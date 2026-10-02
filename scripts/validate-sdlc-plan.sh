@@ -125,7 +125,50 @@ design: Playwright Strategy           §7 (E2E mandatory for UI) / Gate 3
 design: Deployment + Rollback         §11 Release Rules / Gate 5
 tasks: 12 mandatory SDLC groups       §5 Official SDLC Workflow
 tasks: Definition of Done             §3 Definition of Done
+leftover <!-- --> section bodies      Gate 1 — unfilled template rejection
 EOF
+}
+
+# reject_leftover_template_sections <file>
+# Fail when a ## section body is still only HTML comment(s) from the schema
+# template (after stripping <!-- ... --> and whitespace the body is empty).
+reject_leftover_template_sections() {
+  local file="$1"
+  local base
+  base="$(basename "$file")"
+  [ -f "$file" ] || return 0
+
+  local findings
+  findings="$(python3 - "$file" "$base" <<'PY'
+import re
+import sys
+
+path, base = sys.argv[1], sys.argv[2]
+text = open(path, encoding="utf-8").read()
+parts = re.split(r"(?m)^(## .+)$", text)
+errors = []
+i = 1
+while i < len(parts):
+    heading = parts[i][3:].strip()  # drop leading "## "
+    body = parts[i + 1] if i + 1 < len(parts) else ""
+    i += 2
+    stripped = re.sub(r"<!--.*?-->", "", body, flags=re.S)
+    if stripped.strip() == "":
+        errors.append(
+            f'{base}: "{heading}" body is still only template HTML comment(s)'
+        )
+print("\n".join(errors))
+sys.exit(0)
+PY
+)"
+
+  if [ -z "$findings" ]; then
+    return 0
+  fi
+  local line
+  while IFS= read -r line; do
+    [ -n "$line" ] && bad "$line"
+  done <<< "$findings"
 }
 
 validate_change() {
@@ -181,6 +224,7 @@ validate_change() {
     else
       bad "proposal: no Use Case reference (CU-XX / RF-XX / RNF-XX)"
     fi
+    reject_leftover_template_sections "$proposal"
   fi
 
   # ------------------------------------------------------------ traceability
@@ -191,6 +235,7 @@ validate_change() {
     need_section "$trace" '^## Permanent documentation updated'  'Permanent documentation updated'
     need_section "$trace" '^## Gate log'                         'Gate log'
     need_section "$trace" '^## Exceptions'                       'Exceptions'
+    reject_leftover_template_sections "$trace"
   fi
 
   # ------------------------------------------------------------------- specs
@@ -233,6 +278,7 @@ validate_change() {
     need_section "$design" '^## Playwright Strategy'  'Playwright Strategy'
     need_section "$design" '^## Deployment Strategy'  'Deployment Strategy'
     need_section "$design" '^## Rollback Strategy'    'Rollback Strategy'
+    reject_leftover_template_sections "$design"
   fi
 
   # ------------------------------------------------------------------- tasks
@@ -273,6 +319,7 @@ validate_change() {
     else
       ok "tasks: $boxes trackable checkbox task(s)"
     fi
+    reject_leftover_template_sections "$tasks"
   fi
 }
 

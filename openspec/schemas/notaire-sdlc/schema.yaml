@@ -31,6 +31,12 @@ artifacts:
       prevails over any other instruction. It is a constraint you follow, not content
       you reproduce - never copy it into the artifact.
 
+      Prefer seeded files: if `proposal.md` is missing, run
+      `bash scripts/seed-openspec-change.sh <change> --issue <n> --use-case "…" --branch "…"`
+      first. FILL the seeded file in place — keep every `##` heading. Do not rewrite
+      from a blank page. `scripts/validate-sdlc-plan.sh` rejects a section whose body
+      is still only a template `<!-- ... -->` HTML comment.
+
       Create the proposal document that establishes WHY this change is needed.
 
       Sections (all mandatory - a proposal missing one does not pass Gate 1):
@@ -98,6 +104,11 @@ artifacts:
       docs, PR and deploy. This artifact is that chain, made explicit and checkable.
 
       Create the traceability ledger for this change.
+
+      Prefer a seeded `traceability.md` from `bash scripts/seed-openspec-change.sh`.
+      Fill cells in place; keep every `##` heading. Leave Commits/PR/CI/Merge/Release/
+      Smoke as `pending` until those steps happen. Do not leave a section body as only
+      a template `<!-- ... -->` comment.
 
       Fill in now, during planning:
       - **Chain table**: Issue number and state, Use Case reference and whether it
@@ -243,6 +254,10 @@ artifacts:
 
       Create the design document that explains HOW to implement the change.
 
+      Prefer a seeded `design.md`. Fill every mandatory section in place and keep the
+      headings. Optional sections (`Migration Plan`, `Open Questions`) may be omitted;
+      if present they must have real text — leftover `<!-- ... -->` bodies fail Gate 1.
+
       Sections (all mandatory):
       - **Context**: Only the current state and constraints needed to explain the
         approach. Reference the proposal for motivation instead of restating it
@@ -301,6 +316,10 @@ artifacts:
       Workflow and §6 Quality Gates. The plan you write must cover the whole workflow,
       not just the coding. An incomplete plan is rejected: `scripts/validate-sdlc-plan.sh`
       checks that every mandatory group is present.
+
+      Prefer a seeded `tasks.md` from `bash scripts/seed-openspec-change.sh`. Keep all
+      12 group headings and the Definition of Done; fill group 4 with change-specific
+      work. Do not leave a section body as only a template `<!-- ... -->` comment.
 
       Create the task list that breaks down the work.
 

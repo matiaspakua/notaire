@@ -51,9 +51,11 @@ OpenSpec es una CLI de especificación schema-driven. Su núcleo: un **schema**
 (`openspec/schemas/<nombre>/schema.yaml`) declara un conjunto de **artifacts**
 (proposal, spec deltas, design, tasks, traceability), cada uno con un template
 Markdown y un bloque `instruction:` que la CLI inyecta en el contexto del agente
-vía `openspec instructions`. El comando `openspec new change <nombre>` genera el
-directorio `openspec/changes/<nombre>/` a partir de esos templates; `openspec
-archive <nombre>` mueve un change completado a `openspec/changes/archive/` y
+vía `openspec instructions`. El comando `openspec new change <nombre>` crea el
+directorio `openspec/changes/<nombre>/` con `.openspec.yaml`. Los cuatro
+templates Markdown (`proposal`, `design`, `tasks`, `traceability`) se copian con
+`bash scripts/seed-openspec-change.sh <nombre> …` cuando aún no existen;
+`openspec archive <nombre>` mueve un change completado a `openspec/changes/archive/` y
 sincroniza sus deltas aceptados en `openspec/specs/<capability>/spec.md`.
 
 Lo que OpenSpec no hace por defecto: verificar que el Issue existe en GitHub,
@@ -67,10 +69,13 @@ proyecto específico. Esas capas las agrega Notaire sobre OpenSpec.
 npm install -g openspec
 
 # Ciclo de vida de un change
-openspec new change "<nombre-en-kebab-case>"      # scaffoldea los artifacts
+openspec new change "<nombre-en-kebab-case>"      # crea .openspec.yaml del change
+bash scripts/seed-openspec-change.sh "<nombre>" \ # copia templates + valores conocidos
+  --issue N --use-case "CU…" --branch "type/N_desc"
 openspec status --change "<nombre>"               # orden de construcción de artifacts
 openspec instructions <artifact> --change "<nombre>"  # instrucciones para el agente
 openspec validate "<nombre>" --strict             # chequeos estructurales
+bash scripts/validate-sdlc-plan.sh "<nombre>"     # Gate 1 (incluye leftover <!-- -->)
 openspec list                                     # changes activos
 openspec archive "<nombre>"                       # archivar un change completado
 
@@ -309,6 +314,24 @@ bash scripts/validate-sdlc-plan.sh --list          # mapeo checks ↔ §Constitu
 | Scenarios bien formados | `specs/**/*.md` | `#### Scenario:` con 4 hashtags |
 | Secciones de diseño | `design.md` | Testing/Regression/Playwright/Deployment/Rollback |
 | 12 grupos SDLC | `tasks.md` | Gate 1-5, grupos 1-12 + Definition of Done |
+| Cuerpos solo `<!-- … -->` | `proposal`/`design`/`tasks`/`traceability` | Gate 1 — sección de template sin rellenar (nombra archivo + heading) |
+
+**Seed de templates (equivalente cloud/genérico a `phase_setup`)**:
+
+`openspec new change` solo escribe `.openspec.yaml`. Antes de que el agente
+rellene la especificación, corrê:
+
+```bash
+bash scripts/seed-openspec-change.sh "<change>" \
+  --issue <n> --use-case "CU76 — …" --branch "<type>/<n>_desc"
+```
+
+Eso copia `proposal.md`, `design.md`, `tasks.md` y `traceability.md` desde
+`openspec/schemas/notaire-sdlc/templates/` **solo si faltan**, rellena Issue /
+Use Case / Branch / change name, y **no** sobrescribe un archivo ya presente.
+El agente debe **rellenar** las secciones sembradas (mantener cada `##`);
+`validate-sdlc-plan.sh` rechaza un cuerpo que siga siendo solo el comentario
+HTML del template. Self-tests: `scripts/tests/test_validate_sdlc_plan.py`.
 
 **El check de Issue live** (el más importante):
 
