@@ -106,7 +106,7 @@ class PaymentPersistenceAdapterTest {
 
         assertThat(result).isNotNull()
                 .extracting(PaymentDetails::amount, PaymentDetails::id)
-                .containsExactly(new java.math.BigDecimal("1000"));
+                .containsExactly(new java.math.BigDecimal("1000.00"), 1);
 
         verify(budgetRepository, times(2)).findById(1);
         verify(paymentRepository, times(1)).save(any(Payment.class));
@@ -174,7 +174,7 @@ class PaymentPersistenceAdapterTest {
 
         assertThat(result).isPresent().get()
                 .extracting(PaymentDetails::id, PaymentDetails::budgetId, PaymentDetails::amount)
-                .containsExactly(new java.math.BigDecimal("1000"));
+                .containsExactly(1, 1, new java.math.BigDecimal("1000.00"));
 
         verify(paymentRepository, times(1)).findById(1);
     }
