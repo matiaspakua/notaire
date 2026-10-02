@@ -15,17 +15,24 @@ Constitution's requirements to the artifact that carries each one.
 ## Producing a Specification
 
 ```bash
-openspec new change "<kebab-case-name>"     # scaffolds with the notaire-sdlc schema
+openspec new change "<kebab-case-name>"     # creates openspec/changes/<name>/.openspec.yaml
+bash scripts/seed-openspec-change.sh "<name>" \
+  --issue <n> --use-case "CU76 — …" --branch "<type>/<n>_desc"
+# copies proposal/design/tasks/traceability from notaire-sdlc templates when absent
+# and fills the Issue / Use Case / Branch / change-name cells it knows
+
 openspec status  --change "<name>"          # artifact build order
 openspec instructions <artifact> --change "<name>"
+# Fill every ## section in the seeded files; keep every heading.
 openspec validate "<name>" --strict         # OpenSpec's own structural checks
-bash scripts/validate-sdlc-plan.sh "<name>" # this Constitution's checks
+bash scripts/validate-sdlc-plan.sh "<name>" # Constitution checks (rejects leftover <!-- --> bodies)
 ```
 
 Any agent may drive this — Claude Code, OpenCode, GitHub Copilot, Codex, Cursor —
 through its generated `opsx` commands, or a human may write the files directly.
-The contract is the same for all of them because it lives in the CLI, not in the
-agent.
+The contract is the same for all of them because it lives in the CLI and the
+project scripts, not in the agent. Do **not** rewrite the seeded files from
+scratch: fill the template sections in place so headings stay intact.
 
 ## Where each mandatory section lives
 
@@ -75,4 +82,7 @@ contract of the system.
 
 - `CONSTITUTION.md` — the process this implements
 - `openspec/schemas/notaire-sdlc/` — templates and agent instructions
-- `scripts/validate-sdlc-plan.sh` — the mechanical gate (`--list` explains each check)
+- `scripts/validate-sdlc-plan.sh` — the mechanical gate (`--list` explains each check);
+  also rejects `##` section bodies that are still only template `<!-- ... -->` comments
+- `scripts/seed-openspec-change.sh` — copies the four notaire-sdlc templates into a
+  change folder when absent and fills known Issue / Use Case / Branch values
