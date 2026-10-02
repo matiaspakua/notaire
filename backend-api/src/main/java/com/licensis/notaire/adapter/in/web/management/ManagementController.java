@@ -61,6 +61,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -322,7 +323,7 @@ public class ManagementController {
 
     record ManagementRequest(
             Integer number,
-            String encabezado,
+            @NotBlank String encabezado,
             Date dateStart,
             String notes,
             Integer notaryPersonId,

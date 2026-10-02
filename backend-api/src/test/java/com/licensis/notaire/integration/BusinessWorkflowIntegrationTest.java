@@ -165,7 +165,7 @@ class BusinessWorkflowIntegrationTest {
                                       "number": 20250001,
                                       "encabezado": "Gestión de prueba",
                                       "dateStart": "2025-01-15",
-                                      "fkIdNotaryPerson": {"personId": 1}
+                                      "notaryPersonId": 1
                                     }
                                     """))
                     .andExpect(status().is2xxSuccessful());
@@ -528,9 +528,7 @@ class BusinessWorkflowIntegrationTest {
         @DisplayName("POST /api/v1/plantilla-presupuestos returns 201 with bounded response — no circular JSON")
         void createTemplateReturns201WithBoundedResponse() throws Exception {
             String body = """
-                    {"budgetTemplatePK":{"fkIdProcedureType":1,"fkIdConcept":1},
-                     "procedureType":{"idProcedureType":1},
-                     "concept":{"idConcept":1}}
+                    {"fkIdProcedureType":1,"fkIdConcept":1,"notes":"workflow IT"}
                     """;
 
             MvcResult result = mockMvc.perform(post("/api/v1/plantilla-presupuestos")
@@ -555,9 +553,7 @@ class BusinessWorkflowIntegrationTest {
         void createDuplicateTemplateReturns409() throws Exception {
             // Order 3 already created (tipo=1, concepto=1). Re-posting the same PK must return 409.
             String body = """
-                    {"budgetTemplatePK":{"fkIdProcedureType":1,"fkIdConcept":1},
-                     "procedureType":{"idProcedureType":1},
-                     "concept":{"idConcept":1}}
+                    {"fkIdProcedureType":1,"fkIdConcept":1}
                     """;
             mockMvc.perform(post("/api/v1/plantilla-presupuestos")
                             .contentType(MediaType.APPLICATION_JSON)

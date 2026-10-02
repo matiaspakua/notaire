@@ -62,14 +62,10 @@ class ConceptReferentialIntegrityTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "budgetTemplatePK": {
-                                    "fkIdProcedureType": %d,
-                                    "fkIdConcept": %d
-                                  },
-                                  "procedureType": {"idProcedureType": %d},
-                                  "concept": {"idConcept": %d}
+                                  "fkIdProcedureType": %d,
+                                  "fkIdConcept": %d
                                 }
-                                """.formatted(typeProcedureId, conceptId, typeProcedureId, conceptId)))
+                                """.formatted(typeProcedureId, conceptId)))
                 .andExpect(status().isCreated());
     }
 
