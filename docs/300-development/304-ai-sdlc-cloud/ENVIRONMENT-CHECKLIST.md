@@ -5,6 +5,11 @@ hosts the AI SDLC foreman fleet. Populate secrets from `.env.example` keys
 (never commit `.env`).
 
 > This fleet does **not** require `local-ai/`, oMLX, or Codex local profiles.
+>
+> **Nested Docker:** bridge CNI between containers often fails in Cloud Agent VMs.
+> Use host networking (`docker-compose.cloud.yml` or equivalent) and point the backend
+> JDBC URL at `127.0.0.1`. Boot `start` must start `dockerd` (fuse-overlayfs +
+> iptables-legacy) before `docker compose up`.
 
 ---
 
@@ -22,6 +27,7 @@ hosts the AI SDLC foreman fleet. Populate secrets from `.env.example` keys
 | OpenSpec CLI | current project-supported | Gate 1 `openspec validate` | `openspec --version` |
 | Python 3 | 3.11+ | occasional scripts / unittest helpers | `python3 --version` |
 | `curl` / `jq` | any | health checks, JSON parsing | `curl --version`; `jq --version` |
+| `bc` | any | `validate-sdlc-plan.sh` scenario counting (Gate 1) | `bc --version` |
 
 ### Frontend / E2E extras
 
