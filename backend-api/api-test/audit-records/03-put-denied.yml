@@ -1,0 +1,33 @@
+info:
+  name: Reject PUT audit-log
+  type: http
+  seq: 3
+  description: |-
+      ## Deny forge — PUT /api/v1/audit-log/{id}
+      Audit rows must not be updated over HTTP. Expect 405 (issue #1060 AC).
+      Traceability: CU73, CU78, #1060
+
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/audit-log/1"
+  body:
+    type: json
+    data: |-
+        {
+          "module": "Forged",
+          "operationDetail": "bruno must not update audit rows",
+          "version": 1
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 405 Method Not Allowed", function () {
+            expect(res.getStatus()).to.equal(405);
+          });

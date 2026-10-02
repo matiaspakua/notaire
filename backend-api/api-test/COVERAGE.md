@@ -37,7 +37,7 @@ the value but update did not. Hardened in `setAtributos`.
 | Folder | Endpoint | CRUD | Filters / extras | Use Cases |
 |--------|----------|------|------------------|-----------|
 | 00-auth | `/usuarios/login` | n/a | login, invalid, rate-limit lockout | CU78 |
-| audit-records | `/audit-log` | read-only | list | CU73, CU23 |
+| audit-records | `/audit-log` | read-only | list; POST/PUT/DELETE → 405 (#1060) | CU73, CU23, CU78 |
 | budget-templates | `/plantilla-presupuestos` | ✅ | `tipo-tramite/{id}`; own procedure type + concept fixtures | CU26, CU29, CU39, CU55, CU49, CU37, CU57 |
 | budgets | `/presupuestos` | ✅ | `persona/{id}`, `buscar?status=` | CU01, CU60, CU45 |
 | concepts | `/conceptos` | ✅ | — | CU29, CU66, CU34, CU37 |

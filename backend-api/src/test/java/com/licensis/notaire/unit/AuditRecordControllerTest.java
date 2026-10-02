@@ -25,6 +25,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -33,6 +36,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -181,10 +185,31 @@ class AuditRecordControllerTest {
     }
 
     @Test
+    @DisplayName("Should reject update — audit trail is immutable over HTTP (#1060)")
+    void shouldRejectUpdateOfAuditRecords() throws Exception {
+        mockMvc.perform(put("/api/v1/audit-log/100")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(sampleEntity)))
+                .andExpect(status().isMethodNotAllowed());
+        verify(service, never()).save(any(AuditRecord.class));
+    }
+
+    @Test
     @DisplayName("Should reject deletion of audit records - the trail is append-only (issue #556)")
     void shouldRejectDeleteOfAuditRecords() throws Exception {
         mockMvc.perform(delete("/api/v1/audit-log/100"))
                 .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    @DisplayName("OpenAPI tag describes consult-only access (#1060)")
+    void shouldDescribeConsultOnlyOpenApiTag() {
+        Tag tag = AuditRecordController.class.getAnnotation(Tag.class);
+        assertThat(tag).isNotNull();
+        assertThat(tag.description())
+                .as("OpenAPI must not advertise administration of audit records")
+                .doesNotContainIgnoringCase("administrar")
+                .containsIgnoringCase("consultar");
     }
 
     @Test

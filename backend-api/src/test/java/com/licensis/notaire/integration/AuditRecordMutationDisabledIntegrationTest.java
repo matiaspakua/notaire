@@ -11,7 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -41,6 +43,28 @@ class AuditRecordMutationDisabledIntegrationTest {
                                   "version": 1
                                 }
                                 """))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    @DisplayName("PUT /audit-log/{id} is rejected — audit rows are immutable over HTTP (#1060)")
+    void shouldRejectAuditLogPut() throws Exception {
+        mockMvc.perform(put("/api/v1/audit-log/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "module": "Forged",
+                                  "operationDetail": "client must not update audit rows",
+                                  "version": 1
+                                }
+                                """))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    @DisplayName("DELETE /audit-log/{id} is rejected — audit rows are immutable over HTTP (#1060)")
+    void shouldRejectAuditLogDelete() throws Exception {
+        mockMvc.perform(delete("/api/v1/audit-log/1"))
                 .andExpect(status().isMethodNotAllowed());
     }
 }
