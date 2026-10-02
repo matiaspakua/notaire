@@ -3,7 +3,6 @@ package com.licensis.notaire.unit;
 import com.licensis.notaire.audit.AuditAspect;
 import com.licensis.notaire.adapter.in.web.deed.DeedController;
 import com.licensis.notaire.adapter.in.web.user.UserController;
-import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 import com.licensis.notaire.repository.UserRepository;
@@ -89,6 +88,11 @@ class AuditAspectTest {
         return DeedController.class.getDeclaredMethod(name, params);
     }
 
+    /** Nested request DTO introduced when create/update stopped binding {@code Deed} entities. */
+    private Class<?> deedRequestClass() throws ClassNotFoundException {
+        return Class.forName("com.licensis.notaire.adapter.in.web.deed.DeedController$DeedRequest");
+    }
+
     private void stubJoinPoint(Class<?> target, Method method, Object[] args) {
         // Mockito.mock(target) yields a proxy whose getClass().getSimpleName()
         // is e.g. "EscrituraController$MockitoMock$xxx". The aspect handles
@@ -104,11 +108,12 @@ class AuditAspectTest {
 
     @Test
     @DisplayName("Should persist audit record when authenticated user performs a mutation")
-    void shouldPersistAuditRecordWhenAuthenticatedUserPerformsMutation() throws NoSuchMethodException {
+    void shouldPersistAuditRecordWhenAuthenticatedUserPerformsMutation()
+            throws NoSuchMethodException, ClassNotFoundException {
         authenticateAs("admin");
         when(userRepository.findAll()).thenReturn(List.of(adminUser));
 
-        Method method = deedMethod("create", Deed.class);
+        Method method = deedMethod("create", deedRequestClass());
         stubJoinPoint(DeedController.class, method, new Object[]{null});
 
         aspect.auditAfterControllerInvocation(joinPoint);
@@ -124,12 +129,13 @@ class AuditAspectTest {
 
     @Test
     @DisplayName("Should NOT trust a spoofed X-Notaire-User header when there is no verified authentication (issue #555)")
-    void shouldNotTrustSpoofedHeaderWhenNoSecurityContext() throws NoSuchMethodException {
+    void shouldNotTrustSpoofedHeaderWhenNoSecurityContext()
+            throws NoSuchMethodException, ClassNotFoundException {
         SecurityContextHolder.clearContext();
         bindRequestWithUserHeader("admin");
         lenient().when(userRepository.findAll()).thenReturn(List.of(adminUser));
 
-        Method method = deedMethod("update", Integer.class, Deed.class);
+        Method method = deedMethod("update", Integer.class, deedRequestClass());
         stubJoinPoint(DeedController.class, method, new Object[]{5, null});
 
         aspect.auditAfterControllerInvocation(joinPoint);
@@ -151,9 +157,9 @@ class AuditAspectTest {
 
     @Test
     @DisplayName("Should skip audit when no authentication and no header present")
-    void shouldSkipAuditWhenNoActingUser() throws NoSuchMethodException {
+    void shouldSkipAuditWhenNoActingUser() throws NoSuchMethodException, ClassNotFoundException {
         SecurityContextHolder.clearContext();
-        Method method = deedMethod("create", Deed.class);
+        Method method = deedMethod("create", deedRequestClass());
         stubJoinPoint(DeedController.class, method, new Object[]{null});
 
         aspect.auditAfterControllerInvocation(joinPoint);
@@ -163,9 +169,9 @@ class AuditAspectTest {
 
     @Test
     @DisplayName("Should skip audit when authenticated as anonymousUser")
-    void shouldSkipAuditWhenAnonymousUser() throws NoSuchMethodException {
+    void shouldSkipAuditWhenAnonymousUser() throws NoSuchMethodException, ClassNotFoundException {
         authenticateAs("anonymousUser");
-        Method method = deedMethod("create", Deed.class);
+        Method method = deedMethod("create", deedRequestClass());
         stubJoinPoint(DeedController.class, method, new Object[]{null});
 
         aspect.auditAfterControllerInvocation(joinPoint);
@@ -175,11 +181,11 @@ class AuditAspectTest {
 
     @Test
     @DisplayName("Should skip audit when acting user not found in DB")
-    void shouldSkipAuditWhenUserNotFound() throws NoSuchMethodException {
+    void shouldSkipAuditWhenUserNotFound() throws NoSuchMethodException, ClassNotFoundException {
         authenticateAs("ghost");
         when(userRepository.findAll()).thenReturn(List.of(adminUser));
 
-        Method method = deedMethod("create", Deed.class);
+        Method method = deedMethod("create", deedRequestClass());
         stubJoinPoint(DeedController.class, method, new Object[]{null});
 
         aspect.auditAfterControllerInvocation(joinPoint);
