@@ -73,10 +73,10 @@
 ## 10. Pull Request y validación CI
 
 - [x] 10.1 Branch pushed to origin
-- [ ] 10.2 PR open titled `[#1133] docs(ai-sdlc): …`
+- [x] 10.2 PR #1134 open titled `[#1133] docs(ai-sdlc): …`
 - [ ] 10.3 Wait for required workflows — apply CI-MERGE-GATE rule (heavy CI + Playwright)
 - [ ] 10.4 Gate 4 — CI green, review approved, no merge conflicts
-- [ ] 10.5 PR number recorded in `traceability.md`
+- [x] 10.5 PR number recorded in `traceability.md`
 
 ## 11. Deploy
 
