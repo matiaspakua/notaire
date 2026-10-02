@@ -71,10 +71,8 @@ class BudgetTemplateSerializationIntegrationTest {
 
     private void createTemplate(Integer typeProcedureId, Integer conceptId) throws Exception {
         String body = """
-                {"budgetTemplatePK": {"fkIdProcedureType": %d, "fkIdConcept": %d},
-                 "procedureType": {"idProcedureType": %d}, "concept": {"idConcept": %d},
-                 "notes": "template ciclo IT"}
-                """.formatted(typeProcedureId, conceptId, typeProcedureId, conceptId);
+                {"fkIdProcedureType": %d, "fkIdConcept": %d, "notes": "template ciclo IT"}
+                """.formatted(typeProcedureId, conceptId);
         mockMvc.perform(post("/api/v1/plantilla-presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -96,18 +94,18 @@ class BudgetTemplateSerializationIntegrationTest {
         assertThat(body.isArray()).isTrue();
         JsonNode template = null;
         for (JsonNode candidate : body) {
-            JsonNode pk = candidate.get("budgetTemplatePK");
-            if (pk != null && pk.get("fkIdConcept").asInt() == conceptId
-                    && pk.get("fkIdProcedureType").asInt() == typeProcedureId) {
+            if (candidate.path("fkIdConcept").asInt() == conceptId
+                    && candidate.path("fkIdProcedureType").asInt() == typeProcedureId) {
                 template = candidate;
                 break;
             }
         }
         assertThat(template).as("created plantilla should be in the list").isNotNull();
-        JsonNode concept = template.get("concept");
-        assertThat(concept).isNotNull();
-        assertThat(concept.has("budgetTemplateList"))
-                .as("concept must not embed its budgetTemplateList (cyclic reference)")
+        assertThat(template.has("concept"))
+                .as("DTO response must not embed concept entity graph")
+                .isFalse();
+        assertThat(template.has("budgetTemplateList"))
+                .as("DTO response must not embed cyclic budgetTemplateList")
                 .isFalse();
     }
 

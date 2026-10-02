@@ -39,7 +39,7 @@ class SubstitutionControllerIntegrationTest {
     private Integer createPerson(String name, String identificationNumber) throws Exception {
         String body = """
                 {"firstName": "%s", "lastName": "Substitution IT", "identificationNumber": "%s",
-                 "isClient": false, "identificationType": {"idIdentificationType": 1}}
+                 "isClient": false, "identificationTypeId": 1}
                 """.formatted(name, identificationNumber);
         MvcResult result = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -55,7 +55,7 @@ class SubstitutionControllerIntegrationTest {
         Integer suplantado = createPerson("Suplantado IT", "411" + suffix);
         String body = """
                 {"dateStart": "2026-01-01", "dateEnd": "2026-01-31",
-                 "fkIdSubstitute": {"personId": %d}, "fkIdSubstituted": {"personId": %d}}
+                 "substitutePersonId": %d, "substitutedPersonId": %d}
                 """.formatted(suplente, suplantado);
         MvcResult result = mockMvc.perform(post("/api/v1/suplencia")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,8 +73,8 @@ class SubstitutionControllerIntegrationTest {
         mockMvc.perform(get("/api/v1/suplencia/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idSubstitution").value(id))
-                .andExpect(jsonPath("$.fkIdSubstitute.personId").isNumber())
-                .andExpect(jsonPath("$.fkIdSubstituted.personId").isNumber());
+                .andExpect(jsonPath("$.substitutePersonId").isNumber())
+                .andExpect(jsonPath("$.substitutedPersonId").isNumber());
     }
 
     @Test

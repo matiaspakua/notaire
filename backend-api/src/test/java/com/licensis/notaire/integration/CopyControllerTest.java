@@ -77,7 +77,7 @@ class CopyControllerTest extends ServiceIntegrationTest {
                 {
                   "number": %d,
                   "datePrinting": "2026-06-16",
-                  "fkIdTestimony": {"idTestimony": %d}
+                  "testimonyId": %d
                 }
                 """.formatted(number, idTestimony);
     }

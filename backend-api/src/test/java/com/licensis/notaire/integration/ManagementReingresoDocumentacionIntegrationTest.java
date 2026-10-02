@@ -80,7 +80,7 @@ class ManagementReingresoDocumentacionIntegrationTest {
         Integer notaryId = createPerson("43100" + number);
         String body = """
                 {"encabezado": "Management CU43", "dateStart": "2026-01-01", "number": %d,
-                 "fkIdNotaryPerson": {"personId": %d}}
+                 "notaryPersonId": %d}
                 """.formatted(number, notaryId);
         MvcResult result = mockMvc.perform(post("/api/v1/gestiones")
                         .contentType(MediaType.APPLICATION_JSON)

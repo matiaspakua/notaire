@@ -78,7 +78,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
         Integer notaryId = createPerson("42100" + number);
         String body = """
                 {"encabezado": "Management CU10", "dateStart": "2026-01-01", "number": %d,
-                 "fkIdNotaryPerson": {"personId": %d}}
+                 "notaryPersonId": %d}
                 """.formatted(number, notaryId);
         MvcResult result = mockMvc.perform(post("/api/v1/gestiones")
                         .contentType(MediaType.APPLICATION_JSON)

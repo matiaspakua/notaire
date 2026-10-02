@@ -124,7 +124,7 @@ class ManagementControllerIntegrationTest {
         Integer personId = createPerson();
         String body = """
                 {"dateStart": "2026-01-01", "number": 9101,
-                 "fkIdNotaryPerson": {"personId": %d}}
+                 "notaryPersonId": %d}
                 """.formatted(personId);
 
         mockMvc.perform(post("/api/v1/gestiones")
@@ -141,7 +141,7 @@ class ManagementControllerIntegrationTest {
         Integer personId = createPerson();
         String body = """
                 {"encabezado": "Management IT", "dateStart": "2026-01-01", "number": 9102,
-                 "fkIdNotaryPerson": {"personId": %d}}
+                 "notaryPersonId": %d}
                 """.formatted(personId);
 
         mockMvc.perform(post("/api/v1/gestiones")
