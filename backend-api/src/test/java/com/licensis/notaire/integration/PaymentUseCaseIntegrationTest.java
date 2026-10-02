@@ -344,6 +344,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
         assertThat(payments)
                 .hasSize(3)
                 .extracting(PaymentDetails::amount)
+                .usingElementComparator(java.math.BigDecimal::compareTo)
                 .containsExactlyInAnyOrder(monto1, monto2, monto3);
 
         java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
