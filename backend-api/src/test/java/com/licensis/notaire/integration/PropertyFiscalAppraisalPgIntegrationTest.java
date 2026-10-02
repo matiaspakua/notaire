@@ -1,5 +1,6 @@
 package com.licensis.notaire.integration;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,11 +20,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * CU69 - Gestión de Inmuebles, against the real Flyway-managed Postgres
- * schema. The {@code inmuebles.valuacion_fiscal} column is {@code real};
- * H2-based tests (e.g. {@code InmuebleRepositoryIntegrationTest}) do not
- * enforce this type strictness, which is why they stay green despite
- * {@code Inmueble.valuacionFiscal} being declared {@code String} and every
- * real Postgres INSERT failing with a type-mismatch error (Issue #879).
+ * schema. After #1061, {@code properties.fiscal_valuation} is {@code NUMERIC(19,2)}
+ * and {@code Property.fiscalAppraisal} is {@code BigDecimal}. Global Jackson
+ * {@code ALWAYS} inclusion means a null appraisal is serialized as JSON null
+ * (not omitted).
  */
 @SpringBootTest
 @ActiveProfiles("integration")
@@ -68,6 +68,6 @@ class PropertyFiscalAppraisalPgIntegrationTest extends BaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.fiscalAppraisal").doesNotExist());
+                .andExpect(jsonPath("$.fiscalAppraisal").value(nullValue()));
     }
 }

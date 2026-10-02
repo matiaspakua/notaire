@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+
 import com.licensis.notaire.dto.DtoManagementResumenFinanciero;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Procedure;
@@ -53,7 +54,7 @@ class ManagementResumenFinancieroServiceTest {
         return procedure;
     }
 
-    private static PaymentDetails paymentOf(float amount) {
+    private static PaymentDetails paymentOf(java.math.BigDecimal amount) {
         return new PaymentDetails(null, null, amount, new Date(), null, null);
     }
 
@@ -64,49 +65,49 @@ class ManagementResumenFinancieroServiceTest {
         @Test
         @DisplayName("Gestión con un único trámite y budget agrega su total, cobrado y saldo")
         void shouldSummarizeSingleProcedureManagement() {
-            when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(3000.00f);
+            when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(new java.math.BigDecimal("3000.00"));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(3000.00f);
-            when(paymentQueries.findByBudget(10)).thenReturn(List.of(paymentOf(2000.00f)));
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("3000.00"));
+            when(paymentQueries.findByBudget(10)).thenReturn(List.of(paymentOf(new java.math.BigDecimal("2000.00"))));
 
             DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
 
             assertThat(resumen.idManagement()).isEqualTo(1);
-            assertThat(resumen.totalPresupuestado()).isEqualTo(5000.00f);
-            assertThat(resumen.totalCobrado()).isEqualTo(2000.00f);
-            assertThat(resumen.pendingBalance()).isEqualTo(3000.00f);
+            assertThat(resumen.totalPresupuestado()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
+            assertThat(resumen.totalCobrado()).isEqualByComparingTo(new java.math.BigDecimal("2000.00"));
+            assertThat(resumen.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("3000.00"));
         }
 
         @Test
         @DisplayName("Gestión con múltiples trámites y presupuestos suma los totales de cada uno")
         void shouldAggregateMultipleProcedures() {
-            when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(4500.00f);
+            when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(new java.math.BigDecimal("4500.00"));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
                     .thenReturn(List.of(procedureFor(10), procedureFor(20)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(3000.00f);
-            when(paymentQueries.findByBudget(10)).thenReturn(List.of(paymentOf(2000.00f)));
-            when(paymentStatus.pendingBalance(20)).thenReturn(1500.00f);
-            when(paymentQueries.findByBudget(20)).thenReturn(List.of(paymentOf(1000.00f)));
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("3000.00"));
+            when(paymentQueries.findByBudget(10)).thenReturn(List.of(paymentOf(new java.math.BigDecimal("2000.00"))));
+            when(paymentStatus.pendingBalance(20)).thenReturn(new java.math.BigDecimal("1500.00"));
+            when(paymentQueries.findByBudget(20)).thenReturn(List.of(paymentOf(new java.math.BigDecimal("1000.00"))));
 
             DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
 
-            assertThat(resumen.totalPresupuestado()).isEqualTo(7500.00f);
-            assertThat(resumen.totalCobrado()).isEqualTo(3000.00f);
-            assertThat(resumen.pendingBalance()).isEqualTo(4500.00f);
+            assertThat(resumen.totalPresupuestado()).isEqualByComparingTo(new java.math.BigDecimal("7500.00"));
+            assertThat(resumen.totalCobrado()).isEqualByComparingTo(new java.math.BigDecimal("3000.00"));
+            assertThat(resumen.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("4500.00"));
         }
 
         @Test
         @DisplayName("Gestión sin payments registrados devuelve cobrado en cero")
         void shouldReturnZeroCollectedWhenNoPayments() {
-            when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(5000.00f);
+            when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(new java.math.BigDecimal("5000.00"));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(5000.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("5000.00"));
             when(paymentQueries.findByBudget(10)).thenReturn(List.of());
 
             DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
 
-            assertThat(resumen.totalCobrado()).isEqualTo(0.00f);
-            assertThat(resumen.totalPresupuestado()).isEqualTo(5000.00f);
+            assertThat(resumen.totalCobrado()).isEqualByComparingTo(new java.math.BigDecimal("0.00"));
+            assertThat(resumen.totalPresupuestado()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
         }
 
         @Test

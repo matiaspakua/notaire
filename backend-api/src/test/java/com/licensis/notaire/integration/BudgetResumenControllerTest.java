@@ -1,5 +1,6 @@
 package com.licensis.notaire.integration;
 
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,7 +50,7 @@ class BudgetResumenControllerTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
-    private Integer createBudget(Integer clientId, Float propertyAmount) throws Exception {
+    private Integer createBudget(Integer clientId, java.math.BigDecimal propertyAmount) throws Exception {
         String body = """
                 {"number": %d, "date": "2026-01-01", "encabezado": "Budget Resumen IT",
                  "status": "Pending", "propertyAmount": %s, "person": {"personId": %d}}
@@ -62,7 +63,7 @@ class BudgetResumenControllerTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("idBudget").asInt();
     }
 
-    private void createPayment(Integer idBudget, Float amount) throws Exception {
+    private void createPayment(Integer idBudget, java.math.BigDecimal amount) throws Exception {
         String body = """
                 {"idBudget": %d, "amount": %s, "date": "2026-08-20", "notes": "Payment Resumen IT"}
                 """.formatted(idBudget, amount);
@@ -76,7 +77,7 @@ class BudgetResumenControllerTest {
     @DisplayName("Should return the financial summary for a budget with no payments")
     void shouldReturnSummaryForBudgetWithoutPayments() throws Exception {
         Integer clientId = createPerson("51" + (System.nanoTime() % 1000000));
-        Integer budgetId = createBudget(clientId, 5000.00f);
+        Integer budgetId = createBudget(clientId, new java.math.BigDecimal("5000.00"));
 
         mockMvc.perform(get("/api/v1/presupuestos/" + budgetId + "/resumen"))
                 .andExpect(status().isOk())
@@ -90,8 +91,8 @@ class BudgetResumenControllerTest {
     @DisplayName("Should return the financial summary reflecting a registered payment")
     void shouldReturnSummaryForBudgetWithPayment() throws Exception {
         Integer clientId = createPerson("52" + (System.nanoTime() % 1000000));
-        Integer budgetId = createBudget(clientId, 5000.00f);
-        createPayment(budgetId, 2000.00f);
+        Integer budgetId = createBudget(clientId, new java.math.BigDecimal("5000.00"));
+        createPayment(budgetId, new java.math.BigDecimal("2000.00"));
 
         mockMvc.perform(get("/api/v1/presupuestos/" + budgetId + "/resumen"))
                 .andExpect(status().isOk())

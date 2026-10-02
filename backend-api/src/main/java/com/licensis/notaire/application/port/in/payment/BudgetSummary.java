@@ -2,6 +2,7 @@ package com.licensis.notaire.application.port.in.payment;
 
 import com.licensis.notaire.domain.payment.PaymentDetails;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -23,8 +24,8 @@ public record BudgetSummary(
         Integer managementId,
         Integer managementNumber,
         String managementHeading,
-        float total,
-        float pendingBalance,
+        BigDecimal total,
+        BigDecimal pendingBalance,
         List<PaymentDetails> payments) {
 
     public BudgetSummary {

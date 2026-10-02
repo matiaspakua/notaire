@@ -1,5 +1,6 @@
 package com.licensis.notaire.application.usecase.payment;
 
+
 import com.licensis.notaire.domain.payment.PaymentDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,15 +34,15 @@ class PaymentQueryAndDeleteServiceTest {
         return Date.from(LocalDate.of(year, month, day).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
-    private PaymentDetails givenPayment(Integer budgetId, float amount, Date date) {
+    private PaymentDetails givenPayment(Integer budgetId, java.math.BigDecimal amount, Date date) {
         return payments.given(new PaymentDetails(null, budgetId, amount, date, null, null));
     }
 
     @Test
     @DisplayName("Should return every registered payment")
     void shouldFindAll() {
-        givenPayment(10, 100f, at(2026, 1, 10));
-        givenPayment(11, 200f, at(2026, 2, 10));
+        givenPayment(10, new java.math.BigDecimal("100"), at(2026, 1, 10));
+        givenPayment(11, new java.math.BigDecimal("200"), at(2026, 2, 10));
 
         assertThat(queries.findAll()).hasSize(2);
     }
@@ -55,7 +56,7 @@ class PaymentQueryAndDeleteServiceTest {
     @Test
     @DisplayName("Should find a payment by its identifier")
     void shouldFindById() {
-        PaymentDetails created = givenPayment(10, 100f, at(2026, 1, 10));
+        PaymentDetails created = givenPayment(10, new java.math.BigDecimal("100"), at(2026, 1, 10));
 
         assertThat(queries.findById(created.id())).contains(created);
     }
@@ -69,31 +70,29 @@ class PaymentQueryAndDeleteServiceTest {
     @Test
     @DisplayName("Should return only the payments of the requested budget")
     void shouldFindByBudget() {
-        givenPayment(10, 100f, at(2026, 1, 10));
-        givenPayment(11, 200f, at(2026, 1, 10));
+        givenPayment(10, new java.math.BigDecimal("100"), at(2026, 1, 10));
+        givenPayment(11, new java.math.BigDecimal("200"), at(2026, 1, 10));
 
         assertThat(queries.findByBudget(10))
                 .singleElement()
-                .extracting(PaymentDetails::amount)
-                .isEqualTo(100f);
+                .satisfies(d -> assertThat(d.amount()).isEqualByComparingTo(new java.math.BigDecimal("100")));
     }
 
     @Test
     @DisplayName("Should return only the payments inside the requested date range")
     void shouldFindByDateRange() {
-        givenPayment(10, 100f, at(2026, 1, 10));
-        givenPayment(10, 200f, at(2026, 6, 10));
+        givenPayment(10, new java.math.BigDecimal("100"), at(2026, 1, 10));
+        givenPayment(10, new java.math.BigDecimal("200"), at(2026, 6, 10));
 
         assertThat(queries.findByDateRange(at(2026, 1, 1), at(2026, 3, 1)))
                 .singleElement()
-                .extracting(PaymentDetails::amount)
-                .isEqualTo(100f);
+                .satisfies(d -> assertThat(d.amount()).isEqualByComparingTo(new java.math.BigDecimal("100")));
     }
 
     @Test
     @DisplayName("Should delete an existing payment")
     void shouldDeletePayment() {
-        PaymentDetails created = givenPayment(10, 100f, at(2026, 1, 10));
+        PaymentDetails created = givenPayment(10, new java.math.BigDecimal("100"), at(2026, 1, 10));
 
         deletePayment.delete(created.id());
 

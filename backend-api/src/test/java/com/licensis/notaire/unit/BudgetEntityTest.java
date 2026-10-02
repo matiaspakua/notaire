@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Procedure;
@@ -30,12 +31,12 @@ class BudgetEntityTest {
             budget.setDate(new Date());
             budget.setEncabezado("Compraventa de property");
             budget.setStatus("pendiente");
-            budget.setPropertyAmount(500000.00f);
+            budget.setPropertyAmount(new java.math.BigDecimal("500000.00"));
 
             assertThat(budget.getNumber()).isEqualTo(1001);
             assertThat(budget.getEncabezado()).isEqualTo("Compraventa de property");
             assertThat(budget.getStatus()).isEqualTo("pendiente");
-            assertThat(budget.getPropertyAmount()).isEqualTo(500000.00f);
+            assertThat(budget.getPropertyAmount()).isEqualByComparingTo(new java.math.BigDecimal("500000.00"));
         }
 
         @Test

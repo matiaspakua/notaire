@@ -9,13 +9,16 @@ import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.domain.payment.BudgetCharges;
 import com.licensis.notaire.domain.payment.ChargeLine;
+import com.licensis.notaire.domain.payment.Money;
 import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
 
 /**
  * Outbound adapter implementing {@link BudgetLookupPort} on top of the existing Spring
@@ -78,18 +81,18 @@ public class BudgetLookupAdapter implements BudgetLookupPort {
                 .toList();
     }
 
-    private static float sumSubmittedDocumentCosts(Budget budget) {
+    private static BigDecimal sumSubmittedDocumentCosts(Budget budget) {
         if (budget.getProcedureList() == null) {
-            return 0f;
+            return Money.zero();
         }
-        float total = 0f;
+        BigDecimal total = Money.zero();
         for (Procedure procedure : budget.getProcedureList()) {
             if (procedure.getSubmittedDocumentList() == null) {
                 continue;
             }
             for (SubmittedDocument document : procedure.getSubmittedDocumentList()) {
                 if (document.getAmountToPay() != null) {
-                    total += document.getAmountToPay();
+                    total = Money.of(total.add(document.getAmountToPay()));
                 }
             }
         }

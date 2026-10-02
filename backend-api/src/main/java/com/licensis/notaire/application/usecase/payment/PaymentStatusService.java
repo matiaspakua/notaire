@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 /**
  * CU47 "Consultar Estado de Pago": derives the pending balance and the aggregated
  * status of a budget from its charges and the amount already paid.
@@ -29,8 +31,8 @@ public class PaymentStatusService implements GetPaymentStatusUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public float pendingBalance(Integer budgetId) {
-        float pendingBalance = charges(budgetId).pendingBalanceAfter(payments.sumAmountByBudgetId(budgetId));
+    public BigDecimal pendingBalance(Integer budgetId) {
+        BigDecimal pendingBalance = charges(budgetId).pendingBalanceAfter(payments.sumAmountByBudgetId(budgetId));
         log.debug("Saldo pendiente para presupuesto {}: {}", budgetId, pendingBalance);
         return pendingBalance;
     }
@@ -39,7 +41,7 @@ public class PaymentStatusService implements GetPaymentStatusUseCase {
     @Transactional(readOnly = true)
     public PaymentStatus status(Integer budgetId) {
         BudgetCharges charges = charges(budgetId);
-        Float totalPaid = payments.sumAmountByBudgetId(budgetId);
+        BigDecimal totalPaid = payments.sumAmountByBudgetId(budgetId);
         return PaymentStatus.of(totalPaid, charges.pendingBalanceAfter(totalPaid));
     }
 

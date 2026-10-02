@@ -26,7 +26,7 @@ public class DocumentCostTemplateService {
     }
 
     public DocumentCostTemplate create(Integer idProcedureType, Integer idDocumentType,
-                                          Float fixedAmount, Float variablePercentage) {
+                                          java.math.BigDecimal fixedAmount, java.math.BigDecimal variablePercentage) {
         validateExactlyOneCost(fixedAmount, variablePercentage);
 
         ProcedureType procedureType = documentRepository.findProcedureTypeById(idProcedureType)
@@ -50,7 +50,7 @@ public class DocumentCostTemplateService {
         return documentRepository.findCostTemplatesByProcedureType(idProcedureType);
     }
 
-    private void validateExactlyOneCost(Float fixedAmount, Float variablePercentage) {
+    private void validateExactlyOneCost(java.math.BigDecimal fixedAmount, java.math.BigDecimal variablePercentage) {
         boolean tieneFixedAmount = fixedAmount != null;
         boolean tieneVariablePercentage = variablePercentage != null;
         if (tieneFixedAmount == tieneVariablePercentage) {

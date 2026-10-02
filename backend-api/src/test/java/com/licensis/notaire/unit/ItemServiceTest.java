@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+
 import com.licensis.notaire.dto.TypeItem;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
@@ -38,7 +39,7 @@ class ItemServiceTest {
     private Item buildItem(TypeItem type, String reason) {
         Item item = new Item();
         item.setName("Item de prueba");
-        item.setValue(1000f);
+        item.setValue(new java.math.BigDecimal("1000"));
         item.setType(type);
         item.setReason(reason);
         return item;
@@ -49,7 +50,7 @@ class ItemServiceTest {
     void shouldTreatItemWithoutTypeAsNormal() {
         Item item = new Item();
         item.setName("Item sin type");
-        item.setValue(500f);
+        item.setValue(new java.math.BigDecimal("500"));
 
         when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 

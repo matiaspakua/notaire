@@ -1,5 +1,6 @@
 package com.licensis.notaire.integration;
 
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -59,7 +60,7 @@ class ManagementResumenFinancieroControllerTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
-    private Integer createBudget(Integer clientId, Float propertyAmount) throws Exception {
+    private Integer createBudget(Integer clientId, java.math.BigDecimal propertyAmount) throws Exception {
         String body = """
                 {"number": %d, "date": "2026-01-01", "encabezado": "Budget Resumen Management IT",
                  "status": "Pending", "propertyAmount": %s, "person": {"personId": %d}}
@@ -105,7 +106,7 @@ class ManagementResumenFinancieroControllerTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("idManagement").asInt();
     }
 
-    private void createPayment(Integer idBudget, Float amount) throws Exception {
+    private void createPayment(Integer idBudget, java.math.BigDecimal amount) throws Exception {
         String body = """
                 {"idBudget": %d, "amount": %s, "date": "2026-08-20", "notes": "Payment Resumen Management IT"}
                 """.formatted(idBudget, amount);
@@ -119,8 +120,8 @@ class ManagementResumenFinancieroControllerTest {
     @DisplayName("Should return the aggregate financial summary for a gestión with a payment")
     void shouldReturnResumenFinancieroForManagement() throws Exception {
         Integer clientId = createPerson("65" + (System.nanoTime() % 1000000));
-        Integer budgetId = createBudget(clientId, 5000.00f);
-        createPayment(budgetId, 2000.00f);
+        Integer budgetId = createBudget(clientId, new java.math.BigDecimal("5000.00"));
+        createPayment(budgetId, new java.math.BigDecimal("2000.00"));
         Integer managementId = createManagementWithBudget(budgetId);
 
         mockMvc.perform(get("/api/v1/gestiones/" + managementId + "/resumen-financiero"))

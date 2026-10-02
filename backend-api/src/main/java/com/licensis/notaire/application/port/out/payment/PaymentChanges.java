@@ -1,5 +1,6 @@
 package com.licensis.notaire.application.port.out.payment;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Date;
  * @param notes         new observations, or {@code null} to leave unchanged
  * @param paymentMethod new payment method, or {@code null} to leave unchanged
  */
-public record PaymentChanges(Float amount, Date date, String notes, String paymentMethod) {
+public record PaymentChanges(BigDecimal amount, Date date, String notes, String paymentMethod) {
 
     public PaymentChanges {
         date = date == null ? null : new Date(date.getTime());

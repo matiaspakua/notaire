@@ -4,11 +4,14 @@ import com.licensis.notaire.application.port.in.payment.EditPaymentCommand;
 import com.licensis.notaire.application.port.in.payment.EditPaymentUseCase;
 import com.licensis.notaire.application.port.out.payment.PaymentChanges;
 import com.licensis.notaire.application.port.out.payment.PaymentRepositoryPort;
+import com.licensis.notaire.domain.payment.Money;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 /**
  * Applies a partial edit to an existing payment (CU15).
@@ -34,8 +37,8 @@ public class EditPaymentService implements EditPaymentUseCase {
             throw new IllegalArgumentException("Pago no encontrado con ID: " + paymentId);
         }
 
-        Float amount = command.amount();
-        if (amount != null && amount <= 0) {
+        BigDecimal amount = Money.of(command.amount());
+        if (amount != null && amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El monto del pago debe ser mayor a cero");
         }
 

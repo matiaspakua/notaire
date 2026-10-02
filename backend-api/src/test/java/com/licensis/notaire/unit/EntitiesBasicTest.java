@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+
 import com.licensis.notaire.dto.DtoCopy;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoFolio;
@@ -64,14 +65,14 @@ class EntitiesBasicTest {
             Concept c2 = new Concept(5);
             assertThat(c2.getIdConcept()).isEqualTo(5);
 
-            Concept c3 = new Concept(10, "Honorarios", 100f, 5);
+            Concept c3 = new Concept(10, "Honorarios", new java.math.BigDecimal("100"), 5);
             assertThat(c3.getName()).isEqualTo("Honorarios");
-            assertThat(c3.getValue()).isEqualTo(100f);
+            assertThat(c3.getValue()).isEqualByComparingTo(new java.math.BigDecimal("100"));
             assertThat(c3.getPercentage()).isEqualTo(5);
 
             c1.setIdConcept(20);
             c1.setName("X");
-            c1.setValue(50f);
+            c1.setValue(new java.math.BigDecimal("50"));
             c1.setPercentage(10);
             c1.setVersion(1);
             c1.setEnabled(true);
@@ -80,7 +81,7 @@ class EntitiesBasicTest {
 
             assertThat(c1.getIdConcept()).isEqualTo(20);
             assertThat(c1.getName()).isEqualTo("X");
-            assertThat(c1.getValue()).isEqualTo(50f);
+            assertThat(c1.getValue()).isEqualByComparingTo(new java.math.BigDecimal("50"));
             assertThat(c1.getPercentage()).isEqualTo(10);
             assertThat(c1.getVersion()).isEqualTo(1);
             assertThat(c1.getEnabled()).isTrue();
@@ -109,7 +110,7 @@ class EntitiesBasicTest {
         void getDtoAndSetAtributos() throws Exception {
             Concept c = new Concept(1);
             c.setName("X");
-            c.setValue(10f);
+            c.setValue(new java.math.BigDecimal("10"));
             c.setPercentage(2);
             c.setVersion(3);
             c.setEnabled(true);
@@ -118,7 +119,7 @@ class EntitiesBasicTest {
             var dto = c.getDto();
             assertThat(dto.getIdConcept()).isEqualTo(1);
             assertThat(dto.getName()).isEqualTo("X");
-            assertThat(dto.getValue()).isEqualTo(10f);
+            assertThat(dto.getValue()).isEqualByComparingTo(new java.math.BigDecimal("10"));
             assertThat(dto.getPercentage()).isEqualTo(2);
             assertThat(dto.getVersion()).isEqualTo(3);
             assertThat(dto.getEnabled()).isTrue();
@@ -128,7 +129,7 @@ class EntitiesBasicTest {
             c2.setAtributos(dto);
             assertThat(c2.getIdConcept()).isEqualTo(1);
             assertThat(c2.getName()).isEqualTo("X");
-            assertThat(c2.getValue()).isEqualTo(10f);
+            assertThat(c2.getValue()).isEqualByComparingTo(new java.math.BigDecimal("10"));
         }
     }
 
@@ -458,13 +459,13 @@ class EntitiesBasicTest {
 
             i1.setIdProperty(10);
             i1.setCadastralDesignation("N-1");
-            i1.setFiscalAppraisal(10000f);
+            i1.setFiscalAppraisal(new java.math.BigDecimal("10000"));
             i1.setAddress("Address");
             i1.setNotes("obs");
             i1.setVersion(1);
             i1.setProcedureList(new ArrayList<>());
             assertThat(i1.getCadastralDesignation()).isEqualTo("N-1");
-            assertThat(i1.getFiscalAppraisal()).isEqualTo(10000f);
+            assertThat(i1.getFiscalAppraisal()).isEqualByComparingTo(new java.math.BigDecimal("10000"));
             assertThat(i1.getAddress()).isEqualTo("Address");
             assertThat(i1.getNotes()).isEqualTo("obs");
             assertThat(i1.getVersion()).isEqualTo(1);
@@ -478,14 +479,14 @@ class EntitiesBasicTest {
             DtoProperty dto = i1.getDto();
             assertThat(dto.getAddress()).isEqualTo("Address");
             assertThat(dto.getIdProperty()).isEqualTo(10);
-            assertThat(dto.getFiscalAppraisal()).isEqualTo(10000f);
+            assertThat(dto.getFiscalAppraisal()).isEqualByComparingTo(new java.math.BigDecimal("10000"));
 
             DtoProperty dto2 = new DtoProperty();
             dto2.setIdProperty(50);
             dto2.setAddress("d2");
             dto2.setCadastralDesignation("n2");
             dto2.setNotes("o2");
-            dto2.setFiscalAppraisal(2f);
+            dto2.setFiscalAppraisal(new java.math.BigDecimal("2"));
             Property i3 = new Property();
             i3.setAtributos(dto2);
             assertThat(i3.getAddress()).isEqualTo("d2");
@@ -502,20 +503,20 @@ class EntitiesBasicTest {
             assertThat(i1.getIdItem()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
             Item i2 = new Item(1);
             assertThat(i2.getIdItem()).isEqualTo(1);
-            Item i3 = new Item(2, "n", 100f);
+            Item i3 = new Item(2, "n", new java.math.BigDecimal("100"));
             assertThat(i3.getName()).isEqualTo("n");
-            assertThat(i3.getValue()).isEqualTo(100f);
+            assertThat(i3.getValue()).isEqualByComparingTo(new java.math.BigDecimal("100"));
 
             i1.setIdItem(10);
             i1.setName("Item1");
-            i1.setValue(50f);
+            i1.setValue(new java.math.BigDecimal("50"));
             i1.setPercentage(5);
             i1.setNotes("obs");
             i1.setFixedConcept(true);
             i1.setVersion(1);
             i1.setFkIdBudget(null);
             assertThat(i1.getName()).isEqualTo("Item1");
-            assertThat(i1.getValue()).isEqualTo(50f);
+            assertThat(i1.getValue()).isEqualByComparingTo(new java.math.BigDecimal("50"));
             assertThat(i1.getPercentage()).isEqualTo(5);
             assertThat(i1.getNotes()).isEqualTo("obs");
             assertThat(i1.isFixed()).isTrue();
@@ -533,7 +534,7 @@ class EntitiesBasicTest {
             DtoItem dto2 = new DtoItem();
             dto2.setIdItem(50);
             dto2.setName("n");
-            dto2.setValue(1f);
+            dto2.setValue(new java.math.BigDecimal("1"));
             dto2.setPercentage(10);
             dto2.setNotes("o");
             dto2.setVersion(1);

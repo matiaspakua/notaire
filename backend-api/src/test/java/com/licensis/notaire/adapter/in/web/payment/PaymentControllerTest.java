@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.payment;
 
+
 import com.licensis.notaire.application.port.in.payment.DeletePaymentUseCase;
 import com.licensis.notaire.application.port.in.payment.EditPaymentCommand;
 import com.licensis.notaire.application.port.in.payment.EditPaymentUseCase;
@@ -76,7 +77,7 @@ class PaymentControllerTest {
     }
 
     private PaymentDetails buildPayment() {
-        return new PaymentDetails(1, 10, 500.0f, new Date(), null, "Pago de prueba");
+        return new PaymentDetails(1, 10, new java.math.BigDecimal("500.0"), new Date(), null, "Pago de prueba");
     }
 
     private Date toDate(LocalDate localDate) {
@@ -164,7 +165,7 @@ class PaymentControllerTest {
     @Test
     @DisplayName("GET /api/v1/pagos/presupuesto/{id}/saldo should return saldo pendiente")
     void shouldGetSaldoPending() throws Exception {
-        when(paymentStatusUseCase.pendingBalance(10)).thenReturn(1000.0f);
+        when(paymentStatusUseCase.pendingBalance(10)).thenReturn(new java.math.BigDecimal("1000.0"));
         mockMvc.perform(get("/api/v1/pagos/presupuesto/10/saldo"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1000.0"));
@@ -262,7 +263,7 @@ class PaymentControllerTest {
         ArgumentCaptor<ProcessPaymentCommand> command = ArgumentCaptor.forClass(ProcessPaymentCommand.class);
         verify(processPaymentUseCase, times(1)).process(command.capture());
         assertThat(command.getValue().budgetId()).isEqualTo(10);
-        assertThat(command.getValue().amount()).isEqualTo(500.0f);
+        assertThat(command.getValue().amount()).isEqualByComparingTo(new java.math.BigDecimal("500.0"));
         assertThat(command.getValue().date()).isNotNull();
         assertThat(command.getValue().notes()).isEqualTo("Payment de prueba");
     }
@@ -379,7 +380,7 @@ class PaymentControllerTest {
         ArgumentCaptor<ProcessPaymentCommand> command = ArgumentCaptor.forClass(ProcessPaymentCommand.class);
         verify(processPaymentUseCase).process(command.capture());
         assertThat(command.getValue().budgetId()).isEqualTo(10);
-        assertThat(command.getValue().amount()).isEqualTo(500.0f);
+        assertThat(command.getValue().amount()).isEqualByComparingTo(new java.math.BigDecimal("500.0"));
         assertThat(command.getValue().date()).isNull();
         assertThat(command.getValue().notes()).isNull();
         assertThat(command.getValue().paymentMethod()).isNull();
@@ -431,7 +432,7 @@ class PaymentControllerTest {
         ArgumentCaptor<EditPaymentCommand> command = ArgumentCaptor.forClass(EditPaymentCommand.class);
         verify(editPaymentUseCase).edit(command.capture());
         assertThat(command.getValue().paymentId()).isEqualTo(1);
-        assertThat(command.getValue().amount()).isEqualTo(600.0f);
+        assertThat(command.getValue().amount()).isEqualByComparingTo(new java.math.BigDecimal("600.0"));
         assertThat(command.getValue().date()).isNotNull();
         assertThat(command.getValue().notes()).isEqualTo("Updated");
     }

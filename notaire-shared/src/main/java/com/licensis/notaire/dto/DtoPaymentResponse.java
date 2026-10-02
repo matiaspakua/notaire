@@ -1,5 +1,7 @@
 package com.licensis.notaire.dto;
 
+import java.math.BigDecimal;
+
 import java.util.Date;
 
 /**
@@ -9,7 +11,7 @@ import java.util.Date;
 public record DtoPaymentResponse(
         Integer idPayment,
         Integer idBudget,
-        Float amount,
+        BigDecimal amount,
         Date date,
         String paymentMethod,
         String notes) {

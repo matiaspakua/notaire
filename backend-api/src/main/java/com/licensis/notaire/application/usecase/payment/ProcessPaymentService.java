@@ -6,6 +6,7 @@ import com.licensis.notaire.application.port.out.payment.BudgetLookupPort;
 import com.licensis.notaire.application.port.out.payment.NewPayment;
 import com.licensis.notaire.application.port.out.payment.PaymentRepositoryPort;
 import com.licensis.notaire.domain.payment.BudgetCharges;
+import com.licensis.notaire.domain.payment.Money;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 import com.licensis.notaire.exception.PendingBalanceExceededException;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -40,21 +42,21 @@ public class ProcessPaymentService implements ProcessPaymentUseCase {
     @Transactional
     public PaymentDetails process(ProcessPaymentCommand command) {
         Integer budgetId = command.budgetId();
-        Float amount = command.amount();
+        BigDecimal amount = Money.of(command.amount());
         log.info("Procesando pago para presupuesto {}: monto={}", budgetId, amount);
 
         BudgetCharges charges = budgets.findCharges(budgetId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Presupuesto no encontrado con ID: " + budgetId));
 
-        if (amount == null || amount <= 0) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El monto del pago debe ser mayor a cero");
         }
 
-        float pendingBalance = charges.pendingBalanceAfter(payments.sumAmountByBudgetId(budgetId));
+        BigDecimal pendingBalance = charges.pendingBalanceAfter(payments.sumAmountByBudgetId(budgetId));
         log.info("Saldo pendiente para presupuesto {}: {}", budgetId, pendingBalance);
 
-        if (amount > pendingBalance) {
+        if (amount.compareTo(pendingBalance) > 0) {
             throw new PendingBalanceExceededException(
                     String.format("El monto del pago ($%.2f) no puede exceder el saldo pendiente ($%.2f)",
                             amount, pendingBalance));

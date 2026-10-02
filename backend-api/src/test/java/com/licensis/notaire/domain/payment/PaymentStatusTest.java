@@ -14,31 +14,31 @@ class PaymentStatusTest {
     @Test
     @DisplayName("Should report NoPayments when nothing was paid")
     void shouldReportNoPaymentsWhenTotalPaidIsNull() {
-        assertThat(PaymentStatus.of(null, 1000.0f)).isEqualTo(PaymentStatus.NoPayments);
+        assertThat(PaymentStatus.of(null, Money.of("1000.00"))).isEqualTo(PaymentStatus.NoPayments);
     }
 
     @Test
     @DisplayName("Should report NoPayments when the amount paid is exactly zero")
     void shouldReportNoPaymentsWhenTotalPaidIsZero() {
-        assertThat(PaymentStatus.of(0f, 1000.0f)).isEqualTo(PaymentStatus.NoPayments);
+        assertThat(PaymentStatus.of(Money.zero(), Money.of("1000.00"))).isEqualTo(PaymentStatus.NoPayments);
     }
 
     @Test
     @DisplayName("Should report PARTIAL when a balance is still pending")
     void shouldReportPartialWhenBalancePending() {
-        assertThat(PaymentStatus.of(400.0f, 600.0f)).isEqualTo(PaymentStatus.PARTIAL);
+        assertThat(PaymentStatus.of(Money.of("400.00"), Money.of("600.00"))).isEqualTo(PaymentStatus.PARTIAL);
     }
 
     @Test
     @DisplayName("Should report PAID when the pending balance reaches zero")
     void shouldReportPaidWhenBalanceIsZero() {
-        assertThat(PaymentStatus.of(1000.0f, 0f)).isEqualTo(PaymentStatus.PAID);
+        assertThat(PaymentStatus.of(Money.of("1000.00"), Money.zero())).isEqualTo(PaymentStatus.PAID);
     }
 
     @Test
     @DisplayName("Should report PAID when the budget was overpaid")
     void shouldReportPaidWhenOverpaid() {
-        assertThat(PaymentStatus.of(1200.0f, -200.0f)).isEqualTo(PaymentStatus.PAID);
+        assertThat(PaymentStatus.of(Money.of("1200.00"), Money.of("-200.00"))).isEqualTo(PaymentStatus.PAID);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Payment;
@@ -68,7 +69,7 @@ class ReportServiceReciboPaymentTest {
         );
     }
 
-    private Payment buildPayment(Integer idPayment, float amount, Person client) {
+    private Payment buildPayment(Integer idPayment, java.math.BigDecimal amount, Person client) {
         Budget budget = new Budget();
         budget.setIdBudget(10);
         budget.setFkIdPerson(client);
@@ -92,7 +93,7 @@ class ReportServiceReciboPaymentTest {
     @DisplayName("Should generate a PDF recibo with cliente, date, concepto and total for a simple pago")
     void shouldGenerarReciboConDatosDelPayment() throws Exception {
         Person client = buildClient();
-        Payment payment = buildPayment(1, 500000f, client);
+        Payment payment = buildPayment(1, new java.math.BigDecimal("500000"), client);
 
         Item item = new Item();
         item.setName("Escritura de compraventa");
@@ -114,7 +115,7 @@ class ReportServiceReciboPaymentTest {
     @DisplayName("Should print the amount of a partial/installment pago, not the budget total")
     void shouldGenerarReciboParaPaymentParcial() throws Exception {
         Person client = buildClient();
-        Payment paymentParcial = buildPayment(2, 100000f, client);
+        Payment paymentParcial = buildPayment(2, new java.math.BigDecimal("100000"), client);
 
         when(paymentRepository.findById(2)).thenReturn(Optional.of(paymentParcial));
         when(itemRepository.findByFkIdBudgetIdBudget(10)).thenReturn(List.of());

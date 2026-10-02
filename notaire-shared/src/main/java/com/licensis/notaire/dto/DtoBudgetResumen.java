@@ -1,5 +1,7 @@
 package com.licensis.notaire.dto;
 
+import java.math.BigDecimal;
+
 import java.util.List;
 
 /**
@@ -12,7 +14,7 @@ public record DtoBudgetResumen(
         Integer idManagement,
         Integer numberManagement,
         String encabezadoManagement,
-        Float total,
-        Float pendingBalance,
+        BigDecimal total,
+        BigDecimal pendingBalance,
         List<DtoPaymentResponse> payments) {
 }

@@ -1,5 +1,7 @@
 package com.licensis.notaire.business;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -40,10 +42,10 @@ public class DocumentCostTemplate implements Serializable, Persistable<DocumentC
     private DocumentType documentType;
 
     @Column(name = "fixed_amount")
-    private Float fixedAmount;
+    private BigDecimal fixedAmount;
 
     @Column(name = "variable_percentage")
-    private Float variablePercentage;
+    private BigDecimal variablePercentage;
 
     @Basic(optional = false)
     @Column(name = "version")
@@ -106,19 +108,19 @@ public class DocumentCostTemplate implements Serializable, Persistable<DocumentC
         this.documentType = documentType;
     }
 
-    public Float getFixedAmount() {
+    public BigDecimal getFixedAmount() {
         return fixedAmount;
     }
 
-    public void setFixedAmount(Float fixedAmount) {
+    public void setFixedAmount(BigDecimal fixedAmount) {
         this.fixedAmount = fixedAmount;
     }
 
-    public Float getVariablePercentage() {
+    public BigDecimal getVariablePercentage() {
         return variablePercentage;
     }
 
-    public void setVariablePercentage(Float variablePercentage) {
+    public void setVariablePercentage(BigDecimal variablePercentage) {
         this.variablePercentage = variablePercentage;
     }
 

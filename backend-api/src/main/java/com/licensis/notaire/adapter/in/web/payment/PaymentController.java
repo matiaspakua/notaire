@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -109,7 +110,7 @@ public class PaymentController {
 
     @GetMapping("/presupuesto/{idBudget}/saldo")
     @Operation(summary = "Calcular saldo pendiente de un presupuesto")
-    public ResponseEntity<Float> getSaldoPending(@PathVariable Integer idBudget) {
+    public ResponseEntity<BigDecimal> getSaldoPending(@PathVariable Integer idBudget) {
         try {
             return ResponseEntity.ok(paymentStatusUseCase.pendingBalance(idBudget));
         } catch (IllegalArgumentException e) {
@@ -175,7 +176,7 @@ public class PaymentController {
     @Operation(summary = "CU15 - Procesar pago (query params)")
     public ResponseEntity<DtoPaymentResponse> processPaymentParams(
             @Parameter(description = "ID del presupuesto") @RequestParam Integer idBudget,
-            @Parameter(description = "Monto del pago") @RequestParam Float amount,
+            @Parameter(description = "Monto del pago") @RequestParam BigDecimal amount,
             @Parameter(description = "Fecha de pago (opcional, YYYY-MM-DD)")
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
             @Parameter(description = "Observaciones") @RequestParam(required = false) String notes,
@@ -242,7 +243,7 @@ public class PaymentController {
      */
     public record PaymentRequest(
             Integer idBudget,
-            Float amount,
+            BigDecimal amount,
             Date date,
             String notes,
             String paymentMethod
@@ -263,7 +264,7 @@ public class PaymentController {
      * same, and any null field leaves the stored value untouched.
      */
     public record PaymentUpdateRequest(
-            Float amount,
+            BigDecimal amount,
             Date date,
             String notes,
             String paymentMethod

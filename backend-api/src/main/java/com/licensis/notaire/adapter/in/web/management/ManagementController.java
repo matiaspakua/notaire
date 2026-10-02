@@ -133,9 +133,9 @@ public class ManagementController {
         this.procedureFolderService = procedureFolderService;
     }
 
-    public record DtoSaldoPending(Float pendingBalance) {}
+    public record DtoSaldoPending(java.math.BigDecimal pendingBalance) {}
 
-    public record DtoManagementArchivada(Integer idManagement, Float pendingBalance, boolean pendingDebtAtArchiving) {}
+    public record DtoManagementArchivada(Integer idManagement, java.math.BigDecimal pendingBalance, boolean pendingDebtAtArchiving) {}
 
     public record DtoTransicionRequest(String statusDestination) {}
 
@@ -476,7 +476,7 @@ public class ManagementController {
     @Operation(summary = "CU16 - Calcular saldo pendiente agregado de una gestión (RF-22)")
     public ResponseEntity<DtoSaldoPending> getSaldoPending(@PathVariable Integer id) {
         try {
-            Float saldo = managementArchiveDebtService.calculatePendingBalance(id);
+            java.math.BigDecimal saldo = managementArchiveDebtService.calculatePendingBalance(id);
             return ResponseEntity.ok(new DtoSaldoPending(saldo));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.CarpetasEnWaitException;
 import com.licensis.notaire.business.ProcedureFolder;
@@ -89,11 +90,11 @@ class ManagementArchiveDebtServiceTest {
         void shouldReturnSingleBudgetBalanceForSingleProcedure() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(5000.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("5000.00"));
 
-            Float saldo = managementArchiveDebtService.calculatePendingBalance(1);
+            java.math.BigDecimal saldo = managementArchiveDebtService.calculatePendingBalance(1);
 
-            assertThat(saldo).isEqualTo(5000.00f);
+            assertThat(saldo).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
         }
 
         @Test
@@ -102,12 +103,12 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
                     .thenReturn(List.of(procedureFor(10), procedureFor(20)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(3000.00f);
-            when(paymentStatus.pendingBalance(20)).thenReturn(1500.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("3000.00"));
+            when(paymentStatus.pendingBalance(20)).thenReturn(new java.math.BigDecimal("1500.00"));
 
-            Float saldo = managementArchiveDebtService.calculatePendingBalance(1);
+            java.math.BigDecimal saldo = managementArchiveDebtService.calculatePendingBalance(1);
 
-            assertThat(saldo).isEqualTo(4500.00f);
+            assertThat(saldo).isEqualByComparingTo(new java.math.BigDecimal("4500.00"));
         }
 
         @Test
@@ -115,11 +116,11 @@ class ManagementArchiveDebtServiceTest {
         void shouldReturnZeroWhenAllPresupuestosAreFullyPaid() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));
 
-            Float saldo = managementArchiveDebtService.calculatePendingBalance(1);
+            java.math.BigDecimal saldo = managementArchiveDebtService.calculatePendingBalance(1);
 
-            assertThat(saldo).isEqualTo(0.00f);
+            assertThat(saldo).isEqualByComparingTo(new java.math.BigDecimal("0.00"));
         }
 
         @Test
@@ -145,7 +146,7 @@ class ManagementArchiveDebtServiceTest {
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);  // No deuda - required for archive
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));  // No deuda - required for archive
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
@@ -160,7 +161,7 @@ class ManagementArchiveDebtServiceTest {
         void shouldRejectArchiveWhenTransitionInvalid() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));
             when(managementTransitionService.transition(1, "Archivada"))
                     .thenThrow(new BusinessValidationException("Transición no permitida"));
 
@@ -177,14 +178,14 @@ class ManagementArchiveDebtServiceTest {
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(20000.00f);  // Deuda exists
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("20000.00"));  // Deuda exists
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
 
             assertThat(result.management().getPendingDebtAtArchiving()).isTrue();
-            assertThat(result.pendingBalance()).isEqualTo(20000.00f);
+            assertThat(result.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("20000.00"));
         }
 
         @Test
@@ -195,14 +196,14 @@ class ManagementArchiveDebtServiceTest {
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);  // No deuda
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));  // No deuda
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
 
             assertThat(result.management().getPendingDebtAtArchiving()).isFalse();
-            assertThat(result.pendingBalance()).isEqualTo(0.00f);
+            assertThat(result.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("0.00"));
         }
 
         @Test
@@ -214,8 +215,8 @@ class ManagementArchiveDebtServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
                     .thenReturn(List.of(procedureFor(10), procedureFor(20)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(15000.00f);
-            when(paymentStatus.pendingBalance(20)).thenReturn(25000.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("15000.00"));
+            when(paymentStatus.pendingBalance(20)).thenReturn(new java.math.BigDecimal("25000.00"));
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
             // Total deuda = 40000
@@ -223,7 +224,7 @@ class ManagementArchiveDebtServiceTest {
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
 
             assertThat(result.management().getPendingDebtAtArchiving()).isTrue();
-            assertThat(result.pendingBalance()).isEqualTo(40000.00f);
+            assertThat(result.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("40000.00"));
         }
 
         @Test
@@ -236,7 +237,7 @@ class ManagementArchiveDebtServiceTest {
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
             when(procedureFolderRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(folder));
@@ -276,7 +277,7 @@ class ManagementArchiveDebtServiceTest {
                     .thenReturn(List.of(folderEnWait));
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(0.00f);
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 

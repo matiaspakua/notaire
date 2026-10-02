@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Concept;
@@ -41,7 +42,7 @@ class BudgetTemplateServiceTest {
     @InjectMocks
     private BudgetTemplateService budgetTemplateService;
 
-    private BudgetTemplate buildTemplate(String name, float value, int percentage) {
+    private BudgetTemplate buildTemplate(String name, java.math.BigDecimal value, int percentage) {
         Concept concept = new Concept();
         concept.setName(name);
         concept.setValue(value);
@@ -59,8 +60,8 @@ class BudgetTemplateServiceTest {
         budget.setIdBudget(1);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(budgetTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of(
-                buildTemplate("Honorarios", 1000f, 10),
-                buildTemplate("Sellado", 500f, 0)
+                buildTemplate("Honorarios", new java.math.BigDecimal("1000"), 10),
+                buildTemplate("Sellado", new java.math.BigDecimal("500"), 0)
         ));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -68,7 +69,7 @@ class BudgetTemplateServiceTest {
 
         assertThat(items).hasSize(2);
         assertThat(items).extracting(Item::getName).containsExactlyInAnyOrder("Honorarios", "Sellado");
-        assertThat(items).extracting(Item::getValue).containsExactlyInAnyOrder(1000f, 500f);
+        assertThat(items).extracting(Item::getValue).containsExactlyInAnyOrder(new java.math.BigDecimal("1000"), new java.math.BigDecimal("500"));
         assertThat(items).allMatch(item -> item.getFkIdBudget() == budget);
     }
 
@@ -77,7 +78,7 @@ class BudgetTemplateServiceTest {
     void shouldNotRecalculateLoadedItemsWhenTemplateChanges() {
         Budget budget = new Budget();
         budget.setIdBudget(1);
-        BudgetTemplate template = buildTemplate("Honorarios", 1000f, 10);
+        BudgetTemplate template = buildTemplate("Honorarios", new java.math.BigDecimal("1000"), 10);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(budgetTemplateRepository.findByProcedureTypeIdProcedureType(5))
                 .thenReturn(List.of(template));
@@ -87,9 +88,9 @@ class BudgetTemplateServiceTest {
 
         // The item copied the concepto's value at load time; changing the plantilla's
         // concepto afterwards must not retroactively change the already-loaded item.
-        template.getConcept().setValue(9999f);
+        template.getConcept().setValue(new java.math.BigDecimal("9999"));
 
-        assertThat(items).extracting(Item::getValue).containsExactly(1000f);
+        assertThat(items).extracting(Item::getValue).containsExactly(new java.math.BigDecimal("1000"));
     }
 
     @Test

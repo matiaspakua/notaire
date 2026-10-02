@@ -1,5 +1,6 @@
 package com.licensis.notaire.unit;
 
+
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.business.WorkflowNode;

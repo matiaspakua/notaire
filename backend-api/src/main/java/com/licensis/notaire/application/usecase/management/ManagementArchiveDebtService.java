@@ -6,6 +6,7 @@ import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.domain.payment.Money;
 import com.licensis.notaire.repository.ProcedureFolderRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,19 +55,19 @@ public class ManagementArchiveDebtService {
      * Suma el saldo pendiente de cada presupuesto vinculado a los trámites de la gestión.
      */
     @Transactional(readOnly = true)
-    public Float calculatePendingBalance(Integer idManagement) {
+    public BigDecimal calculatePendingBalance(Integer idManagement) {
         managementRepository.findById(idManagement)
                 .orElseThrow(() -> new IllegalArgumentException("Gestión no encontrada con ID: " + idManagement));
 
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
         Set<Integer> idsBudgetContados = new HashSet<>();
-        float saldo = 0f;
+        BigDecimal saldo = Money.zero();
         for (Procedure procedure : procedures) {
             Budget budget = procedure.getFkIdBudget();
             if (budget == null || !idsBudgetContados.add(budget.getIdBudget())) {
                 continue;
             }
-            saldo += paymentStatus.pendingBalance(budget.getIdBudget());
+            saldo = Money.of(saldo.add(paymentStatus.pendingBalance(budget.getIdBudget())));
         }
 
         log.debug("Saldo pendiente agregado para gestión {}: {}", idManagement, saldo);
@@ -76,7 +78,7 @@ public class ManagementArchiveDebtService {
      * Resultado de archivar una gestión: la gestión ya archivada junto con el
      * saldo pendiente agregado calculado en el momento del archivado.
      */
-    public record ArchiveResult(DeedManagement management, Float pendingBalance) { }
+    public record ArchiveResult(DeedManagement management, BigDecimal pendingBalance) { }
 
     /**
      * CU16 - Archiva la gestión sin exigir confirmación de carpetas en espera.
@@ -89,7 +91,7 @@ public class ManagementArchiveDebtService {
     /**
      * CU16 - Archiva la gestión, cambia todas sus carpetas de trámite a
      * "Archivada" (CU85) y registra si quedó con deuda pendiente (RF-22,
-     * RF-37). El archivado no se bloquea por la existencia de deuda: la
+     * RF-37). The archivado no se bloquea por la existencia de deuda: la
      * advertencia de saldo pendiente se muestra al usuario antes de confirmar
      * (ver GET /saldo-pendiente), pero la confirmación del archivado siempre
      * se persiste con o sin deuda. Si alguna carpeta sigue en "Espera" y
@@ -107,10 +109,11 @@ public class ManagementArchiveDebtService {
                     carpetasEnWait);
         }
 
-        Float pendingBalance = calculatePendingBalance(idManagement);
+        BigDecimal pendingBalance = calculatePendingBalance(idManagement);
 
         DeedManagement management = managementTransitionService.transition(idManagement, StatusARCHIVADA);
-        management.setPendingDebtAtArchiving(pendingBalance != null && pendingBalance > 0);
+        management.setPendingDebtAtArchiving(
+                pendingBalance != null && pendingBalance.compareTo(BigDecimal.ZERO) > 0);
         DeedManagement archivedManagement = managementRepository.save(management);
 
         archiveFolders(idManagement);

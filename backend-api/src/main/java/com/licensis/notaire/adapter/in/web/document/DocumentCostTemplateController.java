@@ -38,8 +38,8 @@ public class DocumentCostTemplateController {
     public record CreateCostRequest(
             Integer idProcedureType,
             Integer idDocumentType,
-            Float fixedAmount,
-            Float variablePercentage) {
+            java.math.BigDecimal fixedAmount,
+            java.math.BigDecimal variablePercentage) {
     }
 
     @ApiResponses({

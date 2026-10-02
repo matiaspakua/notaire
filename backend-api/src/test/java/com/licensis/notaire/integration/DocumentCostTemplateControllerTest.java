@@ -1,5 +1,6 @@
 package com.licensis.notaire.integration;
 
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -61,7 +62,7 @@ class DocumentCostTemplateControllerTest {
         return documentTypeRepository.save(documentType);
     }
 
-    private String createCostBody(Integer idDocumentType, Float fixedAmount, Float variablePercentage) throws Exception {
+    private String createCostBody(Integer idDocumentType, java.math.BigDecimal fixedAmount, java.math.BigDecimal variablePercentage) throws Exception {
         Map<String, Object> body = new HashMap<>();
         body.put("idProcedureType", procedureType.getIdProcedureType());
         body.put("idDocumentType", idDocumentType);
@@ -77,13 +78,13 @@ class DocumentCostTemplateControllerTest {
 
         mockMvc.perform(post("/api/v1/plantilla-costos-documento")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createCostBody(documentType.getIdDocumentType(), 2000f, null)))
+                        .content(createCostBody(documentType.getIdDocumentType(), new java.math.BigDecimal("2000"), null)))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/api/v1/plantilla-costos-documento/tipo-tramite/" + procedureType.getIdProcedureType()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].fixedAmount").value(2000f));
+                .andExpect(jsonPath("$[0].fixedAmount").value(new java.math.BigDecimal("2000")));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.licensis.notaire.integration;
 
+
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
@@ -75,7 +76,7 @@ class BudgetDeleteCascadeIntegrationTest {
         budget = budgetRepository.save(budget);
 
         Payment payment = new Payment();
-        payment.setAmount(100f);
+        payment.setAmount(new java.math.BigDecimal("100"));
         payment.setDate(new Date());
         payment.setBudget(budget);
         paymentRepository.save(payment);

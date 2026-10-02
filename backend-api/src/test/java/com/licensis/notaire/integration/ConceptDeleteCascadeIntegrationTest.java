@@ -58,6 +58,8 @@ class ConceptDeleteCascadeIntegrationTest {
 
         Concept concept = new Concept();
         concept.setName("Cascade Test Concepto");
+        concept.setValue(java.math.BigDecimal.ZERO);
+        concept.setPercentage(0);
         concept = conceptRepository.save(concept);
 
         BudgetTemplatePK pk = new BudgetTemplatePK(

@@ -1,4 +1,6 @@
 package com.licensis.notaire.dto;
+
+import java.math.BigDecimal;
 // Generated 19/04/2012 16:59:26 by Hibernate Tools 3.2.1.GA
 
 import com.licensis.notaire.dto.interfaces.DtoValido;
@@ -13,7 +15,7 @@ public class DtoConcept implements DtoValido {
     private Boolean valido = Boolean.FALSE;
     private Integer idConcept;
     private String name;
-    private Float value;
+    private BigDecimal value;
     private Integer percentage;
     private Integer version = 0;
     private Boolean enabled;
@@ -24,7 +26,7 @@ public class DtoConcept implements DtoValido {
         this.fixed = Boolean.FALSE;
     }
 
-    public DtoConcept(String name, Float value, Integer percentage) {
+    public DtoConcept(String name, BigDecimal value, Integer percentage) {
         this.name = name;
         this.value = value;
         this.percentage = percentage;
@@ -62,7 +64,7 @@ public class DtoConcept implements DtoValido {
         this.valido = valido;
     }
 
-    public DtoConcept(String name, Float value, Integer percentage,
+    public DtoConcept(String name, BigDecimal value, Integer percentage,
             List<DtoBudgetTemplate> templatePresupuestoses) {
         this.name = name;
         this.value = value;
@@ -86,11 +88,11 @@ public class DtoConcept implements DtoValido {
         this.name = name;
     }
 
-    public Float getValue() {
+    public BigDecimal getValue() {
         return this.value;
     }
 
-    public void setValue(Float value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 

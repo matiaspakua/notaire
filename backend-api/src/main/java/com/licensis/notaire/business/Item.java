@@ -4,6 +4,8 @@
  */
 package com.licensis.notaire.business;
 
+import java.math.BigDecimal;
+
 import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.TypeItem;
 import java.io.Serializable;
@@ -54,7 +56,7 @@ public class Item implements Serializable, Persistable<Integer>
     private int version = 0;
     @Basic(optional = false)
     @Column(name = "amount")
-    private float value;
+    private BigDecimal value;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -92,7 +94,7 @@ public class Item implements Serializable, Persistable<Integer>
         this.idItem = idItem;
     }
 
-    public Item(Integer idItem, String name, Float value)
+    public Item(Integer idItem, String name, BigDecimal value)
     {
         this.idItem = idItem;
         this.name = name;
@@ -271,12 +273,12 @@ public class Item implements Serializable, Persistable<Integer>
         this.version = version;
     }
 
-    public float getValue()
+    public BigDecimal getValue()
     {
         return value;
     }
 
-    public void setValue(float value)
+    public void setValue(BigDecimal value)
     {
         this.value = value;
     }

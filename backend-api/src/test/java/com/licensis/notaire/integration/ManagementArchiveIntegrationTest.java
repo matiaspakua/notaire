@@ -1,5 +1,6 @@
 package com.licensis.notaire.integration;
 
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -87,7 +88,7 @@ class ManagementArchiveIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
-    private Integer createBudget(Integer clientId, Float propertyAmount) throws Exception {
+    private Integer createBudget(Integer clientId, java.math.BigDecimal propertyAmount) throws Exception {
         String body = """
                 {"number": %d, "date": "2026-01-01", "encabezado": "Budget Archive IT",
                  "status": "Pending", "propertyAmount": %s, "person": {"personId": %d}}
@@ -140,7 +141,7 @@ class ManagementArchiveIntegrationTest {
         return procedureTypeRepository.save(type).getIdProcedureType();
     }
 
-    private Integer createManagementWithBudget(Float propertyAmount) throws Exception {
+    private Integer createManagementWithBudget(java.math.BigDecimal propertyAmount) throws Exception {
         Integer clientId = createPerson("43" + (System.nanoTime() % 1000000));
         Integer notaryId = createPerson("44" + (System.nanoTime() % 1000000));
         Integer budgetId = createBudget(clientId, propertyAmount);
@@ -163,7 +164,7 @@ class ManagementArchiveIntegrationTest {
     @Test
     @DisplayName("Archiving a gestión with pending debt reflects the aggregate balance in the response")
     void shouldReportPendingDebtWhenArchivingManagementWithBalance() throws Exception {
-        Integer managementId = createManagementWithBudget(5000.00f);
+        Integer managementId = createManagementWithBudget(new java.math.BigDecimal("5000.00"));
 
         mockMvc.perform(get("/api/v1/gestiones/" + managementId + "/saldo-pendiente"))
                 .andExpect(status().isOk())
@@ -179,7 +180,7 @@ class ManagementArchiveIntegrationTest {
     @Test
     @DisplayName("Confirming archiving despite pending debt still archives the gestión")
     void shouldArchiveManagementEvenWhenPendingDebtExists() throws Exception {
-        Integer managementId = createManagementWithBudget(3000.00f);
+        Integer managementId = createManagementWithBudget(new java.math.BigDecimal("3000.00"));
 
         mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
                 .andExpect(status().isOk());
@@ -194,7 +195,7 @@ class ManagementArchiveIntegrationTest {
     @Test
     @DisplayName("Archiving a gestión with no pending debt reports zero balance")
     void shouldArchiveManagementWithoutDebtWarning() throws Exception {
-        Integer managementId = createManagementWithBudget(0.00f);
+        Integer managementId = createManagementWithBudget(new java.math.BigDecimal("0.00"));
 
         mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
                 .andExpect(status().isOk())
@@ -205,7 +206,7 @@ class ManagementArchiveIntegrationTest {
     @Test
     @DisplayName("Archiving record reflects pending debt when the gestión had an outstanding balance")
     void shouldPersistDebtPendingTrueWhenBalanceIsPositive() throws Exception {
-        Integer managementId = createManagementWithBudget(1234.00f);
+        Integer managementId = createManagementWithBudget(new java.math.BigDecimal("1234.00"));
 
         mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
                 .andExpect(status().isOk());
@@ -220,7 +221,7 @@ class ManagementArchiveIntegrationTest {
     @Test
     @DisplayName("Archiving record reflects no pending debt when the gestión had a zero balance")
     void shouldPersistDebtPendingFalseWhenBalanceIsZero() throws Exception {
-        Integer managementId = createManagementWithBudget(0.00f);
+        Integer managementId = createManagementWithBudget(new java.math.BigDecimal("0.00"));
 
         mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/archivar"))
                 .andExpect(status().isOk());
