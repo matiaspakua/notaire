@@ -167,6 +167,7 @@ Hard rules discovered while landing the fleet. Also restated for the foreman in
 | **Run install until Saved** | Run `bash .cursor/install.sh` when `openspec`/`bc`/Maven/Docker are missing; Save the Environment card so new boots wire it automatically. | Assume draft builds already put OpenSpec/`bc` on PATH without running install. |
 | **Saved Environment card** | Save `install=bash .cursor/install.sh` and `start=bash .cursor/start.sh` on the Environment card. | Treat draft builds from feature branches as a substitute for a Saved card. |
 | **OpenSpec Gate 1 seed** | Prefer `bash scripts/seed-openspec-change.sh <name> --issue N --use-case "CU…" --branch … --create` before filling artifacts (#1108 / #1116). | Hand-write empty proposal/design/tasks from scratch (templates get rejected by `validate-sdlc-plan.sh` when `<!-- -->` bodies remain). |
+| **Light CI ≠ mergeable** | Wait until Unit, Integration, Coverage Gate, Bruno, and Playwright are terminal **success** (or workflow-skipped). See [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md). | Treat PR Validation + Frontend + SDLC (~12 checks) as “all green” while `CI - Build, Test & Security` / Playwright are still **pending**. |
 
 ---
 

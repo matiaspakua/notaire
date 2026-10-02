@@ -59,7 +59,7 @@ merge, or skip gates.
 | **Dispatch implement** | Route by SURFACE to backend / frontend / both; require TDD-first | Specialist commits show failing tests before green commits |
 | **Quality** | Run local CI mirror before push | `bash scripts/preflight.sh` (and `--full` when stack is up) |
 | **PR** | Open/update PR; body links issue with **`Closes #n`**; title `[#n] type(scope): …` | `gh pr view` / ManagePullRequest; every closing commit must end with `Closes #n` (not merely `Issue: #n`) |
-| **CI watch** | Subscribe or poll checks; on failure dispatch CI-fix specialist with failing job logs | All required checks green on last non-`[skip ci]` commit |
+| **CI watch** | Subscribe or poll checks; on failure dispatch CI-fix specialist with failing job logs | Heavy CI + Playwright terminal success on last non-`[skip ci]` commit — **not** light-only (~12) green; see [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) |
 | **Gate 4** | Dispatch `code-reviewer` (+ `security-auditor` when auth/secrets/schema) | Review verdict PASS or concrete FIX notes |
 | **Gate 5** | Merge via PR only; wait CI/CD on `main`; smoke `/actuator/health`; close issue; archive OpenSpec change | Health UP; issue CLOSED (proves `Closes #` worked); `openspec archive` when applicable |
 | **Next** | Update run ledger; pick next eligible issue | Do not start a second concurrent product issue on the same worktree without isolation |
@@ -69,6 +69,7 @@ merge, or skip gates.
 - Implement product code itself when a specialist is available (except trivial one-line CI fixes after two specialist retries).
 - Call or depend on `local-ai/sdlc/foreman.sh`, oMLX, Codex local profiles, or `../notaire-localai` worktrees.
 - Merge with failing CI or without Gate 4 PASS.
+- Merge when only light CI is green (PR Validation + Frontend + SDLC ~12 checks) while `CI - Build, Test & Security` or Playwright is still pending — see [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md).
 - Fabricate Issue numbers or Use Cases.
 - Close the loop with only `Issue: #n` in commits — **issues stay OPEN** unless commits/PR use a GitHub closing keyword (`Closes #n`).
 - Commit PR Validation wiki reports onto PR heads (especially with `[skip ci]`). That pattern was removed from `pr-validation.yml` on `main` (#1111 / #1117); agents must not reintroduce it by hand.
@@ -233,12 +234,14 @@ Operational failures while landing the fleet. Full table:
 3. **Nested Docker** needs host-network compose (`docker-compose.cloud.yml`). Run `bash .cursor/install.sh` until the Environment card is Saved (`openspec` + `bc` come from that script; Gate 1 no longer hard-depends on `bc`).
 4. **Save** the Environment card with `.cursor/install.sh` / `.cursor/start.sh`; draft builds are not enough.
 5. **Prefer** `scripts/seed-openspec-change.sh` before filling Gate 1.
+6. **Never merge on light-CI-only green** — Unit, Integration, Coverage Gate, Bruno, and Playwright must be terminal success ([`CI-MERGE-GATE.md`](CI-MERGE-GATE.md); #1126 / #1128).
 
 ---
 
 ## 10. Related docs
 
 - [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) — Cloud environment.json inputs + process learnings table
+- [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) — light CI false-positive; required terminal checks before merge
 - [`VALIDATION-PLAN.md`](VALIDATION-PLAN.md) — readiness before first issue
 - [`fleet-manifest.yaml`](fleet-manifest.yaml) — role map
 - Local (reference only): `local-ai/sdlc/AI-SDLC.md`

@@ -22,6 +22,10 @@ Constitution loop; specialists write most of the code.
 - Do **not** run, depend on, or extend `local-ai/` (no `local-ai/sdlc/foreman.sh`, oMLX, Codex `omlx` profiles).
 - Do **not** implement large product changes yourself when a specialist role exists.
 - Do **not** merge with red CI or without Gate 4 PASS.
+- Do **not** merge when only light CI is green (PR Validation + Frontend + SDLC
+  ~12 checks) while `CI - Build, Test & Security` or Playwright is still
+  **pending**. Required terminal success: Unit, Integration, Coverage Gate,
+  Bruno, Playwright — see `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`.
 - Do **not** invent Issue numbers or Use Cases.
 - Do **not** treat `Issue: #n` (or a plain body mention) as sufficient to close work —
   GitHub will **not** auto-close the issue on merge.
@@ -76,7 +80,7 @@ pick → triage brief → OpenSpec Gate 1 → branch + in-progress
 | Gate 1 | `openspec validate <change> --strict` && `bash scripts/validate-sdlc-plan.sh <change>` |
 | Pre-push | `bash scripts/preflight.sh` (use `--full` when stack is up) |
 | Gate 3 | `bash scripts/run_pipeline.sh` when environment supports it |
-| CI | `gh pr checks` / check-runs on last commit without `[skip ci]` |
+| CI | `gh run list --branch <pr-head>` + check-runs: heavy CI + Playwright terminal success (not light-only); see `CI-MERGE-GATE.md` |
 | Smoke | `curl -sf` health URL from env (default `http://localhost:8080/actuator/health`) |
 
 ## Dispatch
@@ -102,4 +106,6 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 - PR title: `[#n] type(scope): description`
 - Commits / PR body: Conventional Commits + **`Closes #n`** (hard rule above —
   never only `Issue: #n`)
-- Merge only via PR after Gate 4 PASS; then archive OpenSpec change when the issue is closed.
+- Merge only via PR after Gate 4 PASS **and** heavy CI + Playwright are terminal
+  success (never light-CI-only green — `CI-MERGE-GATE.md`); then archive OpenSpec
+  change when the issue is closed.
