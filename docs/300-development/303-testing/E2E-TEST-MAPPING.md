@@ -22,7 +22,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | CU Range | TS Suites | Domain |
 |----------|-----------|--------|
-| AUTH-001 | TS-0001, TS-0002 | Authentication |
+| AUTH-001 / CU84 | TS-0001, TS-0002, TS-0093 | Authentication / session expiry |
 | CU01–CU09 | TS-0010 to TS-0014 | Presupuesto, Gestiones, Documentación, Escrituras |
 | CU10–CU23 | TS-0015 to TS-0023 | Personas, Usuarios, Suplencias, Reportes |
 | CU24–CU68 | TS-0020 to TS-0035 | Administration, Workflows, Features |
@@ -40,6 +40,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | **TS-0001** | `TS-0001-login-authentication.spec.ts` | AUTH-001 | Form fill, JWT token | Direct navigation | 4 expect() | ✅ Passing |
 | **TS-0002** | `TS-0002-logout-authentication.spec.ts` | AUTH-001 | Session clear, redirect | Login + logout flow | 3 expect() | ✅ Passing |
 | **TS-0003** | `TS-0003-dashboard-navigation.spec.ts` | Navigation | Role-based layout | Login + sidebar | 4 expect() | ✅ Passing |
+| **TS-0093** | `TS-0093-session-expiry.spec.ts` | CU84 (#1053, #690) | Corrupt JWT → real API 401 | Login + dashboard navigate | expired redirect + re-login + viewports | ✅ Passing |
 
 **Fixture Pattern**: Direct page navigation + form fill (no GherkinSteps needed, simple auth flow)
 **Dependencies**: None (foundation for all other tests)

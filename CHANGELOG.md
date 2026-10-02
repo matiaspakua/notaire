@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Expired sessions redirect to login with a clear message** (issue #1053, CU84):
+  when an authenticated API call returns HTTP `401`, the Next.js client clears
+  local auth state and navigates to `/login?expired=1`, showing that the session
+  expired. Login credential failures and non-401 errors do not trigger this path.
+  Covered by unit tests and Playwright `TS-0093` (also closes the E2E gap in #690).
+
 ### Added
 
 - **STRIDE threat model for authentication & audit trail** (issue #1028):

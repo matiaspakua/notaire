@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Scale, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
@@ -28,9 +28,11 @@ function lockoutMessage(body: string): string {
   }
 }
 
-export default function LoginPage() {
+function LoginForm() {
   const t = useTranslations("login");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const sessionExpired = searchParams.get("expired") === "1";
   const { login } = useAuthStore();
   const [nombre, setNombre] = useState("");
   const [contrasenia, setContrasenia] = useState("");
@@ -88,6 +90,16 @@ export default function LoginPage() {
             <p className="text-sm text-muted-foreground">{t("title")}</p>
           </div>
         </div>
+
+        {sessionExpired && (
+          <p
+            data-testid="session-expired-message"
+            role="status"
+            className="rounded-[12px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 text-center font-medium"
+          >
+            {t("sessionExpired")}
+          </p>
+        )}
 
         <Card className="border-none shadow-none bg-transparent">
           <CardContent className="p-0">
@@ -157,5 +169,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
