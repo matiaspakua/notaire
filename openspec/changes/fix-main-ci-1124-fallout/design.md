@@ -30,6 +30,12 @@ and Bruno suites that POST `fkIdConcept` / `fkIdProcedureType` failed.
    `ProcedureTypeRepository`; set associations before legacy create. Rationale:
    matches JpaController's expectation without loading full graphs when IDs exist.
 2. **`existsById` guard → 400** — missing FK returns bad request instead of NPE/500.
+2b. **ID-only stubs for associations** — hydrate with `new Concept(id)` /
+  `new ProcedureType(id)`, not `getReferenceById`. Legacy
+  `BudgetTemplateJpaController.create` calls `em.getReference(entity.getClass(), id)`;
+  Hibernate proxies make `getClass()` the proxy type and fail across EMFs,
+  so create returned 201 while swallowing the persist error (duplicate → 201,
+  list/in-use never saw the row).
 3. **OpenSpec folder over `sdlc-exception`** — agents cannot set the label.
 
 ## Riesgos / Trade-offs

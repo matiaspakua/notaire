@@ -7,6 +7,8 @@ import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.BudgetTemplatePK;
+import com.licensis.notaire.business.Concept;
+import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.repository.ConceptRepository;
 import com.licensis.notaire.repository.ProcedureTypeRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -150,10 +152,24 @@ public class BudgetTemplateController {
         try {
             BudgetTemplate entity = new BudgetTemplate(new BudgetTemplatePK(procedureTypeId, conceptId));
             entity.setNotes(request.notes());
-            // Legacy JpaController.create reads getConcept()/getProcedureType() IDs at line 51–52.
-            entity.setConcept(conceptRepository.getReferenceById(conceptId));
-            entity.setProcedureType(procedureTypeRepository.getReferenceById(procedureTypeId));
-            getJpaController().create(entity);
+            // Legacy JpaController.create reads getConcept()/getProcedureType() IDs (lines 51–52)
+            // and opens its own EntityManager. Do NOT pass Spring Data getReferenceById proxies —
+            // those are bound to Spring's persistence context and can leave create() returning
+            // false while this method still answered 201. ID-only stubs are enough for PK wiring;
+            // the JpaController re-attaches via em.getReference in its own EM.
+            Concept conceptRef = new Concept();
+            conceptRef.setIdConcept(conceptId);
+            ProcedureType procedureTypeRef = new ProcedureType();
+            procedureTypeRef.setIdProcedureType(procedureTypeId);
+            entity.setConcept(conceptRef);
+            entity.setProcedureType(procedureTypeRef);
+            Boolean created = getJpaController().create(entity);
+            if (!Boolean.TRUE.equals(created)) {
+                LOG.log(Level.SEVERE, "Plantilla de presupuesto create returned false for tipo={0} concepto={1}",
+                        new Object[]{procedureTypeId, conceptId});
+                return ResponseEntity.internalServerError()
+                        .body(Map.of("error", "Error interno al crear la plantilla"));
+            }
             BudgetTemplatePK pk = entity.getBudgetTemplatePK();
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("fkIdTipoTramite", pk.getFkIdProcedureType(), "fkIdConcepto", pk.getFkIdConcept()));
