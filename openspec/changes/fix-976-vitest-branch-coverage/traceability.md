@@ -16,8 +16,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-976-vitest-branch-coverage/` | Gate 1 applied |
 | Branch | `cursor/fix-976-vitest-branch-coverage-69d3` | from `origin/main` @ `68dc2cac` |
 | Tasks | `tasks.md` | implement underway |
-| Commits | `a773a5d4` — fix(frontend): ratchet Vitest coverage floors… | done |
-| Pull Request | pending push | pending |
+| Commits | `10d1d67d` — fix(frontend): ratchet Vitest coverage floors… | done |
+| Pull Request | pending | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
