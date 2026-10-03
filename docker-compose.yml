@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16
+    image: postgres:16.15
     container_name: notary-postgres
     restart: unless-stopped
     environment:
@@ -76,7 +76,7 @@ services:
 
   # pgAdmin for database management
   pgadmin:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:9.18.0
     container_name: notary-pgadmin
     restart: unless-stopped
     environment:

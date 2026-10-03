@@ -113,7 +113,7 @@ jobs:
     timeout-minutes: 20
     services:
       postgres:
-        image: postgres:16-alpine
+        image: postgres:16.15-alpine
         env:
           POSTGRES_DB: notaire
           POSTGRES_USER: notaire
@@ -209,7 +209,7 @@ jobs:
     timeout-minutes: 45
     services:
       postgres:
-        image: postgres:16-alpine
+        image: postgres:16.15-alpine
         env:
           POSTGRES_DB: notaire
           POSTGRES_USER: notaire

@@ -1,7 +1,7 @@
 # =============================================
 # Stage 1: Build - Compile Java application
 # =============================================
-FROM maven:3.9-eclipse-temurin-21-alpine AS builder
+FROM maven:3.9.15-eclipse-temurin-21-alpine AS builder
 
 WORKDIR /build
 
@@ -23,7 +23,7 @@ RUN mvn package -pl backend-api -am -DskipTests -B -q
 # =============================================
 # Stage 2: Runtime - Minimal JRE image
 # =============================================
-FROM eclipse-temurin:21-jre-alpine AS runner
+FROM eclipse-temurin:21.0.11_10-jre-alpine AS runner
 
 # Install wget for healthcheck
 RUN apk add --no-cache wget
