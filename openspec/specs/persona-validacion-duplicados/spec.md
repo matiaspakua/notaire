@@ -1,11 +1,19 @@
 # persona-validacion-duplicados Specification
 
 ## Purpose
-Prevents two `Persona` records from coexisting with the same
-`TipoIdentificacion` and `numeroIdentificacion`, so presupuestos,
-gestiones and pagos are never split across two unlinked records of the
-same real person (CU17, CU18).
+Prevents two `Person` records from coexisting with the same
+identification type and identification number, so budgets, managements,
+and payments are never split across two unlinked records of the same
+real person (CU17, CU18). Enforced in the application service (#835) and
+at the database via unique index on
+`people (fk_id_tipo_identificacion, identification_number)` (#799).
 ## Requirements
+### Requirement: Database uniqueness of person identification type and number
+The system SHALL enforce at the PostgreSQL schema level that no two rows
+in `people` share the same `(fk_id_tipo_identificacion, identification_number)`.
+Migrations MUST fail fast (or apply agreed cleanup keeping the lowest id)
+when duplicate groups already exist before creating the unique index.
+
 ### Requirement: Rechazar alta de persona con documento duplicado
 El sistema SHALL rechazar la creación de una `Persona` cuando ya existe
 otra `Persona` con el mismo `TipoIdentificacion` y
