@@ -1,7 +1,7 @@
 # =============================================
 # Stage 1: Build - Compile Java application
 # =============================================
-FROM maven:3-eclipse-temurin-24-alpine AS builder
+FROM maven:3.9.11-eclipse-temurin-24-alpine AS builder
 
 WORKDIR /build
 
