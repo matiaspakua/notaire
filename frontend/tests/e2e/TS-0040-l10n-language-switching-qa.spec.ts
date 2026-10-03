@@ -135,4 +135,19 @@ test.describe("l10n — Admin pages translations", () => {
     await setupAuthWithLocale(page, "en", "/dashboard/administracion/usuarios");
     await expect(page.getByRole("heading", { name: /users/i })).toBeVisible({ timeout: 10000 });
   });
+
+  // #1059 — former gap pages now wired through next-intl
+  test("roles page shows English title when locale is EN", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/administracion/roles");
+    await expect(page.getByRole("heading", { name: /roles and permissions/i })).toBeVisible({
+      timeout: 10000,
+    });
+  });
+
+  test("workflows page shows English title when locale is EN", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/administracion/workflows");
+    await expect(page.getByRole("heading", { name: /status workflows/i })).toBeVisible({
+      timeout: 10000,
+    });
+  });
 });

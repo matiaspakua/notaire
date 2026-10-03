@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, UserCheck } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -31,6 +32,8 @@ function personaName(p: Suplencia["fkIdSubstituted"]): string {
 }
 
 export default function SuplenciasPage() {
+  const t = useTranslations("suplencias");
+  const tc = useTranslations("common");
   const { data: suplencias = [], isLoading } = useSuplencias();
   const createMutation = useCreateSuplencia();
   const updateMutation = useUpdateSuplencia();
@@ -70,14 +73,14 @@ export default function SuplenciasPage() {
     try {
       if (isEditMode && editing.idSubstitution) {
         await updateMutation.mutateAsync({ id: editing.idSubstitution, data: payload });
-        toast.success("Suplencia actualizada");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(payload);
-        toast.success("Suplencia registrada");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al guardar la suplencia" });
+      presentMutationError(err, { fallback: t("errorSave") });
     }
   }
 
@@ -85,9 +88,9 @@ export default function SuplenciasPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Suplencia eliminada");
+      toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al eliminar" });
+      presentMutationError(err, { fallback: t("errorDelete") });
     } finally {
       setDeleteId(null);
     }
@@ -96,13 +99,13 @@ export default function SuplenciasPage() {
   const columns: Column<Suplencia>[] = [
     {
       key: "id",
-      header: "ID",
+      header: tc("id"),
       render: (s) => <span className="text-xs text-muted-foreground">{s.idSubstitution}</span>,
       className: "w-12",
     },
     {
       key: "escribano",
-      header: "Escribano",
+      header: t("fields.escribano"),
       render: (s) => (
         <div className="flex items-center gap-2">
           <UserCheck className="h-4 w-4 text-muted-foreground" />
@@ -112,17 +115,17 @@ export default function SuplenciasPage() {
     },
     {
       key: "suplente",
-      header: "Suplente",
+      header: t("fields.suplente"),
       render: (s) => personaName(s.fkIdSubstitute),
     },
     {
       key: "desde",
-      header: "Desde",
+      header: t("fields.desde"),
       render: (s) => formatDate(s.dateStart),
     },
     {
       key: "hasta",
-      header: "Hasta",
+      header: t("fields.hasta"),
       render: (s) => formatDate(s.dateEnd),
     },
     {
@@ -131,7 +134,7 @@ export default function SuplenciasPage() {
       className: "w-24",
       render: (s) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(s)} aria-label="Editar">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(s)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -139,7 +142,7 @@ export default function SuplenciasPage() {
             variant="ghost"
             className="text-destructive hover:text-destructive"
             onClick={() => setDeleteId(s.idSubstitution!)}
-            aria-label="Eliminar"
+            aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -151,12 +154,12 @@ export default function SuplenciasPage() {
   return (
     <div>
       <AppHeader
-        title="Suplencias"
-        description="Registrar y consultar suplencias de escribano"
+        title={t("title")}
+        description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nueva-suplencia">
             <Plus className="h-4 w-4" />
-            Nueva suplencia
+            {t("newSuplencia")}
           </Button>
         }
       />
@@ -166,35 +169,35 @@ export default function SuplenciasPage() {
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(s) => s.idSubstitution!}
-        emptyMessage="No hay suplencias registradas"
+        emptyMessage={t("noData")}
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar suplencia" : "Nueva suplencia"}>
+            <FormSection title={isEditMode ? t("editSuplencia") : t("newSuplencia")}>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="ID Escribano" helperText="ID de la persona">
+                <FormField label={t("fields.escribanoId")} helperText={t("fields.escribanoHelper")}>
                   <Input
                     type="number"
                     value={escribanoId}
                     onChange={(e) => setEscribanoId(e.target.value)}
-                    placeholder="ID del escribano"
+                    placeholder={t("fields.escribanoPlaceholder")}
                     data-testid="input-escribano-id"
                   />
                 </FormField>
-                <FormField label="ID Suplente" helperText="ID de la persona">
+                <FormField label={t("fields.suplenteId")} helperText={t("fields.escribanoHelper")}>
                   <Input
                     type="number"
                     value={suplenteId}
                     onChange={(e) => setSuplenteId(e.target.value)}
-                    placeholder="ID del suplente"
+                    placeholder={t("fields.suplentePlaceholder")}
                     data-testid="input-suplente-id"
                   />
                 </FormField>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="Desde">
+                <FormField label={t("fields.desde")}>
                   <Input
                     type="date"
                     value={editing.dateStart ?? ""}
@@ -202,7 +205,7 @@ export default function SuplenciasPage() {
                     data-testid="input-desde"
                   />
                 </FormField>
-                <FormField label="Hasta">
+                <FormField label={t("fields.hasta")}>
                   <Input
                     type="date"
                     value={editing.dateEnd ?? ""}
@@ -214,14 +217,14 @@ export default function SuplenciasPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                Cancelar
+                {tc("cancel")}
               </Button>
               <Button
                 onClick={handleSave}
                 disabled={createMutation.isPending || updateMutation.isPending}
                 data-testid="btn-guardar-suplencia"
               >
-                {isEditMode ? "Actualizar" : "Registrar"}
+                {isEditMode ? tc("update") : t("register")}
               </Button>
             </FormActions>
           </FormContainer>

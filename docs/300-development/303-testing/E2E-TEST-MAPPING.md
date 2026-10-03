@@ -119,7 +119,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | Focus | Test Type | Priority | Value |
 |----|----|-------|---------|----------|-------|
-| **TS-0040** | `TS-0040-l10n-language-switching-qa.spec.ts` | i18n (ES ↔ EN) | Language switcher | Medium | Utility |
+| **TS-0040** | `TS-0040-l10n-language-switching-qa.spec.ts` | i18n (ES ↔ EN); #1059 EN titles on roles/workflows | Language switcher + gap pages | Medium | Utility |
 | **TS-0041** | `TS-0041-responsive-viewport-qa.spec.ts` | Responsive design | Mobile (320px) + tablet (768px) + desktop (1024px) | Medium | Utility |
 | **TS-0042** | `TS-0042-accessibility-search-labels-qa.spec.ts` | WCAG accessibility | Label association (#608) | Medium | Utility |
 | **TS-0043** | `TS-0043-icons-ux-qa.spec.ts` | Icon rendering | PNG load verification | Low | Utility |

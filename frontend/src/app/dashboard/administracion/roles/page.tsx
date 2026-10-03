@@ -16,20 +16,21 @@ import { useRoles, useCreateRol, useUpdateRol, useDeleteRol } from "@/hooks/useR
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Rol } from "@/types";
 
-const MODULOS_DISPONIBLES = [
-  { value: "administracion", label: "Administración" },
-  { value: "usuarios", label: "Usuarios" },
-  { value: "tramites", label: "Trámites" },
-  { value: "presupuestos", label: "Presupuestos" },
-  { value: "escrituras", label: "Escrituras" },
-  { value: "personas", label: "Personas" },
-  { value: "auditoria", label: "Auditoría" },
-  { value: "workflows", label: "Workflows" },
-];
+const MODULO_VALUES = [
+  "administracion",
+  "usuarios",
+  "tramites",
+  "presupuestos",
+  "escrituras",
+  "personas",
+  "auditoria",
+  "workflows",
+] as const;
 
 const EMPTY: Partial<Rol> = { name: "", description: "", active: true, modulos: [] };
 
 export default function RolesPage() {
+  const t = useTranslations("administracion.roles");
   const tc = useTranslations("common");
   const { data: roles = [], isLoading } = useRoles();
   const createMutation = useCreateRol();
@@ -64,20 +65,20 @@ export default function RolesPage() {
   }
 
   async function handleSave() {
-    if (!editing.name?.trim()) { toast.error("El nombre es obligatorio"); return; }
+    if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
     setFieldErrors({});
     try {
       if (isEditMode && editing.idRole) {
         await updateMutation.mutateAsync({ id: editing.idRole, data: editing });
-        toast.success("Rol actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
-        toast.success("Rol creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch (err) {
       presentMutationError(err, {
-        fallback: "Error al guardar el rol",
+        fallback: t("errorSave"),
         fieldNames: ["name", "description"],
         setFieldErrors,
       });
@@ -88,25 +89,25 @@ export default function RolesPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Rol eliminado");
+      toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al eliminar" });
+      presentMutationError(err, { fallback: t("errorDelete") });
     } finally {
       setDeleteId(null);
     }
   }
 
   const columns: Column<Rol>[] = [
-    { key: "id", header: "ID", render: (r) => <span className="text-xs text-muted-foreground">{r.idRole}</span>, className: "w-12" },
-    { key: "nombre", header: "Nombre", render: (r) => <span className="font-medium">{r.name}</span> },
-    { key: "descripcion", header: "Descripción", render: (r) => <span className="text-sm text-muted-foreground">{r.description ?? "—"}</span> },
-    { key: "modulos", header: "Módulos", render: (r) => (
+    { key: "id", header: tc("id"), render: (r) => <span className="text-xs text-muted-foreground">{r.idRole}</span>, className: "w-12" },
+    { key: "nombre", header: tc("name"), render: (r) => <span className="font-medium">{r.name}</span> },
+    { key: "descripcion", header: tc("description"), render: (r) => <span className="text-sm text-muted-foreground">{r.description ?? "—"}</span> },
+    { key: "modulos", header: t("fields.modulos"), render: (r) => (
       <div className="flex flex-wrap gap-1">
         {(r.modulos ?? []).map((m) => <Badge key={m} variant="outline" className="text-xs">{m}</Badge>)}
-        {(r.modulos ?? []).length === 0 && <span className="text-xs text-muted-foreground">Sin permisos</span>}
+        {(r.modulos ?? []).length === 0 && <span className="text-xs text-muted-foreground">{t("noPermissions")}</span>}
       </div>
     )},
-    { key: "activo", header: "Estado", render: (r) => r.active ? <Badge variant="success">Activo</Badge> : <Badge variant="secondary">Inactivo</Badge> },
+    { key: "activo", header: tc("status"), render: (r) => r.active ? <Badge variant="success">{tc("active")}</Badge> : <Badge variant="secondary">{tc("inactive")}</Badge> },
     {
       key: "actions", header: "", className: "w-24",
       render: (r) => (
@@ -121,17 +122,17 @@ export default function RolesPage() {
   return (
     <div>
       <AppHeader
-        title="Roles y Permisos"
-        description="Gestión de roles de usuario y sus accesos a módulos"
-        actions={<Button onClick={openCreate} data-testid="btn-nuevo-rol"><Plus className="h-4 w-4" />Nuevo Rol</Button>}
+        title={t("title")}
+        description={t("description")}
+        actions={<Button onClick={openCreate} data-testid="btn-nuevo-rol"><Plus className="h-4 w-4" />{t("newRol")}</Button>}
       />
-      <DataTable data={roles} columns={columns} isLoading={isLoading} keyExtractor={(r) => r.idRole!} emptyMessage="No hay roles registrados" />
+      <DataTable data={roles} columns={columns} isLoading={isLoading} keyExtractor={(r) => r.idRole!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar Rol" : "Nuevo Rol"}>
-              <FormField label="Nombre" required error={fieldErrors.name}>
+            <FormSection title={isEditMode ? t("editRol") : t("newRol")}>
+              <FormField label={tc("name")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
@@ -139,30 +140,30 @@ export default function RolesPage() {
                   aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
-              <FormField label="Descripción" error={fieldErrors.description}>
+              <FormField label={tc("description")} error={fieldErrors.description}>
                 <Input
                   value={editing.description ?? ""}
                   onChange={(e) => setEditing({ ...editing, description: e.target.value })}
                   aria-invalid={!!fieldErrors.description}
                 />
               </FormField>
-              <FormField label="Módulos permitidos">
+              <FormField label={t("fields.modulosPermitidos")}>
                 <div className="grid grid-cols-2 gap-2 pt-1">
-                  {MODULOS_DISPONIBLES.map((mod) => (
-                    <label key={mod.value} className="flex items-center gap-2 cursor-pointer text-sm">
+                  {MODULO_VALUES.map((mod) => (
+                    <label key={mod} className="flex items-center gap-2 cursor-pointer text-sm">
                       <input
                         type="checkbox"
-                        checked={(editing.modulos ?? []).includes(mod.value)}
-                        onChange={() => toggleModulo(mod.value)}
-                        data-testid={`check-modulo-${mod.value}`}
+                        checked={(editing.modulos ?? []).includes(mod)}
+                        onChange={() => toggleModulo(mod)}
+                        data-testid={`check-modulo-${mod}`}
                         className="rounded"
                       />
-                      {mod.label}
+                      {t(`modules.${mod}`)}
                     </label>
                   ))}
                 </div>
               </FormField>
-              <FormField label="Activo">
+              <FormField label={t("fields.activo")}>
                 <label className="flex items-center gap-2 cursor-pointer text-sm">
                   <input
                     type="checkbox"
@@ -170,14 +171,14 @@ export default function RolesPage() {
                     onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
                     className="rounded"
                   />
-                  Rol activo
+                  {t("fields.activoHint")}
                 </label>
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button>
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
               <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-                {isEditMode ? "Actualizar" : "Crear"}
+                {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>

@@ -34,7 +34,7 @@ vi.mock("@/lib/api-client", () => {
 
 // Mock next-intl so LoginPage doesn't need NextIntlClientProvider
 vi.mock("next-intl", () => ({
-  useTranslations: (ns: string) => (key: string) => {
+  useTranslations: (ns: string) => (key: string, values?: Record<string, string | number>) => {
     const translations: Record<string, Record<string, string>> = {
       login: {
         title: "Iniciar sesión",
@@ -44,9 +44,21 @@ vi.mock("next-intl", () => ({
         submit: "Ingresar",
         error: "Usuario o contraseña incorrectos",
         sessionExpired: "Su sesión ha expirado. Inicie sesión nuevamente.",
+        connectionError:
+          "No se pudo conectar al servidor. Verifique que el backend esté en ejecución.",
+        lockoutError: "Cuenta bloqueada temporalmente por demasiados intentos fallidos.",
+        validationRequired: "Complete usuario y contraseña",
+        welcome: "Bienvenido, {name}",
+        forgotPassword: "¿Olvidó su contraseña? Contacte al administrador.",
+        footerSecure: "Infraestructura Segura",
       },
     };
-    return translations[ns]?.[key] ?? key;
+    const template = translations[ns]?.[key] ?? key;
+    if (!values) return template;
+    return Object.entries(values).reduce(
+      (acc, [k, v]) => acc.replace(`{${k}}`, String(v)),
+      template,
+    );
   },
   useLocale: () => "es",
 }));
