@@ -9,28 +9,22 @@ observability/quality infrastructure stack.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                          Notaire Stack                               │
-│                     (docker-compose.yml - root)                      │
-│                                                                        │
-│  ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐          │
-│  │PostgreSQL│   │ Backend  │   │ Frontend │   │ pgAdmin  │          │
-│  │  :5432   │   │  :8080   │   │  :3000   │   │  :5050   │          │
-│  └──────────┘   └──────────┘   └──────────┘   └──────────┘          │
+│                 Dev stack (docker-compose.yml)                       │
+│  PostgreSQL :5432 · Backend :8080 · Frontend :3000 · pgAdmin :5050 │
 └────────────────────────────┬───────────────────────────────────────┘
                               │ (shared network: notary-network)
 ┌────────────────────────────┴───────────────────────────────────────┐
 │                          Infra Stack                                 │
 │                    (infra/docker-compose.yml)                        │
-│                                                                        │
-│  ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐          │
-│  │Prometheus│   │ Grafana  │   │   Loki   │   │ Promtail │          │
-│  │  :9090   │   │  :3001   │   │  :3100   │   │          │          │
-│  └──────────┘   └──────────┘   └──────────┘   └──────────┘          │
-│  ┌──────────┐   ┌──────────┐   ┌──────────┐                         │
-│  │SonarQube │   │postgres- │   │  Homer   │                         │
-│  │  :9000   │   │exporter  │   │  :8888   │                         │
-│  └──────────┘   │  :9187   │   └──────────┘                         │
-│                  └──────────┘                                        │
+│  Prometheus :9090 · Grafana :3001 · Loki · SonarQube · Homer …     │
+└───────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│           Production stack (docker-compose.prod.yml)                 │
+│                                                                      │
+│   Host :80 → reverse-proxy → frontend (/) + backend (/api,/actuator)│
+│   postgres / backend / frontend: internal only (no host ports)       │
+│   No pgAdmin · ENVIRONMENT=production · Flyway baseline off          │
 └───────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -51,7 +45,7 @@ mvn clean install -DskipTests
 mvn clean install -pl backend-api -am -DskipTests
 ```
 
-### 2. Start the Application Stack
+### 2. Start the Application Stack (development)
 
 ```bash
 bash scripts/start.sh
@@ -62,12 +56,14 @@ docker-compose up -d
 docker-compose ps
 ```
 
-This starts:
+This starts the **dev** stack:
 - **PostgreSQL 16** on port 5432
 - **Backend API** on port 8080
 - **Frontend (Next.js)** on port 3000
 - **pgAdmin** on port 5050 (started by default; skip with `bash scripts/start.sh --no-admin`)
 
+> Production must use `docker-compose.prod.yml` (below) — never the published
+> Postgres/pgAdmin ports from the dev compose.
 ### 3. Start Monitoring & Quality Infrastructure
 
 ```bash
@@ -98,12 +94,23 @@ curl http://localhost:3100/ready             # Loki
 
 ## Docker Compose Details
 
-### Root docker-compose.yml
+### Root docker-compose.yml (development)
 - **Services**: `postgres`, `backend`, `frontend`, `pgadmin`
 - **Network**: `notary-network` (bridge)
 - **Volumes**: `postgres_data`, `pgadmin_data`
 - **Backend health check**: `/actuator/health`
 - **Environment variables**: Configured via `.env` file (see `.env.example`)
+- **Not for production** — publishes Postgres/pgAdmin/app ports and uses
+  `${VAR:-admin}` defaults for local ergonomics
+
+### docker-compose.prod.yml (production entrypoint — issue #1044)
+- **Services**: `postgres`, `backend`, `frontend`, `reverse-proxy` (**no pgAdmin**)
+- **Host ports**: only the reverse proxy (`:80`); postgres/backend/frontend stay on the Docker network
+- **Secrets**: required via `${VAR:?...}` — compose fails fast if `.env` is incomplete; no `admin` defaults
+- **Backend**: `ENVIRONMENT=production` (activates `ProductionCredentialsGuard`); least-privilege env (no Grafana/pgAdmin/exporter credential keys); `SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`
+- **Proxy config**: `deploy/nginx/nginx.conf` — `/` → frontend, `/api/` and `/actuator/` → backend
+- **TLS**: terminate TLS in front of this proxy (or extend the nginx config); full certbot/ACME productization is issue #254
+- **Backups**: automated backup productization remains issue #256
 
 ### Infra docker-compose.yml
 - **Services**: `dashboard` (Homer), `sonarqube`, `sonar-db`, `prometheus`, `postgres-exporter`,
@@ -115,39 +122,71 @@ curl http://localhost:3100/ready             # Loki
 ## Environment Configuration
 
 All credentials live in a single, git-ignored `.env` file at the repo root (copy `.env.example`).
-Both `docker-compose.yml` and `infra/docker-compose.yml` read from it — never hard-code secrets
-in compose files or docs.
+`docker-compose.yml`, `docker-compose.prod.yml`, and `infra/docker-compose.yml` read from it —
+never hard-code secrets in compose files or docs.
 
 Key variables include `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `JWT_SECRET`,
-`ACTUATOR_USER`/`ACTUATOR_PASSWORD` (Prometheus scrape auth), and `NEXT_PUBLIC_API_URL`
-(frontend build arg).
+`ACTUATOR_USER`/`ACTUATOR_PASSWORD` (Prometheus scrape auth), `APP_ADMIN_USER` /
+`APP_ADMIN_PASSWORD`, and (for Flyway V12 / infra exporter) `POSTGRES_EXPORTER_USER` /
+`POSTGRES_EXPORTER_PASSWORD`. See the production section in `.env.example`.
+
+## Production deployment (docker-compose.prod.yml)
+
+1. Copy and harden secrets (do **not** keep `.env.example` `admin` placeholders):
+
+```bash
+cp .env.example .env
+# Set strong unique values for POSTGRES_*, JWT_SECRET, ACTUATOR_*, APP_ADMIN_*,
+# and POSTGRES_EXPORTER_* (used as Flyway placeholders; not injected as Grafana/pgAdmin env on the backend).
+```
+
+2. Start the production stack:
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+docker compose -f docker-compose.prod.yml ps
+```
+
+3. Verify through the reverse proxy only:
+
+```bash
+curl -fsS http://localhost/                  # frontend via reverse proxy
+curl -fsS http://localhost/actuator/health   # backend via reverse proxy
+# Postgres (:5432), backend (:8080), frontend (:3000), and pgAdmin must NOT be published on the host.
+```
+
+4. Confirm Flyway baseline-on-migrate is off in the prod file (`SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`).
 
 ## Production Considerations
 
 For production deployment, ensure:
 
-1. **Change default credentials** — do not reuse `.env.example` values
-2. **Enable HTTPS** — terminate TLS in front of the backend and frontend (e.g. reverse proxy)
-3. **Set a strong `JWT_SECRET`** — see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md)
-4. **Database backups** — configure periodic `pg_dump` backups
-5. **Resource limits** — set Docker resource constraints
-6. **Log rotation** — configure Docker log rotation
-7. **Monitoring alerts** — configure Prometheus alerting rules (`infra/prometheus/alert-rules.yml`)
+1. **Use `docker-compose.prod.yml`** — not the dev compose with published DB/admin ports
+2. **Change default credentials** — do not reuse `.env.example` values; prod compose requires them via `${VAR:?}`
+3. **Enable HTTPS** — terminate TLS in front of the reverse proxy (issue #254)
+4. **Set a strong `JWT_SECRET`** — see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md)
+5. **Database backups** — configure periodic `pg_dump` backups (issue #256)
+6. **Resource limits** — set Docker resource constraints
+7. **Log rotation** — configure Docker log rotation
+8. **Monitoring alerts** — configure Prometheus alerting rules (`infra/prometheus/alert-rules.yml`)
 
 ## Rollback Procedure
 
 ```bash
-# Stop all services
+# Stop production stack
+docker compose -f docker-compose.prod.yml down
+
+# Or stop the development stack
 docker-compose down
 
 # Remove specific volumes if needed
-docker-compose down -v
+docker compose -f docker-compose.prod.yml down -v
 
-# Restore database from backup
-docker exec -i notary-postgres psql -U admin notaire < backup.sql
+# Restore database from backup (container must be running / on the compose network)
+docker exec -i notary-postgres psql -U "$POSTGRES_USER" "$POSTGRES_DB" < backup.sql
 
 # Restart previous version
-docker-compose up -d
+docker compose -f docker-compose.prod.yml --env-file .env up -d
 ```
 
 ## Related Documentation

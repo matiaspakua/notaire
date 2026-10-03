@@ -10,12 +10,13 @@
 | **Descripción** | Asegura que la evolución del modelo de datos de la escribanía se realice de manera determinista, segura y reproducible, garantizando la integridad de datos de clientes, escrituras, folios y trámites. |
 | **Tipo** | Soporte / Arquitectura |
 | **Referencias Cruzadas** | RF #85 (Acceso a la base de datos), RF #86 (Java VM), RF #87 (Sistema operativo), RF #92 (Lenguaje de programación), RF #93 (Motor de base de datos) |
-| **GitHub ID** | #264, #275, #292, #271, #270 |
+| **GitHub ID** | #264, #275, #292, #271, #270, #1044 |
 
 ## Alcance Técnico
 
 - Versionado secuencial e inmutable del esquema con scripts Flyway (V1..V11+).
-- Restricción de acceso directo a la base de datos exclusivamente a cuentas administrativas seguras.
+- En producción (`docker-compose.prod.yml`, issue #1044) Flyway baseline-on-migrate está deshabilitado (`SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`); el stack de desarrollo puede mantener baseline para volúmenes locales vacíos.
+- Restricción de acceso directo a la base de datos exclusivamente a cuentas administrativas seguras (Postgres sin puertos de host en el compose de producción).
 - Documentación de diagramas entidad-relación (ERD) y diccionarios de datos.
 - Políticas de backup periódico y procedimientos de recuperación ante desastres (DRP) con objetivos RTO/RPO.
 
@@ -34,3 +35,4 @@
 - [x] Restricción de acceso directo a base de datos implementada (solo credenciales autorizadas).
 - [x] Procedimientos de respaldo automatizados y plan de recuperación ante desastres definido.
 - [x] Compatibilidad verificada con Java 21 y PostgreSQL 16.
+- [x] Compose de producción no habilita Flyway baseline-on-migrate; DB no publicada en el host (issue #1044).

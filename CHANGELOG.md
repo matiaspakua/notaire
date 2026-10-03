@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Production docker-compose** (issue #1044, CU78/CU75):
+  `docker-compose.prod.yml` with postgres + backend + frontend + nginx reverse
+  proxy; no pgAdmin; reverse-proxy-only host ports; `${VAR:?}` required secrets;
+  `ENVIRONMENT=production`; least-privilege backend env; Flyway
+  baseline-on-migrate off. Guarded by `scripts/test_prod_compose.py`. Deployment
+  guide and CU78/CU75 updated. TLS remains #254; backups remain #256.
+
 ### Changed
+
+- **ProductionCredentialsGuard** aligns with least-privilege prod compose
+  (issue #1044): optional pgAdmin/Grafana/exporter credentials are skipped when
+  blank/unset, while literal `admin` is still rejected when those services are
+  configured. Optional property defaults in `application.properties` are empty.
 
 - **Frontend ESLint is a blocking CI gate** (issue #1048, CU76):
   `.github/workflows/frontend-ci.yml` no longer runs `npm run lint` with
