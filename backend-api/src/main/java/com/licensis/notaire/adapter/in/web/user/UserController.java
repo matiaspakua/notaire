@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.user;
 
+import com.licensis.notaire.config.AuthCookieService;
 import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoUser;
@@ -13,7 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,15 +51,18 @@ public class UserController {
     private final MetricsUtil metricsUtil;
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
+    private final AuthCookieService authCookieService;
 
     public UserController(UserRepository userRepository, JwtTokenService jwtTokenService,
                              MetricsUtil metricsUtil, PasswordEncoder passwordEncoder,
-                             LoginAttemptService loginAttemptService) {
+                             LoginAttemptService loginAttemptService,
+                             AuthCookieService authCookieService) {
         this.userRepository = userRepository;
         this.jwtTokenService = jwtTokenService;
         this.metricsUtil = metricsUtil;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
+        this.authCookieService = authCookieService;
     }
 
     record PersonInfo(Integer idPerson, String name, String lastName) {}
@@ -238,9 +244,11 @@ public class UserController {
                             log.debug("DTO Usuario creado - valido: {}, estado: {}", dtoUser.isValido(), dtoUser.isStatus());
 
                             // Create a map response to ensure 'valido' field is included
+                            String jwt = jwtTokenService.generateToken(user.getName());
                             Map<String, Object> response = new HashMap<>();
                             response.put("valido", true);
-                            response.put("token", jwtTokenService.generateToken(user.getName()));
+                            // Bearer token kept for Bruno/API clients; browsers use the HttpOnly cookie (#1051).
+                            response.put("token", jwt);
                             response.put("idUsuario", dtoUser.getIdUser());
                             response.put("nombre", dtoUser.getName());
                             response.put("estado", dtoUser.isStatus());
@@ -253,7 +261,10 @@ public class UserController {
                                 personMap.put("apellido", dtoUser.getPersons().getLastName());
                                 response.put("personas", personMap);
                             }
-                            return ResponseEntity.ok(response);
+                            ResponseCookie sessionCookie = authCookieService.createSessionCookie(jwt);
+                            return ResponseEntity.ok()
+                                    .header(HttpHeaders.SET_COOKIE, sessionCookie.toString())
+                                    .body(response);
                         } else {
                             log.warn("Login fallido para '{}': usuario inactivo", user.getName());
                             metricsUtil.incrementCounter("login", "inactive");
@@ -280,6 +291,20 @@ public class UserController {
             metricsUtil.incrementCounter("login", "error");
             return ResponseEntity.ok(invalidLoginResponse());
         }
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Auth cookie cleared")
+    })
+    @PostMapping("/logout")
+    @Operation(summary = "Cerrar sesión (limpia cookie HttpOnly)")
+    public ResponseEntity<Map<String, Object>> logout() {
+        ResponseCookie cleared = authCookieService.clearSessionCookie();
+        Map<String, Object> body = new HashMap<>();
+        body.put("ok", true);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cleared.toString())
+                .body(body);
     }
 
     private Map<String, Object> invalidLoginResponse() {

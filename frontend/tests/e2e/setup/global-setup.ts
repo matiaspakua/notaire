@@ -69,40 +69,47 @@ async function authenticateAdmin(page: Page): Promise<void> {
 
   if (loginResult.ok && loginResult.data?.valido && loginResult.data.token) {
     const { token, idUsuario, nombre, tipo } = loginResult.data;
-    // Inject auth state via localStorage (same shape the frontend auth store persists)
+    // HttpOnly JWT cookie for browser proxy auth + UX cookies (#1051 / #1052).
+    await page.context().addCookies([
+      {
+        name: "notaire-auth-token",
+        value: token,
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        sameSite: "Lax",
+      },
+      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
+      { name: "notaire-auth-role", value: (tipo ?? "ADMIN").toUpperCase(), domain: "localhost", path: "/" },
+    ]);
+    // Persist client profile only — never the JWT in localStorage (#1051).
     await page.addInitScript(
-      ([t, user]) => {
+      ([user]) => {
         localStorage.setItem(
           "notaire-auth",
           JSON.stringify({
-            state: { user, token: t, isAuthenticated: true },
+            state: { user, isAuthenticated: true },
             version: 0,
           })
         );
       },
-      [token, { nombre, tipo, valido: true, idUsuario }] as const
+      [{ nombre, tipo, valido: true, idUsuario }] as const
     );
     seedData.adminAuth = { token, user: { idUsuario, nombre, tipo } };
     // Visible to every worker process spawned after global-setup completes — read by
     // tests/e2e/setup/api-helpers.ts so page.request-based seed/cleanup calls authenticate.
     process.env.E2E_ADMIN_TOKEN = token;
   } else {
-    // Fallback: UI-based login
+    // Fallback: UI-based login (Set-Cookie establishes HttpOnly JWT).
     await page.getByTestId("input-usuario").fill("admin");
     await page.getByTestId("input-contrasenia").fill("admin");
     await page.getByTestId("btn-ingresar").click();
     await page.waitForURL(/\/dashboard/, { timeout: 15000 });
 
-    const storedToken = await page.evaluate(() => {
-      try {
-        const raw = localStorage.getItem("notaire-auth");
-        return raw ? JSON.parse(raw)?.state?.token ?? null : null;
-      } catch {
-        return null;
-      }
-    });
-    if (storedToken) {
-      process.env.E2E_ADMIN_TOKEN = storedToken;
+    const cookies = await page.context().cookies();
+    const authCookie = cookies.find((c) => c.name === "notaire-auth-token");
+    if (authCookie?.value) {
+      process.env.E2E_ADMIN_TOKEN = authCookie.value;
     }
   }
 }

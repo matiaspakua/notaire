@@ -242,8 +242,12 @@ class AdditionalControllersTest {
             when(jwtSvc.generateToken(any())).thenReturn("mock-jwt-token");
             var metrics = mock(com.licensis.notaire.observability.MetricsUtil.class);
             var passwordEncoder = mock(org.springframework.security.crypto.password.PasswordEncoder.class);
+            var authCookies = mock(com.licensis.notaire.config.AuthCookieService.class);
+            when(authCookies.createSessionCookie(any())).thenReturn(
+                    org.springframework.http.ResponseCookie.from("notaire-auth-token", "mock")
+                            .httpOnly(true).path("/").sameSite("Lax").build());
             var mvc = standaloneSetup(new UserController(repo, jwtSvc, metrics, passwordEncoder,
-                    new com.licensis.notaire.security.LoginAttemptService(5, 900000))).build();
+                    new com.licensis.notaire.security.LoginAttemptService(5, 900000), authCookies)).build();
             User u = new User(1, "admin", "abc", true, "Escribano");
 
             when(repo.findAll()).thenReturn(List.of(u));

@@ -2,14 +2,14 @@
  * TS-0093 - Session expiry / authenticated 401 handling
  *
  * Covers: CU84 – Login al sistema (expired-session alternate flow)
- * Issues: #1053 (global 401 handling), #690 (E2E gap)
+ * Issues: #1053 (global 401 handling), #690 (E2E gap), #1051 (HttpOnly cookie)
  *
  * Golden path:
- *   authenticated user → API 401 (invalid JWT) → /login?expired=1 + message
+ *   authenticated user → API 401 (invalid JWT cookie) → /login?expired=1 + message
  *   → successful re-login → /dashboard (no expiry banner)
  *
- * Approach: corrupt the persisted JWT after login so the backend returns a
- * real 401 (avoids waiting for the 24 h JWT TTL).
+ * Approach: replace the HttpOnly JWT cookie with an invalid value after login
+ * so the backend returns a real 401 (avoids waiting for the 24 h JWT TTL).
  */
 import { test, expect, type Page } from "@playwright/test";
 
@@ -21,28 +21,34 @@ async function loginAsAdmin(page: Page) {
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }
 
-async function corruptJwt(page: Page) {
+async function corruptJwtCookie(page: Page) {
+  await page.context().addCookies([
+    {
+      name: "notaire-auth-token",
+      value: "invalid-expired-jwt-for-e2e",
+      domain: "localhost",
+      path: "/",
+      httpOnly: true,
+      sameSite: "Lax",
+    },
+  ]);
+  // Keep client session marker so 401 triggers the expiry path.
   await page.evaluate(() => {
     const raw = window.localStorage.getItem("notaire-auth");
-    if (!raw) {
-      throw new Error("notaire-auth missing after login");
-    }
-    const parsed = JSON.parse(raw) as {
-      state?: { token?: string; isAuthenticated?: boolean };
-    };
+    const parsed = raw ? JSON.parse(raw) : { state: {}, version: 0 };
     if (!parsed.state) {
       parsed.state = {};
     }
-    parsed.state.token = "invalid-expired-jwt-for-e2e";
     parsed.state.isAuthenticated = true;
+    delete parsed.state.token;
     window.localStorage.setItem("notaire-auth", JSON.stringify(parsed));
   });
 }
 
-test.describe("TS-0093 - Session expiry (CU84 / #1053)", () => {
+test.describe("TS-0093 - Session expiry (CU84 / #1053 / #1051)", () => {
   test("redirects to login with expired message and allows re-login", async ({ page }) => {
     await loginAsAdmin(page);
-    await corruptJwt(page);
+    await corruptJwtCookie(page);
 
     // Any authenticated API call should receive 401 and trigger session expiry.
     await page.goto("/dashboard/gestiones");

@@ -103,7 +103,7 @@ describe("LoginPage", () => {
     });
   });
 
-  it("stores the JWT token from the login response (issue #552)", async () => {
+  it("authenticates without persisting JWT from the login JSON (issue #1051)", async () => {
     const mockPost = vi.mocked(apiPost);
     mockPost.mockResolvedValueOnce({
       valido: true,
@@ -119,12 +119,12 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByTestId("btn-ingresar"));
 
     await waitFor(() => {
-      expect(useAuthStore.getState().token).toBe("fake-jwt-token");
       expect(useAuthStore.getState().isAuthenticated).toBe(true);
+      expect(useAuthStore.getState().token).toBeNull();
     });
   });
 
-  it("does not log in when the response has no token", async () => {
+  it("logs in when valido is true even without a JSON token (issue #1051)", async () => {
     const mockPost = vi.mocked(apiPost);
     mockPost.mockResolvedValueOnce({ valido: true, nombre: "admin", tipo: "ADMIN" });
 
@@ -135,9 +135,8 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByTestId("btn-ingresar"));
 
     await waitFor(() => {
-      expect(mockPost).toHaveBeenCalled();
+      expect(useAuthStore.getState().isAuthenticated).toBe(true);
     });
-    expect(useAuthStore.getState().isAuthenticated).toBe(false);
   });
 
   it("shows error toast on failed login (valido=false)", async () => {

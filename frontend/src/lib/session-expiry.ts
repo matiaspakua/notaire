@@ -1,6 +1,7 @@
 /**
  * Ends the local session when an authenticated API call returns HTTP 401.
  * Issue #1053 / CU84 — redirect to login with an expired-session signal.
+ * Issue #1051 — also best-effort clear the HttpOnly auth cookie.
  */
 import { useAuthStore } from "@/store/auth-store";
 
@@ -18,9 +19,8 @@ export function isLoginApiPath(path: string): boolean {
   return path === LOGIN_API_PATH || path.startsWith(`${LOGIN_API_PATH}?`);
 }
 
-function hasLocalSessionToken(): boolean {
-  const token = useAuthStore.getState().token;
-  if (token) {
+function hasLocalSession(): boolean {
+  if (useAuthStore.getState().isAuthenticated) {
     return true;
   }
   if (typeof window === "undefined") {
@@ -31,11 +31,24 @@ function hasLocalSessionToken(): boolean {
     if (!raw) {
       return false;
     }
-    const parsed = JSON.parse(raw) as { state?: { token?: string } };
-    return Boolean(parsed.state?.token);
+    const parsed = JSON.parse(raw) as { state?: { isAuthenticated?: boolean } };
+    return Boolean(parsed.state?.isAuthenticated);
   } catch {
     return false;
   }
+}
+
+function clearHttpOnlyAuthCookieBestEffort(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  void fetch("/api/v1/usuarios/logout", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+  }).catch(() => {
+    // Best-effort; client state is still cleared below.
+  });
 }
 
 /**
@@ -52,13 +65,14 @@ export function handleAuthenticatedSessionExpiry(status: number, path: string): 
   if (typeof window === "undefined") {
     return false;
   }
-  if (!hasLocalSessionToken()) {
+  if (!hasLocalSession()) {
     return false;
   }
   if (handlingSessionExpiry) {
     return true;
   }
   handlingSessionExpiry = true;
+  clearHttpOnlyAuthCookieBestEffort();
   useAuthStore.getState().logout();
   window.location.assign(SESSION_EXPIRED_LOGIN_URL);
   return true;

@@ -1,13 +1,9 @@
 /**
  * Shared E2E auth fixture.
  *
- * The backend's security chain requires a JWT Bearer token on every endpoint
- * except login. Several spec files used to inject a *fake* localStorage
- * auth state (no token) to skip the UI login form — that made every
- * subsequent API write silently 401 (create/edit/delete never persisted,
- * dialogs never closed) while assertions that didn't check status codes
- * kept passing. This performs a real login and persists the resulting JWT
- * in the same shape the app's own auth store uses.
+ * Browser sessions use the HttpOnly JWT cookie (`notaire-auth-token`) plus
+ * non-credential UX cookies (#1052). API helpers still use Bearer via
+ * `E2E_ADMIN_TOKEN` for `page.request` seeding (issue #1051).
  */
 import fs from "node:fs";
 import type { Page } from "@playwright/test";
@@ -23,6 +19,7 @@ interface LoginResponse {
 }
 
 const ADMIN_TOKEN_FILE = "tests/e2e/fixtures/e2e-admin-token.txt";
+export const AUTH_TOKEN_COOKIE = "notaire-auth-token";
 
 function readPersistedAdminToken(): string | undefined {
   if (process.env.E2E_ADMIN_TOKEN) {
@@ -48,33 +45,36 @@ async function applyAdminSession(
   process.env.E2E_ADMIN_TOKEN = token;
 
   await page.context().addCookies([
+    {
+      name: AUTH_TOKEN_COOKIE,
+      value: token,
+      domain: "localhost",
+      path: "/",
+      httpOnly: true,
+      sameSite: "Lax",
+    },
     { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
     { name: "notaire-auth-role", value: role, domain: "localhost", path: "/" },
   ]);
-  // addInitScript may resolve to Disposable in current Playwright typings —
-  // await and discard so this helper stays Promise<void>.
+  // Persist only non-credential client state — never the JWT (#1051).
   await page.addInitScript(
-    ([t, u]) => {
+    ([u]) => {
       localStorage.setItem(
         "notaire-auth",
         JSON.stringify({
-          state: { user: u, token: t, isAuthenticated: true },
+          state: { user: u, isAuthenticated: true },
           version: 0,
         }),
       );
     },
-    [token, user] as const,
+    [user] as const,
   );
 }
 
 /**
- * Log in as admin and make the JWT available to both:
- *  - `page.request` helpers (`process.env.E2E_ADMIN_TOKEN`)
- *  - the browser app (`localStorage` `notaire-auth`, same shape as zustand persist)
- *
- * Prefers the JWT written by global-setup (env / fixture file) so parallel
- * workers do not re-login and trip LoginAttemptService 429 lockouts.
- * Falls back to API login only when no shared token is available.
+ * Log in as admin and make credentials available to both:
+ *  - `page.request` helpers (`process.env.E2E_ADMIN_TOKEN` Bearer)
+ *  - the browser app (HttpOnly cookie + UX cookies + zustand persist without token)
  */
 export async function authenticateAsAdmin(
   page: Page,
@@ -120,8 +120,6 @@ export async function authenticateAsAdmin(
 
 /**
  * Ensure the browser has a hydrated admin session before list-page assertions.
- * Re-writes localStorage after the first navigation so zustand persist cannot
- * race the init script and leave API fetches unauthenticated (empty tables).
  */
 export async function establishAdminBrowserSession(page: Page): Promise<void> {
   await authenticateAsAdmin(page);
@@ -131,26 +129,20 @@ export async function establishAdminBrowserSession(page: Page): Promise<void> {
   }
 
   await page.goto("/dashboard");
-  await page.evaluate(
-    ([t, u]) => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: { user: u, token: t, isAuthenticated: true },
-          version: 0,
-        }),
-      );
-    },
-    [
-      token,
-      {
-        nombre: "admin",
-        tipo: "ADMIN",
-        valido: true,
-        idUsuario: 1,
-      },
-    ] as const,
-  );
+  await page.evaluate((u) => {
+    localStorage.setItem(
+      "notaire-auth",
+      JSON.stringify({
+        state: { user: u, isAuthenticated: true },
+        version: 0,
+      }),
+    );
+  }, {
+    nombre: "admin",
+    tipo: "ADMIN",
+    valido: true,
+    idUsuario: 1,
+  });
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForLoadState("networkidle");
 }

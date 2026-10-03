@@ -2,8 +2,8 @@
  * Frontend admin-route access helpers (issue #1052, CU78).
  *
  * Edge middleware cannot read Zustand/localStorage, so login sets a companion
- * non-credential role cookie. Real API authorization remains backend RBAC (#559);
- * HttpOnly token migration is #1051.
+ * non-credential role cookie. Real API authorization remains backend RBAC (#559).
+ * Session JWT is HttpOnly cookie `notaire-auth-token` (issue #1051).
  */
 
 export const AUTH_STATUS_COOKIE = "notaire-auth-status";

@@ -14,8 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -185,5 +187,60 @@ class JwtAuthIntegrationTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valido").value(false));
+    }
+
+    @Test
+    @DisplayName("Login sets HttpOnly SameSite auth cookie (issue #1051)")
+    void shouldSetHttpOnlyAuthCookieOnLogin() throws Exception {
+        mockMvc.perform(post("/api/v1/usuarios/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name": "admin", "password": "admin"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.valido").value(true))
+                .andExpect(header().string("Set-Cookie", containsString("notaire-auth-token=")))
+                .andExpect(header().string("Set-Cookie", containsString("HttpOnly")))
+                .andExpect(header().string("Set-Cookie", containsString("SameSite=Lax")))
+                .andExpect(header().string("Set-Cookie", containsString("Path=/")));
+    }
+
+    @Test
+    @DisplayName("API accepts auth cookie without Bearer (issue #1051)")
+    void shouldAcceptAuthCookieWithoutBearer() throws Exception {
+        var loginResult = mockMvc.perform(post("/api/v1/usuarios/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name": "admin", "password": "admin"}
+                                """))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String setCookie = loginResult.getResponse().getHeader("Set-Cookie");
+        String cookieValue = extractCookieValue(setCookie, "notaire-auth-token");
+
+        mockMvc.perform(get("/api/v1/usuarios")
+                        .cookie(new jakarta.servlet.http.Cookie("notaire-auth-token", cookieValue)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Logout clears auth cookie (issue #1051)")
+    void shouldClearAuthCookieOnLogout() throws Exception {
+        mockMvc.perform(post("/api/v1/usuarios/logout"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Set-Cookie", containsString("notaire-auth-token=")))
+                .andExpect(header().string("Set-Cookie", containsString("Max-Age=0")));
+    }
+
+    private static String extractCookieValue(String setCookieHeader, String name) {
+        String prefix = name + "=";
+        int start = setCookieHeader.indexOf(prefix);
+        if (start < 0) {
+            throw new IllegalStateException("Cookie " + name + " missing from Set-Cookie: " + setCookieHeader);
+        }
+        int valueStart = start + prefix.length();
+        int end = setCookieHeader.indexOf(';', valueStart);
+        return end < 0 ? setCookieHeader.substring(valueStart) : setCookieHeader.substring(valueStart, end);
     }
 }

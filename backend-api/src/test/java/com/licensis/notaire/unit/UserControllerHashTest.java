@@ -1,6 +1,7 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.adapter.in.web.user.UserController;
+import com.licensis.notaire.config.AuthCookieService;
 import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.business.User;
@@ -24,7 +25,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,14 +50,19 @@ class UserControllerHashTest {
     private MetricsUtil metricsUtil;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private AuthCookieService authCookieService;
 
     private UserController controller;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
+        lenient().when(authCookieService.createSessionCookie(anyString()))
+                .thenReturn(org.springframework.http.ResponseCookie.from("notaire-auth-token", "x")
+                        .httpOnly(true).path("/").sameSite("Lax").build());
         controller = new UserController(userRepository, jwtTokenService, metricsUtil, passwordEncoder,
-                new LoginAttemptService(5, 900000));
+                new LoginAttemptService(5, 900000), authCookieService);
         mockMvc = standaloneSetup(controller).build();
     }
 
