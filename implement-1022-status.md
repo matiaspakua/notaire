@@ -5,7 +5,7 @@
 | Issue | [#1022](https://github.com/matiaspakua/notaire/issues/1022) |
 | PR | https://github.com/matiaspakua/notaire/pull/1187 |
 | Branch | `cursor/chore-1022-namedquery-english-69d3` |
-| Head SHA | `fdab215a52c3907aa5a0f0916ed03ba5014653b6` |
+| Head SHA | `0b1ebd7cb6929acbd03a3f558c0d0f308a0101a7` |
 | Base | `main` (`489599e1`) |
 | OpenSpec | `openspec/changes/chore-1022-namedquery-english/` — `validate-sdlc-plan.sh` ✓ |
 | Use Case | none (same exception as epic #973) |
