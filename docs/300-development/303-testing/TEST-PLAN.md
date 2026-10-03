@@ -322,6 +322,12 @@ test.skip("CU01-GW02 (#1146): Create presupuesto with all fields", async () => {
 - ❌ Runtime skip when the table/list is empty (seed the row instead — #1066)
 - ❌ Skipped tests for flaky timing (fix waits; do not raise CI retries above 1)
 - ❌ Skipped tests for "future work" (remove them or implement)
+- ❌ H2 payment ITs that POST against seed `idBudget=1` (arrange a dedicated
+  presupuesto via `BudgetPaymentTestFixtures` — #916; do not rely on
+  `@DirtiesContext(AFTER_EACH)` as the primary isolation strategy)
+- ❌ Controller unit mega-tests that mix happy-path stubs with
+  `RuntimeException("x")` error stubs in the same method (`SimpleControllersTest`
+  pattern — #916)
 
 ---
 

@@ -61,6 +61,15 @@
 | Skips intencionales | Todo `test.skip` por gap de producto cita un issue abierto (p. ej. #1146). |
 | Retries CI | Como máximo **1** retry en CI; triaje vía `trace: on-first-retry` + artefactos. |
 
+## Confiabilidad suite backend (H2 / unit) — #916
+
+| Regla | Detalle |
+|---|---|
+| Fixtures de pago | ITs que crean pagos H2 arreglan su propio presupuesto; no hardcodear seed `idBudget=1`. |
+| Sin debilitar #848 | El guard de sobrepago CU15 permanece; se estabiliza vía fixtures, no deshabilitando tests. |
+| Mega-tests unitarios | `SimpleControllersTest` separa happy path de stubs `RuntimeException("x")`. |
+| DirtiesContext | Preferir fixtures aisladas frente a `@DirtiesContext(AFTER_EACH)` blanket. |
+
 ## Criterios de Aceptación
 
 - [x] Cobertura de código superior al 80% verificada por JaCoCo.
@@ -68,6 +77,7 @@
 - [x] Interfaz gráfica validada con navegación secuencial por teclado y combos predefinidos.
 - [x] Verificación de identificación permanente de sesión de usuario en pantalla.
 - [x] Suites E2E se auto-abastecen de datos y no ocultan flakiness con sleeps/retries (#1066).
+- [x] Suite backend full (`mvn test -pl backend-api`) estable: ITs de pago con presupuesto propio y `SimpleControllersTest` sin stubs mezclados (#916).
 - [x] Controles icon-only del dashboard exponen nombre accesible traducido (`aria-label`) para tecnologías de asistencia y selectores `getByRole` (WCAG 2.1 SC 4.1.2; issue #1057; E2E TS-0096).
 - [x] ESLint del frontend es un gate **bloqueante** en `frontend-ci.yml` y en `scripts/preflight.sh` (`eslint src --max-warnings=0` / `npm run lint`), con reglas `jsx-a11y` activas vía `eslint-config-next` (issue #1048; #701 cerrado).
 - [x] Workflow semanal de carga k6 operativo (script restaurado, umbrales CU74,

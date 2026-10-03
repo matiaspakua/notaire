@@ -582,6 +582,30 @@ await apiDelete(`/api/v1/presupuestos?numero_startswith=PRE-TEST-`);
 await apiDelete(`/api/v1/gestiones?numero_startswith=GES-TEST-`);
 ```
 
+### Backend H2 payment IT fixture isolation (#916)
+
+H2 Spring Boot integration tests share a cached application context. Payments
+against the seeded `idBudget=1` (`src/test/resources/data.sql`) accumulate across
+classes and eventually trip the CU15/#848 overpayment guard (`409` instead of
+`201`). Prefer arranging a dedicated presupuesto over blanket
+`@DirtiesContext(AFTER_EACH)`.
+
+```java
+// Good: mutate payments against a fixture budget
+Integer budgetId = BudgetPaymentTestFixtures.createIsolatedBudget(
+        mockMvc, new BigDecimal("10000.00"));
+BudgetPaymentTestFixtures.createPayment(mockMvc, budgetId, new BigDecimal("1500.00"), "IT");
+
+// Bad: hardcode seed id for POST /api/v1/pagos
+// {"idBudget": 1, "amount": 1500.00, ...}
+```
+
+Read-only GETs against seed id `1` remain acceptable. Patterns to follow:
+`ManagementArchiveIntegrationTest`, `BudgetResumenControllerTest`,
+`BudgetPaymentTestFixtures`. Controller unit mega-tests that stub
+`RuntimeException("x")` must keep happy-path and error-path methods separate
+(`SimpleControllersTest`).
+
 ---
 
 ## 8. Debugging Failed Tests
