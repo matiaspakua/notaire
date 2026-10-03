@@ -10,7 +10,7 @@
 | **Descripción** | Define las prácticas de prueba, estándares visuales de formularios secuenciales y control de calidad requeridos para validar cada caso de uso y requerimiento del sistema. |
 | **Tipo** | Soporte / Calidad |
 | **Referencias Cruzadas** | RF #74 (Aspecto visual), RF #75 (Diseño de ventanas), RF #76 (Diseño de campos y combos), RF #77 (Especificación de campos a completar), RF #78 (Uso de colores en la GUI), RF #79 (Seguimiento del trabajo sobre ventanas), RF #80 (Identificación de sesión), RF #86 (Java VM), RF #87 (Sistema operativo), RF #90 (Metodología de desarrollo), RF #91 (Modelo de desarrollo), RF #92 (Lenguaje de programación) |
-| **GitHub ID** | #276, #295, #296, #594, #1047 |
+| **GitHub ID** | #276, #295, #296, #594, #1047, #1042 |
 
 ## Alcance de Calidad e Interfaz
 
@@ -23,6 +23,10 @@
   `performance-test/k6/load-test.js`, validación de assets en
   `scripts/test_performance_test_assets.py`, y publicación del artefacto
   `k6-load-test-results` / `summary.json` (issue #1047; no es gate por PR).
+- Publicación CD a GHCR anclada al SHA que CI probó en `main`
+  (`workflow_run.head_sha`), con `latest` movido solo después del push del
+  tag SHA; se omite publicar si CI no concluyó `success` (issue #1042;
+  `scripts/test_cd_pin_tested_sha.py`).
 
 ## Ciclo de Verificación de Calidad
 
@@ -53,3 +57,6 @@
 - [x] ESLint del frontend es un gate **bloqueante** en `frontend-ci.yml` y en `scripts/preflight.sh` (`eslint src --max-warnings=0` / `npm run lint`), con reglas `jsx-a11y` activas vía `eslint-config-next` (issue #1048; #701 cerrado).
 - [x] Workflow semanal de carga k6 operativo (script restaurado, umbrales CU74,
   artefacto `summary.json`; issue #1047; schedule + `workflow_dispatch` únicamente).
+- [x] CD en `workflow_run` construye y etiqueta la imagen con el SHA probado por
+  CI (`head_sha`), mueve `latest` solo tras ese push, y no publica si CI no fue
+  `success` (issue #1042).
