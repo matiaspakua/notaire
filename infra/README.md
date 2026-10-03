@@ -147,6 +147,21 @@ The infra connects to `notaire_notary-network` as an **external** network.
 Start the application first so the network exists. `infra/scripts/start-infra.sh`
 verifies this and fails fast with guidance if it is missing.
 
+## 📌 Pinned container images (issue #1045)
+
+All `image:` tags in `infra/docker-compose.yml` (and the app compose files)
+are pinned to a **minor version or digest** — no `:latest`, no bare
+`sonarqube:community`, no major-only `postgres:15` / `postgres:16`.
+
+| Where pins live | Updated by |
+|-----------------|------------|
+| `infra/docker-compose.yml`, `docker-compose.yml`, `docker-compose.prod.yml` | Manual PR when bumping infra/app service images |
+| `backend-api/Dockerfile`, `frontend/Dockerfile` | Dependabot **docker** ecosystems (`/backend-api`, `/frontend`) |
+| CI postgres service images | Keep in sync with compose postgres minor (Playwright / performance workflows) |
+
+Hygiene guard: `python3 scripts/test_image_pins_and_dependabot.py`. Policy:
+[ADR-017](../docs/200-architecture/202-ADR/ADR-017-container-base-images.md).
+
 ## 📖 Additional Documentation
 - [Monitoring Guide](../docs/200-architecture/207-monitoring/README.md)
 - [Deployment Guide](../docs/200-architecture/209-deployment/README.md)

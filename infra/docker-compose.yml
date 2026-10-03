@@ -1,7 +1,7 @@
 services:
   # --- CENTRALIZED DASHBOARD ---
   dashboard:
-    image: b4bz/homer:latest
+    image: b4bz/homer:v26.08.3
     container_name: devsecops-dashboard
     restart: unless-stopped
     ports:
@@ -14,7 +14,7 @@ services:
 
   # --- SECURITY & QUALITY ---
   sonarqube:
-    image: sonarqube:community
+    image: sonarqube:26.9.0.129388-community
     container_name: devsecops-sonarqube
     restart: unless-stopped
     ports:
@@ -47,7 +47,7 @@ services:
       - devsecops-network
 
   sonar-db:
-    image: postgres:15
+    image: postgres:15.19
     container_name: devsecops-sonar-db
     restart: unless-stopped
     environment:
@@ -64,7 +64,7 @@ services:
 
   # --- OBSERVABILITY ---
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.15.0
     container_name: devsecops-prometheus
     restart: unless-stopped
     volumes:
@@ -89,7 +89,7 @@ services:
 
   # --- PostgreSQL Exporter for Database Metrics ---
   postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:latest
+    image: prometheuscommunity/postgres-exporter:v0.20.1
     container_name: devsecops-postgres-exporter
     restart: unless-stopped
     ports:
@@ -110,7 +110,7 @@ services:
       - notaire-app-network
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:12.3.11
     container_name: devsecops-grafana
     restart: unless-stopped
     ports:
@@ -140,7 +140,7 @@ services:
       - notaire-app-network
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.8
     container_name: devsecops-loki
     restart: unless-stopped
     ports:
@@ -157,7 +157,7 @@ services:
       - notaire-app-network
 
   promtail:
-    image: grafana/promtail:latest
+    image: grafana/promtail:3.6.11
     container_name: devsecops-promtail
     restart: unless-stopped
     volumes:
