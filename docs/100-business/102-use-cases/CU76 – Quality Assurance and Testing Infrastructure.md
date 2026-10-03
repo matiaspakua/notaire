@@ -45,3 +45,4 @@
 - [x] Interfaz gráfica validada con navegación secuencial por teclado y combos predefinidos.
 - [x] Verificación de identificación permanente de sesión de usuario en pantalla.
 - [x] Suites E2E se auto-abastecen de datos y no ocultan flakiness con sleeps/retries (#1066).
+- [x] Controles icon-only del dashboard exponen nombre accesible traducido (`aria-label`) para tecnologías de asistencia y selectores `getByRole` (WCAG 2.1 SC 4.1.2; issue #1057; E2E TS-0096).

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -29,6 +30,7 @@ const MODULOS_DISPONIBLES = [
 const EMPTY: Partial<Rol> = { name: "", description: "", active: true, modulos: [] };
 
 export default function RolesPage() {
+  const tc = useTranslations("common");
   const { data: roles = [], isLoading } = useRoles();
   const createMutation = useCreateRol();
   const updateMutation = useUpdateRol();
@@ -109,8 +111,8 @@ export default function RolesPage() {
       key: "actions", header: "", className: "w-24",
       render: (r) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(r)} data-testid={`btn-edit-rol-${r.idRole}`}><Pencil className="h-4 w-4" /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(r.idRole!)}><Trash2 className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(r)} data-testid={`btn-edit-rol-${r.idRole}`} aria-label={tc("edit")}><Pencil className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(r.idRole!)} aria-label={tc("delete")}><Trash2 className="h-4 w-4" /></Button>
         </div>
       ),
     },

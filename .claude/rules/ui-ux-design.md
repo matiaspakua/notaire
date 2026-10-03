@@ -536,6 +536,7 @@ Desktop: 1025px+
 - [ ] Focus indicators visible on all interactive elements
 - [ ] Keyboard navigation works (Tab, Enter, Escape)
 - [ ] Form labels properly associated
+- [ ] Icon-only buttons expose a translated `aria-label` (not icon glyph / img-alt alone)
 - [ ] Alt text on all images
 - [ ] Semantic HTML (`<button>`, `<label>`, `<input>`)
 - [ ] Error messages associated with fields

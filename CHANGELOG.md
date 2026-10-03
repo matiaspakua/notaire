@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Icon-only dashboard buttons expose accessible names** (issue #1057, CU76 /
+  WCAG 2.1 SC 4.1.2): seventeen edit/delete/resumen icon Buttons on personas,
+  escrituras, pagos, presupuestos, and administración (usuarios, roles,
+  conceptos, documentos, trámites) now set translated `aria-label`s so screen
+  readers and Playwright `getByRole('button', { name })` can identify them.
+  Guarded by a static unit inventory test and E2E `TS-0096`; CU21 edit flows in
+  `TS-0016` are unskipped.
+
 - **CRUD screens show backend validation messages** (issue #1054, CU15/CU20):
   mutation failures on ~15 dashboard pages use a shared `presentMutationError`
   helper so users see the API `message`/`error` text (400/404/409/422/500) in

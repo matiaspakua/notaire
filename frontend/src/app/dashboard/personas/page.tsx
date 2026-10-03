@@ -171,7 +171,7 @@ export default function PersonasPage() {
       header: "",
       render: (p) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(p)}>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(p)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -179,6 +179,7 @@ export default function PersonasPage() {
             variant="ghost"
             className="text-destructive hover:text-destructive"
             onClick={() => setDeleteId(p.personId!)}
+            aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>

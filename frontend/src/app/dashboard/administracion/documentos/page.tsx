@@ -109,11 +109,11 @@ export default function DocumentosPage() {
       key: "actions", header: "", className: "w-24",
       render: (tipo) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(tipo)}>
-            <NotaireIcon src="/icons/actions/generar.png" alt={tc("edit")} size={16} />
+          <Button size="sm" variant="ghost" onClick={() => openEdit(tipo)} aria-label={tc("edit")}>
+            <NotaireIcon src="/icons/actions/generar.png" alt="" size={16} />
           </Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(tipo)} data-testid="btn-delete-documento">
-            <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(tipo)} data-testid="btn-delete-documento" aria-label={tc("delete")}>
+            <NotaireIcon src="/icons/actions/borrar.png" alt="" size={16} />
           </Button>
         </div>
       ),

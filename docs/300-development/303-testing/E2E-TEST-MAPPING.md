@@ -25,6 +25,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | AUTH-001 / CU84 | TS-0001, TS-0002, TS-0093 | Authentication / session expiry |
 | CU78 (frontend admin guard) | TS-0094 | Admin route access denial for non-admins |
 | CU15 / CU20 (#1054) | TS-0095 | API business errors on mutation toasts / field errors |
+| CU76 / WCAG (#1057) | TS-0096 | Icon-only button accessible names (`getByRole` by name) |
 | CU01–CU09 | TS-0010 to TS-0014 | Presupuesto, Gestiones, Documentación, Escrituras |
 | CU10–CU23 | TS-0015 to TS-0023 | Personas, Usuarios, Suplencias, Reportes |
 | CU24–CU68 | TS-0020 to TS-0035 | Administration, Workflows, Features |
@@ -45,6 +46,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | **TS-0093** | `TS-0093-session-expiry.spec.ts` | CU84 (#1053, #690) | Corrupt JWT → real API 401 | Login + dashboard navigate | expired redirect + re-login + viewports | ✅ Passing |
 | **TS-0094** | `TS-0094-admin-route-guard.spec.ts` | CU78 (#1052) | Create EMPLEADO via API | Login as non-admin + admin URL | forbidden redirect + message + viewports | ✅ Passing |
 | **TS-0095** | `TS-0095-api-error-toasts.spec.ts` | CU15, CU20 (#1054, #615 slice) | Route stub 4xx ErrorResponse | Login + CRUD mutation | server toast + FormField/aria-invalid + viewports | ✅ Added |
+| **TS-0096** | `TS-0096-icon-button-accessible-names.spec.ts` | CU76 / WCAG (#1057) | Admin login + list pages | Usuarios, personas, presupuestos, conceptos | `getByRole('button', { name })` + 320px | ✅ Added |
 
 **Fixture Pattern**: Direct page navigation + form fill (no GherkinSteps needed, simple auth flow)
 **Dependencies**: None (foundation for all other tests)
@@ -90,7 +92,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0016** | `TS-0016-usuarios-escribanos-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | intentional gaps cite #1146 | **HIGH** |
+| **TS-0016** | `TS-0016-usuarios-escribanos-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | CU21 unskipped (#1057); CU23/CU48 cite #1146 | **HIGH** |
 | **TS-0017** | `TS-0017-suplencias-workflow.spec.ts` | CU22, CU59 | GherkinSteps | intentional gaps cite #1146 | **MEDIUM** |
 | **TS-0018** | `TS-0018-reingreso-documentacion-workflow.spec.ts` | CU43 | Direct nav + assertions | 0 | **MEDIUM** |
 | **TS-0019** | `TS-0019-inmuebles-valuacion-workflow.spec.ts` | CU69 | GherkinSteps | 0 | **MEDIUM** |
@@ -214,7 +216,8 @@ All 11 skipped tests have documented blockers:
 | TS-0013 | CU06-GW01 | No "firmar" button (icon-only actions) | Design | Button restored with accessible name |
 | TS-0014 | CU15-GW03 / CU47-GW01 | Detail / date-filter UI gaps | #1146 | Product UI or re-assert against real controls |
 | TS-0015 | CU18-GW01 | Flow changed ("Es cliente" checkbox, no separate button) | Design | Flow documented in new test |
-| TS-0016 | CU21 / CU23 / CU48 | Icon-only / missing escribanos flows | #1146 | Accessible names + product flows |
+| TS-0016 | CU23 / CU48 | Missing actividades / escribanos flows | #1146 | Product flows |
+| TS-0016 | CU21 | Was icon-only unnamed edit | Fixed in #1057 | `aria-label` + getByRole name |
 | TS-0017 | CU59-GW01/02 | Filter / detail UI absent | #1146 | Filter UI added |
 | TS-0020 | CU24+ admin/report gaps | Copy / missing actions | #1146 | Align tests to real labels or ship UI |
 | TS-0021 | — | Was conditional empty-table skip | Fixed in #1066 | Self-arranges via `createWorkflowDefinition` |

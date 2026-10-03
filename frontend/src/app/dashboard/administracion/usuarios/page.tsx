@@ -120,8 +120,8 @@ export default function UsuariosPage() {
       key: "actions", header: "", className: "w-24",
       render: (u) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(u)}><Pencil className="h-4 w-4" /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(u.idUser!)}><Trash2 className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(u)} aria-label={tc("edit")}><Pencil className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(u.idUser!)} aria-label={tc("delete")}><Trash2 className="h-4 w-4" /></Button>
         </div>
       ),
     },

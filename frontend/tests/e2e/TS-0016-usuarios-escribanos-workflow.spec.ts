@@ -56,13 +56,39 @@ test.describe("CU21 - Modificar Usuario", () => {
     await steps.givenUserIsOnPage("/dashboard/administracion/usuarios");
   });
 
-  test.skip("CU21-GW01 (#1146): Given usuario exists, When click editar, Then modal opens with data", async () => {
-    // Skipped (#1146): the edit button has no accessible name (icon only, no aria-label).
-    // Cannot be found with getByRole("button", { name: /editar/i }).
+  test("CU21-GW01: Given usuario exists, When click editar, Then modal opens with data", async () => {
+    // Given — seeded usuarios table has at least one row
+    await expect(steps.page.getByRole("table")).toBeVisible({ timeout: 15000 });
+
+    // When — icon-only edit is named via aria-label (#1057)
+    await steps.page
+      .getByRole("table")
+      .getByRole("row")
+      .nth(1)
+      .getByRole("button", { name: /editar/i })
+      .click();
+
+    // Then
+    await steps.thenModalIsVisible("Editar usuario");
+    await expect(steps.page.getByTestId("input-nombre-usuario")).not.toHaveValue("");
   });
 
-  test.skip("CU21-GW02 (#1146): Given edit modal open, When modify and submit, Then shows success", async () => {
-    // Skipped (#1146): same reason as CU21-GW01.
+  test("CU21-GW02: Given edit modal open, When modify and submit, Then shows success", async () => {
+    await expect(steps.page.getByRole("table")).toBeVisible({ timeout: 15000 });
+    await steps.page
+      .getByRole("table")
+      .getByRole("row")
+      .nth(1)
+      .getByRole("button", { name: /editar/i })
+      .click();
+    await steps.thenModalIsVisible("Editar usuario");
+
+    const input = steps.page.getByTestId("input-nombre-usuario");
+    const current = await input.inputValue();
+    await input.fill(`${current}_e2e`);
+    await steps.whenUserSubmitsForm();
+
+    await steps.thenShowsSuccessMessage("actualizado");
   });
 });
 
