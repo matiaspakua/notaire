@@ -70,6 +70,14 @@ describe("E2E reliability (#1066 / CU76)", () => {
     expect(assignment).not.toMatch(/test\.skip\s*\(\s*\)/);
   });
 
+  it("TS-0021 validate assert uses validation-errors only (no strict-unsafe toast.or union)", () => {
+    const editor = readE2E("TS-0021-workflow-editor-admin.spec.ts");
+    expect(editor).toMatch(/getByTestId\(\s*["']validation-errors["']\s*\)/);
+    // Ban locator("[data-sonner-toast]").or(...validation-errors...) style unions
+    expect(editor).not.toMatch(/locator\(\s*["']\[data-sonner-toast\]["']\s*\)\s*\.or\(/);
+    expect(editor).not.toMatch(/\.or\(\s*page\.getByTestId\(\s*["']validation-errors["']/);
+  });
+
   it("intentional feature-gap skips in TS-0014/16/17/20 cite an open #issue", () => {
     const files = [
       "TS-0014-pagos-workflow.spec.ts",

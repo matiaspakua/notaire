@@ -70,8 +70,8 @@ test.describe("CU70 - Workflow editor (graph)", () => {
     await page.getByTestId(`btn-editor-${workflowId}`).click();
     await expect(page.getByTestId("workflow-editor")).toBeVisible({ timeout: 5000 });
     await page.getByTestId("btn-validate").click();
-    await expect(page.locator("[data-sonner-toast]").or(page.getByTestId("validation-errors")))
-      .toBeVisible({ timeout: 5000 });
+    // Assert the inline panel only — toast can appear too; a toast|panel union trips strict mode (#1147).
+    await expect(page.getByTestId("validation-errors")).toBeVisible({ timeout: 5000 });
   });
 
   test("toggle edit mode shows add node button", async ({ page }) => {
