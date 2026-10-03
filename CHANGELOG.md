@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0](https://github.com/matiaspakua/notaire/compare/notaire-v0.1.0...notaire-v0.2.0) (2026-10-03)
+
+
+### Features
+
+* **ai-sdlc:** adapter surfaces falls back to a named test surface ([c16a20c](https://github.com/matiaspakua/notaire/commit/c16a20cec304dd7a30b9d0fb9f3a262c3052dcd1)), closes [#1093](https://github.com/matiaspakua/notaire/issues/1093)
+* **ai-sdlc:** add gates.docs_lint_fix adapter key ([47ab614](https://github.com/matiaspakua/notaire/commit/47ab614a6e5b6b844fcd193ea6b1280548566661)), closes [#1091](https://github.com/matiaspakua/notaire/issues/1091)
+* **ai-sdlc:** add ledger restore-ticks and rows commands ([128962c](https://github.com/matiaspakua/notaire/commit/128962c48a4afee30d8c0c8861ad95ea7116afcb)), closes [#1091](https://github.com/matiaspakua/notaire/issues/1091)
+* **ai-sdlc:** harness auto-fixes markdown lint; spec gate lints the change ([2c61c69](https://github.com/matiaspakua/notaire/commit/2c61c69c3938a687c3ad764947995bf75a52a9b1)), closes [#1091](https://github.com/matiaspakua/notaire/issues/1091)
+* **ai-sdlc:** triage prompt says search commands are not proofs ([10f9800](https://github.com/matiaspakua/notaire/commit/10f980000906a97d456e9952694c0604d5981572)), closes [#1095](https://github.com/matiaspakua/notaire/issues/1095)
+* **ai-sdlc:** triage TEST_SURFACE proves rules about docs files ([aac2031](https://github.com/matiaspakua/notaire/commit/aac2031a5f67a2f1805cab0a535abef7fa99f1da)), closes [#1093](https://github.com/matiaspakua/notaire/issues/1093)
+* **ai-sdlc:** triage_check restores seeded keys and finds non-proofs ([4477eeb](https://github.com/matiaspakua/notaire/commit/4477eeb5bb3bc3ac46f102f8ebc76f136b37187f)), closes [#1095](https://github.com/matiaspakua/notaire/issues/1095)
+* **build:** raise JaCoCo ratchet floor to 80% line / 65% branch ([63f4581](https://github.com/matiaspakua/notaire/commit/63f458105de1031e16528cd7cc82b7aaabc99281)), closes [#1063](https://github.com/matiaspakua/notaire/issues/1063)
+* **local-ai:** add static review gates to the red gate ([477b39e](https://github.com/matiaspakua/notaire/commit/477b39ef30195be7d5e6e36671d85d86a2e32a3c)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+* **local-ai:** allow a Codex profile per phase ([a47a793](https://github.com/matiaspakua/notaire/commit/a47a793ca7fde9498fd64f2b37c269ce1bde6c5b)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+* **local-ai:** record every gate result in metrics.jsonl ([bc5ad02](https://github.com/matiaspakua/notaire/commit/bc5ad02e0adb116b5c9837f07c9c0ea90ca2cd02)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+* **local-ai:** run review-note CHECK lines with foreman.sh &lt;n&gt; check ([0b7891e](https://github.com/matiaspakua/notaire/commit/0b7891e8ac9addecc83ae3f82a8b58e745fe9afa)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+* **scripts:** add PR-range checks for commits, TDD, exceptions, rules ([125c8aa](https://github.com/matiaspakua/notaire/commit/125c8aa41ab8f845d38fc64929529918e46632c3)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+
+
+### Bug Fixes
+
+* **ai-sdlc:** a reverted scope violation no longer fails the attempt ([4dd593d](https://github.com/matiaspakua/notaire/commit/4dd593ddf888717576693b79f8a8e89f8a005853)), closes [#1093](https://github.com/matiaspakua/notaire/issues/1093)
+* **ai-sdlc:** clear stale worker block; RECHECK never runs the worker ([47047ff](https://github.com/matiaspakua/notaire/commit/47047ff4e1cfa189b1026caac110177e7536d107)), closes [#1091](https://github.com/matiaspakua/notaire/issues/1091)
+* **ai-sdlc:** harness checks Closes before the pr worker runs ([204cd8f](https://github.com/matiaspakua/notaire/commit/204cd8fe2f4d41f36ee397b2f48f4b3605f66ce0)), closes [#1091](https://github.com/matiaspakua/notaire/issues/1091)
+* **ai-sdlc:** repair tasks.md to plan plus ticks instead of rejecting it ([4c7ef81](https://github.com/matiaspakua/notaire/commit/4c7ef8165c094362ebc7275c01689e2ed03127e5)), closes [#1091](https://github.com/matiaspakua/notaire/issues/1091)
+* **ai-sdlc:** spec gate requires the Commits and Pull Request ledger rows ([2994316](https://github.com/matiaspakua/notaire/commit/2994316eb5f3ad6d216e7b3cb021e2d4f942428e)), closes [#1091](https://github.com/matiaspakua/notaire/issues/1091)
+* **ai-sdlc:** triage gate repairs seeded values and rejects non-proofs ([5c5f4d2](https://github.com/matiaspakua/notaire/commit/5c5f4d2bf65b1ce17a989a446307a7dee25d2c57)), closes [#1095](https://github.com/matiaspakua/notaire/issues/1095)
+* **api:** bind request DTOs instead of JPA entities ([c5edab0](https://github.com/matiaspakua/notaire/commit/c5edab0f6187f80e4db675546f10c679a8b51ce6)), closes [#1068](https://github.com/matiaspakua/notaire/issues/1068)
+* **backend:** apply Gate 4 review for [#1062](https://github.com/matiaspakua/notaire/issues/1062) ([f2bfef4](https://github.com/matiaspakua/notaire/commit/f2bfef438b29ed9f1c94c26edcaa0aa1a71d5a4f))
+* **backend:** correct stale tramites_personas join table name ([ab22527](https://github.com/matiaspakua/notaire/commit/ab22527d57ea9aafa940e8825430a3928d232bed))
+* **backend:** correct two more stale Notebook column mappings ([f471cbe](https://github.com/matiaspakua/notaire/commit/f471cbe2926c1dee3750c3aee7de8d674a8f4eb2))
+* **backend:** resolve Procedure nested FK hydration on create/update ([fe646a5](https://github.com/matiaspakua/notaire/commit/fe646a50c30b58c37791eaa91ae656f3b40318bb))
+* **budget-templates:** persist DELETE instead of silently undoing it ([b7ace0a](https://github.com/matiaspakua/notaire/commit/b7ace0aa33f31eb6272252317e776846a28d266b)), closes [#1036](https://github.com/matiaspakua/notaire/issues/1036)
+* **local-ai:** anchor forbidden build dirs to root or module level ([773a332](https://github.com/matiaspakua/notaire/commit/773a332717899a2c67e8bb5cf6fa0c9b684835c1)), closes [#1074](https://github.com/matiaspakua/notaire/issues/1074)
+* **local-ai:** forbid builds in the spec phase ([e871103](https://github.com/matiaspakua/notaire/commit/e871103866e9dd19d0a2139c754e16a6d7ce84c0)), closes [#1074](https://github.com/matiaspakua/notaire/issues/1074)
+* **local-ai:** keep worker triage on RECHECK and normalize SLUG separators ([5da876f](https://github.com/matiaspakua/notaire/commit/5da876fc73a55df865519332c7f1192f35206f6f)), closes [#1074](https://github.com/matiaspakua/notaire/issues/1074)
+* **local-ai:** ref guard ignores branches checked out in other worktrees ([1720c71](https://github.com/matiaspakua/notaire/commit/1720c7172602746cb86852565189ba32e1df67dd)), closes [#1074](https://github.com/matiaspakua/notaire/issues/1074)
+* **local-ai:** refuse to run under bash 3 ([a11a619](https://github.com/matiaspakua/notaire/commit/a11a619c522e7a1a6b9fa5c8cb07e1345aabff45)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+* **local-ai:** spec commit tolerates no-op rounds and amends the prior spec commit ([058324b](https://github.com/matiaspakua/notaire/commit/058324b149384a593fc502fe4de965f81aad791c)), closes [#1074](https://github.com/matiaspakua/notaire/issues/1074)
+* **local-ai:** spec gate requires the notaire-sdlc schema line ([0349d0d](https://github.com/matiaspakua/notaire/commit/0349d0dc65b739e339f4b59de0600ad260980a64)), closes [#1074](https://github.com/matiaspakua/notaire/issues/1074)
+* **local-ai:** spec gate requires the template's task groups and IDs ([d54e693](https://github.com/matiaspakua/notaire/commit/d54e6933c243287994229d27406a306eff58525e)), closes [#1074](https://github.com/matiaspakua/notaire/issues/1074)
+* **local-ai:** strip surrounding quotes from harness env values ([d5bce21](https://github.com/matiaspakua/notaire/commit/d5bce21e640d314bf4aef40b41e6acc7d4db5cdd)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+* **procedure-folders:** number folders from a sequence, not max+1 ([cddba90](https://github.com/matiaspakua/notaire/commit/cddba907bfc105652ceb3cdb63cd8a6fcc9966dd)), closes [#1038](https://github.com/matiaspakua/notaire/issues/1038)
+* restore main CI after [#1124](https://github.com/matiaspakua/notaire/issues/1124) DTO request fallout ([#1127](https://github.com/matiaspakua/notaire/issues/1127)) ([e8f665e](https://github.com/matiaspakua/notaire/commit/e8f665edf530b10f15126eb63dbe40c3d7311e3d))
+* restore nested person on BudgetResponse (main PG IT) ([#1132](https://github.com/matiaspakua/notaire/issues/1132)) ([b4094eb](https://github.com/matiaspakua/notaire/commit/b4094eb43ea7206314a0282dbd94d776ca8ce37c))
+* **scripts:** fail check-agent-rules when no rule files are found ([ee7f268](https://github.com/matiaspakua/notaire/commit/ee7f268ef43e167d0fb8ad1b8567bdc270ce95af)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+* **scripts:** fail OpenSpec changes that declare no schema ([d068e02](https://github.com/matiaspakua/notaire/commit/d068e0235b720701eecfaa3c5793960db19b2f2f)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+* **scripts:** isolate process self-tests from an outer git hook ([2bd8786](https://github.com/matiaspakua/notaire/commit/2bd8786480c57918cc78f7ac8047b0db0ce370ca)), closes [#1083](https://github.com/matiaspakua/notaire/issues/1083)
+
 ## [Unreleased]
 
 ### Fixed
