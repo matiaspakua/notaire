@@ -123,7 +123,7 @@ class DocumentationTest(unittest.TestCase):
         missing = [k for k in OVERRIDE_KEYS if k not in guide]
         self.assertEqual([], missing, "deployment guide must list every override key")
         self.assertIn("COMPOSE_PROJECT_NAME", guide)
-        self.assertRegex(guide, r"(?i)observability.*default (?:container )?names")
+        self.assertRegex(guide, r"(?is)observability.{0,300}default container names")
 
 
 if __name__ == "__main__":
