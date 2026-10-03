@@ -10,7 +10,7 @@
 | **Descripción** | Define las prácticas de prueba, estándares visuales de formularios secuenciales y control de calidad requeridos para validar cada caso de uso y requerimiento del sistema. |
 | **Tipo** | Soporte / Calidad |
 | **Referencias Cruzadas** | RF #74 (Aspecto visual), RF #75 (Diseño de ventanas), RF #76 (Diseño de campos y combos), RF #77 (Especificación de campos a completar), RF #78 (Uso de colores en la GUI), RF #79 (Seguimiento del trabajo sobre ventanas), RF #80 (Identificación de sesión), RF #86 (Java VM), RF #87 (Sistema operativo), RF #90 (Metodología de desarrollo), RF #91 (Modelo de desarrollo), RF #92 (Lenguaje de programación) |
-| **GitHub ID** | #276, #295, #296, #594, #1047, #1042, #1041 |
+| **GitHub ID** | #276, #295, #296, #594, #1047, #1042, #1041, #1043 |
 
 ## Alcance de Calidad e Interfaz
 
@@ -27,6 +27,13 @@
   (`workflow_run.head_sha`), con `latest` movido solo después del push del
   tag SHA; se omite publicar si CI no concluyó `success` (issue #1042;
   `scripts/test_cd_pin_tested_sha.py`).
+- Publicación CD de **backend y frontend** a GHCR con SBOM CycloneDX, firma
+  cosign keyless y attest del SBOM; proceso semver automatizado
+  (release-please) que corta tags `v*`, rueda `CHANGELOG.md` `[Unreleased]`
+  y deriva versiones Maven/npm del tag (issue #1043;
+  `scripts/test_frontend_ghcr_publish.py`,
+  `scripts/test_semver_release_process.py`; runbook
+  `docs/300-development/RELEASE.md`).
 - Informes CI/CD/E2E publicados como artefactos de Actions,
   `$GITHUB_STEP_SUMMARY` y/o GitHub Pages — **nunca** como commits de bot
   en `docs/wiki/cicd-reports/` (issue #1041;
@@ -67,3 +74,6 @@
 - [x] Workflows CI/CD/E2E/PR no commitean informes generados al repositorio;
   `docs/wiki/cicd-reports/` está ignorado y sin tracking; jobs de publicación
   de informes no piden `contents: write` (issue #1041).
+- [x] Imagen frontend publicada a GHCR con SBOM + cosign (parity con backend) y
+  proceso semver documentado/automatizado con versiones Maven/npm derivadas
+  del tag (issue #1043).

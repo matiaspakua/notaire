@@ -1,0 +1,26 @@
+name: Release Please
+
+# Opens/updates a release PR from Conventional Commits, then creates the v*
+# GitHub Release + tag when that PR merges. Does not bypass protect-main:
+# the release PR must pass required checks like any other PR (#1040).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    name: release-please
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: release-please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

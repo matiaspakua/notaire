@@ -1,0 +1,34 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "package-name": "notaire",
+      "changelog-path": "CHANGELOG.md",
+      "include-v-in-tag": true,
+      "bump-minor-pre-major": true,
+      "extra-files": [
+        {
+          "type": "xml",
+          "path": "pom.xml",
+          "xpath": "/project/version"
+        },
+        {
+          "type": "xml",
+          "path": "backend-api/pom.xml",
+          "xpath": "/project/parent/version"
+        },
+        {
+          "type": "xml",
+          "path": "notaire-shared/pom.xml",
+          "xpath": "/project/parent/version"
+        },
+        {
+          "type": "json",
+          "path": "frontend/package.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    }
+  }
+}

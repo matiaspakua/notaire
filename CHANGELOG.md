@@ -28,6 +28,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Frontend GHCR publish + semver releases** (issue #1043, CU76): CD matrix
+  publishes `ghcr.io/<owner>/notaire/frontend` from `frontend/Dockerfile`
+  with CycloneDX SBOM, cosign sign, and SBOM attest (parity with backend);
+  release-please automates `v*` tags / GitHub Releases, rolls Keep a Changelog
+  sections, and bumps root/module Maven versions plus `frontend/package.json`
+  from the tag. CD `release` job attaches SBOM assets only (no duplicate
+  release notes). Runbook: `docs/300-development/RELEASE.md`. Guarded by
+  `scripts/test_frontend_ghcr_publish.py` and
+  `scripts/test_semver_release_process.py`.
+
 - **Production docker-compose** (issue #1044, CU78/CU75):
   `docker-compose.prod.yml` with postgres + backend + frontend + nginx reverse
   proxy; no pgAdmin; reverse-proxy-only host ports; `${VAR:?}` required secrets;

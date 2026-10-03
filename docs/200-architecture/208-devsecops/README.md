@@ -106,9 +106,24 @@ permissions:
 - Version tags (`v*`)
 - Manual workflow dispatch
 
+### Images (backend + frontend, #1043)
+
+Matrix job `build-and-publish` publishes both:
+
+| Component | Dockerfile | GHCR repository |
+|-----------|------------|-----------------|
+| `backend` | `./backend-api/Dockerfile` (context `.`) | `ghcr.io/<owner>/notaire/backend` |
+| `frontend` | `./frontend/Dockerfile` (context `./frontend`) | `ghcr.io/<owner>/notaire/frontend` |
+
+Each matrix leg generates a CycloneDX SBOM (`sbom-backend` / `sbom-frontend`
+artifacts), cosign keyless-signs the digest, and attests the SBOM
+(`cosign attest --type cyclonedx`). Same supply-chain controls as the former
+backend-only path (#681); frontend publish closes the gap tracked in #1043.
+
 ### Pin to CI-tested SHA (#1042)
 
-On `workflow_run`, `build-and-publish` must publish the exact commit CI tested:
+On `workflow_run`, `build-and-publish` must publish the exact commit CI tested
+(both matrix legs):
 
 1. **Checkout** `ref: ${{ github.event.workflow_run.head_sha || github.sha }}`
    (tag / `workflow_dispatch` fall back to `github.sha`).
@@ -117,27 +132,44 @@ On `workflow_run`, `build-and-publish` must publish the exact commit CI tested:
    `type=sha` alone under `workflow_run`.
 3. **Push immutable SHA-tagged image first**, then **move `latest`** to the same
    digest only after that push succeeds (`docker buildx imagetools create`).
-4. Wiki/report jobs may still check out `main` for docs commits; they must not
-   redefine which git SHA the image was built from.
+4. Report jobs publish artifacts / job summary only; they must not redefine
+   which git SHA the image was built from (#1041).
 
-Guarded by `scripts/test_cd_pin_tested_sha.py`.
+Guarded by `scripts/test_cd_pin_tested_sha.py` and
+`scripts/test_frontend_ghcr_publish.py`.
+
+### Semver releases (release-please, #1043)
+
+- Workflow: `.github/workflows/release-please.yml` + `release-please-config.json`
+- Opens a release PR on Conventional Commits; merge creates `vX.Y.Z` + GitHub
+  Release and bumps Maven (`pom.xml` + module parent versions) and
+  `frontend/package.json` to `X.Y.Z`, rolling `CHANGELOG.md`.
+- CD on `v*` publishes both images; the CD `release` job **attaches SBOM
+  assets** only (release-please owns Release creation — no duplicate softprops
+  notes).
+- Operator runbook: [docs/300-development/RELEASE.md](../../300-development/RELEASE.md).
+- Respects protect-main (#1040): release PRs use required checks; no durable
+  Actions bypass.
+
+Guarded by `scripts/test_semver_release_process.py`.
 
 ### Jobs
 
-#### 1. Build & Publish Docker Image
+#### 1. Build & Publish Docker Image (matrix)
 - Checks out the CI-tested SHA on `workflow_run` (see pin above)
-- Builds Docker image and logs into GHCR (GitHub Container Registry)
+- Builds and pushes **backend** and **frontend** images to GHCR
 - Pushes immutable tags (branch/semver when applicable + publish SHA); then tags
   `latest` to the same digest when appropriate
-- Generates SBOM (Software Bill of Materials) with Trivy
+- Generates CycloneDX SBOM (Trivy), cosign sign, cosign attest per image
 
-#### 2. Create GitHub Release
+#### 2. Attach SBOM assets to GitHub Release
 - Triggered only on version tags (`v*`)
-- Uses softprops/action-gh-release
-- Generates release notes automatically
+- Downloads `sbom-backend` / `sbom-frontend` artifacts
+- Uses softprops/action-gh-release to attach SBOM files to the release already
+  created by release-please (`generate_release_notes: false`)
 
 #### 3. Update Container Registry Description
-- Updates Docker Hub/GHCR description
+- Updates Docker Hub/GHCR description (backend)
 - Requires DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets
 - Conditional execution (skipped if secrets not configured)
 
