@@ -37,7 +37,6 @@ build/
 ### VS Code ###
 .vscode/
 target/
-*.txt
 *.log
 /scripts/doc2md/venv/
 .obsidian/
@@ -46,6 +45,17 @@ target/
 docs/.DS_Store/*
 docs/business/.DS_Store/*
 .claude/worktrees/*
+
+# Local scratch notes (do NOT use a global *.txt ban — that blocks needed
+# assets such as testing/e2e-swing/requirements.txt; issue #1050 / CU76)
+*.local.txt
+notes.local.md
+
+# Serena local project state (AI coding assistant) — never commit
+.serena/
+
+# Local download of the user-manual PDF (Release asset; see ADR-022 / #1050)
+docs/100-business/105-manuals/C_Manual\ de\ Usuario/Manual\ de\ Usuario\ Notaire.doc.pdf
 
 # E2E Swing tests
 integration-test/e2e-swing/.venv/

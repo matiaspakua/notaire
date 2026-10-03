@@ -1,0 +1,3 @@
+# Robot Framework deps for legacy Swing E2E helpers under testing/e2e-swing/.
+# Kept trackable after #1050 removed the global *.txt gitignore ban (CU76).
+robotframework>=6.1,<8

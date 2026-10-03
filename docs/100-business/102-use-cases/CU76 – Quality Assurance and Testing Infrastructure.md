@@ -10,7 +10,7 @@
 | **Descripción** | Define las prácticas de prueba, estándares visuales de formularios secuenciales y control de calidad requeridos para validar cada caso de uso y requerimiento del sistema. |
 | **Tipo** | Soporte / Calidad |
 | **Referencias Cruzadas** | RF #74 (Aspecto visual), RF #75 (Diseño de ventanas), RF #76 (Diseño de campos y combos), RF #77 (Especificación de campos a completar), RF #78 (Uso de colores en la GUI), RF #79 (Seguimiento del trabajo sobre ventanas), RF #80 (Identificación de sesión), RF #86 (Java VM), RF #87 (Sistema operativo), RF #90 (Metodología de desarrollo), RF #91 (Modelo de desarrollo), RF #92 (Lenguaje de programación) |
-| **GitHub ID** | #276, #295, #296, #594, #1047, #1042, #1041, #1043 |
+| **GitHub ID** | #276, #295, #296, #594, #1047, #1042, #1041, #1043, #1050 |
 
 ## Alcance de Calidad e Interfaz
 
@@ -38,6 +38,10 @@
   `$GITHUB_STEP_SUMMARY` y/o GitHub Pages — **nunca** como commits de bot
   en `docs/wiki/cicd-reports/` (issue #1041;
   `scripts/test_no_bot_report_commits.py`).
+- Higiene del repositorio: `.gitignore` sin ban global `*.txt`, `.serena/`
+  local-only, PDF del Manual de Usuario vía Release `docs-manuals` (no blob
+  ordinario), ADR-022 difiere `git filter-repo` (issue #1050;
+  `scripts/test_repo_hygiene.py`).
 
 ## Ciclo de Verificación de Calidad
 
@@ -77,3 +81,6 @@
 - [x] Imagen frontend publicada a GHCR con SBOM + cosign (parity con backend) y
   proceso semver documentado/automatizado con versiones Maven/npm derivadas
   del tag (issue #1043).
+- [x] Higiene de repo: ignore rules permiten `requirements.txt`, `.serena/` no
+  trackeado, CODEOWNERS sin `frontend-swing`, PDF de usuario fuera de blobs
+  ordinarios, ADR-022 con decisión de rewrite (issue #1050).

@@ -193,3 +193,13 @@ docker-compose up -d
 mvn dependency:purge-local-repository
 mvn clean install -U
 ```
+
+## Repo hygiene (ignore rules & manuals)
+
+- Do **not** commit `.serena/` (local AI tooling). It is gitignored (#1050).
+- Needed text assets such as `testing/e2e-swing/requirements.txt` are trackable;
+  there is no global `*.txt` ban (use `*.local.txt` for scratch notes).
+- The historical user-manual **PDF** is a GitHub Release asset (`docs-manuals`),
+  not an ordinary git blob. Fetch with `bash scripts/fetch-user-manual.sh`
+  (see [ADR-022](../../200-architecture/202-ADR/ADR-022-git-history-rewrite-and-large-binaries.md)
+  and [`docs/100-business/105-manuals/`](../../100-business/105-manuals/)).

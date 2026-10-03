@@ -11,7 +11,7 @@ especificación técnica posterior (OpenSpec, arquitectura, implementación).
 | [`102-use-cases/`](102-use-cases/) | Catálogo de casos de uso de negocio (`CUxx`), uno por documento |
 | [`103-actors/`](103-actors/) | Actores del sistema y su jerarquía |
 | [`104-traceability/`](104-traceability/) | Matriz de trazabilidad Requerimientos ↔ Casos de Uso |
-| [`105-manuals/`](105-manuals/) | Manuales de instalación, sistema y usuario |
+| [`105-manuals/`](105-manuals/) | Manuales de instalación, sistema y usuario (PDF de usuario vía Release — ver [README](105-manuals/README.md) / ADR-022) |
 
 ## Flujo de trazabilidad
 
