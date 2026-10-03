@@ -6,11 +6,11 @@
 ## 1. Gate 1 — Prerequisites
 
 - [x] 1.1 GitHub Issue exists, labeled, and linked to a Use Case (`CU-XX` / `RF-XX` / `RNF-XX`)
-- [x] 1.2 Use Case documentation exists and is accurate — CU22 already documents RF-115 effect; will clarify plain paths at Gate 3
+- [x] 1.2 Use Case documentation exists and is accurate — CU22 updated for plain paths
 - [x] 1.3 Acceptance Criteria defined as scenarios in the delta spec
 - [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
-- [x] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural — n/a (reuse existing service)
-- [ ] 1.6 Move the Issue to IN PROGRESS (`gh issue edit <n> --add-label "in-progress"`) — ACL denied for bot
+- [x] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural — n/a
+- [ ] 1.6 Move the Issue to IN PROGRESS — ACL denied for bot
 
 ## 2. Crear branch
 
@@ -20,88 +20,88 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: plain POST redirect; plain PUT redirect; notes; complete-case regression
-- [ ] 3.2 Update `ManagementSubstitutionServiceTest` for English renames (behavior unchanged)
-- [ ] 3.3 Add `shouldRedirectNotaryOnPlainCreateWhenActiveSubstitution` and `shouldRedirectNotaryOnPlainUpdateWhenActiveSubstitution` on `ManagementControllerIntegrationTest`
-- [ ] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=ManagementControllerIntegrationTest`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.1 Enumerate test cases: plain POST redirect; plain PUT redirect; notes; complete-case regression
+- [x] 3.2 Update `ManagementSubstitutionServiceTest` for English renames
+- [x] 3.3 Add plain POST/PUT redirect methods on `ManagementControllerIntegrationTest`
+- [x] 3.4 Observed fail — 2/2 failures (expected substitute id, got requested)
+- [x] 3.5 Every `#### Scenario:` maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Englishize `ManagementSubstitutionService`: `AssignedNotary`, `resolveNotary`, `redirectionNote`, `appliedSubstitution`; English javadoc + note string
-- [ ] 4.2 In `applyManagementRequest`, after `dateStart` is set and notary resolved from repo, call `resolveNotary` and set effective notary
-- [ ] 4.3 Append redirection notes via shared `buildNotes` (or equivalent) on plain path
-- [ ] 4.4 Update OpenAPI `@Operation` on plain POST/PUT to mention CU22/CU59 substitution
-- [ ] 4.5 Update all call sites (`ManagementController`, unit tests) for English names
+- [x] 4.1 Englishize `ManagementSubstitutionService` API + note string
+- [x] 4.2 `applyManagementRequest` calls `resolveNotary` after `dateStart`
+- [x] 4.3 Append redirection notes via shared `buildNotes`
+- [x] 4.4 Update OpenAPI `@Operation` on plain POST/PUT
+- [x] 4.5 Update call sites + frontend toast detector
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected (`ManagementSubstitutionServiceTest`, complete-case redirect IT, `AdditionalControllersTest`)
-- [ ] 5.2 Update them without weakening assertions — rename-only for unit test API
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason — none expected
+- [x] 5.1 Identified affected tests (unit + complete-case IT)
+- [x] 5.2 Updated without weakening assertions
+- [x] 5.3 No obsolete tests removed
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 Bruno/HTTP suite — n/a unless gestiones create pins notary under active substitution
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1 `mvn test -pl backend-api` via verify — 1978 tests, 0 failures
+- [x] 6.2 `mvn jacoco:check -pl backend-api` via verify
+- [x] 6.3 `mvn verify -pl backend-api` BUILD SUCCESS
+- [x] 6.4 Bruno/HTTP — n/a (no Bruno asserts notary under active substitution)
+- [x] 6.5 No `@Disabled` tests added
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 No new E2E specs — no UI surface for plain POST/PUT
-- [ ] 7.2 Optional: `npx playwright test TS-0092-gestion-suplencia-redirect.spec.ts` when stack available; else CI
-- [ ] 7.3 Viewports: n/a — no UI surface
-- [ ] 7.4 Record "n/a — no UI surface" (API residual after #836)
+- [x] 7.1 No new E2E specs — no UI surface for plain POST/PUT
+- [ ] 7.2 TS-0092 regression via CI `playwright-e2e.yml` (toast marker updated)
+- [x] 7.3 Viewports: n/a — no UI surface
+- [x] 7.4 Recorded "n/a — no UI surface"
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update CU22 — plain POST/PUT also redirect under active substitution
-- [ ] 8.2 Update OpenAPI summaries on touched plain create/update endpoints
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) Fixed entry
-- [ ] 8.4 Archive superseded documents into `docs/000-archive/` — n/a
-- [ ] 8.5 Confirm no information was duplicated
-- [ ] 8.6 `bash scripts/preflight.sh --fix` — as capacity allows
+- [x] 8.1 CU22 — plain POST/PUT redirect documented
+- [x] 8.2 OpenAPI summaries on plain create/update
+- [x] 8.3 `CHANGELOG.md` Fixed entry
+- [x] 8.4 Archive — n/a
+- [x] 8.5 No duplication
+- [ ] 8.6 `bash scripts/preflight.sh --fix` — coordinator heavy CI
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #805`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Conventional Commits
+- [x] 9.2 Every commit ends with `Closes #805`
+- [x] 9.3 No secrets / dead code
+- [x] 9.4 SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/feat-805-suplencia-assignment-69d3`
-- [ ] 10.2 Open draft PR `[#805] feat(api): consult substitution on plain management notary assignment` with `Closes #805`
-- [ ] 10.3 Wait for every required workflow — coordinator runs `bash scripts/check-heavy-ci.sh <pr>`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 Pushed `cursor/feat-805-suplencia-assignment-69d3`
+- [x] 10.2 Draft PR #1206
+- [ ] 10.3 Coordinator: `bash scripts/check-heavy-ci.sh 1206`
+- [ ] 10.4 Gate 4 pending CI
+- [x] 10.5 PR recorded in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main` (coordinator merges)
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [ ] 11.1 Coordinator merges after heavy CI green
+- [ ] 11.2 Confirm CD published image
+- [ ] 11.3 Record merge commit
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Run the smoke test on the target environment (health + plain POST redirect)
-- [ ] 12.2 Verify the rollback path is still available as described in design.md
-- [ ] 12.3 Close the GitHub Issue, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive feat-805-suplencia-assignment`
+- [ ] 12.1 Smoke: plain POST redirect under active substitution
+- [ ] 12.2 Rollback path available (code-only revert)
+- [ ] 12.3 Close #805
+- [ ] 12.4 `openspec archive feat-805-suplencia-assignment`
 
 ## Definition of Done
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression, E2E
-- [ ] Coverage at or above the JaCoCo ratchet floor
-- [ ] Playwright E2E green for UI changes (n/a — no UI surface; TS-0092 regression)
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
+- [x] Full suite green: unit, integration, regression (`mvn verify`)
+- [x] Coverage at or above the JaCoCo ratchet floor
+- [x] Playwright E2E: n/a new UI; TS-0092 regression via CI
+- [x] Permanent documentation updated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
