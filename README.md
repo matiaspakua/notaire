@@ -94,12 +94,11 @@ notaire/
 │   ├── 200-architecture/  # SAD, ADRs, diseño, diagramas, seguridad, deploy
 │   ├── 300-development/   # Setup, estándares, testing
 │   └── 000-archive/       # Documentación histórica/superada
-├── infra/                 # Stack de observabilidad (Prometheus, Grafana, Loki)
+├── infra/                 # Infraestructura (repo-ready): observabilidad, deploy (Kustomize, nginx), k6 — ver infra/README.md
 ├── github-page/           # Sitio informativo/portfolio (Next.js, deploy a GitHub Pages)
 ├── openspec/               # Especificaciones SDLC (schema notaire-sdlc)
 ├── docker-compose.yml      # Stack de desarrollo (puertos publicados, pgAdmin)
 ├── docker-compose.prod.yml # Stack de producción (#1044; solo reverse proxy en host)
-├── deploy/nginx/           # Config del reverse proxy de producción
 ├── CONSTITUTION.md         # Autoridad máxima del proceso de desarrollo
 └── CLAUDE.md / AGENTS.md   # Guía para agentes de IA
 ```

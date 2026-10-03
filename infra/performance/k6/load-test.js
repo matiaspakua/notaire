@@ -5,7 +5,7 @@ import { check, sleep } from 'k6';
 // Run manually with:
 //   k6 run -e BASE_URL=http://localhost:8080 \
 //           -e ADMIN_USER=admin -e ADMIN_PASSWORD=admin \
-//           performance-test/k6/load-test.js
+//           infra/performance/k6/load-test.js
 // Wired into .github/workflows/performance-test.yml as a scheduled (not per-PR) CI job.
 // Login uses the English DTO fields (name/password). Thresholds follow CU74 SLOs.
 

@@ -43,7 +43,7 @@ bash testing/scripts/test.sh                    # HTTP integration tests (requir
 
 ### Environment Variables
 
-All credentials in `.env` (git-ignored). Copy from `.env.example`. Both `docker-compose.yml` and `infra/docker-compose.yml` read from it.
+All credentials in `.env` (git-ignored). Copy from `.env.example`. Both `docker-compose.yml` and `infra/observability/docker-compose.yml` read from it.
 
 Required keys:
 - `ACTUATOR_USER` / `ACTUATOR_PASSWORD` — Prometheus scrape auth
@@ -56,7 +56,7 @@ Required keys:
 
 ```
 docker-compose.yml          # App stack (backend + postgres + pgAdmin)
-infra/docker-compose.yml    # Observability stack
+infra/observability/docker-compose.yml    # Observability stack
 infra/README.md             # Observability setup details
 # Schema via Flyway migrations (init-db archived at docs/archive/init-db/)
 .env.example                # Environment template

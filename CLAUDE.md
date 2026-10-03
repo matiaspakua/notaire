@@ -102,7 +102,7 @@ cd backend-api && mvn spring-boot:run
 
 All service credentials live in a **single, git-ignored `.env` file at the repo
 root** (copy from `.env.example`). Both `docker-compose.yml` (app) and
-`infra/docker-compose.yml` (observability) read from it. Never hard-code
+`infra/observability/docker-compose.yml` (observability) read from it. Never hard-code
 secrets in compose files or docs — add a key to `.env(.example)` instead.
 
 ## Observability & Quality Infrastructure (`infra/`)
