@@ -486,8 +486,10 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Auditoría — List", async () => {
-    await navigateTo(page, "/dashboard/auditoria");
+  test("Admin Auditoría — redirects to canonical", async () => {
+    // Legacy admin path must resolve to /dashboard/auditoria (#1058).
+    await navigateTo(page, "/dashboard/administracion/auditoria");
+    await expect(page).toHaveURL(/\/dashboard\/auditoria/);
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
