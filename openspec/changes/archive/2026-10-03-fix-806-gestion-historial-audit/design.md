@@ -3,7 +3,7 @@
 
 ## Context
 
-#833 already writes History on complete-case create, `/transition`, and archive
+\#833 already writes History on complete-case create, `/transition`, and archive
 via `ManagementBitacoraService.registerStatus`. Residual orphans live in
 `ManagementController`: plain `create` / `update` and `updateCompleteCase` never
 call the bitácora service. `getStatusActual` reads only History and 404s when
@@ -12,12 +12,14 @@ empty — common for legacy rows and any path that set status without History.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Close orphan status-write paths by reusing `ManagementBitacoraService`.
 - Provide read-time entity-status fallback for `estado-actual`.
 - Prove behavior with failing-then-green integration tests (TDD).
 - Keep CU13 UI confirmation (TS-0028 / `useHistorial`) without rebuilding UI.
 
 **Non-Goals:**
+
 - Re-implement #833 paths or invent a second History writer.
 - Rely on `AuditoriaAspect` / `registro_auditoria` for this table.
 - Workflow-constrain plain PUT status changes (#804).

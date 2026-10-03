@@ -12,6 +12,7 @@ at an Integer column field, not a relation.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Real `@ManyToOne` / `@OneToMany` pair for DocumentType ↔ SubmittedDocument.
 - Null-safe legacy `getDto()` for optional procedure.
 - Compatibility ID accessors so controller / Reingreso / repository callers keep
@@ -19,6 +20,7 @@ at an Integer column field, not a relation.
 - Prove with failing-then-green unit tests (TDD).
 
 **Non-Goals:**
+
 - New Flyway migration.
 - REST path or JSON contract changes.
 - Frontend / Playwright work.
