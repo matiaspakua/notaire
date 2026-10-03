@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1048-eslint-blocking/` | Gate 1 complete |
 | Branch | `cursor/fix-1048-eslint-blocking-69d3` | created from `origin/main` |
 | Tasks | `tasks.md` | implement in progress |
-| Commits | (filled after commit) | pending |
+| Commits | `f993aacc` docs(openspec); `3df5c805` ci(frontend) | recorded |
 | Pull Request | (filled after PR) | pending |
 | CI run | heavy gate via `scripts/check-heavy-ci.sh` | pending |
 | Merge commit | coordinator after heavy CI exit 0 | pending |
