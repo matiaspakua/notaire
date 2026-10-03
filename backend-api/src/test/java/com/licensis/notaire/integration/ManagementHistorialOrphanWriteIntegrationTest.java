@@ -340,21 +340,28 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         Integer notaryId = createPerson("HIST-TIE-" + System.nanoTime());
         ManagementStatus statusA = createStatus("Tie-A");
         ManagementStatus statusB = createStatus("Tie-B");
-        String body = """
-                {"encabezado": "Tie", "dateStart": "2026-01-01", "number": %d,
+        String createBody = """
+                {"encabezado": "Tie", "dateStart": "2026-01-01", "number": 1,
                  "notaryPersonId": %d, "managementStatusId": %d}
-                """;
+                """.formatted(notaryId, statusA.getIdManagementStatus());
         MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body.formatted(1, notaryId, statusA.getIdManagementStatus())))
+                        .content(createBody))
                 .andExpect(status().isCreated())
                 .andReturn();
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
                 .get("idManagement").asInt();
-        mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body.formatted(2, notaryId, statusB.getIdManagementStatus())))
-                .andExpect(status().isOk());
+
+        // #804 rejects status changes via PUT, so append the second row directly (same effect
+        // as a successful /transition), then force both rows onto one instant.
+        var management = managementRepository.findById(managementId).orElseThrow();
+        management.setFkIdManagementStatus(statusB);
+        managementRepository.save(management);
+        History second = new History();
+        second.setFkIdManagement(management);
+        second.setFkIdManagementStatus(statusB);
+        second.setDate(new Date(0L));
+        historyRepository.saveAndFlush(second);
 
         List<History> rows = historyRepository.findByFkIdManagementIdManagement(managementId);
         assertThat(rows).hasSize(2);
