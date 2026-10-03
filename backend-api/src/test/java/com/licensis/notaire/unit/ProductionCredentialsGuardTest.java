@@ -8,7 +8,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("ProductionCredentialsGuard (issues #565, #651)")
+@DisplayName("ProductionCredentialsGuard (issues #565, #651, #1044)")
 class ProductionCredentialsGuardTest {
 
     private static final String SAFE_DATASOURCE_USERNAME = "notaire_app";
@@ -145,6 +145,46 @@ class ProductionCredentialsGuardTest {
     @DisplayName("Should accept non-default credentials in production")
     void shouldAcceptNonDefaultCredentialsInProduction() {
         ProductionCredentialsGuard guard = guardWith("production");
+
+        assertThatCode(guard::validateCredentials).doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("Should accept production without unused Grafana/pgAdmin/exporter credentials (issue #1044)")
+    void shouldAcceptProductionWithoutUnusedObservabilityCredentials() {
+        ProductionCredentialsGuard guard = guardWith(
+                "production",
+                SAFE_DATASOURCE_USERNAME,
+                SAFE_DATASOURCE_PASSWORD,
+                SAFE_ACTUATOR_USERNAME,
+                SAFE_ACTUATOR_PASSWORD,
+                SAFE_ADMIN_USERNAME,
+                SAFE_ADMIN_PASSWORD,
+                "",
+                "",
+                "",
+                "",
+                "");
+
+        assertThatCode(guard::validateCredentials).doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("Should accept production when unused-service credentials are null (issue #1044)")
+    void shouldAcceptProductionWhenUnusedServiceCredentialsAreNull() {
+        ProductionCredentialsGuard guard = guardWith(
+                "production",
+                SAFE_DATASOURCE_USERNAME,
+                SAFE_DATASOURCE_PASSWORD,
+                SAFE_ACTUATOR_USERNAME,
+                SAFE_ACTUATOR_PASSWORD,
+                SAFE_ADMIN_USERNAME,
+                SAFE_ADMIN_PASSWORD,
+                null,
+                null,
+                null,
+                null,
+                null);
 
         assertThatCode(guard::validateCredentials).doesNotThrowAnyException();
     }

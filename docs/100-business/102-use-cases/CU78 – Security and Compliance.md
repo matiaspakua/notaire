@@ -10,7 +10,7 @@
 | **Descripción** | Establece los controles de seguridad esenciales para proteger datos personales de clientes, escrituras y trámites frente a accesos no autorizados o vulnerabilidades (OWASP Top 10). |
 | **Tipo** | Soporte / Seguridad |
 | **Referencias Cruzadas** | RF #81 (Seguridad y privacidad), RF #82 (Acceso de usuarios), RF #83 (Cifrado de contraseña), RF #84 (Transporte de información por red), RF #85 (Acceso a la base de datos); CU20, CU21 |
-| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309 |
+| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309, #1044 |
 
 ## Alcance Técnico
 
@@ -18,6 +18,7 @@
 - Encriptación de todas las comunicaciones cliente-servidor mediante HTTPS/TLS 1.3.
 - Políticas de control de acceso basado en roles (RBAC) para todas las funciones del sistema.
 - Aislamiento estricto de la base de datos (sin acceso público directo, solo red interna protegida).
+- Artefacto de despliegue de producción (`docker-compose.prod.yml`, issue #1044): sin pgAdmin, sin puertos de host para Postgres/backend/frontend, ingreso solo por reverse proxy, secretos obligatorios `${VAR:?}`, `ENVIRONMENT=production`.
 - Escaneo continuo de vulnerabilidades en dependencias y código fuente.
 
 ## Procedimiento de Seguridad y Control de Acceso
@@ -44,3 +45,4 @@
 - [x] Control de acceso basado en roles (RBAC) verificado en todos los endpoints.
 - [x] Auditoría de seguridad y eventos de acceso registrada permanentemente.
 - [x] Pantallas de administración del frontend no accesibles por URL para usuarios no administradores (guard de layout + edge; Playwright TS-0094).
+- [x] Compose de producción sin pgAdmin ni exposición de DB/app en el host; solo reverse proxy publica puertos; secretos sin defaults `admin` (issue #1044).
