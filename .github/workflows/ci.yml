@@ -6,9 +6,9 @@ name: CI - Build, Test & Security
 # allows modules (notaire-shared) that have no tests matching a filter; it
 # never masks a failing test.
 #
-# The report/wiki-publishing jobs (generate-reports/publish-reports)
-# are guarded to only run on push-to-main or workflow_dispatch — a PR run must
-# never publish reports or push commits to main. See each job's `if:`.
+# Report jobs (generate-reports/publish-reports) run only on push-to-main or
+# workflow_dispatch. They publish workflow artifacts + $GITHUB_STEP_SUMMARY —
+# never git-commit into docs/wiki/cicd-reports/ (issue #1041).
 #
 # GitHub Pages deployment no longer lives here (see issue #778): the single
 # source of truth is deploy-github-page.yml, which auto-runs after this
@@ -451,45 +451,41 @@ jobs:
           retention-days: 30
 
   # ==========================================
-  # JOB 9: Publish Reports to docs/wiki/
+  # JOB 9: Publish CI report (artifact + summary; no git commits — #1041)
   # ==========================================
   publish-reports:
-    name: Publish to Wiki
+    name: Publish report artifact
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [generate-reports]
     if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
-      contents: write
+      contents: read
     continue-on-error: true
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.ref_name }}
-          fetch-depth: 0
-
       - name: Download all artifacts
         uses: actions/download-artifact@v8
         with:
           path: ./reports
 
-      - name: Prepare reports for wiki
+      - name: Publish CI report to job summary
         run: |
-          mkdir -p docs/wiki/cicd-reports
-          cp reports/markdown-reports/ci-report.md docs/wiki/cicd-reports/ 2>/dev/null || true
-          ls -la docs/wiki/cicd-reports/ 2>/dev/null || echo "No reports yet"
-
-      - name: Commit and Push Reports
-        run: |
-          git config --local user.email "ci@notaire.com"
-          git config --local user.name "CI Bot"
-          git add docs/wiki/cicd-reports/ 2>/dev/null || echo "No reports to add"
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
+          REPORT="reports/markdown-reports/ci-report.md"
+          if [ -f "$REPORT" ]; then
+            {
+              echo "## CI report"
+              echo ""
+              cat "$REPORT"
+            } >> "$GITHUB_STEP_SUMMARY"
           else
-            git commit -m "docs: add CI report for $(date +%Y-%m-%d) [skip ci]"
-            git pull --rebase origin ${{ github.ref_name }}
-            git push origin ${{ github.ref_name }}
+            echo "No CI markdown report artifact found" >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      - name: Upload CI report artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ci-report-publish
+          path: reports/markdown-reports/ci-report.md
+          retention-days: 30
+          if-no-files-found: ignore
 

@@ -344,8 +344,9 @@ jobs:
               body: comment
             })
 
-  # NOTE (issue #1117 / #1041): Do NOT commit wiki/CI reports onto the PR head.
-  # A bot commit with [skip ci] moves HEAD to a SHA with no check suite, so
-  # `gh pr checks` goes empty and merge-when-green agents stall (seen on #1111/#1112).
-  # Reports stay as workflow artifacts (generate-report) + PR comment (comment-pr).
-  # In-repo wiki publish belongs on merge-to-main / Pages / a non-PR branch only.
+  # NOTE (issue #1117 / #1041): Do NOT commit wiki/CI reports onto the PR head
+  # (or onto main). A bot commit with [skip ci] moves HEAD to a SHA with no
+  # check suite, so `gh pr checks` goes empty and merge-when-green agents stall
+  # (seen on #1111/#1112). Reports stay as workflow artifacts (generate-report)
+  # + PR comment (comment-pr). Durable browse path: Actions artifacts /
+  # $GITHUB_STEP_SUMMARY / GitHub Pages — never git commits into the app repo.

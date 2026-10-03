@@ -121,6 +121,42 @@ jobs:
             echo "No frontend coverage artifact available yet"
           fi
 
+      # ── Latest CI/CD/E2E markdown reports (no git commits — #1041) ──
+      - name: Download CI/CD/E2E markdown reports for Pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p github-page/public/cicd-reports
+          downloaded=0
+          for artifact_name in ci-report-publish cd-report-publish e2e-coverage-report markdown-reports cd-report; do
+            rm -rf "cicd-report-dl-${artifact_name}"
+            if gh run download --repo "${{ github.repository }}" \
+              --name "${artifact_name}" \
+              --dir "cicd-report-dl-${artifact_name}" 2>/dev/null; then
+              find "cicd-report-dl-${artifact_name}" -type f \( -name '*.md' -o -name '*.html' \) \
+                -exec cp -n {} github-page/public/cicd-reports/ \; 2>/dev/null || true
+              downloaded=1
+            fi
+          done
+          if [ "$downloaded" -eq 0 ] || [ -z "$(ls -A github-page/public/cicd-reports 2>/dev/null)" ]; then
+            printf '%s\n' \
+              '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CI/CD Reports</title>' \
+              '<meta http-equiv="refresh" content="0; url=/notaire/"></head>' \
+              '<body><p>CI/CD reports not available yet. <a href="/notaire/">Back to home</a></p></body></html>' \
+              > github-page/public/cicd-reports/index.html
+          else
+            {
+              echo '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CI/CD Reports</title></head><body>'
+              echo '<h1>CI/CD Reports</h1><ul>'
+              for f in github-page/public/cicd-reports/*; do
+                base=$(basename "$f")
+                [ "$base" = "index.html" ] && continue
+                echo "<li><a href=\"./${base}\">${base}</a></li>"
+              done
+              echo '</ul><p><a href="/notaire/">Back to home</a></p></body></html>'
+            } > github-page/public/cicd-reports/index.html
+          fi
+
       # ── Generate metrics.json ──
       - name: Generate metrics.json
         env:

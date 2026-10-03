@@ -3,8 +3,8 @@ name: Playwright E2E — Full Suite
 # API tests (Bruno) + UI E2E tests (Playwright) against the full stack
 # (PostgreSQL + backend + frontend). Runs on every PR into main, every merge
 # to main, on a weekday schedule, and on manual dispatch. Test failures FAIL
-# the pipeline. The coverage-report job (commits to docs/wiki/ and pushes to
-# main) is guarded to skip pull_request runs — see its `if:`.
+# the pipeline. The coverage-report job publishes artifact + job summary on
+# non-PR events (no git commits to main — issue #1041); see its `if:`.
 on:
   pull_request:
     branches: [ main ]
@@ -345,11 +345,11 @@ jobs:
     name: Business Coverage Report
     runs-on: ubuntu-latest
     needs: [api-tests, e2e-tests]
-    # Commits to docs/wiki/ and pushes to main — never on a pull_request run.
+    # Artifact + job summary only — never on a pull_request run (issue #1041).
     if: always() && github.event_name != 'pull_request'
     timeout-minutes: 10
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v7
 
@@ -371,20 +371,28 @@ jobs:
           ARTIFACTS_ROOT: .
         run: |
           DATE=$(date +%Y-%m-%d)
-          export OUTPUT_FILE="docs/wiki/cicd-reports/e2e-coverage-$DATE.md"
+          mkdir -p reports
+          export OUTPUT_FILE="reports/e2e-coverage-$DATE.md"
           export REPORT_DATE="$DATE"
           python3 scripts/generate_e2e_coverage_report.py
 
-      - name: Commit coverage report
-        continue-on-error: true
+      - name: Publish coverage report to job summary
         run: |
-          git config --local user.email "ci@notaire.com"
-          git config --local user.name "CI Bot"
-          git add docs/wiki/cicd-reports/ 2>/dev/null || true
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
+          REPORT=$(ls -1 reports/e2e-coverage-*.md 2>/dev/null | head -1 || true)
+          if [ -n "$REPORT" ] && [ -f "$REPORT" ]; then
+            {
+              echo "## E2E business coverage report"
+              echo ""
+              cat "$REPORT"
+            } >> "$GITHUB_STEP_SUMMARY"
           else
-            git commit -m "docs: add E2E coverage report for $(date +%Y-%m-%d)"
-            git pull --rebase origin main
-            git push origin HEAD:main || echo "Push skipped"
+            echo "No E2E coverage markdown generated" >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      - name: Upload coverage report artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-coverage-report
+          path: reports/e2e-coverage-*.md
+          retention-days: 30
+          if-no-files-found: ignore

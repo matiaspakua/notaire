@@ -7,11 +7,12 @@ directly depends on, even if that job is reachable transitively through
 another dependency — so the expression silently resolves to an empty
 string instead of the job's status.
 
-Both `publish-report` (pr-validation.yml) and `generate-reports` (ci.yml)
+Both `generate-report` (pr-validation.yml) and `generate-reports` (ci.yml)
 hit this: they read `needs.validate-pr.result` / `needs.build.result` etc.
 without depending on those jobs, so the `: "${VAR:?REQUIRED}"` guards in
 scripts/generate-pr-validation-report.sh and scripts/generate-markdown-report.sh
-failed on every run.
+failed on every run. The former PR `publish-report` wiki-commit job was
+removed (#1117 / #1041); assert against `generate-report` instead.
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
 validation scripts (see scripts/test_performance_test_assets.py).
@@ -65,12 +66,17 @@ class ReportJobNeedsDependenciesTest(unittest.TestCase):
     def test_ci_workflow_has_no_dangling_needs_references(self):
         self.assertNoDanglingNeedsReferences("ci.yml")
 
-    def test_publish_report_depends_on_every_job_it_reports_on(self):
+    def test_generate_report_depends_on_every_job_it_reports_on(self):
         jobs = load_jobs("pr-validation.yml")
-        publish_report = jobs["publish-report"]
+        self.assertNotIn(
+            "publish-report",
+            jobs,
+            "pr-validation must not reintroduce a wiki publish-report job (#1041)",
+        )
+        generate_report = jobs["generate-report"]
         self.assertEqual(
-            declared_needs(publish_report),
-            {"validate-pr", "quick-build", "dependency-analysis", "lint", "branch-naming", "generate-report"},
+            declared_needs(generate_report),
+            {"validate-pr", "quick-build", "dependency-analysis", "lint", "branch-naming"},
         )
 
     def test_generate_reports_depends_on_every_job_it_reports_on(self):

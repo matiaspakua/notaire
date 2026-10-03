@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-Generate docs/wiki/cicd-reports/e2e-coverage-<date>.md from the actual
+Generate an e2e-coverage-<date>.md markdown report from the actual
 Playwright JSON reporter output (frontend/test-results/results.json) and
 Bruno CLI JSON reporter output (backend-api/api-test/bruno-results.json),
 instead of a static hardcoded template (issue #587).
+
+Callers set OUTPUT_FILE (typically reports/e2e-coverage-<date>.md). The
+file is published as a workflow artifact / job summary — not committed into
+docs/wiki/cicd-reports/ (issue #1041).
 """
 import glob
 import json

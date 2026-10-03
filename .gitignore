@@ -68,3 +68,7 @@ headroom_memory.db
 
 # scripts/run_pipeline.sh dashboard + logs (regenerated every run)
 reports/
+
+# Generated CI/CD/E2E reports — publish via Actions artifacts / job summary /
+# GitHub Pages only (issue #1041). Never commit into the application repo.
+docs/wiki/cicd-reports/
