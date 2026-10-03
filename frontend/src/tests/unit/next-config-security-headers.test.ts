@@ -45,4 +45,18 @@ describe("next.config security headers", () => {
     expect(header?.value).toMatch(/max-age=\d+/);
     expect(header?.value).toContain("includeSubDomains");
   });
+
+  it("does not bake /api/v1 rewrite destinations at build time (issue #1055)", async () => {
+    // Request-time Route Handler BFF owns /api/v1; rewrites must not pin BACKEND_URL.
+    if (typeof nextConfig.rewrites !== "function") {
+      expect(nextConfig.rewrites).toBeUndefined();
+      return;
+    }
+    const result = await nextConfig.rewrites();
+    const rules = Array.isArray(result) ? result : [...(result.beforeFiles ?? []), ...(result.afterFiles ?? []), ...(result.fallback ?? [])];
+    const apiRewrite = rules.find(
+      (r) => typeof r.source === "string" && r.source.includes("/api/v1"),
+    );
+    expect(apiRewrite).toBeUndefined();
+  });
 });

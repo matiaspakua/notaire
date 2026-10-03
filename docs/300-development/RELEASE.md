@@ -70,9 +70,10 @@ the chosen tag in the PR that cuts it.
 ## Frontend image notes
 
 - Dockerfile: `frontend/Dockerfile` (Node 22 alpine, Next.js standalone).
-- CD context: `./frontend`. Default `NEXT_PUBLIC_API_URL` comes from the
-  Dockerfile ARG; override later via workflow `build-args` / repo variables if
-  a bake-time API URL is required (prefer runtime config when possible).
+- CD context: `./frontend`. Upstream API base is **runtime** `BACKEND_URL`
+  (server-only Route Handler BFF, issue #1055) — do not bake Docker-internal
+  hosts into `NEXT_PUBLIC_*` build args. Compose/env sets `BACKEND_URL` per
+  environment after image publish.
 - Prod compose may still `build:` locally; switching to GHCR `image:` pull is
   a follow-up, not required by #1043.
 

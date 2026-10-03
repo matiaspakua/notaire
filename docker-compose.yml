@@ -103,19 +103,17 @@ services:
     networks:
       - notary-network
 
-  # Frontend — Next.js 15
+  # Frontend — Next.js (standalone). Upstream API via runtime BACKEND_URL (#1055).
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: http://backend:8080/api/v1
     container_name: notaire-frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://backend:8080/api/v1
+      # Server-only — read by the /api/v1 Route Handler BFF at request time.
       BACKEND_URL: http://backend:8080/api/v1
       HOSTNAME: "0.0.0.0"
     depends_on:

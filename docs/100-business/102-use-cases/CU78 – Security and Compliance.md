@@ -10,7 +10,7 @@
 | **Descripción** | Establece los controles de seguridad esenciales para proteger datos personales de clientes, escrituras y trámites frente a accesos no autorizados o vulnerabilidades (OWASP Top 10). |
 | **Tipo** | Soporte / Seguridad |
 | **Referencias Cruzadas** | RF #81 (Seguridad y privacidad), RF #82 (Acceso de usuarios), RF #83 (Cifrado de contraseña), RF #84 (Transporte de información por red), RF #85 (Acceso a la base de datos); CU20, CU21 |
-| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309, #1044, #1045, #1046, #1051 |
+| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309, #1044, #1045, #1046, #1051, #1055 |
 
 ## Alcance Técnico
 
@@ -26,6 +26,9 @@
   `smol-toml` ≥1.7.1 (pin `^1.9.0`) en el frontend.
 - Imágenes de contenedor pinneadas a minor/digest y Dependabot docker
   (`/backend-api`, `/frontend`) además de npm (issue #1045).
+- URL del backend de API resuelta en tiempo de request vía BFF (`BACKEND_URL`
+  server-only); la página pública `/login` no revela hostnames internos
+  (issue #1055).
 
 ## Procedimiento de Seguridad y Control de Acceso
 
@@ -61,3 +64,5 @@
       / postgres major-only); Dependabot con npm `/frontend` y docker
       `/backend-api` + `/frontend` (issue #1045). Guard:
       `scripts/test_image_pins_and_dependabot.py`.
+- [x] Proxy BFF de `/api/v1` con `BACKEND_URL` en runtime; sin filtrar URL interna
+      del backend en `/login` (issue #1055).

@@ -784,7 +784,7 @@ Dev --> Prom : http://localhost:9090
 Dev --> Sonar : http://localhost:9000
 Dev --> Homer : http://localhost:8888
 
-FE --> BE : NEXT_PUBLIC_API_URL
+FE --> BE : /api/v1 BFF (runtime BACKEND_URL)
 BE --> DB : JDBC + Flyway
 PGA --> DB : Admin queries
 

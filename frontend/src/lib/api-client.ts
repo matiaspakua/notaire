@@ -8,8 +8,9 @@
 import { logger } from "@/lib/logger";
 import { handleAuthenticatedSessionExpiry } from "@/lib/session-expiry";
 
-// Use relative path so requests are proxied by the Next.js server (rewrites in next.config.ts).
-// This ensures the browser never needs to resolve internal Docker hostnames like "backend".
+// Same-origin /api/v1 — proxied at request time by the App Router BFF
+// (src/app/api/v1/[...path]) using server-only BACKEND_URL (issue #1055).
+// The browser never resolves internal Docker hostnames like "backend".
 const BASE_URL = "/api/v1";
 
 const DEFAULT_FETCH_INIT: RequestInit = {

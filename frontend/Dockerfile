@@ -9,8 +9,8 @@ RUN npm ci
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+# Do not bake Docker-internal hosts into NEXT_PUBLIC_* — browser uses same-origin
+# /api/v1; the runner stage reads server-only BACKEND_URL at request time (#1055).
 
 RUN npm run build
 
@@ -24,6 +24,8 @@ RUN apk add --no-cache wget
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Default for local `docker run` without compose; override per environment.
+ENV BACKEND_URL=http://localhost:8080/api/v1
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
