@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1047-k6-load-test/` | Gate 1 in repo; validate PASS |
 | Branch | `cursor/fix-1047-k6-load-test-69d3` | created from origin/main after #1048 (`2967ec32`) |
 | Tasks | `tasks.md` | Gate 1 planning complete; implement pending |
-| Commits | `aa418f3f`, `0312f01e`, `64b31fe0`, `82b21a30` | landed on branch |
+| Commits | `aa418f3f`, `0312f01e`, `64b31fe0`, `82b21a30`, `09c25b0c`, `e2fffe26` | landed on branch |
 | Pull Request | [#1154](https://github.com/matiaspakua/notaire/pull/1154) | draft |
 | CI run | — | pending |
 | Merge commit | — | pending |
