@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: reverse-proxy
+  namespace: notaire
+  labels:
+    app: reverse-proxy
+spec:
+  # Sole external entry (parity with compose host :80). Prefer LoadBalancer
+  # when the cluster provides one; NodePort works for bare-metal staging.
+  type: LoadBalancer
+  selector:
+    app: reverse-proxy
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
