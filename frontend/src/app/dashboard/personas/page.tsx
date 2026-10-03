@@ -13,14 +13,15 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
-import { apiGet, ApiError } from "@/lib/api-client";
+import { apiGet } from "@/lib/api-client";
 import {
   usePersonas,
   useCreatePersona,
   useUpdatePersona,
   useDeletePersona,
 } from "@/hooks/usePersonas";
-import { fullName, extractApiError } from "@/lib/utils";
+import { fullName } from "@/lib/utils";
+import { presentPersonaSaveError } from "@/lib/persona-save-error";
 import type { Persona } from "@/types";
 
 const EMPTY: Partial<Persona> = {
@@ -46,6 +47,7 @@ export default function PersonasPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Persona>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const [searchNombre, setSearchNombre] = useState("");
   const [searchApellido, setSearchApellido] = useState("");
@@ -73,16 +75,19 @@ export default function PersonasPage() {
   function openCreate() {
     setEditing(EMPTY);
     setIsEditMode(false);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   function openEdit(p: Persona) {
     setEditing(p);
     setIsEditMode(true);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   async function handleSave() {
+    setFieldErrors({});
     try {
       if (isEditMode && editing.personId) {
         await updateMutation.mutateAsync({ id: editing.personId, data: editing });
@@ -93,32 +98,14 @@ export default function PersonasPage() {
       }
       setModalOpen(false);
     } catch (err) {
-      handleSaveError(err);
-    }
-  }
-
-  function handleSaveError(err: unknown) {
-    if (!(err instanceof ApiError) || err.status !== 409) {
-      toast.error(extractApiError(err) ?? t("errorSave"));
-      return;
-    }
-    // Prefer the localized message over the backend's raw (English-only) text: the API
-    // doesn't localize error strings, so falling back to extractApiError(err) here would
-    // leak English into a Spanish UI.
-    const existingId = extractDuplicatePersonaId(err);
-    const existing = personas.find((p) => p.personId === existingId);
-    toast.error(t("duplicateDocument"), {
-      action: existing
-        ? { label: t("viewExisting"), onClick: () => openEdit(existing) }
-        : undefined,
-    });
-  }
-
-  function extractDuplicatePersonaId(err: ApiError): number | undefined {
-    try {
-      return (JSON.parse(err.body) as { existingPersonId?: number }).existingPersonId;
-    } catch {
-      return undefined;
+      presentPersonaSaveError(err, {
+        fallback: t("errorSave"),
+        duplicateDocument: t("duplicateDocument"),
+        viewExistingLabel: t("viewExisting"),
+        personas,
+        onViewExisting: openEdit,
+        setFieldErrors,
+      });
     }
   }
 
@@ -249,40 +236,46 @@ export default function PersonasPage() {
           <FormContainer>
             <FormSection title={isEditMode ? t("editPersona") : t("newPersona")}>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label={t("fields.nombre")} required>
+                <FormField label={t("fields.nombre")} required error={fieldErrors.firstName}>
                   <Input
                     value={editing.firstName ?? ""}
                     onChange={(e) => setEditing({ ...editing, firstName: e.target.value })}
                     data-testid="input-firstName"
+                    aria-invalid={!!fieldErrors.firstName}
                   />
                 </FormField>
-                <FormField label={t("fields.apellido")} required>
+                <FormField label={t("fields.apellido")} required error={fieldErrors.lastName}>
                   <Input
                     value={editing.lastName ?? ""}
                     onChange={(e) => setEditing({ ...editing, lastName: e.target.value })}
                     data-testid="input-lastName"
+                    aria-invalid={!!fieldErrors.lastName}
                   />
                 </FormField>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label={t("fields.dni")}>
+                <FormField label={t("fields.dni")} error={fieldErrors.identificationNumber}>
                   <Input
                     value={editing.identificationNumber ?? ""}
                     onChange={(e) => setEditing({ ...editing, identificationNumber: e.target.value })}
+                    data-testid="input-dni"
+                    aria-invalid={!!fieldErrors.identificationNumber}
                   />
                 </FormField>
-                <FormField label={t("fields.cuil")}>
+                <FormField label={t("fields.cuil")} error={fieldErrors.taxId}>
                   <Input
                     value={editing.taxId ?? ""}
                     onChange={(e) => setEditing({ ...editing, taxId: e.target.value })}
+                    aria-invalid={!!fieldErrors.taxId}
                   />
                 </FormField>
               </div>
-              <FormField label={t("fields.email")}>
+              <FormField label={t("fields.email")} error={fieldErrors.email}>
                 <Input
                   type="email"
                   value={editing.email ?? ""}
                   onChange={(e) => setEditing({ ...editing, email: e.target.value })}
+                  aria-invalid={!!fieldErrors.email}
                 />
               </FormField>
               <FormField label={t("fields.telefono")}>

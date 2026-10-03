@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Persona form swallowed non-409 backend validation** (issue #945, CU17/CU61):
+  present create/update errors via `presentPersonaSaveError` so HTTP 400
+  messages (e.g. blank identification) appear in toast and FormField errors;
+  keep curated localized 409 duplicate-document UX; stabilize Dedup-EDGE in
+  TS-0015.
+
 - **Suplencias/Reportes unreachable from navigation; duplicate admin pages**
   (issue #1058, CU22/CU59/CU24/CU25/CU50/CU23): add sidebar + dashboard home
   entries for `/dashboard/suplencias` and `/dashboard/reportes`; merge richer
