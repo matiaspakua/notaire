@@ -19,10 +19,10 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: tree gone, no orphan script, removed scripts gone, no live reference
-- [ ] 3.2 Write the failing guards in `test_repo_hygiene.py` and `test_testing_standalone.py`
-- [ ] 3.3 Observe them fail before deleting anything
-- [ ] 3.4 Confirm every `#### Scenario:` maps to a test
+- [x] 3.1 Enumerate test cases: tree gone, no orphan script, removed scripts gone, no live reference
+- [x] 3.2 Write the failing guards in `test_repo_hygiene.py` and `test_testing_standalone.py`
+- [x] 3.3 Observe them fail before deleting anything
+- [x] 3.4 Confirm every `#### Scenario:` maps to a test
 
 ## 4. Implementación
 

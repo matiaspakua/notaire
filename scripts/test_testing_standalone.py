@@ -47,8 +47,16 @@ REMOVED_PATHS = (
     "generate-coverage-report.sh",
     "scripts/test-all.sh",
     "scripts/run-comprehensive-tests.sh",
-    "http",
     "reports",
+    "integration/http/01-auth.sh",
+    "integration/http/02-usuarios.sh",
+    "integration/http/03-conceptos.sh",
+    "integration/http/04-people.sh",
+    "integration/http/05-tramites.sh",
+    "integration/http/06-escrituras.sh",
+    "integration/http/07-presupuestos.sh",
+    "integration/http/08-items.sh",
+    "integration/http/test-all-endpoints.sh",
 )
 
 REQUIRED_ENV = (
@@ -60,6 +68,8 @@ REQUIRED_ENV = (
 
 LEGACY_REFERENCE = re.compile(
     r"testing/http\b"
+    r"|testing/integration/http/(?:0[1-8]-|test-all-endpoints\.sh)"
+    r"|deprecated-src\.old"
     r"|testing/run-all-tests\.sh"
     r"|testing/scripts/test-all\.sh"
     r"|run-comprehensive-tests\.sh"
@@ -184,6 +194,8 @@ GNU_ONLY_IDIOMS = (
     (re.compile(r"\bdate\s+-d\b"), "date -d (not on BSD date)"),
 )
 CI_ONLY_SCRIPTS = {"generate-coverage-report.sh"}
+# Called from outside testing/ (Constitution step 14, preflight, agent rules) or by CI.
+EXTERNALLY_CALLED_SCRIPTS = {"test.sh", "generate-coverage-report.sh"}
 
 
 class PortabilityTest(unittest.TestCase):
@@ -199,6 +211,25 @@ class PortabilityTest(unittest.TestCase):
                     if pattern.search(line):
                         offenders.append(f"{path.relative_to(REPO_ROOT)}:{number}: {label}")
         self.assertEqual([], offenders, "GNU-only idioms in QA scripts:\n" + "\n".join(offenders))
+
+
+class ReachabilityTest(unittest.TestCase):
+    def test_every_script_is_called_by_the_runner_or_another_suite_script(self):
+        scripts = [p for p in testing_scripts() if p.suffix == ".sh"]
+        orphans = []
+        for script in scripts:
+            if script.name in EXTERNALLY_CALLED_SCRIPTS:
+                continue
+            callers = [
+                other for other in scripts
+                if other != script and any(
+                    script.name in line and not line.lstrip().startswith("#")
+                    for line in other.read_text(encoding="utf-8").splitlines()
+                )
+            ]
+            if not callers:
+                orphans.append(str(script.relative_to(REPO_ROOT)))
+        self.assertEqual([], orphans, f"scripts nothing calls: {orphans}")
 
 
 class DocumentationTest(unittest.TestCase):
