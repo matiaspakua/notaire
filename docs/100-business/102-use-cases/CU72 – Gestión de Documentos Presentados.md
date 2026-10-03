@@ -11,6 +11,15 @@
 | **Tipo** | Secundario |
 | **Referencias Cruzadas** | RF #14 (Administrar certificados y documentos), RF #18 (Informar preparación de documentos), RF #19 (Informar seguimiento de documentos); CU04, CU43 |
 | **GitHub ID** | #163 |
+| **Related issues** | #801 — `SubmittedDocument`↔`DocumentType` JPA association integrity and null-safe legacy `getDto()` when procedure is optional |
+
+## Data integrity notes (#801)
+
+- A submitted document **may omit** a procedure FK (optional since Flyway V6). Legacy
+  `SubmittedDocument.getDto()` MUST NOT throw when the procedure association is null.
+- The document type link is a real JPA `@ManyToOne` on property `documentType`
+  (`fk_id_document_type`); `DocumentType.submittedDocumentCollection` uses
+  `mappedBy = "documentType"`. No cascade-delete from type to submitted documents.
 
 ## Curso de Eventos
 
