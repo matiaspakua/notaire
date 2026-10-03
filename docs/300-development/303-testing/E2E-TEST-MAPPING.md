@@ -78,7 +78,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 |----|----|-------|------|-------|-------|
 | **TS-0012** | `TS-0012-documentacion-testimonio-workflow.spec.ts` | CU03–CU12 | GherkinSteps + API | 2 (UI not present) | **HIGH** |
 | **TS-0013** | `TS-0013-escrituras-signing-workflow.spec.ts` | CU05, CU06, CU52, CU63 | GherkinSteps + API | 1 (UI not present) | **HIGH** |
-| **TS-0014** | `TS-0014-pagos-workflow.spec.ts` | CU15, CU47 | GherkinSteps | 1 (seed data gap) | **HIGH** |
+| **TS-0014** | `TS-0014-pagos-workflow.spec.ts` | CU15, CU47 | GherkinSteps | intentional gaps cite #1146 | **HIGH** |
 | **TS-0015** | `TS-0015-personas-clientes-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61 | GherkinSteps + API | 1 (UI flow changed) | **HIGH** |
 
 **Consolidated From**:
@@ -90,8 +90,8 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0016** | `TS-0016-usuarios-escribanos-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | 1 (icon-only button) | **HIGH** |
-| **TS-0017** | `TS-0017-suplencias-workflow.spec.ts` | CU22, CU59 | GherkinSteps | 1 (filter UI absent) | **MEDIUM** |
+| **TS-0016** | `TS-0016-usuarios-escribanos-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | intentional gaps cite #1146 | **HIGH** |
+| **TS-0017** | `TS-0017-suplencias-workflow.spec.ts` | CU22, CU59 | GherkinSteps | intentional gaps cite #1146 | **MEDIUM** |
 | **TS-0018** | `TS-0018-reingreso-documentacion-workflow.spec.ts` | CU43 | Direct nav + assertions | 0 | **MEDIUM** |
 | **TS-0019** | `TS-0019-inmuebles-valuacion-workflow.spec.ts` | CU69 | GherkinSteps | 0 | **MEDIUM** |
 
@@ -99,9 +99,9 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0020** | `TS-0020-reportes-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | GherkinSteps + API | 1 (button text mismatch) | **HIGH** |
-| **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | Direct nav + form | 2 (state-dependent) | **HIGH** |
-| **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | Direct nav + table | 1 (state-dependent) | **MEDIUM** |
+| **TS-0020** | `TS-0020-reportes-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | GherkinSteps + API | intentional gaps cite #1146 | **HIGH** |
+| **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | API arrange + editor | 0 (self-seeds workflow; #1066) | **HIGH** |
+| **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | API arrange + table | 0 (self-seeds tipo-tramite; #1066) | **MEDIUM** |
 | **TS-0023** | `TS-0023-roles-permisos-admin.spec.ts` | CU43.1 | Direct nav + form | 0 | **MEDIUM** |
 | **TS-0024** | `TS-0024-admin-module-smoke.spec.ts` | CU20–CU32, CU57–CU67 | Direct nav + buttons | 0 | **MEDIUM** |
 | **TS-0028** | `TS-0028-gestion-historial-feature.spec.ts` | CU13 | GherkinSteps + API seed | 0 | **MEDIUM** |
@@ -212,15 +212,18 @@ All 11 skipped tests have documented blockers:
 | TS-0011 | CU02-GW02 | Form simplified (only "numero" field now) | Design change | Form restored |
 | TS-0012 | CU04-GW01 | No "documentación" button on personas page | UI removed | UI restored or alternative added |
 | TS-0013 | CU06-GW01 | No "firmar" button (icon-only actions) | Design | Button restored with accessible name |
-| TS-0014 | CU15-GW02 | Seed data gap (no presupuesto) | Test data | Global setup updated |
+| TS-0014 | CU15-GW03 / CU47-GW01 | Detail / date-filter UI gaps | #1146 | Product UI or re-assert against real controls |
 | TS-0015 | CU18-GW01 | Flow changed ("Es cliente" checkbox, no separate button) | Design | Flow documented in new test |
-| TS-0016 | CU21-GW01 | Icon-only button, no accessible name | Accessibility | aria-label added or text added |
-| TS-0017 | CU59-GW01 | No filter dropdown on suplencias page | UI absent | Filter UI added |
-| TS-0020 | CU24-GW01 | Button text mismatch ("Descargar PDF" not "libro índices") | Copy | Test updated to match actual labels |
-| TS-0021 | 2× | Conditional skips (state-dependent setup) | State | Pre-condition validation added |
-| TS-0022 | 1× | Conditional skips (state-dependent) | State | Pre-condition validation added |
+| TS-0016 | CU21 / CU23 / CU48 | Icon-only / missing escribanos flows | #1146 | Accessible names + product flows |
+| TS-0017 | CU59-GW01/02 | Filter / detail UI absent | #1146 | Filter UI added |
+| TS-0020 | CU24+ admin/report gaps | Copy / missing actions | #1146 | Align tests to real labels or ship UI |
+| TS-0021 | — | Was conditional empty-table skip | Fixed in #1066 | Self-arranges via `createWorkflowDefinition` |
+| TS-0022 | — | Was conditional empty-table skip | Fixed in #1066 | Self-arranges via `createTipoTramite` |
 
-**Policy**: All skips have GitHub issues or clear design/data explanations. Re-enable when blockers resolved.
+**Policy**: Intentional feature-gap skips MUST cite an open GitHub issue in the
+skip title/reason (see #1146). Runtime skips for missing seed data are forbidden
+(#1066). Flake triage uses Playwright `trace: on-first-retry`, failure
+screenshots/video, and CI artifacts — CI retries are capped at **1**.
 
 ---
 

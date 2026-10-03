@@ -7,9 +7,11 @@ export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  // #1066 / CU76: at most one CI retry so flakes stay visible; triage via on-first-retry traces.
+  retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : 2,
-  timeout: 300000, // 5 minutes for full end-to-end demo scenarios with multiple cases
+  // Default hang budget; demo/tutorial specs override with test.describe.configure({ timeout }).
+  timeout: 90000,
   reporter: [
     ["html", { outputFolder: "playwright-report", open: "never" }],
     ["json", { outputFile: "test-results/results.json" }],

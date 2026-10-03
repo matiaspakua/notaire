@@ -299,24 +299,25 @@ Test comments include `@sequence` links to relevant diagrams so test readers can
 
 Tests **MAY** be skipped only if:
 
-1. A linked GitHub issue documents the blocker (e.g., #838: no endpoint for folio→escritura linking)
+1. A linked **open** GitHub issue documents the blocker in the skip title/reason
+   (e.g. `test.skip("CU15-GW03 (#1146): …")` — see #1066 / CU76)
 2. A clear, descriptive `test.skip()` comment explains the reason
-3. It is not a design gap but a genuine technical limitation
+3. It is a genuine product/UI gap — **not** missing seed data (arrange via API helpers)
 
 **Example**:
 
 ```typescript
-test.skip("CU01-GW02: Create presupuesto with all fields", async () => {
-  // Skipped: presupuesto form does not have a "tipo tramite" dropdown per design.
-  // Issue #XXX tracks form field alignment.
+test.skip("CU01-GW02 (#1146): Create presupuesto with all fields", async () => {
+  // Skipped (#1146): presupuesto form does not have a "tipo tramite" dropdown per design.
   // Re-enable once API and form schema are updated.
 });
 ```
 
 **Avoid**:
 
-- ❌ `test.skip()` with no comment
-- ❌ Skipped tests for flaky timing (fix the test, not skip it)
+- ❌ `test.skip()` with no comment or without `#issue`
+- ❌ Runtime skip when the table/list is empty (seed the row instead — #1066)
+- ❌ Skipped tests for flaky timing (fix waits; do not raise CI retries above 1)
 - ❌ Skipped tests for "future work" (remove them or implement)
 
 ---

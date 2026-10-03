@@ -56,13 +56,13 @@ test.describe("CU21 - Modificar Usuario", () => {
     await steps.givenUserIsOnPage("/dashboard/administracion/usuarios");
   });
 
-  test.skip("CU21-GW01: Given usuario exists, When click editar, Then modal opens with data", async () => {
-    // Skipped: the edit button has no accessible name (icon only, no aria-label).
+  test.skip("CU21-GW01 (#1146): Given usuario exists, When click editar, Then modal opens with data", async () => {
+    // Skipped (#1146): the edit button has no accessible name (icon only, no aria-label).
     // Cannot be found with getByRole("button", { name: /editar/i }).
   });
 
-  test.skip("CU21-GW02: Given edit modal open, When modify and submit, Then shows success", async () => {
-    // Skipped: same reason as CU21-GW01.
+  test.skip("CU21-GW02 (#1146): Given edit modal open, When modify and submit, Then shows success", async () => {
+    // Skipped (#1146): same reason as CU21-GW01.
   });
 });
 
@@ -75,8 +75,8 @@ test.describe("CU23 - Ver registro de actividades", () => {
     await steps.givenUserIsOnPage("/dashboard/administracion/usuarios");
   });
 
-  test.skip("CU23-GW01: Given on usuarios page, When click ver actividades, Then shows log", async () => {
-    // Skipped: no "ver actividades" button on the usuarios page.
+  test.skip("CU23-GW01 (#1146): Given on usuarios page, When click ver actividades, Then shows log", async () => {
+    // Skipped (#1146): no "ver actividades" button on the usuarios page.
   });
 });
 
@@ -89,12 +89,12 @@ test.describe("CU48 - Dar alta escribano", () => {
     await steps.givenUserIsOnPage("/dashboard/administracion/usuarios");
   });
 
-  test.skip("CU48-GW01: Given on escribanos page, When click nuevo escribano, Then modal opens", async () => {
-    // Skipped: no /dashboard/administracion/escribanos page exists in the current frontend.
+  test.skip("CU48-GW01 (#1146): Given on escribanos page, When click nuevo escribano, Then modal opens", async () => {
+    // Skipped (#1146): no /dashboard/administracion/escribanos page exists in the current frontend.
     // Escribanos are managed through the Usuarios module.
   });
 
-  test.skip("CU48-GW02: Given form open, When fill and submit, Then escribano created", async () => {
-    // Skipped: same reason as CU48-GW01.
+  test.skip("CU48-GW02 (#1146): Given form open, When fill and submit, Then escribano created", async () => {
+    // Skipped (#1146): same reason as CU48-GW01.
   });
 });
