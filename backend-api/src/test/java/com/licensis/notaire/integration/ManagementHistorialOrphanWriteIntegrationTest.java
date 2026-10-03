@@ -353,8 +353,8 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
                 .get("idManagement").asInt();
 
-        // #804 rejects status changes via PUT — append a second History row directly
-        // (same effect as a successful /transition) then force equal dates for tie-break.
+        // #804 rejects status changes via plain PUT — seed a second History row directly
+        // so this tie-break assertion stays independent of workflow enforcement.
         var management = managementRepository.findById(managementId).orElseThrow();
         management.setFkIdManagementStatus(statusB);
         managementRepository.save(management);
@@ -362,7 +362,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         second.setFkIdManagement(management);
         second.setFkIdManagementStatus(statusB);
         second.setDate(new Date());
-        historyRepository.save(second);
+        historyRepository.saveAndFlush(second);
 
         List<History> rows = historyRepository.findByFkIdManagementIdManagement(managementId);
         assertThat(rows).hasSize(2);
