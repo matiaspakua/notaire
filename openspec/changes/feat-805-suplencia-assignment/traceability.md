@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/feat-805-suplencia-assignment/` | Gate 1 complete |
 | Branch | `cursor/feat-805-suplencia-assignment-69d3` | active |
 | Tasks | `tasks.md` | implementation + docs done; merge pending |
-| Commits | `26c641cd` openspec; `79f8843f` TDD red; `7c6fb646` feat; `84615a72` docs | recorded |
+| Commits | `26c641cd` openspec; `79f8843f` TDD red; `7c6fb646` feat; `84615a72` docs; `b07c001e` status | recorded |
 | Pull Request | https://github.com/matiaspakua/notaire/pull/1206 | draft |
 | CI run | pending (coordinator: `bash scripts/check-heavy-ci.sh 1206`) | pending |
 | Merge commit | — | pending |
