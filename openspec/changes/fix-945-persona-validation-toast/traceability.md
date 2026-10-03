@@ -18,11 +18,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU17 – Dar Alta Persona; CU61 – Buscar persona o cliente | exists |
 | Related | #1054 (shared mutation errors — closed); #928 E2E audit surface | referenced |
 | Specification | `openspec/changes/fix-945-persona-validation-toast/` | Gate 1 validated |
-| Branch | `cursor/fix-945-persona-validation-toast-69d3` | created from `origin/main` @ `24cbe4b0` |
-| Tasks | `tasks.md` | implement complete; push/PR deferred until main PW on `24cbe4b0` finishes |
-| Commits | pending push | pending |
-| Pull Request | — | pending (wait main Playwright E2E) |
-| CI run | — | pending |
+| Branch | `cursor/fix-945-persona-validation-toast-69d3` | pushed |
+| Tasks | `tasks.md` | implement complete; PR open |
+| Commits | `f876351a4c10af46580a69e16c9914fa31ed839b` | pushed |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1172 | draft |
+| CI run | PR checks pending | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
