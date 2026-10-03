@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/chore-1050-repo-hygiene/` | Gate 1 validated on implement branch |
 | Branch | `cursor/chore-1050-repo-hygiene-69d3` | active |
 | Tasks | `tasks.md` | Gate 2–3 implement in progress |
-| Commits | `a83beceb`, `d2c4780b` | recorded |
-| Pull Request | pending | pending |
+| Pull Request | [#1169](https://github.com/matiaspakua/notaire/pull/1169) | draft opened |
+| Commits | `a83beceb`, `d2c4780b`, `fa702eb8` | recorded |
 | CI run | pending | pending |
 | Merge commit | — | pending |
 | Release / tag | `docs-manuals` (user-manual PDF asset) | published |
