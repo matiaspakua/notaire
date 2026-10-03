@@ -319,23 +319,15 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
       // DNI left empty intentionally
       await submitForm(page)
 
-      // Then — form-level validation error (inline message or toast)
+      // Then — form-level validation error (inline FormField and/or toast).
+      // Prefer locator.or so either surface can satisfy without Promise.race
+      // false-negatives when one branch times out first (#945).
       const dialog = page.getByRole('dialog')
-      const errorVisible = await Promise.race([
-        dialog
-          .getByText(/requerido|obligatorio|blank/i)
-          .waitFor({ state: 'visible', timeout: 8000 })
-          .then(() => true)
-          .catch(() => false),
-        page
-          .locator('[data-sonner-toast]')
-          .getByText(/dni|identificacion|requerido|obligatorio|blank/i)
-          .waitFor({ state: 'visible', timeout: 8000 })
-          .then(() => true)
-          .catch(() => false),
-      ])
-
-      expect(errorVisible).toBe(true)
+      const inlineError = dialog.getByText(/requerido|obligatorio|blank/i)
+      const toastError = page
+        .locator('[data-sonner-toast]')
+        .getByText(/dni|identificacion|identification|requerido|obligatorio|blank/i)
+      await expect(inlineError.or(toastError).first()).toBeVisible({ timeout: 8000 })
 
       // And — form stays open (dialog not closed on validation failure)
       await expect(dialog).toBeVisible()

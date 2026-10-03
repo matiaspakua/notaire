@@ -81,7 +81,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | **TS-0012** | `TS-0012-documentacion-testimonio-workflow.spec.ts` | CU03–CU12 | GherkinSteps + API | 2 (UI not present) | **HIGH** |
 | **TS-0013** | `TS-0013-escrituras-signing-workflow.spec.ts` | CU05, CU06, CU52, CU63 | GherkinSteps + API | 1 (UI not present) | **HIGH** |
 | **TS-0014** | `TS-0014-pagos-workflow.spec.ts` | CU15, CU47 | GherkinSteps | intentional gaps cite #1146 | **HIGH** |
-| **TS-0015** | `TS-0015-personas-clientes-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61 | GherkinSteps + API | 1 (UI flow changed) | **HIGH** |
+| **TS-0015** | `TS-0015-personas-clientes-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61; #945 Dedup-EDGE (empty DNI → validation feedback) | GherkinSteps + API | 1 (UI flow changed) | **HIGH** |
 
 **Consolidated From**:
 
