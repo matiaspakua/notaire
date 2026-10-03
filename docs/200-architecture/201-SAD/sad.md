@@ -1085,7 +1085,7 @@ O --> (Deployability Docker)
 | Legacy `jpa` package coexists with modern `repository` | High — code duplication, inconsistent patterns | Certain | Incremental migration per entity; new code uses only `repository` |
 | `ControllerNegocio.java` (5,337 lines, ~193 KB) — God class in `negocio` | High — unmaintainable, untestable | Certain | Extract to service classes; scheduled for refactoring |
 | Legacy Swing client resurrected on `main` | Low — Dependabot noise / confusion | Low | Keep deleted (#1046); do not recreate; history in git |
-| No production deployment target defined | Medium — no deployment pipeline to production | Medium | Define production Docker Compose or Kubernetes manifests |
+| No production deployment target defined | Medium — no deployment pipeline to production | Medium | Mitigated for topology: `docker-compose.prod.yml` (#1044) + staging Kustomize (#901). CD remains publish-only; TLS/backups/SLOs are separate issues |
 | Default credentials in `.env` | Critical — security risk if deployed as-is | Medium | `ProductionCredentialsGuard` blocks startup with defaults |
 
 ### 11.2 Technical Debt Inventory
@@ -1137,7 +1137,7 @@ O --> (Deployability Docker)
 
 #### Long Term (Phase 6 — Deprecation / Post-Phase 6)
 
-8. **Add Kubernetes deployment manifests** for production — [#901](https://github.com/matiaspakua/notaire/issues/901) (production deployment risk).
+8. **Add Kubernetes deployment manifests** for production — [#901](https://github.com/matiaspakua/notaire/issues/901) (production deployment risk) — **shipped** as Kustomize base + staging overlay under `deploy/kustomize/` (mirrors #1044 four-service stack; CD apply-to-cluster still future work).
 9. **Implement WebSocket support** for real-time workflow updates.
 10. **Add batch processing** for report generation.
 
