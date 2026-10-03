@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **E2E feature-gap skip tracker hygiene** (issue #1146, CU76): Vitest guard
+  requires `#\d+` on the fourteen static `test.skip`s in TS-0014/16/17/20 and
+  locks the inventory count; `E2E-TEST-MAPPING.md` lists each skip with owning
+  CU (product work stays on those CUs; #1146 is citation hygiene only).
+
 - **Staging Kustomize deploy manifests** (issue #901, CU77): `deploy/kustomize/`
   base + `overlays/staging` mirroring `docker-compose.prod.yml` (postgres,
   backend, frontend, reverse-proxy; no pgAdmin); ClusterIP data plane; Secret

@@ -10,7 +10,7 @@
 | **Descripción** | Define las prácticas de prueba, estándares visuales de formularios secuenciales y control de calidad requeridos para validar cada caso de uso y requerimiento del sistema. |
 | **Tipo** | Soporte / Calidad |
 | **Referencias Cruzadas** | RF #74 (Aspecto visual), RF #75 (Diseño de ventanas), RF #76 (Diseño de campos y combos), RF #77 (Especificación de campos a completar), RF #78 (Uso de colores en la GUI), RF #79 (Seguimiento del trabajo sobre ventanas), RF #80 (Identificación de sesión), RF #86 (Java VM), RF #87 (Sistema operativo), RF #90 (Metodología de desarrollo), RF #91 (Modelo de desarrollo), RF #92 (Lenguaje de programación) |
-| **GitHub ID** | #276, #295, #296, #594, #1047, #1042, #1041, #1043, #1050, #1059 |
+| **GitHub ID** | #276, #295, #296, #594, #1047, #1042, #1041, #1043, #1050, #1059, #1066, #1146 |
 
 ## Alcance de Calidad e Interfaz
 
@@ -58,7 +58,7 @@
 |---|---|
 | Auto-arranque de datos | Suites E2E crean sus fixtures vía helpers API; no `test.skip()` por tablas vacías. |
 | Esperas web-first | Prohibido `waitForTimeout` como espera de corrección; assert sobre UI/URL/respuesta. |
-| Skips intencionales | Todo `test.skip` por gap de producto cita un issue abierto (p. ej. #1146). |
+| Skips intencionales | Todo `test.skip` por gap de producto cita un issue abierto. Inventario vivo de **14** skips en TS-0014/16/17/20 cita #1146 (higiene de tracker); el producto sigue en el CU dueño — ver `E2E-TEST-MAPPING.md`. Guard Vitest en `e2e-test-reliability.test.ts`. |
 | Retries CI | Como máximo **1** retry en CI; triaje vía `trace: on-first-retry` + artefactos. |
 
 ## Confiabilidad suite backend (H2 / unit) — #916
@@ -77,6 +77,8 @@
 - [x] Interfaz gráfica validada con navegación secuencial por teclado y combos predefinidos.
 - [x] Verificación de identificación permanente de sesión de usuario en pantalla.
 - [x] Suites E2E se auto-abastecen de datos y no ocultan flakiness con sleeps/retries (#1066).
+- [x] Skips intencionales por gap de producto en TS-0014/16/17/20 inventariados (14) con
+  cita `#issue` (#1146) y trazabilidad al CU dueño en `E2E-TEST-MAPPING.md`.
 - [x] Suite backend full (`mvn test -pl backend-api`) estable: ITs de pago con presupuesto propio y `SimpleControllersTest` sin stubs mezclados (#916).
 - [x] Controles icon-only del dashboard exponen nombre accesible traducido (`aria-label`) para tecnologías de asistencia y selectores `getByRole` (WCAG 2.1 SC 4.1.2; issue #1057; E2E TS-0096).
 - [x] ESLint del frontend es un gate **bloqueante** en `frontend-ci.yml` y en `scripts/preflight.sh` (`eslint src --max-warnings=0` / `npm run lint`), con reglas `jsx-a11y` activas vía `eslint-config-next` (issue #1048; #701 cerrado).
