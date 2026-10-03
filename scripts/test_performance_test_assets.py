@@ -13,7 +13,7 @@ import unittest
 import yaml
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-K6_SCRIPT_PATH = os.path.join(REPO_ROOT, "performance-test", "k6", "load-test.js")
+K6_SCRIPT_PATH = os.path.join(REPO_ROOT, "infra", "performance", "k6", "load-test.js")
 WORKFLOW_PATH = os.path.join(REPO_ROOT, ".github", "workflows", "performance-test.yml")
 
 
@@ -100,7 +100,7 @@ class PerformanceTestWorkflowTest(unittest.TestCase):
     def test_runs_k6_against_a_live_stack(self):
         raw = yaml.dump(self.workflow)
         self.assertIn("k6-action", raw)
-        self.assertIn("performance-test/k6/load-test.js", raw)
+        self.assertIn("infra/performance/k6/load-test.js", raw)
         self.assertIn("actuator/health", raw)
 
     def test_uploads_summary_json_artifact(self):

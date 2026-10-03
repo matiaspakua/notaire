@@ -762,7 +762,7 @@ node "Docker Host (Developer Machine)" {
     artifact "notary-pgadmin\n:5050" as PGA <<pgAdmin 4>>
   }
 
-  node "infra/docker-compose.yml\n(DevSecOps Stack)" {
+  node "infra/observability/docker-compose.yml\n(DevSecOps Stack)" {
     artifact "devsecops-prometheus\n:9090" as Prom <<Prometheus>>
     artifact "devsecops-grafana\n:3001" as Graf <<Grafana>>
     artifact "devsecops-loki\n:3100" as Loki <<Loki>>
@@ -843,6 +843,7 @@ Loki --> Graf : depends_on
 ### 8.1 Security
 
 **Authentication:**
+
 - JWT tokens issued by `JwtTokenService` upon successful login.
 - `JwtAuthenticationFilter` accepts HttpOnly cookie `notaire-auth-token` **or**
   `Authorization: Bearer` (issue #1051).
@@ -855,6 +856,7 @@ Loki --> Graf : depends_on
 - `ProductionCredentialsGuard` blocks startup if default passwords are used in production.
 
 **Authorization:**
+
 - Coarse-grained only: every `/api/**` request must be authenticated (valid JWT);
   there is no per-role authorization yet — no `@PreAuthorize` annotations exist in
   the codebase.
@@ -863,6 +865,7 @@ Loki --> Graf : depends_on
   `SecurityAndCorsConfig` (see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md#extending-rbac)).
 
 **API Security:**
+
 - CORS configured in `SecurityAndCorsConfig`.
 - All endpoints under `/api/v1/**` require JWT (except login).
 - Actuator endpoints secured with separate credentials.
@@ -884,6 +887,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 ```
 
 **Exception Hierarchy:**
+
 - `NotaireException` — Base exception
 - `BusinessValidationException` — 400 Bad Request
 - `ResourceNotFoundException` — 404 Not Found
@@ -929,23 +933,27 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 ### 8.5 Observability
 
 **Metrics (Prometheus):**
+
 - Spring Boot Actuator exposes `/actuator/prometheus`.
 - Custom metrics via `MetricsUtil` and `SharedModuleMetrics`.
 - `ApplicationHealthIndicator` for custom health checks.
 - `postgres-exporter` provides database-level metrics.
 
 **Logging (Loki):**
+
 - Structured JSON logging via `StructuredLogger`.
 - Logback configuration with JSON appender.
 - Promtail collects logs from Docker containers.
 - Centralized viewing in Grafana.
 
 **Dashboards (Grafana :3001):**
+
 - Application metrics (JVM, HTTP, custom).
 - Database metrics (connections, query time, table sizes).
 - Log exploration and alerting.
 
 **Code Quality (SonarQube :9000):**
+
 - Static analysis on every build.
 - Coverage: enforced ratchet floor via JaCoCo (raised as coverage improves; long-term
   target 80% line / 80% branch — see [Code Quality](../../300-development/303-testing/README.md)).
@@ -1130,16 +1138,16 @@ O --> (Deployability Docker)
 
 #### Medium Term (Phase 6 — Deprecation)
 
-4. **Replace all `jpa` package controllers** with `repository` + `service` — [#576](https://github.com/matiaspakua/notaire/issues/576).
-5. **Swing client retirement** — complete: directory removed under [#1046](https://github.com/matiaspakua/notaire/issues/1046) (do not recreate). Remaining Phase 6 focus is `jpa` cleanup — [#899](https://github.com/matiaspakua/notaire/issues/899).
-6. **Enable quality gates** that are currently advisory-only: Checkstyle [#710](https://github.com/matiaspakua/notaire/issues/710), SpotBugs [#711](https://github.com/matiaspakua/notaire/issues/711), Trivy [#712](https://github.com/matiaspakua/notaire/issues/712).
-7. **Implement RBAC enforcement** (per-role authorization) — [#559](https://github.com/matiaspakua/notaire/issues/559).
+1. **Replace all `jpa` package controllers** with `repository` + `service` — [#576](https://github.com/matiaspakua/notaire/issues/576).
+2. **Swing client retirement** — complete: directory removed under [#1046](https://github.com/matiaspakua/notaire/issues/1046) (do not recreate). Remaining Phase 6 focus is `jpa` cleanup — [#899](https://github.com/matiaspakua/notaire/issues/899).
+3. **Enable quality gates** that are currently advisory-only: Checkstyle [#710](https://github.com/matiaspakua/notaire/issues/710), SpotBugs [#711](https://github.com/matiaspakua/notaire/issues/711), Trivy [#712](https://github.com/matiaspakua/notaire/issues/712).
+4. **Implement RBAC enforcement** (per-role authorization) — [#559](https://github.com/matiaspakua/notaire/issues/559).
 
 #### Long Term (Phase 6 — Deprecation / Post-Phase 6)
 
-8. **Add Kubernetes deployment manifests** for production — [#901](https://github.com/matiaspakua/notaire/issues/901) (production deployment risk) — **shipped** as Kustomize base + staging overlay under `deploy/kustomize/` (mirrors #1044 four-service stack; CD apply-to-cluster still future work).
-9. **Implement WebSocket support** for real-time workflow updates.
-10. **Add batch processing** for report generation.
+1. **Add Kubernetes deployment manifests** for production — [#901](https://github.com/matiaspakua/notaire/issues/901) (production deployment risk) — **shipped** as Kustomize base + staging overlay under `infra/deploy/kustomize/` (mirrors #1044 four-service stack; CD apply-to-cluster still future work).
+2. **Implement WebSocket support** for real-time workflow updates.
+3. **Add batch processing** for report generation.
 
 #### Tech Debt Priority Queue (SAD §11.2 mapped to GitHub Issues)
 
@@ -1189,6 +1197,7 @@ O --> (Deployability Docker)
 ## References
 
 ### Project Documents
+
 - [CONSTITUTION.md](../../../CONSTITUTION.md) — Engineering process
 - [AGENTS.md](../../../AGENTS.md) — Agent configuration
 - [CHANGELOG.md](../../../CHANGELOG.md) — Version history
@@ -1197,6 +1206,7 @@ O --> (Deployability Docker)
 - [ADR-007](../202-ADR/ADR-007-database-schema-versioning-flyway.md) — Flyway implementation details
 
 ### External References
+
 - [arc42 Template](https://docs.arc42.org/home/)
 - [Spring Boot 4.1 Documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
 - [Next.js Documentation](https://nextjs.org/docs)
@@ -1204,7 +1214,9 @@ O --> (Deployability Docker)
 - [PostgreSQL 16 Documentation](https://www.postgresql.org/docs/16/)
 
 ### Diagram Sources
+
 All PlantUML diagram sources are in `docs/200-architecture/204-diagrams/`:
+
 - `architecture-legacy.puml` — Legacy monolithic architecture
 - `architecture-target.puml` — Target three-tier architecture
 - `deployment-docker.puml` — Docker Compose deployment

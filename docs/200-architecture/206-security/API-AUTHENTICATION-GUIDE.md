@@ -8,7 +8,7 @@ Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, impleme
 
 ## Architecture
 
-```
+```text
 Client ──POST /api/v1/usuarios/login──► UsuarioController
                                               │
                                     ──────────▼──────────
@@ -27,7 +27,8 @@ Client ──POST /api/v1/usuarios/login──► UsuarioController
 ```
 
 On protected requests:
-```
+
+```text
 Browser ──Cookie: notaire-auth-token──► Next proxy ──► JwtAuthenticationFilter
 API client ──Authorization: Bearer <token>──────────► JwtAuthenticationFilter
                                                  │
@@ -121,7 +122,7 @@ boolean valid = jwtTokenService.isValid(token);
 
 ### Role model
 
-```
+```text
 Usuario ──M:1──► Rol
 Rol     ──name, description──► (ENUM: Escribano, Secretario, Admin, ...)
 ```
@@ -166,5 +167,5 @@ Currently tokens are single-use with a 24-hour TTL (configurable). There is no r
 
 - [`SQL-INJECTION-PREVENTION.md`](SQL-INJECTION-PREVENTION.md)
 - [`INPUT-VALIDATION-STRATEGY.md`](INPUT-VALIDATION-STRATEGY.md)
-- `infra/grafana/provisioning/dashboards/notaire-auth.json` — login metrics dashboard
-- `infra/prometheus/alert-rules.yml` — brute-force alert rules
+- `infra/observability/grafana/provisioning/dashboards/notaire-auth.json` — login metrics dashboard
+- `infra/observability/prometheus/alert-rules.yml` — brute-force alert rules

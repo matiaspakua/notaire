@@ -20,7 +20,7 @@
 - Validación de accesibilidad, navegación por teclado (Tab) y formularios secuenciales claros.
 - Monitoreo continuo de cobertura de código con JaCoCo (meta ≥ 80%).
 - Workflow de performance k6 (`performance-test.yml`) con script en
-  `performance-test/k6/load-test.js`, validación de assets en
+  `infra/performance/k6/load-test.js`, validación de assets en
   `scripts/test_performance_test_assets.py`, y publicación del artefacto
   `k6-load-test-results` / `summary.json` (issue #1047; no es gate por PR).
 - Publicación CD a GHCR anclada al SHA que CI probó en `main`

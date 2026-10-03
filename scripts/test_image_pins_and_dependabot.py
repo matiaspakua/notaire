@@ -28,9 +28,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 COMPOSE_FILES = (
     REPO_ROOT / "docker-compose.yml",
     REPO_ROOT / "docker-compose.prod.yml",
-    REPO_ROOT / "infra" / "docker-compose.yml",
+    REPO_ROOT / "infra" / "observability" / "docker-compose.yml",
 )
-INFRA_COMPOSE = REPO_ROOT / "infra" / "docker-compose.yml"
+INFRA_COMPOSE = REPO_ROOT / "infra" / "observability" / "docker-compose.yml"
 ROOT_COMPOSE = REPO_ROOT / "docker-compose.yml"
 PROD_COMPOSE = REPO_ROOT / "docker-compose.prod.yml"
 
@@ -143,7 +143,7 @@ class ImagePinsAndDependabotTest(unittest.TestCase):
     def test_infra_stack_has_no_latest_tags(self):
         self.assertTrue(INFRA_COMPOSE.is_file(), INFRA_COMPOSE)
         images = compose_images(INFRA_COMPOSE)
-        self.assertTrue(images, "infra/docker-compose.yml must declare images")
+        self.assertTrue(images, "infra/observability/docker-compose.yml must declare images")
         latest = [img for img in images if img.endswith(":latest")]
         self.assertEqual(
             latest,

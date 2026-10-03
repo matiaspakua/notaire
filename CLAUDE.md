@@ -9,7 +9,7 @@ It is agent-agnostic and prevails over this file. Read it before any change.
 
 **Before ANY code change, READ and FOLLOW the AI Agent Development Workflow:**
 
-```
+```text
 @CONSTITUTION.md
 @.claude/rules/ai-agent-workflow.md
 @.claude/skills/ai-agent-workflow/SKILL.md
@@ -21,7 +21,7 @@ the Constitution): `openspec new change "<name>"`, then
 
 ### Quick Workflow Summary
 
-```
+```text
 0. Verify Issue + Use Case (Caso de Uso) — MANDATORY, no exceptions
 0.5 Specification via OpenSpec (Gate 1) — proposal, traceability, specs, design, tasks
 1. Create branch from updated main: <type>/<#>_<description>
@@ -39,6 +39,7 @@ the Constitution): `openspec new change "<name>"`, then
 ### Full Workflow Details
 
 See `.claude/rules/ai-agent-workflow.md` for complete workflow with:
+
 - Step-by-step instructions
 - Branch naming conventions
 - Test requirements
@@ -68,6 +69,7 @@ push-to-main guard) — see `.claude/rules/hooks.md` for what they do and why.
 Multi-module Maven project refactoring a Java Swing monolith to microservices. Spring Boot 4.1.0, Java 21, PostgreSQL 16.
 
 **Modules:**
+
 - `backend-api` — Spring Boot REST API (main development target)
 - `notaire-shared` — Shared DTOs and common code
 - `frontend-swing` — **Removed.** The legacy Swing GUI client was deprecated and
@@ -102,12 +104,13 @@ cd backend-api && mvn spring-boot:run
 
 All service credentials live in a **single, git-ignored `.env` file at the repo
 root** (copy from `.env.example`). Both `docker-compose.yml` (app) and
-`infra/docker-compose.yml` (observability) read from it. Never hard-code
+`infra/observability/docker-compose.yml` (observability) read from it. Never hard-code
 secrets in compose files or docs — add a key to `.env(.example)` instead.
 
 ## Observability & Quality Infrastructure (`infra/`)
 
 Runs alongside the app and is wired to it (see `infra/README.md`):
+
 - **Prometheus** (`:9090`) scrapes the backend `/actuator/prometheus`
   (Basic auth `ACTUATOR_USER`/`ACTUATOR_PASSWORD`) and `postgres-exporter`.
 - **Grafana** (`:3001`) — provisioned dashboards `notaire-backend`,
@@ -217,6 +220,7 @@ Package root: `com.licensis.notaire`
 **Stack:** Next.js 16, React 19, TypeScript, Tailwind CSS
 
 **Key Directories:**
+
 - `src/components/ui/` — Base UI components (Button, Input, Card, etc.)
 - `src/theme/` — **Centralized design system** (tokens, utilities, form patterns)
 - `src/app/` — Page components and routes
@@ -229,18 +233,21 @@ Package root: `com.licensis.notaire`
 **MANDATORY**: All forms must use the centralized design system.
 
 When working on frontend forms:
+
 1. **Use the theme system**: `@/theme/tokens.ts` — single source of truth for all colors, spacing, typography
 2. **Follow form patterns**: Use `FormContainer`, `FormSection`, `FormField`, `FormActions` from `@/theme/form-patterns.tsx`
 3. **Reference the rules**: `@.claude/rules/ui-ux-design.md` — Apple design language standards
 4. **Use the skill**: `@.claude/skills/frontend-design/SKILL.md` — Implementation patterns and examples
 
 **Key Theme Files:**
+
 - `src/theme/tokens.ts` — Design tokens (colors, spacing, typography, shadows, etc.)
 - `src/theme/index.ts` — Utilities and hooks for using tokens
 - `src/theme/form-patterns.tsx` — Reusable form component patterns
 - `docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md` — Full design system documentation
 
 **Form Development Pattern:**
+
 ```tsx
 import { FormContainer, FormField, FormSection, FormActions, FormHeader } from "@/theme/form-patterns";
 import { theme } from "@/theme/tokens";
@@ -266,6 +273,7 @@ export function MyForm() {
 ```
 
 **Conventions:**
+
 - No hardcoded colors, spacing, or dimensions — use theme tokens exclusively
 - All forms follow `FormContainer` → `FormSection` → `FormField` structure
 - Buttons: use `variant="default"` (primary), `variant="secondary"` (cancel), `variant="destructive"` (dangerous)
@@ -290,7 +298,7 @@ export function MyForm() {
 
 ### Commit Format: [Conventional Commits](https://www.conventionalcommits.org/)
 
-```
+```text
 <type>(<scope>): <description>
 
 [optional body]
@@ -299,6 +307,7 @@ Closes #<issue-number>
 ```
 
 ### Never
+
 - ❌ Commit directly to `main`
 - ❌ Skip tests
 - ❌ Leave failing tests

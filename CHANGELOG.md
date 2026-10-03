@@ -46,6 +46,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   configured ports. Guard: `scripts/test_dev_stack_isolation.py`. The observability stack
   only supports the default names.
 
+- **`infra/` prepared as a standalone repository** (issue #1179, CU77; related #302):
+  observability stack moved to `infra/observability/`, Kustomize and the reverse-proxy
+  config to `infra/deploy/`, k6 to `infra/performance/`; `deploy/` and `performance-test/`
+  removed. `nginx.conf` now has one source (`infra/deploy/kustomize/base/nginx.conf`) shared
+  by `docker-compose.prod.yml` and the generated Kubernetes ConfigMap. Infra scripts are
+  self-contained (`infra/scripts/common.sh`, `infra/.env.example`); compose project name
+  pinned to `infra` so existing volumes survive. New infra guides under `infra/docs/`
+  (preparation, configuration, definition, operation); `docs/` links to them. Stale
+  `infra/tests/e2e` and `infra/CREDENTIALS.md` removed (folded into the guides).
+  Guard: `scripts/test_infra_standalone.py`. Moved paths are listed in the PR.
+
 - **ADR-023 REST resource naming** (issue #1065, CU76): English resource nouns
   matching established `/api/v1` paths, plural collections, `/search`, action
   sub-resources, and `201`+`Location` for creates; ADR-003 remains versioning-only.
@@ -91,7 +102,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (issue #953, CU07/CU08/CU12): `Testimony.fkIdDeed` was `@ManyToOne(optional =
   false)`, so Hibernate INNER JOINed `deeds` and findById/list missed valid rows
   with a null FK; set `optional = true` to match the nullable column.
-
 
 - **Persona form swallowed non-409 backend validation** (issue #945, CU17/CU61):
   present create/update errors via `presentPersonaSaveError` so HTTP 400

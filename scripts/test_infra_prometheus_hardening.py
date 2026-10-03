@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Guards against issue #674: the Prometheus container in infra/docker-compose.yml
+Guards against issue #674: the Prometheus container in infra/observability/docker-compose.yml
 ran as `user: root` with the host's `/var/run/docker.sock` bind-mounted in,
 even though prometheus.yml only ever scrapes static targets (no
 docker_sd_configs) — so the socket access served no purpose and just gave
@@ -16,7 +16,7 @@ import unittest
 import yaml
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INFRA_COMPOSE_FILE = os.path.join(REPO_ROOT, "infra", "docker-compose.yml")
+INFRA_COMPOSE_FILE = os.path.join(REPO_ROOT, "infra", "observability", "docker-compose.yml")
 
 
 def load_prometheus_service():

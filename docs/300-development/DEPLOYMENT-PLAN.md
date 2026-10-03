@@ -18,7 +18,7 @@ Kustomize (#901) or compose (#1044).
 |-------------|---------------|------------|
 | Local development | Developer machine, Docker | `bash scripts/start.sh` (app) + `bash infra/scripts/start-infra.sh` (observability/quality) |
 | Production compose | Self-hosted Docker | `docker compose -f docker-compose.prod.yml --env-file .env up -d` (see `209-deployment`) |
-| Staging Kustomize | Operator Kubernetes cluster | `kustomize build deploy/kustomize/overlays/staging \| kubectl apply -f -` (#901); validate with `python3 scripts/test_staging_kustomize.py` |
+| Staging Kustomize | Operator Kubernetes cluster | `kustomize build infra/deploy/kustomize/overlays/staging \| kubectl apply -f -` (#901); validate with `python3 scripts/test_staging_kustomize.py` |
 | CI | GitHub Actions runners | `.github/workflows/ci.yml`, ephemeral per run |
 | Published image | GHCR (`ghcr.io/<repo>/backend`, `…/frontend`) | CD pipeline, see §2 — consumed by compose/Kustomize when an operator pulls the SHA tag |
 
@@ -34,7 +34,7 @@ Governed by `CONSTITUTION.md` §11 (Release Rules) and implemented in
 only runs after CI has already gone green — it never builds/publishes an
 untested commit:
 
-```
+```text
 PR → CI green on merge to main (ci.yml)
         │  (workflow_run trigger, gated on conclusion == 'success')
         ▼
