@@ -26,37 +26,37 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 `git rm -r deprecated-src.old` (own commit)
-- [ ] 4.2 `git rm` the nine orphaned cURL scripts (own commit)
-- [ ] 4.3 Remove the unused `COMPOSE_FILES` constant
-- [ ] 4.4 Guards green
+- [x] 4.1 `git rm -r deprecated-src.old` (own commit)
+- [x] 4.2 `git rm` the nine orphaned cURL scripts (own commit)
+- [x] 4.3 Remove the unused `COMPOSE_FILES` constant
+- [x] 4.4 Guards green
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing guards pass, assertions unchanged
-- [ ] 5.2 Fix docs that described the removed scripts
-- [ ] 5.3 No dead references remain
+- [x] 5.1 Existing guards pass, assertions unchanged
+- [x] 5.2 Fix docs that described the removed scripts
+- [x] 5.3 No dead references remain
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — n/a (no Java touched); `mvn -q -pl backend-api -am validate` proves the build ignores the removed tree
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — n/a
-- [ ] 6.3 `mvn verify -pl backend-api` — n/a
+- [x] 6.1 `mvn test -pl backend-api` — n/a (no Java touched); `mvn -q -pl backend-api -am validate` proves the build ignores the removed tree
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — n/a
+- [x] 6.3 `mvn verify -pl backend-api` — n/a
 - [ ] 6.4 Bruno and cURL suites via `bash scripts/run_pipeline.sh`
-- [ ] 6.5 No `@Disabled` tests
+- [x] 6.5 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a product UI — no spec edits
+- [x] 7.1 n/a product UI — no spec edits
 - [ ] 7.2 Required Playwright CI job must still pass on the PR
-- [ ] 7.3 n/a responsive UI checks
-- [ ] 7.4 Record "n/a — no UI surface"
+- [x] 7.3 n/a responsive UI checks
+- [x] 7.4 Record "n/a — no UI surface"
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 api-test README, 303-testing README, testing DEFINITION
-- [ ] 8.2 CHANGELOG entry; confirm CU76 table
-- [ ] 8.3 Confirm no information was duplicated
+- [x] 8.1 api-test README, 303-testing README, testing DEFINITION
+- [x] 8.2 CHANGELOG entry; confirm CU76 table
+- [x] 8.3 Confirm no information was duplicated
 - [ ] 8.4 `bash scripts/preflight.sh` without bypass
 
 ## 9. Commits atómicos
