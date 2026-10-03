@@ -385,7 +385,7 @@ class UserJpaControllerTest {
         void shouldUseNamedQuery() {
             List<User> expected = new ArrayList<>();
             expected.add(new User(1));
-            when(em.createNamedQuery("Usuario.findAll")).thenReturn(query);
+            when(em.createNamedQuery("User.findAll")).thenReturn(query);
             when(query.getResultList()).thenReturn(expected);
 
             List<User> result = controller.searchUsers();
@@ -413,7 +413,7 @@ class UserJpaControllerTest {
             User expected = new User(1);
             List<User> results = new ArrayList<>();
             results.add(expected);
-            when(em.createNamedQuery("Usuario.findByFkIdPersona")).thenReturn(query);
+            when(em.createNamedQuery("User.findByPersonId")).thenReturn(query);
             when(query.getResultList()).thenReturn(results);
 
             User result = controller.findUserByPerson(10);
@@ -426,7 +426,7 @@ class UserJpaControllerTest {
         @Test
         @DisplayName("should return null when not found")
         void shouldReturnNullWhenNotFound() {
-            when(em.createNamedQuery("Usuario.findByFkIdPersona")).thenReturn(query);
+            when(em.createNamedQuery("User.findByPersonId")).thenReturn(query);
             when(query.getResultList()).thenReturn(new ArrayList<>());
 
             User result = controller.findUserByPerson(10);

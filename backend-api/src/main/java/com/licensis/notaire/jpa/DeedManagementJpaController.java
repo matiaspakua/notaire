@@ -382,8 +382,8 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNamedQuery("GestionDeEscritura.findByNumero");
-        query.setParameter("numero", numberDeedManagement);
+        Query query = em.createNamedQuery("DeedManagement.findByNumber");
+        query.setParameter("number", numberDeedManagement);
 
         List<DeedManagement> listaGestiones = query.getResultList();
 
@@ -403,7 +403,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
 
         EntityManager em = getEntityManager();
 
-        Query query = em.createNamedQuery("GestionDeEscritura.findByIdGestion");
+        Query query = em.createNamedQuery("DeedManagement.findByIdManagement");
         query.setParameter("idGestion", idManagement);
 
         List<DeedManagement> listaGestiones = query.getResultList();
@@ -481,7 +481,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
 
         List<DeedManagement> listaGestiones = null;
         Person person = null;
-        Query query = em.createNamedQuery("GestionDeEscritura.findAll");
+        Query query = em.createNamedQuery("DeedManagement.findAll");
         listaGestiones = query.getResultList();
 
         return listaGestiones;

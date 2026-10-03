@@ -384,7 +384,7 @@ public class PersonProcedureJpaController implements Serializable, IPersistencia
     {
         EntityManager em = getEntityManager();
         List<Procedure> procedures = null;
-        Query query = em.createNamedQuery("TramitesPersonas.findByFkIdPersonaCliente");
+        Query query = em.createNamedQuery("PersonProcedure.findByFkIdClientPerson");
         query.setParameter("fkIdPersonaCliente", idPerson);
 
         procedures = query.getResultList();
@@ -403,7 +403,7 @@ public class PersonProcedureJpaController implements Serializable, IPersistencia
     {
         EntityManager em = getEntityManager();
         List<PersonProcedure> listaPersonProcedure = null;
-        Query query = em.createNamedQuery("TramitesPersonas.findByTramiteCliente");
+        Query query = em.createNamedQuery("PersonProcedure.findByProcedureClient");
         query.setParameter("fkIdPersonaCliente", idPerson);
         query.setParameter("fkIdTramite", idProcedure);
 

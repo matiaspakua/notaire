@@ -288,7 +288,7 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
         try
         {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("TipoDeTramite.findByIdTipoTramite");
+            Query q = em.createNamedQuery("ProcedureType.findByIdProcedureType");
 
             //Le paso el nombre del parametro del query, y el valor a buscar.
             q.setParameter("idTipoTramite", id);
@@ -321,10 +321,10 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
         try
         {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("TipoDeTramite.findByNombre");
+            Query q = em.createNamedQuery("ProcedureType.findByName");
 
             //Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("nombre", name);
+            q.setParameter("name", name);
 
             misTiposDeProcedure = (List<ProcedureType>) q.getResultList();
 

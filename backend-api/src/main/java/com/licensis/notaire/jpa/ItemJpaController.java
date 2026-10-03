@@ -227,7 +227,7 @@ public class ItemJpaController implements Serializable, IPersistenciaJpa
         try
         {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("Item.findByPresupuesto");
+            Query q = em.createNamedQuery("Item.findByBudget");
 
             //Le paso el nombre del parametro del query, y el valor a buscar.
             q.setParameter("idPresupuesto", pIdBudget);

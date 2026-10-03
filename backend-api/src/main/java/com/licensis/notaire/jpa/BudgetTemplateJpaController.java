@@ -264,7 +264,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         try
         {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("PlantillaPresupuesto.findByFkIdTipoTramite");
+            Query q = em.createNamedQuery("BudgetTemplate.findByFkIdProcedureType");
 
             //Le paso el nombre del parametro del query, y el valor a buscar.
             q.setParameter("fkIdTipoTramite", idProcedureType);

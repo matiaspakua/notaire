@@ -35,8 +35,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @Table(name = "management_statuses")
 @XmlRootElement
 @NamedQueries({
-        @NamedQuery(name = "EstadoDeGestion.findAll", query = "SELECT e FROM ManagementStatus e"),
-        @NamedQuery(name = "EstadoDeGestion.findByIdEstadoGestion", query = "SELECT e FROM ManagementStatus e WHERE e.idManagementStatus = :idEstadoGestion")
+        @NamedQuery(name = "ManagementStatus.findAll", query = "SELECT e FROM ManagementStatus e"),
+        @NamedQuery(name = "ManagementStatus.findByIdManagementStatus", query = "SELECT e FROM ManagementStatus e WHERE e.idManagementStatus = :idEstadoGestion")
 })
 public class ManagementStatus implements Serializable, Persistable<Integer> {
 

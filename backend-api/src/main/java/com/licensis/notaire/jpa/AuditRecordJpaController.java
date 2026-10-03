@@ -189,7 +189,7 @@ public class AuditRecordJpaController implements Serializable, IPersistenciaJpa 
 
             EntityManager em = getEntityManager();
 
-            Query query = em.createNamedQuery("RegistroAuditoria.findAll");
+            Query query = em.createNamedQuery("AuditRecord.findAll");
 
             listaAudit = query.getResultList();
 

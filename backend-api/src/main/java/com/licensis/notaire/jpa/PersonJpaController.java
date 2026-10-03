@@ -906,8 +906,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         String identificationNumber = dtoPerson.getIdentificationNumber();
         int idIdentificationType = dtoPerson.getDtoIdentificationType().getIdIdentificationType();
 
-        Query query = em.createNamedQuery("Persona.findByNumeroIdentificacion");
-        query.setParameter("numeroIdentificacion", identificationNumber);
+        Query query = em.createNamedQuery("Person.findByIdentificationNumber");
+        query.setParameter("identificationNumber", identificationNumber);
 
         listaPerson = query.getResultList();
 
@@ -939,7 +939,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         String name = "%" + dtoPerson.getFirstName() + "%";
         String lastName = "%" + dtoPerson.getLastName() + "%";
 
-        Query query = em.createNamedQuery("Persona.findByPersonaNombreApellido");
+        Query query = em.createNamedQuery("Person.findByPersonNameLastName");
         query.setParameter("nombre", name);
         query.setParameter("apellido", lastName);
 
@@ -959,7 +959,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         List<Person> listaPerson = null;
         Person person = null;
         try {
-            Query query = em.createNamedQuery("Persona.findAll");
+            Query query = em.createNamedQuery("Person.findAll");
 
             listaPerson = query.getResultList();
         } catch (PersistenceException ex) {
@@ -976,7 +976,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         List<Person> listaPerson = null;
         Person person = null;
 
-        Query query = em.createNamedQuery("Persona.findByRegistroEscribano");
+        Query query = em.createNamedQuery("Person.findByNotaryRegistrationNumber");
         query.setParameter("registroEscribano", miPerson.getNotaryRegistrationNumber());
 
         listaPerson = query.getResultList();
@@ -993,7 +993,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
         Person person = new Person();
 
-        Query query = em.createNamedQuery("Persona.findByIdPersona");
+        Query query = em.createNamedQuery("Person.findByIdPerson");
         query.setParameter("idPersona", idPerson);
 
         person = (Person) query.getSingleResult();

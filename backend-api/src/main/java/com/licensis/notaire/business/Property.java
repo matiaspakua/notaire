@@ -36,9 +36,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @Table(name = "properties")
 @XmlRootElement
 @NamedQueries({
-        @NamedQuery(name = "Inmueble.findAll", query = "SELECT i FROM Property i"),
-        @NamedQuery(name = "Inmueble.findByIdInmueble", query = "SELECT i FROM Property i WHERE i.idProperty = :idInmueble"),
-        @NamedQuery(name = "Inmueble.findByNomenclatura", query = "SELECT i FROM Property i WHERE i.cadastralDesignation = :nomenclatura")
+        @NamedQuery(name = "Property.findAll", query = "SELECT i FROM Property i"),
+        @NamedQuery(name = "Property.findByIdProperty", query = "SELECT i FROM Property i WHERE i.idProperty = :idInmueble"),
+        @NamedQuery(name = "Property.findByCadastralDesignation", query = "SELECT i FROM Property i WHERE i.cadastralDesignation = :cadastralDesignation")
 })
 public class Property implements Serializable, Persistable<Integer> {
 

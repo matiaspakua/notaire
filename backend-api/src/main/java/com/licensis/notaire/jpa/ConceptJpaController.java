@@ -268,8 +268,8 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         List<Concept> listaConcept = new ArrayList<>();
 
-        Query query = em.createNamedQuery("Concepto.findByNombre");
-        query.setParameter("nombre", nameConcept);
+        Query query = em.createNamedQuery("Concept.findByName");
+        query.setParameter("name", nameConcept);
 
         listaConcept = query.getResultList();
 

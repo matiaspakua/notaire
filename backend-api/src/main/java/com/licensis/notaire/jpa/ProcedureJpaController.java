@@ -581,7 +581,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
         try
         {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("Tramite.findByIdPresupuesto");
+            Query q = em.createNamedQuery("Procedure.findByIdBudget");
 
             //Le paso el nombre del parametro del query, y el valor a buscar.
             q.setParameter("idPresupuesto", idBudget);

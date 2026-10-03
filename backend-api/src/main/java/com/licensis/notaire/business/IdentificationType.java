@@ -36,8 +36,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NamedQueries({
-        @NamedQuery(name = "TipoIdentificacion.findAll", query = "SELECT t FROM IdentificationType t"),
-        @NamedQuery(name = "TipoIdentificacion.findByIdTipoIdentificacion", query = "SELECT t FROM IdentificationType t WHERE t.idIdentificationType = :idTipoIdentificacion")
+        @NamedQuery(name = "IdentificationType.findAll", query = "SELECT t FROM IdentificationType t"),
+        @NamedQuery(name = "IdentificationType.findByIdIdentificationType", query = "SELECT t FROM IdentificationType t WHERE t.idIdentificationType = :idTipoIdentificacion")
 })
 public class IdentificationType implements Serializable, Persistable<Integer> {
 

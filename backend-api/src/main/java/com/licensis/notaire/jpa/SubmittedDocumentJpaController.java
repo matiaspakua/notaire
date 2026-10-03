@@ -254,7 +254,7 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
 
         List<SubmittedDocument> listDocumentPresentados = null;
 
-        Query query = em.createNamedQuery("DocumentoPresentado.findAll");
+        Query query = em.createNamedQuery("SubmittedDocument.findAll");
         listDocumentPresentados = query.getResultList();
 
         return listDocumentPresentados;
@@ -267,7 +267,7 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
 
         Date dateActual = Calendar.getInstance().getTime();
 
-        Query query = em.createNamedQuery("DocumentoPresentado.findByFechaVencimiento");
+        Query query = em.createNamedQuery("SubmittedDocument.findByDueDate");
         query.setParameter("fechaVencimiento", dateActual);
 
         listaDocumentPorVencer = query.getResultList();

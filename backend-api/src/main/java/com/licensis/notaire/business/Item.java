@@ -40,9 +40,9 @@ import org.springframework.data.domain.Persistable;
         {
             @NamedQuery(name = "Item.findAll", query = "SELECT i FROM Item i"),
             @NamedQuery(name = "Item.findByIdItem", query = "SELECT i FROM Item i WHERE i.idItem = :idItem"),
-            @NamedQuery(name = "Item.findByValor", query = "SELECT i FROM Item i WHERE i.value = :valor"),
-            @NamedQuery(name = "Item.findByPorcentaje", query = "SELECT i FROM Item i WHERE i.percentage = :porcentaje"),
-            @NamedQuery(name = "Item.findByPresupuesto", query = "SELECT i FROM Item i WHERE i.fkIdBudget.idBudget = :idPresupuesto")
+            @NamedQuery(name = "Item.findByValue", query = "SELECT i FROM Item i WHERE i.value = :valor"),
+            @NamedQuery(name = "Item.findByPercentage", query = "SELECT i FROM Item i WHERE i.percentage = :porcentaje"),
+            @NamedQuery(name = "Item.findByBudget", query = "SELECT i FROM Item i WHERE i.fkIdBudget.idBudget = :idPresupuesto")
         })
 public class Item implements Serializable, Persistable<Integer>
 {

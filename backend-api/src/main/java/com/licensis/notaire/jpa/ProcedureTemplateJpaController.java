@@ -283,7 +283,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
         try
         {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("PlantillaTramite.findByFkIdTipoTramite");
+            Query q = em.createNamedQuery("ProcedureTemplate.findByFkIdProcedureType");
 
             //Le paso el nombre del parametro del query, y el valor a buscar.
             q.setParameter("fkIdTipoTramite", idProcedureType);
@@ -355,7 +355,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
 
         List<ProcedureTemplate> listaTemplateProcedures = null;
 
-        Query query = em.createNamedQuery("PlantillaTramite.findAll");
+        Query query = em.createNamedQuery("ProcedureTemplate.findAll");
         listaTemplateProcedures = query.getResultList();
 
         return listaTemplateProcedures;
