@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1046-dependabot-alerts/` | Gate 1 validated |
 | Branch | `cursor/fix-1046-dependabot-alerts-69d3` | created from `origin/main` @ `c2c34de8` |
 | Tasks | `tasks.md` | implement complete locally; PR/CI pending |
-| Commits | (filled after atomic commits) | pending |
-| Pull Request | — | pending |
+| Commits | `3f050664` test; `3fcbb8f7` chore delete Swing; `d8f15b6a` smol-toml override; `85aef4eb` docs | done |
+| Pull Request | pending push | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
