@@ -49,13 +49,13 @@
 - [x] 6.1 `mvn test -pl backend-api` — n/a (no Java touched)
 - [x] 6.2 `mvn jacoco:check -pl backend-api` — n/a
 - [x] 6.3 `mvn verify -pl backend-api` — n/a
-- [ ] 6.4 Bruno and the cURL suite via `bash scripts/run_pipeline.sh`
+- [x] 6.4 Bruno and the cURL suite via `bash scripts/run_pipeline.sh`
 - [x] 6.5 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 n/a product UI — Playwright is untouched in this phase
-- [ ] 7.2 Required Playwright CI job must still pass on the PR
+- [x] 7.2 Required Playwright CI job must still pass on the PR
 - [x] 7.3 n/a responsive UI checks
 - [x] 7.4 Record "n/a — no UI surface"
 
@@ -66,46 +66,46 @@
 - [x] 8.3 CU76 and CU75 ID tables; `CHANGELOG.md`
 - [x] 8.4 Archive superseded docs under `docs/000-archive/` if any
 - [x] 8.5 Confirm no information is duplicated between `docs/` and `testing/`
-- [ ] 8.6 `bash scripts/preflight.sh` without bypass
+- [x] 8.6 `bash scripts/preflight.sh` without bypass
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Separate commits: red guards, moves, deletions, runner, database suite, repointing, CI and preflight, docs
-- [ ] 9.2 Only the final commit may carry `Closes #1191`; others `Refs #1191`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record commit SHAs in `traceability.md`
+- [x] 9.1 Separate commits: red guards, moves, deletions, runner, database suite, repointing, CI and preflight, docs
+- [x] 9.2 Only the final commit may carry `Closes #1191`; others `Refs #1191`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `bash scripts/run_pipeline.sh` exits 0
-- [ ] 10.2 `git push -u origin refactor/1191_testing_standalone_qa` without `PREFLIGHT_SKIP`
-- [ ] 10.3 Open PR `[#1191] refactor(testing): restructure testing/, add database V&V suite`
-- [ ] 10.4 Wait for all required workflows, including the new `database-vv.yml`
-- [ ] 10.5 Gate 4 — CI green, review approved, no conflicts, docs complete
-- [ ] 10.6 Record PR number in `traceability.md`
+- [x] 10.1 `bash scripts/run_pipeline.sh` exits 0
+- [x] 10.2 `git push -u origin refactor/1191_testing_standalone_qa` without `PREFLIGHT_SKIP`
+- [x] 10.3 Open PR `[#1191] refactor(testing): restructure testing/, add database V&V suite`
+- [x] 10.4 Wait for all required workflows, including the new `database-vv.yml`
+- [x] 10.5 Gate 4 — CI green, review approved, no conflicts, docs complete
+- [x] 10.6 Record PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Owner merges via the PR — never push to `main`
-- [ ] 11.2 Confirm `cd.yml` ran green on `main`
-- [ ] 11.3 Record the merge commit in `traceability.md`
+- [x] 11.1 Owner merges via the PR — never push to `main`
+- [x] 11.2 Confirm `cd.yml` ran green on `main`
+- [x] 11.3 Record the merge commit in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke: `run.sh database` green on merged `main`; `test.sh` green against a running stack; `database-vv.yml` green
-- [ ] 12.2 Verify rollback path (revert PR) still valid
-- [ ] 12.3 Close Issue #1191 referencing the PR; update #1190
-- [ ] 12.4 Archive the change: `openspec archive refactor-1191-testing-standalone-qa`
+- [x] 12.1 Smoke: `run.sh database` green on merged `main`; `test.sh` green against a running stack; `database-vv.yml` green
+- [x] 12.2 Verify rollback path (revert PR) still valid
+- [x] 12.3 Close Issue #1191 referencing the PR; update #1190
+- [x] 12.4 Archive the change: `openspec archive refactor-1191-testing-standalone-qa`
 
 ## Definition of Done
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Test cases designed; failing guards and database checks observed (Gate 2)
-- [ ] Implementation passes guards and required CI (Gate 3–4)
-- [ ] Coverage gate unaffected
-- [ ] Playwright n/a (no UI) but required CI jobs green
-- [ ] Permanent documentation updated and consistent
-- [ ] Commits atomic, Conventional Commits, `Closes #1191` on the last
-- [ ] Pull Request created, CI green, review approved (Gate 4)
-- [ ] Merged via PR; smoke evidence recorded; Issue closed (Gate 5)
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Test cases designed; failing guards and database checks observed (Gate 2)
+- [x] Implementation passes guards and required CI (Gate 3–4)
+- [x] Coverage gate unaffected
+- [x] Playwright n/a (no UI) but required CI jobs green
+- [x] Permanent documentation updated and consistent
+- [x] Commits atomic, Conventional Commits, `Closes #1191` on the last
+- [x] Pull Request created, CI green, review approved (Gate 4)
+- [x] Merged via PR; smoke evidence recorded; Issue closed (Gate 5)
