@@ -25,7 +25,7 @@ mvn jacoco:check -pl backend-api
 
 La imagen del backend se construye con `backend-api/Dockerfile`. Es un build
 multi-etapa **cuyo contexto es la raíz del repositorio** (no `backend-api/`),
-porque necesita los módulos `notaire-shared` y `frontend-swing` para compilar:
+porque necesita el módulo `notaire-shared` (y el reactor raíz) para compilar:
 
 ```bash
 # desde la raíz del repo

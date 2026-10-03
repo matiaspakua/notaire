@@ -10,7 +10,7 @@
 | **Descripción** | Establece los controles de seguridad esenciales para proteger datos personales de clientes, escrituras y trámites frente a accesos no autorizados o vulnerabilidades (OWASP Top 10). |
 | **Tipo** | Soporte / Seguridad |
 | **Referencias Cruzadas** | RF #81 (Seguridad y privacidad), RF #82 (Acceso de usuarios), RF #83 (Cifrado de contraseña), RF #84 (Transporte de información por red), RF #85 (Acceso a la base de datos); CU20, CU21 |
-| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309, #1044 |
+| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309, #1044, #1046, #1051 |
 
 ## Alcance Técnico
 
@@ -22,6 +22,8 @@
 - Aislamiento estricto de la base de datos (sin acceso público directo, solo red interna protegida).
 - Artefacto de despliegue de producción (`docker-compose.prod.yml`, issue #1044): sin pgAdmin, sin puertos de host para Postgres/backend/frontend, ingreso solo por reverse proxy, secretos obligatorios `${VAR:?}`, `ENVIRONMENT=production`.
 - Escaneo continuo de vulnerabilidades en dependencias y código fuente.
+- Higiene Dependabot (issue #1046): sin árbol Swing con Log4j 1.x; override npm
+  `smol-toml` ≥1.7.1 (pin `^1.9.0`) en el frontend.
 
 ## Procedimiento de Seguridad y Control de Acceso
 
@@ -50,3 +52,6 @@
 - [x] Compose de producción sin pgAdmin ni exposición de DB/app en el host; solo reverse proxy publica puertos; secretos sin defaults `admin` (issue #1044).
 - [x] JWT de sesión del navegador en cookie HttpOnly; sin JWT usable en `localStorage` (issue #1051).
 - [x] CSP de producción sin `'unsafe-eval'` y con nonce en `script-src` (issue #1051).
+- [x] Alertas Dependabot críticas/altas por `log4j:log4j` en Swing muerto y por
+      `smol-toml` resueltas: árbol `deprecated-frontend-swing/` eliminado; override
+      npm `smol-toml` `^1.9.0` (issue #1046). Guard: `scripts/test_dependabot_hygiene.py`.

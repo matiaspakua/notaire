@@ -51,7 +51,7 @@ automatizados.
 
 - **Backend**: API REST con **Spring Boot 4.1.0** y **Java 21**.
 - **Frontend**: **Next.js 16** + **React 19** + **TypeScript** + **Tailwind CSS 4**, con un sistema de diseño propio inspirado en Apple.
-- **Cliente activo**: solo el frontend Next.js. El Swing legacy no es un target de desarrollo (histórico en [`deprecated-frontend-swing/`](deprecated-frontend-swing/README.md)).
+- **Cliente activo**: solo el frontend Next.js. El cliente Swing legacy fue eliminado del árbol (#1046); no recrearlo.
 - **Base de datos**: **PostgreSQL 16** con **Flyway** como única fuente de verdad del esquema.
 - **Infraestructura**: Docker Compose multi-stage, 11 workflows de GitHub Actions, observabilidad Prometheus/Grafana/Loki.
 
@@ -89,7 +89,6 @@ notaire/
 ├── backend-api/          # Spring Boot 4 REST API (Java 21)
 ├── frontend/              # Next.js 16 web app
 ├── notaire-shared/        # DTOs y contratos compartidos
-├── deprecated-frontend-swing/  # Cliente Swing legacy (deprecado, no tocar)
 ├── docs/                  # Documentación (ver docs/README.md)
 │   ├── 100-business/      # Requisitos, casos de uso, modelo de datos
 │   ├── 200-architecture/  # SAD, ADRs, diseño, diagramas, seguridad, deploy
