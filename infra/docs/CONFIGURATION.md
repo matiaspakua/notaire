@@ -52,7 +52,7 @@ repository; see its `.env.example`.
 | `observability/grafana/provisioning/` | datasources and dashboards (auto-provisioned) |
 | `observability/loki/local-config.yaml`, `promtail-config.yaml` | log storage and shipping |
 | `observability/dashboard/config.yml` | Homer landing page links |
-| `deploy/kustomize/base/nginx.conf` | the one reverse-proxy config (compose + Kubernetes) |
+| `infra/deploy/kustomize/base/nginx.conf` | the one reverse-proxy config (compose + Kubernetes) |
 
 ## Known limitation
 
