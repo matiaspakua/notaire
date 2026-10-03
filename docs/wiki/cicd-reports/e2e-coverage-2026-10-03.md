@@ -10,9 +10,9 @@ title: E2E Coverage Report - 2026-10-03
 ## Playwright E2E Results
 
 - **Total:** 534
-- **Passed:** 515
+- **Passed:** 518
 - **Failed:** 0
-- **Skipped:** 19
+- **Skipped:** 16
 - **Flaky:** 0
 
 ## Bruno API Test Results
