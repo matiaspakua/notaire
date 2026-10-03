@@ -88,7 +88,7 @@ describe("useAuthStore — logout()", () => {
     expect(state.token).toBeNull();
   });
 
-  it("clears middleware auth cookies on logout (issues #392 / #1052)", () => {
+  it("clears UX auth cookies on logout (issues #392 / #1052)", () => {
     const { login, logout } = useAuthStore.getState();
     login(adminUser);
     expect(document.cookie).toContain("notaire-auth-status=");
@@ -96,7 +96,7 @@ describe("useAuthStore — logout()", () => {
 
     logout();
 
-    // After logout, middleware cookies must be gone so /login is not bounced
+    // After logout, UX auth cookies must be gone so /login is not bounced
     // back to /dashboard and admin paths are not edge-allowed.
     expect(document.cookie).not.toContain("notaire-auth-status=1");
     expect(document.cookie).not.toContain("notaire-auth-role=ADMIN");

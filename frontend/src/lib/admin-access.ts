@@ -1,7 +1,7 @@
 /**
  * Frontend admin-route access helpers (issue #1052, CU78).
  *
- * Edge middleware cannot read Zustand/localStorage, so login sets a companion
+ * Edge proxy cannot read Zustand/localStorage, so login sets a companion
  * non-credential role cookie. Real API authorization remains backend RBAC (#559).
  * Session JWT is HttpOnly cookie `notaire-auth-token` (issue #1051).
  */

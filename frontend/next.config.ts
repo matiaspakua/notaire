@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
     ];
   },
   // Static security headers (issue #562). Content-Security-Policy is set
-  // per-request in middleware with a nonce (issue #1051) — do not set a
+  // per-request in the edge proxy with a nonce (issue #1051) — do not set a
   // competing CSP here.
   async headers() {
     return [

@@ -16,7 +16,7 @@ El acceso al sistema es fundamental para proteger la integridad de los datos y l
 2. El usuario ingresa su Nombre de Usuario (Username) y Contraseña (Password).
 3. El usuario presiona el botón "Ingresar".
 4. El sistema valida las credenciales con la base de datos.
-5. Si son válidas, el sistema establece la sesión del navegador con cookie HttpOnly `notaire-auth-token` (SameSite=Lax; Secure en producción) y cookies UX no-credenciales para el middleware (#1052). El JWT **no** se guarda en `localStorage` (issue #1051).
+5. Si son válidas, el sistema establece la sesión del navegador con cookie HttpOnly `notaire-auth-token` (SameSite=Lax; Secure en producción) y cookies UX no-credenciales para el edge proxy (`proxy.ts`, #1052 / #1056). El JWT **no** se guarda en `localStorage` (issue #1051).
 6. El sistema muestra un mensaje de éxito y redirige al usuario a su panel principal según su rol.
 7. El sistema registra el inicio de sesión en el log de auditoría.
 8. Al cerrar sesión, el cliente llama al endpoint de logout para limpiar la cookie HttpOnly y luego limpia el estado de cliente.

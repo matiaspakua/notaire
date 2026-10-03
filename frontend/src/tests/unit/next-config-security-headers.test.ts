@@ -20,7 +20,7 @@ describe("next.config security headers", () => {
         "Strict-Transport-Security",
       ]),
     );
-    // CSP is per-request nonce in middleware (issue #1051), not a static header.
+    // CSP is per-request nonce in the edge proxy (issue #1051), not a static header.
     expect(headerNames).not.toContain("Content-Security-Policy");
   });
 

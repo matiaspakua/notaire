@@ -42,7 +42,7 @@
 |---|---|---|
 | 1.1 | Credenciales incorrectas o usuario inactivo | El sistema rechaza el acceso, incrementa el contador de intentos fallidos y no revela detalles sensibles. |
 | 3.1 | Usuario sin permisos para la operación solicitada | El sistema bloquea la acción con código HTTP 403 Forbidden y registra el evento de seguridad en auditoría. |
-| 3.2 | Usuario autenticado no administrador navega a `/dashboard/administracion/**` (issue #1052) | El cliente (middleware + layout) redirige a `/dashboard?forbidden=1` y muestra un mensaje de acceso denegado. El control real de API permanece en RBAC del backend (#559). Cookies UX `notaire-auth-status` / `notaire-auth-role` no son credenciales; la sesión API usa cookie HttpOnly (#1051). |
+| 3.2 | Usuario autenticado no administrador navega a `/dashboard/administracion/**` (issue #1052) | El cliente (edge proxy + layout) redirige a `/dashboard?forbidden=1` y muestra un mensaje de acceso denegado. El control real de API permanece en RBAC del backend (#559). Cookies UX `notaire-auth-status` / `notaire-auth-role` no son credenciales; la sesión API usa cookie HttpOnly (#1051). |
 
 ## Criterios de Aceptación
 
