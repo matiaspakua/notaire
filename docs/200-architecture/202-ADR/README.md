@@ -27,6 +27,7 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [019](ADR-019-secrets-management.md) | Secrets Management | Accepted | 2026-08-19 | Security |
 | [020](ADR-020-openapi-exposure-policy.md) | OpenAPI Exposure Policy | Accepted | 2026-08-19 | Security & API |
 | [021](ADR-021-hexagonal-architecture-pilot.md) | Hexagonal Architecture Pilot (Payment Slice) | Accepted | 2026-09-13 | Code organization |
+| [022](ADR-022-git-history-rewrite-and-large-binaries.md) | Git History Rewrite and Large Binaries | Accepted | 2026-10-03 | DevOps / repo hygiene |
 
 ## ADR Status Legend
 
@@ -88,10 +89,11 @@ Cada ADR sigue esta estructura:
 - **ADR-009**: Logging y monitoreo centralizado (LPG Stack)
 - **ADR-016**: Topología del stack de observabilidad (Prometheus/Grafana/Loki/SonarQube)
 
-### DevOps (2 ADRs)
+### DevOps (3 ADRs)
 
 - **ADR-012**: Pipeline CI/CD con GitHub Actions
 - **ADR-017**: Estrategia de imágenes base de contenedores (Alpine, multi-stage, non-root)
+- **ADR-022**: Higiene de binarios grandes y decisión diferida de `git filter-repo` (#1050)
 
 ### Security & Compliance (4 ADRs)
 

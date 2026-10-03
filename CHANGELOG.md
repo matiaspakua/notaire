@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Repo hygiene** (issue #1050, CU76): remove global `*.txt` gitignore ban
+  (keep `*.local.txt`); ignore and untrack `.serena/`; verify CODEOWNERS has
+  no `frontend-swing` (#1046); relocate the ~13 MB Manual de Usuario PDF to
+  GitHub Release `docs-manuals` (`scripts/fetch-user-manual.sh`); add
+  ADR-022 deferring `git filter-repo` history rewrite (related #585/#682).
+  Guarded by `scripts/test_repo_hygiene.py`.
+
 ### Security
 
 - **Runtime backend URL proxy + remove login URL leak** (issue #1055, CU78):
