@@ -31,24 +31,25 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Login sets HttpOnly Secure SameSite cookie | backend integration / security test | pending |
-| JWT is not stored in localStorage after login | frontend unit + Playwright | pending |
-| Browser API call authenticates via proxy and cookie | E2E / api-client unit | pending |
-| API accepts cookie without Bearer | JwtAuthenticationFilter unit/integration | pending |
-| API still accepts Bearer for non-browser clients | existing + regression Bearer tests | pending |
-| Logout clears auth cookie | backend integration + Playwright TS-0002 | pending |
-| Production CSP has no unsafe-eval | next config / middleware unit assert | pending |
-| Production CSP script-src is nonce-based | header assert | pending |
-| App remains functional under nonce CSP | Playwright login/logout | pending |
+| Login sets HttpOnly Secure SameSite cookie | `JwtAuthIntegrationTest#shouldSetHttpOnlyAuthCookieOnLogin` | covered |
+| JWT is not stored in localStorage after login | `auth-store` / login-page unit + TS-0002 / TS-0044 | covered |
+| Browser API call authenticates via proxy and cookie | api-client credentials unit + TS-0044 | covered |
+| API accepts cookie without Bearer | `JwtAuthenticationFilterTest` + integration | covered |
+| API still accepts Bearer for non-browser clients | `JwtAuthIntegrationTest` Bearer cases | covered |
+| Logout clears auth cookie | integration logout + TS-0002 | covered |
+| Production CSP has no unsafe-eval | `csp.test.ts` | covered |
+| Production CSP script-src is nonce-based | `csp.test.ts` | covered |
+| App remains functional under nonce CSP | Playwright login/logout (heavy CI) | pending CI |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU78 – Security and Compliance.md` | pending | — |
-| `docs/100-business/102-use-cases/CU84 - Login.md` | pending | — |
-| Security / frontend architecture notes (if applicable) | pending | — |
-| `CHANGELOG.md` | pending | — |
+| `docs/100-business/102-use-cases/CU78 – Security and Compliance.md` | yes | follow-up |
+| `docs/100-business/102-use-cases/CU84 - Login.md` | yes | follow-up |
+| `docs/200-architecture/206-security/API-AUTHENTICATION-GUIDE.md` | yes | follow-up |
+| `docs/200-architecture/201-SAD/sad.md` | yes | follow-up |
+| `CHANGELOG.md` | yes | follow-up |
 
 ## Gate log
 

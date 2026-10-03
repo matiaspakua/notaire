@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   baseline-on-migrate off. Guarded by `scripts/test_prod_compose.py`. Deployment
   guide and CU78/CU75 updated. TLS remains #254; backups remain #256.
 
+### Security
+
+- **HttpOnly JWT cookie + production CSP nonce** (issue #1051, CU78/CU84):
+  login sets `notaire-auth-token` (HttpOnly, SameSite=Lax, Secure via
+  `COOKIE_SECURE`); logout clears it; `JwtAuthenticationFilter` accepts cookie
+  or Bearer; frontend stops persisting JWT in `localStorage` and uses
+  `credentials: 'include'` through the Next proxy; production CSP uses
+  nonce-based `script-src` without `'unsafe-eval'`.
+
 ### Changed
 
 - **ProductionCredentialsGuard** aligns with least-privilege prod compose

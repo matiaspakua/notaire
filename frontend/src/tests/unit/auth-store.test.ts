@@ -49,7 +49,7 @@ const empleadoUser: DtoUsuario = {
 describe("useAuthStore — login()", () => {
   it("sets user and isAuthenticated on login without keeping a script-readable token", () => {
     const { login } = useAuthStore.getState();
-    login(adminUser, "fake-jwt-token");
+    login(adminUser);
 
     const state = useAuthStore.getState();
     expect(state.isAuthenticated).toBe(true);

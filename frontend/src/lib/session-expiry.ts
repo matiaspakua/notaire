@@ -39,16 +39,23 @@ function hasLocalSession(): boolean {
 }
 
 function clearHttpOnlyAuthCookieBestEffort(): void {
-  if (typeof window === "undefined") {
+  if (typeof window === "undefined" || typeof fetch !== "function") {
     return;
   }
-  void fetch("/api/v1/usuarios/logout", {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-  }).catch(() => {
+  try {
+    const result = fetch("/api/v1/usuarios/logout", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (result && typeof (result as Promise<unknown>).catch === "function") {
+      void (result as Promise<unknown>).catch(() => {
+        // Best-effort; client state is still cleared below.
+      });
+    }
+  } catch {
     // Best-effort; client state is still cleared below.
-  });
+  }
 }
 
 /**

@@ -9,18 +9,15 @@ import { test, expect, type Page } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
 import { createUsuario } from "./setup/api-helpers";
 
-/** Capture JWT from UI login so page.request helpers authenticate. */
+/** Capture JWT from HttpOnly cookie (or shared env) for page.request helpers. */
 async function syncAdminTokenFromBrowser(page: Page): Promise<void> {
-  const token = await page.evaluate(() => {
-    try {
-      const raw = localStorage.getItem("notaire-auth");
-      return raw ? (JSON.parse(raw)?.state?.token as string | undefined) : undefined;
-    } catch {
-      return undefined;
-    }
-  });
-  if (token) {
-    process.env.E2E_ADMIN_TOKEN = token;
+  if (process.env.E2E_ADMIN_TOKEN) {
+    return;
+  }
+  const cookies = await page.context().cookies();
+  const authCookie = cookies.find((c) => c.name === "notaire-auth-token");
+  if (authCookie?.value) {
+    process.env.E2E_ADMIN_TOKEN = authCookie.value;
   }
 }
 

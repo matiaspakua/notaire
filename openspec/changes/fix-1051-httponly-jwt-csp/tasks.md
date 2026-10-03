@@ -21,23 +21,23 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases from both delta specs (cookie login/logout/filter/proxy/localStorage; CSP no-eval/nonce; E2E login/logout)
-- [ ] 3.2 Write failing backend tests: login Set-Cookie attributes; logout clears cookie; filter accepts cookie without Bearer; Bearer still works
-- [ ] 3.3 Write failing frontend unit tests: auth-store does not persist token; api-client does not read JWT from localStorage; uses credentials/include for browser calls
-- [ ] 3.4 Write failing CSP/config asserts: production headers lack `unsafe-eval`; script-src includes nonce
-- [ ] 3.5 Run them and **observe them fail** on pre-change tree
-- [ ] 3.6 Confirm every `#### Scenario:` in both delta specs maps to at least one test
+- [x] 3.1 Enumerate test cases from both delta specs (cookie login/logout/filter/proxy/localStorage; CSP no-eval/nonce; E2E login/logout)
+- [x] 3.2 Write failing backend tests: login Set-Cookie attributes; logout clears cookie; filter accepts cookie without Bearer; Bearer still works
+- [x] 3.3 Write failing frontend unit tests: auth-store does not persist token; api-client does not read JWT from localStorage; uses credentials/include for browser calls
+- [x] 3.4 Write failing CSP/config asserts: production headers lack `unsafe-eval`; script-src includes nonce
+- [x] 3.5 Run them and **observe them fail** on pre-change tree
+- [x] 3.6 Confirm every `#### Scenario:` in both delta specs maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Backend: issue HttpOnly/SameSite/(Secure) cookie on successful login; clear on logout endpoint
-- [ ] 4.2 Backend: extend `JwtAuthenticationFilter` to read cookie OR Bearer
-- [ ] 4.3 Frontend proxy: ensure Cookie forward + Set-Cookie surfacing (rewrite verify or Route Handler BFF)
-- [ ] 4.4 Frontend: remove JWT from Zustand persist; login/logout wire cookie session; `api-client` credentials path
-- [ ] 4.5 Keep #1052 UX cookies (`notaire-auth-status` / `notaire-auth-role`) working with login/logout
-- [ ] 4.6 Production CSP: nonce-based `script-src`; remove `unsafe-eval` (dev-only exception documented if required for HMR)
-- [ ] 4.7 Update E2E auth helpers and TS-0002 / TS-0044 / TS-0093 (and any localStorage JWT injectors)
-- [ ] 4.8 Review CSRF posture docs/tests for cookie-era reality (SameSite + CORS; no stale “no auth cookie” claims)
+- [x] 4.1 Backend: issue HttpOnly/SameSite/(Secure) cookie on successful login; clear on logout endpoint
+- [x] 4.2 Backend: extend `JwtAuthenticationFilter` to read cookie OR Bearer
+- [x] 4.3 Frontend proxy: ensure Cookie forward + Set-Cookie surfacing (rewrite verify or Route Handler BFF)
+- [x] 4.4 Frontend: remove JWT from Zustand persist; login/logout wire cookie session; `api-client` credentials path
+- [x] 4.5 Keep #1052 UX cookies (`notaire-auth-status` / `notaire-auth-role`) working with login/logout
+- [x] 4.6 Production CSP: nonce-based `script-src`; remove `unsafe-eval` (dev-only exception documented if required for HMR)
+- [x] 4.7 Update E2E auth helpers and TS-0002 / TS-0044 / TS-0093 (and any localStorage JWT injectors)
+- [x] 4.8 Review CSRF posture docs/tests for cookie-era reality (SameSite + CORS; no stale “no auth cookie” claims)
 
 ## 5. Actualizar tests existentes
 
@@ -62,11 +62,11 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
 - [ ] 8.2 Update OpenAPI/Swagger if login/logout cookie behavior is documented there
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for HttpOnly JWT + CSP hardening
-- [ ] 8.4 Archive superseded documents into `docs/000-archive/` — none expected
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for HttpOnly JWT + CSP hardening
+- [x] 8.4 Archive superseded documents into `docs/000-archive/` — none expected
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos

@@ -14,7 +14,7 @@ interface AuthState {
   /** Kept null for browser sessions — JWT lives in HttpOnly cookie (#1051). */
   token: string | null;
   isAuthenticated: boolean;
-  login: (user: DtoUsuario, token?: string | null) => void;
+  login: (user: DtoUsuario) => void;
   logout: () => void;
   isAdmin: () => boolean;
 }
@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
 
-      login: (user: DtoUsuario, _token?: string | null) => {
+      login: (user: DtoUsuario) => {
         // Edge middleware reads these non-credential cookies (issue #1052).
         // JWT credential is HttpOnly cookie from the login Set-Cookie (#1051).
         setAuthCookies(user.tipo ?? "");
