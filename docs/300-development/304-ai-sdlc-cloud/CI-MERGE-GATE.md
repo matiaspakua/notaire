@@ -121,6 +121,12 @@ heavy workflows are still pending). That is **not** mergeable — always run
 Agents with read-only `gh` cannot `gh run cancel` superseded workflows (HTTP 403),
 so avoid creating the queue in the first place.
 
+**Concurrency (same ref):** `.github/workflows/ci.yml` and
+`playwright-e2e.yml` set `cancel-in-progress: true` so a newer push on the same
+PR branch cancels superseded heavy runs. `deploy-github-page.yml` keeps
+`cancel-in-progress: false` so a pages deploy is not aborted mid-flight.
+(Issue #1148 / CU76.)
+
 **Dependabot floods:** a batch of Dependabot PRs can enqueue many Playwright
 suites and starve feature tips. Convert those Dependabot PRs to **draft** so
 new runs stop competing (agents often cannot cancel in-flight runs — HTTP 403).
