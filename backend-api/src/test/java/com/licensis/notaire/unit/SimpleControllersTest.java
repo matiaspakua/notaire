@@ -99,7 +99,9 @@ class SimpleControllersTest {
         private final com.licensis.notaire.repository.TestimonyRepository testimonyRepository =
                 mock(com.licensis.notaire.repository.TestimonyRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new CopyController(service, personRepository, testimonyRepository)).build();
+                standaloneSetup(new CopyController(service, personRepository, testimonyRepository))
+                        .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                        .build();
 
         @Test
         @DisplayName("GET all should return 200")
@@ -122,7 +124,7 @@ class SimpleControllersTest {
         }
 
         @Test
-        @DisplayName("POST should return 201 on success and 500 on failure")
+        @DisplayName("POST should return 201 on success")
         void create() throws Exception {
             Copy c = new Copy();
             c.setNumber(1);
@@ -132,14 +134,21 @@ class SimpleControllersTest {
             mvc.perform(post("/api/v1/copia").contentType("application/json")
                             .content(body))
                     .andExpect(status().isCreated());
+        }
+
+        @Test
+        @DisplayName("POST should return 500 on save failure (#916)")
+        void createErrorOnSave() throws Exception {
+            when(service.canCreateCopyForTestimony(any())).thenReturn(true);
             when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
+            String body = "{\"number\":1,\"notes\":\"n\"}";
             mvc.perform(post("/api/v1/copia").contentType("application/json")
                             .content(body))
                     .andExpect(status().isInternalServerError());
         }
 
         @Test
-        @DisplayName("PUT should return 200 when present, 404 when missing, 500 on failure")
+        @DisplayName("PUT should return 200 when present, 404 when missing")
         void update() throws Exception {
             Copy c = new Copy();
             c.setNumber(1);
@@ -150,7 +159,16 @@ class SimpleControllersTest {
                     .content(body)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/copia/2").contentType("application/json")
                     .content(body)).andExpect(status().isNotFound());
+        }
+
+        @Test
+        @DisplayName("PUT should return 500 on save failure (#916)")
+        void updateErrorOnSave() throws Exception {
+            Copy c = new Copy();
+            c.setNumber(1);
+            when(service.findById(1)).thenReturn(Optional.of(c));
             when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
+            String body = "{\"number\":1,\"notes\":\"n\"}";
             mvc.perform(put("/api/v1/copia/1").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
         }
@@ -199,7 +217,7 @@ class SimpleControllersTest {
         }
 
         @Test
-        @DisplayName("POST should return 201 when valid and 409 when save fails")
+        @DisplayName("POST should return 201 when valid")
         void create() throws Exception {
             DtoManagementStatus dto = new DtoManagementStatus();
             dto.setIdManagementStatus(1);
@@ -207,6 +225,14 @@ class SimpleControllersTest {
             when(repo.save(any(ManagementStatus.class))).thenReturn(build());
             mvc.perform(post("/api/v1/estado-gestion").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
+        }
+
+        @Test
+        @DisplayName("POST should return 409 when save fails (#916)")
+        void createErrorOnSave() throws Exception {
+            DtoManagementStatus dto = new DtoManagementStatus();
+            dto.setIdManagementStatus(1);
+            dto.setName("Activo");
             when(repo.save(any(ManagementStatus.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/estado-gestion").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
@@ -251,7 +277,9 @@ class SimpleControllersTest {
         private final ManagementStatusRepository statusRepo = mock(ManagementStatusRepository.class);
         private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new HistoryController(repo, statusRepo, managementRepo)).build();
+                standaloneSetup(new HistoryController(repo, statusRepo, managementRepo))
+                        .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                        .build();
 
         @Test
         @DisplayName("GET all and by id and by gestion should work")
@@ -269,7 +297,7 @@ class SimpleControllersTest {
         }
 
         @Test
-        @DisplayName("POST/PUT/DELETE should cover happy and error paths")
+        @DisplayName("POST/PUT/DELETE should cover happy paths")
         void writeEndpoints() throws Exception {
             String body = "{\"notes\":\"n\",\"managementStatusId\":1,\"managementId\":2}";
             ManagementStatus status = new ManagementStatus();
@@ -295,11 +323,23 @@ class SimpleControllersTest {
             when(repo.findById(1)).thenReturn(Optional.of(toDelete));
             mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/historial/2")).andExpect(status().isNotFound());
+        }
 
+        @Test
+        @DisplayName("POST/PUT/DELETE error paths without polluting happy stubs (#916)")
+        void writeEndpointsErrorPaths() throws Exception {
+            String body = "{\"notes\":\"n\",\"managementStatusId\":1,\"managementId\":2}";
+            ManagementStatus status = new ManagementStatus();
+            DeedManagement management = new DeedManagement();
+            when(statusRepo.findById(1)).thenReturn(Optional.of(status));
+            when(managementRepo.findById(2)).thenReturn(Optional.of(management));
+            History toDelete = new History();
+            status.setHistoryList(new java.util.HashSet<>(List.of(toDelete)));
+            toDelete.setFkIdManagementStatus(status);
+            when(repo.findById(1)).thenReturn(Optional.of(toDelete));
             when(repo.save(any(History.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/historial").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
-            when(repo.findById(1)).thenReturn(Optional.of(toDelete));
             mvc.perform(put("/api/v1/historial/1").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
 
@@ -340,7 +380,7 @@ class SimpleControllersTest {
         }
 
         @Test
-        @DisplayName("POST/PUT/DELETE happy and error paths")
+        @DisplayName("POST/PUT/DELETE happy paths")
         void writeEndpoints() throws Exception {
             DtoTestimonyMovement dto = new DtoTestimonyMovement();
             dto.setIdTestimonyMovement(1);
@@ -358,7 +398,15 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/movimiento-testimonio/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/movimiento-testimonio/2")).andExpect(status().isNotFound());
+        }
 
+        @Test
+        @DisplayName("POST/PUT/DELETE error paths without polluting happy stubs (#916)")
+        void writeEndpointsErrorPaths() throws Exception {
+            DtoTestimonyMovement dto = new DtoTestimonyMovement();
+            dto.setIdTestimonyMovement(1);
+            when(repo.findById(1)).thenReturn(Optional.of(build()));
+            when(repo.existsById(1)).thenReturn(true);
             when(repo.save(any(TestimonyMovement.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/movimiento-testimonio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
@@ -384,7 +432,7 @@ class SimpleControllersTest {
                         .build();
 
         @Test
-        @DisplayName("Should cover all paths")
+        @DisplayName("Should cover happy paths")
         void allPaths() throws Exception {
             Deed e = new Deed();
             e.setIdDeed(1);
@@ -412,8 +460,13 @@ class SimpleControllersTest {
                     .content(deedBody)).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/escrituras/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/escrituras/2")).andExpect(status().isNotFound());
+        }
 
+        @Test
+        @DisplayName("Should return 500 when escritura save throws (#916)")
+        void allPathsErrorOnSave() throws Exception {
             when(service.save(any(Deed.class))).thenThrow(new RuntimeException("x"));
+            String deedBody = "{\"number\":10,\"status\":\"BORRADOR\",\"body\":\"x\"}";
             mvc.perform(post("/api/v1/escrituras").contentType("application/json")
                     .content(deedBody)).andExpect(status().isInternalServerError());
         }
@@ -547,7 +600,7 @@ class SimpleControllersTest {
         }
 
         @Test
-        @DisplayName("Cover all paths")
+        @DisplayName("Cover happy paths")
         void all() throws Exception {
             DtoTestimony dto = new DtoTestimony();
             dto.setIdTestimony(1);
@@ -570,7 +623,15 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/testimonio/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/testimonio/2")).andExpect(status().isNotFound());
+        }
 
+        @Test
+        @DisplayName("Cover error paths without polluting happy stubs (#916)")
+        void allErrorPaths() throws Exception {
+            DtoTestimony dto = new DtoTestimony();
+            dto.setIdTestimony(1);
+            when(repo.findById(1)).thenReturn(Optional.of(build()));
+            when(repo.existsById(1)).thenReturn(true);
             when(repo.save(any(Testimony.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/testimonio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
@@ -593,7 +654,7 @@ class SimpleControllersTest {
                 standaloneSetup(new DocumentTypeController(repo, templateRepo, docSubmittedRepo)).build();
 
         @Test
-        @DisplayName("Cover all paths")
+        @DisplayName("Cover happy paths")
         void all() throws Exception {
             DocumentType t = new DocumentType();
             t.setIdDocumentType(1);
@@ -625,7 +686,23 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/tipo-de-documento/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/tipo-de-documento/2")).andExpect(status().isNotFound());
+        }
 
+        @Test
+        @DisplayName("Cover error paths without polluting happy stubs (#916)")
+        void allErrorPaths() throws Exception {
+            DocumentType t = new DocumentType();
+            t.setIdDocumentType(1);
+            t.setName("DNI");
+            DtoDocumentType dto = new DtoDocumentType();
+            dto.setIdDocumentType(1);
+            dto.setName("DNI");
+            dto.setExpires(false);
+            dto.setEnabled(true);
+            when(repo.findById(1)).thenReturn(Optional.of(t));
+            when(repo.existsById(1)).thenReturn(true);
+            when(templateRepo.findByDocumentTypeIdDocumentType(anyInt())).thenReturn(List.of());
+            when(docSubmittedRepo.existsByFkIdDocumentType(anyInt())).thenReturn(false);
             when(repo.save(any(DocumentType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-de-documento").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
@@ -647,7 +724,7 @@ class SimpleControllersTest {
                 standaloneSetup(new FolioTypeController(repo, folioRepo)).build();
 
         @Test
-        @DisplayName("Cover all paths")
+        @DisplayName("Cover happy paths")
         void all() throws Exception {
             FolioType t = new FolioType();
             t.setIdFolioType(1);
@@ -675,7 +752,19 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/tipo-folio/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/tipo-folio/2")).andExpect(status().isNotFound());
+        }
 
+        @Test
+        @DisplayName("Cover error paths without polluting happy stubs (#916)")
+        void allErrorPaths() throws Exception {
+            FolioType t = new FolioType();
+            t.setIdFolioType(1);
+            t.setName("Protocolo");
+            DtoFolioType dto = new DtoFolioType();
+            dto.setIdFolioType(1);
+            dto.setName("Protocolo");
+            when(repo.findById(1)).thenReturn(Optional.of(t));
+            when(repo.existsById(1)).thenReturn(true);
             when(repo.save(any(FolioType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-folio").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
@@ -702,7 +791,7 @@ class SimpleControllersTest {
                 standaloneSetup(new ProcedureTypeController(repo, budgetRepo, procedureRepo, templateRepo, workflowRepo)).build();
 
         @Test
-        @DisplayName("Cover all paths")
+        @DisplayName("Cover happy paths")
         void all() throws Exception {
             ProcedureType t = new ProcedureType();
             t.setIdProcedureType(1);
@@ -738,7 +827,27 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/tipo-tramite/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/tipo-tramite/2")).andExpect(status().isNotFound());
+        }
 
+        @Test
+        @DisplayName("Cover error paths without polluting happy stubs (#916)")
+        void allErrorPaths() throws Exception {
+            ProcedureType t = new ProcedureType();
+            t.setIdProcedureType(1);
+            t.setName("Compraventa");
+            DtoProcedureType dto = new DtoProcedureType();
+            dto.setIdProcedureType(1);
+            dto.setName("Compraventa");
+            dto.setIsArchived(false);
+            dto.setIsRegistered(false);
+            dto.setAssociatesProperties(false);
+            dto.setEnabled(true);
+            dto.setVersion(0);
+            when(repo.findById(1)).thenReturn(Optional.of(t));
+            when(repo.existsById(1)).thenReturn(true);
+            when(templateRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
+            when(budgetRepo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
+            when(procedureRepo.findByFkIdProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of());
             when(repo.save(any(ProcedureType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-tramite").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
@@ -754,10 +863,12 @@ class SimpleControllersTest {
     class IdentificationTypeControllerTests {
         private final IdentificationTypeRepository repo = mock(IdentificationTypeRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new IdentificationTypeController(repo)).build();
+                standaloneSetup(new IdentificationTypeController(repo))
+                        .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
+                        .build();
 
         @Test
-        @DisplayName("Cover all paths")
+        @DisplayName("Cover happy paths")
         void all() throws Exception {
             IdentificationType t = new IdentificationType();
             t.setIdIdentificationType(1);
@@ -783,7 +894,17 @@ class SimpleControllersTest {
                     .content(typeBody)).andExpect(status().isNotFound());
             mvc.perform(delete("/api/v1/tipo-identificacion/1")).andExpect(status().isOk());
             mvc.perform(delete("/api/v1/tipo-identificacion/2")).andExpect(status().isNotFound());
+        }
 
+        @Test
+        @DisplayName("Cover error paths without polluting happy stubs (#916)")
+        void allErrorPaths() throws Exception {
+            IdentificationType t = new IdentificationType();
+            t.setIdIdentificationType(1);
+            t.setName("DNI");
+            when(repo.findById(1)).thenReturn(Optional.of(t));
+            when(repo.existsById(1)).thenReturn(true);
+            String typeBody = "{\"name\":\"DNI\",\"characters\":\"8\"}";
             when(repo.save(any(IdentificationType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-identificacion").contentType("application/json")
                     .content(typeBody)).andExpect(status().isInternalServerError());
@@ -806,11 +927,12 @@ class SimpleControllersTest {
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new ProcedureController(repo, typeRepo, propertyRepo, budgetRepo, deedRepo,
                         managementRepo))
+                        .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
         @Test
-        @DisplayName("Cover all paths")
+        @DisplayName("Cover happy paths")
         void all() throws Exception {
             Procedure t = new Procedure();
             t.setIdProcedure(1);
@@ -843,7 +965,21 @@ class SimpleControllersTest {
 
             mvc.perform(post("/api/v1/tramites").contentType("application/json")
                     .content("{}")).andExpect(status().isBadRequest());
+        }
 
+        @Test
+        @DisplayName("Cover error paths without polluting happy stubs (#916)")
+        void allErrorPaths() throws Exception {
+            Procedure t = new Procedure();
+            t.setIdProcedure(1);
+            ProcedureType type = new ProcedureType();
+            type.setIdProcedureType(1);
+            when(repo.findById(1)).thenReturn(Optional.of(t));
+            when(repo.existsById(1)).thenReturn(true);
+            when(typeRepo.findById(1)).thenReturn(Optional.of(type));
+            String requestBody = """
+                    {"idProcedureType": 1}
+                    """;
             when(repo.save(any(Procedure.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tramites").contentType("application/json")
                     .content(requestBody)).andExpect(status().isInternalServerError());
@@ -863,7 +999,7 @@ class SimpleControllersTest {
                 standaloneSetup(new PersonController(service, typeRepo)).build();
 
         @Test
-        @DisplayName("Cover all paths including search and default type identificacion")
+        @DisplayName("Cover happy paths including search and default type identificacion")
         void all() throws Exception {
             Person p = new Person();
             p.setPersonId(1);
@@ -903,8 +1039,16 @@ class SimpleControllersTest {
                     """;
             mvc.perform(post("/api/v1/people").contentType("application/json")
                     .content(person2Body)).andExpect(status().isCreated());
+        }
 
-            // POST when save fails
+        @Test
+        @DisplayName("Cover person save error path without polluting happy stubs (#916)")
+        void allErrorPaths() throws Exception {
+            IdentificationType type = new IdentificationType(1, "DNI");
+            when(typeRepo.findById(1)).thenReturn(Optional.of(type));
+            String personBody = """
+                    {"firstName":"Juan","lastName":"Perez","identificationNumber":"12345678","isClient":true}
+                    """;
             when(service.save(any(Person.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/people").contentType("application/json")
                     .content(personBody)).andExpect(status().isConflict());

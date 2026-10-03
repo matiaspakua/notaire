@@ -1,5 +1,8 @@
 package com.licensis.notaire.integration;
 
+import com.licensis.notaire.testing.BudgetPaymentTestFixtures;
+import com.licensis.notaire.testing.RequirementCoverage;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +19,6 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
  * Integration tests for remaining controllers.
@@ -170,18 +172,20 @@ class RemainingControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU15 - Should create new pago")
+        @DisplayName("CU15 - Should create new pago against dedicated presupuesto (#916)")
         void shouldCreatePayment() throws Exception {
+            Integer budgetId = BudgetPaymentTestFixtures.createIsolatedBudget(
+                    mockMvc, new BigDecimal("10000.00"));
             mockMvc.perform(post("/api/v1/pagos")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "idBudget": 1,
+                                      "idBudget": %d,
                                       "amount": 1500.00,
                                       "date": "2025-06-01",
                                       "notes": "Payment test"
                                     }
-                                    """))
+                                    """.formatted(budgetId)))
                     .andExpect(status().is2xxSuccessful());
         }
     }

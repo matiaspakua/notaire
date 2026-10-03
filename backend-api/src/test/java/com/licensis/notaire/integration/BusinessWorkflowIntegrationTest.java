@@ -1,6 +1,9 @@
 package com.licensis.notaire.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.testing.BudgetPaymentTestFixtures;
+import com.licensis.notaire.testing.RequirementCoverage;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
  * Integration tests for complete business workflows.
@@ -261,6 +263,14 @@ class BusinessWorkflowIntegrationTest {
     @DisplayName("CU15/CU47 — Procesamiento de payments")
     class PaymentsWorkflow {
 
+        private Integer fixtureBudgetId;
+
+        @BeforeEach
+        void arrangeDedicatedBudget() throws Exception {
+            fixtureBudgetId = BudgetPaymentTestFixtures.createIsolatedBudget(
+                    mockMvc, new BigDecimal("25000.00"));
+        }
+
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/pagos returns array")
@@ -272,18 +282,18 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(2)
-        @DisplayName("CU15 — Create pago returns 200")
+        @DisplayName("CU15 — Create pago returns 201 against dedicated presupuesto (#916)")
         void createPaymentReturns200() throws Exception {
             mockMvc.perform(post("/api/v1/pagos")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "idBudget": 1,
+                                      "idBudget": %d,
                                       "amount": 5000.00,
                                       "date": "2025-01-15",
                                       "notes": "Test payment"
                                     }
-                                    """))
+                                    """.formatted(fixtureBudgetId)))
                     .andExpect(status().isCreated());
         }
 
@@ -291,7 +301,7 @@ class BusinessWorkflowIntegrationTest {
         @Order(3)
         @DisplayName("CU47 — GET payments by budget returns array")
         void getPaymentsByBudgetReturnsArray() throws Exception {
-            mockMvc.perform(get("/api/v1/pagos/presupuesto/1"))
+            mockMvc.perform(get("/api/v1/pagos/presupuesto/" + fixtureBudgetId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
         }
