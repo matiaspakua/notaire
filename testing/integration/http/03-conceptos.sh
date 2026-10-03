@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-BASE_URL="http://localhost:8080"
+BASE_URL="${BASE_URL:-http://localhost:8080}"
 
 assert_status() {
   local expected="$1"

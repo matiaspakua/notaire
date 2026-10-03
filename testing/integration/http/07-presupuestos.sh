@@ -1,7 +1,7 @@
 #!/bin/bash
 # Notaire API - Presupuestos Tests
 
-BASE_URL="http://localhost:8080"
+BASE_URL="${BASE_URL:-http://localhost:8080}"
 
 echo "=== PRESUPUESTOS - GET ALL ==="
 curl -X GET "$BASE_URL/api/v1/presupuestos" \
