@@ -176,6 +176,31 @@ class SelfContainmentTest(unittest.TestCase):
         self.assertIsNone(REAL_TOKEN.search(ENV_EXAMPLE.read_text(encoding="utf-8")))
 
 
+GNU_ONLY_IDIOMS = (
+    (re.compile(r"\bhead\s+-n\s+-\d"), "head -n -N (BSD head rejects it)"),
+    (re.compile(r"\bsed\s+-i\b"), "sed -i (BSD and GNU disagree on its argument)"),
+    (re.compile(r"\bgrep\s+-\w*P\b"), "grep -P (not on BSD grep)"),
+    (re.compile(r"\breadlink\s+-f\b"), "readlink -f (not on BSD)"),
+    (re.compile(r"\bdate\s+-d\b"), "date -d (not on BSD date)"),
+)
+CI_ONLY_SCRIPTS = {"generate-coverage-report.sh"}
+
+
+class PortabilityTest(unittest.TestCase):
+    def test_suite_scripts_avoid_gnu_only_idioms(self):
+        offenders = []
+        for path in testing_scripts():
+            if path.suffix != ".sh" or path.name in CI_ONLY_SCRIPTS:
+                continue
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if line.lstrip().startswith("#"):
+                    continue
+                for pattern, label in GNU_ONLY_IDIOMS:
+                    if pattern.search(line):
+                        offenders.append(f"{path.relative_to(REPO_ROOT)}:{number}: {label}")
+        self.assertEqual([], offenders, "GNU-only idioms in QA scripts:\n" + "\n".join(offenders))
+
+
 class DocumentationTest(unittest.TestCase):
     def test_readme_links_every_guide(self):
         readme = (TESTING / "README.md").read_text(encoding="utf-8")
