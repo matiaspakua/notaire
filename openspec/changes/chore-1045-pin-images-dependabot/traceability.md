@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/chore-1045-pin-images-dependabot/` | Gate 1 validated |
 | Branch | `cursor/chore-1045-pin-images-dependabot-69d3` | created from `origin/main` @ `8ab8a6e5` |
 | Tasks | `tasks.md` | implement in progress |
-| Commits | — | pending |
-| Pull Request | — | pending |
+| Commits | `afb0935b` test; `6714de75` pin images; `8c266572` dependabot docker; `0f796e9f` docs; `b7c17c3b` traceability | recorded |
+| Pull Request | [#1162](https://github.com/matiaspakua/notaire/pull/1162) | draft open |
 | CI run | — | pending |
 | Merge commit | — | pending (coordinator after heavy CI) |
 | Release / tag | — | pending |
