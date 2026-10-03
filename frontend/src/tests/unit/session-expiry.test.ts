@@ -67,13 +67,26 @@ describe("handleAuthenticatedSessionExpiry (issue #1053)", () => {
     expect(assignMock).not.toHaveBeenCalled();
   });
 
-  it("does not expiry-redirect when there is no local session token", () => {
+  it("does not expiry-redirect when there is no local session", () => {
     useAuthStore.setState({ user: null, token: null, isAuthenticated: false });
 
     const handled = handleAuthenticatedSessionExpiry(401, "/gestiones");
 
     expect(handled).toBe(false);
     expect(assignMock).not.toHaveBeenCalled();
+  });
+
+  it("treats isAuthenticated without a token as an active session (issue #1051)", () => {
+    useAuthStore.setState({
+      user: { nombre: "admin", tipo: "ADMIN", valido: true },
+      token: null,
+      isAuthenticated: true,
+    });
+
+    const handled = handleAuthenticatedSessionExpiry(401, "/gestiones");
+
+    expect(handled).toBe(true);
+    expect(assignMock).toHaveBeenCalledWith("/login?expired=1");
   });
 
   it("is idempotent under concurrent 401s (re-entrancy guard)", () => {

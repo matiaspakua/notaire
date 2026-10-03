@@ -4,7 +4,7 @@ This guide documents the authentication and authorization mechanisms implemented
 
 ## Overview
 
-Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, implemented via JJWT 0.13.0 and Spring Security 6.x. Clients (the Next.js dashboard and the Swing desktop client) authenticate via the `/api/v1/usuarios/login` endpoint and receive a JWT token on success. Every other `/api/**` request **must** include that token as a Bearer header — requests without a valid token are rejected with `401 Unauthorized` (see issue #552).
+Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, implemented via JJWT 0.13.0 and Spring Security 6.x. Clients authenticate via `POST /api/v1/usuarios/login`. The browser session receives an **HttpOnly** cookie `notaire-auth-token` (issue #1051); API tooling still receives a JSON `token` for `Authorization: Bearer`. Every other `/api/**` request **must** present a valid cookie **or** Bearer token — otherwise `401 Unauthorized` (see issues #552 / #1051).
 
 ## Architecture
 
@@ -23,14 +23,15 @@ Client ──POST /api/v1/usuarios/login──► UsuarioController
                                     └──────────┬──────────┘
                                                │
                                       { valido: true,
-                                        token: "eyJ..." }
+                                        token: "eyJ..." }  + Set-Cookie: notaire-auth-token
 ```
 
 On protected requests:
 ```
-Client ──Authorization: Bearer <token>──► JwtAuthenticationFilter
+Browser ──Cookie: notaire-auth-token──► Next proxy ──► JwtAuthenticationFilter
+API client ──Authorization: Bearer <token>──────────► JwtAuthenticationFilter
                                                  │
-                                       isValid(token)?
+                                       isValid(token)?  (Bearer preferred if both)
                                        extractUsername(token)
                                        SecurityContextHolder.setAuth()
                                                  │
@@ -70,21 +71,19 @@ anyone with repo read access forge valid tokens for any user). Set
 | Class | Location | Responsibility |
 |-------|----------|---------------|
 | `JwtTokenService` | `config/` | Generate, validate, and parse tokens |
-| `JwtAuthenticationFilter` | `config/` | Extract Bearer token, set `SecurityContext` |
-| `SecurityAndCorsConfig` | `config/` | Security filter chain — API chain registers the JWT filter |
+| `JwtAuthenticationFilter` | `config/` | Extract Bearer **or** auth cookie, set `SecurityContext` |
+| `AuthCookieService` | `config/` | Build/clear HttpOnly session cookie (`COOKIE_SECURE`) |
+| `SecurityAndCorsConfig` | `config/` | Security filter chain — API chain registers the JWT filter; login/logout permitAll |
 
-### Client-side token propagation
+### Client-side session propagation
 
-Both clients capture the `token` field from the login response and attach it as
-`Authorization: Bearer <token>` on every subsequent request:
+| Client | Credential channel |
+|--------|--------------------|
+| Next.js dashboard | HttpOnly cookie via same-origin `/api/v1` rewrite + `credentials: 'include'`. Zustand persists user profile only — **never** the JWT (`localStorage` `notaire-auth`). Logout calls `POST /usuarios/logout`. UX cookies `notaire-auth-status` / `notaire-auth-role` remain non-credential (#1052). |
+| Bruno / HTTP / OpenAPI | JSON `token` from login → `Authorization: Bearer` (unchanged) |
 
-| Client | Token capture | Header attachment |
-|--------|---------------|--------------------|
-| Next.js dashboard | `useAuthStore` (`frontend/src/store/auth-store.ts`) persists `token` alongside the user | `frontend/src/lib/api-client.ts`'s `buildHeaders()` reads the persisted token and sets `Authorization` |
-| Swing desktop client (deprecated) | `RestClient.login()` (`deprecated-frontend-swing/.../api/client/RestClient.java`) stores the token from the response DTO in a static field via `setAuthToken()` | `RestClient`'s private request builders (`makeGetRequest`, `makePostRequest`, `makePutRequest`, `makeDeleteRequest`, `makeGetRequestBytes`) call `applyAuthHeader()` before connecting |
-
-The shared `DtoUsuario` (`notaire-shared`) and the TypeScript `DtoUsuario` type
-both carry an optional `token` field, populated only in the login response.
+Production frontend CSP uses a per-request nonce for `script-src` and forbids
+`'unsafe-eval'` (issue #1051).
 
 ### Token generation
 
@@ -131,7 +130,7 @@ The `Rol` entity is stored in the `roles` table. `UsuarioController` exposes the
 
 ### Current state
 
-`apiSecurityFilterChain` requires `authenticated()` on every `/api/**` request except `POST /api/v1/usuarios/login` and CORS preflight (`OPTIONS`). Any request without a valid Bearer token gets `401` before reaching a controller. This is coarse-grained (authenticated vs. not) — there is no per-role authorization yet.
+`apiSecurityFilterChain` requires `authenticated()` on every `/api/**` request except `POST /api/v1/usuarios/login`, `POST /api/v1/usuarios/logout`, and CORS preflight (`OPTIONS`). Any request without a valid cookie or Bearer token gets `401` before reaching a controller. This is coarse-grained (authenticated vs. not) — there is no per-role authorization yet. CSRF stays disabled; browser traffic is same-origin via the Next proxy with SameSite=Lax cookies.
 
 ### Extending RBAC
 

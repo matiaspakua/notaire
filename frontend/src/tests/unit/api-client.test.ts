@@ -39,11 +39,13 @@ afterEach(() => {
   resetSessionExpiryGuardForTests();
 });
 
-describe("Authorization header (issue #552)", () => {
-  it("attaches the persisted JWT as a Bearer token", async () => {
+describe("Cookie credentials (issue #1051)", () => {
+  it("sends credentials:include and does not attach Bearer from localStorage", async () => {
     window.localStorage.setItem(
       "notaire-auth",
-      JSON.stringify({ state: { user: { nombre: "admin" }, token: "fake-jwt-token" } })
+      JSON.stringify({
+        state: { user: { nombre: "admin" }, token: "fake-jwt-token", isAuthenticated: true },
+      })
     );
     mockFetch.mockReturnValueOnce(makeResponse([]));
 
@@ -52,9 +54,11 @@ describe("Authorization header (issue #552)", () => {
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("/gestiones"),
       expect.objectContaining({
-        headers: expect.objectContaining({ Authorization: "Bearer fake-jwt-token" }),
+        credentials: "include",
       })
     );
+    const headers = mockFetch.mock.calls[0][1].headers as Record<string, string>;
+    expect(headers.Authorization).toBeUndefined();
   });
 
   it("omits the Authorization header when no token is persisted", async () => {
@@ -71,7 +75,7 @@ describe("X-Notaire-User header removal (issue #678)", () => {
   it("does not send X-Notaire-User even when a user is persisted", async () => {
     window.localStorage.setItem(
       "notaire-auth",
-      JSON.stringify({ state: { user: { nombre: "admin" }, token: "fake-jwt-token" } })
+      JSON.stringify({ state: { user: { nombre: "admin" }, isAuthenticated: true } })
     );
     mockFetch.mockReturnValueOnce(makeResponse([]));
 

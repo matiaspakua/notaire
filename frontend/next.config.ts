@@ -18,7 +18,8 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   // Proxy all /api/v1 calls server-side so the browser never needs to reach
-  // internal Docker hostnames (e.g. "backend").
+  // internal Docker hostnames (e.g. "backend"). Cookie / Set-Cookie are
+  // forwarded for HttpOnly JWT sessions (issue #1051).
   async rewrites() {
     return [
       {
@@ -27,25 +28,14 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Security response headers (issue #562) — defense-in-depth against
-  // clickjacking, MIME-sniffing, and protocol downgrade.
+  // Static security headers (issue #562). Content-Security-Policy is set
+  // per-request in middleware with a nonce (issue #1051) — do not set a
+  // competing CSP here.
   async headers() {
     return [
       {
         source: "/:path*",
         headers: [
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data:",
-              "font-src 'self' data:",
-              "connect-src 'self'",
-              "frame-ancestors 'none'",
-            ].join("; "),
-          },
           {
             key: "X-Frame-Options",
             value: "DENY",

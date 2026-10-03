@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
@@ -15,10 +16,11 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
 
   return (
     <html lang={locale}>
-      <body className="antialiased">
+      <body className="antialiased" data-nonce={nonce}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <Providers>
             {children}

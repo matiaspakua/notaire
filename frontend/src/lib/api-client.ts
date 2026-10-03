@@ -1,6 +1,9 @@
 /**
  * Centralized HTTP client for Notaire REST API.
  * All API calls go through these helpers — never use fetch() directly in components.
+ *
+ * Browser auth uses the HttpOnly session cookie (#1051) via credentials: 'include'
+ * through the Next.js same-origin proxy. Do not read JWT from localStorage.
  */
 import { logger } from "@/lib/logger";
 import { handleAuthenticatedSessionExpiry } from "@/lib/session-expiry";
@@ -9,45 +12,18 @@ import { handleAuthenticatedSessionExpiry } from "@/lib/session-expiry";
 // This ensures the browser never needs to resolve internal Docker hostnames like "backend".
 const BASE_URL = "/api/v1";
 
-/** Shape of the persisted zustand auth store, as written to localStorage. */
-interface PersistedAuthState {
-  state?: { user?: { nombre?: string }; token?: string };
-}
-
-function readPersistedAuthState(): PersistedAuthState | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-  try {
-    const raw = window.localStorage.getItem("notaire-auth");
-    return raw ? (JSON.parse(raw) as PersistedAuthState) : null;
-  } catch {
-    return null;
-  }
-}
+const DEFAULT_FETCH_INIT: RequestInit = {
+  credentials: "include",
+};
 
 /**
- * JWT issued at login, read from the persisted auth store. Sent as a Bearer
- * token on every request since the backend's /api/** security chain requires
- * authentication for all endpoints except login. The backend's audit aspect
- * attributes the acting user from this token's verified identity, not from
- * any client-supplied header (issue #678).
- */
-function authToken(): string | null {
-  return readPersistedAuthState()?.state?.token ?? null;
-}
-
-/**
- * Builds request headers, including the Bearer token so the backend's
- * security filter chain authenticates the request.
+ * Builds request headers. Browser sessions authenticate via the HttpOnly cookie
+ * forwarded by the Next proxy; Authorization is not attached from script-readable
+ * storage (issue #1051). The backend audit aspect attributes the acting user from
+ * the verified JWT identity, not from any client-supplied header (issue #678).
  */
 function buildHeaders(base: Record<string, string> = {}): Record<string, string> {
-  const headers: Record<string, string> = { ...base };
-  const token = authToken();
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-  return headers;
+  return { ...base };
 }
 
 /**
@@ -91,6 +67,7 @@ async function handleResponse<T>(res: Response, path: string, method: string): P
 
 export async function apiGet<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
+    ...DEFAULT_FETCH_INIT,
     headers: buildHeaders({ "Content-Type": "application/json" }),
     cache: "no-store",
   });
@@ -123,6 +100,7 @@ export async function apiPost<T = void>(
   body: unknown
 ): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
+    ...DEFAULT_FETCH_INIT,
     method: "POST",
     headers: buildHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(body),
@@ -135,6 +113,7 @@ export async function apiPut<T = void>(
   body: unknown
 ): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
+    ...DEFAULT_FETCH_INIT,
     method: "PUT",
     headers: buildHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(body),
@@ -144,6 +123,7 @@ export async function apiPut<T = void>(
 
 export async function apiDelete(path: string): Promise<void> {
   const res = await fetch(`${BASE_URL}${path}`, {
+    ...DEFAULT_FETCH_INIT,
     method: "DELETE",
     headers: buildHeaders(),
   });
@@ -161,7 +141,10 @@ export async function apiDelete(path: string): Promise<void> {
 }
 
 export async function apiGetBytes(path: string): Promise<Blob> {
-  const res = await fetch(`${BASE_URL}${path}`, { headers: buildHeaders() });
+  const res = await fetch(`${BASE_URL}${path}`, {
+    ...DEFAULT_FETCH_INIT,
+    headers: buildHeaders(),
+  });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     logger.error("api_call_failed", {
@@ -173,4 +156,17 @@ export async function apiGetBytes(path: string): Promise<Blob> {
     rejectApiFailure(res.status, path, text);
   }
   return res.blob();
+}
+
+/** Clears the HttpOnly auth cookie via the backend logout endpoint (#1051). */
+export async function apiLogout(): Promise<void> {
+  try {
+    await fetch(`${BASE_URL}/usuarios/logout`, {
+      ...DEFAULT_FETCH_INIT,
+      method: "POST",
+      headers: buildHeaders({ "Content-Type": "application/json" }),
+    });
+  } catch {
+    // Best-effort: client state is still cleared by the caller.
+  }
 }

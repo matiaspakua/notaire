@@ -844,11 +844,12 @@ Loki --> Graf : depends_on
 
 **Authentication:**
 - JWT tokens issued by `JwtTokenService` upon successful login.
-- `JwtAuthenticationFilter` validates tokens on every request.
-- Token storage: `localStorage` via Zustand `persist` middleware (`useAuthStore`,
-  Next.js); a separate non-JWT `notaire-auth-status` cookie exists only so the
-  Next.js middleware can route-guard pages. Swing client stores the token in-memory
-  (`RestClient`, static field).
+- `JwtAuthenticationFilter` accepts HttpOnly cookie `notaire-auth-token` **or**
+  `Authorization: Bearer` (issue #1051).
+- Browser token storage: HttpOnly cookie (not `localStorage`). Zustand persists
+  user profile only; UX cookies `notaire-auth-status` / `notaire-auth-role` are
+  non-credential route markers (#1052). API tooling still uses Bearer.
+- Production CSP: nonce-based `script-src`, no `'unsafe-eval'` (#1051).
 - `LoginAttemptService` locks out a username after repeated failed attempts
   (in-memory, single-instance — not a general API rate limiter).
 - `ProductionCredentialsGuard` blocks startup if default passwords are used in production.

@@ -6,7 +6,7 @@ describe("next.config security headers", () => {
     expect(typeof nextConfig.headers).toBe("function");
   });
 
-  it("applies security headers to every route", async () => {
+  it("applies static security headers to every route", async () => {
     const rules = await nextConfig.headers!();
 
     expect(rules).toHaveLength(1);
@@ -15,12 +15,13 @@ describe("next.config security headers", () => {
     const headerNames = rules[0].headers.map((h) => h.key);
     expect(headerNames).toEqual(
       expect.arrayContaining([
-        "Content-Security-Policy",
         "X-Frame-Options",
         "X-Content-Type-Options",
         "Strict-Transport-Security",
       ]),
     );
+    // CSP is per-request nonce in middleware (issue #1051), not a static header.
+    expect(headerNames).not.toContain("Content-Security-Policy");
   });
 
   it("sets X-Frame-Options to DENY", async () => {

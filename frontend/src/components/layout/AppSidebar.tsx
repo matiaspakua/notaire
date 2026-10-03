@@ -28,6 +28,7 @@ import {
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { apiLogout } from "@/lib/api-client";
 import { useAuthStore } from "@/store/auth-store";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 
@@ -98,7 +99,9 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
   const { user, logout, isAdmin } = useAuthStore();
   const t = useTranslations("navigation");
 
-  function handleLogout() {
+  async function handleLogout() {
+    // Clear HttpOnly JWT cookie via API before clearing client state (#1051).
+    await apiLogout();
     logout();
     router.replace("/login");
   }

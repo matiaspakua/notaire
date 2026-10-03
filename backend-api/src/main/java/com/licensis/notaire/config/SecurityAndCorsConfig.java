@@ -125,9 +125,10 @@ public class SecurityAndCorsConfig {
 
     /**
      * Security filter chain for API endpoints.
-     * JWT filter authenticates requests that carry a valid Bearer token.
-     * Only the login endpoint (and CORS preflight) is reachable without one;
-     * every other /api/** request must present a valid token.
+     * JWT filter authenticates from Bearer or the HttpOnly session cookie (#1051).
+     * Login and logout (cookie clear) are reachable without prior auth; every other
+     * /api/** request must present a valid credential. CSRF stays disabled: browsers
+     * talk same-origin via the Next proxy with SameSite=Lax cookies (see TS-0044).
      */
     @Bean
     @Order(2)
@@ -138,6 +139,7 @@ public class SecurityAndCorsConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/logout").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex.authenticationEntryPoint(apiAuthenticationEntryPoint))

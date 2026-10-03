@@ -51,9 +51,10 @@ function LoginForm() {
         password: contrasenia.trim(),
       });
 
-      if (result.valido && result.token) {
-        // Cookies for edge gating are set inside auth-store.login (issue #1052).
-        login(result, result.token);
+      if (result.valido) {
+        // UX cookies for edge gating are set inside auth-store.login (#1052).
+        // JWT is delivered as HttpOnly Set-Cookie; ignore JSON token (#1051).
+        login(result);
         toast.success(`Bienvenido, ${result.nombre}`);
         router.push("/dashboard");
       } else {

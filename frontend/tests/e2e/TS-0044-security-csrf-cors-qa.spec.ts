@@ -1,16 +1,11 @@
 /**
- * E2E tests — CSRF protection posture and CORS enforcement (issue #691)
+ * E2E tests — CSRF protection posture and CORS enforcement (issue #691 / #1051)
  * CU: Autenticación de usuario / Seguridad
  *
- * The API is a stateless JWT bearer-token REST API (SecurityAndCorsConfig
- * disables CSRF on every filter chain). CSRF exploits rely on the browser
- * automatically attaching ambient credentials (session cookies) to a
- * forged cross-site request; here the only credential is a Bearer token
- * that a page must read from localStorage and attach explicitly, which a
- * different origin's script cannot do. These tests document that posture
- * end-to-end and verify CORS actually blocks a disallowed origin from
- * reading API responses, so the "no CSRF" design isn't silently
- * undermined by an overly permissive CORS configuration.
+ * Browser sessions now use an HttpOnly SameSite=Lax JWT cookie via the
+ * same-origin Next proxy. CSRF remains disabled on the API; ambient cookie
+ * risk is mitigated by SameSite=Lax + same-origin proxy + strict CORS
+ * allowlist. These tests document that cookie-era posture.
  *
  * Requires: backend running at localhost:8080, frontend at localhost:3000
  */
@@ -20,8 +15,8 @@ const BACKEND_URL = "http://localhost:8080";
 const DISALLOWED_ORIGIN = "https://malicious-site.example";
 const ALLOWED_ORIGIN = "http://localhost:3000";
 
-test.describe("CSRF posture (issue #691)", () => {
-  test("login does not set a session/auth cookie — only a non-sensitive UI marker", async ({ page }) => {
+test.describe("CSRF / cookie posture (issues #691 / #1051)", () => {
+  test("login sets HttpOnly auth cookie plus non-credential UX markers", async ({ page }) => {
     await page.goto("/login");
     await page.getByTestId("input-usuario").fill("admin");
     await page.getByTestId("input-contrasenia").fill("admin");
@@ -29,27 +24,39 @@ test.describe("CSRF posture (issue #691)", () => {
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 
     const cookies = await page.context().cookies();
-    // Client-side, non-sensitive markers used by Next.js middleware for route
-    // gating (status + role for admin paths, issue #1052). They carry no JWT
-    // and are not read by the backend for authentication.
     const names = cookies.map((c) => c.name).sort();
-    expect(names).toEqual(["notaire-auth-role", "notaire-auth-status"]);
-    expect(cookies.every((c) => c.httpOnly !== true)).toBe(true);
+    expect(names).toEqual(
+      expect.arrayContaining([
+        "notaire-auth-token",
+        "notaire-auth-role",
+        "notaire-auth-status",
+      ]),
+    );
+
+    const authToken = cookies.find((c) => c.name === "notaire-auth-token");
+    expect(authToken?.httpOnly).toBe(true);
+    expect(authToken?.sameSite?.toLowerCase()).toBe("lax");
+
+    const uxCookies = cookies.filter((c) =>
+      c.name === "notaire-auth-role" || c.name === "notaire-auth-status",
+    );
+    expect(uxCookies.every((c) => c.httpOnly !== true)).toBe(true);
+
+    // JWT must not be script-readable in localStorage
+    const authState = await page.evaluate(() => window.localStorage.getItem("notaire-auth"));
+    const parsed = authState ? JSON.parse(authState) : null;
+    expect(parsed?.state?.token ?? null).toBeNull();
   });
 
-  test("a request carrying cookies but no Authorization header is rejected", async ({ page }) => {
-    // Simulates what a forged cross-site request could achieve: the browser
-    // would attach cookies automatically, but never the Authorization header
-    // (it lives in localStorage, unreadable cross-origin). Without it, the
-    // backend's JwtAuthenticationFilter rejects the request outright.
+  test("same-origin proxied API call authenticates via cookie without Bearer", async ({ page }) => {
     await page.goto("/login");
     await page.getByTestId("input-usuario").fill("admin");
     await page.getByTestId("input-contrasenia").fill("admin");
     await page.getByTestId("btn-ingresar").click();
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 
-    const response = await page.request.get(`${BACKEND_URL}/api/v1/people`);
-    expect(response.status()).toBe(401);
+    const response = await page.request.get("http://localhost:3000/api/v1/people");
+    expect(response.status()).toBe(200);
   });
 });
 

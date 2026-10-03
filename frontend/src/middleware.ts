@@ -5,8 +5,34 @@ import {
   forbiddenDashboardPath,
   shouldDenyAdminRoute,
 } from "@/lib/admin-access";
+import { buildContentSecurityPolicy } from "@/lib/csp";
 
 const PUBLIC_PATHS = ["/login"];
+
+function withCsp(request: NextRequest, response: NextResponse): NextResponse {
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const isProduction = process.env.NODE_ENV === "production";
+  const csp = buildContentSecurityPolicy({ nonce, isProduction });
+  response.headers.set("Content-Security-Policy", csp);
+  // Expose nonce on the request for RSC / Next script tagging when continuing.
+  response.headers.set("x-nonce", nonce);
+  return response;
+}
+
+function continueWithNonce(request: NextRequest): NextResponse {
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const isProduction = process.env.NODE_ENV === "production";
+  const csp = buildContentSecurityPolicy({ nonce, isProduction });
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+  response.headers.set("Content-Security-Policy", csp);
+  return response;
+}
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -36,20 +62,23 @@ export function middleware(req: NextRequest) {
   }
 
   if (!authCookie && !isPublic) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return withCsp(req, NextResponse.redirect(new URL("/login", req.url)));
   }
 
   if (authCookie && pathname === "/login") {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    return withCsp(req, NextResponse.redirect(new URL("/dashboard", req.url)));
   }
 
   // Frontend half of CU78 admin access control (issue #1052). Role cookie is a
   // non-credential UI marker; backend RBAC remains the real control (#559).
   if (authCookie && shouldDenyAdminRoute(pathname, authCookie.value, roleValue)) {
-    return NextResponse.redirect(new URL(forbiddenDashboardPath(), req.url));
+    return withCsp(
+      req,
+      NextResponse.redirect(new URL(forbiddenDashboardPath(), req.url)),
+    );
   }
 
-  return NextResponse.next();
+  return continueWithNonce(req);
 }
 
 export const config = {
