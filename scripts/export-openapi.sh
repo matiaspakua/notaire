@@ -77,11 +77,60 @@ if [ ! -s "$OUT" ]; then
   exit 1
 fi
 
-# Normalize trailing newline for stable git diffs.
+# Canonicalize YAML: springdoc property maps use unordered HashMaps, so key
+# order can differ across JVMs/runs and trip the CI freshness git-diff gate.
+# Sort every mapping by key; preserve sequence order; stable dump + trailing NL.
+if ! python3 -c 'import yaml' >/dev/null 2>&1; then
+  python3 -m pip install --user -q 'PyYAML>=6'
+fi
 python3 - <<'PY' "$OUT"
-import pathlib, sys
+import pathlib
+import sys
+
+import yaml
+
 path = pathlib.Path(sys.argv[1])
-text = path.read_text(encoding="utf-8")
+
+
+class SortedDumper(yaml.SafeDumper):
+    """Emit mappings with sorted keys for deterministic OpenAPI artifacts."""
+
+    def ignore_aliases(self, data):
+        return True
+
+
+def _represent_dict(dumper, data):
+    return dumper.represent_mapping(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+        sorted(data.items(), key=lambda item: str(item[0])),
+    )
+
+
+SortedDumper.add_representer(dict, _represent_dict)
+
+raw = path.read_text(encoding="utf-8")
+doc = yaml.safe_load(raw)
+if doc is None:
+    raise SystemExit(f"ERROR: empty OpenAPI document at {path}")
+
+
+def sort_maps(node):
+    if isinstance(node, dict):
+        return {k: sort_maps(node[k]) for k in sorted(node, key=str)}
+    if isinstance(node, list):
+        return [sort_maps(item) for item in node]
+    return node
+
+
+canonical = sort_maps(doc)
+text = yaml.dump(
+    canonical,
+    Dumper=SortedDumper,
+    default_flow_style=False,
+    allow_unicode=True,
+    sort_keys=False,  # SortedDumper already sorts
+    width=120,
+)
 path.write_text(text.rstrip() + "\n", encoding="utf-8")
 PY
 

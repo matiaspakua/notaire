@@ -43,6 +43,17 @@ npm config set prefix "$HOME/.local"
 npm install -g @fission-ai/openspec@1.14.0
 sudo ln -sfn "$HOME/.local/bin/openspec" /usr/local/bin/openspec
 
+# --- Bruno CLI (OpenCollection needs ≥4.x; CI uses unpinned npx @usebruno/cli) ---
+npm install -g @usebruno/cli@4.2.0
+# Prefer npm-global bin; fall back to package entry
+if [ -x "$HOME/.local/bin/bru" ]; then
+  sudo ln -sfn "$HOME/.local/bin/bru" /usr/local/bin/bru
+elif [ -f "$(npm root -g)/@usebruno/cli/bin/bru.js" ]; then
+  sudo ln -sfn "$(npm root -g)/@usebruno/cli/bin/bru.js" /usr/local/bin/bru
+fi
+command -v bru >/dev/null
+bru --version || true
+
 # --- Env files (dev placeholders; override via Cursor secrets when needed) ---
 if [ ! -f .env ]; then
   cp .env.example .env

@@ -46,6 +46,7 @@ Saving the card.
 | Git | 2.40+ | branches, hooks | `git --version` |
 | GitHub CLI `gh` | recent | issues, PR checks, merge | `gh auth status` |
 | OpenSpec CLI | current project-supported | Gate 1 `openspec validate` | `openspec --version` |
+| Bruno CLI | **≥4.2.0** (`@usebruno/cli@4.2.0` via `.cursor/install.sh`) | OpenCollection / `preflight.sh --full` API tests; older 2.x only understands `bruno.json` | `bru --version` |
 | Python 3 | 3.11+ | occasional scripts / unittest helpers | `python3 --version` |
 | `curl` / `jq` | any | health checks, JSON parsing | `curl --version`; `jq --version` |
 | `bc` | any | Installed by `.cursor/install.sh` (optional for Gate 1; validator uses awk) | `bc --version` |
@@ -56,7 +57,7 @@ Saving the card.
 |-----------|-------|--------|
 | `frontend/node_modules` | `cd frontend && npm ci` in install or first boot | `test -d frontend/node_modules` |
 | Playwright browsers | `cd frontend && npx playwright install --with-deps` (or CI-equivalent) | `npx playwright --version` |
-| Bruno / API collection | Used by `preflight.sh --full` / `playwright-e2e.yml` | Collection under `backend-api/api-test/` present |
+| Bruno / API collection | Collection under `backend-api/api-test/`; CLI `bru` ≥4.2.0 on PATH from install | `bru --version`; collection present |
 | markdownlint-cli2 | Via frontend deps for docs lint | `frontend/node_modules/.bin/markdownlint-cli2 --version` |
 
 ### Optional but useful
@@ -101,8 +102,8 @@ install: bash .cursor/install.sh
 start:   bash .cursor/start.sh
 ```
 
-`.cursor/install.sh` is idempotent (JDK/Maven/Node/Docker/`bc`/OpenSpec, `.env`,
-frontend deps, Maven reactor). `.cursor/start.sh` starts `dockerd` then brings up
+`.cursor/install.sh` is idempotent (JDK/Maven/Node/Docker/`bc`/OpenSpec/Bruno CLI,
+`.env`, frontend deps, Maven reactor). `.cursor/start.sh` starts `dockerd` then brings up
 the stack with host-network compose:
 
 ```bash
@@ -123,14 +124,15 @@ curl -sf http://localhost:8080/actuator/health
 
 Agents assume these commands work without interactive prompts:
 
-- `mvn`, `java`, `node`, `npm`, `npx`, `docker`, `docker compose`, `gh`, `openspec`, `bc`
+- `mvn`, `java`, `node`, `npm`, `npx`, `docker`, `docker compose`, `gh`, `openspec`, `bru`, `bc`
 - `bash scripts/preflight.sh`, `bash scripts/validate-sdlc-plan.sh`
 - `bash scripts/seed-openspec-change.sh` (Gate 1 scaffold — prefer before filling artifacts)
 - `bash scripts/start.sh` / `stop.sh` / `run_pipeline.sh`
 
 Install OpenSpec CLI the same way CI/devs do for this repo (document the exact
 install line in the environment build when finalized). If `openspec` is missing,
-Gate 1 cannot pass.
+Gate 1 cannot pass. Bruno CLI ≥4.2.0 (`bru`) is pinned by `.cursor/install.sh` so
+OpenCollection API tests work without relying on unpinned `npx @usebruno/cli`.
 
 ---
 
