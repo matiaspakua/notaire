@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: notaire
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          # Base image name; staging overlay pins GHCR SHA tag (#901 / #1043).
+          image: notaire-backend:local
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: ENVIRONMENT
+              value: production
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: none
+            - name: SPRING_FLYWAY_ENABLED
+              value: "true"
+            - name: SPRING_FLYWAY_BASELINE_ON_MIGRATE
+              value: "false"
+            - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
+              value: health,metrics,prometheus,info,threaddump
+            - name: MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED
+              value: "true"
+            - name: MANAGEMENT_HEALTH_DISKSPACE_ENABLED
+              value: "false"
+            - name: LOG_LEVEL_APP
+              value: INFO
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: POSTGRES_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: JWT_SECRET
+            - name: ACTUATOR_USER
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: ACTUATOR_USER
+            - name: ACTUATOR_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: ACTUATOR_PASSWORD
+            - name: APP_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: APP_ADMIN_USER
+            - name: APP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: APP_ADMIN_PASSWORD
+            - name: SPRING_FLYWAY_PLACEHOLDERS_EXPORTERUSERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: POSTGRES_EXPORTER_USER
+            - name: SPRING_FLYWAY_PLACEHOLDERS_EXPORTERPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: notaire-secrets
+                  key: POSTGRES_EXPORTER_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 10
+          resources:
+            requests:
+              memory: 512Mi
+            limits:
+              memory: 1024Mi

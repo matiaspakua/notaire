@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Staging Kustomize deploy manifests** (issue #901, CU77): `deploy/kustomize/`
+  base + `overlays/staging` mirroring `docker-compose.prod.yml` (postgres,
+  backend, frontend, reverse-proxy; no pgAdmin); ClusterIP data plane; Secret
+  placeholders only; GHCR SHA image tags; static guard
+  `scripts/test_staging_kustomize.py`. CD (`cd.yml`) remains publish-only —
+  no fake cluster deploy. Docs: `209-deployment`, `DEPLOYMENT-PLAN`, CU77, SAD §11.
+
 - **DAST, OpenAPI contract, and backup/restore CI gates** (issue #1067, CU76/CU78/CU75):
   weekly OWASP ZAP baseline (`dast-zap.yml`, warn-first report artifact; Trivy retained);
   committed `backend-api/openapi/openapi.yaml` + PR `openapi-contract.yml` (export freshness

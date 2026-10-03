@@ -26,6 +26,15 @@ observability/quality infrastructure stack.
 │   postgres / backend / frontend: internal only (no host ports)       │
 │   No pgAdmin · ENVIRONMENT=production · Flyway baseline off          │
 └───────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│     Staging Kustomize (deploy/kustomize/overlays/staging — #901)     │
+│                                                                      │
+│   Same four services as prod compose (no pgAdmin)                    │
+│   postgres/backend/frontend: ClusterIP · reverse-proxy: LoadBalancer │
+│   Images: GHCR SHA tags · Secrets: placeholders only                 │
+│   CD remains publish-only — apply manifests manually to a cluster    │
+└───────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Deployment Steps
@@ -115,6 +124,20 @@ curl http://localhost:3100/ready             # Loki
   (#1067) and **skips with an explicit #256 message** until `scripts/backup-postgres.sh`
   exists (no false-green restore).
 
+### deploy/kustomize (staging manifests — issue #901)
+- **Base** (`deploy/kustomize/base`): same four services as `docker-compose.prod.yml`
+  (postgres, backend, frontend, reverse-proxy) — **no pgAdmin**
+- **Staging overlay** (`deploy/kustomize/overlays/staging`): GHCR SHA image tags for
+  backend/frontend; `environment: staging` labels
+- **Service isolation**: postgres/backend/frontend are `ClusterIP` (internal-only);
+  reverse-proxy is the sole external `LoadBalancer`
+- **Secrets**: `notaire-secrets` uses **placeholders only** (`PLACEHOLDER_SET_AT_APPLY_TIME`);
+  replace before apply — never commit real credentials
+- **Backend posture**: `ENVIRONMENT=production`, `SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`
+- **CD**: `.github/workflows/cd.yml` stays **publish-only** (GHCR). Manifest apply is
+  operator-owned; there is no automated “deploy to cluster” job yet
+- **Validate**: `python3 scripts/test_staging_kustomize.py` (requires `kustomize` on PATH)
+
 ### Infra docker-compose.yml
 - **Services**: `dashboard` (Homer), `sonarqube`, `sonar-db`, `prometheus`, `postgres-exporter`,
   `grafana`, `loki`, `promtail`
@@ -169,6 +192,51 @@ curl -fsS http://localhost/actuator/health   # backend via reverse proxy
 ```
 
 4. Confirm Flyway baseline-on-migrate is off in the prod file (`SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`).
+
+## Staging deployment (Kustomize — issue #901)
+
+Reproducible staging topology mirroring `docker-compose.prod.yml`. Requires
+`kustomize` v5+ and a Kubernetes cluster (not provided by this repo).
+
+1. Pin GHCR SHA tags published by CD (replace `sha-PLACEHOLDER`):
+
+```bash
+cd deploy/kustomize/overlays/staging
+kustomize edit set image \
+  notaire-backend=ghcr.io/<owner>/notaire/backend:<git-sha> \
+  notaire-frontend=ghcr.io/<owner>/notaire/frontend:<git-sha>
+```
+
+2. Replace Secret placeholders (do **not** commit real values):
+
+```bash
+kubectl -n notaire create secret generic notaire-secrets \
+  --from-literal=POSTGRES_DB=... \
+  --from-literal=POSTGRES_USER=... \
+  --from-literal=POSTGRES_PASSWORD=... \
+  --from-literal=SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/... \
+  --from-literal=JWT_SECRET=... \
+  --from-literal=ACTUATOR_USER=... \
+  --from-literal=ACTUATOR_PASSWORD=... \
+  --from-literal=APP_ADMIN_USER=... \
+  --from-literal=APP_ADMIN_PASSWORD=... \
+  --from-literal=POSTGRES_EXPORTER_USER=... \
+  --from-literal=POSTGRES_EXPORTER_PASSWORD=... \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+3. Render and apply:
+
+```bash
+kustomize build deploy/kustomize/overlays/staging | kubectl apply -f -
+# or: kubectl apply -k deploy/kustomize/overlays/staging
+python3 scripts/test_staging_kustomize.py
+```
+
+4. Reach the app only via the reverse-proxy LoadBalancer / ingress. Postgres,
+   backend, and frontend remain ClusterIP. CD image publish alone does **not**
+   imply the cluster was updated — apply is a separate, manual step until a real
+   deploy job exists.
 
 ## Production Considerations
 

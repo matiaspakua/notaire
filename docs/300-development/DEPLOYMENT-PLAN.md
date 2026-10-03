@@ -9,21 +9,23 @@ architecture diagrams or service tables already in that README.
 
 ## 1. Environments
 
-Notaire currently defines a **single deployment target: local/self-hosted
-Docker Compose**. No staging or production environment is currently
-provisioned — this is a known gap tracked in the SAD's Risks and Technical
-Debt section (§11.1).
+Notaire defines three operator-facing deployment shapes. There is still **no
+automated CD apply to a live staging/production cluster** — `.github/workflows/cd.yml`
+is **publish-only** (GHCR images + SBOM/cosign). Cluster apply is manual via
+Kustomize (#901) or compose (#1044).
 
 | Environment | Where it runs | Started by |
 |-------------|---------------|------------|
 | Local development | Developer machine, Docker | `bash scripts/start.sh` (app) + `bash infra/scripts/start-infra.sh` (observability/quality) |
+| Production compose | Self-hosted Docker | `docker compose -f docker-compose.prod.yml --env-file .env up -d` (see `209-deployment`) |
+| Staging Kustomize | Operator Kubernetes cluster | `kustomize build deploy/kustomize/overlays/staging \| kubectl apply -f -` (#901); validate with `python3 scripts/test_staging_kustomize.py` |
 | CI | GitHub Actions runners | `.github/workflows/ci.yml`, ephemeral per run |
-| Published image | GHCR (`ghcr.io/<repo>/backend`) | CD pipeline, see §2 — consumed by whichever environment pulls it; none currently does automatically |
+| Published image | GHCR (`ghcr.io/<repo>/backend`, `…/frontend`) | CD pipeline, see §2 — consumed by compose/Kustomize when an operator pulls the SHA tag |
 
-Until a real staging/production target exists, "deployment" in practice
-means: CD publishes a signed, versioned image to GHCR, and a human pulls
-and runs it (`docker-compose up -d` against that tag) wherever the system
-is actually hosted.
+"Deployment" in practice means: CD publishes signed, versioned images to GHCR,
+and a human (or future deploy job) applies either `docker-compose.prod.yml` or
+the staging Kustomize overlay against those tags. TLS (#254), backups (#256),
+SLOs (#306), and runbooks (#288) remain separate follow-ups.
 
 ## 2. Promotion / release process
 

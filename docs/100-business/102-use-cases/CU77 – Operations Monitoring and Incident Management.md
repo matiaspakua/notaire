@@ -10,7 +10,7 @@
 | **Descripción** | Establece los mecanismos de observabilidad basados en Prometheus, Grafana y Loki para asegurar la operatividad ininterrumpida de las estaciones de trabajo de escritorio y portátiles. |
 | **Tipo** | Soporte / Operaciones |
 | **Referencias Cruzadas** | RF #88 (PC de escritorio), RF #89 (Notebook) |
-| **GitHub ID** | #253, #255, #270, #271, #273, #301, #304, #305, #306, #308 |
+| **GitHub ID** | #253, #255, #270, #271, #273, #301, #304, #305, #306, #308, #901 |
 
 ## Alcance Técnico
 
@@ -35,3 +35,6 @@
 - [x] Tableros de control en Grafana accesibles para monitoreo de la escribanía.
 - [x] Registro y búsqueda centralizada de logs con Loki implementados.
 - [x] Procedimientos de respuesta a incidentes y runbooks operativos documentados.
+- [x] Manifiestos de despliegue staging/producción (Kustomize overlay de la topología
+  de `docker-compose.prod.yml`) documentados y validados estáticamente — issue #901
+  (TLS, backups, SLOs y runbooks de incidente siguen en #254 / #256 / #306 / #288).
