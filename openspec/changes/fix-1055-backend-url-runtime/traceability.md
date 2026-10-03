@@ -21,7 +21,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/fix-1055-backend-url-runtime-69d3` | created from `origin/main` @ `d1c5c5f2` |
 | Tasks | `tasks.md` | implement in progress |
 | Commits | `c8f9bbd3d0bef810598dc6e14443d7d6c9cc0c02` | committed |
-| Pull Request | pending | pending |
+| Pull Request | [#1168](https://github.com/matiaspakua/notaire/pull/1168) | draft open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
