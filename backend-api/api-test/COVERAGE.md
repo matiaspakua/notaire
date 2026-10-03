@@ -63,7 +63,7 @@ the value but update did not. Hardened in `setAtributos`.
 | identification-types | `/tipo-identificacion` | ✅ | — | CU17 |
 | items | `/items` | ✅ | `presupuesto/{id}`, surcharge without reason rejected | CU01, CU71, CU45 |
 | management-statuses | `/estado-gestion` | ✅ | — | CU30, CU67, CU35 |
-| managements | `/gestiones` | ✅ | by number; estado-actual | CU02, CU14, CU53 |
+| managements | `/gestiones` | ✅ | by number; estado-actual (History latest or entity-status fallback when empty — #806) | CU02, CU13, CU14, CU53 |
 | notebooks | `/cuadernos` | POST/GET | 10-folio fixture; carátula PDF | CU80 |
 | payments | `/pagos` | ✅ | `presupuesto/{id}`, `saldo`, `estado`, over-limit 409, receipt PDF | CU01, CU15, CU47, CU45 |
 | people | `/people` | ✅ | `search?lastName=`, 409 duplicate | CU17, CU18, CU61, CU46, CU54, CU41 |

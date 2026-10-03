@@ -460,6 +460,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Gestión History orphan status writes** (issue #806, CU13 / CU02 / CU53):
+  plain `POST`/`PUT /gestiones` and `PUT .../complete-case` now append History
+  via `ManagementBitacoraService` when status is first set or changes (no row
+  when create has no status). `GET .../estado-actual` falls back to the entity
+  status when History is empty (404 if management missing or status null).
+  Bitácora UI remains TS-0028 / `useHistorial` on gestiones.
+
 - **Frontend i18n page coverage** (issue #1059, CU76 / ADR-015): wire remaining
   dashboard gap pages (workflows list/editor, roles, suplencias, reportes,
   items) and login leftovers (connection/lockout/validation/welcome/forgot/footer)

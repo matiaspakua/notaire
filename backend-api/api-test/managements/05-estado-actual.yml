@@ -3,7 +3,9 @@ info:
   type: http
   seq: 6
   description: |-
-      Traceability: CU14
+      After #806, plain create with status writes History (and estado-actual
+      also falls back to the entity status when History is empty).
+      Traceability: CU14; CU13
 http:
   method: GET
   url: "{{base_url}}/api/v1/gestiones/{{mgmt_id}}/estado-actual"
@@ -16,6 +18,8 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200 when history exists, else 404", function () {
-            expect([200,404]).to.include(res.getStatus());
+          test("Status 200 with current status", function () {
+            expect(res.getStatus()).to.equal(200);
+            expect(res.getBody().managementId).to.equal(parseInt(bru.getVar('mgmt_id'), 10));
+            expect(res.getBody().statusManagementId).to.be.a('number');
           });

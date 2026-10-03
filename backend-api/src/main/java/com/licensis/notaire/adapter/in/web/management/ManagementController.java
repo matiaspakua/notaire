@@ -241,10 +241,10 @@ public class ManagementController {
 
     @PutMapping("/{id}/complete-case")
     @Transactional
-    @Operation(summary = "CU02 - Actualizar una gestión junto con sus dependencias obligatorias",
-            description = "CU22/CU59 - Si el escribano solicitado tiene una suplencia activa para la fecha de "
-                    + "inicio de la gestión, la gestión se redirige automáticamente al suplente y se deja "
-                    + "constancia en el campo observaciones de la respuesta.")
+    @Operation(summary = "CU02 - Update a management with its required dependencies",
+            description = "CU22/CU59 - If the requested notary has an active substitution for the management "
+                    + "start date, the management is redirected to the substitute and a note is recorded. "
+                    + "CU13 - Status changes are appended to History via ManagementBitacoraService.")
     public ResponseEntity<Object> updateCompleteCase(@PathVariable Integer id,
             @RequestBody CompleteCaseRequest request) {
         Optional<DeedManagement> existing = repository.findById(id);
@@ -259,6 +259,7 @@ public class ManagementController {
             return ResponseEntity.badRequest().build();
         }
         DeedManagement management = existing.get();
+        Integer previousStatusId = statusIdOf(management);
         applyManagementFields(management, request, dependencies.get());
         management = repository.save(management);
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(id);
@@ -267,6 +268,7 @@ public class ManagementController {
         } else {
             updateProcedure(procedures.get(0), dependencies.get());
         }
+        registerStatusChangeIfNeeded(management, previousStatusId);
         return ResponseEntity.ok(managementQueryService.findById(management.getIdManagement()).orElseThrow());
     }
 
@@ -308,17 +310,36 @@ public class ManagementController {
     }
 
     @GetMapping("/{id}/estado-actual")
-    @Operation(summary = "Obtener estado actual de una gestion")
+    @Operation(summary = "CU13/CU14 - Get current management status",
+            description = "Returns the latest History row by date when present; otherwise synthesizes a "
+                    + "summary from DeedManagement.fkIdManagementStatus (as-of-now). Missing management "
+                    + "or null status yields 404.")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoHistorySummary> getStatusActual(@PathVariable Integer id) {
-        List<History> historiales = historyRepository.findByFkIdManagementIdManagement(id);
-        if (historiales.isEmpty()) {
+        Optional<DeedManagement> managementOpt = repository.findById(id);
+        if (managementOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return historiales.stream()
-            .max(Comparator.comparing(History::getDate))
-            .map(h -> ResponseEntity.ok(com.licensis.notaire.application.usecase.history.HistoryMapper.toDto(h)))
-            .orElse(ResponseEntity.notFound().build());
+        List<History> historyRows = historyRepository.findByFkIdManagementIdManagement(id);
+        if (!historyRows.isEmpty()) {
+            return historyRows.stream()
+                    .max(Comparator.comparing(History::getDate))
+                    .map(h -> ResponseEntity.ok(
+                            com.licensis.notaire.application.usecase.history.HistoryMapper.toDto(h)))
+                    .orElse(ResponseEntity.notFound().build());
+        }
+        DeedManagement management = managementOpt.get();
+        ManagementStatus status = management.getFkIdManagementStatus();
+        if (status == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new DtoHistorySummary(
+                null,
+                new Date(),
+                null,
+                management.getIdManagement(),
+                status.getIdManagementStatus(),
+                status.getName()));
     }
 
     record ManagementRequest(
@@ -387,12 +408,14 @@ public class ManagementController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Bad request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nueva gestion")
+    @Transactional
+    @Operation(summary = "CU02 - Create a new management",
+            description = "CU13 - When a status is provided, the initial status is appended to History.")
     public ResponseEntity<Object> create(@Valid @RequestBody ManagementRequest request) {
         try {
             DeedManagement entity = new DeedManagement();
@@ -400,32 +423,55 @@ public class ManagementController {
                 return ResponseEntity.badRequest().build();
             }
             entity = repository.save(entity);
+            if (entity.getFkIdManagementStatus() != null) {
+                managementBitacoraService.registerStatus(entity, null);
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(toManagementResponse(entity));
         } catch (Exception e) {
-            log.error("Failed to create gestion", e);
+            log.error("Failed to create management", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar gestion")
+    @Transactional
+    @Operation(summary = "CU53 - Update a management",
+            description = "CU13 - When the status id is first set or changes, a History row is appended.")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody ManagementRequest request) {
         return repository.findById(id).map(existing -> {
             try {
+                Integer previousStatusId = statusIdOf(existing);
                 if (!applyManagementRequest(existing, request)) {
                     return ResponseEntity.badRequest().<Void>build();
                 }
                 repository.save(existing);
+                registerStatusChangeIfNeeded(existing, previousStatusId);
                 return ResponseEntity.ok().<Void>build();
             } catch (Exception e) {
-                log.error("Failed to update gestion id {}", id, e);
+                log.error("Failed to update management id {}", id, e);
                 return ResponseEntity.internalServerError().<Void>build();
             }
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+    private static Integer statusIdOf(DeedManagement management) {
+        ManagementStatus status = management.getFkIdManagementStatus();
+        return status != null ? status.getIdManagementStatus() : null;
+    }
+
+    /**
+     * Appends a History row when status is first assigned or changes. Does not invent a row
+     * when status remains null or unchanged. Reuses {@link ManagementBitacoraService}.
+     */
+    private void registerStatusChangeIfNeeded(DeedManagement management, Integer previousStatusId) {
+        Integer newStatusId = statusIdOf(management);
+        if (newStatusId != null && !newStatusId.equals(previousStatusId)) {
+            managementBitacoraService.registerStatus(management, null);
+        }
     }
 
     @ApiResponses({

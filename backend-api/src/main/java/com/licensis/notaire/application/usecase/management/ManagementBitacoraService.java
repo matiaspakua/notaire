@@ -13,8 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * CU13 - Escribe y consulta la bitácora ({@link Historial}) de cambios de
- * estado de una gestión.
+ * CU13 - Writes and reads the status History (bitácora) for a management.
  */
 @Service
 public class ManagementBitacoraService {
@@ -26,21 +25,21 @@ public class ManagementBitacoraService {
     }
 
     /**
-     * Registra en la bitácora el estado actual de la gestión (alta, transición
-     * válida o archivado).
+     * Appends the management's current status to History (create, valid
+     * transition, archive, or other status write paths).
      */
     @Transactional
     public History registerStatus(DeedManagement management, String notes) {
-        ManagementStatus statusActual = management.getFkIdManagementStatus();
-        if (statusActual == null) {
+        ManagementStatus currentStatus = management.getFkIdManagementStatus();
+        if (currentStatus == null) {
             throw new BusinessValidationException(
-                    "No se puede registrar bitácora: la gestión " + management.getIdManagement()
-                            + " no tiene un estado asignado");
+                    "Cannot register History: management " + management.getIdManagement()
+                            + " has no status assigned");
         }
 
         History history = new History();
         history.setFkIdManagement(management);
-        history.setFkIdManagementStatus(statusActual);
+        history.setFkIdManagementStatus(currentStatus);
         history.setDate(new Date());
         history.setNotes(notes);
 
@@ -48,7 +47,7 @@ public class ManagementBitacoraService {
     }
 
     /**
-     * Devuelve la bitácora completa de la gestión ordenada cronológicamente.
+     * Returns the full History for the management, ordered chronologically.
      */
     @Transactional(readOnly = true)
     public List<History> getHistory(Integer idManagement) {
