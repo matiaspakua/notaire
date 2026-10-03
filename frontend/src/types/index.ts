@@ -87,6 +87,7 @@ export interface TipoDeDocumento {
   dueDays?: number | null;
   deliveredBy?: string;
   enabled?: boolean;
+  returned?: boolean;
 }
 
 export interface PlantillaTramite {
