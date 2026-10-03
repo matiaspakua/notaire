@@ -10,7 +10,7 @@
 | **Descripción** | Define las prácticas de prueba, estándares visuales de formularios secuenciales y control de calidad requeridos para validar cada caso de uso y requerimiento del sistema. |
 | **Tipo** | Soporte / Calidad |
 | **Referencias Cruzadas** | RF #74 (Aspecto visual), RF #75 (Diseño de ventanas), RF #76 (Diseño de campos y combos), RF #77 (Especificación de campos a completar), RF #78 (Uso de colores en la GUI), RF #79 (Seguimiento del trabajo sobre ventanas), RF #80 (Identificación de sesión), RF #86 (Java VM), RF #87 (Sistema operativo), RF #90 (Metodología de desarrollo), RF #91 (Modelo de desarrollo), RF #92 (Lenguaje de programación) |
-| **GitHub ID** | #276, #295, #296 |
+| **GitHub ID** | #276, #295, #296, #594, #1047 |
 
 ## Alcance de Calidad e Interfaz
 
@@ -19,6 +19,10 @@
 - Pruebas End-to-End (E2E) con Playwright para validar flujos de usuario completos.
 - Validación de accesibilidad, navegación por teclado (Tab) y formularios secuenciales claros.
 - Monitoreo continuo de cobertura de código con JaCoCo (meta ≥ 80%).
+- Workflow de performance k6 (`performance-test.yml`) con script en
+  `performance-test/k6/load-test.js`, validación de assets en
+  `scripts/test_performance_test_assets.py`, y publicación del artefacto
+  `k6-load-test-results` / `summary.json` (issue #1047; no es gate por PR).
 
 ## Ciclo de Verificación de Calidad
 
@@ -47,3 +51,5 @@
 - [x] Suites E2E se auto-abastecen de datos y no ocultan flakiness con sleeps/retries (#1066).
 - [x] Controles icon-only del dashboard exponen nombre accesible traducido (`aria-label`) para tecnologías de asistencia y selectores `getByRole` (WCAG 2.1 SC 4.1.2; issue #1057; E2E TS-0096).
 - [x] ESLint del frontend es un gate **bloqueante** en `frontend-ci.yml` y en `scripts/preflight.sh` (`eslint src --max-warnings=0` / `npm run lint`), con reglas `jsx-a11y` activas vía `eslint-config-next` (issue #1048; #701 cerrado).
+- [x] Workflow semanal de carga k6 operativo (script restaurado, umbrales CU74,
+  artefacto `summary.json`; issue #1047; schedule + `workflow_dispatch` únicamente).
