@@ -10,7 +10,7 @@
 | **Descripción** | Define las prácticas de prueba, estándares visuales de formularios secuenciales y control de calidad requeridos para validar cada caso de uso y requerimiento del sistema. |
 | **Tipo** | Soporte / Calidad |
 | **Referencias Cruzadas** | RF #74 (Aspecto visual), RF #75 (Diseño de ventanas), RF #76 (Diseño de campos y combos), RF #77 (Especificación de campos a completar), RF #78 (Uso de colores en la GUI), RF #79 (Seguimiento del trabajo sobre ventanas), RF #80 (Identificación de sesión), RF #86 (Java VM), RF #87 (Sistema operativo), RF #90 (Metodología de desarrollo), RF #91 (Modelo de desarrollo), RF #92 (Lenguaje de programación) |
-| **GitHub ID** | #276, #295, #296, #594, #1047, #1042 |
+| **GitHub ID** | #276, #295, #296, #594, #1047, #1042, #1041 |
 
 ## Alcance de Calidad e Interfaz
 
@@ -27,6 +27,10 @@
   (`workflow_run.head_sha`), con `latest` movido solo después del push del
   tag SHA; se omite publicar si CI no concluyó `success` (issue #1042;
   `scripts/test_cd_pin_tested_sha.py`).
+- Informes CI/CD/E2E publicados como artefactos de Actions,
+  `$GITHUB_STEP_SUMMARY` y/o GitHub Pages — **nunca** como commits de bot
+  en `docs/wiki/cicd-reports/` (issue #1041;
+  `scripts/test_no_bot_report_commits.py`).
 
 ## Ciclo de Verificación de Calidad
 
@@ -60,3 +64,6 @@
 - [x] CD en `workflow_run` construye y etiqueta la imagen con el SHA probado por
   CI (`head_sha`), mueve `latest` solo tras ese push, y no publica si CI no fue
   `success` (issue #1042).
+- [x] Workflows CI/CD/E2E/PR no commitean informes generados al repositorio;
+  `docs/wiki/cicd-reports/` está ignorado y sin tracking; jobs de publicación
+  de informes no piden `contents: write` (issue #1041).

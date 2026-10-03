@@ -256,10 +256,10 @@ jobs:
           retention-days: 30
 
   # ==========================================
-  # Publish Reports to docs/wiki/
+  # Publish CD report (artifact + summary; no git commits — #1041)
   # ==========================================
   publish-report:
-    name: Publish to Wiki
+    name: Publish report artifact
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [build-and-publish, release, update-description, generate-report]
@@ -271,44 +271,32 @@ jobs:
         || github.event_name == 'workflow_dispatch'
       )
     permissions:
-      contents: write
+      contents: read
     continue-on-error: true
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-        with:
-          ref: main
-          fetch-depth: 0
-
       - name: Download Report
         uses: actions/download-artifact@v8
         with:
           name: cd-report
           path: ./reports
 
-      - name: Generate CD Report for Wiki
-        env:
-          OUTPUT_FILE: docs/wiki/cicd-reports/cd-report.md
-          GHA_BUILD_PUBLISH: ${{ needs.build-and-publish.result }}
-          GHA_RELEASE: ${{ needs.release.result }}
-          GHA_UPDATE_DESC: ${{ needs.update-description.result }}
-          GHA_BRANCH: ${{ github.ref_name }}
-          GHA_SHA: ${{ github.sha }}
-          GHA_REPO: ${{ github.repository }}
-          WIKI_MODE: yes
+      - name: Publish CD report to job summary
         run: |
-          mkdir -p docs/wiki/cicd-reports
-          bash scripts/generate-cd-report.sh
-
-      - name: Commit and Push Reports
-        run: |
-          git config --local user.email "ci@notaire.com"
-          git config --local user.name "CI Bot"
-          git add docs/wiki/cicd-reports/ 2>/dev/null || echo "No reports to add"
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
+          REPORT="reports/cd-report.md"
+          if [ -f "$REPORT" ]; then
+            {
+              echo "## CD report"
+              echo ""
+              cat "$REPORT"
+            } >> "$GITHUB_STEP_SUMMARY"
           else
-            git commit -m "docs: add CD report for $(date +%Y-%m-%d)"
-            git pull --rebase origin main
-            git push origin main
+            echo "No CD report artifact found" >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      - name: Upload CD report artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: cd-report-publish
+          path: reports/cd-report.md
+          retention-days: 30
+          if-no-files-found: ignore

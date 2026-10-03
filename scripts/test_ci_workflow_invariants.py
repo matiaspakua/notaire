@@ -15,9 +15,9 @@ Invariants enforced here:
   workflow concludes successfully (or on manual dispatch), and it holds the
   pages/id-token permissions + github-pages environment.
 - playwright-e2e.yml runs on PR/main push/schedule/manual and its
-  coverage-report job produces the report on non-PR events (commits to
-  docs/wiki/ on main pushes), so the Playwright/Bruno report is recorded for
-  main.
+  coverage-report job produces the report on non-PR events as a workflow
+  artifact + $GITHUB_STEP_SUMMARY (never git-commits into docs/wiki/ —
+  issue #1041), so the Playwright/Bruno coverage record is retained for main.
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
 validation scripts (see scripts/test_report_job_needs_dependencies.py).
