@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/ci-1040-protect-main-ruleset/` | Gate 1 validated |
 | Branch | `cursor/ci-1040-protect-main-ruleset-69d3` | created from `origin/main` |
 | Tasks | `tasks.md` | implement mostly complete; Gate 4/5 pending |
-| Commits | — | pending (filled after commit) |
+| Commits | `ed2b8bd3` test; `5bcc00a2` aggregators; `b84c2446` scripts; `f7e5b727` docs | landed |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending (coordinator) |
