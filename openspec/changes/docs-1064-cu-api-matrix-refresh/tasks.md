@@ -75,19 +75,19 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits (OpenSpec, then tests, then impl/docs as needed)
-- [ ] 9.2 Closing commit ends with `Closes #1064`
-- [ ] 9.3 No secrets; no `local-ai/`; no unrelated changes
-- [ ] 9.4 Record commit SHAs in `traceability.md`
+- [x] 9.1 Conventional Commits (OpenSpec, then tests, then impl/docs as needed)
+- [x] 9.2 Closing commit ends with `Closes #1064`
+- [x] 9.3 No secrets; no `local-ai/`; no unrelated changes
+- [x] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push branch to origin
-- [ ] 10.2 Open draft PR via ManagePullRequest titled
+- [x] 10.1 Push branch to origin
+- [x] 10.2 Open draft PR via ManagePullRequest titled
       `[#1064] docs(test): refresh CU-API-MATRIX + CI validator`
 - [ ] 10.3 Wait for required workflows (do not merge)
 - [ ] 10.4 Gate 4 — leave draft; do not merge
-- [ ] 10.5 Record PR URL/number in `traceability.md` and
+- [x] 10.5 Record PR URL/number in `traceability.md` and
       `/workspace/implement-1064-status.md`
 
 ## 11. Deploy
@@ -98,8 +98,8 @@
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke: run matrix validator + unittest after push
-- [ ] 12.2 Rollback path remains `git revert` (design.md)
+- [x] 12.1 Smoke: run matrix validator + unittest after push
+- [x] 12.2 Rollback path remains `git revert` (design.md)
 - [ ] 12.3 Issue closed via PR `Closes #1064` on merge (not this turn)
 - [ ] 12.4 Archive OpenSpec change after merge
 

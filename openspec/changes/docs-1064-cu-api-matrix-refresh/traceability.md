@@ -17,12 +17,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/docs-1064-cu-api-matrix-refresh/` | complete |
 | Branch | `cursor/docs-1064-cu-api-matrix-refresh-69d3` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | `e993d30d`, `08fea8c9`, `78905c3c` | committed |
-| Pull Request | pending | pending |
+| Commits | `e993d30d`, `08fea8c9`, `78905c3c`, `8068a08b` | committed |
+| Pull Request | [#1181](https://github.com/matiaspakua/notaire/pull/1181) | open (draft) |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | n/a — docs/tooling, no release artifact | pending |
-| Smoke test | `python3 scripts/validate-cu-api-matrix.py` + unittest | pending (post-push) |
+| Smoke test | `python3 scripts/validate-cu-api-matrix.py` + unittest | passed locally |
 
 ## Requirement coverage
 
