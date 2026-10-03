@@ -340,27 +340,27 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         Integer notaryId = createPerson("HIST-TIE-" + System.nanoTime());
         ManagementStatus statusA = createStatus("Tie-A");
         ManagementStatus statusB = createStatus("Tie-B");
-        String createBody = """
-                {"encabezado": "Tie", "dateStart": "2026-01-01", "number": 1,
+        String body = """
+                {"encabezado": "Tie", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
-                """.formatted(notaryId, statusA.getIdManagementStatus());
+                """;
         MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createBody))
+                        .content(body.formatted(1, notaryId, statusA.getIdManagementStatus())))
                 .andExpect(status().isCreated())
                 .andReturn();
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
                 .get("idManagement").asInt();
 
-        // #804 rejects status changes via PUT, so append the second row directly (same effect
-        // as a successful /transition), then force both rows onto one instant.
+        // #804 rejects status changes via plain PUT — seed a second History row directly
+        // so this tie-break assertion stays independent of workflow enforcement.
         var management = managementRepository.findById(managementId).orElseThrow();
         management.setFkIdManagementStatus(statusB);
         managementRepository.save(management);
         History second = new History();
         second.setFkIdManagement(management);
         second.setFkIdManagementStatus(statusB);
-        second.setDate(new Date(0L));
+        second.setDate(new Date());
         historyRepository.saveAndFlush(second);
 
         List<History> rows = historyRepository.findByFkIdManagementIdManagement(managementId);

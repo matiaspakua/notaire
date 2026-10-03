@@ -137,7 +137,7 @@ class PersonServiceTest {
 
             assertThatThrownBy(() -> personService.save(newPerson))
                     .isInstanceOf(DuplicatePersonException.class)
-                    .extracting(ex -> ((DuplicatePersonException) ex).getIdPersonExistente())
+                    .extracting(ex -> ((DuplicatePersonException) ex).getExistingPersonId())
                     .isEqualTo(1);
 
             verify(personRepository, never()).save(any());
@@ -168,6 +168,25 @@ class PersonServiceTest {
                     .isInstanceOf(DuplicatePersonException.class);
 
             verify(personRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should map data-integrity race on duplicate document to DuplicatePersonException")
+        void shouldMapDataIntegrityRaceToDuplicatePersonException() {
+            Person racing = new Person();
+            racing.setIdentificationNumber("12345678");
+            racing.setFkIdIdentificationType(identificationType);
+            when(personRepository.findByIdentificationNumber("12345678"))
+                    .thenReturn(Optional.empty())
+                    .thenReturn(Optional.of(testPerson));
+            when(personRepository.save(racing))
+                    .thenThrow(new org.springframework.dao.DataIntegrityViolationException(
+                            "uq_people_identification_type_number"));
+
+            assertThatThrownBy(() -> personService.save(racing))
+                    .isInstanceOf(DuplicatePersonException.class)
+                    .extracting(ex -> ((DuplicatePersonException) ex).getExistingPersonId())
+                    .isEqualTo(1);
         }
     }
 

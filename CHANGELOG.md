@@ -485,6 +485,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Person identification uniqueness enforced at the database** (issue #799, CU17, CU18):
+  Flyway `V40` adds unique index `uq_people_identification_type_number` on
+  `people (fk_id_tipo_identificacion, identification_number)`, with a fail-fast pre-check when
+  duplicate groups already exist. Aligns with the #835 service-layer reject (HTTP 409); race
+  `DataIntegrityViolationException` on that key is remapped to `DuplicatePersonException` so the
+  existing frontend toast path keeps working. JPA `@UniqueConstraint` mirrors the index.
+
 - **`estado-actual` returned an arbitrary row when history dates tied** (issue #1198, CU13):
   `GET /api/v1/gestiones/{id}/estado-actual` now breaks date ties by the higher history id, so
   a create and an update in the same millisecond no longer show the previous status. This was
