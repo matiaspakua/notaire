@@ -19,7 +19,7 @@
 | 1 | El Escribano decide modificar los datos de un tipo de documento en particular. |  |
 | 2 |  | Muestra una lista de todos los tipos de documento disponibles. |
 | 3 | Selecciona uno de ellos. |  |
-| 4 |  | Presenta: (Nombre del documento; Si posee o no vencimiento; Cantidad de días de validez; Quién lo entrega) |
+| 4 |  | Presenta: (Nombre del documento; Si está habilitado; Si se devuelve al cliente; Si posee o no vencimiento; Cantidad de días de validez; Quién lo entrega) |
 | 5 | Modifica los datos necesarios y confirma los cambios realizados. |  |
 | 6 |  | Registra los cambios realizados. |
 

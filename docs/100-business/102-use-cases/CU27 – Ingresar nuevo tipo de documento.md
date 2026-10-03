@@ -17,7 +17,7 @@
 | Paso | Actor | Sistema |
 |---|---|---|
 | 1 | El Escribano decide dar de alta un nuevo tipo de documento. |  |
-| 2 |  | Solicita: (Nombre del documento; Si posee vencimiento o no; Cantidad de días de validez; Quién debe entregar el mismo (Cliente/Entidad Externa)) |
+| 2 |  | Solicita: (Nombre del documento; Si está habilitado; Si se devuelve al cliente; Si posee vencimiento o no; Cantidad de días de validez; Quién debe entregar el mismo (Cliente/Entidad Externa)). Por defecto: habilitado=sí, devuelto=no. |
 | 3 | El Escribano indica los datos solicitados y confirma los mismos. |  |
 | 4 |  | Registra un nuevo documento en el sistema con los datos indicados. |
 
