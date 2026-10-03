@@ -15,9 +15,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Related | #1044 CLOSED (prod compose); #1043 CLOSED (frontend GHCR); #254 TLS; #256 backups; #306 SLO; #288 runbooks | referenced |
 | Specification | `openspec/changes/feat-901-staging-deploy-manifests/` | Gate 1 validated |
 | Branch | `cursor/feat-901-staging-deploy-manifests-69d3` | created from `origin/main` |
-| Tasks | `tasks.md` | implement in progress |
-| Commits | — | pending |
-| Pull Request | — | pending |
+| Tasks | `tasks.md` | implement complete (local); Gate 4–5 pending |
+| Commits | `c89957e7`, `9b926831`, `711b5c8d` | pushed |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1176 | draft |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
