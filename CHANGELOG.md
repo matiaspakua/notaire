@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Pin container images + Dependabot docker** (issue #1045, CU78): pin compose,
+  infra, Dockerfile, and CI postgres images to minor tags (no `:latest`, no bare
+  `sonarqube:community`, no major-only postgres); keep npm `/frontend`; add
+  Dependabot docker for `/backend-api` and `/frontend`. Guarded by
+  `scripts/test_image_pins_and_dependabot.py`. ADR-017 / DevSecOps / infra docs
+  updated.
+
 - **Protect `main` with ruleset** (issue #1040, CU76/CU78): extend ruleset
   `protect-main` (id `24128115`) for PR-only merges, required checks
   `CI` / `Frontend CI` / `Playwright E2E` / `Code Lint` / `PR Validation`, and

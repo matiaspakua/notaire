@@ -10,7 +10,7 @@
 | **Descripción** | Establece los controles de seguridad esenciales para proteger datos personales de clientes, escrituras y trámites frente a accesos no autorizados o vulnerabilidades (OWASP Top 10). |
 | **Tipo** | Soporte / Seguridad |
 | **Referencias Cruzadas** | RF #81 (Seguridad y privacidad), RF #82 (Acceso de usuarios), RF #83 (Cifrado de contraseña), RF #84 (Transporte de información por red), RF #85 (Acceso a la base de datos); CU20, CU21 |
-| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309, #1044, #1046, #1051 |
+| **GitHub ID** | #254, #267, #280, #281, #282, #283, #307, #309, #1044, #1045, #1046, #1051 |
 
 ## Alcance Técnico
 
@@ -24,6 +24,8 @@
 - Escaneo continuo de vulnerabilidades en dependencias y código fuente.
 - Higiene Dependabot (issue #1046): sin árbol Swing con Log4j 1.x; override npm
   `smol-toml` ≥1.7.1 (pin `^1.9.0`) en el frontend.
+- Imágenes de contenedor pinneadas a minor/digest y Dependabot docker
+  (`/backend-api`, `/frontend`) además de npm (issue #1045).
 
 ## Procedimiento de Seguridad y Control de Acceso
 
@@ -55,3 +57,7 @@
 - [x] Alertas Dependabot críticas/altas por `log4j:log4j` en Swing muerto y por
       `smol-toml` resueltas: árbol `deprecated-frontend-swing/` eliminado; override
       npm `smol-toml` `^1.9.0` (issue #1046). Guard: `scripts/test_dependabot_hygiene.py`.
+- [x] Imágenes compose/Dockerfile/CI pinneadas (sin `:latest` / `sonarqube:community`
+      / postgres major-only); Dependabot con npm `/frontend` y docker
+      `/backend-api` + `/frontend` (issue #1045). Guard:
+      `scripts/test_image_pins_and_dependabot.py`.
