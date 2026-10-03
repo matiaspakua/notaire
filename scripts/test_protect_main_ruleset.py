@@ -157,6 +157,32 @@ class AggregatorJobsTest(unittest.TestCase):
                     f"{display_name} in {workflow_file} missing needs: {sorted(missing)}",
                 )
 
+    def test_aggregators_do_not_inherit_non_repo_root_working_directory(self):
+        """No-checkout suite jobs must not inherit a missing subdirectory cwd."""
+        for workflow_file, display_name, _ in AGGREGATOR_SPECS:
+            with self.subTest(workflow=workflow_file, name=display_name):
+                workflow = load_workflow(workflow_file)
+                found = job_by_name(workflow, display_name)
+                self.assertIsNotNone(found)
+                _, job = found
+                workflow_cwd = (
+                    (workflow.get("defaults") or {})
+                    .get("run", {})
+                    .get("working-directory")
+                )
+                if workflow_cwd in (None, ".", ""):
+                    continue
+                job_cwd = (
+                    (job.get("defaults") or {}).get("run", {}).get("working-directory")
+                )
+                self.assertEqual(
+                    job_cwd,
+                    ".",
+                    f"{display_name} in {workflow_file} inherits cwd "
+                    f"{workflow_cwd!r} but has no checkout; override with "
+                    f"job defaults working-directory: '.' (got {job_cwd!r})",
+                )
+
 
 class HooksDocumentationTest(unittest.TestCase):
     """hooks.md must describe protect-main, not the 2026-09-22 gap."""
