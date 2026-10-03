@@ -25,9 +25,10 @@ lint gate), `frontend-ci.yml`, `playwright-e2e.yml`, `sdlc-process.yml`, and the
 - Every push to `main`
 - Manual workflow dispatch
 
-> Report/wiki-publishing jobs (`generate-reports`, `publish-reports`) are guarded to run
-> only on push-to-`main` or manual dispatch — a PR run never publishes reports or pushes
-> commits to `main`.
+> Report jobs (`generate-reports`, `publish-reports`) are guarded to run only on
+> push-to-`main` or manual dispatch. They publish workflow artifacts and
+> `$GITHUB_STEP_SUMMARY` (and may be mirrored on GitHub Pages) — they never
+> git-commit into `docs/wiki/cicd-reports/` (issue #1041).
 
 > **Test enforcement policy**: test failures FAIL the pipeline. No
 > `continue-on-error` or `-Dmaven.test.failure.ignore` on test steps. The only
@@ -77,9 +78,10 @@ lint gate), `frontend-ci.yml`, `playwright-e2e.yml`, `sdlc-process.yml`, and the
 - Runs only on push-to-`main` or manual dispatch
 - Aggregates test/coverage results into Markdown summaries
 
-#### 9. Publish to Wiki
+#### 9. Publish report artifact
 - Runs only on push-to-`main` or manual dispatch
-- Publishes the generated reports to the GitHub Wiki
+- Surfaces the generated markdown via `$GITHUB_STEP_SUMMARY` and an Actions
+  artifact (no git commits; see issue #1041)
 
 ### Permissions
 
@@ -144,11 +146,12 @@ Guarded by `scripts/test_cd_pin_tested_sha.py`.
   unless the build job itself was skipped)
 - Aggregates their outcomes into a Markdown summary (`reports/cd-report.md`)
 
-#### 5. Publish CD Report to Wiki
+#### 5. Publish CD report artifact
 - Runs only when report generation succeeded, on `workflow_run` success or manual
   dispatch
-- Publishes the report to `docs/wiki/cicd-reports/cd-report.md` on `main`
-  (docs checkout of `main` does not change the image publish SHA)
+- Surfaces `cd-report.md` via `$GITHUB_STEP_SUMMARY` and an Actions artifact
+  (no git commits into `docs/wiki/cicd-reports/`; issue #1041). Does not change
+  the image publish SHA.
 
 ---
 

@@ -48,7 +48,7 @@ CD: build backend-api/Dockerfile → push to GHCR
 Create GitHub Release (softprops/action-gh-release, includes SBOM)
         │
         ▼
-Update GHCR/DockerHub description + publish CD report to docs/wiki/cicd-reports/
+Update GHCR/DockerHub description + publish CD report as Actions artifact / job summary (and Pages mirror)
 ```
 
 **Triggers**: `workflow_run` after CI succeeds on `main`, a `v*` tag push, or
@@ -84,7 +84,8 @@ After the tag is pushed and CD completes:
 - [ ] Smoke test the published image before closing any issues that
       shipped in it — per `CONSTITUTION.md` §11, closing an issue requires
       a smoke test, not just a green pipeline.
-- [ ] CD report published to `docs/wiki/cicd-reports/` (automatic).
+- [ ] CD report available as workflow artifact / `$GITHUB_STEP_SUMMARY`
+      (automatic; not committed into git — issue #1041).
 
 ## 4. Rollback
 

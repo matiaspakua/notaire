@@ -51,6 +51,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **CI bots no longer commit reports to main** (issue #1041, CU76):
+  `ci.yml` / `cd.yml` / `playwright-e2e.yml` report jobs publish via
+  `actions/upload-artifact` + `$GITHUB_STEP_SUMMARY` (and optional Pages
+  mirror under `/cicd-reports/`); they no longer `git commit`/`git push` into
+  `docs/wiki/cicd-reports/`. That path is gitignored and untracked; report
+  jobs drop `contents: write` (CD `release` keeps write for GitHub Releases).
+  Guarded by `scripts/test_no_bot_report_commits.py`.
+
 - **CD publishes the CI-tested SHA, not tip of main** (issue #1042, CU76):
   `.github/workflows/cd.yml` `build-and-publish` checks out
   `workflow_run.head_sha` (fallback `github.sha` for tag/dispatch), tags the
