@@ -40,7 +40,7 @@ import java.util.Date;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @RequirementCoverage({"CU02", "CU22"})
-@DisplayName("Gestion controller — create validates data before hitting the database")
+@DisplayName("Management controller — create validates data before hitting the database")
 class ManagementControllerIntegrationTest {
 
     @Autowired
@@ -136,7 +136,7 @@ class ManagementControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 201 when creating a gestion with all required fields")
+    @DisplayName("Should return 201 when creating a management with all required fields")
     void shouldCreateManagementWithValidData() throws Exception {
         Integer personId = createPerson();
         String body = """
@@ -165,7 +165,7 @@ class ManagementControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create a gestion with its tramite when all case dependencies are provided")
+    @DisplayName("Should create a management with its procedure when all case dependencies are provided")
     void shouldCreateCompleteCaseWithValidDependencies() throws Exception {
         Integer clientId = createPerson("42000010");
         Integer notaryId = createPerson("42000011");
@@ -186,7 +186,7 @@ class ManagementControllerIntegrationTest {
         Integer managementId = mapper.readTree(result.getResponse().getContentAsString()).get("idManagement").asInt();
 
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(managementId);
-        assertThat(procedures).as("complete-case should persist a tramite linked to the gestion").hasSize(1);
+        assertThat(procedures).as("complete-case should persist a procedure linked to the management").hasSize(1);
         assertThat(procedures.get(0).getFkIdBudget())
                 .as("the persisted tramite should carry the requested presupuestoId as its fkIdPresupuesto")
                 .isNotNull()
@@ -195,7 +195,7 @@ class ManagementControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when updating complete-case for a gestion that does not exist")
+    @DisplayName("Should return 404 when updating complete-case for a management that does not exist")
     void shouldReturn404WhenUpdatingCompleteCaseForMissingManagement() throws Exception {
         Integer clientId = createPerson("42000012");
         Integer notaryId = createPerson("42000013");
@@ -214,7 +214,7 @@ class ManagementControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should update a gestion and its tramite when all case dependencies are provided")
+    @DisplayName("Should update a management and its procedure when all case dependencies are provided")
     void shouldUpdateCompleteCaseWithValidDependencies() throws Exception {
         Integer clientId = createPerson("42000014");
         Integer notaryId = createPerson("42000015");
@@ -245,11 +245,11 @@ class ManagementControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should redirect a gestion to the suplente when the requested notary has an active suplencia")
+    @DisplayName("Should redirect a management to the substitute when the requested notary has an active substitution")
     void shouldRedirectToSuplenteWhenUpdatingManagementNotary() throws Exception {
         Integer clientId = createPerson("42000016");
         Integer notaryId = createPerson("42000017");
-        Integer suplenteId = createPerson("42000018");
+        Integer substituteId = createPerson("42000018");
         Integer budgetId = createBudget(clientId);
         Integer statusId = createManagementStatus();
         Integer typeProcedureId = createProcedureType();
@@ -263,7 +263,7 @@ class ManagementControllerIntegrationTest {
                 .andExpect(status().isCreated())
                 .andReturn();
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString()).get("idManagement").asInt();
-        createActiveSubstitution(notaryId, suplenteId);
+        createActiveSubstitution(notaryId, substituteId);
 
         String updateBody = """
                 {"number": 9205, "encabezado": "Management IT", "budgetId": %d,
@@ -275,14 +275,14 @@ class ManagementControllerIntegrationTest {
                 .andExpect(status().isOk());
 
         DeedManagement management = deedManagementRepository.findById(managementId).orElseThrow();
-        Person suplente = personRepository.findById(suplenteId).orElseThrow();
+        Person substitute = personRepository.findById(substituteId).orElseThrow();
         assertThat(management.getFkIdNotaryPerson().getPersonId())
-                .as("the gestion should be redirected to the suplente, not the requested notary")
-                .isEqualTo(suplenteId);
+                .as("the management should be redirected to the substitute, not the requested notary")
+                .isEqualTo(substituteId);
         assertThat(management.getNotes())
-                .as("the redirection should be recorded, identifying both escribanos")
-                .contains(suplente.getFirstName())
-                .contains(suplente.getLastName());
+                .as("the redirection should be recorded, identifying both notaries")
+                .contains(substitute.getFirstName())
+                .contains(substitute.getLastName());
     }
 
     @Test
@@ -293,7 +293,7 @@ class ManagementControllerIntegrationTest {
         createActiveSubstitution(notaryId, substituteId);
 
         String body = """
-                {"encabezado": "Plain create suplencia IT", "number": 9301,
+                {"encabezado": "Plain create substitution IT", "number": 9301,
                  "notaryPersonId": %d}
                 """.formatted(notaryId);
 
@@ -325,7 +325,7 @@ class ManagementControllerIntegrationTest {
         Integer substituteId = createPerson("42000023");
 
         String createBody = """
-                {"encabezado": "Plain update suplencia IT", "number": 9302,
+                {"encabezado": "Plain update substitution IT", "number": 9302,
                  "notaryPersonId": %d}
                 """.formatted(initialNotaryId);
         MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
@@ -339,7 +339,7 @@ class ManagementControllerIntegrationTest {
         createActiveSubstitution(requestedNotaryId, substituteId);
 
         String updateBody = """
-                {"encabezado": "Plain update suplencia IT", "number": 9302,
+                {"encabezado": "Plain update substitution IT", "number": 9302,
                  "notaryPersonId": %d}
                 """.formatted(requestedNotaryId);
         mockMvc.perform(put("/api/v1/gestiones/" + managementId)
@@ -358,7 +358,7 @@ class ManagementControllerIntegrationTest {
                 .contains(substitute.getLastName());
     }
 
-    private void createActiveSubstitution(Integer notaryId, Integer suplenteId) {
+    private void createActiveSubstitution(Integer notaryId, Integer substituteId) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         Date dateStart = calendar.getTime();
@@ -367,7 +367,7 @@ class ManagementControllerIntegrationTest {
 
         Substitution substitution = new Substitution(null, dateStart, dateEnd);
         substitution.setFkIdSubstituted(personRepository.findById(notaryId).orElseThrow());
-        substitution.setFkIdSubstitute(personRepository.findById(suplenteId).orElseThrow());
+        substitution.setFkIdSubstitute(personRepository.findById(substituteId).orElseThrow());
         substitutionRepository.save(substitution);
     }
 }
