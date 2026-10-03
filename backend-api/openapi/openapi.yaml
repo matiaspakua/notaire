@@ -1467,7 +1467,7 @@ components:
           format: int32
           type: integer
       type: object
-    DtoTransicionRequest:
+    DtoTransitionRequest:
       properties:
         statusDestination:
           type: string
@@ -3847,9 +3847,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/PageDtoManagementSummary'
           description: OK
-      summary: Obtener todas las gestiones
+      summary: List all managements
       tags:
-      - Gestiones
+      - Managements
     post:
       description: CU13 - When a status is provided, the initial status is appended to History. Plain create has no procedure/workflow
         yet, so any defined status is accepted.
@@ -3881,7 +3881,7 @@ paths:
           description: Conflict
       summary: CU02 - Create a new management
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/cliente/{idPerson}:
     get:
       operationId: getByClient
@@ -3901,9 +3901,9 @@ paths:
                   $ref: '#/components/schemas/DeedManagement'
                 type: array
           description: OK
-      summary: Obtener gestiones de un cliente (CU19)
+      summary: CU19 - List managements for a client
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/complete-case:
     post:
       description: CU22/CU59 - If the requested notary has an active substitution for the management start date, the management
@@ -3925,7 +3925,7 @@ paths:
           description: OK
       summary: CU02 - Create a management with its required dependencies
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/numero/{number}:
     get:
       operationId: getByNumber
@@ -3943,9 +3943,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoManagementSummary'
           description: OK
-      summary: Obtener gestion por numero
+      summary: Get management by number
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}:
     delete:
       operationId: delete_18
@@ -3958,12 +3958,12 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
-          description: No encontrado
-      summary: Eliminar gestion
+          description: Not found
+      summary: Delete management
       tags:
-      - Gestiones
+      - Managements
     get:
       operationId: getById_17
       parameters:
@@ -3986,9 +3986,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoManagementSummary'
           description: No encontrado
-      summary: Obtener gestion por ID
+      summary: Get management by ID
       tags:
-      - Gestiones
+      - Managements
     put:
       description: CU83 **BREAKING** - Changing managementStatusId is rejected; use POST /{id}/transition. Same-status updates
         remain allowed. CU13 - History for status changes is written by /transition (and create).
@@ -4015,7 +4015,7 @@ paths:
           description: Not found
       summary: CU53 - Update a management
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/archivar:
     post:
       operationId: archiving
@@ -4038,23 +4038,23 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Gestión archivada
+          description: Management archived
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: Gestion no encontrada
+          description: Management not found
         '409':
           content:
             '*/*':
               schema:
                 type: object
-          description: Hay carpetas de trámite (CU85) en espera sin resolver; confirme para archivar
-      summary: CU16 - Archivar una gestión advirtiendo y registrando deuda pendiente (RF-22, RF-37); cascada a las carpetas
-        de trámite de CU85
+          description: Unresolved waiting procedure folders (CU85); confirm to archive
+      summary: CU16 - Archive a management, warning and recording pending debt (RF-22, RF-37); cascades to CU85 procedure
+        folders
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/complete-case:
     put:
       description: CU22/CU59 - If the requested notary has an active substitution for the management start date, the management
@@ -4083,7 +4083,7 @@ paths:
           description: OK
       summary: CU02/CU53 - Update a management with its required dependencies
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/documentos-entidades-externas:
     get:
       operationId: getDocumentsEntidadesExternas
@@ -4106,10 +4106,10 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoManagementDocumentsEntidadesExternas'
-          description: Gestion no encontrada
-      summary: CU10 - Obtener la documentación de una gestión a cargo de entidades externas
+          description: Management not found
+      summary: CU10 - Get management documentation handled by external entities
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/documentos-entidades-externas/{idSubmittedDocument}:
     put:
       operationId: registerMovementDocumentEntidadExterna
@@ -4138,22 +4138,22 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoDocumentEntidadExterna'
-          description: Movimiento registrado
+          description: Movement registered
         '400':
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoDocumentEntidadExterna'
-          description: Documento inválido para la gestión
+          description: Invalid document for the management
         '404':
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoDocumentEntidadExterna'
-          description: Gestion o documento no encontrado
-      summary: CU10 - Registrar el movimiento de un documento de entidad externa
+          description: Management or document not found
+      summary: CU10 - Register movement of an external-entity document
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/estado-actual:
     get:
       description: Returns the latest History row by date when present; otherwise synthesizes a summary from DeedManagement.fkIdManagementStatus
@@ -4175,7 +4175,7 @@ paths:
           description: OK
       summary: CU13/CU14 - Get current management status
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/historial:
     get:
       operationId: getHistory
@@ -4202,10 +4202,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/DtoHistorySummary'
                 type: array
-          description: Gestion no encontrada
-      summary: CU13 - Obtener la bitácora completa de una gestión, ordenada cronológicamente
+          description: Management not found
+      summary: CU13 - Get the full management History log, ordered chronologically
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/reingreso-documentacion:
     get:
       operationId: getRequiredDocumentationForReentry
@@ -4228,10 +4228,10 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoManagementReingresoDocumentacion'
-          description: Gestion no encontrada
-      summary: CU43 - Obtener los trámites de una gestión con su documentación necesaria
+          description: Management not found
+      summary: CU43 - Get management procedures with required documentation
       tags:
-      - Gestiones
+      - Managements
     post:
       operationId: reenterDocumentation
       parameters:
@@ -4253,22 +4253,22 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoDocumentReentered'
-          description: Documento reingresado
+          description: Document re-entered
         '400':
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoDocumentReentered'
-          description: Trámite o tipo de documento inválido
+          description: Invalid procedure or document type
         '404':
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoDocumentReentered'
-          description: Gestion o trámite no encontrado
-      summary: CU43 - Reingresar un tipo de documento para un trámite de la gestión
+          description: Management or procedure not found
+      summary: CU43 - Re-enter a document type for a management procedure
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/resumen-financiero:
     get:
       operationId: getResumenFinanciero
@@ -4291,10 +4291,10 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoManagementResumenFinanciero'
-          description: Gestion no encontrada
-      summary: CU47/CU02 - Obtener resumen financiero agregado de una gestión
+          description: Management not found
+      summary: CU47/CU02 - Get aggregated financial summary for a management
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/saldo-pendiente:
     get:
       operationId: getSaldoPending_1
@@ -4317,10 +4317,10 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoSaldoPending'
-          description: Gestion no encontrada
-      summary: CU16 - Calcular saldo pendiente agregado de una gestión (RF-22)
+          description: Management not found
+      summary: CU16 - Calculate aggregated pending balance for a management (RF-22)
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/transition:
     post:
       operationId: transition
@@ -4335,7 +4335,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoTransicionRequest'
+              $ref: '#/components/schemas/DtoTransitionRequest'
         required: true
       responses:
         '200':
@@ -4343,26 +4343,26 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Transición aplicada
+          description: Transition applied
         '400':
           content:
             '*/*':
               schema:
                 type: object
-          description: Transición no válida para el workflow del tipo de trámite
+          description: Transition not valid for the procedure-type workflow
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: Gestion no encontrada
-      summary: CU83 - Transicionar el estado de una gestión validando el workflow definido
+          description: Management not found
+      summary: CU83 - Transition management status validating the defined workflow
       tags:
-      - Gestiones
+      - Managements
   /api/v1/gestiones/{id}/workflow-trace:
     get:
       description: 'CU83 legal-next contract: clients derive valid destination statuses from `transitions` whose `originNodeId`
-        matches the current node (the node whose status equals `statusActual`). The gestiones UI must offer only those destinations
+        matches the current node (the node whose status equals `statusActual`). The managements UI must offer only those destinations
         when changing status via POST /{id}/transition.'
       operationId: getWorkflowTrace
       parameters:
@@ -4384,16 +4384,16 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Gestion sin tramites o workflow definition
+          description: Management has no procedures or workflow definition
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: Gestion no encontrada
+          description: Management not found
       summary: Get workflow trace for a management (nodes, transitions, history, node statuses)
       tags:
-      - Gestiones
+      - Managements
   /api/v1/historial:
     get:
       operationId: getAll_15
@@ -8477,8 +8477,6 @@ tags:
   name: DocumentoPresentado
 - description: API para gestionar pagos (CU15, CU47)
   name: Pago
-- description: API para gestionar gestiones de escritura
-  name: Gestiones
 - description: API para gestionar roles y permisos de usuario
   name: Roles
 - description: API para gestionar folio
@@ -8533,6 +8531,8 @@ tags:
   name: Inmueble
 - description: API para gestionar suplencia
   name: Suplencia
+- description: API for deed managements
+  name: Managements
 - description: API para gestionar trámites
   name: Trámites
 - description: API para gestionar plantillas de presupuesto

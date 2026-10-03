@@ -271,7 +271,7 @@ test.describe('CU16 - Archivar Gestión', () => {
     await confirmDialog.getByRole('button', { name: /archivar gestión/i }).click()
 
     // Backend should reject: error message must appear
-    await expect(page.getByText(/no está permitida/i)).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText(/is not allowed/i)).toBeVisible({ timeout: 10000 })
     // Row and archive button remain — gestión was NOT archived
     await expect(page.getByTestId(`btn-archivar-gestion-${idGestion}`)).toBeVisible()
   })
