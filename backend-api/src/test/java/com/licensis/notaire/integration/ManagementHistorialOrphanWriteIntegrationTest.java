@@ -35,7 +35,7 @@ import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
- * #806 — Residual History (bitácora) gaps on plain create/update and
+ * #806 — Residual History (audit log) gaps on plain create/update and
  * complete-case update, plus GET estado-actual entity-status fallback.
  */
 @RequirementCoverage({"CU13", "CU02", "CU53"})

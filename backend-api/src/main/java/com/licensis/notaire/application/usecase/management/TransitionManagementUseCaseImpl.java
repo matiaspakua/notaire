@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Use case orchestration for CU83 - Transición de estado de gestión.
+ * Use case orchestration for CU83 — management status transition.
  * Validates and applies status transitions for a management against its workflow definition.
  */
 public class TransitionManagementUseCaseImpl implements TransitionManagementUseCase {
@@ -48,32 +48,32 @@ public class TransitionManagementUseCaseImpl implements TransitionManagementUseC
     public TransitionManagementOutput execute(Integer managementId, String statusDestination) {
         DeedManagement management = managementRepository.findById(managementId);
         if (management == null) {
-            throw new ResourceNotFoundException("Gestión no encontrada con ID: " + managementId);
+            throw new ResourceNotFoundException("Management not found with ID: " + managementId);
         }
 
         WorkflowDefinition workflowDefinition = workflowLookup.resolveWorkflowDefinition(management);
 
-        ManagementStatus statusActual = management.getFkIdManagementStatus();
+        ManagementStatus currentStatus = management.getFkIdManagementStatus();
         ManagementStatus destination = statusRepository.findByName(statusDestination);
         if (destination == null) {
             throw new BusinessValidationException(
-                    "Estado destino '" + statusDestination + "' no está definido en el sistema");
+                    "Destination status '" + statusDestination + "' is not defined in the system");
         }
 
-        if (!transitionValidator.isTransitionValid(workflowDefinition, statusActual, destination)) {
-            throw new BusinessValidationException("Transición de '" + nameStatus(statusActual)
-                    + "' a '" + destination.getName() + "' no está permitida");
+        if (!transitionValidator.isTransitionValid(workflowDefinition, currentStatus, destination)) {
+            throw new BusinessValidationException("Transition from '" + statusName(currentStatus)
+                    + "' to '" + destination.getName() + "' is not allowed");
         }
 
         management.setFkIdManagementStatus(destination);
-        DeedManagement transicionada = managementRepository.save(management);
-        bitacora.registerStatus(transicionada, null);
-        LOG.info("Gestión {} transicionada a estado '{}'", managementId, destination.getName());
+        DeedManagement transitioned = managementRepository.save(management);
+        bitacora.registerStatus(transitioned, null);
+        LOG.info("Management {} transitioned to status '{}'", managementId, destination.getName());
 
-        return new TransitionManagementOutput(transicionada.getIdManagement());
+        return new TransitionManagementOutput(transitioned.getIdManagement());
     }
 
-    private static String nameStatus(ManagementStatus status) {
-        return status != null ? status.getName() : "sin estado";
+    private static String statusName(ManagementStatus status) {
+        return status != null ? status.getName() : "no status";
     }
 }

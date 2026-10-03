@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Shared guard for gestión status writes (CU83 / #804).
+ * Shared guard for management status writes (CU83 / #804).
  * <p>
  * Post-create status mutations must go through
  * {@code POST /api/v1/gestiones/{id}/transition}. Create-time assignment is
@@ -28,7 +28,7 @@ public class ManagementStatusWriteGuard {
     }
 
     /**
-     * Rejects changing the status id on an existing gestión via generic update
+     * Rejects changing the status id on an existing management via generic update
      * paths. Same-status updates and omitted status fields are allowed.
      *
      * @param previousStatusId current status id (may be null)
