@@ -39,7 +39,7 @@ function readPersistedAdminToken(): string | undefined {
   return undefined;
 }
 
-function applyAdminSession(
+async function applyAdminSession(
   page: Page,
   token: string,
   user: { nombre: string; tipo: string; valido: boolean; idUsuario: number },
@@ -47,26 +47,24 @@ function applyAdminSession(
   const role = (user.tipo ?? "ADMIN").toUpperCase();
   process.env.E2E_ADMIN_TOKEN = token;
 
-  return page
-    .context()
-    .addCookies([
-      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-      { name: "notaire-auth-role", value: role, domain: "localhost", path: "/" },
-    ])
-    .then(() =>
-      page.addInitScript(
-        ([t, u]) => {
-          localStorage.setItem(
-            "notaire-auth",
-            JSON.stringify({
-              state: { user: u, token: t, isAuthenticated: true },
-              version: 0,
-            }),
-          );
-        },
-        [token, user] as const,
-      ),
-    );
+  await page.context().addCookies([
+    { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
+    { name: "notaire-auth-role", value: role, domain: "localhost", path: "/" },
+  ]);
+  // addInitScript may resolve to Disposable in current Playwright typings —
+  // await and discard so this helper stays Promise<void>.
+  await page.addInitScript(
+    ([t, u]) => {
+      localStorage.setItem(
+        "notaire-auth",
+        JSON.stringify({
+          state: { user: u, token: t, isAuthenticated: true },
+          version: 0,
+        }),
+      );
+    },
+    [token, user] as const,
+  );
 }
 
 /**
@@ -74,14 +72,28 @@ function applyAdminSession(
  *  - `page.request` helpers (`process.env.E2E_ADMIN_TOKEN`)
  *  - the browser app (`localStorage` `notaire-auth`, same shape as zustand persist)
  *
- * On login failure/429, falls back to the JWT written by global-setup so later
- * suites are not stranded when the in-memory LoginAttemptService locks admin.
+ * Prefers the JWT written by global-setup (env / fixture file) so parallel
+ * workers do not re-login and trip LoginAttemptService 429 lockouts.
+ * Falls back to API login only when no shared token is available.
  */
 export async function authenticateAsAdmin(
   page: Page,
   nombre: string = "admin",
   contrasenia: string = "admin",
 ): Promise<void> {
+  const fallbackUser = {
+    nombre,
+    tipo: "ADMIN",
+    valido: true,
+    idUsuario: 1,
+  };
+
+  const persisted = readPersistedAdminToken();
+  if (persisted) {
+    await applyAdminSession(page, persisted, fallbackUser);
+    return;
+  }
+
   const result = await apiPost<LoginResponse>(page, "/usuarios/login", {
     name: nombre,
     password: contrasenia,
@@ -95,17 +107,6 @@ export async function authenticateAsAdmin(
       tipo: data?.tipo ?? "ADMIN",
       valido: true,
       idUsuario: data?.idUsuario ?? 1,
-    });
-    return;
-  }
-
-  const fallback = readPersistedAdminToken();
-  if (fallback) {
-    await applyAdminSession(page, fallback, {
-      nombre,
-      tipo: "ADMIN",
-      valido: true,
-      idUsuario: 1,
     });
     return;
   }
