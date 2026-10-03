@@ -26,7 +26,7 @@
 |---|---|---|
 | 1 | El desarrollador implementa pruebas unitarias e integración siguiendo TDD. | Ejecuta la suite de pruebas locales (`mvn test`, `mvn verify`). |
 | 2 | Se realiza un cambio en la interfaz gráfica de usuario. | Se ejecutan las pruebas E2E con Playwright simulando la interacción en formularios. |
-| 3 | El pipeline de CI/CD procesa la integración del código. | Valida Checkstyle, SpotBugs, cobertura JaCoCo (≥ 80%) y suite completa de tests. |
+| 3 | El pipeline de CI/CD procesa la integración del código. | Valida Checkstyle, SpotBugs, cobertura JaCoCo (≥ 80%), **ESLint del frontend (bloqueante, incl. jsx-a11y; #1048)** y suite completa de tests. |
 | 4 | El sistema valida la consistencia visual y de sesión. | Verifica que el nombre del usuario y el estado del trámite se visualicen en todo momento en pantalla. |
 
 ## Confiabilidad E2E (Playwright) — #1066
@@ -46,3 +46,4 @@
 - [x] Verificación de identificación permanente de sesión de usuario en pantalla.
 - [x] Suites E2E se auto-abastecen de datos y no ocultan flakiness con sleeps/retries (#1066).
 - [x] Controles icon-only del dashboard exponen nombre accesible traducido (`aria-label`) para tecnologías de asistencia y selectores `getByRole` (WCAG 2.1 SC 4.1.2; issue #1057; E2E TS-0096).
+- [x] ESLint del frontend es un gate **bloqueante** en `frontend-ci.yml` y en `scripts/preflight.sh` (`eslint src --max-warnings=0` / `npm run lint`), con reglas `jsx-a11y` activas vía `eslint-config-next` (issue #1048; #701 cerrado).

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Frontend ESLint is a blocking CI gate** (issue #1048, CU76):
+  `.github/workflows/frontend-ci.yml` no longer runs `npm run lint` with
+  `continue-on-error: true` (obsolete #701 advisory). Local
+  `scripts/preflight.sh` MAP documents the same blocking semantics
+  (`eslint src --max-warnings=0`). jsx-a11y remains enabled via
+  `eslint-config-next/core-web-vitals`. Guarded by
+  `scripts/tests/test_frontend_eslint_blocking.py`.
+
 ### Fixed
 
 - **Icon-only dashboard buttons expose accessible names** (issue #1057, CU76 /

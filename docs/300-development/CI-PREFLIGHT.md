@@ -9,7 +9,7 @@ CI spreads its gates across these workflows:
 | `ci.yml` | Build & Compile, Unit Tests, Integration Tests, Coverage Gate, Security Scan (Trivy fs, report-only), Docker Build (image build + Trivy image scan, report-only), Code Quality (SpotBugs, report-only) |
 | `codeql.yml` | CodeQL analysis for Java, JavaScript/TypeScript, and GitHub Actions (GitHub-hosted only; uploads SARIF to code scanning; findings do not fail the job) |
 | `pr-validation.yml` | Validate PR, Quick Build, Dependency Analysis (report-only), **Code Lint (Checkstyle + Spotless)**, Branch Naming |
-| `frontend-ci.yml` | TypeScript Check, ESLint, Unit Tests (Vitest), Build (Next.js) |
+| `frontend-ci.yml` | TypeScript Check, **ESLint (blocking, #1048)**, Unit Tests (Vitest), Build (Next.js) |
 | `playwright-e2e.yml` | Build Backend/Frontend, API Tests (Bruno), UI E2E Tests (Playwright) |
 | `sdlc-process.yml` | Commit messages, TDD evidence, `sdlc-exception` label, agent rule files, process-script self-tests |
 

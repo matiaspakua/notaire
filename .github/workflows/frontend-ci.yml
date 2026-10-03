@@ -41,12 +41,9 @@ jobs:
       - name: TypeScript type-check
         run: npm run typecheck
 
-      # Report-only until #701 (eslint-config-next's FlatCompat path crashes with
-      # "Converting circular structure to JSON") is fixed — do not add
-      # continue-on-error: false here until that's resolved.
+      # Blocking gate (#1048 / CU76). #701 (FlatCompat circular JSON) is closed.
       - name: ESLint
         run: npm run lint
-        continue-on-error: true
 
   # ──────────────────────────────────────────────
   # JOB 2: Unit tests (Vitest) with coverage
