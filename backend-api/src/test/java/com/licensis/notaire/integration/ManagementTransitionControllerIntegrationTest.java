@@ -152,7 +152,7 @@ class ManagementTransitionControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Transición válida se aplica")
+    @DisplayName("Valid transition is applied")
     void shouldApplyValidTransition() throws Exception {
         mockMvc.perform(post("/api/v1/gestiones/{id}/transition", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -169,7 +169,7 @@ class ManagementTransitionControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Transición inválida es rechazada")
+    @DisplayName("Invalid transition is rejected")
     void shouldRejectInvalidTransition() throws Exception {
         mockMvc.perform(post("/api/v1/gestiones/{id}/transition", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -185,7 +185,7 @@ class ManagementTransitionControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Gestión sin workflow definido rechaza cualquier transición")
+    @DisplayName("Management without a workflow rejects any transition")
     void shouldRejectTransitionWhenNoWorkflowDefinition() throws Exception {
         mockMvc.perform(post("/api/v1/gestiones/{id}/transition", managementSinProcedureId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -195,7 +195,7 @@ class ManagementTransitionControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when transitioning a gestión that does not exist")
+    @DisplayName("Should return 404 when transitioning a management that does not exist")
     void shouldReturn404WhenManagementDoesNotExist() throws Exception {
         mockMvc.perform(post("/api/v1/gestiones/999999/transition")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -46,7 +46,7 @@ class TransitionManagementUseCaseTest {
     }
 
     @Test
-    @DisplayName("Transición válida se aplica y retorna management actualizado")
+    @DisplayName("Valid transition is applied and returns updated management")
     void shouldApplyValidTransition() {
         // Arrange
         var statusInicial = new ManagementStatus();
@@ -83,7 +83,7 @@ class TransitionManagementUseCaseTest {
     }
 
     @Test
-    @DisplayName("Transición inválida es rechazada con BusinessValidationException")
+    @DisplayName("Invalid transition is rejected with BusinessValidationException")
     void shouldRejectInvalidTransition() {
         // Arrange
         var statusInicial = new ManagementStatus();
@@ -110,22 +110,22 @@ class TransitionManagementUseCaseTest {
         // Act & Assert
         assertThatThrownBy(() -> useCase.execute(1, "Inalcanzable"))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("no está permitida");
+                .hasMessageContaining("is not allowed");
 
         // Verify bitacora was not called
         assertThat(fakeBitacora.wasStatusRegistered(1)).isFalse();
     }
 
     @Test
-    @DisplayName("Management no encontrado lanza ResourceNotFoundException")
+    @DisplayName("Missing management throws ResourceNotFoundException")
     void shouldThrowResourceNotFoundWhenManagementNotFound() {
         assertThatThrownBy(() -> useCase.execute(999, "Intermedio"))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("no encontrada");
+                .hasMessageContaining("not found");
     }
 
     @Test
-    @DisplayName("Status destino no definido lanza BusinessValidationException")
+    @DisplayName("Undefined destination status throws BusinessValidationException")
     void shouldThrowBusinessValidationWhenStatusNotDefined() {
         // Arrange
         var statusInicial = new ManagementStatus();
@@ -146,7 +146,7 @@ class TransitionManagementUseCaseTest {
         // Act & Assert
         assertThatThrownBy(() -> useCase.execute(1, "NoExiste"))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("no está definido");
+                .hasMessageContaining("is not defined");
     }
 
     // --- Fake Ports ---

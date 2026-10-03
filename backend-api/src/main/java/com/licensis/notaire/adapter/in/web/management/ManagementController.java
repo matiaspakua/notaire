@@ -73,7 +73,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/gestiones")
-@Tag(name = "Gestiones", description = "API para gestionar gestiones de escritura")
+@Tag(name = "Managements", description = "API for deed managements")
 public class ManagementController {
 
     private static final Logger log = LoggerFactory.getLogger(ManagementController.class);
@@ -140,9 +140,9 @@ public class ManagementController {
 
     public record DtoSaldoPending(java.math.BigDecimal pendingBalance) {}
 
-    public record DtoManagementArchivada(Integer idManagement, java.math.BigDecimal pendingBalance, boolean pendingDebtAtArchiving) {}
+    public record DtoArchivedManagement(Integer idManagement, java.math.BigDecimal pendingBalance, boolean pendingDebtAtArchiving) {}
 
-    public record DtoTransicionRequest(String statusDestination) {}
+    public record DtoTransitionRequest(String statusDestination) {}
 
     public record CompleteCaseRequest(Integer number, String encabezado, String notes,
             Integer budgetId, Integer notaryId, Integer statusManagementId, Integer typeProcedureId,
@@ -179,32 +179,33 @@ public class ManagementController {
     private void applyManagementFields(DeedManagement management, CompleteCaseRequest request,
             CaseDependencies dependencies) {
         management.setNumber(request.number());
-        management.setEncabezado(request.encabezado() == null ? "Gestión" : request.encabezado());
-        ManagementSubstitutionService.NotaryAsignado asignado =
+        management.setEncabezado(request.encabezado() == null ? "Management" : request.encabezado());
+        ManagementSubstitutionService.NotaryAsignado assigned =
                 managementSubstitutionService.resolverNotary(dependencies.notary(), management.getDateStart());
-        management.setFkIdNotaryPerson(asignado.notary());
-        management.setNotes(buildNotes(request.notes(), dependencies.notary(), asignado));
+        management.setFkIdNotaryPerson(assigned.notary());
+        management.setNotes(buildNotes(request.notes(), dependencies.notary(), assigned));
         management.setFkIdManagementStatus(dependencies.status());
     }
 
-    private String buildNotes(String requestNotes, Person notarySolicitado,
-            ManagementSubstitutionService.NotaryAsignado asignado) {
-        if (asignado.substitutionAplicada() == null) {
+    private String buildNotes(String requestNotes, Person requestedNotary,
+            ManagementSubstitutionService.NotaryAsignado assigned) {
+        if (assigned.substitutionAplicada() == null) {
             return requestNotes;
         }
-        String redireccion = managementSubstitutionService.observacionRedireccion(notarySolicitado, asignado.notary());
+        String redirectionNote = managementSubstitutionService.observacionRedireccion(
+                requestedNotary, assigned.notary());
         if (requestNotes == null || requestNotes.isBlank()) {
-            return redireccion;
+            return redirectionNote;
         }
-        return requestNotes + " | " + redireccion;
+        return requestNotes + " | " + redirectionNote;
     }
 
     private void saveProcedure(DeedManagement management, CaseDependencies dependencies) {
         Procedure procedure = new Procedure();
         procedure.setFkIdManagement(management);
         applyProcedureDependencies(procedure, dependencies);
-        Procedure guardado = procedureRepository.save(procedure);
-        procedureFolderService.generateFolderForProcedure(guardado);
+        Procedure saved = procedureRepository.save(procedure);
+        procedureFolderService.generateFolderForProcedure(saved);
     }
 
     private void updateProcedure(Procedure procedure, CaseDependencies dependencies) {
@@ -281,13 +282,13 @@ public class ManagementController {
         } else {
             updateProcedure(procedures.get(0), deps);
         }
-        // Status mutations are rejected above; bitácora for status changes remains on /transition.
+        // Status mutations are rejected above; History for status changes remains on /transition.
         registerStatusChangeIfNeeded(management, previousStatusId);
         return ResponseEntity.ok(managementQueryService.findById(management.getIdManagement()).orElseThrow());
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todas las gestiones")
+    @Operation(summary = "List all managements")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<DtoManagementSummary>> getAll(
             @PageableDefault(size = 20) Pageable pageable) {
@@ -299,7 +300,7 @@ public class ManagementController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener gestion por ID")
+    @Operation(summary = "Get management by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoManagementSummary> getById(@PathVariable Integer id) {
         return managementQueryService.findById(id)
@@ -308,7 +309,7 @@ public class ManagementController {
     }
 
     @GetMapping("/numero/{number}")
-    @Operation(summary = "Obtener gestion por numero")
+    @Operation(summary = "Get management by number")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoManagementSummary> getByNumber(@PathVariable Integer number) {
         return managementQueryService.findByNumber(number)
@@ -317,7 +318,7 @@ public class ManagementController {
     }
 
     @GetMapping("/cliente/{idPerson}")
-    @Operation(summary = "Obtener gestiones de un cliente (CU19)")
+    @Operation(summary = "CU19 - List managements for a client")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DeedManagement>> getByClient(@PathVariable Integer idPerson) {
         return ResponseEntity.ok(repository.findByClientPersonId(idPerson));
@@ -499,11 +500,11 @@ public class ManagementController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar gestion")
+    @Operation(summary = "Delete management")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -512,21 +513,21 @@ public class ManagementController {
             repository.deleteById(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.error("Failed to delete gestion id {}", id, e);
+            log.error("Failed to delete management id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Gestion no encontrada"),
-        @ApiResponse(responseCode = "400", description = "Gestion sin tramites o workflow definition")
+        @ApiResponse(responseCode = "404", description = "Management not found"),
+        @ApiResponse(responseCode = "400", description = "Management has no procedures or workflow definition")
     })
     @GetMapping("/{id}/workflow-trace")
     @Operation(summary = "Get workflow trace for a management (nodes, transitions, history, node statuses)",
             description = "CU83 legal-next contract: clients derive valid destination statuses from "
                     + "`transitions` whose `originNodeId` matches the current node (the node whose "
-                    + "status equals `statusActual`). The gestiones UI must offer only those "
+                    + "status equals `statusActual`). The managements UI must offer only those "
                     + "destinations when changing status via POST /{id}/transition.")
     @Transactional(readOnly = true)
     public ResponseEntity<Object> getWorkflowTrace(@PathVariable Integer id) {
@@ -534,20 +535,20 @@ public class ManagementController {
             DtoManagementWorkflowTrace trace = workflowTraceService.buildTrace(id);
             return ResponseEntity.ok(trace);
         } catch (IllegalArgumentException e) {
-            log.warn("Cannot build workflow trace for gestion {}: {}", id, e.getMessage());
+            log.warn("Cannot build workflow trace for management {}: {}", id, e.getMessage());
             return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to build workflow trace for gestion id {}", id, e);
+            log.error("Failed to build workflow trace for management id {}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+        @ApiResponse(responseCode = "404", description = "Management not found")
     })
     @GetMapping("/{id}/saldo-pendiente")
-    @Operation(summary = "CU16 - Calcular saldo pendiente agregado de una gestión (RF-22)")
+    @Operation(summary = "CU16 - Calculate aggregated pending balance for a management (RF-22)")
     public ResponseEntity<DtoSaldoPending> getSaldoPending(@PathVariable Integer id) {
         try {
             java.math.BigDecimal saldo = managementArchiveDebtService.calculatePendingBalance(id);
@@ -559,10 +560,10 @@ public class ManagementController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+        @ApiResponse(responseCode = "404", description = "Management not found")
     })
     @GetMapping("/{id}/resumen-financiero")
-    @Operation(summary = "CU47/CU02 - Obtener resumen financiero agregado de una gestión")
+    @Operation(summary = "CU47/CU02 - Get aggregated financial summary for a management")
     public ResponseEntity<DtoManagementResumenFinanciero> getResumenFinanciero(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(managementResumenFinancieroService.getSummary(id));
@@ -572,50 +573,50 @@ public class ManagementController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Gestión archivada"),
-        @ApiResponse(responseCode = "404", description = "Gestion no encontrada"),
+        @ApiResponse(responseCode = "200", description = "Management archived"),
+        @ApiResponse(responseCode = "404", description = "Management not found"),
         @ApiResponse(responseCode = "409",
-                description = "Hay carpetas de trámite (CU85) en espera sin resolver; confirme para archivar")
+                description = "Unresolved waiting procedure folders (CU85); confirm to archive")
     })
     @PostMapping("/{id}/archivar")
-    @Operation(summary = "CU16 - Archivar una gestión advirtiendo y registrando deuda pendiente (RF-22, RF-37); "
-            + "cascada a las carpetas de trámite de CU85")
+    @Operation(summary = "CU16 - Archive a management, warning and recording pending debt (RF-22, RF-37); "
+            + "cascades to CU85 procedure folders")
     public ResponseEntity<Object> archiving(@PathVariable Integer id,
             @RequestParam(name = "confirmado", defaultValue = "false") boolean confirmado) {
         try {
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(id, confirmado);
-            return ResponseEntity.ok(new DtoManagementArchivada(result.management().getIdManagement(),
+            return ResponseEntity.ok(new DtoArchivedManagement(result.management().getIdManagement(),
                     result.pendingBalance(), Boolean.TRUE.equals(result.management().getPendingDebtAtArchiving())));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (CarpetasEnWaitException e) {
-            List<Integer> numerosCarpetasEnWait = e.getCarpetasEnWait().stream()
+            List<Integer> waitingFolderNumbers = e.getCarpetasEnWait().stream()
                     .map(ProcedureFolder::getNumber)
                     .toList();
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", e.getMessage(), "carpetasEnEsperaNumero", numerosCarpetasEnWait));
+                    .body(Map.of("message", e.getMessage(), "carpetasEnEsperaNumero", waitingFolderNumbers));
         }
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Transición aplicada"),
-        @ApiResponse(responseCode = "400", description = "Transición no válida para el workflow del tipo de trámite"),
-        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+        @ApiResponse(responseCode = "200", description = "Transition applied"),
+        @ApiResponse(responseCode = "400", description = "Transition not valid for the procedure-type workflow"),
+        @ApiResponse(responseCode = "404", description = "Management not found")
     })
     @PostMapping("/{id}/transition")
-    @Operation(summary = "CU83 - Transicionar el estado de una gestión validando el workflow definido")
+    @Operation(summary = "CU83 - Transition management status validating the defined workflow")
     public ResponseEntity<?> transition(@PathVariable Integer id,
-            @RequestBody DtoTransicionRequest request) {
+            @RequestBody DtoTransitionRequest request) {
         var output = transitionManagementUseCase.execute(id, request.statusDestination());
         return ResponseEntity.ok(transitionManagementWebMapper.mapToHttpResponse(output));
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+        @ApiResponse(responseCode = "404", description = "Management not found")
     })
     @GetMapping("/{id}/historial")
-    @Operation(summary = "CU13 - Obtener la bitácora completa de una gestión, ordenada cronológicamente")
+    @Operation(summary = "CU13 - Get the full management History log, ordered chronologically")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoHistorySummary>> getHistory(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
@@ -629,52 +630,52 @@ public class ManagementController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+        @ApiResponse(responseCode = "404", description = "Management not found")
     })
     @GetMapping("/{id}/documentos-entidades-externas")
-    @Operation(summary = "CU10 - Obtener la documentación de una gestión a cargo de entidades externas")
+    @Operation(summary = "CU10 - Get management documentation handled by external entities")
     public ResponseEntity<DtoManagementDocumentsEntidadesExternas> getDocumentsEntidadesExternas(
             @PathVariable Integer id) {
         return ResponseEntity.ok(documentEntidadExternaService.getDocuments(id));
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Movimiento registrado"),
-        @ApiResponse(responseCode = "400", description = "Documento inválido para la gestión"),
-        @ApiResponse(responseCode = "404", description = "Gestion o documento no encontrado")
+        @ApiResponse(responseCode = "200", description = "Movement registered"),
+        @ApiResponse(responseCode = "400", description = "Invalid document for the management"),
+        @ApiResponse(responseCode = "404", description = "Management or document not found")
     })
     @PutMapping("/{id}/documentos-entidades-externas/{idSubmittedDocument}")
-    @Operation(summary = "CU10 - Registrar el movimiento de un documento de entidad externa")
+    @Operation(summary = "CU10 - Register movement of an external-entity document")
     public ResponseEntity<DtoDocumentEntidadExterna> registerMovementDocumentEntidadExterna(
             @PathVariable Integer id, @PathVariable Integer idSubmittedDocument,
             @RequestBody DtoMovementDocumentEntidadExterna movement) {
-        DtoDocumentEntidadExterna resultado =
+        DtoDocumentEntidadExterna result =
                 documentEntidadExternaService.registerMovement(id, idSubmittedDocument, movement);
         documentEntidadExternaService.tryCompleteDocumentation(id);
-        return ResponseEntity.ok(resultado);
+        return ResponseEntity.ok(result);
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Gestion no encontrada")
+        @ApiResponse(responseCode = "404", description = "Management not found")
     })
     @GetMapping("/{id}/reingreso-documentacion")
-    @Operation(summary = "CU43 - Obtener los trámites de una gestión con su documentación necesaria")
+    @Operation(summary = "CU43 - Get management procedures with required documentation")
     public ResponseEntity<DtoManagementReingresoDocumentacion> getRequiredDocumentationForReentry(
             @PathVariable Integer id) {
         return ResponseEntity.ok(reingresoDocumentacionService.getRequiredDocumentation(id));
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Documento reingresado"),
-        @ApiResponse(responseCode = "400", description = "Trámite o tipo de documento inválido"),
-        @ApiResponse(responseCode = "404", description = "Gestion o trámite no encontrado")
+        @ApiResponse(responseCode = "201", description = "Document re-entered"),
+        @ApiResponse(responseCode = "400", description = "Invalid procedure or document type"),
+        @ApiResponse(responseCode = "404", description = "Management or procedure not found")
     })
     @PostMapping("/{id}/reingreso-documentacion")
-    @Operation(summary = "CU43 - Reingresar un tipo de documento para un trámite de la gestión")
+    @Operation(summary = "CU43 - Re-enter a document type for a management procedure")
     public ResponseEntity<DtoDocumentReentered> reenterDocumentation(@PathVariable Integer id,
             @RequestBody DtoReingresoDocumentacionRequest request) {
-        DtoDocumentReentered resultado = reingresoDocumentacionService.reenter(id, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
+        DtoDocumentReentered result = reingresoDocumentacionService.reenter(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 }
