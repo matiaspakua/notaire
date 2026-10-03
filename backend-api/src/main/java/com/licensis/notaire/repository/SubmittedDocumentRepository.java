@@ -20,7 +20,7 @@ public interface SubmittedDocumentRepository extends JpaRepository<SubmittedDocu
 
     List<SubmittedDocument> findByPrepared(Boolean prepared);
 
-    boolean existsByFkIdDocumentType(Integer fkIdDocumentType);
+    boolean existsByDocumentTypeIdDocumentType(Integer idDocumentType);
 
     List<SubmittedDocument> findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(Integer idManagement,
             String deliveredBy);

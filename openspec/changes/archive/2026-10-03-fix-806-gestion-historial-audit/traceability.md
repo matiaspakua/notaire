@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 

@@ -323,7 +323,8 @@ public class ManagementController {
         List<History> historyRows = historyRepository.findByFkIdManagementIdManagement(id);
         if (!historyRows.isEmpty()) {
             return historyRows.stream()
-                    .max(Comparator.comparing(History::getDate))
+                    .max(Comparator.comparing(History::getDate)
+                            .thenComparing(History::getIdHistory))
                     .map(h -> ResponseEntity.ok(
                             com.licensis.notaire.application.usecase.history.HistoryMapper.toDto(h)))
                     .orElse(ResponseEntity.notFound().build());

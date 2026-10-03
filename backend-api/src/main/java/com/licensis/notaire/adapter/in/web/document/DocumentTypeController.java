@@ -82,7 +82,7 @@ public class DocumentTypeController {
             return ResponseEntity.notFound().build();
         }
         boolean inUse = !procedureTemplateRepository.findByDocumentTypeIdDocumentType(id).isEmpty()
-                || submittedDocumentRepository.existsByFkIdDocumentType(id);
+                || submittedDocumentRepository.existsByDocumentTypeIdDocumentType(id);
         return ResponseEntity.ok(Map.of("inUse", inUse));
     }
 
@@ -120,7 +120,7 @@ public class DocumentTypeController {
             return ResponseEntity.notFound().build();
         }
         if (!procedureTemplateRepository.findByDocumentTypeIdDocumentType(id).isEmpty()
-                || submittedDocumentRepository.existsByFkIdDocumentType(id)) {
+                || submittedDocumentRepository.existsByDocumentTypeIdDocumentType(id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "Este tipo de documento está en uso y no puede modificarse. Cree uno nuevo."));
         }
@@ -149,7 +149,7 @@ public class DocumentTypeController {
             return ResponseEntity.notFound().build();
         }
         if (!procedureTemplateRepository.findByDocumentTypeIdDocumentType(id).isEmpty()
-                || submittedDocumentRepository.existsByFkIdDocumentType(id)) {
+                || submittedDocumentRepository.existsByDocumentTypeIdDocumentType(id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error", "No se puede eliminar: el tipo de documento está siendo utilizado en plantillas o documentos presentados."));
         }
