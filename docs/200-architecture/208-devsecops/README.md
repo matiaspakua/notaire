@@ -46,8 +46,8 @@ lint gate), `frontend-ci.yml`, `playwright-e2e.yml`, `sdlc-process.yml`, and the
 
 #### 2. Unit Tests (with coverage)
 - Backend API only: everything outside the `integration` package
-  (`-Dtest='!**/integration/**'`); `deprecated-frontend-swing` is excluded from
-  the root Maven reactor and not built by this pipeline
+  (`-Dtest='!**/integration/**'`); Swing modules were removed (#1046) and must
+  not be rebuilt by this pipeline (#811)
 - Uploads `unit-test-report` artifact: surefire XML + JaCoCo coverage report
 - Publishes test results with dorny/test-reporter
 

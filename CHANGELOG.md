@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- **Swing E2E leftovers** (issue #811, CU76 / ADR-012): durable retirement of
+  Robot Swing E2E — hygiene fails if `e2e-swing.yml` or Maven `-pl frontend-swing`
+  / `deprecated-frontend-swing` returns in workflows; `testing/e2e-swing/`
+  hard-deprecated in place; live setup/testing docs no longer teach Swing
+  build/run. Active UI E2E remains Playwright.
+
 ### Fixed
 
 - **Frontend i18n page coverage** (issue #1059, CU76 / ADR-015): wire remaining

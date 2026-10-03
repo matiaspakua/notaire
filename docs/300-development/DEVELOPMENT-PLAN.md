@@ -71,10 +71,11 @@ the day-to-day suite inventory in
 
 The project migrated from a legacy monolithic Java Swing application to the
 current three-tier architecture (PostgreSQL 16 + Spring Boot 4.1 REST API +
-Next.js 16 web client). The Swing GUI is **not** a development target — it was
-removed from the active build (history only under `deprecated-frontend-swing/`).
+Next.js 16 web client). The Swing GUI is **not** a development target — the
+modules were removed from the tree (#1046), and Swing Robot E2E / `e2e-swing.yml`
+are retired (#811 / ADR-012). Do not rebuild a standalone Swing client.
 See [ADR-001](../200-architecture/202-ADR/ADR-001-microservices-architecture.md)
-for the rationale and rejected alternatives.
+and [ADR-005](../200-architecture/202-ADR/ADR-005-modern-frontend-migration.md).
 
 **Live status (single sources of truth):**
 

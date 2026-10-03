@@ -21,9 +21,9 @@ Unit → Integration → API (Bruno) → Frontend (Vitest) → E2E UI/UX (Playwr
 | Frontend unit/component (Vitest) | `frontend/src/**/*.test.ts(x)` | 19+ archivos | `cd frontend && npm test` |
 | E2E UI/UX (Playwright) | `frontend/tests/e2e/` | 33 specs, por Caso de Uso (`cuNN-*.spec.ts`) | `cd frontend && npm run test:e2e` |
 | HTTP (cURL, legacy smoke) | `testing/http/` | 10 scripts | `bash testing/http/test-all-endpoints-v2.sh` |
-| E2E Swing (Robot Framework, **deprecado**) | `testing/e2e-swing/tests/` | 7 suites | `cd testing/e2e-swing && robot tests/` |
+| E2E Swing (Robot) | `testing/e2e-swing/` | **RETIRED** (#811 / ADR-012) | Do not run; see suite README |
 
-Backend: 132 clases de test, ~1.483 métodos `@Test` combinados (unit + integration).
+Backend: 132 test classes, ~1,483 `@Test` methods combined (unit + integration).
 
 ## Referencias detalladas
 
@@ -88,17 +88,13 @@ open frontend/playwright-report/index.html         # reporte E2E Playwright
 Dashboard agregado (GitHub Pages, actualizado por CI): ver
 [`.github/workflows/test-coverage-report.yml`](../../../.github/workflows/test-coverage-report.yml).
 
-## Cliente Swing (deprecado)
+## Swing client and Robot E2E (retired)
 
-`deprecated-frontend-swing` está excluido del reactor Maven raíz — sus tests
-corren de forma independiente:
-
-```bash
-cd deprecated-frontend-swing && mvn test
-```
-
-Los suites E2E de Robot Framework (`testing/e2e-swing/`) validan este cliente
-legacy; no se amplían con nueva cobertura (ver `CLAUDE.md`).
+The Swing modules (`frontend-swing` / `deprecated-frontend-swing`) were removed
+from the repository (#1046). `.github/workflows/e2e-swing.yml` is retired
+(ADR-012 / #1083 / #811). Assets under `testing/e2e-swing/` are hard-deprecated
+in place — do **not** wire them into CI or rebuild Swing. Active UI E2E is
+Playwright (`frontend/tests/e2e/`).
 
 ## Navigation
 

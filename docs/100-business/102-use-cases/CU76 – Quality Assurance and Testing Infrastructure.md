@@ -96,6 +96,10 @@
 - [x] Higiene de repo: ignore rules permiten `requirements.txt`, `.serena/` no
   trackeado, CODEOWNERS sin `frontend-swing`, PDF de usuario fuera de blobs
   ordinarios, ADR-022 con decisión de rewrite (issue #1050).
+- [x] Swing E2E retired durably: no `e2e-swing.yml`, workflows must not build
+  `frontend-swing` / `deprecated-frontend-swing`, `testing/e2e-swing/`
+  hard-deprecated (no CI wiring), live docs point to Playwright (issue #811;
+  ADR-012).
 - [x] Cadenas de UI de páginas gap (workflows, roles, suplencias, reportes,
   items) y leftovers de login resueltas vía next-intl / `messages/{es,en}.json`
   (ADR-015; issue #1059; unit `i18n.test.ts` + TS-0040 EN titles).

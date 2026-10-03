@@ -51,38 +51,37 @@ bash scripts/stop.sh
 mvn clean install
 ```
 
-### 5. Iniciar Frontend (Next.js)
+### 5. Start Frontend (Next.js)
 
-El cliente web activo vive en `frontend/` (no confundir con `deprecated-frontend-swing/`, el
-cliente Swing legacy). Requiere el backend corriendo en `http://localhost:8080`.
+The active web client lives in `frontend/`. The Swing desktop modules
+(`frontend-swing` / `deprecated-frontend-swing`) were **removed** (#1046); do not
+look for them on disk. Requires the backend at `http://localhost:8080`.
 
 ```bash
 cd frontend
-cp .env.local.example .env.local   # ajustar API URL si es necesario
+cp .env.local.example .env.local   # adjust API URL if needed
 npm install
 npm run dev                         # http://localhost:3000
 ```
 
-Ver [`frontend/README.md`](../../../frontend/README.md) para stack completo, scripts disponibles
-y cobertura de módulos por Caso de Uso.
+See [`frontend/README.md`](../../../frontend/README.md) for the full stack, scripts,
+and use-case module coverage.
 
-## Estructura de Módulos
+## Module structure
 
 ```bash
 notaire/
-├── backend-api/                # API REST (Spring Boot) — módulo del reactor Maven
+├── backend-api/                # REST API (Spring Boot) — Maven reactor module
 │   ├── src/main/java/
 │   └── pom.xml
-├── notaire-shared/              # DTOs y código compartido — módulo del reactor Maven
+├── notaire-shared/              # Shared DTOs — Maven reactor module
 │   └── pom.xml
-├── frontend/                    # Cliente web (Next.js) — desarrollo activo, ver frontend/README.md
-├── deprecated-frontend-swing/   # Cliente Swing legacy — DEPRECATED, excluido del reactor Maven/CI
-│   └── pom.xml
-└── pom.xml                      # Parent POM (solo backend-api + notaire-shared)
+├── frontend/                    # Web client (Next.js) — active development
+└── pom.xml                      # Parent POM (backend-api + notaire-shared only)
 ```
 
-`deprecated-frontend-swing/` no recibe funcionalidad nueva; todo cliente nuevo se desarrolla en
-`frontend/`. Ver [`deprecated-frontend-swing/README.md`](../../../deprecated-frontend-swing/README.md).
+Swing Robot E2E under `testing/e2e-swing/` is hard-deprecated (#811); active UI
+E2E is Playwright (`cd frontend && npm run test:e2e`).
 
 ## Comandos de Desarrollo
 
@@ -197,8 +196,9 @@ mvn clean install -U
 ## Repo hygiene (ignore rules & manuals)
 
 - Do **not** commit `.serena/` (local AI tooling). It is gitignored (#1050).
-- Needed text assets such as `testing/e2e-swing/requirements.txt` are trackable;
-  there is no global `*.txt` ban (use `*.local.txt` for scratch notes).
+- Needed text assets such as `testing/e2e-swing/requirements.txt` remain
+  trackable for ignore-rule hygiene (#1050) even though the Swing Robot suite is
+  retired (#811); there is no global `*.txt` ban (use `*.local.txt` for scratch notes).
 - The historical user-manual **PDF** is a GitHub Release asset (`docs-manuals`),
   not an ordinary git blob. Fetch with `bash scripts/fetch-user-manual.sh`
   (see [ADR-022](../../200-architecture/202-ADR/ADR-022-git-history-rewrite-and-large-binaries.md)
