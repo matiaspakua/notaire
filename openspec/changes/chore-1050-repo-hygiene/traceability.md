@@ -21,7 +21,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/chore-1050-repo-hygiene-69d3` | active |
 | Tasks | `tasks.md` | Gate 2–3 implement in progress |
 | Pull Request | [#1169](https://github.com/matiaspakua/notaire/pull/1169) | draft opened |
-| Commits | `a83beceb`, `d2c4780b`, `fa702eb8` | recorded |
+| Commits | `a83beceb`, `d2c4780b`, `fa702eb8`, `6077c4a6` | recorded |
 | CI run | pending | pending |
 | Merge commit | — | pending |
 | Release / tag | `docs-manuals` (user-manual PDF asset) | published |
