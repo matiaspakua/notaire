@@ -251,23 +251,32 @@ See [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md) for local↔CI mapping.
 
 ## 8. Traceability: CU → Test Suite → Endpoints
 
-Full traceability is maintained in [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv):
+Full traceability is maintained in [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv).
+Header columns (post–English rename, issue #1064):
 
-- **Column A**: CU ID (CU01–CU68+)
-- **Column B**: CU Name
-- **Column C**: REST Endpoint(s)
-- **Column D**: Endpoint Status (implemented ✓ / missing ✗)
-- **Column E**: Bruno API Test
-- **Column F**: Bruno Status
-- **Column G**: Playwright E2E Suite (TS-nnnn reference)
-- **Column H**: E2E Status (passing ✓ / skipped ⚠)
-- **Column I**: GitHub Issue #
-- **Column J**: Notes
+| Column | Meaning |
+|--------|---------|
+| `CU_ID` / `CU_Nombre` | Use Case id and name |
+| `Modulo` / `Grado` | Business module and priority |
+| `Entidad` / `Operacion` | Domain entity and operation |
+| `Controller` | Current English REST controller class under `adapter.in.web` (or `N/A`) |
+| `HTTP_Method` / `Endpoint` | Contract surface |
+| `Bruno_Test` | Relative Bruno path (`folder/` or `folder/file.yml`), or sentinel `MISSING` / `N/A` — never status words |
+| `Endpoint_Status` / `Bruno_Status` | Implementation / Bruno health |
+| `Notas` / `GitHub_Issue` | Notes and issue links (`Bruno_Test=MISSING` must cite `#953`) |
+
+**Drift guard:** `python3 scripts/validate-cu-api-matrix.py` rejects stale Spanish
+controller names, missing required resource bases (`/carpetas`, `/cuadernos`,
+`/minutas-inscripcion`, `/plantilla-costos-documento`, `/protocolo-auxiliar`,
+`/roles`, `/tipo-identificacion`, `/tramites`), invalid `Bruno_Test` values, and
+`MISSING` rows without `#953`. Wired into `scripts/preflight.sh` and
+`sdlc-process.yml` (CU76 / #1064). Bruno request authoring for remaining gaps
+stays on #953.
 
 Use this CSV to:
 
-1. Verify every CU has ≥1 E2E test (TS-nnnn)
-2. Ensure consistency: endpoint → Bruno → E2E
+1. Verify every CU maps to its REST controller/endpoint
+2. Ensure consistency: endpoint → Bruno path (or `#953` gap)
 3. Track issues to features
 4. Audit test completeness per CU
 
