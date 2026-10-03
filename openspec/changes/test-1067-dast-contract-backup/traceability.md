@@ -14,16 +14,16 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #1067 | open (Gate 1 draft only; implement after queue ahead) |
+| Issue | #1067 | open (implement in progress; label may need human — agent `gh` 403 on labels) |
 | Use Case | CU76 – QA; CU78 – Security; CU75 – Database Management | exists |
 | Related | #256 (backups — OPEN, Phase C gate); #281 (ZAP guide — OPEN); ADR-006 | referenced |
-| Specification | `openspec/changes/test-1067-dast-contract-backup/` (draft: `internal/openspec-1067/`) | Gate 1 draft ready |
-| Branch | `cursor/test-1067-dast-contract-backup-69d3` | pending (do not create/push yet) |
-| Tasks | `tasks.md` | Gate 1 planning complete; implement pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
+| Specification | `openspec/changes/test-1067-dast-contract-backup/` | Gate 1 complete |
+| Branch | `cursor/test-1067-dast-contract-backup-69d3` | pushed |
+| Tasks | `tasks.md` | A/B + C-skip implemented; merge pending |
+| Commits | `f971c760` (red guards); implement commit(s) on branch | in progress |
+| Pull Request | [#1174](https://github.com/matiaspakua/notaire/pull/1174) | draft — keep until heavy green |
+| CI run | Process Checks / OpenAPI Contract / heavy suite | pending green |
+| Merge commit | — | pending (coordinator owns heavy-CI merge) |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
 
@@ -31,35 +31,35 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| ZAP baseline job executes successfully | CI DAST workflow + artifact | pending |
-| Trivy SCA is not removed | static/CI inspect `ci.yml` | pending |
-| OpenAPI artifact is present in the repo | committed file + export script | pending |
-| PR OpenAPI diff job runs | CI openapi-diff job | pending |
-| Restore smoke runs after #256 exists | backup-restore workflow | pending |
-| Restore smoke does not false-green without #256 | workflow skip assertion | pending |
-| Docs describe landed gates | DevSecOps + TEST-PLAN review | pending |
+| ZAP baseline job executes successfully | `.github/workflows/dast-zap.yml` + artifact; guard suite | implemented (warn-first) |
+| Trivy SCA is not removed | `TrivyRetainedTest` + `ci.yml` | green |
+| OpenAPI artifact is present in the repo | `backend-api/openapi/openapi.yaml` + export script | green |
+| PR OpenAPI diff job runs | `openapi-contract.yml` (`oasdiff` ERR) | implemented |
+| Restore smoke runs after #256 exists | `backup-restore-smoke.yml` enable path | gated (tooling absent) |
+| Restore smoke does not false-green without #256 | explicit skip / blocked-on-#256 | green |
+| Docs describe landed gates | DevSecOps + TEST-PLAN + deployment | updated |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/208-devsecops/README.md` | pending | — |
-| `docs/300-development/303-testing/TEST-PLAN.md` | pending | — |
-| `docs/200-architecture/209-deployment/README.md` | pending | — |
-| `CHANGELOG.md` | pending | — |
+| `docs/200-architecture/208-devsecops/README.md` | yes | on branch |
+| `docs/300-development/303-testing/TEST-PLAN.md` | yes | on branch |
+| `docs/200-architecture/209-deployment/README.md` | yes | on branch |
+| `CHANGELOG.md` | yes | on branch |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | yes (draft) | artifacts in this folder |
-| 2 | Failing tests written, test cases designed | pending | — |
-| 3 | Suite green, coverage held, docs updated | pending | — |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 1 | Issue + Specification + Acceptance Criteria | yes | openspec change + validate-sdlc-plan |
+| 2 | Failing tests written, test cases designed | yes | red commit `f971c760`; then green asset suite |
+| 3 | Suite green, coverage held, docs updated | pending | preflight / CI |
+| 4 | CI green, review approved, no conflicts | pending | PR #1174 |
+| 5 | Deployed, smoke test passed, Issue closed | pending | coordinator merge |
 
 ## Exceptions
 
-None for Gate 1. Phase C execution depends on #256 (OPEN) — design requires
-explicit skip (no false green) until backups exist. Gate 1 stockpile only —
-no implementation/PR/push.
+Phase C execution depends on #256 (OPEN) — workflow skips with explicit
+blocked-on-#256 signal until `scripts/backup-postgres.sh` exists. No parallel
+backup product invented in this change.

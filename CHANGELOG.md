@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **DAST, OpenAPI contract, and backup/restore CI gates** (issue #1067, CU76/CU78/CU75):
+  weekly OWASP ZAP baseline (`dast-zap.yml`, warn-first report artifact; Trivy retained);
+  committed `backend-api/openapi/openapi.yaml` + PR `openapi-contract.yml` (export freshness
+  via `scripts/export-openapi.sh`, breaking diffs via `oasdiff`);
+  `backup-restore-smoke.yml` skips with an explicit #256 block until
+  `scripts/backup-postgres.sh` exists. Guarded by `scripts/test_dast_contract_backup_assets.py`.
+
 - **Bruno API coverage for sixteen previously uncovered controllers** (issue #953,
   CU76): OpenCollection folders for roles, workflows (+ validate), copies,
   submitted-documents, testimonies, testimony-movements, managements, notebooks,

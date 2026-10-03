@@ -110,7 +110,10 @@ curl http://localhost:3100/ready             # Loki
 - **Backend**: `ENVIRONMENT=production` (activates `ProductionCredentialsGuard`); least-privilege env (no Grafana/pgAdmin/exporter credential keys); `SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`
 - **Proxy config**: `deploy/nginx/nginx.conf` — `/` → frontend, `/api/` and `/actuator/` → backend
 - **TLS**: terminate TLS in front of this proxy (or extend the nginx config); full certbot/ACME productization is issue #254
-- **Backups**: automated backup productization remains issue #256
+- **Backups**: automated backup productization remains issue #256. CI verification
+  of backup→restore→smoke is scaffolded in `.github/workflows/backup-restore-smoke.yml`
+  (#1067) and **skips with an explicit #256 message** until `scripts/backup-postgres.sh`
+  exists (no false-green restore).
 
 ### Infra docker-compose.yml
 - **Services**: `dashboard` (Homer), `sonarqube`, `sonar-db`, `prometheus`, `postgres-exporter`,
@@ -175,7 +178,8 @@ For production deployment, ensure:
 2. **Change default credentials** — do not reuse `.env.example` values; prod compose requires them via `${VAR:?}`
 3. **Enable HTTPS** — terminate TLS in front of the reverse proxy (issue #254)
 4. **Set a strong `JWT_SECRET`** — see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md)
-5. **Database backups** — configure periodic `pg_dump` backups (issue #256)
+5. **Database backups** — configure periodic `pg_dump` backups (issue #256); after
+   that lands, the scheduled backup→restore→smoke workflow (#1067) will exercise restore
 6. **Resource limits** — set Docker resource constraints
 7. **Log rotation** — configure Docker log rotation
 8. **Monitoring alerts** — configure Prometheus alerting rules (`infra/prometheus/alert-rules.yml`)

@@ -1,0 +1,65 @@
+name: OpenAPI Contract
+
+# Issue #1067 / CU76. On every PR: regenerate OpenAPI from the backend and
+# fail if the committed artifact is stale or introduces breaking changes vs
+# the base branch's committed spec.
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  openapi-contract:
+    name: OpenAPI commit + breaking diff
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Export OpenAPI from springdoc (H2)
+        run: bash scripts/export-openapi.sh --maven
+
+      - name: Committed OpenAPI must match export
+        run: |
+          if ! git diff --exit-code -- backend-api/openapi/openapi.yaml; then
+            echo "::error::backend-api/openapi/openapi.yaml is stale."
+            echo "Regenerate with: bash scripts/export-openapi.sh"
+            echo "Then commit the updated artifact in the same PR."
+            exit 1
+          fi
+
+      - name: Checkout base OpenAPI for breaking-change diff
+        run: |
+          mkdir -p /tmp/openapi-base
+          git show "origin/${{ github.base_ref || 'main' }}:backend-api/openapi/openapi.yaml" \
+            > /tmp/openapi-base/openapi.yaml \
+            || git show "origin/main:backend-api/openapi/openapi.yaml" \
+            > /tmp/openapi-base/openapi.yaml \
+            || {
+              echo "No base OpenAPI on main yet — treating current commit as baseline."
+              cp backend-api/openapi/openapi.yaml /tmp/openapi-base/openapi.yaml
+            }
+
+      - name: Detect breaking OpenAPI changes (oasdiff)
+        uses: oasdiff/oasdiff-action/breaking@v0.1.18
+        with:
+          base: /tmp/openapi-base/openapi.yaml
+          revision: backend-api/openapi/openapi.yaml
+          fail-on: ERR
+          review: 'false'
