@@ -20,56 +20,56 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: PUT/complete-case reject; create node validation; same-status PUT OK
-- [ ] 3.2 Write unit tests for initial-status / reject-mutation guard if extracted
-- [ ] 3.3 Write `ManagementWorkflowStatusWriteEnforcementIntegrationTest`
-- [ ] 3.4 Run them and **observe them fail**
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.1 Enumerate test cases: PUT/complete-case reject; create node validation; same-status PUT OK
+- [x] 3.2 Write unit tests for initial-status / reject-mutation guard if extracted
+- [x] 3.3 Write `ManagementWorkflowStatusWriteEnforcementIntegrationTest`
+- [x] 3.4 Run them and **observe them fail** — 5 failures before implementation
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Add shared status-write guard using workflow nodes / transition validator ports
-- [ ] 4.2 Reject status id changes on plain PUT and complete-case PUT (400 + require `/transition`)
-- [ ] 4.3 Validate initial status on complete-case create (and plain create when workflow resolvable)
-- [ ] 4.4 Ensure BusinessValidationException is not swallowed as 500 in controller catch blocks
-- [ ] 4.5 Document workflow-trace as legal-next source in OpenAPI; keep UI filtered
-- [ ] 4.6 Preserve bitácora on create and `/transition`; English-only in touched code
+- [x] 4.1 Add shared status-write guard using workflow nodes / transition validator ports
+- [x] 4.2 Reject status id changes on plain PUT and complete-case PUT (400 + require `/transition`)
+- [x] 4.3 Validate initial status on complete-case create (and plain create when workflow resolvable)
+- [x] 4.4 Ensure BusinessValidationException is not swallowed as 500 in controller catch blocks
+- [x] 4.5 Document workflow-trace as legal-next source in OpenAPI; keep UI filtered
+- [x] 4.6 Preserve bitácora on create and `/transition`; English-only in touched code
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Update `ManagementHistorialOrphanWriteIntegrationTest` status-change-via-PUT expectations
-- [ ] 5.2 Update `ManagementControllerIntegrationTest` / Bruno if they mutate status via PUT
-- [ ] 5.3 Remove obsolete tests only if genuinely replaced by reject scenarios
+- [x] 5.1 Update `ManagementHistorialOrphanWriteIntegrationTest` status-change-via-PUT expectations
+- [x] 5.2 Update `ManagementControllerIntegrationTest` / Bruno if they mutate status via PUT — Bruno same-status OK; unit mock ctor updated
+- [x] 5.3 Remove obsolete tests only if genuinely replaced by reject scenarios — replaced with reject assertions
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 Bruno/HTTP suite — update if PUT status assertions fail
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration (via verify; 1970 tests, 0 failures)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor (via verify; all checks met)
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+- [x] 6.4 Bruno/HTTP suite — `06-update.yml` keeps same `managementStatusId`; COVERAGE.md noted
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Confirm TS-0011 / TS-0029 still match filtered destinations + `/transition`
+- [x] 7.1 Confirm TS-0011 / TS-0029 still match filtered destinations + `/transition`
 - [ ] 7.2 Run focused Playwright when stack available; otherwise rely on CI
-- [ ] 7.3 Viewports already covered by TS-0029
-- [ ] 7.4 No new UI surface expected — confirmation only
+- [x] 7.3 Viewports already covered by TS-0029
+- [x] 7.4 No new UI surface expected — confirmation only
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update CU02 / CU53 / CU83 (and endpoint registry) per proposal Documentation Impact
-- [ ] 8.2 Update OpenAPI summaries on touched endpoints
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) **BREAKING** entry
-- [ ] 8.4 Archive superseded documents into `docs/000-archive/` — n/a unless needed
-- [ ] 8.5 Confirm no information was duplicated
+- [x] 8.1 Update CU02 / CU53 / CU83 (and endpoint registry) per proposal Documentation Impact
+- [x] 8.2 Update OpenAPI summaries on touched endpoints
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) **BREAKING** entry
+- [x] 8.4 Archive superseded documents into `docs/000-archive/` — n/a
+- [x] 8.5 Confirm no information was duplicated
 - [ ] 8.6 `bash scripts/preflight.sh --fix` as capacity allows
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #804`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #804`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
 - [ ] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
