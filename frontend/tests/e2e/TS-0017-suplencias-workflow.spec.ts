@@ -57,11 +57,11 @@ test.describe("CU59 - Consultar Suplencias", () => {
     await steps.givenUserIsOnPage("/dashboard/suplencias");
   });
 
-  test.skip("CU59-GW01: Given on suplencias, When filter by escribano, Then shows filtered", async () => {
-    // Skipped: suplencias page has no filter dropdown by escribano.
+  test.skip("CU59-GW01 (#1146): Given on suplencias, When filter by escribano, Then shows filtered", async () => {
+    // Skipped (#1146): suplencias page has no filter dropdown by escribano.
   });
 
-  test.skip("CU59-GW02: Given suplencia exists, When click ver detalle, Then shows details", async () => {
-    // Skipped: suplencias table has no "ver" button — only edit/delete icons.
+  test.skip("CU59-GW02 (#1146): Given suplencia exists, When click ver detalle, Then shows details", async () => {
+    // Skipped (#1146): suplencias table has no "ver" button — only edit/delete icons.
   });
 });

@@ -48,8 +48,8 @@ test.describe("CU24 - Generar libro de índices", () => {
     await steps.givenUserIsOnPage("/dashboard/reportes");
   });
 
-  test.skip("CU24-GW01: Given on reportes, When click libro índices, Then generates", async () => {
-    // Skipped: reportes page uses "Descargar PDF" buttons — no "libro índices" button text.
+  test.skip("CU24-GW01 (#1146): Given on reportes, When click libro índices, Then generates", async () => {
+    // Skipped (#1146): reportes page uses "Descargar PDF" buttons — no "libro índices" button text.
     // The report is triggered by filling the year field and clicking Descargar PDF.
   });
 });
@@ -63,8 +63,8 @@ test.describe("CU25 - Generar Declaración Jurada del mes", () => {
     await steps.givenUserIsOnPage("/dashboard/reportes");
   });
 
-  test.skip("CU25-GW01: Given on reportes, When select month and generate, Then creates", async () => {
-    // Skipped: reportes page has no "mes" dropdown or "declaración jurada" named button.
+  test.skip("CU25-GW01 (#1146): Given on reportes, When select month and generate, Then creates", async () => {
+    // Skipped (#1146): reportes page has no "mes" dropdown or "declaración jurada" named button.
     // The DDJJ mensual section uses number inputs for year/month and a "Descargar PDF" button.
   });
 });
@@ -159,8 +159,8 @@ test.describe("CU39 - Crear Plantilla Presupuesto", () => {
     await steps.givenUserIsOnPage("/dashboard/presupuestos");
   });
 
-  test.skip("CU39-GW01: Given on presupuestos, When click plantillas, Then shows plantillas", async () => {
-    // Skipped: presupuestos page has no "plantillas" button in the current UI.
+  test.skip("CU39-GW01 (#1146): Given on presupuestos, When click plantillas, Then shows plantillas", async () => {
+    // Skipped (#1146): presupuestos page has no "plantillas" button in the current UI.
   });
 });
 
@@ -173,8 +173,8 @@ test.describe("CU42 - Informar próximos vencimientos", () => {
     await steps.givenUserIsOnPage("/dashboard");
   });
 
-  test.skip("CU42-GW01: Given on dashboard, When view alerts, Then shows vencimientos", async () => {
-    // Skipped: dashboard has no "alertas" button or "próximos vencimientos" section.
+  test.skip("CU42-GW01 (#1146): Given on dashboard, When view alerts, Then shows vencimientos", async () => {
+    // Skipped (#1146): dashboard has no "alertas" button or "próximos vencimientos" section.
   });
 });
 
@@ -208,8 +208,8 @@ test.describe("CU62 - Buscar Escritura", () => {
     await steps.givenUserIsOnPage("/dashboard/escrituras");
   });
 
-  test.skip("CU62-GW01: Given on escrituras, When search by number, Then shows results", async () => {
-    // Skipped: escrituras page has no search bar in the current UI.
+  test.skip("CU62-GW01 (#1146): Given on escrituras, When search by number, Then shows results", async () => {
+    // Skipped (#1146): escrituras page has no search bar in the current UI.
   });
 });
 
@@ -222,8 +222,8 @@ test.describe("CU65 - Buscar Tipos de documentos", () => {
     await steps.givenUserIsOnPage("/dashboard/administracion/documentos");
   });
 
-  test.skip("CU65-GW01: Given on tipos documento, When search, Then shows results", async () => {
-    // Skipped: administracion/documentos page has no search bar in the current UI.
+  test.skip("CU65-GW01 (#1146): Given on tipos documento, When search, Then shows results", async () => {
+    // Skipped (#1146): administracion/documentos page has no search bar in the current UI.
   });
 });
 
@@ -236,7 +236,7 @@ test.describe("CU66 - Buscar Conceptos", () => {
     await steps.givenUserIsOnPage("/dashboard/administracion/conceptos");
   });
 
-  test.skip("CU66-GW01: Given on conceptos, When search, Then shows results", async () => {
-    // Skipped: administracion/conceptos page has no search bar in the current UI.
+  test.skip("CU66-GW01 (#1146): Given on conceptos, When search, Then shows results", async () => {
+    // Skipped (#1146): administracion/conceptos page has no search bar in the current UI.
   });
 });

@@ -199,10 +199,11 @@ test.describe("Page load — All pages render without crash", () => {
 
       await authSetup(page);
       await page.goto(path);
-      await page.waitForLoadState("networkidle");
-
-      // Allow some time for async rendering
-      await page.waitForTimeout(2000);
+      await page.waitForLoadState("domcontentloaded");
+      // Web-first readiness: page chrome visible (no fixed sleep / networkidle) — #1066
+      await expect(
+        page.locator("main, [role='main'], h1, [data-testid='language-switcher']").first(),
+      ).toBeVisible({ timeout: 15000 });
 
       // Check for console errors (ignore favicon / Next.js hot-reload / known pre-existing issues)
       const criticalErrors = errors.filter(

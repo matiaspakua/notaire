@@ -51,15 +51,11 @@ test.describe("Language Switcher — l10n feature", () => {
     const enBtn = switcher.locator("button", { hasText: "EN" });
     await enBtn.click();
 
-    // Wait for page reload (language switch triggers window.location.reload)
-    await page.waitForLoadState("domcontentloaded");
-    await page.waitForTimeout(2000);
-
-    // After switching, EN button should be active
+    // Language switch reloads; wait on locale UI signal (not a fixed sleep) — #1066
     const switcherAfter = page.getByTestId("language-switcher");
     await expect(switcherAfter).toBeVisible({ timeout: 10000 });
     const enBtnAfter = switcherAfter.locator("button", { hasText: "EN" });
-    await expect(enBtnAfter).toHaveAttribute("aria-pressed", "true");
+    await expect(enBtnAfter).toHaveAttribute("aria-pressed", "true", { timeout: 10000 });
   });
 
   test("English locale shows English navigation labels", async ({ page }) => {
@@ -100,10 +96,14 @@ test.describe("Language Switcher — l10n feature", () => {
     const esBtn = switcher.locator("button", { hasText: "ES" });
     await esBtn.click();
 
-    await page.waitForLoadState("domcontentloaded");
-    await page.waitForTimeout(2000);
-
-    // Should show Spanish nav
+    // Wait on Spanish locale signal after reload — #1066
+    const switcherAfter = page.getByTestId("language-switcher");
+    await expect(switcherAfter).toBeVisible({ timeout: 10000 });
+    await expect(switcherAfter.locator("button", { hasText: "ES" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+      { timeout: 10000 },
+    );
     await expect(page.getByRole("link", { name: /gestiones/i }).first()).toBeVisible({ timeout: 10000 });
   });
 });

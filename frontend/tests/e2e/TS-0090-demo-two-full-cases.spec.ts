@@ -14,12 +14,19 @@
  */
 import { expect, test, type Page } from "@playwright/test";
 
+test.describe.configure({ timeout: 300_000 });
+
 const adminUser = process.env.E2E_TEST_ADMIN_USER ?? "admin";
 const adminPassword = process.env.E2E_TEST_ADMIN_PASS ?? "admin";
 const pauseMs = Number(process.env.TUTORIAL_PAUSE_MS ?? 400);
 const runId = Date.now().toString().slice(-6);
 
 async function pause(page: Page, multiplier = 1): Promise<void> {
+  // Pacing only for headed/SLOW_MO demos — never a CI correctness wait (#1066)
+  const allowPace = process.env.HEADED === "1" || Number(process.env.SLOW_MO ?? 0) > 0;
+  if (!allowPace) {
+    return;
+  }
   await page.waitForTimeout(pauseMs * multiplier);
 }
 

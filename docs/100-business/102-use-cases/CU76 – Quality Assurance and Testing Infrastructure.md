@@ -29,9 +29,19 @@
 | 3 | El pipeline de CI/CD procesa la integración del código. | Valida Checkstyle, SpotBugs, cobertura JaCoCo (≥ 80%) y suite completa de tests. |
 | 4 | El sistema valida la consistencia visual y de sesión. | Verifica que el nombre del usuario y el estado del trámite se visualicen en todo momento en pantalla. |
 
+## Confiabilidad E2E (Playwright) — #1066
+
+| Regla | Detalle |
+|---|---|
+| Auto-arranque de datos | Suites E2E crean sus fixtures vía helpers API; no `test.skip()` por tablas vacías. |
+| Esperas web-first | Prohibido `waitForTimeout` como espera de corrección; assert sobre UI/URL/respuesta. |
+| Skips intencionales | Todo `test.skip` por gap de producto cita un issue abierto (p. ej. #1146). |
+| Retries CI | Como máximo **1** retry en CI; triaje vía `trace: on-first-retry` + artefactos. |
+
 ## Criterios de Aceptación
 
 - [x] Cobertura de código superior al 80% verificada por JaCoCo.
 - [x] Pruebas E2E de Playwright implementadas para los flujos críticos de negocio.
 - [x] Interfaz gráfica validada con navegación secuencial por teclado y combos predefinidos.
 - [x] Verificación de identificación permanente de sesión de usuario en pantalla.
+- [x] Suites E2E se auto-abastecen de datos y no ocultan flakiness con sleeps/retries (#1066).

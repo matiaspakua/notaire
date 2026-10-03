@@ -138,8 +138,8 @@ test.describe("CU15 - Procesar Pago", () => {
     await steps.thenToastIsVisible();
   });
 
-  test.skip("CU15-GW03: Given pago exists, When click ver detalle, Then shows details", () => {
-    // Skipped: pagos table has no "ver" button per row — only edit/delete icons.
+  test.skip("CU15-GW03 (#1146): Given pago exists, When click ver detalle, Then shows details", () => {
+    // Skipped (#1146): pagos table has no "ver" button per row — only edit/delete icons.
   });
 
   test("CU15-RECIBO-01 (#23): Given pago exists, When click emitir recibo, Then PDF is downloaded", async ({ page }) => {
@@ -228,8 +228,8 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
     await expect(badge).toHaveText(/saldado/i);
   });
 
-  test.skip("CU47-GW01: Given on pagos page, When filter by date, Then shows filtered", () => {
-    // Skipped: pagos page has no "fecha desde" / "fecha hasta" filter inputs.
+  test.skip("CU47-GW01 (#1146): Given on pagos page, When filter by date, Then shows filtered", () => {
+    // Skipped (#1146): pagos page has no "fecha desde" / "fecha hasta" filter inputs.
   });
 });
 
