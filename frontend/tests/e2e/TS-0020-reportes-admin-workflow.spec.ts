@@ -39,13 +39,30 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
 
+test.describe("Reportes — navigation discovery (#1058)", () => {
+  let steps: GherkinSteps;
+
+  test.beforeEach(async ({ page }) => {
+    steps = new GherkinSteps(page);
+    await steps.givenUserIsLoggedIn();
+    await steps.givenDashboardIsLoaded();
+  });
+
+  test("opens Reportes from the sidebar", async ({ page }) => {
+    await steps.whenUserOpensSidebarNav("reportes");
+    await expect(page).toHaveURL(/\/dashboard\/reportes/);
+    await expect(page.locator("h1").filter({ hasText: /\S/ }).first()).toBeVisible();
+  });
+});
+
 test.describe("CU24 - Generar libro de índices", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/reportes");
+    await steps.givenDashboardIsLoaded();
+    await steps.whenUserOpensSidebarNav("reportes");
   });
 
   test.skip("CU24-GW01 (#1146): Given on reportes, When click libro índices, Then generates", async () => {
@@ -60,7 +77,8 @@ test.describe("CU25 - Generar Declaración Jurada del mes", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/reportes");
+    await steps.givenDashboardIsLoaded();
+    await steps.whenUserOpensSidebarNav("reportes");
   });
 
   test.skip("CU25-GW01 (#1146): Given on reportes, When select month and generate, Then creates", async () => {

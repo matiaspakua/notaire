@@ -8,6 +8,7 @@ import {
   Calculator,
   Copy,
   CreditCard,
+  FileBarChart,
   FileText,
   FolderKanban,
   ListTodo,
@@ -15,6 +16,7 @@ import {
   Search,
   Settings,
   ShieldCheck,
+  UserRoundCog,
   Users,
 } from "lucide-react";
 import { Suspense, useState } from "react";
@@ -52,6 +54,8 @@ const modules: Module[] = [
   { labelKey: "protocolo.label", descKey: "protocolo.description", href: "/dashboard/protocolo", icon: BookMarked, gradient: "from-teal-500 to-teal-600", adminOnly: false },
   { labelKey: "inmuebles.label", descKey: "inmuebles.description", href: "/dashboard/inmuebles", icon: Building2, gradient: "from-cyan-500 to-cyan-600", adminOnly: false },
   { labelKey: "copias.label", descKey: "copias.description", href: "/dashboard/copias", icon: Copy, gradient: "from-indigo-500 to-indigo-600", adminOnly: false },
+  { labelKey: "suplencias.label", descKey: "suplencias.description", href: "/dashboard/suplencias", icon: UserRoundCog, gradient: "from-sky-500 to-sky-600", adminOnly: false },
+  { labelKey: "reportes.label", descKey: "reportes.description", href: "/dashboard/reportes", icon: FileBarChart, gradient: "from-lime-500 to-lime-600", adminOnly: false },
   { labelKey: "items.label", descKey: "items.description", href: "/dashboard/items", icon: ListTodo, gradient: "from-amber-500 to-amber-600", adminOnly: false },
   { labelKey: "documentos.label", descKey: "documentos.description", href: "/dashboard/documentos", icon: FileText, gradient: "from-rose-500 to-rose-600", adminOnly: false },
   { labelKey: "auditoria.label", descKey: "auditoria.description", href: "/dashboard/auditoria", icon: ShieldCheck, gradient: "from-slate-500 to-slate-600", adminOnly: true },

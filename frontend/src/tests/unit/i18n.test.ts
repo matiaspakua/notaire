@@ -71,6 +71,8 @@ describe("message file integrity", () => {
       "navigation.documentos",
       "navigation.auditoria",
       "navigation.administracion",
+      "navigation.suplencias",
+      "navigation.reportes",
       "navigation.logout",
       "navigation.brand",
       "navigation.brandSubtitle",

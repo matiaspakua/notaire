@@ -2,91 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  ArrowRightLeft,
-  BookMarked,
-  Building2,
-  Calculator,
-  ClipboardList,
-  Copy,
-  CreditCard,
-  FileCheck2,
-  FileText,
-  FolderKanban,
-  Home,
-  Landmark,
-  ListTodo,
-  LogOut,
-  RotateCcw,
-  Scale,
-  ScrollText,
-  Settings,
-  ShieldCheck,
-  Stamp,
-  Users,
-} from "lucide-react";
+import { LogOut, Scale } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { apiLogout } from "@/lib/api-client";
+import { DASHBOARD_NAV_ITEMS } from "@/lib/dashboard-nav";
 import { useAuthStore } from "@/store/auth-store";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
-
-type LucideIcon = React.ComponentType<{ className?: string }>;
-
-interface NavItem {
-  labelKey: string;
-  href: string;
-  icon: LucideIcon;
-  adminOnly?: boolean;
-}
-
-const navItems: NavItem[] = [
-  { labelKey: "home", href: "/dashboard", icon: Home },
-  { labelKey: "gestiones", href: "/dashboard/gestiones", icon: FolderKanban },
-  {
-    labelKey: "presupuestos",
-    href: "/dashboard/presupuestos",
-    icon: Calculator,
-  },
-  { labelKey: "personas", href: "/dashboard/personas", icon: Users },
-  { labelKey: "escrituras", href: "/dashboard/escrituras", icon: ScrollText },
-  { labelKey: "testimonios", href: "/dashboard/testimonios", icon: FileCheck2 },
-  {
-    labelKey: "movimientosTestimonio",
-    href: "/dashboard/movimientos-testimonio",
-    icon: ArrowRightLeft,
-  },
-  {
-    labelKey: "documentosEntidadesExternas",
-    href: "/dashboard/documentos-entidades-externas",
-    icon: Landmark,
-  },
-  { labelKey: "pagos", href: "/dashboard/pagos", icon: CreditCard },
-  { labelKey: "protocolo", href: "/dashboard/protocolo", icon: BookMarked },
-  { labelKey: "inmuebles", href: "/dashboard/inmuebles", icon: Building2 },
-  { labelKey: "minutasInscripcion", href: "/dashboard/minutas-inscripcion", icon: Stamp },
-  { labelKey: "copias", href: "/dashboard/copias", icon: Copy },
-  { labelKey: "items", href: "/dashboard/items", icon: ListTodo },
-  { labelKey: "documentos", href: "/dashboard/documentos", icon: FileText },
-  {
-    labelKey: "documentosNecesarios",
-    href: "/dashboard/documentos-necesarios",
-    icon: ClipboardList,
-  },
-  {
-    labelKey: "reingresoDocumentacion",
-    href: "/dashboard/reingreso-documentacion",
-    icon: RotateCcw,
-  },
-  { labelKey: "auditoria", href: "/dashboard/auditoria", icon: ShieldCheck },
-  {
-    labelKey: "administracion",
-    href: "/dashboard/administracion",
-    icon: Settings,
-    adminOnly: true,
-  },
-];
 
 interface AppSidebarProps {
   open?: boolean;
@@ -157,9 +80,8 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
 
         {/* Navigation */}
         <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
-          {navItems
-            .filter((item) => !item.adminOnly || isAdmin())
-            .map((item) => {
+          {DASHBOARD_NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin()).map(
+            (item) => {
               const Icon = item.icon;
               const active =
                 pathname === item.href ||
@@ -170,6 +92,7 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
                   key={item.href}
                   href={item.href}
                   onClick={onClose}
+                  data-testid={`nav-${item.labelKey}`}
                   aria-label={label}
                   aria-current={active ? "page" : undefined}
                   className={cn(
@@ -203,7 +126,8 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
                   </span>
                 </Link>
               );
-            })}
+            },
+          )}
         </nav>
 
         {/* Language switcher + Logout */}

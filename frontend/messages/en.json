@@ -17,6 +17,8 @@
     "documentos": "Documents",
     "auditoria": "Audit",
     "administracion": "Administration",
+    "suplencias": "Substitutions",
+    "reportes": "Reports",
     "logout": "Logout",
     "brand": "Notaire",
     "brandSubtitle": "Notary Office",
@@ -128,6 +130,14 @@
     "documentos": {
       "label": "Documents",
       "description": "Submitted documents"
+    },
+    "suplencias": {
+      "label": "Substitutions",
+      "description": "Register and consult notary substitutions"
+    },
+    "reportes": {
+      "label": "Reports",
+      "description": "Reports and sworn declarations"
     },
     "auditoria": {
       "label": "Audit",

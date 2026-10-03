@@ -12,6 +12,21 @@ const nextConfig: NextConfig = {
   // /api/v1/** is proxied at request time by the App Router Route Handler
   // (src/app/api/v1/[...path]/route.ts) using runtime BACKEND_URL — do not
   // bake destinations via rewrites() (standalone evaluates them at build).
+  // Collapse duplicate administración pages onto canonical routes (#1058).
+  async redirects() {
+    return [
+      {
+        source: "/dashboard/administracion/items",
+        destination: "/dashboard/items",
+        permanent: true,
+      },
+      {
+        source: "/dashboard/administracion/auditoria",
+        destination: "/dashboard/auditoria",
+        permanent: true,
+      },
+    ];
+  },
   // Static security headers (issue #562). Content-Security-Policy is set
   // per-request in the edge proxy with a nonce (issue #1051) — do not set a
   // competing CSP here.

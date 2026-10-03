@@ -220,12 +220,13 @@ test.describe("CU39/CU49/CU55 — Plantillas de Presupuesto", () => {
 test.describe("Auditoría (read-only)", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/auditoria");
+    await page.goto("/dashboard/auditoria");
   });
 
   test("page loads with audit heading", async ({ page }) => {
+    // Page title is h1; an h3 section card also says "Auditoría" (#1058 nav).
     await expect(
-      page.getByRole("heading", { name: /auditoría/i })
+      page.getByRole("heading", { name: /auditoría/i, level: 1 })
     ).toBeVisible();
   });
 

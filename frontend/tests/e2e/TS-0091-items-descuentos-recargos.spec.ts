@@ -20,7 +20,7 @@ test.describe("Items - Descuentos y Recargos", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/items");
+    await steps.givenUserIsOnPage("/dashboard/items");
   });
 
   test("CU71-GW01: Given nuevo ítem, When tipo is Descuento, Then motivo field is required", async ({ page }) => {

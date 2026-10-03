@@ -26,3 +26,8 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 4.1 | No existen suplencias registradas para el período indicado. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Entrada en la UI (Next.js)
+
+La consulta se inicia desde la navegación primaria (**Suplencias** en el
+sidebar / inicio) hacia `/dashboard/suplencias` — issue #1058.

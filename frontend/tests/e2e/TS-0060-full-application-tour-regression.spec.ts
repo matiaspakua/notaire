@@ -50,6 +50,12 @@ async function loginViaUI(page: Page): Promise<void> {
   await expect(page.getByTestId("sidebar")).toBeVisible({ timeout: 10000 });
 }
 
+async function navigateViaSidebar(page: Page, labelKey: string): Promise<void> {
+  await page.getByTestId(`nav-${labelKey}`).click();
+  await page.waitForLoadState("networkidle");
+  await pause(page, PAUSE);
+}
+
 async function navigateTo(page: Page, path: string): Promise<void> {
   await page.goto(path);
   await page.waitForLoadState("networkidle");
@@ -314,8 +320,8 @@ test.describe.serial("Full Application Tour — single login → all modules →
   });
 
   test("Suplencias — List, Create", async () => {
-    await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/suplencias");
+    await test.step("List via sidebar", async () => {
+      await navigateViaSidebar(page, "suplencias");
       await assertHeadingVisible(page);
     });
 
@@ -330,7 +336,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
   });
 
   test("Reportes — List", async () => {
-    await navigateTo(page, "/dashboard/reportes");
+    await navigateViaSidebar(page, "reportes");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
@@ -439,9 +445,9 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Admin Ítems — List, Create", async () => {
+  test("Ítems — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/items");
+      await navigateTo(page, "/dashboard/items");
       await assertHeadingVisible(page);
     });
 
@@ -480,8 +486,10 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Admin Auditoría — List", async () => {
+  test("Admin Auditoría — redirects to canonical", async () => {
+    // Legacy admin path must resolve to /dashboard/auditoria (#1058).
     await navigateTo(page, "/dashboard/administracion/auditoria");
+    await expect(page).toHaveURL(/\/dashboard\/auditoria/);
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });

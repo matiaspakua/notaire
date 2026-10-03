@@ -27,3 +27,8 @@
 |---|---|---|
 | 4.1 | No existen escrituras para el año y registro indicados. | El sistema gestiona la excepción y notifica al usuario. |
 | 4.2 | Reporte con ID inexistente | La API devuelve 404 Not Found. |
+
+## Entrada en la UI (Next.js)
+
+Los reportes (índices, DDJJ, etc.) se alcanzan desde **Reportes** en la
+barra lateral / inicio (`/dashboard/reportes`) — issue #1058.

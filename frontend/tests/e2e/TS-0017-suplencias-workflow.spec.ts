@@ -11,7 +11,9 @@ test.describe("CU22 - Registrar Suplencia", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/suplencias");
+    await steps.givenDashboardIsLoaded();
+    // Discovery via primary navigation (#1058) — not a hard deep link.
+    await steps.whenUserOpensSidebarNav("suplencias");
   });
 
   test("CU22-GW01: Given on suplencias page, When click nueva suplencia, Then modal opens", async () => {
@@ -54,7 +56,8 @@ test.describe("CU59 - Consultar Suplencias", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/suplencias");
+    await steps.givenDashboardIsLoaded();
+    await steps.whenUserOpensSidebarNav("suplencias");
   });
 
   test.skip("CU59-GW01 (#1146): Given on suplencias, When filter by escribano, Then shows filtered", async () => {

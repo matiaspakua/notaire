@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Suplencias/Reportes unreachable from navigation; duplicate admin pages**
+  (issue #1058, CU22/CU59/CU24/CU25/CU50/CU23): add sidebar + dashboard home
+  entries for `/dashboard/suplencias` and `/dashboard/reportes`; merge richer
+  admin Items UI into canonical `/dashboard/items`; redirect
+  `/dashboard/administracion/{items,auditoria}` to canonical routes; E2E
+  discovers modules via sidebar (`nav-*` test ids) instead of deep `goto`.
+
 ### Changed
 
 - **Repo hygiene** (issue #1050, CU76): remove global `*.txt` gitignore ban
