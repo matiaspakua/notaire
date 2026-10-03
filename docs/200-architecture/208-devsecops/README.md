@@ -96,18 +96,38 @@ permissions:
 
 ### Triggers
 
-- `workflow_run`: after **CI - Build, Test & Security** completes successfully
-  on `main` (the image is never published if any test job failed)
+- `workflow_run`: after **CI - Build, Test & Security** completes on `main`.
+  Job `build-and-publish` runs only when
+  `github.event.workflow_run.conclusion == 'success'` (non-success CI skips
+  publish). Under `workflow_run`, `github.sha` is the tip of the default branch
+  at CD schedule time — **not** the commit CI tested.
 - Version tags (`v*`)
 - Manual workflow dispatch
+
+### Pin to CI-tested SHA (#1042)
+
+On `workflow_run`, `build-and-publish` must publish the exact commit CI tested:
+
+1. **Checkout** `ref: ${{ github.event.workflow_run.head_sha || github.sha }}`
+   (tag / `workflow_dispatch` fall back to `github.sha`).
+2. **Resolve publish SHA** from `workflow_run.head_sha` (or `github.sha` otherwise);
+   immutable image tags use that SHA (full + short). Do not rely on metadata
+   `type=sha` alone under `workflow_run`.
+3. **Push immutable SHA-tagged image first**, then **move `latest`** to the same
+   digest only after that push succeeds (`docker buildx imagetools create`).
+4. Wiki/report jobs may still check out `main` for docs commits; they must not
+   redefine which git SHA the image was built from.
+
+Guarded by `scripts/test_cd_pin_tested_sha.py`.
 
 ### Jobs
 
 #### 1. Build & Publish Docker Image
-- Builds multi-platform Docker image
-- Logs into GHCR (GitHub Container Registry)
+- Checks out the CI-tested SHA on `workflow_run` (see pin above)
+- Builds Docker image and logs into GHCR (GitHub Container Registry)
+- Pushes immutable tags (branch/semver when applicable + publish SHA); then tags
+  `latest` to the same digest when appropriate
 - Generates SBOM (Software Bill of Materials) with Trivy
-- Tags with branch, semver, and sha
 
 #### 2. Create GitHub Release
 - Triggered only on version tags (`v*`)
@@ -128,6 +148,7 @@ permissions:
 - Runs only when report generation succeeded, on `workflow_run` success or manual
   dispatch
 - Publishes the report to `docs/wiki/cicd-reports/cd-report.md` on `main`
+  (docs checkout of `main` does not change the image publish SHA)
 
 ---
 

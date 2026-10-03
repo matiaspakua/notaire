@@ -51,6 +51,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **CD publishes the CI-tested SHA, not tip of main** (issue #1042, CU76):
+  `.github/workflows/cd.yml` `build-and-publish` checks out
+  `workflow_run.head_sha` (fallback `github.sha` for tag/dispatch), tags the
+  image with that explicit publish SHA, and moves `latest` only after the
+  SHA-tagged push succeeds. Non-success CI still skips publish. Guarded by
+  `scripts/test_cd_pin_tested_sha.py`.
+
 - **Weekly k6 load-test script restored** (issue #1047, CU74/CU76):
   `performance-test/k6/load-test.js` is back for the English login DTO
   (`name`/`password`), covers gestiones/presupuestos/tramites with Bearer JWT,
