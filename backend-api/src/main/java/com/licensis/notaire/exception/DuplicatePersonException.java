@@ -1,19 +1,19 @@
 package com.licensis.notaire.exception;
 
 /**
- * Exception thrown when a persona is created or updated with a document
- * (tipo + numero de identificacion) that already belongs to another persona.
+ * Thrown when a person is created or updated with an identification type +
+ * number that already belongs to another person (CU17 / CU18 / #835 / #799).
  */
 public class DuplicatePersonException extends NotaireException {
 
-    private final Integer idPersonExistente;
+    private final Integer existingPersonId;
 
-    public DuplicatePersonException(String message, Integer idPersonExistente) {
+    public DuplicatePersonException(String message, Integer existingPersonId) {
         super(409, message);
-        this.idPersonExistente = idPersonExistente;
+        this.existingPersonId = existingPersonId;
     }
 
-    public Integer getIdPersonExistente() {
-        return idPersonExistente;
+    public Integer getExistingPersonId() {
+        return existingPersonId;
     }
 }
