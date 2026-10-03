@@ -164,9 +164,6 @@ function LoginForm() {
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
             Infraestructura Segura
           </p>
-          <p className="text-[10px] text-muted-foreground/60 mt-1">
-            Backend: {process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1"}
-          </p>
         </div>
       </div>
     </div>

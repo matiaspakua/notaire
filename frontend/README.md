@@ -66,19 +66,32 @@ npm run test:e2e    # Playwright E2E (backend must be running)
 
 All API calls go through `src/lib/api-client.ts` — never use `fetch()` directly in components.
 
-Backend base URL is configured via `NEXT_PUBLIC_API_URL` env variable.
+The browser always calls same-origin `/api/v1`. The App Router Route Handler
+(`src/app/api/v1/[...path]`) proxies to the Spring backend using **server-only**
+`BACKEND_URL` at request time (issue #1055). Do not bake Docker-internal hosts
+into `NEXT_PUBLIC_*` build args.
+
+Local / Docker examples:
+
+```bash
+# Local Next.js (copy frontend/.env.local.example → .env.local)
+BACKEND_URL=http://localhost:8080/api/v1
+
+# Compose / container runtime
+BACKEND_URL=http://backend:8080/api/v1
+```
 
 ## Architecture
 
 ```
 src/
-├── app/            # Next.js App Router pages
+├── app/            # Next.js App Router pages (+ api/v1 BFF Route Handler)
 ├── components/
 │   ├── ui/         # shadcn/ui primitives
 │   ├── layout/     # Sidebar, header
 │   └── shared/     # DataTable, ConfirmDialog
 ├── hooks/          # React Query hooks (one per resource)
-├── lib/            # api-client, query-client, utils
+├── lib/            # api-client, backend-proxy, query-client, utils
 ├── store/          # Zustand stores
 └── types/          # TypeScript interfaces matching backend DTOs
 ```
@@ -86,9 +99,11 @@ src/
 ## Docker
 
 ```bash
-docker build -t notaire-frontend \
-  --build-arg NEXT_PUBLIC_API_URL=http://backend:8080/api/v1 \
-  -f frontend/Dockerfile frontend/
+docker build -t notaire-frontend -f frontend/Dockerfile frontend/
+docker run --rm -p 3000:3000 \
+  -e BACKEND_URL=http://backend:8080/api/v1 \
+  notaire-frontend
 ```
 
-Or use `docker-compose up` from the project root (after adding the frontend service to docker-compose.yml).
+Or use `bash scripts/start.sh` / `docker compose up` from the project root
+(compose sets runtime `BACKEND_URL` for the frontend service).

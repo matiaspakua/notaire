@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Runtime backend URL proxy + remove login URL leak** (issue #1055, CU78):
+  replace build-time `next.config` `/api/v1` rewrites with an App Router Route
+  Handler BFF driven by server-only `BACKEND_URL`; stop baking Docker-internal
+  hosts via `NEXT_PUBLIC_API_URL`; remove the public login “Backend: …” line.
+  HttpOnly cookie forwarding (#1051) preserved; edge `proxy.ts` still skips
+  `/api/**` (#1056).
+
 - **Pin container images + Dependabot docker** (issue #1045, CU78): pin compose,
   infra, Dockerfile, and CI postgres images to minor tags (no `:latest`, no bare
   `sonarqube:community`, no major-only postgres); keep npm `/frontend`; add

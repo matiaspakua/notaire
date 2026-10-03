@@ -130,6 +130,16 @@ Key variables include `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `JWT_
 `APP_ADMIN_PASSWORD`, and (for Flyway V12 / infra exporter) `POSTGRES_EXPORTER_USER` /
 `POSTGRES_EXPORTER_PASSWORD`. See the production section in `.env.example`.
 
+### Frontend upstream URL (issue #1055)
+
+- Browser traffic stays on same-origin `/api/v1` (HttpOnly cookie path, #1051).
+- The Next.js App Router Route Handler BFF reads **runtime** `BACKEND_URL`
+  (server-only) on each request — one frontend image works across environments
+  without baking `next.config` rewrite destinations at `next build`.
+- Compose sets `BACKEND_URL=http://backend:8080/api/v1` (dev/prod/cloud). Do
+  **not** put Docker-internal hosts in `NEXT_PUBLIC_API_URL`; the public login
+  page must not display backend infrastructure URLs (CU78).
+
 ## Production deployment (docker-compose.prod.yml)
 
 1. Copy and harden secrets (do **not** keep `.env.example` `admin` placeholders):

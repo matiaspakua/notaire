@@ -233,4 +233,14 @@ describe("LoginPage", () => {
     render(<LoginPage />, { wrapper });
     expect(screen.queryByTestId("session-expired-message")).toBeNull();
   });
+
+  it("does not disclose Backend URL or internal API host (issue #1055)", () => {
+    process.env.NEXT_PUBLIC_API_URL = "http://backend:8080/api/v1";
+    const { container } = render(<LoginPage />, { wrapper });
+    const text = container.textContent ?? "";
+    expect(text).not.toMatch(/Backend\s*:/i);
+    expect(text).not.toContain("backend:8080");
+    expect(text).not.toContain("NEXT_PUBLIC_API_URL");
+    expect(text).not.toContain("http://localhost:8080/api/v1");
+  });
 });

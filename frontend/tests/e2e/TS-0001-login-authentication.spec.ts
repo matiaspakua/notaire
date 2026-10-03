@@ -30,6 +30,17 @@ test.describe("TS-0001 - Login Authentication", () => {
     await expect(page.getByTestId("btn-ingresar")).toBeVisible();
   });
 
+  test("does not disclose backend URL on the public login page (issue #1055)", async ({
+    page,
+  }) => {
+    const body = await page.locator("body").innerText();
+    expect(body).not.toMatch(/Backend\s*:/i);
+    expect(body).not.toContain("backend:8080");
+    expect(body).not.toContain("NEXT_PUBLIC_API_URL");
+    const html = await page.content();
+    expect(html).not.toContain("http://backend:8080");
+  });
+
   test("shows error for empty submission", async ({ page }) => {
     await page.getByTestId("btn-ingresar").click();
     await expect(page.getByText("Complete usuario y contraseña")).toBeVisible();
