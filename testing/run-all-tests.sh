@@ -6,9 +6,9 @@
 # Centralizes execution of all test suites across the project:
 # - Unit tests (Java, backend-api)
 # - Integration tests (Java, backend-api with PostgreSQL/H2)
-# - API client tests (Java, frontend-swing)
 # - HTTP integration tests (bash scripts, REST endpoints)
-# - E2E tests (Robot Framework, Swing GUI)
+# - Swing Robot E2E and frontend-swing client tests are RETIRED (#811);
+#   active UI E2E is Playwright under frontend/tests/e2e/
 #
 # Generates a consolidated markdown report with coverage, counts, and timings.
 #
@@ -30,7 +30,7 @@ NC='\033[0m' # No Color
 INTEGRATION_TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT="$(cd "$INTEGRATION_TEST_DIR/.." && pwd)"
 BACKEND_DIR="$WORKSPACE_ROOT/backend-api"
-FRONTEND_DIR="$WORKSPACE_ROOT/frontend-swing"
+FRONTEND_DIR="$WORKSPACE_ROOT/frontend"
 REPORTS_DIR="$INTEGRATION_TEST_DIR/reports"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 REPORT_FILE="$REPORTS_DIR/test-report-${TIMESTAMP}.md"
@@ -82,7 +82,7 @@ Usage: bash run-all-tests.sh [OPTIONS]
 
 OPTIONS:
     --help          Show this help message
-    --skip-robot    Skip Robot Framework E2E tests
+    --skip-robot    No-op (Swing Robot E2E retired; #811)
     --skip-http     Skip HTTP integration tests
     --unit-only     Run only unit tests (skip integration, HTTP, E2E)
     --coverage      Generate detailed coverage report (slower)
@@ -94,8 +94,8 @@ EXAMPLES:
     # Run only unit tests
     bash run-all-tests.sh --unit-only
 
-    # Skip slow E2E tests
-    bash run-all-tests.sh --skip-robot
+    # UI E2E (Playwright; not this script)
+    cd frontend && npm run test:e2e
 
     # Run with detailed coverage
     bash run-all-tests.sh --coverage
@@ -204,23 +204,12 @@ count_http_tests() {
 }
 
 count_e2e_tests() {
-    if [[ "$SKIP_ROBOT" == "true" ]]; then
-        log_warn "Skipping E2E test discovery"
-        return
-    fi
-
     log_section "Discovering E2E Tests"
-
-    # Count Robot test files
-    local robot_files=$(find "$INTEGRATION_TEST_DIR/e2e-swing/tests" -name "*.robot" 2>/dev/null | wc -l)
-
-    # Count test cases in Robot files
-    local test_cases=$(grep -r "^\*\*\* Test Cases \*\*\*" -A 1000 "$INTEGRATION_TEST_DIR/e2e-swing/tests" 2>/dev/null | grep "^[A-Z]" | wc -l)
-
-    E2E_TEST_COUNT=$test_cases
-
-    log_info "E2E robot files: $robot_files"
-    log_info "E2E test cases: $test_cases"
+    log_warn "Swing Robot E2E retired (#811); counting Playwright specs instead"
+    local pw_files
+    pw_files=$(find "$FRONTEND_DIR/tests/e2e" -name "*.spec.ts" 2>/dev/null | wc -l)
+    E2E_TEST_COUNT=$pw_files
+    log_info "Playwright E2E spec files: $E2E_TEST_COUNT (run via: cd frontend && npm run test:e2e)"
 }
 
 # ============================================================================
@@ -275,26 +264,11 @@ run_integration_tests() {
 }
 
 run_client_tests() {
-    if [[ "$UNIT_ONLY" == "true" ]]; then
-        log_warn "Skipping client tests (--unit-only)"
-        return
-    fi
-
-    log_section "Running Client Tests (Frontend Swing)"
-
-    local start_time=$(date +%s)
-    local log_file="$LOG_DIR/client-tests.log"
-
-    if mvn test -pl frontend-swing 2>&1 | tee "$log_file"; then
-        TEST_RESULTS["client"]="✓ PASSED"
-    else
-        TEST_RESULTS["client"]="✗ FAILED"
-    fi
-
-    local end_time=$(date +%s)
-    TEST_TIMINGS["client"]=$((end_time - start_time))
-
-    log_info "Client tests completed in ${TEST_TIMINGS["client"]}s"
+    log_section "Client Tests (Swing retired)"
+    log_warn "frontend-swing removed (#811 / #1046); skip Maven Swing client tests"
+    log_info "Frontend unit: cd frontend && npm test"
+    TEST_RESULTS["client"]="⊘ SKIPPED (Swing retired #811)"
+    TEST_TIMINGS["client"]=0
 }
 
 run_http_tests() {
@@ -336,38 +310,11 @@ run_http_tests() {
 }
 
 run_e2e_tests() {
-    if [[ "$SKIP_ROBOT" == "true" ]] || [[ "$UNIT_ONLY" == "true" ]]; then
-        log_warn "Skipping E2E tests"
-        return
-    fi
-
-    log_section "Running E2E Tests (Robot Framework)"
-
-    local start_time=$(date +%s)
-    local log_file="$LOG_DIR/e2e-tests.log"
-
-    cd "$INTEGRATION_TEST_DIR/e2e-swing"
-
-    # Check if virtual environment is available
-    if [[ -d ".venv" ]]; then
-        source .venv/bin/activate
-
-        if robot --outputdir="$LOG_DIR/robot-output" tests/ 2>&1 | tee "$log_file"; then
-            TEST_RESULTS["e2e"]="✓ PASSED"
-        else
-            TEST_RESULTS["e2e"]="✗ FAILED"
-        fi
-
-        deactivate
-    else
-        log_warn "Robot Framework virtual environment not found"
-        TEST_RESULTS["e2e"]="⊘ SKIPPED (venv not found)"
-    fi
-
-    local end_time=$(date +%s)
-    TEST_TIMINGS["e2e"]=$((end_time - start_time))
-
-    log_info "E2E tests completed in ${TEST_TIMINGS["e2e"]}s"
+    log_section "E2E Tests (Swing Robot retired)"
+    log_warn "testing/e2e-swing is hard-deprecated (#811); do not wire into CI"
+    log_info "Active UI E2E: cd frontend && npm run test:e2e"
+    TEST_RESULTS["e2e"]="⊘ SKIPPED (Swing Robot retired #811)"
+    TEST_TIMINGS["e2e"]=0
 }
 
 # ============================================================================
@@ -473,20 +420,18 @@ EOF
 ---
 
 ### Frontend - Client Tests
-- **Type:** JUnit 5 (Java)
-- **Framework:** Spring Boot Test, WireMock for HTTP mocking
-- **Location:** `frontend-swing/src/test/java/com/licensis/notaire/api/client/`
+- **Type:** Vitest (Next.js) — Swing client tests retired (#811)
+- **Location:** `frontend/src/**/*.test.ts(x)`
 - **Status:**
 EOF
         echo "${TEST_RESULTS["client"]:-⊘ NOT RUN}"
         echo "- **Duration:** ${TEST_TIMINGS["client"]:-N/A}s"
-        echo "- **Files:** $CLIENT_TEST_COUNT test classes"
+        echo "- **Files:** run via \`cd frontend && npm test\`"
 
         cat << 'EOF'
 
-**Test Classes:**
-- `RestClientTest` - REST client initialization and API calls
-- `ApiConfigTest` - API configuration and endpoint setup
+**Note:** `frontend-swing` / `deprecated-frontend-swing` were removed. Do not run
+`mvn -pl frontend-swing`.
 
 ---
 
@@ -523,24 +468,17 @@ EOF
 
 ---
 
-### E2E Tests (Robot Framework)
-- **Type:** Robot Framework (Python/Swing)
-- **Location:** `testing/e2e-swing/tests/`
+### E2E Tests (Playwright — active; Swing Robot retired)
+- **Type:** Playwright (Next.js UI)
+- **Location:** `frontend/tests/e2e/`
+- **Legacy:** `testing/e2e-swing/` is hard-deprecated (#811); do not wire into CI
 - **Status:**
 EOF
         echo "${TEST_RESULTS["e2e"]:-⊘ NOT RUN}"
         echo "- **Duration:** ${TEST_TIMINGS["e2e"]:-N/A}s"
+        echo "- **Command:** \`cd frontend && npm run test:e2e\`"
 
         cat << 'EOF'
-
-**Test Suites:**
-- `login_e2e.robot` - Login workflow, authentication, session management
-- `principal_navigation_e2e.robot` - Main window navigation, menu items
-- `administracion_e2e.robot` - Administration panel, user/role management
-- `clientes_e2e.robot` - Client/Person management, CRUD operations
-- `gestiones_e2e.robot` - Process/Tramite management workflows
-- `presupuestos_e2e.robot` - Budget creation and management
-- `protocolo_e2e.robot` - Protocol/Document handling
 
 ---
 
@@ -618,14 +556,12 @@ mvn jacoco:report -pl backend-api
 mvn site -pl backend-api  # Full site including coverage
 \`\`\`
 
-### Robot Framework
+### Playwright E2E (active UI)
 \`\`\`bash
-cd testing/e2e-swing
-source .venv/bin/activate
-robot tests/
-# Or specific test suite
-robot tests/login_e2e.robot
+cd frontend && npm run test:e2e
 \`\`\`
+
+Swing Robot under \`testing/e2e-swing/\` is retired (#811). Do not run or CI-wire it.
 
 ---
 
@@ -633,34 +569,12 @@ robot tests/login_e2e.robot
 
 ```
 Notaire Project Tests
-├── Unit Tests (Java)
-│   ├── Entity Tests (Presupuesto, Escritura, etc.)
-│   ├── DTO Mapping Tests
-│   └── Hash/Security Tests
-│
-├── Integration Tests (Java)
-│   ├── API H2 Tests (in-memory)
-│   ├── API PostgreSQL Tests (TestContainers)
-│   ├── Use Case Coverage Tests
-│   └── Report Generation Tests
-│
-├── Client Tests (Java)
-│   ├── REST Client Tests
-│   └── API Configuration Tests
-│
-├── HTTP Integration Tests (cURL)
-│   ├── Authentication endpoints
-│   ├── CRUD operations
-│   └── Business workflows
-│
-└── E2E Tests (Robot Framework)
-    ├── Login workflow
-    ├── Navigation
-    ├── Administration
-    ├── Client management
-    ├── Process management
-    ├── Budget management
-    └── Protocol handling
+├── Unit Tests (Java) — backend-api
+├── Integration Tests (Java) — backend-api
+├── Frontend unit (Vitest) — frontend/
+├── HTTP Integration Tests (cURL) — testing/http/
+└── E2E Tests (Playwright) — frontend/tests/e2e/
+    (testing/e2e-swing Robot suites: RETIRED #811)
 ```
 
 ---
@@ -671,17 +585,18 @@ Notaire Project Tests
 - Test methods: `should...` (e.g., `shouldCreatePresupuestoWithRequiredFields`)
 - Test classes: `*Test` or `*IntegrationTest` suffix
 - Display names: `@DisplayName` annotations with clear descriptions
+- Playwright: `TS-nnnn-<workflow>` with CU traceability
 
 ### Assertion Framework
 - **Java Tests:** AssertJ fluent assertions
-- **Robot Tests:** Built-in Robot Framework assertions
+- **Playwright:** `@playwright/test` expect API
 
 ### Database Testing
 - **Unit:** No database required
 - **Integration:**
   - H2 in-memory (fast, standalone)
   - PostgreSQL via TestContainers (production-like)
-  - Schema auto-created via Hibernate (locally)
+  - Schema via Flyway (single source of truth)
 
 ### Test Organization
 - Tests grouped by domain (Entity, API, Use Case)
@@ -695,21 +610,22 @@ Notaire Project Tests
 Tests are executed automatically in GitHub Actions CI/CD:
 
 1. **PR Validation**
-   - Unit tests + coverage (80% minimum)
-   - Checkstyle enforcement
-   - SpotBugs static analysis
+   - Unit tests + coverage (JaCoCo ratchet floor)
+   - Checkstyle / Spotless / SpotBugs
    - Integration tests (H2)
+   - Playwright E2E (`playwright-e2e.yml`)
 
 2. **Main Branch**
    - All tests including PostgreSQL integration
    - Security scanning (Trivy)
    - Coverage report upload
-   - E2E tests (when backend is stable)
 
 3. **Release Build**
-   - Full test suite + E2E
+   - Full test suite + Playwright E2E
    - Docker image scan
    - Artifact generation
+
+Swing `e2e-swing.yml` is retired (ADR-012 / #811) and must not return.
 
 ---
 
@@ -724,16 +640,13 @@ bash scripts/start.sh
 psql -h localhost -U notaire -d notaire_db
 \`\`\`
 
-### Robot Framework Tests Not Running
+### UI E2E
 \`\`\`bash
-cd testing/e2e-swing
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-robot tests/
+cd frontend && npm run test:e2e
 \`\`\`
+Do not use \`testing/e2e-swing/\` (retired #811).
 
-### Coverage Below 80%
+### Coverage Below Floor
 \`\`\`bash
 # View detailed coverage report
 mvn jacoco:report -pl backend-api

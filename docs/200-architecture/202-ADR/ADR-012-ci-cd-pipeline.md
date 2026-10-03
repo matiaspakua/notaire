@@ -18,7 +18,7 @@ Usar **GitHub Actions** como única plataforma de CI/CD, con workflows separados
 | `ci.yml` | Pipeline principal: `build`, `unit-tests`, `integration-tests`, `coverage`, `security` (Trivy), `docker-build`, `quality` (Checkstyle/SpotBugs/Spotless), `generate-reports`, `publish-reports` (artifact + `$GITHUB_STEP_SUMMARY` only — no git commits of reports; #1041) |
 | `pr-validation.yml` | Gates específicos de pull request (título convencional, issue vinculado, tamaño del diff) |
 | `playwright-e2e.yml` | Suite E2E Playwright del frontend |
-| ~~`e2e-swing.yml`~~ | Retirado en #1083: el cliente Swing ya no existe en el repositorio |
+| ~~`e2e-swing.yml`~~ | Retired in #1083; leftovers closed in #811 (hygiene + docs). Swing client absent. |
 | `frontend-ci.yml` | Lint/build/test del módulo `frontend/` (Next.js) |
 | `performance-test.yml` | Pruebas de carga/rendimiento bajo demanda |
 | `cd.yml` | `build-and-publish`, `release`, `update-description`, `generate-report`, `publish-report` — build y publicación de imágenes Docker tras un `ci.yml` exitoso en `main`; report jobs usan artifacts/summary (no commits a `docs/wiki/cicd-reports/`; #1041) |

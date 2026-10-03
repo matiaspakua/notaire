@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Guards issue #1046 (CU78): Dependabot hygiene for dead Swing log4j and smol-toml.
+Guards issue #1046 (CU78) and #811 (CU76): Dependabot / Swing E2E hygiene.
 
 Asserts:
 - deprecated-frontend-swing/ and frontend-swing/ are absent
@@ -8,6 +8,9 @@ Asserts:
 - frontend/package.json overrides smol-toml to a patched range
 - frontend/package-lock.json resolves smol-toml >= 1.7.1
 - CODEOWNERS / root README do not present Swing paths as live modules
+- .github/workflows/e2e-swing.yml stays absent (#811)
+- no workflow YAML builds frontend-swing / deprecated-frontend-swing (#811)
+- testing/e2e-swing/ is hard-deprecated (README forbids CI wiring) (#811)
 
 Plain stdlib unittest (JSON), consistent with scripts/test_prod_compose.py.
 Run with: python3 scripts/test_dependabot_hygiene.py
@@ -21,6 +24,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -30,9 +34,26 @@ FRONTEND_LOCKFILE = REPO_ROOT / "frontend" / "package-lock.json"
 CODEOWNERS = REPO_ROOT / ".github" / "CODEOWNERS"
 README = REPO_ROOT / "README.md"
 ROOT_POM = REPO_ROOT / "pom.xml"
+WORKFLOWS_DIR = REPO_ROOT / ".github" / "workflows"
+E2E_SWING_WORKFLOW = WORKFLOWS_DIR / "e2e-swing.yml"
+E2E_SWING_DIR = REPO_ROOT / "testing" / "e2e-swing"
+E2E_SWING_README = E2E_SWING_DIR / "README.md"
 
 DEPRECATED_SWING = REPO_ROOT / "deprecated-frontend-swing"
 ACTIVE_SWING = REPO_ROOT / "frontend-swing"
+
+# Maven -pl targeting removed Swing modules (issue #811).
+SWING_MAVEN_PL = re.compile(
+    r"(?i)-pl\s+(?:frontend-swing|deprecated-frontend-swing)\b"
+)
+# Broader build hints that resurrect Swing in Actions run steps.
+SWING_WORKFLOW_BUILD = re.compile(
+    r"(?i)(?:mvn\b[^\n]*\b(?:frontend-swing|deprecated-frontend-swing)\b|"
+    r"-f\s+(?:frontend-swing|deprecated-frontend-swing)/pom\.xml)"
+)
+HARD_DEPRECATE_MARKERS = re.compile(
+    r"(?i)(retired|hard-?deprecat|do not\s+wire|forbid(?:den)?\s+.*ci|not\s+supported)",
+)
 
 # GHSA-7w5x-hrqm-74c2: vulnerable <=1.7.0; first patched 1.7.1.
 # #1046 AC still requires override to latest (prefer 1.9.x) even though 1.8.0
@@ -125,8 +146,34 @@ def pom_declares_log4j_1x(text: str) -> bool:
     return any(pattern.search(text) for pattern in LOG4J_1X_PATTERNS)
 
 
+def workflow_builds_swing(text: str) -> bool:
+    """True if workflow YAML instructs a Maven build of a removed Swing module."""
+    return bool(SWING_MAVEN_PL.search(text) or SWING_WORKFLOW_BUILD.search(text))
+
+
+def workflow_files(root: Path | None = None) -> list[Path]:
+    """Return YAML workflow files under .github/workflows (or a fixture root)."""
+    base = (root or REPO_ROOT) / ".github" / "workflows"
+    if not base.is_dir():
+        return []
+    return sorted(
+        p for p in base.iterdir() if p.is_file() and p.suffix in {".yml", ".yaml"}
+    )
+
+
+def workflows_that_build_swing(root: Path | None = None) -> list[str]:
+    """Relative paths of workflows that build frontend-swing / deprecated-frontend-swing."""
+    repo = root or REPO_ROOT
+    offenders: list[str] = []
+    for path in workflow_files(repo):
+        text = path.read_text(encoding="utf-8")
+        if workflow_builds_swing(text):
+            offenders.append(str(path.relative_to(repo)))
+    return offenders
+
+
 class DependabotHygieneTest(unittest.TestCase):
-    """Dependabot alert hygiene for issue #1046 / CU78."""
+    """Dependabot alert hygiene for issue #1046 / CU78 and Swing E2E #811 / CU76."""
 
     def test_deprecated_frontend_swing_directory_absent(self):
         self.assertFalse(
@@ -229,6 +276,85 @@ class DependabotHygieneTest(unittest.TestCase):
             text,
             r"\]\(deprecated-frontend-swing/",
             "README.md must not link to deprecated-frontend-swing/ as a live path (#1046)",
+        )
+
+    def test_e2e_swing_workflow_absent(self):
+        """Scenario: e2e-swing workflow remains absent (#811)."""
+        self.assertFalse(
+            E2E_SWING_WORKFLOW.exists(),
+            "e2e-swing.yml must stay retired (ADR-012 / #811); "
+            f"found at {E2E_SWING_WORKFLOW}",
+        )
+
+    def test_workflows_do_not_build_swing_modules(self):
+        """Scenario: workflows do not build Swing modules (#811)."""
+        offenders = workflows_that_build_swing()
+        self.assertEqual(
+            offenders,
+            [],
+            "GitHub Actions must not build frontend-swing or "
+            f"deprecated-frontend-swing (#811); found in: {offenders}",
+        )
+
+    def test_synthetic_e2e_swing_workflow_fails_hygiene(self):
+        """Scenario: synthetic e2e-swing workflow fails hygiene (#811)."""
+        with tempfile.TemporaryDirectory(prefix="swing-e2e-hygiene-") as tmp:
+            root = Path(tmp)
+            workflow = root / ".github" / "workflows" / "e2e-swing.yml"
+            workflow.parent.mkdir(parents=True)
+            workflow.write_text(
+                "name: resurrected-swing-e2e\non: workflow_dispatch\njobs: {}\n",
+                encoding="utf-8",
+            )
+            resurrected = root / ".github" / "workflows" / "e2e-swing.yml"
+            # Red path: the same predicate used on tip must reject a fixture file.
+            with self.assertRaises(AssertionError):
+                self.assertFalse(
+                    resurrected.exists(),
+                    "e2e-swing.yml must stay retired (ADR-012 / #811); "
+                    f"found at {resurrected}",
+                )
+
+    def test_synthetic_swing_maven_build_fails_hygiene(self):
+        """Scenario: synthetic Swing Maven build fails hygiene (#811)."""
+        bad_pl = "run: mvn clean install -pl frontend-swing -am -DskipTests -q\n"
+        bad_deprecated = (
+            "run: mvn clean install -pl deprecated-frontend-swing -DskipTests\n"
+        )
+        self.assertTrue(
+            workflow_builds_swing(bad_pl),
+            "detector must flag -pl frontend-swing",
+        )
+        self.assertTrue(
+            workflow_builds_swing(bad_deprecated),
+            "detector must flag -pl deprecated-frontend-swing",
+        )
+        with tempfile.TemporaryDirectory(prefix="swing-build-hygiene-") as tmp:
+            root = Path(tmp)
+            workflow = root / ".github" / "workflows" / "ci-bad.yml"
+            workflow.parent.mkdir(parents=True)
+            workflow.write_text(
+                "name: bad\non: push\njobs:\n  build:\n    steps:\n"
+                f"      - {bad_pl}",
+                encoding="utf-8",
+            )
+            offenders = workflows_that_build_swing(root)
+            self.assertEqual(
+                offenders,
+                [".github/workflows/ci-bad.yml"],
+                "synthetic workflow with -pl frontend-swing must fail hygiene",
+            )
+
+    def test_e2e_swing_suite_hard_deprecated(self):
+        """Scenario: e2e-swing suite hard-deprecated (#811)."""
+        self.assertTrue(
+            E2E_SWING_README.is_file(),
+            "testing/e2e-swing/README.md must exist and forbid CI wiring (#811)",
+        )
+        text = E2E_SWING_README.read_text(encoding="utf-8")
+        self.assertIsNotNone(
+            HARD_DEPRECATE_MARKERS.search(text),
+            "testing/e2e-swing/README.md must state retirement / forbid CI wiring (#811)",
         )
 
 

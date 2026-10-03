@@ -1,16 +1,21 @@
 #!/bin/bash
-# Setup Python virtual environment for Robot Framework E2E tests
-# Idempotent: safe to re-run
+# RETIRED (#811 / CU76 / ADR-012): Swing Robot E2E is hard-deprecated.
+# Do not wire this script into CI. See testing/e2e-swing/README.md.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
+
+echo -e "${RED}testing/e2e-swing is RETIRED (issue #811).${NC}"
+echo "Do not set up a Robot venv for Swing. Use Playwright:"
+echo "  cd frontend && npm run test:e2e"
+exit 2
+
+# --- historical body kept below for reference; unreachable ---
 
 # Check Python 3
 if ! command -v python3 &> /dev/null; then
