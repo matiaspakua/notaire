@@ -435,7 +435,11 @@ import { theme } from "@/theme/tokens";
 Base components (`button.tsx`, `input.tsx`, `card.tsx`, etc. under
 `frontend/src/components/ui/`) consume theme tokens via Tailwind
 theme-generated utility classes (e.g. `bg-primary-600 text-white rounded-lg`)
-rather than inline styles, keeping usage idiomatic React/Tailwind.
+or `import { theme } from "@/theme/tokens"` style props (see `table.tsx`
+header/hover `color-mix` from `theme.colors.neutral[100]`), keeping usage
+idiomatic React/Tailwind. Dashboard shell/home (`dashboard/layout.tsx`,
+`dashboard/page.tsx`) follow the same rule — no `#RRGGBB` literals; Vitest
+`hex-hygiene.test.ts` guards audited `app/` + `components/` globs (#960 / CU76).
 
 ---
 
