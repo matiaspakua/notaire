@@ -31,6 +31,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -41,39 +42,30 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * Clase que representa a la entidad persona (general).
+ * Person entity used for system users, notaries, and clients.
  * <p>
- * DISEÑO DEL SISTEMA
+ * System design: users, notaries, and clients are all modeled as people;
+ * specific roles are inferred from which attributes are populated.
  * <p>
- * + Tanto los
- * usuarios del sistema, como los escribanos y los clientes, son "personas".
- * Esta clase representa,
- * mendiante el valor de derminados atributos, cada una de estas entidades.
- * <p>
- * REGLA DE NEGOCIO
- * <p>
- * + Si una instancia de personas, solo tiene asignado los siguientes valores:
- * nombre, apellido,
- * telefono, domicilio, tipo y numero de identificado e e-mail, la instancia
- * representa a una
- * persona que tiene presupuestos asociados (No es un cliente).
- * <p>
- * + Si una instancia de persona,
- * tiene ademas de los atributos de personas, los demas atributos (a excepcion
- * del numero de
- * registro) asignado, entonces se trata de un "cliente" y por lo tanto, debe
- * tener gestiones
- * asociadas.
- * <p>
- * + Si una instancia de personas, tiene todos los atributos asignados, pero
- * ademas
- * posee un numero de registro, entonces se trata de un "escribano".
- * <p>
+ * Business rules:
+ * <ul>
+ *   <li>Minimal demographics + identification type/number (and optional contact)
+ *       represent a person linked to budgets (not necessarily a client).</li>
+ *   <li>Additional client attributes (except notary registration number) mark a
+ *       client that should have associated managements.</li>
+ *   <li>A notary registration number marks a notary.</li>
+ *   <li>Identification type + number must be unique across people
+ *       (CU17 / CU18 / #799 / #835).</li>
+ * </ul>
  *
  * @author juanca
  */
 @Entity
-@Table(name = "people")
+@Table(
+        name = "people",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uq_people_identification_type_number",
+                columnNames = {"fk_id_tipo_identificacion", "identification_number"}))
 @XmlRootElement
 @JsonIgnoreProperties({
         "hibernateLazyInitializer", "handler",

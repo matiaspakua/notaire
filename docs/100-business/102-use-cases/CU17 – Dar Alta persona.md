@@ -27,6 +27,6 @@
 
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
-| 6.1 | Ya existe otra persona registrada con el mismo número de identificación. | El sistema rechaza el alta (HTTP 409), muestra un mensaje indicando el duplicado, ofrece un acceso directo a la persona existente y conserva los datos ingresados en el formulario. |
+| 6.1 | Ya existe otra persona registrada con el mismo tipo y número de identificación. | El sistema rechaza el alta (HTTP 409), muestra un mensaje indicando el duplicado, ofrece un acceso directo a la persona existente y conserva los datos ingresados en el formulario. La unicidad tipo+número también se garantiza a nivel de base de datos (`people` unique index; issue #799), además de la validación de servicio (#835). |
 | 6.2 | Alguno de los datos son incorrectos. | El sistema gestiona la excepción y notifica al usuario. |
 | 6.3 | Validación de backend (HTTP 400), p. ej. número de identificación en blanco. | El sistema muestra el mensaje de validación del servidor (toast y/o error de campo en el formulario), no un error genérico de guardado, y mantiene el diálogo abierto para corregir (#945; E2E Dedup-EDGE en TS-0015). |

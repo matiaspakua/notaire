@@ -85,13 +85,13 @@ class ManagementTransitionServiceTest {
     @Test
     @DisplayName("Should apply valid transition")
     void shouldApplyValidTransition() {
-        WorkflowTransition transicion = new WorkflowTransition(1);
-        transicion.setOriginNode(originNode);
-        transicion.setDestinationNode(destinationNode);
+        WorkflowTransition transition = new WorkflowTransition(1);
+        transition.setOriginNode(originNode);
+        transition.setDestinationNode(destinationNode);
 
         when(managementRepository.findById(1)).thenReturn(Optional.of(management));
         when(statusRepository.findByName("En trámite")).thenReturn(Optional.of(statusDestination));
-        when(workflowTransitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of(transicion));
+        when(workflowTransitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of(transition));
         when(managementRepository.save(management)).thenReturn(management);
 
         DeedManagement result = managementTransitionService.transition(1, "En trámite");
@@ -113,10 +113,10 @@ class ManagementTransitionServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject transition when gestión has no workflow definition")
+    @DisplayName("Should reject transition when management has no workflow definition")
     void shouldRejectTransitionWhenNoWorkflowDefinition() {
-        Procedure procedureSinType = new Procedure();
-        management.setProcedureList(List.of(procedureSinType));
+        Procedure procedureWithoutType = new Procedure();
+        management.setProcedureList(List.of(procedureWithoutType));
 
         when(managementRepository.findById(1)).thenReturn(Optional.of(management));
 
@@ -126,7 +126,7 @@ class ManagementTransitionServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw ResourceNotFoundException when gestión does not exist")
+    @DisplayName("Should throw ResourceNotFoundException when management does not exist")
     void shouldRejectTransitionWhenManagementNotFound() {
         when(managementRepository.findById(999)).thenReturn(Optional.empty());
 

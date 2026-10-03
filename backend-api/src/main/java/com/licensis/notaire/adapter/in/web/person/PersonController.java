@@ -220,7 +220,7 @@ public class PersonController {
     }
 
     private Map<String, Object> duplicateBody(DuplicatePersonException e) {
-        return Map.of("message", e.getMessage(), "existingPersonId", e.getIdPersonExistente());
+        return Map.of("message", e.getMessage(), "existingPersonId", e.getExistingPersonId());
     }
 
     @ApiResponses({

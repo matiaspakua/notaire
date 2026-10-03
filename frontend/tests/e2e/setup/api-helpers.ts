@@ -627,12 +627,20 @@ export async function createEstadoGestion(
 
 export async function createTipoDocumento(
   page: Page,
-  overrides: { name?: string; expires?: boolean; dueDays?: number; deliveredBy?: string } = {},
+  overrides: {
+    name?: string;
+    expires?: boolean;
+    dueDays?: number;
+    deliveredBy?: string;
+    enabled?: boolean;
+    returned?: boolean;
+  } = {},
 ): Promise<ApiResult<{ idDocumentType: number }>> {
   const id = uniqueId();
   return apiPost(page, "/tipo-de-documento", {
     name: `Tipo Documento E2E ${id}`,
     enabled: true,
+    returned: false,
     expires: true,
     dueDays: 30,
     deliveredBy: "Cliente",

@@ -201,7 +201,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
             400,
             HttpStatus.BAD_REQUEST.getReasonPhrase(),
-            "Los datos enviados no cumplen las restricciones de la base de datos",
+            "The submitted data violates a database constraint",
             request.getRequestURI()
         );
         STRUCTURED_LOG.logWarn(

@@ -35,14 +35,14 @@ import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
- * #806 — Residual History (bitácora) gaps on plain create/update and
+ * #806 — Residual History (audit log) gaps on plain create/update and
  * complete-case update, plus GET estado-actual entity-status fallback.
  */
 @RequirementCoverage({"CU13", "CU02", "CU53"})
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test-h2")
-@DisplayName("CU13 — orphan gestión status writes must populate History")
+@DisplayName("CU13 — orphan management status writes must populate History")
 class ManagementHistorialOrphanWriteIntegrationTest {
 
     @Autowired
@@ -346,15 +346,23 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 """;
         MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body.formatted(1, notaryId, statusA.getIdManagementStatus())))
+                        .content(body.formatted((int) (System.nanoTime() % 100000), notaryId,
+                                statusA.getIdManagementStatus())))
                 .andExpect(status().isCreated())
                 .andReturn();
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
                 .get("idManagement").asInt();
-        mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body.formatted(2, notaryId, statusB.getIdManagementStatus())))
-                .andExpect(status().isOk());
+
+        // #804 rejects status changes via plain PUT — seed a second History row directly
+        // so this tie-break assertion stays independent of workflow enforcement.
+        var management = managementRepository.findById(managementId).orElseThrow();
+        management.setFkIdManagementStatus(statusB);
+        managementRepository.save(management);
+        History second = new History();
+        second.setFkIdManagement(management);
+        second.setFkIdManagementStatus(statusB);
+        second.setDate(new Date());
+        historyRepository.saveAndFlush(second);
 
         List<History> rows = historyRepository.findByFkIdManagementIdManagement(managementId);
         assertThat(rows).hasSize(2);
@@ -401,7 +409,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
     }
 
     @Test
-    @DisplayName("estado-actual returns 404 when gestión is missing")
+    @DisplayName("estado-actual returns 404 when management is missing")
     void shouldReturn404EstadoActualWhenManagementMissing() throws Exception {
         mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", 999999))
                 .andExpect(status().isNotFound());

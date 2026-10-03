@@ -5,6 +5,7 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,18 +40,34 @@ public class PersonService {
     public Person save(Person entity) {
         rejectDuplicateDocument(entity);
         logger.info("Saving person: {} {}", entity.getFirstName(), entity.getLastName());
-        return personRepository.save(entity);
+        try {
+            return personRepository.save(entity);
+        } catch (DataIntegrityViolationException ex) {
+            throw duplicateFromIntegrityViolation(entity, ex);
+        }
     }
 
     private void rejectDuplicateDocument(Person entity) {
-        personRepository.findByIdentificationNumber(entity.getIdentificationNumber())
+        findConflictingPerson(entity).ifPresent(existing -> {
+            throw new DuplicatePersonException(
+                    "A person is already registered with document " + entity.getIdentificationNumber(),
+                    existing.getPersonId());
+        });
+    }
+
+    private DuplicatePersonException duplicateFromIntegrityViolation(
+            Person entity, DataIntegrityViolationException ex) {
+        return findConflictingPerson(entity)
+                .map(existing -> new DuplicatePersonException(
+                        "A person is already registered with document " + entity.getIdentificationNumber(),
+                        existing.getPersonId()))
+                .orElseThrow(() -> ex);
+    }
+
+    private Optional<Person> findConflictingPerson(Person entity) {
+        return personRepository.findByIdentificationNumber(entity.getIdentificationNumber())
                 .filter(existing -> isSameIdentificationType(existing, entity))
-                .filter(existing -> !existing.getPersonId().equals(entity.getPersonId()))
-                .ifPresent(existing -> {
-                    throw new DuplicatePersonException(
-                            "A person is already registered with document " + entity.getIdentificationNumber(),
-                            existing.getPersonId());
-                });
+                .filter(existing -> !existing.getPersonId().equals(entity.getPersonId()));
     }
 
     private boolean isSameIdentificationType(Person a, Person b) {
@@ -68,7 +85,7 @@ public class PersonService {
     public List<Person> search(String firstName, String lastName, String identificationNumber,
                                  Integer idIdentificationType, Boolean isClient) {
         logger.debug("Searching people with filters - firstName: {}, lastName: {}, identificationNumber: {}, "
-                + "idTipoIdentificacion: {}, isClient: {}", firstName, lastName, identificationNumber,
+                + "idIdentificationType: {}, isClient: {}", firstName, lastName, identificationNumber,
                 idIdentificationType, isClient);
 
         List<Person> results = new ArrayList<>();

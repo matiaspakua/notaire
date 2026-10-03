@@ -121,6 +121,68 @@ class DocumentTypeReferentialIntegrityTest {
                 .andExpect(jsonPath("$[?(@.name =~ /.*SearchableDoc.*/)]").exists());
     }
 
+    @Test
+    @DisplayName("Should persist enabled and returned on create and return them on GET (#800)")
+    void shouldPersistEnabledAndReturnedOnCreate() throws Exception {
+        String name = "Tipo_enabled_returned_" + System.nanoTime();
+        String body = String.format("""
+                {"name": "%s", "expires": false, "enabled": false, "returned": true, "deliveredBy": ""}
+                """, name);
+
+        MvcResult result = mockMvc.perform(post("/api/v1/tipo-de-documento")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.enabled").value(false))
+                .andExpect(jsonPath("$.returned").value(true))
+                .andReturn();
+
+        int id = mapper.readTree(result.getResponse().getContentAsString())
+                .get("idDocumentType").asInt();
+
+        mockMvc.perform(get("/api/v1/tipo-de-documento/" + id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.enabled").value(false))
+                .andExpect(jsonPath("$.returned").value(true));
+    }
+
+    @Test
+    @DisplayName("Should update enabled and returned when type is not in use (#800)")
+    void shouldUpdateEnabledAndReturnedWhenNotInUse() throws Exception {
+        int id = createTypeDocument("Tipo_update_flags_" + System.nanoTime());
+
+        String updateBody = """
+                {"name": "Name flags updated", "expires": false, "enabled": false, "returned": true, "deliveredBy": ""}
+                """;
+
+        mockMvc.perform(put("/api/v1/tipo-de-documento/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateBody))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/v1/tipo-de-documento/" + id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Name flags updated"))
+                .andExpect(jsonPath("$.enabled").value(false))
+                .andExpect(jsonPath("$.returned").value(true));
+    }
+
+    @Test
+    @DisplayName("Should default enabled true and returned false when omitted on create (#800)")
+    void shouldDefaultEnabledTrueAndReturnedFalseWhenOmitted() throws Exception {
+        String name = "Tipo_defaults_" + System.nanoTime();
+        String body = String.format("""
+                {"name": "%s", "expires": false}
+                """, name);
+
+        mockMvc.perform(post("/api/v1/tipo-de-documento")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.enabled").value(true))
+                .andExpect(jsonPath("$.returned").value(false));
+    }
+
     private int createTypeDocument(String name) throws Exception {
         String body = String.format("""
                 {"name": "%s", "expires": false}

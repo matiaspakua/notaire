@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * CU83 - Valida y aplica transiciones de estado de una gestión contra el
- * {@link WorkflowDefinition} del tipo de trámite asociado.
+ * CU83 — Validates and applies management status transitions against the
+ * {@link WorkflowDefinition} of the associated procedure type.
  */
 @Service
 public class ManagementTransitionService {
@@ -44,63 +44,66 @@ public class ManagementTransitionService {
     }
 
     /**
-     * Valida que exista una {@link WorkflowTransition} desde el estado actual de la
-     * gestión hacia {@code estadoDestino} y, de ser así, la aplica.
+     * Validates that a {@link WorkflowTransition} exists from the management's current
+     * status to {@code statusDestination} and, if so, applies it.
      */
     @Transactional
     public DeedManagement transition(Integer idManagement, String statusDestination) {
         DeedManagement management = managementRepository.findById(idManagement)
-                .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Management not found with ID: " + idManagement));
 
         WorkflowDefinition workflowDefinition = resolveWorkflowDefinition(management);
 
-        ManagementStatus statusActual = management.getFkIdManagementStatus();
+        ManagementStatus currentStatus = management.getFkIdManagementStatus();
         ManagementStatus destination = statusRepository.findByName(statusDestination)
                 .orElseThrow(() -> new BusinessValidationException(
-                        "Estado destino '" + statusDestination + "' no está definido en el sistema"));
+                        "Destination status '" + statusDestination + "' is not defined in the system"));
 
-        validateTransition(workflowDefinition, statusActual, destination);
+        validateTransition(workflowDefinition, currentStatus, destination);
 
         management.setFkIdManagementStatus(destination);
-        DeedManagement managementTransicionada = managementRepository.save(management);
-        managementBitacoraService.registerStatus(managementTransicionada, null);
-        log.info("Gestión {} transicionada a estado '{}'", idManagement, destination.getName());
-        return managementTransicionada;
+        DeedManagement transitioned = managementRepository.save(management);
+        managementBitacoraService.registerStatus(transitioned, null);
+        log.info("Management {} transitioned to status '{}'", idManagement, destination.getName());
+        return transitioned;
     }
 
     private WorkflowDefinition resolveWorkflowDefinition(DeedManagement management) {
         List<Procedure> procedures = management.getProcedureList();
         if (procedures == null || procedures.isEmpty()) {
             throw new BusinessValidationException(
-                    "La gestión " + management.getIdManagement() + " no tiene trámites asociados");
+                    "Management " + management.getIdManagement() + " has no associated procedures");
         }
-        ProcedureType typeProcedure = procedures.get(0).getFkIdProcedureType();
-        WorkflowDefinition workflowDefinition = typeProcedure != null ? typeProcedure.getWorkflowDefinition() : null;
+        ProcedureType procedureType = procedures.get(0).getFkIdProcedureType();
+        WorkflowDefinition workflowDefinition = procedureType != null ? procedureType.getWorkflowDefinition() : null;
         if (workflowDefinition == null) {
             throw new BusinessValidationException(
-                    "La gestión " + management.getIdManagement() + " no tiene un workflow definido");
+                    "Management " + management.getIdManagement() + " has no workflow defined");
         }
         return workflowDefinition;
     }
 
     private void validateTransition(WorkflowDefinition workflowDefinition, ManagementStatus origin,
             ManagementStatus destination) {
-        List<WorkflowTransition> transiciones =
+        List<WorkflowTransition> transitions =
                 workflowTransitionRepository.findByWorkflowDefinitionId(workflowDefinition.getId());
-        boolean esValida = transiciones.stream().anyMatch(transicion ->
-                coincideStatus(transicion.getOriginNode(), origin) && coincideStatus(transicion.getDestinationNode(), destination));
-        if (!esValida) {
+        boolean valid = transitions.stream().anyMatch(transition ->
+                statusMatches(transition.getOriginNode(), origin)
+                        && statusMatches(transition.getDestinationNode(), destination));
+        if (!valid) {
             throw new BusinessValidationException(
-                    "Transición de '" + nameStatus(origin) + "' a '" + destination.getName() + "' no está permitida");
+                    "Transition from '" + statusName(origin) + "' to '" + destination.getName()
+                            + "' is not allowed");
         }
     }
 
-    private static boolean coincideStatus(WorkflowNode node, ManagementStatus status) {
+    private static boolean statusMatches(WorkflowNode node, ManagementStatus status) {
         return node != null && node.getManagementStatus() != null && status != null
                 && node.getManagementStatus().getIdManagementStatus().equals(status.getIdManagementStatus());
     }
 
-    private static String nameStatus(ManagementStatus status) {
-        return status != null ? status.getName() : "sin estado";
+    private static String statusName(ManagementStatus status) {
+        return status != null ? status.getName() : "no status";
     }
 }

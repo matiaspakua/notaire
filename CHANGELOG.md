@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Document type enabled and returned on admin form** (issue #800, CU27 / CU32 /
+  CU04 / CU72): residual catalog fields after #837 — create/edit checkboxes for
+  `enabled` (default true) and `returned` (default false); `DtoDocumentType` and
+  entity mapping round-trip `returned`; create no longer overwrites an explicit
+  `enabled=false`. Vitest + Playwright + `DocumentTypeReferentialIntegrityTest`.
+
 - **`testing/` prepared as a standalone QA repository, phase 1** (issue #1191, CU76 / CU75;
   umbrella #1190): one runner (`testing/scripts/run.sh integration|database`, `test.sh` kept as the
   stable entry point) replaces nine overlapping scripts; a new black-box **database V&V suite**
@@ -490,6 +496,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `POST /api/v1/pagos` (JSON body).
 
 ### Fixed
+
+- **Person identification uniqueness enforced at the database** (issue #799, CU17, CU18):
+  Flyway `V40` adds unique index `uq_people_identification_type_number` on
+  `people (fk_id_tipo_identificacion, identification_number)`, with a fail-fast pre-check when
+  duplicate groups already exist. Aligns with the #835 service-layer reject (HTTP 409); race
+  `DataIntegrityViolationException` on that key is remapped to `DuplicatePersonException` so the
+  existing frontend toast path keeps working. JPA `@UniqueConstraint` mirrors the index.
 
 - **`estado-actual` returned an arbitrary row when history dates tied** (issue #1198, CU13):
   `GET /api/v1/gestiones/{id}/estado-actual` now breaks date ties by the higher history id, so

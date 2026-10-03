@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/tipo-de-documento")
-@Tag(name = "TipoDeDocumento", description = "API para gestionar tipo-de-documento")
+@Tag(name = "TipoDeDocumento", description = "API to manage document types")
 public class DocumentTypeController {
 
     private final DocumentTypeRepository repository;
@@ -44,7 +44,7 @@ public class DocumentTypeController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los tipo-de-documento")
+    @Operation(summary = "List all document types")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoDocumentType>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream()
@@ -53,7 +53,7 @@ public class DocumentTypeController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Buscar tipo-de-documento por nombre")
+    @Operation(summary = "Search document types by name")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoDocumentType>> search(@RequestParam String name) {
         return ResponseEntity.ok(repository.findByNameContaining(name).stream()
@@ -63,10 +63,10 @@ public class DocumentTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener tipo-de-documento por ID")
+    @Operation(summary = "Get document type by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoDocumentType> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -75,7 +75,7 @@ public class DocumentTypeController {
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Verificar si el tipo de documento está en uso")
+    @Operation(summary = "Check whether the document type is in use")
     @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
@@ -87,18 +87,24 @@ public class DocumentTypeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Bad request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo tipo-de-documento")
+    @Operation(summary = "Create a new document type")
     public ResponseEntity<Object> create(@RequestBody DtoDocumentType dto) {
         try {
             if (dto.getDeliveredBy() == null) {
                 dto.setDeliveredBy("");
             }
-            dto.setEnabled(true);
+            // Default only when omitted — do not overwrite an explicit enabled=false (#800).
+            if (dto.getEnabled() == null) {
+                dto.setEnabled(true);
+            }
+            if (dto.getReturned() == null) {
+                dto.setReturned(false);
+            }
             DocumentType entity = new DocumentType();
             entity.setAtributos(dto);
             entity = repository.save(entity);
@@ -110,10 +116,10 @@ public class DocumentTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar tipo-de-documento")
+    @Operation(summary = "Update document type")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoDocumentType dto) {
         Optional<DocumentType> existing = repository.findById(id);
         if (existing.isEmpty()) {
@@ -122,7 +128,7 @@ public class DocumentTypeController {
         if (!procedureTemplateRepository.findByDocumentTypeIdDocumentType(id).isEmpty()
                 || submittedDocumentRepository.existsByDocumentTypeIdDocumentType(id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Este tipo de documento está en uso y no puede modificarse. Cree uno nuevo."));
+                    .body(Map.of("error", "This document type is in use and cannot be modified. Create a new one."));
         }
         try {
             DocumentType entity = existing.get();
@@ -139,11 +145,11 @@ public class DocumentTypeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar tipo-de-documento")
+    @Operation(summary = "Delete document type")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -151,7 +157,7 @@ public class DocumentTypeController {
         if (!procedureTemplateRepository.findByDocumentTypeIdDocumentType(id).isEmpty()
                 || submittedDocumentRepository.existsByDocumentTypeIdDocumentType(id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "No se puede eliminar: el tipo de documento está siendo utilizado en plantillas o documentos presentados."));
+                    .body(Map.of("error", "Cannot delete: the document type is used by procedure templates or submitted documents."));
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();

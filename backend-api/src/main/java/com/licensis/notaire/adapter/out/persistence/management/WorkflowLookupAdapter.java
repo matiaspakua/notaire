@@ -17,17 +17,17 @@ public class WorkflowLookupAdapter implements WorkflowLookupPort {
         var procedures = management.getProcedureList();
         if (procedures == null || procedures.isEmpty()) {
             throw new BusinessValidationException(
-                    "La gestión " + management.getIdManagement() + " no tiene trámites asociados");
+                    "Management " + management.getIdManagement() + " has no associated procedures");
         }
 
-        ProcedureType typeProcedure = procedures.get(0).getFkIdProcedureType();
-        WorkflowDefinition workflowDefinition = typeProcedure != null
-                ? typeProcedure.getWorkflowDefinition()
+        ProcedureType procedureType = procedures.get(0).getFkIdProcedureType();
+        WorkflowDefinition workflowDefinition = procedureType != null
+                ? procedureType.getWorkflowDefinition()
                 : null;
 
         if (workflowDefinition == null) {
             throw new BusinessValidationException(
-                    "La gestión " + management.getIdManagement() + " no tiene un workflow definido");
+                    "Management " + management.getIdManagement() + " has no workflow defined");
         }
 
         return workflowDefinition;

@@ -202,12 +202,17 @@ public class DocumentType implements Serializable, Persistable<Integer>
         }
 
         this.deliveredBy = miDto.getDeliveredBy();
-        // Preserve current version when omitted; default habilitado to enabled.
-        // Both are nullable in the DTO and previously NPE'd on update.
+        // Preserve current version / flags when omitted (nullable in the DTO).
+        // Create path defaults enabled=true and returned=false in the controller.
         if (miDto.getVersion() != null) {
             this.version = miDto.getVersion();
         }
-        enabled = !Boolean.FALSE.equals(miDto.getEnabled());
+        if (miDto.getEnabled() != null) {
+            enabled = miDto.getEnabled();
+        }
+        if (miDto.getReturned() != null) {
+            returned = miDto.getReturned();
+        }
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
@@ -228,6 +233,7 @@ public class DocumentType implements Serializable, Persistable<Integer>
 
         miDto.setVersion(version);
         miDto.setEnabled(enabled);
+        miDto.setReturned(returned);
 
         return miDto;
     }
