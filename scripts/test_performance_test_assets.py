@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-Validates the k6 load-test suite and its CI wiring (issue #594).
+Validates the k6 load-test suite and its CI wiring (issues #594, #1047).
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
 validation scripts (see scripts/test_generate_e2e_coverage_report.py).
 Run with: python3 scripts/test_performance_test_assets.py
 """
 import os
+import re
 import unittest
 
 import yaml
@@ -32,15 +33,50 @@ class K6LoadTestScriptTest(unittest.TestCase):
         self.assertIn("http_req_duration", self.script)
         self.assertIn("http_req_failed", self.script)
 
+    def test_thresholds_enforce_cu74_slos(self):
+        # CU74 objective: p95 < 2s; reliability budget: error rate < 1%.
+        duration_match = re.search(
+            r"http_req_duration\s*:\s*\[\s*['\"]p\(95\)<(\d+)['\"]",
+            self.script,
+        )
+        self.assertIsNotNone(
+            duration_match,
+            "http_req_duration must declare a p(95)<Nms threshold",
+        )
+        p95_ms = int(duration_match.group(1))
+        self.assertLessEqual(
+            p95_ms,
+            2000,
+            f"p95 threshold must be ≤2000ms (CU74); found p(95)<{p95_ms}",
+        )
+        self.assertRegex(
+            self.script,
+            r"http_req_failed\s*:\s*\[\s*['\"]rate<0\.01['\"]",
+            "http_req_failed must enforce rate<0.01",
+        )
+
     def test_authenticates_in_setup_and_reuses_token(self):
         self.assertIn("export function setup()", self.script)
         self.assertIn("/api/v1/usuarios/login", self.script)
         self.assertIn("Authorization", self.script)
         self.assertIn("Bearer", self.script)
 
+    def test_uses_english_login_dto_fields(self):
+        self.assertRegex(
+            self.script,
+            r"JSON\.stringify\(\{\s*name:\s*ADMIN_USER,\s*password:\s*ADMIN_PASSWORD\s*\}\)",
+            "login body must use English fields name/password",
+        )
+        self.assertNotIn("nombre:", self.script)
+        self.assertNotIn("contrasenia:", self.script)
+
     def test_covers_the_highest_traffic_endpoints(self):
         for path in ("/api/v1/gestiones", "/api/v1/presupuestos", "/api/v1/tramites"):
             self.assertIn(path, self.script)
+
+    def test_writes_summary_json_artifact(self):
+        self.assertIn("handleSummary", self.script)
+        self.assertIn("summary.json", self.script)
 
 
 class PerformanceTestWorkflowTest(unittest.TestCase):
@@ -48,11 +84,17 @@ class PerformanceTestWorkflowTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         with open(WORKFLOW_PATH, encoding="utf-8") as f:
-            cls.workflow = yaml.safe_load(f)
+            cls.raw = f.read()
+            cls.workflow = yaml.safe_load(cls.raw)
 
     def test_is_scheduled_not_gated_on_pull_requests(self):
         triggers = self.workflow.get(True, self.workflow.get("on"))
         self.assertIn("schedule", triggers, "workflow must run on a schedule")
+        self.assertIn(
+            "workflow_dispatch",
+            triggers,
+            "workflow must support manual dispatch",
+        )
         self.assertNotIn("pull_request", triggers, "load tests must not gate every PR")
 
     def test_runs_k6_against_a_live_stack(self):
@@ -60,6 +102,15 @@ class PerformanceTestWorkflowTest(unittest.TestCase):
         self.assertIn("k6-action", raw)
         self.assertIn("performance-test/k6/load-test.js", raw)
         self.assertIn("actuator/health", raw)
+
+    def test_uploads_summary_json_artifact(self):
+        self.assertIn("summary.json", self.raw)
+        self.assertIn("upload-artifact", self.raw)
+        self.assertNotRegex(
+            self.raw,
+            r"if-no-files-found:\s*ignore",
+            "upload must not silently ignore a missing summary.json",
+        )
 
 
 if __name__ == "__main__":
