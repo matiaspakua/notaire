@@ -83,8 +83,12 @@ async function authenticateAdmin(page: Page): Promise<void> {
       { name: "notaire-auth-role", value: (tipo ?? "ADMIN").toUpperCase(), domain: "localhost", path: "/" },
     ]);
     // Persist client profile only — never the JWT in localStorage (#1051).
+    // Only hydrate when the UX status cookie is present (same as setup/auth.ts).
     await page.addInitScript(
       ([user]) => {
+        if (!document.cookie.split(";").some((c) => c.trim().startsWith("notaire-auth-status="))) {
+          return;
+        }
         localStorage.setItem(
           "notaire-auth",
           JSON.stringify({
