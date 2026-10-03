@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/api-1065-rest-conventions/` | Gate 1 passed |
 | Branch | `cursor/api-1065-rest-conventions-69d3` | pushed |
 | Tasks | `tasks.md` | impl + local gates done |
-| Commits | `9b2e1c89` docs(openspec) Gate 1; `b4e40b97` feat(api) Slice-1 | done |
+| Commits | `9b2e1c89` docs(openspec); `b4e40b97` feat(api); `9a938421` tasks/traceability | done |
 | Pull Request | [#1182](https://github.com/matiaspakua/notaire/pull/1182) | draft |
 | CI run | | pending |
 | Merge commit | | pending |
