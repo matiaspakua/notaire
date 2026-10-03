@@ -65,18 +65,18 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits
-- [ ] 9.2 Message ends with `Closes #1022`
-- [ ] 9.3 No secrets / unrelated changes
-- [ ] 9.4 Record commit SHAs in `traceability.md`
+- [x] 9.1 Conventional Commits
+- [x] 9.2 Message ends with `Closes #1022`
+- [x] 9.3 No secrets / unrelated changes
+- [x] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/chore-1022-namedquery-english-69d3`
-- [ ] 10.2 Draft PR `[#1022] chore(jpa): English NamedQuery name strings` with `Closes #1022` + rename-map checklist
-- [ ] 10.3 Wait for CI — coordinator merges after `bash scripts/check-heavy-ci.sh <pr> exit 0`
-- [ ] 10.4 Do NOT merge from this agent
-- [ ] 10.5 Record PR URL in `traceability.md` + `/workspace/implement-1022-status.md`
+- [x] 10.1 `git push -u origin cursor/chore-1022-namedquery-english-69d3`
+- [x] 10.2 Draft PR [#1187](https://github.com/matiaspakua/notaire/pull/1187) `[#1022] chore(jpa): English NamedQuery name strings` with `Closes #1022` + rename-map checklist
+- [ ] 10.3 Wait for CI — coordinator merges after `bash scripts/check-heavy-ci.sh 1187` exit 0
+- [x] 10.4 Do NOT merge from this agent
+- [x] 10.5 Record PR URL in `traceability.md` + `/workspace/implement-1022-status.md`
 
 ## 11. Deploy
 

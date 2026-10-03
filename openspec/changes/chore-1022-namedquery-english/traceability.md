@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/chore-1022-namedquery-english/` | complete |
 | Branch | `cursor/chore-1022-namedquery-english-69d3` | created from `origin/main` |
 | Tasks | `tasks.md` | groups 1–8 complete; 9–12 at push/PR/merge |
-| Commits | `c536c686` docs(openspec); `0dc08bbd` test hygiene; `4b9efd3d` chore rename | pushed |
-| Pull Request | pending | pending |
+| Commits | `c536c686` docs(openspec); `0dc08bbd` test hygiene; `4b9efd3d` chore rename; `9fb71537` traceability | pushed |
+| Pull Request | [#1187](https://github.com/matiaspakua/notaire/pull/1187) | draft |
 | CI run | | pending |
 | Merge commit | | pending |
 | Release / tag | | pending |
@@ -30,25 +30,25 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| No Spanish NamedQuery entity prefixes remain | `NamedQueryEnglishNamesHygieneTest` | pending |
-| No Persona.createNamedQuery mismatch remains | `NamedQueryEnglishNamesHygieneTest` | pending |
-| English Folio/Item/Person method tails (no Spanish tails in inventory) | `NamedQueryEnglishNamesHygieneTest` | pending |
-| createNamedQuery call sites match English names | `NamedQueryEnglishNamesHygieneTest` + existing JPA unit tests | pending |
+| No Spanish NamedQuery entity prefixes remain | `NamedQueryEnglishNamesHygieneTest` | passing |
+| No Persona.createNamedQuery mismatch remains | `NamedQueryEnglishNamesHygieneTest` | passing |
+| English Folio/Item/Person method tails (no Spanish tails in inventory) | `NamedQueryEnglishNamesHygieneTest` | passing |
+| createNamedQuery call sites match English names | `NamedQueryEnglishNamesHygieneTest` + existing JPA unit tests | passing (1941/1941) |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | pending | pending |
+| `CHANGELOG.md` | yes | `4b9efd3d` |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | proposal + delta spec + validate-sdlc-plan |
-| 2 | Failing tests written, test cases designed | pending | hygiene test red-then-green |
-| 3 | Suite green, coverage held, docs updated | pending | |
-| 4 | CI green, review approved, no conflicts | pending | |
+| 2 | Failing tests written, test cases designed | yes | hygiene 3 failures red, then green |
+| 3 | Suite green, coverage held, docs updated | yes | `mvn test` 1941/1941; verify BUILD SUCCESS; CHANGELOG |
+| 4 | CI green, review approved, no conflicts | pending | draft PR |
 | 5 | Deployed, smoke test passed, Issue closed | pending | |
 
 ## Exceptions
