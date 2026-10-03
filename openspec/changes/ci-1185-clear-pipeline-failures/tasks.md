@@ -19,10 +19,10 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: closed-issue changes, seed on BSD sed, unique headings, no entry lost, pipeline
-- [ ] 3.2 Record the red baseline: `validate-sdlc-plan.sh` (37 problems) and `test_seed_fills_known_header_values`
-- [ ] 3.3 Write failing `scripts/test_changelog_structure.py` and observe it fail
-- [ ] 3.4 Confirm every `#### Scenario:` maps to a test or a verification command
+- [x] 3.1 Enumerate test cases: closed-issue changes, seed on BSD sed, unique headings, no entry lost, pipeline
+- [x] 3.2 Record the red baseline: `validate-sdlc-plan.sh` (37 problems) and `test_seed_fills_known_header_values`
+- [x] 3.3 Write failing `scripts/test_changelog_structure.py` and observe it fail
+- [x] 3.4 Confirm every `#### Scenario:` maps to a test or a verification command
 
 ## 4. Implementación
 
