@@ -23,7 +23,7 @@ RUN mvn package -pl backend-api -am -DskipTests -B -q
 # =============================================
 # Stage 2: Runtime - Minimal JRE image
 # =============================================
-FROM eclipse-temurin:21.0.11_10-jre-alpine AS runner
+FROM eclipse-temurin:24.0.2_12-jre-alpine AS runner
 
 # Install wget for healthcheck
 RUN apk add --no-cache wget
