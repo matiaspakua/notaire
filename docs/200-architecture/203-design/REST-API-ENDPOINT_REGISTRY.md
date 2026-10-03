@@ -61,7 +61,7 @@ These endpoints are actively called by the Next.js frontend:
 ### FolioController
 - `GET /api/v1/folio`
 - `GET /api/v1/folio/search`
-- `POST /api/v1/folio`
+- `POST /api/v1/folio` — `201 Created` + `Location: /api/v1/folio/{id}` (ADR-023 / #1065)
 - `PUT /api/v1/folio/{id}`
 - `DELETE /api/v1/folio/{id}`
 
@@ -91,9 +91,16 @@ These endpoints are actively called by the Next.js frontend:
 - `PUT /api/v1/items/{id}`
 - `DELETE /api/v1/items/{id}`
 
-### PagoController
+### RegistrationDraftController (Minutas de Inscripción)
+- `GET /api/v1/minutas-inscripcion/{id}`
+- `POST /api/v1/minutas-inscripcion` — `201 Created` + `Location: /api/v1/minutas-inscripcion/{id}` (ADR-023 / #1065)
+- `PUT /api/v1/minutas-inscripcion/{id}/presentar`
+- `PUT /api/v1/minutas-inscripcion/{id}/observar`
+- `PUT /api/v1/minutas-inscripcion/{id}/inscribir`
+
+### PagoController / PaymentController
 - `GET /api/v1/pagos`
-- `POST /api/v1/pagos`
+- `POST /api/v1/pagos` — `201 Created` + `Location` (ADR-023 / #1065); `/pagos/params` removed
 - `PUT /api/v1/pagos/{id}`
 - `DELETE /api/v1/pagos/{id}`
 
@@ -252,12 +259,13 @@ Not reached by any current frontend call site. May be used by reports, backgroun
 - `PUT /api/v1/movimiento-testimonio/{id}`
 - `DELETE /api/v1/movimiento-testimonio/{id}`
 
-### PagoController
+### PagoController / PaymentController
 - `GET /api/v1/pagos/{id}`
 - `GET /api/v1/pagos/presupuesto/{idPresupuesto}`
 - `GET /api/v1/pagos/presupuesto/{idPresupuesto}/saldo`
 - `GET /api/v1/pagos/fecha`
-- `POST /api/v1/pagos/params`
+- `POST /api/v1/pagos` — `201 Created` + `Location: /api/v1/pagos/{id}` (ADR-023 / #1065)
+- ~~`POST /api/v1/pagos/params`~~ — **removed** (unused; #1065)
 
 ### PersonaController
 - `GET /api/v1/personas/{id}`

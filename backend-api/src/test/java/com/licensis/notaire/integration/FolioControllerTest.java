@@ -61,7 +61,10 @@ class FolioControllerTest {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        assertThat(mapper.readTree(response).get("status").asText()).isEqualTo("Nuevo");
+        var tree = mapper.readTree(response);
+        assertThat(tree.get("status").asText()).isEqualTo("Nuevo");
+        int id = tree.get("idFolio").asInt();
+        assertThat(result.getResponse().getHeader("Location")).isEqualTo("/api/v1/folio/" + id);
     }
 
     @Test

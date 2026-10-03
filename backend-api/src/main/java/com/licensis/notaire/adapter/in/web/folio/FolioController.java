@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.folio;
 
+import com.licensis.notaire.adapter.in.web.support.CreatedResponses;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
@@ -144,7 +145,7 @@ public class FolioController {
                 folio.setStatus(StatusUTILIZADO);
             }
             Folio saved = folioRepository.save(folio);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+            return CreatedResponses.of(saved, "/api/v1/folio", saved.getIdFolio());
         } catch (Exception e) {
             log.error("Failed to create folio", e);
             return ResponseEntity.internalServerError().build();
