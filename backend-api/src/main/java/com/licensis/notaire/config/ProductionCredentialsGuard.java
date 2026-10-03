@@ -34,19 +34,21 @@ public class ProductionCredentialsGuard {
     @Value("${app.admin.password:admin}")
     private String adminPassword;
 
-    @Value("${pgadmin.admin.password:admin}")
+    // Optional observability / admin-UI credentials. Empty means the service is
+    // not configured for this deployment (prod compose least-privilege, #1044).
+    @Value("${pgadmin.admin.password:}")
     private String pgAdminPassword;
 
-    @Value("${grafana.admin.username:admin}")
+    @Value("${grafana.admin.username:}")
     private String grafanaUsername;
 
-    @Value("${grafana.admin.password:admin}")
+    @Value("${grafana.admin.password:}")
     private String grafanaPassword;
 
-    @Value("${postgres.exporter.username:admin}")
+    @Value("${postgres.exporter.username:}")
     private String exporterUsername;
 
-    @Value("${postgres.exporter.password:admin}")
+    @Value("${postgres.exporter.password:}")
     private String exporterPassword;
 
     @PostConstruct
@@ -62,11 +64,11 @@ public class ProductionCredentialsGuard {
         addIfDefault(insecureProperties, "actuator.security.password", actuatorPassword);
         addIfDefault(insecureProperties, "app.admin.username", adminUsername);
         addIfDefault(insecureProperties, "app.admin.password", adminPassword);
-        addIfDefault(insecureProperties, "pgadmin.admin.password", pgAdminPassword);
-        addIfDefault(insecureProperties, "grafana.admin.username", grafanaUsername);
-        addIfDefault(insecureProperties, "grafana.admin.password", grafanaPassword);
-        addIfDefault(insecureProperties, "postgres.exporter.username", exporterUsername);
-        addIfDefault(insecureProperties, "postgres.exporter.password", exporterPassword);
+        addIfConfiguredDefault(insecureProperties, "pgadmin.admin.password", pgAdminPassword);
+        addIfConfiguredDefault(insecureProperties, "grafana.admin.username", grafanaUsername);
+        addIfConfiguredDefault(insecureProperties, "grafana.admin.password", grafanaPassword);
+        addIfConfiguredDefault(insecureProperties, "postgres.exporter.username", exporterUsername);
+        addIfConfiguredDefault(insecureProperties, "postgres.exporter.password", exporterPassword);
 
         if (!insecureProperties.isEmpty()) {
             throw new IllegalStateException(
@@ -79,5 +81,16 @@ public class ProductionCredentialsGuard {
         if (INSECURE_DEFAULT_VALUE.equals(value)) {
             insecureProperties.add(propertyName);
         }
+    }
+
+    /**
+     * Validates optional service credentials only when they are present.
+     * Blank/null means the service is not part of this deployment (issue #1044).
+     */
+    private void addIfConfiguredDefault(List<String> insecureProperties, String propertyName, String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+        addIfDefault(insecureProperties, propertyName, value);
     }
 }

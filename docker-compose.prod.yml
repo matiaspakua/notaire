@@ -1,0 +1,165 @@
+# Production application stack for Notaire (issue #1044, CU78 + CU75).
+# - No pgAdmin
+# - Postgres / backend / frontend are internal-only (no host ports)
+# - Reverse proxy is the sole host ingress (:80)
+# - Secrets required via ${VAR:?...} (no admin defaults)
+# - ENVIRONMENT=production activates ProductionCredentialsGuard
+# - Flyway baseline-on-migrate disabled
+#
+# Dev stack remains ./docker-compose.yml (scripts/start.sh).
+# TLS cert lifecycle: issue #254. Backups: issue #256.
+#
+# Usage:
+#   cp .env.example .env   # set strong non-admin secrets
+#   docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: notary-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      service: "notaire"
+      app: "postgresql"
+      environment: "production"
+    networks:
+      - notary-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend-api/Dockerfile
+    container_name: notary-backend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1024m
+        reservations:
+          memory: 512m
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:?Set POSTGRES_DB in .env}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "false"
+      # V12 exporter role placeholders — host .env supplies values; keys are not
+      # POSTGRES_EXPORTER_* on the backend (least-privilege, issue #1044).
+      SPRING_FLYWAY_PLACEHOLDERS_EXPORTERUSERNAME: ${POSTGRES_EXPORTER_USER:?Set POSTGRES_EXPORTER_USER in .env}
+      SPRING_FLYWAY_PLACEHOLDERS_EXPORTERPASSWORD: ${POSTGRES_EXPORTER_PASSWORD:?Set POSTGRES_EXPORTER_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env (min 32 bytes)}
+      ACTUATOR_USER: ${ACTUATOR_USER:?Set ACTUATOR_USER in .env}
+      ACTUATOR_PASSWORD: ${ACTUATOR_PASSWORD:?Set ACTUATOR_PASSWORD in .env}
+      APP_ADMIN_USER: ${APP_ADMIN_USER:?Set APP_ADMIN_USER in .env}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:?Set APP_ADMIN_PASSWORD in .env}
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,metrics,prometheus,info,threaddump
+      MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: "true"
+      MANAGEMENT_HEALTH_DISKSPACE_ENABLED: "false"
+      LOG_LEVEL_APP: INFO
+      ENVIRONMENT: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health/liveness || exit 1",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    labels:
+      service: "notaire"
+      app: "backend-api"
+      environment: "production"
+    networks:
+      - notary-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Browser calls same-origin /api/v1 through the reverse proxy.
+        NEXT_PUBLIC_API_URL: /api/v1
+    container_name: notaire-frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: /api/v1
+      BACKEND_URL: http://backend:8080/api/v1
+      HOSTNAME: "0.0.0.0"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    labels:
+      service: "notaire"
+      app: "frontend"
+      environment: "production"
+    networks:
+      - notary-network
+
+  reverse-proxy:
+    image: nginx:1.27-alpine
+    container_name: notary-reverse-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    labels:
+      service: "notaire"
+      app: "reverse-proxy"
+      environment: "production"
+    networks:
+      - notary-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  notary-network:
+    driver: bridge
