@@ -354,6 +354,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Pipeline passes on a clean `main` again** (issue #1185, CU76): 45 OpenSpec changes
+  whose issues are closed were archived (delta specs folded into `openspec/specs/`);
+  `scripts/seed-openspec-change.sh` no longer relies on GNU-only `sed -i` (its self-test
+  failed on macOS); the `[Unreleased]` section was regrouped so each `###` heading appears
+  once, with all entries preserved. Guard: `scripts/test_changelog_structure.py`.
+
 - **JPA NamedQuery name strings Englishized** (issue #1022): rename Spanish
   `@NamedQuery(name=…)` identifiers and matching `createNamedQuery` call sites
   under `backend-api` to English entity prefixes and method tails (e.g.

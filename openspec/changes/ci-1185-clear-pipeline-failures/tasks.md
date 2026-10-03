@@ -26,39 +26,39 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 Make `scripts/seed-openspec-change.sh` portable (no `sed -i`)
-- [ ] 4.2 Regroup `CHANGELOG.md` `[Unreleased]` with entries preserved
-- [ ] 4.3 Finalise traceability of the #1179 and #1186 changes (PRs, merge commits, Gate 5)
-- [ ] 4.4 Archive the 45 changes with closed-COMPLETED issues; record any `--skip-specs` in design.md
-- [ ] 4.5 `validate-sdlc-plan.sh` exits 0; `openspec validate --strict` clean on active changes
+- [x] 4.1 Make `scripts/seed-openspec-change.sh` portable (no `sed -i`)
+- [x] 4.2 Regroup `CHANGELOG.md` `[Unreleased]` with entries preserved
+- [x] 4.3 Finalise traceability of the #1179 and #1186 changes (PRs, merge commits, Gate 5)
+- [x] 4.4 Archive the 45 changes with closed-COMPLETED issues; record any `--skip-specs` in design.md
+- [x] 4.5 `validate-sdlc-plan.sh` exits 0; `openspec validate --strict` clean on active changes
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 `scripts/tests/test_validate_sdlc_plan.py` fully green
-- [ ] 5.2 All `scripts/test_*.py` guards still pass
-- [ ] 5.3 No gate loosened or skipped
+- [x] 5.1 `scripts/tests/test_validate_sdlc_plan.py` fully green
+- [x] 5.2 All `scripts/test_*.py` guards still pass
+- [x] 5.3 No gate loosened or skipped
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — n/a (no Java touched)
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — n/a
-- [ ] 6.3 `mvn verify -pl backend-api` — n/a
+- [x] 6.1 `mvn test -pl backend-api` — n/a (no Java touched)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — n/a
+- [x] 6.3 `mvn verify -pl backend-api` — n/a
 - [ ] 6.4 Bruno/HTTP suites via `bash scripts/run_pipeline.sh`
-- [ ] 6.5 No `@Disabled` tests
+- [x] 6.5 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a product UI — no spec edits
+- [x] 7.1 n/a product UI — no spec edits
 - [ ] 7.2 Required Playwright CI job must still pass on the PR
-- [ ] 7.3 n/a responsive UI checks
-- [ ] 7.4 Record "n/a — no UI surface"
+- [x] 7.3 n/a responsive UI checks
+- [x] 7.4 Record "n/a — no UI surface"
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `CI-PREFLIGHT.md` portability note
-- [ ] 8.2 CU76 ID table and `CHANGELOG.md` entry
-- [ ] 8.3 Confirm archived deltas are folded into `openspec/specs/`
-- [ ] 8.4 Confirm no information was duplicated
+- [x] 8.1 `CI-PREFLIGHT.md` portability note
+- [x] 8.2 CU76 ID table and `CHANGELOG.md` entry
+- [x] 8.3 Confirm archived deltas are folded into `openspec/specs/`
+- [x] 8.4 Confirm no information was duplicated
 - [ ] 8.5 `bash scripts/preflight.sh` with no bypass
 
 ## 9. Commits atómicos
