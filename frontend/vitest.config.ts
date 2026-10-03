@@ -25,14 +25,16 @@ export default defineConfig({
         "src/app/layout.tsx",
         "src/app/providers.tsx",
       ],
-      // Enforced ratchet floor (see backend-api's JaCoCo gate for the same pattern):
-      // raise these as coverage improves, never lower them. Set below the actual
-      // measured coverage at introduction time (2026-07-29) to leave headroom.
+      // Enforced raise-only ratchet floor (mirrors backend JaCoCo; issue #976):
+      // raise these as coverage improves, never lower them without ADR/exception.
+      // Re-measured 2026-10-03 on origin/main @ 68dc2cac:
+      // Statements 15.09% / Branches 10.52% / Functions 11.97% / Lines 15.55%.
+      // Floors sit ~1pp below measured coverage for headroom.
       thresholds: {
-        statements: 10,
-        branches: 6,
-        functions: 9,
-        lines: 10,
+        statements: 14,
+        branches: 9,
+        functions: 10,
+        lines: 14,
       },
     },
   },

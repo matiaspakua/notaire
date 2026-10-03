@@ -237,6 +237,34 @@ To generate a coverage report:
 ```bash
 cd frontend
 npx vitest run --coverage
+# or: npm run test:coverage
 ```
 
-Coverage is reported via the Vitest `@vitest/coverage-v8` provider configured in `vitest.config.ts`.
+Coverage is reported via the Vitest `@vitest/coverage-v8` provider configured in
+`vitest.config.ts`.
+
+### Raise-only ratchet floor (#976, CU76)
+
+Global thresholds in `vitest.config.ts` are an **enforced raise-only floor**
+(same policy as backend JaCoCo). As of 2026-10-03 (measured on `main` @
+`68dc2cac`: Statements 15.09% / Branches 10.52% / Functions 11.97% / Lines
+15.55%):
+
+| Metric | Floor |
+|--------|-------|
+| Statements | 14% |
+| Branches | 9% |
+| Functions | 10% |
+| Lines | 14% |
+
+**How to ratchet:** re-measure with `npx vitest run --coverage`, set each floor
+strictly below the measured percentage (≥1pp headroom), update the comment dates
+in `vitest.config.ts`, update `.claude/rules/code-quality.md`, and bump
+`DOCUMENTED_VITEST_COVERAGE_FLOORS` in
+`src/tests/unit/vitest-coverage-thresholds.test.ts`. Never lower a floor to
+fix CI without an ADR/exception.
+
+**Historical note:** the original 6% branch floor (2026-07-29) was undercut in
+2026-09 (5.85%) when the coverage denominator grew faster than tests; later unit
+tests restored branches above 6%. #976 raises floors and locks the raise-only
+policy so that pattern does not recur silently.

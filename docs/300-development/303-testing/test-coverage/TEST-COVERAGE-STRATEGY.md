@@ -8,7 +8,7 @@ Comprehensive test coverage measurement and automated reporting across all layer
 |-------|------|----------|--------|
 | Backend (Java) | JaCoCo Lines | ~84% | 80% |
 | Backend (Java) | JaCoCo Branches | ~74% | 80% |
-| Frontend (React) | Vitest | see `frontend/vitest.config.ts` | see `frontend/vitest.config.ts` |
+| Frontend (React) | Vitest | ~15% lines / ~10% branches (2026-10-03) | raise-only floor 14/9/10/14 (stmt/branch/fn/line); target 80% |
 | E2E (UI) | Playwright | 33 spec files, per Caso de Uso | — |
 | API | Bruno (YAML suite) | 104 requests, 16 resources | — |
 
@@ -58,9 +58,14 @@ npm test -- Button.test.tsx
 open coverage/index.html
 ```
 
-### Thresholds
+### Thresholds (raise-only, #976)
 
-See `frontend/vitest.config.ts` for current thresholds.
+Enforced floor in `frontend/vitest.config.ts` (as of 2026-10-03): **14%**
+statements / **9%** branches / **10%** functions / **14%** lines. Raise as
+coverage improves; never lower without ADR/exception. Policy and root-cause
+note for the historical <6% branch failure: `.claude/rules/code-quality.md`
+and [`FRONTEND-TESTING-GUIDE.md`](../FRONTEND-TESTING-GUIDE.md). Guard test:
+`frontend/src/tests/unit/vitest-coverage-thresholds.test.ts`.
 
 ## E2E Testing (Playwright)
 

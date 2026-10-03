@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `/dashboard/administracion/{items,auditoria}` to canonical routes; E2E
   discovers modules via sidebar (`nav-*` test ids) instead of deep `goto`.
 
+- **Frontend Vitest branch coverage floor undercut on main** (issue #976, CU76):
+  root cause was an aspirational 6% branch floor (2026-07-29) later briefly
+  undercut (5.85% in 2026-09) as coverage denominators grew; subsequent unit
+  tests restored branches above 6%. Re-measured on `main` @ `68dc2cac`
+  (Statements 15.09% / Branches 10.52% / Functions 11.97% / Lines 15.55%) and
+  raised raise-only floors to 14 / 9 / 10 / 14 with ~1pp headroom; documented
+  policy in `code-quality.md` + frontend testing guides; guard test
+  `vitest-coverage-thresholds.test.ts`.
+
 ### Changed
 
 - **Repo hygiene** (issue #1050, CU76): remove global `*.txt` gitignore ban
