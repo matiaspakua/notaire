@@ -20,7 +20,7 @@ What each suite verifies and where it touches the application. The project-level
 
 `run.sh integration` checks that the API answers, runs `integration/http/test-all-endpoints-v2.sh`
 (strict-mode cURL assertions over the main resources) and then
-`integration/e2e-login-and-stack.sh` (database, backend and login in one pass).
+`integration/e2e-login-and-stack.sh` (backend health, login, then authorization: an anonymous call is rejected with 401 and the login token is accepted with 200). The stack smoke had never run before this suite wired it in; it failed on macOS because of a GNU-only `head -n -1`, and its last step could not fail.
 
 ## Database suite
 

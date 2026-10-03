@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   12.4.0 CLI and checks history, configuration, the V12 exporter role, seed data, schema, renamed
   tables, idempotence and tamper detection, with its own `database-vv.yml` workflow and a matching
   `preflight.sh --full` gate. The cURL suite moved to `testing/integration/` and honours
-  `BASE_URL`. New guides under `testing/docs/` (preparation, configuration, definition,
+  `BASE_URL`; the stack smoke script, previously never run, now works on macOS and asserts
+  authorization. New guides under `testing/docs/` (preparation, configuration, definition,
   operation). Removed: `run-all-tests.sh`, `scripts/test-all.sh`, `scripts/run-comprehensive-tests.sh`,
   the duplicate root `generate-coverage-report.sh` and the committed 2026-04 reports. k6 stays in
   `infra/`; Playwright moves in phase 2 (#1192). Guard: `scripts/test_testing_standalone.py`.
