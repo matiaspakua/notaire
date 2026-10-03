@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1041-no-bot-commits-main/` | Gate 1 validated |
 | Branch | `cursor/fix-1041-no-bot-commits-main-69d3` | created from `origin/main` @ `4159791f` |
 | Tasks | `tasks.md` | implement in progress |
-| Commits | pending (recorded after push) | pending |
-| Pull Request | pending | pending |
+| Commits | `bc7b0a8a`, `f6598cc7`, `b320c8e6` | pushed |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1159 | draft |
 | CI run | — | pending |
 | Merge commit | — | pending (coordinator after heavy CI) |
 | Release / tag | — | pending |
