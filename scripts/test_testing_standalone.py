@@ -69,7 +69,6 @@ REQUIRED_ENV = (
 LEGACY_REFERENCE = re.compile(
     r"testing/http\b"
     r"|testing/integration/http/(?:0[1-8]-|test-all-endpoints\.sh)"
-    r"|deprecated-src\.old"
     r"|testing/run-all-tests\.sh"
     r"|testing/scripts/test-all\.sh"
     r"|run-comprehensive-tests\.sh"

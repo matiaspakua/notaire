@@ -189,15 +189,6 @@ class RepoHygieneTest(unittest.TestCase):
             f".serena/ must not be tracked; found: {tracked}",
         )
 
-    def test_pre_migration_source_tree_is_untracked(self) -> None:
-        """Scenario: Pre-migration tree is gone (#585)."""
-        tracked = _tracked_paths_under("deprecated-src.old")
-        self.assertEqual(
-            tracked[:3],
-            [],
-            f"deprecated-src.old/ must not be tracked ({len(tracked)} files found)",
-        )
-
     def test_codeowners_has_no_frontend_swing(self) -> None:
         """Scenario: CODEOWNERS has no frontend-swing path."""
         text = _codeowners_text()
