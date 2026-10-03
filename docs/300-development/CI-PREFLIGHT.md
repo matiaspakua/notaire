@@ -83,6 +83,9 @@ PREFLIGHT_FAST=1 git push …    # format/lint/compile/typecheck only
 git push --no-verify …         # git's built-in hook bypass
 ```
 
+A bypass is for a documented, known reason (name it in the PR description), never to get past
+a failure you have not diagnosed. On a clean `main` the gates must pass without one (#1185).
+
 ## The git-worktree caveat
 
 Spotless resolves the repository through JGit, which walks parent directories
@@ -153,6 +156,11 @@ mirrors, and `--list` prints the mapping, so drift is easy to spot in review.
 
 Checks that CI runs with `|| true` (Checkstyle) are non-blocking here too, so
 local severity matches CI severity rather than being stricter.
+
+Scripts that run in the gates must work with both BSD (macOS) and GNU (Linux)
+tools. CI runs on Linux and developers on macOS, so a GNU-only idiom passes CI and
+fails locally: `sed -i -E ...` reads `-E` as the backup suffix on BSD sed (#1185).
+Edit through a temporary file (`sed -E ... f > f.new && mv f.new f`) instead of `sed -i`.
 
 The `sdlc-process.yml` checks run locally against `origin/main..HEAD`. The
 `sdlc-exception` label check needs the PR's labels, so preflight reads them

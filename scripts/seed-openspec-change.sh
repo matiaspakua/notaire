@@ -106,6 +106,13 @@ seed_one design.md
 seed_one tasks.md
 seed_one traceability.md
 
+# BSD and GNU sed disagree on `-i`, so edit through a temp file instead.
+sed_edit() {
+  local file="$1"
+  shift
+  sed -E "$@" "$file" > "$file.new" && mv "$file.new" "$file"
+}
+
 fill_known_values() {
   local file="$1"
   [ -f "$file" ] || return 0
@@ -115,36 +122,32 @@ fill_known_values() {
 
   if [ -n "$ISSUE" ]; then
     # proposal header + traceability chain placeholders
-    sed -i -E \
+    sed_edit "$tmp" \
       -e "s/\|[[:space:]]*GitHub Issue[[:space:]]*\|[[:space:]]*#?<!--[^|]*-->[[:space:]]*\|/| GitHub Issue | #${ISSUE} |/" \
-      -e "s/\|[[:space:]]*Issue[[:space:]]*\|[[:space:]]*#?<!--[^|]*-->[[:space:]]*\|[^|]*\|/| Issue | #${ISSUE} | in-progress |/" \
-      "$tmp"
+      -e "s/\|[[:space:]]*Issue[[:space:]]*\|[[:space:]]*#?<!--[^|]*-->[[:space:]]*\|[^|]*\|/| Issue | #${ISSUE} | in-progress |/"
   fi
 
   if [ -n "$USE_CASE" ]; then
     # Escape sed replacement metacharacters in USE_CASE
     local uc_esc
     uc_esc="$(printf '%s' "$USE_CASE" | sed -e 's/[&|\\]/\\&/g')"
-    sed -i -E \
+    sed_edit "$tmp" \
       -e "s/\|[[:space:]]*Use Case[[:space:]]*\|[[:space:]]*<!--[^|]*-->[[:space:]]*\|/| Use Case | ${uc_esc} |/" \
-      -e "s/\|[[:space:]]*Use Case[[:space:]]*\|[[:space:]]*<!--[^|]*-->[[:space:]]*\|[^|]*\|/| Use Case | ${uc_esc} | exists |/" \
-      "$tmp"
+      -e "s/\|[[:space:]]*Use Case[[:space:]]*\|[[:space:]]*<!--[^|]*-->[[:space:]]*\|[^|]*\|/| Use Case | ${uc_esc} | exists |/"
   fi
 
   if [ -n "$BRANCH" ]; then
     local br_esc
     br_esc="$(printf '%s' "$BRANCH" | sed -e 's/[&|\\]/\\&/g')"
-    sed -i -E \
+    sed_edit "$tmp" \
       -e "s#\|[[:space:]]*Branch[[:space:]]*\|[[:space:]]*\`<type>/[^\\\`]*\`[[:space:]]*\|#| Branch | \`${br_esc}\` |#" \
-      -e "s#\|[[:space:]]*Branch[[:space:]]*\|[[:space:]]*\`<type>/[^\\\`]*\`[[:space:]]*\|[^|]*\|#| Branch | \`${br_esc}\` | created |#" \
-      "$tmp"
+      -e "s#\|[[:space:]]*Branch[[:space:]]*\|[[:space:]]*\`<type>/[^\\\`]*\`[[:space:]]*\|[^|]*\|#| Branch | \`${br_esc}\` | created |#"
   fi
 
   # Always point the Specification path at this change name when still templated.
-  sed -i -E \
+  sed_edit "$tmp" \
     -e "s#openspec/changes/<change-name>/#openspec/changes/${CHANGE_NAME}/#g" \
-    -e "s#\|[[:space:]]*Specification[[:space:]]*\|[[:space:]]*\`openspec/changes/<change-name>/\`[[:space:]]*\|[^|]*\|#| Specification | \`openspec/changes/${CHANGE_NAME}/\` | seeded |#" \
-    "$tmp"
+    -e "s#\|[[:space:]]*Specification[[:space:]]*\|[[:space:]]*\`openspec/changes/<change-name>/\`[[:space:]]*\|[^|]*\|#| Specification | \`openspec/changes/${CHANGE_NAME}/\` | seeded |#"
 
   mv "$tmp" "$file"
 }
