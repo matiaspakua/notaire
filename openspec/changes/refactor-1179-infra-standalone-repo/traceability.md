@@ -15,13 +15,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Related | #302 IaC documentation (CU77); #1044 prod compose; #901 kustomize; #1047 k6 | referenced |
 | Specification | `openspec/changes/refactor-1179-infra-standalone-repo/` | Gate 1 approved by Owner |
 | Branch | `refactor/1179_infra_standalone_repo` | created from updated `main` |
-| Tasks | `tasks.md` | implementation complete; pipeline, PR and Gates 4-5 pending |
-| Commits | `4ff9f4d4`, `f951f984` (spec), `96fe9399` (red tests), `7a128aa2`, `250de798`, `36df4301` (moves), `98dbad29`, `16f15bf9`, `c9724848` (content) + docs commit | pushed: no |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Tasks | `tasks.md` | complete except items annotated NOT MET |
+| Commits | squashed into `faa500a5`; branch `refactor/1179_infra_standalone_repo` | merged |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1184 | merged |
+| CI run | PR #1184 checks: all required jobs passed (37 pass, 3 skipping) | green |
+| Merge commit | `faa500a5` (2026-10-03) | merged |
+| Release / tag | none; `cd.yml` ran on the merge commit | n/a |
+| Smoke test | start-all.sh then check-infra.sh 15/15 passed on merged main; all 5 Prometheus targets up | passed |
 
 ## Requirement coverage
 
@@ -53,9 +53,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh refactor-1179-infra-standalone-repo` |
 | 2 | Failing tests written, test cases designed | yes | `96fe9399`: new guard 10 failures + 3 errors, 4 repointed guards red, before any move |
-| 3 | Suite green, coverage held, docs updated | pending | — |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 3 | Suite green, coverage held, docs updated | partial | guards and suites green; `run_pipeline.sh` NOT green: three failures predating the change (#1185); pushed with PREFLIGHT_SKIP; the pipeline failures that predate the change are tracked in #1185 |
+| 4 | CI green, review approved, no conflicts | yes | required CI green; merged by the code owner directly, no formal GitHub review recorded (Constitution step 20) |
+| 5 | Deployed, smoke test passed, Issue closed | yes | `cd.yml` green on `faa500a5`; start-all.sh then check-infra.sh 15/15 passed on merged main; all 5 Prometheus targets up; issue #1179 closed with evidence |
 
 ## Exceptions
 

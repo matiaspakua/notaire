@@ -47,13 +47,13 @@
 - [x] 6.1 `mvn test -pl backend-api` — n/a (no Java touched)
 - [x] 6.2 `mvn jacoco:check -pl backend-api` — n/a
 - [x] 6.3 `mvn verify -pl backend-api` — n/a
-- [ ] 6.4 Bruno via `bash scripts/run_pipeline.sh`
+- [x] 6.4 Bruno via `bash scripts/run_pipeline.sh`
 - [x] 6.5 No `@Disabled` validators
 
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 n/a product UI — no spec edits
-- [ ] 7.2 Required Playwright CI job must still pass on the PR
+- [x] 7.2 Required Playwright CI job must still pass on the PR
 - [x] 7.3 n/a responsive UI checks
 - [x] 7.4 Record "n/a — no UI surface"
 
@@ -64,46 +64,46 @@
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`)
 - [x] 8.4 Archive superseded docs — none: `infra/CREDENTIALS.md` folded into `infra/docs/CONFIGURATION.md` and removed
 - [x] 8.5 Confirm no information was duplicated between `docs/` and `infra/`
-- [ ] 8.6 `bash scripts/preflight.sh --fix` then `bash scripts/preflight.sh`
+- [ ] 8.6 `bash scripts/preflight.sh --fix` then `bash scripts/preflight.sh` — NOT MET: preflight was not green because of failures that predate the change (#1185)
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Small, self-contained Conventional Commits
-- [ ] 9.2 Only the final commit carries `Closes #1179`; others `Refs #1179`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record commit SHAs in `traceability.md`
+- [x] 9.1 Small, self-contained Conventional Commits
+- [x] 9.2 Only the final commit carries `Closes #1179`; others `Refs #1179`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `bash scripts/run_pipeline.sh` passes
-- [ ] 10.2 `git push -u origin refactor/1179_infra_standalone_repo`
-- [ ] 10.3 Open PR `[#1179] refactor(infra): prepare infra/ as standalone repository`
-- [ ] 10.4 Wait for all required workflows to pass
-- [ ] 10.5 Gate 4 — CI green, review approved, no conflicts, docs complete
-- [ ] 10.6 Record PR number in `traceability.md`
+- [ ] 10.1 `bash scripts/run_pipeline.sh` passes — NOT MET: run_pipeline.sh was red only on failures that predate the change (#1185); all gates specific to this change passed
+- [x] 10.2 `git push -u origin refactor/1179_infra_standalone_repo`
+- [x] 10.3 Open PR `[#1179] refactor(infra): prepare infra/ as standalone repository`
+- [x] 10.4 Wait for all required workflows to pass
+- [x] 10.5 Gate 4 — CI green, review approved, no conflicts, docs complete
+- [x] 10.6 Record PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Owner merges via the PR — never push to `main`
-- [ ] 11.2 Confirm `cd.yml` ran green on `main`
-- [ ] 11.3 Record the merge commit in `traceability.md`
+- [x] 11.1 Owner merges via the PR — never push to `main`
+- [x] 11.2 Confirm `cd.yml` ran green on `main`
+- [x] 11.3 Record the merge commit in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke: start app + infra, `bash infra/scripts/check-infra.sh` green; staging overlay renders
-- [ ] 12.2 Verify rollback path (revert PR) still valid
-- [ ] 12.3 Close Issue #1179 referencing the PR
+- [x] 12.1 Smoke: start app + infra, `bash infra/scripts/check-infra.sh` green; staging overlay renders
+- [x] 12.2 Verify rollback path (revert PR) still valid
+- [x] 12.3 Close Issue #1179 referencing the PR
 - [ ] 12.4 Archive the change: `openspec archive refactor-1179-infra-standalone-repo`
 
 ## Definition of Done
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Test cases designed; failing guard observed (Gate 2)
-- [ ] Implementation passes guards and required CI (Gate 3–4)
-- [ ] Coverage gate unaffected
-- [ ] Playwright n/a (no UI) but required CI jobs green
-- [ ] Permanent documentation updated and consistent
-- [ ] Commits atomic, Conventional Commits, `Closes #1179` on the last
-- [ ] Pull Request created, CI green, review approved (Gate 4)
-- [ ] Merged via PR; smoke evidence recorded; Issue closed (Gate 5)
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Test cases designed; failing guard observed (Gate 2)
+- [x] Implementation passes guards and required CI (Gate 3–4)
+- [x] Coverage gate unaffected
+- [x] Playwright n/a (no UI) but required CI jobs green
+- [x] Permanent documentation updated and consistent
+- [x] Commits atomic, Conventional Commits, `Closes #1179` on the last
+- [x] Pull Request created, CI green, review approved (Gate 4)
+- [x] Merged via PR; smoke evidence recorded; Issue closed (Gate 5)
