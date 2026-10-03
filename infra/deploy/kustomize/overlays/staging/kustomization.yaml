@@ -6,7 +6,7 @@
 #     notaire-backend=ghcr.io/matiaspakua/notaire/backend:<sha> \
 #     notaire-frontend=ghcr.io/matiaspakua/notaire/frontend:<sha>
 #
-# Or edit newTag below, then: kubectl apply -k deploy/kustomize/overlays/staging
+# Or edit newTag below, then: kubectl apply -k infra/deploy/kustomize/overlays/staging
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 

@@ -16,7 +16,7 @@ remains **publish-only** — apply these manifests manually to a real cluster.
 ## Layout
 
 ```
-deploy/kustomize/
+infra/deploy/kustomize/
   base/                 # shared resources
   overlays/staging/     # GHCR SHA image tags + staging labels
 ```
@@ -25,13 +25,13 @@ deploy/kustomize/
 
 ```bash
 # Requires kustomize v5+
-kustomize build deploy/kustomize/overlays/staging
+kustomize build infra/deploy/kustomize/overlays/staging
 
 # Static AC guard (issue #901)
 python3 scripts/test_staging_kustomize.py
 
 # Apply (after replacing Secret placeholders + image SHAs)
-kubectl apply -k deploy/kustomize/overlays/staging
+kubectl apply -k infra/deploy/kustomize/overlays/staging
 ```
 
 See `docs/200-architecture/209-deployment/README.md` for Secret keys, image

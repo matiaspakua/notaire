@@ -13,9 +13,17 @@ resources:
   - backend-service.yaml
   - frontend-deployment.yaml
   - frontend-service.yaml
-  - reverse-proxy-configmap.yaml
   - reverse-proxy-deployment.yaml
   - reverse-proxy-service.yaml
+
+configMapGenerator:
+  - name: reverse-proxy-nginx
+    namespace: notaire
+    files:
+      - nginx.conf
+    options:
+      labels:
+        app: reverse-proxy
 
 labels:
   - pairs:
