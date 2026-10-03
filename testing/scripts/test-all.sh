@@ -92,9 +92,9 @@ fi
 echo ""
 echo "Running tests in the following order:"
 echo "  1. Unit tests (backend-api)"
-echo "  2. Unit tests (frontend-swing)"
-echo "  3. Integration tests (backend-api)"
-echo "  4. Coverage analysis"
+echo "  2. Integration tests (backend-api)"
+echo "  3. Coverage analysis"
+echo "  (Swing / frontend-swing removed — #811; UI unit tests: cd frontend && npm test)"
 echo ""
 
 # ============================================
@@ -111,21 +111,9 @@ else
 fi
 
 # ============================================
-# Phase 2: Unit Tests - Frontend Swing
+# Phase 2: Integration Tests - Backend API
 # ============================================
-print_header "Phase 2: Frontend Swing Unit Tests"
-
-if mvn test -pl frontend-swing -DskipTests=false; then
-    print_success "Frontend Swing unit tests passed"
-else
-    print_error "Frontend Swing unit tests failed"
-    exit 1
-fi
-
-# ============================================
-# Phase 3: Integration Tests - Backend API
-# ============================================
-print_header "Phase 3: Backend API Integration Tests"
+print_header "Phase 2: Backend API Integration Tests"
 
 if check_docker; then
     print_info "Running integration tests (Docker available)..."
@@ -140,9 +128,9 @@ else
 fi
 
 # ============================================
-# Phase 4: Coverage Analysis
+# Phase 3: Coverage Analysis
 # ============================================
-print_header "Phase 4: Coverage Analysis"
+print_header "Phase 3: Coverage Analysis"
 
 cd "$REPO_DIR"
 print_info "Generating JaCoCo coverage report..."
@@ -165,11 +153,11 @@ print_header "Test Summary"
 echo ""
 echo "Test Results:"
 echo "  - Backend API unit tests: $(mvn test -pl backend-api -Dtest="**/unit/*" -q 2>&1 | grep -E "Tests run:" | tail -1 || echo 'See Maven output')"
-echo "  - Frontend Swing tests: $(mvn test -pl frontend-swing -q 2>&1 | grep -E "Tests run:" | tail -1 || echo 'See Maven output')"
+echo "  - Frontend (Next.js) unit: cd frontend && npm test"
+echo "  - UI E2E (Playwright): cd frontend && npm run test:e2e"
 echo ""
 echo "Reports location:"
 echo "  - Backend API: backend-api/target/surefire-reports/"
-echo "  - Frontend Swing: frontend-swing/target/surefire-reports/"
 echo "  - Coverage: backend-api/target/site/jacoco/index.html"
 echo ""
 

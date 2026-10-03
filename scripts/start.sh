@@ -6,7 +6,7 @@
 #   - Backend API  (port 8080)    — Spring Boot, JWT auth, Actuator health
 #   - Next.js Frontend (port 3000)
 #   - pgAdmin (port 5050)         — optional (--no-admin)
-#   - Swing GUI                   — optional (--frontend)
+#   - Next.js frontend hint       — optional (--frontend); Swing GUI removed (#811)
 #
 # All service credentials come from the single root .env file (git-ignored).
 # Flyway is the single source of truth for the database schema; PostgreSQL
@@ -57,7 +57,7 @@ while [[ $# -gt 0 ]]; do
             echo "Usage: $0 [OPTIONS]"
             echo ""
             echo "Options:"
-            echo "  -f, --frontend    Start the Swing frontend GUI after backend is ready"
+            echo "  -f, --frontend    Print Next.js start instructions (Swing GUI removed; #811)"
             echo "  -s, --skip-build  Skip Maven build (use existing Docker images)"
             echo "  -a, --admin       Start pgAdmin for database management (default: true)"
             echo "  --no-frontend     Don't start the Swing frontend GUI (default mode)"
@@ -275,35 +275,13 @@ echo -e "  Username:     ${YELLOW}$POSTGRES_USER${NC} (app login: $APP_ADMIN_USE
 echo ""
 echo ""
 
-# Start Frontend Swing application if requested
+# Next.js is the active client; Swing GUI was removed (#811 / ADR-005).
 if [ "$START_FRONTEND" = true ]; then
-    echo -e "${YELLOW}Step $STEP: Starting Frontend Swing application...${NC}"
+    echo -e "${YELLOW}Step $STEP: Frontend (Next.js) — Swing GUI retired (#811)${NC}"
     STEP=$((STEP + 1))
-
-    # Check if DISPLAY is available (for GUI)
-    if [ -z "$DISPLAY" ] && [ "$(uname)" != "Darwin" ]; then
-        echo -e "${RED}✗ No DISPLAY environment variable set. Cannot start GUI.${NC}"
-        echo -e "  Set DISPLAY or run on a system with a graphical environment."
-        exit 1
-    fi
-
-    FRONTEND_JAR="$REPO_DIR/frontend-swing/target/frontend-swing-1.0-SNAPSHOT-jar-with-dependencies.jar"
-
-    if [ ! -f "$FRONTEND_JAR" ]; then
-        echo -e "${RED}✗ Frontend JAR not found at: $FRONTEND_JAR${NC}"
-        echo -e "  Run without --skip-build to build the frontend first."
-        exit 1
-    fi
-
-    echo -e "${GREEN}✓ Starting Swing GUI with dependencies...${NC}"
-    # Run frontend in background
-    java -jar "$FRONTEND_JAR" &
-    FRONTEND_PID=$!
-    echo -e "${GREEN}✓ Frontend started (PID: $FRONTEND_PID)${NC}"
-    echo ""
-    echo -e "${BLUE}Frontend:${NC}"
-    echo -e "  Process ID:   ${YELLOW}$FRONTEND_PID${NC}"
-    echo -e "  Stop with:    ${YELLOW}kill $FRONTEND_PID${NC}"
+    echo -e "${GREEN}✓ Backend stack is up. Start the web client with:${NC}"
+    echo -e "  ${YELLOW}cd frontend && npm install && npm run dev${NC}"
+    echo -e "  UI E2E: ${YELLOW}cd frontend && npm run test:e2e${NC}"
     echo ""
 fi
 
@@ -315,6 +293,6 @@ if [ "$WITH_ADMIN" = true ]; then
     echo -e "  pgAdmin setup:   ${YELLOW}bash scripts/setup-pgadmin.sh${NC}"
 fi
 if [ "$START_FRONTEND" = false ]; then
-    echo -e "  Start frontend:   ${YELLOW}java -jar frontend-swing/target/frontend-swing-1.0-SNAPSHOT-jar-with-dependencies.jar${NC}"
+    echo -e "  Start frontend:   ${YELLOW}cd frontend && npm run dev${NC}"
 fi
 echo ""

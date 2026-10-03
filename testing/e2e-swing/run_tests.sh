@@ -1,21 +1,25 @@
 #!/bin/bash
-# Run Robot Framework E2E tests for Notaire Swing frontend.
-# Usage: bash run_tests.sh [--test "Test Name"] [--suite suite_name] [--dryrun]
+# RETIRED (#811 / CU76 / ADR-012): Swing Robot E2E is hard-deprecated.
+# Do not wire this script into CI. Active E2E: frontend/tests/e2e (Playwright).
 #
 # Exit codes:
-#   0 = all tests passed
-#   1 = test failures
-#   2 = environment error
+#   2 = retired / environment error (always for this script)
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
+
+echo -e "${RED}testing/e2e-swing is RETIRED (issue #811).${NC}"
+echo "Swing modules and e2e-swing.yml are gone. Use Playwright:"
+echo "  cd frontend && npm run test:e2e"
+echo "See testing/e2e-swing/README.md"
+exit 2
+
+# --- historical body kept below for reference; unreachable ---
 
 # Check venv exists
 if [ ! -d ".venv" ]; then
