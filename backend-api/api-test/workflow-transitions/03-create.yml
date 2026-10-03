@@ -1,0 +1,33 @@
+info:
+  name: Create workflow transition
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU76 / CU83
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/workflow-transition"
+  body:
+    type: json
+    data: |-
+        {
+          "workflowDefinitionId": {{wf_tr_def_id}},
+          "originNodeId": {{wf_tr_origin_id}},
+          "destinationNodeId": {{wf_tr_dest_id}},
+          "condition": null,
+          "description": "e2e transition"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns id", function () {
+            expect(res.getBody()).to.have.property('id');
+            bru.setVar('wf_tr_id', res.getBody().id);
+          });

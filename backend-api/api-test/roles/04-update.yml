@@ -1,0 +1,31 @@
+info:
+  name: Update role
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU76 (RF QA Bruno #953)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/roles/{{roles_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "{{roles_name}}-upd",
+          "description": "updated",
+          "active": true,
+          "modulos": ["GESTIONES", "ADMIN"]
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Name updated", function () {
+            expect(res.getBody().name).to.equal(bru.getVar('roles_name') + '-upd');
+          });

@@ -1,0 +1,22 @@
+info:
+  name: Get folder by ID
+  type: http
+  seq: 5
+  description: |-
+      Traceability: CU85
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/carpetas/{{pf_folder_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns idFolder", function () {
+            expect(res.getBody().idFolder).to.equal(Number(bru.getVar('pf_folder_id')));
+          });

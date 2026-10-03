@@ -1,0 +1,24 @@
+info:
+  name: List available auxiliary folios
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU81
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/protocolo-auxiliar/folios-disponibles"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Response is array containing our folio", function () {
+            const id = Number(bru.getVar('ap_folio_id'));
+            expect(res.getBody()).to.be.an('array');
+            expect(res.getBody().some(x => x.idFolio === id)).to.equal(true);
+          });

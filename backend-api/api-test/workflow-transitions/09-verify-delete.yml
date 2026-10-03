@@ -1,0 +1,19 @@
+info:
+  name: Verify workflow transition deleted
+  type: http
+  seq: 10
+  description: |-
+      Traceability: CU76 / CU83
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/workflow-transition/{{wf_tr_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 after delete", function () { expect(res.getStatus()).to.equal(404); });

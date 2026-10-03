@@ -1,0 +1,34 @@
+info:
+  name: Validate workflow definition
+  type: http
+  seq: 3
+  description: |-
+      ## Validate — POST /api/v1/workflow-definition/{id}/validate
+      Incomplete graphs may be invalid; assert structured response.
+      Traceability: CU76 / CU83
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/workflow-definition/{{wf_val_def_id}}/validate"
+  body:
+    type: json
+    data: |-
+        {}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Body has valid boolean", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('valid');
+            expect(b.valid).to.be.a('boolean');
+          });
+          test("Body has errors array", function () {
+            expect(res.getBody()).to.have.property('errors');
+            expect(res.getBody().errors).to.be.an('array');
+          });

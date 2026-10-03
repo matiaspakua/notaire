@@ -1,0 +1,31 @@
+info:
+  name: Create copy
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU70 (RF QA Bruno #953)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/copia"
+  body:
+    type: json
+    data: |-
+        {"number": {{copies_number}}, "datePrinting": "2026-09-05", "notes": "Bruno E2E copy"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('copies_number', 1000 + (Date.now() % 9000));
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idCopy", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idCopy');
+            bru.setVar('copies_id', b.idCopy);
+          });

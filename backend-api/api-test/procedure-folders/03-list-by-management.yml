@@ -1,0 +1,25 @@
+info:
+  name: List folders by management
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU85
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/carpetas?managementId={{pf_mgmt_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("At least one folder", function () {
+            const b = res.getBody();
+            expect(b).to.be.an('array');
+            expect(b.length).to.be.at.least(1);
+            bru.setVar('pf_folder_id', b[0].idFolder);
+          });

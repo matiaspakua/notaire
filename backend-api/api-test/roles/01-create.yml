@@ -1,0 +1,40 @@
+info:
+  name: Create role
+  type: http
+  seq: 1
+  description: |-
+      ## Create role — POST /api/v1/roles
+      Traceability: CU76 (RF QA Bruno #953)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/roles"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "{{roles_name}}",
+          "description": "Bruno E2E role",
+          "active": true,
+          "modulos": ["GESTIONES"]
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('roles_name', 'e2e-role-' + Date.now());
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idRole", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idRole');
+            bru.setVar('roles_id', b.idRole);
+          });
+          test("Name matches", function () {
+            expect(res.getBody().name).to.equal(bru.getVar('roles_name'));
+          });

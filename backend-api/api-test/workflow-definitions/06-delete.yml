@@ -1,0 +1,19 @@
+info:
+  name: Delete workflow definition
+  type: http
+  seq: 6
+  description: |-
+      Traceability: CU76 / CU83
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/workflow-definition/{{wf_def_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });

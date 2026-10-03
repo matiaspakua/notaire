@@ -1,0 +1,36 @@
+info:
+  name: Setup - Complete case (creates folder)
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU85
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/gestiones/complete-case"
+  body:
+    type: json
+    data: |-
+        {
+          "number": {{pf_mgmt_number}},
+          "encabezado": "Bruno folder management",
+          "budgetId": {{pf_budget_id}},
+          "notaryId": {{pf_notary_id}},
+          "statusManagementId": 1,
+          "typeProcedureId": 1
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores management id", function () {
+            const b = res.getBody();
+            const id = b.idManagement || b.id;
+            expect(id).to.be.a('number');
+            bru.setVar('pf_mgmt_id', id);
+          });

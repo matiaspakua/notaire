@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Bruno API coverage for sixteen previously uncovered controllers** (issue #953,
+  CU76): OpenCollection folders for roles, workflows (+ validate), copies,
+  submitted-documents, testimonies, testimony-movements, managements, notebooks,
+  auxiliary-protocol, procedure-folders, document-cost-templates, reports
+  (representative PDFs), and registration-drafts (404/action surface); suite now
+  297 requests / 508 tests, idempotent double `bru run`; docs/matrix updated.
+
 ### Fixed
+
+- **`GET /testimonio/{id}` and `GET /movimiento-testimonio` failed when deed was null**
+  (issue #953, CU07/CU08/CU12): `Testimony.fkIdDeed` was `@ManyToOne(optional =
+  false)`, so Hibernate INNER JOINed `deeds` and findById/list missed valid rows
+  with a null FK; set `optional = true` to match the nullable column.
+
 
 - **Persona form swallowed non-409 backend validation** (issue #945, CU17/CU61):
   present create/update errors via `presentPersonaSaveError` so HTTP 400

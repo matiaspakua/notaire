@@ -1,0 +1,22 @@
+info:
+  name: Verify testimony movement update
+  type: http
+  seq: 6
+  description: |-
+      Traceability: CU12
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/movimiento-testimonio/{{tm_movement_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Notes updated", function () {
+            expect(String(res.getBody().notes)).to.equal('Bruno E2E movement updated');
+          });

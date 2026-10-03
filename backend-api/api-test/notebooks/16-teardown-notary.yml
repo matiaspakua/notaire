@@ -1,0 +1,21 @@
+info:
+  name: Teardown - Delete notary (may 409 if linked)
+  type: http
+  seq: 16
+  description: |-
+      Traceability: CU80
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/people/{{nb_notary_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200/204 or 409 if linked", function () {
+            expect([200,204,409]).to.include(res.getStatus());
+          });

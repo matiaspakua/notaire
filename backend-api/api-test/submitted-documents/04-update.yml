@@ -1,0 +1,23 @@
+info:
+  name: Update submitted document
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU72
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/documento-presentado/{{submitted_doc_id}}"
+  body:
+    type: json
+    data: |-
+        {"typeId": 1, "date": "2026-09-06", "delivered": true, "name": "Bruno E2E submitted doc updated"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect([200,204]).to.include(res.getStatus()); });

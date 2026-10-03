@@ -1,0 +1,35 @@
+info:
+  name: Create workflow definition
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU76 / CU83 (RF QA Bruno #953)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/workflow-definition"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "{{wf_def_name}}",
+          "description": "Bruno E2E workflow",
+          "active": true
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('wf_def_name', 'e2e-wf-' + Date.now());
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns id", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('id');
+            bru.setVar('wf_def_id', b.id);
+          });

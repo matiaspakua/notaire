@@ -1,0 +1,29 @@
+info:
+  name: Update workflow node
+  type: http
+  seq: 5
+  description: |-
+      Traceability: CU76 / CU83
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/workflow-node/{{wf_node_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "workflowDefinitionId": {{wf_nodes_def_id}},
+          "statusManagementId": 1,
+          "type": "INTERMEDIATE",
+          "positionX": 30,
+          "positionY": 40
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect([200,204]).to.include(res.getStatus()); });

@@ -1,0 +1,24 @@
+info:
+  name: Verify submitted document update
+  type: http
+  seq: 5
+  description: |-
+      Traceability: CU72
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/documento-presentado/{{submitted_doc_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Date and delivered updated", function () {
+            const b = res.getBody();
+            expect(String(b.date)).to.equal('2026-09-06');
+            expect(b.delivered).to.equal(true);
+          });

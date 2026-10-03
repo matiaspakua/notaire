@@ -1,0 +1,30 @@
+info:
+  name: Setup - Create auxiliary folio type
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU81 (RF QA Bruno #953)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-folio"
+  body:
+    type: json
+    data: |-
+        {"name":"{{ap_ft_name}}","notes":"aux protocol fixture","isAuxiliary":true}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('ap_ft_name', 'e2e-aux-ft-' + Date.now());
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores folio type id", function () {
+            expect(res.getBody().isAuxiliary).to.equal(true);
+            bru.setVar('ap_ft_id', res.getBody().idFolioType);
+          });

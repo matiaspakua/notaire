@@ -1,0 +1,30 @@
+info:
+  name: Setup - Create procedure type
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU26 / CU39 (RF QA Bruno #953)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-tramite"
+  body:
+    type: json
+    data: |-
+        {"name":"{{dct_pt_name}}","notes":"cost template fixture","isArchived":false,"isRegistered":false}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('dct_pt_name', 'e2e-dct-pt-' + Date.now());
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores procedure type id", function () {
+            expect(res.getBody()).to.have.property('idProcedureType');
+            bru.setVar('dct_pt_id', res.getBody().idProcedureType);
+          });

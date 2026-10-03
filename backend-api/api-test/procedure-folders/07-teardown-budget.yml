@@ -1,0 +1,19 @@
+info:
+  name: Teardown - Delete budget (may 409)
+  type: http
+  seq: 8
+  description: |-
+      Traceability: CU85
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/presupuestos/{{pf_budget_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200/204/400/409", function () { expect([200,204,400,409]).to.include(res.getStatus()); });

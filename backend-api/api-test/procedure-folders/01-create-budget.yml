@@ -1,0 +1,30 @@
+info:
+  name: Setup - Create budget
+  type: http
+  seq: 2
+  description: |-
+      Traceability: CU01 / CU85
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/presupuestos"
+  body:
+    type: json
+    data: |-
+        {
+          "person": { "personId": 1 },
+          "date": "2026-09-05",
+          "encabezado": "Bruno folder budget",
+          "status": "Pendiente",
+          "notes": "folder fixture"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores budget id", function () { bru.setVar('pf_budget_id', res.getBody().idBudget); });
