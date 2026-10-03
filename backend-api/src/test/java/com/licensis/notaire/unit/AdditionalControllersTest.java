@@ -207,10 +207,10 @@ class AdditionalControllersTest {
                             .ManagementSummaryDto(1, "En Progreso"));
             when(transitionUseCase.execute(1, "Estado Inexistente"))
                     .thenThrow(new com.licensis.notaire.exception.BusinessValidationException(
-                            "Transición no permitida"));
+                            "Transition not allowed"));
             when(transitionUseCase.execute(2, "En Progreso"))
                     .thenThrow(new com.licensis.notaire.exception.ResourceNotFoundException(
-                            "Gestión no encontrada con ID: 2"));
+                            "Management not found with ID: 2"));
 
             mvc.perform(post("/api/v1/gestiones/1/transition").contentType("application/json")
                     .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isOk());

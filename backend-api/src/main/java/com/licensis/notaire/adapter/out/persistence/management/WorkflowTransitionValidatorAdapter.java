@@ -27,11 +27,11 @@ public class WorkflowTransitionValidatorAdapter implements WorkflowTransitionVal
         List<WorkflowTransition> transitions =
                 workflowTransitionRepository.findByWorkflowDefinitionId(workflowDefinition.getId());
         return transitions.stream()
-                .anyMatch(transicion -> coincideStatus(transicion.getOriginNode(), origin)
-                        && coincideStatus(transicion.getDestinationNode(), destination));
+                .anyMatch(transition -> statusMatches(transition.getOriginNode(), origin)
+                        && statusMatches(transition.getDestinationNode(), destination));
     }
 
-    private static boolean coincideStatus(WorkflowNode node, ManagementStatus status) {
+    private static boolean statusMatches(WorkflowNode node, ManagementStatus status) {
         return node != null && node.getManagementStatus() != null && status != null
                 && node.getManagementStatus().getIdManagementStatus()
                         .equals(status.getIdManagementStatus());

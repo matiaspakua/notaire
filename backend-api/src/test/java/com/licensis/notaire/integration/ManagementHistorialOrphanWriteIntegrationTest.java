@@ -35,14 +35,14 @@ import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 /**
- * #806 — Residual History (bitácora) gaps on plain create/update and
+ * #806 — Residual History (audit log) gaps on plain create/update and
  * complete-case update, plus GET estado-actual entity-status fallback.
  */
 @RequirementCoverage({"CU13", "CU02", "CU53"})
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test-h2")
-@DisplayName("CU13 — orphan gestión status writes must populate History")
+@DisplayName("CU13 — orphan management status writes must populate History")
 class ManagementHistorialOrphanWriteIntegrationTest {
 
     @Autowired
@@ -346,7 +346,8 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 """;
         MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body.formatted(1, notaryId, statusA.getIdManagementStatus())))
+                        .content(body.formatted((int) (System.nanoTime() % 100000), notaryId,
+                                statusA.getIdManagementStatus())))
                 .andExpect(status().isCreated())
                 .andReturn();
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
@@ -408,7 +409,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
     }
 
     @Test
-    @DisplayName("estado-actual returns 404 when gestión is missing")
+    @DisplayName("estado-actual returns 404 when management is missing")
     void shouldReturn404EstadoActualWhenManagementMissing() throws Exception {
         mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", 999999))
                 .andExpect(status().isNotFound());

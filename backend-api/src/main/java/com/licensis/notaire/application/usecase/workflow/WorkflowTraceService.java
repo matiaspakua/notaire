@@ -49,35 +49,36 @@ public class WorkflowTraceService {
     }
 
     /**
-     * Builds the aggregated workflow trace for a given gestión.
+     * Builds the aggregated workflow trace for a given management.
      * <p>
      * Requires {@code @Transactional(readOnly = true)} because it navigates
-     * LAZY associations ({@code GestionDeEscritura.tramiteList} and
-     * {@code TipoDeTramite.workflowDefinition}) inside the same persistence context.
+     * LAZY associations ({@code DeedManagement.procedureList} and
+     * {@code ProcedureType.workflowDefinition}) inside the same persistence context.
      */
     @Transactional(readOnly = true)
     public DtoManagementWorkflowTrace buildTrace(Integer managementId) {
-        // 1. Load gestión
+        // 1. Load management
         DeedManagement management = managementRepository.findById(managementId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Gestion not found with id: " + managementId));
+                        "Management not found with id: " + managementId));
 
-        // 2. Resolve workflow definition from the first tramite's tipo
+        // 2. Resolve workflow definition from the first procedure's type
         List<Procedure> procedures = management.getProcedureList();
         if (procedures == null || procedures.isEmpty()) {
-            throw new IllegalArgumentException("Gestion " + managementId + " has no tramites");
-        }
-
-        ProcedureType typeProcedure = procedures.get(0).getFkIdProcedureType();
-        if (typeProcedure == null) {
             throw new IllegalArgumentException(
-                    "Tramite for gestion " + managementId + " has no tipo de tramite");
+                    "Management " + managementId + " has no procedures");
         }
 
-        WorkflowDefinition workflowDef = typeProcedure.getWorkflowDefinition();
+        ProcedureType procedureType = procedures.get(0).getFkIdProcedureType();
+        if (procedureType == null) {
+            throw new IllegalArgumentException(
+                    "Procedure for management " + managementId + " has no procedure type");
+        }
+
+        WorkflowDefinition workflowDef = procedureType.getWorkflowDefinition();
         if (workflowDef == null) {
             throw new IllegalArgumentException(
-                    "TipoDeTramite " + typeProcedure.getIdProcedureType()
+                    "ProcedureType " + procedureType.getIdProcedureType()
                             + " has no workflow definition assigned");
         }
 
