@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useRoles, useCreateRol, useUpdateRol, useDeleteRol } from "@/hooks/useRoles";
+import { presentMutationError } from "@/lib/mutation-error";
 import type { Rol } from "@/types";
 
 const MODULOS_DISPONIBLES = [
@@ -37,9 +38,20 @@ export default function RolesPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Rol>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
-  function openEdit(r: Rol) { setEditing({ ...r }); setIsEditMode(true); setModalOpen(true); }
+  function openCreate() {
+    setEditing(EMPTY);
+    setIsEditMode(false);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
+  function openEdit(r: Rol) {
+    setEditing({ ...r });
+    setIsEditMode(true);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
 
   function toggleModulo(modulo: string) {
     const current = editing.modulos ?? [];
@@ -51,6 +63,7 @@ export default function RolesPage() {
 
   async function handleSave() {
     if (!editing.name?.trim()) { toast.error("El nombre es obligatorio"); return; }
+    setFieldErrors({});
     try {
       if (isEditMode && editing.idRole) {
         await updateMutation.mutateAsync({ id: editing.idRole, data: editing });
@@ -60,7 +73,13 @@ export default function RolesPage() {
         toast.success("Rol creado");
       }
       setModalOpen(false);
-    } catch { toast.error("Error al guardar el rol"); }
+    } catch (err) {
+      presentMutationError(err, {
+        fallback: "Error al guardar el rol",
+        fieldNames: ["name", "description"],
+        setFieldErrors,
+      });
+    }
   }
 
   async function handleDelete() {
@@ -68,8 +87,11 @@ export default function RolesPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success("Rol eliminado");
-    } catch { toast.error("Error al eliminar"); }
-    finally { setDeleteId(null); }
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al eliminar" });
+    } finally {
+      setDeleteId(null);
+    }
   }
 
   const columns: Column<Rol>[] = [
@@ -107,17 +129,19 @@ export default function RolesPage() {
         <DialogContent>
           <FormContainer>
             <FormSection title={isEditMode ? "Editar Rol" : "Nuevo Rol"}>
-              <FormField label="Nombre" required>
+              <FormField label="Nombre" required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   data-testid="input-nombre-rol"
+                  aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
-              <FormField label="Descripción">
+              <FormField label="Descripción" error={fieldErrors.description}>
                 <Input
                   value={editing.description ?? ""}
                   onChange={(e) => setEditing({ ...editing, description: e.target.value })}
+                  aria-invalid={!!fieldErrors.description}
                 />
               </FormField>
               <FormField label="Módulos permitidos">

@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { ApiError } from "@/lib/api-client";
 import { cn, formatDate, formatCurrency, fullName, extractApiError } from "@/lib/utils";
 
 describe("cn()", () => {
@@ -67,8 +68,31 @@ describe("extractApiError()", () => {
     expect(extractApiError(null)).toBeNull();
   });
 
-  it("returns null when the status is neither 400 nor 409", () => {
-    const err = new Error('[404] /escrituras/1: {"message":"Not found"}');
+  it("extracts the message from a 404 ApiError body (widened beyond 400/409)", () => {
+    const err = new ApiError(404, "/escrituras/1", JSON.stringify({ message: "Not found" }));
+    expect(extractApiError(err)).toBe("Not found");
+  });
+
+  it("extracts the message from a 422 ApiError body", () => {
+    const err = new ApiError(
+      422,
+      "/pagos",
+      JSON.stringify({ message: "Unprocessable payment" })
+    );
+    expect(extractApiError(err)).toBe("Unprocessable payment");
+  });
+
+  it("extracts the message from a 500 ApiError body when present", () => {
+    const err = new ApiError(
+      500,
+      "/reportes",
+      JSON.stringify({ message: "Report generation failed" })
+    );
+    expect(extractApiError(err)).toBe("Report generation failed");
+  });
+
+  it("returns null for authenticated 401 (session-expiry path owns that UX)", () => {
+    const err = new ApiError(401, "/usuarios", JSON.stringify({ message: "Unauthorized" }));
     expect(extractApiError(err)).toBeNull();
   });
 
@@ -84,8 +108,22 @@ describe("extractApiError()", () => {
     expect(extractApiError(err)).toBe("Ya existe un movimiento abierto");
   });
 
+  it("prefers ApiError.status and ApiError.body over message regex", () => {
+    const err = new ApiError(
+      400,
+      "/roles",
+      JSON.stringify({ message: "name: must not be blank" })
+    );
+    expect(extractApiError(err)).toBe("name: must not be blank");
+  });
+
   it("returns null when the body is not parseable JSON", () => {
     const err = new Error("[400] /escrituras/1/firmar: not json");
+    expect(extractApiError(err)).toBeNull();
+  });
+
+  it("returns null for plain Error with non-business status and no ApiError body", () => {
+    const err = new Error("[403] /admin: Forbidden");
     expect(extractApiError(err)).toBeNull();
   });
 });

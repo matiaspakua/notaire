@@ -158,6 +158,44 @@ describe("apiDelete()", () => {
     await expect(apiDelete("/gestiones/1")).rejects.toThrow("500");
   });
 
+  it("rejects with ApiError carrying status and parseable 400 body (issue #1054)", async () => {
+    const body = JSON.stringify({ message: "Cannot delete: still referenced" });
+    mockFetch.mockReturnValueOnce(
+      Promise.resolve({
+        ok: false,
+        status: 400,
+        text: () => Promise.resolve(body),
+      } as Response)
+    );
+
+    try {
+      await apiDelete("/roles/1");
+      expect.fail("expected apiDelete to reject");
+    } catch (err) {
+      expect(err).toBeInstanceOf(ApiError);
+      const apiErr = err as ApiError;
+      expect(apiErr.status).toBe(400);
+      expect(apiErr.body).toBe(body);
+    }
+  });
+
+  it("rejects with ApiError carrying parseable 409 body on DELETE (issue #1054)", async () => {
+    const body = JSON.stringify({ message: "Conflict: workflow has nodes" });
+    mockFetch.mockReturnValueOnce(
+      Promise.resolve({
+        ok: false,
+        status: 409,
+        text: () => Promise.resolve(body),
+      } as Response)
+    );
+
+    await expect(apiDelete("/workflows/1")).rejects.toMatchObject({
+      name: "ApiError",
+      status: 409,
+      body,
+    });
+  });
+
   it("throws ApiError and triggers session expiry on authenticated 401 (issue #1053)", async () => {
     useAuthStore.setState({
       user: { nombre: "admin", tipo: "ADMIN", valido: true },

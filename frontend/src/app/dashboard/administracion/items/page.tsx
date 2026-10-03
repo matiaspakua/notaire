@@ -24,6 +24,7 @@ import {
   useDeleteItem,
   useDescuentosYRecargos,
 } from "@/hooks/useItems";
+import { presentMutationError } from "@/lib/mutation-error";
 import { formatCurrency } from "@/lib/utils";
 import type { Item, TipoItem } from "@/types";
 
@@ -89,8 +90,8 @@ export default function ItemsPage() {
         toast.success("Ítem creado");
       }
       setModalOpen(false);
-    } catch {
-      toast.error("Error al guardar el ítem");
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al guardar el ítem" });
     }
   }
 
@@ -99,8 +100,8 @@ export default function ItemsPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success("Ítem eliminado");
-    } catch {
-      toast.error("Error al eliminar");
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al eliminar" });
     } finally {
       setDeleteId(null);
     }

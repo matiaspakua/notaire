@@ -40,3 +40,4 @@
 | 11.1 | El monto abonado es menor al total del presupuesto (pago en cuotas, RF #22). | El sistema acepta el pago parcial, calcula el saldo pendiente restante y marca el estado de pago del presupuesto como "Parcialmente abonado". El Cliente puede volver a abonar el saldo restante en uno o más pagos posteriores hasta saldarlo. |
 | 11.2 | El monto abonado (acumulado con pagos previos) cubre el total del presupuesto. | El sistema marca el estado de pago del presupuesto como "Saldado" (saldo pendiente = 0). |
 | 11.3 | El monto indicado excede el saldo pendiente del presupuesto (#848). | El sistema rechaza el pago, informa que el monto no puede exceder el saldo pendiente y no lo persiste. |
+| 11.4 | El backend rechaza el pago con un mensaje de negocio (validación / conflicto) (#1054). | La UI muestra el texto del servidor en el toast de error (y en `FormField` cuando el mensaje identifica un campo mapeable), no solo un mensaje genérico de “error al guardar”. |

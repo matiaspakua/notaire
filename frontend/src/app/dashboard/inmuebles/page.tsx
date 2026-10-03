@@ -17,6 +17,7 @@ import {
   useUpdateInmueble,
   useDeleteInmueble,
 } from "@/hooks/useInmuebles";
+import { presentMutationError } from "@/lib/mutation-error";
 import type { Inmueble } from "@/types";
 
 export default function InmueblesPage() {
@@ -88,8 +89,8 @@ export default function InmueblesPage() {
         toast.success(t("created"));
       }
       setModalOpen(false);
-    } catch {
-      toast.error(t("errorSave"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorSave") });
     }
   }
 
@@ -98,8 +99,8 @@ export default function InmueblesPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorDelete") });
     } finally {
       setDeleteId(null);
     }

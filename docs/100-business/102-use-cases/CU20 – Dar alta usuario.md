@@ -30,3 +30,4 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 5.1 | Concurrir a CU 17 Sigue paso 3 | La persona no está registrada en el sistema. |
+| 8.1 | El backend rechaza el alta (conflicto / validación bean) (#1054). | La UI muestra el mensaje de negocio del servidor en el toast; si el cuerpo incluye detalle `campo: mensaje` mapeable al formulario, también se muestra en el `FormField` correspondiente con estado inválido (`aria-invalid`). |

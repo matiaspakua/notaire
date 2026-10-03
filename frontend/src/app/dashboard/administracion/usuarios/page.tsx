@@ -21,9 +21,11 @@ import {
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useUsuarios, useCreateUsuario, useUpdateUsuario, useDeleteUsuario } from "@/hooks/useUsuarios";
 import { useRoles, useAssignRolToUsuario, useUnassignRolFromUsuario } from "@/hooks/useRoles";
+import { presentMutationError } from "@/lib/mutation-error";
 import type { Usuario } from "@/types";
 
 const EMPTY: Partial<Usuario> = { name: "", password: "", type: "EMPLEADO", active: true };
+const USUARIO_FIELD_NAMES = ["name", "password", "type"];
 
 export default function UsuariosPage() {
   const t = useTranslations("administracion.usuarios");
@@ -42,17 +44,26 @@ export default function UsuariosPage() {
   const [editing, setEditing] = useState<Partial<Usuario>>(EMPTY);
   const [selectedRolId, setSelectedRolId] = useState<string>("none");
   const [isEditMode, setIsEditMode] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  function openCreate() { setEditing(EMPTY); setSelectedRolId("none"); setIsEditMode(false); setModalOpen(true); }
+  function openCreate() {
+    setEditing(EMPTY);
+    setSelectedRolId("none");
+    setIsEditMode(false);
+    setFieldErrors({});
+    setModalOpen(true);
+  }
   function openEdit(u: Usuario) {
     setEditing({ ...u, password: "" });
     setSelectedRolId(u.role?.idRole?.toString() ?? "none");
     setIsEditMode(true);
+    setFieldErrors({});
     setModalOpen(true);
   }
 
   async function handleSave() {
     if (!editing.name?.trim()) { toast.error(t("fields.nombre") + " " + tc("required")); return; }
+    setFieldErrors({});
     try {
       let savedId: number | undefined;
       if (isEditMode && editing.idUser) {
@@ -72,7 +83,13 @@ export default function UsuariosPage() {
         }
       }
       setModalOpen(false);
-    } catch { toast.error(t("errorSave")); }
+    } catch (err) {
+      presentMutationError(err, {
+        fallback: t("errorSave"),
+        fieldNames: USUARIO_FIELD_NAMES,
+        setFieldErrors,
+      });
+    }
   }
 
   async function handleDelete() {
@@ -80,8 +97,11 @@ export default function UsuariosPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch { toast.error(t("errorDelete")); }
-    finally { setDeleteId(null); }
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorDelete") });
+    } finally {
+      setDeleteId(null);
+    }
   }
 
   const tipoVariant = (tipo?: string) => {
@@ -119,30 +139,33 @@ export default function UsuariosPage() {
         <DialogContent>
           <FormContainer>
             <FormSection title={isEditMode ? t("editUsuario") : t("newUsuario")}>
-              <FormField label={t("fields.nombre")} required>
+              <FormField label={t("fields.nombre")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   data-testid="input-nombre-usuario"
+                  aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
               <FormField
                 label={isEditMode ? "Nueva contraseña" : t("fields.contrasenia")}
                 required={!isEditMode}
                 helperText={isEditMode ? t("fields.contraseniaHint") : undefined}
+                error={fieldErrors.password}
               >
                 <Input
                   type="password"
                   value={editing.password ?? ""}
                   onChange={(e) => setEditing({ ...editing, password: e.target.value })}
+                  aria-invalid={!!fieldErrors.password}
                 />
               </FormField>
-              <FormField label={t("fields.tipo")}>
+              <FormField label={t("fields.tipo")} error={fieldErrors.type}>
                 <Select
                   value={editing.type ?? "EMPLEADO"}
                   onValueChange={(v) => setEditing({ ...editing, type: v })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger aria-invalid={!!fieldErrors.type}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

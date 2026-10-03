@@ -32,6 +32,7 @@ import {
   useDeleteWorkflowTransition,
 } from "@/hooks/useWorkflow";
 import { apiPost } from "@/lib/api-client";
+import { presentMutationError } from "@/lib/mutation-error";
 import type { WorkflowNodeType } from "@/types";
 import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { theme } from "@/theme/tokens";
@@ -118,8 +119,8 @@ export default function WorkflowEditorPage() {
           destinationNodeId: Number(connection.target),
         });
         refetchTransitions();
-      } catch {
-        toast.error("Error al crear transición");
+      } catch (err) {
+        presentMutationError(err, { fallback: "Error al crear transición" });
       }
     },
     [editMode, createTransition, workflowId, refetchTransitions, setEdges]
@@ -136,8 +137,8 @@ export default function WorkflowEditorPage() {
           positionY: node.position.y,
         },
       });
-    } catch {
-      toast.error("Error al guardar posición");
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al guardar posición" });
     }
   }
 
@@ -159,8 +160,8 @@ export default function WorkflowEditorPage() {
       setNewNodeTipo("INTERMEDIATE");
       refetchNodes();
       toast.success("Nodo agregado");
-    } catch {
-      toast.error("Error al agregar nodo");
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al agregar nodo" });
     }
   }
 
@@ -170,8 +171,10 @@ export default function WorkflowEditorPage() {
       refetchNodes();
       refetchTransitions();
       toast.success("Nodo eliminado");
-    } catch {
-      toast.error("No se puede eliminar: el nodo tiene transiciones");
+    } catch (err) {
+      presentMutationError(err, {
+        fallback: "No se puede eliminar: el nodo tiene transiciones",
+      });
     }
   }
 
@@ -180,8 +183,8 @@ export default function WorkflowEditorPage() {
       await deleteTransitionMut.mutateAsync({ id: Number(edgeId), workflowId });
       refetchTransitions();
       toast.success("Transición eliminada");
-    } catch {
-      toast.error("Error al eliminar transición");
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al eliminar transición" });
     }
   }
 
@@ -197,8 +200,8 @@ export default function WorkflowEditorPage() {
       } else {
         toast.error("Workflow con errores de consistencia");
       }
-    } catch {
-      toast.error("Error al validar");
+    } catch (err) {
+      presentMutationError(err, { fallback: "Error al validar" });
     }
   }
 

@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FormContainer, FormSection, FormField, FormActions, RadioField } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { presentMutationError } from "@/lib/mutation-error";
 import type { PlantillaPresupuesto, TipoDeTramite, Concepto, TipoDeDocumento, PlantillaCostoDocumento } from "@/types";
 
 interface PlantillaKey {
@@ -83,8 +84,8 @@ export default function PlantillasPage() {
       toast.success(t("costosDocumento.created"));
       setCostoModalOpen(false);
       refetchCostos();
-    } catch {
-      toast.error(t("costosDocumento.errorCreate"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("costosDocumento.errorCreate") });
     } finally {
       setSavingCosto(false);
     }
@@ -145,8 +146,8 @@ export default function PlantillasPage() {
       }
       setModalOpen(false);
       refetch();
-    } catch {
-      toast.error(t("errorCreate"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorCreate") });
     } finally {
       setSaving(false);
     }
@@ -159,8 +160,8 @@ export default function PlantillasPage() {
       await apiDelete(`/plantilla-presupuestos/tipo-tramite/${deleteKey.tipoTramiteId}/concepto/${deleteKey.conceptoId}`);
       toast.success(t("deleted"));
       refetch();
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorDelete") });
     } finally {
       setDeleting(false);
       setDeleteKey(null);

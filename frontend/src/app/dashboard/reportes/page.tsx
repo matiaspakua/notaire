@@ -17,6 +17,7 @@ import {
   useReporteLibroIndice,
   useReporteDeudaDocumentos,
 } from "@/hooks/useReportes";
+import { presentMutationError } from "@/lib/mutation-error";
 
 const cardStyle: React.CSSProperties = {
   backgroundColor: theme.semantic.card.bg,
@@ -74,8 +75,10 @@ export default function ReportesPage() {
     try {
       await fn();
       toast.success("PDF generado y descargado");
-    } catch {
-      toast.error("Error al generar el reporte (backend necesario)");
+    } catch (err) {
+      presentMutationError(err, {
+        fallback: "Error al generar el reporte (backend necesario)",
+      });
     }
   }
 

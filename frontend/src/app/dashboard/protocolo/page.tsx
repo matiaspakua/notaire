@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiGetBytes } from "@/lib/api-client";
+import { presentMutationError } from "@/lib/mutation-error";
 import type { Folio } from "@/types";
 import { FileText, Download, BookOpen, FilePlus } from "lucide-react";
 
@@ -54,8 +55,8 @@ export default function ProtocoloPage() {
       URL.revokeObjectURL(link.href);
       toast.success("Reporte descargado");
       setReportDialog(null);
-    } catch {
-      toast.error(t("errorReport"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorReport") });
     } finally {
       setDownloading(false);
     }
