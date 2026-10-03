@@ -1,6 +1,6 @@
 # ADR-005: Migración de Frontend Java Swing a Next.js
 
-**Status:** Accepted
+**Status:** Accepted (Swing directory deleted under #1046)
 **Date:** 2026-04-13
 **Deciders:** Matías Miguez
 **Supersedes:** N/A
@@ -10,12 +10,13 @@
 
 El módulo `frontend-swing` fue creado como paso intermedio en la migración del monolito:
 fue refactorizado para usar el backend REST en lugar de acceso directo a la base de datos,
-pero sigue siendo una aplicación Java Swing de escritorio.
+pero seguía siendo una aplicación Java Swing de escritorio.
 
 > **Estado actual:** la migración a Next.js está implementada en el directorio `frontend/`
 > (no `frontend-nextjs/` como se planteaba originalmente en este ADR). El módulo Swing fue
-> renombrado a `deprecated-frontend-swing/` y excluido del reactor Maven raíz; ver
-> `deprecated-frontend-swing/README.md`.
+> primero renombrado a `deprecated-frontend-swing/` y excluido del reactor Maven raíz, y
+> luego **eliminado del árbol** en issue #1046 (Dependabot log4j noise). La historia queda
+> en git; no recrear el cliente Swing.
 
 ### Problemas actuales con Java Swing
 
@@ -149,8 +150,7 @@ Browser → Next.js (SSR/CSR) → Spring Boot REST API → PostgreSQL
 
 - Usar `openapi-typescript` para generar types automáticamente desde la spec de Swagger
 - Migración incremental: un módulo de CUs por sprint
-- El módulo `frontend-swing` (hoy `deprecated-frontend-swing`) se mantiene durante la
-  transición hasta que cada CU sea validado
+- El módulo Swing fue retirado del árbol (#1046); el cliente activo es solo `frontend/`
 
 ## Implementation Plan
 
@@ -186,8 +186,8 @@ Browser → Next.js (SSR/CSR) → Spring Boot REST API → PostgreSQL
 
 ### Sprint 10: E2E & Deprecation
 - [x] Playwright E2E para todos los flujos (`frontend/tests/e2e/`, 33+ `cuNN-*.spec.ts`)
-- [x] Deprecar `frontend-swing` (renombrado a `deprecated-frontend-swing`, excluido del
-      reactor Maven raíz — eliminación completa aún pendiente, ver issue #811)
+- [x] Deprecar y eliminar `frontend-swing` / `deprecated-frontend-swing` del árbol
+      (excluido del reactor; borrado completo en #1046 — historial en git)
 
 ## References
 

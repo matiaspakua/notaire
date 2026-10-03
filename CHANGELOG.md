@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- **Dependabot hygiene** (issue #1046, CU78): deleted dead
+  `deprecated-frontend-swing/` (EOL `log4j:log4j:1.2.17` alerts) and pinned
+  frontend `smol-toml` via npm `overrides` to `^1.9.0` (GHSA-7w5x-hrqm-74c2;
+  patched ≥1.7.1). Guarded by `scripts/test_dependabot_hygiene.py`. Live
+  CODEOWNERS/README/ADR-005/SAD references updated. `#585` (`deprecated-src.old`)
+  remains separate / out of scope.
+
 ### Added
 
 - **Production docker-compose** (issue #1044, CU78/CU75):

@@ -6,7 +6,7 @@ alwaysApply: true
 
 ## Architecture Overview
 
-- **Legacy origin:** Monolithic Java 1.6 desktop app with direct DB access and a tightly coupled Swing GUI (removed from the active build; see `deprecated-frontend-swing/` for history only — do not recreate it).
+- **Legacy origin:** Monolithic Java 1.6 desktop app with direct DB access and a tightly coupled Swing GUI (removed from the tree under #1046; history remains in git — do not recreate it).
 - **Current target:** Three-tier system — PostgreSQL 16, Spring Boot 4.1 REST API (`backend-api`), Next.js 16 web client (`frontend/`).
 - **Communication:** Clients call the API over HTTPS/HTTP JSON (`/api/v1/...`); no direct DB access from any client.
 - **Deployment:** Database, backend, and frontend as Docker services; secrets only in the git-ignored `.env`.

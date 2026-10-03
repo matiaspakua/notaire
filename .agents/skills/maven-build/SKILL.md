@@ -21,7 +21,6 @@ mvn clean package -DskipTests
 
 # Run tests for specific module
 mvn test -pl backend-api
-mvn test -pl frontend-swing
 
 # Run specific test class
 mvn test -Dtest=ClassNameTest
@@ -40,8 +39,11 @@ mvn checkstyle:check
 | Module | Description |
 |--------|-------------|
 | backend-api | Spring Boot REST API |
-| frontend-swing | Swing GUI client |
-| notary-shared | Shared DTOs and code |
+| notaire-shared | Shared DTOs and code |
+| frontend | Next.js web app (not a Maven module) |
+
+> The legacy `frontend-swing` / `deprecated-frontend-swing` client was removed
+> under #1046; do not recreate it.
 
 ## Common Issues
 

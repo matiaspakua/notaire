@@ -237,7 +237,7 @@ rectangle "Phase 6\nDeprecation" #Gray {
 
 | Phase | Status | Details |
 |-------|--------|---------|
-| Phase 1: Analysis | ✅ Complete | Legacy documented in `deprecated-frontend-swing/`, use cases cataloged in `docs/100-business/102-use-cases/` |
+| Phase 1: Analysis | ✅ Complete | Legacy Swing retired (removed under #1046; history in git); use cases cataloged in `docs/100-business/102-use-cases/` |
 | Phase 2: Foundation | ✅ Complete | `notaire-shared`, Maven multi-module, Docker Compose |
 | Phase 3: Backend API | ✅ Complete | Controllers, repositories, entities, Flyway migrations |
 | Phase 4: Frontend | 🔄 In Progress | Next.js 16 app (`frontend/`) — Swing is not a target client |
@@ -1084,7 +1084,7 @@ O --> (Deployability Docker)
 |------|--------|-------------|------------|
 | Legacy `jpa` package coexists with modern `repository` | High — code duplication, inconsistent patterns | Certain | Incremental migration per entity; new code uses only `repository` |
 | `ControllerNegocio.java` (5,337 lines, ~193 KB) — God class in `negocio` | High — unmaintainable, untestable | Certain | Extract to service classes; scheduled for refactoring |
-| `deprecated-frontend-swing` still referenced but excluded from build | Low — confusion for new developers | Low | Document deprecation; remove after Next.js frontend is complete |
+| Legacy Swing client resurrected on `main` | Low — Dependabot noise / confusion | Low | Keep deleted (#1046); do not recreate; history in git |
 | No production deployment target defined | Medium — no deployment pipeline to production | Medium | Define production Docker Compose or Kubernetes manifests |
 | Default credentials in `.env` | Critical — security risk if deployed as-is | Medium | `ProductionCredentialsGuard` blocks startup with defaults |
 
@@ -1097,7 +1097,7 @@ O --> (Deployability Docker)
 | `AdministradorJpa` in service layer | `service/AdministradorJpa.java` | Medium | Medium |
 | `AdministradorValidaciones` mixed concerns | `service/AdministradorValidaciones.java` | Medium | Medium |
 | Missing service classes for some entities | `service/` | Medium | Medium |
-| `deprecated-frontend-swing` module deprecated but present | `deprecated-frontend-swing/` | Low | Small |
+| Legacy Swing tree deleted from `main` (#1046) | git history only | Resolved | — |
 | `ConstantesGui.java` in audit package | `audit/ConstantesGui.java` | Low | Small |
 
 ### 11.3 Evolution Roadmap
@@ -1131,7 +1131,7 @@ O --> (Deployability Docker)
 #### Medium Term (Phase 6 — Deprecation)
 
 4. **Replace all `jpa` package controllers** with `repository` + `service` — [#576](https://github.com/matiaspakua/notaire/issues/576).
-5. **Swing client retirement** — done for the active build (history under `deprecated-frontend-swing/`; do not recreate). Remaining Phase 6 focus is `jpa` cleanup — [#899](https://github.com/matiaspakua/notaire/issues/899).
+5. **Swing client retirement** — complete: directory removed under [#1046](https://github.com/matiaspakua/notaire/issues/1046) (do not recreate). Remaining Phase 6 focus is `jpa` cleanup — [#899](https://github.com/matiaspakua/notaire/issues/899).
 6. **Enable quality gates** that are currently advisory-only: Checkstyle [#710](https://github.com/matiaspakua/notaire/issues/710), SpotBugs [#711](https://github.com/matiaspakua/notaire/issues/711), Trivy [#712](https://github.com/matiaspakua/notaire/issues/712).
 7. **Implement RBAC enforcement** (per-role authorization) — [#559](https://github.com/matiaspakua/notaire/issues/559).
 
