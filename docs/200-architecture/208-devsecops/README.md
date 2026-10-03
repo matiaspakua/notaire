@@ -302,10 +302,23 @@ env:
 | `sdlc-process.yml` | PR opened/synchronized/reopened/labeled | CONSTITUTION process gates: commit messages, TDD evidence, `sdlc-exception` label, agent-rule file lint, plus the scripts' self-tests |
 | `test-coverage-report.yml` | Daily schedule (02:00 UTC), manual dispatch | Publishes a standalone coverage report artifact |
 | `performance-test.yml` | Weekly schedule (Mondays 04:00 UTC) | k6 load test |
+| `dast-zap.yml` | Weekly schedule (Mondays 05:00 UTC) + manual dispatch | OWASP ZAP baseline DAST against a live API (report artifact; warn-first policy — does not gate every PR). See [DAST / OpenAPI / backup-restore](#dast-openapi-backup-restore-issue-1067). |
+| `openapi-contract.yml` | PR into `main` + manual dispatch | Regenerates OpenAPI from springdoc, fails if `backend-api/openapi/openapi.yaml` is stale, and fails on breaking changes vs the base branch (`oasdiff`) |
+| `backup-restore-smoke.yml` | Weekly schedule (Sundays 03:00 UTC) + manual dispatch | Backup→restore→smoke once `#256` lands (`scripts/backup-postgres.sh`); until then skips with an explicit blocked-on-#256 notice (no false-green restore) |
 | `deploy-github-page.yml` | After CI succeeds on `main` | Publishes the GitHub Pages documentation site |
 | `claude.yml` / `opencode.yml` | Issue/PR comment events | AI coding-agent triggers (Claude Code, OpenCode) |
 | `copilot-setup-steps.yml` | Push/PR touching itself, manual dispatch | Environment setup used by GitHub Copilot coding agent |
 | `codeql.yml` | PR into `main`, push to `main`, weekly schedule, manual dispatch | CodeQL advanced setup. Findings upload to the Security tab. Do not also enable default setup — see [CodeQL advanced vs default setup](#codeql-advanced-vs-default-setup) |
+
+### DAST / OpenAPI / backup-restore (issue #1067)
+
+| Gate | How to run | Policy |
+|------|------------|--------|
+| **OWASP ZAP baseline** | Actions → `DAST — OWASP ZAP Baseline` (schedule/`workflow_dispatch`) | Targets `http://localhost:8080` after starting the API + Postgres service. Uploads the ZAP report artifact. **Warn-first** (`fail_action: false`) until an allowlist/ratchet is agreed; Trivy SCA in `ci.yml` remains. Full prose operator guide may remain #281. |
+| **OpenAPI contract** | Every PR (`openapi-contract.yml`); locally: `bash scripts/export-openapi.sh` | Committed SSOT: `backend-api/openapi/openapi.yaml`. After API changes, regenerate and commit in the same PR. CI fails on stale artifact or `oasdiff` ERR-level breaking diffs vs base. |
+| **Backup→restore smoke** | Schedule/`workflow_dispatch` | Gated on #256. Sentinel path: `scripts/backup-postgres.sh`. While absent, the job exits 0 with a clear skip/blocked message and does **not** claim a successful restore. |
+
+Guarded by `python3 scripts/test_dast_contract_backup_assets.py` (also under `scripts/tests/` for Process Checks).
 
 ---
 
@@ -330,11 +343,12 @@ bash scripts/enable-gh-secure.sh --apply    # needs admin or maintain
 
 ## Future Enhancements
 
-1. Add OWASP ZAP for API security testing
+1. Ratchet OWASP ZAP baseline from warn-first to fail on CRITICAL/HIGH (allowlist as needed) — CI job already landed in #1067
 2. Implement Snyk for additional vulnerability scanning
 3. Add dependency review action
 4. Add secret scanning with GitLeaks (push protection is the GitHub setting above)
 5. Implement SLSA provenance attestation
+6. Enable backup→restore→smoke execution when #256 ships `scripts/backup-postgres.sh`
 
 ---
 

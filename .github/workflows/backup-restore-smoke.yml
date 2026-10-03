@@ -1,0 +1,66 @@
+name: Backup → Restore → Smoke
+
+# Issue #1067 / CU75. Verifies backup→restore→smoke once #256 lands
+# (sentinel: scripts/backup-postgres.sh). Until then the job exits 0 with an
+# explicit skip — it MUST NOT report a successful restore that did not run.
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # Weekly, Sundays 3am UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backup-restore-smoke:
+    name: Backup restore smoke (gated on #256)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Gate on #256 backup tooling
+        id: gate
+        run: |
+          SENTINEL="scripts/backup-postgres.sh"
+          if [ ! -f "$SENTINEL" ]; then
+            echo "blocked=true" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Backup restore skipped::blocked on #256 — backup tooling absent ($SENTINEL not yet present). No restore was performed (skip, not a false-green restore)."
+            {
+              echo "## Backup → restore → smoke"
+              echo ""
+              echo "**Skipped / blocked on #256** — automated PostgreSQL backups are not in the tree yet."
+              echo ""
+              echo "When #256 lands \`scripts/backup-postgres.sh\`, this workflow will run backup → restore → smoke."
+              echo "This job intentionally does **not** claim a successful restore while tooling is absent."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "blocked=false" >> "$GITHUB_OUTPUT"
+          echo "Backup tooling present — proceeding with backup→restore→smoke."
+
+      - name: Run backup → restore → smoke
+        if: steps.gate.outputs.blocked != 'true'
+        run: |
+          set -euo pipefail
+          # Enabled only when scripts/backup-postgres.sh exists (#256).
+          bash scripts/backup-postgres.sh
+          # Expected companion restore entrypoint from #256 (or follow-up).
+          if [ -f scripts/restore-postgres.sh ]; then
+            bash scripts/restore-postgres.sh
+          else
+            echo "::error::backup-postgres.sh exists but scripts/restore-postgres.sh is missing"
+            exit 1
+          fi
+          # Smoke: restored DB answers a trivial query via documented helper or psql.
+          if [ -f scripts/backup-restore-smoke.sh ]; then
+            bash scripts/backup-restore-smoke.sh
+          else
+            echo "::error::scripts/backup-restore-smoke.sh missing after #256 enablement"
+            exit 1
+          fi
