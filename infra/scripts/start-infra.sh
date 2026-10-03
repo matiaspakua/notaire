@@ -1,16 +1,17 @@
 #!/bin/bash
 
 # Notaire Infrastructure Startup Script
-# Brings up the Observability + SonarQube stack (infra/docker-compose.yml) and
+# Brings up the Observability + SonarQube stack (infra/observability/docker-compose.yml) and
 # connects it to the already-running Notaire application network.
 #
-# Reads ALL credentials from the single root .env file (git-ignored).
+# Reads ALL credentials from a single git-ignored env file (see common.sh for
+# the lookup order; template: infra/.env.example).
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-cd "$REPO_DIR"
+# shellcheck disable=SC1091
+. "$SCRIPT_DIR/common.sh"
 
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -18,9 +19,8 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-ENV_FILE="$REPO_DIR/.env"
-INFRA_COMPOSE="$REPO_DIR/infra/docker-compose.yml"
-APP_NETWORK="notaire_notary-network"
+ENV_FILE="$(resolve_env_file)"
+INFRA_COMPOSE="$OBSERVABILITY_COMPOSE"
 
 # Determine docker compose command
 if docker compose version &> /dev/null 2>&1; then
@@ -34,8 +34,8 @@ fi
 
 # Ensure a local .env exists (create from example on first run)
 if [ ! -f "$ENV_FILE" ]; then
-    echo -e "${YELLOW}No .env found — creating one from .env.example${NC}"
-    cp "$REPO_DIR/.env.example" "$ENV_FILE"
+    echo -e "${YELLOW}No env file found — creating $ENV_FILE from infra/.env.example${NC}"
+    cp "$INFRA_DIR/.env.example" "$ENV_FILE"
 fi
 
 echo -e "${BLUE}========================================${NC}"
@@ -95,6 +95,6 @@ echo -e "  Postgres Exporter:${YELLOW}http://localhost:9187/metrics${NC}"
 echo -e "${BLUE}Quality:${NC}"
 echo -e "  SonarQube:        ${YELLOW}http://localhost:9000${NC}  (\$SONAR_ADMIN_USER / \$SONAR_ADMIN_PASSWORD)"
 echo ""
-echo -e "  Run code analysis: ${YELLOW}bash infra/scripts/run-sonar.sh${NC}"
-echo -e "  Health check:      ${YELLOW}bash infra/scripts/check-infra.sh${NC}"
+echo -e "  Run code analysis: ${YELLOW}bash $SCRIPT_DIR/run-sonar.sh${NC}"
+echo -e "  Health check:      ${YELLOW}bash $SCRIPT_DIR/check-infra.sh${NC}"
 echo ""

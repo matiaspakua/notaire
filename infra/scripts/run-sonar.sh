@@ -8,18 +8,22 @@
 #   3. Generates an analysis token (idempotent).
 #   4. Runs `mvn sonar:sonar` for backend-api so SonarQube shows real data.
 #
-# Credentials come from the single root .env file.
+# Credentials come from the infra env file (see common.sh for the lookup order).
+# The analysis targets the application checkout in $APP_DIR (NOTAIRE_APP_DIR).
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-cd "$REPO_DIR"
+# shellcheck disable=SC1091
+. "$SCRIPT_DIR/common.sh"
+ENV_FILE="$(resolve_env_file)"
+APP_DIR="$(cd "$APP_DIR" && pwd)"
+cd "$APP_DIR"
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; BLUE='\033[0;34m'; NC='\033[0m'
 
 # shellcheck disable=SC1091
-set -a; [ -f "$REPO_DIR/.env" ] && . "$REPO_DIR/.env"; set +a
+set -a; [ -f "$ENV_FILE" ] && . "$ENV_FILE"; set +a
 
 SONAR_URL="http://localhost:9000"
 SONAR_USER="${SONAR_ADMIN_USER:-admin}"
@@ -79,10 +83,10 @@ if [ -z "${SONAR_TOKEN:-}" ]; then
         | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
     if [ -n "$SONAR_TOKEN" ]; then
         # Persist token back into .env for reuse
-        if grep -q '^SONAR_TOKEN=' "$REPO_DIR/.env" 2>/dev/null; then
-            sed -i.bak "s|^SONAR_TOKEN=.*|SONAR_TOKEN=$SONAR_TOKEN|" "$REPO_DIR/.env" && rm -f "$REPO_DIR/.env.bak"
+        if grep -q '^SONAR_TOKEN=' "$ENV_FILE" 2>/dev/null; then
+            sed -i.bak "s|^SONAR_TOKEN=.*|SONAR_TOKEN=$SONAR_TOKEN|" "$ENV_FILE" && rm -f "$ENV_FILE.bak"
         else
-            echo "SONAR_TOKEN=$SONAR_TOKEN" >> "$REPO_DIR/.env"
+            echo "SONAR_TOKEN=$SONAR_TOKEN" >> "$ENV_FILE"
         fi
         echo -e "${GREEN}✓ Token generated and saved to .env${NC}"
     fi

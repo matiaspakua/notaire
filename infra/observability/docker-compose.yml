@@ -1,3 +1,7 @@
+# Project name is pinned so volumes and networks keep their historical
+# infra_* names regardless of this file's directory.
+name: infra
+
 services:
   # --- CENTRALIZED DASHBOARD ---
   dashboard:

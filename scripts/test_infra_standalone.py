@@ -61,6 +61,7 @@ REFERENCE_EXEMPT_PREFIXES = (
     "docs/000-archive/",
     "docs/archive/",
     "openspec/",
+    "backend-api/src/main/resources/db/migration/",
     "CHANGELOG.md",
     "scripts/test_infra_standalone.py",
 )
@@ -130,6 +131,13 @@ class InfraSelfContainmentTest(unittest.TestCase):
     def test_env_example_contains_no_real_tokens(self):
         example = (INFRA / ".env.example").read_text(encoding="utf-8")
         self.assertIsNone(REAL_SONAR_TOKEN.search(example), "SONAR_TOKEN must not be committed")
+
+
+class ObservabilityComposeProjectTest(unittest.TestCase):
+    def test_compose_pins_project_name_so_existing_volumes_survive_the_move(self):
+        with open(OBSERVABILITY_COMPOSE, encoding="utf-8") as f:
+            compose = yaml.safe_load(f)
+        self.assertEqual("infra", compose.get("name"), "project name must stay 'infra' (volume/network names)")
 
 
 class NginxSingleSourceTest(unittest.TestCase):

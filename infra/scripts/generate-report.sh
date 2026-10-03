@@ -4,7 +4,8 @@
 # Aggregates findings from various tools into a single report.
 # Now includes monitoring infrastructure status.
 
-REPORT_DIR="infra/reports"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPORT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)/reports"
 DATE=$(date +"%Y-%m-%d_%H-%M-%S")
 MD_REPORT="$REPORT_DIR/security_report_$DATE.md"
 HTML_REPORT="$REPORT_DIR/security_report_$DATE.html"
@@ -16,7 +17,7 @@ echo "Generated on: $(date)" >> "$MD_REPORT"
 echo "" >> "$MD_REPORT"
 
 echo "## 🏗️ Infrastructure Status (Application + Monitoring)" >> "$MD_REPORT"
-bash infra/scripts/check-infra.sh >> "$MD_REPORT" 2>&1
+bash "$SCRIPT_DIR/check-infra.sh" >> "$MD_REPORT" 2>&1
 echo "" >> "$MD_REPORT"
 
 echo "## 📊 Monitoring Metrics Summary" >> "$MD_REPORT"
