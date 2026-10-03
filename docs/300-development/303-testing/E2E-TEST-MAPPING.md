@@ -93,7 +93,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
 | **TS-0016** | `TS-0016-usuarios-escribanos-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | CU21 unskipped (#1057); CU23/CU48 cite #1146 | **HIGH** |
-| **TS-0017** | `TS-0017-suplencias-workflow.spec.ts` | CU22, CU59 | GherkinSteps | intentional gaps cite #1146 | **MEDIUM** |
+| **TS-0017** | `TS-0017-suplencias-workflow.spec.ts` | CU22, CU59 | Sidebar nav (`nav-suplencias`) + GherkinSteps | intentional gaps cite #1146 | **MEDIUM** |
 | **TS-0018** | `TS-0018-reingreso-documentacion-workflow.spec.ts` | CU43 | Direct nav + assertions | 0 | **MEDIUM** |
 | **TS-0019** | `TS-0019-inmuebles-valuacion-workflow.spec.ts` | CU69 | GherkinSteps | 0 | **MEDIUM** |
 
@@ -101,7 +101,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0020** | `TS-0020-reportes-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | GherkinSteps + API | intentional gaps cite #1146 | **HIGH** |
+| **TS-0020** | `TS-0020-reportes-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | intentional gaps cite #1146 | **HIGH** |
 | **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | API arrange + editor | 0 (self-seeds workflow; #1066) | **HIGH** |
 | **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | API arrange + table | 0 (self-seeds tipo-tramite; #1066) | **MEDIUM** |
 | **TS-0023** | `TS-0023-roles-permisos-admin.spec.ts` | CU43.1 | Direct nav + form | 0 | **MEDIUM** |
@@ -139,7 +139,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | TS | Filename | Scope | Test Type | Value | Run |
 |----|----|-------|---------|-------|-----|
 | **TS-0060** | `TS-0060-full-application-tour-regression.spec.ts` | Complete E2E tour | Regression / smoke | **HIGHEST** | Every PR |
-| **TS-0070** | `TS-0070-supervised-tour-tutorial.spec.ts` | Paced walkthrough | Human-watchable demo | Reference | On demand |
+| **TS-0070** | `TS-0070-supervised-tour-tutorial.spec.ts` | Paced walkthrough via sidebar (incl. Suplencias/Reportes; Items/Auditoría canonical) | Human-watchable demo | Reference | On demand |
 | **TS-0071** | `TS-0071-first-case-tutorial-onboarding.spec.ts` | Learner-friendly | Recording demo (CU01–CU05) | Onboarding | On demand |
 | **TS-0090** | `TS-0090-demo-two-full-cases.spec.ts` | Seeds two comparable full cases via UI | Live-demo data seed | Reference | On demand |
 

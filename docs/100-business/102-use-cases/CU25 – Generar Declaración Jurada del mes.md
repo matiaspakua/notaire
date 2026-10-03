@@ -26,3 +26,8 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | - | Flujo estándar sin desvíos | La operación se completa según el curso normal de eventos. |
+
+## Entrada en la UI (Next.js)
+
+Se accede desde **Reportes** en la navegación primaria
+(`/dashboard/reportes`) — issue #1058.

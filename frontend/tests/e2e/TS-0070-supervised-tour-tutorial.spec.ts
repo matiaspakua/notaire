@@ -38,7 +38,9 @@ const SIDEBAR_MODULES: Module[] = [
   { navLabel: "Protocolo", urlPart: "/dashboard/protocolo" },
   { navLabel: "Inmuebles", urlPart: "/dashboard/inmuebles" },
   { navLabel: "Copias", urlPart: "/dashboard/copias" },
-  { navLabel: "Items", urlPart: "/dashboard/items" },
+  { navLabel: "Suplencias", urlPart: "/dashboard/suplencias", createTestId: "btn-nueva-suplencia" },
+  { navLabel: "Reportes", urlPart: "/dashboard/reportes" },
+  { navLabel: "Items", urlPart: "/dashboard/items", createTestId: "btn-nuevo-item" },
   { navLabel: "Documentos", urlPart: "/dashboard/documentos" },
   { navLabel: "Auditoría", urlPart: "/dashboard/auditoria" },
 ];
@@ -51,9 +53,7 @@ const ADMIN_MODULES: Module[] = [
   { navLabel: "Folios", urlPart: "/dashboard/administracion/folios", createTestId: "btn-nuevo-folio" },
   { navLabel: "Plantillas", urlPart: "/dashboard/administracion/plantillas", createTestId: "btn-nueva-plantilla" },
   { navLabel: "Tipos de documento", urlPart: "/dashboard/administracion/documentos", createTestId: "btn-nuevo-tipo-documento" },
-  { navLabel: "Ítems", urlPart: "/dashboard/administracion/items", createTestId: "btn-nuevo-item" },
   { navLabel: "Usuarios", urlPart: "/dashboard/administracion/usuarios", createTestId: "btn-nuevo-usuario" },
-  { navLabel: "Auditoría", urlPart: "/dashboard/administracion/auditoria" },
 ];
 
 /**
@@ -135,14 +135,6 @@ test.describe("Supervised full-system tour (login → all modules → logout)", 
         }
       });
     }
-
-    await test.step("Visit Reportes & Suplencias", async () => {
-      await page.goto("/dashboard/reportes");
-      await assertPageLoaded(page, { navLabel: "Reportes", urlPart: "/dashboard/reportes" });
-      await page.goto("/dashboard/suplencias");
-      await assertPageLoaded(page, { navLabel: "Suplencias", urlPart: "/dashboard/suplencias" });
-      await exerciseCreateModal(page, "btn-nueva-suplencia");
-    });
 
     await test.step("LAST ACTION: logout", async () => {
       // Return to a page that always shows the sidebar, then log out.

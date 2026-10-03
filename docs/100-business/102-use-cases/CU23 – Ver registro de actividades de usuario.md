@@ -29,3 +29,9 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 6.1 | El usuario no tiene un historial de movimientos. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Entrada en la UI (Next.js)
+
+La ruta canónica es `/dashboard/auditoria` (sidebar / inicio). La ruta
+legacy `/dashboard/administracion/auditoria` redirige a la canónica —
+issue #1058.

@@ -188,8 +188,6 @@ test.describe("Page load — All pages render without crash", () => {
     "/dashboard/administracion/tramites",
     "/dashboard/administracion/estados-gestion",
     "/dashboard/administracion/plantillas",
-    "/dashboard/administracion/items",
-    "/dashboard/administracion/auditoria",
   ];
 
   for (const path of pages) {

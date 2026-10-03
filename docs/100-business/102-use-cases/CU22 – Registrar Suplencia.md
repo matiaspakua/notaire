@@ -36,3 +36,9 @@ intente asignar al escribano suplantado (CU02) se redirige automáticamente
 al escribano suplente. El sistema deja constancia de la redirección en las
 observaciones de la gestión y lo notifica al usuario al guardar (CU48/CU51
 — el suplente debe tener registro de escribano vigente).
+
+## Entrada en la UI (Next.js)
+
+Operadores autenticados abren **Suplencias** desde la barra lateral del
+dashboard (`/dashboard/suplencias`) o desde el mosaico de módulos en el
+inicio — issue #1058.

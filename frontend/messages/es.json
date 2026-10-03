@@ -17,6 +17,8 @@
     "documentos": "Documentos",
     "auditoria": "Auditoría",
     "administracion": "Administración",
+    "suplencias": "Suplencias",
+    "reportes": "Reportes",
     "logout": "Cerrar sesión",
     "brand": "Notaire",
     "brandSubtitle": "Escribanía",
@@ -128,6 +130,14 @@
     "documentos": {
       "label": "Documentos",
       "description": "Documentos presentados"
+    },
+    "suplencias": {
+      "label": "Suplencias",
+      "description": "Registro y consulta de suplencias notariales"
+    },
+    "reportes": {
+      "label": "Reportes",
+      "description": "Reportes y declaraciones juradas"
     },
     "auditoria": {
       "label": "Auditoría",

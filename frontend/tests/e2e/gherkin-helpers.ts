@@ -114,7 +114,17 @@ export class GherkinSteps {
 
   /** When: user selects a sidebar menu item */
   async whenUserOpensSidebarModule(moduleLabel: string) {
-    await this.page.getByTestId("sidebar").getByText(moduleLabel).click();
+    await this.page
+      .getByTestId("sidebar")
+      .getByRole("link", { name: moduleLabel })
+      .first()
+      .click();
+    await this.page.waitForLoadState("networkidle");
+  }
+
+  /** When: user opens a sidebar entry by stable data-testid (`nav-<labelKey>`). */
+  async whenUserOpensSidebarNav(labelKey: string) {
+    await this.page.getByTestId(`nav-${labelKey}`).click();
     await this.page.waitForLoadState("networkidle");
   }
 

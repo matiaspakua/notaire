@@ -26,3 +26,8 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 4.1 | No existen trámites que generen DDJJ para el período indicado. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Entrada en la UI (Next.js)
+
+Se accede desde **Reportes** en la navegación primaria
+(`/dashboard/reportes`) — issue #1058.
