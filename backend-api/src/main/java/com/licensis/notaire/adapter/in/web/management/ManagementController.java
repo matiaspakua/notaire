@@ -34,7 +34,9 @@ import com.licensis.notaire.application.usecase.management.ManagementArchiveDebt
 import com.licensis.notaire.application.usecase.management.ManagementBitacoraService;
 import com.licensis.notaire.application.usecase.management.ManagementQueryService;
 import com.licensis.notaire.application.usecase.management.ManagementResumenFinancieroService;
+import com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard;
 import com.licensis.notaire.application.usecase.management.ManagementSubstitutionService;
+import com.licensis.notaire.exception.NotaireException;
 import com.licensis.notaire.application.usecase.workflow.ReingresoDocumentacionService;
 import com.licensis.notaire.application.usecase.workflow.WorkflowTraceService;
 import com.licensis.notaire.application.port.in.management.TransitionManagementUseCase;
@@ -90,6 +92,7 @@ public class ManagementController {
     private final ManagementSubstitutionService managementSubstitutionService;
     private final ManagementResumenFinancieroService managementResumenFinancieroService;
     private final ManagementBitacoraService managementBitacoraService;
+    private final ManagementStatusWriteGuard managementStatusWriteGuard;
     private final TransitionManagementUseCase transitionManagementUseCase;
     private final TransitionManagementWebMapper transitionManagementWebMapper;
     private final ExternalEntityDocumentService documentEntidadExternaService;
@@ -107,6 +110,7 @@ public class ManagementController {
                              ManagementSubstitutionService managementSubstitutionService,
                              ManagementResumenFinancieroService managementResumenFinancieroService,
                              ManagementBitacoraService managementBitacoraService,
+                             ManagementStatusWriteGuard managementStatusWriteGuard,
                              TransitionManagementUseCase transitionManagementUseCase,
                              TransitionManagementWebMapper transitionManagementWebMapper,
                              ExternalEntityDocumentService documentEntidadExternaService,
@@ -126,6 +130,7 @@ public class ManagementController {
         this.managementSubstitutionService = managementSubstitutionService;
         this.managementResumenFinancieroService = managementResumenFinancieroService;
         this.managementBitacoraService = managementBitacoraService;
+        this.managementStatusWriteGuard = managementStatusWriteGuard;
         this.transitionManagementUseCase = transitionManagementUseCase;
         this.transitionManagementWebMapper = transitionManagementWebMapper;
         this.documentEntidadExternaService = documentEntidadExternaService;
@@ -217,10 +222,11 @@ public class ManagementController {
 
     @PostMapping("/complete-case")
     @Transactional
-    @Operation(summary = "CU02 - Crear una gestión con sus dependencias obligatorias",
-            description = "CU22/CU59 - Si el escribano solicitado tiene una suplencia activa para la fecha de "
-                    + "inicio de la gestión, la gestión se redirige automáticamente al suplente y se deja "
-                    + "constancia en el campo observaciones de la respuesta.")
+    @Operation(summary = "CU02 - Create a management with its required dependencies",
+            description = "CU22/CU59 - If the requested notary has an active substitution for the management "
+                    + "start date, the management is redirected to the substitute and a note is recorded. "
+                    + "CU83 - When the procedure type has a workflow, the initial status must be a start node. "
+                    + "CU13 - Initial status is appended to History.")
     public ResponseEntity<Object> createCompleteCase(@RequestBody CompleteCaseRequest request) {
         if (!hasRequiredFields(request)) {
             return ResponseEntity.badRequest().build();
@@ -229,11 +235,14 @@ public class ManagementController {
         if (dependencies.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
+        CaseDependencies deps = dependencies.get();
+        managementStatusWriteGuard.validateInitialStatus(
+                deps.typeProcedure().getWorkflowDefinition(), deps.status());
         DeedManagement management = new DeedManagement();
         management.setDateStart(new Date());
-        applyManagementFields(management, request, dependencies.get());
+        applyManagementFields(management, request, deps);
         management = repository.save(management);
-        saveProcedure(management, dependencies.get());
+        saveProcedure(management, deps);
         managementBitacoraService.registerStatus(management, null);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(managementQueryService.findById(management.getIdManagement()).orElseThrow());
@@ -241,10 +250,11 @@ public class ManagementController {
 
     @PutMapping("/{id}/complete-case")
     @Transactional
-    @Operation(summary = "CU02 - Update a management with its required dependencies",
+    @Operation(summary = "CU02/CU53 - Update a management with its required dependencies",
             description = "CU22/CU59 - If the requested notary has an active substitution for the management "
                     + "start date, the management is redirected to the substitute and a note is recorded. "
-                    + "CU13 - Status changes are appended to History via ManagementBitacoraService.")
+                    + "CU83 **BREAKING** - Changing statusManagementId is rejected; use "
+                    + "POST /{id}/transition. Same-status updates remain allowed.")
     public ResponseEntity<Object> updateCompleteCase(@PathVariable Integer id,
             @RequestBody CompleteCaseRequest request) {
         Optional<DeedManagement> existing = repository.findById(id);
@@ -260,14 +270,18 @@ public class ManagementController {
         }
         DeedManagement management = existing.get();
         Integer previousStatusId = statusIdOf(management);
-        applyManagementFields(management, request, dependencies.get());
+        managementStatusWriteGuard.rejectStatusMutationOnUpdate(
+                previousStatusId, request.statusManagementId());
+        CaseDependencies deps = dependencies.get();
+        applyManagementFields(management, request, deps);
         management = repository.save(management);
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(id);
         if (procedures.isEmpty()) {
-            saveProcedure(management, dependencies.get());
+            saveProcedure(management, deps);
         } else {
-            updateProcedure(procedures.get(0), dependencies.get());
+            updateProcedure(procedures.get(0), deps);
         }
+        // Status mutations are rejected above; bitácora for status changes remains on /transition.
         registerStatusChangeIfNeeded(management, previousStatusId);
         return ResponseEntity.ok(managementQueryService.findById(management.getIdManagement()).orElseThrow());
     }
@@ -415,7 +429,8 @@ public class ManagementController {
     @PostMapping
     @Transactional
     @Operation(summary = "CU02 - Create a new management",
-            description = "CU13 - When a status is provided, the initial status is appended to History.")
+            description = "CU13 - When a status is provided, the initial status is appended to History. "
+                    + "Plain create has no procedure/workflow yet, so any defined status is accepted.")
     public ResponseEntity<Object> create(@Valid @RequestBody ManagementRequest request) {
         try {
             DeedManagement entity = new DeedManagement();
@@ -427,6 +442,8 @@ public class ManagementController {
                 managementBitacoraService.registerStatus(entity, null);
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(toManagementResponse(entity));
+        } catch (NotaireException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Failed to create management", e);
             return ResponseEntity.internalServerError().build();
@@ -435,22 +452,29 @@ public class ManagementController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Status mutation rejected — use POST /{id}/transition"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "CU53 - Update a management",
-            description = "CU13 - When the status id is first set or changes, a History row is appended.")
+            description = "CU83 **BREAKING** - Changing managementStatusId is rejected; use "
+                    + "POST /{id}/transition. Same-status updates remain allowed. "
+                    + "CU13 - History for status changes is written by /transition (and create).")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody ManagementRequest request) {
         return repository.findById(id).map(existing -> {
             try {
                 Integer previousStatusId = statusIdOf(existing);
+                managementStatusWriteGuard.rejectStatusMutationOnUpdate(
+                        previousStatusId, request.managementStatusId());
                 if (!applyManagementRequest(existing, request)) {
                     return ResponseEntity.badRequest().<Void>build();
                 }
                 repository.save(existing);
                 registerStatusChangeIfNeeded(existing, previousStatusId);
                 return ResponseEntity.ok().<Void>build();
+            } catch (NotaireException e) {
+                throw e;
             } catch (Exception e) {
                 log.error("Failed to update management id {}", id, e);
                 return ResponseEntity.internalServerError().<Void>build();
@@ -499,7 +523,11 @@ public class ManagementController {
         @ApiResponse(responseCode = "400", description = "Gestion sin tramites o workflow definition")
     })
     @GetMapping("/{id}/workflow-trace")
-    @Operation(summary = "Obtener trace del workflow de una gestion (con nodos, transiciones, historial y estados)")
+    @Operation(summary = "Get workflow trace for a management (nodes, transitions, history, node statuses)",
+            description = "CU83 legal-next contract: clients derive valid destination statuses from "
+                    + "`transitions` whose `originNodeId` matches the current node (the node whose "
+                    + "status equals `statusActual`). The gestiones UI must offer only those "
+                    + "destinations when changing status via POST /{id}/transition.")
     @Transactional(readOnly = true)
     public ResponseEntity<Object> getWorkflowTrace(@PathVariable Integer id) {
         try {

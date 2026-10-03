@@ -66,14 +66,16 @@ These endpoints are actively called by the Next.js frontend:
 - `DELETE /api/v1/folio/{id}`
 
 ### GestionController
-- `POST /api/v1/gestiones/complete-case`
+- `POST /api/v1/gestiones/complete-case` — CU02; initial status must be a workflow start node when a definition exists (#804)
 - `GET /api/v1/gestiones`
 - `GET /api/v1/gestiones/numero/{numero}`
 - `GET /api/v1/gestiones/cliente/{idPersona}`
 - `POST /api/v1/gestiones`
-- `PUT /api/v1/gestiones/{id}`
+- `PUT /api/v1/gestiones/{id}` — CU53; **BREAKING (#804):** changing `managementStatusId` → 400; use `POST /{id}/transition`
+- `PUT /api/v1/gestiones/{id}/complete-case` — **BREAKING (#804):** changing `statusManagementId` → 400; use `POST /{id}/transition`
+- `POST /api/v1/gestiones/{id}/transition` — CU83 validated status mutation
 - `DELETE /api/v1/gestiones/{id}`
-- `GET /api/v1/gestiones/{id}/workflow-trace`
+- `GET /api/v1/gestiones/{id}/workflow-trace` — CU83 legal-next source: filter transitions from the current node
 - `GET /api/v1/gestiones/{id}/documentos-entidades-externas` — `useDocumentosEntidadExterna.ts`, CU10 `documentos-entidades-externas` screen (#863)
 - `PUT /api/v1/gestiones/{id}/documentos-entidades-externas/{idDocumentoPresentado}` — `useDocumentosEntidadExterna.ts`, CU10 `documentos-entidades-externas` screen (#863)
 - `GET /api/v1/gestiones/{id}/reingreso-documentacion` — `useReingresoDocumentacion.ts`, CU43 `reingreso-documentacion` screen (#865)
@@ -233,7 +235,7 @@ Not reached by any current frontend call site. May be used by reports, backgroun
 - `GET /api/v1/folio/{id}`
 
 ### GestionController
-- `PUT /api/v1/gestiones/{id}/complete-case`
+- `PUT /api/v1/gestiones/{id}/complete-case` — see primary GestionController list; status id changes rejected (#804)
 - `GET /api/v1/gestiones/{id}`
 - `GET /api/v1/gestiones/{id}/estado-actual`
 
