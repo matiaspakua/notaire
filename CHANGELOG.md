@@ -473,6 +473,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **SubmittedDocument DocumentType mapping and getDto null-guard** (issue #801,
+  CU72): replace the Integer `@Column` for `fk_id_document_type` with a
+  `@ManyToOne DocumentType documentType` association; fix
+  `DocumentType.submittedDocumentCollection` `mappedBy` and drop cascade-all on
+  that collection. Legacy `getDto()` null-guards optional procedure (and
+  nullable Boolean flags) so null-procedure documents no longer NPE. No Flyway
+  change (column already present since V29).
+
 - **Gestión History orphan status writes** (issue #806, CU13 / CU02 / CU53):
   plain `POST`/`PUT /gestiones` and `PUT .../complete-case` now append History
   via `ManagementBitacoraService` when status is first set or changes (no row

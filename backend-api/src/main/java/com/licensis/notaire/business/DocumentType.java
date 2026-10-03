@@ -45,7 +45,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 public class DocumentType implements Serializable, Persistable<Integer>
 {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdDocumentType")
+    // No CascadeType.ALL: deleting a document type must not cascade-delete submitted documents.
+    @OneToMany(mappedBy = "documentType")
     private Collection<SubmittedDocument> submittedDocumentCollection;
     @Basic(optional = false)
     @Column(name = "enabled")
@@ -258,8 +259,8 @@ public class DocumentType implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "TipoDeDocumento[ idTipoDocumento=" + idDocumentType + " ]"
-                + "[ nombre=" + name + " ]";
+        return "DocumentType[ idDocumentType=" + idDocumentType + " ]"
+                + "[ name=" + name + " ]";
     }
 
     public int getVersion()
