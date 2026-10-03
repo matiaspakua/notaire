@@ -351,10 +351,17 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 .andReturn();
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
                 .get("idManagement").asInt();
-        mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body.formatted(2, notaryId, statusB.getIdManagementStatus())))
-                .andExpect(status().isOk());
+
+        // #804 rejects status changes via plain PUT — seed a second History row directly
+        // so this tie-break assertion stays independent of workflow enforcement.
+        var management = managementRepository.findById(managementId).orElseThrow();
+        management.setFkIdManagementStatus(statusB);
+        managementRepository.save(management);
+        History second = new History();
+        second.setFkIdManagement(management);
+        second.setFkIdManagementStatus(statusB);
+        second.setDate(new Date());
+        historyRepository.saveAndFlush(second);
 
         List<History> rows = historyRepository.findByFkIdManagementIdManagement(managementId);
         assertThat(rows).hasSize(2);
