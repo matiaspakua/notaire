@@ -32,6 +32,7 @@ import { usePersonas } from "@/hooks/usePersonas";
 import { usePresupuestos } from "@/hooks/usePresupuestos";
 import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
 import WorkflowTracker from "@/components/motion/WorkflowTracker";
+import { theme } from "@/theme/tokens";
 import type { ComponentType } from "react";
 
 type LucideIcon = ComponentType<{ className?: string }>;
@@ -87,12 +88,12 @@ function WorkflowHero() {
     <section className="space-y-5 px-2" data-testid="workflow-hero">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
             {td("workflowProgress")}
           </h2>
           {trace && (
-            <p className="text-sm text-[#86868b] mt-1" data-testid="workflow-subtitle">
-              {trace.encabezado ?? `Gestión #${trace.number}`}
+            <p className="text-sm text-muted-foreground mt-1" data-testid="workflow-subtitle">
+              {trace.encabezado ?? `Management #${trace.number}`}
               {trace.statusActual && (
                 <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
                   {trace.statusActual}
@@ -103,7 +104,11 @@ function WorkflowHero() {
         </div>
         <form onSubmit={handleSubmit} className="flex items-end gap-3" data-testid="workflow-search-form">
           <div className="space-y-1.5">
-            <label htmlFor="workflow-ref" className="block text-sm font-semibold text-[#424245]">
+            <label
+              htmlFor="workflow-ref"
+              className="block text-sm font-semibold"
+              style={{ color: theme.colors.neutral[800] }}
+            >
               {tw("searchLabel")}
             </label>
             <Input
@@ -124,7 +129,7 @@ function WorkflowHero() {
       </div>
 
       {notFound && (
-        <p role="alert" className="text-sm font-medium text-[#ff3b30]" data-testid="workflow-not-found">
+        <p role="alert" className="text-sm font-medium text-destructive" data-testid="workflow-not-found">
           {tw("notFound")}
         </p>
       )}
@@ -179,13 +184,16 @@ export default function DashboardPage() {
       </Suspense>
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1.5">
-          <h1 className="text-4xl font-semibold tracking-tight text-[#1d1d1f]">
+          <h1 className="text-4xl font-semibold tracking-tight text-foreground">
             {td("hello")}, {user?.nombre?.split(" ")[0]}
           </h1>
-          <p className="text-xl text-[#86868b] font-medium">{td("today")}</p>
+          <p className="text-xl text-muted-foreground font-medium">{td("today")}</p>
         </div>
         <div className="bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-black/5 shadow-sm">
-          <p className="text-sm font-semibold text-[#424245]">
+          <p
+            className="text-sm font-semibold"
+            style={{ color: theme.colors.neutral[800] }}
+          >
             {new Date().toLocaleDateString(dateLocale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
           </p>
         </div>
@@ -200,10 +208,10 @@ export default function DashboardPage() {
                 <Card className="bg-white border-none apple-shadow rounded-[28px] overflow-hidden">
                   <CardContent className="p-8 flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-[13px] font-bold uppercase tracking-widest text-[#86868b]">
+                      <p className="text-[13px] font-bold uppercase tracking-widest text-muted-foreground">
                         {td(stat.labelKey as Parameters<typeof td>[0])}
                       </p>
-                      <p className="text-5xl font-semibold tracking-tighter text-[#1d1d1f]">{stat.value}</p>
+                      <p className="text-5xl font-semibold tracking-tighter text-foreground">{stat.value}</p>
                     </div>
                     <div className={`${stat.tint} p-5 rounded-3xl`}>
                       <StatIcon className={`h-8 w-8 ${stat.iconColor}`} />
@@ -220,8 +228,8 @@ export default function DashboardPage() {
 
       <div className="space-y-6">
         <div className="flex items-center justify-between px-2">
-          <h2 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">{td("availableModules")}</h2>
-          <Button variant="link" className="text-[#0071e3] font-semibold text-sm group">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">{td("availableModules")}</h2>
+          <Button variant="link" className="text-primary font-semibold text-sm group">
             {td("viewAll")} <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
@@ -239,12 +247,12 @@ export default function DashboardPage() {
                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${mod.gradient} text-white shadow-lg shadow-blue-500/10 transition-transform duration-500 group-hover:scale-110`}>
                           <Icon className="h-7 w-7" />
                         </div>
-                        <CardTitle className="text-xl font-semibold text-[#1d1d1f] group-hover:text-[#0071e3] transition-colors duration-300">
+                        <CardTitle className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
                           {td(mod.labelKey as Parameters<typeof td>[0])}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="px-8 pb-8 pt-0">
-                        <CardDescription className="text-base text-[#86868b] leading-relaxed">
+                        <CardDescription className="text-base text-muted-foreground leading-relaxed">
                           {td(mod.descKey as Parameters<typeof td>[0])}
                         </CardDescription>
                       </CardContent>
