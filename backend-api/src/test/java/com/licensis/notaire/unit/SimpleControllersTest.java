@@ -671,7 +671,7 @@ class SimpleControllersTest {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
             when(templateRepo.findByDocumentTypeIdDocumentType(anyInt())).thenReturn(List.of());
-            when(docSubmittedRepo.existsByFkIdDocumentType(anyInt())).thenReturn(false);
+            when(docSubmittedRepo.existsByDocumentTypeIdDocumentType(anyInt())).thenReturn(false);
 
             mvc.perform(get("/api/v1/tipo-de-documento")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/tipo-de-documento/1")).andExpect(status().isOk());
@@ -702,7 +702,7 @@ class SimpleControllersTest {
             when(repo.findById(1)).thenReturn(Optional.of(t));
             when(repo.existsById(1)).thenReturn(true);
             when(templateRepo.findByDocumentTypeIdDocumentType(anyInt())).thenReturn(List.of());
-            when(docSubmittedRepo.existsByFkIdDocumentType(anyInt())).thenReturn(false);
+            when(docSubmittedRepo.existsByDocumentTypeIdDocumentType(anyInt())).thenReturn(false);
             when(repo.save(any(DocumentType.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/tipo-de-documento").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());

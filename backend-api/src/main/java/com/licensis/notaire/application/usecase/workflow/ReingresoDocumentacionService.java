@@ -98,7 +98,7 @@ public class ReingresoDocumentacionService {
     private static SubmittedDocument createSubmittedDocument(Procedure procedure, DocumentType typeDocument) {
         SubmittedDocument document = new SubmittedDocument();
         document.setFkIdProcedure(procedure);
-        document.setFkIdDocumentType(typeDocument.getIdDocumentType());
+        document.setDocumentType(typeDocument);
         document.setName(typeDocument.getName());
         document.setExpires(typeDocument.getExpires());
         document.setDueDays(typeDocument.getDueDays());

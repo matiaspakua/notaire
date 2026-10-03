@@ -7,7 +7,6 @@ package com.licensis.notaire.business;
 import java.math.BigDecimal;
 
 import com.licensis.notaire.dto.DtoSubmittedDocument;
-import com.licensis.notaire.dto.DtoDocumentType;
 import com.licensis.notaire.dto.DtoProcedure;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -63,8 +62,9 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     private Boolean released;
     @Column(name = "observed")
     private Boolean flagged;
-    @Column(name = "fk_id_document_type")
-    private Integer fkIdDocumentType;
+    @JoinColumn(name = "fk_id_document_type", referencedColumnName = "id")
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    private DocumentType documentType;
     @Basic(optional = false)
     @Column(name = "delivered_by")
     private String deliveredBy;
@@ -309,16 +309,16 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "DocumentoPresentado[ idDocumentoPresentado=" + idSubmittedDocument
-                + ", carton: " + this.cardNumber
-                + ", fecha ingreso: " + this.dateEntry
-                + ", fecha salida: " + this.dateExit
-                + ", observado: " + this.flagged
-                + ", importe: " + this.amountToPay
-                + ", echa pago: " + this.datePayment
-                + ", liberado" + this.released
-                + ", fecha liberacion: " + this.dateReleased
-                + ", observaciones: " + this.notes
+        return "SubmittedDocument[ idSubmittedDocument=" + idSubmittedDocument
+                + ", folderNumber: " + this.cardNumber
+                + ", entryDate: " + this.dateEntry
+                + ", exitDate: " + this.dateExit
+                + ", flagged: " + this.flagged
+                + ", amount: " + this.amountToPay
+                + ", paymentDate: " + this.datePayment
+                + ", released: " + this.released
+                + ", releasedDate: " + this.dateReleased
+                + ", notes: " + this.notes
                 + "]";
     }
 
@@ -356,11 +356,11 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
         dtoSubmittedDocument.setDateDue(dateDue);
         dtoSubmittedDocument.setIdSubmittedDocument(idSubmittedDocument);
         dtoSubmittedDocument.setAmountApagar(amountToPay);
-        dtoSubmittedDocument.setReleased(released);
+        dtoSubmittedDocument.setReleased(Boolean.TRUE.equals(released));
         dtoSubmittedDocument.setName(name);
         dtoSubmittedDocument.setCardNumber(cardNumber);
         dtoSubmittedDocument.setNotes(notes);
-        dtoSubmittedDocument.setFlagged(flagged);
+        dtoSubmittedDocument.setFlagged(Boolean.TRUE.equals(flagged));
         dtoSubmittedDocument.setPrepared(prepared);
         dtoSubmittedDocument.setExpires(expires);
         dtoSubmittedDocument.setDeliveredBy(deliveredBy);
@@ -375,11 +375,11 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
             dtoSubmittedDocument.setReentered(reentered);
         }
 
-        DtoProcedure dtoProcedure = new DtoProcedure();
-        dtoProcedure = fkIdProcedure.getDto();
-        dtoSubmittedDocument.setFkProcedure(dtoProcedure);
-
-        DtoDocumentType dtoDocumentType = new DtoDocumentType();
+        if (fkIdProcedure != null) {
+            dtoSubmittedDocument.setFkProcedure(fkIdProcedure.getDto());
+        } else {
+            dtoSubmittedDocument.setFkProcedure(null);
+        }
 
         return dtoSubmittedDocument;
     }
@@ -434,19 +434,43 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
         this.deliveredBy = deliveredBy;
     }
 
+    public DocumentType getDocumentType()
+    {
+        return documentType;
+    }
+
+    public void setDocumentType(DocumentType documentType)
+    {
+        this.documentType = documentType;
+    }
+
+    /**
+     * Compatibility accessor for callers that still use the legacy document-type id API.
+     * Returns 0 when the association is unset (legacy primitive return type).
+     */
     public int getFkIdDocumentType()
     {
-        return fkIdDocumentType;
+        Integer id = getFkIdDocumentTypeNullable();
+        return id != null ? id : 0;
     }
 
     public Integer getFkIdDocumentTypeNullable()
     {
-        return fkIdDocumentType;
+        return documentType != null ? documentType.getIdDocumentType() : null;
     }
 
     public void setFkIdDocumentType(int fkIdDocumentType)
     {
-        this.fkIdDocumentType = fkIdDocumentType;
+        setFkIdDocumentType(Integer.valueOf(fkIdDocumentType));
+    }
+
+    public void setFkIdDocumentType(Integer fkIdDocumentType)
+    {
+        if (fkIdDocumentType == null) {
+            this.documentType = null;
+        } else {
+            this.documentType = new DocumentType(fkIdDocumentType);
+        }
     }
 
     public Boolean getReleased()
@@ -467,11 +491,6 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     public void setFlagged(Boolean flagged)
     {
         this.flagged = flagged;
-    }
-
-    public void setFkIdDocumentType(Integer fkIdDocumentType)
-    {
-        this.fkIdDocumentType = fkIdDocumentType;
     }
 
     public Date getDateEntry()

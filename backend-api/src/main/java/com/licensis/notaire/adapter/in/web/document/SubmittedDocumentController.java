@@ -65,7 +65,10 @@ public class SubmittedDocumentController {
 
     private SubmittedDocument toEntity(SubmittedDocumentRequest request) {
         SubmittedDocument entity = new SubmittedDocument();
-        entity.setFkIdDocumentType(request.typeId());
+        Optional<DocumentType> type = request.typeId() != null
+                ? typeRepository.findById(request.typeId())
+                : Optional.empty();
+        type.ifPresent(entity::setDocumentType);
         entity.setDelivered(request.delivered() != null ? request.delivered() : false);
         entity.setName(request.name() != null ? request.name() : "");
         entity.setPrepared(false);
@@ -80,18 +83,15 @@ public class SubmittedDocumentController {
             try {
                 entity.setDateEntry(DATE_FORMAT.parse(request.date()));
             } catch (ParseException e) {
-                log.warn("Invalid fecha format: {}", request.date());
+                log.warn("Invalid date format: {}", request.date());
             }
         }
-        applyDueFromDocumentType(entity, request);
+        applyDueFromDocumentType(entity, type, request);
         return entity;
     }
 
-    private void applyDueFromDocumentType(SubmittedDocument entity, SubmittedDocumentRequest request) {
-        Optional<DocumentType> type = request.typeId() != null
-                ? typeRepository.findById(request.typeId())
-                : Optional.empty();
-
+    private void applyDueFromDocumentType(SubmittedDocument entity, Optional<DocumentType> type,
+            SubmittedDocumentRequest request) {
         boolean expires = type.map(DocumentType::getExpires).orElse(false);
         Integer dueDays = type.map(DocumentType::getDueDays).orElse(null);
         String deliveredBy = request.deliveredBy() != null
@@ -111,11 +111,16 @@ public class SubmittedDocumentController {
 
     private SubmittedDocumentResponse toResponse(SubmittedDocument d) {
         TypeDocInfo type = null;
-        Integer typeId = d.getFkIdDocumentTypeNullable();
-        if (typeId != null) {
-            type = typeRepository.findById(typeId)
-                    .map(t -> new TypeDocInfo(t.getIdDocumentType(), t.getName()))
-                    .orElse(null);
+        DocumentType documentType = d.getDocumentType();
+        if (documentType != null) {
+            type = new TypeDocInfo(documentType.getIdDocumentType(), documentType.getName());
+        } else {
+            Integer typeId = d.getFkIdDocumentTypeNullable();
+            if (typeId != null) {
+                type = typeRepository.findById(typeId)
+                        .map(t -> new TypeDocInfo(t.getIdDocumentType(), t.getName()))
+                        .orElse(null);
+            }
         }
         String date = d.getDateEntry() != null ? DATE_FORMAT.format(d.getDateEntry()) : null;
         return new SubmittedDocumentResponse(d.getIdSubmittedDocument(), type, date, d.getDelivered());
