@@ -34,7 +34,12 @@ only on macOS, and 8 duplicate-heading hits in `CHANGELOG.md`.
 
 ## Skipped spec sync
 
-(filled during implementation)
+45 changes were archived: 44 with their delta specs folded into `openspec/specs/`, and one with
+`--skip-specs`:
+
+| Change | Why the spec sync was skipped |
+|--------|-------------------------------|
+| `chore-validate-sdlc-no-bc` | Its delta MODIFIES a requirement of a spec that does not exist under `openspec/specs/`; the CLI only allows ADDED requirements for a new spec and aborts. The change's artifacts are archived intact. |
 
 ## Riesgos / Trade-offs
 
