@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU22", "CU59"})
-@DisplayName("GestionSuplenciaService unit tests")
+@DisplayName("ManagementSubstitutionService unit tests")
 @ExtendWith(MockitoExtension.class)
 class ManagementSubstitutionServiceTest {
 
@@ -33,74 +33,75 @@ class ManagementSubstitutionServiceTest {
 
     private ManagementSubstitutionService managementSubstitutionService;
 
-    private Person notarySolicitado;
-    private Person suplente;
-    private Date dateManagement;
+    private Person requestedNotary;
+    private Person substitute;
+    private Date managementDate;
 
     @BeforeEach
     void setUp() {
         managementSubstitutionService = new ManagementSubstitutionService(substitutionRepository);
 
-        notarySolicitado = new Person();
-        notarySolicitado.setPersonId(10);
-        notarySolicitado.setFirstName("Escribano");
-        notarySolicitado.setLastName("Solicitado");
+        requestedNotary = new Person();
+        requestedNotary.setPersonId(10);
+        requestedNotary.setFirstName("Requested");
+        requestedNotary.setLastName("Notary");
 
-        suplente = new Person();
-        suplente.setPersonId(20);
-        suplente.setFirstName("Escribano");
-        suplente.setLastName("Suplente");
+        substitute = new Person();
+        substitute.setPersonId(20);
+        substitute.setFirstName("Substitute");
+        substitute.setLastName("Notary");
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(2026, Calendar.JANUARY, 15, 0, 0, 0);
-        dateManagement = calendar.getTime();
+        managementDate = calendar.getTime();
     }
 
     @Test
-    @DisplayName("Should assign requested notary when no active suplencia exists")
+    @DisplayName("Should assign requested notary when no active substitution exists")
     void shouldAssignRequestedNotaryWhenNoActiveSubstitution() {
         when(substitutionRepository
                 .findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
-                        eq(notarySolicitado.getPersonId()), any(Date.class), any(Date.class)))
+                        eq(requestedNotary.getPersonId()), any(Date.class), any(Date.class)))
                 .thenReturn(Collections.emptyList());
 
-        ManagementSubstitutionService.NotaryAsignado resultado =
-                managementSubstitutionService.resolverNotary(notarySolicitado, dateManagement);
+        ManagementSubstitutionService.AssignedNotary result =
+                managementSubstitutionService.resolveNotary(requestedNotary, managementDate);
 
-        assertThat(resultado.notary()).isEqualTo(notarySolicitado);
-        assertThat(resultado.substitutionAplicada()).isNull();
+        assertThat(result.notary()).isEqualTo(requestedNotary);
+        assertThat(result.appliedSubstitution()).isNull();
     }
 
     @Test
-    @DisplayName("Should assign suplente when notary has an active suplencia")
+    @DisplayName("Should assign substitute when notary has an active substitution")
     void shouldAssignSuplenteWhenNotaryHasActiveSubstitution() {
-        Substitution substitutionActiva = new Substitution(1, dateManagement, dateManagement);
-        substitutionActiva.setFkIdSubstituted(notarySolicitado);
-        substitutionActiva.setFkIdSubstitute(suplente);
+        Substitution activeSubstitution = new Substitution(1, managementDate, managementDate);
+        activeSubstitution.setFkIdSubstituted(requestedNotary);
+        activeSubstitution.setFkIdSubstitute(substitute);
         when(substitutionRepository
                 .findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
-                        eq(notarySolicitado.getPersonId()), any(Date.class), any(Date.class)))
-                .thenReturn(List.of(substitutionActiva));
+                        eq(requestedNotary.getPersonId()), any(Date.class), any(Date.class)))
+                .thenReturn(List.of(activeSubstitution));
 
-        ManagementSubstitutionService.NotaryAsignado resultado =
-                managementSubstitutionService.resolverNotary(notarySolicitado, dateManagement);
+        ManagementSubstitutionService.AssignedNotary result =
+                managementSubstitutionService.resolveNotary(requestedNotary, managementDate);
 
-        assertThat(resultado.notary()).isEqualTo(suplente);
-        assertThat(resultado.substitutionAplicada()).isEqualTo(substitutionActiva);
+        assertThat(result.notary()).isEqualTo(substitute);
+        assertThat(result.appliedSubstitution()).isEqualTo(activeSubstitution);
         verify(substitutionRepository)
                 .findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
-                        eq(notarySolicitado.getPersonId()), any(Date.class), any(Date.class));
+                        eq(requestedNotary.getPersonId()), any(Date.class), any(Date.class));
     }
 
     @Test
-    @DisplayName("Should record the redirection identifying requested and assigned escribanos")
+    @DisplayName("Should record the redirection identifying requested and assigned notaries")
     void shouldRecordRedirectionInNotes() {
-        String observacion = managementSubstitutionService.observacionRedireccion(notarySolicitado, suplente);
+        String note = managementSubstitutionService.redirectionNote(requestedNotary, substitute);
 
-        assertThat(observacion)
-                .contains(notarySolicitado.getFirstName())
-                .contains(notarySolicitado.getLastName())
-                .contains(suplente.getFirstName())
-                .contains(suplente.getLastName());
+        assertThat(note)
+                .contains("redirected by active substitution")
+                .contains(requestedNotary.getFirstName())
+                .contains(requestedNotary.getLastName())
+                .contains(substitute.getFirstName())
+                .contains(substitute.getLastName());
     }
 }

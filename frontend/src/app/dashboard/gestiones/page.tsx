@@ -128,7 +128,7 @@ export default function GestionesPage() {
           inmuebleId: inmuebleId ? Number(inmuebleId) : undefined,
         });
         toast.success(t("created"));
-        notifySuplenciaRedirect(created.notes);
+        notifySubstitutionRedirect(created.notes);
       }
     } catch {
       toast.error(t("errorSave"));
@@ -137,9 +137,10 @@ export default function GestionesPage() {
     }
   }
 
-  function notifySuplenciaRedirect(observaciones?: string) {
-    if (observaciones?.includes("redirigida por suplencia activa")) {
-      toast.info(t("suplenciaRedirected"), { description: observaciones });
+  function notifySubstitutionRedirect(notes?: string) {
+    if (notes?.includes("redirected by active substitution")
+        || notes?.includes("redirigida por suplencia activa")) {
+      toast.info(t("suplenciaRedirected"), { description: notes });
     }
   }
 
