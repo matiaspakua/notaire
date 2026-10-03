@@ -21,7 +21,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/fix-1047-k6-load-test-69d3` | created from origin/main after #1048 (`2967ec32`) |
 | Tasks | `tasks.md` | Gate 1 planning complete; implement pending |
 | Commits | `aa418f3f`, `0312f01e`, `64b31fe0`, `82b21a30` | landed on branch |
-| Pull Request | — | pending |
+| Pull Request | [#1154](https://github.com/matiaspakua/notaire/pull/1154) | draft |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
