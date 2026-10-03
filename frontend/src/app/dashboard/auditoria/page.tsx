@@ -101,7 +101,7 @@ export default function AuditoriaPage() {
               value={moduloFilter}
               onChange={(e) => setModuloFilter(e.target.value)}
             >
-              <option value="all">Todos los módulos</option>
+              <option value="all">{t("allModules")}</option>
               {modulos.map((m) => (
                 <option key={m} value={m}>
                   {m}

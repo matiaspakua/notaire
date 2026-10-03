@@ -80,7 +80,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 |----|----|-------|------|-------|-------|
 | **TS-0012** | `TS-0012-documentacion-testimonio-workflow.spec.ts` | CU03–CU12 | GherkinSteps + API | 2 (UI not present) | **HIGH** |
 | **TS-0013** | `TS-0013-escrituras-signing-workflow.spec.ts` | CU05, CU06, CU52, CU63 | GherkinSteps + API | 1 (UI not present) | **HIGH** |
-| **TS-0014** | `TS-0014-pagos-workflow.spec.ts` | CU15, CU47 | GherkinSteps | intentional gaps cite #1146 | **HIGH** |
+| **TS-0014** | `TS-0014-pagos-workflow.spec.ts` | CU15, CU47 | GherkinSteps | 2 intentional gaps cite #1146 | **HIGH** |
 | **TS-0015** | `TS-0015-personas-clientes-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61; #945 Dedup-EDGE (empty DNI → validation feedback) | GherkinSteps + API | 1 (UI flow changed) | **HIGH** |
 
 **Consolidated From**:
@@ -92,8 +92,8 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0016** | `TS-0016-usuarios-escribanos-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | CU21 unskipped (#1057); CU23/CU48 cite #1146 | **HIGH** |
-| **TS-0017** | `TS-0017-suplencias-workflow.spec.ts` | CU22, CU59 | Sidebar nav (`nav-suplencias`) + GherkinSteps | intentional gaps cite #1146 | **MEDIUM** |
+| **TS-0016** | `TS-0016-usuarios-escribanos-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | 3 intentional gaps cite #1146 (CU21 unskipped #1057) | **HIGH** |
+| **TS-0017** | `TS-0017-suplencias-workflow.spec.ts` | CU22, CU59 | Sidebar nav (`nav-suplencias`) + GherkinSteps | 2 intentional gaps cite #1146 | **MEDIUM** |
 | **TS-0018** | `TS-0018-reingreso-documentacion-workflow.spec.ts` | CU43 | Direct nav + assertions | 0 | **MEDIUM** |
 | **TS-0019** | `TS-0019-inmuebles-valuacion-workflow.spec.ts` | CU69 | GherkinSteps | 0 | **MEDIUM** |
 
@@ -101,7 +101,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0020** | `TS-0020-reportes-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | intentional gaps cite #1146 | **HIGH** |
+| **TS-0020** | `TS-0020-reportes-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | 7 intentional gaps cite #1146 | **HIGH** |
 | **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | API arrange + editor | 0 (self-seeds workflow; #1066) | **HIGH** |
 | **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | API arrange + table | 0 (self-seeds tipo-tramite; #1066) | **MEDIUM** |
 | **TS-0023** | `TS-0023-roles-permisos-admin.spec.ts` | CU43.1 | Direct nav + form | 0 | **MEDIUM** |
@@ -119,7 +119,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | Focus | Test Type | Priority | Value |
 |----|----|-------|---------|----------|-------|
-| **TS-0040** | `TS-0040-l10n-language-switching-qa.spec.ts` | i18n (ES ↔ EN) | Language switcher | Medium | Utility |
+| **TS-0040** | `TS-0040-l10n-language-switching-qa.spec.ts` | i18n (ES ↔ EN); #1059 EN titles on roles/workflows | Language switcher + gap pages | Medium | Utility |
 | **TS-0041** | `TS-0041-responsive-viewport-qa.spec.ts` | Responsive design | Mobile (320px) + tablet (768px) + desktop (1024px) | Medium | Utility |
 | **TS-0042** | `TS-0042-accessibility-search-labels-qa.spec.ts` | WCAG accessibility | Label association (#608) | Medium | Utility |
 | **TS-0043** | `TS-0043-icons-ux-qa.spec.ts` | Icon rendering | PNG load verification | Low | Utility |
@@ -206,27 +206,46 @@ test("scenario", async ({ page }) => {
 
 ## Skipped Tests Justification
 
-All 11 skipped tests have documented blockers:
+### Live inventory — intentional feature-gap skips (#1146 / CU76)
 
-| TS | Skipped Test | Reason | Issue | Re-enable When |
-|----|----|-------|--------|------|
-| TS-0010 | CU01-GW02 | Form schema mismatch (no "tipo tramite" field) | Design change | Form updated to include field |
-| TS-0011 | CU02-GW02 | Form simplified (only "numero" field now) | Design change | Form restored |
-| TS-0012 | CU04-GW01 | No "documentación" button on personas page | UI removed | UI restored or alternative added |
-| TS-0013 | CU06-GW01 | No "firmar" button (icon-only actions) | Design | Button restored with accessible name |
-| TS-0014 | CU15-GW03 / CU47-GW01 | Detail / date-filter UI gaps | #1146 | Product UI or re-assert against real controls |
-| TS-0015 | CU18-GW01 | Flow changed ("Es cliente" checkbox, no separate button) | Design | Flow documented in new test |
-| TS-0016 | CU23 / CU48 | Missing actividades / escribanos flows | #1146 | Product flows |
-| TS-0016 | CU21 | Was icon-only unnamed edit | Fixed in #1057 | `aria-label` + getByRole name |
-| TS-0017 | CU59-GW01/02 | Filter / detail UI absent | #1146 | Filter UI added |
-| TS-0020 | CU24+ admin/report gaps | Copy / missing actions | #1146 | Align tests to real labels or ship UI |
-| TS-0021 | — | Was conditional empty-table skip | Fixed in #1066 | Self-arranges via `createWorkflowDefinition` |
-| TS-0022 | — | Was conditional empty-table skip | Fixed in #1066 | Self-arranges via `createTipoTramite` |
+**Fourteen** static `test.skip` declarations remain in TS-0014 / TS-0016 /
+TS-0017 / TS-0020. Each skip title cites `#1146` (tracker hygiene). **Product
+delivery stays on the owning CU** — do not unskip without real UI assertions.
+CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
+`e2e-test-reliability.test.ts` enforces `#\d+` citations and the count `14`.
+
+| TS | Skip id | Owning CU | Product gap (summary) | Citation | Product tracking |
+|----|---------|-----------|-----------------------|----------|------------------|
+| TS-0014 | CU15-GW03 | CU15 | Pagos row has no “ver detalle” control | #1146 | Owning CU15 (UI detail action) |
+| TS-0014 | CU47-GW01 | CU47 | Pagos page has no fecha desde/hasta filters | #1146 | Owning CU47 (date filter UI) |
+| TS-0016 | CU23-GW01 | CU23 | Usuarios page has no “ver actividades” | #1146 | Owning CU23 (activities UI) |
+| TS-0016 | CU48-GW01 | CU48 | No `/dashboard/administracion/escribanos` page | #1146 | Owning CU48 (escribanos CRUD) |
+| TS-0016 | CU48-GW02 | CU48 | Same — create escribano flow absent | #1146 | Owning CU48 |
+| TS-0017 | CU59-GW01 | CU59 | Suplencias has no escribano filter | #1146 | Owning CU59 (filter UI) |
+| TS-0017 | CU59-GW02 | CU59 | Suplencias table has no “ver” detail | #1146 | Owning CU59 (detail UI) |
+| TS-0020 | CU24-GW01 | CU24 | Reportes lacks “libro índices” named action | #1146 | Owning CU24 (report action/copy) |
+| TS-0020 | CU25-GW01 | CU25 | Reportes lacks mes / declaración jurada UI | #1146 | Owning CU25 |
+| TS-0020 | CU39-GW01 | CU39 | Presupuestos lacks “plantillas” button | #1146 | Owning CU39 |
+| TS-0020 | CU42-GW01 | CU42 | Dashboard lacks alertas / vencimientos | #1146 | Owning CU42 |
+| TS-0020 | CU62-GW01 | CU62 | Escrituras page has no search bar | #1146 | Owning CU62 |
+| TS-0020 | CU65-GW01 | CU65 | Tipos documento page has no search | #1146 | Owning CU65 |
+| TS-0020 | CU66-GW01 | CU66 | Conceptos page has no search | #1146 | Owning CU66 |
+
+### Resolved / not counted as feature-gap debt
+
+| TS | Former skip | Status |
+|----|-------------|--------|
+| TS-0016 | CU21 edit (icon-only unnamed) | Unskipped — #1057 (`aria-label` + `getByRole`) |
+| TS-0021 | Conditional empty-table skip | Fixed — #1066 (`createWorkflowDefinition`) |
+| TS-0022 | Conditional empty-table skip | Fixed — #1066 (`createTipoTramite`) |
+| TS-0010–TS-0015 historical design skips | Formerly listed in this doc | No static `test.skip` on current `main` |
 
 **Policy**: Intentional feature-gap skips MUST cite an open GitHub issue in the
 skip title/reason (see #1146). Runtime skips for missing seed data are forbidden
 (#1066). Flake triage uses Playwright `trace: on-first-retry`, failure
-screenshots/video, and CI artifacts — CI retries are capped at **1**.
+screenshots/video, and CI artifacts — CI retries are capped at **1**. When a
+product PR unskips a row, update this table **and** the Vitest inventory count
+in the same change.
 
 ---
 

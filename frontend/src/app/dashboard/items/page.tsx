@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -34,13 +35,11 @@ const EMPTY: Partial<Item> = {
   type: "NORMAL",
 };
 
-const TIPO_LABELS: Record<TipoItem, string> = {
-  NORMAL: "Normal",
-  DESCUENTO: "Descuento",
-  RECARGO: "Recargo",
-};
+const TIPO_VALUES: TipoItem[] = ["NORMAL", "DESCUENTO", "RECARGO"];
 
 export default function ItemsPage() {
+  const t = useTranslations("items");
+  const tc = useTranslations("common");
   const { data: items = [], isLoading } = useItems();
   const createMutation = useCreateItem();
   const updateMutation = useUpdateItem();
@@ -55,6 +54,10 @@ export default function ItemsPage() {
   const [reporteQuery, setReporteQuery] = useState<number | undefined>(undefined);
   const { data: descuentosRecargos = [], isFetching: reporteLoading } =
     useDescuentosYRecargos(reporteQuery);
+
+  function tipoLabel(tipo: TipoItem): string {
+    return t(`types.${tipo}`);
+  }
 
   function openCreate() {
     setEditing(EMPTY);
@@ -73,7 +76,7 @@ export default function ItemsPage() {
   async function handleSave() {
     const type = editing.type ?? "NORMAL";
     if (type !== "NORMAL" && !editing.reason?.trim()) {
-      toast.error("El motivo es obligatorio para ítems de descuento o recargo");
+      toast.error(t("reasonRequired"));
       return;
     }
     const payload: Partial<Item> = {
@@ -84,14 +87,14 @@ export default function ItemsPage() {
     try {
       if (isEditMode && editing.idItem) {
         await updateMutation.mutateAsync({ id: editing.idItem, data: payload });
-        toast.success("Ítem actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(payload);
-        toast.success("Ítem creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al guardar el ítem" });
+      presentMutationError(err, { fallback: t("errorSave") });
     }
   }
 
@@ -99,9 +102,9 @@ export default function ItemsPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Ítem eliminado");
+      toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al eliminar" });
+      presentMutationError(err, { fallback: t("errorDelete") });
     } finally {
       setDeleteId(null);
     }
@@ -110,29 +113,29 @@ export default function ItemsPage() {
   const columns: Column<Item>[] = [
     {
       key: "id",
-      header: "ID",
+      header: tc("id"),
       render: (i) => <span className="text-xs text-muted-foreground">{i.idItem}</span>,
       className: "w-12",
     },
     {
       key: "nombre",
-      header: "Nombre",
+      header: t("fields.nombre"),
       render: (i) => i.name ?? "—",
     },
     {
       key: "valor",
-      header: "Valor",
+      header: t("fields.valor"),
       render: (i) => <span className="font-medium">{formatCurrency(i.value)}</span>,
     },
     {
       key: "presupuesto",
-      header: "Presupuesto",
+      header: t("fields.presupuesto"),
       render: (i) => i.fkIdBudget?.idBudget ? `#${i.fkIdBudget.idBudget}` : "—",
     },
     {
       key: "tipo",
-      header: "Tipo",
-      render: (i) => TIPO_LABELS[i.type ?? "NORMAL"],
+      header: t("fields.tipo"),
+      render: (i) => tipoLabel(i.type ?? "NORMAL"),
     },
     {
       key: "actions",
@@ -140,7 +143,7 @@ export default function ItemsPage() {
       className: "w-24",
       render: (i) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(i)} aria-label="Editar">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(i)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
           <Button
@@ -148,7 +151,7 @@ export default function ItemsPage() {
             variant="ghost"
             className="text-destructive hover:text-destructive"
             onClick={() => setDeleteId(i.idItem!)}
-            aria-label="Eliminar"
+            aria-label={tc("delete")}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -160,12 +163,12 @@ export default function ItemsPage() {
   return (
     <div>
       <AppHeader
-        title="Ítems de Presupuesto"
-        description="Gestionar ítems y conceptos en presupuestos"
+        title={t("title")}
+        description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-item">
             <Plus className="h-4 w-4" />
-            Nuevo ítem
+            {t("newItem")}
           </Button>
         }
       />
@@ -175,18 +178,18 @@ export default function ItemsPage() {
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(i) => i.idItem!}
-        emptyMessage="No hay ítems registrados"
+        emptyMessage={t("noData")}
       />
 
       <FormContainer>
-        <FormSection title="Descuentos y recargos por presupuesto">
+        <FormSection title={t("report.title")}>
           <div className="flex items-end gap-3">
-            <FormField label="ID Presupuesto">
+            <FormField label={t("fields.presupuestoId")}>
               <Input
                 type="number"
                 value={reporteId}
                 onChange={(e) => setReporteId(e.target.value)}
-                placeholder="ID del presupuesto"
+                placeholder={t("fields.presupuestoPlaceholder")}
                 data-testid="input-reporte-presupuesto-id"
               />
             </FormField>
@@ -195,7 +198,7 @@ export default function ItemsPage() {
               onClick={() => setReporteQuery(reporteId ? Number(reporteId) : undefined)}
               data-testid="btn-consultar-reporte"
             >
-              Consultar
+              {t("report.consult")}
             </Button>
           </div>
           {reporteQuery && (
@@ -203,12 +206,12 @@ export default function ItemsPage() {
               data={descuentosRecargos}
               isLoading={reporteLoading}
               keyExtractor={(i) => i.idItem!}
-              emptyMessage="Este presupuesto no tiene descuentos ni recargos"
+              emptyMessage={t("report.empty")}
               columns={[
-                { key: "nombre", header: "Nombre", render: (i) => i.name ?? "—" },
-                { key: "tipo", header: "Tipo", render: (i) => TIPO_LABELS[i.type ?? "NORMAL"] },
-                { key: "motivo", header: "Motivo", render: (i) => i.reason ?? "—" },
-                { key: "valor", header: "Valor", render: (i) => formatCurrency(i.value) },
+                { key: "nombre", header: t("fields.nombre"), render: (i) => i.name ?? "—" },
+                { key: "tipo", header: t("fields.tipo"), render: (i) => tipoLabel(i.type ?? "NORMAL") },
+                { key: "motivo", header: t("fields.motivo"), render: (i) => i.reason ?? "—" },
+                { key: "valor", header: t("fields.valor"), render: (i) => formatCurrency(i.value) },
               ]}
             />
           )}
@@ -218,25 +221,25 @@ export default function ItemsPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar ítem" : "Nuevo ítem"}>
-              <FormField label="ID Presupuesto">
+            <FormSection title={isEditMode ? t("editItem") : t("newItem")}>
+              <FormField label={t("fields.presupuestoId")}>
                 <Input
                   type="number"
                   value={presupuestoId}
                   onChange={(e) => setPresupuestoId(e.target.value)}
-                  placeholder="ID del presupuesto"
+                  placeholder={t("fields.presupuestoPlaceholder")}
                   data-testid="input-presupuesto-id"
                 />
               </FormField>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="Nombre">
+                <FormField label={t("fields.nombre")}>
                   <Input
                     value={editing.name ?? ""}
                     onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                     data-testid="input-cantidad"
                   />
                 </FormField>
-                <FormField label="Valor ($)">
+                <FormField label={t("fields.valorLabel")}>
                   <Input
                     type="number"
                     step="0.01"
@@ -246,7 +249,7 @@ export default function ItemsPage() {
                   />
                 </FormField>
               </div>
-              <FormField label="Tipo de ítem">
+              <FormField label={t("fields.tipoItem")}>
                 <Select
                   value={editing.type ?? "NORMAL"}
                   onValueChange={(v) => setEditing({ ...editing, type: v as TipoItem })}
@@ -255,20 +258,20 @@ export default function ItemsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {(Object.keys(TIPO_LABELS) as TipoItem[]).map((tipo) => (
+                    {TIPO_VALUES.map((tipo) => (
                       <SelectItem key={tipo} value={tipo}>
-                        {TIPO_LABELS[tipo]}
+                        {tipoLabel(tipo)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </FormField>
               {editing.type && editing.type !== "NORMAL" && (
-                <FormField label="Motivo" required>
+                <FormField label={t("fields.motivo")} required>
                   <Input
                     value={editing.reason ?? ""}
                     onChange={(e) => setEditing({ ...editing, reason: e.target.value })}
-                    placeholder="Ej: Descuento por pronto pago"
+                    placeholder={t("fields.motivoPlaceholder")}
                     data-testid="input-motivo"
                   />
                 </FormField>
@@ -276,14 +279,14 @@ export default function ItemsPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
-                Cancelar
+                {tc("cancel")}
               </Button>
               <Button
                 onClick={handleSave}
                 disabled={createMutation.isPending || updateMutation.isPending}
                 data-testid="btn-guardar-item"
               >
-                {isEditMode ? "Actualizar" : "Crear"}
+                {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>

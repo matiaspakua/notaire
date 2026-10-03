@@ -28,6 +28,7 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [020](ADR-020-openapi-exposure-policy.md) | OpenAPI Exposure Policy | Accepted | 2026-08-19 | Security & API |
 | [021](ADR-021-hexagonal-architecture-pilot.md) | Hexagonal Architecture Pilot (Payment Slice) | Accepted | 2026-09-13 | Code organization |
 | [022](ADR-022-git-history-rewrite-and-large-binaries.md) | Git History Rewrite and Large Binaries | Accepted | 2026-10-03 | DevOps / repo hygiene |
+| [023](ADR-023-rest-resource-naming.md) | REST Resource Naming Conventions | Accepted | 2026-10-03 | API design |
 
 ## ADR Status Legend
 
@@ -69,9 +70,10 @@ Cada ADR sigue esta estructura:
 - **ADR-002**: Estructura Maven multi-módulo
 - **ADR-021**: Piloto de arquitectura hexagonal (solo el slice de pagos/presupuestos)
 
-### API Design (1 ADR)
+### API Design (2 ADRs)
 
 - **ADR-003**: REST API versioning con URL path versioning
+- **ADR-023**: REST resource naming (language, plurals, search, actions, 201+Location)
 
 ### Data Persistence (2 ADRs)
 

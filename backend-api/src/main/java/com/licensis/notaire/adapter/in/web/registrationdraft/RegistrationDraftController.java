@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.registrationdraft;
 
+import com.licensis.notaire.adapter.in.web.support.CreatedResponses;
 import com.licensis.notaire.dto.DtoRegistrationDraft;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
@@ -60,7 +61,7 @@ public class RegistrationDraftController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Minuta generada"),
+        @ApiResponse(responseCode = "201", description = "Minuta generada"),
         @ApiResponse(responseCode = "400", description = "Datos catastrales/registrales incompletos o escritura no firmada"),
         @ApiResponse(responseCode = "404", description = "Escritura no encontrada")
     })
@@ -69,7 +70,7 @@ public class RegistrationDraftController {
     public ResponseEntity<Object> generate(@RequestBody GenerateRequest request) {
         try {
             DtoRegistrationDraft dto = registrationDraftService.generate(request.idDeed()).getDto();
-            return ResponseEntity.ok(dto);
+            return CreatedResponses.of(dto, "/api/v1/minutas-inscripcion", dto.getIdRegistrationDraft());
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (BusinessValidationException e) {

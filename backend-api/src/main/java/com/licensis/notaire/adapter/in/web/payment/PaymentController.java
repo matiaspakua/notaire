@@ -7,6 +7,7 @@ import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
 import com.licensis.notaire.application.port.in.payment.ProcessPaymentCommand;
 import com.licensis.notaire.application.port.in.payment.ProcessPaymentUseCase;
 import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
+import com.licensis.notaire.adapter.in.web.support.CreatedResponses;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 import com.licensis.notaire.domain.payment.PaymentStatus;
 import com.licensis.notaire.dto.DtoPaymentResponse;
@@ -167,27 +168,10 @@ public class PaymentController {
                 request.notes(), request.paymentMethod()));
     }
 
-    @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-        @ApiResponse(responseCode = "409", description = "Conflicto")
-    })
-    @PostMapping("/params")
-    @Operation(summary = "CU15 - Procesar pago (query params)")
-    public ResponseEntity<DtoPaymentResponse> processPaymentParams(
-            @Parameter(description = "ID del presupuesto") @RequestParam Integer idBudget,
-            @Parameter(description = "Monto del pago") @RequestParam BigDecimal amount,
-            @Parameter(description = "Fecha de pago (opcional, YYYY-MM-DD)")
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
-            @Parameter(description = "Observaciones") @RequestParam(required = false) String notes,
-            @Parameter(description = "Método de pago") @RequestParam(required = false) String paymentMethod) {
-        return register(new ProcessPaymentCommand(idBudget, amount, date, notes, paymentMethod));
-    }
-
     private ResponseEntity<DtoPaymentResponse> register(ProcessPaymentCommand command) {
         try {
             PaymentDetails payment = processPaymentUseCase.process(command);
-            return ResponseEntity.status(HttpStatus.CREATED).body(PaymentWebMapper.toDto(payment));
+            return CreatedResponses.of(PaymentWebMapper.toDto(payment), "/api/v1/pagos", payment.id());
         } catch (PendingBalanceExceededException e) {
             log.warn("Pago rechazado por exceder el saldo pendiente: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();

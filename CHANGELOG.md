@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Frontend i18n page coverage** (issue #1059, CU76 / ADR-015): wire remaining
+  dashboard gap pages (workflows list/editor, roles, suplencias, reportes,
+  items) and login leftovers (connection/lockout/validation/welcome/forgot/footer)
+  through next-intl catalogs; extend `i18n.test.ts` required-key gate; TS-0040
+  asserts EN titles on roles and workflows.
+
+### Changed
+
+- **BREAKING — REST create conventions** (issue #1065, CU76 / ADR-023):
+  `POST /api/v1/minutas-inscripcion` now returns `201 Created` (was `200`) with
+  a `Location` header. Sample creates on `POST /api/v1/pagos` and
+  `POST /api/v1/folio` also emit `Location` via shared `CreatedResponses`.
+  Path renames remain phased per ADR-023 (not big-bang).
+
+### Removed
+
+- **BREAKING — unused payment params create** (issue #1065, CU76):
+  `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
+  `POST /api/v1/pagos` (JSON body).
+
 ### Added
 
 - **`infra/` prepared as a standalone repository** (issue #1179, CU77; related #302):
@@ -19,6 +41,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (preparation, configuration, definition, operation); `docs/` links to them. Stale
   `infra/tests/e2e` and `infra/CREDENTIALS.md` removed (folded into the guides).
   Guard: `scripts/test_infra_standalone.py`. Moved paths are listed in the PR.
+
+- **ADR-023 REST resource naming** (issue #1065, CU76): English resource nouns
+  matching established `/api/v1` paths, plural collections, `/search`, action
+  sub-resources, and `201`+`Location` for creates; ADR-003 remains versioning-only.
+
+- **CU-API-MATRIX English refresh + CI validator** (issue #1064, CU76): rename
+  22 stale Spanish controller class names to current `adapter.in.web` English
+  types; add missing resources `/carpetas`, `/cuadernos`, `/minutas-inscripcion`,
+  `/plantilla-costos-documento`, `/protocolo-auxiliar`, `/roles`,
+  `/tipo-identificacion`, `/tramites` (CU80–CU82/CU85 + inventory rows);
+  normalize `Bruno_Test` (paths/`MISSING`/`N/A`, `#953` on gaps — no new Bruno
+  fills); add `scripts/validate-cu-api-matrix.py` with unittest coverage, wired
+  into `scripts/preflight.sh` and `sdlc-process.yml`.
+
+- **E2E feature-gap skip tracker hygiene** (issue #1146, CU76): Vitest guard
+  requires `#\d+` on the fourteen static `test.skip`s in TS-0014/16/17/20 and
+  locks the inventory count; `E2E-TEST-MAPPING.md` lists each skip with owning
+  CU (product work stays on those CUs; #1146 is citation hygiene only).
 
 - **Staging Kustomize deploy manifests** (issue #901, CU77): `deploy/kustomize/`
   base + `overlays/staging` mirroring `docker-compose.prod.yml` (postgres,

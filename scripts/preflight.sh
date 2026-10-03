@@ -43,6 +43,7 @@ Local check                     CI job                          Workflow
 ------------------------------  ------------------------------  --------------------
 branch naming                   Branch Naming Convention Check   pr-validation.yml  (warn)
 sdlc plan (openspec changes)    SDLC Plan Validation             pr-validation.yml  (BLOCKING)
+CU-API matrix validation        Process Checks                    sdlc-process.yml   (BLOCKING)
 commit messages                 Process Checks                    sdlc-process.yml   (BLOCKING)
 tdd evidence                    Process Checks                    sdlc-process.yml   (BLOCKING)
 sdlc exception label            Process Checks                    sdlc-process.yml   (BLOCKING; skipped here until a PR exists)
@@ -127,6 +128,10 @@ fi
 # Engineering Constitution: every active OpenSpec change must carry a complete
 # SDLC plan (CONSTITUTION.md §5, §6). Cheap and fails fast, so it runs first.
 run "sdlc plan validation" bash scripts/validate-sdlc-plan.sh
+
+# CU ↔ API matrix must track English adapter.in.web controllers (#1064, CU76).
+# Also exercised by process-script self-tests under scripts/tests/.
+run "CU-API matrix validation" python3 scripts/validate-cu-api-matrix.py
 
 # Process checks over the branch (sdlc-process.yml). Labels come from the open
 # PR, if there is one: the sdlc-exception label is a human decision.

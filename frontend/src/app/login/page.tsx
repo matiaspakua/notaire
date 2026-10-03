@@ -14,17 +14,13 @@ import { useAuthStore } from "@/store/auth-store";
 import { apiPost, ApiError } from "@/lib/api-client";
 import type { DtoUsuario } from "@/types";
 
-const GENERIC_CONNECTION_ERROR =
-  "No se pudo conectar al servidor. Verifique que el backend esté en ejecución.";
-const GENERIC_LOCKOUT_ERROR = "Cuenta bloqueada temporalmente por demasiados intentos fallidos.";
-
 /** Reads the backend's `message` field from a lockout response body, if present. */
-function lockoutMessage(body: string): string {
+function lockoutMessage(body: string, fallback: string): string {
   try {
     const parsed = JSON.parse(body) as { message?: string };
-    return parsed.message?.trim() || GENERIC_LOCKOUT_ERROR;
+    return parsed.message?.trim() || fallback;
   } catch {
-    return GENERIC_LOCKOUT_ERROR;
+    return fallback;
   }
 }
 
@@ -41,7 +37,7 @@ function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!nombre.trim() || !contrasenia.trim()) {
-      toast.error("Complete usuario y contraseña");
+      toast.error(t("validationRequired"));
       return;
     }
     setLoading(true);
@@ -55,16 +51,16 @@ function LoginForm() {
         // UX cookies for edge gating are set inside auth-store.login (#1052).
         // JWT is delivered as HttpOnly Set-Cookie; ignore JSON token (#1051).
         login(result);
-        toast.success(`Bienvenido, ${result.nombre}`);
+        toast.success(t("welcome", { name: result.nombre }));
         router.push("/dashboard");
       } else {
         toast.error(t("error"));
       }
     } catch (error) {
       if (error instanceof ApiError && error.status === 429) {
-        toast.error(lockoutMessage(error.body));
+        toast.error(lockoutMessage(error.body, t("lockoutError")));
       } else {
-        toast.error(GENERIC_CONNECTION_ERROR);
+        toast.error(t("connectionError"));
       }
     } finally {
       setLoading(false);
@@ -153,7 +149,7 @@ function LoginForm() {
                 </Button>
 
                 <p className="text-sm text-muted-foreground text-center font-medium">
-                  ¿Olvidó su contraseña? Contacte al administrador.
+                  {t("forgotPassword")}
                 </p>
               </div>
             </form>
@@ -162,7 +158,7 @@ function LoginForm() {
 
         <div className="pt-12 text-center border-t border-border">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
-            Infraestructura Segura
+            {t("footerSecure")}
           </p>
         </div>
       </div>

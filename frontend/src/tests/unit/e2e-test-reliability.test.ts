@@ -79,22 +79,32 @@ describe("E2E reliability (#1066 / CU76)", () => {
   });
 
   it("intentional feature-gap skips in TS-0014/16/17/20 cite an open #issue", () => {
-    const files = [
-      "TS-0014-pagos-workflow.spec.ts",
-      "TS-0016-usuarios-escribanos-workflow.spec.ts",
-      "TS-0017-suplencias-workflow.spec.ts",
-      "TS-0020-reportes-admin-workflow.spec.ts",
-    ];
+    // Live inventory for #1146 / CU76 (CU21 already unskipped in #1057 — not counted).
+    const expectedCounts: Record<string, number> = {
+      "TS-0014-pagos-workflow.spec.ts": 2,
+      "TS-0016-usuarios-escribanos-workflow.spec.ts": 3,
+      "TS-0017-suplencias-workflow.spec.ts": 2,
+      "TS-0020-reportes-admin-workflow.spec.ts": 7,
+    };
 
-    for (const file of files) {
+    let total = 0;
+    for (const [file, expected] of Object.entries(expectedCounts)) {
       const source = readE2E(file);
       const skipBlocks = source.match(/test\.skip\s*\(\s*["'`][\s\S]*?["'`]\s*,/g) ?? [];
-      expect(skipBlocks.length, `${file} should still declare intentional skips`).toBeGreaterThan(0);
+      expect(skipBlocks.length, `${file} intentional skip count`).toBe(expected);
+      total += skipBlocks.length;
 
       for (const block of skipBlocks) {
         expect(block, `${file} skip must cite #issue`).toMatch(/#\d+/);
       }
+
+      // CU21 edit was unskipped in #1057 — must not reappear as a feature-gap skip.
+      if (file.includes("TS-0016")) {
+        expect(source).not.toMatch(/test\.skip\s*\(\s*["'`][^"'`]*CU21[^"'`]*["'`]/);
+      }
     }
+
+    expect(total, "TS-0014/16/17/20 feature-gap skip inventory (#1146)").toBe(14);
   });
 
   it("keeps default timeout below the historic 300s hang mask (demo projects may override)", () => {

@@ -29,7 +29,7 @@ Backend: 132 clases de test, ~1.483 métodos `@Test` combinados (unit + integrat
 
 | Documento | Contenido |
 |-----------|-----------|
-| [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv) | Trazabilidad Caso de Uso → módulo → entidad/operación → controller/endpoint → test Bruno → issue |
+| [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv) | Trazabilidad Caso de Uso → módulo → entidad/operación → controller/endpoint → test Bruno → issue. Drift guard: `python3 scripts/validate-cu-api-matrix.py` (#1064) |
 | [`FRONTEND-TESTING-GUIDE.md`](FRONTEND-TESTING-GUIDE.md) | Convenciones de testing Vitest y estructura de specs E2E Playwright |
 | [`api-test/README.md`](api-test/README.md) | Guía de pruebas manuales HTTP/curl y patrones de testing de la API |
 | [`test-coverage/TEST-COVERAGE-STRATEGY.md`](test-coverage/TEST-COVERAGE-STRATEGY.md) | Estrategia de cobertura por capa y automatización de reportes |
