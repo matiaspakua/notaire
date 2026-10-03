@@ -68,18 +68,18 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits, small units
-- [ ] 9.2 Every commit ends with `Closes #1058`
-- [ ] 9.3 No secrets / unrelated changes
-- [ ] 9.4 Record SHAs in `traceability.md`
+- [x] 9.1 Conventional Commits, small units
+- [x] 9.2 Every commit ends with `Closes #1058`
+- [x] 9.3 No secrets / unrelated changes
+- [x] 9.4 Record SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push branch
-- [ ] 10.2 PR title `[#1058] fix(frontend): nav for Suplencias/Reportes; dedupe admin pages`
+- [x] 10.1 Push branch
+- [x] 10.2 PR title `[#1058] fix(frontend): nav for Suplencias/Reportes; dedupe admin pages`
 - [ ] 10.3 Wait for required workflows including Playwright
 - [ ] 10.4 Merge only on heavy-CI gate exit 0
-- [ ] 10.5 Record PR in `traceability.md`
+- [x] 10.5 Record PR in `traceability.md`
 
 ## 11. Deploy
 
