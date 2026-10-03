@@ -29,4 +29,4 @@
 |---|---|---|
 | 4.1 | Concurrir a CU 17 Continuar en paso 2 | No se encuentra la Persona indicada. |
 | 7.1 | Alguno de los datos no son validos. | El sistema gestiona la excepción y notifica al usuario. |
-| 7.2 | El cliente ya se encuentra registrado. | El sistema gestiona la excepción y notifica al usuario. |
+| 7.2 | El cliente ya se encuentra registrado (mismo tipo y número de identificación). | El sistema rechaza el alta/edición (HTTP 409), notifica el duplicado y ofrece acceso a la persona existente (#835). La unicidad tipo+número también se garantiza a nivel de base de datos (`people` unique index; issue #799). |
