@@ -7,7 +7,7 @@ observability/quality infrastructure stack.
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │                 Dev stack (docker-compose.yml)                       │
 │  PostgreSQL :5432 · Backend :8080 · Frontend :3000 · pgAdmin :5050 │
@@ -15,7 +15,7 @@ observability/quality infrastructure stack.
                               │ (shared network: notary-network)
 ┌────────────────────────────┴───────────────────────────────────────┐
 │                          Infra Stack                                 │
-│                    (infra/docker-compose.yml)                        │
+│                    (infra/observability/docker-compose.yml)                        │
 │  Prometheus :9090 · Grafana :3001 · Loki · SonarQube · Homer …     │
 └───────────────────────────────────────────────────────────────────────┘
 
@@ -28,7 +28,7 @@ observability/quality infrastructure stack.
 └───────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│     Staging Kustomize (deploy/kustomize/overlays/staging — #901)     │
+│     Staging Kustomize (infra/deploy/kustomize/overlays/staging — #901)     │
 │                                                                      │
 │   Same four services as prod compose (no pgAdmin)                    │
 │   postgres/backend/frontend: ClusterIP · reverse-proxy: LoadBalancer │
@@ -40,6 +40,7 @@ observability/quality infrastructure stack.
 ## Deployment Steps
 
 ### Prerequisites
+
 - Docker and Docker Compose v2+
 - Java 21+ (for local development)
 - Maven 3.9+ (for local builds)
@@ -66,6 +67,7 @@ docker-compose ps
 ```
 
 This starts the **dev** stack:
+
 - **PostgreSQL 16** on port 5432
 - **Backend API** on port 8080
 - **Frontend (Next.js)** on port 3000
@@ -73,16 +75,17 @@ This starts the **dev** stack:
 
 > Production must use `docker-compose.prod.yml` (below) — never the published
 > Postgres/pgAdmin ports from the dev compose.
+>
 ### 3. Start Monitoring & Quality Infrastructure
 
 ```bash
 bash infra/scripts/start-infra.sh
-# or, from infra/:
-cd infra
-docker-compose up -d
 ```
 
+Prerequisites, environment file and operation details: [infra docs](../../../infra/README.md).
+
 This starts:
+
 - **Prometheus** on port 9090
 - **Grafana** on port 3001 (credentials via `.env`)
 - **Loki + Promtail** — log aggregation (queried at port 3100)
@@ -104,6 +107,7 @@ curl http://localhost:3100/ready             # Loki
 ## Docker Compose Details
 
 ### Root docker-compose.yml (development)
+
 - **Services**: `postgres`, `backend`, `frontend`, `pgadmin`
 - **Network**: `notary-network` (bridge)
 - **Volumes**: `postgres_data`, `pgadmin_data`
@@ -113,21 +117,23 @@ curl http://localhost:3100/ready             # Loki
   `${VAR:-admin}` defaults for local ergonomics
 
 ### docker-compose.prod.yml (production entrypoint — issue #1044)
+
 - **Services**: `postgres`, `backend`, `frontend`, `reverse-proxy` (**no pgAdmin**)
 - **Host ports**: only the reverse proxy (`:80`); postgres/backend/frontend stay on the Docker network
 - **Secrets**: required via `${VAR:?...}` — compose fails fast if `.env` is incomplete; no `admin` defaults
 - **Backend**: `ENVIRONMENT=production` (activates `ProductionCredentialsGuard`); least-privilege env (no Grafana/pgAdmin/exporter credential keys); `SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`
-- **Proxy config**: `deploy/nginx/nginx.conf` — `/` → frontend, `/api/` and `/actuator/` → backend
+- **Proxy config**: `infra/deploy/kustomize/base/nginx.conf` — `/` → frontend, `/api/` and `/actuator/` → backend
 - **TLS**: terminate TLS in front of this proxy (or extend the nginx config); full certbot/ACME productization is issue #254
 - **Backups**: automated backup productization remains issue #256. CI verification
   of backup→restore→smoke is scaffolded in `.github/workflows/backup-restore-smoke.yml`
   (#1067) and **skips with an explicit #256 message** until `scripts/backup-postgres.sh`
   exists (no false-green restore).
 
-### deploy/kustomize (staging manifests — issue #901)
-- **Base** (`deploy/kustomize/base`): same four services as `docker-compose.prod.yml`
+### infra/deploy/kustomize (staging manifests — issue #901)
+
+- **Base** (`infra/deploy/kustomize/base`): same four services as `docker-compose.prod.yml`
   (postgres, backend, frontend, reverse-proxy) — **no pgAdmin**
-- **Staging overlay** (`deploy/kustomize/overlays/staging`): GHCR SHA image tags for
+- **Staging overlay** (`infra/deploy/kustomize/overlays/staging`): GHCR SHA image tags for
   backend/frontend; `environment: staging` labels
 - **Service isolation**: postgres/backend/frontend are `ClusterIP` (internal-only);
   reverse-proxy is the sole external `LoadBalancer`
@@ -138,17 +144,17 @@ curl http://localhost:3100/ready             # Loki
   operator-owned; there is no automated “deploy to cluster” job yet
 - **Validate**: `python3 scripts/test_staging_kustomize.py` (requires `kustomize` on PATH)
 
-### Infra docker-compose.yml
-- **Services**: `dashboard` (Homer), `sonarqube`, `sonar-db`, `prometheus`, `postgres-exporter`,
-  `grafana`, `loki`, `promtail`
-- **Networks**: `devsecops-network` + `notaire-app-network` (external, joins the app stack)
-- **Volumes**: All service data persisted
-- **Configuration files**: Pre-configured in `infra/<service>/` subdirectories
+### Infrastructure stack (`infra/`)
+
+Observability and quality services (Homer, SonarQube, Prometheus, postgres-exporter, Grafana,
+Loki, Promtail) are defined in `infra/observability/docker-compose.yml`; what each service
+does and how it couples to the application is in
+[infra DEFINITION](../../../infra/docs/DEFINITION.md).
 
 ## Environment Configuration
 
 All credentials live in a single, git-ignored `.env` file at the repo root (copy `.env.example`).
-`docker-compose.yml`, `docker-compose.prod.yml`, and `infra/docker-compose.yml` read from it —
+`docker-compose.yml`, `docker-compose.prod.yml`, and `infra/observability/docker-compose.yml` read from it —
 never hard-code secrets in compose files or docs.
 
 Key variables include `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `JWT_SECRET`,
@@ -176,14 +182,14 @@ cp .env.example .env
 # and POSTGRES_EXPORTER_* (used as Flyway placeholders; not injected as Grafana/pgAdmin env on the backend).
 ```
 
-2. Start the production stack:
+1. Start the production stack:
 
 ```bash
 docker compose -f docker-compose.prod.yml --env-file .env up -d --build
 docker compose -f docker-compose.prod.yml ps
 ```
 
-3. Verify through the reverse proxy only:
+1. Verify through the reverse proxy only:
 
 ```bash
 curl -fsS http://localhost/                  # frontend via reverse proxy
@@ -191,52 +197,14 @@ curl -fsS http://localhost/actuator/health   # backend via reverse proxy
 # Postgres (:5432), backend (:8080), frontend (:3000), and pgAdmin must NOT be published on the host.
 ```
 
-4. Confirm Flyway baseline-on-migrate is off in the prod file (`SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`).
+1. Confirm Flyway baseline-on-migrate is off in the prod file (`SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`).
 
 ## Staging deployment (Kustomize — issue #901)
 
-Reproducible staging topology mirroring `docker-compose.prod.yml`. Requires
-`kustomize` v5+ and a Kubernetes cluster (not provided by this repo).
-
-1. Pin GHCR SHA tags published by CD (replace `sha-PLACEHOLDER`):
-
-```bash
-cd deploy/kustomize/overlays/staging
-kustomize edit set image \
-  notaire-backend=ghcr.io/<owner>/notaire/backend:<git-sha> \
-  notaire-frontend=ghcr.io/<owner>/notaire/frontend:<git-sha>
-```
-
-2. Replace Secret placeholders (do **not** commit real values):
-
-```bash
-kubectl -n notaire create secret generic notaire-secrets \
-  --from-literal=POSTGRES_DB=... \
-  --from-literal=POSTGRES_USER=... \
-  --from-literal=POSTGRES_PASSWORD=... \
-  --from-literal=SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/... \
-  --from-literal=JWT_SECRET=... \
-  --from-literal=ACTUATOR_USER=... \
-  --from-literal=ACTUATOR_PASSWORD=... \
-  --from-literal=APP_ADMIN_USER=... \
-  --from-literal=APP_ADMIN_PASSWORD=... \
-  --from-literal=POSTGRES_EXPORTER_USER=... \
-  --from-literal=POSTGRES_EXPORTER_PASSWORD=... \
-  --dry-run=client -o yaml | kubectl apply -f -
-```
-
-3. Render and apply:
-
-```bash
-kustomize build deploy/kustomize/overlays/staging | kubectl apply -f -
-# or: kubectl apply -k deploy/kustomize/overlays/staging
-python3 scripts/test_staging_kustomize.py
-```
-
-4. Reach the app only via the reverse-proxy LoadBalancer / ingress. Postgres,
-   backend, and frontend remain ClusterIP. CD image publish alone does **not**
-   imply the cluster was updated — apply is a separate, manual step until a real
-   deploy job exists.
+Step-by-step apply (image pinning, Secret creation, render and validate) lives in
+[infra OPERATION](../../../infra/docs/OPERATION.md#staging-deployment-kustomize). The staging
+topology mirrors `docker-compose.prod.yml`; CD stays publish-only, so applying the manifests
+is a manual operator step.
 
 ## Production Considerations
 
@@ -250,7 +218,7 @@ For production deployment, ensure:
    that lands, the scheduled backup→restore→smoke workflow (#1067) will exercise restore
 6. **Resource limits** — set Docker resource constraints
 7. **Log rotation** — configure Docker log rotation
-8. **Monitoring alerts** — configure Prometheus alerting rules (`infra/prometheus/alert-rules.yml`)
+8. **Monitoring alerts** — configure Prometheus alerting rules (`infra/observability/prometheus/alert-rules.yml`)
 
 ## Rollback Procedure
 

@@ -1,168 +1,48 @@
-# 🛠️ Observability & Quality Infrastructure — Notaire
+# Notaire infrastructure
 
-This directory contains the infrastructure that runs **alongside** the Notaire
-application, providing **observability** (metrics, logs, dashboards) and
-**code quality** analysis. Every service here is wired to the running Notaire
-stack and shows real data.
+Everything that runs **around** the Notaire application: the observability and
+code-quality stack, the Kubernetes staging manifests, the reverse-proxy config and
+the load test. This folder is self-contained and prepared to live in its own
+repository; for now it sits inside the application repository (#1179).
 
-> **Credentials live in a single, git-ignored `.env` file at the repo root.**
-> Copy `.env.example` → `.env` and adjust if needed. Nothing here hard-codes
-> secrets.
+Project-level documentation (architecture, ADRs, business) stays in
+[`docs/`](../docs/README.md); everything specific to configuring, preparing,
+defining and running the infrastructure is here.
 
-## 🧰 Tools Stack
+## Guides
 
-### 📊 Observability (Monitoring & Logging)
-| Tool | Category | Description | Port | Credentials |
-|------|----------|-------------|------|-------------|
-| **Prometheus** | Metrics | Scrapes backend (Actuator/Micrometer) + Postgres metrics. | 9090 | – |
-| **Grafana** | Visualization | Dashboards for Prometheus metrics and Loki logs. | 3001 | `$GRAFANA_ADMIN_USER` / `$GRAFANA_ADMIN_PASSWORD` |
-| **Loki** | Logging | Aggregates structured JSON logs from all containers. | 3100 | – |
-| **Promtail** | Log shipper | Discovers Docker containers and ships logs to Loki. | – | – |
-| **PostgreSQL Exporter** | DB Metrics | Exposes Notaire DB metrics for Prometheus. | 9187 | – |
+| Guide | Answers |
+|-------|---------|
+| [PREPARATION](docs/PREPARATION.md) | What do I need installed and running first? |
+| [CONFIGURATION](docs/CONFIGURATION.md) | Which variables and config files do I set? |
+| [DEFINITION](docs/DEFINITION.md) | What is defined here, and how does it couple to the application? |
+| [OPERATION](docs/OPERATION.md) | How do I start, check, deploy, troubleshoot and roll back? |
 
-### 🛡️ Security & Quality
-| Tool | Category | Description | Port | Credentials |
-|------|----------|-------------|------|-------------|
-| **SonarQube (CE)** | SAST | Static analysis of the backend (bugs, smells, coverage). | 9000 | `$SONAR_ADMIN_USER` / `$SONAR_ADMIN_PASSWORD` |
+## Layout
 
-### 🕹️ Centralized Control Center
-| Tool | Category | Description | Port | Credentials |
-|------|----------|-------------|------|-------------|
-| **Homer Hub** | Landing Page | A single entry point to navigate every service. | 8888 | – |
-
-> **Removed (2026-06):** Jenkins, Nexus and Dependency-Track were removed —
-> they were not wired to the running application and are out of scope for the
-> observability + quality goal. Re-add them to `docker-compose.yml` if needed.
-
-## 📋 What is Monitored
-
-| Service | Type | Monitoring Method | Prometheus Job |
-|---------|------|-------------------|----------------|
-| **Backend API** | Spring Boot | Actuator / Micrometer (`/actuator/prometheus`, Basic auth) | `notaire-backend` |
-| **PostgreSQL** | Database | postgres-exporter | `notaire-postgres` |
-| **Grafana** | Self | `/metrics` | `grafana` |
-| **Loki** | Self | `/metrics` | `loki` |
-
-**Business audit trail** (create / update / delete operations and logins) is
-recorded by the backend `AuditoriaAspect` into the `registro_auditoria` table
-and surfaced in the application UI at **`/dashboard/auditoria`**. The acting
-user is attributed from the authenticated JWT identity, not from a
-client-supplied header.
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Docker and Docker Compose
-- ~6 GB RAM (SonarQube needs ~2 GB)
-- A `.env` file at the repo root (`cp .env.example .env`)
-
-### Start everything (application + infrastructure)
-```bash
-bash scripts/start-all.sh           # app, then infra
+```text
+infra/
+  observability/   Prometheus, Grafana, Loki/Promtail, SonarQube, Homer (compose)
+  deploy/          Kubernetes (Kustomize) base + staging overlay, shared nginx.conf
+  performance/k6   load test
+  scripts/         start-infra, check-infra, run-sonar, generate-report
+  docs/            the four guides above
+  .env.example     variables this folder needs
 ```
 
-### Or start them independently
-```bash
-bash scripts/start.sh               # 1) application (creates the app network)
-bash infra/scripts/start-infra.sh         # 2) observability + SonarQube
-```
-The infra stack attaches to the application's Docker network
-(`notaire_notary-network`, declared `external`), so the application must be up
-first.
-
-### Access the Hub
-Open **http://localhost:8888**.
-
----
-
-## 🛡️ Health Check
-```bash
-bash infra/scripts/check-infra.sh
-```
-Checks Homer, SonarQube, Prometheus, Grafana, Loki, Promtail, PostgreSQL
-Exporter, and all Notaire application endpoints.
-
-### Quick checks
-```bash
-curl http://localhost:8080/actuator/health                 # backend health
-curl -u admin:admin http://localhost:8080/actuator/prometheus | head   # backend metrics
-curl http://localhost:9090/api/v1/targets                  # prometheus targets (all UP)
-curl http://localhost:3001/api/health                      # grafana
-curl http://localhost:3100/ready                           # loki
-curl http://localhost:9187/metrics | head                  # postgres exporter
-```
-
----
-
-## 📊 Dashboards (pre-provisioned in Grafana)
-
-| Dashboard | UID | Description |
-|-----------|-----|-------------|
-| **Notaire Backend API** | `notaire-backend` | JVM, HTTP, DB pool, log volume |
-| **Notaire PostgreSQL** | `notaire-postgres` | Connections, transactions, size |
-| **Notaire Logs** | `notaire-logs` | Backend & frontend logs from Loki |
-
-Data sources (auto-provisioned): **Prometheus** (`http://prometheus:9090`),
-**Loki** (`http://loki:3100`).
-
----
-
-## 📝 Logging
-
-The backend logs structured JSON (Logback `LogstashEncoder`) to stdout. Promtail
-ships every container's logs to Loki. Query in Grafana → Explore → Loki:
-
-```
-{container_name="notary-backend"} | json
-{service="notaire"}
-```
-Available labels: `container`, `container_name`, `service`, `app`, `level`.
-
----
-
-## 🔍 Code Quality (SonarQube)
+## Quick start
 
 ```bash
-bash infra/scripts/run-sonar.sh
-```
-This waits for SonarQube, handles the first-login password change, generates an
-analysis token (saved to `.env` as `SONAR_TOKEN`), runs the backend test suite
-with JaCoCo, and submits the analysis. View results at
-**http://localhost:9000/dashboard?id=notaire-backend**.
-
----
-
-## 📊 Reporting
-```bash
-bash infra/scripts/generate-report.sh   # Markdown + HTML in infra/reports/
+bash scripts/start.sh                       # 1) the application (creates its network)
+cp infra/.env.example infra/.env            # 2) once
+bash infra/scripts/start-infra.sh           # 3) observability + SonarQube
+bash infra/scripts/check-infra.sh           # 4) verify
 ```
 
----
+Or both at once: `bash scripts/start-all.sh`. Then open http://localhost:8888.
 
-## ⚠️ Networking
+## Guard tests
 
-The infra connects to `notaire_notary-network` as an **external** network.
-Start the application first so the network exists. `infra/scripts/start-infra.sh`
-verifies this and fails fast with guidance if it is missing.
-
-## 📌 Pinned container images (issue #1045)
-
-All `image:` tags in `infra/docker-compose.yml` (and the app compose files)
-are pinned to a **minor version or digest** — no `:latest`, no bare
-`sonarqube:community`, no major-only `postgres:15` / `postgres:16`.
-
-| Where pins live | Updated by |
-|-----------------|------------|
-| `infra/docker-compose.yml`, `docker-compose.yml`, `docker-compose.prod.yml` | Manual PR when bumping infra/app service images |
-| `backend-api/Dockerfile`, `frontend/Dockerfile` | Dependabot **docker** ecosystems (`/backend-api`, `/frontend`) |
-| CI postgres service images | Keep in sync with compose postgres minor (Playwright / performance workflows) |
-
-Hygiene guard: `python3 scripts/test_image_pins_and_dependabot.py`. Policy:
-[ADR-017](../docs/200-architecture/202-ADR/ADR-017-container-base-images.md).
-
-## 📖 Additional Documentation
-- [Monitoring Guide](../docs/200-architecture/207-monitoring/README.md)
-- [Deployment Guide](../docs/200-architecture/209-deployment/README.md)
-- Credentials reference: [`CREDENTIALS.md`](CREDENTIALS.md)
+`python3 scripts/test_infra_standalone.py` enforces the layout, self-containment
+and the single `nginx.conf`; the other `scripts/test_*.py` guards cover images,
+Prometheus hardening, Kustomize and the load test.

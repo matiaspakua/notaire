@@ -10,7 +10,7 @@
 | **Descripción** | Establece los mecanismos de observabilidad basados en Prometheus, Grafana y Loki para asegurar la operatividad ininterrumpida de las estaciones de trabajo de escritorio y portátiles. |
 | **Tipo** | Soporte / Operaciones |
 | **Referencias Cruzadas** | RF #88 (PC de escritorio), RF #89 (Notebook) |
-| **GitHub ID** | #253, #255, #270, #271, #273, #301, #304, #305, #306, #308, #901 |
+| **GitHub ID** | #253, #255, #270, #271, #273, #301, #304, #305, #306, #308, #901, #1179 |
 
 ## Alcance Técnico
 

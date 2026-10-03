@@ -26,7 +26,7 @@ import unittest
 import yaml
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-KUSTOMIZE_ROOT = os.path.join(REPO_ROOT, "deploy", "kustomize")
+KUSTOMIZE_ROOT = os.path.join(REPO_ROOT, "infra", "deploy", "kustomize")
 BASE_DIR = os.path.join(KUSTOMIZE_ROOT, "base")
 STAGING_DIR = os.path.join(KUSTOMIZE_ROOT, "overlays", "staging")
 DEPLOYMENT_GUIDE = os.path.join(
@@ -333,7 +333,7 @@ class StagingKustomizeTest(unittest.TestCase):
         with open(DEPLOYMENT_GUIDE, encoding="utf-8") as f:
             guide = f.read()
         for snippet in (
-            "deploy/kustomize",
+            "infra/deploy/kustomize",
             "staging",
             "docker-compose.prod.yml",
             "Secret",

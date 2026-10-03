@@ -1,0 +1,33 @@
+# Kustomize base for Notaire app stack (#901) — mirrors docker-compose.prod.yml
+# (#1044): postgres, backend, frontend, reverse-proxy. No pgAdmin.
+# Overlays supply GHCR image tags and environment-specific patches.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - secrets.yaml
+  - postgres-deployment.yaml
+  - postgres-service.yaml
+  - backend-deployment.yaml
+  - backend-service.yaml
+  - frontend-deployment.yaml
+  - frontend-service.yaml
+  - reverse-proxy-deployment.yaml
+  - reverse-proxy-service.yaml
+
+configMapGenerator:
+  - name: reverse-proxy-nginx
+    namespace: notaire
+    files:
+      - nginx.conf
+    options:
+      labels:
+        app: reverse-proxy
+
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: notaire
+      app.kubernetes.io/managed-by: kustomize
+    includeSelectors: false
+    includeTemplates: true

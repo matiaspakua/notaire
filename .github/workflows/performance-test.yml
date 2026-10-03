@@ -67,7 +67,7 @@ jobs:
       - name: Run k6 load test
         uses: grafana/k6-action@v0.3.1
         with:
-          filename: performance-test/k6/load-test.js
+          filename: infra/performance/k6/load-test.js
         env:
           BASE_URL: http://localhost:8080
           ADMIN_USER: ci-perf-test-admin

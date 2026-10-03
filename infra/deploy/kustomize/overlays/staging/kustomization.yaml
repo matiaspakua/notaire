@@ -1,0 +1,39 @@
+# Staging overlay (#901) — GHCR SHA image tags for backend/frontend.
+# Replace IMAGE_SHA_PLACEHOLDER with the CI-tested git SHA published by cd.yml
+# (publish-only; this overlay is applied manually — no fake cluster deploy job).
+#
+#   kustomize edit set image \
+#     notaire-backend=ghcr.io/matiaspakua/notaire/backend:<sha> \
+#     notaire-frontend=ghcr.io/matiaspakua/notaire/frontend:<sha>
+#
+# Or edit newTag below, then: kubectl apply -k infra/deploy/kustomize/overlays/staging
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: notaire
+
+resources:
+  - ../../base
+
+images:
+  - name: notaire-backend
+    newName: ghcr.io/matiaspakua/notaire/backend
+    newTag: sha-PLACEHOLDER
+  - name: notaire-frontend
+    newName: ghcr.io/matiaspakua/notaire/frontend
+    newTag: sha-PLACEHOLDER
+
+labels:
+  - pairs:
+      environment: staging
+    includeSelectors: false
+    includeTemplates: true
+
+patches:
+  - target:
+      kind: Namespace
+      name: notaire
+    patch: |-
+      - op: add
+        path: /metadata/labels/environment
+        value: staging

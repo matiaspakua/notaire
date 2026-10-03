@@ -43,9 +43,10 @@ bash testing/scripts/test.sh                    # HTTP integration tests (requir
 
 ### Environment Variables
 
-All credentials in `.env` (git-ignored). Copy from `.env.example`. Both `docker-compose.yml` and `infra/docker-compose.yml` read from it.
+All credentials in `.env` (git-ignored). Copy from `.env.example`. Both `docker-compose.yml` and `infra/observability/docker-compose.yml` read from it.
 
 Required keys:
+
 - `ACTUATOR_USER` / `ACTUATOR_PASSWORD` — Prometheus scrape auth
 - DB credentials
 - See `.env.example` for the full list.
@@ -54,9 +55,9 @@ Required keys:
 
 ## Key Files
 
-```
+```text
 docker-compose.yml          # App stack (backend + postgres + pgAdmin)
-infra/docker-compose.yml    # Observability stack
+infra/observability/docker-compose.yml    # Observability stack
 infra/README.md             # Observability setup details
 # Schema via Flyway migrations (init-db archived at docs/archive/init-db/)
 .env.example                # Environment template
@@ -79,6 +80,7 @@ Validate alignment: `mvn test -Ppg-integration`
 ## Workflow Compliance
 
 All infrastructure changes follow the CONSTITUTION.md workflow:
+
 1. GitHub issue + Use Case reference.
 2. Branch from updated main (`<type>/<issue-number>_<description>`).
 3. Move issue to IN PROGRESS.

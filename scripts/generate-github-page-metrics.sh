@@ -36,9 +36,9 @@ UC_COUNT=$(find docs/100-business/102-use-cases -type f -name "CU*.md" 2>/dev/nu
 RF_FILE="docs/100-business/101-requirements/requerimientos.csv"
 RF_COUNT=$(tail -n +2 "$RF_FILE" 2>/dev/null | wc -l | tr -d ' ')
 DC1=$(yq '.services | length' docker-compose.yml 2>/dev/null || echo "0")
-DC2=$(yq '.services | length' infra/docker-compose.yml 2>/dev/null || echo "0")
+DC2=$(yq '.services | length' infra/observability/docker-compose.yml 2>/dev/null || echo "0")
 DOCKER_COUNT=$(( DC1 + DC2 ))
-GRAFANA_COUNT=$(find infra/grafana/provisioning/dashboards -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+GRAFANA_COUNT=$(find infra/observability/grafana/provisioning/dashboards -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
 CONTRIBUTORS=$(git log --format="%aE" | sort -u | wc -l | tr -d ' ')
 # tail (not `| head -1` on a --reverse log) so the producer is never cut off
 # early -- head closing the pipe on a large reversed log can SIGPIPE git under
