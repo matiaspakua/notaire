@@ -19,9 +19,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Related | #1066 (citations landed); #1057 (CU21 unskipped) | referenced |
 | Specification | `openspec/changes/test-1146-e2e-feature-gap-skips/` | Gate 1 validated |
 | Branch | `cursor/test-1146-e2e-feature-gap-skips-69d3` | created |
-| Tasks | `tasks.md` | pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
+| Tasks | `tasks.md` | implement complete; merge pending |
+| Commits | `d731a836`, `b7261314`, `f69a6fb3` | pushed |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1180 | open (draft) |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
