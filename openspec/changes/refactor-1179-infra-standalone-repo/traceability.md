@@ -29,6 +29,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |---------------------------------|------|--------|
 | All infra assets live under infra/ | `scripts/test_infra_standalone.py` | pending |
 | Legacy locations no longer exist | same | pending |
+| nginx.conf has a single source | `scripts/test_infra_standalone.py`, `scripts/test_staging_kustomize.py` | pending |
 | infra/ does not reference paths outside itself | same | pending |
 | infra/ ships its own env example without secrets | same | pending |
 | Stale E2E suite removed | same | pending |

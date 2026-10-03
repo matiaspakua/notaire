@@ -21,6 +21,7 @@
 
 - [ ] 3.1 Enumerate test cases: layout, legacy removal, self-containment, env example, docs, consumers, validators
 - [ ] 3.2 Write failing `scripts/test_infra_standalone.py`
+- [ ] 3.3a Add failing assertions: single `nginx.conf`, ConfigMap equals the file, prod compose mounts it
 - [ ] 3.3 Repoint existing guards (`test_staging_kustomize.py`, `test_prod_compose.py`, `test_infra_prometheus_hardening.py`, `test_performance_test_assets.py`, `test_image_pins_and_dependabot.py`) to the new paths
 - [ ] 3.4 Observe the new and repointed guards fail before the move
 - [ ] 3.5 Confirm every `#### Scenario:` maps to an assertion
@@ -29,6 +30,7 @@
 
 - [ ] 4.1 `git mv` observability files into `infra/observability/` (separate commit)
 - [ ] 4.2 `git mv` `deploy/*` to `infra/deploy/` and `performance-test/k6` to `infra/performance/k6` (separate commit)
+- [ ] 4.2a `git mv deploy/nginx/nginx.conf` to `infra/deploy/kustomize/base/nginx.conf`; replace `reverse-proxy-configmap.yaml` with a `configMapGenerator`; update the `docker-compose.prod.yml` mount
 - [ ] 4.3 Delete `infra/tests/`; drop its `.gitignore` entries
 - [ ] 4.4 Fix paths in compose mounts, `infra/scripts/*`, `scripts/start-all.sh`, `docker-compose.prod.yml`, workflows, `.gitignore`, `.env.example`, agent rule files
 - [ ] 4.5 Add `infra/.env.example` and env-file resolution in scripts

@@ -17,13 +17,13 @@ load tests and infra scripts MUST live under `infra/`. The legacy locations
 #### Scenario: All infra assets live under infra/
 
 - **WHEN** the repository tree is inspected
-- **THEN** `infra/observability`, `infra/deploy/kustomize`, `infra/deploy/nginx`,
+- **THEN** `infra/observability`, `infra/deploy/kustomize`,
   `infra/performance/k6` and `infra/scripts` exist
 
 #### Scenario: Legacy locations no longer exist
 
 - **WHEN** the repository tree is inspected
-- **THEN** `deploy/`, `performance-test/` and the old `infra/docker-compose.yml`,
+- **THEN** `deploy/` (including `deploy/nginx`), `performance-test/` and the old `infra/docker-compose.yml`,
   `infra/prometheus`, `infra/grafana`, `infra/loki`, `infra/dashboard` do not exist
 
 #### Scenario: Stale E2E suite removed
@@ -49,6 +49,19 @@ endpoints and the root env file passed explicitly.
 - **WHEN** `infra/.env.example` is read
 - **THEN** it lists every variable the infra stack needs and contains no real
   credential values
+
+### Requirement: Reverse-proxy configuration has a single source
+
+The reverse-proxy `nginx.conf` MUST exist exactly once, at
+`infra/deploy/kustomize/base/nginx.conf`. The Kubernetes ConfigMap MUST be
+generated from that file and `docker-compose.prod.yml` MUST mount the same file.
+
+#### Scenario: nginx.conf has a single source
+
+- **WHEN** the repository is searched for `nginx.conf` files and the Kustomize
+  base is built
+- **THEN** only `infra/deploy/kustomize/base/nginx.conf` exists, the rendered
+  ConfigMap content equals that file, and `docker-compose.prod.yml` mounts it
 
 ### Requirement: Infra specifics are documented in infra/
 

@@ -24,8 +24,10 @@ how to configure, prepare, define and run the infra live in `infra/`.
 
 - Reorganize `infra/` into `observability/`, `deploy/`, `performance/`,
   `scripts/`, `docs/` (via `git mv`, history preserved).
-- Move `deploy/kustomize` and `deploy/nginx` to `infra/deploy/`, and
-  `performance-test/k6` to `infra/performance/k6`.
+- Move `deploy/kustomize` to `infra/deploy/kustomize` and `performance-test/k6`
+  to `infra/performance/k6`; keep the single `nginx.conf` inside
+  `infra/deploy/kustomize/base/` (replacing `deploy/nginx/`), generate the
+  Kubernetes ConfigMap from it and mount the same file from prod compose.
 - Delete the stale `infra/tests/e2e/` suite (superseded by `frontend/tests/e2e/`,
   unreferenced, last touched in #383).
 - Make `infra/` self-contained: `infra/.env.example`, scripts resolve paths
@@ -45,6 +47,7 @@ how to configure, prepare, define and run the infra live in `infra/`.
 | Secrets MUST stay out of git; infra variables are documented in `infra/.env.example` | Constitution P9; ADR-019 | Made explicit |
 | Compose files that build or override the application (`docker-compose.yml`, `.cloud.yml`, `.prod.yml`) stay at the root; they are the application composition, not infra | #1179 assessment | New |
 | `docs/` holds project-level docs; infra specifics live in `infra/` and are linked, never copied | #1179; Constitution §8 | New |
+| The reverse-proxy `nginx.conf` MUST have exactly one source, shared by prod compose and Kustomize | #1179 (found identical duplicate: 54/54 lines) | New |
 | Local gates MUST mirror CI after the move | CLAUDE.md CI Preflight | Made explicit |
 
 ## Capabilities
@@ -70,7 +73,7 @@ how to configure, prepare, define and run the infra live in `infra/`.
 | `frontend-swing` | no | Removed module, out of scope |
 | `notaire-shared` | no | — |
 | `infra/` | yes | Reorganized, documented, made self-contained |
-| `deploy/`, `performance-test/` | yes | Moved into `infra/`, directories removed |
+| `deploy/`, `performance-test/` | yes | Moved into `infra/`, directories removed; nginx config deduplicated |
 | CI/CD (`.github/workflows`) | yes | Path updates only (k6 file, CodeQL paths-ignore) |
 | Scripts / tests | yes | `start-all.sh`, `start-infra.sh`, guard tests repointed; new guard test |
 
