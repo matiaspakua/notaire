@@ -17,6 +17,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CU-API-MATRIX English refresh + CI validator** (issue #1064, CU76): rename
+  22 stale Spanish controller class names to current `adapter.in.web` English
+  types; add missing resources `/carpetas`, `/cuadernos`, `/minutas-inscripcion`,
+  `/plantilla-costos-documento`, `/protocolo-auxiliar`, `/roles`,
+  `/tipo-identificacion`, `/tramites` (CU80–CU82/CU85 + inventory rows);
+  normalize `Bruno_Test` (paths/`MISSING`/`N/A`, `#953` on gaps — no new Bruno
+  fills); add `scripts/validate-cu-api-matrix.py` with unittest coverage, wired
+  into `scripts/preflight.sh` and `sdlc-process.yml`.
+
 - **E2E feature-gap skip tracker hygiene** (issue #1146, CU76): Vitest guard
   requires `#\d+` on the fourteen static `test.skip`s in TS-0014/16/17/20 and
   locks the inventory count; `E2E-TEST-MAPPING.md` lists each skip with owning
