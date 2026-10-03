@@ -9,6 +9,7 @@
  *
  * This runs once before ALL test suites.
  */
+import fs from "node:fs";
 import { chromium, type Browser, type Page } from "@playwright/test";
 import { apiPost, apiGet, apiPut, apiDelete } from "./api-helpers";
 
@@ -271,6 +272,14 @@ async function globalSetup(): Promise<void> {
     process.env.E2E_SEED_USUARIO_ID = String(seedData.seedUsuarioId ?? "");
     process.env.E2E_SEED_FOLIO_ID = String(seedData.seedFolioId ?? "");
     process.env.E2E_SEED_ESTADO_GESTION_ID = String(seedData.seedEstadoGestionId ?? "");
+
+    // Persist JWT for workers — process.env set here is not inherited by test
+    // workers, and mid-suite login 429 (lockout) must not strand later specs.
+    const tokenPath = "tests/e2e/fixtures/e2e-admin-token.txt";
+    if (process.env.E2E_ADMIN_TOKEN) {
+      fs.mkdirSync("tests/e2e/fixtures", { recursive: true });
+      fs.writeFileSync(tokenPath, process.env.E2E_ADMIN_TOKEN, "utf8");
+    }
 
     // Step 4: Save storage state for reuse
     await context.storageState({ path: "tests/e2e/fixtures/admin-auth.json" });

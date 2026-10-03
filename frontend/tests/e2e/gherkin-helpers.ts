@@ -27,14 +27,15 @@ export class GherkinSteps {
     await this.page.waitForLoadState("networkidle");
   }
 
+  /**
+   * Prefer shared JWT from global-setup over UI login. Parallel workers that
+   * each submit the login form can trip LoginAttemptService (429) after any
+   * failed attempt (e.g. CU21 historically renaming admin).
+   */
   async givenUserIsLoggedIn() {
-    await this.page.goto("/login");
+    await authenticateAsAdmin(this.page);
+    await this.page.goto("/dashboard");
     await this.page.waitForLoadState("networkidle");
-    await expect(this.page.getByTestId("input-usuario")).toBeVisible({ timeout: 10000 });
-    await this.page.getByTestId("input-usuario").fill("admin");
-    await this.page.getByTestId("input-contrasenia").fill("admin");
-    await this.page.getByTestId("btn-ingresar").click();
-    await this.page.waitForURL(/\/dashboard/, { timeout: 10000 });
   }
 
   async givenModuleIsVisible(moduleName: string) {

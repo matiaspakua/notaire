@@ -196,6 +196,7 @@ export default function PresupuestosPage() {
             size="sm"
             variant="ghost"
             data-testid={`btn-resumen-presupuesto-${p.idBudget}`}
+            aria-label={t("resumen.title")}
             onClick={() => setResumenId(p.idBudget!)}
           >
             <Receipt className="h-4 w-4" />

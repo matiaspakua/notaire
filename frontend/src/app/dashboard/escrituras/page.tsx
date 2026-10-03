@@ -118,8 +118,8 @@ export default function EscriturasPage() {
               <Signature className="h-4 w-4" />
             </Button>
           )}
-          <Button size="sm" variant="ghost" onClick={() => openEdit(e)}><Pencil className="h-4 w-4" /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(e.idDeed!)}><Trash2 className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(e)} aria-label={tc("edit")}><Pencil className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(e.idDeed!)} aria-label={tc("delete")}><Trash2 className="h-4 w-4" /></Button>
         </div>
       ),
     },

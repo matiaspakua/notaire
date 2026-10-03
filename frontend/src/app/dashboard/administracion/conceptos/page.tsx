@@ -102,8 +102,8 @@ export default function ConceptosPage() {
       key: "actions", header: "", className: "w-24",
       render: (c) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(c)}><NotaireIcon src="/icons/actions/generar.png" alt={tc("edit")} size={16} /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(c)} data-testid="btn-delete-concepto"><NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} /></Button>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(c)} aria-label={tc("edit")}><NotaireIcon src="/icons/actions/generar.png" alt="" size={16} /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(c)} data-testid="btn-delete-concepto" aria-label={tc("delete")}><NotaireIcon src="/icons/actions/borrar.png" alt="" size={16} /></Button>
         </div>
       ),
     },
