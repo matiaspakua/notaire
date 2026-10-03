@@ -6,7 +6,7 @@
 | Use Case | CU72 – Gestión de Documentos Presentados |
 | Branch | `cursor/fix-801-submitted-document-mapping-69d3` |
 | PR | https://github.com/matiaspakua/notaire/pull/1195 (draft) |
-| Head SHA | `9f43c37c09b1a1109a3ed8024cc0039e31257f26` (+ follow-up openspec status commit if pushed) |
+| Head SHA | `c881d31d4ee47c18fee5ef2055a492125b5a938a` |
 | OpenSpec | `openspec/changes/fix-801-submitted-document-mapping/` |
 | Store copy | Agent store not mounted (`/cursor/stores/self` missing) |
 
