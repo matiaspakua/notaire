@@ -1,0 +1,30 @@
+info:
+  name: Setup - Create destination node
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU76 / CU83
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/workflow-node"
+  body:
+    type: json
+    data: |-
+        {
+          "workflowDefinitionId": {{wf_tr_def_id}},
+          "statusManagementId": 2,
+          "type": "FINAL",
+          "positionX": 100,
+          "positionY": 0
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores dest node id", function () { bru.setVar('wf_tr_dest_id', res.getBody().id); });

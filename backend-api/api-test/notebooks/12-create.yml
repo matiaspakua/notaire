@@ -1,0 +1,35 @@
+info:
+  name: Create notebook
+  type: http
+  seq: 12
+  description: |-
+      Traceability: CU80
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/cuadernos"
+  body:
+    type: json
+    data: |-
+        {
+          "idsFolio": [
+            {{nb_folio_1_id}}, {{nb_folio_2_id}}, {{nb_folio_3_id}}, {{nb_folio_4_id}}, {{nb_folio_5_id}},
+            {{nb_folio_6_id}}, {{nb_folio_7_id}}, {{nb_folio_8_id}}, {{nb_folio_9_id}}, {{nb_folio_10_id}}
+          ],
+          "idNotary": {{nb_notary_id}},
+          "year": 2026,
+          "notes": "Bruno E2E notebook"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idNotebook", function () {
+            expect(res.getBody()).to.have.property('idNotebook');
+            bru.setVar('nb_id', res.getBody().idNotebook);
+          });

@@ -1,0 +1,24 @@
+info:
+  name: Get costs by procedure type
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU39
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/plantilla-costos-documento/tipo-tramite/{{dct_pt_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Response is array with at least one cost", function () {
+            const b = res.getBody();
+            expect(b).to.be.an('array');
+            expect(b.length).to.be.at.least(1);
+          });

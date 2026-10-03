@@ -1,0 +1,23 @@
+info:
+  name: Observar missing draft returns 404
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU82
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/minutas-inscripcion/999999991/observar"
+  body:
+    type: json
+    data: |-
+        {"registryNotes": "obs", "dateCorrection": "2026-09-06"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404", function () { expect(res.getStatus()).to.equal(404); });

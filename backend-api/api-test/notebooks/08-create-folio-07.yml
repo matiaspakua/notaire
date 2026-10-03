@@ -1,0 +1,34 @@
+info:
+  name: Setup - Create folio 7
+  type: http
+  seq: 8
+  description: |-
+      Traceability: CU28 / CU80
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/folio"
+  body:
+    type: json
+    data: |-
+        {
+          "number": {{nb_folio_7_number}},
+          "year": 2026,
+          "status": "Nuevo",
+          "notes": "notebook fixture folio 7",
+          "typeFolioId": 1,
+          "notaryId": {{nb_notary_id}}
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores folio id 7", function () {
+            expect(res.getBody()).to.have.property('idFolio');
+            bru.setVar('nb_folio_7_id', res.getBody().idFolio);
+          });

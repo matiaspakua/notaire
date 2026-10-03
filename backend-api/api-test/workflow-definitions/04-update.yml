@@ -1,0 +1,27 @@
+info:
+  name: Update workflow definition
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU76 / CU83
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/workflow-definition/{{wf_def_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "{{wf_def_name}}-upd",
+          "description": "updated",
+          "active": true
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });

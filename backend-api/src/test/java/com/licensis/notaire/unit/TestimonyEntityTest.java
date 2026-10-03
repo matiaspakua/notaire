@@ -105,6 +105,16 @@ class TestimonyEntityTest {
         }
 
         @Test
+        @DisplayName("Should allow null deed (optional ManyToOne; Bruno #953)")
+        void shouldAllowNullDeed() {
+            Testimony testimony = new Testimony();
+            testimony.setFkIdDeed(null);
+
+            assertThat(testimony.getFkIdDeed()).isNull();
+            assertThat(testimony.getDto().getDeed()).isNull();
+        }
+
+        @Test
         @DisplayName("Should set and get copia list")
         void shouldSetAndGetCopyList() {
             List<Copy> copies = new ArrayList<>();

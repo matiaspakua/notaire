@@ -1,0 +1,24 @@
+info:
+  name: List managements
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU02
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/gestiones"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Response has content or is array", function () {
+            const b = res.getBody();
+            const items = Array.isArray(b) ? b : (b.content || b);
+            expect(items).to.be.an('array');
+          });

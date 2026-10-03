@@ -1,0 +1,30 @@
+info:
+  name: Setup - Create document type
+  type: http
+  seq: 2
+  description: |-
+      Traceability: CU27
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-de-documento"
+  body:
+    type: json
+    data: |-
+        {"name":"{{dct_dt_name}}","expires":false,"deliveredBy":"Cliente"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('dct_dt_name', 'e2e-dct-dt-' + Date.now());
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores document type id", function () {
+            expect(res.getBody()).to.have.property('idDocumentType');
+            bru.setVar('dct_dt_id', res.getBody().idDocumentType);
+          });

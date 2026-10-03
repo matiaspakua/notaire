@@ -1,0 +1,38 @@
+info:
+  name: Setup - Create notary
+  type: http
+  seq: 2
+  description: |-
+      Traceability: CU81
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/people"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Notary",
+          "lastName": "AuxProtocol E2E",
+          "identificationNumber": "{{ap_notary_document}}",
+          "isClient": false,
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Soltero",
+          "sex": "Masculino"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          const now = Date.now();
+          bru.setVar('ap_notary_document', String(now).slice(-8));
+          bru.setVar('ap_folio_number', 500000 + (now % 400000));
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores notary id", function () { bru.setVar('ap_notary_id', res.getBody().personId); });

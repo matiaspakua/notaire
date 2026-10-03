@@ -1,0 +1,22 @@
+info:
+  name: Verify management update
+  type: http
+  seq: 8
+  description: |-
+      Traceability: CU53
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/gestiones/{{mgmt_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Encabezado updated", function () {
+            expect(String(res.getBody().encabezado)).to.equal('Bruno E2E management updated');
+          });

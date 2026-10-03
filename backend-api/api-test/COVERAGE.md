@@ -1,10 +1,20 @@
 # API Test Coverage
 
-Bruno YAML suite — run with `bru run . -r --env Development` from this directory
-(backend must be up at `localhost:8080`).
+Bruno YAML suite (OpenCollection) — run with Bruno CLI **≥ 4.x** (OpenCollection /
+`opencollection.yml` support; CI uses unpinned `npx @usebruno/cli`, which
+resolves to latest):
 
-**Current status:** 164 requests / 291 tests passing, twice in a row against the
-same database with no leaked rows (verified 2026-09-24, issue #1035). `00-auth`
+```bash
+cd backend-api/api-test
+npx @usebruno/cli run . -r --env Development
+```
+
+(backend must be up at `localhost:8080`). CLI 2.x only understands `bruno.json`
+and will print “You can run only at the root of a collection” for this suite —
+do not add a parent `bruno.json`.
+
+**Current status:** 297 requests / 508 tests passing, twice in a row against the
+same database with no leaked rows (verified 2026-10-03, issue #953). `00-auth`
 sorts first (login/rate-limit fixtures other folders depend on).
 
 ## Backend defects found and fixed via this suite
@@ -22,6 +32,7 @@ sorts first (login/rate-limit fixtures other folders depend on).
 | 9 | `DELETE /historial/{id}` | delete silently cancelled by Hibernate's cascade on the stale `EstadoDeGestion.historialList` collection | unlink the entity from that collection before `repository.delete()` |
 | 10 | `DELETE /{resource}/{id}` for 30 more entities (`Rol`, `TipoDeDocumento`, `TipoDeFolio`, `TipoDeTramite`, `TipoIdentificacion`, `EstadoDeGestion`, `WorkflowDefinition`/`Node`/`Transition`, `Persona`, `Usuario`, `Escritura`, `GestionDeEscritura`, `Presupuesto`, `Testimonio`, `Cuaderno`, `Folio`, `Inmueble`, `MinutaInscripcion`, `MovimientoTestimonio`, `DocumentoPresentado`, `RegistroAuditoria`, `Suplencia`, `Concepto`, `Copia`, plus 5 `@EmbeddedId` join entities) | same silent-delete-via-`isNew()` bug as defect #8, present across every remaining surrogate-key and composite-key entity | implement `Persistable<Integer>` (surrogate keys) or `Persistable<XxxPK>` with `@Transient boolean isNew` + `@PostLoad`/`@PrePersist` (composite keys) on all 30 entities (#957) |
 | 11 | `DELETE /plantilla-presupuestos/tipo-tramite/{id}/concepto/{id}` | returned 200 but the row survived: the `getReference` proxy was not removed from the parents' cascade-ALL lists, so flush re-persisted it | load with `em.find` before unlinking and removing (#1036) |
+| 12 | `GET /testimonio/{id}`, `GET /movimiento-testimonio` | INNER JOIN on required `Testimony.fkIdDeed` made findById/list fail when deed was null | `@ManyToOne(optional = true)` on `Testimony.fkIdDeed` (#953) |
 
 (Earlier, the same campaign fixed `PUT /conceptos`, `GET /folio`,
 `DELETE /personas` — merged in PR #416.)
@@ -38,10 +49,13 @@ the value but update did not. Hardened in `setAtributos`.
 |--------|----------|------|------------------|-----------|
 | 00-auth | `/usuarios/login` | n/a | login, invalid, rate-limit lockout | CU78 |
 | audit-records | `/audit-log` | read-only | list; POST/PUT/DELETE → 405 (#1060) | CU73, CU23, CU78 |
+| auxiliary-protocol | `/protocolo-auxiliar` | actions | folios-disponibles; iniciar escritura | CU81 |
 | budget-templates | `/plantilla-presupuestos` | ✅ | `tipo-tramite/{id}`; own procedure type + concept fixtures | CU26, CU29, CU39, CU55, CU49, CU37, CU57 |
 | budgets | `/presupuestos` | ✅ | `persona/{id}`, `buscar?status=` | CU01, CU60, CU45 |
 | concepts | `/conceptos` | ✅ | — | CU29, CU66, CU34, CU37 |
+| copies | `/copia` | ✅ | requires `datePrinting` | CU70 |
 | deeds | `/escrituras` | search only | `buscar?number=` | CU62 |
+| document-cost-templates | `/plantilla-costos-documento` | POST + GET | by `tipo-tramite/{id}` (no DELETE API) | CU39 |
 | document-types | `/tipo-de-documento` | ✅ | — | CU27, CU65, CU32, CU38 |
 | folio-types | `/tipo-folio` | ✅ | — | CU36, CU68, CU40, CU58 |
 | folios | `/folio` | ✅ (no PUT) | own notary fixture | CU48, CU28, CU63, CU33 |
@@ -49,19 +63,30 @@ the value but update did not. Hardened in `setAtributos`.
 | identification-types | `/tipo-identificacion` | ✅ | — | CU17 |
 | items | `/items` | ✅ | `presupuesto/{id}`, surcharge without reason rejected | CU01, CU71, CU45 |
 | management-statuses | `/estado-gestion` | ✅ | — | CU30, CU67, CU35 |
+| managements | `/gestiones` | ✅ | by number; estado-actual | CU02, CU14, CU53 |
+| notebooks | `/cuadernos` | POST/GET | 10-folio fixture; carátula PDF | CU80 |
 | payments | `/pagos` | ✅ | `presupuesto/{id}`, `saldo`, `estado`, over-limit 409, receipt PDF | CU01, CU15, CU47, CU45 |
 | people | `/people` | ✅ | `search?lastName=`, 409 duplicate | CU17, CU18, CU61, CU46, CU54, CU41 |
+| procedure-folders | `/carpetas` | GET + espera | via complete-case fixture | CU85 |
 | procedure-templates | `/plantilla-tramite` | read-only | list, `tipo-tramite/{id}` | CU79, CU03 |
 | procedure-types | `/tipo-tramite` | ✅ | — | CU26, CU64, CU31, CU57 |
 | procedures | `/tramites` | ✅ | — | CU02, CU53 |
 | properties | `/inmueble` | ✅ | — | CU69 |
+| registration-drafts | `/minutas-inscripcion` | actions | 404 paths for missing ids (happy Firmada+property chain deferred) | CU82 |
+| report-pdfs | `/reportes` | PDF GETs | libro-indice, DJ mensual/rentas, lista-documentos (representative) | CU24, CU25, CU50 |
+| roles | `/roles` | ✅ | — | CU76 |
+| submitted-documents | `/documento-presentado` | ✅ | — | CU04, CU72 |
 | substitutions | `/suplencia` | ✅ | own substitute + replaced person fixtures | CU48, CU22, CU59 |
+| testimonies | `/testimonio` | ✅ | verificar action | CU07, CU08 |
+| testimony-movements | `/movimiento-testimonio` | ✅ | — | CU12 |
 | users | `/usuarios` | ✅ | login (+/- credentials), case-insensitive login, JWT structure, `persona/{id}` | CU20, CU78, CU21 |
+| workflow-definitions | `/workflow-definition` | ✅ | — | CU83 |
+| workflow-nodes | `/workflow-node` | ✅ | by-workflow | CU83 |
+| workflow-transitions | `/workflow-transition` | ✅ | by-workflow | CU83 |
+| workflow-validation | `/workflow-definition/{id}/validate` | POST | structured `{valid, errors}` | CU83 |
 
 ## TODO — resources not yet covered
 
-Tracked as issue #953 (16 controllers with zero Bruno coverage): `CarpetaTramite`,
-`Copia`, `Cuaderno`, `DocumentoPresentado`, `Gestion`, `MinutaInscripcion`,
-`MovimientoTestimonio`, `PlantillaCostoDocumento`, `ProtocoloAuxiliar`, `Reporte`,
-`Rol`, `Testimonio`, `WorkflowDefinition`, `WorkflowNode`, `WorkflowTransition`,
-`WorkflowValidation`.
+None for the sixteen controllers tracked in #953. Optional follow-ups:
+full Firmada+property happy path for `registration-drafts`, and remaining
+`ReportController` PDF variants that need heavier fixtures.

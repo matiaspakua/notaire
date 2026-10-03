@@ -1,0 +1,28 @@
+info:
+  name: Create document cost template
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU39
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/plantilla-costos-documento"
+  body:
+    type: json
+    data: |-
+        {
+          "idProcedureType": {{dct_pt_id}},
+          "idDocumentType": {{dct_dt_id}},
+          "fixedAmount": 150.00
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Body returned", function () { expect(res.getBody()).to.be.an('object'); });

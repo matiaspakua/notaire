@@ -1,0 +1,41 @@
+info:
+  name: Setup - Create notary
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU80 (RF QA Bruno #953)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/people"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Notary",
+          "lastName": "Notebooks E2E",
+          "identificationNumber": "{{nb_notary_document}}",
+          "isClient": false,
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Soltero",
+          "sex": "Masculino"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          const now = Date.now();
+          bru.setVar('nb_notary_document', String(now).slice(-8));
+          const base = 400000 + (now % 500000);
+          for (let i = 1; i <= 10; i++) {
+            bru.setVar('nb_folio_' + i + '_number', base + i - 1);
+          }
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores notary id", function () { bru.setVar('nb_notary_id', res.getBody().personId); });

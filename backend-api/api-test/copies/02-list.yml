@@ -1,0 +1,23 @@
+info:
+  name: List copies
+  type: http
+  seq: 2
+  description: |-
+      Traceability: CU70
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/copia"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Created copy listed", function () {
+            const id = Number(bru.getVar('copies_id'));
+            expect(res.getBody().some(x => x.idCopy === id)).to.equal(true);
+          });

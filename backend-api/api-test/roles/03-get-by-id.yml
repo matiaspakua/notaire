@@ -1,0 +1,22 @@
+info:
+  name: Get role by ID
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU76 (RF QA Bruno #953)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/roles/{{roles_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Returns the requested role", function () {
+            expect(res.getBody().idRole).to.equal(Number(bru.getVar('roles_id')));
+          });

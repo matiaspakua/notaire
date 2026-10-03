@@ -1,0 +1,40 @@
+info:
+  name: Setup - Create notary
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU02 (RF QA Bruno #953)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/people"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Notary",
+          "lastName": "Managements E2E",
+          "identificationNumber": "{{mgmt_notary_document}}",
+          "isClient": false,
+          "fkIdIdentificationType": { "idIdentificationType": 1 },
+          "nationality": "Argentina",
+          "maritalStatus": "Soltero",
+          "sex": "Masculino"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          const now = Date.now();
+          bru.setVar('mgmt_notary_document', String(now).slice(-8));
+          bru.setVar('mgmt_number', 200000000 + (now % 700000000));
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores notary id", function () {
+            bru.setVar('mgmt_notary_id', res.getBody().personId);
+          });

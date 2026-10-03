@@ -1,0 +1,31 @@
+info:
+  name: Setup - Create available auxiliary folio
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU81
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/folio"
+  body:
+    type: json
+    data: |-
+        {
+          "number": {{ap_folio_number}},
+          "year": 2026,
+          "status": "Nuevo",
+          "notes": "aux protocol folio",
+          "typeFolioId": {{ap_ft_id}},
+          "notaryId": {{ap_notary_id}}
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores folio id", function () { bru.setVar('ap_folio_id', res.getBody().idFolio); });

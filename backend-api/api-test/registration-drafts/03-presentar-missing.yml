@@ -1,0 +1,23 @@
+info:
+  name: Presentar missing draft returns 404
+  type: http
+  seq: 3
+  description: |-
+      Traceability: CU82
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/minutas-inscripcion/999999991/presentar"
+  body:
+    type: json
+    data: |-
+        {"dateSubmission": "2026-09-05", "registryEntryNumber": "E-1"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404", function () { expect(res.getStatus()).to.equal(404); });

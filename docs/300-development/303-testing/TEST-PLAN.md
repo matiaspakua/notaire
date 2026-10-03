@@ -187,7 +187,7 @@ Unit (80% target) → Integration (80% target) → API (Bruno) → Frontend unit
 |-------|-----------|-------|
 | **Unit** | Single class/method (mocked dependencies) | Backend: `src/test/java/.../unit/` |
 | **Integration** | Spring context + repo/service, real PostgreSQL | Backend: `.../integration/` |
-| **API (Bruno)** | Real HTTP contract of every endpoint | `backend-api/api-test/` (~70 requests) |
+| **API (Bruno)** | Real HTTP contract of every endpoint | `backend-api/api-test/` (297 requests / 508 tests; OpenCollection, Bruno CLI ≥4.x; #953 closed zero-coverage gap) |
 | **Frontend unit (Vitest)** | React components/hooks in isolation | `frontend/src/**/*.test.ts` |
 | **E2E (Playwright)** | Full Use Case through the actual browser UI | `frontend/tests/e2e/TS-nnnn-*.spec.ts` (35 suites, 448 tests) |
 

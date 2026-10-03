@@ -1,0 +1,33 @@
+info:
+  name: Create testimony movement
+  type: http
+  seq: 2
+  description: |-
+      Traceability: CU12
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/movimiento-testimonio"
+  body:
+    type: json
+    data: |-
+        {
+          "testimony": { "idTestimony": {{tm_testimony_id}} },
+          "dateEntry": "2026-09-05",
+          "registered": false,
+          "notes": "Bruno E2E movement"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idTestimonyMovement", function () {
+            const b = res.getBody();
+            expect(b).to.have.property('idTestimonyMovement');
+            bru.setVar('tm_movement_id', b.idTestimonyMovement);
+          });

@@ -1,0 +1,29 @@
+info:
+  name: Update management
+  type: http
+  seq: 7
+  description: |-
+      Traceability: CU53
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/gestiones/{{mgmt_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "dateStart": "2026-09-05",
+          "number": {{mgmt_number}},
+          "encabezado": "Bruno E2E management updated",
+          "notaryPersonId": {{mgmt_notary_id}},
+          "managementStatusId": 1
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect([200,204]).to.include(res.getStatus()); });

@@ -1,0 +1,23 @@
+info:
+  name: Generate with missing deed returns 404
+  type: http
+  seq: 2
+  description: |-
+      Traceability: CU82
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/minutas-inscripcion"
+  body:
+    type: json
+    data: |-
+        {"idDeed": 999999991}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404", function () { expect(res.getStatus()).to.equal(404); });

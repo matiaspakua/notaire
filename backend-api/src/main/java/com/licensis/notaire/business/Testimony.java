@@ -72,8 +72,11 @@ public class Testimony implements Serializable, Persistable<Integer>
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimony", fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"fkIdTestimonio"})
     private List<TestimonyMovement> testimonyMovementList = new ArrayList<>();
+    // Deed is optional at persistence time: raw creates and some protocol flows leave
+    // fk_id_deed null. optional=false forced an INNER JOIN so findById/list-of-movements
+    // 404/500'd for those rows (Bruno #953). Column is nullable in Flyway.
     @JoinColumn(name = "fk_id_deed", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList", "tramiteList", "testimonioList"})
     private Deed fkIdDeed;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimony", fetch = FetchType.LAZY)

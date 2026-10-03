@@ -1,0 +1,29 @@
+info:
+  name: Setup - Create testimony
+  type: http
+  seq: 1
+  description: |-
+      Traceability: CU12 (RF QA Bruno #953)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/testimonio"
+  body:
+    type: json
+    data: |-
+        {"number": {{tm_testimony_number}}, "flagged": false, "verified": true, "notes": "movement fixture"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('tm_testimony_number', 3000 + (Date.now() % 7000));
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores testimony id", function () {
+            bru.setVar('tm_testimony_id', res.getBody().idTestimony);
+          });

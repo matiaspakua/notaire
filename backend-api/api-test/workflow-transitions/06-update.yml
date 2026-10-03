@@ -1,0 +1,29 @@
+info:
+  name: Update workflow transition
+  type: http
+  seq: 7
+  description: |-
+      Traceability: CU76 / CU83
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/workflow-transition/{{wf_tr_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "workflowDefinitionId": {{wf_tr_def_id}},
+          "originNodeId": {{wf_tr_origin_id}},
+          "destinationNodeId": {{wf_tr_dest_id}},
+          "condition": "always",
+          "description": "e2e transition updated"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect([200,204]).to.include(res.getStatus()); });

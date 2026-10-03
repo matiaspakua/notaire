@@ -1,0 +1,27 @@
+info:
+  name: Put folder on wait
+  type: http
+  seq: 6
+  description: |-
+      Traceability: CU85
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/carpetas/{{pf_folder_id}}/espera"
+  body:
+    type: json
+    data: |-
+        {"reason": "Waiting on client documents (Bruno E2E)"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Wait reason set", function () {
+            const b = res.getBody();
+            expect(String(b.waitReason || b.motivoEspera || '')).to.include('Waiting');
+          });

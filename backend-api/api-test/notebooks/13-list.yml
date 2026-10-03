@@ -1,0 +1,23 @@
+info:
+  name: List notebooks
+  type: http
+  seq: 13
+  description: |-
+      Traceability: CU80
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/cuadernos"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Created notebook listed", function () {
+            const id = Number(bru.getVar('nb_id'));
+            expect(res.getBody().some(x => x.idNotebook === id)).to.equal(true);
+          });

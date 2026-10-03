@@ -1,0 +1,19 @@
+info:
+  name: Delete workflow transition
+  type: http
+  seq: 9
+  description: |-
+      Traceability: CU76 / CU83
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/workflow-transition/{{wf_tr_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

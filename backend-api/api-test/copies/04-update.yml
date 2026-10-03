@@ -1,0 +1,23 @@
+info:
+  name: Update copy
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU70
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/copia/{{copies_id}}"
+  body:
+    type: json
+    data: |-
+        {"number": {{copies_number}}, "datePrinting": "2026-09-06", "notes": "Bruno E2E copy updated"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect([200,204]).to.include(res.getStatus()); });

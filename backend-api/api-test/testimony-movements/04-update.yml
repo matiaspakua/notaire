@@ -1,0 +1,28 @@
+info:
+  name: Update testimony movement
+  type: http
+  seq: 5
+  description: |-
+      Traceability: CU12
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/movimiento-testimonio/{{tm_movement_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "testimony": { "idTestimony": {{tm_testimony_id}} },
+          "dateEntry": "2026-09-05",
+          "registered": false,
+          "notes": "Bruno E2E movement updated"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect([200,204]).to.include(res.getStatus()); });

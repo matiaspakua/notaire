@@ -1,0 +1,24 @@
+info:
+  name: List roles
+  type: http
+  seq: 2
+  description: |-
+      Traceability: CU76 (RF QA Bruno #953)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/roles"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Response is an array", function () { expect(res.getBody()).to.be.an('array'); });
+          test("Created role is in the list", function () {
+            const id = Number(bru.getVar('roles_id'));
+            expect(res.getBody().some(x => x.idRole === id)).to.equal(true);
+          });

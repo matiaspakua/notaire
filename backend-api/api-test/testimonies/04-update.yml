@@ -1,0 +1,23 @@
+info:
+  name: Update testimony
+  type: http
+  seq: 4
+  description: |-
+      Traceability: CU08
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/testimonio/{{testimony_id}}"
+  body:
+    type: json
+    data: |-
+        {"number": {{testimony_number}}, "flagged": false, "verified": false, "notes": "Bruno E2E testimony updated"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect([200,204]).to.include(res.getStatus()); });

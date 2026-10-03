@@ -1,0 +1,29 @@
+info:
+  name: Start auxiliary protocol deed
+  type: http
+  seq: 5
+  description: |-
+      Traceability: CU81
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/protocolo-auxiliar/escrituras"
+  body:
+    type: json
+    data: |-
+        {"idFolio": {{ap_folio_id}}, "body": "Bruno E2E protocolo auxiliar"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns deed id", function () {
+            const b = res.getBody();
+            const id = b.idDeed || b.idEscritura || b.id;
+            expect(id).to.be.a('number');
+            bru.setVar('ap_deed_id', id);
+          });

@@ -200,9 +200,12 @@ class ImagePinsAndDependabotTest(unittest.TestCase):
                         is_pinned(ref),
                         f"{path.name}: base must be minor-or-digest pinned (#1045); got {ref}",
                     )
-                    # Explicitly reject known floating channel tags
+                    # Explicitly reject known floating channel tags (major-only JDK /
+                    # Maven selectors without a minor.pin in the tag).
                     self.assertNotEqual(ref, "maven:3.9-eclipse-temurin-21-alpine")
+                    self.assertNotEqual(ref, "maven:3-eclipse-temurin-24-alpine")
                     self.assertNotEqual(ref, "eclipse-temurin:21-jre-alpine")
+                    self.assertNotEqual(ref, "eclipse-temurin:24-jre-alpine")
 
     def test_frontend_dockerfile_bases_are_pinned(self):
         self.assertTrue(FRONTEND_DOCKERFILE.is_file(), FRONTEND_DOCKERFILE)

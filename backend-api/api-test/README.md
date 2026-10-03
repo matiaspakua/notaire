@@ -3,9 +3,17 @@
 End-to-end API tests for the Notaire backend, written in Bruno's **YAML
 (OpenCollection)** format and run with the Bruno CLI.
 
+## CLI version
+
+OpenCollection requires **Bruno CLI ≥ 4.x**. CI runs unpinned
+`npx @usebruno/cli` from this directory (resolves to latest). Local example:
+`npx @usebruno/cli@4.2.0`. CLI **2.x** only understands `bruno.json` and will
+error with “You can run only at the root of a collection” — do **not** add a
+parent `bruno.json` to paper over that.
+
 ## Why YAML / how the CLI selects the format
 
-Bruno picks the collection format by file presence (`@usebruno/cli`):
+Bruno picks the collection format by file presence (`@usebruno/cli` ≥ 4):
 
 | File at collection root | Format | Files discovered |
 |-------------------------|--------|------------------|
@@ -24,19 +32,20 @@ Prerequisites: the backend must be up at `http://localhost:8080`
 ```bash
 cd backend-api/api-test
 
-# whole suite
-bru run . -r --env Development
+# whole suite (CI-equivalent)
+npx @usebruno/cli run . -r --env Development
 
 # one resource (a full CRUD lifecycle); 00-auth first to get a token
-bru run 00-auth concepts --env Development
+npx @usebruno/cli run 00-auth concepts --env Development
 
 # write reports
-bru run . -r --env Development --reporter-html results.html --reporter-junit results.xml
+npx @usebruno/cli run . -r --env Development --reporter-html results.html --reporter-junit results.xml
 ```
 
 The `Development` environment (`environments/Development.yml`) sets
 `base_url: http://localhost:8080`; `00-auth/01-login.yml` stores `token`.
-Every other id is a runtime variable set by the suite itself.
+CI also injects `--env-var token=...` from a pre-login. Every other id is a
+runtime variable set by the suite itself.
 
 ## Request file conventions
 
@@ -80,5 +89,5 @@ Rules:
 
 ## Coverage status
 
-21 folders, 164 requests, 291 tests — see `COVERAGE.md` for the resource
+37 folders, 297 requests, 508 tests — see `COVERAGE.md` for the resource
 table and the backend defects this suite uncovered and fixed.

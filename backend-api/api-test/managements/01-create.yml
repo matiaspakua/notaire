@@ -1,0 +1,33 @@
+info:
+  name: Create management
+  type: http
+  seq: 2
+  description: |-
+      Traceability: CU02
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/gestiones"
+  body:
+    type: json
+    data: |-
+        {
+          "dateStart": "2026-09-05",
+          "number": {{mgmt_number}},
+          "encabezado": "Bruno E2E management",
+          "notaryPersonId": {{mgmt_notary_id}},
+          "managementStatusId": 1
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idManagement", function () {
+            bru.setVar('mgmt_id', res.getBody().idManagement);
+            expect(bru.getVar('mgmt_id')).to.be.a('number');
+          });
