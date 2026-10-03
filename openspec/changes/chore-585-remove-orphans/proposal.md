@@ -1,0 +1,87 @@
+# Remove orphaned files that deliver no value
+
+> Governed by [CONSTITUTION.md](../../../CONSTITUTION.md). This proposal documents
+> **only this change**; permanent documentation remains the single source of truth.
+
+| Field | Value |
+|-------|-------|
+| GitHub Issue | #585 (scope widened by the Owner on 2026-10-03) |
+| Use Case | CU76 – Quality Assurance and Testing Infrastructure |
+| Branch | `chore/585_remove_orphans` |
+| Gate 1 status | draft — Owner approved the scope ("remove orphan or unused scripts, files and any other temporary file") |
+
+## Objetivo
+
+Delete tracked files that nothing builds, runs or documents as live, so searches, IDE
+indexing and QA hand-over are not polluted: the 422-file pre-migration source tree, nine
+cURL scripts no runner calls, and one unused test constant. Add a guard so orphans cannot
+accumulate again in `testing/`.
+
+## What Changes
+
+- Delete `deprecated-src.old/` (422 files, ~7.6 MB). It duplicates DTO and entity class names
+  of the real codebase, so it risks edits to the wrong copy. Git history keeps it.
+- Delete the nine orphaned scripts `testing/integration/http/01-auth.sh` … `08-items.sh` and
+  `test-all-endpoints.sh`.
+- Remove the unused `COMPOSE_FILES` constant from `scripts/test_image_pins_and_dependabot.py`.
+- Add an orphan guard to `scripts/test_testing_standalone.py`: every script under `testing/`
+  must be reachable from the runner, apart from a short documented exemption list.
+- Update the docs that described the removed scripts.
+
+## Reglas de negocio
+
+| Rule | Source | New / Changed / Made explicit |
+|------|--------|-------------------------------|
+| A tracked script under `testing/` MUST be invoked by the runner or another suite script, or be on the documented exemption list | #585; Owner instruction; Constitution P5 (remove dead code) | New |
+| The pre-migration source tree MUST NOT be tracked on `main` | #585 | New |
+| Removing a file MUST NOT break a build, workflow, guard or live doc link | Constitution P8 | Made explicit |
+| `testing/e2e-swing/` stays until the retirement spec is amended | `openspec/specs/swing-e2e-retirement` | Made explicit |
+
+## Capabilities
+
+### New Capabilities
+
+- `no-orphan-files`: no pre-migration source tree and no unreachable QA scripts on `main`.
+
+### Modified Capabilities
+
+- (none under `openspec/specs/`)
+
+## Impact Analysis
+
+### Módulos afectados
+
+| Module | Touched | What changes |
+|--------|---------|--------------|
+| `backend-api` | no | Not in the Maven module list; `deprecated-src.old` is not referenced by any `pom.xml` |
+| `frontend` | no | — |
+| `frontend-swing` | no | Removed module |
+| `notaire-shared` | no | — |
+| `deprecated-src.old/` | yes | Deleted |
+| `testing/` | yes | Nine scripts deleted; docs updated |
+| `scripts/` | yes | New guard; unused constant removed |
+
+### Surface area
+
+- Entities / Endpoints / Flyway / `.env` / dependencies: none
+
+### Architecture review
+
+Deletion only. No ADR. The history of every removed file stays reachable in git.
+
+## Documentation Impact
+
+| Permanent document | What must change |
+|--------------------|------------------|
+| `docs/300-development/303-testing/api-test/README.md` | Drop the structure and usage sections describing the removed scripts; point to `testing/` |
+| `docs/300-development/303-testing/README.md` | Integration row: one suite script plus the stack smoke |
+| `testing/docs/DEFINITION.md` | Remove the "legacy scripts" row; they are gone |
+| `CHANGELOG.md` | `[Unreleased]` entry |
+| `docs/100-business/102-use-cases/CU76 – Quality Assurance and Testing Infrastructure.md` | #585 is already listed; confirm |
+
+## Out of Scope
+
+- `testing/e2e-swing/` (needs an amendment of `swing-e2e-retirement` and `repo-hygiene`; separate decision).
+- `testing/scripts/generate-coverage-report.sh` (used by `test-coverage-report.yml`).
+- Rewriting history to purge the large files (ADR-022 covers that).
+- Untracked local files (`logs/`, `.env`, caches), which are not in the repository.
