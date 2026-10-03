@@ -12,15 +12,13 @@
 
 ## Objetivo
 
-Delete tracked files that nothing builds, runs or documents as live, so searches, IDE
-indexing and QA hand-over are not polluted: the 422-file pre-migration source tree, nine
-cURL scripts no runner calls, and one unused test constant. Add a guard so orphans cannot
-accumulate again in `testing/`.
+Delete tracked files that nothing builds, runs or documents as live, so searches and QA
+hand-over are not polluted: nine cURL scripts no runner calls, and one unused test constant.
+Add a guard so orphans cannot accumulate again in `testing/`. `deprecated-src.old/` is kept
+as historical data (Owner decision on PR #1207).
 
 ## What Changes
 
-- Delete `deprecated-src.old/` (422 files, ~7.6 MB). It duplicates DTO and entity class names
-  of the real codebase, so it risks edits to the wrong copy. Git history keeps it.
 - Delete the nine orphaned scripts `testing/integration/http/01-auth.sh` … `08-items.sh` and
   `test-all-endpoints.sh`.
 - Remove the unused `COMPOSE_FILES` constant from `scripts/test_image_pins_and_dependabot.py`.
@@ -33,7 +31,7 @@ accumulate again in `testing/`.
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
 | A tracked script under `testing/` MUST be invoked by the runner or another suite script, or be on the documented exemption list | #585; Owner instruction; Constitution P5 (remove dead code) | New |
-| The pre-migration source tree MUST NOT be tracked on `main` | #585 | New |
+| `deprecated-src.old/` is historical data and MUST stay in the tree | Owner decision on PR #1207 | Made explicit |
 | Removing a file MUST NOT break a build, workflow, guard or live doc link | Constitution P8 | Made explicit |
 | `testing/e2e-swing/` stays until the retirement spec is amended | `openspec/specs/swing-e2e-retirement` | Made explicit |
 
@@ -41,7 +39,7 @@ accumulate again in `testing/`.
 
 ### New Capabilities
 
-- `no-orphan-files`: no pre-migration source tree and no unreachable QA scripts on `main`.
+- `no-orphan-files`: no unreachable QA scripts under `testing/`.
 
 ### Modified Capabilities
 
@@ -53,11 +51,10 @@ accumulate again in `testing/`.
 
 | Module | Touched | What changes |
 |--------|---------|--------------|
-| `backend-api` | no | Not in the Maven module list; `deprecated-src.old` is not referenced by any `pom.xml` |
+| `backend-api` | no | — |
 | `frontend` | no | — |
 | `frontend-swing` | no | Removed module |
 | `notaire-shared` | no | — |
-| `deprecated-src.old/` | yes | Deleted |
 | `testing/` | yes | Nine scripts deleted; docs updated |
 | `scripts/` | yes | New guard; unused constant removed |
 
@@ -84,5 +81,6 @@ Deletion only. No ADR. The history of every removed file stays reachable in git.
 
 - `testing/e2e-swing/` (needs an amendment of `swing-e2e-retirement` and `repo-hygiene`; separate decision).
 - `testing/scripts/generate-coverage-report.sh` (used by `test-coverage-report.yml`).
+- `deprecated-src.old/` (422 files): kept by the Owner as historical data; #585's original request to move or delete it is declined.
 - Rewriting history to purge the large files (ADR-022 covers that).
 - Untracked local files (`logs/`, `.env`, caches), which are not in the repository.

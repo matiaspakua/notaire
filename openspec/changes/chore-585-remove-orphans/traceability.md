@@ -27,7 +27,6 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Pre-migration tree is gone | `scripts/test_repo_hygiene.py` | covered |
 | No orphaned script under testing | `scripts/test_testing_standalone.py` | covered |
 | Removed cURL scripts are gone | same | covered |
 | No live reference to a removed path | same | covered |
@@ -44,7 +43,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh chore-585-remove-orphans` |
-| 2 | Failing tests written, test cases designed | yes | guards failed on main before any deletion (hygiene 1 failure; testing guard 3 failures incl. 9 orphan scripts) |
+| 2 | Failing tests written, test cases designed | yes | guards failed on main before any deletion (testing guard 3 failures incl. 9 orphan scripts) |
 | 3 | Suite green, coverage held, docs updated | pending | — |
 | 4 | CI green, review approved, no conflicts | pending | — |
 | 5 | Deployed, smoke test passed, Issue closed | pending | — |

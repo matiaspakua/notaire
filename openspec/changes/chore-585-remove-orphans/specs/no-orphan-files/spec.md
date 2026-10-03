@@ -3,18 +3,9 @@
 
 ## Purpose
 
-Keep dead files out of `main`. Source: #585; owner CU76.
+Keep unreachable QA scripts out of `testing/`. Source: #585; owner CU76.
 
 ## ADDED Requirements
-
-### Requirement: The pre-migration source tree is not tracked
-
-`deprecated-src.old/` MUST NOT exist in the repository tree.
-
-#### Scenario: Pre-migration tree is gone
-
-- **WHEN** the tracked files are listed
-- **THEN** no path starts with `deprecated-src.old/`
 
 ### Requirement: QA scripts are reachable
 
@@ -39,5 +30,5 @@ No active file outside the archives MUST reference a removed path.
 #### Scenario: No live reference to a removed path
 
 - **WHEN** tracked files outside `docs/000-archive`, `openspec/changes/archive` and
-  `CHANGELOG.md` are searched for the removed script names and for `deprecated-src.old`
+  `CHANGELOG.md` are searched for the removed script names
 - **THEN** none is found, except in historical OpenSpec specs and this change

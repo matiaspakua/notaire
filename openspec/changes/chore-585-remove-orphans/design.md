@@ -7,7 +7,7 @@ Issue #585 (open since 2026-07-02), widened by the Owner. Evidence gathered on `
 
 | Candidate | Evidence it is orphaned |
 |-----------|-------------------------|
-| `deprecated-src.old/` | 422 tracked files, ~7.6 MB, `main/java` 309, `main/resources` 111; referenced by no `pom.xml`, workflow, script or live doc (only prose in the CHANGELOG and a retirement spec); issue #585 calls it dead weight |
+| `deprecated-src.old/` | Kept: the Owner treats it as historical data (PR #1207); it was a candidate in #585 and is explicitly **not** removed |
 | `testing/integration/http/02…07-*.sh` | zero references anywhere |
 | `01-auth.sh`, `08-items.sh`, `test-all-endpoints.sh` | referenced only by `api-test/README.md` as manual scripts; not called by `run.sh`, `test-all-endpoints-v2.sh` or CI; use legacy Spanish endpoint names |
 | `COMPOSE_FILES` in `test_image_pins_and_dependabot.py` | defined, never used (found while adding the #1191 image-pin test) |
@@ -15,35 +15,33 @@ Issue #585 (open since 2026-07-02), widened by the Owner. Evidence gathered on `
 
 ## Goals / Non-Goals
 
-**Goals:** delete the above; add an orphan guard for `testing/`; keep every build, workflow and guard green.
+**Goals:** delete the orphaned scripts and constant; add an orphan guard for `testing/`; keep every build, workflow and guard green.
 
 **Non-Goals:** `testing/e2e-swing/`, the coverage script, history rewriting.
 
 ## Decisions
 
-1. **Delete, do not archive in the tree.** Git history is the archive; the commit that removes
-   `deprecated-src.old/` is named in the PR so it is findable. #585 offered "docs/archive or a
-   tagged branch": a tag is another outward-facing artifact for files nobody has used since the
-   migration, so none is created.
+1. **Keep `deprecated-src.old/`.** It is referenced by no build file and duplicates class names of the real
+   codebase, which is why #585 proposed removing it, but the Owner keeps it as historical data. The first
+   version of this change deleted it (commit `f20b9d7d`); a later commit restores it byte for byte, and the
+   hygiene check that required its absence was removed. Deleted history is not rewritten.
 2. **Guard by reachability, not by list.** The test finds callers by script basename inside
    `testing/`, so a future orphan fails without anyone updating a list. Exempt: `scripts/test.sh`
    (external callers: Constitution step 14, preflight, agent rules) and
    `scripts/generate-coverage-report.sh` (CI).
-3. **Separate commits**: red guard, deletion of the tree, deletion of the scripts, doc updates.
+3. **Separate commits**: red guard, deletion of the scripts, doc updates, then the restore of the tree.
 4. **`e2e-swing` left alone**: its retirement spec allows it and `test_dependabot_hygiene.py` and
    `test_repo_hygiene.py` assert it; removing it is a spec change to decide separately.
 
 ## Riesgos / Trade-offs
 
 - [Deleting something a developer runs by hand] → zero references; history retains it; revert is one command.
-- [IDE or tooling expects the tree] → not in any module list or build; `mvn -q validate` is run after.
 - [Large diff hides an unrelated change] → deletions are pure `git rm` in their own commits.
 
 ## Testing Strategy
 
 | Scenario (spec) | Test level | Test class / file |
 |-----------------|------------|-------------------|
-| Pre-migration tree is gone | static | `scripts/test_repo_hygiene.py` |
 | No orphaned script under testing | static | `scripts/test_testing_standalone.py` |
 | Removed cURL scripts are gone | static | same |
 | No live reference to a removed path | static | `scripts/test_testing_standalone.py` (extended legacy-reference scan) |

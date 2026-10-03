@@ -19,14 +19,14 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [x] 3.1 Enumerate test cases: tree gone, no orphan script, removed scripts gone, no live reference
+- [x] 3.1 Enumerate test cases: no orphan script, removed scripts gone, no live reference
 - [x] 3.2 Write the failing guards in `test_repo_hygiene.py` and `test_testing_standalone.py`
 - [x] 3.3 Observe them fail before deleting anything
 - [x] 3.4 Confirm every `#### Scenario:` maps to a test
 
 ## 4. Implementación
 
-- [x] 4.1 `git rm -r deprecated-src.old` (own commit)
+- [x] 4.1 Keep `deprecated-src.old/` (Owner decision on PR #1207): restore it from before commit `f20b9d7d`, verified identical to `main`
 - [x] 4.2 `git rm` the nine orphaned cURL scripts (own commit)
 - [x] 4.3 Remove the unused `COMPOSE_FILES` constant
 - [x] 4.4 Guards green
@@ -62,7 +62,7 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Separate commits: spec, red guards, tree deletion, scripts deletion, docs
+- [ ] 9.1 Separate commits: spec, red guards, scripts deletion, docs, restore of the tree
 - [ ] 9.2 Only the final commit may carry `Closes #585`; others `Refs #585`
 - [ ] 9.3 No secrets, no commented-out code, no unrelated changes
 - [ ] 9.4 Record commit SHAs in `traceability.md`
