@@ -18,11 +18,14 @@ issues were closed: #695, #582, #572, #294 (obsolete Swing), #780, #807, #829, #
 
 ## Key themes
 
-1. **Access control is enforced by convention only.** `main` has no branch protection
-   (#1040), the backend has no RBAC (#559), admin screens are only hidden in the UI (#1052),
-   and any user can write audit records (#1060) or set any entity field (#1068).
+1. **Access control is enforced by convention only.** `main` ruleset protection (#1040 —
+   `protect-main` PR-only + required checks; admin apply after merge) closes the
+   GitHub-side delivery gap; the backend has no RBAC (#559), admin screens are only
+   hidden in the UI (#1052), and any user can write audit records (#1060) or set any
+   entity field (#1068).
 2. **No production deployment artifact.** The only compose file is a dev stack (#1044), there is
-   no frontend image and no versioned releases (#1043), and CD may ship an untested SHA (#1042).
+   no frontend image and no versioned releases (#1043); CD tip-of-main publish risk (#1042)
+   was addressed separately.
 3. **Money uses binary floating point** (#1061).
 4. **Weak quality gates.** Load tests have been silently broken (#1047), lint is non-blocking
    (#1048), coverage floors sit far below actual coverage (#1063, #976), and some tests

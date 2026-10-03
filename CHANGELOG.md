@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Protect `main` with ruleset** (issue #1040, CU76/CU78): extend ruleset
+  `protect-main` (id `24128115`) for PR-only merges, required checks
+  `CI` / `Frontend CI` / `Playwright E2E` / `Code Lint` / `PR Validation`, and
+  keep force-push/deletion blocked; `bypass_actors` empty after #1041. Thin
+  suite aggregator jobs publish the four missing check-run names; desired
+  state + admin apply/assert scripts under `scripts/rulesets/` and
+  `scripts/apply-protect-main-ruleset.sh` / `assert-protect-main-ruleset.sh`.
+  Guarded by `scripts/test_protect_main_ruleset.py`. **Admin must run**
+  `bash scripts/apply-protect-main-ruleset.sh --apply` after merge.
+
 - **Dependabot hygiene** (issue #1046, CU78): deleted dead
   `deprecated-frontend-swing/` (EOL `log4j:log4j:1.2.17` alerts) and pinned
   frontend `smol-toml` via npm `overrides` to `^1.9.0` (GHSA-7w5x-hrqm-74c2;
