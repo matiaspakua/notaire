@@ -11,15 +11,13 @@ repository. Source: #1191 (umbrella #1190); owner CU76.
 
 ### Requirement: System-level suites live under testing/
 
-The integration, database and performance suites, the runner and the guides MUST live under
-`testing/`. `testing/e2e-swing/` MUST remain untouched. Scripts that nothing references and
+The integration and database suites, the runner and the guides MUST live under `testing/`. `testing/e2e-swing/` MUST remain untouched. Scripts that nothing references and
 the stale committed reports MUST NOT remain.
 
 #### Scenario: Suites live under testing/
 
 - **WHEN** the repository tree is inspected
-- **THEN** `testing/integration`, `testing/database`, `testing/performance/k6`,
-  `testing/scripts/run.sh`, `testing/.env.example`, `testing/README.md` and
+- **THEN** `testing/integration`, `testing/database`, `testing/scripts/run.sh`, `testing/.env.example`, `testing/README.md` and
   `testing/docs/{PREPARATION,CONFIGURATION,DEFINITION,OPERATION}.md` exist
 
 #### Scenario: Dead scripts and stale reports are gone
@@ -31,15 +29,14 @@ the stale committed reports MUST NOT remain.
 
 ### Requirement: One runner
 
-`testing/scripts/run.sh <suite>` MUST run a named suite (`integration`, `database`,
-`performance`), print the suites with `--list`, and exit non-zero for an unknown suite.
+`testing/scripts/run.sh <suite>` MUST run a named suite (`integration`, `database`), print the suites with `--list`, and exit non-zero for an unknown suite.
 `testing/scripts/test.sh` MUST keep working as the integration entry point.
 
 #### Scenario: Runner lists suites and rejects unknown ones
 
 - **WHEN** `run.sh --list` and `run.sh nonsense` are executed
-- **THEN** the first prints `integration`, `database` and `performance` and exits 0, and the
-  second exits non-zero
+- **THEN** the first prints `integration` and `database` and exits 0, and the second exits
+  non-zero
 
 #### Scenario: test.sh still runs the integration suite
 
@@ -49,13 +46,21 @@ the stale committed reports MUST NOT remain.
 ### Requirement: Database suite verifies an empty database up to the latest migration
 
 The database suite MUST start an empty PostgreSQL, apply the application's Flyway migrations
-with the Flyway CLI (read-only mount, no Spring context) and verify the result with SQL.
+with the Flyway CLI (read-only mount, no Spring context) and verify the result with SQL. It
+MUST supply the same Flyway placeholders the backend does (`exporterUsername`,
+`exporterPassword`), because migration V12 cannot run without them.
 
 #### Scenario: Migrations apply to an empty database
 
 - **WHEN** the suite runs `flyway migrate` on an empty database
 - **THEN** every versioned migration is applied, `flyway_schema_history` has no failed row and
   `flyway validate` succeeds
+
+#### Scenario: Only the documented rollback script is ignored
+
+- **WHEN** the suite compares the SQL files with the Flyway history
+- **THEN** every `V<n>__*.sql` file is applied, and the only file Flyway ignores is the manual
+  rollback script `R14__restore_presupuestos_fk_id_tramite.sql`
 
 #### Scenario: A second migrate is a no-op
 

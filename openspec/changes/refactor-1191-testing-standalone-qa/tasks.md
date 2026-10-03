@@ -16,27 +16,27 @@
 - [x] 2.2 `git checkout -b refactor/1191_testing_standalone_qa`
 - [x] 2.3 Branch name recorded in `traceability.md`
 - [x] 2.4 Run `bash scripts/validate-sdlc-plan.sh refactor-1191-testing-standalone-qa`
-- [ ] 2.5 Merge `main` after #1193 lands so the folded `infra-standalone-repo` spec exists for the MODIFIED delta
+- [x] 2.5 Merge `main` after #1193 landed so the pipeline gates are green
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: layout, deletions, runner, database checks, pins/no host port, self-containment, docs, gates
+- [ ] 3.1 Enumerate test cases: layout, deletions, runner, database checks (incl. placeholders, R14), pins/no host port, self-containment, docs, gates
 - [ ] 3.2 Write failing `scripts/test_testing_standalone.py` and observe it fail
-- [ ] 3.3 Repoint the existing guards to `testing/performance/k6` and amend the infra layout list; observe them fail
+- [ ] 3.3 Check that `test_image_pins_and_dependabot.py` covers the new compose file's pins; observe it fail first if it does not
 - [ ] 3.4 Write the database SQL checks before the compose harness exists; observe the first run fail
 - [ ] 3.5 Confirm every `#### Scenario:` maps to a test or a verification command
 
 ## 4. Implementación
 
 - [ ] 4.1 `git mv` the cURL suite and stack smoke into `testing/integration/` (separate commit, no content change)
-- [ ] 4.2 `git mv infra/performance/k6` to `testing/performance/k6` (separate commit)
+- [ ] 4.2 Leave `infra/` untouched (k6 stays in `infra/performance`, Owner decision)
 - [ ] 4.3 Delete the five unreferenced scripts and `testing/reports/*`; ignore `testing/reports/`
 - [ ] 4.4 Write `scripts/run.sh`, make `scripts/test.sh` a wrapper, fold the stack smoke into `integration`
 - [ ] 4.5 Build `testing/database/` (compose, Flyway settings, SQL checks, negative check)
 - [ ] 4.6 Add `testing/.env.example`; resolve paths relative to `testing/`; mark the seams
 - [ ] 4.7 Repoint workflows, scripts, agent rules and docs to the new paths
 - [ ] 4.8 Add `database-vv.yml` and the `preflight.sh --full` and `--list` entries together
-- [ ] 4.9 All guards green; record any `R14__` finding
+- [ ] 4.9 All guards green; `R14__` resolved as a deliberate manual rollback, asserted by the suite
 
 ## 5. Actualizar tests existentes
 
@@ -62,7 +62,7 @@
 ## 8. Gate 3 — Actualizar documentación permanente
 
 - [ ] 8.1 Write `testing/README.md` and the four guides under `testing/docs/`
-- [ ] 8.2 Update 303-testing README and TEST-PLAN, CI-PREFLIGHT, TEST-COVERAGE-STRATEGY, infra README/DEFINITION, CLAUDE.md, AGENTS.md
+- [ ] 8.2 Update 303-testing README and TEST-PLAN, CI-PREFLIGHT, TEST-COVERAGE-STRATEGY, CLAUDE.md, AGENTS.md
 - [ ] 8.3 CU76 and CU75 ID tables; `CHANGELOG.md`
 - [ ] 8.4 Archive superseded docs under `docs/000-archive/` if any
 - [ ] 8.5 Confirm no information is duplicated between `docs/` and `testing/`

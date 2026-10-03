@@ -12,8 +12,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #1191 (phase 1 of #1190; phase 2 #1192) | open → in progress |
 | Use Case | CU76 – Quality Assurance and Testing Infrastructure (CU75 for the database suite) | exists (add #1191 to both ID tables) |
-| Related | #1179 (same pattern for infra/), #1185 / PR #1193 (pipeline green; this change needs it merged first), #1186 (lesson: no host-port collisions) | referenced |
-| Specification | `openspec/changes/refactor-1191-testing-standalone-qa/` | Gate 1 draft |
+| Related | #1179 (same pattern for infra/), #1185 / PR #1193 (merged; pipeline green), #1186 (lesson: no host-port collisions) | referenced |
+| Specification | `openspec/changes/refactor-1191-testing-standalone-qa/` | Gate 1 approved by Owner (k6 stays in infra/) |
 | Branch | `refactor/1191_testing_standalone_qa` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | — | pending |
@@ -33,6 +33,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | test.sh still runs the integration suite | same | pending |
 | Migrations apply to an empty database | `testing/database/checks` via `run.sh database` | pending |
 | A second migrate is a no-op | same | pending |
+| Only the documented rollback script is ignored | same | pending |
 | An edited migration is detected | same | pending |
 | Server configuration is as required | same | pending |
 | The exporter role is least-privilege | same | pending |
@@ -43,7 +44,6 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Environment example is complete and secret-free | same | pending |
 | Documentation set exists and docs link to it | same | pending |
 | CI and preflight carry the database gate | same | pending |
-| infra layout without performance (MODIFIED) | `scripts/test_infra_standalone.py` | pending |
 
 ## Permanent documentation updated
 
@@ -51,7 +51,6 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |----------|---------|--------|
 | `testing/README.md`, `testing/docs/*` | pending | — |
 | `303-testing` README and TEST-PLAN, CI-PREFLIGHT, TEST-COVERAGE-STRATEGY | pending | — |
-| `infra/README.md`, `infra/docs/DEFINITION.md` | pending | — |
 | `CLAUDE.md`, `AGENTS.md` | pending | — |
 | CU76, CU75 | pending | — |
 | `CHANGELOG.md` | pending | — |

@@ -13,9 +13,11 @@ Issue #1191, phase 1 of umbrella #1190, Use Case CU76 (database suite also CU75)
 | References outside `testing/` | `scripts/test.sh` 22 (Constitution step 14, preflight, CLAUDE.md, AGENTS.md, agent rules); `scripts/generate-coverage-report.sh` 1 (`test-coverage-report.yml`); `http/test-all-endpoints-v2.sh` 4; **`run-all-tests.sh`, `test-all.sh`, `run-comprehensive-tests.sh`, `integration/e2e-login-and-stack.sh` and the root `generate-coverage-report.sh`: 0** |
 | Reports | three generated reports from 2026-04-14 committed under `testing/reports/` |
 | Database coverage | only white-box (Spring context): `FlywaySchemaValidationIntegrationTest`, six `*PgIntegrationTest`, `FlywayMigrationScriptTest`; nothing runs migrations against an empty server without Spring |
-| Migrations | 41 versioned files plus `R14__restore_presupuestos_fk_id_tramite.sql`; Flyway 12.4.0 (Spring Boot 4.1.1); backend uses `baseline-on-migrate=true`, `baseline-version=0`, `clean-disabled=true` |
+| Migrations | 39 versioned files (V1–V39), the manual rollback script `R14__restore_presupuestos_fk_id_tramite.sql` and a README; Flyway 12.4.0 (Spring Boot 4.1.1); backend uses `baseline-on-migrate=true`, `baseline-version=0`, `clean-disabled=true`; V12 needs the placeholders `exporterUsername` and `exporterPassword` |
 | Images in use | `postgres:16.15` (prod compose, CI); `flyway/flyway:12.4.0` exists |
 | Playwright | in `frontend/`, zero imports from frontend source — phase 2 |
+| k6 | stays in `infra/performance` by Owner decision (all infra assets belong to the INFRA team's future repository) |
+| Probe run (this assessment) | Flyway CLI 12.4.0 on an empty `postgres:16.15`: with the two placeholders it applies 39 migrations and validates; without them V12 fails; the CLI ignores `R14__` exactly as its own header says |
 
 ## Goals / Non-Goals
 
@@ -33,7 +35,7 @@ Issue #1191, phase 1 of umbrella #1190, Use Case CU76 (database suite also CU75)
 ## Decisions
 
 1. **Layout by suite, not by tool**: `integration/` (cURL suite and stack smoke), `database/`,
-   `performance/`, plus `scripts/`, `docs/`. `e2e-swing/` stays at its path because
+   plus `scripts/`, `docs/`. `e2e-swing/` stays at its path because
    `swing-e2e-retirement` allows it and `test_dependabot_hygiene.py` checks its README.
    - Alternative rejected: move `e2e-swing` to `legacy/` — needs spec and guard changes for
      files nobody runs.
@@ -50,7 +52,8 @@ Issue #1191, phase 1 of umbrella #1190, Use Case CU76 (database suite also CU75)
      `../backend-api/src/main/resources/db/migration`, marked `TESTING_APP_SEAM`); the suite
      never edits them (P6).
    - Same Flyway settings as the backend: `baselineOnMigrate=true`, `baselineVersion=0`,
-     `cleanDisabled=true`.
+     `cleanDisabled=true`, and the V12 placeholders from `POSTGRES_EXPORTER_USER` /
+     `POSTGRES_EXPORTER_PASSWORD` (defaults `notaire_exporter` / a throwaway value).
    - No published host port, so it cannot collide with a running stack (lesson of #1186).
    - SQL assertion files, run in order, each printing PASS/FAIL lines; the runner exits non-zero
      on any FAIL. Table and role names are read from the migrated database, not assumed.
@@ -58,11 +61,13 @@ Issue #1191, phase 1 of umbrella #1190, Use Case CU76 (database suite also CU75)
      must fail, which proves checksum protection works.
    - Alternative rejected: pytest + psycopg — adds a toolchain; the existing `testing/` and
      preflight are shell-based.
-5. **`R14__` file**: Flyway documents repeatable migrations as `R__name`. How the CLI treats
-   `R14__…` versus the backend's classpath scan is unknown. If it differs, the suite records it as
-   a finding in the PR; the migration is not changed.
-6. **k6 moves to `testing/performance/k6`**: it verifies NFRs (CU74 SLOs), which is V&V. It makes
-   #1179's placement wrong, so the infra spec is amended by a MODIFIED delta in this change.
+5. **`R14__` is not a finding.** It is a deliberate manual rollback for V14; its header says Flyway
+   must ignore it, and the probe confirms the CLI does ("1 SQL migrations were detected but not
+   run because they did not follow the filename convention"). The suite turns this into a check:
+   every `V<n>__*.sql` is applied and the only ignored file is that one. Nothing is changed (P6).
+6. **k6 stays in `infra/performance`** (Owner decision): everything infrastructure-related must live
+   in `infra/` so the future INFRA team owns it in one repository. The `testing/` runner has no
+   performance suite; there is no reference from `testing/` into `infra/`.
 7. **CI and preflight together**: new `database-vv.yml`, path-filtered on
    `backend-api/src/main/resources/db/migration/**` and `testing/database/**`, plus a
    `preflight.sh --full` entry and `--list` row.
@@ -74,13 +79,11 @@ Issue #1191, phase 1 of umbrella #1190, Use Case CU76 (database suite also CU75)
 
 ## Riesgos / Trade-offs
 
-- [Flyway CLI and the backend disagree on `R14__`] → recorded as a finding, not "fixed" (P6).
+- [A new migration adds another placeholder] → the suite fails loudly on the missing placeholder, as the probe did; `.env.example` and the guide are updated with it.
 - [Docker image pulls make the suite slow or flaky offline] → pinned tags; CI caches; the suite
   is a separate job so it cannot block unrelated PRs.
 - [Deleting scripts someone runs by hand] → zero references in code, docs and CI; recorded in the
   PR; revert is trivial.
-- [Moving k6 breaks the weekly workflow] → path updated in `performance-test.yml` and its guard
-  in the same PR.
 - [Docs drift] → Gate 3 names every document.
 
 ## Testing Strategy
@@ -89,7 +92,7 @@ Issue #1191, phase 1 of umbrella #1190, Use Case CU76 (database suite also CU75)
 |-----------------|------------|-------------------|
 | Suites live under testing/; dead scripts gone | static | `scripts/test_testing_standalone.py` |
 | Runner lists/rejects; test.sh delegates | static + run | same |
-| Migrations apply; second run no-op; edit detected | database (Docker) | `testing/database/checks/*.sql` via `run.sh database` |
+| Migrations apply; only R14 ignored; second run no-op; edit detected | database (Docker) | `testing/database/checks/*.sql` via `run.sh database` |
 | Config, exporter role, seed data, schema objects | database (Docker) | same |
 | Pinned images, no host port | static | `scripts/test_testing_standalone.py` |
 | Self-contained; env example; docs set and links | static | same |
@@ -101,9 +104,8 @@ Issue #1191, phase 1 of umbrella #1190, Use Case CU76 (database suite also CU75)
 
 ## Regression Strategy
 
-- Existing tests affected: `test_performance_test_assets.py`, `test_image_pins_and_dependabot.py`,
-  `test_infra_standalone.py` (k6 path) — repointed, assertions unchanged except the infra layout
-  list, which this change amends deliberately.
+- Existing tests affected: none expected; `test_image_pins_and_dependabot.py` must accept the new
+  compose file's pinned images. `infra/` and its guards are untouched.
 - Full suite command: `bash scripts/preflight.sh`, then `bash scripts/run_pipeline.sh`.
 - HTTP/Bruno suites: the cURL suite runs through `run.sh integration`; Bruno untouched.
 - Legacy paths at risk: none.
@@ -118,12 +120,12 @@ CI job must still pass unchanged.
 - Flyway migration required: no
 - Deployment order / coupling: single PR; moves (`git mv`) separate from content edits; CI
   workflow and preflight land with the code they run.
-- Configuration or `.env` keys: new `testing/.env.example` (`BASE_URL`, `MIGRATIONS_DIR`, k6 vars).
+- Configuration or `.env` keys: new `testing/.env.example` (`BASE_URL`, `MIGRATIONS_DIR`, `POSTGRES_EXPORTER_USER`, `POSTGRES_EXPORTER_PASSWORD`).
 - Feature flag: no
 - Smoke test after deploy (Gate 5): `bash testing/scripts/run.sh database` green on merged
   `main`, `testing/scripts/test.sh` green against a running stack, `database-vv.yml` green.
 
 ## Rollback Strategy
 
-- Revert the PR: restores the old layout and k6 location. No data, schema or runtime state is
+- Revert the PR: restores the old layout. No data, schema or runtime state is
   involved; the database suite only uses throwaway containers.
