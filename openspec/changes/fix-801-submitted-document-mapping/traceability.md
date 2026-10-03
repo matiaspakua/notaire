@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-801-submitted-document-mapping/` | Gate 1 complete |
 | Branch | `cursor/fix-801-submitted-document-mapping-69d3` | active |
 | Tasks | `tasks.md` | implementation + docs done; merge pending |
-| Commits | `18f43840` openspec; `5d9cb61b` tests; `be3fc61d` fix; `9f43c37c` docs | recorded |
+| Commits | `18f43840` openspec; `5d9cb61b` tests; `be3fc61d` fix; `9f43c37c` docs; `9de27283` status | recorded |
 | Pull Request | https://github.com/matiaspakua/notaire/pull/1195 | draft |
 | CI run | pending (coordinator: `bash scripts/check-heavy-ci.sh 1195`) | pending |
 | Merge commit | — | pending |
