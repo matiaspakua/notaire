@@ -16,9 +16,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-976-vitest-branch-coverage/` | Gate 1 applied |
 | Branch | `cursor/fix-976-vitest-branch-coverage-69d3` | from `origin/main` @ `68dc2cac` |
 | Tasks | `tasks.md` | implement underway |
-| Commits | `10d1d67d` — fix(frontend): ratchet Vitest coverage floors… | done |
-| Pull Request | pending | pending |
-| CI run | — | pending |
+| Commits | `10d1d67d` (impl), `bfd10489` (traceability SHA note) | done |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1171 | draft open |
+| CI run | pending Frontend CI / heavy gate | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |

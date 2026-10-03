@@ -68,18 +68,18 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits
-- [ ] 9.2 Every commit ends with `Closes #976`
-- [ ] 9.3 No unrelated changes
-- [ ] 9.4 Record SHAs in `traceability.md`
+- [x] 9.1 Conventional Commits
+- [x] 9.2 Every commit ends with `Closes #976`
+- [x] 9.3 No unrelated changes
+- [x] 9.4 Record SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push branch
-- [ ] 10.2 PR title `[#976] fix(frontend): ratchet Vitest coverage floors and document policy`
+- [x] 10.1 Push branch
+- [x] 10.2 PR title `[#976] fix(frontend): ratchet Vitest coverage floors and document policy`
 - [ ] 10.3 Wait for Frontend CI Vitest job + other required workflows
-- [ ] 10.4 Merge only on heavy-CI gate exit 0
-- [ ] 10.5 Record PR in `traceability.md`
+- [ ] 10.4 Merge only on heavy-CI gate exit 0 (coordinator)
+- [x] 10.5 Record PR in `traceability.md` (#1171)
 
 ## 11. Deploy
 
