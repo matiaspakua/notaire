@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1058-suplencias-reportes-nav/` | Gate 1 validated |
 | Branch | `cursor/fix-1058-suplencias-reportes-nav-69d3` | created from `origin/main` @ `8d8b72af` |
 | Tasks | `tasks.md` | implement in progress |
-| Commits | `d4fa6cd1` | pushed |
+| Commits | `d4fa6cd1`, `d57cf926` | pushed |
 | Pull Request | https://github.com/matiaspakua/notaire/pull/1170 (draft) | open |
 | CI run | — | pending heavy gate |
 | Merge commit | — | pending |
