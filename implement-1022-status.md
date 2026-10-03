@@ -29,3 +29,7 @@
   NamedQuery name matches a repository method; `User.findByPersonId` avoids
   colliding with `UserRepository.findByFkIdPerson(Person)`.
 - `in-progress` label ACL returned 403 (ignored).
+
+## Tip at agent completion
+
+`31cc528ec14dbcad441a02c3a45dce7be7de921e`
