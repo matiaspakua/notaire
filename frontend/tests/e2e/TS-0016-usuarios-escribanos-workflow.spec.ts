@@ -5,8 +5,43 @@
  * CU48 - Dar alta escribano
  * CU51 - Modificar escribano
  */
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
+import { createUsuario } from "./setup/api-helpers";
+
+/** Capture JWT from UI login so page.request helpers authenticate. */
+async function syncAdminTokenFromBrowser(page: Page): Promise<void> {
+  const token = await page.evaluate(() => {
+    try {
+      const raw = localStorage.getItem("notaire-auth");
+      return raw ? (JSON.parse(raw)?.state?.token as string | undefined) : undefined;
+    } catch {
+      return undefined;
+    }
+  });
+  if (token) {
+    process.env.E2E_ADMIN_TOKEN = token;
+  }
+}
+
+/**
+ * Create a disposable EMPLEADO to edit. Never target row nth(1) — that is the
+ * seeded admin; renaming it locks out the rest of the suite (login 429).
+ */
+async function seedEditableUsuario(page: Page): Promise<string> {
+  const username = `cu21-${Date.now()}`;
+  const created = await createUsuario(page, undefined, {
+    name: username,
+    password: "Test1234!",
+    type: "EMPLEADO",
+    active: true,
+  });
+  expect(created.ok, created.error ?? "createUsuario failed").toBe(true);
+  await page.goto("/dashboard/administracion/usuarios");
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("table").getByText(username)).toBeVisible({ timeout: 15000 });
+  return username;
+}
 
 test.describe("CU20 - Dar Alta Usuario", () => {
   let steps: GherkinSteps;
@@ -53,39 +88,43 @@ test.describe("CU21 - Modificar Usuario", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
+    await syncAdminTokenFromBrowser(page);
     await steps.givenUserIsOnPage("/dashboard/administracion/usuarios");
   });
 
-  test("CU21-GW01: Given usuario exists, When click editar, Then modal opens with data", async () => {
-    // Given — seeded usuarios table has at least one row
-    await expect(steps.page.getByRole("table")).toBeVisible({ timeout: 15000 });
+  test("CU21-GW01: Given usuario exists, When click editar, Then modal opens with data", async ({
+    page,
+  }) => {
+    const username = await seedEditableUsuario(page);
 
     // When — icon-only edit is named via aria-label (#1057)
-    await steps.page
+    await page
       .getByRole("table")
-      .getByRole("row")
-      .nth(1)
+      .getByRole("row", { name: new RegExp(username) })
       .getByRole("button", { name: /editar/i })
       .click();
 
     // Then
     await steps.thenModalIsVisible("Editar usuario");
-    await expect(steps.page.getByTestId("input-nombre-usuario")).not.toHaveValue("");
+    await expect(page.getByTestId("input-nombre-usuario")).toHaveValue(username);
   });
 
-  test("CU21-GW02: Given edit modal open, When modify and submit, Then shows success", async () => {
-    await expect(steps.page.getByRole("table")).toBeVisible({ timeout: 15000 });
-    await steps.page
+  test("CU21-GW02: Given edit modal open, When modify and submit, Then shows success", async ({
+    page,
+  }) => {
+    const username = await seedEditableUsuario(page);
+
+    await page
       .getByRole("table")
-      .getByRole("row")
-      .nth(1)
+      .getByRole("row", { name: new RegExp(username) })
       .getByRole("button", { name: /editar/i })
       .click();
     await steps.thenModalIsVisible("Editar usuario");
 
-    const input = steps.page.getByTestId("input-nombre-usuario");
-    const current = await input.inputValue();
-    await input.fill(`${current}_e2e`);
+    const input = page.getByTestId("input-nombre-usuario");
+    await expect(input).toHaveValue(username);
+    // Never rename admin — only mutate the disposable EMPLEADO we just created.
+    await input.fill(`${username}_e2e`);
     await steps.whenUserSubmitsForm();
 
     await steps.thenShowsSuccessMessage("actualizado");

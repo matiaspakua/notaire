@@ -9,6 +9,7 @@
  * kept passing. This performs a real login and persists the resulting JWT
  * in the same shape the app's own auth store uses.
  */
+import fs from "node:fs";
 import type { Page } from "@playwright/test";
 import { apiPost } from "./api-helpers";
 
@@ -21,14 +22,60 @@ interface LoginResponse {
   message?: string;
 }
 
+const ADMIN_TOKEN_FILE = "tests/e2e/fixtures/e2e-admin-token.txt";
+
+function readPersistedAdminToken(): string | undefined {
+  if (process.env.E2E_ADMIN_TOKEN) {
+    return process.env.E2E_ADMIN_TOKEN;
+  }
+  try {
+    if (fs.existsSync(ADMIN_TOKEN_FILE)) {
+      const token = fs.readFileSync(ADMIN_TOKEN_FILE, "utf8").trim();
+      return token || undefined;
+    }
+  } catch {
+    // ignore missing/unreadable fixture
+  }
+  return undefined;
+}
+
+function applyAdminSession(
+  page: Page,
+  token: string,
+  user: { nombre: string; tipo: string; valido: boolean; idUsuario: number },
+): Promise<void> {
+  const role = (user.tipo ?? "ADMIN").toUpperCase();
+  process.env.E2E_ADMIN_TOKEN = token;
+
+  return page
+    .context()
+    .addCookies([
+      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
+      { name: "notaire-auth-role", value: role, domain: "localhost", path: "/" },
+    ])
+    .then(() =>
+      page.addInitScript(
+        ([t, u]) => {
+          localStorage.setItem(
+            "notaire-auth",
+            JSON.stringify({
+              state: { user: u, token: t, isAuthenticated: true },
+              version: 0,
+            }),
+          );
+        },
+        [token, user] as const,
+      ),
+    );
+}
+
 /**
  * Log in as admin and make the JWT available to both:
  *  - `page.request` helpers (`process.env.E2E_ADMIN_TOKEN`)
  *  - the browser app (`localStorage` `notaire-auth`, same shape as zustand persist)
  *
- * Throws when login fails (including 429 lockout). Callers must not continue
- * with an empty token — that yields empty list pages while API seeds still
- * succeed via a stale worker env token.
+ * On login failure/429, falls back to the JWT written by global-setup so later
+ * suites are not stranded when the in-memory LoginAttemptService locks admin.
  */
 export async function authenticateAsAdmin(
   page: Page,
@@ -41,43 +88,33 @@ export async function authenticateAsAdmin(
   });
   const data = result.ok ? result.data : undefined;
   const token = data?.valido ? data.token : undefined;
-  if (!token) {
-    throw new Error(
-      `authenticateAsAdmin login failed (status=${result.status}): ${
-        data?.message ?? result.error ?? "no token"
-      }`,
-    );
+
+  if (token) {
+    await applyAdminSession(page, token, {
+      nombre: data?.nombre ?? nombre,
+      tipo: data?.tipo ?? "ADMIN",
+      valido: true,
+      idUsuario: data?.idUsuario ?? 1,
+    });
+    return;
   }
 
-  const role = (data?.tipo ?? "ADMIN").toUpperCase();
-  const user = {
-    nombre: data?.nombre ?? nombre,
-    tipo: data?.tipo ?? "ADMIN",
-    valido: true,
-    idUsuario: data?.idUsuario ?? 1,
-  };
+  const fallback = readPersistedAdminToken();
+  if (fallback) {
+    await applyAdminSession(page, fallback, {
+      nombre,
+      tipo: "ADMIN",
+      valido: true,
+      idUsuario: 1,
+    });
+    return;
+  }
 
-  // Non-credential UI markers for Next.js middleware (issue #1052 role guard).
-  await page.context().addCookies([
-    { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-    { name: "notaire-auth-role", value: role, domain: "localhost", path: "/" },
-  ]);
-
-  await page.addInitScript(
-    ([t, u]) => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: { user: u, token: t, isAuthenticated: true },
-          version: 0,
-        }),
-      );
-    },
-    [token, user] as const,
+  throw new Error(
+    `authenticateAsAdmin login failed (status=${result.status}): ${
+      data?.message ?? result.error ?? "no token"
+    }`,
   );
-
-  // Visible to page.request-based helper calls (api-helpers.ts) made after this point.
-  process.env.E2E_ADMIN_TOKEN = token;
 }
 
 /**
