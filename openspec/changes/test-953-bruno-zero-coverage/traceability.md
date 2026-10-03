@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/test-953-bruno-zero-coverage/` (draft: `internal/openspec-953/`) | Gate 1 draft ready |
 | Branch | `cursor/test-953-bruno-zero-coverage-69d3` | created |
 | Tasks | `tasks.md` | Gate 1 planning complete; implement pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
+| Commits | `cfc76da6` (+ `964bafe9`) | pushed |
+| Pull Request | #1173 | draft open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
