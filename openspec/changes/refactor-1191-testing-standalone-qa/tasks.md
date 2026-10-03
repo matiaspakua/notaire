@@ -28,44 +28,44 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 `git mv` the cURL suite and stack smoke into `testing/integration/` (separate commit, no content change)
-- [ ] 4.2 Leave `infra/` untouched (k6 stays in `infra/performance`, Owner decision)
-- [ ] 4.3 Delete the five unreferenced scripts and `testing/reports/*`; ignore `testing/reports/`
-- [ ] 4.4 Write `scripts/run.sh`, make `scripts/test.sh` a wrapper, fold the stack smoke into `integration`
-- [ ] 4.5 Build `testing/database/` (compose, Flyway settings, SQL checks, negative check)
-- [ ] 4.6 Add `testing/.env.example`; resolve paths relative to `testing/`; mark the seams
-- [ ] 4.7 Repoint workflows, scripts, agent rules and docs to the new paths
-- [ ] 4.8 Add `database-vv.yml` and the `preflight.sh --full` and `--list` entries together
-- [ ] 4.9 All guards green; `R14__` resolved as a deliberate manual rollback, asserted by the suite
+- [x] 4.1 `git mv` the cURL suite and stack smoke into `testing/integration/` (separate commit, no content change)
+- [x] 4.2 Leave `infra/` untouched (k6 stays in `infra/performance`, Owner decision)
+- [x] 4.3 Delete the unreferenced scripts (run-all-tests, test-all, run-comprehensive-tests, the root coverage duplicate) and `testing/reports/*`; ignore `testing/reports/`
+- [x] 4.4 Write `scripts/run.sh`, make `scripts/test.sh` a wrapper, fold the stack smoke into `integration`
+- [x] 4.5 Build `testing/database/` (compose, Flyway settings, SQL checks, negative check)
+- [x] 4.6 Add `testing/.env.example`; resolve paths relative to `testing/`; mark the seams
+- [x] 4.7 Repoint workflows, scripts, agent rules and docs to the new paths
+- [x] 4.8 Add `database-vv.yml` and the `preflight.sh --full` and `--list` entries together
+- [x] 4.9 All guards green; `R14__` resolved as a deliberate manual rollback, asserted by the suite
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing guards pass with assertions unchanged except the deliberate infra layout amendment
-- [ ] 5.2 Fix docs and agent rules that reference removed scripts
-- [ ] 5.3 No dead references to the removed scripts remain
+- [x] 5.1 Existing guards pass with assertions unchanged except the deliberate infra layout amendment
+- [x] 5.2 Fix docs and agent rules that reference removed scripts
+- [x] 5.3 No dead references to the removed scripts remain
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — n/a (no Java touched)
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — n/a
-- [ ] 6.3 `mvn verify -pl backend-api` — n/a
+- [x] 6.1 `mvn test -pl backend-api` — n/a (no Java touched)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — n/a
+- [x] 6.3 `mvn verify -pl backend-api` — n/a
 - [ ] 6.4 Bruno and the cURL suite via `bash scripts/run_pipeline.sh`
-- [ ] 6.5 No `@Disabled` tests
+- [x] 6.5 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a product UI — Playwright is untouched in this phase
+- [x] 7.1 n/a product UI — Playwright is untouched in this phase
 - [ ] 7.2 Required Playwright CI job must still pass on the PR
-- [ ] 7.3 n/a responsive UI checks
-- [ ] 7.4 Record "n/a — no UI surface"
+- [x] 7.3 n/a responsive UI checks
+- [x] 7.4 Record "n/a — no UI surface"
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Write `testing/README.md` and the four guides under `testing/docs/`
-- [ ] 8.2 Update 303-testing README and TEST-PLAN, CI-PREFLIGHT, TEST-COVERAGE-STRATEGY, CLAUDE.md, AGENTS.md
-- [ ] 8.3 CU76 and CU75 ID tables; `CHANGELOG.md`
-- [ ] 8.4 Archive superseded docs under `docs/000-archive/` if any
-- [ ] 8.5 Confirm no information is duplicated between `docs/` and `testing/`
+- [x] 8.1 Write `testing/README.md` and the four guides under `testing/docs/`
+- [x] 8.2 Update 303-testing README and TEST-PLAN, CI-PREFLIGHT, TEST-COVERAGE-STRATEGY, CLAUDE.md, AGENTS.md
+- [x] 8.3 CU76 and CU75 ID tables; `CHANGELOG.md`
+- [x] 8.4 Archive superseded docs under `docs/000-archive/` if any
+- [x] 8.5 Confirm no information is duplicated between `docs/` and `testing/`
 - [ ] 8.6 `bash scripts/preflight.sh` without bypass
 
 ## 9. Commits atómicos

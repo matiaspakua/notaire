@@ -156,6 +156,9 @@ mvn verify -pl backend-api  # all checks
 
 # HTTP integration tests (requires running API)
 bash testing/scripts/test.sh
+
+# Database V&V: empty PostgreSQL -> Flyway -> SQL checks (Docker only; see testing/README.md)
+bash testing/scripts/run.sh database
 ```
 
 ## ⚠️ CI Preflight — run BEFORE every push

@@ -1,11 +1,11 @@
 # Notaire API — HTTP Tests
 
 Guía de pruebas manuales de la API REST de Notaire con `curl`. Los scripts
-automatizados viven en `testing/http/` (no en este directorio de
+automatizados viven en `testing/integration/http/` (no en este directorio de
 documentación); todos los comandos de este documento asumen backend
 corriendo en `http://localhost:8080`.
 
-## Estructura (`testing/http/`)
+## Estructura (`testing/integration/http/`)
 
 - `test-all-endpoints.sh` / `test-all-endpoints-v2.sh` — scripts master que ejecutan todos los tests
 - `01-auth.sh` … `08-items.sh` — tests por entidad (auth, usuarios, conceptos, personas, trámites, escrituras, presupuestos, items)
@@ -24,7 +24,7 @@ y [`COVERAGE.md`](../../../../backend-api/api-test/COVERAGE.md).
 
 ```bash
 # Todos los tests
-cd testing/http
+cd testing/integration/http
 chmod +x test-all-endpoints.sh && ./test-all-endpoints.sh
 
 # Test individual
@@ -56,7 +56,7 @@ curl -X DELETE "http://localhost:8080/api/v1/conceptos/1"
 El mismo patrón CRUD aplica a todas las entidades. Endpoints principales
 (verificados contra `@RequestMapping` de cada controller):
 
-```
+```text
 /api/v1/auth  /api/v1/usuarios  /api/v1/personas  /api/v1/tramites
 /api/v1/escrituras  /api/v1/presupuestos  /api/v1/items  /api/v1/folio
 /api/v1/testimonio  /api/v1/pagos  /api/v1/inmueble  /api/v1/copia

@@ -62,7 +62,7 @@ change is Done until the plan is complete and every Quality Gate has passed.
 
 ## Mandatory Development Workflow (all agents follow this)
 
-```
+```text
 0. Issue + Use Case (Caso de Uso) — MANDATORY, no exceptions
 0.5 Specification via OpenSpec (Gate 1) — proposal, traceability, specs, design, tasks
 1. Branch from updated main: <type>/<issue-number>_<description>
@@ -107,6 +107,7 @@ mvn test -pl backend-api -Dtest=ClassName         # single class
 mvn jacoco:check -pl backend-api                  # enforced ratchet floor (70% line / 25% branch); 80% is the target — see .claude/rules/code-quality.md
 mvn verify -pl backend-api                        # all quality checks
 bash testing/scripts/test.sh                                       # HTTP integration (API running)
+bash testing/scripts/run.sh database                               # database V&V (Docker only)
 cd frontend && npx playwright test                # E2E
 ```
 
@@ -147,6 +148,7 @@ Package root: `com.licensis.notaire`
 | `config` | Spring configuration |
 
 **Frontend** (`frontend`): Next.js 16, React 19, TypeScript, Tailwind CSS.
+
 - Design system: `src/theme/tokens.ts` (single source of truth).
 - Forms: `FormContainer → FormSection → FormField → FormActions`.
 
