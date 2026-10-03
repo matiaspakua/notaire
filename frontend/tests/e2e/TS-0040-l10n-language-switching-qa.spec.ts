@@ -3,12 +3,25 @@
  * Phase 3: Verify ES/EN language switching via LanguageSwitcher component
  *
  * Requires: frontend at localhost:3000, backend at localhost:8080
+ *
+ * Auth must include the HttpOnly JWT cookie (#1051). UX-only cookies are not
+ * enough — API 401s redirect to /login?expired=1.
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
 
 async function setupAuthAndGo(page: Page, path = "/dashboard") {
   await authenticateAsAdmin(page);
+  await page.goto(path);
+  await page.waitForLoadState("domcontentloaded");
+}
+
+/** Authenticated session + locale cookie (re-auth after cookie clears). */
+async function setupAuthWithLocale(page: Page, locale: "en" | "es", path = "/dashboard") {
+  await authenticateAsAdmin(page);
+  await page.context().addCookies([
+    { name: "NEXT_LOCALE", value: locale, domain: "localhost", path: "/" },
+  ]);
   await page.goto(path);
   await page.waitForLoadState("domcontentloaded");
 }
@@ -59,36 +72,13 @@ test.describe("Language Switcher — l10n feature", () => {
   });
 
   test("English locale shows English navigation labels", async ({ page }) => {
-    await authenticateAsAdmin(page);
-    // Pre-set English locale cookie
-    await page.context().addCookies([
-      { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/" },
-    ]);
-    await page.goto("/dashboard");
-    await page.waitForLoadState("domcontentloaded");
-
+    await setupAuthWithLocale(page, "en");
     // Sidebar should show English labels
     await expect(page.getByRole("link", { name: /cases/i }).first()).toBeVisible({ timeout: 10000 });
   });
 
   test("switching to ES from EN shows Spanish navigation labels", async ({ page }) => {
-    // Start in English
-    await page.context().addCookies([
-      { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/" },
-      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-      { name: "notaire-auth-role", value: "ADMIN", domain: "localhost", path: "/" },
-    ]);
-    await page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: { user: { nombre: "Admin Test", tipo: "ADMIN", valido: true }, isAuthenticated: true },
-          version: 0,
-        })
-      );
-    });
-    await page.goto("/dashboard");
-    await page.waitForLoadState("domcontentloaded");
+    await setupAuthWithLocale(page, "en");
 
     // Switch to Spanish
     const switcher = page.getByTestId("language-switcher");
@@ -115,22 +105,7 @@ test.describe("l10n — Dashboard page translations", () => {
   });
 
   test("dashboard shows English text when locale is EN", async ({ page }) => {
-    await page.context().addCookies([
-      { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/" },
-      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-      { name: "notaire-auth-role", value: "ADMIN", domain: "localhost", path: "/" },
-    ]);
-    await page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: { user: { nombre: "Admin Test", tipo: "ADMIN", valido: true }, isAuthenticated: true },
-          version: 0,
-        })
-      );
-    });
-    await page.goto("/dashboard");
-    await page.waitForLoadState("domcontentloaded");
+    await setupAuthWithLocale(page, "en");
     await expect(page.getByText(/available modules/i)).toBeVisible({ timeout: 10000 });
   });
 });
@@ -157,22 +132,7 @@ test.describe("l10n — Admin pages translations", () => {
   });
 
   test("usuarios page shows English title when locale is EN", async ({ page }) => {
-    await page.context().addCookies([
-      { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/" },
-      { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-      { name: "notaire-auth-role", value: "ADMIN", domain: "localhost", path: "/" },
-    ]);
-    await page.addInitScript(() => {
-      localStorage.setItem(
-        "notaire-auth",
-        JSON.stringify({
-          state: { user: { nombre: "Admin Test", tipo: "ADMIN", valido: true }, isAuthenticated: true },
-          version: 0,
-        })
-      );
-    });
-    await page.goto("/dashboard/administracion/usuarios");
-    await page.waitForLoadState("domcontentloaded");
+    await setupAuthWithLocale(page, "en", "/dashboard/administracion/usuarios");
     await expect(page.getByRole("heading", { name: /users/i })).toBeVisible({ timeout: 10000 });
   });
 });

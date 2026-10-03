@@ -50,10 +50,17 @@ test.describe("TS-0093 - Session expiry (CU84 / #1053 / #1051)", () => {
     await loginAsAdmin(page);
     await corruptJwtCookie(page);
 
-    // Any authenticated API call should receive 401 and trigger session expiry.
-    await page.goto("/dashboard/gestiones");
+    // Session expiry uses window.location.assign, which aborts in-flight goto.
+    // Wait for the expired-login URL rather than requiring goto to complete.
+    await Promise.all([
+      page.waitForURL(/\/login\?expired=1/, { timeout: 15000 }),
+      page.goto("/dashboard/gestiones", { waitUntil: "commit" }).catch((err: Error) => {
+        if (!/ERR_ABORTED|frame was detached/i.test(String(err))) {
+          throw err;
+        }
+      }),
+    ]);
 
-    await expect(page).toHaveURL(/\/login\?expired=1/, { timeout: 15000 });
     await expect(page.getByTestId("session-expired-message")).toBeVisible();
     await expect(page.getByTestId("session-expired-message")).toContainText(/sesión ha expirado|session has expired/i);
 

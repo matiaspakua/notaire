@@ -57,8 +57,13 @@ async function applyAdminSession(
     { name: "notaire-auth-role", value: role, domain: "localhost", path: "/" },
   ]);
   // Persist only non-credential client state — never the JWT (#1051).
+  // Gate on the UX status cookie so clearing cookies (logout / role switch)
+  // does not re-poison localStorage and trip session-expiry 401 → /login?expired=1.
   await page.addInitScript(
     ([u]) => {
+      if (!document.cookie.split(";").some((c) => c.trim().startsWith("notaire-auth-status="))) {
+        return;
+      }
       localStorage.setItem(
         "notaire-auth",
         JSON.stringify({
