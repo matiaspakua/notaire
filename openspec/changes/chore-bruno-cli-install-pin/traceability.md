@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/chore-bruno-cli-install-pin/` | Gate 1 writing |
 | Branch | `cursor/chore-bruno-cli-install-pin-69d3` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | 8999bee2, ace51e73 | done |
+| Commits | 8999bee2, ace51e73, 16db211d | done |
 | Pull Request | #1175 | open (draft) |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
