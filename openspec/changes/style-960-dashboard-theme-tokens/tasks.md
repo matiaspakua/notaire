@@ -49,9 +49,9 @@
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Prefer cheap smoke or computerUse viewport evidence at 320/768/1024
-- [ ] 7.2 Heavy CI Playwright may run — keep diff style-only
-- [ ] 7.3 Verify dashboard appearance at 320 / 768 / 1024
+- [x] 7.1 Prefer cheap smoke or computerUse viewport evidence at 320/768/1024 — Playwright screenshots
+- [x] 7.2 Heavy CI Playwright may run — keep diff style-only
+- [x] 7.3 Verify dashboard appearance at 320 / 768 / 1024 — evidence under `/opt/cursor/artifacts/dashboard-960-*.png`
 - [x] 7.4 Serialize awareness vs other Playwright-heavy PRs — **not n/a**
 
 ## 8. Gate 3 — Actualizar documentación permanente
@@ -61,22 +61,22 @@
 - [x] 8.3 `CHANGELOG.md` Changed entry for #960
 - [x] 8.4 Archive only if a doc becomes obsolete
 - [x] 8.5 No duplicated SSOT content
-- [ ] 8.6 `bash scripts/preflight.sh --fix` (or frontend-focused gates if backend unchanged)
+- [x] 8.6 `bash scripts/preflight.sh` — frontend/backend gates green; repo-wide SDLC validation fails on unrelated CLOSED-issue changes (ours alone PASS)
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits, small units
-- [ ] 9.2 Every commit ends with `Closes #960`
-- [ ] 9.3 No secrets / unrelated changes
-- [ ] 9.4 Record SHAs in `traceability.md`
+- [x] 9.1 Conventional Commits, small units
+- [x] 9.2 Every commit ends with `Closes #960`
+- [x] 9.3 No secrets / unrelated changes
+- [x] 9.4 Record SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push branch
-- [ ] 10.2 PR title `[#960] style(frontend): dashboard/table theme tokens`
+- [x] 10.1 Push branch
+- [x] 10.2 PR title `[#960] style(frontend): dashboard/table theme tokens`
 - [ ] 10.3 Wait for required workflows including Playwright as applicable
 - [ ] 10.4 Merge only on heavy-CI gate exit 0 (coordinator)
-- [ ] 10.5 Record PR in `traceability.md`
+- [x] 10.5 Record PR in `traceability.md`
 
 ## 11. Deploy
 
