@@ -3,7 +3,7 @@
 
 ## Context
 
-#833 shipped `POST /gestiones/{id}/transition` (CU83 use case + validator) and
+\#833 shipped `POST /gestiones/{id}/transition` (CU83 use case + validator) and
 UI filtering via `workflow-trace`. #806 wired History on orphan create/update
 paths. Bypass remains: `applyManagementRequest` and complete-case
 `applyManagementFields` still set any status id on update. Archive already goes
@@ -12,6 +12,7 @@ through `ManagementTransitionService`.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Reject status id changes on plain PUT and complete-case PUT (require `/transition`).
 - Validate initial create status against workflow nodes when a workflow exists.
 - Reuse shared `WorkflowTransitionValidatorPort` / workflow lookup — no duplicated graph logic.
@@ -20,6 +21,7 @@ through `ManagementTransitionService`.
 - English-only identifiers/comments in touched code.
 
 **Non-Goals:**
+
 - New workflow builder features.
 - Renaming Spanish URL segments without ADR.
 - Auto-applying transitions from PUT body (reject is clearer).
