@@ -37,6 +37,14 @@ al escribano suplente. El sistema deja constancia de la redirección en las
 observaciones de la gestión y lo notifica al usuario al guardar (CU48/CU51
 — el suplente debe tener registro de escribano vigente).
 
+La redirección aplica en **todas** las rutas de escritura de notario:
+
+- `POST` / `PUT /api/v1/gestiones/complete-case` (flujo UI principal, #836)
+- `POST` / `PUT /api/v1/gestiones` (CRUD plano; residual cerrado en #805)
+
+Si no hay suplencia activa para la fecha de la gestión, se conserva el
+escribano solicitado.
+
 ## Entrada en la UI (Next.js)
 
 Operadores autenticados abren **Suplencias** desde la barra lateral del
