@@ -18,7 +18,7 @@
 - Optimización de consultas JPA con estrategias Lazy/Eager y prevención de problemas N+1.
 - Configuración de pool de conexiones (HikariCP) y límites de aislamiento transaccional.
 - Establecimiento de líneas base de rendimiento y pruebas de carga automatizadas
-  (`performance-test/k6/load-test.js`, workflow semanal `performance-test.yml`;
+  (`infra/performance/k6/load-test.js`, workflow semanal `performance-test.yml`;
   umbrales CU74: p95 ≤ 2s, tasa de error &lt; 1%; issue #1047 / #594).
 
 ## Procedimiento de Ejecución y Monitoreo

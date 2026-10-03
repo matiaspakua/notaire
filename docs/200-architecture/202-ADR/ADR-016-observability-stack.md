@@ -13,7 +13,7 @@ record the deployment shape and its cross-network wiring.
 
 ## Decision
 The observability stack lives in a **separate Compose file**
-(`infra/docker-compose.yml`), deployed independently from the application
+(`infra/observability/docker-compose.yml`), deployed independently from the application
 stack (`docker-compose.yml`), and bridged via one external Docker network
 (`notaire_notary-network`) so both stacks can resolve each other's
 containers by name.
@@ -21,8 +21,8 @@ containers by name.
 ### Topology
 | Container | Image | Port | Role |
 |-----------|-------|------|------|
-| `devsecops-prometheus` | prom/prometheus | 9090 | Scrapes `backend:8080/actuator/prometheus` (Basic auth) and `postgres-exporter:9187`; evaluates `infra/prometheus/alert-rules.yml` |
-| `devsecops-grafana` | grafana/grafana | 3001 | Dashboards (`notaire-backend`, `notaire-postgres`, `notaire-logs`), provisioned from `infra/grafana/` |
+| `devsecops-prometheus` | prom/prometheus | 9090 | Scrapes `backend:8080/actuator/prometheus` (Basic auth) and `postgres-exporter:9187`; evaluates `infra/observability/prometheus/alert-rules.yml` |
+| `devsecops-grafana` | grafana/grafana | 3001 | Dashboards (`notaire-backend`, `notaire-postgres`, `notaire-logs`), provisioned from `infra/observability/grafana/` |
 | `devsecops-loki` | grafana/loki | 3100 | Log aggregation, queried by Grafana (`{container_name="notary-backend"}`) |
 | `devsecops-promtail` | grafana/promtail | — | Tails Docker container logs (socket-mounted) and pushes to Loki |
 | `devsecops-postgres-exporter` | prometheuscommunity/postgres-exporter | 9187 | Database-level metrics, connects to the app's PostgreSQL via the `pg_monitor` role (Flyway `V12`) |

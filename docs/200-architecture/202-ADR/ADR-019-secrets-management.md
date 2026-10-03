@@ -5,7 +5,7 @@ Accepted
 
 ## Context
 Both the application stack (`docker-compose.yml`) and the observability
-stack (`infra/docker-compose.yml`) need credentials (database, JWT signing
+stack (`infra/observability/docker-compose.yml`) need credentials (database, JWT signing
 key, Actuator/Grafana/SonarQube admin accounts, a least-privilege Postgres
 metrics-exporter role). A single, consistent approach was needed instead of
 scattering secrets across multiple compose files or hardcoding them.
@@ -22,7 +22,7 @@ read from this one file — there is no separate `infra/.env`.
 | `PGADMIN_DEFAULT_EMAIL/PASSWORD` | pgAdmin |
 | `APP_ADMIN_USER/PASSWORD` | Seeded admin user (stored as BCrypt hash in DB, issue #554; seeded once on first startup, issue #651) |
 | `JWT_SECRET` | Token signing key — **mandatory**, backend refuses to start if blank, &lt;32 bytes, or left as the example value |
-| `ACTUATOR_USER/PASSWORD` | HTTP Basic auth for `/actuator/prometheus`, also referenced by `infra/prometheus/prometheus.yml`'s `basic_auth` block |
+| `ACTUATOR_USER/PASSWORD` | HTTP Basic auth for `/actuator/prometheus`, also referenced by `infra/observability/prometheus/prometheus.yml`'s `basic_auth` block |
 | `GRAFANA_ADMIN_USER/PASSWORD` | Grafana |
 | `POSTGRES_EXPORTER_USER/PASSWORD` | Least-privilege `pg_monitor`-only role for `postgres-exporter`, created by Flyway `V12` (issue #675) — deliberately **not** `POSTGRES_USER`, so a compromised exporter never gets full DB access |
 | `SONAR_DB_USER/PASSWORD`, `SONAR_ADMIN_USER/PASSWORD`, `SONAR_TOKEN` | SonarQube's own database + admin account; `scripts/run-sonar.sh` handles SonarQube's forced first-login password change |
@@ -43,7 +43,7 @@ unchanged.
   now to keep local/CI setup provider-agnostic and dependency-free,
   consistent with ADR-009's LPG rationale.
 - **Per-service `.env` files**: Rejected — `.env` sprawl across
-  `docker-compose.yml` and `infra/docker-compose.yml` would risk drift
+  `docker-compose.yml` and `infra/observability/docker-compose.yml` would risk drift
   (e.g. the exporter's DB password defined in two places); a single file is
   the simplest way to guarantee both stacks agree.
 

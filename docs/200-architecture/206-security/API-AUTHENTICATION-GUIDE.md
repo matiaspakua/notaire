@@ -166,5 +166,5 @@ Currently tokens are single-use with a 24-hour TTL (configurable). There is no r
 
 - [`SQL-INJECTION-PREVENTION.md`](SQL-INJECTION-PREVENTION.md)
 - [`INPUT-VALIDATION-STRATEGY.md`](INPUT-VALIDATION-STRATEGY.md)
-- `infra/grafana/provisioning/dashboards/notaire-auth.json` — login metrics dashboard
-- `infra/prometheus/alert-rules.yml` — brute-force alert rules
+- `infra/observability/grafana/provisioning/dashboards/notaire-auth.json` — login metrics dashboard
+- `infra/observability/prometheus/alert-rules.yml` — brute-force alert rules

@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`infra/` prepared as a standalone repository** (issue #1179, CU77; related #302):
+  observability stack moved to `infra/observability/`, Kustomize and the reverse-proxy
+  config to `infra/deploy/`, k6 to `infra/performance/`; `deploy/` and `performance-test/`
+  removed. `nginx.conf` now has one source (`infra/deploy/kustomize/base/nginx.conf`) shared
+  by `docker-compose.prod.yml` and the generated Kubernetes ConfigMap. Infra scripts are
+  self-contained (`infra/scripts/common.sh`, `infra/.env.example`); compose project name
+  pinned to `infra` so existing volumes survive. New infra guides under `infra/docs/`
+  (preparation, configuration, definition, operation); `docs/` links to them. Stale
+  `infra/tests/e2e` and `infra/CREDENTIALS.md` removed (folded into the guides).
+  Guard: `scripts/test_infra_standalone.py`. Moved paths are listed in the PR.
+
 - **Staging Kustomize deploy manifests** (issue #901, CU77): `deploy/kustomize/`
   base + `overlays/staging` mirroring `docker-compose.prod.yml` (postgres,
   backend, frontend, reverse-proxy; no pgAdmin); ClusterIP data plane; Secret

@@ -762,7 +762,7 @@ node "Docker Host (Developer Machine)" {
     artifact "notary-pgadmin\n:5050" as PGA <<pgAdmin 4>>
   }
 
-  node "infra/docker-compose.yml\n(DevSecOps Stack)" {
+  node "infra/observability/docker-compose.yml\n(DevSecOps Stack)" {
     artifact "devsecops-prometheus\n:9090" as Prom <<Prometheus>>
     artifact "devsecops-grafana\n:3001" as Graf <<Grafana>>
     artifact "devsecops-loki\n:3100" as Loki <<Loki>>
@@ -1137,7 +1137,7 @@ O --> (Deployability Docker)
 
 #### Long Term (Phase 6 — Deprecation / Post-Phase 6)
 
-8. **Add Kubernetes deployment manifests** for production — [#901](https://github.com/matiaspakua/notaire/issues/901) (production deployment risk) — **shipped** as Kustomize base + staging overlay under `deploy/kustomize/` (mirrors #1044 four-service stack; CD apply-to-cluster still future work).
+8. **Add Kubernetes deployment manifests** for production — [#901](https://github.com/matiaspakua/notaire/issues/901) (production deployment risk) — **shipped** as Kustomize base + staging overlay under `infra/deploy/kustomize/` (mirrors #1044 four-service stack; CD apply-to-cluster still future work).
 9. **Implement WebSocket support** for real-time workflow updates.
 10. **Add batch processing** for report generation.
 

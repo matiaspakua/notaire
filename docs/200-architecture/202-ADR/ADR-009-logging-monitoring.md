@@ -14,7 +14,7 @@ We will implement a structured logging and monitoring stack based on the **Loki-
 2.  **Metrics**: Export application metrics using **Spring Boot Actuator** and **Micrometer**.
 3.  **Collection**: **Prometheus** will scrape metrics from the `/actuator/prometheus` endpoint.
 4.  **Visualization**: **Grafana** dashboards for real-time monitoring.
-5.  **Alerting**: Prometheus-native alert rules (`infra/prometheus/alert-rules.yml`),
+5.  **Alerting**: Prometheus-native alert rules (`infra/observability/prometheus/alert-rules.yml`),
     evaluated by Prometheus itself and visible in its `/alerts` UI and Grafana —
     e.g. `HighLoginFailureRate`, `SuspiciousLoginActivity`, `BackendDown`,
     `HighJvmHeapUsage`. No Alertmanager is deployed: `prometheus.yml` has only
