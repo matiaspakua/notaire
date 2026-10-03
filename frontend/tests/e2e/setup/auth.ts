@@ -18,8 +18,18 @@ interface LoginResponse {
   idUsuario: number;
   nombre: string;
   tipo: string;
+  message?: string;
 }
 
+/**
+ * Log in as admin and make the JWT available to both:
+ *  - `page.request` helpers (`process.env.E2E_ADMIN_TOKEN`)
+ *  - the browser app (`localStorage` `notaire-auth`, same shape as zustand persist)
+ *
+ * Throws when login fails (including 429 lockout). Callers must not continue
+ * with an empty token — that yields empty list pages while API seeds still
+ * succeed via a stale worker env token.
+ */
 export async function authenticateAsAdmin(
   page: Page,
   nombre: string = "admin",
@@ -30,7 +40,22 @@ export async function authenticateAsAdmin(
     password: contrasenia,
   });
   const data = result.ok ? result.data : undefined;
+  const token = data?.valido ? data.token : undefined;
+  if (!token) {
+    throw new Error(
+      `authenticateAsAdmin login failed (status=${result.status}): ${
+        data?.message ?? result.error ?? "no token"
+      }`,
+    );
+  }
+
   const role = (data?.tipo ?? "ADMIN").toUpperCase();
+  const user = {
+    nombre: data?.nombre ?? nombre,
+    tipo: data?.tipo ?? "ADMIN",
+    valido: true,
+    idUsuario: data?.idUsuario ?? 1,
+  };
 
   // Non-credential UI markers for Next.js middleware (issue #1052 role guard).
   await page.context().addCookies([
@@ -39,28 +64,55 @@ export async function authenticateAsAdmin(
   ]);
 
   await page.addInitScript(
-    ([token, user]) => {
+    ([t, u]) => {
       localStorage.setItem(
         "notaire-auth",
         JSON.stringify({
-          state: { user, token, isAuthenticated: true },
+          state: { user: u, token: t, isAuthenticated: true },
+          version: 0,
+        }),
+      );
+    },
+    [token, user] as const,
+  );
+
+  // Visible to page.request-based helper calls (api-helpers.ts) made after this point.
+  process.env.E2E_ADMIN_TOKEN = token;
+}
+
+/**
+ * Ensure the browser has a hydrated admin session before list-page assertions.
+ * Re-writes localStorage after the first navigation so zustand persist cannot
+ * race the init script and leave API fetches unauthenticated (empty tables).
+ */
+export async function establishAdminBrowserSession(page: Page): Promise<void> {
+  await authenticateAsAdmin(page);
+  const token = process.env.E2E_ADMIN_TOKEN;
+  if (!token) {
+    throw new Error("E2E_ADMIN_TOKEN missing after authenticateAsAdmin");
+  }
+
+  await page.goto("/dashboard");
+  await page.evaluate(
+    ([t, u]) => {
+      localStorage.setItem(
+        "notaire-auth",
+        JSON.stringify({
+          state: { user: u, token: t, isAuthenticated: true },
           version: 0,
         }),
       );
     },
     [
-      data?.token ?? "",
+      token,
       {
-        nombre: data?.nombre ?? nombre,
-        tipo: data?.tipo ?? "ADMIN",
+        nombre: "admin",
+        tipo: "ADMIN",
         valido: true,
-        idUsuario: data?.idUsuario ?? 1,
+        idUsuario: 1,
       },
     ] as const,
   );
-
-  // Visible to page.request-based helper calls (api-helpers.ts) made after this point.
-  if (data?.token) {
-    process.env.E2E_ADMIN_TOKEN = data.token;
-  }
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.waitForLoadState("networkidle");
 }
