@@ -116,6 +116,31 @@ curl http://localhost:3100/ready             # Loki
 - **Not for production** — publishes Postgres/pgAdmin/app ports and uses
   `${VAR:-admin}` defaults for local ergonomics
 
+#### Parallel dev stacks (issue #1186)
+
+Host ports and container names can be overridden from `.env` (or the shell) so a second stack
+runs beside the first. Defaults are unchanged.
+
+| Variable | Default |
+|----------|---------|
+| `POSTGRES_PORT` / `BACKEND_PORT` / `PGADMIN_PORT` / `FRONTEND_PORT` | `5432` / `8080` / `5050` / `3000` |
+| `NOTAIRE_POSTGRES_CONTAINER_NAME` | `notary-postgres` |
+| `NOTAIRE_BACKEND_CONTAINER_NAME` | `notary-backend` |
+| `NOTAIRE_PGADMIN_CONTAINER_NAME` | `notary-pgadmin` |
+| `NOTAIRE_FRONTEND_CONTAINER_NAME` | `notaire-frontend` |
+
+```bash
+COMPOSE_PROJECT_NAME=notaire_alt BACKEND_PORT=18080 FRONTEND_PORT=13000 POSTGRES_PORT=15432 \
+PGADMIN_PORT=15050 NOTAIRE_POSTGRES_CONTAINER_NAME=alt-postgres NOTAIRE_BACKEND_CONTAINER_NAME=alt-backend \
+NOTAIRE_PGADMIN_CONTAINER_NAME=alt-pgadmin NOTAIRE_FRONTEND_CONTAINER_NAME=alt-frontend \
+bash scripts/start.sh
+```
+
+A distinct `COMPOSE_PROJECT_NAME` also separates volumes and the network. The observability
+stack (`infra/`) scrapes `notary-backend` and `notary-postgres` on `notaire_notary-network`, so it
+only works with the default container names. `docker-compose.prod.yml` and
+`docker-compose.cloud.yml` are not affected.
+
 ### docker-compose.prod.yml (production entrypoint — issue #1044)
 
 - **Services**: `postgres`, `backend`, `frontend`, `reverse-proxy` (**no pgAdmin**)

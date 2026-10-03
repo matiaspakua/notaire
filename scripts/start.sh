@@ -2,10 +2,10 @@
 
 # Notaire Application Startup Script
 # This script starts the complete Notaire application stack:
-#   - PostgreSQL 16 (port 5432)   — schema is managed by Flyway (V1→V13+)
-#   - Backend API  (port 8080)    — Spring Boot, JWT auth, Actuator health
-#   - Next.js Frontend (port 3000)
-#   - pgAdmin (port 5050)         — optional (--no-admin)
+#   - PostgreSQL 16 (port 5432 or $POSTGRES_PORT) — schema is managed by Flyway (V1→V13+)
+#   - Backend API  (port 8080 or $BACKEND_PORT)    — Spring Boot, JWT auth, Actuator health
+#   - Next.js Frontend (port 3000 or $FRONTEND_PORT)
+#   - pgAdmin (port 5050 or $PGADMIN_PORT)         — optional (--no-admin)
 #   - Next.js frontend hint       — optional (--frontend); Swing GUI removed (#811)
 #
 # All service credentials come from the single root .env file (git-ignored).
@@ -103,6 +103,11 @@ PGADMIN_EMAIL="$(env_value PGADMIN_DEFAULT_EMAIL admin@notaire.com)"
 PGADMIN_PASSWORD="$(env_value PGADMIN_DEFAULT_PASSWORD admin)"
 APP_ADMIN_USER="$(env_value APP_ADMIN_USER admin)"
 APP_ADMIN_PASSWORD="$(env_value APP_ADMIN_PASSWORD admin)"
+# Same precedence as docker compose: exported shell variable, then .env, then default.
+POSTGRES_PORT="${POSTGRES_PORT:-$(env_value POSTGRES_PORT 5432)}"
+BACKEND_PORT="${BACKEND_PORT:-$(env_value BACKEND_PORT 8080)}"
+PGADMIN_PORT="${PGADMIN_PORT:-$(env_value PGADMIN_PORT 5050)}"
+FRONTEND_PORT="${FRONTEND_PORT:-$(env_value FRONTEND_PORT 3000)}"
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}   Notaire Application Startup${NC}"
@@ -207,7 +212,7 @@ echo -e "${GREEN}✓ Flyway is the single source of truth — migrations run aut
 echo -e "${YELLOW}Step $STEP: Verifying Backend API...${NC}"
 STEP=$((STEP + 1))
 for i in {1..90}; do
-    if curl -sf http://localhost:8080/actuator/health 2>/dev/null | grep -q '"status":"UP"'; then
+    if curl -sf http://localhost:$BACKEND_PORT/actuator/health 2>/dev/null | grep -q '"status":"UP"'; then
         echo -e "${GREEN}✓ Backend API is ready${NC}"
         break
     fi
@@ -225,7 +230,7 @@ if [ "$WITH_ADMIN" = true ]; then
     echo -e "${YELLOW}Step $STEP: Verifying pgAdmin...${NC}"
     STEP=$((STEP + 1))
     for i in {1..60}; do
-        if curl -sf http://localhost:5050 > /dev/null 2>&1; then
+        if curl -sf http://localhost:$PGADMIN_PORT > /dev/null 2>&1; then
             echo -e "${GREEN}✓ pgAdmin is ready${NC}"
             break
         fi
@@ -242,7 +247,7 @@ fi
 echo -e "\n${BLUE}Step $STEP: Verifying Frontend...${NC}"
 STEP=$((STEP + 1))
 for i in {1..60}; do
-    if curl -sf http://localhost:3000 > /dev/null 2>&1; then
+    if curl -sf http://localhost:$FRONTEND_PORT > /dev/null 2>&1; then
         echo -e "${GREEN}✓ Frontend is ready${NC}"
         break
     fi
@@ -260,15 +265,15 @@ echo -e "${GREEN}✓ All services are running!${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
 echo -e "${BLUE}Available Services:${NC}"
-echo -e "  Frontend:     ${YELLOW}http://localhost:3000${NC}"
-echo -e "  API Swagger:  ${YELLOW}http://localhost:8080/swagger-ui.html${NC}"
-echo -e "  API Docs:     ${YELLOW}http://localhost:8080/v3/api-docs${NC}"
+echo -e "  Frontend:     ${YELLOW}http://localhost:$FRONTEND_PORT${NC}"
+echo -e "  API Swagger:  ${YELLOW}http://localhost:$BACKEND_PORT/swagger-ui.html${NC}"
+echo -e "  API Docs:     ${YELLOW}http://localhost:$BACKEND_PORT/v3/api-docs${NC}"
 if [ "$WITH_ADMIN" = true ]; then
-    echo -e "  PgAdmin:      ${YELLOW}http://localhost:5050${NC} ($PGADMIN_EMAIL / $PGADMIN_PASSWORD)"
+    echo -e "  PgAdmin:      ${YELLOW}http://localhost:$PGADMIN_PORT${NC} ($PGADMIN_EMAIL / $PGADMIN_PASSWORD)"
 else
     echo -e "  PgAdmin:      ${RED}Disabled${NC}"
 fi
-echo -e "  PostgreSQL:   ${YELLOW}localhost:5432${NC}"
+echo -e "  PostgreSQL:   ${YELLOW}localhost:$POSTGRES_PORT${NC}"
 echo ""
 echo -e "${BLUE}Database Access:${NC}"
 echo -e "  Username:     ${YELLOW}$POSTGRES_USER${NC} (app login: $APP_ADMIN_USER / $APP_ADMIN_PASSWORD)"

@@ -50,6 +50,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Configurable dev stack ports and container names** (issue #1186, CU76): host ports
+  (`POSTGRES_PORT`, `BACKEND_PORT`, `PGADMIN_PORT`, `FRONTEND_PORT`) and container names
+  (`NOTAIRE_<SERVICE>_CONTAINER_NAME`) in `docker-compose.yml` are overridable from `.env`
+  so parallel stacks can coexist; defaults unchanged and `scripts/start.sh` follows the
+  configured ports. Guard: `scripts/test_dev_stack_isolation.py`. The observability stack
+  only supports the default names.
+
 - **`infra/` prepared as a standalone repository** (issue #1179, CU77; related #302):
   observability stack moved to `infra/observability/`, Kustomize and the reverse-proxy
   config to `infra/deploy/`, k6 to `infra/performance/`; `deploy/` and `performance-test/`
