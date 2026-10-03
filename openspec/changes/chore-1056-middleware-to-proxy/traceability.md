@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/chore-1056-middleware-to-proxy/` | Gate 1 validated |
 | Branch | `cursor/chore-1056-middleware-to-proxy-69d3` | created from `origin/main` @ `0607cf0a` |
 | Tasks | `tasks.md` | Gate 1 planning complete; implement pending |
-| Commits | `1db232433963902449b42ebb5f1b834ff5b77319` | pushed |
+| Commits | `1db23243` (impl), `1010aa96` (openspec PR refs) | pushed; tip `1010aa961f7326d54fd8c054bfcdb88f9267c987` |
 | Pull Request | https://github.com/matiaspakua/notaire/pull/1167 | draft |
 | CI run | — | pending |
 | Merge commit | — | pending |
