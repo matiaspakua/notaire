@@ -12,7 +12,7 @@
 
 ## Objetivo
 
-#833 already exposes `POST /gestiones/{id}/transition` and the UI filters
+\#833 already exposes `POST /gestiones/{id}/transition` and the UI filters
 destinations from `workflow-trace`, but plain `PUT` / complete-case update can
 still set any `managementStatusId`, bypassing the workflow graph. Close those
 bypasses so every real status mutation is legal per `WorkflowDefinition`.
