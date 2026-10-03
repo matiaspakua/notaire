@@ -21,27 +21,27 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: required namespaces/keys; login leftovers; es/en sync; optional EN titles
-- [ ] 3.2 Extend `frontend/src/tests/unit/i18n.test.ts` with required gap-page + login leftover keys **before** adding catalogs — observe fail
-- [ ] 3.3 Adjust `login-page.test.tsx` expectations if they pin leftover Spanish literals — observe fail where applicable
-- [ ] 3.4 Run them and **observe them fail** — `cd frontend && npx vitest run src/tests/unit/i18n.test.ts`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.1 Enumerate test cases: required namespaces/keys; login leftovers; es/en sync; optional EN titles
+- [x] 3.2 Extend `frontend/src/tests/unit/i18n.test.ts` with required gap-page + login leftover keys **before** adding catalogs — observe fail
+- [x] 3.3 Adjust `login-page.test.tsx` expectations if they pin leftover Spanish literals — observe fail where applicable
+- [x] 3.4 Run them and **observe them fail** — `cd frontend && npx vitest run src/tests/unit/i18n.test.ts`
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Add/extend `messages/es.json` + `messages/en.json`: `administracion.roles`, `administracion.workflows` (+ editor), `suplencias`, `reportes`, expand `items`, extend `login`, `auditoria.allModules`, shared `common.active`/`inactive` if needed
-- [ ] 4.2 Wire `administracion/workflows/page.tsx` and `workflows/[id]/page.tsx` with `useTranslations`
-- [ ] 4.3 Wire `suplencias/page.tsx` and `reportes/page.tsx`
-- [ ] 4.4 Complete `administracion/roles/page.tsx` remaining hardcoded strings
-- [ ] 4.5 Wire `dashboard/items/page.tsx` to expanded `items` namespace; leave redirect stubs untouched
-- [ ] 4.6 Wire login leftovers + auditoria `allModules` leftover
-- [ ] 4.7 Keep design-system layout/tokens unchanged — translation only
+- [x] 4.1 Add/extend `messages/es.json` + `messages/en.json`: `administracion.roles`, `administracion.workflows` (+ editor), `suplencias`, `reportes`, expand `items`, extend `login`, `auditoria.allModules`, shared `common.active`/`inactive` if needed
+- [x] 4.2 Wire `administracion/workflows/page.tsx` and `workflows/[id]/page.tsx` with `useTranslations`
+- [x] 4.3 Wire `suplencias/page.tsx` and `reportes/page.tsx`
+- [x] 4.4 Complete `administracion/roles/page.tsx` remaining hardcoded strings
+- [x] 4.5 Wire `dashboard/items/page.tsx` to expanded `items` namespace; leave redirect stubs untouched
+- [x] 4.6 Wire login leftovers + auditoria `allModules` leftover
+- [x] 4.7 Keep design-system layout/tokens unchanged — translation only
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected (`i18n.test.ts`, `login-page.test.tsx`, TS-0040)
-- [ ] 5.2 Update assertions to use translated EN/ES expectations; do not weaken coverage
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason — none expected
+- [x] 5.1 Identify existing tests affected (`i18n.test.ts`, `login-page.test.tsx`, TS-0040)
+- [x] 5.2 Update assertions to use translated EN/ES expectations; do not weaken coverage
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason — none expected
 
 ## 6. Ejecutar regresión
 
@@ -53,18 +53,18 @@
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Optionally extend `TS-0040-l10n-language-switching-qa.spec.ts` with EN titles on 1–2 gap pages; update `E2E-TEST-MAPPING.md`
+- [x] 7.1 Optionally extend `TS-0040-l10n-language-switching-qa.spec.ts` with EN titles on 1–2 gap pages; update `E2E-TEST-MAPPING.md`
 - [ ] 7.2 `cd frontend && npx playwright test TS-0040` (or full suite when stack is up)
 - [ ] 7.3 Verify affected screens at 320px, 768px and 1024px (layout unchanged)
-- [ ] 7.4 n/a only if no UI — this change HAS UI surface (string wiring)
+- [x] 7.4 n/a only if no UI — this change HAS UI surface (string wiring)
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
-- [ ] 8.2 Update OpenAPI/Swagger — n/a
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible i18n coverage
-- [ ] 8.4 Archive superseded documents into `docs/000-archive/` — none expected
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.2 Update OpenAPI/Swagger — n/a
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible i18n coverage
+- [x] 8.4 Archive superseded documents into `docs/000-archive/` — none expected
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos
