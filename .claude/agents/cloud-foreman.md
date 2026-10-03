@@ -116,6 +116,12 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 - PR title: `[#n] type(scope): description`
 - Commits / PR body: Conventional Commits + **`Closes #n`** (hard rule above —
   never only `Issue: #n`)
-- Merge only via PR after Gate 4 PASS **and** heavy CI + Playwright are terminal
-  success (never light-CI-only green — `CI-MERGE-GATE.md`); then archive OpenSpec
-  change when the issue is closed.
+- Merge only via PR after Gate 4 PASS **and** `bash scripts/check-heavy-ci.sh <pr>`
+  exits 0 on the **current head** (Integration + Coverage + Bruno + Playwright).
+  Never merge on light-only `gh pr checks` green — `CI-MERGE-GATE.md`.
+- A `github:ci:branch` “all checks success” event is wake-up only — always re-run
+  the heavy script before merge (queued heavy jobs can omit check-runs).
+- Serialize Playwright-heavy PRs; draft Dependabot floods when runners starve.
+- If a cloud worker’s `gh` returns 401, the **coordinator** (or a same-VM worker
+  with working `gh`) owns `gh pr ready` / squash-merge after heavy-gate exit 0.
+- After merge: archive OpenSpec change when the issue is closed.
