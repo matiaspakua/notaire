@@ -16,7 +16,7 @@ Adoptar **next-intl** como librería de internacionalización del frontend Next.
 - **Catálogos de mensajes** en `frontend/messages/{locale}.json` — actualmente `es.json` (locale por defecto) y `en.json`.
 - **Resolución de locale** centralizada en `frontend/src/i18n/request.ts`, integrada con el App Router de Next.js (`next-intl` provee el plugin de configuración server-side).
 - **Server actions** de cambio de idioma en `frontend/src/i18n/actions.ts`.
-- Cobertura de test dedicada (`frontend/src/tests/unit/i18n.test.ts`) que verifica que ambos catálogos existen y están sincronizados en claves.
+- Cobertura de test dedicada (`frontend/src/tests/unit/i18n.test.ts`) que verifica que ambos catálogos existen y están sincronizados en claves, incluyendo namespaces de cobertura de páginas (workflows, roles, suplencias, reportes, items) y leftovers de login (issue #1059).
 
 ### Por qué next-intl (y no react-i18next, ni next-i18next)
 
@@ -39,6 +39,13 @@ Adoptar **next-intl** como librería de internacionalización del frontend Next.
 
 - Todo nuevo componente debe usar las claves de mensaje en lugar de strings literales — requiere disciplina de code review; no hay lint automatizado que lo fuerce todavía.
 - Solo `es` (por defecto) y `en` están cubiertos; añadir una jurisdicción con otro idioma requiere un catálogo completo antes de habilitarla.
+
+## Page coverage note (#1059)
+
+Redirect-only stubs (`/`, `/auditoria`, `administracion/items`,
+`administracion/auditoria`) have no UI strings and remain exempt. Canonical
+dashboard pages and login leftovers consume catalogs via `useTranslations`,
+mirroring the `administracion.usuarios` pattern.
 
 ## Related ADRs
 

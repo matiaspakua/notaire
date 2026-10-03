@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { FileDown, FileText, Book, ClipboardList, AlertCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +54,8 @@ const iconWrapStyle: React.CSSProperties = {
 };
 
 export default function ReportesPage() {
+  const t = useTranslations("reportes");
+  const tc = useTranslations("common");
   const rPresupuesto = useReportePresupuesto();
   const rPresupuestoInmuebles = useReportePresupuestoInmuebles();
   const rHistorial = useReporteHistorialGestion();
@@ -74,10 +77,10 @@ export default function ReportesPage() {
   async function handle(fn: () => Promise<void>) {
     try {
       await fn();
-      toast.success("PDF generado y descargado");
+      toast.success(t("generated"));
     } catch (err) {
       presentMutationError(err, {
-        fallback: "Error al generar el reporte (backend necesario)",
+        fallback: t("errorGenerate"),
       });
     }
   }
@@ -85,8 +88,8 @@ export default function ReportesPage() {
   return (
     <div>
       <AppHeader
-        title="Reportes"
-        description="Generación de reportes y documentos PDF"
+        title={t("title")}
+        description={t("description")}
       />
 
       <div
@@ -102,16 +105,16 @@ export default function ReportesPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
             <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
               <FileText style={iconWrapStyle} />
-              <h3 style={cardTitleStyle}>Reporte Presupuesto</h3>
+              <h3 style={cardTitleStyle}>{t("presupuesto.title")}</h3>
             </div>
-            <p style={cardDescStyle}>PDF del presupuesto seleccionado</p>
+            <p style={cardDescStyle}>{t("presupuesto.description")}</p>
           </div>
-          <FormField label="ID Presupuesto" required>
+          <FormField label={t("fields.presupuestoId")} required>
             <Input
               type="number"
               value={idPresupuesto}
               onChange={(e) => setIdPresupuesto(e.target.value)}
-              placeholder="Ej: 1"
+              placeholder={t("fields.ejemplo")}
               data-testid="input-id-presupuesto"
             />
           </FormField>
@@ -123,7 +126,7 @@ export default function ReportesPage() {
             data-testid="btn-descargar-presupuesto"
           >
             <FileDown className="h-4 w-4 mr-2" />
-            Descargar PDF
+            {tc("downloadPdf")}
           </Button>
         </div>
 
@@ -132,16 +135,16 @@ export default function ReportesPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
             <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
               <FileText style={iconWrapStyle} />
-              <h3 style={cardTitleStyle}>Presupuesto + Inmuebles</h3>
+              <h3 style={cardTitleStyle}>{t("presupuestoInmuebles.title")}</h3>
             </div>
-            <p style={cardDescStyle}>PDF con información de inmuebles del presupuesto</p>
+            <p style={cardDescStyle}>{t("presupuestoInmuebles.description")}</p>
           </div>
-          <FormField label="ID Presupuesto" required>
+          <FormField label={t("fields.presupuestoId")} required>
             <Input
               type="number"
               value={idPresupuestoInm}
               onChange={(e) => setIdPresupuestoInm(e.target.value)}
-              placeholder="Ej: 1"
+              placeholder={t("fields.ejemplo")}
             />
           </FormField>
           <Button
@@ -151,7 +154,7 @@ export default function ReportesPage() {
             onClick={() => handle(() => rPresupuestoInmuebles.download(Number(idPresupuestoInm)))}
           >
             <FileDown className="h-4 w-4 mr-2" />
-            Descargar PDF
+            {tc("downloadPdf")}
           </Button>
         </div>
 
@@ -160,16 +163,16 @@ export default function ReportesPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
             <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
               <ClipboardList style={iconWrapStyle} />
-              <h3 style={cardTitleStyle}>Historial de Gestión</h3>
+              <h3 style={cardTitleStyle}>{t("historial.title")}</h3>
             </div>
-            <p style={cardDescStyle}>PDF del historial de una gestión notarial</p>
+            <p style={cardDescStyle}>{t("historial.description")}</p>
           </div>
-          <FormField label="ID Gestión" required>
+          <FormField label={t("fields.gestionId")} required>
             <Input
               type="number"
               value={idGestion}
               onChange={(e) => setIdGestion(e.target.value)}
-              placeholder="Ej: 1"
+              placeholder={t("fields.ejemplo")}
               data-testid="input-id-gestion-historial"
             />
           </FormField>
@@ -180,7 +183,7 @@ export default function ReportesPage() {
             onClick={() => handle(() => rHistorial.download(Number(idGestion)))}
           >
             <FileDown className="h-4 w-4 mr-2" />
-            Descargar PDF
+            {tc("downloadPdf")}
           </Button>
         </div>
 
@@ -189,12 +192,12 @@ export default function ReportesPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
             <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
               <Book style={iconWrapStyle} />
-              <h3 style={cardTitleStyle}>DDJJ Mensual</h3>
+              <h3 style={cardTitleStyle}>{t("ddjjMensual.title")}</h3>
             </div>
-            <p style={cardDescStyle}>Declaración jurada mensual de escrituras</p>
+            <p style={cardDescStyle}>{t("ddjjMensual.description")}</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: theme.spacing[3] }}>
-            <FormField label="Año">
+            <FormField label={tc("year")}>
               <Input
                 type="number"
                 value={anioMensual}
@@ -203,7 +206,7 @@ export default function ReportesPage() {
                 max="2099"
               />
             </FormField>
-            <FormField label="Mes">
+            <FormField label={tc("month")}>
               <Input
                 type="number"
                 value={mesMensual}
@@ -219,7 +222,7 @@ export default function ReportesPage() {
             onClick={() => handle(() => rDdjjMensual.download(Number(anioMensual), Number(mesMensual)))}
           >
             <FileDown className="h-4 w-4 mr-2" />
-            Descargar PDF
+            {tc("downloadPdf")}
           </Button>
         </div>
 
@@ -228,12 +231,12 @@ export default function ReportesPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
             <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
               <Book style={iconWrapStyle} />
-              <h3 style={cardTitleStyle}>DDJJ de Rentas</h3>
+              <h3 style={cardTitleStyle}>{t("ddjjRentas.title")}</h3>
             </div>
-            <p style={cardDescStyle}>Declaración jurada de rentas anuales</p>
+            <p style={cardDescStyle}>{t("ddjjRentas.description")}</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: theme.spacing[3] }}>
-            <FormField label="Año">
+            <FormField label={tc("year")}>
               <Input
                 type="number"
                 value={anioRentas}
@@ -242,7 +245,7 @@ export default function ReportesPage() {
                 max="2099"
               />
             </FormField>
-            <FormField label="Mes">
+            <FormField label={tc("month")}>
               <Input
                 type="number"
                 value={mesRentas}
@@ -259,7 +262,7 @@ export default function ReportesPage() {
             data-testid="btn-descargar-ddjj-rentas"
           >
             <FileDown className="h-4 w-4 mr-2" />
-            Descargar PDF
+            {tc("downloadPdf")}
           </Button>
         </div>
 
@@ -268,11 +271,11 @@ export default function ReportesPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
             <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
               <Book style={iconWrapStyle} />
-              <h3 style={cardTitleStyle}>Libro Índice</h3>
+              <h3 style={cardTitleStyle}>{t("libroIndice.title")}</h3>
             </div>
-            <p style={cardDescStyle}>Libro de índice anual de escrituras</p>
+            <p style={cardDescStyle}>{t("libroIndice.description")}</p>
           </div>
-          <FormField label="Año">
+          <FormField label={tc("year")}>
             <Input
               type="number"
               value={anioIndice}
@@ -287,7 +290,7 @@ export default function ReportesPage() {
             onClick={() => handle(() => rLibroIndice.download(Number(anioIndice)))}
           >
             <FileDown className="h-4 w-4 mr-2" />
-            Descargar PDF
+            {tc("downloadPdf")}
           </Button>
         </div>
 
@@ -296,16 +299,16 @@ export default function ReportesPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: theme.spacing[1] }}>
             <div style={{ display: "flex", alignItems: "center", gap: theme.spacing[2] }}>
               <AlertCircle style={iconWrapStyle} />
-              <h3 style={cardTitleStyle}>Deuda de Documentos</h3>
+              <h3 style={cardTitleStyle}>{t("deudaDocumentos.title")}</h3>
             </div>
-            <p style={cardDescStyle}>Documentos pendientes de entrega por gestión</p>
+            <p style={cardDescStyle}>{t("deudaDocumentos.description")}</p>
           </div>
-          <FormField label="Número de gestión" required>
+          <FormField label={t("fields.numeroGestion")} required>
             <Input
               type="number"
               value={numGestionDeuda}
               onChange={(e) => setNumGestionDeuda(e.target.value)}
-              placeholder="Ej: 1001"
+              placeholder={t("fields.ejemploGestion")}
             />
           </FormField>
           <Button
@@ -315,7 +318,7 @@ export default function ReportesPage() {
             onClick={() => handle(() => rDeudaDocs.download(Number(numGestionDeuda)))}
           >
             <FileDown className="h-4 w-4 mr-2" />
-            Descargar PDF
+            {tc("downloadPdf")}
           </Button>
         </div>
       </div>

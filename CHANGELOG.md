@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Frontend i18n page coverage** (issue #1059, CU76 / ADR-015): wire remaining
+  dashboard gap pages (workflows list/editor, roles, suplencias, reportes,
+  items) and login leftovers (connection/lockout/validation/welcome/forgot/footer)
+  through next-intl catalogs; extend `i18n.test.ts` required-key gate; TS-0040
+  asserts EN titles on roles and workflows.
+
 ### Added
 
 - **Staging Kustomize deploy manifests** (issue #901, CU77): `deploy/kustomize/`

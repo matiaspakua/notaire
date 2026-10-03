@@ -56,7 +56,9 @@
     "language": "Idioma",
     "all": "Todos",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+    "active": "Activo",
+    "inactive": "Inactivo"
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -510,19 +512,38 @@
     "noData": "No hay copias registradas"
   },
   "items": {
-    "title": "Items",
-    "newItem": "Nuevo item",
-    "editItem": "Editar item",
-    "created": "Item creado",
-    "updated": "Item actualizado",
-    "deleted": "Item eliminado",
-    "errorSave": "Error al guardar el item",
-    "errorDelete": "Error al eliminar el item",
-    "noData": "No hay items registrados",
+    "title": "Ítems de Presupuesto",
+    "description": "Gestionar ítems y conceptos en presupuestos",
+    "newItem": "Nuevo ítem",
+    "editItem": "Editar ítem",
+    "created": "Ítem creado",
+    "updated": "Ítem actualizado",
+    "deleted": "Ítem eliminado",
+    "errorSave": "Error al guardar el ítem",
+    "errorDelete": "Error al eliminar",
+    "noData": "No hay ítems registrados",
+    "reasonRequired": "El motivo es obligatorio para ítems de descuento o recargo",
     "fields": {
-      "concepto": "Concepto",
-      "cantidad": "Cantidad",
-      "precio": "Precio"
+      "nombre": "Nombre",
+      "valor": "Valor",
+      "valorLabel": "Valor ($)",
+      "presupuesto": "Presupuesto",
+      "presupuestoId": "ID Presupuesto",
+      "presupuestoPlaceholder": "ID del presupuesto",
+      "tipo": "Tipo",
+      "tipoItem": "Tipo de ítem",
+      "motivo": "Motivo",
+      "motivoPlaceholder": "Ej: Descuento por pronto pago"
+    },
+    "types": {
+      "NORMAL": "Normal",
+      "DESCUENTO": "Descuento",
+      "RECARGO": "Recargo"
+    },
+    "report": {
+      "title": "Descuentos y recargos por presupuesto",
+      "empty": "Este presupuesto no tiene descuentos ni recargos",
+      "consult": "Consultar"
     }
   },
   "documentos": {
@@ -607,7 +628,8 @@
       "usuario": "Usuario",
       "operacion": "Operación",
       "modulo": "Módulo"
-    }
+    },
+    "allModules": "Todos los módulos"
   },
   "administracion": {
     "title": "Administración",
@@ -833,6 +855,92 @@
           "valor": "Valor"
         }
       }
+    },
+    "roles": {
+      "title": "Roles y Permisos",
+      "description": "Gestión de roles de usuario y sus accesos a módulos",
+      "newRol": "Nuevo Rol",
+      "editRol": "Editar Rol",
+      "created": "Rol creado",
+      "updated": "Rol actualizado",
+      "deleted": "Rol eliminado",
+      "errorSave": "Error al guardar el rol",
+      "errorDelete": "Error al eliminar",
+      "noData": "No hay roles registrados",
+      "nameRequired": "El nombre es obligatorio",
+      "noPermissions": "Sin permisos",
+      "fields": {
+        "modulos": "Módulos",
+        "modulosPermitidos": "Módulos permitidos",
+        "activo": "Activo",
+        "activoHint": "Rol activo"
+      },
+      "modules": {
+        "administracion": "Administración",
+        "usuarios": "Usuarios",
+        "tramites": "Trámites",
+        "presupuestos": "Presupuestos",
+        "escrituras": "Escrituras",
+        "personas": "Personas",
+        "auditoria": "Auditoría",
+        "workflows": "Workflows"
+      }
+    },
+    "workflows": {
+      "title": "Workflows de Estados",
+      "description": "Gestión de workflows para el ciclo de vida de las gestiones notariales",
+      "newWorkflow": "Nuevo Workflow",
+      "editWorkflow": "Editar Workflow",
+      "created": "Workflow creado",
+      "updated": "Workflow actualizado",
+      "deleted": "Workflow eliminado",
+      "errorSave": "Error al guardar",
+      "errorDeleteHasNodes": "No se puede eliminar: el workflow tiene nodos",
+      "noData": "No hay workflows",
+      "nameRequired": "El nombre es requerido",
+      "searchPlaceholder": "Buscar por nombre...",
+      "editGraph": "Editar grafo",
+      "editData": "Datos",
+      "deleteAction": "Borrar",
+      "enabledForAssignment": "Habilitado para asignación",
+      "fields": {
+        "namePlaceholder": "Ej: Workflow Compraventa",
+        "descriptionPlaceholder": "Descripción opcional"
+      },
+      "editor": {
+        "title": "Editor de Workflow",
+        "back": "Volver",
+        "editMode": "Modo Edición",
+        "viewMode": "Modo Vista",
+        "addNode": "+ Agregar Nodo",
+        "validate": "Validar Workflow",
+        "valid": "Workflow válido y consistente",
+        "invalid": "Workflow con errores de consistencia",
+        "errorValidate": "Error al validar",
+        "errorCreateTransition": "Error al crear transición",
+        "errorSavePosition": "Error al guardar posición",
+        "selectStatus": "Selecciona un estado",
+        "nodeAdded": "Nodo agregado",
+        "errorAddNode": "Error al agregar nodo",
+        "nodeDeleted": "Nodo eliminado",
+        "errorDeleteNodeHasTransitions": "No se puede eliminar: el nodo tiene transiciones",
+        "transitionDeleted": "Transición eliminada",
+        "errorDeleteTransition": "Error al eliminar transición",
+        "consistencyErrors": "Errores de consistencia:",
+        "hint": "Doble clic sobre un nodo o arista para eliminarlo. Arrastra desde el handle lateral para crear transiciones.",
+        "addNodeTitle": "Agregar Nodo al Workflow",
+        "fields": {
+          "estado": "Estado de Gestión",
+          "estadoPlaceholder": "Seleccionar estado...",
+          "tipo": "Tipo de Nodo"
+        },
+        "types": {
+          "INITIAL": "Inicial",
+          "INTERMEDIATE": "Intermedio",
+          "FINAL": "Final"
+        },
+        "nodeFallback": "Nodo {id}"
+      }
     }
   },
   "login": {
@@ -842,7 +950,13 @@
     "password": "Contraseña",
     "submit": "Ingresar",
     "error": "Usuario o contraseña incorrectos",
-    "sessionExpired": "Su sesión ha expirado. Inicie sesión nuevamente."
+    "sessionExpired": "Su sesión ha expirado. Inicie sesión nuevamente.",
+    "connectionError": "No se pudo conectar al servidor. Verifique que el backend esté en ejecución.",
+    "lockoutError": "Cuenta bloqueada temporalmente por demasiados intentos fallidos.",
+    "validationRequired": "Complete usuario y contraseña",
+    "welcome": "Bienvenido, {name}",
+    "forgotPassword": "¿Olvidó su contraseña? Contacte al administrador.",
+    "footerSecure": "Infraestructura Segura"
   },
   "confirmDialog": {
     "title": "¿Confirmar eliminación?",
@@ -864,6 +978,71 @@
       "vence": "Vence",
       "diasVencimiento": "Días de validez",
       "quienEntrega": "Quién entrega"
+    }
+  },
+  "suplencias": {
+    "title": "Suplencias",
+    "description": "Registrar y consultar suplencias de escribano",
+    "newSuplencia": "Nueva suplencia",
+    "editSuplencia": "Editar suplencia",
+    "created": "Suplencia registrada",
+    "updated": "Suplencia actualizada",
+    "deleted": "Suplencia eliminada",
+    "errorSave": "Error al guardar la suplencia",
+    "errorDelete": "Error al eliminar",
+    "noData": "No hay suplencias registradas",
+    "fields": {
+      "escribano": "Escribano",
+      "escribanoId": "ID Escribano",
+      "escribanoHelper": "ID de la persona",
+      "escribanoPlaceholder": "ID del escribano",
+      "suplente": "Suplente",
+      "suplenteId": "ID Suplente",
+      "suplentePlaceholder": "ID del suplente",
+      "desde": "Desde",
+      "hasta": "Hasta"
+    },
+    "register": "Registrar"
+  },
+  "reportes": {
+    "title": "Reportes",
+    "description": "Generación de reportes y documentos PDF",
+    "generated": "PDF generado y descargado",
+    "errorGenerate": "Error al generar el reporte (backend necesario)",
+    "fields": {
+      "presupuestoId": "ID Presupuesto",
+      "gestionId": "ID Gestión",
+      "numeroGestion": "Número de gestión",
+      "ejemplo": "Ej: 1",
+      "ejemploGestion": "Ej: 1001"
+    },
+    "presupuesto": {
+      "title": "Reporte Presupuesto",
+      "description": "PDF del presupuesto seleccionado"
+    },
+    "presupuestoInmuebles": {
+      "title": "Presupuesto + Inmuebles",
+      "description": "PDF con información de inmuebles del presupuesto"
+    },
+    "historial": {
+      "title": "Historial de Gestión",
+      "description": "PDF del historial de una gestión notarial"
+    },
+    "ddjjMensual": {
+      "title": "DDJJ Mensual",
+      "description": "Declaración jurada mensual de escrituras"
+    },
+    "ddjjRentas": {
+      "title": "DDJJ de Rentas",
+      "description": "Declaración jurada de rentas anuales"
+    },
+    "libroIndice": {
+      "title": "Libro Índice",
+      "description": "Libro de índice anual de escrituras"
+    },
+    "deudaDocumentos": {
+      "title": "Deuda de Documentos",
+      "description": "Documentos pendientes de entrega por gestión"
     }
   }
 }

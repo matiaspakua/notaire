@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
@@ -21,6 +22,8 @@ import type { WorkflowDefinition } from "@/types";
 const EMPTY: Partial<WorkflowDefinition> = { name: "", description: "", active: false };
 
 export default function WorkflowsPage() {
+  const t = useTranslations("administracion.workflows");
+  const tc = useTranslations("common");
   const { data = [], isLoading } = useWorkflowDefinitions();
   const createWf = useCreateWorkflowDefinition();
   const updateWf = useUpdateWorkflowDefinition();
@@ -51,21 +54,21 @@ export default function WorkflowsPage() {
 
   async function handleSave() {
     if (!editing.name?.trim()) {
-      toast.error("El nombre es requerido");
+      toast.error(t("nameRequired"));
       return;
     }
     setSaving(true);
     try {
       if (isEditMode && editing.id) {
         await updateWf.mutateAsync({ id: editing.id, data: editing });
-        toast.success("Workflow actualizado");
+        toast.success(t("updated"));
       } else {
         await createWf.mutateAsync(editing);
-        toast.success("Workflow creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al guardar" });
+      presentMutationError(err, { fallback: t("errorSave") });
     } finally {
       setSaving(false);
     }
@@ -75,10 +78,10 @@ export default function WorkflowsPage() {
     if (!deleteId) return;
     try {
       await deleteWf.mutateAsync(deleteId);
-      toast.success("Workflow eliminado");
+      toast.success(t("deleted"));
     } catch (err) {
       presentMutationError(err, {
-        fallback: "No se puede eliminar: el workflow tiene nodos",
+        fallback: t("errorDeleteHasNodes"),
       });
     } finally {
       setDeleteId(null);
@@ -86,15 +89,15 @@ export default function WorkflowsPage() {
   }
 
   const columns: Column<WorkflowDefinition>[] = [
-    { key: "id", header: "ID", render: (wf) => <span className="text-xs text-muted-foreground">{wf.id}</span>, className: "w-12" },
-    { key: "nombre", header: "Nombre", render: (wf) => <span className="font-medium">{wf.name}</span> },
-    { key: "desc", header: "Descripción", render: (wf) => wf.description ?? "—" },
+    { key: "id", header: tc("id"), render: (wf) => <span className="text-xs text-muted-foreground">{wf.id}</span>, className: "w-12" },
+    { key: "nombre", header: tc("name"), render: (wf) => <span className="font-medium">{wf.name}</span> },
+    { key: "desc", header: tc("description"), render: (wf) => wf.description ?? "—" },
     {
       key: "activo",
-      header: "Estado",
+      header: tc("status"),
       render: (wf) => (
         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${wf.active ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-500"}`}>
-          {wf.active ? "Activo" : "Inactivo"}
+          {wf.active ? tc("active") : tc("inactive")}
         </span>
       ),
       className: "w-24",
@@ -106,10 +109,10 @@ export default function WorkflowsPage() {
       render: (wf) => (
         <div className="flex gap-1 justify-end">
           <Button size="sm" variant="ghost" asChild data-testid={`btn-editor-${wf.id}`}>
-            <Link href={`/dashboard/administracion/workflows/${wf.id}`}>Editar grafo</Link>
+            <Link href={`/dashboard/administracion/workflows/${wf.id}`}>{t("editGraph")}</Link>
           </Button>
           <Button size="sm" variant="ghost" onClick={() => openEdit(wf)} data-testid={`btn-edit-wf-${wf.id}`}>
-            Datos
+            {t("editData")}
           </Button>
           <Button
             size="sm"
@@ -118,7 +121,7 @@ export default function WorkflowsPage() {
             onClick={() => setDeleteId(wf.id!)}
             data-testid={`btn-delete-wf-${wf.id}`}
           >
-            Borrar
+            {t("deleteAction")}
           </Button>
         </div>
       ),
@@ -128,46 +131,46 @@ export default function WorkflowsPage() {
   return (
     <div>
       <AppHeader
-        title="Workflows de Estados"
-        description="Gestión de workflows para el ciclo de vida de las gestiones notariales"
+        title={t("title")}
+        description={t("description")}
         actions={
           <Button onClick={openCreate} data-testid="btn-nuevo-workflow">
-            + Nuevo Workflow
+            + {t("newWorkflow")}
           </Button>
         }
       />
       <div className="mb-4">
         <Input
-          placeholder="Buscar por nombre..."
-          aria-label="Buscar por nombre..."
+          placeholder={t("searchPlaceholder")}
+          aria-label={t("searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
           data-testid="search-workflows"
         />
       </div>
-      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(wf) => wf.id!} emptyMessage="No hay workflows" />
+      <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(wf) => wf.id!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? "Editar Workflow" : "Nuevo Workflow"}>
-              <FormField label="Nombre" required>
+            <FormSection title={isEditMode ? t("editWorkflow") : t("newWorkflow")}>
+              <FormField label={tc("name")} required>
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                  placeholder="Ej: Workflow Compraventa"
+                  placeholder={t("fields.namePlaceholder")}
                   data-testid="input-nombre-workflow"
                 />
               </FormField>
-              <FormField label="Descripción">
+              <FormField label={tc("description")}>
                 <Input
                   value={editing.description ?? ""}
                   onChange={(e) => setEditing({ ...editing, description: e.target.value })}
-                  placeholder="Descripción opcional"
+                  placeholder={t("fields.descriptionPlaceholder")}
                 />
               </FormField>
-              <FormField label="Activo">
+              <FormField label={tc("active")}>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -175,14 +178,14 @@ export default function WorkflowsPage() {
                     onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
                     data-testid="checkbox-activo-workflow"
                   />
-                  <span className="text-sm">Habilitado para asignación</span>
+                  <span className="text-sm">{t("enabledForAssignment")}</span>
                 </label>
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button>
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
               <Button onClick={handleSave} disabled={saving} data-testid="btn-guardar-workflow">
-                {isEditMode ? "Actualizar" : "Crear"}
+                {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>
           </FormContainer>

@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import {
   ReactFlow,
   Background,
@@ -64,6 +65,8 @@ function WorkflowNodeComponent({ data }: { data: { label: string; type: string }
 const nodeTypes = { workflowNode: WorkflowNodeComponent };
 
 export default function WorkflowEditorPage() {
+  const t = useTranslations("administracion.workflows.editor");
+  const tc = useTranslations("common");
   const params = useParams();
   const router = useRouter();
   const workflowId = Number(params.id);
@@ -91,16 +94,19 @@ export default function WorkflowEditorPage() {
     type: "workflowNode",
     position: { x: n.positionX ?? 0, y: n.positionY ?? 0 },
     data: {
-      label: withNodeIcon(n.statusManagementName ?? `Nodo ${n.id}`, n.type ?? "INTERMEDIATE"),
+      label: withNodeIcon(
+        n.statusManagementName ?? t("nodeFallback", { id: n.id }),
+        n.type ?? "INTERMEDIATE",
+      ),
       tipo: n.type ?? "INTERMEDIATE",
     },
   }));
 
-  const flowEdges: Edge[] = rawTransitions.map((t) => ({
-    id: String(t.id),
-    source: String(t.originNodeId),
-    target: String(t.destinationNodeId),
-    label: t.description ?? undefined,
+  const flowEdges: Edge[] = rawTransitions.map((tr) => ({
+    id: String(tr.id),
+    source: String(tr.originNodeId),
+    target: String(tr.destinationNodeId),
+    label: tr.description ?? undefined,
     animated: false,
     style: { stroke: theme.colors.neutral[500] },
   }));
@@ -120,10 +126,10 @@ export default function WorkflowEditorPage() {
         });
         refetchTransitions();
       } catch (err) {
-        presentMutationError(err, { fallback: "Error al crear transición" });
+        presentMutationError(err, { fallback: t("errorCreateTransition") });
       }
     },
-    [editMode, createTransition, workflowId, refetchTransitions, setEdges]
+    [editMode, createTransition, workflowId, refetchTransitions, setEdges, t]
   );
 
   async function handleNodeDragStop(_: unknown, node: Node) {
@@ -138,13 +144,13 @@ export default function WorkflowEditorPage() {
         },
       });
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al guardar posición" });
+      presentMutationError(err, { fallback: t("errorSavePosition") });
     }
   }
 
   async function handleAddNode() {
     if (!newNodeEstadoId) {
-      toast.error("Selecciona un estado");
+      toast.error(t("selectStatus"));
       return;
     }
     try {
@@ -159,9 +165,9 @@ export default function WorkflowEditorPage() {
       setNewNodeEstadoId("");
       setNewNodeTipo("INTERMEDIATE");
       refetchNodes();
-      toast.success("Nodo agregado");
+      toast.success(t("nodeAdded"));
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al agregar nodo" });
+      presentMutationError(err, { fallback: t("errorAddNode") });
     }
   }
 
@@ -170,10 +176,10 @@ export default function WorkflowEditorPage() {
       await deleteNodeMut.mutateAsync({ id: Number(nodeId), workflowId });
       refetchNodes();
       refetchTransitions();
-      toast.success("Nodo eliminado");
+      toast.success(t("nodeDeleted"));
     } catch (err) {
       presentMutationError(err, {
-        fallback: "No se puede eliminar: el nodo tiene transiciones",
+        fallback: t("errorDeleteNodeHasTransitions"),
       });
     }
   }
@@ -182,9 +188,9 @@ export default function WorkflowEditorPage() {
     try {
       await deleteTransitionMut.mutateAsync({ id: Number(edgeId), workflowId });
       refetchTransitions();
-      toast.success("Transición eliminada");
+      toast.success(t("transitionDeleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al eliminar transición" });
+      presentMutationError(err, { fallback: t("errorDeleteTransition") });
     }
   }
 
@@ -196,39 +202,39 @@ export default function WorkflowEditorPage() {
       );
       setValidationErrors(result.errors ?? []);
       if (result.valid) {
-        toast.success("Workflow válido y consistente");
+        toast.success(t("valid"));
       } else {
-        toast.error("Workflow con errores de consistencia");
+        toast.error(t("invalid"));
       }
     } catch (err) {
-      presentMutationError(err, { fallback: "Error al validar" });
+      presentMutationError(err, { fallback: t("errorValidate") });
     }
   }
 
   return (
     <div>
       <AppHeader
-        title={workflow?.name ?? "Editor de Workflow"}
+        title={workflow?.name ?? t("title")}
         description={workflow?.description ?? ""}
         actions={
           <div className="flex gap-2">
             <Button variant="secondary" onClick={() => router.back()}>
-              Volver
+              {t("back")}
             </Button>
             <Button
               variant={editMode ? "default" : "secondary"}
               onClick={() => setEditMode((v) => !v)}
               data-testid="btn-toggle-edit"
             >
-              {editMode ? "Modo Edición" : "Modo Vista"}
+              {editMode ? t("editMode") : t("viewMode")}
             </Button>
             {editMode && (
               <Button onClick={() => setAddNodeOpen(true)} data-testid="btn-add-node">
-                + Agregar Nodo
+                {t("addNode")}
               </Button>
             )}
             <Button variant="secondary" onClick={handleValidate} data-testid="btn-validate">
-              Validar Workflow
+              {t("validate")}
             </Button>
           </div>
         }
@@ -236,7 +242,7 @@ export default function WorkflowEditorPage() {
 
       {validationErrors.length > 0 && (
         <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200" data-testid="validation-errors">
-          <p className="text-sm font-semibold text-red-700 mb-1">Errores de consistencia:</p>
+          <p className="text-sm font-semibold text-red-700 mb-1">{t("consistencyErrors")}</p>
           <ul className="list-disc list-inside text-sm text-red-600">
             {validationErrors.map((e, i) => <li key={i}>{e}</li>)}
           </ul>
@@ -244,9 +250,9 @@ export default function WorkflowEditorPage() {
       )}
 
       <div className="mb-3 flex gap-3 text-xs text-neutral-500">
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-200 border border-green-600 inline-block" />Inicial</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-blue-200 border border-blue-600 inline-block" />Intermedio</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-200 border border-red-600 inline-block" />Final</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-200 border border-green-600 inline-block" />{t("types.INITIAL")}</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-blue-200 border border-blue-600 inline-block" />{t("types.INTERMEDIATE")}</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-200 border border-red-600 inline-block" />{t("types.FINAL")}</span>
       </div>
 
       <div
@@ -275,43 +281,43 @@ export default function WorkflowEditorPage() {
       </div>
       {editMode && (
         <p className="text-xs text-neutral-400 mt-1">
-          Doble clic sobre un nodo o arista para eliminarlo. Arrastra desde el handle lateral para crear transiciones.
+          {t("hint")}
         </p>
       )}
 
       <Dialog open={addNodeOpen} onOpenChange={setAddNodeOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title="Agregar Nodo al Workflow">
-              <FormField label="Estado de Gestión" required>
+            <FormSection title={t("addNodeTitle")}>
+              <FormField label={t("fields.estado")} required>
                 <select
                   className="w-full border border-neutral-300 rounded-lg px-3 py-2 text-sm bg-white"
                   value={newNodeEstadoId}
                   onChange={(e) => setNewNodeEstadoId(e.target.value ? Number(e.target.value) : "")}
                   data-testid="select-estado-nodo"
                 >
-                  <option value="">Seleccionar estado...</option>
+                  <option value="">{t("fields.estadoPlaceholder")}</option>
                   {estados.map((e) => (
                     <option key={e.idManagementStatus} value={e.idManagementStatus}>{e.name}</option>
                   ))}
                 </select>
               </FormField>
-              <FormField label="Tipo de Nodo" required>
+              <FormField label={t("fields.tipo")} required>
                 <select
                   className="w-full border border-neutral-300 rounded-lg px-3 py-2 text-sm bg-white"
                   value={newNodeTipo}
                   onChange={(e) => setNewNodeTipo(e.target.value as WorkflowNodeType)}
                   data-testid="select-tipo-nodo"
                 >
-                  <option value="INITIAL">Inicial</option>
-                  <option value="INTERMEDIATE">Intermedio</option>
-                  <option value="FINAL">Final</option>
+                  <option value="INITIAL">{t("types.INITIAL")}</option>
+                  <option value="INTERMEDIATE">{t("types.INTERMEDIATE")}</option>
+                  <option value="FINAL">{t("types.FINAL")}</option>
                 </select>
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setAddNodeOpen(false)}>Cancelar</Button>
-              <Button onClick={handleAddNode} data-testid="btn-confirmar-nodo">Agregar</Button>
+              <Button variant="secondary" onClick={() => setAddNodeOpen(false)}>{tc("cancel")}</Button>
+              <Button onClick={handleAddNode} data-testid="btn-confirmar-nodo">{tc("add")}</Button>
             </FormActions>
           </FormContainer>
         </DialogContent>

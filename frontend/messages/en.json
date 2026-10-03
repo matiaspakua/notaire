@@ -56,7 +56,9 @@
     "language": "Language",
     "all": "All",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "active": "Active",
+    "inactive": "Inactive"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -510,7 +512,8 @@
     "noData": "No copies registered"
   },
   "items": {
-    "title": "Items",
+    "title": "Budget Items",
+    "description": "Manage items and concepts in budgets",
     "newItem": "New item",
     "editItem": "Edit item",
     "created": "Item created",
@@ -519,10 +522,28 @@
     "errorSave": "Error saving item",
     "errorDelete": "Error deleting item",
     "noData": "No items registered",
+    "reasonRequired": "Reason is required for discount or surcharge items",
     "fields": {
-      "concepto": "Concept",
-      "cantidad": "Quantity",
-      "precio": "Price"
+      "nombre": "Name",
+      "valor": "Value",
+      "valorLabel": "Value ($)",
+      "presupuesto": "Budget",
+      "presupuestoId": "Budget ID",
+      "presupuestoPlaceholder": "Budget ID",
+      "tipo": "Type",
+      "tipoItem": "Item type",
+      "motivo": "Reason",
+      "motivoPlaceholder": "e.g. Early payment discount"
+    },
+    "types": {
+      "NORMAL": "Normal",
+      "DESCUENTO": "Discount",
+      "RECARGO": "Surcharge"
+    },
+    "report": {
+      "title": "Discounts and surcharges by budget",
+      "empty": "This budget has no discounts or surcharges",
+      "consult": "Look up"
     }
   },
   "documentos": {
@@ -607,7 +628,8 @@
       "usuario": "User",
       "operacion": "Operation",
       "modulo": "Module"
-    }
+    },
+    "allModules": "All modules"
   },
   "administracion": {
     "title": "Administration",
@@ -833,6 +855,92 @@
           "valor": "Value"
         }
       }
+    },
+    "roles": {
+      "title": "Roles and Permissions",
+      "description": "Manage user roles and module access",
+      "newRol": "New Role",
+      "editRol": "Edit Role",
+      "created": "Role created",
+      "updated": "Role updated",
+      "deleted": "Role deleted",
+      "errorSave": "Error saving role",
+      "errorDelete": "Error deleting",
+      "noData": "No roles registered",
+      "nameRequired": "Name is required",
+      "noPermissions": "No permissions",
+      "fields": {
+        "modulos": "Modules",
+        "modulosPermitidos": "Allowed modules",
+        "activo": "Active",
+        "activoHint": "Active role"
+      },
+      "modules": {
+        "administracion": "Administration",
+        "usuarios": "Users",
+        "tramites": "Procedures",
+        "presupuestos": "Budgets",
+        "escrituras": "Deeds",
+        "personas": "Persons",
+        "auditoria": "Audit",
+        "workflows": "Workflows"
+      }
+    },
+    "workflows": {
+      "title": "Status Workflows",
+      "description": "Manage workflows for the notarial case lifecycle",
+      "newWorkflow": "New Workflow",
+      "editWorkflow": "Edit Workflow",
+      "created": "Workflow created",
+      "updated": "Workflow updated",
+      "deleted": "Workflow deleted",
+      "errorSave": "Error saving",
+      "errorDeleteHasNodes": "Cannot delete: the workflow has nodes",
+      "noData": "No workflows",
+      "nameRequired": "Name is required",
+      "searchPlaceholder": "Search by name...",
+      "editGraph": "Edit graph",
+      "editData": "Details",
+      "deleteAction": "Delete",
+      "enabledForAssignment": "Enabled for assignment",
+      "fields": {
+        "namePlaceholder": "e.g. Purchase Workflow",
+        "descriptionPlaceholder": "Optional description"
+      },
+      "editor": {
+        "title": "Workflow Editor",
+        "back": "Back",
+        "editMode": "Edit Mode",
+        "viewMode": "View Mode",
+        "addNode": "+ Add Node",
+        "validate": "Validate Workflow",
+        "valid": "Workflow is valid and consistent",
+        "invalid": "Workflow has consistency errors",
+        "errorValidate": "Error validating",
+        "errorCreateTransition": "Error creating transition",
+        "errorSavePosition": "Error saving position",
+        "selectStatus": "Select a status",
+        "nodeAdded": "Node added",
+        "errorAddNode": "Error adding node",
+        "nodeDeleted": "Node deleted",
+        "errorDeleteNodeHasTransitions": "Cannot delete: the node has transitions",
+        "transitionDeleted": "Transition deleted",
+        "errorDeleteTransition": "Error deleting transition",
+        "consistencyErrors": "Consistency errors:",
+        "hint": "Double-click a node or edge to delete it. Drag from the side handle to create transitions.",
+        "addNodeTitle": "Add Node to Workflow",
+        "fields": {
+          "estado": "Case Status",
+          "estadoPlaceholder": "Select status...",
+          "tipo": "Node Type"
+        },
+        "types": {
+          "INITIAL": "Initial",
+          "INTERMEDIATE": "Intermediate",
+          "FINAL": "Final"
+        },
+        "nodeFallback": "Node {id}"
+      }
     }
   },
   "login": {
@@ -842,7 +950,13 @@
     "password": "Password",
     "submit": "Sign in",
     "error": "Invalid username or password",
-    "sessionExpired": "Your session has expired. Please sign in again."
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "connectionError": "Could not connect to the server. Verify that the backend is running.",
+    "lockoutError": "Account temporarily locked due to too many failed attempts.",
+    "validationRequired": "Enter username and password",
+    "welcome": "Welcome, {name}",
+    "forgotPassword": "Forgot your password? Contact the administrator.",
+    "footerSecure": "Secure Infrastructure"
   },
   "confirmDialog": {
     "title": "Confirm deletion?",
@@ -864,6 +978,71 @@
       "vence": "Expires",
       "diasVencimiento": "Days valid",
       "quienEntrega": "Delivered by"
+    }
+  },
+  "suplencias": {
+    "title": "Substitutions",
+    "description": "Register and review notary substitutions",
+    "newSuplencia": "New substitution",
+    "editSuplencia": "Edit substitution",
+    "created": "Substitution registered",
+    "updated": "Substitution updated",
+    "deleted": "Substitution deleted",
+    "errorSave": "Error saving substitution",
+    "errorDelete": "Error deleting",
+    "noData": "No substitutions registered",
+    "fields": {
+      "escribano": "Notary",
+      "escribanoId": "Notary ID",
+      "escribanoHelper": "Person ID",
+      "escribanoPlaceholder": "Notary ID",
+      "suplente": "Substitute",
+      "suplenteId": "Substitute ID",
+      "suplentePlaceholder": "Substitute ID",
+      "desde": "From",
+      "hasta": "To"
+    },
+    "register": "Register"
+  },
+  "reportes": {
+    "title": "Reports",
+    "description": "Generate reports and PDF documents",
+    "generated": "PDF generated and downloaded",
+    "errorGenerate": "Error generating report (backend required)",
+    "fields": {
+      "presupuestoId": "Budget ID",
+      "gestionId": "Case ID",
+      "numeroGestion": "Case number",
+      "ejemplo": "e.g. 1",
+      "ejemploGestion": "e.g. 1001"
+    },
+    "presupuesto": {
+      "title": "Budget Report",
+      "description": "PDF of the selected budget"
+    },
+    "presupuestoInmuebles": {
+      "title": "Budget + Properties",
+      "description": "PDF with property information for the budget"
+    },
+    "historial": {
+      "title": "Case History",
+      "description": "PDF of a notarial case history"
+    },
+    "ddjjMensual": {
+      "title": "Monthly Affidavit",
+      "description": "Monthly affidavit of deeds"
+    },
+    "ddjjRentas": {
+      "title": "Tax Affidavit",
+      "description": "Annual tax affidavit"
+    },
+    "libroIndice": {
+      "title": "Index Book",
+      "description": "Annual deed index book"
+    },
+    "deudaDocumentos": {
+      "title": "Document Debt",
+      "description": "Pending documents to deliver per case"
     }
   }
 }
