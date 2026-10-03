@@ -102,8 +102,14 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
     // Then: the picker never offers an escritura already Utilizado by another folio
     await expect(page.getByRole('option', { name: `Escritura Nº ${numero}` })).toHaveCount(0)
 
+    // Escape closes the open select; a second Escape (or the first, if focus is on
+    // the dialog) dismisses the modal. Never click Cancelar after Escape — the
+    // button is gone once the dialog is already closed (CI flake CU87-EDGE01).
     await page.keyboard.press('Escape')
-    await dialog.getByRole('button', { name: /cancelar/i }).click()
+    if (await dialog.isVisible().catch(() => false)) {
+      await page.keyboard.press('Escape')
+    }
+    await expect(dialog).not.toBeVisible({ timeout: 5000 })
   })
 
   test('CU87-EDGE02: folio en estado Utilizado no puede editarse ni borrarse desde la grilla', async ({ page }) => {
