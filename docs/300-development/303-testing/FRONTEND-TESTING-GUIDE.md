@@ -190,8 +190,8 @@ test.describe("MyModule (CUxx)", () => {
 The frontend CI (`.github/workflows/frontend-ci.yml`) runs on every PR/push touching the
 frontend:
 
-1. **TypeScript Check** — type-check (blocking); ESLint step (`continue-on-error: true` —
-   not yet a blocking gate)
+1. **TypeScript Check** — type-check (blocking); **ESLint** (`npm run lint`,
+   `--max-warnings=0`, including jsx-a11y) is also **blocking** (#1048; #701 closed)
 2. **Unit Tests (Vitest)** — must pass (blocking)
 3. **Build (Next.js)** — must compile cleanly (blocking)
 
