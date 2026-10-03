@@ -20,9 +20,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/test-853-gestion-escritura-unit/` | Gate 1 validated |
 | Branch | `cursor/test-853-gestion-escritura-unit-69d3` | active |
 | Tasks | `tasks.md` | Gate 2–3 in progress |
-| Commits | pending (recorded after push) | pending |
-| Pull Request | pending | pending |
-| CI run | — | pending |
+| Commits | `ba4f8a2f`, `a0437995`, `8c29fe7b`, `5160b757` | recorded |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1211 | draft |
+| CI run | pending on head `5160b757` | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
