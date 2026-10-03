@@ -57,6 +57,7 @@
 - [x] 8.1 api-test README, 303-testing README, testing DEFINITION
 - [x] 8.2 CHANGELOG entry; confirm CU76 table
 - [x] 8.3 Confirm no information was duplicated
+- [x] 8.3a Complete #799's hand-fold in `persona-validacion-duplicados` (3 scenarios + 1 sentence) and re-validate the spec strictly
 - [ ] 8.4 `bash scripts/preflight.sh` without bypass
 
 ## 9. Commits atómicos

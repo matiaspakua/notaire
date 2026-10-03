@@ -77,6 +77,7 @@ Deletion only. No ADR. The history of every removed file stays reachable in git.
 | `docs/300-development/303-testing/README.md` | Integration row: one suite script plus the stack smoke |
 | `testing/docs/DEFINITION.md` | Remove the "legacy scripts" row; they are gone |
 | `CHANGELOG.md` | `[Unreleased]` entry |
+| `openspec/specs/persona-validacion-duplicados/spec.md` | Complete #799's hand-fold: restore the three scenarios of the "Database uniqueness" requirement (the spec failed strict validation without them) and the database-level sentence of its MODIFIED requirement; both copied from the archived delta; owner-approved on 2026-10-03 |
 | `docs/100-business/102-use-cases/CU76 – Quality Assurance and Testing Infrastructure.md` | #585 is already listed; confirm |
 
 ## Out of Scope
