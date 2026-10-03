@@ -68,15 +68,15 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #1057`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #1057`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/fix-1057-a11y-icon-names-69d3`
-- [ ] 10.2 Open the PR titled `[#1057] fix(frontend): accessible names for icon-only buttons`, referencing Issue and CU76 / RNF a11y
+- [x] 10.1 `git push -u origin cursor/fix-1057-a11y-icon-names-69d3`
+- [x] 10.2 Open the PR titled `[#1057] fix(frontend): accessible names for icon-only buttons`, referencing Issue and CU76 / RNF a11y
 - [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
 - [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete; merge only on heavy-CI gate exit 0
 - [ ] 10.5 Record the PR number in `traceability.md`

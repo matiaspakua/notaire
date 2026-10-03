@@ -19,9 +19,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Related | #940 (dialog close a11y — closed); #608 / TS-0042 (search labels); audit-2026-09 | referenced |
 | Specification | `openspec/changes/fix-1057-a11y-icon-names/` | Gate 1 validated; implementing |
 | Branch | `cursor/fix-1057-a11y-icon-names-69d3` | created |
-| Tasks | `tasks.md` | Gate 1 planning complete; implement pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
+| Tasks | `tasks.md` | implement largely complete; await CI/merge |
+| Commits | `14dbd9ab`, `1f62fa5d` | pushed |
+| Pull Request | #1150 | draft open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
