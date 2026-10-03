@@ -90,14 +90,15 @@ role, the seeded reference data and the presence of the core schema objects.
 #### Scenario: Seed data is present
 
 - **WHEN** the suite counts the rows loaded by the seed migrations (V2, V10)
-- **THEN** each seeded reference table holds at least the expected rows, including the default
-  administrator user
+- **THEN** each seeded table holds at least the rows the migrations insert, including the default
+  administrator user, the identification, document, folio and management-status reference data,
+  and the demo workflow (definition, nodes, transitions)
 
 #### Scenario: Core schema objects exist
 
 - **WHEN** the suite inspects the migrated schema
-- **THEN** the core tables, their primary keys and foreign keys exist, and no table from the
-  pre-rename Spanish names remains
+- **THEN** every table has a primary key, foreign keys exist and are validated, and no table
+  renamed by a migration (`ALTER TABLE x RENAME TO y`) still exists under its old name
 
 ### Requirement: The database suite runs isolated and pinned
 

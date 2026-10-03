@@ -56,7 +56,10 @@ Issue #1191, phase 1 of umbrella #1190, Use Case CU76 (database suite also CU75)
      `POSTGRES_EXPORTER_PASSWORD` (defaults `notaire_exporter` / a throwaway value).
    - No published host port, so it cannot collide with a running stack (lesson of #1186).
    - SQL assertion files, run in order, each printing PASS/FAIL lines; the runner exits non-zero
-     on any FAIL. Table and role names are read from the migrated database, not assumed.
+     on any FAIL. Expected values come from a probe of the real migrated database (39 history rows,
+     37 tables each with a primary key, 49 foreign keys, 14 seeded tables); "renamed tables are gone"
+     is derived from the `RENAME TO` statements in the migrations, never a hard-coded list — `folios`
+     keeps its name on purpose (V32: "folio" is already English).
    - Includes a negative check: a *copy* of an applied migration is altered and `flyway validate`
      must fail, which proves checksum protection works.
    - Alternative rejected: pytest + psycopg — adds a toolchain; the existing `testing/` and

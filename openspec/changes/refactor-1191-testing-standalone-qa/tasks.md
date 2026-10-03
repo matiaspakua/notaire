@@ -20,11 +20,11 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: layout, deletions, runner, database checks (incl. placeholders, R14), pins/no host port, self-containment, docs, gates
-- [ ] 3.2 Write failing `scripts/test_testing_standalone.py` and observe it fail
-- [ ] 3.3 Check that `test_image_pins_and_dependabot.py` covers the new compose file's pins; observe it fail first if it does not
-- [ ] 3.4 Write the database SQL checks before the compose harness exists; observe the first run fail
-- [ ] 3.5 Confirm every `#### Scenario:` maps to a test or a verification command
+- [x] 3.1 Enumerate test cases: layout, deletions, runner, database checks (incl. placeholders, R14), pins/no host port, self-containment, docs, gates
+- [x] 3.2 Write failing `scripts/test_testing_standalone.py` and observe it fail
+- [x] 3.3 `test_image_pins_and_dependabot.py` did not cover the new compose file (its `COMPOSE_FILES` tuple is unused); added a real test and observed it fail
+- [x] 3.4 Write the database SQL checks before the compose harness exists; observe the first run fail
+- [x] 3.5 Confirm every `#### Scenario:` maps to a test or a verification command
 
 ## 4. Implementación
 
