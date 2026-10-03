@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Aggregated DTO for the GET /api/v1/gestiones/{id}/workflow-trace endpoint.
- * Combines gestión info, the workflow definition, its nodes and transitions,
- * the gestión's historial, and computed per-node statuses.
+ * Aggregated DTO for GET /api/v1/gestiones/{id}/workflow-trace.
+ * Combines management info, the workflow definition, its nodes and transitions,
+ * the management history, computed per-node statuses, and optional testimony
+ * movements for the post-signing reingreso loop (issue #841).
  */
 public class DtoManagementWorkflowTrace {
 
@@ -26,6 +27,8 @@ public class DtoManagementWorkflowTrace {
     private List<DtoWorkflowTransition> transitions;
     private List<DtoHistoryEntry> history;
     private Map<Integer, String> nodeStatuses; // nodeId → "completed" | "in_progress" | "pending"
+    /** Testimony movements for the gestión (empty when none); reingreso loop signal. */
+    private List<DtoTestimonyMovementEntry> testimonyMovements;
 
     public Integer getManagementId() {
         return managementId;
@@ -107,8 +110,16 @@ public class DtoManagementWorkflowTrace {
         this.nodeStatuses = nodeStatuses;
     }
 
+    public List<DtoTestimonyMovementEntry> getTestimonyMovements() {
+        return testimonyMovements;
+    }
+
+    public void setTestimonyMovements(List<DtoTestimonyMovementEntry> testimonyMovements) {
+        this.testimonyMovements = testimonyMovements;
+    }
+
     /**
-     * Lightweight historial entry included in the workflow trace response.
+     * Lightweight history entry included in the workflow trace response.
      */
     public static class DtoHistoryEntry {
         private Integer idHistory;
@@ -155,6 +166,49 @@ public class DtoManagementWorkflowTrace {
 
         public void setNotes(String notes) {
             this.notes = notes;
+        }
+    }
+
+    /**
+     * Lightweight testimony movement entry for the secondary reingreso timeline.
+     * {@code returnedObserved} is derived as {@code dateExit != null && !registered}.
+     */
+    public static class DtoTestimonyMovementEntry {
+        private Date dateEntry;
+        private Date dateExit;
+        private Date dateRegistration;
+        private boolean returnedObserved;
+
+        public Date getDateEntry() {
+            return dateEntry;
+        }
+
+        public void setDateEntry(Date dateEntry) {
+            this.dateEntry = dateEntry;
+        }
+
+        public Date getDateExit() {
+            return dateExit;
+        }
+
+        public void setDateExit(Date dateExit) {
+            this.dateExit = dateExit;
+        }
+
+        public Date getDateRegistration() {
+            return dateRegistration;
+        }
+
+        public void setDateRegistration(Date dateRegistration) {
+            this.dateRegistration = dateRegistration;
+        }
+
+        public boolean isReturnedObserved() {
+            return returnedObserved;
+        }
+
+        public void setReturnedObserved(boolean returnedObserved) {
+            this.returnedObserved = returnedObserved;
         }
     }
 }
