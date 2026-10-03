@@ -23,7 +23,7 @@ on any legacy DTO path. Fix both integrity defects under CU72.
 ## What Changes
 
 - Replace `SubmittedDocument` Integer column field with `@ManyToOne DocumentType`
-  + `@JoinColumn(name = "fk_id_document_type")` (property `documentType`).
+  - `@JoinColumn(name = "fk_id_document_type")` (property `documentType`).
 - Fix `DocumentType` `mappedBy` to `documentType`; soften Cascade ALL on that
   OneToMany if too aggressive for submitted documents.
 - Keep compatibility accessors `getFkIdDocumentType` / setters that delegate to

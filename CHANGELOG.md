@@ -473,6 +473,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`estado-actual` returned an arbitrary row when history dates tied** (issue #1198, CU13):
+  `GET /api/v1/gestiones/{id}/estado-actual` now breaks date ties by the higher history id, so
+  a create and an update in the same millisecond no longer show the previous status. This was
+  also the cause of an intermittent failure in `ManagementHistorialOrphanWriteIntegrationTest`.
+
 - **SubmittedDocument DocumentType mapping and getDto null-guard** (issue #801,
   CU72): replace the Integer `@Column` for `fk_id_document_type` with a
   `@ManyToOne DocumentType documentType` association; fix

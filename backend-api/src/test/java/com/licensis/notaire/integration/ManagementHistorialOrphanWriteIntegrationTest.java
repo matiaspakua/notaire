@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -325,6 +326,39 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 .andExpect(jsonPath("$.statusManagementId").value(statusB.getIdManagementStatus()))
                 .andExpect(jsonPath("$.statusManagementName").value(statusB.getName()))
                 .andExpect(jsonPath("$.idHistory").isNumber());
+    }
+
+    @Test
+    @DisplayName("GET estado-actual returns the later insert when history dates tie")
+    void shouldReturnLaterHistoryRowWhenDatesTie() throws Exception {
+        Integer notaryId = createPerson("HIST-TIE-" + System.nanoTime());
+        ManagementStatus statusA = createStatus("Tie-A");
+        ManagementStatus statusB = createStatus("Tie-B");
+        String body = """
+                {"encabezado": "Tie", "dateStart": "2026-01-01", "number": %d,
+                 "notaryPersonId": %d, "managementStatusId": %d}
+                """;
+        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body.formatted(1, notaryId, statusA.getIdManagementStatus())))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
+                .get("idManagement").asInt();
+        mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body.formatted(2, notaryId, statusB.getIdManagementStatus())))
+                .andExpect(status().isOk());
+
+        List<History> rows = historyRepository.findByFkIdManagementIdManagement(managementId);
+        assertThat(rows).hasSize(2);
+        Date sameInstant = new Date(0L);
+        rows.forEach(row -> row.setDate(sameInstant));
+        historyRepository.saveAllAndFlush(rows);
+
+        mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", managementId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statusManagementId").value(statusB.getIdManagementStatus()));
     }
 
     @Test

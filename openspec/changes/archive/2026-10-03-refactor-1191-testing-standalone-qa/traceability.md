@@ -15,13 +15,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Related | #1179 (same pattern for infra/), #1185 / PR #1193 (merged; pipeline green), #1186 (lesson: no host-port collisions) | referenced |
 | Specification | `openspec/changes/refactor-1191-testing-standalone-qa/` | Gate 1 approved by Owner (k6 stays in infra/) |
 | Branch | `refactor/1191_testing_standalone_qa` | created from updated `main` |
-| Tasks | `tasks.md` | implementation and docs complete; pipeline, PR and Gates 4-5 pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Tasks | `tasks.md` | complete |
+| Commits | squashed into `615959c8`; branch `refactor/1191_testing_standalone_qa` | merged |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1196 | merged |
+| CI run | PR #1196: 38 checks passed, 3 skipping; `database-vv.yml` green on the merge commit | green |
+| Merge commit | `615959c8` (2026-10-03) | merged |
+| Release / tag | none; `cd.yml` green on the merge commit | n/a |
+| Smoke test | merged main: `run.sh database` 30 passed / 0 failed; `test.sh` against a live stack rc=0 | passed |
 
 ## Requirement coverage
 
@@ -62,9 +62,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh refactor-1191-testing-standalone-qa` |
 | 2 | Failing tests written, test cases designed | yes | `b27c8875`: guard 16 of 18 failed, image-pin test failed, `run.sh` did not exist, before any production file changed |
-| 3 | Suite green, coverage held, docs updated | pending | — |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 3 | Suite green, coverage held, docs updated | yes | `run_pipeline.sh` PASSED with no bypass, including the new database gate |
+| 4 | CI green, review approved, no conflicts | yes | required CI green; merged by the code owner directly, no formal GitHub review recorded (Constitution step 20) |
+| 5 | Deployed, smoke test passed, Issue closed | yes | `cd.yml` green on `615959c8`; smoke above; #1191 closed with evidence |
 
 ## Exceptions
 
