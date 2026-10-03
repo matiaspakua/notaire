@@ -19,10 +19,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Related | audit-2026-09; after #1044 → #1051 → #1046 (`dbc15d30`) | referenced |
 | Specification | `openspec/changes/fix-1042-cd-tested-sha/` | Gate 1 validated |
 | Branch | `cursor/fix-1042-cd-tested-sha-69d3` | created from `origin/main` @ `dbc15d30` |
-| Tasks | `tasks.md` | implement complete locally; PR/merge pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
-| CI run | — | pending |
+| Tasks | `tasks.md` | implement complete; merge pending coordinator |
+| Commits | `28ef0f5d` test; `0dcd1541` fix; `38c187de` docs | pushed |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1158 | draft |
+| CI run | heavy gate pending on PR head | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |

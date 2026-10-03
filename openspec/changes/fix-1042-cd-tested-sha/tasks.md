@@ -68,18 +68,18 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format (e.g. `fix(cd): pin publish to workflow_run head SHA`, `test: …`, `docs: …`)
-- [ ] 9.2 Every commit message ends with `Closes #1042`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format (`test` → `fix` → `docs`)
+- [x] 9.2 Every commit message ends with `Closes #1042`
 - [x] 9.3 No secrets, no commented-out code, no unrelated workflow rewrites
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/fix-1042-cd-tested-sha-69d3`
-- [ ] 10.2 Open the PR titled `[#1042] fix(cd): pin Docker publish to CI-tested SHA`, referencing Issue and CU76
+- [x] 10.1 `git push -u origin cursor/fix-1042-cd-tested-sha-69d3`
+- [x] 10.2 Open the PR titled `[#1042] fix(cd): pin Docker publish to CI-tested SHA`, referencing Issue and CU76 — #1158 draft
 - [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
 - [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete; merge only on heavy gate (`bash scripts/check-heavy-ci.sh <pr>` exit 0)
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
