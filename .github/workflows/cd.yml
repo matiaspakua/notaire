@@ -38,8 +38,13 @@ jobs:
       packages: write
       id-token: write  # required for cosign keyless (OIDC) signing
     steps:
+      # Pin checkout to the CI-tested commit on workflow_run. Under that event,
+      # github.sha is tip-of-default-branch at CD schedule time — not the SHA CI
+      # tested. Tag / workflow_dispatch fall back to github.sha (#1042).
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -51,6 +56,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Explicit publish SHA: do not trust metadata type=sha / github.sha under
+      # workflow_run (those track tip-of-default-branch).
+      - name: Resolve publish SHA
+        id: publish_sha
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            SHA="${{ github.event.workflow_run.head_sha }}"
+          else
+            SHA="${{ github.sha }}"
+          fi
+          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+          echo "sha_short=${SHA:0:7}" >> "$GITHUB_OUTPUT"
+
+      # Immutable tags only (full + short publish SHA). Omit latest here — it
+      # moves in a later step after this push succeeds.
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v6
@@ -59,8 +79,8 @@ jobs:
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
-            type=sha,prefix=
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ steps.publish_sha.outputs.sha }}
+            type=raw,value=${{ steps.publish_sha.outputs.sha_short }}
 
       - name: Build and Push Docker Image
         id: build
@@ -75,6 +95,16 @@ jobs:
           cache-to: type=gha,mode=min
           build-args: |
             VERSION=${{ github.ref_name }}
+
+      # Move mutable latest only after the SHA-tagged push succeeded (same digest).
+      - name: Tag and push latest
+        if: >
+          github.event_name == 'workflow_run'
+          || github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        run: |
+          docker buildx imagetools create \
+            --tag "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" \
+            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}"
 
       # Real SBOM: CycloneDX document listing every package in the image.
       # (Previously this step ran a default Trivy vulnerability scan and
