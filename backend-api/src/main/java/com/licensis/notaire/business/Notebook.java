@@ -25,8 +25,8 @@ import org.springframework.data.domain.Persistable;
 @Entity
 @Table(name = "notebooks")
 @NamedQueries({
-    @NamedQuery(name = "Cuaderno.findAll", query = "SELECT c FROM Notebook c"),
-    @NamedQuery(name = "Cuaderno.findByAnioAndEscribano",
+    @NamedQuery(name = "Notebook.findAll", query = "SELECT c FROM Notebook c"),
+    @NamedQuery(name = "Notebook.findByYearAndNotary",
             query = "SELECT c FROM Notebook c WHERE c.year = :anio AND c.fkIdNotaryPerson = :escribano")
 })
 public class Notebook implements Serializable, Persistable<Integer> {

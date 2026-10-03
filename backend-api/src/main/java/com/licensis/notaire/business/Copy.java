@@ -42,12 +42,12 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries(
         {
-            @NamedQuery(name = "Copia.findAll", query = "SELECT c FROM Copy c"),
-            @NamedQuery(name = "Copia.findByIdCopia", query = "SELECT c FROM Copy c WHERE c.idCopy = :idCopia"),
-            @NamedQuery(name = "Copia.findByNumero", query = "SELECT c FROM Copy c WHERE c.number = :numero"),
-            @NamedQuery(name = "Copia.findByFechaImpresion", query = "SELECT c FROM Copy c WHERE c.datePrinting = :fechaImpresion"),
-            @NamedQuery(name = "Copia.findByTestimonio", query = "SELECT c FROM Copy c WHERE c.fkIdTestimony.idTestimony = :idTestimonio"),
-            @NamedQuery(name = "Copia.findByFechaRetiro", query = "SELECT c FROM Copy c WHERE c.dateWithdrawal = :fechaRetiro")
+            @NamedQuery(name = "Copy.findAll", query = "SELECT c FROM Copy c"),
+            @NamedQuery(name = "Copy.findByIdCopy", query = "SELECT c FROM Copy c WHERE c.idCopy = :idCopia"),
+            @NamedQuery(name = "Copy.findByNumber", query = "SELECT c FROM Copy c WHERE c.number = :number"),
+            @NamedQuery(name = "Copy.findByPrintingDate", query = "SELECT c FROM Copy c WHERE c.datePrinting = :fechaImpresion"),
+            @NamedQuery(name = "Copy.findByTestimony", query = "SELECT c FROM Copy c WHERE c.fkIdTestimony.idTestimony = :idTestimonio"),
+            @NamedQuery(name = "Copy.findByWithdrawalDate", query = "SELECT c FROM Copy c WHERE c.dateWithdrawal = :fechaRetiro")
         })
 public class Copy implements Serializable, Persistable<Integer>
 {

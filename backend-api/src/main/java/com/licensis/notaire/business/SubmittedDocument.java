@@ -38,20 +38,20 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries(
         {
-            @NamedQuery(name = "DocumentoPresentado.findAll", query = "SELECT d FROM SubmittedDocument d"),
-            @NamedQuery(name = "DocumentoPresentado.findByIdDocumentoPresentado", query = "SELECT d FROM SubmittedDocument d WHERE d.idSubmittedDocument = :idDocumentoPresentado"),
-            @NamedQuery(name = "DocumentoPresentado.findByNumeroCarton", query = "SELECT d FROM SubmittedDocument d WHERE d.cardNumber = :numeroCarton"),
-            @NamedQuery(name = "DocumentoPresentado.findByFechaIngreso", query = "SELECT d FROM SubmittedDocument d WHERE d.dateEntry = :fechaIngreso"),
-            @NamedQuery(name = "DocumentoPresentado.findByFechaSalida", query = "SELECT d FROM SubmittedDocument d WHERE d.dateExit = :fechaSalida"),
-            @NamedQuery(name = "DocumentoPresentado.findByPreparado", query = "SELECT d FROM SubmittedDocument d WHERE d.prepared = :preparado"),
-            @NamedQuery(name = "DocumentoPresentado.findByVence", query = "SELECT d FROM SubmittedDocument d WHERE d.expires = :vence"),
-            @NamedQuery(name = "DocumentoPresentado.findByFechaVencimiento", query = "SELECT d FROM SubmittedDocument d WHERE d.dateDue >= :fechaVencimiento"),
-            @NamedQuery(name = "DocumentoPresentado.findByDiasVencimiento", query = "SELECT d FROM SubmittedDocument d WHERE d.dueDays = :diasVencimiento"),
-            @NamedQuery(name = "DocumentoPresentado.findByImporteAPagar", query = "SELECT d FROM SubmittedDocument d WHERE d.amountToPay = :importeAPagar"),
-            @NamedQuery(name = "DocumentoPresentado.findByFechaPago", query = "SELECT d FROM SubmittedDocument d WHERE d.datePayment = :fechaPago"),
-            @NamedQuery(name = "DocumentoPresentado.findByLiberado", query = "SELECT d FROM SubmittedDocument d WHERE d.released = :liberado"),
-            @NamedQuery(name = "DocumentoPresentado.findByFechaLiberado", query = "SELECT d FROM SubmittedDocument d WHERE d.dateReleased = :fechaLiberado"),
-            @NamedQuery(name = "DocumentoPresentado.findByObservado", query = "SELECT d FROM SubmittedDocument d WHERE d.flagged = :observado")
+            @NamedQuery(name = "SubmittedDocument.findAll", query = "SELECT d FROM SubmittedDocument d"),
+            @NamedQuery(name = "SubmittedDocument.findByIdSubmittedDocument", query = "SELECT d FROM SubmittedDocument d WHERE d.idSubmittedDocument = :idDocumentoPresentado"),
+            @NamedQuery(name = "SubmittedDocument.findByCardNumber", query = "SELECT d FROM SubmittedDocument d WHERE d.cardNumber = :numeroCarton"),
+            @NamedQuery(name = "SubmittedDocument.findByEntryDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateEntry = :fechaIngreso"),
+            @NamedQuery(name = "SubmittedDocument.findByExitDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateExit = :fechaSalida"),
+            @NamedQuery(name = "SubmittedDocument.findByPrepared", query = "SELECT d FROM SubmittedDocument d WHERE d.prepared = :prepared"),
+            @NamedQuery(name = "SubmittedDocument.findByExpires", query = "SELECT d FROM SubmittedDocument d WHERE d.expires = :vence"),
+            @NamedQuery(name = "SubmittedDocument.findByDueDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateDue >= :fechaVencimiento"),
+            @NamedQuery(name = "SubmittedDocument.findByDueDays", query = "SELECT d FROM SubmittedDocument d WHERE d.dueDays = :diasVencimiento"),
+            @NamedQuery(name = "SubmittedDocument.findByAmountToPay", query = "SELECT d FROM SubmittedDocument d WHERE d.amountToPay = :importeAPagar"),
+            @NamedQuery(name = "SubmittedDocument.findByPaymentDate", query = "SELECT d FROM SubmittedDocument d WHERE d.datePayment = :fechaPago"),
+            @NamedQuery(name = "SubmittedDocument.findByReleased", query = "SELECT d FROM SubmittedDocument d WHERE d.released = :released"),
+            @NamedQuery(name = "SubmittedDocument.findByReleasedDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateReleased = :fechaLiberado"),
+            @NamedQuery(name = "SubmittedDocument.findByFlagged", query = "SELECT d FROM SubmittedDocument d WHERE d.flagged = :flagged")
         })
 public class SubmittedDocument implements Serializable, Persistable<Integer>
 {

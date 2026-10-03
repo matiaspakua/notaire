@@ -344,14 +344,14 @@ class ConceptJpaControllerTest {
             List<Concept> expectedList = new ArrayList<>();
             expectedList.add(new Concept(1, name, new java.math.BigDecimal("100"), 10));
 
-            when(em.createNamedQuery("Concepto.findByNombre")).thenReturn(query);
+            when(em.createNamedQuery("Concept.findByName")).thenReturn(query);
             when(query.getResultList()).thenReturn(expectedList);
 
             List<Concept> result = controller.findConceptByName(name);
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getName()).isEqualTo(name);
-            verify(query).setParameter("nombre", name);
+            verify(query).setParameter("name", name);
             // Note: source code does NOT close EM in this method (pre-existing leak)
             verify(em, never()).close();
         }

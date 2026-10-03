@@ -41,11 +41,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries(
         {
-            @NamedQuery(name = "Escritura.findAll", query = "SELECT e FROM Deed e"),
-            @NamedQuery(name = "Escritura.findByIdEscritura", query = "SELECT e FROM Deed e WHERE e.idDeed = :idEscritura"),
-            @NamedQuery(name = "Escritura.findByNumero", query = "SELECT e FROM Deed e WHERE e.number = :numero"),
-            @NamedQuery(name = "Escritura.findByFechaEscrituracion", query = "SELECT e FROM Deed e WHERE e.dateDeedrecording = :fechaEscrituracion"),
-            @NamedQuery(name = "Escritura.findByFechaInscripcion", query = "SELECT e FROM Deed e WHERE e.dateRegistration = :fechaInscripcion")
+            @NamedQuery(name = "Deed.findAll", query = "SELECT e FROM Deed e"),
+            @NamedQuery(name = "Deed.findByIdDeed", query = "SELECT e FROM Deed e WHERE e.idDeed = :idEscritura"),
+            @NamedQuery(name = "Deed.findByNumber", query = "SELECT e FROM Deed e WHERE e.number = :number"),
+            @NamedQuery(name = "Deed.findByDeedDate", query = "SELECT e FROM Deed e WHERE e.dateDeedrecording = :fechaEscrituracion"),
+            @NamedQuery(name = "Deed.findByRegistrationDate", query = "SELECT e FROM Deed e WHERE e.dateRegistration = :fechaInscripcion")
         })
 public class Deed implements Serializable, Persistable<Integer>
 {

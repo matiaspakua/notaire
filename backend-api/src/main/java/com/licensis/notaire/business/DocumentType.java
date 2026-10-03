@@ -36,11 +36,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries(
         {
-            @NamedQuery(name = "TipoDeDocumento.findAll", query = "SELECT t FROM DocumentType t"),
-            @NamedQuery(name = "TipoDeDocumento.findByIdTipoDocumento", query = "SELECT t FROM DocumentType t WHERE t.idDocumentType = :idTipoDocumento"),
-            @NamedQuery(name = "TipoDeDocumento.findByVence", query = "SELECT t FROM DocumentType t WHERE t.expires = :vence"),
-            @NamedQuery(name = "TipoDeDocumento.findByDiasVencimiento", query = "SELECT t FROM DocumentType t WHERE t.dueDays = :diasVencimiento"),
-            @NamedQuery(name = "TipoDeDocumento.findByNombre", query = "SELECT t FROM DocumentType t WHERE t.name = :nombre")
+            @NamedQuery(name = "DocumentType.findAll", query = "SELECT t FROM DocumentType t"),
+            @NamedQuery(name = "DocumentType.findByIdDocumentType", query = "SELECT t FROM DocumentType t WHERE t.idDocumentType = :idTipoDocumento"),
+            @NamedQuery(name = "DocumentType.findByExpires", query = "SELECT t FROM DocumentType t WHERE t.expires = :vence"),
+            @NamedQuery(name = "DocumentType.findByDueDays", query = "SELECT t FROM DocumentType t WHERE t.dueDays = :diasVencimiento"),
+            @NamedQuery(name = "DocumentType.findByName", query = "SELECT t FROM DocumentType t WHERE t.name = :name")
         })
 public class DocumentType implements Serializable, Persistable<Integer>
 {

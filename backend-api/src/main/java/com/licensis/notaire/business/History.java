@@ -37,10 +37,10 @@ import org.springframework.data.domain.Persistable;
 @XmlRootElement
 @NamedQueries(
         {
-            @NamedQuery(name = "Historial.findAll", query = "SELECT h FROM History h"),
-            @NamedQuery(name = "Historial.findByIdHistorial", query = "SELECT h FROM History h WHERE h.idHistory = :idHistorial"),
-            @NamedQuery(name = "Historial.findByIdGestion", query = "SELECT h FROM History h WHERE h.fkIdManagement.idManagement = :idGestion"),
-            @NamedQuery(name = "Historial.findByFecha", query = "SELECT h FROM History h WHERE h.date = :fecha")
+            @NamedQuery(name = "History.findAll", query = "SELECT h FROM History h"),
+            @NamedQuery(name = "History.findByIdHistory", query = "SELECT h FROM History h WHERE h.idHistory = :idHistorial"),
+            @NamedQuery(name = "History.findByIdManagement", query = "SELECT h FROM History h WHERE h.fkIdManagement.idManagement = :idGestion"),
+            @NamedQuery(name = "History.findByDate", query = "SELECT h FROM History h WHERE h.date = :fecha")
         })
 public class History implements Serializable, Persistable<Integer>
 {

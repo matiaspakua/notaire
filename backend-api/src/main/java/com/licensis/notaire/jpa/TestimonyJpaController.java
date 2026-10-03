@@ -363,7 +363,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         List<Testimony> lista = null;
 
-        Query query = em.createNamedQuery("Testimonio.findByEscritura");
+        Query query = em.createNamedQuery("Testimony.findByDeed");
         query.setParameter("idEscritura", idDeed);
 
         lista = (List<Testimony>) query.getResultList();
@@ -377,7 +377,7 @@ public class TestimonyJpaController implements Serializable, IPersistenciaJpa
         Testimony testimony = null;
         EntityManager em = getEntityManager();
 
-        Query query = em.createNamedQuery("Testimonio.findByIdTestimonio");
+        Query query = em.createNamedQuery("Testimony.findByIdTestimony");
         query.setParameter("idTestimonio", idTestimony);
 
         testimony = (Testimony) query.getResultList().get(0);

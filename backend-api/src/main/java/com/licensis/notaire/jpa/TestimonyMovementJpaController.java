@@ -209,7 +209,7 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
         List<TestimonyMovement> movTestimony = null;
         EntityManager em = getEntityManager();
 
-        Query query = em.createNamedQuery("MovimientoTestimonio.findByTestimonio");
+        Query query = em.createNamedQuery("TestimonyMovement.findByTestimony");
         query.setParameter("idTestimonio", idTestimony);
 
         movTestimony = (List<TestimonyMovement>) query.getResultList();
@@ -223,7 +223,7 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
         TestimonyMovement movTestimony = null;
         EntityManager em = getEntityManager();
 
-        Query query = em.createNamedQuery("MovimientoTestimonio.findByIdMovimientoTestimonio");
+        Query query = em.createNamedQuery("TestimonyMovement.findByIdTestimonyMovement");
         query.setParameter("idMovimientoTestimonio", idMovement);
 
         movTestimony = (TestimonyMovement) query.getResultList().get(0);

@@ -57,10 +57,10 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @Table(name = "deed_managements")
 @XmlRootElement
 @NamedQueries({
-        @NamedQuery(name = "GestionDeEscritura.findAll", query = "SELECT g FROM DeedManagement g"),
-        @NamedQuery(name = "GestionDeEscritura.findByIdGestion", query = "SELECT g FROM DeedManagement g WHERE g.idManagement = :idGestion"),
-        @NamedQuery(name = "GestionDeEscritura.findByNumero", query = "SELECT g FROM DeedManagement g WHERE g.number = :numero"),
-        @NamedQuery(name = "GestionDeEscritura.findByFechaInicio", query = "SELECT g FROM DeedManagement g WHERE g.dateStart = :fechaInicio")
+        @NamedQuery(name = "DeedManagement.findAll", query = "SELECT g FROM DeedManagement g"),
+        @NamedQuery(name = "DeedManagement.findByIdManagement", query = "SELECT g FROM DeedManagement g WHERE g.idManagement = :idGestion"),
+        @NamedQuery(name = "DeedManagement.findByNumber", query = "SELECT g FROM DeedManagement g WHERE g.number = :number"),
+        @NamedQuery(name = "DeedManagement.findByStartDate", query = "SELECT g FROM DeedManagement g WHERE g.dateStart = :fechaInicio")
 })
 public class DeedManagement implements Serializable, Persistable<Integer> {
 

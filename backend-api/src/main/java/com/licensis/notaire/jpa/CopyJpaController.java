@@ -327,7 +327,7 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
         List<Copy> copies = null;
         EntityManager em = getEntityManager();
 
-        Query query = em.createNamedQuery("Copia.findByTestimonio");
+        Query query = em.createNamedQuery("Copy.findByTestimony");
         query.setParameter("idTestimonio", idTestimony);
 
         copies = (List<Copy>) query.getResultList();

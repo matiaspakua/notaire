@@ -39,11 +39,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries(
         {
-            @NamedQuery(name = "Testimonio.findAll", query = "SELECT t FROM Testimony t"),
-            @NamedQuery(name = "Testimonio.findByIdTestimonio", query = "SELECT t FROM Testimony t WHERE t.idTestimony = :idTestimonio"),
-            @NamedQuery(name = "Testimonio.findByNumero", query = "SELECT t FROM Testimony t WHERE t.number = :numero"),
-            @NamedQuery(name = "Testimonio.findByEscritura", query = "SELECT t FROM Testimony t WHERE t.fkIdDeed.idDeed = :idEscritura"),
-            @NamedQuery(name = "Testimonio.findByObservado", query = "SELECT t FROM Testimony t WHERE t.flagged = :observado")
+            @NamedQuery(name = "Testimony.findAll", query = "SELECT t FROM Testimony t"),
+            @NamedQuery(name = "Testimony.findByIdTestimony", query = "SELECT t FROM Testimony t WHERE t.idTestimony = :idTestimonio"),
+            @NamedQuery(name = "Testimony.findByNumber", query = "SELECT t FROM Testimony t WHERE t.number = :numero"),
+            @NamedQuery(name = "Testimony.findByDeed", query = "SELECT t FROM Testimony t WHERE t.fkIdDeed.idDeed = :idEscritura"),
+            @NamedQuery(name = "Testimony.findByFlagged", query = "SELECT t FROM Testimony t WHERE t.flagged = :flagged")
         })
 public class Testimony implements Serializable, Persistable<Integer>
 {

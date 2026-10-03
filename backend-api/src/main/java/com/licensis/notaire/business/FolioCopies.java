@@ -31,10 +31,10 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries(
         {
-            @NamedQuery(name = "FoliosCopias.findAll", query = "SELECT f FROM FolioCopies f"),
-            @NamedQuery(name = "FoliosCopias.findByVersion", query = "SELECT f FROM FolioCopies f WHERE f.version = :version"),
-            @NamedQuery(name = "FoliosCopias.findByFkIdFolio", query = "SELECT f FROM FolioCopies f WHERE f.folioCopiesPK.fkIdFolio = :fkIdFolio"),
-            @NamedQuery(name = "FoliosCopias.findByFkIdCopia", query = "SELECT f FROM FolioCopies f WHERE f.folioCopiesPK.fkIdCopy = :fkIdCopia")
+            @NamedQuery(name = "FolioCopy.findAll", query = "SELECT f FROM FolioCopies f"),
+            @NamedQuery(name = "FolioCopy.findByVersion", query = "SELECT f FROM FolioCopies f WHERE f.version = :version"),
+            @NamedQuery(name = "FolioCopy.findByFkIdFolio", query = "SELECT f FROM FolioCopies f WHERE f.folioCopiesPK.fkIdFolio = :fkIdFolio"),
+            @NamedQuery(name = "FolioCopy.findByFkIdCopy", query = "SELECT f FROM FolioCopies f WHERE f.folioCopiesPK.fkIdCopy = :fkIdCopia")
         })
 public class FolioCopies implements Serializable, Persistable<FolioCopiesPK>
 {

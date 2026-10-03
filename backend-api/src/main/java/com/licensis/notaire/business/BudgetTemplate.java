@@ -35,9 +35,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries(
         {
-            @NamedQuery(name = "PlantillaPresupuesto.findAll", query = "SELECT p FROM BudgetTemplate p"),
-            @NamedQuery(name = "PlantillaPresupuesto.findByFkIdTipoTramite", query = "SELECT p FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdProcedureType = :fkIdTipoTramite"),
-            @NamedQuery(name = "PlantillaPresupuesto.findByFkIdConcepto", query = "SELECT p FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdConcept = :fkIdConcepto")
+            @NamedQuery(name = "BudgetTemplate.findAll", query = "SELECT p FROM BudgetTemplate p"),
+            @NamedQuery(name = "BudgetTemplate.findByFkIdProcedureType", query = "SELECT p FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdProcedureType = :fkIdTipoTramite"),
+            @NamedQuery(name = "BudgetTemplate.findByFkIdConcept", query = "SELECT p FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdConcept = :fkIdConcepto")
         })
 public class BudgetTemplate implements Serializable, Persistable<BudgetTemplatePK>
 {

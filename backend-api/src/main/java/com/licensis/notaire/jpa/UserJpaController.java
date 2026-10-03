@@ -262,7 +262,7 @@ public class UserJpaController implements Serializable, IPersistenciaJpa {
     public List<User> searchUsers() {
         EntityManager em = getEntityManager();
         try {
-            Query query = em.createNamedQuery("Usuario.findAll");
+            Query query = em.createNamedQuery("User.findAll");
             return query.getResultList();
         } finally {
             em.close();
@@ -278,7 +278,7 @@ public class UserJpaController implements Serializable, IPersistenciaJpa {
             return null;
         EntityManager em = getEntityManager();
         try {
-            Query query = em.createNamedQuery("Usuario.findByFkIdPersona");
+            Query query = em.createNamedQuery("User.findByPersonId");
             query.setParameter("idPersona", idPerson);
             @SuppressWarnings("unchecked")
             List<User> results = query.getResultList();

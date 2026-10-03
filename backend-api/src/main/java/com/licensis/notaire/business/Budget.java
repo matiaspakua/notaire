@@ -46,12 +46,12 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @Table(name = "budgets")
 @XmlRootElement
 @NamedQueries({
-        @NamedQuery(name = "Presupuesto.findAll", query = "SELECT p FROM Budget p"),
-        @NamedQuery(name = "Presupuesto.findByIdPresupuesto", query = "SELECT p FROM Budget p WHERE p.idBudget = :idPresupuesto"),
-        @NamedQuery(name = "Presupuesto.findByFecha", query = "SELECT p FROM Budget p WHERE p.date = :fecha"),
-        @NamedQuery(name = "Presupuesto.findByNumero", query = "SELECT p FROM Budget p WHERE p.number = :numero"),
-        @NamedQuery(name = "Presupuesto.findByEstado", query = "SELECT p FROM Budget p WHERE p.status = :estado"),
-        @NamedQuery(name = "Presupuesto.findByPersona", query = "SELECT p FROM Budget p WHERE p.fkIdPerson.idPerson = :idPersona"),
+        @NamedQuery(name = "Budget.findAll", query = "SELECT p FROM Budget p"),
+        @NamedQuery(name = "Budget.findByIdBudget", query = "SELECT p FROM Budget p WHERE p.idBudget = :idPresupuesto"),
+        @NamedQuery(name = "Budget.findByDate", query = "SELECT p FROM Budget p WHERE p.date = :fecha"),
+        @NamedQuery(name = "Budget.findByNumber", query = "SELECT p FROM Budget p WHERE p.number = :number"),
+        @NamedQuery(name = "Budget.findByStatus", query = "SELECT p FROM Budget p WHERE p.status = :status"),
+        @NamedQuery(name = "Budget.findByPerson", query = "SELECT p FROM Budget p WHERE p.fkIdPerson.idPerson = :idPersona"),
 })
 public class Budget implements Serializable, Persistable<Integer> {
 

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **JPA NamedQuery name strings Englishized** (issue #1022): rename Spanish
+  `@NamedQuery(name=…)` identifiers and matching `createNamedQuery` call sites
+  under `backend-api` to English entity prefixes and method tails (e.g.
+  `Escritura.findByFechaEscrituracion` → `Deed.findByDeedDate`); fix latent
+  `Persona.*` vs `Person.*` mismatch. Where English names collide with Spring
+  Data repository methods, JPQL named *parameters* (not entity/field paths) are
+  Englishized so binding still works. Schema and API unchanged. Guarded by
+  `NamedQueryEnglishNamesHygieneTest`.
+
 ### Removed
 
 - **Swing E2E leftovers** (issue #811, CU76 / ADR-012): durable retirement of

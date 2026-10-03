@@ -219,7 +219,7 @@ public class PaymentJpaController implements Serializable, IPersistenciaJpa
         try
         {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("Pago.findByPresupuesto");
+            Query q = em.createNamedQuery("Payment.findByBudget");
 
             //Le paso el nombre del parametro del query, y el valor a buscar.
             q.setParameter("idPresupuesto", pIdBudget);

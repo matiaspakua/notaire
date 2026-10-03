@@ -299,7 +299,7 @@ class AuditRecordJpaControllerTest {
             all.add(ra1);
             all.add(ra2);
 
-            when(em.createNamedQuery("RegistroAuditoria.findAll")).thenReturn(query);
+            when(em.createNamedQuery("AuditRecord.findAll")).thenReturn(query);
             when(query.getResultList()).thenReturn(all);
 
             ArrayList<AuditRecord> result = controller.searchRecordAuditoriasUser(user);
@@ -318,7 +318,7 @@ class AuditRecordJpaControllerTest {
             ra1.setFkIdUser(new User(5));
             all.add(ra1);
 
-            when(em.createNamedQuery("RegistroAuditoria.findAll")).thenReturn(query);
+            when(em.createNamedQuery("AuditRecord.findAll")).thenReturn(query);
             when(query.getResultList()).thenReturn(all);
 
             ArrayList<AuditRecord> result = controller.searchRecordAuditoriasUser(user);
@@ -329,7 +329,7 @@ class AuditRecordJpaControllerTest {
         @Test
         @DisplayName("should handle exception gracefully")
         void shouldHandleException() {
-            when(em.createNamedQuery("RegistroAuditoria.findAll")).thenThrow(new RuntimeException("DB error"));
+            when(em.createNamedQuery("AuditRecord.findAll")).thenThrow(new RuntimeException("DB error"));
 
             ArrayList<AuditRecord> result = controller.searchRecordAuditoriasUser(new User(1));
 

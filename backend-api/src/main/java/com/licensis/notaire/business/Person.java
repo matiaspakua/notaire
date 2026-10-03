@@ -83,14 +83,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 })
 @NamedQueries({
         @NamedQuery(name = "Person.findAll", query = "SELECT p FROM Person p"),
-        @NamedQuery(name = "Person.findByIdPersona", query = "SELECT p FROM Person p WHERE p.idPerson = :idPersona"),
-        @NamedQuery(name = "Person.findByNumeroIdentificacion", query = "SELECT p FROM Person p WHERE p.identificationNumber = :numeroIdentificacion"),
-        @NamedQuery(name = "Person.findBySexo", query = "SELECT p FROM Person p WHERE p.sex = :sexo"),
-        @NamedQuery(name = "Person.findByFechaNacimiento", query = "SELECT p FROM Person p WHERE p.birthDate = :fechaNacimiento"),
-        @NamedQuery(name = "Person.findByNumeroNupcias", query = "SELECT p FROM Person p WHERE p.marriageCount = :numeroNupcias"),
-        @NamedQuery(name = "Person.findByRegistroEscribano", query = "SELECT p FROM Person p WHERE p.notaryRegistrationNumber = :registroEscribano"),
-        @NamedQuery(name = "Person.findByEsCliente", query = "SELECT p FROM Person p WHERE p.isClient = :esCliente"),
-        @NamedQuery(name = "Person.findByPersonaNombreApellido", query = "SELECT p FROM Person p WHERE p.name LIKE :nombre and p.lastName LIKE :apellido"),
+        @NamedQuery(name = "Person.findByIdPerson", query = "SELECT p FROM Person p WHERE p.idPerson = :idPersona"),
+        @NamedQuery(name = "Person.findByIdentificationNumber", query = "SELECT p FROM Person p WHERE p.identificationNumber = :identificationNumber"),
+        @NamedQuery(name = "Person.findBySex", query = "SELECT p FROM Person p WHERE p.sex = :sex"),
+        @NamedQuery(name = "Person.findByBirthDate", query = "SELECT p FROM Person p WHERE p.birthDate = :fechaNacimiento"),
+        @NamedQuery(name = "Person.findByMarriageCount", query = "SELECT p FROM Person p WHERE p.marriageCount = :numeroNupcias"),
+        @NamedQuery(name = "Person.findByNotaryRegistrationNumber", query = "SELECT p FROM Person p WHERE p.notaryRegistrationNumber = :registroEscribano"),
+        @NamedQuery(name = "Person.findByIsClient", query = "SELECT p FROM Person p WHERE p.isClient = :isClient"),
+        @NamedQuery(name = "Person.findByPersonNameLastName", query = "SELECT p FROM Person p WHERE p.name LIKE :nombre and p.lastName LIKE :apellido"),
 })
 public class Person implements Serializable, Persistable<Integer> {
 

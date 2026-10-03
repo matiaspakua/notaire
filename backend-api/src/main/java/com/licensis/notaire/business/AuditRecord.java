@@ -34,9 +34,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries(
         {
-            @NamedQuery(name = "RegistroAuditoria.findAll", query = "SELECT r FROM AuditRecord r"),
-            @NamedQuery(name = "RegistroAuditoria.findByIdRegistroAuditoria", query = "SELECT r FROM AuditRecord r WHERE r.idAuditRecord = :idRegistroAuditoria"),
-            @NamedQuery(name = "RegistroAuditoria.findByFecha", query = "SELECT r FROM AuditRecord r WHERE r.date = :fecha")
+            @NamedQuery(name = "AuditRecord.findAll", query = "SELECT r FROM AuditRecord r"),
+            @NamedQuery(name = "AuditRecord.findByIdAuditRecord", query = "SELECT r FROM AuditRecord r WHERE r.idAuditRecord = :idRegistroAuditoria"),
+            @NamedQuery(name = "AuditRecord.findByDate", query = "SELECT r FROM AuditRecord r WHERE r.date = :fecha")
         })
 public class AuditRecord implements Serializable, Persistable<Integer>
 {

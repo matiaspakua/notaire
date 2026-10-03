@@ -338,7 +338,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         List<Folio> miListaFolios = null;
         try
         {
-            Query q = em.createNamedQuery("Folio.findByAnioAndRegistro");
+            Query q = em.createNamedQuery("Folio.findByYearAndRegistration");
             q.setParameter("anio", year);
             q.setParameter("registro", record);
             miListaFolios = q.getResultList();
@@ -364,8 +364,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
         List<Folio> miListaFolios = null;
         try
         {
-            Query q = em.createNamedQuery("Folio.findByNumero");
-            q.setParameter("numero", number);
+            Query q = em.createNamedQuery("Folio.findByNumber");
+            q.setParameter("number", number);
 
             miListaFolios = q.getResultList();
 

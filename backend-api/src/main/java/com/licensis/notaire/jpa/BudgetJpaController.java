@@ -386,7 +386,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
 
         try {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("Presupuesto.findByPersona");
+            Query q = em.createNamedQuery("Budget.findByPerson");
 
             // Le paso el nombre del parametro del query, y el valor a buscar.
             q.setParameter("idPersona", pIdPerson);
@@ -422,7 +422,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
 
         try {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("Presupuesto.findByPersonaTramite");
+            Query q = em.createNamedQuery("Budget.findByPersonProcedure");
 
             // Le paso el nombre del parametro del query, y el valor a buscar.
             q.setParameter("idPersona", pIdPerson);
@@ -442,7 +442,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
 
         try {
             // Nombre del @NamedQuery definido en nuestra clase
-            Query q = em.createNamedQuery("Presupuesto.findByIdPresupuesto");
+            Query q = em.createNamedQuery("Budget.findByIdBudget");
 
             // Le paso el nombre del parametro del query, y el valor a buscar.
             q.setParameter("idPresupuesto", idBudget);

@@ -239,8 +239,8 @@ public class PropertyJpaController implements Serializable, IPersistenciaJpa
         List<Property> properties = null;
         Property miProperty = null;
 
-        Query query = em.createNamedQuery("Inmueble.findByNomenclatura");
-        query.setParameter("nomenclatura", dtoProperty.getCadastralDesignation());
+        Query query = em.createNamedQuery("Property.findByCadastralDesignation");
+        query.setParameter("cadastralDesignation", dtoProperty.getCadastralDesignation());
 
         properties = query.getResultList();
 

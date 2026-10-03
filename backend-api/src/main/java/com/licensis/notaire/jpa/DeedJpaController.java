@@ -363,8 +363,8 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         List<Deed> escrituras = null;
 
-        Query query = em.createNamedQuery("Escritura.findByNumero");
-        query.setParameter("numero", number);
+        Query query = em.createNamedQuery("Deed.findByNumber");
+        query.setParameter("number", number);
 
         escrituras = query.getResultList();
 
@@ -376,7 +376,7 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = getEntityManager();
         Deed deed = null;
 
-        Query query = em.createNamedQuery("Escritura.findByIdEscritura");
+        Query query = em.createNamedQuery("Deed.findByIdDeed");
         query.setParameter("idEscritura", id);
 
         deed = (Deed) query.getResultList().get(0);
