@@ -15,7 +15,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   through next-intl catalogs; extend `i18n.test.ts` required-key gate; TS-0040
   asserts EN titles on roles and workflows.
 
+### Changed
+
+- **BREAKING — REST create conventions** (issue #1065, CU76 / ADR-023):
+  `POST /api/v1/minutas-inscripcion` now returns `201 Created` (was `200`) with
+  a `Location` header. Sample creates on `POST /api/v1/pagos` and
+  `POST /api/v1/folio` also emit `Location` via shared `CreatedResponses`.
+  Path renames remain phased per ADR-023 (not big-bang).
+
+### Removed
+
+- **BREAKING — unused payment params create** (issue #1065, CU76):
+  `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
+  `POST /api/v1/pagos` (JSON body).
+
 ### Added
+
+- **ADR-023 REST resource naming** (issue #1065, CU76): English resource nouns
+  matching established `/api/v1` paths, plural collections, `/search`, action
+  sub-resources, and `201`+`Location` for creates; ADR-003 remains versioning-only.
 
 - **CU-API-MATRIX English refresh + CI validator** (issue #1064, CU76): rename
   22 stale Spanish controller class names to current `adapter.in.web` English

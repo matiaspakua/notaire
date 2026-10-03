@@ -40,6 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -258,6 +259,7 @@ class PaymentControllerTest {
                 .contentType("application/json")
                 .content(json))
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/v1/pagos/1"))
                 .andExpect(jsonPath("$.idPayment").value(1));
 
         ArgumentCaptor<ProcessPaymentCommand> command = ArgumentCaptor.forClass(ProcessPaymentCommand.class);
@@ -353,61 +355,20 @@ class PaymentControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/pagos/params should return 201 when pago created via params")
-    void shouldCreatePaymentViaParams() throws Exception {
-        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class))).thenReturn(buildPayment());
-
-        mockMvc.perform(post("/api/v1/pagos/params")
+    @DisplayName("POST /api/v1/pagos/params should be absent (unused create surface removed)")
+    void shouldNotExposePaymentParamsCreateRoute() throws Exception {
+        int statusCode = mockMvc.perform(post("/api/v1/pagos/params")
                 .param("idBudget", "10")
                 .param("amount", "500.0")
                 .param("date", "2026-06-16")
                 .param("notes", "Test pago"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.idPayment").value(1));
-    }
+                .andReturn()
+                .getResponse()
+                .getStatus();
 
-    @Test
-    @DisplayName("POST /api/v1/pagos/params should handle missing optional params")
-    void shouldHandleMissingOptionalParams() throws Exception {
-        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class))).thenReturn(buildPayment());
-
-        mockMvc.perform(post("/api/v1/pagos/params")
-                .param("idBudget", "10")
-                .param("amount", "500.0"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.idPayment").value(1));
-
-        ArgumentCaptor<ProcessPaymentCommand> command = ArgumentCaptor.forClass(ProcessPaymentCommand.class);
-        verify(processPaymentUseCase).process(command.capture());
-        assertThat(command.getValue().budgetId()).isEqualTo(10);
-        assertThat(command.getValue().amount()).isEqualByComparingTo(new java.math.BigDecimal("500.0"));
-        assertThat(command.getValue().date()).isNull();
-        assertThat(command.getValue().notes()).isNull();
-        assertThat(command.getValue().paymentMethod()).isNull();
-    }
-
-    @Test
-    @DisplayName("POST /api/v1/pagos/params should return 409 when monto exceeds saldo pendiente")
-    void shouldReturn409OnParamsExceedsSaldo() throws Exception {
-        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class)))
-                .thenThrow(new PendingBalanceExceededException("no puede exceder el saldo pendiente"));
-
-        mockMvc.perform(post("/api/v1/pagos/params")
-                .param("idBudget", "10")
-                .param("amount", "999999.0"))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    @DisplayName("POST /api/v1/pagos/params should return 500 on service error")
-    void shouldReturn500OnParamsServiceError() throws Exception {
-        when(processPaymentUseCase.process(any(ProcessPaymentCommand.class)))
-                .thenThrow(new RuntimeException("Service error"));
-
-        mockMvc.perform(post("/api/v1/pagos/params")
-                .param("idBudget", "10")
-                .param("amount", "500.0"))
-                .andExpect(status().isInternalServerError());
+        // No matching create handler: standalone MockMvc reports 405; full stack may 404.
+        assertThat(statusCode).isIn(404, 405);
+        verify(processPaymentUseCase, times(0)).process(any(ProcessPaymentCommand.class));
     }
 
     @Test

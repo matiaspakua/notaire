@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -89,7 +90,8 @@ class RegistrationDraftControllerTest {
         mockMvc.perform(post("/api/v1/minutas-inscripcion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new RegistrationDraftController.GenerateRequest(1))))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/v1/minutas-inscripcion/1"))
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftGENERADA));
     }
 
