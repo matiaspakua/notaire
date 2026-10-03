@@ -3,7 +3,9 @@ info:
   type: http
   seq: 9
   description: |-
-      Traceability: CU02
+      Deletes History rows for this management first so FK constraints do not
+      return 409 after #806 registerStatus on create/update.
+      Traceability: CU02; CU13 (RF #110)
 http:
   method: DELETE
   url: "{{base_url}}/api/v1/gestiones/{{mgmt_id}}"
@@ -14,6 +16,20 @@ http:
       value: "Bearer {{token}}"
 runtime:
   scripts:
+    - type: before-request
+      code: |-
+          const baseUrl = bru.getEnvVar('base_url');
+          const token = bru.getVar('token');
+          const managementId = bru.getVar('mgmt_id');
+          const headers = { Authorization: `Bearer ${token}` };
+          const listed = await axios.get(
+            `${baseUrl}/api/v1/historial/gestion/${managementId}`,
+            { headers }
+          );
+          const rows = listed.data || [];
+          for (const row of rows) {
+            await axios.delete(`${baseUrl}/api/v1/historial/${row.idHistory}`, { headers });
+          }
     - type: tests
       code: |-
           test("Status 200 or 204", function () { expect([200,204]).to.include(res.getStatus()); });

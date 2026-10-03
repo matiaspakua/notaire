@@ -4,7 +4,9 @@ info:
   seq: 11
   description: |-
       ## Teardown — DELETE /api/v1/gestiones/{id}
-      Traceability: CU53 (RF #3, #13)
+      Deletes any remaining History rows for this management first (#806
+      registerStatus leaves an initial row after the explicit history delete).
+      Traceability: CU53 (RF #3, #13); CU13 (RF #110)
 http:
   method: DELETE
   url: "{{base_url}}/api/v1/gestiones/{{history_management_id}}"
@@ -15,6 +17,20 @@ http:
       value: "Bearer {{token}}"
 runtime:
   scripts:
+    - type: before-request
+      code: |-
+          const baseUrl = bru.getEnvVar('base_url');
+          const token = bru.getVar('token');
+          const managementId = bru.getVar('history_management_id');
+          const headers = { Authorization: `Bearer ${token}` };
+          const listed = await axios.get(
+            `${baseUrl}/api/v1/historial/gestion/${managementId}`,
+            { headers }
+          );
+          const rows = listed.data || [];
+          for (const row of rows) {
+            await axios.delete(`${baseUrl}/api/v1/historial/${row.idHistory}`, { headers });
+          }
     - type: tests
       code: |-
           test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });

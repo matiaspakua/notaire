@@ -3851,6 +3851,7 @@ paths:
       tags:
       - Gestiones
     post:
+      description: CU13 - When a status is provided, the initial status is appended to History.
       operationId: create_17
       requestBody:
         content:
@@ -3864,20 +3865,20 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: Bad request
         '409':
           content:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
-      summary: Crear nueva gestion
+          description: Conflict
+      summary: CU02 - Create a new management
       tags:
       - Gestiones
   /api/v1/gestiones/cliente/{idPerson}:
@@ -3987,6 +3988,7 @@ paths:
       tags:
       - Gestiones
     put:
+      description: CU13 - When the status id is first set or changes, a History row is appended.
       operationId: update_18
       parameters:
       - in: path
@@ -4005,8 +4007,8 @@ paths:
         '200':
           description: OK
         '404':
-          description: No encontrado
-      summary: Actualizar gestion
+          description: Not found
+      summary: CU53 - Update a management
       tags:
       - Gestiones
   /api/v1/gestiones/{id}/archivar:
@@ -4050,8 +4052,8 @@ paths:
       - Gestiones
   /api/v1/gestiones/{id}/complete-case:
     put:
-      description: CU22/CU59 - Si el escribano solicitado tiene una suplencia activa para la fecha de inicio de la gestión,
-        la gestión se redirige automáticamente al suplente y se deja constancia en el campo observaciones de la respuesta.
+      description: CU22/CU59 - If the requested notary has an active substitution for the management start date, the management
+        is redirected to the substitute and a note is recorded. CU13 - Status changes are appended to History via ManagementBitacoraService.
       operationId: updateCompleteCase
       parameters:
       - in: path
@@ -4073,7 +4075,7 @@ paths:
               schema:
                 type: object
           description: OK
-      summary: CU02 - Actualizar una gestión junto con sus dependencias obligatorias
+      summary: CU02 - Update a management with its required dependencies
       tags:
       - Gestiones
   /api/v1/gestiones/{id}/documentos-entidades-externas:
@@ -4148,6 +4150,8 @@ paths:
       - Gestiones
   /api/v1/gestiones/{id}/estado-actual:
     get:
+      description: Returns the latest History row by date when present; otherwise synthesizes a summary from DeedManagement.fkIdManagementStatus
+        (as-of-now). Missing management or null status yields 404.
       operationId: getStatusActual
       parameters:
       - in: path
@@ -4163,7 +4167,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoHistorySummary'
           description: OK
-      summary: Obtener estado actual de una gestion
+      summary: CU13/CU14 - Get current management status
       tags:
       - Gestiones
   /api/v1/gestiones/{id}/historial:
