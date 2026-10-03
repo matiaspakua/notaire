@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/test-1066-e2e-flakiness/` | Gate 1 validated on branch |
 | Branch | `cursor/fix-1066-e2e-flakiness-69d3` | created |
 | Tasks | `tasks.md` | Gate 1 planning complete; implement pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
+| Commits | `823f67d5` | pushed |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1147 | open (draft) |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
