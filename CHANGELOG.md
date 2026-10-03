@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Plain gestión notary assignment consults active Substitution** (issue #805,
+  CU22 / CU02): residual after #836 — `POST`/`PUT /api/v1/gestiones` now call
+  `ManagementSubstitutionService.resolveNotary` (same as complete-case) and
+  append a redirection note when an active substitution covers the requested
+  notary. Integration coverage for plain create/update; TS-0092 toast detects
+  the English note marker.
+
 ### Added
 
 - **Document type enabled and returned on admin form** (issue #800, CU27 / CU32 /

@@ -10,9 +10,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * CU22/CU59 - Resuelve el escribano efectivo de una gestión: si el escribano
- * solicitado tiene una {@link Suplencia} activa como suplantado para la fecha
- * dada (RF-89), la gestión se redirige a su suplente en su lugar.
+ * CU22/CU59 - Resolves the effective notary for a management: if the requested
+ * notary has an active {@link Substitution} as the substituted notary for the
+ * given date (RF-89 / RF-115), the management is redirected to the substitute.
  */
 @Service
 public class ManagementSubstitutionService {
@@ -24,25 +24,25 @@ public class ManagementSubstitutionService {
     }
 
     /**
-     * Escribano finalmente asignado a la gestión, junto con la suplencia que
-     * motivó la redirección ({@code null} cuando no hubo redirección).
+     * Notary finally assigned to the management, plus the substitution that
+     * caused the redirect ({@code null} when no redirect occurred).
      */
-    public record NotaryAsignado(Person notary, Substitution substitutionAplicada) { }
+    public record AssignedNotary(Person notary, Substitution appliedSubstitution) { }
 
     @Transactional(readOnly = true)
-    public NotaryAsignado resolverNotary(Person notarySolicitado, Date date) {
-        List<Substitution> suplenciasActivas = substitutionRepository
+    public AssignedNotary resolveNotary(Person requestedNotary, Date date) {
+        List<Substitution> activeSubstitutions = substitutionRepository
                 .findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
-                        notarySolicitado.getPersonId(), date, date);
-        return suplenciasActivas.stream()
+                        requestedNotary.getPersonId(), date, date);
+        return activeSubstitutions.stream()
                 .findFirst()
-                .map(substitution -> new NotaryAsignado(substitution.getFkIdSubstitute(), substitution))
-                .orElseGet(() -> new NotaryAsignado(notarySolicitado, null));
+                .map(substitution -> new AssignedNotary(substitution.getFkIdSubstitute(), substitution))
+                .orElseGet(() -> new AssignedNotary(requestedNotary, null));
     }
 
-    public String observacionRedireccion(Person notarySolicitado, Person suplente) {
-        return "Gestión redirigida por suplencia activa: escribano solicitado %s %s, asignada al suplente %s %s"
-                .formatted(notarySolicitado.getFirstName(), notarySolicitado.getLastName(),
-                        suplente.getFirstName(), suplente.getLastName());
+    public String redirectionNote(Person requestedNotary, Person substitute) {
+        return "Management redirected by active substitution: requested notary %s %s, assigned to substitute %s %s"
+                .formatted(requestedNotary.getFirstName(), requestedNotary.getLastName(),
+                        substitute.getFirstName(), substitute.getLastName());
     }
 }

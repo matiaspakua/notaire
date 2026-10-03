@@ -3853,8 +3853,9 @@ paths:
       tags:
       - Managements
     post:
-      description: CU13 - When a status is provided, the initial status is appended to History. Plain create has no procedure/workflow
-        yet, so any defined status is accepted.
+      description: CU22/CU59 - If the requested notary has an active substitution for the management start date, the management
+        is redirected to the substitute and a note is recorded. CU13 - When a status is provided, the initial status is appended
+        to History. Plain create has no procedure/workflow yet, so any defined status is accepted.
       operationId: create_17
       requestBody:
         content:
@@ -3992,8 +3993,10 @@ paths:
       tags:
       - Managements
     put:
-      description: CU83 **BREAKING** - Changing managementStatusId is rejected; use POST /{id}/transition. Same-status updates
-        remain allowed. CU13 - History for status changes is written by /transition (and create).
+      description: CU22/CU59 - If the requested notary has an active substitution for the management start date, the management
+        is redirected to the substitute and a note is recorded. CU83 **BREAKING** - Changing managementStatusId is rejected;
+        use POST /{id}/transition. Same-status updates remain allowed. CU13 - History for status changes is written by /transition
+        (and create).
       operationId: update_18
       parameters:
       - in: path

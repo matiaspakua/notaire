@@ -180,19 +180,19 @@ public class ManagementController {
             CaseDependencies dependencies) {
         management.setNumber(request.number());
         management.setEncabezado(request.encabezado() == null ? "Management" : request.encabezado());
-        ManagementSubstitutionService.NotaryAsignado assigned =
-                managementSubstitutionService.resolverNotary(dependencies.notary(), management.getDateStart());
+        ManagementSubstitutionService.AssignedNotary assigned =
+                managementSubstitutionService.resolveNotary(dependencies.notary(), management.getDateStart());
         management.setFkIdNotaryPerson(assigned.notary());
         management.setNotes(buildNotes(request.notes(), dependencies.notary(), assigned));
         management.setFkIdManagementStatus(dependencies.status());
     }
 
     private String buildNotes(String requestNotes, Person requestedNotary,
-            ManagementSubstitutionService.NotaryAsignado assigned) {
-        if (assigned.substitutionAplicada() == null) {
+            ManagementSubstitutionService.AssignedNotary assigned) {
+        if (assigned.appliedSubstitution() == null) {
             return requestNotes;
         }
-        String redirectionNote = managementSubstitutionService.observacionRedireccion(
+        String redirectionNote = managementSubstitutionService.redirectionNote(
                 requestedNotary, assigned.notary());
         if (requestNotes == null || requestNotes.isBlank()) {
             return redirectionNote;
@@ -401,17 +401,21 @@ public class ManagementController {
         }
         entity.setEncabezado(request.encabezado());
         entity.setDateStart(request.dateStart() != null ? request.dateStart() : new Date());
-        entity.setNotes(request.notes());
+        String notes = request.notes();
         if (request.pendingDebtAtArchiving() != null) {
             entity.setPendingDebtAtArchiving(request.pendingDebtAtArchiving());
         }
         if (request.notaryPersonId() != null) {
-            Person notary = personRepository.findById(request.notaryPersonId()).orElse(null);
-            if (notary == null) {
+            Person requestedNotary = personRepository.findById(request.notaryPersonId()).orElse(null);
+            if (requestedNotary == null) {
                 return false;
             }
-            entity.setFkIdNotaryPerson(notary);
+            ManagementSubstitutionService.AssignedNotary assigned =
+                    managementSubstitutionService.resolveNotary(requestedNotary, entity.getDateStart());
+            entity.setFkIdNotaryPerson(assigned.notary());
+            notes = buildNotes(notes, requestedNotary, assigned);
         }
+        entity.setNotes(notes);
         if (request.managementStatusId() != null) {
             ManagementStatus status = statusRepository.findById(request.managementStatusId())
                     .orElse(null);
@@ -431,7 +435,9 @@ public class ManagementController {
     @PostMapping
     @Transactional
     @Operation(summary = "CU02 - Create a new management",
-            description = "CU13 - When a status is provided, the initial status is appended to History. "
+            description = "CU22/CU59 - If the requested notary has an active substitution for the management "
+                    + "start date, the management is redirected to the substitute and a note is recorded. "
+                    + "CU13 - When a status is provided, the initial status is appended to History. "
                     + "Plain create has no procedure/workflow yet, so any defined status is accepted.")
     public ResponseEntity<Object> create(@Valid @RequestBody ManagementRequest request) {
         try {
@@ -460,7 +466,9 @@ public class ManagementController {
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "CU53 - Update a management",
-            description = "CU83 **BREAKING** - Changing managementStatusId is rejected; use "
+            description = "CU22/CU59 - If the requested notary has an active substitution for the management "
+                    + "start date, the management is redirected to the substitute and a note is recorded. "
+                    + "CU83 **BREAKING** - Changing managementStatusId is rejected; use "
                     + "POST /{id}/transition. Same-status updates remain allowed. "
                     + "CU13 - History for status changes is written by /transition (and create).")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody ManagementRequest request) {
