@@ -69,10 +69,10 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format (e.g. `chore(docker): pin compose and Dockerfile bases`, `ci(deps): add Dependabot docker`, `docs: …`)
-- [ ] 9.2 Every commit message ends with `Closes #1045`
-- [ ] 9.3 No secrets; do not absorb #1046 alert fixes or #1043 CD publish work
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format (e.g. `chore(docker): pin compose and Dockerfile bases`, `ci(deps): add Dependabot docker`, `docs: …`)
+- [x] 9.2 Every commit message ends with `Closes #1045`
+- [x] 9.3 No secrets; do not absorb #1046 alert fixes or #1043 CD publish work
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
