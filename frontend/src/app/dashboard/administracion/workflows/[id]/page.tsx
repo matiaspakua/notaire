@@ -95,7 +95,7 @@ export default function WorkflowEditorPage() {
     position: { x: n.positionX ?? 0, y: n.positionY ?? 0 },
     data: {
       label: withNodeIcon(
-        n.statusManagementName ?? t("nodeFallback", { id: n.id }),
+        n.statusManagementName ?? t("nodeFallback", { id: n.id ?? 0 }),
         n.type ?? "INTERMEDIATE",
       ),
       tipo: n.type ?? "INTERMEDIATE",
