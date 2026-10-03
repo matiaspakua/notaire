@@ -26,37 +26,37 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 Parametrise container names and host ports in `docker-compose.yml`
-- [ ] 4.2 Make `scripts/start.sh` follow the configured ports
-- [ ] 4.3 Add the eight optional keys to `.env.example`
-- [ ] 4.4 Guard green; defaults render unchanged
+- [x] 4.1 Parametrise container names and host ports in `docker-compose.yml`
+- [x] 4.2 Make `scripts/start.sh` follow the configured ports
+- [x] 4.3 Add the eight optional keys to `.env.example`
+- [x] 4.4 Guard green; defaults render unchanged
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing compose guards (`test_image_pins_and_dependabot.py`, `test_prod_compose.py`) still pass
-- [ ] 5.2 Nothing else references the literal ports in `start.sh`
+- [x] 5.1 Existing compose guards (`test_image_pins_and_dependabot.py`, `test_prod_compose.py`) still pass
+- [x] 5.2 Nothing else references the literal ports in `start.sh`
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — n/a (no Java touched)
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — n/a
-- [ ] 6.3 `mvn verify -pl backend-api` — n/a
+- [x] 6.1 `mvn test -pl backend-api` — n/a (no Java touched)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — n/a
+- [x] 6.3 `mvn verify -pl backend-api` — n/a
 - [ ] 6.4 Bruno/HTTP suites via `bash scripts/run_pipeline.sh` (default ports unchanged)
-- [ ] 6.5 No `@Disabled` tests
+- [x] 6.5 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a product UI — no spec edits
+- [x] 7.1 n/a product UI — no spec edits
 - [ ] 7.2 Required Playwright CI job must still pass on the PR
-- [ ] 7.3 n/a responsive UI checks
-- [ ] 7.4 Record "n/a — no UI surface"
+- [x] 7.3 n/a responsive UI checks
+- [x] 7.4 Record "n/a — no UI surface"
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `.env.example` keys documented
-- [ ] 8.2 `209-deployment/README.md` dev section: parallel stacks and the observability limitation
-- [ ] 8.3 CU76 ID table and `CHANGELOG.md`
-- [ ] 8.4 Confirm no information was duplicated
+- [x] 8.1 `.env.example` keys documented
+- [x] 8.2 `209-deployment/README.md` dev section: parallel stacks and the observability limitation
+- [x] 8.3 CU76 ID table and `CHANGELOG.md`
+- [x] 8.4 Confirm no information was duplicated
 - [ ] 8.5 `bash scripts/preflight.sh`
 
 ## 9. Commits atómicos

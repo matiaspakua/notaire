@@ -39,6 +39,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Configurable dev stack ports and container names** (issue #1186, CU76): host ports
+  (`POSTGRES_PORT`, `BACKEND_PORT`, `PGADMIN_PORT`, `FRONTEND_PORT`) and container names
+  (`NOTAIRE_<SERVICE>_CONTAINER_NAME`) in `docker-compose.yml` are overridable from `.env`
+  so parallel stacks can coexist; defaults unchanged and `scripts/start.sh` follows the
+  configured ports. Guard: `scripts/test_dev_stack_isolation.py`. The observability stack
+  only supports the default names.
+
 - **ADR-023 REST resource naming** (issue #1065, CU76): English resource nouns
   matching established `/api/v1` paths, plural collections, `/search`, action
   sub-resources, and `201`+`Location` for creates; ADR-003 remains versioning-only.
