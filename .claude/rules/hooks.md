@@ -17,15 +17,19 @@ describes the hooks and why they exist — it does not duplicate the process.
 
 ## Why the push guard exists
 
-GitHub branch protection is **not currently configured** on this repo's `main`
-branch (`gh api repos/matiaspakua/notaire/branches/main/protection` returns
-`404 Branch not protected`, verified 2026-09-22). CONSTITUTION.md already
-requires every change to land via Pull Request; this hook is defense in depth
-at the tool-call level so an agent (or a human pasting a command) can't
-accidentally push straight to `main` from inside a Claude Code session, even
-before that GitHub-side gap is closed. It is not a replacement for branch
-protection — configuring that on GitHub is a recommended follow-up, tracked
-separately (see the PR for issue #1027).
+GitHub enforces protection on `main` via the active repository ruleset
+`protect-main` (id `24128115`): pull-request-only merges, required status
+checks (`CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, `PR Validation`),
+and blocked force-push/deletion. Classic (legacy) branch protection is
+intentionally unused — do not layer it on top of the ruleset. See
+`docs/200-architecture/208-devsecops/README.md` and issue #1040; apply/assert
+with `scripts/apply-protect-main-ruleset.sh` /
+`scripts/assert-protect-main-ruleset.sh`.
+
+CONSTITUTION.md already requires every change to land via Pull Request. This
+Claude Code hook is **defense in depth** at the tool-call level so an agent
+(or a human pasting a command) cannot accidentally `git push` straight to
+`main` from inside a session. It is not a substitute for the GitHub ruleset.
 
 The hook only looks at the resolved destination branch of a `git push`
 invocation (explicit refspec, or the current branch when none is given). It

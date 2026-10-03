@@ -396,3 +396,29 @@ jobs:
           path: reports/e2e-coverage-*.md
           retention-days: 30
           if-no-files-found: ignore
+
+  # Suite aggregator for ruleset required check (#1040)
+  # Exact check-run name must be "Playwright E2E".
+  suite-playwright-e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [api-tests, e2e-tests]
+    if: ${{ always() && !cancelled() }}
+    steps:
+      - name: Require Playwright / Bruno suite jobs success
+        run: |
+          set -euo pipefail
+          failed=0
+          for pair in \
+            "api-tests=${{ needs.api-tests.result }}" \
+            "e2e-tests=${{ needs.e2e-tests.result }}"
+          do
+            name="${pair%%=*}"
+            result="${pair#*=}"
+            echo "${name}=${result}"
+            if [ "${result}" != "success" ]; then
+              failed=1
+            fi
+          done
+          exit "${failed}"
