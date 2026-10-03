@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Weekly k6 load-test script restored** (issue #1047, CU74/CU76):
+  `performance-test/k6/load-test.js` is back for the English login DTO
+  (`name`/`password`), covers gestiones/presupuestos/tramites with Bearer JWT,
+  enforces CU74 thresholds (p95 ≤ 2000ms, `http_req_failed` rate &lt; 1%), and
+  writes `summary.json` for the Performance workflow artifact. Asset unittest
+  `scripts/test_performance_test_assets.py` guards the contract; upload step
+  no longer ignores a missing summary.
+
 - **Icon-only dashboard buttons expose accessible names** (issue #1057, CU76 /
   WCAG 2.1 SC 4.1.2): seventeen edit/delete/resumen icon Buttons on personas,
   escrituras, pagos, presupuestos, and administración (usuarios, roles,

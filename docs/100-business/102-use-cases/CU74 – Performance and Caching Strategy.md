@@ -10,14 +10,16 @@
 | **Descripción** | Cubre los requerimientos no funcionales de rendimiento y sistema, optimizando la latencia de las transacciones notariales, consultas de carpetas, búsqueda de personas y generación de documentos en entornos de múltiples usuarios concurrentes. |
 | **Tipo** | Soporte / Arquitectura |
 | **Referencias Cruzadas** | RF #70 (Uso de memoria RAM), RF #71 (Uso de CPU), RF #72 (Tiempo de respuesta), RF #73 (Múltiples usuarios), RF #88 (PC de escritorio), RF #89 (Notebook); CU70, CU72 |
-| **GitHub ID** | #298, #278, #277, #290, #303 |
+| **GitHub ID** | #298, #278, #277, #290, #303, #594, #1047 |
 
 ## Alcance Técnico
 
 - Caché a nivel de aplicación (Spring Cache con Caffeine/Redis) para tablas maestras y catálogos (tipos de trámite, folios, conceptos).
 - Optimización de consultas JPA con estrategias Lazy/Eager y prevención de problemas N+1.
 - Configuración de pool de conexiones (HikariCP) y límites de aislamiento transaccional.
-- Establecimiento de líneas base de rendimiento y pruebas de carga automatizadas.
+- Establecimiento de líneas base de rendimiento y pruebas de carga automatizadas
+  (`performance-test/k6/load-test.js`, workflow semanal `performance-test.yml`;
+  umbrales CU74: p95 ≤ 2s, tasa de error &lt; 1%; issue #1047 / #594).
 
 ## Procedimiento de Ejecución y Monitoreo
 
@@ -35,3 +37,6 @@
 - [x] Gestión de transacciones Spring configurada con aislamiento apropiado.
 - [x] Pool de conexiones de base de datos ajustado y probado bajo concurrencia.
 - [x] Pruebas de carga ejecutadas con cumplimiento de SLAs (< 10 s tiempo de respuesta).
+- [x] Suite k6 restaurada en CI semanal / `workflow_dispatch` con login API en inglés
+  (`name`/`password`), umbrales p95 ≤ 2000 ms y `http_req_failed` &lt; 1%, y artefacto
+  `summary.json` (`k6-load-test-results`; issue #1047).
