@@ -18,9 +18,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | none | not applicable — same technical/internal-quality exception as epic #973 |
 | Specification | `openspec/changes/chore-1022-namedquery-english/` | complete |
 | Branch | `cursor/chore-1022-namedquery-english-69d3` | created from `origin/main` |
-| Tasks | `tasks.md` | pending |
-| Commits | | pending |
-| Pull Request | | pending |
+| Tasks | `tasks.md` | groups 1–8 complete; 9–12 at push/PR/merge |
+| Commits | `c536c686` docs(openspec); `0dc08bbd` test hygiene; `4b9efd3d` chore rename | pushed |
+| Pull Request | pending | pending |
 | CI run | | pending |
 | Merge commit | | pending |
 | Release / tag | | pending |
