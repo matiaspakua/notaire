@@ -43,17 +43,17 @@
 ## 6. Ejecutar regresión
 
 - [x] 6.1 `mvn test -pl backend-api -Dtest=DocumentTypeReferentialIntegrityTest,SubmittedDocumentControllerTest`
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` as capacity allows / via preflight
-- [ ] 6.3 `mvn verify -pl backend-api` as capacity allows / via preflight
+- [x] 6.2 `mvn jacoco:check -pl backend-api` as capacity allows / via preflight
+- [x] 6.3 `mvn verify -pl backend-api` as capacity allows / via preflight
 - [x] 6.4 Bruno — no contract break for existing clients
 - [x] 6.5 No `@Disabled` or skipped tests without justification
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add/extend Playwright for enabled+returned create/edit
-- [ ] 7.2 Run the document-type form Playwright specs
-- [ ] 7.3 Viewport sanity on the dialog (320 / 768 / 1024)
-- [ ] 7.4 Golden path + edge paths from design.md covered
+- [x] 7.1 Add/extend Playwright for enabled+returned create/edit
+- [x] 7.2 Run the document-type form Playwright specs
+- [x] 7.3 Viewport sanity on the dialog (320 / 768 / 1024)
+- [x] 7.4 Golden path + edge paths from design.md covered
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
@@ -62,22 +62,22 @@
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`)
 - [x] 8.4 Archive superseded documents — n/a
 - [x] 8.5 Confirm no information was duplicated
-- [ ] 8.6 `bash scripts/preflight.sh --fix` as capacity allows
+- [x] 8.6 `bash scripts/preflight.sh --fix` as capacity allows
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #800`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #800`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/feat-800-tipo-documento-defaults-69d3`
-- [ ] 10.2 Open draft PR `[#800] feat(frontend): expose document-type enabled and returned fields` with `Closes #800`
+- [x] 10.1 `git push -u origin cursor/feat-800-tipo-documento-defaults-69d3`
+- [x] 10.2 Open draft PR `[#800] feat(frontend): expose document-type enabled and returned fields` with `Closes #800`
 - [ ] 10.3 Wait for required workflows — coordinator watches heavy CI
 - [ ] 10.4 Gate 4 — CI green, code review, no conflicts — coordinator merges
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
