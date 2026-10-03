@@ -7,47 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- **JPA NamedQuery name strings Englishized** (issue #1022): rename Spanish
-  `@NamedQuery(name=…)` identifiers and matching `createNamedQuery` call sites
-  under `backend-api` to English entity prefixes and method tails (e.g.
-  `Escritura.findByFechaEscrituracion` → `Deed.findByDeedDate`); fix latent
-  `Persona.*` vs `Person.*` mismatch. Where English names collide with Spring
-  Data repository methods, JPQL named *parameters* (not entity/field paths) are
-  Englishized so binding still works. Schema and API unchanged. Guarded by
-  `NamedQueryEnglishNamesHygieneTest`.
-
-### Removed
-
-- **Swing E2E leftovers** (issue #811, CU76 / ADR-012): durable retirement of
-  Robot Swing E2E — hygiene fails if `e2e-swing.yml` or Maven `-pl frontend-swing`
-  / `deprecated-frontend-swing` returns in workflows; `testing/e2e-swing/`
-  hard-deprecated in place; live setup/testing docs no longer teach Swing
-  build/run. Active UI E2E remains Playwright.
-
-### Fixed
-
-- **Frontend i18n page coverage** (issue #1059, CU76 / ADR-015): wire remaining
-  dashboard gap pages (workflows list/editor, roles, suplencias, reportes,
-  items) and login leftovers (connection/lockout/validation/welcome/forgot/footer)
-  through next-intl catalogs; extend `i18n.test.ts` required-key gate; TS-0040
-  asserts EN titles on roles and workflows.
-
-### Changed
-
-- **BREAKING — REST create conventions** (issue #1065, CU76 / ADR-023):
-  `POST /api/v1/minutas-inscripcion` now returns `201 Created` (was `200`) with
-  a `Location` header. Sample creates on `POST /api/v1/pagos` and
-  `POST /api/v1/folio` also emit `Location` via shared `CreatedResponses`.
-  Path renames remain phased per ADR-023 (not big-bang).
-
-### Removed
-
-- **BREAKING — unused payment params create** (issue #1065, CU76):
-  `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
-  `POST /api/v1/pagos` (JSON body).
-
 ### Added
 
 - **Configurable dev stack ports and container names** (issue #1186, CU76): host ports
@@ -107,79 +66,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (representative PDFs), and registration-drafts (404/action surface); suite now
   297 requests / 508 tests, idempotent double `bru run`; docs/matrix updated.
 
-### Fixed
-
-- **`GET /testimonio/{id}` and `GET /movimiento-testimonio` failed when deed was null**
-  (issue #953, CU07/CU08/CU12): `Testimony.fkIdDeed` was `@ManyToOne(optional =
-  false)`, so Hibernate INNER JOINed `deeds` and findById/list missed valid rows
-  with a null FK; set `optional = true` to match the nullable column.
-
-- **Persona form swallowed non-409 backend validation** (issue #945, CU17/CU61):
-  present create/update errors via `presentPersonaSaveError` so HTTP 400
-  messages (e.g. blank identification) appear in toast and FormField errors;
-  keep curated localized 409 duplicate-document UX; stabilize Dedup-EDGE in
-  TS-0015.
-
-- **Suplencias/Reportes unreachable from navigation; duplicate admin pages**
-  (issue #1058, CU22/CU59/CU24/CU25/CU50/CU23): add sidebar + dashboard home
-  entries for `/dashboard/suplencias` and `/dashboard/reportes`; merge richer
-  admin Items UI into canonical `/dashboard/items`; redirect
-  `/dashboard/administracion/{items,auditoria}` to canonical routes; E2E
-  discovers modules via sidebar (`nav-*` test ids) instead of deep `goto`.
-
-- **Frontend Vitest branch coverage floor undercut on main** (issue #976, CU76):
-  root cause was an aspirational 6% branch floor (2026-07-29) later briefly
-  undercut (5.85% in 2026-09) as coverage denominators grew; subsequent unit
-  tests restored branches above 6%. Re-measured on `main` @ `68dc2cac`
-  (Statements 15.09% / Branches 10.52% / Functions 11.97% / Lines 15.55%) and
-  raised raise-only floors to 14 / 9 / 10 / 14 with ~1pp headroom; documented
-  policy in `code-quality.md` + frontend testing guides; guard test
-  `vitest-coverage-thresholds.test.ts`.
-
-### Changed
-
-- **Repo hygiene** (issue #1050, CU76): remove global `*.txt` gitignore ban
-  (keep `*.local.txt`); ignore and untrack `.serena/`; verify CODEOWNERS has
-  no `frontend-swing` (#1046); relocate the ~13 MB Manual de Usuario PDF to
-  GitHub Release `docs-manuals` (`scripts/fetch-user-manual.sh`); add
-  ADR-022 deferring `git filter-repo` history rewrite (related #585/#682).
-  Guarded by `scripts/test_repo_hygiene.py`.
-
-### Security
-
-- **Runtime backend URL proxy + remove login URL leak** (issue #1055, CU78):
-  replace build-time `next.config` `/api/v1` rewrites with an App Router Route
-  Handler BFF driven by server-only `BACKEND_URL`; stop baking Docker-internal
-  hosts via `NEXT_PUBLIC_API_URL`; remove the public login “Backend: …” line.
-  HttpOnly cookie forwarding (#1051) preserved; edge `proxy.ts` still skips
-  `/api/**` (#1056).
-
-- **Pin container images + Dependabot docker** (issue #1045, CU78): pin compose,
-  infra, Dockerfile, and CI postgres images to minor tags (no `:latest`, no bare
-  `sonarqube:community`, no major-only postgres); keep npm `/frontend`; add
-  Dependabot docker for `/backend-api` and `/frontend`. Guarded by
-  `scripts/test_image_pins_and_dependabot.py`. ADR-017 / DevSecOps / infra docs
-  updated.
-
-- **Protect `main` with ruleset** (issue #1040, CU76/CU78): extend ruleset
-  `protect-main` (id `24128115`) for PR-only merges, required checks
-  `CI` / `Frontend CI` / `Playwright E2E` / `Code Lint` / `PR Validation`, and
-  keep force-push/deletion blocked; `bypass_actors` empty after #1041. Thin
-  suite aggregator jobs publish the four missing check-run names; desired
-  state + admin apply/assert scripts under `scripts/rulesets/` and
-  `scripts/apply-protect-main-ruleset.sh` / `assert-protect-main-ruleset.sh`.
-  Guarded by `scripts/test_protect_main_ruleset.py`. **Admin must run**
-  `bash scripts/apply-protect-main-ruleset.sh --apply` after merge.
-
-- **Dependabot hygiene** (issue #1046, CU78): deleted dead
-  `deprecated-frontend-swing/` (EOL `log4j:log4j:1.2.17` alerts) and pinned
-  frontend `smol-toml` via npm `overrides` to `^1.9.0` (GHSA-7w5x-hrqm-74c2;
-  patched ≥1.7.1). Guarded by `scripts/test_dependabot_hygiene.py`. Live
-  CODEOWNERS/README/ADR-005/SAD references updated. `#585` (`deprecated-src.old`)
-  remains separate / out of scope.
-
-### Added
-
 - **Frontend GHCR publish + semver releases** (issue #1043, CU76): CD matrix
   publishes `ghcr.io/<owner>/notaire/frontend` from `frontend/Dockerfile`
   with CycloneDX SBOM, cosign sign, and SBOM attest (parity with backend);
@@ -196,94 +82,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ENVIRONMENT=production`; least-privilege backend env; Flyway
   baseline-on-migrate off. Guarded by `scripts/test_prod_compose.py`. Deployment
   guide and CU78/CU75 updated. TLS remains #254; backups remain #256.
-
-### Security
-
-- **HttpOnly JWT cookie + production CSP nonce** (issue #1051, CU78/CU84):
-  login sets `notaire-auth-token` (HttpOnly, SameSite=Lax, Secure via
-  `COOKIE_SECURE`); logout clears it; `JwtAuthenticationFilter` accepts cookie
-  or Bearer; frontend stops persisting JWT in `localStorage` and uses
-  `credentials: 'include'` through the Next proxy; production CSP uses
-  nonce-based `script-src` without `'unsafe-eval'`.
-
-### Changed
-
-- **Migrate Next.js edge interceptor to `proxy.ts`** (issue #1056, CU84):
-  apply official `@next/codemod middleware-to-proxy` so
-  `frontend/src/middleware.ts` becomes `frontend/src/proxy.ts` with
-  `export function proxy`. Route-guard semantics, `/api/**` skip, UX
-  status/role cookies, and #1051 CSP nonce headers are unchanged; `next build`
-  no longer emits the middleware-convention deprecation warning.
-
-- **ProductionCredentialsGuard** aligns with least-privilege prod compose
-  (issue #1044): optional pgAdmin/Grafana/exporter credentials are skipped when
-  blank/unset, while literal `admin` is still rejected when those services are
-  configured. Optional property defaults in `application.properties` are empty.
-
-- **Frontend ESLint is a blocking CI gate** (issue #1048, CU76):
-  `.github/workflows/frontend-ci.yml` no longer runs `npm run lint` with
-  `continue-on-error: true` (obsolete #701 advisory). Local
-  `scripts/preflight.sh` MAP documents the same blocking semantics
-  (`eslint src --max-warnings=0`). jsx-a11y remains enabled via
-  `eslint-config-next/core-web-vitals`. Guarded by
-  `scripts/tests/test_frontend_eslint_blocking.py`.
-
-### Fixed
-
-- **CI bots no longer commit reports to main** (issue #1041, CU76):
-  `ci.yml` / `cd.yml` / `playwright-e2e.yml` report jobs publish via
-  `actions/upload-artifact` + `$GITHUB_STEP_SUMMARY` (and optional Pages
-  mirror under `/cicd-reports/`); they no longer `git commit`/`git push` into
-  `docs/wiki/cicd-reports/`. That path is gitignored and untracked; report
-  jobs drop `contents: write` (CD `release` keeps write for GitHub Releases).
-  Guarded by `scripts/test_no_bot_report_commits.py`.
-
-- **CD publishes the CI-tested SHA, not tip of main** (issue #1042, CU76):
-  `.github/workflows/cd.yml` `build-and-publish` checks out
-  `workflow_run.head_sha` (fallback `github.sha` for tag/dispatch), tags the
-  image with that explicit publish SHA, and moves `latest` only after the
-  SHA-tagged push succeeds. Non-success CI still skips publish. Guarded by
-  `scripts/test_cd_pin_tested_sha.py`.
-
-- **Weekly k6 load-test script restored** (issue #1047, CU74/CU76):
-  `performance-test/k6/load-test.js` is back for the English login DTO
-  (`name`/`password`), covers gestiones/presupuestos/tramites with Bearer JWT,
-  enforces CU74 thresholds (p95 ≤ 2000ms, `http_req_failed` rate &lt; 1%), and
-  writes `summary.json` for the Performance workflow artifact. Asset unittest
-  `scripts/test_performance_test_assets.py` guards the contract; upload step
-  no longer ignores a missing summary.
-
-- **Icon-only dashboard buttons expose accessible names** (issue #1057, CU76 /
-  WCAG 2.1 SC 4.1.2): seventeen edit/delete/resumen icon Buttons on personas,
-  escrituras, pagos, presupuestos, and administración (usuarios, roles,
-  conceptos, documentos, trámites) now set translated `aria-label`s so screen
-  readers and Playwright `getByRole('button', { name })` can identify them.
-  Guarded by a static unit inventory test and E2E `TS-0096`; CU21 edit flows in
-  `TS-0016` are unskipped.
-
-- **CRUD screens show backend validation messages** (issue #1054, CU15/CU20):
-  mutation failures on ~15 dashboard pages use a shared `presentMutationError`
-  helper so users see the API `message`/`error` text (400/404/409/422/500) in
-  toasts instead of generic “error al guardar/eliminar” copy. When the body
-  includes bean-validation style `field: msg` detail that matches a form
-  control, the matching `FormField` shows the error and the control is marked
-  `aria-invalid`. Authenticated 401 remains on the session-expiry path (#1053).
-  Covered by unit tests and Playwright `TS-0095` (focused #615 slice).
-
-- **Admin screens blocked for non-admin users** (issue #1052, CU78): navigating
-  to `/dashboard/administracion/**` without an admin-capable role redirects to
-  `/dashboard?forbidden=1` with an access-denied message (edge proxy +
-  administración layout). Login sets a non-credential `notaire-auth-role`
-  cookie for the edge check. Covered by unit tests and Playwright `TS-0094`.
-  Backend RBAC remains #559; HttpOnly token migration shipped in #1051.
-
-- **Expired sessions redirect to login with a clear message** (issue #1053, CU84):
-  when an authenticated API call returns HTTP `401`, the Next.js client clears
-  local auth state and navigates to `/login?expired=1`, showing that the session
-  expired. Login credential failures and non-401 errors do not trigger this path.
-  Covered by unit tests and Playwright `TS-0093` (also closes the E2E gap in #690).
-
-### Added
 
 - **CodeQL and GitHub Security Lab baseline** (issue #1135, CU78):
   `.github/workflows/codeql.yml` analyzes Java, JavaScript/TypeScript, and
@@ -528,7 +326,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   asserts no horizontal overflow on the login page at 320px and 768px and on the dashboard at
   320px after login.
 
+- **ADR-007**: Database Schema Versioning with Flyway
+  - Added architecture decision record for Flyway implementation
+  - Documented migration strategy and best practices
+
+- **SAR-007**: Flyway Implementation Solution Architecture Report
+  - Detailed technical analysis and implementation plan
+  - Testing strategy for database migrations
+  - AI Agent Guidelines section
+
+- **Flyway Skill for AI Agents**: `.claude/skills/flyway/SKILL.md`
+  - Comprehensive guide for implementing Flyway migrations
+  - Examples, best practices, and common patterns
+  - Project-specific conventions and templates
+
+- **Database Migrations Rules**: `.claude/rules/database-migrations.md`
+  - Mandatory rules for all database changes
+  - Anti-patterns to avoid
+  - Rollback strategies and emergency procedures
+
+- **Database Migrations README**: `backend-api/src/main/resources/db/migration/README.md`
+  - Quick reference for developers
+  - Common patterns and templates
+  - Testing and validation commands
+
+<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Changed" block within [Unreleased] -->
+
 ### Changed
+
+- **JPA NamedQuery name strings Englishized** (issue #1022): rename Spanish
+  `@NamedQuery(name=…)` identifiers and matching `createNamedQuery` call sites
+  under `backend-api` to English entity prefixes and method tails (e.g.
+  `Escritura.findByFechaEscrituracion` → `Deed.findByDeedDate`); fix latent
+  `Persona.*` vs `Person.*` mismatch. Where English names collide with Spring
+  Data repository methods, JPQL named *parameters* (not entity/field paths) are
+  Englishized so binding still works. Schema and API unchanged. Guarded by
+  `NamedQueryEnglishNamesHygieneTest`.
+
+- **BREAKING — REST create conventions** (issue #1065, CU76 / ADR-023):
+  `POST /api/v1/minutas-inscripcion` now returns `201 Created` (was `200`) with
+  a `Location` header. Sample creates on `POST /api/v1/pagos` and
+  `POST /api/v1/folio` also emit `Location` via shared `CreatedResponses`.
+  Path renames remain phased per ADR-023 (not big-bang).
+
+- **Repo hygiene** (issue #1050, CU76): remove global `*.txt` gitignore ban
+  (keep `*.local.txt`); ignore and untrack `.serena/`; verify CODEOWNERS has
+  no `frontend-swing` (#1046); relocate the ~13 MB Manual de Usuario PDF to
+  GitHub Release `docs-manuals` (`scripts/fetch-user-manual.sh`); add
+  ADR-022 deferring `git filter-repo` history rewrite (related #585/#682).
+  Guarded by `scripts/test_repo_hygiene.py`.
+
+- **Migrate Next.js edge interceptor to `proxy.ts`** (issue #1056, CU84):
+  apply official `@next/codemod middleware-to-proxy` so
+  `frontend/src/middleware.ts` becomes `frontend/src/proxy.ts` with
+  `export function proxy`. Route-guard semantics, `/api/**` skip, UX
+  status/role cookies, and #1051 CSP nonce headers are unchanged; `next build`
+  no longer emits the middleware-convention deprecation warning.
+
+- **ProductionCredentialsGuard** aligns with least-privilege prod compose
+  (issue #1044): optional pgAdmin/Grafana/exporter credentials are skipped when
+  blank/unset, while literal `admin` is still rejected when those services are
+  configured. Optional property defaults in `application.properties` are empty.
+
+- **Frontend ESLint is a blocking CI gate** (issue #1048, CU76):
+  `.github/workflows/frontend-ci.yml` no longer runs `npm run lint` with
+  `continue-on-error: true` (obsolete #701 advisory). Local
+  `scripts/preflight.sh` MAP documents the same blocking semantics
+  (`eslint src --max-warnings=0`). jsx-a11y remains enabled via
+  `eslint-config-next/core-web-vitals`. Guarded by
+  `scripts/tests/test_frontend_eslint_blocking.py`.
 
 - **Bruno API suite in English and idempotent** (issue #1035, CU76):
   `backend-api/api-test/` folders, files, requests, tests, variables and
@@ -554,27 +420,117 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   status codes, persisted data and DB schema are identical, and the pattern is
   deliberately scoped to this one slice pending review.
 
-### Security
+- **Flyway Integration**: Migrated from init-db scripts to Flyway versioned migrations
+  - Scripts moved to `backend-api/src/main/resources/db/migration/`
+  - V1: Initial schema (24 tables)
+  - V2: Initial reference data and admin user
 
-- **Audit-log HTTP mutations denied end-to-end** (issue #1060 residual, CU73/CU78):
-  confirms GET-only `/api/v1/audit-log` (POST already removed in #1124); unit +
-  integration coverage for PUT/DELETE → 405; Bruno negatives under
-  `api-test/audit-records/`; OpenAPI tag is consult-only; threat model SR-07
-  notes the HTTP forge vector is closed.
-- **Request DTOs replace JPA `@RequestBody` entity binding** (issue #1068, CU78):
-  thirteen write endpoints now bind validated request records (client-writable
-  fields only) and return response DTOs, so clients cannot mass-assign
-  server-managed fields (`id`, `version`, status/audit). Affected resources:
-  property, identification type, person, budget, deed, item, history, copy,
-  substitution, procedure template, budget template, and management CRUD.
-  `POST /api/v1/audit-log` is removed — audit rows are written only by
-  `AuditoriaAspect` (aligns with #1060). Bruno bodies updated to flat FK ids.
-- **Dead default credentials removed** (issue #1069, CU78): dropped the unused
-  `spring.security.user.*` keys (`admin`/`admin`) from `application.properties`
-  and deleted the legacy Swing-era `config.properties` (plain-text database
-  credentials) that no code read. Actuator auth is unchanged (#1069)
+### Deprecated
+
+- `init-db/01-schema.sql` - Superseded by Flyway migration
+- `init-db/02-data.sql` - Superseded by Flyway migration
+
+<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Fixed" block within [Unreleased] -->
+
+### Removed
+
+- **Swing E2E leftovers** (issue #811, CU76 / ADR-012): durable retirement of
+  Robot Swing E2E — hygiene fails if `e2e-swing.yml` or Maven `-pl frontend-swing`
+  / `deprecated-frontend-swing` returns in workflows; `testing/e2e-swing/`
+  hard-deprecated in place; live setup/testing docs no longer teach Swing
+  build/run. Active UI E2E remains Playwright.
+
+- **BREAKING — unused payment params create** (issue #1065, CU76):
+  `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
+  `POST /api/v1/pagos` (JSON body).
 
 ### Fixed
+
+- **Frontend i18n page coverage** (issue #1059, CU76 / ADR-015): wire remaining
+  dashboard gap pages (workflows list/editor, roles, suplencias, reportes,
+  items) and login leftovers (connection/lockout/validation/welcome/forgot/footer)
+  through next-intl catalogs; extend `i18n.test.ts` required-key gate; TS-0040
+  asserts EN titles on roles and workflows.
+
+- **`GET /testimonio/{id}` and `GET /movimiento-testimonio` failed when deed was null**
+  (issue #953, CU07/CU08/CU12): `Testimony.fkIdDeed` was `@ManyToOne(optional =
+  false)`, so Hibernate INNER JOINed `deeds` and findById/list missed valid rows
+  with a null FK; set `optional = true` to match the nullable column.
+
+- **Persona form swallowed non-409 backend validation** (issue #945, CU17/CU61):
+  present create/update errors via `presentPersonaSaveError` so HTTP 400
+  messages (e.g. blank identification) appear in toast and FormField errors;
+  keep curated localized 409 duplicate-document UX; stabilize Dedup-EDGE in
+  TS-0015.
+
+- **Suplencias/Reportes unreachable from navigation; duplicate admin pages**
+  (issue #1058, CU22/CU59/CU24/CU25/CU50/CU23): add sidebar + dashboard home
+  entries for `/dashboard/suplencias` and `/dashboard/reportes`; merge richer
+  admin Items UI into canonical `/dashboard/items`; redirect
+  `/dashboard/administracion/{items,auditoria}` to canonical routes; E2E
+  discovers modules via sidebar (`nav-*` test ids) instead of deep `goto`.
+
+- **Frontend Vitest branch coverage floor undercut on main** (issue #976, CU76):
+  root cause was an aspirational 6% branch floor (2026-07-29) later briefly
+  undercut (5.85% in 2026-09) as coverage denominators grew; subsequent unit
+  tests restored branches above 6%. Re-measured on `main` @ `68dc2cac`
+  (Statements 15.09% / Branches 10.52% / Functions 11.97% / Lines 15.55%) and
+  raised raise-only floors to 14 / 9 / 10 / 14 with ~1pp headroom; documented
+  policy in `code-quality.md` + frontend testing guides; guard test
+  `vitest-coverage-thresholds.test.ts`.
+
+- **CI bots no longer commit reports to main** (issue #1041, CU76):
+  `ci.yml` / `cd.yml` / `playwright-e2e.yml` report jobs publish via
+  `actions/upload-artifact` + `$GITHUB_STEP_SUMMARY` (and optional Pages
+  mirror under `/cicd-reports/`); they no longer `git commit`/`git push` into
+  `docs/wiki/cicd-reports/`. That path is gitignored and untracked; report
+  jobs drop `contents: write` (CD `release` keeps write for GitHub Releases).
+  Guarded by `scripts/test_no_bot_report_commits.py`.
+
+- **CD publishes the CI-tested SHA, not tip of main** (issue #1042, CU76):
+  `.github/workflows/cd.yml` `build-and-publish` checks out
+  `workflow_run.head_sha` (fallback `github.sha` for tag/dispatch), tags the
+  image with that explicit publish SHA, and moves `latest` only after the
+  SHA-tagged push succeeds. Non-success CI still skips publish. Guarded by
+  `scripts/test_cd_pin_tested_sha.py`.
+
+- **Weekly k6 load-test script restored** (issue #1047, CU74/CU76):
+  `performance-test/k6/load-test.js` is back for the English login DTO
+  (`name`/`password`), covers gestiones/presupuestos/tramites with Bearer JWT,
+  enforces CU74 thresholds (p95 ≤ 2000ms, `http_req_failed` rate &lt; 1%), and
+  writes `summary.json` for the Performance workflow artifact. Asset unittest
+  `scripts/test_performance_test_assets.py` guards the contract; upload step
+  no longer ignores a missing summary.
+
+- **Icon-only dashboard buttons expose accessible names** (issue #1057, CU76 /
+  WCAG 2.1 SC 4.1.2): seventeen edit/delete/resumen icon Buttons on personas,
+  escrituras, pagos, presupuestos, and administración (usuarios, roles,
+  conceptos, documentos, trámites) now set translated `aria-label`s so screen
+  readers and Playwright `getByRole('button', { name })` can identify them.
+  Guarded by a static unit inventory test and E2E `TS-0096`; CU21 edit flows in
+  `TS-0016` are unskipped.
+
+- **CRUD screens show backend validation messages** (issue #1054, CU15/CU20):
+  mutation failures on ~15 dashboard pages use a shared `presentMutationError`
+  helper so users see the API `message`/`error` text (400/404/409/422/500) in
+  toasts instead of generic “error al guardar/eliminar” copy. When the body
+  includes bean-validation style `field: msg` detail that matches a form
+  control, the matching `FormField` shows the error and the control is marked
+  `aria-invalid`. Authenticated 401 remains on the session-expiry path (#1053).
+  Covered by unit tests and Playwright `TS-0095` (focused #615 slice).
+
+- **Admin screens blocked for non-admin users** (issue #1052, CU78): navigating
+  to `/dashboard/administracion/**` without an admin-capable role redirects to
+  `/dashboard?forbidden=1` with an access-denied message (edge proxy +
+  administración layout). Login sets a non-credential `notaire-auth-role`
+  cookie for the edge check. Covered by unit tests and Playwright `TS-0094`.
+  Backend RBAC remains #559; HttpOnly token migration shipped in #1051.
+
+- **Expired sessions redirect to login with a clear message** (issue #1053, CU84):
+  when an authenticated API call returns HTTP `401`, the Next.js client clears
+  local auth state and navigates to `/login?expired=1`, showing that the session
+  expired. Login credential failures and non-401 errors do not trigger this path.
+  Covered by unit tests and Playwright `TS-0093` (also closes the E2E gap in #690).
 
 - **Monetary amounts use `BigDecimal` / `NUMERIC` (issue #1061, CU15):**
   entities, shared DTOs, payment domain (`BudgetCharges`, status/summary),
@@ -928,50 +884,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - See `.claude/rules/database-migrations.md` for new migration workflow
 
 <!-- markdownlint-disable-next-line MD024 -- pre-existing second "Added" block within [Unreleased] -->
-### Added
-
-- **ADR-007**: Database Schema Versioning with Flyway
-  - Added architecture decision record for Flyway implementation
-  - Documented migration strategy and best practices
-
-- **SAR-007**: Flyway Implementation Solution Architecture Report
-  - Detailed technical analysis and implementation plan
-  - Testing strategy for database migrations
-  - AI Agent Guidelines section
-
-- **Flyway Skill for AI Agents**: `.claude/skills/flyway/SKILL.md`
-  - Comprehensive guide for implementing Flyway migrations
-  - Examples, best practices, and common patterns
-  - Project-specific conventions and templates
-
-- **Database Migrations Rules**: `.claude/rules/database-migrations.md`
-  - Mandatory rules for all database changes
-  - Anti-patterns to avoid
-  - Rollback strategies and emergency procedures
-
-- **Database Migrations README**: `backend-api/src/main/resources/db/migration/README.md`
-  - Quick reference for developers
-  - Common patterns and templates
-  - Testing and validation commands
-
-<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Changed" block within [Unreleased] -->
-### Changed
-
-- **Flyway Integration**: Migrated from init-db scripts to Flyway versioned migrations
-  - Scripts moved to `backend-api/src/main/resources/db/migration/`
-  - V1: Initial schema (24 tables)
-  - V2: Initial reference data and admin user
-
-### Deprecated
-
-- `init-db/01-schema.sql` - Superseded by Flyway migration
-- `init-db/02-data.sql` - Superseded by Flyway migration
-
-<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Fixed" block within [Unreleased] -->
-### Fixed
 
 - Updated Docker Compose to remove init-db volume mounts
 - Configured Spring Boot to use Flyway with `spring.flyway.*` properties
+
+### Security
+
+- **Runtime backend URL proxy + remove login URL leak** (issue #1055, CU78):
+  replace build-time `next.config` `/api/v1` rewrites with an App Router Route
+  Handler BFF driven by server-only `BACKEND_URL`; stop baking Docker-internal
+  hosts via `NEXT_PUBLIC_API_URL`; remove the public login “Backend: …” line.
+  HttpOnly cookie forwarding (#1051) preserved; edge `proxy.ts` still skips
+  `/api/**` (#1056).
+
+- **Pin container images + Dependabot docker** (issue #1045, CU78): pin compose,
+  infra, Dockerfile, and CI postgres images to minor tags (no `:latest`, no bare
+  `sonarqube:community`, no major-only postgres); keep npm `/frontend`; add
+  Dependabot docker for `/backend-api` and `/frontend`. Guarded by
+  `scripts/test_image_pins_and_dependabot.py`. ADR-017 / DevSecOps / infra docs
+  updated.
+
+- **Protect `main` with ruleset** (issue #1040, CU76/CU78): extend ruleset
+  `protect-main` (id `24128115`) for PR-only merges, required checks
+  `CI` / `Frontend CI` / `Playwright E2E` / `Code Lint` / `PR Validation`, and
+  keep force-push/deletion blocked; `bypass_actors` empty after #1041. Thin
+  suite aggregator jobs publish the four missing check-run names; desired
+  state + admin apply/assert scripts under `scripts/rulesets/` and
+  `scripts/apply-protect-main-ruleset.sh` / `assert-protect-main-ruleset.sh`.
+  Guarded by `scripts/test_protect_main_ruleset.py`. **Admin must run**
+  `bash scripts/apply-protect-main-ruleset.sh --apply` after merge.
+
+- **Dependabot hygiene** (issue #1046, CU78): deleted dead
+  `deprecated-frontend-swing/` (EOL `log4j:log4j:1.2.17` alerts) and pinned
+  frontend `smol-toml` via npm `overrides` to `^1.9.0` (GHSA-7w5x-hrqm-74c2;
+  patched ≥1.7.1). Guarded by `scripts/test_dependabot_hygiene.py`. Live
+  CODEOWNERS/README/ADR-005/SAD references updated. `#585` (`deprecated-src.old`)
+  remains separate / out of scope.
+
+- **HttpOnly JWT cookie + production CSP nonce** (issue #1051, CU78/CU84):
+  login sets `notaire-auth-token` (HttpOnly, SameSite=Lax, Secure via
+  `COOKIE_SECURE`); logout clears it; `JwtAuthenticationFilter` accepts cookie
+  or Bearer; frontend stops persisting JWT in `localStorage` and uses
+  `credentials: 'include'` through the Next proxy; production CSP uses
+  nonce-based `script-src` without `'unsafe-eval'`.
+
+- **Audit-log HTTP mutations denied end-to-end** (issue #1060 residual, CU73/CU78):
+  confirms GET-only `/api/v1/audit-log` (POST already removed in #1124); unit +
+  integration coverage for PUT/DELETE → 405; Bruno negatives under
+  `api-test/audit-records/`; OpenAPI tag is consult-only; threat model SR-07
+  notes the HTTP forge vector is closed.
+- **Request DTOs replace JPA `@RequestBody` entity binding** (issue #1068, CU78):
+  thirteen write endpoints now bind validated request records (client-writable
+  fields only) and return response DTOs, so clients cannot mass-assign
+  server-managed fields (`id`, `version`, status/audit). Affected resources:
+  property, identification type, person, budget, deed, item, history, copy,
+  substitution, procedure template, budget template, and management CRUD.
+  `POST /api/v1/audit-log` is removed — audit rows are written only by
+  `AuditoriaAspect` (aligns with #1060). Bruno bodies updated to flat FK ids.
+- **Dead default credentials removed** (issue #1069, CU78): dropped the unused
+  `spring.security.user.*` keys (`admin`/`admin`) from `application.properties`
+  and deleted the legacy Swing-era `config.properties` (plain-text database
+  credentials) that no code read. Actuator auth is unchanged (#1069)
 
 ## [1.0.0-SNAPSHOT] - 2026-04-14
 
