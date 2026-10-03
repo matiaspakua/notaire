@@ -7,7 +7,6 @@ package com.licensis.notaire.business;
 import java.math.BigDecimal;
 
 import com.licensis.notaire.dto.DtoSubmittedDocument;
-import com.licensis.notaire.dto.DtoProcedure;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.Date;
