@@ -25,11 +25,6 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
-COMPOSE_FILES = (
-    REPO_ROOT / "docker-compose.yml",
-    REPO_ROOT / "docker-compose.prod.yml",
-    REPO_ROOT / "infra" / "observability" / "docker-compose.yml",
-)
 INFRA_COMPOSE = REPO_ROOT / "infra" / "observability" / "docker-compose.yml"
 TESTING_DB_COMPOSE = REPO_ROOT / "testing" / "database" / "docker-compose.yml"
 ROOT_COMPOSE = REPO_ROOT / "docker-compose.yml"
