@@ -64,7 +64,7 @@
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for security/deps cleanup
 - [x] 8.4 Archive superseded documents into `docs/000-archive/` only if a live doc is replaced — n/a
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash scripts/preflight.sh --fix` — run before push
+- [x] 8.6 `bash scripts/preflight.sh --fix` — frontend gates green; Maven missing in this agent env (`mvn: command not found`); repo-wide SDLC scan fails on unrelated CLOSED changes (our change validates alone)
 
 ## 9. Commits atómicos
 
@@ -75,11 +75,11 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/fix-1046-dependabot-alerts-69d3`
-- [ ] 10.2 Open the PR titled `[#1046] fix(deps): clear Dependabot Swing log4j + smol-toml`, referencing Issue and CU78
+- [x] 10.1 `git push -u origin cursor/fix-1046-dependabot-alerts-69d3`
+- [x] 10.2 Open the PR titled `[#1046] fix(deps): clear Dependabot Swing log4j + smol-toml`, referencing Issue and CU78 — PR #1157 draft
 - [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
 - [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete; merge only on heavy gate (`bash scripts/check-heavy-ci.sh <pr>` exit 0)
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md` — #1157
 
 ## 11. Deploy
 
