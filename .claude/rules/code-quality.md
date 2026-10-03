@@ -8,7 +8,8 @@ The project uses the following code quality tools:
 
 | Tool | Purpose | Config File |
 |------|---------|-------------|
-| **JaCoCo** | Code coverage analysis | `pom.xml` |
+| **JaCoCo** | Backend code coverage analysis | `pom.xml` |
+| **Vitest coverage** | Frontend unit coverage ratchet | `frontend/vitest.config.ts` |
 | **Checkstyle** | Code style enforcement | `checkstyle.xml` |
 | **SpotBugs** | Static bug detection | `spotbugs-exclude.xml` |
 | **Trivy** | Vulnerability scanning | Built-in |
@@ -50,6 +51,51 @@ Coverage reports are:
 - Generated in CI pipeline
 - Uploaded as artifacts
 - Commented on PRs via madrapps/jacoco-action
+
+## Vitest — Frontend coverage floor (raise-only)
+
+Frontend unit coverage uses Vitest `@vitest/coverage-v8` with global thresholds in
+`frontend/vitest.config.ts`. Same policy as JaCoCo: **raise-only ratchet floor**.
+
+### Configuration (as of 2026-10-03, #976)
+
+| Metric | Enforced floor | Measured on `main` @ `68dc2cac` |
+|--------|----------------|----------------------------------|
+| Statements | **14%** | 15.09% |
+| Branches | **9%** | 10.52% |
+| Functions | **10%** | 11.97% |
+| Lines | **14%** | 15.55% |
+
+- **Long-term target**: 80% line / 80% branch (aspirational; not this gate).
+- **Policy**: raise floors as coverage improves with ≥1 percentage point headroom
+  under a fresh `npx vitest run --coverage` measurement; **never lower** a floor
+  without an ADR or documented SDLC exception.
+- **Guard**: `frontend/src/tests/unit/vitest-coverage-thresholds.test.ts` asserts
+  configured thresholds stay ≥ the documented floors.
+
+### Root cause of the historical <6% branch failure (#976)
+
+In 2026-07-29 the branch floor was set to **6%** as a low aspirational ratchet with
+headroom. By 2026-09, coverage denominators grew faster than tests (untouched
+branches in new UI), and measured branches briefly sat at **5.85%**, failing
+Frontend CI on `main` even for unrelated PRs. Later unit tests (auth, admin-access,
+hooks, proxy/BFF, etc.) restored branches above 6%. #976 closes the remaining gap by
+**raising** floors toward current reality and documenting the raise-only rule so the
+floor cannot silently rot or be lowered to paper over a red build.
+
+### Running Coverage
+
+```bash
+cd frontend
+npx vitest run --coverage
+# or: npm run test:coverage
+open coverage/index.html
+```
+
+### CI Integration
+
+Frontend CI runs Vitest with `--coverage`; the job fails if any metric dips under
+the configured thresholds.
 
 ## Checkstyle - Code Style
 
@@ -180,7 +226,7 @@ The complete quality gate in CI:
 1. **Build** - Compilation
 2. **Unit Tests** - JUnit tests
 3. **Integration Tests** - Spring Boot tests
-4. **Coverage** - JaCoCo (enforced ratchet floor; 80% target)
+4. **Coverage** - JaCoCo (backend) + Vitest thresholds (frontend); raise-only floors; 80% target
 5. **Security** - Trivy vulnerability scan
 6. **Code Quality** - Checkstyle + SpotBugs
 
