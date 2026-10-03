@@ -124,7 +124,7 @@ class RunnerTest(unittest.TestCase):
 
     def test_wrapper_delegates_to_the_integration_suite(self):
         text = WRAPPER.read_text(encoding="utf-8")
-        self.assertIn("run.sh integration", text)
+        self.assertRegex(text, r'run\.sh"?\s+integration')
         self.assertNotIn("test-all", text)
 
 

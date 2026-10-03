@@ -84,3 +84,8 @@ docs/wiki/cicd-reports/
 
 # OpenAPI contract CI scratch (base spec copy for oasdiff; issue #1067)
 .openapi-ci/
+
+# QA suite outputs and scratch space (testing/ is a standalone QA folder, #1191)
+testing/reports/
+testing/database/.work.*
+testing/.env
