@@ -17,7 +17,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/docs-foreman-heavy-ci-ops/` (`skip_specs: true`) | drafted |
 | Branch | `cursor/docs-foreman-heavy-ci-69d3` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | `5a20839e` (foreman docs); OpenSpec commit pending | in progress |
+| Commits | `5a20839e` (foreman docs); `8353226c` (OpenSpec Gate 1) | in progress |
 | Pull Request | #1151 | open |
 | CI run | pending — wait for heavy CI via `check-heavy-ci.sh 1151` | pending |
 | Merge commit | pending | pending |
@@ -35,8 +35,8 @@ n/a — `skip_specs: true`. Acceptance Criteria are in Issue #1153.
 | Playwright-heavy PRs serialized; Dependabot draft floods | Grep Serialize Playwright / Dependabot in foreman | passed |
 | Coordinator owns merge when worker `gh` returns 401 | Grep 401 / coordinator in foreman | passed |
 | Docs-only change; no product code | `git diff` scoped to agents + openspec | passed |
-| OpenSpec Gate 1 complete (`skip_specs`) | `openspec validate --strict` + `validate-sdlc-plan.sh` | pending |
-| PR commits include `Closes #1153` | Commit message inspection | pending |
+| OpenSpec Gate 1 complete (`skip_specs`) | `openspec validate --strict` + `validate-sdlc-plan.sh` | passed |
+| PR commits include `Closes #1153` | Commit message inspection (`8353226c`) | passed |
 | Does not use or depend on `local-ai/` | Grep change for runtime local-ai deps | passed |
 
 ## Permanent documentation updated
@@ -44,7 +44,7 @@ n/a — `skip_specs: true`. Acceptance Criteria are in Issue #1153.
 | Document | Updated | Commit |
 |----------|---------|--------|
 | `.claude/agents/cloud-foreman.md` | yes | `5a20839e` |
-| `openspec/changes/docs-foreman-heavy-ci-ops/` | yes | pending |
+| `openspec/changes/docs-foreman-heavy-ci-ops/` | yes | `8353226c` |
 
 ## Gate log
 
