@@ -69,18 +69,18 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #1040`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated product rewrites
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #1040`
+- [x] 9.3 No secrets, no commented-out code, no unrelated product rewrites
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/ci-1040-protect-main-ruleset-69d3`
-- [ ] 10.2 Open the PR titled `[#1040] ci(security): protect main with ruleset — required checks, PR-only`, referencing Issue, CU76, CU78
+- [x] 10.1 `git push -u origin cursor/ci-1040-protect-main-ruleset-69d3`
+- [x] 10.2 Open the PR titled `[#1040] ci(security): protect main with ruleset — required checks, PR-only`, referencing Issue, CU76, CU78
 - [ ] 10.3 Wait for every required workflow to pass, including the five named checks
 - [ ] 10.4 Gate 4 — merge only on heavy gate (`bash scripts/check-heavy-ci.sh <pr>` exit 0) — coordinator
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 

@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/ci-1040-protect-main-ruleset/` | Gate 1 validated |
 | Branch | `cursor/ci-1040-protect-main-ruleset-69d3` | created from `origin/main` |
 | Tasks | `tasks.md` | implement mostly complete; Gate 4/5 pending |
-| Commits | `ed2b8bd3` test; `5bcc00a2` aggregators; `b84c2446` scripts; `f7e5b727` docs | landed |
-| Pull Request | — | pending |
+| Commits | `ed2b8bd3` test; `5bcc00a2` aggregators; `b84c2446` scripts; `f7e5b727` docs; `628fa5b0` traceability | landed |
+| Pull Request | [#1160](https://github.com/matiaspakua/notaire/pull/1160) | draft |
 | CI run | — | pending |
 | Merge commit | — | pending (coordinator) |
 | Release / tag | — | n/a |
