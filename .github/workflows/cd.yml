@@ -1,7 +1,7 @@
 name: CD - Build & Publish Docker
 
-# Publishes the backend Docker image only AFTER the CI test pipeline has
-# succeeded on main (workflow_run gate). Tag pushes and manual dispatch
+# Publishes backend and frontend Docker images only AFTER the CI test pipeline
+# has succeeded on main (workflow_run gate). Tag pushes and manual dispatch
 # also publish.
 on:
   workflow_run:
@@ -21,14 +21,13 @@ on:
 env:
   JAVA_VERSION: '21'
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/backend
 
 jobs:
   # ==========================================
-  # Build and Publish Docker Image
+  # Build and Publish Docker Images (matrix)
   # ==========================================
   build-and-publish:
-    name: Build & Publish Docker Image
+    name: Build & Publish (${{ matrix.component }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
     # On workflow_run, only publish when CI (all tests) succeeded.
@@ -37,6 +36,20 @@ jobs:
       contents: read
       packages: write
       id-token: write  # required for cosign keyless (OIDC) signing
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - component: backend
+            context: .
+            dockerfile: ./backend-api/Dockerfile
+            sbom_artifact: sbom-backend
+            scan_artifact: published-image-scan-backend
+          - component: frontend
+            context: ./frontend
+            dockerfile: ./frontend/Dockerfile
+            sbom_artifact: sbom-frontend
+            scan_artifact: published-image-scan-frontend
     steps:
       # Pin checkout to the CI-tested commit on workflow_run. Under that event,
       # github.sha is tip-of-default-branch at CD schedule time — not the SHA CI
@@ -75,7 +88,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.component }}
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -86,13 +99,13 @@ jobs:
         id: build
         uses: docker/build-push-action@v7
         with:
-          context: .
-          file: ./backend-api/Dockerfile
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,scope=${{ matrix.component }}
+          cache-to: type=gha,mode=min,scope=${{ matrix.component }}
           build-args: |
             VERSION=${{ github.ref_name }}
 
@@ -103,24 +116,22 @@ jobs:
           || github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         run: |
           docker buildx imagetools create \
-            --tag "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" \
-            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}"
+            --tag "${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.component }}:latest" \
+            "${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.component }}@${{ steps.build.outputs.digest }}"
 
       # Real SBOM: CycloneDX document listing every package in the image.
-      # (Previously this step ran a default Trivy vulnerability scan and
-      # mislabeled it "Generate SBOM" — no CycloneDX/SPDX doc was produced.)
       - name: Generate SBOM (CycloneDX)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: 'image'
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.component }}@${{ steps.build.outputs.digest }}
           format: 'cyclonedx'
           output: 'sbom.cdx.json'
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v7
         with:
-          name: sbom
+          name: ${{ matrix.sbom_artifact }}
           path: sbom.cdx.json
           retention-days: 365
 
@@ -131,7 +142,7 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: 'image'
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.component }}@${{ steps.build.outputs.digest }}
           format: 'json'
           output: 'published-image-scan.json'
           exit-code: '0'
@@ -140,7 +151,7 @@ jobs:
       - name: Upload Published Image Scan
         uses: actions/upload-artifact@v7
         with:
-          name: published-image-scan
+          name: ${{ matrix.scan_artifact }}
           path: published-image-scan.json
           retention-days: 30
 
@@ -149,25 +160,27 @@ jobs:
 
       - name: Sign Image (keyless/OIDC)
         run: |
-          cosign sign --yes "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}"
+          cosign sign --yes \
+            "${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.component }}@${{ steps.build.outputs.digest }}"
 
       - name: Attest SBOM
         run: |
           cosign attest --yes \
             --predicate sbom.cdx.json \
             --type cyclonedx \
-            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}"
+            "${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.component }}@${{ steps.build.outputs.digest }}"
 
       - name: Image Digest
         run: |
+          echo "Component: ${{ matrix.component }}"
           echo "Image tags: ${{ steps.meta.outputs.tags }}"
           echo "Image digest: ${{ steps.build.outputs.digest }}"
 
   # ==========================================
-  # Create GitHub Release
+  # Attach SBOMs to GitHub Release (release-please owns Release creation)
   # ==========================================
   release:
-    name: Create GitHub Release
+    name: Attach SBOM assets to GitHub Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: build-and-publish
@@ -178,20 +191,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      - name: Download SBOM
+      - name: Download SBOM artifacts
         uses: actions/download-artifact@v8
         with:
-          name: sbom
-          path: .
+          pattern: sbom-*
+          path: ./sboms
+          merge-multiple: false
 
-      - name: Create Release
+      - name: Prepare SBOM assets
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          if [ -f sboms/sbom-backend/sbom.cdx.json ]; then
+            cp sboms/sbom-backend/sbom.cdx.json release-assets/sbom-backend.cdx.json
+          fi
+          if [ -f sboms/sbom-frontend/sbom.cdx.json ]; then
+            cp sboms/sbom-frontend/sbom.cdx.json release-assets/sbom-frontend.cdx.json
+          fi
+          ls -la release-assets
+
+      - name: Attach SBOMs to Release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
-          generate_release_notes: true
+          generate_release_notes: false
+          files: |
+            release-assets/sbom-backend.cdx.json
+            release-assets/sbom-frontend.cdx.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
