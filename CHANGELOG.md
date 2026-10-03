@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`testing/` prepared as a standalone QA repository, phase 1** (issue #1191, CU76 / CU75;
+  umbrella #1190): one runner (`testing/scripts/run.sh integration|database`, `test.sh` kept as the
+  stable entry point) replaces nine overlapping scripts; a new black-box **database V&V suite**
+  starts an empty PostgreSQL 16.15, applies the application's Flyway migrations with the Flyway
+  12.4.0 CLI and checks history, configuration, the V12 exporter role, seed data, schema, renamed
+  tables, idempotence and tamper detection, with its own `database-vv.yml` workflow and a matching
+  `preflight.sh --full` gate. The cURL suite moved to `testing/integration/` and honours
+  `BASE_URL`; the stack smoke script, previously never run, now works on macOS and asserts
+  authorization. New guides under `testing/docs/` (preparation, configuration, definition,
+  operation). Removed: `run-all-tests.sh`, `scripts/test-all.sh`, `scripts/run-comprehensive-tests.sh`,
+  the duplicate root `generate-coverage-report.sh` and the committed 2026-04 reports. k6 stays in
+  `infra/`; Playwright moves in phase 2 (#1192). Guard: `scripts/test_testing_standalone.py`.
+
 - **Configurable dev stack ports and container names** (issue #1186, CU76): host ports
   (`POSTGRES_PORT`, `BACKEND_PORT`, `PGADMIN_PORT`, `FRONTEND_PORT`) and container names
   (`NOTAIRE_<SERVICE>_CONTAINER_NAME`) in `docker-compose.yml` are overridable from `.env`

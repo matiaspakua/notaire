@@ -5,7 +5,7 @@ set -euo pipefail
 # Notaire API - Test Scripts using curl
 # ============================================================================
 # Base URL for the API
-BASE_URL="http://localhost:8080"
+BASE_URL="${BASE_URL:-http://localhost:8080}"
 
 # Colors for output
 GREEN='\033[0;32m'

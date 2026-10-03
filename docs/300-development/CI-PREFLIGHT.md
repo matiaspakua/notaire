@@ -52,8 +52,11 @@ bash scripts/preflight.sh --list     # local check -> CI job mapping
 frontend on `:3000`. It also runs a local Docker Compose build + smoke test
 (skipped with a warning if the Docker daemon isn't running) and the real
 Bruno API collection (`backend-api/api-test/`) — not just the legacy
-`testing/http/` cURL suite, which `--full` also still runs as an extra local
+`testing/integration/http/` cURL suite, which `--full` also still runs as an extra local
 smoke check with no corresponding CI job.
+
+`--full` also runs the database V&V suite (`bash testing/scripts/run.sh database`, Docker only, no
+running stack needed), the local mirror of `.github/workflows/database-vv.yml`.
 
 `bash scripts/preflight.sh` (without `--fast`) also runs three report-only
 checks that mirror advisory CI jobs: `mvn dependency:analyze`, SpotBugs, and

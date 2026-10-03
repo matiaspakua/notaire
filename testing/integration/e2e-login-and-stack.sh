@@ -29,11 +29,12 @@ done
 
 # 2) Login API (same contract as frontend Login)
 echo -e "${YELLOW}2. Testing POST /api/v1/usuarios/login (frontend login contract)...${NC}"
-RESP=$(curl -sS -w "\n%{http_code}" -X POST "$BASE_URL/api/v1/usuarios/login" \
+BODY_FILE="$(mktemp)"
+trap 'rm -f "$BODY_FILE"' EXIT
+HTTP_CODE=$(curl -sS -o "$BODY_FILE" -w "%{http_code}" -X POST "$BASE_URL/api/v1/usuarios/login" \
   -H "Content-Type: application/json" \
   -d '{"name":"admin","password":"admin"}')
-HTTP_BODY=$(echo "$RESP" | head -n -1)
-HTTP_CODE=$(echo "$RESP" | tail -n 1)
+HTTP_BODY=$(cat "$BODY_FILE")
 
 if [ "$HTTP_CODE" != "200" ]; then
   echo -e "${RED}   Login returned HTTP $HTTP_CODE${NC}"
@@ -48,13 +49,20 @@ else
   echo "   Response (first 200 chars): ${HTTP_BODY:0:200}"
 fi
 
-# 3) Optional: GET conceptos (smoke test another endpoint)
-echo -e "${YELLOW}3. Smoke test GET /api/v1/conceptos...${NC}"
-CODE=$(curl -sS -o /dev/null -w "%{http_code}" "$BASE_URL/api/v1/conceptos")
-if [ "$CODE" = "200" ]; then
-  echo -e "${GREEN}   GET conceptos OK (HTTP 200).${NC}"
+# 3) Authorization: anonymous calls are rejected, the login token is accepted
+echo -e "${YELLOW}3. Smoke test GET /api/v1/conceptos: anonymous rejected, login token accepted...${NC}"
+TOKEN=$(printf '%s' "$HTTP_BODY" | tr -d '\n' | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
+if [ -z "$TOKEN" ]; then
+  echo -e "${RED}   Login response carries no token.${NC}"
+  exit 1
+fi
+ANON_CODE=$(curl -sS -o /dev/null -w "%{http_code}" "$BASE_URL/api/v1/conceptos")
+AUTH_CODE=$(curl -sS -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/v1/conceptos")
+if [ "$ANON_CODE" = "401" ] && [ "$AUTH_CODE" = "200" ]; then
+  echo -e "${GREEN}   Anonymous HTTP $ANON_CODE, authenticated HTTP $AUTH_CODE.${NC}"
 else
-  echo -e "${YELLOW}   GET conceptos returned HTTP $CODE${NC}"
+  echo -e "${RED}   Expected anonymous 401 and authenticated 200, got $ANON_CODE and $AUTH_CODE.${NC}"
+  exit 1
 fi
 
 echo ""

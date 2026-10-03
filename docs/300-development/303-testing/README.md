@@ -20,10 +20,16 @@ Unit → Integration → API (Bruno) → Frontend (Vitest) → E2E UI/UX (Playwr
 | API (Bruno YAML) | `backend-api/api-test/` | 164 requests, 21 resource folders (idempotent) | `cd backend-api/api-test && bru run . -r --env Development` |
 | Frontend unit/component (Vitest) | `frontend/src/**/*.test.ts(x)` | 19+ archivos | `cd frontend && npm test` |
 | E2E UI/UX (Playwright) | `frontend/tests/e2e/` | 33 specs, por Caso de Uso (`cuNN-*.spec.ts`) | `cd frontend && npm run test:e2e` |
-| HTTP (cURL, legacy smoke) | `testing/http/` | 10 scripts | `bash testing/http/test-all-endpoints-v2.sh` |
+| Integration (cURL suite + stack smoke) | `testing/integration/` | 10 scripts + 1 smoke | `bash testing/scripts/run.sh integration` |
+| Database V&V (empty DB → Flyway → SQL checks) | `testing/database/` | 30 checks | `bash testing/scripts/run.sh database` |
 | E2E Swing (Robot) | `testing/e2e-swing/` | **RETIRED** (#811 / ADR-012) | Do not run; see suite README |
 
 Backend: 132 test classes, ~1,483 `@Test` methods combined (unit + integration).
+
+Las suites de nivel sistema (integración y base de datos) viven en [`testing/`](../../../testing/README.md),
+una carpeta autocontenida pensada para pasar a un repositorio de QA propio; allí está la guía de
+ejecución, configuración y extensión. Los tests unitarios y de API permanecen en `backend-api/` y
+`frontend/` porque forman parte del ciclo de desarrollo de cada módulo.
 
 ## Referencias detalladas
 

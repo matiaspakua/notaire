@@ -1,0 +1,37 @@
+name: Database V&V
+
+# Issue #1191 / CU76 / CU75. Black-box database verification: empty PostgreSQL, Flyway CLI migrate,
+# SQL checks (testing/database). Runs only when migrations or the suite change. Mirrored locally by
+# `bash scripts/preflight.sh --full` ("database v&v suite").
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend-api/src/main/resources/db/migration/**'
+      - 'testing/database/**'
+      - 'testing/scripts/run.sh'
+      - '.github/workflows/database-vv.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'backend-api/src/main/resources/db/migration/**'
+      - 'testing/database/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  database-vv:
+    name: Database V&V
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run the database suite
+        run: bash testing/scripts/run.sh database

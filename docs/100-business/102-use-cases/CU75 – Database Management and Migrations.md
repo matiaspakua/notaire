@@ -10,7 +10,7 @@
 | **Descripción** | Asegura que la evolución del modelo de datos de la escribanía se realice de manera determinista, segura y reproducible, garantizando la integridad de datos de clientes, escrituras, folios y trámites. |
 | **Tipo** | Soporte / Arquitectura |
 | **Referencias Cruzadas** | RF #85 (Acceso a la base de datos), RF #86 (Java VM), RF #87 (Sistema operativo), RF #92 (Lenguaje de programación), RF #93 (Motor de base de datos) |
-| **GitHub ID** | #264, #275, #292, #271, #270, #1044 |
+| **GitHub ID** | #264, #275, #292, #271, #270, #1044, #1191 |
 
 ## Alcance Técnico
 

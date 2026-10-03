@@ -31,6 +31,7 @@ COMPOSE_FILES = (
     REPO_ROOT / "infra" / "observability" / "docker-compose.yml",
 )
 INFRA_COMPOSE = REPO_ROOT / "infra" / "observability" / "docker-compose.yml"
+TESTING_DB_COMPOSE = REPO_ROOT / "testing" / "database" / "docker-compose.yml"
 ROOT_COMPOSE = REPO_ROOT / "docker-compose.yml"
 PROD_COMPOSE = REPO_ROOT / "docker-compose.prod.yml"
 
@@ -155,6 +156,17 @@ class ImagePinsAndDependabotTest(unittest.TestCase):
             unpinned,
             [],
             f"infra images must be minor-or-digest pinned (#1045); unpinned={unpinned}",
+        )
+
+    def test_testing_database_stack_is_pinned(self):
+        self.assertTrue(TESTING_DB_COMPOSE.is_file(), TESTING_DB_COMPOSE)
+        images = compose_images(TESTING_DB_COMPOSE)
+        self.assertTrue(images, "testing/database/docker-compose.yml must declare images")
+        unpinned = [img for img in images if not is_pinned(img)]
+        self.assertEqual(
+            unpinned,
+            [],
+            f"testing database images must be minor-or-digest pinned (#1045, #1191); unpinned={unpinned}",
         )
 
     def test_sonarqube_channel_tag_is_versioned(self):

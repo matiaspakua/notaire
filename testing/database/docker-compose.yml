@@ -1,0 +1,32 @@
+# Throwaway PostgreSQL + Flyway CLI for the black-box database suite (#1191, CU76 / CU75).
+# No host ports are published and data lives in tmpfs, so a run cannot collide with a running
+# stack or leave state behind. run.sh gives every run its own project name.
+services:
+  postgres:
+    image: postgres:16.15
+    environment:
+      POSTGRES_DB: notaire
+      POSTGRES_USER: vv
+      POSTGRES_PASSWORD: ${DB_VV_PASSWORD:-vv-throwaway}
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vv -d notaire"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  flyway:
+    image: flyway/flyway:12.4.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ${MIGRATIONS_DIR:?set MIGRATIONS_DIR to the Flyway migrations directory}:/flyway/sql:ro
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/notaire
+      FLYWAY_USER: vv
+      FLYWAY_PASSWORD: ${DB_VV_PASSWORD:-vv-throwaway}
+      FLYWAY_BASELINE_ON_MIGRATE: "true"
+      FLYWAY_BASELINE_VERSION: "0"
+      FLYWAY_CLEAN_DISABLED: "true"
