@@ -68,10 +68,10 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #1047`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #1047`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -98,12 +98,12 @@
 
 - [x] Issue linked to a Use Case / RNF, with Acceptance Criteria (CU74 + CU76)
 - [x] Specification written and reviewed (Gate 1 draft)
-- [ ] Tests designed and written first, observed failing (Gate 2)
+- [x] Tests designed and written first, observed failing (Gate 2)
 - [ ] Full suite green: unit, integration, regression, E2E
 - [ ] Coverage at or above the JaCoCo ratchet floor (n/a backend delta)
 - [ ] Playwright E2E green for UI changes (n/a product UI; heavy gate still required)
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release

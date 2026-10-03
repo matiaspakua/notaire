@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1047-k6-load-test/` | Gate 1 in repo; validate PASS |
 | Branch | `cursor/fix-1047-k6-load-test-69d3` | created from origin/main after #1048 (`2967ec32`) |
 | Tasks | `tasks.md` | Gate 1 planning complete; implement pending |
-| Commits | — | pending |
+| Commits | `aa418f3f`, `0312f01e`, `64b31fe0`, `82b21a30` | landed on branch |
 | Pull Request | — | pending |
 | CI run | — | pending |
 | Merge commit | — | pending |
@@ -45,10 +45,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU74 – Performance and Caching Strategy.md` | yes | pending commit |
-| `docs/100-business/102-use-cases/CU76 – Quality Assurance and Testing Infrastructure.md` | yes | pending commit |
+| `docs/100-business/102-use-cases/CU74 – Performance and Caching Strategy.md` | yes | `82b21a30` |
+| `docs/100-business/102-use-cases/CU76 – Quality Assurance and Testing Infrastructure.md` | yes | `82b21a30` |
 | Related perf docs / #303 pointers (if stale) | n/a (arch docs already reference workflow) | — |
-| `CHANGELOG.md` | yes | pending commit |
+| `CHANGELOG.md` | yes | `82b21a30` |
 
 ## Gate log
 
