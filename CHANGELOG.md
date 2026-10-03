@@ -488,6 +488,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- **Orphaned test scripts** (issue #585, CU76): deleted nine cURL scripts under
+  `testing/integration/http/` that no runner called (`01-auth` … `08-items`, `test-all-endpoints.sh`)
+  and the unused `COMPOSE_FILES` constant in `test_image_pins_and_dependabot.py`. New guard: a
+  reachability check for `testing/` scripts. `deprecated-src.old/` is deliberately kept as
+  historical data.
+
 - **Swing E2E leftovers** (issue #811, CU76 / ADR-012): durable retirement of
   Robot Swing E2E — hygiene fails if `e2e-swing.yml` or Maven `-pl frontend-swing`
   / `deprecated-frontend-swing` returns in workflows; `testing/e2e-swing/`

@@ -1,14 +1,10 @@
 # Notaire API — HTTP Tests
 
-Guía de pruebas manuales de la API REST de Notaire con `curl`. Los scripts
-automatizados viven en `testing/integration/http/` (no en este directorio de
-documentación); todos los comandos de este documento asumen backend
-corriendo en `http://localhost:8080`.
-
-## Estructura (`testing/integration/http/`)
-
-- `test-all-endpoints.sh` / `test-all-endpoints-v2.sh` — scripts master que ejecutan todos los tests
-- `01-auth.sh` … `08-items.sh` — tests por entidad (auth, usuarios, conceptos, personas, trámites, escrituras, presupuestos, items)
+Guía de pruebas manuales de la API REST de Notaire con `curl`. El script
+automatizado vive en `testing/integration/http/test-all-endpoints-v2.sh` y se
+ejecuta con `bash testing/scripts/run.sh integration` (ver
+[`testing/README.md`](../../../../testing/README.md)); todos los comandos de este
+documento asumen backend corriendo en `http://localhost:8080`.
 
 Para pruebas de API con **colecciones Bruno** (105 requests) y su estado
 actual de cobertura, ver [`backend-api/api-test/`](../../../../backend-api/api-test/README.md)
@@ -23,12 +19,8 @@ y [`COVERAGE.md`](../../../../backend-api/api-test/COVERAGE.md).
 ## Uso
 
 ```bash
-# Todos los tests
-cd testing/integration/http
-chmod +x test-all-endpoints.sh && ./test-all-endpoints.sh
-
-# Test individual
-chmod +x 01-auth.sh && ./01-auth.sh
+# Suite de integración completa (contra un stack en ejecución)
+bash testing/scripts/run.sh integration
 ```
 
 ## Documentación Swagger

@@ -64,4 +64,3 @@ migration cannot hide behind it.
 | Asset | Status |
 |-------|--------|
 | `e2e-swing/` | Retired Swing Robot suite, kept on disk by `openspec/specs/swing-e2e-retirement`; never wire it into CI |
-| `integration/http/01-auth.sh` … `08-items.sh`, `test-all-endpoints.sh` | Not called by `run.sh`, by `test-all-endpoints-v2.sh` or by CI; only described as manual scripts in `docs/300-development/303-testing/api-test/README.md`, and several use legacy Spanish endpoint names. Candidates for removal in a later change, after an owner decision |
