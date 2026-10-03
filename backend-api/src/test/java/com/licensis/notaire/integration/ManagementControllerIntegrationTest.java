@@ -285,6 +285,79 @@ class ManagementControllerIntegrationTest {
                 .contains(suplente.getLastName());
     }
 
+    @Test
+    @DisplayName("Should redirect notary on plain POST create when an active substitution covers the requested notary")
+    void shouldRedirectNotaryOnPlainCreateWhenActiveSubstitution() throws Exception {
+        Integer notaryId = createPerson("42000019");
+        Integer substituteId = createPerson("42000020");
+        createActiveSubstitution(notaryId, substituteId);
+
+        String body = """
+                {"encabezado": "Plain create suplencia IT", "number": 9301,
+                 "notaryPersonId": %d}
+                """.formatted(notaryId);
+
+        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.notaryPersonId").value(substituteId))
+                .andReturn();
+
+        Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
+                .get("idManagement").asInt();
+        DeedManagement management = deedManagementRepository.findById(managementId).orElseThrow();
+        Person substitute = personRepository.findById(substituteId).orElseThrow();
+        assertThat(management.getFkIdNotaryPerson().getPersonId())
+                .as("plain create must redirect to the substitute, not the requested notary")
+                .isEqualTo(substituteId);
+        assertThat(management.getNotes())
+                .as("plain create must record the redirection identifying both notaries")
+                .contains(substitute.getFirstName())
+                .contains(substitute.getLastName());
+    }
+
+    @Test
+    @DisplayName("Should redirect notary on plain PUT update when an active substitution covers the requested notary")
+    void shouldRedirectNotaryOnPlainUpdateWhenActiveSubstitution() throws Exception {
+        Integer initialNotaryId = createPerson("42000021");
+        Integer requestedNotaryId = createPerson("42000022");
+        Integer substituteId = createPerson("42000023");
+
+        String createBody = """
+                {"encabezado": "Plain update suplencia IT", "number": 9302,
+                 "notaryPersonId": %d}
+                """.formatted(initialNotaryId);
+        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createBody))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
+                .get("idManagement").asInt();
+
+        createActiveSubstitution(requestedNotaryId, substituteId);
+
+        String updateBody = """
+                {"encabezado": "Plain update suplencia IT", "number": 9302,
+                 "notaryPersonId": %d}
+                """.formatted(requestedNotaryId);
+        mockMvc.perform(put("/api/v1/gestiones/" + managementId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateBody))
+                .andExpect(status().isOk());
+
+        DeedManagement management = deedManagementRepository.findById(managementId).orElseThrow();
+        Person substitute = personRepository.findById(substituteId).orElseThrow();
+        assertThat(management.getFkIdNotaryPerson().getPersonId())
+                .as("plain update must redirect to the substitute, not the requested notary")
+                .isEqualTo(substituteId);
+        assertThat(management.getNotes())
+                .as("plain update must record the redirection identifying both notaries")
+                .contains(substitute.getFirstName())
+                .contains(substitute.getLastName());
+    }
+
     private void createActiveSubstitution(Integer notaryId, Integer suplenteId) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
