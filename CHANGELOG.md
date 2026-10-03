@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Workflow tracker post-signing reingreso loop (strategy b)** (issue #841,
+  CU83 / CU06 / CU07 / CU11 / CU44): seed `ManagementStatus` 11–13 and replace
+  Firmada→Inscripta on the standard workflow with Generado → Ingresado →
+  Retirado; `GET .../workflow-trace` returns additive `testimonyMovements` with
+  derived `returnedObserved`; dashboard `WorkflowTracker` shows a secondary
+  movement timeline and reingreso badge on the inscription node.
+
 ### Fixed
 
 - **Plain gestión notary assignment consults active Substitution** (issue #805,

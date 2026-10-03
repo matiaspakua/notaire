@@ -462,6 +462,17 @@ export interface GestionWorkflowTrace {
   history: HistorialEntry[];
   /** nodeId → "completed" | "in_progress" | "pending" */
   nodeStatuses: Record<number, string>;
+  /** Secondary timeline for the unbounded reingreso loop (issue #841). */
+  testimonyMovements?: TestimonyMovementEntry[];
+}
+
+/** Lightweight testimony movement on the workflow trace (reingreso loop). */
+export interface TestimonyMovementEntry {
+  dateEntry?: string;
+  dateExit?: string;
+  dateRegistration?: string;
+  /** Derived: dateExit != null && !registered */
+  returnedObserved?: boolean;
 }
 
 /** CU10 - a single "Entidad Externa" document tracked within a gestión — DtoDocumentEntidadExterna. */

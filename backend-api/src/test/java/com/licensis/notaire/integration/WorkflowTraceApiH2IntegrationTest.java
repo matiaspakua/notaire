@@ -177,7 +177,8 @@ class WorkflowTraceApiH2IntegrationTest {
                 .andExpect(jsonPath("$.workflowDefinition.name").value("Workflow Trace Test"))
                 .andExpect(jsonPath("$.nodes", hasSize(3)))
                 .andExpect(jsonPath("$.transitions", hasSize(2)))
-                .andExpect(jsonPath("$.history", hasSize(2)));
+                .andExpect(jsonPath("$.history", hasSize(2)))
+                .andExpect(jsonPath("$.testimonyMovements", hasSize(0)));
     }
 
     @Test
