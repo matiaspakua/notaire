@@ -63,6 +63,7 @@ frontend eslint                 ESLint                           frontend-ci.yml
 frontend vitest                 Unit Tests (Vitest)              frontend-ci.yml
 frontend build                  Build (Next.js)                  frontend-ci.yml
 http integration suite (--full) (legacy cURL smoke; no CI job)   n/a
+database v&v suite      (--full) Database V&V                    database-vv.yml    (needs Docker, not the stack)
 playwright e2e          (--full) UI E2E Tests (Playwright)       playwright-e2e.yml
 bruno api tests         (--full) API Tests (Bruno)               playwright-e2e.yml
 docker build/smoke      (--full) Build Docker Image              ci.yml             (image scan not replicated locally)
@@ -239,13 +240,13 @@ section "Server-backed suites"
 if [ "$MODE_FULL" = "1" ]; then
     if curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
        && curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
-        run "http integration suite" bash -c "cd testing/http && bash test-all-endpoints-v2.sh"
+        run "http integration suite" bash -c "cd testing/integration/http && bash test-all-endpoints-v2.sh"
         run "playwright e2e" bash -c "cd frontend && ./node_modules/.bin/playwright test"
 
         # Mirrors playwright-e2e.yml's "API Tests (Bruno)" job: fetch a JWT up
         # front (the collection sends it on every request; folders run
         # alphabetically so it can't be captured mid-run) and run the real
-        # Bruno collection, not the legacy testing/http suite above.
+        # Bruno collection, not the legacy testing/integration/http suite above.
         BRUNO_TOKEN="$(curl -sf -X POST http://localhost:8080/api/v1/usuarios/login \
             -H 'Content-Type: application/json' \
             -d '{"name":"admin","password":"admin"}' | tr -d '\n' | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')"
@@ -256,6 +257,12 @@ if [ "$MODE_FULL" = "1" ]; then
         fi
     else
         fail "server-backed suites: stack not reachable (need backend :8080 + frontend :3000 — run 'bash scripts/start.sh')"
+    fi
+
+    if docker info >/dev/null 2>&1; then
+        run "database v&v suite" bash testing/scripts/run.sh database
+    else
+        skip "database v&v suite" "docker not running — CI WILL run this (database-vv.yml)"
     fi
 
     if docker info >/dev/null 2>&1; then
