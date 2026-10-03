@@ -41,9 +41,9 @@
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
 - [x] 6.4 Bruno/HTTP suite — no contract change; #835 409 path unchanged
 - [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
@@ -65,18 +65,18 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #799`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #799`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/fix-799-persona-id-uniqueness-69d3`
-- [ ] 10.2 Open draft PR `[#799] fix(db): unique constraint on person identification type+number` with `Closes #799`
+- [x] 10.1 `git push -u origin cursor/fix-799-persona-id-uniqueness-69d3`
+- [x] 10.2 Open draft PR `[#799] fix(db): unique constraint on person identification type+number` with `Closes #799`
 - [ ] 10.3 Wait for required workflows — coordinator watches heavy CI
 - [ ] 10.4 Gate 4 — CI green, code review, no conflicts — coordinator merges
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
@@ -96,11 +96,11 @@
 - [x] Issue linked to a Use Case, with Acceptance Criteria
 - [x] Specification written and reviewed (Gate 1)
 - [x] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression (`mvn verify -pl backend-api`); E2E via CI
-- [ ] Coverage at or above the JaCoCo ratchet floor
+- [x] Full suite green: unit, integration, regression (`mvn verify -pl backend-api`); E2E via CI
+- [x] Coverage at or above the JaCoCo ratchet floor
 - [x] Playwright E2E green for UI changes — n/a no UI surface
 - [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4) — draft pending
+- [x] Commits atomic and conventional, referencing the Issue
+- [x] PR created, CI green, review approved (Gate 4) — draft #1202 (CI pending coordinator)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
