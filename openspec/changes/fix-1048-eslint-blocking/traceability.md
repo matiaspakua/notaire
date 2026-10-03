@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1048-eslint-blocking/` | Gate 1 complete |
 | Branch | `cursor/fix-1048-eslint-blocking-69d3` | created from `origin/main` |
 | Tasks | `tasks.md` | implement in progress |
-| Commits | `f993aacc` docs(openspec); `3df5c805` ci(frontend) | recorded |
-| Pull Request | (filled after PR) | pending |
+| Commits | `f993aacc` docs(openspec); `3df5c805` ci(frontend); `6f9a8098`+ docs(openspec) SHA/PR ledger | recorded |
+| Pull Request | [#1152](https://github.com/matiaspakua/notaire/pull/1152) | draft |
 | CI run | heavy gate via `scripts/check-heavy-ci.sh` | pending |
 | Merge commit | coordinator after heavy CI exit 0 | pending |
 | Release / tag | — | pending |
