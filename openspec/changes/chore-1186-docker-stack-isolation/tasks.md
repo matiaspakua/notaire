@@ -15,14 +15,14 @@
 - [x] 2.1 `git checkout main && git pull origin main`
 - [x] 2.2 `git checkout -b chore/1186_docker_stack_isolation`
 - [x] 2.3 Branch name recorded in `traceability.md`
-- [ ] 2.4 Run `bash scripts/validate-sdlc-plan.sh chore-1186-docker-stack-isolation`
+- [x] 2.4 Run `bash scripts/validate-sdlc-plan.sh chore-1186-docker-stack-isolation`
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: names, host ports, defaults render, overrides render, start.sh, docs keys
-- [ ] 3.2 Write failing `scripts/test_dev_stack_isolation.py`
-- [ ] 3.3 Observe it fail before touching `docker-compose.yml`
-- [ ] 3.4 Confirm every `#### Scenario:` maps to an assertion
+- [x] 3.1 Enumerate test cases: names, host ports, defaults render, overrides render, start.sh, docs keys
+- [x] 3.2 Write failing `scripts/test_dev_stack_isolation.py`
+- [x] 3.3 Observe it fail before touching `docker-compose.yml`
+- [x] 3.4 Confirm every `#### Scenario:` maps to an assertion
 
 ## 4. Implementación
 
