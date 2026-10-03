@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/feat-804-enforce-workflow-transitions/` | Gate 1 complete |
 | Branch | `cursor/feat-804-enforce-workflow-transitions-69d3` | active |
 | Tasks | `tasks.md` | implementation + docs done; merge pending |
-| Commits | `ea80c244` openspec; `06493144` failing IT; `544f4432` feat+docs; `758a767a` tasks | recorded |
+| Commits | `ea80c244` openspec; `06493144` failing IT; `544f4432` feat+docs; `758a767a`/`f3b5bcbc` tasks+PR | recorded |
 | Pull Request | https://github.com/matiaspakua/notaire/pull/1199 | draft |
 | CI run | pending (coordinator: `bash scripts/check-heavy-ci.sh 1199`) | pending |
 | Merge commit | — | pending |
