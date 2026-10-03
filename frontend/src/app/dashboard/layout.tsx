@@ -7,6 +7,7 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { useAuthStore } from "@/store/auth-store";
 import { AnimatePresence, PageTransition } from "@/components/motion";
+import { theme } from "@/theme/tokens";
 
 export default function DashboardLayout({
   children,
@@ -36,7 +37,10 @@ export default function DashboardLayout({
   if (!mounted || !isAuthenticated) return null;
 
   return (
-    <div className="flex min-h-screen bg-[#F5F5F7]">
+    <div
+      className="flex min-h-screen"
+      style={{ backgroundColor: theme.colors.neutral[100] }}
+    >
       <AppSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex-1 flex flex-col min-w-0">
         {/* Each page renders its own AppHeader with a title; a title-less one
@@ -45,7 +49,7 @@ export default function DashboardLayout({
           <button
             data-testid="btn-sidebar-toggle"
             onClick={() => setSidebarOpen(true)}
-            aria-label="Abrir menú"
+            aria-label="Open menu"
             className="md:hidden flex items-center justify-center w-9 h-9 rounded-[10px] border border-border/60 text-foreground hover:bg-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
           >
             <Menu className="h-5 w-5" aria-hidden="true" />

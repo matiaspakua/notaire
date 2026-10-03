@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Dashboard/table theme tokens** (issue #960, CU76 / RF #78): replace
+  hardcoded `#RRGGBB` colors in `dashboard/layout.tsx`, `dashboard/page.tsx`, and
+  `components/ui/table.tsx` with `theme.colors.*` style props or semantic
+  Tailwind (`text-foreground`, `text-muted-foreground`, `text-primary`,
+  `text-destructive`). Table header/hover opacity preserved via
+  `color-mix` from `theme.colors.neutral[100]`. Guarded by
+  `hex-hygiene.test.ts`.
+
 - **JPA NamedQuery name strings Englishized** (issue #1022): rename Spanish
   `@NamedQuery(name=…)` identifiers and matching `createNamedQuery` call sites
   under `backend-api` to English entity prefixes and method tails (e.g.
