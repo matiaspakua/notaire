@@ -20,8 +20,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/feat-1044-prod-compose/` | Gate 1 validated |
 | Branch | `cursor/feat-1044-prod-compose-69d3` | created from `origin/main` @ `27aaf730` |
 | Tasks | `tasks.md` | implement in progress |
-| Commits | (filled after commit) | pending |
-| Pull Request | (filled after PR) | pending |
+| Commits | `50164b4f`, `307b4178`, `19bc3f28`, `947afe02` | pushed |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1155 | draft |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
