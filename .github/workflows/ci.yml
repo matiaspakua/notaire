@@ -489,3 +489,43 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
+  # ==========================================
+  # Suite aggregator for ruleset required check (#1040)
+  # Exact check-run name must be "CI".
+  # ==========================================
+  suite-ci:
+    name: CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - build
+      - unit-tests
+      - integration-tests
+      - coverage
+      - quality
+      - security
+      - docker-build
+    if: ${{ always() && !cancelled() }}
+    steps:
+      - name: Require CI suite jobs success
+        run: |
+          set -euo pipefail
+          failed=0
+          for pair in \
+            "build=${{ needs.build.result }}" \
+            "unit-tests=${{ needs.unit-tests.result }}" \
+            "integration-tests=${{ needs.integration-tests.result }}" \
+            "coverage=${{ needs.coverage.result }}" \
+            "quality=${{ needs.quality.result }}" \
+            "security=${{ needs.security.result }}" \
+            "docker-build=${{ needs.docker-build.result }}"
+          do
+            name="${pair%%=*}"
+            result="${pair#*=}"
+            echo "${name}=${result}"
+            if [ "${result}" != "success" ]; then
+              failed=1
+            fi
+          done
+          exit "${failed}"
+

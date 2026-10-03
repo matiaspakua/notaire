@@ -123,3 +123,30 @@ jobs:
             frontend/.next/
           retention-days: 7
           include-hidden-files: true
+
+  # Suite aggregator for ruleset required check (#1040)
+  # Exact check-run name must be "Frontend CI".
+  suite-frontend-ci:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [typecheck, unit-tests, build]
+    if: ${{ always() && !cancelled() }}
+    steps:
+      - name: Require Frontend CI suite jobs success
+        run: |
+          set -euo pipefail
+          failed=0
+          for pair in \
+            "typecheck=${{ needs.typecheck.result }}" \
+            "unit-tests=${{ needs.unit-tests.result }}" \
+            "build=${{ needs.build.result }}"
+          do
+            name="${pair%%=*}"
+            result="${pair#*=}"
+            echo "${name}=${result}"
+            if [ "${result}" != "success" ]; then
+              failed=1
+            fi
+          done
+          exit "${failed}"

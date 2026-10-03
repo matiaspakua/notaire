@@ -344,6 +344,42 @@ jobs:
               body: comment
             })
 
+  # Suite aggregator for ruleset required check (#1040)
+  # Exact check-run name must be "PR Validation". Code Lint stays on job lint.
+  suite-pr-validation:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - validate-pr
+      - lint
+      - sdlc-plan
+      - quick-build
+      - branch-naming
+      - dependency-analysis
+    if: ${{ always() && !cancelled() && github.event_name == 'pull_request' }}
+    steps:
+      - name: Require PR Validation suite jobs success
+        run: |
+          set -euo pipefail
+          failed=0
+          for pair in \
+            "validate-pr=${{ needs.validate-pr.result }}" \
+            "lint=${{ needs.lint.result }}" \
+            "sdlc-plan=${{ needs.sdlc-plan.result }}" \
+            "quick-build=${{ needs.quick-build.result }}" \
+            "branch-naming=${{ needs.branch-naming.result }}" \
+            "dependency-analysis=${{ needs.dependency-analysis.result }}"
+          do
+            name="${pair%%=*}"
+            result="${pair#*=}"
+            echo "${name}=${result}"
+            if [ "${result}" != "success" ]; then
+              failed=1
+            fi
+          done
+          exit "${failed}"
+
   # NOTE (issue #1117 / #1041): Do NOT commit wiki/CI reports onto the PR head
   # (or onto main). A bot commit with [skip ci] moves HEAD to a SHA with no
   # check suite, so `gh pr checks` goes empty and merge-when-green agents stall
