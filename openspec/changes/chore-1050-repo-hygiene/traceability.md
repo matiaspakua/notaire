@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/chore-1050-repo-hygiene/` | Gate 1 validated on implement branch |
 | Branch | `cursor/chore-1050-repo-hygiene-69d3` | active |
 | Tasks | `tasks.md` | Gate 2–3 implement in progress |
-| Commits | pending first push | pending |
+| Commits | `a83beceb`, `d2c4780b` | recorded |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | — | pending |
