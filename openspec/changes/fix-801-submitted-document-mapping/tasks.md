@@ -20,34 +20,34 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: null-procedure getDto; DocumentType association + mappedBy
-- [ ] 3.2 Write unit tests in `SubmittedDocumentEntityTest` for every scenario
-- [ ] 3.3 Write integration tests where applicable — n/a (unit covers acceptance; existing IT covers bootstrap)
-- [ ] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=SubmittedDocumentEntityTest`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.1 Enumerate test cases: null-procedure getDto; DocumentType association + mappedBy
+- [x] 3.2 Write unit tests in `SubmittedDocumentEntityTest` for every scenario
+- [x] 3.3 Write integration tests where applicable — n/a (unit covers acceptance; existing IT covers bootstrap)
+- [x] 3.4 Run them and **observe them fail** — compile failure (missing get/setDocumentType) then NPE on released unboxing before full fix
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Replace Integer column with `@ManyToOne DocumentType documentType` + `@JoinColumn(name = "fk_id_document_type")`
-- [ ] 4.2 Fix `DocumentType` `mappedBy` to `documentType`; drop Cascade ALL on that OneToMany
-- [ ] 4.3 Compatibility accessors `getFkIdDocumentType` / setters / nullable delegate to association
-- [ ] 4.4 Null-guard procedure in `getDto`; remove dead `DtoDocumentType` construction
-- [ ] 4.5 Rename repository `existsByFkIdDocumentType` → `existsByDocumentTypeIdDocumentType`; update DocumentTypeController + SimpleControllersTest
-- [ ] 4.6 Translate Spanish identifiers/comments/strings in touched code to English (keep Spanish REST paths)
+- [x] 4.1 Replace Integer column with `@ManyToOne DocumentType documentType` + `@JoinColumn(name = "fk_id_document_type")`
+- [x] 4.2 Fix `DocumentType` `mappedBy` to `documentType`; drop Cascade ALL on that OneToMany
+- [x] 4.3 Compatibility accessors `getFkIdDocumentType` / setters / nullable delegate to association
+- [x] 4.4 Null-guard procedure in `getDto`; remove dead `DtoDocumentType` construction
+- [x] 4.5 Rename repository `existsByFkIdDocumentType` → `existsByDocumentTypeIdDocumentType`; update DocumentTypeController + SimpleControllersTest
+- [x] 4.6 Translate Spanish identifiers/comments/strings in touched code to English (keep Spanish REST paths)
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected (SimpleControllersTest mocks, any ID accessor assumptions)
-- [ ] 5.2 Update them without weakening assertions
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason — none expected
+- [x] 5.1 Identify existing tests affected (SimpleControllersTest mocks, any ID accessor assumptions)
+- [x] 5.2 Update them without weakening assertions
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason — none
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
-- [ ] 6.4 Bruno/HTTP suite — n/a (no API contract change); note in status
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration (via verify)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor (via verify)
+- [x] 6.3 `mvn verify -pl backend-api` — BUILD SUCCESS
+- [x] 6.4 Bruno/HTTP suite — n/a (no API contract change); noted in status
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
@@ -58,27 +58,27 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update CU72 for optional procedure + DocumentType association integrity
-- [ ] 8.2 OpenAPI — n/a (no endpoint contract change)
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) Fixed entry for #801
-- [ ] 8.4 Archive superseded documents — n/a
-- [ ] 8.5 Confirm no information was duplicated
-- [ ] 8.6 `bash scripts/preflight.sh --fix` — as capacity allows
+- [x] 8.1 Update CU72 for optional procedure + DocumentType association integrity
+- [x] 8.2 OpenAPI — n/a (no endpoint contract change)
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) Fixed entry for #801
+- [x] 8.4 Archive superseded documents — n/a
+- [x] 8.5 Confirm no information was duplicated
+- [ ] 8.6 `bash scripts/preflight.sh --fix` — as capacity allows / CI
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Closes #801`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Closes #801`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/fix-801-submitted-document-mapping-69d3`
-- [ ] 10.2 Open draft PR `[#801] fix(jpa): SubmittedDocument DocumentType mapping and getDto null-guard` with `Closes #801`
+- [x] 10.1 `git push -u origin cursor/fix-801-submitted-document-mapping-69d3`
+- [x] 10.2 Open draft PR `[#801] fix(jpa): SubmittedDocument DocumentType mapping and getDto null-guard` with `Closes #801` — #1195
 - [ ] 10.3 Wait for required workflows — coordinator watches heavy CI
 - [ ] 10.4 Gate 4 — CI green, code review, no conflicts — coordinator merges
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
@@ -95,14 +95,14 @@
 
 ## Definition of Done
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression (`mvn verify -pl backend-api`); E2E n/a
-- [ ] Coverage at or above the JaCoCo ratchet floor
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
+- [x] Full suite green: unit, integration, regression (`mvn verify -pl backend-api`); E2E n/a
+- [x] Coverage at or above the JaCoCo ratchet floor
 - [x] Playwright E2E green for UI changes — n/a no UI surface
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4)
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
+- [ ] PR created, CI green, review approved (Gate 4) — draft #1195
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
