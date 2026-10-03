@@ -1,9 +1,11 @@
 # ADR-016: Observability Stack Topology
 
 ## Status
+
 Accepted
 
 ## Context
+
 ADR-009 established the Loki-Prometheus-Grafana (LPG) pattern but did not
 document the concrete container topology, network boundaries, or how the
 `infra/` stack relates to the application stack (`docker-compose.yml`). As
@@ -12,6 +14,7 @@ Promtail, SonarQube, postgres-exporter, Homer), a dedicated ADR is needed to
 record the deployment shape and its cross-network wiring.
 
 ## Decision
+
 The observability stack lives in a **separate Compose file**
 (`infra/observability/docker-compose.yml`), deployed independently from the application
 stack (`docker-compose.yml`), and bridged via one external Docker network
@@ -19,6 +22,7 @@ stack (`docker-compose.yml`), and bridged via one external Docker network
 containers by name.
 
 ### Topology
+
 | Container | Image | Port | Role |
 |-----------|-------|------|------|
 | `devsecops-prometheus` | prom/prometheus | 9090 | Scrapes `backend:8080/actuator/prometheus` (Basic auth) and `postgres-exporter:9187`; evaluates `infra/observability/prometheus/alert-rules.yml` |
@@ -30,6 +34,7 @@ containers by name.
 | `devsecops-dashboard` (Homer) | b4bz/homer | 8888 | Landing page linking every service |
 
 ### Startup ordering
+
 The application stack must be started first (`bash scripts/start.sh`), then
 the infra stack (`bash infra/scripts/start-infra.sh`) — or both together via
 `bash scripts/start-all.sh`. This is because Prometheus/postgres-exporter
@@ -37,12 +42,14 @@ scrape the running backend/database on the shared external network; starting
 infra first leaves scrape targets unreachable until the app stack joins.
 
 ### Alerting
+
 Prometheus evaluates alert rules natively (see ADR-009) but **no
 Alertmanager is deployed** — alerts are visible in Prometheus's `/alerts` UI
 and can be queried from Grafana, but nothing routes them to a notification
 channel today.
 
 ## Options Considered
+
 - **Single Compose file for app + observability**: Rejected — couples
   unrelated lifecycles (a developer working only on backend/frontend
   shouldn't need Prometheus/Grafana/SonarQube running) and infra containers
@@ -52,6 +59,7 @@ channel today.
   ADR-009's rationale).
 
 ## Consequences
+
 - **Pros**: App and observability stacks can be started/stopped
   independently; matches local-dev and CI needs (CI doesn't need the infra
   stack for `mvn verify`).

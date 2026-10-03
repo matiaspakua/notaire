@@ -15,7 +15,7 @@ remains **publish-only** — apply these manifests manually to a real cluster.
 
 ## Layout
 
-```
+```text
 infra/deploy/kustomize/
   base/                 # shared resources
   overlays/staging/     # GHCR SHA image tags + staging labels

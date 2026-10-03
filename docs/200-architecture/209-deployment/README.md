@@ -7,7 +7,7 @@ observability/quality infrastructure stack.
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │                 Dev stack (docker-compose.yml)                       │
 │  PostgreSQL :5432 · Backend :8080 · Frontend :3000 · pgAdmin :5050 │
@@ -40,6 +40,7 @@ observability/quality infrastructure stack.
 ## Deployment Steps
 
 ### Prerequisites
+
 - Docker and Docker Compose v2+
 - Java 21+ (for local development)
 - Maven 3.9+ (for local builds)
@@ -66,6 +67,7 @@ docker-compose ps
 ```
 
 This starts the **dev** stack:
+
 - **PostgreSQL 16** on port 5432
 - **Backend API** on port 8080
 - **Frontend (Next.js)** on port 3000
@@ -73,6 +75,7 @@ This starts the **dev** stack:
 
 > Production must use `docker-compose.prod.yml` (below) — never the published
 > Postgres/pgAdmin ports from the dev compose.
+>
 ### 3. Start Monitoring & Quality Infrastructure
 
 ```bash
@@ -82,6 +85,7 @@ bash infra/scripts/start-infra.sh
 Prerequisites, environment file and operation details: [infra docs](../../../infra/README.md).
 
 This starts:
+
 - **Prometheus** on port 9090
 - **Grafana** on port 3001 (credentials via `.env`)
 - **Loki + Promtail** — log aggregation (queried at port 3100)
@@ -103,6 +107,7 @@ curl http://localhost:3100/ready             # Loki
 ## Docker Compose Details
 
 ### Root docker-compose.yml (development)
+
 - **Services**: `postgres`, `backend`, `frontend`, `pgadmin`
 - **Network**: `notary-network` (bridge)
 - **Volumes**: `postgres_data`, `pgadmin_data`
@@ -112,6 +117,7 @@ curl http://localhost:3100/ready             # Loki
   `${VAR:-admin}` defaults for local ergonomics
 
 ### docker-compose.prod.yml (production entrypoint — issue #1044)
+
 - **Services**: `postgres`, `backend`, `frontend`, `reverse-proxy` (**no pgAdmin**)
 - **Host ports**: only the reverse proxy (`:80`); postgres/backend/frontend stay on the Docker network
 - **Secrets**: required via `${VAR:?...}` — compose fails fast if `.env` is incomplete; no `admin` defaults
@@ -124,6 +130,7 @@ curl http://localhost:3100/ready             # Loki
   exists (no false-green restore).
 
 ### infra/deploy/kustomize (staging manifests — issue #901)
+
 - **Base** (`infra/deploy/kustomize/base`): same four services as `docker-compose.prod.yml`
   (postgres, backend, frontend, reverse-proxy) — **no pgAdmin**
 - **Staging overlay** (`infra/deploy/kustomize/overlays/staging`): GHCR SHA image tags for
@@ -138,6 +145,7 @@ curl http://localhost:3100/ready             # Loki
 - **Validate**: `python3 scripts/test_staging_kustomize.py` (requires `kustomize` on PATH)
 
 ### Infrastructure stack (`infra/`)
+
 Observability and quality services (Homer, SonarQube, Prometheus, postgres-exporter, Grafana,
 Loki, Promtail) are defined in `infra/observability/docker-compose.yml`; what each service
 does and how it couples to the application is in
@@ -174,14 +182,14 @@ cp .env.example .env
 # and POSTGRES_EXPORTER_* (used as Flyway placeholders; not injected as Grafana/pgAdmin env on the backend).
 ```
 
-2. Start the production stack:
+1. Start the production stack:
 
 ```bash
 docker compose -f docker-compose.prod.yml --env-file .env up -d --build
 docker compose -f docker-compose.prod.yml ps
 ```
 
-3. Verify through the reverse proxy only:
+1. Verify through the reverse proxy only:
 
 ```bash
 curl -fsS http://localhost/                  # frontend via reverse proxy
@@ -189,7 +197,7 @@ curl -fsS http://localhost/actuator/health   # backend via reverse proxy
 # Postgres (:5432), backend (:8080), frontend (:3000), and pgAdmin must NOT be published on the host.
 ```
 
-4. Confirm Flyway baseline-on-migrate is off in the prod file (`SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`).
+1. Confirm Flyway baseline-on-migrate is off in the prod file (`SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`).
 
 ## Staging deployment (Kustomize — issue #901)
 

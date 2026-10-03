@@ -34,7 +34,7 @@ Governed by `CONSTITUTION.md` §11 (Release Rules) and implemented in
 only runs after CI has already gone green — it never builds/publishes an
 untested commit:
 
-```
+```text
 PR → CI green on merge to main (ci.yml)
         │  (workflow_run trigger, gated on conclusion == 'success')
         ▼

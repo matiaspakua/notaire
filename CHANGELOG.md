@@ -48,7 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   false)`, so Hibernate INNER JOINed `deeds` and findById/list missed valid rows
   with a null FK; set `optional = true` to match the nullable column.
 
-
 - **Persona form swallowed non-409 backend validation** (issue #945, CU17/CU61):
   present create/update errors via `presentPersonaSaveError` so HTTP 400
   messages (e.g. blank identification) appear in toast and FormField errors;

@@ -84,7 +84,7 @@ Snapshots históricos: [`docs/000-archive/github/`](docs/000-archive/github/).
 
 ## 📁 Estructura del repositorio
 
-```
+```text
 notaire/
 ├── backend-api/          # Spring Boot 4 REST API (Java 21)
 ├── frontend/              # Next.js 16 web app

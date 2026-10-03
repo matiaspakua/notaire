@@ -8,7 +8,7 @@ Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, impleme
 
 ## Architecture
 
-```
+```text
 Client ──POST /api/v1/usuarios/login──► UsuarioController
                                               │
                                     ──────────▼──────────
@@ -27,7 +27,8 @@ Client ──POST /api/v1/usuarios/login──► UsuarioController
 ```
 
 On protected requests:
-```
+
+```text
 Browser ──Cookie: notaire-auth-token──► Next proxy ──► JwtAuthenticationFilter
 API client ──Authorization: Bearer <token>──────────► JwtAuthenticationFilter
                                                  │
@@ -121,7 +122,7 @@ boolean valid = jwtTokenService.isValid(token);
 
 ### Role model
 
-```
+```text
 Usuario ──M:1──► Rol
 Rol     ──name, description──► (ENUM: Escribano, Secretario, Admin, ...)
 ```

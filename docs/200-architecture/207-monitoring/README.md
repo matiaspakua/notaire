@@ -11,7 +11,7 @@ authoritative, up-to-date service list, ports, and credentials.
 
 ## Architecture
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │                      Notaire Application                     │
 ├───────────────────────────┬────────────────────────────────┤
@@ -59,11 +59,13 @@ authoritative, up-to-date service list, ports, and credentials.
 ### 1. Backend API Monitoring
 
 **Metrics Collection:** Spring Boot Actuator with Micrometer
+
 - **Endpoint:** `http://localhost:8080/actuator/prometheus`
 - **Auth:** Basic Auth via `ACTUATOR_USER` / `ACTUATOR_PASSWORD` (set in `.env`)
 - **Scrape Interval:** Every 10 seconds
 
 **Metrics Exposed:**
+
 - JVM metrics (memory, GC, threads, classes)
 - HTTP request metrics (rate, duration, errors)
 - Database connection pool (HikariCP)
@@ -71,6 +73,7 @@ authoritative, up-to-date service list, ports, and credentials.
 - Custom business metrics (operation counts, durations, API errors, login attempts)
 
 **Grafana Dashboard:** `notaire-backend` (pre-provisioned)
+
 - API request rate & response time (P95)
 - JVM memory usage & garbage collection
 - Active threads & database connection pool
@@ -80,6 +83,7 @@ authoritative, up-to-date service list, ports, and credentials.
 ### 2. PostgreSQL Database Monitoring
 
 **Metrics Collection:** postgres-exporter
+
 - **Endpoint:** `http://localhost:9187/metrics`
 - **Configuration:** `infra/observability/prometheus/postgres_exporter.yml`
 - **Connection:** connects with a dedicated, least-privilege role (granted only
@@ -88,6 +92,7 @@ authoritative, up-to-date service list, ports, and credentials.
   `POSTGRES_EXPORTER_PASSWORD` in `.env`.
 
 **Grafana Dashboard:** `notaire-postgres` (pre-provisioned)
+
 - Database size & connection count
 - Transaction commit/rollback rates
 - Query performance
@@ -110,6 +115,7 @@ Loki datasource: `{container_name="notary-backend"} | json`.
 counters), plus Loki for raw log lines.
 
 **Grafana Dashboard:** `notaire-auth` (pre-provisioned)
+
 - Login attempts — total rate
 - Successful logins
 - Failed logins (bad credentials)
@@ -120,7 +126,7 @@ counters), plus Loki for raw log lines.
 - Recent login errors (from logs)
 
 Backs the `HighLoginFailureRate` and `SuspiciousLoginActivity` alerts (see
-[Alerting Rules](#alerting-rules) below).
+[Alerting Rules](#alerting-rules-and-code-quality) below).
 
 ## Operating the stack
 
@@ -141,6 +147,7 @@ SonarQube analysis is run as described in [infra OPERATION](../../../infra/docs/
 ---
 
 **Related Documents:**
+
 - [Infrastructure README](../../../infra/README.md) — complete infra setup (source of truth for ports/credentials)
 - [DevSecOps Pipeline](../208-devsecops/README.md) — CI/CD pipeline documentation
 - [Deployment Guide](../209-deployment/README.md) — deployment procedures

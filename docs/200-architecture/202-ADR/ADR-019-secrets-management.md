@@ -1,9 +1,11 @@
 # ADR-019: Secrets Management
 
 ## Status
+
 Accepted
 
 ## Context
+
 Both the application stack (`docker-compose.yml`) and the observability
 stack (`infra/observability/docker-compose.yml`) need credentials (database, JWT signing
 key, Actuator/Grafana/SonarQube admin accounts, a least-privilege Postgres
@@ -11,11 +13,13 @@ metrics-exporter role). A single, consistent approach was needed instead of
 scattering secrets across multiple compose files or hardcoding them.
 
 ## Decision
+
 All credentials live in a **single, git-ignored `.env` file at the repo
 root**, seeded from a checked-in `.env.example` template. Both compose files
 read from this one file — there is no separate `infra/.env`.
 
 ### What's in `.env`
+
 | Variable(s) | Purpose |
 |-------------|---------|
 | `POSTGRES_DB/USER/PASSWORD` | Application database |
@@ -28,6 +32,7 @@ read from this one file — there is no separate `infra/.env`.
 | `SONAR_DB_USER/PASSWORD`, `SONAR_ADMIN_USER/PASSWORD`, `SONAR_TOKEN` | SonarQube's own database + admin account; `scripts/run-sonar.sh` handles SonarQube's forced first-login password change |
 
 ### Runtime enforcement
+
 `ProductionCredentialsGuard` (`@PostConstruct`) checks, only when
 `app.environment=production`, whether any of the credential properties still
 equal the literal default value `"admin"` — if so, it throws
@@ -36,6 +41,7 @@ fail-closed guard against deploying with `.env.example`'s placeholder values
 unchanged.
 
 ## Options Considered
+
 - **Docker secrets / Kubernetes Secrets**: Deferred — no Swarm/Kubernetes
   orchestration is in place yet (see ADR-001); revisit if/when a production
   orchestrator is adopted.
@@ -48,6 +54,7 @@ unchanged.
   the simplest way to guarantee both stacks agree.
 
 ## Consequences
+
 - **Pros**: One file to rotate/audit; `ProductionCredentialsGuard` catches
   the most common deployment mistake (forgetting to change placeholders)
   before the app even starts serving traffic.
