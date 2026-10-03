@@ -758,6 +758,8 @@ components:
           type: integer
         name:
           type: string
+        returned:
+          type: boolean
         templateProcedures:
           items:
             $ref: '#/components/schemas/DtoProcedureTemplate'
@@ -7110,7 +7112,7 @@ paths:
                   $ref: '#/components/schemas/DtoDocumentType'
                 type: array
           description: OK
-      summary: Obtener todos los tipo-de-documento
+      summary: List all document types
       tags:
       - TipoDeDocumento
     post:
@@ -7127,20 +7129,20 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creado
+          description: Created
         '400':
           content:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: Bad request
         '409':
           content:
             '*/*':
               schema:
                 type: object
-          description: Conflicto
-      summary: Crear nuevo tipo-de-documento
+          description: Conflict
+      summary: Create a new document type
       tags:
       - TipoDeDocumento
   /api/v1/tipo-de-documento/search:
@@ -7161,7 +7163,7 @@ paths:
                   $ref: '#/components/schemas/DtoDocumentType'
                 type: array
           description: OK
-      summary: Buscar tipo-de-documento por nombre
+      summary: Search document types by name
       tags:
       - TipoDeDocumento
   /api/v1/tipo-de-documento/{id}:
@@ -7180,14 +7182,14 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
-      summary: Eliminar tipo-de-documento
+          description: Not found
+      summary: Delete document type
       tags:
       - TipoDeDocumento
     get:
@@ -7211,8 +7213,8 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoDocumentType'
-          description: No encontrado
-      summary: Obtener tipo-de-documento por ID
+          description: Not found
+      summary: Get document type by ID
       tags:
       - TipoDeDocumento
     put:
@@ -7242,8 +7244,8 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
-      summary: Actualizar tipo-de-documento
+          description: Not found
+      summary: Update document type
       tags:
       - TipoDeDocumento
   /api/v1/tipo-de-documento/{id}/in-use:
@@ -7265,7 +7267,7 @@ paths:
                   type: boolean
                 type: object
           description: OK
-      summary: Verificar si el tipo de documento está en uso
+      summary: Check whether the document type is in use
       tags:
       - TipoDeDocumento
   /api/v1/tipo-folio:
@@ -8471,8 +8473,6 @@ servers:
 tags:
 - description: CU70 - Gestión de workflows de estados
   name: Workflow Definition
-- description: API para gestionar tipo-de-documento
-  name: TipoDeDocumento
 - description: API para gestionar documentos presentados
   name: DocumentoPresentado
 - description: API para gestionar pagos (CU15, CU47)
@@ -8537,6 +8537,8 @@ tags:
   name: Trámites
 - description: API para gestionar plantillas de presupuesto
   name: PlantillaPresupuesto
+- description: API to manage document types
+  name: TipoDeDocumento
 - description: API para tipos de tramite
   name: Tipo de Tramite
 - description: API para administrar cuadernos de folios
