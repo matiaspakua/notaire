@@ -1,8 +1,11 @@
 # ci-no-bot-report-commits Specification
 
 ## Purpose
+
 TBD - created by archiving change fix-1041-no-bot-commits-main. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Workflows never commit generated CI reports into the repo
 
 CI, CD, Playwright E2E, and PR validation workflows MUST NOT create git
@@ -70,4 +73,3 @@ request `contents: write`.
   `playwright-e2e.yml` are inspected
 - **THEN** those jobs do not set `permissions.contents: write` (the CD
   `release` job MAY retain `contents: write` solely for GitHub Releases)
-

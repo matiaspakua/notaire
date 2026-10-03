@@ -1,9 +1,12 @@
 # audit-log-mutation-deny Specification
 
 ## Purpose
+
 Guarantee the public audit-log HTTP API is consult-only: clients cannot create,
 update, or delete audit rows; mutations are rejected with HTTP 405.
+
 ## Requirements
+
 ### Requirement: Audit-log HTTP mutations MUST be denied
 
 The system SHALL NOT expose create, update, or delete handlers for
@@ -15,16 +18,19 @@ SHALL continue to be written only by the server-side audit aspect from the
 authenticated JWT identity.
 
 #### Scenario: POST audit-log is rejected
+
 - **WHEN** a client sends `POST /api/v1/audit-log` with any JSON body
 - **THEN** the server responds `405 Method Not Allowed` and no new audit row
   is created from that request
 
 #### Scenario: PUT audit-log is rejected
+
 - **WHEN** a client sends `PUT /api/v1/audit-log/{id}` with any JSON body
 - **THEN** the server responds `405 Method Not Allowed` and the existing row
   is unchanged
 
 #### Scenario: DELETE audit-log is rejected
+
 - **WHEN** a client sends `DELETE /api/v1/audit-log/{id}`
 - **THEN** the server responds `405 Method Not Allowed` and the existing row
   remains
@@ -37,13 +43,14 @@ Bruno/api-test coverage SHALL include negative cases that assert `405` for
 `POST`, `PUT`, and `DELETE` with a valid JWT.
 
 #### Scenario: OpenAPI tag is consult-only
+
 - **WHEN** a consumer inspects the OpenAPI tag/description for the audit-log
   API
 - **THEN** the description states consult/query access and does not claim
   administration or mutation of audit records
 
 #### Scenario: Bruno rejects audit-log mutations
+
 - **WHEN** the Bruno suite runs authenticated `POST`, `PUT`, and `DELETE`
   against `/api/v1/audit-log`
 - **THEN** each request expects HTTP status `405`
-

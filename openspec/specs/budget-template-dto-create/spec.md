@@ -1,8 +1,11 @@
 # budget-template-dto-create Specification
 
 ## Purpose
+
 TBD - created by archiving change fix-main-ci-1124-fallout. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Budget template DTO create hydrates JPA associations
 
 `POST /api/v1/plantilla-presupuestos` SHALL accept a request DTO with
@@ -28,4 +31,3 @@ NPE on null associations.
 - **WHEN** a client POSTs a template referencing a non-existent concept or
   procedure type id
 - **THEN** the API returns HTTP 400 and does not return HTTP 500 from an NPE
-

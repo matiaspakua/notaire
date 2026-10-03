@@ -86,7 +86,7 @@ not enforce icon-button naming for this pattern today.
   tests blocked solely by accessible name; leave others skipped with reason.
 - **[Trade-off] img-alt-only already “works” for some AT** → Still add
   `aria-label` for AC + consistency; keep meaningful `alt` or set decorative
-  + aria-label — pick one clear naming source (prefer aria-label on Button).
+  - aria-label — pick one clear naming source (prefer aria-label on Button).
 
 ## Testing Strategy
 

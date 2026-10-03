@@ -1,9 +1,12 @@
 # dev-stack-isolation Specification
 
 ## Purpose
+
 Let several dev stacks coexist by making container names and host ports
 overridable with unchanged defaults. Source: #1186; owner CU76.
+
 ## Requirements
+
 ### Requirement: Container names are overridable
 
 Each container of `docker-compose.yml` MUST take its name from
@@ -63,4 +66,3 @@ including the limitation for the observability stack.
 - **WHEN** `.env.example` and the deployment guide are read
 - **THEN** both list the eight override keys, and the guide states that the
   observability stack targets the default names
-

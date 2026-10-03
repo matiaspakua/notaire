@@ -13,12 +13,14 @@ fleet docs.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Short, findable process doc under `304-ai-sdlc-cloud/` with the false positive
   and required terminal checks.
 - Cross-link from README, checklist, fleet architecture, and `cloud-foreman`.
 - Keep Gate 1 complete with `skip_specs: true` and CU76 / #1133 traceability.
 
 **Non-Goals:**
+
 - No product code, workflow YAML, or `local-ai/` edits.
 - No change to GitHub required-check settings (document agent behavior only).
 

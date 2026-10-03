@@ -79,7 +79,7 @@ mutation-error path for all listed CRUD surfaces.
 ### Architecture review
 
 Follows existing `ApiError` + design-system `FormField` patterns from #945 /
-#1053. No ADR. Does not implement #1051 (HttpOnly JWT) or broaden #615 beyond
+\#1053. No ADR. Does not implement #1051 (HttpOnly JWT) or broaden #615 beyond
 the error-display slice needed for #1054 AC.
 
 ## Documentation Impact

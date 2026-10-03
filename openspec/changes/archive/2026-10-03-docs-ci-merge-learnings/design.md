@@ -5,7 +5,7 @@
 
 ## Context
 
-#1134 added `CI-MERGE-GATE.md` and `scripts/check-heavy-ci.sh`. Cascade work on
+\#1134 added `CI-MERGE-GATE.md` and `scripts/check-heavy-ci.sh`. Cascade work on
 2026-10-02 then showed: (1) agents still need an explicit heavy-gate command and
 docs-only Playwright note; CI subscriptions can report “all N checks success”
 (e.g. 18 on #1137) while `CI - Build, Test & Security` / Playwright are still
@@ -18,11 +18,13 @@ setup is on rejects advanced SARIF and fails Analyze.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Extend existing fleet docs (no parallel duplicates) with the three learnings.
 - Cross-link DevSecOps CodeQL ops (`enable-gh-secure.sh`, `wait-for-processing`).
 - Keep Gate 1 complete with `skip_specs: true` and CU76 / #1133 traceability.
 
 **Non-Goals:**
+
 - No product code, no new workflow YAML in this PR, no `local-ai/` edits.
 - No `sdlc-exception` label — this change folder satisfies Process Checks.
 - No change to GitHub required-check settings (document agent behavior only).

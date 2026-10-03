@@ -5,7 +5,7 @@
 
 `BudgetTemplateJpaController.create` (line 51) does
 `budgetTemplate.getConcept().getIdConcept()` before `em.getReference`. After
-#1124, `BudgetTemplateController.create` built a `BudgetTemplate` with only the
+\#1124, `BudgetTemplateController.create` built a `BudgetTemplate` with only the
 composite PK and notes — `getConcept()` was null → NPE → HTTP 500. Integration
 and Bruno suites that POST `fkIdConcept` / `fkIdProcedureType` failed.
 
@@ -74,4 +74,3 @@ n/a — no UI surface in this hotfix.
 - Revert the merge commit of this PR on `main` if create regressions appear.
 - Rollback restores the previous NPE/500 behavior for DTO-only creates; prefer
   forward-fix of association hydration instead.
-

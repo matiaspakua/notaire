@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -34,7 +34,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | PUT audit-log is rejected | `AuditRecordControllerTest#shouldRejectUpdateOfAuditRecords`; `AuditRecordMutationDisabledIntegrationTest#shouldRejectAuditLogPut`; Bruno `03-put-denied.yml` | pending |
 | DELETE audit-log is rejected | `AuditRecordControllerTest#shouldRejectDeleteOfAuditRecords`; `AuditRecordMutationDisabledIntegrationTest#shouldRejectAuditLogDelete`; Bruno `04-delete-denied.yml` | pending |
 | OpenAPI tag is consult-only | `@Tag` on `AuditRecordController` + Gate 3 Swagger check | pending |
-| Bruno rejects audit-log mutations | `api-test/audit-records/02|03|04-*-denied.yml` | pending |
+| Bruno rejects audit-log mutations | `api-test/audit-records/02\|03\|04-*-denied.yml` | pending |
 
 ## Permanent documentation updated
 

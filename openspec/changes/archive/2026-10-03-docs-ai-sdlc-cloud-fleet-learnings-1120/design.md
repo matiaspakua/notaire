@@ -12,6 +12,7 @@ not yet captured in permanent cloud docs.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Capture five concrete process learnings where agents will read them (checklist,
   fleet architecture, README index).
 - Harden `.claude/agents/` so loadable agent prompts enforce `Closes #<n>` and
@@ -19,6 +20,7 @@ not yet captured in permanent cloud docs.
 - Keep Gate 1 complete with `skip_specs: true` and CU76 / #1120 traceability.
 
 **Non-Goals:**
+
 - No product code, workflow YAML, or `local-ai/` edits.
 - No change to `pr-validation.yml` (already fixed on `main` in #1111).
 - No environment.json edit in this PR (document the Saved-card requirement only).

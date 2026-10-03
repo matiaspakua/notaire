@@ -1,10 +1,13 @@
 # session-expiry-handling Specification
 
 ## Purpose
+
 Define how the Notaire web client ends an authenticated session when the API
 rejects the request with HTTP 401, so users re-authenticate via CU84 instead of
 seeing repeated generic error toasts.
+
 ## Requirements
+
 ### Requirement: Session ends on authenticated 401
 
 While the client believes the user is authenticated, an API response of HTTP 401
@@ -41,4 +44,3 @@ redirect loop.
 
 - **WHEN** an unauthenticated login attempt receives HTTP 401 (invalid credentials)
 - **THEN** the login page shows a credentials error and does not redirect via the session-expiry path
-

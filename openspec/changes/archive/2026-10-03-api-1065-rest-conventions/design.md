@@ -13,12 +13,14 @@ paths; prefer plurals and `/search`; phase renames later.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Record ADR-023 naming conventions and phased-rename policy.
 - Remove dead `POST /api/v1/pagos/params`.
 - Shared `Location` helper; apply on sample creates (pagos, folio, minutas).
 - RegistrationDraft generate → `201` + `Location`.
 
 **Non-Goals:**
+
 - Big-bang path renames across the API.
 - Adding `Location` to every create endpoint in one PR.
 - Introducing `/api/v2` in this slice.

@@ -40,12 +40,14 @@ Verified on `origin/main` (2026-10-03, tip after fetch):
 ## Decisions
 
 1. **Checkout `ref` for build-and-publish**
+
    ```yaml
    - name: Checkout code
      uses: actions/checkout@v7
      with:
        ref: ${{ github.event.workflow_run.head_sha || github.sha }}
    ```
+
    - Why: AC1 requires `workflow_run.head_sha`. Empty `head_sha` on tag /
      `workflow_dispatch` falls back to `github.sha`.
    - Alternative rejected: bare `${{ github.event.workflow_run.head_sha }}`
@@ -53,6 +55,7 @@ Verified on `origin/main` (2026-10-03, tip after fetch):
    - Equivalent accepted: explicit ternary on `github.event_name == 'workflow_run'`.
 
 2. **Explicit publish SHA step (do not trust metadata `type=sha` alone)**
+
    ```yaml
    - name: Resolve publish SHA
      id: publish_sha
@@ -63,6 +66,7 @@ Verified on `origin/main` (2026-10-03, tip after fetch):
          echo "sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
        fi
    ```
+
    - Why: under `workflow_run`, metadata-action’s `type=sha` / `github.sha`
      tracks tip-of-default-branch, which is the bug class #1042 describes.
    - Tags for the immutable push MUST include

@@ -1,10 +1,13 @@
 # frontend-csp-hardening Specification
 
 ## Purpose
+
 Harden the frontend Content-Security-Policy in production so scripts are
 nonce-constrained and `unsafe-eval` is not allowed, reducing XSS impact.
 Source: #1051; owner CU78 – Security and Compliance.
+
 ## Requirements
+
 ### Requirement: Production CSP forbids unsafe-eval
 
 In production, the `Content-Security-Policy` response header MUST NOT include
@@ -33,4 +36,3 @@ scripts.
 - **WHEN** a user loads login and completes login/logout under production CSP
   settings used by E2E/production build
 - **THEN** required application scripts execute and the login/logout flows succeed
-

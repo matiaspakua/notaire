@@ -23,7 +23,7 @@ Verified on workspace tip (2026-10-03):
 
 Fleet serialize (coordinator): **#1057** (PR #1150) → **#1048** → **#1047** →
 then **#1044**. This Gate 1 draft is prep-only; no product branch/PR until
-#1047 is on `main`.
+\#1047 is on `main`.
 
 ## Goals / Non-Goals
 

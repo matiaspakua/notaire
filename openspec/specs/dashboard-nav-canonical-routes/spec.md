@@ -1,11 +1,14 @@
 # dashboard-nav-canonical-routes Specification
 
 ## Purpose
+
 Make Suplencias and Reportes discoverable from primary dashboard navigation,
 collapse duplicate administración pages for Items and Auditoría into one
 canonical route each, and prove E2E reaches those screens via navigation UI.
 Source: #1058; CU22, CU59, CU24, CU25, CU50, CU23.
+
 ## Requirements
+
 ### Requirement: Suplencias and Reportes appear in primary navigation
 
 The dashboard sidebar MUST expose navigation entries for Suplencias
@@ -62,4 +65,3 @@ navigation UI (sidebar or equivalent primary nav) rather than only
 - **WHEN** the updated Playwright suite runs the Reportes discovery path
 - **THEN** it clicks/activates the Reportes nav control and asserts the
   canonical URL/content loads
-

@@ -15,6 +15,7 @@ that drift in CI.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Refresh Controller names and add the eight missing resources (CU80–CU82,
   CU85, plus inventory rows for roles / identification types / document cost
   templates / procedures).
@@ -24,6 +25,7 @@ that drift in CI.
   wire into preflight and process self-tests.
 
 **Non-Goals:**
+
 - Bruno request authoring or suite expansion (#953).
 - Changing Spanish URL paths still returned by the API.
 - Editing product Java/TS runtime behavior.

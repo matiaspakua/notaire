@@ -150,4 +150,4 @@ ADR-015 already mandates next-intl + synced catalogs + `i18n.test.ts`.
 ## Open Questions
 
 None blocking. Store seed path was unavailable; artifacts filled from issue
-#1059 + coordinator decisions.
+\#1059 + coordinator decisions.

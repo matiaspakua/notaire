@@ -3,7 +3,7 @@
 
 ## Context
 
-#1066 already annotated intentional skips in TS-0014/16/17/20 with `#1146` and
+\#1066 already annotated intentional skips in TS-0014/16/17/20 with `#1146` and
 added a Vitest citation check in `frontend/src/tests/unit/e2e-test-reliability.test.ts`.
 Live inventory on updated `main` (2026-10-03):
 

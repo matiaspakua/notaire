@@ -78,6 +78,7 @@
 - [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
 - [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
 - [x] 10.5 Record the PR number in `traceability.md` (#1176)
+
 ## 11. Deploy
 
 - [ ] 11.1 Merge via the Pull Request only — never push to `main`

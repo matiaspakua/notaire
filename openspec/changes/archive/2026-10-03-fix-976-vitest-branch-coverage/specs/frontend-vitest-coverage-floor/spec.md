@@ -6,7 +6,7 @@
 Establish a deliberate, documented raise-only Vitest coverage floor for the
 Notaire frontend so CI reflects intentional quality policy (mirroring backend
 JaCoCo), and record why branch coverage historically fell under 6%. Source:
-#976; CU76.
+\#976; CU76.
 
 ## ADDED Requirements
 

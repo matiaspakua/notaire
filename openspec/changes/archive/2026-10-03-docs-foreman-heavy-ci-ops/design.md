@@ -5,7 +5,7 @@
 
 ## Context
 
-#1138 / `docs-ci-merge-learnings` documented the heavy merge gate and
+\#1138 / `docs-ci-merge-learnings` documented the heavy merge gate and
 `scripts/check-heavy-ci.sh`. Fleet ops on 2026-10-03 then showed residual gaps
 in the foreman agent: (1) CI subscriptions can report “all N checks success”
 while heavy jobs are still queued/omitted from check-runs — wake-up only, always
@@ -18,12 +18,14 @@ heavy-gate exit 0. The product docs change is already on the branch tip in
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Complete Gate 1 (`skip_specs: true`) for the foreman merge-ops hardening so
   Process Checks pass without `sdlc-exception`.
 - Keep CU76 / #1153 traceability; cite `CI-MERGE-GATE.md` as the permanent
   heavy-gate authority.
 
 **Non-Goals:**
+
 - No product code, no new workflow YAML, no `local-ai/` edits.
 - No duplicate rewrite of `CI-MERGE-GATE.md` (already from #1138).
 - No `sdlc-exception` label — this change folder satisfies Process Checks.

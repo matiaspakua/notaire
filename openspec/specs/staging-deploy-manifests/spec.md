@@ -1,10 +1,13 @@
 # staging-deploy-manifests Specification
 
 ## Purpose
+
 Provide a KIS staging/production Kubernetes deploy target (Kustomize) that
 mirrors the #1044 four-service production compose topology, with static
 validation and honest deployment documentation. Source: #901; owner CU77.
+
 ## Requirements
+
 ### Requirement: Kustomize base renders the #1044 service set
 
 The repository MUST include a Kustomize base (or equivalently documented
@@ -101,4 +104,3 @@ does not imply automated cluster deploy unless a real deploy job exists.
 - **THEN** the docs name the Kustomize path, required Secret keys, apply
   steps, relationship to prod compose, and do not claim automated production
   cluster deploy unless such a job actually exists
-

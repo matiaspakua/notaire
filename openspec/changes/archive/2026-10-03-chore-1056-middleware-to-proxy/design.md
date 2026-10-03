@@ -25,7 +25,7 @@ through the **rewrite/BFF**, while edge continues using status/role markers
 unless that change explicitly adds CSP nonce headers in the edge file. This
 migration MUST preserve cookie forwarding skips for `/api/**`, preserve UX
 cookie reads, and carry forward any #1051 edge additions (e.g. CSP nonce) if
-#1051 merges first.
+\#1051 merges first.
 
 ## Goals / Non-Goals
 

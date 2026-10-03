@@ -70,7 +70,6 @@ Related: #945 (Persona), #615 (E2E validation coverage gap), #1053 (401).
      #615 gap without closing the whole matrix.
    - Allocate next free TS id at implement time (TS-0095; TS-0094 taken by #1052).
 
-
 5. **`apiDelete` ApiError**
    - Why: issue AC still lists it; #1053 already throws `ApiError` via
      `rejectApiFailure`. Implement task = verify + extend unit tests for

@@ -6,7 +6,9 @@ Mechanical checks of the CONSTITUTION process: the local-AI harness gates
 (env parsing, static test checks, runnable review notes, metrics) and the PR
 checks run by `sdlc-process.yml` and `scripts/preflight.sh`. Issue #1083
 introduced them from the findings in `local-ai/AUDIT.md`.
+
 ## Requirements
+
 ### Requirement: Harness env files accept quoted values
 
 The harness SHALL read `KEY=value` files (`triage.env`, `tests.env`) with one
@@ -524,4 +526,3 @@ SHALL name the file and the heading.
 
 - **WHEN** `design.md` `## Decisions` is still only a template HTML comment
 - **THEN** the failure text includes `design.md` and `Decisions`
-

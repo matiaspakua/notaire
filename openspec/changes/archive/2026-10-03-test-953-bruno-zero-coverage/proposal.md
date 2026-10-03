@@ -79,7 +79,7 @@ for those controllers.
 ### Architecture review
 
 Follows established Bruno OpenCollection layout (`backend-api/api-test/README.md`,
-#952/#1035). No ADR. Prefer English folder names consistent with recent
+\#952/#1035). No ADR. Prefer English folder names consistent with recent
 renames (`people`, `budgets`, …).
 
 ## Documentation Impact

@@ -15,7 +15,7 @@ Researched on `origin/main` tip `6b246a72` (2026-10-03):
 | Toast matchers | Expect `/requerido\|obligatorio\|blank/i` (dialog) or `/dni\|identificacion\|requerido\|obligatorio\|blank/i` (toast) |
 
 Queue ahead (do not implement until clear): `#1040 → #1043 → #1045 → #1056 →
-#1055 → #1050 → #1058 → #976`.
+\#1055 → #1050 → #1058 → #976`.
 
 ## Goals / Non-Goals
 

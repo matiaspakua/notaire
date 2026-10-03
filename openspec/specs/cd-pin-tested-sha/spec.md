@@ -1,8 +1,11 @@
 # cd-pin-tested-sha Specification
 
 ## Purpose
+
 TBD - created by archiving change fix-1042-cd-tested-sha. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: CD builds the CI-tested SHA on workflow_run
 
 When CD is triggered by a successful CI `workflow_run` on `main`, the
@@ -49,4 +52,3 @@ result other than `success`.
   `github.event.workflow_run.conclusion` is not `success`
 - **THEN** job `build-and-publish` is skipped via its `if` condition
   (`github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'`)
-

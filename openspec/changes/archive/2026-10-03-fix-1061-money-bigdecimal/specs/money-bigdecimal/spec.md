@@ -15,12 +15,14 @@ scale 2 with `RoundingMode.HALF_UP` when scaling inputs. Comparisons SHALL use
 `compareTo`, not `==` or `equals` alone for magnitude checks.
 
 #### Scenario: Charge lines 0.1 and 0.2 sum exactly to 0.3
+
 - **WHEN** a budget has two charge lines valued `0.1` and `0.2` with no
   percentages or document costs
 - **THEN** `BudgetCharges.total()` equals `0.30` exactly (scale 2), not a
   binary-float approximation
 
 #### Scenario: Overpayment against an exact tenths balance is rejected
+
 - **WHEN** a budget total is `0.30`, payments of `0.10` and `0.20` are already
   recorded, and a client attempts another payment of `0.01`
 - **THEN** the server rejects the payment with HTTP `409 Conflict` (same
@@ -35,6 +37,7 @@ Flyway migration SHALL perform the conversion. Layout coordinates
 (`workflow_nodes` position columns) SHALL remain non-monetary floating types.
 
 #### Scenario: Payment amount column is NUMERIC scale 2 after migration
+
 - **WHEN** Flyway applies the money migration on an empty or existing database
 - **THEN** `payments.amount` (and peer money columns) are `numeric` with scale 2
   and schema validation passes
@@ -46,6 +49,7 @@ the payment amount from `BigDecimal` at scale 2 without `String.valueOf(float)`
 artifacts.
 
 #### Scenario: Receipt text shows two decimal places for amount
+
 - **WHEN** a payment receipt PDF is generated for amount `100.50`
 - **THEN** the rendered amount text uses two decimal places derived from
   `BigDecimal`, not a float string artifact

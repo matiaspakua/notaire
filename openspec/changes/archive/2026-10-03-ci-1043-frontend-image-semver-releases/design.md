@@ -98,7 +98,7 @@ Verified on `origin/main` (2026-10-03, tip `ce97e114` after fetch):
 5. **TDD via static unittests**
    - `scripts/test_frontend_ghcr_publish.py` (name flexible): assert `cd.yml`
      references `frontend/Dockerfile`, frontend image name, SBOM + cosign sign
-     + attest steps for that image.
+     - attest steps for that image.
    - `scripts/test_semver_release_process.py`: assert release-please workflow
      **or** tag-triggered release workflow exists; assert documented version
      bump targets (`pom.xml`, `frontend/package.json`) are wired (config paths

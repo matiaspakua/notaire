@@ -1,8 +1,11 @@
 # protect-main-ruleset Specification
 
 ## Purpose
+
 TBD - created by archiving change ci-1040-protect-main-ruleset. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Default branch ruleset enforces PR-only merges
 
 The repository's active ruleset on the default branch (`protect-main`) MUST
@@ -69,4 +72,3 @@ defense-in-depth alongside the active `protect-main` ruleset.
 - **THEN** it no longer states that protection returns 404 / is “not currently
   configured”, and it references the active `protect-main` ruleset as the
   GitHub-side control
-

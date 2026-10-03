@@ -1,10 +1,13 @@
 # admin-route-guard Specification
 
 ## Purpose
+
 Define how the Notaire web client blocks non-admin authenticated users from
 opening administración screens via direct URL, using both the edge layer and a
 layout guard, and informs the user when access is denied.
+
 ## Requirements
+
 ### Requirement: Admin routes require an admin-capable role
 
 Authenticated access to `/dashboard/administracion` and its sub-paths SHALL be
@@ -40,4 +43,3 @@ access-denied message on the dashboard.
 
 - **WHEN** a non-admin user (for example `EMPLEADO`) logs in and navigates to `/dashboard/administracion/usuarios`
 - **THEN** the user lands on the dashboard with the forbidden signal and message, and does not see the admin usuarios UI
-

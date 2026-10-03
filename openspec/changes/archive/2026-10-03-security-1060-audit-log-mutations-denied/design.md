@@ -11,11 +11,13 @@ negatives, stale OpenAPI `@Tag` (“consultar y administrar”).
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Lock mutation deny to **405** for POST, PUT, and DELETE.
 - Close #1060 AC with Bruno + OpenAPI + threat-model note.
 - Keep legitimate `AuditAspect` writer unchanged.
 
 **Non-Goals:**
+
 - RBAC on GET (#559), DB immutability (SR-09), aspect `save` visibility hardening.
 
 ## Decisions

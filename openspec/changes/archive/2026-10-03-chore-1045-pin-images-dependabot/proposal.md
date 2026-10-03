@@ -43,7 +43,7 @@ and **docker** ecosystems so supply-chain updates stay continuous.
     (`/backend-api`, `/frontend`; add further directories only if a Dockerfile
     lives there)
 - Document the pin policy and Dependabot ecosystems in DevSecOps / infra docs
-  + CHANGELOG
+  - CHANGELOG
 - **No product API/UI behavior change.** No Flyway. No Java/TS feature work.
 
 ## Reglas de negocio

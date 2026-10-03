@@ -1,10 +1,13 @@
 # swing-e2e-retirement Specification
 
 ## Purpose
+
 Keep Swing desktop E2E permanently retired: no resurrected workflow, no Maven
 build of removed Swing modules in GitHub Actions, and no live docs that teach
 operators to run Robot Framework against a Swing client that no longer exists.
+
 ## Requirements
+
 ### Requirement: Swing E2E workflow stays retired
 
 The repository MUST NOT contain `.github/workflows/e2e-swing.yml`. ADR-012
@@ -48,4 +51,3 @@ hygiene, but MUST be clearly hard-deprecated and MUST NOT be invoked from CI.
 - **WHEN** an operator opens `testing/e2e-swing/README.md` or runs
   `testing/e2e-swing/run_tests.sh`
 - **THEN** the suite is documented or exits as retired, forbidding CI wiring
-

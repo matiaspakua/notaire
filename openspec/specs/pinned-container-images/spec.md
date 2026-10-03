@@ -1,10 +1,13 @@
 # pinned-container-images Specification
 
 ## Purpose
+
 Keep local, prod, and infra container image references reproducible by
 forbidding floating tags and requiring minor-version or digest pins for every
 image named in #1045. Source: #1045; CU78.
+
 ## Requirements
+
 ### Requirement: Compose and infra images are pinned
 
 Application and observability compose files MUST reference container images
@@ -66,4 +69,3 @@ project.
   inspected
 - **THEN** those postgres images are pinned to a minor version or digest
   consistent with the compose postgres pin policy
-

@@ -1,10 +1,13 @@
 # httponly-jwt-cookie Specification
 
 ## Purpose
+
 Deliver the browser session JWT as an HttpOnly cookie (set/cleared by the
 backend, forwarded by the Next proxy) so page scripts cannot read the credential.
 Source: #1051; owners CU78 – Security and Compliance, CU84 – Login.
+
 ## Requirements
+
 ### Requirement: Login establishes an HttpOnly session cookie
 
 Successful `POST /api/v1/usuarios/login` MUST set a session cookie that carries
@@ -65,4 +68,3 @@ Logout MUST cause an HTTP response that clears the auth token cookie
 - **WHEN** an authenticated user logs out
 - **THEN** subsequent browser requests do not present a valid auth token cookie
   and protected API calls fail authentication until login succeeds again
-

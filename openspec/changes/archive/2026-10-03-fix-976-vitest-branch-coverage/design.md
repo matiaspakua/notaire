@@ -11,7 +11,7 @@ backend-only PRs.
 
 **Prep measurement (2026-10-03, `origin/main` worktree at `9642a033`):**
 
-```
+```text
 Statements : 12.87%
 Branches   : 8.61%
 Functions  : 10.9%

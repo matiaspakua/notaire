@@ -9,7 +9,7 @@
 Introduce an automated Semantic Versioning release process that creates `v*`
 tags and GitHub Releases, rolls Keep a Changelog `[Unreleased]` into versioned
 sections, and derives Maven and npm versions from the release tag. Source:
-#1043; CU76; Constitution §11.
+\#1043; CU76; Constitution §11.
 
 ## ADDED Requirements
 

@@ -1,11 +1,14 @@
 # next-middleware-to-proxy Specification
 
 ## Purpose
+
 Migrate the Next.js 16 edge request interceptor from the deprecated
 `middleware.ts` convention to `proxy.ts` with `export function proxy`, while
 preserving CU84 login route guards and non-regression of cookie-based session
 auth. Source: #1056; owner CU84 – Login al sistema.
+
 ## Requirements
+
 ### Requirement: Edge interceptor uses Next 16 proxy convention
 
 The frontend MUST expose the edge request interceptor as `frontend/src/proxy.ts`
@@ -89,4 +92,3 @@ or in-flight under #1051 (no requirement to re-introduce `localStorage` JWT).
 - **THEN** browser login still authenticates API calls via the cookie/BFF path
   and the edge `proxy` continues to honor UX status/role cookies without
   requiring a script-readable JWT
-

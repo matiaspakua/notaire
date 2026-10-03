@@ -14,7 +14,7 @@
 
 In the spec phase, agents often write `proposal.md`, `design.md`, `tasks.md` and
 `traceability.md` from scratch. Local models (Qwen3-Coder on #1049, gpt-oss on
-#1062) repeatedly omitted required sections or whole files, and
+\#1062) repeatedly omitted required sections or whole files, and
 `validate-sdlc-plan.sh` failed every attempt. The schema already ships templates
 with every mandatory heading and `<!-- ... -->` guidance, but `openspec new
 change` only creates `.openspec.yaml` — it does not copy those templates into the

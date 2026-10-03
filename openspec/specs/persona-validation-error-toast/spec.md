@@ -1,10 +1,13 @@
 # persona-validation-error-toast Specification
 
 ## Purpose
+
 Ensure the Personas dashboard surfaces backend validation messages on non-409
 save failures (instead of a generic save error) and that Dedup-EDGE proves the
 empty-identification path. Source: #945; CU17 / CU61.
+
 ## Requirements
+
 ### Requirement: Non-409 ApiError shows extractable backend message
 
 When persona create or update fails with an `ApiError` whose status is not 409
@@ -63,4 +66,3 @@ remain passable on `main` after merge).
 - **WHEN** `npx playwright test` runs the TS-0015 suite including `Dedup-EDGE`
 - **THEN** that test concludes successfully without being skipped or weakened
   below its validation-feedback assertions
-

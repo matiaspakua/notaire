@@ -1,11 +1,14 @@
 # repo-hygiene Specification
 
 ## Purpose
+
 Keep the Notaire git repository hygienic for CI and contributors: precise
 ignore rules, CODEOWNERS aligned to the live tree, large manuals outside
 ordinary blobs, and an explicit ADR before any history rewrite. Source: #1050;
 CU76; audit-2026-09.
+
 ## Requirements
+
 ### Requirement: Gitignore allows needed text assets and excludes Serena state
 
 The repository `.gitignore` MUST NOT use an unbounded global `*.txt` rule that
@@ -65,4 +68,3 @@ list of historical heavy blobs in scope (related #585 / #682).
 - **THEN** a new ADR exists that states the filter-repo decision and points to
   related cleanup issues for historical binaries without silently rewriting
   `main` in this PR unless the ADR explicitly authorizes it in a follow-up
-

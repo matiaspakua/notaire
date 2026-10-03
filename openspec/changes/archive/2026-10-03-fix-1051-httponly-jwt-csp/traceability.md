@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -64,5 +64,5 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 ## Exceptions
 
 None. Implement deliberately deferred (no branch/PR/push) until **#1048 → #1047 →
-#1044** clear and no Playwright-heavy PR is in flight — authorized by coordinator
+\#1044** clear and no Playwright-heavy PR is in flight — authorized by coordinator
 prep-only scope while PR #1150 CI finishes.

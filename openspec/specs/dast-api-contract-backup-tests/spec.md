@@ -1,10 +1,13 @@
 # dast-api-contract-backup-tests Specification
 
 ## Purpose
+
 Add CI/test infrastructure for OWASP ZAP baseline DAST against the running
 stack, committed OpenAPI with PR diff, and backup→restore→smoke verification
 gated on automated backups (#256). Source: #1067; CU76 / CU78 / CU75.
+
 ## Requirements
+
 ### Requirement: OWASP ZAP baseline runs against the compose stack
 
 The repository MUST provide an automated OWASP ZAP baseline (or equivalent
@@ -72,4 +75,3 @@ how to run and interpret ZAP, OpenAPI diff, and backup-restore verification.
 - **WHEN** DevSecOps and TEST-PLAN docs are read after this change
 - **THEN** they document the landed DAST and OpenAPI-diff processes (and the
   #256 gate for backup-restore)
-

@@ -1,8 +1,11 @@
 # ci-workflow-concurrency Specification
 
 ## Purpose
+
 TBD - created by archiving change ci-cancel-in-progress-1148. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Same-ref CI concurrency cancels superseded runs
 
 GitHub Actions workflows for backend CI and Playwright MUST cancel in-progress
@@ -23,4 +26,3 @@ not starved by superseded jobs.
 
 - **WHEN** `.github/workflows/deploy-github-page.yml` defines concurrency
 - **THEN** `cancel-in-progress` remains `false`
-

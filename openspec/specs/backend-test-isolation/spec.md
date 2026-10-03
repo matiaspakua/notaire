@@ -1,11 +1,14 @@
 # backend-test-isolation Specification
 
 ## Purpose
+
 Define backend full-suite test isolation rules so H2 payment integration tests
 and SimpleControllers unit tests remain deterministic under
 `mvn test -pl backend-api` (Issue #916), without weakening CU15/#848 overpayment
 rejection or CU16 archive debt checks.
+
 ## Requirements
+
 ### Requirement: Payment-mutating H2 ITs arrange their own presupuesto
 
 Integration tests under `backend-api` that POST a payment MUST create (or obtain)
@@ -57,4 +60,3 @@ fixtures rather than disabling or bypassing the guard.
 - **WHEN** a payment is registered with `monto` greater than the presupuesto's
   current saldo pendiente
 - **THEN** the payment is rejected (existing #848 tests remain green)
-

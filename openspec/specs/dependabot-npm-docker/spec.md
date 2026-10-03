@@ -1,10 +1,13 @@
 # dependabot-npm-docker Specification
 
 ## Purpose
+
 Ensure Dependabot version updates cover the frontend npm tree and Docker
 Dockerfiles so image and JS dependency bumps arrive as PRs, not only Maven and
 GitHub Actions. Source: #1045; CU78.
+
 ## Requirements
+
 ### Requirement: Dependabot covers npm under frontend
 
 The repository Dependabot configuration MUST include a `package-ecosystem`
@@ -46,4 +49,3 @@ the product images (at minimum `/backend-api` and `/frontend`).
 
 - **WHEN** all docker ecosystem entries in `.github/dependabot.yml` are listed
 - **THEN** each `directory` value appears at most once
-

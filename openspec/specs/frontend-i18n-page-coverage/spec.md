@@ -1,10 +1,13 @@
 # frontend-i18n-page-coverage Specification
 
 ## Purpose
+
 Close the frontend i18n coverage gap for remaining dashboard pages and login
 leftover strings so English locale switching (TS-0040) does not leave Spanish
 hardcoded copy on those surfaces. Source: #1059; CU76; ADR-015.
+
 ## Requirements
+
 ### Requirement: Gap page namespaces exist in both catalogs
 
 The message catalogs `frontend/messages/es.json` and `frontend/messages/en.json`
@@ -82,4 +85,3 @@ catalog.
 - **WHEN** TS-0040 (or a focused extension) runs against a wired gap page with
   locale `en`
 - **THEN** at least one former gap page title is asserted in English
-

@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -62,4 +62,4 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 ## Exceptions
 
 None. Implement deliberately deferred (no branch/PR/push) until #1147 and
-#1148 ship — authorized by coordinator prep-only scope for this worker.
+\#1148 ship — authorized by coordinator prep-only scope for this worker.

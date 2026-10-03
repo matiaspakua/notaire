@@ -1,10 +1,13 @@
 # frontend-ghcr-publish Specification
 
 ## Purpose
+
 Publish the Next.js frontend container to GHCR with SBOM generation, cosign
 keyless signing, and SBOM attestation, matching the backend supply-chain path
 already shipped for #681. Source: #1043; CU76.
+
 ## Requirements
+
 ### Requirement: CD builds and pushes the frontend image to GHCR
 
 The CD pipeline MUST build `frontend/Dockerfile` and push the resulting image
@@ -52,4 +55,3 @@ of that SBOM — the same controls applied to the backend image in `cd.yml`.
 - **WHEN** the frontend CycloneDX SBOM file exists after publish
 - **THEN** `cosign attest` attaches that SBOM as a CycloneDX predicate to the
   frontend image digest
-

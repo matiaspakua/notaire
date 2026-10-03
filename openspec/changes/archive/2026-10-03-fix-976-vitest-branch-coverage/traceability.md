@@ -4,7 +4,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -25,7 +25,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 ## Implement-time measurement (`origin/main` @ `68dc2cac`)
 
-```
+```text
 Statements : 15.09%
 Branches   : 10.52%
 Functions  : 11.97%

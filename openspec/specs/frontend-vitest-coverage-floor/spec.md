@@ -1,11 +1,14 @@
 # frontend-vitest-coverage-floor Specification
 
 ## Purpose
+
 Establish a deliberate, documented raise-only Vitest coverage floor for the
 Notaire frontend so CI reflects intentional quality policy (mirroring backend
 JaCoCo), and record why branch coverage historically fell under 6%. Source:
-#976; CU76.
+\#976; CU76.
+
 ## Requirements
+
 ### Requirement: Root cause of the historical Vitest branch failure is documented
 
 Permanent quality documentation MUST state whether the original 6% branch
@@ -62,4 +65,3 @@ the backend JaCoCo ratchet.
 - **WHEN** the permanent quality rules are inspected after this change
 - **THEN** they state the frontend Vitest floor metrics and that floors are
   raise-only unless an explicit documented exception exists
-

@@ -1,11 +1,14 @@
 # e2e-test-reliability Specification
 
 ## Purpose
+
 Define Playwright E2E reliability rules for Notaire so suites prove behavior
 under CU76 – Quality Assurance and Testing Infrastructure: arrange their own
 data, wait on real UI conditions, cite intentional skips, and avoid retry/sleep
 budgets that hide flakiness (#1066).
+
 ## Requirements
+
 ### Requirement: Self-arranging workflow E2E data
 
 Workflow editor and assignment E2E suites (TS-0021, TS-0022) MUST create any
@@ -77,4 +80,3 @@ pointers).
 - **WHEN** a test fails once and is retried in CI
 - **THEN** trace/screenshot/video retention settings still allow triage of the
   first failure (e.g. `trace: on-first-retry` or equivalent artifacts)
-

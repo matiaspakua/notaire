@@ -1,9 +1,12 @@
 # frontend-smol-toml-override Specification
 
 ## Purpose
+
 Ensure the Next.js frontend lockfile resolves `smol-toml` to a patched release
 so Dependabot’s high alert for that package is cleared. Source: #1046; CU78.
+
 ## Requirements
+
 ### Requirement: Frontend lockfile pins a patched smol-toml
 
 The frontend npm dependency graph MUST resolve `smol-toml` to version
@@ -31,4 +34,3 @@ refreshed `frontend/package-lock.json`.
 - **WHEN** `npm ci` (or `npm install`) is run under `frontend/`
 - **THEN** `npm ls smol-toml` reports the overridden patched version and
   install completes successfully
-

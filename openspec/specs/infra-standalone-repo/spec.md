@@ -1,9 +1,12 @@
 # infra-standalone-repo Specification
 
 ## Purpose
+
 Make `infra/` a single, self-contained, documented folder that can be split into
 its own repository without further changes. Source: #1179; owner CU77.
+
 ## Requirements
+
 ### Requirement: Infrastructure assets live under infra/
 
 The observability stack, Kubernetes manifests, reverse-proxy configuration, k6
@@ -89,4 +92,3 @@ and `CHANGELOG.md` may reference a legacy path.
 - **THEN** `test_staging_kustomize.py`, `test_prod_compose.py`,
   `test_infra_prometheus_hardening.py`, `test_performance_test_assets.py` and
   config rendering of the infra compose pass
-

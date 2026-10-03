@@ -1,11 +1,14 @@
 # api-error-toasts Specification
 
 ## Purpose
+
 Define how the Notaire web client presents backend mutation failures so users
 see business-rule messages (and field errors when available) instead of generic
 toasts on CRUD screens. Source exemplars: CU15 – Procesar pago; CU20/CU21
 usuarios; surface area includes CU26–CU30 tablas base pages listed in #1054.
+
 ## Requirements
+
 ### Requirement: Shared mutation error presentation
 
 The client SHALL provide a single shared handler that maps an `ApiError` (or
@@ -73,4 +76,3 @@ of a generic-only toast.
 - **WHEN** a mutation fails with field-like detail that does not match any
   control on the active form
 - **THEN** the user still sees the full server message in a toast
-

@@ -1,10 +1,13 @@
 # jpa-namedquery-english-names Specification
 
 ## Purpose
+
 Ensure JPA `@NamedQuery` *name* strings and `EntityManager.createNamedQuery`
 call sites under `backend-api` use English entity prefixes and English method
 tails after the #973 domain-schema rename. Source: #1022 (follow-up to #973).
+
 ## Requirements
+
 ### Requirement: NamedQuery names use English entity prefixes
 
 Every `@NamedQuery(name = "…")` declaration under
@@ -60,4 +63,3 @@ contracts, DTOs, or frontend identifiers.
 - **THEN** diffs are limited to NamedQuery name strings, matching
   `createNamedQuery` / mock strings, the hygiene test, OpenSpec artifacts, and
   CHANGELOG — with no Flyway or API contract edits
-

@@ -1,11 +1,14 @@
 # e2e-feature-gap-skip-tracking Specification
 
 ## Purpose
+
 Track intentional Playwright feature-gap skips in TS-0014, TS-0016, TS-0017, and
 TS-0020 so CU76 QA infrastructure keeps an honest inventory (#1146): every static
 `test.skip` cites an issue, the permanent mapping matches live suite source, and
 product ownership stays on domain Use Cases.
+
 ## Requirements
+
 ### Requirement: Feature-gap skips cite a tracking issue
 
 Every static `test.skip(` declaration in TS-0014, TS-0016, TS-0017, and TS-0020
@@ -48,4 +51,3 @@ UI assertion against shipped controls. CU21 edit remains out of this inventory
 
 - **WHEN** the inventory for #1146 is built from TS-0016
 - **THEN** CU21 edit is absent from the skipped list (covered by #1057)
-

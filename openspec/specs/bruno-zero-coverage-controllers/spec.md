@@ -1,10 +1,13 @@
 # bruno-zero-coverage-controllers Specification
 
 ## Purpose
+
 Close the Bruno zero-coverage gap for the sixteen controllers listed in #953 /
 `backend-api/api-test/COVERAGE.md` TODO, with asserted lifecycle requests and
 updated coverage documentation. Source: #953; CU76.
+
 ## Requirements
+
 ### Requirement: Each listed controller has a Bruno folder
 
 The Bruno suite under `backend-api/api-test/` MUST include a dedicated folder
@@ -70,4 +73,3 @@ sixteen controllers as zero-coverage TODOs.
 
 - **WHEN** `CU-API-MATRIX.csv` and `TEST-PLAN.md` §7 are inspected
 - **THEN** Bruno columns/notes for the newly covered endpoints match the suite
-

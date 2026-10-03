@@ -1,11 +1,14 @@
 # retire-deprecated-frontend-swing Specification
 
 ## Purpose
+
 Remove the dead Swing client tree that still declares EOL Log4j 1.x so
 Dependabot critical/high alerts from that path disappear. Source: #1046; CU78.
 Related open cleanup issue #585 covers `src.old` / `deprecated-src.old`, not
 this deletion.
+
 ## Requirements
+
 ### Requirement: deprecated-frontend-swing tree is removed from main
 
 The repository on `main` MUST NOT contain a `deprecated-frontend-swing/`
@@ -53,4 +56,3 @@ Swing module path after deletion.
 - **WHEN** the root `README.md` project tree / module list is inspected
 - **THEN** it does not present `deprecated-frontend-swing/` as an on-disk
   module (it MAY mention historical removal in prose)
-

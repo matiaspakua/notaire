@@ -4,7 +4,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -51,4 +51,3 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 None. No `sdlc-exception` label; OpenSpec change folder satisfies Process Checks.
 No wrongful `Closes` for #1068 (already closed via #1124).
-

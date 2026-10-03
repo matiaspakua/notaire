@@ -1,10 +1,13 @@
 # k6-load-test-restore Specification
 
 ## Purpose
+
 Restore the deleted k6 load-test script and keep the weekly Performance
 workflow green with SLO-tied thresholds and a published results artifact.
 Source: #1047; owners CU74 (performance SLOs) and CU76 (QA/CI infrastructure).
+
 ## Requirements
+
 ### Requirement: k6 load-test script is present and API-current
 
 The repository MUST contain `performance-test/k6/load-test.js` (path referenced
@@ -72,4 +75,3 @@ artifact that is actually produced by the run.
   restored tree
 - **THEN** every assertion passes (script presence, stages/thresholds, English
   login, endpoint coverage, summary output, workflow wiring)
-

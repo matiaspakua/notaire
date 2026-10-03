@@ -1,10 +1,13 @@
 # prod-docker-compose Specification
 
 ## Purpose
+
 Provide a production docker-compose artifact that hardens host exposure and
 secrets for the Notaire app stack. Source: #1044; owners CU78 (security /
 isolation) and CU75 (Flyway production migration posture).
+
 ## Requirements
+
 ### Requirement: Production compose has no pgAdmin and internal-only data plane
 
 The repository MUST include `docker-compose.prod.yml` (or an equivalently named
@@ -85,4 +88,3 @@ and admin UIs are not exposed on the host.
   after the change
 - **THEN** it documents the production compose path, required secrets posture,
   absence of pgAdmin, reverse-proxy-only host ports, and Flyway baseline-off
-

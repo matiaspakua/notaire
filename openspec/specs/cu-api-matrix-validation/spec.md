@@ -1,10 +1,13 @@
 # cu-api-matrix-validation Specification
 
 ## Purpose
+
 Keep `docs/300-development/303-testing/CU-API-MATRIX.csv` synchronized with the
 English REST controllers under `adapter.in.web`, required resource base paths,
 and Bruno_Test column conventions, enforced by a CI/preflight validator.
+
 ## Requirements
+
 ### Requirement: Matrix Controller names MUST match live English REST controllers
 
 The `Controller` column of `CU-API-MATRIX.csv` MUST use the current Java class
@@ -88,4 +91,3 @@ self-tests exercise it.
   discover under `scripts/tests`) runs
 - **THEN** fixtures prove a stale Spanish matrix fails and a refreshed matrix
   matching live controllers passes
-

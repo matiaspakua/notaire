@@ -1,11 +1,14 @@
 # icon-button-accessible-names Specification
 
 ## Purpose
+
 Ensure every icon-only action button in the Notaire web dashboard exposes a
 translated accessible name so assistive technologies and role-based selectors
 can identify the control. Source: #1057; quality owner CU76 accessibility
 validation; WCAG 2.1 SC 4.1.2 via `.claude/rules/ui-ux-design.md`.
+
 ## Requirements
+
 ### Requirement: Icon-only buttons have translated accessible names
 
 Every icon-only `<Button>` in the dashboard (Lucide or `NotaireIcon` child with
@@ -75,4 +78,3 @@ that was blocked only by missing names MUST be restored.
   because the edit control had no accessible name
 - **THEN** those scenarios are active (not skipped for that reason) and can
   open the edit dialog via the named button
-

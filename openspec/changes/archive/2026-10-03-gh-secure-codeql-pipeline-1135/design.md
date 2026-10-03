@@ -15,12 +15,14 @@ enabled. The same token receives HTTP 403 on administration endpoints.
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Run CodeQL on pull requests and on `main` for Java, JavaScript/TypeScript, and Actions, and upload results to code scanning.
 - Cover `frontend/package-lock.json` with Dependabot version updates.
 - Publish `SECURITY.md` for the already-enabled private reporting channel.
 - Give an admin `scripts/enable-gh-secure.sh` for the API-only settings, without turning on branch protection by default.
 
 **Non-Goals:**
+
 - Enabling branch protection, secret-scanning push protection, or Dependabot security updates from this agent (the token cannot).
 - Enabling CodeQL default setup in addition to the workflow.
 - Adding Gitleaks, OWASP ZAP, or a new product dependency.
