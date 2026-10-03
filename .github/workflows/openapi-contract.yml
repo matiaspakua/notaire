@@ -3,6 +3,11 @@ name: OpenAPI Contract
 # Issue #1067 / CU76. On every PR: regenerate OpenAPI from the backend and
 # fail if the committed artifact is stale or introduces breaking changes vs
 # the base branch's committed spec.
+#
+# Bootstrap: when the base ref does not yet contain
+# backend-api/openapi/openapi.yaml (first introduction), skip the breaking
+# diff after the freshness check — fail-on ERR applies only once a base
+# artifact exists.
 on:
   pull_request:
     branches: [ main ]
@@ -26,6 +31,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch base ref for OpenAPI comparison
+        if: github.event_name == 'pull_request'
+        run: git fetch --no-tags --depth=1 origin "${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}"
+
       - uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
@@ -44,22 +53,41 @@ jobs:
             exit 1
           fi
 
-      - name: Checkout base OpenAPI for breaking-change diff
+      - name: Resolve base OpenAPI for breaking-change diff
+        id: base
         run: |
-          mkdir -p /tmp/openapi-base
-          git show "origin/${{ github.base_ref || 'main' }}:backend-api/openapi/openapi.yaml" \
-            > /tmp/openapi-base/openapi.yaml \
-            || git show "origin/main:backend-api/openapi/openapi.yaml" \
-            > /tmp/openapi-base/openapi.yaml \
-            || {
-              echo "No base OpenAPI on main yet — treating current commit as baseline."
-              cp backend-api/openapi/openapi.yaml /tmp/openapi-base/openapi.yaml
-            }
+          set -euo pipefail
+          SPEC_PATH="backend-api/openapi/openapi.yaml"
+          BASE_REF="${{ github.base_ref || 'main' }}"
+          BASE_SPEC_REF="origin/${BASE_REF}:${SPEC_PATH}"
+          mkdir -p .openapi-ci
+          rm -f .openapi-ci/base-openapi.yaml
+
+          if git cat-file -e "${BASE_SPEC_REF}" 2>/dev/null; then
+            git show "${BASE_SPEC_REF}" > .openapi-ci/base-openapi.yaml
+            if [ ! -s .openapi-ci/base-openapi.yaml ]; then
+              echo "::error::Base OpenAPI at ${BASE_SPEC_REF} is empty"
+              exit 1
+            fi
+            echo "has_base=true" >> "$GITHUB_OUTPUT"
+            echo "Base OpenAPI found at ${BASE_SPEC_REF} — running breaking-change gate."
+          else
+            echo "has_base=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "## OpenAPI breaking diff"
+              echo ""
+              echo "**Skipped (bootstrap):** \`${SPEC_PATH}\` is not present on"
+              echo "\`origin/${BASE_REF}\` yet. Freshness check against the export still ran."
+              echo "Subsequent PRs will fail on \`oasdiff\` ERR-level breaking changes."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::notice title=OpenAPI breaking diff skipped::No ${SPEC_PATH} on origin/${BASE_REF} yet (first introduction). Breaking-change gate skipped; freshness check still enforced."
+          fi
 
       - name: Detect breaking OpenAPI changes (oasdiff)
+        if: steps.base.outputs.has_base == 'true'
         uses: oasdiff/oasdiff-action/breaking@v0.1.18
         with:
-          base: /tmp/openapi-base/openapi.yaml
+          base: .openapi-ci/base-openapi.yaml
           revision: backend-api/openapi/openapi.yaml
           fail-on: ERR
           review: 'false'

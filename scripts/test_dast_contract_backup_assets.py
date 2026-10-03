@@ -132,6 +132,10 @@ class OpenApiContractTest(unittest.TestCase):
         self.assertRegex(raw, r"(?i)oasdiff|openapi-diff|breaking")
         self.assertIn("backend-api/openapi/openapi.yaml", raw)
         self.assertIn("export-openapi", raw)
+        # First introduction on main: skip breaking-diff when base artifact absent.
+        self.assertIn("has_base", raw)
+        self.assertRegex(raw, r"(?i)bootstrap|first introduction|not present")
+        self.assertIn("steps.base.outputs.has_base", raw)
 
 
 class BackupRestoreSmokeTest(unittest.TestCase):
