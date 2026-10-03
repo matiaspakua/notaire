@@ -19,6 +19,13 @@ then made that a 400. Verified on a clean worktree of `origin/main`: 11 tests, 1
 2. **Prove the test still guards the bug**: with the production comparator removed the test fails 3 of 3;
    with it, it passes 3 of 3.
 
+## Skipped spec sync
+
+The #799 change was archived with `--skip-specs` because its ADDED requirement was already present in
+`openspec/specs/persona-validacion-duplicados/spec.md` (folded by hand in #799's own PR) so the CLI aborts.
+Its MODIFIED requirement ("Rechazar alta de persona con documento duplicado") was **not** folded: the live
+spec still has the older Spanish wording without the database-level sentence. Needs the #799 owner's review.
+
 ## Riesgos / Trade-offs
 
 - [Merge-order conflicts between green PRs] → not solved here; stated in the PR.
