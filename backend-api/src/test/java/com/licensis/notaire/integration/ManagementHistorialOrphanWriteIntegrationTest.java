@@ -155,8 +155,8 @@ class ManagementHistorialOrphanWriteIntegrationTest {
     }
 
     @Test
-    @DisplayName("Plain update that changes status writes History")
-    void shouldWriteHistoryOnPlainUpdateStatusChange() throws Exception {
+    @DisplayName("Plain update that changes status is rejected (#804); History unchanged")
+    void shouldRejectPlainUpdateStatusChangeWithoutWritingHistory() throws Exception {
         Integer notaryId = createPerson("80610003");
         ManagementStatus statusA = createStatus("A");
         ManagementStatus statusB = createStatus("B");
@@ -180,12 +180,14 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
 
-        List<History> rows = historyFor(managementId);
-        assertThat(rows).hasSize(before + 1);
-        assertThat(rows.get(rows.size() - 1).getFkIdManagementStatus().getIdManagementStatus())
-                .isEqualTo(statusB.getIdManagementStatus());
+        assertThat(historyFor(managementId)).hasSize(before);
+        assertThat(managementRepository.findById(managementId))
+                .isPresent()
+                .get()
+                .extracting(g -> g.getFkIdManagementStatus().getIdManagementStatus())
+                .isEqualTo(statusA.getIdManagementStatus());
     }
 
     @Test
@@ -220,8 +222,8 @@ class ManagementHistorialOrphanWriteIntegrationTest {
     }
 
     @Test
-    @DisplayName("Complete-case update that changes status writes History")
-    void shouldWriteHistoryOnCompleteCaseUpdateStatusChange() throws Exception {
+    @DisplayName("Complete-case update that changes status is rejected (#804); History unchanged")
+    void shouldRejectCompleteCaseUpdateStatusChangeWithoutWritingHistory() throws Exception {
         Integer clientId = createPerson("80610005");
         Integer notaryId = createPerson("80610006");
         Integer budgetId = createBudget(clientId);
@@ -250,12 +252,14 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         mockMvc.perform(put("/api/v1/gestiones/{id}/complete-case", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
 
-        List<History> rows = historyFor(managementId);
-        assertThat(rows).hasSize(before + 1);
-        assertThat(rows.get(rows.size() - 1).getFkIdManagementStatus().getIdManagementStatus())
-                .isEqualTo(statusB.getIdManagementStatus());
+        assertThat(historyFor(managementId)).hasSize(before);
+        assertThat(managementRepository.findById(managementId))
+                .isPresent()
+                .get()
+                .extracting(g -> g.getFkIdManagementStatus().getIdManagementStatus())
+                .isEqualTo(statusA.getIdManagementStatus());
     }
 
     @Test
@@ -311,14 +315,16 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString())
                 .get("idManagement").asInt();
 
-        String updateBody = """
-                {"encabezado": "Estado from history", "dateStart": "2026-01-01", "number": %d,
-                 "notaryPersonId": %d, "managementStatusId": %d}
-                """.formatted((int) (System.nanoTime() % 100000), notaryId, statusB.getIdManagementStatus());
-        mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(updateBody))
-                .andExpect(status().isOk());
+        // #804 rejects status changes via PUT — append a second History row directly
+        // (same effect as a successful /transition) to exercise estado-actual.
+        var management = managementRepository.findById(managementId).orElseThrow();
+        management.setFkIdManagementStatus(statusB);
+        managementRepository.save(management);
+        History second = new History();
+        second.setFkIdManagement(management);
+        second.setFkIdManagementStatus(statusB);
+        second.setDate(new java.util.Date(System.currentTimeMillis() + 60_000L));
+        historyRepository.save(second);
 
         mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", managementId))
                 .andExpect(status().isOk())

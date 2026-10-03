@@ -367,6 +367,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **BREAKING — gestión status writes require workflow transitions** (issue #804,
+  CU02 / CU53 / CU16 / CU83): `PUT /api/v1/gestiones/{id}` and
+  `PUT /api/v1/gestiones/{id}/complete-case` reject a changed
+  `managementStatusId` / `statusManagementId` with HTTP 400; clients must use
+  `POST /api/v1/gestiones/{id}/transition`. Complete-case create validates the
+  initial status against workflow start nodes when a `WorkflowDefinition`
+  exists. Legal next destinations remain derived from
+  `GET /api/v1/gestiones/{id}/workflow-trace` (UI already filters). History
+  (bitácora) from #806 is preserved on create and on successful `/transition`
+  / archive. Guarded by `ManagementWorkflowStatusWriteEnforcementIntegrationTest`
+  and `ManagementStatusWriteGuardTest`.
+
 - **Dashboard/table theme tokens** (issue #960, CU76 / RF #78): replace
   hardcoded `#RRGGBB` colors in `dashboard/layout.tsx`, `dashboard/page.tsx`, and
   `components/ui/table.tsx` with `theme.colors.*` style props or semantic

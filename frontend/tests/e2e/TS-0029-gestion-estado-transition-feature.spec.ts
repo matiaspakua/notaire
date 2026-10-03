@@ -1,6 +1,6 @@
 /**
  * E2E tests — "Cambiar estado" action on the gestiones screen (CU83)
- * Issue: #833
+ * Issues: #833, #804 (server rejects PUT status bypass; UI filtered destinations)
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";

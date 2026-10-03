@@ -10,7 +10,16 @@
 | **Descripción** | Un Cliente se acerca a la escribanía y solicita iniciar una gestión en base a uno o varios presupuestos. El Gestor/Recepcionista busca los presupuestos por su número o nombre y apellido o tipo y número de identificación del Cliente. El sistema muestra los trámites asociados a cada presupuesto. El Gestor/Recepcionista procede al inicio de una gestión, indicando fecha de inicio de la misma, el número de gestión, un detalle de encabezado y confirma los trámites a realizar. Finalmente, selecciona un escribano para dicha gestión, generando una lista de documentos, certificados necesarios para cada trámite (ver CU03), indica / selecciona un número de la nueva gestión, las observaciones adicionales, y si van a haber otros clientes involucrados en la gestión. |
 | **Tipo** | Primario |
 | **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #10 (Iniciar trámites), RF #11 (Verificar presupuestos), RF #12 (Verificar clientes), RF #13 (Registrar inicio de gestión de trámites), RF #104 (Administrar carpetas de trámite), RF #105 (Generar carpeta de trámite), RF #106 (Estados de carpeta), RF #115 (Asignar suplente a una gestión), RF #119 (Diferencias entre protocolo principal y auxiliar); CU60 |
-| **GitHub ID** | #155 |
+| **GitHub ID** | #155, #804 |
+
+## API notes (initial status)
+
+On `POST /api/v1/gestiones/complete-case`, when the procedure type has a
+`WorkflowDefinition`, the initial `statusManagementId` must be a start
+(`INITIAL`) node of that workflow (or any node if no INITIAL is defined).
+Plain `POST /api/v1/gestiones` has no procedure yet, so any defined management
+status is accepted. Initial assignment does not require a prior transition edge.
+Status is recorded in History (CU13 / #806).
 
 ## Curso de Eventos
 

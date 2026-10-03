@@ -10,7 +10,15 @@
 | **Descripción** | El Gestor/Recepcionista decide modificar una gestión en particular. Busca la gestión deseada. El sistema muestra los trámites asociados a cada presupuesto, el encabezado de la gestión, las observaciones, el escribano a cargo, el cliente de referencia y los clientes asociados a la gestión. El Gestor/Recepcionista procede a modificar alguno de los datos de la gestión encontrada: El encabezado, las observaciones o los clientes asociados. Finalmente, confirma los cambios realizados. |
 | **Tipo** | Primario y esencial. |
 | **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #13 (Registrar inicio de gestión de trámites), RF #104 (Administrar carpetas de trámite), RF #106 (Estados de carpeta), RF #110 (Registrar historial de cambios de estado), RF #115 (Asignar suplente a una gestión) |
-| **GitHub ID** | #206 |
+| **GitHub ID** | #206, #804 |
+
+## API notes (status changes)
+
+Changing the management status is **not** done via `PUT /api/v1/gestiones/{id}`
+or `PUT /api/v1/gestiones/{id}/complete-case`. Those endpoints reject a changed
+status id (HTTP 400). Use `POST /api/v1/gestiones/{id}/transition` (CU83).
+Legal destinations come from `GET /api/v1/gestiones/{id}/workflow-trace`.
+Non-status field updates via PUT remain allowed when the status id is unchanged.
 
 ## Curso de Eventos
 

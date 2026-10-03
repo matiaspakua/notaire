@@ -18,11 +18,13 @@ pending).
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/api/v1/gestiones/{id}/workflow-trace` | Aggregated trace: workflow definition, nodes, transitions, historial, per-node statuses |
+| GET | `/api/v1/gestiones/{id}/workflow-trace` | Aggregated trace: workflow definition, nodes, transitions, historial, per-node statuses. Also the **legal-next** contract for CU83 (#804): filter `transitions` by current node → valid destinations for `POST /{id}/transition`. |
 
-Implemented by `GestionController` + `WorkflowTraceService.buildTrace()`.
+Implemented by `ManagementController` + `WorkflowTraceService.buildTrace()`.
 Returns **400** with `{ "error": ... }` when the gestión does not exist, has
 no trámites, or its tipo de trámite has no workflow definition assigned.
+Generic PUT status mutations are rejected (#804); the gestiones UI already uses
+`/transition` with destinations from this trace.
 
 ### Node status computation
 

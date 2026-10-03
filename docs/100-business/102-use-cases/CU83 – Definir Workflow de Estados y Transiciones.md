@@ -10,7 +10,22 @@
 | **Descripción** | El sistema modela el ciclo de vida de una gestión como datos versionados: una `WorkflowDefinition` asociable a uno o más `TipoDeTramite`, compuesta de `WorkflowNode` (cada uno vinculado a un `EstadoDeGestion` existente, tipado `INITIAL`/`INTERMEDIATE`/`FINAL`) y `WorkflowTransition` (aristas dirigidas entre nodos, con condición opcional). Permite crear, editar y eliminar definiciones, nodos y transiciones vía API REST, validar la consistencia de un workflow (por ejemplo, que exista un nodo `FINAL` alcanzable) y consultar la traza de ejecución de una gestión sobre su workflow asignado. Estas transiciones ya no son de solo lectura: el Gestor/Escribano puede aplicarlas sobre una gestión real desde la pantalla de gestiones (acción "Cambiar estado"), y el sistema valida cada cambio de estado — incluido el archivado (CU16) — contra el grafo definido aquí antes de aplicarlo, registrando el resultado en la bitácora (CU13). Ver [ADR-014](../../200-architecture/202-ADR/ADR-014-workflow-engine.md) para la decisión de arquitectura y [FRONTEND-WORKFLOW-TRACKER.md](../../200-architecture/203-design/FRONTEND-WORKFLOW-TRACKER.md) para el visualizador. |
 | **Tipo** | Secundario / Administración |
 | **Referencias Cruzadas** | RF #46 (Registro de auditoría, vía WorkflowTraceService); CU13, CU16, CU30, CU35, CU67 |
-| **GitHub ID** | #451, #453, #454, #455, #833 |
+| **GitHub ID** | #451, #453, #454, #455, #833, #804 |
+
+## Enforcement on real gestiones (#804)
+
+The workflow graph is enforced on real status writes, not only on the diagram
+editor:
+
+- **Mutation path:** `POST /api/v1/gestiones/{id}/transition` (and archive via
+  the archive use case) — validates against `WorkflowTransition` edges.
+- **Rejected bypasses:** changing status via `PUT /gestiones/{id}` or
+  `PUT /gestiones/{id}/complete-case` → HTTP 400.
+- **Legal next destinations:** `GET /api/v1/gestiones/{id}/workflow-trace` —
+  clients filter `transitions` whose `originNodeId` matches the current node
+  (`statusActual`). The gestiones UI uses only those destinations.
+- **Create:** complete-case initial status must be a workflow start node when a
+  definition exists.
 
 ## Curso de Eventos
 
