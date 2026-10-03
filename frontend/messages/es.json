@@ -714,6 +714,9 @@
       "description": "Catálogo de tipos de documento notarial",
       "newDoc": "Nuevo tipo de documento",
       "editDoc": "Editar tipo de documento",
+      "created": "Tipo de documento creado",
+      "updated": "Tipo de documento actualizado",
+      "deleted": "Tipo de documento eliminado",
       "errorSave": "Error al guardar el tipo de documento",
       "errorDelete": "No se puede eliminar: el tipo de documento está referenciado por otros registros.",
       "inUseCannotDelete": "No se puede eliminar: el tipo de documento está siendo utilizado",
@@ -723,6 +726,8 @@
       "namePlaceholder": "Ej: DNI, Escritura",
       "searchPlaceholder": "Buscar por nombre...",
       "fields": {
+        "enabled": "Habilitado",
+        "returned": "Devuelto al cliente",
         "vence": "¿Vence?",
         "diasVencimiento": "Días para el vencimiento",
         "quienEntrega": "Quién entrega/devuelve"

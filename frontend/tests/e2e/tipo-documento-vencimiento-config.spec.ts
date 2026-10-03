@@ -79,4 +79,55 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
     await expect(page.getByTestId("input-dias-vencimiento-documento")).toHaveValue("15");
     await expect(page.getByTestId("input-quien-entrega-documento")).toHaveValue("Escribano");
   });
+
+  test("CU27-GW04: Given nuevo tipo de documento, When form opens, Then enabled is checked and returned is unchecked", async ({
+    page,
+  }) => {
+    await page.getByTestId("btn-nuevo-tipo-documento").click();
+    await steps.thenModalIsVisible();
+
+    await expect(page.getByTestId("checkbox-enabled-documento")).toBeChecked();
+    await expect(page.getByTestId("checkbox-returned-documento")).not.toBeChecked();
+  });
+
+  test("CU27-GW05: Given enabled/returned toggled, When creating, Then values persist on edit reopen", async ({
+    page,
+  }) => {
+    const nombre = `Doc Enabled Returned ${Date.now()}`;
+    await page.getByTestId("btn-nuevo-tipo-documento").click();
+    await page.getByTestId("input-nombre-documento").fill(nombre);
+    // Defaults: enabled checked, returned unchecked — flip both.
+    await page.getByTestId("checkbox-enabled-documento").click();
+    await page.getByTestId("checkbox-returned-documento").click();
+
+    await page.getByRole("button", { name: /crear|guardar|save|create/i }).click();
+    await steps.thenShowsSuccessMessage("creado|created");
+
+    const row = page.getByRole("row", { name: new RegExp(nombre) });
+    await expect(row).toBeVisible({ timeout: 10000 });
+    await row.getByRole("button").first().click();
+
+    await steps.thenModalIsVisible();
+    await expect(page.getByTestId("checkbox-enabled-documento")).not.toBeChecked();
+    await expect(page.getByTestId("checkbox-returned-documento")).toBeChecked();
+  });
+
+  test("CU32-GW02: Given an existing tipo with returned, When editing, Then enabled and returned are pre-filled", async ({
+    page,
+  }) => {
+    const nombre = `Doc Returned Edit ${Date.now()}`;
+    await page.getByTestId("btn-nuevo-tipo-documento").click();
+    await page.getByTestId("input-nombre-documento").fill(nombre);
+    await page.getByTestId("checkbox-returned-documento").click();
+    await page.getByRole("button", { name: /crear|guardar|save|create/i }).click();
+    await steps.thenShowsSuccessMessage("creado|created");
+
+    const row = page.getByRole("row", { name: new RegExp(nombre) });
+    await expect(row).toBeVisible({ timeout: 10000 });
+    await row.getByRole("button").first().click();
+
+    await steps.thenModalIsVisible();
+    await expect(page.getByTestId("checkbox-enabled-documento")).toBeChecked();
+    await expect(page.getByTestId("checkbox-returned-documento")).toBeChecked();
+  });
 });

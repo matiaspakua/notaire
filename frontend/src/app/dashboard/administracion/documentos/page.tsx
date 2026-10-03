@@ -13,9 +13,8 @@ import { FormContainer, FormSection, FormField, FormActions, CheckboxField } fro
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
+import { EMPTY_DOCUMENT_TYPE } from "@/lib/document-type-form";
 import type { TipoDeDocumento } from "@/types";
-
-const EMPTY: Partial<TipoDeDocumento> = { name: "", expires: false, dueDays: null, deliveredBy: "" };
 
 export default function DocumentosPage() {
   const t = useTranslations("administracion.documentos");
@@ -43,7 +42,7 @@ export default function DocumentosPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [editing, setEditing] = useState<Partial<TipoDeDocumento>>(EMPTY);
+  const [editing, setEditing] = useState<Partial<TipoDeDocumento>>(EMPTY_DOCUMENT_TYPE);
   const [isEditMode, setIsEditMode] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -55,8 +54,20 @@ export default function DocumentosPage() {
         : Promise.resolve(tipos),
   });
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
-  function openEdit(tipo: TipoDeDocumento) { setEditing(tipo); setIsEditMode(true); setModalOpen(true); }
+  function openCreate() {
+    setEditing({ ...EMPTY_DOCUMENT_TYPE });
+    setIsEditMode(false);
+    setModalOpen(true);
+  }
+  function openEdit(tipo: TipoDeDocumento) {
+    setEditing({
+      ...tipo,
+      enabled: tipo.enabled ?? true,
+      returned: tipo.returned ?? false,
+    });
+    setIsEditMode(true);
+    setModalOpen(true);
+  }
 
   async function handleSave() {
     if (!editing.name?.trim()) { toast.error(t("nameRequired")); return; }
@@ -64,10 +75,10 @@ export default function DocumentosPage() {
     try {
       if (isEditMode && editing.idDocumentType) {
         await updateMutation.mutateAsync({ id: editing.idDocumentType, data: editing });
-        toast.success("Tipo de documento actualizado");
+        toast.success(t("updated"));
       } else {
         await createMutation.mutateAsync(editing);
-        toast.success("Tipo de documento creado");
+        toast.success(t("created"));
       }
       setModalOpen(false);
     } catch (err) {
@@ -93,7 +104,7 @@ export default function DocumentosPage() {
     if (!deleteId) return;
     try {
       await deleteMutation.mutateAsync(deleteId);
-      toast.success("Tipo de documento eliminado");
+      toast.success(t("deleted"));
     } catch (err) {
       const apiError = extractApiError(err);
       toast.error(apiError ?? t("errorDelete"));
@@ -162,6 +173,18 @@ export default function DocumentosPage() {
                   data-testid="input-nombre-documento"
                 />
               </FormField>
+              <CheckboxField
+                label={t("fields.enabled")}
+                checked={editing.enabled ?? true}
+                onChange={(checked) => setEditing({ ...editing, enabled: checked })}
+                data-testid="checkbox-enabled-documento"
+              />
+              <CheckboxField
+                label={t("fields.returned")}
+                checked={editing.returned ?? false}
+                onChange={(checked) => setEditing({ ...editing, returned: checked })}
+                data-testid="checkbox-returned-documento"
+              />
               <CheckboxField
                 label={t("fields.vence")}
                 checked={editing.expires ?? false}

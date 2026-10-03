@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Document type enabled and returned on admin form** (issue #800, CU27 / CU32 /
+  CU04 / CU72): residual catalog fields after #837 — create/edit checkboxes for
+  `enabled` (default true) and `returned` (default false); `DtoDocumentType` and
+  entity mapping round-trip `returned`; create no longer overwrites an explicit
+  `enabled=false`. Vitest + Playwright + `DocumentTypeReferentialIntegrityTest`.
+
 - **`testing/` prepared as a standalone QA repository, phase 1** (issue #1191, CU76 / CU75;
   umbrella #1190): one runner (`testing/scripts/run.sh integration|database`, `test.sh` kept as the
   stable entry point) replaces nine overlapping scripts; a new black-box **database V&V suite**

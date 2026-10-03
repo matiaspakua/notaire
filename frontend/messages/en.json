@@ -714,6 +714,9 @@
       "description": "Notarial document types catalog",
       "newDoc": "New document type",
       "editDoc": "Edit document type",
+      "created": "Document type created",
+      "updated": "Document type updated",
+      "deleted": "Document type deleted",
       "errorSave": "Error saving document type",
       "errorDelete": "Cannot delete: document type is referenced by other records.",
       "inUseCannotDelete": "Cannot delete: document type is in use",
@@ -723,6 +726,8 @@
       "namePlaceholder": "E.g.: ID Card, Deed",
       "searchPlaceholder": "Search by name...",
       "fields": {
+        "enabled": "Enabled",
+        "returned": "Returned to client",
         "vence": "Expires?",
         "diasVencimiento": "Days until expiration",
         "quienEntrega": "Who delivers/returns it"

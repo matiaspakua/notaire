@@ -17,6 +17,7 @@ public class DtoDocumentType implements DtoValido
     private String deliveredBy;
     private Integer version = 0;
     private Boolean enabled;
+    private Boolean returned;
     private List<DtoProcedureTemplate> templateProcedures = null;
 
     public DtoDocumentType()
@@ -47,6 +48,16 @@ public class DtoDocumentType implements DtoValido
     public void setEnabled(Boolean enabled)
     {
         this.enabled = enabled;
+    }
+
+    public Boolean getReturned()
+    {
+        return returned;
+    }
+
+    public void setReturned(Boolean returned)
+    {
+        this.returned = returned;
     }
 
     public Integer getVersion()
