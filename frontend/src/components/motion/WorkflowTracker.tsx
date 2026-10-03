@@ -9,6 +9,7 @@ import { easeApple } from "@/components/motion";
 import type {
   GestionWorkflowTrace,
   HistorialEntry,
+  TestimonyMovementEntry,
   WorkflowNode,
   WorkflowTransition,
 } from "@/types";
@@ -16,6 +17,9 @@ import type {
 interface Props {
   trace: GestionWorkflowTrace;
 }
+
+/** ManagementStatus id for "Testimonio Ingresado a Inscripcion" (V41 seed). */
+const INSCRIPTION_STATUS_ID = 12;
 
 type NodeStatus = "completed" | "in_progress" | "pending";
 
@@ -63,6 +67,17 @@ const STATUS_STYLE: Record<NodeStatus, { fill: string; border: string; text: str
 function nodeStatus(node: WorkflowNode, statuses: Record<number, string>): NodeStatus {
   const raw = node.id != null ? statuses[node.id] : undefined;
   return raw === "completed" || raw === "in_progress" ? raw : "pending";
+}
+
+function reentryCount(movements: TestimonyMovementEntry[] | undefined): number {
+  if (!movements || movements.length === 0) {
+    return 0;
+  }
+  return movements.filter((m) => m.returnedObserved).length;
+}
+
+function isInscriptionNode(node: WorkflowNode): boolean {
+  return node.statusManagementId === INSCRIPTION_STATUS_ID;
 }
 
 /**
@@ -182,6 +197,8 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
   );
   const incoming = trace.transitions.filter((t) => t.destinationNodeId === node.id);
   const outgoing = trace.transitions.filter((t) => t.originNodeId === node.id);
+  const movements = isInscriptionNode(node) ? (trace.testimonyMovements ?? []) : [];
+  const returnedCount = reentryCount(movements);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -217,7 +234,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
       >
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-xl font-semibold tracking-tight" style={{ color: theme.colors.neutral[900] }}>
-            {node.statusManagementName ?? `Nodo ${node.id}`}
+            {node.statusManagementName ?? `Node ${node.id}`}
           </h3>
           <button
             type="button"
@@ -229,7 +246,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
           </button>
         </div>
 
-        <div className="mt-4 flex items-center gap-3">
+        <div className="mt-4 flex items-center gap-3 flex-wrap">
           <StatusBadge status={status} />
           {node.type && (
             <span
@@ -237,6 +254,15 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
               style={{ color: theme.colors.neutral[600] }}
             >
               {tw(`type.${node.type}`)}
+            </span>
+          )}
+          {returnedCount > 0 && (
+            <span
+              data-testid="workflow-reingreso-badge"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white"
+              style={{ backgroundColor: theme.colors.warning[600] }}
+            >
+              {tw("reentry.badge", { count: returnedCount })}
             </span>
           )}
         </div>
@@ -293,6 +319,35 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
               </ul>
             )}
           </div>
+          {isInscriptionNode(node) && movements.length > 0 && (
+            <div data-testid="workflow-movement-timeline">
+              <p className="font-semibold mb-1.5" style={{ color: theme.colors.neutral[900] }}>
+                {tw("reentry.timeline")}
+              </p>
+              <ul className="space-y-2">
+                {movements.map((m, index) => (
+                  <li
+                    key={`${m.dateEntry ?? "entry"}-${index}`}
+                    className="rounded-xl px-4 py-2.5"
+                    style={{ backgroundColor: theme.colors.neutral[100] }}
+                    data-testid="workflow-movement-entry"
+                  >
+                    <p className="font-medium" style={{ color: theme.colors.neutral[900] }}>
+                      {m.dateEntry ? new Date(m.dateEntry).toLocaleDateString() : "—"}
+                      {m.dateExit
+                        ? ` → ${new Date(m.dateExit).toLocaleDateString()}`
+                        : ` → ${tw("reentry.open")}`}
+                    </p>
+                    {m.returnedObserved && (
+                      <p className="mt-0.5" style={{ color: theme.colors.warning[600] }}>
+                        {tw("reentry.returnedObserved")}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </motion.div>
     </motion.div>
@@ -338,6 +393,7 @@ export default function WorkflowTracker({ trace }: Props) {
   const svgW = Math.max(...layout.map((n) => n.lx + NODE_W)) + PAD;
   const svgH = Math.max(...layout.map((n) => n.ly + NODE_H)) + PAD;
   const selected = selectedId != null ? positions.get(selectedId) : undefined;
+  const returnedCount = reentryCount(trace.testimonyMovements);
 
   return (
     <div data-testid="workflow-tracker">
@@ -393,6 +449,7 @@ export default function WorkflowTracker({ trace }: Props) {
             const radius = node.type === "INITIAL" ? NODE_H / 2 : 14;
             const cx = node.lx + NODE_W / 2;
             const cy = node.ly + NODE_H / 2;
+            const showReentryBadge = isInscriptionNode(node) && returnedCount > 0;
             return (
               <motion.g
                 key={node.id}
@@ -489,19 +546,19 @@ export default function WorkflowTracker({ trace }: Props) {
                 )}
                 <text
                   x={node.lx + 40}
-                  y={cy - (inProgress ? 6 : 0)}
+                  y={cy - (inProgress || showReentryBadge ? 8 : 0)}
                   dominantBaseline="middle"
                   fill={style.text}
                   fontSize={13.5}
                   fontWeight={600}
                   fontFamily={theme.typography.fontFamily.body}
                 >
-                  {node.statusManagementName ?? `Nodo ${node.id}`}
+                  {node.statusManagementName ?? `Node ${node.id}`}
                 </text>
                 {inProgress && (
                   <text
                     x={node.lx + 40}
-                    y={cy + 12}
+                    y={cy + (showReentryBadge ? 4 : 12)}
                     dominantBaseline="middle"
                     fill={theme.colors.primary[600]}
                     fontSize={10.5}
@@ -510,6 +567,30 @@ export default function WorkflowTracker({ trace }: Props) {
                   >
                     {tw("status.in_progress")}
                   </text>
+                )}
+                {showReentryBadge && (
+                  <g data-testid="workflow-reingreso-badge">
+                    <rect
+                      x={node.lx + 40}
+                      y={cy + (inProgress ? 14 : 6)}
+                      width={72}
+                      height={16}
+                      rx={8}
+                      fill={theme.colors.warning[600]}
+                    />
+                    <text
+                      x={node.lx + 76}
+                      y={cy + (inProgress ? 22 : 14)}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill={theme.colors.neutral[0]}
+                      fontSize={10}
+                      fontWeight={600}
+                      fontFamily={theme.typography.fontFamily.body}
+                    >
+                      {tw("reentry.short", { count: returnedCount })}
+                    </text>
+                  </g>
                 )}
               </motion.g>
             );

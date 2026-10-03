@@ -91,6 +91,13 @@
         "outgoing": "Pasos siguientes",
         "history": "Historial",
         "noHistory": "Aún no hay entradas de historial para este paso"
+      },
+      "reentry": {
+        "badge": "{count} reingresos",
+        "short": "×{count} reingreso",
+        "timeline": "Movimientos de testimonio",
+        "open": "abierto",
+        "returnedObserved": "Volvió observado"
       }
     },
     "gestiones": {
