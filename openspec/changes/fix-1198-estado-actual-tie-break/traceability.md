@@ -15,7 +15,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Related | #806 (introduced the endpoint behaviour and test) | referenced |
 | Specification | `openspec/changes/fix-1198-estado-actual-tie-break/` | Gate 1 draft |
 | Branch | `fix/1198_estado_actual_tie_break` | created from updated `main` |
-| Tasks | `tasks.md` | in progress |
+| Tasks | `tasks.md` | fix and docs complete; pipeline, PR, Gates 4-5 pending |
 | Commits | — | pending |
 | Pull Request | — | pending |
 | CI run | — | pending |
@@ -27,21 +27,21 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Identical dates return the later insert | `ManagementHistorialOrphanWriteIntegrationTest#shouldReturnLaterHistoryRowWhenDatesTie` | pending |
-| Distinct dates still return the latest date | `ManagementHistorialOrphanWriteIntegrationTest#shouldReturnEstadoActualFromHistoryWhenRowsExist` | pending |
+| Identical dates return the later insert | `ManagementHistorialOrphanWriteIntegrationTest#shouldReturnLaterHistoryRowWhenDatesTie` | covered |
+| Distinct dates still return the latest date | `ManagementHistorialOrphanWriteIntegrationTest#shouldReturnEstadoActualFromHistoryWhenRowsExist` | covered |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | pending | — |
+| `CHANGELOG.md`, CU13 ID table | yes | docs commit |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | `bash scripts/validate-sdlc-plan.sh fix-1198-estado-actual-tie-break` |
-| 2 | Failing tests written, test cases designed | pending | — |
+| 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh fix-1198-estado-actual-tie-break` |
+| 2 | Failing tests written, test cases designed | yes | tie test failed 3 of 3 on unfixed code before the fix commit |
 | 3 | Suite green, coverage held, docs updated | pending | — |
 | 4 | CI green, review approved, no conflicts | pending | — |
 | 5 | Deployed, smoke test passed, Issue closed | pending | — |

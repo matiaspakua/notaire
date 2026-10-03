@@ -26,14 +26,14 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 Add the id tie-break to the comparator
-- [ ] 4.2 Tie test green
+- [x] 4.1 Add the id tie-break to the comparator
+- [x] 4.2 Tie test green
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 The #806 tests keep their assertions and pass
-- [ ] 5.2 No docs reference the old behaviour
-- [ ] 5.3 Nothing else to adapt
+- [x] 5.1 The #806 tests keep their assertions and pass
+- [x] 5.2 No docs reference the old behaviour
+- [x] 5.3 Nothing else to adapt
 
 ## 6. Ejecutar regresión
 
@@ -41,20 +41,20 @@
 - [ ] 6.2 `mvn jacoco:check -pl backend-api`
 - [ ] 6.3 `mvn verify -pl backend-api`
 - [ ] 6.4 Bruno via `bash scripts/run_pipeline.sh`
-- [ ] 6.5 No `@Disabled` tests
+- [x] 6.5 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a product UI — no spec edits
+- [x] 7.1 n/a product UI — no spec edits
 - [ ] 7.2 Required Playwright CI job must still pass on the PR
-- [ ] 7.3 n/a responsive UI checks
-- [ ] 7.4 Record "n/a — no UI surface"
+- [x] 7.3 n/a responsive UI checks
+- [x] 7.4 Record "n/a — no UI surface"
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 CHANGELOG Fixed entry
-- [ ] 8.2 CU13 ID table if present
-- [ ] 8.3 Confirm no information was duplicated
+- [x] 8.1 CHANGELOG Fixed entry
+- [x] 8.2 CU13 ID table if present
+- [x] 8.3 Confirm no information was duplicated
 - [ ] 8.4 `bash scripts/preflight.sh`
 
 ## 9. Commits atómicos
