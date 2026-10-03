@@ -63,6 +63,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Migrate Next.js edge interceptor to `proxy.ts`** (issue #1056, CU84):
+  apply official `@next/codemod middleware-to-proxy` so
+  `frontend/src/middleware.ts` becomes `frontend/src/proxy.ts` with
+  `export function proxy`. Route-guard semantics, `/api/**` skip, UX
+  status/role cookies, and #1051 CSP nonce headers are unchanged; `next build`
+  no longer emits the middleware-convention deprecation warning.
+
 - **ProductionCredentialsGuard** aligns with least-privilege prod compose
   (issue #1044): optional pgAdmin/Grafana/exporter credentials are skipped when
   blank/unset, while literal `admin` is still rejected when those services are
@@ -120,10 +127,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Admin screens blocked for non-admin users** (issue #1052, CU78): navigating
   to `/dashboard/administracion/**` without an admin-capable role redirects to
-  `/dashboard?forbidden=1` with an access-denied message (edge middleware +
+  `/dashboard?forbidden=1` with an access-denied message (edge proxy +
   administración layout). Login sets a non-credential `notaire-auth-role`
   cookie for the edge check. Covered by unit tests and Playwright `TS-0094`.
-  Backend RBAC remains #559; HttpOnly token migration remains #1051.
+  Backend RBAC remains #559; HttpOnly token migration shipped in #1051.
 
 - **Expired sessions redirect to login with a clear message** (issue #1053, CU84):
   when an authenticated API call returns HTTP `401`, the Next.js client clears

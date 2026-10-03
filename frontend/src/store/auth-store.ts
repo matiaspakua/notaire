@@ -35,14 +35,14 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       login: (user: DtoUsuario) => {
-        // Edge middleware reads these non-credential cookies (issue #1052).
+        // Edge proxy reads these non-credential cookies (issue #1052).
         // JWT credential is HttpOnly cookie from the login Set-Cookie (#1051).
         setAuthCookies(user.tipo ?? "");
         set({ user, token: null, isAuthenticated: true });
       },
 
       logout: () => {
-        // Clear middleware cookies so /login is not bounced back to /dashboard.
+        // Clear UX auth cookies so /login is not bounced back to /dashboard.
         clearAuthCookies();
         set({ user: null, token: null, isAuthenticated: false });
       },

@@ -130,11 +130,11 @@ complete static copy here would go stale quickly.
 
 ### Auth Setup in E2E Tests
 
-Since the middleware checks for the `notaire-auth-status` cookie and the auth store uses `localStorage`, tests must inject both:
+Since the edge proxy checks for the `notaire-auth-status` cookie and the auth store uses `localStorage`, tests must inject both:
 
 ```typescript
 test.beforeEach(async ({ page }) => {
-  // Set auth cookie (middleware check)
+  // Set auth cookie (edge proxy check)
   await page.context().addCookies([{
     name: "notaire-auth-status",
     value: "authenticated",

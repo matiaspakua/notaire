@@ -34,10 +34,11 @@ function continueWithNonce(request: NextRequest): NextResponse {
   return response;
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Skip Next.js internals, static files, and API proxy routes
+  // Skip Next.js internals, static files, and API rewrite/BFF routes
+  // (/api/** must not be hijacked — HttpOnly JWT cookie path, issue #1051).
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
@@ -49,7 +50,7 @@ export function middleware(req: NextRequest) {
 
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
 
-  // Zustand persists to localStorage — we detect auth via cookies set on login
+  // UX status/role cookies (non-credential) drive edge redirects; JWT is HttpOnly.
   const authCookie = req.cookies.get(AUTH_STATUS_COOKIE);
   const roleRaw = req.cookies.get(AUTH_ROLE_COOKIE)?.value;
   let roleValue: string | undefined;

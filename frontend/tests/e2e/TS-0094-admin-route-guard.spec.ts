@@ -34,7 +34,7 @@ test.describe("TS-0094 - Admin route guard (CU78 / #1052)", () => {
     });
     expect(created.ok, `createUsuario failed: ${created.status} ${created.error}`).toBe(true);
 
-    // Drop admin cookies first so middleware does not bounce /login → /dashboard
+    // Drop admin cookies first so edge proxy does not bounce /login → /dashboard
     // (ERR_ABORTED). Auth helper init script only hydrates when status cookie
     // is present (#1051), so localStorage will not be re-poisoned after clear.
     await page.context().clearCookies();
