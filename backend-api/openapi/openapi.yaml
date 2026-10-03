@@ -3851,7 +3851,8 @@ paths:
       tags:
       - Gestiones
     post:
-      description: CU13 - When a status is provided, the initial status is appended to History.
+      description: CU13 - When a status is provided, the initial status is appended to History. Plain create has no procedure/workflow
+        yet, so any defined status is accepted.
       operationId: create_17
       requestBody:
         content:
@@ -3905,8 +3906,9 @@ paths:
       - Gestiones
   /api/v1/gestiones/complete-case:
     post:
-      description: CU22/CU59 - Si el escribano solicitado tiene una suplencia activa para la fecha de inicio de la gestión,
-        la gestión se redirige automáticamente al suplente y se deja constancia en el campo observaciones de la respuesta.
+      description: CU22/CU59 - If the requested notary has an active substitution for the management start date, the management
+        is redirected to the substitute and a note is recorded. CU83 - When the procedure type has a workflow, the initial
+        status must be a start node. CU13 - Initial status is appended to History.
       operationId: createCompleteCase
       requestBody:
         content:
@@ -3921,7 +3923,7 @@ paths:
               schema:
                 type: object
           description: OK
-      summary: CU02 - Crear una gestión con sus dependencias obligatorias
+      summary: CU02 - Create a management with its required dependencies
       tags:
       - Gestiones
   /api/v1/gestiones/numero/{number}:
@@ -3988,7 +3990,8 @@ paths:
       tags:
       - Gestiones
     put:
-      description: CU13 - When the status id is first set or changes, a History row is appended.
+      description: CU83 **BREAKING** - Changing managementStatusId is rejected; use POST /{id}/transition. Same-status updates
+        remain allowed. CU13 - History for status changes is written by /transition (and create).
       operationId: update_18
       parameters:
       - in: path
@@ -4006,6 +4009,8 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          description: Status mutation rejected — use POST /{id}/transition
         '404':
           description: Not found
       summary: CU53 - Update a management
@@ -4053,7 +4058,8 @@ paths:
   /api/v1/gestiones/{id}/complete-case:
     put:
       description: CU22/CU59 - If the requested notary has an active substitution for the management start date, the management
-        is redirected to the substitute and a note is recorded. CU13 - Status changes are appended to History via ManagementBitacoraService.
+        is redirected to the substitute and a note is recorded. CU83 **BREAKING** - Changing statusManagementId is rejected;
+        use POST /{id}/transition. Same-status updates remain allowed.
       operationId: updateCompleteCase
       parameters:
       - in: path
@@ -4075,7 +4081,7 @@ paths:
               schema:
                 type: object
           description: OK
-      summary: CU02 - Update a management with its required dependencies
+      summary: CU02/CU53 - Update a management with its required dependencies
       tags:
       - Gestiones
   /api/v1/gestiones/{id}/documentos-entidades-externas:
@@ -4355,6 +4361,9 @@ paths:
       - Gestiones
   /api/v1/gestiones/{id}/workflow-trace:
     get:
+      description: 'CU83 legal-next contract: clients derive valid destination statuses from `transitions` whose `originNodeId`
+        matches the current node (the node whose status equals `statusActual`). The gestiones UI must offer only those destinations
+        when changing status via POST /{id}/transition.'
       operationId: getWorkflowTrace
       parameters:
       - in: path
@@ -4382,7 +4391,7 @@ paths:
               schema:
                 type: object
           description: Gestion no encontrada
-      summary: Obtener trace del workflow de una gestion (con nodos, transiciones, historial y estados)
+      summary: Get workflow trace for a management (nodes, transitions, history, node statuses)
       tags:
       - Gestiones
   /api/v1/historial:

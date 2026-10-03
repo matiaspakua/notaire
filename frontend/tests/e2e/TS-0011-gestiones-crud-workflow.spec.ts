@@ -5,7 +5,7 @@
  * CU83 - Cambiar estado (workflow)
  * CU16 - Archivar Gestión
  * CU19 - Buscar gestiones por cliente
- * Issue #833
+ * Issues: #833, #804 (workflow-enforced status writes; UI uses /transition)
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU02.puml
  */
 import { type Page, test, expect } from '@playwright/test'
