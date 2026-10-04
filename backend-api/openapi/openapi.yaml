@@ -1476,6 +1476,48 @@ components:
         statusDestination:
           type: string
       type: object
+    DtoUpcomingExpiration:
+      properties:
+        amountToPay:
+          type: number
+        cardNumber:
+          format: int32
+          type: integer
+        dateDue:
+          format: date
+          type: string
+        dateEntry:
+          format: date
+          type: string
+        dateExit:
+          format: date
+          type: string
+        datePayment:
+          format: date
+          type: string
+        dateReleased:
+          format: date
+          type: string
+        daysRemaining:
+          format: int64
+          type: integer
+        documentName:
+          type: string
+        idSubmittedDocument:
+          format: int32
+          type: integer
+        managementHeading:
+          type: string
+        managementNumber:
+          format: int32
+          type: integer
+        notes:
+          type: string
+        observed:
+          type: boolean
+        prepared:
+          type: boolean
+      type: object
     DtoUser:
       properties:
         idUser:
@@ -3228,6 +3270,38 @@ paths:
                 type: object
           description: Conflicto
       summary: Crear nuevo documento presentado
+      tags:
+      - DocumentoPresentado
+  /api/v1/documento-presentado/proximos-vencimientos:
+    get:
+      description: Documentos presentados que vencen entre hoy y hoy más 'dias' días (por defecto 30), no liberados, ordenados
+        por fecha de vencimiento
+      operationId: getUpcoming
+      parameters:
+      - in: query
+        name: dias
+        required: false
+        schema:
+          format: int32
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/DtoUpcomingExpiration'
+                type: array
+          description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/DtoUpcomingExpiration'
+                type: array
+          description: La ventana de días está fuera de 1 a 365
+      summary: CU42 - Informar próximos vencimientos
       tags:
       - DocumentoPresentado
   /api/v1/documento-presentado/{id}:
