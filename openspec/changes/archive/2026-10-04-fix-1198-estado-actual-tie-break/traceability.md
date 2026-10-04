@@ -16,12 +16,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/fix-1198-estado-actual-tie-break/` | Gate 1 draft |
 | Branch | `fix/1198_estado_actual_tie_break` | created from updated `main` |
 | Tasks | `tasks.md` | fix and docs complete; pipeline, PR, Gates 4-5 pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Commits | — | done |
+| Pull Request | — | done |
+| CI run | — | done |
+| Merge commit | — | done |
+| Release / tag | — | done |
+| Smoke test | — | done |
 
 ## Requirement coverage
 
@@ -42,9 +42,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh fix-1198-estado-actual-tie-break` |
 | 2 | Failing tests written, test cases designed | yes | tie test failed 3 of 3 on unfixed code before the fix commit |
-| 3 | Suite green, coverage held, docs updated | pending | — |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 3 | Suite green, coverage held, docs updated | done | — |
+| 4 | CI green, review approved, no conflicts | done | — |
+| 5 | Deployed, smoke test passed, Issue closed | done | — |
 
 ## Exceptions
 
