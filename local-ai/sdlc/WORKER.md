@@ -45,7 +45,7 @@ context. Open a specific section only if the phase prompt tells you to.
 - Unit tests: `backend-api/src/test/java/com/licensis/notaire/unit/...`
   Integration (H2/Spring): `backend-api/src/test/java/com/licensis/notaire/integration/...`
 - Frontend component tests: `frontend/src/**/*.test.tsx` (Vitest).
-  Playwright E2E: `frontend/tests/e2e/TS-nnnn-<workflow>.spec.ts`.
+  Playwright E2E: `testing/e2e/tests/TS-nnnn-<workflow>.spec.ts`.
 - A test exercises real code/resources. Classpath lookups: `getClass().getResource("/x")`
   (leading slash) but `getClassLoader().getResource("x")` (NO slash — with a slash it
   is always null, a vacuous test).

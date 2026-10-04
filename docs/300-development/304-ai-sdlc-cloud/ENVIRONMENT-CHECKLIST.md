@@ -56,7 +56,7 @@ Saving the card.
 | Component | Notes | Verify |
 |-----------|-------|--------|
 | `frontend/node_modules` | `cd frontend && npm ci` in install or first boot | `test -d frontend/node_modules` |
-| Playwright browsers | `cd frontend && npx playwright install --with-deps` (or CI-equivalent) | `npx playwright --version` |
+| Playwright browsers | `cd testing/e2e && npx playwright install --with-deps` (or CI-equivalent) | `npx playwright --version` |
 | Bruno / API collection | Collection under `backend-api/api-test/`; CLI `bru` ≥4.2.0 on PATH from install | `bru --version`; collection present |
 | markdownlint-cli2 | Via frontend deps for docs lint | `frontend/node_modules/.bin/markdownlint-cli2 --version` |
 
