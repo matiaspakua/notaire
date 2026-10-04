@@ -12,7 +12,7 @@
 
 ## Objetivo
 
-#1192 moved the Playwright suite to `testing/e2e`. `CONSTITUTION.md` still names `frontend/tests/e2e/`
+\#1192 moved the Playwright suite to `testing/e2e`. `CONSTITUTION.md` still names `frontend/tests/e2e/`
 and `cd frontend && npx playwright test`, so the highest-authority document contradicts the repository.
 This change fixes the wording, nothing else.
 
