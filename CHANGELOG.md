@@ -1028,6 +1028,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Server-side authorization for administrative endpoints** (issue #559, CU78; **BREAKING** for non-administrator API clients of these endpoints): any authenticated user could list users and create an `ESCRIBANO` account. The JWT filter now resolves the authority from the stored user on each request (`ROLE_ADMIN` for Administrador, Admin and Escribano, `ROLE_USER` otherwise; deleted or inactive users get 401), `/usuarios` (except login and logout), `/roles` and `/audit-log` require `ROLE_ADMIN`, and mutations of workflow definitions and the administrative catalogs require `ROLE_ADMIN` while reads stay open; non-administrators receive 403. `/dashboard/auditoria` is now an administrator route in the UI; `RbacIntegrationTest`, Bruno `rbac/` and Playwright `TS-0094` cover it. #559 stays open for per-permission rules from `roles_permisos` and for business resources.
+
 - **Runtime backend URL proxy + remove login URL leak** (issue #1055, CU78):
   replace build-time `next.config` `/api/v1` rewrites with an App Router Route
   Handler BFF driven by server-only `BACKEND_URL`; stop baking Docker-internal
