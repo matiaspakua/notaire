@@ -4,7 +4,19 @@ import { useTranslations } from "next-intl";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormHeader, FormSection } from "@/theme/form-patterns";
 import { useGestionResumenCaso, useGestionResumenFinanciero } from "@/hooks/useGestionResumen";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import type { DocumentoCaso } from "@/types";
+
+function documentFlags(documento: DocumentoCaso, t: (key: string) => string): string[] {
+  const flags: [boolean, string][] = [
+    [documento.prepared, "preparado"],
+    [documento.released, "liberado"],
+    [documento.observed, "observado"],
+    [documento.delivered, "entregado"],
+    [documento.reentered, "reingresado"],
+  ];
+  return flags.filter(([active]) => active).map(([, key]) => t(key));
+}
 
 interface GestionResumenDialogProps {
   gestionId: number | null;
@@ -18,6 +30,7 @@ export function GestionResumenDialog({ gestionId, onClose }: GestionResumenDialo
   const { data: financiero } = useGestionResumenFinanciero(gestionId ?? undefined);
 
   const deeds = caso?.deeds ?? [];
+  const documents = caso?.documents ?? [];
 
   return (
     <Dialog open={!!gestionId} onOpenChange={(open) => !open && onClose()}>
@@ -43,6 +56,22 @@ export function GestionResumenDialog({ gestionId, onClose }: GestionResumenDialo
                           {` · ${t("copias", { cantidad: testimony.copies })}`}
                         </div>
                       ))}
+                    </div>
+                  ))
+                )}
+              </FormSection>
+              <FormSection title={t("documentos")}>
+                {documents.length === 0 ? (
+                  <p className="text-sm text-muted-foreground" data-testid="resumen-sin-documentos">{t("sinDocumentos")}</p>
+                ) : (
+                  documents.map((documento) => (
+                    <div key={documento.idSubmittedDocument} className="text-sm border-b pb-2" data-testid="resumen-documento">
+                      <div className="font-medium">{documento.typeName ?? documento.name ?? "—"}</div>
+                      <div className="text-muted-foreground">
+                        {t("tramiteDocumento", { id: documento.idProcedure })}
+                        {documento.dateDue ? ` · ${t("vence", { fecha: formatDate(documento.dateDue) })}` : ""}
+                        {documentFlags(documento, t).map((flag) => ` · ${flag}`).join("")}
+                      </div>
                     </div>
                   ))
                 )}

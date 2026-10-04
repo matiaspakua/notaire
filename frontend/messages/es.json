@@ -273,7 +273,15 @@
         "INGRESADO": "Ingresado",
         "INSCRIPTO": "Inscripto",
         "RETIRADO": "Retirado"
-      }
+      },
+      "documentos": "Documentos",
+      "sinDocumentos": "Esta gestión todavía no tiene documentos",
+      "tramiteDocumento": "Trámite #{id}",
+      "vence": "vence {fecha}",
+      "preparado": "preparado",
+      "liberado": "liberado",
+      "entregado": "entregado",
+      "reingresado": "reingresado"
     }
   },
   "escrituras": {
@@ -589,7 +597,13 @@
     "deleted": "Documento eliminado",
     "errorSave": "Error al guardar",
     "errorDelete": "Error al eliminar",
-    "noData": "No hay documentos registrados"
+    "noData": "No hay documentos registrados",
+    "tramite": "Trámite",
+    "gestion": "Gestión",
+    "gestionHelper": "Opcional: vincula el documento a un trámite de la gestión",
+    "selectGestion": "Seleccionar gestión",
+    "selectTramite": "Seleccionar trámite",
+    "sinTramites": "La gestión no tiene trámites"
   },
   "presupuestos": {
     "title": "Presupuestos",

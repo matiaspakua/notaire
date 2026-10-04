@@ -153,17 +153,21 @@ export interface Tramite {
   documentosPresentados?: DocumentoPresentado[];
 }
 
+/** GET /documento-presentado row — SubmittedDocumentController.SubmittedDocumentResponse. */
 export interface DocumentoPresentado {
   idSubmittedDocument?: number;
-  fkDocumentType?: TipoDeDocumento;
+  type?: { idDocumentType?: number; name?: string } | null;
+  date?: string | null;
   delivered?: boolean;
-  dateEntry?: string;
+  procedureId?: number | null;
 }
 
+/** POST/PUT /documento-presentado body — SubmittedDocumentController.SubmittedDocumentRequest. */
 export interface DocumentoPresentadoRequest {
-  tipoId: number | null;
-  fecha: string | null;
-  entregado: boolean;
+  typeId: number | null;
+  date: string | null;
+  delivered: boolean;
+  procedureId?: number | null;
 }
 
 /** GET /api/v1/carpetas — raw ProcedureFolder DTO. */
@@ -597,11 +601,25 @@ export interface EscrituraCaso {
   testimonies: TestimonioCaso[];
 }
 
+export interface DocumentoCaso {
+  idSubmittedDocument: number;
+  name?: string;
+  typeName?: string;
+  idProcedure: number;
+  prepared: boolean;
+  released: boolean;
+  observed: boolean;
+  delivered: boolean;
+  reentered: boolean;
+  dateDue?: string;
+}
+
 export interface GestionResumenCaso {
   managementId: number;
   managementNumber: number;
   heading?: string;
   deeds: EscrituraCaso[];
+  documents: DocumentoCaso[];
 }
 
 /** CU47/CU02 - GET /gestiones/{id}/resumen-financiero — DtoManagementResumenFinanciero. */
