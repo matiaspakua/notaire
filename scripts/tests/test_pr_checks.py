@@ -60,6 +60,17 @@ class CommitMessagesTest(unittest.TestCase):
         self.assertEqual(run("check-commit-messages.sh", base, cwd=repo).returncode, 0)
 
 
+    def test_accepts_squash_merge_subjects_with_issue_prefix_and_pr_suffix(self):
+        repo, base = new_repo()
+        commit(repo, "[#1210] docs(constitution): point the Playwright suite at testing/e2e (#1214)")
+        self.assertEqual(run("check-commit-messages.sh", base, cwd=repo).returncode, 0)
+
+    def test_rejects_issue_prefix_without_a_conventional_subject(self):
+        repo, base = new_repo()
+        commit(repo, "[#1210] update stuff (#1214)")
+        self.assertNotEqual(run("check-commit-messages.sh", base, cwd=repo).returncode, 0)
+
+
 class TddEvidenceTest(unittest.TestCase):
     MAIN = "backend-api/src/main/java/a/Foo.java"
     TEST = "backend-api/src/test/java/a/FooTest.java"
@@ -110,6 +121,13 @@ class SdlcExceptionTest(unittest.TestCase):
     def test_accepts_pr_with_change_folder(self):
         repo, base = new_repo()
         commit(repo, "docs(openspec): plan", "openspec/changes/x/proposal.md")
+        self.assertEqual(run("check-sdlc-exception.sh", base, cwd=repo).returncode, 0)
+
+    def test_accepts_a_large_diff_whose_first_path_is_an_openspec_change(self):
+        repo, base = new_repo()
+        long_name = "x" * 180
+        paths = ["openspec/changes/archive/2026-10-04-big/" + f"{index:04d}-{long_name}.md" for index in range(700)]
+        commit(repo, "chore(openspec): archive a large change", *paths)
         self.assertEqual(run("check-sdlc-exception.sh", base, cwd=repo).returncode, 0)
 
     def test_accepts_dependency_bot(self):

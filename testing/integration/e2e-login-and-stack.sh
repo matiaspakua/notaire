@@ -68,5 +68,5 @@ fi
 echo ""
 echo -e "${GREEN}=== E2E integration test finished ===${NC}"
 echo "  Active UI client: cd frontend && npm run dev"
-echo "  Active UI E2E:    cd frontend && npm run test:e2e"
+echo "  Active UI E2E:    bash testing/scripts/run.sh e2e"
 echo "  Swing desktop E2E is retired (#811 / ADR-012)."

@@ -16,7 +16,7 @@ import re
 import subprocess
 import sys
 
-TEST_FILE = re.compile(r"(src/test/|\.test\.tsx?$|tests/e2e/)")
+TEST_FILE = re.compile(r"(src/test/|\.test\.tsx?$|tests/e2e/|testing/e2e/)")
 HOME_PATH = re.compile(r"/Users/|/home/")
 ASSERTION = re.compile(r"\b(assert\w*|expect|verify|fail)\s*\(|\bassert\s")
 

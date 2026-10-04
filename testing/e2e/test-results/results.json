@@ -1,0 +1,2742 @@
+{
+  "config": {
+    "argv": [
+      "/opt/node22/bin/node",
+      "/home/user/notaire/testing/e2e/node_modules/.bin/playwright",
+      "test",
+      "--project=smoke"
+    ],
+    "configFile": "/home/user/notaire/testing/e2e/playwright.config.ts",
+    "rootDir": "/home/user/notaire/testing/e2e/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": "/home/user/notaire/testing/e2e/tests/setup/global-setup.ts",
+    "globalTeardown": "/home/user/notaire/testing/e2e/tests/setup/global-teardown.ts",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/user/notaire/testing/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "smoke",
+        "name": "smoke",
+        "testDir": "/home/user/notaire/testing/e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "/home/user/notaire/testing/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "health",
+        "name": "health",
+        "testDir": "/home/user/notaire/testing/e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "/home/user/notaire/testing/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/user/notaire/testing/e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "/home/user/notaire/testing/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/home/user/notaire/testing/e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/mobile-viewport.spec.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/results.xml"
+        }
+      ],
+      [
+        "/home/user/notaire/testing/e2e/tests/reporters/coverage-report.ts",
+        {
+          "outputFile": "test-results/coverage-report.html"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "TS-0050-cu-health-matrix-smoke.spec.ts",
+      "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "CU Coverage Matrix — Health Check",
+          "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+          "line": 144,
+          "column": 6,
+          "specs": [
+            {
+              "title": "CU-AUTH: Login [POST /usuarios/login]",
+              "ok": true,
+              "tags": [
+                "cu-cu-auth",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1281,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:50.833Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-454139ea78129e60cd74",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU17: Dar Alta persona [POST /people]",
+              "ok": true,
+              "tags": [
+                "cu-cu17",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1324,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:50.796Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-c47b1156c04c1427c742",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU18: Dar Alta Cliente [POST /people]",
+              "ok": true,
+              "tags": [
+                "cu-cu18",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1306,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:52.308Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-38913e067d61ad81c13c",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU46: Ver detalle cliente [GET (dynamic)]",
+              "ok": true,
+              "tags": [
+                "cu-cu46",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1250,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:52.309Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-246755045d57fb0b0e2a",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU54: Modificar Persona [GET /people]",
+              "ok": true,
+              "tags": [
+                "cu-cu54",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1283,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:53.583Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-f94fb5df3efc2054f439",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU61: Buscar persona o cliente [GET /people/search?firstName=test]",
+              "ok": true,
+              "tags": [
+                "cu-cu61",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1138,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:53.650Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-9358f89175b62d38eb7b",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU01: Preparar Presupuesto [GET /presupuestos]",
+              "ok": true,
+              "tags": [
+                "cu-cu01",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1193,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:54.817Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-da33953a9088de64d444",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU45: Modificar presupuesto [GET /presupuestos]",
+              "ok": true,
+              "tags": [
+                "cu-cu45",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1200,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:54.898Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-1e20eabb66e64e2f5da6",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU60: Buscar Presupuesto [GET (dynamic)]",
+              "ok": true,
+              "tags": [
+                "cu-cu60",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1181,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:56.033Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-bd72fe0d20d9c421b51f",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU02: Iniciar Gestión [GET /gestiones]",
+              "ok": true,
+              "tags": [
+                "cu-cu02",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1325,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:56.129Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-134f169b98ee2be15294",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU14: Consultar estado gestión [GET (dynamic)]",
+              "ok": true,
+              "tags": [
+                "cu-cu14",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1264,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:57.240Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-d53f6088191a9f789b5b",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU16: Archivar Gestión [GET /gestiones]",
+              "ok": true,
+              "tags": [
+                "cu-cu16",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1165,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:57.485Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-458829a33c30538bb825",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU19: Buscar gestiones de un Cliente [GET (dynamic)]",
+              "ok": true,
+              "tags": [
+                "cu-cu19",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1282,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:58.525Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-49c9f2b4aeb5f4f4530e",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU53: Modificar Gestión [GET /gestiones]",
+              "ok": true,
+              "tags": [
+                "cu-cu53",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1207,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:58.681Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-392d4db26cae08954308",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU56: Registrar inscripción [GET /gestiones]",
+              "ok": true,
+              "tags": [
+                "cu-cu56",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1241,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:59.840Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-f2dededa46f327cda2ab",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU05: Preparar escritura [GET /escrituras]",
+              "ok": true,
+              "tags": [
+                "cu-cu05",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1172,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:49:59.924Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-02a7fcf2bbb6619e2893",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU06: Firmar escritura [GET /escrituras]",
+              "ok": true,
+              "tags": [
+                "cu-cu06",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1220,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:01.104Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-707278ec740a9d50e0f9",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU52: Modificar Escritura [GET /escrituras]",
+              "ok": true,
+              "tags": [
+                "cu-cu52",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1148,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:01.117Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-5685a0c7c735b9a656bb",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU62: Buscar Escritura [GET /escrituras/buscar]",
+              "ok": true,
+              "tags": [
+                "cu-cu62",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1345,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:02.287Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-fcf0ac2431712744681d",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU48-SUB: Escribanos disponibles (GET) [GET /escrituras/escribanos-disponibles]",
+              "ok": true,
+              "tags": [
+                "cu-cu48-sub",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1337,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:02.352Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-1170e8e249c1164f7bca",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU07: Generar testimonio [GET /testimonio]",
+              "ok": true,
+              "tags": [
+                "cu-cu07",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1218,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:03.652Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-648a1e156bffccfa25d7",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU08: Verificar Testimonio [GET /testimonio]",
+              "ok": true,
+              "tags": [
+                "cu-cu08",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1250,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:03.707Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-4aca2035dc12bf45d7b4",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU03: Lista documentos [GET /documento-presentado]",
+              "ok": true,
+              "tags": [
+                "cu-cu03",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1255,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:04.894Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-131f0b3a561f3f8f6e36",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU04: Registrar documentación cliente [GET /documento-presentado]",
+              "ok": true,
+              "tags": [
+                "cu-cu04",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1380,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:04.983Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-318c5cb42a3d4e3fc7ab",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU42: Informar próximos vencimientos [GET /documento-presentado]",
+              "ok": true,
+              "tags": [
+                "cu-cu42",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1115,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:06.172Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-6be95ed8f7157faa0906",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU43: Reingresar documentación [GET /documento-presentado]",
+              "ok": true,
+              "tags": [
+                "cu-cu43",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1212,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:06.393Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-6a2fb287c5f793e36547",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU15: Procesar pago [GET /pagos]",
+              "ok": true,
+              "tags": [
+                "cu-cu15",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1182,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:07.308Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-b72a62f959c1af8b9dd4",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU47: Consultar Pago [GET /pagos]",
+              "ok": true,
+              "tags": [
+                "cu-cu47",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1150,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:07.622Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-9888f75a4f2b0e61f577",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU20: Dar alta usuario [GET /usuarios]",
+              "ok": true,
+              "tags": [
+                "cu-cu20",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1136,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:08.519Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-f53c4e987ee8df160239",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU21: Modificar Usuario [GET /usuarios]",
+              "ok": true,
+              "tags": [
+                "cu-cu21",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1272,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:08.803Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-54bc27f7cb1e02693ee4",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU48: Dar alta escribano [GET /people]",
+              "ok": true,
+              "tags": [
+                "cu-cu48",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1098,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:09.698Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-d88ce7c37ea2b34d49d7",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU51: Modificar escribano [GET /people]",
+              "ok": true,
+              "tags": [
+                "cu-cu51",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1034,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:10.116Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-b1323b00304fa6c9c256",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU22: Registrar Suplencia [GET /suplencia]",
+              "ok": true,
+              "tags": [
+                "cu-cu22",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1234,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:10.817Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-9805c17fd5a364cfe2d3",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU59: Consultar Suplencias [GET /suplencia]",
+              "ok": true,
+              "tags": [
+                "cu-cu59",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1089,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:11.176Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-d4e015364f37ac56a03a",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU23-AUD: Ver registro de actividades [GET (dynamic)]",
+              "ok": true,
+              "tags": [
+                "cu-cu23-aud",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1389,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:12.076Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-f177f7e8126561078775",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU26: Ingresar nuevo tipo de trámite [GET /tipo-tramite]",
+              "ok": true,
+              "tags": [
+                "cu-cu26",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1411,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:12.305Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-e166881903d608768cdf",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU27: Ingresar nuevo tipo de documento [GET /tipo-de-documento]",
+              "ok": true,
+              "tags": [
+                "cu-cu27",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 999,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:13.482Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-81298fda15d355e25bb9",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU28: Ingresar nuevos folios [GET /folio]",
+              "ok": true,
+              "tags": [
+                "cu-cu28",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1174,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:13.739Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-6b94124b753a70b8628b",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU29: Ingresar nuevo concepto [GET /conceptos]",
+              "ok": true,
+              "tags": [
+                "cu-cu29",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1029,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:14.522Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-557c56ec4acf94206d93",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU30: Ingresar nuevo estado de Gestión [GET /estado-gestion]",
+              "ok": true,
+              "tags": [
+                "cu-cu30",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1071,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:14.941Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-0897ce23aaa9974437b4",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU31: Modificar tipo de trámite [GET /tipo-tramite]",
+              "ok": true,
+              "tags": [
+                "cu-cu31",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1179,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:15.577Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-22a7be55a83d62a31d8a",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU32: Modificar tipo de documento [GET /tipo-de-documento]",
+              "ok": true,
+              "tags": [
+                "cu-cu32",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1307,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:16.038Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-215eef8bd031205a7fe7",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU33: Modificar folio [GET /folio]",
+              "ok": true,
+              "tags": [
+                "cu-cu33",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1109,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:16.776Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-2970c53c002c1b0b355d",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU34: Modificar concepto [GET /conceptos]",
+              "ok": true,
+              "tags": [
+                "cu-cu34",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1126,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:17.369Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-7f25e406d7884a4b94f7",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU35: Modificar estado de Gestión [GET /estado-gestion]",
+              "ok": true,
+              "tags": [
+                "cu-cu35",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1127,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:17.910Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-8263d0578723cf457287",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU36: Ingresar tipos de folio [GET /tipo-folio]",
+              "ok": true,
+              "tags": [
+                "cu-cu36",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1111,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:18.519Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-24aee40b4cb824fa9c2b",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU37: Eliminar concepto [GET /conceptos]",
+              "ok": true,
+              "tags": [
+                "cu-cu37",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1142,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:19.072Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-a6b6eaa81bd02730b733",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU38: Eliminar tipo de documento [GET /tipo-de-documento]",
+              "ok": true,
+              "tags": [
+                "cu-cu38",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 994,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:19.656Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-cd3d0ed667a9b6b15109",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU39: Crear Plantilla Presupuesto [GET /plantilla-presupuestos]",
+              "ok": true,
+              "tags": [
+                "cu-cu39",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1026,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:20.245Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-981304abec337363c0d2",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU40: Modificar Tipo de folio [GET /tipo-folio]",
+              "ok": true,
+              "tags": [
+                "cu-cu40",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1004,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:20.668Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-a367b2fbd36b13022308",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU57: Eliminar tipo de trámite [GET /tipo-tramite]",
+              "ok": true,
+              "tags": [
+                "cu-cu57",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 934,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:21.289Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-ed0f3d6b8e323568e61d",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU58: Eliminar Tipo de folio [GET /tipo-folio]",
+              "ok": true,
+              "tags": [
+                "cu-cu58",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1104,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:21.696Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-ebb9c542cdfd668c5dc2",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU63: Buscar Folios [GET /folio]",
+              "ok": true,
+              "tags": [
+                "cu-cu63",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 985,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:22.246Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-f570af6c50547a64ef5c",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU64: Buscar Tipo de tramite [GET /tipo-tramite]",
+              "ok": true,
+              "tags": [
+                "cu-cu64",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 996,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:22.820Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-620d7ee1fad4b263a5be",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU65: Buscar Tipos de documentos [GET /tipo-de-documento]",
+              "ok": true,
+              "tags": [
+                "cu-cu65",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1081,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:23.274Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-3c6260b9c300f4cd3d79",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU66: Buscar Conceptos [GET /conceptos]",
+              "ok": true,
+              "tags": [
+                "cu-cu66",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1024,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:23.837Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-6042dc2c5266e5718baa",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU67: Buscar Estados de Gestión [GET /estado-gestion]",
+              "ok": true,
+              "tags": [
+                "cu-cu67",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1062,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:24.390Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-4c3026be0260b3cbd887",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU68: Buscar tipos de folios [GET /tipo-folio]",
+              "ok": true,
+              "tags": [
+                "cu-cu68",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1065,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:24.894Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-6a159b4eb1cb99087116",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU13: Ver historial de gestión [GET (dynamic)]",
+              "ok": true,
+              "tags": [
+                "cu-cu13",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 979,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:25.489Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-35c7143d5088488bab97",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU11: Ingresar para inscripción [GET /historial]",
+              "ok": true,
+              "tags": [
+                "cu-cu11",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1069,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:25.989Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-fe06b704e9c1db4fd39e",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU10: Registrar movimientos documentación [GET /movimiento-testimonio]",
+              "ok": true,
+              "tags": [
+                "cu-cu10",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1030,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:26.506Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-806ad0df57f04c831341",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU12: Retirar testimonio [GET /movimiento-testimonio]",
+              "ok": true,
+              "tags": [
+                "cu-cu12",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1102,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:27.083Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-a65dd7bcd2ba41798d4e",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU44: Reingresar testimonio [GET /movimiento-testimonio]",
+              "ok": true,
+              "tags": [
+                "cu-cu44",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1151,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:27.571Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-54ae47f1152fb288594a",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU49: Eliminar Plantilla Presupuesto [GET /plantilla-presupuestos]",
+              "ok": true,
+              "tags": [
+                "cu-cu49",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1043,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:28.215Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-87ef24f6ca3dfc2d1fa3",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU55: Modificar Plantilla Presupuesto [GET /plantilla-presupuestos]",
+              "ok": true,
+              "tags": [
+                "cu-cu55",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1134,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:28.762Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-582a2f37fdf084c4602c",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU-INM: Inmuebles [GET /inmueble]",
+              "ok": true,
+              "tags": [
+                "cu-cu-inm",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1021,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:29.286Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-1bedc0022948a0c6e4b7",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU-COP: Copias [GET /copia]",
+              "ok": true,
+              "tags": [
+                "cu-cu-cop",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1036,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:29.917Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-3766d56de8f7cdf024e0",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "CU-ITEM: Items [GET /items]",
+              "ok": true,
+              "tags": [
+                "cu-cu-item",
+                "smoke",
+                "health"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "smoke",
+                  "projectName": "smoke",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 992,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T10:50:30.326Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f97924bbcd5c26f98c30-9db84cb932e23acc8918",
+              "file": "TS-0050-cu-health-matrix-smoke.spec.ts",
+              "line": 158,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T10:49:48.061Z",
+    "duration": 44931.473,
+    "expected": 68,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -61,7 +61,7 @@ Adoptamos la **Testing Trophy** adaptada al stack actual:
 
 **Convenciones frontend:**
 - Archivos de test: `*.test.ts` junto al código
-- E2E en `tests/e2e/*.spec.ts`
+- E2E en `testing/e2e/tests/*.spec.ts`
 - Page Object Model para E2E
 
 ### E2E Tests - Flujos Prioritarios

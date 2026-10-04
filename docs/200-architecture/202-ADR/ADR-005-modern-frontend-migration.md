@@ -109,7 +109,6 @@ frontend/
 │   ├── i18n/                  # Internationalization
 │   ├── types/                 # TypeScript types (mirrors backend DTOs)
 │   └── tests/                 # Vitest unit/component tests
-├── tests/e2e/               # Playwright E2E tests (cuNN-*.spec.ts, per Caso de Uso)
 └── public/                  # Static assets
 ```
 
@@ -185,7 +184,7 @@ Browser → Next.js (SSR/CSR) → Spring Boot REST API → PostgreSQL
 - [ ] Migrar CU28, CU33, CU36, CU40, CU63-CU68
 
 ### Sprint 10: E2E & Deprecation
-- [x] Playwright E2E para todos los flujos (`frontend/tests/e2e/`, 33+ `cuNN-*.spec.ts`)
+- [x] Playwright E2E para todos los flujos (`testing/e2e/tests/`, 33+ `cuNN-*.spec.ts`)
 - [x] Deprecar y eliminar `frontend-swing` / `deprecated-frontend-swing` del árbol
       (excluido del reactor; borrado completo en #1046 — historial en git)
 
