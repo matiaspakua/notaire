@@ -2,18 +2,18 @@
 
 ## Context
 
-#1124/#1127 DTO migration flattened `BudgetResponse` to `personId`. Frontend
+\#1124/#1127 DTO migration flattened `BudgetResponse` to `personId`. Frontend
 and PG ITs (#883 / CU01) still require nested `person`. Main is red on
 `e8f665ed` PG job.
 
 ## Goals / Non-Goals
 
-**Goals**
+### Goals
 
 - Restore nested `person` on responses with NON_NULL inclusion.
 - Unblock main + sibling PRs (#1126/#1128) after rebase.
 
-**Non-Goals**
+### Non-Goals
 
 - Changing request binding (already accepts nested + flat).
 - Expanding person payload beyond `{ personId }`.
