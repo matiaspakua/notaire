@@ -60,6 +60,17 @@ class CommitMessagesTest(unittest.TestCase):
         self.assertEqual(run("check-commit-messages.sh", base, cwd=repo).returncode, 0)
 
 
+    def test_accepts_squash_merge_subjects_with_issue_prefix_and_pr_suffix(self):
+        repo, base = new_repo()
+        commit(repo, "[#1210] docs(constitution): point the Playwright suite at testing/e2e (#1214)")
+        self.assertEqual(run("check-commit-messages.sh", base, cwd=repo).returncode, 0)
+
+    def test_rejects_issue_prefix_without_a_conventional_subject(self):
+        repo, base = new_repo()
+        commit(repo, "[#1210] update stuff (#1214)")
+        self.assertNotEqual(run("check-commit-messages.sh", base, cwd=repo).returncode, 0)
+
+
 class TddEvidenceTest(unittest.TestCase):
     MAIN = "backend-api/src/main/java/a/Foo.java"
     TEST = "backend-api/src/test/java/a/FooTest.java"
