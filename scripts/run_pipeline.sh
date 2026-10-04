@@ -176,8 +176,8 @@ DASHBOARD="$REPORT_DIR/index.html"
         echo "<li><a href=\"file://$REPO_ROOT/backend-api/target/spotbugsXml.xml\">Backend bug patterns (SpotBugs XML)</a></li>"
     [ -f "$REPORT_DIR/eslint-report.html" ] && \
         echo "<li><a href=\"file://$REPORT_DIR/eslint-report.html\">Frontend lint (ESLint)</a></li>"
-    [ -f "$REPO_ROOT/frontend/playwright-report/index.html" ] && \
-        echo "<li><a href=\"file://$REPO_ROOT/frontend/playwright-report/index.html\">E2E tests (Playwright)</a></li>"
+    [ -f "$REPO_ROOT/testing/e2e/playwright-report/index.html" ] && \
+        echo "<li><a href=\"file://$REPO_ROOT/testing/e2e/playwright-report/index.html\">E2E tests (Playwright)</a></li>"
     echo "</ul><p><a href=\"file://$SUMMARY_LOG\">Full pipeline log</a></p>"
     echo "</body></html>"
 } > "$DASHBOARD"

@@ -6,6 +6,7 @@ which a separate QA team verifies and validates Notaire as black-box modules.
 Plain stdlib unittest + PyYAML, consistent with scripts/test_infra_standalone.py.
 Run with: python3 scripts/test_testing_standalone.py
 """
+import json
 import os
 import re
 import subprocess
@@ -41,6 +42,32 @@ REQUIRED_PATHS = (
     "docs/OPERATION.md",
     "e2e-swing/README.md",
 )
+
+E2E = TESTING / "e2e"
+E2E_REQUIRED = (
+    "tests",
+    "playwright.config.ts",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "eslint.config.mjs",
+    ".gitignore",
+)
+E2E_SPEC_COUNT = 52
+FRONTEND = REPO_ROOT / "frontend"
+E2E_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "playwright-e2e.yml"
+E2E_WORKFLOW_NAMES = (
+    "name: Playwright E2E",
+    "name: UI E2E Tests (Playwright)",
+    "name: playwright-report",
+    "name: playwright-traces",
+)
+E2E_LEGACY_REFERENCE = re.compile(
+    r"frontend/tests/e2e|frontend/playwright|frontend/test-results/results"
+    r"|cd frontend\s*&&\s*npx playwright|npm run test:e2e"
+)
+E2E_REFERENCE_EXEMPT = ("frontend/package-lock.json",)
+E2E_ESCAPE = re.compile(r"""(?:from|import\(|require\()\s*["']((?:\.\./)+[\w./-]*)""")
 
 REMOVED_PATHS = (
     "run-all-tests.sh",
@@ -127,7 +154,7 @@ class RunnerTest(unittest.TestCase):
     def test_runner_lists_the_suites(self):
         result = self.run_runner("--list")
         self.assertEqual(0, result.returncode, result.stderr)
-        self.assertEqual({"integration", "database"}, set(result.stdout.split()))
+        self.assertEqual({"integration", "database", "e2e"}, set(result.stdout.split()))
 
     def test_runner_rejects_an_unknown_suite(self):
         self.assertNotEqual(0, self.run_runner("nonsense").returncode)
@@ -230,6 +257,91 @@ class ReachabilityTest(unittest.TestCase):
             if not callers:
                 orphans.append(str(script.relative_to(REPO_ROOT)))
         self.assertEqual([], orphans, f"scripts nothing calls: {orphans}")
+
+
+class E2ESuiteLayoutTest(unittest.TestCase):
+    def test_suite_and_tooling_live_under_testing_e2e(self):
+        missing = [p for p in E2E_REQUIRED if not (E2E / p).exists()]
+        self.assertEqual([], missing, f"missing under testing/e2e/: {missing}")
+
+    def test_old_locations_are_gone(self):
+        present = [p for p in ("tests", "playwright.config.ts") if (FRONTEND / p).exists()]
+        self.assertEqual([], present, f"should not exist under frontend/: {present}")
+
+    def test_no_spec_was_lost(self):
+        specs = sorted((E2E / "tests").rglob("*.spec.ts"))
+        self.assertEqual(E2E_SPEC_COUNT, len(specs))
+
+    def test_frontend_is_free_of_playwright(self):
+        package = (FRONTEND / "package.json").read_text(encoding="utf-8")
+        root = json.loads((FRONTEND / "package-lock.json").read_text(encoding="utf-8"))["packages"][""]
+        declared = {**root.get("dependencies", {}), **root.get("devDependencies", {})}
+        self.assertNotRegex(package, r"playwright|test:e2e")
+        self.assertEqual([], [name for name in declared if "playwright" in name])
+        for name in ("vitest.config.ts", "eslint.config.mjs", ".gitignore", ".dockerignore"):
+            text = (FRONTEND / name).read_text(encoding="utf-8")
+            self.assertNotRegex(text, r"playwright|tests/e2e|test-results", name)
+
+    def test_e2e_does_not_reference_paths_outside_itself(self):
+        escapes = []
+        files = [p for p in E2E.rglob("*") if p.is_file() and "node_modules" not in p.parts
+                 and p.suffix in {".ts", ".mjs", ".json"} and p.name != "package-lock.json"]
+        for path in files:
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                for match in E2E_ESCAPE.finditer(line):
+                    target = match.group(1)
+                    resolved = Path(os.path.normpath(path.parent / target))
+                    if E2E not in (resolved, *resolved.parents):
+                        escapes.append(f"{path.relative_to(REPO_ROOT)}:{number}: {target}")
+        self.assertEqual([], escapes, f"testing/e2e references outside itself: {escapes}")
+
+    def test_e2e_config_points_at_its_own_tree(self):
+        config = (E2E / "playwright.config.ts").read_text(encoding="utf-8")
+        self.assertIn('testDir: "./tests"', config)
+        self.assertNotIn("tests/e2e", config)
+
+
+class E2EGatesTest(unittest.TestCase):
+    def test_workflow_runs_the_suite_from_testing_e2e(self):
+        text = E2E_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("working-directory: testing/e2e", text)
+        self.assertIn("testing/e2e/playwright-report/", text)
+        self.assertIn("testing/e2e/package-lock.json", text)
+        self.assertIn("npx tsc --noEmit", text)
+        self.assertIn("npx eslint .", text)
+
+    def test_required_check_and_artifact_names_are_unchanged(self):
+        text = E2E_WORKFLOW.read_text(encoding="utf-8")
+        for name in E2E_WORKFLOW_NAMES:
+            self.assertIn(name, text, f"{name} must not be renamed (protect-main requires it)")
+
+    def test_workflow_does_not_override_the_config_reporter(self):
+        for line in E2E_WORKFLOW.read_text(encoding="utf-8").splitlines():
+            if "npx playwright test" in line and not line.lstrip().startswith("#"):
+                self.assertNotIn("--reporter", line)
+
+    def test_preflight_runs_the_suite_from_testing_e2e(self):
+        text = PREFLIGHT.read_text(encoding="utf-8")
+        self.assertIn("testing/e2e", text)
+        self.assertNotIn("test:e2e", text)
+
+
+class E2ELegacyReferenceTest(unittest.TestCase):
+    def test_no_active_file_references_the_old_location(self):
+        offenders = []
+        for path in tracked_files():
+            rel = path.as_posix()
+            if (rel.startswith(REFERENCE_EXEMPT_PREFIXES) or rel in E2E_REFERENCE_EXEMPT
+                    or "node_modules" in path.parts or rel.startswith("testing/e2e-swing/")):
+                continue
+            try:
+                text = (REPO_ROOT / path).read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError):
+                continue
+            for number, line in enumerate(text.splitlines(), 1):
+                if E2E_LEGACY_REFERENCE.search(line):
+                    offenders.append(f"{rel}:{number}")
+        self.assertEqual([], offenders, "references to the old E2E location:\n" + "\n".join(offenders))
 
 
 class DocumentationTest(unittest.TestCase):

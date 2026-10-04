@@ -19,7 +19,7 @@ Unit → Integration → API (Bruno) → Frontend (Vitest) → E2E UI/UX (Playwr
 | Integration (Spring Boot / H2 + PostgreSQL) | `backend-api/src/test/java/.../integration/` | 59 clases | `mvn test -pl backend-api -Dtest="**/integration/*"` |
 | API (Bruno YAML) | `backend-api/api-test/` | 164 requests, 21 resource folders (idempotent) | `cd backend-api/api-test && bru run . -r --env Development` |
 | Frontend unit/component (Vitest) | `frontend/src/**/*.test.ts(x)` | 19+ archivos | `cd frontend && npm test` |
-| E2E UI/UX (Playwright) | `frontend/tests/e2e/` | 33 specs, por Caso de Uso (`cuNN-*.spec.ts`) | `cd frontend && npm run test:e2e` |
+| E2E UI/UX (Playwright) | `testing/e2e/tests/` | 33 specs, por Caso de Uso (`cuNN-*.spec.ts`) | `cd testing/e2e && npm test` |
 | Integration (cURL suite + stack smoke) | `testing/integration/` | 1 suite estricta + 1 smoke | `bash testing/scripts/run.sh integration` |
 | Database V&V (empty DB → Flyway → SQL checks) | `testing/database/` | 30 checks | `bash testing/scripts/run.sh database` |
 | E2E Swing (Robot) | `testing/e2e-swing/` | **RETIRED** (#811 / ADR-012) | Do not run; see suite README |
@@ -57,8 +57,8 @@ mvn jacoco:report -pl backend-api && open backend-api/target/site/jacoco/index.h
 cd frontend && npm run test:coverage
 
 # E2E Playwright (requiere stack completo: bash scripts/start.sh)
-cd frontend && npm run test:e2e
-npm run test:e2e:headed   # modo interactivo
+cd testing/e2e && npm test
+npm run test:headed   # modo interactivo
 
 # API (Bruno, requiere backend en :8080)
 cd backend-api/api-test && bru run . -r --env Development
@@ -88,7 +88,7 @@ Mapeo completo de checks locales ↔ jobs de CI:
 ```bash
 open backend-api/target/site/jacoco/index.html   # cobertura backend (JaCoCo)
 open frontend/coverage/index.html                 # cobertura frontend (Vitest)
-open frontend/playwright-report/index.html         # reporte E2E Playwright
+open testing/e2e/playwright-report/index.html         # reporte E2E Playwright
 ```
 
 Dashboard agregado (GitHub Pages, actualizado por CI): ver
@@ -100,7 +100,7 @@ The Swing modules (`frontend-swing` / `deprecated-frontend-swing`) were removed
 from the repository (#1046). `.github/workflows/e2e-swing.yml` is retired
 (ADR-012 / #1083 / #811). Assets under `testing/e2e-swing/` are hard-deprecated
 in place — do **not** wire them into CI or rebuild Swing. Active UI E2E is
-Playwright (`frontend/tests/e2e/`).
+Playwright (`testing/e2e/tests/`).
 
 ## Navigation
 

@@ -286,7 +286,7 @@ if [ "$START_FRONTEND" = true ]; then
     STEP=$((STEP + 1))
     echo -e "${GREEN}✓ Backend stack is up. Start the web client with:${NC}"
     echo -e "  ${YELLOW}cd frontend && npm install && npm run dev${NC}"
-    echo -e "  UI E2E: ${YELLOW}cd frontend && npm run test:e2e${NC}"
+    echo -e "  UI E2E: ${YELLOW}cd testing/e2e && npx playwright test${NC}"
     echo ""
 fi
 

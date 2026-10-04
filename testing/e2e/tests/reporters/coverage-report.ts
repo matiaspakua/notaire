@@ -8,7 +8,7 @@
  * Usage in playwright.config.ts:
  *   reporter: [
  *     'html',
- *     ['./tests/e2e/reporters/coverage-report.ts', { outputFile: 'test-results/coverage-report.html' }]
+ *     ['./tests/reporters/coverage-report.ts', { outputFile: 'test-results/coverage-report.html' }]
  *   ]
  */
 

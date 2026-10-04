@@ -106,7 +106,7 @@ async function globalTeardown(): Promise<void> {
     // Remove auth fixture file
     try {
       const fs = await import("fs");
-      fs.unlinkSync("tests/e2e/fixtures/admin-auth.json");
+      fs.unlinkSync("tests/fixtures/admin-auth.json");
       console.log("[global-teardown] Auth fixture removed");
     } catch {
       // File may not exist, that's fine

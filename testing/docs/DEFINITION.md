@@ -13,7 +13,7 @@ What each suite verifies and where it touches the application. The project-level
 | Bruno API collection | `backend-api/api-test` | Backend developers (API tests belong to the module) |
 | **Integration (HTTP surface, stack smoke)** | `testing/integration` | QA |
 | **Database V&V** | `testing/database` | QA |
-| Playwright E2E / acceptance | `frontend/tests/e2e` → `testing/e2e` in phase 2 (#1192) | QA after the move |
+| **E2E (Playwright UI)** | `testing/e2e` | QA |
 | k6 load test | `infra/performance/k6` | Infra |
 
 ## Integration suite
@@ -21,6 +21,23 @@ What each suite verifies and where it touches the application. The project-level
 `run.sh integration` checks that the API answers, runs `integration/http/test-all-endpoints-v2.sh`
 (strict-mode cURL assertions over the main resources) and then
 `integration/e2e-login-and-stack.sh` (backend health, login, then authorization: an anonymous call is rejected with 401 and the login token is accepted with 200). The stack smoke had never run before this suite wired it in; it failed on macOS because of a GNU-only `head -n -1`, and its last step could not fail.
+
+## E2E suite
+
+Playwright drives the UI in a browser against a running stack. It is black-box: no spec imports
+anything from `frontend/`; the only inputs are the frontend URL (`BASE_URL`, mapped from
+`E2E_BASE_URL` by `run.sh`) and the backend the frontend talks to. Specs are named `TS-nnnn-*.spec.ts`
+and mapped to Use Cases in
+[`E2E-TEST-MAPPING.md`](../../docs/300-development/303-testing/E2E-TEST-MAPPING.md).
+
+| Item | Where |
+|------|-------|
+| Specs, helpers, global setup, business-coverage reporter | `e2e/tests/` |
+| Projects `smoke`, `health`, `chromium` (Chrome channel), `mobile` (iPhone SE, WebKit) | `e2e/playwright.config.ts` |
+| Dependencies, type-check (`npm run typecheck`), lint (`npm run lint`) | `e2e/package.json`, `tsconfig.json`, `eslint.config.mjs` |
+| Reliability rules (retry budget, sleeps, skip inventory) | `scripts/test_e2e_reliability.py` in the application repository |
+
+Fixtures written at run time (`tests/fixtures/`) and the reports (`playwright-report/`, `test-results/`) are git-ignored.
 
 ## Database suite
 

@@ -101,7 +101,7 @@ async function authenticateAdmin(page: Page): Promise<void> {
     );
     seedData.adminAuth = { token, user: { idUsuario, nombre, tipo } };
     // Visible to every worker process spawned after global-setup completes — read by
-    // tests/e2e/setup/api-helpers.ts so page.request-based seed/cleanup calls authenticate.
+    // tests/setup/api-helpers.ts so page.request-based seed/cleanup calls authenticate.
     process.env.E2E_ADMIN_TOKEN = token;
   } else {
     // Fallback: UI-based login (Set-Cookie establishes HttpOnly JWT).
@@ -286,14 +286,14 @@ async function globalSetup(): Promise<void> {
 
     // Persist JWT for workers — process.env set here is not inherited by test
     // workers, and mid-suite login 429 (lockout) must not strand later specs.
-    const tokenPath = "tests/e2e/fixtures/e2e-admin-token.txt";
+    const tokenPath = "tests/fixtures/e2e-admin-token.txt";
     if (process.env.E2E_ADMIN_TOKEN) {
-      fs.mkdirSync("tests/e2e/fixtures", { recursive: true });
+      fs.mkdirSync("tests/fixtures", { recursive: true });
       fs.writeFileSync(tokenPath, process.env.E2E_ADMIN_TOKEN, "utf8");
     }
 
     // Step 4: Save storage state for reuse
-    await context.storageState({ path: "tests/e2e/fixtures/admin-auth.json" });
+    await context.storageState({ path: "tests/fixtures/admin-auth.json" });
     console.log("[global-setup] Storage state saved");
 
   } catch (err) {
