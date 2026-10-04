@@ -65,6 +65,42 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     await expect(dialog.getByTestId("items-subtotal")).toContainText("1.500");
   });
 
+  test("crea el presupuesto desde el formulario con los ítems de la plantilla del tipo de trámite", async ({ page }) => {
+    // GIVEN: persona, tipo de trámite con plantilla configurada
+    const lastName = `Plantilla-${Date.now()}`;
+    const personaResult = await createPersona(page, { lastName });
+    expect(personaResult.ok).toBe(true);
+    const tipoTramiteName = `Tipo Alta E2E ${Date.now()}`;
+    const tipoTramiteResult = await createTipoTramite(page, { name: tipoTramiteName });
+    expect(tipoTramiteResult.ok).toBe(true);
+    const conceptoResult = await createConcepto(page, { name: "Honorarios Alta E2E", value: 2500 });
+    expect(conceptoResult.ok).toBe(true);
+    const plantillaResult = await createPlantillaPresupuesto(
+      page,
+      tipoTramiteResult.data!.idProcedureType,
+      conceptoResult.data!.idConcept,
+    );
+    expect(plantillaResult.ok, `createPlantillaPresupuesto failed: ${plantillaResult.error}`).toBe(true);
+
+    // WHEN: el operador crea el presupuesto eligiendo cliente, monto y tipo de trámite
+    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await page.getByTestId("btn-nuevo-presupuesto").click();
+    await page.getByTestId("select-persona").click();
+    await page.getByRole("option", { name: new RegExp(lastName) }).click();
+    await page.locator('input[type="date"]').fill(new Date().toISOString().split("T")[0]);
+    await page.getByTestId("input-monto").fill("100000");
+    await page.getByTestId("select-tipo-tramite-nuevo").click();
+    await page.getByRole("option", { name: tipoTramiteName }).click();
+    await page.getByTestId("btn-guardar-presupuesto").click();
+
+    // THEN: los ítems de la plantilla ya están en el desglose del nuevo presupuesto
+    const row = page.getByRole("row").filter({ hasText: lastName }).first();
+    await expect(row).toBeVisible({ timeout: 8000 });
+    await row.getByRole("button", { name: /ítems|items/i }).click();
+    const dialog = page.getByTestId("dialog-items-presupuesto");
+    await expect(dialog.getByTestId("table-items-presupuesto")).toContainText("Honorarios Alta E2E", { timeout: 8000 });
+  });
+
   test("muestra un error cuando el tipo de trámite no tiene plantilla configurada", async ({ page }) => {
     const personaResult = await createPersona(page);
     expect(personaResult.ok).toBe(true);

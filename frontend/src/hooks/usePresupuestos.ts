@@ -26,11 +26,40 @@ export function usePresupuestos() {
   });
 }
 
+interface CreatePresupuestoInput {
+  data: Partial<Presupuesto>;
+  tipoTramiteId?: number;
+}
+
+interface CreatePresupuestoResult {
+  presupuesto: Presupuesto;
+  itemsLoaded: boolean;
+}
+
+/**
+ * CU01/CU39 - Creates the presupuesto and, when a tipo de trámite is given, loads that type's template items into it.
+ * A missing template must not undo the creation, so the second step only reports `itemsLoaded`.
+ */
 export function useCreatePresupuesto() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<Presupuesto>) => apiPost<void>("/presupuestos", data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: presupuestosKeys.all }),
+    mutationFn: async ({ data, tipoTramiteId }: CreatePresupuestoInput): Promise<CreatePresupuestoResult> => {
+      const presupuesto = await apiPost<Presupuesto>("/presupuestos", data);
+      if (tipoTramiteId === undefined) return { presupuesto, itemsLoaded: false };
+      try {
+        await apiPost<Item[]>(
+          `/presupuestos/${presupuesto.idBudget}/items-desde-plantilla?tipoTramiteId=${tipoTramiteId}`,
+          undefined,
+        );
+        return { presupuesto, itemsLoaded: true };
+      } catch {
+        return { presupuesto, itemsLoaded: false };
+      }
+    },
+    onSuccess: (result) => {
+      qc.invalidateQueries({ queryKey: presupuestosKeys.all });
+      if (result.itemsLoaded) qc.invalidateQueries({ queryKey: itemsKeys.byPresupuesto(result.presupuesto.idBudget!) });
+    },
   });
 }
 
