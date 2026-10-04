@@ -8,7 +8,7 @@
 - [x] 1.3 Acceptance Criteria defined as scenarios (or `skip_specs` justified)
 - [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
 - [x] 1.5 ADR — n/a unless the design says otherwise
-- [ ] 1.6 Move the Issue to IN PROGRESS (comment with the branch link)
+- [x] 1.6 Move the Issue to IN PROGRESS (comment with the branch link)
 
 ## 2. Crear branch
 
@@ -19,44 +19,44 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: retired names, agreement between artifacts, renamed tables present
-- [ ] 3.2 Add `scripts/test_erd_current_schema.py` with its wrapper; observed failing (8 failures)
-- [ ] 3.3 Every scenario maps to a test or command
+- [x] 3.1 Enumerate test cases: retired names, agreement between artifacts, renamed tables present
+- [x] 3.2 Add `scripts/test_erd_current_schema.py` with its wrapper; observed failing (8 failures)
+- [x] 3.3 Every scenario maps to a test or command
 
 ## 4. Implementación
 
-- [ ] 4.1 Add `scripts/generate_erd.py` (reads the migrated schema)
-- [ ] 4.2 Regenerate the two `.puml` sources and the CSV
-- [ ] 4.3 Render both SVGs with PlantUML
-- [ ] 4.4 Cross-check against the data dictionary and report drift on the issue
+- [x] 4.1 Add `scripts/generate_erd.py` (reads the migrated schema)
+- [x] 4.2 Regenerate the two `.puml` sources and the CSV
+- [x] 4.3 Render both SVGs with PlantUML
+- [x] 4.4 Cross-check against the data dictionary and report drift on the issue
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing affected tests updated without weakening assertions
-- [ ] 5.2 No dead code or references remain
+- [x] 5.1 Existing affected tests updated without weakening assertions
+- [x] 5.2 No dead code or references remain
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 Backend tests — n/a (no Java touched)
-- [ ] 6.2 Coverage gate — n/a
+- [x] 6.1 Backend tests — n/a (no Java touched)
+- [x] 6.2 Coverage gate — n/a
 - [ ] 6.3 `bash scripts/preflight.sh` (or the subset the environment allows)
 - [ ] 6.4 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a — no UI change
+- [x] 7.1 n/a — no UI change
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `docs/200-architecture/205-data-model/ERD/*` — regenerated
-- [ ] 8.2 `docs/200-architecture/205-data-model/Diccionario de Datos.md` — drift against the schema listed, not rewritten here
-- [ ] 8.3 `CHANGELOG.md` — one line
+- [x] 8.1 `docs/200-architecture/205-data-model/ERD/*` — regenerated
+- [x] 8.2 `docs/200-architecture/205-data-model/Diccionario de Datos.md` — drift against the schema listed, not rewritten here
+- [x] 8.3 `CHANGELOG.md` — one line
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One logical change per commit, Conventional Commits
-- [ ] 9.2 Only the final commit carries `Closes #1021`; others `Refs #1021`
-- [ ] 9.3 No secrets, no commented-out code
+- [x] 9.1 One logical change per commit, Conventional Commits
+- [x] 9.2 Only the final commit carries `Closes #1021`; others `Refs #1021`
+- [x] 9.3 No secrets, no commented-out code
 
 ## 10. Pull Request y validación CI
 

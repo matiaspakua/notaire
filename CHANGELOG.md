@@ -401,6 +401,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **ERD artifacts regenerated for the English schema** (issue #1021, CU76): `scripts/generate_erd.py` rebuilds the
+  PlantUML sources, SVG renders and relational CSV from the migrated database; a database-free guard
+  (`scripts/test_erd_current_schema.py`) rejects retired Spanish table names and disagreement between artifacts.
+  The dictionary's stale column names are tracked in #1222.
 - **BREAKING — gestión status writes require workflow transitions** (issue #804,
   CU02 / CU53 / CU16 / CU83): `PUT /api/v1/gestiones/{id}` and
   `PUT /api/v1/gestiones/{id}/complete-case` reject a changed
