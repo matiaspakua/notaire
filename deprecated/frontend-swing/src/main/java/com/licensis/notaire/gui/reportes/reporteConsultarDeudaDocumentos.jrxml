@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <style name="Crosstab Data Text" hAlign="Center"/>
+    <parameter name="numeroGestion" class="java.lang.Integer">
+        <defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+    </parameter>
+    <queryString>
+		<![CDATA[SELECT tt.nombre as nombreTramite,dp.nombre as tipoDocumento,
+IFNULL (dp.importe_a_pagar ,"No Registra"),
+IFNULL (DATE_FORMAT(IFNULL(dp.fecha_pago ,"Pago Pendiente"),'%d/%m/%Y'),"No Registra")
+
+FROM tramites t
+
+INNER JOIN documentos_presentados dp 
+ON (t.id_tramite = dp.fk_id_tramite)
+
+INNER JOIN gestiones_de_escrituras ge
+ON (t.fk_id_gestion = ge.id_gestion)
+
+INNER JOIN tipos_de_tramite tt
+ON (tt.id_tipo_tramite = t.fk_id_tipo_tramite)
+WHERE ge.numero = $P{numeroGestion}]]>
+    </queryString>
+    <field name="nombreTramite" class="java.lang.String"/>
+    <field name="tipoDocumento" class="java.lang.String"/>
+    <field name="IFNULL (dp.importe_a_pagar ,&quot;No Registra&quot;)" class="java.lang.String"/>
+    <field name="IFNULL (DATE_FORMAT(IFNULL(dp.fecha_pago ,&quot;Pago Pendiente&quot;),&apos;%d/%m/%Y&apos;),&quot;No Registra&quot;)" class="java.lang.String"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="79" splitType="Stretch">
+            <staticText>
+                <reportElement x="47" y="22" width="491" height="41"/>
+                <textElement>
+                    <font size="24" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Lista Deuda Documentos de Clientes
+                ]]></text>
+            </staticText>
+        </band>
+    </title>
+    <pageHeader>
+        <band height="36" splitType="Stretch">
+            <staticText>
+                <reportElement x="47" y="0" width="100" height="36"/>
+                <textElement>
+                    <font isBold="true" isItalic="true" isUnderline="false"/>
+                </textElement>
+                <text><![CDATA[Tramite]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="162" y="0" width="111" height="36"/>
+                <textElement>
+                    <font isBold="true" isItalic="true" isUnderline="false"/>
+                </textElement>
+                <text><![CDATA[Tipo Documentio]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="313" y="0" width="70" height="36"/>
+                <textElement>
+                    <font isBold="true" isItalic="true" isUnderline="false"/>
+                </textElement>
+                <text><![CDATA[Deuda]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="416" y="0" width="71" height="36"/>
+                <textElement>
+                    <font isBold="true" isItalic="true" isUnderline="false"/>
+                </textElement>
+                <text><![CDATA[Fecha Pago]]></text>
+            </staticText>
+        </band>
+    </pageHeader>
+    <columnHeader>
+        <band height="28" splitType="Stretch">
+            <textField>
+                <reportElement x="47" y="0" width="100" height="20"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{nombreTramite}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="162" y="0" width="100" height="20"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{tipoDocumento}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="313" y="0" width="100" height="20"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{IFNULL (dp.importe_a_pagar ,"No Registra")}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="416" y="0" width="100" height="20"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{IFNULL (DATE_FORMAT(IFNULL(dp.fecha_pago ,"Pago Pendiente"),'%d/%m/%Y'),"No Registra")}]]></textFieldExpression>
+            </textField>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="29" splitType="Stretch"/>
+    </detail>
+    <columnFooter>
+        <band height="46" splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band height="54" splitType="Stretch"/>
+    </pageFooter>
+    <summary>
+        <band height="42" splitType="Stretch"/>
+    </summary>
+</jasperReport>
