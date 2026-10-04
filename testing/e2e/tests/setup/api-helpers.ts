@@ -317,7 +317,7 @@ export async function createGestionSinTramite(
     encabezado: `Gestión E2E ${uniqueId()}`,
     dateStart: new Date().toISOString().split("T")[0],
     number: uniqueId() % 1_000_000,
-    fkIdNotaryPerson: { personId: escribanoId },
+    notaryPersonId: escribanoId,
     ...overrides,
   });
 }
