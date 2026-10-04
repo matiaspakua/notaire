@@ -1,6 +1,6 @@
 #!/bin/bash
 # RETIRED (#811 / CU76 / ADR-012): Swing Robot E2E is hard-deprecated.
-# Do not wire this script into CI. Active E2E: frontend/tests/e2e (Playwright).
+# Do not wire this script into CI. Active E2E: testing/e2e/tests (Playwright).
 #
 # Exit codes:
 #   2 = retired / environment error (always for this script)
@@ -15,7 +15,7 @@ NC='\033[0m'
 
 echo -e "${RED}testing/e2e-swing is RETIRED (issue #811).${NC}"
 echo "Swing modules and e2e-swing.yml are gone. Use Playwright:"
-echo "  cd frontend && npm run test:e2e"
+echo "  cd testing/e2e && npm test"
 echo "See testing/e2e-swing/README.md"
 exit 2
 

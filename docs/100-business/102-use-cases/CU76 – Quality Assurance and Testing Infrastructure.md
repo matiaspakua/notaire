@@ -10,7 +10,7 @@
 | **Descripción** | Define las prácticas de prueba, estándares visuales de formularios secuenciales y control de calidad requeridos para validar cada caso de uso y requerimiento del sistema. |
 | **Tipo** | Soporte / Calidad |
 | **Referencias Cruzadas** | RF #74 (Aspecto visual), RF #75 (Diseño de ventanas), RF #76 (Diseño de campos y combos), RF #77 (Especificación de campos a completar), RF #78 (Uso de colores en la GUI), RF #79 (Seguimiento del trabajo sobre ventanas), RF #80 (Identificación de sesión), RF #86 (Java VM), RF #87 (Sistema operativo), RF #90 (Metodología de desarrollo), RF #91 (Modelo de desarrollo), RF #92 (Lenguaje de programación) |
-| **GitHub ID** | #276, #295, #296, #594, #1047, #1042, #1041, #1043, #1050, #1059, #1066, #1146, #1186, #1185, #1191 |
+| **GitHub ID** | #276, #295, #296, #594, #1047, #1042, #1041, #1043, #1050, #1059, #1066, #1146, #1186, #1185, #1191, #1192 |
 
 ## Alcance de Calidad e Interfaz
 
@@ -58,7 +58,7 @@
 |---|---|
 | Auto-arranque de datos | Suites E2E crean sus fixtures vía helpers API; no `test.skip()` por tablas vacías. |
 | Esperas web-first | Prohibido `waitForTimeout` como espera de corrección; assert sobre UI/URL/respuesta. |
-| Skips intencionales | Todo `test.skip` por gap de producto cita un issue abierto. Inventario vivo de **14** skips en TS-0014/16/17/20 cita #1146 (higiene de tracker); el producto sigue en el CU dueño — ver `E2E-TEST-MAPPING.md`. Guard Vitest en `e2e-test-reliability.test.ts`. |
+| Skips intencionales | Todo `test.skip` por gap de producto cita un issue abierto. Inventario vivo de **14** skips en TS-0014/16/17/20 cita #1146 (higiene de tracker); el producto sigue en el CU dueño — ver `E2E-TEST-MAPPING.md`. Guard en `scripts/test_e2e_reliability.py` (movido desde Vitest en #1192). |
 | Retries CI | Como máximo **1** retry en CI; triaje vía `trace: on-first-retry` + artefactos. |
 
 ## Confiabilidad suite backend (H2 / unit) — #916

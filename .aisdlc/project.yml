@@ -31,7 +31,7 @@ surfaces:
     suite: cd frontend && npx vitest run
 
 source_roots: '^(backend-api|frontend|notaire-shared)/'
-test_files: '(^|/)src/test/|\.test\.tsx?$|^frontend/tests/'
+test_files: '(^|/)src/test/|\.test\.tsx?$|^testing/e2e/tests/'
 db_migrations: backend-api/src/main/resources/db/migration/
 
 gates:

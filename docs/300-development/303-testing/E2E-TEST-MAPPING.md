@@ -212,7 +212,7 @@ test("scenario", async ({ page }) => {
 TS-0017 / TS-0020. Each skip title cites `#1146` (tracker hygiene). **Product
 delivery stays on the owning CU** — do not unskip without real UI assertions.
 CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
-`e2e-test-reliability.test.ts` enforces `#\d+` citations and the count `14`.
+`scripts/test_e2e_reliability.py` enforces `#\d+` citations and the count `14`.
 
 | TS | Skip id | Owning CU | Product gap (summary) | Citation | Product tracking |
 |----|---------|-----------|-----------------------|----------|------------------|
@@ -309,9 +309,9 @@ Reduction:             14% fewer files, same test count, better traceability
 - **[Sequence Diagrams](../../200-architecture/204-diagrams/Secuencias/)**: Actor workflows for each CU
 - **[FRONTEND-TESTING-GUIDE.md](FRONTEND-TESTING-GUIDE.md)**: Vitest + Playwright conventions
 - **[CI-PREFLIGHT.md](../CI-PREFLIGHT.md)**: Local↔CI command mapping
-- **Frontend E2E Suites**: `frontend/tests/e2e/TS-*.spec.ts`
-- **Setup/Helpers**: `frontend/tests/e2e/setup/` (global-setup, auth, api-helpers)
-- **Gherkin Steps**: `frontend/tests/e2e/gherkin-helpers.ts`
+- **Frontend E2E Suites**: `testing/e2e/tests/TS-*.spec.ts`
+- **Setup/Helpers**: `testing/e2e/tests/setup/` (global-setup, auth, api-helpers)
+- **Gherkin Steps**: `testing/e2e/tests/gherkin-helpers.ts`
 
 ---
 

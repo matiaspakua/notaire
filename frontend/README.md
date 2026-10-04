@@ -38,8 +38,9 @@ npm run lint        # ESLint (flat config, zero-warning gate)
 npm run typecheck   # TypeScript type-check (tsc --noEmit)
 npm run test        # Vitest unit tests
 npm run test:watch  # Watch mode
-npm run test:e2e    # Playwright E2E (backend must be running)
 ```
+
+Playwright E2E is not part of this module: see [`testing/e2e`](../testing/e2e) (`cd testing/e2e && npm test`).
 
 ## Modules Implemented
 

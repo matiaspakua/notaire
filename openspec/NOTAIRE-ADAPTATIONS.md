@@ -427,7 +427,7 @@ operations:
   mvn test -pl backend-api                  # unit + integration
   mvn jacoco:check -pl backend-api          # coverage ratchet ≥ 70% línea / 25% branch
   mvn verify -pl backend-api                # Checkstyle + SpotBugs
-  cd frontend && npx playwright test        # E2E (si hay cambios UI)
+  cd testing/e2e && npx playwright test        # E2E (si hay cambios UI)
   Actualizar documentación permanente       # docs/, README.md, CHANGELOG.md
   bash scripts/preflight.sh --fix           # mirrors todos los CI gates
   bash scripts/run_pipeline.sh              # gate final pre-PR (HTML dashboard)
@@ -516,7 +516,7 @@ cd frontend && npx vitest run <nuevo-test>
 | Integration (backend) | Testcontainers / H2 | `src/test/java/.../integration/` | 60-75% |
 | Component (frontend) | Vitest + React Testing Library | `frontend/src/**/*.test.tsx` | 60-75% línea |
 | API Contract | Bruno | `backend-api/api-test/` | 80-100% endpoints |
-| E2E | Playwright | `frontend/tests/e2e/TS-nnnn-*.spec.ts` | 1+ por Caso de Uso |
+| E2E | Playwright | `testing/e2e/tests/TS-nnnn-*.spec.ts` | 1+ por Caso de Uso |
 
 **Convenciones**:
 - Nombres: `shouldXxxYyy` con `@DisplayName` (backend); `describe/it` (frontend)
@@ -558,8 +558,8 @@ cd frontend && npx eslint src                     # ESLint
 cd frontend && npx vitest run --coverage          # Vitest + coverage
 
 # E2E (requiere stack corriendo)
-cd frontend && npx playwright test                # todos los tests
-cd frontend && npx playwright test --reporter=html  # con reporte HTML
+cd testing/e2e && npx playwright test                # todos los tests
+cd testing/e2e && npx playwright test --reporter=html  # con reporte HTML
 
 # API tests
 bash testing/scripts/test.sh                      # Bruno / HTTP suite
@@ -718,7 +718,7 @@ Code style            Checkstyle (checkstyle.xml)                     Gate 3
 Static analysis       SpotBugs (spotbugs-exclude.xml)                 Gate 3
                       Trivy (filesystem + Docker image)
 
-E2E                   Playwright (frontend/tests/e2e/)                Gate 3
+E2E                   Playwright (testing/e2e/tests/)                Gate 3
                       Bruno (backend-api/api-test/)
                       npx playwright test
 
@@ -1123,7 +1123,7 @@ carriles corren en paralelo mientras no compartan archivos:
 | `backend-test` | `backend-api/src/test` (unit/integration) | `mvn test`, `mvn verify -Ppg-integration` |
 | `frontend` | `frontend/src` | `npx tsc`, ESLint, Vitest |
 | `api-contract` | `backend-api/api-test/` (Bruno) | `npx @usebruno/cli run` |
-| `e2e` | `frontend/tests/e2e` | Playwright |
+| `e2e` | `testing/e2e/tests` | Playwright |
 | `docs` | `docs/`, `openspec/` | markdown-lint, `validate-sdlc-plan.sh` |
 
 Reglas de paralelización (derivadas de la Constitución §5 "Sub-agent

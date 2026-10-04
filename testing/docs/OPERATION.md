@@ -6,9 +6,10 @@ Commands run from the repository root while `testing/` is co-located. Prerequisi
 ## Run
 
 ```bash
-bash testing/scripts/run.sh --list          # integration, database
+bash testing/scripts/run.sh --list          # integration, database, e2e
 bash testing/scripts/run.sh database         # Docker only, about 10 seconds
 bash testing/scripts/run.sh integration      # against a running stack
+bash testing/scripts/run.sh e2e              # Playwright UI suite; extra arguments go to playwright (e.g. --project=smoke)
 bash testing/scripts/test.sh                 # same as integration; the stable entry point
 ```
 
