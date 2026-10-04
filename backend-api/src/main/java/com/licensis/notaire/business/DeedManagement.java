@@ -363,12 +363,12 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         if (identificationType != null) {
             DtoIdentificationType dtoIdentificationType = new DtoIdentificationType();
             dtoIdentificationType.setIdIdentificationType(identificationType.getIdIdentificationType());
-            // Prefer hydrated name; fall back to BusinessController lookup when absent
+            // Prefer hydrated name; fall back to the catalog when absent
             if (identificationType.getName() != null && !identificationType.getName().isBlank()) {
                 dtoIdentificationType.setName(identificationType.getName());
             } else {
                 dtoIdentificationType.setName(
-                        BusinessController.getInstancia().asociarNameIdentificationType(dtoPerson));
+                        IdentificationTypeLookup.shared().nameOf(identificationType.getIdIdentificationType()));
             }
             dtoPerson.setDtoIdentificationType(dtoIdentificationType);
         }
@@ -420,8 +420,8 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
 
         dtoPerson.setDtoIdentificationType(dtoIdentificationType);
 
-        // Asocio el id_Fk_TipoIdentificacion con el nombre tipo de identificacion
-        dtoIdentificationType.setName(BusinessController.getInstancia().asociarNameIdentificationType(dtoPerson));
+        dtoIdentificationType.setName(IdentificationTypeLookup.shared()
+                .nameOf(miPerson.getFkIdIdentificationType().getIdIdentificationType()));
 
         return dtoPerson;
     }

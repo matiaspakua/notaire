@@ -10,7 +10,7 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.business.BusinessController;
+import com.licensis.notaire.business.IdentificationTypeLookup;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.DeedManagement;
@@ -899,9 +899,8 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
         Person person = null;
         // acocio el nombre de la identificacion con su id correspondiente, para la
         // busqueda
-        // TODO: VIOLACION DE CAPAS!
-        dtoPerson.getDtoIdentificationType()
-                .setIdIdentificationType(BusinessController.getInstancia().asociarFkIdentificationType(dtoPerson));
+        dtoPerson.getDtoIdentificationType().setIdIdentificationType(
+                IdentificationTypeLookup.shared().idOf(dtoPerson.getDtoIdentificationType().getName()));
 
         String identificationNumber = dtoPerson.getIdentificationNumber();
         int idIdentificationType = dtoPerson.getDtoIdentificationType().getIdIdentificationType();
