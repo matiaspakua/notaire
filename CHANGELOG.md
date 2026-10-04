@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **E2E gestión helper fixed** (issue #1236, CU76): `createGestionSinTramite` sent `fkIdNotaryPerson`, which the API ignores, so the gestión had no notary and could not be loaded by id; it now sends `notaryPersonId`, and `scripts/test_e2e_reliability.py` fails if any E2E source sends the stale field.
+
 - **E2E artifacts untracked** (issue #1237, CU76): `testing/e2e/node_modules` (2925 files), the Playwright report and results and the generated `e2e-admin-token.txt` fixture were committed by mistake in #1212 and #1216 despite `.gitignore`; they are removed from the index (files stay on disk, history is not rewritten) and `scripts/test_testing_standalone.py` fails if a tracked path lives under an ignored E2E directory.
 
 - **Gestión case summary** (issue #774, slice; CU07/CU11/CU12/CU70): `GET /gestiones/{id}/resumen-caso` returns the escrituras of a gestión's trámites with their testimonios (verified, flagged, registry state SIN_INGRESAR, INGRESADO, INSCRIPTO or RETIRADO from the latest movement) and copias, and the gestiones screen has a `Resumen del caso` dialog that also shows the financial summary (`resumen-financiero`, previously not reachable from the UI); E2E `TS-0098`, Bruno `managements/05b`. #774 stays open for creating the linked records from the gestión and the full first-case journey.

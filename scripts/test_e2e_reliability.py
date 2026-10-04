@@ -112,6 +112,18 @@ class FeatureGapSkipInventoryTest(unittest.TestCase):
         self.assertNotRegex(source, r"""test\.skip\s*\(\s*["'`][^"'`]*CU21[^"'`]*["'`]""")
 
 
+class ApiPayloadFieldsTest(unittest.TestCase):
+    def test_no_e2e_source_sends_the_stale_notary_field(self):
+        offenders = [str(path.relative_to(E2E_ROOT)) for path in TESTS_DIR.rglob("*.ts")
+                     if "fkIdNotaryPerson" in path.read_text(encoding="utf-8")]
+        self.assertEqual([], offenders, "the gestiones API reads notaryPersonId, not fkIdNotaryPerson")
+
+    def test_gestion_helper_sends_the_notary_field_the_api_reads(self):
+        helpers = (TESTS_DIR / "setup" / "api-helpers.ts").read_text(encoding="utf-8")
+        body = helpers[helpers.index("export async function createGestionSinTramite"):]
+        self.assertIn("notaryPersonId", body[: body.index("\n}\n")])
+
+
 class InventorySanityTest(unittest.TestCase):
     def test_hotspot_files_exist(self):
         missing = [name for name in HOTSPOT_SPECS if not (TESTS_DIR / name).is_file()]
