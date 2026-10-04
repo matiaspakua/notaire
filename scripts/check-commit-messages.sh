@@ -12,7 +12,8 @@ set -uo pipefail
 BASE="${1:?usage: check-commit-messages.sh <base> [head]}"
 HEAD="${2:-HEAD}"
 TYPES='feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|design'
-PATTERN="^((${TYPES})(\([^()]+\))?!?: .+|Revert \".+\")$"
+# Squash merges carry the PR title: `[#<issue>] <type>(<scope>): <description> (#<pr>)` (CONSTITUTION §4).
+PATTERN="^(\[#[0-9]+\] )?((${TYPES})(\([^()]+\))?!?: .+|Revert \".+\")$"
 
 bad=0
 while IFS=$'\t' read -r sha subject; do
