@@ -51,8 +51,9 @@ async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
   await pause(page);
 }
 
-async function chooseInDialogCombobox(page: Page, option: RegExp): Promise<void> {
-  await page.getByRole("dialog").getByRole("combobox").click();
+async function chooseInDialogCombobox(page: Page, option: RegExp, testId?: string): Promise<void> {
+  const dialog = page.getByRole("dialog");
+  await (testId ? dialog.getByTestId(testId) : dialog.getByRole("combobox")).click();
   await pause(page, 0.5);
   const choice = page.getByRole("option", { name: option });
   await choice.evaluate((element) => (element as HTMLElement).click());
@@ -227,7 +228,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   await test.step(`[Caso ${def.label}] Documento presentado`, async () => {
     await go(page, "/dashboard/documentos");
     await page.getByRole("button", { name: /nuevo documento/i }).click();
-    await chooseInDialogCombobox(page, new RegExp(def.tipoDocumento, "i"));
+    await chooseInDialogCombobox(page, new RegExp(def.tipoDocumento, "i"), "select-tipo-documento");
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-06");
     await page.getByRole("dialog").getByLabel(/documento entregado/i).click();
     await saveDialog(page);

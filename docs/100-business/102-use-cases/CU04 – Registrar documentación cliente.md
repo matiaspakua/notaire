@@ -26,3 +26,7 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 2.1 | No existe la gestión | El sistema gestiona la excepción y notifica al usuario. |
+
+## Implementación (#773)
+
+La pantalla `/dashboard/documentos` registra un documento presentado eligiendo el tipo, la fecha, si fue entregado y, opcionalmente, una gestión y uno de sus trámites (`POST /api/v1/documento-presentado` con `typeId`, `date`, `delivered` y `procedureId`). El listado muestra el tipo, la fecha y el trámite vinculado. El resumen del caso de la gestión (`GET /api/v1/gestiones/{id}/resumen-caso`, diálogo *Resumen del caso* de la pantalla de gestiones) lista los documentos de sus trámites con su estado: preparado, liberado, observado, entregado, reingresado y fecha de vencimiento.

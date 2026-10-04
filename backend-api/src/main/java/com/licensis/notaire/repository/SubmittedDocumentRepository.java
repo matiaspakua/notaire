@@ -25,6 +25,8 @@ public interface SubmittedDocumentRepository extends JpaRepository<SubmittedDocu
 
     boolean existsByDocumentTypeIdDocumentType(Integer idDocumentType);
 
+    List<SubmittedDocument> findByFkIdProcedureFkIdManagementIdManagement(Integer idManagement);
+
     List<SubmittedDocument> findByFkIdProcedureFkIdManagementIdManagementAndDeliveredBy(Integer idManagement,
             String deliveredBy);
 

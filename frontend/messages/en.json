@@ -273,7 +273,15 @@
         "INGRESADO": "Filed",
         "INSCRIPTO": "Registered",
         "RETIRADO": "Withdrawn"
-      }
+      },
+      "documentos": "Documents",
+      "sinDocumentos": "This management has no documents yet",
+      "tramiteDocumento": "Procedure #{id}",
+      "vence": "due {fecha}",
+      "preparado": "prepared",
+      "liberado": "released",
+      "entregado": "delivered",
+      "reingresado": "re-entered"
     }
   },
   "escrituras": {
@@ -589,7 +597,13 @@
     "deleted": "Document deleted",
     "errorSave": "Error saving",
     "errorDelete": "Error deleting",
-    "noData": "No documents registered"
+    "noData": "No documents registered",
+    "tramite": "Procedure",
+    "gestion": "Management",
+    "gestionHelper": "Optional: links the document to a procedure of the management",
+    "selectGestion": "Select management",
+    "selectTramite": "Select procedure",
+    "sinTramites": "The management has no procedures"
   },
   "presupuestos": {
     "title": "Quotes",

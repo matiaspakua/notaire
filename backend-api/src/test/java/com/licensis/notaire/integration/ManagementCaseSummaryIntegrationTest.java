@@ -128,6 +128,23 @@ class ManagementCaseSummaryIntegrationTest {
     }
 
     @Test
+    @DisplayName("Should list a document registered against a trámite of the gestión")
+    void shouldListDocumentOfTheManagement() throws Exception {
+        int idManagement = createManagement((int) (System.nanoTime() % 900_000) + 100_000);
+        Procedure procedure = createProcedure(idManagement, null);
+        mockMvc.perform(post("/api/v1/documento-presentado").contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"date": "2026-06-01", "delivered": false, "procedureId": %d, "name": "Doc del caso"}
+                                """.formatted(procedure.getIdProcedure())))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/api/v1/gestiones/" + idManagement + "/resumen-caso"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.documents[0].name").value("Doc del caso"))
+                .andExpect(jsonPath("$.documents[0].idProcedure").value(procedure.getIdProcedure()));
+    }
+
+    @Test
     @DisplayName("Should return 404 for an unknown gestión")
     void shouldReturn404ForUnknownManagement() throws Exception {
         mockMvc.perform(get("/api/v1/gestiones/999999/resumen-caso")).andExpect(status().isNotFound());

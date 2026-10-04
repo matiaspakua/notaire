@@ -203,6 +203,30 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
+    @DisplayName("Should list a document with its type name, date and linked trámite")
+    void shouldListDocumentWithTypeDateAndProcedure() throws Exception {
+        Integer typeId = createDocumentType(false, null, "Cliente");
+        Integer procedureId = createProcedure();
+        String body = """
+                {"typeId": %d, "date": "2026-06-01", "delivered": true, "procedureId": %d, "name": "Doc listado"}
+                """.formatted(typeId, procedureId);
+        MvcResult created = mockMvc.perform(post("/api/v1/documento-presentado")
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated()).andReturn();
+        Integer id = mapper.readTree(created.getResponse().getContentAsString()).get("idSubmittedDocument").asInt();
+
+        MvcResult list = mockMvc.perform(get("/api/v1/documento-presentado")).andExpect(status().isOk()).andReturn();
+
+        var row = java.util.stream.StreamSupport
+                .stream(mapper.readTree(list.getResponse().getContentAsString()).spliterator(), false)
+                .filter(node -> node.get("idSubmittedDocument").asInt() == id).findFirst().orElseThrow();
+        assertThat(row.get("type").get("idDocumentType").asInt()).isEqualTo(typeId);
+        assertThat(row.get("date").asText()).isEqualTo("2026-06-01");
+        assertThat(row.get("delivered").asBoolean()).isTrue();
+        assertThat(row.get("procedureId").asInt()).isEqualTo(procedureId);
+    }
+
+    @Test
     @DisplayName("Should return 200 when listing documents presentados")
     void shouldListDocumentsPresentados() throws Exception {
         mockMvc.perform(get("/api/v1/documento-presentado"))

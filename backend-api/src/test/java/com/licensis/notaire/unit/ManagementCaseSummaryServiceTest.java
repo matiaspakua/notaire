@@ -10,13 +10,16 @@ import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.business.Testimony;
+import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.dto.DtoCaseDeed;
+import com.licensis.notaire.dto.DtoCaseDocument;
 import com.licensis.notaire.dto.DtoCaseTestimony;
 import com.licensis.notaire.dto.DtoManagementCaseSummary;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.testing.RequirementCoverage;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +41,9 @@ class ManagementCaseSummaryServiceTest {
 
     @Mock
     private ProcedureRepository procedureRepository;
+
+    @Mock
+    private SubmittedDocumentRepository submittedDocumentRepository;
 
     @InjectMocks
     private ManagementCaseSummaryService service;
@@ -144,6 +150,43 @@ class ManagementCaseSummaryServiceTest {
         givenProcedures(new Procedure(1));
 
         assertThat(service.getSummary(4).deeds()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should list the documents of the gestión with their status flags")
+    void shouldListDocumentsOfTheManagement() {
+        givenProcedures(new Procedure(7));
+        SubmittedDocument document = new SubmittedDocument();
+        document.setIdSubmittedDocument(31);
+        document.setName("Certificado de dominio");
+        document.setPrepared(true);
+        document.setReleased(false);
+        document.setFlagged(true);
+        document.setDelivered(false);
+        document.setReentered(true);
+        document.setFkIdProcedure(new Procedure(7));
+        when(submittedDocumentRepository.findByFkIdProcedureFkIdManagementIdManagement(4))
+                .thenReturn(List.of(document));
+
+        DtoManagementCaseSummary summary = service.getSummary(4);
+
+        assertThat(summary.documents()).singleElement().satisfies((DtoCaseDocument row) -> {
+            assertThat(row.idSubmittedDocument()).isEqualTo(31);
+            assertThat(row.name()).isEqualTo("Certificado de dominio");
+            assertThat(row.idProcedure()).isEqualTo(7);
+            assertThat(row.prepared()).isTrue();
+            assertThat(row.released()).isFalse();
+            assertThat(row.observed()).isTrue();
+            assertThat(row.reentered()).isTrue();
+        });
+    }
+
+    @Test
+    @DisplayName("Should return no documents when the gestión has none")
+    void shouldReturnEmptyDocumentsWhenNoneExists() {
+        givenProcedures(new Procedure(1));
+
+        assertThat(service.getSummary(4).documents()).isEmpty();
     }
 
     @Test

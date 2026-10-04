@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { presentMutationError } from "@/lib/mutation-error";
+import { formatDate } from "@/lib/utils";
 import {
   useDocumentosPresentados,
   useCreateDocumentoPresentado,
@@ -26,6 +27,8 @@ import {
   useDeleteDocumentoPresentado,
 } from "@/hooks/useDocumentosPresentados";
 import { useTiposDocumento } from "@/hooks/useDocumentos";
+import { useGestiones } from "@/hooks/useGestiones";
+import { useReingresoDocumentacion } from "@/hooks/useReingresoDocumentacion";
 import type { DocumentoPresentado } from "@/types";
 
 export default function DocumentosPage() {
@@ -41,29 +44,35 @@ export default function DocumentosPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<DocumentoPresentado | null>(null);
-  const [form, setForm] = useState({ tipoId: "", fecha: "", entregado: false });
+  const [form, setForm] = useState({ tipoId: "", fecha: "", entregado: false, gestionId: "", tramiteId: "" });
+  const { data: gestiones = [] } = useGestiones();
+  const { data: gestionConTramites } = useReingresoDocumentacion(form.gestionId ? Number(form.gestionId) : undefined);
+  const tramites = gestionConTramites?.procedures ?? [];
 
   function openCreate() {
     setEditing(null);
-    setForm({ tipoId: "", fecha: new Date().toISOString().split("T")[0], entregado: false });
+    setForm({ tipoId: "", fecha: new Date().toISOString().split("T")[0], entregado: false, gestionId: "", tramiteId: "" });
     setModalOpen(true);
   }
 
   function openEdit(d: DocumentoPresentado) {
     setEditing(d);
     setForm({
-      tipoId: d.fkDocumentType?.idDocumentType?.toString() ?? "",
-      fecha: d.dateEntry?.split("T")[0] ?? "",
+      tipoId: d.type?.idDocumentType?.toString() ?? "",
+      fecha: d.date?.split("T")[0] ?? "",
       entregado: d.delivered ?? false,
+      gestionId: "",
+      tramiteId: d.procedureId?.toString() ?? "",
     });
     setModalOpen(true);
   }
 
   async function handleSave() {
     const data = {
-      tipoId: form.tipoId ? Number(form.tipoId) : null,
-      fecha: form.fecha || null,
-      entregado: form.entregado,
+      typeId: form.tipoId ? Number(form.tipoId) : null,
+      date: form.fecha || null,
+      delivered: form.entregado,
+      procedureId: form.tramiteId ? Number(form.tramiteId) : null,
     };
     try {
       if (editing?.idSubmittedDocument) {
@@ -101,12 +110,18 @@ export default function DocumentosPage() {
     {
       key: "tipo",
       header: tc("type"),
-      render: (d) => <span className="font-medium">{d.fkDocumentType?.name ?? "—"}</span>,
+      render: (d) => <span className="font-medium">{d.type?.name ?? "—"}</span>,
+    },
+    {
+      key: "tramite",
+      header: t("tramite"),
+      render: (d) => (d.procedureId ? `#${d.procedureId}` : "—"),
+      className: "w-24",
     },
     {
       key: "fecha",
       header: tc("date"),
-      render: (d) => d.dateEntry ? new Date(d.dateEntry).toLocaleDateString("es-AR") : "—",
+      render: (d) => formatDate(d.date),
     },
     {
       key: "entregado",
@@ -151,7 +166,7 @@ export default function DocumentosPage() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openCreate}>
+          <Button onClick={openCreate} data-testid="btn-nuevo-documento">
             <Plus className="h-4 w-4" />
             {t("newDocumento")}
           </Button>
@@ -172,7 +187,7 @@ export default function DocumentosPage() {
             <FormSection title={editing ? t("editDocumento") : t("newDocumento")}>
               <FormField label={tc("type")}>
                 <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
-                  <SelectTrigger>
+                  <SelectTrigger data-testid="select-tipo-documento">
                     <SelectValue placeholder="Seleccionar tipo" />
                   </SelectTrigger>
                   <SelectContent>
@@ -191,6 +206,43 @@ export default function DocumentosPage() {
                   onChange={(e) => setForm({ ...form, fecha: e.target.value })}
                 />
               </FormField>
+              {!editing && (
+                <>
+                  <FormField label={t("gestion")} helperText={t("gestionHelper")}>
+                    <Select
+                      value={form.gestionId}
+                      onValueChange={(v) => setForm({ ...form, gestionId: v, tramiteId: "" })}
+                    >
+                      <SelectTrigger data-testid="select-gestion-documento">
+                        <SelectValue placeholder={t("selectGestion")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {gestiones.map((g) => (
+                          <SelectItem key={g.idManagement} value={g.idManagement!.toString()}>
+                            {g.number} — {g.encabezado}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  {form.gestionId && (
+                    <FormField label={t("tramite")} helperText={tramites.length === 0 ? t("sinTramites") : undefined}>
+                      <Select value={form.tramiteId} onValueChange={(v) => setForm({ ...form, tramiteId: v })}>
+                        <SelectTrigger data-testid="select-tramite-documento" disabled={tramites.length === 0}>
+                          <SelectValue placeholder={t("selectTramite")} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {tramites.map((tr) => (
+                            <SelectItem key={tr.idProcedure} value={tr.idProcedure.toString()}>
+                              #{tr.idProcedure} — {tr.typeProcedureName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormField>
+                  )}
+                </>
+              )}
               <CheckboxField
                 label={t("delivered")}
                 checked={form.entregado}
@@ -201,7 +253,7 @@ export default function DocumentosPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} data-testid="btn-guardar-documento">
                 {editing ? tc("update") : tc("create")}
               </Button>
             </FormActions>

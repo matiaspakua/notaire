@@ -45,7 +45,8 @@ public class SubmittedDocumentController {
             Integer idSubmittedDocument,
             TypeDocInfo type,
             String date,
-            Boolean delivered
+            Boolean delivered,
+            Integer procedureId
     ) {}
 
     record SubmittedDocumentRequest(Integer typeId, String date, Boolean delivered, Integer procedureId,
@@ -123,7 +124,8 @@ public class SubmittedDocumentController {
             }
         }
         String date = d.getDateEntry() != null ? DATE_FORMAT.format(d.getDateEntry()) : null;
-        return new SubmittedDocumentResponse(d.getIdSubmittedDocument(), type, date, d.getDelivered());
+        Integer procedureId = d.getFkIdProcedure() != null ? d.getFkIdProcedure().getIdProcedure() : null;
+        return new SubmittedDocumentResponse(d.getIdSubmittedDocument(), type, date, d.getDelivered(), procedureId);
     }
 
     @GetMapping
