@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **check-sdlc-exception.sh false failure** (issue #1228, CU76): the diff is captured before matching, so `grep -q`
+  closing the pipe can no longer SIGPIPE `git diff` and report a PR with an OpenSpec change as having none.
 - **DeedManagement / Person DTO mapping null-safety** (issue #853, CU76):
   `DeedManagement.getDto()`, `getDtoNotary()`, and `setAtributos()` tolerate null
   management status, notary, and identification type without NPE (return/omit
