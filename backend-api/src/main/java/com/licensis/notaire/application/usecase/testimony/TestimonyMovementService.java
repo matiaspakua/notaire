@@ -121,21 +121,29 @@ public class TestimonyMovementService {
     /**
      * Re-enters a withdrawn testimonio, creating a new movement without altering the previous one.
      *
-     * @param idTestimonio the testimonio ID
+     * @param idTestimony the testimonio ID
+     * @param reentry cartón number, observation flag and notes captured at the reingreso
      * @return the newly created movement
      * @throws ResourceNotFoundException if no testimonio with the given ID exists
-     * @throws BusinessValidationException if the testimonio was not previously withdrawn
+     * @throws BusinessValidationException if the testimonio was not previously withdrawn, or the reingreso is
+     *         observed without observaciones
      */
-    public TestimonyMovement reenter(Integer idTestimony) {
+    public TestimonyMovement reenter(Integer idTestimony, TestimonyReentry reentry) {
         requireTestimonyExists(idTestimony);
         TestimonyMovement ultimo = lastMovement(idTestimony);
         if (ultimo == null || ultimo.getDateExit() == null) {
-            throw new BusinessValidationException("El testimonio no fue retirado, no se puede reenter");
+            throw new BusinessValidationException("El testimonio no fue retirado, no se puede reingresar");
+        }
+        if (reentry.isMissingRequiredNotes()) {
+            throw new BusinessValidationException("El reingreso observado requiere observaciones");
         }
 
         TestimonyMovement nuevo = new TestimonyMovement();
         nuevo.setTestimony(ultimo.getTestimony());
         nuevo.setDateEntry(new Date());
+        nuevo.setCardNumber(reentry.cardNumber());
+        nuevo.setObservedByRegistry(reentry.observedByRegistry());
+        nuevo.setNotes(reentry.notes());
 
         log.info("Reingresando testimonio id: {}", idTestimony);
         return testimonyMovementRepository.save(nuevo);

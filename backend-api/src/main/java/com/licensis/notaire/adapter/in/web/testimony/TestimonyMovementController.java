@@ -4,6 +4,7 @@ import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.repository.TestimonyMovementRepository;
 import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
+import com.licensis.notaire.application.usecase.testimony.TestimonyReentry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -161,15 +162,19 @@ public class TestimonyMovementController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "El testimonio no fue retirado previamente"),
+    @ApiResponse(responseCode = "400", description = "El testimonio no fue retirado previamente, o el reingreso observado no tiene observaciones"),
     @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
 })
     @PostMapping("/{idTestimony}/reenter")
     @Operation(summary = "Reingresar testimonio retirado",
                description = "Crea un nuevo movimiento de ingreso para un testimonio previamente retirado, sin "
-                       + "alterar el movimiento anterior")
-    public ResponseEntity<DtoTestimonyMovement> reenter(@PathVariable Integer idTestimony) {
-        TestimonyMovement movement = testimonyMovementService.reenter(idTestimony);
+                       + "alterar el movimiento anterior. El cuerpo es opcional: número de cartón, si fue observado "
+                       + "por el registro y observaciones (obligatorias cuando fue observado)")
+    public ResponseEntity<DtoTestimonyMovement> reenter(@PathVariable Integer idTestimony,
+            @RequestBody(required = false) DtoTestimonyMovement dto) {
+        TestimonyReentry reentry = dto == null ? TestimonyReentry.empty()
+                : new TestimonyReentry(dto.getCardNumber(), dto.isObservedByRegistry(), dto.getNotes());
+        TestimonyMovement movement = testimonyMovementService.reenter(idTestimony, reentry);
         return ResponseEntity.status(HttpStatus.CREATED).body(movement.getDto());
     }
 }

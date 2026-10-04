@@ -75,6 +75,9 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     private int cardNumber;
     @Column(name = "notes")
     private String notes;
+    @Basic(optional = false)
+    @Column(name = "observed_by_registry")
+    private boolean observedByRegistry;
     @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Testimony fkIdTestimony;
@@ -171,6 +174,16 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
         this.cardNumber = cardNumber;
     }
 
+    public boolean isObservedByRegistry()
+    {
+        return observedByRegistry;
+    }
+
+    public void setObservedByRegistry(boolean observedByRegistry)
+    {
+        this.observedByRegistry = observedByRegistry;
+    }
+
     public String getNotes()
     {
         return notes;
@@ -244,6 +257,7 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
         miDto.setRegistered(registered);
         miDto.setCardNumber(cardNumber);
         miDto.setNotes(notes);
+        miDto.setObservedByRegistry(observedByRegistry);
         miDto.setVersion(version);
 
         DtoTestimony miDtoTestimony = new DtoTestimony();
@@ -267,6 +281,7 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
         registered = miDto.isRegistered();
         cardNumber = miDto.getCardNumber();
         notes = miDto.getNotes();
+        observedByRegistry = miDto.isObservedByRegistry();
         version = miDto.getVersion();
 
         if (miDto.getTestimony() != null)
