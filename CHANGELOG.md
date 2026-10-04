@@ -401,6 +401,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CU84 on the Use Case template, requirements CSV fixed** (issue #956, CU84): CU84 now has Referencias Cruzadas
+  and GitHub ID rows; the two malformed "Login al sistema" rows in `requerimientos.csv` became one row with
+  requirement issue #1224; `scripts/test_business_docs_traceability.py` guards the shape.
 - **BREAKING — gestión status writes require workflow transitions** (issue #804,
   CU02 / CU53 / CU16 / CU83): `PUT /api/v1/gestiones/{id}` and
   `PUT /api/v1/gestiones/{id}/complete-case` reject a changed
