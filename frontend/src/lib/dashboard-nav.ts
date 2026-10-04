@@ -3,6 +3,7 @@ import {
   ArrowRightLeft,
   BookMarked,
   Building2,
+  CalendarClock,
   Calculator,
   ClipboardList,
   Copy,
@@ -83,6 +84,11 @@ export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [
     labelKey: "reingresoDocumentacion",
     href: "/dashboard/reingreso-documentacion",
     icon: RotateCcw,
+  },
+  {
+    labelKey: "proximosVencimientos",
+    href: "/dashboard/proximos-vencimientos",
+    icon: CalendarClock,
   },
   { labelKey: "auditoria", href: "/dashboard/auditoria", icon: ShieldCheck },
   {
