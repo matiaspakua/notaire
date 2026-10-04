@@ -324,7 +324,7 @@ borderRadius: theme.borderRadius.lg
 
 ### File Structure
 
-```
+```text
 frontend/src/theme/
 ├── tokens.ts         # Core design tokens (single source of truth)
 ├── index.ts           # Utilities & hooks
@@ -334,7 +334,7 @@ frontend/src/theme/
 
 ### How to Access Tokens
 
-**Option 1: Direct import (TypeScript)**
+#### Option 1: Direct import (TypeScript)
 
 ```typescript
 import { theme } from "@/theme/tokens";
@@ -343,7 +343,7 @@ const primaryColor = theme.colors.primary[600];
 const padding = theme.spacing[4];
 ```
 
-**Option 2: Hooks (React components)**
+#### Option 2: Hooks (React components)
 
 ```typescript
 import { useTheme } from "@/theme";
@@ -629,9 +629,9 @@ style={{
 ## Related Documentation
 
 - [ADR-011: Centralized Design System](../202-ADR/ADR-011-centralized-design-system.md)
-- [`frontend/src/theme/README.md`](../../../../frontend/src/theme/README.md) — code-adjacent quick-start
-- [`.claude/rules/ui-ux-design.md`](../../../../.claude/rules/ui-ux-design.md) — mandatory rules
-- [`.claude/skills/frontend-design/SKILL.md`](../../../../.claude/skills/frontend-design/SKILL.md) — implementation patterns
+- [`frontend/src/theme/README.md`](../../../frontend/src/theme/README.md) — code-adjacent quick-start
+- [`.claude/rules/ui-ux-design.md`](../../../.claude/rules/ui-ux-design.md) — mandatory rules
+- [`.claude/skills/frontend-design/SKILL.md`](../../../.claude/skills/frontend-design/SKILL.md) — implementation patterns
 - [Apple Human Interface Guidelines](https://developer.apple.com/design/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Design Tokens W3C Community Group](https://www.designtokens.org/)
