@@ -2,17 +2,24 @@ package com.licensis.notaire.application.usecase.management;
 
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.DocumentType;
 import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.dto.DtoCaseDeed;
+import com.licensis.notaire.dto.DtoCaseDocument;
 import com.licensis.notaire.dto.DtoCaseTestimony;
 import com.licensis.notaire.dto.DtoManagementCaseSummary;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.repository.SubmittedDocumentRepository;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,11 +41,13 @@ public class ManagementCaseSummaryService {
 
     private final DeedManagementRepository managementRepository;
     private final ProcedureRepository procedureRepository;
+    private final SubmittedDocumentRepository submittedDocumentRepository;
 
     public ManagementCaseSummaryService(DeedManagementRepository managementRepository,
-            ProcedureRepository procedureRepository) {
+            ProcedureRepository procedureRepository, SubmittedDocumentRepository submittedDocumentRepository) {
         this.managementRepository = managementRepository;
         this.procedureRepository = procedureRepository;
+        this.submittedDocumentRepository = submittedDocumentRepository;
     }
 
     /**
@@ -58,8 +67,25 @@ public class ManagementCaseSummaryService {
                         java.util.LinkedHashMap::new));
 
         List<DtoCaseDeed> deeds = deedsById.values().stream().map(ManagementCaseSummaryService::toCaseDeed).toList();
+        List<DtoCaseDocument> documents = submittedDocumentRepository
+                .findByFkIdProcedureFkIdManagementIdManagement(idManagement).stream()
+                .map(ManagementCaseSummaryService::toCaseDocument)
+                .toList();
         return new DtoManagementCaseSummary(management.getIdManagement(), management.getNumber(),
-                management.getEncabezado(), deeds);
+                management.getEncabezado(), deeds, documents);
+    }
+
+    private static DtoCaseDocument toCaseDocument(SubmittedDocument document) {
+        DocumentType type = document.getDocumentType();
+        return new DtoCaseDocument(document.getIdSubmittedDocument(), document.getName(),
+                type == null ? null : type.getName(), document.getFkIdProcedure().getIdProcedure(),
+                document.getPrepared(), Boolean.TRUE.equals(document.getReleased()),
+                Boolean.TRUE.equals(document.getFlagged()), Boolean.TRUE.equals(document.getDelivered()),
+                Boolean.TRUE.equals(document.getReentered()), toLocalDate(document.getDateDue()));
+    }
+
+    private static LocalDate toLocalDate(Date date) {
+        return date == null ? null : new Date(date.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private static DtoCaseDeed toCaseDeed(Deed deed) {
