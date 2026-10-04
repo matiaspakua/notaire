@@ -271,6 +271,7 @@ testimony_movements,Débil,exit_date,,si,Fecha,,,x,Fecha de devolución del Regi
 testimony_movements,Débil,registration_date,,si,Fecha,,,x,Fecha en que se perfeccionó la inscripción (V5)
 testimony_movements,Débil,registered,,no,Lógico,,,,`true` si la inscripción resultó favorable (V5)
 testimony_movements,Débil,folder_number,,no,Entero,,,,Número de cartón de presentación (V5)
+testimony_movements,Débil,observed_by_registry,,no,Lógico,,,,`true` si el registro devolvió observado el testimonio al reingresarlo (CU44); exige observaciones
 copies,Débil,version,,no,Entero,,,,Control de concurrencia optimista
 copies,Débil,id,PK,no,Entero,x,,,Identificador unívoco del ejemplar de copia
 copies,Débil,number,,no,Entero,,,,Número correlativo de copia emitida

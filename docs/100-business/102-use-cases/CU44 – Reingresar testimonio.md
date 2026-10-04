@@ -29,3 +29,8 @@
 | Paso | Condición / Evento | Acción del Sistema / Actor |
 |---|---|---|
 | 5.1 | El testimonio seleccionado no fue retirado previamente (ver CU12). | El sistema gestiona la excepción y notifica al usuario. |
+| 6.1 | El reingreso se indica como observado por el registro y no se cargan observaciones. | El sistema rechaza el reingreso (400) y solicita las observaciones. |
+
+## Implementación (#851)
+
+`POST /api/v1/movimiento-testimonio/{id}/reenter` recibe opcionalmente `cardNumber`, `observedByRegistry` y `notes`, y los guarda en el nuevo movimiento (`testimony_movements.folder_number`, `observed_by_registry`, `notes`) sin alterar el movimiento anterior. La fecha de salida es la del movimiento previo y la fecha de reingreso es el día del registro. La pantalla *Movimientos de testimonio* abre un diálogo con estos datos al reingresar.

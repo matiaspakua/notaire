@@ -441,6 +441,7 @@ package "Protocols, Deeds and Registration" {
     registration_date : DATE
     * registered : BOOLEAN
     * folder_number : INT
+    * observed_by_registry : BOOLEAN
     version : INT
   }
 

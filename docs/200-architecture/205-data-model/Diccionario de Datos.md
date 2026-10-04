@@ -355,6 +355,7 @@ Registro del tracto y asientos de presentación registral del testimonio (V5).
 | `registration_date` | DATE | No | No | No | NULL | — | Fecha en que se perfeccionó la inscripción (V5) |
 | `registered` | BOOLEAN | No | No | Sí | false | — | `true` si la inscripción resultó favorable (V5) |
 | `folder_number` | INTEGER | No | No | Sí | 0 | — | Número de cartón de presentación (V5) |
+| `observed_by_registry` | BOOLEAN | No | No | Sí | false | — | `true` si el registro devolvió observado el testimonio al reingresarlo (CU44); exige observaciones |
 
 ---
 

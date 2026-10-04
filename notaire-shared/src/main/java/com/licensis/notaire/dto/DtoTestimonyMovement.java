@@ -18,6 +18,7 @@ public class DtoTestimonyMovement implements DtoValido
     private boolean registered;
     private int cardNumber;
     private String notes;
+    private boolean observedByRegistry;
     private int version = 0;
 
     public DtoTestimonyMovement()
@@ -102,6 +103,16 @@ public class DtoTestimonyMovement implements DtoValido
     public void setCardNumber(int cardNumber)
     {
         this.cardNumber = cardNumber;
+    }
+
+    public boolean isObservedByRegistry()
+    {
+        return this.observedByRegistry;
+    }
+
+    public void setObservedByRegistry(boolean observedByRegistry)
+    {
+        this.observedByRegistry = observedByRegistry;
     }
 
     public String getNotes()

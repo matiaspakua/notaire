@@ -150,13 +150,22 @@ describe("Movimiento de testimonio hooks (CU11, CU12, CU44)", () => {
     expect(apiPost).toHaveBeenCalledWith("/movimiento-testimonio/5/withdraw", { cardNumber: 123 });
   });
 
-  it("useReingresar posts to /movimiento-testimonio/{id}/reenter", async () => {
+  it("useReingresar posts cartón number, observation flag and notes to /movimiento-testimonio/{id}/reenter", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idMovimientoTestimonio: 2 });
 
     const { result } = renderHook(() => useReingresar(), { wrapper: createWrapper() });
-    result.current.mutate(5);
+    result.current.mutate({
+      idTestimonio: 5,
+      numeroCarton: 77,
+      observadoPorRegistro: true,
+      observaciones: "Falta sello",
+    });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiPost).toHaveBeenCalledWith("/movimiento-testimonio/5/reenter", {});
+    expect(apiPost).toHaveBeenCalledWith("/movimiento-testimonio/5/reenter", {
+      cardNumber: 77,
+      observedByRegistry: true,
+      notes: "Falta sello",
+    });
   });
 });

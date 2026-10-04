@@ -296,6 +296,7 @@ export interface MovimientoTestimonio {
   dateRegistration?: string;
   registered?: boolean;
   cardNumber?: number;
+  observedByRegistry?: boolean;
   notes?: string;
   testimony?: { idTestimony?: number };
 }
