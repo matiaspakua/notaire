@@ -51,7 +51,7 @@
 ## 7. Ejecutar Playwright
 
 - [ ] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
-- [ ] 7.2 `cd frontend && npx playwright test` — all green
+- [ ] 7.2 `cd testing/e2e && npx playwright test` — all green
 - [ ] 7.3 Verify the affected screens at 320px, 768px and 1024px
 - [ ] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
 

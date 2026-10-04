@@ -80,7 +80,7 @@ mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 
 ```bash
 mvn verify -pl backend-api                 # unit + integration + quality gates
-cd frontend && npx playwright test         # E2E
+cd testing/e2e && npx playwright test         # E2E
 ```
 
 ### Step 6 — Commit
@@ -139,7 +139,7 @@ mvn test -pl backend-api -Dtest=ClassName
 mvn jacoco:check -pl backend-api           # coverage ≥ 80%
 mvn verify -pl backend-api                 # all quality checks
 bash testing/scripts/test.sh                                # HTTP integration (needs running API)
-cd frontend && npx playwright test         # E2E
+cd testing/e2e && npx playwright test         # E2E
 ```
 
 ### Code Quality

@@ -108,7 +108,7 @@ mvn jacoco:check -pl backend-api                  # enforced ratchet floor (70% 
 mvn verify -pl backend-api                        # all quality checks
 bash testing/scripts/test.sh                                       # HTTP integration (API running)
 bash testing/scripts/run.sh database                               # database V&V (Docker only)
-cd frontend && npx playwright test                # E2E
+cd testing/e2e && npx playwright test                # E2E
 ```
 
 ### Code Quality

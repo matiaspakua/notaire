@@ -163,7 +163,7 @@ Stack completo (Prometheus, Grafana, SonarQube, Homer): `bash scripts/start-all.
 
 ```bash
 mvn test -pl backend-api                 # unit + integration backend
-cd frontend && npm run test:e2e          # Playwright E2E
+cd testing/e2e && npm test              # Playwright E2E
 bash scripts/preflight.sh --full         # réplica local de todos los gates de CI
 ```
 
