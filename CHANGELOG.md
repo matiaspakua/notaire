@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **ERD artifacts regenerated for the English schema** (issue #1021, CU76): `scripts/generate_erd.py` rebuilds the
+  PlantUML sources, SVG renders and relational CSV from the migrated database; a database-free guard
+  (`scripts/test_erd_current_schema.py`) rejects retired Spanish table names and disagreement between artifacts.
+  The dictionary's stale column names are tracked in #1222.
+
 - **Top-level guards wired into CI** (issue #1209, CU76): every `scripts/test_*.py` guard now has a
   wrapper in `scripts/tests/` and a meta-guard fails when one is missing; the kustomize guard skips
   when `kustomize` is absent; repeated `###` headings under `[Unreleased]` merged.
