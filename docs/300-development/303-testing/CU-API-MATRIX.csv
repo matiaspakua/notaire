@@ -7,6 +7,7 @@ CU04,Registrar documentación cliente,Gestiones,Esencial,DocumentoPresentado,Cre
 CU05,Preparar escritura,Gestiones,Esencial,Escritura,Create,DeedController,POST,/api/v1/escrituras,MISSING,OK,NO-TEST,Bruno gap #953,#158
 CU06,Firmar escritura,Gestiones,Esencial,Escritura,Update,DeedController,PUT,/api/v1/escrituras/{id},MISSING,OK,NO-TEST,Actualiza estado firma; Bruno gap #953,#159
 CU07,Generar testimonio,Gestiones,Esencial,Testimonio,Create,TestimonyController,POST,/api/v1/testimonio,testimonies/,OK,OK,GET devuelve 500; Bruno #953,#160
+CU07,Generar testimonio (resumen del caso),Gestiones,Esencial,GestionDeEscritura,Read,ManagementCaseSummaryController,GET,/api/v1/gestiones/{id}/resumen-caso,managements/05b-resumen-caso.yml,OK,OK,Escrituras testimonios y copias de la gestión; Bruno #774,#160
 CU08,Verificar Testimonio,Gestiones,Necesario,Testimonio,Read,TestimonyController,GET,/api/v1/testimonio/{id},testimonies/,OK,OK,GET /testimonio devuelve 500; Bruno #953,#161
 CU09,Registrar deudas documentos de Cliente,Gestiones,Esencial,DocumentoPresentado,Create,SubmittedDocumentController,POST,/api/v1/documento-presentado,submitted-documents/,OK,OK,Flag deuda en documento; Bruno #953,#162
 CU10,Registrar movimientos documentación de entidades externas,Gestiones,Esencial,DocumentoEntidadExterna,Read/Update,ManagementController,GET/PUT,/api/v1/gestiones/{id}/documentos-entidades-externas[/{idDocumentoPresentado}],managements/,OK,OK,Implementado #863; E2E Playwright golden+edge path; Bruno #953,#163

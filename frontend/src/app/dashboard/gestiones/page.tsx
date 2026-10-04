@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Archive, RefreshCcw, History, FolderClock } from "lucide-react";
+import { Plus, Pencil, Trash2, Archive, RefreshCcw, History, FolderClock, ClipboardList } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
@@ -34,6 +34,7 @@ import { useInmuebles } from "@/hooks/useInmuebles";
 import { ApiError } from "@/lib/api-client";
 import { fullName, formatCurrency, formatDate, extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
+import { GestionResumenDialog } from "./GestionResumenDialog";
 
 const ESTADO_CARPETA_ACTIVA = "Activa";
 
@@ -63,6 +64,7 @@ export default function GestionesPage() {
   const [selectedEstado, setSelectedEstado] = useState("");
   const [bitacoraId, setBitacoraId] = useState<number | null>(null);
   const [carpetasGestionId, setCarpetasGestionId] = useState<number | null>(null);
+  const [resumenCasoId, setResumenCasoId] = useState<number | null>(null);
   const [esperaCarpetaId, setEsperaCarpetaId] = useState<number | null>(null);
   const [motivoEspera, setMotivoEspera] = useState("");
   const [editing, setEditing] = useState<GestionDeEscritura | null>(null);
@@ -274,6 +276,15 @@ export default function GestionesPage() {
           <Button
             size="sm"
             variant="ghost"
+            onClick={() => setResumenCasoId(g.idManagement!)}
+            aria-label={t("resumen.action")}
+            data-testid={`btn-resumen-caso-${g.idManagement}`}
+          >
+            <ClipboardList className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
             onClick={() => setCarpetasGestionId(g.idManagement!)}
             aria-label={t("viewCarpetas")}
             data-testid={`btn-ver-carpetas-${g.idManagement}`}
@@ -302,7 +313,7 @@ export default function GestionesPage() {
           </Button>
         </div>
       ),
-      className: "w-48",
+      className: "w-56",
     },
   ];
 
@@ -571,6 +582,8 @@ export default function GestionesPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <GestionResumenDialog gestionId={resumenCasoId} onClose={() => setResumenCasoId(null)} />
     </div>
   );
 }

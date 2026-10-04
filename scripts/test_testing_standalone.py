@@ -53,6 +53,7 @@ E2E_REQUIRED = (
     "eslint.config.mjs",
     ".gitignore",
 )
+E2E_IGNORED_DIRS = ("node_modules", "playwright-report", "test-results", "tests/fixtures")
 E2E_SPEC_COUNT = 52  # floor: specs moved from frontend/ in #1192; new specs only raise the count
 FRONTEND = REPO_ROOT / "frontend"
 E2E_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "playwright-e2e.yml"
@@ -267,6 +268,13 @@ class E2ESuiteLayoutTest(unittest.TestCase):
     def test_old_locations_are_gone(self):
         present = [p for p in ("tests", "playwright.config.ts") if (FRONTEND / p).exists()]
         self.assertEqual([], present, f"should not exist under frontend/: {present}")
+
+    def test_no_generated_artifacts_are_tracked(self):
+        ignored = tuple(f"testing/e2e/{d}/" for d in E2E_IGNORED_DIRS)
+        tracked = subprocess.run(["git", "ls-files", "testing/e2e"], cwd=REPO_ROOT, capture_output=True,
+                                 text=True, check=True).stdout.splitlines()
+        offenders = [path for path in tracked if path.startswith(ignored)]
+        self.assertEqual([], offenders[:5], f"{len(offenders)} tracked files under ignored E2E directories")
 
     def test_no_spec_was_lost(self):
         specs = sorted((E2E / "tests").rglob("*.spec.ts"))

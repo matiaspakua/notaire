@@ -530,6 +530,39 @@ components:
           format: int32
           type: integer
       type: object
+    DtoCaseDeed:
+      properties:
+        idDeed:
+          format: int32
+          type: integer
+        number:
+          format: int32
+          type: integer
+        status:
+          type: string
+        testimonies:
+          items:
+            $ref: '#/components/schemas/DtoCaseTestimony'
+          type: array
+      type: object
+    DtoCaseTestimony:
+      properties:
+        copies:
+          format: int32
+          type: integer
+        flagged:
+          type: boolean
+        idTestimony:
+          format: int32
+          type: integer
+        number:
+          format: int32
+          type: integer
+        state:
+          type: string
+        verified:
+          type: boolean
+      type: object
     DtoConcept:
       properties:
         enabled:
@@ -915,6 +948,21 @@ components:
         value:
           type: number
         version:
+          format: int32
+          type: integer
+      type: object
+    DtoManagementCaseSummary:
+      properties:
+        deeds:
+          items:
+            $ref: '#/components/schemas/DtoCaseDeed'
+          type: array
+        heading:
+          type: string
+        managementId:
+          format: int32
+          type: integer
+        managementNumber:
           format: int32
           type: integer
       type: object
@@ -4348,6 +4396,32 @@ paths:
                 $ref: '#/components/schemas/DtoDocumentReentered'
           description: Management or procedure not found
       summary: CU43 - Re-enter a document type for a management procedure
+      tags:
+      - Managements
+  /api/v1/gestiones/{id}/resumen-caso:
+    get:
+      operationId: getCaseSummary
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          format: int32
+          type: integer
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DtoManagementCaseSummary'
+          description: OK
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DtoManagementCaseSummary'
+          description: Management not found
+      summary: CU07/CU11/CU12/CU70 - Get the escrituras, testimonios and copias of a management
       tags:
       - Managements
   /api/v1/gestiones/{id}/resumen-financiero:
