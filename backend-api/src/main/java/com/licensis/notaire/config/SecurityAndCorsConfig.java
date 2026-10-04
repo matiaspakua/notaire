@@ -1,5 +1,6 @@
 package com.licensis.notaire.config;
 
+import com.licensis.notaire.security.UserAuthorityResolver;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -35,6 +37,31 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityAndCorsConfig {
 
     private static final String PRODUCTION_ENVIRONMENT = "production";
+
+    private static final String[] ADMIN_ONLY_PATHS = {
+        "/api/v1/usuarios/**",
+        "/api/v1/roles/**",
+        "/api/v1/audit-log/**"
+    };
+
+    private static final String[] ADMIN_WRITE_PATHS = {
+        "/api/v1/workflow-definition/**",
+        "/api/v1/workflow-node/**",
+        "/api/v1/workflow-transition/**",
+        "/api/v1/tipo-tramite/**",
+        "/api/v1/tipo-de-documento/**",
+        "/api/v1/tipo-folio/**",
+        "/api/v1/tipo-identificacion/**",
+        "/api/v1/conceptos/**",
+        "/api/v1/estado-gestion/**",
+        "/api/v1/plantilla-tramite/**",
+        "/api/v1/plantilla-presupuestos/**",
+        "/api/v1/plantilla-costos-documento/**"
+    };
+
+    private static final HttpMethod[] WRITE_METHODS = {
+        HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE
+    };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -124,6 +151,15 @@ public class SecurityAndCorsConfig {
     }
 
     /**
+     * Plain 403 for authenticated users without the required authority (issue #559).
+     */
+    @Bean
+    public AccessDeniedHandler apiAccessDeniedHandler() {
+        return (request, response, accessDeniedException) ->
+            response.sendError(HttpStatus.FORBIDDEN.value(), "Forbidden");
+    }
+
+    /**
      * Security filter chain for API endpoints.
      * JWT filter authenticates from Bearer or the HttpOnly session cookie (#1051).
      * Login and logout (cookie clear) are reachable without prior auth; every other
@@ -133,16 +169,23 @@ public class SecurityAndCorsConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http,
-            AuthenticationEntryPoint apiAuthenticationEntryPoint) throws Exception {
+            AuthenticationEntryPoint apiAuthenticationEntryPoint,
+            AccessDeniedHandler apiAccessDeniedHandler) throws Exception {
         http
             .securityMatcher("/api/**")
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/logout").permitAll()
-                .anyRequest().authenticated()
-            )
-            .exceptionHandling(ex -> ex.authenticationEntryPoint(apiAuthenticationEntryPoint))
+            .authorizeHttpRequests(auth -> {
+                auth.requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll();
+                auth.requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login").permitAll();
+                auth.requestMatchers(HttpMethod.POST, "/api/v1/usuarios/logout").permitAll();
+                auth.requestMatchers(ADMIN_ONLY_PATHS).hasRole(UserAuthorityResolver.ADMIN_ROLE);
+                for (HttpMethod method : WRITE_METHODS) {
+                    auth.requestMatchers(method, ADMIN_WRITE_PATHS).hasRole(UserAuthorityResolver.ADMIN_ROLE);
+                }
+                auth.anyRequest().authenticated();
+            })
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(apiAuthenticationEntryPoint)
+                .accessDeniedHandler(apiAccessDeniedHandler))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf.disable())
