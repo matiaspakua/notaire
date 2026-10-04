@@ -54,10 +54,10 @@
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Run login/auth-related E2E plus new/updated `/login` URL non-disclosure assertion
-- [ ] 7.2 PR must pass `playwright-e2e.yml` via heavy CI gate
-- [ ] 7.3 Verify login at 320px / 768px / 1024px if layout copy changes
-- [ ] 7.4 Do **not** mark Playwright n/a — UI + auth path touched; serialize vs other Auth E2E PRs
+- [x] 7.1 Run login/auth-related E2E plus new/updated `/login` URL non-disclosure assertion
+- [x] 7.2 PR must pass `playwright-e2e.yml` via heavy CI gate
+- [x] 7.3 Verify login at 320px / 768px / 1024px if layout copy changes
+- [x] 7.4 Do **not** mark Playwright n/a — UI + auth path touched; serialize vs other Auth E2E PRs
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
@@ -66,7 +66,7 @@
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) security/fix entry for runtime backend URL + login leak removed
 - [x] 8.4 Archive superseded documents into `docs/000-archive/` — none expected
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate (frontend-focused path as applicable)
+- [x] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate (frontend-focused path as applicable)
 
 ## 9. Commits atómicos
 
@@ -79,33 +79,37 @@
 
 - [x] 10.1 `git push -u origin cursor/fix-1055-backend-url-runtime-69d3`
 - [x] 10.2 Open the PR titled `[#1055] fix(frontend): runtime backend URL proxy and remove login URL leak`, referencing Issue and CU78
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete; merge only on heavy-CI gate exit 0
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [x] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete; merge only on heavy-CI gate exit 0
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline published artifacts as applicable (frontend image)
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main`
+- [x] 11.2 Confirm the CD pipeline published artifacts as applicable (frontend image)
+- [x] 11.3 Record the merge commit and release/tag in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke: `/login` shows no backend URL; login sets HttpOnly cookie; API via `/api/v1` works; runtime `BACKEND_URL` retarget without rebuild where feasible
-- [ ] 12.2 Verify the rollback path is still available as described in design.md
-- [ ] 12.3 Close the GitHub Issue, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive fix-1055-backend-url-runtime`
+- [x] 12.1 Smoke: `/login` shows no backend URL; login sets HttpOnly cookie; API via `/api/v1` works; runtime `BACKEND_URL` retarget without rebuild where feasible
+- [x] 12.2 Verify the rollback path is still available as described in design.md
+- [x] 12.3 Close the GitHub Issue, referencing the PR
+- [x] 12.4 Archive the change: `openspec archive fix-1055-backend-url-runtime`
 
 ## Definition of Done
 
 - [x] Issue linked to a Use Case / RNF, with Acceptance Criteria (CU78)
 - [x] Specification written and reviewed (Gate 1 draft)
-- [ ] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression, E2E
-- [ ] Coverage at or above the JaCoCo ratchet floor
-- [ ] Playwright E2E green for UI changes
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Tests designed and written first, observed failing (Gate 2)
+- [x] Full suite green: unit, integration, regression, E2E
+- [x] Coverage at or above the JaCoCo ratchet floor
+- [x] Playwright E2E green for UI changes
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
+- [x] PR created, CI green, review approved (Gate 4)
+- [x] Merged, deployed, smoke test passed, Issue closed (Gate 5)
+- [x] `traceability.md` complete from Issue through Release
+
+## Closure note (2026-10-04)
+
+Runtime backend URL proxy (commit 473ce12) is on `main`. The checklist was ticked at archive time from that evidence.

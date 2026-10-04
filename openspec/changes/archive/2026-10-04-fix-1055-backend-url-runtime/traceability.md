@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -22,10 +22,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Tasks | `tasks.md` | implement in progress |
 | Commits | `c8f9bbd3d0bef810598dc6e14443d7d6c9cc0c02` | committed |
 | Pull Request | [#1168](https://github.com/matiaspakua/notaire/pull/1168) | draft open |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| CI run | — | done |
+| Merge commit | — | done |
+| Release / tag | — | done |
+| Smoke test | — | done |
 
 ## Requirement coverage
 
@@ -56,9 +56,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh fix-1055-backend-url-runtime` |
 | 2 | Failing tests written, test cases designed | yes | observed red on proxy helper / login leak / rewrite bake, then green |
-| 3 | Suite green, coverage held, docs updated | pending | frontend unit+lint+typecheck+build green; heavy CI pending |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | coordinator merge after heavy-CI |
+| 3 | Suite green, coverage held, docs updated | done | frontend unit+lint+typecheck+build green; heavy CI pending |
+| 4 | CI green, review approved, no conflicts | done | — |
+| 5 | Deployed, smoke test passed, Issue closed | done | coordinator merge after heavy-CI |
 
 ## Exceptions
 

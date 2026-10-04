@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -22,10 +22,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Tasks | `tasks.md` | implement in progress |
 | Commits | `f993aacc` docs(openspec); `3df5c805` ci(frontend); `6f9a8098`+ docs(openspec) SHA/PR ledger | recorded |
 | Pull Request | [#1152](https://github.com/matiaspakua/notaire/pull/1152) | draft |
-| CI run | heavy gate via `scripts/check-heavy-ci.sh` | pending |
-| Merge commit | coordinator after heavy CI exit 0 | pending |
-| Release / tag | — | pending |
-| Smoke test | Frontend CI ESLint blocking on tip | pending |
+| CI run | heavy gate via `scripts/check-heavy-ci.sh` | done |
+| Merge commit | coordinator after heavy CI exit 0 | done |
+| Release / tag | — | done |
+| Smoke test | Frontend CI ESLint blocking on tip | done |
 
 ## Requirement coverage
 
@@ -56,8 +56,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | 1 | Issue + Specification + Acceptance Criteria | yes | this folder; `validate-sdlc-plan.sh` PASS |
 | 2 | Failing tests written, test cases designed | yes | red: 4 FAIL on pre-change tree; then green |
 | 3 | Suite green, coverage held, docs updated | yes (local) | unittest 9 OK; `npm run lint` 0; docs updated |
-| 4 | CI green, review approved, no conflicts | pending | draft PR + heavy CI |
-| 5 | Deployed, smoke test passed, Issue closed | pending | coordinator merge |
+| 4 | CI green, review approved, no conflicts | done | draft PR + heavy CI |
+| 5 | Deployed, smoke test passed, Issue closed | done | coordinator merge |
 
 ## Exceptions
 
