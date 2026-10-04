@@ -545,6 +545,32 @@ components:
             $ref: '#/components/schemas/DtoCaseTestimony'
           type: array
       type: object
+    DtoCaseDocument:
+      properties:
+        dateDue:
+          format: date
+          type: string
+        delivered:
+          type: boolean
+        idProcedure:
+          format: int32
+          type: integer
+        idSubmittedDocument:
+          format: int32
+          type: integer
+        name:
+          type: string
+        observed:
+          type: boolean
+        prepared:
+          type: boolean
+        reentered:
+          type: boolean
+        released:
+          type: boolean
+        typeName:
+          type: string
+      type: object
     DtoCaseTestimony:
       properties:
         copies:
@@ -956,6 +982,10 @@ components:
         deeds:
           items:
             $ref: '#/components/schemas/DtoCaseDeed'
+          type: array
+        documents:
+          items:
+            $ref: '#/components/schemas/DtoCaseDocument'
           type: array
         heading:
           type: string
@@ -2597,6 +2627,9 @@ components:
         delivered:
           type: boolean
         idSubmittedDocument:
+          format: int32
+          type: integer
+        procedureId:
           format: int32
           type: integer
         type:
