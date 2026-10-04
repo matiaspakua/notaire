@@ -401,6 +401,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **BusinessController god class removed** (issue #900, CU76): the 5,337-line singleton had two production-reachable
+  methods (identification-type name/id lookups); they became `business/IdentificationTypeLookup` (unit-tested, exact
+  matching instead of `contains`), the class and its three coverage excludes were deleted, and
+  `scripts/test_no_business_controller.py` keeps it removed.
 - **BREAKING — gestión status writes require workflow transitions** (issue #804,
   CU02 / CU53 / CU16 / CU83): `PUT /api/v1/gestiones/{id}` and
   `PUT /api/v1/gestiones/{id}/complete-case` reject a changed
