@@ -401,6 +401,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Documentation audit** (issue #921, CU76 / CU77): `docs/300-development/DOCUMENTATION-AUDIT-2026-10.md`
+  (inventory, ownership map, measured findings, prioritized roadmap); `scripts/test_docs_links.py` fails on broken
+  relative links; design-system links fixed. Follow-ups: #1222 (dictionary), #1226 (license).
 - **BREAKING — gestión status writes require workflow transitions** (issue #804,
   CU02 / CU53 / CU16 / CU83): `PUT /api/v1/gestiones/{id}` and
   `PUT /api/v1/gestiones/{id}/complete-case` reject a changed
