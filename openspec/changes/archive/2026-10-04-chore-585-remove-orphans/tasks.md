@@ -42,13 +42,13 @@
 - [x] 6.1 `mvn test -pl backend-api` — n/a (no Java touched); `mvn -q -pl backend-api -am validate` proves the build ignores the removed tree
 - [x] 6.2 `mvn jacoco:check -pl backend-api` — n/a
 - [x] 6.3 `mvn verify -pl backend-api` — n/a
-- [ ] 6.4 Bruno and cURL suites via `bash scripts/run_pipeline.sh`
+- [x] 6.4 Bruno and cURL suites via `bash scripts/run_pipeline.sh`
 - [x] 6.5 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 n/a product UI — no spec edits
-- [ ] 7.2 Required Playwright CI job must still pass on the PR
+- [x] 7.2 Required Playwright CI job must still pass on the PR
 - [x] 7.3 n/a responsive UI checks
 - [x] 7.4 Record "n/a — no UI surface"
 
@@ -58,46 +58,50 @@
 - [x] 8.2 CHANGELOG entry; confirm CU76 table
 - [x] 8.3 Confirm no information was duplicated
 - [x] 8.3a Complete #799's hand-fold in `persona-validacion-duplicados` (3 scenarios + 1 sentence) and re-validate the spec strictly
-- [ ] 8.4 `bash scripts/preflight.sh` without bypass
+- [x] 8.4 `bash scripts/preflight.sh` without bypass
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Separate commits: spec, red guards, scripts deletion, docs, restore of the tree
-- [ ] 9.2 Only the final commit may carry `Closes #585`; others `Refs #585`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record commit SHAs in `traceability.md`
+- [x] 9.1 Separate commits: spec, red guards, scripts deletion, docs, restore of the tree
+- [x] 9.2 Only the final commit may carry `Closes #585`; others `Refs #585`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `bash scripts/run_pipeline.sh` exits 0
-- [ ] 10.2 `git push -u origin chore/585_remove_orphans` without `PREFLIGHT_SKIP`
-- [ ] 10.3 Open PR `[#585] chore(repo): remove orphaned files`
-- [ ] 10.4 Wait for all required workflows to pass
-- [ ] 10.5 Gate 4 — CI green, review approved, no conflicts, docs complete
-- [ ] 10.6 Record PR number in `traceability.md`
+- [x] 10.1 `bash scripts/run_pipeline.sh` exits 0
+- [x] 10.2 `git push -u origin chore/585_remove_orphans` without `PREFLIGHT_SKIP`
+- [x] 10.3 Open PR `[#585] chore(repo): remove orphaned files`
+- [x] 10.4 Wait for all required workflows to pass
+- [x] 10.5 Gate 4 — CI green, review approved, no conflicts, docs complete
+- [x] 10.6 Record PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Owner merges via the PR — never push to `main`
-- [ ] 11.2 Confirm `cd.yml` ran green on `main`
-- [ ] 11.3 Record the merge commit in `traceability.md`
+- [x] 11.1 Owner merges via the PR — never push to `main`
+- [x] 11.2 Confirm `cd.yml` ran green on `main`
+- [x] 11.3 Record the merge commit in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke: `run.sh integration` and `run.sh database` green on merged `main`
-- [ ] 12.2 Verify rollback path (revert PR) still valid
-- [ ] 12.3 Close Issue #585 referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive chore-585-remove-orphans`
+- [x] 12.1 Smoke: `run.sh integration` and `run.sh database` green on merged `main`
+- [x] 12.2 Verify rollback path (revert PR) still valid
+- [x] 12.3 Close Issue #585 referencing the PR
+- [x] 12.4 Archive the change: `openspec archive chore-585-remove-orphans`
 
 ## Definition of Done
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Test cases designed; failing guards observed (Gate 2)
-- [ ] Implementation passes guards and required CI (Gate 3–4)
-- [ ] Coverage gate unaffected
-- [ ] Playwright n/a (no UI) but required CI jobs green
-- [ ] Permanent documentation updated and consistent
-- [ ] Commits atomic, Conventional Commits
-- [ ] Pull Request created, CI green, review approved (Gate 4)
-- [ ] Merged via PR; smoke evidence recorded; Issue closed (Gate 5)
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Test cases designed; failing guards observed (Gate 2)
+- [x] Implementation passes guards and required CI (Gate 3–4)
+- [x] Coverage gate unaffected
+- [x] Playwright n/a (no UI) but required CI jobs green
+- [x] Permanent documentation updated and consistent
+- [x] Commits atomic, Conventional Commits
+- [x] Pull Request created, CI green, review approved (Gate 4)
+- [x] Merged via PR; smoke evidence recorded; Issue closed (Gate 5)
+
+## Closure note (2026-10-04)
+
+Shipped in PR #1207 (merged) and verified on `main`. The checklist was ticked at archive time from that evidence.
