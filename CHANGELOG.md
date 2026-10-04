@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Constitution wording for the Playwright suite** (issue #1210, CU76): §4, §5 step 15, §7 and §13
+  name `testing/e2e`; no process step changed. The stale-path guard now covers `CONSTITUTION.md`.
 - **Playwright UI E2E suite moved to `testing/e2e`** (issue #1192, CU76, phase 2 of #1190):
   the 52 specs, helpers, reporter and config moved from `frontend/tests/e2e` with their own
   `package.json`, lockfile, `tsconfig.json` and ESLint config; Playwright removed from `frontend/`.

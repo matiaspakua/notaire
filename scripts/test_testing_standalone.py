@@ -66,10 +66,7 @@ E2E_LEGACY_REFERENCE = re.compile(
     r"frontend/tests/e2e|frontend/playwright|frontend/test-results/results"
     r"|cd frontend\s*&&\s*npx playwright|npm run test:e2e"
 )
-E2E_REFERENCE_EXEMPT = (
-    "CONSTITUTION.md",  # #1210 amends the Constitution wording in its own owner-reviewed PR
-    "frontend/package-lock.json",
-)
+E2E_REFERENCE_EXEMPT = ("frontend/package-lock.json",)
 E2E_ESCAPE = re.compile(r"""(?:from|import\(|require\()\s*["']((?:\.\./)+[\w./-]*)""")
 
 REMOVED_PATHS = (
