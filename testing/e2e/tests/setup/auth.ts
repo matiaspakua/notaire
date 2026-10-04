@@ -18,7 +18,7 @@ interface LoginResponse {
   message?: string;
 }
 
-const ADMIN_TOKEN_FILE = "tests/e2e/fixtures/e2e-admin-token.txt";
+const ADMIN_TOKEN_FILE = "tests/fixtures/e2e-admin-token.txt";
 export const AUTH_TOKEN_COOKIE = "notaire-auth-token";
 
 function readPersistedAdminToken(): string | undefined {

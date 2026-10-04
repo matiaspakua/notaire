@@ -7,6 +7,7 @@ used by `scripts/run.sh`: `$TESTING_ENV_FILE`, then `testing/.env`.
 
 | Variable | Used by | Default | Meaning |
 |----------|---------|---------|---------|
+| `E2E_BASE_URL` | `e2e` | `http://localhost:3000` | Frontend the Playwright suite drives; `run.sh` passes it to Playwright as `BASE_URL` |
 | `BASE_URL` | `integration` | `http://localhost:8080` | API under test; honoured by every cURL script |
 | `MIGRATIONS_DIR` | `database` | `../backend-api/src/main/resources/db/migration` | Flyway migrations to apply; relative paths resolve from `testing/` |
 | `POSTGRES_EXPORTER_USER` | `database` | `notaire_exporter` | Flyway placeholder `exporterUsername` for migration V12 |

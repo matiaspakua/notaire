@@ -1,0 +1,20 @@
+{
+  "name": "notaire-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Black-box Playwright UI E2E suite for Notaire (CU76, #1192)",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "HEADED=1 playwright test --headed",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.1",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0"
+  }
+}

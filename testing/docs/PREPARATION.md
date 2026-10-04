@@ -9,15 +9,17 @@ What you need before running anything in `testing/`. Next:
 |------|-----|--------------|
 | Docker with Compose v2 | runs the throwaway PostgreSQL and the Flyway CLI | `database` |
 | `bash` 3.2 or newer, `curl` | the runner and the cURL suite (macOS and Linux both work) | both |
-| A running Notaire stack | the system under test | `integration` |
+| A running Notaire stack | the system under test | `integration`, `e2e` |
+| Node 22 and npm | installs and runs the Playwright suite (`npm ci` runs on first use) | `e2e` |
+| Playwright browsers (`npx playwright install --with-deps chromium chrome webkit`) | the projects use Chrome, bundled Chromium and WebKit | `e2e` |
 | Network access to pull `postgres:16.15` and `flyway/flyway:12.4.0` once | image pulls | `database` |
 
-Python, Node and Maven are **not** needed for these suites. The coverage script is the exception
+Python and Maven are **not** needed for `integration` and `database`; Node is needed only for `e2e`. The coverage script is the exception
 (see DEFINITION): it builds the application and so needs Maven and Java 21.
 
-## 1. The system under test (integration only)
+## 1. The system under test (integration and e2e)
 
-The integration suite talks to a stack that is already running. From the application repository:
+The integration and e2e suites talk to a stack that is already running. From the application repository:
 
 ```bash
 bash scripts/start.sh        # PostgreSQL, backend :8080, frontend :3000

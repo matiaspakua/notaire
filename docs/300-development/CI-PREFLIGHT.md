@@ -10,7 +10,7 @@ CI spreads its gates across these workflows:
 | `codeql.yml` | CodeQL analysis for Java, JavaScript/TypeScript, and GitHub Actions (GitHub-hosted only; uploads SARIF to code scanning; findings do not fail the job) |
 | `pr-validation.yml` | Validate PR, Quick Build, Dependency Analysis (report-only), **Code Lint (Checkstyle + Spotless)**, Branch Naming |
 | `frontend-ci.yml` | TypeScript Check, **ESLint (blocking, #1048)**, Unit Tests (Vitest), Build (Next.js) |
-| `playwright-e2e.yml` | Build Backend/Frontend, API Tests (Bruno), UI E2E Tests (Playwright) |
+| `playwright-e2e.yml` | Build Backend/Frontend, API Tests (Bruno), UI E2E Tests (Playwright: the suite lives in `testing/e2e`; type-check and ESLint run first, before the stack starts) |
 | `sdlc-process.yml` | Commit messages, TDD evidence, `sdlc-exception` label, agent rule files, process-script self-tests |
 
 **Not all of these are reachable from the commands developers normally run.** The
