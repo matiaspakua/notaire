@@ -1,0 +1,28 @@
+info:
+  name: Create employee
+  type: http
+  seq: 1
+  description: |-
+      ## Create an EMPLEADO as administrator — POST /api/v1/usuarios
+      Traceability: CU78 (issue #559)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios"
+  body:
+    type: json
+    data: |-
+        {"name": "{{rbac_employee_name}}", "password": "Test1234!", "type": "EMPLEADO", "active": true}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('rbac_employee_name', 'rbac-employee-' + Date.now());
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the employee id", function () { bru.setVar('rbac_employee_id', res.getBody().idUser); });

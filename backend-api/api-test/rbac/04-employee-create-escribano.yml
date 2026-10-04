@@ -1,0 +1,24 @@
+info:
+  name: Employee cannot create an ESCRIBANO
+  type: http
+  seq: 4
+  description: |-
+      ## Employee creating an ESCRIBANO account is forbidden — POST /api/v1/usuarios
+      Traceability: CU78 (issue #559)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/usuarios"
+  body:
+    type: json
+    data: |-
+        {"name": "rbac-escalation-{{rbac_employee_name}}", "password": "Test1234!", "type": "ESCRIBANO", "active": true}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{employee_token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 403 Forbidden", function () { expect(res.getStatus()).to.equal(403); });

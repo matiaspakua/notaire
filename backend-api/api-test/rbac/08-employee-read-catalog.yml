@@ -1,0 +1,20 @@
+info:
+  name: Employee can read a catalog
+  type: http
+  seq: 8
+  description: |-
+      ## Employee reads a catalog — GET /api/v1/tipo-tramite
+      Traceability: CU78 (issue #559)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/tipo-tramite"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{employee_token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
