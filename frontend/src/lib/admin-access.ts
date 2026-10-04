@@ -9,7 +9,7 @@
 export const AUTH_STATUS_COOKIE = "notaire-auth-status";
 export const AUTH_ROLE_COOKIE = "notaire-auth-role";
 export const FORBIDDEN_QUERY = "forbidden=1";
-export const ADMIN_ROUTE_PREFIX = "/dashboard/administracion";
+export const ADMIN_ROUTE_PREFIXES = ["/dashboard/administracion", "/dashboard/auditoria"] as const;
 
 const ADMIN_TIPOS = new Set(["ADMIN", "ADMINISTRADOR", "ESCRIBANO"]);
 
@@ -21,8 +21,8 @@ export function isAdminTipo(tipo?: string | null): boolean {
 }
 
 export function isAdminRoute(pathname: string): boolean {
-  return (
-    pathname === ADMIN_ROUTE_PREFIX || pathname.startsWith(`${ADMIN_ROUTE_PREFIX}/`)
+  return ADMIN_ROUTE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
 }
 

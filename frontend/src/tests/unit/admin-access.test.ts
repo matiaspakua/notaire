@@ -33,12 +33,12 @@ describe("isAdminRoute", () => {
     expect(isAdminRoute("/dashboard/administracion")).toBe(true);
     expect(isAdminRoute("/dashboard/administracion/usuarios")).toBe(true);
     expect(isAdminRoute("/dashboard/administracion/roles")).toBe(true);
+    expect(isAdminRoute("/dashboard/auditoria")).toBe(true);
   });
 
   it("does not match other dashboard paths", () => {
     expect(isAdminRoute("/dashboard")).toBe(false);
     expect(isAdminRoute("/dashboard/gestiones")).toBe(false);
-    expect(isAdminRoute("/dashboard/auditoria")).toBe(false);
     expect(isAdminRoute("/login")).toBe(false);
   });
 });
