@@ -478,13 +478,13 @@ public class Person implements Serializable, Persistable<Integer> {
         if (getFkIdIdentificationType() != null) {
             dtoIdentificationType = new DtoIdentificationType();
             dtoIdentificationType.setIdIdentificationType(getFkIdIdentificationType().getIdIdentificationType());
-            // Prefer hydrated name; fall back to BusinessController lookup when absent
+            // Prefer hydrated name; fall back to the catalog when absent
             if (getFkIdIdentificationType().getName() != null
                     && !getFkIdIdentificationType().getName().isBlank()) {
                 dtoIdentificationType.setName(getFkIdIdentificationType().getName());
             } else {
-                dtoIdentificationType.setName(
-                        BusinessController.getInstancia().asociarNameIdentificationType(dtoPerson));
+                dtoIdentificationType.setName(IdentificationTypeLookup.shared()
+                        .nameOf(getFkIdIdentificationType().getIdIdentificationType()));
             }
             dtoPerson.setDtoIdentificationType(dtoIdentificationType);
         }

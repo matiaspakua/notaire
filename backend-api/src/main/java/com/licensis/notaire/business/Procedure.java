@@ -380,8 +380,8 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
         dtoPerson.setDtoIdentificationType(dtoIdentificationType);
 
-        // Asocio el id_Fk_TipoIdentificacion con el nombre tipo de identificacion
-        dtoIdentificationType.setName(BusinessController.getInstancia().asociarNameIdentificationType(dtoPerson));
+        dtoIdentificationType.setName(IdentificationTypeLookup.shared()
+                .nameOf(miPerson.getFkIdIdentificationType().getIdIdentificationType()));
 
         return dtoPerson;
     }
