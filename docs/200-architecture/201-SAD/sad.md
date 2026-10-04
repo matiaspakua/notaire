@@ -1091,7 +1091,7 @@ O --> (Deployability Docker)
 | Risk | Impact | Probability | Mitigation |
 |------|--------|-------------|------------|
 | Legacy `jpa` package coexists with modern `repository` | High — code duplication, inconsistent patterns | Certain | Incremental migration per entity; new code uses only `repository` |
-| `ControllerNegocio.java` (5,337 lines, ~193 KB) — God class in `negocio` | High — unmaintainable, untestable | Certain | Extract to service classes; scheduled for refactoring |
+| ~~`ControllerNegocio.java` (5,337 lines) — God class~~ (renamed `BusinessController`, removed in #900) | Resolved — only two identification-type lookups were reachable; now `business/IdentificationTypeLookup` | — | Done (#900) |
 | Legacy Swing client resurrected on `main` | Low — Dependabot noise / confusion | Low | Keep deleted (#1046); do not recreate; history in git |
 | No production deployment target defined | Medium — no deployment pipeline to production | Medium | Mitigated for topology: `docker-compose.prod.yml` (#1044) + staging Kustomize (#901). CD remains publish-only; TLS/backups/SLOs are separate issues |
 | Default credentials in `.env` | Critical — security risk if deployed as-is | Medium | `ProductionCredentialsGuard` blocks startup with defaults |
@@ -1101,7 +1101,7 @@ O --> (Deployability Docker)
 | Item | Location | Severity | Effort |
 |------|----------|----------|--------|
 | 26 legacy JPA controllers | `com.licensis.notaire.jpa` | High | Large — one per entity |
-| `ControllerNegocio.java` God class (5,337 lines, ~193 KB) | `negocio/ControllerNegocio.java` | Critical | Large |
+| ~~`ControllerNegocio.java` God class (5,337 lines)~~ | removed in #900 (`business/BusinessController.java` deleted) | Resolved | — |
 | `AdministradorJpa` in service layer | `service/AdministradorJpa.java` | Medium | Medium |
 | `AdministradorValidaciones` mixed concerns | `service/AdministradorValidaciones.java` | Medium | Medium |
 | Missing service classes for some entities | `service/` | Medium | Medium |
@@ -1134,7 +1134,7 @@ O --> (Deployability Docker)
 1. **Complete Next.js frontend pages for all 73 use cases** — tracking issue [#898](https://github.com/matiaspakua/notaire/issues/898).
    Key open items: Gestiones (#804, #806), Escrituras (#838, #839), Presupuestos (#797, #821, #822, #823), Personas (#829, #835).
 2. **Fix critical bugs blocking frontend** — #829 (Persona create), #835 (persona dedup), #799 (uniqueness), #801 (DocumentoPresentado mapping).
-3. **Extract `ControllerNegocio` logic into dedicated service classes** — tracking issue [#900](https://github.com/matiaspakua/notaire/issues/900), GitHub issue [#568](https://github.com/matiaspakua/notaire/issues/568).
+3. ~~Extract `ControllerNegocio` logic into dedicated service classes~~ — resolved by deleting the class ([#900](https://github.com/matiaspakua/notaire/issues/900)); its only live behaviour moved to `IdentificationTypeLookup`.
 
 #### Medium Term (Phase 6 — Deprecation)
 
@@ -1153,7 +1153,7 @@ O --> (Deployability Docker)
 
 | Severity | Item | GitHub Issue | Milestone |
 |----------|------|-------------|-----------|
-| 🔴 Critical | `ControllerNegocio` God class (5,337 lines) | [#568](https://github.com/matiaspakua/notaire/issues/568), [#900](https://github.com/matiaspakua/notaire/issues/900) | Phase 6 |
+| ✅ Resolved | `ControllerNegocio` God class (5,337 lines) removed | [#568](https://github.com/matiaspakua/notaire/issues/568), [#900](https://github.com/matiaspakua/notaire/issues/900) | Phase 6 |
 | 🔴 Critical | Controllers instantiate JPA directly (no Spring DI) | [#574](https://github.com/matiaspakua/notaire/issues/574) | Phase 6 |
 | 🔴 Critical | Raw-JDBC `Conexion` singleton bypasses HikariCP | [#575](https://github.com/matiaspakua/notaire/issues/575) | Phase 6 |
 | 🟠 High | 26 legacy JPA controllers | [#576](https://github.com/matiaspakua/notaire/issues/576) | Phase 6 |
