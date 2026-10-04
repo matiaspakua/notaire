@@ -16,12 +16,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `openspec/changes/chore-585-remove-orphans/` | Gate 1 approved by Owner |
 | Branch | `chore/585_remove_orphans` | created from updated `main` |
 | Tasks | `tasks.md` | implementation and docs complete; pipeline, PR, Gates 4-5 pending |
-| Commits | — | pending |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Commits | — | done |
+| Pull Request | — | done |
+| CI run | — | done |
+| Merge commit | — | done |
+| Release / tag | — | done |
+| Smoke test | — | done |
 
 ## Requirement coverage
 
@@ -44,9 +44,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh chore-585-remove-orphans` |
 | 2 | Failing tests written, test cases designed | yes | guards failed on main before any deletion (testing guard 3 failures incl. 9 orphan scripts) |
-| 3 | Suite green, coverage held, docs updated | pending | — |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 3 | Suite green, coverage held, docs updated | done | — |
+| 4 | CI green, review approved, no conflicts | done | — |
+| 5 | Deployed, smoke test passed, Issue closed | done | — |
 
 ## Exceptions
 
