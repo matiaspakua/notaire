@@ -1,7 +1,7 @@
 info:
   name: Verify management update
   type: http
-  seq: 8
+  seq: 9
   description: |-
       Traceability: CU53
 http:

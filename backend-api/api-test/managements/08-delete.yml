@@ -1,7 +1,7 @@
 info:
   name: Delete management
   type: http
-  seq: 9
+  seq: 10
   description: |-
       Deletes History rows for this management first so FK constraints do not
       return 409 after #806 registerStatus on create/update.
