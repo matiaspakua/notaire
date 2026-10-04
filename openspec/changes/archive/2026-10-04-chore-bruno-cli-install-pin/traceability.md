@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -21,24 +21,24 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Tasks | `tasks.md` | in progress |
 | Commits | 8999bee2, ace51e73, 16db211d | done |
 | Pull Request | #1175 | open (draft) |
-| CI run | pending | pending |
-| Merge commit | pending | pending |
-| Release / tag | pending | pending |
-| Smoke test | pending | pending |
+| CI run | done | pending |
+| Merge commit | done | pending |
+| Release / tag | done | pending |
+| Smoke test | done | pending |
 
 ## Requirement coverage
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| install.sh pins @usebruno/cli@4.2.0 | static review / grep | pending |
-| bru symlink block present after OpenSpec | static review / grep | pending |
-| checklist lists Bruno CLI ≥4.2.0 | static review | pending |
+| install.sh pins @usebruno/cli@4.2.0 | static review / grep | done |
+| bru symlink block present after OpenSpec | static review / grep | done |
+| checklist lists Bruno CLI ≥4.2.0 | static review | done |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md` | yes | pending |
+| `docs/300-development/304-ai-sdlc-cloud/ENVIRONMENT-CHECKLIST.md` | yes | done |
 
 ## Gate log
 
@@ -46,9 +46,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | #1121 OPEN + this folder + scenarios |
 | 2 | Failing tests written, test cases designed | yes | static presence scenarios (no prod code) |
-| 3 | Suite green, coverage held, docs updated | pending | checklist + validate-sdlc-plan |
-| 4 | CI green, review approved, no conflicts | pending | pending |
-| 5 | Deployed, smoke test passed, Issue closed | pending | does not close #1121; env rebuild after merge |
+| 3 | Suite green, coverage held, docs updated | done | checklist + validate-sdlc-plan |
+| 4 | CI green, review approved, no conflicts | done | pending |
+| 5 | Deployed, smoke test passed, Issue closed | done | does not close #1121; env rebuild after merge |
 
 ## Exceptions
 

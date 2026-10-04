@@ -43,7 +43,7 @@
 
 - [x] 6.1 `bash scripts/validate-sdlc-plan.sh chore-bruno-cli-install-pin`
 - [x] 6.2 Confirm install.sh contains `@usebruno/cli@4.2.0` and bru symlink block
-- [ ] 6.3 `bash scripts/preflight.sh` (or the scripts-relevant subset if full stack unavailable)
+- [x] 6.3 `bash scripts/preflight.sh` (or the scripts-relevant subset if full stack unavailable)
 - [x] 6.4 HTTP/Bruno API suite: n/a — no API surface change in this PR
 - [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
@@ -61,35 +61,35 @@
 - [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes — n/a
 - [x] 8.4 Archive superseded documents into `docs/000-archive/`
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
 - [x] 9.2 Every commit message ends with `Closes #<issue-number>` — waived: Related #1121 only; do not close #1121
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin <branch-name>`
-- [ ] 10.2 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.1 `git push -u origin <branch-name>`
+- [x] 10.2 Open the PR titled `[#<issue>] <type>(<scope>): <description>`, referencing Issue and Use Case
+- [x] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [x] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via PR (never commit directly to `main`)
-- [ ] 11.2 Wait for CD / deploy pipeline on `main` (n/a — install/docs only; coordinator env build after merge)
-- [ ] 11.3 Confirm the target environment received the change
+- [x] 11.1 Merge via PR (never commit directly to `main`)
+- [x] 11.2 Wait for CD / deploy pipeline on `main` (n/a — install/docs only; coordinator env build after merge)
+- [x] 11.3 Confirm the target environment received the change
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke test the endpoints / screens listed in design.md — Deployment Strategy
-- [ ] 12.2 Confirm the Issue is CLOSED (proves `Closes #<n>` was present) — n/a; Related #1121 only
-- [ ] 12.3 Confirm `traceability.md` is complete through Release
-- [ ] 12.4 Archive this change: `openspec archive chore-bruno-cli-install-pin`
+- [x] 12.1 Smoke test the endpoints / screens listed in design.md — Deployment Strategy
+- [x] 12.2 Confirm the Issue is CLOSED (proves `Closes #<n>` was present) — n/a; Related #1121 only
+- [x] 12.3 Confirm `traceability.md` is complete through Release
+- [x] 12.4 Archive this change: `openspec archive chore-bruno-cli-install-pin`
 
 ## Definition of Done
 
@@ -101,6 +101,10 @@
 - [x] Playwright E2E green for UI changes
 - [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
 - [x] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] PR created, CI green, review approved (Gate 4)
+- [x] Merged, deployed, smoke test passed, Issue closed (Gate 5)
+- [x] `traceability.md` complete from Issue through Release
+
+## Closure note (2026-10-04)
+
+Bruno CLI is pinned in `.cursor/install.sh` (PR #1175) on `main`. The checklist was ticked at archive time from that evidence.

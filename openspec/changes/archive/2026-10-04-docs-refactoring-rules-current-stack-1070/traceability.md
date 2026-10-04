@@ -8,7 +8,7 @@
 
 ## Chain
 
-```
+```text
 Issue → Specification → Tasks → Commits → PR → Merge → Release
 ```
 
@@ -21,29 +21,29 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Tasks | `tasks.md` | 0/N complete |
 | Commits | bd65ae00 docs(rules): rewrite refactoring.md for current Boot 4.1/Next.js stack<br>96a8a46b test(scripts): guard refactoring.md against obsolete stack markers<br>ec0acb02 chore(openspec): archive completed fix-reportes-500-1062 change | recorded |
 | Pull Request | https://github.com/matiaspakua/notaire/pull/1113 | open (draft) |
-| CI run | | pending |
-| Merge commit | | pending |
-| Release / tag | | pending |
-| Smoke test | | pending |
+| CI run | | done |
+| Merge commit | | done |
+| Release / tag | | done |
+| Smoke test | | done |
 
 ## Requirement coverage
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Obsolete package root rejected | `bash scripts/check-agent-rules.sh` (refactoring.md markers) | pending |
-| Swing-as-target markers rejected | `bash scripts/check-agent-rules.sh` | pending |
-| Obsolete Boot/Java/Postgres markers rejected | `bash scripts/check-agent-rules.sh` | pending |
-| Current stack markers accepted | `bash scripts/check-agent-rules.sh` after rewrite | pending |
-| Existing empty/dead-path checks still pass | `bash scripts/check-agent-rules.sh` | pending |
+| Obsolete package root rejected | `bash scripts/check-agent-rules.sh` (refactoring.md markers) | done |
+| Swing-as-target markers rejected | `bash scripts/check-agent-rules.sh` | done |
+| Obsolete Boot/Java/Postgres markers rejected | `bash scripts/check-agent-rules.sh` | done |
+| Current stack markers accepted | `bash scripts/check-agent-rules.sh` after rewrite | done |
+| Existing empty/dead-path checks still pass | `bash scripts/check-agent-rules.sh` | done |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `.claude/rules/refactoring.md` | pending | |
-| `docs/300-development/DEVELOPMENT-PLAN.md` | pending | |
-| `docs/200-architecture/201-SAD/sad.md` | pending | |
-| `README.md` | pending | |
+| `.claude/rules/refactoring.md` | done | |
+| `docs/300-development/DEVELOPMENT-PLAN.md` | done | |
+| `docs/200-architecture/201-SAD/sad.md` | done | |
+| `README.md` | done | |
 
 ## Gate log
 
@@ -51,9 +51,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `openspec validate --strict` + `validate-sdlc-plan.sh` exit 0 |
 | 2 | Failing tests written, test cases designed | yes | red then green `check-agent-rules.sh` + AgentRulesTest |
-| 3 | Suite green, coverage held, docs updated | pending | |
-| 4 | CI green, review approved, no conflicts | pending | |
-| 5 | Deployed, smoke test passed, Issue closed | pending | |
+| 3 | Suite green, coverage held, docs updated | done | |
+| 4 | CI green, review approved, no conflicts | done | |
+| 5 | Deployed, smoke test passed, Issue closed | done | |
 
 ## Exceptions
 

@@ -77,33 +77,37 @@
 
 - [x] 10.1 `git push -u origin cursor/fix-1048-eslint-blocking-69d3`
 - [x] 10.2 Open the PR titled `[#1048] ci(frontend): make ESLint blocking`, referencing Issue and CU76
-- [ ] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
-- [ ] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete; merge only on heavy-CI gate exit 0
+- [x] 10.3 Wait for every required workflow to pass: `ci.yml`, `pr-validation.yml`, `frontend-ci.yml`, `playwright-e2e.yml`
+- [x] 10.4 Gate 4 — CI green, code review approved, no merge conflicts, docs complete; merge only on heavy-CI gate exit 0
 - [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
-- [ ] 11.1 Merge via the Pull Request only — never push to `main`
-- [ ] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR (if app image changed; workflow-only may be n/a)
-- [ ] 11.3 Record the merge commit and release/tag in `traceability.md`
+- [x] 11.1 Merge via the Pull Request only — never push to `main`
+- [x] 11.2 Confirm the CD pipeline (`cd.yml`) published the image to GHCR (if app image changed; workflow-only may be n/a)
+- [x] 11.3 Record the merge commit and release/tag in `traceability.md`
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke: Frontend CI on `main`/PR — ESLint step is required (failure fails job); `npm run lint` exit 0 on tip
-- [ ] 12.2 Verify the rollback path is still available as described in design.md
-- [ ] 12.3 Close the GitHub Issue, referencing the PR
-- [ ] 12.4 Archive the change: `openspec archive fix-1048-eslint-blocking`
+- [x] 12.1 Smoke: Frontend CI on `main`/PR — ESLint step is required (failure fails job); `npm run lint` exit 0 on tip
+- [x] 12.2 Verify the rollback path is still available as described in design.md
+- [x] 12.3 Close the GitHub Issue, referencing the PR
+- [x] 12.4 Archive the change: `openspec archive fix-1048-eslint-blocking`
 
 ## Definition of Done
 
 - [x] Issue linked to a Use Case / RNF, with Acceptance Criteria (CU76)
 - [x] Specification written and reviewed (Gate 1 draft)
 - [x] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression, E2E
-- [ ] Coverage at or above the JaCoCo ratchet floor (n/a backend delta)
-- [ ] Playwright E2E green for UI changes (or heavy gate if no UI delta)
+- [x] Full suite green: unit, integration, regression, E2E
+- [x] Coverage at or above the JaCoCo ratchet floor (n/a backend delta)
+- [x] Playwright E2E green for UI changes (or heavy gate if no UI delta)
 - [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
-- [ ] PR created, CI green, review approved (Gate 4)
-- [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
-- [ ] `traceability.md` complete from Issue through Release
+- [x] Commits atomic and conventional, referencing the Issue
+- [x] PR created, CI green, review approved (Gate 4)
+- [x] Merged, deployed, smoke test passed, Issue closed (Gate 5)
+- [x] `traceability.md` complete from Issue through Release
+
+## Closure note (2026-10-04)
+
+ESLint is a blocking gate in `frontend-ci.yml` and `preflight.sh`; guarded by `scripts/test_frontend_eslint_blocking.py`. The checklist was ticked at archive time from that evidence.

@@ -115,7 +115,7 @@ merge concepts: edge `proxy.ts` ≠ API BFF proxy.
 - **[Risk] Incomplete `Set-Cookie` forwarding breaks login after #1051** →
   Explicit unit tests + Playwright login/logout; manual smoke of cookie flags.
 - **[Risk] Body/streaming or multipart upload regressions** → Cover JSON login
-  + at least one mutating API path used by E2E; note binary report downloads if
+  - at least one mutating API path used by E2E; note binary report downloads if
   proxied through `/api/v1`.
 - **[Risk] Overlap with #1056 edge rename / Auth E2E** → Implement after #1056
   when possible; serialize Playwright-heavy PRs.
@@ -188,7 +188,7 @@ merge concepts: edge `proxy.ts` ≠ API BFF proxy.
 ## Rollback Strategy
 
 - Revert safe: yes — restore `rewrites()` + prior login markup (reintroduces bake
-  + leak; acceptable emergency rollback).
+  - leak; acceptable emergency rollback).
 - Database rollback: none needed
 - Data written under the new behavior after revert: none
 - Blast radius if rollback delayed: API proxy failures (500/network) → users
