@@ -1,7 +1,7 @@
 info:
   name: Verify management deleted
   type: http
-  seq: 10
+  seq: 11
   description: |-
       Traceability: CU02
 http:
