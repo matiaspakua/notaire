@@ -139,7 +139,7 @@ documented in OpenAPI/Swagger (CONSTITUTION.md §4).
 - Backend: unit tests under `…/unit/`, integration under `…/integration/`
 - Coverage must stay at or above the JaCoCo ratchet floor (see
   `.claude/rules/code-quality.md`); 80% line/branch is the target
-- Frontend UI changes require Playwright E2E under `frontend/tests/e2e/`
+- Frontend UI changes require Playwright E2E under `testing/e2e/tests/`
 - Do not `@Disabled` tests without documented justification
 
 ## Refactoring Strategy (ongoing)

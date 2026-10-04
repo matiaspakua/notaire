@@ -13,7 +13,10 @@ set -uo pipefail
 BASE="${1:?usage: check-sdlc-exception.sh <base> [head]}"
 HEAD="${2:-HEAD}"
 
-if git diff --name-only "$BASE...$HEAD" | grep -q '^openspec/changes/'; then
+# Capture first: `grep -q` closing the pipe early can SIGPIPE `git diff` and flip the result under pipefail.
+CHANGED="$(git diff --name-only "$BASE...$HEAD")"
+
+if grep -q '^openspec/changes/' <<< "$CHANGED"; then
   echo "✓ PR carries an OpenSpec change"
 elif grep -qw 'sdlc-exception' <<< "${PR_LABELS:-}"; then
   echo "✓ no OpenSpec change; sdlc-exception label set by a human"

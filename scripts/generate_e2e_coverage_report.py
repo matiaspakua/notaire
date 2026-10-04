@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate an e2e-coverage-<date>.md markdown report from the actual
-Playwright JSON reporter output (frontend/test-results/results.json) and
+Playwright JSON reporter output (testing/e2e/test-results/results.json) and
 Bruno CLI JSON reporter output (backend-api/api-test/bruno-results.json),
 instead of a static hardcoded template (issue #587).
 

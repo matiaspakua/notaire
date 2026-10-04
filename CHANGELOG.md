@@ -7,403 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- **DeedManagement / Person DTO mapping null-safety** (issue #853, CU76):
-  `DeedManagement.getDto()`, `getDtoNotary()`, and `setAtributos()` tolerate null
-  management status, notary, and identification type without NPE (return/omit
-  null instead of 500); `Person.getDto()` tolerates null identification type and
-  null `DeedManagementList`; id/full constructors initialize empty procedure and
-  history lists like the default constructor. Expanded
-  `DeedManagementEntityTest` + `PersonEntityTest` coverage for all cited paths.
-
-### Added
-
-- **Workflow tracker post-signing reingreso loop (strategy b)** (issue #841,
-  CU83 / CU06 / CU07 / CU11 / CU44): seed `ManagementStatus` 11–13 and replace
-  Firmada→Inscripta on the standard workflow with Generado → Ingresado →
-  Retirado; `GET .../workflow-trace` returns additive `testimonyMovements` with
-  derived `returnedObserved`; dashboard `WorkflowTracker` shows a secondary
-  movement timeline and reingreso badge on the inscription node.
-
-### Fixed
-
-- **Plain gestión notary assignment consults active Substitution** (issue #805,
-  CU22 / CU02): residual after #836 — `POST`/`PUT /api/v1/gestiones` now call
-  `ManagementSubstitutionService.resolveNotary` (same as complete-case) and
-  append a redirection note when an active substitution covers the requested
-  notary. Integration coverage for plain create/update; TS-0092 toast detects
-  the English note marker.
-
-### Added
-
-- **Document type enabled and returned on admin form** (issue #800, CU27 / CU32 /
-  CU04 / CU72): residual catalog fields after #837 — create/edit checkboxes for
-  `enabled` (default true) and `returned` (default false); `DtoDocumentType` and
-  entity mapping round-trip `returned`; create no longer overwrites an explicit
-  `enabled=false`. Vitest + Playwright + `DocumentTypeReferentialIntegrityTest`.
-
-- **`testing/` prepared as a standalone QA repository, phase 1** (issue #1191, CU76 / CU75;
-  umbrella #1190): one runner (`testing/scripts/run.sh integration|database`, `test.sh` kept as the
-  stable entry point) replaces nine overlapping scripts; a new black-box **database V&V suite**
-  starts an empty PostgreSQL 16.15, applies the application's Flyway migrations with the Flyway
-  12.4.0 CLI and checks history, configuration, the V12 exporter role, seed data, schema, renamed
-  tables, idempotence and tamper detection, with its own `database-vv.yml` workflow and a matching
-  `preflight.sh --full` gate. The cURL suite moved to `testing/integration/` and honours
-  `BASE_URL`; the stack smoke script, previously never run, now works on macOS and asserts
-  authorization. New guides under `testing/docs/` (preparation, configuration, definition,
-  operation). Removed: `run-all-tests.sh`, `scripts/test-all.sh`, `scripts/run-comprehensive-tests.sh`,
-  the duplicate root `generate-coverage-report.sh` and the committed 2026-04 reports. k6 stays in
-  `infra/`; Playwright moves in phase 2 (#1192). Guard: `scripts/test_testing_standalone.py`.
-
-- **Configurable dev stack ports and container names** (issue #1186, CU76): host ports
-  (`POSTGRES_PORT`, `BACKEND_PORT`, `PGADMIN_PORT`, `FRONTEND_PORT`) and container names
-  (`NOTAIRE_<SERVICE>_CONTAINER_NAME`) in `docker-compose.yml` are overridable from `.env`
-  so parallel stacks can coexist; defaults unchanged and `scripts/start.sh` follows the
-  configured ports. Guard: `scripts/test_dev_stack_isolation.py`. The observability stack
-  only supports the default names.
-
-- **`infra/` prepared as a standalone repository** (issue #1179, CU77; related #302):
-  observability stack moved to `infra/observability/`, Kustomize and the reverse-proxy
-  config to `infra/deploy/`, k6 to `infra/performance/`; `deploy/` and `performance-test/`
-  removed. `nginx.conf` now has one source (`infra/deploy/kustomize/base/nginx.conf`) shared
-  by `docker-compose.prod.yml` and the generated Kubernetes ConfigMap. Infra scripts are
-  self-contained (`infra/scripts/common.sh`, `infra/.env.example`); compose project name
-  pinned to `infra` so existing volumes survive. New infra guides under `infra/docs/`
-  (preparation, configuration, definition, operation); `docs/` links to them. Stale
-  `infra/tests/e2e` and `infra/CREDENTIALS.md` removed (folded into the guides).
-  Guard: `scripts/test_infra_standalone.py`. Moved paths are listed in the PR.
-
-- **ADR-023 REST resource naming** (issue #1065, CU76): English resource nouns
-  matching established `/api/v1` paths, plural collections, `/search`, action
-  sub-resources, and `201`+`Location` for creates; ADR-003 remains versioning-only.
-
-- **CU-API-MATRIX English refresh + CI validator** (issue #1064, CU76): rename
-  22 stale Spanish controller class names to current `adapter.in.web` English
-  types; add missing resources `/carpetas`, `/cuadernos`, `/minutas-inscripcion`,
-  `/plantilla-costos-documento`, `/protocolo-auxiliar`, `/roles`,
-  `/tipo-identificacion`, `/tramites` (CU80–CU82/CU85 + inventory rows);
-  normalize `Bruno_Test` (paths/`MISSING`/`N/A`, `#953` on gaps — no new Bruno
-  fills); add `scripts/validate-cu-api-matrix.py` with unittest coverage, wired
-  into `scripts/preflight.sh` and `sdlc-process.yml`.
-
-- **E2E feature-gap skip tracker hygiene** (issue #1146, CU76): Vitest guard
-  requires `#\d+` on the fourteen static `test.skip`s in TS-0014/16/17/20 and
-  locks the inventory count; `E2E-TEST-MAPPING.md` lists each skip with owning
-  CU (product work stays on those CUs; #1146 is citation hygiene only).
-
-- **Staging Kustomize deploy manifests** (issue #901, CU77): `deploy/kustomize/`
-  base + `overlays/staging` mirroring `docker-compose.prod.yml` (postgres,
-  backend, frontend, reverse-proxy; no pgAdmin); ClusterIP data plane; Secret
-  placeholders only; GHCR SHA image tags; static guard
-  `scripts/test_staging_kustomize.py`. CD (`cd.yml`) remains publish-only —
-  no fake cluster deploy. Docs: `209-deployment`, `DEPLOYMENT-PLAN`, CU77, SAD §11.
-
-- **DAST, OpenAPI contract, and backup/restore CI gates** (issue #1067, CU76/CU78/CU75):
-  weekly OWASP ZAP baseline (`dast-zap.yml`, warn-first report artifact; Trivy retained);
-  committed `backend-api/openapi/openapi.yaml` + PR `openapi-contract.yml` (export freshness
-  via `scripts/export-openapi.sh`, breaking diffs via `oasdiff`);
-  `backup-restore-smoke.yml` skips with an explicit #256 block until
-  `scripts/backup-postgres.sh` exists. Guarded by `scripts/test_dast_contract_backup_assets.py`.
-
-- **Bruno API coverage for sixteen previously uncovered controllers** (issue #953,
-  CU76): OpenCollection folders for roles, workflows (+ validate), copies,
-  submitted-documents, testimonies, testimony-movements, managements, notebooks,
-  auxiliary-protocol, procedure-folders, document-cost-templates, reports
-  (representative PDFs), and registration-drafts (404/action surface); suite now
-  297 requests / 508 tests, idempotent double `bru run`; docs/matrix updated.
-
-- **Frontend GHCR publish + semver releases** (issue #1043, CU76): CD matrix
-  publishes `ghcr.io/<owner>/notaire/frontend` from `frontend/Dockerfile`
-  with CycloneDX SBOM, cosign sign, and SBOM attest (parity with backend);
-  release-please automates `v*` tags / GitHub Releases, rolls Keep a Changelog
-  sections, and bumps root/module Maven versions plus `frontend/package.json`
-  from the tag. CD `release` job attaches SBOM assets only (no duplicate
-  release notes). Runbook: `docs/300-development/RELEASE.md`. Guarded by
-  `scripts/test_frontend_ghcr_publish.py` and
-  `scripts/test_semver_release_process.py`.
-
-- **Production docker-compose** (issue #1044, CU78/CU75):
-  `docker-compose.prod.yml` with postgres + backend + frontend + nginx reverse
-  proxy; no pgAdmin; reverse-proxy-only host ports; `${VAR:?}` required secrets;
-  `ENVIRONMENT=production`; least-privilege backend env; Flyway
-  baseline-on-migrate off. Guarded by `scripts/test_prod_compose.py`. Deployment
-  guide and CU78/CU75 updated. TLS remains #254; backups remain #256.
-
-- **CodeQL and GitHub Security Lab baseline** (issue #1135, CU78):
-  `.github/workflows/codeql.yml` analyzes Java, JavaScript/TypeScript, and
-  GitHub Actions on pull requests and on `main`. Dependabot also watches
-  `frontend/`. `SECURITY.md` points at private vulnerability reporting.
-  `scripts/enable-gh-secure.sh` is the admin step for secret-scanning push
-  protection and Dependabot security updates; branch protection stays opt-in.
-- **STRIDE threat model for authentication & audit trail** (issue #1028):
-  added `docs/200-architecture/206-security/THREAT-MODEL-AUTH-AUDIT.md`
-  with numbered security requirements (`SR-01`..`SR-10`) and an explicit
-  Mitigated/Partial/Open status for each threat against the login and
-  audit-trail subsystems, replacing the informal risk register for those
-  two areas. Documentation only, no behavior change.
-- **Vincular escritura a folio y validar copia de testimonio ya inscripto**
-  (issue #838, CU87): `POST`/`PUT /api/v1/folio` accept an optional
-  `escrituraId`; linking sets the folio's `estado` to `Utilizado` and
-  rejects (`409`) linking a folio already `Utilizado` by a different
-  escritura (re-saving the same escritura is idempotent). `POST
-  /api/v1/copia` now rejects (`409`) creating a copia when its source
-  testimonio has a `MovimientoTestimonio` with `inscripta = true`. The
-  folios admin screen lets the Escribano pick an unlinked, `Firmada`
-  escritura when creating/editing a folio, and the escrituras screen
-  shows the linked folio.
-- **Suplencias con efecto práctico en la asignación de gestiones** (issue
-  #836, CU22/CU48/CU51): a `GestionDeEscritura` created or edited
-  (`POST`/`PUT .../complete-case`) for an escribano with an active
-  `Suplencia` (fecha de la gestión dentro de `fechaInicio`–`fechaFin`) is
-  now redirected to the suplente automatically, leaving a trace in
-  `observaciones` and a toast notification on the gestiones screen. The
-  personas screen now exposes a "Registro de escribano" field
-  (alta/edición) so any Persona can be enabled as a suplente.
-- **Cargar presupuesto desde plantilla y catálogo de ítems** (issue #834,
-  CU39/CU71): the presupuestos screen now offers, per presupuesto, a
-  dialog to (1) pick a `TipoDeTramite` and load its `PlantillaPresupuesto`
-  conceptos as ítems in one step (`POST
-  /api/v1/presupuestos/{id}/items-desde-plantilla?tipoTramiteId=X`, 400 if
-  the tipo de trámite has no plantilla), and (2) add copies of existing
-  catalog `Item`s to the presupuesto (`POST
-  /api/v1/presupuestos/{id}/items-desde-catalogo`). Replaces the previous
-  free-text `montoInmueble` field as the only way to price a presupuesto.
-- **Recibo de pago en PDF** (issue #23, CU15/RF-21): new
-  `GET /api/v1/reportes/recibo-pago/{idPago}` endpoint generates a PDF recibo
-  (cliente, fecha, concepto(s), total abonado) for an existing pago, 404 if
-  not found. Wired to an "Emitir recibo" action on the pagos screen.
-- **Minuta de Inscripción** (issue #839, CU82): generate a minuta de
-  inscripción from a signed (`Firmada`) escritura and track it through the
-  registry circuit — `Generada` → `Presentada` → `Observada`/`Inscripta`.
-  Generation is blocked until the escritura's inmueble has its datos
-  registrales complete (`matricula`, `tomoFolioFinca`, `linderos`, added to
-  `Inmueble` alongside the existing catastral data). Adds
-  `POST/PUT /api/v1/minutas-inscripcion/**` endpoints, a
-  `GET /api/v1/reportes/minuta-inscripcion/{id}` PDF report for the
-  normalized inscription form, and a "Minutas de Inscripción" dashboard
-  screen to generate, present, observe and inscribe.
-- **Administrar carpetas de trámite** (issue #839, CU85): iniciar un
-  trámite genera automáticamente su carpeta de trámite (una por trámite,
-  numeración única, estado "Activa"). Adds `CarpetaTramite` entity and
-  `GET /api/v1/carpetas/{id}`, `GET /api/v1/carpetas?gestionId=&tramiteId=`,
-  `PUT /api/v1/carpetas/{id}/espera` (requires a `motivo`). Archiving a
-  gestión (CU16) now cascades to all its carpetas, transitioning them to
-  "Archivada"; if any carpeta is still "Espera" unresolved, the archive
-  request is rejected (HTTP 409) unless explicitly confirmed
-  (`?confirmado=true`). Adds a "Ver carpetas" action to the gestiones
-  screen.
-- **Vencimiento y responsable en tipos de documento** (issue #837, CU27, CU32,
-  CU42): a `TipoDeDocumento` can now declare `vence`, `diasVencimiento`
-  (required when `vence` is checked), and `quienEntrega`. When a
-  `DocumentoPresentado` is created, these fields — plus a computed
-  `fechaVencimiento` (`fechaIngreso + diasVencimiento`) — are copied from its
-  `TipoDeDocumento`, giving CU42's "próximos vencimientos" report real data to
-  work with. Adds a "Vence"/"Días de vencimiento"/"Quién entrega" section to
-  the Tipos de Documento admin form.
-- **Costos de documentos en el presupuesto** (issue #823, CU27/CU39): the
-  cost (`importeAPagar`) of a `DocumentoPresentado` in a trámite is now
-  included in its presupuesto's total. Adds `PlantillaCostoDocumento`
-  (`POST`/`GET /api/v1/plantilla-costos-documento`) so a `TipoDeTramite`'s
-  presupuesto template can define an expected fixed or variable
-  (percentage) cost per `TipoDeDocumento` — exactly one of the two must be
-  set. Adds a "Costos de Documentos" section to the plantillas de
-  presupuesto admin screen.
-- **Descuentos y recargos en ítems de presupuesto** (issue #822, CU45/CU71): a
-  new `Item.tipo` field (`NORMAL`/`DESCUENTO`/`RECARGO`, default `NORMAL`)
-  plus a required `motivo` when the type is `DESCUENTO` or `RECARGO`,
-  validated both client- and server-side. `PagoService`'s total calculation
-  now subtracts `DESCUENTO` items and adds `RECARGO` items. Adds
-  `GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos` to list
-  only discount/surcharge items for a presupuesto, and a "Tipo"/"Motivo" UI
-  on the ítems admin screen with a descuentos/recargos report section.
-- **Estado de pago por presupuesto** (issue #821, CU15, CU47): adds
-  `GET /api/v1/pagos/presupuesto/{idPresupuesto}/estado`, returning
-  `SIN_PAGOS`, `PARCIAL`, or `SALDADO` derived from the existing saldo
-  pendiente calculation. Additive change — existing pago/saldo endpoints are
-  unchanged. The Pagos screen now shows an estado badge next to the saldo
-  pendiente for the selected presupuesto.
-
-- **Protocolo Auxiliar** (issue #839, CU81): marking a `TipoDeFolio` as
-  `esAuxiliar` lets escribanos start a new `Escritura` directly on an available
-  Protocolo Auxiliar folio (a folio of that type not yet linked to an
-  `Escritura`), without opening a `CarpetaTramite`/`Tramite` — the ágil
-  circuit of CU81. Numbering is `MAX(Escritura.numero) + 1` scoped to
-  auxiliar folios only, independent from Protocolo Principal's sequence.
-  Adds `GET /api/v1/protocolo-auxiliar/folios-disponibles` and
-  `POST /api/v1/protocolo-auxiliar/escrituras`, a "Protocolo Auxiliar"
-  checkbox on the existing Tipos de Folio admin form, and a new
-  Protocolo Auxiliar screen under Protocolo.
-
-- **Cuadernos de Folios** (issue #839, CU80): allows escribanos to group folios
-  into cuadernos of exactly 10 strictly consecutive folios belonging to the same
-  registro notarial, assigning a sequential number per year/escribano and marking
-  the folios as `Asignado a cuaderno`. Damaged or annulled folios (`Errose`,
-  `no pasó`) require an `observaciones` justification. Adds
-  `GET/POST /api/v1/cuadernos` and `GET /api/v1/cuadernos/{id}/caratula` (PDF via
-  JasperReports) with a new `Cuadernos` screen under Protocolo.
-
-- **Persona duplicate-document validation** (issue #835, CU17, CU18): creating or
-  editing a `Persona` with a `numeroIdentificacion` already registered to another
-  person is rejected with `409 Conflict` (`PersonaDuplicadaException`), whose body
-  now carries `idPersonaExistente` so the frontend can offer a direct link to the
-  existing person. The personas page shows a toast with a "Ver persona existente"
-  action and preserves the in-progress form data instead of discarding it.
-
-- **Folio picker in Escritura form** (issue #892, CU06): Allows users to assign a folio
-  to an escritura before signing. Unblocks E2E demo completion and enables full workflow
-  validation (Escritura Firmada → Testimonio → Verificación → Inscripción → Retiro).
-  Prerequisite for CU09–CU12. Backend already supported `Escritura.folios[]` field;
-  this change wires the UI selector (`select-folio-escritura`) and submission payload.
-
-- **Workflow engine y bitácora conectados al flujo real de gestión** (issue #833,
-  CU13, CU16, CU83): `POST /api/v1/gestiones/{id}/transicionar`
-  (`GestionTransitionService`) valida cada cambio de estado de una gestión contra
-  el `WorkflowDefinition`/`WorkflowNode`/`WorkflowTransition` de su tipo de trámite
-  (CU83) y rechaza transiciones no permitidas por el grafo. `GestionArchiveDebtService.archivar`
-  ahora delega esa misma validación de transición (destino "Archivada") antes de
-  archivar. Cada alta, transición válida y archivado registra una entrada en la
-  bitácora vía `GestionBitacoraService`, expuesta en `GET /api/v1/gestiones/{id}/historial`
-  (CU13). La pantalla `/dashboard/gestiones` agrega las acciones "Cambiar estado"
-  (selector limitado a los destinos válidos del workflow) y "Ver bitácora", y
-  muestra el mensaje de rechazo cuando una transición no está permitida. New
-  Playwright specs (`gestion-cambiar-estado.spec.ts`, `gestion-bitacora.spec.ts`)
-  cover the golden path, invalid-transition and viewport edge cases.
-
-- **Circuito legal posterior a la firma de escritura: testimonio, inscripción y retiro**
-  (issue #832, CU06, CU07, CU08, CU11, CU12, CU44): `POST /api/v1/escrituras/{id}/firmar`
-  transitions a "Sin Firmar" escritura with folio(s) assigned to "Firmada"
-  (`EscrituraFirmaService`). `POST /api/v1/testimonios/{id}/generar` and
-  `.../verificar` (`TestimonioGeneracionVerificacionService`, migration `V17`) generate
-  a testimonio from a firmada escritura and record verification (observado/no
-  observado + motivo); `GET /api/v1/reportes/testimonio/{id}/copia` issues the printed
-  copy (JasperReports) only for verified testimonios. `MovimientoTestimonioService`
-  adds the Registro de la Propiedad circuit: `ingresar-inscripcion`,
-  `registrar-inscripcion`, `retirar` and `reingresar`, each validating the required
-  preconditions (verificado, movimiento abierto, inscripto, retirado) and returning
-  404 for a non-existent testimonio. New Playwright specs cover firma, generación/
-  verificación de testimonio and the movimiento-de-inscripción circuit.
-
-- **Pago ↔ presupuesto ↔ gestión financial summary exposed end-to-end** (issue #820,
-  CU-47, CU-02, RF-21): `Pago.getPresupuesto()` is no longer `@JsonIgnore` — payment
-  responses now go through `DtoPagoResponse` (via `PagoMapper`) and include the
-  associated `idPresupuesto`. Added `GET /api/v1/presupuestos/{id}/resumen`
-  (`PresupuestoResumenService`) returning the gestión número/encabezado, presupuesto
-  total, saldo pendiente, and the full payment list for a presupuesto — 404 for an
-  unknown id. Added `GET /api/v1/gestiones/{id}/resumen-financiero`
-  (`GestionResumenFinancieroService`) aggregating total presupuestado, total cobrado
-  and saldo across every presupuesto reachable through a gestión's trámites. The CU47
-  "Ver resumen" dialog on `/dashboard/presupuestos` calls the presupuesto-scoped
-  endpoint and shows total, saldo and the payment table without extra navigation
-  (`usePresupuestoResumen` in `frontend/src/hooks/usePresupuestos.ts`).
-
-- **Pending-debt verification when archiving a gestión** (issue #819, CU-16, RF-22, RF-37):
-  archiving a gestión now aggregates the pending balance (`PagoService.calcularSaldoPendiente`)
-  across all `presupuesto`s reachable through its `tramite`s, exposes it via
-  `GET /api/v1/gestiones/{id}/saldo-pendiente`, and records whether debt was outstanding at
-  archive time on the gestión (`gestiones_de_escrituras.deuda_pendiente_al_archivar`, migration
-  `V15`) via `POST /api/v1/gestiones/{id}/archivar`. The gestión screen surfaces a non-blocking
-  debt warning in the archive confirmation dialog. New `GestionArchiveDebtService` in
-  `backend-api`; new archive action + `useSaldoPendiente`/`useArchivarGestion` hooks in
-  `frontend/src/app/dashboard/gestiones/page.tsx`.
-
-- **AUTH-001 HTTP/integration test gaps closed: rate limiting, wrong password, expired token**
-  (issues #685, #686, #687): `backend-api/api-test/auth/` gained a chained rate-limit test
-  (5 failed logins against a per-run-randomized username, then asserts the lockout response)
-  and a tightened wrong-password test; `JwtAuthIntegrationTest` gained an expired-token test
-  using a genuinely expired, validly-signed JWT generated via the real `JwtTokenService`. Along
-  the way, corrected two of the issues' own assumptions against verified real behavior: the
-  login endpoint never returns 401 for bad credentials or 423 for lockout — it returns
-  `200 {valido:false}` and `429 {valido:false, message}` respectively (see
-  `docs/05-api/ERROR-HANDLING-STRATEGY.md`), matching the already-passing
-  `LoginRateLimitIntegrationTest`/`JwtAuthIntegrationTest`. No production code changed.
-
-- **Status-aware login error messages** (issue #756): the login page previously showed the
-  same generic "can't connect to server" toast for a 429 account lockout, a genuine network
-  failure, and (separately) invalid credentials, even though the backend already returns a
-  distinct status and `message` field for the lockout case. Added `ApiError` (status + body) to
-  `frontend/src/lib/api-client.ts`; the login page now reads the 429 response's `message` and
-  shows it instead of the generic error. `frontend-swing`'s `Login.java` has the identical
-  (worse) problem — documented in place rather than fixed, since propagating the HTTP status
-  through that Swing/`RestClient` call chain is a larger change than this issue scoped.
-
-- **Case-insensitive username and JWT structure HTTP tests** (issues #692, #693): closed two
-  gaps in the AUTH-001 HTTP/Bruno test coverage. `backend-api/api-test/usuarios/09-13-*.yml`
-  verifies `POST /api/v1/usuarios/login` treats a username the same regardless of case
-  (lowercase/uppercase/mixed), matching `UsuarioController`'s existing `equalsIgnoreCase`
-  lookup. `14-16-*.yml` verifies the returned `token` is a well-formed
-  `header.payload.signature` JWT whose decoded payload has `sub` (the username) and a future
-  `exp` claim, matching `JwtTokenService.generateToken()`. No production code changed.
-
-- **k6 load-test suite** (issue #594): no performance/load testing existed anywhere in the
-  repository. Added `performance-test/k6/load-test.js`, covering the highest-traffic read
-  endpoints (`gestiones`, `presupuestos`, `tramites`) with baseline thresholds (`p(95)<500ms`,
-  error rate `<1%`), authenticating via the existing JWT login endpoint. Wired into a new
-  scheduled (weekly, not per-PR) `.github/workflows/performance-test.yml` job so it doesn't
-  gate every PR.
-
-- **Security response headers on the Next.js frontend** (issue #562): `frontend/next.config.ts`
-  had no `headers()` callback. Added `Content-Security-Policy`, `X-Frame-Options: DENY`,
-  `X-Content-Type-Options: nosniff`, and `Strict-Transport-Security` to every route.
-
-- **HistorialMapper unit tests** (issue #589): `service.mappers.HistorialMapper` had zero test
-  coverage despite not being excluded from the JaCoCo gate. Added `HistorialMapperTest` covering
-  the happy path and each nullable foreign key individually.
-
-- **Login rate limiting / account lockout** (issue #560): `POST /api/v1/usuarios/login`
-  now locks a username out for a configurable duration (`security.login.lockout-duration-ms`,
-  default 15 minutes) after a configurable number of consecutive failed attempts
-  (`security.login.max-attempts`, default 5), returning `429 Too Many Requests`. A
-  successful login resets the counter. Implemented in the new
-  `com.licensis.notaire.security.LoginAttemptService`.
-
-- **Jakarta Bean Validation on request boundaries** (issue #561): `UsuarioController`'s
-  `createUsuario`/`updateUsuario` now validate the request body (`@NotBlank nombre`, `tipo`),
-  and `ReporteController`'s path/query parameters are validated (`@Positive` on ID-like
-  parameters, `@NotBlank` on `nombreTipoTramite`, `@Min(1)/@Max(12)` on `mes`), returning a
-  clean `400` instead of a generic `500` or silently accepting malformed input.
-  `GlobalExceptionHandler` now handles `MethodArgumentNotValidException` (body validation) and
-  `ConstraintViolationException` (`@RequestParam`/`@PathVariable` validation) consistently.
-  Full rollout across the remaining controllers is tracked as a follow-up.
-
-- **Mobile/tablet viewport coverage in Playwright E2E** (issue #610): `frontend/playwright.config.ts`
-  previously only ran against `devices["Desktop Chrome"]`, with zero specs asserting layout at
-  the 320px/768px/1024px breakpoints mandated by `.claude/rules/ui-ux-design.md`. Added a
-  `mobile` project (`devices["iPhone SE"]`) and `tests/e2e/mobile-viewport.spec.ts`, which
-  asserts no horizontal overflow on the login page at 320px and 768px and on the dashboard at
-  320px after login.
-
-- **ADR-007**: Database Schema Versioning with Flyway
-  - Added architecture decision record for Flyway implementation
-  - Documented migration strategy and best practices
-
-- **SAR-007**: Flyway Implementation Solution Architecture Report
-  - Detailed technical analysis and implementation plan
-  - Testing strategy for database migrations
-  - AI Agent Guidelines section
-
-- **Flyway Skill for AI Agents**: `.claude/skills/flyway/SKILL.md`
-  - Comprehensive guide for implementing Flyway migrations
-  - Examples, best practices, and common patterns
-  - Project-specific conventions and templates
-
-- **Database Migrations Rules**: `.claude/rules/database-migrations.md`
-  - Mandatory rules for all database changes
-  - Anti-patterns to avoid
-  - Rollback strategies and emergency procedures
-
-- **Database Migrations README**: `backend-api/src/main/resources/db/migration/README.md`
-  - Quick reference for developers
-  - Common patterns and templates
-  - Testing and validation commands
-
-<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Changed" block within [Unreleased] -->
-
 ### Changed
 
 - **CU84 on the Use Case template, requirements CSV fixed** (issue #956, CU84): CU84 now has Referencias Cruzadas
   and GitHub ID rows; the two malformed "Login al sistema" rows in `requerimientos.csv` became one row with
   requirement issue #1224; `scripts/test_business_docs_traceability.py` guards the shape.
+
+### Changed
+
+- **Top-level guards wired into CI** (issue #1209, CU76): every `scripts/test_*.py` guard now has a
+  wrapper in `scripts/tests/` and a meta-guard fails when one is missing; the kustomize guard skips
+  when `kustomize` is absent; repeated `###` headings under `[Unreleased]` merged.
+
+- **Constitution wording for the Playwright suite** (issue #1210, CU76): §4, §5 step 15, §7 and §13
+  name `testing/e2e`; no process step changed. The stale-path guard now covers `CONSTITUTION.md`.
+- **Playwright UI E2E suite moved to `testing/e2e`** (issue #1192, CU76, phase 2 of #1190):
+  the 52 specs, helpers, reporter and config moved from `frontend/tests/e2e` with their own
+  `package.json`, lockfile, `tsconfig.json` and ESLint config; Playwright removed from `frontend/`.
+  Run with `cd testing/e2e && npm test` or `bash testing/scripts/run.sh e2e`. `playwright-e2e.yml`,
+  `preflight.sh`, `run_pipeline.sh` repointed (job and artifact names unchanged); the reliability rules
+  moved to `scripts/test_e2e_reliability.py`.
+
 - **BREAKING — gestión status writes require workflow transitions** (issue #804,
   CU02 / CU53 / CU16 / CU83): `PUT /api/v1/gestiones/{id}` and
   `PUT /api/v1/gestiones/{id}/complete-case` reject a changed
@@ -501,32 +125,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - V1: Initial schema (24 tables)
   - V2: Initial reference data and admin user
 
-### Deprecated
-
-- `init-db/01-schema.sql` - Superseded by Flyway migration
-- `init-db/02-data.sql` - Superseded by Flyway migration
-
-<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Fixed" block within [Unreleased] -->
-
-### Removed
-
-- **Orphaned test scripts** (issue #585, CU76): deleted nine cURL scripts under
-  `testing/integration/http/` that no runner called (`01-auth` … `08-items`, `test-all-endpoints.sh`)
-  and the unused `COMPOSE_FILES` constant in `test_image_pins_and_dependabot.py`. New guard: a
-  reachability check for `testing/` scripts. `deprecated-src.old/` is deliberately kept as
-  historical data.
-
-- **Swing E2E leftovers** (issue #811, CU76 / ADR-012): durable retirement of
-  Robot Swing E2E — hygiene fails if `e2e-swing.yml` or Maven `-pl frontend-swing`
-  / `deprecated-frontend-swing` returns in workflows; `testing/e2e-swing/`
-  hard-deprecated in place; live setup/testing docs no longer teach Swing
-  build/run. Active UI E2E remains Playwright.
-
-- **BREAKING — unused payment params create** (issue #1065, CU76):
-  `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
-  `POST /api/v1/pagos` (JSON body).
-
 ### Fixed
+
+- **check-sdlc-exception.sh false failure** (issue #1228, CU76): the diff is captured before matching, so `grep -q`
+  closing the pipe can no longer SIGPIPE `git diff` and report a PR with an OpenSpec change as having none.
+- **DeedManagement / Person DTO mapping null-safety** (issue #853, CU76):
+  `DeedManagement.getDto()`, `getDtoNotary()`, and `setAtributos()` tolerate null
+  management status, notary, and identification type without NPE (return/omit
+  null instead of 500); `Person.getDto()` tolerates null identification type and
+  null `DeedManagementList`; id/full constructors initialize empty procedure and
+  history lists like the default constructor. Expanded
+  `DeedManagementEntityTest` + `PersonEntityTest` coverage for all cited paths.
+
+- **Plain gestión notary assignment consults active Substitution** (issue #805,
+  CU22 / CU02): residual after #836 — `POST`/`PUT /api/v1/gestiones` now call
+  `ManagementSubstitutionService.resolveNotary` (same as complete-case) and
+  append a redirection note when an active substitution covers the requested
+  notary. Integration coverage for plain create/update; TS-0092 toast detects
+  the English note marker.
 
 - **Person identification uniqueness enforced at the database** (issue #799, CU17, CU18):
   Flyway `V40` adds unique index `uq_people_identification_type_number` on
@@ -992,10 +608,400 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated all documentation, agent configs, and `.claude/rules/database-migrations.md`
   - See `.claude/rules/database-migrations.md` for new migration workflow
 
-<!-- markdownlint-disable-next-line MD024 -- pre-existing second "Added" block within [Unreleased] -->
-
 - Updated Docker Compose to remove init-db volume mounts
 - Configured Spring Boot to use Flyway with `spring.flyway.*` properties
+
+### Added
+
+- **Workflow tracker post-signing reingreso loop (strategy b)** (issue #841,
+  CU83 / CU06 / CU07 / CU11 / CU44): seed `ManagementStatus` 11–13 and replace
+  Firmada→Inscripta on the standard workflow with Generado → Ingresado →
+  Retirado; `GET .../workflow-trace` returns additive `testimonyMovements` with
+  derived `returnedObserved`; dashboard `WorkflowTracker` shows a secondary
+  movement timeline and reingreso badge on the inscription node.
+
+- **Document type enabled and returned on admin form** (issue #800, CU27 / CU32 /
+  CU04 / CU72): residual catalog fields after #837 — create/edit checkboxes for
+  `enabled` (default true) and `returned` (default false); `DtoDocumentType` and
+  entity mapping round-trip `returned`; create no longer overwrites an explicit
+  `enabled=false`. Vitest + Playwright + `DocumentTypeReferentialIntegrityTest`.
+
+- **`testing/` prepared as a standalone QA repository, phase 1** (issue #1191, CU76 / CU75;
+  umbrella #1190): one runner (`testing/scripts/run.sh integration|database`, `test.sh` kept as the
+  stable entry point) replaces nine overlapping scripts; a new black-box **database V&V suite**
+  starts an empty PostgreSQL 16.15, applies the application's Flyway migrations with the Flyway
+  12.4.0 CLI and checks history, configuration, the V12 exporter role, seed data, schema, renamed
+  tables, idempotence and tamper detection, with its own `database-vv.yml` workflow and a matching
+  `preflight.sh --full` gate. The cURL suite moved to `testing/integration/` and honours
+  `BASE_URL`; the stack smoke script, previously never run, now works on macOS and asserts
+  authorization. New guides under `testing/docs/` (preparation, configuration, definition,
+  operation). Removed: `run-all-tests.sh`, `scripts/test-all.sh`, `scripts/run-comprehensive-tests.sh`,
+  the duplicate root `generate-coverage-report.sh` and the committed 2026-04 reports. k6 stays in
+  `infra/`; Playwright moves in phase 2 (#1192). Guard: `scripts/test_testing_standalone.py`.
+
+- **Configurable dev stack ports and container names** (issue #1186, CU76): host ports
+  (`POSTGRES_PORT`, `BACKEND_PORT`, `PGADMIN_PORT`, `FRONTEND_PORT`) and container names
+  (`NOTAIRE_<SERVICE>_CONTAINER_NAME`) in `docker-compose.yml` are overridable from `.env`
+  so parallel stacks can coexist; defaults unchanged and `scripts/start.sh` follows the
+  configured ports. Guard: `scripts/test_dev_stack_isolation.py`. The observability stack
+  only supports the default names.
+
+- **`infra/` prepared as a standalone repository** (issue #1179, CU77; related #302):
+  observability stack moved to `infra/observability/`, Kustomize and the reverse-proxy
+  config to `infra/deploy/`, k6 to `infra/performance/`; `deploy/` and `performance-test/`
+  removed. `nginx.conf` now has one source (`infra/deploy/kustomize/base/nginx.conf`) shared
+  by `docker-compose.prod.yml` and the generated Kubernetes ConfigMap. Infra scripts are
+  self-contained (`infra/scripts/common.sh`, `infra/.env.example`); compose project name
+  pinned to `infra` so existing volumes survive. New infra guides under `infra/docs/`
+  (preparation, configuration, definition, operation); `docs/` links to them. Stale
+  `infra/tests/e2e` and `infra/CREDENTIALS.md` removed (folded into the guides).
+  Guard: `scripts/test_infra_standalone.py`. Moved paths are listed in the PR.
+
+- **ADR-023 REST resource naming** (issue #1065, CU76): English resource nouns
+  matching established `/api/v1` paths, plural collections, `/search`, action
+  sub-resources, and `201`+`Location` for creates; ADR-003 remains versioning-only.
+
+- **CU-API-MATRIX English refresh + CI validator** (issue #1064, CU76): rename
+  22 stale Spanish controller class names to current `adapter.in.web` English
+  types; add missing resources `/carpetas`, `/cuadernos`, `/minutas-inscripcion`,
+  `/plantilla-costos-documento`, `/protocolo-auxiliar`, `/roles`,
+  `/tipo-identificacion`, `/tramites` (CU80–CU82/CU85 + inventory rows);
+  normalize `Bruno_Test` (paths/`MISSING`/`N/A`, `#953` on gaps — no new Bruno
+  fills); add `scripts/validate-cu-api-matrix.py` with unittest coverage, wired
+  into `scripts/preflight.sh` and `sdlc-process.yml`.
+
+- **E2E feature-gap skip tracker hygiene** (issue #1146, CU76): Vitest guard
+  requires `#\d+` on the fourteen static `test.skip`s in TS-0014/16/17/20 and
+  locks the inventory count; `E2E-TEST-MAPPING.md` lists each skip with owning
+  CU (product work stays on those CUs; #1146 is citation hygiene only).
+
+- **Staging Kustomize deploy manifests** (issue #901, CU77): `deploy/kustomize/`
+  base + `overlays/staging` mirroring `docker-compose.prod.yml` (postgres,
+  backend, frontend, reverse-proxy; no pgAdmin); ClusterIP data plane; Secret
+  placeholders only; GHCR SHA image tags; static guard
+  `scripts/test_staging_kustomize.py`. CD (`cd.yml`) remains publish-only —
+  no fake cluster deploy. Docs: `209-deployment`, `DEPLOYMENT-PLAN`, CU77, SAD §11.
+
+- **DAST, OpenAPI contract, and backup/restore CI gates** (issue #1067, CU76/CU78/CU75):
+  weekly OWASP ZAP baseline (`dast-zap.yml`, warn-first report artifact; Trivy retained);
+  committed `backend-api/openapi/openapi.yaml` + PR `openapi-contract.yml` (export freshness
+  via `scripts/export-openapi.sh`, breaking diffs via `oasdiff`);
+  `backup-restore-smoke.yml` skips with an explicit #256 block until
+  `scripts/backup-postgres.sh` exists. Guarded by `scripts/test_dast_contract_backup_assets.py`.
+
+- **Bruno API coverage for sixteen previously uncovered controllers** (issue #953,
+  CU76): OpenCollection folders for roles, workflows (+ validate), copies,
+  submitted-documents, testimonies, testimony-movements, managements, notebooks,
+  auxiliary-protocol, procedure-folders, document-cost-templates, reports
+  (representative PDFs), and registration-drafts (404/action surface); suite now
+  297 requests / 508 tests, idempotent double `bru run`; docs/matrix updated.
+
+- **Frontend GHCR publish + semver releases** (issue #1043, CU76): CD matrix
+  publishes `ghcr.io/<owner>/notaire/frontend` from `frontend/Dockerfile`
+  with CycloneDX SBOM, cosign sign, and SBOM attest (parity with backend);
+  release-please automates `v*` tags / GitHub Releases, rolls Keep a Changelog
+  sections, and bumps root/module Maven versions plus `frontend/package.json`
+  from the tag. CD `release` job attaches SBOM assets only (no duplicate
+  release notes). Runbook: `docs/300-development/RELEASE.md`. Guarded by
+  `scripts/test_frontend_ghcr_publish.py` and
+  `scripts/test_semver_release_process.py`.
+
+- **Production docker-compose** (issue #1044, CU78/CU75):
+  `docker-compose.prod.yml` with postgres + backend + frontend + nginx reverse
+  proxy; no pgAdmin; reverse-proxy-only host ports; `${VAR:?}` required secrets;
+  `ENVIRONMENT=production`; least-privilege backend env; Flyway
+  baseline-on-migrate off. Guarded by `scripts/test_prod_compose.py`. Deployment
+  guide and CU78/CU75 updated. TLS remains #254; backups remain #256.
+
+- **CodeQL and GitHub Security Lab baseline** (issue #1135, CU78):
+  `.github/workflows/codeql.yml` analyzes Java, JavaScript/TypeScript, and
+  GitHub Actions on pull requests and on `main`. Dependabot also watches
+  `frontend/`. `SECURITY.md` points at private vulnerability reporting.
+  `scripts/enable-gh-secure.sh` is the admin step for secret-scanning push
+  protection and Dependabot security updates; branch protection stays opt-in.
+- **STRIDE threat model for authentication & audit trail** (issue #1028):
+  added `docs/200-architecture/206-security/THREAT-MODEL-AUTH-AUDIT.md`
+  with numbered security requirements (`SR-01`..`SR-10`) and an explicit
+  Mitigated/Partial/Open status for each threat against the login and
+  audit-trail subsystems, replacing the informal risk register for those
+  two areas. Documentation only, no behavior change.
+- **Vincular escritura a folio y validar copia de testimonio ya inscripto**
+  (issue #838, CU87): `POST`/`PUT /api/v1/folio` accept an optional
+  `escrituraId`; linking sets the folio's `estado` to `Utilizado` and
+  rejects (`409`) linking a folio already `Utilizado` by a different
+  escritura (re-saving the same escritura is idempotent). `POST
+  /api/v1/copia` now rejects (`409`) creating a copia when its source
+  testimonio has a `MovimientoTestimonio` with `inscripta = true`. The
+  folios admin screen lets the Escribano pick an unlinked, `Firmada`
+  escritura when creating/editing a folio, and the escrituras screen
+  shows the linked folio.
+- **Suplencias con efecto práctico en la asignación de gestiones** (issue
+  #836, CU22/CU48/CU51): a `GestionDeEscritura` created or edited
+  (`POST`/`PUT .../complete-case`) for an escribano with an active
+  `Suplencia` (fecha de la gestión dentro de `fechaInicio`–`fechaFin`) is
+  now redirected to the suplente automatically, leaving a trace in
+  `observaciones` and a toast notification on the gestiones screen. The
+  personas screen now exposes a "Registro de escribano" field
+  (alta/edición) so any Persona can be enabled as a suplente.
+- **Cargar presupuesto desde plantilla y catálogo de ítems** (issue #834,
+  CU39/CU71): the presupuestos screen now offers, per presupuesto, a
+  dialog to (1) pick a `TipoDeTramite` and load its `PlantillaPresupuesto`
+  conceptos as ítems in one step (`POST
+  /api/v1/presupuestos/{id}/items-desde-plantilla?tipoTramiteId=X`, 400 if
+  the tipo de trámite has no plantilla), and (2) add copies of existing
+  catalog `Item`s to the presupuesto (`POST
+  /api/v1/presupuestos/{id}/items-desde-catalogo`). Replaces the previous
+  free-text `montoInmueble` field as the only way to price a presupuesto.
+- **Recibo de pago en PDF** (issue #23, CU15/RF-21): new
+  `GET /api/v1/reportes/recibo-pago/{idPago}` endpoint generates a PDF recibo
+  (cliente, fecha, concepto(s), total abonado) for an existing pago, 404 if
+  not found. Wired to an "Emitir recibo" action on the pagos screen.
+- **Minuta de Inscripción** (issue #839, CU82): generate a minuta de
+  inscripción from a signed (`Firmada`) escritura and track it through the
+  registry circuit — `Generada` → `Presentada` → `Observada`/`Inscripta`.
+  Generation is blocked until the escritura's inmueble has its datos
+  registrales complete (`matricula`, `tomoFolioFinca`, `linderos`, added to
+  `Inmueble` alongside the existing catastral data). Adds
+  `POST/PUT /api/v1/minutas-inscripcion/**` endpoints, a
+  `GET /api/v1/reportes/minuta-inscripcion/{id}` PDF report for the
+  normalized inscription form, and a "Minutas de Inscripción" dashboard
+  screen to generate, present, observe and inscribe.
+- **Administrar carpetas de trámite** (issue #839, CU85): iniciar un
+  trámite genera automáticamente su carpeta de trámite (una por trámite,
+  numeración única, estado "Activa"). Adds `CarpetaTramite` entity and
+  `GET /api/v1/carpetas/{id}`, `GET /api/v1/carpetas?gestionId=&tramiteId=`,
+  `PUT /api/v1/carpetas/{id}/espera` (requires a `motivo`). Archiving a
+  gestión (CU16) now cascades to all its carpetas, transitioning them to
+  "Archivada"; if any carpeta is still "Espera" unresolved, the archive
+  request is rejected (HTTP 409) unless explicitly confirmed
+  (`?confirmado=true`). Adds a "Ver carpetas" action to the gestiones
+  screen.
+- **Vencimiento y responsable en tipos de documento** (issue #837, CU27, CU32,
+  CU42): a `TipoDeDocumento` can now declare `vence`, `diasVencimiento`
+  (required when `vence` is checked), and `quienEntrega`. When a
+  `DocumentoPresentado` is created, these fields — plus a computed
+  `fechaVencimiento` (`fechaIngreso + diasVencimiento`) — are copied from its
+  `TipoDeDocumento`, giving CU42's "próximos vencimientos" report real data to
+  work with. Adds a "Vence"/"Días de vencimiento"/"Quién entrega" section to
+  the Tipos de Documento admin form.
+- **Costos de documentos en el presupuesto** (issue #823, CU27/CU39): the
+  cost (`importeAPagar`) of a `DocumentoPresentado` in a trámite is now
+  included in its presupuesto's total. Adds `PlantillaCostoDocumento`
+  (`POST`/`GET /api/v1/plantilla-costos-documento`) so a `TipoDeTramite`'s
+  presupuesto template can define an expected fixed or variable
+  (percentage) cost per `TipoDeDocumento` — exactly one of the two must be
+  set. Adds a "Costos de Documentos" section to the plantillas de
+  presupuesto admin screen.
+- **Descuentos y recargos en ítems de presupuesto** (issue #822, CU45/CU71): a
+  new `Item.tipo` field (`NORMAL`/`DESCUENTO`/`RECARGO`, default `NORMAL`)
+  plus a required `motivo` when the type is `DESCUENTO` or `RECARGO`,
+  validated both client- and server-side. `PagoService`'s total calculation
+  now subtracts `DESCUENTO` items and adds `RECARGO` items. Adds
+  `GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos` to list
+  only discount/surcharge items for a presupuesto, and a "Tipo"/"Motivo" UI
+  on the ítems admin screen with a descuentos/recargos report section.
+- **Estado de pago por presupuesto** (issue #821, CU15, CU47): adds
+  `GET /api/v1/pagos/presupuesto/{idPresupuesto}/estado`, returning
+  `SIN_PAGOS`, `PARCIAL`, or `SALDADO` derived from the existing saldo
+  pendiente calculation. Additive change — existing pago/saldo endpoints are
+  unchanged. The Pagos screen now shows an estado badge next to the saldo
+  pendiente for the selected presupuesto.
+
+- **Protocolo Auxiliar** (issue #839, CU81): marking a `TipoDeFolio` as
+  `esAuxiliar` lets escribanos start a new `Escritura` directly on an available
+  Protocolo Auxiliar folio (a folio of that type not yet linked to an
+  `Escritura`), without opening a `CarpetaTramite`/`Tramite` — the ágil
+  circuit of CU81. Numbering is `MAX(Escritura.numero) + 1` scoped to
+  auxiliar folios only, independent from Protocolo Principal's sequence.
+  Adds `GET /api/v1/protocolo-auxiliar/folios-disponibles` and
+  `POST /api/v1/protocolo-auxiliar/escrituras`, a "Protocolo Auxiliar"
+  checkbox on the existing Tipos de Folio admin form, and a new
+  Protocolo Auxiliar screen under Protocolo.
+
+- **Cuadernos de Folios** (issue #839, CU80): allows escribanos to group folios
+  into cuadernos of exactly 10 strictly consecutive folios belonging to the same
+  registro notarial, assigning a sequential number per year/escribano and marking
+  the folios as `Asignado a cuaderno`. Damaged or annulled folios (`Errose`,
+  `no pasó`) require an `observaciones` justification. Adds
+  `GET/POST /api/v1/cuadernos` and `GET /api/v1/cuadernos/{id}/caratula` (PDF via
+  JasperReports) with a new `Cuadernos` screen under Protocolo.
+
+- **Persona duplicate-document validation** (issue #835, CU17, CU18): creating or
+  editing a `Persona` with a `numeroIdentificacion` already registered to another
+  person is rejected with `409 Conflict` (`PersonaDuplicadaException`), whose body
+  now carries `idPersonaExistente` so the frontend can offer a direct link to the
+  existing person. The personas page shows a toast with a "Ver persona existente"
+  action and preserves the in-progress form data instead of discarding it.
+
+- **Folio picker in Escritura form** (issue #892, CU06): Allows users to assign a folio
+  to an escritura before signing. Unblocks E2E demo completion and enables full workflow
+  validation (Escritura Firmada → Testimonio → Verificación → Inscripción → Retiro).
+  Prerequisite for CU09–CU12. Backend already supported `Escritura.folios[]` field;
+  this change wires the UI selector (`select-folio-escritura`) and submission payload.
+
+- **Workflow engine y bitácora conectados al flujo real de gestión** (issue #833,
+  CU13, CU16, CU83): `POST /api/v1/gestiones/{id}/transicionar`
+  (`GestionTransitionService`) valida cada cambio de estado de una gestión contra
+  el `WorkflowDefinition`/`WorkflowNode`/`WorkflowTransition` de su tipo de trámite
+  (CU83) y rechaza transiciones no permitidas por el grafo. `GestionArchiveDebtService.archivar`
+  ahora delega esa misma validación de transición (destino "Archivada") antes de
+  archivar. Cada alta, transición válida y archivado registra una entrada en la
+  bitácora vía `GestionBitacoraService`, expuesta en `GET /api/v1/gestiones/{id}/historial`
+  (CU13). La pantalla `/dashboard/gestiones` agrega las acciones "Cambiar estado"
+  (selector limitado a los destinos válidos del workflow) y "Ver bitácora", y
+  muestra el mensaje de rechazo cuando una transición no está permitida. New
+  Playwright specs (`gestion-cambiar-estado.spec.ts`, `gestion-bitacora.spec.ts`)
+  cover the golden path, invalid-transition and viewport edge cases.
+
+- **Circuito legal posterior a la firma de escritura: testimonio, inscripción y retiro**
+  (issue #832, CU06, CU07, CU08, CU11, CU12, CU44): `POST /api/v1/escrituras/{id}/firmar`
+  transitions a "Sin Firmar" escritura with folio(s) assigned to "Firmada"
+  (`EscrituraFirmaService`). `POST /api/v1/testimonios/{id}/generar` and
+  `.../verificar` (`TestimonioGeneracionVerificacionService`, migration `V17`) generate
+  a testimonio from a firmada escritura and record verification (observado/no
+  observado + motivo); `GET /api/v1/reportes/testimonio/{id}/copia` issues the printed
+  copy (JasperReports) only for verified testimonios. `MovimientoTestimonioService`
+  adds the Registro de la Propiedad circuit: `ingresar-inscripcion`,
+  `registrar-inscripcion`, `retirar` and `reingresar`, each validating the required
+  preconditions (verificado, movimiento abierto, inscripto, retirado) and returning
+  404 for a non-existent testimonio. New Playwright specs cover firma, generación/
+  verificación de testimonio and the movimiento-de-inscripción circuit.
+
+- **Pago ↔ presupuesto ↔ gestión financial summary exposed end-to-end** (issue #820,
+  CU-47, CU-02, RF-21): `Pago.getPresupuesto()` is no longer `@JsonIgnore` — payment
+  responses now go through `DtoPagoResponse` (via `PagoMapper`) and include the
+  associated `idPresupuesto`. Added `GET /api/v1/presupuestos/{id}/resumen`
+  (`PresupuestoResumenService`) returning the gestión número/encabezado, presupuesto
+  total, saldo pendiente, and the full payment list for a presupuesto — 404 for an
+  unknown id. Added `GET /api/v1/gestiones/{id}/resumen-financiero`
+  (`GestionResumenFinancieroService`) aggregating total presupuestado, total cobrado
+  and saldo across every presupuesto reachable through a gestión's trámites. The CU47
+  "Ver resumen" dialog on `/dashboard/presupuestos` calls the presupuesto-scoped
+  endpoint and shows total, saldo and the payment table without extra navigation
+  (`usePresupuestoResumen` in `frontend/src/hooks/usePresupuestos.ts`).
+
+- **Pending-debt verification when archiving a gestión** (issue #819, CU-16, RF-22, RF-37):
+  archiving a gestión now aggregates the pending balance (`PagoService.calcularSaldoPendiente`)
+  across all `presupuesto`s reachable through its `tramite`s, exposes it via
+  `GET /api/v1/gestiones/{id}/saldo-pendiente`, and records whether debt was outstanding at
+  archive time on the gestión (`gestiones_de_escrituras.deuda_pendiente_al_archivar`, migration
+  `V15`) via `POST /api/v1/gestiones/{id}/archivar`. The gestión screen surfaces a non-blocking
+  debt warning in the archive confirmation dialog. New `GestionArchiveDebtService` in
+  `backend-api`; new archive action + `useSaldoPendiente`/`useArchivarGestion` hooks in
+  `frontend/src/app/dashboard/gestiones/page.tsx`.
+
+- **AUTH-001 HTTP/integration test gaps closed: rate limiting, wrong password, expired token**
+  (issues #685, #686, #687): `backend-api/api-test/auth/` gained a chained rate-limit test
+  (5 failed logins against a per-run-randomized username, then asserts the lockout response)
+  and a tightened wrong-password test; `JwtAuthIntegrationTest` gained an expired-token test
+  using a genuinely expired, validly-signed JWT generated via the real `JwtTokenService`. Along
+  the way, corrected two of the issues' own assumptions against verified real behavior: the
+  login endpoint never returns 401 for bad credentials or 423 for lockout — it returns
+  `200 {valido:false}` and `429 {valido:false, message}` respectively (see
+  `docs/05-api/ERROR-HANDLING-STRATEGY.md`), matching the already-passing
+  `LoginRateLimitIntegrationTest`/`JwtAuthIntegrationTest`. No production code changed.
+
+- **Status-aware login error messages** (issue #756): the login page previously showed the
+  same generic "can't connect to server" toast for a 429 account lockout, a genuine network
+  failure, and (separately) invalid credentials, even though the backend already returns a
+  distinct status and `message` field for the lockout case. Added `ApiError` (status + body) to
+  `frontend/src/lib/api-client.ts`; the login page now reads the 429 response's `message` and
+  shows it instead of the generic error. `frontend-swing`'s `Login.java` has the identical
+  (worse) problem — documented in place rather than fixed, since propagating the HTTP status
+  through that Swing/`RestClient` call chain is a larger change than this issue scoped.
+
+- **Case-insensitive username and JWT structure HTTP tests** (issues #692, #693): closed two
+  gaps in the AUTH-001 HTTP/Bruno test coverage. `backend-api/api-test/usuarios/09-13-*.yml`
+  verifies `POST /api/v1/usuarios/login` treats a username the same regardless of case
+  (lowercase/uppercase/mixed), matching `UsuarioController`'s existing `equalsIgnoreCase`
+  lookup. `14-16-*.yml` verifies the returned `token` is a well-formed
+  `header.payload.signature` JWT whose decoded payload has `sub` (the username) and a future
+  `exp` claim, matching `JwtTokenService.generateToken()`. No production code changed.
+
+- **k6 load-test suite** (issue #594): no performance/load testing existed anywhere in the
+  repository. Added `performance-test/k6/load-test.js`, covering the highest-traffic read
+  endpoints (`gestiones`, `presupuestos`, `tramites`) with baseline thresholds (`p(95)<500ms`,
+  error rate `<1%`), authenticating via the existing JWT login endpoint. Wired into a new
+  scheduled (weekly, not per-PR) `.github/workflows/performance-test.yml` job so it doesn't
+  gate every PR.
+
+- **Security response headers on the Next.js frontend** (issue #562): `frontend/next.config.ts`
+  had no `headers()` callback. Added `Content-Security-Policy`, `X-Frame-Options: DENY`,
+  `X-Content-Type-Options: nosniff`, and `Strict-Transport-Security` to every route.
+
+- **HistorialMapper unit tests** (issue #589): `service.mappers.HistorialMapper` had zero test
+  coverage despite not being excluded from the JaCoCo gate. Added `HistorialMapperTest` covering
+  the happy path and each nullable foreign key individually.
+
+- **Login rate limiting / account lockout** (issue #560): `POST /api/v1/usuarios/login`
+  now locks a username out for a configurable duration (`security.login.lockout-duration-ms`,
+  default 15 minutes) after a configurable number of consecutive failed attempts
+  (`security.login.max-attempts`, default 5), returning `429 Too Many Requests`. A
+  successful login resets the counter. Implemented in the new
+  `com.licensis.notaire.security.LoginAttemptService`.
+
+- **Jakarta Bean Validation on request boundaries** (issue #561): `UsuarioController`'s
+  `createUsuario`/`updateUsuario` now validate the request body (`@NotBlank nombre`, `tipo`),
+  and `ReporteController`'s path/query parameters are validated (`@Positive` on ID-like
+  parameters, `@NotBlank` on `nombreTipoTramite`, `@Min(1)/@Max(12)` on `mes`), returning a
+  clean `400` instead of a generic `500` or silently accepting malformed input.
+  `GlobalExceptionHandler` now handles `MethodArgumentNotValidException` (body validation) and
+  `ConstraintViolationException` (`@RequestParam`/`@PathVariable` validation) consistently.
+  Full rollout across the remaining controllers is tracked as a follow-up.
+
+- **Mobile/tablet viewport coverage in Playwright E2E** (issue #610): `frontend/playwright.config.ts`
+  previously only ran against `devices["Desktop Chrome"]`, with zero specs asserting layout at
+  the 320px/768px/1024px breakpoints mandated by `.claude/rules/ui-ux-design.md`. Added a
+  `mobile` project (`devices["iPhone SE"]`) and `tests/e2e/mobile-viewport.spec.ts`, which
+  asserts no horizontal overflow on the login page at 320px and 768px and on the dashboard at
+  320px after login.
+
+- **ADR-007**: Database Schema Versioning with Flyway
+  - Added architecture decision record for Flyway implementation
+  - Documented migration strategy and best practices
+
+- **SAR-007**: Flyway Implementation Solution Architecture Report
+  - Detailed technical analysis and implementation plan
+  - Testing strategy for database migrations
+  - AI Agent Guidelines section
+
+- **Flyway Skill for AI Agents**: `.claude/skills/flyway/SKILL.md`
+  - Comprehensive guide for implementing Flyway migrations
+  - Examples, best practices, and common patterns
+  - Project-specific conventions and templates
+
+- **Database Migrations Rules**: `.claude/rules/database-migrations.md`
+  - Mandatory rules for all database changes
+  - Anti-patterns to avoid
+  - Rollback strategies and emergency procedures
+
+- **Database Migrations README**: `backend-api/src/main/resources/db/migration/README.md`
+  - Quick reference for developers
+  - Common patterns and templates
+  - Testing and validation commands
+
+### Deprecated
+
+- `init-db/01-schema.sql` - Superseded by Flyway migration
+- `init-db/02-data.sql` - Superseded by Flyway migration
+
+### Removed
+
+- **Orphaned test scripts** (issue #585, CU76): deleted nine cURL scripts under
+  `testing/integration/http/` that no runner called (`01-auth` … `08-items`, `test-all-endpoints.sh`)
+  and the unused `COMPOSE_FILES` constant in `test_image_pins_and_dependabot.py`. New guard: a
+  reachability check for `testing/` scripts. `deprecated-src.old/` is deliberately kept as
+  historical data.
+
+- **Swing E2E leftovers** (issue #811, CU76 / ADR-012): durable retirement of
+  Robot Swing E2E — hygiene fails if `e2e-swing.yml` or Maven `-pl frontend-swing`
+  / `deprecated-frontend-swing` returns in workflows; `testing/e2e-swing/`
+  hard-deprecated in place; live setup/testing docs no longer teach Swing
+  build/run. Active UI E2E remains Playwright.
+
+- **BREAKING — unused payment params create** (issue #1065, CU76):
+  `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
+  `POST /api/v1/pagos` (JSON body).
 
 ### Security
 

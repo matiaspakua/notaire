@@ -73,7 +73,10 @@ def find_kustomize() -> str:
 
 
 def kustomize_build(path: str) -> list:
-    binary = find_kustomize()
+    try:
+        binary = find_kustomize()
+    except FileNotFoundError as error:
+        raise unittest.SkipTest(str(error)) from error
     result = subprocess.run(
         [binary, "build", path],
         check=False,
