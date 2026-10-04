@@ -18,7 +18,7 @@ pending).
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/api/v1/gestiones/{id}/workflow-trace` | Aggregated trace: workflow definition, nodes, transitions, historial, per-node statuses. Also the **legal-next** contract for CU83 (#804): filter `transitions` by current node → valid destinations for `POST /{id}/transition`. |
+| GET | `/api/v1/gestiones/{id}/workflow-trace` | Aggregated trace: workflow definition, nodes, transitions, history, per-node statuses, optional `testimonyMovements`. Also the **legal-next** contract for CU83 (#804): filter `transitions` by current node → valid destinations for `POST /{id}/transition`. |
 
 Implemented by `ManagementController` + `WorkflowTraceService.buildTrace()`.
 Returns **400** with `{ "error": ... }` when the gestión does not exist, has
@@ -28,23 +28,36 @@ Generic PUT status mutations are rejected (#804); the gestiones UI already uses
 
 ### Node status computation
 
-`WorkflowTraceService.computeNodeStatuses()` sorts historial by `fecha` and
-collects the distinct estado IDs in chronological order:
+`WorkflowTraceService.computeNodeStatuses()` sorts history by date and
+collects the distinct status IDs in chronological order:
 
-- node's estado is the **latest** distinct estado → `in_progress`
-- node's estado appears **earlier** in the historial → `completed`
-- node's estado never appears → `pending`
+- node's status is the **latest** distinct status → `in_progress`
+- node's status appears **earlier** in the history → `completed`
+- node's status never appears → `pending`
 
 ### Demo seed data
 
-Flyway `V10__seed_workflow_demo_data.sql` (and formerly `init-db/02-data.sql`,
-now archived at `docs/archive/init-db/`) seed:
+Flyway `V10__seed_workflow_demo_data.sql` seeds the base graph; `V41__extend_workflow_post_firma_testimony.sql`
+(#841) extends it:
 
-- "Workflow de Gestión Estándar" — 7 nodes covering Iniciada → Inscripta with
-  a fork at *Documentación Completa* (→ Escritura Sin Firmar or → Archivada)
-- The workflow assigned to tipos de trámite Compraventa, Donación, Hipoteca
-- Two sample gestiones (1001, 1002) with trámites and historial
+- "Workflow de Gestión Estándar" — nodes covering Iniciada → Firmada →
+  Testimonio Generado → Testimonio Ingresado a Inscripción → Testimonio
+  Retirado (FINAL), with a fork at *Documentación Completa* → Archivada
+- Statuses 11–13 added; status id 10 (Inscripta) remains as inert catalog
+- The workflow assigned to procedure types Compraventa, Donación, Hipoteca
+- Two sample gestiones (1001, 1002) with procedures and history
 
+### Testimony movements / reingreso loop (#841, strategy b)
+
+`buildTrace` also returns `testimonyMovements` (empty when none): chronological
+`TestimonyMovement` rows for the first procedure→deed→testimony chain, with
+`returnedObserved = dateExit != null && !registered`.
+
+The animated tracker (`WorkflowTracker.tsx`) keeps the mutually exclusive node
+graph for linear post-signing statuses and shows a **secondary timeline** plus
+a reingreso count badge on the inscription node (`statusManagementId === 12`)
+when the returned-observed count is greater than zero. This does not model the
+unbounded reingreso loop as exclusive workflow nodes.
 ## Frontend
 
 ### Components

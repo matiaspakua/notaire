@@ -91,6 +91,13 @@
         "outgoing": "Next steps",
         "history": "History",
         "noHistory": "No history entries for this step yet"
+      },
+      "reentry": {
+        "badge": "{count} re-entries",
+        "short": "×{count} re-entry",
+        "timeline": "Testimony movements",
+        "open": "open",
+        "returnedObserved": "Returned observed"
       }
     },
     "gestiones": {

@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **DeedManagement / Person DTO mapping null-safety** (issue #853, CU76):
+  `DeedManagement.getDto()`, `getDtoNotary()`, and `setAtributos()` tolerate null
+  management status, notary, and identification type without NPE (return/omit
+  null instead of 500); `Person.getDto()` tolerates null identification type and
+  null `DeedManagementList`; id/full constructors initialize empty procedure and
+  history lists like the default constructor. Expanded
+  `DeedManagementEntityTest` + `PersonEntityTest` coverage for all cited paths.
+
+### Added
+
+- **Workflow tracker post-signing reingreso loop (strategy b)** (issue #841,
+  CU83 / CU06 / CU07 / CU11 / CU44): seed `ManagementStatus` 11–13 and replace
+  Firmada→Inscripta on the standard workflow with Generado → Ingresado →
+  Retirado; `GET .../workflow-trace` returns additive `testimonyMovements` with
+  derived `returnedObserved`; dashboard `WorkflowTracker` shows a secondary
+  movement timeline and reingreso badge on the inscription node.
+
+### Fixed
+
 - **Plain gestión notary assignment consults active Substitution** (issue #805,
   CU22 / CU02): residual after #836 — `POST`/`PUT /api/v1/gestiones` now call
   `ManagementSubstitutionService.resolveNotary` (same as complete-case) and

@@ -38,18 +38,11 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase que representa un gestion de escritura.
+ * Entity representing a deed management case.
  * <p>
- * REGLA DE NEGOCIO:
- * <p>
- *
- * <lo>
- * <li>El numero de carpeta es auto-incremental sugerido por el sistema, pero
- * puede ser
- * modificado por el usuario, donde se verifica que el numero indicado no exista
- * ya registrado.
- * </li> </lo>
- *
+ * Business rule: the folder number is auto-incremented by the system but may be
+ * overridden by the user, who must ensure the chosen number is not already
+ * registered.
  *
  * @author User
  */
@@ -100,9 +93,9 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
     private Boolean pendingDebtAtArchiving;
 
     /**
-     * Constructor por default para gestion de escritura. Asigna al ID y al numero
-     * de gestion el
-     * valor de {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
+     * Default constructor for deed management. Assigns ID and number to
+     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO} and initializes empty
+     * procedure and history lists.
      */
     public DeedManagement() {
         this.idManagement = BusinessConstants.ID_OBJETO_NO_VALIDO;
@@ -113,6 +106,8 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
 
     public DeedManagement(Integer idManagement) {
         this.idManagement = idManagement;
+        this.procedureList = new ArrayList<>();
+        this.historyList = new ArrayList<>();
     }
 
     public DeedManagement(Integer idManagement, int number, Date dateStart, String encabezado) {
@@ -120,6 +115,8 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         this.number = number;
         this.dateStart = dateStart;
         this.encabezado = encabezado;
+        this.procedureList = new ArrayList<>();
+        this.historyList = new ArrayList<>();
     }
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
@@ -263,10 +260,12 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
             dtoProcedure.setProperty(new DtoProperty());
         }
 
-        // Estado de la gestion
-        ManagementStatus fkStatusManagement = new ManagementStatus();
-        fkStatusManagement.setAtributo(dtoManagement.getStatus());
-        this.setFkIdManagementStatus(fkStatusManagement);
+        // Management status — skip when absent (leave prior status unchanged)
+        if (dtoManagement.getStatus() != null) {
+            ManagementStatus fkStatusManagement = new ManagementStatus();
+            fkStatusManagement.setAtributo(dtoManagement.getStatus());
+            this.setFkIdManagementStatus(fkStatusManagement);
+        }
 
     }
 
@@ -280,15 +279,13 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         dtoManagement.setEncabezado(this.getEncabezado());
         dtoManagement.setDateStart(this.getDateStart());
         dtoManagement.setNotes(this.getNotes());
-        dtoManagement.setStatus(this.fkIdManagementStatus.getDto());
 
-        // Evito que se produzca un bucle, por esta razon esta el
-        // metodo getDtoEscribano y no getDto.
+        // Use getDtoNotary (not Person.getDto) to avoid a circular mapping loop
         dtoManagement.setPersonNotary(this.getDtoNotary());
 
-        // Tramites asociados a la gestion
+        // Procedures associated with this management
         ArrayList<DtoProcedure> listaDtoProcedures = new ArrayList<>();
-        if (!procedureList.isEmpty()) {
+        if (procedureList != null && !procedureList.isEmpty()) {
             for (int i = 0; i < procedureList.size(); i++) {
                 listaDtoProcedures.add(this.getDtoProcedure(procedureList.get(i)));
             }
@@ -296,20 +293,15 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         }
 
         /*
-         * Personas asociadas a la gestion
-         * Cargo los clientes asociados a la gestion, no descrimino por tRamite,
-         * esto signifca que se eliminan las personas duplicadas,
-         * debido a que una gestion tien mas de un tarmite, y un tarmite mas de una
-         * persona
-         * involucrada,
-         * esto produce que se repitan las personas involucradas en la gesion
-         * Atencion: para mejorar se puede filtrar que persona pertenece a que tramite,
-         * lo soporta
+         * People associated with this management. Clients are collected without
+         * discriminating by procedure, so duplicates across procedures are removed.
+         * A management can have multiple procedures, and a procedure multiple people,
+         * which would otherwise repeat people on the management DTO.
          */
         ArrayList<DtoPerson> listaDtoPersons = new ArrayList<>();
         ArrayList<Integer> listaIdPerson = new ArrayList<>();
 
-        if (!(this.procedureList.isEmpty())) {
+        if (this.procedureList != null && !(this.procedureList.isEmpty())) {
             for (int j = 0; j < procedureList.size(); j++) {
                 for (int i = 0; i < procedureList.get(j).getPersonList().size(); i++) {
 
@@ -325,24 +317,30 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
             dtoManagement.setListaClientesInvolucrados(listaDtoPersons);
         }
 
-        // Estado de la gestion
-        DtoManagementStatus statusDto = new DtoManagementStatus();
-        statusDto.setIdManagementStatus(this.getFkIdManagementStatus().getIdManagementStatus());
-        statusDto.setName(fkIdManagementStatus.getName());
-        statusDto.setNotes(fkIdManagementStatus.getNotes());
-        statusDto.setVersion(fkIdManagementStatus.getVersion());
-
-        dtoManagement.setStatus(statusDto);
+        // Management status — null when unset
+        if (this.fkIdManagementStatus != null) {
+            DtoManagementStatus statusDto = new DtoManagementStatus();
+            statusDto.setIdManagementStatus(this.getFkIdManagementStatus().getIdManagementStatus());
+            statusDto.setName(fkIdManagementStatus.getName());
+            statusDto.setNotes(fkIdManagementStatus.getNotes());
+            statusDto.setVersion(fkIdManagementStatus.getVersion());
+            dtoManagement.setStatus(statusDto);
+        } else {
+            dtoManagement.setStatus(null);
+        }
 
         return dtoManagement;
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoPerson getDtoNotary() {
+        if (fkIdNotaryPerson == null) {
+            return null;
+        }
 
         DtoPerson dtoPerson = new DtoPerson();
 
-        // Version del objeto
+        // Object version
         dtoPerson.setVersion(fkIdNotaryPerson.getVersion());
         dtoPerson.setId(fkIdNotaryPerson.getPersonId());
         dtoPerson.setFirstName(fkIdNotaryPerson.getFirstName());
@@ -361,14 +359,19 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
         dtoPerson.setSex(fkIdNotaryPerson.getSex());
         dtoPerson.setPhone(fkIdNotaryPerson.getPhone());
 
-        DtoIdentificationType dtoIdentificationType = new DtoIdentificationType();
-        dtoIdentificationType
-                .setIdIdentificationType(fkIdNotaryPerson.getFkIdIdentificationType().getIdIdentificationType());
-
-        dtoPerson.setDtoIdentificationType(dtoIdentificationType);
-
-        // Asocio el id_Fk_TipoIdentificacion con el nombre tipo de identificacion
-        dtoIdentificationType.setName(BusinessController.getInstancia().asociarNameIdentificationType(dtoPerson));
+        IdentificationType identificationType = fkIdNotaryPerson.getFkIdIdentificationType();
+        if (identificationType != null) {
+            DtoIdentificationType dtoIdentificationType = new DtoIdentificationType();
+            dtoIdentificationType.setIdIdentificationType(identificationType.getIdIdentificationType());
+            // Prefer hydrated name; fall back to BusinessController lookup when absent
+            if (identificationType.getName() != null && !identificationType.getName().isBlank()) {
+                dtoIdentificationType.setName(identificationType.getName());
+            } else {
+                dtoIdentificationType.setName(
+                        BusinessController.getInstancia().asociarNameIdentificationType(dtoPerson));
+            }
+            dtoPerson.setDtoIdentificationType(dtoIdentificationType);
+        }
 
         return dtoPerson;
     }
