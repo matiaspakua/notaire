@@ -7,7 +7,7 @@ Issue #1192, phase 2 of #1190, Use Case CU76. Assessment on `main` (2026-10-03):
 
 | Finding | Detail |
 |---------|--------|
-| Suite | 57 tracked files under `frontend/tests/e2e` (51 `*.spec.ts`, helpers, `setup/`, `reporters/`); 530 passed, 0 failed, 14 skipped on the last full pipeline run |
+| Suite | 58 tracked files under `frontend/tests/e2e` (52 `*.spec.ts`, helpers, `setup/`, `reporters/`); 530 passed, 0 failed, 14 skipped on the last full pipeline run |
 | Coupling to frontend source | none: the only non-relative imports are `@playwright/test` (56), `node:fs` (2) and `@playwright/test/reporter` (1); no relative import leaves the tree |
 | Path assumptions | working directory is `frontend/`: `testDir ./tests/e2e`, `globalSetup`, reporter path, `tests/e2e/fixtures/admin-auth.json` (storage state) and `tests/e2e/fixtures/e2e-admin-token.txt` |
 | Dependencies | `playwright` (a runtime dependency, imported nowhere) and `@playwright/test` (dev) in the frontend; resolved 1.63.0 |
@@ -28,7 +28,7 @@ the real repository split.
 1. **`git mv frontend/tests/e2e testing/e2e/tests`** and the config to `testing/e2e/`. Moving the tree
    as a unit keeps every relative import valid (`./setup/...`, `../gherkin-helpers`), so no spec is edited.
    Only the config and three string constants change. The move is its own commit, with no content edits.
-   - Rejected: flattening the tree under `testing/e2e/` — rewrites imports in 51 specs for no gain.
+   - Rejected: flattening the tree under `testing/e2e/` — rewrites imports in 52 specs for no gain.
 2. **Own `package.json` and lockfile** with `@playwright/test`, `typescript`, `eslint`, `typescript-eslint`
    and `@types/node`, at the same version ranges as the frontend. Playwright resolves to the same 1.63.0.
    - Rejected: a root-level workspace — the repo has no root JS workspace; adding one changes CI install paths for the frontend too.

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Playwright UI E2E suite moved to `testing/e2e`** (issue #1192, CU76, phase 2 of #1190):
+  the 52 specs, helpers, reporter and config moved from `frontend/tests/e2e` with their own
+  `package.json`, lockfile, `tsconfig.json` and ESLint config; Playwright removed from `frontend/`.
+  Run with `cd testing/e2e && npm test` or `bash testing/scripts/run.sh e2e`. `playwright-e2e.yml`,
+  `preflight.sh`, `run_pipeline.sh` repointed (job and artifact names unchanged); the reliability rules
+  moved to `scripts/test_e2e_reliability.py`.
+
 ### Fixed
 
 - **DeedManagement / Person DTO mapping null-safety** (issue #853, CU76):

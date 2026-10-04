@@ -27,7 +27,7 @@ ESLint configuration MUST live under `testing/e2e`. `frontend/tests/e2e` and
 #### Scenario: No spec was lost
 
 - **WHEN** the spec files under `testing/e2e/tests` are counted
-- **THEN** the count equals the number that existed under `frontend/tests/e2e` before the move (51)
+- **THEN** the count equals the number that existed under `frontend/tests/e2e` before the move (52; 51 before #1208 added `workflow-tracker.spec.ts`)
 
 ### Requirement: The frontend no longer carries Playwright
 

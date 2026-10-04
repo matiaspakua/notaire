@@ -29,7 +29,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |---------------------------------|------|--------|
 | The suite and its tooling live under testing/e2e | `scripts/test_testing_standalone.py` | pending |
 | The old locations are gone | same | pending |
-| No spec was lost | same (51) | pending |
+| No spec was lost | same (52) | pending |
 | Frontend is free of Playwright | same | pending |
 | e2e does not reference paths outside itself | same | pending |
 | The reliability guard runs from the discovered test directory | `python3 -m unittest discover -s scripts/tests` | pending |

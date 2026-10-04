@@ -15,7 +15,7 @@ CONSTITUTION §10.
 | 6 Branch | From updated `main`; move the Issue to in progress | `git checkout main && git pull origin main`; `git checkout -b <type>/<issue>_<desc>`; `gh issue edit <n> --add-label in-progress` |
 | 8–10 Failing tests first (**Gate 2**) | Write tests, run them, watch them fail; commit them before the production code | `mvn test -pl backend-api -Dtest=<NewTest>` (must fail) |
 | 11–12 Implement | Minimum code to pass; update affected tests without weakening them | — |
-| 13–15 Test | Unit + integration + coverage, Bruno API, Playwright for any UI change | `mvn verify -pl backend-api`; `bash testing/scripts/test.sh`; `cd frontend && npx playwright test` |
+| 13–15 Test | Unit + integration + coverage, Bruno API, Playwright for any UI change | `mvn verify -pl backend-api`; `bash testing/scripts/test.sh`; `cd testing/e2e && npx playwright test` |
 | 16 Docs (**Gate 3**) | Update permanent docs; move outdated ones to `docs/000-archive/` | CONSTITUTION §8 |
 | 17 Atomic commits | One logical change per commit, Conventional Commits. Only the commit that completes the Issue carries `Closes #<n>`; the others carry `Refs #<n>` | `.claude/rules/general.md` rule 6.1 |
 | 17.5 Pipeline | Must exit 0 before the PR | `bash scripts/run_pipeline.sh` |

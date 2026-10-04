@@ -57,11 +57,11 @@
 <!-- Mandatory for any UI change. If this change has no UI surface, write
      "n/a - no UI surface" and justify it in one line; do not delete the section. -->
 
-- Specs to add/update under `frontend/tests/e2e/`:
+- Specs to add/update under `testing/e2e/tests/`:
 - Golden path covered:
 - Edge / error paths covered:
 - Viewports: 320px (mobile) / 768px (tablet) / 1024px (desktop)
-- Command: `cd frontend && npx playwright test`
+- Command: `cd testing/e2e && npx playwright test`
 
 ## Deployment Strategy
 

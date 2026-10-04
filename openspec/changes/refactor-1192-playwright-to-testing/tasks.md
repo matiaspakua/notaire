@@ -21,7 +21,7 @@
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
 - [ ] 3.1 Enumerate test cases: layout, old locations gone, spec count, frontend free of Playwright, self-containment, reliability rules, tsc and lint, gates and names, no live reference
-- [ ] 3.2 Record the baseline: spec count (51) and the last full run (530 passed, 0 failed, 14 skipped)
+- [ ] 3.2 Record the baseline: spec count (52; 51 before #1208 added `workflow-tracker.spec.ts`) and the last full run (530 passed, 0 failed, 14 skipped)
 - [ ] 3.3 Add the layout, frontend-free, self-containment and legacy-reference checks to `scripts/test_testing_standalone.py`; observe them fail
 - [ ] 3.4 Port the reliability assertions to `scripts/test_e2e_reliability.py` with a wrapper in `scripts/tests/`; observe it fail
 - [ ] 3.5 Confirm every `#### Scenario:` maps to a test or a verification command
