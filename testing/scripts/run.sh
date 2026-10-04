@@ -5,14 +5,15 @@
 #   bash testing/scripts/run.sh --list
 #   bash testing/scripts/run.sh integration   # cURL suite + stack smoke against a RUNNING stack
 #   bash testing/scripts/run.sh database      # empty PostgreSQL -> Flyway -> SQL checks (Docker only)
+#   bash testing/scripts/run.sh e2e [args]    # Playwright UI suite against a RUNNING stack (extra args go to playwright)
 #
-# Variables (see testing/.env.example): BASE_URL, MIGRATIONS_DIR, POSTGRES_EXPORTER_*.
+# Variables (see testing/.env.example): BASE_URL, E2E_BASE_URL, MIGRATIONS_DIR, POSTGRES_EXPORTER_*.
 # Env file lookup: $TESTING_ENV_FILE, then testing/.env.
 
 set -euo pipefail
 
 TESTING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SUITES=(integration database)
+SUITES=(integration database e2e)
 
 usage() {
     echo "Usage: bash testing/scripts/run.sh <suite>|--list"
@@ -45,6 +46,18 @@ run_database() {
     bash "$TESTING_DIR/database/run.sh"
 }
 
+run_e2e() {
+    local ui_url="${E2E_BASE_URL:-http://localhost:3000}"
+    if ! curl -sf -o /dev/null "$ui_url" > /dev/null 2>&1; then
+        echo "The UI is not reachable at $ui_url. Start the application first, or set E2E_BASE_URL." >&2
+        exit 1
+    fi
+    if [ ! -d "$TESTING_DIR/e2e/node_modules" ]; then
+        (cd "$TESTING_DIR/e2e" && npm ci)
+    fi
+    (cd "$TESTING_DIR/e2e" && BASE_URL="$ui_url" npx playwright test "$@")
+}
+
 case "${1:-}" in
     --list)
         printf '%s\n' "${SUITES[@]}"
@@ -56,6 +69,11 @@ case "${1:-}" in
     database)
         load_env
         run_database
+        ;;
+    e2e)
+        load_env
+        shift
+        run_e2e "$@"
         ;;
     -h|--help|"")
         usage

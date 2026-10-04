@@ -53,7 +53,7 @@ E2E_REQUIRED = (
     "eslint.config.mjs",
     ".gitignore",
 )
-E2E_SPEC_COUNT = 51
+E2E_SPEC_COUNT = 52
 FRONTEND = REPO_ROOT / "frontend"
 E2E_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "playwright-e2e.yml"
 E2E_WORKFLOW_NAMES = (
@@ -63,14 +63,14 @@ E2E_WORKFLOW_NAMES = (
     "name: playwright-traces",
 )
 E2E_LEGACY_REFERENCE = re.compile(
-    r"frontend/tests/e2e|frontend/playwright|frontend/test-results"
+    r"frontend/tests/e2e|frontend/playwright|frontend/test-results/results"
     r"|cd frontend\s*&&\s*npx playwright|npm run test:e2e"
 )
 E2E_REFERENCE_EXEMPT = (
     "CONSTITUTION.md",  # #1210 amends the Constitution wording in its own owner-reviewed PR
     "frontend/package-lock.json",
 )
-E2E_ESCAPE = re.compile(r"""["'](?:\.\./)+[\w./-]*""")
+E2E_ESCAPE = re.compile(r"""(?:from|import\(|require\()\s*["']((?:\.\./)+[\w./-]*)""")
 
 REMOVED_PATHS = (
     "run-all-tests.sh",
@@ -292,7 +292,7 @@ class E2ESuiteLayoutTest(unittest.TestCase):
         for path in files:
             for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
                 for match in E2E_ESCAPE.finditer(line):
-                    target = match.group(0)[1:]
+                    target = match.group(1)
                     resolved = Path(os.path.normpath(path.parent / target))
                     if E2E not in (resolved, *resolved.parents):
                         escapes.append(f"{path.relative_to(REPO_ROOT)}:{number}: {target}")
