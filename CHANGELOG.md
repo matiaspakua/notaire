@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Documentation audit** (issue #921, CU76 / CU77): `docs/300-development/DOCUMENTATION-AUDIT-2026-10.md`
+  (inventory, ownership map, measured findings, prioritized roadmap); `scripts/test_docs_links.py` fails on broken
+  relative links; design-system links fixed. Follow-ups: #1222 (dictionary), #1226 (license).
+
 - **CU84 on the Use Case template, requirements CSV fixed** (issue #956, CU84): CU84 now has Referencias Cruzadas
   and GitHub ID rows; the two malformed "Login al sistema" rows in `requerimientos.csv` became one row with
   requirement issue #1224; `scripts/test_business_docs_traceability.py` guards the shape.

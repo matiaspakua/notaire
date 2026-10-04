@@ -9,7 +9,7 @@ ciclo de vida: negocio, arquitectura y desarrollo.
 |---------|-----------|
 | [`100-business/`](100-business/) | Requerimientos, casos de uso, actores y trazabilidad de negocio |
 | [`200-architecture/`](200-architecture/) | SAD (arc42), ADRs, diseño, diagramas, modelo de datos, seguridad, monitoreo, DevSecOps y deployment |
-| [`300-development/`](300-development/) | Guías de setup, estándares de código, testing y [AI SDLC Cloud fleet](300-development/304-ai-sdlc-cloud/) |
+| [`300-development/`](300-development/) | Guías de setup, estándares de código, testing y [AI SDLC Cloud fleet](300-development/304-ai-sdlc-cloud/); auditoría vigente: [DOCUMENTATION-AUDIT-2026-10.md](300-development/DOCUMENTATION-AUDIT-2026-10.md) |
 | [`github/`](github/) | Organización de GitHub (tablero, milestones, labels) y auditoría de preparación para producción 2026-09 |
 | [`000-archive/`](000-archive/) | Documentos y artefactos legacy superados, conservados por trazabilidad histórica |
 
