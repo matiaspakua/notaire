@@ -131,13 +131,23 @@ The `Rol` entity is stored in the `roles` table. `UsuarioController` exposes the
 
 ### Current state
 
-`apiSecurityFilterChain` requires `authenticated()` on every `/api/**` request except `POST /api/v1/usuarios/login`, `POST /api/v1/usuarios/logout`, and CORS preflight (`OPTIONS`). Any request without a valid cookie or Bearer token gets `401` before reaching a controller. This is coarse-grained (authenticated vs. not) — there is no per-role authorization yet. CSRF stays disabled; browser traffic is same-origin via the Next proxy with SameSite=Lax cookies.
+`apiSecurityFilterChain` allows `POST /api/v1/usuarios/login`, `POST /api/v1/usuarios/logout` and CORS preflight (`OPTIONS`) without credentials and requires an authenticated user for everything else. A request without a valid cookie or Bearer token gets `401` before reaching a controller. CSRF stays disabled; browser traffic is same-origin via the Next proxy with SameSite=Lax cookies.
+
+Authorization (#559): `JwtAuthenticationFilter` asks `UserAuthorityResolver` for the authority of the token's user on every request. Active users of type Administrador, Admin or Escribano (case-insensitive) get `ROLE_ADMIN`; other active users get `ROLE_USER`; a deleted or inactive user is not authenticated and gets `401`.
+
+| Scope | Methods | Required |
+|-------|---------|----------|
+| `/api/v1/usuarios/**` (except login, logout), `/api/v1/roles/**`, `/api/v1/audit-log/**` | all | `ROLE_ADMIN` |
+| workflow definitions, nodes and transitions; `tipo-tramite`, `tipo-de-documento`, `tipo-folio`, `tipo-identificacion`, `conceptos`, `estado-gestion`, `plantilla-tramite`, `plantilla-presupuestos`, `plantilla-costos-documento` | POST, PUT, PATCH, DELETE | `ROLE_ADMIN` |
+| the same catalogs | GET | any authenticated user |
+| everything else | all | any authenticated user |
+
+A non-administrator receives `403` from `apiAccessDeniedHandler`. The frontend mirrors the rule for the administration and audit screens (`frontend/src/lib/admin-access.ts`); the server is the authority.
 
 ### Extending RBAC
 
-1. Add permissions/modules to the `Rol` entity.
-2. Replace `.anyRequest().authenticated()` with per-route `.hasRole("ADMIN")` etc. in `SecurityAndCorsConfig`.
-3. Pass the role claim in the JWT payload.
+1. Add a path to `ADMIN_ONLY_PATHS` or `ADMIN_WRITE_PATHS` in `SecurityAndCorsConfig` and a case to `RbacIntegrationTest` and the Bruno `rbac/` folder.
+2. For per-permission rules, use the `roles_permisos` data through `UserAuthorityResolver` (not yet implemented).
 
 ## Authentication error handling
 
@@ -148,6 +158,8 @@ The `Rol` entity is stored in the `roles` table. `UsuarioController` exposes the
 | Inactive user | 200 | `{ "valido": false }` |
 | DB error | 200 | `{ "valido": false }` |
 | Missing/invalid/expired JWT on a protected endpoint | 401 | `Unauthorized` (via `apiAuthenticationEntryPoint`) |
+| Valid JWT of a deleted or inactive user | 401 | `Unauthorized` |
+| Authenticated non-administrator on an administrator-only endpoint | 403 | `Forbidden` (via `apiAccessDeniedHandler`) |
 
 The login endpoint always returns HTTP 200 to avoid information leakage. The `valido` field in the response distinguishes success from failure.
 

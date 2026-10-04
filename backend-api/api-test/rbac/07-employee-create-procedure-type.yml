@@ -1,0 +1,24 @@
+info:
+  name: Employee cannot create a tipo de tramite
+  type: http
+  seq: 7
+  description: |-
+      ## Employee changing a catalog is forbidden — POST /api/v1/tipo-tramite
+      Traceability: CU78 (issue #559)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tipo-tramite"
+  body:
+    type: json
+    data: |-
+        {"name":"rbac-forbidden","notes":"rbac","isArchived":false,"isRegistered":false}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{employee_token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 403 Forbidden", function () { expect(res.getStatus()).to.equal(403); });

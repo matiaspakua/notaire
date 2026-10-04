@@ -1,0 +1,20 @@
+info:
+  name: Delete employee
+  type: http
+  seq: 9
+  description: |-
+      ## Cleanup as administrator — DELETE /api/v1/usuarios/{id}
+      Traceability: CU78 (issue #559)
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/usuarios/{{rbac_employee_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 204 No Content", function () { expect(res.getStatus()).to.equal(204); });

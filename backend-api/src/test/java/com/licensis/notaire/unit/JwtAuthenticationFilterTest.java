@@ -3,6 +3,7 @@ package com.licensis.notaire.unit;
 import com.licensis.notaire.config.AuthCookieService;
 import com.licensis.notaire.config.JwtAuthenticationFilter;
 import com.licensis.notaire.config.JwtTokenService;
+import com.licensis.notaire.security.UserAuthorityResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.AfterEach;
@@ -14,9 +15,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,6 +38,8 @@ class JwtAuthenticationFilterTest {
     @Mock
     private AuthCookieService authCookieService;
     @Mock
+    private UserAuthorityResolver userAuthorityResolver;
+    @Mock
     private FilterChain filterChain;
 
     private JwtAuthenticationFilter filter;
@@ -39,7 +47,9 @@ class JwtAuthenticationFilterTest {
     @BeforeEach
     void setUp() {
         lenient().when(authCookieService.cookieName()).thenReturn(COOKIE_NAME);
-        filter = new JwtAuthenticationFilter(jwtTokenService, authCookieService);
+        lenient().when(userAuthorityResolver.resolve(anyString()))
+                .thenReturn(Optional.of(List.of(new SimpleGrantedAuthority("ROLE_USER"))));
+        filter = new JwtAuthenticationFilter(jwtTokenService, authCookieService, userAuthorityResolver);
         SecurityContextHolder.clearContext();
     }
 
@@ -96,5 +106,22 @@ class JwtAuthenticationFilterTest {
         filter.doFilter(request, response, filterChain);
 
         assertThat(SecurityContextHolder.getContext().getAuthentication().getName()).isEqualTo("bearer-user");
+    }
+
+    @Test
+    @DisplayName("should not authenticate when the user cannot be resolved (issue #559)")
+    void shouldNotAuthenticateWhenTheUserCannotBeResolved() throws Exception {
+        when(jwtTokenService.isValid("orphan-jwt")).thenReturn(true);
+        when(jwtTokenService.extractUsername("orphan-jwt")).thenReturn("ghost");
+        when(userAuthorityResolver.resolve("ghost")).thenReturn(Optional.empty());
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer orphan-jwt");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        filter.doFilter(request, response, filterChain);
+
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+        verify(filterChain).doFilter(request, response);
     }
 }
