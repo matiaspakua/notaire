@@ -15,6 +15,7 @@ trabajo obligatorio.
 | [`302-code-standards/`](302-code-standards/) | Estándares de código: DTO mapping, manejo de errores, JPA lazy loading, transacciones Spring |
 | [`303-testing/`](303-testing/) | Suites de test, matriz CU↔API y guías de QA |
 | [`templates/`](templates/) | Plantillas para especificaciones OpenSpec |
+| [`ASSESSMENT-2026-10.md`](ASSESSMENT-2026-10.md) | Evaluación integral del sistema (octubre 2026): resultados de tests, hallazgos por dimensión e issues asociados |
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`scripts/preflight.sh`) a jobs de CI |
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
 
