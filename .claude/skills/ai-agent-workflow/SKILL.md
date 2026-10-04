@@ -173,8 +173,8 @@ src/test/java/com/licensis/notaire/
 │   └── api/UserControllerIntegrationTest.java
 └── TestBase.java
 
-frontend/tests/
-└── e2e/
+testing/e2e/
+└── tests/
     └── usuarios.spec.ts
 ```
 
@@ -247,7 +247,7 @@ mvn jacoco:check -pl backend-api
 mvn verify -pl backend-api
 
 # E2E (frontend must be running)
-cd frontend && npx playwright test
+cd testing/e2e && npx playwright test
 ```
 
 ### Quality Gates
@@ -366,7 +366,7 @@ mvn checkstyle:check -pl backend-api
 
 # 5. Run all tests
 mvn verify -pl backend-api
-cd frontend && npx playwright test
+cd testing/e2e && npx playwright test
 
 # 6. Commit
 git commit -m "feat(scope): description

@@ -7,7 +7,7 @@
 | Layer | Tool | Config file |
 |-------|------|-------------|
 | Unit tests | Vitest + React Testing Library | `frontend/vitest.config.ts` |
-| E2E tests | Playwright | `frontend/playwright.config.ts` |
+| E2E tests | Playwright | `testing/e2e/playwright.config.ts` |
 | Test setup | `@testing-library/jest-dom` | `frontend/src/tests/setup.ts` |
 
 ## Running Tests
@@ -18,10 +18,14 @@ cd frontend
 # Unit tests (Vitest)
 npm run test             # watch mode
 npm run test:run         # single run (CI)
+```
 
-# E2E tests (requires backend on :8080 + frontend on :3000)
-npm run test:e2e         # run all E2E
-npm run test:e2e -- --headed   # with browser visible
+E2E tests are not part of `frontend/`; they live in `testing/e2e` (requires backend on :8080 + frontend on :3000):
+
+```bash
+cd testing/e2e
+npm test                 # run all E2E
+npm run test:headed      # with browser visible
 ```
 
 ## Unit Test Structure
@@ -104,7 +108,7 @@ describe("MyComponent", () => {
 
 ## E2E Test Structure
 
-All Playwright E2E tests live under `frontend/tests/e2e/` (34 spec files as of 2026-08-19,
+All Playwright E2E tests live under `testing/e2e/tests/` (34 spec files as of 2026-08-19,
 plus `gherkin-helpers.ts` shared step helpers, `reporters/`, and `setup/`). Most files map
 to one or more Use Cases and are named accordingly (`cu01-presupuesto.spec.ts`,
 `cu17-18-personas-clientes.spec.ts`, `cu70-workflow-editor.spec.ts`, etc.); a handful cover
@@ -214,8 +218,8 @@ To run E2E locally:
 docker-compose up -d
 
 # Terminal 2: Run E2E
-cd frontend
-npm run test:e2e
+cd testing/e2e
+npm test
 ```
 
 ## Test Data Strategy

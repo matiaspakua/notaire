@@ -72,14 +72,14 @@ and [`FRONTEND-TESTING-GUIDE.md`](../FRONTEND-TESTING-GUIDE.md). Guard test:
 ### Running Tests
 
 ```bash
-cd frontend
-npm run test:e2e
-npm run test:e2e:headed   # watch mode
+cd testing/e2e
+npm test
+npm run test:headed   # watch mode
 ```
 
 ### Coverage
 
-- 33 spec files under `frontend/tests/e2e/`, mostly one per Caso de Uso (`cuNN-*.spec.ts`)
+- 33 spec files under `testing/e2e/tests/`, mostly one per Caso de Uso (`cuNN-*.spec.ts`)
 - Full stack must be running (`bash scripts/start.sh`)
 
 ## API Testing (Bruno)

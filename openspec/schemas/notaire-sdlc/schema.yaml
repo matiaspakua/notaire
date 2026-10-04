@@ -278,7 +278,7 @@ artifacts:
         Never weaken an assertion to force green - if an existing test now fails
         legitimately, state why the old expectation was wrong.
       - **Playwright Strategy**: Mandatory for any UI change - the E2E specs under
-        `frontend/tests/e2e/`, the golden path, the edge/error paths, and the
+        `testing/e2e/tests/`, the golden path, the edge/error paths, and the
         320/768/1024px viewports. If the change has no UI surface, write
         "n/a - no UI surface" with a one-line justification; do not delete the section.
       - **Deployment Strategy**: Flyway migration version if the schema changes,

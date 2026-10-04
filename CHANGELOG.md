@@ -7,8 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Constitution wording for the Playwright suite** (issue #1210, CU76): §4, §5 step 15, §7 and §13
+  name `testing/e2e`; no process step changed. The stale-path guard now covers `CONSTITUTION.md`.
+- **Playwright UI E2E suite moved to `testing/e2e`** (issue #1192, CU76, phase 2 of #1190):
+  the 52 specs, helpers, reporter and config moved from `frontend/tests/e2e` with their own
+  `package.json`, lockfile, `tsconfig.json` and ESLint config; Playwright removed from `frontend/`.
+  Run with `cd testing/e2e && npm test` or `bash testing/scripts/run.sh e2e`. `playwright-e2e.yml`,
+  `preflight.sh`, `run_pipeline.sh` repointed (job and artifact names unchanged); the reliability rules
+  moved to `scripts/test_e2e_reliability.py`.
+
 ### Fixed
 
+- **check-sdlc-exception.sh false failure** (issue #1228, CU76): the diff is captured before matching, so `grep -q`
+  closing the pipe can no longer SIGPIPE `git diff` and report a PR with an OpenSpec change as having none.
 - **DeedManagement / Person DTO mapping null-safety** (issue #853, CU76):
   `DeedManagement.getDto()`, `getDtoNotary()`, and `setAtributos()` tolerate null
   management status, notary, and identification type without NPE (return/omit
