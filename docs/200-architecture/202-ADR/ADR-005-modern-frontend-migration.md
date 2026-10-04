@@ -51,6 +51,8 @@ pero seguía siendo una aplicación Java Swing de escritorio.
 
 **Migrar el frontend a Next.js 15 con TypeScript** como tecnología base, complementado por:
 
+> Actualización 2026-10: el frontend corre hoy sobre Next.js 16 / React 19; la decisión (Next.js + TypeScript) no cambia.
+
 - **Tailwind CSS** para estilos utilitarios
 - **shadcn/ui** para componentes accesibles y customizables
 - **React Query (TanStack Query)** para manejo de estado servidor y cache de API
@@ -64,7 +66,7 @@ pero seguía siendo una aplicación Java Swing de escritorio.
 > implementada vive en `frontend/` (no `frontend-nextjs/`) bajo un directorio `src/`, con
 > algunas carpetas renombradas — ver estructura actual más abajo.
 
-```
+```text
 frontend-nextjs/
 ├── app/                    # Next.js App Router
 │   ├── (auth)/             # Páginas públicas (login)
@@ -97,7 +99,7 @@ frontend-nextjs/
 
 **Estructura actual (`frontend/`):**
 
-```
+```text
 frontend/
 ├── src/
 │   ├── app/                # Next.js App Router (dashboard/, login/, auditoria/)
@@ -118,7 +120,7 @@ El backend REST existente (`/api/v1`) se expone directamente al nuevo frontend.
 Para casos donde se necesite composición de múltiples APIs o transformaciones específicas,
 se usarán Next.js Route Handlers como BFF (Backend For Frontend) liviano.
 
-```
+```text
 Browser → Next.js (SSR/CSR) → Spring Boot REST API → PostgreSQL
                     ↓
              Route Handlers (BFF)
@@ -161,29 +163,36 @@ Browser → Next.js (SSR/CSR) → Spring Boot REST API → PostgreSQL
 > los checkboxes por sprint a continuación, que no se han mantenido actualizados.
 
 ### Sprint 1: Setup Base
+
 - [ ] Crear módulo `frontend-nextjs` en el mono-repo Maven
 - [ ] Setup Next.js 15 + TypeScript + Tailwind + shadcn/ui
 - [ ] Implementar autenticación JWT con Spring Security
 - [ ] Crear layout base: sidebar con todos los módulos
 
 ### Sprint 2-3: Core Workflow
+
 - [ ] Migrar CU01-CU16: Gestiones (workflow principal del negocio)
 - [ ] Tests Playwright para el flujo completo gestión → escritura → pago
 
 ### Sprint 4-5: Clientes & Personas
+
 - [ ] Migrar CU17-CU19, CU41, CU46, CU54, CU61
 
 ### Sprint 6-7: Administración
+
 - [ ] Migrar CU20-CU23, CU26-CU38, CU48, CU51
 
 ### Sprint 8: Presupuestos & Escrituras
+
 - [ ] Migrar CU39, CU45, CU49, CU52, CU55, CU60, CU62
 
 ### Sprint 9: Reportes & Protocolos
+
 - [ ] Migrar CU24, CU25, CU50 (PDF via JasperReports API)
 - [ ] Migrar CU28, CU33, CU36, CU40, CU63-CU68
 
 ### Sprint 10: E2E & Deprecation
+
 - [x] Playwright E2E para todos los flujos (`testing/e2e/tests/`, 33+ `cuNN-*.spec.ts`)
 - [x] Deprecar y eliminar `frontend-swing` / `deprecated-frontend-swing` del árbol
       (excluido del reactor; borrado completo en #1046 — historial en git)
