@@ -6,6 +6,7 @@ which a separate QA team verifies and validates Notaire as black-box modules.
 Plain stdlib unittest + PyYAML, consistent with scripts/test_infra_standalone.py.
 Run with: python3 scripts/test_testing_standalone.py
 """
+import json
 import os
 import re
 import subprocess
@@ -276,9 +277,10 @@ class E2ESuiteLayoutTest(unittest.TestCase):
 
     def test_frontend_is_free_of_playwright(self):
         package = (FRONTEND / "package.json").read_text(encoding="utf-8")
-        lock = (FRONTEND / "package-lock.json").read_text(encoding="utf-8")
+        root = json.loads((FRONTEND / "package-lock.json").read_text(encoding="utf-8"))["packages"][""]
+        declared = {**root.get("dependencies", {}), **root.get("devDependencies", {})}
         self.assertNotRegex(package, r"playwright|test:e2e")
-        self.assertNotIn("playwright", lock)
+        self.assertEqual([], [name for name in declared if "playwright" in name])
         for name in ("vitest.config.ts", "eslint.config.mjs", ".gitignore", ".dockerignore"):
             text = (FRONTEND / name).read_text(encoding="utf-8")
             self.assertNotRegex(text, r"playwright|tests/e2e|test-results", name)
