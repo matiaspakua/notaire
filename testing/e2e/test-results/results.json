@@ -4,7 +4,7 @@
       "/opt/node22/bin/node",
       "/home/user/notaire/testing/e2e/node_modules/.bin/playwright",
       "test",
-      "tests/TS-0032-testimonio-inscripcion-feature.spec.ts",
+      "tests/TS-0097-proximos-vencimientos-feature.spec.ts",
       "--workers=1"
     ],
     "configFile": "/home/user/notaire/testing/e2e/playwright.config.ts",
@@ -130,20 +130,20 @@
   },
   "suites": [
     {
-      "title": "TS-0032-testimonio-inscripcion-feature.spec.ts",
-      "file": "TS-0032-testimonio-inscripcion-feature.spec.ts",
+      "title": "TS-0097-proximos-vencimientos-feature.spec.ts",
+      "file": "TS-0097-proximos-vencimientos-feature.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "CU11/CU12/CU44 - Movimientos de testimonio",
-          "file": "TS-0032-testimonio-inscripcion-feature.spec.ts",
-          "line": 35,
+          "title": "CU42 - Próximos vencimientos",
+          "file": "TS-0097-proximos-vencimientos-feature.spec.ts",
+          "line": 12,
           "column": 6,
           "specs": [
             {
-              "title": "Golden path: ingresar, registrar inscripción y retirar",
+              "title": "lists a document due in 10 days and hides it when the window is 7 days",
               "ok": true,
               "tags": [],
               "tests": [
@@ -158,12 +158,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5254,
+                      "duration": 2876,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-04T14:30:49.349Z",
+                      "startTime": "2026-10-04T15:18:32.643Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -171,146 +171,10 @@
                   "status": "expected"
                 }
               ],
-              "id": "23d2a82e0cd2c2b9d2f8-0b0a1673e470cad36a0b",
-              "file": "TS-0032-testimonio-inscripcion-feature.spec.ts",
-              "line": 43,
+              "id": "afb222be59f68d94d688-d8846b9c6e58c4d88dcd",
+              "file": "TS-0097-proximos-vencimientos-feature.spec.ts",
+              "line": 17,
               "column": 7
-            },
-            {
-              "title": "Edge: reingresar solo está disponible después de un retiro previo",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 5552,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-10-04T14:30:54.727Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "23d2a82e0cd2c2b9d2f8-2287a50272e75672c0e2",
-              "file": "TS-0032-testimonio-inscripcion-feature.spec.ts",
-              "line": 66,
-              "column": 7
-            },
-            {
-              "title": "movimientos-testimonio screen has no horizontal overflow at 320px (mobile)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2058,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-10-04T14:31:00.299Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "23d2a82e0cd2c2b9d2f8-2b685af08dace7520c91",
-              "file": "TS-0032-testimonio-inscripcion-feature.spec.ts",
-              "line": 104,
-              "column": 9
-            },
-            {
-              "title": "movimientos-testimonio screen has no horizontal overflow at 768px (tablet)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2336,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-10-04T14:31:02.372Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "23d2a82e0cd2c2b9d2f8-40a351ac0b6ee3923e0a",
-              "file": "TS-0032-testimonio-inscripcion-feature.spec.ts",
-              "line": 104,
-              "column": 9
-            },
-            {
-              "title": "movimientos-testimonio screen has no horizontal overflow at 1024px (desktop)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2083,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-10-04T14:31:04.727Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "23d2a82e0cd2c2b9d2f8-96ea63039d0e2c19a19c",
-              "file": "TS-0032-testimonio-inscripcion-feature.spec.ts",
-              "line": 104,
-              "column": 9
             }
           ]
         }
@@ -319,9 +183,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-04T14:30:46.470Z",
-    "duration": 22222.097999999998,
-    "expected": 5,
+    "startTime": "2026-10-04T15:18:28.864Z",
+    "duration": 8785.982,
+    "expected": 1,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

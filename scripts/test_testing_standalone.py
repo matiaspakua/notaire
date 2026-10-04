@@ -53,7 +53,7 @@ E2E_REQUIRED = (
     "eslint.config.mjs",
     ".gitignore",
 )
-E2E_SPEC_COUNT = 52
+E2E_SPEC_COUNT = 52  # floor: specs moved from frontend/ in #1192; new specs only raise the count
 FRONTEND = REPO_ROOT / "frontend"
 E2E_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "playwright-e2e.yml"
 E2E_WORKFLOW_NAMES = (
@@ -270,7 +270,7 @@ class E2ESuiteLayoutTest(unittest.TestCase):
 
     def test_no_spec_was_lost(self):
         specs = sorted((E2E / "tests").rglob("*.spec.ts"))
-        self.assertEqual(E2E_SPEC_COUNT, len(specs))
+        self.assertGreaterEqual(len(specs), E2E_SPEC_COUNT)
 
     def test_frontend_is_free_of_playwright(self):
         package = (FRONTEND / "package.json").read_text(encoding="utf-8")
