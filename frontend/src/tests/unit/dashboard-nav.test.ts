@@ -28,6 +28,13 @@ describe("DASHBOARD_NAV_ITEMS (#1058)", () => {
     expect(item?.adminOnly).toBeFalsy();
   });
 
+  it("exposes Próximos vencimientos (CU42) at its route with i18n labels", () => {
+    const item = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "proximosVencimientos");
+    expect(item?.href).toBe("/dashboard/proximos-vencimientos");
+    expect(esMessages.navigation.proximosVencimientos).toBeTruthy();
+    expect(enMessages.navigation.proximosVencimientos).toBeTruthy();
+  });
+
   it("keeps Administración admin-gated", () => {
     const admin = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "administracion");
     expect(admin?.adminOnly).toBe(true);

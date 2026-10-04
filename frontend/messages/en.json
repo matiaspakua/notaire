@@ -23,7 +23,8 @@
     "brand": "Notaire",
     "brandSubtitle": "Notary Office",
     "documentosNecesarios": "Required Documents",
-    "reingresoDocumentacion": "Re-submit Documentation"
+    "reingresoDocumentacion": "Re-submit Documentation",
+    "proximosVencimientos": "Upcoming Expirations"
   },
   "common": {
     "create": "Create",
@@ -1057,6 +1058,26 @@
     "deudaDocumentos": {
       "title": "Document Debt",
       "description": "Pending documents to deliver per case"
+    }
+  },
+  "proximosVencimientos": {
+    "title": "Upcoming Expirations",
+    "description": "Submitted documents about to expire",
+    "noData": "No documents expire within the chosen window",
+    "si": "Yes",
+    "no": "No",
+    "ventanaDias": "{dias} days",
+    "fields": {
+      "ventana": "Window",
+      "documento": "Document",
+      "gestion": "Management",
+      "fechaIngreso": "Entry date",
+      "fechaVencimiento": "Due date",
+      "diasRestantes": "Days remaining",
+      "preparado": "Prepared",
+      "observado": "Observed",
+      "montoDeuda": "Amount owed",
+      "observaciones": "Notes"
     }
   }
 }

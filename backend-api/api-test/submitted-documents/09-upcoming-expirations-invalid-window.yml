@@ -1,0 +1,19 @@
+info:
+  name: Reject an invalid expiration window
+  type: http
+  seq: 9
+  description: |-
+      Traceability: CU42 (#802)
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/documento-presentado/proximos-vencimientos?dias=0"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400", function () { expect(res.getStatus()).to.equal(400); });

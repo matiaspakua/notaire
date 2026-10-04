@@ -42,7 +42,7 @@ CU38,Eliminar tipo de documento,Administracion,Esencial,TipoDeDocumento,Delete,D
 CU39,Crear Plantilla Presupuesto,Administracion,Esencial,PlantillaPresupuesto,Create,BudgetTemplateController,POST,/api/v1/plantilla-presupuestos,budget-templates/01-create.yml,OK,OK,ERROR en concurrencia - sin test POST,#192
 CU40,Modificar Tipo de folio,Administracion,Esencial,TipoDeFolio,Update,FolioTypeController,PUT,/api/v1/tipo-folio/{id},folio-types/04-update.yml,500-ERROR,OK,GET base devuelve 500,#193
 CU41,Modificar Cliente,Clientes,Esencial,Persona,Update,PersonController,PUT,/api/v1/people/{id},people/05-update.yml,OK,OK,Green in the idempotent suite (#1035),#194
-CU42,Informar próximos vencimientos,Gestiones,Necesario,DocumentoPresentado,Read,SubmittedDocumentController,GET,/api/v1/documento-presentado,submitted-documents/,OK,OK,Sin filtro vencimiento específico; Bruno #953,#195
+CU42,Informar próximos vencimientos,Gestiones,Necesario,DocumentoPresentado,Read,UpcomingExpirationController,GET,/api/v1/documento-presentado/proximos-vencimientos,submitted-documents/08-upcoming-expirations.yml,OK,OK,Ventana dias 1-365 (por defecto 30); Bruno #802,#195
 CU43,Reingresar documentación,Gestiones,Esencial,DocumentoPresentado,Create,ManagementController,GET/POST,/api/v1/gestiones/{id}/reingreso-documentacion,managements/,OK,OK,Implementado #865; E2E Playwright golden+edge path; Bruno #953,#196
 CU44,Reingresar testimonio,Gestiones,Esencial,MovimientoTestimonio,Update,TestimonyMovementController,PUT,/api/v1/movimiento-testimonio/{id},testimony-movements/,OK,OK,GET base devuelve 500; Bruno #953,#197
 CU45,Modificar presupuesto,Presupuestos,Esencial,Presupuesto,Update,BudgetController,PUT,/api/v1/presupuestos/{id},budgets/06-update.yml,OK,OK,,#198

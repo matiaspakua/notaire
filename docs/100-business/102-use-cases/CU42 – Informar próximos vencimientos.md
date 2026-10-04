@@ -33,3 +33,7 @@ cada `DocumentoPresentado` creado a partir de ese tipo, calculando
 ningún tipo de documento tenía estos campos cargables desde la pantalla de
 administración, por lo que este informe nunca tenía datos reales sobre los
 que operar.
+
+## Implementación (#802)
+
+`GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` (`UpcomingExpirationController`, `UpcomingExpirationService`) devuelve los documentos presentados que vencen, no están liberados y cuya fecha de vencimiento está entre hoy y hoy más `N` días (ambos inclusive), ordenados por fecha de vencimiento. `N` va de 1 a 365 (por defecto 30); fuera de rango responde 400. Cada fila trae los datos de este caso de uso (nombre del documento, número y encabezado de la gestión, preparado, fecha de ingreso y de salida, número de cartón, observado, monto de deuda, fecha de pago, fecha de liberación, observaciones) más la fecha de vencimiento y los días restantes. Los documentos ya vencidos o liberados no se informan. Pantalla: `/dashboard/proximos-vencimientos`, con selector de ventana y mensaje cuando no hay documentos (excepción 1.1).

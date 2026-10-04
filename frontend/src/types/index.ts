@@ -558,3 +558,22 @@ export interface DocumentoReingresado {
   deliveredBy?: string;
   reentered: boolean;
 }
+
+/** CU42 - GET /documento-presentado/proximos-vencimientos row — DtoUpcomingExpiration. */
+export interface ProximoVencimiento {
+  idSubmittedDocument: number;
+  documentName?: string;
+  managementNumber?: number;
+  managementHeading?: string;
+  prepared: boolean;
+  dateEntry?: string;
+  dateExit?: string;
+  cardNumber?: number;
+  observed: boolean;
+  amountToPay?: number;
+  datePayment?: string;
+  dateReleased?: string;
+  notes?: string;
+  dateDue: string;
+  daysRemaining: number;
+}

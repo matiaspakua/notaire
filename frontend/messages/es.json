@@ -23,7 +23,8 @@
     "brand": "Notaire",
     "brandSubtitle": "Escribanía",
     "documentosNecesarios": "Documentos Necesarios",
-    "reingresoDocumentacion": "Reingresar Documentación"
+    "reingresoDocumentacion": "Reingresar Documentación",
+    "proximosVencimientos": "Próximos Vencimientos"
   },
   "common": {
     "create": "Crear",
@@ -1057,6 +1058,26 @@
     "deudaDocumentos": {
       "title": "Deuda de Documentos",
       "description": "Documentos pendientes de entrega por gestión"
+    }
+  },
+  "proximosVencimientos": {
+    "title": "Próximos Vencimientos",
+    "description": "Documentos presentados próximos a vencer",
+    "noData": "No hay documentos próximos a vencer en la ventana elegida",
+    "si": "Sí",
+    "no": "No",
+    "ventanaDias": "{dias} días",
+    "fields": {
+      "ventana": "Ventana",
+      "documento": "Documento",
+      "gestion": "Gestión",
+      "fechaIngreso": "Fecha de ingreso",
+      "fechaVencimiento": "Fecha de vencimiento",
+      "diasRestantes": "Días restantes",
+      "preparado": "Preparado",
+      "observado": "Observado",
+      "montoDeuda": "Monto de deuda",
+      "observaciones": "Observaciones"
     }
   }
 }
