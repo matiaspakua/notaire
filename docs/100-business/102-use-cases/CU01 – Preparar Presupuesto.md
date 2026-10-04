@@ -33,3 +33,7 @@
 |---|---|---|
 | 4.1 | La persona no existe, se debe dar de alta a la persona. | El sistema gestiona la excepción y notifica al usuario. |
 | 6.1 | No existen tipos de trámite disponibles. | El sistema gestiona la excepción y notifica al usuario. |
+
+## Implementación: crear desde plantilla (#797)
+
+El formulario de alta de presupuesto (`/dashboard/presupuestos`) tiene un selector opcional de *Tipo de trámite*. Al guardar, el sistema crea el presupuesto y carga en él los ítems de la plantilla de ese tipo (`POST /api/v1/presupuestos/{id}/items-desde-plantilla`, CU39); los ítems quedan como filas `Item` del presupuesto y se editan en la pantalla de Ítems (CU71). Si el tipo no tiene plantilla, el presupuesto se crea igual y se avisa que no se cargaron ítems. El campo *Monto* es el valor del inmueble; el total del presupuesto se calcula con sus ítems (resumen CU47).

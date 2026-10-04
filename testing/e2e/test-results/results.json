@@ -4,7 +4,7 @@
       "/opt/node22/bin/node",
       "/home/user/notaire/testing/e2e/node_modules/.bin/playwright",
       "test",
-      "tests/TS-0097-proximos-vencimientos-feature.spec.ts",
+      "tests/TS-0010-presupuesto-workflow.spec.ts",
       "--workers=1"
     ],
     "configFile": "/home/user/notaire/testing/e2e/playwright.config.ts",
@@ -130,20 +130,123 @@
   },
   "suites": [
     {
-      "title": "TS-0097-proximos-vencimientos-feature.spec.ts",
-      "file": "TS-0097-proximos-vencimientos-feature.spec.ts",
+      "title": "TS-0010-presupuesto-workflow.spec.ts",
+      "file": "TS-0010-presupuesto-workflow.spec.ts",
       "column": 0,
       "line": 0,
-      "specs": [],
+      "specs": [
+        {
+          "title": "TS-0010-VP: módulo de presupuestos es usable a 320px (mobile)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1117,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:55:13.503Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "55d869acd02d47eb7ede-ea0d1fb1f329d66b3e9f",
+          "file": "TS-0010-presupuesto-workflow.spec.ts",
+          "line": 249,
+          "column": 7
+        },
+        {
+          "title": "TS-0010-VP: módulo de presupuestos es usable a 768px (tablet)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1411,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:55:14.631Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "55d869acd02d47eb7ede-c79de60251d9744a3bae",
+          "file": "TS-0010-presupuesto-workflow.spec.ts",
+          "line": 249,
+          "column": 7
+        },
+        {
+          "title": "TS-0010-VP: módulo de presupuestos es usable a 1024px (desktop)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1311,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:55:16.058Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "55d869acd02d47eb7ede-8763694c82375a364cc1",
+          "file": "TS-0010-presupuesto-workflow.spec.ts",
+          "line": 249,
+          "column": 7
+        }
+      ],
       "suites": [
         {
-          "title": "CU42 - Próximos vencimientos",
-          "file": "TS-0097-proximos-vencimientos-feature.spec.ts",
-          "line": 12,
+          "title": "CU01 - Preparar Presupuesto (golden path)",
+          "file": "TS-0010-presupuesto-workflow.spec.ts",
+          "line": 41,
           "column": 6,
           "specs": [
             {
-              "title": "lists a document due in 10 days and hides it when the window is 7 days",
+              "title": "TS-0010-GW01: crear persona via API y presupuesto via UI — aparece en la lista con nombre del cliente",
               "ok": true,
               "tags": [],
               "tests": [
@@ -158,12 +261,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2876,
+                      "duration": 2864,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-04T15:18:32.643Z",
+                      "startTime": "2026-10-04T15:55:00.671Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -171,9 +274,161 @@
                   "status": "expected"
                 }
               ],
-              "id": "afb222be59f68d94d688-d8846b9c6e58c4d88dcd",
-              "file": "TS-0097-proximos-vencimientos-feature.spec.ts",
-              "line": 17,
+              "id": "55d869acd02d47eb7ede-955019e54de0640b22f9",
+              "file": "TS-0010-presupuesto-workflow.spec.ts",
+              "line": 50,
+              "column": 7
+            },
+            {
+              "title": "TS-0010-GW02: lista de presupuestos muestra el nombre del cliente en cada fila",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2334,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:55:03.647Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "55d869acd02d47eb7ede-bbdce5131efe1d4453af",
+              "file": "TS-0010-presupuesto-workflow.spec.ts",
+              "line": 101,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "CU47 - Consultar Pago / Saldo",
+          "file": "TS-0010-presupuesto-workflow.spec.ts",
+          "line": 130,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TS-0010-SD01 (#796): el resumen del presupuesto muestra el saldo pendiente",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2383,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:55:05.999Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "55d869acd02d47eb7ede-81a3f747e36e0064ed45",
+              "file": "TS-0010-presupuesto-workflow.spec.ts",
+              "line": 139,
+              "column": 7
+            },
+            {
+              "title": "TS-0010-SD02 (#821): tras registrar un pago parcial vía API el resumen refleja el nuevo saldo",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2437,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:55:08.400Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "55d869acd02d47eb7ede-20cc5b214e3048d1ec78",
+              "file": "TS-0010-presupuesto-workflow.spec.ts",
+              "line": 162,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "CU45 - Modificar Presupuesto",
+          "file": "TS-0010-presupuesto-workflow.spec.ts",
+          "line": 192,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TS-0010-MOD01: editar un presupuesto existente actualiza los datos en la lista",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2640,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:55:10.853Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "55d869acd02d47eb7ede-58c51b5c8b618f5267bb",
+              "file": "TS-0010-presupuesto-workflow.spec.ts",
+              "line": 201,
               "column": 7
             }
           ]
@@ -183,9 +438,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-04T15:18:28.864Z",
-    "duration": 8785.982,
-    "expected": 1,
+    "startTime": "2026-10-04T15:54:58.532Z",
+    "duration": 20544.781,
+    "expected": 8,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
