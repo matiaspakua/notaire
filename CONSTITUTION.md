@@ -96,7 +96,7 @@ A change is **Done** only when **all** of the following are true:
 | DTOs | `DtoEntityName` (e.g. `DtoUsuario`) |
 | REST URLs | `/api/v1/resource` (plural nouns) |
 | Test names | `shouldXxxYyy` with `@DisplayName`; AssertJ assertions |
-| Test folders | `src/test/java/.../unit/` and `integration/`; Playwright under `frontend/tests/e2e/` |
+| Test folders | `src/test/java/.../unit/` and `integration/`; Playwright under `testing/e2e/tests/` |
 | Database | New Flyway migration `V{n}__description.sql`; never edit applied migrations |
 | Frontend | Centralized design system: `src/theme/tokens.ts` + `FormContainer → FormSection → FormField → FormActions` |
 | Endpoints | Every REST endpoint must be invoked from the UI at least once (UI traceability) and documented in OpenAPI/Swagger |
@@ -253,7 +253,7 @@ mvn verify -pl backend-api               # all quality checks
 (`bash testing/scripts/test.sh`) and any affected legacy paths. No
 `@Disabled` or skipped tests without documented, approved justification.
 
-**15. Playwright E2E.** For any UI change, run `cd frontend && npx playwright test`
+**15. Playwright E2E.** For any UI change, run `cd testing/e2e && npx playwright test`
 — golden path and edge cases, on mobile/tablet/desktop widths.
 
 **16. Actualizar documentación permanente.** Update the permanent documentation
@@ -440,7 +440,7 @@ Every modification must produce or update:
 | **Component Tests** | React/frontend changes | `frontend/src/**/*.test.tsx` (Vitest) | 60–75% line |
 | **Integration Tests** | All changes with data/API impact | `backend-api/src/test/java/.../integration/` (H2 + Testcontainers/PostgreSQL) | 60–75% coverage |
 | **API Contract Tests** | When a contract (API DTO/schema) changes | `backend-api/api-test/` (Bruno) | 80–100% endpoints |
-| **Playwright E2E** | Any UI change; new workflows | `frontend/tests/e2e/TS-nnnn-*.spec.ts` | 1–2 per Use Case |
+| **Playwright E2E** | Any UI change; new workflows | `testing/e2e/tests/TS-nnnn-*.spec.ts` | 1–2 per Use Case |
 | **Regression Tests** | All changes — full suite must stay green | entire suite | — |
 
 ### Testing Fixtures & Patterns
@@ -663,7 +663,7 @@ drift.
 | Coverage | JaCoCo ratchet floor (`mvn jacoco:check`); CI job `coverage` |
 | Lint / format | Spotless (CI "Code Lint"), Checkstyle, ESLint |
 | Frontend | `frontend-ci.yml` (TypeScript, ESLint, Vitest, Next.js build) |
-| E2E | `playwright-e2e.yml` (Playwright + Bruno API suite) |
+| E2E | `playwright-e2e.yml` (Playwright suite in `testing/e2e` + Bruno API suite) |
 | Local preflight | `bash scripts/preflight.sh [--fix / --fast / --full]`; pre-push hook |
 | Pre-PR pipeline gate (Gate 3) | `bash scripts/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
@@ -673,6 +673,6 @@ drift.
 
 ---
 
-*Last reviewed: 2026-09-28. This Constitution supersedes the process
+*Last reviewed: 2026-10-04. This Constitution supersedes the process
 summary in `.claude/rules/ai-agent-workflow.md` where they conflict; that
 document remains the operational implementation.*

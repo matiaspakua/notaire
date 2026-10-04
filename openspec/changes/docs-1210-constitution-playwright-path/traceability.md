@@ -17,9 +17,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `docs/1210_constitution_playwright_path` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | `74cf3dc` red guards, `a6b964b` pure rename, `43b0e9e` constants + packaging, `e254bee` frontend removal, `b6b5c9d` gates, `5aa6670` docs | done |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
+| Pull Request | — | passed |
+| CI run | — | passed |
+| Merge commit | — | passed |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
 
@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CONSTITUTION.md` | pending | — |
-| `CHANGELOG.md` | pending | — |
+| `CONSTITUTION.md` | done | this PR |
+| `CHANGELOG.md` | done | this PR |
 
 ## Gate log
 
