@@ -328,7 +328,9 @@
       "fechaIngreso": "Fecha de ingreso",
       "fechaInscripcion": "Fecha de inscripción",
       "fechaSalida": "Fecha de salida",
-      "numeroCarton": "Número de cartón"
+      "numeroCarton": "Número de cartón",
+      "observadoPorRegistro": "Observado por el registro",
+      "observaciones": "Observaciones"
     }
   },
   "documentosEntidadesExternas": {

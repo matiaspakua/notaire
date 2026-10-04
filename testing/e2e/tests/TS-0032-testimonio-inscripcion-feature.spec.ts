@@ -85,6 +85,13 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
 
     await expect(page.getByTestId(`btn-reingresar-testimonio-${idTestimonio}`)).toBeVisible();
     await page.getByTestId(`btn-reingresar-testimonio-${idTestimonio}`).click();
+
+    await page.getByTestId("input-reingreso-carton").fill("77");
+    await page.getByTestId("checkbox-reingreso-observado").check();
+    await expect(page.getByTestId("btn-confirmar-reingreso")).toBeDisabled();
+    await page.getByTestId("input-reingreso-observaciones").fill("Falta sello del registro");
+    await expect(page.getByTestId("btn-confirmar-reingreso")).toBeEnabled();
+    await page.getByTestId("btn-confirmar-reingreso").click();
     await steps.thenShowsSuccessMessage("reingresado");
     await expect(row).toContainText(/ingresado/i);
   });

@@ -36,7 +36,23 @@ export function useRetirar() {
   });
 }
 
+export interface ReingresoTestimonio {
+  idTestimonio: number;
+  numeroCarton: number;
+  observadoPorRegistro: boolean;
+  observaciones: string;
+}
+
 /** CU44 - Reingresa un testimonio previamente retirado, sin alterar el movimiento anterior. */
 export function useReingresar() {
-  return useMovimientoAction("reenter");
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ idTestimonio, numeroCarton, observadoPorRegistro, observaciones }: ReingresoTestimonio) =>
+      apiPost<MovimientoTestimonio>(`/movimiento-testimonio/${idTestimonio}/reenter`, {
+        cardNumber: numeroCarton,
+        observedByRegistry: observadoPorRegistro,
+        notes: observaciones,
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniosKeys.all }),
+  });
 }

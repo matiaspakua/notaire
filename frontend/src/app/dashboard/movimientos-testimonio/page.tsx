@@ -13,6 +13,7 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import { useTestimonios } from "@/hooks/useTestimonios";
 import { useIngresarInscripcion, useRegistrarInscripcion, useRetirar, useReingresar } from "@/hooks/useMovimientosTestimonio";
 import { extractApiError, formatDate } from "@/lib/utils";
+import { ReingresarDialog, type DatosReingreso } from "./ReingresarDialog";
 import type { Testimonio, MovimientoTestimonio } from "@/types";
 
 type EstadoMovimiento = "sinIngresar" | "ingresado" | "inscripto" | "retirado";
@@ -47,6 +48,7 @@ export default function MovimientosTestimonioPage() {
 
   const [retirarId, setRetirarId] = useState<number | null>(null);
   const [numeroCarton, setNumeroCarton] = useState("");
+  const [reingresarId, setReingresarId] = useState<number | null>(null);
 
   async function handleIngresar(idTestimonio: number) {
     try {
@@ -82,10 +84,12 @@ export default function MovimientosTestimonioPage() {
     }
   }
 
-  async function handleReingresar(idTestimonio: number) {
+  async function handleReingresar(datos: DatosReingreso) {
+    if (!reingresarId) return;
     try {
-      await reingresarMutation.mutateAsync(idTestimonio);
+      await reingresarMutation.mutateAsync({ idTestimonio: reingresarId, ...datos });
       toast.success(t("reingresado"));
+      setReingresarId(null);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorReingresar"));
     }
@@ -123,7 +127,7 @@ export default function MovimientosTestimonioPage() {
               </Button>
             )}
             {estado === "retirado" && (
-              <Button size="sm" variant="ghost" onClick={() => handleReingresar(id)} aria-label={t("reingresar")} data-testid={`btn-reingresar-testimonio-${id}`}>
+              <Button size="sm" variant="ghost" onClick={() => setReingresarId(id)} aria-label={t("reingresar")} data-testid={`btn-reingresar-testimonio-${id}`}>
                 <RotateCcw className="h-4 w-4" />
               </Button>
             )}
@@ -157,6 +161,10 @@ export default function MovimientosTestimonioPage() {
           </FormContainer>
         </DialogContent>
       </Dialog>
+
+      {reingresarId !== null && (
+        <ReingresarDialog open isPending={reingresarMutation.isPending} onCancel={() => setReingresarId(null)} onConfirm={handleReingresar} />
+      )}
     </div>
   );
 }

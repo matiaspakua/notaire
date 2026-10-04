@@ -328,7 +328,9 @@
       "fechaIngreso": "Filing date",
       "fechaInscripcion": "Registration date",
       "fechaSalida": "Withdrawal date",
-      "numeroCarton": "Folder number"
+      "numeroCarton": "Folder number",
+      "observadoPorRegistro": "Observed by the registry",
+      "observaciones": "Notes"
     }
   },
   "documentosEntidadesExternas": {
