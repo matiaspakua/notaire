@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **docs(data-model):** `Diccionario de Datos.md` regenerated from the Flyway schema by the new `scripts/generate_data_dictionary.py` (36 tables, current column names, types, nullability, defaults, foreign keys and ON DELETE actions; human descriptions kept, four missing tables added) and `scripts/test_data_dictionary_sync.py` fails CI when it drifts from the schema; the ERD CSV `Observaciones` column is repopulated from it (#1222).
+
 - **BusinessController god class removed** (issue #900, CU76): the 5,337-line singleton had two production-reachable
   methods (identification-type name/id lookups); they became `business/IdentificationTypeLookup` (unit-tested, exact
   matching instead of `contains`), the class and its three coverage excludes were deleted, and

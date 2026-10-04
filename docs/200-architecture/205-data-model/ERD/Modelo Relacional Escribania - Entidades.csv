@@ -1,165 +1,165 @@
 Nombre Entidad,Tipo Entidad,Atributo,Clave,Null?,Tipo_Dato,PK,FK,NULL,Observaciones
 people,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 people,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco de la persona
-people,Fuerte,last_name,,no,Texto,,,,
-people,Fuerte,first_name,,no,Texto,,,,
-people,Fuerte,identification_number,,no,Texto,,,,
-people,Fuerte,tax_id,,si,Texto,,,x,
-people,Fuerte,sex,,si,Texto,,,x,
+people,Fuerte,last_name,,no,Texto,,,,Apellido o denominación societaria
+people,Fuerte,first_name,,no,Texto,,,,Nombres de pila o razón social
+people,Fuerte,identification_number,,no,Texto,,,,Identificación civil principal
+people,Fuerte,tax_id,,si,Texto,,,x,Clave tributaria CUIT / CUIL
+people,Fuerte,sex,,si,Texto,,,x,Sexo / Género legal
 people,Fuerte,fecha_nacimiento,,si,Fecha,,,x,Fecha de nacimiento
-people,Fuerte,marital_status,,si,Texto,,,x,
-people,Fuerte,marriage_count,,si,Entero,,,x,
-people,Fuerte,occupation,,si,Texto,,,x,
-people,Fuerte,address,,si,Texto,,,x,
+people,Fuerte,marital_status,,si,Texto,,,x,Estado civil
+people,Fuerte,marriage_count,,si,Entero,,,x,Número de nupcias si contrajo matrimonio
+people,Fuerte,occupation,,si,Texto,,,x,Ocupación laboral
+people,Fuerte,address,,si,Texto,,,x,Domicilio real / legal
 people,Fuerte,email,,si,Texto,,,x,Correo electrónico principal
-people,Fuerte,notary_registration_number,,si,Entero,,,x,
-people,Fuerte,is_client,,no,Lógico,,,,
-people,Fuerte,locality,,si,Texto,,,x,
-people,Fuerte,province,,si,Texto,,,x,
-people,Fuerte,phone,,si,Texto,,,x,
-people,Fuerte,mobile_phone,,si,Texto,,,x,
-people,Fuerte,secondary_email,,si,Texto,,,x,
-people,Fuerte,nationality,,si,Texto,,,x,
-people,Fuerte,profession,,si,Texto,,,x,
-people,Fuerte,notes,,si,Texto,,,x,
+people,Fuerte,notary_registration_number,,si,Entero,,,x,Número de Registro Notarial (escribanos)
+people,Fuerte,is_client,,no,Lógico,,,,`true` si es cliente de la escribanía
+people,Fuerte,locality,,si,Texto,,,x,Localidad
+people,Fuerte,province,,si,Texto,,,x,Provincia
+people,Fuerte,phone,,si,Texto,,,x,Teléfono fijo
+people,Fuerte,mobile_phone,,si,Texto,,,x,Teléfono celular
+people,Fuerte,secondary_email,,si,Texto,,,x,Correo electrónico secundario/histórico
+people,Fuerte,nationality,,si,Texto,,,x,Nacionalidad de la persona
+people,Fuerte,profession,,si,Texto,,,x,Profesión u oficio
+people,Fuerte,notes,,si,Texto,,,x,Legajo y antecedentes de la persona
 people,Fuerte,fk_id_tipo_identificacion,FK,si,Entero,,x,x,Tipo de identificación principal
-people,Fuerte,is_notary,,no,Lógico,,,,
+people,Fuerte,is_notary,,no,Lógico,,,,`true` si es escribano habilitado
 identification_types,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 identification_types,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del tipo de documento
-identification_types,Fuerte,name,,no,Texto,,,,
-identification_types,Fuerte,characters,,no,Texto,,,,
+identification_types,Fuerte,name,,no,Texto,,,,"Nombre (`DNI`, `CUIT`, `CUIL`, `Pasaporte`, `CI`, `LC`, `LE`)"
+identification_types,Fuerte,characters,,no,Texto,,,,Formato o máscara alfanumérica
 substitutions,Asociativa,version,,no,Entero,,,,Control de concurrencia optimista
-substitutions,Asociativa,id,PK,no,Entero,x,,,
+substitutions,Asociativa,id,PK,no,Entero,x,,,Identificador unívoco de la suplencia
 substitutions,Asociativa,start_date,,no,Fecha,,,,Fecha inicial de la suplencia
-substitutions,Asociativa,end_date,,si,Fecha,,,x,
-substitutions,Asociativa,notes,,si,Texto,,,x,
-substitutions,Asociativa,fk_id_substituted_person,FK,si,Entero,,x,x,
-substitutions,Asociativa,fk_id_substitute_person,FK,si,Entero,,x,x,
+substitutions,Asociativa,end_date,,si,Fecha,,,x,Fecha de finalización
+substitutions,Asociativa,notes,,si,Texto,,,x,Motivo o atestación legal
+substitutions,Asociativa,fk_id_substituted_person,FK,si,Entero,,x,x,Escribano titular bajo licencia
+substitutions,Asociativa,fk_id_substitute_person,FK,si,Entero,,x,x,Escribano suplente interviniente
 users,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
-users,Fuerte,id,PK,no,Entero,x,,,
-users,Fuerte,username,,no,Texto,,,,
-users,Fuerte,password,,no,Texto,,,,
-users,Fuerte,user_type,,no,Texto,,,,
-users,Fuerte,status,,no,Lógico,,,,
+users,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del usuario
+users,Fuerte,username,,no,Texto,,,,Nombre de usuario (login único)
+users,Fuerte,password,,no,Texto,,,,Hash seguro de la contraseña
+users,Fuerte,user_type,,no,Texto,,,,Rol descriptivo legacy
+users,Fuerte,status,,no,Lógico,,,,`true` si la cuenta está activa
 users,Fuerte,fk_id_person,FK,si,Entero,,x,x,Persona física asociada
 users,Fuerte,fk_id_role,FK,si,Entero,,x,x,Rol de seguridad asignado (V9)
 roles,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 roles,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del rol
-roles,Fuerte,name,,no,Texto,,,,
-roles,Fuerte,description,,si,Texto,,,x,
-roles,Fuerte,active,,no,Lógico,,,,
+roles,Fuerte,name,,no,Texto,,,,"Nombre único del rol (`ADMIN`, `ESCRIBANO`, `SECRETARIA`, etc.)"
+roles,Fuerte,description,,si,Texto,,,x,Alcances y responsabilidades del rol
+roles,Fuerte,active,,no,Lógico,,,,Indica si el rol está habilitado
 role_modules,Asociativa,fk_id_role,PK,no,Entero,x,x,,Rol al cual se le concede el permiso
-role_modules,Asociativa,module,PK,no,Texto,x,,,
+role_modules,Asociativa,module,PK,no,Texto,x,,,Identificador del módulo o acción autorizada
 audit_records,Débil,version,,no,Entero,,,,Control de concurrencia optimista
 audit_records,Débil,id,PK,no,Entero,x,,,Identificador unívoco del evento auditado
-audit_records,Débil,date,,no,Fecha/Hora,,,,
-audit_records,Débil,module,,no,Texto,,,,
-audit_records,Débil,operation_detail,,no,Texto,,,,
+audit_records,Débil,date,,no,Fecha/Hora,,,,Marca temporal exacta de la transacción
+audit_records,Débil,module,,no,Texto,,,,Módulo funcional afectado
+audit_records,Débil,operation_detail,,no,Texto,,,,Detalle de datos modificados o acción ejecutada
 audit_records,Débil,fk_id_usuario,FK,si,Entero,,x,x,Operador responsable de la acción
 budgets,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
-budgets,Fuerte,id,PK,no,Entero,x,,,
-budgets,Fuerte,number,,no,Entero,,,,
-budgets,Fuerte,budget_date,,no,Fecha,,,,
-budgets,Fuerte,heading,,no,Texto,,,,
-budgets,Fuerte,notes,,si,Texto,,,x,
-budgets,Fuerte,status,,no,Texto,,,,
-budgets,Fuerte,property_amount,,si,Real,,,x,
+budgets,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del presupuesto
+budgets,Fuerte,number,,no,Entero,,,,Número correlativo del presupuesto
+budgets,Fuerte,budget_date,,no,Fecha,,,,Fecha de emisión
+budgets,Fuerte,heading,,no,Texto,,,,Título descriptivo de la cotización
+budgets,Fuerte,notes,,si,Texto,,,x,Condiciones y plazos de validez
+budgets,Fuerte,status,,no,Texto,,,,"Estado (`Borrador`, `Emitido`, `Aceptado`, `Abonado`, `Cancelado`)"
+budgets,Fuerte,property_amount,,si,Real,,,x,Base imponible inmobiliaria informada
 budgets,Fuerte,fk_id_person,FK,si,Entero,,x,x,Cliente solicitante
 concepts,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista (Hibernate)
 concepts,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del concepto arancelario
-concepts,Fuerte,name,,no,Texto,,,,
-concepts,Fuerte,amount,,no,Real,,,,
-concepts,Fuerte,percentage,,no,Entero,,,,
-concepts,Fuerte,enabled,,no,Lógico,,,,
+concepts,Fuerte,name,,no,Texto,,,,"Denominación del concepto (e.g., Honorarios, Aporte Caja Notarial)"
+concepts,Fuerte,amount,,no,Real,,,,Importe fijo de referencia en moneda de curso legal
+concepts,Fuerte,percentage,,no,Entero,,,,Porcentaje estándar aplicable sobre el monto del acto
+concepts,Fuerte,enabled,,no,Lógico,,,,Indica si el concepto está disponible para presupuestos
 concepts,Fuerte,fixed_concept,,no,Lógico,,,,"`true` si es importe fijo, `false` si es liquidación porcentual"
 budget_templates,Asociativa,version,,no,Entero,,,,Control de concurrencia optimista
 budget_templates,Asociativa,fk_id_procedure_type,PK,no,Entero,x,x,,Tipo de trámite
 budget_templates,Asociativa,fk_id_concept,PK,no,Entero,x,x,,Concepto presupuestado
-budget_templates,Asociativa,notes,,si,Texto,,,x,
+budget_templates,Asociativa,notes,,si,Texto,,,x,Reglas particulares de cómputo
 items,Débil,version,,no,Entero,,,,Control de concurrencia optimista
 items,Débil,id,PK,no,Entero,x,,,Identificador unívoco del ítem
-items,Débil,name,,no,Texto,,,,
-items,Débil,amount,,no,Real,,,,
-items,Débil,percentage,,no,Entero,,,,
+items,Débil,name,,no,Texto,,,,Concepto o partida liquidada
+items,Débil,amount,,no,Real,,,,Monto resultante de la línea
+items,Débil,percentage,,no,Entero,,,,Porcentaje aplicado en la liquidación
 items,Débil,fixed_concept,,no,Lógico,,,,"`true` si es importe fijo, `false` si es porcentual"
 items,Débil,fk_id_presupuesto,FK,si,Entero,,x,x,Presupuesto al que pertenece
-items,Débil,notes,,si,Texto,,,x,
-items,Débil,item_type,,no,Texto,,,,
-items,Débil,reason,,si,Texto,,,x,
+items,Débil,notes,,si,Texto,,,x,Notas justificativas de la partida (V3/V4)
+items,Débil,item_type,,no,Texto,,,,Clase de ítem presupuestario (por defecto `NORMAL`)
+items,Débil,reason,,si,Texto,,,x,Motivo declarado del ítem cuando no es un concepto ordinario
 payments,Débil,version,,no,Entero,,,,Control de concurrencia optimista
 payments,Débil,id,PK,no,Entero,x,,,Identificador unívoco del recibo
-payments,Débil,payment_date,,no,Fecha,,,,
-payments,Débil,amount,,no,Real,,,,
-payments,Débil,notes,,si,Texto,,,x,
+payments,Débil,payment_date,,no,Fecha,,,,Fecha de realización del pago
+payments,Débil,amount,,no,Real,,,,Importe percibido
+payments,Débil,notes,,si,Texto,,,x,Medio de pago y constancias
 payments,Débil,fk_id_presupuesto,FK,si,Entero,,x,x,Presupuesto cancelado
-payments,Débil,payment_method,,si,Texto,,,x,
+payments,Débil,payment_method,,si,Texto,,,x,Medio de pago utilizado
 deed_managements,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 deed_managements,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco de la gestión
-deed_managements,Fuerte,number,,no,Entero,,,,
+deed_managements,Fuerte,number,,no,Entero,,,,Número correlativo anual de la gestión
 deed_managements,Fuerte,start_date,,no,Fecha,,,,Fecha de apertura de la carpeta
-deed_managements,Fuerte,heading,,no,Texto,,,,
-deed_managements,Fuerte,notes,,si,Texto,,,x,
+deed_managements,Fuerte,heading,,no,Texto,,,,Carátula descriptiva del objeto de la gestión
+deed_managements,Fuerte,notes,,si,Texto,,,x,Notas operativas de tramitación
 deed_managements,Fuerte,fk_id_notary_person,FK,si,Entero,,x,x,Escribano a cargo de la gestión
 deed_managements,Fuerte,fk_id_management_status,FK,si,Entero,,x,x,Estado operativo consolidado
-deed_managements,Fuerte,pending_debt_on_archive,,si,Lógico,,,x,
+deed_managements,Fuerte,pending_debt_on_archive,,si,Lógico,,,x,`true` si la gestión se archivó con deuda pendiente
 management_statuses,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 management_statuses,Fuerte,id,PK,no,Entero,x,,,Identificador del estado de gestión
-management_statuses,Fuerte,name,,no,Texto,,,,
-management_statuses,Fuerte,notes,,si,Texto,,,x,
+management_statuses,Fuerte,name,,no,Texto,,,,"Nombre del estado (e.g., `Generado`, `En proceso`, `Listo para firmar`)"
+management_statuses,Fuerte,notes,,si,Texto,,,x,Definición funcional y condiciones
 history,Débil,version,,no,Entero,,,,Control de concurrencia optimista
-history,Débil,id,PK,no,Entero,x,,,
-history,Débil,event_date,,no,Fecha,,,,
-history,Débil,notes,,si,Texto,,,x,
-history,Débil,fk_id_deed_management,FK,si,Entero,,x,x,
-history,Débil,fk_id_management_status,FK,si,Entero,,x,x,
+history,Débil,id,PK,no,Entero,x,,,Identificador del registro histórico
+history,Débil,event_date,,no,Fecha,,,,Fecha del cambio de estado
+history,Débil,notes,,si,Texto,,,x,Motivo o atestación del cambio de estado
+history,Débil,fk_id_deed_management,FK,si,Entero,,x,x,Gestión que transitó de estado
+history,Débil,fk_id_management_status,FK,si,Entero,,x,x,Estado alcanzado
 procedure_types,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 procedure_types,Fuerte,id,PK,no,Entero,x,,,Identificador del tipo de trámite
-procedure_types,Fuerte,name,,no,Texto,,,,
-procedure_types,Fuerte,notes,,si,Texto,,,x,
-procedure_types,Fuerte,enabled,,no,Lógico,,,,
-procedure_types,Fuerte,is_archived,,no,Lógico,,,,
-procedure_types,Fuerte,is_registered,,no,Lógico,,,,
-procedure_types,Fuerte,associates_properties,,no,Lógico,,,,
+procedure_types,Fuerte,name,,no,Texto,,,,"Denominación del trámite (e.g., `Compraventa`, `Poder`)"
+procedure_types,Fuerte,notes,,si,Texto,,,x,Normativa y descripción notarial
+procedure_types,Fuerte,enabled,,no,Lógico,,,,`true` si permite nuevas gestiones
+procedure_types,Fuerte,is_archived,,no,Lógico,,,,`true` si requiere archivo físico con bibliorato
+procedure_types,Fuerte,is_registered,,no,Lógico,,,,`true` si requiere inscripción registral
+procedure_types,Fuerte,associates_properties,,no,Lógico,,,,`true` si involucra properties
 procedure_types,Fuerte,fk_workflow_definition_id,FK,si,Entero,,x,x,Workflow asignado al tipo de trámite (V8)
 procedures,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 procedures,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del trámite
-procedures,Fuerte,number,,si,Entero,,,x,
-procedures,Fuerte,name,,si,Texto,,,x,
-procedures,Fuerte,notes,,si,Texto,,,x,
+procedures,Fuerte,number,,si,Entero,,,x,Número correlativo de trámite (V13 opcional)
+procedures,Fuerte,name,,si,Texto,,,x,Carátula descriptiva (V13 opcional)
+procedures,Fuerte,notes,,si,Texto,,,x,Instrucciones u observaciones
 procedures,Fuerte,fk_id_procedure_type,FK,si,Entero,,x,x,Tipo de trámite
 procedures,Fuerte,fk_id_gestion,FK,si,Entero,,x,x,Gestión que lo agrupa (nulo en aux.)
-procedures,Fuerte,fk_id_escritura,FK,si,Entero,,x,x,
+procedures,Fuerte,fk_id_escritura,FK,si,Entero,,x,x,Escritura notarial resultante
 procedures,Fuerte,fk_id_presupuesto,FK,si,Entero,,x,x,Presupuesto económico base (V14)
 procedures,Fuerte,fk_id_property,FK,si,Entero,,x,x,Inmueble objeto del acto (si aplica)
 person_procedures,Asociativa,version,,no,Entero,,,,Control de concurrencia optimista
 person_procedures,Asociativa,fk_id_procedure,PK,no,Entero,x,x,,Trámite en el que participa
 person_procedures,Asociativa,fk_id_client_person,PK,no,Entero,x,x,,Persona que interviene
-person_procedures,Asociativa,notes,,no,Texto,,,,
-procedure_folders,Fuerte,id,PK,no,Entero,x,,,
-procedure_folders,Fuerte,number,,no,Entero,,,,
-procedure_folders,Fuerte,status,,no,Texto,,,,
-procedure_folders,Fuerte,wait_reason,,si,Texto,,,x,
-procedure_folders,Fuerte,fk_id_gestion,FK,no,Entero,,x,,
-procedure_folders,Fuerte,fk_id_tramite,FK,no,Entero,,x,,
+person_procedures,Asociativa,notes,,no,Texto,,,,"Rol notarial (`Comprador`, `Vendedor`, `Donante`, `Apoderado`)"
+procedure_folders,Débil,id,PK,no,Entero,x,,,Identificador unívoco de la carpeta de trámite
+procedure_folders,Débil,number,,no,Entero,,,,Número correlativo de la carpeta (secuencia dedicada)
+procedure_folders,Débil,status,,no,Texto,,,,Estado de la carpeta
+procedure_folders,Débil,wait_reason,,si,Texto,,,x,Motivo de la espera cuando la carpeta está detenida
+procedure_folders,Débil,fk_id_gestion,FK,no,Entero,,x,,Gestión a la que pertenece la carpeta
+procedure_folders,Débil,fk_id_tramite,FK,no,Entero,,x,,Trámite que origina la carpeta
 properties,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 properties,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del inmueble
 properties,Fuerte,nomenclature,,si,Texto,,,x,Nomenclatura catastral oficial
 properties,Fuerte,registration_number,,si,Texto,,,x,Matrícula del Registro de la Propiedad
 properties,Fuerte,valuation_year,,si,Entero,,,x,Año de la valuación fiscal
 properties,Fuerte,fiscal_valuation,,si,Real,,,x,Monto fiscal oficial de tasación
-properties,Fuerte,record_number,,si,Entero,,,x,
+properties,Fuerte,record_number,,si,Entero,,,x,Número de partida inmobiliaria
 properties,Fuerte,district,,si,Texto,,,x,Circunscripción
-properties,Fuerte,section,,si,Texto,,,x,
-properties,Fuerte,zone,,si,Texto,,,x,
-properties,Fuerte,block,,si,Texto,,,x,
-properties,Fuerte,parcel,,si,Texto,,,x,
-properties,Fuerte,polygon,,si,Texto,,,x,
+properties,Fuerte,section,,si,Texto,,,x,Sección
+properties,Fuerte,zone,,si,Texto,,,x,Zona
+properties,Fuerte,block,,si,Texto,,,x,Manzana
+properties,Fuerte,parcel,,si,Texto,,,x,Parcela
+properties,Fuerte,polygon,,si,Texto,,,x,Polígono
 properties,Fuerte,functional_unit,,si,Texto,,,x,Unidad funcional (PH)
-properties,Fuerte,address,,si,Texto,,,x,
-properties,Fuerte,locality,,si,Texto,,,x,
-properties,Fuerte,notes,,si,Texto,,,x,
-properties,Fuerte,registry_volume_folio,,si,Texto,,,x,
-properties,Fuerte,boundaries,,si,Texto,,,x,
+properties,Fuerte,address,,si,Texto,,,x,Dirección física del inmueble
+properties,Fuerte,locality,,si,Texto,,,x,Localidad de ubicación
+properties,Fuerte,notes,,si,Texto,,,x,Linderos y especificaciones
+properties,Fuerte,registry_volume_folio,,si,Texto,,,x,Tomo y folio de inscripción en el Registro de la Propiedad
+properties,Fuerte,boundaries,,si,Texto,,,x,Linderos del inmueble
 workflow_definition,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 workflow_definition,Fuerte,id_workflow_definition,PK,no,Entero,x,,,Identificador unívoco del workflow
 workflow_definition,Fuerte,nombre,,no,Texto,,,,Nombre descriptivo del workflow
@@ -181,117 +181,117 @@ workflow_transition,Débil,condicion,,si,Texto,,,x,Condición lógica de habilit
 workflow_transition,Débil,descripcion,,si,Texto,,,x,Descripción de la acción que dispara el avance
 document_types,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 document_types,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del tipo de documento
-document_types,Fuerte,name,,no,Texto,,,,
-document_types,Fuerte,returned,,no,Lógico,,,,
-document_types,Fuerte,expires,,no,Lógico,,,,
+document_types,Fuerte,name,,no,Texto,,,,Denominación del documento/certificado
+document_types,Fuerte,returned,,no,Lógico,,,,`true` si el original debe restituirse al cliente
+document_types,Fuerte,expires,,no,Lógico,,,,`true` si el certificado tiene vigencia temporal
 document_types,Fuerte,due_days,,si,Entero,,,x,Plazo legal de vigencia en días
 document_types,Fuerte,amount_to_pay,,si,Real,,,x,Tasa arancelaria estándar
-document_types,Fuerte,enabled,,no,Lógico,,,,
-document_types,Fuerte,delivered_by,,no,Texto,,,,
+document_types,Fuerte,enabled,,no,Lógico,,,,`true` si está activo para plantillas
+document_types,Fuerte,delivered_by,,no,Texto,,,,Origen (`Cliente` o `Entidad Externa`)
 procedure_templates,Asociativa,version,,no,Entero,,,,Control de concurrencia optimista
 procedure_templates,Asociativa,fk_id_procedure_type,PK,no,Entero,x,x,,Tipo de trámite
 procedure_templates,Asociativa,fk_id_document_type,PK,no,Entero,x,x,,Documento/Certificado requerido
-procedure_templates,Asociativa,notes,,si,Texto,,,x,
-document_cost_templates,Asociativa,fk_id_procedure_type,PK,no,Entero,x,x,,
-document_cost_templates,Asociativa,fk_id_document_type,PK,no,Entero,x,x,,
-document_cost_templates,Asociativa,fixed_amount,,si,Real,,,x,
-document_cost_templates,Asociativa,variable_percentage,,si,Real,,,x,
-document_cost_templates,Asociativa,version,,no,Entero,,,,
+procedure_templates,Asociativa,notes,,si,Texto,,,x,Instrucciones específicas de presentación
+document_cost_templates,Asociativa,fk_id_procedure_type,PK,no,Entero,x,x,,Tipo de trámite al que aplica la plantilla de costo
+document_cost_templates,Asociativa,fk_id_document_type,PK,no,Entero,x,x,,Tipo de documento al que aplica la plantilla de costo
+document_cost_templates,Asociativa,fixed_amount,,si,Real,,,x,Importe fijo sugerido para el documento
+document_cost_templates,Asociativa,variable_percentage,,si,Real,,,x,Porcentaje variable sugerido para el documento
+document_cost_templates,Asociativa,version,,no,Entero,,,,Control de concurrencia optimista
 submitted_documents,Débil,version,,no,Entero,,,,Control de concurrencia optimista
 submitted_documents,Débil,id,PK,no,Entero,x,,,Identificador unívoco de la pieza documental
-submitted_documents,Débil,name,,no,Texto,,,,
+submitted_documents,Débil,name,,no,Texto,,,,Nombre descriptivo del documento presentado
 submitted_documents,Débil,folder_number,,si,Entero,,,x,Número de cartón de mesa de entrada de organismo externo
 submitted_documents,Débil,entry_date,,si,Fecha,,,x,Fecha en que se ingresó o solicitó ante organismo externo
 submitted_documents,Débil,exit_date,,si,Fecha,,,x,Fecha de devolución por parte del organismo
-submitted_documents,Débil,prepared,,no,Lógico,,,,
-submitted_documents,Débil,expires,,no,Lógico,,,,
+submitted_documents,Débil,prepared,,no,Lógico,,,,`true` si fue confeccionado en la escribanía
+submitted_documents,Débil,expires,,no,Lógico,,,,Indica si el documento está sujeto a caducidad
 submitted_documents,Débil,due_date,,si,Fecha,,,x,Fecha límite de validez legal
 submitted_documents,Débil,due_days,,si,Entero,,,x,Plazo de vigencia en días
 submitted_documents,Débil,amount_to_pay,,si,Real,,,x,Monto real de sellado o tasa liquidada
 submitted_documents,Débil,payment_date,,si,Fecha,,,x,Fecha de efectivización del pago de la tasa
-submitted_documents,Débil,released,,no,Lógico,,,,
+submitted_documents,Débil,released,,no,Lógico,,,,`true` si se emitió constancia de libre deuda
 submitted_documents,Débil,released_date,,si,Fecha,,,x,Fecha de acreditación de liberación
-submitted_documents,Débil,observed,,no,Lógico,,,,
-submitted_documents,Débil,notes,,si,Texto,,,x,
-submitted_documents,Débil,delivered,,si,Lógico,,,x,
-submitted_documents,Débil,reentered,,si,Lógico,,,x,
-submitted_documents,Débil,delivered_by,,no,Texto,,,,
+submitted_documents,Débil,observed,,no,Lógico,,,,`true` si el organismo formuló observaciones técnicas
+submitted_documents,Débil,notes,,si,Texto,,,x,Notas técnicas o requisitos de subsanación
+submitted_documents,Débil,delivered,,si,Lógico,,,x,`true` si ya fue entregado a la entidad requirente
+submitted_documents,Débil,reentered,,si,Lógico,,,x,`true` si fue reingresado tras subsanar (V6 nullable)
+submitted_documents,Débil,delivered_by,,no,Texto,,,,Origen de provisión (`Cliente` o `Entidad Externa`)
 submitted_documents,Débil,fk_id_tramite,FK,si,Entero,,x,x,Trámite al que pertenece (V6: opcional)
 submitted_documents,Débil,fk_id_document_type,FK,si,Entero,,x,x,Tipo de documento maestro
 deeds,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 deeds,Fuerte,id,PK,no,Entero,x,,,Identificador interno de la escritura matriz
-deeds,Fuerte,number,,no,Entero,,,,
+deeds,Fuerte,number,,no,Entero,,,,Número correlativo anual de escritura dentro del protocolo
 deeds,Fuerte,deed_date,,no,Fecha,,,,Fecha de otorgamiento y celebración del acto
-deeds,Fuerte,body,,no,Texto,,,,
-deeds,Fuerte,status,,no,Texto,,,,
+deeds,Fuerte,body,,no,Texto,,,,Texto legal íntegro de la escritura protocolar
+deeds,Fuerte,status,,no,Texto,,,,"Estado de la escritura (`Preparada`, `Firmada`, `No Pasó`, `Errose`)"
 deeds,Fuerte,registration_number,,si,Texto,,,x,Matrícula registral otorgada por el Registro
 deeds,Fuerte,registration_date,,si,Fecha,,,x,Fecha de inscripción definitiva
-deeds,Fuerte,notes,,si,Texto,,,x,
-notebooks,Fuerte,version,,no,Entero,,,,
-notebooks,Fuerte,id,PK,no,Entero,x,,,
-notebooks,Fuerte,number,,no,Entero,,,,
-notebooks,Fuerte,year_number,,no,Entero,,,,
-notebooks,Fuerte,notes,,si,Texto,,,x,
-notebooks,Fuerte,fk_id_notary_person,FK,no,Entero,,x,,
+deeds,Fuerte,notes,,si,Texto,,,x,Notas marginales y atestados notariales
+notebooks,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
+notebooks,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del cuaderno
+notebooks,Fuerte,number,,no,Entero,,,,Número del cuaderno
+notebooks,Fuerte,year_number,,no,Entero,,,,Año al que corresponde el cuaderno
+notebooks,Fuerte,notes,,si,Texto,,,x,Observaciones del cuaderno
+notebooks,Fuerte,fk_id_notary_person,FK,no,Entero,,x,,Escribano titular del cuaderno
 folio_types,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 folio_types,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del tipo de folio
-folio_types,Fuerte,name,,no,Texto,,,,
-folio_types,Fuerte,notes,,si,Texto,,,x,
-folio_types,Fuerte,enabled,,no,Lógico,,,,
-folio_types,Fuerte,is_auxiliary,,no,Lógico,,,,
+folio_types,Fuerte,name,,no,Texto,,,,"Nombre (`Protocolo Principal`, `Protocolo Auxiliar`, `Testimonio`)"
+folio_types,Fuerte,notes,,si,Texto,,,x,Notas del tipo de folio (V3/V4)
+folio_types,Fuerte,enabled,,no,Lógico,,,,`true` si está activo para tandas de folios (V3/V4)
+folio_types,Fuerte,is_auxiliary,,no,Lógico,,,,`true` si el tipo corresponde a folios auxiliares (de uso complementario)
 folios,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 folios,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del folio notarial
-folios,Fuerte,number,,no,Entero,,,,
+folios,Fuerte,number,,no,Entero,,,,Número oficial correlativo impreso en el folio
 folios,Fuerte,year_number,,no,Entero,,,,Año calendario del protocolo correspondiente
-folios,Fuerte,status,,no,Texto,,,,
-folios,Fuerte,notes,,si,Texto,,,x,
+folios,Fuerte,status,,no,Texto,,,,"Estado (`Disponible`, `Usado`, `Errose`, `No Pasó`)"
+folios,Fuerte,notes,,si,Texto,,,x,Justificación de contingencias o atestados
 folios,Fuerte,fk_id_deed,FK,si,Entero,,x,x,Escritura en la que fue utilizado
 folios,Fuerte,fk_id_folio_type,FK,no,Entero,,x,,Clasificación de uso del folio
 folios,Fuerte,fk_id_notary_person,FK,no,Entero,,x,,Escribano responsable titular del registro
-folios,Fuerte,fk_id_notebook,FK,si,Entero,,x,x,
+folios,Fuerte,fk_id_notebook,FK,si,Entero,,x,x,Cuaderno al que pertenece el folio
 testimonies,Débil,version,,no,Entero,,,,Control de concurrencia optimista
-testimonies,Débil,id,PK,no,Entero,x,,,
-testimonies,Débil,number,,no,Entero,,,,
-testimonies,Débil,notes,,si,Texto,,,x,
+testimonies,Débil,id,PK,no,Entero,x,,,Identificador unívoco del testimonio
+testimonies,Débil,number,,no,Entero,,,,"Número de testimonio (1º, 2º testimonio)"
+testimonies,Débil,notes,,si,Texto,,,x,Notas registrales o de entrega
 testimonies,Débil,registration_date,,si,Fecha,,,x,Fecha de registración
 testimonies,Débil,pickup_date,,si,Fecha,,,x,Fecha de entrega al cliente
-testimonies,Débil,book_entry_date,,si,Fecha,,,x,
-testimonies,Débil,folder_number,,si,Entero,,,x,
-testimonies,Débil,file_number,,si,Entero,,,x,
-testimonies,Débil,reentered,,no,Lógico,,,,
+testimonies,Débil,book_entry_date,,si,Fecha,,,x,Fecha de asiento en libro
+testimonies,Débil,folder_number,,si,Entero,,,x,Número de carpeta registral
+testimonies,Débil,file_number,,si,Entero,,,x,Número de expediente del Registro
+testimonies,Débil,reentered,,no,Lógico,,,,`true` si fue reingresado
 testimonies,Débil,fk_id_deed,FK,si,Entero,,x,x,Escritura matriz de origen
-testimonies,Débil,observed,,no,Lógico,,,,
-testimonies,Débil,verified,,no,Lógico,,,,
+testimonies,Débil,observed,,no,Lógico,,,,`true` si fue observado (V3/V4)
+testimonies,Débil,verified,,no,Lógico,,,,`true` si el testimonio fue verificado
 testimony_movements,Débil,version,,no,Entero,,,,Control de concurrencia optimista
 testimony_movements,Débil,id,PK,no,Entero,x,,,Identificador del movimiento registral (V5)
 testimony_movements,Débil,entry_date,,no,Fecha,,,,Fecha de ingreso del movimiento (V5)
-testimony_movements,Débil,notes,,si,Texto,,,x,
+testimony_movements,Débil,notes,,si,Texto,,,x,Notas y despachos registrales
 testimony_movements,Débil,fk_id_testimonio,FK,si,Entero,,x,x,Testimonio objeto del trámite
 testimony_movements,Débil,exit_date,,si,Fecha,,,x,Fecha de devolución del Registro (V5)
 testimony_movements,Débil,registration_date,,si,Fecha,,,x,Fecha en que se perfeccionó la inscripción (V5)
-testimony_movements,Débil,registered,,no,Lógico,,,,
+testimony_movements,Débil,registered,,no,Lógico,,,,`true` si la inscripción resultó favorable (V5)
 testimony_movements,Débil,folder_number,,no,Entero,,,,Número de cartón de presentación (V5)
 copies,Débil,version,,no,Entero,,,,Control de concurrencia optimista
 copies,Débil,id,PK,no,Entero,x,,,Identificador unívoco del ejemplar de copia
-copies,Débil,number,,no,Entero,,,,
+copies,Débil,number,,no,Entero,,,,Número correlativo de copia emitida
 copies,Débil,print_date,,no,Fecha,,,,Fecha de expedición e impresión de la copia
 copies,Débil,pickup_date,,si,Fecha,,,x,Fecha en que fue retirada por el interesado
-copies,Débil,notes,,si,Texto,,,x,
+copies,Débil,notes,,si,Texto,,,x,Registro de entrega o atestaciones
 copies,Débil,fk_id_testimonio,FK,si,Entero,,x,x,Testimonio matriz originario
 copies,Débil,fk_id_person,FK,si,Entero,,x,x,Persona a quien se le expide o entrega la copia
 folio_copies,Asociativa,version,,no,Entero,,,,Control de concurrencia optimista
 folio_copies,Asociativa,fk_id_folio,PK,no,Entero,x,x,,Folio especial de testimonio
 folio_copies,Asociativa,fk_id_copy,PK,no,Entero,x,x,,Copia expedida
-registration_drafts,Fuerte,id,PK,no,Entero,x,,,
-registration_drafts,Fuerte,number,,no,Entero,,,,
-registration_drafts,Fuerte,operation_price,,si,Real,,,x,
-registration_drafts,Fuerte,status,,no,Texto,,,,
-registration_drafts,Fuerte,generation_date,,no,Fecha,,,,
-registration_drafts,Fuerte,submission_date,,si,Fecha,,,x,
-registration_drafts,Fuerte,registry_entry_number,,si,Texto,,,x,
-registration_drafts,Fuerte,reception_date,,si,Fecha,,,x,
-registration_drafts,Fuerte,final_registration_number,,si,Texto,,,x,
-registration_drafts,Fuerte,registry_notes,,si,Texto,,,x,
-registration_drafts,Fuerte,correction_date,,si,Fecha,,,x,
-registration_drafts,Fuerte,fk_id_escritura,FK,no,Entero,,x,,
-registration_drafts,Fuerte,version,,no,Entero,,,,
+registration_drafts,Débil,id,PK,no,Entero,x,,,Identificador unívoco del borrador de inscripción
+registration_drafts,Débil,number,,no,Entero,,,,Número del borrador
+registration_drafts,Débil,operation_price,,si,Real,,,x,Precio de la operación a inscribir
+registration_drafts,Débil,status,,no,Texto,,,,Estado del borrador en el circuito de inscripción
+registration_drafts,Débil,generation_date,,no,Fecha,,,,Fecha de generación del borrador
+registration_drafts,Débil,submission_date,,si,Fecha,,,x,Fecha de presentación ante el Registro
+registration_drafts,Débil,registry_entry_number,,si,Texto,,,x,Número de ingreso asignado por el Registro
+registration_drafts,Débil,reception_date,,si,Fecha,,,x,Fecha de recepción por el Registro
+registration_drafts,Débil,final_registration_number,,si,Texto,,,x,Número definitivo de inscripción
+registration_drafts,Débil,registry_notes,,si,Texto,,,x,Observaciones formuladas por el Registro
+registration_drafts,Débil,correction_date,,si,Fecha,,,x,Fecha de la corrección solicitada por el Registro
+registration_drafts,Débil,fk_id_escritura,FK,no,Entero,,x,,Escritura a inscribir
+registration_drafts,Débil,version,,no,Entero,,,,Control de concurrencia optimista

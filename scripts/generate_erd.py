@@ -51,7 +51,9 @@ ENTITY_TYPES = {"Fuerte", "Débil", "Asociativa"}
 QUERY = """
 select json_build_object(
   'columns', (select json_agg(c order by c.table_name, c.ordinal_position) from (
-      select table_name, column_name, data_type, is_nullable = 'YES' as nullable,
+      select table_name, column_name, data_type, character_maximum_length as length, numeric_precision as precision,
+             numeric_scale as scale,
+             is_nullable = 'YES' as nullable, column_default as "default",
              coalesce(column_default like 'nextval%%', false) as generated, ordinal_position
       from information_schema.columns
       where table_schema = 'public' and table_name <> 'flyway_schema_history'
@@ -61,7 +63,7 @@ select json_build_object(
       select rel.relname as table_name, con.contype as kind, con.conname as name,
              (select json_agg(a.attname order by u.ord) from unnest(con.conkey) with ordinality u(attnum, ord)
               join pg_attribute a on a.attrelid = con.conrelid and a.attnum = u.attnum) as columns,
-             fr.relname as ref_table,
+             fr.relname as ref_table, con.confdeltype as on_delete,
              (select json_agg(a.attname order by u.ord) from unnest(con.confkey) with ordinality u(attnum, ord)
               join pg_attribute a on a.attrelid = con.confrelid and a.attnum = u.attnum) as ref_columns
       from pg_constraint con
