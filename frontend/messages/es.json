@@ -251,6 +251,29 @@
       "observaciones": "Observaciones",
       "presupuesto": "Presupuesto",
       "inmueble": "Inmueble"
+    },
+    "resumen": {
+      "action": "Resumen del caso",
+      "title": "Resumen del caso",
+      "loading": "Cargando...",
+      "escrituras": "Escrituras y testimonios",
+      "sinEscrituras": "Esta gestión todavía no tiene escrituras",
+      "escritura": "Escritura {numero}",
+      "testimonio": "Testimonio {numero}",
+      "verificado": "verificado",
+      "observado": "observado",
+      "copias": "{cantidad, plural, =0 {sin copias} one {# copia} other {# copias}}",
+      "pagos": "Pagos",
+      "totalPresupuestado": "Total presupuestado",
+      "totalCobrado": "Total cobrado",
+      "saldoPendiente": "Saldo pendiente",
+      "sinPagos": "Sin datos de pagos",
+      "estados": {
+        "SIN_INGRESAR": "Sin ingresar",
+        "INGRESADO": "Ingresado",
+        "INSCRIPTO": "Inscripto",
+        "RETIRADO": "Retirado"
+      }
     }
   },
   "escrituras": {

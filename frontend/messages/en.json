@@ -251,6 +251,29 @@
       "observaciones": "Observations",
       "presupuesto": "Quote",
       "inmueble": "Property"
+    },
+    "resumen": {
+      "action": "Case summary",
+      "title": "Case summary",
+      "loading": "Loading...",
+      "escrituras": "Deeds and testimonies",
+      "sinEscrituras": "This management has no deeds yet",
+      "escritura": "Deed {numero}",
+      "testimonio": "Testimony {numero}",
+      "verificado": "verified",
+      "observado": "observed",
+      "copias": "{cantidad, plural, =0 {no copies} one {# copy} other {# copies}}",
+      "pagos": "Payments",
+      "totalPresupuestado": "Total budgeted",
+      "totalCobrado": "Total collected",
+      "saldoPendiente": "Pending balance",
+      "sinPagos": "No payment data",
+      "estados": {
+        "SIN_INGRESAR": "Not filed",
+        "INGRESADO": "Filed",
+        "INSCRIPTO": "Registered",
+        "RETIRADO": "Withdrawn"
+      }
     }
   },
   "escrituras": {

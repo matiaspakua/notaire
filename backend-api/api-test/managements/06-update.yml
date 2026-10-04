@@ -1,7 +1,7 @@
 info:
   name: Update management
   type: http
-  seq: 7
+  seq: 8
   description: |-
       Traceability: CU53
 http:
