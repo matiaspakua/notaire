@@ -584,7 +584,11 @@
       "cliente": "Cliente",
       "fecha": "Fecha",
       "monto": "Monto",
-      "estado": "Estado"
+      "estado": "Estado",
+      "montoAyuda": "Valor del inmueble; el total del presupuesto se calcula con sus ítems",
+      "tipoTramite": "Tipo de trámite (opcional)",
+      "tipoTramiteAyuda": "Carga los ítems de su plantilla en el nuevo presupuesto",
+      "sinPlantilla": "Sin plantilla"
     },
     "states": {
       "borrador": "BORRADOR",
@@ -626,7 +630,8 @@
         "valor": "Valor",
         "porcentaje": "Porcentaje"
       }
-    }
+    },
+    "itemsNotLoaded": "Presupuesto creado, pero el tipo de trámite no tiene plantilla: no se cargaron ítems"
   },
   "auditoria": {
     "title": "Auditoría",

@@ -584,7 +584,11 @@
       "cliente": "Client",
       "fecha": "Date",
       "monto": "Amount",
-      "estado": "Status"
+      "estado": "Status",
+      "montoAyuda": "Property value; the budget total is calculated from its items",
+      "tipoTramite": "Procedure type (optional)",
+      "tipoTramiteAyuda": "Loads its template items into the new budget",
+      "sinPlantilla": "No template"
     },
     "states": {
       "borrador": "DRAFT",
@@ -626,7 +630,8 @@
         "valor": "Value",
         "porcentaje": "Percentage"
       }
-    }
+    },
+    "itemsNotLoaded": "Budget created, but the procedure type has no template: no items were loaded"
   },
   "auditoria": {
     "title": "Audit",

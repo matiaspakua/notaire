@@ -37,6 +37,8 @@ import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import type { Presupuesto } from "@/types";
 
+const NO_TEMPLATE = "none";
+
 const EMPTY: Partial<Presupuesto> = { date: "", propertyAmount: undefined, status: "BORRADOR" };
 
 export default function PresupuestosPage() {
@@ -58,6 +60,7 @@ export default function PresupuestosPage() {
   const { data: resumen, isLoading: isResumenLoading, error: resumenError } =
     usePresupuestoResumen(resumenId);
 
+  const [tipoTramiteNuevoId, setTipoTramiteNuevoId] = useState(NO_TEMPLATE);
   const [itemsPresupuestoId, setItemsPresupuestoId] = useState<number | null>(null);
   const { data: presupuestoItems = [], isLoading: isItemsLoading } =
     useItemsByPresupuesto(itemsPresupuestoId ?? undefined);
@@ -130,7 +133,12 @@ export default function PresupuestosPage() {
     return true;
   });
 
-  function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
+  function openCreate() {
+    setEditing(EMPTY);
+    setTipoTramiteNuevoId(NO_TEMPLATE);
+    setIsEditMode(false);
+    setModalOpen(true);
+  }
   function openEdit(p: Presupuesto) { setEditing(p); setIsEditMode(true); setModalOpen(true); }
 
   async function handleSave() {
@@ -139,8 +147,10 @@ export default function PresupuestosPage() {
         await updateMutation.mutateAsync({ id: editing.idBudget, data: editing });
         toast.success(t("updated"));
       } else {
-        await createMutation.mutateAsync(editing);
+        const tipoTramiteId = tipoTramiteNuevoId === NO_TEMPLATE ? undefined : Number(tipoTramiteNuevoId);
+        const { itemsLoaded } = await createMutation.mutateAsync({ data: editing, tipoTramiteId });
         toast.success(t("created"));
+        if (tipoTramiteId !== undefined && !itemsLoaded) toast.warning(t("itemsNotLoaded"));
       }
       setModalOpen(false);
     } catch (err) {
@@ -313,7 +323,7 @@ export default function PresupuestosPage() {
                   onChange={(e) => setEditing({ ...editing, date: e.target.value })}
                 />
               </FormField>
-              <FormField label={`${tc("amount")} ($)`} required>
+              <FormField label={`${tc("amount")} ($)`} required helperText={t("fields.montoAyuda")}>
                 <Input
                   type="number"
                   step="0.01"
@@ -322,6 +332,23 @@ export default function PresupuestosPage() {
                   data-testid="input-monto"
                 />
               </FormField>
+              {!isEditMode && (
+                <FormField label={t("fields.tipoTramite")} helperText={t("fields.tipoTramiteAyuda")}>
+                  <Select value={tipoTramiteNuevoId} onValueChange={setTipoTramiteNuevoId}>
+                    <SelectTrigger data-testid="select-tipo-tramite-nuevo">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NO_TEMPLATE}>{t("fields.sinPlantilla")}</SelectItem>
+                      {tiposTramite.map((tt) => (
+                        <SelectItem key={tt.idProcedureType} value={tt.idProcedureType!.toString()}>
+                          {tt.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormField>
+              )}
               <FormField label={tc("status")}>
                 <Select
                   value={editing.status ?? "BORRADOR"}
@@ -343,7 +370,7 @@ export default function PresupuestosPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} data-testid="btn-guardar-presupuesto">
                 {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>
