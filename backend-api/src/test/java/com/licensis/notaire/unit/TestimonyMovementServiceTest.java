@@ -7,6 +7,7 @@ import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.repository.TestimonyMovementRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
 import com.licensis.notaire.application.usecase.testimony.TestimonyMovementService;
+import com.licensis.notaire.application.usecase.testimony.TestimonyReentry;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -214,12 +215,69 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.save(any(TestimonyMovement.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
-            TestimonyMovement nuevo = testimonyMovementService.reenter(5);
+            TestimonyMovement nuevo = testimonyMovementService.reenter(5, TestimonyReentry.empty());
 
             assertThat(nuevo.getDateEntry()).isNotNull();
             assertThat(nuevo.getDateExit()).isNull();
             assertThat(nuevo).isNotSameAs(retirado);
             assertThat(retirado.getDateExit()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("Should store cartón number, observation flag and notes on the new movement")
+        void shouldStoreReentryDataOnTheNewMovement() {
+            TestimonyMovement retirado = movementConEntry();
+            retirado.setDateExit(new Date());
+            retirado.setCardNumber(123);
+
+            when(testimonyRepository.existsById(5)).thenReturn(true);
+            when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
+                    .thenReturn(Optional.of(retirado));
+            when(testimonyMovementRepository.save(any(TestimonyMovement.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            TestimonyMovement nuevo = testimonyMovementService.reenter(5,
+                    new TestimonyReentry(77, true, "Falta firma del escribano"));
+
+            assertThat(nuevo.getCardNumber()).isEqualTo(77);
+            assertThat(nuevo.isObservedByRegistry()).isTrue();
+            assertThat(nuevo.getNotes()).isEqualTo("Falta firma del escribano");
+            assertThat(retirado.getCardNumber()).isEqualTo(123);
+            assertThat(retirado.isObservedByRegistry()).isFalse();
+        }
+
+        @Test
+        @DisplayName("Should default to card 0, not observed and no notes when no data is given")
+        void shouldDefaultReentryDataWhenEmpty() {
+            TestimonyMovement retirado = movementConEntry();
+            retirado.setDateExit(new Date());
+
+            when(testimonyRepository.existsById(5)).thenReturn(true);
+            when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
+                    .thenReturn(Optional.of(retirado));
+            when(testimonyMovementRepository.save(any(TestimonyMovement.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            TestimonyMovement nuevo = testimonyMovementService.reenter(5, TestimonyReentry.empty());
+
+            assertThat(nuevo.getCardNumber()).isZero();
+            assertThat(nuevo.isObservedByRegistry()).isFalse();
+            assertThat(nuevo.getNotes()).isNull();
+        }
+
+        @Test
+        @DisplayName("Should reject an observed reentry without notes")
+        void shouldRejectObservedReentryWithoutNotes() {
+            TestimonyMovement retirado = movementConEntry();
+            retirado.setDateExit(new Date());
+
+            when(testimonyRepository.existsById(5)).thenReturn(true);
+            when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
+                    .thenReturn(Optional.of(retirado));
+
+            assertThatThrownBy(() -> testimonyMovementService.reenter(5, new TestimonyReentry(77, true, "  ")))
+                    .isInstanceOf(BusinessValidationException.class)
+                    .hasMessageContaining("observaciones");
         }
 
         @Test
@@ -230,7 +288,7 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
                     .thenReturn(Optional.of(ingresado));
 
-            assertThatThrownBy(() -> testimonyMovementService.reenter(5))
+            assertThatThrownBy(() -> testimonyMovementService.reenter(5, TestimonyReentry.empty()))
                     .isInstanceOf(BusinessValidationException.class)
                     .hasMessageContaining("retirado");
         }
@@ -242,7 +300,7 @@ class TestimonyMovementServiceTest {
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
                     .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> testimonyMovementService.reenter(5))
+            assertThatThrownBy(() -> testimonyMovementService.reenter(5, TestimonyReentry.empty()))
                     .isInstanceOf(BusinessValidationException.class)
                     .hasMessageContaining("retirado");
         }
@@ -252,7 +310,7 @@ class TestimonyMovementServiceTest {
         void shouldRejectReingresarWhenTestimonyNotFound() {
             when(testimonyRepository.existsById(999)).thenReturn(false);
 
-            assertThatThrownBy(() -> testimonyMovementService.reenter(999))
+            assertThatThrownBy(() -> testimonyMovementService.reenter(999, TestimonyReentry.empty()))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }

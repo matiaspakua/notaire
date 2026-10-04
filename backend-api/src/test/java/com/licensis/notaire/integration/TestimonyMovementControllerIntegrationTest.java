@@ -182,7 +182,40 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
         mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/reenter"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.dateEntry").exists())
-                .andExpect(jsonPath("$.registered").value(false));
+                .andExpect(jsonPath("$.registered").value(false))
+                .andExpect(jsonPath("$.cardNumber").value(0))
+                .andExpect(jsonPath("$.observedByRegistry").value(false));
+    }
+
+    @Test
+    @DisplayName("Should persist cartón number, observation flag and notes sent on reentry")
+    void shouldPersistReentryData() throws Exception {
+        int idTestimony = generarTestimonyVerified();
+        registerEntry(idTestimony);
+        registerInscription(idTestimony);
+        withdraw(idTestimony, 456);
+
+        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/reenter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"cardNumber\": 77, \"observedByRegistry\": true, \"notes\": \"Falta sello\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.cardNumber").value(77))
+                .andExpect(jsonPath("$.observedByRegistry").value(true))
+                .andExpect(jsonPath("$.notes").value("Falta sello"));
+    }
+
+    @Test
+    @DisplayName("Should return 400 when the reentry is observed but has no notes")
+    void shouldRejectObservedReentryWithoutNotes() throws Exception {
+        int idTestimony = generarTestimonyVerified();
+        registerEntry(idTestimony);
+        registerInscription(idTestimony);
+        withdraw(idTestimony, 456);
+
+        mockMvc.perform(post("/api/v1/movimiento-testimonio/" + idTestimony + "/reenter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"cardNumber\": 77, \"observedByRegistry\": true}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
