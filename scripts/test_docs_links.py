@@ -18,7 +18,7 @@ SKIPPED_DIRS = ("docs/000-archive", "docs/archive")
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)")
 FENCE = re.compile(r"```.*?```", re.DOTALL)
 EXEMPT_REASONS = {
-    ("README.md", "LICENSE"): "no license file yet; choosing one is the Owner's decision (tracked in the audit report)",
+    ("README.md", "LICENSE"): "no license file yet; choosing one is the Owner's decision (issue #1226)",
 }
 
 
