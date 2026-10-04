@@ -577,3 +577,37 @@ export interface ProximoVencimiento {
   dateDue: string;
   daysRemaining: number;
 }
+
+/** #774 - GET /gestiones/{id}/resumen-caso — DtoManagementCaseSummary. */
+export type EstadoTestimonioCaso = "SIN_INGRESAR" | "INGRESADO" | "INSCRIPTO" | "RETIRADO";
+
+export interface TestimonioCaso {
+  idTestimony: number;
+  number: number;
+  verified: boolean;
+  flagged: boolean;
+  state: EstadoTestimonioCaso;
+  copies: number;
+}
+
+export interface EscrituraCaso {
+  idDeed: number;
+  number: number;
+  status?: string;
+  testimonies: TestimonioCaso[];
+}
+
+export interface GestionResumenCaso {
+  managementId: number;
+  managementNumber: number;
+  heading?: string;
+  deeds: EscrituraCaso[];
+}
+
+/** CU47/CU02 - GET /gestiones/{id}/resumen-financiero — DtoManagementResumenFinanciero. */
+export interface GestionResumenFinanciero {
+  idManagement: number;
+  totalPresupuestado: number;
+  totalCobrado: number;
+  pendingBalance: number;
+}
