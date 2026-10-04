@@ -27,8 +27,4 @@ yarn-error.log*
 next-env.d.ts
 
 # Test results
-test-results/
-playwright-report/
-playwright-results/
 coverage/
-tests/e2e/fixtures/

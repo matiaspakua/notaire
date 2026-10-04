@@ -12,7 +12,7 @@ a later phase writes the specification; the foreman reverts it here.
    name is mentioned with exactly `git grep -n -i "<name>"` — one name, no
    options added; `find` and `grep -r` crawl `node_modules/`.
 3. Find the existing tests for those classes:
-   `git grep -ln "<ClassName>" -- backend-api/src/test frontend/src frontend/tests`.
+   `git grep -ln "<ClassName>" -- backend-api/src/test frontend/src testing/e2e/tests`.
    Open them. The issue may be partly stale: something it asks for may already
    be true on `main` and already tested.
 4. For each acceptance criterion of the issue decide:

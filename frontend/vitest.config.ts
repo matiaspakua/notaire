@@ -9,7 +9,7 @@ export default defineConfig({
     setupFiles: ["./src/tests/setup.ts"],
     globals: true,
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
-    exclude: ["tests/e2e/**", "node_modules/**"],
+    exclude: ["node_modules/**"],
     coverage: {
       provider: "v8",
       // json-summary produces coverage/coverage-summary.json, which the
