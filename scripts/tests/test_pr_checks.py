@@ -123,6 +123,13 @@ class SdlcExceptionTest(unittest.TestCase):
         commit(repo, "docs(openspec): plan", "openspec/changes/x/proposal.md")
         self.assertEqual(run("check-sdlc-exception.sh", base, cwd=repo).returncode, 0)
 
+    def test_accepts_a_large_diff_whose_first_path_is_an_openspec_change(self):
+        repo, base = new_repo()
+        long_name = "x" * 180
+        paths = ["openspec/changes/archive/2026-10-04-big/" + f"{index:04d}-{long_name}.md" for index in range(700)]
+        commit(repo, "chore(openspec): archive a large change", *paths)
+        self.assertEqual(run("check-sdlc-exception.sh", base, cwd=repo).returncode, 0)
+
     def test_accepts_dependency_bot(self):
         repo, base = new_repo()
         commit(repo, "chore(deps): bump", "frontend/package.json")
