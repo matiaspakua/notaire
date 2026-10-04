@@ -5,7 +5,7 @@ CU76, ADR-012.
 
 The Swing desktop client (`frontend-swing` / `deprecated-frontend-swing`) was
 removed from the repository. The GitHub Actions workflow `e2e-swing.yml` is
-retired and must not return. Active UI E2E is Playwright under `frontend/tests/e2e/`.
+retired and must not return. Active UI E2E is Playwright under `testing/e2e/tests/`.
 
 ## Forbidden
 
@@ -24,7 +24,7 @@ hygiene (#1050) keeps working and so git history retains context. They are
 ## Supported E2E
 
 ```bash
-cd frontend && npm run test:e2e
+cd testing/e2e && npm test
 ```
 
 See `docs/300-development/303-testing/README.md`.

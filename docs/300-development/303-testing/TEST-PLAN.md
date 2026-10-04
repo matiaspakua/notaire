@@ -135,11 +135,11 @@ test.describe("TS-0010 - Presupuesto Workflow", () => {
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| **GherkinSteps** | `frontend/tests/e2e/gherkin-helpers.ts` | Given-When-Then step definitions (login, modal, form, table assertions) |
-| **API Helpers** | `frontend/tests/e2e/setup/api-helpers.ts` | Shared functions: `createPersona()`, `createPresupuesto()`, `seedGestion()` |
-| **Global Setup** | `frontend/tests/e2e/setup/global-setup.ts` | Runs once per worker: login as admin, extract JWT to `process.env.E2E_ADMIN_TOKEN` |
-| **Global Teardown** | `frontend/tests/e2e/setup/global-teardown.ts` | Cleanup after suite (close browser, audit logs) |
-| **Auth Helper** | `frontend/tests/e2e/setup/auth.ts` | Inject cached token or re-login (`authenticateAsAdmin()`) |
+| **GherkinSteps** | `testing/e2e/tests/gherkin-helpers.ts` | Given-When-Then step definitions (login, modal, form, table assertions) |
+| **API Helpers** | `testing/e2e/tests/setup/api-helpers.ts` | Shared functions: `createPersona()`, `createPresupuesto()`, `seedGestion()` |
+| **Global Setup** | `testing/e2e/tests/setup/global-setup.ts` | Runs once per worker: login as admin, extract JWT to `process.env.E2E_ADMIN_TOKEN` |
+| **Global Teardown** | `testing/e2e/tests/setup/global-teardown.ts` | Cleanup after suite (close browser, audit logs) |
+| **Auth Helper** | `testing/e2e/tests/setup/auth.ts` | Inject cached token or re-login (`authenticateAsAdmin()`) |
 
 ### Fixture Validation Rules
 
@@ -192,7 +192,7 @@ Unit (80% target) → Integration (80% target) → API (Bruno) → Frontend unit
 | **DAST (OWASP ZAP)** | Baseline dynamic scan of the running API | `.github/workflows/dast-zap.yml` (weekly + dispatch; warn-first; complements Trivy) |
 | **Backup→restore smoke** | Restoreability once automated backups exist | `.github/workflows/backup-restore-smoke.yml` (skipped/blocked on #256 until `scripts/backup-postgres.sh` lands) |
 | **Frontend unit (Vitest)** | React components/hooks in isolation | `frontend/src/**/*.test.ts` |
-| **E2E (Playwright)** | Full Use Case through the actual browser UI | `frontend/tests/e2e/TS-nnnn-*.spec.ts` (35 suites, 448 tests) |
+| **E2E (Playwright)** | Full Use Case through the actual browser UI | `testing/e2e/tests/TS-nnnn-*.spec.ts` (35 suites, 448 tests) |
 
 ---
 
@@ -201,8 +201,8 @@ Unit (80% target) → Integration (80% target) → API (Bruno) → Frontend unit
 ### Local Commands
 
 ```bash
-# Run all E2E tests (35 suites, ~448 tests)
-npm run test:e2e
+# Run all E2E tests (from testing/e2e)
+cd testing/e2e && npm test
 
 # Run single test suite
 npx playwright test TS-0001-login-authentication
@@ -239,7 +239,7 @@ See [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md) for local↔CI mapping.
 
 | Report | Source | Location |
 |--------|--------|----------|
-| E2E results (Playwright HTML) | `npm run test:e2e` | `frontend/playwright-report/index.html` |
+| E2E results (Playwright HTML) | `cd testing/e2e && npm test` | `testing/e2e/playwright-report/index.html` |
 | E2E trace/artifacts | On failure | `test-results/` (traces, videos, screenshots) |
 | Coverage (JaCoCo backend) | `mvn jacoco:report` | `backend-api/target/site/jacoco/` |
 | Coverage (Vitest frontend) | `npm run test:coverage` | `frontend/coverage/` |

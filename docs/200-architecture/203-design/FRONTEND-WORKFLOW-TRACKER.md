@@ -110,4 +110,4 @@ class's other lazy associations; API consumers use `workflowDefinitionId` /
 |-------|----------|
 | Unit | `backend-api/src/test/java/.../unit/WorkflowTraceServiceTest.java` |
 | Integration (H2) | `backend-api/src/test/java/.../integration/WorkflowTraceApiH2IntegrationTest.java` (`@RequirementCoverage({"CU83"})`) |
-| E2E | `frontend/tests/e2e/workflow-tracker.spec.ts` |
+| E2E | `testing/e2e/tests/workflow-tracker.spec.ts` |

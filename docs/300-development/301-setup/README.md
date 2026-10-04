@@ -81,7 +81,7 @@ notaire/
 ```
 
 Swing Robot E2E under `testing/e2e-swing/` is hard-deprecated (#811); active UI
-E2E is Playwright (`cd frontend && npm run test:e2e`).
+E2E is Playwright (`cd testing/e2e && npm test`).
 
 ## Comandos de Desarrollo
 

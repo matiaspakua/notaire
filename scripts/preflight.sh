@@ -62,6 +62,8 @@ frontend typecheck              TypeScript Check                 frontend-ci.yml
 frontend eslint                 ESLint                           frontend-ci.yml   (BLOCKING)
 frontend vitest                 Unit Tests (Vitest)              frontend-ci.yml
 frontend build                  Build (Next.js)                  frontend-ci.yml
+e2e typecheck                   UI E2E Tests (Playwright)        playwright-e2e.yml (fails before the stack starts)
+e2e eslint                      UI E2E Tests (Playwright)        playwright-e2e.yml (fails before the stack starts)
 http integration suite (--full) (legacy cURL smoke; no CI job)   n/a
 database v&v suite      (--full) Database V&V                    database-vv.yml    (needs Docker, not the stack)
 playwright e2e          (--full) UI E2E Tests (Playwright)       playwright-e2e.yml
@@ -235,13 +237,23 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+section "E2E suite (testing/e2e)"
+# ---------------------------------------------------------------------------
+if [ ! -d testing/e2e/node_modules ]; then
+    echo "installing E2E suite deps (npm ci)…"
+    (cd testing/e2e && npm ci) >/dev/null 2>&1 || warn "npm ci failed (testing/e2e)"
+fi
+run "e2e typecheck" bash -c "cd testing/e2e && ./node_modules/.bin/tsc --noEmit"
+run "e2e eslint" bash -c "cd testing/e2e && ./node_modules/.bin/eslint . --max-warnings=0"
+
+# ---------------------------------------------------------------------------
 section "Server-backed suites"
 # ---------------------------------------------------------------------------
 if [ "$MODE_FULL" = "1" ]; then
     if curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
        && curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
         run "http integration suite" bash -c "cd testing/integration/http && bash test-all-endpoints-v2.sh"
-        run "playwright e2e" bash -c "cd frontend && ./node_modules/.bin/playwright test"
+        run "playwright e2e" bash -c "cd testing/e2e && ./node_modules/.bin/playwright test"
 
         # Mirrors playwright-e2e.yml's "API Tests (Bruno)" job: fetch a JWT up
         # front (the collection sends it on every request; folders run

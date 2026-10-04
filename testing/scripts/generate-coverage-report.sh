@@ -76,11 +76,9 @@ fi
 # E2E Coverage (Playwright)
 echo ""
 echo "3️⃣ E2E Tests (Playwright)..."
-if [ -f "frontend/playwright.config.ts" ]; then
-  cd frontend
-  npx playwright test --reporter=html 2>/dev/null || true
-  cd ..
-  cp -r frontend/playwright-report "$REPORT_DIR/playwright-report" 2>/dev/null || true
+if [ -f "testing/e2e/playwright.config.ts" ]; then
+  (cd testing/e2e && npx playwright test --reporter=html 2>/dev/null) || true
+  cp -r testing/e2e/playwright-report "$REPORT_DIR/playwright-report" 2>/dev/null || true
   echo "   ✓ E2E test report generated"
 fi
 

@@ -12,7 +12,7 @@ NC='\033[0m'
 
 echo -e "${RED}testing/e2e-swing is RETIRED (issue #811).${NC}"
 echo "Do not set up a Robot venv for Swing. Use Playwright:"
-echo "  cd frontend && npm run test:e2e"
+echo "  cd testing/e2e && npm test"
 exit 2
 
 # --- historical body kept below for reference; unreachable ---

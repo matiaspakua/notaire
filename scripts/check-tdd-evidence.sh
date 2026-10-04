@@ -16,7 +16,7 @@ set -uo pipefail
 BASE="${1:?usage: check-tdd-evidence.sh <base> [head]}"
 HEAD="${2:-HEAD}"
 PROD='^(backend-api|notaire-shared)/src/main/|^frontend/src/'
-TEST='/src/test/|\.test\.tsx?$|^frontend/tests/|/__tests__/'
+TEST='/src/test/|\.test\.tsx?$|^testing/e2e/tests/|/__tests__/'
 
 if grep -qw 'sdlc-exception' <<< "${PR_LABELS:-}"; then
   echo "✓ sdlc-exception label set — TDD evidence check waived"
