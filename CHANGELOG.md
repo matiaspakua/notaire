@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CU84 on the Use Case template, requirements CSV fixed** (issue #956, CU84): CU84 now has Referencias Cruzadas
+  and GitHub ID rows; the two malformed "Login al sistema" rows in `requerimientos.csv` became one row with
+  requirement issue #1224; `scripts/test_business_docs_traceability.py` guards the shape.
+
 - **ERD artifacts regenerated for the English schema** (issue #1021, CU76): `scripts/generate_erd.py` rebuilds the
   PlantUML sources, SVG renders and relational CSV from the migrated database; a database-free guard
   (`scripts/test_erd_current_schema.py`) rejects retired Spanish table names and disagreement between artifacts.
