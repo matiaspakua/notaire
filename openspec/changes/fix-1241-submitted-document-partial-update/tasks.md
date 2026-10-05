@@ -19,9 +19,9 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [ ] 3.2 Add the failing tests; observed failing
-- [ ] 3.3 Every scenario maps to a test
+- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [x] 3.2 Add the failing tests; observed failing
+- [x] 3.3 Every scenario maps to a test
 
 ## 4. Implementación
 
