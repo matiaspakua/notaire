@@ -27,12 +27,12 @@ Dependabot **docker** ecosystems for `/backend-api` and `/frontend` open PRs
 when Dockerfile bases change.
 
 ### Backend (`backend-api/Dockerfile`)
-- **Build stage**: `maven:3.9.x-eclipse-temurin-21-alpine` (pinned minor;
-  currently `3.9.15-eclipse-temurin-21-alpine`) — compiles
+- **Build stage**: `maven:3.x-eclipse-temurin-26-alpine` (pinned minor;
+  currently `3.10.0-eclipse-temurin-26-alpine`, JDK 26 since #1276) — compiles
   `notaire-shared` + `backend-api` (`mvn package -pl backend-api -am
   -DskipTests`).
-- **Runtime stage**: `eclipse-temurin:21.0.x_*-jre-alpine` (pinned;
-  currently `21.0.11_10-jre-alpine`) — copies the built JAR, runs as
+- **Runtime stage**: `eclipse-temurin:26.0.x_*-jre-alpine` (pinned;
+  currently `26.0.2.1_1-jre-alpine`) — copies the built JAR, runs as
   `notary` (uid/gid 1000).
 - JVM tuned for containers: `-XX:+UseContainerSupport
   -XX:MaxRAMPercentage=70.0 -XX:+UseG1GC`.

@@ -144,14 +144,14 @@ The configuration is in `backend-api/spotbugs-exclude.xml`.
 
 ### Known Issues
 
-- SpotBugs does not support Java 21+ bytecode in some versions
-- In CI, use Java 21: `mvn spotbugs:check -pl backend-api -DskipSpotBugs=false`
+- SpotBugs does not support the newest Java bytecode in some versions
+- In CI, use Java 26: `mvn spotbugs:check -pl backend-api -DskipSpotBugs=false`
 - Locally, SpotBugs is skipped by default due to Java compatibility
 
 ### Running SpotBugs
 
 ```bash
-# Run SpotBugs (requires Java 21)
+# Run SpotBugs (requires Java 26)
 mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 
 # Generate XML report
@@ -163,7 +163,7 @@ open backend-api/target/spotbugsXml.xml
 
 ### CI Integration
 
-In GitHub Actions, SpotBugs runs with Java 21 and reports are uploaded as artifacts.
+In GitHub Actions, SpotBugs runs with Java 26 and reports are uploaded as artifacts.
 
 ## Trivy - Security Scanning
 

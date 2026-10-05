@@ -262,7 +262,7 @@ CodeQL is not a substitute for that gate.
 
 ```yaml
 env:
-  JAVA_VERSION: '21'
+  JAVA_VERSION: '26'
   MAVEN_OPTS: -Xmx1024m -XX:MaxMetaspaceSize=512m
 ```
 
