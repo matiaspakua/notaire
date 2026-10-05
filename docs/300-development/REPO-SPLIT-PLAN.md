@@ -122,7 +122,7 @@ git push -u origin main                        # new repository only; no --force
 Differences from the playbook in #1197: no copying into the clone before filtering (filter-repo
 deletes unlisted paths), `--path-rename` so history is kept under the new root, issue references
 stay unambiguous, no force push to an existing repository, no `deprecated-*` paths, current
-directory names (`testing/e2e`, not `frontend/tests/e2e`).
+directory names (the Playwright suite is `testing/e2e`).
 
 Open issues for the area move with `gh issue transfer <n> <owner>/notaire-<area>` (same owner
 only); pull requests are closed or re-opened. Commit SHAs cited in `CHANGELOG.md` and OpenSpec
