@@ -7,14 +7,12 @@ WORKDIR /build
 
 # Copy POM files first for dependency caching
 COPY pom.xml pom.xml
-COPY notaire-shared/pom.xml notaire-shared/pom.xml
 COPY backend-api/pom.xml backend-api/pom.xml
 
 # Download dependencies (cached in Docker layer)
 RUN mvn dependency:go-offline -B -q || true
 
 # Copy source code
-COPY notaire-shared/src notaire-shared/src
 COPY backend-api/src backend-api/src
 
 # Build the application (skip tests)
