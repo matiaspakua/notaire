@@ -126,7 +126,7 @@ cd backend-api && mvn spring-boot:run
 
 ### Backend API
 
-```
+```text
 com.licensis.notaire/
 ├── api/                  # Controllers REST
 │   └── PersonaController.java
@@ -155,6 +155,7 @@ El schema es gestionado por Flyway (migraciones en `backend-api/src/main/resourc
 ### Índices
 
 Verificar que los índices necesarios estén creados para:
+
 - `personas.id_persona`
 - `escrituras.id_escritura`
 - `presupuestos.id_presupuesto`

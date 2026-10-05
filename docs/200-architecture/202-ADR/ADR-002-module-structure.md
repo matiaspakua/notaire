@@ -10,7 +10,7 @@
 > renamed to `deprecated-frontend-swing` and excluded from the root Maven reactor.
 > `mvn clean install -pl frontend-swing -am` no longer works — see the corrected
 > command in [Build Commands](#build-commands).
-
+>
 > **Update (see ADR-024):** the `notaire-shared` module below was retired under #1255.
 > Its classes live in `backend-api` and the folder is archived in
 > `deprecated/notaire-shared/`; the reactor now has the single module `backend-api`.
@@ -24,6 +24,7 @@ El sistema Notaire tiene tres responsabilidades distintas que necesitan organiza
 3. **Código Compartido**: DTOs y utilidades comunes
 
 La estructura monolítica anterior mezclaba estas responsabilidades. Se necesita una estructura de módulos Maven que:
+
 - Enforce la separación de responsabilidades
 - Facilite el testing independiente
 - Permita builds selectivos
@@ -33,7 +34,7 @@ La estructura monolítica anterior mezclaba estas responsabilidades. Se necesita
 
 Implementar estructura Maven multi-módulo con 3 módulos principales:
 
-```
+```text
 notaire/ (pom.xml agregador)
 ├── backend-api/
 │   ├── src/main/java/com/licensis/notaire/
@@ -72,7 +73,8 @@ notaire/ (pom.xml agregador)
 ### Backend-API: Capas internas
 
 **api/** (REST Controllers)
-```
+
+```text
 api/
 ├── PresupuestoController.java
 ├── PersonaController.java
@@ -83,7 +85,8 @@ api/
 ```
 
 **service/** (Orquestación de negocio)
-```
+
+```text
 service/
 ├── PresupuestoService.java
 ├── PersonaService.java
@@ -93,7 +96,8 @@ service/
 ```
 
 **repository/** (Spring Data JPA)
-```
+
+```text
 repository/
 ├── PresupuestoRepository.java
 ├── PersonaRepository.java
@@ -103,7 +107,8 @@ repository/
 ```
 
 **negocio/** (Domain entities)
-```
+
+```text
 negocio/
 ├── Presupuesto.java
 ├── Persona.java
@@ -114,7 +119,8 @@ negocio/
 ```
 
 **config/** (Spring configuration)
-```
+
+```text
 config/
 ├── DataSourceConfig.java
 ├── JpaConfig.java
@@ -124,7 +130,8 @@ config/
 ```
 
 **exception/** (Custom exceptions)
-```
+
+```text
 exception/
 ├── NotaireException.java
 ├── ResourceNotFoundException.java
@@ -133,7 +140,8 @@ exception/
 ```
 
 **dto/** (Response DTOs)
-```
+
+```text
 dto/
 ├── DtoPresupuesto.java
 ├── DtoPersona.java
@@ -145,6 +153,7 @@ dto/
 ## Options Considered
 
 ### Option A: Single monolithic JAR
+
 | Dimensión | Evaluación |
 |-----------|-----------|
 | Complejidad | Baja |
@@ -152,11 +161,13 @@ dto/
 | Testabilidad | Media |
 
 **Cons:**
+
 - No permite separar FE/BE builds
 - Dificulta testing independiente
 - Legacy structure
 
 ### Option B: Multi-módulo Maven (SELECCIONADO)
+
 | Dimensión | Evaluación |
 |-----------|-----------|
 | Complejidad | Media |
@@ -164,6 +175,7 @@ dto/
 | Testabilidad | Alta |
 
 **Pros:**
+
 - Separación clara de responsabilidades
 - Builds selectivos (`mvn -pl backend-api -am`)
 - Dependency management centralizado
@@ -171,34 +183,38 @@ dto/
 - Versioning independiente de módulos
 
 ### Option C: Monorepo Gradle
+
 | Dimensión | Evaluación |
 |-----------|-----------|
 | Complejidad | Alta |
 | Performance | Mejor en monorepos grandes |
 
 **Cons:**
+
 - Curva de aprendizaje para equipo Maven
 - Migración costosa desde Maven
 
 ## Trade-off Analysis
 
-**Complejidad vs. Separación**
+### Complejidad vs. Separación
 
 La estructura multi-módulo añade cierta complejidad inicial (gestión de dependencias entre módulos), pero el beneficio de separación es mayor. Permite que equipos trabajen independientemente sin conflictos de merge.
 
-**Build time vs. Seguridad de cambios**
+### Build time vs. Seguridad de cambios
 
 Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds rápidos sin esperar a la GUI. Cada módulo puede testearse independientemente.
 
 ## Consequences
 
 ### Positivas
+
 - **Separación clara**: No hay imports cruzados BE→GUI
 - **Builds independientes**: Backend sin esperar frontend
 - **Testing granular**: Unidad tests por módulo
 - **Deployment independiente**: Backend actualiza sin GUI
 
 ### Desafíos
+
 - **Versionado de dependencias**: Mantener compatibilidad entre módulos
 - **Shared module overhead**: Pequeño overhead de coordinación
 - **Build más lento**: Multi-módulo requiere builds secuenciales
@@ -208,12 +224,14 @@ Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds
 ### Backend-API
 
 1. **NO se permiten imports de Swing**
+
    ```java
    // PROHIBIDO
    import javax.swing.*;
    ```
 
 2. **NO acceso directo a BD desde controllers**
+
    ```java
    // INCORRECTO - Direct JDBC
    Statement stmt = connection.createStatement();
@@ -223,6 +241,7 @@ Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds
    ```
 
 3. **NO excepciones silenciosas**
+
    ```java
    // INCORRECTO
    try { ... } catch (Exception e) { }
@@ -237,6 +256,7 @@ Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds
 ### Frontend-Swing
 
 1. **NO lógica de negocio en GUI**
+
    ```java
    // INCORRECTO
    if (presupuesto.monto > 1000) {
@@ -248,6 +268,7 @@ Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds
    ```
 
 2. **NO acceso directo a BD**
+
    ```java
    // INCORRECTO
    Connection conn = DriverManager.getConnection(...);
@@ -257,6 +278,7 @@ Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds
    ```
 
 3. **Usar ApiClient para todas las operaciones**
+
    ```java
    @Autowired private ApiClient apiClient;
    

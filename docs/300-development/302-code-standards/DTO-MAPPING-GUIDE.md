@@ -23,6 +23,7 @@ DTO classes live in `backend-api` (`com.licensis.notaire.dto`). They used to sit
 ### Where Direct Entity Serialization Is Used
 
 Most CRUD endpoints return JPA entities directly:
+
 - `GET /personas` → `List<Persona>` serialized as JSON
 - `GET /gestiones` → `List<GestionDeEscritura>` serialized as JSON
 
@@ -81,6 +82,7 @@ protected PlantillaPresupuestoPK plantillaPresupuestoPK;
 ```
 
 The serialized JSON:
+
 ```json
 {
   "plantillaPresupuestoPK": {
@@ -94,7 +96,8 @@ The serialized JSON:
 ```
 
 PUT/DELETE endpoints use composite path variables:
-```
+
+```text
 PUT /api/v1/plantilla-presupuestos/tipo-tramite/{idTipoTramite}/concepto/{idConcepto}
 DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{idTipoTramite}/concepto/{idConcepto}
 ```
