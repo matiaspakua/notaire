@@ -19,9 +19,9 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: signatures, loose baseline, folio/notebook/cost/procedure/notary shapes, removed DTOs
-- [ ] 3.2 Add `ControllerSignatureArchitectureTest`, `ControllerResponseRecordsIntegrationTest`, `DtoRemovalTest`; observed failing
-- [ ] 3.3 Every scenario maps to a test
+- [x] 3.1 Enumerate test cases: signatures, loose baseline, folio/notebook/cost/procedure/notary shapes, removed DTOs
+- [x] 3.2 Add `ControllerSignatureArchitectureTest`, `ControllerResponseRecordsIntegrationTest`, `DtoRemovalTest`; observed failing
+- [x] 3.3 Every scenario maps to a test
 
 ## 4. Implementación
 
