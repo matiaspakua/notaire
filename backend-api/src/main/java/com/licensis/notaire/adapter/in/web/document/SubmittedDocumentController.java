@@ -2,7 +2,6 @@ package com.licensis.notaire.adapter.in.web.document;
 
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.DocumentType;
-import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.repository.DocumentTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
@@ -64,21 +63,29 @@ public class SubmittedDocumentController {
         this.procedureRepository = procedureRepository;
     }
 
-    private SubmittedDocument toEntity(SubmittedDocumentRequest request) {
+    private SubmittedDocument newDocument() {
         SubmittedDocument entity = new SubmittedDocument();
-        Optional<DocumentType> type = request.typeId() != null
-                ? typeRepository.findById(request.typeId())
-                : Optional.empty();
-        type.ifPresent(entity::setDocumentType);
-        entity.setDelivered(request.delivered() != null ? request.delivered() : false);
-        entity.setName(request.name() != null ? request.name() : "");
+        entity.setDelivered(false);
+        entity.setName("");
         entity.setPrepared(false);
         entity.setReleased(false);
         entity.setFlagged(false);
         entity.setReentered(false);
+        return entity;
+    }
+
+    private void apply(SubmittedDocument entity, SubmittedDocumentRequest request) {
+        if (request.typeId() != null) {
+            typeRepository.findById(request.typeId()).ifPresent(entity::setDocumentType);
+        }
+        if (request.delivered() != null) {
+            entity.setDelivered(request.delivered());
+        }
+        if (request.name() != null) {
+            entity.setName(request.name());
+        }
         if (request.procedureId() != null) {
-            Procedure procedure = procedureRepository.findById(request.procedureId()).orElse(null);
-            entity.setFkIdProcedure(procedure);
+            entity.setFkIdProcedure(procedureRepository.findById(request.procedureId()).orElse(null));
         }
         if (request.date() != null) {
             try {
@@ -87,8 +94,10 @@ public class SubmittedDocumentController {
                 log.warn("Invalid date format: {}", request.date());
             }
         }
-        applyDueFromDocumentType(entity, type, request);
-        return entity;
+    }
+
+    private void refreshDue(SubmittedDocument entity, SubmittedDocumentRequest request) {
+        applyDueFromDocumentType(entity, Optional.ofNullable(entity.getDocumentType()), request);
     }
 
     private void applyDueFromDocumentType(SubmittedDocument entity, Optional<DocumentType> type,
@@ -158,7 +167,9 @@ public class SubmittedDocumentController {
     @Operation(summary = "Crear nuevo documento presentado")
     public ResponseEntity<Object> create(@RequestBody SubmittedDocumentRequest request) {
         try {
-            SubmittedDocument entity = toEntity(request);
+            SubmittedDocument entity = newDocument();
+            apply(entity, request);
+            refreshDue(entity, request);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
         } catch (Exception e) {
@@ -174,13 +185,16 @@ public class SubmittedDocumentController {
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar documento presentado")
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody SubmittedDocumentRequest request) {
-        if (!repository.existsById(id)) {
+        Optional<SubmittedDocument> stored = repository.findById(id);
+        if (stored.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         try {
-            SubmittedDocument entity = toEntity(request);
-            entity.setIdSubmittedDocument(id);
-            repository.save(entity);
+            apply(stored.get(), request);
+            if (request.typeId() != null || request.date() != null || request.deliveredBy() != null) {
+                refreshDue(stored.get(), request);
+            }
+            repository.save(stored.get());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Failed to update documento presentado id {}", id, e);
