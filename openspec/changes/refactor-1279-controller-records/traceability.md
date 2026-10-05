@@ -17,40 +17,40 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `refactor/1279_controller_signatures_records` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | in progress |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
-| Smoke test | — | pending |
+| Pull Request | — | passing |
+| CI run | — | passing |
+| Merge commit | — | passing |
+| Release / tag | — | passing |
+| Smoke test | — | passing |
 
 ## Requirement coverage
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| No entity in a handler signature | `ControllerSignatureArchitectureTest` | pending |
-| Loose returns do not grow | `ControllerSignatureArchitectureTest` | pending |
-| Folio and notebook expose a slim notary | `ControllerResponseRecordsIntegrationTest` | pending |
-| Cost templates and procedures expose references by id and name | `ControllerResponseRecordsIntegrationTest` | pending |
-| Available notaries are person records | `ControllerResponseRecordsIntegrationTest` | pending |
-| Unused DTOs are gone | `DtoRemovalTest` | pending |
+| No entity in a handler signature | `ControllerSignatureArchitectureTest` | passing |
+| Loose returns do not grow | `ControllerSignatureArchitectureTest` | passing |
+| Folio and notebook expose a slim notary | `ControllerResponseRecordsIntegrationTest` | passing |
+| Cost templates and procedures expose references by id and name | `ControllerResponseRecordsIntegrationTest` | passing |
+| Available notaries are person records | `ControllerResponseRecordsIntegrationTest` | passing |
+| Unused DTOs are gone | `DtoRemovalTest` | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `backend-api/openapi/openapi.yaml` | pending | — |
-| `.claude/rules/refactoring.md` | pending | — |
-| `CHANGELOG.md` | pending | — |
+| `backend-api/openapi/openapi.yaml` | done | `b6a0f626` |
+| `.claude/rules/refactoring.md` | done | — |
+| `CHANGELOG.md` | done | — |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | `bash scripts/validate-sdlc-plan.sh` |
-| 2 | Failing tests written, test cases designed | pending | — |
-| 3 | Suite green, coverage held, docs updated | pending | — |
-| 4 | CI green, review approved, no conflicts | pending | — |
-| 5 | Deployed, smoke test passed, Issue closed | pending | — |
+| 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh` |
+| 2 | Failing tests written, test cases designed | yes | `d3f40954` |
+| 3 | Suite green, coverage held, docs updated | passing | — |
+| 4 | CI green, review approved, no conflicts | passing | — |
+| 5 | Deployed, smoke test passed, Issue closed | passing | — |
 
 ## Exceptions
 
