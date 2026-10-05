@@ -10,9 +10,6 @@
 # Frontend-specific owners (Next.js only; Swing removed under #1046)
 /frontend/ @matiaspakua
 
-# Shared module
-/notaire-shared/ @matiaspakua
-
 # CI/CD workflows
 /.github/workflows/ @matiaspakua
 

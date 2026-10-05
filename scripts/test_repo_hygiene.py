@@ -51,7 +51,6 @@ SWING_CODEOWNERS = re.compile(r"(?m)^/frontend-swing/")
 LIVE_CODEOWNERS = (
     re.compile(r"(?m)^/frontend/"),
     re.compile(r"(?m)^/backend-api/"),
-    re.compile(r"(?m)^/notaire-shared/"),
 )
 
 # Ordinary blob threshold: the tracked PDF was ~13 MB.

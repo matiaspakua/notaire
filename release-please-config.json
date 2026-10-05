@@ -19,11 +19,6 @@
           "xpath": "/project/parent/version"
         },
         {
-          "type": "xml",
-          "path": "notaire-shared/pom.xml",
-          "xpath": "/project/parent/version"
-        },
-        {
           "type": "json",
           "path": "frontend/package.json",
           "jsonpath": "$.version"
