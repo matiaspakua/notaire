@@ -19,10 +19,10 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: class ownership, one-module reactor, no dependency, Docker files, tooling references, archived folder and manifest, dead code, docs
-- [ ] 3.2 Add `DtoOwnershipTest` and `scripts/test_notaire_shared_retired.py` (+ wrapper); update `test_repo_hygiene.py`; observed failing
-- [ ] 3.3 Every scenario maps to a test
-- [ ] 3.4 Baseline for the contract diff is the committed `backend-api/openapi/openapi.yaml` (no regeneration may change it)
+- [x] 3.1 Enumerate test cases: class ownership, one-module reactor, no dependency, Docker files, tooling references, archived folder and manifest, dead code, docs
+- [x] 3.2 Add `DtoOwnershipTest` and `scripts/test_notaire_shared_retired.py` (+ wrapper); update `test_repo_hygiene.py`; observed failing
+- [x] 3.3 Every scenario maps to a test
+- [x] 3.4 Baseline for the contract diff is the committed `backend-api/openapi/openapi.yaml` (no regeneration may change it)
 
 ## 4. Implementación
 
