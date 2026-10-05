@@ -1,6 +1,8 @@
 package com.licensis.notaire.adapter.in.web.folio;
 
 import com.licensis.notaire.adapter.in.web.support.CreatedResponses;
+import com.licensis.notaire.adapter.in.web.support.DeedRef;
+import com.licensis.notaire.adapter.in.web.support.NotaryRef;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
@@ -43,6 +45,23 @@ public class FolioController {
 
     private static final String StatusUTILIZADO = "Utilizado";
 
+    public record FolioTypeRef(Integer idFolioType, String name, String notes, boolean enabled, boolean isAuxiliary) {
+        public static FolioTypeRef from(FolioType type) {
+            return type == null ? null : new FolioTypeRef(type.getIdFolioType(), type.getName(), type.getNotes(),
+                    type.getEnabled(), type.isIsAuxiliary());
+        }
+    }
+
+    public record FolioResponse(Integer idFolio, int number, int year, String status, String notes,
+            FolioTypeRef fkIdFolioType, NotaryRef fkIdNotaryPerson, DeedRef fkIdDeed, int version) {
+        public static FolioResponse from(Folio folio) {
+            return new FolioResponse(folio.getIdFolio(), folio.getNumber(), folio.getYear(), folio.getStatus(),
+                    folio.getNotes(), FolioTypeRef.from(folio.getFkIdFolioType()),
+                    NotaryRef.from(folio.getFkIdNotaryPerson()), DeedRef.from(folio.getFkIdDeed()),
+                    folio.getVersion());
+        }
+    }
+
     record FolioRequest(
             int number,
             int year,
@@ -68,14 +87,13 @@ public class FolioController {
         this.deedRepository = deedRepository;
     }
 
-    // GET endpoints return the raw entity, not Folio.getDto(): the legacy DTO renames fields
-    // (personNotary/deed/id instead of fkIdNotaryPerson/fkIdDeed/personId) and does not match
-    // the frontend's Folio type or the rest of the refactored API (see #1006).
+    // FolioResponse keeps the wire names of the frontend Folio type (fkIdNotaryPerson, fkIdDeed); the legacy
+    // Folio.getDto() renames them (personNotary/deed/id) and is not used here (see #1006).
     @GetMapping
     @Operation(summary = "Obtener todos los folios")
-    public ResponseEntity<List<Folio>> getAll() {
+    public ResponseEntity<List<FolioResponse>> getAll() {
         try {
-            return ResponseEntity.ok(folioRepository.findAll());
+            return ResponseEntity.ok(folioRepository.findAll().stream().map(FolioResponse::from).toList());
         } catch (Exception e) {
             log.error("Failed to list folios", e);
             return ResponseEntity.internalServerError().build();
@@ -84,8 +102,8 @@ public class FolioController {
 
     @GetMapping("/search")
     @Operation(summary = "Buscar folios por estado")
-    public ResponseEntity<List<Folio>> search(@RequestParam String status) {
-        return ResponseEntity.ok(folioRepository.findByStatus(status));
+    public ResponseEntity<List<FolioResponse>> search(@RequestParam String status) {
+        return ResponseEntity.ok(folioRepository.findByStatus(status).stream().map(FolioResponse::from).toList());
     }
 
     @GetMapping("/{id}/in-use")
@@ -102,9 +120,9 @@ public class FolioController {
 })
     @GetMapping("/{id}")
     @Operation(summary = "Obtener folio por ID")
-    public ResponseEntity<Folio> getById(@PathVariable Integer id) {
+    public ResponseEntity<FolioResponse> getById(@PathVariable Integer id) {
         return folioRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(folio -> ResponseEntity.ok(FolioResponse.from(folio)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -115,7 +133,7 @@ public class FolioController {
 })
     @PostMapping
     @Operation(summary = "Crear nuevo folio")
-    public ResponseEntity<Folio> create(@Valid @RequestBody FolioRequest request) {
+    public ResponseEntity<FolioResponse> create(@Valid @RequestBody FolioRequest request) {
         if (request.typeFolioId() == null || request.notaryId() == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -145,7 +163,7 @@ public class FolioController {
                 folio.setStatus(StatusUTILIZADO);
             }
             Folio saved = folioRepository.save(folio);
-            return CreatedResponses.of(saved, "/api/v1/folio", saved.getIdFolio());
+            return CreatedResponses.of(FolioResponse.from(saved), "/api/v1/folio", saved.getIdFolio());
         } catch (Exception e) {
             log.error("Failed to create folio", e);
             return ResponseEntity.internalServerError().build();

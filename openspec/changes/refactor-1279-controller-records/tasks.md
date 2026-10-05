@@ -1,0 +1,93 @@
+> Governed by [CONSTITUTION.md](../../../CONSTITUTION.md) — §5 Official SDLC
+> Workflow, §6 Quality Gates. Groups 1-12 are **mandatory**.
+
+## 1. Gate 1 — Prerequisites
+
+- [x] 1.1 GitHub Issue #1279 exists, labeled, linked to CU76
+- [x] 1.2 Use Case documentation exists
+- [x] 1.3 Acceptance Criteria defined as scenarios
+- [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
+- [x] 1.5 ADR — n/a, follows `.claude/rules/refactoring.md`
+- [x] 1.6 Move the Issue to IN PROGRESS (`in-progress` label)
+
+## 2. Crear branch
+
+- [x] 2.1 `git fetch origin main`
+- [x] 2.2 `git checkout -b refactor/1279_controller_signatures_records`
+- [x] 2.3 Branch name recorded in `traceability.md`
+- [x] 2.4 Run `bash scripts/validate-sdlc-plan.sh refactor-1279-controller-records`
+
+## 3. Gate 2 — Escribir tests (TDD, failing first)
+
+- [x] 3.1 Enumerate test cases: signatures, loose baseline, folio/notebook/cost/procedure/notary shapes, removed DTOs
+- [x] 3.2 Add `ControllerSignatureArchitectureTest`, `ControllerResponseRecordsIntegrationTest`, `DtoRemovalTest`; observed failing
+- [x] 3.3 Every scenario maps to a test
+
+## 4. Implementación
+
+- [x] 4.1 Folio and AuxiliaryProtocol return `FolioResponse`
+- [x] 4.2 Notebook returns `NotebookResponse`
+- [x] 4.3 DocumentCostTemplate returns `CostTemplateResponse`
+- [x] 4.4 Procedure returns `ProcedureResponse` (page and by id)
+- [x] 4.5 Deed notaries use `PersonResponse`; Budget items use `ItemResponse`; Management by client uses `ManagementResponse`
+- [x] 4.6 Delete `DtoFlag` and `DtoIdentification`
+- [x] 4.7 Tests green
+
+## 5. Actualizar tests existentes
+
+- [x] 5.1 Existing tests that assert entity JSON updated without weakening assertions
+- [x] 5.2 No dead code or unused imports remain
+
+## 6. Ejecutar regresión
+
+- [x] 6.1 `mvn test -pl backend-api -Dtest=ControllerSignatureArchitectureTest,ControllerResponseRecordsIntegrationTest,DtoRemovalTest`
+- [x] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
+- [x] 6.3 `bash scripts/export-openapi.sh --maven` regenerated and committed
+- [ ] 6.4 `bash scripts/preflight.sh`
+- [x] 6.5 No `@Disabled` tests
+
+## 7. Ejecutar Playwright
+
+- [ ] 7.1 Existing suite runs as regression evidence (`bash scripts/run_pipeline.sh`)
+
+## 8. Gate 3 — Actualizar documentación permanente
+
+- [x] 8.1 OpenAPI artifact
+- [x] 8.2 `.claude/rules/refactoring.md`
+- [x] 8.3 `CHANGELOG.md` — one entry
+
+## 9. Commits atómicos
+
+- [x] 9.1 One logical change per commit, Conventional Commits
+- [ ] 9.2 Only the final commit carries `Closes #1279`; others `Refs #1279`
+- [x] 9.3 No secrets, no commented-out code
+
+## 10. Pull Request y validación CI
+
+- [ ] 10.1 `bash scripts/run_pipeline.sh` exits 0
+- [ ] 10.2 `git push -u origin refactor/1279_controller_signatures_records`
+- [ ] 10.3 Open PR `[#1279] refactor(api): controllers return records, not entities (slice 1 of #577)`
+- [ ] 10.4 Wait for all required workflows
+- [ ] 10.5 Gate 4 — CI green, review approved, no conflicts
+
+## 11. Deploy
+
+- [ ] 11.1 Owner merges via the PR — never push to `main`
+- [ ] 11.2 Confirm `cd.yml` ran green on `main`
+
+## 12. Gate 5 — Smoke test y cierre
+
+- [ ] 12.1 Smoke: CD green; folio, notebook and procedure endpoints answer 200
+- [ ] 12.2 Rollback path (revert PR) still valid
+- [ ] 12.3 Close Issue #1279 referencing the PR; #577 stays open with slice 2 next
+- [ ] 12.4 Archive the change: `openspec archive refactor-1279-controller-records`
+
+## Definition of Done
+
+- [ ] Issue linked to a Use Case, with Acceptance Criteria
+- [ ] Specification written (Gate 1)
+- [ ] Failing tests observed (Gate 2)
+- [ ] Implementation passes tests and required CI (Gate 3–4)
+- [ ] Permanent documentation updated and consistent
+- [ ] Commits atomic, Conventional Commits, `Closes #1279` on the last
+- [ ] Merged via PR; smoke evidence recorded; Issue closed (Gate 5)

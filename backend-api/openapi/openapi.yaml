@@ -45,40 +45,6 @@ components:
                 format: date-time
       description: Error interno del servidor
   schemas:
-    Budget:
-      properties:
-        atributos:
-          $ref: '#/components/schemas/DtoBudget'
-          writeOnly: true
-        date:
-          format: date-time
-          type: string
-        encabezado:
-          type: string
-        idBudget:
-          format: int32
-          type: integer
-        notes:
-          type: string
-        number:
-          format: int32
-          type: integer
-        person:
-          $ref: '#/components/schemas/Person'
-        propertyAmount:
-          type: number
-        saldo:
-          deprecated: true
-          type: number
-        status:
-          type: string
-        total:
-          deprecated: true
-          type: number
-        version:
-          format: int32
-          type: integer
-      type: object
     BudgetRef:
       properties:
         idBudget:
@@ -242,6 +208,31 @@ components:
           format: int32
           type: integer
       type: object
+    CostTemplateKey:
+      properties:
+        fkIdDocumentType:
+          format: int32
+          type: integer
+        fkIdProcedureType:
+          format: int32
+          type: integer
+      type: object
+    CostTemplateResponse:
+      properties:
+        documentCostTemplatePK:
+          $ref: '#/components/schemas/CostTemplateKey'
+        documentType:
+          $ref: '#/components/schemas/DocumentTypeRef'
+        fixedAmount:
+          type: number
+        procedureType:
+          $ref: '#/components/schemas/ProcedureTypeRef'
+        variablePercentage:
+          type: number
+        version:
+          format: int32
+          type: integer
+      type: object
     CreateCostRequest:
       properties:
         fixedAmount:
@@ -274,65 +265,16 @@ components:
       required:
       - idsFolio
       type: object
-    Deed:
+    DeedRef:
       properties:
-        atributos:
-          $ref: '#/components/schemas/DtoDeed'
-          writeOnly: true
-        body:
-          type: string
-        dateDeedrecording:
-          format: date-time
-          type: string
-        dateRegistration:
-          format: date-time
-          type: string
         idDeed:
           format: int32
           type: integer
-        idFolio:
-          format: int32
-          type: integer
-        notes:
-          type: string
         number:
           format: int32
           type: integer
-        registrationEntryNumber:
-          type: string
         status:
           type: string
-        version:
-          format: int32
-          type: integer
-      type: object
-    DeedManagement:
-      properties:
-        atributos:
-          $ref: '#/components/schemas/DtoDeedManagement'
-          writeOnly: true
-        dateStart:
-          format: date-time
-          type: string
-        encabezado:
-          type: string
-        fkIdManagementStatus:
-          $ref: '#/components/schemas/ManagementStatus'
-        fkIdNotaryPerson:
-          $ref: '#/components/schemas/Person'
-        idManagement:
-          format: int32
-          type: integer
-        notes:
-          type: string
-        number:
-          format: int32
-          type: integer
-        pendingDebtAtArchiving:
-          type: boolean
-        version:
-          format: int32
-          type: integer
       type: object
     DeedRequest:
       properties:
@@ -383,36 +325,8 @@ components:
           format: int32
           type: integer
       type: object
-    DocumentCostTemplate:
+    DocumentTypeRef:
       properties:
-        documentCostTemplatePK:
-          $ref: '#/components/schemas/DocumentCostTemplatePK'
-        documentType:
-          $ref: '#/components/schemas/DocumentType'
-        fixedAmount:
-          type: number
-        procedureType:
-          $ref: '#/components/schemas/ProcedureType'
-        variablePercentage:
-          type: number
-        version:
-          format: int32
-          type: integer
-      type: object
-    DocumentCostTemplatePK:
-      properties:
-        fkIdDocumentType:
-          format: int32
-          type: integer
-        fkIdProcedureType:
-          format: int32
-          type: integer
-      type: object
-    DocumentType:
-      properties:
-        atributos:
-          $ref: '#/components/schemas/DtoDocumentType'
-          writeOnly: true
         deliveredBy:
           type: string
         dueDays:
@@ -429,9 +343,6 @@ components:
           type: string
         returned:
           type: boolean
-        version:
-          format: int32
-          type: integer
       type: object
     DtoAuditRecord:
       properties:
@@ -1686,36 +1597,6 @@ components:
           format: int32
           type: integer
       type: object
-    Folio:
-      properties:
-        atributos:
-          $ref: '#/components/schemas/DtoFolio'
-          writeOnly: true
-        fkIdDeed:
-          $ref: '#/components/schemas/Deed'
-        fkIdFolioType:
-          $ref: '#/components/schemas/FolioType'
-        fkIdNotaryPerson:
-          $ref: '#/components/schemas/Person'
-        fkIdNotebook:
-          $ref: '#/components/schemas/Notebook'
-        idFolio:
-          format: int32
-          type: integer
-        notes:
-          type: string
-        number:
-          format: int32
-          type: integer
-        status:
-          type: string
-        version:
-          format: int32
-          type: integer
-        year:
-          format: int32
-          type: integer
-      type: object
     FolioRequest:
       properties:
         deedId:
@@ -1741,11 +1622,33 @@ components:
       required:
       - status
       type: object
-    FolioType:
+    FolioResponse:
       properties:
-        atributos:
-          $ref: '#/components/schemas/DtoFolioType'
-          writeOnly: true
+        fkIdDeed:
+          $ref: '#/components/schemas/DeedRef'
+        fkIdFolioType:
+          $ref: '#/components/schemas/FolioTypeRef'
+        fkIdNotaryPerson:
+          $ref: '#/components/schemas/NotaryRef'
+        idFolio:
+          format: int32
+          type: integer
+        notes:
+          type: string
+        number:
+          format: int32
+          type: integer
+        status:
+          type: string
+        version:
+          format: int32
+          type: integer
+        year:
+          format: int32
+          type: integer
+      type: object
+    FolioTypeRef:
+      properties:
         enabled:
           type: boolean
         idFolioType:
@@ -1757,9 +1660,6 @@ components:
           type: string
         notes:
           type: string
-        version:
-          format: int32
-          type: integer
       type: object
     GenerateRequest:
       properties:
@@ -1783,22 +1683,6 @@ components:
       required:
       - managementId
       - managementStatusId
-      type: object
-    IdentificationType:
-      properties:
-        characters:
-          type: string
-        idIdentificationType:
-          format: int32
-          type: integer
-        name:
-          minLength: 1
-          type: string
-        version:
-          format: int32
-          type: integer
-      required:
-      - name
       type: object
     IdentificationTypeRef:
       properties:
@@ -1844,48 +1728,6 @@ components:
           type: string
         finalRegistrationNumber:
           type: string
-      type: object
-    Item:
-      properties:
-        atributos:
-          $ref: '#/components/schemas/DtoItem'
-          writeOnly: true
-        dto:
-          $ref: '#/components/schemas/DtoItem'
-        fixed:
-          type: boolean
-        fixedConcept:
-          type: boolean
-          writeOnly: true
-        fkIdBudget:
-          $ref: '#/components/schemas/Budget'
-          writeOnly: true
-        id:
-          format: int32
-          type: integer
-        idItem:
-          format: int32
-          type: integer
-        name:
-          type: string
-        notes:
-          type: string
-        percentage:
-          format: int32
-          type: integer
-        reason:
-          type: string
-        type:
-          enum:
-          - NORMAL
-          - DESCUENTO
-          - RECARGO
-          type: string
-        value:
-          type: number
-        version:
-          format: int32
-          type: integer
       type: object
     ItemRequest:
       properties:
@@ -1948,6 +1790,17 @@ components:
           format: int32
           type: integer
       type: object
+    ManagementRef:
+      properties:
+        encabezado:
+          type: string
+        idManagement:
+          format: int32
+          type: integer
+        number:
+          format: int32
+          type: integer
+      type: object
     ManagementRequest:
       properties:
         dateStart:
@@ -1972,26 +1825,57 @@ components:
       required:
       - encabezado
       type: object
-    ManagementStatus:
+    ManagementResponse:
       properties:
-        atributo:
-          $ref: '#/components/schemas/DtoManagementStatus'
-          writeOnly: true
-        idManagementStatus:
+        dateStart:
+          format: date-time
+          type: string
+        encabezado:
+          type: string
+        idManagement:
           format: int32
           type: integer
-        name:
-          type: string
+        managementStatusId:
+          format: int32
+          type: integer
+        notaryPersonId:
+          format: int32
+          type: integer
         notes:
           type: string
+        number:
+          format: int32
+          type: integer
+        pendingDebtAtArchiving:
+          type: boolean
         version:
           format: int32
           type: integer
       type: object
-    Notebook:
+    NotaryRef:
+      properties:
+        firstName:
+          type: string
+        identificationNumber:
+          minLength: 1
+          type: string
+        lastName:
+          minLength: 1
+          type: string
+        notaryRegistrationNumber:
+          format: int32
+          type: integer
+        personId:
+          format: int32
+          type: integer
+      required:
+      - identificationNumber
+      - lastName
+      type: object
+    NotebookResponse:
       properties:
         fkIdNotaryPerson:
-          $ref: '#/components/schemas/Person'
+          $ref: '#/components/schemas/NotaryRef'
         idNotebook:
           format: int32
           type: integer
@@ -2111,11 +1995,11 @@ components:
           format: int32
           type: integer
       type: object
-    PageProcedure:
+    PageProcedureResponse:
       properties:
         content:
           items:
-            $ref: '#/components/schemas/Procedure'
+            $ref: '#/components/schemas/ProcedureResponse'
           type: array
         empty:
           type: boolean
@@ -2203,58 +2087,6 @@ components:
         paymentMethod:
           type: string
       type: object
-    Person:
-      properties:
-        address:
-          type: string
-        atributos:
-          $ref: '#/components/schemas/DtoPerson'
-          writeOnly: true
-        birthDate:
-          format: date-time
-          type: string
-        email:
-          type: string
-        firstName:
-          type: string
-        fkIdIdentificationType:
-          $ref: '#/components/schemas/IdentificationType'
-        identificationNumber:
-          minLength: 1
-          type: string
-        isClient:
-          type: boolean
-        lastName:
-          minLength: 1
-          type: string
-        maritalStatus:
-          type: string
-        marriageCount:
-          format: int32
-          type: integer
-        nationality:
-          type: string
-        notaryRegistrationNumber:
-          format: int32
-          type: integer
-        occupation:
-          type: string
-        personId:
-          format: int32
-          type: integer
-        phone:
-          type: string
-        sex:
-          type: string
-        taxId:
-          type: string
-        version:
-          format: int32
-          type: integer
-      required:
-      - identificationNumber
-      - lastName
-      type: object
     PersonInfo:
       properties:
         idPerson:
@@ -2335,6 +2167,7 @@ components:
         firstName:
           type: string
         identificationNumber:
+          minLength: 1
           type: string
         identificationTypeId:
           format: int32
@@ -2342,6 +2175,7 @@ components:
         isClient:
           type: boolean
         lastName:
+          minLength: 1
           type: string
         maritalStatus:
           type: string
@@ -2367,6 +2201,9 @@ components:
         version:
           format: int32
           type: integer
+      required:
+      - identificationNumber
+      - lastName
       type: object
     PresentarRequest:
       properties:
@@ -2375,36 +2212,6 @@ components:
           type: string
         registryEntryNumber:
           type: string
-      type: object
-    Procedure:
-      properties:
-        atributos:
-          $ref: '#/components/schemas/DtoProcedure'
-          writeOnly: true
-        dtoDocument:
-          $ref: '#/components/schemas/DtoSubmittedDocument'
-          writeOnly: true
-        fkIdBudget:
-          $ref: '#/components/schemas/Budget'
-        fkIdDeed:
-          $ref: '#/components/schemas/Deed'
-        fkIdManagement:
-          $ref: '#/components/schemas/DeedManagement'
-        fkIdProcedureType:
-          $ref: '#/components/schemas/ProcedureType'
-        fkIdProperty:
-          $ref: '#/components/schemas/Property'
-        id:
-          format: int32
-          type: integer
-        idProcedure:
-          format: int32
-          type: integer
-        notes:
-          type: string
-        version:
-          format: int32
-          type: integer
       type: object
     ProcedureRequest:
       properties:
@@ -2425,6 +2232,27 @@ components:
           type: integer
         notes:
           type: string
+      type: object
+    ProcedureResponse:
+      properties:
+        fkIdBudget:
+          $ref: '#/components/schemas/BudgetRef'
+        fkIdDeed:
+          $ref: '#/components/schemas/DeedRef'
+        fkIdManagement:
+          $ref: '#/components/schemas/ManagementRef'
+        fkIdProcedureType:
+          $ref: '#/components/schemas/ProcedureTypeRef'
+        fkIdProperty:
+          $ref: '#/components/schemas/PropertyRef'
+        idProcedure:
+          format: int32
+          type: integer
+        notes:
+          type: string
+        version:
+          format: int32
+          type: integer
       type: object
     ProcedureTemplatePkRequest:
       properties:
@@ -2462,13 +2290,10 @@ components:
           format: int32
           type: integer
       type: object
-    ProcedureType:
+    ProcedureTypeRef:
       properties:
         associatesProperties:
           type: boolean
-        atributos:
-          $ref: '#/components/schemas/DtoProcedureType'
-          writeOnly: true
         enabled:
           type: boolean
         idProcedureType:
@@ -2482,36 +2307,17 @@ components:
           type: string
         notes:
           type: string
-        version:
-          format: int32
-          type: integer
       type: object
-    Property:
+    PropertyRef:
       properties:
         address:
           type: string
-        atributos:
-          $ref: '#/components/schemas/DtoProperty'
-          writeOnly: true
-        boundaries:
-          type: string
         cadastralDesignation:
           type: string
-        dto:
-          $ref: '#/components/schemas/DtoProperty'
-        fiscalAppraisal:
-          type: number
         idProperty:
           format: int32
           type: integer
-        notes:
-          type: string
         registrationNumber:
-          type: string
-        version:
-          format: int32
-          type: integer
-        volumeFolioLandRecord:
           type: string
       type: object
     PropertyRequest:
@@ -3218,7 +3024,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Notebook'
+                  $ref: '#/components/schemas/NotebookResponse'
                 type: array
           description: OK
       summary: Obtener todos los cuadernos
@@ -3269,13 +3075,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Notebook'
+                $ref: '#/components/schemas/NotebookResponse'
           description: OK
         '404':
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Notebook'
+                $ref: '#/components/schemas/NotebookResponse'
           description: No encontrado
       summary: Obtener cuaderno por ID
       tags:
@@ -3531,7 +3337,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Person'
+                  $ref: '#/components/schemas/PersonResponse'
                 type: array
           description: OK
       summary: Obtener lista de escribanos disponibles (con registro)
@@ -3823,7 +3629,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Folio'
+                  $ref: '#/components/schemas/FolioResponse'
                 type: array
           description: OK
       summary: Obtener todos los folios
@@ -3842,19 +3648,19 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Folio'
+                $ref: '#/components/schemas/FolioResponse'
           description: Creado
         '400':
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Folio'
+                $ref: '#/components/schemas/FolioResponse'
           description: Solicitud inválida
         '409':
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Folio'
+                $ref: '#/components/schemas/FolioResponse'
           description: Conflicto
       summary: Crear nuevo folio
       tags:
@@ -3874,7 +3680,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Folio'
+                  $ref: '#/components/schemas/FolioResponse'
                 type: array
           description: OK
       summary: Buscar folios por estado
@@ -3920,13 +3726,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Folio'
+                $ref: '#/components/schemas/FolioResponse'
           description: OK
         '404':
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Folio'
+                $ref: '#/components/schemas/FolioResponse'
           description: No encontrado
       summary: Obtener folio por ID
       tags:
@@ -4058,7 +3864,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/DeedManagement'
+                  $ref: '#/components/schemas/ManagementResponse'
                 type: array
           description: OK
       summary: CU19 - List managements for a client
@@ -5881,7 +5687,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/DocumentCostTemplate'
+                  $ref: '#/components/schemas/CostTemplateResponse'
                 type: array
           description: OK
       summary: Obtener los costos de documentos definidos para un tipo de trámite
@@ -6363,7 +6169,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: '#/components/schemas/ItemResponse'
                 type: array
           description: OK
         '404':
@@ -6371,7 +6177,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: '#/components/schemas/ItemResponse'
                 type: array
           description: Presupuesto o ítem de catálogo no encontrado
       summary: CU71 - Agregar al presupuesto copias de ítems existentes del catálogo
@@ -6400,7 +6206,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: '#/components/schemas/ItemResponse'
                 type: array
           description: OK
         '400':
@@ -6408,7 +6214,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: '#/components/schemas/ItemResponse'
                 type: array
           description: El tipo de trámite no tiene plantilla configurada
         '404':
@@ -6416,7 +6222,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: '#/components/schemas/ItemResponse'
                 type: array
           description: Presupuesto no encontrado
       summary: CU39 - Cargar ítems del presupuesto desde la plantilla del tipo de trámite
@@ -6488,7 +6294,7 @@ paths:
             '*/*':
               schema:
                 items:
-                  $ref: '#/components/schemas/Folio'
+                  $ref: '#/components/schemas/FolioResponse'
                 type: array
           description: OK
       summary: Listar folios de Protocolo Auxiliar disponibles
@@ -7954,7 +7760,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PageProcedure'
+                $ref: '#/components/schemas/PageProcedureResponse'
           description: OK
       summary: Obtener todos los trámites
       tags:
@@ -8027,13 +7833,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Procedure'
+                $ref: '#/components/schemas/ProcedureResponse'
           description: OK
         '404':
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Procedure'
+                $ref: '#/components/schemas/ProcedureResponse'
           description: No encontrado
       summary: Obtener trámite por ID
       tags:
