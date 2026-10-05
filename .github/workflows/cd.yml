@@ -19,7 +19,7 @@ on:
         type: string
 
 env:
-  JAVA_VERSION: '21'
+  JAVA_VERSION: '26'
   REGISTRY: ghcr.io
 
 jobs:
