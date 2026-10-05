@@ -189,22 +189,7 @@ public class Property implements Serializable, Persistable<Integer> {
         return miDto;
     }
 
-    public void setAtributos(DtoProperty miDtoProperty) {
-        if (miDtoProperty.isValido()) {
-            this.address = miDtoProperty.getAddress();
 
-            if (miDtoProperty.getIdProperty() != null) {
-                this.idProperty = miDtoProperty.getIdProperty();
-            }
-
-            this.cadastralDesignation = miDtoProperty.getCadastralDesignation();
-            this.notes = miDtoProperty.getNotes();
-            this.fiscalAppraisal = miDtoProperty.getFiscalAppraisal();
-            this.registrationNumber = miDtoProperty.getRegistrationNumber();
-            this.volumeFolioLandRecord = miDtoProperty.getVolumeFolioLandRecord();
-            this.boundaries = miDtoProperty.getBoundaries();
-        }
-    }
 
     @Override
     public int hashCode() {

@@ -11,13 +11,10 @@ import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoBudget;
 import com.licensis.notaire.dto.DtoIdentificationType;
 import com.licensis.notaire.dto.DtoProcedure;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -224,57 +221,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
         this.fkIdProcedureType = fkIdProcedureType;
     }
 
-    public void setAtributos(DtoProcedure dtoProcedure) {
 
-        this.setIdProcedure(dtoProcedure.getIdProcedure());
-        this.setNotes(dtoProcedure.getNotes());
-
-        ProcedureType procedureType = new ProcedureType();
-        procedureType.setAtributos(dtoProcedure.getProcedureType());
-        this.setFkIdProcedureType(procedureType);
-
-        if (dtoProcedure.getProperty() != null) {
-            Property property = new Property();
-            property.setAtributos(dtoProcedure.getProperty());
-            this.setFkIdProperty(property);
-        }
-
-        if (dtoProcedure.getDeed() != null) {
-            Deed deed = new Deed();
-            deed.setAtributos(dtoProcedure.getDeed());
-            this.setFkIdDeed(deed);
-        }
-
-        if (dtoProcedure.getManagement() != null) {
-            try {
-                DeedManagement management = new DeedManagement();
-                management.setAtributos(dtoProcedure.getManagement());
-                this.setFkIdManagement(management);
-            } catch (DtoInvalidoException ex) {
-                Logger.getLogger(Procedure.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NullPointerException ex) {
-                // El dto tramite no tiene la referencias hacia la gestion a la cual pertenece.
-                DeedManagement management = new DeedManagement();
-
-                management.setIdManagement(dtoProcedure.getManagement().getIdManagement());
-                this.setFkIdManagement(management);
-            }
-
-        }
-
-        if (dtoProcedure.getBudget() != null) {
-            try {
-                Budget budget = new Budget();
-                budget.setAtributos(dtoProcedure.getBudget());
-
-                this.setFkIdBudget(budget);
-            } catch (NullPointerException ex) {
-                Budget budget = new Budget();
-                budget.setIdBudget(dtoProcedure.getBudget().getIdBudget());
-                this.setFkIdBudget(budget);
-            }
-        }
-    }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoProcedure getDto() {

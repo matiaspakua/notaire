@@ -1,8 +1,5 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.dto.DtoDeed;
-import com.licensis.notaire.dto.DtoFolio;
-import com.licensis.notaire.dto.DtoProcedure;
 import com.licensis.notaire.business.BusinessConstants;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
@@ -221,81 +218,6 @@ class DeedEntityTest {
     @DisplayName("setAtributos branches")
     class SetAtributosTests {
 
-        @Test
-        @DisplayName("setAtributos with null DTO — no-op")
-        void setAtributosWithNullDtoIsNoOp() {
-            Deed e = new Deed(1);
-            e.setAtributos(null);
-            assertThat(e.getIdDeed()).isEqualTo(1);
-        }
-
-        @Test
-        @DisplayName("setAtributos with null idDeed — does not overwrite id")
-        void setAtributosDoesNotOverwriteWhenIdNull() {
-            Deed e = new Deed();
-            DtoDeed dto = new DtoDeed();
-            dto.setNumber(100);
-            dto.setIdDeed(5);
-            e.setAtributos(dto);
-            assertThat(e.getNumber()).isEqualTo(100);
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null idDeed — copies id")
-        void setAtributosOverwritesIdWhenNotNull() {
-            Deed e = new Deed(1);
-            DtoDeed dto = new DtoDeed();
-            dto.setIdDeed(9);
-            dto.setNumber(200);
-            e.setAtributos(dto);
-            assertThat(e.getNumber()).isEqualTo(200);
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null folios — populates folioList")
-        void setAtributosWithFoliosPopulatesList() {
-            Deed e = new Deed(1);
-            DtoDeed dto = new DtoDeed();
-            dto.setNumber(1);
-            dto.getFolios().add(new DtoFolio());
-            e.setAtributos(dto);
-            assertThat(e.getFolioList()).isNotNull();
-        }
-
-        @Test
-        @DisplayName("setAtributos with empty DTO folios — creates empty folioList")
-        void setAtributosWithEmptyFoliosCreatesEmptyList() {
-            Deed e = new Deed(1);
-            DtoDeed dto = new DtoDeed();
-            dto.setNumber(1);
-            // DtoEscritura.getFolios() always returns a new ArrayList (setFolios is no-op in shared module)
-            e.setAtributos(dto);
-            assertThat(e.getFolioList()).isNotNull().isEmpty();
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null procedures — populates tramiteList")
-        void setAtributosWithProceduresPopulatesList() {
-            Deed e = new Deed(1);
-            DtoDeed dto = new DtoDeed();
-            dto.setNumber(1);
-            DtoProcedure dtoProcedure = new DtoProcedure();
-            dtoProcedure.setIdProcedure(10);
-            dto.getProcedures().add(dtoProcedure);
-            e.setAtributos(dto);
-            assertThat(e.getProcedureList()).isNotNull().hasSize(1);
-        }
-
-        @Test
-        @DisplayName("setAtributos with null procedures — does not create tramiteList")
-        void setAtributosWithNullProceduresDoesNotCreateList() {
-            Deed e = new Deed(1);
-            DtoDeed dto = new DtoDeed();
-            dto.setNumber(1);
-            dto.setProcedures(null);
-            e.setAtributos(dto);
-            assertThat(e.getProcedureList()).isNull();
-        }
     }
 
     @Nested

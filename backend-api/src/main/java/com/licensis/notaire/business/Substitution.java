@@ -4,8 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoSubstitution;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.Date;
@@ -197,47 +195,8 @@ public class Substitution implements Serializable, Persistable<Integer>
         return "Suplencia[ idSuplencia=" + idSubstitution + " ]";
     }
 
-    public void setAtributos(DtoSubstitution nuevaSubstitution) throws DtoInvalidoException
-    {
-        if (nuevaSubstitution.isValido())
-        {
-            this.setDateStart(nuevaSubstitution.getDateStart());
-            this.setDateEnd(nuevaSubstitution.getDateEnd());
-            this.setNotes(nuevaSubstitution.getNotes());
 
-            if (nuevaSubstitution.getPersonsByFkIdSubstituted().isValido())
-            {
-                Person notarySuplantado = new Person();
-                notarySuplantado.setAtributos(nuevaSubstitution.getPersonsByFkIdSubstituted());
-                this.setFkIdSubstituted(notarySuplantado);
-            }
 
-            if (nuevaSubstitution.getPersonsByFkIdSubstitute().isValido())
-            {
-                Person notarySuplente = new Person();
-                notarySuplente.setAtributos(nuevaSubstitution.getPersonsByFkIdSubstitute());
-                this.setFkIdSubstitute(notarySuplente);
-            }
-        } else
-        {
-            throw new DtoInvalidoException("El Dto Suplencia es invalido");
-        }
-    }
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoSubstitution getDto()
-    {
-        DtoSubstitution valoresSubstitution = new DtoSubstitution();
-
-        valoresSubstitution.setIdSubstitution(idSubstitution);
-        valoresSubstitution.setDateStart(dateStart);
-        valoresSubstitution.setDateEnd(dateEnd);
-        valoresSubstitution.setNotes(notes);
-        valoresSubstitution.setPersonsByFkIdSubstituted(fkIdSubstituted.getDto());
-        valoresSubstitution.setPersonsByFkIdSubstitute(fkIdSubstitute.getDto());
-
-        return valoresSubstitution;
-    }
 
     public int getVersion()
     {

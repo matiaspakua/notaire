@@ -6,17 +6,14 @@ package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoDeedManagement;
-import com.licensis.notaire.dto.DtoProperty;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoIdentificationType;
 import com.licensis.notaire.dto.DtoProcedure;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -237,37 +234,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
                 + "[ numero=" + number + " ]";
     }
 
-    public void setAtributos(DtoDeedManagement dtoManagement) throws DtoInvalidoException {
 
-        this.setVersion(dtoManagement.getVersion());
-        this.setIdManagement(dtoManagement.getIdManagement());
-        this.setNumber(dtoManagement.getNumber());
-        this.setEncabezado(dtoManagement.getEncabezado());
-        this.setDateStart(dtoManagement.getDateStart());
-        this.setNotes(dtoManagement.getNotes());
-
-        if (dtoManagement.getPersonNotary() != null) {
-            Person notary = new Person();
-            notary.setAtributos(dtoManagement.getPersonNotary());
-
-            this.setFkIdNotaryPerson(notary);
-        }
-
-        for (Iterator<DtoProcedure> it = dtoManagement.getListaProceduresAsociados().iterator(); it.hasNext();) {
-            DtoProcedure dtoProcedure = it.next();
-
-            dtoProcedure.setDeedManagement(dtoManagement);
-            dtoProcedure.setProperty(new DtoProperty());
-        }
-
-        // Management status — skip when absent (leave prior status unchanged)
-        if (dtoManagement.getStatus() != null) {
-            ManagementStatus fkStatusManagement = new ManagementStatus();
-            fkStatusManagement.setAtributo(dtoManagement.getStatus());
-            this.setFkIdManagementStatus(fkStatusManagement);
-        }
-
-    }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoDeedManagement getDto() {

@@ -282,22 +282,7 @@ public class Folio implements Serializable, Persistable<Integer>
                 + "[ anio=" + year + " ]";
     }
 
-    public void setAtributos(DtoFolio unDtoFolio)
-    {
-        if (unDtoFolio.isValido())
-        {
-            this.setIdFolio(unDtoFolio.getIdFolio());
-            this.setNumber(unDtoFolio.getNumber());
-            this.setYear(unDtoFolio.getYear());
-            this.setStatus(unDtoFolio.getStatus());
-            this.setNotes(unDtoFolio.getNotes());
-            this.setVersion(unDtoFolio.getVersion());
-            if (unDtoFolio.getDeed() != null)
-            {
-                this.setFkIdDeed(new Deed(unDtoFolio.getDeed().getIdDeed()));
-            }
-        }
-    }
+
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoFolio getDto()

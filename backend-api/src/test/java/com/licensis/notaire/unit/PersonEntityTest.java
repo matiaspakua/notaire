@@ -11,9 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import com.licensis.notaire.testing.RequirementCoverage;
-import com.licensis.notaire.dto.DtoPerson;
 
 @RequirementCoverage({"CU17", "CU18", "CU41", "CU46", "CU48", "CU51", "CU54", "CU61", "CU76"})
 @DisplayName("Person Entity Tests")
@@ -176,37 +174,6 @@ class PersonEntityTest {
     @DisplayName("getDto null-safety for management associations")
     class GetDtoNullSafetyTests {
 
-        @Test
-        @DisplayName("getDto with null identification type does not throw")
-        void getDtoWithNullIdentificationTypeDoesNotThrow() {
-            Person person = new Person();
-            person.setPersonId(20);
-            person.setFirstName("Lucia");
-            person.setLastName("Diaz");
-            person.setFkIdIdentificationType(null);
-            person.setNotaryRegistrationNumber(null);
-
-            assertThatCode(person::getDto).doesNotThrowAnyException();
-            DtoPerson dto = person.getDto();
-            assertThat(dto.getId()).isEqualTo(20);
-            assertThat(dto.getDtoIdentificationType()).isNull();
-        }
-
-        @Test
-        @DisplayName("getDto with null DeedManagementList does not throw")
-        void getDtoWithNullDeedManagementListDoesNotThrow() {
-            Person notary = new Person();
-            notary.setPersonId(21);
-            notary.setFirstName("Pedro");
-            notary.setLastName("Suarez");
-            notary.setNotaryRegistrationNumber(2002);
-            notary.setFkIdIdentificationType(null);
-            notary.setDeedManagementList(null);
-
-            assertThatCode(notary::getDto).doesNotThrowAnyException();
-            DtoPerson dto = notary.getDto();
-            assertThat(dto.getId()).isEqualTo(21);
-        }
     }
 
     private List<Person> createTestPeople() {

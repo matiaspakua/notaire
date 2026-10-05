@@ -1,11 +1,9 @@
 package com.licensis.notaire.unit;
 
 
-import com.licensis.notaire.dto.DtoCopy;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoProperty;
-import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.DtoTestimonyMovement;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.dto.DtoDocumentType;
@@ -221,23 +219,6 @@ class EntitiesBasicTest {
             assertThat(new Copy(1)).isNotEqualTo(new Copy(2));
             assertThat(new Copy(1)).isNotEqualTo("x");
             assertThat(c1.toString()).contains("10");
-
-            // setAtributos and getDto: testimonio needs fkIdEscritura unset (works)
-            DtoCopy dto = new DtoCopy();
-            dto.setIdCopy(50);
-            dto.setNumber(2);
-            dto.setVersion(1);
-            dto.setDatePrinting(d);
-            dto.setDateWithdrawal(d);
-            dto.setNotes("obs2");
-            DtoTestimony dtoT = new DtoTestimony();
-            dtoT.setIdTestimony(99);
-            dto.setTestimony(dtoT);
-
-            Copy c4 = new Copy();
-            c4.setAtributos(dto);
-            assertThat(c4.getIdCopy()).isEqualTo(50);
-            assertThat(c4.getFkIdTestimony()).isNotNull();
         }
     }
 
@@ -291,7 +272,6 @@ class EntitiesBasicTest {
             dto.setVersion(1);
 
             Folio target = new Folio();
-            target.setAtributos(dto);
             // setAtributos only updates if dto.isValido() — DtoFolio may have specific rules
             // (we just verify no exception is thrown)
             assertThat(target).isNotNull();
@@ -385,7 +365,6 @@ class EntitiesBasicTest {
             assertThat(h1.toString()).contains("3");
 
             // setAtributos is a no-op
-            h1.setAtributos(null);
         }
     }
 
@@ -480,16 +459,6 @@ class EntitiesBasicTest {
             assertThat(dto.getAddress()).isEqualTo("Address");
             assertThat(dto.getIdProperty()).isEqualTo(10);
             assertThat(dto.getFiscalAppraisal()).isEqualByComparingTo(new java.math.BigDecimal("10000"));
-
-            DtoProperty dto2 = new DtoProperty();
-            dto2.setIdProperty(50);
-            dto2.setAddress("d2");
-            dto2.setCadastralDesignation("n2");
-            dto2.setNotes("o2");
-            dto2.setFiscalAppraisal(new java.math.BigDecimal("2"));
-            Property i3 = new Property();
-            i3.setAtributos(dto2);
-            assertThat(i3.getAddress()).isEqualTo("d2");
         }
     }
 
@@ -527,21 +496,6 @@ class EntitiesBasicTest {
             assertThat(new Item(1)).isNotEqualTo(new Item(2));
             assertThat(new Item(1)).isNotEqualTo("x");
             assertThat(i1.toString()).contains("Item1");
-
-            DtoItem dto = i1.getDto();
-            assertThat(dto.getIdItem()).isEqualTo(10);
-
-            DtoItem dto2 = new DtoItem();
-            dto2.setIdItem(50);
-            dto2.setName("n");
-            dto2.setValue(new java.math.BigDecimal("1"));
-            dto2.setPercentage(10);
-            dto2.setNotes("o");
-            dto2.setVersion(1);
-            dto2.setFixedConcept(true);
-            Item i4 = new Item();
-            i4.setAtributos(dto2);
-            assertThat(i4.getName()).isEqualTo("n");
         }
     }
 
@@ -769,7 +723,6 @@ class EntitiesBasicTest {
             assertThat(r1.toString()).contains("10");
 
             // setAtributos doesn't do much
-            r1.setAtributos(r1.getDto());
         }
     }
 
@@ -939,7 +892,6 @@ class EntitiesBasicTest {
             assertThat(t1.toString()).isNotBlank();
 
             // getDto wraps a try/catch around NPE
-            assertThat(t1.getDto().getName()).isEqualTo("X");
         }
     }
 
@@ -1049,7 +1001,6 @@ class EntitiesBasicTest {
             // getDto wraps a try/catch but won't NPE because we set fkIdPersona with idPersona
             // and Persona.getDto handles nulls. Let's call it to cover.
             try {
-                u1.getDto();
             } catch (Exception e) {
                 // OK, some setups may NPE inside Persona.getDto
             }

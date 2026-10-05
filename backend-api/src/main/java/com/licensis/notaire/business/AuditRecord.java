@@ -4,7 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoAuditRecord;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.Date;
@@ -156,20 +155,6 @@ public class AuditRecord implements Serializable, Persistable<Integer>
         return "negocio.RegistroAuditoria[ idRegistroAuditoria=" + idAuditRecord + " ]";
     }
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoAuditRecord getDto()
-    {
-
-        DtoAuditRecord miDto = new DtoAuditRecord();
-
-        miDto.setOperationDetail(operationDetail);
-        miDto.setModule(module);
-        miDto.setDate(date);
-        miDto.setIdAuditRecord(idAuditRecord);
-        miDto.setUsers(this.getFkIdUser().getDto());
-
-        return miDto;
-    }
 
     public int getVersion()
     {
@@ -191,16 +176,7 @@ public class AuditRecord implements Serializable, Persistable<Integer>
         this.module = module;
     }
 
-    public void setAtributos(DtoAuditRecord miDto)
-    {
 
-        this.setFkIdUser(fkIdUser);
-        this.setDate(date);
-        this.setModule(module);
-        this.setOperationDetail(operationDetail);
-        this.setVersion(version);
-
-    }
 
     public Date getDate()
     {

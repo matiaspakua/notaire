@@ -4,7 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoIdentificationType;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.List;
@@ -154,21 +153,6 @@ public class IdentificationType implements Serializable, Persistable<Integer> {
                 + "[ nombre=" + name + " ]";
     }
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoIdentificationType getDto() {
-
-        DtoIdentificationType miDto = new DtoIdentificationType();
-
-        try {
-            miDto.setIdIdentificationType(this.getIdIdentificationType());
-            miDto.setName(this.getName());
-
-        } catch (NullPointerException e) {
-            System.out.println("Erro getDto Tipo Identificacion");
-        }
-        return miDto;
-
-    }
 
     public int getVersion() {
         return version;

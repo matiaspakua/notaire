@@ -6,8 +6,6 @@ package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoDeedManagement;
 import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.dto.DtoIdentificationType;
-import com.licensis.notaire.dto.DtoProcedure;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
@@ -36,7 +34,6 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import org.hibernate.LazyInitializationException;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -450,92 +447,7 @@ public class Person implements Serializable, Persistable<Integer> {
                 + "[ apellido=" + lastName + " ]";
     }
 
-    @JsonIgnore
-    public DtoPerson getDto() {
 
-        DtoPerson dtoPerson = new DtoPerson();
-
-        // Object version
-        dtoPerson.setVersion(this.version);
-        dtoPerson.setId(this.idPerson);
-        dtoPerson.setFirstName(this.name);
-        dtoPerson.setLastName(this.lastName);
-        dtoPerson.setTaxId(this.taxId);
-        dtoPerson.setEmail(this.email);
-        dtoPerson.setIsClient(this.isClient);
-        dtoPerson.setMaritalStatus(this.maritalStatus);
-        dtoPerson.setBirthDate(this.birthDate);
-        dtoPerson.setNationality(this.nationality);
-        dtoPerson.setIdentificationNumber(this.getIdentificationNumber());
-        dtoPerson.setMarriageCount(this.marriageCount);
-        dtoPerson.setOccupation(this.occupation);
-        dtoPerson.setAddress(this.address);
-        dtoPerson.setNotaryRegistrationNumber(this.notaryRegistrationNumber);
-        dtoPerson.setSex(this.sex);
-        dtoPerson.setPhone(this.phone);
-
-        DtoIdentificationType dtoIdentificationType = null;
-        if (getFkIdIdentificationType() != null) {
-            dtoIdentificationType = new DtoIdentificationType();
-            dtoIdentificationType.setIdIdentificationType(getFkIdIdentificationType().getIdIdentificationType());
-            // Prefer hydrated name; fall back to the catalog when absent
-            if (getFkIdIdentificationType().getName() != null
-                    && !getFkIdIdentificationType().getName().isBlank()) {
-                dtoIdentificationType.setName(getFkIdIdentificationType().getName());
-            } else {
-                dtoIdentificationType.setName(IdentificationTypeLookup.shared()
-                        .nameOf(getFkIdIdentificationType().getIdIdentificationType()));
-            }
-            dtoPerson.setDtoIdentificationType(dtoIdentificationType);
-        }
-
-        // Associate managements when this person is a notary
-        if (this.getNotaryRegistrationNumber() != null) {
-            ArrayList<DtoDeedManagement> miListaDtoManagementNotary = new ArrayList<>();
-
-            if (this.DeedManagementList != null && !this.DeedManagementList.isEmpty()) {
-                for (int i = 0; i < this.DeedManagementList.size(); i++) {
-                    DtoDeedManagement dtoDeedManagement = this.DeedManagementList.get(i).getDto();
-                    miListaDtoManagementNotary.add(dtoDeedManagement);
-                }
-                dtoPerson.setListDtoManagementDeEscriturasDeNotary(miListaDtoManagementNotary);
-            }
-        }
-
-        // Associate procedures belonging to this person
-        ArrayList<DtoProcedure> miListaDtoProcedures = new ArrayList<>();
-        if (this.procedureList != null && !this.procedureList.isEmpty()) {
-            for (int i = 0; i < this.procedureList.size(); i++) {
-                DtoProcedure dtoProcedure = this.procedureList.get(i).getDto();
-                miListaDtoProcedures.add(dtoProcedure);
-            }
-            dtoPerson.setListaProceduresPerson(miListaDtoProcedures);
-        }
-
-        // Associate managements linked through this person's procedures
-        ArrayList<DtoDeedManagement> miListaDtoManagementPerson = new ArrayList<>();
-        ArrayList<Integer> listaIdGestiones = new ArrayList<>();
-
-        try {
-            if (procedureList != null && !procedureList.isEmpty()) {
-                for (int i = 0; i < this.procedureList.size(); i++) {
-                    // Returns one management per procedure; dedupe when the same
-                    // person appears on multiple procedures of the same management
-                    DtoDeedManagement dtoDeedManagement = this.procedureList.get(i).getFkIdManagement().getDto();
-
-                    // Remove duplicate managements caused by multiple procedures
-                    if (!listaIdGestiones.contains(dtoDeedManagement.getIdManagement())) {
-                        listaIdGestiones.add(dtoDeedManagement.getIdManagement());
-                        miListaDtoManagementPerson.add(dtoDeedManagement);
-                    }
-                }
-                dtoPerson.setListaDtoManagementDeEscriturasPerson(miListaDtoManagementPerson);
-            }
-        } catch (LazyInitializationException ex) {
-            dtoPerson.setListaDtoManagementDeEscriturasPerson(miListaDtoManagementPerson);
-        }
-        return dtoPerson;
-    }
 
     public ArrayList<DtoDeedManagement> elimimarDuplicados(ArrayList<DtoDeedManagement> listaDtoDeed) {
 

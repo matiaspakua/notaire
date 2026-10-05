@@ -209,7 +209,5 @@ public class History implements Serializable, Persistable<Integer>
         return dto;
     }
 
-    public void setAtributos(DtoHistory dto)
-    {
-    }
+
 }
