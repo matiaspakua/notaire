@@ -25,26 +25,26 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 Folio and AuxiliaryProtocol return `FolioResponse`
-- [ ] 4.2 Notebook returns `NotebookResponse`
-- [ ] 4.3 DocumentCostTemplate returns `CostTemplateResponse`
-- [ ] 4.4 Procedure returns `ProcedureResponse` (page and by id)
-- [ ] 4.5 Deed notaries use `PersonResponse`; Budget items use `ItemResponse`; Management by client uses `ManagementResponse`
-- [ ] 4.6 Delete `DtoFlag` and `DtoIdentification`
-- [ ] 4.7 Tests green
+- [x] 4.1 Folio and AuxiliaryProtocol return `FolioResponse`
+- [x] 4.2 Notebook returns `NotebookResponse`
+- [x] 4.3 DocumentCostTemplate returns `CostTemplateResponse`
+- [x] 4.4 Procedure returns `ProcedureResponse` (page and by id)
+- [x] 4.5 Deed notaries use `PersonResponse`; Budget items use `ItemResponse`; Management by client uses `ManagementResponse`
+- [x] 4.6 Delete `DtoFlag` and `DtoIdentification`
+- [x] 4.7 Tests green
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing tests that assert entity JSON updated without weakening assertions
-- [ ] 5.2 No dead code or unused imports remain
+- [x] 5.1 Existing tests that assert entity JSON updated without weakening assertions
+- [x] 5.2 No dead code or unused imports remain
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api -Dtest=ControllerSignatureArchitectureTest,ControllerResponseRecordsIntegrationTest,DtoRemovalTest`
-- [ ] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
-- [ ] 6.3 `bash scripts/export-openapi.sh --maven` regenerated and committed
+- [x] 6.1 `mvn test -pl backend-api -Dtest=ControllerSignatureArchitectureTest,ControllerResponseRecordsIntegrationTest,DtoRemovalTest`
+- [x] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
+- [x] 6.3 `bash scripts/export-openapi.sh --maven` regenerated and committed
 - [ ] 6.4 `bash scripts/preflight.sh`
-- [ ] 6.5 No `@Disabled` tests
+- [x] 6.5 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
@@ -52,15 +52,15 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 OpenAPI artifact
-- [ ] 8.2 `.claude/rules/refactoring.md`
-- [ ] 8.3 `CHANGELOG.md` — one entry
+- [x] 8.1 OpenAPI artifact
+- [x] 8.2 `.claude/rules/refactoring.md`
+- [x] 8.3 `CHANGELOG.md` — one entry
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One logical change per commit, Conventional Commits
+- [x] 9.1 One logical change per commit, Conventional Commits
 - [ ] 9.2 Only the final commit carries `Closes #1279`; others `Refs #1279`
-- [ ] 9.3 No secrets, no commented-out code
+- [x] 9.3 No secrets, no commented-out code
 
 ## 10. Pull Request y validación CI
 
