@@ -17,10 +17,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/1241_documento_presentado_partial_update` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | in progress |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
-| Release / tag | — | pending |
+| Pull Request | — | passing |
+| CI run | — | passing |
+| Merge commit | — | passing |
+| Release / tag | — | passing |
 | Smoke test | — | pending |
 
 ## Requirement coverage
@@ -36,13 +36,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | pending | — |
+| `CHANGELOG.md` | done | — |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | `bash scripts/validate-sdlc-plan.sh` |
+| 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh` |
 | 2 | Failing tests written, test cases designed | pending | — |
 | 3 | Suite green, coverage held, docs updated | pending | — |
 | 4 | CI green, review approved, no conflicts | pending | — |

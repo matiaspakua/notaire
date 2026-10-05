@@ -25,35 +25,35 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 `SubmittedDocumentController` applies the request onto the stored entity
-- [ ] 4.2 Recompute due fields only when the type or date is sent
-- [ ] 4.3 Tests green
+- [x] 4.1 `SubmittedDocumentController` applies the request onto the stored entity
+- [x] 4.2 Recompute due fields only when the type or date is sent
+- [x] 4.3 Tests green
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing affected tests updated without weakening assertions
-- [ ] 5.2 No dead code or unused imports remain
+- [x] 5.1 Existing affected tests updated without weakening assertions
+- [x] 5.2 No dead code or unused imports remain
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 Targeted tests for the change
-- [ ] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
+- [x] 6.1 Targeted tests for the change
+- [x] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
 - [ ] 6.3 `bash scripts/preflight.sh`
-- [ ] 6.4 No `@Disabled` tests
+- [x] 6.4 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 No UI change: the suite runs as regression evidence (`bash scripts/run_pipeline.sh`)
+- [x] 7.1 No UI change: the suite runs as regression evidence (`bash scripts/run_pipeline.sh`)
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `CHANGELOG.md`
+- [x] 8.1 `CHANGELOG.md`
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One logical change per commit, Conventional Commits
+- [x] 9.1 One logical change per commit, Conventional Commits
 - [ ] 9.2 Only the final commit carries `Closes #1241`; others `Refs #1241`
-- [ ] 9.3 No secrets, no commented-out code
+- [x] 9.3 No secrets, no commented-out code
 
 ## 10. Pull Request y validación CI
 
