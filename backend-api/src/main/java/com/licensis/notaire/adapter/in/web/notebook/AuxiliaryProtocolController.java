@@ -3,7 +3,7 @@ package com.licensis.notaire.adapter.in.web.notebook;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.Deed;
-import com.licensis.notaire.business.Folio;
+import com.licensis.notaire.adapter.in.web.folio.FolioController.FolioResponse;
 import com.licensis.notaire.application.usecase.notebook.AuxiliaryProtocolService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,8 +42,9 @@ public class AuxiliaryProtocolController {
     @GetMapping("/folios-disponibles")
     @Operation(summary = "Listar folios de Protocolo Auxiliar disponibles")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Folio>> getAvailableFolios() {
-        return ResponseEntity.ok(protocoloAuxiliaryService.listAvailableFolios());
+    public ResponseEntity<List<FolioResponse>> getAvailableFolios() {
+        return ResponseEntity.ok(
+                protocoloAuxiliaryService.listAvailableFolios().stream().map(FolioResponse::from).toList());
     }
 
     @ApiResponses({

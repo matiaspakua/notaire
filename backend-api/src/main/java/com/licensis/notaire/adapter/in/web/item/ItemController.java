@@ -50,7 +50,7 @@ public class ItemController {
             Integer budgetId,
             @JsonProperty("fkIdBudget") BudgetRef fkIdBudget) {}
 
-    record ItemResponse(
+    public record ItemResponse(
             Integer idItem,
             String name,
             java.math.BigDecimal value,
@@ -60,7 +60,23 @@ public class ItemController {
             String reason,
             boolean fixedConcept,
             Integer budgetId,
-            int version) {}
+            int version) {
+
+        public static ItemResponse from(Item item) {
+        Integer budgetId = item.getFkIdBudget() != null ? item.getFkIdBudget().getIdBudget() : null;
+            return new ItemResponse(
+                    item.getIdItem(),
+                    item.getName(),
+                    item.getValue(),
+                    item.getPercentage(),
+                    item.getNotes(),
+                    item.getType(),
+                    item.getReason(),
+                    item.isFixed(),
+                    budgetId,
+                    item.getVersion());
+        }
+    }
 
     private final ItemService itemService;
     private final BudgetRepository budgetRepository;
@@ -75,21 +91,6 @@ public class ItemController {
             return request.budgetId();
         }
         return request.fkIdBudget() != null ? request.fkIdBudget().idBudget() : null;
-    }
-
-    private ItemResponse toResponse(Item item) {
-        Integer budgetId = item.getFkIdBudget() != null ? item.getFkIdBudget().getIdBudget() : null;
-        return new ItemResponse(
-                item.getIdItem(),
-                item.getName(),
-                item.getValue(),
-                item.getPercentage(),
-                item.getNotes(),
-                item.getType(),
-                item.getReason(),
-                item.isFixed(),
-                budgetId,
-                item.getVersion());
     }
 
     private void applyRequest(Item item, ItemRequest request) {
@@ -115,7 +116,7 @@ public class ItemController {
     @Operation(summary = "Obtener todos los ítems")
     @Transactional(readOnly = true)
     public ResponseEntity<List<ItemResponse>> getAll() {
-        return ResponseEntity.ok(itemService.findAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(itemService.findAll().stream().map(ItemResponse::from).toList());
     }
 
     @ApiResponses({
@@ -127,7 +128,7 @@ public class ItemController {
     @Transactional(readOnly = true)
     public ResponseEntity<ItemResponse> getById(@PathVariable Integer id) {
         return itemService.findById(id)
-                .map(this::toResponse)
+                .map(ItemResponse::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -136,7 +137,7 @@ public class ItemController {
     @Operation(summary = "Obtener ítems por presupuesto")
     @Transactional(readOnly = true)
     public ResponseEntity<List<ItemResponse>> getByBudget(@PathVariable Integer idBudget) {
-        return ResponseEntity.ok(itemService.findByBudget(idBudget).stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(itemService.findByBudget(idBudget).stream().map(ItemResponse::from).toList());
     }
 
     @ApiResponses({
@@ -149,7 +150,7 @@ public class ItemController {
     public ResponseEntity<List<ItemResponse>> getDescuentosYRecargos(@PathVariable Integer idBudget) {
         try {
             return ResponseEntity.ok(itemService.findDiscountsAndSurchargesByBudget(idBudget)
-                    .stream().map(this::toResponse).toList());
+                    .stream().map(ItemResponse::from).toList());
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -167,7 +168,7 @@ public class ItemController {
             Item entity = new Item();
             applyRequest(entity, request);
             entity = itemService.create(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
+            return ResponseEntity.status(HttpStatus.CREATED).body(ItemResponse.from(entity));
         } catch (BusinessValidationException e) {
             log.warn("Error de validación al crear item: {}", e.getMessage());
             return ResponseEntity.badRequest().build();

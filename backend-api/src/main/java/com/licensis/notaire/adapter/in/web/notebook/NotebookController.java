@@ -2,6 +2,7 @@ package com.licensis.notaire.adapter.in.web.notebook;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.adapter.in.web.support.NotaryRef;
 import com.licensis.notaire.business.Notebook;
 import com.licensis.notaire.application.usecase.notebook.NotebookService;
 import com.licensis.notaire.application.usecase.report.ReportService;
@@ -47,6 +48,14 @@ public class NotebookController {
         this.reporteService = reporteService;
     }
 
+    public record NotebookResponse(Integer idNotebook, int number, int year, String notes,
+            NotaryRef fkIdNotaryPerson, int version) {
+        public static NotebookResponse from(Notebook notebook) {
+            return new NotebookResponse(notebook.getIdNotebook(), notebook.getNumber(), notebook.getYear(),
+                    notebook.getNotes(), NotaryRef.from(notebook.getFkIdNotaryPerson()), notebook.getVersion());
+        }
+    }
+
     public record CreateNotebookRequest(
             @NotEmpty List<Integer> idsFolio,
             Integer idNotary,
@@ -57,8 +66,8 @@ public class NotebookController {
     @GetMapping
     @Operation(summary = "Obtener todos los cuadernos")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Notebook>> getAllCuadernos() {
-        return ResponseEntity.ok(notebookService.findAll());
+    public ResponseEntity<List<NotebookResponse>> getAllCuadernos() {
+        return ResponseEntity.ok(notebookService.findAll().stream().map(NotebookResponse::from).toList());
     }
 
     @ApiResponses({
@@ -68,9 +77,9 @@ public class NotebookController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener cuaderno por ID")
     @Transactional(readOnly = true)
-    public ResponseEntity<Notebook> getNotebookById(@PathVariable Integer id) {
+    public ResponseEntity<NotebookResponse> getNotebookById(@PathVariable Integer id) {
         return notebookService.findById(id)
-                .map(ResponseEntity::ok)
+                .map(notebook -> ResponseEntity.ok(NotebookResponse.from(notebook)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -85,7 +94,7 @@ public class NotebookController {
         try {
             Notebook creado = notebookService.createNotebook(
                     request.idsFolio(), request.idNotary(), request.year(), request.notes());
-            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(NotebookResponse.from(creado));
         } catch (BusinessValidationException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (ResourceNotFoundException e) {

@@ -2,6 +2,8 @@ package com.licensis.notaire.adapter.in.web.document;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.adapter.in.web.support.DocumentTypeRef;
+import com.licensis.notaire.adapter.in.web.support.ProcedureTypeRef;
 import com.licensis.notaire.business.DocumentCostTemplate;
 import com.licensis.notaire.application.usecase.document.DocumentCostTemplateService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +37,21 @@ public class DocumentCostTemplateController {
         this.documentCostTemplateService = documentCostTemplateService;
     }
 
+    public record CostTemplateKey(int fkIdProcedureType, int fkIdDocumentType) {
+    }
+
+    public record CostTemplateResponse(CostTemplateKey documentCostTemplatePK, ProcedureTypeRef procedureType,
+            DocumentTypeRef documentType, java.math.BigDecimal fixedAmount,
+            java.math.BigDecimal variablePercentage, int version) {
+        public static CostTemplateResponse from(DocumentCostTemplate cost) {
+            return new CostTemplateResponse(
+                    new CostTemplateKey(cost.getDocumentCostTemplatePK().getFkIdProcedureType(),
+                            cost.getDocumentCostTemplatePK().getFkIdDocumentType()),
+                    ProcedureTypeRef.from(cost.getProcedureType()), DocumentTypeRef.from(cost.getDocumentType()),
+                    cost.getFixedAmount(), cost.getVariablePercentage(), cost.getVersion());
+        }
+    }
+
     public record CreateCostRequest(
             Integer idProcedureType,
             Integer idDocumentType,
@@ -54,7 +71,7 @@ public class DocumentCostTemplateController {
             DocumentCostTemplate creado = documentCostTemplateService.create(
                     request.idProcedureType(), request.idDocumentType(),
                     request.fixedAmount(), request.variablePercentage());
-            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(CostTemplateResponse.from(creado));
         } catch (BusinessValidationException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (ResourceNotFoundException e) {
@@ -68,8 +85,9 @@ public class DocumentCostTemplateController {
     @GetMapping("/tipo-tramite/{idProcedureType}")
     @Operation(summary = "Obtener los costos de documentos definidos para un tipo de trámite")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DocumentCostTemplate>> getCostosByTypeProcedure(
+    public ResponseEntity<List<CostTemplateResponse>> getCostosByTypeProcedure(
             @PathVariable Integer idProcedureType) {
-        return ResponseEntity.ok(documentCostTemplateService.findByTypeProcedure(idProcedureType));
+        return ResponseEntity.ok(documentCostTemplateService.findByTypeProcedure(idProcedureType).stream()
+                .map(CostTemplateResponse::from).toList());
     }
 }
