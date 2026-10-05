@@ -71,7 +71,7 @@ Multi-module Maven project refactoring a Java Swing monolith to microservices. S
 **Modules:**
 
 - `backend-api` — Spring Boot REST API (main development target)
-- `notaire-shared` — **Retired** (ADR-024, #1255). DTOs now live in `backend-api`
+- `notaire-shared` — **Retired** (ADR-025, #1255). DTOs now live in `backend-api`
   (`com.licensis.notaire.dto`); the folder is archived in `deprecated/`. External
   services consume the REST API (OpenAPI), never Java DTO classes.
 - `frontend-swing` — **Removed.** The legacy Swing GUI client was deprecated and

@@ -54,9 +54,10 @@ DOCS_AS_NON_LIVE = (
     REPO_ROOT / "backend-api" / "README.md",
     REPO_ROOT / "docs" / "300-development" / "301-setup" / "README.md",
     REPO_ROOT / "docs" / "300-development" / "302-code-standards" / "DTO-MAPPING-GUIDE.md",
+    REPO_ROOT / "docs" / "200-architecture" / "202-ADR" / "ADR-024-repository-topology.md",
 )
-NON_LIVE_MARKERS = ("deprecated", "retired", "formerly", "ADR-024")
-ADR = REPO_ROOT / "docs" / "200-architecture" / "202-ADR" / "ADR-024-retire-notaire-shared.md"
+NON_LIVE_MARKERS = ("deprecated", "retired", "formerly", "ADR-025")
+ADR = REPO_ROOT / "docs" / "200-architecture" / "202-ADR" / "ADR-025-retire-notaire-shared.md"
 
 
 def _modules(pom: Path) -> list[str]:
@@ -134,7 +135,7 @@ class NotaireSharedRetiredTest(unittest.TestCase):
 
     def test_adr_points_external_services_to_the_api(self) -> None:
         """Scenario: External services use the API."""
-        self.assertTrue(ADR.is_file(), "ADR-024 must record the decision")
+        self.assertTrue(ADR.is_file(), "ADR-025 must record the decision")
         text = ADR.read_text(encoding="utf-8")
         self.assertIn("OpenAPI", text)
         self.assertIn("/api/v1", text)

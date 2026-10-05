@@ -143,7 +143,7 @@ com.licensis.notaire/
 ```
 
 Los DTOs (`DtoPersona`, etc.) viven en `backend-api` (`com.licensis.notaire.dto`); el
-módulo `notaire-shared` fue retirado (ADR-024) y los servicios externos consumen la
+módulo `notaire-shared` fue retirado (ADR-025) y los servicios externos consumen la
 API REST (OpenAPI) — ver [DTO-MAPPING-GUIDE.md](../302-code-standards/DTO-MAPPING-GUIDE.md).
 
 ## Base de Datos

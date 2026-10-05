@@ -1,4 +1,4 @@
-# ADR-024: Retire the notaire-shared Module
+# ADR-025: Retire the notaire-shared Module
 
 **Status:** Accepted  
 **Date:** 2026-10-05  

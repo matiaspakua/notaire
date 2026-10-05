@@ -7,7 +7,7 @@
 - [x] 1.2 Use Case documentation exists
 - [x] 1.3 Acceptance Criteria defined as scenarios (or `skip_specs` justified)
 - [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
-- [x] 1.5 ADR-024 planned in `proposal.md` (Documentation Impact)
+- [x] 1.5 ADR-025 planned in `proposal.md` (Documentation Impact)
 - [x] 1.6 Move the Issue to IN PROGRESS (`in-progress` label)
 
 ## 2. Crear branch
@@ -53,7 +53,7 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [x] 8.1 ADR-024 (new) and index; status note in ADR-002; Docker note in ADR-017
+- [x] 8.1 ADR-025 (new) and index; status note in ADR-002; Docker note in ADR-017
 - [x] 8.2 SAD, diagrams, devsecops, setup, DTO-MAPPING-GUIDE, RELEASE, DEVELOPMENT-PLAN
 - [x] 8.3 README, backend README, CLAUDE.md, rules, agents, skills, `openspec/config.yaml` and schema, `deprecated/README.md`
 - [x] 8.4 `CHANGELOG.md` — one entry

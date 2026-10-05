@@ -74,5 +74,5 @@ The documentation MUST state that external services and clients consume `/api/v1
 
 #### Scenario: External services use the API
 
-- **WHEN** the setup guide, DTO guide, README and ADR-024 are read
+- **WHEN** the setup guide, DTO guide, README and ADR-025 are read
 - **THEN** they point to the OpenAPI contract and none lists `notaire-shared` as a live module

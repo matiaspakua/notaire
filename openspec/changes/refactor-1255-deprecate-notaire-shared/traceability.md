@@ -42,7 +42,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/202-ADR/ADR-024-retire-notaire-shared.md` | done | `8c9cfc9f` |
+| `docs/200-architecture/202-ADR/ADR-025-retire-notaire-shared.md` | done | `8c9cfc9f` |
 | `docs/200-architecture/202-ADR/ADR-002-module-structure.md` | done | `8c9cfc9f` |
 | `docs/200-architecture/201-SAD/sad.md` | done | `8c9cfc9f` |
 | `docs/300-development/302-code-standards/DTO-MAPPING-GUIDE.md` | done | `8c9cfc9f` |

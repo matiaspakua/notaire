@@ -22,7 +22,7 @@
 - Dockerfile, `.dockerignore`, CODEOWNERS, `release-please-config.json`, `.cursor/install.sh`, `.aisdlc/project.yml`, `scripts/check-tdd-evidence.sh`, `scripts/check-agent-rules.sh` and `testing/scripts/generate-coverage-report.sh` stop referencing the module.
 - The remaining folder moves to `deprecated/notaire-shared/`; its `pom.xml` is stored as `pom.xml.archived`, like `frontend-swing`.
 - A guard test fails if a live manifest references the module or the folder reappears at the repo root.
-- ADR-024 records the decision and supersedes the three-module structure of ADR-002.
+- ADR-025 records the decision and supersedes the three-module structure of ADR-002.
 
 ## Reglas de negocio
 
@@ -50,7 +50,7 @@
 | `backend-api` | yes | receives the DTO sources, drops the dependency, loses the dead metrics code, Dockerfile |
 | `frontend` | no | already consumes the API only |
 | `notaire-shared` | yes | retired: emptied and moved to `deprecated/notaire-shared/` |
-| Docs / scripts / CI | yes | build and tooling references, ADR-024, SAD, setup and DTO guides |
+| Docs / scripts / CI | yes | build and tooling references, ADR-025, SAD, setup and DTO guides |
 
 ### Surface area
 
@@ -62,13 +62,13 @@
 
 ### Architecture review
 
-Structural: supersedes the three-module decision of ADR-002 and the module list of ADR-005. Recorded in ADR-024. The `repository`/`service`/`adapter` layering is untouched. Follow-up outside this change: CONSTITUTION §5 step 4 still lists `notaire-shared`; amending the Constitution needs its own PR (§12).
+Structural: supersedes the three-module decision of ADR-002 and the module list of ADR-005. Recorded in ADR-025. The `repository`/`service`/`adapter` layering is untouched. Follow-up outside this change: CONSTITUTION §5 step 4 still lists `notaire-shared`; amending the Constitution needs its own PR (§12).
 
 ## Documentation Impact
 
 | Permanent document | What must change |
 |--------------------|------------------|
-| `docs/200-architecture/202-ADR/ADR-024-retire-notaire-shared.md` | new ADR; index in `ADR/README.md` |
+| `docs/200-architecture/202-ADR/ADR-025-retire-notaire-shared.md` | new ADR; index in `ADR/README.md` |
 | `docs/200-architecture/202-ADR/ADR-002-module-structure.md`, `ADR-017-container-base-images.md` | status note / Docker build context |
 | `docs/200-architecture/201-SAD/sad.md`, `204-diagrams/*.puml` | module view and diagrams |
 | `docs/200-architecture/208-devsecops/README.md`, `docs/300-development/301-setup/README.md`, `302-code-standards/DTO-MAPPING-GUIDE.md`, `RELEASE.md`, `DEVELOPMENT-PLAN.md` | build commands, DTO location |

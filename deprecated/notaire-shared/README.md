@@ -1,6 +1,6 @@
 # notaire-shared (retired)
 
-> ⚠️ **DEPRECATED**: retired under #1255 (ADR-024). Nothing here is built, tested,
+> ⚠️ **DEPRECATED**: retired under #1255 (ADR-025). Nothing here is built, tested,
 > scanned or deployed, and it is not a module of the root `pom.xml`.
 
 `notaire-shared` was a Maven module of shared DTO classes used by the Swing client

@@ -9,7 +9,7 @@ rectangle "Phase 1\nAnalysis" #LightBlue {
 }
 
 rectangle "Phase 2\nFoundation" #LightGreen {
-  (Create shared DTOs; retired in ADR-024) as P2A
+  (Create shared DTOs; retired in ADR-025) as P2A
   (Set up Maven multi-module) as P2B
   (PostgreSQL + Docker Compose) as P2C
 }

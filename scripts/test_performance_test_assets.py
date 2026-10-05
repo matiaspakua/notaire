@@ -103,6 +103,20 @@ class PerformanceTestWorkflowTest(unittest.TestCase):
         self.assertIn("infra/performance/k6/load-test.js", raw)
         self.assertIn("actuator/health", raw)
 
+    def test_k6_runs_on_the_runner_so_localhost_reaches_the_backend(self):
+        steps = self.workflow["jobs"]["load-test"]["steps"]
+        uses = [step.get("uses", "") for step in steps]
+        self.assertFalse(
+            any(u.startswith("grafana/k6-action") for u in uses),
+            "the container action cannot reach the backend on the runner's localhost (#1266)",
+        )
+        self.assertTrue(
+            any(u.startswith("grafana/setup-k6-action") for u in uses),
+            "install k6 on the runner with grafana/setup-k6-action (#1266)",
+        )
+        runs = " ".join(step.get("run", "") for step in steps)
+        self.assertIn("k6 run", runs)
+
     def test_uploads_summary_json_artifact(self):
         self.assertIn("summary.json", self.raw)
         self.assertIn("upload-artifact", self.raw)

@@ -10,7 +10,7 @@ This document describes how Notaire maps between JPA entities and Data Transfer 
 
 Notaire uses **direct entity serialization** — JPA entities are serialized as JSON directly from the REST controllers, without a separate DTO layer for most endpoints. DTOs exist for specific use cases where the full entity should not be exposed.
 
-DTO classes live in `backend-api` (`com.licensis.notaire.dto`). They used to sit in a separate `notaire-shared` module, retired in [ADR-024](../../200-architecture/202-ADR/ADR-024-retire-notaire-shared.md). External services and clients consume the REST API (`/api/v1`) through the OpenAPI contract (`backend-api/openapi/openapi.yaml`), never a Java DTO library.
+DTO classes live in `backend-api` (`com.licensis.notaire.dto`). They used to sit in a separate `notaire-shared` module, retired in [ADR-025](../../200-architecture/202-ADR/ADR-025-retire-notaire-shared.md). External services and clients consume the REST API (`/api/v1`) through the OpenAPI contract (`backend-api/openapi/openapi.yaml`), never a Java DTO library.
 
 ### Where DTOs Are Used
 
