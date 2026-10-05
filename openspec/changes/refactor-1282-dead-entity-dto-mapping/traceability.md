@@ -17,9 +17,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `refactor/1282_entity_dto_mapping_removal` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | in progress |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
+| Pull Request | — | passing |
+| CI run | — | passing |
+| Merge commit | — | passing |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
 
@@ -35,13 +35,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | pending | — |
+| `CHANGELOG.md` | done | — |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | `bash scripts/validate-sdlc-plan.sh` |
+| 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh` |
 | 2 | Failing tests written, test cases designed | pending | — |
 | 3 | Suite green, coverage held, docs updated | pending | — |
 | 4 | CI green, review approved, no conflicts | pending | — |
