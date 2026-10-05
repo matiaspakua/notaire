@@ -49,7 +49,7 @@ automatizados.
 
 **Notaire** es el resultado de migrarlo hacia:
 
-- **Backend**: API REST con **Spring Boot 4.1.0** y **Java 21**.
+- **Backend**: API REST con **Spring Boot 4.1.0** y **Java 26**.
 - **Frontend**: **Next.js 16** + **React 19** + **TypeScript** + **Tailwind CSS 4**, con un sistema de diseño propio inspirado en Apple.
 - **Cliente activo**: solo el frontend Next.js. El cliente Swing legacy fue eliminado del árbol (#1046); no recrearlo.
 - **Base de datos**: **PostgreSQL 16** con **Flyway** como única fuente de verdad del esquema.
@@ -86,7 +86,7 @@ Snapshots históricos: [`docs/000-archive/github/`](docs/000-archive/github/).
 
 ```text
 notaire/
-├── backend-api/          # Spring Boot 4 REST API (Java 21)
+├── backend-api/          # Spring Boot 4 REST API (Java 26)
 ├── frontend/              # Next.js 16 web app
 ├── docs/                  # Documentación (ver docs/README.md)
 │   ├── 100-business/      # Requisitos, casos de uso, modelo de datos
@@ -106,7 +106,7 @@ notaire/
 
 | Capa | Tecnologías |
 |:-----|:------------|
-| **Backend** | Java 21, Spring Boot 4.1.0 (Web, Data JPA, Security, Actuator), SpringDoc OpenAPI |
+| **Backend** | Java 26, Spring Boot 4.1.0 (Web, Data JPA, Security, Actuator), SpringDoc OpenAPI |
 | **Persistencia** | PostgreSQL 16, Flyway, HikariCP, JasperReports |
 | **Frontend** | Next.js 16, React 19, TypeScript 5.7, Tailwind CSS 4, TanStack Query, shadcn/ui, Zustand |
 | **Testing** | JUnit 5 + Mockito + Testcontainers (backend), Vitest + Playwright (frontend), Bruno (API) |
@@ -122,7 +122,7 @@ Detalle completo y justificación de cada elección: [ADRs](docs/200-architectur
 
 ```bash
 # Backend
-Java 21+ / Maven 3.9+ / Docker + Compose
+Java 26 / Maven 3.9+ / Docker + Compose
 
 # Frontend (desarrollo local sin Docker)
 Node.js 22+ / npm 10+

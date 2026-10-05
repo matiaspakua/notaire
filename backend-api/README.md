@@ -2,7 +2,7 @@
 
 `backend-api` es el servicio REST que implementa la lógica de negocio y expone los endpoints HTTP de Notaire.
 
-- Java 21
+- Java 26
 - Spring Boot 4
 - PostgreSQL 16
 - Endpoints en `/api/v1`

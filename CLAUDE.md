@@ -66,7 +66,7 @@ push-to-main guard) — see `.claude/rules/hooks.md` for what they do and why.
 
 ## Project Overview
 
-Multi-module Maven project refactoring a Java Swing monolith to microservices. Spring Boot 4.1.0, Java 21, PostgreSQL 16.
+Multi-module Maven project refactoring a Java Swing monolith to microservices. Spring Boot 4.1.0, Java 26, PostgreSQL 16.
 
 **Modules:**
 
