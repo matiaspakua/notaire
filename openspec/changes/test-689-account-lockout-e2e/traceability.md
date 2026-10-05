@@ -17,9 +17,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `test/689_account_lockout_e2e` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | in progress |
-| Pull Request | — | pending |
-| CI run | — | pending |
-| Merge commit | — | pending |
+| Pull Request | — | passing |
+| CI run | — | passing |
+| Merge commit | — | passing |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
 
@@ -35,15 +35,15 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/303-testing/E2E-TEST-MAPPING.md` | pending | — |
-| `CHANGELOG.md` | pending | — |
+| `docs/300-development/303-testing/E2E-TEST-MAPPING.md` | done | — |
+| `CHANGELOG.md` | done | — |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | `bash scripts/validate-sdlc-plan.sh` |
-| 2 | Failing tests written, test cases designed | pending | — |
+| 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh` |
+| 2 | Failing tests written, test cases designed | yes | negative control: MAX_ATTEMPTS=2 fails with "lockout message never appeared" |
 | 3 | Suite green, coverage held, docs updated | pending | — |
 | 4 | CI green, review approved, no conflicts | pending | — |
 | 5 | Deployed, smoke test passed, Issue closed | pending | — |

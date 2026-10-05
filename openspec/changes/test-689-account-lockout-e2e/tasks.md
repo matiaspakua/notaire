@@ -19,41 +19,41 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [ ] 3.2 Add the failing tests; observed failing
-- [ ] 3.3 Every scenario maps to a test
+- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [x] 3.2 Add the failing tests; observed failing
+- [x] 3.3 Every scenario maps to a test
 
 ## 4. Implementación
 
-- [ ] 4.1 Add `TS-0100-login-account-lockout.spec.ts` for desktop and mobile widths
-- [ ] 4.2 Tests green
+- [x] 4.1 Add `TS-0100-login-account-lockout.spec.ts` for desktop and mobile widths
+- [x] 4.2 Tests green
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing affected tests updated without weakening assertions
-- [ ] 5.2 No dead code or unused imports remain
+- [x] 5.1 Existing affected tests updated without weakening assertions
+- [x] 5.2 No dead code or unused imports remain
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 Targeted tests for the change
-- [ ] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
+- [x] 6.1 Targeted tests for the change
+- [x] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
 - [ ] 6.3 `bash scripts/preflight.sh`
-- [ ] 6.4 No `@Disabled` tests
+- [x] 6.4 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add or extend the Playwright spec for the UI change
+- [x] 7.1 Add or extend the Playwright spec for the UI change
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `docs/300-development/303-testing/E2E-TEST-MAPPING.md`
-- [ ] 8.2 `CHANGELOG.md`
+- [x] 8.1 `docs/300-development/303-testing/E2E-TEST-MAPPING.md`
+- [x] 8.2 `CHANGELOG.md`
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One logical change per commit, Conventional Commits
+- [x] 9.1 One logical change per commit, Conventional Commits
 - [ ] 9.2 Only the final commit carries `Closes #689`; others `Refs #689`
-- [ ] 9.3 No secrets, no commented-out code
+- [x] 9.3 No secrets, no commented-out code
 
 ## 10. Pull Request y validación CI
 
