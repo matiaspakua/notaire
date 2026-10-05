@@ -6,7 +6,6 @@ package com.licensis.notaire.business;
 
 import java.math.BigDecimal;
 
-import com.licensis.notaire.dto.DtoItem;
 import com.licensis.notaire.dto.TypeItem;
 import java.io.Serializable;
 import jakarta.persistence.Basic;
@@ -187,50 +186,9 @@ public class Item implements Serializable, Persistable<Integer>
         this.reason = reason;
     }
 
-    public void setAtributos(DtoItem miDto)
-    {
-        idItem = miDto.getIdItem();
-        name = miDto.getName();
-        value = miDto.getValue();
 
-        if (miDto.getPercentage() != null)
-        {
-            percentage = miDto.getPercentage();
-        }
 
-        if (miDto.getNotes() != null)
-        {
-            notes = miDto.getNotes();
-        }
 
-        fixedConcept = miDto.isFixed();
-
-        if (miDto.getType() != null)
-        {
-            type = miDto.getType();
-        }
-
-        reason = miDto.getReason();
-
-        version = miDto.getVersion();
-    }
-
-    public DtoItem getDto()
-    {
-        DtoItem miDtoItem = new DtoItem();
-
-        miDtoItem.setIdItem(idItem);
-        miDtoItem.setName(name);
-        miDtoItem.setNotes(notes);
-        miDtoItem.setPercentage(percentage);
-        miDtoItem.setValue(value);
-        miDtoItem.setVersion(version);
-        miDtoItem.setFixedConcept(fixedConcept);
-        miDtoItem.setType(type);
-        miDtoItem.setReason(reason);
-
-        return miDtoItem;
-    }
 
     @Override
     public int hashCode()

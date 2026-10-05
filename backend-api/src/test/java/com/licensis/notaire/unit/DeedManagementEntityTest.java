@@ -5,8 +5,6 @@ import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.dto.DtoDeedManagement;
-import com.licensis.notaire.dto.DtoIdentificationType;
-import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.DisplayName;
@@ -185,65 +183,6 @@ class DeedManagementEntityTest {
     @DisplayName("setAtributos branches")
     class SetAtributosTests {
 
-        @Test
-        @DisplayName("setAtributos with null personNotary — does not set notary")
-        void setAtributosWithNullPersonNotary() throws Exception {
-            DeedManagement g = new DeedManagement(1);
-            DtoDeedManagement dto = new DtoDeedManagement();
-            dto.setNumber(100);
-            dto.setPersonNotary(null);
-            DtoManagementStatus dtoStatus = new DtoManagementStatus();
-            dtoStatus.setIdManagementStatus(1);
-            dtoStatus.setName("Started");
-            dto.setStatus(dtoStatus);
-
-            g.setAtributos(dto);
-            assertThat(g.getFkIdNotaryPerson()).isNull();
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null personNotary — sets notary")
-        void setAtributosWithPersonNotary() throws Exception {
-            DeedManagement g = new DeedManagement(1);
-            DtoDeedManagement dto = new DtoDeedManagement();
-            dto.setNumber(200);
-            DtoIdentificationType dtoTypeId = new DtoIdentificationType();
-            dtoTypeId.setIdIdentificationType(1);
-            dtoTypeId.setName("DNI");
-            DtoPerson dtoPerson = new DtoPerson();
-            dtoPerson.setId(10);
-            dtoPerson.setFirstName("Juan");
-            dtoPerson.setLastName("Garcia");
-            dtoPerson.setVersion(0);
-            dtoPerson.setDtoIdentificationType(dtoTypeId);
-            dto.setPersonNotary(dtoPerson);
-            DtoManagementStatus dtoStatus = new DtoManagementStatus();
-            dtoStatus.setIdManagementStatus(1);
-            dtoStatus.setName("Started");
-            dto.setStatus(dtoStatus);
-
-            g.setAtributos(dto);
-            assertThat(g.getFkIdNotaryPerson()).isNotNull();
-        }
-
-        @Test
-        @DisplayName("setAtributos with null status — does not throw and leaves prior status")
-        void setAtributosWithNullStatusLeavesPriorStatus() throws Exception {
-            ManagementStatus prior = new ManagementStatus();
-            prior.setIdManagementStatus(3);
-            prior.setName("In Progress");
-
-            DeedManagement g = new DeedManagement(1);
-            g.setFkIdManagementStatus(prior);
-
-            DtoDeedManagement dto = new DtoDeedManagement();
-            dto.setNumber(300);
-            dto.setStatus(null);
-
-            assertThatCode(() -> g.setAtributos(dto)).doesNotThrowAnyException();
-            assertThat(g.getFkIdManagementStatus()).isSameAs(prior);
-            assertThat(g.getFkIdManagementStatus().getName()).isEqualTo("In Progress");
-        }
     }
 
     @Nested

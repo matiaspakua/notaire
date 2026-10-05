@@ -1,8 +1,6 @@
 package com.licensis.notaire.unit;
 
 
-import com.licensis.notaire.dto.DtoPayment;
-import com.licensis.notaire.dto.DtoBudget;
 import com.licensis.notaire.business.Payment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -59,85 +57,12 @@ class PaymentEntityTest {
     @DisplayName("getDto branches")
     class GetDtoTests {
 
-        @Test
-        @DisplayName("getDto with null notes — covers null branch")
-        void getDtoWithNullNotes() {
-            Payment payment = new Payment(1);
-            payment.setDate(new Date());
-            payment.setAmount(new java.math.BigDecimal("1000.0"));
-
-            var dto = payment.getDto();
-
-            assertThat(dto.getIdPayment()).isEqualTo(1);
-            assertThat(dto.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("1000.0"));
-        }
-
-        @Test
-        @DisplayName("getDto with non-null notes — covers non-null branch")
-        void getDtoWithNonNullNotes() {
-            Payment payment = new Payment(2);
-            payment.setDate(new Date());
-            payment.setAmount(new java.math.BigDecimal("500.0"));
-            payment.setNotes("Pago parcial");
-
-            var dto = payment.getDto();
-
-            assertThat(dto.getNotes()).isEqualTo("Pago parcial");
-        }
     }
 
     @Nested
     @DisplayName("setAtributos branches")
     class SetAtributosTests {
 
-        @Test
-        @DisplayName("setAtributos with null notes and null budget — covers null branches")
-        void setAtributosAllNullOptional() {
-            DtoPayment dto = new DtoPayment();
-            dto.setIdPayment(3);
-            dto.setDate(new Date());
-            dto.setAmount(new java.math.BigDecimal("2000.0"));
-
-            Payment payment = new Payment();
-            payment.setAtributos(dto);
-
-            assertThat(payment.getIdPayment()).isEqualTo(3);
-            assertThat(payment.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("2000.0"));
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null notes — covers non-null notes branch")
-        void setAtributosWithNotes() {
-            DtoPayment dto = new DtoPayment();
-            dto.setIdPayment(4);
-            dto.setDate(new Date());
-            dto.setAmount(new java.math.BigDecimal("300.0"));
-            dto.setNotes("Cuota 1");
-
-            Payment payment = new Payment();
-            payment.setAtributos(dto);
-
-            assertThat(payment.getNotes()).isEqualTo("Cuota 1");
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null budget — covers non-null budget branch")
-        void setAtributosWithBudget() {
-            DtoPayment dto = new DtoPayment();
-            dto.setIdPayment(5);
-            dto.setDate(new Date());
-            dto.setAmount(new java.math.BigDecimal("750.0"));
-            DtoBudget dtoBudget = new DtoBudget();
-            dtoBudget.setIdBudget(10);
-            dtoBudget.setNumber(1001);
-            dtoBudget.setVersion(0);
-            dto.setBudget(dtoBudget);
-
-            Payment payment = new Payment();
-            payment.setAtributos(dto);
-
-            assertThat(payment.getIdPayment()).isEqualTo(5);
-        }
     }
 
     @Nested

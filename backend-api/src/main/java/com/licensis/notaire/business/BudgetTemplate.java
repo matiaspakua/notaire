@@ -4,16 +4,12 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoBudgetTemplate;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
 import java.io.Serializable;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Transient;
 import org.springframework.data.domain.Persistable;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -137,46 +133,8 @@ public class BudgetTemplate implements Serializable, Persistable<BudgetTemplateP
         this.concept = concept;
     }
 
-    public void setAtributos(DtoBudgetTemplate miDto)
-    {
-        try
-        {
-            if (procedureType == null)
-            {
-                procedureType = new ProcedureType();
-            }
-            procedureType.setAtributos(miDto.getTiposDeProcedure());
 
-            if (concept == null)
-            {
-                concept = new Concept();
-            }
-            concept.setAtributos(miDto.getConceptos());
 
-            budgetTemplatePK = new BudgetTemplatePK(procedureType.getIdProcedureType(), concept.getIdConcept());
-
-            version = miDto.getVersion();
-
-        }
-        catch (DtoInvalidoException ex)
-        {
-            Logger.getLogger(BudgetTemplate.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoBudgetTemplate getDto()
-    {
-        DtoBudgetTemplate miDto = new DtoBudgetTemplate();
-
-        miDto.setConceptos(concept.getDto());
-        miDto.setTiposDeProcedure(procedureType.getDto());
-
-        miDto.setVersion(version);
-
-        return miDto;
-    }
 
     public int getVersion()
     {

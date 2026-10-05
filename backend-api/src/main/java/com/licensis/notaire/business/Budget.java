@@ -6,16 +6,12 @@ package com.licensis.notaire.business;
 
 import java.math.BigDecimal;
 
-import com.licensis.notaire.dto.DtoItem;
-import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.dto.DtoBudget;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -199,63 +195,8 @@ public class Budget implements Serializable, Persistable<Integer> {
         this.itemList = itemList;
     }
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoBudget getDto() {
-        DtoBudget miDto = new DtoBudget();
 
-        miDto.setIdBudget(idBudget);
-        miDto.setDate(date);
-        miDto.setNumber(number);
-        miDto.setEncabezado(encabezado);
-        miDto.setStatus(status);
-        miDto.setPropertyAmount(propertyAmount);
-        miDto.setNotes(notes);
 
-        if (fkIdPerson != null) {
-            try {
-                miDto.setPerson(fkIdPerson.getDto());
-            } catch (Exception ex) {
-                DtoPerson persons = new DtoPerson();
-                persons.setId(fkIdPerson.getPersonId());
-                persons.setFirstName(fkIdPerson.getFirstName());
-                persons.setLastName(fkIdPerson.getLastName());
-                persons.setDtoIdentificationType(fkIdPerson.getFkIdIdentificationType().getDto());
-                persons.setIdentificationNumber(fkIdPerson.getIdentificationNumber());
-            }
-        } else {
-            miDto.setPerson(null);
-        }
-
-        miDto.setVersion(version);
-
-        return miDto;
-    }
-
-    public void setAtributos(DtoBudget dtoBudget) {
-        this.setIdBudget(dtoBudget.getIdBudget());
-        this.setDate(dtoBudget.getDate());
-        this.setNumber(dtoBudget.getNumber());
-        this.setEncabezado(dtoBudget.getEncabezado());
-        this.setStatus(dtoBudget.getStatus());
-        this.setPropertyAmount(dtoBudget.getPropertyAmount());
-        this.setNotes(dtoBudget.getNotes());
-
-        if (dtoBudget.getPerson() != null) {
-            Person client = new Person();
-            client.setAtributos(dtoBudget.getPerson());
-            this.setFkIdPerson(client);
-        }
-
-        if (dtoBudget.getItems() != null && !dtoBudget.getItems().isEmpty()) {
-            for (Iterator<DtoItem> it = dtoBudget.getItems().iterator(); it.hasNext();) {
-                DtoItem dtoItem = it.next();
-                Item item = new Item();
-                item.setAtributos(dtoItem);
-            }
-        }
-
-        version = dtoBudget.getVersion();
-    }
 
     @Override
     public int hashCode() {

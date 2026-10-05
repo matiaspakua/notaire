@@ -1,9 +1,5 @@
 package com.licensis.notaire.unit;
 
-import com.licensis.notaire.dto.DtoDeed;
-import com.licensis.notaire.dto.DtoDeedManagement;
-import com.licensis.notaire.dto.DtoProperty;
-import com.licensis.notaire.dto.DtoBudget;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.dto.DtoProcedure;
 import com.licensis.notaire.business.Deed;
@@ -226,81 +222,6 @@ class ProcedureEntityTest {
             return dto;
         }
 
-        @Test
-        @DisplayName("setAtributos with all optional fields null — covers null branches")
-        void setAtributosAllNullOptional() {
-            DtoProcedure dto = baseDto();
-            dto.setProperty(null);
-
-            Procedure procedure = new Procedure();
-            procedure.setAtributos(dto);
-
-            assertThat(procedure.getIdProcedure()).isEqualTo(10);
-            assertThat(procedure.getFkIdProperty()).isNull();
-            assertThat(procedure.getFkIdDeed()).isNull();
-            assertThat(procedure.getFkIdManagement()).isNull();
-            assertThat(procedure.getFkIdBudget()).isNull();
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null property — covers non-null branch")
-        void setAtributosWithProperty() {
-            DtoProcedure dto = baseDto();
-            DtoProperty dtoProperty = new DtoProperty();
-            dtoProperty.setIdProperty(5);
-            dtoProperty.setAddress("Calle Test 123");
-            dto.setProperty(dtoProperty);
-
-            Procedure procedure = new Procedure();
-            procedure.setAtributos(dto);
-
-            assertThat(procedure.getFkIdProperty()).isNotNull();
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null deed — covers non-null branch")
-        void setAtributosWithDeed() {
-            DtoProcedure dto = baseDto();
-            DtoDeed dtoDeed = new DtoDeed();
-            dtoDeed.setIdDeed(7);
-            dtoDeed.setNumber(2025001);
-            dto.setDeed(dtoDeed);
-
-            Procedure procedure = new Procedure();
-            procedure.setAtributos(dto);
-
-            assertThat(procedure.getFkIdDeed()).isNotNull();
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null gestion — covers non-null branch")
-        void setAtributosWithManagement() {
-            DtoProcedure dto = baseDto();
-            DtoDeedManagement dtoManagement = new DtoDeedManagement();
-            dtoManagement.setIdManagement(3);
-            dto.setDeedManagement(dtoManagement);
-
-            Procedure procedure = new Procedure();
-            procedure.setAtributos(dto);
-
-            assertThat(procedure.getFkIdManagement()).isNotNull();
-        }
-
-        @Test
-        @DisplayName("setAtributos with non-null budget — covers non-null branch")
-        void setAtributosWithBudget() {
-            DtoProcedure dto = baseDto();
-            DtoBudget dtoBudget = new DtoBudget();
-            dtoBudget.setIdBudget(20);
-            dtoBudget.setNumber(12345);
-            dtoBudget.setVersion(0);
-            dto.setBudget(dtoBudget);
-
-            Procedure procedure = new Procedure();
-            procedure.setAtributos(dto);
-
-            assertThat(procedure.getFkIdBudget()).isNotNull();
-        }
     }
 
     @Nested

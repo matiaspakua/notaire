@@ -4,8 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoCopy;
-import com.licensis.notaire.dto.DtoTestimony;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -253,45 +251,7 @@ public class Copy implements Serializable, Persistable<Integer>
         this.folioCopiesCollection = folioCopiesCollection;
     }
 
-    public DtoCopy getDto()
-    {
-        DtoCopy miDto = new DtoCopy();
 
-        miDto.setIdCopy(idCopy);
-        miDto.setDatePrinting(datePrinting);
-        miDto.setDateWithdrawal(dateWithdrawal);
-        miDto.setNumber(number);
-        miDto.setNotes(notes);
 
-        if (fkIdTestimony != null)
-        {
-            DtoTestimony miDtoTestimony;
-            miDtoTestimony = fkIdTestimony.getDto();
-            miDto.setTestimony(miDtoTestimony);
-        }
 
-        miDto.setVersion(version);
-
-        return miDto;
-    }
-
-    public void setAtributos(DtoCopy miDto)
-    {
-
-        if (miDto.getIdCopy() != null)
-        {
-            idCopy = miDto.getIdCopy();
-        }
-
-        version = miDto.getVersion();
-        datePrinting = miDto.getDatePrinting();
-        dateWithdrawal = miDto.getDateWithdrawal();
-        number = miDto.getNumber();
-        notes = miDto.getNotes();
-
-        if (miDto.getTestimony() != null)
-        {
-            fkIdTestimony = new Testimony(miDto.getTestimony().getIdTestimony());
-        }
-    }
 }

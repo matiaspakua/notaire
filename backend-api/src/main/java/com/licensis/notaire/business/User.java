@@ -4,7 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoUser;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -229,34 +228,6 @@ public class User implements Serializable, Persistable<Integer> {
 
     }
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoUser getDto() {
-        DtoUser miDto = new DtoUser();
-        try {
-            miDto.setPassword(password);
-            miDto.setStatus(status);
-            miDto.setIdUser(idUser);
-            miDto.setName(name);
-
-            DtoPerson miDtoPerson = new DtoPerson();
-            miDtoPerson = this.getFkIdPerson().getDto();
-
-            miDto.setPersons(miDtoPerson);
-            miDto.setType(type);
-
-            if (role != null) {
-                miDto.setRoleId(role.getIdRole());
-                miDto.setRoleName(role.getName());
-            }
-
-            // Controlo la version del objeto
-            miDto.setVersion(version);
-
-        } catch (NullPointerException e) {
-            System.out.println("Error Metodo : getDtoUsuario");
-        }
-        return miDto;
-    }
 
     public int getVersion() {
         return version;

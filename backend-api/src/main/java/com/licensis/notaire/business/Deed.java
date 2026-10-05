@@ -10,7 +10,6 @@ import com.licensis.notaire.dto.DtoProcedure;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -254,49 +253,7 @@ public class Deed implements Serializable, Persistable<Integer>
         this.testimonyList = testimonyList;
     }
 
-    public void setAtributos(DtoDeed miDtoDeed)
-    {
-        if (miDtoDeed != null)
-        {
-            if (idDeed != null)
-            {
-                idDeed = miDtoDeed.getIdDeed();
-            }
 
-            number = miDtoDeed.getNumber();
-            dateDeedrecording = miDtoDeed.getDateDeedrecording();
-
-            if (miDtoDeed.getFolios() != null)
-            {
-                folioList = new ArrayList<>();
-                for (Iterator<DtoFolio> it = miDtoDeed.getFolios().iterator(); it.hasNext();)
-                {
-                    DtoFolio dtoFolio = it.next();
-                    Folio miFolio = new Folio();
-
-                    miFolio.setAtributos(dtoFolio);
-
-                    folioList.add(miFolio);
-                }
-            }
-
-            if (miDtoDeed.getProcedures() != null)
-            {
-                procedureList = new ArrayList<>();
-                for (Iterator<DtoProcedure> it = miDtoDeed.getProcedures().iterator(); it.hasNext();)
-                {
-                    DtoProcedure dtoProcedure = it.next();
-                    Procedure miProcedure = new Procedure();
-
-                    miProcedure.setIdProcedure(dtoProcedure.getIdProcedure());
-                    procedureList.add(miProcedure);
-                }
-            }
-            body = miDtoDeed.getBody();
-            status = miDtoDeed.getStatus();
-            version = miDtoDeed.getVersion();
-        }
-    }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoDeed getDto()

@@ -6,7 +6,6 @@ package com.licensis.notaire.business;
 
 import java.math.BigDecimal;
 
-import com.licensis.notaire.dto.DtoSubmittedDocument;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.Date;
@@ -341,77 +340,9 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
         this.delivered = delivered;
     }
 
-    public DtoSubmittedDocument getDto()
-    {
 
-        DtoSubmittedDocument dtoSubmittedDocument = new DtoSubmittedDocument();
 
-        dtoSubmittedDocument.setVersion(version);
-        dtoSubmittedDocument.setDueDays(dueDays);
-        dtoSubmittedDocument.setDateEntry(dateEntry);
-        dtoSubmittedDocument.setDateReleased(dateReleased);
-        dtoSubmittedDocument.setDatePayment(datePayment);
-        dtoSubmittedDocument.setDateExit(dateExit);
-        dtoSubmittedDocument.setDateDue(dateDue);
-        dtoSubmittedDocument.setIdSubmittedDocument(idSubmittedDocument);
-        dtoSubmittedDocument.setAmountApagar(amountToPay);
-        dtoSubmittedDocument.setReleased(Boolean.TRUE.equals(released));
-        dtoSubmittedDocument.setName(name);
-        dtoSubmittedDocument.setCardNumber(cardNumber);
-        dtoSubmittedDocument.setNotes(notes);
-        dtoSubmittedDocument.setFlagged(Boolean.TRUE.equals(flagged));
-        dtoSubmittedDocument.setPrepared(prepared);
-        dtoSubmittedDocument.setExpires(expires);
-        dtoSubmittedDocument.setDeliveredBy(deliveredBy);
 
-        if (delivered != null)
-        {
-            dtoSubmittedDocument.setDelivered(delivered);
-        }
-
-        if (reentered != null)
-        {
-            dtoSubmittedDocument.setReentered(reentered);
-        }
-
-        if (fkIdProcedure != null) {
-            dtoSubmittedDocument.setFkProcedure(fkIdProcedure.getDto());
-        } else {
-            dtoSubmittedDocument.setFkProcedure(null);
-        }
-
-        return dtoSubmittedDocument;
-    }
-
-    public void setAtributos(DtoSubmittedDocument dtoSubmittedDocument)
-    {
-
-        version = dtoSubmittedDocument.getVersion();
-        idSubmittedDocument = dtoSubmittedDocument.getIdSubmittedDocument();
-        name = dtoSubmittedDocument.getName();
-        cardNumber = dtoSubmittedDocument.getCardNumber();
-        dateEntry = dtoSubmittedDocument.getDateEntry();
-        dateExit = dtoSubmittedDocument.getDateExit();
-        prepared = dtoSubmittedDocument.isPrepared();
-        expires = dtoSubmittedDocument.isExpires();
-        dateDue = dtoSubmittedDocument.getDateDue();
-        dueDays = dtoSubmittedDocument.getDueDays();
-        amountToPay = dtoSubmittedDocument.getAmountToPay();
-        datePayment = dtoSubmittedDocument.getDatePayment();
-        released = dtoSubmittedDocument.isReleased();
-        dateReleased = dtoSubmittedDocument.getDateReleased();
-        flagged = dtoSubmittedDocument.isFlagged();
-        notes = dtoSubmittedDocument.getNotes();
-        reentered = dtoSubmittedDocument.isReentered();
-        deliveredBy = dtoSubmittedDocument.getDeliveredBy();
-        delivered = dtoSubmittedDocument.isDelivered();
-        idSubmittedDocument = dtoSubmittedDocument.getIdSubmittedDocument();
-
-        Procedure procedure = new Procedure();
-        procedure.setAtributos(dtoSubmittedDocument.getFkProcedure());
-
-        fkIdProcedure = procedure;
-    }
 
     public Boolean getReentered()
     {

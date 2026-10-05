@@ -4,7 +4,6 @@
  */
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.dto.DtoProcedureTemplate;
 import java.io.Serializable;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
@@ -134,36 +133,8 @@ public class ProcedureTemplate implements Serializable, Persistable<ProcedureTem
         this.documentType = documentType;
     }
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoProcedureTemplate getDto()
-    {
-        DtoProcedureTemplate miDto = new DtoProcedureTemplate();
 
-        miDto.setNotes(notes);
-        miDto.setTiposDeDocument(documentType.getDto());
-        miDto.setTiposDeProcedure(procedureType.getDto());
 
-        return miDto;
-
-    }
-
-    public void setAtributos(DtoProcedureTemplate miDto)
-    {
-        notes = miDto.getNotes();
-        if (documentType == null)
-        {
-            documentType = new DocumentType();
-        }
-        documentType.setAtributos(miDto.getTiposDeDocument());
-
-        if (procedureType == null)
-        {
-            procedureType = new ProcedureType();
-        }
-        procedureType.setAtributos(miDto.getTiposDeProcedure());
-
-        procedureTemplatePK = new ProcedureTemplatePK(procedureType.getIdProcedureType(), documentType.getIdDocumentType());
-    }
 
     @Override
     public int hashCode()

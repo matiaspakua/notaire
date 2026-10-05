@@ -6,7 +6,6 @@ package com.licensis.notaire.business;
 
 import java.math.BigDecimal;
 
-import com.licensis.notaire.dto.DtoPayment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
@@ -145,55 +144,8 @@ public class Payment implements Serializable, Persistable<Integer>
         this.fkIdBudget = fkIdBudget;
     }
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    public DtoPayment getDto()
-    {
-        DtoPayment miDtoPayment = new DtoPayment();
 
-        miDtoPayment.setIdPayment(idPayment);
-        miDtoPayment.setDate(date);
-        miDtoPayment.setAmount(amount);
 
-        if (notes != null)
-        {
-            miDtoPayment.setNotes(notes);
-        }
-
-        if (paymentMethod != null)
-        {
-            miDtoPayment.setPaymentMethod(paymentMethod);
-        }
-
-        miDtoPayment.setVersion(version);
-
-        return miDtoPayment;
-    }
-
-    public void setAtributos(DtoPayment miDtoPayment)
-    {
-
-        this.idPayment = miDtoPayment.getIdPayment();
-        this.date = miDtoPayment.getDate();
-        this.amount = miDtoPayment.getAmount();
-
-        if (miDtoPayment.getNotes() != null)
-        {
-            this.notes = miDtoPayment.getNotes();
-        }
-
-        if (miDtoPayment.getPaymentMethod() != null)
-        {
-            this.paymentMethod = miDtoPayment.getPaymentMethod();
-        }
-
-        if (miDtoPayment.getBudget() != null)
-        {
-            this.fkIdBudget = new Budget();
-            this.fkIdBudget.setAtributos(miDtoPayment.getBudget());
-        }
-
-        version = miDtoPayment.getVersion();
-    }
 
     @Override
     public int hashCode()
