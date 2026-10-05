@@ -27,15 +27,13 @@ DEPRECATED_MODULE = REPO_ROOT / "deprecated" / MODULE
 
 MOVED_SOURCES = (
     BACKEND_JAVA / "dto" / "DtoPerson.java",
+    BACKEND_JAVA / "dto" / "GenericDto.java",
+    BACKEND_JAVA / "dto" / "interfaces" / "DtoValido.java",
     BACKEND_JAVA / "dto" / "TypeItem.java",
     BACKEND_JAVA / "dto" / "exceptions" / "DtoInvalidoException.java",
     BACKEND_JAVA / "jpa" / "exceptions" / "PreexistingEntityException.java",
 )
-DEAD_SOURCES = (
-    BACKEND_JAVA / "dto" / "GenericDto.java",
-    BACKEND_JAVA / "dto" / "interfaces" / "DtoValido.java",
-    BACKEND_JAVA / "observability" / "SharedModuleMetrics.java",
-)
+DEAD_SOURCE = BACKEND_JAVA / "observability" / "SharedModuleMetrics.java"
 
 LIVE_TOOLING = (
     REPO_ROOT / ".github" / "CODEOWNERS",
@@ -115,10 +113,9 @@ class NotaireSharedRetiredTest(unittest.TestCase):
         missing = [str(p.relative_to(REPO_ROOT)) for p in MOVED_SOURCES if not p.is_file()]
         self.assertEqual([], missing)
 
-    def test_dead_sources_are_gone(self) -> None:
+    def test_module_observers_are_gone(self) -> None:
         """Scenario: Dead module observers are gone."""
-        present = [str(p.relative_to(REPO_ROOT)) for p in DEAD_SOURCES if p.exists()]
-        self.assertEqual([], present)
+        self.assertFalse(DEAD_SOURCE.exists(), "SharedModuleMetrics must be removed")
         leftovers = [
             str(p.relative_to(REPO_ROOT))
             for p in BACKEND_SOURCES.rglob("*.java")

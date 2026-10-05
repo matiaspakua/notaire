@@ -26,7 +26,7 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 `git mv` the used DTOs, `TypeItem`, `DtoInvalidoException` and `PreexistingEntityException` into `backend-api`; delete `GenericDto` and `DtoValido`
+- [ ] 4.1 `git mv` every class of the module into `backend-api`
 - [ ] 4.2 Remove the dependency from `backend-api/pom.xml` and the module from the root `pom.xml`
 - [ ] 4.3 Delete `SharedModuleMetrics`, the `notaire_shared_version` gauge and the `ObservabilityTest` block
 - [ ] 4.4 Update Dockerfile, `.dockerignore`, CODEOWNERS, `release-please-config.json`, `.cursor/install.sh`, `.aisdlc/project.yml`, `check-tdd-evidence.sh`, `check-agent-rules.sh`, `generate-coverage-report.sh`, `ci.yml` comment

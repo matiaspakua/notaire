@@ -9,7 +9,7 @@ Keep the Maven reactor and the build tooling free of a module with no second con
 
 ### Requirement: backend-api owns its DTOs
 
-The system MUST compile the `com.licensis.notaire.dto` classes, `DtoInvalidoException`, `TypeItem` and `PreexistingEntityException` as part of `backend-api`, under their existing packages, and MUST NOT change any JSON shape exposed by the REST API.
+The system MUST compile every class of the former module (`com.licensis.notaire.dto`, `dto.exceptions`, `dto.interfaces` and `jpa.exceptions.PreexistingEntityException`) as part of `backend-api`, under their existing packages, and MUST NOT change any JSON shape exposed by the REST API.
 
 #### Scenario: DTOs compile from backend-api
 
@@ -61,7 +61,7 @@ The system MUST keep the former module only under `deprecated/notaire-shared/`, 
 
 ### Requirement: Code that only served the module is removed
 
-The system MUST NOT contain `GenericDto`, `DtoValido`, `SharedModuleMetrics` or the `notaire_shared_version` gauge, because nothing uses them.
+The system MUST NOT contain `SharedModuleMetrics` or the `notaire_shared_version` gauge, because nothing uses them.
 
 #### Scenario: Dead module observers are gone
 

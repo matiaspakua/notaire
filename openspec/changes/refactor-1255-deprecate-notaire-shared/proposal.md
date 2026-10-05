@@ -16,8 +16,7 @@
 
 ## What Changes
 
-- The DTO classes in use, `TypeItem`, `DtoInvalidoException` and `PreexistingEntityException` move with `git mv` into `backend-api`, keeping their packages, so no `import` changes.
-- Dead code in the module is deleted instead of moved: `GenericDto` and `DtoValido` (no usages).
+- Every class of the module (56 files: the DTOs plus `GenericDto`, `DtoValido`, `TypeItem`, `DtoInvalidoException`, `PreexistingEntityException`) moves with `git mv` into `backend-api`, keeping its package, so no `import` changes. All of them are used: the DTOs extend `GenericDto` or implement `DtoValido`.
 - Dead code that only existed to observe the module is deleted: `SharedModuleMetrics`, the `notaire_shared_version` gauge and their tests (no caller records into them; no dashboard reads them).
 - `backend-api` drops the `notaire-shared` dependency; the root `pom.xml` lists only `backend-api`.
 - Dockerfile, `.dockerignore`, CODEOWNERS, `release-please-config.json`, `.cursor/install.sh`, `.aisdlc/project.yml`, `scripts/check-tdd-evidence.sh`, `scripts/check-agent-rules.sh` and `testing/scripts/generate-coverage-report.sh` stop referencing the module.

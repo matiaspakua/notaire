@@ -2,7 +2,7 @@
 
 ## Context
 
-Issue #1255, Use Case CU76. `notaire-shared` holds 56 DTO classes, `GenericDto`, `TypeItem`, `DtoInvalidoException`, `DtoValido` and `PreexistingEntityException` (in a `jpa.exceptions` package that `backend-api` also has). Its only dependency is `jackson-annotations`. Nothing in `frontend/` references it, and no class name collides with one in `backend-api`.
+Issue #1255, Use Case CU76. `notaire-shared` holds 56 classes: the DTOs plus `GenericDto`, `TypeItem`, `DtoInvalidoException`, `DtoValido` and `PreexistingEntityException` (in a `jpa.exceptions` package that `backend-api` also has). Its only dependency is `jackson-annotations`. Nothing in `frontend/` references it, and no class name collides with one in `backend-api`.
 
 ## Goals / Non-Goals
 
@@ -12,7 +12,7 @@ Issue #1255, Use Case CU76. `notaire-shared` holds 56 DTO classes, `GenericDto`,
 ## Decisions
 
 1. Move the sources into `backend-api` under the same package (`com.licensis.notaire.dto`), using `git mv` so history follows. Rejected: a new package (rewrites 100 imports for no gain).
-2. Delete `GenericDto`, `DtoValido`, `SharedModuleMetrics` and the gauge instead of moving them: nothing uses them, and the metrics observe a module that no longer exists. Rejected: keeping them under a new name (dead code, rule 13).
+2. Delete `SharedModuleMetrics` and the gauge instead of moving them: nothing calls them, and they observe a module that no longer exists. Rejected: keeping them under a new name (dead code, rule 13). `GenericDto` and `DtoValido` move because DTOs extend or implement them.
 3. Keep the root `pom.xml` as the parent with a single module, because `backend-api` inherits its parent and the build commands keep working. Rejected: flattening `backend-api` into the root (larger move, unrelated).
 4. Archive the manifest as `pom.xml.archived`, the precedent of `frontend-swing`, so Dependabot and Maven never see a live manifest. Rejected: leaving a live `pom.xml` under `deprecated/`.
 5. Enforce with a Python guard test next to the other repo-structure guards (`scripts/test_*.py` with a `scripts/tests` wrapper) plus one JUnit test for class ownership. Rejected: ArchUnit (new dependency for one assertion).
