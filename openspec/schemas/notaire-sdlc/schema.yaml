@@ -64,7 +64,7 @@ artifacts:
           implementation details). Each needs a delta spec file. Use the exact
           existing path under `openspec/specs/`. Leave empty if no requirement changes.
       - **Impact Analysis**: Mandatory (Constitution §5 step 4). Fill the affected
-        modules table (`backend-api`, `frontend`, `frontend-swing`, `notaire-shared`,
+        modules table (`backend-api`, `frontend`, `frontend-swing`,
         infra, CI/CD), then the surface area: entities, endpoints, Flyway migration
         version if the schema changes, configuration keys, dependencies. State
         whether anything is BREAKING for API clients. Include the architecture review:

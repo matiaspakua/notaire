@@ -196,7 +196,7 @@ rectangle "Phase 1\nAnalysis" #LightBlue {
 }
 
 rectangle "Phase 2\nFoundation" #LightGreen {
-  (notaire-shared DTOs)
+  (Shared DTOs, retired in ADR-024)
   (Maven multi-module)
   (PostgreSQL + Docker)
 }
@@ -238,7 +238,7 @@ rectangle "Phase 6\nDeprecation" #Gray {
 | Phase | Status | Details |
 |-------|--------|---------|
 | Phase 1: Analysis | ✅ Complete | Legacy Swing retired (removed under #1046; history in git); use cases cataloged in `docs/100-business/102-use-cases/` |
-| Phase 2: Foundation | ✅ Complete | `notaire-shared`, Maven multi-module, Docker Compose |
+| Phase 2: Foundation | ✅ Complete | Shared DTO module (retired, ADR-024), Maven multi-module, Docker Compose |
 | Phase 3: Backend API | ✅ Complete | Controllers, repositories, entities, Flyway migrations |
 | Phase 4: Frontend | 🔄 In Progress | Next.js 16 app (`frontend/`) — Swing is not a target client |
 | Phase 5: Observability | ✅ Complete | Full LPG stack + SonarQube + Homer dashboard |
@@ -274,17 +274,11 @@ package "Notaire System" {
     [Security & Config]
   }
 
-  package "notaire-shared\n(Java Library)" as Shared {
-    [DTOs]
-    [JPA Helpers]
-  }
-
   database "PostgreSQL 16" as DB
 }
 
 FE --> BE : HTTP/JSON (JWT)
 BE --> DB : Flyway + Hibernate
-BE ..> Shared : compile dependency
 @enduml
 ```
 
@@ -472,31 +466,13 @@ comp --> theme : styling
 @enduml
 ```
 
-### 5.4 Level 2 — Shared Module
+### 5.4 Level 2 — Shared Module (retired)
 
-```plantuml
-@startuml
-title Building Block View — Level 2: notaire-shared
-
-package "notaire-shared" {
-  package "com.licensis.notaire.dto" {
-    [DTO classes — API contracts]
-    [exceptions/ — Shared exceptions]
-    [interfaces/ — DTO interfaces]
-  }
-
-  package "com.licensis.notaire.jpa" {
-    [JPA helpers — Reusable persistence]
-  }
-}
-
-note right of "notaire-shared"
-  Compile dependency for backend-api.
-  Contains API contracts shared between
-  backend and any Java client.
-end note
-@enduml
-```
+The `notaire-shared` module was retired under #1255 (see
+[ADR-024](../202-ADR/ADR-024-retire-notaire-shared.md)). Its DTO classes
+(`com.licensis.notaire.dto`, `dto.exceptions`, `dto.interfaces`) now live in
+`backend-api`, and the folder is archived in `deprecated/notaire-shared/`. External
+services consume the REST API through the OpenAPI contract, not a Java library.
 
 ### 5.5 Core Domain Model
 
@@ -971,7 +947,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 - All endpoints under `/api/v1/` prefix.
 - RESTful resource naming (Spanish domain: `/gestion`, `/persona`, `/escritura`).
 - OpenAPI 3.0 documentation via `OpenApiConfig` at `/swagger-ui.html`.
-- Response wrapping with DTOs from `notaire-shared`.
+- Response wrapping with the DTOs in `backend-api` (`com.licensis.notaire.dto`).
 - Pagination support on list endpoints.
 
 ### 8.8 Testing Strategy
@@ -1123,7 +1099,7 @@ O --> (Deployability Docker)
 | Phase | GitHub Milestone | Status | Tracking Issue |
 |-------|-----------------|--------|----------------|
 | Phase 1 — Analysis | [#6 Phase 1 — Analysis](https://github.com/matiaspakua/notaire/milestone/6) | ✅ Complete | Legacy documentado, 73 CU catalogados |
-| Phase 2 — Foundation | [#7 Phase 2 — Foundation](https://github.com/matiaspakua/notaire/milestone/7) | ✅ Complete | notaire-shared, Maven multi-módulo, Docker Compose |
+| Phase 2 — Foundation | [#7 Phase 2 — Foundation](https://github.com/matiaspakua/notaire/milestone/7) | ✅ Complete | Módulo de DTOs compartidos (retirado, ADR-024), Maven multi-módulo, Docker Compose |
 | Phase 3 — Backend API | [#8 Phase 3 — Backend API](https://github.com/matiaspakua/notaire/milestone/8) | ✅ Complete | 31 controllers, 32 entidades, Flyway V1→V14 |
 | Phase 4 — Modern Frontend | [#9 Phase 4 — Modern Frontend](https://github.com/matiaspakua/notaire/milestone/9) | 🔄 In Progress | [#898](https://github.com/matiaspakua/notaire/issues/898) — 73 CU en Next.js 16 |
 | Phase 5 — Observability | [#10 Phase 5 — Observability](https://github.com/matiaspakua/notaire/milestone/10) | ✅ Complete | LPG stack + SonarQube + Homer |

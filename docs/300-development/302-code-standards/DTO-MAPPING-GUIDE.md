@@ -10,7 +10,7 @@ This document describes how Notaire maps between JPA entities and Data Transfer 
 
 Notaire uses **direct entity serialization** — JPA entities are serialized as JSON directly from the REST controllers, without a separate DTO layer for most endpoints. DTOs exist for specific use cases where the full entity should not be exposed.
 
-DTO classes live in the **`notaire-shared`** module (`com.licensis.notaire.dto`), not in `backend-api` itself. `backend-api` declares a Maven dependency on `notaire-shared` and imports the DTOs from there; `notaire-shared` has no dependency back on `backend-api`.
+DTO classes live in `backend-api` (`com.licensis.notaire.dto`). They used to sit in a separate `notaire-shared` module, retired in [ADR-024](../../200-architecture/202-ADR/ADR-024-retire-notaire-shared.md). External services and clients consume the REST API (`/api/v1`) through the OpenAPI contract (`backend-api/openapi/openapi.yaml`), never a Java DTO library.
 
 ### Where DTOs Are Used
 
@@ -109,7 +109,7 @@ Some entities have `@ManyToOne` or `@OneToMany` with lazy loading. When Jackson 
 
 When a new endpoint should return a reduced view of an entity:
 
-1. Create the DTO class in `notaire-shared`, package `com.licensis.notaire.dto`
+1. Create the DTO class in `backend-api`, package `com.licensis.notaire.dto`
 2. Add a `toDto()` method to the entity class (in `backend-api`)
 3. Return the DTO from the controller instead of the entity
 
@@ -141,7 +141,7 @@ public ResponseEntity<DtoWorkflowNode> getById(@PathVariable Integer id) {
 
 ## References
 
-- `DtoUsuario.java` (`notaire-shared`) — primary auth response DTO
+- `DtoUsuario.java` (`backend-api`) — primary auth response DTO
 - `PlantillaPresupuesto.java` (`backend-api`) — composite PK entity example
 - `WorkflowNode.java` / `WorkflowNodeController.java` (`backend-api`) — `toDto()` mapping pattern
 - `frontend/src/types/index.ts` — TypeScript mirrors of all entity types

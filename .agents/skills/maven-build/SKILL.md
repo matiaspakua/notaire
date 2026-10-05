@@ -39,7 +39,6 @@ mvn checkstyle:check
 | Module | Description |
 |--------|-------------|
 | backend-api | Spring Boot REST API |
-| notaire-shared | Shared DTOs and code |
 | frontend | Next.js web app (not a Maven module) |
 
 > The legacy `frontend-swing` / `deprecated-frontend-swing` client was removed

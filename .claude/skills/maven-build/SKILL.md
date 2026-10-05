@@ -39,7 +39,6 @@ mvn checkstyle:check
 | Module | Description |
 |--------|-------------|
 | backend-api | Spring Boot REST API |
-| notaire-shared | Shared DTOs and code |
 
 `frontend-swing` was removed from the repository (see `CLAUDE.md`); do not
 recreate it or reference it in build commands. All new client work belongs

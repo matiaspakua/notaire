@@ -63,7 +63,6 @@
 | `backend-api` | <!-- yes/no --> | <!-- --> |
 | `frontend` | <!-- yes/no --> | <!-- --> |
 | `frontend-swing` | <!-- yes/no --> | <!-- --> |
-| `notaire-shared` | <!-- yes/no --> | <!-- --> |
 | `infra` / observability | <!-- yes/no --> | <!-- --> |
 | CI/CD (`.github/workflows`) | <!-- yes/no --> | <!-- --> |
 

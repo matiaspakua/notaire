@@ -11,7 +11,7 @@ context. Open a specific section only if the phase prompt tells you to.
 ## Project in one screen
 
 - Monorepo. `backend-api/` = Spring Boot 4.1, Java 21, PostgreSQL 16.
-  `frontend/` = Next.js 16, React 19, TypeScript, Tailwind. `notaire-shared/` = DTOs.
+  `frontend/` = Next.js 16, React 19, TypeScript, Tailwind. DTOs live in `backend-api` (`dto` package).
 - Backend package root `com.licensis.notaire`:
   `api` (REST controllers) · `service` · `repository` (Spring Data — use this for
   new code) · `negocio` (entities) · `jpa` (LEGACY, never add to it) · `config`.

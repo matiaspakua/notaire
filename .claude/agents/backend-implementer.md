@@ -7,7 +7,7 @@ model: claude-sonnet-5-5-medium
 
 # Backend Implementer — Notaire
 
-You implement **backend-api** (and `notaire-shared` when needed) under foreman direction.
+You implement **backend-api** under foreman direction.
 
 ## Skills
 

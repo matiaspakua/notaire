@@ -29,6 +29,7 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [021](ADR-021-hexagonal-architecture-pilot.md) | Hexagonal Architecture Pilot (Payment Slice) | Accepted | 2026-09-13 | Code organization |
 | [022](ADR-022-git-history-rewrite-and-large-binaries.md) | Git History Rewrite and Large Binaries | Accepted | 2026-10-03 | DevOps / repo hygiene |
 | [023](ADR-023-rest-resource-naming.md) | REST Resource Naming Conventions | Accepted | 2026-10-03 | API design |
+| [024](ADR-024-retire-notaire-shared.md) | Retire the notaire-shared Module | Accepted | 2026-10-05 | Code organization |
 
 ## ADR Status Legend
 
@@ -65,10 +66,11 @@ Cada ADR sigue esta estructura:
 - **ADR-001**: Migración de monolito a microservicios con 3 capas
 - **ADR-005**: Migración a Next.js para el nuevo frontend web
 
-### Code Organization (2 ADRs)
+### Code Organization (3 ADRs)
 
-- **ADR-002**: Estructura Maven multi-módulo
+- **ADR-002**: Estructura Maven multi-módulo (parcialmente reemplazada por ADR-024)
 - **ADR-021**: Piloto de arquitectura hexagonal (solo el slice de pagos/presupuestos)
+- **ADR-024**: Retiro del módulo `notaire-shared`; `backend-api` es dueño de sus DTOs
 
 ### API Design (2 ADRs)
 

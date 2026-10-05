@@ -1119,7 +1119,7 @@ carriles corren en paralelo mientras no compartan archivos:
 
 | Carril | Módulos | Ejecutor típico |
 |---|---|---|
-| `backend` | `backend-api/src/main`, `notaire-shared` | `mvn`, Checkstyle, Spotless, JaCoCo |
+| `backend` | `backend-api/src/main` | `mvn`, Checkstyle, Spotless, JaCoCo |
 | `backend-test` | `backend-api/src/test` (unit/integration) | `mvn test`, `mvn verify -Ppg-integration` |
 | `frontend` | `frontend/src` | `npx tsc`, ESLint, Vitest |
 | `api-contract` | `backend-api/api-test/` (Bruno) | `npx @usebruno/cli run` |

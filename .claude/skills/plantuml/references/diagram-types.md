@@ -231,7 +231,7 @@ package "backend-api" {
   [Services] as svc
   [Repositories] as repo
 }
-package "notaire-shared" {
+package "shared-lib" {
   [DTOs]
   [Domain Model]
 }

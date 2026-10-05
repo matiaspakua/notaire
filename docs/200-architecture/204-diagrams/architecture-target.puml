@@ -24,7 +24,7 @@ node "Backend API\n(Spring Boot 4.1 / Java 21)" {
 }
 
 database "PostgreSQL 16\n(Flyway-managed)" as Postgres
-cloud "Shared Contracts\n(notaire-shared DTOs)" as Shared
+cloud "Shared Contracts\n(DTOs, now in backend-api)" as Shared
 
 node "Observability Stack" {
   [Prometheus] as Prom

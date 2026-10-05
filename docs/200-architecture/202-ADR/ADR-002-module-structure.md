@@ -11,6 +11,10 @@
 > `mvn clean install -pl frontend-swing -am` no longer works — see the corrected
 > command in [Build Commands](#build-commands).
 
+> **Update (see ADR-024):** the `notaire-shared` module below was retired under #1255.
+> Its classes live in `backend-api` and the folder is archived in
+> `deprecated/notaire-shared/`; the reactor now has the single module `backend-api`.
+
 ## Context
 
 El sistema Notaire tiene tres responsabilidades distintas que necesitan organización clara:
@@ -278,9 +282,6 @@ mvn clean install -pl backend-api -am
 
 # Build frontend solo (module excluded from root reactor; build standalone)
 cd deprecated-frontend-swing && mvn clean install
-
-# Build shared solo
-mvn clean install -pl notaire-shared
 
 # Tests backend
 mvn test -pl backend-api
