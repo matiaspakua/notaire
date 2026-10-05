@@ -19,7 +19,7 @@ public interface DtoValido {
     /**
      * Determina si el DTO actual es válido o no, dependiendo del estado interno del
      * mismo.
-     * 
+     *
      * Implementación por defecto retorna true. Los DTOs pueden sobrescribir este
      * método
      * para implementar validaciones específicas.

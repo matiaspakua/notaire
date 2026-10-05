@@ -1,8 +1,5 @@
 package com.licensis.notaire.dto;
 
-import com.licensis.notaire.dto.DtoWorkflowDefinition;
-import com.licensis.notaire.dto.DtoWorkflowNode;
-import com.licensis.notaire.dto.DtoWorkflowTransition;
 
 import java.util.Date;
 import java.util.List;

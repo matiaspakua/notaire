@@ -156,4 +156,3 @@ public class DtoUser
         this.token = token;
     }
 }
-
