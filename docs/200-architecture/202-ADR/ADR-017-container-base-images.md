@@ -1,9 +1,11 @@
 # ADR-017: Container / Base-Image Strategy
 
 ## Status
+
 Accepted (pin-to-minor-or-digest policy added — issue #1045 / CU78)
 
 ## Context
+
 Both application containers (backend, frontend) build multi-stage Docker
 images. The base-image choices affect image size, attack surface (Trivy
 scan results), and startup speed — worth recording explicitly rather than
@@ -16,6 +18,7 @@ pinned to a **minor version or digest**, with Dependabot covering Dockerfile
 bases.
 
 ## Decision
+
 Use **Alpine-based, multi-stage builds** for both backend and frontend,
 running as a **non-root user** in the final stage.
 
@@ -27,6 +30,7 @@ Dependabot **docker** ecosystems for `/backend-api` and `/frontend` open PRs
 when Dockerfile bases change.
 
 ### Backend (`backend-api/Dockerfile`)
+
 - **Build stage**: `maven:3.x-eclipse-temurin-26-alpine` (pinned minor;
   currently `3.10.0-eclipse-temurin-26-alpine`, JDK 26 since #1276) — compiles
   `notaire-shared` + `backend-api` (`mvn package -pl backend-api -am
@@ -43,6 +47,7 @@ when Dockerfile bases change.
   built by an earlier pipeline step, avoiding a duplicate compile.
 
 ### Frontend (`frontend/Dockerfile`)
+
 - **Build stage**: `node:22.x.x-alpine` (pinned; currently `22.23.3-alpine`)
   — `npm ci` + `npm run build` (Next.js standalone output).
 - **Runtime stage**: same pinned Node Alpine tag — copies only
@@ -51,6 +56,7 @@ when Dockerfile bases change.
 - `NEXT_TELEMETRY_DISABLED=1` in both stages.
 
 ## Options Considered
+
 - **Distroless images**: Rejected — smaller attack surface, but no shell
   makes the `wget`-based `HEALTHCHECK` and ad-hoc container debugging
   harder; Alpine's size savings already satisfy current needs.
@@ -62,6 +68,7 @@ when Dockerfile bases change.
   Digests remain acceptable where registries lack stable minor tags.
 
 ## Consequences
+
 - **Pros**: Small final images (JRE-only, standalone Next.js output),
   non-root runtime reduces container-escape blast radius, multi-stage builds
   keep source/build tooling out of the shipped image; pinned tags make
