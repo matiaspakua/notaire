@@ -49,7 +49,7 @@ class AuditPointcutCoverageTest {
 
     private static Class<?> paymentController() {
         Optional<Class<?>> found = PAYMENT_CONTROLLER_CANDIDATES.stream()
-                .map(AuditPointcutCoverageTest::loadOrNull)
+                .<Class<?>>map(AuditPointcutCoverageTest::loadOrNull)
                 .filter(java.util.Objects::nonNull)
                 .findFirst();
 

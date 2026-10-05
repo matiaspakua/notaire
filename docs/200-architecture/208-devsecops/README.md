@@ -29,7 +29,7 @@ lint gate), `frontend-ci.yml`, `playwright-e2e.yml`, `sdlc-process.yml`, and the
 > push-to-`main` or manual dispatch. They publish workflow artifacts and
 > `$GITHUB_STEP_SUMMARY` (and may be mirrored on GitHub Pages) — they never
 > git-commit into `docs/wiki/cicd-reports/` (issue #1041).
-
+>
 > **Test enforcement policy**: test failures FAIL the pipeline. No
 > `continue-on-error` or `-Dmaven.test.failure.ignore` on test steps. The only
 > tolerated flag is `-Dsurefire.failIfNoSpecifiedTests=false`, which allows
@@ -40,11 +40,13 @@ lint gate), `frontend-ci.yml`, `playwright-e2e.yml`, `sdlc-process.yml`, and the
 ### Jobs
 
 #### 1. Build & Compile
+
 - Sets up JDK 21 (Temurin distribution)
 - Builds all modules with Maven
 - Extracts project version for downstream jobs
 
 #### 2. Unit Tests (with coverage)
+
 - Backend API only: everything outside the `integration` package
   (`-Dtest='!**/integration/**'`); Swing modules were removed (#1046) and must
   not be rebuilt by this pipeline (#811)
@@ -52,33 +54,40 @@ lint gate), `frontend-ci.yml`, `playwright-e2e.yml`, `sdlc-process.yml`, and the
 - Publishes test results with dorny/test-reporter
 
 #### 3. Integration Tests (with coverage)
+
 - H2-based tests: `-Dtest='**/integration/**'`
 - Testcontainers/PostgreSQL tests: `-Ppg-integration` (Flyway schema validation)
 - Uploads `integration-test-report` artifact: surefire XML + JaCoCo coverage report
 
 #### 4. Coverage Gate (`mvn verify`)
+
 - Runs the full suite once; `jacoco:check` enforces the ratchet floor
   (70% line / 25% branch as of Phase 8; target 80/80)
 - Uploads combined `jacoco-report` and `coverage-snapshot` artifacts
 
 #### 5. Security Scan
+
 - Runs Trivy vulnerability scanner on source code (report-only)
 - Uploads JSON results as artifact
 
 #### 6. Build Docker Image
+
 - Runs only after unit, integration and coverage jobs succeed
 - Builds Docker image using Buildx
 - Does NOT push (push only happens on CD, gated on CI success)
 
 #### 7. Code Quality (SpotBugs)
+
 - Runs SpotBugs static analysis (report-only)
 - Generates XML report for review
 
 #### 8. Generate Markdown Reports
+
 - Runs only on push-to-`main` or manual dispatch
 - Aggregates test/coverage results into Markdown summaries
 
 #### 9. Publish report artifact
+
 - Runs only on push-to-`main` or manual dispatch
 - Surfaces the generated markdown via `$GITHUB_STEP_SUMMARY` and an Actions
   artifact (no git commits; see issue #1041)
@@ -156,6 +165,7 @@ Guarded by `scripts/test_semver_release_process.py`.
 ### Jobs
 
 #### 1. Build & Publish Docker Image (matrix)
+
 - Checks out the CI-tested SHA on `workflow_run` (see pin above)
 - Builds and pushes **backend** and **frontend** images to GHCR
 - Pushes immutable tags (branch/semver when applicable + publish SHA); then tags
@@ -163,22 +173,26 @@ Guarded by `scripts/test_semver_release_process.py`.
 - Generates CycloneDX SBOM (Trivy), cosign sign, cosign attest per image
 
 #### 2. Attach SBOM assets to GitHub Release
+
 - Triggered only on version tags (`v*`)
 - Downloads `sbom-backend` / `sbom-frontend` artifacts
 - Uses softprops/action-gh-release to attach SBOM files to the release already
   created by release-please (`generate_release_notes: false`)
 
 #### 3. Update Container Registry Description
+
 - Updates Docker Hub/GHCR description (backend)
 - Requires DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets
 - Conditional execution (skipped if secrets not configured)
 
 #### 4. Generate CD Report
+
 - Runs after build-and-publish, release, and update-description complete (always,
   unless the build job itself was skipped)
 - Aggregates their outcomes into a Markdown summary (`reports/cd-report.md`)
 
 #### 5. Publish CD report artifact
+
 - Runs only when report generation succeeded, on `workflow_run` success or manual
   dispatch
 - Surfaces `cd-report.md` via `$GITHUB_STEP_SUMMARY` and an Actions artifact
@@ -262,7 +276,7 @@ CodeQL is not a substitute for that gate.
 
 ```yaml
 env:
-  JAVA_VERSION: '21'
+  JAVA_VERSION: '26'
   MAVEN_OPTS: -Xmx1024m -XX:MaxMetaspaceSize=512m
 ```
 
@@ -302,7 +316,7 @@ env:
 | `sdlc-process.yml` | PR opened/synchronized/reopened/labeled | CONSTITUTION process gates: commit messages, TDD evidence, `sdlc-exception` label, agent-rule file lint, plus the scripts' self-tests |
 | `test-coverage-report.yml` | Daily schedule (02:00 UTC), manual dispatch | Publishes a standalone coverage report artifact |
 | `performance-test.yml` | Weekly schedule (Mondays 04:00 UTC) | k6 load test |
-| `dast-zap.yml` | Weekly schedule (Mondays 05:00 UTC) + manual dispatch | OWASP ZAP baseline DAST against a live API (report artifact; warn-first policy — does not gate every PR). See [DAST / OpenAPI / backup-restore](#dast-openapi-backup-restore-issue-1067). |
+| `dast-zap.yml` | Weekly schedule (Mondays 05:00 UTC) + manual dispatch | OWASP ZAP baseline DAST against a live API (report artifact; warn-first policy — does not gate every PR). See [DAST / OpenAPI / backup-restore](#dast--openapi--backup-restore-issue-1067). |
 | `openapi-contract.yml` | PR into `main` + manual dispatch | Regenerates OpenAPI from springdoc, fails if `backend-api/openapi/openapi.yaml` is stale, and fails on breaking changes vs the base branch (`oasdiff`) |
 | `backup-restore-smoke.yml` | Weekly schedule (Sundays 03:00 UTC) + manual dispatch | Backup→restore→smoke once `#256` lands (`scripts/backup-postgres.sh`); until then skips with an explicit blocked-on-#256 notice (no false-green restore) |
 | `deploy-github-page.yml` | After CI succeeds on `main` | Publishes the GitHub Pages documentation site |

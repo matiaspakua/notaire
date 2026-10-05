@@ -17,7 +17,7 @@ alwaysApply: true
 ### Backend (`backend-api`)
 
 - Package root: `com.licensis.notaire`
-- Framework: Spring Boot 4.1 with Java 21
+- Framework: Spring Boot 4.1 with Java 26
 - Responsibilities: business logic, validation, persistence, REST endpoints, security
 - No Swing (or any desktop UI) dependencies
 - Stateless and horizontally scalable

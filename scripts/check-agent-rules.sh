@@ -65,7 +65,7 @@ OBSOLETE
   done <<'CURRENT'
 com\.licensis\.notaire
 Spring Boot 4
-Java 21
+Java 26
 PostgreSQL 16
 Next\.js
 Dto[A-Z]
