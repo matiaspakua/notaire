@@ -80,7 +80,7 @@ When hexagonal ports/adapters already exist for a capability (`application.port`
 - Package: `com.licensis.notaire.dto` (in `backend-api`)
 - Naming: `DtoEntityName`
 - Bean Validation (`jakarta.validation`) on request DTOs
-- Never expose JPA entities directly from controllers
+- Never expose JPA entities directly from controllers; `ControllerSignatureArchitectureTest` fails on an entity in a handler signature and ratchets loosely typed returns (`src/test/resources/architecture/controller-loose-returns.txt` may only shrink)
 - Map entities ↔ DTOs with dedicated mappers (manual or MapStruct)
 
 Every new REST endpoint must be reachable from the UI at least once and

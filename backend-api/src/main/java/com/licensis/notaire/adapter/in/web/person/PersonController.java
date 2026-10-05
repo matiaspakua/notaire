@@ -55,11 +55,11 @@ public class PersonController {
             Integer identificationTypeId,
             IdentificationTypeRef fkIdIdentificationType) {}
 
-    record PersonResponse(
+    public record PersonResponse(
             Integer personId,
             String firstName,
-            String lastName,
-            String identificationNumber,
+            @NotBlank String lastName,
+            @NotBlank String identificationNumber,
             boolean isClient,
             String nationality,
             String taxId,
@@ -73,7 +73,33 @@ public class PersonController {
             String email,
             Integer notaryRegistrationNumber,
             Integer identificationTypeId,
-            int version) {}
+            int version) {
+
+        public static PersonResponse from(Person person) {
+        Integer typeId = person.getFkIdIdentificationType() != null
+                    ? person.getFkIdIdentificationType().getIdIdentificationType()
+                    : null;
+            return new PersonResponse(
+                    person.getPersonId(),
+                    person.getFirstName(),
+                    person.getLastName(),
+                    person.getIdentificationNumber(),
+                    person.getIsClient(),
+                    person.getNationality(),
+                    person.getTaxId(),
+                    person.getSex(),
+                    person.getBirthDate(),
+                    person.getMaritalStatus(),
+                    person.getMarriageCount(),
+                    person.getOccupation(),
+                    person.getAddress(),
+                    person.getPhone(),
+                    person.getEmail(),
+                    person.getNotaryRegistrationNumber(),
+                    typeId,
+                    person.getVersion());
+        }
+    }
 
     private final PersonService personService;
     private final IdentificationTypeRepository identificationTypeRepository;
@@ -81,31 +107,6 @@ public class PersonController {
     public PersonController(PersonService personService, IdentificationTypeRepository identificationTypeRepository) {
         this.personService = personService;
         this.identificationTypeRepository = identificationTypeRepository;
-    }
-
-    private PersonResponse toResponse(Person person) {
-        Integer typeId = person.getFkIdIdentificationType() != null
-                ? person.getFkIdIdentificationType().getIdIdentificationType()
-                : null;
-        return new PersonResponse(
-                person.getPersonId(),
-                person.getFirstName(),
-                person.getLastName(),
-                person.getIdentificationNumber(),
-                person.getIsClient(),
-                person.getNationality(),
-                person.getTaxId(),
-                person.getSex(),
-                person.getBirthDate(),
-                person.getMaritalStatus(),
-                person.getMarriageCount(),
-                person.getOccupation(),
-                person.getAddress(),
-                person.getPhone(),
-                person.getEmail(),
-                person.getNotaryRegistrationNumber(),
-                typeId,
-                person.getVersion());
     }
 
     private Integer resolveIdentificationTypeId(PersonRequest request) {
@@ -151,7 +152,7 @@ public class PersonController {
     @Operation(summary = "Get all people")
     @Transactional(readOnly = true)
     public ResponseEntity<List<PersonResponse>> getAllPeople() {
-        return ResponseEntity.ok(personService.findAll().stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(personService.findAll().stream().map(PersonResponse::from).toList());
     }
 
     @ApiResponses({
@@ -163,7 +164,7 @@ public class PersonController {
     @Transactional(readOnly = true)
     public ResponseEntity<PersonResponse> getPersonById(@PathVariable Integer id) {
         return personService.findById(id)
-                .map(this::toResponse)
+                .map(PersonResponse::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -187,7 +188,7 @@ public class PersonController {
             Person person = new Person();
             applyRequest(person, request, type);
             Person saved = personService.save(person);
-            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
+            return ResponseEntity.status(HttpStatus.CREATED).body(PersonResponse.from(saved));
         } catch (DuplicatePersonException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(duplicateBody(e));
         } catch (Exception e) {
@@ -209,7 +210,7 @@ public class PersonController {
                     applyRequest(existing, request, type);
                     try {
                         Person updated = personService.save(existing);
-                        return ResponseEntity.ok((Object) toResponse(updated));
+                        return ResponseEntity.ok((Object) PersonResponse.from(updated));
                     } catch (DuplicatePersonException e) {
                         return ResponseEntity.status(HttpStatus.CONFLICT).body((Object) duplicateBody(e));
                     } catch (Exception e) {
@@ -253,7 +254,7 @@ public class PersonController {
             @RequestParam(required = false) Boolean isClient) {
 
         List<PersonResponse> people = personService.search(firstName, lastName, identificationNumber,
-                idIdentificationType, isClient).stream().map(this::toResponse).toList();
+                idIdentificationType, isClient).stream().map(PersonResponse::from).toList();
         return ResponseEntity.ok(people);
     }
 }

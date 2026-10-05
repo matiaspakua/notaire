@@ -7,7 +7,7 @@ import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
 import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
 import com.licensis.notaire.dto.DtoBudgetResumen;
 import com.licensis.notaire.exception.ResourceNotFoundException;
-import com.licensis.notaire.business.Item;
+import com.licensis.notaire.adapter.in.web.item.ItemController.ItemResponse;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
@@ -250,11 +250,12 @@ public class BudgetController {
 })
     @PostMapping("/{id}/items-desde-plantilla")
     @Operation(summary = "CU39 - Cargar ítems del presupuesto desde la plantilla del tipo de trámite")
-    public ResponseEntity<List<Item>> cargarItemsDesdeTemplate(
+    public ResponseEntity<List<ItemResponse>> cargarItemsDesdeTemplate(
             @PathVariable Integer id,
             @Parameter(description = "ID del tipo de trámite")
             @RequestParam("tipoTramiteId") Integer typeProcedureId) {
-        return ResponseEntity.ok(budgetTemplateService.cargarItemsDesdeTemplate(id, typeProcedureId));
+        return ResponseEntity.ok(budgetTemplateService.cargarItemsDesdeTemplate(id, typeProcedureId).stream()
+                .map(ItemResponse::from).toList());
     }
 
     @ApiResponses({
@@ -263,9 +264,10 @@ public class BudgetController {
 })
     @PostMapping("/{id}/items-desde-catalogo")
     @Operation(summary = "CU71 - Agregar al presupuesto copias de ítems existentes del catálogo")
-    public ResponseEntity<List<Item>> addItemsFromCatalog(
+    public ResponseEntity<List<ItemResponse>> addItemsFromCatalog(
             @PathVariable Integer id,
             @RequestBody List<Integer> idItems) {
-        return ResponseEntity.ok(budgetCatalogoItemsService.addItemsFromCatalog(id, idItems));
+        return ResponseEntity.ok(budgetCatalogoItemsService.addItemsFromCatalog(id, idItems).stream()
+                .map(ItemResponse::from).toList());
     }
 }

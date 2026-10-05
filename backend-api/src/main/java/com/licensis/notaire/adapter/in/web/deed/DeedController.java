@@ -1,7 +1,7 @@
 package com.licensis.notaire.adapter.in.web.deed;
 
 import com.licensis.notaire.business.Deed;
-import com.licensis.notaire.business.Person;
+import com.licensis.notaire.adapter.in.web.person.PersonController.PersonResponse;
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.application.usecase.deed.DeedService;
@@ -179,8 +179,8 @@ public class DeedController {
     @GetMapping("/escribanos-disponibles")
     @Operation(summary = "Obtener lista de escribanos disponibles (con registro)")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<Person>> getEscribanosDisponibles() {
-        return ResponseEntity.ok(deedService.findEscribanosDisponibles());
+    public ResponseEntity<List<PersonResponse>> getEscribanosDisponibles() {
+        return ResponseEntity.ok(deedService.findEscribanosDisponibles().stream().map(PersonResponse::from).toList());
     }
 
     @GetMapping("/buscar")

@@ -1,5 +1,9 @@
 package com.licensis.notaire.adapter.in.web.procedure;
 
+import com.licensis.notaire.adapter.in.web.support.DeedRef;
+import com.licensis.notaire.adapter.in.web.support.ManagementRef;
+import com.licensis.notaire.adapter.in.web.support.ProcedureTypeRef;
+import com.licensis.notaire.adapter.in.web.support.PropertyRef;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
@@ -70,6 +74,23 @@ public class ProcedureController {
      * association is re-fetched from its own persisted row instead of
      * trusting a client-supplied nested object (issue #981).
      */
+    public record BudgetRef(Integer idBudget) {
+    }
+
+    public record ProcedureResponse(Integer idProcedure, String notes, ProcedureTypeRef fkIdProcedureType,
+            PropertyRef fkIdProperty, BudgetRef fkIdBudget, DeedRef fkIdDeed, ManagementRef fkIdManagement,
+            int version) {
+        public static ProcedureResponse from(Procedure procedure) {
+            Budget budget = procedure.getFkIdBudget();
+            return new ProcedureResponse(procedure.getIdProcedure(), procedure.getNotes(),
+                    ProcedureTypeRef.from(procedure.getFkIdProcedureType()),
+                    PropertyRef.from(procedure.getFkIdProperty()),
+                    budget == null ? null : new BudgetRef(budget.getIdBudget()),
+                    DeedRef.from(procedure.getFkIdDeed()), ManagementRef.from(procedure.getFkIdManagement()),
+                    procedure.getVersion());
+        }
+    }
+
     public record ProcedureRequest(Integer idProcedureType, Integer idProperty, Integer idDeed,
             Integer idManagement, Integer idBudget, String notes) {
     }
@@ -77,9 +98,9 @@ public class ProcedureController {
     @GetMapping
     @Operation(summary = "Obtener todos los trámites")
     @Transactional(readOnly = true)
-    public ResponseEntity<Page<Procedure>> getAll(
+    public ResponseEntity<Page<ProcedureResponse>> getAll(
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(repository.findAll(pageable));
+        return ResponseEntity.ok(repository.findAll(pageable).map(ProcedureResponse::from));
     }
 
     @ApiResponses({
@@ -89,9 +110,9 @@ public class ProcedureController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener trámite por ID")
     @Transactional(readOnly = true)
-    public ResponseEntity<Procedure> getById(@PathVariable Integer id) {
+    public ResponseEntity<ProcedureResponse> getById(@PathVariable Integer id) {
         return repository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(procedure -> ResponseEntity.ok(ProcedureResponse.from(procedure)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -115,7 +136,7 @@ public class ProcedureController {
         }
         try {
             entity = repository.save(entity);
-            return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(ProcedureResponse.from(entity));
         } catch (Exception e) {
             log.error("Failed to create tramite", e);
             return ResponseEntity.internalServerError().build();
@@ -141,7 +162,7 @@ public class ProcedureController {
         }
         try {
             entity = repository.save(entity);
-            return ResponseEntity.ok(entity);
+            return ResponseEntity.ok(ProcedureResponse.from(entity));
         } catch (Exception e) {
             log.error("Failed to update tramite id {}", id, e);
             return ResponseEntity.internalServerError().build();

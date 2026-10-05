@@ -320,8 +320,9 @@ public class ManagementController {
     @GetMapping("/cliente/{idPerson}")
     @Operation(summary = "CU19 - List managements for a client")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DeedManagement>> getByClient(@PathVariable Integer idPerson) {
-        return ResponseEntity.ok(repository.findByClientPersonId(idPerson));
+    public ResponseEntity<List<ManagementResponse>> getByClient(@PathVariable Integer idPerson) {
+        return ResponseEntity.ok(repository.findByClientPersonId(idPerson).stream()
+                .map(this::toManagementResponse).toList());
     }
 
     @GetMapping("/{id}/estado-actual")
