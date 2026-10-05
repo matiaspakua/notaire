@@ -25,20 +25,20 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 `java.version` 26 in the root POM
-- [ ] 4.2 Every workflow `setup-java` and `JAVA_VERSION` set to 26
-- [ ] 4.3 Pin the Dockerfile and Dockerfile.slim bases to JDK 26
-- [ ] 4.4 Tests green
+- [x] 4.1 `java.version` 26 in the root POM
+- [x] 4.2 Every workflow `setup-java` and `JAVA_VERSION` set to 26
+- [x] 4.3 Pin the Dockerfile and Dockerfile.slim bases to JDK 26
+- [x] 4.4 Tests green
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Update `test_image_pins_and_dependabot.py` rejected-floating list for 26 without weakening it
-- [ ] 5.2 No dead code or stale versions remain
+- [x] 5.1 Update `test_image_pins_and_dependabot.py` rejected-floating list for 26 without weakening it
+- [x] 5.2 No dead code or stale versions remain
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn verify` on JDK 26 (Maven container) keeps the ratchet floor
-- [ ] 6.2 `python3 -m unittest discover -s scripts/tests`
+- [x] 6.1 `mvn verify` on JDK 26 (Maven container) keeps the ratchet floor
+- [x] 6.2 `python3 -m unittest discover -s scripts/tests`
 - [ ] 6.3 Image builds and the smoke test passes (`bash scripts/run_pipeline.sh`)
 - [ ] 6.4 No `@Disabled` tests
 
@@ -48,15 +48,15 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 ADR-017
-- [ ] 8.2 devsecops guide and CLAUDE.md
-- [ ] 8.3 `CHANGELOG.md` — one entry
+- [x] 8.1 ADR-017
+- [x] 8.2 devsecops guide and CLAUDE.md
+- [x] 8.3 `CHANGELOG.md` — one entry
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One logical change per commit, Conventional Commits
+- [x] 9.1 One logical change per commit, Conventional Commits
 - [ ] 9.2 Only the final commit carries `Closes #1276`; others `Refs #1276`
-- [ ] 9.3 No secrets, no commented-out code
+- [x] 9.3 No secrets, no commented-out code
 
 ## 10. Pull Request y validación CI
 
