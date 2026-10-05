@@ -27,7 +27,7 @@ On the release commit for tag `vX.Y.Z`:
 |----------|---------|
 | Git tag | `vX.Y.Z` |
 | Root `pom.xml` `<version>` | `X.Y.Z` |
-| `backend-api` / `notaire-shared` parent `<version>` | `X.Y.Z` |
+| `backend-api` parent `<version>` | `X.Y.Z` |
 | `frontend/package.json` `"version"` | `X.Y.Z` |
 | `CHANGELOG.md` | New `## [X.Y.Z] - YYYY-MM-DD` (or release-please equivalent) from prior unreleased commits; fresh unreleased section remains for new work |
 

@@ -88,7 +88,6 @@ Snapshots históricos: [`docs/000-archive/github/`](docs/000-archive/github/).
 notaire/
 ├── backend-api/          # Spring Boot 4 REST API (Java 26)
 ├── frontend/              # Next.js 16 web app
-├── notaire-shared/        # DTOs y contratos compartidos
 ├── docs/                  # Documentación (ver docs/README.md)
 │   ├── 100-business/      # Requisitos, casos de uso, modelo de datos
 │   ├── 200-architecture/  # SAD, ADRs, diseño, diagramas, seguridad, deploy

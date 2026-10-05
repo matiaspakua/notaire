@@ -3,8 +3,8 @@ name: CI - Build, Test & Security
 # Full test pipeline: runs on every PR into main and every merge to main, plus
 # manual dispatch. Test failures FAIL the pipeline — no failure-ignore flags.
 # The only tolerated skip is -Dsurefire.failIfNoSpecifiedTests=false, which
-# allows modules (notaire-shared) that have no tests matching a filter; it
-# never masks a failing test.
+# allows a module that has no tests matching a filter; it never masks a
+# failing test.
 #
 # Report jobs (generate-reports/publish-reports) run only on push-to-main or
 # workflow_dispatch. They publish workflow artifacts + $GITHUB_STEP_SUMMARY —

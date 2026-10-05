@@ -33,7 +33,7 @@ lint gate), `frontend-ci.yml`, `playwright-e2e.yml`, `sdlc-process.yml`, and the
 > **Test enforcement policy**: test failures FAIL the pipeline. No
 > `continue-on-error` or `-Dmaven.test.failure.ignore` on test steps. The only
 > tolerated flag is `-Dsurefire.failIfNoSpecifiedTests=false`, which allows
-> modules with no tests matching a filter (`notaire-shared`); it never masks a
+> modules with no tests matching a filter; it never masks a
 > failing test. The only acceptable skip is an environment limitation (e.g.
 > Testcontainers tests auto-skip when Docker is unavailable — they run in CI).
 

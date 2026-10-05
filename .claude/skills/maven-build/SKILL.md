@@ -39,7 +39,6 @@ mvn checkstyle:check
 | Module | Description |
 |--------|-------------|
 | backend-api | Spring Boot REST API |
-| notaire-shared | Shared DTOs and code |
 
 `frontend-swing` was removed from the repository (see `CLAUDE.md`); do not
 recreate it or reference it in build commands. All new client work belongs
@@ -48,13 +47,16 @@ in `frontend/` (Next.js), which is built with `npm`/`next`, not Maven.
 ## Common Issues
 
 ### Dependency Resolution
+
 - Use `-am` flag to build dependent modules first
 - Run `mvn dependency:resolve` to download dependencies
 
 ### Test Failures
+
 - Use `-DfailIfNoTests=false` for modules without tests
 - Use `-Dmaven.test.failure.ignore=true` to continue on test failures
 
 ### Coverage
+
 - JaCoCo enforces a ratchet floor of 70% line / 25% branch coverage at `mvn verify`; 80% line/branch is the long-term target (see `.claude/rules/code-quality.md`)
 - Check report at: `target/site/jacoco/index.html`

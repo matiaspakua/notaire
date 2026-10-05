@@ -35,13 +35,15 @@
    - 6.5 [Gate 5 — Done (deploy + smoke test + cierre)](#65-gate-5--done-deploy--smoke-test--cierre)
 7. [Mapa de herramientas por etapa](#7-mapa-de-herramientas-por-etapa)
 8. [Skills y commands disponibles](#8-skills-y-commands-disponibles)
-  - 8.1 [Composición de skills para el SDLC](#81-composición-de-skills-para-el-sdlc)
-  - 8.2 [Contratos de artefactos y evidencias](#82-contratos-de-artefactos-y-evidencias)
-9. [Evidencia: changes que recorrieron el flujo completo](#9-evidencia-changes-que-recorrieron-el-flujo-completo)
-10. [Verificación del gate mecánico](#10-verificación-del-gate-mecánico)
-11. [Cómo adaptar OpenSpec en un proyecto nuevo](#11-cómo-adaptar-openspec-en-un-proyecto-nuevo)
-12. [Referencias](#12-referencias)
-13. [Orquestación del SDLC con OpenSpec — paralelización y optimización de costo](#13-orquestación-del-sdlc-con-openspec--paralelización-y-optimización-de-costo)
+
+- 8.1 [Composición de skills para el SDLC](#81-composición-de-skills-para-el-sdlc)
+- 8.2 [Contratos de artefactos y evidencias](#82-contratos-de-artefactos-y-evidencias)
+
+1. [Evidencia: changes que recorrieron el flujo completo](#9-evidencia-changes-que-recorrieron-el-flujo-completo)
+2. [Verificación del gate mecánico](#10-verificación-del-gate-mecánico)
+3. [Cómo adaptar OpenSpec en un proyecto nuevo](#11-cómo-adaptar-openspec-en-un-proyecto-nuevo)
+4. [Referencias](#12-referencias)
+5. [Orquestación del SDLC con OpenSpec — paralelización y optimización de costo](#13-orquestación-del-sdlc-con-openspec--paralelización-y-optimización-de-costo)
 
 ---
 
@@ -141,7 +143,7 @@ bash scripts/preflight.sh --list
 
 La configuración de OpenSpec en Notaire vive en **dos archivos project-owned**:
 
-```
+```text
 openspec/
 ├── config.yaml                        # contexto de la Constitución + reglas + operations
 └── schemas/
@@ -191,6 +193,7 @@ Lo que el fork **agrega** sobre el upstream:
 | Schema `notaire-sdlc` en `config.yaml` | Hace que `openspec new change` use este schema por defecto |
 
 Para actualizar openspec sin perder el fork:
+
 ```bash
 openspec update          # actualiza skills vendor
 # Luego revisar manualmente:
@@ -244,7 +247,7 @@ en un proposal y lo pasara a Gate 1.
 
 **La solución**: tres piezas que trabajan juntas:
 
-```
+```text
 opsx:explore          openspec-triage          opsx:propose
 (thinking, produce  ──▶  (informe → Issues   ──▶  (scaffoldea change,
  informe; nunca           reales, estimados,        proposal.md cita
@@ -274,6 +277,7 @@ script (ver §4.5).
 - Su única salida es un número de Issue real — lo único que puede pasarse a `opsx:propose`
 
 **Flujo interno del skill**:
+
 1. Leer el informe fuente completo
 2. Extraer un candidato por feature/gap: título, CU-XX, descripción, acceptance
    criteria, notas técnicas
@@ -367,6 +371,7 @@ operations:
 ```
 
 **Resultado del archivo**:
+
 - Change movido a `openspec/changes/archive/YYYY-MM-DD-<name>/`
 - Deltas aceptados sincronizados en `openspec/specs/<capability>/spec.md`
 - `traceability.md` completa con evidencia real (SHAs, PR, CI run, smoke test)
@@ -375,7 +380,7 @@ operations:
 
 ## 5. Flujo completo — secuencia canónica
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                     NOTAIRE SDLC — FLUJO COMPLETO                           │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -480,6 +485,7 @@ openspec validate <change-name> --strict
 ```
 
 **CI jobs que lo bloquean**:
+
 - `pr-validation.yml` → job `sdlc-plan-validation` → `bash scripts/validate-sdlc-plan.sh` (BLOCKING)
 
 **Regla de trazabilidad** (P4, §4): todo hallazgo en `openspec/explore*.md`
@@ -519,6 +525,7 @@ cd frontend && npx vitest run <nuevo-test>
 | E2E | Playwright | `testing/e2e/tests/TS-nnnn-*.spec.ts` | 1+ por Caso de Uso |
 
 **Convenciones**:
+
 - Nombres: `shouldXxxYyy` con `@DisplayName` (backend); `describe/it` (frontend)
 - Nomenclatura E2E: `TS-nnnn-<workflow-name>.spec.ts` con trazabilidad a CU
 - DTOs: `DtoEntityName` (e.g. `DtoUsuario`)
@@ -621,14 +628,14 @@ bash scripts/run_pipeline.sh                      # OBLIGATORIO antes de abrir P
 
 **Convenciones de PR**:
 
-```
+```text
 Título: [#<issue>] type(scope): description (≤70 chars)
 Body: .github/PULL_REQUEST_TEMPLATE.md (referencia Issue + Use Case)
 ```
 
 **Convenciones de commits** (Conventional Commits):
 
-```
+```text
 feat(scope): description
 fix(scope): description
 ...
@@ -669,7 +676,7 @@ openspec archive <change-name>
 
 ## 7. Mapa de herramientas por etapa
 
-```
+```text
 ETAPA                 HERRAMIENTA / ARCHIVO                          GATE
 ─────────────────────────────────────────────────────────────────────────
 Issue + Use Case      GitHub Issues; gh CLI; .github/ISSUE_TEMPLATE/  Gate 1
@@ -782,7 +789,7 @@ Archive               openspec archive <name>                         Gate 5
 
 ### Commands slash (Claude Code)
 
-```
+```text
 .claude/commands/opsx/
 ├── explore.md     # /opsx:explore
 ├── propose.md     # /opsx:propose
@@ -986,6 +993,7 @@ cp -r "$(openspec schema which spec-driven --path)" openspec/schemas/<mi-proyect
 ```
 
 Apuntar `openspec/config.yaml` al nuevo schema:
+
 ```yaml
 schema: <mi-proyecto>
 ```
@@ -1011,12 +1019,14 @@ operations:
 ### Paso 5: Crear el gate mecánico (bash)
 
 Adaptar `scripts/validate-sdlc-plan.sh` para verificar:
+
 - Issue reference presente en `proposal.md`
 - Issue existe y está abierto (`gh issue view <number>`)
 - Secciones obligatorias del proceso
 - Grupos de tareas obligatorios
 
 Integrar en:
+
 - Git pre-push hook (`scripts/install-git-hooks.sh`)
 - CI (workflow de PR validation, BLOCKING)
 
@@ -1029,6 +1039,7 @@ que cualquier change sea scaffoldeado.
 ### Paso 7: Conectar con los quality gates de CI/CD existentes
 
 Agregar en `scripts/preflight.sh` (o equivalente):
+
 ```bash
 # SDLC plan validation
 bash scripts/validate-sdlc-plan.sh
@@ -1119,7 +1130,7 @@ carriles corren en paralelo mientras no compartan archivos:
 
 | Carril | Módulos | Ejecutor típico |
 |---|---|---|
-| `backend` | `backend-api/src/main`, `notaire-shared` | `mvn`, Checkstyle, Spotless, JaCoCo |
+| `backend` | `backend-api/src/main` | `mvn`, Checkstyle, Spotless, JaCoCo |
 | `backend-test` | `backend-api/src/test` (unit/integration) | `mvn test`, `mvn verify -Ppg-integration` |
 | `frontend` | `frontend/src` | `npx tsc`, ESLint, Vitest |
 | `api-contract` | `backend-api/api-test/` (Bruno) | `npx @usebruno/cli run` |

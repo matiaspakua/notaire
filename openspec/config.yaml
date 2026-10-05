@@ -50,7 +50,7 @@ context: |
 
   Project shape: multi-module Maven modernization of a Java Swing monolith.
   backend-api (Spring Boot 4.1, Java 21, package com.licensis.notaire), frontend
-  (Next.js 16), frontend-swing (REST client only), notaire-shared. PostgreSQL 16.
+  (Next.js 16), frontend-swing (REST client only). PostgreSQL 16.
   New data access goes in `repository` (Spring Data), not the legacy `jpa` package.
 
   Explore -> Issue -> Propose (mandatory sequence, see

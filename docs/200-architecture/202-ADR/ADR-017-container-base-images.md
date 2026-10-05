@@ -33,7 +33,7 @@ when Dockerfile bases change.
 
 - **Build stage**: `maven:3.x-eclipse-temurin-26-alpine` (pinned minor;
   currently `3.10.0-eclipse-temurin-26-alpine`, JDK 26 since #1276) — compiles
-  `notaire-shared` + `backend-api` (`mvn package -pl backend-api -am
+  `backend-api` (`mvn package -pl backend-api -am
   -DskipTests`).
 - **Runtime stage**: `eclipse-temurin:26.0.x_*-jre-alpine` (pinned;
   currently `26.0.2.1_1-jre-alpine`) — copies the built JAR, runs as

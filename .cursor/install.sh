@@ -70,8 +70,8 @@ fi
   npx playwright install --with-deps chromium
 )
 
-# --- Maven reactor (shared + backend) ---
-mvn -DskipTests clean install -pl notaire-shared,backend-api -am
+# --- Maven reactor (backend) ---
+mvn -DskipTests clean install -pl backend-api -am
 
 # --- Pre-build Docker images while dockerd is available (best-effort) ---
 if ! docker info >/dev/null 2>&1; then

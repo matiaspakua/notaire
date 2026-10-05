@@ -1,7 +1,6 @@
 package com.licensis.notaire.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
@@ -119,24 +118,5 @@ public class ObservabilityConfig {
         metrics.bindTo(meterRegistry);
         LOG.debug("ClassLoader metrics registered");
         return metrics;
-    }
-
-    /**
-     * Register a custom Gauge for notaire-shared module version
-     * This exposes the shared module version as a metric for tracking
-     */
-    @Bean
-    public Gauge notaireSharedVersion() {
-        return Gauge.builder("notaire_shared_version", () -> {
-                try {
-                    String version = getClass().getPackage().getImplementationVersion();
-                    return version != null ? Double.parseDouble(version.replaceAll("[^0-9.]", "").substring(0, 1)) : 1.0;
-                } catch (Exception e) {
-                    return 1.0;
-                }
-            })
-            .description("Notaire shared module version indicator")
-            .tag("module", "notaire-shared")
-            .register(meterRegistry);
     }
 }

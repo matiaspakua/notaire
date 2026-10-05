@@ -74,10 +74,8 @@ notaire/
 ├── backend-api/                # REST API (Spring Boot) — Maven reactor module
 │   ├── src/main/java/
 │   └── pom.xml
-├── notaire-shared/              # Shared DTOs — Maven reactor module
-│   └── pom.xml
 ├── frontend/                    # Web client (Next.js) — active development
-└── pom.xml                      # Parent POM (backend-api + notaire-shared only)
+└── pom.xml                      # Parent POM (backend-api only)
 ```
 
 Swing Robot E2E under `testing/e2e-swing/` is hard-deprecated (#811); active UI
@@ -128,7 +126,7 @@ cd backend-api && mvn spring-boot:run
 
 ### Backend API
 
-```
+```text
 com.licensis.notaire/
 ├── api/                  # Controllers REST
 │   └── PersonaController.java
@@ -144,9 +142,9 @@ com.licensis.notaire/
 └── exception/           # Excepciones
 ```
 
-Los DTOs (`DtoPersona`, etc.) viven en el módulo `notaire-shared`
-(`com.licensis.notaire.dto`), no en `backend-api` — ver
-[DTO-MAPPING-GUIDE.md](../302-code-standards/DTO-MAPPING-GUIDE.md).
+Los DTOs (`DtoPersona`, etc.) viven en `backend-api` (`com.licensis.notaire.dto`); el
+módulo `notaire-shared` fue retirado (ADR-025) y los servicios externos consumen la
+API REST (OpenAPI) — ver [DTO-MAPPING-GUIDE.md](../302-code-standards/DTO-MAPPING-GUIDE.md).
 
 ## Base de Datos
 
@@ -157,6 +155,7 @@ El schema es gestionado por Flyway (migraciones en `backend-api/src/main/resourc
 ### Índices
 
 Verificar que los índices necesarios estén creados para:
+
 - `personas.id_persona`
 - `escrituras.id_escritura`
 - `presupuestos.id_presupuesto`

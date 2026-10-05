@@ -23,9 +23,10 @@ alwaysApply: true
 - Stateless and horizontally scalable
 - Prefer Spring Data `repository` over the legacy `jpa` package for new data access
 
-### Shared contracts (`notaire-shared`)
+### DTO contracts (in `backend-api`)
 
-- DTOs and shared API contracts used by the backend (and historically by other clients)
+- DTOs live in `backend-api` (`com.licensis.notaire.dto`); the `notaire-shared` module was retired (ADR-025)
+- External services and clients consume the REST API (`/api/v1`, OpenAPI), never Java DTO classes
 - Naming: `DtoEntityName` (e.g. `DtoUsuario`, `DtoPersona`) — never `*RequestDTO` / `*ResponseDTO` suffixes
 
 ### Frontend (`frontend/`)
@@ -76,7 +77,7 @@ When hexagonal ports/adapters already exist for a capability (`application.port`
 
 ### DTOs
 
-- Package: `com.licensis.notaire.dto` (in `notaire-shared`)
+- Package: `com.licensis.notaire.dto` (in `backend-api`)
 - Naming: `DtoEntityName`
 - Bean Validation (`jakarta.validation`) on request DTOs
 - Never expose JPA entities directly from controllers

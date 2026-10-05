@@ -13,7 +13,7 @@
 set -uo pipefail
 
 ROOT="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
-TOPS='docs|scripts|\.claude|\.github|backend-api|frontend|notaire-shared|openspec|local-ai|infra|testing'
+TOPS='docs|scripts|\.claude|\.github|backend-api|frontend|openspec|local-ai|infra|testing'
 
 files=()
 for f in "$ROOT"/.claude/rules/*.md "$ROOT"/CLAUDE.md "$ROOT"/AGENTS.md "$ROOT"/CONSTITUTION.md; do

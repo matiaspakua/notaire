@@ -39,7 +39,6 @@ mvn checkstyle:check
 | Module | Description |
 |--------|-------------|
 | backend-api | Spring Boot REST API |
-| notaire-shared | Shared DTOs and code |
 | frontend | Next.js web app (not a Maven module) |
 
 > The legacy `frontend-swing` / `deprecated-frontend-swing` client was removed
@@ -48,13 +47,16 @@ mvn checkstyle:check
 ## Common Issues
 
 ### Dependency Resolution
+
 - Use `-am` flag to build dependent modules first
 - Run `mvn dependency:resolve` to download dependencies
 
 ### Test Failures
+
 - Use `-DfailIfNoTests=false` for modules without tests
 - Use `-Dmaven.test.failure.ignore=true` to continue on test failures
 
 ### Coverage
+
 - JaCoCo requires 80% minimum coverage
 - Check report at: `target/site/jacoco/index.html`

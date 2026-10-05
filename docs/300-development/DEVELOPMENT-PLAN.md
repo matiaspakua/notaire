@@ -88,7 +88,7 @@ and [ADR-005](../200-architecture/202-ADR/ADR-005-modern-frontend-migration.md).
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 1 | Setup Spring Boot backend with shared module | ✅ Done — `backend-api` + `notaire-shared` |
+| 1 | Setup Spring Boot backend with shared module | ✅ Done — `backend-api` (the shared DTO module was retired, ADR-025) |
 | 2 | Migrate business entities and repositories | ✅ Done — `business`/`domain` + `repository` packages |
 | 3 | Implement business services | 🔶 Partial — `service` / `application` growing; legacy `jpa` package still does heavy data access |
 | 4 | Create REST endpoints | ✅ Done — see [REST-API-ENDPOINT_REGISTRY.md](../200-architecture/203-design/REST-API-ENDPOINT_REGISTRY.md) |
@@ -100,7 +100,7 @@ Related decisions: [ADR-002](../200-architecture/202-ADR/ADR-002-module-structur
 (Maven module structure), [ADR-005](../200-architecture/202-ADR/ADR-005-modern-frontend-migration.md)
 (Next.js frontend migration).
 
-**New feature work targets `backend-api` / `notaire-shared` and the `frontend/`
+**New feature work targets `backend-api` and the `frontend/`
 Next.js client only. Do not recreate a Swing client. Avoid extending the `jpa`
 package** — it is deprecation debt, not an extension point.
 

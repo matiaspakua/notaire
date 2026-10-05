@@ -81,8 +81,8 @@ Relationship arrows (memorize these, they're the whole language):
 
 | Syntax | Meaning |
 |---|---|
-| `--|>` | inheritance / extends |
-| `..|>` | interface implementation |
+| `--\|>` | inheritance / extends |
+| `..\|>` | interface implementation |
 | `-->`  | association / directed |
 | `--`   | plain association |
 | `o--`  | aggregation (hollow diamond) |
@@ -140,6 +140,7 @@ end
 ```
 
 Key elements:
+
 - `->` synchronous call, `-->` return/response, `->>` async
 - `activate`/`deactivate` for lifelines (or `autoactivate on` to infer them)
 - `alt`/`else`/`end`, `opt`, `loop`, `par`, `critical`, `break` for control flow
@@ -231,7 +232,7 @@ package "backend-api" {
   [Services] as svc
   [Repositories] as repo
 }
-package "notaire-shared" {
+package "shared-lib" {
   [DTOs]
   [Domain Model]
 }
@@ -323,6 +324,7 @@ Rel(api, db, "Reads/Writes", "SQL")
 ```
 
 Levels, and which file to `!include`:
+
 - `C4_Context` — systems and external actors, no internals
 - `C4_Container` — the deployable pieces of one system (web app, API, DB, queue...)
 - `C4_Component` — the internal building blocks of one container
