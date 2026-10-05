@@ -58,8 +58,8 @@ public class PersonController {
     public record PersonResponse(
             Integer personId,
             String firstName,
-            String lastName,
-            String identificationNumber,
+            @NotBlank String lastName,
+            @NotBlank String identificationNumber,
             boolean isClient,
             String nationality,
             String taxId,

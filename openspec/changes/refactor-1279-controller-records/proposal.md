@@ -17,7 +17,7 @@ Eight REST controllers expose JPA entities in 14 public method signatures (Budge
 ## What Changes
 
 - An architecture test fails when a public handler of a `@RestController` mentions a `business` entity type; a second test holds loosely typed returns (`ResponseEntity<Object>`, `<?>`) to a baseline that can only shrink.
-- The 14 handlers return nested response records next to their controller, with related entities as slim references (`personId` and `notaryRegistrationNumber` for a notary, ids and names for types), built by a `from` factory on the record.
+- The 14 handlers return nested response records next to their controller, with related entities as slim references (identity fields without tax or contact data for a notary, ids and names for types), built by a `from` factory on the record.
 - `PersonResponse`, `ItemResponse` and `ManagementResponse` become public and gain `from` factories so other controllers reuse them.
 - `DtoFlag` and `DtoIdentification` are deleted.
 - `backend-api/openapi/openapi.yaml` is regenerated.
@@ -51,7 +51,7 @@ Eight REST controllers expose JPA entities in 14 public method signatures (Budge
 
 ### Surface area
 
-- Endpoints: 14 handlers keep their paths and status codes; their JSON loses nested entity detail and entity internals (BREAKING only for a client reading nested fields the frontend types do not declare)
+- Endpoints: 14 handlers keep their paths and status codes; their JSON loses nested entity detail and entity internals; the `oasdiff` gate (`fail-on ERR`) stays green because the properties the old schema marked required (`lastName`, `identificationNumber` of a notary) are kept
 - Entities / Flyway / Configuration: none
 - Dependencies: none (reflection and Spring classpath scanning, no ArchUnit)
 - Risk: a client reading a dropped nested field; mitigated by checking the frontend types, Bruno and Playwright, and by listing the dropped fields in the CHANGELOG

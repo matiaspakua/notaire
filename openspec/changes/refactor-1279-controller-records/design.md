@@ -12,7 +12,7 @@ Issue #1279, Use Case CU76; slice 1 of #577. Measured on `main`: 38 REST control
 ## Decisions
 
 1. Records are nested in their controller and built by a `from` factory on the record, following `DeedController.DeedResponse`. Rejected: a shared mapper class (adds a layer and an `-Er` name for no gain), `Dto*` classes (the thing being removed).
-2. Related entities become slim references so no personal data or lazy collection leaks. Rejected: reusing the full `PersonResponse` for a notary (carries tax id and address).
+2. Related entities become slim references so no tax or contact data and no lazy collection leaks. A notary keeps `firstName`, `lastName` and `identificationNumber` because the old schema marked the last two required and `oasdiff` fails the PR when a required response property is removed. Rejected: reusing the full `PersonResponse` for a notary (carries tax id and address); dropping the name (breaks the contract gate).
 3. The guard uses reflection and Spring's classpath scanner, no ArchUnit (one assertion does not justify a dependency).
 4. Loose returns are held by a baseline file that may only shrink, the same ratchet policy as JaCoCo. Rejected: banning them now (69 handlers, mostly error-or-body unions, would make this slice unreviewable).
 

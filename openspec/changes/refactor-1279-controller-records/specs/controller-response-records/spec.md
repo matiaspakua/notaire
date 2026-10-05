@@ -20,12 +20,12 @@ A public handler method of a `@RestController` MUST NOT use a `com.licensis.nota
 
 ### Requirement: Related entities are slim references
 
-A response record MUST expose a related notary as `personId` and `notaryRegistrationNumber` only, and other related entities by id and name.
+A response record MUST expose a related notary by `personId`, `firstName`, `lastName`, `identificationNumber` and `notaryRegistrationNumber` and no tax or contact data, and other related entities by id and name. `lastName` and `identificationNumber` stay required so the OpenAPI contract does not break.
 
 #### Scenario: Folio and notebook expose a slim notary
 
 - **WHEN** a folio or a notebook is requested
-- **THEN** its `fkIdNotaryPerson` has `personId` and `notaryRegistrationNumber` and no personal data, and the body has no `atributos`, `dto` or `dtoDocument`
+- **THEN** its `fkIdNotaryPerson` has the notary identity fields and no tax id, address, phone, email or birth date, and the body has no `atributos`, `dto` or `dtoDocument`
 
 #### Scenario: Cost templates and procedures expose references by id and name
 

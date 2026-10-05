@@ -83,7 +83,10 @@ class ControllerResponseRecordsIntegrationTest {
     private void assertNotaryRef(JsonNode notary) {
         assertThat(notary.get("personId").asInt()).isEqualTo(1);
         assertThat(notary.has("notaryRegistrationNumber")).isTrue();
-        assertThat(notary.has("taxId")).as("related person is a slim reference").isFalse();
+        assertThat(notary.get("lastName").asText()).isNotBlank();
+        assertThat(notary.get("identificationNumber").asText()).isNotBlank();
+        List.of("taxId", "address", "phone", "email", "birthDate")
+                .forEach(field -> assertThat(notary.has(field)).as("contact or tax data " + field).isFalse());
     }
 
     @Test
