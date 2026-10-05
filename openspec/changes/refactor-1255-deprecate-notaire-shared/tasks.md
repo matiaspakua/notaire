@@ -26,44 +26,44 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 `git mv` every class of the module into `backend-api`
-- [ ] 4.2 Remove the dependency from `backend-api/pom.xml` and the module from the root `pom.xml`
-- [ ] 4.3 Delete `SharedModuleMetrics`, the `notaire_shared_version` gauge and the `ObservabilityTest` block
-- [ ] 4.4 Update Dockerfile, `.dockerignore`, CODEOWNERS, `release-please-config.json`, `.cursor/install.sh`, `.aisdlc/project.yml`, `check-tdd-evidence.sh`, `check-agent-rules.sh`, `generate-coverage-report.sh`, `ci.yml` comment
-- [ ] 4.5 Move the remaining folder to `deprecated/notaire-shared/` (`pom.xml.archived`, README pointing to the API)
-- [ ] 4.6 Spotless-format the moved sources in their own commit
-- [ ] 4.7 Tests green
+- [x] 4.1 `git mv` every class of the module into `backend-api`
+- [x] 4.2 Remove the dependency from `backend-api/pom.xml` and the module from the root `pom.xml`
+- [x] 4.3 Delete `SharedModuleMetrics`, the `notaire_shared_version` gauge and the `ObservabilityTest` block
+- [x] 4.4 Update Dockerfile, `.dockerignore`, CODEOWNERS, `release-please-config.json`, `.cursor/install.sh`, `.aisdlc/project.yml`, `check-tdd-evidence.sh`, `check-agent-rules.sh`, `generate-coverage-report.sh`, `ci.yml` comment
+- [x] 4.5 Move the remaining folder to `deprecated/notaire-shared/` (`pom.xml.archived`, README pointing to the API)
+- [x] 4.6 Spotless-format the moved sources in their own commit
+- [x] 4.7 Tests green
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing affected tests updated without weakening assertions
-- [ ] 5.2 No dead code or references remain (`git grep notaire-shared` outside archive and history)
+- [x] 5.1 Existing affected tests updated without weakening assertions
+- [x] 5.2 No dead code or references remain (`git grep notaire-shared` outside archive and history)
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api -Dtest=DtoOwnershipTest,ObservabilityTest` and `python3 -m unittest discover -s scripts/tests`
-- [ ] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
-- [ ] 6.3 `bash scripts/export-openapi.sh --maven` leaves `backend-api/openapi/openapi.yaml` unchanged
+- [x] 6.1 `mvn test -pl backend-api -Dtest=DtoOwnershipTest,ObservabilityTest` and `python3 -m unittest discover -s scripts/tests`
+- [x] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
+- [x] 6.3 `bash scripts/export-openapi.sh --maven` leaves `backend-api/openapi/openapi.yaml` unchanged
 - [ ] 6.4 `bash scripts/preflight.sh --full` (Docker build, Bruno, Playwright)
-- [ ] 6.5 No `@Disabled` tests
+- [x] 6.5 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 No UI change: run the existing suite as regression evidence (`bash scripts/preflight.sh --full`)
+- [x] 7.1 No UI change; no new spec. Playwright runs unchanged in CI as regression evidence
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 ADR-024 (new) and index; status note in ADR-002; Docker note in ADR-017
-- [ ] 8.2 SAD, diagrams, devsecops, setup, DTO-MAPPING-GUIDE, RELEASE, DEVELOPMENT-PLAN
-- [ ] 8.3 README, backend README, CLAUDE.md, rules, agents, skills, `openspec/config.yaml` and schema, `deprecated/README.md`
-- [ ] 8.4 `CHANGELOG.md` — one entry
-- [ ] 8.5 Open a follow-up issue for the Constitution §5 step 4 module list (separate PR, §12)
+- [x] 8.1 ADR-024 (new) and index; status note in ADR-002; Docker note in ADR-017
+- [x] 8.2 SAD, diagrams, devsecops, setup, DTO-MAPPING-GUIDE, RELEASE, DEVELOPMENT-PLAN
+- [x] 8.3 README, backend README, CLAUDE.md, rules, agents, skills, `openspec/config.yaml` and schema, `deprecated/README.md`
+- [x] 8.4 `CHANGELOG.md` — one entry
+- [x] 8.5 Follow-up issue #1263 for the Constitution §5 step 4 module list (separate PR, §12)
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 One logical change per commit, Conventional Commits
+- [x] 9.1 One logical change per commit, Conventional Commits
 - [ ] 9.2 Only the final commit carries `Closes #1255`; others `Refs #1255`
-- [ ] 9.3 No secrets, no commented-out code, unrelated working-tree files left out
+- [x] 9.3 No secrets, no commented-out code, unrelated working-tree files left out
 
 ## 10. Pull Request y validación CI
 
