@@ -19,9 +19,9 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: POM, workflows, Dockerfiles, pins, docs
-- [ ] 3.2 Add `scripts/test_jdk26_toolchain.py` (+ wrapper); observed failing
-- [ ] 3.3 Every scenario maps to a test
+- [x] 3.1 Enumerate test cases: POM, workflows, Dockerfiles, pins, docs
+- [x] 3.2 Add `scripts/test_jdk26_toolchain.py` (+ wrapper); observed failing
+- [x] 3.3 Every scenario maps to a test
 
 ## 4. Implementación
 
