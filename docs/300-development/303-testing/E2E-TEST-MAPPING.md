@@ -24,6 +24,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 |----------|-----------|--------|
 | AUTH-001 / CU84 | TS-0001, TS-0002, TS-0093 | Authentication / session expiry |
 | CU78 (frontend admin guard) | TS-0094 | Admin route access denial for non-admins |
+| CU78 (login lockout, #689) | TS-0100 | Account lockout after repeated failed logins |
 | CU15 / CU20 (#1054) | TS-0095 | API business errors on mutation toasts / field errors |
 | CU76 / WCAG (#1057) | TS-0096 | Icon-only button accessible names (`getByRole` by name) |
 | CU01–CU09 | TS-0010 to TS-0014 | Presupuesto, Gestiones, Documentación, Escrituras |
@@ -45,6 +46,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | **TS-0003** | `TS-0003-dashboard-navigation.spec.ts` | Navigation | Role-based layout | Login + sidebar | 4 expect() | ✅ Passing |
 | **TS-0093** | `TS-0093-session-expiry.spec.ts` | CU84 (#1053, #690) | Corrupt JWT → real API 401 | Login + dashboard navigate | expired redirect + re-login + viewports | ✅ Passing |
 | **TS-0094** | `TS-0094-admin-route-guard.spec.ts` | CU78 (#1052) | Create EMPLEADO via API | Login as non-admin + admin URL | forbidden redirect + message + viewports | ✅ Passing |
+| **TS-0100** | `TS-0100-login-account-lockout.spec.ts` | CU78 (#689, #560) | Unique throwaway username | Failed logins via the form | lockout message + stays locked + 320/1024 px | ✅ Passing |
 | **TS-0095** | `TS-0095-api-error-toasts.spec.ts` | CU15, CU20 (#1054, #615 slice) | Route stub 4xx ErrorResponse | Login + CRUD mutation | server toast + FormField/aria-invalid + viewports | ✅ Added |
 | **TS-0096** | `TS-0096-icon-button-accessible-names.spec.ts` | CU76 / WCAG (#1057) | Admin login + list pages | Usuarios, personas, presupuestos, conceptos | `getByRole('button', { name })` + 320px | ✅ Added |
 
