@@ -172,7 +172,7 @@ class AgentRulesTest(unittest.TestCase):
         return (
             "# Refactoring\n"
             "Package root `com.licensis.notaire`. "
-            "Spring Boot 4.1, Java 21, PostgreSQL 16, Next.js frontend. "
+            "Spring Boot 4.1, Java 26, PostgreSQL 16, Next.js frontend. "
             "DTOs named `DtoUsuario`.\n"
         )
 
