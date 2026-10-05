@@ -29,6 +29,7 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [021](ADR-021-hexagonal-architecture-pilot.md) | Hexagonal Architecture Pilot (Payment Slice) | Accepted | 2026-09-13 | Code organization |
 | [022](ADR-022-git-history-rewrite-and-large-binaries.md) | Git History Rewrite and Large Binaries | Accepted | 2026-10-03 | DevOps / repo hygiene |
 | [023](ADR-023-rest-resource-naming.md) | REST Resource Naming Conventions | Accepted | 2026-10-03 | API design |
+| [024](ADR-024-repository-topology.md) | Repository Topology — Evidence-Gated Decomposition | Proposed | 2026-10-05 | Repository structure |
 
 ## ADR Status Legend
 
@@ -74,6 +75,7 @@ Cada ADR sigue esta estructura:
 
 - **ADR-003**: REST API versioning con URL path versioning
 - **ADR-023**: REST resource naming (language, plurals, search, actions, 201+Location)
+- **ADR-024**: Repository topology (staged, evidence-gated extraction of satellites; core stays a monorepo)
 
 ### Data Persistence (2 ADRs)
 
