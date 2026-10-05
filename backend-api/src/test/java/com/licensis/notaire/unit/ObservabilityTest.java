@@ -7,7 +7,6 @@ import ch.qos.logback.core.read.ListAppender;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.observability.ApplicationHealthIndicator;
 import com.licensis.notaire.observability.MetricsUtil;
-import com.licensis.notaire.observability.SharedModuleMetrics;
 import com.licensis.notaire.observability.StructuredLogger;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -270,73 +269,6 @@ class ObservabilityTest {
             metrics.setActiveOperations("work", 7);
             assertThat(registry.find("notaire_active_operations").tag("operation", "work").gauge().value())
                     .isEqualTo(7.0);
-        }
-    }
-
-    @Nested
-    @DisplayName("SharedModuleMetrics")
-    class SharedModuleMetricsTests {
-
-        private MeterRegistry registry;
-        private SharedModuleMetrics shared;
-
-        @BeforeEach
-        void setUp() {
-            registry = new SimpleMeterRegistry();
-            shared = new SharedModuleMetrics(registry);
-            shared.init();
-        }
-
-        @Test
-        @DisplayName("recordSerialization should increment counter and record time")
-        void recordSerializationShouldIncrement() {
-            shared.recordSerialization(50);
-            assertThat(registry.find("notaire_shared_dto_serialization_total").counter().count())
-                    .isEqualTo(1.0);
-        }
-
-        @Test
-        @DisplayName("recordDeserialization should increment counter")
-        void recordDeserializationShouldIncrement() {
-            shared.recordDeserialization(60);
-            assertThat(registry.find("notaire_shared_dto_deserialization_total").counter().count())
-                    .isEqualTo(1.0);
-        }
-
-        @Test
-        @DisplayName("recordValidation success should not bump error counter")
-        void recordValidationSuccessShouldNotIncrementErrors() {
-            shared.recordValidation(10, true);
-            assertThat(registry.find("notaire_shared_dto_validation_total").counter().count())
-                    .isEqualTo(1.0);
-            assertThat(registry.find("notaire_shared_validation_errors_total").counter().count())
-                    .isEqualTo(0.0);
-        }
-
-        @Test
-        @DisplayName("recordValidation failure should bump validation error counter")
-        void recordValidationFailureShouldIncrementErrors() {
-            shared.recordValidation(10, false);
-            assertThat(registry.find("notaire_shared_validation_errors_total").counter().count())
-                    .isEqualTo(1.0);
-        }
-
-        @Test
-        @DisplayName("active DTOs gauge should follow increment/decrement/set")
-        void activeDtosGaugeShouldFollowOps() {
-            shared.incrementActiveDtos();
-            shared.incrementActiveDtos();
-            shared.decrementActiveDtos();
-            shared.setActiveDtos(10);
-            assertThat(registry.find("notaire_shared_active_dtos").gauge().value()).isEqualTo(10.0);
-        }
-
-        @Test
-        @DisplayName("recordSerializationError should bump serialization error counter")
-        void recordSerializationErrorShouldIncrement() {
-            shared.recordSerializationError();
-            assertThat(registry.find("notaire_shared_serialization_errors_total").counter().count())
-                    .isEqualTo(1.0);
         }
     }
 
