@@ -51,4 +51,3 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 ## Exceptions
 
 None.
-
