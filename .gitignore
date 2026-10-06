@@ -89,3 +89,8 @@ docs/wiki/cicd-reports/
 testing/reports/
 testing/database/.work.*
 testing/.env
+
+# Stale Playwright output left in frontend/ after the suite moved to testing/e2e (#1285)
+frontend/playwright-report/
+frontend/test-results/
+frontend/tests/e2e/fixtures/
