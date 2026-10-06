@@ -17,7 +17,7 @@ Produce an inventory and ownership map of the documentation, verify its internal
 ## What Changes
 
 - `docs/300-development/DOCUMENTATION-AUDIT-2026-10.md`: inventory and ownership map, findings with evidence, fixes applied, residual risks, prioritized documentation roadmap.
-- `scripts/test_docs_links.py` (with a CI wrapper): every relative Markdown link in the active documentation resolves; the only exemption carries a reason and an issue.
+- `docs/tests/test_docs_links.py` (with a CI wrapper): every relative Markdown link in the active documentation resolves; the only exemption carries a reason and an issue.
 - Broken relative links in `FRONTEND-DESIGN-SYSTEM.md` fixed; documentation index links the audit.
 
 ## Reglas de negocio

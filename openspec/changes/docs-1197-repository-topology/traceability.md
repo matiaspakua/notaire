@@ -27,8 +27,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Documentation links stay valid | `scripts/test_docs_links.py` | pending |
-| Business documentation traceability stays valid | `scripts/test_business_docs_traceability.py` | pending |
+| Documentation links stay valid | `docs/tests/test_docs_links.py` | pending |
+| Business documentation traceability stays valid | `docs/tests/test_business_docs_traceability.py` | pending |
 
 ## Permanent documentation updated
 

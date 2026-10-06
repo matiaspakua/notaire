@@ -6,14 +6,14 @@ The retired Spanish table names are derived from the `ALTER TABLE ... RENAME TO`
 of the migrations themselves, so the list cannot go stale. The three artifacts (PlantUML
 source, rendered SVG, relational CSV) must also agree on the set of entities.
 
-Run with: python3 scripts/test_erd_current_schema.py
+Run with: python3 docs/tests/test_erd_current_schema.py
 """
 import csv
 import re
 import unittest
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 MIGRATIONS = REPO_ROOT / "backend-api" / "src" / "main" / "resources" / "db" / "migration"
 ERD_DIR = REPO_ROOT / "docs" / "200-architecture" / "205-data-model" / "ERD"
 FULL_PUML = ERD_DIR / "ERD-Escribania_completo.puml"

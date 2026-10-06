@@ -5,14 +5,14 @@ Guards issue #921 / CU76: relative Markdown links in the active documentation re
 External URLs are not fetched (slow and flaky in CI). Archives are skipped. Every exemption must carry
 a reason, ideally an issue.
 
-Run with: python3 scripts/test_docs_links.py
+Run with: python3 docs/tests/test_docs_links.py
 """
 import re
 import unittest
 from pathlib import Path
 from urllib.parse import unquote
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 ROOT_DOCS = ("README.md", "AGENTS.md", "CLAUDE.md", "CONSTITUTION.md", "CHANGELOG.md")
 SKIPPED_DIRS = ("docs/000-archive",)
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)")

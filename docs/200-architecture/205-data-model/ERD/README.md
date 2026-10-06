@@ -14,8 +14,8 @@ With a PostgreSQL migrated by Flyway (for example the running stack), set the li
 
 ```bash
 export PGHOST=localhost PGUSER=notaire PGPASSWORD=... PGDATABASE=notaire
-python3 scripts/generate_erd.py --render   # needs plantuml (or PLANTUML_JAR=/path/plantuml.jar) and graphviz
+python3 docs/tools/generate_erd.py --render   # needs plantuml (or PLANTUML_JAR=/path/plantuml.jar) and graphviz
 ```
 
-`scripts/test_erd_current_schema.py` (collected by CI) fails when an artifact uses a retired Spanish table name
+`docs/tests/test_erd_current_schema.py` (collected by CI) fails when an artifact uses a retired Spanish table name
 or the three artifacts disagree. A new table needs a package in `PACKAGES` inside the generator.

@@ -39,7 +39,7 @@ add, remove or reword any entry.
 
 #### Scenario: Each release has unique headings
 
-- **WHEN** `scripts/test_changelog_structure.py` runs
+- **WHEN** `docs/tests/test_changelog_structure.py` runs
 - **THEN** no release section contains two identical `###` headings
 
 #### Scenario: No changelog entry is lost

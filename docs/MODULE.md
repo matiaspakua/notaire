@@ -10,10 +10,10 @@
 
 ## Seams (what this module reads from outside)
 
-- Flyway migrations and controllers (read by the ERD, data dictionary and CU-API generators)
+- A running PostgreSQL schema created by Flyway, read through `psql` by `docs/tools/generate_erd.py` and `generate_data_dictionary.py` (seam `database-schema`)
 
 ## Must not
 
-- Hold code or generated reports
+- Hold product code or generated CI reports (the generators and guards in `tools/` and `tests/` only describe the system)
 
 Manifest entry: [`workspace/modules.yaml`](../workspace/modules.yaml). Rationale: ADR-026.

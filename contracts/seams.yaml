@@ -38,3 +38,9 @@ seams:
     consumers: [testing]
     values: ["db/migration"]
     evidence: [testing/.env.example, testing/database/run.sh]
+  database-schema:
+    description: Live PostgreSQL schema (created by Flyway) that the ERD and data-dictionary generators read through psql
+    provider: backend-api
+    consumers: [docs]
+    values: [psql, information_schema]
+    evidence: [docs/tools/generate_erd.py]

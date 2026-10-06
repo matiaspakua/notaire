@@ -6,7 +6,7 @@ Guards issue #956 / CU84: the business documents stay machine-traceable.
 - the Login requirement appears exactly once;
 - every Use Case file carries the "Referencias Cruzadas" and "GitHub ID" rows of the standard template.
 
-Run with: python3 scripts/test_business_docs_traceability.py
+Run with: python3 docs/tests/test_business_docs_traceability.py
 """
 import csv
 import re
@@ -14,7 +14,7 @@ import unittest
 from collections import Counter
 from pathlib import Path
 
-BUSINESS = Path(__file__).resolve().parents[1] / "docs" / "100-business"
+BUSINESS = Path(__file__).resolve().parents[2] / "docs" / "100-business"
 REQUIREMENTS = BUSINESS / "101-requirements" / "requerimientos.csv"
 USE_CASES = BUSINESS / "102-use-cases"
 GITHUB_ID = re.compile(r"^#\d+$")

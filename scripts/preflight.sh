@@ -153,7 +153,8 @@ run "process script self-tests" bash -c \
      && python3 -m unittest discover -s workspace/tests && python3 -m unittest discover -s contracts/tests \
      && python3 -m unittest discover -s security/tests \
      && python3 -m unittest discover -s infra/tests \
-     && python3 -m unittest discover -s testing/tests"
+     && python3 -m unittest discover -s testing/tests \
+     && python3 -m unittest discover -s docs/tests"
 
 # ---------------------------------------------------------------------------
 section "Format & lint (BLOCKING in CI: 'Code Lint')"

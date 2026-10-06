@@ -849,15 +849,15 @@ Este patrón es esperado en sistemas notariales donde la mayoría del trabajo se
 
 **Validación 2026-10-04:**
 
-- ✅ 36/36 tablas Flyway presentes en Diccionario de Datos (regeneradas por `scripts/generate_data_dictionary.py`).
+- ✅ 36/36 tablas Flyway presentes en Diccionario de Datos (regeneradas por `docs/tools/generate_data_dictionary.py`).
 - ✅ 49 Foreign Keys documentadas correctamente (matriz de la sección 5 igual al esquema).
 - ✅ Cardinalidad V14 (presupuesto-trámite) reflejada en Diccionario.
 - ✅ Workflows (V7/V8) y RBAC (V9) presentes y coherentes.
 - ⚠️  1 entidad heredada (`identificaciones`) archivada; decisión de diseño documentada.
 - ℹ️  19 entidades sin CU independiente; clasificadas como "supporting" (normal para dominios notariales).
 
-**Mantenimiento:** Cada migración Flyway debe ir acompañada, en el mismo commit, de `python3 scripts/generate_data_dictionary.py` (con PostgreSQL migrado) y de la descripción de cada tabla o columna nueva: el generador deja `TODO` y `scripts/test_data_dictionary_sync.py` (CI) falla mientras quede alguno o el Diccionario difiera del esquema. Las secciones 3 y 6 y los textos introductorios son manuales.
+**Mantenimiento:** Cada migración Flyway debe ir acompañada, en el mismo commit, de `python3 docs/tools/generate_data_dictionary.py` (con PostgreSQL migrado) y de la descripción de cada tabla o columna nueva: el generador deja `TODO` y `docs/tests/test_data_dictionary_sync.py` (CI) falla mientras quede alguno o el Diccionario difiera del esquema. Las secciones 3 y 6 y los textos introductorios son manuales.
 
 ---
 
-**Versión actual:** 3.0 (regenerada 2026-10-04 desde el esquema, deriva vigilada por `scripts/test_data_dictionary_sync.py`; previamente 2.4, revisada 2026-08-18, sección 6 añadida, renumeración y coherencia Flyway verificadas, identificaciones archivada).
+**Versión actual:** 3.0 (regenerada 2026-10-04 desde el esquema, deriva vigilada por `docs/tests/test_data_dictionary_sync.py`; previamente 2.4, revisada 2026-08-18, sección 6 añadida, renumeración y coherencia Flyway verificadas, identificaciones archivada).
