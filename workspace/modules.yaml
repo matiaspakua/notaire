@@ -1,0 +1,45 @@
+# The Foreman's single manifest (issue #1292, ADR-026). A module may read another module only
+# through contracts; only workspace reads them all. `verify` is the module's own check.
+modules:
+  backend-api:
+    path: backend-api
+    responsibility: REST API, business rules, persistence and Flyway schema
+    fleet: backend
+    verify: bash backend-api/verify.sh
+    depends_on: []
+  frontend:
+    path: frontend
+    responsibility: Next.js web client; talks to the API over HTTP only
+    fleet: frontend
+    verify: bash frontend/verify.sh
+    depends_on: [backend-api]
+  infra:
+    path: infra
+    responsibility: Observability, quality stack, Kubernetes and load-test assets
+    fleet: infrastructure
+    verify: bash infra/verify.sh
+    depends_on: [backend-api]
+  testing:
+    path: testing
+    responsibility: Black-box QA suites (E2E, integration smoke, database V&V)
+    fleet: qa
+    verify: bash testing/verify.sh
+    depends_on: [backend-api, frontend]
+  local-ai:
+    path: local-ai
+    responsibility: Local AI SDLC engine (foreman, worker); no product consumer
+    fleet: ai
+    verify: bash local-ai/verify.sh
+    depends_on: []
+  docs:
+    path: docs
+    responsibility: Business and architecture knowledge base
+    fleet: knowledge
+    verify: bash docs/verify.sh
+    depends_on: []
+  workspace:
+    path: workspace
+    responsibility: Unifier, manifest and the guards that read more than one module
+    fleet: foreman
+    verify: bash workspace/verify.sh
+    depends_on: [backend-api, frontend, infra, testing, local-ai, docs]
