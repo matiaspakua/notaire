@@ -80,6 +80,7 @@ reports/
 
 # Generated CI/CD/E2E reports — publish via Actions artifacts / job summary /
 # GitHub Pages only (issue #1041). Never commit into the application repo.
+docs/wiki/cicd-reports/
 
 # OpenAPI contract CI scratch (base spec copy for oasdiff; issue #1067)
 .openapi-ci/
