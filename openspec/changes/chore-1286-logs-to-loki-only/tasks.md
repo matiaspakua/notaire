@@ -46,7 +46,7 @@
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `infra/README.md`
+- [ ] 8.1 `infra/docs/DEFINITION.md`
 - [ ] 8.2 `CHANGELOG.md`
 
 ## 9. Commits atómicos

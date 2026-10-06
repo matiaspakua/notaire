@@ -25,7 +25,7 @@ The backend writes a rolling JSON log file (`backend-api/logs/notaire-backend.lo
 
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
-| Application logs are shipped to Loki via structured JSON on stdout; the application never persists log files | CU77, `infra/README.md` | Made explicit |
+| Application logs are shipped to Loki via structured JSON on stdout; the application never persists log files | CU77, `infra/docs/DEFINITION.md` | Made explicit |
 
 ## Capabilities
 
@@ -61,5 +61,5 @@ No architectural change; aligns the backend with the existing Promtail/Loki pipe
 
 | Permanent document | What must change |
 |--------------------|------------------|
-| `infra/README.md` | state that logs are stdout-only and where to query them |
+| `infra/docs/DEFINITION.md` | state that logs are stdout-only and where to query them |
 | `CHANGELOG.md` | one entry |

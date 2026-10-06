@@ -34,7 +34,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `infra/README.md` | pending | — |
+| `infra/docs/DEFINITION.md` | pending | — |
 | `CHANGELOG.md` | pending | — |
 
 ## Gate log

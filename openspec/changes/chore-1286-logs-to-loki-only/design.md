@@ -16,7 +16,7 @@ Issue #1286, Use Case CU77. `logging.file.name=logs/notaire-backend.log` is reso
 
 ## Riesgos / Trade-offs
 
-- Host runs have no centralized logs; documented in `infra/README.md`.
+- Host runs have no centralized logs; documented in `infra/docs/DEFINITION.md`.
 
 ## Testing Strategy
 
