@@ -31,6 +31,7 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [023](ADR-023-rest-resource-naming.md) | REST Resource Naming Conventions | Accepted | 2026-10-03 | API design |
 | [024](ADR-024-repository-topology.md) | Repository Topology — Evidence-Gated Decomposition | Proposed | 2026-10-05 | Repository structure |
 | [025](ADR-025-retire-notaire-shared.md) | Retire the notaire-shared Module | Accepted | 2026-10-05 | Code organization |
+| [026](ADR-026-module-separation.md) | Module Separation Inside the Repository | Accepted | 2026-10-06 | Code organization |
 
 ## ADR Status Legend
 
