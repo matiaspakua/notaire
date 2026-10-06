@@ -151,7 +151,9 @@ run "agent rule files" bash scripts/check-agent-rules.sh
 run "process script self-tests" bash -c \
     "python3 -m unittest discover -s scripts/tests && python3 -m unittest discover -s local-ai/sdlc/tests \
      && python3 -m unittest discover -s workspace/tests && python3 -m unittest discover -s contracts/tests \
-     && python3 -m unittest discover -s security/tests"
+     && python3 -m unittest discover -s security/tests \
+     && python3 -m unittest discover -s infra/tests \
+     && python3 -m unittest discover -s testing/tests"
 
 # ---------------------------------------------------------------------------
 section "Format & lint (BLOCKING in CI: 'Code Lint')"
