@@ -8,7 +8,7 @@ The Notaire project uses **Flyway** as the single source of truth for database s
 
 > ✅ **Flyway is now the sole schema source in Docker.** The old `init-db/`
 > scripts (formerly mounted at `/docker-entrypoint-initdb.d/`) have been archived
-> at `docs/archive/init-db/`. PostgreSQL starts empty in Docker and Flyway
+> at `docs/000-archive/init-db/`. PostgreSQL starts empty in Docker and Flyway
 > applies V1→V11+ sequentially on first startup. The `flyway_schema_history`
 > table tracks which migrations have run. This replaces the previous dual-source
 > setup where `init-db/` created the schema first and Flyway stayed dormant.

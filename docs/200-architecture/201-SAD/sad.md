@@ -883,7 +883,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 - **Flyway** is the single source of truth for database schema.
 - Migrations located at `backend-api/src/main/resources/db/migration/`.
 - Docker starts PostgreSQL **empty**; Flyway applies V1→V14 sequentially on backend startup.
-- Historical `init-db/` scripts archived at `docs/archive/init-db/`.
+- Historical `init-db/` scripts archived at `docs/000-archive/init-db/`.
 - Repeatable migrations (`R__`) used for reversible operations.
 
 **Current Migrations:**

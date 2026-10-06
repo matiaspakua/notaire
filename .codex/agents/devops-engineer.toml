@@ -54,13 +54,13 @@ Required keys:
 docker-compose.yml          # App stack (backend + postgres + pgAdmin)
 infra/observability/docker-compose.yml    # Observability stack
 infra/README.md             # Observability setup details
-# Schema via Flyway migrations (init-db archived at docs/archive/init-db/)
+# Schema via Flyway migrations (init-db archived at docs/000-archive/init-db/)
 .env.example                # Environment template
 ```
 
 ## Critical: Schema Source of Truth
 
-Flyway is the single source of truth. The Docker PostgreSQL container starts empty and Flyway applies V1→V11+ sequentially. The old `init-db/` scripts are archived at `docs/archive/init-db/`.
+Flyway is the single source of truth. The Docker PostgreSQL container starts empty and Flyway applies V1→V11+ sequentially. The old `init-db/` scripts are archived at `docs/000-archive/init-db/`.
 
 Validate alignment: `mvn test -Ppg-integration`
 

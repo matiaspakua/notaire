@@ -20,7 +20,7 @@ no product code.
 | Testing | `docs/300-development/303-testing/`, `testing/docs/` | QA | 19 + 4 | Test plan (project level) / how to run the QA suites |
 | Specifications | `openspec/specs/` (80), `openspec/changes/archive/` (107) | Whoever opens the change | — | Behaviour contracts; changes are not permanent docs |
 | Skills and agents | `.claude/skills` (33), `.claude/agents` (11) | Engineering | — | Execution guidance, never policy |
-| Archive | `docs/000-archive/` (64 Markdown files), `docs/archive/` (compatibility shim) | Owner | not maintained | History |
+| Archive | `docs/000-archive/` (64 Markdown files) | Owner | not maintained | History |
 
 Total: 180 active Markdown files under `docs/` (`find docs -name '*.md'`, archives excluded).
 
@@ -48,7 +48,7 @@ Total: 180 active Markdown files under `docs/` (`find docs -name '*.md'`, archiv
 | F4 | `SRS - Especificacion de Requerimientos.md` still prescribes MySQL and a desktop stack | `git grep MySQL` | Kept as the original business baseline; marked historical in the roadmap below |
 | F5 | ADR-005 says Next.js 15; the product runs Next.js 16 | `ADR-005-modern-frontend-migration.md` | Accepted ADRs record the decision at the time; a one-line update note added |
 | F6 | `CHANGELOG.md` `[Unreleased]` is over 1,000 lines | `wc -l CHANGELOG.md` | Roadmap item: curate at the next release |
-| F7 | Two archive roots (`docs/000-archive` and the `docs/archive` shim) | `ls docs` | Kept: scripts and rules still name the shim; consolidate when they are repointed |
+| F7 | Two archive roots (`docs/000-archive` and the `docs/archive` shim) | `ls docs` | Resolved (#1289): references repointed to `docs/000-archive/`; the shim and its byte-identical duplicate are deleted |
 
 ## 4. Residual risks
 
@@ -73,5 +73,5 @@ Total: 180 active Markdown files under `docs/` (`find docs -name '*.md'`, archiv
 python3 scripts/test_docs_links.py
 python3 scripts/test_business_docs_traceability.py
 python3 scripts/test_erd_current_schema.py
-find docs -name '*.md' -not -path 'docs/000-archive/*' -not -path 'docs/archive/*' | wc -l
+find docs -name '*.md' -not -path 'docs/000-archive/*' | wc -l
 ```

@@ -208,7 +208,7 @@ VALUES (0, '<< BASELINE >>', 'BASELINE', NOW());
 ### Fase 2: Docker Integration (Sprint 1) — COMPLETED
 
 - [x] Actualizar `docker-compose.yml` para usar Flyway
-- [x] Remover volúmenes de `init-db` (archivado en `docs/archive/init-db/`)
+- [x] Remover volúmenes de `init-db` (archivado en `docs/000-archive/init-db/`)
 - [ ] Agregar healthcheck de Flyway
 - [ ] Test de migrate + clean en containers
 
