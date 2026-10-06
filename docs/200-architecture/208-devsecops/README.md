@@ -347,7 +347,7 @@ settings. The pieces that belong in git are already in the tree:
 | Dependabot version updates | `.github/dependabot.yml` (Maven, npm under `frontend/`, Docker for `/backend-api` + `/frontend`, GitHub Actions) |
 | Private vulnerability reporting | Already enabled. Policy: `SECURITY.md` |
 | Secret-scanning push protection, Dependabot alerts and security updates | GitHub settings. An admin runs `bash scripts/enable-gh-secure.sh --apply` |
-| Branch protection / ruleset | Classic branch protection is **not** enabled by the script unless `--with-branch-protection` is passed (and must stay unused). Active ruleset `protect-main` (id `24128115`) on `~DEFAULT_BRANCH` enforces PR-only merges, required checks `CI` / `Frontend CI` / `Playwright E2E` / `Code Lint` / `PR Validation`, and blocks force-push/deletion; `bypass_actors` empty after #1041. Desired state: `scripts/rulesets/protect-main.desired.json`. Admin apply: `bash scripts/apply-protect-main-ruleset.sh --apply` then `bash scripts/assert-protect-main-ruleset.sh` (#1040) |
+| Branch protection / ruleset | Classic branch protection is **not** enabled by the script unless `--with-branch-protection` is passed (and must stay unused). Active ruleset `protect-main` (id `24128115`) on `~DEFAULT_BRANCH` enforces PR-only merges, required checks `CI` / `Frontend CI` / `Playwright E2E` / `Code Lint` / `PR Validation`, and blocks force-push/deletion; `bypass_actors` empty after #1041. Desired state: `security/rulesets/protect-main.desired.json`. Admin apply: `bash security/apply-protect-main-ruleset.sh --apply` then `bash security/assert-protect-main-ruleset.sh` (#1040) |
 
 ```bash
 bash scripts/enable-gh-secure.sh            # status

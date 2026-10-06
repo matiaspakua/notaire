@@ -14,10 +14,10 @@
 # Requires admin (administration scope). Integration / fleet tokens get HTTP 403.
 #
 # USAGE
-#   bash scripts/apply-protect-main-ruleset.sh            # dry-run (default)
-#   bash scripts/apply-protect-main-ruleset.sh --dry-run
-#   bash scripts/apply-protect-main-ruleset.sh --apply
-#   bash scripts/apply-protect-main-ruleset.sh --repo owner/name --apply
+#   bash security/apply-protect-main-ruleset.sh            # dry-run (default)
+#   bash security/apply-protect-main-ruleset.sh --dry-run
+#   bash security/apply-protect-main-ruleset.sh --apply
+#   bash security/apply-protect-main-ruleset.sh --repo owner/name --apply
 set -euo pipefail
 
 REPO="${PROTECT_MAIN_REPO:-matiaspakua/notaire}"
@@ -85,7 +85,7 @@ echo "$PUT_BODY" | jq .
 if [ "$APPLY" = 0 ]; then
   echo ""
   echo "Dry-run only. Re-run with --apply as a repo admin to update ruleset ${RULESET_ID}."
-  echo "After apply: bash scripts/assert-protect-main-ruleset.sh"
+  echo "After apply: bash security/assert-protect-main-ruleset.sh"
   exit 0
 fi
 
@@ -99,4 +99,4 @@ echo "$PUT_BODY" | gh api \
   --jq '{id,name,enforcement,bypass_actors,rules:[.rules[].type]}'
 
 echo ""
-echo "Applied. Run: bash scripts/assert-protect-main-ruleset.sh"
+echo "Applied. Run: bash security/assert-protect-main-ruleset.sh"

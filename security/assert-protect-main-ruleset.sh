@@ -8,8 +8,8 @@
 #   - bypass_actors empty
 #
 # USAGE
-#   bash scripts/assert-protect-main-ruleset.sh
-#   bash scripts/assert-protect-main-ruleset.sh --repo owner/name
+#   bash security/assert-protect-main-ruleset.sh
+#   bash security/assert-protect-main-ruleset.sh --repo owner/name
 set -euo pipefail
 
 REPO="${PROTECT_MAIN_REPO:-matiaspakua/notaire}"
@@ -141,7 +141,7 @@ fi
 
 if [ "$FAIL" -ne 0 ]; then
   echo ""
-  echo "ASSERT FAILED. Apply with: bash scripts/apply-protect-main-ruleset.sh --apply" >&2
+  echo "ASSERT FAILED. Apply with: bash security/apply-protect-main-ruleset.sh --apply" >&2
   exit 1
 fi
 
