@@ -37,7 +37,7 @@ def environment(agent, base, here, hooks):
         return env
     home = env.get("HOME", os.path.expanduser("~"))
     env.update({
-        # the repo's opencode.json loads CLAUDE.md, the rules and every skill: far beyond a 64K window
+        # the repo's opencode.json loads AGENTS.md, the rules and every skill: far beyond a 64K window
         "OPENCODE_CONFIG_DIR": os.path.join(os.path.dirname(here), "opencode"),
         "OPENCODE_DISABLE_PROJECT_CONFIG": "1",
         "OPENCODE_DISABLE_CLAUDE_CODE": "1",
