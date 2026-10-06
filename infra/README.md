@@ -43,6 +43,6 @@ Or both at once: `bash scripts/start-all.sh`. Then open http://localhost:8888.
 
 ## Guard tests
 
-`python3 scripts/test_infra_standalone.py` enforces the layout, self-containment
+`python3 infra/tests/test_infra_standalone.py` enforces the layout, self-containment
 and the single `nginx.conf`; the other `scripts/test_*.py` guards cover images,
 Prometheus hardening, Kustomize and the load test.

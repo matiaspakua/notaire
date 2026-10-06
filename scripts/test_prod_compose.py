@@ -4,7 +4,7 @@ Guards issue #1044 (CU78 + CU75): production docker-compose must exist with
 no pgAdmin, reverse-proxy-only host ports, ENVIRONMENT=production, required
 secrets via ${VAR:?}, least-privilege backend env, and Flyway baseline off.
 
-Plain stdlib unittest + PyYAML, consistent with scripts/test_infra_prometheus_hardening.py.
+Plain stdlib unittest + PyYAML, consistent with infra/tests/test_infra_prometheus_hardening.py.
 Run with: python3 scripts/test_prod_compose.py
 """
 import os

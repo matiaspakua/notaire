@@ -94,7 +94,7 @@ Needs `kustomize` v5+ and a Kubernetes cluster (not provided here).
 
    ```bash
    kustomize build infra/deploy/kustomize/overlays/staging | kubectl apply -f -
-   python3 scripts/test_staging_kustomize.py
+   python3 infra/tests/test_staging_kustomize.py
    ```
 
 4. Reach the app only through the reverse-proxy LoadBalancer. A published image

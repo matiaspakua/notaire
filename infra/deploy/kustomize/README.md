@@ -28,7 +28,7 @@ infra/deploy/kustomize/
 kustomize build infra/deploy/kustomize/overlays/staging
 
 # Static AC guard (issue #901)
-python3 scripts/test_staging_kustomize.py
+python3 infra/tests/test_staging_kustomize.py
 
 # Apply (after replacing Secret placeholders + image SHAs)
 kubectl apply -k infra/deploy/kustomize/overlays/staging

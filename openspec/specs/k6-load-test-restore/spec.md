@@ -71,7 +71,7 @@ artifact that is actually produced by the run.
 
 #### Scenario: Asset unittest suite green
 
-- **WHEN** `python3 scripts/test_performance_test_assets.py` runs on the
+- **WHEN** `python3 infra/tests/test_performance_test_assets.py` runs on the
   restored tree
 - **THEN** every assertion passes (script presence, stages/thresholds, English
   login, endpoint coverage, summary output, workflow wiring)

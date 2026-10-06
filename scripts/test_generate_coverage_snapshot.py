@@ -10,7 +10,7 @@ contract via subprocess, since the script is a CLI entry point rather than
 an importable module.
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
-validation scripts (see scripts/test_performance_test_assets.py).
+validation scripts (see infra/tests/test_performance_test_assets.py).
 Run with: python3 scripts/test_generate_coverage_snapshot.py
 """
 import json
