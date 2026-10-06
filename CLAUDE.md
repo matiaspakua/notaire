@@ -204,7 +204,7 @@ Package root: `com.licensis.notaire`
 > ✅ **Flyway is the single source of truth.** The Docker stack now uses Flyway
 > as the sole mechanism to create the database schema. PostgreSQL starts empty;
 > Flyway applies V1→V11+ sequentially. The old `init-db/` scripts have been
-> archived at `docs/archive/init-db/`. The guard test is
+> archived at `docs/000-archive/init-db/`. The guard test is
 > `FlywaySchemaValidationIntegrationTest` — run `mvn test -Ppg-integration`.
 > See `.claude/rules/database-migrations.md`.
 

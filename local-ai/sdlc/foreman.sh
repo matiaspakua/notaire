@@ -520,7 +520,7 @@ gate_docs() {
         return 1
     fi
     # markdown lint runs in the pipeline too, but only after ~10 minutes: give the worker fast feedback here
-    local md; md="$(git_wt diff --name-only --diff-filter=d origin/main...HEAD -- '*.md' | grep -vE '^(docs/archive|docs/000-archive)/' | tr '\n' ' ')"
+    local md; md="$(git_wt diff --name-only --diff-filter=d origin/main...HEAD -- '*.md' | grep -vE '^docs/000-archive/' | tr '\n' ' ')"
     if [ -n "$md" ]; then
         # only committed files: a worker's uncommitted edit must not ride in the style commit
         git_wt diff --quiet HEAD -- $md && md_fix "$md"

@@ -172,7 +172,7 @@ mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 - New code → use `repository`, not `jpa`.
 - DTOs named `DtoEntityName` (e.g., `DtoUsuario`).
 - REST URLs: `/api/v1/resource` (plural nouns).
-- DB schema source of truth: Flyway migrations (init-db archived at `docs/archive/init-db/`).
+- DB schema source of truth: Flyway migrations (init-db archived at `docs/000-archive/init-db/`).
 
 **Frontend**: `frontend/src/` — Next.js 16, React 19, TypeScript, Tailwind CSS.
 - Theme: `src/theme/tokens.ts` — single source of truth, no hardcoded values.

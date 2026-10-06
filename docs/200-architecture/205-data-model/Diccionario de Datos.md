@@ -32,7 +32,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 
 ## 2. Índice General de Tablas (36 tablas, Flyway V1–V41)
 
-**Nota sobre Entidades Heredadas:** La entidad `identificaciones` se documentó en versiones previas pero nunca fue materializada en las migraciones Flyway activas (V1–V41). Existe solo en los scripts archivados de inicialización (`docs/archive/init-db/`) y fue utilizada en el modelo JPA legacy. Se considera un componente de normalización 3FN planificado pero no implementado. Véase la sección "Notas Técnicas" al pie para detalles.
+**Nota sobre Entidades Heredadas:** La entidad `identificaciones` se documentó en versiones previas pero nunca fue materializada en las migraciones Flyway activas (V1–V41). Existe solo en los scripts archivados de inicialización (`docs/000-archive/init-db/`) y fue utilizada en el modelo JPA legacy. Se considera un componente de normalización 3FN planificado pero no implementado. Véase la sección "Notas Técnicas" al pie para detalles.
 
 | Nº | Tabla | Paquete / Módulo | Tipo Entidad | Descripción |
 |---|---|---|---|---|
@@ -818,7 +818,7 @@ Borradores de inscripción de una escritura ante el Registro y su seguimiento.
 
 **Estado:** Archivada, no materializada en Flyway V1–V41.
 
-La entidad `identificaciones` fue documentada y existe en los scripts de inicialización heredados (`docs/archive/init-db/orig/01_initial_schema.sql`), pero nunca fue creada mediante las migraciones Flyway. Esta tabla era una propuesta de normalización 3FN para permitir múltiples documentos de identidad por persona (DNI, CUIT, Pasaporte, etc.).
+La entidad `identificaciones` fue documentada y existe en los scripts de inicialización heredados (`docs/000-archive/init-db/orig/01_initial_schema.sql`), pero nunca fue creada mediante las migraciones Flyway. Esta tabla era una propuesta de normalización 3FN para permitir múltiples documentos de identidad por persona (DNI, CUIT, Pasaporte, etc.).
 
 **Decisión:** En la fase de migración a Flyway (V1–V14), se abandonó esta normalización en favor de la simplificación operacional: cada persona mantiene un único `identification_number` y `tax_id` denormalizado en la tabla `people`, y se utiliza `fk_id_tipo_identificacion` para clasificar el tipo de identificación principal. Esta decisión priorizó la coherencia con el código JPA moderno y la experiencia usuario sobre la normalización teórica.
 

@@ -203,7 +203,7 @@ done
 # The database schema and seed data are applied by Flyway when the backend
 # boots (PostgreSQL starts empty; Flyway applies V1→V13+). No manual
 # init-db loading is needed — the old init-db scripts are archived at
-# docs/archive/init-db/.
+# docs/000-archive/init-db/.
 echo -e "${YELLOW}Step $STEP: Waiting for Flyway migrations (applied by the backend on startup)...${NC}"
 STEP=$((STEP + 1))
 echo -e "${GREEN}✓ Flyway is the single source of truth — migrations run automatically${NC}\n"
