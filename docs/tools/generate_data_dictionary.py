@@ -2,12 +2,12 @@
 """
 Regenerate the structural parts of the Diccionario de Datos (#1222 / CU76) from the Flyway schema.
 
-    python3 scripts/generate_data_dictionary.py
+    python3 docs/tools/generate_data_dictionary.py
 
 Rewrites the table index (section 2), the per-table column tables (section 4) and the referential
 matrix (section 5). Human-written text is read from the existing file and kept: table summaries,
 package and entity type, and column descriptions. Anything without one is written as `TODO`, which
-scripts/test_data_dictionary_sync.py rejects, so a migration forces a description.
+docs/tests/test_data_dictionary_sync.py rejects, so a migration forces a description.
 
 Connection: the standard libpq variables (PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE), against a
 database migrated by Flyway. The database is never changed.

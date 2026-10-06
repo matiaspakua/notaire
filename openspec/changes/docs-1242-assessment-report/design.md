@@ -24,8 +24,8 @@ Issue #1242, Use Case CU76 – Quality Assurance and Testing Infrastructure. The
 
 | Scenario (spec) | Test level | Test class / file |
 |-----------------|------------|-------------------|
-| Documentation links stay valid | static | `scripts/test_docs_links.py` |
-| Business documentation traceability stays valid | static | `scripts/test_business_docs_traceability.py` |
+| Documentation links stay valid | static | `docs/tests/test_docs_links.py` |
+| Business documentation traceability stays valid | static | `docs/tests/test_business_docs_traceability.py` |
 
 - New unit tests (`src/test/java/.../unit/`): n/a
 - New integration tests: n/a

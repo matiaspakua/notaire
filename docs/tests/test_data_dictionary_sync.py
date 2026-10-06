@@ -2,11 +2,11 @@
 """
 Guards issue #1222 / CU76: the Diccionario de Datos describes the schema Flyway builds.
 
-The committed ERD artifacts are generated from that schema (scripts/generate_erd.py) and guarded
+The committed ERD artifacts are generated from that schema (docs/tools/generate_erd.py) and guarded
 by test_erd_current_schema.py, so comparing the dictionary with them detects drift without a
-database. Regenerate the dictionary with scripts/generate_data_dictionary.py.
+database. Regenerate the dictionary with docs/tools/generate_data_dictionary.py.
 
-Run with: python3 scripts/test_data_dictionary_sync.py
+Run with: python3 docs/tests/test_data_dictionary_sync.py
 """
 import csv
 import re
@@ -14,7 +14,7 @@ import unittest
 from collections import OrderedDict
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_MODEL = REPO_ROOT / "docs" / "200-architecture" / "205-data-model"
 DICTIONARY = DATA_MODEL / "Diccionario de Datos.md"
 CSV_FILE = DATA_MODEL / "ERD" / "Modelo Relacional Escribania - Entidades.csv"

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Unit tests for the pure rendering helpers of scripts/generate_data_dictionary.py (#1222 / CU76)."""
+"""Unit tests for the pure rendering helpers of docs/tools/generate_data_dictionary.py (#1222 / CU76)."""
 import sys
 import unittest
 from pathlib import Path
 
-_SCRIPTS = str(Path(__file__).resolve().parent)
+_SCRIPTS = str(Path(__file__).resolve().parents[1] / "tools")
 sys.path.insert(0, _SCRIPTS)
 try:
     import generate_data_dictionary as gen

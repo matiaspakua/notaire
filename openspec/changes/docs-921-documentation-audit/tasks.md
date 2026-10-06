@@ -20,7 +20,7 @@
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
 - [x] 3.1 Enumerate test cases: broken relative link, exemption without reason, audit report present
-- [x] 3.2 Add `scripts/test_docs_links.py` with its wrapper; observed failing (4 broken links)
+- [x] 3.2 Add `docs/tests/test_docs_links.py` with its wrapper; observed failing (4 broken links)
 - [x] 3.3 Every scenario maps to a test
 
 ## 4. Implementación

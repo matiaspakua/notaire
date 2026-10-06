@@ -28,12 +28,12 @@ Total: 180 active Markdown files under `docs/` (`find docs -name '*.md'`, archiv
 
 | Check | Command or guard | Result |
 |-------|------------------|--------|
-| Relative links resolve | `python3 scripts/test_docs_links.py` | 4 broken before this audit (3 in `FRONTEND-DESIGN-SYSTEM.md`, 1 `LICENSE`); 3 fixed, 1 exempt (F1) |
-| Use Case template | `scripts/test_business_docs_traceability.py` (#956) | CU84 was the only file off-template |
+| Relative links resolve | `python3 docs/tests/test_docs_links.py` | 4 broken before this audit (3 in `FRONTEND-DESIGN-SYSTEM.md`, 1 `LICENSE`); 3 fixed, 1 exempt (F1) |
+| Use Case template | `docs/tests/test_business_docs_traceability.py` (#956) | CU84 was the only file off-template |
 | RF → Use Case coverage | `grep -oh 'RF #[0-9]*'` against `requerimientos.csv` | 95 of 96 functional rows referenced; the 96th was the malformed Login row (#956) |
 | Use Case numbering | `ls docs/100-business/102-use-cases` | CU01-CU87, no gap, no duplicate |
 | ADR index and status | each `ADR-*.md` listed in `202-ADR/README.md` and carrying a status | All 23 |
-| ERD vs schema | `scripts/test_erd_current_schema.py` (#1021) | Regenerated; consistent |
+| ERD vs schema | `docs/tests/test_erd_current_schema.py` (#1021) | Regenerated; consistent |
 | Dictionary vs schema | column-set comparison per table | 29 of 36 tables with stale column names, 4 tables missing (F3, #1222) |
 | Stale technology statements | `git grep -E 'Spring Boot 3\|PostgreSQL 15\|com\.notaria\|Java 17\|MySQL' -- docs` | Only historical context, the Sonar database (PostgreSQL 15 is correct there) and the SRS (F4) |
 | Guards CI never ran | `scripts/tests/test_guard_wrappers.py` (#1209) | 12 unwired before #1209 |
@@ -42,7 +42,7 @@ Total: 180 active Markdown files under `docs/` (`find docs -name '*.md'`, archiv
 
 | ID | Finding | Evidence | Action |
 |----|---------|----------|--------|
-| F1 | Broken relative links | `scripts/test_docs_links.py` | Fixed (design-system links); `LICENSE` exempt with a reason and issue #1226 |
+| F1 | Broken relative links | `docs/tests/test_docs_links.py` | Fixed (design-system links); `LICENSE` exempt with a reason and issue #1226 |
 | F2 | CU84 off-template; two malformed CSV rows | #956 | Fixed in #956 |
 | F3 | Data dictionary column names stale for 29 tables; 4 tables absent | #1222 | Filed; needs a generator, not hand edits |
 | F4 | `SRS - Especificacion de Requerimientos.md` still prescribes MySQL and a desktop stack | `git grep MySQL` | Kept as the original business baseline; marked historical in the roadmap below |
@@ -70,8 +70,8 @@ Total: 180 active Markdown files under `docs/` (`find docs -name '*.md'`, archiv
 ## 6. Refreshing this audit
 
 ```bash
-python3 scripts/test_docs_links.py
-python3 scripts/test_business_docs_traceability.py
-python3 scripts/test_erd_current_schema.py
+python3 docs/tests/test_docs_links.py
+python3 docs/tests/test_business_docs_traceability.py
+python3 docs/tests/test_erd_current_schema.py
 find docs -name '*.md' -not -path 'docs/000-archive/*' | wc -l
 ```

@@ -23,8 +23,8 @@ Issue #921, Use Case CU76 – Quality Assurance and Testing Infrastructure; CU77
 
 | Scenario (spec) | Test level | Test class / file |
 |-----------------|------------|-------------------|
-| Relative links in active documentation resolve | static | `scripts/test_docs_links.py` |
-| The audit report exists and links its evidence | static | `scripts/test_docs_links.py` |
+| Relative links in active documentation resolve | static | `docs/tests/test_docs_links.py` |
+| The audit report exists and links its evidence | static | `docs/tests/test_docs_links.py` |
 
 - New unit tests (`src/test/java/.../unit/`): n/a
 - New integration tests: n/a

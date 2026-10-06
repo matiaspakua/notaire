@@ -27,8 +27,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Relative links in active documentation resolve | `scripts/test_docs_links.py` | pending |
-| The audit report exists and links its evidence | `scripts/test_docs_links.py` | pending |
+| Relative links in active documentation resolve | `docs/tests/test_docs_links.py` | pending |
+| The audit report exists and links its evidence | `docs/tests/test_docs_links.py` | pending |
 
 ## Permanent documentation updated
 
@@ -54,5 +54,5 @@ None.
 
 ## Verification log (2026-10-04)
 
-- Red first: `scripts/test_docs_links.py` failed (4 broken links, audit report missing); passes after the fixes, with `LICENSE` exempt (#1226).
+- Red first: `docs/tests/test_docs_links.py` failed (4 broken links, audit report missing); passes after the fixes, with `LICENSE` exempt (#1226).
 - Figures in the audit report come from the commands recorded in it.
