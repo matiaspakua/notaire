@@ -1,0 +1,40 @@
+# Every seam between modules (issue #1292, ADR-026). A module may read another only through a
+# seam listed here. `values` are the names both sides must keep; `evidence` are the files that
+# rely on them. contracts/tests/test_seams.py fails when a value disappears from an evidence file.
+seams:
+  http-api:
+    description: REST surface, committed OpenAPI contract diffed in CI
+    provider: backend-api
+    consumers: [frontend, testing]
+    values: ["/api/v1/"]
+    evidence: [backend-api/openapi/openapi.yaml]
+  actuator-metrics:
+    description: Prometheus scrape path of the backend
+    provider: backend-api
+    consumers: [infra]
+    values: ["/actuator/prometheus"]
+    evidence: [infra/observability/prometheus/prometheus.yml]
+  actuator-credentials:
+    description: Basic-auth variables protecting the Actuator endpoints
+    provider: backend-api
+    consumers: [infra]
+    values: [ACTUATOR_USER, ACTUATOR_PASSWORD]
+    evidence: [backend-api/src/main/resources/application.properties, .env.example, infra/.env.example]
+  container-names:
+    description: Backend container name that Prometheus scrapes and Promtail discovers
+    provider: backend-api
+    consumers: [infra]
+    values: [notary-backend]
+    evidence: [docker-compose.yml, docker-compose.prod.yml, infra/observability/prometheus/prometheus.yml]
+  postgres-exporter-credentials:
+    description: Database role used by the PostgreSQL exporter and the database V&V suite
+    provider: backend-api
+    consumers: [infra, testing]
+    values: [POSTGRES_EXPORTER_USER, POSTGRES_EXPORTER_PASSWORD]
+    evidence: [.env.example, infra/.env.example, testing/.env.example]
+  flyway-migrations:
+    description: Migrations directory applied by the database V&V suite
+    provider: backend-api
+    consumers: [testing]
+    values: ["db/migration"]
+    evidence: [testing/.env.example, testing/database/run.sh]

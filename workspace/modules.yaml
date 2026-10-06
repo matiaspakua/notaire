@@ -37,9 +37,15 @@ modules:
     fleet: knowledge
     verify: bash docs/verify.sh
     depends_on: []
+  contracts:
+    path: contracts
+    responsibility: The seams between modules and the guards that keep both sides in step
+    fleet: foreman
+    verify: bash contracts/verify.sh
+    depends_on: []
   workspace:
     path: workspace
     responsibility: Unifier, manifest and the guards that read more than one module
     fleet: foreman
     verify: bash workspace/verify.sh
-    depends_on: [backend-api, frontend, infra, testing, local-ai, docs]
+    depends_on: [backend-api, frontend, infra, testing, local-ai, docs, contracts]
