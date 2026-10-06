@@ -7,8 +7,8 @@
 > applies equally to Claude Code, OpenCode, GitHub Copilot, Cursor, Codex, and
 > any other tool or person touching this codebase.
 >
-> Existing project documents (`.claude/rules/*`, `AGENTS.md`, `CLAUDE.md`,
-> `.claude/rules/`, `docs/`) implement this Constitution. Where a lower-level
+> Existing project documents (`AGENTS.md`, `.claude/rules/*`,
+> `.claude/skills/`, `.claude/agents/`, `docs/`) implement this Constitution. Where a lower-level
 > document contradicts this Constitution, **this document prevails**.
 
 ---
@@ -577,13 +577,20 @@ OpenSpec through the project schema `openspec/schemas/notaire-sdlc` and
 `openspec/config.yaml`. Because both are read by the `openspec` CLI rather than
 by any one assistant, every agent receives the same context, the same mandatory
 sections and the same task groups — no agent-proprietary feature is involved.
-An agent that never reads `CLAUDE.md` still gets this Constitution.
+An agent that never reads `AGENTS.md` still gets this Constitution.
+
+**Central catalogs.** `.claude/skills/` is the only catalog of skills and
+`.claude/agents/` the only catalog of agents. Every tool reads them from there;
+no per-tool copy (for example under `.agents`, `.opencode`, `.codex` or the
+Copilot folders of `.github`) may exist. OpenSpec is configured for Claude Code only,
+so `openspec update` regenerates its skills into `.claude/skills/` and nowhere
+else. A new skill or agent is added to the catalog, never beside it.
 
 Agent-specific entry points:
 
-- **Claude Code** → `CLAUDE.md` + `.claude/rules/ai-agent-workflow.md`
-- **OpenCode** → `opencode.json` (loads `CLAUDE.md` and `.claude/rules/*`)
-- **GitHub Copilot** → `.github/agents/openspec.agent.md`, `.github/prompts/opsx-*`
+- **Claude Code** → `AGENTS.md` (imported by `CLAUDE.md`) + `.claude/rules/ai-agent-workflow.md`
+- **OpenCode** → `opencode.json` (loads `AGENTS.md`, `.claude/rules/*` and `.claude/skills/*`)
+- **GitHub Copilot** → `AGENTS.md`; agents from `.claude/agents/`
 - **Any agent** → `AGENTS.md` at repo root; `.claude/skills/openspec-*`
 - **Any agent, via the CLI** → `openspec instructions <artifact> --change <name>`
 - **Local-AI SDLC harness** → `local-ai/sdlc/` (`foreman.sh`, see `local-ai/sdlc/AI-SDLC.md`)
@@ -669,7 +676,7 @@ drift.
 | CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | Security | Trivy (`ci.yml` security job) |
 | Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |
-| Agent rules | `AGENTS.md`, `CLAUDE.md`, `.claude/rules/*`, `.claude/skills/*` |
+| Agent rules | `AGENTS.md`, `.claude/rules/*`, `.claude/skills/*`, `.claude/agents/*` |
 
 ---
 

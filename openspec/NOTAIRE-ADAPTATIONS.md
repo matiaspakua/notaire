@@ -803,9 +803,9 @@ Archive               openspec archive <name>                         Gate 5
 
 | Agente | Entry point |
 |--------|------------|
-| **Claude Code** | `CLAUDE.md` + `.claude/rules/ai-agent-workflow.md` |
-| **OpenCode** | `opencode.json` (carga `CLAUDE.md` y `.claude/rules/*`) |
-| **GitHub Copilot** | `.github/agents/openspec.agent.md`, `.github/prompts/opsx-*` |
+| **Claude Code** | `AGENTS.md` (importado por `CLAUDE.md`) + `.claude/rules/ai-agent-workflow.md` |
+| **OpenCode** | `opencode.json` (carga `AGENTS.md`, `.claude/rules/*` y `.claude/skills/*`) |
+| **GitHub Copilot** | `AGENTS.md`; `.claude/agents/` |
 | **Cualquier agente** | `AGENTS.md` en la raíz; `.claude/skills/openspec-*` |
 | **Cualquier agente via CLI** | `openspec instructions <artifact> --change <name>` |
 
