@@ -583,7 +583,7 @@ Agent-specific entry points:
 
 - **Claude Code** → `CLAUDE.md` + `.claude/rules/ai-agent-workflow.md`
 - **OpenCode** → `opencode.json` (loads `CLAUDE.md` and `.claude/rules/*`)
-- **GitHub Copilot** → `.github/agents/openspec.agent.md`, `.github/prompts/opsx-*`
+- **GitHub Copilot** → `.claude/agents/openspec.md`
 - **Any agent** → `AGENTS.md` at repo root; `.claude/skills/openspec-*`
 - **Any agent, via the CLI** → `openspec instructions <artifact> --change <name>`
 - **Local-AI SDLC harness** → `local-ai/sdlc/` (`foreman.sh`, see `local-ai/sdlc/AI-SDLC.md`)
