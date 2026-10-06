@@ -167,7 +167,7 @@ only works with the default container names. `docker-compose.prod.yml` and
 - **Backend posture**: `ENVIRONMENT=production`, `SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`
 - **CD**: `.github/workflows/cd.yml` stays **publish-only** (GHCR). Manifest apply is
   operator-owned; there is no automated “deploy to cluster” job yet
-- **Validate**: `python3 scripts/test_staging_kustomize.py` (requires `kustomize` on PATH)
+- **Validate**: `python3 infra/tests/test_staging_kustomize.py` (requires `kustomize` on PATH)
 
 ### Infrastructure stack (`infra/`)
 

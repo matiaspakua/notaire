@@ -14,7 +14,7 @@ Asserts:
   backup tooling is absent (no false-green restore)
 
 Plain stdlib unittest (+ PyYAML), consistent with
-scripts/test_performance_test_assets.py.
+infra/tests/test_performance_test_assets.py.
 Run with: python3 scripts/test_dast_contract_backup_assets.py
 
 Also discoverable via: python3 -m unittest discover -s scripts/tests

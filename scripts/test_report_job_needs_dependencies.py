@@ -15,7 +15,7 @@ failed on every run. The former PR `publish-report` wiki-commit job was
 removed (#1117 / #1041); assert against `generate-report` instead.
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
-validation scripts (see scripts/test_performance_test_assets.py).
+validation scripts (see infra/tests/test_performance_test_assets.py).
 Run with: python3 scripts/test_report_job_needs_dependencies.py
 """
 import os

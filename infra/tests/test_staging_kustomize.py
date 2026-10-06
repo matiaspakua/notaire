@@ -13,7 +13,7 @@ Asserts:
 - deployment docs mention the Kustomize path
 
 Requires `kustomize` on PATH (or KUSTOMIZE=/path/to/kustomize).
-Run with: python3 scripts/test_staging_kustomize.py
+Run with: python3 infra/tests/test_staging_kustomize.py
 """
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 KUSTOMIZE_ROOT = os.path.join(REPO_ROOT, "infra", "deploy", "kustomize")
 BASE_DIR = os.path.join(KUSTOMIZE_ROOT, "base")
 STAGING_DIR = os.path.join(KUSTOMIZE_ROOT, "overlays", "staging")

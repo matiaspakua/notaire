@@ -8,14 +8,14 @@ any RCE inside the container a path to full host compromise.
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
 validation scripts (see scripts/test_report_job_needs_dependencies.py).
-Run with: python3 scripts/test_infra_prometheus_hardening.py
+Run with: python3 infra/tests/test_infra_prometheus_hardening.py
 """
 import os
 import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 INFRA_COMPOSE_FILE = os.path.join(REPO_ROOT, "infra", "observability", "docker-compose.yml")
 
 

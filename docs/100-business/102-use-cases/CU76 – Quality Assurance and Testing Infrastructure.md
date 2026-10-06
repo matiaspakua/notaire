@@ -21,7 +21,7 @@
 - Monitoreo continuo de cobertura de código con JaCoCo (meta ≥ 80%).
 - Workflow de performance k6 (`performance-test.yml`) con script en
   `infra/performance/k6/load-test.js`, validación de assets en
-  `scripts/test_performance_test_assets.py`, y publicación del artefacto
+  `infra/tests/test_performance_test_assets.py`, y publicación del artefacto
   `k6-load-test-results` / `summary.json` (issue #1047; no es gate por PR).
 - Publicación CD a GHCR anclada al SHA que CI probó en `main`
   (`workflow_run.head_sha`), con `latest` movido solo después del push del
@@ -58,7 +58,7 @@
 |---|---|
 | Auto-arranque de datos | Suites E2E crean sus fixtures vía helpers API; no `test.skip()` por tablas vacías. |
 | Esperas web-first | Prohibido `waitForTimeout` como espera de corrección; assert sobre UI/URL/respuesta. |
-| Skips intencionales | Todo `test.skip` por gap de producto cita un issue abierto. Inventario vivo de **14** skips en TS-0014/16/17/20 cita #1146 (higiene de tracker); el producto sigue en el CU dueño — ver `E2E-TEST-MAPPING.md`. Guard en `scripts/test_e2e_reliability.py` (movido desde Vitest en #1192). |
+| Skips intencionales | Todo `test.skip` por gap de producto cita un issue abierto. Inventario vivo de **14** skips en TS-0014/16/17/20 cita #1146 (higiene de tracker); el producto sigue en el CU dueño — ver `E2E-TEST-MAPPING.md`. Guard en `testing/tests/test_e2e_reliability.py` (movido desde Vitest en #1192). |
 | Retries CI | Como máximo **1** retry en CI; triaje vía `trace: on-first-retry` + artefactos. |
 
 ## Confiabilidad suite backend (H2 / unit) — #916

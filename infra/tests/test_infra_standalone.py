@@ -4,7 +4,7 @@ Guards issue #1179 (CU77): infra/ is a single, self-contained, documented folder
 that can be split into its own repository.
 
 Plain stdlib unittest + PyYAML, consistent with scripts/test_prod_compose.py.
-Run with: python3 scripts/test_infra_standalone.py
+Run with: python3 infra/tests/test_infra_standalone.py
 """
 import os
 import re
@@ -15,7 +15,7 @@ from pathlib import Path
 
 import yaml
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 INFRA = REPO_ROOT / "infra"
 NGINX_CONF = INFRA / "deploy" / "kustomize" / "base" / "nginx.conf"
 KUSTOMIZE_BASE = INFRA / "deploy" / "kustomize" / "base"
@@ -49,20 +49,19 @@ LEGACY_PATHS = (
     "infra/grafana",
     "infra/loki",
     "infra/dashboard",
-    "infra/tests",
 )
 
 LEGACY_REFERENCE = re.compile(
     r"(?<![\w/.-])deploy/(?:kustomize|nginx)"
     r"|(?<![\w/.-])performance-test/"
-    r"|infra/(?:docker-compose\.yml|prometheus|grafana|loki|dashboard|tests)\b"
+    r"|infra/(?:docker-compose\.yml|prometheus|grafana|loki|dashboard)\b"
 )
 REFERENCE_EXEMPT_PREFIXES = (
     "docs/000-archive/",
     "openspec/",
     "backend-api/src/main/resources/db/migration/",
     "CHANGELOG.md",
-    "scripts/test_infra_standalone.py",
+    "infra/tests/test_infra_standalone.py",
 )
 
 ESCAPE_CANDIDATE = re.compile(r"(?:\.\./)+[\w.-]*")
@@ -97,7 +96,8 @@ class InfraLayoutTest(unittest.TestCase):
         self.assertEqual([], present, f"legacy locations still present: {present}")
 
     def test_stale_e2e_suite_removed(self):
-        self.assertFalse((INFRA / "tests").exists(), "infra/tests must be removed (#1179)")
+        specs = list((INFRA / "tests").glob("**/*.spec.ts"))
+        self.assertEqual([], specs, "infra/ holds guards only; Playwright specs live in testing/e2e (#1179)")
 
 
 class InfraSelfContainmentTest(unittest.TestCase):

@@ -4,7 +4,7 @@ Validates the k6 load-test suite and its CI wiring (issues #594, #1047).
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
 validation scripts (see scripts/test_generate_e2e_coverage_report.py).
-Run with: python3 scripts/test_performance_test_assets.py
+Run with: python3 infra/tests/test_performance_test_assets.py
 """
 import os
 import re
@@ -12,7 +12,7 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 K6_SCRIPT_PATH = os.path.join(REPO_ROOT, "infra", "performance", "k6", "load-test.js")
 WORKFLOW_PATH = os.path.join(REPO_ROOT, ".github", "workflows", "performance-test.yml")
 
