@@ -4,13 +4,13 @@ Static Gate 2 checks for #1066 / CU76, moved from the frontend Vitest suite with
 Playwright suite (#1192): reliability rules asserted on the E2E sources and config so
 false-green skips and sleep/retry budgets fail CI.
 
-Plain stdlib unittest. Run with: python3 scripts/test_e2e_reliability.py
+Plain stdlib unittest. Run with: python3 testing/tests/test_e2e_reliability.py
 """
 import re
 import unittest
 from pathlib import Path
 
-E2E_ROOT = Path(__file__).resolve().parents[1] / "testing" / "e2e"
+E2E_ROOT = Path(__file__).resolve().parents[1] / "e2e"
 TESTS_DIR = E2E_ROOT / "tests"
 
 HOTSPOT_SPECS = (

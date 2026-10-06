@@ -35,7 +35,7 @@ and mapped to Use Cases in
 | Specs, helpers, global setup, business-coverage reporter | `e2e/tests/` |
 | Projects `smoke`, `health`, `chromium` (Chrome channel), `mobile` (iPhone SE, WebKit) | `e2e/playwright.config.ts` |
 | Dependencies, type-check (`npm run typecheck`), lint (`npm run lint`) | `e2e/package.json`, `tsconfig.json`, `eslint.config.mjs` |
-| Reliability rules (retry budget, sleeps, skip inventory) | `scripts/test_e2e_reliability.py` in the application repository |
+| Reliability rules (retry budget, sleeps, skip inventory) | `testing/tests/test_e2e_reliability.py` in the application repository |
 
 Fixtures written at run time (`tests/fixtures/`) and the reports (`playwright-report/`, `test-results/`) are git-ignored.
 

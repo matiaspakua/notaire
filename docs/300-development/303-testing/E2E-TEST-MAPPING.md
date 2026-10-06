@@ -214,7 +214,7 @@ test("scenario", async ({ page }) => {
 TS-0017 / TS-0020. Each skip title cites `#1146` (tracker hygiene). **Product
 delivery stays on the owning CU** — do not unskip without real UI assertions.
 CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
-`scripts/test_e2e_reliability.py` enforces `#\d+` citations and the count `14`.
+`testing/tests/test_e2e_reliability.py` enforces `#\d+` citations and the count `14`.
 
 | TS | Skip id | Owning CU | Product gap (summary) | Citation | Product tracking |
 |----|---------|-----------|-----------------------|----------|------------------|

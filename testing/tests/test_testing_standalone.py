@@ -3,8 +3,8 @@
 Guards issue #1191 (CU76): testing/ is a single, self-contained, documented folder with
 which a separate QA team verifies and validates Notaire as black-box modules.
 
-Plain stdlib unittest + PyYAML, consistent with scripts/test_infra_standalone.py.
-Run with: python3 scripts/test_testing_standalone.py
+Plain stdlib unittest + PyYAML, consistent with infra/tests/test_infra_standalone.py.
+Run with: python3 testing/tests/test_testing_standalone.py
 """
 import json
 import os
@@ -15,7 +15,7 @@ from pathlib import Path
 
 import yaml
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 TESTING = REPO_ROOT / "testing"
 DB_COMPOSE = TESTING / "database" / "docker-compose.yml"
 RUNNER = TESTING / "scripts" / "run.sh"
@@ -108,7 +108,7 @@ REFERENCE_EXEMPT_PREFIXES = (
     "openspec/",
     "CHANGELOG.md",
     ".gitignore",
-    "scripts/test_testing_standalone.py",
+    "testing/tests/test_testing_standalone.py",
     "scripts/test_repo_hygiene.py",
 )
 
