@@ -222,7 +222,7 @@ GNU_ONLY_IDIOMS = (
 )
 CI_ONLY_SCRIPTS = {"generate-coverage-report.sh"}
 # Called from outside testing/ (Constitution step 14, preflight, agent rules) or by CI.
-EXTERNALLY_CALLED_SCRIPTS = {"test.sh", "generate-coverage-report.sh"}
+EXTERNALLY_CALLED_SCRIPTS = {"test.sh", "generate-coverage-report.sh", "verify.sh"}
 
 
 class PortabilityTest(unittest.TestCase):
