@@ -60,7 +60,7 @@ build imports from it.
 | 2 | Extract with the recipe in section 7 using `--path infra/ --path-rename infra/:` |
 | 3 | In the new repository add CI (`kustomize build`, `docker compose config`, k6 smoke), ruleset, `LICENSE`, `SECURITY.md`, `CODEOWNERS` |
 | 4 | In the core, replace `infra/` with a stub `README.md`, point `scripts/start-all.sh` and `docker-compose.prod.yml` consumers to `NOTAIRE_INFRA_DIR`, keep `docker-compose*.yml` for the dev stack |
-| 5 | Move `scripts/test_infra_standalone.py` and the infra part of `scripts/preflight.sh` to the new repository; the core keeps a seam guard that checks image names and variable names |
+| 5 | Move `infra/tests/test_infra_standalone.py` and the infra part of `scripts/preflight.sh` to the new repository; the core keeps a seam guard that checks image names and variable names |
 | 6 | Update `CLAUDE.md`, `docs/200-architecture/208-devsecops`, ADR-024 status table |
 | Exit | Core CI green without `infra/`; `bash scripts/start-all.sh` works with `NOTAIRE_INFRA_DIR`; infra CI green; rollback tag exists |
 
