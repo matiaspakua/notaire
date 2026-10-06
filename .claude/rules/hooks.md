@@ -23,8 +23,8 @@ checks (`CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, `PR Validation`),
 and blocked force-push/deletion. Classic (legacy) branch protection is
 intentionally unused — do not layer it on top of the ruleset. See
 `docs/200-architecture/208-devsecops/README.md` and issue #1040; apply/assert
-with `scripts/apply-protect-main-ruleset.sh` /
-`scripts/assert-protect-main-ruleset.sh`.
+with `security/apply-protect-main-ruleset.sh` /
+`security/assert-protect-main-ruleset.sh`.
 
 CONSTITUTION.md already requires every change to land via Pull Request. This
 Claude Code hook is **defense in depth** at the tool-call level so an agent

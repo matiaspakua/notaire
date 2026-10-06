@@ -11,7 +11,7 @@ Invariants (in-repo artifacts; live GitHub assert is Gate 5):
   Playwright E2E, PR Validation; Code Lint remains the lint job name.
 - .claude/rules/hooks.md no longer claims main is unprotected / 404.
 
-Run with: python3 scripts/test_protect_main_ruleset.py
+Run with: python3 security/tests/test_protect_main_ruleset.py
 """
 from __future__ import annotations
 
@@ -21,9 +21,9 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WORKFLOWS_DIR = os.path.join(REPO_ROOT, ".github", "workflows")
-DESIRED_JSON = os.path.join(REPO_ROOT, "scripts", "rulesets", "protect-main.desired.json")
+DESIRED_JSON = os.path.join(REPO_ROOT, "security", "rulesets", "protect-main.desired.json")
 HOOKS_MD = os.path.join(REPO_ROOT, ".claude", "rules", "hooks.md")
 
 REQUIRED_CHECK_NAMES = (
