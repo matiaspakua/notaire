@@ -3,7 +3,7 @@
 # Notaire pgAdmin Setup Script
 # This script helps set up the database connection in pgAdmin
 
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$PROJECT_DIR"
 
 # Colors for output

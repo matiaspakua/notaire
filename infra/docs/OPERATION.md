@@ -6,7 +6,7 @@ Prerequisites: [PREPARATION](PREPARATION.md); variables: [CONFIGURATION](CONFIGU
 ## Start and stop
 
 ```bash
-bash scripts/start-all.sh               # application, then infra
+bash workspace/stack/start-all.sh               # application, then infra
 bash infra/scripts/start-infra.sh       # infra only (application must be up)
 docker compose -f infra/observability/docker-compose.yml --env-file infra/.env down   # stop
 ```
@@ -119,7 +119,7 @@ exporter credentials against Flyway V12, and the queries in
 `observability/prometheus/postgres_exporter.yml`.
 
 **"Application network not found"** — start the application first
-(`bash scripts/start.sh`).
+(`bash workspace/stack/start.sh`).
 
 ## Rollback
 

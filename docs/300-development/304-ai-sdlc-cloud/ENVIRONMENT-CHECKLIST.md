@@ -42,7 +42,7 @@ Saving the card.
 | Maven | **3.9+** | `mvn test`, `verify`, Spotless/Checkstyle | `mvn -version` |
 | Node.js | **22.x LTS** (or project engines) | Next.js 16 frontend | `node -v` |
 | npm | bundled with Node | `npm ci`, Vitest, Playwright | `npm -v` |
-| Docker Engine + Compose | **24+** | `scripts/start.sh`, integration/smoke | `docker version` && `docker compose version` |
+| Docker Engine + Compose | **24+** | `workspace/stack/start.sh`, integration/smoke | `docker version` && `docker compose version` |
 | Git | 2.40+ | branches, hooks | `git --version` |
 | GitHub CLI `gh` | recent | issues, PR checks, merge | `gh auth status` |
 | OpenSpec CLI | current project-supported | Gate 1 `openspec validate` | `openspec --version` |
@@ -108,8 +108,8 @@ the stack with host-network compose:
 
 ```bash
 export COMPOSE_FILE=docker-compose.yml:docker-compose.cloud.yml
-bash scripts/start.sh     # DB + backend; frontend may be separate
-# for full autonomy including observability: bash scripts/start-all.sh
+bash workspace/stack/start.sh     # DB + backend; frontend may be separate
+# for full autonomy including observability: bash workspace/stack/start-all.sh
 ```
 
 Health before E2E / Bruno:
@@ -127,7 +127,7 @@ Agents assume these commands work without interactive prompts:
 - `mvn`, `java`, `node`, `npm`, `npx`, `docker`, `docker compose`, `gh`, `openspec`, `bru`, `bc`
 - `bash scripts/preflight.sh`, `bash scripts/validate-sdlc-plan.sh`
 - `bash scripts/seed-openspec-change.sh` (Gate 1 scaffold — prefer before filling artifacts)
-- `bash scripts/start.sh` / `stop.sh` / `run_pipeline.sh`
+- `bash workspace/stack/start.sh` / `stop.sh` / `run_pipeline.sh`
 
 Install OpenSpec CLI the same way CI/devs do for this repo (document the exact
 install line in the environment build when finalized). If `openspec` is missing,
@@ -142,7 +142,7 @@ OpenCollection API tests work without relying on unpinned `npx @usebruno/cli`.
 |----------|----------|
 | Disk | Room for `~/.m2`, `frontend/node_modules`, Docker images, Playwright browsers |
 | Memory | Maven + Next + Postgres + Playwright: prefer ≥8 GB container RAM |
-| Nested Docker | Required for `scripts/start.sh` and CI-parity smoke |
+| Nested Docker | Required for `workspace/stack/start.sh` and CI-parity smoke |
 | Network | Access to Maven Central, npm, GitHub, Playwright browser download hosts |
 
 ---

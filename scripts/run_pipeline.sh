@@ -18,7 +18,7 @@
 # -----------------------------
 # This script does not reimplement any check — it calls:
 #   - scripts/validate-sdlc-plan.sh
-#   - scripts/start.sh          (idempotent; blocks until backend+frontend healthy)
+#   - workspace/stack/start.sh          (idempotent; blocks until backend+frontend healthy)
 #   - scripts/preflight.sh --full
 # Add or change a gate in preflight.sh or .github/workflows/ and this script
 # picks it up automatically; nothing to update here.
@@ -37,7 +37,8 @@
 # USAGE
 #   bash scripts/run_pipeline.sh
 #
-# Dashboard + logs are written under reports/pipeline/<timestamp>/ (git-ignored).
+# Dashboard + logs are written under reports/pipeline/<timestamp>/ (git-ignored); previous runs are
+# deleted first, so only the latest run is kept.
 # Exit code is non-zero if any blocking gate fails.
 set -uo pipefail
 
@@ -55,6 +56,7 @@ RED=$'\033[0;31m'; GREEN=$'\033[0;32m'; YELLOW=$'\033[1;33m'; BLUE=$'\033[0;34m'
 
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 REPORT_DIR="$REPO_ROOT/reports/pipeline/$TIMESTAMP"
+find "$REPO_ROOT/reports/pipeline" -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} + 2>/dev/null
 mkdir -p "$REPORT_DIR"
 SUMMARY_LOG="$REPORT_DIR/pipeline.log"
 
@@ -105,7 +107,7 @@ phase "sdlc plan validation" bash scripts/validate-sdlc-plan.sh || OVERALL_FAILE
 # 2. Bring the Docker stack up (idempotent; blocks until backend+frontend are healthy)
 # -----------------------------------------------------------------------------
 if docker info >/dev/null 2>&1; then
-    phase "docker stack up" bash scripts/start.sh || OVERALL_FAILED=1
+    phase "docker stack up" bash workspace/stack/start.sh || OVERALL_FAILED=1
 else
     phase_skip "docker stack up" "docker not running — preflight's server-backed suites will fail"
 fi

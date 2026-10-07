@@ -56,7 +56,7 @@ mvn jacoco:report -pl backend-api && open backend-api/target/site/jacoco/index.h
 # Frontend: unit + coverage
 cd frontend && npm run test:coverage
 
-# E2E Playwright (requiere stack completo: bash scripts/start.sh)
+# E2E Playwright (requiere stack completo: bash workspace/stack/start.sh)
 cd testing/e2e && npm test
 npm run test:headed   # modo interactivo
 

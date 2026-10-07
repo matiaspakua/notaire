@@ -16,7 +16,7 @@ Kustomize (#901) or compose (#1044).
 
 | Environment | Where it runs | Started by |
 |-------------|---------------|------------|
-| Local development | Developer machine, Docker | `bash scripts/start.sh` (app) + `bash infra/scripts/start-infra.sh` (observability/quality) |
+| Local development | Developer machine, Docker | `bash workspace/stack/start.sh` (app) + `bash infra/scripts/start-infra.sh` (observability/quality) |
 | Production compose | Self-hosted Docker | `docker compose -f docker-compose.prod.yml --env-file .env up -d` (see `209-deployment`) |
 | Staging Kustomize | Operator Kubernetes cluster | `kustomize build infra/deploy/kustomize/overlays/staging \| kubectl apply -f -` (#901); validate with `python3 infra/tests/test_staging_kustomize.py` |
 | CI | GitHub Actions runners | `.github/workflows/ci.yml`, ephemeral per run |

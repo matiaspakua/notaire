@@ -58,7 +58,7 @@ mvn clean install -pl backend-api -am -DskipTests
 ### 2. Start the Application Stack (development)
 
 ```bash
-bash scripts/start.sh
+bash workspace/stack/start.sh
 # or, from repo root:
 docker-compose up -d
 
@@ -71,7 +71,7 @@ This starts the **dev** stack:
 - **PostgreSQL 16** on port 5432
 - **Backend API** on port 8080
 - **Frontend (Next.js)** on port 3000
-- **pgAdmin** on port 5050 (started by default; skip with `bash scripts/start.sh --no-admin`)
+- **pgAdmin** on port 5050 (started by default; skip with `bash workspace/stack/start.sh --no-admin`)
 
 > Production must use `docker-compose.prod.yml` (below) — never the published
 > Postgres/pgAdmin ports from the dev compose.
@@ -133,7 +133,7 @@ runs beside the first. Defaults are unchanged.
 COMPOSE_PROJECT_NAME=notaire_alt BACKEND_PORT=18080 FRONTEND_PORT=13000 POSTGRES_PORT=15432 \
 PGADMIN_PORT=15050 NOTAIRE_POSTGRES_CONTAINER_NAME=alt-postgres NOTAIRE_BACKEND_CONTAINER_NAME=alt-backend \
 NOTAIRE_PGADMIN_CONTAINER_NAME=alt-pgadmin NOTAIRE_FRONTEND_CONTAINER_NAME=alt-frontend \
-bash scripts/start.sh
+bash workspace/stack/start.sh
 ```
 
 A distinct `COMPOSE_PROJECT_NAME` also separates volumes and the network. The observability

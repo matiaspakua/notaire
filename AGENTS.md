@@ -95,6 +95,20 @@ foreman per [`fleet-manifest.yaml`](docs/300-development/304-ai-sdlc-cloud/fleet
 
 ---
 
+## Modules (the Foreman's map)
+
+`workspace/modules.yaml` lists every module (responsibility, fleet, verify command,
+dependencies); each has a `MODULE.md` and a `verify.sh`; seams between modules are in
+`contracts/seams.yaml` (ADR-026). The Foreman uses:
+
+```bash
+python3 workspace/modules.py list                      # dependency order
+python3 workspace/modules.py affected <changed path>   # modules a change touches + dependents
+python3 workspace/modules.py verify <module>|--all     # run the module's own checks
+```
+
+---
+
 ## Rules & Standards (always enforced)
 
 ```text
@@ -140,10 +154,10 @@ Multi-module Maven project refactoring a Java Swing monolith to microservices. S
 mvn clean install                       # all modules
 mvn clean install -pl backend-api -am   # backend only (with shared dependency)
 
-bash scripts/start.sh                   # DB + backend (Docker)
-bash scripts/stop.sh
-bash scripts/logs.sh
-bash scripts/start-all.sh               # application + observability/quality infra
+bash workspace/stack/start.sh                   # DB + backend (Docker)
+bash workspace/stack/stop.sh
+bash workspace/stack/logs.sh
+bash workspace/stack/start-all.sh               # application + observability/quality infra
 bash infra/scripts/start-infra.sh       # infra only (app must be up first)
 
 cd backend-api && mvn spring-boot:run   # backend directly (needs local PostgreSQL on 5432)

@@ -32,10 +32,10 @@ You are a DevOps engineer for the Notaire project. You know the actual infrastru
 ### Scripts Reference
 
 ```bash
-bash scripts/start.sh          # Start DB + backend (Docker)
-bash scripts/stop.sh           # Stop everything
-bash scripts/logs.sh           # Tail logs
-bash scripts/start-all.sh      # App + observability infra (= start.sh + start-infra.sh)
+bash workspace/stack/start.sh          # Start DB + backend (Docker)
+bash workspace/stack/stop.sh           # Stop everything
+bash workspace/stack/logs.sh           # Tail logs
+bash workspace/stack/start-all.sh      # App + observability infra (= start.sh + start-infra.sh)
 bash infra/scripts/start-infra.sh    # Infra only (app must be running first)
 bash infra/scripts/run-sonar.sh      # SonarQube analysis
 bash testing/scripts/test.sh                    # HTTP integration tests (requires running API)

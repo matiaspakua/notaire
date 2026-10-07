@@ -22,7 +22,7 @@ Python and Maven are **not** needed for `integration` and `database`; Node is ne
 The integration and e2e suites talk to a stack that is already running. From the application repository:
 
 ```bash
-bash scripts/start.sh        # PostgreSQL, backend :8080, frontend :3000
+bash workspace/stack/start.sh        # PostgreSQL, backend :8080, frontend :3000
 ```
 
 Any other environment works by setting `BASE_URL` (see CONFIGURATION). The runner checks

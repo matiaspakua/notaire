@@ -47,12 +47,12 @@ Without overrides the rendered configuration MUST equal today's names and ports.
 
 ### Requirement: start.sh follows the configured ports
 
-`scripts/start.sh` MUST health-check and print URLs for the configured host ports,
+`workspace/stack/start.sh` MUST health-check and print URLs for the configured host ports,
 not literal ones.
 
 #### Scenario: start.sh follows configured ports
 
-- **WHEN** `scripts/start.sh` is inspected
+- **WHEN** `workspace/stack/start.sh` is inspected
 - **THEN** its health checks and printed URLs use the configured port variables
   instead of literal `localhost:8080`, `:5050`, `:3000` or `:5432`
 

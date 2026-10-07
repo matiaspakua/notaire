@@ -22,7 +22,7 @@ Documentation    E2E acceptance tests for the Gestiones module of Notaire Swing.
 ...              - CU56 – Registrar inscripcion
 ...              - CU62 – Buscar Escritura
 ...
-...              Requires: backend running (scripts/start.sh), frontend JAR built.
+...              Requires: backend running (workspace/stack/start.sh), frontend JAR built.
 Resource         ../resources/common.resource
 Suite Setup      Suite Initialization
 Suite Teardown   Close Swing Application

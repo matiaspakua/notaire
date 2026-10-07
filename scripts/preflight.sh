@@ -273,7 +273,7 @@ if [ "$MODE_FULL" = "1" ]; then
             fail "bruno api tests: could not obtain JWT token from login endpoint"
         fi
     else
-        fail "server-backed suites: stack not reachable (need backend :8080 + frontend :3000 — run 'bash scripts/start.sh')"
+        fail "server-backed suites: stack not reachable (need backend :8080 + frontend :3000 — run 'bash workspace/stack/start.sh')"
     fi
 
     if docker info >/dev/null 2>&1; then
