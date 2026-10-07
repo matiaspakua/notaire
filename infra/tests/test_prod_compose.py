@@ -5,7 +5,7 @@ no pgAdmin, reverse-proxy-only host ports, ENVIRONMENT=production, required
 secrets via ${VAR:?}, least-privilege backend env, and Flyway baseline off.
 
 Plain stdlib unittest + PyYAML, consistent with infra/tests/test_infra_prometheus_hardening.py.
-Run with: python3 scripts/test_prod_compose.py
+Run with: python3 infra/tests/test_prod_compose.py
 """
 import os
 import re
@@ -13,7 +13,7 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PROD_COMPOSE_FILE = os.path.join(REPO_ROOT, "docker-compose.prod.yml")
 DEPLOYMENT_GUIDE = os.path.join(
     REPO_ROOT, "docs", "200-architecture", "209-deployment", "README.md"

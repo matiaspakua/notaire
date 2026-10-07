@@ -233,7 +233,7 @@ Fleet / ops rules:
 2. Set `wait-for-processing: false` on `github/codeql-action/analyze` so a
    leftover default-setup conflict does not fail the job after a successful
    analysis+upload; findings land once default setup is off.
-3. Disable default setup (admin): `bash scripts/enable-gh-secure.sh --apply`
+3. Disable default setup (admin): `bash security/enable-gh-secure.sh --apply`
    (script PATCHes `code-scanning/default-setup` to `not-configured`), or
    Settings → Code security → Code scanning → disable default setup.
 4. Do **not** pass `code-scanning` to gh-secure’s enable list — that turns
@@ -242,9 +242,9 @@ Fleet / ops rules:
 Status / dry-run:
 
 ```bash
-bash scripts/enable-gh-secure.sh            # status
-bash scripts/enable-gh-secure.sh --dry-run  # preview
-bash scripts/enable-gh-secure.sh --apply    # admin/maintain token
+bash security/enable-gh-secure.sh            # status
+bash security/enable-gh-secure.sh --dry-run  # preview
+bash security/enable-gh-secure.sh --apply    # admin/maintain token
 ```
 
 Merge-when-green still requires heavy CI (Integration, Coverage, Bruno,
@@ -329,7 +329,7 @@ env:
 | Gate | How to run | Policy |
 |------|------------|--------|
 | **OWASP ZAP baseline** | Actions → `DAST — OWASP ZAP Baseline` (schedule/`workflow_dispatch`) | Targets `http://localhost:8080` after starting the API + Postgres service. Uploads the ZAP report artifact. **Warn-first** (`fail_action: false`) until an allowlist/ratchet is agreed; Trivy SCA in `ci.yml` remains. Full prose operator guide may remain #281. |
-| **OpenAPI contract** | Every PR (`openapi-contract.yml`); locally: `bash scripts/export-openapi.sh` | Committed SSOT: `backend-api/openapi/openapi.yaml`. After API changes, regenerate and commit in the same PR. CI fails on stale artifact or `oasdiff` ERR-level breaking diffs vs base. |
+| **OpenAPI contract** | Every PR (`openapi-contract.yml`); locally: `bash backend-api/tools/export-openapi.sh` | Committed SSOT: `backend-api/openapi/openapi.yaml`. After API changes, regenerate and commit in the same PR. CI fails on stale artifact or `oasdiff` ERR-level breaking diffs vs base. |
 | **Backup→restore smoke** | Schedule/`workflow_dispatch` | Gated on #256. Sentinel path: `scripts/backup-postgres.sh`. While absent, the job exits 0 with a clear skip/blocked message and does **not** claim a successful restore. |
 
 Guarded by `python3 scripts/test_dast_contract_backup_assets.py` (also under `scripts/tests/` for Process Checks).
@@ -346,13 +346,13 @@ settings. The pieces that belong in git are already in the tree:
 | Code scanning | `.github/workflows/codeql.yml` (advanced setup). Do not also enable default setup. |
 | Dependabot version updates | `.github/dependabot.yml` (Maven, npm under `frontend/`, Docker for `/backend-api` + `/frontend`, GitHub Actions) |
 | Private vulnerability reporting | Already enabled. Policy: `SECURITY.md` |
-| Secret-scanning push protection, Dependabot alerts and security updates | GitHub settings. An admin runs `bash scripts/enable-gh-secure.sh --apply` |
+| Secret-scanning push protection, Dependabot alerts and security updates | GitHub settings. An admin runs `bash security/enable-gh-secure.sh --apply` |
 | Branch protection / ruleset | Classic branch protection is **not** enabled by the script unless `--with-branch-protection` is passed (and must stay unused). Active ruleset `protect-main` (id `24128115`) on `~DEFAULT_BRANCH` enforces PR-only merges, required checks `CI` / `Frontend CI` / `Playwright E2E` / `Code Lint` / `PR Validation`, and blocks force-push/deletion; `bypass_actors` empty after #1041. Desired state: `security/rulesets/protect-main.desired.json`. Admin apply: `bash security/apply-protect-main-ruleset.sh --apply` then `bash security/assert-protect-main-ruleset.sh` (#1040) |
 
 ```bash
-bash scripts/enable-gh-secure.sh            # status
-bash scripts/enable-gh-secure.sh --dry-run  # preview
-bash scripts/enable-gh-secure.sh --apply    # needs admin or maintain
+bash security/enable-gh-secure.sh            # status
+bash security/enable-gh-secure.sh --dry-run  # preview
+bash security/enable-gh-secure.sh --apply    # needs admin or maintain
 ```
 
 ## Future Enhancements

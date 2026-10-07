@@ -42,13 +42,13 @@ jobs:
           cache: 'maven'
 
       - name: Export OpenAPI from springdoc (H2)
-        run: bash scripts/export-openapi.sh --maven
+        run: bash backend-api/tools/export-openapi.sh --maven
 
       - name: Committed OpenAPI must match export
         run: |
           if ! git diff --exit-code -- backend-api/openapi/openapi.yaml; then
             echo "::error::backend-api/openapi/openapi.yaml is stale."
-            echo "Regenerate with: bash scripts/export-openapi.sh"
+            echo "Regenerate with: bash backend-api/tools/export-openapi.sh"
             echo "Then commit the updated artifact in the same PR."
             exit 1
           fi

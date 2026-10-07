@@ -4,11 +4,14 @@ Tests for generate_e2e_coverage_report.build_report (issue #587, #658).
 
 Plain stdlib unittest — no extra dependency, consistent with this project's
 other one-off CI scripts (generate-coverage-snapshot.py) which also have no
-test framework wired in. Run with: python3 scripts/test_generate_e2e_coverage_report.py
+test framework wired in. Run with: python3 testing/tests/test_generate_e2e_coverage_report.py
 """
 import json
 import os
+import sys
 import unittest
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 
 from generate_e2e_coverage_report import build_report
 

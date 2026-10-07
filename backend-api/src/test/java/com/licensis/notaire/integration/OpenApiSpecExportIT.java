@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Optional OpenAPI exporter for issue #1067. Skipped in normal CI suites;
- * enabled by {@code -Dopenapi.export.path=...} via {@code scripts/export-openapi.sh}.
+ * enabled by {@code -Dopenapi.export.path=...} via {@code backend-api/tools/export-openapi.sh}.
  */
 @SpringBootTest
 @ActiveProfiles("test-h2")

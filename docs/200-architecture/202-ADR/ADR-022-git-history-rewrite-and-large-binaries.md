@@ -32,7 +32,7 @@ history are architectural choices that affect every clone and open PR.
   from the git index.
 - Publish it as release tag **`docs-manuals`**, asset
   **`Manual-de-Usuario-Notaire.doc.pdf`**.
-- Keep a markdown stub + `scripts/fetch-user-manual.sh` so operators can
+- Keep a markdown stub + `docs/tools/fetch-user-manual.sh` so operators can
   download the binary without bloating clones.
 - Ignore the downloaded PDF path locally so it is not re-committed.
 

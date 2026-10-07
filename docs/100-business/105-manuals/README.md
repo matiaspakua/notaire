@@ -14,7 +14,7 @@ The ~13 MB `Manual de Usuario Notaire.doc.pdf` is **not** an ordinary git blob.
 Obtain it with:
 
 ```bash
-bash scripts/fetch-user-manual.sh
+bash docs/tools/fetch-user-manual.sh
 ```
 
 Details: [`C_Manual de Usuario/README.md`](C_Manual%20de%20Usuario/README.md) and

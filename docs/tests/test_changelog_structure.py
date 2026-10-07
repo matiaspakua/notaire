@@ -3,7 +3,7 @@
 Guards issue #1185 (CU76): a release section of CHANGELOG.md must not repeat a
 `###` heading (markdownlint MD024, siblings_only), which kept the pipeline red.
 
-Plain stdlib unittest, consistent with scripts/test_prod_compose.py.
+Plain stdlib unittest, consistent with infra/tests/test_prod_compose.py.
 Run with: python3 docs/tests/test_changelog_structure.py
 """
 import re

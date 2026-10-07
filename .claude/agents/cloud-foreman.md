@@ -32,7 +32,7 @@ Constitution loop; specialists write most of the code.
   `main` first (#1132 nested `BudgetResponse.person`).
 - Do **not** enable GitHub Code Scanning default setup alongside
   `.github/workflows/codeql.yml` (SARIF rejection). Use
-  `wait-for-processing: false` and/or `bash scripts/enable-gh-secure.sh --apply`.
+  `wait-for-processing: false` and/or `bash security/enable-gh-secure.sh --apply`.
 - Do **not** open new product PRs (or push docs tips that re-trigger Playwright)
   while another PR’s heavy suite is still queued — serialize; prefer one
   heavy-CI PR at a time (`CI-MERGE-GATE.md` — Runner contention).

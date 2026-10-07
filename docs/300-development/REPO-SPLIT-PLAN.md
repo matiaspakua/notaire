@@ -98,7 +98,7 @@ Further conditions:
 - Constitution sections 4 and 7 amended (Owner-reviewed PR, section 12).
 - Bruno API tests and `pg-integration` stay with the backend module (#1190); a reversal is a
   separate Owner decision recorded in #1190, not a side effect of this plan.
-- `scripts/generate_e2e_coverage_report.py` and the CU-API matrix validator parameterised with
+- `testing/tools/generate_e2e_coverage_report.py` and the CU-API matrix validator parameterised with
   `NOTAIRE_APP_ROOT` and `NOTAIRE_TESTING_ROOT`.
 - A compatibility table in the testing repository maps spec tags to core releases.
 

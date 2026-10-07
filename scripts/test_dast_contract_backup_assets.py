@@ -40,7 +40,7 @@ CI_WORKFLOW = os.path.join(REPO_ROOT, ".github", "workflows", "ci.yml")
 OPENAPI_ARTIFACT = os.path.join(
     REPO_ROOT, "backend-api", "openapi", "openapi.yaml"
 )
-EXPORT_SCRIPT = os.path.join(REPO_ROOT, "scripts", "export-openapi.sh")
+EXPORT_SCRIPT = os.path.join(REPO_ROOT, "backend-api", "tools", "export-openapi.sh")
 BACKUP_SENTINEL = os.path.join(REPO_ROOT, "scripts", "backup-postgres.sh")
 
 

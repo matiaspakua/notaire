@@ -199,6 +199,6 @@ mvn clean install -U
   trackable for ignore-rule hygiene (#1050) even though the Swing Robot suite is
   retired (#811); there is no global `*.txt` ban (use `*.local.txt` for scratch notes).
 - The historical user-manual **PDF** is a GitHub Release asset (`docs-manuals`),
-  not an ordinary git blob. Fetch with `bash scripts/fetch-user-manual.sh`
+  not an ordinary git blob. Fetch with `bash docs/tools/fetch-user-manual.sh`
   (see [ADR-022](../../200-architecture/202-ADR/ADR-022-git-history-rewrite-and-large-binaries.md)
   and [`docs/100-business/105-manuals/`](../../100-business/105-manuals/)).

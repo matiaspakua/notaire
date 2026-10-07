@@ -188,7 +188,7 @@ Unit (80% target) → Integration (80% target) → API (Bruno) → Frontend unit
 | **Unit** | Single class/method (mocked dependencies) | Backend: `src/test/java/.../unit/` |
 | **Integration** | Spring context + repo/service, real PostgreSQL | Backend: `.../integration/` |
 | **API (Bruno)** | Real HTTP contract of every endpoint | `backend-api/api-test/` (297 requests / 508 tests; OpenCollection, Bruno CLI ≥4.x; #953 closed zero-coverage gap) |
-| **API contract (OpenAPI)** | Committed OpenAPI + PR breaking-diff (`oasdiff`) | `backend-api/openapi/openapi.yaml`; regenerate via `bash scripts/export-openapi.sh` (#1067) |
+| **API contract (OpenAPI)** | Committed OpenAPI + PR breaking-diff (`oasdiff`) | `backend-api/openapi/openapi.yaml`; regenerate via `bash backend-api/tools/export-openapi.sh` (#1067) |
 | **DAST (OWASP ZAP)** | Baseline dynamic scan of the running API | `.github/workflows/dast-zap.yml` (weekly + dispatch; warn-first; complements Trivy) |
 | **Backup→restore smoke** | Restoreability once automated backups exist | `.github/workflows/backup-restore-smoke.yml` (skipped/blocked on #256 until `scripts/backup-postgres.sh` lands) |
 | **Frontend unit (Vitest)** | React components/hooks in isolation | `frontend/src/**/*.test.ts` |

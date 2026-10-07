@@ -12,8 +12,8 @@ Asserts:
 - no workflow YAML builds frontend-swing / deprecated-frontend-swing (#811)
 - testing/e2e-swing/ is hard-deprecated (README forbids CI wiring) (#811)
 
-Plain stdlib unittest (JSON), consistent with scripts/test_prod_compose.py.
-Run with: python3 scripts/test_dependabot_hygiene.py
+Plain stdlib unittest (JSON), consistent with infra/tests/test_prod_compose.py.
+Run with: python3 security/tests/test_dependabot_hygiene.py
 
 Also discoverable via: python3 -m unittest discover -s scripts/tests
 (see scripts/tests/test_dependabot_hygiene.py).
@@ -28,7 +28,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 FRONTEND_PACKAGE_JSON = REPO_ROOT / "frontend" / "package.json"
 FRONTEND_LOCKFILE = REPO_ROOT / "frontend" / "package-lock.json"
 CODEOWNERS = REPO_ROOT / ".github" / "CODEOWNERS"

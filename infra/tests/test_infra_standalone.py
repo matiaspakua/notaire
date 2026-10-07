@@ -3,7 +3,7 @@
 Guards issue #1179 (CU77): infra/ is a single, self-contained, documented folder
 that can be split into its own repository.
 
-Plain stdlib unittest + PyYAML, consistent with scripts/test_prod_compose.py.
+Plain stdlib unittest + PyYAML, consistent with infra/tests/test_prod_compose.py.
 Run with: python3 infra/tests/test_infra_standalone.py
 """
 import os
