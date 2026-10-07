@@ -18,7 +18,7 @@
 # -----------------------------
 # This script does not reimplement any check — it calls:
 #   - scripts/validate-sdlc-plan.sh
-#   - scripts/start.sh          (idempotent; blocks until backend+frontend healthy)
+#   - workspace/stack/start.sh          (idempotent; blocks until backend+frontend healthy)
 #   - scripts/preflight.sh --full
 # Add or change a gate in preflight.sh or .github/workflows/ and this script
 # picks it up automatically; nothing to update here.
@@ -107,7 +107,7 @@ phase "sdlc plan validation" bash scripts/validate-sdlc-plan.sh || OVERALL_FAILE
 # 2. Bring the Docker stack up (idempotent; blocks until backend+frontend are healthy)
 # -----------------------------------------------------------------------------
 if docker info >/dev/null 2>&1; then
-    phase "docker stack up" bash scripts/start.sh || OVERALL_FAILED=1
+    phase "docker stack up" bash workspace/stack/start.sh || OVERALL_FAILED=1
 else
     phase_skip "docker stack up" "docker not running — preflight's server-backed suites will fail"
 fi
