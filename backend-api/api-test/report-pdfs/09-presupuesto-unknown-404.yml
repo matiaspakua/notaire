@@ -1,0 +1,23 @@
+info:
+  name: Report - presupuesto unknown id 404
+  type: http
+  seq: 10
+  description: |-
+      ## GET /api/v1/reportes/presupuesto/{idPresupuesto} for a missing budget
+      Traceability: CU01
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/reportes/presupuesto/999999999"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 Not Found", function () { expect(res.getStatus()).to.equal(404); });
+          test("Explains what was not found", function () {
+            expect(res.getBody().message).to.be.a('string').and.not.be.empty;
+          });

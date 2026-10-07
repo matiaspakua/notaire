@@ -1,0 +1,23 @@
+info:
+  name: Report - consultar deuda documentos unknown number 404
+  type: http
+  seq: 14
+  description: |-
+      ## GET /api/v1/reportes/consultar-deuda-documentos for a management number that does not exist
+      Traceability: CU09
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/reportes/consultar-deuda-documentos?numberManagement=999999999"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 Not Found", function () { expect(res.getStatus()).to.equal(404); });
+          test("Explains what was not found", function () {
+            expect(res.getBody().message).to.be.a('string').and.not.be.empty;
+          });

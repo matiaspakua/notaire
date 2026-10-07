@@ -1,12 +1,14 @@
 info:
-  name: Report - declaracion jurada mensual PDF
+  name: Report - presupuesto PDF
   type: http
-  seq: 2
+  seq: 7
   description: |-
-      Traceability: CU25
+      ## GET /api/v1/reportes/presupuesto/{idPresupuesto}
+      Rendered in-house from the current schema since #567 (was a broken Jasper template).
+      Traceability: CU01
 http:
   method: GET
-  url: "{{base_url}}/api/v1/reportes/declaracion-jurada-mensual?anio=2026&mes=9"
+  url: "{{base_url}}/api/v1/reportes/presupuesto/{{report_budget_id}}"
   headers:
     - name: Content-Type
       value: application/json
