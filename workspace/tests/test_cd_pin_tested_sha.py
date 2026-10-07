@@ -10,7 +10,7 @@ time — not workflow_run.head_sha. This suite asserts:
 3. Immutable SHA-tagged image is pushed before latest is moved to that digest
 4. build-and-publish skips when workflow_run.conclusion != success
 
-Run with: python3 scripts/test_cd_pin_tested_sha.py
+Run with: python3 workspace/tests/test_cd_pin_tested_sha.py
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CD_WORKFLOW = os.path.join(REPO_ROOT, ".github", "workflows", "cd.yml")
 
 SUCCESS_IF = (

@@ -4,8 +4,8 @@ Guards issue #1255 (CU76): notaire-shared is retired. backend-api owns its DTOs,
 no live manifest or tooling references the module, and the former folder lives
 only under deprecated/.
 
-Plain stdlib unittest, consistent with scripts/test_repo_hygiene.py.
-Run with: python3 scripts/test_notaire_shared_retired.py
+Plain stdlib unittest, consistent with workspace/tests/test_repo_hygiene.py.
+Run with: python3 workspace/tests/test_notaire_shared_retired.py
 
 Also discoverable via: python3 -m unittest discover -s scripts/tests
 (see scripts/tests/test_notaire_shared_retired.py).
@@ -17,7 +17,7 @@ import unittest
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 MODULE = "notaire-shared"
 POM_NS = {"m": "http://maven.apache.org/POM/4.0.0"}
 
@@ -39,7 +39,6 @@ LIVE_TOOLING = (
     REPO_ROOT / ".github" / "CODEOWNERS",
     REPO_ROOT / ".github" / "workflows",
     REPO_ROOT / "release-please-config.json",
-    REPO_ROOT / "scripts",
     REPO_ROOT / "testing" / "scripts",
     REPO_ROOT / ".cursor",
     REPO_ROOT / ".aisdlc",

@@ -10,7 +10,7 @@ Asserts:
 4. Cosign keyless sign + CycloneDX attest run for the frontend digest
 5. Tag wiring mirrors backend (publish SHA + latest-after-SHA when applicable)
 
-Run with: python3 scripts/test_frontend_ghcr_publish.py
+Run with: python3 workspace/tests/test_frontend_ghcr_publish.py
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CD_WORKFLOW = os.path.join(REPO_ROOT, ".github", "workflows", "cd.yml")
 
 

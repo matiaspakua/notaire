@@ -10,7 +10,7 @@ Invariants:
 - Reports remain discoverable via upload-artifact and/or GITHUB_STEP_SUMMARY.
 - docs/wiki/cicd-reports/ is gitignored and untracked.
 
-Run with: python3 scripts/test_no_bot_report_commits.py
+Run with: python3 workspace/tests/test_no_bot_report_commits.py
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WORKFLOWS_DIR = os.path.join(REPO_ROOT, ".github", "workflows")
 GITIGNORE_PATH = os.path.join(REPO_ROOT, ".gitignore")
 

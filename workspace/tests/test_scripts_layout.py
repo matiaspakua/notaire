@@ -81,8 +81,9 @@ def tracked_text_files():
 
 
 class ScriptsLayoutTest(unittest.TestCase):
-    def test_the_scripts_folder_is_gone(self):
-        self.assertFalse((REPO_ROOT / "scripts").exists(), "scripts/ was emptied into the modules (#1307)")
+    def test_no_file_is_tracked_under_scripts(self):
+        out = subprocess.run(["git", "ls-files", "scripts"], cwd=REPO_ROOT, capture_output=True, text=True, check=True)
+        self.assertEqual("", out.stdout, "scripts/ was emptied into the modules (#1307)")
 
     def test_moved_scripts_exist_at_their_new_path(self):
         missing = [new for new in MOVED.values() if not (REPO_ROOT / new).is_file()]
