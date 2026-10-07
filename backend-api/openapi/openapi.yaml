@@ -7988,6 +7988,9 @@ paths:
       - Usuarios
   /api/v1/usuarios/logout:
     post:
+      description: 'Revoca en el servidor el JWT enviado por Bearer o cookie, de modo que no puede reutilizarse aunque no
+        haya expirado; las demás sesiones del usuario siguen activas. Sin token o con un token inválido responde igual (issue
+        #676).'
       operationId: logout
       responses:
         '200':
@@ -7996,8 +7999,8 @@ paths:
               schema:
                 additionalProperties: {}
                 type: object
-          description: Auth cookie cleared
-      summary: Cerrar sesión (limpia cookie HttpOnly)
+          description: Token revoked (if any) and auth cookie cleared
+      summary: Cerrar sesión (revoca el token presentado y limpia cookie HttpOnly)
       tags:
       - Usuarios
   /api/v1/usuarios/persona/{idPerson}:

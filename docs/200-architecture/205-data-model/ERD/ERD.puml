@@ -39,6 +39,7 @@ package "Subjects and Security" {
   entity "roles" as roles
   entity "role_modules" as role_modules
   entity "audit_records" as audit_records
+  entity "revoked_tokens" as revoked_tokens
 }
 
 package "Budgeting and Payments" {

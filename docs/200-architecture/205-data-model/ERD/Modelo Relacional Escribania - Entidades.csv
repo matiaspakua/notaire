@@ -56,6 +56,9 @@ audit_records,Débil,date,,no,Fecha/Hora,,,,Marca temporal exacta de la transacc
 audit_records,Débil,module,,no,Texto,,,,Módulo funcional afectado
 audit_records,Débil,operation_detail,,no,Texto,,,,Detalle de datos modificados o acción ejecutada
 audit_records,Débil,fk_id_usuario,FK,si,Entero,,x,x,Operador responsable de la acción
+revoked_tokens,Fuerte,jti,PK,no,Texto,x,,,Identificador único del JWT revocado (claim `jti`)
+revoked_tokens,Fuerte,expires_at,,no,Fecha/Hora,,,,Vencimiento del token; después de esta fecha la fila puede purgarse
+revoked_tokens,Fuerte,revoked_at,,no,Fecha/Hora,,,,Momento del cierre de sesión que revocó el token
 budgets,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 budgets,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del presupuesto
 budgets,Fuerte,number,,no,Entero,,,,Número correlativo del presupuesto

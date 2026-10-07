@@ -2,6 +2,8 @@ package com.licensis.notaire.adapter.in.web.user;
 
 import com.licensis.notaire.config.AuthCookieService;
 import com.licensis.notaire.config.JwtTokenService;
+import com.licensis.notaire.config.RequestTokenResolver;
+import com.licensis.notaire.config.TokenRevocationService;
 import com.licensis.notaire.dto.DtoPerson;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.business.User;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpHeaders;
@@ -52,17 +55,20 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
     private final AuthCookieService authCookieService;
+    private final TokenRevocationService tokenRevocationService;
 
     public UserController(UserRepository userRepository, JwtTokenService jwtTokenService,
                              MetricsUtil metricsUtil, PasswordEncoder passwordEncoder,
                              LoginAttemptService loginAttemptService,
-                             AuthCookieService authCookieService) {
+                             AuthCookieService authCookieService,
+                             TokenRevocationService tokenRevocationService) {
         this.userRepository = userRepository;
         this.jwtTokenService = jwtTokenService;
         this.metricsUtil = metricsUtil;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
         this.authCookieService = authCookieService;
+        this.tokenRevocationService = tokenRevocationService;
     }
 
     record PersonInfo(Integer idPerson, String name, String lastName) {}
@@ -294,11 +300,15 @@ public class UserController {
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Auth cookie cleared")
+            @ApiResponse(responseCode = "200", description = "Token revoked (if any) and auth cookie cleared")
     })
     @PostMapping("/logout")
-    @Operation(summary = "Cerrar sesión (limpia cookie HttpOnly)")
-    public ResponseEntity<Map<String, Object>> logout() {
+    @Operation(summary = "Cerrar sesión (revoca el token presentado y limpia cookie HttpOnly)",
+            description = "Revoca en el servidor el JWT enviado por Bearer o cookie, de modo que no puede "
+                    + "reutilizarse aunque no haya expirado; las demás sesiones del usuario siguen activas. "
+                    + "Sin token o con un token inválido responde igual (issue #676).")
+    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
+        tokenRevocationService.revoke(RequestTokenResolver.resolve(request, authCookieService.cookieName()));
         ResponseCookie cleared = authCookieService.clearSessionCookie();
         Map<String, Object> body = new HashMap<>();
         body.put("ok", true);

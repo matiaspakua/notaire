@@ -29,7 +29,7 @@ CSV_FILE = ERD_DIR / "Modelo Relacional Escribania - Entidades.csv"
 
 PACKAGES = OrderedDict([
     ("Subjects and Security", ["people", "identification_types", "substitutions", "users", "roles", "role_modules",
-                               "audit_records"]),
+                               "audit_records", "revoked_tokens"]),
     ("Budgeting and Payments", ["budgets", "concepts", "budget_templates", "items", "payments"]),
     ("Deed Management and Workflows", ["deed_managements", "management_statuses", "history", "procedure_types",
                                        "procedures", "person_procedures", "procedure_folders", "properties",
