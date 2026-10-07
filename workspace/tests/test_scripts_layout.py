@@ -17,6 +17,18 @@ MOVED = {
     "scripts/logs.sh": "workspace/stack/logs.sh",
     "scripts/start-all.sh": "workspace/stack/start-all.sh",
     "scripts/setup-pgadmin.sh": "workspace/stack/setup-pgadmin.sh",
+    "scripts/export-openapi.sh": "backend-api/tools/export-openapi.sh",
+    "scripts/generate-coverage-snapshot.py": "backend-api/tools/generate-coverage-snapshot.py",
+    "scripts/spotless-fallback.sh": "backend-api/tools/spotless-fallback.sh",
+    "scripts/test_generate_coverage_snapshot.py": "backend-api/tools/tests/test_generate_coverage_snapshot.py",
+    "scripts/fetch-user-manual.sh": "docs/tools/fetch-user-manual.sh",
+    "scripts/generate_e2e_coverage_report.py": "testing/tools/generate_e2e_coverage_report.py",
+    "scripts/test_generate_e2e_coverage_report.py": "testing/tests/test_generate_e2e_coverage_report.py",
+    "scripts/enable-gh-secure.sh": "security/enable-gh-secure.sh",
+    "scripts/test_dependabot_hygiene.py": "security/tests/test_dependabot_hygiene.py",
+    "scripts/test_image_pins_and_dependabot.py": "security/tests/test_image_pins_and_dependabot.py",
+    "scripts/test_prod_compose.py": "infra/tests/test_prod_compose.py",
+    "scripts/test_dev_stack_isolation.py": "infra/tests/test_dev_stack_isolation.py",
 }
 HISTORY = (
     "CHANGELOG.md", "deprecated/", "docs/000-archive/", "docs/openspec/changes/archive/",
