@@ -17,3 +17,10 @@ POST /api/v1/pagos the request property `amount` became required
 POST /api/v1/pagos the request property `idBudget` became required
 POST /api/v1/pagos the `amount` request property's exclusiveMinimum was set to `0.00`
 PUT /api/v1/pagos/{id} the `amount` request property's exclusiveMinimum was set to `0.00`
+
+# #596 (CU13): GET /api/v1/historial answers a Spring Data page (default 20,
+# optional page/size/sort query parameters) instead of the whole, ever-growing
+# history table. No shipped client reads this list: the frontend uses
+# GET /api/v1/gestiones/{id}/historial and GET /api/v1/historial/gestion/{id},
+# both unchanged; Bruno history/03 moved to the page shape in the same PR.
+GET /api/v1/historial the response's body `type` changed from `array<object>` to `object` for status `200`
