@@ -4,7 +4,7 @@
 
 Initial administrator seeding at startup.
 
-## MODIFIED Requirements
+## ADDED Requirements
 
 ### Requirement: No default admin password outside dev/test
 

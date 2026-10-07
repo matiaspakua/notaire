@@ -4,7 +4,7 @@
 
 Automated semver releases via release-please.
 
-## MODIFIED Requirements
+## ADDED Requirements
 
 ### Requirement: Release PR identity
 
