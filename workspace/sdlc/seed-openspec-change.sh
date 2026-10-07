@@ -7,11 +7,11 @@
 # `openspec new change` only creates `.openspec.yaml`. Agents that write
 # proposal/design/tasks/traceability from scratch often omit mandatory headings
 # (see #1049 / #1062). Seeding the schema templates gives every agent the same
-# skeleton to fill; `scripts/validate-sdlc-plan.sh` then rejects leftover
+# skeleton to fill; `workspace/sdlc/validate-sdlc-plan.sh` then rejects leftover
 # `<!-- ... -->` section bodies.
 #
 # USAGE
-#   bash scripts/seed-openspec-change.sh <change-name> \
+#   bash workspace/sdlc/seed-openspec-change.sh <change-name> \
 #     [--issue N] [--use-case "CU76 — …"] [--branch "type/N_desc"] [--create]
 #
 # --create  run `openspec new change <name>` when the folder is missing
@@ -20,7 +20,7 @@
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TEMPLATES="$REPO_ROOT/docs/openspec/schemas/notaire-sdlc/templates"
 CHANGES_DIR="$REPO_ROOT/docs/openspec/changes"
 
@@ -32,7 +32,7 @@ CREATE=0
 
 usage() {
   cat <<'EOF'
-Usage: bash scripts/seed-openspec-change.sh <change-name> [options]
+Usage: bash workspace/sdlc/seed-openspec-change.sh <change-name> [options]
 
 Options:
   --issue N              GitHub Issue number (digits only)
@@ -158,4 +158,4 @@ fill_known_values "$CHANGE_DIR/traceability.md"
 echo "Seeded OpenSpec change: $CHANGE_DIR"
 echo "Next: fill every ## section (keep headings), then:"
 echo "  openspec validate $CHANGE_NAME --strict"
-echo "  bash scripts/validate-sdlc-plan.sh $CHANGE_NAME"
+echo "  bash workspace/sdlc/validate-sdlc-plan.sh $CHANGE_NAME"

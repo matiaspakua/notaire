@@ -38,15 +38,15 @@
 # check is skipped with a note, never silently passed as "verified".
 #
 # USAGE
-#   bash scripts/validate-sdlc-plan.sh                 # every active change
-#   bash scripts/validate-sdlc-plan.sh <change-name>   # one change
-#   bash scripts/validate-sdlc-plan.sh --list          # what is checked, and why
+#   bash workspace/sdlc/validate-sdlc-plan.sh                 # every active change
+#   bash workspace/sdlc/validate-sdlc-plan.sh <change-name>   # one change
+#   bash workspace/sdlc/validate-sdlc-plan.sh --list          # what is checked, and why
 #
 # Exit code is non-zero if any active change has an incomplete plan.
 
 set -uo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CHANGES_DIR="$REPO_ROOT/docs/openspec/changes"
 SCHEMA_NAME="notaire-sdlc"
 

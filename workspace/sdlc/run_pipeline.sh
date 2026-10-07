@@ -6,7 +6,7 @@
 # ---
 # CONSTITUTION.md Gate 4 requires CI-equivalent evidence before a PR is ready
 # for review, and .claude/rules/ai-agent-workflow.md Step 5 requires the full
-# suite (unit + integration + E2E) to pass before committing. scripts/preflight.sh
+# suite (unit + integration + E2E) to pass before committing. workspace/sdlc/preflight.sh
 # already mirrors every CI gate, but it assumes the Docker stack is already
 # running for its server-backed suites and it only prints to the terminal —
 # there is no single, reviewable artifact proving a branch is ready. This
@@ -17,9 +17,9 @@
 # COMPOSITION, NOT DUPLICATION
 # -----------------------------
 # This script does not reimplement any check — it calls:
-#   - scripts/validate-sdlc-plan.sh
+#   - workspace/sdlc/validate-sdlc-plan.sh
 #   - workspace/stack/start.sh          (idempotent; blocks until backend+frontend healthy)
-#   - scripts/preflight.sh --full
+#   - workspace/sdlc/preflight.sh --full
 # Add or change a gate in preflight.sh or .github/workflows/ and this script
 # picks it up automatically; nothing to update here.
 #
@@ -35,14 +35,14 @@
 #                                     linted, so pre-existing docs are unaffected.
 #
 # USAGE
-#   bash scripts/run_pipeline.sh
+#   bash workspace/sdlc/run_pipeline.sh
 #
 # Dashboard + logs are written under reports/pipeline/<timestamp>/ (git-ignored); previous runs are
 # deleted first, so only the latest run is kept.
 # Exit code is non-zero if any blocking gate fails.
 set -uo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT" || exit 1
 
 for arg in "$@"; do
@@ -101,7 +101,7 @@ OVERALL_FAILED=0
 # -----------------------------------------------------------------------------
 # 1. SDLC plan validation (OpenSpec Gate 1-3 mechanical check)
 # -----------------------------------------------------------------------------
-phase "sdlc plan validation" bash scripts/validate-sdlc-plan.sh || OVERALL_FAILED=1
+phase "sdlc plan validation" bash workspace/sdlc/validate-sdlc-plan.sh || OVERALL_FAILED=1
 
 # -----------------------------------------------------------------------------
 # 2. Bring the Docker stack up (idempotent; blocks until backend+frontend are healthy)
@@ -116,7 +116,7 @@ fi
 # 3. Everything preflight.sh --full covers (format, lint, backend, frontend,
 #    Bruno API tests, Playwright E2E, Docker build/smoke — see preflight.sh --list)
 # -----------------------------------------------------------------------------
-phase "preflight --full" bash scripts/preflight.sh --full || OVERALL_FAILED=1
+phase "preflight --full" bash workspace/sdlc/preflight.sh --full || OVERALL_FAILED=1
 
 # -----------------------------------------------------------------------------
 # 4. markdown-lint — ratchet vs origin/main (same policy as the Spotless gate,

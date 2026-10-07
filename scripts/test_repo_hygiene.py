@@ -116,7 +116,7 @@ def _pdf_fetch_docs_present() -> bool:
         USER_MANUAL_DIR / "OBTAINING.md",
         REPO_ROOT / "docs" / "100-business" / "105-manuals" / "README.md",
         REPO_ROOT / "docs" / "300-development" / "301-setup" / "README.md",
-        REPO_ROOT / "scripts" / "fetch-user-manual.sh",
+        REPO_ROOT / "docs" / "tools" / "fetch-user-manual.sh",
     ]
     keywords = re.compile(
         r"(gh\s+release|GitHub\s+Release|git\s+lfs|Manual de Usuario.*\.pdf|"

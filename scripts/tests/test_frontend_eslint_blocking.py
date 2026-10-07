@@ -13,7 +13,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[2]
 FRONTEND_DIR = REPO_ROOT / "frontend"
 FRONTEND_CI = REPO_ROOT / ".github/workflows/frontend-ci.yml"
-PREFLIGHT = REPO_ROOT / "scripts/preflight.sh"
+PREFLIGHT = REPO_ROOT / "workspace/sdlc/preflight.sh"
 ESLINT_CONFIG = REPO_ROOT / "frontend/eslint.config.mjs"
 PACKAGE_JSON = REPO_ROOT / "frontend/package.json"
 ESLINT_BIN = FRONTEND_DIR / "node_modules" / ".bin" / "eslint"

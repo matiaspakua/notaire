@@ -10,7 +10,7 @@ import textwrap
 import unittest
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-SCRIPTS = os.path.join(REPO, "scripts")
+SCRIPTS = os.path.join(REPO, "workspace", "sdlc")
 TEMPLATES = os.path.join(REPO, "docs", "openspec", "schemas", "notaire-sdlc", "templates")
 
 
@@ -33,7 +33,7 @@ def _run_in_temp_repo(mode: str, change_dir: str | None = None, seed_args: list[
         os.makedirs(os.path.dirname(tmpl_dst), exist_ok=True)
         shutil.copytree(TEMPLATES, tmpl_dst)
 
-        scripts_dst = os.path.join(root, "scripts")
+        scripts_dst = os.path.join(root, "workspace", "sdlc")
         os.makedirs(scripts_dst)
         for name in ("validate-sdlc-plan.sh", "seed-openspec-change.sh"):
             src = os.path.join(SCRIPTS, name)
@@ -331,7 +331,7 @@ class LeftoverCommentRejectionTest(unittest.TestCase):
         changes = os.path.join(root, "docs", "openspec", "changes")
         os.makedirs(changes)
         shutil.copytree(change, os.path.join(changes, "demo-change"))
-        scripts = os.path.join(root, "scripts")
+        scripts = os.path.join(root, "workspace", "sdlc")
         os.makedirs(scripts)
         shutil.copy(os.path.join(SCRIPTS, "validate-sdlc-plan.sh"), scripts)
         # Stub gh so live Issue checks are skipped (auth status fails).
@@ -375,7 +375,7 @@ class LeftoverCommentRejectionTest(unittest.TestCase):
         changes = os.path.join(root, "docs", "openspec", "changes")
         os.makedirs(changes)
         shutil.copytree(change, os.path.join(changes, "no-bc-change"))
-        scripts = os.path.join(root, "scripts")
+        scripts = os.path.join(root, "workspace", "sdlc")
         os.makedirs(scripts)
         shutil.copy(os.path.join(SCRIPTS, "validate-sdlc-plan.sh"), scripts)
         bin_dir = os.path.join(root, "bin")
@@ -423,11 +423,11 @@ class SeedOpenspecChangeTest(unittest.TestCase):
             f.write("schema: notaire-sdlc\n")
         tmpl_dst = os.path.join(self.root, "docs", "openspec", "schemas", "notaire-sdlc", "templates")
         shutil.copytree(TEMPLATES, tmpl_dst)
-        scripts = os.path.join(self.root, "scripts")
+        scripts = os.path.join(self.root, "workspace", "sdlc")
         os.makedirs(scripts)
         seed_src = os.path.join(SCRIPTS, "seed-openspec-change.sh")
         if not os.path.isfile(seed_src):
-            self.fail("scripts/seed-openspec-change.sh is missing — write it after observing RED")
+            self.fail("workspace/sdlc/seed-openspec-change.sh is missing — write it after observing RED")
         shutil.copy(seed_src, scripts)
         self.scripts = scripts
         self.change = changes

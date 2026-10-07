@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import unittest
 
-SCRIPTS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SCRIPTS = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "workspace", "sdlc")
 
 # A git hook (pre-push runs these suites) exports GIT_DIR and friends; they would
 # point the temp repos, and the scripts under test, at the outer repository.
@@ -211,13 +211,13 @@ class AgentRulesTest(unittest.TestCase):
 class SchemaLineTest(unittest.TestCase):
     def test_validator_fails_change_without_schema_line(self):
         root = tempfile.mkdtemp(prefix="schema-")
-        os.makedirs(os.path.join(root, "scripts"))
-        shutil.copy(os.path.join(SCRIPTS, "validate-sdlc-plan.sh"), os.path.join(root, "scripts"))
+        os.makedirs(os.path.join(root, "workspace", "sdlc"))
+        shutil.copy(os.path.join(SCRIPTS, "validate-sdlc-plan.sh"), os.path.join(root, "workspace", "sdlc"))
         change = os.path.join(root, "docs/openspec/changes/no-schema")
         os.makedirs(change)
         with open(os.path.join(change, ".openspec.yaml"), "w") as f:
             f.write('change_id: "no-schema"\n')
-        result = subprocess.run(["bash", "scripts/validate-sdlc-plan.sh"], cwd=root, capture_output=True, text=True)
+        result = subprocess.run(["bash", "workspace/sdlc/validate-sdlc-plan.sh"], cwd=root, capture_output=True, text=True)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("schema", result.stdout)
 

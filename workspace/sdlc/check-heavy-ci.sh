@@ -10,7 +10,7 @@
 # `gh run list` for the parent heavy workflows so queued/pending runs are
 # reported as pending (not bare missing) — still fails the gate.
 #
-# USAGE  bash scripts/check-heavy-ci.sh <pr-number>
+# USAGE  bash workspace/sdlc/check-heavy-ci.sh <pr-number>
 set -euo pipefail
 
 PR="${1:?usage: check-heavy-ci.sh <pr-number>}"

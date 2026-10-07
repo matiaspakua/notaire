@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Guards scripts/run_pipeline.sh for issue #856:
+Guards workspace/sdlc/run_pipeline.sh for issue #856:
 
 Goal: run_pipeline.sh is the single, mandatory, dashboarded pre-PR gate
 (CONSTITUTION.md Gate 4 precondition) — it composes the existing gates rather
@@ -17,7 +17,7 @@ import stat
 import unittest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SCRIPT_PATH = os.path.join(REPO_ROOT, "scripts", "run_pipeline.sh")
+SCRIPT_PATH = os.path.join(REPO_ROOT, "workspace", "sdlc", "run_pipeline.sh")
 GITIGNORE_PATH = os.path.join(REPO_ROOT, ".gitignore")
 
 

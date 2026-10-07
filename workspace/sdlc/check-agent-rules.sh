@@ -9,10 +9,10 @@
 # Also rejects obsolete migration-era targets in .claude/rules/refactoring.md (#1070).
 # Run by sdlc-process.yml and preflight.sh.
 #
-# USAGE  bash scripts/check-agent-rules.sh [repo-root]
+# USAGE  bash workspace/sdlc/check-agent-rules.sh [repo-root]
 set -uo pipefail
 
-ROOT="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+ROOT="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 TOPS='docs|scripts|\.claude|\.github|backend-api|frontend|openspec|local-ai|infra|testing'
 
 files=()
