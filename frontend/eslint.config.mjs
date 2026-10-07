@@ -11,6 +11,5 @@ export default defineConfig([
     "build/**",
     "coverage/**",
     "next-env.d.ts",
-    "poc_motion_js/**",
   ]),
 ]);
