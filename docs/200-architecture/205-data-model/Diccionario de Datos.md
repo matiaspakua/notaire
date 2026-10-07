@@ -6,7 +6,7 @@
 **Motor de Base de Datos:** PostgreSQL 16  
 **Mecanismo de Migración:** Flyway (V1 a V41)  
 **Fecha de actualización:** 4 de Octubre de 2026  
-**Estado:** Sincronizado con el esquema PostgreSQL activo, las migraciones Flyway vigentes y la modelización JPA del backend. Regenerado desde el esquema migrado (#1222): 36/36 tablas Flyway documentadas, 49 FKs coherentes, nombres de columna actuales; `identificaciones` (heredada) archivada. Incluye la corrección de cardinalidad Presupuesto–Trámite (V14), workflows (V7/V8) y roles/permisos (V9).
+**Estado:** Sincronizado con el esquema PostgreSQL activo, las migraciones Flyway vigentes y la modelización JPA del backend. Regenerado desde el esquema migrado (#1222): 37/37 tablas Flyway documentadas, 49 FKs coherentes, nombres de columna actuales; `identificaciones` (heredada) archivada. Incluye la corrección de cardinalidad Presupuesto–Trámite (V14), workflows (V7/V8) y roles/permisos (V9).
 
 ---
 
@@ -30,9 +30,9 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 
 ---
 
-## 2. Índice General de Tablas (36 tablas, Flyway V1–V41)
+## 2. Índice General de Tablas (37 tablas, Flyway V1–V43)
 
-**Nota sobre Entidades Heredadas:** La entidad `identificaciones` se documentó en versiones previas pero nunca fue materializada en las migraciones Flyway activas (V1–V41). Existe solo en los scripts archivados de inicialización (`docs/000-archive/init-db/`) y fue utilizada en el modelo JPA legacy. Se considera un componente de normalización 3FN planificado pero no implementado. Véase la sección "Notas Técnicas" al pie para detalles.
+**Nota sobre Entidades Heredadas:** La entidad `identificaciones` se documentó en versiones previas pero nunca fue materializada en las migraciones Flyway activas (V1–V43). Existe solo en los scripts archivados de inicialización (`docs/000-archive/init-db/`) y fue utilizada en el modelo JPA legacy. Se considera un componente de normalización 3FN planificado pero no implementado. Véase la sección "Notas Técnicas" al pie para detalles.
 
 | Nº | Tabla | Paquete / Módulo | Tipo Entidad | Descripción |
 |---|---|---|---|---|
@@ -72,6 +72,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 | 34 | [notebooks](#34-notebooks) | Protocolos | Fuerte | Cuadernos anuales de protocolo de un escribano |
 | 35 | [procedure_folders](#35-procedure_folders) | Gestión Notarial | Débil | Carpetas numeradas de los trámites de una gestión |
 | 36 | [registration_drafts](#36-registration_drafts) | Protocolos | Débil | Borradores de inscripción registral de escrituras |
+| 37 | [revoked_tokens](#37-revoked_tokens) | Seguridad | Fuerte | Identificadores de JWT revocados por cierre de sesión hasta su expiración |
 
 ---
 
@@ -79,7 +80,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
 
 ### Revisión del esquema activo
 
-La base de datos actual refleja la evolución real del sistema a través de Flyway V1–V41. Los cambios relevantes para la integridad del modelo son:
+La base de datos actual refleja la evolución real del sistema a través de Flyway V1–V43. Los cambios relevantes para la integridad del modelo son:
 
 - V1: esquema base relacional con entidades de sujetos, protocolo, trámites, presupuestos y documentación.
 - V3/V4: se corrigen columnas faltantes en `items`, `folio_types` y `testimonies`.
@@ -89,6 +90,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 - V9: se incorporan `roles` y `role_modules`, y se enlaza `users` con `fk_id_role`.
 - V13: `procedures.nombre` y `procedures.numero` pasan a ser opcionales para coincidir con las entidades de negocio.
 - V14: se elimina la FK redundante `budgets.fk_id_tramite`; la relación canónica quedó en `procedures.fk_id_presupuesto` (1:N).
+- V43: se incorpora `revoked_tokens`, la lista de revocación de JWT por cierre de sesión (issue #676); sin FK.
 
 ### Matriz de entidades, PK/FK y mecanismo de compensación
 
@@ -756,6 +758,18 @@ Borradores de inscripción de una escritura ante el Registro y su seguimiento.
 
 ---
 
+### 37. `revoked_tokens`
+
+Lista de revocación de JWT (issue #676): el cierre de sesión guarda el identificador (`jti`) del token presentado hasta su vencimiento y el filtro de autenticación rechaza todo token listado. Nunca se guarda el token. Las filas vencidas se purgan en el siguiente cierre de sesión.
+
+| Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
+|---|---|---|---|---|---|---|---|
+| `jti` | VARCHAR(64) | Sí | No | Sí | — | — | Identificador único del JWT revocado (claim `jti`) |
+| `expires_at` | TIMESTAMP WITH TIME ZONE | No | No | Sí | — | — | Vencimiento del token; después de esta fecha la fila puede purgarse |
+| `revoked_at` | TIMESTAMP WITH TIME ZONE | No | No | Sí | — | — | Momento del cierre de sesión que revocó el token |
+
+---
+
 ## 5. Matriz de Integridad Referencial Consolidada
 
 | Tabla Origen | Columna FK | Tabla Destino | Columna PK | Acción ON DELETE |
@@ -816,7 +830,7 @@ Borradores de inscripción de una escritura ante el Registro y su seguimiento.
 
 ### 6.1 Entidad Heredada: `identificaciones`
 
-**Estado:** Archivada, no materializada en Flyway V1–V41.
+**Estado:** Archivada, no materializada en Flyway V1–V43.
 
 La entidad `identificaciones` fue documentada y existe en los scripts de inicialización heredados (`docs/000-archive/init-db/orig/01_initial_schema.sql`), pero nunca fue creada mediante las migraciones Flyway. Esta tabla era una propuesta de normalización 3FN para permitir múltiples documentos de identidad por persona (DNI, CUIT, Pasaporte, etc.).
 
@@ -829,19 +843,19 @@ La entidad `identificaciones` fue documentada y existe en los scripts de inicial
 
 ### 6.2 Entidades de Apoyo (Supporting Entities) sin Caso de Uso Independiente
 
-Las siguientes 19 entidades (59% de la base de datos) no poseen un Caso de Uso independiente. Se clasifican como **entidades maestras, plantillas o de compensación** que se crean y modifican indirectamente dentro de los flujos principales:
+Las siguientes 20 entidades (61% de la base de datos) no poseen un Caso de Uso independiente. Se clasifican como **entidades maestras, plantillas o de compensación** que se crean y modifican indirectamente dentro de los flujos principales:
 
 | Categoría | Entidades | Observación |
 |-----------|-----------|-------------|
 | **Maestros/Catálogos** | `document_types`, `folio_types`, `procedure_types`, `identification_types`, `concepts`, `management_statuses` | Se crean vía CRUD administrativo, referenciados por CUs de negocio. |
 | **Plantillas** | `budget_templates`, `procedure_templates` | Se definen una única vez y reutilizan en múltiples CUs (presupuestación, documentación). |
-| **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `users`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
+| **Compensación/Seguridad** | `roles`, `role_modules`, `audit_records`, `users`, `revoked_tokens`, `workflow_definition`, `workflow_node`, `workflow_transition` | Se crean durante instalación/configuración del sistema o automáticamente por auditoría/workflows. |
 | **Asociativas Operacionales** | `submitted_documents`, `person_procedures`, `folio_copies`, `testimony_movements`, `substitutions`, `history`, `properties`, `items`, `payments` | Tablas débiles/asociativas creadas como parte de CUs que gestionan entidades fuertes (trámites, escrituras, presupuestos). |
 
 **Patrón de Cobertura:**
 
-- 13 entidades **fuertes** (41%) poseen CUs explícitas.
-- 19 entidades **de apoyo/asociativas** (59%) son creadas por las 13 CUs principales o durante operaciones administrativas.
+- 13 entidades **fuertes** (39%) poseen CUs explícitas.
+- 20 entidades **de apoyo/asociativas** (61%) son creadas por las 13 CUs principales o durante operaciones administrativas.
 
 Este patrón es esperado en sistemas notariales donde la mayoría del trabajo se concentra en trámites, escrituras y presupuestos, mientras que los catálogos y configuración son actividades de administración de bajo volumen.
 
@@ -849,12 +863,12 @@ Este patrón es esperado en sistemas notariales donde la mayoría del trabajo se
 
 **Validación 2026-10-04:**
 
-- ✅ 36/36 tablas Flyway presentes en Diccionario de Datos (regeneradas por `docs/tools/generate_data_dictionary.py`).
+- ✅ 37/37 tablas Flyway presentes en Diccionario de Datos (regeneradas por `docs/tools/generate_data_dictionary.py`).
 - ✅ 49 Foreign Keys documentadas correctamente (matriz de la sección 5 igual al esquema).
 - ✅ Cardinalidad V14 (presupuesto-trámite) reflejada en Diccionario.
 - ✅ Workflows (V7/V8) y RBAC (V9) presentes y coherentes.
 - ⚠️  1 entidad heredada (`identificaciones`) archivada; decisión de diseño documentada.
-- ℹ️  19 entidades sin CU independiente; clasificadas como "supporting" (normal para dominios notariales).
+- ℹ️  20 entidades sin CU independiente; clasificadas como "supporting" (normal para dominios notariales).
 
 **Mantenimiento:** Cada migración Flyway debe ir acompañada, en el mismo commit, de `python3 docs/tools/generate_data_dictionary.py` (con PostgreSQL migrado) y de la descripción de cada tabla o columna nueva: el generador deja `TODO` y `docs/tests/test_data_dictionary_sync.py` (CI) falla mientras quede alguno o el Diccionario difiera del esquema. Las secciones 3 y 6 y los textos introductorios son manuales.
 

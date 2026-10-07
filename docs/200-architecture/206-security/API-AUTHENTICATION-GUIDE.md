@@ -45,6 +45,7 @@ API client ──Authorization: Bearer <token>──────────► 
 
 | Claim | Value |
 |-------|-------|
+| `jti` | random UUID identifying this token, used for logout revocation (issue #676) |
 | `sub` | username (e.g., `admin`) |
 | `iat` | issued-at timestamp |
 | `exp` | expiry timestamp (`iat + jwt.expiration-ms`) |
@@ -72,7 +73,8 @@ anyone with repo read access forge valid tokens for any user). Set
 | Class | Location | Responsibility |
 |-------|----------|---------------|
 | `JwtTokenService` | `config/` | Generate, validate, and parse tokens |
-| `JwtAuthenticationFilter` | `config/` | Extract Bearer **or** auth cookie, set `SecurityContext` |
+| `JwtAuthenticationFilter` | `config/` | Extract Bearer **or** auth cookie, skip revoked tokens, set `SecurityContext` |
+| `TokenRevocationService` | `config/` | Revoke the presented token on logout; answer whether a token was revoked (`revoked_tokens`) |
 | `AuthCookieService` | `config/` | Build/clear HttpOnly session cookie (`COOKIE_SECURE`) |
 | `SecurityAndCorsConfig` | `config/` | Security filter chain — API chain registers the JWT filter; login/logout permitAll |
 
@@ -91,6 +93,7 @@ Production frontend CSP uses a per-request nonce for `script-src` and forbids
 ```java
 // JwtTokenService.generateToken(username)
 return Jwts.builder()
+    .id(UUID.randomUUID().toString())   // jti, see Logout and revocation
     .subject(username)
     .issuedAt(new Date())
     .expiration(new Date(System.currentTimeMillis() + expirationMs))
@@ -159,9 +162,16 @@ A non-administrator receives `403` from `apiAccessDeniedHandler`. The frontend m
 | DB error | 200 | `{ "valido": false }` |
 | Missing/invalid/expired JWT on a protected endpoint | 401 | `Unauthorized` (via `apiAuthenticationEntryPoint`) |
 | Valid JWT of a deleted or inactive user | 401 | `Unauthorized` |
+| JWT revoked by logout | 401 | `Unauthorized` |
 | Authenticated non-administrator on an administrator-only endpoint | 403 | `Forbidden` (via `apiAccessDeniedHandler`) |
 
 The login endpoint always returns HTTP 200 to avoid information leakage. The `valido` field in the response distinguishes success from failure.
+
+## Logout and revocation
+
+`POST /api/v1/usuarios/logout` revokes the token the request presents (Bearer first, then the auth cookie) and clears the cookie (issue #676). Revocation stores only the token id (`jti`) and its expiry in `revoked_tokens` (Flyway V43); `JwtAuthenticationFilter` ignores any token whose id is listed, so a copied token cannot be replayed after logout. Only that token is revoked: other sessions of the same user keep working. Rows are purged once the token has expired, on the next logout. Logout without a token, or with an invalid one, still answers `200 {"ok": true}`.
+
+Not covered yet (issue #676): changing a password does not end existing sessions, and tokens issued before V43 carry no `jti`, so they cannot be revoked and simply expire.
 
 ## Token refresh strategy
 

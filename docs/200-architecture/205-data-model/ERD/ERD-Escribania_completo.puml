@@ -116,6 +116,13 @@ package "Subjects and Security" {
     fk_id_usuario : INT <<FK>>
     version : INT
   }
+
+  entity "revoked_tokens" as revoked_tokens {
+    * jti : TEXT <<PK>>
+    --
+    * expires_at : TIMESTAMP
+    * revoked_at : TIMESTAMP
+  }
 }
 
 package "Budgeting and Payments" {

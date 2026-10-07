@@ -249,7 +249,8 @@ class AdditionalControllersTest {
                     org.springframework.http.ResponseCookie.from("notaire-auth-token", "mock")
                             .httpOnly(true).path("/").sameSite("Lax").build());
             var mvc = standaloneSetup(new UserController(repo, jwtSvc, metrics, passwordEncoder,
-                    new com.licensis.notaire.security.LoginAttemptService(5, 900000), authCookies)).build();
+                    new com.licensis.notaire.security.LoginAttemptService(5, 900000), authCookies,
+                    mock(com.licensis.notaire.config.TokenRevocationService.class))).build();
             User u = new User(1, "admin", "abc", true, "Escribano");
 
             when(repo.findAll()).thenReturn(List.of(u));

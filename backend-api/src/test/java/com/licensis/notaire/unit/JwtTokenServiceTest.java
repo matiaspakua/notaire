@@ -6,6 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.Instant;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -115,5 +117,27 @@ class JwtTokenServiceTest {
     @DisplayName("Should accept a sufficiently long, non-default jwt.secret")
     void shouldAcceptValidSecret() {
         assertThatCode(jwtTokenService::validateSecret).doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("Each token carries its own id (jti), even for the same user in the same second (#676)")
+    void shouldGiveEachTokenAUniqueId() {
+        String first = jwtTokenService.generateToken("admin");
+        String second = jwtTokenService.generateToken("admin");
+
+        assertThat(first).isNotEqualTo(second);
+        assertThat(jwtTokenService.extractTokenId(first)).isNotBlank()
+                .isNotEqualTo(jwtTokenService.extractTokenId(second));
+    }
+
+    @Test
+    @DisplayName("Should expose the token expiration so a revocation can be kept only as long as needed (#676)")
+    void shouldExposeTokenExpiration() {
+        Instant before = Instant.now();
+        String token = jwtTokenService.generateToken("admin");
+
+        assertThat(jwtTokenService.extractExpiration(token))
+                .isAfter(before.plusSeconds(3590))
+                .isBefore(before.plusSeconds(3601));
     }
 }

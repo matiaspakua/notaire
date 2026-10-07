@@ -2,6 +2,7 @@ package com.licensis.notaire.unit;
 
 import com.licensis.notaire.adapter.in.web.user.UserController;
 import com.licensis.notaire.config.AuthCookieService;
+import com.licensis.notaire.config.TokenRevocationService;
 import com.licensis.notaire.config.JwtTokenService;
 import com.licensis.notaire.dto.DtoUser;
 import com.licensis.notaire.business.User;
@@ -52,6 +53,8 @@ class UserControllerHashTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private AuthCookieService authCookieService;
+    @Mock
+    private TokenRevocationService tokenRevocationService;
 
     private UserController controller;
     private MockMvc mockMvc;
@@ -62,7 +65,7 @@ class UserControllerHashTest {
                 .thenReturn(org.springframework.http.ResponseCookie.from("notaire-auth-token", "x")
                         .httpOnly(true).path("/").sameSite("Lax").build());
         controller = new UserController(userRepository, jwtTokenService, metricsUtil, passwordEncoder,
-                new LoginAttemptService(5, 900000), authCookieService);
+                new LoginAttemptService(5, 900000), authCookieService, tokenRevocationService);
         mockMvc = standaloneSetup(controller).build();
     }
 
