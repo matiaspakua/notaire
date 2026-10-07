@@ -12,6 +12,9 @@ public interface ProcedureTypeRepository extends JpaRepository<ProcedureType, In
 
     Optional<ProcedureType> findByName(String name);
 
+    /** Names are unique by service rule, not by constraint; tolerate legacy duplicates. */
+    Optional<ProcedureType> findFirstByNameOrderByIdProcedureTypeAsc(String name);
+
     boolean existsByName(String name);
 
     List<ProcedureType> findByNameContaining(String name);

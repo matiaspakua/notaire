@@ -8,9 +8,8 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.PaymentRepository;
-import com.licensis.notaire.repository.BudgetRepository;
-import com.licensis.notaire.repository.DeedManagementRepository;
-import com.licensis.notaire.repository.SubmittedDocumentRepository;
+import com.licensis.notaire.application.port.out.report.ReportRenderer;
+import com.licensis.notaire.application.usecase.report.ReportDocumentFactory;
 import com.licensis.notaire.application.usecase.report.ReportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.sql.DataSource;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -33,22 +31,16 @@ import static org.mockito.Mockito.when;
 class ReportServiceReciboPaymentTest {
 
     @Mock
-    private DataSource dataSource;
-
-    @Mock
     private PaymentRepository paymentRepository;
 
     @Mock
     private ItemRepository itemRepository;
 
     @Mock
-    private BudgetRepository budgetRepository;
+    private ReportDocumentFactory reportDocuments;
 
     @Mock
-    private DeedManagementRepository deedManagementRepository;
-
-    @Mock
-    private SubmittedDocumentRepository submittedDocumentRepository;
+    private ReportRenderer reportRenderer;
 
     private ReportService reporteService;
 
@@ -57,15 +49,13 @@ class ReportServiceReciboPaymentTest {
         // Provide all constructor arguments; mock objects are sufficient for
         // the tests that rely only on paymentRepository and itemRepository.
         reporteService = new ReportService(
-                dataSource,
                 null,
                 null,
                 null,
                 paymentRepository,
                 itemRepository,
-                budgetRepository,
-                deedManagementRepository,
-                submittedDocumentRepository
+                reportDocuments,
+                reportRenderer
         );
     }
 

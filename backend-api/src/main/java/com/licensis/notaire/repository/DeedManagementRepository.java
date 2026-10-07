@@ -35,6 +35,9 @@ public interface DeedManagementRepository extends JpaRepository<DeedManagement, 
 
     java.util.Optional<DeedManagement> findByNumber(int number);
 
+    /** Management numbers are not unique (no constraint); every match is returned. */
+    List<DeedManagement> findAllByNumber(int number);
+
     @Query("SELECT DISTINCT g FROM DeedManagement g JOIN g.procedureList t "
             + "WHERE t.fkIdBudget.fkIdPerson.idPerson = :idPersona")
     List<DeedManagement> findByClientPersonId(@Param("idPersona") Integer idPerson);
