@@ -2,24 +2,25 @@
 
 ## Purpose
 
-Make every top-level guard run in CI. Source: #1209; owner CU76.
+Make every guard run in CI. Source: #1209, reshaped by #1307 (ADR-026); owner CU76.
 
 ## Requirements
 
-### Requirement: Every top-level guard has a discoverable wrapper
+### Requirement: Every guard lives in a module `tests/` directory that CI and preflight discover
 
-Each `scripts/test_*.py` MUST have a wrapper of the same name in `scripts/tests/`, unless it is
-listed in the meta-guard's exemption map with a reason.
+Each guard MUST live in the `tests/` directory of the module it guards (or `workspace/tests/` when it
+reads several modules), and both `workspace/sdlc/preflight.sh` and `sdlc-process.yml` MUST run
+`python3 -m unittest discover` on every such directory. No wrapper layer exists.
 
-#### Scenario: A guard without a wrapper fails the meta-guard
+#### Scenario: A guard in a discovered directory runs
 
-- **WHEN** a top-level `scripts/test_*.py` has no wrapper
-- **THEN** `scripts/tests/test_guard_wrappers.py` fails and names it
+- **WHEN** `python3 -m unittest discover -s <module>/tests` runs for each module listed in preflight
+- **THEN** the tests of every guard in it are collected and pass
 
-#### Scenario: Wrapped guards are collected
+#### Scenario: No guard sits outside a discovered directory
 
-- **WHEN** `python3 -m unittest discover -s scripts/tests` runs
-- **THEN** the tests of every wrapped guard are collected and pass
+- **WHEN** `workspace/tests/test_scripts_layout.py` runs
+- **THEN** no tracked file remains under `scripts/` and none references a removed path
 
 #### Scenario: A missing external tool skips
 

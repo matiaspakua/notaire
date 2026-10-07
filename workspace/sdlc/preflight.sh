@@ -134,7 +134,7 @@ fi
 run "sdlc plan validation" bash workspace/sdlc/validate-sdlc-plan.sh
 
 # CU ↔ API matrix must track English adapter.in.web controllers (#1064, CU76).
-# Also exercised by process-script self-tests under scripts/tests/.
+# Also exercised by process-script self-tests under workspace/tests/.
 run "CU-API matrix validation" python3 workspace/sdlc/validate-cu-api-matrix.py
 
 # Process checks over the branch (sdlc-process.yml). Labels come from the open
@@ -150,7 +150,7 @@ else
 fi
 run "agent rule files" bash workspace/sdlc/check-agent-rules.sh
 run "process script self-tests" bash -c \
-    "python3 -m unittest discover -s scripts/tests && python3 -m unittest discover -s local-ai/sdlc/tests \
+    "python3 -m unittest discover -s local-ai/sdlc/tests \
      && python3 -m unittest discover -s workspace/tests && python3 -m unittest discover -s contracts/tests \
      && python3 -m unittest discover -s security/tests \
      && python3 -m unittest discover -s infra/tests \

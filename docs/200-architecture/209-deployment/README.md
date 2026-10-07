@@ -151,7 +151,7 @@ only works with the default container names. `docker-compose.prod.yml` and
 - **TLS**: terminate TLS in front of this proxy (or extend the nginx config); full certbot/ACME productization is issue #254
 - **Backups**: automated backup productization remains issue #256. CI verification
   of backup→restore→smoke is scaffolded in `.github/workflows/backup-restore-smoke.yml`
-  (#1067) and **skips with an explicit #256 message** until `scripts/backup-postgres.sh`
+  (#1067) and **skips with an explicit #256 message** until `infra/scripts/backup-postgres.sh`
   exists (no false-green restore).
 
 ### infra/deploy/kustomize (staging manifests — issue #901)

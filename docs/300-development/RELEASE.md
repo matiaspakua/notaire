@@ -107,5 +107,5 @@ the chosen tag in the PR that cuts it.
 
 - DevSecOps pipeline: [208-devsecops/README.md](../200-architecture/208-devsecops/README.md)
 - CD pin-to-tested-SHA: issue #1042
-- Static guards: `scripts/test_frontend_ghcr_publish.py`,
-  `scripts/test_semver_release_process.py`
+- Static guards: `workspace/tests/test_frontend_ghcr_publish.py`,
+  `workspace/tests/test_semver_release_process.py`
