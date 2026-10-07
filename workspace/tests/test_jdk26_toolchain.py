@@ -3,8 +3,8 @@
 Guards issue #1276 (CU76): build, CI and runtime use JDK 26, and the backend
 Docker bases are pinned to a minor or digest (#1045).
 
-Plain stdlib unittest, consistent with scripts/test_notaire_shared_retired.py.
-Run with: python3 scripts/test_jdk26_toolchain.py
+Plain stdlib unittest, consistent with workspace/tests/test_notaire_shared_retired.py.
+Run with: python3 workspace/tests/test_jdk26_toolchain.py
 
 Also discoverable via: python3 -m unittest discover -s scripts/tests
 (see scripts/tests/test_jdk26_toolchain.py).
@@ -17,7 +17,7 @@ import unittest
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 JDK = "26"
 POM_NS = {"m": "http://maven.apache.org/POM/4.0.0"}
 WORKFLOWS = sorted((REPO_ROOT / ".github" / "workflows").glob("*.yml"))

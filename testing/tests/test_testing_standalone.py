@@ -109,7 +109,7 @@ REFERENCE_EXEMPT_PREFIXES = (
     "CHANGELOG.md",
     ".gitignore",
     "testing/tests/test_testing_standalone.py",
-    "scripts/test_repo_hygiene.py",
+    "workspace/tests/test_repo_hygiene.py",
 )
 
 SEAM_MARKER = "TESTING_APP_SEAM"

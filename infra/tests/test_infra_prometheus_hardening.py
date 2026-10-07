@@ -7,7 +7,7 @@ docker_sd_configs) — so the socket access served no purpose and just gave
 any RCE inside the container a path to full host compromise.
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
-validation scripts (see scripts/test_report_job_needs_dependencies.py).
+validation scripts (see workspace/tests/test_report_job_needs_dependencies.py).
 Run with: python3 infra/tests/test_infra_prometheus_hardening.py
 """
 import os

@@ -335,7 +335,7 @@ Eso copia `proposal.md`, `design.md`, `tasks.md` y `traceability.md` desde
 Use Case / Branch / change name, y **no** sobrescribe un archivo ya presente.
 El agente debe **rellenar** las secciones sembradas (mantener cada `##`);
 `validate-sdlc-plan.sh` rechaza un cuerpo que siga siendo solo el comentario
-HTML del template. Self-tests: `scripts/tests/test_validate_sdlc_plan.py`.
+HTML del template. Self-tests: `workspace/tests/test_validate_sdlc_plan.py`.
 
 **El check de Issue live** (el más importante):
 

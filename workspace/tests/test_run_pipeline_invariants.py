@@ -9,14 +9,14 @@ pass that exists nowhere else in the repo, and produces one HTML dashboard
 plus a plain-text log with a non-zero exit code on any blocking failure.
 
 Plain stdlib unittest, consistent with this project's other one-off
-script/config invariant checks (see scripts/test_ci_workflow_invariants.py).
-Run with: python3 scripts/test_run_pipeline_invariants.py
+script/config invariant checks (see workspace/tests/test_ci_workflow_invariants.py).
+Run with: python3 workspace/tests/test_run_pipeline_invariants.py
 """
 import os
 import stat
 import unittest
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SCRIPT_PATH = os.path.join(REPO_ROOT, "workspace", "sdlc", "run_pipeline.sh")
 GITIGNORE_PATH = os.path.join(REPO_ROOT, ".gitignore")
 

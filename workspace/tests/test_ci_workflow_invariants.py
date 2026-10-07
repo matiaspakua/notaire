@@ -20,15 +20,15 @@ Invariants enforced here:
   issue #1041), so the Playwright/Bruno coverage record is retained for main.
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
-validation scripts (see scripts/test_report_job_needs_dependencies.py).
-Run with: python3 scripts/test_ci_workflow_invariants.py
+validation scripts (see workspace/tests/test_report_job_needs_dependencies.py).
+Run with: python3 workspace/tests/test_ci_workflow_invariants.py
 """
 import os
 import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WORKFLOWS_DIR = os.path.join(REPO_ROOT, ".github", "workflows")
 
 CI_WORKFLOW = "ci.yml"

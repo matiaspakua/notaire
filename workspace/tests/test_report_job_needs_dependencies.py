@@ -16,7 +16,7 @@ removed (#1117 / #1041); assert against `generate-report` instead.
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
 validation scripts (see infra/tests/test_performance_test_assets.py).
-Run with: python3 scripts/test_report_job_needs_dependencies.py
+Run with: python3 workspace/tests/test_report_job_needs_dependencies.py
 """
 import os
 import re
@@ -24,7 +24,7 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WORKFLOWS_DIR = os.path.join(REPO_ROOT, ".github", "workflows")
 
 NEEDS_REF_PATTERN = re.compile(r"needs\.([A-Za-z0-9_-]+)\.")

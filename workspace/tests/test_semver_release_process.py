@@ -8,7 +8,7 @@ Asserts:
 3. CHANGELOG roll / Keep a Changelog is referenced in release config or docs
 4. Permanent DevSecOps/development docs describe the operator release path
 
-Run with: python3 scripts/test_semver_release_process.py
+Run with: python3 workspace/tests/test_semver_release_process.py
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WORKFLOWS_DIR = os.path.join(REPO_ROOT, ".github", "workflows")
 DEVSECOPS_README = os.path.join(
     REPO_ROOT, "docs", "200-architecture", "208-devsecops", "README.md"

@@ -26,22 +26,22 @@
 - Publicación CD a GHCR anclada al SHA que CI probó en `main`
   (`workflow_run.head_sha`), con `latest` movido solo después del push del
   tag SHA; se omite publicar si CI no concluyó `success` (issue #1042;
-  `scripts/test_cd_pin_tested_sha.py`).
+  `workspace/tests/test_cd_pin_tested_sha.py`).
 - Publicación CD de **backend y frontend** a GHCR con SBOM CycloneDX, firma
   cosign keyless y attest del SBOM; proceso semver automatizado
   (release-please) que corta tags `v*`, rueda `CHANGELOG.md` `[Unreleased]`
   y deriva versiones Maven/npm del tag (issue #1043;
-  `scripts/test_frontend_ghcr_publish.py`,
-  `scripts/test_semver_release_process.py`; runbook
+  `workspace/tests/test_frontend_ghcr_publish.py`,
+  `workspace/tests/test_semver_release_process.py`; runbook
   `docs/300-development/RELEASE.md`).
 - Informes CI/CD/E2E publicados como artefactos de Actions,
   `$GITHUB_STEP_SUMMARY` y/o GitHub Pages — **nunca** como commits de bot
   en `docs/wiki/cicd-reports/` (issue #1041;
-  `scripts/test_no_bot_report_commits.py`).
+  `workspace/tests/test_no_bot_report_commits.py`).
 - Higiene del repositorio: `.gitignore` sin ban global `*.txt`, `.serena/`
   local-only, PDF del Manual de Usuario vía Release `docs-manuals` (no blob
   ordinario), ADR-022 difiere `git filter-repo` (issue #1050;
-  `scripts/test_repo_hygiene.py`).
+  `workspace/tests/test_repo_hygiene.py`).
 
 ## Ciclo de Verificación de Calidad
 
