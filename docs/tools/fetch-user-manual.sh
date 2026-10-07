@@ -4,7 +4,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 DEST_DIR="${REPO_ROOT}/docs/100-business/105-manuals/C_Manual de Usuario"
 DEST_FILE="${DEST_DIR}/Manual de Usuario Notaire.doc.pdf"
 RELEASE_TAG="${NOTAIRE_MANUAL_RELEASE_TAG:-docs-manuals}"

@@ -22,11 +22,11 @@
 # administration scope fails with HTTP 403.
 #
 # USAGE
-#   bash scripts/enable-gh-secure.sh
-#   bash scripts/enable-gh-secure.sh --dry-run
-#   bash scripts/enable-gh-secure.sh --apply
-#   bash scripts/enable-gh-secure.sh --apply --with-branch-protection
-#   bash scripts/enable-gh-secure.sh --repo owner/name --apply
+#   bash security/enable-gh-secure.sh
+#   bash security/enable-gh-secure.sh --dry-run
+#   bash security/enable-gh-secure.sh --apply
+#   bash security/enable-gh-secure.sh --apply --with-branch-protection
+#   bash security/enable-gh-secure.sh --repo owner/name --apply
 set -euo pipefail
 
 REPO="${GH_SECURE_REPO:-matiaspakua/notaire}"

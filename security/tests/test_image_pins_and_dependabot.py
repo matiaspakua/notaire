@@ -10,8 +10,8 @@ Asserts:
 - .github/dependabot.yml keeps npm /frontend, maven, github-actions and adds
   docker for /backend-api and /frontend without duplicates
 
-Plain stdlib unittest + PyYAML, consistent with scripts/test_prod_compose.py.
-Run with: python3 scripts/test_image_pins_and_dependabot.py
+Plain stdlib unittest + PyYAML, consistent with infra/tests/test_prod_compose.py.
+Run with: python3 security/tests/test_image_pins_and_dependabot.py
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ from pathlib import Path
 
 import yaml
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 INFRA_COMPOSE = REPO_ROOT / "infra" / "observability" / "docker-compose.yml"
 TESTING_DB_COMPOSE = REPO_ROOT / "testing" / "database" / "docker-compose.yml"

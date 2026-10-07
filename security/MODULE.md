@@ -7,6 +7,8 @@
 ## Contract (what other modules may rely on)
 
 - `rulesets/protect-main.desired.json` is the desired state of the `protect-main` ruleset; `apply-protect-main-ruleset.sh` applies it and `assert-protect-main-ruleset.sh` checks it (both need an admin `gh` session).
+- `enable-gh-secure.sh` reports and applies the GitHub security baseline (admin `gh` session).
+- `tests/` also guards Dependabot hygiene and image pins.
 - Required status check names (`CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, `PR Validation`) are guarded against the workflow job names.
 
 ## Where the other security controls live

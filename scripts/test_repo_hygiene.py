@@ -11,7 +11,7 @@ Asserts:
 - Manual de Usuario PDF is not an ordinary ~13 MB git blob
 - ADR-022 exists and records the filter-repo decision
 
-Plain stdlib unittest, consistent with scripts/test_dependabot_hygiene.py.
+Plain stdlib unittest, consistent with security/tests/test_dependabot_hygiene.py.
 Run with: python3 scripts/test_repo_hygiene.py
 
 Also discoverable via: python3 -m unittest discover -s scripts/tests
