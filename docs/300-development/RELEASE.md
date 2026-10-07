@@ -35,6 +35,25 @@ Between releases, main stays at the last released versions until the next
 release PR merges (release-please interim PR may bump versions on that branch
 only).
 
+## Release PR permissions (#1264)
+
+The workflow uses the default `GITHUB_TOKEN`. It can open the release PR only
+while the repository setting **Settings → Actions → General → Allow GitHub
+Actions to create and approve pull requests** is enabled; turning it off makes
+every `Release Please` run fail with "GitHub Actions is not permitted to create
+or approve pull requests".
+
+A PR opened or updated with `GITHUB_TOKEN` does not trigger other workflows, so
+the release PR starts without the checks protect-main requires (#1040). Before
+merging it, the Owner closes and reopens the release PR (or pushes a commit to
+its branch) so `CI`, `Frontend CI`, `Playwright E2E`, `Code Lint` and
+`PR Validation` run. Switching the action's `token` to a fine-grained token or
+GitHub App would remove this manual step.
+
+`release-please-config.json` sets `bootstrap-sha` to the commit that introduced
+release-please (`8ab8a6e`, #1043), so older merge commits are not parsed into
+the first release notes.
+
 ## Bootstrap (first cut)
 
 Tags/releases were empty before #1043. Manifest starts at `0.1.0` (aligned with

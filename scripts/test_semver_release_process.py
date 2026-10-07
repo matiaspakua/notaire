@@ -188,6 +188,29 @@ class SemverReleaseProcessTest(unittest.TestCase):
             "DevSecOps README must document frontend image publish",
         )
 
+class ReleasePleaseCanOpenPrTest(unittest.TestCase):
+    """Guards issue #1264: release-please can open its PR and the manual check step is documented."""
+
+    def test_release_please_uses_default_github_token(self):
+        wf = load_yaml(os.path.join(WORKFLOWS_DIR, "release-please.yml"))
+        steps = wf["jobs"]["release-please"]["steps"]
+        action = next(s for s in steps if "release-please-action" in s.get("uses", ""))
+        token = action.get("with", {}).get("token", "")
+        self.assertEqual("${{ github.token }}", token)
+        self.assertNotIn("secrets.", token)
+
+    def test_release_please_has_bootstrap_sha(self):
+        import json
+        with open(os.path.join(REPO_ROOT, "release-please-config.json"), encoding="utf-8") as f:
+            cfg = json.load(f)
+        sha = cfg.get("bootstrap-sha", "")
+        self.assertRegex(sha, r"^[0-9a-f]{40}$")
+
+    def test_runbook_documents_actions_pr_setting(self):
+        text = read_text(os.path.join(REPO_ROOT, "docs", "300-development", "RELEASE.md"))
+        self.assertIn("Allow GitHub", text)
+        self.assertIn("does not trigger other workflows", text)
+
 
 if __name__ == "__main__":
     unittest.main()
