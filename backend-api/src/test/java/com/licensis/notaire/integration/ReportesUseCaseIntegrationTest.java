@@ -118,10 +118,9 @@ class ReportesUseCaseIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // --- JasperReports-based endpoints — verify graceful error handling ---
-    // These endpoints require a DB connection; in H2 mode they return 500 when
-    // the Jasper template SQL is incompatible or data is absent. The controller
-    // must never propagate an unhandled exception (no 5xx without body or 404).
+    // --- Data-backed report endpoints: a missing aggregate is a 404 ---
+    // Rendered in-house from the current schema (issue #567); the happy paths
+    // are covered by InHouseReportPdfIntegrationTest.
 
     @Test
     @DisplayName("CU01/CU45: budget endpoint handles missing data gracefully")
@@ -143,7 +142,7 @@ class ReportesUseCaseIntegrationTest {
     void shouldHandleListaDocumentsProcedureEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite")
                         .param("nombreTipoTramite", "TramiteQueNoExiste"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -165,19 +164,15 @@ class ReportesUseCaseIntegrationTest {
     void shouldHandleConsultarDebtDocumentsEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/consultar-deuda-documentos")
                         .param("numberManagement", "99999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Special characters in nombreTipoTramite are safely handled")
+    @DisplayName("Special characters in nombreTipoTramite are matched literally, never a server error")
     void shouldHandleSpecialCharsInProcedureParam() throws Exception {
         mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite")
                         .param("nombreTipoTramite", "Compra/Venta (especial) & más"))
-                .andExpect(result ->
-                    assertThat(result.getResponse().getStatus())
-                        .as("Should not return 404 or crash with special chars")
-                        .isNotEqualTo(404)
-                        .isNotEqualTo(400));
+                .andExpect(status().isNotFound());
     }
 
     @Test
