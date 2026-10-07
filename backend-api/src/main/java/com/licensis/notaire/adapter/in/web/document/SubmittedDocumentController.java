@@ -2,10 +2,14 @@ package com.licensis.notaire.adapter.in.web.document;
 
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.exception.BusinessValidationException;
+import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.repository.DocumentTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,9 +27,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.temporal.ChronoUnit;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +43,9 @@ import java.util.Optional;
 public class SubmittedDocumentController {
 
     private static final Logger log = LoggerFactory.getLogger(SubmittedDocumentController.class);
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    /** Strict ISO day; thread-safe, unlike the shared SimpleDateFormat it replaces (issue #655). */
+    private static final DateTimeFormatter DATE_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
 
     record TypeDocInfo(Integer idDocumentType, String name) {}
 
@@ -48,8 +57,20 @@ public class SubmittedDocumentController {
             Integer procedureId
     ) {}
 
-    record SubmittedDocumentRequest(Integer typeId, String date, Boolean delivered, Integer procedureId,
-            String deliveredBy, String name) {}
+    record SubmittedDocumentRequest(
+            @Schema(description = "Id de un tipo de documento existente; si no existe la respuesta es 404")
+            Integer typeId,
+            @Schema(description = "Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); "
+                    + "otro valor responde 400")
+            String date,
+            Boolean delivered,
+            @Schema(description = "Id de un trámite existente; si no existe la respuesta es 404")
+            Integer procedureId,
+            String deliveredBy,
+            String name) {}
+
+    /** Request references resolved and parsed before anything is changed (issue #655). */
+    private record Resolved(Optional<DocumentType> type, Optional<Procedure> procedure, Optional<LocalDate> date) {}
 
     private final SubmittedDocumentRepository repository;
     private final DocumentTypeRepository typeRepository;
@@ -74,26 +95,42 @@ public class SubmittedDocumentController {
         return entity;
     }
 
-    private void apply(SubmittedDocument entity, SubmittedDocumentRequest request) {
-        if (request.typeId() != null) {
-            typeRepository.findById(request.typeId()).ifPresent(entity::setDocumentType);
+    private Resolved resolve(SubmittedDocumentRequest request) {
+        Optional<DocumentType> type = Optional.ofNullable(request.typeId()).map(id -> typeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de documento no encontrado: " + id)));
+        Optional<Procedure> procedure = Optional.ofNullable(request.procedureId()).map(id -> procedureRepository
+                .findById(id).orElseThrow(() -> new ResourceNotFoundException("Trámite no encontrado: " + id)));
+        return new Resolved(type, procedure, Optional.ofNullable(request.date()).map(this::parseDate));
+    }
+
+    private LocalDate parseDate(String value) {
+        try {
+            return LocalDate.parse(value, DATE_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new BusinessValidationException(
+                    "La fecha debe ser un día válido con formato yyyy-MM-dd: '" + value + "'");
         }
+    }
+
+    private static Date toDate(LocalDate date) {
+        return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    /** Works for java.util.Date and the java.sql.Date Hibernate loads (whose toInstant() throws). */
+    private static LocalDate toLocalDate(Date date) {
+        return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private void apply(SubmittedDocument entity, SubmittedDocumentRequest request, Resolved resolved) {
+        resolved.type().ifPresent(entity::setDocumentType);
         if (request.delivered() != null) {
             entity.setDelivered(request.delivered());
         }
         if (request.name() != null) {
             entity.setName(request.name());
         }
-        if (request.procedureId() != null) {
-            entity.setFkIdProcedure(procedureRepository.findById(request.procedureId()).orElse(null));
-        }
-        if (request.date() != null) {
-            try {
-                entity.setDateEntry(DATE_FORMAT.parse(request.date()));
-            } catch (ParseException e) {
-                log.warn("Invalid date format: {}", request.date());
-            }
-        }
+        resolved.procedure().ifPresent(entity::setFkIdProcedure);
+        resolved.date().map(SubmittedDocumentController::toDate).ifPresent(entity::setDateEntry);
     }
 
     private void refreshDue(SubmittedDocument entity, SubmittedDocumentRequest request) {
@@ -113,9 +150,7 @@ public class SubmittedDocumentController {
         entity.setDeliveredBy(deliveredBy);
 
         if (expires && dueDays != null && entity.getDateEntry() != null) {
-            Date dateDue = Date.from(
-                    entity.getDateEntry().toInstant().plus(dueDays, ChronoUnit.DAYS));
-            entity.setDateDue(dateDue);
+            entity.setDateDue(toDate(toLocalDate(entity.getDateEntry()).plusDays(dueDays)));
         }
     }
 
@@ -132,7 +167,7 @@ public class SubmittedDocumentController {
                         .orElse(null);
             }
         }
-        String date = d.getDateEntry() != null ? DATE_FORMAT.format(d.getDateEntry()) : null;
+        String date = d.getDateEntry() != null ? DATE_FORMAT.format(toLocalDate(d.getDateEntry())) : null;
         Integer procedureId = d.getFkIdProcedure() != null ? d.getFkIdProcedure().getIdProcedure() : null;
         return new SubmittedDocumentResponse(d.getIdSubmittedDocument(), type, date, d.getDelivered(), procedureId);
     }
@@ -160,15 +195,17 @@ public class SubmittedDocumentController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida (fecha que no es un día yyyy-MM-dd)"),
+    @ApiResponse(responseCode = "404", description = "Tipo de documento o trámite no encontrado"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
     @Operation(summary = "Crear nuevo documento presentado")
     public ResponseEntity<Object> create(@RequestBody SubmittedDocumentRequest request) {
+        Resolved resolved = resolve(request);
         try {
             SubmittedDocument entity = newDocument();
-            apply(entity, request);
+            apply(entity, request, resolved);
             refreshDue(entity, request);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
@@ -180,17 +217,20 @@ public class SubmittedDocumentController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida (fecha que no es un día yyyy-MM-dd)"),
+    @ApiResponse(responseCode = "404", description = "Documento, tipo de documento o trámite no encontrado")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar documento presentado")
+    @Transactional
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody SubmittedDocumentRequest request) {
         Optional<SubmittedDocument> stored = repository.findById(id);
         if (stored.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        Resolved resolved = resolve(request);
         try {
-            apply(stored.get(), request);
+            apply(stored.get(), request, resolved);
             if (request.typeId() != null || request.date() != null || request.deliveredBy() != null) {
                 refreshDue(stored.get(), request);
             }

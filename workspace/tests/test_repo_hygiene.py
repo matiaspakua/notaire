@@ -12,7 +12,7 @@ Asserts:
 - ADR-022 exists and records the filter-repo decision
 
 Plain stdlib unittest, consistent with security/tests/test_dependabot_hygiene.py.
-Run with: python3 scripts/test_repo_hygiene.py
+Run with: python3 workspace/tests/test_repo_hygiene.py
 
 Also discoverable via: python3 -m unittest discover -s scripts/tests
 (see scripts/tests/test_repo_hygiene.py).
@@ -25,7 +25,7 @@ import subprocess
 import unittest
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 GITIGNORE = REPO_ROOT / ".gitignore"
 CODEOWNERS = REPO_ROOT / ".github" / "CODEOWNERS"
 ADR_DIR = REPO_ROOT / "docs" / "200-architecture" / "202-ADR"

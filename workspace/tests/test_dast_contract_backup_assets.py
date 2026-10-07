@@ -18,7 +18,7 @@ Asserts:
 
 Plain stdlib unittest (+ PyYAML), consistent with
 infra/tests/test_performance_test_assets.py.
-Run with: python3 scripts/test_dast_contract_backup_assets.py
+Run with: python3 workspace/tests/test_dast_contract_backup_assets.py
 
 Also discoverable via: python3 -m unittest discover -s scripts/tests
 """
@@ -31,7 +31,7 @@ import unittest
 
 import yaml
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ZAP_WORKFLOW = os.path.join(REPO_ROOT, ".github", "workflows", "dast-zap.yml")
 OPENAPI_WORKFLOW = os.path.join(
     REPO_ROOT, ".github", "workflows", "openapi-contract.yml"
@@ -44,7 +44,7 @@ OPENAPI_ARTIFACT = os.path.join(
     REPO_ROOT, "backend-api", "openapi", "openapi.yaml"
 )
 EXPORT_SCRIPT = os.path.join(REPO_ROOT, "backend-api", "tools", "export-openapi.sh")
-BACKUP_SENTINEL = os.path.join(REPO_ROOT, "scripts", "backup-postgres.sh")
+BACKUP_SENTINEL = os.path.join(REPO_ROOT, "infra", "scripts", "backup-postgres.sh")
 ACCEPTED_BREAKING_REL = "backend-api/openapi/accepted-breaking-changes.txt"
 ACCEPTED_BREAKING = os.path.join(REPO_ROOT, *ACCEPTED_BREAKING_REL.split("/"))
 PREFLIGHT = os.path.join(REPO_ROOT, "workspace", "sdlc", "preflight.sh")

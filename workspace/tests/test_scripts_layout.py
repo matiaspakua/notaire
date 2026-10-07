@@ -44,8 +44,25 @@ MOVED = {
     "scripts/generate-markdown-report.sh": "workspace/ci/generate-markdown-report.sh",
     "scripts/generate-pr-validation-report.sh": "workspace/ci/generate-pr-validation-report.sh",
     "scripts/generate-github-page-metrics.sh": "workspace/ci/generate-github-page-metrics.sh",
+    "scripts/test_cd_pin_tested_sha.py": "workspace/tests/test_cd_pin_tested_sha.py",
+    "scripts/test_ci_workflow_invariants.py": "workspace/tests/test_ci_workflow_invariants.py",
+    "scripts/test_dast_contract_backup_assets.py": "workspace/tests/test_dast_contract_backup_assets.py",
+    "scripts/test_frontend_ghcr_publish.py": "workspace/tests/test_frontend_ghcr_publish.py",
+    "scripts/test_jdk26_toolchain.py": "workspace/tests/test_jdk26_toolchain.py",
+    "scripts/test_no_bot_report_commits.py": "workspace/tests/test_no_bot_report_commits.py",
+    "scripts/test_no_business_controller.py": "workspace/tests/test_no_business_controller.py",
+    "scripts/test_notaire_shared_retired.py": "workspace/tests/test_notaire_shared_retired.py",
+    "scripts/test_repo_hygiene.py": "workspace/tests/test_repo_hygiene.py",
+    "scripts/test_report_job_needs_dependencies.py": "workspace/tests/test_report_job_needs_dependencies.py",
+    "scripts/test_run_pipeline_invariants.py": "workspace/tests/test_run_pipeline_invariants.py",
+    "scripts/test_semver_release_process.py": "workspace/tests/test_semver_release_process.py",
+    "scripts/tests/test_frontend_eslint_blocking.py": "workspace/tests/test_frontend_eslint_blocking.py",
+    "scripts/tests/test_pr_checks.py": "workspace/tests/test_pr_checks.py",
+    "scripts/tests/test_validate_cu_api_matrix.py": "workspace/tests/test_validate_cu_api_matrix.py",
+    "scripts/tests/test_validate_sdlc_plan.py": "workspace/tests/test_validate_sdlc_plan.py",
+    "scripts/tests/test_workflow_concurrency.py": "workspace/tests/test_workflow_concurrency.py",
 }
-REMOVED = ("scripts/validate-cu-api-matrix.sh",)
+REMOVED = ("scripts/validate-cu-api-matrix.sh", "scripts/tests/test_guard_wrappers.py")
 HISTORY = (
     "CHANGELOG.md", "deprecated/", "docs/000-archive/", "docs/openspec/changes/archive/",
     "workspace/tests/test_scripts_layout.py",
@@ -64,6 +81,10 @@ def tracked_text_files():
 
 
 class ScriptsLayoutTest(unittest.TestCase):
+    def test_no_file_is_tracked_under_scripts(self):
+        out = subprocess.run(["git", "ls-files", "scripts"], cwd=REPO_ROOT, capture_output=True, text=True, check=True)
+        self.assertEqual("", out.stdout, "scripts/ was emptied into the modules (#1307)")
+
     def test_moved_scripts_exist_at_their_new_path(self):
         missing = [new for new in MOVED.values() if not (REPO_ROOT / new).is_file()]
         self.assertEqual([], missing)

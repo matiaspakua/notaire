@@ -2,17 +2,17 @@
 """
 Guards issue #900 / CU76: the BusinessController god class stays removed.
 
-Run with: python3 scripts/test_no_business_controller.py
+Run with: python3 workspace/tests/test_no_business_controller.py
 """
 import subprocess
 import unittest
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 BACKEND = REPO_ROOT / "backend-api"
 FORBIDDEN = "BusinessController"
 ALLOWED_PATHS = (
-    "scripts/test_no_business_controller.py",
+    "workspace/tests/test_no_business_controller.py",
     "CHANGELOG.md",
     "docs/openspec/",
     "docs/000-archive/",

@@ -36,7 +36,7 @@ Total: 180 active Markdown files under `docs/` (`find docs -name '*.md'`, archiv
 | ERD vs schema | `docs/tests/test_erd_current_schema.py` (#1021) | Regenerated; consistent |
 | Dictionary vs schema | column-set comparison per table | 29 of 36 tables with stale column names, 4 tables missing (F3, #1222) |
 | Stale technology statements | `git grep -E 'Spring Boot 3\|PostgreSQL 15\|com\.notaria\|Java 17\|MySQL' -- docs` | Only historical context, the Sonar database (PostgreSQL 15 is correct there) and the SRS (F4) |
-| Guards CI never ran | `scripts/tests/test_guard_wrappers.py` (#1209) | 12 unwired before #1209 |
+| Guards CI never ran | `test_guard_wrappers.py` (#1209, removed by #1307: guards now live in each module's `tests/`) | 12 unwired before #1209 |
 
 ## 3. Findings
 

@@ -52,7 +52,7 @@ modules:
   workspace:
     path: workspace
     responsibility: Unifier, manifest and the guards that read more than one module
-    extra_paths: [scripts, .github]
+    extra_paths: [.github]
     fleet: foreman
     verify: bash workspace/verify.sh
     depends_on: [backend-api, frontend, infra, testing, local-ai, docs, contracts, security]

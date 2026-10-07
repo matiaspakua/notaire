@@ -46,7 +46,6 @@ jobs:
       - name: Process script and harness self-tests
         if: ${{ !cancelled() }}
         run: |
-          python3 -m unittest discover -s scripts/tests
           python3 -m unittest discover -s local-ai/sdlc/tests
           python3 -m unittest discover -s workspace/tests
           python3 -m unittest discover -s contracts/tests
