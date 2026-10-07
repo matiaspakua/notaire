@@ -35,15 +35,20 @@ Between releases, main stays at the last released versions until the next
 release PR merges (release-please interim PR may bump versions on that branch
 only).
 
-## Release token (Owner action, #1264)
+## Release PR permissions (#1264)
 
-GitHub does not let `GITHUB_TOKEN` open pull requests in this repository, and a
-PR opened with `GITHUB_TOKEN` would not trigger the required checks anyway. The
-workflow therefore passes `secrets.RELEASE_PLEASE_TOKEN` to the action (falling
-back to `GITHUB_TOKEN` until it exists). The Owner creates a fine-grained token
-or GitHub App limited to this repository with `contents: write` and
-`pull-requests: write` and stores it as the repository secret
-`RELEASE_PLEASE_TOKEN`.
+The workflow uses the default `GITHUB_TOKEN`. It can open the release PR only
+while the repository setting **Settings → Actions → General → Allow GitHub
+Actions to create and approve pull requests** is enabled; turning it off makes
+every `Release Please` run fail with "GitHub Actions is not permitted to create
+or approve pull requests".
+
+A PR opened or updated with `GITHUB_TOKEN` does not trigger other workflows, so
+the release PR starts without the checks protect-main requires (#1040). Before
+merging it, the Owner closes and reopens the release PR (or pushes a commit to
+its branch) so `CI`, `Frontend CI`, `Playwright E2E`, `Code Lint` and
+`PR Validation` run. Switching the action's `token` to a fine-grained token or
+GitHub App would remove this manual step.
 
 `release-please-config.json` sets `bootstrap-sha` to the commit that introduced
 release-please (`8ab8a6e`, #1043), so older merge commits are not parsed into

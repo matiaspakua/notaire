@@ -11,7 +11,7 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [x] 3.1 3 new guard tests observed failing before the change
+- [x] 3.1 guard tests updated first and observed failing against the previous secret wiring
 
 ## 4. Implementación
 

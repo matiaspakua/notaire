@@ -163,7 +163,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **Release Please can open its release PR** (issue #1264, CU76): `release-please.yml` passes `secrets.RELEASE_PLEASE_TOKEN` (falling back to `GITHUB_TOKEN`) so the PR is opened by an identity that triggers required checks, and `release-please-config.json` sets `bootstrap-sha` to the #1043 commit so pre-release merge commits are not parsed. The Owner still has to create the secret; `docs/300-development/RELEASE.md` explains how.
+- **Release Please can open its release PR** (issue #1264, CU76): `release-please.yml` uses the default `GITHUB_TOKEN`, relying on the repository setting that allows GitHub Actions to create pull requests, and `release-please-config.json` sets `bootstrap-sha` to the #1043 commit so pre-release merge commits are not parsed. A PR opened by `GITHUB_TOKEN` triggers no other workflow, so `docs/300-development/RELEASE.md` tells the Owner to close and reopen the release PR to run the required checks.
 - **check-sdlc-exception.sh false failure** (issue #1228, CU76): the diff is captured before matching, so `grep -q`
   closing the pipe can no longer SIGPIPE `git diff` and report a PR with an OpenSpec change as having none.
 - **DeedManagement / Person DTO mapping null-safety** (issue #853, CU76):

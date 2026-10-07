@@ -8,19 +8,19 @@ Automated semver releases via release-please.
 
 ### Requirement: Release PR identity
 
-The release-please workflow SHALL authenticate with `RELEASE_PLEASE_TOKEN` when present and SHALL start from a bootstrap commit.
+The release-please workflow SHALL authenticate with the default `GITHUB_TOKEN` and SHALL start from a bootstrap commit.
 
-#### Scenario: Workflow uses the dedicated token
+#### Scenario: Workflow uses the default token
 
 - **WHEN** release-please.yml is parsed
-- **THEN** the action's token input references secrets.RELEASE_PLEASE_TOKEN
+- **THEN** the action's token input is github.token and references no secret
 
 #### Scenario: History is bootstrapped
 
 - **WHEN** release-please-config.json is parsed
 - **THEN** bootstrap-sha is a full commit SHA
 
-#### Scenario: Runbook names the secret
+#### Scenario: Runbook documents the setting and manual checks
 
 - **WHEN** RELEASE.md is read
-- **THEN** it explains how to create RELEASE_PLEASE_TOKEN
+- **THEN** it names the Actions-PR setting and explains that GITHUB_TOKEN PRs do not trigger other workflows

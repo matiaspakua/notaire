@@ -26,9 +26,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Workflow uses the dedicated token | `scripts/test_semver_release_process.py` | passing |
+| Workflow uses the default token | `scripts/test_semver_release_process.py` | passing |
 | History is bootstrapped | `scripts/test_semver_release_process.py` | passing |
-| Runbook names the secret | `scripts/test_semver_release_process.py` | passing |
+| Runbook documents the setting and manual checks | `scripts/test_semver_release_process.py` | passing |
 
 ## Permanent documentation updated
 
@@ -42,11 +42,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh fix-1264-release-please-token` |
-| 2 | Failing tests written, test cases designed | yes | 3 new guard tests observed failing before the change |
+| 2 | Failing tests written, test cases designed | yes | guard tests updated first and observed failing against the previous secret wiring |
 | 3 | Suite green, coverage held, docs updated | partial | semver guard, CI workflow invariants, concurrency, changelog and links guards green; run_pipeline.sh not run (no Docker) |
 | 4 | CI green, review approved, no conflicts | pending | — |
 | 5 | Deployed, smoke test passed, Issue closed | pending | — |
 
 ## Exceptions
 
-`scripts/run_pipeline.sh` needs Docker, unavailable on the agent box. Acceptance depends on the Owner creating `RELEASE_PLEASE_TOKEN`.
+`scripts/run_pipeline.sh` needs Docker, unavailable on the agent box. Acceptance (first release cut) happens after merge.

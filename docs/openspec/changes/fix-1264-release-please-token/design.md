@@ -6,15 +6,15 @@ Run log: `GitHub Actions is not permitted to create or approve pull requests`.
 
 ## Goals / Non-Goals
 
-Goal: the workflow is ready for the Owner's secret. Non-goal: creating the secret or changing repo Actions settings (Owner action).
+Goal: Release Please opens its PR. Non-goal: a PAT or GitHub App (not needed once the setting is enabled).
 
 ## Decisions
 
-Fallback to `github.token` keeps the workflow valid before the secret exists; bootstrap at the #1043 commit, as the issue suggests.
+Use the default token per the Owner's choice (setting enabled); document the manual close/reopen step for required checks; bootstrap at the #1043 commit.
 
 ## Riesgos / Trade-offs
 
-Until the secret is created the workflow keeps failing; bootstrap-sha choice is the Owner's to confirm.
+Release PRs start without required checks until the Owner closes and reopens them; disabling the repository setting breaks the workflow again. bootstrap-sha choice is the Owner's to confirm.
 
 ## Testing Strategy
 

@@ -12,19 +12,19 @@
 
 ## Objetivo
 
-Release Please fails on every push to main because GITHUB_TOKEN cannot open PRs; make the workflow use a dedicated token and stop parsing pre-release history.
+Release Please fails on every push to main because GitHub Actions was not allowed to open PRs. The Owner enabled that setting; make the workflow rely on the default token explicitly and stop parsing pre-release history.
 
 ## What Changes
 
-- `release-please.yml` passes `token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}`.
+- `release-please.yml` passes `token: ${{ github.token }}` and documents the repository setting it depends on.
 - `release-please-config.json` sets `bootstrap-sha` to `8ab8a6e` (#1043).
-- `RELEASE.md` documents the Owner-created secret; CHANGELOG entry.
+- `RELEASE.md` documents the setting and the manual close/reopen step that starts required checks on the release PR; CHANGELOG entry.
 
 ## Reglas de negocio
 
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
-| The release PR is opened by an identity that triggers required checks | #1264, #1040 | New |
+| Release Please opens its PR with GITHUB_TOKEN while the Actions-PR setting is enabled; required checks are started by the Owner | #1264, #1040 | New |
 
 ## Capabilities
 
@@ -50,7 +50,7 @@ Release Please fails on every push to main because GITHUB_TOKEN cannot open PRs;
 ### Surface area
 
 - Entities / Endpoints / Flyway: none
-- Configuration: new repository secret `RELEASE_PLEASE_TOKEN` (Owner)
+- Configuration: repository setting "Allow GitHub Actions to create and approve pull requests" (enabled by the Owner)
 
 ### Architecture review
 
@@ -61,4 +61,4 @@ No architecture change.
 | Permanent document | What must change |
 |--------------------|------------------|
 | `CHANGELOG.md` | one Fixed entry |
-| `docs/300-development/RELEASE.md` | Release token section |
+| `docs/300-development/RELEASE.md` | Release PR permissions section |

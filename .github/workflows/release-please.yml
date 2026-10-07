@@ -3,10 +3,10 @@ name: Release Please
 # Opens/updates a release PR from Conventional Commits, then creates the v*
 # GitHub Release + tag when that PR merges. Does not bypass protect-main:
 # the release PR must pass required checks like any other PR (#1040).
-# A PR opened with GITHUB_TOKEN triggers no other workflow, so the release PR
-# could never get its required checks; the Owner-provisioned RELEASE_PLEASE_TOKEN
-# (fine-grained PAT or GitHub App: contents + pull-requests write) is used
-# instead, falling back to GITHUB_TOKEN until it exists (#1264).
+# Uses the default GITHUB_TOKEN; the repository setting "Allow GitHub Actions to
+# create and approve pull requests" must stay enabled (#1264). A PR opened with
+# GITHUB_TOKEN triggers no other workflow, so the Owner starts the required
+# checks on the release PR by hand (close and reopen it); see RELEASE.md.
 on:
   push:
     branches: [main]
@@ -28,4 +28,4 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+          token: ${{ github.token }}
