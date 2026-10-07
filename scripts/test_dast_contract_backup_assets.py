@@ -10,6 +10,9 @@ Asserts:
 - Committed OpenAPI artifact exists at the documented path
 - OpenAPI export script exists and documents regeneration
 - PR OpenAPI contract workflow fails on breaking changes
+- Owner-accepted breaking changes are listed, one traceable line each, in
+  backend-api/openapi/accepted-breaking-changes.txt, the only file the
+  oasdiff step reads as err-ignore, and preflight.sh runs the same diff
 - Backup→restore smoke workflow skips with an explicit #256 signal when
   backup tooling is absent (no false-green restore)
 
@@ -42,6 +45,12 @@ OPENAPI_ARTIFACT = os.path.join(
 )
 EXPORT_SCRIPT = os.path.join(REPO_ROOT, "backend-api", "tools", "export-openapi.sh")
 BACKUP_SENTINEL = os.path.join(REPO_ROOT, "scripts", "backup-postgres.sh")
+ACCEPTED_BREAKING_REL = "backend-api/openapi/accepted-breaking-changes.txt"
+ACCEPTED_BREAKING = os.path.join(REPO_ROOT, *ACCEPTED_BREAKING_REL.split("/"))
+PREFLIGHT = os.path.join(REPO_ROOT, "workspace", "sdlc", "preflight.sh")
+# oasdiff err-ignore lines: "<METHOD> <path> <change text as oasdiff prints it>".
+ACCEPTED_ENTRY = re.compile(r"^(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) /\S* \S.*$")
+ISSUE_REF = re.compile(r"#[0-9]+")
 
 
 def _load_workflow(path: str) -> tuple[str, dict]:
@@ -136,6 +145,53 @@ class OpenApiContractTest(unittest.TestCase):
         self.assertIn("has_base", raw)
         self.assertRegex(raw, r"(?i)bootstrap|first introduction|not present")
         self.assertIn("steps.base.outputs.has_base", raw)
+
+    def test_breaking_diff_ignores_only_the_owner_accepted_list(self):
+        _, workflow = _load_workflow(OPENAPI_WORKFLOW)
+        steps = workflow["jobs"]["openapi-contract"]["steps"]
+        diff_steps = [
+            s for s in steps if "oasdiff-action/breaking" in str(s.get("uses", ""))
+        ]
+        self.assertEqual(len(diff_steps), 1, "exactly one oasdiff breaking step")
+        inputs = diff_steps[0].get("with") or {}
+        self.assertEqual(inputs.get("fail-on"), "ERR")
+        self.assertEqual(
+            inputs.get("err-ignore"),
+            ACCEPTED_BREAKING_REL,
+            "accepted breaking changes must come from the committed list",
+        )
+        self.assertNotIn("warn-ignore", inputs)
+
+    def test_accepted_breaking_changes_are_traceable(self):
+        self.assertTrue(
+            os.path.isfile(ACCEPTED_BREAKING),
+            f"expected accepted-breaking list at {ACCEPTED_BREAKING}",
+        )
+        with open(ACCEPTED_BREAKING, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+        issue_seen = False
+        for number, line in enumerate(lines, start=1):
+            if not line.strip():
+                continue
+            if line.startswith("#"):
+                issue_seen = issue_seen or bool(ISSUE_REF.search(line))
+                continue
+            self.assertRegex(
+                line,
+                ACCEPTED_ENTRY,
+                f"line {number}: expected '<METHOD> <path> <oasdiff text>'",
+            )
+            self.assertTrue(
+                issue_seen,
+                f"line {number}: an entry needs a preceding '# #<issue>' comment",
+            )
+
+    def test_preflight_runs_the_same_breaking_diff(self):
+        with open(PREFLIGHT, encoding="utf-8") as f:
+            script = f.read()
+        self.assertIn("oasdiff breaking", script)
+        self.assertIn("--fail-on ERR", script)
+        self.assertIn(ACCEPTED_BREAKING_REL, script)
 
 
 class BackupRestoreSmokeTest(unittest.TestCase):

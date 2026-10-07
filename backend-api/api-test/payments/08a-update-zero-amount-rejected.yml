@@ -1,0 +1,28 @@
+info:
+  name: Update payment with zero amount is rejected
+  type: http
+  seq: 9
+  description: |-
+      ## Update payment with a non-positive amount — PUT /api/v1/pagos/{payment_id}
+      Bean validation rejects `amount <= 0` with 400 (it used to answer 404). Issue #655.
+      Traceability: CU15 (RF #3, #20)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/pagos/{{payment_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "amount": 0,
+          "notes": "E2E zero amount"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request", function () { expect(res.getStatus()).to.equal(400); });

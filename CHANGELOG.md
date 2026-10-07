@@ -176,6 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Payment requests validated at the boundary (slice of #655)** (issue #655, CU15): `POST /api/v1/pagos` requires `idBudget` and a positive `amount`, and `PUT /api/v1/pagos/{id}` rejects a non-positive `amount`, through `@Valid` bean validation; the update used to answer 404 for `amount <= 0`. `PaymentControllerTest` and Bruno `payments/08a` cover it, and the OpenAPI artifact now documents the constraints. **Contract tightening:** `oasdiff` reports these 4 changes as breaking (`idBudget`/`amount` required on POST, `exclusiveMinimum: 0` on `amount` for POST and PUT), but no request that used to succeed is rejected, so they are accepted in the new `backend-api/openapi/accepted-breaking-changes.txt`, which `openapi-contract.yml` and `scripts/preflight.sh` pass to `oasdiff --err-ignore`; any break not listed there still fails the gate. #655 stays open for the remaining controllers.
 - **Release Please can open its release PR** (issue #1264, CU76): `release-please.yml` uses the default `GITHUB_TOKEN`, relying on the repository setting that allows GitHub Actions to create pull requests, and `release-please-config.json` sets `bootstrap-sha` to the #1043 commit so pre-release merge commits are not parsed. A PR opened by `GITHUB_TOKEN` triggers no other workflow, so `docs/300-development/RELEASE.md` tells the Owner to close and reopen the release PR to run the required checks.
 - **No `admin/admin` seed outside dev/test** (issue #1249, CU78/CU84): `DataInitializer` skips creating the initial admin user and logs an error when `APP_ADMIN_PASSWORD` is blank or `admin` and `app.environment` is not `development`, `dev`, `local` or `test`; `DataInitializerTest` covers both paths. ADR-019 and `.env.example` document the rule. The legacy Flyway `V2` seed is out of scope.
 - **check-sdlc-exception.sh false failure** (issue #1228, CU76): the diff is captured before matching, so `grep -q`
@@ -664,6 +665,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Guard: every REST endpoint has a UI consumer or an allowlist reason** (issue #1250, CU76, CONSTITUTION §4): `contracts/tests/test_api_reachability.py` scans `frontend/src` (tests and comments excluded) for API paths, method-aware for the `api-client` helpers, and fails on any OpenAPI endpoint the UI does not call unless `contracts/api-reachability-allowlist.yaml` lists it with a reason; stale entries (endpoint removed or now called) fail too. The allowlist starts with the 53 endpoints unreferenced today, the 10 from #1250 plus 43 the method-aware scan adds, all marked for triage; #1250 stays open for that triage.
 - **Workflow tracker post-signing reingreso loop (strategy b)** (issue #841,
   CU83 / CU06 / CU07 / CU11 / CU44): seed `ManagementStatus` 11–13 and replace
   Firmada→Inscripta on the standard workflow with Generado → Ingresado →

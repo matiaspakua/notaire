@@ -8,6 +8,9 @@ name: OpenAPI Contract
 # backend-api/openapi/openapi.yaml (first introduction), skip the breaking
 # diff after the freshness check — fail-on ERR applies only once a base
 # artifact exists.
+#
+# Intended breaks: list the exact oasdiff line in
+# backend-api/openapi/accepted-breaking-changes.txt with its issue (#655).
 on:
   pull_request:
     branches: [ main ]
@@ -90,4 +93,6 @@ jobs:
           base: .openapi-ci/base-openapi.yaml
           revision: backend-api/openapi/openapi.yaml
           fail-on: ERR
+          # Owner-accepted breaks only, one traceable line each (see the file header).
+          err-ignore: backend-api/openapi/accepted-breaking-changes.txt
           review: 'false'

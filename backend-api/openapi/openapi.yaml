@@ -2063,6 +2063,7 @@ components:
     PaymentRequest:
       properties:
         amount:
+          exclusiveMinimum: 0
           type: number
         date:
           format: date-time
@@ -2074,10 +2075,14 @@ components:
           type: string
         paymentMethod:
           type: string
+      required:
+      - amount
+      - idBudget
       type: object
     PaymentUpdateRequest:
       properties:
         amount:
+          exclusiveMinimum: 0
           type: number
         date:
           format: date-time
