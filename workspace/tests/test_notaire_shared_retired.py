@@ -98,16 +98,10 @@ class NotaireSharedRetiredTest(unittest.TestCase):
         ]
         self.assertEqual([], offenders, f"{MODULE} must not appear in live tooling")
 
-    def test_module_folder_is_archived(self) -> None:
-        """Scenario: Module folder is archived."""
+    def test_module_folder_is_gone(self) -> None:
+        """Scenario: Module folder is removed; history keeps it behind tag archive-monorepo-pre-split."""
         self.assertFalse((REPO_ROOT / MODULE).exists(), f"{MODULE}/ must not exist at the repo root")
-        self.assertTrue((DEPRECATED_MODULE / "README.md").is_file())
-        self.assertTrue((DEPRECATED_MODULE / "pom.xml.archived").is_file())
-
-    def test_archived_manifest_is_not_live(self) -> None:
-        """Scenario: Archived manifest is not live."""
-        live = [str(p.relative_to(REPO_ROOT)) for p in (REPO_ROOT / "deprecated").rglob("pom.xml")]
-        self.assertEqual([], live, "deprecated/ must hold no live pom.xml")
+        self.assertFalse((REPO_ROOT / "deprecated").exists(), "deprecated/ was removed (#1261)")
 
     def test_backend_owns_the_moved_sources(self) -> None:
         """Scenario: DTOs compile from backend-api."""
