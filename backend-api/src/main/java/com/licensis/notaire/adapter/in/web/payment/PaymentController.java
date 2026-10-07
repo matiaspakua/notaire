@@ -17,6 +17,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -162,7 +165,7 @@ public class PaymentController {
     })
     @PostMapping
     @Operation(summary = "CU15 - Procesar pago (JSON body)")
-    public ResponseEntity<DtoPaymentResponse> processPayment(@RequestBody PaymentRequest request) {
+    public ResponseEntity<DtoPaymentResponse> processPayment(@Valid @RequestBody PaymentRequest request) {
         return register(new ProcessPaymentCommand(
                 request.idBudget(), request.amount(), request.date(),
                 request.notes(), request.paymentMethod()));
@@ -191,7 +194,7 @@ public class PaymentController {
     @PutMapping("/{id}")
     @Operation(summary = "Editar pago")
     public ResponseEntity<DtoPaymentResponse> update(@PathVariable Integer id,
-            @RequestBody PaymentUpdateRequest request) {
+            @Valid @RequestBody PaymentUpdateRequest request) {
         try {
             PaymentDetails updated = editPaymentUseCase.edit(new EditPaymentCommand(
                     id, request.amount(), request.date(), request.notes(), request.paymentMethod()));
@@ -226,8 +229,8 @@ public class PaymentController {
      * Request body of {@code POST /api/v1/pagos} (CU15).
      */
     public record PaymentRequest(
-            Integer idBudget,
-            BigDecimal amount,
+            @NotNull Integer idBudget,
+            @NotNull @Positive BigDecimal amount,
             Date date,
             String notes,
             String paymentMethod
@@ -248,7 +251,7 @@ public class PaymentController {
      * same, and any null field leaves the stored value untouched.
      */
     public record PaymentUpdateRequest(
-            BigDecimal amount,
+            @Positive BigDecimal amount,
             Date date,
             String notes,
             String paymentMethod
