@@ -996,7 +996,9 @@ class SimpleControllersTest {
         private final PersonService service = mock(PersonService.class);
         private final IdentificationTypeRepository typeRepo = mock(IdentificationTypeRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new PersonController(service, typeRepo)).build();
+                standaloneSetup(new PersonController(service, typeRepo))
+                        .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                        .build();
 
         @Test
         @DisplayName("Cover happy paths including search and default type identificacion")
@@ -1009,7 +1011,8 @@ class SimpleControllersTest {
             IdentificationType type = new IdentificationType(1, "DNI");
             p.setFkIdIdentificationType(type);
 
-            when(service.findAll()).thenReturn(List.of(p));
+            when(service.findAll(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(p), PageRequest.of(0, 20), 1));
             when(service.findById(1)).thenReturn(Optional.of(p));
             when(service.findById(2)).thenReturn(Optional.empty());
             when(service.save(any(Person.class))).thenReturn(p);

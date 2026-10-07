@@ -102,12 +102,12 @@ class BusinessWorkflowIntegrationTest {
 
         @Test
         @Order(1)
-        @DisplayName("GET /api/v1/people returns array")
+        @DisplayName("GET /api/v1/people returns a page whose content is an array")
         void getAllPeopleReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/people"))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray());
+                    .andExpect(jsonPath("$.content").isArray());
         }
 
         @Test

@@ -6,6 +6,8 @@ import com.licensis.notaire.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,12 @@ public class PersonService {
     public List<Person> findAll() {
         logger.debug("Finding all people");
         return personRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Person> findAll(Pageable pageable) {
+        logger.debug("Finding people page {}", pageable);
+        return personRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
