@@ -5,3 +5,4 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 python3 contracts/tests/test_seams.py
+python3 contracts/tests/test_api_reachability.py
