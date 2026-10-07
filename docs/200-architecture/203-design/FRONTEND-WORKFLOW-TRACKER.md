@@ -2,7 +2,7 @@
 
 **Issue:** [#453](https://github.com/matiaspakua/notaire/issues/453) (parent #436)
 **Use Cases:** [CU83 – Definir Workflow de Estados y Transiciones](../../100-business/102-use-cases/CU83%20%E2%80%93%20Definir%20Workflow%20de%20Estados%20y%20Transiciones.md)
-**Concept:** `frontend/poc_motion_js/poc.md`
+**Concept:** [archived concept](../../000-archive/200-architecture/WORKFLOW-TRACKER-CONCEPT-poc_motion_js.md) (original design chat; superseded by this document)
 
 ## Overview
 
