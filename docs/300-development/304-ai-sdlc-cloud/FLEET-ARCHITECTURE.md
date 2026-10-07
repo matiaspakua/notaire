@@ -236,7 +236,7 @@ Operational failures while landing the fleet. Full table:
 5. **Prefer** `scripts/seed-openspec-change.sh` before filling Gate 1.
 6. **Never merge on light-CI-only green** — Unit, Integration, Coverage Gate, Bruno, and Playwright must be terminal success. Gate: `bash scripts/check-heavy-ci.sh <pr>` ([`CI-MERGE-GATE.md`](CI-MERGE-GATE.md); #1126 / #1128 / #1134). Do not trust CI subscription “all N checks success” alone.
 7. **Stale PR: rebase first** — Budget/person / `undefined, undefined` Integration or Playwright failures on a tip behind `main` are usually fixed by rebasing onto #1132’s nested `BudgetResponse.person`, not by new product code.
-8. **CodeQL: advanced XOR default setup** — do not enable GitHub Code Scanning default setup beside `.github/workflows/codeql.yml`; use `wait-for-processing: false` and/or `scripts/enable-gh-secure.sh --apply` ([DevSecOps](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup)).
+8. **CodeQL: advanced XOR default setup** — do not enable GitHub Code Scanning default setup beside `.github/workflows/codeql.yml`; use `wait-for-processing: false` and/or `security/enable-gh-secure.sh --apply` ([DevSecOps](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup)).
 9. **Serialize heavy CI** — prefer one heavy-CI PR at a time; docs/rebase tips wait; do not open new product PRs until the in-flight Integration/Playwright suite finishes ([`CI-MERGE-GATE.md` — Runner contention](CI-MERGE-GATE.md#runner-contention--serialize-heavy-ci)).
 
 ---

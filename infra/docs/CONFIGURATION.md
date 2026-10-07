@@ -65,7 +65,7 @@ block too.
 Every `image:` in `observability/docker-compose.yml` is pinned to a minor version
 or digest — no `:latest`. Bump deliberately in a PR; policy in
 [ADR-017](../../docs/200-architecture/202-ADR/ADR-017-container-base-images.md),
-guard: `python3 scripts/test_image_pins_and_dependabot.py`.
+guard: `python3 security/tests/test_image_pins_and_dependabot.py`.
 
 ## Compose project name
 

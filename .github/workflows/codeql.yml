@@ -11,7 +11,7 @@ name: CodeQL
 # "CodeQL analyses from advanced configurations cannot be processed when the
 # default setup is enabled" — the Analyze job then fails. Disable default
 # setup (Settings → Code security → Code scanning, or
-# scripts/enable-gh-secure.sh --apply which turns it off) before relying on
+# security/enable-gh-secure.sh --apply which turns it off) before relying on
 # this workflow's uploads.
 #
 # wait-for-processing is false so a leftover default-setup conflict does not

@@ -79,5 +79,5 @@ when Dockerfile bases change.
   run regularly since Alpine base images do accumulate CVEs over time;
   compose/infra `image:` lines are not auto-rewritten by Dependabot docker
   (bump via PR / checklist in `infra/README.md`).
-- **Hygiene**: `scripts/test_image_pins_and_dependabot.py` rejects floating
+- **Hygiene**: `security/tests/test_image_pins_and_dependabot.py` rejects floating
   tags and asserts Dependabot npm + docker coverage.

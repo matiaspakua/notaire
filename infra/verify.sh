@@ -8,3 +8,5 @@ python3 infra/tests/test_infra_standalone.py
 python3 infra/tests/test_infra_prometheus_hardening.py
 python3 infra/tests/test_staging_kustomize.py
 python3 infra/tests/test_performance_test_assets.py
+python3 infra/tests/test_prod_compose.py
+python3 infra/tests/test_dev_stack_isolation.py

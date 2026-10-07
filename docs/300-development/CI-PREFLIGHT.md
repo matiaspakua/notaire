@@ -101,7 +101,7 @@ Cannot find git repository in any parent directory
 
 CI checks out normally and is unaffected, but this makes the format gate
 unrunnable from a worktree — precisely where you'd want it. `preflight.sh`
-detects this and falls back to `scripts/spotless-fallback.sh`, which implements
+detects this and falls back to `backend-api/tools/spotless-fallback.sh`, which implements
 the same four rules configured in the pom:
 
 ```xml

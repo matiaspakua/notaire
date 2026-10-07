@@ -16,7 +16,7 @@ Publish / download via the `docs-manuals` GitHub Release asset
 `Manual-de-Usuario-Notaire.doc.pdf`:
 
 ```bash
-bash scripts/fetch-user-manual.sh
+bash docs/tools/fetch-user-manual.sh
 ```
 
 Or manually:

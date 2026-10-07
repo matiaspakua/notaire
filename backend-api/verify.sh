@@ -7,3 +7,4 @@ cd "$ROOT"
 mvn spotless:check -pl backend-api
 mvn checkstyle:check -pl backend-api
 mvn verify -pl backend-api -am
+python3 backend-api/tools/tests/test_generate_coverage_snapshot.py

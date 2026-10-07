@@ -137,5 +137,5 @@ Re-ready them only after the product PR’s heavy gate is green or merged.
 
 Adding `.github/workflows/codeql.yml` while GitHub Code Scanning **default
 setup** is enabled causes SARIF rejection / Analyze failures. Ops notes and
-`scripts/enable-gh-secure.sh`:
+`security/enable-gh-secure.sh`:
 [DevSecOps — CodeQL](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup).
