@@ -6,6 +6,7 @@ import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.application.usecase.deed.DeedService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -100,7 +101,7 @@ public class DeedController {
     @Operation(summary = "Obtener todas las escrituras")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<DeedResponse>> getAll(
-            @PageableDefault(size = 20) Pageable pageable) {
+            @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(deedService.findAllPaged(pageable).map(this::toResponse));
     }
 

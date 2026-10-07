@@ -2091,21 +2091,6 @@ components:
           format: int32
           type: integer
       type: object
-    Pageable:
-      properties:
-        page:
-          format: int32
-          minimum: 0
-          type: integer
-        size:
-          format: int32
-          minimum: 1
-          type: integer
-        sort:
-          items:
-            type: string
-          type: array
-      type: object
     PageableObject:
       properties:
         offset:
@@ -3341,11 +3326,31 @@ paths:
     get:
       operationId: getAll_19
       parameters:
-      - in: query
-        name: pageable
-        required: true
+      - description: Zero-based page index (0..N)
+        in: query
+        name: page
+        required: false
         schema:
-          $ref: '#/components/schemas/Pageable'
+          default: 0
+          minimum: 0
+          type: integer
+      - description: The size of the page to be returned
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          minimum: 1
+          type: integer
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort
+          criteria are supported.'
+        in: query
+        name: sort
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
       responses:
         '200':
           content:
@@ -3880,11 +3885,31 @@ paths:
     get:
       operationId: getAll_16
       parameters:
-      - in: query
-        name: pageable
-        required: true
+      - description: Zero-based page index (0..N)
+        in: query
+        name: page
+        required: false
         schema:
-          $ref: '#/components/schemas/Pageable'
+          default: 0
+          minimum: 0
+          type: integer
+      - description: The size of the page to be returned
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          minimum: 1
+          type: integer
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort
+          criteria are supported.'
+        in: query
+        name: sort
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
       responses:
         '200':
           content:
@@ -5577,11 +5602,33 @@ paths:
     get:
       operationId: getAllPeople
       parameters:
-      - in: query
-        name: pageable
-        required: true
+      - description: Zero-based page index (0..N)
+        in: query
+        name: page
+        required: false
         schema:
-          $ref: '#/components/schemas/Pageable'
+          default: 0
+          minimum: 0
+          type: integer
+      - description: The size of the page to be returned
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          minimum: 1
+          type: integer
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort
+          criteria are supported.'
+        in: query
+        name: sort
+        required: false
+        schema:
+          default:
+          - idPerson,ASC
+          items:
+            type: string
+          type: array
       responses:
         '200':
           content:
@@ -6093,11 +6140,33 @@ paths:
       description: 'Parámetros: page (default 0), size (default 20), sort (ej. idPresupuesto,desc)'
       operationId: getAll_8
       parameters:
-      - in: query
-        name: pageable
-        required: true
+      - description: Zero-based page index (0..N)
+        in: query
+        name: page
+        required: false
         schema:
-          $ref: '#/components/schemas/Pageable'
+          default: 0
+          minimum: 0
+          type: integer
+      - description: The size of the page to be returned
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          minimum: 1
+          type: integer
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort
+          criteria are supported.'
+        in: query
+        name: sort
+        required: false
+        schema:
+          default:
+          - idBudget,DESC
+          items:
+            type: string
+          type: array
       responses:
         '200':
           content:
@@ -7862,11 +7931,31 @@ paths:
     get:
       operationId: getAll_1
       parameters:
-      - in: query
-        name: pageable
-        required: true
+      - description: Zero-based page index (0..N)
+        in: query
+        name: page
+        required: false
         schema:
-          $ref: '#/components/schemas/Pageable'
+          default: 0
+          minimum: 0
+          type: integer
+      - description: The size of the page to be returned
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          minimum: 1
+          type: integer
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort
+          criteria are supported.'
+        in: query
+        name: sort
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
       responses:
         '200':
           content:

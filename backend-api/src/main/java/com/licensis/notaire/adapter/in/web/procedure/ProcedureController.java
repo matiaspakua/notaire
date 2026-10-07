@@ -17,6 +17,7 @@ import com.licensis.notaire.application.port.out.property.PropertyRepositoryPort
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.DeedRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -99,7 +100,7 @@ public class ProcedureController {
     @Operation(summary = "Obtener todos los trámites")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<ProcedureResponse>> getAll(
-            @PageableDefault(size = 20) Pageable pageable) {
+            @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(repository.findAll(pageable).map(ProcedureResponse::from));
     }
 
