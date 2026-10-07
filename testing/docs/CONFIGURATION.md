@@ -40,5 +40,5 @@ Flyway does. Add the variable to `.env.example`, to `database/run.sh` and to thi
 ## Pinned images
 
 Both images in `database/docker-compose.yml` are pinned to an exact version. Bump them together
-with the product, deliberately, in a pull request; `scripts/test_image_pins_and_dependabot.py`
+with the product, deliberately, in a pull request; `security/tests/test_image_pins_and_dependabot.py`
 rejects `:latest` and major-only tags.

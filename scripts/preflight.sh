@@ -154,7 +154,8 @@ run "process script self-tests" bash -c \
      && python3 -m unittest discover -s security/tests \
      && python3 -m unittest discover -s infra/tests \
      && python3 -m unittest discover -s testing/tests \
-     && python3 -m unittest discover -s docs/tests"
+     && python3 -m unittest discover -s docs/tests \
+     && python3 -m unittest discover -s backend-api/tools/tests"
 
 # ---------------------------------------------------------------------------
 section "Format & lint (BLOCKING in CI: 'Code Lint')"
@@ -169,14 +170,14 @@ if [ "$MODE_FIX" = "1" ]; then
     if [ "$SPOTLESS_NATIVE" = "1" ]; then
         run_warn "spotless:apply" mvn spotless:apply -pl backend-api "${MVN_FLAGS[@]}"
     else
-        run_warn "spotless:apply (fallback: git worktree)" bash scripts/spotless-fallback.sh apply
+        run_warn "spotless:apply (fallback: git worktree)" bash backend-api/tools/spotless-fallback.sh apply
     fi
 fi
 
 if [ "$SPOTLESS_NATIVE" = "1" ]; then
     run "spotless format check" mvn spotless:check -pl backend-api "${MVN_FLAGS[@]}"
 else
-    run "spotless format check (fallback: git worktree)" bash scripts/spotless-fallback.sh check
+    run "spotless format check (fallback: git worktree)" bash backend-api/tools/spotless-fallback.sh check
 fi
 
 run_warn "checkstyle" mvn checkstyle:check -pl backend-api "${MVN_FLAGS[@]}"

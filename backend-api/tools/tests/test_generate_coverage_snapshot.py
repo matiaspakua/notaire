@@ -11,7 +11,7 @@ an importable module.
 
 Plain stdlib unittest, consistent with this project's other one-off CI/config
 validation scripts (see infra/tests/test_performance_test_assets.py).
-Run with: python3 scripts/test_generate_coverage_snapshot.py
+Run with: python3 backend-api/tools/tests/test_generate_coverage_snapshot.py
 """
 import json
 import os
@@ -21,7 +21,7 @@ import sys
 import tempfile
 import unittest
 
-SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "generate-coverage-snapshot.py")
+SCRIPT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "generate-coverage-snapshot.py")
 
 MINIMAL_JACOCO_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <report name="backend-api">

@@ -54,6 +54,7 @@ jobs:
           python3 -m unittest discover -s infra/tests
           python3 -m unittest discover -s testing/tests
           python3 -m unittest discover -s docs/tests
+          python3 -m unittest discover -s backend-api/tools/tests
 
       - name: CU-API matrix validation
         if: ${{ !cancelled() }}

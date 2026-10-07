@@ -59,10 +59,10 @@
 - [x] CSP de producción sin `'unsafe-eval'` y con nonce en `script-src` (issue #1051).
 - [x] Alertas Dependabot críticas/altas por `log4j:log4j` en Swing muerto y por
       `smol-toml` resueltas: árbol `deprecated-frontend-swing/` eliminado; override
-      npm `smol-toml` `^1.9.0` (issue #1046). Guard: `scripts/test_dependabot_hygiene.py`.
+      npm `smol-toml` `^1.9.0` (issue #1046). Guard: `security/tests/test_dependabot_hygiene.py`.
 - [x] Imágenes compose/Dockerfile/CI pinneadas (sin `:latest` / `sonarqube:community`
       / postgres major-only); Dependabot con npm `/frontend` y docker
       `/backend-api` + `/frontend` (issue #1045). Guard:
-      `scripts/test_image_pins_and_dependabot.py`.
+      `security/tests/test_image_pins_and_dependabot.py`.
 - [x] Proxy BFF de `/api/v1` con `BACKEND_URL` en runtime; sin filtrar URL interna
       del backend en `/login` (issue #1055).

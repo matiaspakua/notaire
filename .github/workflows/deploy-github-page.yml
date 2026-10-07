@@ -59,7 +59,7 @@ jobs:
           # jacoco.xml is missing (issue #758) -- that's expected here if the
           # mvn run above failed; the shared metrics script falls back to the
           # last deployed values in that case rather than fabricating zeros.
-          python3 scripts/generate-coverage-snapshot.py || true
+          python3 backend-api/tools/generate-coverage-snapshot.py || true
           if [ -f "backend-api/target/site/jacoco/jacoco.xml" ]; then
             mkdir -p jacoco-report
             cp -r backend-api/target/site/jacoco/* jacoco-report/

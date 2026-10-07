@@ -305,7 +305,7 @@ jobs:
       # Deliberately NOT passing --reporter here (issue #658): the CLI --reporter flag
       # fully overrides playwright.config.ts's own `reporter` array, silently dropping
       # its outputFile paths (test-results/results.json, results.xml) that
-      # scripts/generate_e2e_coverage_report.py depends on, and the custom
+      # testing/tools/generate_e2e_coverage_report.py depends on, and the custom
       # tests/reporters/coverage-report.ts business-coverage reporter entirely.
       - name: Run Playwright E2E tests
         run: |
@@ -386,7 +386,7 @@ jobs:
           mkdir -p reports
           export OUTPUT_FILE="reports/e2e-coverage-$DATE.md"
           export REPORT_DATE="$DATE"
-          python3 scripts/generate_e2e_coverage_report.py
+          python3 testing/tools/generate_e2e_coverage_report.py
 
       - name: Publish coverage report to job summary
         run: |

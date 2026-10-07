@@ -19,7 +19,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     exit 1
 fi
 
-chmod +x .githooks/* scripts/preflight.sh scripts/spotless-fallback.sh 2>/dev/null || true
+chmod +x .githooks/* scripts/preflight.sh backend-api/tools/spotless-fallback.sh 2>/dev/null || true
 git config core.hooksPath .githooks
 
 cat <<MSG

@@ -3,8 +3,8 @@
 Guards issue #1186 (CU76): the dev compose stack takes container names and host
 ports from overridable variables whose defaults equal the historical values.
 
-Plain stdlib unittest + PyYAML, consistent with scripts/test_prod_compose.py.
-Run with: python3 scripts/test_dev_stack_isolation.py
+Plain stdlib unittest + PyYAML, consistent with infra/tests/test_prod_compose.py.
+Run with: python3 infra/tests/test_dev_stack_isolation.py
 """
 import json
 import os
@@ -16,7 +16,7 @@ from pathlib import Path
 
 import yaml
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 COMPOSE_FILE = REPO_ROOT / "docker-compose.yml"
 START_SCRIPT = REPO_ROOT / "workspace" / "stack" / "start.sh"
 ENV_EXAMPLE = REPO_ROOT / ".env.example"

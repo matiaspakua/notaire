@@ -3,9 +3,9 @@
 # export-openapi.sh — regenerate the committed OpenAPI artifact (#1067 / CU76).
 #
 # Usage:
-#   bash scripts/export-openapi.sh           # prefer live API, else Maven/H2
-#   bash scripts/export-openapi.sh --maven   # force Maven H2 export (CI)
-#   bash scripts/export-openapi.sh --live    # require http://localhost:8080
+#   bash backend-api/tools/export-openapi.sh           # prefer live API, else Maven/H2
+#   bash backend-api/tools/export-openapi.sh --maven   # force Maven H2 export (CI)
+#   bash backend-api/tools/export-openapi.sh --live    # require http://localhost:8080
 #
 # Output (stable path): backend-api/openapi/openapi.yaml
 #
@@ -14,7 +14,7 @@
 # the file is stale or introduces breaking changes vs main.
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
 
 OUT="backend-api/openapi/openapi.yaml"
