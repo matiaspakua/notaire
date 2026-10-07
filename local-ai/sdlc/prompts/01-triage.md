@@ -1,7 +1,7 @@
 # Phase 1 — Triage issue #{{ISSUE}} (analysis only)
 
 You read code and fill in TWO files. Nothing else: no branches, no edits to
-repository files, no `git add`. Do NOT create anything under `openspec/` —
+repository files, no `git add`. Do NOT create anything under `docs/openspec/` —
 a later phase writes the specification; the foreman reverts it here.
 
 ## Steps

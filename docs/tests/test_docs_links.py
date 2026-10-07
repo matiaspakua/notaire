@@ -14,7 +14,7 @@ from urllib.parse import unquote
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ROOT_DOCS = ("README.md", "AGENTS.md", "CLAUDE.md", "CONSTITUTION.md", "CHANGELOG.md")
-SKIPPED_DIRS = ("docs/000-archive",)
+SKIPPED_DIRS = ("docs/000-archive", "docs/openspec/changes/archive", "docs/openspec/schemas")
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)")
 FENCE = re.compile(r"```.*?```", re.DOTALL)
 EXEMPT_REASONS = {

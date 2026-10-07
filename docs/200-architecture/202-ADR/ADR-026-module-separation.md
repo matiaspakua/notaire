@@ -40,7 +40,7 @@ documented seams before any extraction. This ADR delivers them as folders first.
 - Extraction (Phase 2) becomes `git filter-repo` of one folder plus a pin in the manifest.
 - Cross-area guards stay in `workspace/` until their areas are parameterised.
 - Moving OpenSpec is the last slice because it touches every workflow, hook and script that
-  names `openspec/`.
+  names `docs/openspec/`.
 
 ## Navigation
 

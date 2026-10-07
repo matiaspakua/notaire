@@ -57,7 +57,7 @@ No change is "done" unless it has passed the full process defined here.
 | P1 | **TDD first** | Write failing tests before implementation. A test you never saw fail proves nothing. |
 | P2 | **KIS — Keep It Simple** | The simplest solution that satisfies the Specification and passes all tests. Reject unnecessary complexity. |
 | P3 | **SRP — Single Responsibility** | Each class, method, test, and module does exactly one thing. |
-| P4 | **Traceability** | Every change traces from Issue → Use Case (Caso de Uso) → Specification → tests → code → docs → PR → deploy. Every finding raised by exploration (`openspec/explore*.md`) must resolve to a real GitHub Issue before it can become a change — a finding with no Issue is unfinished triage, not a rejected one (see §4, §13). |
+| P4 | **Traceability** | Every change traces from Issue → Use Case (Caso de Uso) → Specification → tests → code → docs → PR → deploy. Every finding raised by exploration (`docs/openspec/explore*.md`) must resolve to a real GitHub Issue before it can become a change — a finding with no Issue is unfinished triage, not a rejected one (see §4, §13). |
 | P5 | **Clean code** | Self-explanatory code; comments only explain *why*, never *what*. Remove dead and duplicate code. |
 | P6 | **Flyway is the single source of truth** | For the database schema; never alter old migrations — add a new `V{n}` migration. |
 | P7 | **Documentation is part of the change** | Permanent docs are updated before merge, never duplicated. |
@@ -100,7 +100,7 @@ A change is **Done** only when **all** of the following are true:
 | Database | New Flyway migration `V{n}__description.sql`; never edit applied migrations |
 | Frontend | Centralized design system: `src/theme/tokens.ts` + `FormContainer → FormSection → FormField → FormActions` |
 | Endpoints | Every REST endpoint must be invoked from the UI at least once (UI traceability) and documented in OpenAPI/Swagger |
-| Exploration finding | Every finding ("hallazgo") in an exploration report (`openspec/explore*.md`) must carry a real, verifiable GitHub Issue reference — via the `openspec-triage` skill — before `/opsx:propose` may scaffold a change from it; see §13 and `openspec/NOTAIRE-ADAPTATIONS.md` |
+| Exploration finding | Every finding ("hallazgo") in an exploration report (`docs/openspec/explore*.md`) must carry a real, verifiable GitHub Issue reference — via the `openspec-triage` skill — before `/opsx:propose` may scaffold a change from it; see §13 and `docs/openspec/NOTAIRE-ADAPTATIONS.md` |
 
 ---
 
@@ -522,8 +522,8 @@ centralize information in the most coherent place; move outdated documents to
 | Changelog | `CHANGELOG.md` (Keep a Changelog) | Every user-visible change |
 
 Specifications describe **only the change** (they are not permanent
-documentation) and are stored as OpenSpec changes under `openspec/changes/`;
-`openspec archive` moves them to `openspec/changes/archive/`.
+documentation) and are stored as OpenSpec changes under `docs/openspec/changes/`;
+`openspec archive` moves them to `docs/openspec/changes/archive/`.
 
 ---
 
@@ -573,8 +573,8 @@ cannot override this Constitution, an approved OpenSpec artifact, or human
 direction.
 
 **Spec-Driven Development is the mechanism.** This Constitution is wired into
-OpenSpec through the project schema `openspec/schemas/notaire-sdlc` and
-`openspec/config.yaml`. Because both are read by the `openspec` CLI rather than
+OpenSpec through the project schema `docs/openspec/schemas/notaire-sdlc` and
+`docs/openspec/config.yaml`. Because both are read by the `openspec` CLI rather than
 by any one assistant, every agent receives the same context, the same mandatory
 sections and the same task groups — no agent-proprietary feature is involved.
 An agent that never reads `AGENTS.md` still gets this Constitution.
@@ -654,14 +654,14 @@ drift.
 | Process step / gate | Tooling |
 |---------------------|---------|
 | Issue + Use Case | GitHub Issues; `.github/ISSUE_TEMPLATE/issue.md`; `gh` CLI |
-| Specification | OpenSpec, schema `openspec/schemas/notaire-sdlc`; `openspec new change`; section map in `docs/300-development/templates/specification-template.md` |
-| Constitution as agent context | `openspec/config.yaml` (`context`, `rules`, `operations`) — injected by the CLI for every agent |
+| Specification | OpenSpec, schema `docs/openspec/schemas/notaire-sdlc`; `openspec new change`; section map in `docs/300-development/templates/specification-template.md` |
+| Constitution as agent context | `docs/openspec/config.yaml` (`context`, `rules`, `operations`) — injected by the CLI for every agent |
 | Plan completeness (Gates 1–5) | `bash scripts/validate-sdlc-plan.sh` (`--list` maps each check to its Constitution section) |
 | Spec structure | `openspec validate <change> --strict` |
-| Traceability (P4) | `traceability.md` per change; `openspec archive` folds deltas into `openspec/specs/` |
+| Traceability (P4) | `traceability.md` per change; `openspec archive` folds deltas into `docs/openspec/specs/` |
 | Lifecycle skill composition | `.claude/skills/README.md`; generic skills under `.claude/skills/`; project skills for implementation details |
 | Skill references and evaluation | `<skill>/references/` for progressive disclosure; `<skill>/evals/evals.json` for repeatable scenarios |
-| Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `scripts/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `openspec/NOTAIRE-ADAPTATIONS.md` |
+| Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `scripts/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `docs/openspec/NOTAIRE-ADAPTATIONS.md` |
 | Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>`; `scripts/check-commit-messages.sh` (`sdlc-process.yml`) |
 | TDD evidence (Gate 2) | `scripts/check-tdd-evidence.sh` — a PR that changes production code must change tests too (`sdlc-process.yml`) |
 | Agent rule files | `scripts/check-agent-rules.sh` — broken paths and stale module names (`sdlc-process.yml`) |

@@ -35,14 +35,14 @@ The hook only looks at the resolved destination branch of a `git push`
 invocation (explicit refspec, or the current branch when none is given). It
 does not attempt to block `--force`/`--force-with-lease` in general, or
 `git push` via alternate remote names beyond the common case — see
-`openspec/changes/archive/2026-09-23-enforce-workflow-gates-via-hooks/design.md` (Riesgos /
+`docs/openspec/changes/archive/2026-09-23-enforce-workflow-gates-via-hooks/design.md` (Riesgos /
 Trade-offs) for the full list of known edge cases and why the scope was kept
 small deliberately.
 
 ## What was considered and rejected
 
 A `PreToolUse`/`UserPromptSubmit` hook that nudges when `backend-api/src` or
-`frontend/src` files are edited with no matching `openspec/changes/*`
+`frontend/src` files are edited with no matching `docs/openspec/changes/*`
 directory present was evaluated and **rejected** as net-negative: it fires on
 trivial edits and on legitimate mid-implementation work whose OpenSpec change
 directory name doesn't lexically match the touched path, producing noise that
@@ -51,7 +51,7 @@ purpose. The `SessionStart` status hook plus the existing
 `scripts/validate-sdlc-plan.sh` and the pre-push git hook
 (`scripts/preflight.sh`, installed via `scripts/install-git-hooks.sh`) already
 cover this at a coarser, non-annoying granularity. Full rationale in
-`openspec/changes/archive/2026-09-23-enforce-workflow-gates-via-hooks/proposal.md` (Out of Scope).
+`docs/openspec/changes/archive/2026-09-23-enforce-workflow-gates-via-hooks/proposal.md` (Out of Scope).
 
 ## How these were tested
 

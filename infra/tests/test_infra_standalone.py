@@ -58,7 +58,7 @@ LEGACY_REFERENCE = re.compile(
 )
 REFERENCE_EXEMPT_PREFIXES = (
     "docs/000-archive/",
-    "openspec/",
+    "docs/openspec/",
     "backend-api/src/main/resources/db/migration/",
     "CHANGELOG.md",
     "infra/tests/test_infra_standalone.py",

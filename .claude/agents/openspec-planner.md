@@ -25,7 +25,7 @@ in the `implement` sense (no feature logic to make tests green).
 
 - Real open GitHub Issue (`gh issue view`); never invent numbers.
 - Use Case reference (`CU-XX` / `RF-XX` / `RNF-XX`) or stop with `BLOCKED`.
-- Schema `notaire-sdlc`; follow `openspec/config.yaml` rules.
+- Schema `notaire-sdlc`; follow `docs/openspec/config.yaml` rules.
 - Exploration findings → `openspec-triage` → Issues **before** `openspec-propose`.
 - Do not copy `CONSTITUTION.md` into artifacts; cite it.
 - Do not run `local-ai/` tooling.

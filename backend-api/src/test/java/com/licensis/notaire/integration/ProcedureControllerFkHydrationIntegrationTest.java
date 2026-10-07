@@ -28,7 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
  * Reproduces issue #981: {@code POST}/{@code PUT /api/v1/tramites} must resolve
  * plain FK ids (idDeed, idProperty, idManagement, idBudget, idProcedureType)
  * against their real persisted rows, never trust a client-supplied nested
- * object as-is. See openspec/changes/fix-procedure-nested-fk-hydration/.
+ * object as-is. See docs/openspec/changes/fix-procedure-nested-fk-hydration/.
  */
 @SpringBootTest
 @ActiveProfiles("test-h2")

@@ -27,7 +27,7 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 ## Authority
 
 - Process: [`CONSTITUTION.md`](../../../CONSTITUTION.md)
-- Specs: OpenSpec schema `notaire-sdlc` (`openspec/`)
+- Specs: OpenSpec schema `notaire-sdlc` (`docs/openspec/`)
 - Skills catalog: [`.claude/skills/`](../../../.claude/skills/)
 - Agent index: [`AGENTS.md`](../../../AGENTS.md)
 
@@ -40,4 +40,4 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 
 - [← Development docs](../)
 - [CI Preflight](../CI-PREFLIGHT.md)
-- [OpenSpec adaptations](../../../openspec/NOTAIRE-ADAPTATIONS.md)
+- [OpenSpec adaptations](../../openspec/NOTAIRE-ADAPTATIONS.md)

@@ -9,7 +9,7 @@
  *   - Define a fixed or variable cost for a tipo de documento
  *   - Verify the cost appears in the costos de documentos table
  *
- * Reference: openspec/changes/costos-documentos-presupuesto
+ * Reference: docs/openspec/changes/costos-documentos-presupuesto
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";

@@ -80,4 +80,4 @@ migration cannot hide behind it.
 
 | Asset | Status |
 |-------|--------|
-| `e2e-swing/` | Retired Swing Robot suite, kept on disk by `openspec/specs/swing-e2e-retirement`; never wire it into CI |
+| `e2e-swing/` | Retired Swing Robot suite, kept on disk by `docs/openspec/specs/swing-e2e-retirement`; never wire it into CI |

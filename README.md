@@ -95,7 +95,7 @@ notaire/
 │   └── 000-archive/       # Documentación histórica/superada
 ├── infra/                 # Infraestructura (repo-ready): observabilidad, deploy (Kustomize, nginx), k6 — ver infra/README.md
 ├── github-page/           # Sitio informativo/portfolio (Next.js, deploy a GitHub Pages)
-├── openspec/               # Especificaciones SDLC (schema notaire-sdlc)
+├── docs/openspec/               # Especificaciones SDLC (schema notaire-sdlc)
 ├── docker-compose.yml      # Stack de desarrollo (puertos publicados, pgAdmin)
 ├── docker-compose.prod.yml # Stack de producción (#1044; solo reverse proxy en host)
 ├── CONSTITUTION.md         # Autoridad máxima del proceso de desarrollo

@@ -1,13 +1,13 @@
 # Phase 3 — Specification for #{{ISSUE}} (Gate 1). Documents only, no code
 
-Branch `{{BRANCH}}` and change `openspec/changes/{{CHANGE}}/` already exist.
+Branch `{{BRANCH}}` and change `docs/openspec/changes/{{CHANGE}}/` already exist.
 Your triage is in `{{IO}}/triage.md` and `{{IO}}/triage.env` — read both first.
 Never run mvn, npm or any build/test here: coverage and test results come from
 the issue and triage, and a build started in this phase stalls it.
 
 Fill the artifacts in this order. For EACH one, first run
 `openspec instructions <artifact> --change {{CHANGE}}` and follow it, and look at
-the same file in `openspec/changes/archive/2026-09-19-fix-bruno-login-field-names/`
+the same file in `docs/openspec/changes/archive/2026-09-19-fix-bruno-login-field-names/`
 as a model of the expected depth:
 
 0. Copy config keys, paths and class names EXACTLY from `## Evidence` in triage.md
@@ -16,7 +16,7 @@ as a model of the expected depth:
    branch `{{BRANCH}}`. If USE_CASE is NONE, state why no Use Case applies.
 2. `specs/<capability>/spec.md` — one `### Requirement:` per behaviour, each with
    `#### Scenario:` blocks (WHEN/THEN) = the acceptance criteria from triage.
-   Look in `openspec/specs/` for an existing capability first; if one fits, use
+   Look in `docs/openspec/specs/` for an existing capability first; if one fits, use
    `## MODIFIED Requirements` against it, otherwise `## ADDED Requirements`.
    Specify ONLY what the TODO criteria say. Never invent new behaviour (new
    startup checks, new modes, new error messages) — that is scope creep and is
@@ -24,7 +24,7 @@ as a model of the expected depth:
    One requirement per TODO criterion; each planned test from triage appears
    in a scenario and in traceability.md.
    ONLY for pure docs/ci changes with no behaviour (KIND={{KIND}}): skip specs and set
-   `skip_specs: true` in `openspec/changes/{{CHANGE}}/.openspec.yaml`.
+   `skip_specs: true` in `docs/openspec/changes/{{CHANGE}}/.openspec.yaml`.
 3. `design.md` — include Testing Strategy (which test classes, which level),
    Regression Strategy, Playwright Strategy (n/a + reason if UI_CHANGE=no),
    Deployment and Rollback.

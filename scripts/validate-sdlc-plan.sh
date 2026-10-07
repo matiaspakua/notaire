@@ -5,7 +5,7 @@
 # WHY
 # ---
 # CONSTITUTION.md defines the mandatory SDLC and its five Quality Gates. The
-# OpenSpec schema `openspec/schemas/notaire-sdlc` puts those requirements in front
+# OpenSpec schema `docs/openspec/schemas/notaire-sdlc` puts those requirements in front
 # of every agent (templates + instructions + config context), but instructions are
 # advisory: an agent can still emit an incomplete plan. This script is the
 # mechanical gate. It is plain bash so it works for any agent and any human -
@@ -30,7 +30,7 @@
 # format check below (§4/Gate 1) only validates that a `#<number>` is present,
 # not that it is real. When the `gh` CLI is installed and authenticated, this
 # script additionally resolves the Issue live: it must exist and be open. This
-# is what makes the process in openspec/NOTAIRE-ADAPTATIONS.md
+# is what makes the process in docs/openspec/NOTAIRE-ADAPTATIONS.md
 # mechanically enforced rather than advisory: an exploration report (`opsx:explore`)
 # must be triaged into real GitHub Issues before `opsx:propose` scaffolds a plan
 # around one, because this gate — run by `preflight.sh` and `pr-validation.yml` —
@@ -47,7 +47,7 @@
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CHANGES_DIR="$REPO_ROOT/openspec/changes"
+CHANGES_DIR="$REPO_ROOT/docs/openspec/changes"
 SCHEMA_NAME="notaire-sdlc"
 
 if [ -t 1 ]; then
@@ -335,7 +335,7 @@ fi
 printf '%sSDLC plan validation%s — CONSTITUTION.md enforced on OpenSpec changes\n' "$BLUE" "$NC"
 
 if [ ! -d "$CHANGES_DIR" ]; then
-  printf '%s\n' "No openspec/changes directory — nothing to validate."
+  printf '%s\n' "No docs/openspec/changes directory — nothing to validate."
   exit 0
 fi
 

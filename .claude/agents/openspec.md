@@ -62,9 +62,9 @@ When the user wants to propose a new change:
 
 ## Key Directories
 
-- `openspec/` — Root OpenSpec directory
-- `openspec/changes/` — Active changes with their artifacts
-- `openspec/config.yaml` — Project configuration
+- `docs/openspec/` — Root OpenSpec directory
+- `docs/openspec/changes/` — Active changes with their artifacts
+- `docs/openspec/config.yaml` — Project configuration
 
 ## Best Practices
 

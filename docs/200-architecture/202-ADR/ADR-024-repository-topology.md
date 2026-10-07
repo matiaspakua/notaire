@@ -44,7 +44,7 @@ proposal against `main` @ `610fa7b0` and records a topology that reaches those g
    generated frontend types from the committed OpenAPI contract, size reduction. These deliver most of
    the stated benefits at no coordination cost.
 2. **Keep the core together** in `notaire`: `backend-api`, `frontend` (`notaire-shared` was retired, ADR-025), business and
-   architecture `docs/`, `openspec/`, `CONSTITUTION.md`, the SDLC guards in `scripts/`, Bruno API
+   architecture `docs/`, `docs/openspec/`, `CONSTITUTION.md`, the SDLC guards in `scripts/`, Bruno API
    tests, Flyway migrations and the schema guard test. They change together and are released together.
 3. **Extract satellites in order of independence, each behind explicit gates**:
    `notaire-infra` (guard from #1179 exists), then the local AI engine (`local-ai/`), then

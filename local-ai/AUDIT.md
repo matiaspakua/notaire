@@ -57,9 +57,9 @@ Severity: **H** = blocks autonomy or allows wrong work to merge; **M** = costs f
 
 | # | Sev | Finding | Fix | Status |
 |---|-----|---------|-----|--------|
-| S1 | H | 17 of the last 40 merged PRs touched no `openspec/changes/` path. Some are legitimate §12 docs/chore work, but nothing records that the §12 exception was *approved*. | CI: a PR with no change folder must carry an `sdlc-exception` label set by a human, or fail. | Done #1083: `check-sdlc-exception.sh` + `sdlc-exception` label |
+| S1 | H | 17 of the last 40 merged PRs touched no `docs/openspec/changes/` path. Some are legitimate §12 docs/chore work, but nothing records that the §12 exception was *approved*. | CI: a PR with no change folder must carry an `sdlc-exception` label set by a human, or fail. | Done #1083: `check-sdlc-exception.sh` + `sdlc-exception` label |
 | S2 | M | `validate-sdlc-plan.sh` checks structure: 12 task groups, required headings, open issue. It does not check meaning: traceability files exist, planned tests name real or new classes, no requirement lacks a scenario. | Add `traceability-check`: every planned file/test path either exists or is marked NEW, and each one appears in the final diff. | Open |
-| S3 | M | No automatic archive after merge, so finished changes sit in `openspec/changes/` and fail the "issue CLOSED" check on the next PR. | Post-merge job (or `foreman.sh <n> merge`) runs `openspec archive`. | Open (manual archive documented in AI-SDLC.md) |
+| S3 | M | No automatic archive after merge, so finished changes sit in `docs/openspec/changes/` and fail the "issue CLOSED" check on the next PR. | Post-merge job (or `foreman.sh <n> merge`) runs `openspec archive`. | Open (manual archive documented in AI-SDLC.md) |
 | S4 | L | Changes created without the `schema:` line are silently skipped by the validator. | Fail instead of skip. | Done #1083 |
 
 ### 3.3 Enforcement layer (hooks, CI, preflight)
@@ -128,7 +128,7 @@ gates:
 guards:
   forbidden: ['.env', '**/*.pem', 'CONSTITUTION.md']
   scope:
-    spec: '^openspec/changes/{change}/'
+    spec: '^docs/openspec/changes/{change}/'
     tests: '^(backend-api/src/test/|frontend/src/.*\.test\.tsx?$)'
   path_lint: ['/Users/', '/home/']
 backend:

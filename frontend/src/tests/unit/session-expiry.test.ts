@@ -1,6 +1,6 @@
 /**
  * Unit tests for session-expiry handling (issue #1053, CU84).
- * Spec: openspec/changes/fix-1053-session-401-handling/specs/session-expiry-handling
+ * Spec: docs/openspec/changes/fix-1053-session-401-handling/specs/session-expiry-handling
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {

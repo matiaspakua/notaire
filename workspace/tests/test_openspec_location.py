@@ -20,7 +20,7 @@ class OpenSpecLocationTest(unittest.TestCase):
             self.assertTrue((OPENSPEC / name).exists(), f"docs/openspec/{name} missing")
 
     def test_no_openspec_folder_at_the_repository_root(self):
-        self.assertFalse((REPO_ROOT / "openspec").exists(), "openspec/ moved to docs/openspec/")
+        self.assertFalse((REPO_ROOT / "openspec").exists(), "docs/openspec/ moved to docs/openspec/")
 
     @unittest.skipUnless(shutil.which("openspec"), "openspec CLI not installed")
     def test_cli_resolves_the_root_from_docs(self):

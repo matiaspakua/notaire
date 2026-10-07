@@ -376,12 +376,12 @@ repair_spec() {
 gate_spec() {
     local c; c="$(tv CHANGE)"
     local validate plan; validate="$(need spec.validate change="$c")"; plan="$(need spec.plan_check change="$c")"
-    repair_spec "$WT/openspec/changes/$c"
+    repair_spec "$WT/docs/openspec/changes/$c"
     run_gate spec-validate bash -c "$validate" \
         || { { echo "$validate failed:"; tail -60 "$STATE/gate-spec-validate.out"; } > "$STATE/gate.out"; return 1; }
     run_gate spec-sdlc bash -c "$plan" \
         || { { echo "$plan failed:"; tail -80 "$STATE/gate-spec-sdlc.out"; } > "$STATE/gate.out"; return 1; }
-    local d="$WT/openspec/changes/$c" e="" t
+    local d="$WT/docs/openspec/changes/$c" e="" t
     # without the schema line validate-sdlc-plan.sh skips the change and "passes": Constitution checks silently off
     # the ledger ticks template IDs (10.1, 10.2, ...): the 12 mandatory group headings must be the template's, verbatim
     local tpl_h; tpl_h="$(grep -E '^## [0-9]+\. ' "$WT/$TASKS_TEMPLATE")"
@@ -390,7 +390,7 @@ gate_spec() {
     grep -qE '^- \[.\] 10\.1 ' "$d/tasks.md" 2>/dev/null \
         || e+="- tasks.md: keep the template's numbered items (e.g. '- [ ] 10.1 ...'): the foreman ticks them by ID\n"
     grep -qx "schema: $SPEC_SCHEMA" "$d/.openspec.yaml" 2>/dev/null \
-        || e+="- .openspec.yaml must keep its first line 'schema: $SPEC_SCHEMA' (restore it: git checkout HEAD -- openspec/changes/$c/.openspec.yaml, then only remove skip_specs if needed)\n"
+        || e+="- .openspec.yaml must keep its first line 'schema: $SPEC_SCHEMA' (restore it: git checkout HEAD -- docs/openspec/changes/$c/.openspec.yaml, then only remove skip_specs if needed)\n"
     # the harness writes these rows later (record_ledger, record_pr): a spec that dropped one fails the run at the docs phase
     python3 "$HERE/bin/ledger.py" rows "$d/traceability.md" Commits "Pull Request" 2>/dev/null \
         || e+="- traceability.md: keep the template's 'Commits' and 'Pull Request' rows, exactly once each (the harness fills them)\n"
@@ -406,12 +406,12 @@ gate_spec() {
             grep -q "$t" "$d/traceability.md" || e+="- traceability.md: planned test $t (from triage) is missing — add a row for it\n"
         done
     fi
-    [ -z "$e" ] || gate_msg "Fix these in openspec/changes/$c/:\n$e" || return 1
+    [ -z "$e" ] || gate_msg "Fix these in docs/openspec/changes/$c/:\n$e" || return 1
     # lint here, not first in the docs gate: the errors go back to the phase that wrote them (the harness commits the fixes)
-    local md; md="$(cd "$WT" && find "openspec/changes/$c" -name '*.md' | tr '\n' ' ')"
+    local md; md="$(cd "$WT" && find "docs/openspec/changes/$c" -name '*.md' | tr '\n' ' ')"
     md_fix "$md"
     md_lint spec-lint "$md" || return 1
-    [ "$(tv USE_CASE)" = NONE ] || has -E "$(tv USE_CASE | sed 's/^\([A-Z]*\)-\{0,1\}/\1-?/')" "$WT/openspec/changes/$c/proposal.md" \
+    [ "$(tv USE_CASE)" = NONE ] || has -E "$(tv USE_CASE | sed 's/^\([A-Z]*\)-\{0,1\}/\1-?/')" "$WT/docs/openspec/changes/$c/proposal.md" \
         || gate_msg "proposal.md must reference Use Case $(tv USE_CASE)\n" || return 1
 }
 
@@ -473,7 +473,7 @@ collateral_deletions() {
 # repair_tasks <base>: after Gate 2, tasks.md may only change by [ ] -> [x] (the worker kept rewriting it with
 # invented results, and could not undo it in three retries) — the harness restores the plan, keeps the ticks
 repair_tasks() {
-    local f="openspec/changes/$(tv CHANGE)/tasks.md" old="$STATE/tasks-base.md" fixed="$STATE/tasks-fixed.md"
+    local f="docs/openspec/changes/$(tv CHANGE)/tasks.md" old="$STATE/tasks-base.md" fixed="$STATE/tasks-fixed.md"
     git_wt show "$1:$f" > "$old" 2>/dev/null || return 0
     local diff; diff="$(python3 "$HERE/bin/ledger.py" ticks-only "$old" "$WT/$f")" && return 0
     python3 "$HERE/bin/ledger.py" restore-ticks "$old" "$WT/$f" > "$fixed" && cp "$fixed" "$WT/$f" \
@@ -494,11 +494,11 @@ gate_green() {
     git_wt diff --check "$base"..HEAD > "$STATE/diff-check.out" \
         || gate_msg "Leftover conflict markers or whitespace errors (git diff --check):\n$(head -20 "$STATE/diff-check.out")\n" || return 1
     [ -z "$lost" ] || gate_msg "Unrequested deletions — you destroyed content outside the change:\n$lost\n" || return 1
-    git_wt diff --name-only origin/main...HEAD | grep -vE '^(openspec/|\.localai/)' | has . \
+    git_wt diff --name-only origin/main...HEAD | grep -vE '^(docs/openspec/|\.localai/)' | has . \
         || gate_msg "No implementation committed on this branch yet.\n" || return 1
-    local stray; stray="$(git_wt diff --name-only --diff-filter=A origin/main...HEAD -- openspec/changes \
-        | grep -v "^openspec/changes/$(tv CHANGE)/" || true)"
-    [ -z "$stray" ] || gate_msg "Files added under openspec/changes/ outside this change ($(tv CHANGE)) — remove them (git rm -r) and amend:\n$stray\n" || return 1
+    local stray; stray="$(git_wt diff --name-only --diff-filter=A origin/main...HEAD -- docs/openspec/changes \
+        | grep -v "^docs/openspec/changes/$(tv CHANGE)/" || true)"
+    [ -z "$stray" ] || gate_msg "Files added under docs/openspec/changes/ outside this change ($(tv CHANGE)) — remove them (git rm -r) and amend:\n$stray\n" || return 1
     run_gate green bash -c "$(test_cmd)" \
         || { { echo "TEST_CMD ($(test_cmd)) fails:"; tail -120 "$STATE/gate-green.out"; } > "$STATE/gate.out"; return 1; }
     run_gate suite bash -c "$(suite_cmd)" \
@@ -597,16 +597,16 @@ phase_setup() {
     else
         git_wt checkout -q -b "$branch" origin/main || fail "cannot create $branch"
     fi
-    [ -d "$WT/openspec/changes/$change" ] || (cd "$WT" && openspec new change "$change" >> "$STATE/foreman.log" 2>&1) \
+    [ -d "$WT/docs/openspec/changes/$change" ] || (cd "$WT/docs" && openspec new change "$change" >> "$STATE/foreman.log" 2>&1) \
         || fail "openspec new change $change failed"
     (cd "$WT" && gh issue edit "$ISSUE" --add-label in-progress >/dev/null) || log "warn: could not add in-progress label"
 }
 
 phase_spec() {
-    NO_COMMIT=1 SCOPE="^(\.localai/|openspec/changes/$(tv CHANGE)/)" with_retries spec 03-spec.md gate_spec
+    NO_COMMIT=1 SCOPE="^(\.localai/|docs/openspec/changes/$(tv CHANGE)/)" with_retries spec 03-spec.md gate_spec
     # the harness commits: the worker kept writing "Closes #n" into spec commits
     local subject="docs(openspec): specify $(tv CHANGE)" amend=()
-    git_wt add "openspec/changes/$(tv CHANGE)" || fail "could not stage the spec"
+    git_wt add "docs/openspec/changes/$(tv CHANGE)" || fail "could not stage the spec"
     # a RECHECK or a review round with no edits leaves nothing to commit
     git_wt diff --cached --quiet && { log "spec unchanged — nothing to commit"; return 0; }
     # review rounds fold into the one spec commit instead of stacking new ones
@@ -617,7 +617,7 @@ phase_spec() {
 
 phase_tests() {
     is_code || { log "KIND=$(tv KIND): no tests phase"; return 0; }
-    SCOPE="^(\.localai/|openspec/changes/$(tv CHANGE)/)|$TEST_FILES" \
+    SCOPE="^(\.localai/|docs/openspec/changes/$(tv CHANGE)/)|$TEST_FILES" \
         with_retries tests 04-tests.md gate_red
 }
 
@@ -625,7 +625,7 @@ phase_implement() {
     is_code || { log "KIND=$(tv KIND): implementation is the docs/ci edit itself"; echo "TEST_CMD=true" | tee "$IO/tests.env" > "$STATE/tests.env"; }
     local scope=.
     is_code && scope="$(python3 "$HERE/bin/scope.py" implement "$WT" "$(tv CHANGE)" "$SOURCE_ROOTS" \
-        "$STATE/triage.md" "$WT/openspec/changes/$(tv CHANGE)/traceability.md")"
+        "$STATE/triage.md" "$WT/docs/openspec/changes/$(tv CHANGE)/traceability.md")"
     SCOPE="$scope" with_retries implement 05-implement.md gate_green
 }
 
@@ -635,7 +635,7 @@ phase_docs()    { with_retries docs 06-docs.md gate_docs; record_ledger; }
 # squash_spec_churn: fold the trailing run of commits that touch only the change's openspec dir into one commit —
 # the worker commits every retry separately, and `gh pr merge --merge` would put that churn on main
 squash_spec_churn() {
-    local dir="openspec/changes/$(tv CHANGE)/" floor base c n=0
+    local dir="docs/openspec/changes/$(tv CHANGE)/" floor base c n=0
     floor="$(cat "$STATE/red.sha" 2>/dev/null || git_wt merge-base origin/main HEAD)"
     base="$(git_wt rev-parse HEAD)"
     for c in $(git_wt rev-list "$floor"..HEAD); do
@@ -650,7 +650,7 @@ squash_spec_churn() {
 }
 
 record_ledger() {
-    local f="openspec/changes/$(tv CHANGE)/traceability.md" shas cl
+    local f="docs/openspec/changes/$(tv CHANGE)/traceability.md" shas cl
     squash_spec_churn
     shas="$(git_wt log --reverse --format=%h origin/main..HEAD | paste -sd, - | sed 's/,/, /g')"
     python3 "$HERE/bin/ledger.py" row "$WT/$f" Commits "$shas" done || fail "cannot record commits in $f"
@@ -690,7 +690,7 @@ push_branch() {
 }
 
 record_pr() {
-    local d="openspec/changes/$(tv CHANGE)" pr; pr="$(cat "$STATE/pr.number")"
+    local d="docs/openspec/changes/$(tv CHANGE)" pr; pr="$(cat "$STATE/pr.number")"
     python3 "$HERE/bin/ledger.py" row "$WT/$d/traceability.md" "Pull Request" "#$pr" open \
         && python3 "$HERE/bin/ledger.py" tick "$WT/$d/tasks.md" 10.1 10.2 || fail "cannot record PR #$pr in $d"
     git_wt diff --quiet -- "$d" && return 0

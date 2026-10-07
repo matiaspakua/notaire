@@ -9,7 +9,7 @@
  *   - Motivo becomes required and is enforced client-side
  *   - Query the descuentos/recargos report for a presupuesto
  *
- * Reference: openspec/changes/descuentos-recargos-presupuesto
+ * Reference: docs/openspec/changes/descuentos-recargos-presupuesto
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";

@@ -37,7 +37,7 @@ def planned_files(worktree, triage, traceability):
 
 
 def implement_scope(worktree, change, source_roots, triage, traceability):
-    parts = [r"^(\.localai/|openspec/changes/%s/)" % ERE_SPECIAL.sub(r"\\\1", change), source_roots]
+    parts = [r"^(\.localai/|docs/openspec/changes/%s/)" % ERE_SPECIAL.sub(r"\\\1", change), source_roots]
     parts += ["^%s$" % ERE_SPECIAL.sub(r"\\\1", p) for p in planned_files(worktree, triage, traceability)]
     return "|".join(parts)
 

@@ -120,13 +120,13 @@ class SdlcExceptionTest(unittest.TestCase):
 
     def test_accepts_pr_with_change_folder(self):
         repo, base = new_repo()
-        commit(repo, "docs(openspec): plan", "openspec/changes/x/proposal.md")
+        commit(repo, "docs(openspec): plan", "docs/openspec/changes/x/proposal.md")
         self.assertEqual(run("check-sdlc-exception.sh", base, cwd=repo).returncode, 0)
 
     def test_accepts_a_large_diff_whose_first_path_is_an_openspec_change(self):
         repo, base = new_repo()
         long_name = "x" * 180
-        paths = ["openspec/changes/archive/2026-10-04-big/" + f"{index:04d}-{long_name}.md" for index in range(700)]
+        paths = ["docs/openspec/changes/archive/2026-10-04-big/" + f"{index:04d}-{long_name}.md" for index in range(700)]
         commit(repo, "chore(openspec): archive a large change", *paths)
         self.assertEqual(run("check-sdlc-exception.sh", base, cwd=repo).returncode, 0)
 
@@ -160,7 +160,7 @@ class AgentRulesTest(unittest.TestCase):
         self.assertNotIn("docs/real/", result.stdout)
 
     def test_ignores_placeholders(self):
-        self.write(".claude/rules/a.md", "Use `docs/real/`, `openspec/changes/<name>/`, `docs/*.md`, branch `docs/257_readme`.\n")
+        self.write(".claude/rules/a.md", "Use `docs/real/`, `docs/openspec/changes/<name>/`, `docs/*.md`, branch `docs/257_readme`.\n")
         self.assertEqual(run("check-agent-rules.sh", self.root, cwd=self.root).returncode, 0)
 
     def test_rejects_root_without_rule_files(self):
@@ -213,7 +213,7 @@ class SchemaLineTest(unittest.TestCase):
         root = tempfile.mkdtemp(prefix="schema-")
         os.makedirs(os.path.join(root, "scripts"))
         shutil.copy(os.path.join(SCRIPTS, "validate-sdlc-plan.sh"), os.path.join(root, "scripts"))
-        change = os.path.join(root, "openspec/changes/no-schema")
+        change = os.path.join(root, "docs/openspec/changes/no-schema")
         os.makedirs(change)
         with open(os.path.join(change, ".openspec.yaml"), "w") as f:
             f.write('change_id: "no-schema"\n')

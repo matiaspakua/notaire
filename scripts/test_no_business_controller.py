@@ -14,7 +14,7 @@ FORBIDDEN = "BusinessController"
 ALLOWED_PATHS = (
     "scripts/test_no_business_controller.py",
     "CHANGELOG.md",
-    "openspec/",
+    "docs/openspec/",
     "docs/000-archive/",
     "docs/200-architecture/201-SAD/sad.md",
     "backend-api/src/test/java/com/licensis/notaire/integration/CoreBusinessControllersIntegrationTest.java",
