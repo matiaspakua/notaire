@@ -21,7 +21,7 @@ const services = [
   {
     name: "Spring Boot API",
     port: "8080",
-    role: "REST API + Swagger UI. JWT auth, JasperReports, audit aspect",
+    role: "REST API + Swagger UI. JWT auth, PDF reports, audit aspect",
     icon: "🌱",
     color: "var(--spring-green)",
     category: "App",

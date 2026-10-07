@@ -274,16 +274,16 @@ Authenticate a user.
 
 ## Reportes (PDF generation)
 
-All endpoints return `application/pdf` and are consumed via `downloadPdf()` in `frontend/src/hooks/useReportes.ts` (not the `apiGet` JSON wrapper).
+All endpoints return `application/pdf` (errors: `ErrorResponse` JSON) and are consumed via `downloadPdf()` in `frontend/src/hooks/useReportes.ts` (not the `apiGet` JSON wrapper), except `documentos-por-vencer`, which is API-only (see `contracts/api-reachability-allowlist.yaml`). Since #567 the PDFs are generated in-house from the current schema.
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/reportes/presupuesto/{idPresupuesto}` | Download presupuesto PDF | CU01, CU39 |
-| GET | `/reportes/presupuesto-inmuebles/{idPresupuesto}` | Download presupuesto PDF with inmuebles detail | CU08 |
-| GET | `/reportes/lista-documentos-tramite` | List of documents required for a trámite type (`?nombreTipoTramite=`) | CU02 |
-| GET | `/reportes/historial-gestion/{idGestion}` | Gestión history report | CU13 |
-| GET | `/reportes/documentos-por-vencer/{idDocumentoPresentado}` | Documents nearing expiration | — |
-| GET | `/reportes/consultar-deuda-documentos` | Outstanding document debt report (`?numeroGestion=`) | CU16 |
+| GET | `/reportes/presupuesto/{idPresupuesto}` | Download presupuesto PDF (items, total and pending balance) | CU01, CU39 |
+| GET | `/reportes/presupuesto-inmuebles/{idPresupuesto}` | Download presupuesto PDF with the properties of its trámites | CU01 |
+| GET | `/reportes/lista-documentos-tramite` | Documents required by a trámite type, from its template (`?nombreTipoTramite=`) | CU03 |
+| GET | `/reportes/historial-gestion/{idGestion}` | Gestión data and state history report | CU13 |
+| GET | `/reportes/documentos-por-vencer/{idDocumentoPresentado}` | Expiry, payment and gestión of one submitted document | CU42 |
+| GET | `/reportes/consultar-deuda-documentos` | Document debt of a gestión number (`?numberManagement=`) | CU09 |
 | GET | `/reportes/libro-indice` | Libro Índice report (`?anio=`) | CU24 |
 | GET | `/reportes/declaracion-jurada-mensual` | Monthly declaración jurada (`?anio=&mes=`) | CU25 |
 | GET | `/reportes/declaracion-jurada-rentas` | Rentas declaración jurada (`?anio=&mes=`) | CU50 |

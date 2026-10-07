@@ -17,7 +17,7 @@ const layers = [
   {
     label: "Services",
     color: "var(--spring-green)",
-    items: ["Business Logic", "Audit Aspect", "JasperReports", "Email Service"],
+    items: ["Business Logic", "Audit Aspect", "PDF Reports", "Email Service"],
     icon: "🧩",
   },
   {

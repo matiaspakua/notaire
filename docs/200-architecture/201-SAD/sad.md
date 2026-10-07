@@ -701,23 +701,31 @@ title Runtime — Generate Report
 
 participant "User" as U
 participant "Frontend" as FE
-participant "ReporteController" as Ctrl
-participant "ReporteService" as Svc
-participant "JasperReports\n(JasperFillManager/ExportManager)" as Jasper
-participant "PostgreSQL\n(via DataSource, JDBC)" as DB
+participant "ReportController" as Ctrl
+participant "ReportService" as Svc
+participant "ReportDocumentFactory" as Factory
+participant "PostgreSQL\n(JPA repositories)" as DB
+participant "ReportRenderer port\n(PdfBoxReportRenderer)" as Renderer
 
 U -> FE : Select report + parameters
 FE -> Ctrl : GET /api/v1/reportes/{report-name}/{params}\n(one endpoint per report, e.g. /presupuesto/{id})
-Ctrl -> Svc : generarReporte...(params)
-Svc -> DB : JDBC query via .jasper template\n(src/main/resources/reportes/)
-DB --> Svc : Result set
-Svc -> Jasper : JasperFillManager.fillReport() +\nJasperExportManager.exportReportToPdf()
-Jasper --> Svc : byte[] (PDF)
+Ctrl -> Svc : generate...Report(params)
+Svc -> Factory : build ReportDocument (read-only transaction)
+Factory -> DB : load the aggregate (budget, management, ...)
+DB --> Factory : entities, or none -> ResourceNotFoundException (404)
+Factory --> Svc : ReportDocument (title, field and table sections)
+Svc -> Renderer : render(document)
+Renderer --> Svc : byte[] (PDF)
 Svc --> Ctrl : byte[] (PDF)
 Ctrl --> FE : 200 application/pdf
 FE --> U : Open/download PDF
 @enduml
 ```
+
+Reports are generated in-house since #567: the six JasperReports 3.5.3 templates queried
+the legacy MySQL schema and were replaced by `ReportDocumentFactory` (current domain model)
+and a PDFBox adapter behind the `ReportRenderer` outbound port. The PDF library stays out of
+the application layer.
 
 ---
 
