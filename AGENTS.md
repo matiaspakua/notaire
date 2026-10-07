@@ -18,9 +18,11 @@ It is agent-agnostic and prevails over this file. Read it before any change.
 ```
 
 Specifications are produced with **OpenSpec** (schema `notaire-sdlc`, which encodes the
-Constitution):
+Constitution). OpenSpec lives in `docs/openspec/` and the CLI resolves its root from the
+working directory, so **run every `openspec` command from `docs/`**:
 
 ```bash
+cd docs
 openspec new change "<kebab-case-name>"      # scaffolds the mandatory artifacts
 openspec status --change "<name>"            # artifact build order
 openspec instructions <artifact> --change "<name>"
@@ -29,7 +31,7 @@ bash scripts/validate-sdlc-plan.sh           # Constitution checks (--list expla
 ```
 
 The Constitution reaches every agent through the `openspec` CLI itself
-(`openspec/config.yaml` → `context` and `rules`). No change is Done until the plan is
+(`docs/openspec/config.yaml` → `context` and `rules`). No change is Done until the plan is
 complete and every Quality Gate has passed.
 
 ### Quick workflow summary
