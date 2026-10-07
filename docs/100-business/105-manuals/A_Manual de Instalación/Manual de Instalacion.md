@@ -14,4 +14,4 @@ duplicación:
 **→ [`docs/300-development/301-setup/README.md`](../../../300-development/301-setup/README.md)**
 
 Esa guía cubre: requisitos previos, clonado del repositorio, configuración de `.env`, arranque de la pila
-Docker (`scripts/start.sh`), compilación Maven, estructura de módulos, comandos de test y troubleshooting.
+Docker (`workspace/stack/start.sh`), compilación Maven, estructura de módulos, comandos de test y troubleshooting.

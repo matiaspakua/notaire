@@ -27,7 +27,7 @@ Ensure Backend Is Running
     ${result}=    Run Process    curl    -sf    http://localhost:8080/swagger-ui.html
     ...    shell=False    timeout=10s
     IF    ${result.rc} != 0
-        Fatal Error    Backend API is not running. Run: bash scripts/start.sh
+        Fatal Error    Backend API is not running. Run: bash workspace/stack/start.sh
     END
     Log    Backend API is healthy.
 

@@ -154,10 +154,10 @@ Multi-module Maven project refactoring a Java Swing monolith to microservices. S
 mvn clean install                       # all modules
 mvn clean install -pl backend-api -am   # backend only (with shared dependency)
 
-bash scripts/start.sh                   # DB + backend (Docker)
-bash scripts/stop.sh
-bash scripts/logs.sh
-bash scripts/start-all.sh               # application + observability/quality infra
+bash workspace/stack/start.sh                   # DB + backend (Docker)
+bash workspace/stack/stop.sh
+bash workspace/stack/logs.sh
+bash workspace/stack/start-all.sh               # application + observability/quality infra
 bash infra/scripts/start-infra.sh       # infra only (app must be up first)
 
 cd backend-api && mvn spring-boot:run   # backend directly (needs local PostgreSQL on 5432)

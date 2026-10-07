@@ -22,7 +22,7 @@ The observability stack attaches to the application's Docker network
 `notary-postgres` by container name. Start the application before the infra:
 
 ```bash
-bash scripts/start.sh            # from the application repository root
+bash workspace/stack/start.sh            # from the application repository root
 ```
 
 `start-infra.sh` checks the network and stops with guidance if it is missing.

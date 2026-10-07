@@ -57,7 +57,7 @@ The backend writes structured JSON to stdout only and never keeps log files.
 Promtail discovers the Docker containers, parses the JSON envelope and pushes it
 to Loki; query `{container_name="notary-backend"}` in Grafana. A backend started
 directly on the host (`mvn spring-boot:run`) logs to the terminal only and is not
-shipped; use `bash scripts/start.sh` for centralized logs.
+shipped; use `bash workspace/stack/start.sh` for centralized logs.
 
 ### Alert rules (`prometheus/alert-rules.yml`)
 

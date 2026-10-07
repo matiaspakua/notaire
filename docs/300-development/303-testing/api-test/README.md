@@ -13,7 +13,7 @@ y [`COVERAGE.md`](../../../../backend-api/api-test/COVERAGE.md).
 ## Requisitos
 
 - `curl` (y opcionalmente `jq` para formatear salida)
-- Backend ejecutándose en `http://localhost:8080` (`bash scripts/start.sh`)
+- Backend ejecutándose en `http://localhost:8080` (`bash workspace/stack/start.sh`)
 - PostgreSQL levantado vía Docker Compose
 
 ## Uso

@@ -48,7 +48,7 @@ bash scripts/preflight.sh --full     # adds Playwright E2E + Bruno API tests + D
 bash scripts/preflight.sh --list     # local check -> CI job mapping
 ```
 
-`--full` needs the stack running (`bash scripts/start.sh`): backend on `:8080`,
+`--full` needs the stack running (`bash workspace/stack/start.sh`): backend on `:8080`,
 frontend on `:3000`. It also runs a local Docker Compose build + smoke test
 (skipped with a warning if the Docker daemon isn't running) and the real
 Bruno API collection (`backend-api/api-test/`) — not just the legacy
@@ -132,7 +132,7 @@ above; the script itself has been removed.
 `preflight.sh` mirrors CI gates but assumes the Docker stack is already up and
 only prints to the terminal — there's no single artifact proving a branch is
 ready. `scripts/run_pipeline.sh` is that command: it brings the stack up
-itself (`scripts/start.sh`), runs `scripts/validate-sdlc-plan.sh`, runs
+itself (`workspace/stack/start.sh`), runs `scripts/validate-sdlc-plan.sh`, runs
 `preflight.sh --full`, adds a markdown-lint pass (ratcheted against
 `origin/main`, same policy as the Spotless gate — see the git-worktree caveat
 above) that has no CI job yet, and writes one HTML dashboard plus a log per

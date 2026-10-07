@@ -17,7 +17,7 @@ Modern web frontend for the Notaire notary management system. Replaces the Java 
 ## Prerequisites
 
 - Node.js 22+
-- Backend running at `http://localhost:8080` (see root `scripts/start.sh`)
+- Backend running at `http://localhost:8080` (see root `workspace/stack/start.sh`)
 
 ## Setup
 
@@ -106,5 +106,5 @@ docker run --rm -p 3000:3000 \
   notaire-frontend
 ```
 
-Or use `bash scripts/start.sh` / `docker compose up` from the project root
+Or use `bash workspace/stack/start.sh` / `docker compose up` from the project root
 (compose sets runtime `BACKEND_URL` for the frontend service).

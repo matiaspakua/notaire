@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    E2E Login test for Notaire Swing frontend.
 ...              Launches the Swing app, enters credentials, and verifies login.
-...              Requires: backend running (scripts/start.sh), frontend JAR built.
+...              Requires: backend running (workspace/stack/start.sh), frontend JAR built.
 Resource         ../resources/common.resource
 Suite Setup      Suite Initialization
 Suite Teardown   Close Swing Application

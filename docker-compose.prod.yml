@@ -6,7 +6,7 @@
 # - ENVIRONMENT=production activates ProductionCredentialsGuard
 # - Flyway baseline-on-migrate disabled
 #
-# Dev stack remains ./docker-compose.yml (scripts/start.sh).
+# Dev stack remains ./docker-compose.yml (workspace/stack/start.sh).
 # TLS cert lifecycle: issue #254. Backups: issue #256.
 #
 # Usage:

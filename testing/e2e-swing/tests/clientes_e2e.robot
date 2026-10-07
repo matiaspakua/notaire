@@ -10,7 +10,7 @@ Documentation    E2E acceptance tests for the Clientes module of Notaire Swing.
 ...              - CU54 – Modificar Persona
 ...              - CU61 – Buscar persona o cliente
 ...
-...              Requires: backend running (scripts/start.sh), frontend JAR built.
+...              Requires: backend running (workspace/stack/start.sh), frontend JAR built.
 Resource         ../resources/common.resource
 Suite Setup      Suite Initialization
 Suite Teardown   Close Swing Application

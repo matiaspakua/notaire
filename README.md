@@ -134,7 +134,7 @@ Node.js 22+ / npm 10+
 git clone https://github.com/matiaspakua/notaire.git
 cd notaire
 cp .env.example .env
-bash scripts/start.sh          # levanta PostgreSQL + backend
+bash workspace/stack/start.sh          # levanta PostgreSQL + backend
 bash scripts/health.sh         # verifica que todo esté arriba
 ```
 
@@ -156,7 +156,7 @@ cd frontend && npm run dev
 | Frontend | http://localhost:3000 |
 | pgAdmin | http://localhost:5050 |
 
-Stack completo (Prometheus, Grafana, SonarQube, Homer): `bash scripts/start-all.sh` — ver [`infra/README.md`](infra/README.md).
+Stack completo (Prometheus, Grafana, SonarQube, Homer): `bash workspace/stack/start-all.sh` — ver [`infra/README.md`](infra/README.md).
 
 ## 🧪 Testing y calidad
 

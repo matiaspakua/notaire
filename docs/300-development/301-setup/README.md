@@ -36,13 +36,13 @@ API_PORT=8080
 
 ```bash
 # Iniciar Docker con PostgreSQL
-bash scripts/start.sh
+bash workspace/stack/start.sh
 
 # Ver logs
-bash scripts/logs.sh
+bash workspace/stack/logs.sh
 
 # Detener
-bash scripts/stop.sh
+bash workspace/stack/stop.sh
 ```
 
 ### 4. Compilar Proyecto

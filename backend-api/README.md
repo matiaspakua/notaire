@@ -30,7 +30,7 @@ porque necesita el reactor raíz (POM padre) para compilar:
 ```bash
 # desde la raíz del repo
 docker build -f backend-api/Dockerfile -t notaire-backend .
-# o vía compose (lo usa scripts/start.sh)
+# o vía compose (lo usa workspace/stack/start.sh)
 docker compose build backend
 ```
 

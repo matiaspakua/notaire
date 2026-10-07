@@ -27,7 +27,7 @@ which is why a yml-only run reported `Requests: 0` before this file existed.)
 ## Running
 
 Prerequisites: the backend must be up at `http://localhost:8080`
-(`bash scripts/start.sh` from the repo root).
+(`bash workspace/stack/start.sh` from the repo root).
 
 ```bash
 cd backend-api/api-test

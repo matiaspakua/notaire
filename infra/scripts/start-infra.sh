@@ -46,7 +46,7 @@ echo -e "${BLUE}========================================${NC}\n"
 # be up first so that network exists.
 if ! docker network inspect "$APP_NETWORK" &> /dev/null; then
     echo -e "${RED}✗ Application network '$APP_NETWORK' not found.${NC}"
-    echo -e "  Start the application first: ${YELLOW}bash scripts/start.sh${NC}"
+    echo -e "  Start the application first: ${YELLOW}bash workspace/stack/start.sh${NC}"
     exit 1
 fi
 
