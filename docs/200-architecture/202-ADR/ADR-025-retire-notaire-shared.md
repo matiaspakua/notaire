@@ -28,10 +28,10 @@ observed the module itself and were never recorded.
 2. **The reactor has one module.** The root `pom.xml` stays the parent and lists only
    `backend-api`; the Docker build, CODEOWNERS, release-please and the tooling stop
    naming the retired module.
-3. **The folder is archived, not deleted.** It lives in `deprecated/notaire-shared/`
-   with its manifest stored as `pom.xml.archived`, like `frontend-swing`. A guard
-   (`workspace/tests/test_notaire_shared_retired.py`) fails if it reappears at the root or a
-   live manifest references it.
+3. **The folder is removed from the tree.** It was first archived in `deprecated/notaire-shared/`;
+   #1261 then deleted `deprecated/` (Owner decision, 2026-10-07). History keeps it behind the git
+   tag `archive-monorepo-pre-split`. A guard (`workspace/tests/test_notaire_shared_retired.py`)
+   fails if it or `deprecated/` reappears.
 4. **External services consume the REST API.** Any non-Java or separate service uses
    `/api/v1` through the OpenAPI contract (`backend-api/openapi/openapi.yaml`,
    Swagger UI), never a shared Java DTO library.

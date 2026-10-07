@@ -29,7 +29,7 @@ documented seams before any extraction. This ADR delivers them as folders first.
 5. **Delivery:** one PR per slice (manifest, contracts, security, guard relocation, docs
    generators, OpenSpec into `docs/`, Foreman integration), each keeping `workspace/sdlc/preflight.sh`
    green; the full suite including Playwright E2E runs at the end. Code nothing needs any more moves
-   to `deprecated/`, never deleted; the Owner decides later.
+   to `deprecated/`; the Owner then decided (#1261, 2026-10-07) to delete `deprecated/`, whose history stays behind the tag `archive-monorepo-pre-split`.
 6. **OpenSpec location:** the OpenSpec CLI hard-codes the folder name `openspec`, so it moves to
    `docs/openspec/` and `docs/` becomes the OpenSpec root. Verified on a copy: from `docs/` the
    CLI lists changes and statuses; from the repository root it finds nothing. Every script, hook

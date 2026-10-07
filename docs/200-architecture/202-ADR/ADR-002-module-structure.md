@@ -12,8 +12,8 @@
 > command in [Build Commands](#build-commands).
 >
 > **Update (see ADR-025):** the `notaire-shared` module below was retired under #1255.
-> Its classes live in `backend-api` and the folder is archived in
-> `deprecated/notaire-shared/`; the reactor now has the single module `backend-api`.
+> Its classes live in `backend-api` and the folder was removed
+> (history: tag `archive-monorepo-pre-split`); the reactor now has the single module `backend-api`.
 
 ## Context
 

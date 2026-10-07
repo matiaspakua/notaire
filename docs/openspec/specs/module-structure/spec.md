@@ -44,19 +44,14 @@ The system MUST list only `backend-api` as a module of the root `pom.xml`, MUST 
 - **WHEN** CODEOWNERS, release-please, CI workflows, `scripts/`, `testing/scripts/`, `.cursor/` and `.aisdlc/` are searched
 - **THEN** none references `notaire-shared`
 
-### Requirement: The retired module is archived under deprecated
+### Requirement: The retired module is removed from the tree
 
-The system MUST keep the former module only under `deprecated/notaire-shared/`, with its manifest stored as `pom.xml.archived`, and MUST fail a guard test if the folder or a live `pom.xml` for it reappears at the repo root.
+The system MUST NOT contain the former module (its history stays in git, tag `archive-monorepo-pre-split`), and MUST fail a guard test if the folder or a `deprecated/` folder reappears.
 
-#### Scenario: Module folder is archived
+#### Scenario: Module folder is gone
 
 - **WHEN** the repository tree is listed
-- **THEN** `notaire-shared/` is absent at the root and `deprecated/notaire-shared/` exists with a README pointing to the API
-
-#### Scenario: Archived manifest is not live
-
-- **WHEN** the repository is searched for `pom.xml` files
-- **THEN** none exists under `deprecated/`
+- **THEN** neither `notaire-shared/` nor `deprecated/` exists
 
 ### Requirement: Code that only served the module is removed
 

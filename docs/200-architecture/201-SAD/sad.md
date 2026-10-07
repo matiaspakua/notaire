@@ -471,7 +471,7 @@ comp --> theme : styling
 The `notaire-shared` module was retired under #1255 (see
 [ADR-025](../202-ADR/ADR-025-retire-notaire-shared.md)). Its DTO classes
 (`com.licensis.notaire.dto`, `dto.exceptions`, `dto.interfaces`) now live in
-`backend-api`, and the folder is archived in `deprecated/notaire-shared/`. External
+`backend-api`, and the folder was removed (history: tag `archive-monorepo-pre-split`). External
 services consume the REST API through the OpenAPI contract, not a Java library.
 
 ### 5.5 Core Domain Model

@@ -64,7 +64,7 @@ MOVED = {
 }
 REMOVED = ("scripts/validate-cu-api-matrix.sh", "scripts/tests/test_guard_wrappers.py")
 HISTORY = (
-    "CHANGELOG.md", "deprecated/", "docs/000-archive/", "docs/openspec/changes/archive/",
+    "CHANGELOG.md", "docs/000-archive/", "docs/openspec/changes/archive/",
     "workspace/tests/test_scripts_layout.py",
 )
 

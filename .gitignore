@@ -38,7 +38,6 @@ build/
 .vscode/
 target/
 *.log
-/scripts/doc2md/venv/
 .obsidian/
 .DS_Store
 .DS_Store/*

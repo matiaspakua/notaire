@@ -23,7 +23,6 @@ POM_NS = {"m": "http://maven.apache.org/POM/4.0.0"}
 
 BACKEND_JAVA = REPO_ROOT / "backend-api" / "src" / "main" / "java" / "com" / "licensis" / "notaire"
 BACKEND_SOURCES = REPO_ROOT / "backend-api" / "src"
-DEPRECATED_MODULE = REPO_ROOT / "deprecated" / MODULE
 
 MOVED_SOURCES = (
     BACKEND_JAVA / "dto" / "DtoPerson.java",
