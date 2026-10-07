@@ -15,6 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -300,9 +302,9 @@ class PaymentControllerTest {
         String json = """
                 {
                     "idBudget": 10,
-                    "amount": -100.0,
+                    "amount": 100.0,
                     "date": "2026-06-16",
-                    "notes": "Invalid"
+                    "notes": "Rejected by the use case"
                 }
                 """;
 
@@ -461,5 +463,45 @@ class PaymentControllerTest {
         doThrow(new RuntimeException("DB error")).when(deletePaymentUseCase).delete(anyInt());
         mockMvc.perform(delete("/api/v1/pagos/1"))
                 .andExpect(status().isInternalServerError());
+    }
+
+    @ParameterizedTest(name = "POST /api/v1/pagos with {0} returns 400")
+    @ValueSource(strings = {
+        "{\"amount\": 100.0}",
+        "{\"idBudget\": 10}",
+        "{\"idBudget\": 10, \"amount\": 0}",
+        "{\"idBudget\": 10, \"amount\": -100.0}"
+    })
+    @DisplayName("shouldRejectInvalidCreateBeforeCallingUseCase (issue #655)")
+    void shouldRejectInvalidCreateBeforeCallingUseCase(String json) throws Exception {
+        mockMvc.perform(post("/api/v1/pagos")
+                .contentType("application/json")
+                .content(json))
+                .andExpect(status().isBadRequest());
+
+        verify(processPaymentUseCase, times(0)).process(any(ProcessPaymentCommand.class));
+    }
+
+    @ParameterizedTest(name = "PUT /api/v1/pagos/1 with amount {0} returns 400, not 404")
+    @ValueSource(strings = {"0", "-50.0"})
+    @DisplayName("shouldRejectNonPositiveAmountOnUpdate (issue #655)")
+    void shouldRejectNonPositiveAmountOnUpdate(String amount) throws Exception {
+        mockMvc.perform(put("/api/v1/pagos/1")
+                .contentType("application/json")
+                .content("{\"amount\": " + amount + ", \"notes\": \"x\"}"))
+                .andExpect(status().isBadRequest());
+
+        verify(editPaymentUseCase, times(0)).edit(any(EditPaymentCommand.class));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/pagos/{id} without amount keeps the partial update (issue #655)")
+    void shouldAllowUpdateWithoutAmount() throws Exception {
+        when(editPaymentUseCase.edit(any(EditPaymentCommand.class))).thenReturn(buildPayment());
+
+        mockMvc.perform(put("/api/v1/pagos/1")
+                .contentType("application/json")
+                .content("{\"notes\": \"solo notas\"}"))
+                .andExpect(status().isOk());
     }
 }
