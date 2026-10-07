@@ -2,7 +2,7 @@
  * The report download hooks must call the backend with the exact paths and query
  * parameter names of backend-api/openapi/openapi.yaml (issue #567).
  *
- * Covers: CU03, CU09, CU13, CU45 (Reportes)
+ * Covers: CU01, CU03, CU09, CU13 (Reportes)
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 

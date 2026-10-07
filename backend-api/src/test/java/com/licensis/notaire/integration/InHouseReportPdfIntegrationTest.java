@@ -60,7 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * one must return a real PDF with the data of the requested aggregate, and a 404 when
  * that aggregate does not exist.
  */
-@RequirementCoverage({"CU03", "CU09", "CU13", "CU42", "CU45"})
+@RequirementCoverage({"CU01", "CU03", "CU09", "CU13", "CU42"})
 @DisplayName("In-house report PDFs on the current schema (issue #567)")
 class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
 

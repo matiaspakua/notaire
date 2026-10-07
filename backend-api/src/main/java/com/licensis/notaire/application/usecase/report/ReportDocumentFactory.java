@@ -90,7 +90,7 @@ public class ReportDocumentFactory {
     }
 
     /**
-     * Budget with its charge lines, total and pending balance (CU45); with
+     * Budget with its charge lines, total and pending balance (CU01); with
      * {@code withProperties} it also lists the properties of the budget's procedures.
      */
     public ReportDocument budget(Integer idBudget, boolean withProperties) {
@@ -147,7 +147,7 @@ public class ReportDocumentFactory {
                         new Field("Saldo pendiente", money(summary.pendingBalance())))));
 
         return new ReportDocument("Presupuesto N° " + budget.getNumber(),
-                withProperties ? "Presupuesto con inmuebles (CU45)" : "Presupuesto (CU45)", sections);
+                withProperties ? "Presupuesto con inmuebles (CU01)" : "Presupuesto (CU01)", sections);
     }
 
     /** Documents a procedure type requires, from its procedure template (CU03). */
