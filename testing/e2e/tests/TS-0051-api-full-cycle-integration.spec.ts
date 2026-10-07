@@ -83,9 +83,9 @@ test.describe("API — Personas endpoints", () => {
     await page.goto("/login");
     const result = await apiGet<{ content: ApiPersona[]; size: number }>(page, "/people?size=5");
     expect(result.ok).toBe(true);
-    expect(Array.isArray(result.data.content)).toBe(true);
-    expect(result.data.size).toBe(5);
-    expect(result.data.content.length).toBeLessThanOrEqual(5);
+    expect(Array.isArray(result.data?.content)).toBe(true);
+    expect(result.data?.size).toBe(5);
+    expect(result.data?.content.length ?? 0).toBeLessThanOrEqual(5);
   });
 
   test("POST /api/v1/people — create a persona", async ({ page }) => {
