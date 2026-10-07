@@ -1995,6 +1995,38 @@ components:
           format: int32
           type: integer
       type: object
+    PagePersonResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/PersonResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
     PageProcedureResponse:
       properties:
         content:
@@ -5473,16 +5505,20 @@ paths:
   /api/v1/people:
     get:
       operationId: getAllPeople
+      parameters:
+      - in: query
+        name: pageable
+        required: true
+        schema:
+          $ref: '#/components/schemas/Pageable'
       responses:
         '200':
           content:
             '*/*':
               schema:
-                items:
-                  $ref: '#/components/schemas/PersonResponse'
-                type: array
+                $ref: '#/components/schemas/PagePersonResponse'
           description: OK
-      summary: Get all people
+      summary: Get people, one page at a time (default 20, sorted by id)
       tags:
       - People
     post:

@@ -12,6 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,10 +152,11 @@ public class PersonController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all people")
+    @Operation(summary = "Get people, one page at a time (default 20, sorted by id)")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<PersonResponse>> getAllPeople() {
-        return ResponseEntity.ok(personService.findAll().stream().map(PersonResponse::from).toList());
+    public ResponseEntity<Page<PersonResponse>> getAllPeople(
+            @PageableDefault(size = 20, sort = "idPerson") Pageable pageable) {
+        return ResponseEntity.ok(personService.findAll(pageable).map(PersonResponse::from));
     }
 
     @ApiResponses({

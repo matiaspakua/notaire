@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { Persona } from "@/types";
 
 export const personasKeys = {
@@ -10,7 +10,7 @@ export const personasKeys = {
 export function usePersonas() {
   return useQuery({
     queryKey: personasKeys.all,
-    queryFn: () => apiGet<Persona[]>("/people"),
+    queryFn: () => apiGetPaged<Persona>("/people"),
   });
 }
 

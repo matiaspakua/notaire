@@ -79,11 +79,13 @@ test.describe("API Connectivity — Backend proxy health", () => {
 test.describe("API — Personas endpoints", () => {
   let createdId = 0;
 
-  test("GET /api/v1/people — list all people", async ({ page }) => {
+  test("GET /api/v1/people — list people (paginated, #596)", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiPersona[]>(page, "/people");
+    const result = await apiGet<{ content: ApiPersona[]; size: number }>(page, "/people?size=5");
     expect(result.ok).toBe(true);
-    expect(Array.isArray(result.data)).toBe(true);
+    expect(Array.isArray(result.data?.content)).toBe(true);
+    expect(result.data?.size).toBe(5);
+    expect(result.data?.content.length ?? 0).toBeLessThanOrEqual(5);
   });
 
   test("POST /api/v1/people — create a persona", async ({ page }) => {

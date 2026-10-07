@@ -3,11 +3,12 @@ info:
   type: http
   seq: 2
   description: |-
-      ## List people — GET /api/v1/people
+      ## List people — GET /api/v1/people (paginated, #596)
+      Answers a Spring Data page; newest first with `sort=idPerson,desc`.
       Traceability: CU61 (RF #38, #41)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/people"
+  url: "{{base_url}}/api/v1/people?size=5&sort=idPerson,desc"
   headers:
     - name: Content-Type
       value: application/json
@@ -18,7 +19,13 @@ runtime:
     - type: tests
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
-          test("List contains the created person", function () {
+          test("Answers a page bounded by size", function () {
+            const b = res.getBody();
+            expect(b.size).to.equal(5);
+            expect(b.content.length).to.be.at.most(5);
+            expect(b.totalElements).to.be.at.least(1);
+          });
+          test("First page contains the created person", function () {
             const id = Number(bru.getVar('person_id'));
-            expect(res.getBody().some(p => p.personId === id)).to.equal(true);
+            expect(res.getBody().content.some(p => p.personId === id)).to.equal(true);
           });
