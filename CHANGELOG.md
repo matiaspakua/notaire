@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1](https://github.com/matiaspakua/notaire/compare/notaire-v0.1.0...notaire-v0.1.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* **security:** skip admin/admin seed outside dev/test environments ([#1305](https://github.com/matiaspakua/notaire/issues/1305)) ([7f7731e](https://github.com/matiaspakua/notaire/commit/7f7731e0fafae5a3f6a6cca6f82088d8c2349c91)), closes [#1249](https://github.com/matiaspakua/notaire/issues/1249)
+
 ## [Unreleased]
 
 ### Changed
