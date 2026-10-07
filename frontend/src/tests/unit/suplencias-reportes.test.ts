@@ -117,10 +117,10 @@ describe("Reporte URL construction", () => {
     expect(url).toBe("http://localhost:8080/api/v1/reportes/libro-indice?anio=2025");
   });
 
-  it("deuda documentos URL includes numero gestion", () => {
+  it("deuda documentos URL includes the management number (numberManagement)", () => {
     const numero = 1001;
-    const url = `${BASE}/reportes/consultar-deuda-documentos?numeroGestion=${numero}`;
-    expect(url).toContain("numeroGestion=1001");
+    const url = `${BASE}/reportes/consultar-deuda-documentos?numberManagement=${numero}`;
+    expect(url).toContain("numberManagement=1001");
   });
 });
 
