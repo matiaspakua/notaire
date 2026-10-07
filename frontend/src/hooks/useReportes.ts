@@ -27,7 +27,7 @@ export function useReportePresupuesto() {
   };
 }
 
-/** CU08 — Reporte PDF de presupuesto con inmuebles */
+/** CU01 — Reporte PDF de presupuesto con inmuebles */
 export function useReportePresupuestoInmuebles() {
   return {
     download: (idPresupuesto: number) =>
@@ -93,12 +93,12 @@ export function useReporteLibroIndice() {
   };
 }
 
-/** CU16 — Consultar deuda documentos */
+/** CU09 — Consultar deuda de documentos (query param numberManagement, see openapi.yaml) */
 export function useReporteDeudaDocumentos() {
   return {
     download: (numeroGestion: number) =>
       downloadPdf(
-        `/reportes/consultar-deuda-documentos?numeroGestion=${numeroGestion}`,
+        `/reportes/consultar-deuda-documentos?numberManagement=${numeroGestion}`,
         `deuda_documentos_${numeroGestion}.pdf`
       ),
   };
