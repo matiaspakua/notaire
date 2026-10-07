@@ -96,5 +96,13 @@ class RunPipelineExitCodeTest(unittest.TestCase):
         self.assertIn("exit 1", content)
 
 
+class RunPipelinePrunesOldRunsTest(unittest.TestCase):
+    def test_removes_previous_runs_before_creating_the_new_one(self):
+        content = load_script()
+        prune = content.index('find "$REPO_ROOT/reports/pipeline"')
+        create = content.index('mkdir -p "$REPORT_DIR"')
+        self.assertLess(prune, create)
+
+
 if __name__ == "__main__":
     unittest.main()

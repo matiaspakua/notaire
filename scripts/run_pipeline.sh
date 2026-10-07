@@ -37,7 +37,8 @@
 # USAGE
 #   bash scripts/run_pipeline.sh
 #
-# Dashboard + logs are written under reports/pipeline/<timestamp>/ (git-ignored).
+# Dashboard + logs are written under reports/pipeline/<timestamp>/ (git-ignored); previous runs are
+# deleted first, so only the latest run is kept.
 # Exit code is non-zero if any blocking gate fails.
 set -uo pipefail
 
@@ -55,6 +56,7 @@ RED=$'\033[0;31m'; GREEN=$'\033[0;32m'; YELLOW=$'\033[1;33m'; BLUE=$'\033[0;34m'
 
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 REPORT_DIR="$REPO_ROOT/reports/pipeline/$TIMESTAMP"
+find "$REPO_ROOT/reports/pipeline" -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} + 2>/dev/null
 mkdir -p "$REPORT_DIR"
 SUMMARY_LOG="$REPORT_DIR/pipeline.log"
 
