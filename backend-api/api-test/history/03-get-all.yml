@@ -3,11 +3,12 @@ info:
   type: http
   seq: 4
   description: |-
-      ## List history entries — GET /api/v1/historial
+      ## List history entries — GET /api/v1/historial (paginated, #596)
+      Answers a Spring Data page; newest first with `sort=idHistory,desc`.
       Traceability: CU13 (RF #3, #24, #26, #110)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/historial"
+  url: "{{base_url}}/api/v1/historial?size=5&sort=idHistory,desc"
   headers:
     - name: Content-Type
       value: application/json
@@ -18,7 +19,13 @@ runtime:
     - type: tests
       code: |-
           test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
-          test("Contains the created history entry", function () {
+          test("Answers a page bounded by size", function () {
+            const b = res.getBody();
+            expect(b.size).to.equal(5);
+            expect(b.content.length).to.be.at.most(5);
+            expect(b.totalElements).to.be.at.least(1);
+          });
+          test("First page contains the created history entry", function () {
             const id = parseInt(bru.getVar('history_id'), 10);
-            expect(res.getBody().some((h) => h.idHistory === id)).to.be.true;
+            expect(res.getBody().content.some((h) => h.idHistory === id)).to.be.true;
           });

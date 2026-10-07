@@ -195,12 +195,12 @@ class RemainingControllersIntegrationTest {
     class HistoryTests {
 
         @Test
-        @DisplayName("Should return all historiales")
+        @DisplayName("Should return a page of historiales")
         void shouldReturnAllHistoriales() throws Exception {
             mockMvc.perform(get("/api/v1/historial"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$", isA(java.util.List.class)));
+                    .andExpect(jsonPath("$.content", isA(java.util.List.class)));
         }
 
         @Test
