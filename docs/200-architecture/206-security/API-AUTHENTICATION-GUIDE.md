@@ -143,13 +143,14 @@ Authorization (#559): `JwtAuthenticationFilter` asks `UserAuthorityResolver` for
 | `/api/v1/usuarios/**` (except login, logout), `/api/v1/roles/**`, `/api/v1/audit-log/**` | all | `ROLE_ADMIN` |
 | workflow definitions, nodes and transitions; `tipo-tramite`, `tipo-de-documento`, `tipo-folio`, `tipo-identificacion`, `conceptos`, `estado-gestion`, `plantilla-tramite`, `plantilla-presupuestos`, `plantilla-costos-documento` | POST, PUT, PATCH, DELETE | `ROLE_ADMIN` |
 | the same catalogs | GET | any authenticated user |
+| `/api/v1/historial/{id}` (management history, the CU13 audit trail; issue #1250) | PUT, DELETE | `ROLE_ADMIN` |
 | everything else | all | any authenticated user |
 
 A non-administrator receives `403` from `apiAccessDeniedHandler`. The frontend mirrors the rule for the administration and audit screens (`frontend/src/lib/admin-access.ts`); the server is the authority.
 
 ### Extending RBAC
 
-1. Add a path to `ADMIN_ONLY_PATHS` or `ADMIN_WRITE_PATHS` in `SecurityAndCorsConfig` and a case to `RbacIntegrationTest` and the Bruno `rbac/` folder.
+1. Add a path to `ADMIN_ONLY_PATHS` or `ADMIN_WRITE_PATHS` (or a method-specific rule such as `ADMIN_HISTORY_METHODS`) in `SecurityAndCorsConfig` and a case to `RbacIntegrationTest` and the Bruno `rbac/` folder.
 2. For per-permission rules, use the `roles_permisos` data through `UserAuthorityResolver` (not yet implemented).
 
 ## Authentication error handling

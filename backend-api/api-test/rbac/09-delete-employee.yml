@@ -1,7 +1,7 @@
 info:
   name: Delete employee
   type: http
-  seq: 9
+  seq: 11
   description: |-
       ## Cleanup as administrator — DELETE /api/v1/usuarios/{id}
       Traceability: CU78 (issue #559)
