@@ -49,6 +49,7 @@ class DataInitializerTest {
                 userRepository, personRepository, identificationTypeRepository, passwordEncoder);
         ReflectionTestUtils.setField(dataInitializer, "adminUsername", "admin");
         ReflectionTestUtils.setField(dataInitializer, "adminPassword", "admin");
+        ReflectionTestUtils.setField(dataInitializer, "environment", "development");
     }
 
     @Test
@@ -117,5 +118,59 @@ class DataInitializerTest {
         dataInitializer.run(null);
 
         verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should skip the seed outside dev/test when the password is the known default (issue #1249)")
+    void shouldSkipSeedOutsideDevWhenPasswordIsDefault() {
+        ReflectionTestUtils.setField(dataInitializer, "environment", "staging");
+
+        dataInitializer.run(null);
+
+        verify(userRepository, never()).findByName(any());
+        verify(userRepository, never()).save(any());
+        verify(personRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should skip the seed outside dev/test when the password is blank (issue #1249)")
+    void shouldSkipSeedOutsideDevWhenPasswordIsBlank() {
+        ReflectionTestUtils.setField(dataInitializer, "environment", "production");
+        ReflectionTestUtils.setField(dataInitializer, "adminPassword", " ");
+
+        dataInitializer.run(null);
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should seed outside dev/test when a non-default password is configured (issue #1249)")
+    void shouldSeedOutsideDevWhenPasswordIsCustom() {
+        ReflectionTestUtils.setField(dataInitializer, "environment", "staging");
+        ReflectionTestUtils.setField(dataInitializer, "adminPassword", "S3cure-Rotated!");
+        when(userRepository.findByName("admin")).thenReturn(Optional.empty());
+        IdentificationType type = new IdentificationType();
+        type.setName("DNI");
+        when(identificationTypeRepository.findAll()).thenReturn(List.of(type));
+        when(passwordEncoder.encode("S3cure-Rotated!")).thenReturn(BCRYPT_ADMIN);
+
+        dataInitializer.run(null);
+
+        verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Should keep seeding the default password in the test profile (issue #1249)")
+    void shouldSeedDefaultPasswordInTestEnvironment() {
+        ReflectionTestUtils.setField(dataInitializer, "environment", "test");
+        when(userRepository.findByName("admin")).thenReturn(Optional.empty());
+        IdentificationType type = new IdentificationType();
+        type.setName("DNI");
+        when(identificationTypeRepository.findAll()).thenReturn(List.of(type));
+        when(passwordEncoder.encode("admin")).thenReturn(BCRYPT_ADMIN);
+
+        dataInitializer.run(null);
+
+        verify(userRepository).save(any(User.class));
     }
 }
