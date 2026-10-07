@@ -27,7 +27,7 @@ Documentation    E2E acceptance tests for the Administración module of Notaire 
 ...              - CU58 – Eliminar tipo de folio
 ...              - CU59 – Consultar Suplencias
 ...
-...              Requires: backend running (scripts/start.sh), frontend JAR built.
+...              Requires: backend running (workspace/stack/start.sh), frontend JAR built.
 Resource         ../resources/common.resource
 Suite Setup      Suite Initialization
 Suite Teardown   Close Swing Application

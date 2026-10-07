@@ -47,7 +47,7 @@ testing/
 ```bash
 cp testing/.env.example testing/.env     # once
 bash testing/scripts/run.sh database      # needs Docker; about 10 seconds
-bash scripts/start.sh                     # start the application, then:
+bash workspace/stack/start.sh                     # start the application, then:
 bash testing/scripts/run.sh integration
 bash testing/scripts/run.sh e2e           # first run installs the suite dependencies (npm ci)
 ```

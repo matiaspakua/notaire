@@ -124,10 +124,10 @@ mvn clean install -pl backend-api -am      # backend + dependencies
 ### Run
 
 ```bash
-bash scripts/start.sh                      # DB + backend (Docker)
-bash scripts/stop.sh
-bash scripts/logs.sh
-bash scripts/start-all.sh                  # app + observability infra
+bash workspace/stack/start.sh                      # DB + backend (Docker)
+bash workspace/stack/stop.sh
+bash workspace/stack/logs.sh
+bash workspace/stack/start-all.sh                  # app + observability infra
 cd backend-api && mvn spring-boot:run      # local (needs PostgreSQL on 5432)
 ```
 

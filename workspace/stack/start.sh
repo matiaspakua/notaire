@@ -15,7 +15,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_DIR"
 
 # Colors for output
@@ -291,11 +291,11 @@ if [ "$START_FRONTEND" = true ]; then
 fi
 
 echo -e "${BLUE}Useful Commands:${NC}"
-echo -e "  View logs:        ${YELLOW}bash scripts/logs.sh [backend|frontend|postgres|pgadmin]${NC}"
-echo -e "  Stop services:    ${YELLOW}bash scripts/stop.sh${NC}"
+echo -e "  View logs:        ${YELLOW}bash workspace/stack/logs.sh [backend|frontend|postgres|pgadmin]${NC}"
+echo -e "  Stop services:    ${YELLOW}bash workspace/stack/stop.sh${NC}"
 echo -e "  Run tests:        ${YELLOW}bash testing/scripts/test.sh${NC}"
 if [ "$WITH_ADMIN" = true ]; then
-    echo -e "  pgAdmin setup:   ${YELLOW}bash scripts/setup-pgadmin.sh${NC}"
+    echo -e "  pgAdmin setup:   ${YELLOW}bash workspace/stack/setup-pgadmin.sh${NC}"
 fi
 if [ "$START_FRONTEND" = false ]; then
     echo -e "  Start frontend:   ${YELLOW}cd frontend && npm run dev${NC}"

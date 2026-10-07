@@ -103,7 +103,7 @@ export function Architecture() {
           <p className="text-neutral-500 text-sm mb-6">All layers run in Docker containers. One command to start everything.</p>
           <div className="inline-block glass rounded-xl px-6 py-3 font-mono text-sm border border-cyan-500/20">
             <span className="text-neutral-500">$ </span>
-            <span className="grad-cyan">bash scripts/start-all.sh</span>
+            <span className="grad-cyan">bash workspace/stack/start-all.sh</span>
           </div>
         </div>
       </div>

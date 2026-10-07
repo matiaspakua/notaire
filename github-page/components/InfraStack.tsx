@@ -171,9 +171,9 @@ export function InfraStack() {
             </h3>
             <div className="space-y-3">
               {[
-                { cmd: "bash scripts/start.sh", desc: "App stack (Backend + Postgres + pgAdmin)" },
+                { cmd: "bash workspace/stack/start.sh", desc: "App stack (Backend + Postgres + pgAdmin)" },
                 { cmd: "bash scripts/start-infra.sh", desc: "Infra stack (Prometheus + Grafana + Loki + SonarQube)" },
-                { cmd: "bash scripts/start-all.sh", desc: "Everything at once" },
+                { cmd: "bash workspace/stack/start-all.sh", desc: "Everything at once" },
               ].map((c, i) => (
                 <div key={i} className="rounded-xl p-3" style={{ background: "rgba(0,0,0,0.03)" }}>
                   <code className="text-[#0A84FF] text-xs font-mono">$ {c.cmd}</code>

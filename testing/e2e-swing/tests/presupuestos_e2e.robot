@@ -6,7 +6,7 @@ Documentation    E2E acceptance tests for the Presupuestos module of Notaire Swi
 ...              - CU45 – Modificar presupuesto
 ...              - CU60 – Buscar Presupuesto
 ...
-...              Requires: backend running (scripts/start.sh), frontend JAR built.
+...              Requires: backend running (workspace/stack/start.sh), frontend JAR built.
 Resource         ../resources/common.resource
 Suite Setup      Suite Initialization
 Suite Teardown   Close Swing Application

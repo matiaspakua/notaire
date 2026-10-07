@@ -33,13 +33,13 @@ infra/
 ## Quick start
 
 ```bash
-bash scripts/start.sh                       # 1) the application (creates its network)
+bash workspace/stack/start.sh                       # 1) the application (creates its network)
 cp infra/.env.example infra/.env            # 2) once
 bash infra/scripts/start-infra.sh           # 3) observability + SonarQube
 bash infra/scripts/check-infra.sh           # 4) verify
 ```
 
-Or both at once: `bash scripts/start-all.sh`. Then open http://localhost:8888.
+Or both at once: `bash workspace/stack/start-all.sh`. Then open http://localhost:8888.
 
 ## Guard tests
 

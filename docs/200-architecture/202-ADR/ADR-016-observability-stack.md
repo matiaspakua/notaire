@@ -35,9 +35,9 @@ containers by name.
 
 ### Startup ordering
 
-The application stack must be started first (`bash scripts/start.sh`), then
+The application stack must be started first (`bash workspace/stack/start.sh`), then
 the infra stack (`bash infra/scripts/start-infra.sh`) — or both together via
-`bash scripts/start-all.sh`. This is because Prometheus/postgres-exporter
+`bash workspace/stack/start-all.sh`. This is because Prometheus/postgres-exporter
 scrape the running backend/database on the shared external network; starting
 infra first leaves scrape targets unreachable until the app stack joins.
 

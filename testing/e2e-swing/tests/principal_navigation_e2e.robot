@@ -7,7 +7,7 @@ Documentation    E2E navigation tests for the Principal (main) window of Notaire
 ...              - Each module button navigates to the correct sub-module
 ...              - Menu bar items are accessible
 ...
-...              Requires: backend running (scripts/start.sh), frontend JAR built.
+...              Requires: backend running (workspace/stack/start.sh), frontend JAR built.
 Resource         ../resources/common.resource
 Suite Setup      Suite Initialization
 Suite Teardown   Close Swing Application

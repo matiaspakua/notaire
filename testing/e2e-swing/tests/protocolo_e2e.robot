@@ -11,7 +11,7 @@ Documentation    E2E acceptance tests for the Protocolo module of Notaire Swing.
 ...              - CU64 – Buscar Tipo de tramite (ref. from Protocolo)
 ...              - CU68 – Buscar tipos de folios
 ...
-...              Requires: backend running (scripts/start.sh), frontend JAR built.
+...              Requires: backend running (workspace/stack/start.sh), frontend JAR built.
 Resource         ../resources/common.resource
 Suite Setup      Suite Initialization
 Suite Teardown   Close Swing Application

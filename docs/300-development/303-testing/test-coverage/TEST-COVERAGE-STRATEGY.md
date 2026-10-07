@@ -80,7 +80,7 @@ npm run test:headed   # watch mode
 ### Coverage
 
 - 33 spec files under `testing/e2e/tests/`, mostly one per Caso de Uso (`cuNN-*.spec.ts`)
-- Full stack must be running (`bash scripts/start.sh`)
+- Full stack must be running (`bash workspace/stack/start.sh`)
 
 ## API Testing (Bruno)
 

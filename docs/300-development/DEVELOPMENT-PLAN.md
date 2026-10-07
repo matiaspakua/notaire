@@ -40,7 +40,7 @@ installation, module structure, and the day-to-day command reference
 
 ```bash
 cp .env.example .env        # once, then fill in real values
-bash scripts/start.sh       # PostgreSQL + backend + frontend (Docker)
+bash workspace/stack/start.sh       # PostgreSQL + backend + frontend (Docker)
 cd backend-api && mvn spring-boot:run   # or run backend directly
 ```
 

@@ -18,7 +18,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 COMPOSE_FILE = REPO_ROOT / "docker-compose.yml"
-START_SCRIPT = REPO_ROOT / "scripts" / "start.sh"
+START_SCRIPT = REPO_ROOT / "workspace" / "stack" / "start.sh"
 ENV_EXAMPLE = REPO_ROOT / ".env.example"
 DEPLOYMENT_GUIDE = REPO_ROOT / "docs" / "200-architecture" / "209-deployment" / "README.md"
 
