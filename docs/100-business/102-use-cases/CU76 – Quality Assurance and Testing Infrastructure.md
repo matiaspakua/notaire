@@ -81,7 +81,7 @@
   cita `#issue` (#1146) y trazabilidad al CU dueño en `E2E-TEST-MAPPING.md`.
 - [x] Suite backend full (`mvn test -pl backend-api`) estable: ITs de pago con presupuesto propio y `SimpleControllersTest` sin stubs mezclados (#916).
 - [x] Controles icon-only del dashboard exponen nombre accesible traducido (`aria-label`) para tecnologías de asistencia y selectores `getByRole` (WCAG 2.1 SC 4.1.2; issue #1057; E2E TS-0096).
-- [x] ESLint del frontend es un gate **bloqueante** en `frontend-ci.yml` y en `scripts/preflight.sh` (`eslint src --max-warnings=0` / `npm run lint`), con reglas `jsx-a11y` activas vía `eslint-config-next` (issue #1048; #701 cerrado).
+- [x] ESLint del frontend es un gate **bloqueante** en `frontend-ci.yml` y en `workspace/sdlc/preflight.sh` (`eslint src --max-warnings=0` / `npm run lint`), con reglas `jsx-a11y` activas vía `eslint-config-next` (issue #1048; #701 cerrado).
 - [x] Workflow semanal de carga k6 operativo (script restaurado, umbrales CU74,
   artefacto `summary.json`; issue #1047; schedule + `workflow_dispatch` únicamente).
 - [x] CD en `workflow_run` construye y etiqueta la imagen con el SHA probado por

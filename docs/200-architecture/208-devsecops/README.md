@@ -248,7 +248,7 @@ bash security/enable-gh-secure.sh --apply    # admin/maintain token
 ```
 
 Merge-when-green still requires heavy CI (Integration, Coverage, Bruno,
-Playwright) via `bash scripts/check-heavy-ci.sh <pr>` — see
+Playwright) via `bash workspace/sdlc/check-heavy-ci.sh <pr>` — see
 [CI merge gate](../../300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md).
 CodeQL is not a substitute for that gate.
 

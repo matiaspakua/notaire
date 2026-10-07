@@ -32,9 +32,9 @@ artifacts:
       you reproduce - never copy it into the artifact.
 
       Prefer seeded files: if `proposal.md` is missing, run
-      `bash scripts/seed-openspec-change.sh <change> --issue <n> --use-case "…" --branch "…"`
+      `bash workspace/sdlc/seed-openspec-change.sh <change> --issue <n> --use-case "…" --branch "…"`
       first. FILL the seeded file in place — keep every `##` heading. Do not rewrite
-      from a blank page. `scripts/validate-sdlc-plan.sh` rejects a section whose body
+      from a blank page. `workspace/sdlc/validate-sdlc-plan.sh` rejects a section whose body
       is still only a template `<!-- ... -->` HTML comment.
 
       Create the proposal document that establishes WHY this change is needed.
@@ -105,7 +105,7 @@ artifacts:
 
       Create the traceability ledger for this change.
 
-      Prefer a seeded `traceability.md` from `bash scripts/seed-openspec-change.sh`.
+      Prefer a seeded `traceability.md` from `bash workspace/sdlc/seed-openspec-change.sh`.
       Fill cells in place; keep every `##` heading. Leave Commits/PR/CI/Merge/Release/
       Smoke as `pending` until those steps happen. Do not leave a section body as only
       a template `<!-- ... -->` comment.
@@ -314,10 +314,10 @@ artifacts:
     instruction: |
       CONSTITUTION: Read CONSTITUTION.md at the repository root - §5 Official SDLC
       Workflow and §6 Quality Gates. The plan you write must cover the whole workflow,
-      not just the coding. An incomplete plan is rejected: `scripts/validate-sdlc-plan.sh`
+      not just the coding. An incomplete plan is rejected: `workspace/sdlc/validate-sdlc-plan.sh`
       checks that every mandatory group is present.
 
-      Prefer a seeded `tasks.md` from `bash scripts/seed-openspec-change.sh`. Keep all
+      Prefer a seeded `tasks.md` from `bash workspace/sdlc/seed-openspec-change.sh`. Keep all
       12 group headings and the Definition of Done; fill group 4 with change-specific
       work. Do not leave a section body as only a template `<!-- ... -->` comment.
 
@@ -397,7 +397,7 @@ apply:
       with the reason.
     - Update traceability.md as you go: commit SHAs, PR number, gate log. Record
       evidence only for what actually happened.
-    - Before pushing, run `bash scripts/preflight.sh --fix`. `mvn verify` alone does
+    - Before pushing, run `bash workspace/sdlc/preflight.sh --fix`. `mvn verify` alone does
       not predict CI (Spotless is unbound from the Maven lifecycle).
     - Report failures honestly. If a gate does not pass, say so with the output
       rather than moving on.

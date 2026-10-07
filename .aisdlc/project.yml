@@ -16,7 +16,7 @@ spec:
   schema: notaire-sdlc
   tasks_template: docs/openspec/schemas/notaire-sdlc/templates/tasks.md
   validate: openspec validate {change} --strict
-  plan_check: bash scripts/validate-sdlc-plan.sh {change}
+  plan_check: bash workspace/sdlc/validate-sdlc-plan.sh {change}
 
 # A change's surfaces are the ones whose root holds a file from triage's "Files to Edit".
 # test_one must end with {test}: the red gate requires TEST_CMD to start with the text before it.
@@ -37,8 +37,8 @@ db_migrations: backend-api/src/main/resources/db/migration/
 gates:
   docs_lint: frontend/node_modules/.bin/markdownlint-cli2 --no-globs {files}
   docs_lint_fix: frontend/node_modules/.bin/markdownlint-cli2 --fix --no-globs {files}   # run by the harness before docs_lint
-  preflight: bash scripts/preflight.sh
-  pipeline: bash scripts/run_pipeline.sh
+  preflight: bash workspace/sdlc/preflight.sh
+  pipeline: bash workspace/sdlc/run_pipeline.sh
   start: bash workspace/stack/start.sh
   health_url: http://localhost:8080/actuator/health
   main_workflows: [ci.yml, cd.yml]

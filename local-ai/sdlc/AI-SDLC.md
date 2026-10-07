@@ -36,8 +36,8 @@ earned. So:
 | `tests` | worker | 8–10 test design, TDD | tests committed, `TEST_CMD` must **fail** → **Gate 2** |
 | `implement` | worker | 11–13 | `TEST_CMD` green + full suite green + `Closes #n` |
 | `docs` | worker | 16 permanent docs | CHANGELOG for feat/fix, SDLC plan still valid |
-| `quality` | harness→worker | 13–14, lint | `scripts/preflight.sh` |
-| `pipeline` | harness→worker | 14–15, 17.5 | `scripts/run_pipeline.sh` (stack + E2E + Bruno) → **Gate 3** |
+| `quality` | harness→worker | 13–14, lint | `workspace/sdlc/preflight.sh` |
+| `pipeline` | harness→worker | 14–15, 17.5 | `workspace/sdlc/run_pipeline.sh` (stack + E2E + Bruno) → **Gate 3** |
 | `pr` | worker | 18 | PR title `[#n] type(scope): …`, body references issue, branch pushed |
 | `ci` | harness→worker | 19 | check runs on the last commit without `[skip ci]` settle green; failed-job logs go to the worker |
 | `review` | **foreman** | 20 | human/Claude review of the diff → **Gate 4**; findings go back via `fix` |
@@ -54,7 +54,7 @@ bash local-ai/setup-omlx-codex.sh           # oMLX + model + codex profile (full
 git worktree add --detach ../notaire-localai origin/main
 ln -s "$PWD/.env" ../notaire-localai/.env   # never copy .env
 (cd ../notaire-localai/frontend && npm ci)  # deps before the agent
-(cd ../notaire-localai && bash scripts/install-git-hooks.sh)
+(cd ../notaire-localai && bash workspace/sdlc/install-git-hooks.sh)
 
 # per issue
 local-ai/sdlc/foreman.sh 1069                     # runs triage … ci, stops at review

@@ -274,7 +274,7 @@ jobs:
           REPORT_EMOJI: yes
         run: |
           mkdir -p reports
-          bash scripts/generate-cd-report.sh
+          bash workspace/ci/generate-cd-report.sh
 
       - name: Upload Report
         uses: actions/upload-artifact@v7

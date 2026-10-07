@@ -135,11 +135,11 @@ suites use and contain no real credential.
 
 ### Requirement: Gates stay in sync
 
-A gate added to CI MUST be added to `scripts/preflight.sh` in the same change, so local and CI
+A gate added to CI MUST be added to `workspace/sdlc/preflight.sh` in the same change, so local and CI
 never drift.
 
 #### Scenario: CI and preflight carry the database gate
 
-- **WHEN** `.github/workflows/database-vv.yml` and `scripts/preflight.sh` are inspected
+- **WHEN** `.github/workflows/database-vv.yml` and `workspace/sdlc/preflight.sh` are inspected
 - **THEN** the workflow runs the database suite on changes to migrations or `testing/database`,
   and `preflight.sh --full` and `--list` include the same gate

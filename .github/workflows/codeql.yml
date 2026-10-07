@@ -16,7 +16,7 @@ name: CodeQL
 #
 # wait-for-processing is false so a leftover default-setup conflict does not
 # fail the job after a successful analysis+upload; findings land once default
-# setup is off. Local preflight does not run CodeQL. See scripts/preflight.sh.
+# setup is off. Local preflight does not run CodeQL. See workspace/sdlc/preflight.sh.
 
 on:
   pull_request:

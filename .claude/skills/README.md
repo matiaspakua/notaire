@@ -12,7 +12,7 @@ This directory combines project-specific skills with generic lifecycle skills. T
 | Threats and security requirements | `secure-threat-modeling`, `backend`, `programming`, `devops` | security docs, `SR-*`, SAST/SCA/DAST evidence | 1-4 |
 | QA strategy and tests | `qa-automation-strategy`, `testing`, `maven-build`, `api-rest` | MTP, JUnit, Vitest, Bruno, Playwright | 2-3 |
 | API contracts | `api-contract-testing`, `api-rest` | OpenAPI/Swagger, Bruno and UI traceability | 2-3 |
-| CI/CD quality gates | `ci-cd-quality-gates`, `devops` | `scripts/preflight.sh`, `scripts/run_pipeline.sh`, CI workflows | 3-4 |
+| CI/CD quality gates | `ci-cd-quality-gates`, `devops` | `workspace/sdlc/preflight.sh`, `workspace/sdlc/run_pipeline.sh`, CI workflows | 3-4 |
 | Operations and incidents | `operations-observability-readiness`, `devops` | `infra/`, runbooks, SLOs, incident/postmortem evidence | 3-5 |
 | Specification lifecycle | OpenSpec vendor skills + `openspec-triage` | `docs/openspec/changes/`, `docs/openspec/specs/` | 1-5 |
 

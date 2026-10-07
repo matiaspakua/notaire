@@ -15,7 +15,7 @@
 - [x] 2.1 `git fetch origin main`
 - [x] 2.2 `git checkout -b docs/921_documentation_audit`
 - [x] 2.3 Branch name recorded in `traceability.md`
-- [x] 2.4 Run `bash scripts/validate-sdlc-plan.sh docs-921-documentation-audit`
+- [x] 2.4 Run `bash workspace/sdlc/validate-sdlc-plan.sh docs-921-documentation-audit`
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
@@ -38,7 +38,7 @@
 
 - [x] 6.1 Backend tests — n/a (no Java touched)
 - [x] 6.2 Coverage gate — n/a
-- [ ] 6.3 `bash scripts/preflight.sh` (or the subset the environment allows)
+- [ ] 6.3 `bash workspace/sdlc/preflight.sh` (or the subset the environment allows)
 - [ ] 6.4 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright

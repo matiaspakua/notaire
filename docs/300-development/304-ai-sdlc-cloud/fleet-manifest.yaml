@@ -18,10 +18,10 @@ authority:
   skills_root: .claude/skills/
   agents_root: .claude/agents/
   openspec_schema: notaire-sdlc
-  preflight: bash scripts/preflight.sh
-  plan_validate: bash scripts/validate-sdlc-plan.sh
+  preflight: bash workspace/sdlc/preflight.sh
+  plan_validate: bash workspace/sdlc/validate-sdlc-plan.sh
   openspec_validate: openspec validate {change} --strict
-  pipeline: bash scripts/run_pipeline.sh
+  pipeline: bash workspace/sdlc/run_pipeline.sh
 
 foreman:
   id: cloud-foreman

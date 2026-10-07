@@ -27,7 +27,7 @@ openspec new change "<kebab-case-name>"      # scaffolds the mandatory artifacts
 openspec status --change "<name>"            # artifact build order
 openspec instructions <artifact> --change "<name>"
 openspec validate "<name>" --strict          # structural checks
-bash scripts/validate-sdlc-plan.sh           # Constitution checks (--list explains them)
+bash workspace/sdlc/validate-sdlc-plan.sh           # Constitution checks (--list explains them)
 ```
 
 The Constitution reaches every agent through the `openspec` CLI itself
@@ -232,14 +232,14 @@ green locally and still fail CI on formatting. Validate with the preflight scrip
 mirrors every CI gate:
 
 ```bash
-bash scripts/install-git-hooks.sh   # once per clone: pre-push runs the gates automatically
-bash scripts/preflight.sh --fix     # auto-fix formatting/lint, then verify
-bash scripts/preflight.sh           # all blocking gates except server-backed suites
-bash scripts/preflight.sh --full    # adds Playwright E2E + Bruno API tests + Docker build/smoke test
-bash scripts/preflight.sh --list    # local check -> CI job mapping
+bash workspace/sdlc/install-git-hooks.sh   # once per clone: pre-push runs the gates automatically
+bash workspace/sdlc/preflight.sh --fix     # auto-fix formatting/lint, then verify
+bash workspace/sdlc/preflight.sh           # all blocking gates except server-backed suites
+bash workspace/sdlc/preflight.sh --full    # adds Playwright E2E + Bruno API tests + Docker build/smoke test
+bash workspace/sdlc/preflight.sh --list    # local check -> CI job mapping
 ```
 
-**When you add or change a gate in `.github/workflows/`, update `scripts/preflight.sh` in
+**When you add or change a gate in `.github/workflows/`, update `workspace/sdlc/preflight.sh` in
 the same PR.** Full details: `docs/300-development/CI-PREFLIGHT.md`.
 
 ## Backend Architecture (`backend-api`)

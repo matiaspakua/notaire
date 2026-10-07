@@ -36,7 +36,7 @@ closed issue.
 
 ### Requirement: Preflight mirrors blocking ESLint
 
-`scripts/preflight.sh` MUST document and execute frontend ESLint as a blocking
+`workspace/sdlc/preflight.sh` MUST document and execute frontend ESLint as a blocking
 gate consistent with CI (same max-warnings / lint script semantics).
 
 #### Scenario: Preflight maps ESLint as blocking in CI

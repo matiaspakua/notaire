@@ -524,7 +524,7 @@ Execution Strategy:
 | **Component (Frontend)** | 60% line | 75% line | `npm run test:coverage` |
 | **API (REST)** | 80% endpoints | 100% endpoints + error paths | `bru run . -r` |
 | **E2E (Workflows)** | 1 per CU | 1–2 per CU (golden + edge) | `npx playwright test` |
-| **Overall** | — | **Ratchet floor enforced** | `bash scripts/preflight.sh` |
+| **Overall** | — | **Ratchet floor enforced** | `bash workspace/sdlc/preflight.sh` |
 
 ---
 

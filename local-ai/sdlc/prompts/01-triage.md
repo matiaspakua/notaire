@@ -51,7 +51,7 @@ Keep the four `##` headings exactly. Replace the example lines.
   - `N. DONE — <criterion> — proven by: <ExistingTestClass>#<method>`
   - `N. TODO — <criterion> — proven by: command <shell command that must pass>`
     (only for things no unit test can see, e.g. a Gitleaks/Trivy scan,
-    `bash scripts/preflight.sh`, a file removed outside `backend-api/` and
+    `bash workspace/sdlc/preflight.sh`, a file removed outside `backend-api/` and
     `frontend/` — `command test ! -e Jenkinsfile` — or a stale mention removed
     from docs — `command ! git grep -qi jenkins -- docs README.md`). `grep`, `find`, `cat`, `ls`, `git ls-tree`
     and the like are NOT proofs: they succeed whether or not the criterion

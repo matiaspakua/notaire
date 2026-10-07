@@ -17,6 +17,6 @@ Read the "Documentation Impact" section of `docs/openspec/changes/{{CHANGE}}/pro
    `traceability.md`: fix only content rows that are wrong (e.g. a Planned File that
    does not exist), one edit block per row. Never touch the Commits or CHANGELOG
    rows — the harness records SHAs itself after this phase.
-5. Run `bash scripts/validate-sdlc-plan.sh {{CHANGE}}` — must pass.
+5. Run `bash workspace/sdlc/validate-sdlc-plan.sh {{CHANGE}}` — must pass.
    Do not touch code or tests in this phase.
 6. Commit: `docs(<scope>): <what>` with body `Refs #{{ISSUE}}`.

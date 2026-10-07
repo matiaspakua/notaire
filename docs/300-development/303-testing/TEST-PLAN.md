@@ -217,7 +217,7 @@ npx playwright test --debug
 npx playwright show-report
 
 # Full CI preflight (includes E2E + API + Docker build)
-bash scripts/preflight.sh --full
+bash workspace/sdlc/preflight.sh --full
 ```
 
 ### CI Pipeline
@@ -265,11 +265,11 @@ Header columns (post–English rename, issue #1064):
 | `Endpoint_Status` / `Bruno_Status` | Implementation / Bruno health |
 | `Notas` / `GitHub_Issue` | Notes and issue links (`Bruno_Test=MISSING` must cite `#953`) |
 
-**Drift guard:** `python3 scripts/validate-cu-api-matrix.py` rejects stale Spanish
+**Drift guard:** `python3 workspace/sdlc/validate-cu-api-matrix.py` rejects stale Spanish
 controller names, missing required resource bases (`/carpetas`, `/cuadernos`,
 `/minutas-inscripcion`, `/plantilla-costos-documento`, `/protocolo-auxiliar`,
 `/roles`, `/tipo-identificacion`, `/tramites`), invalid `Bruno_Test` values, and
-`MISSING` rows without `#953`. Wired into `scripts/preflight.sh` and
+`MISSING` rows without `#953`. Wired into `workspace/sdlc/preflight.sh` and
 `sdlc-process.yml` (CU76 / #1064). Bruno request authoring for remaining gaps
 stays on #953.
 

@@ -163,7 +163,7 @@ Stack completo (Prometheus, Grafana, SonarQube, Homer): `bash workspace/stack/st
 ```bash
 mvn test -pl backend-api                 # unit + integration backend
 cd testing/e2e && npm test              # Playwright E2E
-bash scripts/preflight.sh --full         # réplica local de todos los gates de CI
+bash workspace/sdlc/preflight.sh --full         # réplica local de todos los gates de CI
 ```
 
 Cobertura actual: ~84% líneas / ~74% branches (piso obligatorio: 70%/25%,
@@ -202,7 +202,7 @@ Todo cambio sigue el proceso obligatorio definido en
 **[`CONSTITUTION.md`](CONSTITUTION.md)** y
 **[`.claude/rules/ai-agent-workflow.md`](.claude/rules/ai-agent-workflow.md)**:
 Issue + Caso de Uso → branch (`<type>/<issue>_<descripción>`) → TDD → tests →
-commit (Conventional Commits, `Closes #<issue>`) → `scripts/preflight.sh` → PR.
+commit (Conventional Commits, `Closes #<issue>`) → `workspace/sdlc/preflight.sh` → PR.
 
 - **Commits**: [Conventional Commits](https://www.conventionalcommits.org/)
 - **Branches**: `<type>/<issue-number>_<description>`

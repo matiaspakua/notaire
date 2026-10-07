@@ -50,7 +50,7 @@ BASE_URL=https://staging.example.org bash testing/scripts/run.sh integration
 ## CI
 
 `.github/workflows/database-vv.yml` runs the database suite on pull requests and pushes that touch
-the migrations or `testing/database`. Locally, `bash scripts/preflight.sh --full` runs the same
+the migrations or `testing/database`. Locally, `bash workspace/sdlc/preflight.sh --full` runs the same
 suite ("database v&v suite"). The integration suite needs a running stack and runs locally and
 through `preflight.sh --full`.
 

@@ -199,7 +199,7 @@ encodes this Constitution:
 
 ```bash
 openspec new change "<kebab-case-name>"      # scaffolds the mandatory artifacts
-bash scripts/validate-sdlc-plan.sh "<name>"  # rejects an incomplete plan
+bash workspace/sdlc/validate-sdlc-plan.sh "<name>"  # rejects an incomplete plan
 ```
 
 The schema produces `proposal.md`, `traceability.md`, `specs/<capability>/spec.md`,
@@ -263,7 +263,7 @@ affected by the change (see [section 8](#8-documentation-rules)). → **Gate 3.*
 Conventional Commits; each commit references the issue (`Closes #<issue-number>`).
 
 **17.5 Ejecutar el pipeline completo.** Before opening the PR, run
-`bash scripts/run_pipeline.sh` — the single, dashboarded pre-PR gate. It brings
+`bash workspace/sdlc/run_pipeline.sh` — the single, dashboarded pre-PR gate. It brings
 the Docker stack up itself and composes `validate-sdlc-plan.sh` +
 `preflight.sh --full` + a markdown-lint pass, writing one HTML dashboard under
 `reports/pipeline/<timestamp>/index.html`. Do not open the PR until it passes.
@@ -273,7 +273,7 @@ the Docker stack up itself and composes `validate-sdlc-plan.sh` +
 
 **19. Esperar CI/CD verde.** Wait for all required GitHub Actions workflows to
 pass (see [Tooling Map](#13-tooling-map)). Do not request review or merge while
-CI is red. Locally, run `bash scripts/preflight.sh` before pushing (installed
+CI is red. Locally, run `bash workspace/sdlc/preflight.sh` before pushing (installed
 pre-push hook enforces it).
 
 **20. Code Review.** Address review feedback in new commits. The PR is ready to
@@ -409,7 +409,7 @@ every condition is satisfied.
 - [ ] Coverage is reduced below the JaCoCo ratchet floor (80% target)
 - [ ] Playwright E2E is failing for UI changes
 - [ ] Checkstyle / Spotless / lint gates fail
-- [ ] `bash scripts/run_pipeline.sh` has not been run, or last failed
+- [ ] `bash workspace/sdlc/run_pipeline.sh` has not been run, or last failed
 
 ### Gate 4 — Do not merge if
 
@@ -538,8 +538,8 @@ Mandatory:
 - PRs: mandatory for every change; merge only via Pull Request.
 - Merge requires: green CI, code review approval, no conflicts (Gate 4).
 - No secrets in commits; `.env` is git-ignored.
-- Before pushing, run the local CI gates: `bash scripts/preflight.sh`
-  (enforced by the `pre-push` hook after `bash scripts/install-git-hooks.sh`).
+- Before pushing, run the local CI gates: `bash workspace/sdlc/preflight.sh`
+  (enforced by the `pre-push` hook after `bash workspace/sdlc/install-git-hooks.sh`).
 
 ---
 
@@ -633,10 +633,10 @@ Agent-specific entry points:
   trivial documentation-only typo fixes. The exception must be documented in
   the commit and the PR, and the Owner marks it with the `sdlc-exception`
   label. A PR that carries no OpenSpec change must have that label, and the
-  label is only valid on such a PR (`scripts/check-sdlc-exception.sh`).
+  label is only valid on such a PR (`workspace/sdlc/check-sdlc-exception.sh`).
 - **Enforcement:**
-  - Local: `scripts/preflight.sh` + pre-push git hook (mirrors CI gates);
-    `scripts/run_pipeline.sh` is the mandatory, dashboarded final check
+  - Local: `workspace/sdlc/preflight.sh` + pre-push git hook (mirrors CI gates);
+    `workspace/sdlc/run_pipeline.sh` is the mandatory, dashboarded final check
     before opening a PR (→ Gate 3).
   - CI: GitHub Actions workflows block PRs that violate quality gates;
     `sdlc-process.yml` checks the process itself (commit messages, TDD
@@ -648,7 +648,7 @@ Agent-specific entry points:
 ## 13. Tooling Map
 
 Operational tools implement the Constitution. When adding or changing a CI
-gate, update `scripts/preflight.sh` in the same PR so local and CI never
+gate, update `workspace/sdlc/preflight.sh` in the same PR so local and CI never
 drift.
 
 | Process step / gate | Tooling |
@@ -656,23 +656,23 @@ drift.
 | Issue + Use Case | GitHub Issues; `.github/ISSUE_TEMPLATE/issue.md`; `gh` CLI |
 | Specification | OpenSpec, schema `docs/openspec/schemas/notaire-sdlc`; `openspec new change`; section map in `docs/300-development/templates/specification-template.md` |
 | Constitution as agent context | `docs/openspec/config.yaml` (`context`, `rules`, `operations`) — injected by the CLI for every agent |
-| Plan completeness (Gates 1–5) | `bash scripts/validate-sdlc-plan.sh` (`--list` maps each check to its Constitution section) |
+| Plan completeness (Gates 1–5) | `bash workspace/sdlc/validate-sdlc-plan.sh` (`--list` maps each check to its Constitution section) |
 | Spec structure | `openspec validate <change> --strict` |
 | Traceability (P4) | `traceability.md` per change; `openspec archive` folds deltas into `docs/openspec/specs/` |
 | Lifecycle skill composition | `.claude/skills/README.md`; generic skills under `.claude/skills/`; project skills for implementation details |
 | Skill references and evaluation | `<skill>/references/` for progressive disclosure; `<skill>/evals/evals.json` for repeatable scenarios |
-| Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `scripts/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `docs/openspec/NOTAIRE-ADAPTATIONS.md` |
-| Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>`; `scripts/check-commit-messages.sh` (`sdlc-process.yml`) |
-| TDD evidence (Gate 2) | `scripts/check-tdd-evidence.sh` — a PR that changes production code must change tests too (`sdlc-process.yml`) |
-| Agent rule files | `scripts/check-agent-rules.sh` — broken paths and stale module names (`sdlc-process.yml`) |
+| Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `workspace/sdlc/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `docs/openspec/NOTAIRE-ADAPTATIONS.md` |
+| Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>`; `workspace/sdlc/check-commit-messages.sh` (`sdlc-process.yml`) |
+| TDD evidence (Gate 2) | `workspace/sdlc/check-tdd-evidence.sh` — a PR that changes production code must change tests too (`sdlc-process.yml`) |
+| Agent rule files | `workspace/sdlc/check-agent-rules.sh` — broken paths and stale module names (`sdlc-process.yml`) |
 | Local-AI harness | `local-ai/sdlc/foreman.sh`; harness self-tests in `local-ai/sdlc/tests/` |
 | Unit + Integration tests | `mvn test -pl backend-api`; `mvn verify -pl backend-api` |
 | Coverage | JaCoCo ratchet floor (`mvn jacoco:check`); CI job `coverage` |
 | Lint / format | Spotless (CI "Code Lint"), Checkstyle, ESLint |
 | Frontend | `frontend-ci.yml` (TypeScript, ESLint, Vitest, Next.js build) |
 | E2E | `playwright-e2e.yml` (Playwright suite in `testing/e2e` + Bruno API suite) |
-| Local preflight | `bash scripts/preflight.sh [--fix / --fast / --full]`; pre-push hook |
-| Pre-PR pipeline gate (Gate 3) | `bash scripts/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
+| Local preflight | `bash workspace/sdlc/preflight.sh [--fix / --fast / --full]`; pre-push hook |
+| Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | Security | Trivy (`ci.yml` security job) |
 | Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |

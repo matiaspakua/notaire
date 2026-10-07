@@ -131,5 +131,5 @@ fi
 
 printf 'spotless-fallback: %d file(s) violate the format rules:\n' "${#VIOLATIONS[@]}"
 printf '  %s\n' "${VIOLATIONS[@]}"
-echo "Run: bash scripts/preflight.sh --fix   (or: mvn spotless:apply -pl backend-api)"
+echo "Run: bash workspace/sdlc/preflight.sh --fix   (or: mvn spotless:apply -pl backend-api)"
 exit 1

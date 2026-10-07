@@ -89,7 +89,7 @@ the stack starts and in `preflight.sh`.
 
 #### Scenario: The same suite passes after the move
 
-- **WHEN** `bash scripts/run_pipeline.sh` runs with the stack up
+- **WHEN** `bash workspace/sdlc/run_pipeline.sh` runs with the stack up
 - **THEN** the Playwright run reports the same number of passed tests as the baseline recorded before the move
 
 ### Requirement: No active file points at the old location

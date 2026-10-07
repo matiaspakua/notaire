@@ -2,7 +2,7 @@
 
 **Purpose:** Business and architecture knowledge base: requirements, use cases, SAD, ADRs, manuals.
 
-**Verify:** `bash docs/verify.sh` (module checks only; the full gate is `bash scripts/preflight.sh`).
+**Verify:** `bash docs/verify.sh` (module checks only; the full gate is `bash workspace/sdlc/preflight.sh`).
 
 ## Contract (what other modules may rely on)
 

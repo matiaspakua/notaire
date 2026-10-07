@@ -25,7 +25,7 @@ Constitution loop; specialists write most of the code.
 - Do **not** merge when only light CI is green (PR Validation + Frontend + SDLC
   ~12 checks) while `CI - Build, Test & Security` or Playwright is still
   **pending**. Required terminal success: Unit, Integration, Coverage Gate,
-  Bruno, Playwright — run `bash scripts/check-heavy-ci.sh <pr>` first; see
+  Bruno, Playwright — run `bash workspace/sdlc/check-heavy-ci.sh <pr>` first; see
   `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`.
 - Do **not** invent product fixes for Integration/Playwright Budget/person /
   `undefined, undefined` failures when the tip is behind `main` — rebase onto
@@ -87,10 +87,10 @@ pick → triage brief → OpenSpec Gate 1 → branch + in-progress
 
 | Gate | Command |
 |------|---------|
-| Gate 1 | `openspec validate <change> --strict` && `bash scripts/validate-sdlc-plan.sh <change>` |
-| Pre-push | `bash scripts/preflight.sh` (use `--full` when stack is up) |
-| Gate 3 | `bash scripts/run_pipeline.sh` when environment supports it |
-| CI | `bash scripts/check-heavy-ci.sh <pr>` (Integration + Coverage + Bruno + Playwright); see `CI-MERGE-GATE.md` |
+| Gate 1 | `openspec validate <change> --strict` && `bash workspace/sdlc/validate-sdlc-plan.sh <change>` |
+| Pre-push | `bash workspace/sdlc/preflight.sh` (use `--full` when stack is up) |
+| Gate 3 | `bash workspace/sdlc/run_pipeline.sh` when environment supports it |
+| CI | `bash workspace/sdlc/check-heavy-ci.sh <pr>` (Integration + Coverage + Bruno + Playwright); see `CI-MERGE-GATE.md` |
 | Smoke | `curl -sf` health URL from env (default `http://localhost:8080/actuator/health`) |
 
 ## Dispatch
@@ -116,7 +116,7 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 - PR title: `[#n] type(scope): description`
 - Commits / PR body: Conventional Commits + **`Closes #n`** (hard rule above —
   never only `Issue: #n`)
-- Merge only via PR after Gate 4 PASS **and** `bash scripts/check-heavy-ci.sh <pr>`
+- Merge only via PR after Gate 4 PASS **and** `bash workspace/sdlc/check-heavy-ci.sh <pr>`
   exits 0 on the **current head** (Integration + Coverage + Bruno + Playwright).
   Never merge on light-only `gh pr checks` green — `CI-MERGE-GATE.md`.
 - A `github:ci:branch` “all checks success” event is wake-up only — always re-run

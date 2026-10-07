@@ -22,7 +22,7 @@ RUNNER = TESTING / "scripts" / "run.sh"
 WRAPPER = TESTING / "scripts" / "test.sh"
 ENV_EXAMPLE = TESTING / ".env.example"
 DB_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "database-vv.yml"
-PREFLIGHT = REPO_ROOT / "scripts" / "preflight.sh"
+PREFLIGHT = REPO_ROOT / "workspace" / "sdlc" / "preflight.sh"
 TESTING_GUIDE = REPO_ROOT / "docs" / "300-development" / "303-testing" / "README.md"
 
 REQUIRED_PATHS = (

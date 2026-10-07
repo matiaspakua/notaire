@@ -31,7 +31,7 @@ Issue #1307, Use Case CU76, follows ADR-026. `scripts/` mixes system start/stop,
 
 ## Regression Strategy
 
-- Full suite command: `bash scripts/preflight.sh`; `--full` after the last slice
+- Full suite command: `bash workspace/sdlc/preflight.sh`; `--full` after the last slice
 
 ## Playwright Strategy
 

@@ -54,7 +54,7 @@ context. Open a specific section only if the phase prompt tells you to.
 - Commands:
   - one backend class: `mvn -q -B test -pl backend-api -Dtest=ClassName`
   - frontend unit: `cd frontend && npx vitest run <path>`
-  - lint/format fix: `bash scripts/preflight.sh --fix`
+  - lint/format fix: `bash workspace/sdlc/preflight.sh --fix`
 
 ## Git rules
 
@@ -75,7 +75,7 @@ Every change lives in `docs/openspec/changes/<change>/` with
 `tasks.md`. Get exact instructions for an artifact with:
 `openspec instructions <artifact> --change <change>`.
 Checks: `openspec validate <change> --strict` and
-`bash scripts/validate-sdlc-plan.sh <change>`.
+`bash workspace/sdlc/validate-sdlc-plan.sh <change>`.
 A worked, approved example: `docs/openspec/changes/archive/2026-09-19-fix-bruno-login-field-names/`.
 Markdown lint (MD040): only the OPENING fence gets a language (```` ```text ````);
 the closing fence is always a bare ```` ``` ````.

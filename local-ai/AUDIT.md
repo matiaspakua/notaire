@@ -5,7 +5,7 @@
 | Issue | #1079 |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure |
 | Date | 2026-09-28 |
-| Scope | `CONSTITUTION.md`, OpenSpec `notaire-sdlc` schema, `.claude/` (rules, skills, agents, hooks), `.github/workflows/`, `scripts/preflight.sh`, `local-ai/sdlc/` |
+| Scope | `CONSTITUTION.md`, OpenSpec `notaire-sdlc` schema, `.claude/` (rules, skills, agents, hooks), `.github/workflows/`, `workspace/sdlc/preflight.sh`, `local-ai/sdlc/` |
 | Evidence | Harness runs #1069 (PR #1073) and #1063 (in flight), PRs #1076 and #1078, last 40 merged PRs |
 
 ## 1. Verdict
@@ -116,7 +116,7 @@ policy: CONSTITUTION.md
 spec:
   tool: openspec
   schema: notaire-sdlc
-  validate: [openspec validate {change} --strict, bash scripts/validate-sdlc-plan.sh {change}]
+  validate: [openspec validate {change} --strict, bash workspace/sdlc/validate-sdlc-plan.sh {change}]
 intake:
   use_case_dir: docs/100-business/102-use-cases
   labels: {in_progress: in-progress, docs: DOC}
@@ -124,7 +124,7 @@ gates:
   test_one: mvn -q test -pl backend-api -Dtest={test}
   suite: mvn -q test -pl backend-api
   lint_docs: frontend/node_modules/.bin/markdownlint-cli2 --no-globs {files}
-  preflight: bash scripts/preflight.sh
+  preflight: bash workspace/sdlc/preflight.sh
 guards:
   forbidden: ['.env', '**/*.pem', 'CONSTITUTION.md']
   scope:

@@ -23,5 +23,5 @@ Keep the Constitution consistent with the repository after the Playwright suite 
 
 #### Scenario: Agent rule files stay consistent
 
-- **WHEN** `bash scripts/check-agent-rules.sh` runs
+- **WHEN** `bash workspace/sdlc/check-agent-rules.sh` runs
 - **THEN** it exits 0

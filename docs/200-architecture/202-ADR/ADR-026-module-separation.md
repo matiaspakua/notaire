@@ -27,7 +27,7 @@ documented seams before any extraction. This ADR delivers them as folders first.
 4. **Rule:** a module reads another only through its contract (`contracts/`, slice 2); only
    `workspace` reads all of them.
 5. **Delivery:** one PR per slice (manifest, contracts, security, guard relocation, docs
-   generators, OpenSpec into `docs/`, Foreman integration), each keeping `scripts/preflight.sh`
+   generators, OpenSpec into `docs/`, Foreman integration), each keeping `workspace/sdlc/preflight.sh`
    green; the full suite including Playwright E2E runs at the end. Code nothing needs any more moves
    to `deprecated/`, never deleted; the Owner decides later.
 6. **OpenSpec location:** the OpenSpec CLI hard-codes the folder name `openspec`, so it moves to

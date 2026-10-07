@@ -2,9 +2,9 @@
 #
 # pre-push — run the CI gates locally before anything reaches the remote.
 #
-# Installed by: bash scripts/install-git-hooks.sh  (sets core.hooksPath=.githooks)
+# Installed by: bash workspace/sdlc/install-git-hooks.sh  (sets core.hooksPath=.githooks)
 #
-# Runs scripts/preflight.sh in its default mode: every blocking CI gate that does
+# Runs workspace/sdlc/preflight.sh in its default mode: every blocking CI gate that does
 # not need a running app stack. A push is aborted if any of them fail, so a PR is
 # never opened against a branch that CI would reject.
 #
@@ -32,10 +32,10 @@ done
 ARGS=()
 [ "${PREFLIGHT_FAST:-0}" = "1" ] && ARGS+=(--fast)
 
-echo "pre-push: running local CI gates (scripts/preflight.sh ${ARGS[*]:-})…"
+echo "pre-push: running local CI gates (workspace/sdlc/preflight.sh ${ARGS[*]:-})…"
 echo "          skip with PREFLIGHT_SKIP=1, or git push --no-verify"
 
-if bash "$REPO_ROOT/scripts/preflight.sh" "${ARGS[@]}"; then
+if bash "$REPO_ROOT/workspace/sdlc/preflight.sh" "${ARGS[@]}"; then
     exit 0
 fi
 
@@ -44,8 +44,8 @@ cat <<'MSG'
 pre-push: BLOCKED — the checks above are the same ones CI runs, so this push
 would produce a red PR.
 
-  fix automatically :  bash scripts/preflight.sh --fix
-  re-check          :  bash scripts/preflight.sh
+  fix automatically :  bash workspace/sdlc/preflight.sh --fix
+  re-check          :  bash workspace/sdlc/preflight.sh
   push anyway       :  PREFLIGHT_SKIP=1 git push …   (or: git push --no-verify)
 MSG
 exit 1
