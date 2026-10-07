@@ -60,7 +60,7 @@ build imports from it.
 | 2 | Extract with the recipe in section 7 using `--path infra/ --path-rename infra/:` |
 | 3 | In the new repository add CI (`kustomize build`, `docker compose config`, k6 smoke), ruleset, `LICENSE`, `SECURITY.md`, `CODEOWNERS` |
 | 4 | In the core, replace `infra/` with a stub `README.md`, point `workspace/stack/start-all.sh` and `docker-compose.prod.yml` consumers to `NOTAIRE_INFRA_DIR`, keep `docker-compose*.yml` for the dev stack |
-| 5 | Move `infra/tests/test_infra_standalone.py` and the infra part of `scripts/preflight.sh` to the new repository; the core keeps a seam guard that checks image names and variable names |
+| 5 | Move `infra/tests/test_infra_standalone.py` and the infra part of `workspace/sdlc/preflight.sh` to the new repository; the core keeps a seam guard that checks image names and variable names |
 | 6 | Update `CLAUDE.md`, `docs/200-architecture/208-devsecops`, ADR-024 status table |
 | Exit | Core CI green without `infra/`; `bash workspace/stack/start-all.sh` works with `NOTAIRE_INFRA_DIR`; infra CI green; rollback tag exists |
 
@@ -161,7 +161,7 @@ and three or more repositories exist.
 |------|-----------|--------|-----------|
 | Path-scoped CI lets a breaking change through | medium | high | aggregator jobs; classifier tested in `test_ci_workflow_invariants.py`; full run on `main` |
 | Required-check names change and block merges | medium | high | keep names; roll out on one workflow first |
-| Extraction breaks a guard that reads across areas | high | medium | gate 2 and the seam guard; run `scripts/preflight.sh` on both sides |
+| Extraction breaks a guard that reads across areas | high | medium | gate 2 and the seam guard; run `workspace/sdlc/preflight.sh` on both sides |
 | Referenced commit SHAs and issue links go stale | certain | low | archive tag; message rewrite; transfer issues |
 | Spec and app versions drift (testing repository) | medium | high | pinned SHA, compatibility table, bump PRs |
 | Owner overhead from several repositories | high | medium | extract only gated areas; metrics decide |

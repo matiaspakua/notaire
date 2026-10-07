@@ -48,8 +48,8 @@ trivial edits and on legitimate mid-implementation work whose OpenSpec change
 directory name doesn't lexically match the touched path, producing noise that
 trains the agent (and the human) to ignore hook output — which defeats the
 purpose. The `SessionStart` status hook plus the existing
-`scripts/validate-sdlc-plan.sh` and the pre-push git hook
-(`scripts/preflight.sh`, installed via `scripts/install-git-hooks.sh`) already
+`workspace/sdlc/validate-sdlc-plan.sh` and the pre-push git hook
+(`workspace/sdlc/preflight.sh`, installed via `workspace/sdlc/install-git-hooks.sh`) already
 cover this at a coarser, non-annoying granularity. Full rationale in
 `docs/openspec/changes/archive/2026-09-23-enforce-workflow-gates-via-hooks/proposal.md` (Out of Scope).
 
@@ -77,5 +77,5 @@ issue #1027.
 Keep the set small. Before adding one, ask: does this block or annoy a normal,
 compliant workflow more than it helps? If a hook would need to guess intent
 from a shell command with a high false-positive rate, prefer documentation
-(CLAUDE.md / `.claude/rules/`) or a CI/pre-push gate (`scripts/preflight.sh`)
+(CLAUDE.md / `.claude/rules/`) or a CI/pre-push gate (`workspace/sdlc/preflight.sh`)
 instead — those are already the mechanically enforced parts of this process.

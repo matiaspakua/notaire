@@ -7,7 +7,7 @@
 # The record is now the `sdlc-exception` label, which only a human sets. Dependency
 # bots are exempt. Run by sdlc-process.yml and preflight.sh.
 #
-# USAGE  PR_LABELS="a,b" PR_AUTHOR=login bash scripts/check-sdlc-exception.sh <base> [head]
+# USAGE  PR_LABELS="a,b" PR_AUTHOR=login bash workspace/sdlc/check-sdlc-exception.sh <base> [head]
 set -uo pipefail
 
 BASE="${1:?usage: check-sdlc-exception.sh <base> [head]}"

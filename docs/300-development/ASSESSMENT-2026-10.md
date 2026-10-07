@@ -154,7 +154,7 @@ no completion plan beyond the open arch issues (#576-#580).
 ## 12. AI SDLC
 
 - Operating model: CONSTITUTION with five gates, OpenSpec schema `notaire-sdlc`, SessionStart
-  status hook, push-to-main guard, `scripts/preflight.sh` mirroring CI, atomic Conventional
+  status hook, push-to-main guard, `workspace/sdlc/preflight.sh` mirroring CI, atomic Conventional
   Commits, issue comments as hand-off notes. 72 commits since 2026-09-01 followed this flow.
 - Drift: 18 active OpenSpec changes against 118 archived; merged changes still show 9/46
   tasks. The status signal intended for resuming agents is unreliable. -> #1252

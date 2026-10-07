@@ -19,16 +19,16 @@
 # the local/CI gap reopens. `--list` prints the mapping.
 #
 # USAGE
-#   bash scripts/preflight.sh            # everything except server-backed suites
-#   bash scripts/preflight.sh --fix      # auto-fix what is fixable, then verify
-#   bash scripts/preflight.sh --fast     # format/lint/compile/typecheck only
-#   bash scripts/preflight.sh --full     # adds Playwright E2E + Bruno API tests + Docker build/smoke test
-#   bash scripts/preflight.sh --list     # show local-check -> CI-job mapping
+#   bash workspace/sdlc/preflight.sh            # everything except server-backed suites
+#   bash workspace/sdlc/preflight.sh --fix      # auto-fix what is fixable, then verify
+#   bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only
+#   bash workspace/sdlc/preflight.sh --full     # adds Playwright E2E + Bruno API tests + Docker build/smoke test
+#   bash workspace/sdlc/preflight.sh --list     # show local-check -> CI-job mapping
 #
 # Exit code is non-zero if any blocking check fails.
 set -uo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
 
 MODE_FIX=0; MODE_FAST=0; MODE_FULL=0
@@ -131,24 +131,24 @@ fi
 
 # Engineering Constitution: every active OpenSpec change must carry a complete
 # SDLC plan (CONSTITUTION.md §5, §6). Cheap and fails fast, so it runs first.
-run "sdlc plan validation" bash scripts/validate-sdlc-plan.sh
+run "sdlc plan validation" bash workspace/sdlc/validate-sdlc-plan.sh
 
 # CU ↔ API matrix must track English adapter.in.web controllers (#1064, CU76).
 # Also exercised by process-script self-tests under scripts/tests/.
-run "CU-API matrix validation" python3 scripts/validate-cu-api-matrix.py
+run "CU-API matrix validation" python3 workspace/sdlc/validate-cu-api-matrix.py
 
 # Process checks over the branch (sdlc-process.yml). Labels come from the open
 # PR, if there is one: the sdlc-exception label is a human decision.
 PR_LABELS="$(gh pr view --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || true)"
 export PR_LABELS
-run "commit messages" bash scripts/check-commit-messages.sh origin/main
-run "tdd evidence" bash scripts/check-tdd-evidence.sh origin/main
+run "commit messages" bash workspace/sdlc/check-commit-messages.sh origin/main
+run "tdd evidence" bash workspace/sdlc/check-tdd-evidence.sh origin/main
 if gh pr view >/dev/null 2>&1; then
-    run "sdlc exception label" bash scripts/check-sdlc-exception.sh origin/main
+    run "sdlc exception label" bash workspace/sdlc/check-sdlc-exception.sh origin/main
 else
     skip "sdlc exception label" "no PR yet — CI WILL run this"
 fi
-run "agent rule files" bash scripts/check-agent-rules.sh
+run "agent rule files" bash workspace/sdlc/check-agent-rules.sh
 run "process script self-tests" bash -c \
     "python3 -m unittest discover -s scripts/tests && python3 -m unittest discover -s local-ai/sdlc/tests \
      && python3 -m unittest discover -s workspace/tests && python3 -m unittest discover -s contracts/tests \
@@ -322,7 +322,7 @@ if [ "${#FAILED[@]}" -gt 0 ]; then
     printf '%sfailed:%s  %d\n' "$RED" "$NC" "${#FAILED[@]}"
     printf '  ✗ %s\n' "${FAILED[@]}"
     printf '\n%sPREFLIGHT FAILED — these would fail in CI.%s\n' "$RED" "$NC"
-    printf 'Try: bash scripts/preflight.sh --fix\n'
+    printf 'Try: bash workspace/sdlc/preflight.sh --fix\n'
     exit 1
 fi
 

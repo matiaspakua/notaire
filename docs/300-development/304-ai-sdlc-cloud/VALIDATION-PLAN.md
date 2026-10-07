@@ -58,8 +58,8 @@ issue until GAPs for `java`, `mvn`, `node`, `gh`, `openspec` are closed.
 ## Step C — Constitution tooling smoke
 
 ```bash
-bash scripts/validate-sdlc-plan.sh --list
-bash scripts/preflight.sh --list
+bash workspace/sdlc/validate-sdlc-plan.sh --list
+bash workspace/sdlc/preflight.sh --list
 # Optional if openspec installed and a sample change exists:
 # openspec list
 ```

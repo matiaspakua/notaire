@@ -13,7 +13,7 @@ is still open; completed work MUST be archived.
 
 #### Scenario: No active change has a closed issue
 
-- **WHEN** `bash scripts/validate-sdlc-plan.sh` runs on the repository
+- **WHEN** `bash workspace/sdlc/validate-sdlc-plan.sh` runs on the repository
 - **THEN** it reports no `exists but is CLOSED` problem and exits 0
 
 #### Scenario: Archived changes keep their content
@@ -29,7 +29,7 @@ Scripts that run in the pipeline MUST work with both BSD (macOS) and GNU sed.
 
 #### Scenario: Seed script fills values on BSD and GNU sed
 
-- **WHEN** `scripts/seed-openspec-change.sh` runs with `--issue`, `--use-case` and `--branch`
+- **WHEN** `workspace/sdlc/seed-openspec-change.sh` runs with `--issue`, `--use-case` and `--branch`
 - **THEN** the seeded proposal and traceability contain those values on macOS and Linux
 
 ### Requirement: Each release has unique subsection headings
@@ -53,5 +53,5 @@ The pre-PR pipeline MUST pass on this branch without `PREFLIGHT_SKIP` or `--no-v
 
 #### Scenario: Pipeline passes on main without bypass
 
-- **WHEN** `bash scripts/run_pipeline.sh` runs on this branch
+- **WHEN** `bash workspace/sdlc/run_pipeline.sh` runs on this branch
 - **THEN** it exits 0 and `PREFLIGHT_SKIP` is not needed to push

@@ -41,7 +41,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh fix-1250-endpoint-reachability-guard` |
+| 1 | Issue + Specification + Acceptance Criteria | yes | `bash workspace/sdlc/validate-sdlc-plan.sh fix-1250-endpoint-reachability-guard` |
 | 2 | Failing tests written, test cases designed | yes | guard written first and observed failing (allowlist missing) |
 | 3 | Suite green, coverage held, docs updated | partial | contracts, workspace, changelog and links guards green; run_pipeline.sh not run (no Docker) |
 | 4 | CI green, review approved, no conflicts | pending | — |
@@ -49,4 +49,4 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 ## Exceptions
 
-`scripts/run_pipeline.sh` needs Docker, unavailable on the agent box.
+`workspace/sdlc/run_pipeline.sh` needs Docker, unavailable on the agent box.

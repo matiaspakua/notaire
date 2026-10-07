@@ -2,7 +2,7 @@
 
 **Purpose:** REST API, business rules, persistence and the Flyway-managed PostgreSQL schema.
 
-**Verify:** `bash backend-api/verify.sh` (module checks only; the full gate is `bash scripts/preflight.sh`).
+**Verify:** `bash backend-api/verify.sh` (module checks only; the full gate is `bash workspace/sdlc/preflight.sh`).
 
 ## Contract (what other modules may rely on)
 

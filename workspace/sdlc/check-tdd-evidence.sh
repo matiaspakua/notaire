@@ -10,7 +10,7 @@
 #
 # A human-set `sdlc-exception` label (in $PR_LABELS) waives it (CONSTITUTION §12).
 #
-# USAGE  PR_LABELS="a,b" bash scripts/check-tdd-evidence.sh <base> [head]
+# USAGE  PR_LABELS="a,b" bash workspace/sdlc/check-tdd-evidence.sh <base> [head]
 set -uo pipefail
 
 BASE="${1:?usage: check-tdd-evidence.sh <base> [head]}"

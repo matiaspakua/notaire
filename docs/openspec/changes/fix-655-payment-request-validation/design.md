@@ -14,7 +14,7 @@ Keep the use-case checks as defence in depth; validate at the boundary with stan
 
 ## Riesgos / Trade-offs
 
-oasdiff reports 4 ERR-level changes (required/exclusiveMinimum) although the runtime already rejected those values. Decision (Owner asked to resolve the red check): list exactly those 4 lines in `backend-api/openapi/accepted-breaking-changes.txt`, passed to oasdiff as `err-ignore` by `openapi-contract.yml` and `scripts/preflight.sh`. Rejected: hiding the constraints from the schema (the contract would lie about rules the API enforces) and dropping `fail-on: ERR` (any break would pass). `scripts/test_dast_contract_backup_assets.py` requires every entry to follow an issue comment.
+oasdiff reports 4 ERR-level changes (required/exclusiveMinimum) although the runtime already rejected those values. Decision (Owner asked to resolve the red check): list exactly those 4 lines in `backend-api/openapi/accepted-breaking-changes.txt`, passed to oasdiff as `err-ignore` by `openapi-contract.yml` and `workspace/sdlc/preflight.sh`. Rejected: hiding the constraints from the schema (the contract would lie about rules the API enforces) and dropping `fail-on: ERR` (any break would pass). `scripts/test_dast_contract_backup_assets.py` requires every entry to follow an issue comment.
 
 ## Testing Strategy
 

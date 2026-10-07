@@ -441,7 +441,7 @@ jobs:
           export OUTPUT_FILE="./markdown-reports/ci-report.md"
           export REPORT_EMOJI="yes"
           export REPORT_NAV_ORDER="yes"
-          bash scripts/generate-markdown-report.sh
+          bash workspace/ci/generate-markdown-report.sh
 
       - name: Upload Markdown Reports
         uses: actions/upload-artifact@v7

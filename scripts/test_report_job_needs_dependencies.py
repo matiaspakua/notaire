@@ -10,7 +10,7 @@ string instead of the job's status.
 Both `generate-report` (pr-validation.yml) and `generate-reports` (ci.yml)
 hit this: they read `needs.validate-pr.result` / `needs.build.result` etc.
 without depending on those jobs, so the `: "${VAR:?REQUIRED}"` guards in
-scripts/generate-pr-validation-report.sh and scripts/generate-markdown-report.sh
+workspace/ci/generate-pr-validation-report.sh and workspace/ci/generate-markdown-report.sh
 failed on every run. The former PR `publish-report` wiki-commit job was
 removed (#1117 / #1041); assert against `generate-report` instead.
 

@@ -12,7 +12,7 @@ import unittest
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-SCRIPTS = REPO / "scripts"
+SCRIPTS = REPO / "workspace" / "sdlc"
 VALIDATOR = SCRIPTS / "validate-cu-api-matrix.py"
 PREFLIGHT = SCRIPTS / "preflight.sh"
 MATRIX = REPO / "docs" / "300-development" / "303-testing" / "CU-API-MATRIX.csv"

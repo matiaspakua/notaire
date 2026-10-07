@@ -25,7 +25,7 @@ subscription):
 can deliver “all N checks success” (e.g. **18 checks** on #1137) when they only
 see the completed light suite — while `CI - Build, Test & Security` and/or
 Playwright are still **pending** or not yet in the rollup. That delivery is
-**not** mergeable. Always run `bash scripts/check-heavy-ci.sh <pr>` before
+**not** mergeable. Always run `bash workspace/sdlc/check-heavy-ci.sh <pr>` before
 `gh pr merge`; ignore subscription “success” unless that script exits 0.
 
 `gh pr checks` has the same blind spot when heavy jobs are missing or still
@@ -53,14 +53,14 @@ Docs-only PRs are not exempt: `playwright-e2e.yml` still runs on PRs into
 explicitly skipped for that tip.
 
 Local mirror before push: [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md)
-(`bash scripts/preflight.sh`, optionally `--full`).
+(`bash workspace/sdlc/preflight.sh`, optionally `--full`).
 
 ## Verify before merge
 
 ```bash
 # REQUIRED — agents must run this before `gh pr merge`.
 # Do not merge on subscription “all checks success” alone.
-bash scripts/check-heavy-ci.sh <pr-number>
+bash workspace/sdlc/check-heavy-ci.sh <pr-number>
 
 # Or manually (still confirm the four required names are success):
 gh run list --branch <pr-head-branch> --limit 10
@@ -107,7 +107,7 @@ Many open PR tips each trigger a full `CI - Build, Test & Security` + Playwright
 suite. Contending tips sit `queued` for minutes; light jobs finish first and
 produce **light-only subscription false greens** (“all N checks success” while
 heavy workflows are still pending). That is **not** mergeable — always run
-`bash scripts/check-heavy-ci.sh <pr>` before merge.
+`bash workspace/sdlc/check-heavy-ci.sh <pr>` before merge.
 
 **Serialize:** prefer **one heavy-CI PR at a time**.
 

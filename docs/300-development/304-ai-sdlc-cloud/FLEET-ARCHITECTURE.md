@@ -54,10 +54,10 @@ merge, or skip gates.
 |-------|----------------|---------------------|
 | **Pick** | Select one open issue that is not an epic/roadmap umbrella; verify Use Case (`CU-XX` / `RF-XX` / `RNF-XX`) in body | `gh issue view <n> --json title,body,labels,state` — state `OPEN`, UC present |
 | **Triage** | Dispatch analyst / openspec-planner for refine + surface map (`backend` / `frontend` / both / `none`) | Written brief: issue #, UC, TYPE, SURFACE, acceptance criteria list |
-| **Gate 1** | Prefer `bash scripts/seed-openspec-change.sh <change> --issue N --use-case "CU…" --branch … --create` then fill; ensure OpenSpec change exists (`schema: notaire-sdlc`); run plan validation | `openspec validate <change> --strict` + `bash scripts/validate-sdlc-plan.sh <change>` |
+| **Gate 1** | Prefer `bash workspace/sdlc/seed-openspec-change.sh <change> --issue N --use-case "CU…" --branch … --create` then fill; ensure OpenSpec change exists (`schema: notaire-sdlc`); run plan validation | `openspec validate <change> --strict` + `bash workspace/sdlc/validate-sdlc-plan.sh <change>` |
 | **Branch** | Create `<type>/<issue-number>_<description>` from updated `main`; label `in-progress` | Branch name regex + `gh issue edit … --add-label in-progress` |
 | **Dispatch implement** | Route by SURFACE to backend / frontend / both; require TDD-first | Specialist commits show failing tests before green commits |
-| **Quality** | Run local CI mirror before push | `bash scripts/preflight.sh` (and `--full` when stack is up) |
+| **Quality** | Run local CI mirror before push | `bash workspace/sdlc/preflight.sh` (and `--full` when stack is up) |
 | **PR** | Open/update PR; body links issue with **`Closes #n`**; title `[#n] type(scope): …` | `gh pr view` / ManagePullRequest; every closing commit must end with `Closes #n` (not merely `Issue: #n`) |
 | **CI watch** | Subscribe or poll checks; on failure dispatch CI-fix specialist with failing job logs | Heavy CI + Playwright terminal success on last non-`[skip ci]` commit — **not** light-only (~12) green; see [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) |
 | **Gate 4** | Dispatch `code-reviewer` (+ `security-auditor` when auth/secrets/schema) | Review verdict PASS or concrete FIX notes |
@@ -75,7 +75,7 @@ merge, or skip gates.
 - Commit PR Validation wiki reports onto PR heads (especially with `[skip ci]`). That pattern was removed from `pr-validation.yml` on `main` (#1111 / #1117); agents must not reintroduce it by hand.
 - Assume bridge Docker networking works in Cloud VMs — use `docker-compose.cloud.yml` (host network). Until the Environment card is Saved, run `bash .cursor/install.sh` for `openspec` + `bc` (and the rest of the toolchain).
 - Treat draft environment builds as a substitute for a **Saved** Environment card with `install=bash .cursor/install.sh` and `start=bash .cursor/start.sh`.
-- Skip `scripts/seed-openspec-change.sh` and hand-author empty OpenSpec templates (leftover `<!-- -->` bodies fail Gate 1 validation — #1108 / #1116).
+- Skip `workspace/sdlc/seed-openspec-change.sh` and hand-author empty OpenSpec templates (leftover `<!-- -->` bodies fail Gate 1 validation — #1108 / #1116).
 
 ---
 
@@ -134,7 +134,7 @@ skills:
 constraints:
   - "TDD: failing tests committed before implementation"
   - "Do not edit local-ai/"
-  - "Do not push without bash scripts/preflight.sh"
+  - "Do not push without bash workspace/sdlc/preflight.sh"
 inputs:
   issue_url: https://github.com/matiaspakua/notaire/issues/1234
   acceptance_criteria: []
@@ -203,10 +203,10 @@ If a specialist finds itself reading `local-ai/` for product work, stop and re-r
 |-------|--------------------|
 | `CONSTITUTION.md` | Highest process authority |
 | `docs/openspec/` + `notaire-sdlc` | Gate 1 artifacts |
-| `scripts/seed-openspec-change.sh` | Prefer before filling Gate 1 templates (#1108) |
-| `scripts/validate-sdlc-plan.sh` | Constitution checks on plans (scenario sum via awk; `bc` optional) |
-| `scripts/preflight.sh` | Pre-push CI mirror |
-| `scripts/run_pipeline.sh` | Full Gate 3 when stack is up |
+| `workspace/sdlc/seed-openspec-change.sh` | Prefer before filling Gate 1 templates (#1108) |
+| `workspace/sdlc/validate-sdlc-plan.sh` | Constitution checks on plans (scenario sum via awk; `bc` optional) |
+| `workspace/sdlc/preflight.sh` | Pre-push CI mirror |
+| `workspace/sdlc/run_pipeline.sh` | Full Gate 3 when stack is up |
 | `.cursor/install.sh` / `.cursor/start.sh` | Saved Environment card install/start |
 | `docker-compose.cloud.yml` | Host-network compose for nested Docker |
 | `.claude/skills/*` | Specialist playbooks |
@@ -233,8 +233,8 @@ Operational failures while landing the fleet. Full table:
 2. **Never commit PR Validation wiki reports onto PR heads with `[skip ci]`** — fixed in `pr-validation.yml` on `main`; do not reintroduce.
 3. **Nested Docker** needs host-network compose (`docker-compose.cloud.yml`). Run `bash .cursor/install.sh` until the Environment card is Saved (`openspec` + `bc` come from that script; Gate 1 no longer hard-depends on `bc`).
 4. **Save** the Environment card with `.cursor/install.sh` / `.cursor/start.sh`; draft builds are not enough.
-5. **Prefer** `scripts/seed-openspec-change.sh` before filling Gate 1.
-6. **Never merge on light-CI-only green** — Unit, Integration, Coverage Gate, Bruno, and Playwright must be terminal success. Gate: `bash scripts/check-heavy-ci.sh <pr>` ([`CI-MERGE-GATE.md`](CI-MERGE-GATE.md); #1126 / #1128 / #1134). Do not trust CI subscription “all N checks success” alone.
+5. **Prefer** `workspace/sdlc/seed-openspec-change.sh` before filling Gate 1.
+6. **Never merge on light-CI-only green** — Unit, Integration, Coverage Gate, Bruno, and Playwright must be terminal success. Gate: `bash workspace/sdlc/check-heavy-ci.sh <pr>` ([`CI-MERGE-GATE.md`](CI-MERGE-GATE.md); #1126 / #1128 / #1134). Do not trust CI subscription “all N checks success” alone.
 7. **Stale PR: rebase first** — Budget/person / `undefined, undefined` Integration or Playwright failures on a tip behind `main` are usually fixed by rebasing onto #1132’s nested `BudgetResponse.person`, not by new product code.
 8. **CodeQL: advanced XOR default setup** — do not enable GitHub Code Scanning default setup beside `.github/workflows/codeql.yml`; use `wait-for-processing: false` and/or `security/enable-gh-secure.sh --apply` ([DevSecOps](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup)).
 9. **Serialize heavy CI** — prefer one heavy-CI PR at a time; docs/rebase tips wait; do not open new product PRs until the in-flight Integration/Playwright suite finishes ([`CI-MERGE-GATE.md` — Runner contention](CI-MERGE-GATE.md#runner-contention--serialize-heavy-ci)).

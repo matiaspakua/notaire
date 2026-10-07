@@ -32,7 +32,7 @@ You implement **backend-api** under foreman direction.
 2. Add/adjust tests; run `TEST_CMD` and **confirm failure** (Gate 2).
 3. Implement until `TEST_CMD` green; then module suite as instructed.
 4. Tick tasks.md only `[ ]`→`[x]` for your groups; do not invent results.
-5. Do not push unless foreman asks; when asked, run `bash scripts/preflight.sh` first.
+5. Do not push unless foreman asks; when asked, run `bash workspace/sdlc/preflight.sh` first.
 
 ## Commits (when foreman asks you to commit)
 

@@ -45,7 +45,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh fix-655-payment-request-validation` |
+| 1 | Issue + Specification + Acceptance Criteria | yes | `bash workspace/sdlc/validate-sdlc-plan.sh fix-655-payment-request-validation` |
 | 2 | Failing tests written, test cases designed | yes | 6 new `PaymentControllerTest` cases observed failing before the change |
 | 3 | Suite green, coverage held, docs updated | partial | payment unit/integration tests and Bruno payments (15 requests, 26 tests) green; backend full suite run before push; run_pipeline.sh not run (no Docker) |
 | 4 | CI green, review approved, no conflicts | pending | — |
@@ -53,4 +53,4 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 ## Exceptions
 
-`scripts/run_pipeline.sh` needs Docker, unavailable on the agent box. The OpenAPI breaking-diff check flagged 4 ERR changes that only document already-enforced rules; at the Owner's request they are accepted in `backend-api/openapi/accepted-breaking-changes.txt` (see design.md).
+`workspace/sdlc/run_pipeline.sh` needs Docker, unavailable on the agent box. The OpenAPI breaking-diff check flagged 4 ERR changes that only document already-enforced rules; at the Owner's request they are accepted in `backend-api/openapi/accepted-breaking-changes.txt` (see design.md).

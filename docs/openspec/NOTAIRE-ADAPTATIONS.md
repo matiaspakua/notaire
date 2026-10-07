@@ -56,7 +56,7 @@ Markdown y un bloque `instruction:` que la CLI inyecta en el contexto del agente
 vía `openspec instructions`. El comando `openspec new change <nombre>` crea el
 directorio `docs/openspec/changes/<nombre>/` con `.openspec.yaml`. Los cuatro
 templates Markdown (`proposal`, `design`, `tasks`, `traceability`) se copian con
-`bash scripts/seed-openspec-change.sh <nombre> …` cuando aún no existen;
+`bash workspace/sdlc/seed-openspec-change.sh <nombre> …` cuando aún no existen;
 `openspec archive <nombre>` mueve un change completado a `docs/openspec/changes/archive/` y
 sincroniza sus deltas aceptados en `docs/openspec/specs/<capability>/spec.md`.
 
@@ -72,12 +72,12 @@ npm install -g openspec
 
 # Ciclo de vida de un change
 openspec new change "<nombre-en-kebab-case>"      # crea .openspec.yaml del change
-bash scripts/seed-openspec-change.sh "<nombre>" \ # copia templates + valores conocidos
+bash workspace/sdlc/seed-openspec-change.sh "<nombre>" \ # copia templates + valores conocidos
   --issue N --use-case "CU…" --branch "type/N_desc"
 openspec status --change "<nombre>"               # orden de construcción de artifacts
 openspec instructions <artifact> --change "<nombre>"  # instrucciones para el agente
 openspec validate "<nombre>" --strict             # chequeos estructurales
-bash scripts/validate-sdlc-plan.sh "<nombre>"     # Gate 1 (incluye leftover <!-- -->)
+bash workspace/sdlc/validate-sdlc-plan.sh "<nombre>"     # Gate 1 (incluye leftover <!-- -->)
 openspec list                                     # changes activos
 openspec archive "<nombre>"                       # archivar un change completado
 
@@ -117,7 +117,7 @@ openspec doctor
 gh auth login
 
 # 4. Instalar git hooks del proyecto (pre-push ejecuta preflight.sh)
-bash scripts/install-git-hooks.sh
+bash workspace/sdlc/install-git-hooks.sh
 
 # 5. Verificar que el schema del proyecto está reconocido
 openspec schemas --json
@@ -131,10 +131,10 @@ openspec schemas --json
 openspec list
 
 # Debe validar todos los changes activos
-bash scripts/validate-sdlc-plan.sh
+bash workspace/sdlc/validate-sdlc-plan.sh
 
 # Debe ejecutar todos los gates locales
-bash scripts/preflight.sh --list
+bash workspace/sdlc/preflight.sh --list
 ```
 
 ---
@@ -254,7 +254,7 @@ opsx:explore          openspec-triage          opsx:propose
  scaffoldea change)       priorizados, con CU)      Issue REAL)
                                    │
                                    ▼
-                     scripts/validate-sdlc-plan.sh
+                     workspace/sdlc/validate-sdlc-plan.sh
                      resuelve el Issue live via
                      `gh issue view` — un Issue
                      fabricado o cerrado falla Gate 1
@@ -292,7 +292,7 @@ script (ver §4.5).
 
 ### 4.5 Gate mecánico: `validate-sdlc-plan.sh`
 
-**Archivo**: `scripts/validate-sdlc-plan.sh`
+**Archivo**: `workspace/sdlc/validate-sdlc-plan.sh`
 
 Este es el gate mecánico que convierte las reglas advisory del schema en un check
 que falla con exit code ≠ 0. Es bash puro — funciona para cualquier agente, CI,
@@ -300,9 +300,9 @@ o humano, sin hooks tool-specific.
 
 ```bash
 # Uso
-bash scripts/validate-sdlc-plan.sh                 # todo los changes activos
-bash scripts/validate-sdlc-plan.sh <change-name>   # un change específico
-bash scripts/validate-sdlc-plan.sh --list          # mapeo checks ↔ §Constitución
+bash workspace/sdlc/validate-sdlc-plan.sh                 # todo los changes activos
+bash workspace/sdlc/validate-sdlc-plan.sh <change-name>   # un change específico
+bash workspace/sdlc/validate-sdlc-plan.sh --list          # mapeo checks ↔ §Constitución
 ```
 
 **Qué verifica**:
@@ -326,7 +326,7 @@ bash scripts/validate-sdlc-plan.sh --list          # mapeo checks ↔ §Constitu
 rellene la especificación, corrê:
 
 ```bash
-bash scripts/seed-openspec-change.sh "<change>" \
+bash workspace/sdlc/seed-openspec-change.sh "<change>" \
   --issue <n> --use-case "CU76 — …" --branch "<type>/<n>_desc"
 ```
 
@@ -349,7 +349,7 @@ HTML del template. Self-tests: `scripts/tests/test_validate_sdlc_plan.py`.
 #   (nota visible, nunca un silent pass)
 ```
 
-**Integración**: ejecutado por `scripts/preflight.sh` (local, pre-push) y por
+**Integración**: ejecutado por `workspace/sdlc/preflight.sh` (local, pre-push) y por
 `.github/workflows/pr-validation.yml` (CI, bloqueante).
 
 ### 4.6 Archivado: `openspec-archive-change`
@@ -403,7 +403,7 @@ operations:
   specs/, design.md, tasks.md
           │
           ▼
-  bash scripts/validate-sdlc-plan.sh ◄── Gate mecánico:
+  bash workspace/sdlc/validate-sdlc-plan.sh ◄── Gate mecánico:
   • Issue existe y está OPEN               Issue fabricado → FALLA
   • Secciones obligatorias                 Issue cerrado  → FALLA
   • Traceability no pre-llenada            Sin diseño     → FALLA
@@ -434,8 +434,8 @@ operations:
   mvn verify -pl backend-api                # Checkstyle + SpotBugs
   cd testing/e2e && npx playwright test        # E2E (si hay cambios UI)
   Actualizar documentación permanente       # docs/, README.md, CHANGELOG.md
-  bash scripts/preflight.sh --fix           # mirrors todos los CI gates
-  bash scripts/run_pipeline.sh              # gate final pre-PR (HTML dashboard)
+  bash workspace/sdlc/preflight.sh --fix           # mirrors todos los CI gates
+  bash workspace/sdlc/run_pipeline.sh              # gate final pre-PR (HTML dashboard)
           │
           ▼
   git push -u origin <branch>
@@ -475,7 +475,7 @@ operations:
 
 ```bash
 # Validación mecánica local (y en CI)
-bash scripts/validate-sdlc-plan.sh <change-name>
+bash workspace/sdlc/validate-sdlc-plan.sh <change-name>
 
 # Verificación del Issue live
 gh issue view <number>   # usado internamente por validate-sdlc-plan.sh
@@ -486,7 +486,7 @@ openspec validate <change-name> --strict
 
 **CI jobs que lo bloquean**:
 
-- `pr-validation.yml` → job `sdlc-plan-validation` → `bash scripts/validate-sdlc-plan.sh` (BLOCKING)
+- `pr-validation.yml` → job `sdlc-plan-validation` → `bash workspace/sdlc/validate-sdlc-plan.sh` (BLOCKING)
 
 **Regla de trazabilidad** (P4, §4): todo hallazgo en `docs/openspec/explore*.md`
 debe tener un Issue real antes de que `opsx:propose` lo convierta en un change.
@@ -536,7 +536,7 @@ cd frontend && npx vitest run <nuevo-test>
 ### 6.3 Gate 3 — PR-ready (suite verde + docs)
 
 **Cuándo**: Antes de abrir el Pull Request. El gate completo se ejecuta con
-`bash scripts/run_pipeline.sh`, que levanta el stack Docker por sí mismo.
+`bash workspace/sdlc/run_pipeline.sh`, que levanta el stack Docker por sí mismo.
 
 **Condiciones** (ninguna puede fallar):
 
@@ -547,7 +547,7 @@ cd frontend && npx vitest run <nuevo-test>
 - [ ] Spotless formateado
 - [ ] ESLint sin errores
 - [ ] Documentación permanente actualizada y consistente
-- [ ] `bash scripts/run_pipeline.sh` pasado (genera HTML dashboard en `reports/pipeline/<timestamp>/`)
+- [ ] `bash workspace/sdlc/run_pipeline.sh` pasado (genera HTML dashboard en `reports/pipeline/<timestamp>/`)
 
 **Comandos completos**:
 
@@ -576,13 +576,13 @@ mvn spotless:check -pl backend-api                # verificar
 mvn spotless:apply -pl backend-api                # corregir
 
 # Gate local completo (mirrors CI)
-bash scripts/preflight.sh                         # todo excepto suites server-backed
-bash scripts/preflight.sh --fix                   # auto-fix lo que es fixable
-bash scripts/preflight.sh --fast                  # solo format/lint/compile/typecheck
-bash scripts/preflight.sh --full                  # + Playwright E2E + Bruno + Docker
+bash workspace/sdlc/preflight.sh                         # todo excepto suites server-backed
+bash workspace/sdlc/preflight.sh --fix                   # auto-fix lo que es fixable
+bash workspace/sdlc/preflight.sh --fast                  # solo format/lint/compile/typecheck
+bash workspace/sdlc/preflight.sh --full                  # + Playwright E2E + Bruno + Docker
 
 # Gate pre-PR con dashboard HTML
-bash scripts/run_pipeline.sh                      # OBLIGATORIO antes de abrir PR
+bash workspace/sdlc/run_pipeline.sh                      # OBLIGATORIO antes de abrir PR
 ```
 
 **CI jobs que lo bloquean** (todos deben ser verdes):
@@ -609,7 +609,7 @@ bash scripts/run_pipeline.sh                      # OBLIGATORIO antes de abrir P
 
 > **Nota crítica**: Spotless está **deliberadamente desvinculado** de `mvn verify`
 > (`backend-api/pom.xml`, ver issue #705). Un branch puede pasar `mvn verify`
-> localmente y fallar "Code Lint" en CI. Por esto `scripts/preflight.sh` invoca
+> localmente y fallar "Code Lint" en CI. Por esto `workspace/sdlc/preflight.sh` invoca
 > Spotless explícitamente — `mvn verify` solo no predice CI.
 
 ---
@@ -696,7 +696,7 @@ Specification         openspec new change                             Gate 1
                       docs/openspec/config.yaml (context + rules)
                       docs/openspec/changes/<name>/ (5 artifacts)
 
-Plan validation       bash scripts/validate-sdlc-plan.sh              Gate 1
+Plan validation       bash workspace/sdlc/validate-sdlc-plan.sh              Gate 1
                       .github/workflows/pr-validation.yml
                       (BLOCKING: Issue live, secciones, 12 grupos)
 
@@ -729,10 +729,10 @@ E2E                   Playwright (testing/e2e/tests/)                Gate 3
                       Bruno (backend-api/api-test/)
                       npx playwright test
 
-Local preflight       bash scripts/preflight.sh [--fix/--fast/--full] Gate 3
+Local preflight       bash workspace/sdlc/preflight.sh [--fix/--fast/--full] Gate 3
                       (pre-push hook instalado por install-git-hooks.sh)
 
-Pre-PR gate           bash scripts/run_pipeline.sh                    Gate 3
+Pre-PR gate           bash workspace/sdlc/run_pipeline.sh                    Gate 3
                       → reports/pipeline/<timestamp>/index.html
 
 CI/CD                 ci.yml (build, test, coverage, security)        Gate 4
@@ -915,7 +915,7 @@ la trazabilidad ni la validación apropiada al riesgo.
   comparar comportamiento; mantener el conjunto de pruebas cuando se cambie el
   alcance.
 - Antes de actualizar OpenSpec, preservar el fork `notaire-sdlc`, ejecutar
-  `openspec validate --strict` y `bash scripts/validate-sdlc-plan.sh` sobre un
+  `openspec validate --strict` y `bash workspace/sdlc/validate-sdlc-plan.sh` sobre un
   fixture representativo.
 - Cuando una herramienta cambie, actualizar el mapa de tooling y la skill local
   correspondiente; las prácticas y contratos no deben quedar atados a una sola
@@ -951,7 +951,7 @@ sin excepciones.
 
 ## 10. Verificación del gate mecánico
 
-Probado directamente contra `scripts/validate-sdlc-plan.sh` usando un fixture
+Probado directamente contra `workspace/sdlc/validate-sdlc-plan.sh` usando un fixture
 temporal en `docs/openspec/changes/` (nunca commiteado):
 
 | Caso | Issue reference | Resultado |
@@ -1018,7 +1018,7 @@ operations:
 
 ### Paso 5: Crear el gate mecánico (bash)
 
-Adaptar `scripts/validate-sdlc-plan.sh` para verificar:
+Adaptar `workspace/sdlc/validate-sdlc-plan.sh` para verificar:
 
 - Issue reference presente en `proposal.md`
 - Issue existe y está abierto (`gh issue view <number>`)
@@ -1027,7 +1027,7 @@ Adaptar `scripts/validate-sdlc-plan.sh` para verificar:
 
 Integrar en:
 
-- Git pre-push hook (`scripts/install-git-hooks.sh`)
+- Git pre-push hook (`workspace/sdlc/install-git-hooks.sh`)
 - CI (workflow de PR validation, BLOCKING)
 
 ### Paso 6: Crear el skill de triage (project-owned)
@@ -1038,11 +1038,11 @@ que cualquier change sea scaffoldeado.
 
 ### Paso 7: Conectar con los quality gates de CI/CD existentes
 
-Agregar en `scripts/preflight.sh` (o equivalente):
+Agregar en `workspace/sdlc/preflight.sh` (o equivalente):
 
 ```bash
 # SDLC plan validation
-bash scripts/validate-sdlc-plan.sh
+bash workspace/sdlc/validate-sdlc-plan.sh
 
 # ... resto de gates del proyecto (tests, lint, coverage, etc.)
 ```
@@ -1079,9 +1079,9 @@ bash scripts/validate-sdlc-plan.sh
 | `docs/openspec/explore.md` | Registro permanente hallazgo↔Issue del dominio de negocio |
 | `docs/openspec/schemas/notaire-sdlc/schema.yaml` | Schema completo con instructions por artifact |
 | `docs/openspec/config.yaml` | Contexto, reglas por artifact, guidance por operación |
-| `scripts/validate-sdlc-plan.sh` | Gate mecánico — `--list` mapea cada check a §Constitución |
-| `scripts/preflight.sh` | Gate local completo — `--list` mapea local ↔ CI job |
-| `scripts/run_pipeline.sh` | Gate pre-PR con dashboard HTML |
+| `workspace/sdlc/validate-sdlc-plan.sh` | Gate mecánico — `--list` mapea cada check a §Constitución |
+| `workspace/sdlc/preflight.sh` | Gate local completo — `--list` mapea local ↔ CI job |
+| `workspace/sdlc/run_pipeline.sh` | Gate pre-PR con dashboard HTML |
 | `.github/workflows/pr-validation.yml` | CI — SDLC validation, Spotless, branch naming |
 | `.github/workflows/ci.yml` | CI — build, tests, coverage, security |
 | `.github/workflows/frontend-ci.yml` | CI — TypeScript, ESLint, Vitest, Next.js |
@@ -1110,7 +1110,7 @@ bash scripts/validate-sdlc-plan.sh
 paralelización porque:
 
 - **Cada change es una unidad de trabajo autocontenida y verificable**:
-  `bash scripts/validate-sdlc-plan.sh <slug>` confirma mecánicamente (sin
+  `bash workspace/sdlc/validate-sdlc-plan.sh <slug>` confirma mecánicamente (sin
   IA) que el Issue, la especificación y las tareas están completas antes de
   que cualquier agente empiece a escribir código — el Gate 1 no depende de
   que el agente "se acuerde" de verificarlo.
@@ -1168,8 +1168,8 @@ gasta una llamada a modelo en ella.** Aplicado en este flujo:
 | "¿Compila el backend?" | `mvn -q compile -pl backend-api -am` (exit code) |
 | "¿Pasan los tests?" | `mvn test -pl backend-api` / `npx vitest run` — parsear `Tests run:` / summary JSON |
 | "¿Cumple el estilo?" | `mvn checkstyle:check` + `mvn spotless:check` — no se le pide a un modelo que "revise el formato" |
-| "¿Está completo el plan SDLC?" | `bash scripts/validate-sdlc-plan.sh` (gate mecánico, resuelve el Issue vía `gh` en vivo) |
-| "¿Está todo listo para el PR?" | `bash scripts/run_pipeline.sh` (dashboard HTML, un solo exit code) |
+| "¿Está completo el plan SDLC?" | `bash workspace/sdlc/validate-sdlc-plan.sh` (gate mecánico, resuelve el Issue vía `gh` en vivo) |
+| "¿Está todo listo para el PR?" | `bash workspace/sdlc/run_pipeline.sh` (dashboard HTML, un solo exit code) |
 | "¿Qué endpoints Bruno fallan?" | `npx @usebruno/cli run` + grep del resumen — solo se lee con IA el *diff* de fallos, no el log completo |
 | "¿Hay un merge conflict?" | `gh pr view <n> --json mergeable,mergeStateStatus` |
 
@@ -1214,7 +1214,7 @@ cd ../notaire-issue-<n>
 # 2. Spec (Gate 1) — el artefacto OpenSpec es el contrato que el
 #    ejecutor (agente o humano) sigue de punta a punta
 openspec new change "<slug>"
-bash scripts/validate-sdlc-plan.sh   # gate mecánico, 0 tokens de IA
+bash workspace/sdlc/validate-sdlc-plan.sh   # gate mecánico, 0 tokens de IA
 
 # 3. TDD + implementación — el agente de turno (Claude Code u otro
 #    conforme a Constitución §10), modelo cost-matched (13.4), trabaja
@@ -1226,7 +1226,7 @@ bash scripts/validate-sdlc-plan.sh   # gate mecánico, 0 tokens de IA
 # 4. Gates — todo mecánico, 0 tokens salvo para interpretar un fallo real
 mvn test -pl backend-api && mvn verify -pl backend-api
 cd frontend && npx vitest run && npx tsc --noEmit
-bash scripts/run_pipeline.sh   # Gate 3 obligatorio antes del PR
+bash workspace/sdlc/run_pipeline.sh   # Gate 3 obligatorio antes del PR
 
 # 5. PR + verificación de mergeabilidad (Gate 4) — `gh`, sin IA
 gh pr create --title "[#<n>] ..." --body "Closes #<n>"

@@ -42,7 +42,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | yes | Owner approval 2026-10-07; `bash scripts/validate-sdlc-plan.sh` |
+| 1 | Issue + Specification + Acceptance Criteria | yes | Owner approval 2026-10-07; `bash workspace/sdlc/validate-sdlc-plan.sh` |
 | 2 | Failing tests written, test cases designed | yes | layout guard red before the move |
 | 3 | Suite green, coverage held, docs updated | pending | — |
 | 4 | CI green, review approved, no conflicts | pending | — |

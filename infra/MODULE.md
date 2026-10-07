@@ -2,7 +2,7 @@
 
 **Purpose:** Observability (Prometheus, Grafana, Loki), SonarQube, Kubernetes manifests and the k6 load test.
 
-**Verify:** `bash infra/verify.sh` (module checks only; the full gate is `bash scripts/preflight.sh`).
+**Verify:** `bash infra/verify.sh` (module checks only; the full gate is `bash workspace/sdlc/preflight.sh`).
 
 ## Contract (what other modules may rely on)
 

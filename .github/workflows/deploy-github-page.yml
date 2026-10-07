@@ -163,7 +163,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-        run: bash scripts/generate-github-page-metrics.sh
+        run: bash workspace/ci/generate-github-page-metrics.sh
 
       - name: Install dependencies
         working-directory: github-page

@@ -19,7 +19,7 @@ names of `@RestController` types under
 
 - **WHEN** the matrix lists a `Controller` value that is not an existing
   `adapter.in.web` REST controller class and is not `N/A`
-- **THEN** `scripts/validate-cu-api-matrix.py` exits non-zero and reports the
+- **THEN** `workspace/sdlc/validate-cu-api-matrix.py` exits non-zero and reports the
   stale name
 
 #### Scenario: Current English controller names are accepted
@@ -76,13 +76,13 @@ Every row with `Bruno_Test=MISSING` MUST mention `#953` in `Notas` and/or
 
 ### Requirement: Validator MUST run in preflight and CI process checks
 
-`scripts/preflight.sh` MUST invoke the matrix validator as a blocking check, and
+`workspace/sdlc/preflight.sh` MUST invoke the matrix validator as a blocking check, and
 `scripts/tests/` MUST cover red/green behavior so `sdlc-process` process-script
 self-tests exercise it.
 
 #### Scenario: Preflight list includes the matrix validator
 
-- **WHEN** `bash scripts/preflight.sh --list` is inspected
+- **WHEN** `bash workspace/sdlc/preflight.sh --list` is inspected
 - **THEN** it maps a CU-API matrix validation check to a CI process job
 
 #### Scenario: Unit tests prove stale matrix fails and refreshed matrix passes

@@ -37,7 +37,7 @@ Then check, and fix until both pass:
 
 ```text
 openspec validate {{CHANGE}} --strict
-bash scripts/validate-sdlc-plan.sh {{CHANGE}}
+bash workspace/sdlc/validate-sdlc-plan.sh {{CHANGE}}
 ```
 
 Do NOT commit — the foreman commits the change folder after the gate passes.

@@ -47,7 +47,7 @@ EXPORT_SCRIPT = os.path.join(REPO_ROOT, "backend-api", "tools", "export-openapi.
 BACKUP_SENTINEL = os.path.join(REPO_ROOT, "scripts", "backup-postgres.sh")
 ACCEPTED_BREAKING_REL = "backend-api/openapi/accepted-breaking-changes.txt"
 ACCEPTED_BREAKING = os.path.join(REPO_ROOT, *ACCEPTED_BREAKING_REL.split("/"))
-PREFLIGHT = os.path.join(REPO_ROOT, "scripts", "preflight.sh")
+PREFLIGHT = os.path.join(REPO_ROOT, "workspace", "sdlc", "preflight.sh")
 # oasdiff err-ignore lines: "<METHOD> <path> <change text as oasdiff prints it>".
 ACCEPTED_ENTRY = re.compile(r"^(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) /\S* \S.*$")
 ISSUE_REF = re.compile(r"#[0-9]+")

@@ -41,7 +41,7 @@
 ## 10. Pull Request y validación CI
 
 - [x] 10.1 Push and open PR (#1312)
-- [ ] 10.2 `bash scripts/run_pipeline.sh` green
+- [ ] 10.2 `bash workspace/sdlc/run_pipeline.sh` green
 
 ## 11. Deploy
 

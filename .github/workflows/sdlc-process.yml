@@ -3,7 +3,7 @@ name: SDLC Process
 # Mechanical checks of the CONSTITUTION process on every PR (local-ai/AUDIT.md
 # E2, E3, S1, P2, P5). Separate from pr-validation.yml so that adding or removing
 # the `sdlc-exception` label re-runs only these checks. Mirrored locally by
-# scripts/preflight.sh — keep the two in sync (preflight.sh --list).
+# workspace/sdlc/preflight.sh — keep the two in sync (preflight.sh --list).
 
 on:
   pull_request:
@@ -29,19 +29,19 @@ jobs:
 
       - name: Commit messages are Conventional Commits
         if: ${{ !cancelled() }}
-        run: bash scripts/check-commit-messages.sh "$BASE_SHA"
+        run: bash workspace/sdlc/check-commit-messages.sh "$BASE_SHA"
 
       - name: Tests come before production code
         if: ${{ !cancelled() }}
-        run: bash scripts/check-tdd-evidence.sh "$BASE_SHA"
+        run: bash workspace/sdlc/check-tdd-evidence.sh "$BASE_SHA"
 
       - name: OpenSpec change or approved sdlc-exception
         if: ${{ !cancelled() }}
-        run: bash scripts/check-sdlc-exception.sh "$BASE_SHA"
+        run: bash workspace/sdlc/check-sdlc-exception.sh "$BASE_SHA"
 
       - name: Agent rule files are valid
         if: ${{ !cancelled() }}
-        run: bash scripts/check-agent-rules.sh
+        run: bash workspace/sdlc/check-agent-rules.sh
 
       - name: Process script and harness self-tests
         if: ${{ !cancelled() }}
@@ -58,4 +58,4 @@ jobs:
 
       - name: CU-API matrix validation
         if: ${{ !cancelled() }}
-        run: python3 scripts/validate-cu-api-matrix.py
+        run: python3 workspace/sdlc/validate-cu-api-matrix.py

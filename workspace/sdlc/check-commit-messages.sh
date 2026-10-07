@@ -6,7 +6,7 @@
 # commit subject still merged (local-ai/AUDIT.md E3). Merge commits are skipped.
 # Run by sdlc-process.yml and preflight.sh.
 #
-# USAGE  bash scripts/check-commit-messages.sh <base> [head]
+# USAGE  bash workspace/sdlc/check-commit-messages.sh <base> [head]
 set -uo pipefail
 
 BASE="${1:?usage: check-commit-messages.sh <base> [head]}"

@@ -40,7 +40,7 @@
 ## 10. Pull Request y validación CI
 
 - [ ] 10.1 Push and open PR (awaiting Owner approval)
-- [ ] 10.2 `bash scripts/run_pipeline.sh` green
+- [ ] 10.2 `bash workspace/sdlc/run_pipeline.sh` green
 
 ## 11. Deploy
 

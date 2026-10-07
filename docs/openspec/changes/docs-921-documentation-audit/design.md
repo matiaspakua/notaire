@@ -33,7 +33,7 @@ Issue #921, Use Case CU76 – Quality Assurance and Testing Infrastructure; CU77
 ## Regression Strategy
 
 - Existing tests affected: none
-- Full suite command: `bash scripts/preflight.sh`
+- Full suite command: `bash workspace/sdlc/preflight.sh`
 - HTTP/Bruno API suite: unchanged
 - Legacy paths at risk: none
 

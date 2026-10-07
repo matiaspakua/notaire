@@ -1,6 +1,6 @@
 > Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md) — §5 Official SDLC
 > Workflow, §6 Quality Gates. Groups 1-12 are **mandatory**: a plan that omits one
-> is incomplete and `scripts/validate-sdlc-plan.sh` will reject it. Add
+> is incomplete and `workspace/sdlc/validate-sdlc-plan.sh` will reject it. Add
 > change-specific work inside group 4; do not renumber the mandatory groups.
 
 ## 1. Gate 1 — Prerequisites
@@ -62,7 +62,7 @@
 - [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes
 - [ ] 8.4 Archive superseded documents into `docs/000-archive/`
 - [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash scripts/preflight.sh --fix` — mirrors every CI gate
+- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos
 

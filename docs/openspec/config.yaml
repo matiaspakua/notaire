@@ -36,9 +36,9 @@ context: |
     Playwright green for UI changes, Checkstyle/Spotless clean, permanent documentation updated.
     E2E tests must follow TS-nnnn-<workflow-name> nomenclature with CU traceability
     (docs/300-development/303-testing/E2E-TEST-MAPPING.md).
-  - `bash scripts/preflight.sh` before pushing. `mvn verify` alone does NOT predict
+  - `bash workspace/sdlc/preflight.sh` before pushing. `mvn verify` alone does NOT predict
     CI - Spotless is deliberately unbound from the Maven lifecycle.
-    Full pre-PR gate: `bash scripts/run_pipeline.sh` (Gate 3).
+    Full pre-PR gate: `bash workspace/sdlc/run_pipeline.sh` (Gate 3).
   - Flyway is the single source of truth for the schema. Never edit an applied
     migration; add a new `V{n}__description.sql`.
   - Frontend uses the centralized design system (src/theme/tokens.ts, FormContainer
@@ -60,7 +60,7 @@ context: |
   functional gap report), run the `openspec-triage` skill first: it turns that
   report into real, estimated, prioritized GitHub Issues, each linked to a Use
   Case. Only once a real Issue exists may `opsx:propose` scaffold a change around
-  it. `scripts/validate-sdlc-plan.sh` enforces the "real" part mechanically: when
+  it. `workspace/sdlc/validate-sdlc-plan.sh` enforces the "real" part mechanically: when
   `gh` is available it resolves the Issue live and fails the plan if it does not
   exist or is not open - an invented issue number cannot pass Gate 1. Every
   finding recorded in an exploration report (`docs/openspec/explore*.md`) must end up
@@ -71,7 +71,7 @@ context: |
 # ---------------------------------------------------------------------------
 # Per-artifact rules
 # ---------------------------------------------------------------------------
-# Enforced in prose here and mechanically by scripts/validate-sdlc-plan.sh.
+# Enforced in prose here and mechanically by workspace/sdlc/validate-sdlc-plan.sh.
 # The section list is duplicated nowhere else: the templates in
 # docs/openspec/schemas/notaire-sdlc/templates/ carry the headings themselves.
 rules:
@@ -112,7 +112,7 @@ operations:
       - "Confirm you are on the change branch, not main. Create it from an updated main if needed."
       - "Run the new tests and show them failing before implementing. Report the failure output."
       - "Update traceability.md as work lands - commit SHAs and the gate log - recording only what actually happened."
-      - "Run 'bash scripts/preflight.sh --fix' before pushing, and 'bash scripts/validate-sdlc-plan.sh' to confirm the plan is still complete."
+      - "Run 'bash workspace/sdlc/preflight.sh --fix' before pushing, and 'bash workspace/sdlc/validate-sdlc-plan.sh' to confirm the plan is still complete."
       - "Report gate failures with their output. Never describe a gate as passed without having run it."
   archive:
     guidance:

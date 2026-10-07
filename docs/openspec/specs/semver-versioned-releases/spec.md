@@ -6,9 +6,7 @@ Introduce an automated Semantic Versioning release process that creates `v*`
 tags and GitHub Releases, rolls Keep a Changelog `[Unreleased]` into versioned
 sections, and derives Maven and npm versions from the release tag. Source:
 \#1043; CU76; Constitution §11.
-
 ## Requirements
-
 ### Requirement: Semver release process is automated and documented
 
 The repository MUST have a documented, automated path to cut a SemVer release
@@ -66,3 +64,23 @@ tagged release commit MUST carry non-SNAPSHOT Maven and matching npm versions.
 - **WHEN** the same release commit for tag `vX.Y.Z` is inspected
 - **THEN** `frontend/package.json` `"version"` is `X.Y.Z` (not left at
   unrelated `0.1.0` when a release has been cut)
+
+### Requirement: Release PR identity
+
+The release-please workflow SHALL authenticate with the default `GITHUB_TOKEN` and SHALL start from a bootstrap commit.
+
+#### Scenario: Workflow uses the default token
+
+- **WHEN** release-please.yml is parsed
+- **THEN** the action's token input is github.token and references no secret
+
+#### Scenario: History is bootstrapped
+
+- **WHEN** release-please-config.json is parsed
+- **THEN** bootstrap-sha is a full commit SHA
+
+#### Scenario: Runbook documents the setting and manual checks
+
+- **WHEN** RELEASE.md is read
+- **THEN** it names the Actions-PR setting and explains that GITHUB_TOKEN PRs do not trigger other workflows
+

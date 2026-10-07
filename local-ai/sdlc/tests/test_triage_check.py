@@ -46,7 +46,7 @@ class BadProofsTest(unittest.TestCase):
         self.assertEqual(triage_check.bad_proofs(crit), [crit])
 
     def test_script_command_accepted(self):
-        self.assertEqual(triage_check.bad_proofs("1. TODO — clean — proven by: command bash scripts/preflight.sh"), [])
+        self.assertEqual(triage_check.bad_proofs("1. TODO — clean — proven by: command bash workspace/sdlc/preflight.sh"), [])
 
     def test_negated_search_accepted(self):
         # fails while the stale mention is still there, unlike a bare search

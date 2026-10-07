@@ -24,14 +24,14 @@ mvn verify -pl backend-api   # ✅ green locally
 git push                     # ❌ "Code Lint" fails in CI
 ```
 
-That happened on PR #721 and is the exact gap `scripts/preflight.sh` closes.
+That happened on PR #721 and is the exact gap `workspace/sdlc/preflight.sh` closes.
 
 ## Usage
 
 Install once per clone:
 
 ```bash
-bash scripts/install-git-hooks.sh
+bash workspace/sdlc/install-git-hooks.sh
 ```
 
 That sets `core.hooksPath=.githooks`, so the hooks are version-controlled, apply
@@ -41,11 +41,11 @@ gates automatically and refuses to push a branch CI would reject.
 Run it by hand any time:
 
 ```bash
-bash scripts/preflight.sh            # every blocking gate except server-backed suites
-bash scripts/preflight.sh --fix      # auto-fix what is fixable, then verify
-bash scripts/preflight.sh --fast     # format/lint/compile/typecheck only
-bash scripts/preflight.sh --full     # adds Playwright E2E + Bruno API tests + Docker build/smoke test
-bash scripts/preflight.sh --list     # local check -> CI job mapping
+bash workspace/sdlc/preflight.sh            # every blocking gate except server-backed suites
+bash workspace/sdlc/preflight.sh --fix      # auto-fix what is fixable, then verify
+bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only
+bash workspace/sdlc/preflight.sh --full     # adds Playwright E2E + Bruno API tests + Docker build/smoke test
+bash workspace/sdlc/preflight.sh --list     # local check -> CI job mapping
 ```
 
 `--full` needs the stack running (`bash workspace/stack/start.sh`): backend on `:8080`,
@@ -58,7 +58,7 @@ smoke check with no corresponding CI job.
 `--full` also runs the database V&V suite (`bash testing/scripts/run.sh database`, Docker only, no
 running stack needed), the local mirror of `.github/workflows/database-vv.yml`.
 
-`bash scripts/preflight.sh` (without `--fast`) also runs three report-only
+`bash workspace/sdlc/preflight.sh` (without `--fast`) also runs three report-only
 checks that mirror advisory CI jobs: `mvn dependency:analyze`, SpotBugs, and
 a Trivy filesystem scan (skipped with a warning if `trivy` isn't installed
 locally). None of these block the push — they match the report-only
@@ -131,15 +131,15 @@ above; the script itself has been removed.
 
 `preflight.sh` mirrors CI gates but assumes the Docker stack is already up and
 only prints to the terminal — there's no single artifact proving a branch is
-ready. `scripts/run_pipeline.sh` is that command: it brings the stack up
-itself (`workspace/stack/start.sh`), runs `scripts/validate-sdlc-plan.sh`, runs
+ready. `workspace/sdlc/run_pipeline.sh` is that command: it brings the stack up
+itself (`workspace/stack/start.sh`), runs `workspace/sdlc/validate-sdlc-plan.sh`, runs
 `preflight.sh --full`, adds a markdown-lint pass (ratcheted against
 `origin/main`, same policy as the Spotless gate — see the git-worktree caveat
 above) that has no CI job yet, and writes one HTML dashboard plus a log per
 run under `reports/pipeline/<timestamp>/` (git-ignored).
 
 ```bash
-bash scripts/run_pipeline.sh
+bash workspace/sdlc/run_pipeline.sh
 ```
 
 It composes rather than duplicates: everything under "what CI checks" above
@@ -177,7 +177,7 @@ insufficient — see
 [`304-ai-sdlc-cloud/CI-MERGE-GATE.md`](304-ai-sdlc-cloud/CI-MERGE-GATE.md):
 
 ```bash
-bash scripts/check-heavy-ci.sh <pr-number>
+bash workspace/sdlc/check-heavy-ci.sh <pr-number>
 ```
 
 Required terminal success: Integration Tests, Coverage Gate (`mvn verify`),

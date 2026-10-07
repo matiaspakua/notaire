@@ -4,7 +4,7 @@
 
 Mechanical checks of the CONSTITUTION process: the local-AI harness gates
 (env parsing, static test checks, runnable review notes, metrics) and the PR
-checks run by `sdlc-process.yml` and `scripts/preflight.sh`. Issue #1083
+checks run by `sdlc-process.yml` and `workspace/sdlc/preflight.sh`. Issue #1083
 introduced them from the findings in `local-ai/AUDIT.md`.
 
 ## Requirements
@@ -167,7 +167,7 @@ package `com.licensis.notaire`, Next.js frontend, `Dto*` DTOs).
 #### Scenario: Obsolete package root rejected
 
 - **WHEN** `.claude/rules/refactoring.md` contains the string `com.notaria`
-- **THEN** `scripts/check-agent-rules.sh` fails and names the obsolete marker
+- **THEN** `workspace/sdlc/check-agent-rules.sh` fails and names the obsolete marker
 
 #### Scenario: Swing-as-target markers rejected
 
@@ -186,7 +186,7 @@ package `com.licensis.notaire`, Next.js frontend, `Dto*` DTOs).
 - **WHEN** `.claude/rules/refactoring.md` describes Spring Boot 4.1, Java 21,
   PostgreSQL 16, `com.licensis.notaire`, Next.js, and `Dto*` naming, and
   contains none of the obsolete markers above
-- **THEN** `scripts/check-agent-rules.sh` passes for that file
+- **THEN** `workspace/sdlc/check-agent-rules.sh` passes for that file
 
 ### Requirement: Changes must declare their schema
 
@@ -391,7 +391,7 @@ The triage gate SHALL reject a `command` proof whose program only searches or pr
 
 #### Scenario: Script command accepted
 
-- **WHEN** a criterion reads `proven by: command bash scripts/preflight.sh`
+- **WHEN** a criterion reads `proven by: command bash workspace/sdlc/preflight.sh`
 - **THEN** nothing is reported
 
 ### Requirement: Promised tests need a tests phase
@@ -506,7 +506,7 @@ The harness SHALL run the worker with the agent named by `AGENT` or the adapter'
 ### Requirement: OpenSpec changes are seeded from notaire-sdlc templates
 
 After `openspec new change`, or when invoked on an existing change folder,
-`scripts/seed-openspec-change.sh` SHALL copy
+`workspace/sdlc/seed-openspec-change.sh` SHALL copy
 `docs/openspec/schemas/notaire-sdlc/templates/{proposal,design,tasks,traceability}.md`
 into the change directory when those files are absent, and SHALL fill the Issue,
 Use Case, Branch, and change-name values it is given. It SHALL NOT overwrite an
@@ -531,7 +531,7 @@ existing non-empty artifact file.
 
 ### Requirement: Unfilled template HTML-comment sections fail Gate 1
 
-`scripts/validate-sdlc-plan.sh` SHALL reject a `notaire-sdlc` change when a
+`workspace/sdlc/validate-sdlc-plan.sh` SHALL reject a `notaire-sdlc` change when a
 mandatory `##` section body in `proposal.md`, `design.md`, `tasks.md`, or
 `traceability.md` is still only one or more template `<!-- ... -->` HTML
 comments (after stripping comments and whitespace the body is empty). The error

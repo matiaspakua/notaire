@@ -41,7 +41,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | yes | `bash scripts/validate-sdlc-plan.sh fix-1264-release-please-token` |
+| 1 | Issue + Specification + Acceptance Criteria | yes | `bash workspace/sdlc/validate-sdlc-plan.sh fix-1264-release-please-token` |
 | 2 | Failing tests written, test cases designed | yes | guard tests updated first and observed failing against the previous secret wiring |
 | 3 | Suite green, coverage held, docs updated | partial | semver guard, CI workflow invariants, concurrency, changelog and links guards green; run_pipeline.sh not run (no Docker) |
 | 4 | CI green, review approved, no conflicts | pending | — |
@@ -49,4 +49,4 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 ## Exceptions
 
-`scripts/run_pipeline.sh` needs Docker, unavailable on the agent box. Acceptance (first release cut) happens after merge.
+`workspace/sdlc/run_pipeline.sh` needs Docker, unavailable on the agent box. Acceptance (first release cut) happens after merge.

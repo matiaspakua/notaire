@@ -2,7 +2,7 @@ name: Database V&V
 
 # Issue #1191 / CU76 / CU75. Black-box database verification: empty PostgreSQL, Flyway CLI migrate,
 # SQL checks (testing/database). Runs only when migrations or the suite change. Mirrored locally by
-# `bash scripts/preflight.sh --full` ("database v&v suite").
+# `bash workspace/sdlc/preflight.sh --full` ("database v&v suite").
 on:
   pull_request:
     branches: [main]

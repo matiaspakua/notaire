@@ -2,16 +2,16 @@
 
 ## 1. Gate 1 — Prerequisites
 
-- [x] 1.1 Issue #1264 exists with acceptance criteria
+- [x] 1.1 Issue #1249 exists with acceptance criteria
 - [x] 1.2 Specification written in this change
 
 ## 2. Crear branch
 
-- [x] 2.1 `fix/1264_release_please_token` from updated `main`
+- [x] 2.1 `fix/1249_admin_default_credentials_seed` from updated `main`
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [x] 3.1 guard tests updated first and observed failing against the previous secret wiring
+- [x] 3.1 4 new `DataInitializerTest` cases observed failing before the change
 
 ## 4. Implementación
 
@@ -23,7 +23,7 @@
 
 ## 6. Ejecutar regresión
 
-- [x] 6.1 semver guard, CI workflow invariants, concurrency, changelog and links guards green; run_pipeline.sh not run (no Docker)
+- [x] 6.1 backend `mvn test` green locally; `run_pipeline.sh` not run (no Docker on the box)
 
 ## 7. Ejecutar Playwright
 
@@ -35,12 +35,12 @@
 
 ## 9. Commits atómicos
 
-- [x] 9.1 Conventional Commit ending with `Closes #1264`
+- [x] 9.1 Conventional Commit ending with `Closes #1249`
 
 ## 10. Pull Request y validación CI
 
 - [ ] 10.1 Push and open PR (awaiting Owner approval)
-- [ ] 10.2 `bash scripts/run_pipeline.sh` green
+- [ ] 10.2 `bash workspace/sdlc/run_pipeline.sh` green
 
 ## 11. Deploy
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Local AI SDLC engine: foreman, worker, harness and prompts.
 
-**Verify:** `bash local-ai/verify.sh` (module checks only; the full gate is `bash scripts/preflight.sh`).
+**Verify:** `bash local-ai/verify.sh` (module checks only; the full gate is `bash workspace/sdlc/preflight.sh`).
 
 ## Contract (what other modules may rely on)
 

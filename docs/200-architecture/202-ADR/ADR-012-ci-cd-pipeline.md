@@ -42,13 +42,13 @@ Usar **GitHub Actions** como única plataforma de CI/CD, con workflows separados
 ### Positivos
 
 - Cada PR recibe automáticamente el resultado de build, tests, cobertura y seguridad antes de poder fusionarse.
-- `scripts/preflight.sh` replica localmente los mismos gates que corren en CI, evitando sorpresas (ver `docs/300-development/CI-PREFLIGHT.md`).
+- `workspace/sdlc/preflight.sh` replica localmente los mismos gates que corren en CI, evitando sorpresas (ver `docs/300-development/CI-PREFLIGHT.md`).
 - La publicación de imágenes Docker (`cd.yml`) solo ocurre tras un `ci.yml` exitoso en `main`, evitando publicar builds rotos.
 
 ### Negativos
 
-- Spotless corre solo en el job "Code Lint" de CI, no está enlazado al ciclo de vida de Maven — un desarrollador puede tener `mvn verify` en verde localmente y aun así fallar en CI por formato (ver issue #705). Mitigado por `scripts/preflight.sh --fix`.
-- Múltiples workflows YAML incrementan el costo de mantenimiento: cualquier gate nuevo debe añadirse tanto en `.github/workflows/` como en `scripts/preflight.sh` en el mismo PR (regla explícita en `CLAUDE.md`).
+- Spotless corre solo en el job "Code Lint" de CI, no está enlazado al ciclo de vida de Maven — un desarrollador puede tener `mvn verify` en verde localmente y aun así fallar en CI por formato (ver issue #705). Mitigado por `workspace/sdlc/preflight.sh --fix`.
+- Múltiples workflows YAML incrementan el costo de mantenimiento: cualquier gate nuevo debe añadirse tanto en `.github/workflows/` como en `workspace/sdlc/preflight.sh` en el mismo PR (regla explícita en `CLAUDE.md`).
 
 ### Report publish channel (issue #1041)
 

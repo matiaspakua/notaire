@@ -15,7 +15,7 @@
 - [ ] 2.1 `git fetch origin main`
 - [ ] 2.2 `git checkout -b refactor/1307_scripts_stack`
 - [ ] 2.3 Branch name recorded in `traceability.md`
-- [ ] 2.4 Run `bash scripts/validate-sdlc-plan.sh refactor-1307-scripts-into-modules`
+- [ ] 2.4 Run `bash workspace/sdlc/validate-sdlc-plan.sh refactor-1307-scripts-into-modules`
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
@@ -37,7 +37,7 @@
 
 - [ ] 6.1 Targeted tests for the change
 - [ ] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
-- [ ] 6.3 `bash scripts/preflight.sh`
+- [ ] 6.3 `bash workspace/sdlc/preflight.sh`
 - [ ] 6.4 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
@@ -57,7 +57,7 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `bash scripts/run_pipeline.sh` exits 0
+- [ ] 10.1 `bash workspace/sdlc/run_pipeline.sh` exits 0
 - [ ] 10.2 `git push -u origin refactor/1307_scripts_stack`
 - [ ] 10.3 Open PR `[#1307] refactor(repo): organize scripts into their modules`
 - [ ] 10.4 Wait for all required workflows

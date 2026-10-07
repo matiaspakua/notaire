@@ -75,7 +75,7 @@ headroom_memory.db
 .rtk/
 .tokensave/
 
-# scripts/run_pipeline.sh dashboard + logs (regenerated every run)
+# workspace/sdlc/run_pipeline.sh dashboard + logs (regenerated every run)
 reports/
 
 # Generated CI/CD/E2E reports — publish via Actions artifacts / job summary /

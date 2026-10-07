@@ -12,7 +12,7 @@ Triage an exploration report into real GitHub Issues. This is the mandatory brid
 between `opsx:explore` (open-ended thinking, produces a report, never scaffolds a
 change) and `opsx:propose` (scaffolds a change around a real Issue). See
 `docs/openspec/NOTAIRE-ADAPTATIONS.md` for why this step exists:
-`scripts/validate-sdlc-plan.sh` mechanically rejects a proposal whose Issue number
+`workspace/sdlc/validate-sdlc-plan.sh` mechanically rejects a proposal whose Issue number
 does not resolve to a real, open GitHub Issue, so a report entry that never went
 through triage cannot reach Gate 1.
 

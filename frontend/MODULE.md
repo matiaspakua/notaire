@@ -2,7 +2,7 @@
 
 **Purpose:** Next.js web client: UI, client-side validation, API calls.
 
-**Verify:** `bash frontend/verify.sh` (module checks only; the full gate is `bash scripts/preflight.sh`).
+**Verify:** `bash frontend/verify.sh` (module checks only; the full gate is `bash workspace/sdlc/preflight.sh`).
 
 ## Contract (what other modules may rely on)
 

@@ -2,7 +2,7 @@
 
 **Purpose:** Black-box QA suites: Playwright E2E, integration smoke and database V&V.
 
-**Verify:** `bash testing/verify.sh` (module checks only; the full gate is `bash scripts/preflight.sh`).
+**Verify:** `bash testing/verify.sh` (module checks only; the full gate is `bash workspace/sdlc/preflight.sh`).
 
 ## Contract (what other modules may rely on)
 

@@ -17,7 +17,7 @@ trabajo obligatorio.
 | [`templates/`](templates/) | Plantillas para especificaciones OpenSpec |
 | [`ASSESSMENT-2026-10.md`](ASSESSMENT-2026-10.md) | Evaluación integral del sistema (octubre 2026): resultados de tests, hallazgos por dimensión e issues asociados |
 | [`REPO-SPLIT-PLAN.md`](REPO-SPLIT-PLAN.md) | Plan por fases y criterios de salida para la topología de repositorios (#1197, ADR-024) |
-| [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`scripts/preflight.sh`) a jobs de CI |
+| [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`workspace/sdlc/preflight.sh`) a jobs de CI |
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
 
 OpenSpec ↔ Constitution: ver [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../openspec/NOTAIRE-ADAPTATIONS.md)
@@ -28,7 +28,7 @@ OpenSpec ↔ Constitution: ver [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../opens
 1. Leer [`CONSTITUTION.md`](../../CONSTITUTION.md) y
    [`.claude/rules/ai-agent-workflow.md`](../../.claude/rules/ai-agent-workflow.md) — flujo
    obligatorio (issue + caso de uso → branch → TDD → tests → commit → PR).
-2. Ejecutar `bash scripts/preflight.sh` antes de cada push (ver
+2. Ejecutar `bash workspace/sdlc/preflight.sh` antes de cada push (ver
    [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md); `mvn verify` solo no es suficiente).
 
 ## Navigation

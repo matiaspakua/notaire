@@ -1,6 +1,6 @@
 # OpenAPI breaking changes the Owner has accepted (oasdiff err-ignore list).
 #
-# openapi-contract.yml and scripts/preflight.sh pass this file to
+# openapi-contract.yml and workspace/sdlc/preflight.sh pass this file to
 # `oasdiff breaking --fail-on ERR --err-ignore`. A breaking change listed here
 # does not fail the gate; any other one still does.
 #

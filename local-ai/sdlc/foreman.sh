@@ -323,7 +323,7 @@ gate_triage() {
     grep -vqE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit" \
         && e+="- triage.md: these criteria lines do not match 'N. TODO|DONE — <criterion> — proven by: [new test ]<TestClass>#<method>' or '... — proven by: command <cmd>':\n$(grep -vE '^[0-9]+\. (TODO|DONE) — .+ — proven by: ((new test )?[A-Za-z0-9_.]+#[A-Za-z0-9_]+|command .+)' <<<"$crit")\n  Rewrite each whole line, e.g. '1. TODO — Jenkinsfile removed — proven by: command test ! -e Jenkinsfile'\n"
     grep -qE 'proven by: (git |bash |mvn |npm |npx |gh )' <<<"$crit" \
-        && e+="- triage.md: a shell command as proof must start with the word 'command', e.g. 'proven by: command bash scripts/preflight.sh'. A removal (git rm) is not a proof — prove it with a test, e.g. 'new test BackendResourcesHygieneTest#shouldNotPackageLegacyConfigProperties' asserting getClass().getResource(\"/config.properties\") is null\n"
+        && e+="- triage.md: a shell command as proof must start with the word 'command', e.g. 'proven by: command bash workspace/sdlc/preflight.sh'. A removal (git rm) is not a proof — prove it with a test, e.g. 'new test BackendResourcesHygieneTest#shouldNotPackageLegacyConfigProperties' asserting getClass().getResource(\"/config.properties\") is null\n"
     grep -qiE 'proven by: .*(PR #|issue #|#[0-9]+)' <<<"$crit" \
         && e+="- triage.md: a PR/issue number is not a proof. Also: criteria come ONLY from the issue's '## Acceptance Criteria' checklist — 'Technical Notes'/'Related' items are out of scope, drop them\n"
     local search; search="$(python3 "$HERE/bin/triage_check.py" bad-proofs <<<"$crit")"

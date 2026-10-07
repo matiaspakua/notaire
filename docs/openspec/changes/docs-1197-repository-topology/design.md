@@ -37,7 +37,7 @@ Issue #1197, Use Case CU76. The proposal predates or ignores facts in the reposi
 ## Regression Strategy
 
 - Existing tests affected: none
-- Full suite command: `bash scripts/preflight.sh`
+- Full suite command: `bash workspace/sdlc/preflight.sh`
 - HTTP/Bruno API suite: unchanged
 - Legacy paths at risk: none
 

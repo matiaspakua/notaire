@@ -42,7 +42,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | `bash scripts/validate-sdlc-plan.sh` |
+| 1 | Issue + Specification + Acceptance Criteria | pending | `bash workspace/sdlc/validate-sdlc-plan.sh` |
 | 2 | Failing tests written, test cases designed | pending | — |
 | 3 | Suite green, coverage held, docs updated | pending | — |
 | 4 | CI green, review approved, no conflicts | pending | — |

@@ -248,7 +248,7 @@ bash security/enable-gh-secure.sh --apply    # admin/maintain token
 ```
 
 Merge-when-green still requires heavy CI (Integration, Coverage, Bruno,
-Playwright) via `bash scripts/check-heavy-ci.sh <pr>` — see
+Playwright) via `bash workspace/sdlc/check-heavy-ci.sh <pr>` — see
 [CI merge gate](../../300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md).
 CodeQL is not a substitute for that gate.
 
@@ -329,7 +329,7 @@ env:
 | Gate | How to run | Policy |
 |------|------------|--------|
 | **OWASP ZAP baseline** | Actions → `DAST — OWASP ZAP Baseline` (schedule/`workflow_dispatch`) | Targets `http://localhost:8080` after starting the API + Postgres service. Uploads the ZAP report artifact. **Warn-first** (`fail_action: false`) until an allowlist/ratchet is agreed; Trivy SCA in `ci.yml` remains. Full prose operator guide may remain #281. |
-| **OpenAPI contract** | Every PR (`openapi-contract.yml`); locally: `bash backend-api/tools/export-openapi.sh`, and `bash scripts/preflight.sh` runs the breaking diff when `oasdiff` is installed | Committed SSOT: `backend-api/openapi/openapi.yaml`. After API changes, regenerate and commit in the same PR. CI fails on stale artifact or `oasdiff` ERR-level breaking diffs vs base. An intended break is accepted by adding the exact `oasdiff` line to `backend-api/openapi/accepted-breaking-changes.txt` under a `# #<issue>` comment that says why no working client breaks, plus a CHANGELOG entry; the Owner approves it in review. Any break not listed still fails. |
+| **OpenAPI contract** | Every PR (`openapi-contract.yml`); locally: `bash backend-api/tools/export-openapi.sh`, and `bash workspace/sdlc/preflight.sh` runs the breaking diff when `oasdiff` is installed | Committed SSOT: `backend-api/openapi/openapi.yaml`. After API changes, regenerate and commit in the same PR. CI fails on stale artifact or `oasdiff` ERR-level breaking diffs vs base. An intended break is accepted by adding the exact `oasdiff` line to `backend-api/openapi/accepted-breaking-changes.txt` under a `# #<issue>` comment that says why no working client breaks, plus a CHANGELOG entry; the Owner approves it in review. Any break not listed still fails. |
 | **Backup→restore smoke** | Schedule/`workflow_dispatch` | Gated on #256. Sentinel path: `scripts/backup-postgres.sh`. While absent, the job exits 0 with a clear skip/blocked message and does **not** claim a successful restore. |
 
 Guarded by `python3 scripts/test_dast_contract_backup_assets.py` (also under `scripts/tests/` for Process Checks).
