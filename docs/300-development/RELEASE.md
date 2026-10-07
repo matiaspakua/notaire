@@ -35,6 +35,20 @@ Between releases, main stays at the last released versions until the next
 release PR merges (release-please interim PR may bump versions on that branch
 only).
 
+## Release token (Owner action, #1264)
+
+GitHub does not let `GITHUB_TOKEN` open pull requests in this repository, and a
+PR opened with `GITHUB_TOKEN` would not trigger the required checks anyway. The
+workflow therefore passes `secrets.RELEASE_PLEASE_TOKEN` to the action (falling
+back to `GITHUB_TOKEN` until it exists). The Owner creates a fine-grained token
+or GitHub App limited to this repository with `contents: write` and
+`pull-requests: write` and stores it as the repository secret
+`RELEASE_PLEASE_TOKEN`.
+
+`release-please-config.json` sets `bootstrap-sha` to the commit that introduced
+release-please (`8ab8a6e`, #1043), so older merge commits are not parsed into
+the first release notes.
+
 ## Bootstrap (first cut)
 
 Tags/releases were empty before #1043. Manifest starts at `0.1.0` (aligned with
