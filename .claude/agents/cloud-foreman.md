@@ -125,3 +125,7 @@ Retry the same phase with `prior_gate_log` attached (max 2–3 attempts) then es
 - If a cloud worker’s `gh` returns 401, the **coordinator** (or a same-VM worker
   with working `gh`) owns `gh pr ready` / squash-merge after heavy-gate exit 0.
 - After merge: archive OpenSpec change when the issue is closed.
+
+## Module map
+
+Use `python3 workspace/modules.py affected <paths>` to find which modules (and dependents) a change touches, dispatch the matching fleet from `workspace/modules.yaml`, and run `python3 workspace/modules.py verify <module>` per module; seams are in `contracts/seams.yaml`.
