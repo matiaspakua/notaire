@@ -29,7 +29,23 @@ MOVED = {
     "scripts/test_image_pins_and_dependabot.py": "security/tests/test_image_pins_and_dependabot.py",
     "scripts/test_prod_compose.py": "infra/tests/test_prod_compose.py",
     "scripts/test_dev_stack_isolation.py": "infra/tests/test_dev_stack_isolation.py",
+    "scripts/preflight.sh": "workspace/sdlc/preflight.sh",
+    "scripts/run_pipeline.sh": "workspace/sdlc/run_pipeline.sh",
+    "scripts/validate-sdlc-plan.sh": "workspace/sdlc/validate-sdlc-plan.sh",
+    "scripts/check-agent-rules.sh": "workspace/sdlc/check-agent-rules.sh",
+    "scripts/check-commit-messages.sh": "workspace/sdlc/check-commit-messages.sh",
+    "scripts/check-sdlc-exception.sh": "workspace/sdlc/check-sdlc-exception.sh",
+    "scripts/check-tdd-evidence.sh": "workspace/sdlc/check-tdd-evidence.sh",
+    "scripts/check-heavy-ci.sh": "workspace/sdlc/check-heavy-ci.sh",
+    "scripts/seed-openspec-change.sh": "workspace/sdlc/seed-openspec-change.sh",
+    "scripts/install-git-hooks.sh": "workspace/sdlc/install-git-hooks.sh",
+    "scripts/validate-cu-api-matrix.py": "workspace/sdlc/validate-cu-api-matrix.py",
+    "scripts/generate-cd-report.sh": "workspace/ci/generate-cd-report.sh",
+    "scripts/generate-markdown-report.sh": "workspace/ci/generate-markdown-report.sh",
+    "scripts/generate-pr-validation-report.sh": "workspace/ci/generate-pr-validation-report.sh",
+    "scripts/generate-github-page-metrics.sh": "workspace/ci/generate-github-page-metrics.sh",
 }
+REMOVED = ("scripts/validate-cu-api-matrix.sh",)
 HISTORY = (
     "CHANGELOG.md", "deprecated/", "docs/000-archive/", "docs/openspec/changes/archive/",
     "workspace/tests/test_scripts_layout.py",
@@ -56,8 +72,11 @@ class ScriptsLayoutTest(unittest.TestCase):
         left = [old for old in MOVED if (REPO_ROOT / old).exists()]
         self.assertEqual([], left)
 
+    def test_removed_scripts_are_gone(self):
+        self.assertEqual([], [p for p in REMOVED if (REPO_ROOT / p).exists()])
+
     def test_no_tracked_file_references_an_old_path(self):
-        stale = [f"{name}: {old}" for name, text in tracked_text_files() for old in MOVED if old in text]
+        stale = [f"{name}: {old}" for name, text in tracked_text_files() for old in (*MOVED, *REMOVED) if old in text]
         self.assertEqual([], stale)
 
 
