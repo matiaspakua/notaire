@@ -40,6 +40,13 @@ equal the literal default value `"admin"` — if so, it throws
 fail-closed guard against deploying with `.env.example`'s placeholder values
 unchanged.
 
+`DataInitializer` adds a second, environment-wide check (issue #1249): outside
+`app.environment` values `development`, `dev`, `local` and `test`, it does not
+seed the initial admin user when `APP_ADMIN_PASSWORD` is blank or the literal
+`"admin"`; it logs an error and skips the seed. Staging and any other named
+environment therefore never create an `admin/admin` account from the seeder.
+The Flyway `V2__initial_data.sql` legacy seed is not covered by this check.
+
 ## Options Considered
 
 - **Docker secrets / Kubernetes Secrets**: Deferred — no Swarm/Kubernetes

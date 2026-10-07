@@ -1,5 +1,8 @@
 package com.licensis.notaire.config;
 
+import java.util.Locale;
+import java.util.Set;
+
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.User;
@@ -26,11 +29,22 @@ import org.springframework.transaction.annotation.Transactional;
  * porque un operador ya rotó su contraseña) no se toca — de lo contrario cualquier
  * cambio de credenciales quedaría deshecho en cada reinicio del backend (issue
  * #553).</p>
+ *
+ * <p>Fuera de los entornos {@code development}/{@code dev}/{@code local}/{@code test}
+ * no se siembra el usuario si la contraseña está vacía o es el valor por defecto
+ * conocido {@code admin}: se registra un error y se omite el seed, de modo que
+ * ningún camino de arranque (jar, compose, staging) publique {@code admin/admin}
+ * (issue #1249).</p>
  */
 @Component
 public class DataInitializer implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
+    private static final String KNOWN_DEFAULT_PASSWORD = "admin";
+    private static final Set<String> SEED_DEFAULT_ENVIRONMENTS = Set.of("development", "dev", "local", "test");
+
+    @Value("${app.environment:development}")
+    private String environment;
 
     @Value("${app.admin.username:admin}")
     private String adminUsername;
@@ -64,6 +78,11 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void ensureAdminUser() {
+        if (isDefaultPassword() && !allowsDefaultSeed()) {
+            log.error("APP_ADMIN_PASSWORD no configurada o con valor por defecto en el entorno '{}': "
+                    + "se omite la creación del usuario '{}' (issue #1249).", environment, adminUsername);
+            return;
+        }
         if (userRepository.findByName(adminUsername).isPresent()) {
             log.debug("Usuario '{}' ya existe; no se modifican sus credenciales.", adminUsername);
             return;
@@ -103,4 +122,12 @@ public class DataInitializer implements ApplicationRunner {
         return identificationTypeRepository.save(type);
     }
 
+
+    private boolean isDefaultPassword() {
+        return adminPassword == null || adminPassword.isBlank() || KNOWN_DEFAULT_PASSWORD.equals(adminPassword);
+    }
+
+    private boolean allowsDefaultSeed() {
+        return environment != null && SEED_DEFAULT_ENVIRONMENTS.contains(environment.trim().toLowerCase(Locale.ROOT));
+    }
 }
