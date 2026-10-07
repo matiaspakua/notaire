@@ -16,6 +16,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -70,12 +74,14 @@ public class HistoryController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todo el historial")
+    @Operation(summary = "Obtener el historial, una página por vez",
+            description = "Página de Spring Data (por defecto 20 filas, ordenadas por idHistory ascendente). "
+                    + "Usar sort=idHistory,desc para ver primero los cambios más recientes. "
+                    + "El historial completo de una gestión está en GET /api/v1/historial/gestion/{idManagement}.")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<DtoHistorySummary>> getAll() {
-        return ResponseEntity.ok(repository.findAll().stream()
-            .map(HistoryMapper::toDto)
-            .toList());
+    public ResponseEntity<Page<DtoHistorySummary>> getAll(
+            @ParameterObject @PageableDefault(size = 20, sort = "idHistory") Pageable pageable) {
+        return ResponseEntity.ok(repository.findAll(pageable).map(HistoryMapper::toDto));
     }
 
     @ApiResponses({

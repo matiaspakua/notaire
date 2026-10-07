@@ -278,6 +278,7 @@ class SimpleControllersTest {
         private final DeedManagementRepository managementRepo = mock(DeedManagementRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new HistoryController(repo, statusRepo, managementRepo))
+                        .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .build();
 
@@ -286,7 +287,8 @@ class SimpleControllersTest {
         void getEndpoints() throws Exception {
             History h = new History();
             h.setIdHistory(1);
-            when(repo.findAll()).thenReturn(List.of(h));
+            when(repo.findAll(any(Pageable.class)))
+                    .thenReturn(new PageImpl<>(List.of(h), PageRequest.of(0, 20), 1));
             when(repo.findById(1)).thenReturn(Optional.of(h));
             when(repo.findById(2)).thenReturn(Optional.empty());
             when(repo.findByFkIdManagementIdManagement(10)).thenReturn(List.of(h));
