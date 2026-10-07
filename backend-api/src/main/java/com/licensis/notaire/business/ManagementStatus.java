@@ -57,7 +57,7 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
     private String name;
     @Column(name = "notes")
     private String notes;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdManagementStatus", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdManagementStatus", fetch = FetchType.LAZY)
     private java.util.Set<History> historyList;
 
     /**
