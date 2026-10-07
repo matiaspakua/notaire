@@ -15,8 +15,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/fix-655-payment-request-validation/` | Gate 1 draft |
 | Branch | `fix/655_payment_request_validation` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
-| Commits | see branch | local, not pushed |
-| Pull Request | — | pending (Owner approval) |
+| Commits | see branch | pushed |
+| Pull Request | #1312 | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
@@ -38,6 +38,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | `CHANGELOG.md` | yes | branch commit |
 | `backend-api/openapi/openapi.yaml` | yes | branch commit |
 | `backend-api/api-test/COVERAGE.md` | yes | branch commit |
+| `backend-api/openapi/accepted-breaking-changes.txt` | yes (new) | branch commit |
+| `docs/200-architecture/208-devsecops/README.md`, `docs/300-development/303-testing/TEST-PLAN.md` | yes | branch commit |
 
 ## Gate log
 
@@ -51,4 +53,4 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 ## Exceptions
 
-`scripts/run_pipeline.sh` needs Docker, unavailable on the agent box. The OpenAPI breaking-diff check (not a required check) flags 4 ERR changes that only document already-enforced rules; Owner to accept.
+`scripts/run_pipeline.sh` needs Docker, unavailable on the agent box. The OpenAPI breaking-diff check flagged 4 ERR changes that only document already-enforced rules; at the Owner's request they are accepted in `backend-api/openapi/accepted-breaking-changes.txt` (see design.md).

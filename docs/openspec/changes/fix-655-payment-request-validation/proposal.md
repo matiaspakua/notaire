@@ -45,7 +45,7 @@ Reject malformed payment requests with 400 before they reach the use case; today
 | `backend-api` | yes | `PaymentController` request records |
 | `frontend` | no | — |
 | `notaire-shared` | no | — |
-| Docs / scripts / CI | yes | OpenAPI artifact, Bruno, CHANGELOG |
+| Docs / scripts / CI | yes | OpenAPI artifact, accepted-breaking list wired into `openapi-contract.yml` and `preflight.sh`, Bruno, CHANGELOG |
 
 ### Surface area
 
@@ -63,3 +63,4 @@ Follows the #561/#737/#777 pattern; no ADR.
 | `CHANGELOG.md` | one Fixed entry |
 | `backend-api/openapi/openapi.yaml` | regenerated |
 | `backend-api/api-test/COVERAGE.md` | payments row |
+| `docs/200-architecture/208-devsecops/README.md`, `TEST-PLAN.md` | how an intended OpenAPI break is accepted |

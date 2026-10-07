@@ -32,6 +32,7 @@
 ## 8. Gate 3 — Actualizar documentación permanente
 
 - [x] 8.1 Documentation updated (see traceability)
+- [x] 8.2 OpenAPI gate: the 4 accepted breaks listed in `backend-api/openapi/accepted-breaking-changes.txt`; guard tests observed failing first
 
 ## 9. Commits atómicos
 
@@ -39,7 +40,7 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push and open PR (awaiting Owner approval)
+- [x] 10.1 Push and open PR (#1312)
 - [ ] 10.2 `bash scripts/run_pipeline.sh` green
 
 ## 11. Deploy

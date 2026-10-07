@@ -1,0 +1,19 @@
+# OpenAPI breaking changes the Owner has accepted (oasdiff err-ignore list).
+#
+# openapi-contract.yml and scripts/preflight.sh pass this file to
+# `oasdiff breaking --fail-on ERR --err-ignore`. A breaking change listed here
+# does not fail the gate; any other one still does.
+#
+# Add an entry only when the break is intended and reviewed: copy the line
+# oasdiff prints as "<METHOD> <path> <change text>", put it under a comment
+# that names the issue and why no working client breaks, and record it in the
+# CHANGELOG. Entries become inert once the change is on main (the base spec
+# already contains it) and may be removed in a later PR.
+
+# #655 (CU15): the use cases already rejected these values at runtime (POST:
+# missing budget or amount <= 0 never created a payment; PUT: amount <= 0 never
+# updated one), so no request that used to succeed is now rejected.
+POST /api/v1/pagos the request property `amount` became required
+POST /api/v1/pagos the request property `idBudget` became required
+POST /api/v1/pagos the `amount` request property's exclusiveMinimum was set to `0.00`
+PUT /api/v1/pagos/{id} the `amount` request property's exclusiveMinimum was set to `0.00`

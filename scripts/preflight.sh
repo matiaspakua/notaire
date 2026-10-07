@@ -49,6 +49,7 @@ tdd evidence                    Process Checks                    sdlc-process.y
 sdlc exception label            Process Checks                    sdlc-process.yml   (BLOCKING; skipped here until a PR exists)
 agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
+openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
 checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (warn, CI uses || true)
 dependency analysis             Dependency Analysis              pr-validation.yml  (warn, CI uses || true)
@@ -156,6 +157,23 @@ run "process script self-tests" bash -c \
      && python3 -m unittest discover -s testing/tests \
      && python3 -m unittest discover -s docs/tests \
      && python3 -m unittest discover -s backend-api/tools/tests"
+
+# Mirrors: OpenAPI commit + breaking diff (openapi-contract.yml), breaking half.
+# Same oasdiff rule and the same Owner-accepted list as CI; the export-freshness
+# half needs a springdoc export and runs in CI only.
+OPENAPI_SPEC="backend-api/openapi/openapi.yaml"
+OPENAPI_ACCEPTED="backend-api/openapi/accepted-breaking-changes.txt"
+if ! command -v oasdiff >/dev/null 2>&1; then
+    skip "openapi breaking diff" "oasdiff not installed — CI WILL run this"
+elif ! git cat-file -e "origin/main:$OPENAPI_SPEC" 2>/dev/null; then
+    skip "openapi breaking diff" "no $OPENAPI_SPEC on origin/main yet"
+else
+    OPENAPI_BASE="$(mktemp)"
+    git show "origin/main:$OPENAPI_SPEC" > "$OPENAPI_BASE"
+    run "openapi breaking diff" oasdiff breaking "$OPENAPI_BASE" "$OPENAPI_SPEC" \
+        --fail-on ERR --err-ignore "$OPENAPI_ACCEPTED"
+    rm -f "$OPENAPI_BASE"
+fi
 
 # ---------------------------------------------------------------------------
 section "Format & lint (BLOCKING in CI: 'Code Lint')"
