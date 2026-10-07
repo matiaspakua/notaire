@@ -1,0 +1,23 @@
+info:
+  name: Reject a create with an invalid date
+  type: http
+  seq: 10
+  description: |-
+      Traceability: CU04 (#655) — an impossible day is rejected instead of silently dropped
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/documento-presentado"
+  body:
+    type: json
+    data: |-
+        {"typeId": 1, "date": "2026-02-30", "delivered": false, "name": "Bruno invalid date"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400", function () { expect(res.getStatus()).to.equal(400); });

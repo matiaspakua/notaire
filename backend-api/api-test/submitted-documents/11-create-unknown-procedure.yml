@@ -1,0 +1,23 @@
+info:
+  name: Reject a create for an unknown procedure
+  type: http
+  seq: 11
+  description: |-
+      Traceability: CU04 (#655) — an unknown procedure id is rejected instead of storing an orphan document
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/documento-presentado"
+  body:
+    type: json
+    data: |-
+        {"procedureId": 999999, "delivered": false, "name": "Bruno unknown procedure"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404", function () { expect(res.getStatus()).to.equal(404); });
