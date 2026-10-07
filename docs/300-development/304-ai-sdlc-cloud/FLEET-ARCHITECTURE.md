@@ -156,7 +156,7 @@ commands_run:
   - cmd: "mvn -q -B test -pl backend-api -Dtest=FooTest"
     exit_code: 0
 artifacts:
-  - path: "openspec/changes/.../tasks.md"
+  - path: "docs/openspec/changes/.../tasks.md"
 commits: ["abc1234"]
 blockers: []                      # if BLOCKED: missing UC, flaky env, etc.
 next_recommended: quality         # foreman decides
@@ -202,7 +202,7 @@ If a specialist finds itself reading `local-ai/` for product work, stop and re-r
 | Asset | Use in cloud fleet |
 |-------|--------------------|
 | `CONSTITUTION.md` | Highest process authority |
-| `openspec/` + `notaire-sdlc` | Gate 1 artifacts |
+| `docs/openspec/` + `notaire-sdlc` | Gate 1 artifacts |
 | `scripts/seed-openspec-change.sh` | Prefer before filling Gate 1 templates (#1108) |
 | `scripts/validate-sdlc-plan.sh` | Constitution checks on plans (scenario sum via awk; `bc` optional) |
 | `scripts/preflight.sh` | Pre-push CI mirror |

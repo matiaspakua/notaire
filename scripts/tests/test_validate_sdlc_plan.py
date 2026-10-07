@@ -11,13 +11,13 @@ import unittest
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SCRIPTS = os.path.join(REPO, "scripts")
-TEMPLATES = os.path.join(REPO, "openspec", "schemas", "notaire-sdlc", "templates")
+TEMPLATES = os.path.join(REPO, "docs", "openspec", "schemas", "notaire-sdlc", "templates")
 
 
 def run_validate(change_dir: str) -> subprocess.CompletedProcess[str]:
     """Run validate-sdlc-plan.sh against a single change directory by name.
 
-    The script expects changes under <repo>/openspec/changes/<name>. We build a
+    The script expects changes under <repo>/docs/openspec/changes/<name>. We build a
     temporary repo tree that mirrors that layout and copies the script + templates.
     """
     return _run_in_temp_repo("validate", change_dir)
@@ -26,10 +26,10 @@ def run_validate(change_dir: str) -> subprocess.CompletedProcess[str]:
 def _run_in_temp_repo(mode: str, change_dir: str | None = None, seed_args: list[str] | None = None):
     root = tempfile.mkdtemp(prefix="sdlc-plan-")
     try:
-        changes = os.path.join(root, "openspec", "changes")
+        changes = os.path.join(root, "docs", "openspec", "changes")
         os.makedirs(changes)
         # Validator and seeder read templates from the repo layout.
-        tmpl_dst = os.path.join(root, "openspec", "schemas", "notaire-sdlc", "templates")
+        tmpl_dst = os.path.join(root, "docs", "openspec", "schemas", "notaire-sdlc", "templates")
         os.makedirs(os.path.dirname(tmpl_dst), exist_ok=True)
         shutil.copytree(TEMPLATES, tmpl_dst)
 
@@ -136,7 +136,7 @@ MINIMAL_FILLED = {
 
         | Permanent document | What must change |
         |--------------------|------------------|
-        | `openspec/NOTAIRE-ADAPTATIONS.md` | document seed + check |
+        | `docs/openspec/NOTAIRE-ADAPTATIONS.md` | document seed + check |
 
         ## Out of Scope
 
@@ -153,7 +153,7 @@ MINIMAL_FILLED = {
         |------|-----------|--------|
         | Issue | #1108 | open |
         | Use Case | CU76 | exists |
-        | Specification | openspec/changes/x/ | writing |
+        | Specification | docs/openspec/changes/x/ | writing |
         | Branch | cursor/chore-1108-openspec-template-seed-30a2 | created |
         | Tasks | tasks.md | pending |
         | Commits | pending | pending |
@@ -173,7 +173,7 @@ MINIMAL_FILLED = {
 
         | Document | Updated | Commit |
         |----------|---------|--------|
-        | openspec/NOTAIRE-ADAPTATIONS.md | pending | pending |
+        | docs/openspec/NOTAIRE-ADAPTATIONS.md | pending | pending |
 
         ## Gate log
 
@@ -328,7 +328,7 @@ class LeftoverCommentRejectionTest(unittest.TestCase):
         # Build a mini-repo for the script
         root = tempfile.mkdtemp(prefix="repo-")
         self.addCleanup(shutil.rmtree, root, ignore_errors=True)
-        changes = os.path.join(root, "openspec", "changes")
+        changes = os.path.join(root, "docs", "openspec", "changes")
         os.makedirs(changes)
         shutil.copytree(change, os.path.join(changes, "demo-change"))
         scripts = os.path.join(root, "scripts")
@@ -372,7 +372,7 @@ class LeftoverCommentRejectionTest(unittest.TestCase):
         change = write_change(os.path.join(self.tmp, "no-bc-change"), files)
         root = tempfile.mkdtemp(prefix="repo-")
         self.addCleanup(shutil.rmtree, root, ignore_errors=True)
-        changes = os.path.join(root, "openspec", "changes")
+        changes = os.path.join(root, "docs", "openspec", "changes")
         os.makedirs(changes)
         shutil.copytree(change, os.path.join(changes, "no-bc-change"))
         scripts = os.path.join(root, "scripts")
@@ -417,11 +417,11 @@ class SeedOpenspecChangeTest(unittest.TestCase):
     def setUp(self):
         self.root = tempfile.mkdtemp(prefix="seed-repo-")
         self.addCleanup(shutil.rmtree, self.root, ignore_errors=True)
-        changes = os.path.join(self.root, "openspec", "changes", "seeded-change")
+        changes = os.path.join(self.root, "docs", "openspec", "changes", "seeded-change")
         os.makedirs(changes)
         with open(os.path.join(changes, ".openspec.yaml"), "w") as f:
             f.write("schema: notaire-sdlc\n")
-        tmpl_dst = os.path.join(self.root, "openspec", "schemas", "notaire-sdlc", "templates")
+        tmpl_dst = os.path.join(self.root, "docs", "openspec", "schemas", "notaire-sdlc", "templates")
         shutil.copytree(TEMPLATES, tmpl_dst)
         scripts = os.path.join(self.root, "scripts")
         os.makedirs(scripts)

@@ -1,6 +1,6 @@
 /**
  * Unit tests for admin route guard helpers (issue #1052, CU78).
- * Spec: openspec/changes/fix-1052-admin-route-guard/specs/admin-route-guard
+ * Spec: docs/openspec/changes/fix-1052-admin-route-guard/specs/admin-route-guard
  */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {

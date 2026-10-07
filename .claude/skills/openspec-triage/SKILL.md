@@ -11,7 +11,7 @@ metadata:
 Triage an exploration report into real GitHub Issues. This is the mandatory bridge
 between `opsx:explore` (open-ended thinking, produces a report, never scaffolds a
 change) and `opsx:propose` (scaffolds a change around a real Issue). See
-`openspec/NOTAIRE-ADAPTATIONS.md` for why this step exists:
+`docs/openspec/NOTAIRE-ADAPTATIONS.md` for why this step exists:
 `scripts/validate-sdlc-plan.sh` mechanically rejects a proposal whose Issue number
 does not resolve to a real, open GitHub Issue, so a report entry that never went
 through triage cannot reach Gate 1.
@@ -26,7 +26,7 @@ OpenSpec change scaffolding.
 ## When to use this skill
 
 - The user has an exploration report (from `opsx:explore`, or any markdown file
-  under `openspec/` listing candidate features/gaps) and wants to move toward
+  under `docs/openspec/` listing candidate features/gaps) and wants to move toward
   implementation.
 - The user asks to turn a report, a backlog, or "the gaps we found" into issues.
 - `opsx:propose` is about to scaffold a change and the Issue it would reference
@@ -59,11 +59,11 @@ OpenSpec change scaffolding.
    - A one-line roadmap note: does this block another candidate, is it
      independent, does it belong in the current milestone.
 
-4. **Write the candidate-issue-list markdown** under `openspec/` (e.g.
+4. **Write the candidate-issue-list markdown** under `docs/openspec/` (e.g.
    `<source-name>_issues.md`), one file per triage pass, with a header block
    naming the source report, the date, and the mode (`draft candidate list`).
    Follow the structure already established in
-   `openspec/functional_gaps_issues.md` if it exists — do not invent a new shape
+   `docs/openspec/functional_gaps_issues.md` if it exists — do not invent a new shape
    without a reason.
 
 5. **Show the candidate list to the user and stop.** Creating GitHub Issues is a

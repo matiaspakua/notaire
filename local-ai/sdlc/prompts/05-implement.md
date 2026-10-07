@@ -1,7 +1,7 @@
 # Phase 5 — Implement #{{ISSUE}} (make the tests green)
 
 Tests to satisfy: `{{TEST_CMD}}` (see `{{IO}}/tests.env`).
-Spec: `openspec/changes/{{CHANGE}}/`. Group 4 of `tasks.md` is your work list.
+Spec: `docs/openspec/changes/{{CHANGE}}/`. Group 4 of `tasks.md` is your work list.
 
 1. Write the minimum production code that makes the tests pass and satisfies
    the scenarios. Follow the design. Do NOT edit the tests to make them pass

@@ -92,4 +92,4 @@ The follow-up MUST:
 - Issue #1050 (this change), CU76
 - Related cleanup: #585, #682
 - CODEOWNERS Swing removal already done under #1046 (verify-only here)
-- Spec: `openspec/changes/chore-1050-repo-hygiene/`
+- Spec: `docs/openspec/changes/chore-1050-repo-hygiene/`

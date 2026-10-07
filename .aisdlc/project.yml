@@ -14,7 +14,7 @@ backend:
 
 spec:
   schema: notaire-sdlc
-  tasks_template: openspec/schemas/notaire-sdlc/templates/tasks.md
+  tasks_template: docs/openspec/schemas/notaire-sdlc/templates/tasks.md
   validate: openspec validate {change} --strict
   plan_check: bash scripts/validate-sdlc-plan.sh {change}
 

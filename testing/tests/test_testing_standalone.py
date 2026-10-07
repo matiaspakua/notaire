@@ -105,7 +105,7 @@ LEGACY_REFERENCE = re.compile(
 )
 REFERENCE_EXEMPT_PREFIXES = (
     "docs/000-archive/",
-    "openspec/",
+    "docs/openspec/",
     "CHANGELOG.md",
     ".gitignore",
     "testing/tests/test_testing_standalone.py",

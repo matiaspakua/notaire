@@ -5,7 +5,7 @@
  * documento) — loading vence/diasVencimiento/quienEntrega so CU42 (Informar
  * próximos vencimientos) has data to report on.
  *
- * Reference: openspec/changes/tipo-documento-vencimiento-config
+ * Reference: docs/openspec/changes/tipo-documento-vencimiento-config
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";

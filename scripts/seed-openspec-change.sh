@@ -21,8 +21,8 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TEMPLATES="$REPO_ROOT/openspec/schemas/notaire-sdlc/templates"
-CHANGES_DIR="$REPO_ROOT/openspec/changes"
+TEMPLATES="$REPO_ROOT/docs/openspec/schemas/notaire-sdlc/templates"
+CHANGES_DIR="$REPO_ROOT/docs/openspec/changes"
 
 CHANGE_NAME=""
 ISSUE=""
@@ -76,7 +76,7 @@ CHANGE_DIR="$CHANGES_DIR/$CHANGE_NAME"
 
 if [ ! -d "$CHANGE_DIR" ]; then
   if [ "$CREATE" -eq 1 ]; then
-    (cd "$REPO_ROOT" && openspec new change "$CHANGE_NAME" --schema notaire-sdlc) \
+    (cd "$REPO_ROOT/docs" && openspec new change "$CHANGE_NAME" --schema notaire-sdlc) \
       || { echo "openspec new change failed" >&2; exit 1; }
   else
     echo "Change not found: $CHANGE_DIR (pass --create to scaffold it)" >&2
@@ -146,8 +146,8 @@ fill_known_values() {
 
   # Always point the Specification path at this change name when still templated.
   sed_edit "$tmp" \
-    -e "s#openspec/changes/<change-name>/#openspec/changes/${CHANGE_NAME}/#g" \
-    -e "s#\|[[:space:]]*Specification[[:space:]]*\|[[:space:]]*\`openspec/changes/<change-name>/\`[[:space:]]*\|[^|]*\|#| Specification | \`openspec/changes/${CHANGE_NAME}/\` | seeded |#"
+    -e "s#docs/openspec/changes/<change-name>/#docs/openspec/changes/${CHANGE_NAME}/#g" \
+    -e "s#\|[[:space:]]*Specification[[:space:]]*\|[[:space:]]*\`docs/openspec/changes/<change-name>/\`[[:space:]]*\|[^|]*\|#| Specification | \`docs/openspec/changes/${CHANGE_NAME}/\` | seeded |#"
 
   mv "$tmp" "$file"
 }

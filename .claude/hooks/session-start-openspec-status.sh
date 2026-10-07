@@ -19,7 +19,7 @@ elif command -v gtimeout >/dev/null 2>&1; then
 fi
 
 if command -v openspec >/dev/null 2>&1; then
-    if ! $timeout_cmd openspec list 2>&1; then
+    if ! (cd "${CLAUDE_PROJECT_DIR:-.}/docs" && $timeout_cmd openspec list) 2>&1; then
         echo "(openspec list failed or timed out — check 'openspec' CLI installation)"
     fi
 else

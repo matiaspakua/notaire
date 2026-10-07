@@ -323,4 +323,4 @@ Reduction:             14% fewer files, same test count, better traceability
 - **Archive skipped tests only if blocker resolved**: Update justification comments
 - **Add new workflows as TS-00nn**: Extend numbering (e.g., TS-0036, TS-0037)
 - **Update this map when**: Consolidating duplicates, archiving low-value tests, adding new suites
-- **Sync with OpenSpec**: Every TS-nnnn rename → update openspec/changes/*/traceability.md
+- **Sync with OpenSpec**: Every TS-nnnn rename → update docs/openspec/changes/*/traceability.md

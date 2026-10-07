@@ -18,7 +18,7 @@ no product code.
 | Security, monitoring, DevSecOps, deployment | `docs/200-architecture/206-209` | Security / DevOps | 9 | Threat model, SLOs, gates, deploy |
 | Development | `docs/300-development/` | Engineering | 36 | Setup, standards, testing, preflight, release |
 | Testing | `docs/300-development/303-testing/`, `testing/docs/` | QA | 19 + 4 | Test plan (project level) / how to run the QA suites |
-| Specifications | `openspec/specs/` (80), `openspec/changes/archive/` (107) | Whoever opens the change | — | Behaviour contracts; changes are not permanent docs |
+| Specifications | `docs/openspec/specs/` (80), `docs/openspec/changes/archive/` (107) | Whoever opens the change | — | Behaviour contracts; changes are not permanent docs |
 | Skills and agents | `.claude/skills` (33), `.claude/agents` (11) | Engineering | — | Execution guidance, never policy |
 | Archive | `docs/000-archive/` (64 Markdown files) | Owner | not maintained | History |
 

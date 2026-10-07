@@ -15,7 +15,7 @@ Constitution's requirements to the artifact that carries each one.
 ## Producing a Specification
 
 ```bash
-openspec new change "<kebab-case-name>"     # creates openspec/changes/<name>/.openspec.yaml
+openspec new change "<kebab-case-name>"     # creates docs/openspec/changes/<name>/.openspec.yaml
 bash scripts/seed-openspec-change.sh "<name>" \
   --issue <n> --use-case "CU76 — …" --branch "<type>/<n>_desc"
 # copies proposal/design/tasks/traceability from notaire-sdlc templates when absent
@@ -73,15 +73,15 @@ OpenSpec does not model approvals. They are recorded where they are enforced:
 
 ## Where the artifacts live
 
-Active changes are in `openspec/changes/<change-name>/`; once Gate 5 passes,
-`openspec archive <change-name>` moves the change to `openspec/changes/archive/`
-and folds its delta into `openspec/specs/`, which is the accumulated behavior
+Active changes are in `docs/openspec/changes/<change-name>/`; once Gate 5 passes,
+`openspec archive <change-name>` moves the change to `docs/openspec/changes/archive/`
+and folds its delta into `docs/openspec/specs/`, which is the accumulated behavior
 contract of the system.
 
 ## Related
 
 - `CONSTITUTION.md` — the process this implements
-- `openspec/schemas/notaire-sdlc/` — templates and agent instructions
+- `docs/openspec/schemas/notaire-sdlc/` — templates and agent instructions
 - `scripts/validate-sdlc-plan.sh` — the mechanical gate (`--list` explains each check);
   also rejects `##` section bodies that are still only template `<!-- ... -->` comments
 - `scripts/seed-openspec-change.sh` — copies the four notaire-sdlc templates into a

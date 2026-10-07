@@ -55,9 +55,9 @@ class ImplementScopeTest(unittest.TestCase):
         self.assertFalse(self.regex.search("FloorTest.java"))
 
     def test_existing_scope_is_kept(self):
-        for path in (".localai/1/tests.env", "openspec/changes/raise-floor-1/tasks.md", "frontend/src/a.tsx"):
+        for path in (".localai/1/tests.env", "docs/openspec/changes/raise-floor-1/tasks.md", "frontend/src/a.tsx"):
             self.assertTrue(self.regex.search(path), path)
-        self.assertFalse(self.regex.search("openspec/changes/other-2/tasks.md"))
+        self.assertFalse(self.regex.search("docs/openspec/changes/other-2/tasks.md"))
 
 
 if __name__ == "__main__":

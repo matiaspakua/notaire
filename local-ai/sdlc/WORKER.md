@@ -70,13 +70,13 @@ context. Open a specific section only if the phase prompt tells you to.
 
 ## OpenSpec (the specification)
 
-Every change lives in `openspec/changes/<change>/` with
+Every change lives in `docs/openspec/changes/<change>/` with
 `proposal.md`, `traceability.md`, `specs/<capability>/spec.md`, `design.md`,
 `tasks.md`. Get exact instructions for an artifact with:
 `openspec instructions <artifact> --change <change>`.
 Checks: `openspec validate <change> --strict` and
 `bash scripts/validate-sdlc-plan.sh <change>`.
-A worked, approved example: `openspec/changes/archive/2026-09-19-fix-bruno-login-field-names/`.
+A worked, approved example: `docs/openspec/changes/archive/2026-09-19-fix-bruno-login-field-names/`.
 Markdown lint (MD040): only the OPENING fence gets a language (```` ```text ````);
 the closing fence is always a bare ```` ``` ````.
 

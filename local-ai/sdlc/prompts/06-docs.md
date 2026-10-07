@@ -1,6 +1,6 @@
 # Phase 6 — Permanent documentation for #{{ISSUE}} (Gate 3)
 
-Read the "Documentation Impact" section of `openspec/changes/{{CHANGE}}/proposal.md`.
+Read the "Documentation Impact" section of `docs/openspec/changes/{{CHANGE}}/proposal.md`.
 
 1. Update every permanent document listed there (`docs/...`, `README.md`,
    `AGENTS.md`, `.claude/rules/...`). Edit the single place the fact lives;

@@ -1,7 +1,7 @@
 # Phase 4 — Write FAILING tests for #{{ISSUE}} (Gate 2). No production code
 
-Read `openspec/changes/{{CHANGE}}/specs/` (the scenarios) and the Testing
-Strategy in `openspec/changes/{{CHANGE}}/design.md`.
+Read `docs/openspec/changes/{{CHANGE}}/specs/` (the scenarios) and the Testing
+Strategy in `docs/openspec/changes/{{CHANGE}}/design.md`.
 
 1. For every scenario write at least one test. Put it where the design says.
    Open one neighbouring test in the same folder first and copy its setup style.
@@ -20,8 +20,8 @@ Strategy in `openspec/changes/{{CHANGE}}/design.md`.
 
    (frontend example: `TEST_CMD=cd frontend && npx vitest run src/components/foo/Foo.test.tsx`)
 
-4. Tick the group 3 tasks you completed in `openspec/changes/{{CHANGE}}/tasks.md`.
-5. Commit tests only (never `.localai/`): `git add <test files> openspec/changes/{{CHANGE}}/tasks.md`
+4. Tick the group 3 tasks you completed in `docs/openspec/changes/{{CHANGE}}/tasks.md`.
+5. Commit tests only (never `.localai/`): `git add <test files> docs/openspec/changes/{{CHANGE}}/tasks.md`
    then `git commit -m "test(<scope>): <what the tests pin down>" -m "Refs #{{ISSUE}}"`.
 
 The foreman will run TEST_CMD and REQUIRE it to fail.

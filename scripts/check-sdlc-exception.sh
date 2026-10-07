@@ -16,14 +16,14 @@ HEAD="${2:-HEAD}"
 # Capture first: `grep -q` closing the pipe early can SIGPIPE `git diff` and flip the result under pipefail.
 CHANGED="$(git diff --name-only "$BASE...$HEAD")"
 
-if grep -q '^openspec/changes/' <<< "$CHANGED"; then
+if grep -q '^docs/openspec/changes/' <<< "$CHANGED"; then
   echo "✓ PR carries an OpenSpec change"
 elif grep -qw 'sdlc-exception' <<< "${PR_LABELS:-}"; then
   echo "✓ no OpenSpec change; sdlc-exception label set by a human"
 elif grep -qE '^(dependabot|renovate)\[bot\]$' <<< "${PR_AUTHOR:-}"; then
   echo "✓ dependency bot PR — exempt"
 else
-  echo "✗ no openspec/changes/ path in this PR and no 'sdlc-exception' label."
+  echo "✗ no docs/openspec/changes/ path in this PR and no 'sdlc-exception' label."
   echo "  CONSTITUTION §12: work without an OpenSpec change needs explicit human approval."
   echo "  Either add the change folder (openspec new change <name>) or ask the owner to add the label."
   exit 1

@@ -20,7 +20,7 @@ trabajo obligatorio.
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`scripts/preflight.sh`) a jobs de CI |
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
 
-OpenSpec ↔ Constitution: ver [`openspec/NOTAIRE-ADAPTATIONS.md`](../../openspec/NOTAIRE-ADAPTATIONS.md)
+OpenSpec ↔ Constitution: ver [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../openspec/NOTAIRE-ADAPTATIONS.md)
 (SpecKit, retirado en #1083: [`docs/000-archive/speckit/`](../000-archive/speckit/)).
 
 ## Antes de tocar código

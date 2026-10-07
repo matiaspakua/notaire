@@ -16,4 +16,4 @@
 
 - Hold product code or per-module guards
 
-Manifest entry: [`workspace/modules.yaml`](../workspace/modules.yaml). Rationale: ADR-026.
+Manifest entry: [`workspace/modules.yaml`](modules.yaml). Rationale: ADR-026.
