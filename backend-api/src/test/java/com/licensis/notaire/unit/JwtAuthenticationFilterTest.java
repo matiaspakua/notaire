@@ -3,6 +3,7 @@ package com.licensis.notaire.unit;
 import com.licensis.notaire.config.AuthCookieService;
 import com.licensis.notaire.config.JwtAuthenticationFilter;
 import com.licensis.notaire.config.JwtTokenService;
+import com.licensis.notaire.config.TokenRevocationService;
 import com.licensis.notaire.security.UserAuthorityResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
@@ -40,6 +41,8 @@ class JwtAuthenticationFilterTest {
     @Mock
     private UserAuthorityResolver userAuthorityResolver;
     @Mock
+    private TokenRevocationService tokenRevocationService;
+    @Mock
     private FilterChain filterChain;
 
     private JwtAuthenticationFilter filter;
@@ -49,7 +52,8 @@ class JwtAuthenticationFilterTest {
         lenient().when(authCookieService.cookieName()).thenReturn(COOKIE_NAME);
         lenient().when(userAuthorityResolver.resolve(anyString()))
                 .thenReturn(Optional.of(List.of(new SimpleGrantedAuthority("ROLE_USER"))));
-        filter = new JwtAuthenticationFilter(jwtTokenService, authCookieService, userAuthorityResolver);
+        filter = new JwtAuthenticationFilter(jwtTokenService, authCookieService, userAuthorityResolver,
+                tokenRevocationService);
         SecurityContextHolder.clearContext();
     }
 
@@ -117,6 +121,21 @@ class JwtAuthenticationFilterTest {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Authorization", "Bearer orphan-jwt");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        filter.doFilter(request, response, filterChain);
+
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+        verify(filterChain).doFilter(request, response);
+    }
+    @Test
+    @DisplayName("should not authenticate a token revoked by logout (issue #676)")
+    void shouldNotAuthenticateRevokedToken() throws Exception {
+        when(jwtTokenService.isValid("revoked-jwt")).thenReturn(true);
+        when(tokenRevocationService.isRevoked("revoked-jwt")).thenReturn(true);
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer revoked-jwt");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         filter.doFilter(request, response, filterChain);
