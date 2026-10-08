@@ -24,3 +24,9 @@ PUT /api/v1/pagos/{id} the `amount` request property's exclusiveMinimum was set 
 # GET /api/v1/gestiones/{id}/historial and GET /api/v1/historial/gestion/{id},
 # both unchanged; Bruno history/03 moved to the page shape in the same PR.
 GET /api/v1/historial the response's body `type` changed from `array<object>` to `object` for status `200`
+
+# #1315 (CU21): DELETE /api/v1/roles/usuarios/{idUser} always answered 204 No
+# Content; the contract wrongly documented 200. The spec now documents the 204
+# the endpoint has always returned, so no response a client received changes.
+# The frontend only checks res.ok (apiDelete).
+DELETE /api/v1/roles/usuarios/{idUser} removed the success response with the status `200`
