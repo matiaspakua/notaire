@@ -47,7 +47,7 @@ Notaire does not render user input as HTML (the UI is Swing + REST JSON). There 
 
 1. **Log entries** — use parameterized SLF4J calls (`log.warn("msg {}", value)`), never string concatenation.
 2. **Next.js frontend** — React's default JSX escaping handles XSS for rendered user data. Never use `dangerouslySetInnerHTML` with user data.
-3. **PDF reports** — JasperReports renders user-supplied field values into PDF; ensure field values are sanitized before being passed to JasperFillManager.
+3. **PDF reports** — `PdfBoxReportRenderer` writes field values as PDF text operands only (no markup, scripts or form fields); control characters become spaces and characters outside the font encoding become `?` (#567).
 
 For any field that might be reflected back, apply:
 ```java

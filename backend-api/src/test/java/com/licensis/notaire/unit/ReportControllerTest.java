@@ -64,7 +64,7 @@ class ReportControllerTest {
     @Test
     @DisplayName("Should log the exception when report generation fails")
     void shouldLogExceptionWhenReportGenerationFails() throws Exception {
-        RuntimeException cause = new RuntimeException("jasper compile failure");
+        RuntimeException cause = new RuntimeException("pdf rendering failure");
         when(reporteService.generateBudgetReport(42)).thenThrow(cause);
 
         ResponseEntity<byte[]> response = controller.generateBudgetReport(42);
@@ -73,7 +73,7 @@ class ReportControllerTest {
         assertThat(logAppender.list)
                 .anySatisfy(event -> {
                     assertThat(event.getLevel()).isEqualTo(Level.ERROR);
-                    assertThat(event.getThrowableProxy().getMessage()).isEqualTo("jasper compile failure");
+                    assertThat(event.getThrowableProxy().getMessage()).isEqualTo("pdf rendering failure");
                 });
     }
 

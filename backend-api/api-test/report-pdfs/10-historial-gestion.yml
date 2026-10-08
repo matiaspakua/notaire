@@ -1,12 +1,14 @@
 info:
-  name: Report - declaracion jurada mensual PDF
+  name: Report - historial gestion PDF
   type: http
-  seq: 2
+  seq: 11
   description: |-
-      Traceability: CU25
+      ## GET /api/v1/reportes/historial-gestion/{idGestion}
+      Seeded management 1 (number 1001, three history rows, V10); rendered in-house since #567.
+      Traceability: CU13
 http:
   method: GET
-  url: "{{base_url}}/api/v1/reportes/declaracion-jurada-mensual?anio=2026&mes=9"
+  url: "{{base_url}}/api/v1/reportes/historial-gestion/1"
   headers:
     - name: Content-Type
       value: application/json

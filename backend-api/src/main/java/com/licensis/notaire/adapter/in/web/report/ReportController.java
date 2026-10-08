@@ -1,8 +1,11 @@
 package com.licensis.notaire.adapter.in.web.report;
 
 import com.licensis.notaire.application.usecase.report.ReportService;
+import com.licensis.notaire.exception.ErrorResponse;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,8 +27,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller REST para generación de reportes
- * Expone endpoints para generar PDFs desde JasperReports
+ * Controller REST para generación de reportes PDF.
+ *
+ * <p>Los reportes se generan internamente con Apache PDFBox a partir del modelo de
+ * dominio actual (issue #567); ya no se usan plantillas JasperReports.
  */
 @RestController
 @RequestMapping("/api/v1/reportes")
@@ -61,9 +66,19 @@ public class ReportController {
         }
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "PDF del presupuesto"),
+        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Presupuesto no encontrado", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+                content = @Content)
+    })
     @GetMapping(value = "/presupuesto/{idPresupuesto}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de presupuesto",
-               description = "Genera un PDF con el presupuesto especificado")
+               description = "Genera un PDF con los datos del presupuesto (cliente, trámites, gestión), "
+                       + "sus conceptos y el total y saldo pendiente calculados como en CU47")
     public ResponseEntity<byte[]> generateBudgetReport(
             @Parameter(description = "ID del presupuesto")
             @PathVariable("idPresupuesto") @Positive Integer idBudget) {
@@ -71,9 +86,19 @@ public class ReportController {
                 () -> reporteService.generateBudgetReport(idBudget));
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "PDF del presupuesto con inmuebles"),
+        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Presupuesto no encontrado", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+                content = @Content)
+    })
     @GetMapping(value = "/presupuesto-inmuebles/{idPresupuesto}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de presupuesto con inmuebles",
-               description = "Genera un PDF con el presupuesto e información de inmuebles")
+               description = "Genera el PDF del presupuesto e incluye los inmuebles de sus trámites "
+                       + "(nomenclatura catastral, domicilio y valuación fiscal)")
     public ResponseEntity<byte[]> generateBudgetPropertiesReport(
             @Parameter(description = "ID del presupuesto")
             @PathVariable("idPresupuesto") @Positive Integer idBudget) {
@@ -81,9 +106,19 @@ public class ReportController {
                 () -> reporteService.generateBudgetPropertiesReport(idBudget));
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "PDF con los documentos del tipo de trámite"),
+        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Tipo de trámite no encontrado", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+                content = @Content)
+    })
     @GetMapping(value = "/lista-documentos-tramite", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de lista de documentos por trámite",
-               description = "Genera un PDF con la lista de documentos requeridos para un tipo de trámite")
+               description = "Genera un PDF con los documentos que requiere un tipo de trámite según su "
+                       + "plantilla (vencimiento, días de validez y quién los entrega)")
     public ResponseEntity<byte[]> generateProcedureDocumentsListReport(
             @Parameter(description = "Nombre del tipo de trámite")
             @RequestParam("nombreTipoTramite") @NotBlank String nameTypeProcedure) {
@@ -91,9 +126,19 @@ public class ReportController {
                 () -> reporteService.generateProcedureDocumentsListReport(nameTypeProcedure));
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "PDF con el historial de la gestión"),
+        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Gestión no encontrada", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+                content = @Content)
+    })
     @GetMapping(value = "/historial-gestion/{idGestion}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de historial de gestión",
-               description = "Genera un PDF con el historial de una gestión específica")
+               description = "Genera un PDF con los datos de la gestión y su historial de estados, "
+                       + "del más antiguo al más reciente")
     public ResponseEntity<byte[]> generateManagementHistoryReport(
             @Parameter(description = "ID de la gestión")
             @PathVariable("idGestion") @Positive Integer idManagement) {
@@ -101,9 +146,19 @@ public class ReportController {
                 () -> reporteService.generateManagementHistoryReport(idManagement));
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "PDF con el vencimiento del documento presentado"),
+        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Documento presentado no encontrado", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+                content = @Content)
+    })
     @GetMapping(value = "/documentos-por-vencer/{idDocumentoPresentado}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de documentos por vencer",
-               description = "Genera un PDF con información de documentos próximos a vencer")
+               description = "Genera un PDF con el vencimiento de un documento presentado (fecha y días "
+                       + "restantes), su estado de pago y la gestión, trámite y cliente a los que pertenece")
     public ResponseEntity<byte[]> generateDocumentsDueSoonReport(
             @Parameter(description = "ID del documento presentado")
             @PathVariable("idDocumentoPresentado") @Positive Integer idSubmittedDocument) {
@@ -111,9 +166,19 @@ public class ReportController {
                 () -> reporteService.generateDocumentsDueSoonReport(idSubmittedDocument));
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "PDF con la deuda de documentos de la gestión"),
+        @ApiResponse(responseCode = "400", description = "Parámetro inválido", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "No existe una gestión con ese número", content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+                content = @Content)
+    })
     @GetMapping(value = "/consultar-deuda-documentos", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar reporte de consulta de deuda de documentos",
-               description = "Genera un PDF con la consulta de deuda de documentos para una gestión")
+               description = "Genera un PDF con los documentos presentados en las gestiones con ese número, "
+                       + "su importe, fecha de pago o pago pendiente, y el total adeudado")
     public ResponseEntity<byte[]> generateDebtDocumentsReport(
             @Parameter(description = "Número de gestión")
             @RequestParam @Positive Integer numberManagement) {
@@ -123,7 +188,8 @@ public class ReportController {
 
     @GetMapping(value = "/libro-indice", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar libro de indice",
-               description = "Endpoint base para CU24. Requiere plantilla Jasper de libro de indice")
+               description = "Endpoint base para CU24: PDF provisorio con el período solicitado; "
+                       + "el contenido del libro de índice está pendiente")
     public ResponseEntity<byte[]> generarLibroIndice(
             @Parameter(description = "Año del libro de indice")
             @RequestParam("anio") @Positive Integer year) {
@@ -133,7 +199,8 @@ public class ReportController {
 
     @GetMapping(value = "/declaracion-jurada-mensual", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar declaracion jurada mensual",
-               description = "Endpoint base para CU25. Requiere plantilla Jasper de DDJJ mensual")
+               description = "Endpoint base para CU25: PDF provisorio con el período solicitado; "
+                       + "el contenido de la DDJJ mensual está pendiente")
     public ResponseEntity<byte[]> generarDeclaracionJuradaMensual(
             @Parameter(description = "Año del periodo")
             @RequestParam("anio") @Positive Integer year,
@@ -201,7 +268,8 @@ public class ReportController {
 
     @GetMapping(value = "/declaracion-jurada-rentas", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generar declaracion jurada de rentas",
-               description = "Endpoint base para CU50. Requiere plantilla Jasper de DDJJ rentas")
+               description = "Endpoint base para CU50: PDF provisorio con el período solicitado; "
+                       + "el contenido de la DDJJ de rentas está pendiente")
     public ResponseEntity<byte[]> generarDeclaracionJuradaRentas(
             @Parameter(description = "Año del periodo")
             @RequestParam("anio") @Positive Integer year,

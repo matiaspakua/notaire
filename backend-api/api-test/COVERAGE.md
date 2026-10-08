@@ -73,7 +73,7 @@ the value but update did not. Hardened in `setAtributos`.
 | procedures | `/tramites` | ✅ | — | CU02, CU53 |
 | properties | `/inmueble` | ✅ | — | CU69 |
 | registration-drafts | `/minutas-inscripcion` | actions | 404 paths for missing ids (happy Firmada+property chain deferred) | CU82 |
-| report-pdfs | `/reportes` | PDF GETs | libro-indice, DJ mensual/rentas, lista-documentos (representative) | CU24, CU25, CU50 |
+| report-pdfs | `/reportes` | PDF GETs | libro-indice, DJ mensual/rentas, lista-documentos, presupuesto (+ inmuebles), historial-gestion, consultar-deuda-documentos; 404 for missing aggregates incl. documentos-por-vencer (#567) | CU01, CU03, CU09, CU13, CU24, CU25, CU42, CU50 |
 | roles | `/roles` | ✅ | — | CU76 |
 | submitted-documents | `/documento-presentado` | ✅ | — | CU04, CU72 |
 | substitutions | `/suplencia` | ✅ | own substitute + replaced person fixtures | CU48, CU22, CU59 |

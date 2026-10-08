@@ -267,8 +267,9 @@ large data-access classes migrated from the original monolith. They are being su
 > `docs/000-archive/init-db/`. The guard test is `FlywaySchemaValidationIntegrationTest` —
 > run `mvn test -Ppg-integration`. See `.claude/rules/database-migrations.md`.
 
-**Reports:** JasperReports (`.jasper`/`.jrxml`) in `src/main/resources/reportes/`; the
-`ReporteController` generates them.
+**Reports:** generated in-house (#567). `ReportDocumentFactory` builds a framework-free
+`ReportDocument` from the domain model and the `ReportRenderer` port renders it to PDF
+(`PdfBoxReportRenderer`, Apache PDFBox); `ReportController` exposes them. No templates.
 
 **Tests:** under `src/test/java/.../unit/` and `integration/`. `ApiH2IntegrationTest` uses
 H2 in-memory; `ApiIntegrationTest` requires a running PostgreSQL.

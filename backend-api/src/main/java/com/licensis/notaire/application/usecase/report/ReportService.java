@@ -14,107 +14,74 @@ import com.licensis.notaire.repository.ItemRepository;
 import com.licensis.notaire.repository.RegistrationDraftRepository;
 import com.licensis.notaire.repository.PaymentRepository;
 import com.licensis.notaire.repository.TestimonyRepository;
-import com.licensis.notaire.repository.BudgetRepository;
-import com.licensis.notaire.repository.DeedManagementRepository;
-import com.licensis.notaire.repository.SubmittedDocumentRepository;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.util.JRLoader;
+import com.licensis.notaire.application.port.out.report.ReportRenderer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Map;
 
+/**
+ * Generates the report PDFs exposed by {@code /api/v1/reportes}.
+ *
+ * <p>The six reports that were JasperReports 3.5.3 templates over the legacy schema
+ * (budget, budget with properties, procedure documents, management history, document
+ * expiry and document debt) are built from the current domain model by
+ * {@link ReportDocumentFactory} and rendered through the {@link ReportRenderer} port
+ * (issue #567).
+ */
 @Service
 public class ReportService {
 
-    private final DataSource dataSource;
     private final TestimonyRepository testimonyRepository;
     private final NotebookRepository notebookRepository;
     private final RegistrationDraftRepository registrationDraftRepository;
     private final PaymentRepository paymentRepository;
     private final ItemRepository itemRepository;
-    private final BudgetRepository budgetRepository;
-    private final DeedManagementRepository deedManagementRepository;
-    private final SubmittedDocumentRepository submittedDocumentRepository;
+    private final ReportDocumentFactory reportDocuments;
+    private final ReportRenderer reportRenderer;
 
-    private static final String REPORT_PATH_BUDGET = "reportes/reportePresupuestoSinInmueble.jasper";
-    private static final String REPORT_PATH_BUDGET_PROPERTIES = "reportes/reportePresupuestoInmuebles.jasper";
-    private static final String REPORT_PATH_PROCEDURE_DOCUMENTS_LIST = "reportes/reporteListaDocumetosTramite.jasper";
-    private static final String REPORT_PATH_MANAGEMENT_HISTORY = "reportes/reporteHistorialGestion.jasper";
-    private static final String REPORT_PATH_DOCUMENTS_DUE_SOON = "reportes/reporteConsultarVencimientosDocumentos.jasper";
-    private static final String REPORT_PATH_DEBT_DOCUMENTS = "reportes/reporteConsultarDeudaDocumentos.jasper";
     private static final int FOLIOS_PER_NOTEBOOK = 10;
 
-    public ReportService(DataSource dataSource, TestimonyRepository testimonyRepository,
+    public ReportService(TestimonyRepository testimonyRepository,
                            NotebookRepository notebookRepository,
                            RegistrationDraftRepository registrationDraftRepository,
                            PaymentRepository paymentRepository,
                            ItemRepository itemRepository,
-                           BudgetRepository budgetRepository,
-                           DeedManagementRepository deedManagementRepository,
-                           SubmittedDocumentRepository submittedDocumentRepository) {
-        this.dataSource = dataSource;
+                           ReportDocumentFactory reportDocuments,
+                           ReportRenderer reportRenderer) {
         this.testimonyRepository = testimonyRepository;
         this.notebookRepository = notebookRepository;
         this.registrationDraftRepository = registrationDraftRepository;
         this.paymentRepository = paymentRepository;
         this.itemRepository = itemRepository;
-        this.budgetRepository = budgetRepository;
-        this.deedManagementRepository = deedManagementRepository;
-        this.submittedDocumentRepository = submittedDocumentRepository;
+        this.reportDocuments = reportDocuments;
+        this.reportRenderer = reportRenderer;
     }
 
-    public byte[] generateBudgetReport(Integer idBudget) throws Exception {
-        if (!budgetRepository.existsById(idBudget)) {
-            throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget);
-        }
-        Map<String, Object> parameters = Map.of("pIdPresupuesto", idBudget);
-        return generatePdfFromTemplate(REPORT_PATH_BUDGET, parameters);
+    public byte[] generateBudgetReport(Integer idBudget) {
+        return reportRenderer.render(reportDocuments.budget(idBudget, false));
     }
 
-    public byte[] generateBudgetPropertiesReport(Integer idBudget) throws Exception {
-        if (!budgetRepository.existsById(idBudget)) {
-            throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget);
-        }
-        Map<String, Object> parameters = Map.of("idPresupuestoParam", idBudget);
-        return generatePdfFromTemplate(REPORT_PATH_BUDGET_PROPERTIES, parameters);
+    public byte[] generateBudgetPropertiesReport(Integer idBudget) {
+        return reportRenderer.render(reportDocuments.budget(idBudget, true));
     }
 
-    public byte[] generateProcedureDocumentsListReport(String nameTypeProcedure) throws Exception {
-        Map<String, Object> parameters = Map.of("nombreTipoTramite", nameTypeProcedure);
-        return generatePdfFromTemplate(REPORT_PATH_PROCEDURE_DOCUMENTS_LIST, parameters);
+    public byte[] generateProcedureDocumentsListReport(String nameTypeProcedure) {
+        return reportRenderer.render(reportDocuments.procedureDocuments(nameTypeProcedure));
     }
 
-    public byte[] generateManagementHistoryReport(Integer idManagement) throws Exception {
-        if (!deedManagementRepository.existsById(idManagement)) {
-            throw new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement);
-        }
-        Map<String, Object> parameters = Map.of("idGestion", idManagement);
-        return generatePdfFromTemplate(REPORT_PATH_MANAGEMENT_HISTORY, parameters);
+    public byte[] generateManagementHistoryReport(Integer idManagement) {
+        return reportRenderer.render(reportDocuments.managementHistory(idManagement));
     }
 
-    public byte[] generateDocumentsDueSoonReport(Integer idSubmittedDocument) throws Exception {
-        if (!submittedDocumentRepository.existsById(idSubmittedDocument)) {
-            throw new ResourceNotFoundException("Documento presentado no encontrado con ID: " + idSubmittedDocument);
-        }
-        Map<String, Object> parameters = Map.of("idDocumentoPresentado", idSubmittedDocument);
-        return generatePdfFromTemplate(REPORT_PATH_DOCUMENTS_DUE_SOON, parameters);
+    public byte[] generateDocumentsDueSoonReport(Integer idSubmittedDocument) {
+        return reportRenderer.render(reportDocuments.submittedDocumentExpiry(idSubmittedDocument));
     }
 
-    public byte[] generateDebtDocumentsReport(Integer numberManagement) throws Exception {
-        Map<String, Object> parameters = Map.of("numeroGestion", numberManagement);
-        return generatePdfFromTemplate(REPORT_PATH_DEBT_DOCUMENTS, parameters);
+    public byte[] generateDebtDocumentsReport(Integer numberManagement) {
+        return reportRenderer.render(reportDocuments.documentDebt(numberManagement));
     }
 
     public byte[] generateIndexBookReport(Integer year) throws Exception {
@@ -239,25 +206,6 @@ public class ReportService {
             return buildPdf(stream.toString());
         } catch (Exception e) {
             throw new RuntimeException("Error al generar el recibo de pago: " + e.getMessage(), e);
-        }
-    }
-
-    private byte[] generatePdfFromTemplate(String templatePath, Map<String, Object> parameters) throws Exception {
-        try (Connection connection = dataSource.getConnection()) {
-            InputStream reportStream = getClass().getClassLoader().getResourceAsStream(templatePath);
-            if (reportStream == null) {
-                throw new RuntimeException("No se encontró el template: " + templatePath);
-            }
-
-            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportStream);
-
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
-
-            return JasperExportManager.exportReportToPdf(jasperPrint);
-        } catch (SQLException e) {
-            throw new RuntimeException("Error de conexión a base de datos: " + e.getMessage(), e);
-        } catch (JRException e) {
-            throw new RuntimeException("Error al generar el reporte: " + e.getMessage(), e);
         }
     }
 

@@ -1,12 +1,14 @@
 info:
-  name: Report - declaracion jurada mensual PDF
+  name: Report - consultar deuda documentos PDF
   type: http
-  seq: 2
+  seq: 13
   description: |-
-      Traceability: CU25
+      ## GET /api/v1/reportes/consultar-deuda-documentos?numberManagement=
+      Seeded management number 1001 (V10); rendered in-house since #567.
+      Traceability: CU09
 http:
   method: GET
-  url: "{{base_url}}/api/v1/reportes/declaracion-jurada-mensual?anio=2026&mes=9"
+  url: "{{base_url}}/api/v1/reportes/consultar-deuda-documentos?numberManagement=1001"
   headers:
     - name: Content-Type
       value: application/json

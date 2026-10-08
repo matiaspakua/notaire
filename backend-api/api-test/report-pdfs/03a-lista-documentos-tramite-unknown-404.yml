@@ -1,0 +1,24 @@
+info:
+  name: Report - lista documentos tramite unknown type 404
+  type: http
+  seq: 4
+  description: |-
+      ## GET /api/v1/reportes/lista-documentos-tramite with an unknown procedure type
+      Answers 404 instead of an empty or broken report (#567).
+      Traceability: CU03
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/reportes/lista-documentos-tramite?nombreTipoTramite=No%20existe%20E2E%20567"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 404 Not Found", function () { expect(res.getStatus()).to.equal(404); });
+          test("Explains what was not found", function () {
+            expect(res.getBody().message).to.be.a('string').and.not.be.empty;
+          });

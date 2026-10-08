@@ -1,0 +1,37 @@
+info:
+  name: Setup - Create budget for the budget reports
+  type: http
+  seq: 6
+  description: |-
+      ## Setup — POST /api/v1/presupuestos
+      Budget used by the two budget reports; deleted by `08-teardown-delete-budget.yml`.
+      Traceability: CU01
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/presupuestos"
+  body:
+    type: json
+    data: |-
+        {
+          "person": { "personId": 1 },
+          "date": "2026-10-07",
+          "encabezado": "Report PDFs E2E budget",
+          "status": "Pendiente",
+          "propertyAmount": 10000.0,
+          "notes": "created by the report-pdfs suite"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the budget id", function () {
+            const b = res.getBody();
+            expect(b.idBudget).to.be.a('number');
+            bru.setVar('report_budget_id', b.idBudget);
+          });

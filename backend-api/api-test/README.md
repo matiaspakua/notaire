@@ -6,7 +6,8 @@ End-to-end API tests for the Notaire backend, written in Bruno's **YAML
 ## CLI version
 
 OpenCollection requires **Bruno CLI ≥ 4.x**. CI runs unpinned
-`npx @usebruno/cli` from this directory (resolves to latest). Local example:
+`npx @usebruno/cli` from this directory (resolves to latest), installing it first with
+up to 3 attempts so a transient npm registry error does not fail the suite. Local example:
 `npx @usebruno/cli@4.2.0`. CLI **2.x** only understands `bruno.json` and will
 error with “You can run only at the root of a collection” — do **not** add a
 parent `bruno.json` to paper over that.

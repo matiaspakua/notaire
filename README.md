@@ -107,7 +107,8 @@ notaire/
 | Capa | Tecnologías |
 |:-----|:------------|
 | **Backend** | Java 26, Spring Boot 4.1.0 (Web, Data JPA, Security, Actuator), SpringDoc OpenAPI |
-| **Persistencia** | PostgreSQL 16, Flyway, HikariCP, JasperReports |
+| **Persistencia** | PostgreSQL 16, Flyway, HikariCP |
+| **Reportes PDF** | Apache PDFBox (generación propia, sin plantillas) |
 | **Frontend** | Next.js 16, React 19, TypeScript 5.7, Tailwind CSS 4, TanStack Query, shadcn/ui, Zustand |
 | **Testing** | JUnit 5 + Mockito + Testcontainers (backend), Vitest + Playwright (frontend), Bruno (API) |
 | **Calidad** | JaCoCo, Checkstyle, SpotBugs, Trivy |

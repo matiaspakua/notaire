@@ -1,7 +1,7 @@
 info:
   name: Report - declaracion jurada rentas PDF
   type: http
-  seq: 4
+  seq: 5
   description: |-
       Traceability: CU50
 http:
@@ -16,12 +16,7 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200 or 500 if template/data unavailable", function () {
-            expect([200,500]).to.include(res.getStatus());
-          });
-          test("If 200, Content-Type is PDF", function () {
-            if (res.getStatus() === 200) {
-              const ct = res.getHeader('content-type') || '';
-              expect(String(ct).toLowerCase()).to.include('pdf');
-            }
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Content-Type is PDF", function () {
+            expect(String(res.getHeader('content-type') || '').toLowerCase()).to.include('application/pdf');
           });

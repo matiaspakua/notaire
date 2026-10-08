@@ -1597,6 +1597,25 @@ components:
           format: int32
           type: integer
       type: object
+    ErrorResponse:
+      properties:
+        details:
+          additionalProperties: {}
+          type: object
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+        status:
+          format: int32
+          type: integer
+        timestamp:
+          type: string
+        traceId:
+          type: string
+      type: object
     FolioRequest:
       properties:
         deedId:
@@ -6491,7 +6510,8 @@ paths:
       - Protocolo Auxiliar
   /api/v1/reportes/consultar-deuda-documentos:
     get:
-      description: Genera un PDF con la consulta de deuda de documentos para una gestión
+      description: Genera un PDF con los documentos presentados en las gestiones con ese número, su importe, fecha de pago
+        o pago pendiente, y el total adeudado
       operationId: generateDebtDocumentsReport
       parameters:
       - description: Número de gestión
@@ -6509,13 +6529,28 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: OK
+          description: PDF con la deuda de documentos de la gestión
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Parámetro inválido
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: No existe una gestión con ese número
+        '500':
+          description: Error inesperado al generar el PDF (sin cuerpo)
       summary: Generar reporte de consulta de deuda de documentos
       tags:
       - Reportes
   /api/v1/reportes/declaracion-jurada-mensual:
     get:
-      description: Endpoint base para CU25. Requiere plantilla Jasper de DDJJ mensual
+      description: 'Endpoint base para CU25: PDF provisorio con el período solicitado; el contenido de la DDJJ mensual está
+        pendiente'
       operationId: generarDeclaracionJuradaMensual
       parameters:
       - description: Año del periodo
@@ -6548,7 +6583,8 @@ paths:
       - Reportes
   /api/v1/reportes/declaracion-jurada-rentas:
     get:
-      description: Endpoint base para CU50. Requiere plantilla Jasper de DDJJ rentas
+      description: 'Endpoint base para CU50: PDF provisorio con el período solicitado; el contenido de la DDJJ de rentas está
+        pendiente'
       operationId: generarDeclaracionJuradaRentas
       parameters:
       - description: Año del periodo
@@ -6581,7 +6617,8 @@ paths:
       - Reportes
   /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}:
     get:
-      description: Genera un PDF con información de documentos próximos a vencer
+      description: Genera un PDF con el vencimiento de un documento presentado (fecha y días restantes), su estado de pago
+        y la gestión, trámite y cliente a los que pertenece
       operationId: generateDocumentsDueSoonReport
       parameters:
       - description: ID del documento presentado
@@ -6599,13 +6636,27 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: OK
+          description: PDF con el vencimiento del documento presentado
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Parámetro inválido
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Documento presentado no encontrado
+        '500':
+          description: Error inesperado al generar el PDF (sin cuerpo)
       summary: Generar reporte de documentos por vencer
       tags:
       - Reportes
   /api/v1/reportes/historial-gestion/{idGestion}:
     get:
-      description: Genera un PDF con el historial de una gestión específica
+      description: Genera un PDF con los datos de la gestión y su historial de estados, del más antiguo al más reciente
       operationId: generateManagementHistoryReport
       parameters:
       - description: ID de la gestión
@@ -6623,13 +6674,28 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: OK
+          description: PDF con el historial de la gestión
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Parámetro inválido
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Gestión no encontrada
+        '500':
+          description: Error inesperado al generar el PDF (sin cuerpo)
       summary: Generar reporte de historial de gestión
       tags:
       - Reportes
   /api/v1/reportes/libro-indice:
     get:
-      description: Endpoint base para CU24. Requiere plantilla Jasper de libro de indice
+      description: 'Endpoint base para CU24: PDF provisorio con el período solicitado; el contenido del libro de índice está
+        pendiente'
       operationId: generarLibroIndice
       parameters:
       - description: Año del libro de indice
@@ -6653,7 +6719,8 @@ paths:
       - Reportes
   /api/v1/reportes/lista-documentos-tramite:
     get:
-      description: Genera un PDF con la lista de documentos requeridos para un tipo de trámite
+      description: Genera un PDF con los documentos que requiere un tipo de trámite según su plantilla (vencimiento, días
+        de validez y quién los entrega)
       operationId: generateProcedureDocumentsListReport
       parameters:
       - description: Nombre del tipo de trámite
@@ -6670,7 +6737,21 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: OK
+          description: PDF con los documentos del tipo de trámite
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Parámetro inválido
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Tipo de trámite no encontrado
+        '500':
+          description: Error inesperado al generar el PDF (sin cuerpo)
       summary: Generar reporte de lista de documentos por trámite
       tags:
       - Reportes
@@ -6707,7 +6788,8 @@ paths:
       - Reportes
   /api/v1/reportes/presupuesto-inmuebles/{idPresupuesto}:
     get:
-      description: Genera un PDF con el presupuesto e información de inmuebles
+      description: Genera el PDF del presupuesto e incluye los inmuebles de sus trámites (nomenclatura catastral, domicilio
+        y valuación fiscal)
       operationId: generateBudgetPropertiesReport
       parameters:
       - description: ID del presupuesto
@@ -6725,13 +6807,28 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: OK
+          description: PDF del presupuesto con inmuebles
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Parámetro inválido
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Presupuesto no encontrado
+        '500':
+          description: Error inesperado al generar el PDF (sin cuerpo)
       summary: Generar reporte de presupuesto con inmuebles
       tags:
       - Reportes
   /api/v1/reportes/presupuesto/{idPresupuesto}:
     get:
-      description: Genera un PDF con el presupuesto especificado
+      description: Genera un PDF con los datos del presupuesto (cliente, trámites, gestión), sus conceptos y el total y saldo
+        pendiente calculados como en CU47
       operationId: generateBudgetReport
       parameters:
       - description: ID del presupuesto
@@ -6749,7 +6846,21 @@ paths:
               schema:
                 format: byte
                 type: string
-          description: OK
+          description: PDF del presupuesto
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Parámetro inválido
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Presupuesto no encontrado
+        '500':
+          description: Error inesperado al generar el PDF (sin cuerpo)
       summary: Generar reporte de presupuesto
       tags:
       - Reportes

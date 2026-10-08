@@ -116,10 +116,11 @@
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
         </dependency>
+        <!-- In-house report PDFs (issue #567): Apache PDFBox, Apache License 2.0. -->
         <dependency>
-            <groupId>jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-            <version>3.5.3</version>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.8</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
