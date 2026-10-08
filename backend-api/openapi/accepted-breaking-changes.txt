@@ -16,3 +16,13 @@
 # so the entry accepts nothing and would hide a later break with the same text.
 # workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
 # until the entry and its comment are removed.
+
+# #655 (CU69 / CU82, Owner decision Run 7): the nomenclatura catastral
+# identifies a property and the UI already labelled it required, but the API
+# stored properties with a null, empty or blank one. PUT replaces every field,
+# so it must carry the designation too. The shipped UI now blocks Save while it
+# is blank (same PR); Bruno, Playwright and every backend test already sent it.
+POST /api/v1/inmueble the request property `cadastralDesignation` became required
+POST /api/v1/inmueble the `cadastralDesignation` request property's minLength was set to `1`
+PUT /api/v1/inmueble/{id} the request property `cadastralDesignation` became required
+PUT /api/v1/inmueble/{id} the `cadastralDesignation` request property's minLength was set to `1`

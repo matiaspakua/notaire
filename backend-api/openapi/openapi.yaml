@@ -2400,6 +2400,8 @@ components:
         boundaries:
           type: string
         cadastralDesignation:
+          description: Nomenclatura catastral que identifica el inmueble; obligatoria y no vacía
+          minLength: 1
           type: string
         fiscalAppraisal:
           type: number
@@ -2409,6 +2411,8 @@ components:
           type: string
         volumeFolioLandRecord:
           type: string
+      required:
+      - cadastralDesignation
       type: object
     PropertyResponse:
       properties:
@@ -4716,7 +4720,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: Solicitud inválida (falta la nomenclatura catastral)
         '409':
           content:
             '*/*':
@@ -4787,6 +4791,8 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          description: Solicitud inválida (falta la nomenclatura catastral)
         '404':
           description: No encontrado
       summary: Actualizar inmueble
