@@ -4,23 +4,15 @@
 # `oasdiff breaking --fail-on ERR --err-ignore`. A breaking change listed here
 # does not fail the gate; any other one still does.
 #
-# Add an entry only when the break is intended and reviewed: copy the line
-# oasdiff prints as "<METHOD> <path> <change text>", put it under a comment
-# that names the issue and why no working client breaks, and record it in the
-# CHANGELOG. Entries become inert once the change is on main (the base spec
-# already contains it) and may be removed in a later PR.
-
-# #655 (CU15): the use cases already rejected these values at runtime (POST:
-# missing budget or amount <= 0 never created a payment; PUT: amount <= 0 never
-# updated one), so no request that used to succeed is now rejected.
-POST /api/v1/pagos the request property `amount` became required
-POST /api/v1/pagos the request property `idBudget` became required
-POST /api/v1/pagos the `amount` request property's exclusiveMinimum was set to `0.00`
-PUT /api/v1/pagos/{id} the `amount` request property's exclusiveMinimum was set to `0.00`
-
-# #596 (CU13): GET /api/v1/historial answers a Spring Data page (default 20,
-# optional page/size/sort query parameters) instead of the whole, ever-growing
-# history table. No shipped client reads this list: the frontend uses
-# GET /api/v1/gestiones/{id}/historial and GET /api/v1/historial/gestion/{id},
-# both unchanged; Bruno history/03 moved to the page shape in the same PR.
-GET /api/v1/historial the response's body `type` changed from `array<object>` to `object` for status `200`
+# The list is empty by default (issue #1315). Add an entry only when the break
+# is intended and reviewed, in the pull request that introduces it:
+# - copy the line oasdiff prints as "<METHOD> <path> <change text>";
+# - put it under a comment that names the issue and why no working client
+#   breaks;
+# - record it in the CHANGELOG, comment on the issue, and get Owner approval
+#   in review.
+#
+# Once that pull request is merged, the base spec already contains the break,
+# so the entry accepts nothing and would hide a later break with the same text.
+# workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
+# until the entry and its comment are removed.
