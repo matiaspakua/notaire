@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -68,6 +70,35 @@ public class SubmittedDocumentController {
             Integer procedureId,
             String deliveredBy,
             String name) {}
+
+    /**
+     * POST body. A submitted document is presented for a trámite of a gestión (CU04 / CU72):
+     * without the procedure it never reaches the case summary, the documentation-complete check,
+     * the CU09 debt report, the CU42 expiry list with its gestión, or CU10 external-entity
+     * movements; without a type it has no name, expiry or delivered-by. Both are required on
+     * create (issue #655). PUT keeps {@link SubmittedDocumentRequest}, where every field is
+     * optional, so rows stored before this rule can still be edited.
+     */
+    record SubmittedDocumentCreateRequest(
+            @NotNull
+            @Schema(description = "Id de un tipo de documento existente; si no existe la respuesta es 404",
+                    requiredMode = Schema.RequiredMode.REQUIRED)
+            Integer typeId,
+            @Schema(description = "Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); "
+                    + "otro valor responde 400")
+            String date,
+            Boolean delivered,
+            @NotNull
+            @Schema(description = "Id del trámite de la gestión para el que se presenta el documento; "
+                    + "si no existe la respuesta es 404", requiredMode = Schema.RequiredMode.REQUIRED)
+            Integer procedureId,
+            String deliveredBy,
+            String name) {
+
+        SubmittedDocumentRequest toRequest() {
+            return new SubmittedDocumentRequest(typeId, date, delivered, procedureId, deliveredBy, name);
+        }
+    }
 
     /** Request references resolved and parsed before anything is changed (issue #655). */
     private record Resolved(Optional<DocumentType> type, Optional<Procedure> procedure, Optional<LocalDate> date) {}
@@ -195,13 +226,15 @@ public class SubmittedDocumentController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida (fecha que no es un día yyyy-MM-dd)"),
+    @ApiResponse(responseCode = "400",
+            description = "Solicitud inválida (falta typeId o procedureId, o la fecha no es un día yyyy-MM-dd)"),
     @ApiResponse(responseCode = "404", description = "Tipo de documento o trámite no encontrado"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
     @Operation(summary = "Crear nuevo documento presentado")
-    public ResponseEntity<Object> create(@RequestBody SubmittedDocumentRequest request) {
+    public ResponseEntity<Object> create(@Valid @RequestBody SubmittedDocumentCreateRequest body) {
+        SubmittedDocumentRequest request = body.toRequest();
         Resolved resolved = resolve(request);
         try {
             SubmittedDocument entity = newDocument();

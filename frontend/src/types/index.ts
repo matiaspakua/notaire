@@ -162,7 +162,10 @@ export interface DocumentoPresentado {
   procedureId?: number | null;
 }
 
-/** POST/PUT /documento-presentado body — SubmittedDocumentController.SubmittedDocumentRequest. */
+/**
+ * POST/PUT /documento-presentado body — SubmittedDocumentController.SubmittedDocumentCreateRequest
+ * (POST: typeId and procedureId required, #655) / SubmittedDocumentRequest (PUT: all optional).
+ */
 export interface DocumentoPresentadoRequest {
   typeId: number | null;
   date: string | null;
