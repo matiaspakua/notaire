@@ -1,7 +1,7 @@
 info:
   name: Verify testimony action
   type: http
-  seq: 6
+  seq: 7
   description: |-
       ## POST /api/v1/testimonio/{id}/verificar
       Traceability: CU08
