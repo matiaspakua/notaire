@@ -150,6 +150,6 @@ public class ManagementStatusController {
                             "No se puede eliminar: el estado está referenciado por gestiones de escritura."));
         }
         repository.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

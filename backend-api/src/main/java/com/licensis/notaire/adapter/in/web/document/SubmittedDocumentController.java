@@ -254,7 +254,7 @@ public class SubmittedDocumentController {
         }
         try {
             repository.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Failed to delete documento presentado id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();

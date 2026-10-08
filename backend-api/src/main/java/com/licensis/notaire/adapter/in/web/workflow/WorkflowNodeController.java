@@ -144,6 +144,6 @@ public class WorkflowNodeController {
                     .body(Map.of("error", "No se puede eliminar: el nodo tiene transiciones asociadas."));
         }
         repository.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
