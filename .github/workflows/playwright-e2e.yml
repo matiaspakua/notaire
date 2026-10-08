@@ -170,6 +170,19 @@ jobs:
             exit 1
           fi
           cd backend-api/api-test
+          # The CLI stays unpinned (see api-test/README.md), so every run resolves
+          # it from the live npm registry. Retry the install so a transient
+          # registry error (e.g. a dependency published seconds after its
+          # dependent: ETARGET tldts-core@^7.4.17, #567) does not fail the suite.
+          for attempt in 1 2 3; do
+            if npx --yes @usebruno/cli --version; then break; fi
+            if [ "$attempt" = 3 ]; then
+              echo "ERROR: could not install @usebruno/cli after 3 attempts" >&2
+              exit 1
+            fi
+            echo "Bruno CLI install failed (attempt $attempt/3); retrying in 60s" >&2
+            sleep 60
+          done
           npx @usebruno/cli run --env Development \
             --env-var token="$TOKEN" \
             --reporter-junit bruno-results.xml \

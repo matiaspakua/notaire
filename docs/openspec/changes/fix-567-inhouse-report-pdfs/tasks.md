@@ -40,6 +40,7 @@
 ## 10. Pull Request y validación CI
 
 - [x] 10.1 Push and open PR
+- [x] 10.1a CI run 37697055951 failed installing the Bruno CLI (npm `ETARGET`, upstream publish race), not on a request: make the workflow retry the install (3 attempts) and reproduce the CI command on a fresh DB
 - [ ] 10.2 `bash workspace/sdlc/run_pipeline.sh` green
 
 ## 11. Deploy
