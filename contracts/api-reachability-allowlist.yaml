@@ -7,7 +7,7 @@
 #
 # Owner triage of the baseline (2026-10-07, #1250): A = read-by-id, stays API-only; B = management
 # history, API-only with ADMIN-only PUT/DELETE; C = UI backlog; D = likely redundant, removal later;
-# E = broken Jasper report, decided with #567.
+# E = the Jasper report, rebuilt in-house by #567 (works, no UI caller yet; Owner to reclassify as C or A).
 endpoints:
   "GET /api/v1/audit-log/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/carpetas/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
@@ -40,7 +40,7 @@ endpoints:
   "DELETE /api/v1/plantilla-tramite/{idProcedureType}/{idDocumentType}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "PUT /api/v1/plantilla-tramite/{idProcedureType}/{idDocumentType}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "GET /api/v1/presupuestos/persona/{idPerson}": "Likely redundant (#1250 bucket D): confirm, then remove with OpenAPI, Bruno and the CU-API matrix"
-  "GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}": "Broken Jasper report (#1250 bucket E): decided with #567"
+  "GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}": "No UI caller yet (#1250 bucket E): in-house PDF since #567; Owner to reclassify as C (UI backlog) or A (API-only)"
   "GET /api/v1/roles/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/suplencia/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "POST /api/v1/testimonio": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
