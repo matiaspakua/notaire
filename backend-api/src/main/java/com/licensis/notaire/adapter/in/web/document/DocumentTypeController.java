@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.document;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoDocumentType;
 import com.licensis.notaire.business.DocumentType;
 import com.licensis.notaire.repository.SubmittedDocumentRepository;
@@ -110,7 +111,7 @@ public class DocumentTypeController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -140,7 +141,7 @@ public class DocumentTypeController {
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ErrorResponses.serverError(e);
         }
     }
 

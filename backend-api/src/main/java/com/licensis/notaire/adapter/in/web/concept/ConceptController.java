@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.concept;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoConcept;
 import com.licensis.notaire.application.usecase.concept.ConceptService;
 import com.licensis.notaire.business.Concept;
@@ -104,7 +105,7 @@ public class ConceptController {
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
             log.warn("Error creating concept: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -134,7 +135,7 @@ public class ConceptController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Error updating concept id {}: {}", id, e.getMessage());
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ErrorResponses.serverError(e);
         }
     }
 
@@ -157,7 +158,7 @@ public class ConceptController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Error deleting concept id {}: {}", id, e.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ErrorResponses.conflict(e);
         }
     }
 }

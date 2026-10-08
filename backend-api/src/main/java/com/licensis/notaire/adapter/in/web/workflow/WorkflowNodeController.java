@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.workflow;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoWorkflowNode;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.WorkflowDefinition;
@@ -96,7 +97,7 @@ public class WorkflowNodeController {
             node = repository.save(node);
             return ResponseEntity.status(HttpStatus.CREATED).body(node.toDto());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -125,7 +126,7 @@ public class WorkflowNodeController {
             repository.save(node);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
+            return ErrorResponses.serverError(e);
         }
     }
 
