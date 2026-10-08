@@ -129,10 +129,13 @@ public class HistoryController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "403", description = "Solo un administrador puede modificar el historial"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar historial")
+    @Operation(summary = "Actualizar historial (solo administrador)",
+            description = "El historial es la traza de cambios de estado de la gestión (CU13): "
+                    + "solo un administrador puede corregir un registro.")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody HistoryRequest request) {
         return repository.findById(id).map(existing -> {
             try {
@@ -150,10 +153,13 @@ public class HistoryController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "403", description = "Solo un administrador puede eliminar el historial"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar historial")
+    @Operation(summary = "Eliminar historial (solo administrador)",
+            description = "El historial es la traza de cambios de estado de la gestión (CU13): "
+                    + "solo un administrador puede eliminar un registro.")
     @Transactional
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         History entity = repository.findById(id).orElse(null);
