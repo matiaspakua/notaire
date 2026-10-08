@@ -4565,6 +4565,8 @@ paths:
       - Historial
   /api/v1/historial/{id}:
     delete:
+      description: 'El historial es la traza de cambios de estado de la gestión (CU13): solo un administrador puede eliminar
+        un registro.'
       operationId: delete_17
       parameters:
       - in: path
@@ -4576,9 +4578,11 @@ paths:
       responses:
         '204':
           description: Eliminado
+        '403':
+          description: Solo un administrador puede eliminar el historial
         '404':
           description: No encontrado
-      summary: Eliminar historial
+      summary: Eliminar historial (solo administrador)
       tags:
       - Historial
     get:
@@ -4607,6 +4611,8 @@ paths:
       tags:
       - Historial
     put:
+      description: 'El historial es la traza de cambios de estado de la gestión (CU13): solo un administrador puede corregir
+        un registro.'
       operationId: update_17
       parameters:
       - in: path
@@ -4624,9 +4630,11 @@ paths:
       responses:
         '200':
           description: OK
+        '403':
+          description: Solo un administrador puede modificar el historial
         '404':
           description: No encontrado
-      summary: Actualizar historial
+      summary: Actualizar historial (solo administrador)
       tags:
       - Historial
   /api/v1/inmueble:

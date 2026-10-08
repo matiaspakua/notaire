@@ -59,6 +59,15 @@ public class SecurityAndCorsConfig {
         "/api/v1/plantilla-costos-documento/**"
     };
 
+    /**
+     * The management history is the audit trail of state changes (CU13): any authenticated
+     * user may read it or record a new row, but only an administrator may rewrite or delete
+     * one (issue #1250).
+     */
+    private static final String HISTORY_ENTRY_PATH = "/api/v1/historial/*";
+
+    private static final HttpMethod[] ADMIN_HISTORY_METHODS = {HttpMethod.PUT, HttpMethod.DELETE};
+
     private static final HttpMethod[] WRITE_METHODS = {
         HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE
     };
@@ -180,6 +189,9 @@ public class SecurityAndCorsConfig {
                 auth.requestMatchers(ADMIN_ONLY_PATHS).hasRole(UserAuthorityResolver.ADMIN_ROLE);
                 for (HttpMethod method : WRITE_METHODS) {
                     auth.requestMatchers(method, ADMIN_WRITE_PATHS).hasRole(UserAuthorityResolver.ADMIN_ROLE);
+                }
+                for (HttpMethod method : ADMIN_HISTORY_METHODS) {
+                    auth.requestMatchers(method, HISTORY_ENTRY_PATH).hasRole(UserAuthorityResolver.ADMIN_ROLE);
                 }
                 auth.anyRequest().authenticated();
             })
