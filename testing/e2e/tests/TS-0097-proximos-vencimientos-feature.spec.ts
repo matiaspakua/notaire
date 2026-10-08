@@ -7,7 +7,7 @@
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { apiPost, createTipoDocumento, uniqueId } from "./setup/api-helpers";
+import { apiPost, createTipoDocumento, createTipoTramite, uniqueId } from "./setup/api-helpers";
 
 test.describe("CU42 - Próximos vencimientos", () => {
   test.beforeEach(async ({ page }) => {
@@ -18,9 +18,18 @@ test.describe("CU42 - Próximos vencimientos", () => {
     const tipo = await createTipoDocumento(page, { expires: true, dueDays: 10 });
     expect(tipo.ok, tipo.error ?? "createTipoDocumento failed").toBe(true);
 
+    // A document is presented for a trámite (CU04, #655): procedureId is required on create.
+    const tipoTramite = await createTipoTramite(page);
+    expect(tipoTramite.ok, tipoTramite.error ?? "createTipoTramite failed").toBe(true);
+    const tramite = await apiPost<{ idProcedure: number }>(page, "/tramites", {
+      idProcedureType: tipoTramite.data!.idProcedureType,
+    });
+    expect(tramite.ok, tramite.error ?? "create trámite failed").toBe(true);
+
     const name = `Vencimiento E2E ${uniqueId()}`;
     const documento = await apiPost<{ idSubmittedDocument: number }>(page, "/documento-presentado", {
       typeId: tipo.data!.idDocumentType,
+      procedureId: tramite.data!.idProcedure,
       date: new Date().toISOString().split("T")[0],
       delivered: false,
       name,

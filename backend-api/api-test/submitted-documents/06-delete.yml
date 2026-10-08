@@ -1,7 +1,7 @@
 info:
   name: Delete submitted document
   type: http
-  seq: 6
+  seq: 7
   description: |-
       Traceability: CU72
 http:

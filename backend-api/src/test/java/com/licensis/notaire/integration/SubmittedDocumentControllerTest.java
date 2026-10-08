@@ -89,8 +89,8 @@ class SubmittedDocumentControllerTest {
     @DisplayName("Should return 201 when creating documento presentado with tipoId, date and delivered")
     void shouldCreateSubmittedDocumentWithDtoFields() throws Exception {
         String body = """
-                {"typeId": null, "date": "2024-06-01", "delivered": false}
-                """;
+                {"typeId": %d, "procedureId": %d, "date": "2024-06-01", "delivered": false}
+                """.formatted(createDocumentType(false, null, "Cliente"), createProcedure());
 
         mockMvc.perform(post("/api/v1/documento-presentado")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -104,8 +104,8 @@ class SubmittedDocumentControllerTest {
     @DisplayName("Should return 201 when creating documento presentado with delivered true")
     void shouldCreateSubmittedDocumentDelivered() throws Exception {
         String body = """
-                {"typeId": null, "date": "2024-07-15", "delivered": true}
-                """;
+                {"typeId": %d, "procedureId": %d, "date": "2024-07-15", "delivered": true}
+                """.formatted(createDocumentType(false, null, "Cliente"), createProcedure());
 
         mockMvc.perform(post("/api/v1/documento-presentado")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -119,9 +119,9 @@ class SubmittedDocumentControllerTest {
     void shouldCreateSubmittedDocumentLinkedToProcedure() throws Exception {
         Integer procedureId = createProcedure();
         String body = """
-                {"typeId": null, "date": "2024-06-01", "delivered": false, "procedureId": %d,
+                {"typeId": %d, "date": "2024-06-01", "delivered": false, "procedureId": %d,
                  "deliveredBy": "Entidad Externa"}
-                """.formatted(procedureId);
+                """.formatted(createDocumentType(false, null, "Cliente"), procedureId);
 
         MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -142,8 +142,8 @@ class SubmittedDocumentControllerTest {
     void shouldInheritDueFieldsFromDocumentType() throws Exception {
         Integer typeId = createDocumentType(true, 5, "Escribano");
         String body = """
-                {"typeId": %d, "date": "2024-01-01", "delivered": false}
-                """.formatted(typeId);
+                {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false}
+                """.formatted(typeId, createProcedure());
 
         MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -165,8 +165,8 @@ class SubmittedDocumentControllerTest {
     void shouldNotComputeDateDueWhenTypeDoesNotExpires() throws Exception {
         Integer typeId = createDocumentType(false, null, "Cliente");
         String body = """
-                {"typeId": %d, "date": "2024-01-01", "delivered": false}
-                """.formatted(typeId);
+                {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false}
+                """.formatted(typeId, createProcedure());
 
         MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -187,8 +187,9 @@ class SubmittedDocumentControllerTest {
     void shouldLetExplicitDeliveredByOverrideDocumentType() throws Exception {
         Integer typeId = createDocumentType(false, null, "Escribano");
         String body = """
-                {"typeId": %d, "date": "2024-01-01", "delivered": false, "deliveredBy": "Entidad Externa"}
-                """.formatted(typeId);
+                {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false,
+                 "deliveredBy": "Entidad Externa"}
+                """.formatted(typeId, createProcedure());
 
         MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -238,8 +239,8 @@ class SubmittedDocumentControllerTest {
     @DisplayName("Should return 200 and update documento presentado")
     void shouldUpdateSubmittedDocument() throws Exception {
         String createBody = """
-                {"typeId": null, "date": "2024-01-01", "delivered": false}
-                """;
+                {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false}
+                """.formatted(createDocumentType(false, null, "Cliente"), createProcedure());
 
         MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -277,8 +278,8 @@ class SubmittedDocumentControllerTest {
     @DisplayName("Should return 200 and delete an existing documento presentado")
     void shouldDeleteSubmittedDocument() throws Exception {
         String createBody = """
-                {"typeId": null, "date": "2024-05-10", "delivered": false}
-                """;
+                {"typeId": %d, "procedureId": %d, "date": "2024-05-10", "delivered": false}
+                """.formatted(createDocumentType(false, null, "Cliente"), createProcedure());
 
         MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
                         .contentType(MediaType.APPLICATION_JSON)

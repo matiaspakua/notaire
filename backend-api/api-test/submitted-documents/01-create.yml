@@ -1,16 +1,16 @@
 info:
   name: Create submitted document
   type: http
-  seq: 1
+  seq: 2
   description: |-
-      Traceability: CU04 / CU72 (RF QA Bruno #953)
+      Traceability: CU04 / CU72 (RF QA Bruno #953). Linked to the trámite from 00-setup-procedure (#655: required on create).
 http:
   method: POST
   url: "{{base_url}}/api/v1/documento-presentado"
   body:
     type: json
     data: |-
-        {"typeId": 1, "date": "2026-09-05", "delivered": false, "name": "Bruno E2E submitted doc"}
+        {"typeId": 1, "procedureId": {{submitted_doc_procedure_id}}, "date": "2026-09-05", "delivered": false, "name": "Bruno E2E submitted doc"}
   headers:
     - name: Content-Type
       value: application/json

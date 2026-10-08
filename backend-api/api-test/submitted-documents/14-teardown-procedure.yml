@@ -1,0 +1,20 @@
+info:
+  name: Teardown - Delete the procedure
+  type: http
+  seq: 15
+  description: |-
+      ## Teardown — DELETE /api/v1/tramites/{id}
+      Removes the trámite from 00-setup-procedure; its document was deleted by
+      06-delete.
+      Traceability: CU04 / CU72 (#655)
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/tramites/{{submitted_doc_procedure_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Procedure deleted", function () { expect(res.getStatus()).to.be.oneOf([200, 204]); });

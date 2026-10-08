@@ -8,7 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.licensis.notaire.business.DocumentType;
+import com.licensis.notaire.business.Procedure;
+import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.repository.DocumentTypeRepository;
+import com.licensis.notaire.repository.ProcedureRepository;
+import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.testing.RequirementCoverage;
 import java.time.LocalDate;
@@ -43,12 +47,26 @@ class UpcomingExpirationControllerIntegrationTest {
     @Autowired
     private SubmittedDocumentRepository submittedDocumentRepository;
 
+    @Autowired
+    private ProcedureTypeRepository procedureTypeRepository;
+
+    @Autowired
+    private ProcedureRepository procedureRepository;
+
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
+    private Integer procedureId;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        ProcedureType procedureType = new ProcedureType();
+        procedureType.setName("Tipo trámite CU42 " + System.nanoTime());
+        procedureType.setEnabled(true);
+        procedureType = procedureTypeRepository.save(procedureType);
+        Procedure procedure = new Procedure();
+        procedure.setFkIdProcedureType(procedureType);
+        procedureId = procedureRepository.save(procedure).getIdProcedure();
     }
 
     private Integer documentType(boolean expires, Integer dueDays) {
@@ -63,8 +81,8 @@ class UpcomingExpirationControllerIntegrationTest {
 
     private int submit(Integer typeId, LocalDate entryDate) throws Exception {
         String body = """
-                {"typeId": %d, "date": "%s", "delivered": false}
-                """.formatted(typeId, entryDate);
+                {"typeId": %d, "procedureId": %d, "date": "%s", "delivered": false}
+                """.formatted(typeId, procedureId, entryDate);
         String response = mockMvc.perform(post("/api/v1/documento-presentado")
                         .contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();

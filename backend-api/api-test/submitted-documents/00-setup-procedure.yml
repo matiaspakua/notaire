@@ -1,0 +1,32 @@
+info:
+  name: Setup - Create procedure for the documents
+  type: http
+  seq: 1
+  description: |-
+      ## Setup — POST /api/v1/tramites
+      A submitted document is presented for a trámite of a gestión (CU04), so
+      creating one requires a procedure (#655). Uses seeded procedure type 1
+      (referenced only); deleted by `14-teardown-procedure.yml`.
+      Traceability: CU04 / CU72 (#655)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/tramites"
+  body:
+    type: json
+    data: |-
+        {"notes":"Bruno submitted documents procedure","idProcedureType":1}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the procedure id", function () {
+            const b = res.getBody();
+            expect(b.idProcedure).to.be.a('number');
+            bru.setVar('submitted_doc_procedure_id', b.idProcedure);
+          });
