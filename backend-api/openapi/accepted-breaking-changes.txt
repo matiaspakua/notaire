@@ -16,3 +16,12 @@
 # so the entry accepts nothing and would hide a later break with the same text.
 # workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
 # until the entry and its comment are removed.
+
+# #655 (CU04 / CU72, Owner decision Run 7): a submitted document is presented
+# for a trámite of a gestión, and its type gives it a name, expiry and
+# delivered-by. A create without them stored a document that the case
+# summary, the documentation-complete check, the CU09 debt report, CU42 and
+# CU10 never see. The shipped frontend now requires both on create (same PR);
+# Bruno and Playwright were updated; PUT stays partial for legacy rows.
+POST /api/v1/documento-presentado the request property `procedureId` became required
+POST /api/v1/documento-presentado the request property `typeId` became required
