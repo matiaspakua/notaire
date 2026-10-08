@@ -50,6 +50,7 @@ sdlc exception label            Process Checks                    sdlc-process.y
 agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
+openapi accepted list           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; stale entries, #1315)
 spotless format                 Code Lint / Format Check         pr-validation.yml  (BLOCKING)
 checkstyle                      Code Lint / Checkstyle           pr-validation.yml  (warn, CI uses || true)
 dependency analysis             Dependency Analysis              pr-validation.yml  (warn, CI uses || true)
@@ -172,6 +173,9 @@ else
     git show "origin/main:$OPENAPI_SPEC" > "$OPENAPI_BASE"
     run "openapi breaking diff" oasdiff breaking "$OPENAPI_BASE" "$OPENAPI_SPEC" \
         --fail-on ERR --err-ignore "$OPENAPI_ACCEPTED"
+    # Mirrors: "Accepted breaking list has no stale entries" (openapi-contract.yml, #1315).
+    run "openapi accepted list has no stale entries" python3 workspace/sdlc/check-accepted-breaking-changes.py \
+        "$OPENAPI_BASE" "$OPENAPI_SPEC" "$OPENAPI_ACCEPTED"
     rm -f "$OPENAPI_BASE"
 fi
 

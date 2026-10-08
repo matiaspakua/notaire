@@ -96,3 +96,19 @@ jobs:
           # Owner-accepted breaks only, one traceable line each (see the file header).
           err-ignore: backend-api/openapi/accepted-breaking-changes.txt
           review: 'false'
+
+      # Keep the accepted list empty by default (#1315): an entry whose break is
+      # already on main matches nothing and would hide a later break with the same
+      # text, so the next PR after its merge must remove it. Pull requests only:
+      # on main the base equals the revision and every entry would look stale.
+      - name: Accepted breaking list has no stale entries
+        if: steps.base.outputs.has_base == 'true' && github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          # Same oasdiff version as oasdiff-action/breaking@v0.1.18, checksum from the release.
+          curl -sSfL -o /tmp/oasdiff.tar.gz \
+            https://github.com/oasdiff/oasdiff/releases/download/v1.33.0/oasdiff_1.33.0_linux_amd64.tar.gz
+          echo "43a4e328e2d13ba1552d760aa68d2485c75c5621f309f6ff64ae895188345247  /tmp/oasdiff.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/oasdiff.tar.gz -C /tmp oasdiff
+          OASDIFF=/tmp/oasdiff python3 workspace/sdlc/check-accepted-breaking-changes.py \
+            .openapi-ci/base-openapi.yaml backend-api/openapi/openapi.yaml
