@@ -208,7 +208,7 @@ class ItemControllerTest {
     void shouldDeleteItem() throws Exception {
         doNothing().when(itemService).delete(1);
         mockMvc.perform(delete("/api/v1/items/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

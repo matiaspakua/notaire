@@ -144,7 +144,7 @@ class WorkflowDefinitionControllerTest {
         when(repository.existsById(1)).thenReturn(true);
         when(nodeRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
         mockMvc.perform(delete("/api/v1/workflow-definition/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

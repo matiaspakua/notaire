@@ -197,7 +197,7 @@ class AdditionalControllersTest {
                     .content(managementBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/gestiones/2").contentType("application/json")
                     .content(managementBody)).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isOk());
+            mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/gestiones/2")).andExpect(status().isNotFound());
 
             var transitionOutput = new com.licensis.notaire.application.port.in.management.TransitionManagementOutput(1);
