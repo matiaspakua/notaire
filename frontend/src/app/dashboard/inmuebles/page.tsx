@@ -236,7 +236,15 @@ export default function InmueblesPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                onClick={handleSave}
+                disabled={
+                  createMutation.isPending ||
+                  updateMutation.isPending ||
+                  // The nomenclatura catastral identifies the property (CU69, #655).
+                  !form.nomenclaturaCatastral.trim()
+                }
+              >
                 {editing ? tc("update") : tc("create")}
               </Button>
             </FormActions>

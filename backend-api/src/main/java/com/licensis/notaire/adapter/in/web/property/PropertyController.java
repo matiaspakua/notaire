@@ -3,10 +3,12 @@ package com.licensis.notaire.adapter.in.web.property;
 import com.licensis.notaire.business.Property;
 import com.licensis.notaire.repository.PropertyRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +28,14 @@ import java.util.List;
 @Tag(name = "Inmueble", description = "API para gestionar inmueble")
 public class PropertyController {
 
+    /**
+     * Create and full-update body. The cadastral designation (nomenclatura catastral) identifies
+     * the property and is required on both, since PUT replaces every field (issue #655).
+     */
     record PropertyRequest(
+            @NotBlank
+            @Schema(description = "Nomenclatura catastral que identifica el inmueble; obligatoria y no vacía",
+                    requiredMode = Schema.RequiredMode.REQUIRED)
             String cadastralDesignation,
             java.math.BigDecimal fiscalAppraisal,
             String address,
@@ -98,7 +107,7 @@ public class PropertyController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Creado"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+        @ApiResponse(responseCode = "400", description = "Solicitud inválida (falta la nomenclatura catastral)"),
         @ApiResponse(responseCode = "409", description = "Conflicto")
     })
     @PostMapping
@@ -116,6 +125,7 @@ public class PropertyController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Solicitud inválida (falta la nomenclatura catastral)"),
         @ApiResponse(responseCode = "404", description = "No encontrado")
     })
     @PutMapping("/{id}")
