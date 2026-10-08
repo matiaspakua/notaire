@@ -49,6 +49,21 @@ test.describe("CU69 - Gestión de Inmuebles: valuación fiscal", () => {
     await steps.thenTableContainsText(nomenclatura);
   });
 
+  test("CU69-GW04: Given on inmuebles page, When the nomenclatura catastral is blank, Then the form cannot be saved (#655)", async ({ page }) => {
+    await steps.whenUserClicksButton("nuevo inmueble");
+    await steps.thenModalIsVisible();
+
+    const save = page.getByRole("dialog").getByRole("button", { name: /^(crear|create)$/i });
+    await steps.whenUserFillsField("Domicilio", "Calle sin nomenclatura");
+    await expect(save).toBeDisabled();
+
+    await steps.whenUserFillsField("Nomenclatura Catastral", "   ");
+    await expect(save).toBeDisabled();
+
+    await steps.whenUserFillsField("Nomenclatura Catastral", `NC-E2E-${Date.now()}-REQ`);
+    await expect(save).toBeEnabled();
+  });
+
   for (const viewport of [
     { width: 320, height: 568, label: "320px (mobile)" },
     { width: 768, height: 1024, label: "768px (tablet)" },
