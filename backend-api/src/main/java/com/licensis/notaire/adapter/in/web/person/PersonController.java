@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -155,7 +156,7 @@ public class PersonController {
     @Operation(summary = "Get people, one page at a time (default 20, sorted by id)")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<PersonResponse>> getAllPeople(
-            @PageableDefault(size = 20, sort = "idPerson") Pageable pageable) {
+            @ParameterObject @PageableDefault(size = 20, sort = "idPerson") Pageable pageable) {
         return ResponseEntity.ok(personService.findAll(pageable).map(PersonResponse::from));
     }
 

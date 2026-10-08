@@ -23,6 +23,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -147,7 +148,7 @@ public class BudgetController {
     @Operation(summary = "Obtener presupuestos paginados",
             description = "Parámetros: page (default 0), size (default 20), sort (ej. idPresupuesto,desc)")
     public ResponseEntity<Page<BudgetResponse>> getAll(
-            @PageableDefault(size = 20, sort = "idBudget", direction = Sort.Direction.DESC) Pageable pageable) {
+            @ParameterObject @PageableDefault(size = 20, sort = "idBudget", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(budgetService.findAllPaged(pageable).map(this::toResponse));
     }
 
