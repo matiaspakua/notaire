@@ -135,7 +135,7 @@ class WorkflowTransitionControllerTest {
     void shouldDeleteTransition() throws Exception {
         when(repository.existsById(1)).thenReturn(true);
         mockMvc.perform(delete("/api/v1/workflow-transition/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

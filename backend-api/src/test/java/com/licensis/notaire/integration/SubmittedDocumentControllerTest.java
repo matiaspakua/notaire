@@ -290,6 +290,6 @@ class SubmittedDocumentControllerTest {
                 .get("idSubmittedDocument").asInt();
 
         mockMvc.perform(delete("/api/v1/documento-presentado/" + id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 }

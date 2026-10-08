@@ -139,6 +139,6 @@ public class PropertyController {
             return ResponseEntity.notFound().build();
         }
         repository.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

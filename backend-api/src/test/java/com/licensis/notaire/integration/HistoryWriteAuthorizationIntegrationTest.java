@@ -150,7 +150,7 @@ class HistoryWriteAuthorizationIntegrationTest {
     void shouldLetAnAdministratorDeleteHistory() throws Exception {
         mockMvc.perform(delete("/api/v1/historial/{id}", historyId)
                         .header("Authorization", "Bearer " + administratorToken))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

@@ -140,6 +140,10 @@ public class RoleController {
         return ResponseEntity.ok(Map.of("idUsuario", idUser, "idRol", idRole));
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Rol desasignado"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
     @DeleteMapping("/usuarios/{idUser}")
     @Operation(summary = "Desasignar rol de usuario")
     public ResponseEntity<Void> unassignRoleFromUser(@PathVariable Integer idUser) {

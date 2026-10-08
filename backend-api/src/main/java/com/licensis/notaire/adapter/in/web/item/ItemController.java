@@ -212,7 +212,7 @@ public class ItemController {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             itemService.delete(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

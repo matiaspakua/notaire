@@ -223,7 +223,7 @@ class TestimonyControllerIntegrationTest {
         int id = mapper.readTree(created.getResponse().getContentAsString()).get("idTestimony").asInt();
 
         mockMvc.perform(delete("/api/v1/testimonio/" + id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/api/v1/testimonio/" + id))
                 .andExpect(status().isNotFound());

@@ -143,7 +143,7 @@ public class FolioTypeController {
         }
         try {
             repository.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("No se puede eliminar: el tipo de folio está referenciado por otros registros.");

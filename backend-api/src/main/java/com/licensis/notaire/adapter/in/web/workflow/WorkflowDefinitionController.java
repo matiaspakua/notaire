@@ -124,6 +124,6 @@ public class WorkflowDefinitionController {
                     .body(Map.of("error", "No se puede eliminar: el workflow tiene nodos asociados."));
         }
         repository.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

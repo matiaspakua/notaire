@@ -139,7 +139,7 @@ class FolioTypeControllerTest {
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of());
 
         mockMvc.perform(delete("/api/v1/tipo-folio/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

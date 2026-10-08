@@ -215,7 +215,7 @@ public class ProcedureController {
         }
         try {
             repository.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Failed to delete tramite id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();

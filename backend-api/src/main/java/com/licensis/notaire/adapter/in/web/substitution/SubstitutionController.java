@@ -221,7 +221,7 @@ public class SubstitutionController {
                 return ResponseEntity.notFound().build();
             }
             service.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Failed to delete substitution id {}", id, e);
             return ResponseEntity.internalServerError().build();

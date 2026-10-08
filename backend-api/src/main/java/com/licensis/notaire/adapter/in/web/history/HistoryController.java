@@ -169,7 +169,7 @@ public class HistoryController {
         try {
             entity.getFkIdManagementStatus().getHistoryList().remove(entity);
             repository.delete(entity);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Failed to delete historial id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();

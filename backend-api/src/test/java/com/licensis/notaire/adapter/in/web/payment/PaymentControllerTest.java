@@ -445,7 +445,7 @@ class PaymentControllerTest {
     void shouldDeletePayment() throws Exception {
         doNothing().when(deletePaymentUseCase).delete(1);
         mockMvc.perform(delete("/api/v1/pagos/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
         verify(deletePaymentUseCase, times(1)).delete(1);
     }
 
