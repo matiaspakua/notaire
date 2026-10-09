@@ -1,7 +1,7 @@
 info:
   name: List upcoming expirations
   type: http
-  seq: 8
+  seq: 9
   description: |-
       Traceability: CU42 (#802)
 http:

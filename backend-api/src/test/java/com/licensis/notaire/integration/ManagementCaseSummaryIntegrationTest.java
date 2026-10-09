@@ -41,6 +41,9 @@ class ManagementCaseSummaryIntegrationTest {
     @Autowired
     private ProcedureRepository procedureRepository;
 
+    @Autowired
+    private com.licensis.notaire.repository.DocumentTypeRepository documentTypeRepository;
+
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -132,10 +135,17 @@ class ManagementCaseSummaryIntegrationTest {
     void shouldListDocumentOfTheManagement() throws Exception {
         int idManagement = createManagement((int) (System.nanoTime() % 900_000) + 100_000);
         Procedure procedure = createProcedure(idManagement, null);
+        com.licensis.notaire.business.DocumentType type = new com.licensis.notaire.business.DocumentType();
+        type.setName("Tipo resumen caso " + System.nanoTime());
+        type.setDeliveredBy("Cliente");
+        type.setExpires(false);
+        type.setEnabled(true);
+        type = documentTypeRepository.save(type);
         mockMvc.perform(post("/api/v1/documento-presentado").contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"date": "2026-06-01", "delivered": false, "procedureId": %d, "name": "Doc del caso"}
-                                """.formatted(procedure.getIdProcedure())))
+                                {"typeId": %d, "date": "2026-06-01", "delivered": false, "procedureId": %d,
+                                 "name": "Doc del caso"}
+                                """.formatted(type.getIdDocumentType(), procedure.getIdProcedure())))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/api/v1/gestiones/" + idManagement + "/resumen-caso"))

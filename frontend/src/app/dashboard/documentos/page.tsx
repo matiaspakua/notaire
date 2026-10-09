@@ -28,6 +28,13 @@ import {
 } from "@/hooks/useDocumentosPresentados";
 import { useTiposDocumento } from "@/hooks/useDocumentos";
 import { useGestiones } from "@/hooks/useGestiones";
+import {
+  EMPTY_DOCUMENTO_FORM,
+  missingDocumentoFields,
+  showsTramiteLink,
+  toDocumentoRequest,
+  type DocumentoForm,
+} from "@/lib/documento-presentado-form";
 import { useReingresoDocumentacion } from "@/hooks/useReingresoDocumentacion";
 import type { DocumentoPresentado } from "@/types";
 
@@ -44,14 +51,14 @@ export default function DocumentosPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<DocumentoPresentado | null>(null);
-  const [form, setForm] = useState({ tipoId: "", fecha: "", entregado: false, gestionId: "", tramiteId: "" });
+  const [form, setForm] = useState<DocumentoForm>(EMPTY_DOCUMENTO_FORM);
   const { data: gestiones = [] } = useGestiones();
   const { data: gestionConTramites } = useReingresoDocumentacion(form.gestionId ? Number(form.gestionId) : undefined);
   const tramites = gestionConTramites?.procedures ?? [];
 
   function openCreate() {
     setEditing(null);
-    setForm({ tipoId: "", fecha: new Date().toISOString().split("T")[0], entregado: false, gestionId: "", tramiteId: "" });
+    setForm({ ...EMPTY_DOCUMENTO_FORM, fecha: new Date().toISOString().split("T")[0] });
     setModalOpen(true);
   }
 
@@ -68,12 +75,7 @@ export default function DocumentosPage() {
   }
 
   async function handleSave() {
-    const data = {
-      typeId: form.tipoId ? Number(form.tipoId) : null,
-      date: form.fecha || null,
-      delivered: form.entregado,
-      procedureId: form.tramiteId ? Number(form.tramiteId) : null,
-    };
+    const data = toDocumentoRequest(form);
     try {
       if (editing?.idSubmittedDocument) {
         await updateMutation.mutateAsync({ id: editing.idSubmittedDocument, data });
@@ -185,7 +187,7 @@ export default function DocumentosPage() {
         <DialogContent>
           <FormContainer>
             <FormSection title={editing ? t("editDocumento") : t("newDocumento")}>
-              <FormField label={tc("type")}>
+              <FormField label={tc("type")} required={!editing}>
                 <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
                   <SelectTrigger data-testid="select-tipo-documento">
                     <SelectValue placeholder="Seleccionar tipo" />
@@ -206,9 +208,9 @@ export default function DocumentosPage() {
                   onChange={(e) => setForm({ ...form, fecha: e.target.value })}
                 />
               </FormField>
-              {!editing && (
+              {showsTramiteLink(editing) && (
                 <>
-                  <FormField label={t("gestion")} helperText={t("gestionHelper")}>
+                  <FormField label={t("gestion")} helperText={t("gestionHelper")} required={!editing}>
                     <Select
                       value={form.gestionId}
                       onValueChange={(v) => setForm({ ...form, gestionId: v, tramiteId: "" })}
@@ -226,7 +228,11 @@ export default function DocumentosPage() {
                     </Select>
                   </FormField>
                   {form.gestionId && (
-                    <FormField label={t("tramite")} helperText={tramites.length === 0 ? t("sinTramites") : undefined}>
+                    <FormField
+                      label={t("tramite")}
+                      helperText={tramites.length === 0 ? t("sinTramites") : undefined}
+                      required={!editing}
+                    >
                       <Select value={form.tramiteId} onValueChange={(v) => setForm({ ...form, tramiteId: v })}>
                         <SelectTrigger data-testid="select-tramite-documento" disabled={tramites.length === 0}>
                           <SelectValue placeholder={t("selectTramite")} />
@@ -253,7 +259,15 @@ export default function DocumentosPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} data-testid="btn-guardar-documento">
+              <Button
+                onClick={handleSave}
+                disabled={
+                  createMutation.isPending ||
+                  updateMutation.isPending ||
+                  missingDocumentoFields(form, !!editing).length > 0
+                }
+                data-testid="btn-guardar-documento"
+              >
                 {editing ? tc("update") : tc("create")}
               </Button>
             </FormActions>

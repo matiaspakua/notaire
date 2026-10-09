@@ -448,15 +448,26 @@ export async function createTramite(
 }
 
 /**
- * SubmittedDocumentController's SubmittedDocumentRequest is
- * (typeId, date, delivered, procedureId, deliveredBy, name).
+ * SubmittedDocumentController's create request is
+ * (typeId, date, delivered, procedureId, deliveredBy, name); typeId and
+ * procedureId are required (#655). Without an explicit typeId a
+ * non-expiring document type is created first.
  */
 export async function createDocumentoEntidadExterna(
   page: Page,
   tramiteId: number,
-  overrides: { name?: string; deliveredBy?: string } = {},
+  overrides: { name?: string; deliveredBy?: string; typeId?: number } = {},
 ): Promise<ApiResult<{ idSubmittedDocument: number }>> {
+  let typeId = overrides.typeId;
+  if (typeId === undefined) {
+    const tipo = await createTipoDocumento(page, { expires: false });
+    if (!tipo.ok) {
+      return { ok: false, status: tipo.status, error: tipo.error ?? "createTipoDocumento failed" };
+    }
+    typeId = tipo.data!.idDocumentType;
+  }
   return apiPost(page, "/documento-presentado", {
+    typeId,
     procedureId: tramiteId,
     deliveredBy: "Entidad Externa",
     delivered: false,

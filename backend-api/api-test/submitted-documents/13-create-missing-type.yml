@@ -1,16 +1,16 @@
 info:
-  name: Reject a create with an invalid date
+  name: Reject a create without typeId
   type: http
-  seq: 11
+  seq: 14
   description: |-
-      Traceability: CU04 (#655) — an impossible day is rejected instead of silently dropped
+      Traceability: CU04 (#655) — the document type is required; nothing is stored
 http:
   method: POST
   url: "{{base_url}}/api/v1/documento-presentado"
   body:
     type: json
     data: |-
-        {"typeId": 1, "procedureId": {{submitted_doc_procedure_id}}, "date": "2026-02-30", "delivered": false, "name": "Bruno invalid date"}
+        {"procedureId": {{submitted_doc_procedure_id}}, "date": "2026-09-05", "delivered": false, "name": "Bruno no type"}
   headers:
     - name: Content-Type
       value: application/json
@@ -21,3 +21,4 @@ runtime:
     - type: tests
       code: |-
           test("Status 400", function () { expect(res.getStatus()).to.equal(400); });
+          test("Names the missing field", function () { expect(res.getBody().message).to.contain('typeId'); });

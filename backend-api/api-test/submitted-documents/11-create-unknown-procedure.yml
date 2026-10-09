@@ -1,7 +1,7 @@
 info:
   name: Reject a create for an unknown procedure
   type: http
-  seq: 11
+  seq: 12
   description: |-
       Traceability: CU04 (#655) — an unknown procedure id is rejected instead of storing an orphan document
 http:
@@ -10,7 +10,7 @@ http:
   body:
     type: json
     data: |-
-        {"procedureId": 999999, "delivered": false, "name": "Bruno unknown procedure"}
+        {"typeId": 1, "procedureId": 999999, "delivered": false, "name": "Bruno unknown procedure"}
   headers:
     - name: Content-Type
       value: application/json
