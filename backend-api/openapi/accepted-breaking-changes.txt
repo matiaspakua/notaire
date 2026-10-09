@@ -17,25 +17,16 @@
 # workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
 # until the entry and its comment are removed.
 
-# #655 (CU69 / CU82, Owner decision Run 7): the nomenclatura catastral
-# identifies a property and the UI already labelled it required, but the API
-# stored properties with a null, empty or blank one. PUT replaces every field,
-# so it must carry the designation too. The shipped UI now blocks Save while it
-# is blank (same PR); Bruno, Playwright and every backend test already sent it.
-POST /api/v1/inmueble the request property `cadastralDesignation` became required
-POST /api/v1/inmueble the `cadastralDesignation` request property's minLength was set to `1`
-PUT /api/v1/inmueble/{id} the request property `cadastralDesignation` became required
-PUT /api/v1/inmueble/{id} the `cadastralDesignation` request property's minLength was set to `1`
-# #655 (CU04 / CU72, Owner decision Run 7): a submitted document is presented
-# for a trámite of a gestión, and its type gives it a name, expiry and
-# delivered-by. A create without them stored a document that the case
-# summary, the documentation-complete check, the CU09 debt report, CU42 and
-# CU10 never see. The shipped frontend now requires both on create (same PR);
-# Bruno and Playwright were updated; PUT stays partial for legacy rows.
-POST /api/v1/documento-presentado the request property `procedureId` became required
-POST /api/v1/documento-presentado the request property `typeId` became required
-# #1315 (CU21): DELETE /api/v1/roles/usuarios/{idUser} always answered 204 No
-# Content; the contract wrongly documented 200. The spec now documents the 204
-# the endpoint has always returned, so no response a client received changes.
-# The frontend only checks res.ok (apiDelete).
-DELETE /api/v1/roles/usuarios/{idUser} removed the success response with the status `200`
+# #655 (CU08 / CU82 / CU43): these requests answered 500 whenever the field was
+# missing: the copy's print date and number are NOT NULL columns, and the
+# registration draft and document re-entry passed a null id to findById. No
+# request that omitted them ever succeeded, so no working client breaks; the
+# shipped UI already sends them (the copies dialog now also blocks Save without
+# them, same PR); Bruno and Playwright already sent them.
+POST /api/v1/copia the request property `datePrinting` became required
+POST /api/v1/copia the request property `number` became required
+PUT /api/v1/copia/{id} the request property `datePrinting` became required
+PUT /api/v1/copia/{id} the request property `number` became required
+POST /api/v1/gestiones/{id}/reingreso-documentacion the request property `idDocumentType` became required
+POST /api/v1/gestiones/{id}/reingreso-documentacion the request property `idProcedure` became required
+POST /api/v1/minutas-inscripcion the request property `idDeed` became required
