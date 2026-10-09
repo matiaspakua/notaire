@@ -1,16 +1,16 @@
 info:
   name: Create testimony
   type: http
-  seq: 1
+  seq: 2
   description: |-
-      Traceability: CU07 / CU08 (RF QA Bruno #953)
+      Traceability: CU07 / CU08 (RF QA Bruno #953). The deed comes from 00-setup-deed (#655: required).
 http:
   method: POST
   url: "{{base_url}}/api/v1/testimonio"
   body:
     type: json
     data: |-
-        {"number": {{testimony_number}}, "flagged": false, "verified": false, "notes": "Bruno E2E testimony"}
+        {"number": {{testimony_number}}, "flagged": false, "verified": false, "notes": "Bruno E2E testimony", "deed": {"idDeed": {{testimony_deed_id}}, "number": 0}}
   headers:
     - name: Content-Type
       value: application/json
