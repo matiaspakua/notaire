@@ -600,10 +600,10 @@
     "noData": "No documents registered",
     "tramite": "Procedure",
     "gestion": "Management",
-    "gestionHelper": "Optional: links the document to a procedure of the management",
+    "gestionHelper": "Required: the document is presented for a procedure of the management",
     "selectGestion": "Select management",
     "selectTramite": "Select procedure",
-    "sinTramites": "The management has no procedures"
+    "sinTramites": "The management has no procedures: add one before registering the document"
   },
   "presupuestos": {
     "title": "Quotes",

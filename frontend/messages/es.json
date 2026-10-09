@@ -600,10 +600,10 @@
     "noData": "No hay documentos registrados",
     "tramite": "Trámite",
     "gestion": "Gestión",
-    "gestionHelper": "Opcional: vincula el documento a un trámite de la gestión",
+    "gestionHelper": "Obligatorio: el documento se presenta para un trámite de la gestión",
     "selectGestion": "Seleccionar gestión",
     "selectTramite": "Seleccionar trámite",
-    "sinTramites": "La gestión no tiene trámites"
+    "sinTramites": "La gestión no tiene trámites: agregue uno antes de registrar el documento"
   },
   "presupuestos": {
     "title": "Presupuestos",

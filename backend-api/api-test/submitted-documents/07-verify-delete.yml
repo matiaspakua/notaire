@@ -1,7 +1,7 @@
 info:
   name: Verify submitted document deleted
   type: http
-  seq: 7
+  seq: 8
   description: |-
       Traceability: CU72
 http:

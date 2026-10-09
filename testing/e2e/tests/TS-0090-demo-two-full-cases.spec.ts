@@ -229,6 +229,9 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await go(page, "/dashboard/documentos");
     await page.getByRole("button", { name: /nuevo documento/i }).click();
     await chooseInDialogCombobox(page, new RegExp(def.tipoDocumento, "i"), "select-tipo-documento");
+    // The document is presented for the case's trámite (CU04, #655).
+    await chooseInDialogCombobox(page, new RegExp(`^${def.gestionNumero} `), "select-gestion-documento");
+    await chooseFirst(page, "select-tramite-documento");
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-06");
     await page.getByRole("dialog").getByLabel(/documento entregado/i).click();
     await saveDialog(page);

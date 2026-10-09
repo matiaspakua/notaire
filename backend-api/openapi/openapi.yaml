@@ -2482,6 +2482,29 @@ components:
         unsorted:
           type: boolean
       type: object
+    SubmittedDocumentCreateRequest:
+      properties:
+        date:
+          description: 'Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); otro valor responde 400'
+          type: string
+        delivered:
+          type: boolean
+        deliveredBy:
+          type: string
+        name:
+          type: string
+        procedureId:
+          description: Id del trámite de la gestión para el que se presenta el documento; si no existe la respuesta es 404
+          format: int32
+          type: integer
+        typeId:
+          description: Id de un tipo de documento existente; si no existe la respuesta es 404
+          format: int32
+          type: integer
+      required:
+      - procedureId
+      - typeId
+      type: object
     SubmittedDocumentRequest:
       properties:
         date:
@@ -3211,7 +3234,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubmittedDocumentRequest'
+              $ref: '#/components/schemas/SubmittedDocumentCreateRequest'
         required: true
       responses:
         '201':
@@ -3225,7 +3248,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida (fecha que no es un día yyyy-MM-dd)
+          description: Solicitud inválida (falta typeId o procedureId, o la fecha no es un día yyyy-MM-dd)
         '404':
           content:
             '*/*':

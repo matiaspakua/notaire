@@ -136,7 +136,8 @@ class SubmittedDocumentRequestValidationIntegrationTest {
     void createRejectsInvalidDate(String date) throws Exception {
         long before = documentRepository.count();
 
-        postJson("{\"typeId\": " + expiringType.getIdDocumentType() + ", \"date\": \"" + date + "\", \"name\": \"x\"}")
+        postJson("{\"typeId\": " + expiringType.getIdDocumentType() + ", \"procedureId\": "
+                + procedure.getIdProcedure() + ", \"date\": \"" + date + "\", \"name\": \"x\"}")
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("yyyy-MM-dd")));
 
@@ -148,7 +149,8 @@ class SubmittedDocumentRequestValidationIntegrationTest {
     void createRejectsUnknownType() throws Exception {
         long before = documentRepository.count();
 
-        postJson("{\"typeId\": 999999, \"date\": \"2026-09-05\", \"name\": \"x\"}")
+        postJson("{\"typeId\": 999999, \"procedureId\": " + procedure.getIdProcedure()
+                + ", \"date\": \"2026-09-05\", \"name\": \"x\"}")
                 .andExpect(status().isNotFound());
 
         assertThat(documentRepository.count()).isEqualTo(before);
@@ -159,10 +161,58 @@ class SubmittedDocumentRequestValidationIntegrationTest {
     void createRejectsUnknownProcedure() throws Exception {
         long before = documentRepository.count();
 
-        postJson("{\"procedureId\": 999999, \"name\": \"x\"}")
+        postJson("{\"typeId\": " + expiringType.getIdDocumentType() + ", \"procedureId\": 999999, \"name\": \"x\"}")
                 .andExpect(status().isNotFound());
 
         assertThat(documentRepository.count()).isEqualTo(before);
+    }
+
+    @ParameterizedTest(name = "create without {0} is rejected")
+    @ValueSource(strings = {"typeId", "procedureId"})
+    @DisplayName("create requires the document type and the procedure (CU04: a document is presented for a "
+            + "procedure of a management)")
+    void createRequiresTypeAndProcedure(String missing) throws Exception {
+        long before = documentRepository.count();
+        String type = "\"typeId\": " + expiringType.getIdDocumentType() + ", ";
+        String proc = "\"procedureId\": " + procedure.getIdProcedure() + ", ";
+        String body = "{" + ("typeId".equals(missing) ? "" : type) + ("procedureId".equals(missing) ? "" : proc)
+                + "\"date\": \"2026-09-05\", \"name\": \"x\"}";
+
+        postJson(body)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString(missing)));
+
+        assertThat(documentRepository.count()).isEqualTo(before);
+    }
+
+    @Test
+    @DisplayName("an empty create body is rejected instead of storing an empty document")
+    void createRejectsEmptyBody() throws Exception {
+        long before = documentRepository.count();
+
+        postJson("{}").andExpect(status().isBadRequest());
+
+        assertThat(documentRepository.count()).isEqualTo(before);
+    }
+
+    @Test
+    @DisplayName("the contract marks typeId and procedureId required on create only")
+    void contractMarksCreateFieldsRequired() throws Exception {
+        com.fasterxml.jackson.databind.JsonNode spec = JsonMapper.builder().build().readTree(
+                mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/v3/api-docs"))
+                        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        assertThat(requiredOf(spec, "post", URL)).contains("typeId", "procedureId");
+        assertThat(requiredOf(spec, "put", URL + "/{id}")).doesNotContain("typeId", "procedureId");
+    }
+
+    private static List<String> requiredOf(com.fasterxml.jackson.databind.JsonNode spec, String method, String path) {
+        String ref = spec.path("paths").path(path).path(method).path("requestBody").path("content")
+                .path("application/json").path("schema").path("$ref").asText();
+        com.fasterxml.jackson.databind.JsonNode schema = spec.path("components").path("schemas")
+                .path(ref.substring(ref.lastIndexOf('/') + 1));
+        List<String> required = new ArrayList<>();
+        schema.path("required").forEach(n -> required.add(n.asText()));
+        return required;
     }
 
     @Test
