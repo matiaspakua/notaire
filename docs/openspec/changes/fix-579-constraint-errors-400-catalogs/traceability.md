@@ -28,6 +28,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |---------------------------------|------|--------|
 | Create violating a constraint | `backend-api/src/test/java/com/licensis/notaire/integration/CatalogConstraintErrorsIntegrationTest.java, Bruno */08-create-empty-body` | passing |
 | Update violating a constraint | `backend-api/src/test/java/com/licensis/notaire/integration/CatalogConstraintErrorsIntegrationTest.java` | passing |
+| Duplicate role name on update (409) | `backend-api/src/test/java/com/licensis/notaire/integration/UniqueConstraintConflictIntegrationTest.java`, `ErrorResponsesTest.uniqueViolationIsConflict`, Bruno roles duplicate-rename | passing |
+| NOT NULL stays 400 | `UniqueConstraintConflictIntegrationTest.notNullStillBadRequest`, `ErrorResponsesTest.otherConstraintViolationsStayBadRequest` | passing |
+| Contract documents 409 | `UniqueConstraintConflictIntegrationTest.contractDocumentsConflict` | passing |
 | Other failures | `backend-api/src/test/java/com/licensis/notaire/adapter/in/web/support/ErrorResponsesTest.java` | passing |
 | Contract | `backend-api/src/test/java/com/licensis/notaire/integration/CatalogConstraintErrorsIntegrationTest.java` | passing |
 
