@@ -1,0 +1,25 @@
+info:
+  name: Unassign workflow with an explicit null
+  type: http
+  seq: 4
+  description: |-
+      ## Explicit null — PUT /api/v1/tipo-tramite/{procedure_type_id}/workflow
+      `{"workflowDefinitionId": null}` unassigns the workflow (what the UI sends).
+      Traceability: CU26
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tipo-tramite/{{procedure_type_id}}/workflow"
+  body:
+    type: json
+    data: |-
+        {"workflowDefinitionId": null}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
