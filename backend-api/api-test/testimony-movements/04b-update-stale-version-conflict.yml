@@ -1,7 +1,7 @@
 info:
   name: Update testimony movement with a stale version answers 409
   type: http
-  seq: 5
+  seq: 6
   description: |-
       ## Stale version — PUT /api/v1/movimiento-testimonio/{tm_movement_id}
       Issue #655, Owner decision Oct 9: 04-update moved the stored version to 1, so

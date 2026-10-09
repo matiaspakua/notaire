@@ -1,7 +1,7 @@
 info:
   name: Update testimony with a stale version answers 409
   type: http
-  seq: 4
+  seq: 5
   description: |-
       ## Stale version — PUT /api/v1/testimonio/{testimony_id}
       Issue #655, Owner decision Oct 9: 04-update already moved the stored version past

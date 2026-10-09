@@ -1,7 +1,7 @@
 info:
   name: Update testimony without version answers 400
   type: http
-  seq: 4
+  seq: 5
   description: |-
       ## Missing version — PUT /api/v1/testimonio/{testimony_id}
       Issue #655, Owner decision Oct 9: version is required on the full update. Without it
