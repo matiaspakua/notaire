@@ -16,10 +16,3 @@
 # so the entry accepts nothing and would hide a later break with the same text.
 # workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
 # until the entry and its comment are removed.
-
-# #655 (CU07 / CU08): a bare testimony must be a copy of an existing deed. The
-# only callers of POST /testimonio (E2E seed helpers createTestimonio and
-# TS-0032, the Bruno testimonies and testimony-movements folders, backend
-# tests) already send or now send the deed; the UI generates testimonies
-# through POST /testimonio/generar, which is unchanged.
-POST /api/v1/testimonio the request property `deed` became required
