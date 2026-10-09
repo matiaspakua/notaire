@@ -20,7 +20,7 @@ import {
 import { formatDate } from "@/lib/utils";
 
 describe("BUSINESS_TIME_ZONE", () => {
-  it("is Argentina (default decision on #1339)", () => {
+  it("is Argentina (owner decision on #1339)", () => {
     expect(BUSINESS_TIME_ZONE).toBe("America/Argentina/Buenos_Aires");
   });
 });

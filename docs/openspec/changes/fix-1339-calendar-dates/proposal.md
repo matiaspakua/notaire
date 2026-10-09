@@ -16,7 +16,7 @@ Date-only fields are `@Temporal(DATE)` columns that the backend serializes as mi
 
 ## What Changes
 
-- New `frontend/src/lib/dates.ts`: `BUSINESS_TIME_ZONE` (`America/Argentina/Buenos_Aires`, default decision on #1339), `parseCalendarDate`, `toDateInputValue`, `formatCalendarDate`, `formatInstant`, `todayInputValue`.
+- New `frontend/src/lib/dates.ts`: `BUSINESS_TIME_ZONE` (`America/Argentina/Buenos_Aires`, owner decision on #1339), `parseCalendarDate`, `toDateInputValue`, `formatCalendarDate`, `formatInstant`, `todayInputValue`.
 - `formatDate` (`lib/utils.ts`) keeps its signature and uses `formatCalendarDate`.
 - Edit dialogs bind `toDateInputValue(...)`: presupuestos, pagos, escrituras, suplencias, documentos-entidades-externas (4 dates), documentos, copias. `split("T")` and `toISOString().split` are gone, and today defaults use `todayInputValue()`.
 - Audit-log timestamps use `formatInstant` in the business zone; management history (a TIMESTAMP column holding the day's midnight), copias and testimony movements use `formatCalendarDate`.
@@ -27,7 +27,7 @@ Date-only fields are `@Temporal(DATE)` columns that the backend serializes as mi
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
 | A calendar date shows the stored day in any browser zone | #1339 | Made explicit |
-| Business time zone is America/Argentina/Buenos_Aires | #1339 default decision (Owner did not answer, 2026-10-09) | New |
+| Business time zone is America/Argentina/Buenos_Aires | Owner decision on #1339 (2026-10-09) | New |
 | Edit dialogs pre-fill the stored date; saving unchanged keeps it | #1338 | Made explicit |
 
 ## Capabilities

@@ -15,7 +15,7 @@
  * TIMESTAMP columns but hold the day's midnight, so they are calendar dates.
  */
 
-/** Business time zone of the notary office (default decision on #1339). */
+/** Business time zone of the notary office (owner decision on #1339). */
 export const BUSINESS_TIME_ZONE = "America/Argentina/Buenos_Aires";
 
 export interface CalendarDate {
