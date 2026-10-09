@@ -10,11 +10,11 @@ Goal: catalog constraint errors answer 400. Non-goals: the other controller grou
 
 ## Decisions
 
-Every SQLState class 23 error counts, including unique violations, matching GlobalExceptionHandler. DELETE keeps 409 for referenced rows: the request is well formed and conflicts with stored state. Concept updates are partial (null fields are kept), so they rarely hit a constraint; the helper still covers them.
+Every SQLState class 23 error counts. Owner decision (Oct 9): a unique violation (SQLState 23505, Hibernate `ConstraintKind.UNIQUE`, `DuplicateKeyException`) is a duplicate of stored data and answers 409; the rest (NOT NULL, foreign key, check) answer 400. `GlobalExceptionHandler` applies the same rule through `ErrorResponses.isUniqueViolation`, so both paths agree. DELETE keeps 409 for referenced rows: the request is well formed and conflicts with stored state. Concept updates are partial (null fields are kept), so they rarely hit a constraint; the helper still covers them.
 
 ## Riesgos / Trade-offs
 
-A client that treated 409 as 'invalid catalog data' now sees 400; the shipped frontend shows the message for any non-2xx.
+A client that treated 409 as 'invalid catalog data' now sees 400; the shipped frontend shows the message for any non-2xx. Endpoints that relied on `GlobalExceptionHandler` for duplicates (role rename, second registration draft for a deed, notebook number race) move from 400 to 409; the UI shows the message for any non-2xx.
 
 ## Testing Strategy
 
