@@ -1,11 +1,8 @@
-# patched-dependencies — delta
+# patched-dependencies Specification
 
 ## Purpose
-
 Runtime dependencies stay at or above the patched release of each known HIGH/CRITICAL CVE.
-
-## MODIFIED Requirements
-
+## Requirements
 ### Requirement: Patched runtime libraries
 
 The backend runtime classpath SHALL use releases at or above the fixed version of every known HIGH/CRITICAL CVE on the release line in use, for embedded Tomcat and Jackson 2 and 3.
@@ -28,3 +25,4 @@ commons-collections 2.x/3.x SHALL NOT be on the backend classpath.
 
 - **WHEN** the backend classpath is inspected
 - **THEN** `org.apache.commons.collections.functors.InvokerTransformer` cannot be loaded
+
