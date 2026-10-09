@@ -2628,12 +2628,14 @@ components:
           description: Testimonio verificado
           type: boolean
         version:
+          description: 'Versión leída del testimonio (bloqueo optimista): 409 si ya no es la almacenada'
           format: int32
           type: integer
       required:
       - flagged
       - number
       - verified
+      - version
       type: object
     TypeDocInfo:
       properties:
@@ -3039,6 +3041,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar concepto
       tags:
       - Conceptos
@@ -3795,6 +3803,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar estado de gestion
       tags:
       - Estado de Gestion
@@ -5501,6 +5515,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar movimiento-testimonio
       tags:
       - MovimientoTestimonio
@@ -7453,8 +7473,9 @@ paths:
       tags:
       - Testimonio
     put:
-      description: Reemplaza el testimonio. number, flagged y verified son obligatorios (400 si falta alguno); notes se guarda
-        tal como se envía y una escritura ausente conserva la actual.
+      description: 'Reemplaza el testimonio. number, flagged, verified y version son obligatorios (400 si falta alguno); notes
+        se guarda tal como se envía y una escritura ausente conserva la actual. version es la leída: si ya no es la almacenada
+        responde 409 (bloqueo optimista).'
       operationId: update_8
       parameters:
       - in: path
@@ -7481,13 +7502,19 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: 'Cuerpo vacío o incompleto: number, flagged y verified son obligatorios'
+          description: 'Cuerpo vacío o incompleto: number, flagged, verified y version son obligatorios'
         '404':
           content:
             '*/*':
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el testimonio'
       summary: Actualizar testimonio
       tags:
       - Testimonio
@@ -7675,6 +7702,12 @@ paths:
               schema:
                 type: object
           description: Not found
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Update document type
       tags:
       - TipoDeDocumento
@@ -7851,6 +7884,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar tipo de folio
       tags:
       - Tipo de Folio
@@ -8138,6 +8177,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar tipo de tramite
       tags:
       - Tipo de Tramite
@@ -8667,6 +8712,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar workflow
       tags:
       - Workflow Definition
