@@ -63,4 +63,40 @@ class ErrorResponsesTest {
         ErrorResponse body = (ErrorResponse) ErrorResponses.conflict(null).getBody();
         assertThat(body.getMessage()).isEqualTo(ErrorResponses.CONFLICT_MESSAGE);
     }
+
+    @Test
+    @DisplayName("#579 slice 2: a create failing on a data constraint answers 400 with a safe message")
+    void createFailedOnConstraintIsBadRequest() {
+        ResponseEntity<Object> response = ErrorResponses.createFailed(new DataIntegrityViolationException(SQL_LEAK));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertThat(body.getStatus()).isEqualTo(400);
+        assertThat(body.getError()).isEqualTo("Bad Request");
+        assertThat(body.getMessage()).isEqualTo(ErrorResponses.CONSTRAINT_MESSAGE);
+        assertThat(body.getMessage()).doesNotContain("Failing row", "folio_types", "secret");
+    }
+
+    @Test
+    @DisplayName("#579 slice 2: a constraint violation wrapped in other exceptions is still a 400")
+    void wrappedConstraintViolationIsBadRequest() {
+        Exception wrapped = new org.springframework.transaction.TransactionSystemException("commit failed",
+                new org.hibernate.exception.ConstraintViolationException("x",
+                        new java.sql.SQLException("null value", "23502"), "c"));
+        assertThat(ErrorResponses.updateFailed(wrapped).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        Exception sqlOnly = new RuntimeException(new java.sql.SQLException("unique", "23505"));
+        assertThat(ErrorResponses.createFailed(sqlOnly).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("#579 slice 2: other failures keep their status (409 on create, 500 on update)")
+    void otherFailuresKeepTheirStatus() {
+        assertThat(ErrorResponses.createFailed(new RuntimeException("x")).getStatusCode())
+                .isEqualTo(HttpStatus.CONFLICT);
+        assertThat(ErrorResponses.updateFailed(new RuntimeException("x")).getStatusCode())
+                .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(ErrorResponses.updateFailed(new java.sql.SQLException("deadlock", "40001")).getStatusCode())
+                .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

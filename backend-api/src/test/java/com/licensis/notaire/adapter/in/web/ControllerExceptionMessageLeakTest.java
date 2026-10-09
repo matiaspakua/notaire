@@ -56,6 +56,8 @@ class ControllerExceptionMessageLeakTest {
     private static final String GENERIC_CONFLICT =
             "The request conflicts with existing data or violates a data constraint";
     private static final String GENERIC_SERVER_ERROR = "An unexpected error occurred";
+    /** #579 slice 2: a constraint violation on a catalog create or update answers 400. */
+    private static final String GENERIC_CONSTRAINT = "The submitted data violates a database constraint";
 
     private static void assertNoLeak(MvcResult result) throws Exception {
         String body = result.getResponse().getContentAsString();
@@ -71,9 +73,9 @@ class ControllerExceptionMessageLeakTest {
 
         MvcResult result = mvc.perform(post("/api/v1/tipo-folio").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":null}"))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.status").value(409))
-                .andExpect(jsonPath("$.message").value(GENERIC_CONFLICT))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
                 .andReturn();
         assertNoLeak(result);
     }
@@ -90,9 +92,9 @@ class ControllerExceptionMessageLeakTest {
 
         MvcResult result = mvc.perform(put("/api/v1/tipo-folio/1").contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.status").value(500))
-                .andExpect(jsonPath("$.message").value(GENERIC_SERVER_ERROR))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
                 .andReturn();
         assertNoLeak(result);
     }
@@ -111,8 +113,8 @@ class ControllerExceptionMessageLeakTest {
 
         MvcResult result = mvc.perform(put("/api/v1/tipo-de-documento/1").contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.message").value(GENERIC_SERVER_ERROR))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
                 .andReturn();
         assertNoLeak(result);
     }
