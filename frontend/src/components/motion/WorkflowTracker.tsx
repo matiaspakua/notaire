@@ -13,7 +13,7 @@ import type {
   WorkflowNode,
   WorkflowTransition,
 } from "@/types";
-import { formatCalendarDate, formatInstant } from "@/lib/dates";
+import { formatCalendarDate } from "@/lib/dates";
 
 interface Props {
   trace: GestionWorkflowTrace;
@@ -308,7 +308,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
                     style={{ backgroundColor: theme.colors.neutral[100] }}
                   >
                     <p className="font-medium" style={{ color: theme.colors.neutral[900] }}>
-                      {formatInstant(h.date, "es-AR", { withTime: false })}
+                      {formatCalendarDate(h.date)}
                     </p>
                     {h.notes && (
                       <p className="mt-0.5" style={{ color: theme.colors.neutral[600] }}>

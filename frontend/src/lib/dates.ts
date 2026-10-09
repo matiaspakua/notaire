@@ -10,8 +10,9 @@
  * the server and the browser zone, and accept plain `yyyy-MM-dd` too, so they
  * keep working once the backend moves to `LocalDate`.
  *
- * Real timestamps (audit log, history) are instants: show them in the
- * business time zone with {@link formatInstant}.
+ * Real timestamps (the audit log) are instants: show them in the business
+ * time zone with {@link formatInstant}. Management history dates are
+ * TIMESTAMP columns but hold the day's midnight, so they are calendar dates.
  */
 
 /** Business time zone of the notary office (default decision on #1339). */
@@ -69,11 +70,7 @@ export function formatCalendarDate(value?: string | null, locale = "es-AR"): str
 }
 
 /** A timestamp shown as date and time in the business time zone; "—" when empty. */
-export function formatInstant(
-  value?: string | null,
-  locale = "es-AR",
-  { withTime = true }: { withTime?: boolean } = {},
-): string {
+export function formatInstant(value?: string | null, locale = "es-AR"): string {
   if (!value) return "—";
   const ms = Date.parse(value);
   if (Number.isNaN(ms)) return "—";
@@ -82,7 +79,9 @@ export function formatInstant(
     day: "numeric",
     month: "numeric",
     year: "numeric",
-    ...(withTime ? { hour: "2-digit", minute: "2-digit", hour12: false } : {}),
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   }).format(new Date(ms));
 }
 

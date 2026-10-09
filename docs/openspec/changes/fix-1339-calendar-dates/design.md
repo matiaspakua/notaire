@@ -14,7 +14,7 @@ An instant is read as the day of its nearest UTC midnight (instant + 12h, UTC da
 
 ## Riesgos / Trade-offs
 
-A real timestamp passed to `formatDate` would be rounded to the nearest midnight; timestamps (audit, history) now use `formatInstant` explicitly.
+A real timestamp passed to `formatDate` would be rounded to the nearest midnight; the audit log now uses `formatInstant` explicitly. Management history is a TIMESTAMP column, but the backend stores the day's midnight in it (checked on the dev DB), so it stays a calendar date.
 
 ## Testing Strategy
 

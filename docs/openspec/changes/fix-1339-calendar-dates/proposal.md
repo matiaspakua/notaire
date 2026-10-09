@@ -19,7 +19,7 @@ Date-only fields are `@Temporal(DATE)` columns that the backend serializes as mi
 - New `frontend/src/lib/dates.ts`: `BUSINESS_TIME_ZONE` (`America/Argentina/Buenos_Aires`, default decision on #1339), `parseCalendarDate`, `toDateInputValue`, `formatCalendarDate`, `formatInstant`, `todayInputValue`.
 - `formatDate` (`lib/utils.ts`) keeps its signature and uses `formatCalendarDate`.
 - Edit dialogs bind `toDateInputValue(...)`: presupuestos, pagos, escrituras, suplencias, documentos-entidades-externas (4 dates), documentos, copias. `split("T")` and `toISOString().split` are gone, and today defaults use `todayInputValue()`.
-- Timestamps (audit log, management history, WorkflowTracker history) use `formatInstant` in the business zone; copias and testimony movements use `formatCalendarDate`.
+- Audit-log timestamps use `formatInstant` in the business zone; management history (a TIMESTAMP column holding the day's midnight), copias and testimony movements use `formatCalendarDate`.
 - Vitest `dates.test.ts` (with a source guard); Playwright `TS-0102`, `TS-0103`; CHANGELOG entry.
 
 ## Reglas de negocio
