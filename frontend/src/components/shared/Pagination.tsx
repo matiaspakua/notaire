@@ -33,15 +33,15 @@ export function Pagination({ page, size, totalElements, onPageChange, onSizeChan
   return (
     <nav
       aria-label={t("label")}
-      className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-t border-border/40 text-sm text-muted-foreground"
+      className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-border/40 text-sm text-muted-foreground"
     >
       <p data-testid="pagination-status" aria-live="polite">
         {t("status", { from, to, total: totalElements })}
       </p>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         {onSizeChange && (
           <label className="flex items-center gap-2">
-            <span>{t("rowsPerPage")}</span>
+            <span className="sr-only sm:not-sr-only whitespace-nowrap">{t("rowsPerPage")}</span>
             <select
               className="h-9 rounded-lg border border-input bg-background px-2 text-sm text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               value={size}
@@ -55,7 +55,7 @@ export function Pagination({ page, size, totalElements, onPageChange, onSizeChan
             </select>
           </label>
         )}
-        <span data-testid="pagination-page">{t("page", { page: current + 1, pages })}</span>
+        <span data-testid="pagination-page" className="whitespace-nowrap">{t("page", { page: current + 1, pages })}</span>
         <div className="flex items-center gap-1">
           <Button size="sm" variant="ghost" aria-label={t("first")} disabled={atFirst} onClick={() => onPageChange(0)}>
             <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
