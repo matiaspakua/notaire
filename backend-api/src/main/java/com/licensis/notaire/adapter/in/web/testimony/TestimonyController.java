@@ -33,15 +33,17 @@ public class TestimonyController {
 
     /**
      * Body of the full update: the same fields as {@link DtoTestimony}, with {@code number},
-     * {@code flagged} and {@code verified} required. They map to NOT NULL columns and are
+     * {@code flagged}, {@code verified} and {@code version} required. They map to NOT NULL columns and are
      * primitives in the DTO, so a missing one used to overwrite the stored value with 0/false
      * (issue #655, Owner decision Oct 9). Presence is recorded by the setters Jackson calls.
      * {@code notes} is replaced as sent; an absent {@code deed} keeps the stored link.
+     * {@code version} is the one the client read: a different stored version answers 409.
      */
     public static class TestimonyUpdateRequest extends DtoTestimony {
         private boolean numberSent;
         private boolean flaggedSent;
         private boolean verifiedSent;
+        private boolean versionSent;
 
         @Override
         @Schema(description = "Número del testimonio", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -79,12 +81,26 @@ public class TestimonyController {
             super.setVerified(verified);
         }
 
+        @Override
+        @Schema(description = "Versión leída del testimonio (bloqueo optimista): 409 si ya no es la "
+                + "almacenada", requiredMode = Schema.RequiredMode.REQUIRED)
+        public int getVersion() {
+            return super.getVersion();
+        }
+
+        @Override
+        public void setVersion(int version) {
+            versionSent = true;
+            super.setVersion(version);
+        }
+
         /** Throws a 400 naming every required field the body did not send. */
         void requireComplete() {
             RequiredFields.check()
                     .present(numberSent, "number")
                     .present(flaggedSent, "flagged")
                     .present(verifiedSent, "verified")
+                    .present(versionSent, "version")
                     .orThrow();
         }
     }
@@ -141,27 +157,33 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Cuerpo vacío o incompleto: number, flagged y verified son obligatorios"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "400", description = "Cuerpo vacío o incompleto: number, flagged, verified y version son "
+            + "obligatorios"),
+    @ApiResponse(responseCode = "404", description = "No encontrado"),
+    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el testimonio")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar testimonio",
-               description = "Reemplaza el testimonio. number, flagged y verified son obligatorios (400 si falta "
-                       + "alguno); notes se guarda tal como se envía y una escritura ausente conserva la actual.")
+               description = "Reemplaza el testimonio. number, flagged, verified y version son obligatorios (400 si "
+                       + "falta alguno); notes se guarda tal como se envía y una escritura ausente conserva la actual. "
+                       + "version es la leída: si ya no es la almacenada responde 409 (bloqueo optimista).")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody TestimonyUpdateRequest dto) {
         dto.requireComplete();
         Optional<Testimony> existing = repository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        Testimony entity = existing.get();
+        if (entity.getVersion() != dto.getVersion()) {
+            return ErrorResponses.staleVersion();
+        }
         try {
-            Testimony entity = existing.get();
             dto.setIdTestimony(id);
             entity.setAtributos(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ErrorResponses.serverError(e);
+            return ErrorResponses.updateFailed(e);
         }
     }
 
