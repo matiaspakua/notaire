@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.management;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoManagementStatus;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.repository.ManagementStatusRepository;
@@ -100,7 +101,7 @@ public class ManagementStatusController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -130,7 +131,7 @@ public class ManagementStatusController {
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ErrorResponses.serverError(e);
         }
     }
 
@@ -150,6 +151,6 @@ public class ManagementStatusController {
                             "No se puede eliminar: el estado está referenciado por gestiones de escritura."));
         }
         repository.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

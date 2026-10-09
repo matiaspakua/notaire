@@ -7012,8 +7012,10 @@ paths:
           format: int32
           type: integer
       responses:
-        '200':
-          description: OK
+        '204':
+          description: Rol desasignado
+        '404':
+          description: Usuario no encontrado
       summary: Desasignar rol de usuario
       tags:
       - Roles

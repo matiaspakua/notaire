@@ -16,4 +16,4 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
+          test("Status 204 No Content", function () { expect(res.getStatus()).to.equal(204); });

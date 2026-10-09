@@ -176,7 +176,7 @@ public class CopyController {
         }
         try {
             service.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             log.error("Failed to delete copia id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();

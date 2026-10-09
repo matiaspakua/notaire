@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.workflow;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoWorkflowDefinition;
 import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
@@ -78,7 +79,7 @@ public class WorkflowDefinitionController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.toDto());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -104,7 +105,7 @@ public class WorkflowDefinitionController {
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
+            return ErrorResponses.serverError(e);
         }
     }
 
@@ -123,6 +124,6 @@ public class WorkflowDefinitionController {
                     .body(Map.of("error", "No se puede eliminar: el workflow tiene nodos asociados."));
         }
         repository.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

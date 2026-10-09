@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.folio;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoFolioType;
 import com.licensis.notaire.business.FolioType;
 import com.licensis.notaire.repository.FolioRepository;
@@ -96,7 +97,7 @@ public class FolioTypeController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -122,7 +123,7 @@ public class FolioTypeController {
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ErrorResponses.serverError(e);
         }
     }
 
@@ -142,7 +143,7 @@ public class FolioTypeController {
         }
         try {
             repository.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("No se puede eliminar: el tipo de folio está referenciado por otros registros.");

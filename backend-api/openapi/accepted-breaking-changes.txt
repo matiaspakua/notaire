@@ -25,3 +25,8 @@
 # Bruno and Playwright were updated; PUT stays partial for legacy rows.
 POST /api/v1/documento-presentado the request property `procedureId` became required
 POST /api/v1/documento-presentado the request property `typeId` became required
+# #1315 (CU21): DELETE /api/v1/roles/usuarios/{idUser} always answered 204 No
+# Content; the contract wrongly documented 200. The spec now documents the 204
+# the endpoint has always returned, so no response a client received changes.
+# The frontend only checks res.ok (apiDelete).
+DELETE /api/v1/roles/usuarios/{idUser} removed the success response with the status `200`

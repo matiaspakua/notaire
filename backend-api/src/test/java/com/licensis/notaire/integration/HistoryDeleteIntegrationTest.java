@@ -59,7 +59,7 @@ class HistoryDeleteIntegrationTest {
 
         ResponseEntity<Void> response = historyController.delete(id);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(historyRepository.existsById(id)).isFalse();
     }
 

@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.workflow;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoWorkflowTransition;
 import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.business.WorkflowNode;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -95,7 +95,7 @@ public class WorkflowTransitionController {
             transition = repository.save(transition);
             return ResponseEntity.status(HttpStatus.CREATED).body(transition.toDto());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -125,7 +125,7 @@ public class WorkflowTransitionController {
             transition.setDescription(dto.getDescription());
             return ResponseEntity.ok(repository.save(transition).toDto());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -140,6 +140,6 @@ public class WorkflowTransitionController {
             return ResponseEntity.notFound().build();
         }
         repository.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
