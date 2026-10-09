@@ -63,7 +63,8 @@ public class RegistrationDraftController {
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Minuta generada"),
         @ApiResponse(responseCode = "400", description = "Datos catastrales/registrales incompletos o escritura no firmada"),
-        @ApiResponse(responseCode = "404", description = "Escritura no encontrada")
+        @ApiResponse(responseCode = "404", description = "Escritura no encontrada"),
+        @ApiResponse(responseCode = "409", description = "La escritura ya tiene una minuta de inscripción")
     })
     @PostMapping
     @Operation(summary = "CU82 - Generar la minuta de inscripción para una escritura sobre un inmueble")

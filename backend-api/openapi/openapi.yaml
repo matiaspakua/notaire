@@ -3166,6 +3166,12 @@ paths:
               schema:
                 type: object
           description: Escribano o folio no encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Ya existe un cuaderno con ese número para el año y escribano
       summary: Crear un nuevo cuaderno a partir de diez folios consecutivos
       tags:
       - Cuadernos
@@ -5026,6 +5032,12 @@ paths:
               schema:
                 type: object
           description: Escritura no encontrada
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: La escritura ya tiene una minuta de inscripción
       summary: CU82 - Generar la minuta de inscripción para una escritura sobre un inmueble
       tags:
       - Minutas de Inscripción
@@ -7140,12 +7152,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/RoleResponse'
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+          description: Solicitud inválida
         '404':
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RoleResponse'
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+          description: Ya existe un rol con ese nombre
       summary: Actualizar rol
       tags:
       - Roles

@@ -12,6 +12,7 @@
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
 - [x] 3.1 `CatalogConstraintErrorsIntegrationTest` observed failing 15/15 before the change
+- [x] 3.2 Duplicates as 409: `ErrorResponsesTest.uniqueViolationIsConflict` and `UniqueConstraintConflictIntegrationTest` (duplicate role rename, 3 contract cases) observed failing 1 + 4 before the change
 
 ## 4. Implementación
 
