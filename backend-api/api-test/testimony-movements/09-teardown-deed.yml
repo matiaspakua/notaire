@@ -1,0 +1,20 @@
+info:
+  name: Teardown - Delete the deed
+  type: http
+  seq: 11
+  description: |-
+      ## Teardown — DELETE /api/v1/escrituras/{id}
+      Removes the deed from 00-setup-deed; its testimony was deleted by
+      08-teardown-testimony.
+      Traceability: CU12 (#655)
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/escrituras/{{tm_deed_id}}"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 204 No Content", function () { expect(res.getStatus()).to.equal(204); });

@@ -1,7 +1,7 @@
 info:
   name: Verify testimony update
   type: http
-  seq: 5
+  seq: 6
   description: |-
       Traceability: CU08
 http:
