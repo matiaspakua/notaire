@@ -39,6 +39,14 @@
             "context": 32768,
             "output": 4096
           }
+        },
+        "Ternary-Bonsai-2-27B-mlx-2bit": {
+          "name": "Ternary-Bonsai-2-27B (2-bit MLX)",
+          "tool_call": true,
+          "limit": {
+            "context": 65536,
+            "output": 4096
+          }
         }
       }
     }
