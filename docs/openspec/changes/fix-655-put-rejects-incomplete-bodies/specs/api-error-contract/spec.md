@@ -34,3 +34,27 @@ Consistent HTTP status codes and error bodies for failed API requests.
 
 - **WHEN** the OpenAPI document is generated
 - **THEN** the three PUTs list 400 and their request schemas list the required fields
+
+### Requirement: A missing or stale version on update never answers 500
+
+`PUT /api/v1/testimonio/{id}` SHALL require `version` (400 `version: es obligatorio` when absent) and SHALL answer 409 with the standard ErrorResponse ("The record was modified by another user; reload it and try again") when the sent version is not the stored one, storing nothing. Every update whose optimistic lock fails (Spring `OptimisticLockingFailureException`, JPA `OptimisticLockException`, Hibernate `StaleStateException`), whether caught through `ErrorResponses.updateFailed` or reaching `GlobalExceptionHandler`, SHALL answer that 409. The PUTs that copy `version` from the body (tipo-folio, estado-gestion, tipo-de-documento, tipo-tramite, conceptos, workflow-definition, movimiento-testimonio) SHALL document 409. Owner decision Oct 9.
+
+#### Scenario: Testimony update without version
+
+- **WHEN** `PUT /testimonio/{id}` sends number, flagged and verified but no version
+- **THEN** the response is 400 `version: es obligatorio` and the testimony is unchanged
+
+#### Scenario: Stale testimony version
+
+- **WHEN** another update already moved the stored version past the one sent
+- **THEN** the response is 409 and the newer data is kept
+
+#### Scenario: Stale version on another versioned update
+
+- **WHEN** a catalog or testimony-movement PUT sends a version that is not the stored one
+- **THEN** the response is 409, not 500
+
+#### Scenario: UI sends the version it read
+
+- **WHEN** an administrator edits the same folio type twice
+- **THEN** both saves answer 200 and notes and enabled are kept

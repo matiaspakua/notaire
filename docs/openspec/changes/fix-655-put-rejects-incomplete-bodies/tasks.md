@@ -12,6 +12,7 @@
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
 - [x] 3.1 `IncompletePutBodiesIntegrationTest` observed failing 9/10 before the change; `RequiredFieldsTest` written first
+- [x] 3.2 Version addendum: `StaleOrMissingVersionIntegrationTest` + `GlobalExceptionHandlerOptimisticLockTest` red 6/6, then 8/13 for the versioned-PUT contract and the movement; Bruno 4 requests red; Playwright `folio-type-edit-version` red (second PUT 409)
 
 ## 4. Implementación
 
@@ -28,6 +29,7 @@
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 TS-0022, TS-0021, TS-0012/0031/0032
+- [x] 7.2 Version addendum: `folio-type-edit-version`, TS-0024, folios-vinculacion, TS-0012/0031/0032
 
 ## 8. Gate 3 — Actualizar documentación permanente
 

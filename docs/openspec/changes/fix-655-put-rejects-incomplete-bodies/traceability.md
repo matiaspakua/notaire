@@ -31,6 +31,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Procedure update without type | `IncompletePutBodiesIntegrationTest.procedureWithoutTypeIsRejected`, Bruno `procedures/04a` + `05` | passing |
 | Workflow assignment | `IncompletePutBodiesIntegrationTest.workflowAssignment*`, Bruno `procedure-types/04a`–`04b`, `frontend/src/hooks/useTiposTramite.test.tsx` | passing |
 | Contract | `IncompletePutBodiesIntegrationTest.contractDocumentsRequiredFields` | passing |
+| Testimony update without version | `StaleOrMissingVersionIntegrationTest.testimonyMissingVersionIsRejected`, Bruno `testimonies/04c`, `04a` | passing |
+| Stale testimony version | `StaleOrMissingVersionIntegrationTest.testimonyStaleVersionIsConflict` / `testimonyFutureVersionIsConflict`, Bruno `testimonies/04b` | passing |
+| Stale version on another versioned update | `StaleOrMissingVersionIntegrationTest.catalogStaleVersionIsConflict` / `testimonyMovementStaleVersionIsConflict` / `versionedUpdatesDocument409`, `GlobalExceptionHandlerOptimisticLockTest`, `ErrorResponsesTest`, Bruno `testimony-movements/04b` | passing |
+| UI sends the version it read | `testing/e2e/tests/folio-type-edit-version.spec.ts` | passing |
 
 ## Permanent documentation updated
 

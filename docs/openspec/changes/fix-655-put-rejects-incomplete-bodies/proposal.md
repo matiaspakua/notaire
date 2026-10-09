@@ -71,3 +71,7 @@ Validation stays in the web adapter, with the shared `RequiredFields` helper fro
 | `CHANGELOG.md` | Fixed entry |
 | `backend-api/openapi/openapi.yaml` | regenerated |
 | `backend-api/openapi/accepted-breaking-changes.txt` | six #655 entries |
+
+## Addendum — missing or stale version (Owner decision Oct 9)
+
+`PUT /testimonio/{id}` copied `version` from the body into the `@Version` field: an omitted version read as 0 and a stale one hit the optimistic lock, both as 500. It now requires `version` (400) and answers 409 when it is not the stored one. Optimistic-lock failures answer 409 everywhere (`ErrorResponses.updateFailed`, `GlobalExceptionHandler`), the seven PUTs that copy `version` document 409, and the folio-type dialog, which never sent `version` (its second edit always failed), now sends the loaded row.
