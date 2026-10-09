@@ -3,9 +3,11 @@ package com.licensis.notaire.adapter.in.web.testimony;
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.business.Testimony;
+import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.repository.TestimonyRepository;
 import com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,6 +30,64 @@ import java.util.Optional;
 @RequestMapping("/api/v1/testimonio")
 @Tag(name = "Testimonio", description = "API para gestionar testimonio")
 public class TestimonyController {
+
+    /**
+     * Body of the full update: the same fields as {@link DtoTestimony}, with {@code number},
+     * {@code flagged} and {@code verified} required. They map to NOT NULL columns and are
+     * primitives in the DTO, so a missing one used to overwrite the stored value with 0/false
+     * (issue #655, Owner decision Oct 9). Presence is recorded by the setters Jackson calls.
+     * {@code notes} is replaced as sent; an absent {@code deed} keeps the stored link.
+     */
+    public static class TestimonyUpdateRequest extends DtoTestimony {
+        private boolean numberSent;
+        private boolean flaggedSent;
+        private boolean verifiedSent;
+
+        @Override
+        @Schema(description = "Número del testimonio", requiredMode = Schema.RequiredMode.REQUIRED)
+        public int getNumber() {
+            return super.getNumber();
+        }
+
+        @Override
+        public void setNumber(int number) {
+            numberSent = true;
+            super.setNumber(number);
+        }
+
+        @Override
+        @Schema(description = "Testimonio observado", requiredMode = Schema.RequiredMode.REQUIRED)
+        public boolean isFlagged() {
+            return super.isFlagged();
+        }
+
+        @Override
+        public void setFlagged(boolean flagged) {
+            flaggedSent = true;
+            super.setFlagged(flagged);
+        }
+
+        @Override
+        @Schema(description = "Testimonio verificado", requiredMode = Schema.RequiredMode.REQUIRED)
+        public boolean isVerified() {
+            return super.isVerified();
+        }
+
+        @Override
+        public void setVerified(boolean verified) {
+            verifiedSent = true;
+            super.setVerified(verified);
+        }
+
+        /** Throws a 400 naming every required field the body did not send. */
+        void requireComplete() {
+            RequiredFields.check()
+                    .present(numberSent, "number")
+                    .present(flaggedSent, "flagged")
+                    .present(verifiedSent, "verified")
+                    .orThrow();
+        }
+    }
 
     private final TestimonyRepository repository;
     private final TestimonyGenerationVerificationService generationVerificacionService;
@@ -81,11 +141,15 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Cuerpo vacío o incompleto: number, flagged y verified son obligatorios"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar testimonio")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
+    @Operation(summary = "Actualizar testimonio",
+               description = "Reemplaza el testimonio. number, flagged y verified son obligatorios (400 si falta "
+                       + "alguno); notes se guarda tal como se envía y una escritura ausente conserva la actual.")
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody TestimonyUpdateRequest dto) {
+        dto.requireComplete();
         Optional<Testimony> existing = repository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
