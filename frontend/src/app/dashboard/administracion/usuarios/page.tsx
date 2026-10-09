@@ -23,12 +23,14 @@ import { useUsuarios, useCreateUsuario, useUpdateUsuario, useDeleteUsuario } fro
 import { useRoles, useAssignRolToUsuario, useUnassignRolFromUsuario } from "@/hooks/useRoles";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Usuario } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<Usuario> = { name: "", password: "", type: "EMPLEADO", active: true };
 const USUARIO_FIELD_NAMES = ["name", "password", "type"];
 
 export default function UsuariosPage() {
   const t = useTranslations("administracion.usuarios");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: usuarios = [], isLoading } = useUsuarios();
@@ -98,7 +100,7 @@ export default function UsuariosPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

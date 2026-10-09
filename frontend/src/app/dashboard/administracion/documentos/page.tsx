@@ -15,9 +15,11 @@ import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
 import { EMPTY_DOCUMENT_TYPE } from "@/lib/document-type-form";
 import type { TipoDeDocumento } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 export default function DocumentosPage() {
   const t = useTranslations("administracion.documentos");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const qc = useQueryClient();
@@ -91,12 +93,12 @@ export default function DocumentosPage() {
     try {
       const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-de-documento/${tipo.idDocumentType}/in-use`);
       if (inUse) {
-        toast.error(t("inUseCannotDelete"));
+        toast.warning(t("inUseCannotDelete"));
         return;
       }
       setDeleteId(tipo.idDocumentType!);
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
     }
   }
 
@@ -106,8 +108,7 @@ export default function DocumentosPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      const apiError = extractApiError(err);
-      toast.error(apiError ?? t("errorDelete"));
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

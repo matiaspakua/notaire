@@ -16,11 +16,13 @@ import { useTiposTramite, useCreateTipoTramite, useUpdateTipoTramite, useDeleteT
 import { useWorkflowDefinitions } from "@/hooks/useWorkflow";
 import { extractApiError } from "@/lib/utils";
 import type { TipoDeTramite } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<TipoDeTramite> = { name: "", notes: "" };
 
 export default function TramitesPage() {
   const t = useTranslations("administracion.tramites");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data = [], isLoading } = useTiposTramite();
@@ -78,12 +80,12 @@ export default function TramitesPage() {
     try {
       const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-tramite/${item.idProcedureType}/in-use`);
       if (inUse) {
-        toast.error(t("inUseCannotDelete"));
+        toast.warning(t("inUseCannotDelete"));
         return;
       }
       setDeleteId(item.idProcedureType!);
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
     }
   }
 
@@ -93,8 +95,7 @@ export default function TramitesPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      const apiError = extractApiError(err);
-      toast.error(apiError ?? t("errorDelete"));
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

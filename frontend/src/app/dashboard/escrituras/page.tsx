@@ -23,12 +23,14 @@ import {
 } from "@/hooks/useEscrituras";
 import { formatDate, extractApiError } from "@/lib/utils";
 import type { Escritura, Folio } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<Escritura> = { number: undefined, dateDeedrecording: "", body: "" };
 const ESTADO_SIN_FIRMAR = "Sin Firmar";
 
 export default function EscriturasPage() {
   const t = useTranslations("escrituras");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: escrituras = [], isLoading } = useEscrituras();
@@ -77,7 +79,7 @@ export default function EscriturasPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch { toast.error(t("errorDelete")); }
+    } catch (err) { showDeleteError(err, t("errorDelete")); }
     finally { setDeleteId(null); }
   }
 

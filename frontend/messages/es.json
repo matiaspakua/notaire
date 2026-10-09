@@ -59,7 +59,11 @@
     "yes": "Sí",
     "no": "No",
     "active": "Activo",
-    "inactive": "Inactivo"
+    "inactive": "Inactivo",
+    "errors": {
+      "inUse": "No se puede eliminar: el registro está en uso por otros registros.",
+      "notFound": "El registro ya no existe. Actualice la lista."
+    }
   },
   "dashboard": {
     "title": "Panel de Control",

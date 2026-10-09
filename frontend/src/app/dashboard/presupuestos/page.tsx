@@ -36,6 +36,7 @@ import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import type { Presupuesto } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const NO_TEMPLATE = "none";
 
@@ -43,6 +44,7 @@ const EMPTY: Partial<Presupuesto> = { date: "", propertyAmount: undefined, statu
 
 export default function PresupuestosPage() {
   const t = useTranslations("presupuestos");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: presupuestos = [], isLoading } = usePresupuestos();
@@ -164,7 +166,7 @@ export default function PresupuestosPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

@@ -59,7 +59,11 @@
     "yes": "Yes",
     "no": "No",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "errors": {
+      "inUse": "Cannot be deleted: the record is still used by other records.",
+      "notFound": "The record no longer exists. Refresh the list."
+    }
   },
   "dashboard": {
     "title": "Dashboard",

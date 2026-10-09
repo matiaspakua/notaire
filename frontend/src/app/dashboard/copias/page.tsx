@@ -19,9 +19,11 @@ import {
 } from "@/hooks/useCopias";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Copia } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 export default function CopiasPage() {
   const t = useTranslations("copias");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: copias = [], isLoading } = useCopias();
@@ -83,7 +85,7 @@ export default function CopiasPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

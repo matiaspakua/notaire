@@ -28,6 +28,7 @@ import {
 import { presentMutationError } from "@/lib/mutation-error";
 import { formatCurrency } from "@/lib/utils";
 import type { Item, TipoItem } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<Item> = {
   name: "",
@@ -39,6 +40,7 @@ const TIPO_VALUES: TipoItem[] = ["NORMAL", "DESCUENTO", "RECARGO"];
 
 export default function ItemsPage() {
   const t = useTranslations("items");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
   const { data: items = [], isLoading } = useItems();
   const createMutation = useCreateItem();
@@ -104,7 +106,7 @@ export default function ItemsPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

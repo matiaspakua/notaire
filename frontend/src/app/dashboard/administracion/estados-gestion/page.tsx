@@ -16,11 +16,13 @@ import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { useWorkflowDefinitions, useWorkflowNodes, useWorkflowTransitions } from "@/hooks/useWorkflow";
 import { extractApiError } from "@/lib/utils";
 import type { EstadoDeGestion } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<EstadoDeGestion> = { name: "", notes: "" };
 
 export default function EstadosGestionPage() {
   const t = useTranslations("administracion.estadosGestion");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data = [], isLoading, refetch } = useQuery({
@@ -89,12 +91,12 @@ export default function EstadosGestionPage() {
     try {
       const { inUse } = await apiGet<{ inUse: boolean }>(`/estado-gestion/${estado.idManagementStatus}/in-use`);
       if (inUse) {
-        toast.error(t("inUseCannotDelete"));
+        toast.warning(t("inUseCannotDelete"));
         return;
       }
       setDeleteId(estado.idManagementStatus!);
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
     }
   }
 
@@ -106,8 +108,7 @@ export default function EstadosGestionPage() {
       toast.success(t("deleted"));
       refetch();
     } catch (err) {
-      const apiMsg = extractApiError(err);
-      toast.error(apiMsg ?? t("errorDelete"));
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleting(false);
       setDeleteId(null);

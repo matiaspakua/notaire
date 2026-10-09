@@ -16,11 +16,13 @@ import { apiGet } from "@/lib/api-client";
 import { useConceptos, useCreateConcepto, useUpdateConcepto, useDeleteConcepto } from "@/hooks/useConceptos";
 import { formatCurrency, extractApiError } from "@/lib/utils";
 import type { Concepto } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<Concepto> = { name: "", value: undefined };
 
 export default function ConceptosPage() {
   const t = useTranslations("administracion.conceptos");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: conceptos = [], isLoading } = useConceptos();
@@ -70,12 +72,12 @@ export default function ConceptosPage() {
     try {
       const { inUse } = await apiGet<{ inUse: boolean }>(`/conceptos/${c.idConcept}/in-use`);
       if (inUse) {
-        toast.error(t("inUseCannotDelete"));
+        toast.warning(t("inUseCannotDelete"));
         return;
       }
       setDeleteId(c.idConcept!);
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
     }
   }
 
@@ -85,12 +87,7 @@ export default function ConceptosPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      const conflict = extractApiError(err);
-      if (conflict) {
-        toast.error(conflict);
-      } else {
-        toast.error(t("errorDelete"));
-      }
+      showDeleteError(err, t("errorDelete"));
     } finally { setDeleteId(null); }
   }
 

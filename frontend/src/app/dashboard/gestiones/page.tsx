@@ -35,6 +35,7 @@ import { ApiError } from "@/lib/api-client";
 import { fullName, formatCurrency, formatDate, extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 import { GestionResumenDialog } from "./GestionResumenDialog";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const ESTADO_CARPETA_ACTIVA = "Activa";
 
@@ -42,6 +43,7 @@ const ESTADO_ARCHIVADA = "Archivada";
 
 export default function GestionesPage() {
   const t = useTranslations("gestiones");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
   const { data: gestiones = [], isLoading } = useGestiones();
   const { data: personas = [] } = usePersonas();
@@ -151,8 +153,8 @@ export default function GestionesPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

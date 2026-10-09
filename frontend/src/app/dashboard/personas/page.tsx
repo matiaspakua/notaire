@@ -23,6 +23,7 @@ import {
 import { fullName } from "@/lib/utils";
 import { presentPersonaSaveError } from "@/lib/persona-save-error";
 import type { Persona } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<Persona> = {
   firstName: "",
@@ -36,6 +37,7 @@ const EMPTY: Partial<Persona> = {
 
 export default function PersonasPage() {
   const t = useTranslations("personas");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: personas = [], isLoading } = usePersonas();
@@ -114,8 +116,8 @@ export default function PersonasPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

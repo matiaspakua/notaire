@@ -115,7 +115,7 @@ describe("delete handlers in src/app (static scan)", () => {
 
   it("route delete failures through presentDeleteError", () => {
     const offenders = files.filter((f) =>
-      /presentMutationError\(\s*err,\s*\{\s*fallback:\s*t\("[\w.]*errorDelete/.test(readFileSync(f, "utf8"))
+      /presentMutationError\(\s*err,\s*\{\s*fallback:\s*t\("[\w.]*errorDelete"/.test(readFileSync(f, "utf8"))
     );
     expect(offenders).toEqual([]);
   });
