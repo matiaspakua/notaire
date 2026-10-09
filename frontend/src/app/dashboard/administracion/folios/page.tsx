@@ -319,7 +319,7 @@ export default function FoliosAdminPage() {
       />
       <div className="px-4 pb-4 flex items-center gap-2">
         <Select value={estadoFilter || "all"} onValueChange={(v) => setEstadoFilter(v === "all" ? "" : v)}>
-          <SelectTrigger className="w-48" data-testid="select-filter-estado-folio">
+          <SelectTrigger className="w-48" data-testid="select-filter-estado-folio" aria-label={t("estadoFilter")}>
             <SelectValue placeholder={t("fields.estadoPlaceholder")} />
           </SelectTrigger>
           <SelectContent>

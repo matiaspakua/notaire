@@ -282,7 +282,8 @@
       "liberado": "released",
       "entregado": "delivered",
       "reingresado": "re-entered"
-    }
+    },
+    "clienteFilter": "Filter by client"
   },
   "escrituras": {
     "title": "Deeds",
@@ -668,7 +669,8 @@
         "porcentaje": "Percentage"
       }
     },
-    "itemsNotLoaded": "Budget created, but the procedure type has no template: no items were loaded"
+    "itemsNotLoaded": "Budget created, but the procedure type has no template: no items were loaded",
+    "estadoFilter": "Filter by status"
   },
   "auditoria": {
     "title": "Audit",
@@ -681,7 +683,8 @@
       "operacion": "Operation",
       "modulo": "Module"
     },
-    "allModules": "All modules"
+    "allModules": "All modules",
+    "moduleFilter": "Module"
   },
   "administracion": {
     "title": "Administration",
@@ -806,7 +809,8 @@
         "descripcionPlaceholder": "Optional description"
       },
       "workflowSection": "Workflow Diagram",
-      "selectWorkflow": "Select workflow..."
+      "selectWorkflow": "Select workflow...",
+      "workflowFilter": "Workflow to display"
     },
     "folios": {
       "title": "Folios",
@@ -848,7 +852,8 @@
         "inUseCannotDelete": "Cannot delete: it is in use by folios",
         "noData": "No folio types",
         "esAuxiliar": "Protocolo Auxiliar"
-      }
+      },
+      "estadoFilter": "Filter by status"
     },
     "tramites": {
       "title": "Case Types",

@@ -282,7 +282,8 @@
       "liberado": "liberado",
       "entregado": "entregado",
       "reingresado": "reingresado"
-    }
+    },
+    "clienteFilter": "Filtrar por cliente"
   },
   "escrituras": {
     "title": "Escrituras",
@@ -668,7 +669,8 @@
         "porcentaje": "Porcentaje"
       }
     },
-    "itemsNotLoaded": "Presupuesto creado, pero el tipo de trámite no tiene plantilla: no se cargaron ítems"
+    "itemsNotLoaded": "Presupuesto creado, pero el tipo de trámite no tiene plantilla: no se cargaron ítems",
+    "estadoFilter": "Filtrar por estado"
   },
   "auditoria": {
     "title": "Auditoría",
@@ -681,7 +683,8 @@
       "operacion": "Operación",
       "modulo": "Módulo"
     },
-    "allModules": "Todos los módulos"
+    "allModules": "Todos los módulos",
+    "moduleFilter": "Módulo"
   },
   "administracion": {
     "title": "Administración",
@@ -806,7 +809,8 @@
         "descripcionPlaceholder": "Descripción opcional"
       },
       "workflowSection": "Diagrama de Workflow",
-      "selectWorkflow": "Seleccionar workflow..."
+      "selectWorkflow": "Seleccionar workflow...",
+      "workflowFilter": "Workflow a visualizar"
     },
     "folios": {
       "title": "Folios",
@@ -848,7 +852,8 @@
         "inUseCannotDelete": "No se puede eliminar: está siendo utilizado por folios",
         "noData": "No hay tipos de folio",
         "esAuxiliar": "Protocolo Auxiliar"
-      }
+      },
+      "estadoFilter": "Filtrar por estado"
     },
     "tramites": {
       "title": "Tipos de Trámite",

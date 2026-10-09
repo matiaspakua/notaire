@@ -331,7 +331,7 @@ export default function GestionesPage() {
 
       <div className="px-4 pb-4 flex items-center gap-2">
         <Select value={clienteFilter || "all"} onValueChange={(v) => setClienteFilter(v === "all" ? "" : v)}>
-          <SelectTrigger className="w-56" data-testid="select-filter-cliente-gestion">
+          <SelectTrigger className="w-56" data-testid="select-filter-cliente-gestion" aria-label={t("clienteFilter")}>
             <SelectValue placeholder={t("filterByCliente")} />
           </SelectTrigger>
           <SelectContent>

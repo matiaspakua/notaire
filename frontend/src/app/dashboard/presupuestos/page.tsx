@@ -267,7 +267,7 @@ export default function PresupuestosPage() {
           className="w-52"
         />
         <Select value={filterEstado} onValueChange={setFilterEstado}>
-          <SelectTrigger data-testid="select-estado" className="w-44">
+          <SelectTrigger data-testid="select-estado" className="w-44" aria-label={t("estadoFilter")}>
             <SelectValue placeholder={`${tc("status")}...`} />
           </SelectTrigger>
           <SelectContent>

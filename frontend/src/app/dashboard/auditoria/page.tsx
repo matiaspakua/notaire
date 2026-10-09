@@ -95,8 +95,9 @@ export default function AuditoriaPage() {
         </div>
         {modulos.length > 0 && (
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
+            <Filter className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
             <select
+              aria-label={t("moduleFilter")}
               className="h-12 rounded-lg border border-input bg-background px-4 text-sm text-foreground font-sans outline-none cursor-pointer focus:ring-2 focus:ring-ring"
               value={moduloFilter}
               onChange={(e) => setModuloFilter(e.target.value)}
