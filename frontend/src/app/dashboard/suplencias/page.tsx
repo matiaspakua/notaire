@@ -175,7 +175,7 @@ export default function SuplenciasPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editSuplencia") : t("newSuplencia")}>
+            <FormSection dialogTitle title={isEditMode ? t("editSuplencia") : t("newSuplencia")}>
               <div className="grid grid-cols-2 gap-3">
                 <FormField label={t("fields.escribanoId")} helperText={t("fields.escribanoHelper")}>
                   <Input

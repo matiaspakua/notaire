@@ -59,7 +59,8 @@
     "yes": "Yes",
     "no": "No",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "close": "Close"
   },
   "dashboard": {
     "title": "Dashboard",

@@ -234,7 +234,7 @@ export default function PersonasPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-md">
           <FormContainer>
-            <FormSection title={isEditMode ? t("editPersona") : t("newPersona")}>
+            <FormSection dialogTitle title={isEditMode ? t("editPersona") : t("newPersona")}>
               <div className="grid grid-cols-2 gap-3">
                 <FormField label={t("fields.nombre")} required error={fieldErrors.firstName}>
                   <Input

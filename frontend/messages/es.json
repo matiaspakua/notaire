@@ -59,7 +59,8 @@
     "yes": "Sí",
     "no": "No",
     "active": "Activo",
-    "inactive": "Inactivo"
+    "inactive": "Inactivo",
+    "close": "Cerrar"
   },
   "dashboard": {
     "title": "Panel de Control",

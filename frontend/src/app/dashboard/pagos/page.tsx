@@ -143,7 +143,7 @@ export default function PagosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editPago") : t("newPago")}>
+            <FormSection dialogTitle title={isEditMode ? t("editPago") : t("newPago")}>
               {/* Issue #796: Replace numeric ID input with presupuesto picker */}
               <FormField label="Presupuesto" required>
                 <Select

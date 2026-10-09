@@ -186,7 +186,7 @@ export default function DocumentosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? t("editDocumento") : t("newDocumento")}>
+            <FormSection dialogTitle title={editing ? t("editDocumento") : t("newDocumento")}>
               <FormField label={tc("type")} required={!editing}>
                 <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
                   <SelectTrigger data-testid="select-tipo-documento">

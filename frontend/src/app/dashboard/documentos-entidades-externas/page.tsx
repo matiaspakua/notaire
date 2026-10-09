@@ -182,7 +182,7 @@ export default function DocumentosEntidadesExternasPage() {
       <Dialog open={!!editingDocumento} onOpenChange={(v) => !v && setEditingDocumento(null)}>
         <DialogContent className="max-h-[85vh] overflow-y-auto" data-testid="dialog-movimiento">
           <FormContainer>
-            <FormSection title={t("registrarMovimiento")}>
+            <FormSection dialogTitle title={t("registrarMovimiento")}>
               <FormField label={t("fields.numeroCarton")}>
                 <Input
                   type="number"

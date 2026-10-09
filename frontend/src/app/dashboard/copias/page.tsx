@@ -163,7 +163,7 @@ export default function CopiasPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? t("editCopia") : t("newCopia")}>
+            <FormSection dialogTitle title={editing ? t("editCopia") : t("newCopia")}>
               <FormField label={tc("number")} required>
                 <Input
                   type="number"
