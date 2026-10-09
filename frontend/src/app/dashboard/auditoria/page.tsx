@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Shield, Search, Filter } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -10,24 +11,62 @@ import { Badge } from "@/components/ui/badge";
 import { useAuditoria } from "@/hooks/useAuditoria";
 import type { RegistroAuditoria } from "@/types";
 import { formatInstant } from "@/lib/dates";
+import { AUDIT_MODULES } from "@/lib/audit-modules";
+import { PAGE_SIZE_OPTIONS } from "@/components/shared/Pagination";
+
+const DEFAULT_SIZE = PAGE_SIZE_OPTIONS[0];
+
+function readInt(value: string | null, fallback: number): number {
+  const n = Number(value);
+  return Number.isInteger(n) && n >= 0 ? n : fallback;
+}
 
 export default function AuditoriaPage() {
+  return (
+    <Suspense>
+      <AuditoriaList />
+    </Suspense>
+  );
+}
+
+function AuditoriaList() {
   const t = useTranslations("auditoria");
   const tc = useTranslations("common");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const { data: registros = [], isLoading } = useAuditoria();
+  // Page, size and module live in the URL so back/forward and reload keep them (#1340).
+  const page = readInt(searchParams.get("page"), 0);
+  const sizeParam = readInt(searchParams.get("size"), DEFAULT_SIZE);
+  const size = (PAGE_SIZE_OPTIONS as readonly number[]).includes(sizeParam) ? sizeParam : DEFAULT_SIZE;
+  const moduloFilter = searchParams.get("module") ?? "all";
+
+  function updateQuery(changes: Record<string, string | number | null>) {
+    const next = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(changes)) {
+      if (value === null || value === "") next.delete(key);
+      else next.set(key, String(value));
+    }
+    const qs = next.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }
+
+  const { data, isLoading, isFetching } = useAuditoria({
+    page,
+    size,
+    module: moduloFilter === "all" ? undefined : moduloFilter,
+  });
+  const registros = data?.content ?? [];
   const [search, setSearch] = useState("");
-  const [moduloFilter, setModuloFilter] = useState<string>("all");
 
-  const modulos = Array.from(new Set(registros.map((r) => r.module).filter(Boolean)));
-
+  // Search narrows the rows of the current page only; the backend has no text filter.
   const filtered = registros.filter((r) => {
-    const matchesSearch =
+    return (
       !search ||
       r.operationDetail?.toLowerCase().includes(search.toLowerCase()) ||
-      r.users?.name?.toLowerCase().includes(search.toLowerCase());
-    const matchesModulo = moduloFilter === "all" || r.module === moduloFilter;
-    return matchesSearch && matchesModulo;
+      r.users?.name?.toLowerCase().includes(search.toLowerCase())
+    );
   });
 
   const columns: Column<RegistroAuditoria>[] = [
@@ -94,31 +133,39 @@ export default function AuditoriaPage() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        {modulos.length > 0 && (
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
-            <select
-              className="h-12 rounded-lg border border-input bg-background px-4 text-sm text-foreground font-sans outline-none cursor-pointer focus:ring-2 focus:ring-ring"
-              value={moduloFilter}
-              onChange={(e) => setModuloFilter(e.target.value)}
-            >
-              <option value="all">{t("allModules")}</option>
-              {modulos.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <Filter className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
+          <select
+            aria-label={t("moduleFilter")}
+            data-testid="select-modulo-auditoria"
+            className="h-12 rounded-lg border border-input bg-background px-4 text-sm text-foreground font-sans outline-none cursor-pointer focus:ring-2 focus:ring-ring"
+            value={moduloFilter}
+            onChange={(e) => updateQuery({ module: e.target.value === "all" ? null : e.target.value, page: null })}
+          >
+            <option value="all">{t("allModules")}</option>
+            {AUDIT_MODULES.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <DataTable
         data={filtered}
         columns={columns}
         isLoading={isLoading}
+        isFetching={isFetching}
         keyExtractor={(r) => r.idAuditRecord!}
         emptyMessage={t("noData")}
+        pagination={{
+          page: data?.number ?? page,
+          size,
+          totalElements: data?.totalElements ?? 0,
+          onPageChange: (next) => updateQuery({ page: next === 0 ? null : next }),
+          onSizeChange: (next) => updateQuery({ size: next === DEFAULT_SIZE ? null : next, page: null }),
+        }}
       />
 
       <div className="mt-6 rounded-2xl border border-border bg-card shadow-sm p-6">
