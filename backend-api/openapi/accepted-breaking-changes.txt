@@ -17,25 +17,8 @@
 # workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
 # until the entry and its comment are removed.
 
-# #655 (CU69 / CU82, Owner decision Run 7): the nomenclatura catastral
-# identifies a property and the UI already labelled it required, but the API
-# stored properties with a null, empty or blank one. PUT replaces every field,
-# so it must carry the designation too. The shipped UI now blocks Save while it
-# is blank (same PR); Bruno, Playwright and every backend test already sent it.
-POST /api/v1/inmueble the request property `cadastralDesignation` became required
-POST /api/v1/inmueble the `cadastralDesignation` request property's minLength was set to `1`
-PUT /api/v1/inmueble/{id} the request property `cadastralDesignation` became required
-PUT /api/v1/inmueble/{id} the `cadastralDesignation` request property's minLength was set to `1`
-# #655 (CU04 / CU72, Owner decision Run 7): a submitted document is presented
-# for a trámite of a gestión, and its type gives it a name, expiry and
-# delivered-by. A create without them stored a document that the case
-# summary, the documentation-complete check, the CU09 debt report, CU42 and
-# CU10 never see. The shipped frontend now requires both on create (same PR);
-# Bruno and Playwright were updated; PUT stays partial for legacy rows.
-POST /api/v1/documento-presentado the request property `procedureId` became required
-POST /api/v1/documento-presentado the request property `typeId` became required
-# #1315 (CU21): DELETE /api/v1/roles/usuarios/{idUser} always answered 204 No
-# Content; the contract wrongly documented 200. The spec now documents the 204
-# the endpoint has always returned, so no response a client received changes.
-# The frontend only checks res.ok (apiDelete).
-DELETE /api/v1/roles/usuarios/{idUser} removed the success response with the status `200`
+# #1315 (CU49, Owner rule Run 7: every DELETE answers 204 No Content): the
+# budget template concept delete was the last DELETE answering 200 (springdoc
+# default). The shipped frontend calls it through apiDelete, which only checks
+# res.ok; Bruno budget-templates/05 and the backend tests now expect 204.
+DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{idProcedureType}/concepto/{idConcept} removed the success response with the status `200`
