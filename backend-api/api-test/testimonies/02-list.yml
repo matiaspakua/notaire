@@ -1,7 +1,7 @@
 info:
   name: List testimonies
   type: http
-  seq: 2
+  seq: 3
   description: |-
       Traceability: CU07
 http:
