@@ -2,6 +2,8 @@ package com.licensis.notaire.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.licensis.notaire.business.Deed;
+import com.licensis.notaire.repository.DeedRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,6 +54,18 @@ class IncompletePutBodiesIntegrationTest {
     private MockMvc mockMvc;
     private final JsonMapper mapper = JsonMapper.builder().build();
 
+    @Autowired
+    private DeedRepository deedRepository;
+
+    /** POST /testimonio requires an existing deed (#1335), so each fixture testimony copies one. */
+    private int seedDeed() {
+        Deed deed = new Deed();
+        deed.setNumber((int) (System.nanoTime() % 1_000_000));
+        deed.setDateDeedrecording(new Date());
+        deed.setStatus("Firmada");
+        return deedRepository.save(deed).getIdDeed();
+    }
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -75,7 +90,8 @@ class IncompletePutBodiesIntegrationTest {
 
     private int createTestimony() throws Exception {
         return postJson("/api/v1/testimonio",
-                "{\"number\":57,\"flagged\":true,\"verified\":true,\"notes\":\"keep\"}").get("idTestimony").asInt();
+                "{\"number\":57,\"flagged\":true,\"verified\":true,\"notes\":\"keep\",\"deed\":{\"idDeed\":"
+                        + seedDeed() + ",\"number\":0}}").get("idTestimony").asInt();
     }
 
     @Test
