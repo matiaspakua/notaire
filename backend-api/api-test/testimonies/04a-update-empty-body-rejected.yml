@@ -30,4 +30,5 @@ runtime:
             expect(m).to.contain('number: es obligatorio');
             expect(m).to.contain('flagged: es obligatorio');
             expect(m).to.contain('verified: es obligatorio');
+            expect(m).to.contain('version: es obligatorio');
           });

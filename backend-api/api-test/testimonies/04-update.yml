@@ -10,7 +10,7 @@ http:
   body:
     type: json
     data: |-
-        {"number": {{testimony_number}}, "flagged": false, "verified": false, "notes": "Bruno E2E testimony updated"}
+        {"number": {{testimony_number}}, "flagged": false, "verified": false, "notes": "Bruno E2E testimony updated", "version": {{testimony_version}}}
   headers:
     - name: Content-Type
       value: application/json
