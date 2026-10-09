@@ -1,7 +1,7 @@
 info:
   name: Verify testimony deleted
   type: http
-  seq: 8
+  seq: 9
   description: |-
       Traceability: CU07
 http:
