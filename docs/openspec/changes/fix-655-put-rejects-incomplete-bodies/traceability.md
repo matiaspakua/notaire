@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/655_put_rejects_incomplete_bodies` | stacked on #1371 / #1370 |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | pushed |
-| Pull Request | — | pending |
+| Pull Request | #1374 | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
