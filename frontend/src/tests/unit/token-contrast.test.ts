@@ -67,6 +67,18 @@ describe("tokens.ts text colours meet 4.5:1 on light backgrounds (#1341)", () =>
   }
 });
 
+describe("error text tokens meet 4.5:1 (#1341)", () => {
+  it("form.errorText on white and on form.errorBg", () => {
+    expect(contrast(semantic.form.errorText, colors.neutral[0])).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(semantic.form.errorText, semantic.form.errorBg)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("the required-field asterisk uses the error text token, not error[500]", () => {
+    const patterns = readFileSync(resolve(__dirname, "../../theme/form-patterns.tsx"), "utf8");
+    expect(patterns).not.toMatch(/colors\.error\[500\] \}\}>\*/);
+  });
+});
+
 describe("globals.css text variables meet 4.5:1 (#1341)", () => {
   const pairs: Array<[string, string]> = [
     ["muted-foreground", "background"],
@@ -117,6 +129,12 @@ describe("no light-gray text utilities in app code (#1341)", () => {
         .filter(({ line }) => /(?<![:\w-])text-(neutral|gray|slate|zinc)-(300|400)\b/.test(line))
         .map(({ i }) => `${f.slice(src.length + 1)}:${i + 1}`),
     );
+    expect(offenders).toEqual([]);
+  });
+
+  it("text-neutral-500 (#737373) is not paired with bg-neutral-100/200 (4.3:1)", () => {
+    const pair = /bg-(neutral|gray)-(100|200)\b[^"`]*text-(neutral|gray)-500\b|text-(neutral|gray)-500\b[^"`]*bg-(neutral|gray)-(100|200)\b/;
+    const offenders = files.filter((f) => pair.test(readFileSync(f, "utf8"))).map((f) => f.slice(src.length + 1));
     expect(offenders).toEqual([]);
   });
 
