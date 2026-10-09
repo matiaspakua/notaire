@@ -16,3 +16,19 @@
 # so the entry accepts nothing and would hide a later break with the same text.
 # workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
 # until the entry and its comment are removed.
+
+# #655 (CU07 / CU53 / CU26), Owner decision Oct 9: an empty or incomplete PUT
+# answers 400. PUT /testimonio/{id} without number, flagged or verified used to
+# overwrite the stored values with 0/false (data loss); PUT /tramites/{id} now
+# requires idProcedureType like POST, which already rejected a request without
+# it at runtime (only the schema is new); PUT /tipo-tramite/{id}/workflow with
+# {} silently unassigned the workflow, and an explicit null still unassigns.
+# The UI never calls the testimony or procedure PUT and always sends
+# workflowDefinitionId (number or null); Bruno and Playwright already send
+# complete bodies.
+PUT /api/v1/testimonio/{id} the request property `flagged` became required
+PUT /api/v1/testimonio/{id} the request property `number` became required
+PUT /api/v1/testimonio/{id} the request property `verified` became required
+PUT /api/v1/tipo-tramite/{id}/workflow added the new required request property `workflowDefinitionId`
+POST /api/v1/tramites the request property `idProcedureType` became required
+PUT /api/v1/tramites/{id} the request property `idProcedureType` became required
