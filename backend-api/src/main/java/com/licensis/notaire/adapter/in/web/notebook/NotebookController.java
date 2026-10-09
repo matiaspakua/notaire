@@ -86,7 +86,8 @@ public class NotebookController {
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Creado"),
         @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-        @ApiResponse(responseCode = "404", description = "Escribano o folio no encontrado")
+        @ApiResponse(responseCode = "404", description = "Escribano o folio no encontrado"),
+        @ApiResponse(responseCode = "409", description = "Ya existe un cuaderno con ese número para el año y escribano")
     })
     @PostMapping
     @Operation(summary = "Crear un nuevo cuaderno a partir de diez folios consecutivos")

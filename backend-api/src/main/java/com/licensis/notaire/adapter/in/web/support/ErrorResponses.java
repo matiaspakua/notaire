@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -34,6 +35,12 @@ public final class ErrorResponses {
      */
     public static final String CONSTRAINT_MESSAGE = "The submitted data violates a database constraint";
 
+    /** Safe text for a request that would duplicate an existing record. */
+    public static final String DUPLICATE_MESSAGE = "The submitted data duplicates an existing record";
+
+    /** SQLState 23505: unique_violation. */
+    private static final String SQLSTATE_UNIQUE_VIOLATION = "23505";
+
     /** SQLState class 23: integrity constraint violation (NOT NULL, FK, unique, check). */
     private static final String SQLSTATE_INTEGRITY_CLASS = "23";
 
@@ -57,23 +64,30 @@ public final class ErrorResponses {
 
     /**
      * Failure of a create (POST). A data-constraint violation is the client's fault and answers
-     * {@code 400}, as {@code GlobalExceptionHandler} does; anything else keeps {@code 409}
-     * (issue #579, slice 2, Owner decision Run 7).
+     * {@code 400}, or {@code 409} for a duplicate, as {@code GlobalExceptionHandler} does; anything
+     * else keeps {@code 409} (issue #579, slice 2, Owner decisions Run 7 and Oct 9).
      */
     public static ResponseEntity<Object> createFailed(Exception cause) {
         return isConstraintViolation(cause) ? constraintViolation(cause) : conflict(cause);
     }
 
     /**
-     * Failure of an update (PUT). A data-constraint violation answers {@code 400}; anything else
-     * keeps {@code 500} (issue #579, slice 2).
+     * Failure of an update (PUT). A data-constraint violation answers {@code 400}, or {@code 409}
+     * for a duplicate; anything else keeps {@code 500} (issue #579, slice 2).
      */
     public static ResponseEntity<Object> updateFailed(Exception cause) {
         return isConstraintViolation(cause) ? constraintViolation(cause) : serverError(cause);
     }
 
-    /** {@code 400 Bad Request} for a request whose data violates a database constraint. */
+    /**
+     * Answer for a request whose data violates a database constraint: {@code 409 Conflict} when it
+     * would duplicate an existing record (unique constraint), {@code 400 Bad Request} for every
+     * other constraint (NOT NULL, foreign key, check). Issue #579, Owner decision Oct 9.
+     */
     public static ResponseEntity<Object> constraintViolation(Exception cause) {
+        if (isUniqueViolation(cause)) {
+            return build(HttpStatus.CONFLICT, DUPLICATE_MESSAGE, cause);
+        }
         return build(HttpStatus.BAD_REQUEST, CONSTRAINT_MESSAGE, cause);
     }
 
@@ -90,6 +104,28 @@ public final class ErrorResponses {
             }
             if (t instanceof SQLException sql && sql.getSQLState() != null
                     && sql.getSQLState().startsWith(SQLSTATE_INTEGRITY_CLASS)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * True when the cause chain holds a unique-constraint violation: a Spring
+     * {@link DuplicateKeyException}, a Hibernate {@code ConstraintViolationException} of kind
+     * {@code UNIQUE}, or an {@link SQLException} with SQLState {@code 23505}
+     * (issue #579, Owner decision Oct 9: duplicates answer 409).
+     */
+    public static boolean isUniqueViolation(Throwable error) {
+        for (Throwable t = error; t != null; t = t.getCause() == t ? null : t.getCause()) {
+            if (t instanceof DuplicateKeyException) {
+                return true;
+            }
+            if (t instanceof org.hibernate.exception.ConstraintViolationException hibernate
+                    && hibernate.getKind() == org.hibernate.exception.ConstraintViolationException.ConstraintKind.UNIQUE) {
+                return true;
+            }
+            if (t instanceof SQLException sql && SQLSTATE_UNIQUE_VIOLATION.equals(sql.getSQLState())) {
                 return true;
             }
         }

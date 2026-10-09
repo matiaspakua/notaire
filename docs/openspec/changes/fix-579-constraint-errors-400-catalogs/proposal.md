@@ -19,6 +19,7 @@ When a create or update failed on a database constraint (e.g. `POST {}` violates
 - `ErrorResponses.createFailed` / `updateFailed` / `constraintViolation` / `isConstraintViolation`: a cause chain holding a `DataIntegrityViolationException`, a Hibernate `ConstraintViolationException` or an `SQLException` with SQLState class 23 answers 400 with the `GlobalExceptionHandler` message; other failures keep 409 (create) and 500 (update).
 - Concept, DocumentType, FolioType, ManagementStatus and ProcedureType controllers use them on POST and PUT and document 400 on PUT.
 - `openapi.yaml` regenerated (no breaking change); the seven accepted entries already on `main` removed.
+- **Owner decision Oct 9:** `ErrorResponses.isUniqueViolation` (SQLState 23505, Hibernate `ConstraintKind.UNIQUE`, `DuplicateKeyException`); `constraintViolation` and `GlobalExceptionHandler` answer 409 with `The submitted data duplicates an existing record` for duplicates and 400 for the rest. `PUT /roles/{id}`, `POST /minutas-inscripcion` and `POST /cuadernos` document 409 (`PUT /roles/{id}` also its 400). Folder numbers (`procedure_folders`) are system-assigned and only collide under a race, so their callers are not documented with 409. `UniqueConstraintConflictIntegrationTest`; `ErrorResponsesTest` unique cases.
 - Tests: `CatalogConstraintErrorsIntegrationTest`, `ErrorResponsesTest`, `ControllerExceptionMessageLeakTest` updates, Bruno `08-create-empty-body` in five folders; CHANGELOG entry.
 
 ## Reglas de negocio
@@ -26,6 +27,7 @@ When a create or update failed on a database constraint (e.g. `POST {}` violates
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
 | A create or update whose data violates a database constraint answers 400 | #579 (Owner decision Run 7), GlobalExceptionHandler | Applied to catalogs |
+| A unique-constraint violation (duplicate) answers 409; other constraint violations stay 400 | #579 (Owner decision Oct 9) | Changed, everywhere |
 
 ## Capabilities
 
