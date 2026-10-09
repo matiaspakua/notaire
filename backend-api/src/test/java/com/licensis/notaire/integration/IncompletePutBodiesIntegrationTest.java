@@ -116,7 +116,7 @@ class IncompletePutBodiesIntegrationTest {
         int id = createTestimony();
 
         mockMvc.perform(put("/api/v1/testimonio/" + id).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"number\":59,\"flagged\":false,\"verified\":false,\"notes\":\"n\"}"))
+                        .content("{\"number\":59,\"flagged\":false,\"verified\":false,\"notes\":\"n\",\"version\":0}"))
                 .andExpect(status().isOk());
 
         JsonNode stored = getJson("/api/v1/testimonio/" + id);

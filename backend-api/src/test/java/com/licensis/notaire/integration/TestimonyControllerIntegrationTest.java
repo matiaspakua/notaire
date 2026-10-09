@@ -234,7 +234,7 @@ class TestimonyControllerIntegrationTest {
     @DisplayName("CU07 - Should return 404 when updating non-existing testimony")
     void shouldReturn404WhenUpdatingNonExistingTestimony() throws Exception {
         String body = """
-                {"number": 9999, "flagged": false, "verified": false}
+                {"number": 9999, "flagged": false, "verified": false, "version": 0}
                 """;
         mockMvc.perform(put("/api/v1/testimonio/99999")
                         .contentType(MediaType.APPLICATION_JSON)
