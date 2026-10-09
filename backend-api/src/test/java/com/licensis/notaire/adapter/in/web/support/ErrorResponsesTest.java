@@ -8,6 +8,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -85,7 +87,7 @@ class ErrorResponsesTest {
                         new java.sql.SQLException("null value", "23502"), "c"));
         assertThat(ErrorResponses.updateFailed(wrapped).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
-        Exception sqlOnly = new RuntimeException(new java.sql.SQLException("unique", "23505"));
+        Exception sqlOnly = new RuntimeException(new java.sql.SQLException("foreign key", "23503"));
         assertThat(ErrorResponses.createFailed(sqlOnly).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -98,5 +100,43 @@ class ErrorResponsesTest {
                 .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(ErrorResponses.updateFailed(new java.sql.SQLException("deadlock", "40001")).getStatusCode())
                 .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    @DisplayName("#579 Owner decision Oct 9: a unique-constraint violation (duplicate) answers 409 on create and update")
+    void uniqueViolationIsConflict() {
+        List<Exception> duplicates = List.of(
+                new RuntimeException(new java.sql.SQLException("duplicate key", "23505")),
+                new DataIntegrityViolationException("x", new org.hibernate.exception.ConstraintViolationException(
+                        "x", new java.sql.SQLException("duplicate key", "23505"), "uq_roles_name")),
+                new DataIntegrityViolationException("x", new org.hibernate.exception.ConstraintViolationException(
+                        "x", new java.sql.SQLException("dup"),
+                        org.hibernate.exception.ConstraintViolationException.ConstraintKind.UNIQUE, "uq")),
+                new org.springframework.dao.DuplicateKeyException("dup"));
+        for (Exception duplicate : duplicates) {
+            assertThat(ErrorResponses.isUniqueViolation(duplicate)).as(duplicate.toString()).isTrue();
+            for (ResponseEntity<Object> response : List.of(ErrorResponses.createFailed(duplicate),
+                    ErrorResponses.updateFailed(duplicate))) {
+                assertThat(response.getStatusCode()).as(duplicate.toString()).isEqualTo(HttpStatus.CONFLICT);
+                ErrorResponse body = (ErrorResponse) response.getBody();
+                assertThat(body.getStatus()).isEqualTo(409);
+                assertThat(body.getMessage()).isEqualTo(ErrorResponses.DUPLICATE_MESSAGE);
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("#579 Owner decision Oct 9: NOT NULL, foreign-key and check violations stay 400")
+    void otherConstraintViolationsStayBadRequest() {
+        for (String sqlState : List.of("23502", "23503", "23514")) {
+            Exception cause = new DataIntegrityViolationException("x",
+                    new org.hibernate.exception.ConstraintViolationException("x",
+                            new java.sql.SQLException("violation", sqlState), "c"));
+            assertThat(ErrorResponses.isUniqueViolation(cause)).as(sqlState).isFalse();
+            assertThat(ErrorResponses.createFailed(cause).getStatusCode()).as(sqlState)
+                    .isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(ErrorResponses.updateFailed(cause).getStatusCode()).as(sqlState)
+                    .isEqualTo(HttpStatus.BAD_REQUEST);
+        }
     }
 }
