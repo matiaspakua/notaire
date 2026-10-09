@@ -82,7 +82,8 @@ public class TestimonyMovementController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "No encontrado"),
+    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar movimiento-testimonio")
@@ -91,14 +92,17 @@ public class TestimonyMovementController {
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        TestimonyMovement entity = existing.get();
+        if (entity.getVersion() != dto.getVersion()) {
+            return ErrorResponses.staleVersion();
+        }
         try {
-            TestimonyMovement entity = existing.get();
             dto.setIdTestimonyMovement(id);
             entity.setAtributos(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ErrorResponses.serverError(e);
+            return ErrorResponses.updateFailed(e);
         }
     }
 

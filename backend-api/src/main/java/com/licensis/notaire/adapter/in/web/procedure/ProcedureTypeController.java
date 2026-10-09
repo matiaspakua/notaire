@@ -128,7 +128,8 @@ public class ProcedureTypeController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "No encontrado"),
+    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar tipo de tramite")
