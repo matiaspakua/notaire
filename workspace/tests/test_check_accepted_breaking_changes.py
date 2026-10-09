@@ -177,14 +177,16 @@ class WiringTest(unittest.TestCase):
         names = [i for i, s in enumerate(steps) if CHECKER_REL in str(s.get("run", ""))]
         self.assertEqual(len(names), 1, "exactly one step runs the stale-entry checker")
         step = steps[names[0]]
-        diff = [i for i, s in enumerate(steps) if "oasdiff-action/breaking" in str(s.get("uses", ""))]
+        diff = [i for i, s in enumerate(steps) if "oasdiff breaking" in str(s.get("run", ""))]
         self.assertGreater(names[0], diff[0], "the checker runs after the breaking diff")
         condition = str(step.get("if", ""))
         self.assertIn("steps.base.outputs.has_base", condition)
         self.assertIn("pull_request", condition,
                       "on main the base equals the revision, so every entry would look stale")
-        self.assertIn("1.33.0", str(step.get("run")), "same oasdiff version as oasdiff-action@v0.1.18")
-        self.assertIn("sha256sum", str(step.get("run")), "the downloaded binary is verified")
+        self.assertIn("OASDIFF=/tmp/oasdiff", str(step.get("run")))
+        install = [s for s in steps[:diff[0]] if "oasdiff_1.33.0_linux_amd64.tar.gz" in str(s.get("run", ""))]
+        self.assertEqual(len(install), 1, "one step installs oasdiff 1.33.0 before the diff (#1380)")
+        self.assertIn("sha256sum", str(install[0].get("run")), "the downloaded binary is verified")
 
     def test_preflight_runs_the_checker(self):
         with open(PREFLIGHT, encoding="utf-8") as f:
