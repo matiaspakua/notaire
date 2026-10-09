@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/1315_accepted_breaking_changes_dir` | stacked on #1382 |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | pushed |
-| Pull Request | — | pending |
+| Pull Request | #1389 | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
