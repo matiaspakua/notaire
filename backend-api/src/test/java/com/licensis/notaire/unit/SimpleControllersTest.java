@@ -178,7 +178,7 @@ class SimpleControllersTest {
         void deleteCopy() throws Exception {
             when(service.existsById(1)).thenReturn(true);
             when(service.existsById(2)).thenReturn(false);
-            mvc.perform(delete("/api/v1/copia/1")).andExpect(status().isOk());
+            mvc.perform(delete("/api/v1/copia/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/copia/2")).andExpect(status().isNotFound());
             doThrow(new RuntimeException("fk")).when(service).deleteById(1);
             mvc.perform(delete("/api/v1/copia/1")).andExpect(status().isConflict());
@@ -262,7 +262,7 @@ class SimpleControllersTest {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
             when(managementRepo.findByFkIdManagementStatusIdManagementStatus(anyInt())).thenReturn(List.of());
-            mvc.perform(delete("/api/v1/estado-gestion/1")).andExpect(status().isOk());
+            mvc.perform(delete("/api/v1/estado-gestion/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/estado-gestion/2")).andExpect(status().isNotFound());
             when(managementRepo.findByFkIdManagementStatusIdManagementStatus(1))
                     .thenReturn(List.of(new com.licensis.notaire.business.DeedManagement()));
@@ -323,7 +323,7 @@ class SimpleControllersTest {
             status.setHistoryList(new java.util.HashSet<>(List.of(toDelete)));
             toDelete.setFkIdManagementStatus(status);
             when(repo.findById(1)).thenReturn(Optional.of(toDelete));
-            mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isOk());
+            mvc.perform(delete("/api/v1/historial/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/historial/2")).andExpect(status().isNotFound());
         }
 
@@ -398,7 +398,7 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
             mvc.perform(put("/api/v1/movimiento-testimonio/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/movimiento-testimonio/1")).andExpect(status().isOk());
+            mvc.perform(delete("/api/v1/movimiento-testimonio/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/movimiento-testimonio/2")).andExpect(status().isNotFound());
         }
 
@@ -623,7 +623,7 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
             mvc.perform(put("/api/v1/testimonio/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/testimonio/1")).andExpect(status().isOk());
+            mvc.perform(delete("/api/v1/testimonio/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/testimonio/2")).andExpect(status().isNotFound());
         }
 
@@ -752,7 +752,7 @@ class SimpleControllersTest {
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isOk());
             mvc.perform(put("/api/v1/tipo-folio/2").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/tipo-folio/1")).andExpect(status().isOk());
+            mvc.perform(delete("/api/v1/tipo-folio/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/tipo-folio/2")).andExpect(status().isNotFound());
         }
 
@@ -894,7 +894,7 @@ class SimpleControllersTest {
                     .content(typeBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/tipo-identificacion/2").contentType("application/json")
                     .content(typeBody)).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/tipo-identificacion/1")).andExpect(status().isOk());
+            mvc.perform(delete("/api/v1/tipo-identificacion/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/tipo-identificacion/2")).andExpect(status().isNotFound());
         }
 
@@ -962,7 +962,7 @@ class SimpleControllersTest {
                     .content(requestBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/tramites/2").contentType("application/json")
                     .content(requestBody)).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/tramites/1")).andExpect(status().isOk());
+            mvc.perform(delete("/api/v1/tramites/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/tramites/2")).andExpect(status().isNotFound());
 
             mvc.perform(post("/api/v1/tramites").contentType("application/json")

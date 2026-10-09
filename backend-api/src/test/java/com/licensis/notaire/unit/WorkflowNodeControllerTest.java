@@ -150,7 +150,7 @@ class WorkflowNodeControllerTest {
         when(repository.existsById(1)).thenReturn(true);
         when(transitionRepository.existsByOriginNodeIdOrDestinationNodeId(1, 1)).thenReturn(false);
         mockMvc.perform(delete("/api/v1/workflow-node/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

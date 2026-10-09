@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.testimony;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.repository.TestimonyRepository;
@@ -74,7 +75,7 @@ public class TestimonyController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -96,7 +97,7 @@ public class TestimonyController {
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ErrorResponses.serverError(e);
         }
     }
 
@@ -112,7 +113,7 @@ public class TestimonyController {
         }
         try {
             repository.deleteById(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("No se puede eliminar: el testimonio está referenciado por otros registros.");

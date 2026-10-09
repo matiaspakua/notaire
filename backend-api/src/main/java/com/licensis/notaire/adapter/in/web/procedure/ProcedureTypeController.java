@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.procedure;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
@@ -116,7 +117,7 @@ public class ProcedureTypeController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -144,7 +145,7 @@ public class ProcedureTypeController {
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ErrorResponses.serverError(e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.licensis.notaire.adapter.in.web.person;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.exception.DuplicatePersonException;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.IdentificationType;
@@ -197,7 +198,7 @@ public class PersonController {
         } catch (DuplicatePersonException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(duplicateBody(e));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ErrorResponses.conflict(e);
         }
     }
 
@@ -219,7 +220,7 @@ public class PersonController {
                     } catch (DuplicatePersonException e) {
                         return ResponseEntity.status(HttpStatus.CONFLICT).body((Object) duplicateBody(e));
                     } catch (Exception e) {
-                        return ResponseEntity.status(HttpStatus.CONFLICT).body((Object) e.getMessage());
+                        return ErrorResponses.conflict(e);
                     }
                 })
                 .orElse(ResponseEntity.notFound().build());

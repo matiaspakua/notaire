@@ -26,3 +26,8 @@ POST /api/v1/inmueble the request property `cadastralDesignation` became require
 POST /api/v1/inmueble the `cadastralDesignation` request property's minLength was set to `1`
 PUT /api/v1/inmueble/{id} the request property `cadastralDesignation` became required
 PUT /api/v1/inmueble/{id} the `cadastralDesignation` request property's minLength was set to `1`
+# #1315 (CU21): DELETE /api/v1/roles/usuarios/{idUser} always answered 204 No
+# Content; the contract wrongly documented 200. The spec now documents the 204
+# the endpoint has always returned, so no response a client received changes.
+# The frontend only checks res.ok (apiDelete).
+DELETE /api/v1/roles/usuarios/{idUser} removed the success response with the status `200`

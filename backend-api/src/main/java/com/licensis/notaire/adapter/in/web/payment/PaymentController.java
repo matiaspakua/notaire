@@ -216,7 +216,7 @@ public class PaymentController {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             deletePaymentUseCase.delete(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
