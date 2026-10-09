@@ -2608,6 +2608,39 @@ components:
           format: int32
           type: integer
       type: object
+    TestimonyCreateRequest:
+      properties:
+        copies:
+          items:
+            $ref: '#/components/schemas/DtoCopy'
+          type: array
+        deed:
+          $ref: '#/components/schemas/DtoDeed'
+          description: Escritura de la que el testimonio es copia; `idDeed` debe existir (404 si no)
+        flagged:
+          type: boolean
+        idTestimony:
+          format: int32
+          type: integer
+        movimientosTestimonios:
+          items:
+            $ref: '#/components/schemas/DtoTestimonyMovement'
+          type: array
+        notes:
+          type: string
+        number:
+          format: int32
+          type: integer
+        valido:
+          type: boolean
+        verified:
+          type: boolean
+        version:
+          format: int32
+          type: integer
+      required:
+      - deed
+      type: object
     TypeDocInfo:
       properties:
         idDocumentType:
@@ -7270,7 +7303,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoTestimony'
+              $ref: '#/components/schemas/TestimonyCreateRequest'
         required: true
       responses:
         '201':
@@ -7284,7 +7317,13 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: Solicitud inválida (falta la escritura o su idDeed)
+        '404':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Escritura no encontrada
         '409':
           content:
             '*/*':

@@ -592,8 +592,10 @@ class SimpleControllersTest {
         private final TestimonyRepository repo = mock(TestimonyRepository.class);
         private final TestimonyGenerationVerificationService generationVerificacionService =
                 mock(TestimonyGenerationVerificationService.class);
+        private final com.licensis.notaire.repository.DeedRepository deedRepo =
+                mock(com.licensis.notaire.repository.DeedRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TestimonyController(repo, generationVerificacionService)).build();
+                standaloneSetup(new TestimonyController(repo, generationVerificacionService, deedRepo)).build();
 
         private Testimony build() {
             Testimony t = new Testimony();
@@ -606,6 +608,10 @@ class SimpleControllersTest {
         void all() throws Exception {
             DtoTestimony dto = new DtoTestimony();
             dto.setIdTestimony(1);
+            com.licensis.notaire.dto.DtoDeed deed = new com.licensis.notaire.dto.DtoDeed();
+            deed.setIdDeed(5);
+            dto.setDeed(deed);
+            when(deedRepo.existsById(5)).thenReturn(true);
             when(repo.findAll()).thenReturn(List.of(build()));
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.findById(2)).thenReturn(Optional.empty());
@@ -632,6 +638,10 @@ class SimpleControllersTest {
         void allErrorPaths() throws Exception {
             DtoTestimony dto = new DtoTestimony();
             dto.setIdTestimony(1);
+            com.licensis.notaire.dto.DtoDeed deed = new com.licensis.notaire.dto.DtoDeed();
+            deed.setIdDeed(5);
+            dto.setDeed(deed);
+            when(deedRepo.existsById(5)).thenReturn(true);
             when(repo.findById(1)).thenReturn(Optional.of(build()));
             when(repo.existsById(1)).thenReturn(true);
             when(repo.save(any(Testimony.class))).thenThrow(new RuntimeException("x"));

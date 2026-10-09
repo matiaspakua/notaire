@@ -1,0 +1,34 @@
+info:
+  name: Setup - Create deed for the testimony
+  type: http
+  seq: 1
+  description: |-
+      ## Setup — POST /api/v1/escrituras
+      A testimony is a certified copy of a deed, so the bare create requires
+      one (#655). Deleted by `10-teardown-deed.yml`.
+      Traceability: CU07 / CU08 (#655)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/escrituras"
+  body:
+    type: json
+    data: |-
+        {"number": {{testimony_deed_number}}, "body": "Bruno testimony deed", "status": "BORRADOR", "dateDeedrecording": "2026-06-16"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('testimony_deed_number', 700000 + (Date.now() % 100000));
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Stores the deed id", function () {
+            const b = res.getBody();
+            expect(b.idDeed).to.be.a('number');
+            bru.setVar('testimony_deed_id', b.idDeed);
+          });

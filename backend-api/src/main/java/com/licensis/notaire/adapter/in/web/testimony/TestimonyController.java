@@ -5,10 +5,17 @@ import com.licensis.notaire.dto.DtoTestimony;
 import com.licensis.notaire.business.Testimony;
 import com.licensis.notaire.repository.TestimonyRepository;
 import com.licensis.notaire.application.usecase.testimony.TestimonyGenerationVerificationService;
+import com.licensis.notaire.dto.DtoDeed;
+import com.licensis.notaire.exception.BusinessValidationException;
+import com.licensis.notaire.exception.ResourceNotFoundException;
+import com.licensis.notaire.repository.DeedRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,13 +36,31 @@ import java.util.Optional;
 @Tag(name = "Testimonio", description = "API para gestionar testimonio")
 public class TestimonyController {
 
+    /**
+     * Body of the bare create: the same fields as {@link DtoTestimony}, with the deed required.
+     * A testimony is a certified copy of a deed (CU07 / CU08), so it cannot exist without one
+     * (issue #655). The UI creates testimonies through {@code POST /{idDeed}/generar}.
+     */
+    public static class TestimonyCreateRequest extends DtoTestimony {
+        @Override
+        @NotNull
+        @Schema(description = "Escritura de la que el testimonio es copia; `idDeed` debe existir (404 si no)",
+                requiredMode = Schema.RequiredMode.REQUIRED)
+        public DtoDeed getDeed() {
+            return super.getDeed();
+        }
+    }
+
     private final TestimonyRepository repository;
     private final TestimonyGenerationVerificationService generationVerificacionService;
+    private final DeedRepository deedRepository;
 
     public TestimonyController(TestimonyRepository repository,
-            TestimonyGenerationVerificationService generationVerificacionService) {
+            TestimonyGenerationVerificationService generationVerificacionService,
+            DeedRepository deedRepository) {
         this.repository = repository;
         this.generationVerificacionService = generationVerificacionService;
+        this.deedRepository = deedRepository;
     }
 
     @GetMapping
@@ -63,12 +88,20 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida (falta la escritura o su idDeed)"),
+    @ApiResponse(responseCode = "404", description = "Escritura no encontrada"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
     @Operation(summary = "Crear nuevo testimonio")
-    public ResponseEntity<Object> create(@RequestBody DtoTestimony dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody TestimonyCreateRequest dto) {
+        Integer idDeed = dto.getDeed().getIdDeed();
+        if (idDeed == null) {
+            throw new BusinessValidationException("deed.idDeed: es obligatorio");
+        }
+        if (!deedRepository.existsById(idDeed)) {
+            throw new ResourceNotFoundException("Escritura no encontrada: " + idDeed);
+        }
         try {
             Testimony entity = new Testimony();
             entity.setAtributos(dto);
