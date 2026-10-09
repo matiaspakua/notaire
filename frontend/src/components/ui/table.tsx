@@ -60,10 +60,10 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
     <th
       ref={ref}
       className={cn(
-        "h-14 px-6 text-left align-middle font-bold text-[13px] uppercase tracking-wider [&:has([role=checkbox])]:pr-0",
+        "h-14 px-6 text-left align-middle font-bold text-[13px] text-muted-foreground uppercase tracking-wider [&:has([role=checkbox])]:pr-0",
         className,
       )}
-      style={{ color: theme.colors.neutral[600], ...style }}
+      style={style}
       {...props}
     />
   )

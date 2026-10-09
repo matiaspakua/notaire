@@ -96,7 +96,7 @@ export default function WorkflowsPage() {
       key: "activo",
       header: tc("status"),
       render: (wf) => (
-        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${wf.active ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-500"}`}>
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${wf.active ? "bg-green-100 text-green-700" : "bg-neutral-100 text-neutral-600"}`}>
           {wf.active ? tc("active") : tc("inactive")}
         </span>
       ),

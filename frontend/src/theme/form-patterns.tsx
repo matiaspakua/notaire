@@ -70,7 +70,7 @@ export function FormField({
   };
 
   const errorStyle: React.CSSProperties = {
-    color: theme.colors.error[600],
+    color: theme.semantic.form.errorText,
     fontSize: theme.typography.fontSize.xs,
     marginTop: theme.spacing[1],
     fontFamily: theme.typography.fontFamily.body,
@@ -95,7 +95,7 @@ export function FormField({
     return (
       <label style={containerStyle}>
         <span style={labelTextStyle}>
-          {label} {required && <span style={{ color: theme.colors.error[500] }}>*</span>}
+          {label} {required && <span style={{ color: theme.semantic.form.errorText }}>*</span>}
         </span>
         <span style={{ ...contentStyle, display: "block" }}>{content}</span>
       </label>
