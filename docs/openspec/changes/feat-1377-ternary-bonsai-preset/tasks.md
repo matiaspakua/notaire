@@ -1,0 +1,86 @@
+> Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md) — §5 Official SDLC
+> Workflow, §6 Quality Gates. Groups 1-12 are **mandatory**.
+
+## 1. Gate 1 — Prerequisites
+
+- [ ] 1.1 GitHub Issue #1377 exists, labeled, linked to CU76
+- [ ] 1.2 Use Case documentation exists
+- [ ] 1.3 Acceptance Criteria defined as scenarios
+- [ ] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
+- [ ] 1.5 ADR — n/a, follows existing architecture
+- [ ] 1.6 Move the Issue to IN PROGRESS (`in-progress` label)
+
+## 2. Crear branch
+
+- [ ] 2.1 `git fetch origin main`
+- [ ] 2.2 `git checkout -b feat/1377_add-ternary-bonsai-local-ai-model`
+- [ ] 2.3 Branch name recorded in `traceability.md`
+- [ ] 2.4 Run `bash workspace/sdlc/validate-sdlc-plan.sh feat-1377-ternary-bonsai-preset`
+
+## 3. Gate 2 — Escribir tests (TDD, failing first)
+
+- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [ ] 3.2 Add the failing tests; observed failing
+- [ ] 3.3 Every scenario maps to a test
+
+## 4. Implementación
+
+- [ ] 4.1 Registry (`models.yaml`), resolver (`models_config.py`), setup script reads it, Bonsai preset and `omlx-bonsai` profile
+- [ ] 4.2 Tests green
+
+## 5. Actualizar tests existentes
+
+- [ ] 5.1 Existing affected tests updated without weakening assertions
+- [ ] 5.2 No dead code or unused imports remain
+
+## 6. Ejecutar regresión
+
+- [ ] 6.1 Targeted tests for the change
+- [ ] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
+- [ ] 6.3 `bash workspace/sdlc/preflight.sh`
+- [ ] 6.4 No `@Disabled` tests
+
+## 7. Ejecutar Playwright
+
+- [ ] 7.1 n/a — no UI change; run the existing suite with preflight --full
+
+## 8. Gate 3 — Actualizar documentación permanente
+
+- [ ] 8.1 `local-ai/sdlc/AI-SDLC.md` (model selection by registry key)
+- [ ] 8.2 `CHANGELOG.md`
+
+## 9. Commits atómicos
+
+- [ ] 9.1 One logical change per commit, Conventional Commits
+- [ ] 9.2 Only the final commit carries `Closes #1377`; others `Refs #1377`
+- [ ] 9.3 No secrets, no commented-out code
+
+## 10. Pull Request y validación CI
+
+- [ ] 10.1 `bash workspace/sdlc/run_pipeline.sh` exits 0
+- [ ] 10.2 `git push -u origin feat/1377_add-ternary-bonsai-local-ai-model`
+- [ ] 10.3 Open PR `[#1377] feat(local-ai): add the Ternary Bonsai 27B preset and move model presets to models.yaml`
+- [ ] 10.4 Wait for all required workflows
+- [ ] 10.5 Gate 4 — CI green, review approved, no conflicts
+
+## 11. Deploy
+
+- [ ] 11.1 Owner merges via the PR — never push to `main`
+- [ ] 11.2 Confirm `cd.yml` ran green on `main`
+
+## 12. Gate 5 — Smoke test y cierre
+
+- [ ] 12.1 Smoke: `python3 -m unittest discover -s local-ai/sdlc/tests` green on the merge commit
+- [ ] 12.2 Rollback path (revert PR) still valid
+- [ ] 12.3 Close Issue #1377 referencing the PR
+- [ ] 12.4 Archive the change: `openspec archive feat-1377-ternary-bonsai-preset`
+
+## Definition of Done
+
+- [ ] Issue linked to a Use Case, with Acceptance Criteria
+- [ ] Specification written (Gate 1)
+- [ ] Failing tests observed (Gate 2)
+- [ ] Implementation passes tests and required CI (Gate 3–4)
+- [ ] Permanent documentation updated and consistent
+- [ ] Commits atomic, Conventional Commits, `Closes #1377` on the last
+- [ ] Merged via PR; smoke evidence recorded; Issue closed (Gate 5)
