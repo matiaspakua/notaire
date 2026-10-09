@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -147,5 +149,37 @@ class StaleOrMissingVersionIntegrationTest {
         List<String> required = new ArrayList<>();
         spec.path("components").path("schemas").path(ref).path("required").forEach(n -> required.add(n.asText()));
         assertThat(required).contains("number", "flagged", "verified", "version");
+    }
+
+    @ParameterizedTest(name = "contract of PUT {0} documents 409 for a stale version")
+    @ValueSource(strings = {
+        "/api/v1/tipo-folio/{id}", "/api/v1/estado-gestion/{id}", "/api/v1/tipo-de-documento/{id}",
+        "/api/v1/tipo-tramite/{id}", "/api/v1/conceptos/{id}", "/api/v1/workflow-definition/{id}",
+        "/api/v1/movimiento-testimonio/{id}"
+    })
+    @DisplayName("every PUT that copies version from the body documents 409")
+    void versionedUpdatesDocument409(String path) throws Exception {
+        JsonNode responses = getJson("/v3/api-docs").path("paths").path(path).path("put").path("responses");
+        List<String> codes = new ArrayList<>();
+        responses.fieldNames().forEachRemaining(codes::add);
+        assertThat(codes).contains("409");
+    }
+
+    @Test
+    @DisplayName("PUT /movimiento-testimonio/{id} with a stale version answers 409 instead of 500")
+    void testimonyMovementStaleVersionIsConflict() throws Exception {
+        int testimony = createTestimony();
+        JsonNode created = json(mockMvc.perform(post("/api/v1/movimiento-testimonio").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"testimony\":{\"idTestimony\":" + testimony + "},\"registered\":false,"
+                                + "\"dateEntry\":\"2026-10-01\"}"))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+        int id = created.get("idTestimonyMovement").asInt();
+        com.fasterxml.jackson.databind.node.ObjectNode current =
+                (com.fasterxml.jackson.databind.node.ObjectNode) getJson("/api/v1/movimiento-testimonio/" + id);
+        String stale = current.put("version", current.get("version").asInt() + 5).toString();
+
+        mockMvc.perform(put("/api/v1/movimiento-testimonio/" + id).contentType(MediaType.APPLICATION_JSON).content(stale))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(STALE_MESSAGE));
     }
 }
