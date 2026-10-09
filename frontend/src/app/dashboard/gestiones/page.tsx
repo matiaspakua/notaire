@@ -32,9 +32,10 @@ import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { useInmuebles } from "@/hooks/useInmuebles";
 import { ApiError } from "@/lib/api-client";
-import { fullName, formatCurrency, formatDate, extractApiError } from "@/lib/utils";
+import { fullName, formatCurrency, extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 import { GestionResumenDialog } from "./GestionResumenDialog";
+import { formatInstant } from "@/lib/dates";
 
 const ESTADO_CARPETA_ACTIVA = "Activa";
 
@@ -493,7 +494,7 @@ export default function GestionesPage() {
                 {historial.map((h) => (
                   <div key={h.idHistory} data-testid="bitacora-item" className="border-b pb-2">
                     <div className="font-medium">{h.statusManagementName}</div>
-                    <div className="text-xs text-muted-foreground">{formatDate(h.date)}</div>
+                    <div className="text-xs text-muted-foreground">{formatInstant(h.date, "es-AR", { withTime: false })}</div>
                     {h.notes && <div className="text-sm">{h.notes}</div>}
                   </div>
                 ))}

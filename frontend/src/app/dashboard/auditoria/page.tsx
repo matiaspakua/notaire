@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuditoria } from "@/hooks/useAuditoria";
 import type { RegistroAuditoria } from "@/types";
+import { formatInstant } from "@/lib/dates";
 
 export default function AuditoriaPage() {
   const t = useTranslations("auditoria");
@@ -41,7 +42,7 @@ export default function AuditoriaPage() {
       header: t("fields.fecha"),
       render: (r) => (
         <span className="text-sm">
-          {r.date ? new Date(r.date).toLocaleString("es-AR") : "—"}
+          {formatInstant(r.date)}
         </span>
       ),
       className: "w-44",

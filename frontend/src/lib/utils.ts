@@ -1,20 +1,19 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ApiError } from "@/lib/api-client";
+import { formatCalendarDate } from "@/lib/dates";
 
 /** Merge Tailwind classes safely */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Format a date string to DD/MM/YYYY */
+/**
+ * Format a date-only business field as D/M/YYYY (es-AR) showing the stored
+ * calendar day in any browser zone (#1339); see `lib/dates.ts`.
+ */
 export function formatDate(dateStr?: string | null): string {
-  if (!dateStr) return "—";
-  try {
-    return new Date(dateStr).toLocaleDateString("es-AR");
-  } catch {
-    return dateStr;
-  }
+  return formatCalendarDate(dateStr, "es-AR");
 }
 
 /** Format a number as currency (ARS) */

@@ -19,6 +19,7 @@ import {
 } from "@/hooks/useCopias";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Copia } from "@/types";
+import { formatCalendarDate, toDateInputValue, todayInputValue } from "@/lib/dates";
 
 export default function CopiasPage() {
   const t = useTranslations("copias");
@@ -41,7 +42,7 @@ export default function CopiasPage() {
 
   function openCreate() {
     setEditing(null);
-    setForm({ numero: "", fechaImpresion: new Date().toISOString().split("T")[0], fechaRetiro: "", observaciones: "" });
+    setForm({ numero: "", fechaImpresion: todayInputValue(), fechaRetiro: "", observaciones: "" });
     setModalOpen(true);
   }
 
@@ -49,8 +50,8 @@ export default function CopiasPage() {
     setEditing(c);
     setForm({
       numero: c.number?.toString() ?? "",
-      fechaImpresion: c.datePrinting?.split("T")[0] ?? "",
-      fechaRetiro: c.dateWithdrawal?.split("T")[0] ?? "",
+      fechaImpresion: toDateInputValue(c.datePrinting),
+      fechaRetiro: toDateInputValue(c.dateWithdrawal),
       observaciones: c.notes ?? "",
     });
     setModalOpen(true);
@@ -104,12 +105,12 @@ export default function CopiasPage() {
     {
       key: "fechaImpresion",
       header: "Fecha Impresión",
-      render: (c) => c.datePrinting ? new Date(c.datePrinting).toLocaleDateString("es-AR") : "—",
+      render: (c) => formatCalendarDate(c.datePrinting),
     },
     {
       key: "fechaRetiro",
       header: "Fecha Retiro",
-      render: (c) => c.dateWithdrawal ? new Date(c.dateWithdrawal).toLocaleDateString("es-AR") : "—",
+      render: (c) => formatCalendarDate(c.dateWithdrawal),
     },
     {
       key: "testimonio",

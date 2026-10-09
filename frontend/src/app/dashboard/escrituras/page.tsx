@@ -23,6 +23,7 @@ import {
 } from "@/hooks/useEscrituras";
 import { formatDate, extractApiError } from "@/lib/utils";
 import type { Escritura, Folio } from "@/types";
+import { toDateInputValue } from "@/lib/dates";
 
 const EMPTY: Partial<Escritura> = { number: undefined, dateDeedrecording: "", body: "" };
 const ESTADO_SIN_FIRMAR = "Sin Firmar";
@@ -152,7 +153,7 @@ export default function EscriturasPage() {
                 <Input type="number" value={editing.number ?? ""} onChange={(e) => setEditing({ ...editing, number: Number(e.target.value) })} />
               </FormField>
               <FormField label={tc("date")} required>
-                <Input type="date" value={editing.dateDeedrecording ?? ""} onChange={(e) => setEditing({ ...editing, dateDeedrecording: e.target.value })} />
+                <Input type="date" value={toDateInputValue(editing.dateDeedrecording)} onChange={(e) => setEditing({ ...editing, dateDeedrecording: e.target.value })} />
               </FormField>
               <FormField label={t("fields.folio")} required={!isEditMode}>
                 <Select value={editing.idFolio?.toString() ?? ""} onValueChange={(v) => setEditing({ ...editing, idFolio: parseInt(v) })}>
