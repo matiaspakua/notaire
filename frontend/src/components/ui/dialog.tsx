@@ -17,7 +17,7 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/30 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:duration-200 data-[state=closed]:duration-150", className)}
+    className={cn("fixed inset-0 z-50 bg-black/30 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:duration-slow data-[state=open]:ease-emphasized data-[state=closed]:duration-exit data-[state=closed]:ease-exit", className)}
     {...props}
   />
 ));
@@ -34,7 +34,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-[28px] border-none bg-white p-10 apple-shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:duration-200 data-[state=open]:ease-out data-[state=closed]:duration-150 data-[state=closed]:ease-in max-h-[90vh] overflow-y-auto",
+        "fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-[28px] border-none bg-white p-10 apple-shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:duration-slow data-[state=open]:ease-emphasized data-[state=closed]:duration-exit data-[state=closed]:ease-exit max-h-[90vh] overflow-y-auto",
         className
       )}
       // No DialogDescription is rendered: drop Radix's default aria-describedby
@@ -43,7 +43,7 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogClose className="absolute right-6 top-6 rounded-full p-2 opacity-50 hover:bg-black/5 hover:opacity-100 transition-all active:scale-90">
+      <DialogClose className="absolute right-6 top-6 rounded-full p-2 opacity-50 hover:bg-black/5 hover:opacity-100 transition-[background-color,opacity,transform] duration-fast ease-standard active:scale-90">
         <X className="h-5 w-5" />
         <span className="sr-only">{tc("close")}</span>
       </DialogClose>

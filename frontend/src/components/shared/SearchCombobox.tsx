@@ -186,7 +186,7 @@ export function SearchCombobox<T>({
         onKeyDown={onKeyDown}
         onBlur={(e) => { if (!containerRef.current?.contains(e.relatedTarget as Node | null)) close(); }}
         className={cn(
-          "flex h-12 w-full rounded-[12px] border border-[hsl(var(--border))] bg-white pl-10 py-2.5 text-base transition-all duration-200 placeholder:text-[hsl(var(--muted-foreground))] apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-[hsl(var(--ring)/0.4)]",
+          "flex h-12 w-full rounded-[12px] border border-[hsl(var(--border))] bg-white pl-10 py-2.5 text-base transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard placeholder:text-[hsl(var(--muted-foreground))] apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-[hsl(var(--ring)/0.4)]",
           canClear ? "pr-11" : "pr-4",
         )}
       />
@@ -204,7 +204,7 @@ export function SearchCombobox<T>({
       {open && (
         <div
           onClick={(e) => e.preventDefault()}
-          className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-[12px] border border-[hsl(var(--border))] bg-white shadow-lg animate-in fade-in slide-in-from-top-1 duration-150 motion-reduce:animate-none"
+          className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-[12px] border border-[hsl(var(--border))] bg-white shadow-lg animate-in fade-in slide-in-from-top-1 duration-base ease-standard motion-reduce:animate-none"
         >
           <ul id={listId} role="listbox" aria-label={ariaLabel} className="max-h-64 overflow-y-auto p-1">
             {options.map((o, i) => {
@@ -226,7 +226,7 @@ export function SearchCombobox<T>({
                     choose(o);
                   }}
                   className={cn(
-                    "flex cursor-pointer select-none items-center justify-between gap-3 rounded-[8px] px-3 py-2 text-sm transition-colors duration-150",
+                    "flex cursor-pointer select-none items-center justify-between gap-3 rounded-[8px] px-3 py-2 text-sm transition-colors duration-fast",
                     i === active ? "bg-[hsl(var(--ring)/0.14)]" : "hover:bg-black/5",
                     getKey(o) === selectedKey && "font-semibold",
                   )}

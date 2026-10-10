@@ -7,6 +7,12 @@
 
 import { useCallback } from "react";
 import { theme, type Theme } from "./tokens";
+import { motion, cssEase, cssMs } from "./motion";
+
+/** Colour/shadow transition from the motion tokens; never `all` (#1368). */
+const COLOR_TRANSITION = ["background-color", "border-color", "color", "box-shadow"]
+  .map((p) => `${p} ${cssMs(motion.duration.fast)} ${cssEase(motion.ease.standard)}`)
+  .join(", ");
 
 /**
  * Hook to access the current theme object
@@ -117,7 +123,7 @@ export const themeStyles = {
         fontWeight: theme.typography.fontWeight.semibold,
         border: "none",
         cursor: "pointer",
-        transition: `all ${theme.transitions.duration.base} ${theme.transitions.timing.ease}`,
+        transition: COLOR_TRANSITION,
       },
       secondary: {
         backgroundColor: theme.semantic.button.secondaryBg,
@@ -128,7 +134,7 @@ export const themeStyles = {
         fontWeight: theme.typography.fontWeight.semibold,
         border: `1px solid ${theme.colors.neutral[300]}`,
         cursor: "pointer",
-        transition: `all ${theme.transitions.duration.base} ${theme.transitions.timing.ease}`,
+        transition: COLOR_TRANSITION,
       },
       ghost: {
         backgroundColor: "transparent",
@@ -139,7 +145,7 @@ export const themeStyles = {
         fontWeight: theme.typography.fontWeight.semibold,
         border: "none",
         cursor: "pointer",
-        transition: `all ${theme.transitions.duration.base} ${theme.transitions.timing.ease}`,
+        transition: COLOR_TRANSITION,
       },
     };
     return styles[variant];
@@ -157,7 +163,7 @@ export const themeStyles = {
     height: theme.sizes.input.height,
     border: `${theme.sizes.input.borderWidth} solid ${theme.semantic.form.inputBorder}`,
     fontFamily: theme.typography.fontFamily.body,
-    transition: `all ${theme.transitions.duration.base} ${theme.transitions.timing.ease}`,
+    transition: COLOR_TRANSITION,
   }),
 
   /**
@@ -191,13 +197,13 @@ export function useThemeClasses() {
   return useCallback((component: string, state?: string): string => {
     const baseClasses: Record<string, string> = {
       button:
-        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-200 apple-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95",
+        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold apple-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95",
       input:
-        "flex h-12 w-full rounded-lg border border-input bg-background px-4 py-2.5 text-base transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/60 apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-muted-foreground/40",
+        "flex h-12 w-full rounded-lg border border-input bg-background px-4 py-2.5 text-base transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/60 apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-muted-foreground/40",
       card: "rounded-2xl border border-border bg-card text-card-foreground apple-shadow",
       label: "text-xs font-semibold uppercase tracking-wider text-muted-foreground",
       textarea:
-        "flex min-h-[100px] w-full rounded-lg border border-input bg-background px-4 py-2.5 text-base transition-all duration-200 placeholder:text-muted-foreground/60 apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-muted-foreground/40",
+        "flex min-h-[100px] w-full rounded-lg border border-input bg-background px-4 py-2.5 text-base transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard placeholder:text-muted-foreground/60 apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-muted-foreground/40",
     };
 
     const stateModifiers: Record<string, string> = {

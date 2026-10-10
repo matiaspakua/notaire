@@ -252,6 +252,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and documentos-entidades-externas); the 14 differently coloured dashboard module tiles share one
   `bg-primary/10 text-primary` style, and `ring-primary-300` / `border-error-500`, which generated no CSS, are `ring-ring/40` / `border-destructive`. The partial
   `.dark` block is removed (owner decision 2026-10-09). Guarded by `design-tokens.test.ts` and Playwright TS-0119.
+- **One motion system, and route changes no longer wait for an exit animation** (issue #1368, RNF-05/RNF-03):
+  `globals.css` defines `--motion-*` durations (fast 120ms, base 180ms, slow 240ms, exit 180ms, page 160ms) and
+  easings with `duration-fast|base|slow|exit|page` and `ease-standard|emphasized|exit` utilities, mirrored by
+  `theme/motion.ts` for motion/react. The 22 ad-hoc `duration-NNN` / `transition-all` classes and
+  `.apple-button { transition: all }` (with its hover scale) are gone; dialogs enter in 240ms emphasized and leave in
+  180ms; pages fade up 4px in 160ms without `AnimatePresence mode="wait"` (was 200ms exit + 400ms enter); staggered
+  entrances are capped at 6 x 30ms. Guarded by `motion-tokens.test.ts` and Playwright TS-0120.
 
 ### Fixed
 

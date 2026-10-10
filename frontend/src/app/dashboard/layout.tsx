@@ -69,7 +69,7 @@ export default function DashboardLayout({
             aria-label={tn("openMenu")}
             aria-expanded={sidebarOpen}
             aria-controls={MOBILE_SIDEBAR_ID}
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-[10px] border border-border/60 text-foreground hover:bg-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-[10px] border border-border/60 text-foreground hover:bg-accent transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -80,7 +80,13 @@ export default function DashboardLayout({
           tabIndex={-1}
           className="flex-1 overflow-y-auto p-6 lg:p-8 focus:outline-none"
         >
-          <AnimatePresence mode="wait" initial={false}>
+          {/* initial={false}: the first render is not animated (nor are its
+              children, e.g. the workflow tracker's pulse). Pages have no exit
+              variant and the default "sync" mode is used, so the old page
+              unmounts at once and the new one fades in without waiting (#1368).
+              The data-route-path wrapper lets useRouteFocus focus only the
+              incoming page's <h1> (#1352). */}
+          <AnimatePresence initial={false}>
             <PageTransition key={pathname}>
               <div {...{ [ROUTE_PATH_ATTR]: pathname }}>{children}</div>
             </PageTransition>

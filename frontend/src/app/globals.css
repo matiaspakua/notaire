@@ -35,6 +35,38 @@
   --color-ring: hsl(var(--ring));
 }
 
+/* Motion tokens (#1368): the CSS source of timing, mirrored by theme/motion.ts
+   for motion/react. Use `duration-fast|base|slow|exit|page` and
+   `ease-standard|emphasized|exit`; numeric durations and transitions of every
+   property are rejected by tests/unit/motion-tokens.test.ts. */
+@theme inline {
+  --ease-standard: var(--motion-ease-standard);
+  --ease-emphasized: var(--motion-ease-emphasized);
+  --ease-exit: var(--motion-ease-exit);
+}
+
+/* --tw-duration also drives tw-animate-css enter/exit animations. */
+@utility duration-fast {
+  --tw-duration: var(--motion-duration-fast);
+  transition-duration: var(--motion-duration-fast);
+}
+@utility duration-base {
+  --tw-duration: var(--motion-duration-base);
+  transition-duration: var(--motion-duration-base);
+}
+@utility duration-slow {
+  --tw-duration: var(--motion-duration-slow);
+  transition-duration: var(--motion-duration-slow);
+}
+@utility duration-exit {
+  --tw-duration: var(--motion-duration-exit);
+  transition-duration: var(--motion-duration-exit);
+}
+@utility duration-page {
+  --tw-duration: var(--motion-duration-page);
+  transition-duration: var(--motion-duration-page);
+}
+
 @layer base {
   :root {
     /* Apple-inspired design tokens - Refined for macOS Sequoia/iOS 18 aesthetic */
@@ -92,6 +124,18 @@
     --sidebar-hover: 0 0% 92%;
     --sidebar-active: 210.1 100% 44.5%;
     --sidebar-active-foreground: 0 0% 100%;
+
+    /* Motion tokens (#1368), see the @utility block above. */
+    --motion-duration-instant: 0ms;
+    --motion-duration-fast: 120ms;
+    --motion-duration-base: 180ms;
+    --motion-duration-slow: 240ms;
+    --motion-duration-exit: 180ms;
+    --motion-duration-page: 160ms;
+    --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --motion-ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+    --motion-ease-exit: cubic-bezier(0.3, 0, 1, 1);
+    --motion-distance-sm: 4px;
   }
 
 }
@@ -171,12 +215,11 @@
   }
 
   /* Apple-style button hover */
+  /* Hover changes colour/shadow only; press feedback is scale(0.98) (#1368). */
   .apple-button {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .apple-button:hover {
-    transform: scale(1.02);
+    transition-property: background-color, box-shadow, transform;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease-standard);
   }
 
   .apple-button:active {
@@ -198,7 +241,6 @@
 
   /* Neutralise the decorative button scale so motion-sensitive users get no
      movement (the transforms are otherwise driven by transitions above). */
-  .apple-button:hover,
   .apple-button:active {
     transform: none !important;
   }

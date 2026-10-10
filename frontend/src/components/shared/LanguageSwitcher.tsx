@@ -34,7 +34,7 @@ export function LanguageSwitcher() {
           aria-pressed={currentLocale === code}
           data-testid={`locale-${code}`}
           className={[
-            "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold transition-all duration-150",
+            "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold transition-colors duration-fast",
             currentLocale === code
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground hover:bg-muted",

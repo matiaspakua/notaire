@@ -69,7 +69,7 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
-      <div className="w-full max-w-[400px] space-y-8 animate-in fade-in-0 duration-500">
+      <div className="w-full max-w-[400px] space-y-8 animate-in fade-in-0 duration-slow ease-standard">
         <div className="text-center space-y-4">
           <div className="flex justify-center">
             <motion.div
