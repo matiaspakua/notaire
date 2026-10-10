@@ -17,27 +17,27 @@
 
 ## 3. Gate 2 — Write tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate cases from the spec scenarios
-- [ ] 3.2 Write `RequestLoggingFilterTest`, extend `backend-proxy.test.ts`, write `infra/tests/test_log_trace_correlation.py`
-- [ ] 3.3 Run it and observe it fail
-- [ ] 3.4 Every scenario maps to a test (`traceability.md`)
+- [x] 3.1 Enumerate cases from the spec scenarios
+- [x] 3.2 Write `RequestLoggingFilterTest`, extend `backend-proxy.test.ts`, write `infra/tests/test_log_trace_correlation.py`
+- [x] 3.3 Run it and observe it fail
+- [x] 3.4 Every scenario maps to a test (`traceability.md`)
 
 ## 4. Implementation
 
-- [ ] 4.1 Backend `RequestLoggingFilter`
-- [ ] 4.2 Frontend proxy structured logging
-- [ ] 4.3 Loki derived field to Tempo
-- [ ] 4.4 Register the guard in `infra/verify.sh`
+- [x] 4.1 Backend `RequestLoggingFilter`
+- [x] 4.2 Frontend proxy structured logging
+- [x] 4.3 Loki derived field to Tempo
+- [x] 4.4 Register the guard in `infra/verify.sh`
 
 ## 5. Update existing tests
 
-- [ ] 5.1 Existing `infra/tests/test_*.py` still pass
+- [x] 5.1 Existing `infra/tests/test_*.py` still pass
 
 ## 6. Run regression
 
-- [ ] 6.1 `bash infra/verify.sh`
+- [x] 6.1 `bash infra/verify.sh`
 - [ ] 6.2 `bash workspace/sdlc/preflight.sh`
-- [ ] 6.3 Live check: a log line carries traceId that opens the trace
+- [x] 6.3 Live check: a log line carries traceId that opens the trace
 
 ## 7. Playwright
 
@@ -45,9 +45,9 @@
 
 ## 8. Gate 3 — Update permanent documentation
 
-- [ ] 8.1 `docs/200-architecture/207-monitoring/README.md`
-- [ ] 8.2 `infra/docs/DEFINITION.md`
-- [ ] 8.3 `CHANGELOG.md` n/a
+- [x] 8.1 `docs/200-architecture/207-monitoring/README.md`
+- [x] 8.2 `infra/docs/DEFINITION.md`
+- [x] 8.3 `CHANGELOG.md` n/a
 
 ## 9. Atomic commits
 

@@ -14,7 +14,7 @@ See [proposal.md](proposal.md). `logback-spring.xml` already includes MDC `trace
    (MDC populated). Rejected: Tomcat access log (not in MDC scope, different format); `CommonsRequestLoggingFilter` (logs payload/query).
 2. **Log method + path only.** Query strings and headers can carry identifiers or tokens. Path IDs are already in audit logs.
 3. **Frontend: reuse `lib/logger.ts`** (JSON mirroring the backend schema) inside `backend-proxy.ts`; no new dependency.
-4. **Derived field on the Loki datasource** (regex on `"traceId":"(\w+)"`), not a promoted label, to avoid high-cardinality labels.
+4. **`traceId` as Loki structured metadata** (Promtail `structured_metadata` stage, Loki `allow_structured_metadata: true`) with a `matcherType: label` derived field to Tempo. Not a label (high cardinality) and not parsed from the line (Promtail stores only the `message`, so the JSON envelope is gone).
 
 ## Riesgos / Trade-offs
 

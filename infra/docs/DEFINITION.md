@@ -58,6 +58,12 @@ running application.
 | `notaire-logs` | backend and frontend logs from Loki |
 | `notaire-auth` | login and security signals |
 
+### Log-to-trace link
+
+Promtail stores `traceId` and `spanId` as Loki structured metadata (`allow_structured_metadata: true`); the Loki
+datasource's `TraceID` derived field (matcher type `label`) links to Tempo. In provisioning files the link is written
+`$${__value.raw}`, because Grafana expands `${...}` there.
+
 ### Logging
 
 The backend writes structured JSON to stdout only and never keeps log files.
