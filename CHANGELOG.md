@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **OpenSpec active-set hygiene**: archive `docs-1197-repository-topology` (tied to closed
+  umbrella) and the merged `docs-1445-openspec-archive` tree so `validate-sdlc-plan.sh` /
+  `workspace/verify` stay green.
 - **OpenSpec hygiene + business README Pages link**: archive shipped docs-1441/1443/1445
   packaging changes; `docs/100-business/README.md` links the public Business Docs page.
 - **Live Owner topology tracker is #1445** (CU76): ADR-024 / REPO-SPLIT-PLAN point at #1445 after
