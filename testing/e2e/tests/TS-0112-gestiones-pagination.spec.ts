@@ -30,7 +30,8 @@ test.describe("Managements list pagination (#1340)", () => {
     const table = page.getByRole("table");
     await expect(table.locator("tbody tr")).toHaveCount(20);
     await expect(table.locator("tbody tr").first().locator("td").first()).toHaveText(
-      String(newest.data!.content[0].idManagement),
+      // The id is secondary text under the case number since #1348.
+      new RegExp(`ID\\s*${newest.data!.content[0].idManagement}$`),
     );
     const nav = page.getByRole("navigation", { name: /paginaci[oó]n|pagination/i });
     const shown = (await nav.getByTestId("pagination-status").innerText()).replace(/[.,\s\u00a0]/g, "");
@@ -40,7 +41,7 @@ test.describe("Managements list pagination (#1340)", () => {
     await nav.getByRole("button", { name: /última|last/i }).click();
     await expect(page).toHaveURL(/[?&]page=\d+/);
     await expect(table.locator("tbody tr").last().locator("td").first()).toHaveText(
-      String(oldest.data!.content[0].idManagement),
+      new RegExp(`ID\\s*${oldest.data!.content[0].idManagement}$`),
       { timeout: 15000 },
     );
   });
