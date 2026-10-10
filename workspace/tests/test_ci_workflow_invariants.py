@@ -223,5 +223,44 @@ class PathScopedCiInvariantsTest(unittest.TestCase):
 
 
 
+
+class PlaywrightShardInvariantsTest(unittest.TestCase):
+    """#1258 — three-shard E2E matrix + fail-closed merge job."""
+
+    def setUp(self):
+        self.pw = load_workflow(PLAYWRIGHT_WORKFLOW)
+
+    def test_e2e_tests_job_has_three_shards(self):
+        job = self.pw.get("jobs", {}).get("e2e-tests", {})
+        matrix = (job.get("strategy") or {}).get("matrix") or {}
+        self.assertEqual(matrix.get("shard"), [1, 2, 3])
+
+    def test_e2e_run_step_passes_shard_flag(self):
+        steps = self.pw.get("jobs", {}).get("e2e-tests", {}).get("steps") or []
+        run = next((s.get("run", "") for s in steps if "playwright test" in s.get("run", "")), "")
+        self.assertIn("--shard=", run)
+
+    def test_merge_reports_job_needs_e2e_tests(self):
+        job = self.pw.get("jobs", {}).get("e2e-merge-reports", {})
+        self.assertIsNotNone(job)
+        needs = job.get("needs") or []
+        self.assertIn("e2e-tests", needs)
+
+    def test_merge_job_keeps_heavy_ci_check_name(self):
+        """check-heavy-ci.sh looks for exact name UI E2E Tests (Playwright)."""
+        job = self.pw.get("jobs", {}).get("e2e-merge-reports", {})
+        self.assertEqual(job.get("name"), "UI E2E Tests (Playwright)")
+
+    def test_suite_aggregator_needs_merge_not_raw_matrix(self):
+        needs = self.pw.get("jobs", {}).get("suite-playwright-e2e", {}).get("needs") or []
+        self.assertIn("e2e-merge-reports", needs)
+        self.assertNotIn("e2e-tests", needs)
+
+    def test_merge_job_fails_closed_when_shards_red(self):
+        steps = self.pw.get("jobs", {}).get("e2e-merge-reports", {}).get("steps") or []
+        script = "\n".join(s.get("run", "") for s in steps if isinstance(s.get("run"), str))
+        self.assertIn("needs.e2e-tests.result", script)
+
+
 if __name__ == "__main__":
     unittest.main()

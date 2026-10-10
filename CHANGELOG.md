@@ -29,6 +29,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   fails Frontend CI on drift. Gestiones, presupuestos, documentos (and dashboard counts via those
   hooks) use generated schema aliases from `src/types/api.ts`.
 - **Always-loaded agent context ≤8k tokens** (issue #1259 / #1197 P0.4, CU76): slim `AGENTS.md` with an on-demand rule/skill table; add `CONSTITUTION-AGENT-CARD.md` digest (full Constitution on demand); set `alwaysApply: false` on large frontend/Java/refactoring rules and the frontend-design skill; add `workspace/ci/agent-context-budget.py` + unit test; refresh `REPO-METRICS-BASELINE.md` (~2k tokens est.).
+- **Playwright E2E runs as a three-shard matrix** (issue #1258, CU76, #1197 P0.3):
+  `playwright-e2e.yml` shards UI E2E with `--shard=i/3`, merges blob reports in
+  `e2e-merge-reports` (check name stays `UI E2E Tests (Playwright)` for
+  `check-heavy-ci.sh`), and fails closed if any shard failed. CI
+  `playwright.config.ts` adds the blob reporter; invariants guard the matrix.
+  `check-heavy-ci.sh` accepts path-scoped `skip`/`skipped` for docs-only PRs.
 - **Path-scoped CI skips Java and E2E on docs-only PRs** (issue #1257, CU76, #1197 P0.2):
   `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, and `openapi-contract.yml` add a
   `Path filter` (`dorny/paths-filter`) job; leaf jobs gate on filter outputs; suite

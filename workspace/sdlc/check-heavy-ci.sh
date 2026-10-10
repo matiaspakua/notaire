@@ -74,6 +74,11 @@ for name in "${REQUIRED[@]}"; do
     pass|success)
       echo "  ✓ $name ($st)"
       ;;
+    # Path-scoped CI (#1257): docs/OpenSpec PRs intentionally skip Java/E2E leaves;
+    # suite aggregators and gh pr checks report skip/skipped — still mergeable.
+    skip|skipped)
+      echo "  ✓ $name ($st — path-scoped skip)"
+      ;;
     missing)
       wf="$(workflow_for "$name")"
       wst="$(workflow_status "$wf")"
