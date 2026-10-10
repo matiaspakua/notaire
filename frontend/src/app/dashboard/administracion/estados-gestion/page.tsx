@@ -172,6 +172,7 @@ export default function EstadosGestionPage() {
           <div className="flex items-center gap-3 mb-3">
             <h2 className="text-base font-semibold text-neutral-800">{t("workflowSection")}</h2>
             <select
+              aria-label={t("workflowFilter")}
               className="border border-neutral-300 rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"
               value={selectedWorkflowId ?? ""}
               onChange={(e) => setSelectedWorkflowId(e.target.value ? Number(e.target.value) : undefined)}

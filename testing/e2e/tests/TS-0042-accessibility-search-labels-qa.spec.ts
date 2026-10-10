@@ -58,3 +58,46 @@ test.describe("Search inputs expose an accessible label (#608)", () => {
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 });
+
+/**
+ * Issue #1343: filter selects had no accessible name (axe button-name /
+ * select-name, critical) on gestiones, presupuestos, folios, auditoria and
+ * estados-gestion.
+ */
+test.describe("Filter selects expose an accessible name (#1343)", () => {
+  test.beforeEach(async ({ page }) => {
+    await adminAuthSetup(page);
+  });
+
+  test("gestiones client filter is a named combobox", async ({ page }) => {
+    await page.goto("/dashboard/gestiones");
+    await expect(page.getByRole("combobox", { name: "Filtrar por cliente", exact: true })).toBeVisible();
+  });
+
+  test("presupuestos status filter is a named combobox", async ({ page }) => {
+    await page.goto("/dashboard/presupuestos");
+    await expect(page.getByRole("combobox", { name: "Filtrar por estado", exact: true })).toBeVisible();
+  });
+
+  test("folios status filter is a named combobox", async ({ page }) => {
+    await page.goto("/dashboard/administracion/folios");
+    await expect(page.getByRole("combobox", { name: "Filtrar por estado", exact: true })).toBeVisible();
+  });
+
+  test("auditoria module filter, when shown, is a named combobox", async ({ page }) => {
+    await page.goto("/dashboard/auditoria");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    const selects = page.locator("select");
+    if ((await selects.count()) > 0) {
+      await expect(page.getByRole("combobox", { name: "Módulo", exact: true })).toBeVisible();
+    }
+  });
+
+  test("estados-gestion workflow selector, when shown, is a named combobox", async ({ page }) => {
+    await page.goto("/dashboard/administracion/estados-gestion");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    if ((await page.getByTestId("select-workflow").count()) > 0) {
+      await expect(page.getByRole("combobox", { name: "Workflow a visualizar", exact: true })).toBeVisible();
+    }
+  });
+});

@@ -349,7 +349,7 @@ function GestionesList() {
         <PersonPicker
           value={clienteFilter ? Number(clienteFilter) : undefined}
           onChange={(person) => setClienteFilter(person?.personId != null ? String(person.personId) : "")}
-          aria-label={t("filterByCliente")}
+          aria-label={t("clienteFilter")}
           placeholder={t("filterByCliente")}
           clientsOnly
           allowClear
