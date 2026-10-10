@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **ADR-024 measured evidence refreshed after Phase 0** (issue #1197, CU76): path-scoped CI, ~2k agent context, OpenAPI-generated frontend types, and Playwright shards recorded; ADR-022 notes that #1261 packaging does not complete the Owner decision.
 - **Owner decision packaging for `deprecated/` / history purge** (issue #1261, CU76, #1197 P0.6): ADR-022 adds a Pending Owner decision section (Option A/B/C); GitHub Pages Architecture links ADR-022; agents must not delete `deprecated/` or rewrite history until the Owner records a choice.
 - **Frontend API types generated from OpenAPI** (issue #1260, CU76, #1197 P0.5):
   `openapi-typescript` writes `frontend/src/types/api.generated.ts`; `npm run openapi:types:check`

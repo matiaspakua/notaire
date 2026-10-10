@@ -97,6 +97,11 @@ The deferred history rewrite (Decision §2) and the largest tip-tree weight outs
 **Agents must not delete `deprecated/` or run `git filter-repo` until the Owner
 records a choice here.**
 
+> **Note:** GitHub may show issue #1261 as closed after the packaging PR (#1429).
+> That PR only documented Option A/B/C — it did **not** execute a decision.
+> The Owner must still pick an option (and reopen #1261 or open a follow-up issue
+> if the tracker entry must stay open).
+
 | Option | Tip tree | History | Notes |
 |--------|----------|---------|-------|
 | **Option A** | Tag `archive-monorepo-pre-split`, remove `deprecated/` from tip | Keep historical blobs | Preferred size win without SHA churn |
