@@ -19,6 +19,7 @@ import {
 } from "@/hooks/useCopias";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Copia } from "@/types";
+import { formatCalendarDate, toDateInputValue, todayInputValue } from "@/lib/dates";
 
 export default function CopiasPage() {
   const t = useTranslations("copias");
@@ -41,7 +42,7 @@ export default function CopiasPage() {
 
   function openCreate() {
     setEditing(null);
-    setForm({ numero: "", fechaImpresion: new Date().toISOString().split("T")[0], fechaRetiro: "", observaciones: "" });
+    setForm({ numero: "", fechaImpresion: todayInputValue(), fechaRetiro: "", observaciones: "" });
     setModalOpen(true);
   }
 
@@ -49,12 +50,15 @@ export default function CopiasPage() {
     setEditing(c);
     setForm({
       numero: c.number?.toString() ?? "",
-      fechaImpresion: c.datePrinting?.split("T")[0] ?? "",
-      fechaRetiro: c.dateWithdrawal?.split("T")[0] ?? "",
+      fechaImpresion: toDateInputValue(c.datePrinting),
+      fechaRetiro: toDateInputValue(c.dateWithdrawal),
       observaciones: c.notes ?? "",
     });
     setModalOpen(true);
   }
+
+  // The copy number and print date are required by the API on create and update (#655).
+  const canSave = form.numero.trim() !== "" && form.fechaImpresion !== "";
 
   async function handleSave() {
     const data: Partial<Copia> = {
@@ -104,12 +108,12 @@ export default function CopiasPage() {
     {
       key: "fechaImpresion",
       header: "Fecha Impresión",
-      render: (c) => c.datePrinting ? new Date(c.datePrinting).toLocaleDateString("es-AR") : "—",
+      render: (c) => formatCalendarDate(c.datePrinting),
     },
     {
       key: "fechaRetiro",
       header: "Fecha Retiro",
-      render: (c) => c.dateWithdrawal ? new Date(c.dateWithdrawal).toLocaleDateString("es-AR") : "—",
+      render: (c) => formatCalendarDate(c.dateWithdrawal),
     },
     {
       key: "testimonio",
@@ -163,7 +167,7 @@ export default function CopiasPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? t("editCopia") : t("newCopia")}>
+            <FormSection dialogTitle title={editing ? t("editCopia") : t("newCopia")}>
               <FormField label={tc("number")} required>
                 <Input
                   type="number"
@@ -172,7 +176,7 @@ export default function CopiasPage() {
                 />
               </FormField>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="Fecha de Impresión">
+                <FormField label="Fecha de Impresión" required>
                   <Input
                     type="date"
                     value={form.fechaImpresion}
@@ -198,7 +202,10 @@ export default function CopiasPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                onClick={handleSave}
+                disabled={!canSave || createMutation.isPending || updateMutation.isPending}
+              >
                 {editing ? tc("update") : tc("create")}
               </Button>
             </FormActions>

@@ -144,7 +144,7 @@ export default function CuadernosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-2xl">
           <FormContainer>
-            <FormSection title={t("newCuaderno")}>
+            <FormSection dialogTitle title={t("newCuaderno")}>
               <FormField label={t("fields.selectFolios")} helperText={t("selectTenHelper")}>
                 <div className="max-h-64 overflow-y-auto rounded-lg border border-border/40 p-3 space-y-2">
                   {foliosDisponibles.length === 0 && (

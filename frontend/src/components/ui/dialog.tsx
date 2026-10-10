@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 const Dialog = DialogPrimitive.Root;
@@ -25,7 +26,9 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => {
+  const tc = useTranslations("common");
+  return (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -34,16 +37,20 @@ const DialogContent = React.forwardRef<
         "fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-[28px] border-none bg-white p-10 apple-shadow-lg animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto",
         className
       )}
+      // No DialogDescription is rendered: drop Radix's default aria-describedby
+      // unless the caller passes one (issue #1344).
+      aria-describedby={undefined}
       {...props}
     >
       {children}
       <DialogClose className="absolute right-6 top-6 rounded-full p-2 opacity-50 hover:bg-black/5 hover:opacity-100 transition-all active:scale-90">
         <X className="h-5 w-5" />
-        <span className="sr-only">Cerrar</span>
+        <span className="sr-only">{tc("close")}</span>
       </DialogClose>
     </DialogPrimitive.Content>
   </DialogPortal>
-));
+  );
+});
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
