@@ -58,6 +58,9 @@ export default function CopiasPage() {
     setModalOpen(true);
   }
 
+  // The copy number and print date are required by the API on create and update (#655).
+  const canSave = form.numero.trim() !== "" && form.fechaImpresion !== "";
+
   async function handleSave() {
     const data: Partial<Copia> = {
       number: form.numero ? Number(form.numero) : undefined,
@@ -174,7 +177,7 @@ export default function CopiasPage() {
                 />
               </FormField>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="Fecha de Impresión">
+                <FormField label="Fecha de Impresión" required>
                   <Input
                     type="date"
                     value={form.fechaImpresion}
@@ -200,7 +203,10 @@ export default function CopiasPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+              <Button
+                onClick={handleSave}
+                disabled={!canSave || createMutation.isPending || updateMutation.isPending}
+              >
                 {editing ? tc("update") : tc("create")}
               </Button>
             </FormActions>

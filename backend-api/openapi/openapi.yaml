@@ -165,6 +165,7 @@ components:
     CopyRequest:
       properties:
         datePrinting:
+          description: Fecha de impresión
           format: date-time
           type: string
         dateWithdrawal:
@@ -173,6 +174,7 @@ components:
         notes:
           type: string
         number:
+          description: Número de copia
           format: int32
           type: integer
         personId:
@@ -181,6 +183,9 @@ components:
         testimonyId:
           format: int32
           type: integer
+      required:
+      - datePrinting
+      - number
       type: object
     CopyResponse:
       properties:
@@ -1331,11 +1336,16 @@ components:
     DtoReingresoDocumentacionRequest:
       properties:
         idDocumentType:
+          description: Tipo de documento a reingresar
           format: int32
           type: integer
         idProcedure:
+          description: Trámite de la gestión
           format: int32
           type: integer
+      required:
+      - idDocumentType
+      - idProcedure
       type: object
     DtoSaldoPending:
       properties:
@@ -1683,8 +1693,11 @@ components:
     GenerateRequest:
       properties:
         idDeed:
+          description: Escritura para la que se genera la minuta
           format: int32
           type: integer
+      required:
+      - idDeed
       type: object
     HistoryRequest:
       properties:
@@ -3009,6 +3022,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Solicitud inválida
         '404':
           content:
             '*/*':
@@ -3193,6 +3212,12 @@ paths:
               schema:
                 type: object
           description: Escribano o folio no encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Ya existe un cuaderno con ese número para el año y escribano
       summary: Crear un nuevo cuaderno a partir de diez folios consecutivos
       tags:
       - Cuadernos
@@ -3753,6 +3778,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Solicitud inválida
         '404':
           content:
             '*/*':
@@ -5047,6 +5078,12 @@ paths:
               schema:
                 type: object
           description: Escritura no encontrada
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: La escritura ya tiene una minuta de inscripción
       summary: CU82 - Generar la minuta de inscripción para una escritura sobre un inmueble
       tags:
       - Minutas de Inscripción
@@ -6025,12 +6062,18 @@ paths:
           format: int32
           type: integer
       responses:
-        '200':
+        '204':
           content:
             '*/*':
               schema:
                 type: object
-          description: OK
+          description: Eliminado
+        '404':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: No encontrado
       summary: Eliminar plantilla de presupuesto
       tags:
       - PlantillaPresupuesto
@@ -7149,12 +7192,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/RoleResponse'
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+          description: Solicitud inválida
         '404':
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RoleResponse'
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+          description: Ya existe un rol con ese nombre
       summary: Actualizar rol
       tags:
       - Roles
@@ -7607,6 +7662,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Bad request
         '404':
           content:
             '*/*':
@@ -7777,6 +7838,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Solicitud inválida
         '404':
           content:
             '*/*':
@@ -8058,6 +8125,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Solicitud inválida
         '404':
           content:
             '*/*':
@@ -8473,7 +8546,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: 'Solicitud inválida: name es obligatorio'
         '409':
           content:
             '*/*':
@@ -8556,6 +8629,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'Solicitud inválida: name es obligatorio'
         '404':
           content:
             '*/*':
@@ -8607,7 +8686,8 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: 'Solicitud inválida: workflowDefinitionId, statusManagementId y type (INITIAL, INTERMEDIATE o FINAL)
+            son obligatorios'
         '409':
           content:
             '*/*':
@@ -8712,6 +8792,13 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'Solicitud inválida: indicar al menos type, positionX o positionY; type debe ser INITIAL, INTERMEDIATE
+            o FINAL'
         '404':
           content:
             '*/*':
@@ -8742,7 +8829,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: 'Solicitud inválida: workflowDefinitionId, originNodeId y destinationNodeId son obligatorios'
         '409':
           content:
             '*/*':
@@ -8847,6 +8934,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'Solicitud inválida: originNodeId y destinationNodeId son obligatorios'
         '404':
           content:
             '*/*':
