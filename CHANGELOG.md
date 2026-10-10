@@ -28,8 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `globals.css` adds text-safe `success`, `warning` and `info` tokens (WCAG AA on white and on their /10 tint),
   mapped in `@theme`; `tokens.ts` mirrors them and writes the brand `#0071E3` once (`BRAND_PRIMARY`). The 54 raw
   Tailwind palette classes in 13 files are now semantic (Badge variants, notices, pagos balance panel, workflow
-  editor legend and errors, admin selects); the 14 differently coloured dashboard module tiles share one
-  `bg-primary/10 text-primary` style, and `ring-primary-300`, which generated no CSS, is `ring-ring/40`. The partial
+  editor legend and errors, admin selects, the `useThemeClasses` builders used by testimonios, ReingresarDialog
+  and documentos-entidades-externas); the 14 differently coloured dashboard module tiles share one
+  `bg-primary/10 text-primary` style, and `ring-primary-300` / `border-error-500`, which generated no CSS, are `ring-ring/40` / `border-destructive`. The partial
   `.dark` block is removed (owner decision 2026-10-09). Guarded by `design-tokens.test.ts` and Playwright TS-0119.
 - **Frontend API types generated from OpenAPI** (issue #1260, CU76, #1197 P0.5):
   `openapi-typescript` writes `frontend/src/types/api.generated.ts`; `npm run openapi:types:check`

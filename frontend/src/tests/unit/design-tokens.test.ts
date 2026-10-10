@@ -29,7 +29,7 @@ const PREFIX =
 const RAW_PALETTE = new RegExp(`(?<![\\w-])(?:${PREFIX})-(?:${PALETTE})-\\d{2,3}\\b`, "g");
 /** Semantic tokens have no numeric scale: `ring-primary-300` compiles to nothing. */
 const SCALED_SEMANTIC = new RegExp(
-  `(?<![\\w-])(?:${PREFIX})-(?:primary|secondary|destructive|muted|accent|success|warning|info)-\\d{2,3}\\b`,
+  `(?<![\\w-])(?:${PREFIX})-(?:primary|secondary|destructive|error|muted|accent|success|warning|info)-\\d{2,3}\\b`,
   "g",
 );
 const ARBITRARY_HEX = /\[#[0-9a-fA-F]{3,8}\]/g;
@@ -39,16 +39,17 @@ function walk(dir: string, out: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {
     const full = join(dir, entry);
     if (statSync(full).isDirectory()) {
-      if (["node_modules", "tests", "theme", "generated"].includes(entry)) continue;
+      if (["node_modules", "tests", "generated"].includes(entry)) continue;
       walk(full, out);
-    } else if (/\.(tsx?|css)$/.test(entry) && !/\.test\.tsx?$/.test(entry)) {
+    } else if (/\.(tsx?|css)$/.test(entry) && !/\.test\.tsx?$/.test(entry) && !full.endsWith("theme/tokens.ts")) {
       out.push(full);
     }
   }
   return out;
 }
 
-const SOURCES = ["app", "components", "lib", "hooks"].flatMap((d) => walk(join(SRC, d)));
+/** theme/tokens.ts holds the hex mirror; theme/index.ts class builders are scanned like components. */
+const SOURCES = ["app", "components", "lib", "hooks", "theme"].flatMap((d) => walk(join(SRC, d)));
 
 function offenders(pattern: RegExp): string[] {
   const hits: string[] = [];
@@ -140,15 +141,13 @@ describe("design tokens: one source (#1365)", () => {
   );
 
   it("defines the brand hex #0071E3 exactly once (tokens.ts) and never the old #0080FF", () => {
-    const files = [...walk(join(SRC, "theme")), ...readdirSync(join(SRC, "theme")).map((f) => join(SRC, "theme", f))]
-      .filter((f, i, all) => all.indexOf(f) === i && /\.tsx?$/.test(f));
-    const hits = [...SOURCES, ...files].flatMap((f) =>
+    const hits = [...SOURCES, join(SRC, "theme/tokens.ts")].flatMap((f) =>
       [...readFileSync(f, "utf8").matchAll(/#0071E3|#0080FF/gi)].map((m) => `${relative(SRC, f)}: ${m[0]}`),
     );
     expect(hits).toEqual(["theme/tokens.ts: #0071E3"]);
   });
 
-  it("uses no raw Tailwind palette utilities in app/, components/, lib/ or hooks/", () => {
+  it("uses no raw Tailwind palette utilities in app/, components/, lib/, hooks/ or theme class builders", () => {
     expect(offenders(RAW_PALETTE)).toEqual([]);
   });
 
