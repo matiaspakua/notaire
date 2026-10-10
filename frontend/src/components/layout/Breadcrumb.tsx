@@ -50,7 +50,7 @@ export function Breadcrumb() {
       <ol className="flex items-center gap-1 text-sm text-muted-foreground flex-wrap">
         {crumbs.map((crumb, i) => (
           <li key={crumb.href} className="flex items-center gap-1">
-            {i > 0 && <span className="text-neutral-300 select-none">/</span>}
+            {i > 0 && <span aria-hidden="true" className="text-muted-foreground select-none">/</span>}
             {crumb.isLast ? (
               <span className="font-medium text-foreground">{crumb.label}</span>
             ) : (

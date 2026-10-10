@@ -23,7 +23,7 @@ export const NODE_META: Record<string, WorkflowNodeMeta> = {
   FINAL: {
     background: theme.colors.error[50],
     border: theme.colors.error[500],
-    color: theme.colors.error[600],
+    color: theme.colors.error[700],
     icon: "■",
   },
 };
