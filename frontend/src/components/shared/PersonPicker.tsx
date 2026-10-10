@@ -212,7 +212,7 @@ export function PersonPicker({
                 }}
                 className={cn(
                   "flex cursor-pointer select-none items-center justify-between gap-3 rounded-[8px] px-3 py-2 text-sm transition-colors duration-150",
-                  i === active ? "bg-accent text-accent-foreground" : "hover:bg-secondary/40",
+                  i === active ? "bg-[hsl(var(--ring)/0.14)]" : "hover:bg-black/5",
                   p.personId === value && "font-semibold",
                 )}
               >
