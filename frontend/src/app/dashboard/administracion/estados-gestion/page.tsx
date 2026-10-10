@@ -189,7 +189,7 @@ export default function EstadosGestionPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editEstado") : t("newEstado")}>
+            <FormSection dialogTitle title={isEditMode ? t("editEstado") : t("newEstado")}>
               <FormField label={t("fields.nombre")} required>
                 <Input
                   value={editing.name ?? ""}

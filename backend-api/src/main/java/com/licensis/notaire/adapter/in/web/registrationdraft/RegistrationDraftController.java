@@ -1,5 +1,8 @@
 package com.licensis.notaire.adapter.in.web.registrationdraft;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import com.licensis.notaire.adapter.in.web.support.CreatedResponses;
 import com.licensis.notaire.dto.DtoRegistrationDraft;
 import com.licensis.notaire.exception.BusinessValidationException;
@@ -36,7 +39,11 @@ public class RegistrationDraftController {
         this.registrationDraftService = registrationDraftService;
     }
 
-    public record GenerateRequest(Integer idDeed) {
+    /** Body of the generate request; the deed is required (issue #655). */
+    public record GenerateRequest(
+            @NotNull @Schema(description = "Escritura para la que se genera la minuta",
+                    requiredMode = Schema.RequiredMode.REQUIRED)
+            Integer idDeed) {
     }
 
     public record PresentarRequest(Date dateSubmission, String registryEntryNumber) {
@@ -63,11 +70,12 @@ public class RegistrationDraftController {
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Minuta generada"),
         @ApiResponse(responseCode = "400", description = "Datos catastrales/registrales incompletos o escritura no firmada"),
-        @ApiResponse(responseCode = "404", description = "Escritura no encontrada")
+        @ApiResponse(responseCode = "404", description = "Escritura no encontrada"),
+        @ApiResponse(responseCode = "409", description = "La escritura ya tiene una minuta de inscripción")
     })
     @PostMapping
     @Operation(summary = "CU82 - Generar la minuta de inscripción para una escritura sobre un inmueble")
-    public ResponseEntity<Object> generate(@RequestBody GenerateRequest request) {
+    public ResponseEntity<Object> generate(@Valid @RequestBody GenerateRequest request) {
         try {
             DtoRegistrationDraft dto = registrationDraftService.generate(request.idDeed()).getDto();
             return CreatedResponses.of(dto, "/api/v1/minutas-inscripcion", dto.getIdRegistrationDraft());

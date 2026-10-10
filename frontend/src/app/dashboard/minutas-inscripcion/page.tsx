@@ -234,7 +234,7 @@ export default function MinutasInscripcionPage() {
       <Dialog open={presentarOpen} onOpenChange={setPresentarOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("presentar")}>
+            <FormSection dialogTitle title={t("presentar")}>
               <FormField label={t("fields.fechaPresentacion")} required>
                 <Input
                   type="date"
@@ -270,7 +270,7 @@ export default function MinutasInscripcionPage() {
       <Dialog open={observarOpen} onOpenChange={setObservarOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("observar")}>
+            <FormSection dialogTitle title={t("observar")}>
               <FormField label={t("fields.observacionesRegistro")} required>
                 <Input
                   data-testid="input-observaciones-registro"
@@ -306,7 +306,7 @@ export default function MinutasInscripcionPage() {
       <Dialog open={inscribirOpen} onOpenChange={setInscribirOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("inscribir")}>
+            <FormSection dialogTitle title={t("inscribir")}>
               <FormField label={t("fields.fechaRecepcion")} required>
                 <Input
                   type="date"

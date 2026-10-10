@@ -154,7 +154,7 @@ export default function WorkflowsPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editWorkflow") : t("newWorkflow")}>
+            <FormSection dialogTitle title={isEditMode ? t("editWorkflow") : t("newWorkflow")}>
               <FormField label={tc("name")} required>
                 <Input
                   value={editing.name ?? ""}

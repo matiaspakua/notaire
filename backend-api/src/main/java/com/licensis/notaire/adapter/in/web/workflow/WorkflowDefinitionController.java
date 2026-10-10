@@ -65,7 +65,7 @@ public class WorkflowDefinitionController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida: name es obligatorio"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
@@ -79,12 +79,13 @@ public class WorkflowDefinitionController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.toDto());
         } catch (Exception e) {
-            return ErrorResponses.conflict(e);
+            return ErrorResponses.createFailed(e);
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida: name es obligatorio"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")
@@ -105,7 +106,7 @@ public class WorkflowDefinitionController {
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ErrorResponses.serverError(e);
+            return ErrorResponses.updateFailed(e);
         }
     }
 

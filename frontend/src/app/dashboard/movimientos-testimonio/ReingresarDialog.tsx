@@ -37,7 +37,7 @@ export function ReingresarDialog({ open, isPending, onCancel, onConfirm }: Reing
     <Dialog open={open} onOpenChange={(v) => !v && onCancel()}>
       <DialogContent>
         <FormContainer>
-          <FormSection title={t("reingresar")}>
+          <FormSection dialogTitle title={t("reingresar")}>
             <FormField label={t("fields.numeroCarton")}>
               <Input type="number" value={numeroCarton} onChange={(e) => setNumeroCarton(e.target.value)} data-testid="input-reingreso-carton" />
             </FormField>
