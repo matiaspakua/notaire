@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **OpenSpec hygiene after #1456**: archive shipped `docs-1445-archive-1368-motion`.
 - **OpenSpec hygiene**: archive closed-issue trees `fix-1368-motion-tokens` and
   `fix-1354-hardcoded-ui-strings`, plus shipped `docs-1445-archive-owner-decisions`, so
   `validate-sdlc-plan` stays green.
