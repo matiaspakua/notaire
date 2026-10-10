@@ -6061,12 +6061,18 @@ paths:
           format: int32
           type: integer
       responses:
-        '200':
+        '204':
           content:
             '*/*':
               schema:
                 type: object
-          description: OK
+          description: Eliminado
+        '404':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: No encontrado
       summary: Eliminar plantilla de presupuesto
       tags:
       - PlantillaPresupuesto
