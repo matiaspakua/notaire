@@ -27,6 +27,7 @@ containers by name.
 |-----------|-------|------|------|
 | `devsecops-prometheus` | prom/prometheus | 9090 | Scrapes `backend:8080/actuator/prometheus` (Basic auth) and `postgres-exporter:9187`; evaluates `infra/observability/prometheus/alert-rules.yml` |
 | `devsecops-otel-collector` | otel/opentelemetry-collector-contrib | — | Single OTLP ingress (4317/4318); the backend pushes Micrometer metrics here and Prometheus scrapes `:8889`. The Actuator scrape is kept |
+| `devsecops-alertmanager` | prom/alertmanager | 9093 | Receives alerts from Prometheus; local receiver, grouping and inhibition only |
 | `devsecops-tempo` | grafana/tempo | — | Trace store (24h local retention); fed by the collector's `traces` pipeline, queried by Grafana (datasource `tempo`, linked to Loki) |
 | `devsecops-node-exporter` / `devsecops-cadvisor` | prom/node-exporter, cadvisor | — | Host (Docker VM) and per-container metrics; read-only host mounts, no Docker socket |
 | `devsecops-blackbox-exporter` | prom/blackbox-exporter | — | HTTP/TCP availability probes (`probe_success`) for every stack service; feeds the overview dashboards and the `ServiceDown` alert |
@@ -47,10 +48,14 @@ infra first leaves scrape targets unreachable until the app stack joins.
 
 ### Alerting
 
-Prometheus evaluates alert rules natively (see ADR-009) but **no
-Alertmanager is deployed** — alerts are visible in Prometheus's `/alerts` UI
-and can be queried from Grafana, but nothing routes them to a notification
-channel today.
+Prometheus evaluates alert rules natively (see ADR-009) and sends them to
+**Alertmanager** (`devsecops-alertmanager`, :9093; issue #1465, amending the earlier
+"not deployed" decision). Alerts are grouped by `alertname` and `service`, warnings are
+inhibited while a critical alert of the same `service` fires, and the only receiver is
+local: alerts are visible in the Alertmanager UI and in Grafana (datasource
+`alertmanager`). No external channel (email, chat, paging) is configured because it needs
+credentials, which is an owner decision. Rules live in `prometheus/alert-rules.yml` and
+`prometheus/alert-rules-stack.yml`.
 
 ## Options Considered
 
@@ -68,5 +73,5 @@ channel today.
   independently; matches local-dev and CI needs (CI doesn't need the infra
   stack for `mvn verify`).
 - **Cons**: Two Compose files to keep in sync (shared network name,
-  credentials via the single root `.env`); no Alertmanager means alert rules
-  are passive until a notification integration is added.
+  credentials via the single root `.env`); alerts reach only a local
+  receiver until an external notification integration is added.

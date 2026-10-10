@@ -51,3 +51,12 @@ datasources:
         datasourceUid: prometheus
       nodeGraph:
         enabled: true
+
+  - name: Alertmanager
+    type: alertmanager
+    uid: alertmanager
+    access: proxy
+    url: http://alertmanager:9093
+    editable: true
+    jsonData:
+      implementation: prometheus

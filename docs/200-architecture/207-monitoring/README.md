@@ -81,6 +81,12 @@ OTLP export needs both `micrometer-registry-otlp` and `spring-boot-opentelemetry
 the collector, which forwards them to Tempo. In Grafana, Explore -> Tempo finds traces by service/name; a trace links to
 its Loki logs by `service`. Frontend spans are not instrumented yet.
 
+**Alerting:** Prometheus evaluates `alert-rules.yml` and `alert-rules-stack.yml` and sends firing alerts to Alertmanager
+(http://localhost:9093). Catalogue: `ServiceDown` and `TargetDown` (availability), `HighHttp5xxRatio`, `HighApiLatency`,
+`HighJvmHeapUsage`, `HighDatabaseConnections`, `ConnectionPoolSaturated`, `HostMemoryLow`, `HostDiskLow`, plus the login
+alerts. Each carries `severity`, `summary` and `description`. There are no per-container alerts: cAdvisor on Docker Desktop
+reports cgroup ids without container names. No external notification channel is configured.
+
 **Log fields and log-to-trace navigation:** the backend writes one `http_request` line per API request (method, path, status,
 duration; never the query string, headers or body; Actuator is skipped), and the frontend BFF proxy writes one `api_proxy`
 line per proxied request, both as structured JSON. Promtail stores `traceId`/`spanId` as Loki *structured metadata* (not

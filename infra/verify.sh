@@ -15,3 +15,4 @@ python3 infra/tests/test_grafana_status_dashboards.py
 python3 infra/tests/test_otel_metrics_pipeline.py
 python3 infra/tests/test_log_trace_correlation.py
 python3 infra/tests/test_tempo_traces.py
+python3 infra/tests/test_alertmanager.py
