@@ -82,7 +82,6 @@
     "hello": "Hola",
     "today": "Resumen de actividad para hoy",
     "availableModules": "Módulos disponibles",
-    "viewAll": "Ver todos los servicios",
     "accessDenied": "No tiene permisos para acceder a esa sección de administración.",
     "workflowProgress": "Progreso del workflow",
     "workflow": {
@@ -114,7 +113,10 @@
         "timeline": "Movimientos de testimonio",
         "open": "abierto",
         "returnedObserved": "Volvió observado"
-      }
+      },
+      "managementFallback": "Gestión #{number}",
+      "noRecentWorkflow": "Ninguna de las gestiones más recientes tiene un workflow asignado.",
+      "openGestiones": "Ver gestiones"
     },
     "gestiones": {
       "label": "Gestiones",
