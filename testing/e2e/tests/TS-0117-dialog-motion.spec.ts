@@ -50,11 +50,12 @@ test.describe("Dialog motion (#1349)", () => {
 
   test.describe("with reduced motion", () => {
     test.use({ reducedMotion: "reduce" });
-    test("the dialog does not scale (opacity only)", async ({ page }) => {
+    test("the dialog appears without perceptible motion", async ({ page }) => {
       const dialog = await openDialog(page);
       await expect(dialog).toBeVisible();
-      const anim = await dialog.evaluate((el) => getComputedStyle(el).getPropertyValue("--tw-enter-scale").trim());
-      expect(["", "1", "initial"]).toContain(anim);
+      // globals.css shortens every animation to 0.01ms under prefers-reduced-motion.
+      const seconds = await dialog.evaluate((el) => parseFloat(getComputedStyle(el).animationDuration));
+      expect(seconds).toBeLessThan(0.05);
     });
   });
 });

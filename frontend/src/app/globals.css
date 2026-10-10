@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* shadcn enter/exit utilities (animate-in, fade-in-0, zoom-in-95, ...) used by dialogs (#1349). */
+@import "tw-animate-css";
 
 /* Tailwind v4 generates colour utilities (bg-primary, text-muted-foreground,
    border-border/40...) only for colours registered here (#1337). `inline`
