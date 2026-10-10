@@ -2215,10 +2215,13 @@ components:
           type: string
         fkIdIdentificationType:
           $ref: '#/components/schemas/IdentificationTypeRef'
+          description: Legacy nested form of identificationTypeId; identificationTypeId wins when both are sent.
         identificationNumber:
           minLength: 1
           type: string
         identificationTypeId:
+          description: 'Identification type id from GET /tipo-identificacion. Omitted on create: DNI. An id that is not in
+            the catalog answers 400 (#1361).'
           format: int32
           type: integer
         isClient:
