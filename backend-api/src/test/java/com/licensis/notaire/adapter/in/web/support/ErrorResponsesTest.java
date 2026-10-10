@@ -139,4 +139,32 @@ class ErrorResponsesTest {
                     .isEqualTo(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @Test
+    @DisplayName("updateFailed answers 409 for an optimistic-lock failure (stale version), not 500 (#655)")
+    void updateFailedStaleVersionIsConflict() {
+        for (Exception stale : List.<Exception>of(
+                new org.springframework.orm.ObjectOptimisticLockingFailureException("com.licensis.notaire.business.Concept", 3),
+                new RuntimeException(new jakarta.persistence.OptimisticLockException("Row was updated")),
+                new RuntimeException(new org.hibernate.StaleObjectStateException("com.licensis.notaire.business.Testimony", 9)))) {
+            ResponseEntity<Object> response = ErrorResponses.updateFailed(stale);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            ErrorResponse body = (ErrorResponse) response.getBody();
+            assertThat(body.getMessage()).isEqualTo(ErrorResponses.STALE_VERSION_MESSAGE);
+            assertThat(body.getMessage()).doesNotContain("com.licensis", "Row was");
+        }
+        assertThat(ErrorResponses.isOptimisticLockFailure(new IllegalStateException("x"))).isFalse();
+    }
+
+    @Test
+    @DisplayName("staleVersion answers the standard 409 ErrorResponse")
+    void staleVersionIsConflict() {
+        ResponseEntity<Object> response = ErrorResponses.staleVersion();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        ErrorResponse body = (ErrorResponse) response.getBody();
+        assertThat(body.getStatus()).isEqualTo(409);
+        assertThat(body.getMessage()).isEqualTo(ErrorResponses.STALE_VERSION_MESSAGE);
+    }
 }

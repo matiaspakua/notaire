@@ -46,7 +46,7 @@ test.describe("#773 - Documento vinculado a un trámite", () => {
     await page.getByTestId("select-gestion-documento").click();
     await page.getByRole("option", { name: new RegExp(String(numeroGestion)) }).click();
     await page.getByTestId("select-tramite-documento").click();
-    await page.getByRole("option").first().click();
+    await page.getByRole("listbox").getByRole("option").first().click();
     await page.getByTestId("btn-guardar-documento").click();
 
     const row = page.getByRole("row").filter({ hasText: tipoNombre }).first();

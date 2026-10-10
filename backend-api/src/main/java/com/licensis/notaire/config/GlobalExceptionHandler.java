@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -216,6 +217,35 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             )
         );
         return new ResponseEntity<>(errorResponse, status);
+    }
+
+    /**
+     * Handle an optimistic-lock failure that escaped a controller: the update carried a stale
+     * {@code version}. Answers {@code 409 Conflict} with a safe message instead of 500
+     * (issue #655, Owner decision Oct 9).
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     * @return 409 error response entity
+     */
+    @ExceptionHandler({OptimisticLockingFailureException.class, jakarta.persistence.OptimisticLockException.class})
+    public ResponseEntity<ErrorResponse> handleOptimisticLockFailure(
+            Exception ex,
+            HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.CONFLICT.value(),
+            HttpStatus.CONFLICT.getReasonPhrase(),
+            ErrorResponses.STALE_VERSION_MESSAGE,
+            request.getRequestURI()
+        );
+        STRUCTURED_LOG.logWarn(
+            "Optimistic lock failure (stale version)",
+            Map.of(
+                "path", request.getRequestURI(),
+                "method", request.getMethod()
+            )
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     /**

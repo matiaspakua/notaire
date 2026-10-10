@@ -20,3 +20,7 @@ runtime:
           test("Returns id", function () {
             expect(res.getBody().idTestimony).to.equal(Number(bru.getVar('testimony_id')));
           });
+          test("Returns version", function () {
+            expect(res.getBody()).to.have.property('version');
+            bru.setVar('testimony_version', res.getBody().version);
+          });

@@ -1,0 +1,30 @@
+info:
+  name: Update procedure with an empty body answers 400
+  type: http
+  seq: 4
+  description: |-
+      ## Empty body — PUT /api/v1/tramites/{procedure_id}
+      Issue #655, Owner decision Oct 9: idProcedureType is required on PUT as on
+      POST; `{}` used to answer 200 and clear the notes. 05-verify-update still
+      sees the notes stored by 04-update.
+      Traceability: CU53
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tramites/{{procedure_id}}"
+  body:
+    type: json
+    data: |-
+        {}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400", function () { expect(res.getStatus()).to.equal(400); });
+          test("Names idProcedureType", function () {
+            expect(res.getBody().message).to.equal('idProcedureType: es obligatorio');
+          });

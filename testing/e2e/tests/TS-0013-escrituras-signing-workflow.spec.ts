@@ -118,7 +118,7 @@ test.describe('CU05 - Preparar Escritura', () => {
     const folioPicker = dialog.getByTestId('select-folio-escritura')
     await folioPicker.click()
     // Pick the first available folio option
-    const folioOption = page.getByRole('option').first()
+    const folioOption = page.getByRole('listbox').getByRole('option').first()
     await folioOption.waitFor({ state: 'attached', timeout: 5000 })
     await folioOption.evaluate((el: HTMLElement) => el.click())
 

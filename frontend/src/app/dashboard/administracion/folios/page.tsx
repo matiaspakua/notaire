@@ -27,6 +27,10 @@ interface TipoDeFolioRow {
   idFolioType: number;
   name: string;
   isAuxiliary?: boolean;
+  notes?: string;
+  enabled?: boolean;
+  /** Optimistic-lock version read from the list; the full update sends it back (#655). */
+  version?: number;
 }
 
 interface FolioFormState {
@@ -110,7 +114,13 @@ export default function FoliosAdminPage() {
     setTipoSaving(true);
     try {
       if (tipoEditing) {
-        await apiPut(`/tipo-folio/${tipoEditing.idFolioType}`, { name: tipoNombre, isAuxiliary: tipoEsAuxiliar });
+        // PUT replaces the row: send the loaded fields (notes, enabled, version) with the edited ones,
+        // otherwise version reads as 0 and every edit after the first answers 409 (#655).
+        await apiPut(`/tipo-folio/${tipoEditing.idFolioType}`, {
+          ...tipoEditing,
+          name: tipoNombre,
+          isAuxiliary: tipoEsAuxiliar,
+        });
         toast.success(t("tiposDeFolio.updated"));
       } else {
         await apiPost("/tipo-folio", { name: tipoNombre, isAuxiliary: tipoEsAuxiliar });

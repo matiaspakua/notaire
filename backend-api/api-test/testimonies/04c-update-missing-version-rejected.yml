@@ -1,0 +1,29 @@
+info:
+  name: Update testimony without version answers 400
+  type: http
+  seq: 5
+  description: |-
+      ## Missing version — PUT /api/v1/testimonio/{testimony_id}
+      Issue #655, Owner decision Oct 9: version is required on the full update. Without it
+      the request answers 400 naming version and nothing is stored.
+      Traceability: CU07
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/testimonio/{{testimony_id}}"
+  body:
+    type: json
+    data: |-
+        {"number": {{testimony_number}}, "flagged": true, "verified": true, "notes": "no version"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400", function () { expect(res.getStatus()).to.equal(400); });
+          test("Names version", function () {
+            expect(res.getBody().message).to.equal('version: es obligatorio');
+          });

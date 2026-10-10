@@ -27,9 +27,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Stagger, StaggerItem, HoverLift } from "@/components/motion";
 import { useAuthStore } from "@/store/auth-store";
-import { useGestiones, useGestionByNumero } from "@/hooks/useGestiones";
-import { usePersonas } from "@/hooks/usePersonas";
-import { usePresupuestos } from "@/hooks/usePresupuestos";
+import { useGestionesPage, useGestionByNumero } from "@/hooks/useGestiones";
+import { usePersonasPage } from "@/hooks/usePersonas";
+import { usePresupuestosPage } from "@/hooks/usePresupuestos";
 import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
 import WorkflowTracker from "@/components/motion/WorkflowTracker";
 import { theme } from "@/theme/tokens";
@@ -66,13 +66,15 @@ const modules: Module[] = [
 function WorkflowHero() {
   const td = useTranslations("dashboard");
   const tw = useTranslations("dashboard.workflow");
-  const { data: gestiones } = useGestiones();
+  // The first management in backend order, as before, without loading the list (#1340).
+  // Not "newest first": the newest test or draft managements often have no workflow.
+  const { data: latestPage } = useGestionesPage({ page: 0, size: 1, sort: null });
 
   const [refInput, setRefInput] = useState("");
   const [searchedNumero, setSearchedNumero] = useState<number | undefined>();
   const byNumero = useGestionByNumero(searchedNumero);
 
-  const latestGestionId = gestiones && gestiones.length > 0 ? gestiones[0].idManagement : undefined;
+  const latestGestionId = latestPage?.content[0]?.idManagement;
   const targetGestionId = searchedNumero != null ? byNumero.data?.idManagement : latestGestionId;
   const { data: trace, isLoading: traceLoading } = useGestionWorkflowTrace(targetGestionId);
 
@@ -164,17 +166,18 @@ export default function DashboardPage() {
   const td = useTranslations("dashboard");
   const locale = useLocale();
   const { user, isAdmin } = useAuthStore();
-  const { data: gestiones } = useGestiones();
-  const { data: personas } = usePersonas();
-  const { data: presupuestos } = usePresupuestos();
+  const { data: gestionesPage } = useGestionesPage({ page: 0, size: 1 });
+  // Only the total is needed; the list itself is paged (#1340).
+  const { data: personasPage } = usePersonasPage({ page: 0, size: 1 });
+  const { data: presupuestosPage } = usePresupuestosPage({ page: 0, size: 1 });
 
   const visibleModules = modules.filter((m) => !m.adminOnly || isAdmin());
   const dateLocale = locale === "en" ? "en-US" : "es-AR";
 
   const stats = [
-    { labelKey: "gestiones.label", value: gestiones?.length ?? 0, icon: FolderKanban, tint: "bg-blue-500/10", iconColor: "text-blue-600" },
-    { labelKey: "personas.label", value: personas?.length ?? 0, icon: Users, tint: "bg-violet-500/10", iconColor: "text-violet-600" },
-    { labelKey: "presupuestos.label", value: presupuestos?.length ?? 0, icon: Calculator, tint: "bg-emerald-500/10", iconColor: "text-emerald-600" },
+    { labelKey: "gestiones.label", value: gestionesPage?.totalElements ?? 0, icon: FolderKanban, tint: "bg-blue-500/10", iconColor: "text-blue-600" },
+    { labelKey: "personas.label", value: personasPage?.totalElements ?? 0, icon: Users, tint: "bg-violet-500/10", iconColor: "text-violet-600" },
+    { labelKey: "presupuestos.label", value: presupuestosPage?.totalElements ?? 0, icon: Calculator, tint: "bg-emerald-500/10", iconColor: "text-emerald-600" },
   ] as const;
 
   return (

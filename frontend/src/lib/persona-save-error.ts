@@ -23,6 +23,8 @@ export type PresentPersonaSaveErrorOptions = {
   duplicateDocument: string;
   viewExistingLabel: string;
   personas: Persona[];
+  /** Loads the existing person when it is not among `personas` (e.g. on another page, #1340). */
+  loadPersona?: (id: number) => Promise<Persona>;
   onViewExisting: (persona: Persona) => void;
   setFieldErrors: (errors: Record<string, string>) => void;
 };
@@ -48,13 +50,18 @@ export function presentPersonaSaveError(
   if (err instanceof ApiError && err.status === 409) {
     const existingId = extractDuplicatePersonaId(err);
     const existing = options.personas.find((p) => p.personId === existingId);
-    toast.error(options.duplicateDocument, {
-      action: existing
-        ? {
-            label: options.viewExistingLabel,
-            onClick: () => options.onViewExisting(existing),
+    const { loadPersona } = options;
+    const onClick = existing
+      ? () => options.onViewExisting(existing)
+      : existingId != null && loadPersona
+        ? () => {
+            loadPersona(existingId)
+              .then(options.onViewExisting)
+              .catch(() => toast.error(options.fallback));
           }
-        : undefined,
+        : undefined;
+    toast.error(options.duplicateDocument, {
+      action: onClick ? { label: options.viewExistingLabel, onClick } : undefined,
     });
     return {
       message: options.duplicateDocument,
