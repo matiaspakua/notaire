@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/1347_dashboard_latest_case` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | pushed |
-| Pull Request | — | pending |
+| Pull Request | [#1406](https://github.com/matiaspakua/notaire/pull/1406) | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
