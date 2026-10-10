@@ -54,6 +54,11 @@ scrape_configs:
           level:
           service:
           environment:
+      # High-cardinality ids must not become labels; structured metadata keeps
+      # them queryable and lets Grafana link a log line to its trace (#1463).
+      - structured_metadata:
+          traceId:
+          spanId:
       # Use the timestamp from the JSON envelope when present so log lines
       # are stored with their original event time.
       - timestamp:
