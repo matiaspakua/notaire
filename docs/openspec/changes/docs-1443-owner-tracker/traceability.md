@@ -24,6 +24,14 @@
 | REPO-SPLIT-PLAN umbrella cites #1443 | unit guard | pending |
 | Note that #1197 was auto-closed | ADR-024 text | pending |
 
+## Permanent documentation updated
+
+| Document | Updated | Commit |
+|----------|---------|--------|
+| `docs/200-architecture/202-ADR/ADR-024-repository-topology.md` | Deciders + tracker note → #1443 | this PR |
+| `docs/300-development/REPO-SPLIT-PLAN.md` | Issue map umbrella → #1443 | this PR |
+| `CHANGELOG.md` | Unreleased | this PR |
+
 ## Exceptions
 
 - Cannot reopen #1197 (API 403). #1443 is the live Owner tracker.
