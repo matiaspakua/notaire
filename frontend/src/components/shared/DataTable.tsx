@@ -2,6 +2,7 @@
 
 import { Table as TableIcon } from "lucide-react";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useMediaQuery, MOBILE_QUERY } from "@/hooks/useMediaQuery";
 import {
   Table,
@@ -45,7 +46,7 @@ export function DataTable<T>({
   data,
   columns,
   isLoading,
-  emptyMessage = "Sin datos disponibles",
+  emptyMessage,
   keyExtractor,
   isFetching,
   pagination,
@@ -98,7 +99,7 @@ export function DataTable<T>({
                   <div className="bg-secondary p-4 rounded-full">
                     <TableIcon className="h-8 w-8 opacity-20" />
                   </div>
-                  <p className="text-lg font-medium">{emptyMessage}</p>
+                  <p className="text-lg font-medium"><EmptyMessage text={emptyMessage} /></p>
                 </div>
               </TableCell>
             </TableRow>
@@ -126,6 +127,16 @@ export function DataTable<T>({
   );
 }
 
+/** Caller's message, or the translated default (#1354). */
+function EmptyMessage({ text }: { text?: string }) {
+  return text ? <>{text}</> : <DefaultEmptyMessage />;
+}
+
+function DefaultEmptyMessage() {
+  const tc = useTranslations("common");
+  return <>{tc("noData")}</>;
+}
+
 function isActions<T>(col: Column<T>) {
   return col.mobile === "actions" || (col.mobile === undefined && col.key === "actions");
 }
@@ -136,7 +147,8 @@ function MobileCards<T>({
   isLoading,
   emptyMessage,
   keyExtractor,
-}: Required<Pick<DataTableProps<T>, "data" | "columns" | "emptyMessage" | "keyExtractor">> &
+}: Required<Pick<DataTableProps<T>, "data" | "columns" | "keyExtractor">> &
+  Pick<DataTableProps<T>, "emptyMessage"> &
   Pick<DataTableProps<T>, "isLoading">) {
   const visible = columns.filter((c) => c.mobile !== "hidden");
   const actions = visible.filter(isActions);
@@ -166,7 +178,7 @@ function MobileCards<T>({
         <div className="bg-secondary p-4 rounded-full">
           <TableIcon className="h-8 w-8 opacity-20" />
         </div>
-        <p className="text-lg font-medium">{emptyMessage}</p>
+        <p className="text-lg font-medium"><EmptyMessage text={emptyMessage} /></p>
       </div>
     );
   }

@@ -116,8 +116,8 @@ export default function UsuariosPage() {
     { key: "id", header: tc("id"), render: (u) => <span className="text-xs text-muted-foreground">{u.idUser}</span>, className: "w-12" },
     { key: "nombre", header: t("fields.nombre"), render: (u) => <span className="font-medium">{u.name}</span> },
     { key: "tipo", header: t("fields.tipo"), render: (u) => <Badge variant={tipoVariant(u.type)}>{u.type ?? "—"}</Badge> },
-    { key: "rol", header: "Rol", render: (u) => u.role ? <Badge variant="outline">{u.role.name}</Badge> : <span className="text-xs text-muted-foreground">—</span> },
-    { key: "activo", header: tc("status"), render: (u) => u.active ? <Badge variant="success">Activo</Badge> : <Badge variant="secondary">Inactivo</Badge> },
+    { key: "rol", header: t("fields.rol"), render: (u) => u.role ? <Badge variant="outline">{u.role.name}</Badge> : <span className="text-xs text-muted-foreground">—</span> },
+    { key: "activo", header: tc("status"), render: (u) => u.active ? <Badge variant="success">{tc("active")}</Badge> : <Badge variant="secondary">{tc("inactive")}</Badge> },
     {
       key: "actions", header: "", className: "w-24",
       render: (u) => (
@@ -150,7 +150,7 @@ export default function UsuariosPage() {
                 />
               </FormField>
               <FormField
-                label={isEditMode ? "Nueva contraseña" : t("fields.contrasenia")}
+                label={isEditMode ? t("fields.nuevaContrasenia") : t("fields.contrasenia")}
                 required={!isEditMode}
                 helperText={isEditMode ? t("fields.contraseniaHint") : undefined}
                 error={fieldErrors.password}
@@ -177,13 +177,13 @@ export default function UsuariosPage() {
                   </SelectContent>
                 </Select>
               </FormField>
-              <FormField label="Rol de acceso" helperText="Permisos de módulos del sistema">
+              <FormField label={t("fields.rolAcceso")} helperText={t("fields.rolAccesoHint")}>
                 <Select value={selectedRolId} onValueChange={setSelectedRolId}>
                   <SelectTrigger data-testid="select-rol-usuario">
-                    <SelectValue placeholder="Sin rol asignado" />
+                    <SelectValue placeholder={t("fields.sinRolAsignado")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Sin rol</SelectItem>
+                    <SelectItem value="none">{t("fields.sinRol")}</SelectItem>
                     {roles.filter((r) => r.active).map((r) => (
                       <SelectItem key={r.idRole} value={String(r.idRole)}>{r.name}</SelectItem>
                     ))}

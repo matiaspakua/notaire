@@ -112,7 +112,7 @@ export default function PagosPage() {
 
   const columns: Column<Pago>[] = [
     { key: "id", header: tc("id"), render: (p) => <span className="text-xs text-muted-foreground">{p.idPayment}</span>, className: "w-12" },
-    { key: "presupuesto", header: "Presupuesto", render: (p) => <span className="text-xs text-muted-foreground">#{p.idBudget ?? p.fkIdBudget?.idBudget ?? "—"}</span>, className: "w-20" },
+    { key: "presupuesto", header: t("fields.presupuesto"), render: (p) => <span className="text-xs text-muted-foreground">#{p.idBudget ?? p.fkIdBudget?.idBudget ?? "—"}</span>, className: "w-20" },
     { key: "fecha", header: tc("date"), render: (p) => formatDate(p.date) },
     { key: "monto", header: tc("amount"), render: (p) => <span className="font-medium">{formatCurrency(p.amount)}</span> },
     { key: "metodo", header: t("fields.metodoPago"), render: (p) => p.paymentMethod ?? "—" },
@@ -155,11 +155,11 @@ export default function PagosPage() {
               {editing.idBudget && (
                 <div className="rounded-lg bg-info/10 p-3 border border-info/30">
                   {resumenLoading ? (
-                    <div className="text-sm text-muted-foreground">Cargando saldo...</div>
+                    <div className="text-sm text-muted-foreground">{t("saldo.loading")}</div>
                   ) : resumen ? (
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">
-                        <div className="text-sm text-muted-foreground">Saldo Pendiente</div>
+                        <div className="text-sm text-muted-foreground">{t("saldo.pending")}</div>
                         {estadoPago && (
                           <span
                             data-testid="estado-pago-badge"
@@ -173,11 +173,14 @@ export default function PagosPage() {
                         {formatCurrency(resumen.pendingBalance || 0)}
                       </div>
                       <div className="text-xs text-muted-foreground pt-1">
-                        Presupuestado: {formatCurrency(resumen.total || 0)} | Pagado: {formatCurrency((resumen.total || 0) - (resumen.pendingBalance || 0))}
+                        {t("saldo.summary", {
+                          budgeted: formatCurrency(resumen.total || 0),
+                          paid: formatCurrency((resumen.total || 0) - (resumen.pendingBalance || 0)),
+                        })}
                       </div>
                     </div>
                   ) : (
-                    <div className="text-sm text-destructive">No se pudo cargar el saldo. Intenta nuevamente.</div>
+                    <div className="text-sm text-destructive">{t("saldo.error")}</div>
                   )}
                 </div>
               )}
