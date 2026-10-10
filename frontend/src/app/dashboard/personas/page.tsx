@@ -12,14 +12,13 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
-import { useQuery } from "@tanstack/react-query";
-import { apiGet } from "@/lib/api-client";
 import {
   usePersonasPage,
   fetchPersona,
   useCreatePersona,
   useUpdatePersona,
   useDeletePersona,
+  useSearchPersonas,
 } from "@/hooks/usePersonas";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { fullName } from "@/lib/utils";
@@ -71,23 +70,17 @@ function PersonasList() {
   const [searchDni, setSearchDni] = useState("");
   const [filterClientes, setFilterClientes] = useState(false);
 
-  const hasSearchCriteria = !!(searchNombre || searchApellido || searchDni || filterClientes);
-
-  // A search goes to GET /people/search and lists every match; without one the
-  // table shows the current server page.
-  const { data: searchResults = [], isLoading: isSearching } = useQuery({
-    queryKey: ["personas", "buscar", searchNombre, searchApellido, searchDni, filterClientes],
-    enabled: hasSearchCriteria,
-    queryFn: () => {
-      // Backend route is /people/search (PersonController#searchPeople) — not /personas/buscar.
-      const params = new URLSearchParams();
-      if (searchNombre) params.set("firstName", searchNombre);
-      if (searchApellido) params.set("lastName", searchApellido);
-      if (searchDni) params.set("identificationNumber", searchDni);
-      if (filterClientes) params.set("isClient", "true");
-      return apiGet<Persona[]>(`/people/search?${params.toString()}`);
-    },
+  // A search goes to GET /people/search (debounced, #1357) and lists every
+  // match; without one the table shows the current server page.
+  const search = useSearchPersonas({
+    firstName: searchNombre,
+    lastName: searchApellido,
+    identificationNumber: searchDni,
+    onlyClients: filterClientes,
   });
+  const hasSearchCriteria = search.active;
+  const searchResults = search.results;
+  const isSearching = search.isLoading;
 
   function openCreate() {
     setEditing(EMPTY);
@@ -245,7 +238,7 @@ function PersonasList() {
         data={hasSearchCriteria ? searchResults : personas}
         columns={columns}
         isLoading={hasSearchCriteria ? isSearching : isLoading}
-        isFetching={!hasSearchCriteria && isFetching}
+        isFetching={hasSearchCriteria ? search.isFetching : isFetching}
         keyExtractor={(p) => p.personId!}
         emptyMessage={t("noData")}
         pagination={

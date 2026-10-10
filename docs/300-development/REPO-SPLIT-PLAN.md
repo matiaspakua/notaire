@@ -25,7 +25,7 @@ Each item is one issue, one OpenSpec change, one PR, independent of the Owner's 
 
 | Id | Issue | Work | Acceptance |
 |----|-------|------|------------|
-| P0.1 | #1256 / #1417 | `workspace/ci/repo-metrics.py` prints offline git/tree metrics; baseline committed as `REPO-METRICS-BASELINE.md` | **Done** — script offline; unit test; baseline under `workspace/` (ADR-026) |
+| P0.1 | #1256 / #1417 | `workspace/ci/repo-metrics.py` prints offline git/tree metrics; baseline committed as `REPO-METRICS-BASELINE.md` | **Done** — script offline; unit test; baseline under `workspace/` (ADR-026); GitHub issue #1256 may still show OPEN (agents get 403 on close — Owner can close as completed) |
 | P0.2 | #1257 | Path classifier job (`changes`) in `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `openapi-contract.yml`; docs, OpenSpec and agent-only PRs skip Java, Vitest and Playwright; required check names unchanged through aggregator jobs that succeed when their inputs are skipped | **Done** — squash-merged as #1422 (`c4070b3c`) |
 | P0.3 | #1258 | Shard the Playwright suite across a matrix (3 shards) and merge reports | **Done** — squash-merged as #1425 (`d3eed416`); fail-closed `e2e-merge-reports` keeps check name `UI E2E Tests (Playwright)` |
 | P0.4 | #1259 | Move rules that are needed only for some areas out of the always-loaded imports (path-scoped guidance in `AGENTS.md`/skills); keep Constitution, workflow and general rules | **Done** — squash-merged as #1424 (`6e817569`); ~2k tokens via `agent-context-budget.py` |
@@ -173,7 +173,7 @@ and three or more repositories exist.
 
 | Item | Issue |
 |------|-------|
-| Umbrella, decision and criteria (live Owner tracker) | #1443 (replaces auto-closed #1197) |
+| Umbrella, decision and criteria (live Owner tracker) | #1445 (replaces closed #1197/#1443) |
 | P0.1 metrics | #1256 |
 | P0.2 path-scoped CI | #1257 |
 | P0.3 E2E sharding | #1258 |

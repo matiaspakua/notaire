@@ -1,5 +1,6 @@
 {
   "navigation": {
+    "skipToContent": "Saltar al contenido",
     "home": "Inicio",
     "gestiones": "Gestiones",
     "presupuestos": "Presupuestos",
@@ -119,7 +120,8 @@
       },
       "managementFallback": "Gestión #{number}",
       "noRecentWorkflow": "Ninguna de las gestiones más recientes tiene un workflow asignado.",
-      "openGestiones": "Ver gestiones"
+      "openGestiones": "Ver gestiones",
+      "diagramRole": "diagrama de flujo"
     },
     "gestiones": {
       "label": "Gestiones",

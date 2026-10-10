@@ -24,9 +24,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Live Owner topology tracker is #1443** (CU76): ADR-024 / REPO-SPLIT-PLAN point at #1443 after
-  #1197 was auto-closed by a packaging squash that contained `Closes` near `#1197`. Keep #1443 open
-  until Owner decisions are recorded.
+- **Pages Architecture lists Owner decision pack** (CU76): `/docs/architecture/` names
+  blocking issues #1445 (ADR-024), #1438 (deprecated/ A/B/C), and #1226 (LICENSE) with
+  deep-links; unit guard pins the pack; archive completed `docs-1445-archive-hygiene-1452`.
+- **OpenSpec hygiene after #1452**: archive shipped `docs-1445-archive-pages-umbrella`.
+- **OpenSpec hygiene after #1451**: archive shipped `docs-1445-pages-owner-umbrella`.
+- **Pages Architecture surfaces live Owner umbrella #1445** (CU76): ADR-024 entry on
+  `/docs/architecture/` names the open tracker (same pattern as ADR-022 → #1438); unit
+  guard pins the string; archive completed `docs-1445-archive-closed-umbrella` OpenSpec.
+- **OpenSpec active-set hygiene**: archive `docs-1197-repository-topology` (tied to closed
+  umbrella) and the merged `docs-1445-openspec-archive` tree so `validate-sdlc-plan.sh` /
+  `workspace/verify` stay green.
+- **OpenSpec hygiene + business README Pages link**: archive shipped docs-1441/1443/1445
+  packaging changes; `docs/100-business/README.md` links the public Business Docs page.
+- **Live Owner topology tracker is #1445** (CU76): ADR-024 / REPO-SPLIT-PLAN point at #1445 after
+  prior umbrellas were closed by GitHub keyword parsing in packaging PRs. Keep #1445 open until
+  Owner decisions are recorded.
+
 - **Business Docs on GitHub Pages** (#1441, CU76, #1197): curated `/docs/business/` page with
   deep-links into `docs/100-business/` (requirements, use cases, actors, traceability, manuals);
   Docs chrome nav and home card include Business; unit guard in `workspace/tests/`.
@@ -248,6 +262,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Personas search waits for you to stop typing** (issue #1357, RF-39 / RNF-03): the search sent one `/people/search` request per keystroke (17 for a 17-character surname) and the table flashed between keystrokes. `useSearchPersonas` now debounces the criteria 300ms, keys the cache by primitive criteria only, and keeps the previous results visible while the next ones load. Vitest `personas-search` and Playwright TS-0015 (#1357, one request per typed surname) cover it.
+- **The dashboard workflow graph is reachable by screen readers and its motion stops** (issue #1353, RF-23/CU76): the graph was an image (`role="img"`) containing focusable step buttons, so screen readers couldn't reach the steps (axe `nested-interactive`), and the active-edge dot and current-step pulse looped forever. The graph is now a named group described as a flow diagram, each step is a button named with its state, and both animations stop after 4.8 seconds (WCAG 2.2.2). Vitest `workflow-tracker-a11y.test.tsx` and Playwright TS-0035 cover it.
 - **Dashboard counts no longer flash 0 while loading** (issue #1358, RNF-03): since #1397 the three stat cards count with `size=1` page requests instead of downloading lists of 1000, but each card still showed `0` until its count arrived (and after an error). The cards now show a skeleton (announced as loading) until the total arrives, a dash if it fails, and the exact total formatted for the locale. Playwright TS-0118 checks the counts against the API, that only `size=1` requests are made, and the skeleton.
 - **Dialogs and confirm dialogs animate in and out** (issue #1349, RNF-05/RNF-06): the shadcn classes `animate-in`, `fade-in` and `zoom-in-95` had no CSS behind them (tw-animate-css was not installed), so dialogs popped in and vanished mid-click. `tw-animate-css` is now a devDependency imported in `globals.css`. Overlays fade, and content fades and scales from 0.95 on enter (200ms) and reverses on exit (150ms) through Radix `data-state`. The table and login fades now run too. Under `prefers-reduced-motion` the existing global rule leaves no perceptible motion. Playwright TS-0117 covers it.
 - **The mobile navigation drawer behaves as a modal sheet** (issue #1350, RNF-10/CU76): below 768px the drawer left focus on the toggle, ignored Escape, let Tab reach the page behind it, had no close button, let the page scroll, and its toggle had no `aria-expanded` and an English-only name. It is now a Radix dialog sheet: focus starts on the first navigation link, Tab stays inside, Escape, the new translated close button or a tap outside close it and return focus to the toggle, and the page does not scroll behind it. The toggle exposes `aria-expanded`/`aria-controls` and the translated `navigation.openMenu`. Playwright TS-0041 covers it.
@@ -768,6 +784,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
+  with a "Saltar al contenido" / "Skip to content" link that appears on the first Tab and moves focus to
+  `<main id="main-content">` (WCAG 2.4.1). After a client-side navigation, focus moves to the new page's `<h1>`
+  instead of staying on the clicked sidebar link (WCAG 2.4.3). The first load and `?page=`/filter changes leave
+  focus alone. Guarded by `dashboard-layout.test.tsx` and Playwright TS-0108.
 - **Guard: every REST endpoint has a UI consumer or an allowlist reason** (issue #1250, CU76, CONSTITUTION §4): `contracts/tests/test_api_reachability.py` scans `frontend/src` (tests and comments excluded) for API paths, method-aware for the `api-client` helpers, and fails on any OpenAPI endpoint the UI does not call unless `contracts/api-reachability-allowlist.yaml` lists it with a reason; stale entries (endpoint removed or now called) fail too. The allowlist starts with the 53 endpoints unreferenced today, the 10 from #1250 plus 43 the method-aware scan adds, all marked for triage; #1250 stays open for that triage.
 - **Workflow tracker post-signing reingreso loop (strategy b)** (issue #841,
   CU83 / CU06 / CU07 / CU11 / CU44): seed `ManagementStatus` 11–13 and replace
