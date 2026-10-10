@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Pages Architecture lists Owner decision pack** (CU76): `/docs/architecture/` names
+  blocking issues #1445 (ADR-024), #1438 (deprecated/ A/B/C), and #1226 (LICENSE) with
+  deep-links; unit guard pins the pack; archive completed `docs-1445-archive-hygiene-1452`.
 - **OpenSpec hygiene after #1452**: archive shipped `docs-1445-archive-pages-umbrella`.
 - **OpenSpec hygiene after #1451**: archive shipped `docs-1445-pages-owner-umbrella`.
 - **Pages Architecture surfaces live Owner umbrella #1445** (CU76): ADR-024 entry on

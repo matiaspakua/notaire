@@ -57,6 +57,47 @@ export default function DocsArchitecturePage() {
       </section>
 
       <section className="space-y-3">
+        <h2 className="text-lg font-semibold text-neutral-900">Owner decisions pending</h2>
+        <p className="text-sm text-neutral-600 max-w-3xl leading-relaxed">
+          Topology prep Phase 0 is on main; these Owner choices still block marking the work done.
+          Agents must not invent answers.
+        </p>
+        <ul className="space-y-2 text-sm">
+          <li>
+            <a
+              className="text-[#0A84FF] hover:underline"
+              href="https://github.com/matiaspakua/notaire/issues/1445"
+            >
+              #1445
+            </a>
+            {" — "}
+            Live umbrella: accept ADR-024 staged satellites (A+B) vs eight-repo C
+          </li>
+          <li>
+            <a
+              className="text-[#0A84FF] hover:underline"
+              href="https://github.com/matiaspakua/notaire/issues/1438"
+            >
+              #1438
+            </a>
+            {" — "}
+            P0.6 <code className="text-xs bg-neutral-100 px-1 rounded">deprecated/</code> Option A /
+            B / C (record in ADR-022)
+          </li>
+          <li>
+            <a
+              className="text-[#0A84FF] hover:underline"
+              href="https://github.com/matiaspakua/notaire/issues/1226"
+            >
+              #1226
+            </a>
+            {" — "}
+            LICENSE file (README already links one that does not exist)
+          </li>
+        </ul>
+      </section>
+
+      <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900">Recent decisions</h2>
         <ul className="space-y-2">
           {adrs.map((a) => (
