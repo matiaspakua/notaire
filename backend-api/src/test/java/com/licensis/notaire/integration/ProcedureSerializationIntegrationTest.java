@@ -82,7 +82,7 @@ class ProcedureSerializationIntegrationTest {
         MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"number": 1, "encabezado": "budget ciclo IT", "status": "Pending",
+                                {"number": 1, "encabezado": "budget ciclo IT", "status": "PENDIENTE",
                                  "date": "2026-07-24"}
                                 """))
                 .andExpect(status().isCreated())

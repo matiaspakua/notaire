@@ -1,0 +1,32 @@
+info:
+  name: Create budget with an unknown status
+  type: http
+  seq: 10
+  description: |-
+      ## Create budget with an unknown status — POST /api/v1/presupuestos
+      Traceability: CU01 (RF-02), issue #1346. The status is one of BORRADOR, PENDIENTE,
+      APROBADO, RECHAZADO, FACTURADO (any letter case); anything else answers 400.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/presupuestos"
+  body:
+    type: json
+    data: |-
+        {
+          "date": "2026-06-01",
+          "encabezado": "E2E Budget invalid status",
+          "status": "Pending"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request", function () { expect(res.getStatus()).to.equal(400); });
+          test("Names the accepted values", function () {
+            expect(res.getBody().message).to.contain("BORRADOR, PENDIENTE, APROBADO, RECHAZADO, FACTURADO");
+          });

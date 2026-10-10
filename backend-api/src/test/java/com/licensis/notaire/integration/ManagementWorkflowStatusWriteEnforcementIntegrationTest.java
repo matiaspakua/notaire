@@ -148,7 +148,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
 
     private Integer createBudget(Integer clientId) throws Exception {
         String body = """
-                {"number": 1, "date": "2026-01-01", "encabezado": "Budget Enforce IT", "status": "Pending",
+                {"number": 1, "date": "2026-01-01", "encabezado": "Budget Enforce IT", "status": "PENDIENTE",
                  "person": {"personId": %d}}
                 """.formatted(clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")

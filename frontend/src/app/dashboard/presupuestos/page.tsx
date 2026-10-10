@@ -36,13 +36,14 @@ import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
+import { BUDGET_STATUSES, DEFAULT_BUDGET_STATUS, budgetStatusLabelKey, normalizeBudgetStatus } from "@/lib/budget-status";
 import type { Presupuesto } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 
 const NO_TEMPLATE = "none";
 
-const EMPTY: Partial<Presupuesto> = { date: "", propertyAmount: undefined, status: "BORRADOR" };
+const EMPTY: Partial<Presupuesto> = { date: "", propertyAmount: undefined, status: DEFAULT_BUDGET_STATUS };
 
 export default function PresupuestosPage() {
   return (
@@ -162,7 +163,7 @@ function PresupuestosList() {
   // no budget search by client name.
   const filteredPresupuestos =
     searchId !== null
-      ? byId && (!byStatus || byId.status === filterEstado)
+      ? byId && (!byStatus || normalizeBudgetStatus(byId.status) === filterEstado)
         ? [byId]
         : []
       : shown.filter((p) => {
@@ -178,7 +179,17 @@ function PresupuestosList() {
     setIsEditMode(false);
     setModalOpen(true);
   }
-  function openEdit(p: Presupuesto) { setEditing(p); setIsEditMode(true); setModalOpen(true); }
+  function openEdit(p: Presupuesto) {
+    setEditing({ ...p, status: normalizeBudgetStatus(p.status) ?? p.status });
+    setIsEditMode(true);
+    setModalOpen(true);
+  }
+
+  /** Translated label of a stored status; a value outside the vocabulary shows as stored (#1346). */
+  function statusLabel(status: string | undefined) {
+    const code = normalizeBudgetStatus(status);
+    return code ? t(budgetStatusLabelKey(code)) : status || "—";
+  }
 
   async function handleSave() {
     try {
@@ -234,7 +245,7 @@ function PresupuestosList() {
     {
       key: "estado",
       header: tc("status"),
-      render: (p) => p.status ?? "—",
+      render: (p) => statusLabel(p.status),
     },
     {
       key: "actions",
@@ -310,11 +321,10 @@ function PresupuestosList() {
             <SelectValue placeholder={`${tc("status")}...`} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="TODOS">Todos</SelectItem>
-            <SelectItem value="BORRADOR">Borrador</SelectItem>
-            <SelectItem value="APROBADO">Aprobado</SelectItem>
-            <SelectItem value="RECHAZADO">Rechazado</SelectItem>
-            <SelectItem value="FACTURADO">Facturado</SelectItem>
+            <SelectItem value="TODOS">{tc("all")}</SelectItem>
+            {BUDGET_STATUSES.map((code) => (
+              <SelectItem key={code} value={code}>{t(budgetStatusLabelKey(code))}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -388,17 +398,20 @@ function PresupuestosList() {
               )}
               <FormField label={tc("status")}>
                 <Select
-                  value={editing.status ?? "BORRADOR"}
+                  value={editing.status ?? DEFAULT_BUDGET_STATUS}
                   onValueChange={(v) => setEditing({ ...editing, status: v })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger data-testid="select-estado-presupuesto" aria-label={tc("status")}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="BORRADOR">Borrador</SelectItem>
-                    <SelectItem value="APROBADO">Aprobado</SelectItem>
-                    <SelectItem value="RECHAZADO">Rechazado</SelectItem>
-                    <SelectItem value="FACTURADO">Facturado</SelectItem>
+                    {/* A legacy value outside the vocabulary stays visible (never a blank select) but must be changed to save (#1346). */}
+                    {editing.status && !normalizeBudgetStatus(editing.status) && (
+                      <SelectItem value={editing.status} disabled>{editing.status}</SelectItem>
+                    )}
+                    {BUDGET_STATUSES.map((code) => (
+                      <SelectItem key={code} value={code}>{t(budgetStatusLabelKey(code))}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </FormField>

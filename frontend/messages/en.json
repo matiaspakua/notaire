@@ -649,11 +649,6 @@
       "tipoTramiteAyuda": "Loads its template items into the new budget",
       "sinPlantilla": "No template"
     },
-    "states": {
-      "borrador": "DRAFT",
-      "aprobado": "APPROVED",
-      "rechazado": "REJECTED"
-    },
     "resumen": {
       "title": "Financial summary",
       "gestionSection": "Case and quote",
@@ -691,7 +686,14 @@
       }
     },
     "itemsNotLoaded": "Budget created, but the procedure type has no template: no items were loaded",
-    "estadoFilter": "Filter by status"
+    "estadoFilter": "Filter by status",
+    "status": {
+      "BORRADOR": "Draft",
+      "PENDIENTE": "Pending",
+      "APROBADO": "Approved",
+      "RECHAZADO": "Rejected",
+      "FACTURADO": "Invoiced"
+    }
   },
   "auditoria": {
     "title": "Audit",
