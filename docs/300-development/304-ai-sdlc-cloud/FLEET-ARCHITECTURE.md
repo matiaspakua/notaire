@@ -17,6 +17,11 @@
 3. Prefer **cost-to-value** Cursor model slugs per role (strong models only where judgment fails cheaply).
 4. Keep gates **mechanical** (`openspec validate`, `validate-sdlc-plan.sh`, `preflight.sh`,
    `gh pr checks`) — never trust an agent’s “all green” claim without a command exit code.
+5. Respect **in-repo module ownership** ([MODULE-OWNERSHIP.md](../MODULE-OWNERSHIP.md), ADR-026):
+   pick work by `python3 workspace/modules.py affected <path>` and keep #1197 Phase 0
+   (path-scoped CI, metrics, context trim, OpenAPI types) ahead of any repository split.
+6. Sync with sibling agents via **GitHub issue status** (board Status / `in-progress` when the
+   token allows; otherwise PR `Closes #n` and issue comments). Do not invent parallel trackers.
 
 ---
 
