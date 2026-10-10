@@ -138,6 +138,8 @@ services:
     container_name: devsecops-otel-collector
     restart: unless-stopped
     command: ['--config=/etc/otelcol/config.yml']
+    depends_on:
+      - tempo
     volumes:
       - ./otel/collector.yml:/etc/otelcol/config.yml:ro
     labels:
@@ -146,6 +148,22 @@ services:
     networks:
       - devsecops-network
       - notaire-app-network
+
+  # --- Trace store (receives OTLP from the collector) ---
+  tempo:
+    image: grafana/tempo:2.10.8
+    container_name: devsecops-tempo
+    restart: unless-stopped
+    command: ['-config.file=/etc/tempo/tempo.yml']
+    user: root
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - tempo_data:/var/tempo
+    labels:
+      service: "tempo"
+      app: "monitoring"
+    networks:
+      - devsecops-network
 
   # --- Host (Docker VM) metrics ---
   node-exporter:
@@ -256,3 +274,4 @@ volumes:
   prometheus_data:
   grafana_data:
   loki_data:
+  tempo_data:
