@@ -8,7 +8,16 @@
  */
 
 import { ReactNode, useId } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { theme } from "./tokens";
+
+/**
+ * Renders the heading as the Radix `Dialog.Title` (same element, via asChild)
+ * so the dialog's `aria-labelledby` points at visible text (issue #1344).
+ */
+function AsDialogTitle({ enabled, children }: { enabled: boolean; children: ReactNode }) {
+  return enabled ? <DialogPrimitive.Title asChild>{children}</DialogPrimitive.Title> : <>{children}</>;
+}
 
 /**
  * Form wrapper - provides consistent spacing and layout
@@ -116,10 +125,13 @@ export function FormSection({
   title,
   subtitle,
   children,
+  dialogTitle = false,
 }: {
   title: string;
   subtitle?: string;
   children: ReactNode;
+  /** Inside a DialogContent: this heading names the dialog (issue #1344). One per dialog. */
+  dialogTitle?: boolean;
 }) {
   return (
     <div
@@ -132,7 +144,8 @@ export function FormSection({
       }}
     >
       <div>
-        <h3
+        <AsDialogTitle enabled={dialogTitle}>
+          <h3
           style={{
             fontSize: theme.typography.fontSize.lg,
             fontWeight: theme.typography.fontWeight.semibold,
@@ -144,6 +157,7 @@ export function FormSection({
         >
           {title}
         </h3>
+        </AsDialogTitle>
         {subtitle && (
           <p
             style={{
@@ -210,10 +224,13 @@ export function FormHeader({
   title,
   subtitle,
   description,
+  dialogTitle = false,
 }: {
   title: string;
   subtitle?: string;
   description?: string;
+  /** Inside a DialogContent: this heading names the dialog (issue #1344). One per dialog. */
+  dialogTitle?: boolean;
 }) {
   return (
     <div
@@ -225,7 +242,8 @@ export function FormHeader({
       }}
     >
       <div>
-        <h1
+        <AsDialogTitle enabled={dialogTitle}>
+          <h1
           style={{
             fontSize: theme.typography.fontSize["3xl"],
             fontWeight: theme.typography.fontWeight.bold,
@@ -236,6 +254,7 @@ export function FormHeader({
         >
           {title}
         </h1>
+        </AsDialogTitle>
         {subtitle && (
           <p
             style={{

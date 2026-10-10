@@ -18,6 +18,7 @@ import {
   assignWorkflowToTipoTramite,
   createCompleteCaseGestion,
 } from "./setup/api-helpers";
+import { listRow } from "./setup/list-locators";
 
 /**
  * "Archivada" is a global, singleton estado (looked up by name in
@@ -180,7 +181,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
       await page.goto("/dashboard/gestiones");
       await page.waitForLoadState("domcontentloaded");
 
-      const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+      const row = listRow(page, new RegExp(String(numero)));
       await expect(row).toBeVisible({ timeout: 10000 });
 
       await page.getByTestId(`btn-ver-carpetas-${idGestion}`).click();

@@ -685,7 +685,7 @@ public class ManagementController {
     @PostMapping("/{id}/reingreso-documentacion")
     @Operation(summary = "CU43 - Re-enter a document type for a management procedure")
     public ResponseEntity<DtoDocumentReentered> reenterDocumentation(@PathVariable Integer id,
-            @RequestBody DtoReingresoDocumentacionRequest request) {
+            @Valid @RequestBody DtoReingresoDocumentacionRequest request) {
         DtoDocumentReentered result = reingresoDocumentacionService.reenter(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }

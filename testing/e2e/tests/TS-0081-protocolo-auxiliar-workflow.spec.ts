@@ -4,6 +4,7 @@
 import { test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
 import { createPersona, createFolio, createTipoDeFolio } from "./setup/api-helpers";
+import { rowWithCell } from "./setup/rows";
 
 async function seedFolioAuxiliarDisponible(page: import("@playwright/test").Page) {
   const persona = await createPersona(page);
@@ -27,7 +28,7 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
     await page.goto("/dashboard/protocolo/auxiliar");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(idFolio)) });
+    const row = rowWithCell(page, idFolio);
     await expect(row).toBeVisible({ timeout: 10000 });
     await row.getByRole("button", { name: /iniciar escritura/i }).click();
 
@@ -47,7 +48,7 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
     await page.goto("/dashboard/protocolo/auxiliar");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(idFolio)) });
+    const row = rowWithCell(page, idFolio);
     await expect(row).toBeVisible({ timeout: 10000 });
     await row.getByRole("button", { name: /iniciar escritura/i }).click();
 

@@ -149,18 +149,20 @@ class OpenApiContractTest(unittest.TestCase):
     def test_breaking_diff_ignores_only_the_owner_accepted_list(self):
         _, workflow = _load_workflow(OPENAPI_WORKFLOW)
         steps = workflow["jobs"]["openapi-contract"]["steps"]
+        # The oasdiff release binary runs the diff (#1380: the Docker-based
+        # oasdiff-action failed on Docker Hub rate limits).
         diff_steps = [
-            s for s in steps if "oasdiff-action/breaking" in str(s.get("uses", ""))
+            s for s in steps if "oasdiff breaking" in str(s.get("run", ""))
         ]
         self.assertEqual(len(diff_steps), 1, "exactly one oasdiff breaking step")
-        inputs = diff_steps[0].get("with") or {}
-        self.assertEqual(inputs.get("fail-on"), "ERR")
-        self.assertEqual(
-            inputs.get("err-ignore"),
-            ACCEPTED_BREAKING_REL,
+        run = " ".join(str(diff_steps[0]["run"]).replace("\\\n", " ").split())
+        self.assertIn("--fail-on ERR", run)
+        self.assertIn(
+            f"--err-ignore {ACCEPTED_BREAKING_REL}",
+            run,
             "accepted breaking changes must come from the committed list",
         )
-        self.assertNotIn("warn-ignore", inputs)
+        self.assertNotIn("--warn-ignore", run)
 
     def test_accepted_breaking_changes_are_traceable(self):
         self.assertTrue(
