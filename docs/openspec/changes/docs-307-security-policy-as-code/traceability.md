@@ -15,7 +15,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-307-security-policy-as-code/` | drafted |
 | Branch | `cursor/security-policy-307-81d6` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | `da2dee43974b23bcb0775764401e10d9a182ea8c` | created |
+| Commits | `da2dee43974b23bcb0775764401e10d9a182ea8c`, `062ea2c8` | created |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
