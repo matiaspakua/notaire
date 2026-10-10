@@ -581,6 +581,13 @@ An AI agent **must**:
 - ✅ **Issue status sync** with sibling agents: prefer `in-progress` / board Status
   when the token allows; if Issues write is 403, keep status in the PR body and
   use `Closes #<n>` / `Refs #<n>` as the sync channel — never invent a parallel tracker
+- ✅ **Path-scoped CI on PRs (#1257 / #1197 P0.2):** docs / OpenSpec / agent-only
+  path sets must not run Java Unit/Integration/Coverage or Playwright/Bruno leaf
+  jobs. Required check *names* (`CI`, `Frontend CI`, `Playwright E2E`, …) stay
+  green via suite aggregators that treat intentional `skipped` as success.
+  `push` to `main`, `workflow_dispatch`, and `schedule` always run the full
+  suite. Never use workflow-level `on.paths` that would omit a required check
+  on `main`. Guards: `workspace/tests/test_ci_workflow_invariants.py`.
 
 Before acting, the agent must select the applicable skills using
 `.claude/skills/README.md`, load their references only when needed, and state
@@ -693,6 +700,7 @@ drift.
 | Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | **Merge gate (heavy CI)** | `bash workspace/sdlc/check-heavy-ci.sh <pr>` — Integration + Coverage + Bruno + Playwright must pass; light-only green is not mergeable ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
+| Path-scoped CI | `dorny/paths-filter` job `changes` in `ci.yml` / `frontend-ci.yml` / `playwright-e2e.yml` / `openapi-contract.yml`; aggregators accept `success\|skipped`; invariants in `workspace/tests/test_ci_workflow_invariants.py` (#1257) |
 | Security | Trivy (`ci.yml` security job); CodeQL; DAST/ZAP where configured; `security/` module for rulesets-as-code |
 | Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |
 | Public documentation site | `deploy-github-page.yml` → https://matiaspakua.github.io/notaire/ (story) and `/docs/` (technical Docs tab) |
@@ -700,6 +708,7 @@ drift.
 
 ---
 
-*Last reviewed: 2026-10-10 (AI SDLC tooling map, issue sync, Mermaid/modules, heavy-CI merge gate).
-This Constitution supersedes the process summary in `.claude/rules/ai-agent-workflow.md`
-where they conflict; that document remains the operational implementation.*
+*Last reviewed: 2026-10-10 (AI SDLC tooling map, issue sync, Mermaid/modules,
+heavy-CI merge gate, path-scoped CI #1257 / #1197 P0.2). This Constitution
+supersedes the process summary in `.claude/rules/ai-agent-workflow.md` where they
+conflict; that document remains the operational implementation.*
