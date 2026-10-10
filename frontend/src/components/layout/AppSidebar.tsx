@@ -54,7 +54,7 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
       {/* User info */}
       <div className="mx-4 mb-6 p-4 rounded-[16px] bg-white/50 border border-white/20 apple-shadow">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-primary to-blue-600 text-primary-foreground text-sm font-bold">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground text-sm font-bold">
             {user?.nombre?.charAt(0).toUpperCase() ?? "U"}
           </div>
           <div className="min-w-0">
@@ -126,7 +126,7 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
         <button
           data-testid="btn-logout"
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-[12px] text-sm font-medium text-[hsl(var(--sidebar-foreground))] hover:bg-red-50 hover:text-red-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-1"
+          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-[12px] text-sm font-medium text-[hsl(var(--sidebar-foreground))] hover:bg-destructive/10 hover:text-destructive transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-1"
         >
           <LogOut className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
           {t("logout")}

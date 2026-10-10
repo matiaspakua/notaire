@@ -92,7 +92,7 @@ function LoginForm() {
           <p
             data-testid="session-expired-message"
             role="status"
-            className="rounded-[12px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 text-center font-medium"
+            className="rounded-[12px] border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning text-center font-medium"
           >
             {t("sessionExpired")}
           </p>

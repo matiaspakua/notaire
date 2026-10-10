@@ -532,3 +532,27 @@ test.describe('Personas screen - responsive viewports', () => {
     )
   }
 })
+
+// ---------------------------------------------------------------------------
+// #1357 - Search-as-you-type is debounced and keeps the table stable
+// ---------------------------------------------------------------------------
+
+test.describe('#1357 - Debounced personas search', () => {
+  test('typing a surname quickly sends one /people/search request and finds the person', async ({ page }) => {
+    await loginAndGoToPersonas(page)
+    const created = await createPersona(page)
+    const lastName = created.data!.lastName!
+    const searches: string[] = []
+    page.on('request', (r) => {
+      if (r.url().includes('/people/search')) searches.push(r.url())
+    })
+
+    await page.getByTestId('input-search-lastName').pressSequentially(lastName, { delay: 40 })
+    await expect(page.getByRole('cell', { name: lastName }).first()).toBeVisible({ timeout: 10_000 })
+    await page.waitForTimeout(500)
+    await page.screenshot({ path: 'test-results/ui-shots/1357-personas-search/search-desktop.png' })
+
+    expect(searches).toHaveLength(1)
+    expect(decodeURIComponent(searches[0])).toContain(`lastName=${lastName}`)
+  })
+})
