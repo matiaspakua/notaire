@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Signature } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -15,13 +15,14 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import {
-  useEscrituras,
+  useEscriturasPage,
   useCreateEscritura,
   useUpdateEscritura,
   useDeleteEscritura,
   useFirmarEscritura,
 } from "@/hooks/useEscrituras";
 import { formatDate, extractApiError } from "@/lib/utils";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import type { Escritura, Folio } from "@/types";
 import { toDateInputValue } from "@/lib/dates";
 
@@ -29,10 +30,17 @@ const EMPTY: Partial<Escritura> = { number: undefined, dateDeedrecording: "", bo
 const ESTADO_SIN_FIRMAR = "Sin Firmar";
 
 export default function EscriturasPage() {
+  return (
+    <Suspense>
+      <EscriturasList />
+    </Suspense>
+  );
+}
+
+function EscriturasList() {
   const t = useTranslations("escrituras");
   const tc = useTranslations("common");
 
-  const { data: escrituras = [], isLoading } = useEscrituras();
   const { data: folios = [] } = useQuery({
     queryKey: ["folios"],
     queryFn: () => apiGet<Folio[]>("/folio"),
@@ -48,14 +56,25 @@ export default function EscriturasPage() {
   const [editing, setEditing] = useState<Partial<Escritura>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [searchNumero, setSearchNumero] = useState("");
+  const numero = searchNumero.trim();
 
-  const { data: filteredEscrituras = escrituras } = useQuery({
-    queryKey: ["escrituras", "buscar", searchNumero, escrituras],
-    queryFn: () =>
-      searchNumero.trim()
-        ? apiGet<Escritura[]>(`/escrituras/buscar?numero=${encodeURIComponent(searchNumero.trim())}`)
-        : Promise.resolve(escrituras),
+  // One server page at a time, page and size in the URL (#1340): the list used
+  // to load size=1000.
+  const paging = useUrlPagination();
+  const { data: escriturasPage, isLoading: isLoadingPage, isFetching } = useEscriturasPage(
+    { page: paging.page, size: paging.size },
+    { enabled: !numero },
+  );
+  useClampPage(paging, numero ? undefined : escriturasPage?.totalPages);
+
+  // The backend reads `number`; `numero` was ignored and returned every deed.
+  const { data: found = [], isLoading: isLoadingSearch } = useQuery({
+    queryKey: ["escrituras", "buscar", numero],
+    queryFn: () => apiGet<Escritura[]>(`/escrituras/buscar?number=${encodeURIComponent(numero)}`),
+    enabled: /^\d+$/.test(numero),
   });
+  const filteredEscrituras = numero ? (/^\d+$/.test(numero) ? found : []) : escriturasPage?.content ?? [];
+  const isLoading = numero ? isLoadingSearch && /^\d+$/.test(numero) : isLoadingPage;
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(e: Escritura) { setEditing(e); setIsEditMode(true); setModalOpen(true); }
@@ -143,7 +162,25 @@ export default function EscriturasPage() {
           data-testid="input-search-escritura"
         />
       </div>
-      <DataTable data={filteredEscrituras} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idDeed!} emptyMessage={t("noData")} />
+      <DataTable
+        data={filteredEscrituras}
+        columns={columns}
+        isLoading={isLoading}
+        isFetching={!numero && isFetching}
+        keyExtractor={(e) => e.idDeed!}
+        emptyMessage={t("noData")}
+        pagination={
+          numero
+            ? undefined
+            : {
+                page: escriturasPage?.number ?? paging.page,
+                size: paging.size,
+                totalElements: escriturasPage?.totalElements ?? 0,
+                onPageChange: paging.setPage,
+                onSizeChange: paging.setSize,
+              }
+        }
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
