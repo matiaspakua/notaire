@@ -120,6 +120,21 @@ describe("PersonPicker (#1340)", () => {
     expect(search.some((u) => /Name=G$|Name=Ga$/.test(u))).toBe(false);
   });
 
+  it("hides the newest people as soon as the user types, so Enter cannot pick a stale option", async () => {
+    const onPick = vi.fn();
+    render(<Harness onPick={onPick} />, { wrapper });
+    const box = screen.getByRole("combobox", { name: "Cliente" });
+    fireEvent.click(box);
+    await screen.findByRole("option", { name: "Ana Nueva" });
+    fireEvent.change(box, { target: { value: "Gar" } });
+    expect(screen.queryByRole("option", { name: "Ana Nueva" })).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("personPicker.searching");
+    fireEvent.keyDown(box, { key: "ArrowDown" });
+    fireEvent.keyDown(box, { key: "Enter" });
+    expect(onPick).not.toHaveBeenCalled();
+    expect(await screen.findByRole("option", { name: "Carla Garcia" })).toBeInTheDocument();
+  });
+
   it("selects with the keyboard and closes on Escape without bubbling", async () => {
     const onPick = vi.fn();
     render(<Harness onPick={onPick} />, { wrapper });
