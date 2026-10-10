@@ -318,6 +318,8 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
     // Wait for the filter select to be populated with personas
     const filterSelect = page.getByTestId('select-filter-cliente-gestion')
     await filterSelect.click()
+    // The client filter searches the server (#1340): type the seeded last name.
+    await filterSelect.fill(personaApellido)
 
     // Select the option matching the seeded persona specifically — picking
     // the first non-"Todos" option would filter by an unrelated persona

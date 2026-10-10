@@ -31,7 +31,7 @@ import {
   useCargarItemsDesdePlantilla,
   useAgregarItemsDesdeCatalogo,
 } from "@/hooks/usePresupuestos";
-import { usePersonas } from "@/hooks/usePersonas";
+import { PersonPicker } from "@/components/shared/PersonPicker";
 import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
@@ -47,7 +47,6 @@ export default function PresupuestosPage() {
   const tc = useTranslations("common");
 
   const { data: presupuestos = [], isLoading } = usePresupuestos();
-  const { data: personas = [] } = usePersonas();
   const createMutation = useCreatePresupuesto();
   const updateMutation = useUpdatePresupuesto();
   const deleteMutation = useDeletePresupuesto();
@@ -293,29 +292,15 @@ export default function PresupuestosPage() {
         <DialogContent>
           <FormContainer>
             <FormSection title={isEditMode ? t("editPresupuesto") : t("newPresupuesto")}>
-              <FormField
-                label={t("fields.cliente")}
-                required
-                helperText={personas.length === 0 ? "No hay personas registradas. Primero registre una persona." : undefined}
-              >
-                <Select
-                  value={editing.person?.personId?.toString() ?? ""}
-                  onValueChange={(v) => {
-                    const persona = personas.find((p) => p.personId?.toString() === v);
-                    setEditing({ ...editing, person: persona });
-                  }}
-                >
-                  <SelectTrigger data-testid="select-persona" disabled={personas.length === 0}>
-                    <SelectValue placeholder="Seleccionar cliente..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {personas.map((p) => (
-                      <SelectItem key={p.personId} value={p.personId!.toString()}>
-                        {fullName(p)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <FormField label={t("fields.cliente")} required>
+                {/* Server search instead of the first 1000 people (#1340). */}
+                <PersonPicker
+                  value={editing.person?.personId}
+                  selected={editing.person}
+                  onChange={(person) => setEditing({ ...editing, person })}
+                  aria-label={t("fields.cliente")}
+                  data-testid="select-persona"
+                />
               </FormField>
               <FormField label={tc("date")} required>
                 <Input

@@ -20,8 +20,9 @@ export const PERSONAS_SORT = "idPerson,desc";
  * One server page of GET /people (#1340). The people list outgrows any fixed
  * size, so the list screen never loads it whole.
  */
-export function usePersonasPage(params: PersonasPageParams) {
+export function usePersonasPage(params: PersonasPageParams, options: { enabled?: boolean } = {}) {
   return useQuery({
+    enabled: options.enabled ?? true,
     queryKey: personasKeys.page(params),
     queryFn: () =>
       apiGetPage<Persona>("/people", { page: params.page, size: params.size, sort: PERSONAS_SORT }),

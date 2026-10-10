@@ -26,7 +26,7 @@ import {
   usePonerCarpetaEnEspera,
 } from "@/hooks/useGestiones";
 import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
-import { usePersonas } from "@/hooks/usePersonas";
+import { PersonPicker } from "@/components/shared/PersonPicker";
 import { usePresupuestos } from "@/hooks/usePresupuestos";
 import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
@@ -44,7 +44,6 @@ export default function GestionesPage() {
   const t = useTranslations("gestiones");
   const tc = useTranslations("common");
   const { data: gestiones = [], isLoading } = useGestiones();
-  const { data: personas = [] } = usePersonas();
   const { data: presupuestos = [] } = usePresupuestos();
   const { data: estados = [] } = useEstadosGestion();
   const { data: tiposTramite = [] } = useTiposTramite();
@@ -330,17 +329,17 @@ export default function GestionesPage() {
       />
 
       <div className="px-4 pb-4 flex items-center gap-2">
-        <Select value={clienteFilter || "all"} onValueChange={(v) => setClienteFilter(v === "all" ? "" : v)}>
-          <SelectTrigger className="w-56" data-testid="select-filter-cliente-gestion">
-            <SelectValue placeholder={t("filterByCliente")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{tc("all")}</SelectItem>
-            {personas.filter((p) => p.isClient).map((p) => (
-              <SelectItem key={p.personId} value={String(p.personId)}>{fullName(p)}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Server search over clients instead of the first 1000 people (#1340). */}
+        <PersonPicker
+          value={clienteFilter ? Number(clienteFilter) : undefined}
+          onChange={(person) => setClienteFilter(person?.personId != null ? String(person.personId) : "")}
+          aria-label={t("filterByCliente")}
+          placeholder={t("filterByCliente")}
+          clientsOnly
+          allowClear
+          className="w-full sm:w-80"
+          data-testid="select-filter-cliente-gestion"
+        />
       </div>
 
       <DataTable
@@ -381,10 +380,12 @@ export default function GestionesPage() {
                     </Select>
                   </FormField>
                   <FormField label={t("fields.escribano")} required>
-                    <Select value={escribanoId} onValueChange={setEscribanoId}>
-                      <SelectTrigger data-testid="select-escribano-gestion"><SelectValue placeholder="Seleccionar escribano..." /></SelectTrigger>
-                      <SelectContent>{personas.map((p) => <SelectItem key={p.personId} value={String(p.personId)}>{fullName(p)}</SelectItem>)}</SelectContent>
-                    </Select>
+                    <PersonPicker
+                      value={escribanoId ? Number(escribanoId) : undefined}
+                      onChange={(person) => setEscribanoId(person?.personId != null ? String(person.personId) : "")}
+                      aria-label={t("fields.escribano")}
+                      data-testid="select-escribano-gestion"
+                    />
                   </FormField>
                   <FormField label={t("fields.estado")} required>
                     <Select value={estadoId} onValueChange={setEstadoId}>

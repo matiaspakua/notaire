@@ -1132,5 +1132,14 @@
       "montoDeuda": "Amount owed",
       "observaciones": "Notes"
     }
+  },
+  "personPicker": {
+    "placeholder": "Search by first name, last name or ID…",
+    "searching": "Searching…",
+    "noResults": "No results",
+    "results": "{count} results",
+    "recentHint": "Newest people. Type to search.",
+    "clear": "Clear selection",
+    "loadError": "Could not load the people list"
   }
 }

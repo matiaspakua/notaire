@@ -37,7 +37,10 @@ async function go(page: Page, path: string): Promise<void> {
 }
 
 async function choose(page: Page, triggerTestId: string, option: RegExp): Promise<void> {
-  await page.getByTestId(triggerTestId).click();
+  const trigger = page.getByTestId(triggerTestId);
+  await trigger.click();
+  // Person pickers are server-search comboboxes (#1340): type the name first.
+  if ((await trigger.evaluate((el) => el.tagName)) === "INPUT") await trigger.fill(option.source);
   await pause(page, 0.5);
   const choice = page.getByRole("option", { name: option });
   await choice.evaluate((element) => (element as HTMLElement).click());

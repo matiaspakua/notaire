@@ -11,7 +11,10 @@ import { authenticateAsAdmin } from "./setup/auth";
 import { createPersona, createPresupuesto, createSuplencia, uniqueId } from "./setup/api-helpers";
 
 async function choose(page: Page, triggerTestId: string, option: RegExp): Promise<void> {
-  await page.getByTestId(triggerTestId).click();
+  const trigger = page.getByTestId(triggerTestId);
+  await trigger.click();
+  // Person pickers are server-search comboboxes (#1340): type the name first.
+  if ((await trigger.evaluate((el) => el.tagName)) === "INPUT") await trigger.fill(option.source);
   const choice = page.getByRole("option", { name: option });
   await expect(choice).toBeVisible({ timeout: 8000 });
   await choice.click();

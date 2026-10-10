@@ -85,7 +85,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     // WHEN: el operador crea el presupuesto eligiendo cliente, monto y tipo de trámite
     await steps.givenUserIsOnPage("/dashboard/presupuestos");
     await page.getByTestId("btn-nuevo-presupuesto").click();
-    await page.getByTestId("select-persona").click();
+    await page.getByTestId("select-persona").fill(lastName);
     await page.getByRole("option", { name: new RegExp(lastName) }).click();
     await page.locator('input[type="date"]').fill(new Date().toISOString().split("T")[0]);
     await page.getByTestId("input-monto").fill("100000");
