@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { apiGet, apiGetPage, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { gestionWorkflowKeys } from "@/hooks/useGestionWorkflow";
 import type { DtoSaldoPendiente, GestionDeEscritura } from "@/types/api";
 import type {
@@ -53,13 +53,6 @@ export const historialKeys = {
 export const carpetasTramiteKeys = {
   byGestion: (id: number) => ["carpetas-tramite", "gestion", id] as const,
 };
-
-export function useGestiones() {
-  return useQuery({
-    queryKey: gestionesKeys.all,
-    queryFn: () => apiGetPaged<GestionDeEscritura>("/gestiones"),
-  });
-}
 
 export function useGestionByNumero(numero: number | undefined) {
   return useQuery({

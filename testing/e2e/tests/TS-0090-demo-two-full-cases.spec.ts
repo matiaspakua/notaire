@@ -56,7 +56,12 @@ async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
 
 async function chooseInDialogCombobox(page: Page, option: RegExp, testId?: string): Promise<void> {
   const dialog = page.getByRole("dialog");
-  await (testId ? dialog.getByTestId(testId) : dialog.getByRole("combobox")).click();
+  const trigger = testId ? dialog.getByTestId(testId) : dialog.getByRole("combobox");
+  await trigger.click();
+  // Management pickers are server-search comboboxes (#1340): type the number first.
+  if ((await trigger.evaluate((el) => el.tagName)) === "INPUT") {
+    await trigger.fill(option.source.replace(/^\^/, "").trim());
+  }
   await pause(page, 0.5);
   const choice = page.getByRole("option", { name: option });
   await choice.evaluate((element) => (element as HTMLElement).click());
