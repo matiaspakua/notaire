@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **OpenSpec hygiene**: archive closed-issue trees for #1408 / #1367 / #1466 and shipped
+  `docs-1445-owner-phase0-evidence` so `validate-sdlc-plan` stays green.
 - **Owner evidence on Pages + ADR-024** (CU76): Architecture Owner pack shows
   P0.1–P0.5 Done and links `REPO-METRICS-BASELINE.md` (path-scoped **6/17**); Modules
   links plan + baseline; ADR-024 measured evidence records dorny/paths-filter count.
