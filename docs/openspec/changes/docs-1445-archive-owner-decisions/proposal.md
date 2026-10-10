@@ -16,7 +16,13 @@ PR #1454 shipped the Pages Owner decision pack. Archive completed active change
 
 ## What Changes
 
+Also archive shipped frontend OpenSpec trees whose issues are CLOSED
+(`feat-1352-skip-link-route-focus`, `fix-1353-workflow-tracker-a11y`,
+`fix-1357-personas-search-debounce`, `fix-1365-design-tokens`) so
+`validate-sdlc-plan.sh` stays green on main.
+
 - Archive `docs-1445-pages-owner-decisions` → `archive/2026-10-10-docs-1445-pages-owner-decisions/`
+- Archive closed-issue OpenSpec trees #1352/#1353/#1357/#1365
 - CHANGELOG Unreleased
 - `skip_specs: true`
 

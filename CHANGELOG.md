@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **OpenSpec hygiene after #1454**: archive shipped `docs-1445-pages-owner-decisions`.
+- **OpenSpec hygiene**: archive shipped Owner-decisions Pages change and closed-issue trees #1352/#1353/#1357/#1365 so `validate-sdlc-plan` stays green.
 - **Pages Architecture lists Owner decision pack** (CU76): `/docs/architecture/` names
   blocking issues #1445 (ADR-024), #1438 (deprecated/ A/B/C), and #1226 (LICENSE) with
   deep-links; unit guard pins the pack; archive completed `docs-1445-archive-hygiene-1452`.
