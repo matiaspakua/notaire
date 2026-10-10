@@ -294,12 +294,14 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
     await page.waitForLoadState('domcontentloaded')
 
     await page.getByTestId('select-filter-cliente-gestion').click()
-    const firstOption = page.getByRole('option').filter({ hasNotText: /^Todos$/ }).first()
-
-    if ((await firstOption.count()) === 0) {
-      // No cliente available in this environment — assertion would be vacuous
-      return
-    }
+    // Scoped to the picker's listbox: the pagination footer's page-size <select>
+    // also has options (#1340). seedFullWorkflow guarantees at least one client.
+    const firstOption = page
+      .getByRole('listbox')
+      .getByRole('option')
+      .filter({ hasNotText: /^Todos$/ })
+      .first()
+    await expect(firstOption).toBeVisible({ timeout: 15000 })
 
     const searchRequest = page.waitForRequest(
       (req) =>

@@ -69,7 +69,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     await dialog.getByTestId("select-persona").click();
     // The option text is "<nombre> <apellido>" — idPersona is embedded as data-value or similar;
     // we select the first option that contains the persona we just created.
-    const personaOption = page.getByRole("option").first();
+    const personaOption = page.getByRole("listbox").getByRole("option").first();
     await expect(personaOption).toBeVisible({ timeout: 5000 });
     // Use the picker option that matches our seeded persona via data attribute
     const targetOption = page.getByRole("option", { name: new RegExp(`Persona-${idPersona}`, "i") });

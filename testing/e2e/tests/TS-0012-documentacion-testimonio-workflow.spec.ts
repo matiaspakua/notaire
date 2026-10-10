@@ -84,7 +84,7 @@ test.describe('CU03 - Listar documentos y certificados necesarios', () => {
     await steps.thenPageHasHeading('Documentos Necesarios')
 
     await page.getByTestId('select-tramite').click()
-    await page.getByRole('option').first().click()
+    await page.getByRole('listbox').getByRole('option').first().click()
 
     await expect(page.getByText(/Documentos necesarios para/i)).toBeVisible()
     const emptyState = page.getByTestId('empty-state')

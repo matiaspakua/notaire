@@ -51,7 +51,7 @@ async function choose(page: Page, triggerTestId: string, option: RegExp): Promis
 async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
   await page.getByTestId(triggerTestId).click();
   await pause(page, 0.5);
-  await page.getByRole("option").first().evaluate((element) => (element as HTMLElement).click());
+  await page.getByRole("listbox").getByRole("option").first().evaluate((element) => (element as HTMLElement).click());
   await pause(page);
 }
 

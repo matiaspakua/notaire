@@ -22,7 +22,7 @@ async function choose(page: Page, triggerTestId: string, option: RegExp): Promis
 
 async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
   await page.getByTestId(triggerTestId).click();
-  await page.getByRole("option").first().click();
+  await page.getByRole("listbox").getByRole("option").first().click();
 }
 
 // ---------------------------------------------------------------------------
