@@ -3,6 +3,7 @@ package com.licensis.notaire.adapter.in.web.history;
 import com.licensis.notaire.dto.DtoHistorySummary;
 import com.licensis.notaire.application.usecase.history.HistoryMapper;
 import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.HistoryOrder;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.repository.HistoryRepository;
@@ -102,6 +103,7 @@ public class HistoryController {
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoHistorySummary>> getByManagement(@PathVariable Integer idManagement) {
         return ResponseEntity.ok(repository.findByFkIdManagementIdManagement(idManagement).stream()
+            .sorted(HistoryOrder.CHRONOLOGICAL)
             .map(HistoryMapper::toDto)
             .toList());
     }

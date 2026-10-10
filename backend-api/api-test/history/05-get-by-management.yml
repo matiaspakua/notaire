@@ -4,6 +4,9 @@ info:
   seq: 6
   description: |-
       ## Get history by management — GET /api/v1/historial/gestion/{managementId}
+      Also checks that this endpoint and GET /api/v1/gestiones/{id}/historial return the
+      same total order: event date ascending, then idHistory ascending (#1383). The
+      management has its initial row (today) and the entry dated 2026-09-05 from 02.
       Traceability: CU13 (RF #3, #24, #26, #110)
 http:
   method: GET
@@ -15,10 +18,32 @@ http:
       value: "Bearer {{token}}"
 runtime:
   scripts:
+    - type: before-request
+      code: |-
+          const baseUrl = bru.getEnvVar('base_url');
+          const managementId = bru.getVar('history_management_id');
+          const bitacora = await axios.get(
+            `${baseUrl}/api/v1/gestiones/${managementId}/historial`,
+            { headers: { Authorization: `Bearer ${bru.getVar('token')}` } }
+          );
+          bru.setVar('history_bitacora_ids', JSON.stringify(bitacora.data.map((h) => h.idHistory)));
     - type: tests
       code: |-
           test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
           test("Contains the created history entry", function () {
             const id = parseInt(bru.getVar('history_id'), 10);
             expect(res.getBody().some((h) => h.idHistory === id)).to.be.true;
+          });
+          test("#1383 ordered by date, then idHistory", function () {
+            const rows = res.getBody();
+            expect(rows.length).to.be.at.least(2);
+            for (let i = 1; i < rows.length; i++) {
+              const prev = new Date(rows[i - 1].date).getTime();
+              const cur = new Date(rows[i].date).getTime();
+              expect(prev < cur || (prev === cur && rows[i - 1].idHistory < rows[i].idHistory)).to.be.true;
+            }
+          });
+          test("#1383 bitácora endpoint returns the same order", function () {
+            const ids = res.getBody().map((h) => h.idHistory);
+            expect(JSON.parse(bru.getVar('history_bitacora_ids'))).to.deep.equal(ids);
           });

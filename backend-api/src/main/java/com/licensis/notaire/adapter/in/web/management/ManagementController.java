@@ -15,6 +15,7 @@ import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.HistoryOrder;
 import com.licensis.notaire.business.Property;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Budget;
@@ -66,7 +67,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -340,8 +340,7 @@ public class ManagementController {
         List<History> historyRows = historyRepository.findByFkIdManagementIdManagement(id);
         if (!historyRows.isEmpty()) {
             return historyRows.stream()
-                    .max(Comparator.comparing(History::getDate)
-                            .thenComparing(History::getIdHistory))
+                    .max(HistoryOrder.CHRONOLOGICAL)
                     .map(h -> ResponseEntity.ok(
                             com.licensis.notaire.application.usecase.history.HistoryMapper.toDto(h)))
                     .orElse(ResponseEntity.notFound().build());

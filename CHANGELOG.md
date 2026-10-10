@@ -815,6 +815,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Touch targets** (#1369, RNF-06/RNF-07): on touch screens (coarse pointer) small buttons
   and the rows-per-page select are at least 44x44 and row actions sit 8px apart, so taps no
   longer miss or hit the neighbouring delete button. Desktop keeps the 32px compact buttons.
+- **The bitácora lists same-day entries in the order they were recorded** (issue #1383, CU13): `history.event_date` only keeps the day and nothing broke ties, so `GET /gestiones/{id}/historial` returned same-day entries in whatever order the database gave, `GET /historial/gestion/{id}` was not sorted at all, and the workflow trace could pick the wrong current step. Every history read path (bitácora, history by management, workflow trace, current state, history report) now uses one order: event date, then `idHistory`. This was behind the recurring TS-0011/TS-0028 e2e flakes. JUnit `HistoryOrderTieBreakerIntegrationTest` and Bruno `history/05` cover it.
 
 ### Added
 
