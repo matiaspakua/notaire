@@ -70,7 +70,7 @@ Validation stays in the web adapter, with the shared `RequiredFields` helper fro
 |--------------------|------------------|
 | `CHANGELOG.md` | Fixed entry |
 | `backend-api/openapi/openapi.yaml` | regenerated |
-| `backend-api/openapi/accepted-breaking-changes.txt` | six #655 entries |
+| `backend-api/openapi/accepted-breaking-changes.d/655-put-rejects-incomplete-bodies.txt` | seven #655 entries (one file per PR since #1389) |
 
 ## Addendum — missing or stale version (Owner decision Oct 9)
 

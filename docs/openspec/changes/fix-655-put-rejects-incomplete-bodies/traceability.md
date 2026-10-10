@@ -42,7 +42,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |----------|---------|--------|
 | `CHANGELOG.md` | yes | branch commit |
 | `backend-api/openapi/openapi.yaml` | yes | branch commit |
-| `backend-api/openapi/accepted-breaking-changes.txt` | yes | branch commit |
+| `backend-api/openapi/accepted-breaking-changes.d/655-put-rejects-incomplete-bodies.txt` | yes | branch commit |
 
 ## Gate log
 
