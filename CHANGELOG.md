@@ -32,6 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and documentos-entidades-externas); the 14 differently coloured dashboard module tiles share one
   `bg-primary/10 text-primary` style, and `ring-primary-300` / `border-error-500`, which generated no CSS, are `ring-ring/40` / `border-destructive`. The partial
   `.dark` block is removed (owner decision 2026-10-09). Guarded by `design-tokens.test.ts` and Playwright TS-0119.
+- **Business Docs on GitHub Pages** (#1441, CU76, #1197): curated `/docs/business/` page with
+  deep-links into `docs/100-business/` (requirements, use cases, actors, traceability, manuals);
+  Docs chrome nav and home card include Business; unit guard in `workspace/tests/`.
 - **P0.6 Owner decision tracker refreshed** (#1197, CU76): ADR-022 / REPO-SPLIT-PLAN / Pages Architecture point at the current open Owner issue after prior trackers were auto-closed by merges.
 - **Live Owner tracker for `deprecated/` decision is #1435** (issue #1197 P0.6, CU76): ADR-022 / REPO-SPLIT-PLAN / Pages Architecture point at #1435 after #1261 was auto-closed by packaging PR #1429.
 - **Heavy-CI gate accepts `gh pr checks` status `skipping`** (issue #1197 / #1257, CU76): `check-heavy-ci.sh` treats path-scoped skips the same as `skip`/`skipped` so docs-only PRs are mergeable after suite aggregators go green.
