@@ -1,12 +1,14 @@
 #!/bin/bash
 
-# Notaire — Run SonarQube static analysis against the backend module.
+# Notaire — Run SonarQube static analysis against the backend and the frontend.
 #
 # Handles SonarQube Community first-run flow automatically:
 #   1. Waits for SonarQube to be UP.
 #   2. Changes the default admin password (Sonar forces this on first login).
 #   3. Generates an analysis token (idempotent).
-#   4. Runs `mvn sonar:sonar` for backend-api so SonarQube shows real data.
+#   4. Applies the "Notaire way" quality gate and the new-code period to both projects.
+#   5. Analyzes notaire-backend (Maven, JaCoCo) and notaire-frontend (scanner container,
+#      Vitest lcov, ESLint report), waiting for each quality gate; exits non-zero if one fails.
 #
 # Credentials come from the infra env file (see common.sh for the lookup order).
 # The analysis targets the application checkout in $APP_DIR (NOTAIRE_APP_DIR).
@@ -29,9 +31,13 @@ SONAR_URL="http://localhost:9000"
 SONAR_USER="${SONAR_ADMIN_USER:-admin}"
 SONAR_DEFAULT_PASS="admin"
 SONAR_NEW_PASS="${SONAR_ADMIN_PASSWORD:-admin}"
-PROJECT_KEY="notaire-backend"
+BACKEND_KEY="notaire-backend"
+FRONTEND_KEY="notaire-frontend"
+GATE_NAME="Notaire way"
+SCANNER_IMAGE="sonarsource/sonar-scanner-cli:12.2.0.4256_8.1.0"
+SONAR_NETWORK="${SONAR_DOCKER_NETWORK:-infra_devsecops-network}"
 
-echo -e "${BLUE}=== SonarQube analysis for Notaire backend ===${NC}\n"
+echo -e "${BLUE}=== SonarQube analysis for Notaire (backend + frontend) ===${NC}\n"
 
 # 1. Wait for SonarQube to report UP
 echo -ne "${YELLOW}Waiting for SonarQube to be UP...${NC}"
@@ -97,16 +103,51 @@ if [ -z "$SONAR_TOKEN" ]; then
     exit 1
 fi
 
-# 4. Run analysis (jacoco report first so coverage is reported)
-echo -e "${YELLOW}Running Maven build + Sonar analysis (this can take a few minutes)...${NC}"
+# 4. Quality gate ("Notaire way" = copy of "Sonar way" with new-code coverage >= 70%) and new-code period
+api() { curl -s -u "$SONAR_USER:$WORKING_PASS" -X POST "$SONAR_URL/api/$1" "${@:2}"; }
+
+if ! curl -s -u "$SONAR_USER:$WORKING_PASS" "$SONAR_URL/api/qualitygates/list" | grep -q "\"name\":\"$GATE_NAME\""; then
+    api qualitygates/copy --data-urlencode "sourceName=Sonar way" --data-urlencode "name=$GATE_NAME" >/dev/null
+    COVERAGE_ID=$(curl -s -u "$SONAR_USER:$WORKING_PASS" "$SONAR_URL/api/qualitygates/show?name=$(echo "$GATE_NAME" | sed 's/ /%20/g')" \
+        | python3 -c "import sys,json;print(next((c['id'] for c in json.load(sys.stdin)['conditions'] if c['metric']=='new_coverage'),''))")
+    [ -n "$COVERAGE_ID" ] && api qualitygates/update_condition --data-urlencode "id=$COVERAGE_ID" \
+        --data-urlencode "metric=new_coverage" --data-urlencode "op=LT" --data-urlencode "error=70" >/dev/null
+    echo -e "${GREEN}✓ Quality gate '$GATE_NAME' created${NC}"
+fi
+for KEY in "$BACKEND_KEY" "$FRONTEND_KEY"; do
+    api projects/create --data-urlencode "project=$KEY" --data-urlencode "name=$KEY" >/dev/null 2>&1 || true
+    api qualitygates/select --data-urlencode "gateName=$GATE_NAME" --data-urlencode "projectKey=$KEY" >/dev/null
+    api new_code_periods/set --data-urlencode "project=$KEY" --data-urlencode "type=NUMBER_OF_DAYS" --data-urlencode "value=30" >/dev/null
+done
+
+FAILED=0
+
+# 5. Backend: tests + JaCoCo report, then the Maven scanner (settings live in backend-api/pom.xml)
+echo -e "${YELLOW}Backend: Maven build + Sonar analysis (this can take a few minutes)...${NC}"
 mvn -B -pl backend-api -am clean test \
     org.jacoco:jacoco-maven-plugin:report \
     org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
     -Dsonar.host.url="$SONAR_URL" \
     -Dsonar.token="$SONAR_TOKEN" \
-    -Dsonar.projectKey="$PROJECT_KEY" \
-    -Dsonar.projectName="Notaire Backend" \
-    -Dsonar.coverage.jacoco.xmlReportPaths=backend-api/target/site/jacoco/jacoco.xml
+    -Dsonar.qualitygate.wait=true || FAILED=1
+
+# 6. Frontend: Vitest lcov + ESLint JSON report, then the scanner container on the Sonar network
+echo -e "${YELLOW}Frontend: Vitest coverage + ESLint report + Sonar analysis...${NC}"
+(
+    cd frontend
+    npm run test:coverage --silent
+    npx eslint src -f json -o coverage/eslint-report.json || true
+)
+docker run --rm --network "$SONAR_NETWORK" -v "$APP_DIR/frontend:/usr/src" \
+    -e SONAR_HOST_URL="http://devsecops-sonarqube:9000" -e SONAR_TOKEN="$SONAR_TOKEN" \
+    "$SCANNER_IMAGE" -Dsonar.qualitygate.wait=true || FAILED=1
 
 echo ""
-echo -e "${GREEN}✓ Analysis submitted.${NC} View results at ${YELLOW}$SONAR_URL/dashboard?id=$PROJECT_KEY${NC}"
+if [ "$FAILED" = "0" ]; then
+    echo -e "${GREEN}✓ Both analyses passed the '$GATE_NAME' quality gate.${NC}"
+else
+    echo -e "${RED}✗ An analysis failed or violated the quality gate.${NC}"
+fi
+echo -e "Backend:  ${YELLOW}$SONAR_URL/dashboard?id=$BACKEND_KEY${NC}"
+echo -e "Frontend: ${YELLOW}$SONAR_URL/dashboard?id=$FRONTEND_KEY${NC}"
+exit "$FAILED"
