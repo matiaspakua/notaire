@@ -5,6 +5,7 @@
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
 import { createPersona, createPresupuesto, seedGestionWithWorkflow } from "./setup/api-helpers";
+import { listRow } from "./setup/list-locators";
 
 async function seedGestion(page: Page) {
   const persona = await createPersona(page);
@@ -93,7 +94,7 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
       await page.goto("/dashboard/gestiones");
       await page.waitForLoadState("domcontentloaded");
 
-      const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+      const row = listRow(page, new RegExp(String(numero)));
       await expect(row).toBeVisible({ timeout: 10000 });
 
       await page.getByTestId(`btn-ver-bitacora-${idGestion}`).click();

@@ -379,7 +379,7 @@ function GestionesList() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? t("editGestion") : t("newGestion")}>
+            <FormSection dialogTitle title={editing ? t("editGestion") : t("newGestion")}>
               <FormField label={t("fields.numero")} required>
                 <Input
                   type="number"
@@ -476,7 +476,7 @@ function GestionesList() {
       <Dialog open={!!transitionId} onOpenChange={closeTransitionDialog}>
         <DialogContent>
           <FormContainer>
-            <FormHeader title={t("changeState")} description={t("selectNewStateDescription")} />
+            <FormHeader dialogTitle title={t("changeState")} description={t("selectNewStateDescription")} />
             <FormSection title={t("selectNewState")}>
               <FormField label={t("selectNewState")} required>
                 <Select value={selectedEstado} onValueChange={setSelectedEstado}>
@@ -512,7 +512,7 @@ function GestionesList() {
       <Dialog open={!!bitacoraId} onOpenChange={(v) => !v && setBitacoraId(null)}>
         <DialogContent>
           <FormContainer>
-            <FormHeader title={t("bitacoraTitle")} />
+            <FormHeader dialogTitle title={t("bitacoraTitle")} />
             {historial.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t("bitacoraEmpty")}</p>
             ) : (
@@ -543,7 +543,7 @@ function GestionesList() {
         <DialogContent>
           {esperaCarpetaId ? (
             <FormContainer>
-              <FormHeader title={t("ponerEnEsperaTitle")} />
+              <FormHeader dialogTitle title={t("ponerEnEsperaTitle")} />
               <FormSection title={t("ponerEnEsperaTitle")}>
                 <FormField label={t("motivoEspera")} required helperText={t("motivoEsperaHelper")}>
                   <Input

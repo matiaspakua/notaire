@@ -175,7 +175,7 @@ export default function InmueblesPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? t("editInmueble") : t("newInmueble")}>
+            <FormSection dialogTitle title={editing ? t("editInmueble") : t("newInmueble")}>
               <FormField label="Nomenclatura Catastral" required>
                 <Input
                   data-testid="input-nomenclatura"
