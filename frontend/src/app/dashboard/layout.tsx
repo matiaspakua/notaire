@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { AppSidebar, MOBILE_SIDEBAR_ID } from "@/components/layout/AppSidebar";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { useAuthStore } from "@/store/auth-store";
-import { PageTransition } from "@/components/motion";
+import { AnimatePresence, PageTransition } from "@/components/motion";
 import { theme } from "@/theme/tokens";
 
 export default function DashboardLayout({
@@ -69,8 +69,13 @@ export default function DashboardLayout({
           <Breadcrumb />
         </div>
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-          {/* No exit wait: the new route fades in at once (#1368). */}
-          <PageTransition key={pathname}>{children}</PageTransition>
+          {/* initial={false}: the first render is not animated (nor are its
+              children, e.g. the workflow tracker's pulse). Pages have no exit
+              variant and the default "sync" mode is used, so the old page
+              unmounts at once and the new one fades in without waiting (#1368). */}
+          <AnimatePresence initial={false}>
+            <PageTransition key={pathname}>{children}</PageTransition>
+          </AnimatePresence>
         </main>
       </div>
     </div>
