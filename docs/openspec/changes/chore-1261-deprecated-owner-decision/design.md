@@ -1,18 +1,57 @@
-# Design — #1261 Owner decision packaging
+# Design — Owner decision packaging for deprecated/ (#1261)
 
-## Approach
+## Context
 
-Documentation-only packaging. Amend ADR-022 with a clearly labeled **Pending** section (options A/B/C + measured size from `repo-metrics.py`). Link it from Pages Architecture and from `REPO-SPLIT-PLAN` P0.6. Guard with a small Python unit test so the packaging cannot regress silently.
+#1197 P0.6 / issue #1261 requires an Owner choice on `deprecated/` (~13.4 MB,
+~767 files) and the history rewrite deferred by ADR-022 Decision §2. Agents must
+not invent a deletion or `git filter-repo` run. This change only packages the
+decision request so it is discoverable and guarded.
+
+## Goals / Non-Goals
+
+**Goals:** ADR-022 lists Option A/B/C under a Pending Owner decision; Pages
+Architecture links ADR-022; a unit test prevents silent regression; REPO-SPLIT-PLAN
+P0.6 points at the ADR section.
+
+**Non-Goals:** Choosing A/B/C; deleting `deprecated/`; rewriting git history;
+closing #1261 before the Owner decides; changing ADR-024 topology status.
 
 ## Decisions
 
-| Decision | Choice | Why |
-|----------|--------|-----|
-| Choose A/B/C in this PR? | No | Owner-only; agents package the ask |
-| New ADR vs amend ADR-022 | Amend ADR-022 | History purge deferral already lives there (#1050) |
-| Delete `deprecated/` now? | No | Acceptance requires Owner choice first |
+| Decision | Choice | Alternative | Why alt lost |
+|----------|--------|-------------|--------------|
+| New ADR vs amend ADR-022 | Amend ADR-022 | New ADR-028 | Purge deferral already lives in ADR-022 |
+| Choose option in this PR | No — package only | Pick Option A | Owner-only; Constitution |
+| Close #1261 in PR | No — `Refs` only | `Closes #1261` | Acceptance needs Owner choice recorded |
 
-## Risks
+## Riesgos / Trade-offs
 
-- Owner never decides → pack stays ~13 MB heavier; mitigated by visible Pages + issue link.
-- Someone merges a delete PR without ADR update → hygiene/guard tests and this ADR section are the tripwire (full delete still needs its own PR after the decision).
+| Risk | Mitigation |
+|------|------------|
+| Owner never decides | Visible Pages + issue + plan row; pack cost stays explicit |
+| Agent deletes `deprecated/` anyway | ADR language + hygiene tests; this pack is the tripwire |
+| Closed OpenSpec changes fail SDLC plan | Archive closed changes in same PR when needed |
+
+## Testing Strategy
+
+| Scenario | Level | Verification |
+|----------|-------|--------------|
+| ADR-022 pending #1261 options | Guard | `test_adr022_owner_decision_pack.py` |
+| Pages links ADR-022 | Guard | same unit test |
+| OpenSpec structural | Script | `openspec validate --strict` |
+
+## Regression Strategy
+
+`validate-sdlc-plan.sh`, Process Checks unit discovery under `workspace/tests`.
+
+## Playwright Strategy
+
+n/a — documentation / Pages static content only (no product UI workflow).
+
+## Deployment Strategy
+
+Docs + GitHub Pages source; Pages deploy follows existing `github-page` workflow on merge.
+
+## Rollback Strategy
+
+Revert PR; ADR-022 Pending section and Pages link disappear; #1261 remains open.
