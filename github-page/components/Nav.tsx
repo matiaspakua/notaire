@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const links = [
@@ -33,7 +34,7 @@ export function Nav() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <a href="#" className="flex items-center gap-3 group">
           <div className="relative w-9 h-9">
-            <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-600 opacity-80 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 opacity-80 group-hover:opacity-100 transition-opacity" />
             <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-sm" style={{ fontFamily: "var(--font-mono)" }}>N</div>
           </div>
           <span className="font-semibold text-neutral-900 text-sm tracking-wide hidden sm:block">NOTAIRE</span>
@@ -53,6 +54,12 @@ export function Nav() {
               {l.label}
             </a>
           ))}
+          <Link
+            href="/docs/"
+            className="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-900/5"
+          >
+            Docs
+          </Link>
           <a
             href="https://github.com/matiaspakua/notaire"
             target="_blank"
