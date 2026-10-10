@@ -70,6 +70,10 @@
       "next": "Next page",
       "last": "Last page",
       "rowsPerPage": "Rows per page"
+    },
+    "errors": {
+      "inUse": "Cannot be deleted: the record is still used by other records.",
+      "notFound": "The record no longer exists. Refresh the list."
     }
   },
   "dashboard": {
@@ -1137,5 +1141,14 @@
       "montoDeuda": "Amount owed",
       "observaciones": "Notes"
     }
+  },
+  "personPicker": {
+    "placeholder": "Search by first name, last name or ID…",
+    "searching": "Searching…",
+    "noResults": "No results",
+    "results": "{count} results",
+    "recentHint": "Newest people. Type to search.",
+    "clear": "Clear selection",
+    "loadError": "Could not load the people list"
   }
 }

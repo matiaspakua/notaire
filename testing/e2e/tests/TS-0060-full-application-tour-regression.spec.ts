@@ -199,7 +199,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
       const trigger = page.getByTestId("select-estado");
       await trigger.click();
       await pause(page, 400);
-      const firstOption = page.getByRole("option").first();
+      const firstOption = page.getByRole("listbox").getByRole("option").first();
       if (await firstOption.isVisible().catch(() => false)) {
         await firstOption.click();
       } else {

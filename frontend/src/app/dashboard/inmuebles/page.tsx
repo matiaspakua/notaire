@@ -19,9 +19,11 @@ import {
 } from "@/hooks/useInmuebles";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Inmueble } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 export default function InmueblesPage() {
   const t = useTranslations("inmuebles");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: inmuebles = [], isLoading } = useInmuebles();
@@ -100,7 +102,7 @@ export default function InmueblesPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

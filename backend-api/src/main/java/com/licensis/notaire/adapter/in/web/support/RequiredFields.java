@@ -2,6 +2,9 @@ package com.licensis.notaire.adapter.in.web.support;
 
 import com.licensis.notaire.exception.BusinessValidationException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Checks for request fields that controllers bind to shared {@code Dto*} classes, where a bean
  * validation constraint would also mark the field required in every response schema that reuses
@@ -13,6 +16,47 @@ import com.licensis.notaire.exception.BusinessValidationException;
 public final class RequiredFields {
 
     private RequiredFields() {
+    }
+
+    /**
+     * Starts a check that collects every missing field and throws one 400 naming them all,
+     * {@code "a: es obligatorio; b: es obligatorio"} (issue #655, incomplete PUT bodies).
+     */
+    public static Check check() {
+        return new Check();
+    }
+
+    /** Collects missing fields; see {@link #check()}. */
+    public static final class Check {
+
+        private final List<String> missing = new ArrayList<>();
+
+        private Check() {
+        }
+
+        /** Records {@code field} as missing unless {@code present}. */
+        public Check present(boolean present, String field) {
+            if (!present) {
+                missing.add(field);
+            }
+            return this;
+        }
+
+        /** Records {@code field} as missing when {@code value} is {@code null}. */
+        public Check notNull(Object value, String field) {
+            return present(value != null, field);
+        }
+
+        /** Throws a 400 naming every missing field, if any. */
+        public void orThrow() {
+            if (!missing.isEmpty()) {
+                StringBuilder message = new StringBuilder();
+                for (String field : missing) {
+                    message.append(message.isEmpty() ? "" : "; ").append(field).append(": es obligatorio");
+                }
+                throw new BusinessValidationException(message.toString());
+            }
+        }
     }
 
     /** Returns {@code value}, or throws a 400 naming {@code field} when it is {@code null}. */

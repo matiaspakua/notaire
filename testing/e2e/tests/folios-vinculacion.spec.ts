@@ -27,7 +27,7 @@ async function seedEscrituraFirmada(page: Page): Promise<{ idEscritura: number; 
 
 /** Select the first option of an already-open Radix listbox */
 async function pickFirstOption(page: Page) {
-  const option = page.getByRole('option').first()
+  const option = page.getByRole('listbox').getByRole('option').first()
   await option.waitFor({ state: 'attached', timeout: 5000 })
   await option.evaluate((el: HTMLElement) => el.click())
 }

@@ -2311,6 +2311,7 @@ components:
           format: int32
           type: integer
         idProcedureType:
+          description: Tipo de trámite; debe existir (404 si no)
           format: int32
           type: integer
         idProperty:
@@ -2318,6 +2319,8 @@ components:
           type: integer
         notes:
           type: string
+      required:
+      - idProcedureType
       type: object
     ProcedureResponse:
       properties:
@@ -2641,6 +2644,45 @@ components:
       required:
       - deed
       type: object
+    TestimonyUpdateRequest:
+      properties:
+        copies:
+          items:
+            $ref: '#/components/schemas/DtoCopy'
+          type: array
+        deed:
+          $ref: '#/components/schemas/DtoDeed'
+        flagged:
+          description: Testimonio observado
+          type: boolean
+        idTestimony:
+          format: int32
+          type: integer
+        movimientosTestimonios:
+          items:
+            $ref: '#/components/schemas/DtoTestimonyMovement'
+          type: array
+        notes:
+          type: string
+        number:
+          description: Número del testimonio
+          format: int32
+          type: integer
+        valido:
+          type: boolean
+        verified:
+          description: Testimonio verificado
+          type: boolean
+        version:
+          description: 'Versión leída del testimonio (bloqueo optimista): 409 si ya no es la almacenada'
+          format: int32
+          type: integer
+      required:
+      - flagged
+      - number
+      - verified
+      - version
+      type: object
     TypeDocInfo:
       properties:
         idDocumentType:
@@ -2685,6 +2727,17 @@ components:
       properties:
         reason:
           type: string
+      type: object
+    WorkflowAssignmentRequest:
+      properties:
+        workflowDefinitionId:
+          description: Workflow activo a asignar, o null para desasignar el actual
+          format: int32
+          type:
+          - integer
+          - 'null'
+      required:
+      - workflowDefinitionId
       type: object
 info:
   contact:
@@ -3034,6 +3087,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar concepto
       tags:
       - Conceptos
@@ -3790,6 +3849,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar estado de gestion
       tags:
       - Estado de Gestion
@@ -5502,6 +5567,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar movimiento-testimonio
       tags:
       - MovimientoTestimonio
@@ -7472,6 +7543,9 @@ paths:
       tags:
       - Testimonio
     put:
+      description: 'Reemplaza el testimonio. number, flagged, verified y version son obligatorios (400 si falta alguno); notes
+        se guarda tal como se envía y una escritura ausente conserva la actual. version es la leída: si ya no es la almacenada
+        responde 409 (bloqueo optimista).'
       operationId: update_8
       parameters:
       - in: path
@@ -7484,7 +7558,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DtoTestimony'
+              $ref: '#/components/schemas/TestimonyUpdateRequest'
         required: true
       responses:
         '200':
@@ -7498,13 +7572,19 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: 'Cuerpo vacío o incompleto: number, flagged, verified y version son obligatorios'
         '404':
           content:
             '*/*':
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el testimonio'
       summary: Actualizar testimonio
       tags:
       - Testimonio
@@ -7692,6 +7772,12 @@ paths:
               schema:
                 type: object
           description: Not found
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Update document type
       tags:
       - TipoDeDocumento
@@ -7868,6 +7954,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar tipo de folio
       tags:
       - Tipo de Folio
@@ -8155,6 +8247,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar tipo de tramite
       tags:
       - Tipo de Tramite
@@ -8194,8 +8292,7 @@ paths:
         content:
           application/json:
             schema:
-              additionalProperties: {}
-              type: object
+              $ref: '#/components/schemas/WorkflowAssignmentRequest'
         required: true
       responses:
         '200':
@@ -8204,6 +8301,24 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'Cuerpo vacío o inválido: workflowDefinitionId es obligatorio (entero, o null para desasignar)'
+        '404':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Tipo de trámite o workflow no encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: El workflow seleccionado no está activo
       summary: Asignar o desasignar workflow a tipo de tramite
       tags:
       - Tipo de Tramite
@@ -8266,7 +8381,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: 'Solicitud inválida: idProcedureType es obligatorio'
         '404':
           content:
             '*/*':
@@ -8326,6 +8441,8 @@ paths:
       tags:
       - Trámites
     put:
+      description: idProcedureType es obligatorio (400 si falta); notes se guarda tal como se envía y una asociación ausente
+        conserva la actual.
       operationId: update_3
       parameters:
       - in: path
@@ -8347,12 +8464,18 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'Cuerpo vacío o incompleto: idProcedureType es obligatorio'
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: No encontrado
+          description: Trámite o referencia no encontrados
       summary: Actualizar trámite
       tags:
       - Trámites
@@ -8659,6 +8782,12 @@ paths:
               schema:
                 type: object
           description: No encontrado
+        '409':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'version no es la almacenada: otro usuario modificó el registro'
       summary: Actualizar workflow
       tags:
       - Workflow Definition

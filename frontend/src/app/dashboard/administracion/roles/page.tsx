@@ -15,6 +15,7 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import { useRoles, useCreateRol, useUpdateRol, useDeleteRol } from "@/hooks/useRoles";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Rol } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const MODULO_VALUES = [
   "administracion",
@@ -31,6 +32,7 @@ const EMPTY: Partial<Rol> = { name: "", description: "", active: true, modulos: 
 
 export default function RolesPage() {
   const t = useTranslations("administracion.roles");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
   const { data: roles = [], isLoading } = useRoles();
   const createMutation = useCreateRol();
@@ -91,7 +93,7 @@ export default function RolesPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

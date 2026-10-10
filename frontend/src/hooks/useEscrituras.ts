@@ -1,11 +1,26 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { Escritura } from "@/types";
 
 export const escriturasKeys = {
   all: ["escrituras"] as const,
   detail: (id: number) => ["escrituras", id] as const,
+  page: (params: { page: number; size: number }) => ["escrituras", "page", params] as const,
 };
+
+/** Sort for the deeds list: newest first (#1340). */
+export const ESCRITURAS_SORT = "idDeed,desc";
+
+/** One server page of GET /escrituras (#1340); the list is never loaded whole. */
+export function useEscriturasPage(params: { page: number; size: number }, options: { enabled?: boolean } = {}) {
+  return useQuery({
+    queryKey: escriturasKeys.page(params),
+    queryFn: () =>
+      apiGetPage<Escritura>("/escrituras", { page: params.page, size: params.size, sort: ESCRITURAS_SORT }),
+    placeholderData: keepPreviousData,
+    enabled: options.enabled ?? true,
+  });
+}
 
 export function useEscrituras() {
   return useQuery({

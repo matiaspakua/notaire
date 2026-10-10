@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Receipt, ListChecks } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -23,7 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet, ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import {
-  usePresupuestos,
+  usePresupuestosPage,
   usePresupuestoResumen,
   useCreatePresupuesto,
   useUpdatePresupuesto,
@@ -31,11 +31,13 @@ import {
   useCargarItemsDesdePlantilla,
   useAgregarItemsDesdeCatalogo,
 } from "@/hooks/usePresupuestos";
-import { usePersonas } from "@/hooks/usePersonas";
+import { PersonPicker } from "@/components/shared/PersonPicker";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import type { Presupuesto } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 
 const NO_TEMPLATE = "none";
@@ -43,11 +45,18 @@ const NO_TEMPLATE = "none";
 const EMPTY: Partial<Presupuesto> = { date: "", propertyAmount: undefined, status: "BORRADOR" };
 
 export default function PresupuestosPage() {
+  return (
+    <Suspense>
+      <PresupuestosList />
+    </Suspense>
+  );
+}
+
+function PresupuestosList() {
   const t = useTranslations("presupuestos");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: presupuestos = [], isLoading } = usePresupuestos();
-  const { data: personas = [] } = usePersonas();
   const createMutation = useCreatePresupuesto();
   const updateMutation = useUpdatePresupuesto();
   const deleteMutation = useDeletePresupuesto();
@@ -115,24 +124,53 @@ export default function PresupuestosPage() {
 
   const [searchPresupuesto, setSearchPresupuesto] = useState("");
   const [filterEstado, setFilterEstado] = useState<string>("TODOS");
+  const search = searchPresupuesto.trim();
+  const searchId = /^\d+$/.test(search) ? Number(search) : null;
+  const byStatus = filterEstado !== "TODOS";
 
-  const { data: byEstado = presupuestos } = useQuery({
-    queryKey: ["presupuestos", "buscar", filterEstado, presupuestos],
+  // One server page at a time, page and size in the URL (#1340): the list used
+  // to load size=1000, so budgets after the 1000th were unreachable.
+  const paging = useUrlPagination();
+  const { data: presupuestosPage, isLoading: isLoadingPage, isFetching } = usePresupuestosPage(
+    { page: paging.page, size: paging.size },
+    { enabled: !byStatus && searchId === null },
+  );
+  useClampPage(paging, byStatus || searchId !== null ? undefined : presupuestosPage?.totalPages);
+
+  // CU60: the backend reads `status`; `estado` was ignored and returned every budget.
+  const { data: byEstado = [], isLoading: isLoadingEstado } = useQuery({
+    queryKey: ["presupuestos", "buscar", filterEstado],
+    queryFn: () => apiGet<Presupuesto[]>(`/presupuestos/buscar?status=${encodeURIComponent(filterEstado)}`),
+    enabled: byStatus,
+  });
+
+  // A budget number is looked up on the server, so it is found on any page.
+  const { data: byId = null, isLoading: isLoadingId } = useQuery({
+    queryKey: ["presupuestos", searchId ?? 0, "search"],
     queryFn: () =>
-      filterEstado !== "TODOS"
-        ? apiGet<Presupuesto[]>(`/presupuestos/buscar?estado=${encodeURIComponent(filterEstado)}`)
-        : Promise.resolve(presupuestos),
+      apiGet<Presupuesto>(`/presupuestos/${searchId}`).catch((e) => {
+        if (e instanceof ApiError && e.status === 404) return null;
+        throw e;
+      }),
+    enabled: searchId !== null,
   });
 
-  const filteredPresupuestos = byEstado.filter((p) => {
-    if (searchPresupuesto) {
-      const q = searchPresupuesto.toLowerCase();
-      const matchId = p.idBudget?.toString().includes(q);
-      const matchPersona = p.person ? fullName(p.person).toLowerCase().includes(q) : false;
-      if (!matchId && !matchPersona) return false;
-    }
-    return true;
-  });
+  const shown = byStatus ? byEstado : presupuestosPage?.content ?? [];
+  const isLoading = searchId !== null ? isLoadingId : byStatus ? isLoadingEstado : isLoadingPage;
+
+  // A name filters the rows shown (the page or the status list): the backend has
+  // no budget search by client name.
+  const filteredPresupuestos =
+    searchId !== null
+      ? byId && (!byStatus || byId.status === filterEstado)
+        ? [byId]
+        : []
+      : shown.filter((p) => {
+          if (!search) return true;
+          const q = search.toLowerCase();
+          return p.person ? fullName(p.person).toLowerCase().includes(q) : false;
+        });
+  const showPagination = !byStatus && searchId === null && !search;
 
   function openCreate() {
     setEditing(EMPTY);
@@ -165,7 +203,7 @@ export default function PresupuestosPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -285,37 +323,35 @@ export default function PresupuestosPage() {
         data={filteredPresupuestos}
         columns={columns}
         isLoading={isLoading}
+        isFetching={showPagination && isFetching}
         keyExtractor={(p) => p.idBudget!}
         emptyMessage={t("noData")}
+        pagination={
+          showPagination
+            ? {
+                page: presupuestosPage?.number ?? paging.page,
+                size: paging.size,
+                totalElements: presupuestosPage?.totalElements ?? 0,
+                onPageChange: paging.setPage,
+                onSizeChange: paging.setSize,
+              }
+            : undefined
+        }
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editPresupuesto") : t("newPresupuesto")}>
-              <FormField
-                label={t("fields.cliente")}
-                required
-                helperText={personas.length === 0 ? "No hay personas registradas. Primero registre una persona." : undefined}
-              >
-                <Select
-                  value={editing.person?.personId?.toString() ?? ""}
-                  onValueChange={(v) => {
-                    const persona = personas.find((p) => p.personId?.toString() === v);
-                    setEditing({ ...editing, person: persona });
-                  }}
-                >
-                  <SelectTrigger data-testid="select-persona" disabled={personas.length === 0}>
-                    <SelectValue placeholder="Seleccionar cliente..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {personas.map((p) => (
-                      <SelectItem key={p.personId} value={p.personId!.toString()}>
-                        {fullName(p)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <FormField label={t("fields.cliente")} required>
+                {/* Server search instead of the first 1000 people (#1340). */}
+                <PersonPicker
+                  value={editing.person?.personId}
+                  selected={editing.person}
+                  onChange={(person) => setEditing({ ...editing, person })}
+                  aria-label={t("fields.cliente")}
+                  data-testid="select-persona"
+                />
               </FormField>
               <FormField label={tc("date")} required>
                 <Input
