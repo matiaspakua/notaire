@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-1400-github-page-timeline/` | Gate 1 draft |
 | Branch | `cursor/docs-1400-github-page-timeline-c19f` | created |
 | Tasks | `tasks.md` | in progress |
-| Pull Request | — | pending |
+| Pull Request | [#1402](https://github.com/matiaspakua/notaire/pull/1402) | draft |
 | Skip | #1197 | per Owner |
 
 ## Requirement coverage

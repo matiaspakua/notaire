@@ -58,9 +58,9 @@
 
 ## 10. Push + PR
 
-- [ ] 10.1 Push branch
-- [ ] 10.2 Draft PR (do not merge)
-- [ ] 10.3 Record PR number in `traceability.md`
+- [x] 10.1 Push branch
+- [x] 10.2 Draft PR (do not merge) — https://github.com/matiaspakua/notaire/pull/1402
+- [x] 10.3 Record PR number in `traceability.md`
 - [ ] 10.4 Wait for CI on the draft PR
 - [ ] 10.5 Gate 4 — CI green, review approved (human)
 - [ ] 10.6 Do not merge from the agent
