@@ -148,7 +148,7 @@ class RequestBodyDtoBindingIntegrationTest {
                                   "number": 106801,
                                   "date": "2026-10-02",
                                   "encabezado": "Budget mass-assignment",
-                                  "status": "Pending",
+                                  "status": "PENDIENTE",
                                   "propertyAmount": 1500.0,
                                   "person": {"personId": %d}
                                 }

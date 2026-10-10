@@ -53,7 +53,7 @@ class BudgetResumenControllerTest {
     private Integer createBudget(Integer clientId, java.math.BigDecimal propertyAmount) throws Exception {
         String body = """
                 {"number": %d, "date": "2026-01-01", "encabezado": "Budget Resumen IT",
-                 "status": "Pending", "propertyAmount": %s, "person": {"personId": %d}}
+                 "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount, clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)

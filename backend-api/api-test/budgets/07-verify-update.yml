@@ -21,5 +21,5 @@ runtime:
           test("Update persisted", function () {
             const b = res.getBody();
             expect(b.encabezado).to.equal('E2E Budget Updated');
-            expect(b.status).to.equal('Aprobado');
+            expect(b.status).to.equal('APROBADO'); // stored as the canonical code (#1346)
           });

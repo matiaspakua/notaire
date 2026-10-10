@@ -16,7 +16,7 @@ http:
           "person": { "personId": 1 },
           "date": "2026-09-05",
           "encabezado": "Items E2E budget",
-          "status": "Pendiente",
+          "status": "PENDIENTE",
           "notes": "created by the items suite"
         }
   headers:

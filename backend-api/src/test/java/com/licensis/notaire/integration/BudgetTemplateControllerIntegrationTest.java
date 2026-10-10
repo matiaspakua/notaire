@@ -70,7 +70,7 @@ class BudgetTemplateControllerIntegrationTest {
     private Integer createBudget(Integer clientId) throws Exception {
         String body = """
                 {"number": %d, "date": "2026-01-01", "encabezado": "Budget Template IT",
-                 "status": "Pending", "amount": 1000.00, "person": {"personId": %d}}
+                 "status": "PENDIENTE", "amount": 1000.00, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
                         .contentType(MediaType.APPLICATION_JSON)

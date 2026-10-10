@@ -221,7 +221,7 @@ class BusinessWorkflowIntegrationTest {
                                       "date": "2025-01-15",
                                       "encabezado": "Budget de prueba",
                                       "amount": 15000.00,
-                                      "status": "Pending"
+                                      "status": "PENDIENTE"
                                     }
                                     """))
                     .andExpect(status().isCreated());

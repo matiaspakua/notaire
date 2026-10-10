@@ -16,7 +16,7 @@ http:
           "person": { "personId": 1 },
           "date": "2026-10-07",
           "encabezado": "Report PDFs E2E budget",
-          "status": "Pendiente",
+          "status": "PENDIENTE",
           "propertyAmount": 10000.0,
           "notes": "created by the report-pdfs suite"
         }

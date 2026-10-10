@@ -14,7 +14,7 @@ http:
           "person": { "personId": 1 },
           "date": "2026-09-05",
           "encabezado": "Bruno folder budget",
-          "status": "Pendiente",
+          "status": "PENDIENTE",
           "notes": "folder fixture"
         }
   headers:
