@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `openapi-typescript` writes `frontend/src/types/api.generated.ts`; `npm run openapi:types:check`
   fails Frontend CI on drift. Gestiones, presupuestos, documentos (and dashboard counts via those
   hooks) use generated schema aliases from `src/types/api.ts`.
+- **Always-loaded agent context ≤8k tokens** (issue #1259 / #1197 P0.4, CU76): slim `AGENTS.md` with an on-demand rule/skill table; add `CONSTITUTION-AGENT-CARD.md` digest (full Constitution on demand); set `alwaysApply: false` on large frontend/Java/refactoring rules and the frontend-design skill; add `workspace/ci/agent-context-budget.py` + unit test; refresh `REPO-METRICS-BASELINE.md` (~2k tokens est.).
 - **Path-scoped CI skips Java and E2E on docs-only PRs** (issue #1257, CU76, #1197 P0.2):
   `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, and `openapi-contract.yml` add a
   `Path filter` (`dorny/paths-filter`) job; leaf jobs gate on filter outputs; suite
