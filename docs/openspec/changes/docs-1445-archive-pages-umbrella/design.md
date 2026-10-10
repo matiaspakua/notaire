@@ -14,6 +14,10 @@
 
 1. Keep #1445 open — PR uses only `Refs` + full URL.
 
+## Riesgos / Trade-offs
+
+- [Keyword auto-close] → never place close/fix/resolve next to `#1445` in PR/commit text.
+
 ## Testing Strategy
 
 | AC | Test |
