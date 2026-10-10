@@ -1,0 +1,94 @@
+groups:
+  - name: notaire.stack
+    interval: 30s
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: notaire
+        annotations:
+          summary: "Scrape target {{ $labels.job }} is down"
+          description: "Prometheus cannot scrape {{ $labels.job }} ({{ $labels.instance }}) for more than 2 minutes."
+
+      - alert: HighHttp5xxRatio
+        expr: |
+          sum(rate(http_server_requests_seconds_count{application="notaire-backend", status=~"5.."}[5m]))
+            /
+          sum(rate(http_server_requests_seconds_count{application="notaire-backend"}[5m]))
+          > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          team: notaire
+          service: backend
+        annotations:
+          summary: "More than 5% of API requests fail with 5xx"
+          description: "5xx ratio is {{ $value | humanizePercentage }} over the last 5 minutes."
+
+      - alert: HighApiLatency
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_server_requests_seconds_bucket{application="notaire-backend"}[5m])) by (le)) > 2
+        for: 10m
+        labels:
+          severity: warning
+          team: notaire
+          service: backend
+        annotations:
+          summary: "API p95 latency above 2s"
+          description: "p95 latency is {{ $value | humanizeDuration }} over the last 5 minutes."
+
+      - alert: HighDatabaseConnections
+        expr: |
+          sum(pg_stat_database_numbackends{datname="notaire"})
+            / on() max(pg_settings_max_connections) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: notaire
+          service: postgres
+        annotations:
+          summary: "PostgreSQL connections above 80% of the limit"
+          description: "{{ $value | humanizePercentage }} of max_connections are in use."
+
+      - alert: ConnectionPoolSaturated
+        expr: |
+          hikaricp_connections_active{application="notaire-backend"}
+            / hikaricp_connections_max{application="notaire-backend"} > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          team: notaire
+          service: backend
+        annotations:
+          summary: "Backend connection pool above 90%"
+          description: "Pool {{ $labels.pool }} is {{ $value | humanizePercentage }} in use."
+
+      - alert: HostMemoryLow
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.1
+        for: 10m
+        labels:
+          severity: warning
+          team: notaire
+          service: host
+        annotations:
+          summary: "Docker host has less than 10% memory available"
+          description: "{{ $value | humanizePercentage }} of memory is available."
+
+      - alert: HostDiskLow
+        expr: |
+          (
+            node_filesystem_avail_bytes{fstype=~"ext4|xfs|btrfs"}
+              / node_filesystem_size_bytes{fstype=~"ext4|xfs|btrfs"} < 0.1
+          )
+          and node_filesystem_size_bytes{fstype=~"ext4|xfs|btrfs"} > 1e9
+        for: 10m
+        labels:
+          severity: warning
+          team: notaire
+          service: host
+        annotations:
+          summary: "Docker host disk has less than 10% free"
+          description: "{{ $value | humanizePercentage }} of {{ $labels.mountpoint }} ({{ $labels.device }}) is free."
