@@ -1,6 +1,6 @@
 # Repository Metrics Baseline
 
-> Generated: `2026-10-10T14:36:59Z` by `workspace/ci/repo-metrics.py` (#1417 / #1256 / #1197 P0.1, CU76).
+> Generated: `2026-10-10T15:01:46Z` by `workspace/ci/repo-metrics.py` (#1417 / #1256 / #1197 P0.1, CU76).
 >
 > Regenerate: `python3 workspace/ci/repo-metrics.py --markdown docs/300-development/REPO-METRICS-BASELINE.md`
 
@@ -15,7 +15,7 @@
 | Always-loaded tokens (est.) | 2034 |
 | `deprecated/` bytes | 13406232 |
 | `deprecated/` files | 767 |
-| `docs/` bytes | 19917586 |
+| `docs/` bytes | 19940517 |
 | PlantUML `.puml` under `204-diagrams/` | 116 |
 
 ## Modules
