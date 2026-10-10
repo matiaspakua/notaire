@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * {@code GET /api/v1/escrituras?status=} filters the paged deed list on the server
- * (issue #1340, CU20/CU22/CU25). Deed pickers list only signed deeds; without the
+ * (issue #1340, CU06/CU07/CU82). Deed pickers list only signed deeds; without the
  * filter a newest-20 page filtered on the client can be empty while signed deeds exist.
  */
 @SpringBootTest
@@ -78,7 +78,9 @@ class DeedStatusFilterIntegrationTest {
     @Test
     @DisplayName("shouldMatchTheStatusInAnyLetterCase")
     void shouldMatchTheStatusInAnyLetterCase() throws Exception {
-        JsonNode page = getJson("/api/v1/escrituras?status=sin%20firmar&size=1000");
+        String body = mockMvc.perform(get("/api/v1/escrituras").param("status", "sin firmar").param("size", "1000"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        JsonNode page = MAPPER.readTree(body);
         assertThat(page.path("content")).isNotEmpty();
         page.path("content").forEach(d -> assertThat(d.path("status").asText()).isEqualTo("Sin Firmar"));
     }

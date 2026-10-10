@@ -44,6 +44,12 @@ public class DeedService {
         return deedRepository.findAll(pageable);
     }
 
+    /** One page of deeds, only those in {@code status} when it is not null (issue #1340). */
+    @Transactional(readOnly = true)
+    public Page<Deed> findAllPaged(String status, Pageable pageable) {
+        return status == null ? deedRepository.findAll(pageable) : deedRepository.findByStatus(status, pageable);
+    }
+
     public List<Deed> findAll() {
         logger.debug("Finding all escrituras");
         return deedRepository.findAll();

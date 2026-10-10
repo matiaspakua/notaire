@@ -5,7 +5,14 @@ import com.licensis.notaire.adapter.in.web.person.PersonController.PersonRespons
 import com.licensis.notaire.repository.FolioRepository;
 import com.licensis.notaire.application.usecase.deed.DeedSigningService;
 import com.licensis.notaire.application.usecase.deed.DeedService;
+import com.licensis.notaire.exception.BusinessValidationException;
+import com.licensis.notaire.exception.ErrorResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import org.springframework.http.MediaType;
+import com.licensis.notaire.business.BusinessConstants;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -97,12 +104,40 @@ public class DeedController {
         deed.setNotes(request.notes());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Estado fuera del vocabulario", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)))
+})
     @GetMapping
-    @Operation(summary = "Obtener todas las escrituras")
+    @Operation(summary = "Obtener todas las escrituras, opcionalmente solo las de un estado")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<DeedResponse>> getAll(
+            @Parameter(description = "Estado de la escritura (cualquier mayúscula/minúscula; otro valor responde 400). "
+                    + "Sin este parámetro se listan todas.",
+                    schema = @Schema(allowableValues = {"Sin Firmar", "Firmada", "Anulada", "No Paso", "Inscripta"}))
+            @RequestParam(required = false) String status,
             @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(deedService.findAllPaged(pageable).map(this::toResponse));
+        return ResponseEntity.ok(deedService.findAllPaged(canonicalStatus(status), pageable).map(this::toResponse));
+    }
+
+    /** Deed statuses as stored (BusinessConstants), in workflow order. */
+    static final List<String> DEED_STATUSES = List.of(
+            BusinessConstants.DeedSINFIRMAR, BusinessConstants.DeedFIRMADA, BusinessConstants.DeedANULADA,
+            BusinessConstants.DeedNOPASO, BusinessConstants.DeedRegistered);
+
+    /** The stored spelling of {@code value} in any letter case, null for none, or a 400. */
+    static String canonicalStatus(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        for (String known : DEED_STATUSES) {
+            if (known.equalsIgnoreCase(value.trim())) {
+                return known;
+            }
+        }
+        throw new BusinessValidationException("status: valor no válido '" + value + "'; valores aceptados: "
+                + String.join(", ", DEED_STATUSES));
     }
 
     @ApiResponses({

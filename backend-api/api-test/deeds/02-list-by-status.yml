@@ -1,0 +1,28 @@
+info:
+  name: List deeds in one status
+  type: http
+  seq: 2
+  description: |-
+      ## List deeds in one status — GET /api/v1/escrituras?status=Firmada
+      Traceability: CU06/CU07/CU82, issue #1340. Deed pickers list only signed deeds;
+      the optional status filter pages them on the server (any letter case).
+http:
+  method: GET
+  url: "{{base_url}}/api/v1/escrituras"
+  headers:
+    - name: Authorization
+      value: "Bearer {{token}}"
+  params:
+    - name: status
+      value: "firmada"
+    - name: size
+      value: "5"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Is a page", function () { expect(res.getBody().content).to.be.an('array'); });
+          test("Only signed deeds", function () {
+            res.getBody().content.forEach(function (d) { expect(d.status).to.equal("Firmada"); });
+          });
