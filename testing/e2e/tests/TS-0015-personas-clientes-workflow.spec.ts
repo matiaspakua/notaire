@@ -550,6 +550,7 @@ test.describe('#1357 - Debounced personas search', () => {
     await page.getByTestId('input-search-lastName').pressSequentially(lastName, { delay: 40 })
     await expect(page.getByRole('cell', { name: lastName }).first()).toBeVisible({ timeout: 10_000 })
     await page.waitForTimeout(500)
+    await page.screenshot({ path: 'test-results/ui-shots/1357-personas-search/search-desktop.png' })
 
     expect(searches).toHaveLength(1)
     expect(decodeURIComponent(searches[0])).toContain(`lastName=${lastName}`)
