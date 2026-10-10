@@ -73,11 +73,11 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/security-policy-307-81d6`
-- [ ] 10.2 Open the PR referencing Issue #307 and CU78
+- [x] 10.1 `git push -u origin cursor/security-policy-307-81d6`
+- [x] 10.2 Open the PR referencing Issue #307 and CU78 — #1493
 - [ ] 10.3 Required workflows run on the PR
 - [ ] 10.4 Gate 4 waits on CI
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 

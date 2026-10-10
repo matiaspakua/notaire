@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/security-policy-307-81d6` | created |
 | Tasks | `tasks.md` | in progress |
 | Commits | `da2dee43974b23bcb0775764401e10d9a182ea8c`, `062ea2c8` | created |
-| Pull Request | pending | pending |
+| Pull Request | #1493 | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
