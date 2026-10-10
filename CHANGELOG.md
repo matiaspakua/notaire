@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **OpenSpec hygiene + business README Pages link**: archive shipped docs-1441/1443/1445
+  packaging changes; `docs/100-business/README.md` links the public Business Docs page.
 - **Live Owner topology tracker is #1445** (CU76): ADR-024 / REPO-SPLIT-PLAN point at #1445 after
   prior umbrellas were closed by GitHub keyword parsing in packaging PRs. Keep #1445 open until
   Owner decisions are recorded.
