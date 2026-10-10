@@ -24,21 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **One motion system, and route changes no longer wait for an exit animation** (issue #1368, RNF-05/RNF-03):
-  `globals.css` defines `--motion-*` durations (fast 120ms, base 180ms, slow 240ms, exit 180ms, page 160ms) and
-  easings with `duration-fast|base|slow|exit|page` and `ease-standard|emphasized|exit` utilities, mirrored by
-  `theme/motion.ts` for motion/react. The 22 ad-hoc `duration-NNN` / `transition-all` classes and
-  `.apple-button { transition: all }` (with its hover scale) are gone; dialogs enter in 240ms emphasized and leave in
-  180ms; pages fade up 4px in 160ms without `AnimatePresence mode="wait"` (was 200ms exit + 400ms enter); staggered
-  entrances are capped at 6 x 30ms. Guarded by `motion-tokens.test.ts` and Playwright TS-0120.
-- **One design-token source for colour, and the half-built dark mode is gone** (issue #1365, RNF-05/RNF-09, CU76):
-  `globals.css` adds text-safe `success`, `warning` and `info` tokens (WCAG AA on white and on their /10 tint),
-  mapped in `@theme`; `tokens.ts` mirrors them and writes the brand `#0071E3` once (`BRAND_PRIMARY`). The 54 raw
-  Tailwind palette classes in 13 files are now semantic (Badge variants, notices, pagos balance panel, workflow
-  editor legend and errors, admin selects, the `useThemeClasses` builders used by testimonios, ReingresarDialog
-  and documentos-entidades-externas); the 14 differently coloured dashboard module tiles share one
-  `bg-primary/10 text-primary` style, and `ring-primary-300` / `border-error-500`, which generated no CSS, are `ring-ring/40` / `border-destructive`. The partial
-  `.dark` block is removed (owner decision 2026-10-09). Guarded by `design-tokens.test.ts` and Playwright TS-0119.
+- **Live Owner topology tracker is #1443** (CU76): ADR-024 / REPO-SPLIT-PLAN point at #1443 after
+  #1197 was auto-closed by a packaging squash that contained `Closes` near `#1197`. Keep #1443 open
+  until Owner decisions are recorded.
 - **Business Docs on GitHub Pages** (#1441, CU76, #1197): curated `/docs/business/` page with
   deep-links into `docs/100-business/` (requirements, use cases, actors, traceability, manuals);
   Docs chrome nav and home card include Business; unit guard in `workspace/tests/`.
@@ -242,6 +230,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Scripts moved to `backend-api/src/main/resources/db/migration/`
   - V1: Initial schema (24 tables)
   - V2: Initial reference data and admin user
+- **One design-token source for colour, and the half-built dark mode is gone** (issue #1365, RNF-05/RNF-09, CU76):
+  `globals.css` adds text-safe `success`, `warning` and `info` tokens (WCAG AA on white and on their /10 tint),
+  mapped in `@theme`; `tokens.ts` mirrors them and writes the brand `#0071E3` once (`BRAND_PRIMARY`). The 54 raw
+  Tailwind palette classes in 13 files are now semantic (Badge variants, notices, pagos balance panel, workflow
+  editor legend and errors, admin selects, the `useThemeClasses` builders used by testimonios, ReingresarDialog
+  and documentos-entidades-externas); the 14 differently coloured dashboard module tiles share one
+  `bg-primary/10 text-primary` style, and `ring-primary-300` / `border-error-500`, which generated no CSS, are `ring-ring/40` / `border-destructive`. The partial
+  `.dark` block is removed (owner decision 2026-10-09). Guarded by `design-tokens.test.ts` and Playwright TS-0119.
+- **One motion system, and route changes no longer wait for an exit animation** (issue #1368, RNF-05/RNF-03):
+  `globals.css` defines `--motion-*` durations (fast 120ms, base 180ms, slow 240ms, exit 180ms, page 160ms) and
+  easings with `duration-fast|base|slow|exit|page` and `ease-standard|emphasized|exit` utilities, mirrored by
+  `theme/motion.ts` for motion/react. The 22 ad-hoc `duration-NNN` / `transition-all` classes and
+  `.apple-button { transition: all }` (with its hover scale) are gone; dialogs enter in 240ms emphasized and leave in
+  180ms; pages fade up 4px in 160ms without `AnimatePresence mode="wait"` (was 200ms exit + 400ms enter); staggered
+  entrances are capped at 6 x 30ms. Guarded by `motion-tokens.test.ts` and Playwright TS-0120.
 
 ### Fixed
 

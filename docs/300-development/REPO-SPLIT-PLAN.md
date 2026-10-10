@@ -173,7 +173,7 @@ and three or more repositories exist.
 
 | Item | Issue |
 |------|-------|
-| Umbrella, decision and criteria | #1197 |
+| Umbrella, decision and criteria (live Owner tracker) | #1443 (replaces auto-closed #1197) |
 | P0.1 metrics | #1256 |
 | P0.2 path-scoped CI | #1257 |
 | P0.3 E2E sharding | #1258 |
