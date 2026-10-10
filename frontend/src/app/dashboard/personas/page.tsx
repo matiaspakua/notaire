@@ -21,7 +21,7 @@ import {
   useUpdatePersona,
   useDeletePersona,
 } from "@/hooks/usePersonas";
-import { useUrlPagination } from "@/hooks/useUrlPagination";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { fullName } from "@/lib/utils";
 import { presentPersonaSaveError } from "@/lib/persona-save-error";
 import type { Persona } from "@/types";
@@ -53,6 +53,7 @@ function PersonasList() {
   const paging = useUrlPagination();
   const { data: peoplePage, isLoading, isFetching } = usePersonasPage({ page: paging.page, size: paging.size });
   const personas = peoplePage?.content ?? [];
+  useClampPage(paging, peoplePage?.totalPages);
   const createMutation = useCreatePersona();
   const updateMutation = useUpdatePersona();
   const deleteMutation = useDeletePersona();

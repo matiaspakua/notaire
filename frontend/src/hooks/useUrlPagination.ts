@@ -2,6 +2,7 @@
  * Page and page size of a server-paged list, kept in the URL (`?page=&size=`)
  * so reload, links and back/forward keep the position (#1340).
  */
+import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { PAGE_SIZE_OPTIONS } from "@/components/shared/Pagination";
 
@@ -37,4 +38,20 @@ export function useUrlPagination() {
     setPage: (next: number) => update({ page: next === 0 ? null : next }),
     setSize: (next: number) => update({ size: next === DEFAULT_PAGE_SIZE ? null : next, page: null }),
   };
+}
+
+/**
+ * Moves a page past the end (a stale link, or the last rows were deleted) to
+ * the last page, instead of an empty table under a "1101–1104 of 1104" footer.
+ */
+export function useClampPage(
+  paging: Pick<ReturnType<typeof useUrlPagination>, "page" | "setPage">,
+  totalPages: number | undefined,
+) {
+  const { page, setPage } = paging;
+  useEffect(() => {
+    if (totalPages && totalPages > 0 && page >= totalPages) setPage(totalPages - 1);
+    // setPage is recreated each render; page and totalPages decide.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, totalPages]);
 }
