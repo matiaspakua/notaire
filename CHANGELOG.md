@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Pages Architecture surfaces live Owner umbrella #1445** (CU76): ADR-024 entry on
+  `/docs/architecture/` names the open tracker (same pattern as ADR-022 → #1438); unit
+  guard pins the string; archive completed `docs-1445-archive-closed-umbrella` OpenSpec.
 - **OpenSpec active-set hygiene**: archive `docs-1197-repository-topology` (tied to closed
   umbrella) and the merged `docs-1445-openspec-archive` tree so `validate-sdlc-plan.sh` /
   `workspace/verify` stay green.

@@ -7,7 +7,11 @@ const adrs = [
     title: "Git history / large binaries — pending Owner decision (#1438)",
     file: "ADR-022-git-history-rewrite-and-large-binaries.md",
   },
-  { id: "024", title: "Repository topology (Proposed)", file: "ADR-024-repository-topology.md" },
+  {
+    id: "024",
+    title: "Repository topology (Proposed) — Owner umbrella (#1445)",
+    file: "ADR-024-repository-topology.md",
+  },
   { id: "025", title: "Retire notaire-shared", file: "ADR-025-retire-notaire-shared.md" },
   { id: "026", title: "Module separation inside the repo", file: "ADR-026-module-separation.md" },
   { id: "027", title: "Mermaid diagram language", file: "ADR-027-mermaid-diagrams.md" },

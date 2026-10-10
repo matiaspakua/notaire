@@ -11,6 +11,9 @@ ADR_024 = os.path.join(
     REPO_ROOT, "docs", "200-architecture", "202-ADR", "ADR-024-repository-topology.md"
 )
 PLAN = os.path.join(REPO_ROOT, "docs", "300-development", "REPO-SPLIT-PLAN.md")
+PAGES_ARCH = os.path.join(
+    REPO_ROOT, "github-page", "app", "docs", "architecture", "page.tsx"
+)
 LIVE = "1445"
 
 
@@ -26,6 +29,16 @@ class Adr024OwnerTrackerTest(unittest.TestCase):
             text = fh.read()
         self.assertIn(f"#{LIVE}", text)
         self.assertRegex(text, rf"(?i)live Owner tracker.*#{LIVE}|#{LIVE} \(replaces")
+
+    def test_pages_architecture_surfaces_live_owner_umbrella(self):
+        with open(PAGES_ARCH, encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertIn("ADR-024-repository-topology.md", text)
+        self.assertIn(
+            f"#{LIVE}",
+            text,
+            f"Pages Architecture must name live Owner umbrella #{LIVE} next to ADR-024",
+        )
 
 
 if __name__ == "__main__":
