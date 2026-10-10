@@ -27,6 +27,7 @@ containers by name.
 |-----------|-------|------|------|
 | `devsecops-prometheus` | prom/prometheus | 9090 | Scrapes `backend:8080/actuator/prometheus` (Basic auth) and `postgres-exporter:9187`; evaluates `infra/observability/prometheus/alert-rules.yml` |
 | `devsecops-otel-collector` | otel/opentelemetry-collector-contrib | — | Single OTLP ingress (4317/4318); the backend pushes Micrometer metrics here and Prometheus scrapes `:8889`. The Actuator scrape is kept |
+| `devsecops-tempo` | grafana/tempo | — | Trace store (24h local retention); fed by the collector's `traces` pipeline, queried by Grafana (datasource `tempo`, linked to Loki) |
 | `devsecops-node-exporter` / `devsecops-cadvisor` | prom/node-exporter, cadvisor | — | Host (Docker VM) and per-container metrics; read-only host mounts, no Docker socket |
 | `devsecops-blackbox-exporter` | prom/blackbox-exporter | — | HTTP/TCP availability probes (`probe_success`) for every stack service; feeds the overview dashboards and the `ServiceDown` alert |
 | `devsecops-grafana` | grafana/grafana | 3001 | Dashboards (`notaire-stack-status`, `notaire-status`, `notaire-backend`, `notaire-postgres`, `notaire-auth`, `notaire-logs`), provisioned from `infra/observability/grafana/` |

@@ -77,6 +77,10 @@ authoritative, up-to-date service list, ports, and credentials.
 cAdvisor and node-exporter cover containers and the host. On Docker Desktop the last two describe the Linux VM.
 OTLP export needs both `micrometer-registry-otlp` and `spring-boot-opentelemetry` on the backend classpath.
 
+**Tracing topology:** the backend uses the OpenTelemetry tracer (replacing Brave/Zipkin) and exports spans over OTLP to
+the collector, which forwards them to Tempo. In Grafana, Explore -> Tempo finds traces by service/name; a trace links to
+its Loki logs by `service`. Frontend spans are not instrumented yet.
+
 **Overview dashboards (start here):** `notaire-stack-status` (every service in the stack) and
 `notaire-status` (Notaire only). Both show availability from blackbox probes, firing alerts and recent
 errors, and link to the specialist dashboards below.

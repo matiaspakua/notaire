@@ -56,6 +56,7 @@ services:
       MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: true
       MANAGEMENT_HEALTH_DISKSPACE_ENABLED: "false"
       MANAGEMENT_OTLP_METRICS_EXPORT_URL: ${OTEL_METRICS_URL:-http://devsecops-otel-collector:4318/v1/metrics}
+      MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT: ${OTEL_TRACES_URL:-http://devsecops-otel-collector:4318/v1/traces}
       LOG_LEVEL_APP: INFO
       ENVIRONMENT: development
     ports:
