@@ -5490,6 +5490,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Solicitud inválida
         '404':
           content:
             '*/*':
@@ -5910,6 +5916,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Invalid request
         '404':
           content:
             '*/*':
@@ -7481,6 +7493,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: Solicitud inválida
         '404':
           content:
             '*/*':
