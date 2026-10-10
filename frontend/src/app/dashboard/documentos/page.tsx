@@ -27,7 +27,7 @@ import {
   useDeleteDocumentoPresentado,
 } from "@/hooks/useDocumentosPresentados";
 import { useTiposDocumento } from "@/hooks/useDocumentos";
-import { useGestiones } from "@/hooks/useGestiones";
+import { ManagementPicker } from "@/components/shared/ManagementPicker";
 import {
   EMPTY_DOCUMENTO_FORM,
   missingDocumentoFields,
@@ -55,7 +55,6 @@ export default function DocumentosPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<DocumentoPresentado | null>(null);
   const [form, setForm] = useState<DocumentoForm>(EMPTY_DOCUMENTO_FORM);
-  const { data: gestiones = [] } = useGestiones();
   const { data: gestionConTramites } = useReingresoDocumentacion(form.gestionId ? Number(form.gestionId) : undefined);
   const tramites = gestionConTramites?.procedures ?? [];
 
@@ -214,21 +213,13 @@ export default function DocumentosPage() {
               {showsTramiteLink(editing) && (
                 <>
                   <FormField label={t("gestion")} helperText={t("gestionHelper")} required={!editing}>
-                    <Select
-                      value={form.gestionId}
-                      onValueChange={(v) => setForm({ ...form, gestionId: v, tramiteId: "" })}
-                    >
-                      <SelectTrigger data-testid="select-gestion-documento">
-                        <SelectValue placeholder={t("selectGestion")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {gestiones.map((g) => (
-                          <SelectItem key={g.idManagement} value={g.idManagement!.toString()}>
-                            {g.number} — {g.encabezado}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <ManagementPicker
+                      value={form.gestionId ? Number(form.gestionId) : undefined}
+                      onChange={(g) => setForm({ ...form, gestionId: g?.idManagement?.toString() ?? "", tramiteId: "" })}
+                      aria-label={t("gestion")}
+                      placeholder={t("selectGestion")}
+                      data-testid="select-gestion-documento"
+                    />
                   </FormField>
                   {form.gestionId && (
                     <FormField

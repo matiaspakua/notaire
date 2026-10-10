@@ -15,7 +15,6 @@ endpoints:
   "GET /api/v1/copia/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/cuadernos/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/folio/{id}/in-use": "Likely redundant (#1250 bucket D): confirm, then remove with OpenAPI, Bruno and the CU-API matrix"
-  "GET /api/v1/gestiones/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "PUT /api/v1/gestiones/{id}/complete-case": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "GET /api/v1/gestiones/{id}/estado-actual": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "GET /api/v1/historial": "API-only (#1250 bucket B): paged audit read; the UI reads GET /api/v1/gestiones/{id}/historial"

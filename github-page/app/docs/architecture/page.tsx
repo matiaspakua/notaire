@@ -112,6 +112,36 @@ export default function DocsArchitecturePage() {
       </section>
 
       <section className="space-y-3">
+        <h2 className="text-lg font-semibold text-neutral-900">Enterprise readiness reports</h2>
+        <p className="text-sm text-neutral-600 max-w-3xl leading-relaxed">
+          Measured assessment and documentation audit for CU76 — evidence for topology and quality
+          decisions without inventing Owner answers.
+        </p>
+        <ul className="space-y-2 text-sm">
+          <li>
+            <a
+              className="text-[#0A84FF] hover:underline"
+              href={`${DOCS}/300-development/ASSESSMENT-2026-10.md`}
+            >
+              ASSESSMENT-2026-10.md
+            </a>
+            {" — "}
+            Full-system assessment (#1242)
+          </li>
+          <li>
+            <a
+              className="text-[#0A84FF] hover:underline"
+              href={`${DOCS}/300-development/DOCUMENTATION-AUDIT-2026-10.md`}
+            >
+              DOCUMENTATION-AUDIT-2026-10.md
+            </a>
+            {" — "}
+            End-to-end documentation audit (#921)
+          </li>
+        </ul>
+      </section>
+
+      <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900">Recent decisions</h2>
         <ul className="space-y-2">
           {adrs.map((a) => (

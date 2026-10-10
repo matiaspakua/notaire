@@ -1238,6 +1238,15 @@
     "clear": "Clear selection",
     "loadError": "Could not load the budgets"
   },
+  "managementPicker": {
+    "placeholder": "Search by case number, client or document…",
+    "searching": "Searching…",
+    "noResults": "No results",
+    "results": "{count} results",
+    "recentHint": "Newest cases. Type to search.",
+    "clear": "Clear selection",
+    "loadError": "Could not load the cases"
+  },
   "breadcrumb": {
     "label": "Breadcrumb",
     "segments": {
