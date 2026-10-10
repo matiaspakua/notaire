@@ -12,6 +12,7 @@ import { test, expect } from '@playwright/test'
 import { GherkinSteps } from './gherkin-helpers'
 import { authenticateAsAdmin } from './setup/auth'
 import { apiPost, apiGet, uniqueId } from './setup/api-helpers'
+import { rowWithCell } from './setup/rows'
 
 // ──────────────────────────────────────────────
 // Seed helpers
@@ -120,7 +121,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     await steps.thenShowsSuccessMessage('generado')
     await steps.thenModalIsNotVisible()
 
-    const rowTestimonios = page.getByRole('row', { name: new RegExp(String(escrituraNumero)) })
+    const rowTestimonios = rowWithCell(page, escrituraNumero)
     await expect(rowTestimonios).toBeVisible({ timeout: 10_000 })
 
     // Retrieve the generated testimonio id from the API
@@ -141,7 +142,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
 
     // ── CU11: Ingresar para inscripción ───────────────
     await steps.givenUserIsOnPage('/dashboard/movimientos-testimonio')
-    const rowMovimientos = page.getByRole('row', { name: new RegExp(String(escrituraNumero)) })
+    const rowMovimientos = rowWithCell(page, escrituraNumero)
     await expect(rowMovimientos).toBeVisible({ timeout: 10_000 })
 
     await page.getByTestId(`btn-ingresar-testimonio-${idTestimonio}`).click()
@@ -190,7 +191,7 @@ test.describe('CU07 - Generar testimonio', () => {
     await steps.thenShowsSuccessMessage('generado')
     await steps.thenModalIsNotVisible()
 
-    const row = page.getByRole('row', { name: new RegExp(String(numero)) })
+    const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
   })
 })
@@ -218,7 +219,7 @@ test.describe('CU08 - Verificar testimonio', () => {
     const idTestimonio = generated.data!.idTestimony
 
     await steps.givenUserIsOnPage('/dashboard/testimonios')
-    const row = page.getByRole('row', { name: new RegExp(String(numero)) })
+    const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     await page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`).click()
@@ -243,7 +244,7 @@ test.describe('CU08 - Verificar testimonio', () => {
     const idTestimonio = generated.data!.idTestimony
 
     await steps.givenUserIsOnPage('/dashboard/testimonios')
-    const row = page.getByRole('row', { name: new RegExp(String(numero)) })
+    const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     // btn-emitir-copia must NOT exist while testimonio is still unverified
@@ -269,7 +270,7 @@ test.describe('CU11 - Ingresar para inscripción', () => {
     const { idTestimonio, numero } = await seedTestimonioVerificado(page)
 
     await steps.givenUserIsOnPage('/dashboard/movimientos-testimonio')
-    const row = page.getByRole('row', { name: new RegExp(String(numero)) })
+    const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     await page.getByTestId(`btn-ingresar-testimonio-${idTestimonio}`).click()
@@ -298,7 +299,7 @@ test.describe('CU12 - Retirar testimonio', () => {
     const { idTestimonio, numero } = await seedTestimonioVerificado(page)
 
     await steps.givenUserIsOnPage('/dashboard/movimientos-testimonio')
-    const row = page.getByRole('row', { name: new RegExp(String(numero)) })
+    const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     // Move to 'inscripto' first
