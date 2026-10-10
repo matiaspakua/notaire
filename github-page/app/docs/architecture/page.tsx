@@ -59,8 +59,22 @@ export default function DocsArchitecturePage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900">Owner decisions pending</h2>
         <p className="text-sm text-neutral-600 max-w-3xl leading-relaxed">
-          Topology prep Phase 0 is on main; these Owner choices still block marking the work done.
-          Agents must not invent answers.
+          Topology prep Phase 0 is on main (<strong>P0.1–P0.5 Done</strong>); these Owner choices
+          still block marking the work done. Agents must not invent answers. Evidence:{" "}
+          <a
+            className="text-[#0A84FF] hover:underline"
+            href={`${DOCS}/300-development/REPO-METRICS-BASELINE.md`}
+          >
+            REPO-METRICS-BASELINE.md
+          </a>{" "}
+          (path-scoped workflows <strong>6/17</strong>, ~2k always-loaded tokens) and{" "}
+          <a
+            className="text-[#0A84FF] hover:underline"
+            href={`${DOCS}/300-development/REPO-SPLIT-PLAN.md`}
+          >
+            REPO-SPLIT-PLAN.md
+          </a>
+          .
         </p>
         <ul className="space-y-2 text-sm">
           <li>

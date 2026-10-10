@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Owner evidence on Pages + ADR-024** (CU76): Architecture Owner pack shows
+  P0.1–P0.5 Done and links `REPO-METRICS-BASELINE.md` (path-scoped **6/17**); Modules
+  links plan + baseline; ADR-024 measured evidence records dorny/paths-filter count.
+- **OpenSpec hygiene after #1457 / #1458**: archive shipped Gate 1 trees
+  `docs-1445-archive-1456-gate1` and `docs-1256-metrics-path-filter`.
 - **Repo metrics path-scoping count** (CU76, #1256): `repo-metrics.py` counts
   `dorny/paths-filter` workflows (P0.2) as well as classic `on.paths`; baseline regenerated
   (6/17 path-scoped).

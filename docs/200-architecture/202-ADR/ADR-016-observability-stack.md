@@ -26,7 +26,8 @@ containers by name.
 | Container | Image | Port | Role |
 |-----------|-------|------|------|
 | `devsecops-prometheus` | prom/prometheus | 9090 | Scrapes `backend:8080/actuator/prometheus` (Basic auth) and `postgres-exporter:9187`; evaluates `infra/observability/prometheus/alert-rules.yml` |
-| `devsecops-grafana` | grafana/grafana | 3001 | Dashboards (`notaire-backend`, `notaire-postgres`, `notaire-logs`), provisioned from `infra/observability/grafana/` |
+| `devsecops-blackbox-exporter` | prom/blackbox-exporter | — | HTTP/TCP availability probes (`probe_success`) for every stack service; feeds the overview dashboards and the `ServiceDown` alert |
+| `devsecops-grafana` | grafana/grafana | 3001 | Dashboards (`notaire-stack-status`, `notaire-status`, `notaire-backend`, `notaire-postgres`, `notaire-auth`, `notaire-logs`), provisioned from `infra/observability/grafana/` |
 | `devsecops-loki` | grafana/loki | 3100 | Log aggregation, queried by Grafana (`{container_name="notary-backend"}`) |
 | `devsecops-promtail` | grafana/promtail | — | Tails Docker container logs (socket-mounted) and pushes to Loki |
 | `devsecops-postgres-exporter` | prometheuscommunity/postgres-exporter | 9187 | Database-level metrics, connects to the app's PostgreSQL via the `pg_monitor` role (Flyway `V12`) |

@@ -32,6 +32,12 @@ curl http://localhost:9187/metrics | head
 
 ## Dashboards and logs
 
+- Start here: stack overview http://localhost:3001/d/notaire-stack-status, Notaire only
+  http://localhost:3001/d/notaire-status. Both link to the specialist dashboards below.
+  Triage: a red service tile or firing alert points to the matching specialist view
+  (API/JVM: backend, DB: PostgreSQL, logins: auth, error evidence: logs).
+  Status tiles come from blackbox probes (reachability, not a business transaction);
+  a probe that is `0` for 2 minutes fires `ServiceDown`.
 - Backend: http://localhost:3001/d/notaire-backend
 - PostgreSQL: http://localhost:3001/d/notaire-postgres
 - Auth and security: http://localhost:3001/d/notaire-auth
