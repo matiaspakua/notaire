@@ -9,9 +9,9 @@
 | Issue | #1445 | open |
 | Prior | #1197, #1443 closed by keyword parse | closed |
 | Use Case | CU76 | exists |
-| Specification |  | Gate 1 |
-| Branch |  | created |
-| Tasks |  | in progress |
+| Specification | `docs/openspec/changes/docs-1445-owner-umbrella/` | Gate 1 |
+| Branch | `cursor/docs-owner-umbrella-tracker-cf98` | created |
+| Tasks | `tasks.md` | in progress |
 | Commits | pending | pending |
 | Pull Request | pending | pending |
 | CI / Merge / Smoke | pending | pending |

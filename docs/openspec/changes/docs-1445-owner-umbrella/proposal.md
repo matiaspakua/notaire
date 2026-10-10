@@ -6,7 +6,7 @@
 |-------|-------|
 | GitHub Issue | #1445 |
 | Use Case | CU76 |
-| Branch |  |
+| Branch | `cursor/docs-owner-umbrella-tracker-cf98` |
 | Gate 1 status | passed |
 
 ## Objetivo
@@ -18,7 +18,7 @@ Prior Owner umbrellas #1197 and #1443 were closed by GitHub keyword parsing. Liv
 - ADR-024 / REPO-SPLIT-PLAN → #1445
 - Update unit guard
 - CHANGELOG Unreleased
-- 
+- `skip_specs: true`
 
 ## Reglas de negocio
 
