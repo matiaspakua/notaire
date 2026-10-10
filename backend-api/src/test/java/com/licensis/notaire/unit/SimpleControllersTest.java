@@ -130,7 +130,7 @@ class SimpleControllersTest {
             c.setNumber(1);
             when(service.save(any(Copy.class))).thenReturn(c);
             when(service.canCreateCopyForTestimony(any())).thenReturn(true);
-            String body = "{\"number\":1,\"notes\":\"n\"}";
+            String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
             mvc.perform(post("/api/v1/copia").contentType("application/json")
                             .content(body))
                     .andExpect(status().isCreated());
@@ -141,7 +141,7 @@ class SimpleControllersTest {
         void createErrorOnSave() throws Exception {
             when(service.canCreateCopyForTestimony(any())).thenReturn(true);
             when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
-            String body = "{\"number\":1,\"notes\":\"n\"}";
+            String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
             mvc.perform(post("/api/v1/copia").contentType("application/json")
                             .content(body))
                     .andExpect(status().isInternalServerError());
@@ -154,7 +154,7 @@ class SimpleControllersTest {
             c.setNumber(1);
             when(service.findById(1)).thenReturn(Optional.of(c));
             when(service.findById(2)).thenReturn(Optional.empty());
-            String body = "{\"number\":1,\"notes\":\"n\"}";
+            String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
             mvc.perform(put("/api/v1/copia/1").contentType("application/json")
                     .content(body)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/copia/2").contentType("application/json")
@@ -168,7 +168,7 @@ class SimpleControllersTest {
             c.setNumber(1);
             when(service.findById(1)).thenReturn(Optional.of(c));
             when(service.save(any(Copy.class))).thenThrow(new RuntimeException("x"));
-            String body = "{\"number\":1,\"notes\":\"n\"}";
+            String body = "{\"number\":1,\"datePrinting\":\"2026-10-09\",\"notes\":\"n\"}";
             mvc.perform(put("/api/v1/copia/1").contentType("application/json")
                     .content(body)).andExpect(status().isInternalServerError());
         }

@@ -98,6 +98,9 @@ def workflow_postgres_images(path: Path) -> list[str]:
                 for svc in services.values():
                     if isinstance(svc, dict) and "image" in svc:
                         image = str(svc["image"])
+                        # Pulled through Google's Docker Hub cache (#1380); the pin
+                        # rule applies to the Docker Hub reference behind it.
+                        image = image.removeprefix("mirror.gcr.io/library/")
                         if image.startswith("postgres:"):
                             found.append(image)
             for value in node.values():

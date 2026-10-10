@@ -16,3 +16,4 @@
 # so the entry accepts nothing and would hide a later break with the same text.
 # workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
 # until the entry and its comment are removed.
+

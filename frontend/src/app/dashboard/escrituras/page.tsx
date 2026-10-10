@@ -157,7 +157,7 @@ function EscriturasList() {
           aria-label={t("searchPlaceholder")}
           value={searchNumero}
           onChange={(e) => setSearchNumero(e.target.value)}
-          className="w-48"
+          className="w-full sm:w-48"
           type="number"
           data-testid="input-search-escritura"
         />
@@ -185,7 +185,7 @@ function EscriturasList() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editEscritura") : t("newEscritura")}>
+            <FormSection dialogTitle title={isEditMode ? t("editEscritura") : t("newEscritura")}>
               <FormField label={t("fields.numero")} required>
                 <Input type="number" value={editing.number ?? ""} onChange={(e) => setEditing({ ...editing, number: Number(e.target.value) })} />
               </FormField>

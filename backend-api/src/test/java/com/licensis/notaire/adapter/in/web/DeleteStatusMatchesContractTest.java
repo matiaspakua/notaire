@@ -65,6 +65,33 @@ class DeleteStatusMatchesContractTest {
         assertThat(mismatches).as("DELETE handlers whose success status differs from the contract").isEmpty();
     }
 
+    @Test
+    @DisplayName("every DELETE handler documents 204 No Content as its only success status")
+    void deleteHandlersDocumentNoContent() throws IOException {
+        // Owner rule (#1315, Run 7 follow-up): DELETE returns 204 everywhere, including
+        // DELETE /plantilla-presupuestos/tipo-tramite/{id}/concepto/{id}, which relied on the
+        // springdoc default 200.
+        List<String> offenders = new ArrayList<>();
+        try (Stream<Path> files = Files.walk(WEB)) {
+            for (Path file : files.filter(p -> p.toString().endsWith("Controller.java")).sorted().toList()) {
+                String src = Files.readString(file);
+                Matcher m = DELETE.matcher(src);
+                while (m.find()) {
+                    Set<String> documented = new TreeSet<>();
+                    Matcher d = DOCUMENTED.matcher(annotationBlock(src, m.start()));
+                    while (d.find()) {
+                        documented.add(d.group(1));
+                    }
+                    if (!documented.equals(Set.of("204"))) {
+                        offenders.add(WEB.relativize(file) + " line " + line(src, m.start())
+                                + ": documents " + (documented.isEmpty() ? "[200 (springdoc default)]" : documented));
+                    }
+                }
+            }
+        }
+        assertThat(offenders).as("DELETE handlers that do not document 204 No Content").isEmpty();
+    }
+
     /** Text between the end of the previous member and the mapping annotation. */
     private static String annotationBlock(String src, int mappingStart) {
         int prev = Math.max(src.lastIndexOf("}\n", mappingStart), src.lastIndexOf(";\n", mappingStart));

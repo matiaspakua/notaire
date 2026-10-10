@@ -36,7 +36,7 @@ export function GestionResumenDialog({ gestionId, onClose }: GestionResumenDialo
     <Dialog open={!!gestionId} onOpenChange={(open) => !open && onClose()}>
       <DialogContent data-testid="dialog-resumen-caso">
         <FormContainer>
-          <FormHeader title={t("title")} description={caso ? `${caso.managementNumber} — ${caso.heading ?? ""}` : undefined} />
+          <FormHeader dialogTitle title={t("title")} description={caso ? `${caso.managementNumber} — ${caso.heading ?? ""}` : undefined} />
           {isLoading ? (
             <p className="text-sm text-muted-foreground">{t("loading")}</p>
           ) : (

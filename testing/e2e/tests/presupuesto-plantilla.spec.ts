@@ -55,7 +55,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId("select-tipo-tramite-items").click();
-    await page.getByRole("option", { name: tipoTramiteName }).click();
+    await page.getByRole("option", { name: tipoTramiteName, exact: true }).click();
 
     // AND: carga los ítems de la plantilla
     await dialog.getByTestId("btn-cargar-plantilla").click();

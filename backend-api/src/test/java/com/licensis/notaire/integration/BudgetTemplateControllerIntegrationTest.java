@@ -142,7 +142,7 @@ class BudgetTemplateControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("DELETE should remove the budget template row, not just return 200 (CU49)")
+    @DisplayName("DELETE should remove the budget template row and answer 204 No Content (CU49, #1315)")
     void shouldPersistBudgetTemplateDeletion() throws Exception {
         ProcedureType procedureType = createProcedureTypeConTemplate("Delete IT", new java.math.BigDecimal("100"), 0);
         Integer idProcedureType = procedureType.getIdProcedureType();
@@ -151,7 +151,7 @@ class BudgetTemplateControllerIntegrationTest {
 
         mockMvc.perform(delete("/api/v1/plantilla-presupuestos/tipo-tramite/" + idProcedureType
                         + "/concepto/" + idConcept))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         assertThat(budgetTemplateRepository.findByProcedureTypeIdProcedureType(idProcedureType)).isEmpty();
     }
