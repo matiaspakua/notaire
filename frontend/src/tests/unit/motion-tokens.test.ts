@@ -73,6 +73,10 @@ describe("motion tokens (#1368)", () => {
     expect(offenders(/(?<![\w-])duration-\d+\b/g)).toEqual([]);
   });
 
+  it("uses no default Tailwind easings (use ease-standard/emphasized/exit)", () => {
+    expect(offenders(/(?<![\w-])ease-(?:in|out|in-out|linear)(?![\w-])/g)).toEqual([]);
+  });
+
   it("never transitions `all` properties", () => {
     expect(offenders(/(?<![\w-])transition-all\b|transition:\s*all\b|transition:\s*`all\b/g)).toEqual([]);
   });
