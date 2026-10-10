@@ -9,11 +9,13 @@ import { establishAdminBrowserSession } from "./setup/auth";
 async function expectBadgeOnEveryRow(page: Page, route: string) {
   await page.goto(route);
   await page.waitForLoadState("networkidle");
-  const rows = page.getByRole("table").locator("tbody tr");
+  // The first table is the list (folios also shows a folio-type table below it).
+  const table = page.getByRole("table").first();
+  const rows = table.locator("tbody tr");
   await expect(rows.first()).toBeVisible({ timeout: 15000 });
   const count = await rows.count();
   test.skip(count === 0, `no rows on ${route}`);
-  const badges = page.getByRole("table").getByTestId("status-badge");
+  const badges = table.getByTestId("status-badge");
   await expect(badges).toHaveCount(count);
   const first = badges.first();
   await expect(first).toHaveAttribute("data-tone", /^(neutral|info|success|warning|danger)$/);
