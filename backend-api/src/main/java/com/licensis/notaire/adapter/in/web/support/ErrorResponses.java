@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -37,6 +38,13 @@ public final class ErrorResponses {
 
     /** Safe text for a request that would duplicate an existing record. */
     public static final String DUPLICATE_MESSAGE = "The submitted data duplicates an existing record";
+
+    /**
+     * Safe text for an update whose {@code version} is not the stored one (optimistic lock):
+     * someone else changed the record since the client read it (issue #655, Owner decision Oct 9).
+     */
+    public static final String STALE_VERSION_MESSAGE =
+            "The record was modified by another user; reload it and try again";
 
     /** SQLState 23505: unique_violation. */
     private static final String SQLSTATE_UNIQUE_VIOLATION = "23505";
@@ -72,11 +80,36 @@ public final class ErrorResponses {
     }
 
     /**
-     * Failure of an update (PUT). A data-constraint violation answers {@code 400}, or {@code 409}
-     * for a duplicate; anything else keeps {@code 500} (issue #579, slice 2).
+     * Failure of an update (PUT). A stale {@code version} (optimistic-lock failure) answers
+     * {@code 409} (issue #655, Owner decision Oct 9); a data-constraint violation answers
+     * {@code 400}, or {@code 409} for a duplicate; anything else keeps {@code 500} (issue #579).
      */
     public static ResponseEntity<Object> updateFailed(Exception cause) {
+        if (isOptimisticLockFailure(cause)) {
+            return build(HttpStatus.CONFLICT, STALE_VERSION_MESSAGE, cause);
+        }
         return isConstraintViolation(cause) ? constraintViolation(cause) : serverError(cause);
+    }
+
+    /** {@code 409 Conflict} for an update whose {@code version} is not the stored one (issue #655). */
+    public static ResponseEntity<Object> staleVersion() {
+        return build(HttpStatus.CONFLICT, STALE_VERSION_MESSAGE, null);
+    }
+
+    /**
+     * True when the cause chain holds an optimistic-lock failure: Spring's
+     * {@link OptimisticLockingFailureException}, JPA's {@code OptimisticLockException} or
+     * Hibernate's {@code StaleStateException}.
+     */
+    public static boolean isOptimisticLockFailure(Throwable error) {
+        for (Throwable t = error; t != null; t = t.getCause() == t ? null : t.getCause()) {
+            if (t instanceof OptimisticLockingFailureException
+                    || t instanceof jakarta.persistence.OptimisticLockException
+                    || t instanceof org.hibernate.StaleStateException) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

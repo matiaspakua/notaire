@@ -118,7 +118,8 @@ public class DocumentTypeController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Bad request"),
-    @ApiResponse(responseCode = "404", description = "Not found")
+    @ApiResponse(responseCode = "404", description = "Not found"),
+    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update document type")

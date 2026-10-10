@@ -1,6 +1,8 @@
 package com.licensis.notaire.adapter.in.web.procedure;
 
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
+import com.licensis.notaire.adapter.in.web.support.RequiredFields;
+import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.dto.DtoProcedureType;
 import com.licensis.notaire.business.ProcedureType;
 import com.licensis.notaire.repository.BudgetTemplateRepository;
@@ -10,6 +12,8 @@ import com.licensis.notaire.application.port.out.procedure.ProcedureRepositoryPo
 import com.licensis.notaire.repository.WorkflowDefinitionRepository;
 import com.licensis.notaire.business.WorkflowDefinition;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -124,7 +128,8 @@ public class ProcedureTypeController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "No encontrado"),
+    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar tipo de tramite")
@@ -170,16 +175,42 @@ public class ProcedureTypeController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Documented shape of the workflow assignment body. The handler reads a map so that a missing
+     * {@code workflowDefinitionId} (400) can be told apart from an explicit {@code null}
+     * (unassign); issue #655, Owner decision Oct 9.
+     */
+    @Schema(name = "WorkflowAssignmentRequest")
+    public record WorkflowAssignmentRequest(
+            @Schema(description = "Workflow activo a asignar, o null para desasignar el actual",
+                    requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
+            Integer workflowDefinitionId) {
+    }
+
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400",
+            description = "Cuerpo vacío o inválido: workflowDefinitionId es obligatorio (entero, o null para desasignar)"),
+    @ApiResponse(responseCode = "404", description = "Tipo de trámite o workflow no encontrado"),
+    @ApiResponse(responseCode = "409", description = "El workflow seleccionado no está activo")
+})
     @PutMapping("/{id}/workflow")
     @Operation(summary = "Asignar o desasignar workflow a tipo de tramite")
     public ResponseEntity<Object> assignWorkflow(@PathVariable Integer id,
-                                                 @RequestBody Map<String, Object> body) {
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = WorkflowAssignmentRequest.class)))
+            @RequestBody Map<String, Object> body) {
+        RequiredFields.check().present(body.containsKey("workflowDefinitionId"), "workflowDefinitionId").orThrow();
+        Object wfIdObj = body.get("workflowDefinitionId");
+        if (wfIdObj != null && !(wfIdObj instanceof Integer)) {
+            throw new BusinessValidationException("workflowDefinitionId: debe ser un número entero o null");
+        }
         Optional<ProcedureType> existing = repository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         ProcedureType type = existing.get();
-        Object wfIdObj = body.get("workflowDefinitionId");
         if (wfIdObj == null) {
             type.setWorkflowDefinition(null);
             repository.save(type);
