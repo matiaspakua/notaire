@@ -8533,7 +8533,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: 'Solicitud inválida: name es obligatorio'
         '409':
           content:
             '*/*':
@@ -8616,6 +8616,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'Solicitud inválida: name es obligatorio'
         '404':
           content:
             '*/*':
@@ -8667,7 +8673,8 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: 'Solicitud inválida: workflowDefinitionId, statusManagementId y type (INITIAL, INTERMEDIATE o FINAL)
+            son obligatorios'
         '409':
           content:
             '*/*':
@@ -8772,6 +8779,13 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'Solicitud inválida: indicar al menos type, positionX o positionY; type debe ser INITIAL, INTERMEDIATE
+            o FINAL'
         '404':
           content:
             '*/*':
@@ -8802,7 +8816,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Solicitud inválida
+          description: 'Solicitud inválida: workflowDefinitionId, originNodeId y destinationNodeId son obligatorios'
         '409':
           content:
             '*/*':
@@ -8907,6 +8921,12 @@ paths:
               schema:
                 type: object
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: 'Solicitud inválida: originNodeId y destinationNodeId son obligatorios'
         '404':
           content:
             '*/*':
