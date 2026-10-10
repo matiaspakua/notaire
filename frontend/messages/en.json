@@ -60,7 +60,7 @@
     "no": "No",
     "active": "Active",
     "inactive": "Inactive",
-    "close": "Close"
+    "close": "Close",
     "pagination": {
       "label": "Pagination",
       "status": "{from}–{to} of {total}",
