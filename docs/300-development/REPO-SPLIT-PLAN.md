@@ -15,7 +15,9 @@ decides between the staged plan below and the original eight-repository proposal
 | Independent ownership | share of PRs that cross backend and frontend | 18% (since 2026-04-25) | tracked monthly; a split of those two needs below 5% |
 | Typed backend-frontend contract | generated client, drift guard in CI | none (hand-written types) | generated, guarded |
 
-P0.1 records these in `docs/300-development/REPO-METRICS.md` so each later decision cites numbers.
+P0.1 records these in [`REPO-METRICS-BASELINE.md`](REPO-METRICS-BASELINE.md) (generator:
+`python3 workspace/ci/repo-metrics.py`) so each later decision cites numbers. Folder ownership
+inside the monorepo is documented in [`MODULE-OWNERSHIP.md`](MODULE-OWNERSHIP.md) (ADR-026).
 
 ## 2. Phase 0: inside the monorepo (no split)
 
@@ -23,7 +25,7 @@ Each item is one issue, one OpenSpec change, one PR, independent of the Owner's 
 
 | Id | Issue | Work | Acceptance |
 |----|-------|------|------------|
-| P0.1 | #1256 | `scripts/repo-metrics.py` prints the table in section 1 from git and the Actions API; baseline committed | Script runs offline for git metrics; guard test; doc updated |
+| P0.1 | #1256 / #1417 | `workspace/ci/repo-metrics.py` prints offline git/tree metrics; baseline committed as `REPO-METRICS-BASELINE.md` | Script runs offline; unit test; doc updated (path under `workspace/` per ADR-026 — not `scripts/`) |
 | P0.2 | #1257 | Path classifier job (`changes`) in `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `openapi-contract.yml`; docs, OpenSpec and agent-only PRs skip Java, Vitest and Playwright; required check names unchanged through aggregator jobs that succeed when their inputs are skipped | A PR that changes only `docs/` is mergeable with all six required checks green and runs no Java or E2E job; a backend change still runs everything it affects; `workspace/tests/test_ci_workflow_invariants.py` extended |
 | P0.3 | #1258 | Shard the Playwright suite across a matrix (3 shards) and merge reports | E2E job wall-clock 6 min or less; report merged; flake rate unchanged over 10 runs |
 | P0.4 | #1259 | Move rules that are needed only for some areas out of the always-loaded imports (path-scoped guidance in `AGENTS.md`/skills); keep Constitution, workflow and general rules | Always-loaded context 8,000 tokens or less, measured by P0.1; `check-agent-rules.sh` green |

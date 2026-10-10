@@ -17,6 +17,8 @@ trabajo obligatorio.
 | [`templates/`](templates/) | Plantillas para especificaciones OpenSpec |
 | [`ASSESSMENT-2026-10.md`](ASSESSMENT-2026-10.md) | Evaluación integral del sistema (octubre 2026): resultados de tests, hallazgos por dimensión e issues asociados |
 | [`REPO-SPLIT-PLAN.md`](REPO-SPLIT-PLAN.md) | Plan por fases y criterios de salida para la topología de repositorios (#1197, ADR-024) |
+| [`MODULE-OWNERSHIP.md`](MODULE-OWNERSHIP.md) | In-repo module map (ADR-026): paths, fleets, verify, Mermaid deps — #1197 Phase 0 |
+| [`REPO-METRICS-BASELINE.md`](REPO-METRICS-BASELINE.md) | Reproducible repo metrics for topology decisions (#1256 / #1417) |
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`workspace/sdlc/preflight.sh`) a jobs de CI |
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
 

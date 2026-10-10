@@ -89,8 +89,8 @@ A change is **Done** only when **all** of the following are true:
 | Concern | Convention |
 |---------|------------|
 | Issue | One GitHub Issue per change; labeled; linked to a Use Case (`CU-XX`), Functional Requirement (`RF-XX`) or Non-Functional Requirement (`RNF-XX`) |
-| Branch | `<type>/<issue-number>_<description>` — e.g. `feat/253_user_auth`, `fix/254_login_timeout` |
-| Commit | Conventional Commits: `<type>(<scope>): <description>`, ending with `Closes #<issue-number>` |
+| Branch | Canonical: `<type>/<issue-number>_<description>` — e.g. `feat/253_user_auth`. Cursor Cloud fleet agents may use `cursor/<description>-<fleet-suffix>` when Process Checks / Owner allow; still one Issue per branch and `Closes #<n>` on the closing commit/PR. |
+| Commit | Conventional Commits: `<type>(<scope>): <description>`, ending with `Closes #<issue-number>` (use `Refs #<n>` on intermediate stacked slices; only the final slice closes) |
 | PR title | `[#<issue-number>] type(scope): description` |
 | Code style | Checkstyle: 120-char lines, 4-space indent, no wildcard imports, ordered imports (java → javax → third-party → own) |
 | DTOs | `DtoEntityName` (e.g. `DtoUsuario`) |
@@ -207,9 +207,13 @@ The schema produces `proposal.md`, `traceability.md`, `specs/<capability>/spec.m
 maps every requirement of this Constitution to the artifact that carries it.
 Acceptance Criteria are the delta spec's `#### Scenario:` blocks. → **Gate 1.**
 
-**4. Impact Analysis.** Identify affected modules (backend-api, frontend),
-entities, endpoints, database schema, tests, and documentation. List risks
-and dependencies.
+**4. Impact Analysis.** Identify affected modules from
+`workspace/modules.yaml` / [`MODULE-OWNERSHIP.md`](docs/300-development/MODULE-OWNERSHIP.md)
+(ADR-026) — typically `backend-api` and/or `frontend`, plus `docs`, `testing`,
+`infra`, `security`, `contracts`, or `workspace` when those areas change.
+Retired modules (e.g. `notaire-shared`, ADR-025) are not live. List entities,
+endpoints, database schema, tests, and documentation risks and dependencies.
+Run `python3 workspace/modules.py affected <path>` when unsure.
 
 **5. Architecture Review.** Verify the design follows the existing
 architecture and conventions. If the change is architectural, record it in an
@@ -312,7 +316,7 @@ quality, security, delivery or operations boundary.
 | Strategy and discovery | Baseline, value and backlog | `delivery-maturity-roadmap`, `analyst`, `product-owner` | roadmap hypothesis, Issue, Use Case, acceptance criteria |
 | Traceability | Evidence chain and impact | `devsecops-traceability`, `openspec-triage` | IDs, traceability ledger, impact map |
 | Specification | Behavior contract | `openspec-propose`, `openspec` schema `notaire-sdlc` | proposal, delta specs, scenarios |
-| Architecture | Decisions and quality attributes | `architecture-decision-design`, `plantuml`, `java-architect`, `hexagonal-arch` (Ports & Adapters implementation, e.g. ADR-021) | design, ADR, C4/UML views |
+| Architecture | Decisions and quality attributes | `architecture-decision-design`, Mermaid for active diagrams (ADR-027; `plantuml` only for legacy migration), `java-architect`, `hexagonal-arch` (Ports & Adapters, e.g. ADR-021) | design, ADR, Mermaid/C4 views |
 | Security design | Threats, privacy and controls | `secure-threat-modeling`, `backend`, `devops` | threat model, risk register, `SR-*` requirements |
 | Test design | Risk-based verification | `qa-automation-strategy`, `testing`, `api-rest` | MTP/test plan, test cases, fixtures, vectors |
 | Implementation | TDD and project conventions | `openspec-apply-change`, `programming`, `java`, `frontend-design` | failing tests, implementation, updated traceability |
@@ -518,7 +522,9 @@ centralize information in the most coherent place; move outdated documents to
 | API | `docs/200-architecture/203-design/` + OpenAPI/Swagger | Endpoint changes |
 | Development | `docs/300-development/` | Build, test, contribution process |
 | Operations / Runbooks | `docs/200-architecture/` (`206-security`, `207-monitoring`, `208-devsecops`, `209-deployment`) | Deploy, monitoring, security |
-| Diagrams | `docs/200-architecture/204-diagrams/` | Architecture or data-model changes |
+| Diagrams | Active docs: **Mermaid only** (ADR-027). Sources and policy in `docs/200-architecture/204-diagrams/README.md`; legacy `.puml` migrate on touch | Architecture or data-model changes |
+| Module ownership | `docs/300-development/MODULE-OWNERSHIP.md` + `workspace/modules.yaml` | Module boundary / Foreman / #1197 Phase 0 prep |
+| Public tech docs | GitHub Pages `/docs/` (`github-page/`) | When architecture, testing, or DevSecOps process docs change for public readers |
 | Changelog | `CHANGELOG.md` (Keep a Changelog) | Every user-visible change |
 
 Specifications describe **only the change** (they are not permanent
@@ -564,6 +570,17 @@ An AI agent **must**:
 - ✅ Adapt to the existing project architecture and conventions (do not replace them)
 - ✅ Reference the existing rule files (`AGENTS.md`, `.claude/rules/*`) for operational detail
 - ✅ Treat human review as authoritative when conflicts arise
+- ✅ **Merge authority:** never treat light CI as mergeable — require
+  `bash workspace/sdlc/check-heavy-ci.sh <pr>` exit 0 (Integration + Coverage +
+  Bruno + Playwright). Details:
+  [`docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)
+- ✅ **Serialize** Playwright-heavy PRs (one at a time on shared runners); draft
+  Dependabot PRs when they starve the queue
+- ✅ **Englishize** touched non-i18n Spanish (code, comments, logs, PR titles/bodies);
+  leave Spanish only in `messages/es.json` or terms deferred by a rename ADR
+- ✅ **Issue status sync** with sibling agents: prefer `in-progress` / board Status
+  when the token allows; if Issues write is 403, keep status in the PR body and
+  use `Closes #<n>` / `Refs #<n>` as the sync channel — never invent a parallel tracker
 
 Before acting, the agent must select the applicable skills using
 `.claude/skills/README.md`, load their references only when needed, and state
@@ -653,8 +670,9 @@ drift.
 
 | Process step / gate | Tooling |
 |---------------------|---------|
-| Issue + Use Case | GitHub Issues; `.github/ISSUE_TEMPLATE/issue.md`; `gh` CLI |
-| Specification | OpenSpec, schema `docs/openspec/schemas/notaire-sdlc`; `openspec new change`; section map in `docs/300-development/templates/specification-template.md` |
+| Issue + Use Case | GitHub Issues; `.github/ISSUE_TEMPLATE/issue.md`; `gh` CLI; multi-agent sync via labels/board Status or PR `Closes`/`Refs` when Issues write is denied |
+| Module map (Foreman) | `workspace/modules.yaml`; `python3 workspace/modules.py list\|affected\|verify`; [`MODULE-OWNERSHIP.md`](docs/300-development/MODULE-OWNERSHIP.md) |
+| Specification | OpenSpec under **`docs/openspec/`** (run CLI from `docs/`); schema `docs/openspec/schemas/notaire-sdlc`; `openspec new change`; section map in `docs/300-development/templates/specification-template.md` |
 | Constitution as agent context | `docs/openspec/config.yaml` (`context`, `rules`, `operations`) — injected by the CLI for every agent |
 | Plan completeness (Gates 1–5) | `bash workspace/sdlc/validate-sdlc-plan.sh` (`--list` maps each check to its Constitution section) |
 | Spec structure | `openspec validate <change> --strict` |
@@ -674,12 +692,14 @@ drift.
 | Local preflight | `bash workspace/sdlc/preflight.sh [--fix / --fast / --full]`; pre-push hook |
 | Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
-| Security | Trivy (`ci.yml` security job) |
+| **Merge gate (heavy CI)** | `bash workspace/sdlc/check-heavy-ci.sh <pr>` — Integration + Coverage + Bruno + Playwright must pass; light-only green is not mergeable ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
+| Security | Trivy (`ci.yml` security job); CodeQL; DAST/ZAP where configured; `security/` module for rulesets-as-code |
 | Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |
-| Agent rules | `AGENTS.md`, `.claude/rules/*`, `.claude/skills/*`, `.claude/agents/*` |
+| Public documentation site | `deploy-github-page.yml` → https://matiaspakua.github.io/notaire/ (story) and `/docs/` (technical Docs tab) |
+| Agent rules | `AGENTS.md`, `.claude/rules/*`, `.claude/skills/*`, `.claude/agents/*`; Cursor Cloud fleet: `docs/300-development/304-ai-sdlc-cloud/` |
 
 ---
 
-*Last reviewed: 2026-10-10. This Constitution supersedes the process
-summary in `.claude/rules/ai-agent-workflow.md` where they conflict; that
-document remains the operational implementation.*
+*Last reviewed: 2026-10-10 (AI SDLC tooling map, issue sync, Mermaid/modules, heavy-CI merge gate).
+This Constitution supersedes the process summary in `.claude/rules/ai-agent-workflow.md`
+where they conflict; that document remains the operational implementation.*

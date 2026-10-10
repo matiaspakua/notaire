@@ -99,7 +99,9 @@ foreman per [`fleet-manifest.yaml`](docs/300-development/304-ai-sdlc-cloud/fleet
 
 `workspace/modules.yaml` lists every module (responsibility, fleet, verify command,
 dependencies); each has a `MODULE.md` and a `verify.sh`; seams between modules are in
-`contracts/seams.yaml` (ADR-026). The Foreman uses:
+`contracts/seams.yaml` (ADR-026). Human-readable map:
+[`docs/300-development/MODULE-OWNERSHIP.md`](docs/300-development/MODULE-OWNERSHIP.md)
+(also on GitHub Pages `/docs/modules/`). The Foreman uses:
 
 ```bash
 python3 workspace/modules.py list                      # dependency order
