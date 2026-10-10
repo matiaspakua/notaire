@@ -26,10 +26,21 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 
 ## Authority
 
-- Process: [`CONSTITUTION.md`](../../../CONSTITUTION.md)
+- Process: [`CONSTITUTION.md`](../../../CONSTITUTION.md) (always-loaded digest:
+  [`CONSTITUTION-AGENT-CARD.md`](../../../CONSTITUTION-AGENT-CARD.md))
 - Specs: OpenSpec schema `notaire-sdlc` (`docs/openspec/`)
 - Skills catalog: [`.claude/skills/`](../../../.claude/skills/)
 - Agent index: [`AGENTS.md`](../../../AGENTS.md)
+
+## Agent context packing (#1259 / #1197 P0.4)
+
+Always-loaded files are measured by
+`python3 workspace/ci/agent-context-budget.py --max-tokens 8000` (bytes/4 heuristic).
+The set is: `CLAUDE.md`, slim `AGENTS.md`, `CONSTITUTION-AGENT-CARD.md`, and
+`.claude/rules/ai-agent-workflow.md`. Large area rules/skills (frontend-design,
+ui-ux-design, programming, refactoring) use `alwaysApply: false` and load via the
+on-demand table in `AGENTS.md`. Do not re-add bulk `@` imports or flip those skills
+back to `alwaysApply: true`.
 
 ## Explicit non-goals
 

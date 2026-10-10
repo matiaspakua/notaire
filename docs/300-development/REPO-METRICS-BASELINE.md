@@ -1,6 +1,6 @@
 # Repository Metrics Baseline
 
-> Generated: `2026-10-10T12:17:08Z` by `workspace/ci/repo-metrics.py` (#1417 / #1256 / #1197 P0.1, CU76).
+> Generated: `2026-10-10T14:36:59Z` by `workspace/ci/repo-metrics.py` (#1417 / #1256 / #1197 P0.1, CU76).
 >
 > Regenerate: `python3 workspace/ci/repo-metrics.py --markdown docs/300-development/REPO-METRICS-BASELINE.md`
 
@@ -11,11 +11,11 @@
 | Modules (`workspace/modules.yaml`) | 9 |
 | Workflows total | 17 |
 | Workflows with `paths:` filter (heuristic) | 2 |
-| Always-loaded bytes | 105026 |
-| Always-loaded tokens (est.) | 26256 |
+| Always-loaded bytes | 8139 |
+| Always-loaded tokens (est.) | 2034 |
 | `deprecated/` bytes | 13406232 |
 | `deprecated/` files | 767 |
-| `docs/` bytes | 19876311 |
+| `docs/` bytes | 19917586 |
 | PlantUML `.puml` under `204-diagrams/` | 116 |
 
 ## Modules
@@ -37,16 +37,9 @@
 | Path | Bytes |
 |------|------:|
 | `CLAUDE.md` | 100 |
-| `AGENTS.md` | 16589 |
-| `CONSTITUTION.md` | 34245 |
-| `.claude/rules/general.md` | 2709 |
-| `.claude/rules/programming.md` | 8470 |
-| `.claude/rules/code-quality.md` | 6263 |
-| `.claude/rules/refactoring.md` | 7515 |
+| `AGENTS.md` | 2447 |
+| `CONSTITUTION-AGENT-CARD.md` | 1613 |
 | `.claude/rules/ai-agent-workflow.md` | 3979 |
-| `.claude/rules/ui-ux-design.md` | 16432 |
-| `.claude/rules/database-migrations.md` | 3986 |
-| `.claude/rules/hooks.md` | 4738 |
 
 ## Notes
 
