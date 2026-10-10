@@ -8,13 +8,10 @@ info:
       No Paso, Inscripta (any letter case); anything else answers 400.
 http:
   method: GET
-  url: "{{base_url}}/api/v1/escrituras"
+  url: "{{base_url}}/api/v1/escrituras?status=Signed"
   headers:
     - name: Authorization
       value: "Bearer {{token}}"
-  params:
-    - name: status
-      value: "Signed"
 runtime:
   scripts:
     - type: tests

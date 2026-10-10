@@ -8,15 +8,10 @@ info:
       the optional status filter pages them on the server (any letter case).
 http:
   method: GET
-  url: "{{base_url}}/api/v1/escrituras"
+  url: "{{base_url}}/api/v1/escrituras?status=firmada&size=5"
   headers:
     - name: Authorization
       value: "Bearer {{token}}"
-  params:
-    - name: status
-      value: "firmada"
-    - name: size
-      value: "5"
 runtime:
   scripts:
     - type: tests
