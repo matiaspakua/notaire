@@ -134,7 +134,7 @@ describe("backend-proxy helper (issue #1055)", () => {
       );
     }
 
-    function loggedEntries(spy: ReturnType<typeof vi.spyOn>) {
+    function loggedEntries(spy: { mock: { calls: unknown[][] } }) {
       return spy.mock.calls.map((call) => JSON.parse(String(call[0])));
     }
 
