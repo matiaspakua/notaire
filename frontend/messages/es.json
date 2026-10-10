@@ -82,7 +82,6 @@
     "hello": "Hola",
     "today": "Resumen de actividad para hoy",
     "availableModules": "Módulos disponibles",
-    "viewAll": "Ver todos los servicios",
     "accessDenied": "No tiene permisos para acceder a esa sección de administración.",
     "workflowProgress": "Progreso del workflow",
     "workflow": {
@@ -114,7 +113,10 @@
         "timeline": "Movimientos de testimonio",
         "open": "abierto",
         "returnedObserved": "Volvió observado"
-      }
+      },
+      "managementFallback": "Gestión #{number}",
+      "noRecentWorkflow": "Ninguna de las gestiones más recientes tiene un workflow asignado.",
+      "openGestiones": "Ver gestiones"
     },
     "gestiones": {
       "label": "Gestiones",
@@ -445,6 +447,7 @@
     "noData": "No hay pagos registrados",
     "emitirRecibo": "Emitir recibo",
     "fields": {
+      "presupuesto": "Presupuesto",
       "fecha": "Fecha",
       "monto": "Monto",
       "metodoPago": "Método de Pago",
@@ -1153,5 +1156,14 @@
     "recentHint": "Personas más recientes. Escriba para buscar.",
     "clear": "Quitar selección",
     "loadError": "No se pudo cargar la lista de personas"
+  },
+  "budgetPicker": {
+    "placeholder": "Buscar por número, cliente o documento…",
+    "searching": "Buscando…",
+    "noResults": "Sin resultados",
+    "results": "{count} resultados",
+    "recentHint": "Presupuestos más recientes. Escriba para buscar.",
+    "clear": "Quitar selección",
+    "loadError": "No se pudo cargar la lista de presupuestos"
   }
 }
