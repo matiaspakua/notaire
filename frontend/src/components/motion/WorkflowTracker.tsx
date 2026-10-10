@@ -13,6 +13,7 @@ import type {
   WorkflowNode,
   WorkflowTransition,
 } from "@/types";
+import { formatCalendarDate } from "@/lib/dates";
 
 interface Props {
   trace: GestionWorkflowTrace;
@@ -307,7 +308,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
                     style={{ backgroundColor: theme.colors.neutral[100] }}
                   >
                     <p className="font-medium" style={{ color: theme.colors.neutral[900] }}>
-                      {h.date ? new Date(h.date).toLocaleDateString() : "—"}
+                      {formatCalendarDate(h.date)}
                     </p>
                     {h.notes && (
                       <p className="mt-0.5" style={{ color: theme.colors.neutral[600] }}>
@@ -333,9 +334,9 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
                     data-testid="workflow-movement-entry"
                   >
                     <p className="font-medium" style={{ color: theme.colors.neutral[900] }}>
-                      {m.dateEntry ? new Date(m.dateEntry).toLocaleDateString() : "—"}
+                      {formatCalendarDate(m.dateEntry)}
                       {m.dateExit
-                        ? ` → ${new Date(m.dateExit).toLocaleDateString()}`
+                        ? ` → ${formatCalendarDate(m.dateExit)}`
                         : ` → ${tw("reentry.open")}`}
                     </p>
                     {m.returnedObserved && (

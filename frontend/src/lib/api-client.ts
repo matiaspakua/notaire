@@ -96,6 +96,42 @@ export async function apiGetPaged<T>(path: string): Promise<T[]> {
   return page.content;
 }
 
+export interface PageRequest {
+  page?: number;
+  size?: number;
+  /** Spring sort expression, e.g. `date,desc`. */
+  sort?: string;
+  /** Extra query parameters (filters); empty values are not sent. */
+  params?: Record<string, string | number | undefined | null>;
+}
+
+/**
+ * Fetches one page of a Spring Data endpoint and keeps the totals (#1340).
+ * Accepts both the Spring `Page` shape (`number`) and the audit-log page
+ * shape (`page`), so callers always read `number`.
+ */
+export async function apiGetPage<T>(path: string, request: PageRequest = {}): Promise<SpringPage<T>> {
+  const query = new URLSearchParams();
+  if (request.page != null) query.set("page", String(request.page));
+  if (request.size != null) query.set("size", String(request.size));
+  if (request.sort) query.set("sort", request.sort);
+  for (const [key, value] of Object.entries(request.params ?? {})) {
+    if (value !== undefined && value !== null && value !== "") query.set(key, String(value));
+  }
+  const qs = query.toString();
+  const separator = path.includes("?") ? "&" : "?";
+  const raw = await apiGet<SpringPage<T> & { page?: number }>(qs ? `${path}${separator}${qs}` : path);
+  const size = raw.size ?? request.size ?? raw.content?.length ?? 0;
+  const totalElements = raw.totalElements ?? raw.content?.length ?? 0;
+  return {
+    content: raw.content ?? [],
+    number: raw.number ?? raw.page ?? request.page ?? 0,
+    size,
+    totalElements,
+    totalPages: raw.totalPages ?? (size > 0 ? Math.ceil(totalElements / size) : 0),
+  };
+}
+
 export async function apiPost<T = void>(
   path: string,
   body: unknown

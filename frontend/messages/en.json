@@ -59,7 +59,18 @@
     "yes": "Yes",
     "no": "No",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "close": "Close"
+    "pagination": {
+      "label": "Pagination",
+      "status": "{from}–{to} of {total}",
+      "page": "Page {page} of {pages}",
+      "first": "First page",
+      "previous": "Previous page",
+      "next": "Next page",
+      "last": "Last page",
+      "rowsPerPage": "Rows per page"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -674,14 +685,15 @@
     "title": "Audit",
     "description": "System activity log",
     "noData": "No audit records",
-    "searchPlaceholder": "Search by user or operation...",
+    "searchPlaceholder": "Search this page by user or operation...",
     "fields": {
       "fecha": "Date",
       "usuario": "User",
       "operacion": "Operation",
       "modulo": "Module"
     },
-    "allModules": "All modules"
+    "allModules": "All modules",
+    "moduleFilter": "Module"
   },
   "administracion": {
     "title": "Administration",

@@ -19,6 +19,7 @@ import {
 } from "@/hooks/useDocumentosEntidadExterna";
 import { extractApiError, formatDate } from "@/lib/utils";
 import type { DocumentoEntidadExterna, GestionDeEscritura, MovimientoDocumentoEntidadExternaInput } from "@/types";
+import { toDateInputValue } from "@/lib/dates";
 
 const emptyMovimiento: MovimientoDocumentoEntidadExternaInput = {
   prepared: false,
@@ -182,7 +183,7 @@ export default function DocumentosEntidadesExternasPage() {
       <Dialog open={!!editingDocumento} onOpenChange={(v) => !v && setEditingDocumento(null)}>
         <DialogContent className="max-h-[85vh] overflow-y-auto" data-testid="dialog-movimiento">
           <FormContainer>
-            <FormSection title={t("registrarMovimiento")}>
+            <FormSection dialogTitle title={t("registrarMovimiento")}>
               <FormField label={t("fields.numeroCarton")}>
                 <Input
                   type="number"
@@ -196,7 +197,7 @@ export default function DocumentosEntidadesExternasPage() {
               <FormField label={t("fields.fechaIngreso")}>
                 <Input
                   type="date"
-                  value={movimiento.dateEntry ?? ""}
+                  value={toDateInputValue(movimiento.dateEntry)}
                   onChange={(e) => setMovimiento((m) => ({ ...m, dateEntry: e.target.value }))}
                   data-testid="input-fecha-ingreso"
                 />
@@ -204,7 +205,7 @@ export default function DocumentosEntidadesExternasPage() {
               <FormField label={t("fields.fechaSalida")}>
                 <Input
                   type="date"
-                  value={movimiento.dateExit ?? ""}
+                  value={toDateInputValue(movimiento.dateExit)}
                   onChange={(e) => setMovimiento((m) => ({ ...m, dateExit: e.target.value }))}
                   data-testid="input-fecha-salida"
                 />
@@ -222,7 +223,7 @@ export default function DocumentosEntidadesExternasPage() {
               <FormField label={t("fields.fechaPago")}>
                 <Input
                   type="date"
-                  value={movimiento.datePayment ?? ""}
+                  value={toDateInputValue(movimiento.datePayment)}
                   onChange={(e) => setMovimiento((m) => ({ ...m, datePayment: e.target.value }))}
                   data-testid="input-fecha-pago"
                 />
@@ -230,7 +231,7 @@ export default function DocumentosEntidadesExternasPage() {
               <FormField label={t("fields.fechaLiberado")}>
                 <Input
                   type="date"
-                  value={movimiento.dateReleased ?? ""}
+                  value={toDateInputValue(movimiento.dateReleased)}
                   onChange={(e) => setMovimiento((m) => ({ ...m, dateReleased: e.target.value }))}
                   data-testid="input-fecha-liberado"
                 />

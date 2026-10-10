@@ -1,5 +1,6 @@
 package com.licensis.notaire.config;
 
+import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ErrorResponse;
 import com.licensis.notaire.exception.NotaireException;
@@ -188,30 +189,33 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     /**
      * Handle constraint violations raised by the persistence layer (e.g. NOT NULL,
      * unique, or foreign key violations) as a client error rather than a bare 500,
-     * since they stem from the request payload, not a server fault.
+     * since they stem from the request payload, not a server fault. A unique-constraint
+     * violation (a duplicate) answers 409 Conflict; NOT NULL, foreign-key and check violations
+     * answer 400 (issue #579, Owner decision Oct 9).
      *
      * @param ex      the exception
      * @param request the HTTP request
-     * @return 400 error response entity
+     * @return 409 for a duplicate, 400 otherwise
      */
     @ExceptionHandler({DataIntegrityViolationException.class})
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(
             DataIntegrityViolationException ex,
             HttpServletRequest request) {
+        HttpStatus status = ErrorResponses.isUniqueViolation(ex) ? HttpStatus.CONFLICT : HttpStatus.BAD_REQUEST;
         ErrorResponse errorResponse = new ErrorResponse(
-            400,
-            HttpStatus.BAD_REQUEST.getReasonPhrase(),
-            "The submitted data violates a database constraint",
+            status.value(),
+            status.getReasonPhrase(),
+            status == HttpStatus.CONFLICT ? ErrorResponses.DUPLICATE_MESSAGE : ErrorResponses.CONSTRAINT_MESSAGE,
             request.getRequestURI()
         );
         STRUCTURED_LOG.logWarn(
-            "Data integrity violation",
+            status == HttpStatus.CONFLICT ? "Unique constraint violation" : "Data integrity violation",
             Map.of(
                 "path", request.getRequestURI(),
                 "method", request.getMethod()
             )
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, status);
     }
 
     /**

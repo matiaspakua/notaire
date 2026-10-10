@@ -25,6 +25,7 @@ import { ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Pago } from "@/types";
+import { toDateInputValue } from "@/lib/dates";
 
 const PAGO_FIELD_NAMES = ["amount", "date", "paymentMethod", "notes", "idBudget"];
 
@@ -143,7 +144,7 @@ export default function PagosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editPago") : t("newPago")}>
+            <FormSection dialogTitle title={isEditMode ? t("editPago") : t("newPago")}>
               {/* Issue #796: Replace numeric ID input with presupuesto picker */}
               <FormField label="Presupuesto" required>
                 <Select
@@ -201,7 +202,7 @@ export default function PagosPage() {
               <FormField label={tc("date")} required error={fieldErrors.date}>
                 <Input
                   type="date"
-                  value={editing.date ?? ""}
+                  value={toDateInputValue(editing.date)}
                   onChange={(e) => setEditing({ ...editing, date: e.target.value })}
                   aria-invalid={!!fieldErrors.date}
                 />

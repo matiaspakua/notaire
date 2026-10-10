@@ -1,7 +1,9 @@
 package com.licensis.notaire.adapter.in.web.workflow;
 
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
+import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.dto.DtoWorkflowNode;
+import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.business.WorkflowNode;
@@ -73,17 +75,21 @@ public class WorkflowNodeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida: workflowDefinitionId, statusManagementId "
+            + "y type (INITIAL, INTERMEDIATE o FINAL) son obligatorios"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
     @Operation(summary = "Crear nodo en un workflow")
     public ResponseEntity<Object> create(@RequestBody DtoWorkflowNode dto) {
-        Optional<WorkflowDefinition> wf = workflowRepository.findById(dto.getWorkflowDefinitionId());
+        Integer workflowId = RequiredFields.require(dto.getWorkflowDefinitionId(), "workflowDefinitionId");
+        Integer statusId = RequiredFields.require(dto.getStatusManagementId(), "statusManagementId");
+        WorkflowNodeType type = RequiredFields.requireEnum(dto.getType(), WorkflowNodeType.class, "type");
+        Optional<WorkflowDefinition> wf = workflowRepository.findById(workflowId);
         if (wf.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Optional<ManagementStatus> status = statusRepository.findById(dto.getStatusManagementId());
+        Optional<ManagementStatus> status = statusRepository.findById(statusId);
         if (status.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -91,31 +97,38 @@ public class WorkflowNodeController {
             WorkflowNode node = new WorkflowNode();
             node.setWorkflowDefinition(wf.get());
             node.setManagementStatus(status.get());
-            node.setType(WorkflowNodeType.valueOf(dto.getType()));
+            node.setType(type);
             node.setPositionX(dto.getPositionX());
             node.setPositionY(dto.getPositionY());
             node = repository.save(node);
             return ResponseEntity.status(HttpStatus.CREATED).body(node.toDto());
         } catch (Exception e) {
-            return ErrorResponses.conflict(e);
+            return ErrorResponses.createFailed(e);
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida: indicar al menos type, positionX o "
+            + "positionY; type debe ser INITIAL, INTERMEDIATE o FINAL"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar nodo")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowNode dto) {
+        if (dto.getType() == null && dto.getPositionX() == null && dto.getPositionY() == null) {
+            throw new BusinessValidationException("type, positionX, positionY: indicar al menos un campo a actualizar");
+        }
+        WorkflowNodeType type = dto.getType() == null
+                ? null : RequiredFields.parseEnum(dto.getType(), WorkflowNodeType.class, "type");
         Optional<WorkflowNode> existing = repository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         try {
             WorkflowNode node = existing.get();
-            if (dto.getType() != null) {
-                node.setType(WorkflowNodeType.valueOf(dto.getType()));
+            if (type != null) {
+                node.setType(type);
             }
             if (dto.getPositionX() != null) {
                 node.setPositionX(dto.getPositionX());
@@ -126,7 +139,7 @@ public class WorkflowNodeController {
             repository.save(node);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ErrorResponses.serverError(e);
+            return ErrorResponses.updateFailed(e);
         }
     }
 
