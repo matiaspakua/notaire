@@ -1,0 +1,31 @@
+info:
+  name: Document re-entry with empty body is rejected
+  type: http
+  seq: 13
+  description: |-
+      ## POST /api/v1/gestiones/1/reingreso-documentacion with {} — 400 Bad Request
+      idProcedure and idDocumentType are required; missing ids used to reach findById and answer 500. Validated before the management lookup.
+      Traceability: CU43 (#655)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/gestiones/1/reingreso-documentacion"
+  body:
+    type: json
+    data: |-
+        {}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request", function () { expect(res.getStatus()).to.equal(400); });
+          test("Standard ErrorResponse naming the required fields", function () {
+            const b = res.getBody();
+            expect(b.status).to.equal(400);
+            expect(b.message).to.include("idProcedure");
+            expect(b.message).to.include("idDocumentType");
+          });

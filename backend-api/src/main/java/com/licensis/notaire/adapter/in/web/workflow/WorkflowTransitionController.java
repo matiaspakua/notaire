@@ -1,6 +1,7 @@
 package com.licensis.notaire.adapter.in.web.workflow;
 
 import com.licensis.notaire.adapter.in.web.support.ErrorResponses;
+import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.dto.DtoWorkflowTransition;
 import com.licensis.notaire.business.WorkflowDefinition;
 import com.licensis.notaire.business.WorkflowNode;
@@ -67,21 +68,25 @@ public class WorkflowTransitionController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida: workflowDefinitionId, originNodeId y "
+            + "destinationNodeId son obligatorios"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
     @Operation(summary = "Crear transición entre dos nodos")
     public ResponseEntity<Object> create(@RequestBody DtoWorkflowTransition dto) {
-        Optional<WorkflowDefinition> wf = workflowRepository.findById(dto.getWorkflowDefinitionId());
+        Integer workflowId = RequiredFields.require(dto.getWorkflowDefinitionId(), "workflowDefinitionId");
+        Integer originId = RequiredFields.require(dto.getOriginNodeId(), "originNodeId");
+        Integer destinationId = RequiredFields.require(dto.getDestinationNodeId(), "destinationNodeId");
+        Optional<WorkflowDefinition> wf = workflowRepository.findById(workflowId);
         if (wf.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Optional<WorkflowNode> origin = nodeRepository.findById(dto.getOriginNodeId());
+        Optional<WorkflowNode> origin = nodeRepository.findById(originId);
         if (origin.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Optional<WorkflowNode> destination = nodeRepository.findById(dto.getDestinationNodeId());
+        Optional<WorkflowNode> destination = nodeRepository.findById(destinationId);
         if (destination.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -95,12 +100,14 @@ public class WorkflowTransitionController {
             transition = repository.save(transition);
             return ResponseEntity.status(HttpStatus.CREATED).body(transition.toDto());
         } catch (Exception e) {
-            return ErrorResponses.conflict(e);
+            return ErrorResponses.createFailed(e);
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida: originNodeId y destinationNodeId son "
+            + "obligatorios"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")
@@ -109,11 +116,13 @@ public class WorkflowTransitionController {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        Optional<WorkflowNode> origin = nodeRepository.findById(dto.getOriginNodeId());
+        Integer originId = RequiredFields.require(dto.getOriginNodeId(), "originNodeId");
+        Integer destinationId = RequiredFields.require(dto.getDestinationNodeId(), "destinationNodeId");
+        Optional<WorkflowNode> origin = nodeRepository.findById(originId);
         if (origin.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Optional<WorkflowNode> destination = nodeRepository.findById(dto.getDestinationNodeId());
+        Optional<WorkflowNode> destination = nodeRepository.findById(destinationId);
         if (destination.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -125,7 +134,8 @@ public class WorkflowTransitionController {
             transition.setDescription(dto.getDescription());
             return ResponseEntity.ok(repository.save(transition).toDto());
         } catch (Exception e) {
-            return ErrorResponses.conflict(e);
+            // A data constraint answers 400; any other failure keeps 409 (issue #579, slice 3).
+            return ErrorResponses.createFailed(e);
         }
     }
 
