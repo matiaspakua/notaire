@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Repo metrics path-scoping count** (CU76, #1256): `repo-metrics.py` counts
+  `dorny/paths-filter` workflows (P0.2) as well as classic `on.paths`; baseline regenerated
+  (6/17 path-scoped).
 - **OpenSpec hygiene after #1456**: archive shipped `docs-1445-archive-1368-motion`.
 - **OpenSpec hygiene**: archive closed-issue trees `fix-1368-motion-tokens` and
   `fix-1354-hardcoded-ui-strings`, plus shipped `docs-1445-archive-owner-decisions`, so

@@ -1,6 +1,6 @@
 # Repository Metrics Baseline
 
-> Generated: `2026-10-10T15:01:46Z` by `workspace/ci/repo-metrics.py` (#1417 / #1256 / #1197 P0.1, CU76).
+> Generated: `2026-10-10T19:40:05Z` by `workspace/ci/repo-metrics.py` (#1417 / #1256 / #1197 P0.1, CU76).
 >
 > Regenerate: `python3 workspace/ci/repo-metrics.py --markdown docs/300-development/REPO-METRICS-BASELINE.md`
 
@@ -10,12 +10,12 @@
 |--------|------:|
 | Modules (`workspace/modules.yaml`) | 9 |
 | Workflows total | 17 |
-| Workflows with `paths:` filter (heuristic) | 2 |
+| Workflows with path scoping (`on.paths` or dorny/paths-filter) | 6 |
 | Always-loaded bytes | 8139 |
 | Always-loaded tokens (est.) | 2034 |
 | `deprecated/` bytes | 13406232 |
 | `deprecated/` files | 767 |
-| `docs/` bytes | 19940517 |
+| `docs/` bytes | 20132666 |
 | PlantUML `.puml` under `204-diagrams/` | 116 |
 
 ## Modules
@@ -44,7 +44,7 @@
 ## Notes
 
 - Token estimate is bytes/4 (rough); measure with the agent loader for exact counts.
-- Workflow path-filter count is heuristic over YAML text; re-check when editing workflows.
+- Path-scoping count includes classic on.paths and dorny/paths-filter (P0.2 / #1257).
 - Script is offline-only; PR cross-area rates require gh and are recorded in ADR-024.
 
 Related: [MODULE-OWNERSHIP.md](MODULE-OWNERSHIP.md), [REPO-SPLIT-PLAN.md](REPO-SPLIT-PLAN.md), ADR-024, #1197.
