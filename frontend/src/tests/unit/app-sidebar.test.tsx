@@ -44,7 +44,7 @@ describe("AppSidebar sections (#1367)", () => {
     render(<AppSidebar />);
     const headings = desktop().getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
     expect(headings).toHaveLength(5);
-    expect(headings).not.toContain("navigation.groups.administracion");
+    expect(headings).not.toContain("navGroups.administracion");
     expect(desktop().queryByTestId("nav-auditoria")).toBeNull();
   });
 
@@ -56,14 +56,14 @@ describe("AppSidebar sections (#1367)", () => {
 
   it("expands the section holding the current route and marks the link current", () => {
     render(<AppSidebar />);
-    const toggle = desktop().getByRole("button", { name: "navigation.groups.escriturasProtocolo" });
+    const toggle = desktop().getByRole("button", { name: "navGroups.escriturasProtocolo" });
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     expect(desktop().getByTestId("nav-copias")).toHaveAttribute("aria-current", "page");
   });
 
   it("collapses a section on click and persists it", () => {
     render(<AppSidebar />);
-    const toggle = desktop().getByRole("button", { name: "navigation.groups.clientes" });
+    const toggle = desktop().getByRole("button", { name: "navGroups.clientes" });
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     expect(desktop().getByTestId("nav-personas")).toBeVisible();
 
@@ -76,8 +76,8 @@ describe("AppSidebar sections (#1367)", () => {
   it("restores collapsed sections, but never hides the current route's section", () => {
     window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, JSON.stringify(["clientes", "escriturasProtocolo"]));
     render(<AppSidebar />);
-    expect(desktop().getByRole("button", { name: "navigation.groups.clientes" })).toHaveAttribute("aria-expanded", "false");
-    expect(desktop().getByRole("button", { name: "navigation.groups.escriturasProtocolo" })).toHaveAttribute("aria-expanded", "true");
+    expect(desktop().getByRole("button", { name: "navGroups.clientes" })).toHaveAttribute("aria-expanded", "false");
+    expect(desktop().getByRole("button", { name: "navGroups.escriturasProtocolo" })).toHaveAttribute("aria-expanded", "true");
     expect(desktop().getByTestId("nav-copias")).toBeVisible();
   });
 });

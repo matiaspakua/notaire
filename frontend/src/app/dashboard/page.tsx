@@ -1,22 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  BookMarked,
-  Building2,
-  Calculator,
-  Copy,
-  CreditCard,
-  FileBarChart,
-  FileText,
-  FolderKanban,
-  ListTodo,
-  ScrollText,
-  Settings,
-  ShieldCheck,
-  UserRoundCog,
-  Users,
-} from "lucide-react";
+import { Calculator, FolderKanban, Users } from "lucide-react";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
@@ -29,34 +14,7 @@ import { usePresupuestosPage } from "@/hooks/usePresupuestos";
 import { StatValue } from "@/components/dashboard/StatValue";
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
 import { theme } from "@/theme/tokens";
-import type { ComponentType } from "react";
-
-type LucideIcon = ComponentType<{ className?: string }>;
-
-interface Module {
-  labelKey: string;
-  descKey: string;
-  href: string;
-  icon: LucideIcon;
-  adminOnly: boolean;
-}
-
-const modules: Module[] = [
-  { labelKey: "gestiones.label", descKey: "gestiones.description", href: "/dashboard/gestiones", icon: FolderKanban, adminOnly: false },
-  { labelKey: "presupuestos.label", descKey: "presupuestos.description", href: "/dashboard/presupuestos", icon: Calculator, adminOnly: false },
-  { labelKey: "personas.label", descKey: "personas.description", href: "/dashboard/personas", icon: Users, adminOnly: false },
-  { labelKey: "escrituras.label", descKey: "escrituras.description", href: "/dashboard/escrituras", icon: ScrollText, adminOnly: false },
-  { labelKey: "pagos.label", descKey: "pagos.description", href: "/dashboard/pagos", icon: CreditCard, adminOnly: false },
-  { labelKey: "protocolo.label", descKey: "protocolo.description", href: "/dashboard/protocolo", icon: BookMarked, adminOnly: false },
-  { labelKey: "inmuebles.label", descKey: "inmuebles.description", href: "/dashboard/inmuebles", icon: Building2, adminOnly: false },
-  { labelKey: "copias.label", descKey: "copias.description", href: "/dashboard/copias", icon: Copy, adminOnly: false },
-  { labelKey: "suplencias.label", descKey: "suplencias.description", href: "/dashboard/suplencias", icon: UserRoundCog, adminOnly: false },
-  { labelKey: "reportes.label", descKey: "reportes.description", href: "/dashboard/reportes", icon: FileBarChart, adminOnly: false },
-  { labelKey: "items.label", descKey: "items.description", href: "/dashboard/items", icon: ListTodo, adminOnly: false },
-  { labelKey: "documentos.label", descKey: "documentos.description", href: "/dashboard/documentos", icon: FileText, adminOnly: false },
-  { labelKey: "auditoria.label", descKey: "auditoria.description", href: "/dashboard/auditoria", icon: ShieldCheck, adminOnly: true },
-  { labelKey: "administracion.label", descKey: "administracion.description", href: "/dashboard/administracion", icon: Settings, adminOnly: true },
-];
+import { DASHBOARD_MODULES } from "@/lib/dashboard-nav";
 
 function AccessDeniedBanner() {
   const td = useTranslations("dashboard");
@@ -84,7 +42,8 @@ export default function DashboardPage() {
   const personasPage = usePersonasPage({ page: 0, size: 1 });
   const presupuestosPage = usePresupuestosPage({ page: 0, size: 1 });
 
-  const visibleModules = modules.filter((m) => !m.adminOnly || isAdmin());
+  // One config for the sidebar and this grid (#1367).
+  const visibleModules = DASHBOARD_MODULES.filter((m) => !m.adminOnly || isAdmin());
   const dateLocale = locale === "en" ? "en-US" : "es-AR";
 
   const stats = [
@@ -151,6 +110,7 @@ export default function DashboardPage() {
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">{td("availableModules")}</h2>
         </div>
 
+        <div data-testid="dashboard-modules">
         <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {visibleModules.map((mod) => {
             const Icon = mod.icon;
@@ -165,12 +125,12 @@ export default function DashboardPage() {
                           <Icon className="h-7 w-7" />
                         </div>
                         <CardTitle className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-fast">
-                          {td(mod.labelKey as Parameters<typeof td>[0])}
+                          {td(`${mod.labelKey}.label` as Parameters<typeof td>[0])}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="px-8 pb-8 pt-0">
                         <CardDescription className="text-base text-muted-foreground leading-relaxed">
-                          {td(mod.descKey as Parameters<typeof td>[0])}
+                          {td(`${mod.labelKey}.description` as Parameters<typeof td>[0])}
                         </CardDescription>
                       </CardContent>
                     </Card>
@@ -180,6 +140,7 @@ export default function DashboardPage() {
             );
           })}
         </Stagger>
+        </div>
       </div>
     </div>
   );

@@ -137,11 +137,11 @@ describe("DASHBOARD_NAV_GROUPS (#1367)", () => {
   });
 
   it("translates every section label in es and en", () => {
-    const es = (esMessages.navigation as Record<string, unknown>).groups as Record<string, string> | undefined;
-    const en = (enMessages.navigation as Record<string, unknown>).groups as Record<string, string> | undefined;
+    const es = (esMessages as Record<string, unknown>).navGroups as Record<string, string> | undefined;
+    const en = (enMessages as Record<string, unknown>).navGroups as Record<string, string> | undefined;
     for (const g of DASHBOARD_NAV_GROUPS) {
-      expect(es?.[g.labelKey], `es navigation.groups.${g.labelKey}`).toBeTruthy();
-      expect(en?.[g.labelKey], `en navigation.groups.${g.labelKey}`).toBeTruthy();
+      expect(es?.[g.labelKey], `es navGroups.${g.labelKey}`).toBeTruthy();
+      expect(en?.[g.labelKey], `en navGroups.${g.labelKey}`).toBeTruthy();
     }
   });
 
