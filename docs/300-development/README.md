@@ -21,6 +21,7 @@ trabajo obligatorio.
 | [`REPO-METRICS-BASELINE.md`](REPO-METRICS-BASELINE.md) | Reproducible repo metrics for topology decisions (#1256 / #1417) |
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`workspace/sdlc/preflight.sh`) a jobs de CI |
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
+| [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) | Permanent domain model. A change that moves a state updates this file in the same PR |
 
 OpenSpec ↔ Constitution: ver [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../openspec/NOTAIRE-ADAPTATIONS.md)
 (SpecKit, retirado en #1083: [`docs/000-archive/speckit/`](../000-archive/speckit/)).

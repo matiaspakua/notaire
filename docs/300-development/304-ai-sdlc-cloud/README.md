@@ -10,6 +10,7 @@ issue → OpenSpec Gate 1 → TDD → implement → preflight/CI → PR → revi
 | [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) | **Never merge on light-CI-only green** — `bash workspace/sdlc/check-heavy-ci.sh <pr>`; rebase-first for stale Budget/person failures |
 | [`VALIDATION-PLAN.md`](VALIDATION-PLAN.md) | Prove the fleet is ready before picking the first GitHub issue |
 | [`fleet-manifest.yaml`](fleet-manifest.yaml) | Machine-readable role → skills → model map |
+| [CICLO-DE-VIDA.md](../../200-architecture/203-design/CICLO-DE-VIDA.md) | Permanent domain lifecycles. Update in the docs phase when a state changes; do not add a second diagram |
 
 **Process learnings (must follow):** `Closes #<issue>` (not only `Issue: #N`); never commit PR Validation wiki reports onto PR heads with `[skip ci]`; host-network compose; run `bash .cursor/install.sh` until the Environment card is Saved (`openspec`+`bc` from that script); prefer `workspace/sdlc/seed-openspec-change.sh` for Gate 1; **do not merge when only light CI (~12 checks) is green** — run `bash workspace/sdlc/check-heavy-ci.sh <pr>` ([CI-MERGE-GATE](CI-MERGE-GATE.md)); **rebase onto `main` before inventing fixes** for Budget/person / `undefined, undefined` when the tip is stale; **CodeQL advanced XOR default setup** ([DevSecOps](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup)). Details in [ENVIRONMENT-CHECKLIST §7](ENVIRONMENT-CHECKLIST.md) and [FLEET-ARCHITECTURE §9](FLEET-ARCHITECTURE.md).
 

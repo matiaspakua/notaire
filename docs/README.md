@@ -16,10 +16,12 @@ ciclo de vida: negocio, arquitectura y desarrollo.
 ## Punto de entrada recomendado
 
 1. **Negocio**: [Casos de Uso](100-business/102-use-cases/) — qué hace el sistema y para quién.
-2. **Arquitectura**: [SAD](200-architecture/201-SAD/sad.md) — visión arc42 completa del sistema.
-3. **Desarrollo**: [`CLAUDE.md`](../CLAUDE.md) y [`CONSTITUTION.md`](../CONSTITUTION.md) — flujo de
+2. **Ciclo de vida**: [CICLO-DE-VIDA.md](200-architecture/203-design/CICLO-DE-VIDA.md) — estados,
+   secuencias y componentes, del requerimiento a la operación.
+3. **Arquitectura**: [SAD](200-architecture/201-SAD/sad.md) — visión arc42 completa del sistema.
+4. **Desarrollo**: [`CLAUDE.md`](../CLAUDE.md) y [`CONSTITUTION.md`](../CONSTITUTION.md) — flujo de
    trabajo obligatorio para cualquier cambio de código.
-4. **Gestión**: [Organización de GitHub](github/README.md) — dónde se sigue el trabajo y cómo se etiqueta.
+5. **Gestión**: [Organización de GitHub](github/README.md) — dónde se sigue el trabajo y cómo se etiqueta.
 
 ## Convenciones
 

@@ -247,7 +247,25 @@ Operational failures while landing the fleet. Full table:
 
 ---
 
-## 10. Related docs
+## 10. Permanent domain model
+
+OpenSpec records the **delta** of one change. The picture of the running
+domain — gestión, deed, testimony, documents, budget, payment, folders — is
+[CICLO-DE-VIDA.md](../../200-architecture/203-design/CICLO-DE-VIDA.md).
+
+In the docs phase, when a change adds, removes, or conditions one of those
+states:
+
+1. Edit `CICLO-DE-VIDA.md` in the same PR. Flyway remains the schema source of
+   truth; if the seeded graph changes, the migration and that file move together.
+2. Leave the use-case narrative in `docs/100-business/102-use-cases/` unless the
+   actor's steps changed. Do not paste the state graph into every use case.
+3. Do not add a new `.puml` for the same lifecycle ([ADR-027](../../200-architecture/202-ADR/ADR-027-mermaid-diagrams.md)).
+
+Work-item status on the delivery board is a different machine. Do not describe
+an issue `In Progress` as a gestión `En Tramite`.
+
+## 11. Related docs
 
 - [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) — Cloud environment.json inputs + process learnings table
 - [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) — light CI false-positive; required terminal checks before merge
