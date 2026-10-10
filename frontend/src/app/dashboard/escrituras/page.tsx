@@ -137,7 +137,7 @@ export default function EscriturasPage() {
           aria-label={t("searchPlaceholder")}
           value={searchNumero}
           onChange={(e) => setSearchNumero(e.target.value)}
-          className="w-48"
+          className="w-full sm:w-48"
           type="number"
           data-testid="input-search-escritura"
         />
