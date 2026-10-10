@@ -87,9 +87,33 @@ The follow-up MUST:
 - Someone with release write access must publish the `docs-manuals` asset if it
   is not already present.
 
+## Pending Owner decision (#1261 / #1197 P0.6)
+
+The deferred history rewrite (Decision §2) and the largest tip-tree weight outside
+`docs/` are now tracked as issue **#1261**. Measured tip weight (2026-10-10,
+`workspace/ci/repo-metrics.py`): `deprecated/` ≈ **13.4 MB** / **767 files**;
+`docs/` ≈ 20 MB; always-loaded agent context ≈ 2k tokens (post-#1259).
+
+**Agents must not delete `deprecated/` or run `git filter-repo` until the Owner
+records a choice here.**
+
+| Option | Tip tree | History | Notes |
+|--------|----------|---------|-------|
+| **Option A** | Tag `archive-monorepo-pre-split`, remove `deprecated/` from tip | Keep historical blobs | Preferred size win without SHA churn |
+| **Option B** | Option A + `git filter-repo` purge | Rewrites SHAs; force-push `main` | Only with freeze window + re-clone notice (Decision §2 follow-up MUST list) |
+| **Option C** | Keep `deprecated/` | No change | Explicitly accept pack / tree cost |
+
+### Acceptance (when Owner chooses)
+
+1. Record the chosen option and date in this section (replace “Pending” with the decision).
+2. Capture before/after metrics via `python3 workspace/ci/repo-metrics.py --markdown …`.
+3. If A or B: one PR updates the tree, `test_repo_hygiene.py` guards, MODULE docs, and this ADR.
+
 ## Related
 
 - Issue #1050 (this change), CU76
+- Owner follow-up: #1261 (#1197 P0.6), ADR-024
 - Related cleanup: #585, #682
 - CODEOWNERS Swing removal already done under #1046 (verify-only here)
 - Spec: `docs/openspec/changes/chore-1050-repo-hygiene/`
+- Spec (decision packaging): `docs/openspec/changes/chore-1261-deprecated-owner-decision/`
