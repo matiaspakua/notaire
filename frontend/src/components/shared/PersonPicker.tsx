@@ -57,17 +57,20 @@ export function PersonPicker({
   const [known, setKnown] = useState<Persona | undefined>(selected);
 
   const debounced = useDebouncedValue(query, 250);
-  const searching = debounced.trim().length > 0;
+  const searching = query.trim().length > 0;
   const search = usePersonSearch(debounced, open);
   const recent = useRecentPersonas(open && !searching);
+  // While typing, list only the results of the text actually typed: never the
+  // newest people or an older query, so Enter cannot pick a stale option.
+  const settled = query === debounced && !search.isPlaceholderData && !search.isFetching;
 
   const knownMatches = (selected?.personId === value ? selected : undefined) ?? (known?.personId === value ? known : undefined);
   const loaded = usePersona(value, value != null && !knownMatches);
   const current = value == null ? undefined : knownMatches ?? loaded.data;
 
-  const source = searching ? search.data : recent.data?.content;
+  const source = searching ? (settled ? search.data : undefined) : recent.data?.content;
   const options = (source ?? []).filter((p) => !clientsOnly || p.isClient).slice(0, MAX_OPTIONS);
-  const pending = query !== debounced || (searching ? search.isFetching : recent.isLoading);
+  const pending = searching ? !settled : recent.isLoading;
   const failed = searching ? search.isError : recent.isError;
 
   function close() {
