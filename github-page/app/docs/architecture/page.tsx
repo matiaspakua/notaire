@@ -4,7 +4,7 @@ import { DOCS, SYSTEM_CONTEXT_CHART } from "@/lib/docs-content";
 const adrs = [
   {
     id: "022",
-    title: "Git history / large binaries — pending Owner decision (#1261)",
+    title: "Git history / large binaries — pending Owner decision (#1435)",
     file: "ADR-022-git-history-rewrite-and-large-binaries.md",
   },
   { id: "024", title: "Repository topology (Proposed)", file: "ADR-024-repository-topology.md" },
