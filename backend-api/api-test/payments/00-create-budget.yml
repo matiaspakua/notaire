@@ -17,7 +17,7 @@ http:
           "person": { "personId": 1 },
           "date": "2026-09-05",
           "encabezado": "Payments E2E budget",
-          "status": "Pendiente",
+          "status": "PENDIENTE",
           "propertyAmount": 10000.0,
           "notes": "created by the payments suite"
         }

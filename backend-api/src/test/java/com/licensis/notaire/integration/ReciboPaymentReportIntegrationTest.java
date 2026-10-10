@@ -64,7 +64,7 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
                   "fkIdPerson": {"personId": %d},
                   "date": "2026-09-05",
                   "encabezado": "Budget recibo E2E",
-                  "status": "Pending",
+                  "status": "PENDIENTE",
                   "propertyAmount": 10000.0
                 }
                 """.formatted(idPerson);

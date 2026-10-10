@@ -28,7 +28,7 @@ async function seedPresupuesto(
 
   const presupuestoResult = await createPresupuesto(page, idPersona, undefined, {
     propertyAmount: montoOverride,
-    status: "Pendiente",
+    status: "PENDIENTE",
   });
   expect(presupuestoResult.ok, `createPresupuesto failed: ${presupuestoResult.error}`).toBe(true);
   const idPresupuesto = presupuestoResult.data!.idBudget;

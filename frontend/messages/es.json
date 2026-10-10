@@ -646,11 +646,6 @@
       "tipoTramiteAyuda": "Carga los ítems de su plantilla en el nuevo presupuesto",
       "sinPlantilla": "Sin plantilla"
     },
-    "states": {
-      "borrador": "BORRADOR",
-      "aprobado": "APROBADO",
-      "rechazado": "RECHAZADO"
-    },
     "resumen": {
       "title": "Resumen financiero",
       "gestionSection": "Gestión y presupuesto",
@@ -688,7 +683,14 @@
       }
     },
     "itemsNotLoaded": "Presupuesto creado, pero el tipo de trámite no tiene plantilla: no se cargaron ítems",
-    "estadoFilter": "Filtrar por estado"
+    "estadoFilter": "Filtrar por estado",
+    "status": {
+      "BORRADOR": "Borrador",
+      "PENDIENTE": "Pendiente",
+      "APROBADO": "Aprobado",
+      "RECHAZADO": "Rechazado",
+      "FACTURADO": "Facturado"
+    }
   },
   "auditoria": {
     "title": "Auditoría",

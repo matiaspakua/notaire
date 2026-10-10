@@ -532,7 +532,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/presupuestos/buscar?estado=activo")).andExpect(status().isOk());
 
             String budgetBody = """
-                    {"number":1,"encabezado":"Test","status":"Pending","propertyAmount":10.0}
+                    {"number":1,"encabezado":"Test","status":"PENDIENTE","propertyAmount":10.0}
                     """;
             mvc.perform(post("/api/v1/presupuestos").contentType("application/json")
                     .content(budgetBody)).andExpect(status().isCreated());
