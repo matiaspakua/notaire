@@ -29,7 +29,9 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 
-    const tipoTramiteResult = await createTipoTramite(page);
+    // Own uniquely named type: `.last()` on a shared name raced with parallel tests.
+    const tipoTramiteName = `Tipo Items E2E ${Date.now()}`;
+    const tipoTramiteResult = await createTipoTramite(page, { name: tipoTramiteName });
     expect(tipoTramiteResult.ok).toBe(true);
     const idTipoTramite = tipoTramiteResult.data!.idProcedureType;
 
@@ -53,7 +55,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId("select-tipo-tramite-items").click();
-    await page.getByRole("option", { name: new RegExp(`Tipo Tramite E2E`, "i") }).last().click();
+    await page.getByRole("option", { name: tipoTramiteName }).click();
 
     // AND: carga los ítems de la plantilla
     await dialog.getByTestId("btn-cargar-plantilla").click();
