@@ -265,7 +265,7 @@ export default function PresupuestosPage() {
           value={searchPresupuesto}
           onChange={(e) => setSearchPresupuesto(e.target.value)}
           data-testid="input-search-presupuesto"
-          className="w-52"
+          className="w-full sm:w-52"
         />
         <Select value={filterEstado} onValueChange={setFilterEstado}>
           <SelectTrigger data-testid="select-estado" className="w-44">
