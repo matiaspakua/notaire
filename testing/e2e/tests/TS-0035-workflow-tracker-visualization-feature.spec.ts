@@ -4,6 +4,18 @@
  * Issue: #453
  */
 import { type Page, test, expect } from "@playwright/test";
+import { establishAdminBrowserSession } from "./setup/auth";
+import {
+  apiGet,
+  assignWorkflowToTipoTramite,
+  createCompleteCaseGestion,
+  createEstadoGestion,
+  createPersona,
+  createPresupuesto,
+  createTipoTramite,
+  createWorkflowDefinition,
+  createWorkflowNode,
+} from "./setup/api-helpers";
 
 async function loginAs(page: Page) {
   await page.goto("/login");
@@ -64,5 +76,45 @@ test.describe("Workflow hero section (CU70, CU71)", () => {
 
     const subtitle = page.getByTestId("workflow-subtitle");
     await expect(subtitle).toBeVisible();
+  });
+});
+
+// #1347: the hero follows the newest management with a workflow, not management 1001.
+test.describe("Workflow hero shows the newest case (#1347)", () => {
+  test("a case just created with a workflow (or a newer one) is shown, never the oldest", async ({ page }) => {
+    await establishAdminBrowserSession(page);
+    const person = await createPersona(page, { isClient: true });
+    expect(person.ok, person.error).toBe(true);
+    const budget = await createPresupuesto(page, person.data!.personId);
+    expect(budget.ok, budget.error).toBe(true);
+    // A self-contained one-node workflow, so the new case is traceable on any database.
+    const estado = await createEstadoGestion(page);
+    const workflow = await createWorkflowDefinition(page);
+    await createWorkflowNode(page, workflow.data!.id, estado.data!.idManagementStatus, "INITIAL");
+    const tipo = await createTipoTramite(page);
+    await assignWorkflowToTipoTramite(page, tipo.data!.idProcedureType, workflow.data!.id);
+    const gestion = await createCompleteCaseGestion(page, {
+      presupuestoId: budget.data!.idBudget,
+      tipoTramiteId: tipo.data!.idProcedureType,
+      estadoGestionId: estado.data!.idManagementStatus,
+    });
+    expect(gestion.ok, gestion.error).toBe(true);
+    const trace = await apiGet(page, `/gestiones/${gestion.data!.idManagement}/workflow-trace`);
+    expect(trace.ok, trace.error).toBe(true);
+
+    await page.goto("/dashboard");
+    const hero = page.getByTestId("workflow-hero");
+    await expect(page.getByTestId("workflow-tracker")).toBeVisible({ timeout: 15000 });
+    const shown = Number(await hero.getAttribute("data-management-id"));
+    // Parallel workers may create newer cases; the oldest (seed 1001) must never win.
+    expect(shown).toBeGreaterThanOrEqual(gestion.data!.idManagement);
+    await expect(page.getByTestId("workflow-subtitle")).toContainText("#");
+  });
+
+  test("the modules header has no dead 'view all' button", async ({ page }) => {
+    await establishAdminBrowserSession(page);
+    await page.goto("/dashboard");
+    await expect(page.getByTestId("workflow-hero")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("button", { name: /ver todos|view all/i })).toHaveCount(0);
   });
 });

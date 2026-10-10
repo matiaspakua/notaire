@@ -82,7 +82,6 @@
     "hello": "Hello",
     "today": "Today's activity summary",
     "availableModules": "Available modules",
-    "viewAll": "View all services",
     "accessDenied": "You do not have permission to access that administration section.",
     "workflowProgress": "Workflow progress",
     "workflow": {
@@ -114,7 +113,10 @@
         "timeline": "Testimony movements",
         "open": "open",
         "returnedObserved": "Returned observed"
-      }
+      },
+      "managementFallback": "Management #{number}",
+      "noRecentWorkflow": "None of the most recent managements has a workflow assigned.",
+      "openGestiones": "Open managements"
     },
     "gestiones": {
       "label": "Cases",
@@ -442,6 +444,7 @@
     "noData": "No payments registered",
     "emitirRecibo": "Issue receipt",
     "fields": {
+      "presupuesto": "Budget",
       "fecha": "Date",
       "monto": "Amount",
       "metodoPago": "Payment method",
@@ -1152,5 +1155,14 @@
     "recentHint": "Newest people. Type to search.",
     "clear": "Clear selection",
     "loadError": "Could not load the people list"
+  },
+  "budgetPicker": {
+    "placeholder": "Search by number, client or document…",
+    "searching": "Searching…",
+    "noResults": "No results",
+    "results": "{count} results",
+    "recentHint": "Newest budgets. Type to search.",
+    "clear": "Clear selection",
+    "loadError": "Could not load the budgets"
   }
 }

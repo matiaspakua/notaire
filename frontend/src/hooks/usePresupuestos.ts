@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { apiGet, apiGetPage, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { itemsKeys } from "@/hooks/useItems";
 import type { Item, Presupuesto, PresupuestoResumen } from "@/types";
 
@@ -31,13 +31,6 @@ export function usePresupuestoResumen(id: number | null) {
     queryKey: presupuestosKeys.resumen(id ?? 0),
     queryFn: () => apiGet<PresupuestoResumen>(`/presupuestos/${id}/resumen`),
     enabled: id !== null,
-  });
-}
-
-export function usePresupuestos() {
-  return useQuery({
-    queryKey: presupuestosKeys.all,
-    queryFn: () => apiGetPaged<Presupuesto>("/presupuestos"),
   });
 }
 

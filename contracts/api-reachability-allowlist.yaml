@@ -40,7 +40,6 @@ endpoints:
   "POST /api/v1/plantilla-tramite": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "DELETE /api/v1/plantilla-tramite/{idProcedureType}/{idDocumentType}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "PUT /api/v1/plantilla-tramite/{idProcedureType}/{idDocumentType}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
-  "GET /api/v1/presupuestos/persona/{idPerson}": "Likely redundant (#1250 bucket D): confirm, then remove with OpenAPI, Bruno and the CU-API matrix"
   "GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}": "API-only (#1250 bucket A, Owner decision 2026-10-09, #1363): in-house PDF since #567; the UI lists expiries on /dashboard/proximos-vencimientos and offers no download"
   "GET /api/v1/roles/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/suplencia/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"

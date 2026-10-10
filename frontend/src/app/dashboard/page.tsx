@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  ArrowRight,
   BookMarked,
   Building2,
   Calculator,
@@ -13,25 +12,21 @@ import {
   FolderKanban,
   ListTodo,
   ScrollText,
-  Search,
   Settings,
   ShieldCheck,
   UserRoundCog,
   Users,
 } from "lucide-react";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Stagger, StaggerItem, HoverLift } from "@/components/motion";
 import { useAuthStore } from "@/store/auth-store";
-import { useGestionesPage, useGestionByNumero } from "@/hooks/useGestiones";
+import { useGestionesPage } from "@/hooks/useGestiones";
 import { usePersonasPage } from "@/hooks/usePersonas";
 import { usePresupuestosPage } from "@/hooks/usePresupuestos";
-import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
-import WorkflowTracker from "@/components/motion/WorkflowTracker";
+import { WorkflowHero } from "@/components/workflow/WorkflowHero";
 import { theme } from "@/theme/tokens";
 import type { ComponentType } from "react";
 
@@ -62,88 +57,6 @@ const modules: Module[] = [
   { labelKey: "auditoria.label", descKey: "auditoria.description", href: "/dashboard/auditoria", icon: ShieldCheck, gradient: "from-slate-500 to-slate-600", adminOnly: true },
   { labelKey: "administracion.label", descKey: "administracion.description", href: "/dashboard/administracion", icon: Settings, gradient: "from-gray-500 to-gray-600", adminOnly: true },
 ];
-
-function WorkflowHero() {
-  const td = useTranslations("dashboard");
-  const tw = useTranslations("dashboard.workflow");
-  // The first management in backend order, as before, without loading the list (#1340).
-  // Not "newest first": the newest test or draft managements often have no workflow.
-  const { data: latestPage } = useGestionesPage({ page: 0, size: 1, sort: null });
-
-  const [refInput, setRefInput] = useState("");
-  const [searchedNumero, setSearchedNumero] = useState<number | undefined>();
-  const byNumero = useGestionByNumero(searchedNumero);
-
-  const latestGestionId = latestPage?.content[0]?.idManagement;
-  const targetGestionId = searchedNumero != null ? byNumero.data?.idManagement : latestGestionId;
-  const { data: trace, isLoading: traceLoading } = useGestionWorkflowTrace(targetGestionId);
-
-  const notFound = searchedNumero != null && byNumero.isError;
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const numero = Number.parseInt(refInput.trim(), 10);
-    setSearchedNumero(Number.isNaN(numero) ? undefined : numero);
-  }
-
-  return (
-    <section className="space-y-5 px-2" data-testid="workflow-hero">
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-            {td("workflowProgress")}
-          </h2>
-          {trace && (
-            <p className="text-sm text-muted-foreground mt-1" data-testid="workflow-subtitle">
-              {trace.encabezado ?? `Management #${trace.number}`}
-              {trace.statusActual && (
-                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                  {trace.statusActual}
-                </span>
-              )}
-            </p>
-          )}
-        </div>
-        <form onSubmit={handleSubmit} className="flex items-end gap-3" data-testid="workflow-search-form">
-          <div className="space-y-1.5">
-            <label
-              htmlFor="workflow-ref"
-              className="block text-sm font-semibold"
-              style={{ color: theme.colors.neutral[800] }}
-            >
-              {tw("searchLabel")}
-            </label>
-            <Input
-              id="workflow-ref"
-              type="number"
-              inputMode="numeric"
-              value={refInput}
-              onChange={(e) => setRefInput(e.target.value)}
-              placeholder={tw("searchPlaceholder")}
-              className="w-44"
-            />
-          </div>
-          <Button type="submit" variant="default" className="min-w-[120px]">
-            <Search className="h-4 w-4 mr-2" />
-            {tw("searchButton")}
-          </Button>
-        </form>
-      </div>
-
-      {notFound && (
-        <p role="alert" className="text-sm font-medium text-destructive" data-testid="workflow-not-found">
-          {tw("notFound")}
-        </p>
-      )}
-
-      {trace && !notFound && <WorkflowTracker trace={trace} />}
-
-      {traceLoading && (
-        <div className="h-[320px] bg-gray-50 rounded-[28px] animate-pulse" data-testid="workflow-skeleton" />
-      )}
-    </section>
-  );
-}
 
 function AccessDeniedBanner() {
   const td = useTranslations("dashboard");
@@ -232,9 +145,6 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between px-2">
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">{td("availableModules")}</h2>
-          <Button variant="link" className="text-primary-text font-semibold text-sm group">
-            {td("viewAll")} <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-          </Button>
         </div>
 
         <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

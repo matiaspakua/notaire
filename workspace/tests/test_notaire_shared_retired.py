@@ -51,6 +51,7 @@ DOCS_AS_NON_LIVE = (
     REPO_ROOT / "README.md",
     REPO_ROOT / "AGENTS.md",
     REPO_ROOT / "CLAUDE.md",
+    REPO_ROOT / "CONSTITUTION.md",
     REPO_ROOT / "backend-api" / "README.md",
     REPO_ROOT / "docs" / "300-development" / "301-setup" / "README.md",
     REPO_ROOT / "docs" / "300-development" / "302-code-standards" / "DTO-MAPPING-GUIDE.md",
