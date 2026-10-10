@@ -11,11 +11,11 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [x] 3.1 personas-search.test.tsx and TS-0015 #1357 observed failing before the change (test commit; Playwright saw 17 requests)
+- [x] 3.1 `personas-search.test.tsx` (5 failed) and TS-0015 `#1357` (17 requests instead of 1) observed failing before the change
 
 ## 4. Implementación
 
-- [x] 4.1 `useSearchPersonas` + page wiring
+- [x] 4.1 Minimal implementation (`useSearchPersonas`, page wiring)
 
 ## 5. Actualizar tests existentes
 
@@ -27,11 +27,11 @@
 
 ## 7. Ejecutar Playwright
 
-- [x] 7.1 TS-0015 (incl. #1357) and TS-0111 25/25, plus the chromium suite
+- [x] 7.1 TS-0015 and TS-0111 plus the chromium suite against the branch production build
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [x] 8.1 CHANGELOG; spec delta below
+- [x] 8.1 Documentation updated (see traceability)
 
 ## 9. Commits atómicos
 
@@ -39,4 +39,17 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 CI green and `sdlc/check-heavy-ci.sh` exit 0
+- [x] 10.1 Push and open PR (#1437)
+- [ ] 10.2 CI green and `workspace/sdlc/check-heavy-ci.sh 1437` exit 0
+
+## 11. Deploy
+
+- [ ] 11.1 Deploy
+
+## 12. Gate 5 — Smoke test y cierre
+
+- [ ] 12.1 Smoke test and close issue
+
+## Definition of Done
+
+- [ ] All gates passed

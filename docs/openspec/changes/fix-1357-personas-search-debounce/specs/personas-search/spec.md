@@ -1,10 +1,10 @@
-# ui-personas — delta
+# personas-search — delta
 
 ## Purpose
 
 Personas list search.
 
-## MODIFIED Requirements
+## ADDED Requirements
 
 ### Requirement: Personas search
 
