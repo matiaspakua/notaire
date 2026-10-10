@@ -30,7 +30,7 @@ Each item is one issue, one OpenSpec change, one PR, independent of the Owner's 
 | P0.3 | #1258 | Shard the Playwright suite across a matrix (3 shards) and merge reports | **Done** — squash-merged as #1425 (`d3eed416`); fail-closed `e2e-merge-reports` keeps check name `UI E2E Tests (Playwright)` |
 | P0.4 | #1259 | Move rules that are needed only for some areas out of the always-loaded imports (path-scoped guidance in `AGENTS.md`/skills); keep Constitution, workflow and general rules | **Done** — squash-merged as #1424 (`6e817569`); ~2k tokens via `agent-context-budget.py` |
 | P0.5 | #1260 | Generate TypeScript API types from `backend-api/openapi/openapi.yaml` (openapi-typescript), replace hand-written DTO types incrementally, CI fails on drift | **Done** — squash-merged as #1423 (`5fc5d635`); `api.generated.ts` + Frontend CI drift check |
-| P0.6 | #1435 (was #1261) | Owner decision on `deprecated/` (~767 files, 13.4 MB): archive behind tag `archive-monorepo-pre-split` and remove it from the tree; decide whether to run the history purge deferred by ADR-022 | **Waiting Owner on #1435** — ADR-022 §Pending lists Option A/B/C; packaging was #1429; #1261 auto-closed without a choice |
+| P0.6 | #1438 | Owner decision on `deprecated/` (~767 files, 13.4 MB): archive behind tag `archive-monorepo-pre-split` and remove it from the tree; decide whether to run the history purge deferred by ADR-022 | **Waiting Owner on #1438** — ADR-022 §Pending Option A/B/C; do not auto-close tracker |
 
 `LICENSE` (#1226) is a prerequisite for every extraction and tracked there.
 
@@ -179,7 +179,7 @@ and three or more repositories exist.
 | P0.3 E2E sharding | #1258 |
 | P0.4 agent context | #1259 |
 | P0.5 generated API types | #1260 |
-| P0.6 `deprecated/` and history purge decision | #1435 (was #1261) |
+| P0.6 `deprecated/` and history purge decision | #1438 |
 | `LICENSE` prerequisite | #1226 |
 | Testing standalone (phases 1 to 3) | #1190 |
 | Infra standalone | #1179 |
