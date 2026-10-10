@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
-import { AppSidebar } from "@/components/layout/AppSidebar";
+import { useTranslations } from "next-intl";
+import { AppSidebar, MOBILE_SIDEBAR_ID } from "@/components/layout/AppSidebar";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { useAuthStore } from "@/store/auth-store";
 import { AnimatePresence, PageTransition } from "@/components/motion";
@@ -18,6 +19,7 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const tn = useTranslations("navigation");
   // Delay auth check until after client hydration so Zustand can read localStorage.
   // Without this, the layout redirects before persist has loaded the stored auth state.
   const [mounted, setMounted] = useState(false);
@@ -34,6 +36,14 @@ export default function DashboardLayout({
     }
   }, [mounted, isAuthenticated, router]);
 
+  // The sheet is mobile-only: close it if the viewport grows to the desktop layout.
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const onChange = (e: MediaQueryListEvent) => { if (e.matches) setSidebarOpen(false); };
+    desktop.addEventListener("change", onChange);
+    return () => desktop.removeEventListener("change", onChange);
+  }, []);
+
   if (!mounted || !isAuthenticated) return null;
 
   return (
@@ -49,7 +59,9 @@ export default function DashboardLayout({
           <button
             data-testid="btn-sidebar-toggle"
             onClick={() => setSidebarOpen(true)}
-            aria-label="Open menu"
+            aria-label={tn("openMenu")}
+            aria-expanded={sidebarOpen}
+            aria-controls={MOBILE_SIDEBAR_ID}
             className="md:hidden flex items-center justify-center w-9 h-9 rounded-[10px] border border-border/60 text-foreground hover:bg-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
