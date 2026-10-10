@@ -77,7 +77,8 @@
     "errors": {
       "inUse": "No se puede eliminar: el registro está en uso por otros registros.",
       "notFound": "El registro ya no existe. Actualice la lista."
-    }
+    },
+    "languageSelector": "Selector de idioma"
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -273,7 +274,8 @@
       "inmueble": "Inmueble",
       "encabezado": "Carátula",
       "inicio": "Inicio",
-      "tramites": "Trámites"
+      "tramites": "Trámites",
+      "numeroPlaceholder": "Ej: 1001"
     },
     "resumen": {
       "action": "Resumen del caso",
@@ -306,7 +308,11 @@
       "entregado": "entregado",
       "reingresado": "reingresado"
     },
-    "clienteFilter": "Filtrar por cliente"
+    "clienteFilter": "Filtrar por cliente",
+    "selectEstado": "Seleccionar estado...",
+    "selectTramite": "Seleccionar trámite...",
+    "selectInmueble": "Seleccionar inmueble...",
+    "inmuebleFallback": "Inmueble #{id}"
   },
   "escrituras": {
     "title": "Escrituras",
@@ -331,7 +337,8 @@
       "estado": "Estado",
       "observaciones": "Observaciones",
       "folio": "Folio"
-    }
+    },
+    "folioOption": "Folio #{id} — {type}"
   },
   "testimonios": {
     "title": "Testimonios",
@@ -462,7 +469,13 @@
     },
     "estadoSinPagos": "Sin pagos",
     "estadoParcial": "Parcialmente abonado",
-    "estadoSaldado": "Saldado"
+    "estadoSaldado": "Saldado",
+    "saldo": {
+      "loading": "Cargando saldo...",
+      "pending": "Saldo Pendiente",
+      "summary": "Presupuestado: {budgeted} | Pagado: {paid}",
+      "error": "No se pudo cargar el saldo. Intenta nuevamente."
+    }
   },
   "protocolo": {
     "title": "Protocolo",
@@ -507,6 +520,23 @@
         "folio": "Folio",
         "cuerpo": "Cuerpo"
       }
+    },
+    "reportDownloaded": "Reporte descargado",
+    "available": "Disponible",
+    "inUse": "En uso",
+    "reports": {
+      "libroIndice": {
+        "button": "Libro de Índices",
+        "title": "Generar Libro de Índices"
+      },
+      "ddjjMensual": {
+        "button": "DDJJ Mensual",
+        "title": "Generar Declaración Jurada Mensual"
+      },
+      "ddjjRentas": {
+        "button": "DDJJ Rentas",
+        "title": "Generar Declaración Jurada de Rentas"
+      }
     }
   },
   "inmuebles": {
@@ -527,7 +557,11 @@
       "observaciones": "Observaciones",
       "matricula": "Matrícula",
       "tomoFolioFinca": "Tomo/Folio/Finca",
-      "linderos": "Linderos"
+      "linderos": "Linderos",
+      "nomenclatura": "Nomenclatura Catastral",
+      "nomenclaturaPlaceholder": "Ej: 01-02-03-04-05",
+      "tomoFolioFincaPlaceholder": "T1-F2-FN3",
+      "linderosPlaceholder": "Norte, Sur, Este, Oeste"
     }
   },
   "minutasInscripcion": {
@@ -575,7 +609,16 @@
     "deleted": "Copia eliminada",
     "errorSave": "Error al guardar",
     "errorDelete": "Error al eliminar",
-    "noData": "No hay copias registradas"
+    "noData": "No hay copias registradas",
+    "columns": {
+      "fechaImpresion": "Fecha Impresión",
+      "fechaRetiro": "Fecha Retiro",
+      "testimonio": "Testimonio"
+    },
+    "fields": {
+      "fechaImpresion": "Fecha de Impresión",
+      "fechaRetiro": "Fecha de Retiro"
+    }
   },
   "items": {
     "title": "Ítems de Presupuesto",
@@ -628,7 +671,8 @@
     "gestionHelper": "Obligatorio: el documento se presenta para un trámite de la gestión",
     "selectGestion": "Seleccionar gestión",
     "selectTramite": "Seleccionar trámite",
-    "sinTramites": "La gestión no tiene trámites: agregue uno antes de registrar el documento"
+    "sinTramites": "La gestión no tiene trámites: agregue uno antes de registrar el documento",
+    "selectTipo": "Seleccionar tipo"
   },
   "presupuestos": {
     "title": "Presupuestos",
@@ -763,7 +807,13 @@
         "nombre": "Nombre",
         "contrasenia": "Contraseña",
         "contraseniaHint": "Dejar vacío para no cambiar",
-        "tipo": "Tipo"
+        "tipo": "Tipo",
+        "rol": "Rol",
+        "nuevaContrasenia": "Nueva contraseña",
+        "rolAcceso": "Rol de acceso",
+        "rolAccesoHint": "Permisos de módulos del sistema",
+        "sinRolAsignado": "Sin rol asignado",
+        "sinRol": "Sin rol"
       },
       "roles": {
         "admin": "ADMINISTRADOR",
@@ -787,7 +837,9 @@
       "nameRequired": "El nombre es obligatorio",
       "fields": {
         "nombre": "Nombre",
-        "descripcion": "Descripción"
+        "descripcion": "Descripción",
+        "valorBase": "Valor base",
+        "valorBaseInput": "Valor base ($)"
       }
     },
     "documentos": {
@@ -879,7 +931,8 @@
         "noData": "No hay tipos de folio",
         "esAuxiliar": "Protocolo Auxiliar"
       },
-      "estadoFilter": "Filtrar por estado"
+      "estadoFilter": "Filtrar por estado",
+      "escrituraOption": "Escritura Nº {number}"
     },
     "tramites": {
       "title": "Tipos de Trámite",
@@ -899,7 +952,11 @@
         "nombre": "Nombre",
         "namePlaceholder": "Ej: Compraventa",
         "descripcion": "Descripción",
-        "descripcionPlaceholder": "Descripción del tipo de trámite"
+        "descripcionPlaceholder": "Descripción del tipo de trámite",
+        "workflow": "Workflow",
+        "seArchiva": "Se archiva",
+        "seInscribe": "Se inscribe",
+        "sinWorkflow": "— Sin workflow —"
       }
     },
     "plantillas": {
@@ -1170,5 +1227,50 @@
     "recentHint": "Presupuestos más recientes. Escriba para buscar.",
     "clear": "Quitar selección",
     "loadError": "No se pudo cargar la lista de presupuestos"
+  },
+  "breadcrumb": {
+    "label": "Ruta de navegación",
+    "segments": {
+      "dashboard": "Inicio",
+      "auditoria": "Auditoría",
+      "items": "Items",
+      "escrituras": "Escrituras",
+      "movimientosTestimonio": "Movimientos de Testimonio",
+      "reportes": "Reportes",
+      "minutasInscripcion": "Minutas de Inscripción",
+      "testimonios": "Testimonios",
+      "documentos": "Documentos",
+      "gestiones": "Gestiones",
+      "personas": "Personas",
+      "presupuestos": "Presupuestos",
+      "pagos": "Pagos",
+      "documentosNecesarios": "Documentos Necesarios",
+      "suplencias": "Suplencias",
+      "proximosVencimientos": "Próximos Vencimientos",
+      "reingresoDocumentacion": "Reingresar Documentación",
+      "copias": "Copias",
+      "protocolo": "Protocolo",
+      "cuadernos": "Cuadernos de Folios",
+      "auxiliar": "Protocolo Auxiliar",
+      "documentosEntidadesExternas": "Documentación de Entidades Externas",
+      "administracion": "Administración",
+      "inmuebles": "Inmuebles"
+    },
+    "admin": {
+      "roles": "Roles y Permisos",
+      "auditoria": "Auditoría",
+      "items": "Items",
+      "documentos": "Tipos de Documento",
+      "tramites": "Tipos de Trámite",
+      "workflows": "Workflows",
+      "plantillas": "Plantillas Presupuesto",
+      "conceptos": "Conceptos",
+      "estadosGestion": "Estados de Gestión",
+      "folios": "Folios",
+      "usuarios": "Usuarios"
+    }
+  },
+  "workflowViewer": {
+    "empty": "Sin nodos. Agrega estados al workflow."
   }
 }

@@ -202,7 +202,7 @@ function EscriturasList() {
                   <SelectContent>
                     {folios.filter(f => f.status === "Nuevo").map(f => (
                       <SelectItem key={f.idFolio} value={String(f.idFolio)}>
-                        Folio #{f.idFolio} — {f.fkIdFolioType?.name ?? "—"}
+                        {t("folioOption", { id: f.idFolio ?? "—", type: f.fkIdFolioType?.name ?? "—" })}
                       </SelectItem>
                     ))}
                   </SelectContent>

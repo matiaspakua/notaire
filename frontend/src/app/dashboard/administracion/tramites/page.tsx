@@ -105,7 +105,7 @@ export default function TramitesPage() {
     { key: "id", header: tc("id"), render: (item) => <span className="text-xs text-muted-foreground">{item.idProcedureType}</span>, className: "w-12" },
     { key: "nombre", header: t("fields.nombre"), render: (item) => <span className="font-medium">{item.name}</span> },
     { key: "desc", header: t("fields.descripcion"), render: (item) => item.notes ?? "—" },
-    { key: "workflow", header: "Workflow", render: (item) => item.workflowDefinitionName ? <span className="text-xs text-muted-foreground">{item.workflowDefinitionName}</span> : <span className="text-xs text-muted-foreground">—</span> },
+    { key: "workflow", header: t("fields.workflow"), render: (item) => item.workflowDefinitionName ? <span className="text-xs text-muted-foreground">{item.workflowDefinitionName}</span> : <span className="text-xs text-muted-foreground">—</span> },
     {
       key: "actions", header: "", className: "w-24",
       render: (item) => (
@@ -171,23 +171,23 @@ export default function TramitesPage() {
                 />
               </FormField>
               <CheckboxField
-                label="Se archiva"
+                label={t("fields.seArchiva")}
                 checked={editing.isArchived ?? false}
                 onChange={(v) => setEditing({ ...editing, isArchived: v })}
               />
               <CheckboxField
-                label="Se inscribe"
+                label={t("fields.seInscribe")}
                 checked={editing.isRegistered ?? false}
                 onChange={(v) => setEditing({ ...editing, isRegistered: v })}
               />
-              <FormField label="Workflow">
+              <FormField label={t("fields.workflow")}>
                 <select
                   className="w-full h-12 rounded-xl border border-neutral-300 px-3 text-sm bg-white"
                   value={selectedWorkflowId}
                   onChange={(e) => setSelectedWorkflowId(e.target.value)}
                   data-testid="select-workflow-tramite"
                 >
-                  <option value="">— Sin workflow —</option>
+                  <option value="">{t("fields.sinWorkflow")}</option>
                   {workflows.filter((w) => w.active).map((w) => (
                     <option key={w.id} value={String(w.id)}>{w.name}</option>
                   ))}

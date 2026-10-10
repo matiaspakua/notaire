@@ -94,7 +94,7 @@ export default function ConceptosPage() {
   const columns: Column<Concepto>[] = [
     { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idConcept}</span>, className: "w-12" },
     { key: "nombre", header: t("fields.nombre"), render: (c) => <span className="font-medium">{c.name}</span> },
-    { key: "valor", header: "Valor base", render: (c) => formatCurrency(c.value) },
+    { key: "valor", header: t("fields.valorBase"), render: (c) => formatCurrency(c.value) },
     {
       key: "actions", header: "", className: "w-24",
       render: (c) => (
@@ -138,7 +138,7 @@ export default function ConceptosPage() {
                   data-testid="input-nombre-concepto"
                 />
               </FormField>
-              <FormField label="Valor base ($)">
+              <FormField label={t("fields.valorBaseInput")}>
                 <Input
                   type="number"
                   step="0.01"

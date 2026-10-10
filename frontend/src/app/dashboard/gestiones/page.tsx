@@ -407,7 +407,7 @@ function GestionesList() {
                   type="number"
                   value={numero}
                   onChange={(e) => setNumero(e.target.value)}
-                  placeholder="Ej: 1001"
+                  placeholder={t("fields.numeroPlaceholder")}
                   data-testid="input-numero-gestion"
                 />
               </FormField>
@@ -432,20 +432,20 @@ function GestionesList() {
                   </FormField>
                   <FormField label={t("fields.estado")} required>
                     <Select value={estadoId} onValueChange={setEstadoId}>
-                      <SelectTrigger data-testid="select-estado-gestion"><SelectValue placeholder="Seleccionar estado..." /></SelectTrigger>
+                      <SelectTrigger data-testid="select-estado-gestion"><SelectValue placeholder={t("selectEstado")} /></SelectTrigger>
                       <SelectContent>{estados.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.tipo")} required>
                     <Select value={tipoTramiteId} onValueChange={setTipoTramiteId}>
-                      <SelectTrigger data-testid="select-tipo-tramite-gestion"><SelectValue placeholder="Seleccionar trámite..." /></SelectTrigger>
+                      <SelectTrigger data-testid="select-tipo-tramite-gestion"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
                       <SelectContent>{tiposTramite.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.inmueble")}>
                     <Select value={inmuebleId} onValueChange={setInmuebleId}>
-                      <SelectTrigger data-testid="select-inmueble-gestion"><SelectValue placeholder="Seleccionar inmueble..." /></SelectTrigger>
-                      <SelectContent>{inmuebles.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? `Inmueble #${i.idProperty}`}</SelectItem>)}</SelectContent>
+                      <SelectTrigger data-testid="select-inmueble-gestion"><SelectValue placeholder={t("selectInmueble")} /></SelectTrigger>
+                      <SelectContent>{inmuebles.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? t("inmuebleFallback", { id: i.idProperty ?? "—" })}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                 </>

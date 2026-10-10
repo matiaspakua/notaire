@@ -1,5 +1,6 @@
 "use client";
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import {
   ReactFlow,
   Background,
@@ -63,7 +64,7 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
         className="flex items-center justify-center h-64 rounded-xl border border-dashed border-neutral-300 text-muted-foreground text-sm"
         data-testid={testId}
       >
-        Sin nodos. Agrega estados al workflow.
+        <WorkflowViewerEmpty />
       </div>
     );
   }
@@ -91,4 +92,9 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
       </ReactFlow>
     </div>
   );
+}
+
+function WorkflowViewerEmpty() {
+  const t = useTranslations("workflowViewer");
+  return <>{t("empty")}</>;
 }

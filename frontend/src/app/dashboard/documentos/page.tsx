@@ -138,7 +138,7 @@ export default function DocumentosPage() {
           ) : (
             <XCircle className="h-4 w-4 text-muted-foreground/40" />
           )}
-          <span className="text-sm">{d.delivered ? "Sí" : "No"}</span>
+          <span className="text-sm">{d.delivered ? tc("yes") : tc("no")}</span>
         </span>
       ),
       className: "w-28",
@@ -193,7 +193,7 @@ export default function DocumentosPage() {
               <FormField label={tc("type")} required={!editing}>
                 <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
                   <SelectTrigger data-testid="select-tipo-documento">
-                    <SelectValue placeholder="Seleccionar tipo" />
+                    <SelectValue placeholder={t("selectTipo")} />
                   </SelectTrigger>
                   <SelectContent>
                     {tiposDoc.map((tipo) => (

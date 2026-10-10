@@ -77,7 +77,8 @@
     "errors": {
       "inUse": "Cannot be deleted: the record is still used by other records.",
       "notFound": "The record no longer exists. Refresh the list."
-    }
+    },
+    "languageSelector": "Language selector"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -273,7 +274,8 @@
       "inmueble": "Property",
       "encabezado": "Case title",
       "inicio": "Started",
-      "tramites": "Procedures"
+      "tramites": "Procedures",
+      "numeroPlaceholder": "e.g. 1001"
     },
     "resumen": {
       "action": "Case summary",
@@ -306,7 +308,11 @@
       "entregado": "delivered",
       "reingresado": "re-entered"
     },
-    "clienteFilter": "Filter by client"
+    "clienteFilter": "Filter by client",
+    "selectEstado": "Select status...",
+    "selectTramite": "Select procedure...",
+    "selectInmueble": "Select property...",
+    "inmuebleFallback": "Property #{id}"
   },
   "escrituras": {
     "title": "Deeds",
@@ -331,7 +337,8 @@
       "estado": "Status",
       "observaciones": "Observations",
       "folio": "Folio"
-    }
+    },
+    "folioOption": "Folio #{id} — {type}"
   },
   "testimonios": {
     "title": "Testimonios",
@@ -462,7 +469,13 @@
     },
     "estadoSinPagos": "No payments",
     "estadoParcial": "Partially paid",
-    "estadoSaldado": "Fully paid"
+    "estadoSaldado": "Fully paid",
+    "saldo": {
+      "loading": "Loading balance...",
+      "pending": "Outstanding Balance",
+      "summary": "Budgeted: {budgeted} | Paid: {paid}",
+      "error": "Couldn't load the balance. Please try again."
+    }
   },
   "protocolo": {
     "title": "Protocol",
@@ -507,6 +520,23 @@
         "folio": "Folio",
         "cuerpo": "Body"
       }
+    },
+    "reportDownloaded": "Report downloaded",
+    "available": "Available",
+    "inUse": "In use",
+    "reports": {
+      "libroIndice": {
+        "button": "Index Book",
+        "title": "Generate Index Book"
+      },
+      "ddjjMensual": {
+        "button": "Monthly Affidavit",
+        "title": "Generate Monthly Affidavit"
+      },
+      "ddjjRentas": {
+        "button": "Revenue Affidavit",
+        "title": "Generate Revenue Affidavit"
+      }
     }
   },
   "inmuebles": {
@@ -527,7 +557,11 @@
       "observaciones": "Observations",
       "matricula": "Registration number",
       "tomoFolioFinca": "Volume/Page/Property",
-      "linderos": "Boundaries"
+      "linderos": "Boundaries",
+      "nomenclatura": "Cadastral Designation",
+      "nomenclaturaPlaceholder": "e.g. 01-02-03-04-05",
+      "tomoFolioFincaPlaceholder": "V1-F2-P3",
+      "linderosPlaceholder": "North, South, East, West"
     }
   },
   "minutasInscripcion": {
@@ -575,7 +609,16 @@
     "deleted": "Copy deleted",
     "errorSave": "Error saving",
     "errorDelete": "Error deleting",
-    "noData": "No copies registered"
+    "noData": "No copies registered",
+    "columns": {
+      "fechaImpresion": "Print date",
+      "fechaRetiro": "Pickup date",
+      "testimonio": "Testimonio"
+    },
+    "fields": {
+      "fechaImpresion": "Print date",
+      "fechaRetiro": "Pickup date"
+    }
   },
   "items": {
     "title": "Budget Items",
@@ -628,7 +671,8 @@
     "gestionHelper": "Required: the document is presented for a procedure of the management",
     "selectGestion": "Select management",
     "selectTramite": "Select procedure",
-    "sinTramites": "The management has no procedures: add one before registering the document"
+    "sinTramites": "The management has no procedures: add one before registering the document",
+    "selectTipo": "Select type"
   },
   "presupuestos": {
     "title": "Quotes",
@@ -763,7 +807,13 @@
         "nombre": "Name",
         "contrasenia": "Password",
         "contraseniaHint": "Leave empty to keep current",
-        "tipo": "Type"
+        "tipo": "Type",
+        "rol": "Role",
+        "nuevaContrasenia": "New password",
+        "rolAcceso": "Access role",
+        "rolAccesoHint": "System module permissions",
+        "sinRolAsignado": "No role assigned",
+        "sinRol": "No role"
       },
       "roles": {
         "admin": "ADMINISTRATOR",
@@ -787,7 +837,9 @@
       "nameRequired": "Name is required",
       "fields": {
         "nombre": "Name",
-        "descripcion": "Description"
+        "descripcion": "Description",
+        "valorBase": "Base value",
+        "valorBaseInput": "Base value ($)"
       }
     },
     "documentos": {
@@ -879,7 +931,8 @@
         "noData": "No folio types",
         "esAuxiliar": "Protocolo Auxiliar"
       },
-      "estadoFilter": "Filter by status"
+      "estadoFilter": "Filter by status",
+      "escrituraOption": "Deed No. {number}"
     },
     "tramites": {
       "title": "Case Types",
@@ -899,7 +952,11 @@
         "nombre": "Name",
         "namePlaceholder": "E.g.: Sale",
         "descripcion": "Description",
-        "descripcionPlaceholder": "Case type description"
+        "descripcionPlaceholder": "Case type description",
+        "workflow": "Workflow",
+        "seArchiva": "Is archived",
+        "seInscribe": "Is registered",
+        "sinWorkflow": "— No workflow —"
       }
     },
     "plantillas": {
@@ -1170,5 +1227,50 @@
     "recentHint": "Newest budgets. Type to search.",
     "clear": "Clear selection",
     "loadError": "Could not load the budgets"
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "segments": {
+      "dashboard": "Home",
+      "auditoria": "Audit",
+      "items": "Items",
+      "escrituras": "Deeds",
+      "movimientosTestimonio": "Testimonio Movements",
+      "reportes": "Reports",
+      "minutasInscripcion": "Registration Memoranda",
+      "testimonios": "Testimonios",
+      "documentos": "Documents",
+      "gestiones": "Cases",
+      "personas": "People",
+      "presupuestos": "Quotes",
+      "pagos": "Payments",
+      "documentosNecesarios": "Required Documents",
+      "suplencias": "Substitutions",
+      "proximosVencimientos": "Upcoming Expirations",
+      "reingresoDocumentacion": "Re-submit Documentation",
+      "copias": "Copies",
+      "protocolo": "Protocol",
+      "cuadernos": "Folio Notebooks",
+      "auxiliar": "Auxiliary Protocol",
+      "documentosEntidadesExternas": "External Entity Documentation",
+      "administracion": "Administration",
+      "inmuebles": "Properties"
+    },
+    "admin": {
+      "roles": "Roles & Permissions",
+      "auditoria": "Audit",
+      "items": "Items",
+      "documentos": "Document Types",
+      "tramites": "Case Types",
+      "workflows": "Workflows",
+      "plantillas": "Quote Templates",
+      "conceptos": "Concepts",
+      "estadosGestion": "Case Statuses",
+      "folios": "Folios",
+      "usuarios": "Users"
+    }
+  },
+  "workflowViewer": {
+    "empty": "No nodes. Add statuses to the workflow."
   }
 }
