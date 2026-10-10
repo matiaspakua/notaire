@@ -28,7 +28,7 @@ infra/
 | Grafana | dashboards over Prometheus and Loki | 3001 |
 | Loki + Promtail | structured JSON log storage and Docker log shipping | 3100 |
 | PostgreSQL exporter | database metrics for Prometheus | 9187 |
-| SonarQube CE (+ own database) | static analysis of the backend | 9000 |
+| SonarQube CE (+ own database) | static analysis of backend and frontend, quality gate "Notaire way" | 9000 |
 | Homer | landing page linking every service | 8888 |
 
 Jenkins, Nexus and Dependency-Track were removed in 2026-06: not wired to the

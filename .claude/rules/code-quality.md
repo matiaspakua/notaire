@@ -13,6 +13,7 @@ The project uses the following code quality tools:
 | **Checkstyle** | Code style enforcement | `checkstyle.xml` |
 | **SpotBugs** | Static bug detection | `spotbugs-exclude.xml` |
 | **Trivy** | Vulnerability scanning | Built-in |
+| **SonarQube** | Backend + frontend analysis, quality gate on new code (`bash infra/scripts/run-sonar.sh`) | `backend-api/pom.xml`, `frontend/sonar-project.properties` |
 
 ## JaCoCo - Code Coverage
 

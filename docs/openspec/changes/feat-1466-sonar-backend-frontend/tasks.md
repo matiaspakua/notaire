@@ -17,27 +17,27 @@
 
 ## 3. Gate 2 — Write tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate cases from the spec scenarios
-- [ ] 3.2 Write `infra/tests/test_sonar_analysis.py`
-- [ ] 3.3 Run it and observe it fail
-- [ ] 3.4 Every scenario maps to a test (`traceability.md`)
+- [x] 3.1 Enumerate cases from the spec scenarios
+- [x] 3.2 Write `infra/tests/test_sonar_analysis.py`
+- [x] 3.3 Run it and observe it fail
+- [x] 3.4 Every scenario maps to a test (`traceability.md`)
 
 ## 4. Implementation
 
-- [ ] 4.1 Backend `sonar.*` properties in `backend-api/pom.xml`
-- [ ] 4.2 `frontend/sonar-project.properties`, Vitest lcov and ESLint JSON report scripts
-- [ ] 4.3 Extend `infra/scripts/run-sonar.sh` (both projects, quality gate, new-code period, wait)
-- [ ] 4.4 Register the guard in `infra/verify.sh`
+- [x] 4.1 Backend `sonar.*` properties in `backend-api/pom.xml`
+- [x] 4.2 `frontend/sonar-project.properties`, Vitest lcov and ESLint JSON report scripts
+- [x] 4.3 Extend `infra/scripts/run-sonar.sh` (both projects, quality gate, new-code period, wait)
+- [x] 4.4 Register the guard in `infra/verify.sh`
 
 ## 5. Update existing tests
 
-- [ ] 5.1 Existing `infra/tests/test_*.py` still pass
+- [x] 5.1 Existing `infra/tests/test_*.py` still pass
 
 ## 6. Run regression
 
-- [ ] 6.1 `bash infra/verify.sh`
+- [x] 6.1 `bash infra/verify.sh`
 - [ ] 6.2 `bash workspace/sdlc/preflight.sh`
-- [ ] 6.3 Live run of `bash infra/scripts/run-sonar.sh`
+- [x] 6.3 Live run of `bash infra/scripts/run-sonar.sh`
 
 ## 7. Playwright
 
@@ -45,9 +45,9 @@
 
 ## 8. Gate 3 — Update permanent documentation
 
-- [ ] 8.1 `infra/docs/OPERATION.md`
-- [ ] 8.2 `infra/docs/DEFINITION.md`
-- [ ] 8.3 `.claude/rules/code-quality.md`
+- [x] 8.1 `infra/docs/OPERATION.md`
+- [x] 8.2 `infra/docs/DEFINITION.md`
+- [x] 8.3 `.claude/rules/code-quality.md`
 
 ## 9. Atomic commits
 
