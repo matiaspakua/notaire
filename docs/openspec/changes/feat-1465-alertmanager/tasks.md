@@ -17,27 +17,27 @@
 
 ## 3. Gate 2 — Write tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate cases from the spec scenarios
-- [ ] 3.2 Write `infra/tests/test_alertmanager.py`
-- [ ] 3.3 Run it and observe it fail
-- [ ] 3.4 Every scenario maps to a test (`traceability.md`)
+- [x] 3.1 Enumerate cases from the spec scenarios
+- [x] 3.2 Write `infra/tests/test_alertmanager.py`
+- [x] 3.3 Run it and observe it fail
+- [x] 3.4 Every scenario maps to a test (`traceability.md`)
 
 ## 4. Implementation
 
-- [ ] 4.1 Alertmanager service and config, Prometheus wiring
-- [ ] 4.2 Alert rules file `alert-rules-stack.yml`
-- [ ] 4.3 Grafana Alertmanager datasource
-- [ ] 4.4 Register the guard in `infra/verify.sh`
+- [x] 4.1 Alertmanager service and config, Prometheus wiring
+- [x] 4.2 Alert rules file `alert-rules-stack.yml`
+- [x] 4.3 Grafana Alertmanager datasource
+- [x] 4.4 Register the guard in `infra/verify.sh`
 
 ## 5. Update existing tests
 
-- [ ] 5.1 Existing `infra/tests/test_*.py` still pass
+- [x] 5.1 Existing `infra/tests/test_*.py` still pass
 
 ## 6. Run regression
 
-- [ ] 6.1 `bash infra/verify.sh`
+- [x] 6.1 `bash infra/verify.sh`
 - [ ] 6.2 `bash workspace/sdlc/preflight.sh`
-- [ ] 6.3 Live fire test: stop a service, alert fires in Alertmanager, then resolves
+- [x] 6.3 Live fire test: stop a service, alert fires in Alertmanager, then resolves
 
 ## 7. Playwright
 
@@ -45,9 +45,9 @@
 
 ## 8. Gate 3 — Update permanent documentation
 
-- [ ] 8.1 `ADR-016-observability-stack.md`
-- [ ] 8.2 `infra/docs/DEFINITION.md`
-- [ ] 8.3 `docs/200-architecture/207-monitoring/README.md`
+- [x] 8.1 `ADR-016-observability-stack.md`
+- [x] 8.2 `infra/docs/DEFINITION.md`
+- [x] 8.3 `docs/200-architecture/207-monitoring/README.md`
 
 ## 9. Atomic commits
 

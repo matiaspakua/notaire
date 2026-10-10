@@ -81,6 +81,12 @@ OTLP export needs both `micrometer-registry-otlp` and `spring-boot-opentelemetry
 the collector, which forwards them to Tempo. In Grafana, Explore -> Tempo finds traces by service/name; a trace links to
 its Loki logs by `service`. Frontend spans are not instrumented yet.
 
+**Alerting:** Prometheus evaluates `alert-rules.yml` and `alert-rules-stack.yml` and sends firing alerts to Alertmanager
+(http://localhost:9093). Catalogue: `ServiceDown` and `TargetDown` (availability), `HighHttp5xxRatio`, `HighApiLatency`,
+`HighJvmHeapUsage`, `HighDatabaseConnections`, `ConnectionPoolSaturated`, `HostMemoryLow`, `HostDiskLow`, plus the login
+alerts. Each carries `severity`, `summary` and `description`. There are no per-container alerts: cAdvisor on Docker Desktop
+reports cgroup ids without container names. No external notification channel is configured.
+
 **Overview dashboards (start here):** `notaire-stack-status` (every service in the stack) and
 `notaire-status` (Notaire only). Both show availability from blackbox probes, firing alerts and recent
 errors, and link to the specialist dashboards below.

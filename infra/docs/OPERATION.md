@@ -38,6 +38,8 @@ curl http://localhost:9187/metrics | head
   (API/JVM: backend, DB: PostgreSQL, logins: auth, error evidence: logs).
   Status tiles come from blackbox probes (reachability, not a business transaction);
   a probe that is `0` for 2 minutes fires `ServiceDown`.
+- Alerts: http://localhost:9093 (Alertmanager) lists firing alerts grouped by alert and service; silence one there
+  with `amtool` or the UI. Prometheus' own view is http://localhost:9090/alerts.
 - Backend: http://localhost:3001/d/notaire-backend
 - PostgreSQL: http://localhost:3001/d/notaire-postgres
 - Auth and security: http://localhost:3001/d/notaire-auth
