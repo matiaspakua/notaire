@@ -57,6 +57,20 @@ class Adr024OwnerTrackerTest(unittest.TestCase):
                 f"Pages Architecture must deep-link issue #{num}",
             )
 
+    def test_pages_architecture_surfaces_phase0_done_and_metrics(self):
+        """Owner pack must show Phase 0 done and link the metrics baseline."""
+        with open(PAGES_ARCH, encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertIn("P0.1–P0.5 Done", text)
+        self.assertIn("REPO-METRICS-BASELINE.md", text)
+        self.assertIn("6/17", text)
+
+    def test_adr024_records_current_path_scoping_baseline(self):
+        with open(ADR_024, encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertRegex(text, r"6/17|6 of 17")
+        self.assertIn("dorny/paths-filter", text)
+
 
 if __name__ == "__main__":
     unittest.main()
