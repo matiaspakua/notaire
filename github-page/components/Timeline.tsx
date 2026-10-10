@@ -74,6 +74,18 @@ const events = [
     commits: 524,
     side: "right",
   },
+  {
+    year: "2026",
+    month: "September–October",
+    title: "Cloud AI SDLC",
+    subtitle: "Autonomous Delivery Fleet",
+    desc: "Cursor Cloud agents took the CONSTITUTION from paper to practice: OpenSpec Gate 1, TDD-first PRs, heavy-CI merge gates (Bruno + Playwright + coverage), Flyway as the sole schema source, and continuous Englishize hygiene. The Delivery Board stayed the single work queue while multi-slice API validation and UI/UX audits shipped in serial heavy-green merges.",
+    color: "#0A84FF",
+    icon: "☁️",
+    tech: ["Cursor Cloud", "OpenSpec", "Heavy-CI", "Flyway-only"],
+    commits: 400,
+    side: "left",
+  },
 ];
 
 function TimelineEvent({ event, index }: { event: (typeof events)[0]; index: number }) {

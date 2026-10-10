@@ -47,7 +47,7 @@ const challenges = [
   {
     title: "Schema Dual-Source Drift",
     severity: "HIGH",
-    desc: "Docker builds from init-db/*.sql but Flyway runs db/migration/V*.sql. Hibernate entities can drift from both. Caused recurring 500 errors until an integration test guard was added.",
+    desc: "Docker once built from init-db/*.sql while Flyway ran db/migration/V*.sql, so Hibernate entities could drift from both and produce recurring 500s until an integration test guard landed. Resolved: Flyway is now the sole schema source; the old init-db scripts are archived.",
     color: "#ff453a",
   },
   {
