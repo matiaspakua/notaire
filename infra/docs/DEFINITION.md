@@ -41,6 +41,7 @@ running application.
 | Backend API | Actuator/Micrometer `/actuator/prometheus`, Basic auth | `notaire-backend` |
 | PostgreSQL | postgres-exporter | `notaire-postgres` |
 | Grafana, Loki | `/metrics` | `grafana`, `loki` |
+| Tempo (traces, via the collector) | OTLP gRPC `tempo:4317`, query `tempo:3200` (Grafana datasource `tempo`) | n/a |
 | OTel Collector (OTLP from the backend) | `otel-collector:8889` | `otel-collector` |
 | Frontend (Node runtime, scrape counter) | `/api/metrics` | `frontend-metrics` |
 | Containers / host (Docker VM) | cAdvisor / node-exporter | `cadvisor`, `node-exporter` |

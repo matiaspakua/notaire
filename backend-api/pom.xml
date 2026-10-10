@@ -104,13 +104,10 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-otlp</artifactId>
         </dependency>
+        <!-- Observability: OpenTelemetry tracer + OTLP trace export (replaces Brave/Zipkin) -->
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-brave</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zipkin.reporter2</groupId>
-            <artifactId>zipkin-reporter-brave</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-opentelemetry</artifactId>
         </dependency>
         <!-- Logging: SLF4J + Logback (already in Spring Boot) + JSON logging -->
         <dependency>

@@ -13,3 +13,4 @@ python3 infra/tests/test_dev_stack_isolation.py
 python3 infra/tests/test_sonar_analysis.py
 python3 infra/tests/test_grafana_status_dashboards.py
 python3 infra/tests/test_otel_metrics_pipeline.py
+python3 infra/tests/test_tempo_traces.py
