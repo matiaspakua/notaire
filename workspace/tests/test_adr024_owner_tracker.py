@@ -71,6 +71,13 @@ class Adr024OwnerTrackerTest(unittest.TestCase):
         self.assertRegex(text, r"6/17|6 of 17")
         self.assertIn("dorny/paths-filter", text)
 
+    def test_pages_architecture_links_enterprise_assessment_reports(self):
+        """Enterprise readiness reports must be discoverable from Architecture Pages."""
+        with open(PAGES_ARCH, encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertIn("ASSESSMENT-2026-10.md", text)
+        self.assertIn("DOCUMENTATION-AUDIT-2026-10.md", text)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Pages Architecture links enterprise readiness reports** (CU76, #1242): deep-links to
+  `ASSESSMENT-2026-10.md` and `DOCUMENTATION-AUDIT-2026-10.md`.
 - **OpenSpec hygiene**: archive closed-issue trees for #1408 / #1367 / #1466 and shipped
   `docs-1445-owner-phase0-evidence` so `validate-sdlc-plan` stays green.
 - **Owner evidence on Pages + ADR-024** (CU76): Architecture Owner pack shows
