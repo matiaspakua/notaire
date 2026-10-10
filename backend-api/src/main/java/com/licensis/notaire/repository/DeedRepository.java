@@ -1,6 +1,8 @@
 package com.licensis.notaire.repository;
 
 import com.licensis.notaire.business.Deed;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,7 @@ public interface DeedRepository extends JpaRepository<Deed, Integer> {
     Optional<Deed> findByNumber(Integer number);
 
     List<Deed> findByStatus(String status);
+
+    /** One page of deeds in one status (issue #1340). */
+    Page<Deed> findByStatus(String status, Pageable pageable);
 }

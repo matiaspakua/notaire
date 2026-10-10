@@ -1,0 +1,38 @@
+info:
+  name: Create person with an unknown identification type
+  type: http
+  seq: 8
+  description: |-
+      ## Create person with an unknown identification type — POST /api/v1/people
+      Traceability: CU17, issue #1361. An identificationTypeId that is not in
+      GET /tipo-identificacion answers 400 (it used to store DNI silently).
+      Omitting the type still defaults to DNI.
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/people"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Ana",
+          "lastName": "Tipo Desconocido E2E",
+          "identificationNumber": "{{person_unknown_type_document}}",
+          "isClient": true,
+          "identificationTypeId": 987654
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('person_unknown_type_document', String((Date.now() + 7) % 100000000).padStart(8, '0'));
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request", function () { expect(res.getStatus()).to.equal(400); });
+          test("Names the field", function () {
+            expect(res.getBody().message).to.contain("identificationTypeId");
+          });

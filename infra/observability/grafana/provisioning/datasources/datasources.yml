@@ -28,6 +28,12 @@ datasources:
     editable: true
     jsonData:
       maxLines: 1000
+      derivedFields:
+        - name: TraceID
+          datasourceUid: tempo
+          matcherType: label
+          matcherRegex: traceId
+          url: '$${__value.raw}'
 
   - name: Tempo
     type: tempo

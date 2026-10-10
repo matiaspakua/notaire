@@ -2215,10 +2215,13 @@ components:
           type: string
         fkIdIdentificationType:
           $ref: '#/components/schemas/IdentificationTypeRef'
+          description: Legacy nested form of identificationTypeId; identificationTypeId wins when both are sent.
         identificationNumber:
           minLength: 1
           type: string
         identificationTypeId:
+          description: 'Identification type id from GET /tipo-identificacion. Omitted on create: DNI. An id that is not in
+            the catalog answers 400 (#1361).'
           format: int32
           type: integer
         isClient:
@@ -3497,6 +3500,19 @@ paths:
     get:
       operationId: getAll_19
       parameters:
+      - description: Estado de la escritura (cualquier mayúscula/minúscula; otro valor responde 400). Sin este parámetro se
+          listan todas.
+        in: query
+        name: status
+        required: false
+        schema:
+          enum:
+          - Sin Firmar
+          - Firmada
+          - Anulada
+          - No Paso
+          - Inscripta
+          type: string
       - description: Zero-based page index (0..N)
         in: query
         name: page
@@ -3529,7 +3545,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/PageDeedResponse'
           description: OK
-      summary: Obtener todas las escrituras
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Estado fuera del vocabulario
+      summary: Obtener todas las escrituras, opcionalmente solo las de un estado
       tags:
       - Escrituras
     post:

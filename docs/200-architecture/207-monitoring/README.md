@@ -87,6 +87,12 @@ its Loki logs by `service`. Frontend spans are not instrumented yet.
 alerts. Each carries `severity`, `summary` and `description`. There are no per-container alerts: cAdvisor on Docker Desktop
 reports cgroup ids without container names. No external notification channel is configured.
 
+**Log fields and log-to-trace navigation:** the backend writes one `http_request` line per API request (method, path, status,
+duration; never the query string, headers or body; Actuator is skipped), and the frontend BFF proxy writes one `api_proxy`
+line per proxied request, both as structured JSON. Promtail stores `traceId`/`spanId` as Loki *structured metadata* (not
+labels, which would be high-cardinality), so `{container="notary-backend"} | traceId="<id>"` finds a request's lines and the
+Loki datasource's `TraceID` derived field opens the trace in Tempo. Loki needs `allow_structured_metadata: true`.
+
 **Overview dashboards (start here):** `notaire-stack-status` (every service in the stack) and
 `notaire-status` (Notaire only). Both show availability from blackbox probes, firing alerts and recent
 errors, and link to the specialist dashboards below.

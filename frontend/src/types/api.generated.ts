@@ -330,7 +330,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener todas las escrituras */
+        /** Obtener todas las escrituras, opcionalmente solo las de un estado */
         get: operations["getAll_19"];
         put?: never;
         /** Crear nueva escritura */
@@ -3911,9 +3911,13 @@ export interface components {
             birthDate?: string;
             email?: string;
             firstName: string;
+            /** @description Legacy nested form of identificationTypeId; identificationTypeId wins when both are sent. */
             fkIdIdentificationType?: components["schemas"]["IdentificationTypeRef"];
             identificationNumber: string;
-            /** Format: int32 */
+            /**
+             * Format: int32
+             * @description Identification type id from GET /tipo-identificacion. Omitted on create: DNI. An id that is not in the catalog answers 400 (#1361).
+             */
             identificationTypeId?: number;
             isClient?: boolean;
             lastName: string;
@@ -5171,6 +5175,8 @@ export interface operations {
     getAll_19: {
         parameters: {
             query?: {
+                /** @description Estado de la escritura (cualquier mayúscula/minúscula; otro valor responde 400). Sin este parámetro se listan todas. */
+                status?: "Sin Firmar" | "Firmada" | "Anulada" | "No Paso" | "Inscripta";
                 /** @description Zero-based page index (0..N) */
                 page?: number;
                 /** @description The size of the page to be returned */
@@ -5191,6 +5197,15 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["PageDeedResponse"];
+                };
+            };
+            /** @description Estado fuera del vocabulario */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

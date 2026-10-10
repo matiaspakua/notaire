@@ -126,4 +126,56 @@ describe("backend-proxy helper (issue #1055)", () => {
       true,
     );
   });
+  describe("structured request logs (issue #1463)", () => {
+    function stubUpstream(status: number) {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue(new Response("{}", { status })),
+      );
+    }
+
+    function loggedEntries(spy: { mock: { calls: unknown[][] } }) {
+      return spy.mock.calls.map((call) => JSON.parse(String(call[0])));
+    }
+
+    it("logs each proxied request as structured JSON without query or cookies", async () => {
+      process.env.BACKEND_URL = "http://backend:8080/api/v1";
+      stubUpstream(200);
+      const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
+      const { proxyApiRequest } = await import("@/lib/backend-proxy");
+
+      await proxyApiRequest(
+        new Request("http://localhost:3000/api/v1/personas?dni=123", {
+          headers: { cookie: "session=secret" },
+        }),
+        ["personas"],
+      );
+
+      const [entry] = loggedEntries(log);
+      expect(entry).toMatchObject({
+        service: "notaire-frontend",
+        level: "INFO",
+        message: "api_proxy",
+        context: { method: "GET", path: "/personas", status: 200 },
+      });
+      expect(JSON.stringify(entry)).not.toContain("secret");
+      expect(JSON.stringify(entry)).not.toContain("dni");
+    });
+
+    it("logs an ERROR line and returns 502 when the upstream is unreachable", async () => {
+      process.env.BACKEND_URL = "http://backend:8080/api/v1";
+      vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("ECONNREFUSED")));
+      const error = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      const { proxyApiRequest } = await import("@/lib/backend-proxy");
+
+      const response = await proxyApiRequest(
+        new Request("http://localhost:3000/api/v1/personas"),
+        ["personas"],
+      );
+
+      expect(response.status).toBe(502);
+      const [entry] = loggedEntries(error);
+      expect(entry).toMatchObject({ level: "ERROR", message: "api_proxy_upstream_failed" });
+    });
+  });
 });
