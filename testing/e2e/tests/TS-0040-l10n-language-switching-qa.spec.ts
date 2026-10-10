@@ -9,6 +9,7 @@
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
+import { createPago, createPersona, createPresupuesto } from "./setup/api-helpers";
 
 async function setupAuthAndGo(page: Page, path = "/dashboard") {
   await authenticateAsAdmin(page);
@@ -202,5 +203,39 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     await expect(page.getByRole("group", { name: "Selector de idioma" })).toBeVisible({ timeout: 10000 });
     const crumb = page.getByRole("navigation", { name: "Ruta de navegación" });
     await expect(crumb).toContainText("Próximos Vencimientos");
+  });
+
+  test.describe("#1355 dates and currency follow the locale", () => {
+    // A unique amount on a fixed day, so the row is found whatever else is listed.
+    async function seedPayment(page: Page): Promise<number> {
+      await authenticateAsAdmin(page);
+      const person = await createPersona(page);
+      expect(person.ok, person.error).toBe(true);
+      const budget = await createPresupuesto(page, person.data!.personId, undefined, {
+        propertyAmount: 100000, // a payment may not exceed the budget balance
+      });
+      expect(budget.ok, budget.error).toBe(true);
+      const cents = 10 + Math.floor(Math.random() * 89);
+      const amount = Number(`75123.${cents}`);
+      const pago = await createPago(page, budget.data!.idBudget, { amount, date: "2026-07-08" });
+      expect(pago.ok, pago.error).toBe(true);
+      return cents;
+    }
+
+    test("en: pagos shows day-first dates and ARS 75,123.xx", async ({ page }) => {
+      const cents = await seedPayment(page);
+      await setupAuthWithLocale(page, "en", "/dashboard/pagos");
+      const row = page.getByRole("row").filter({ hasText: new RegExp(`ARS\\s75,123\\.${cents}`) });
+      await expect(row.first()).toBeAttached({ timeout: 15000 });
+      await expect(row.first()).toContainText("08/07/2026");
+    });
+
+    test("es: pagos shows 8/7/2026 and $ 75.123,xx", async ({ page }) => {
+      const cents = await seedPayment(page);
+      await setupAuthWithLocale(page, "es", "/dashboard/pagos");
+      const row = page.getByRole("row").filter({ hasText: new RegExp(`\\$\\s75\\.123,${cents}`) });
+      await expect(row.first()).toBeAttached({ timeout: 15000 });
+      await expect(row.first()).toContainText("8/7/2026");
+    });
   });
 });
