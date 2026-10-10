@@ -13,6 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -84,5 +86,15 @@ class RequestLoggingFilterTest {
 
         assertThat(events).hasSize(1);
         assertThat(events.get(0).getLevel().toString()).isEqualTo("WARN");
+    }
+
+    @Test
+    @DisplayName("shouldRunInsideTheTraceScopeButBeforeSecurityToLogRejectedRequests")
+    void shouldRunInsideTheTraceScopeButBeforeSecurityToLogRejectedRequests() {
+        Order order = RequestLoggingFilter.class.getAnnotation(Order.class);
+
+        assertThat(order).isNotNull();
+        // Spring's observation filter is HIGHEST_PRECEDENCE + 1; Spring Security's chain is -100.
+        assertThat(order.value()).isEqualTo(Ordered.HIGHEST_PRECEDENCE + 2);
     }
 }
