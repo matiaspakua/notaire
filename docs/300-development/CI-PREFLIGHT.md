@@ -95,6 +95,14 @@ pushing product changes.
 
 Guards: `python3 workspace/tests/test_ci_workflow_invariants.py`.
 
+### Playwright shards (#1258 / #1197 P0.3)
+
+On product PRs, `e2e-tests` runs a 3-shard matrix (`--shard=i/3`). Blob reports
+merge in `e2e-merge-reports`, whose check name stays **`UI E2E Tests (Playwright)`**
+so `check-heavy-ci.sh` still matches. The merge job fails if any shard failed.
+Docs-only path filters still skip the whole E2E stack (aggregator + heavy-CI
+script accept `skipped`).
+
 ### What `--fix` fixes automatically
 
 | Problem | Fix applied |
@@ -207,7 +215,8 @@ insufficient — see
 bash workspace/sdlc/check-heavy-ci.sh <pr-number>
 ```
 
-Required terminal success: Integration Tests, Coverage Gate (`mvn verify`),
-API Tests (Bruno), UI E2E Tests (Playwright). Docs-only PRs may still run
-Playwright. If those jobs fail with Budget/person / `undefined, undefined` on a
-tip behind `main`, rebase onto `main` first (#1132).
+Required terminal success (or path-scoped `skip`/`skipped`): Integration Tests,
+Coverage Gate (`mvn verify`), API Tests (Bruno), UI E2E Tests (Playwright).
+Docs-only PRs skip those leaves via #1257. If product jobs fail with
+Budget/person / `undefined, undefined` on a tip behind `main`, rebase onto
+`main` first (#1132).
