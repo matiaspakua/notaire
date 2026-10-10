@@ -24,7 +24,8 @@ infra/
 
 | Tool | Role | Port |
 |------|------|------|
-| Prometheus | metrics; scrapes backend Actuator and the exporter | 9090 |
+| Prometheus | metrics; scrapes backend Actuator and the exporter; evaluates alert rules | 9090 |
+| Alertmanager | receives Prometheus alerts (local receiver, grouping, inhibition) | 9093 |
 | Grafana | dashboards over Prometheus and Loki | 3001 |
 | Loki + Promtail | structured JSON log storage and Docker log shipping | 3100 |
 | PostgreSQL exporter | database metrics for Prometheus | 9187 |

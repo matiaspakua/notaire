@@ -4,11 +4,11 @@ import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.HistoryOrder;
 import com.licensis.notaire.repository.HistoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class ManagementBitacoraService {
     public List<History> getHistory(Integer idManagement) {
         List<History> history = historyRepository.findByFkIdManagementIdManagement(idManagement);
         return history.stream()
-                .sorted(Comparator.comparing(History::getDate))
+                .sorted(HistoryOrder.CHRONOLOGICAL)
                 .toList();
     }
 }

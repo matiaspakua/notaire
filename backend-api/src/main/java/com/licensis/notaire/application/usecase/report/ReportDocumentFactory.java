@@ -11,7 +11,7 @@ import com.licensis.notaire.application.port.out.report.ReportDocument.Table;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.DocumentType;
-import com.licensis.notaire.business.History;
+import com.licensis.notaire.business.HistoryOrder;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Procedure;
@@ -189,8 +189,7 @@ public class ReportDocumentFactory {
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
 
         List<List<String>> rows = historyRepository.findByFkIdManagementIdManagement(idManagement).stream()
-                .sorted(Comparator.comparing(History::getDate, Comparator.nullsLast(Comparator.naturalOrder()))
-                        .thenComparing(History::getIdHistory, Comparator.nullsLast(Comparator.naturalOrder())))
+                .sorted(HistoryOrder.CHRONOLOGICAL)
                 .map(entry -> List.of(
                         day(entry.getDate()),
                         entry.getFkIdManagementStatus() == null

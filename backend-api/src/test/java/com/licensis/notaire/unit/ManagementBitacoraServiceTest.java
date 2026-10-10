@@ -115,4 +115,19 @@ class ManagementBitacoraServiceTest {
 
         assertThat(history).containsExactly(h1, h3, h2);
     }
+    @Test
+    @DisplayName("#1383 Should order same-day entries by idHistory (insertion order)")
+    void shouldOrderSameDayEntriesByIdHistory() {
+        Date sameDay = new Date(86_400_000L);
+        History h1 = new History(1, sameDay);
+        History h2 = new History(2, sameDay);
+        History h3 = new History(3, sameDay);
+        History earlier = new History(9, new Date(1000));
+
+        when(historyRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(h3, h1, earlier, h2));
+
+        List<History> history = managementBitacoraService.getHistory(1);
+
+        assertThat(history).containsExactly(earlier, h1, h2, h3);
+    }
 }
