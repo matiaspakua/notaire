@@ -289,7 +289,7 @@ for (const viewport of [
     await page.waitForLoadState('domcontentloaded')
 
     // Page heading visible
-    await expect(page.getByRole('heading', { name: /escrituras/i })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: /escrituras/i })).toBeVisible()
 
     // "Nueva escritura" button accessible
     await expect(page.getByRole('button', { name: /nueva escritura/i })).toBeVisible()
