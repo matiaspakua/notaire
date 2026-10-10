@@ -4,13 +4,16 @@ import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useFormFieldAria } from "@/theme/form-field-context";
 
 const Select = SelectPrimitive.Root;
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, ...rest }, ref) => {
+  const props = useFormFieldAria(rest);
+  return (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
@@ -24,7 +27,8 @@ const SelectTrigger = React.forwardRef<
       <ChevronDown className="h-4 w-4 opacity-50" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
-));
+  );
+});
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectValue = SelectPrimitive.Value;

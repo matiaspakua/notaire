@@ -7,9 +7,14 @@
  * All form components should use these patterns.
  */
 
-import { ReactNode, useId } from "react";
+import { cloneElement, isValidElement, ReactElement, ReactNode, useId } from "react";
+import { AlertCircle } from "lucide-react";
+import { FormFieldContext, mergeFormFieldAria, type FormFieldControlState } from "./form-field-context";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { theme } from "./tokens";
+
+/** Native controls FormField clones directly; components read FormFieldContext. */
+const NATIVE_CONTROLS = new Set(["input", "textarea", "select"]);
 
 /**
  * Renders the heading as the Radix `Dialog.Title` (same element, via asChild)
@@ -92,28 +97,60 @@ export function FormField({
     fontFamily: theme.typography.fontFamily.body,
   };
 
-  const content = (
+  // Link the error/helper text to the control (#1351): Input and SelectTrigger
+  // read the context; a single native control is cloned.
+  const baseId = useId();
+  const errorId = `${baseId}-error`;
+  const helperId = `${baseId}-helper`;
+  const field: FormFieldControlState = {
+    describedBy: error ? errorId : helperText ? helperId : undefined,
+    invalid: !!error,
+    required: !!required,
+  };
+  const control =
+    isValidElement(children) && typeof children.type === "string" && NATIVE_CONTROLS.has(children.type)
+      ? cloneElement(children as ReactElement<Record<string, unknown>>, mergeFormFieldAria(children.props as Record<string, never>, field))
+      : children;
+
+  // The error/helper text sits outside the <label>, so it describes the control
+  // (aria-describedby) instead of becoming part of its accessible name.
+  const messages = (
     <>
-      {children}
-      {error && <div style={errorStyle}>⚠️ {error}</div>}
-      {helperText && !error && <div style={helperStyle}>{helperText}</div>}
+      {error && (
+        <p id={errorId} role="alert" style={{ ...errorStyle, display: "flex", alignItems: "center", gap: theme.spacing[1] }}>
+          <AlertCircle aria-hidden="true" style={{ width: 14, height: 14, flexShrink: 0 }} />
+          {error}
+        </p>
+      )}
+      {helperText && !error && (
+        <p id={helperId} style={helperStyle}>
+          {helperText}
+        </p>
+      )}
     </>
   );
+  const provided = <FormFieldContext.Provider value={field}>{control}</FormFieldContext.Provider>;
 
   if (label) {
     return (
-      <label style={containerStyle}>
-        <span style={labelTextStyle}>
-          {label} {required && <span style={{ color: theme.semantic.form.errorText }}>*</span>}
-        </span>
-        <span style={{ ...contentStyle, display: "block" }}>{content}</span>
-      </label>
+      <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+        <label style={containerStyle}>
+          <span style={labelTextStyle}>
+            {label} {required && <span style={{ color: theme.semantic.form.errorText }}>*</span>}
+          </span>
+          <span style={{ ...contentStyle, display: "block" }}>{provided}</span>
+        </label>
+        <div style={isVertical ? undefined : { paddingLeft: `calc(120px + ${theme.spacing[4]})` }}>{messages}</div>
+      </div>
     );
   }
 
   return (
     <div style={containerStyle}>
-      <div style={contentStyle}>{content}</div>
+      <div style={contentStyle}>
+        {provided}
+        {messages}
+      </div>
     </div>
   );
 }

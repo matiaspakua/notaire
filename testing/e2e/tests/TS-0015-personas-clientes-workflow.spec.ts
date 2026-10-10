@@ -333,6 +333,25 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
       await expect(dialog).toBeVisible()
     },
   )
+
+  test(
+    'A11y-#1351: un campo con error queda inválido y descrito por su mensaje',
+    async ({ page }) => {
+      await page.getByTestId('btn-nueva-persona').click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible()
+      await submitForm(page)
+
+      const nombre = page.getByTestId('input-firstName')
+      await expect(nombre).toHaveAttribute('aria-invalid', 'true')
+      await expect(nombre).toHaveAttribute('aria-required', 'true')
+      // The message comes from the backend's field error (English Bean Validation text today).
+      await expect(nombre).toHaveAccessibleDescription(/requerido|obligatorio|must not be blank/i)
+      const alert = dialog.getByRole('alert').first()
+      await expect(alert).toBeVisible()
+      expect(await alert.textContent()).not.toMatch(/\p{Extended_Pictographic}/u)
+    },
+  )
 })
 
 // ---------------------------------------------------------------------------
