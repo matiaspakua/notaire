@@ -18,6 +18,8 @@
  * file is the typed mirror for SVG, canvas and inline styles, and
  * tests/unit/design-tokens.test.ts fails if the two drift.
  */
+import { motion, cssEase, cssMs } from "./motion";
+
 export const BRAND_PRIMARY = "#0071E3";
 
 export const colors = {
@@ -184,20 +186,20 @@ export const shadows = {
 // TRANSITIONS & ANIMATIONS
 // ============================================================================
 
+/** Derived from theme/motion.ts (#1368); motion/react callers import motion.ts directly. */
 export const transitions = {
   duration: {
-    instant: "0ms",
-    fast: "150ms",
-    base: "200ms",
-    slow: "300ms",
-    slower: "500ms",
+    instant: cssMs(motion.duration.instant),
+    fast: cssMs(motion.duration.fast),
+    base: cssMs(motion.duration.base),
+    slow: cssMs(motion.duration.slow),
+    exit: cssMs(motion.duration.exit),
+    page: cssMs(motion.duration.page),
   },
   timing: {
-    // Apple's standard easing function
-    ease: "cubic-bezier(0.4, 0, 0.2, 1)",
-    easeInOut: "cubic-bezier(0.4, 0, 0.2, 1)",
-    easeOut: "cubic-bezier(0, 0, 0.2, 1)",
-    easeIn: "cubic-bezier(0.4, 0, 1, 1)",
+    ease: cssEase(motion.ease.standard),
+    emphasized: cssEase(motion.ease.emphasized),
+    exit: cssEase(motion.ease.exit),
   },
 } as const;
 

@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { AppSidebar, MOBILE_SIDEBAR_ID } from "@/components/layout/AppSidebar";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { useAuthStore } from "@/store/auth-store";
-import { AnimatePresence, PageTransition } from "@/components/motion";
+import { PageTransition } from "@/components/motion";
 import { theme } from "@/theme/tokens";
 
 export default function DashboardLayout({
@@ -62,16 +62,15 @@ export default function DashboardLayout({
             aria-label={tn("openMenu")}
             aria-expanded={sidebarOpen}
             aria-controls={MOBILE_SIDEBAR_ID}
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-[10px] border border-border/60 text-foreground hover:bg-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-[10px] border border-border/60 text-foreground hover:bg-accent transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
           <Breadcrumb />
         </div>
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-          <AnimatePresence mode="wait" initial={false}>
-            <PageTransition key={pathname}>{children}</PageTransition>
-          </AnimatePresence>
+          {/* No exit wait: the new route fades in at once (#1368). */}
+          <PageTransition key={pathname}>{children}</PageTransition>
         </main>
       </div>
     </div>

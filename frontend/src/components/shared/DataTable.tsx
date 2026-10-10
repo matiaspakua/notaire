@@ -63,7 +63,7 @@ export function DataTable<T>({
     );
   }
   return (
-    <div className="rounded-[24px] border border-border/40 overflow-hidden bg-white apple-shadow animate-in fade-in-0 duration-300">
+    <div className="rounded-[24px] border border-border/40 overflow-hidden bg-white apple-shadow animate-in fade-in-0 duration-base ease-standard">
       <Table aria-busy={isFetching || isLoading ? true : undefined}>
         <TableHeader>
           <TableRow className="bg-secondary/50 border-b border-border/40 hover:bg-secondary/50">
@@ -109,7 +109,7 @@ export function DataTable<T>({
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={rowTransition(i)}
-                className="border-b border-border/20 last:border-0 hover:bg-secondary/30 transition-colors duration-200 group"
+                className="border-b border-border/20 last:border-0 hover:bg-secondary/30 transition-colors duration-fast group"
               >
                 {columns.map((col) => (
                   <TableCell key={col.key} className={cn("py-5 px-6 text-foreground font-medium", col.className)}>

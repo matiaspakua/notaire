@@ -241,7 +241,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
             type="button"
             aria-label={tw("modal.close")}
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-muted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ring/40"
+            className="p-2 rounded-full hover:bg-muted transition-colors duration-fast focus:outline-none focus:ring-2 focus:ring-ring/40"
           >
             <X className="h-5 w-5" style={{ color: theme.colors.neutral[600] }} />
           </button>
