@@ -44,7 +44,8 @@
               code-reviewer + sync_issues_and_code
 ```
 
-All agents read `CONSTITUTION.md`, `AGENTS.md`, and the skill(s) listed in
+All agents read `CONSTITUTION-AGENT-CARD.md` (full `CONSTITUTION.md` on demand), slim
+`AGENTS.md`, and the skill(s) listed in
 [`fleet-manifest.yaml`](fleet-manifest.yaml). Product authority stays in permanent docs;
 OpenSpec artifacts describe **only the change**.
 

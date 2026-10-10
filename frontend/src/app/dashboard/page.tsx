@@ -26,6 +26,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { useGestionesPage } from "@/hooks/useGestiones";
 import { usePersonasPage } from "@/hooks/usePersonas";
 import { usePresupuestosPage } from "@/hooks/usePresupuestos";
+import { StatValue } from "@/components/dashboard/StatValue";
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
 import { theme } from "@/theme/tokens";
 import type { ComponentType } from "react";
@@ -79,18 +80,18 @@ export default function DashboardPage() {
   const td = useTranslations("dashboard");
   const locale = useLocale();
   const { user, isAdmin } = useAuthStore();
-  const { data: gestionesPage } = useGestionesPage({ page: 0, size: 1 });
-  // Only the total is needed; the list itself is paged (#1340).
-  const { data: personasPage } = usePersonasPage({ page: 0, size: 1 });
-  const { data: presupuestosPage } = usePresupuestosPage({ page: 0, size: 1 });
+  // Only the totals are needed: size=1 pages, never the lists (#1340, #1358).
+  const gestionesPage = useGestionesPage({ page: 0, size: 1 });
+  const personasPage = usePersonasPage({ page: 0, size: 1 });
+  const presupuestosPage = usePresupuestosPage({ page: 0, size: 1 });
 
   const visibleModules = modules.filter((m) => !m.adminOnly || isAdmin());
   const dateLocale = locale === "en" ? "en-US" : "es-AR";
 
   const stats = [
-    { labelKey: "gestiones.label", value: gestionesPage?.totalElements ?? 0, icon: FolderKanban, tint: "bg-blue-500/10", iconColor: "text-blue-600" },
-    { labelKey: "personas.label", value: personasPage?.totalElements ?? 0, icon: Users, tint: "bg-violet-500/10", iconColor: "text-violet-600" },
-    { labelKey: "presupuestos.label", value: presupuestosPage?.totalElements ?? 0, icon: Calculator, tint: "bg-emerald-500/10", iconColor: "text-emerald-600" },
+    { labelKey: "gestiones.label", query: gestionesPage, icon: FolderKanban, tint: "bg-blue-500/10", iconColor: "text-blue-600" },
+    { labelKey: "personas.label", query: personasPage, icon: Users, tint: "bg-violet-500/10", iconColor: "text-violet-600" },
+    { labelKey: "presupuestos.label", query: presupuestosPage, icon: Calculator, tint: "bg-emerald-500/10", iconColor: "text-emerald-600" },
   ] as const;
 
   return (
@@ -127,7 +128,11 @@ export default function DashboardPage() {
                       <p className="text-[13px] font-bold uppercase tracking-widest text-muted-foreground">
                         {td(stat.labelKey as Parameters<typeof td>[0])}
                       </p>
-                      <p className="text-5xl font-semibold tracking-tighter text-foreground">{stat.value}</p>
+                      <StatValue
+                        value={stat.query.data?.totalElements}
+                        isLoading={stat.query.isLoading}
+                        isError={stat.query.isError}
+                      />
                     </div>
                     <div className={`${stat.tint} p-5 rounded-3xl`}>
                       <StatIcon className={`h-8 w-8 ${stat.iconColor}`} />

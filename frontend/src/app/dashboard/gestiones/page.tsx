@@ -483,8 +483,10 @@ function GestionesList() {
         description={
           archiveConflict
             ? archiveConflict
-            : saldoPendiente && saldoPendiente.pendingBalance > 0
-              ? t("archiveConfirmDescriptionWithDebt", { monto: formatCurrency(saldoPendiente.pendingBalance) })
+            : saldoPendiente && (saldoPendiente.pendingBalance ?? 0) > 0
+              ? t("archiveConfirmDescriptionWithDebt", {
+                  monto: formatCurrency(saldoPendiente.pendingBalance ?? 0),
+                })
               : t("archiveConfirmDescriptionNoDebt")
         }
         confirmLabel={archiveConflict ? t("archiveConfirmAnyway") : t("archiveGestion")}

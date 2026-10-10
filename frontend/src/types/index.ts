@@ -2,6 +2,27 @@
 // Core domain types — mirrors backend JPA entities / DTOs (all English, per #977)
 // ──────────────────────────────────────────────
 
+/** Generated from OpenAPI (#1260) — see `api.ts` / `api.generated.ts`. */
+import type {
+  DocumentoPresentado,
+  DocumentoPresentadoRequest,
+  DocumentoPresentadoUpdateRequest,
+  DtoSaldoPendiente,
+  GestionDeEscritura,
+  Presupuesto,
+  PresupuestoResumen,
+} from "@/types/api";
+
+export type {
+  DocumentoPresentado,
+  DocumentoPresentadoRequest,
+  DocumentoPresentadoUpdateRequest,
+  DtoSaldoPendiente,
+  GestionDeEscritura,
+  Presupuesto,
+  PresupuestoResumen,
+};
+
 /** POST /usuarios/login response — hand-built Map in UserController#login. */
 export interface DtoUsuario {
   idUsuario?: number;
@@ -153,26 +174,6 @@ export interface Tramite {
   documentosPresentados?: DocumentoPresentado[];
 }
 
-/** GET /documento-presentado row — SubmittedDocumentController.SubmittedDocumentResponse. */
-export interface DocumentoPresentado {
-  idSubmittedDocument?: number;
-  type?: { idDocumentType?: number; name?: string } | null;
-  date?: string | null;
-  delivered?: boolean;
-  procedureId?: number | null;
-}
-
-/**
- * POST/PUT /documento-presentado body — SubmittedDocumentController.SubmittedDocumentCreateRequest
- * (POST: typeId and procedureId required, #655) / SubmittedDocumentRequest (PUT: all optional).
- */
-export interface DocumentoPresentadoRequest {
-  typeId: number | null;
-  date: string | null;
-  delivered: boolean;
-  procedureId?: number | null;
-}
-
 /** GET /api/v1/carpetas — raw ProcedureFolder DTO. */
 export interface CarpetaTramite {
   idFolder?: number;
@@ -191,21 +192,6 @@ export interface Historial {
   managementId?: number;
   statusManagementId?: number;
   statusManagementName?: string;
-}
-
-/** GET /gestiones — DtoManagementSummary. */
-export interface GestionDeEscritura {
-  idManagement?: number;
-  number?: number;
-  encabezado?: string;
-  dateStart?: string;
-  statusActual?: string;
-  procedureCount?: number;
-  notes?: string;
-}
-
-export interface DtoSaldoPendiente {
-  pendingBalance: number;
 }
 
 export interface DtoGestionArchivada {
@@ -270,20 +256,6 @@ export interface PlantillaCostoDocumento {
   version?: number;
 }
 
-/** GET /api/v1/presupuestos — raw Budget entity. */
-export interface Presupuesto {
-  idBudget?: number;
-  number?: number;
-  date?: string;
-  encabezado?: string;
-  status?: string;
-  propertyAmount?: number;
-  notes?: string;
-  person?: DtoPerson;
-  itemList?: Item[];
-  version?: number;
-}
-
 /** GET /api/v1/escrituras — raw Deed entity. */
 export interface Escritura {
   idDeed?: number;
@@ -328,18 +300,6 @@ export interface Pago {
   paymentMethod?: string;
   notes?: string;
   fkIdBudget?: { idBudget?: number };
-}
-
-/** CU47 - GET /presupuestos/{id}/resumen response — DtoBudgetResumen. */
-export interface PresupuestoResumen {
-  idBudget: number;
-  numberBudget: number;
-  idManagement?: number;
-  numberManagement?: number;
-  encabezadoManagement?: string;
-  total: number;
-  pendingBalance: number;
-  payments: Pago[];
 }
 
 /** GET /api/v1/suplencia — raw Substitution entity. */
