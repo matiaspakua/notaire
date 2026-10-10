@@ -46,7 +46,7 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
 
     await page.getByTestId("input-firstName").fill("Juan");
     await page.getByTestId("input-lastName").fill(apellido);
-    await dialog.getByLabel(/dni/i).fill(dni);
+    await dialog.getByTestId("input-dni").fill(dni);
     await page.getByTestId("input-registro-escribano").fill("123");
 
     await dialog.getByRole("button", { name: /crear|guardar/i }).click();
