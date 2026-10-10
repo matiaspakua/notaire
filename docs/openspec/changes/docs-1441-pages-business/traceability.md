@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/docs-1441-pages-business/` (`skip_specs`) | Gate 1 |
 | Branch | `cursor/docs-1441-pages-business-cf98` | created |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `b26ffba1`, `601ad773`, `cd9d253e` | recorded |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -27,10 +27,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Acceptance Criterion | Verification | Status |
 |----------------------|--------------|--------|
-| `/docs/business/` deep-links `docs/100-business/` sections | page source + unit guard | pending |
-| Docs chrome nav includes Business | `DocsChrome.tsx` + unit guard | pending |
-| Home card includes Business | `app/docs/page.tsx` + unit guard | pending |
-| Guard fails if Business surface removed | `test_pages_business_docs.py` red-then-green | pending |
+| `/docs/business/` deep-links `docs/100-business/` sections | page source + unit guard | done |
+| Docs chrome nav includes Business | `DocsChrome.tsx` + unit guard | done |
+| Home card includes Business | `app/docs/page.tsx` + unit guard | done |
+| Guard fails if Business surface removed | `test_pages_business_docs.py` red-then-green | done |
 | Pages deploy shows route | post-merge deploy smoke | pending |
 
 ## Permanent documentation updated
@@ -44,7 +44,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Gate | Result | Notes |
 |------|--------|-------|
 | Gate 1 | draft→pass | skip_specs justified in proposal |
-| Gate 2 | pending | unit guard TDD |
+| Gate 2 | done | unit guard TDD |
 | Gate 3–5 | pending | |
 
 ## Exceptions
