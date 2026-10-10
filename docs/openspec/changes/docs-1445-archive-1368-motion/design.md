@@ -2,17 +2,19 @@
 
 ## Context
 
-#1368 CLOSED; OpenSpec tree still active after merge.
+#1368 and #1354 CLOSED after #1433 / #1428; OpenSpec trees still active.
+#1455 Gate 1 (`docs-1445-archive-owner-decisions`) shipped and should leave the active set.
 
 ## Goals / Non-Goals
 
-**Goals:** Archive the shipped change.
+**Goals:** Archive the shipped / closed-issue changes so validate-sdlc-plan is green.
 
-**Non-Goals:** Frontend motion code changes.
+**Non-Goals:** Frontend code changes; Owner ADR-024 / LICENSE decisions.
 
 ## Decisions
 
 1. Keep #1445 open — Refs + full URL only.
+2. Bundle the three archive moves in one docs-only PR.
 
 ## Riesgos / Trade-offs
 

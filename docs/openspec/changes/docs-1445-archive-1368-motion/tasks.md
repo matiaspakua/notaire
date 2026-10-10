@@ -18,16 +18,18 @@
 
 ## 3. Gate 2 — Tests first
 
-- [x] 3.1 Observed validate FAIL on closed #1368
+- [x] 3.1 Observed validate FAIL on closed #1368 / #1354
 - [x] 3.2 Evidence captured
 - [x] 3.3 Mapped
 
 ## 4. Implementación
 
 - [x] 4.1 Archive fix-1368-motion-tokens
-- [x] 4.2 CHANGELOG
-- [x] 4.3 OpenSpec Gate 1
-- [x] 4.4 validate green
+- [x] 4.2 Archive fix-1354-hardcoded-ui-strings
+- [x] 4.3 Archive docs-1445-archive-owner-decisions
+- [x] 4.4 CHANGELOG
+- [x] 4.5 OpenSpec Gate 1
+- [x] 4.6 validate green
 
 ## 5. Actualizar tests existentes
 
@@ -59,8 +61,8 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push
-- [ ] 10.2 Open draft PR
+- [x] 10.1 Push
+- [x] 10.2 Open draft PR
 - [ ] 10.3 Wait CI
 - [ ] 10.4 Gate 4
 

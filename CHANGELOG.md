@@ -24,7 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **OpenSpec hygiene**: archive closed-issue `fix-1368-motion-tokens` so `validate-sdlc-plan` stays green.
+- **OpenSpec hygiene**: archive closed-issue trees `fix-1368-motion-tokens` and
+  `fix-1354-hardcoded-ui-strings`, plus shipped `docs-1445-archive-owner-decisions`, so
+  `validate-sdlc-plan` stays green.
 - **OpenSpec hygiene**: archive shipped Owner-decisions Pages change and closed-issue trees #1352/#1353/#1357/#1365 so `validate-sdlc-plan` stays green.
 - **Pages Architecture lists Owner decision pack** (CU76): `/docs/architecture/` names
   blocking issues #1445 (ADR-024), #1438 (deprecated/ A/B/C), and #1226 (LICENSE) with

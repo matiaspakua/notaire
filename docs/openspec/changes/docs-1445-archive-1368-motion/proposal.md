@@ -1,4 +1,4 @@
-# Archive closed-issue OpenSpec fix-1368-motion-tokens
+# Archive closed-issue OpenSpec trees after #1433 / #1428 / #1455
 
 > Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md).
 
@@ -11,12 +11,15 @@
 
 ## Objetivo
 
-After #1433 merged, active OpenSpec `fix-1368-motion-tokens` still required OPEN
-#1368 (now CLOSED). Archive it so `validate-sdlc-plan.sh` stays green.
+Active OpenSpec trees still required OPEN issues that are now CLOSED after merges
+(#1433 → #1368, #1428 → #1354), and the shipped Gate 1 for #1455 remained active.
+Archive them so `validate-sdlc-plan.sh` stays green.
 
 ## What Changes
 
 - Archive `fix-1368-motion-tokens` → `archive/2026-10-10-fix-1368-motion-tokens/`
+- Archive `fix-1354-hardcoded-ui-strings` → `archive/2026-10-10-fix-1354-hardcoded-ui-strings/`
+- Archive `docs-1445-archive-owner-decisions` → `archive/2026-10-10-docs-1445-archive-owner-decisions/`
 - CHANGELOG Unreleased
 - `skip_specs: true`
 
@@ -40,13 +43,15 @@ After #1433 merged, active OpenSpec `fix-1368-motion-tokens` still required OPEN
 
 | Module | Impact |
 |--------|--------|
-| docs/openspec | archive move only |
+| docs/openspec | archive moves only |
 
 ## Documentation Impact
 
 | File | Change |
 |------|--------|
 | `docs/openspec/changes/archive/2026-10-10-fix-1368-motion-tokens/` | archived tree |
+| `docs/openspec/changes/archive/2026-10-10-fix-1354-hardcoded-ui-strings/` | archived tree |
+| `docs/openspec/changes/archive/2026-10-10-docs-1445-archive-owner-decisions/` | archived tree |
 | `CHANGELOG.md` | Unreleased note |
 
 ## Out of Scope
