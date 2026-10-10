@@ -18,7 +18,8 @@
 
 - `useGestionesPage({ page, size })`: one page of `GET /gestiones`, sorted `idManagement,desc` (newest first), `keepPreviousData`.
 - `/dashboard/gestiones`: the table shows the current server page with the shared `Pagination` footer and the real total; page and size live in the URL (`useUrlPagination`, `useClampPage` from slice 2). Filtering by client still uses `GET /gestiones/cliente/{id}` and lists every match without the footer.
-- Dashboard: the managements counter shows `totalElements` and the workflow hero follows the newest management (`page=0&size=1`, newest first) instead of loading the list.
+- Dashboard: the managements counter shows `totalElements`; the workflow hero keeps the first management in backend order but reads it with `page=0&size=1` instead of loading the list.
+- E2E robustness: option lookups that took the first `option` of the page are scoped to the open `listbox` (the footer's page-size `<select>` has options too; TS-0011 CU19-GW01 clicked it).
 - Vitest `gestiones-pagination.test.tsx`; Playwright `TS-0112`; CHANGELOG entry.
 
 ## Reglas de negocio
@@ -50,7 +51,7 @@
 | Module | Touched | What changes |
 |--------|---------|--------------|
 | `frontend` | yes | useGestiones (useGestionesPage), gestiones page, dashboard page |
-| `testing` | yes | Playwright TS-0112 |
+| `testing` | yes | Playwright TS-0112; option lookups scoped to the listbox |
 | `backend-api` | no | GET /gestiones already pages with @ParameterObject page/size/sort |
 
 ### Surface area

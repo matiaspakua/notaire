@@ -66,8 +66,9 @@ const modules: Module[] = [
 function WorkflowHero() {
   const td = useTranslations("dashboard");
   const tw = useTranslations("dashboard.workflow");
-  // The newest management, without loading the list (#1340).
-  const { data: latestPage } = useGestionesPage({ page: 0, size: 1 });
+  // The first management in backend order, as before, without loading the list (#1340).
+  // Not "newest first": the newest test or draft managements often have no workflow.
+  const { data: latestPage } = useGestionesPage({ page: 0, size: 1, sort: null });
 
   const [refInput, setRefInput] = useState("");
   const [searchedNumero, setSearchedNumero] = useState<number | undefined>();

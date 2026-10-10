@@ -12,14 +12,14 @@
 ## Decisions
 
 1. **Reuse slice 2.** This slice only wires the existing hooks and footer to `/gestiones`.
-2. **Sort `idManagement,desc`.** `GET /gestiones` has no default sort; newest first keeps a management just created on page 1 and gives the dashboard hero a stable "latest".
+2. **Sort `idManagement,desc`.** `GET /gestiones` has no default sort; newest first keeps a management just created on page 1.
 3. **Client filter stays unpaged.** `GET /gestiones/cliente/{id}` returns one client's managements; the footer is hidden while it is active.
-4. **Dashboard reads `size=1`.** The counter needs only `totalElements` and the hero only the newest id; both share the `page=0&size=1` query.
+4. **Dashboard reads `size=1`.** The counter needs only `totalElements`. The hero keeps its previous target (the first management in backend order, `sort: null`): following the newest one left the tracker empty when that management has no workflow (TS-0035), which is a product decision outside this slice.
 
 ## Riesgos / Trade-offs
 
 - A page past the end (stale link, rows deleted) is clamped to the last page by `useClampPage`.
-- The hero now follows the newest management; before it followed whatever the unsorted list returned first (in practice the oldest).
+- The hero's "latest" is still the first management in backend order (in practice the oldest); reported, not changed.
 
 ## Testing Strategy
 

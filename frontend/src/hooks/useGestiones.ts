@@ -22,6 +22,8 @@ export const gestionesKeys = {
 export interface GestionesPageParams {
   page: number;
   size: number;
+  /** Spring sort; defaults to newest first. `null` keeps the backend order. */
+  sort?: string | null;
 }
 
 /** Sort for the managements list: newest first (#1340). */
@@ -35,7 +37,11 @@ export function useGestionesPage(params: GestionesPageParams, options: { enabled
   return useQuery({
     queryKey: gestionesKeys.page(params),
     queryFn: () =>
-      apiGetPage<GestionDeEscritura>("/gestiones", { page: params.page, size: params.size, sort: GESTIONES_SORT }),
+      apiGetPage<GestionDeEscritura>("/gestiones", {
+        page: params.page,
+        size: params.size,
+        sort: params.sort === null ? undefined : (params.sort ?? GESTIONES_SORT),
+      }),
     placeholderData: keepPreviousData,
     enabled: options.enabled ?? true,
   });
