@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **OpenSpec hygiene after #1477 / #1480**: archive closed-issue tree
+  `feat-1462-otel-metrics-exporters` and shipped Gate 1 trees
+  `docs-1445-archive-closed-1472` / `docs-1479-modules-owner-tracker` so `validate-sdlc-plan` stays green.
 - **Module-ownership surfaces point at live Owner tracker #1445** (CU76, #1479):
   `MODULE-OWNERSHIP.md`, Modules Pages, and Docs home no longer present closed #1197 as the
   live umbrella.
