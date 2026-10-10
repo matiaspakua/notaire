@@ -16,3 +16,9 @@
 # so the entry accepts nothing and would hide a later break with the same text.
 # workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
 # until the entry and its comment are removed.
+
+# #1315 (CU49, Owner rule Run 7: every DELETE answers 204 No Content): the
+# budget template concept delete was the last DELETE answering 200 (springdoc
+# default). The shipped frontend calls it through apiDelete, which only checks
+# res.ok; Bruno budget-templates/05 and the backend tests now expect 204.
+DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{idProcedureType}/concepto/{idConcept} removed the success response with the status `200`
