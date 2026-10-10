@@ -24,6 +24,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Pages Architecture lists Owner decision pack** (CU76): `/docs/architecture/` names
+  blocking issues #1445 (ADR-024), #1438 (deprecated/ A/B/C), and #1226 (LICENSE) with
+  deep-links; unit guard pins the pack; archive completed `docs-1445-archive-hygiene-1452`.
+- **OpenSpec hygiene after #1452**: archive shipped `docs-1445-archive-pages-umbrella`.
+- **OpenSpec hygiene after #1451**: archive shipped `docs-1445-pages-owner-umbrella`.
+- **Pages Architecture surfaces live Owner umbrella #1445** (CU76): ADR-024 entry on
+  `/docs/architecture/` names the open tracker (same pattern as ADR-022 → #1438); unit
+  guard pins the string; archive completed `docs-1445-archive-closed-umbrella` OpenSpec.
+- **OpenSpec active-set hygiene**: archive `docs-1197-repository-topology` (tied to closed
+  umbrella) and the merged `docs-1445-openspec-archive` tree so `validate-sdlc-plan.sh` /
+  `workspace/verify` stay green.
+- **OpenSpec hygiene + business README Pages link**: archive shipped docs-1441/1443/1445
+  packaging changes; `docs/100-business/README.md` links the public Business Docs page.
+- **Live Owner topology tracker is #1445** (CU76): ADR-024 / REPO-SPLIT-PLAN point at #1445 after
+  prior umbrellas were closed by GitHub keyword parsing in packaging PRs. Keep #1445 open until
+  Owner decisions are recorded.
+
+- **Business Docs on GitHub Pages** (#1441, CU76, #1197): curated `/docs/business/` page with
+  deep-links into `docs/100-business/` (requirements, use cases, actors, traceability, manuals);
+  Docs chrome nav and home card include Business; unit guard in `workspace/tests/`.
 - **P0.6 Owner decision tracker refreshed** (#1197, CU76): ADR-022 / REPO-SPLIT-PLAN / Pages Architecture point at the current open Owner issue after prior trackers were auto-closed by merges.
 - **Live Owner tracker for `deprecated/` decision is #1435** (issue #1197 P0.6, CU76): ADR-022 / REPO-SPLIT-PLAN / Pages Architecture point at #1435 after #1261 was auto-closed by packaging PR #1429.
 - **Heavy-CI gate accepts `gh pr checks` status `skipping`** (issue #1197 / #1257, CU76): `check-heavy-ci.sh` treats path-scoped skips the same as `skip`/`skipped` so docs-only PRs are mergeable after suite aggregators go green.
@@ -224,10 +244,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Scripts moved to `backend-api/src/main/resources/db/migration/`
   - V1: Initial schema (24 tables)
   - V2: Initial reference data and admin user
+- **One design-token source for colour, and the half-built dark mode is gone** (issue #1365, RNF-05/RNF-09, CU76):
+  `globals.css` adds text-safe `success`, `warning` and `info` tokens (WCAG AA on white and on their /10 tint),
+  mapped in `@theme`; `tokens.ts` mirrors them and writes the brand `#0071E3` once (`BRAND_PRIMARY`). The 54 raw
+  Tailwind palette classes in 13 files are now semantic (Badge variants, notices, pagos balance panel, workflow
+  editor legend and errors, admin selects, the `useThemeClasses` builders used by testimonios, ReingresarDialog
+  and documentos-entidades-externas); the 14 differently coloured dashboard module tiles share one
+  `bg-primary/10 text-primary` style, and `ring-primary-300` / `border-error-500`, which generated no CSS, are `ring-ring/40` / `border-destructive`. The partial
+  `.dark` block is removed (owner decision 2026-10-09). Guarded by `design-tokens.test.ts` and Playwright TS-0119.
 
 ### Fixed
 
 - **Personas search waits for you to stop typing** (issue #1357, RF-39 / RNF-03): the search sent one `/people/search` request per keystroke (17 for a 17-character surname) and the table flashed between keystrokes. `useSearchPersonas` now debounces the criteria 300ms, keys the cache by primitive criteria only, and keeps the previous results visible while the next ones load. Vitest `personas-search` and Playwright TS-0015 (#1357, one request per typed surname) cover it.
+- **The dashboard workflow graph is reachable by screen readers and its motion stops** (issue #1353, RF-23/CU76): the graph was an image (`role="img"`) containing focusable step buttons, so screen readers couldn't reach the steps (axe `nested-interactive`), and the active-edge dot and current-step pulse looped forever. The graph is now a named group described as a flow diagram, each step is a button named with its state, and both animations stop after 4.8 seconds (WCAG 2.2.2). Vitest `workflow-tracker-a11y.test.tsx` and Playwright TS-0035 cover it.
 - **Dashboard counts no longer flash 0 while loading** (issue #1358, RNF-03): since #1397 the three stat cards count with `size=1` page requests instead of downloading lists of 1000, but each card still showed `0` until its count arrived (and after an error). The cards now show a skeleton (announced as loading) until the total arrives, a dash if it fails, and the exact total formatted for the locale. Playwright TS-0118 checks the counts against the API, that only `size=1` requests are made, and the skeleton.
 - **Dialogs and confirm dialogs animate in and out** (issue #1349, RNF-05/RNF-06): the shadcn classes `animate-in`, `fade-in` and `zoom-in-95` had no CSS behind them (tw-animate-css was not installed), so dialogs popped in and vanished mid-click. `tw-animate-css` is now a devDependency imported in `globals.css`. Overlays fade, and content fades and scales from 0.95 on enter (200ms) and reverses on exit (150ms) through Radix `data-state`. The table and login fades now run too. Under `prefers-reduced-motion` the existing global rule leaves no perceptible motion. Playwright TS-0117 covers it.
 - **The mobile navigation drawer behaves as a modal sheet** (issue #1350, RNF-10/CU76): below 768px the drawer left focus on the toggle, ignored Escape, let Tab reach the page behind it, had no close button, let the page scroll, and its toggle had no `aria-expanded` and an English-only name. It is now a Radix dialog sheet: focus starts on the first navigation link, Tab stays inside, Escape, the new translated close button or a tap outside close it and return focus to the toggle, and the page does not scroll behind it. The toggle exposes `aria-expanded`/`aria-controls` and the translated `navigation.openMenu`. Playwright TS-0041 covers it.

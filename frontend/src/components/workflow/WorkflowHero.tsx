@@ -103,7 +103,7 @@ export function WorkflowHero() {
       {trace && !notFound && <WorkflowTracker trace={trace} />}
 
       {loading && !trace && (
-        <div className="h-[320px] bg-gray-50 rounded-[28px] animate-pulse" data-testid="workflow-skeleton" />
+        <div className="h-[320px] bg-muted rounded-[28px] animate-pulse" data-testid="workflow-skeleton" />
       )}
     </section>
   );

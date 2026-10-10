@@ -193,18 +193,18 @@ export function useThemeClasses() {
       button:
         "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-200 apple-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95",
       input:
-        "flex h-12 w-full rounded-lg border border-neutral-400 bg-white px-4 py-2.5 text-base transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-600/60 apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-neutral-500",
-      card: "rounded-2xl border border-neutral-300 bg-white text-card-foreground apple-shadow",
-      label: "text-xs font-semibold uppercase tracking-wider text-neutral-600",
+        "flex h-12 w-full rounded-lg border border-input bg-background px-4 py-2.5 text-base transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/60 apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-muted-foreground/40",
+      card: "rounded-2xl border border-border bg-card text-card-foreground apple-shadow",
+      label: "text-xs font-semibold uppercase tracking-wider text-muted-foreground",
       textarea:
-        "flex min-h-[100px] w-full rounded-lg border border-neutral-400 bg-white px-4 py-2.5 text-base transition-all duration-200 placeholder:text-neutral-600/60 apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-neutral-500",
+        "flex min-h-[100px] w-full rounded-lg border border-input bg-background px-4 py-2.5 text-base transition-all duration-200 placeholder:text-muted-foreground/60 apple-focus disabled:cursor-not-allowed disabled:opacity-50 hover:border-muted-foreground/40",
     };
 
     const stateModifiers: Record<string, string> = {
-      hover: "hover:bg-neutral-100 hover:border-neutral-500",
-      focus: "focus:border-primary-600 focus:ring-2 focus:ring-primary-300",
-      disabled: "disabled:bg-neutral-100 disabled:text-neutral-500",
-      error: "border-error-500 focus:ring-error-300",
+      hover: "hover:bg-muted hover:border-muted-foreground/40",
+      focus: "focus:border-primary focus:ring-2 focus:ring-ring/40",
+      disabled: "disabled:bg-muted disabled:text-muted-foreground",
+      error: "border-destructive focus:ring-destructive/40",
     };
 
     let classes = baseClasses[component] || "";

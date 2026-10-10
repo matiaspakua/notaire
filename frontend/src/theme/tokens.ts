@@ -12,6 +12,14 @@
 // COLOR PALETTE
 // ============================================================================
 
+/**
+ * Brand primary (owner decision 2026-10-09, #1365): the only place this hex is
+ * written. globals.css `:root --primary` is the runtime source for CSS; this
+ * file is the typed mirror for SVG, canvas and inline styles, and
+ * tests/unit/design-tokens.test.ts fails if the two drift.
+ */
+export const BRAND_PRIMARY = "#0071E3";
+
 export const colors = {
   // Neutrals - Apple San Francisco palette
   neutral: {
@@ -36,7 +44,7 @@ export const colors = {
     300: "#72B4FF",
     400: "#419BFF",
     500: "#0A84FF", // Apple blue standard
-    600: "#0071E3", // Apple blue dark
+    600: BRAND_PRIMARY, // Apple blue dark: the brand primary
     700: "#0066D6",
     800: "#005CC2",
     900: "#004BA0",
@@ -48,6 +56,7 @@ export const colors = {
     100: "#D1ECDA",
     500: "#34C759", // Apple green
     600: "#30B14B",
+    700: "#1A6E2E", // Success text: mirrors globals.css --success (#1365)
   },
 
   warning: {
@@ -55,6 +64,7 @@ export const colors = {
     100: "#FFF0CC",
     500: "#FF9500", // Apple orange
     600: "#E68400",
+    700: "#9A5000", // Warning text: mirrors globals.css --warning (#1365)
   },
 
   error: {
@@ -69,7 +79,8 @@ export const colors = {
     50: "#E8F4FF",
     100: "#D1E8FF",
     500: "#0A84FF", // Apple blue
-    600: "#0071E3",
+    600: BRAND_PRIMARY,
+    700: "#0062C4", // Info text: mirrors globals.css --info / --primary-text (#1365)
   },
 } as const;
 

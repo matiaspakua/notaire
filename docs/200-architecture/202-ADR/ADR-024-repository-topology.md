@@ -2,8 +2,14 @@
 
 **Status:** Proposed — awaiting Owner decision
 **Date:** 2026-10-05
-**Deciders:** Owner (issue #1197 / CU76)
-**Related:** ADR-021, ADR-022, #1179 (infra standalone), #1190 (testing standalone), #1242 (assessment)
+**Deciders:** Owner (live tracker **#1445** / CU76; prior umbrellas #1197/#1443 were closed by keyword parsing)
+**Related:** ADR-021, ADR-022, #1179 (infra standalone), #1190 (testing standalone), #1242 (assessment), #1438 (P0.6)
+
+> **Tracker note (2026-10-10):** Prior umbrellas #1197 and #1443 were closed by GitHub
+> keyword parsing in packaging PR bodies (not by Owner decision). Agents cannot reopen (403).
+> Remaining Owner work (ADR-024 A+B vs C, plus #1438 / #1226) is tracked on **#1445**.
+> Keep #1445 open until decisions are recorded here.
+
 
 ## Context
 

@@ -19,6 +19,16 @@ interface Props {
   trace: GestionWorkflowTrace;
 }
 
+/**
+ * Looping motion stops within 5 seconds (WCAG 2.2.2 Pause, Stop, Hide; #1353):
+ * the active-edge dot travels twice (4.8s) and the current-step pulse runs 3
+ * times (4.8s).
+ */
+const FLOW_DOT_SECONDS = 2.4;
+const FLOW_DOT_REPEATS = 2;
+const PULSE_SECONDS = 1.6;
+const PULSE_REPEATS = 3;
+
 /** ManagementStatus id for "Testimonio Ingresado a Inscripcion" (V41 seed). */
 const INSCRIPTION_STATUS_ID = 12;
 
@@ -241,7 +251,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
             type="button"
             aria-label={tw("modal.close")}
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-neutral-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="p-2 rounded-full hover:bg-muted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ring/40"
           >
             <X className="h-5 w-5" style={{ color: theme.colors.neutral[600] }} />
           </button>
@@ -409,8 +419,11 @@ export default function WorkflowTracker({ trace }: Props) {
           viewBox={`0 0 ${svgW} ${svgH}`}
           className="w-full h-auto max-h-[640px] mx-auto"
           style={{ minWidth: Math.min(svgW, 720) }}
-          role="img"
-          aria-label={trace.workflowDefinition?.name}
+          // A named group, not role="img": an img hides its children, and the
+          // step buttons inside must stay reachable (#1353, axe nested-interactive).
+          role="group"
+          aria-roledescription={tw("diagramRole")}
+          aria-label={trace.workflowDefinition?.name ?? tw("diagramRole")}
         >
           <defs>
             <marker id="wf-arrow-active" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto">
@@ -436,7 +449,7 @@ export default function WorkflowTracker({ trace }: Props) {
               />
               {edge.active && !reduceMotion && (
                 <circle r={4} fill={theme.colors.primary[500]} fillOpacity={0.9}>
-                  <animateMotion dur="2.4s" repeatCount="indefinite" path={edge.path} />
+                  <animateMotion dur={`${FLOW_DOT_SECONDS}s`} repeatCount={FLOW_DOT_REPEATS} fill="freeze" path={edge.path} />
                 </circle>
               )}
             </g>
@@ -484,7 +497,7 @@ export default function WorkflowTracker({ trace }: Props) {
                     strokeWidth={3}
                     initial={{ strokeOpacity: 0.55, scale: 1 }}
                     animate={{ strokeOpacity: 0, scale: 1.06 }}
-                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
+                    transition={{ duration: PULSE_SECONDS, repeat: PULSE_REPEATS - 1, ease: "easeOut" }}
                     style={{ transformOrigin: `${cx}px ${cy}px` }}
                   />
                 )}

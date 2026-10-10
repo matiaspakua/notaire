@@ -38,25 +38,24 @@ interface Module {
   descKey: string;
   href: string;
   icon: LucideIcon;
-  gradient: string;
   adminOnly: boolean;
 }
 
 const modules: Module[] = [
-  { labelKey: "gestiones.label", descKey: "gestiones.description", href: "/dashboard/gestiones", icon: FolderKanban, gradient: "from-blue-500 to-blue-600", adminOnly: false },
-  { labelKey: "presupuestos.label", descKey: "presupuestos.description", href: "/dashboard/presupuestos", icon: Calculator, gradient: "from-emerald-500 to-emerald-600", adminOnly: false },
-  { labelKey: "personas.label", descKey: "personas.description", href: "/dashboard/personas", icon: Users, gradient: "from-violet-500 to-violet-600", adminOnly: false },
-  { labelKey: "escrituras.label", descKey: "escrituras.description", href: "/dashboard/escrituras", icon: ScrollText, gradient: "from-orange-500 to-orange-600", adminOnly: false },
-  { labelKey: "pagos.label", descKey: "pagos.description", href: "/dashboard/pagos", icon: CreditCard, gradient: "from-pink-500 to-pink-600", adminOnly: false },
-  { labelKey: "protocolo.label", descKey: "protocolo.description", href: "/dashboard/protocolo", icon: BookMarked, gradient: "from-teal-500 to-teal-600", adminOnly: false },
-  { labelKey: "inmuebles.label", descKey: "inmuebles.description", href: "/dashboard/inmuebles", icon: Building2, gradient: "from-cyan-500 to-cyan-600", adminOnly: false },
-  { labelKey: "copias.label", descKey: "copias.description", href: "/dashboard/copias", icon: Copy, gradient: "from-indigo-500 to-indigo-600", adminOnly: false },
-  { labelKey: "suplencias.label", descKey: "suplencias.description", href: "/dashboard/suplencias", icon: UserRoundCog, gradient: "from-sky-500 to-sky-600", adminOnly: false },
-  { labelKey: "reportes.label", descKey: "reportes.description", href: "/dashboard/reportes", icon: FileBarChart, gradient: "from-lime-500 to-lime-600", adminOnly: false },
-  { labelKey: "items.label", descKey: "items.description", href: "/dashboard/items", icon: ListTodo, gradient: "from-amber-500 to-amber-600", adminOnly: false },
-  { labelKey: "documentos.label", descKey: "documentos.description", href: "/dashboard/documentos", icon: FileText, gradient: "from-rose-500 to-rose-600", adminOnly: false },
-  { labelKey: "auditoria.label", descKey: "auditoria.description", href: "/dashboard/auditoria", icon: ShieldCheck, gradient: "from-slate-500 to-slate-600", adminOnly: true },
-  { labelKey: "administracion.label", descKey: "administracion.description", href: "/dashboard/administracion", icon: Settings, gradient: "from-gray-500 to-gray-600", adminOnly: true },
+  { labelKey: "gestiones.label", descKey: "gestiones.description", href: "/dashboard/gestiones", icon: FolderKanban, adminOnly: false },
+  { labelKey: "presupuestos.label", descKey: "presupuestos.description", href: "/dashboard/presupuestos", icon: Calculator, adminOnly: false },
+  { labelKey: "personas.label", descKey: "personas.description", href: "/dashboard/personas", icon: Users, adminOnly: false },
+  { labelKey: "escrituras.label", descKey: "escrituras.description", href: "/dashboard/escrituras", icon: ScrollText, adminOnly: false },
+  { labelKey: "pagos.label", descKey: "pagos.description", href: "/dashboard/pagos", icon: CreditCard, adminOnly: false },
+  { labelKey: "protocolo.label", descKey: "protocolo.description", href: "/dashboard/protocolo", icon: BookMarked, adminOnly: false },
+  { labelKey: "inmuebles.label", descKey: "inmuebles.description", href: "/dashboard/inmuebles", icon: Building2, adminOnly: false },
+  { labelKey: "copias.label", descKey: "copias.description", href: "/dashboard/copias", icon: Copy, adminOnly: false },
+  { labelKey: "suplencias.label", descKey: "suplencias.description", href: "/dashboard/suplencias", icon: UserRoundCog, adminOnly: false },
+  { labelKey: "reportes.label", descKey: "reportes.description", href: "/dashboard/reportes", icon: FileBarChart, adminOnly: false },
+  { labelKey: "items.label", descKey: "items.description", href: "/dashboard/items", icon: ListTodo, adminOnly: false },
+  { labelKey: "documentos.label", descKey: "documentos.description", href: "/dashboard/documentos", icon: FileText, adminOnly: false },
+  { labelKey: "auditoria.label", descKey: "auditoria.description", href: "/dashboard/auditoria", icon: ShieldCheck, adminOnly: true },
+  { labelKey: "administracion.label", descKey: "administracion.description", href: "/dashboard/administracion", icon: Settings, adminOnly: true },
 ];
 
 function AccessDeniedBanner() {
@@ -69,7 +68,7 @@ function AccessDeniedBanner() {
     <p
       data-testid="access-denied-message"
       role="status"
-      className="rounded-[16px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 font-medium"
+      className="rounded-[16px] border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning font-medium"
     >
       {td("accessDenied")}
     </p>
@@ -89,9 +88,9 @@ export default function DashboardPage() {
   const dateLocale = locale === "en" ? "en-US" : "es-AR";
 
   const stats = [
-    { labelKey: "gestiones.label", query: gestionesPage, icon: FolderKanban, tint: "bg-blue-500/10", iconColor: "text-blue-600" },
-    { labelKey: "personas.label", query: personasPage, icon: Users, tint: "bg-violet-500/10", iconColor: "text-violet-600" },
-    { labelKey: "presupuestos.label", query: presupuestosPage, icon: Calculator, tint: "bg-emerald-500/10", iconColor: "text-emerald-600" },
+    { labelKey: "gestiones.label", query: gestionesPage, icon: FolderKanban, tint: "bg-primary/10", iconColor: "text-primary" },
+    { labelKey: "personas.label", query: personasPage, icon: Users, tint: "bg-primary/10", iconColor: "text-primary" },
+    { labelKey: "presupuestos.label", query: presupuestosPage, icon: Calculator, tint: "bg-primary/10", iconColor: "text-primary" },
   ] as const;
 
   return (
@@ -160,9 +159,9 @@ export default function DashboardPage() {
                 <HoverLift className="h-full">
                   <Link href={mod.href} className="group block h-full">
                     <Card className="h-full bg-white border-none apple-shadow rounded-[28px] hover:apple-shadow-lg transition-shadow duration-500 relative overflow-hidden">
-                      <div className={`absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${mod.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                      <div className="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                       <CardHeader className="pb-4 p-8">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${mod.gradient} text-white shadow-lg shadow-blue-500/10 transition-transform duration-500 group-hover:scale-110`}>
+                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-primary/10 text-primary transition-transform duration-500 group-hover:scale-110">
                           <Icon className="h-7 w-7" />
                         </div>
                         <CardTitle className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">

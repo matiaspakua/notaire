@@ -376,7 +376,7 @@ export const spacing = {
 3. **Keyboard Navigation**: Tab, Enter, Escape work
 4. **Focus States**: Visible on all interactive elements
 5. **Color Contrast**: Verify 4.5:1 ratio (use axe, WAVE, or Contrast Checker)
-6. **Dark Mode Ready**: Plan for dark mode compatibility
+6. **No dark mode yet**: the half-built `.dark` block was removed (owner decision 2026-10-09, #1365); dark mode will be designed and tracked separately
 
 ## Color Contrast Checker
 
@@ -409,7 +409,15 @@ import { theme, type Theme } from "@/theme/tokens";
 
 ### Dark Mode Not Working
 
-**Solution**: Dark mode isn't implemented yet. Foundation is ready; add `.dark` selector in `globals.css`.
+**Solution**: Dark mode is intentionally not shipped (#1365). Do not add a `.dark` block or `dark:` utilities; `tests/unit/design-tokens.test.ts` fails on both until dark mode is designed and tracked as its own issue.
+
+## Single source of colour (#1365)
+
+- `app/globals.css` `:root` is the runtime source; `@theme inline` maps each variable to Tailwind utilities.
+- Semantic colours: `primary`, `primary-text`, `secondary`, `muted`, `accent`, `destructive`, `success`, `warning`, `info` (each with `-foreground`), `border`, `input`, `ring`.
+- Status styling: tint `bg-<status>/10`, text and icons `text-<status>`, border `border-<status>/30`. All four status colours pass 4.5:1 as text on white and on their own /10 tint.
+- `tokens.ts` is the typed hex mirror for SVG, canvas and inline styles. `BRAND_PRIMARY` (`#0071E3`) is the only place the brand hex is written.
+- Raw Tailwind palette classes (`bg-blue-50`, `from-emerald-500`...), numeric scales on semantic tokens (`ring-primary-300`) and `[#hex]` arbitrary colours are rejected by `tests/unit/design-tokens.test.ts`.
 
 ## Related Files
 
