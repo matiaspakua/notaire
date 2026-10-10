@@ -24,9 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Live Owner topology tracker is #1443** (CU76): ADR-024 / REPO-SPLIT-PLAN point at #1443 after
-  #1197 was auto-closed by a packaging squash that contained `Closes` near `#1197`. Keep #1443 open
-  until Owner decisions are recorded.
+- **Live Owner topology tracker is #1445** (CU76): ADR-024 / REPO-SPLIT-PLAN point at #1445 after
+  prior umbrellas were closed by GitHub keyword parsing in packaging PRs. Keep #1445 open until
+  Owner decisions are recorded.
+
 - **Business Docs on GitHub Pages** (#1441, CU76, #1197): curated `/docs/business/` page with
   deep-links into `docs/100-business/` (requirements, use cases, actors, traceability, manuals);
   Docs chrome nav and home card include Business; unit guard in `workspace/tests/`.
