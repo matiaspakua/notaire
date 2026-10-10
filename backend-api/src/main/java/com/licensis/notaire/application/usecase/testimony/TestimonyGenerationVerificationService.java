@@ -40,7 +40,7 @@ public class TestimonyGenerationVerificationService {
      */
     public Testimony generate(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)
-                .orElseThrow(() -> new ResourceNotFoundException("Deed no encontrada con ID: " + idDeed));
+                .orElseThrow(() -> new ResourceNotFoundException("Deed not found with ID: " + idDeed));
 
         if (!BusinessConstants.DeedFIRMADA.equals(deed.getStatus())) {
             throw new BusinessValidationException(
@@ -68,7 +68,7 @@ public class TestimonyGenerationVerificationService {
      */
     public Testimony verify(Integer idTestimony, boolean flagged, String notes) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
-                .orElseThrow(() -> new ResourceNotFoundException("Testimony no encontrado con ID: " + idTestimony));
+                .orElseThrow(() -> new ResourceNotFoundException("Testimony not found with ID: " + idTestimony));
 
         testimony.setVerified(true);
         testimony.setFlagged(flagged);

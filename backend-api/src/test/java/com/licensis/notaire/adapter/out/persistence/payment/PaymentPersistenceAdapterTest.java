@@ -134,7 +134,7 @@ class PaymentPersistenceAdapterTest {
         assertThatThrownBy(() -> processPayment.process(
                 new ProcessPaymentCommand(1, null, testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("The monto of the payment must be mayor a cero");
+                .hasMessageContaining("The payment amount must be greater than zero");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }
@@ -147,7 +147,7 @@ class PaymentPersistenceAdapterTest {
         assertThatThrownBy(() -> processPayment.process(
                 new ProcessPaymentCommand(1, new java.math.BigDecimal("0"), testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("The monto of the payment must be mayor a cero");
+                .hasMessageContaining("The payment amount must be greater than zero");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }
@@ -160,7 +160,7 @@ class PaymentPersistenceAdapterTest {
         assertThatThrownBy(() -> processPayment.process(
                 new ProcessPaymentCommand(1, new java.math.BigDecimal("-100"), testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("The monto of the payment must be mayor a cero");
+                .hasMessageContaining("The payment amount must be greater than zero");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }
@@ -325,7 +325,7 @@ class PaymentPersistenceAdapterTest {
 
         assertThatThrownBy(() -> deletePayment.delete(999))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Payment no encontrado");
+                .hasMessageContaining("Payment not found");
 
         verify(paymentRepository, never()).deleteById(anyInt());
     }
@@ -358,7 +358,7 @@ class PaymentPersistenceAdapterTest {
 
         assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(999, new java.math.BigDecimal("1000"), testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Payment no encontrado");
+                .hasMessageContaining("Payment not found");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }
@@ -370,7 +370,7 @@ class PaymentPersistenceAdapterTest {
 
         assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(1, new java.math.BigDecimal("-100"), testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("The monto of the payment must be mayor a cero");
+                .hasMessageContaining("The payment amount must be greater than zero");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }

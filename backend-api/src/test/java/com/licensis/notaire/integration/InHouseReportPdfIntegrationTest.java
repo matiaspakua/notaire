@@ -237,7 +237,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
 
         assertThat(text).contains("Informe de dominio", "Informe de dominio 567",
                 String.valueOf(MANAGEMENT_NUMBER), "Management Peña", "Lucía Peña", "77", "$ 3.000,00",
-                new SimpleDateFormat("dd/MM/yyyy").format(dueDate), "Vence in 10 days");
+                new SimpleDateFormat("dd/MM/yyyy").format(dueDate), "Expires in 10 days");
     }
 
     @Test

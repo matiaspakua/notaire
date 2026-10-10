@@ -69,7 +69,7 @@ public class ItemService {
     @Transactional
     public Item update(Integer id, Item item) {
         if (!itemRepository.findById(id).isPresent()) {
-            throw new ResourceNotFoundException("Item no encontrado con ID: " + id);
+            throw new ResourceNotFoundException("Item not found with ID: " + id);
         }
         validateReason(item);
         item.setIdItem(id);
@@ -79,7 +79,7 @@ public class ItemService {
     @Transactional
     public void delete(Integer id) {
         if (itemRepository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException("Item no encontrado con ID: " + id);
+            throw new ResourceNotFoundException("Item not found with ID: " + id);
         }
         itemRepository.deleteById(id);
         log.info("Item eliminado exitosamente: ID={}", id);

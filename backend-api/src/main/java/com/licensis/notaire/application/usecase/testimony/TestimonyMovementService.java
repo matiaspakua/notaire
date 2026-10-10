@@ -41,7 +41,7 @@ public class TestimonyMovementService {
 
     private void requireTestimonyExists(Integer idTestimony) {
         if (!testimonyRepository.existsById(idTestimony)) {
-            throw new ResourceNotFoundException("Testimony no encontrado con ID: " + idTestimony);
+            throw new ResourceNotFoundException("Testimony not found with ID: " + idTestimony);
         }
     }
 
@@ -55,7 +55,7 @@ public class TestimonyMovementService {
      */
     public TestimonyMovement registerEntry(Integer idTestimony) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
-                .orElseThrow(() -> new ResourceNotFoundException("Testimony no encontrado con ID: " + idTestimony));
+                .orElseThrow(() -> new ResourceNotFoundException("Testimony not found with ID: " + idTestimony));
 
         if (!testimony.getVerified()) {
             throw new BusinessValidationException("The testimony must be verified for enter registration");

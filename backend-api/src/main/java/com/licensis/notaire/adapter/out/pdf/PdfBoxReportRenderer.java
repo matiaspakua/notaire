@@ -86,7 +86,7 @@ public class PdfBoxReportRenderer implements ReportRenderer {
     }
 
     private static String footerText() {
-        return "Notaire — generado el " + LocalDateTime.now().format(GENERATED_AT);
+        return "Notaire — generated on " + LocalDateTime.now().format(GENERATED_AT);
     }
 
     private static void addFooters(PDDocument pdf, String footerText) throws IOException {
@@ -98,7 +98,7 @@ public class PdfBoxReportRenderer implements ReportRenderer {
                 stream.setNonStrokingColor(GRAY, GRAY, GRAY);
                 float y = MARGIN / 2;
                 showText(stream, font, FOOTER_SIZE, MARGIN, y, sanitize(font, footerText));
-                String pageLabel = "Página " + (i + 1) + " de " + pages;
+                String pageLabel = "Page " + (i + 1) + " of " + pages;
                 float width = width(font, FOOTER_SIZE, pageLabel);
                 showText(stream, font, FOOTER_SIZE, PAGE_SIZE.getWidth() - MARGIN - width, y, pageLabel);
             }

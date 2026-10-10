@@ -209,7 +209,7 @@ class AuditRecordControllerTest {
         assertThat(tag.description())
                 .as("OpenAPI must not advertise administration of audit records")
                 .doesNotContainIgnoringCase("administrar")
-                .containsIgnoringCase("consultar");
+                .containsIgnoringCase("querying");
     }
 
     @Test

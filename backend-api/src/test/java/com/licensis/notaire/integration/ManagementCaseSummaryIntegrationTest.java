@@ -150,7 +150,7 @@ class ManagementCaseSummaryIntegrationTest {
 
         mockMvc.perform(get("/api/v1/managements/" + idManagement + "/case-summary"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.documents[0].name").value("Doc of the caso"))
+                .andExpect(jsonPath("$.documents[0].name").value("Doc del caso"))
                 .andExpect(jsonPath("$.documents[0].idProcedure").value(procedure.getIdProcedure()));
     }
 

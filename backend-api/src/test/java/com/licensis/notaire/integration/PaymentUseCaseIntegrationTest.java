@@ -287,7 +287,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
         assertThatThrownBy(() -> edit(saved.id(), new java.math.BigDecimal("-50000"), new Date(), "Invalid"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("mayor a cero");
+                .hasMessageContaining("greater than zero");
     }
 
     @Test
@@ -295,7 +295,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     void shouldThrowExceptionWhenEditingNonExistentPayment() {
         assertThatThrownBy(() -> edit(9999, new java.math.BigDecimal("100000"), new Date(), "Test"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("no encontrado");
+                .hasMessageContaining("not found");
     }
 
     @Test
@@ -303,7 +303,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     void shouldThrowExceptionWhenDeletingNonExistentPayment() {
         assertThatThrownBy(() -> deletePayment.delete(9999))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("no encontrado");
+                .hasMessageContaining("not found");
     }
 
     @Test
@@ -325,7 +325,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     void shouldRejectZeroAmountInProcessarPayment() {
         assertThatThrownBy(() -> process(testBudget.getIdBudget(), new java.math.BigDecimal("0"), new Date(), "Invalid"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("mayor a cero");
+                .hasMessageContaining("greater than zero");
     }
 
     @Test
@@ -389,6 +389,6 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     void shouldThrowExceptionWhenCalculatingSaldoForNonExistentBudget() {
         assertThatThrownBy(() -> paymentStatus.pendingBalance(9999))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("no encontrado");
+                .hasMessageContaining("not found");
     }
 }

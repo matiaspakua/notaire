@@ -75,7 +75,7 @@ class HistoryWriteAuthorizationIntegrationTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
         employeeToken = tokenForNewUser("EMPLEADO");
-        administratorToken = tokenForNewUser("Notary");
+        administratorToken = tokenForNewUser("Escribano");
 
         Person person = new Person();
         person.setFirstName("Hist");

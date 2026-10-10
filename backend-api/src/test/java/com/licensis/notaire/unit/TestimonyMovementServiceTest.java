@@ -98,7 +98,7 @@ class TestimonyMovementServiceTest {
 
             assertThatThrownBy(() -> testimonyMovementService.registerEntry(5))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("verificado");
+                    .hasMessageContaining("verified");
         }
 
         @Test
@@ -183,7 +183,7 @@ class TestimonyMovementServiceTest {
 
             assertThatThrownBy(() -> testimonyMovementService.withdraw(5, 123))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("inscripto");
+                    .hasMessageContaining("registered");
         }
 
         @Test
@@ -277,7 +277,7 @@ class TestimonyMovementServiceTest {
 
             assertThatThrownBy(() -> testimonyMovementService.reenter(5, new TestimonyReentry(77, true, "  ")))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("observaciones");
+                    .hasMessageContaining("notes");
         }
 
         @Test

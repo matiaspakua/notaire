@@ -103,7 +103,7 @@ class BudgetTemplateServiceTest {
 
         assertThatThrownBy(() -> budgetTemplateService.cargarItemsDesdeTemplate(1, 99))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("plantilla");
+                .hasMessageContaining("template");
     }
 
     @Test

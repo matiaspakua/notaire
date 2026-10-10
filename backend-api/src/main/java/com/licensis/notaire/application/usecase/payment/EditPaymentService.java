@@ -34,12 +34,12 @@ public class EditPaymentService implements EditPaymentUseCase {
         log.info("Editando pago con ID: {}", paymentId);
 
         if (!payments.existsById(paymentId)) {
-            throw new IllegalArgumentException("Payment no encontrado con ID: " + paymentId);
+            throw new IllegalArgumentException("Payment not found with ID: " + paymentId);
         }
 
         BigDecimal amount = Money.of(command.amount());
         if (amount != null && amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("The monto of the payment must be mayor a cero");
+            throw new IllegalArgumentException("The payment amount must be greater than zero");
         }
 
         PaymentDetails updated = payments.applyChanges(paymentId, new PaymentChanges(

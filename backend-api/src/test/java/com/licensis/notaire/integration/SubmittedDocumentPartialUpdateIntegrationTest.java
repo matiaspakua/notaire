@@ -115,10 +115,10 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
     @Test
     @DisplayName("shouldKeepFlagsWhenOnlyTheNameIsSent")
     void shouldKeepFlagsWhenOnlyTheNameIsSent() throws Exception {
-        putJson(stored.getIdSubmittedDocument(), "{\'name\':\'Nombre nuevo\'}", 200);
+        putJson(stored.getIdSubmittedDocument(), "{\"name\":\"Nombre nuevo\"}", 200);
 
         SubmittedDocument after = reload();
-        assertThat(after.getName()).isEqualTo("Name new");
+        assertThat(after.getName()).isEqualTo("Nombre nuevo");
         assertThat(after.getFlagged()).isTrue();
         assertThat(after.getFkIdProcedure().getIdProcedure()).isEqualTo(procedure.getIdProcedure());
     }

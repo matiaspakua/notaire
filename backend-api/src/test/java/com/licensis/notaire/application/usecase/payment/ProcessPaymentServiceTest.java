@@ -84,7 +84,7 @@ class ProcessPaymentServiceTest {
     void shouldRejectOverpayment() {
         assertThatThrownBy(() -> processPayment.process(command(Money.of("10001.00"))))
                 .isInstanceOf(PendingBalanceExceededException.class)
-                .hasMessageContaining("no puede exceder el saldo pendiente");
+                .hasMessageContaining("cannot exceed the outstanding balance");
 
         assertThat(payments.all()).isEmpty();
     }
@@ -119,7 +119,7 @@ class ProcessPaymentServiceTest {
     void shouldRejectNullAmount() {
         assertThatThrownBy(() -> processPayment.process(command(null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("The monto of the payment must be mayor a cero");
+                .hasMessage("The payment amount must be greater than zero");
     }
 
     @Test
@@ -127,11 +127,11 @@ class ProcessPaymentServiceTest {
     void shouldRejectNonPositiveAmount() {
         assertThatThrownBy(() -> processPayment.process(command(Money.of("0.00"))))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("The monto of the payment must be mayor a cero");
+                .hasMessage("The payment amount must be greater than zero");
 
         assertThatThrownBy(() -> processPayment.process(command(Money.of("-50.00"))))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("The monto of the payment must be mayor a cero");
+                .hasMessage("The payment amount must be greater than zero");
     }
 
     @Test

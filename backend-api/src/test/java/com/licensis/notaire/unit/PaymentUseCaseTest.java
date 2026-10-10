@@ -137,7 +137,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("0.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("The monto of the payment must be mayor a cero");
+                    .hasMessageContaining("The payment amount must be greater than zero");
         }
 
         @Test
@@ -149,7 +149,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("-500.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("The monto of the payment must be mayor a cero");
+                    .hasMessageContaining("The payment amount must be greater than zero");
         }
 
         @Test
@@ -161,7 +161,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(1, null, new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("The monto of the payment must be mayor a cero");
+                    .hasMessageContaining("The payment amount must be greater than zero");
         }
 
         @Test
@@ -310,7 +310,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> deletePayment.delete(999))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Payment no encontrado");
+                    .hasMessageContaining("Payment not found");
         }
 
         private Payment createPayment(Integer id, java.math.BigDecimal amount) {
@@ -377,7 +377,7 @@ class PaymentUseCaseTest {
             assertThatThrownBy(() -> editPayment.edit(
                     new EditPaymentCommand(999, new java.math.BigDecimal("1000"), new Date(), "Test", "Efectivo")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Payment no encontrado");
+                    .hasMessageContaining("Payment not found");
 
             verify(paymentRepository, never()).save(any(Payment.class));
         }
@@ -400,7 +400,7 @@ class PaymentUseCaseTest {
             // Saldo = 50k - 30k = 20k, trying to pay 25k should fail
             assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("25000"), new Date(), "Overpay attempt")))
                     .isInstanceOf(PendingBalanceExceededException.class)
-                    .hasMessageContaining("no puede exceder el saldo pendiente");
+                    .hasMessageContaining("cannot exceed the outstanding balance");
 
             verify(paymentRepository, never()).save(any(Payment.class));
         }

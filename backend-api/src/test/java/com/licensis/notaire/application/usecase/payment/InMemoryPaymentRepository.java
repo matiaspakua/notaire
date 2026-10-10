@@ -98,7 +98,7 @@ class InMemoryPaymentRepository implements PaymentRepositoryPort {
     public PaymentDetails applyChanges(Integer paymentId, PaymentChanges changes) {
         PaymentDetails current = stored.get(paymentId);
         if (current == null) {
-            throw new IllegalArgumentException("Payment no encontrado con ID: " + paymentId);
+            throw new IllegalArgumentException("Payment not found with ID: " + paymentId);
         }
         PaymentDetails updated = new PaymentDetails(
                 current.id(),

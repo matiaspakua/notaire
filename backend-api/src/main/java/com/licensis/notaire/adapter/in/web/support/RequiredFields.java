@@ -84,7 +84,7 @@ public final class RequiredFields {
             for (E constant : type.getEnumConstants()) {
                 accepted.append(accepted.isEmpty() ? "" : ", ").append(constant.name());
             }
-            throw new BusinessValidationException(field + ": invalid value '" + value + "'; valores aceptados: "
+            throw new BusinessValidationException(field + ": invalid value '" + value + "'; accepted values: "
                     + accepted);
         }
     }

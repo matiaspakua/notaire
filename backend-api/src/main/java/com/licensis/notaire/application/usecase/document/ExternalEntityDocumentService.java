@@ -56,7 +56,7 @@ public class ExternalEntityDocumentService {
         findManagementOrThrow(idManagement);
         SubmittedDocument document = documentRepository.findSubmittedDocumentById(idSubmittedDocument)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Documento presentado no encontrado con ID: " + idSubmittedDocument));
+                        "Documento presentado not found with ID: " + idSubmittedDocument));
         validateBelongsToManagement(document, idManagement);
         validateIsExternalEntity(document);
 

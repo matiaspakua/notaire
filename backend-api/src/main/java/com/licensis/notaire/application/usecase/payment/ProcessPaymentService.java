@@ -50,7 +50,7 @@ public class ProcessPaymentService implements ProcessPaymentUseCase {
                         "Budget not found with ID: " + budgetId));
 
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("The monto of the payment must be mayor a cero");
+            throw new IllegalArgumentException("The payment amount must be greater than zero");
         }
 
         BigDecimal pendingBalance = charges.pendingBalanceAfter(payments.sumAmountByBudgetId(budgetId));
@@ -58,7 +58,7 @@ public class ProcessPaymentService implements ProcessPaymentUseCase {
 
         if (amount.compareTo(pendingBalance) > 0) {
             throw new PendingBalanceExceededException(
-                    String.format("The monto of the payment ($%.2f) cannot exceder the outstanding balance ($%.2f)",
+                    String.format("The payment amount ($%.2f) cannot exceed the outstanding balance ($%.2f)",
                             amount, pendingBalance));
         }
 

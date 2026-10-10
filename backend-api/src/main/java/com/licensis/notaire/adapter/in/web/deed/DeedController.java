@@ -136,7 +136,7 @@ public class DeedController {
                 return known;
             }
         }
-        throw new BusinessValidationException("status: invalid value '" + value + "'; valores aceptados: "
+        throw new BusinessValidationException("status: invalid value '" + value + "'; accepted values: "
                 + String.join(", ", DEED_STATUSES));
     }
 

@@ -51,7 +51,7 @@ class RbacIntegrationTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
         employeeToken = tokenForNewUser("EMPLEADO", true);
-        administratorToken = tokenForNewUser("Notary", true);
+        administratorToken = tokenForNewUser("Escribano", true);
     }
 
     private String tokenForNewUser(String type, boolean active) {
@@ -148,7 +148,7 @@ class RbacIntegrationTest {
     @Test
     @DisplayName("should reject a token whose user is inactive")
     void shouldRejectATokenWhoseUserIsInactive() throws Exception {
-        String inactiveToken = tokenForNewUser("Notary", false);
+        String inactiveToken = tokenForNewUser("Escribano", false);
 
         mockMvc.perform(get("/api/v1/procedure-types").header("Authorization", "Bearer " + inactiveToken))
                 .andExpect(status().isUnauthorized());

@@ -104,7 +104,7 @@ public class ReportService {
 
     public byte[] generateTestimonyCopyReport(Integer idTestimony) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
-                .orElseThrow(() -> new ResourceNotFoundException("Testimony no encontrado con ID: " + idTestimony));
+                .orElseThrow(() -> new ResourceNotFoundException("Testimony not found with ID: " + idTestimony));
 
         if (!testimony.getVerified()) {
             throw new BusinessValidationException(

@@ -88,7 +88,7 @@ public class PaymentPersistenceAdapter implements PaymentRepositoryPort {
     @Override
     public PaymentDetails applyChanges(Integer paymentId, PaymentChanges changes) {
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new IllegalArgumentException("Payment no encontrado con ID: " + paymentId));
+                .orElseThrow(() -> new IllegalArgumentException("Payment not found with ID: " + paymentId));
 
         if (changes.amount() != null) {
             payment.setAmount(changes.amount());

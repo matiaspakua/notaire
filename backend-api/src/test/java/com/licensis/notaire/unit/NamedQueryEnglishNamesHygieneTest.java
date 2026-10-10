@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
  * Static inventory for issue #1022: {@code @NamedQuery} name strings and
  * {@code createNamedQuery} call sites must use English entity prefixes (and
  * English method tails on Folio/Item/Person). Also catches the latent
- * {@code Person.*} vs {@code Person.*} mismatch.
+ * {@code Persona.*} vs {@code Person.*} mismatch.
  */
 @DisplayName("NamedQuery English names hygiene (issue #1022)")
 class NamedQueryEnglishNamesHygieneTest {
@@ -35,33 +35,33 @@ class NamedQueryEnglishNamesHygieneTest {
 
     /** Spanish entity prefixes deferred from #973 / forbidden by #1022. */
     private static final String[] FORBIDDEN_PREFIXES = {
-            "Deed.",
-            "UserAccount.",
-            "AuditRecord.",
-            "Concept.",
-            "Testimony.",
-            "Substitution.",
-            "Copy.",
-            "Payment.",
-            "Budget.",
-            "Procedure.",
-            "ProcedureType.",
-            "DocumentType.",
-            "SubmittedDocument.",
-            "ProcedureTemplate.",
-            "BudgetTemplate.",
-            "DeedManagement.",
-            "ManagementHistory.",
-            "Property.",
-            "Identification.",
-            "IdentificationType.",
-            "TestimonyMovement.",
+            "Escritura.",
+            "Usuario.",
+            "RegistroAuditoria.",
+            "Concepto.",
+            "Testimonio.",
+            "Suplencia.",
+            "Copia.",
+            "Pago.",
+            "Presupuesto.",
+            "Tramite.",
+            "TipoDeTramite.",
+            "TipoDeDocumento.",
+            "DocumentoPresentado.",
+            "PlantillaTramite.",
+            "PlantillaPresupuesto.",
+            "GestionDeEscritura.",
+            "Historial.",
+            "Inmueble.",
+            "Identificacion.",
+            "TipoIdentificacion.",
+            "MovimientoTestimonio.",
             "TramitesPersonas.",
-            "Notebook.",
+            "Cuaderno.",
             "FoliosCopias.",
-            "FolioType.",
-            "ManagementStatus.",
-            "Person."
+            "TipoDeFolio.",
+            "EstadoDeGestion.",
+            "Persona."
     };
 
     /** Spanish method tails that must not remain on already-English prefixes. */
@@ -109,7 +109,7 @@ class NamedQueryEnglishNamesHygieneTest {
     }
 
     @Test
-    @DisplayName("Should have zero Spanish or Person createNamedQuery call sites")
+    @DisplayName("Should have zero Spanish or Persona createNamedQuery call sites")
     void shouldHaveZeroSpanishOrPersonaCreateNamedQueryCallSites() throws IOException {
         Path srcRoot = BACKEND_ROOT.resolve("src");
         assertThat(Files.isDirectory(srcRoot)).as("src directory").isTrue();
@@ -129,7 +129,7 @@ class NamedQueryEnglishNamesHygieneTest {
         }
 
         assertThat(violations)
-                .as("Spanish / Person createNamedQuery call sites remaining (issue #1022)")
+                .as("Spanish / Persona createNamedQuery call sites remaining (issue #1022)")
                 .isEmpty();
     }
 

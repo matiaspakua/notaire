@@ -35,7 +35,7 @@ class UserAuthorityResolverTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"Notary", "NOTARY", "Admin", "administrador", " Administrador "})
+    @ValueSource(strings = {"Escribano", "ESCRIBANO", "Admin", "administrador", " Administrador "})
     @DisplayName("should grant administrator authority to administrator-capable types")
     void shouldGrantAdministratorAuthorityToAdministratorCapableTypes(String type) {
         when(userRepository.findByName("boss")).thenReturn(Optional.of(new User(1, "boss", "x", true, type)));

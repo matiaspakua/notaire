@@ -38,7 +38,7 @@ public class DeedSigningService {
      */
     public Deed sign(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)
-                .orElseThrow(() -> new ResourceNotFoundException("Deed no encontrada con ID: " + idDeed));
+                .orElseThrow(() -> new ResourceNotFoundException("Deed not found with ID: " + idDeed));
 
         if (!BusinessConstants.DeedSINFIRMAR.equals(deed.getStatus())) {
             throw new BusinessValidationException(

@@ -43,7 +43,7 @@ class PdfBoxReportRendererTest {
             String text = new PDFTextStripper().getText(parsed);
             assertThat(text).contains("Budget N° 12", "CU45", "Datos", "Cliente", "Lucía Peña", "Procedure",
                     "Conceptos", "Concept", "Valor", "Honorarios escribanía", "$ 10.000,00", "Total",
-                    "Página 1 of 1");
+                    "Page 1 of 1");
             assertThat(parsed.getDocumentInformation().getTitle()).isEqualTo("Budget N° 12");
         }
     }
@@ -73,7 +73,7 @@ class PdfBoxReportRendererTest {
             int pages = parsed.getNumberOfPages();
             assertThat(pages).isGreaterThan(1);
             String text = new PDFTextStripper().getText(parsed);
-            assertThat(text).contains("Fila 1", "Fila 120", "Página 1 of " + pages, "Página " + pages + " de " + pages);
+            assertThat(text).contains("Fila 1", "Fila 120", "Page 1 of " + pages, "Page " + pages + " of " + pages);
             assertThat(text.split("Detalle", -1)).hasSize(pages + 1);
         }
     }

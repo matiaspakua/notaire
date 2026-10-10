@@ -21,7 +21,7 @@ public class UserAuthorityResolver {
 
     public static final String ADMIN_ROLE = "ADMIN";
 
-    private static final Set<String> ADMINISTRATOR_TYPES = Set.of("ADMIN", "ADMINISTRADOR", "NOTARY");
+    private static final Set<String> ADMINISTRATOR_TYPES = Set.of("ADMIN", "ADMINISTRADOR", "ESCRIBANO");
     private static final GrantedAuthority ADMIN_AUTHORITY = new SimpleGrantedAuthority("ROLE_" + ADMIN_ROLE);
     private static final GrantedAuthority USER_AUTHORITY = new SimpleGrantedAuthority("ROLE_USER");
 

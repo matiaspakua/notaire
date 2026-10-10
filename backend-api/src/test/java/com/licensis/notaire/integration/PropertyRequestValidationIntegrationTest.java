@@ -66,7 +66,7 @@ class PropertyRequestValidationIntegrationTest {
     @ParameterizedTest(name = "create with body {0} is rejected")
     @ValueSource(strings = {
         "{}",
-        "{\'address\': \'Sin nomenclatura\'}",
+        "{\"address\": \"Sin nomenclatura\"}",
         "{\"cadastralDesignation\": null, \"address\": \"Nula\"}",
         "{\"cadastralDesignation\": \"\", \"address\": \"Vacia\"}",
         "{\"cadastralDesignation\": \"   \", \"address\": \"Blanca\"}"

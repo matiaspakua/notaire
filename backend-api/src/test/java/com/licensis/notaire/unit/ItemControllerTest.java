@@ -214,7 +214,7 @@ class ItemControllerTest {
     @Test
     @DisplayName("DELETE /api/v1/items/{id} should return 404 when item not found")
     void shouldReturn404OnDeleteNotFound() throws Exception {
-        doThrow(new ResourceNotFoundException("Item no encontrado con ID: 999")).when(itemService).delete(999);
+        doThrow(new ResourceNotFoundException("Item not found with ID: 999")).when(itemService).delete(999);
         mockMvc.perform(delete("/api/v1/items/999"))
                 .andExpect(status().isNotFound());
     }

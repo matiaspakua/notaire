@@ -44,7 +44,7 @@
 ## 6. Ejecutar regresión
 
 - [x] 6.1 `mvn test -pl backend-api -Dtest=EnglishSurfaceRatchetTest,UseCaseRouteCatalogTest` and the path-sensitive controller tests that the rename touches
-- [ ] 6.2 `mvn -pl backend-api test` for the module when the environment can run it
+- [x] 6.2 `mvn -pl backend-api test` for the module when the environment can run it
 - [x] 6.3 `python3 workspace/sdlc/validate-cu-api-matrix.py` and `python3 -m unittest workspace/tests/test_validate_cu_api_matrix.py`
 - [x] 6.4 Bruno collection paths updated in `backend-api/api-test`; full HTTP suite when the stack is up
 - [x] 6.5 No `@Disabled` added

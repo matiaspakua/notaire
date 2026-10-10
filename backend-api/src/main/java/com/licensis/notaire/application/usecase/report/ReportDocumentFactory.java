@@ -220,13 +220,13 @@ public class ReportDocumentFactory {
     public ReportDocument submittedDocumentExpiry(Integer idSubmittedDocument) {
         SubmittedDocument document = submittedDocumentRepository.findById(idSubmittedDocument)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Documento presentado no encontrado con ID: " + idSubmittedDocument));
+                        "Documento presentado not found with ID: " + idSubmittedDocument));
         Procedure procedure = document.getFkIdProcedure();
         DeedManagement management = procedure == null ? null : procedure.getFkIdManagement();
         Person client = procedure == null || procedure.getFkIdBudget() == null
                 ? null : procedure.getFkIdBudget().getFkIdPerson();
 
-        return new ReportDocument("Expiration of submitted document", "Documents by vencer (CU42)", List.of(
+        return new ReportDocument("Expiration of submitted document", "Documents due (CU42)", List.of(
                 new Fields("Documento", List.of(
                         new Field("Documento", orNotRecorded(document.getName())),
                         new Field("Tipo de documento", document.getDocumentType() == null
@@ -316,12 +316,13 @@ public class ReportDocumentFactory {
         }
         long days = ChronoUnit.DAYS.between(LocalDate.now(), localDate(dateDue));
         if (days < 0) {
-            return "Vencido hace " + (-days) + (days == -1 ? " día" : " days");
+            long overdue = -days;
+            return "Expired " + overdue + (overdue == 1 ? " day" : " days") + " ago";
         }
         if (days == 0) {
-            return "Vence hoy";
+            return "Expires today";
         }
-        return "Vence en " + days + (days == 1 ? " día" : " days");
+        return "Expires in " + days + (days == 1 ? " day" : " days");
     }
 
     private static List<String> procedureTypeNames(List<Procedure> procedures) {

@@ -199,7 +199,7 @@ class TestimonyControllerIntegrationTest {
         mockMvc.perform(get("/api/v1/testimonies/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.flagged").value(true))
-                .andExpect(jsonPath("$.notes").value("Verified by notary"));
+                .andExpect(jsonPath("$.notes").value("Verified por notary"));
     }
 
     @Test
@@ -304,10 +304,10 @@ class TestimonyControllerIntegrationTest {
 
         mockMvc.perform(post("/api/v1/testimonies/" + idTestimony + "/verify")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\'flagged\': true, \'notes\': \'Falta firma del otorgante\'}"))
+                        .content("{\"flagged\": true, \"notes\": \"Falta firma del otorgante\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.verified").value(true))
                 .andExpect(jsonPath("$.flagged").value(true))
-                .andExpect(jsonPath("$.notes").value("Falta firma of the otorgante"));
+                .andExpect(jsonPath("$.notes").value("Falta firma del otorgante"));
     }
 }
