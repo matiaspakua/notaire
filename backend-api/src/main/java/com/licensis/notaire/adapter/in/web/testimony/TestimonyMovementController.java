@@ -76,12 +76,13 @@ public class TestimonyMovementController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
-            return ErrorResponses.conflict(e);
+            return ErrorResponses.createFailed(e);
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
     @ApiResponse(responseCode = "404", description = "No encontrado"),
     @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
 })

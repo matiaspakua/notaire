@@ -198,12 +198,13 @@ public class PersonController {
         } catch (DuplicatePersonException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(duplicateBody(e));
         } catch (Exception e) {
-            return ErrorResponses.conflict(e);
+            return ErrorResponses.createFailed(e);
         }
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "404", description = "Not found"),
         @ApiResponse(responseCode = "409", description = "Conflict")
     })
@@ -220,7 +221,8 @@ public class PersonController {
                     } catch (DuplicatePersonException e) {
                         return ResponseEntity.status(HttpStatus.CONFLICT).body((Object) duplicateBody(e));
                     } catch (Exception e) {
-                        return ErrorResponses.conflict(e);
+                        // A data constraint answers 400; any other failure keeps 409 (issue #579).
+                        return ErrorResponses.createFailed(e);
                     }
                 })
                 .orElse(ResponseEntity.notFound().build());

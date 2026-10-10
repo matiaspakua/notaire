@@ -20,6 +20,7 @@ import {
 import { presentMutationError } from "@/lib/mutation-error";
 import { formatDate } from "@/lib/utils";
 import type { Suplencia } from "@/types";
+import { toDateInputValue } from "@/lib/dates";
 
 const EMPTY: Partial<Suplencia> = {
   dateStart: "",
@@ -175,7 +176,7 @@ export default function SuplenciasPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editSuplencia") : t("newSuplencia")}>
+            <FormSection dialogTitle title={isEditMode ? t("editSuplencia") : t("newSuplencia")}>
               <div className="grid grid-cols-2 gap-3">
                 <FormField label={t("fields.escribanoId")} helperText={t("fields.escribanoHelper")}>
                   <Input
@@ -200,7 +201,7 @@ export default function SuplenciasPage() {
                 <FormField label={t("fields.desde")}>
                   <Input
                     type="date"
-                    value={editing.dateStart ?? ""}
+                    value={toDateInputValue(editing.dateStart)}
                     onChange={(e) => setEditing({ ...editing, dateStart: e.target.value })}
                     data-testid="input-desde"
                   />
@@ -208,7 +209,7 @@ export default function SuplenciasPage() {
                 <FormField label={t("fields.hasta")}>
                   <Input
                     type="date"
-                    value={editing.dateEnd ?? ""}
+                    value={toDateInputValue(editing.dateEnd)}
                     onChange={(e) => setEditing({ ...editing, dateEnd: e.target.value })}
                     data-testid="input-hasta"
                   />

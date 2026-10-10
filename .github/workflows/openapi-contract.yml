@@ -86,16 +86,26 @@ jobs:
             echo "::notice title=OpenAPI breaking diff skipped::No ${SPEC_PATH} on origin/${BASE_REF} yet (first introduction). Breaking-change gate skipped; freshness check still enforced."
           fi
 
+      # oasdiff runs from its checksum-verified release binary, not the Docker-based
+      # oasdiff-action: building tufin/oasdiff from Docker Hub failed with 429 rate
+      # limits on shared runners (#1380). Same version (v1.33.0) and same rule.
+      - name: Install oasdiff
+        if: steps.base.outputs.has_base == 'true'
+        run: |
+          set -euo pipefail
+          curl -sSfL --retry 3 -o /tmp/oasdiff.tar.gz \
+            https://github.com/oasdiff/oasdiff/releases/download/v1.33.0/oasdiff_1.33.0_linux_amd64.tar.gz
+          echo "43a4e328e2d13ba1552d760aa68d2485c75c5621f309f6ff64ae895188345247  /tmp/oasdiff.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/oasdiff.tar.gz -C /tmp oasdiff
+
       - name: Detect breaking OpenAPI changes (oasdiff)
         if: steps.base.outputs.has_base == 'true'
-        uses: oasdiff/oasdiff-action/breaking@v0.1.18
-        with:
-          base: .openapi-ci/base-openapi.yaml
-          revision: backend-api/openapi/openapi.yaml
-          fail-on: ERR
+        run: |
           # Owner-accepted breaks only, one traceable line each (see the file header).
-          err-ignore: backend-api/openapi/accepted-breaking-changes.txt
-          review: 'false'
+          /tmp/oasdiff breaking .openapi-ci/base-openapi.yaml backend-api/openapi/openapi.yaml \
+            --fail-on ERR \
+            --err-ignore backend-api/openapi/accepted-breaking-changes.txt \
+            --format githubactions
 
       # Keep the accepted list empty by default (#1315): an entry whose break is
       # already on main matches nothing and would hide a later break with the same
@@ -105,10 +115,6 @@ jobs:
         if: steps.base.outputs.has_base == 'true' && github.event_name == 'pull_request'
         run: |
           set -euo pipefail
-          # Same oasdiff version as oasdiff-action/breaking@v0.1.18, checksum from the release.
-          curl -sSfL -o /tmp/oasdiff.tar.gz \
-            https://github.com/oasdiff/oasdiff/releases/download/v1.33.0/oasdiff_1.33.0_linux_amd64.tar.gz
-          echo "43a4e328e2d13ba1552d760aa68d2485c75c5621f309f6ff64ae895188345247  /tmp/oasdiff.tar.gz" | sha256sum -c -
-          tar -xzf /tmp/oasdiff.tar.gz -C /tmp oasdiff
+          # Uses the oasdiff binary installed above.
           OASDIFF=/tmp/oasdiff python3 workspace/sdlc/check-accepted-breaking-changes.py \
             .openapi-ci/base-openapi.yaml backend-api/openapi/openapi.yaml

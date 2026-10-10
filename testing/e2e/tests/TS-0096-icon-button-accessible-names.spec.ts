@@ -14,11 +14,12 @@ import {
   createPresupuesto,
   createUsuario,
 } from "./setup/api-helpers";
+import { listView } from "./setup/list-locators";
 
 async function openList(page: import("@playwright/test").Page, path: string) {
   await page.goto(path);
   await page.waitForLoadState("networkidle");
-  const table = page.getByRole("table");
+  const table = listView(page);
   await expect(table).toBeVisible({ timeout: 15000 });
   return table;
 }

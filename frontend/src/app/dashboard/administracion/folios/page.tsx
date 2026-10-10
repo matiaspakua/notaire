@@ -346,7 +346,7 @@ export default function FoliosAdminPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editFolio") : t("newFolio")}>
+            <FormSection dialogTitle title={isEditMode ? t("editFolio") : t("newFolio")}>
               <FormField label={t("fields.numero")} required>
                 <Input
                   type="number"
@@ -509,7 +509,7 @@ export default function FoliosAdminPage() {
       <Dialog open={tipoModalOpen} onOpenChange={setTipoModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={tipoEditing ? t("tiposDeFolio.editTipo") : t("tiposDeFolio.newTipo")}>
+            <FormSection dialogTitle title={tipoEditing ? t("tiposDeFolio.editTipo") : t("tiposDeFolio.newTipo")}>
               <FormField label={tc("name")} required>
                 <Input
                   value={tipoNombre}
