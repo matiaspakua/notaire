@@ -15,13 +15,12 @@ import { FormContainer, FormSection, FormField, FormActions, CheckboxField } fro
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
-import { useEscrituras } from "@/hooks/useEscrituras";
-import type { Folio, Persona } from "@/types";
+import { DeedPicker } from "@/components/shared/DeedPicker";
+import type { Escritura, Folio, Persona } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
 const ESTADOS_FOLIO = ["Nuevo", "Utilizado", "Errose"] as const;
 const ESTADO_UTILIZADO = "Utilizado";
-const ESTADO_ESCRITURA_FIRMADA = "Firmada";
 
 interface TipoDeFolioRow {
   idFolioType: number;
@@ -168,7 +167,6 @@ export default function FoliosAdminPage() {
     queryFn: () => apiGet<Persona[]>("/escrituras/escribanos-disponibles"),
   });
 
-  const { data: escrituras = [] } = useEscrituras();
   const { data: allFolios = [] } = useQuery({
     queryKey: ["folios"],
     queryFn: () => apiGet<Folio[]>("/folio"),
@@ -176,13 +174,9 @@ export default function FoliosAdminPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState<FolioFormState>(EMPTY);
-  const escriturasVinculables = escrituras.filter((e) => {
-    if (e.status !== ESTADO_ESCRITURA_FIRMADA) return false;
-    const yaVinculada = allFolios.some(
-      (f) => f.fkIdDeed?.idDeed === e.idDeed && f.idFolio !== form.idFolio
-    );
-    return !yaVinculada;
-  });
+  /** A deed already linked to another folio cannot be linked again (CU87); the picker offers only signed deeds. */
+  const linkedToAnotherFolio = (e: Escritura) =>
+    allFolios.some((f) => f.fkIdDeed?.idDeed === e.idDeed && f.idFolio !== form.idFolio);
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
@@ -411,22 +405,15 @@ export default function FoliosAdminPage() {
                 </Select>
               </FormField>
               <FormField label={t("fields.escritura")}>
-                <Select
-                  value={form.escrituraId !== undefined ? String(form.escrituraId) : "none"}
-                  onValueChange={(v) => setForm({ ...form, escrituraId: v === "none" ? undefined : Number(v) })}
-                >
-                  <SelectTrigger data-testid="select-escritura-folio">
-                    <SelectValue placeholder={t("fields.escrituraPlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">{t("fields.escrituraPlaceholder")}</SelectItem>
-                    {escriturasVinculables.map((e) => (
-                      <SelectItem key={e.idDeed} value={String(e.idDeed)}>
-                        {t("escrituraOption", { number: e.number ?? "—" })}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <DeedPicker
+                  value={form.escrituraId}
+                  onChange={(deed) => setForm({ ...form, escrituraId: deed?.idDeed })}
+                  exclude={linkedToAnotherFolio}
+                  allowClear
+                  aria-label={t("fields.escritura")}
+                  placeholder={t("fields.escrituraPlaceholder")}
+                  data-testid="select-escritura-folio"
+                />
               </FormField>
               <FormField label={tc("observations")}>
                 <Input

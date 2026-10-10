@@ -8,7 +8,6 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { theme } from "@/theme/tokens";
 import {
@@ -19,10 +18,9 @@ import {
   useInscribirMinutaInscripcion,
   descargarReporteMinutaInscripcion,
 } from "@/hooks/useMinutasInscripcion";
-import { useEscrituras } from "@/hooks/useEscrituras";
+import { DeedPicker } from "@/components/shared/DeedPicker";
 import { extractApiError } from "@/lib/utils";
 
-const ESTADO_FIRMADA = "Firmada";
 const ESTADO_GENERADA = "Generada";
 const ESTADO_PRESENTADA = "Presentado para inscripción";
 const ESTADO_OBSERVADA = "Observado";
@@ -32,7 +30,6 @@ export default function MinutasInscripcionPage() {
   const t = useTranslations("minutasInscripcion");
   const tc = useTranslations("common");
 
-  const { data: escrituras = [] } = useEscrituras();
   const generarMutation = useGenerarMinutaInscripcion();
   const presentarMutation = usePresentarMinutaInscripcion();
   const observarMutation = useObservarMinutaInscripcion();
@@ -56,7 +53,6 @@ export default function MinutasInscripcionPage() {
   const [numeroInscripcionDefinitivo, setNumeroInscripcionDefinitivo] = useState("");
 
   const { data: minuta, isLoading } = useMinutaInscripcion(minutaId);
-  const escriturasFirmadas = escrituras.filter((e) => e.status === ESTADO_FIRMADA);
 
   function estadoLabel(estado?: string): string {
     switch (estado) {
@@ -140,18 +136,12 @@ export default function MinutasInscripcionPage() {
       <FormContainer>
         <FormSection title={t("generarSection")}>
           <FormField label={t("fields.escritura")} required>
-            <Select value={idEscritura} onValueChange={setIdEscritura}>
-              <SelectTrigger data-testid="select-escritura-minuta">
-                <SelectValue placeholder={t("selectEscritura")} />
-              </SelectTrigger>
-              <SelectContent>
-                {escriturasFirmadas.map((e) => (
-                  <SelectItem key={e.idDeed} value={String(e.idDeed)}>
-                    {t("fields.numero")} {e.number}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <DeedPicker
+              value={idEscritura ? Number(idEscritura) : undefined}
+              onChange={(deed) => setIdEscritura(deed?.idDeed != null ? String(deed.idDeed) : "")}
+              aria-label={t("fields.escritura")}
+              data-testid="select-escritura-minuta"
+            />
           </FormField>
           <FormActions align="left">
             <Button

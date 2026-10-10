@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { apiGetPage, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { Escritura } from "@/types";
 
 export const escriturasKeys = {
@@ -19,13 +19,6 @@ export function useEscriturasPage(params: { page: number; size: number }, option
       apiGetPage<Escritura>("/escrituras", { page: params.page, size: params.size, sort: ESCRITURAS_SORT }),
     placeholderData: keepPreviousData,
     enabled: options.enabled ?? true,
-  });
-}
-
-export function useEscrituras() {
-  return useQuery({
-    queryKey: escriturasKeys.all,
-    queryFn: () => apiGetPaged<Escritura>("/escrituras"),
   });
 }
 
