@@ -79,8 +79,8 @@ describe("DialogContent accessible name (#1344)", () => {
 
 describe("common.close i18n", () => {
   it("is defined in es and en", () => {
-    expect((es.common as Record<string, string>).close).toBe("Cerrar");
-    expect((en.common as Record<string, string>).close).toBe("Close");
+    expect(es.common.close).toBe("Cerrar");
+    expect(en.common.close).toBe("Close");
   });
 });
 
