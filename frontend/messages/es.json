@@ -211,7 +211,9 @@
       "telefono": "Teléfono",
       "domicilio": "Domicilio",
       "esCliente": "Es cliente",
-      "registroEscribano": "Registro de escribano"
+      "registroEscribano": "Registro de escribano",
+      "tipoIdentificacion": "Tipo de identificación",
+      "numeroIdentificacion": "Número de documento"
     },
     "helperText": {
       "registroEscribano": "Número de registro notarial. Se usa para identificar al escribano en suplencias."
@@ -224,6 +226,12 @@
       "nombre": "Buscar por nombre...",
       "apellido": "Buscar por apellido...",
       "dni": "Buscar por DNI..."
+    },
+    "placeholders": {
+      "tipoIdentificacion": "Seleccioná un tipo"
+    },
+    "validation": {
+      "tipoIdentificacionRequired": "Seleccioná el tipo de identificación."
     }
   },
   "gestiones": {
