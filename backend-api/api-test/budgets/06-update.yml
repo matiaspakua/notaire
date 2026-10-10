@@ -15,7 +15,7 @@ http:
           "person": { "personId": 1 },
           "date": "2026-06-02",
           "encabezado": "E2E Budget Updated",
-          "status": "Aprobado",
+          "status": "aprobado",
           "notes": "updated"
         }
   headers:

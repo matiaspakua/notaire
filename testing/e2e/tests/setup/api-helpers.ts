@@ -254,7 +254,7 @@ export async function createPresupuesto(
     person: { personId: personaId },
     date: new Date().toISOString().split("T")[0],
     encabezado: `Presupuesto E2E ${uniqueId()}`,
-    status: "Pendiente",
+    status: "PENDIENTE",
     notes: `Presupuesto E2E ${uniqueId()}`,
     ...overrides,
   });

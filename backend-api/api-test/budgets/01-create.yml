@@ -16,7 +16,7 @@ http:
           "person": { "personId": 1 },
           "date": "2026-06-02",
           "encabezado": "E2E Budget",
-          "status": "Pendiente",
+          "status": "PENDIENTE",
           "notes": "created by the E2E suite"
         }
   headers:

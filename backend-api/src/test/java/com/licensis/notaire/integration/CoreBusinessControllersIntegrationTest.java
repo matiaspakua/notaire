@@ -190,7 +190,7 @@ class CoreBusinessControllersIntegrationTest {
                                       "number": 20250099,
                                       "date": "2025-06-01",
                                       "encabezado": "Budget test",
-                                      "status": "Pending",
+                                      "status": "PENDIENTE",
                                       "propertyAmount": 50000.00,
                                       "version": 0
                                     }

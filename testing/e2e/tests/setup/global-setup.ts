@@ -182,7 +182,7 @@ async function seedCatalogData(page: Page): Promise<void> {
         person: { personId: seedData.seedPersonaId },
         date: "2026-05-27",
         encabezado: "Presupuesto E2E Seed",
-        status: "Pendiente",
+        status: "PENDIENTE",
         notes: `Presupuesto semilla ${seedData.testId}`,
       }
     );

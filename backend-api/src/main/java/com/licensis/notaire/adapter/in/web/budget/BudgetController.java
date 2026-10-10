@@ -8,7 +8,9 @@ import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
 import com.licensis.notaire.dto.DtoBudgetResumen;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.adapter.in.web.item.ItemController.ItemResponse;
+import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.business.Budget;
+import com.licensis.notaire.business.BudgetStatus;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService;
 import com.licensis.notaire.application.usecase.budget.BudgetTemplateService;
@@ -18,6 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -61,7 +64,11 @@ public class BudgetController {
             Integer number,
             Date date,
             String encabezado,
-            @NotBlank String status,
+            @NotBlank
+            @Schema(allowableValues = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "FACTURADO"},
+                    description = "Estado del presupuesto (#1346). Se acepta cualquier mayúscula/minúscula y se "
+                            + "guarda el código; otro valor responde 400.")
+            String status,
             @JsonAlias("amount") java.math.BigDecimal propertyAmount,
             String notes,
             Integer personId,
@@ -124,6 +131,22 @@ public class BudgetController {
                 budget.getVersion());
     }
 
+    /**
+     * The {@link BudgetStatus} code for a value in any letter case and spacing, or a 400 naming
+     * the accepted values (#1346). {@code null} stays {@code null}.
+     */
+    private static String canonicalStatus(String value) {
+        if (value == null) {
+            return null;
+        }
+        for (BudgetStatus status : BudgetStatus.values()) {
+            if (status.name().equalsIgnoreCase(value.trim())) {
+                return status.name();
+            }
+        }
+        return RequiredFields.parseEnum(value, BudgetStatus.class, "status").name(); // throws the 400
+    }
+
     private void applyRequest(Budget budget, BudgetRequest request) {
         if (request.number() != null) {
             budget.setNumber(request.number());
@@ -132,7 +155,7 @@ public class BudgetController {
             budget.setDate(request.date());
         }
         budget.setEncabezado(request.encabezado());
-        budget.setStatus(request.status());
+        budget.setStatus(canonicalStatus(request.status()));
         budget.setPropertyAmount(request.propertyAmount());
         budget.setNotes(request.notes());
         Integer personId = resolvePersonId(request);
@@ -187,12 +210,17 @@ public class BudgetController {
         return ResponseEntity.ok(budgetService.findByPerson(idPerson).stream().map(this::toResponse).toList());
     }
 
+    @ApiResponses({
+    @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Estado fuera del vocabulario")
+})
     @GetMapping("/buscar")
     @Operation(summary = "Buscar presupuestos por estado (CU60)")
     @Transactional(readOnly = true)
     public ResponseEntity<List<BudgetResponse>> search(
-            @Parameter(description = "Estado del presupuesto") @RequestParam(required = false) String status) {
-        return ResponseEntity.ok(budgetService.findByStatus(status).stream().map(this::toResponse).toList());
+            @Parameter(description = "Estado del presupuesto (cualquier mayúscula/minúscula; otro valor responde 400)",
+                    schema = @Schema(allowableValues = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "FACTURADO"})) @RequestParam(required = false) String status) {
+        return ResponseEntity.ok(budgetService.findByStatus(canonicalStatus(status)).stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
@@ -211,6 +239,7 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida (p. ej. estado fuera del vocabulario)"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")

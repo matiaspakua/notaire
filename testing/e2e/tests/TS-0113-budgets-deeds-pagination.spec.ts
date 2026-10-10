@@ -61,7 +61,8 @@ test.describe("Budgets and deeds list pagination (#1340)", () => {
     await expect.poll(() => seen.some((u) => /[?&]status=APROBADO/.test(u))).toBe(true);
     const cells = page.getByRole("table").locator("tbody tr td:nth-child(5)");
     const texts = await cells.allInnerTexts();
-    expect(texts.every((s) => s.trim() === "APROBADO" || s.trim() === "")).toBe(true);
+    // The status column shows the translated label of the stored code (#1346).
+    expect(texts.every((s) => s.trim() === "Aprobado" || s.trim() === "")).toBe(true);
   });
 
   test("deeds: a page of 20, newest first, the total, the oldest deed and the number search", async ({ page }) => {
