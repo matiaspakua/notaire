@@ -41,6 +41,9 @@ running application.
 | Backend API | Actuator/Micrometer `/actuator/prometheus`, Basic auth | `notaire-backend` |
 | PostgreSQL | postgres-exporter | `notaire-postgres` |
 | Grafana, Loki | `/metrics` | `grafana`, `loki` |
+| OTel Collector (OTLP from the backend) | `otel-collector:8889` | `otel-collector` |
+| Frontend (Node runtime, scrape counter) | `/api/metrics` | `frontend-metrics` |
+| Containers / host (Docker VM) | cAdvisor / node-exporter | `cadvisor`, `node-exporter` |
 | All stack services (11) | blackbox exporter HTTP/TCP probes, `probe_success{service=...}` | `probe-<service>` |
 
 ### Dashboards (provisioned in Grafana)

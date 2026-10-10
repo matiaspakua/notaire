@@ -86,6 +86,7 @@ services:
     depends_on:
       - postgres-exporter
       - blackbox-exporter
+      - otel-collector
     labels:
       service: "prometheus"
       app: "monitoring"
@@ -130,6 +131,51 @@ services:
     networks:
       - devsecops-network
       - notaire-app-network
+
+  # --- OpenTelemetry Collector: single OTLP ingress; Prometheus scrapes :8889 ---
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.162.0
+    container_name: devsecops-otel-collector
+    restart: unless-stopped
+    command: ['--config=/etc/otelcol/config.yml']
+    volumes:
+      - ./otel/collector.yml:/etc/otelcol/config.yml:ro
+    labels:
+      service: "otel-collector"
+      app: "monitoring"
+    networks:
+      - devsecops-network
+      - notaire-app-network
+
+  # --- Host (Docker VM) metrics ---
+  node-exporter:
+    image: prom/node-exporter:v1.12.1
+    container_name: devsecops-node-exporter
+    restart: unless-stopped
+    command: ['--path.rootfs=/host']
+    volumes:
+      - /:/host:ro
+    labels:
+      service: "node-exporter"
+      app: "monitoring"
+    networks:
+      - devsecops-network
+
+  # --- Container metrics (read-only host mounts, no Docker socket) ---
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.55.1
+    container_name: devsecops-cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    labels:
+      service: "cadvisor"
+      app: "monitoring"
+    networks:
+      - devsecops-network
 
   grafana:
     image: grafana/grafana:12.3.11
