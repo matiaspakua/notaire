@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Cloud Agent install pins Temurin JDK 26** (issue #1401, CU76): `.cursor/install.sh` idempotently installs Temurin 26 and sets `JAVA_HOME` / `/usr/local/bin/java` so Cursor Cloud recurring builds match repo `java.version=26` and CI (tip installs were failing with `release version 26 not supported` on JDK 21 images).
 - **GitHub Pages timeline appends Sept–Oct 2026 Cloud AI SDLC** (issue #1400, CU76): `github-page` Project History keeps every prior era (2014 → Aug 2026) and adds a September–October 2026 entry for the Cursor Cloud fleet, OpenSpec Gate 1, and heavy-CI delivery; AI Era / AI Tools copy mentions OpenSpec and Cursor Cloud; the schema dual-source Fun Fact notes Flyway-only resolution. Deploy workflow unchanged.
 - **Constitution Impact Analysis drops retired `notaire-shared`** (issue #1263, CU76): §5 step 4 lists only live product modules (`backend-api`, `frontend`). The module was retired under #1255 / ADR-025; leaving it in the Constitution taught agents to treat a dead module as current. `workspace/tests/test_notaire_shared_retired.py` now includes `CONSTITUTION.md` in its non-live docs guard.
 
