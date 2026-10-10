@@ -232,7 +232,7 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between px-2">
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">{td("availableModules")}</h2>
-          <Button variant="link" className="text-primary font-semibold text-sm group">
+          <Button variant="link" className="text-primary-text font-semibold text-sm group">
             {td("viewAll")} <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>

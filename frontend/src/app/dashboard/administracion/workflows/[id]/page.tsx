@@ -280,7 +280,7 @@ export default function WorkflowEditorPage() {
         </ReactFlow>
       </div>
       {editMode && (
-        <p className="text-xs text-neutral-400 mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           {t("hint")}
         </p>
       )}
