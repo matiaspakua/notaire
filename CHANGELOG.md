@@ -811,6 +811,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   managements (newest first, page in the URL) and the document form picks its management
   with a searchable `ManagementPicker` (case number, client name or document). They loaded
   `GET /gestiones?size=1000`, so every case after the 1000th was missing.
+- **Touch targets** (#1369, RNF-06/RNF-07): on touch screens (coarse pointer) small buttons
+  and the rows-per-page select are at least 44x44 and row actions sit 8px apart, so taps no
+  longer miss or hit the neighbouring delete button. Desktop keeps the 32px compact buttons.
 
 ### Added
 
