@@ -38,14 +38,14 @@
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 Backend — n/a
-- [ ] 6.2 Coverage — n/a
+- [x] 6.1 Backend — n/a
+- [x] 6.2 Coverage — n/a
 - [x] 6.3 `validate-sdlc-plan.sh` + unit tests for this change
-- [ ] 6.4 No `@Disabled` tests
+- [x] 6.4 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Product Playwright — n/a (no `frontend/` change)
+- [x] 7.1 Product Playwright — n/a (no `frontend/` change)
 - [ ] 7.2 Pages smoke after deploy (200 on `/docs/business/`)
 
 ## 8. Gate 3 — Actualizar documentación permanente
@@ -56,14 +56,14 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits
-- [ ] 9.2 PR body `Closes #1441`; `Refs #1197` (do not close #1197)
-- [ ] 9.3 No secrets
+- [x] 9.1 Conventional Commits
+- [x] 9.2 PR body `Closes #1441`; `Refs #1197` (do not close #1197)
+- [x] 9.3 No secrets
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push branch
-- [ ] 10.2 Open draft PR
+- [x] 10.1 Push branch
+- [x] 10.2 Open draft PR
 - [ ] 10.3 Wait for required workflows / heavy CI
 - [ ] 10.4 Gate 4 — CI green
 
