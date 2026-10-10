@@ -5,6 +5,8 @@
  * popup. An empty query lists the newest people; typing searches the server
  * (debounced) instead of filtering a size=1000 list. The current value is a
  * person id, loaded by id so edit forms show it wherever it sits in the table.
+ * Like the APG combobox, focus alone does not open the popup (a dialog that
+ * autofocuses the field stays readable); a click, typing or ArrowDown does.
  */
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -163,7 +165,6 @@ export function PersonPicker({
         data-testid={testId}
         placeholder={placeholder ?? t("placeholder")}
         value={open ? query : current ? fullName(current) : ""}
-        onFocus={openList}
         onClick={() => { if (!open) openList(); }}
         onChange={(e) => { setQuery(e.target.value); setOpen(true); setActive(-1); }}
         onKeyDown={onKeyDown}
@@ -186,6 +187,7 @@ export function PersonPicker({
       )}
       {open && (
         <div
+          onClick={(e) => e.preventDefault()}
           className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-[12px] border border-[hsl(var(--border))] bg-white shadow-lg animate-in fade-in slide-in-from-top-1 duration-150 motion-reduce:animate-none"
         >
           <ul id={listId} role="listbox" aria-label={ariaLabel} className="max-h-64 overflow-y-auto p-1">
@@ -199,7 +201,12 @@ export function PersonPicker({
                 data-person-id={p.personId}
                 onMouseDown={(e) => e.preventDefault()}
                 onMouseEnter={() => setActive(i)}
-                onClick={() => choose(p)}
+                onClick={(e) => {
+                  // Forms wrap fields in <label>: without this the click would
+                  // be forwarded to the input and reopen the list.
+                  e.preventDefault();
+                  choose(p);
+                }}
                 className={cn(
                   "flex cursor-pointer select-none items-center justify-between gap-3 rounded-[8px] px-3 py-2 text-sm transition-colors duration-150",
                   i === active ? "bg-accent text-accent-foreground" : "hover:bg-secondary/40",
