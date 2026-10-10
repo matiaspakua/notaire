@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/refactor-1490-english-codebase/` | written |
 | Branch | `cursor/english-codebase-01e0` | created from `origin/main` |
 | Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Commits | `9c536900`, `329247ba` | created |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -42,10 +42,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/303-testing/CU-API-MATRIX.csv` | yes | pending |
-| `CHANGELOG.md` | yes | pending |
-| `backend-api/openapi/openapi.yaml` | yes | pending |
-| `backend-api/api-test/COVERAGE.md` | yes | pending |
+| `docs/300-development/303-testing/CU-API-MATRIX.csv` | yes | `329247ba` |
+| `CHANGELOG.md` | yes | `329247ba` |
+| `backend-api/openapi/openapi.yaml` | yes | `329247ba` |
+| `backend-api/api-test/COVERAGE.md` | yes | `329247ba` |
 
 ## Gate log
 
