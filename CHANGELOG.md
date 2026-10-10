@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and documentos-entidades-externas); the 14 differently coloured dashboard module tiles share one
   `bg-primary/10 text-primary` style, and `ring-primary-300` / `border-error-500`, which generated no CSS, are `ring-ring/40` / `border-destructive`. The partial
   `.dark` block is removed (owner decision 2026-10-09). Guarded by `design-tokens.test.ts` and Playwright TS-0119.
+- **P0.6 Owner decision tracker refreshed** (#1197, CU76): ADR-022 / REPO-SPLIT-PLAN / Pages Architecture point at the current open Owner issue after prior trackers were auto-closed by merges.
+- **Live Owner tracker for `deprecated/` decision is #1435** (issue #1197 P0.6, CU76): ADR-022 / REPO-SPLIT-PLAN / Pages Architecture point at #1435 after #1261 was auto-closed by packaging PR #1429.
 - **Heavy-CI gate accepts `gh pr checks` status `skipping`** (issue #1197 / #1257, CU76): `check-heavy-ci.sh` treats path-scoped skips the same as `skip`/`skipped` so docs-only PRs are mergeable after suite aggregators go green.
 - **ADR-024 measured evidence refreshed after Phase 0** (issue #1197, CU76): path-scoped CI, ~2k agent context, OpenAPI-generated frontend types, and Playwright shards recorded; ADR-022 notes that #1261 packaging does not complete the Owner decision.
 - **Owner decision packaging for `deprecated/` / history purge** (issue #1261, CU76, #1197 P0.6): ADR-022 adds a Pending Owner decision section (Option A/B/C); GitHub Pages Architecture links ADR-022; agents must not delete `deprecated/` or rewrite history until the Owner records a choice.
