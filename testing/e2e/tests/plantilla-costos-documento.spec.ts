@@ -30,7 +30,7 @@ test.describe("Plantillas - Costos de Documentos", () => {
 
   test("CU39-GW02: Given a tipo de trámite selected, Then costos de documentos section appears", async ({ page }) => {
     await page.getByTestId("select-tipo-tramite-costos").click();
-    await page.getByRole("option").first().click();
+    await page.getByRole("listbox").getByRole("option").first().click();
 
     await expect(page.getByTestId("btn-nuevo-costo-documento")).toBeVisible();
   });

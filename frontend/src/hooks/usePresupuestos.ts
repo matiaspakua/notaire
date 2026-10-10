@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { itemsKeys } from "@/hooks/useItems";
 import type { Item, Presupuesto, PresupuestoResumen } from "@/types";
 
@@ -8,7 +8,22 @@ export const presupuestosKeys = {
   detail: (id: number) => ["presupuestos", id] as const,
   byPersona: (id: number) => ["presupuestos", "persona", id] as const,
   resumen: (id: number) => ["presupuestos", id, "resumen"] as const,
+  page: (params: { page: number; size: number }) => ["presupuestos", "page", params] as const,
 };
+
+/** Sort for the budgets list: newest first (#1340). */
+export const PRESUPUESTOS_SORT = "idBudget,desc";
+
+/** One server page of GET /presupuestos (#1340); the list is never loaded whole. */
+export function usePresupuestosPage(params: { page: number; size: number }, options: { enabled?: boolean } = {}) {
+  return useQuery({
+    queryKey: presupuestosKeys.page(params),
+    queryFn: () =>
+      apiGetPage<Presupuesto>("/presupuestos", { page: params.page, size: params.size, sort: PRESUPUESTOS_SORT }),
+    placeholderData: keepPreviousData,
+    enabled: options.enabled ?? true,
+  });
+}
 
 /** CU47 - Consultar Pago: financial summary (gestión, total, saldo, pagos) for a presupuesto. */
 export function usePresupuestoResumen(id: number | null) {
