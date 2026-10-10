@@ -40,6 +40,16 @@ groups:
           summary: "Notaire backend is down"
           description: "The Notaire backend API has been unreachable for more than 1 minute."
 
+      - alert: ServiceDown
+        expr: probe_success == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: notaire
+        annotations:
+          summary: "{{ $labels.service }} is unreachable"
+          description: "The availability probe for {{ $labels.service }} has failed for more than 2 minutes."
+
       - alert: HighJvmHeapUsage
         expr: |
           jvm_memory_used_bytes{application="notaire-backend", area="heap"}
