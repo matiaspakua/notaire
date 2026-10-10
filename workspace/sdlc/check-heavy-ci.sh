@@ -75,8 +75,8 @@ for name in "${REQUIRED[@]}"; do
       echo "  ✓ $name ($st)"
       ;;
     # Path-scoped CI (#1257): docs/OpenSpec PRs intentionally skip Java/E2E leaves;
-    # suite aggregators and gh pr checks report skip/skipped — still mergeable.
-    skip|skipped)
+    # suite aggregators report skipped; `gh pr checks` often prints "skipping".
+    skip|skipped|skipping)
       echo "  ✓ $name ($st — path-scoped skip)"
       ;;
     missing)
