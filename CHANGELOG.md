@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **OpenSpec hygiene after #1451**: archive shipped `docs-1445-pages-owner-umbrella`.
 - **Pages Architecture surfaces live Owner umbrella #1445** (CU76): ADR-024 entry on
   `/docs/architecture/` names the open tracker (same pattern as ADR-022 → #1438); unit
   guard pins the string; archive completed `docs-1445-archive-closed-umbrella` OpenSpec.
