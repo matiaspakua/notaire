@@ -21,11 +21,12 @@ import {
   useDeleteEscritura,
   useFirmarEscritura,
 } from "@/hooks/useEscrituras";
-import { formatDate, extractApiError } from "@/lib/utils";
+import { extractApiError } from "@/lib/utils";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import type { Escritura, Folio } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Escritura> = { number: undefined, dateDeedrecording: "", body: "" };
 const ESTADO_SIN_FIRMAR = "Sin Firmar";
@@ -39,6 +40,7 @@ export default function EscriturasPage() {
 }
 
 function EscriturasList() {
+  const fmt = useFormat();
   const t = useTranslations("escrituras");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -115,7 +117,7 @@ function EscriturasList() {
   const columns: Column<Escritura>[] = [
     { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idDeed}</span>, className: "w-12" },
     { key: "numero", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.number ?? "—"}</span> },
-    { key: "fecha", header: tc("date"), render: (e) => formatDate(e.dateDeedrecording) },
+    { key: "fecha", header: tc("date"), render: (e) => fmt.date(e.dateDeedrecording) },
     { key: "estado", header: t("fields.estado"), render: (e) => e.status ?? "—" },
     {
       key: "folio",

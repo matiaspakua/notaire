@@ -26,9 +26,9 @@ import {
   useDescuentosYRecargos,
 } from "@/hooks/useItems";
 import { presentMutationError } from "@/lib/mutation-error";
-import { formatCurrency } from "@/lib/utils";
 import type { Item, TipoItem } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Item> = {
   name: "",
@@ -39,6 +39,7 @@ const EMPTY: Partial<Item> = {
 const TIPO_VALUES: TipoItem[] = ["NORMAL", "DESCUENTO", "RECARGO"];
 
 export default function ItemsPage() {
+  const fmt = useFormat();
   const t = useTranslations("items");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -127,7 +128,7 @@ export default function ItemsPage() {
     {
       key: "valor",
       header: t("fields.valor"),
-      render: (i) => <span className="font-medium">{formatCurrency(i.value)}</span>,
+      render: (i) => <span className="font-medium">{fmt.currency(i.value)}</span>,
     },
     {
       key: "presupuesto",
@@ -213,7 +214,7 @@ export default function ItemsPage() {
                 { key: "nombre", header: t("fields.nombre"), render: (i) => i.name ?? "—" },
                 { key: "tipo", header: t("fields.tipo"), render: (i) => tipoLabel(i.type ?? "NORMAL") },
                 { key: "motivo", header: t("fields.motivo"), render: (i) => i.reason ?? "—" },
-                { key: "valor", header: t("fields.valor"), render: (i) => formatCurrency(i.value) },
+                { key: "valor", header: t("fields.valor"), render: (i) => fmt.currency(i.value) },
               ]}
             />
           )}

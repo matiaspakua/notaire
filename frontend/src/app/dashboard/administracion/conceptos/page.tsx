@@ -14,13 +14,15 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import { useConceptos, useCreateConcepto, useUpdateConcepto, useDeleteConcepto } from "@/hooks/useConceptos";
-import { formatCurrency, extractApiError } from "@/lib/utils";
+import { extractApiError } from "@/lib/utils";
 import type { Concepto } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Concepto> = { name: "", value: undefined };
 
 export default function ConceptosPage() {
+  const fmt = useFormat();
   const t = useTranslations("administracion.conceptos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -94,7 +96,7 @@ export default function ConceptosPage() {
   const columns: Column<Concepto>[] = [
     { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idConcept}</span>, className: "w-12" },
     { key: "nombre", header: t("fields.nombre"), render: (c) => <span className="font-medium">{c.name}</span> },
-    { key: "valor", header: t("fields.valorBase"), render: (c) => formatCurrency(c.value) },
+    { key: "valor", header: t("fields.valorBase"), render: (c) => fmt.currency(c.value) },
     {
       key: "actions", header: "", className: "w-24",
       render: (c) => (

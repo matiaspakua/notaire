@@ -14,6 +14,7 @@ const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
 vi.mock("next-intl", () => ({
   useTranslations: (ns: string) => (key: string) => `${ns}.${key}`,
+  useLocale: () => "es",
 }));
 
 import { BudgetPicker } from "@/components/shared/BudgetPicker";

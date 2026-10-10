@@ -8,10 +8,11 @@
  */
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { formatCurrency, fullName } from "@/lib/utils";
+import { fullName } from "@/lib/utils";
 import { SearchCombobox } from "@/components/shared/SearchCombobox";
 import { useBudget, useBudgetSearch, useRecentBudgets } from "@/hooks/useBudgetSearch";
 import type { Presupuesto } from "@/types";
+import { useFormat } from "@/hooks/useFormat";
 
 export interface BudgetPickerProps {
   /** Selected budget id. */
@@ -31,6 +32,7 @@ export function budgetLabel(b: Presupuesto): string {
 }
 
 export function BudgetPicker({ value, onChange, allowClear = false, ...rest }: BudgetPickerProps) {
+  const fmt = useFormat();
   const t = useTranslations("budgetPicker");
   const [known, setKnown] = useState<Presupuesto | undefined>();
 
@@ -54,7 +56,7 @@ export function BudgetPicker({ value, onChange, allowClear = false, ...rest }: B
       useSource={useSource}
       getKey={(b) => b.idBudget!}
       getLabel={budgetLabel}
-      renderDetail={(b) => (b.propertyAmount != null ? formatCurrency(b.propertyAmount) : undefined)}
+      renderDetail={(b) => (b.propertyAmount != null ? fmt.currency(b.propertyAmount) : undefined)}
       displayValue={current ? budgetLabel(current) : ""}
       selectedKey={value}
       onSelect={(b) => { setKnown(b); onChange(b); }}
