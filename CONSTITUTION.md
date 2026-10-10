@@ -207,9 +207,9 @@ The schema produces `proposal.md`, `traceability.md`, `specs/<capability>/spec.m
 maps every requirement of this Constitution to the artifact that carries it.
 Acceptance Criteria are the delta spec's `#### Scenario:` blocks. → **Gate 1.**
 
-**4. Impact Analysis.** Identify affected modules (backend-api, frontend,
-notaire-shared), entities, endpoints, database schema, tests,
-and documentation. List risks and dependencies.
+**4. Impact Analysis.** Identify affected modules (backend-api, frontend),
+entities, endpoints, database schema, tests, and documentation. List risks
+and dependencies.
 
 **5. Architecture Review.** Verify the design follows the existing
 architecture and conventions. If the change is architectural, record it in an
@@ -680,6 +680,6 @@ drift.
 
 ---
 
-*Last reviewed: 2026-10-04. This Constitution supersedes the process
+*Last reviewed: 2026-10-10. This Constitution supersedes the process
 summary in `.claude/rules/ai-agent-workflow.md` where they conflict; that
 document remains the operational implementation.*
