@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { gestionWorkflowKeys } from "@/hooks/useGestionWorkflow";
 import type {
   CarpetaTramite,
@@ -16,7 +16,30 @@ export const gestionesKeys = {
   byCliente: (id: number) => ["gestiones", "cliente", id] as const,
   byNumero: (numero: number) => ["gestiones", "numero", numero] as const,
   saldoPendiente: (id: number) => ["gestiones", id, "saldo-pendiente"] as const,
+  page: (params: GestionesPageParams) => ["gestiones", "page", params] as const,
 };
+
+export interface GestionesPageParams {
+  page: number;
+  size: number;
+}
+
+/** Sort for the managements list: newest first (#1340). */
+export const GESTIONES_SORT = "idManagement,desc";
+
+/**
+ * One server page of GET /gestiones (#1340). The managements table outgrows any
+ * fixed size, so screens never load it whole.
+ */
+export function useGestionesPage(params: GestionesPageParams, options: { enabled?: boolean } = {}) {
+  return useQuery({
+    queryKey: gestionesKeys.page(params),
+    queryFn: () =>
+      apiGetPage<GestionDeEscritura>("/gestiones", { page: params.page, size: params.size, sort: GESTIONES_SORT }),
+    placeholderData: keepPreviousData,
+    enabled: options.enabled ?? true,
+  });
+}
 
 export const historialKeys = {
   byGestion: (id: number) => ["historial", "gestion", id] as const,

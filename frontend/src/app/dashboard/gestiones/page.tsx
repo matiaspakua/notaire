@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Archive, RefreshCcw, History, FolderClock, ClipboardList } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, FormHeader } from "@/theme/form-patterns";
 import {
-  useGestiones,
+  useGestionesPage,
   useGestionesByCliente,
   useCreateCompleteGestion,
   useUpdateGestion,
@@ -27,6 +27,7 @@ import {
 } from "@/hooks/useGestiones";
 import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
 import { PersonPicker } from "@/components/shared/PersonPicker";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { usePresupuestos } from "@/hooks/usePresupuestos";
 import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
@@ -41,9 +42,22 @@ const ESTADO_CARPETA_ACTIVA = "Activa";
 const ESTADO_ARCHIVADA = "Archivada";
 
 export default function GestionesPage() {
+  return (
+    <Suspense>
+      <GestionesList />
+    </Suspense>
+  );
+}
+
+function GestionesList() {
   const t = useTranslations("gestiones");
   const tc = useTranslations("common");
-  const { data: gestiones = [], isLoading } = useGestiones();
+  // One server page at a time, page and size in the URL (#1340): the list used
+  // to load size=1000, hiding older managements and rendering 1000 rows.
+  const paging = useUrlPagination();
+  const { data: gestionesPage, isLoading, isFetching } = useGestionesPage({ page: paging.page, size: paging.size });
+  const gestiones = gestionesPage?.content ?? [];
+  useClampPage(paging, gestionesPage?.totalPages);
   const { data: presupuestos = [] } = usePresupuestos();
   const { data: estados = [] } = useEstadosGestion();
   const { data: tiposTramite = [] } = useTiposTramite();
@@ -346,8 +360,20 @@ export default function GestionesPage() {
         data={visibleGestiones}
         columns={columns}
         isLoading={isLoadingVisible}
+        isFetching={!clienteFilter && isFetching}
         keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
+        pagination={
+          clienteFilter
+            ? undefined
+            : {
+                page: gestionesPage?.number ?? paging.page,
+                size: paging.size,
+                totalElements: gestionesPage?.totalElements ?? 0,
+                onPageChange: paging.setPage,
+                onSizeChange: paging.setSize,
+              }
+        }
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
