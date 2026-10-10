@@ -11,15 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { usePagos, useCreatePago, useUpdatePago, useDeletePago, usePagoEstado } from "@/hooks/usePagos";
-import { usePresupuestos, usePresupuestoResumen } from "@/hooks/usePresupuestos";
+import { usePresupuestoResumen } from "@/hooks/usePresupuestos";
+import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { useReciboPago } from "@/hooks/useReportes";
 import { ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
@@ -38,7 +32,6 @@ export default function PagosPage() {
   const tc = useTranslations("common");
 
   const { data: pagos = [], isLoading } = usePagos();
-  const { data: presupuestos = [] } = usePresupuestos();
   const createMutation = useCreatePago();
   const updateMutation = useUpdatePago();
   const deleteMutation = useDeletePago();
@@ -148,26 +141,14 @@ export default function PagosPage() {
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editPago") : t("newPago")}>
               {/* Issue #796: Replace numeric ID input with presupuesto picker */}
-              <FormField label="Presupuesto" required>
-                <Select
-                  value={editing.idBudget?.toString() || ""}
-                  onValueChange={(value) => setEditing({ ...editing, idBudget: parseInt(value) })}
-                >
-                  <SelectTrigger data-testid="select-presupuesto-pago">
-                    <SelectValue placeholder="Seleccionar presupuesto..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {presupuestos.length === 0 ? (
-                      <div className="px-2 py-1.5 text-sm text-muted-foreground">No hay presupuestos disponibles</div>
-                    ) : (
-                      presupuestos.map((p) => (
-                        <SelectItem key={p.idBudget} value={p.idBudget!.toString()}>
-                          {p.person ? `${p.person.lastName}, ${p.person.name} - $${p.propertyAmount}` : `Presupuesto #${p.idBudget}`}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
+              <FormField label={t("fields.presupuesto")} required>
+                {/* Server search instead of the first 1000 budgets (#1340). */}
+                <BudgetPicker
+                  value={editing.idBudget ?? undefined}
+                  onChange={(budget) => setEditing({ ...editing, idBudget: budget?.idBudget })}
+                  aria-label={t("fields.presupuesto")}
+                  data-testid="select-presupuesto-pago"
+                />
               </FormField>
 
               {/* Issue #796: Show saldo pendiente after selection */}
