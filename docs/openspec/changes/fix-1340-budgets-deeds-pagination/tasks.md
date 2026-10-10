@@ -39,7 +39,7 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push and open PR
+- [x] 10.1 Push and open PR (#1397)
 - [ ] 10.2 CI green
 
 ## 11. Deploy

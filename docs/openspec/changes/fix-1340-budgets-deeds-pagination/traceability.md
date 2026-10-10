@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/1340_budgets_deeds_pagination` | stacked on #1396 |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | pushed |
-| Pull Request | — | pending |
+| Pull Request | #1397 | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
