@@ -160,23 +160,29 @@ run "process script self-tests" bash -c \
      && python3 -m unittest discover -s backend-api/tools/tests"
 
 # Mirrors: OpenAPI commit + breaking diff (openapi-contract.yml), breaking half.
-# Same oasdiff rule and the same Owner-accepted list as CI; the export-freshness
-# half needs a springdoc export and runs in CI only.
+# Same oasdiff rule and the same Owner-accepted entries as CI: the checker
+# assembles this branch's own files in backend-api/openapi/accepted-breaking-changes.d
+# (#1315) into the ignore list and fails on stale entries; files unchanged on
+# origin/main belong to merged pull requests and are never ignored (--fix deletes
+# them). The export-freshness half needs a springdoc export and runs in CI only.
 OPENAPI_SPEC="backend-api/openapi/openapi.yaml"
-OPENAPI_ACCEPTED="backend-api/openapi/accepted-breaking-changes.txt"
 if ! command -v oasdiff >/dev/null 2>&1; then
     skip "openapi breaking diff" "oasdiff not installed — CI WILL run this"
 elif ! git cat-file -e "origin/main:$OPENAPI_SPEC" 2>/dev/null; then
     skip "openapi breaking diff" "no $OPENAPI_SPEC on origin/main yet"
 else
     OPENAPI_BASE="$(mktemp)"
+    OPENAPI_IGNORE="$(mktemp)"
+    OPENAPI_PRUNE=()
+    [ "$MODE_FIX" = "1" ] && OPENAPI_PRUNE=(--prune)
     git show "origin/main:$OPENAPI_SPEC" > "$OPENAPI_BASE"
+    # Mirrors: "Accepted breaking changes: assemble and check" (openapi-contract.yml).
+    run "openapi accepted breaking changes (accepted-breaking-changes.d)" \
+        python3 workspace/sdlc/check-accepted-breaking-changes.py "$OPENAPI_BASE" "$OPENAPI_SPEC" \
+        --base-ref origin/main --write-ignore "$OPENAPI_IGNORE" "${OPENAPI_PRUNE[@]}"
     run "openapi breaking diff" oasdiff breaking "$OPENAPI_BASE" "$OPENAPI_SPEC" \
-        --fail-on ERR --err-ignore "$OPENAPI_ACCEPTED"
-    # Mirrors: "Accepted breaking list has no stale entries" (openapi-contract.yml, #1315).
-    run "openapi accepted list has no stale entries" python3 workspace/sdlc/check-accepted-breaking-changes.py \
-        "$OPENAPI_BASE" "$OPENAPI_SPEC" "$OPENAPI_ACCEPTED"
-    rm -f "$OPENAPI_BASE"
+        --fail-on ERR --err-ignore "$OPENAPI_IGNORE"
+    rm -f "$OPENAPI_BASE" "$OPENAPI_IGNORE"
 fi
 
 # ---------------------------------------------------------------------------
