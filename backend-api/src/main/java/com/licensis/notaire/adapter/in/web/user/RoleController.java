@@ -92,7 +92,9 @@ public class RoleController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "404", description = "No encontrado"),
+    @ApiResponse(responseCode = "409", description = "Ya existe un rol con ese nombre")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar rol")
