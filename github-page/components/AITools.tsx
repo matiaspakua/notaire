@@ -12,6 +12,15 @@ const tools = [
     contrib: "~80% of AI work",
   },
   {
+    name: "Cursor Cloud",
+    maker: "Cursor",
+    role: "Autonomous cloud fleet — foreman + specialists run Issue → OpenSpec → PR → heavy-CI on remote VMs",
+    color: "#0A84FF",
+    icon: "☁️",
+    badge: "Fleet",
+    contrib: "Cloud SDLC loop",
+  },
+  {
     name: "OpenCode",
     maker: "OpenCode",
     role: "Terminal-native AI coding agent, integrated directly into the shell workflow",
@@ -76,7 +85,7 @@ export function AITools() {
             The <span className="grad-fire">AI Tools</span> That Built It
           </h2>
           <p className="text-neutral-600 max-w-xl mx-auto">
-            Four AI tools, one codebase. Each played a different role in accelerating from idea to production.
+            Five AI tools, one codebase. Each played a different role in accelerating from idea to production.
           </p>
         </div>
 

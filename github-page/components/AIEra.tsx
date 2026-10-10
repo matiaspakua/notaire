@@ -83,8 +83,8 @@ export function AIEra() {
             Built with <span className="grad-cyan">Artificial Intelligence</span>
           </h2>
           <p className="text-neutral-600 max-w-2xl mx-auto leading-relaxed">
-            In 2026, Claude AI became the primary co-developer. Not just autocomplete—
-            full workflow automation: TDD, code review, documentation, E2E testing, and security audits.
+            In 2026, Claude AI became the primary co-developer, then Cursor Cloud agents
+            closed the loop on remote VMs—OpenSpec specs, TDD, documentation, Bruno, Playwright, and heavy-CI merges.
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export function AIEra() {
         <div className="mb-16 glass rounded-2xl p-6 border border-[#AF52DE]/20 overflow-hidden relative">
           <div className="absolute inset-0 shimmer" />
           <div className="relative z-10 flex items-center gap-3 flex-wrap justify-center text-sm font-mono text-neutral-600">
-            {["GitHub Issue", "→", "Use Case (CU-XX)", "→", "Feature Branch", "→", "TDD", "→", "Implementation", "→", "E2E Tests", "→", "PR Review", "→", "Merged"].map((step, i) => (
+            {["GitHub Issue", "→", "Use Case (CU-XX)", "→", "OpenSpec Gate 1", "→", "Feature Branch", "→", "TDD", "→", "Implementation", "→", "E2E + Bruno", "→", "Heavy-CI", "→", "Merged"].map((step, i) => (
               <span key={i} className={step === "→" ? "text-neutral-500" : "px-3 py-1 rounded-full text-xs"} style={step !== "→" ? { background: "rgba(175,82,222,0.15)", color: "#AF52DE", border: "1px solid rgba(175,82,222,0.25)" } : {}}>
                 {step}
               </span>
