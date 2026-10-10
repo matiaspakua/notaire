@@ -3,9 +3,7 @@
 ## Purpose
 
 Keep the Maven reactor and the build tooling free of a module with no second consumer, and make the REST API the only contract external services use. Source: #1255; owner CU76.
-
 ## Requirements
-
 ### Requirement: backend-api owns its DTOs
 
 The system MUST compile every class of the former module (`com.licensis.notaire.dto`, `dto.exceptions`, `dto.interfaces` and `jpa.exceptions.PreexistingEntityException`) as part of `backend-api`, under their existing packages, and MUST NOT change any JSON shape exposed by the REST API.
@@ -75,3 +73,25 @@ The documentation MUST state that external services and clients consume `/api/v1
 
 - **WHEN** the setup guide, DTO guide, README and ADR-025 are read
 - **THEN** they point to the OpenAPI contract and none lists `notaire-shared` as a live module
+
+### Requirement: Constitution Impact Analysis lists only live modules
+
+The Engineering Constitution (`CONSTITUTION.md`) MUST name only live product
+modules in its §5 Impact Analysis example list. It MUST NOT present
+`notaire-shared` as a live module beside `backend-api` and `frontend`. Mentions
+that mark the module retired, deprecated, formerly, or that cite ADR-025 remain
+allowed elsewhere in permanent docs covered by the retirement guard.
+
+#### Scenario: Constitution does not list notaire-shared as a live module
+
+- **WHEN** `CONSTITUTION.md` is scanned for the string `notaire-shared`
+- **THEN** every matching line also carries a non-live marker (`retired`,
+  `deprecated`, `formerly`, or `ADR-025`), so Impact Analysis cannot list it as
+  a current module
+
+#### Scenario: Retirement docs guard covers the Constitution
+
+- **WHEN** `NotaireSharedRetiredTest.test_docs_do_not_present_the_module_as_live` runs
+- **THEN** `CONSTITUTION.md` is included in `DOCS_AS_NON_LIVE` and a bare live
+  mention fails the assertion
+
