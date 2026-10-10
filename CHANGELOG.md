@@ -815,6 +815,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Touch targets** (#1369, RNF-06/RNF-07): on touch screens (coarse pointer) small buttons
   and the rows-per-page select are at least 44x44 and row actions sit 8px apart, so taps no
   longer miss or hit the neighbouring delete button. Desktop keeps the 32px compact buttons.
+- **Deeds are chosen with a searchable picker instead of the first 1000 (slice 8b of #1340)** (issue #1340, CU07/CU08/CU87): the testimony, registration-draft and folio forms read `GET /escrituras?size=1000` and kept the signed deeds in the browser, so once the deeds table passes 1000 rows a newly signed deed could not be chosen. A new `DeedPicker` (shared `SearchCombobox`) lists the 20 newest signed deeds on open (`GET /escrituras?status=Firmada`, #1476), finds any signed deed by number (`GET /escrituras/buscar`) and loads the current deed by id; unsigned deeds are never offered. The folio form still hides a deed already linked to another folio. `useEscrituras()`, the unused `usePersonas()` and the size=1000 helper `apiGetPaged` are removed, and a guard test fails if a source asks for a whole table again. `deed-picker.test.tsx`, `no-whole-table-loads.test.ts` and Playwright `TS-0123` cover it.
 
 ### Added
 
