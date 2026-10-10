@@ -1171,6 +1171,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Quick reference for developers
   - Common patterns and templates
   - Testing and validation commands
+- **Deed list status filter** (#1340, CU06/CU07/CU82): `GET /api/v1/escrituras` takes an
+  optional `status` (Sin Firmar, Firmada, Anulada, No Paso, Inscripta; any letter case,
+  anything else answers 400) and returns one page of deeds in that status, so deed pickers
+  no longer need the whole list to find signed deeds. Non-breaking.
 
 ### Deprecated
 
