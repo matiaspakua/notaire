@@ -60,18 +60,20 @@ def collect(repo: Path = REPO_ROOT) -> dict:
     with_paths = 0
     for wf in workflow_files:
         text = wf.read_text(encoding="utf-8", errors="replace")
-        # naive but stable: look for paths: under on.push / on.pull_request
-        if "\n    paths:" in text or "\n  paths:" in text or "paths:" in text and "paths-ignore" not in text:
-            # count only if paths: appears as a filter key (not paths-ignore alone)
-            lines = text.splitlines()
-            for i, line in enumerate(lines):
-                stripped = line.strip()
-                if stripped.startswith("paths:") and "paths-ignore" not in stripped:
-                    with_paths += 1
-                    break
-                if stripped == "paths:" and i + 1 < len(lines) and lines[i + 1].strip().startswith("-"):
-                    with_paths += 1
-                    break
+        # Path scoping after P0.2 (#1257): either classic on.paths / on.pull_request.paths,
+        # or dorny/paths-filter in a changes job (ci, frontend-ci, playwright-e2e, openapi).
+        if "dorny/paths-filter" in text:
+            with_paths += 1
+            continue
+        lines = text.splitlines()
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.startswith("paths:") and "paths-ignore" not in stripped:
+                with_paths += 1
+                break
+            if stripped == "paths:" and i + 1 < len(lines) and lines[i + 1].strip().startswith("-"):
+                with_paths += 1
+                break
 
     always_bytes = 0
     always_present = []
@@ -118,7 +120,7 @@ def collect(repo: Path = REPO_ROOT) -> dict:
         "plantuml_diagram_files": puml_count,
         "notes": [
             "Token estimate is bytes/4 (rough); measure with the agent loader for exact counts.",
-            "Workflow path-filter count is heuristic over YAML text; re-check when editing workflows.",
+            "Path-scoping count includes classic on.paths and dorny/paths-filter (P0.2 / #1257).",
             "Script is offline-only; PR cross-area rates require gh and are recorded in ADR-024.",
         ],
     }
@@ -138,7 +140,7 @@ def render_markdown(data: dict) -> str:
         "|--------|------:|",
         f"| Modules (`workspace/modules.yaml`) | {data['modules_count']} |",
         f"| Workflows total | {data['workflows_total']} |",
-        f"| Workflows with `paths:` filter (heuristic) | {data['workflows_with_paths_filter']} |",
+        f"| Workflows with path scoping (`on.paths` or dorny/paths-filter) | {data['workflows_with_paths_filter']} |",
         f"| Always-loaded bytes | {data['always_loaded_bytes']} |",
         f"| Always-loaded tokens (est.) | {data['always_loaded_tokens_estimate']} |",
         f"| `deprecated/` bytes | {data['deprecated_bytes']} |",

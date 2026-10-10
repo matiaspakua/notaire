@@ -50,6 +50,27 @@ class RepoMetricsTest(unittest.TestCase):
         self.assertIn("workspace/ci/repo-metrics.py", text)
         self.assertIn("modules", text.lower())
 
+    def test_paths_filter_count_includes_dorny_action(self) -> None:
+        """P0.2 uses dorny/paths-filter; the heuristic must count those workflows (#1256)."""
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "metrics.json"
+            completed = subprocess.run(
+                ["python3", str(SCRIPT), "--json", str(out)],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0, msg=completed.stderr)
+            data = json.loads(out.read_text(encoding="utf-8"))
+            # classic on.paths (2) + dorny/paths-filter (4) after P0.2
+            self.assertGreaterEqual(
+                data["workflows_with_paths_filter"],
+                6,
+                msg="path-scoped CI heuristics under-count dorny/paths-filter workflows",
+            )
+            self.assertIn("dorny/paths-filter", " ".join(data.get("notes") or []))
+
 
 if __name__ == "__main__":
     unittest.main()
