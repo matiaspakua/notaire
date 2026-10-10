@@ -6,8 +6,9 @@
 # Keys are 'METHOD /api/v1/path' exactly as in OpenAPI.
 #
 # Owner triage of the baseline (2026-10-07, #1250): A = read-by-id, stays API-only; B = management
-# history, API-only with ADMIN-only PUT/DELETE; C = UI backlog; D = likely redundant, removal later;
-# E = the Jasper report, rebuilt in-house by #567 (works, no UI caller yet; Owner to reclassify as C or A).
+# history, API-only with ADMIN-only PUT/DELETE; C = UI backlog; D = likely redundant, removal later.
+# Owner decision 2026-10-09 (#1336): the former bucket E report (rebuilt in-house by #567, #1363) and
+# manual testimony-movement POST/PUT/DELETE (#1364) are API-only (bucket A).
 endpoints:
   "GET /api/v1/audit-log/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/carpetas/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
@@ -26,10 +27,10 @@ endpoints:
   "GET /api/v1/inmueble/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/items/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/movimiento-testimonio": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
-  "POST /api/v1/movimiento-testimonio": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
-  "DELETE /api/v1/movimiento-testimonio/{id}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
+  "POST /api/v1/movimiento-testimonio": "API-only (#1250 bucket A, Owner decision 2026-10-09, #1364): the withdraw and re-enter actions record movements; manual creation is not offered in the UI"
+  "DELETE /api/v1/movimiento-testimonio/{id}": "API-only (#1250 bucket A, Owner decision 2026-10-09, #1364): manual movement correction is API-only"
   "GET /api/v1/movimiento-testimonio/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
-  "PUT /api/v1/movimiento-testimonio/{id}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
+  "PUT /api/v1/movimiento-testimonio/{id}": "API-only (#1250 bucket A, Owner decision 2026-10-09, #1364): manual movement correction is API-only"
   "GET /api/v1/pagos/fecha": "Likely redundant (#1250 bucket D): confirm, then remove with OpenAPI, Bruno and the CU-API matrix"
   "GET /api/v1/pagos/presupuesto/{idBudget}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "GET /api/v1/pagos/presupuesto/{idBudget}/saldo": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
@@ -40,7 +41,7 @@ endpoints:
   "DELETE /api/v1/plantilla-tramite/{idProcedureType}/{idDocumentType}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "PUT /api/v1/plantilla-tramite/{idProcedureType}/{idDocumentType}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "GET /api/v1/presupuestos/persona/{idPerson}": "Likely redundant (#1250 bucket D): confirm, then remove with OpenAPI, Bruno and the CU-API matrix"
-  "GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}": "No UI caller yet (#1250 bucket E): in-house PDF since #567; Owner to reclassify as C (UI backlog) or A (API-only)"
+  "GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}": "API-only (#1250 bucket A, Owner decision 2026-10-09, #1363): in-house PDF since #567; the UI lists expiries on /dashboard/proximos-vencimientos and offers no download"
   "GET /api/v1/roles/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "GET /api/v1/suplencia/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "POST /api/v1/testimonio": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"

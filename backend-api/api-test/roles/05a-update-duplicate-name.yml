@@ -1,0 +1,38 @@
+info:
+  name: Update role to a duplicate name answers 409
+  type: http
+  seq: 5
+  description: |-
+      ## Duplicate role name — PUT /api/v1/roles/{id}
+      Renaming the second role to the first role's name violates the unique
+      constraint on roles.name. Issue #579, Owner decision Oct 9: duplicates
+      answer 409 with a safe message; other constraint violations stay 400.
+      Traceability: CU76
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/roles/{{roles_second_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "{{roles_name}}-upd",
+          "description": "duplicate",
+          "active": true,
+          "modulos": []
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 409 Conflict", function () { expect(res.getStatus()).to.equal(409); });
+          test("Safe duplicate message", function () {
+            const b = res.getBody();
+            expect(b.status).to.equal(409);
+            expect(b.message).to.equal('The submitted data duplicates an existing record');
+            expect(JSON.stringify(b)).to.not.contain('23505');
+          });

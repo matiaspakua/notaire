@@ -141,7 +141,7 @@ export default function TestimoniosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("newTestimonio")}>
+            <FormSection dialogTitle title={t("newTestimonio")}>
               <FormField label={t("fields.escritura")} required>
                 <Select value={idEscritura} onValueChange={setIdEscritura}>
                   <SelectTrigger data-testid="select-escritura-testimonio">
@@ -172,7 +172,7 @@ export default function TestimoniosPage() {
       <Dialog open={!!verificarId} onOpenChange={(v) => !v && setVerificarId(null)}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("verificarTestimonio")}>
+            <FormSection dialogTitle title={t("verificarTestimonio")}>
               <CheckboxField label={t("fields.observado")} checked={observado} onChange={setObservado} data-testid="checkbox-observado-testimonio" />
               <FormField label={t("fields.observaciones")}>
                 <textarea

@@ -147,6 +147,10 @@ jobs:
       # PostgreSQL schema. Docker is available on ubuntu-latest runners.
       - name: Run Integration Tests (Testcontainers / PostgreSQL)
         run: mvn test -pl backend-api -am -Ppg-integration
+        env:
+          # Pull postgres and testcontainers/ryuk through Google's public Docker Hub
+          # cache instead of anonymous Docker Hub (429 rate limit on runners, #1380).
+          TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX: mirror.gcr.io/
 
       - name: Upload Integration Test Report (surefire + JaCoCo coverage)
         uses: actions/upload-artifact@v7
@@ -277,6 +281,12 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
+        with:
+          # FROM images (maven, eclipse-temurin) through Google's public Docker Hub
+          # cache; anonymous Docker Hub pulls hit the 429 rate limit (#1380).
+          buildkitd-config-inline: |
+            [registry."docker.io"]
+              mirrors = ["mirror.gcr.io"]
 
       - name: Extract Metadata
         id: meta
