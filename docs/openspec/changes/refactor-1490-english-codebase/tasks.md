@@ -67,15 +67,15 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits, one commit for the plan and one for the rename
-- [ ] 9.2 Messages end with `Closes #1490` only on the commit that should close the issue; intermediate commits use `Issue: #1490` so the issue stays open until the PR merges. The final PR body uses `Closes #1490`
-- [ ] 9.3 No secrets and no unrelated edits
-- [ ] 9.4 Record SHAs in `traceability.md` after the commits exist
+- [x] 9.1 Conventional Commits, one commit for the plan and one for the rename
+- [x] 9.2 Messages end with `Closes #1490` only on the commit that should close the issue; intermediate commits use `Issue: #1490` so the issue stays open until the PR merges. The final PR body uses `Closes #1490`
+- [x] 9.3 No secrets and no unrelated edits
+- [x] 9.4 Record SHAs in `traceability.md` after the commits exist
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/english-codebase-01e0`
-- [ ] 10.2 Open the PR titled `[#1490] refactor(codebase): translate remaining surface to English`
+- [x] 10.1 `git push -u origin cursor/english-codebase-01e0`
+- [x] 10.2 Open the PR titled `[#1490] refactor(codebase): translate remaining surface to English`
 - [ ] 10.3 CI workflows run on the PR
 - [ ] 10.4 Gate 4 waits on review
 - [ ] 10.5 Record the PR number in `traceability.md`

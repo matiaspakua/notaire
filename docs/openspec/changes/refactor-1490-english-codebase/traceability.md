@@ -20,7 +20,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/english-codebase-01e0` | created from `origin/main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | `9c536900`, `329247ba` | created |
-| Pull Request | pending | pending |
+| Pull Request | #1495 | draft |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | pending | pending |
