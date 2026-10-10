@@ -63,7 +63,7 @@ export function DataTable<T>({
     );
   }
   return (
-    <div className="rounded-[24px] border border-border/40 overflow-hidden bg-white apple-shadow animate-in fade-in duration-500">
+    <div className="rounded-[24px] border border-border/40 overflow-hidden bg-white apple-shadow animate-in fade-in-0 duration-300">
       <Table aria-busy={isFetching || isLoading ? true : undefined}>
         <TableHeader>
           <TableRow className="bg-secondary/50 border-b border-border/40 hover:bg-secondary/50">
