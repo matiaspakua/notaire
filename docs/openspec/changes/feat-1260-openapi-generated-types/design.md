@@ -22,6 +22,13 @@ Hand-written DTOs in `frontend/src/types/index.ts` drift from `openapi.yaml`. #1
 
 Large generated file in PRs — accept. Dual type systems briefly — finish AC hooks same PR.
 
+## Reachability guard
+
+`api.generated.ts` lists every OpenAPI path as a bare string. The #1250 static reachability
+scanner treats bare path literals as consumers for every HTTP method, so generated maps are
+excluded via `*.generated.ts` (see `contracts/tests/test_api_reachability.py`). Hand-written
+hooks remain the only consumers that clear allowlist entries.
+
 ## Testing Strategy
 
 | Scenario | Verification |

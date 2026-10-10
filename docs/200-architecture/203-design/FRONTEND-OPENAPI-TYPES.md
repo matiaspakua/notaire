@@ -29,6 +29,12 @@ npm run openapi:types:check   # fail if committed file is stale (also Frontend C
 `frontend-ci.yml` runs `npm run openapi:types:check` before `typecheck`. Any PR that changes
 `openapi.yaml` without regenerating types fails Frontend CI.
 
+## Reachability scan
+
+`contracts/tests/test_api_reachability.py` skips `*.generated.ts`. The generated path map embeds
+every OpenAPI path as a string literal; counting those as UI consumers would empty the
+API-only allowlist. Real `apiGet` / `apiPost` / … call sites remain the source of truth.
+
 ## Migration policy
 
 New hooks and call sites should import from `@/types/api` (or re-exports in `@/types`).
