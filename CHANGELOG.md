@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Frontend API types generated from OpenAPI** (issue #1260, CU76, #1197 P0.5):
+  `openapi-typescript` writes `frontend/src/types/api.generated.ts`; `npm run openapi:types:check`
+  fails Frontend CI on drift. Gestiones, presupuestos, documentos (and dashboard counts via those
+  hooks) use generated schema aliases from `src/types/api.ts`.
 - **Path-scoped CI skips Java and E2E on docs-only PRs** (issue #1257, CU76, #1197 P0.2):
   `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, and `openapi-contract.yml` add a
   `Path filter` (`dorny/paths-filter`) job; leaf jobs gate on filter outputs; suite

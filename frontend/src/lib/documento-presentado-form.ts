@@ -37,11 +37,12 @@ export function showsTramiteLink(editing: DocumentoPresentado | null): boolean {
   return !editing || editing.procedureId == null;
 }
 
+/** Build a create body; call only after `missingDocumentoFields` is empty (#655 / #1260). */
 export function toDocumentoRequest(form: DocumentoForm): DocumentoPresentadoRequest {
   return {
-    typeId: form.tipoId ? Number(form.tipoId) : null,
-    date: form.fecha || null,
+    typeId: Number(form.tipoId),
+    date: form.fecha || undefined,
     delivered: form.entregado,
-    procedureId: form.tramiteId ? Number(form.tramiteId) : null,
+    procedureId: Number(form.tramiteId),
   };
 }
