@@ -252,6 +252,10 @@ Operational failures while landing the fleet. Full table:
 OpenSpec records the **delta** of one change. The picture of the running
 domain — gestión, deed, testimony, documents, budget, payment, folders — is
 [CICLO-DE-VIDA.md](../../200-architecture/203-design/CICLO-DE-VIDA.md).
+The method for artifacts, traceability, and the process boxes is
+[INGENIERIA.md](../INGENIERIA.md), taken from the
+[specialization guide](https://github.com/matiaspakua/tech.notes.io/blob/main/pages/sw_eng_specialization/final_projects_specialization.md)
+and fitted to this repository's mainline and board.
 
 In the docs phase, when a change adds, removes, or conditions one of those
 states:

@@ -22,6 +22,7 @@ trabajo obligatorio.
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Mapeo de checks locales (`workspace/sdlc/preflight.sh`) a jobs de CI |
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
 | [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) | Permanent domain model. A change that moves a state updates this file in the same PR |
+| [`INGENIERIA.md`](INGENIERIA.md) | Artifact IDs, forward/back trace, and process boxes. Method from the specialization guide, fitted to this repo |
 
 OpenSpec ↔ Constitution: ver [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../openspec/NOTAIRE-ADAPTATIONS.md)
 (SpecKit, retirado en #1083: [`docs/000-archive/speckit/`](../000-archive/speckit/)).
@@ -31,7 +32,10 @@ OpenSpec ↔ Constitution: ver [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../opens
 1. Leer [`CONSTITUTION.md`](../../CONSTITUTION.md) y
    [`.claude/rules/ai-agent-workflow.md`](../../.claude/rules/ai-agent-workflow.md) — flujo
    obligatorio (issue + caso de uso → branch → TDD → tests → commit → PR).
-2. Ejecutar `bash workspace/sdlc/preflight.sh` antes de cada push (ver
+2. Si el cambio mueve un estado del dominio, actualizar
+   [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md). El método de
+   artefactos y trazabilidad está en [`INGENIERIA.md`](INGENIERIA.md).
+3. Ejecutar `bash workspace/sdlc/preflight.sh` antes de cada push (ver
    [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md); `mvn verify` solo no es suficiente).
 
 ## Navigation

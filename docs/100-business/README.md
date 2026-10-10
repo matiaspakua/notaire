@@ -21,7 +21,9 @@ Requerimientos (SRS) → Casos de Uso (CUxx) → Ciclo de vida → Issues GitHub
 
 El modelo de estados (gestión, pago, documentación, escritura, testimonio) vive
 una sola vez en [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md).
-Las fichas de caso de uso no copian el grafo.
+Las fichas de caso de uso no copian el grafo. La identificación de artefactos
+y el camino RF → CU → prueba → operación están en
+[INGENIERIA.md](../300-development/INGENIERIA.md).
 
 Todo cambio de código debe estar asociado a un Caso de Uso existente (ver
 [`.claude/rules/ai-agent-workflow.md`](../../.claude/rules/ai-agent-workflow.md)). Si no existe,

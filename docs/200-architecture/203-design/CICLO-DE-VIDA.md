@@ -12,6 +12,12 @@ PR. No se agrega un PlantUML paralelo ([ADR-027](../202-ADR/ADR-027-mermaid-diag
 Cuando el relato de un caso de uso y el grafo sembrado no coinciden, manda el
 código y Flyway. Las divergencias están en [§8](#8-divergencias-conocidas).
 
+**Método:** [INGENIERIA.md](../../300-development/INGENIERIA.md) (`DOC-ING`),
+aplicado desde la
+[guía de especialización](https://github.com/matiaspakua/tech.notes.io/blob/main/pages/sw_eng_specialization/final_projects_specialization.md).
+Este archivo es `DOC-CICLO`: el modelo del producto. Las vistas de abajo son
+C4 niveles 1 a 3, más las máquinas de estado del dominio.
+
 **Fuentes:** `V2__initial_data.sql`, `V10__seed_workflow_demo_data.sql`,
 `V41__extend_workflow_post_firma_testimony.sql`, `BusinessConstants`,
 `PaymentStatus`, `BudgetStatus`, `DeedSigningService`, `DeedController`,
@@ -408,7 +414,48 @@ sequenceDiagram
   end
 ```
 
-## 5. Componentes que sostienen el ciclo
+## 5. Vistas C4
+
+Nivel 4 (clases) no se dibuja aquí: el costo no paga el detalle, y el código
+ya es esa vista. El SAD arc42 sigue siendo `DOC-SAD`.
+
+### 5.1 Contexto
+
+```mermaid
+flowchart TB
+  cliente[Cliente]
+  gestor[Gestor y recepcionista]
+  escribano[Escribano]
+  registro[Registro de la Propiedad]
+  catastro[Catastro y municipio]
+
+  subgraph notaire [Notaire]
+    sistema[Gestión notarial]
+  end
+
+  cliente --> sistema
+  gestor --> sistema
+  escribano --> sistema
+  sistema --> registro
+  sistema --> catastro
+```
+
+El cliente pide el trámite y paga. El gestor documenta y hace avanzar la
+gestión. El escribano firma y archiva. Registro y catastro están fuera del
+sistema: la minuta y los certificados se registran en Notaire; el organismo
+no tiene API en este modelo.
+
+### 5.2 Contenedores
+
+```mermaid
+flowchart LR
+  usuario[Usuario] --> web[frontend Next.js]
+  web --> api[backend-api]
+  api --> db[(PostgreSQL)]
+  api --> obs[Prometheus Grafana Loki]
+```
+
+### 5.3 Componentes del backend que sostienen el ciclo
 
 El pago es el corte hexagonal ([ADR-021](../202-ADR/ADR-021-hexagonal-architecture-pilot.md)).
 Gestión, documento, escritura, testimonio y minuta viven en casos de uso de
@@ -468,6 +515,10 @@ diaria (métricas, logs, incidentes) está en
 [monitoreo](../207-monitoring/README.md) y CU77.
 
 ## 6. Trazabilidad de punta a punta
+
+El hilo adelante y atrás, con el ejemplo de CU15, está en
+[INGENIERIA.md §3](../../300-development/INGENIERIA.md#3-trazabilidad).
+Esta tabla es el mapa de documentos del dominio.
 
 | Pregunta | Documento permanente | Contrato de cambio | Código |
 |----------|----------------------|--------------------|--------|
