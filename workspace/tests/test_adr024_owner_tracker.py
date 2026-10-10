@@ -40,6 +40,23 @@ class Adr024OwnerTrackerTest(unittest.TestCase):
             f"Pages Architecture must name live Owner umbrella #{LIVE} next to ADR-024",
         )
 
+    def test_pages_architecture_lists_owner_decision_pack(self):
+        """Public Architecture page names every blocking Owner decision for sync."""
+        with open(PAGES_ARCH, encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertIn("Owner decisions pending", text)
+        for num in (LIVE, "1438", "1226"):
+            self.assertIn(
+                f"#{num}",
+                text,
+                f"Pages Architecture must list Owner decision #{num}",
+            )
+            self.assertIn(
+                f"https://github.com/matiaspakua/notaire/issues/{num}",
+                text,
+                f"Pages Architecture must deep-link issue #{num}",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
