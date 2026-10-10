@@ -12,12 +12,26 @@ export default function DocsModulesPage() {
           Phase 0 of repository topology (#1197): keep one monorepo, give every folder a clear
           responsibility (ADR-026). Extraction happens later, only behind evidence gates.
         </p>
-        <a
-          className="inline-flex text-sm text-[#0A84FF] hover:underline"
-          href={`${DOCS}/300-development/MODULE-OWNERSHIP.md`}
-        >
-          Full MODULE-OWNERSHIP.md on GitHub →
-        </a>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <a
+            className="text-[#0A84FF] hover:underline"
+            href={`${DOCS}/300-development/MODULE-OWNERSHIP.md`}
+          >
+            MODULE-OWNERSHIP.md →
+          </a>
+          <a
+            className="text-[#0A84FF] hover:underline"
+            href={`${DOCS}/300-development/REPO-SPLIT-PLAN.md`}
+          >
+            REPO-SPLIT-PLAN.md →
+          </a>
+          <a
+            className="text-[#0A84FF] hover:underline"
+            href={`${DOCS}/300-development/REPO-METRICS-BASELINE.md`}
+          >
+            REPO-METRICS-BASELINE.md (6/17 path-scoped) →
+          </a>
+        </div>
       </header>
 
       <section className="space-y-3">
