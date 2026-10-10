@@ -272,6 +272,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `.apple-button { transition: all }` (with its hover scale) are gone; dialogs enter in 240ms emphasized and leave in
   180ms; pages fade up 4px in 160ms without `AnimatePresence mode="wait"` (was 200ms exit + 400ms enter); staggered
   entrances are capped at 6 x 30ms. Guarded by `motion-tokens.test.ts` and Playwright TS-0120.
+- **Grouped sidebar (#1367).** The sidebar's flat 22-link list is now Inicio plus six collapsible sections with headings: Clientes, Trámites, Documentación, Escrituras y protocolo, Gestión and Administración. The browser remembers collapsed sections, and the section holding the current page always opens. The dashboard module grid is built from the same config, in sidebar order. Auditoría is now hidden from non-admins, matching its route guard. Opening Documentos necesarios no longer also highlights Documentos.
 
 ### Fixed
 

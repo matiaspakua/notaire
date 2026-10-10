@@ -1,19 +1,46 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, Scale, X } from "lucide-react";
+import { ChevronDown, LogOut, Scale, X } from "lucide-react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { apiLogout } from "@/lib/api-client";
-import { DASHBOARD_NAV_ITEMS } from "@/lib/dashboard-nav";
+import {
+  DASHBOARD_NAV_GROUPS,
+  DASHBOARD_NAV_HOME,
+  isNavItemActive,
+  type DashboardNavItem,
+} from "@/lib/dashboard-nav";
 import { useAuthStore } from "@/store/auth-store";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 
 /** Id of the mobile navigation sheet, for the toggle's aria-controls. */
 export const MOBILE_SIDEBAR_ID = "mobile-sidebar";
+
+/** localStorage key holding the labelKeys of the sections the user collapsed (#1367). */
+export const SIDEBAR_COLLAPSED_KEY = "notaire.sidebar.collapsed";
+
+function readCollapsed(): string[] {
+  try {
+    const raw = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((k): k is string => typeof k === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeCollapsed(keys: string[]) {
+  try {
+    window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, JSON.stringify(keys));
+  } catch {
+    // storage unavailable (private mode): the state just isn't remembered
+  }
+}
 
 interface AppSidebarProps {
   open?: boolean;
@@ -25,6 +52,31 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
   const router = useRouter();
   const { user, logout, isAdmin } = useAuthStore();
   const t = useTranslations("navigation");
+  const tg = useTranslations("navGroups");
+
+  // #1367: collapsible sections. The section holding the current route is
+  // opened on load and whenever the route moves into it; the user's other
+  // choices are remembered. (The layout renders the sidebar client-side only,
+  // after hydration, so reading localStorage in the initializer is safe.)
+  const activeGroup = DASHBOARD_NAV_GROUPS.find((g) =>
+    g.items.some((i) => isNavItemActive(pathname, i.href)),
+  )?.labelKey;
+  const [collapsed, setCollapsed] = useState<string[]>(() =>
+    readCollapsed().filter((k) => k !== activeGroup),
+  );
+  const [seenPath, setSeenPath] = useState(pathname);
+  if (seenPath !== pathname) {
+    setSeenPath(pathname);
+    if (activeGroup && collapsed.includes(activeGroup)) {
+      setCollapsed(collapsed.filter((k) => k !== activeGroup));
+    }
+  }
+
+  function toggleGroup(key: string) {
+    const next = collapsed.includes(key) ? collapsed.filter((k) => k !== key) : [...collapsed, key];
+    setCollapsed(next);
+    writeCollapsed(next);
+  }
 
   async function handleLogout() {
     // Clear HttpOnly JWT cookie via API before clearing client state (#1051).
@@ -34,7 +86,50 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
   }
 
   /** Logo, user, navigation and footer, shared by the desktop sidebar and the mobile sheet. */
-  const body = (onNavigate: (() => void) | undefined, animateActive: boolean) => (
+  function navLink(item: DashboardNavItem, onNavigate: (() => void) | undefined, animateActive: boolean) {
+    const Icon = item.icon;
+    const active = isNavItemActive(pathname, item.href);
+    const label = t(item.labelKey as Parameters<typeof t>[0]);
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={onNavigate}
+        data-testid={`nav-${item.labelKey}`}
+        aria-label={label}
+        aria-current={active ? "page" : undefined}
+        className={cn(
+          "relative flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-sm font-medium transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
+          active
+            ? "text-primary-foreground"
+            : "text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-hover))] hover:text-[hsl(var(--sidebar-foreground))]",
+        )}
+      >
+        {active && (
+          <motion.span
+            layoutId={animateActive ? "sidebar-active" : undefined}
+            className="absolute inset-0 rounded-[12px] bg-primary shadow-md shadow-primary/20"
+            transition={{
+              type: "spring",
+              stiffness: 380,
+              damping: 32,
+            }}
+          />
+        )}
+        <span className="relative z-10 flex items-center gap-3">
+          <Icon
+            className={cn(
+              "h-[18px] w-[18px] shrink-0",
+              active ? "text-primary-foreground" : "text-[hsl(var(--sidebar-muted))]",
+            )}
+          />
+          {label}
+        </span>
+      </Link>
+    );
+  }
+
+  const body = (onNavigate: (() => void) | undefined, animateActive: boolean, idPrefix: string) => (
     <>
       {/* Logo */}
       <div className="flex items-center gap-3 px-7 py-8">
@@ -68,56 +163,42 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation: Inicio, then the task-based sections (#1367) */}
       <nav aria-label={t("mainNav")} className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
-        {DASHBOARD_NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin()).map(
-          (item) => {
-            const Icon = item.icon;
-            const active =
-              pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
-            const label = t(item.labelKey as Parameters<typeof t>[0]);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onNavigate}
-                data-testid={`nav-${item.labelKey}`}
-                aria-label={label}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "relative flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-sm font-medium transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
-                  active
-                    ? "text-primary-foreground"
-                    : "text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-hover))] hover:text-[hsl(var(--sidebar-foreground))]",
-                )}
-              >
-                {active && (
-                  <motion.span
-                    layoutId={animateActive ? "sidebar-active" : undefined}
-                    className="absolute inset-0 rounded-[12px] bg-primary shadow-md shadow-primary/20"
-                    transition={{
-                      type: "spring",
-                      stiffness: 380,
-                      damping: 32,
-                    }}
-                  />
-                )}
-                <span className="relative z-10 flex items-center gap-3">
-                  <Icon
-                    className={cn(
-                      "h-[18px] w-[18px] shrink-0",
-                      active
-                        ? "text-primary-foreground"
-                        : "text-[hsl(var(--sidebar-muted))]",
-                    )}
-                  />
+        {navLink(DASHBOARD_NAV_HOME, onNavigate, animateActive)}
+        {DASHBOARD_NAV_GROUPS.map((group) => {
+          const items = group.items.filter((item) => !item.adminOnly || isAdmin());
+          if (items.length === 0) return null;
+          const expanded = !collapsed.includes(group.labelKey);
+          const headingId = `${idPrefix}-nav-group-${group.labelKey}`;
+          const listId = `${headingId}-items`;
+          const label = tg(group.labelKey as Parameters<typeof tg>[0]);
+          return (
+            <div key={group.labelKey} data-nav-group={group.labelKey} role="group" aria-labelledby={headingId} className="pt-3">
+              <h2 id={headingId} className="m-0">
+                <button
+                  type="button"
+                  data-testid={`nav-group-${group.labelKey}`}
+                  aria-expanded={expanded}
+                  aria-controls={listId}
+                  onClick={() => toggleGroup(group.labelKey)}
+                  className="flex w-full min-h-8 items-center justify-between rounded-[8px] px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--sidebar-muted))] hover:text-[hsl(var(--sidebar-foreground))] transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+                >
                   {label}
-                </span>
-              </Link>
-            );
-          },
-        )}
+                  <ChevronDown
+                    aria-hidden="true"
+                    className={cn("h-3.5 w-3.5 shrink-0 transition-transform duration-fast", !expanded && "-rotate-90")}
+                  />
+                </button>
+              </h2>
+              {expanded && (
+                <div id={listId} className="mt-1 space-y-1">
+                  {items.map((item) => navLink(item, onNavigate, animateActive))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </nav>
 
       {/* Language switcher + Logout */}
@@ -142,7 +223,7 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
     <>
       {/* Desktop: a static column. While the mobile sheet is open it carries the test id. */}
       <aside data-testid={open ? undefined : "sidebar"} className={cn("hidden md:static md:flex", panel)}>
-        {body(undefined, true)}
+        {body(undefined, true, "desktop")}
       </aside>
 
       {/* Below 768px: a modal navigation sheet (WAI-ARIA dialog, #1350). Radix traps
@@ -179,7 +260,7 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </DialogPrimitive.Close>
-            {body(onClose, false)}
+            {body(onClose, false, "mobile")}
           </DialogPrimitive.Content>
         </DialogPrimitive.Portal>
       </DialogPrimitive.Root>
