@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -15,11 +15,13 @@ import { FormContainer, FormSection, FormField, FormActions, CheckboxField } fro
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import {
-  usePersonas,
+  usePersonasPage,
+  fetchPersona,
   useCreatePersona,
   useUpdatePersona,
   useDeletePersona,
 } from "@/hooks/usePersonas";
+import { useUrlPagination } from "@/hooks/useUrlPagination";
 import { fullName } from "@/lib/utils";
 import { presentPersonaSaveError } from "@/lib/persona-save-error";
 import type { Persona } from "@/types";
@@ -35,10 +37,22 @@ const EMPTY: Partial<Persona> = {
 };
 
 export default function PersonasPage() {
+  return (
+    <Suspense>
+      <PersonasList />
+    </Suspense>
+  );
+}
+
+function PersonasList() {
   const t = useTranslations("personas");
   const tc = useTranslations("common");
 
-  const { data: personas = [], isLoading } = usePersonas();
+  // One server page at a time, page and size in the URL (#1340): the list used
+  // to load size=1000 and silently hide everyone after the 1000th person.
+  const paging = useUrlPagination();
+  const { data: peoplePage, isLoading, isFetching } = usePersonasPage({ page: paging.page, size: paging.size });
+  const personas = peoplePage?.content ?? [];
   const createMutation = useCreatePersona();
   const updateMutation = useUpdatePersona();
   const deleteMutation = useDeletePersona();
@@ -56,12 +70,12 @@ export default function PersonasPage() {
 
   const hasSearchCriteria = !!(searchNombre || searchApellido || searchDni || filterClientes);
 
-  const { data: filteredPersonas = personas } = useQuery({
-    queryKey: ["personas", "buscar", searchNombre, searchApellido, searchDni, filterClientes, personas],
+  // A search goes to GET /people/search and lists every match; without one the
+  // table shows the current server page.
+  const { data: searchResults = [], isLoading: isSearching } = useQuery({
+    queryKey: ["personas", "buscar", searchNombre, searchApellido, searchDni, filterClientes],
+    enabled: hasSearchCriteria,
     queryFn: () => {
-      if (!hasSearchCriteria) {
-        return Promise.resolve(personas);
-      }
       // Backend route is /people/search (PersonController#searchPeople) — not /personas/buscar.
       const params = new URLSearchParams();
       if (searchNombre) params.set("firstName", searchNombre);
@@ -102,7 +116,8 @@ export default function PersonasPage() {
         fallback: t("errorSave"),
         duplicateDocument: t("duplicateDocument"),
         viewExistingLabel: t("viewExisting"),
-        personas,
+        personas: hasSearchCriteria ? searchResults : personas,
+        loadPersona: fetchPersona,
         onViewExisting: openEdit,
         setFieldErrors,
       });
@@ -224,11 +239,23 @@ export default function PersonasPage() {
       </div>
 
       <DataTable
-        data={filteredPersonas}
+        data={hasSearchCriteria ? searchResults : personas}
         columns={columns}
-        isLoading={isLoading}
+        isLoading={hasSearchCriteria ? isSearching : isLoading}
+        isFetching={!hasSearchCriteria && isFetching}
         keyExtractor={(p) => p.personId!}
         emptyMessage={t("noData")}
+        pagination={
+          hasSearchCriteria
+            ? undefined
+            : {
+                page: peoplePage?.number ?? paging.page,
+                size: paging.size,
+                totalElements: peoplePage?.totalElements ?? 0,
+                onPageChange: paging.setPage,
+                onSizeChange: paging.setSize,
+              }
+        }
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
