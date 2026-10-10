@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Loads the `Concepto`s of a `TipoDeTramite`'s `PlantillaPresupuesto` as
+Loads the `Concept`s of a `ProcedureType`'s `BudgetTemplate` as
 `Item`s of a real `Presupuesto`, so quoting the same tipo de trámite
 starts from a common, previously defined price list (CU39).
 
@@ -10,19 +10,19 @@ starts from a common, previously defined price list (CU39).
 
 ### Requirement: Cargar ítems de presupuesto desde la plantilla del tipo de trámite
 El sistema SHALL permitir cargar en un presupuesto, como nuevos `Item`s,
-los `Concepto`s de la `PlantillaPresupuesto` asociada al `TipoDeTramite`
+los `Concept`s de la `BudgetTemplate` asociada al `ProcedureType`
 elegido, copiando su nombre, valor y porcentaje al momento de la carga,
 según CU39 y RF-04/RF-64 a RF-67.
 
 #### Scenario: Carga exitosa desde una plantilla existente
 - **WHEN** un usuario carga los ítems de plantilla en un presupuesto para
-  un tipo de trámite que tiene una `PlantillaPresupuesto` con uno o más
+  un tipo de trámite que tiene una `BudgetTemplate` con uno o más
   conceptos
 - **THEN** el sistema crea un `Item` del presupuesto por cada concepto de
   la plantilla, con el mismo nombre, valor y porcentaje
 
 #### Scenario: Ítems cargados no se recalculan si la plantilla cambia después
-- **WHEN** la `PlantillaPresupuesto` de un tipo de trámite se modifica
+- **WHEN** la `BudgetTemplate` de un tipo de trámite se modifica
   después de haber cargado sus ítems en un presupuesto existente
 - **THEN** los ítems ya cargados en ese presupuesto conservan los valores
   con los que fueron creados, sin actualizarse automáticamente
@@ -30,6 +30,6 @@ según CU39 y RF-04/RF-64 a RF-67.
 #### Scenario: Rechazo cuando el tipo de trámite no tiene plantilla
 - **WHEN** un usuario intenta cargar los ítems de plantilla en un
   presupuesto para un tipo de trámite que no tiene ninguna
-  `PlantillaPresupuesto` definida
+  `BudgetTemplate` definida
 - **THEN** el sistema rechaza la operación y responde con un error que
   indica que el tipo de trámite no tiene plantilla configurada

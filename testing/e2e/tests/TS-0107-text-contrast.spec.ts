@@ -15,17 +15,17 @@ import { test, expect, type Page } from "@playwright/test";
 
 const ROUTES = [
   "/dashboard",
-  "/dashboard/personas",
-  "/dashboard/gestiones",
-  "/dashboard/reportes",
-  "/dashboard/administracion/workflows",
+  "/dashboard/people",
+  "/dashboard/managements",
+  "/dashboard/reports",
+  "/dashboard/administration/workflows",
 ];
 
 async function login(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }
 
@@ -102,7 +102,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
 
     test("login page text reaches 4.5:1", async ({ page }) => {
       await page.goto("/login");
-      await expect(page.getByTestId("btn-ingresar")).toBeVisible();
+      await expect(page.getByTestId("btn-sign-in")).toBeVisible();
       expect(await lowContrastText(page)).toEqual([]);
     });
 

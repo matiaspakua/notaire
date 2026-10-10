@@ -12,9 +12,9 @@ Source: #1047; owners CU74 (performance SLOs) and CU76 (QA/CI infrastructure).
 
 The repository MUST contain `performance-test/k6/load-test.js` (path referenced
 by `.github/workflows/performance-test.yml`). The script MUST authenticate via
-`POST /api/v1/usuarios/login` using the English DTO fields `name` and
+`POST /api/v1/users/login` using the English DTO fields `name` and
 `password`, reuse a Bearer JWT, and exercise the highest-traffic read
-endpoints `/api/v1/gestiones`, `/api/v1/presupuestos`, and `/api/v1/tramites`.
+endpoints `/api/v1/managements`, `/api/v1/budgets`, and `/api/v1/procedures`.
 
 #### Scenario: k6 script file exists at workflow path
 
@@ -26,13 +26,13 @@ endpoints `/api/v1/gestiones`, `/api/v1/presupuestos`, and `/api/v1/tramites`.
 
 - **WHEN** the script's `setup()` performs login
 - **THEN** the JSON body uses `name` and `password` (not Spanish
-  `nombre`/`contrasenia`) against `/api/v1/usuarios/login`
+  `nombre`/`contrasenia`) against `/api/v1/users/login`
 
 #### Scenario: Script covers gestiones presupuestos and tramites with Bearer auth
 
 - **WHEN** the default VU function runs after setup
-- **THEN** it GETs `/api/v1/gestiones`, `/api/v1/presupuestos`, and
-  `/api/v1/tramites` with an `Authorization: Bearer` header from the setup token
+- **THEN** it GETs `/api/v1/managements`, `/api/v1/budgets`, and
+  `/api/v1/procedures` with an `Authorization: Bearer` header from the setup token
 
 ### Requirement: Thresholds are tied to CU74 SLOs
 

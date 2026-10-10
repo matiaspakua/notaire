@@ -46,7 +46,7 @@ public class WorkflowTransitionController {
     }
 
     @GetMapping("/by-workflow/{workflowId}")
-    @Operation(summary = "Obtener transiciones por workflow")
+    @Operation(summary = "Get transitions by workflow")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoWorkflowTransition>> getByWorkflow(@PathVariable Integer workflowId) {
         return ResponseEntity.ok(repository.findByWorkflowDefinitionId(workflowId)
@@ -58,7 +58,7 @@ public class WorkflowTransitionController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener transición por ID")
+    @Operation(summary = "Get transition by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoWorkflowTransition> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -68,12 +68,12 @@ public class WorkflowTransitionController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida: workflowDefinitionId, originNodeId y "
+    @ApiResponse(responseCode = "400", description = "Invalid request: workflowDefinitionId, originNodeId and "
             + "destinationNodeId son obligatorios"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
-    @Operation(summary = "Crear transición entre dos nodos")
+    @Operation(summary = "Create transition between dos nodes")
     public ResponseEntity<Object> create(@RequestBody DtoWorkflowTransition dto) {
         Integer workflowId = RequiredFields.require(dto.getWorkflowDefinitionId(), "workflowDefinitionId");
         Integer originId = RequiredFields.require(dto.getOriginNodeId(), "originNodeId");
@@ -106,12 +106,12 @@ public class WorkflowTransitionController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida: originNodeId y destinationNodeId son "
+    @ApiResponse(responseCode = "400", description = "Invalid request: originNodeId and destinationNodeId are "
             + "obligatorios"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar transición")
+    @Operation(summary = "Update transition")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowTransition dto) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -144,7 +144,7 @@ public class WorkflowTransitionController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar transición")
+    @Operation(summary = "Delete transition")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();

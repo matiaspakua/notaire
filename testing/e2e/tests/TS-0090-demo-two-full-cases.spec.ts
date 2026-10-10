@@ -115,7 +115,7 @@ function buildCaseDefinition(label: "A" | "B", suffix: string): CaseDefinition {
 
 async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   await test.step(`[Caso ${def.label}] Tipo de trámite`, async () => {
-    await go(page, "/dashboard/administracion/tramites");
+    await go(page, "/dashboard/administration/procedures");
     await page.getByTestId("btn-nuevo-tipo-tramite").click();
     await page.getByTestId("input-nombre-tramite").fill(def.tipoTramite);
     await saveDialog(page);
@@ -124,7 +124,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   });
 
   await test.step(`[Caso ${def.label}] Tipo de documento`, async () => {
-    await go(page, "/dashboard/administracion/documentos");
+    await go(page, "/dashboard/administration/documents");
     await page.getByTestId("btn-nuevo-tipo-documento").click();
     await page.getByTestId("input-nombre-documento").fill(def.tipoDocumento);
     await saveDialog(page);
@@ -133,7 +133,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   });
 
   await test.step(`[Caso ${def.label}] Tipo de folio y folio`, async () => {
-    await go(page, "/dashboard/administracion/folios");
+    await go(page, "/dashboard/administration/folios");
     await page.getByTestId("btn-nuevo-tipo-folio").click();
     await page.getByTestId("input-nombre-tipo-folio").fill(def.tipoFolio);
     await page.getByTestId("btn-save-tipo-folio").click();
@@ -149,7 +149,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   });
 
   await test.step(`[Caso ${def.label}] Cliente`, async () => {
-    await go(page, "/dashboard/personas");
+    await go(page, "/dashboard/people");
     await page.getByTestId("btn-nueva-persona").click();
     await page.getByTestId("input-firstName").fill(def.clienteNombre);
     await page.getByTestId("input-lastName").fill(def.clienteApellido);
@@ -161,8 +161,8 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await expect(page.getByRole("table")).toContainText(def.clienteApellido);
   });
 
-  await test.step(`[Caso ${def.label}] Inmueble`, async () => {
-    await go(page, "/dashboard/inmuebles");
+  await test.step(`[Caso ${def.label}] Property`, async () => {
+    await go(page, "/dashboard/properties");
     await page.getByRole("button", { name: /nuevo inmueble/i }).click();
     await page.getByRole("dialog").getByLabel(/nomenclatura catastral/i).fill(def.inmuebleNomenclatura);
     await page.getByRole("dialog").getByLabel(/domicilio/i).fill(def.inmuebleDomicilio);
@@ -171,10 +171,10 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   });
 
   await test.step(`[Caso ${def.label}] Presupuesto`, async () => {
-    await go(page, "/dashboard/presupuestos");
+    await go(page, "/dashboard/budgets");
     await page.getByTestId("btn-nuevo-presupuesto").click();
     await choose(page, "select-persona", new RegExp(def.clienteApellido, "i"));
-    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-04");
+    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-04");
     await page.getByTestId("input-monto").fill(def.presupuestoMonto);
     await saveDialog(page);
     await page.getByTestId("input-search-presupuesto").fill(def.clienteApellido);
@@ -182,7 +182,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   });
 
   await test.step(`[Caso ${def.label}] Gestión`, async () => {
-    await go(page, "/dashboard/gestiones");
+    await go(page, "/dashboard/managements");
     await page.getByTestId("btn-nueva-gestion").click();
     await page.getByTestId("input-numero-gestion").fill(def.gestionNumero);
     await choose(page, "select-presupuesto-gestion", new RegExp(def.clienteApellido, "i"));
@@ -195,11 +195,11 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   });
 
   let escrituraId = "";
-  await test.step(`[Caso ${def.label}] Escritura y firma`, async () => {
-    await go(page, "/dashboard/escrituras");
+  await test.step(`[Caso ${def.label}] Deed y firma`, async () => {
+    await go(page, "/dashboard/deeds");
     await page.getByRole("button", { name: /nueva escritura/i }).click();
     await page.getByRole("dialog").getByLabel(/número/i).fill(def.escrituraNumero);
-    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-05");
+    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-05");
     await choose(page, "select-folio-escritura", new RegExp(def.tipoFolio, "i"));
     await page
       .getByRole("dialog")
@@ -211,13 +211,13 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     const row = page.getByRole("row").filter({ hasText: def.escrituraNumero });
     escrituraId = ((await row.locator("td").first().innerText()) ?? "").trim();
     await row.getByTestId(`btn-firmar-escritura-${escrituraId}`).click();
-    await page.getByRole("button", { name: /firmar escritura/i }).click();
+    await page.getByRole("button", { name: /sign escritura/i }).click();
     await expect(page.getByRole("dialog")).toBeHidden();
     await pause(page);
   });
 
-  await test.step(`[Caso ${def.label}] Testimonio, verificación y copia`, async () => {
-    await go(page, "/dashboard/testimonios");
+  await test.step(`[Caso ${def.label}] Testimony, verificación y copia`, async () => {
+    await go(page, "/dashboard/testimonies");
     await page.getByTestId("btn-generar-testimonio").click();
     await choose(page, "select-escritura-testimonio", new RegExp(def.escrituraNumero, "i"));
     await page.getByTestId("btn-guardar-testimonio").click();
@@ -230,29 +230,29 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await page.getByTestId("btn-confirmar-verificar-testimonio").click();
     await pause(page);
 
-    await go(page, "/dashboard/copias");
+    await go(page, "/dashboard/copies");
     await page.getByRole("button", { name: /nueva copia/i }).click();
     await page.getByRole("dialog").getByLabel(/número/i).fill(def.copiaNumero);
     await saveDialog(page);
   });
 
   await test.step(`[Caso ${def.label}] Documento presentado`, async () => {
-    await go(page, "/dashboard/documentos");
+    await go(page, "/dashboard/documents");
     await page.getByRole("button", { name: /nuevo documento/i }).click();
     await chooseInDialogCombobox(page, new RegExp(def.tipoDocumento, "i"), "select-tipo-documento");
     // The document is presented for the case's trámite (CU04, #655).
     await chooseInDialogCombobox(page, new RegExp(`^${def.gestionNumero} `), "select-gestion-documento");
     await chooseFirst(page, "select-tramite-documento");
-    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-06");
-    await page.getByRole("dialog").getByLabel(/documento entregado/i).click();
+    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-06");
+    await page.getByRole("dialog").getByLabel(/document entregado/i).click();
     await saveDialog(page);
   });
 
-  await test.step(`[Caso ${def.label}] Pago`, async () => {
-    await go(page, "/dashboard/pagos");
+  await test.step(`[Caso ${def.label}] Payment`, async () => {
+    await go(page, "/dashboard/payments");
     await page.getByTestId("btn-nuevo-pago").click();
     await choose(page, "select-presupuesto-pago", new RegExp(def.clienteApellido, "i"));
-    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-07");
+    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-07");
     await page.getByRole("dialog").getByLabel(/monto/i).fill(def.pagoMonto);
     await saveDialog(page);
   });
@@ -264,9 +264,9 @@ test.describe("Demo seed — two full comparable cases", () => {
   test("seeds Caso A and Caso B end to end through the UI", async ({ page }) => {
     await test.step("Sign in", async () => {
       await page.goto("/login");
-      await page.getByTestId("input-usuario").fill(adminUser);
-      await page.getByTestId("input-contrasenia").fill(adminPassword);
-      await page.getByTestId("btn-ingresar").click();
+      await page.getByTestId("input-username").fill(adminUser);
+      await page.getByTestId("input-password").fill(adminPassword);
+      await page.getByTestId("btn-sign-in").click();
       await expect(page).toHaveURL(/\/dashboard/);
     });
 
@@ -277,7 +277,7 @@ test.describe("Demo seed — two full comparable cases", () => {
     await buildFullCase(page, caseB);
 
     await test.step("Both cases visible on dashboard", async () => {
-      await go(page, "/dashboard/gestiones");
+      await go(page, "/dashboard/managements");
       await expect(page.getByRole("table")).toContainText(caseA.gestionNumero);
       await expect(page.getByRole("table")).toContainText(caseB.gestionNumero);
     });

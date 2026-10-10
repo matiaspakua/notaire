@@ -13,12 +13,12 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import WorkflowTracker from "@/components/motion/WorkflowTracker";
-import { useGestionByNumero } from "@/hooks/useGestiones";
-import { useGestionWorkflowTrace, useLatestTracedGestion } from "@/hooks/useGestionWorkflow";
+import { useGestionByNumero } from "@/hooks/useManagements";
+import { useGestionWorkflowTrace, useLatestTracedGestion } from "@/hooks/useManagementWorkflow";
 import { theme } from "@/theme/tokens";
-import type { GestionWorkflowTrace } from "@/types";
+import type { ManagementWorkflowTrace } from "@/types";
 
-function caseLabel(trace: GestionWorkflowTrace, fallback: (number: number | undefined) => string): string {
+function caseLabel(trace: ManagementWorkflowTrace, fallback: (number: number | undefined) => string): string {
   return trace.encabezado ? `#${trace.number} — ${trace.encabezado}` : fallback(trace.number);
 }
 
@@ -94,7 +94,7 @@ export function WorkflowHero() {
           className="flex flex-col items-start gap-3 rounded-[28px] border border-dashed border-[hsl(var(--border))] bg-white/60 p-8 text-sm text-muted-foreground"
         >
           <p>{tw("noRecentWorkflow")}</p>
-          <Link href="/dashboard/gestiones" className="font-semibold text-primary-text underline-offset-4 hover:underline apple-focus rounded">
+          <Link href="/dashboard/managements" className="font-semibold text-primary-text underline-offset-4 hover:underline apple-focus rounded">
             {tw("openGestiones")}
           </Link>
         </div>

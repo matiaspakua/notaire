@@ -73,7 +73,7 @@ public class PaymentPersistenceAdapter implements PaymentRepositoryPort {
     public PaymentDetails register(NewPayment newPayment) {
         Budget budget = budgetRepository.findById(newPayment.budgetId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Presupuesto no encontrado con ID: " + newPayment.budgetId()));
+                        "Budget not found with ID: " + newPayment.budgetId()));
 
         Payment payment = new Payment();
         payment.setAmount(newPayment.amount());
@@ -88,7 +88,7 @@ public class PaymentPersistenceAdapter implements PaymentRepositoryPort {
     @Override
     public PaymentDetails applyChanges(Integer paymentId, PaymentChanges changes) {
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new IllegalArgumentException("Pago no encontrado con ID: " + paymentId));
+                .orElseThrow(() -> new IllegalArgumentException("Payment no encontrado con ID: " + paymentId));
 
         if (changes.amount() != null) {
             payment.setAmount(changes.amount());

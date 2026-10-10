@@ -48,7 +48,7 @@ import jakarta.persistence.EntityManager;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test-h2")
-@DisplayName("CU83 — enforce workflow on gestión status writes (#804)")
+@DisplayName("CU83 — enforce workflow on management status writes (#804)")
 class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
 
     @Autowired
@@ -151,7 +151,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 {"number": 1, "date": "2026-01-01", "encabezado": "Budget Enforce IT", "status": "PENDIENTE",
                  "person": {"personId": %d}}
                 """.formatted(clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -165,7 +165,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 {"number": %d, "encabezado": "Enforce IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, statusId, procedureTypeId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -188,7 +188,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 {"encabezado": "Plain PUT reject", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, startStatus.getIdManagementStatus());
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -200,7 +200,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 {"encabezado": "Plain PUT reject", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, nextStatus.getIdManagementStatus());
-        mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
+        mockMvc.perform(put("/api/v1/managements/{id}", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isBadRequest())
@@ -228,7 +228,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, nextStatus.getIdManagementStatus(),
                         procedureTypeId);
-        mockMvc.perform(put("/api/v1/gestiones/{id}/complete-case", managementId)
+        mockMvc.perform(put("/api/v1/managements/{id}/complete-case", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isBadRequest())
@@ -250,7 +250,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 {"encabezado": "Same status PUT", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, startStatus.getIdManagementStatus());
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -262,7 +262,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                 {"encabezado": "Same status PUT renamed", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, startStatus.getIdManagementStatus());
-        mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
+        mockMvc.perform(put("/api/v1/managements/{id}", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
@@ -304,7 +304,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId,
                         outsideWorkflowStatus.getIdManagementStatus(), procedureTypeId);
-        mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
@@ -321,7 +321,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
         Integer managementId = createCompleteCase(budgetId, notaryId,
                 startStatus.getIdManagementStatus(), number);
 
-        MvcResult result = mockMvc.perform(get("/api/v1/gestiones/{id}/workflow-trace", managementId))
+        MvcResult result = mockMvc.perform(get("/api/v1/managements/{id}/workflow-trace", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusActual").value(startStatus.getName()))
                 .andExpect(jsonPath("$.transitions").isArray())
@@ -351,7 +351,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
         Integer managementId = createCompleteCase(budgetId, notaryId,
                 startStatus.getIdManagementStatus(), number);
 
-        mockMvc.perform(post("/api/v1/gestiones/{id}/transition", managementId)
+        mockMvc.perform(post("/api/v1/managements/{id}/transition", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"statusDestination\": \"" + nextStatus.getName() + "\"}"))
                 .andExpect(status().isOk());

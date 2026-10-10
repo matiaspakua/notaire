@@ -9,7 +9,7 @@
 export const AUTH_STATUS_COOKIE = "notaire-auth-status";
 export const AUTH_ROLE_COOKIE = "notaire-auth-role";
 export const FORBIDDEN_QUERY = "forbidden=1";
-export const ADMIN_ROUTE_PREFIXES = ["/dashboard/administracion", "/dashboard/auditoria"] as const;
+export const ADMIN_ROUTE_PREFIXES = ["/dashboard/administration", "/dashboard/audit"] as const;
 
 const ADMIN_TIPOS = new Set(["ADMIN", "ADMINISTRADOR", "ESCRIBANO"]);
 

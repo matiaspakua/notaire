@@ -27,15 +27,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Integration tests for GET /api/v1/gestiones/{id}/historial.
- * Seeds Historial entries out of chronological order and asserts the
+ * Integration tests for GET /api/v1/managements/{id}/history.
+ * Seeds ManagementHistory entries out of chronological order and asserts the
  * endpoint returns them sorted by date, per CU13.
  */
 @RequirementCoverage({"CU13"})
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test-h2")
-@DisplayName("GET /gestiones/{id}/history — returns the ordered bitácora (CU13)")
+@DisplayName("GET /managements/{id}/history — returns the ordered bitácora (CU13)")
 class ManagementBitacoraControllerIntegrationTest {
 
     @Autowired
@@ -70,7 +70,7 @@ class ManagementBitacoraControllerIntegrationTest {
     private Integer createManagement(ManagementStatus status) {
         DeedManagement management = new DeedManagement();
         management.setNumber((int) (System.nanoTime() % 100000));
-        management.setEncabezado("Gestion Bitacora IT");
+        management.setEncabezado("Management Bitacora IT");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(status);
         management.setFkIdNotaryPerson(personRepository.findAll().get(0));
@@ -100,7 +100,7 @@ class ManagementBitacoraControllerIntegrationTest {
     @Test
     @DisplayName("Query returns the full ordered history")
     void shouldReturnOrderedHistory() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/{id}/historial", managementConHistoryId))
+        mockMvc.perform(get("/api/v1/managements/{id}/history", managementConHistoryId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].statusManagementName").value(statusInicial.getName()))
@@ -108,17 +108,17 @@ class ManagementBitacoraControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return an empty list when the gestión has no history entries")
+    @DisplayName("Should return an empty list when the management has not history entries")
     void shouldReturnEmptyListWhenNoHistoryEntries() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/{id}/historial", managementSinHistoryId))
+        mockMvc.perform(get("/api/v1/managements/{id}/history", managementSinHistoryId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
-    @DisplayName("Should return 404 when the gestión does not exist")
+    @DisplayName("Should return 404 when the management does not exist")
     void shouldReturn404WhenManagementDoesNotExist() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/999999/historial"))
+        mockMvc.perform(get("/api/v1/managements/999999/history"))
                 .andExpect(status().isNotFound());
     }
 }

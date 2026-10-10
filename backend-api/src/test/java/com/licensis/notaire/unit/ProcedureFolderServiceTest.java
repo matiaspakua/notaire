@@ -50,7 +50,7 @@ class ProcedureFolderServiceTest {
     }
 
     @Test
-    @DisplayName("Should generate carpeta activa numerada al alta de un trámite")
+    @DisplayName("Should generate folder active numerada to the alta of a procedure")
     void shouldGenerateActiveFolderForNewProcedure() {
         when(procedureFolderRepository.nextFolderNumber()).thenReturn(1);
         when(procedureFolderRepository.save(any(ProcedureFolder.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -64,7 +64,7 @@ class ProcedureFolderServiceTest {
     }
 
     @Test
-    @DisplayName("Should number the carpeta from the database sequence, not from the last carpeta")
+    @DisplayName("Should number the folder from the database sequence, not from the last folder")
     void shouldNumberFolderFromSequence() {
         when(procedureFolderRepository.nextFolderNumber()).thenReturn(8);
         when(procedureFolderRepository.save(any(ProcedureFolder.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -75,7 +75,7 @@ class ProcedureFolderServiceTest {
     }
 
     @Test
-    @DisplayName("Should put carpeta en espera when motivo is provided")
+    @DisplayName("Should put folder in espera when motivo is provided")
     void shouldPutFolderEnWaitWithReason() {
         ProcedureFolder folder = new ProcedureFolder();
         folder.setIdFolder(1);
@@ -83,17 +83,17 @@ class ProcedureFolderServiceTest {
         when(procedureFolderRepository.findById(1)).thenReturn(Optional.of(folder));
         when(procedureFolderRepository.save(any(ProcedureFolder.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        ProcedureFolder result = procedureFolderService.ponerEnWait(1, "Falta documentación del titular");
+        ProcedureFolder result = procedureFolderService.ponerEnWait(1, "Falta documentation of the titular");
 
         assertThat(result.getStatus()).isEqualTo("Espera");
-        assertThat(result.getWaitReason()).isEqualTo("Falta documentación del titular");
+        assertThat(result.getWaitReason()).isEqualTo("Falta documentation of the titular");
         ArgumentCaptor<ProcedureFolder> captor = ArgumentCaptor.forClass(ProcedureFolder.class);
         verify(procedureFolderRepository).save(captor.capture());
         assertThat(captor.getValue().getStatus()).isEqualTo("Espera");
     }
 
     @Test
-    @DisplayName("Should reject poner en espera without a motivo (CU85 - Excepción 3.1)")
+    @DisplayName("Should reject put in espera without a motivo (CU85 - Excepción 3.1)")
     void shouldRejectWaitWithoutReason() {
         assertThatThrownBy(() -> procedureFolderService.ponerEnWait(1, "  "))
                 .isInstanceOf(BusinessValidationException.class)
@@ -101,16 +101,16 @@ class ProcedureFolderServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw when carpeta does not exist")
+    @DisplayName("Should throw when folder does not exist")
     void shouldThrowWhenFolderNotFound() {
         when(procedureFolderRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> procedureFolderService.ponerEnWait(999, "Motivo válido"))
+        assertThatThrownBy(() -> procedureFolderService.ponerEnWait(999, "Motivo valid"))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
-    @DisplayName("Should find carpetas by gestión")
+    @DisplayName("Should find folders by management")
     void shouldFindCarpetasByManagement() {
         ProcedureFolder folder = new ProcedureFolder();
         folder.setIdFolder(1);
@@ -122,7 +122,7 @@ class ProcedureFolderServiceTest {
     }
 
     @Test
-    @DisplayName("Should find carpeta by trámite")
+    @DisplayName("Should find folder by procedure")
     void shouldFindFolderByProcedure() {
         ProcedureFolder folder = new ProcedureFolder();
         folder.setIdFolder(1);

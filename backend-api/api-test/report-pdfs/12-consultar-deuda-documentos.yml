@@ -3,12 +3,12 @@ info:
   type: http
   seq: 13
   description: |-
-      ## GET /api/v1/reportes/consultar-deuda-documentos?numberManagement=
+      ## GET /api/v1/reports/document-debt?numberManagement=
       Seeded management number 1001 (V10); rendered in-house since #567.
       Traceability: CU09
 http:
   method: GET
-  url: "{{base_url}}/api/v1/reportes/consultar-deuda-documentos?numberManagement=1001"
+  url: "{{base_url}}/api/v1/reports/document-debt?numberManagement=1001"
   headers:
     - name: Content-Type
       value: application/json

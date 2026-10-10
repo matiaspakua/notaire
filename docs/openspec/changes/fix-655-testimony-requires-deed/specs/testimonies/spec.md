@@ -8,7 +8,7 @@ Generating, verifying and tracking testimonies (certified copies of deeds).
 
 ### Requirement: Bare testimony requires its deed
 
-`POST /api/v1/testimonio` SHALL reject a body without `deed` or without `deed.idDeed` with 400 naming the field, SHALL answer 404 when the deed does not exist, and SHALL store nothing in both cases; the contract SHALL mark `deed` required on POST and not on PUT.
+`POST /api/v1/testimonies` SHALL reject a body without `deed` or without `deed.idDeed` with 400 naming the field, SHALL answer 404 when the deed does not exist, and SHALL store nothing in both cases; the contract SHALL mark `deed` required on POST and not on PUT.
 
 #### Scenario: Create without deed
 

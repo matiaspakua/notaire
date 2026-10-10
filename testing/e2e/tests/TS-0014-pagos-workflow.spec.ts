@@ -1,7 +1,7 @@
 /**
  * TS-0014 - Pagos Workflow (CU15 → CU47)
- * CU15 - Procesar Pago
- * CU47 - Consultar Pago
+ * CU15 - Procesar Payment
+ * CU47 - Consultar Payment
  * Issue #796 (presupuesto picker + saldo pendiente visibility)
  * Issue #821 (estado de pago badge: SIN_PAGOS / PARCIAL / SALDADO)
  * Issue #848 (overpayment rejection message)
@@ -27,13 +27,13 @@ async function seedPresupuesto(page: Page, monto: number): Promise<{ idPresupues
   return { idPresupuesto: presupuestoResult.data.idBudget, apellido: personaResult.data.lastName! };
 }
 
-test.describe("CU15 - Procesar Pago", () => {
+test.describe("CU15 - Procesar Payment", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
   });
 
   test("CU15-GW01: Given user on pagos page, When click nuevo pago, Then modal opens", async () => {
@@ -49,7 +49,7 @@ test.describe("CU15 - Procesar Pago", () => {
   test("CU15-SALDO-01 (#796): Payment form has presupuesto picker, not a numeric input", async ({ page }) => {
     await steps.whenUserClicksButton("nuevo pago");
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
+    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await expect(presupuestoSelector).toBeVisible();
   });
 
@@ -57,11 +57,11 @@ test.describe("CU15 - Procesar Pago", () => {
     const montoPresupuesto = 75000;
     const { apellido } = await seedPresupuesto(page, montoPresupuesto);
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
+    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await presupuestoSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await presupuestoSelector.fill(apellido);
@@ -70,7 +70,7 @@ test.describe("CU15 - Procesar Pago", () => {
     await expect(presupuestoOption).toBeVisible();
     await presupuestoOption.click();
 
-    const saldoDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
+    const saldoDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
     await expect(saldoDisplay).toBeVisible({ timeout: 5000 });
 
     // The picker shows "#<id> — <client>"; the budget amount is in the balance panel (#1340).
@@ -82,16 +82,16 @@ test.describe("CU15 - Procesar Pago", () => {
     const { apellido: apellido1 } = await seedPresupuesto(page, 50000);
     const { apellido: apellido2 } = await seedPresupuesto(page, 100000);
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
+    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await presupuestoSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await presupuestoSelector.fill(apellido1);
     await page.getByRole("option", { name: new RegExp(apellido1, "i") }).click();
 
-    let saldoDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
+    let saldoDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
     await expect(saldoDisplay).toBeVisible();
     const saldoText1 = await saldoDisplay.locator("../..").textContent();
 
@@ -102,7 +102,7 @@ test.describe("CU15 - Procesar Pago", () => {
     await presupuestoSelector.fill(apellido2);
     await page.getByRole("option", { name: new RegExp(apellido2, "i") }).click();
 
-    saldoDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
+    saldoDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
     await expect(saldoDisplay).toBeVisible();
     const saldoText2 = await saldoDisplay.locator("../..").textContent();
 
@@ -112,17 +112,17 @@ test.describe("CU15 - Procesar Pago", () => {
   test("CU15-SALDO-04 (#848): Submitting a monto over saldo pendiente shows a specific rejection message", async ({ page }) => {
     const { apellido } = await seedPresupuesto(page, 50000);
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
+    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await presupuestoSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
-    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
+    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-09-01");
     await page.getByRole("dialog").locator('input[type="number"]').fill("999999");
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
 
@@ -133,17 +133,17 @@ test.describe("CU15 - Procesar Pago", () => {
   test("CU15-GW02: Given form open, When fill and submit, Then pago is registered", async ({ page }) => {
     const { apellido } = await seedPresupuesto(page, 50000);
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
+    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await presupuestoSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
-    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
+    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-09-01");
     await page.getByRole("dialog").locator('input[type="number"]').fill("10000");
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
 
@@ -163,7 +163,7 @@ test.describe("CU15 - Procesar Pago", () => {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
 
     // Row's accessible name starts with the bare id (no "#" prefix) — see TABLE-01/02/03.
     const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
@@ -177,7 +177,7 @@ test.describe("CU15 - Procesar Pago", () => {
   });
 });
 
-test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
+test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -188,11 +188,11 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
   test("ESTADO-01: New presupuesto without payments shows SIN_PAGOS badge", async ({ page }) => {
     const { apellido } = await seedPresupuesto(page, 60000);
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
+    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await presupuestoSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await presupuestoSelector.fill(apellido);
@@ -210,11 +210,11 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
+    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await presupuestoSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await presupuestoSelector.fill(apellido);
@@ -232,11 +232,11 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
+    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await presupuestoSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await presupuestoSelector.fill(apellido);
@@ -267,7 +267,7 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
 
     const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
@@ -282,7 +282,7 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
 
     const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
@@ -304,7 +304,7 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
 
-    await steps.givenUserIsOnPage("/dashboard/pagos");
+    await steps.givenUserIsOnPage("/dashboard/payments");
 
     const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });

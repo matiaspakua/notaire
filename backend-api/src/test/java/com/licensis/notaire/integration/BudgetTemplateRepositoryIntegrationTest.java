@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("PlantillaPresupuesto Repository Integration Tests")
+@DisplayName("BudgetTemplate Repository Integration Tests")
 class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -35,7 +35,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @BeforeEach
     void setUp() {
         testTypeProcedure = new ProcedureType();
-        testTypeProcedure.setName("Escritura de Compraventa");
+        testTypeProcedure.setName("Deed de Compraventa");
         typeProcedureRepository.save(testTypeProcedure);
 
         testConcept = new Concept();
@@ -52,7 +52,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
         testTemplate.setBudgetTemplatePK(pk);
         testTemplate.setProcedureType(testTypeProcedure);
         testTemplate.setConcept(testConcept);
-        testTemplate.setNotes("Plantilla estándar");
+        testTemplate.setNotes("Template estándar");
         templateRepository.save(testTemplate);
     }
 
@@ -64,16 +64,16 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find plantilla by type tramite")
+    @DisplayName("Should find template by type procedure")
     void shouldFindTemplateByTypeProcedure() {
         List<BudgetTemplate> found = templateRepository.findByProcedureTypeIdProcedureType(testTypeProcedure.getIdProcedureType());
 
         assertThat(found).isNotEmpty()
-                .anyMatch(p -> p.getNotes().equals("Plantilla estándar"));
+                .anyMatch(p -> p.getNotes().equals("Template estándar"));
     }
 
     @Test
-    @DisplayName("Should return empty for non-existent type tramite")
+    @DisplayName("Should return empty for non-existent type procedure")
     void shouldReturnEmptyForNonExistentTypeProcedure() {
         List<BudgetTemplate> found = templateRepository.findByProcedureTypeIdProcedureType(999999);
 
@@ -120,7 +120,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
         typeProcedureRepository.save(type);
 
         Concept concept = new Concept();
-        concept.setName("Gestión");
+        concept.setName("Management");
         concept.setValue(java.math.BigDecimal.ZERO);
         concept.setPercentage(0);
         conceptRepository.save(concept);
@@ -141,7 +141,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should handle multiple plantillas for same type tramite")
+    @DisplayName("Should handle multiple plantillas for same type procedure")
     void shouldHandleMultiplePlantillas() {
         Concept concepto2 = new Concept();
         concepto2.setName("Gastos");
@@ -184,7 +184,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle transaction consistency")
     void shouldMaintainTransactionConsistency() {
-        testTemplate.setNotes("Antes de eliminar");
+        testTemplate.setNotes("Antes of delete");
         templateRepository.save(testTemplate);
 
         templateRepository.delete(testTemplate);
@@ -205,13 +205,13 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
         typeProcedureRepository.save(tipo2);
 
         Concept concepto1 = new Concept();
-        concepto1.setName("Concepto 1");
+        concepto1.setName("Concept 1");
         concepto1.setValue(java.math.BigDecimal.ZERO);
         concepto1.setPercentage(0);
         conceptRepository.save(concepto1);
 
         Concept concepto2 = new Concept();
-        concepto2.setName("Concepto 2");
+        concepto2.setName("Concept 2");
         concepto2.setValue(java.math.BigDecimal.ZERO);
         concepto2.setPercentage(0);
         conceptRepository.save(concepto2);

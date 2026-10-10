@@ -39,12 +39,12 @@ async function navigateAndTime(page: Page, testId: string, path: string): Promis
 test.describe("Motion tokens (#1368)", () => {
   test("route content is fully visible soon after a nav click (no exit wait)", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    await page.goto("/dashboard/copias");
+    await page.goto("/dashboard/copies");
     await page.waitForLoadState("networkidle");
     const samples: number[] = [];
     for (let i = 0; i < 5; i++) {
       samples.push(await navigateAndTime(page, "nav-items", "/dashboard/items"));
-      samples.push(await navigateAndTime(page, "nav-copias", "/dashboard/copias"));
+      samples.push(await navigateAndTime(page, "nav-copias", "/dashboard/copies"));
     }
     samples.sort((a, b) => a - b);
     const median = samples[Math.floor(samples.length / 2)];
@@ -55,7 +55,7 @@ test.describe("Motion tokens (#1368)", () => {
 
   test("dialogs use the motion tokens", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await page.getByTestId("btn-nueva-persona").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
@@ -72,7 +72,7 @@ test.describe("Motion tokens (#1368)", () => {
 
     test("page content and dialogs end without a transform", async ({ page }) => {
       await establishAdminBrowserSession(page);
-      await page.goto("/dashboard/personas");
+      await page.goto("/dashboard/people");
       const wrapper = page.locator("main > div").first();
       await expect(wrapper).toBeVisible();
       await expect(wrapper).toHaveCSS("transform", "none");

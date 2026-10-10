@@ -46,7 +46,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     expect(plantillaResult.ok, `createPlantillaPresupuesto failed: ${plantillaResult.error}`).toBe(true);
 
     // WHEN: operador abre los ítems del presupuesto y elige el tipo de trámite
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
@@ -85,7 +85,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     expect(plantillaResult.ok, `createPlantillaPresupuesto failed: ${plantillaResult.error}`).toBe(true);
 
     // WHEN: el operador crea el presupuesto eligiendo cliente, monto y tipo de trámite
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.getByTestId("btn-nuevo-presupuesto").click();
     await page.getByTestId("select-persona").fill(lastName);
     await page.getByRole("option", { name: new RegExp(lastName) }).click();
@@ -113,7 +113,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     const tipoTramiteResult = await createTipoTramite(page, { name: `Sin Plantilla E2E ${Date.now()}` });
     expect(tipoTramiteResult.ok).toBe(true);
 
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
@@ -151,7 +151,7 @@ for (const viewport of [
     const idPresupuesto = presupuestoResult.data!.idBudget;
 
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
 
     const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });

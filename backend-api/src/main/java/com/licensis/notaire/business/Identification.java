@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * @author User
  */
 @Entity
-@Table(name = "identificaciones")
+@Table(name = "identifications")
 @XmlRootElement
 @NamedQueries(
         {
@@ -37,12 +37,12 @@ public class Identification implements Serializable
     @EmbeddedId
     protected IdentificationPK identificationPK;
     @Basic(optional = false)
-    @Column(name = "numero")
+    @Column(name = "number")
     private int number;
-    @JoinColumn(name = "fk_id_persona", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_person", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Person person;
-    @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "fk_id_identification_type", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private IdentificationType identificationType;
 
@@ -133,7 +133,7 @@ public class Identification implements Serializable
     @Override
     public String toString()
     {
-        return "Identificacion[ identificacionPK=" + identificationPK + " ]"
+        return "Identification[ identificacionPK=" + identificationPK + " ]"
                 + "[ numero=" + number + " ]";
     }
 }

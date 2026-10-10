@@ -10,15 +10,15 @@ import { authenticateAsAdmin as adminAuthSetup } from "./setup/auth";
 test.describe("Administración hub (ADMIN only)", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion");
+    await page.goto("/dashboard/administration");
   });
 
   test("hub shows all admin module cards", async ({ page }) => {
     await expect(
       page.getByRole("heading", { level: 1, name: /administración/i })
     ).toBeVisible();
-    await expect(page.getByText(/usuarios/i).first()).toBeVisible();
-    await expect(page.getByText(/conceptos/i).first()).toBeVisible();
+    await expect(page.getByText(/users/i).first()).toBeVisible();
+    await expect(page.getByText(/concepts/i).first()).toBeVisible();
     await expect(page.getByText(/tipos de trámite/i).first()).toBeVisible();
     await expect(page.getByText(/estados de gestión/i).first()).toBeVisible();
   });
@@ -31,7 +31,7 @@ test.describe("Administración hub (ADMIN only)", () => {
 test.describe("CU67 — Estados de Gestión", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/estados-gestion");
+    await page.goto("/dashboard/administration/management-statuses");
   });
 
   test("page loads with correct title", async ({ page }) => {
@@ -53,9 +53,9 @@ test.describe("CU67 — Estados de Gestión", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
   });
 
-  test("CU67 — typing in search calls GET /estado-gestion/search", async ({ page }) => {
+  test("CU67 — typing in search calls GET /management-statuses/search", async ({ page }) => {
     const searchRequest = page.waitForRequest((req) =>
-      req.url().includes("/api/v1/estado-gestion/search") && req.method() === "GET"
+      req.url().includes("/api/v1/management-statuses/search") && req.method() === "GET"
     );
     await page.getByTestId("search-estados").fill("Iniciada");
     await searchRequest;
@@ -65,7 +65,7 @@ test.describe("CU67 — Estados de Gestión", () => {
 test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/tramites");
+    await page.goto("/dashboard/administration/procedures");
   });
 
   test("page loads with correct title", async ({ page }) => {
@@ -83,9 +83,9 @@ test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
     await expect(dialog.getByLabel(/se inscribe/i)).toBeVisible();
   });
 
-  test("CU26/CU64 — typing in search calls GET /tipo-tramite/search", async ({ page }) => {
+  test("CU26/CU64 — typing in search calls GET /procedure-types/search", async ({ page }) => {
     const searchRequest = page.waitForRequest((req) =>
-      req.url().includes("/api/v1/tipo-tramite/search") && req.method() === "GET"
+      req.url().includes("/api/v1/procedure-types/search") && req.method() === "GET"
     );
     await page.getByTestId("input-search-tramite").fill("Compraventa");
     await searchRequest;
@@ -95,16 +95,16 @@ test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
 test.describe("CU37 — Conceptos", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/conceptos");
+    await page.goto("/dashboard/administration/concepts");
   });
 
   test("page loads with correct title", async ({ page }) => {
-    await expect(page.getByRole("heading", { name: /conceptos/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /concepts/i })).toBeVisible();
   });
 
-  test("typing in search calls GET /conceptos/search", async ({ page }) => {
+  test("typing in search calls GET /concepts/search", async ({ page }) => {
     const searchRequest = page.waitForRequest((req) =>
-      req.url().includes("/api/v1/conceptos/search") && req.method() === "GET"
+      req.url().includes("/api/v1/concepts/search") && req.method() === "GET"
     );
     await page.getByTestId("input-search-concepto").fill("Honorarios");
     await searchRequest;
@@ -114,16 +114,16 @@ test.describe("CU37 — Conceptos", () => {
 test.describe("CU38 — Tipos de Documento", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/documentos");
+    await page.goto("/dashboard/administration/documents");
   });
 
   test("page loads with correct title", async ({ page }) => {
     await expect(page.getByRole("heading", { name: /tipos de documento/i })).toBeVisible();
   });
 
-  test("typing in search calls GET /tipo-de-documento/search", async ({ page }) => {
+  test("typing in search calls GET /document-types/search", async ({ page }) => {
     const searchRequest = page.waitForRequest((req) =>
-      req.url().includes("/api/v1/tipo-de-documento/search") && req.method() === "GET"
+      req.url().includes("/api/v1/document-types/search") && req.method() === "GET"
     );
     await page.getByTestId("input-search-documento").fill("DNI");
     await searchRequest;
@@ -133,7 +133,7 @@ test.describe("CU38 — Tipos de Documento", () => {
 test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/folios");
+    await page.goto("/dashboard/administration/folios");
   });
 
   test("page loads with correct title", async ({ page }) => {
@@ -194,19 +194,19 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
     await expect(dialog).toBeHidden();
 
     await page.getByTestId("input-search-tipo-folio").fill(uniqueName);
-    await expect(page.getByText(/protocolo auxiliar/i).first()).toBeVisible();
+    await expect(page.getByText(/protocol auxiliar/i).first()).toBeVisible();
   });
 });
 
 test.describe("CU39/CU49/CU55 — Plantillas de Presupuesto", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/plantillas");
+    await page.goto("/dashboard/administration/templates");
   });
 
   test("page loads with correct title", async ({ page }) => {
     await expect(
-      page.getByRole("heading", { name: /plantillas de presupuesto/i })
+      page.getByRole("heading", { name: /templates de presupuesto/i })
     ).toBeVisible();
   });
 
@@ -220,7 +220,7 @@ test.describe("CU39/CU49/CU55 — Plantillas de Presupuesto", () => {
 test.describe("Auditoría (read-only)", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/auditoria");
+    await page.goto("/dashboard/audit");
   });
 
   test("page loads with audit heading", async ({ page }) => {

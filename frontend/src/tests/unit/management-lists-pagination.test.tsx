@@ -1,5 +1,5 @@
 /**
- * Screens that list or pick managements never load GET /gestiones?size=1000
+ * Screens that list or pick managements never load GET /managements?size=1000
  * (#1340 slice 7, CU31/CU32/CU84). The dev DB has more than 1000 managements, so
  * the external-entity documents and re-entry lists and the document form's
  * management select silently missed every case after the 1000th.
@@ -13,7 +13,7 @@ const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
 
 let mockSearchParams = new URLSearchParams();
-let mockPathname = "/dashboard/reingreso-documentacion";
+let mockPathname = "/dashboard/document-reentry";
 const mockReplace = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: mockReplace }),
@@ -26,14 +26,14 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
-import ReingresoDocumentacionPage from "@/app/dashboard/reingreso-documentacion/page";
-import DocumentosEntidadesExternasPage from "@/app/dashboard/documentos-entidades-externas/page";
+import ReingresoDocumentacionPage from "@/app/dashboard/document-reentry/page";
+import DocumentosEntidadesExternasPage from "@/app/dashboard/external-entity-documents/page";
 import { ManagementPicker } from "@/components/shared/ManagementPicker";
-import type { GestionDeEscritura } from "@/types";
+import type { DeedManagement } from "@/types";
 
-const NEWEST: GestionDeEscritura = { idManagement: 1312, number: 98765, encabezado: "Compraventa Nueva", statusActual: "Iniciada" };
-const OLD: GestionDeEscritura = { idManagement: 12, number: 4321, encabezado: "Hipoteca Garcia", statusActual: "Iniciada" };
-const OLD2: GestionDeEscritura = { idManagement: 40, number: 5555, encabezado: "Donación Garcia", statusActual: "Iniciada" };
+const NEWEST: DeedManagement = { idManagement: 1312, number: 98765, encabezado: "Compraventa Nueva", statusActual: "Iniciada" };
+const OLD: DeedManagement = { idManagement: 12, number: 4321, encabezado: "Hipoteca Garcia", statusActual: "Iniciada" };
+const OLD2: DeedManagement = { idManagement: 40, number: 5555, encabezado: "Donación Garcia", statusActual: "Iniciada" };
 
 function json(body: unknown, status = 200) {
   const text = JSON.stringify(body);
@@ -43,16 +43,16 @@ function json(body: unknown, status = 200) {
 function route(page: object) {
   return (u: string) => {
     const url = String(u);
-    if (/\/gestiones\?/.test(url)) return json(page);
+    if (/\/managements\?/.test(url)) return json(page);
     if (url.includes("/people/search")) {
       const q = new URL(url, "http://x").searchParams;
       if (q.get("identificationNumber") === "30111222") return json([{ personId: 7, firstName: "Carla", lastName: "Garcia" }]);
       if (q.get("lastName")?.toLowerCase().startsWith("gar")) return json([{ personId: 7, firstName: "Carla", lastName: "Garcia" }]);
       return json([]);
     }
-    if (/\/gestiones\/cliente\/7$/.test(url)) return json([OLD, OLD2]);
-    if (/\/gestiones\/numero\/4321$/.test(url)) return json(OLD);
-    if (/\/gestiones\/12$/.test(url)) return json(OLD);
+    if (/\/managements\/client\/7$/.test(url)) return json([OLD, OLD2]);
+    if (/\/managements\/number\/4321$/.test(url)) return json(OLD);
+    if (/\/managements\/12$/.test(url)) return json(OLD);
     return json({ message: "not found" }, 404);
   };
 }
@@ -80,7 +80,7 @@ describe.each([
     render(<Page />, { wrapper });
     expect(await screen.findByText("98765")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
-    expect(urls().some((u) => /\/gestiones\?page=0&size=20&sort=idManagement%2Cdesc$/.test(u))).toBe(true);
+    expect(urls().some((u) => /\/managements\?page=0&size=20&sort=idManagement%2Cdesc$/.test(u))).toBe(true);
     expect(urls().some((u) => u.includes("size=1000"))).toBe(false);
   });
 
@@ -92,7 +92,7 @@ describe.each([
   });
 });
 
-function Harness({ initial, onPick }: { initial?: number; onPick?: (g?: GestionDeEscritura) => void }) {
+function Harness({ initial, onPick }: { initial?: number; onPick?: (g?: DeedManagement) => void }) {
   const [id, setId] = useState<number | undefined>(initial);
   return (
     <ManagementPicker

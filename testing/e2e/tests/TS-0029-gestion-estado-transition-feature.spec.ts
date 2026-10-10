@@ -21,7 +21,7 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
   test("golden path: transitioning to a valid destination updates the estado", async ({ page }) => {
     const { idGestion, numero, estadoFinal } = await seedGestion(page);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
@@ -42,7 +42,7 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
   test("edge path: only valid workflow destinations are offered", async ({ page }) => {
     const { idGestion, estadoInicial, estadoFinal } = await seedGestion(page);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
     await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click();
@@ -62,7 +62,7 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
       const { idGestion, numero, estadoFinal } = await seedGestion(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await page.goto("/dashboard/gestiones");
+      await page.goto("/dashboard/managements");
       await page.waitForLoadState("domcontentloaded");
 
       const row = listRow(page, new RegExp(String(numero)));

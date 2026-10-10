@@ -48,7 +48,7 @@ class ManagementBitacoraServiceTest {
     }
 
     @Test
-    @DisplayName("Should record history entry on gestión creation")
+    @DisplayName("Should record history entry on management creation")
     void shouldRecordHistoryOnCreate() {
         ArgumentCaptor<History> captor = ArgumentCaptor.forClass(History.class);
         when(historyRepository.save(any(History.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -64,7 +64,7 @@ class ManagementBitacoraServiceTest {
     @Test
     @DisplayName("Should record history entry on valid transition")
     void shouldRecordHistoryOnValidTransition() {
-        ManagementStatus nuevoStatus = new ManagementStatus(2, "En trámite");
+        ManagementStatus nuevoStatus = new ManagementStatus(2, "In procedure");
         management.setFkIdManagementStatus(nuevoStatus);
         ArgumentCaptor<History> captor = ArgumentCaptor.forClass(History.class);
         when(historyRepository.save(any(History.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -91,7 +91,7 @@ class ManagementBitacoraServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject recording history when gestión has no status assigned")
+    @DisplayName("Should reject recording history when management has not status assigned")
     void shouldRejectRecordingWhenNoStatus() {
         management.setFkIdManagementStatus(null);
 
@@ -100,7 +100,7 @@ class ManagementBitacoraServiceTest {
     }
 
     @Test
-    @DisplayName("Should return ordered history for a gestión")
+    @DisplayName("Should return ordered history for a management")
     void shouldReturnOrderedHistory() {
         History h1 = new History(1);
         h1.setDate(new Date(1000));

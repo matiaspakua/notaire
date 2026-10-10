@@ -296,7 +296,7 @@ public class Testimony implements Serializable, Persistable<Integer>
     public String toString()
     {
         String deedId = fkIdDeed != null ? String.valueOf(fkIdDeed.getIdDeed()) : "null";
-        return "Testimonio[ idTestimonio=" + idTestimony + " ]"
+        return "Testimony[ idTestimonio=" + idTestimony + " ]"
                 + "[ numero=" + number + " ]"
                 + "[ idEscritura=" + deedId + " ]";
     }

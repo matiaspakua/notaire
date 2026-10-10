@@ -1,6 +1,6 @@
 /**
  * TS-0015 - Personas y Clientes Workflow (CU17 → CU18 → CU61)
- * CU17 - Dar Alta Persona
+ * CU17 - Dar Alta Person
  * CU18 - Dar Alta Cliente (via checkbox 'es cliente')
  * CU41 - Modificar Cliente
  * CU61 - Buscar persona o cliente
@@ -30,7 +30,7 @@ import { createPersona, uniqueId } from './setup/api-helpers'
 async function loginAndGoToPersonas(page: Page): Promise<void> {
   const steps = new GherkinSteps(page)
   await authenticateAsAdmin(page)
-  await steps.givenUserIsOnPage('/dashboard/personas')
+  await steps.givenUserIsOnPage('/dashboard/people')
 }
 
 /** Opens "Nueva persona" modal and fills the required fields.
@@ -68,10 +68,10 @@ async function submitForm(page: Page): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// CU17 - Dar Alta Persona (Golden Path)
+// CU17 - Dar Alta Person (Golden Path)
 // ---------------------------------------------------------------------------
 
-test.describe('CU17 - Dar Alta Persona', () => {
+test.describe('CU17 - Dar Alta Person', () => {
   test.beforeEach(async ({ page }) => {
     await loginAndGoToPersonas(page)
   })
@@ -245,7 +245,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
       // And — persona now shows as client
       await page.getByTestId('input-search-lastName').fill(apellido)
       const updatedRow = page.getByRole('row', { name: new RegExp(apellido, 'i') })
-      await expect(updatedRow.getByText(/cliente|sí/i)).toBeVisible()
+      await expect(updatedRow.getByText(/client|sí/i)).toBeVisible()
     },
   )
 })
@@ -272,7 +272,7 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
       ).toBeVisible({ timeout: 8000 })
 
       // When — attempt to create a second persona with the same DNI
-      await fillPersonaForm(page, { nombre: 'Otra', apellido: 'Persona', dni })
+      await fillPersonaForm(page, { nombre: 'Otra', apellido: 'Person', dni })
       await submitForm(page)
 
       // Then — error toast references duplicate document
@@ -362,7 +362,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
   test.beforeEach(async ({ page }) => {
     // Seed a known persona via API so searches have guaranteed results
     await authenticateAsAdmin(page)
-    await page.goto('/dashboard/personas')
+    await page.goto('/dashboard/people')
     await page.waitForLoadState('networkidle')
   })
 
@@ -466,12 +466,12 @@ test.describe('Personas screen - responsive viewports', () => {
       async ({ page }) => {
         await page.setViewportSize({ width: vp.width, height: vp.height })
         await authenticateAsAdmin(page)
-        await page.goto('/dashboard/personas')
+        await page.goto('/dashboard/people')
         await page.waitForLoadState('domcontentloaded')
 
         // Personas heading visible
         await expect(
-          page.getByRole('heading', { name: /personas/i }),
+          page.getByRole('heading', { name: /people/i }),
         ).toBeVisible()
 
         // No horizontal scroll at this breakpoint
@@ -487,7 +487,7 @@ test.describe('Personas screen - responsive viewports', () => {
       async ({ page }) => {
         await page.setViewportSize({ width: vp.width, height: vp.height })
         await authenticateAsAdmin(page)
-        await page.goto('/dashboard/personas')
+        await page.goto('/dashboard/people')
         await page.waitForLoadState('domcontentloaded')
 
         await expect(page.getByTestId('btn-nueva-persona')).toBeVisible()
@@ -508,7 +508,7 @@ test.describe('Personas screen - responsive viewports', () => {
 
         await page.setViewportSize({ width: vp.width, height: vp.height })
         await authenticateAsAdmin(page)
-        await page.goto('/dashboard/personas')
+        await page.goto('/dashboard/people')
         await page.waitForLoadState('domcontentloaded')
 
         // Create original

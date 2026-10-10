@@ -9,7 +9,7 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.FolioType;
 import java.io.Serializable;
@@ -26,7 +26,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author matias
  */
-public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
+public class FolioTypeJpaController implements Serializable, JpaPersistence
 {
 
     public FolioTypeJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -199,7 +199,7 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This TipoDeFolio (" + folioType + ") cannot be destroyed since the Folio " + folioListOrphanCheckFolio + " in its folioList field has a non-nullable fkIdTipoFolio field.");
+                illegalOrphanMessages.add("This FolioType (" + folioType + ") cannot be destroyed since the Folio " + folioListOrphanCheckFolio + " in its folioList field has a non-nullable fkIdTipoFolio field.");
             }
             if (illegalOrphanMessages != null)
             {

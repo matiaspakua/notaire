@@ -9,7 +9,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import es from "../../../messages/es.json";
 import en from "../../../messages/en.json";
 
-const mockPathname = vi.fn(() => "/dashboard/personas");
+const mockPathname = vi.fn(() => "/dashboard/people");
 
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname(),
@@ -25,7 +25,7 @@ vi.mock("@/components/layout/AppSidebar", () => ({
   MOBILE_SIDEBAR_ID: "mobile-sidebar",
   AppSidebar: () => (
     <nav aria-label="sidebar">
-      <a href="/dashboard/gestiones">Gestiones</a>
+      <a href="/dashboard/managements">Gestiones</a>
     </nav>
   ),
 }));
@@ -47,7 +47,7 @@ function Page({ title }: { title: string }) {
 }
 
 beforeEach(() => {
-  mockPathname.mockReturnValue("/dashboard/personas");
+  mockPathname.mockReturnValue("/dashboard/people");
   // jsdom has no matchMedia; the layout listens for the desktop breakpoint.
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
     matches: false,
@@ -114,7 +114,7 @@ describe("DashboardLayout route focus (#1352)", () => {
     await screen.findByRole("heading", { name: "Personas" });
     screen.getByRole("link", { name: "Gestiones" }).focus();
 
-    mockPathname.mockReturnValue("/dashboard/gestiones");
+    mockPathname.mockReturnValue("/dashboard/managements");
     rerender(
       <DashboardLayout>
         <Page title="Gestiones" />

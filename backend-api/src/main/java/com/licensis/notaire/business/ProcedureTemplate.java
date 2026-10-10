@@ -163,7 +163,7 @@ public class ProcedureTemplate implements Serializable, Persistable<ProcedureTem
     @Override
     public String toString()
     {
-        return "PlantillaTramite[ plantillaTramitePK=" + procedureTemplatePK + " ]";
+        return "ProcedureTemplate[ plantillaTramitePK=" + procedureTemplatePK + " ]";
     }
 
     public int getVersion()

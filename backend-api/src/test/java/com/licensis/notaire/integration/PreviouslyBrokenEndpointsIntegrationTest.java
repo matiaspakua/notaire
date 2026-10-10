@@ -16,7 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Behavioural regression tests for the controllers whose read endpoints previously
- * returned HTTP 500 due to entity/schema drift (testimonio, movimiento-testimonio,
+ * returned HTTP 500 due to entity/schema drift (testimony, testimony movement,
  * tipo-folio, items). Runs on the H2 profile for fast feedback and covers the list
  * and not-found branches. The schema-level guard lives in
  * {@link InitDbSchemaValidationIntegrationTest}.
@@ -39,47 +39,47 @@ class PreviouslyBrokenEndpointsIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return a JSON array for GET /api/v1/testimonio")
+    @DisplayName("Should return a JSON array for GET /api/v1/testimonies")
     void shouldListTestimoniosWhenRequested() throws Exception {
-        mockMvc.perform(get("/api/v1/testimonio"))
+        mockMvc.perform(get("/api/v1/testimonies"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
 
     @Test
-    @DisplayName("Should return 404 for GET /api/v1/testimonio/{id} when absent")
+    @DisplayName("Should return 404 for GET /api/v1/testimonies/{id} when absent")
     void shouldReturnNotFoundWhenTestimonyMissing() throws Exception {
-        mockMvc.perform(get("/api/v1/testimonio/" + MISSING_ID))
+        mockMvc.perform(get("/api/v1/testimonies/" + MISSING_ID))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should return a JSON array for GET /api/v1/movimiento-testimonio")
+    @DisplayName("Should return a JSON array for GET /api/v1/testimony-movements")
     void shouldListMovimientosTestimonyWhenRequested() throws Exception {
-        mockMvc.perform(get("/api/v1/movimiento-testimonio"))
+        mockMvc.perform(get("/api/v1/testimony-movements"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
 
     @Test
-    @DisplayName("Should return 404 for GET /api/v1/movimiento-testimonio/{id} when absent")
+    @DisplayName("Should return 404 for GET /api/v1/testimony-movements/{id} when absent")
     void shouldReturnNotFoundWhenTestimonyMovementMissing() throws Exception {
-        mockMvc.perform(get("/api/v1/movimiento-testimonio/" + MISSING_ID))
+        mockMvc.perform(get("/api/v1/testimony-movements/" + MISSING_ID))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should return a JSON array for GET /api/v1/tipo-folio")
+    @DisplayName("Should return a JSON array for GET /api/v1/folio-types")
     void shouldListTiposDeFolioWhenRequested() throws Exception {
-        mockMvc.perform(get("/api/v1/tipo-folio"))
+        mockMvc.perform(get("/api/v1/folio-types"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
 
     @Test
-    @DisplayName("Should return 404 for GET /api/v1/tipo-folio/{id} when absent")
+    @DisplayName("Should return 404 for GET /api/v1/folio-types/{id} when absent")
     void shouldReturnNotFoundWhenFolioTypeMissing() throws Exception {
-        mockMvc.perform(get("/api/v1/tipo-folio/" + MISSING_ID))
+        mockMvc.perform(get("/api/v1/folio-types/" + MISSING_ID))
                 .andExpect(status().isNotFound());
     }
 
@@ -99,21 +99,21 @@ class PreviouslyBrokenEndpointsIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return a JSON array for GET /api/v1/folio")
+    @DisplayName("Should return a JSON array for GET /api/v1/folios")
     void shouldListFoliosWhenRequested() throws Exception {
         // Folio list previously returned 500: raw entities were serialized with
         // uninitialized lazy Hibernate proxies (fkIdDeed/fkIdNotebook). Fixed by making
         // those associations EAGER instead of masking it with the legacy DtoFolio shape,
         // which didn't match the frontend's contract (see #1006).
-        mockMvc.perform(get("/api/v1/folio"))
+        mockMvc.perform(get("/api/v1/folios"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
 
     @Test
-    @DisplayName("Should return 404 for GET /api/v1/folio/{id} when absent")
+    @DisplayName("Should return 404 for GET /api/v1/folios/{id} when absent")
     void shouldReturnNotFoundWhenFolioMissing() throws Exception {
-        mockMvc.perform(get("/api/v1/folio/" + MISSING_ID))
+        mockMvc.perform(get("/api/v1/folios/" + MISSING_ID))
                 .andExpect(status().isNotFound());
     }
 }

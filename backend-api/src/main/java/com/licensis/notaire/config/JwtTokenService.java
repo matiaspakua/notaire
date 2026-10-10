@@ -30,17 +30,17 @@ public class JwtTokenService {
     public void validateSecret() {
         if (secretKey == null || secretKey.isBlank()) {
             throw new IllegalStateException(
-                    "jwt.secret no está configurado. Definí una clave secreta propia (variable de entorno "
-                            + "JWT_SECRET) antes de iniciar la aplicación.");
+                    "jwt.secret is not configured. Definí a key secreta propia (variable of entorno "
+                            + "JWT_SECRET) antes of start the aplicación.");
         }
         if (INSECURE_DEFAULT_SECRET.equals(secretKey)) {
             throw new IllegalStateException(
-                    "jwt.secret usa el valor por defecto inseguro incluido en el repositorio. "
-                            + "Definí una clave secreta propia (variable de entorno JWT_SECRET).");
+                    "jwt.secret usa the valor by defecto inseguro incluido in the repositorio. "
+                            + "Definí a key secreta propia (variable of entorno JWT_SECRET).");
         }
         if (secretKey.getBytes(StandardCharsets.UTF_8).length < MIN_SECRET_LENGTH) {
             throw new IllegalStateException(
-                    "jwt.secret es demasiado corto para HS256: se requieren al menos " + MIN_SECRET_LENGTH
+                    "jwt.secret is demasiado corto for HS256: requieren to the menos " + MIN_SECRET_LENGTH
                             + " bytes.");
         }
     }

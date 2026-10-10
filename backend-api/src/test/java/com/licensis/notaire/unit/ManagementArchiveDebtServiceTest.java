@@ -2,7 +2,7 @@ package com.licensis.notaire.unit;
 
 
 import com.licensis.notaire.exception.BusinessValidationException;
-import com.licensis.notaire.exception.CarpetasEnWaitException;
+import com.licensis.notaire.exception.FoldersInWaitException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
@@ -82,11 +82,11 @@ class ManagementArchiveDebtServiceTest {
     }
 
     @Nested
-    @DisplayName("Calcular saldo pendiente de una gestión")
+    @DisplayName("Calculate outstanding balance of a management")
     class CalcularSaldoPendingTests {
 
         @Test
-        @DisplayName("Gestión con un único trámite y budget devuelve el saldo de ese budget")
+        @DisplayName("Management with a único procedure and budget devuelve the balance of that budget")
         void shouldReturnSingleBudgetBalanceForSingleProcedure() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
@@ -98,7 +98,7 @@ class ManagementArchiveDebtServiceTest {
         }
 
         @Test
-        @DisplayName("Gestión con múltiples trámites y presupuestos suma el saldo de cada budget")
+        @DisplayName("Management with múltiples procedures and budgets suma the balance of each budget")
         void shouldSumBalancesAcrossMultipleProceduresAndPresupuestos() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
@@ -112,7 +112,7 @@ class ManagementArchiveDebtServiceTest {
         }
 
         @Test
-        @DisplayName("Gestión cuyos presupuestos están totalmente pagados devuelve cero")
+        @DisplayName("Management cuyos budgets están totalmente pagados devuelve cero")
         void shouldReturnZeroWhenAllPresupuestosAreFullyPaid() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
@@ -124,18 +124,18 @@ class ManagementArchiveDebtServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when gestión does not exist")
+        @DisplayName("Should throw exception when management does not exist")
         void shouldThrowExceptionWhenManagementNotFound() {
             when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> managementArchiveDebtService.calculatePendingBalance(999))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Gestión no encontrada");
+                    .hasMessageContaining("Management not found");
         }
     }
 
     @Nested
-    @DisplayName("Archivar gestión")
+    @DisplayName("Archivar management")
     class ArchivingTests {
 
         @Test
@@ -163,11 +163,11 @@ class ManagementArchiveDebtServiceTest {
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));
             when(managementTransitionService.transition(1, "Archivada"))
-                    .thenThrow(new BusinessValidationException("Transición no permitida"));
+                    .thenThrow(new BusinessValidationException("Transition not permitida"));
 
             assertThatThrownBy(() -> managementArchiveDebtService.archiving(1))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("Transición no permitida");
+                    .hasMessageContaining("Transition not permitida");
         }
 
         @Test
@@ -207,7 +207,7 @@ class ManagementArchiveDebtServiceTest {
         }
 
         @Test
-        @DisplayName("CU16: Archive succeeds and aggregates deuda across multiple presupuestos")
+        @DisplayName("CU16: Archive succeeds and aggregates debt across multiple budgets")
         void shouldArchiveAndAggregateDebtAcrossMultiplePresupuestos() {
             ManagementStatus archivada = new ManagementStatus(3, "Archivada");
             testManagement.setFkIdManagementStatus(archivada);
@@ -228,7 +228,7 @@ class ManagementArchiveDebtServiceTest {
         }
 
         @Test
-        @DisplayName("CU85: Archiving cascades all carpetas de trámite of the gestión to Archivada")
+        @DisplayName("CU85: Archiving cascades all procedure folders of the management to Archivada")
         void shouldCascadeArchiveCarpetasWhenManagementArchived() {
             ManagementStatus archivada = new ManagementStatus(3, "Archivada");
             testManagement.setFkIdManagementStatus(archivada);
@@ -250,7 +250,7 @@ class ManagementArchiveDebtServiceTest {
         }
 
         @Test
-        @DisplayName("CU85: Archiving is rejected when a carpeta de trámite is in Espera and not confirmed")
+        @DisplayName("CU85: Archiving is rejected when a procedure folder is in Espera and not confirmed")
         void shouldRejectArchiveWhenFolderEnWaitAndNotConfirmed() {
             ProcedureFolder folderEnWait = new ProcedureFolder();
             folderEnWait.setNumber(1);
@@ -259,7 +259,7 @@ class ManagementArchiveDebtServiceTest {
                     .thenReturn(List.of(folderEnWait));
 
             assertThatThrownBy(() -> managementArchiveDebtService.archiving(1, false))
-                    .isInstanceOf(CarpetasEnWaitException.class);
+                    .isInstanceOf(FoldersInWaitException.class);
 
             verify(managementRepository, never()).save(testManagement);
         }

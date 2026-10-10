@@ -35,7 +35,7 @@ class UserAuthorityResolverTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"Escribano", "ESCRIBANO", "Admin", "administrador", " Administrador "})
+    @ValueSource(strings = {"Notary", "NOTARY", "Admin", "administrador", " Administrador "})
     @DisplayName("should grant administrator authority to administrator-capable types")
     void shouldGrantAdministratorAuthorityToAdministratorCapableTypes(String type) {
         when(userRepository.findByName("boss")).thenReturn(Optional.of(new User(1, "boss", "x", true, type)));
@@ -62,7 +62,7 @@ class UserAuthorityResolverTest {
     @Test
     @DisplayName("should resolve nothing for an inactive user")
     void shouldResolveNothingForAnInactiveUser() {
-        when(userRepository.findByName("gone")).thenReturn(Optional.of(new User(4, "gone", "x", false, "Escribano")));
+        when(userRepository.findByName("gone")).thenReturn(Optional.of(new User(4, "gone", "x", false, "Notary")));
 
         assertThat(new UserAuthorityResolver(userRepository).resolve("gone")).isEmpty();
     }

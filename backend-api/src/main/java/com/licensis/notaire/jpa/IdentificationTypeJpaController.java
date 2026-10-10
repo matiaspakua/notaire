@@ -6,10 +6,10 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.IdentificationType;
-import com.licensis.notaire.service.AdministradorJpa;
+import com.licensis.notaire.service.JpaAdministrator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class IdentificationTypeJpaController implements Serializable, IPersistenciaJpa {
+public class IdentificationTypeJpaController implements Serializable, JpaPersistence {
 
     private static IdentificationTypeJpaController instancia = null;
 
@@ -90,7 +90,7 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Persona " + personListOldPerson
+                    illegalOrphanMessages.add("You must retain Person " + personListOldPerson
                             + " since its fkIdTipoIdentificacion field is not nullable.");
                 }
             }
@@ -156,8 +156,8 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This TipoIdentificacion (" + identificationType
-                        + ") cannot be destroyed since the Persona " + personListOrphanCheckPerson
+                illegalOrphanMessages.add("This IdentificationType (" + identificationType
+                        + ") cannot be destroyed since the Person " + personListOrphanCheckPerson
                         + " in its personaList field has a non-nullable fkIdTipoIdentificacion field.");
             }
             if (illegalOrphanMessages != null) {
@@ -215,7 +215,7 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
 
     public static IdentificationTypeJpaController getInstancia() {
 
-        EntityManagerFactory emf = AdministradorJpa.getEmf();
+        EntityManagerFactory emf = JpaAdministrator.getEmf();
 
         if (instancia == null || (instancia.emf == null && emf != null)) {
             instancia = new IdentificationTypeJpaController(null, emf);

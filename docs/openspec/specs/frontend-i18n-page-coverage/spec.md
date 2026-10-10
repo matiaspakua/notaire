@@ -50,12 +50,12 @@ concerns MUST NOT remain in `login/page.tsx`.
 The gap UI pages (workflows list, workflows editor, suplencias, reportes, roles,
 dashboard/items) SHALL call `useTranslations` for page-specific copy and reuse
 `common` for shared actions/labels where an existing key fits. Redirect-only
-stubs (`/`, `/auditoria`, `administracion/items`, `administracion/auditoria`)
+stubs (`/`, `/audit`, `administracion/items`, `administracion/audit`)
 are exempt because they have no UI strings.
 
 #### Scenario: Workflows list and editor use translations
 
-- **WHEN** a user opens `/dashboard/administracion/workflows` or the editor
+- **WHEN** a user opens `/dashboard/administration/workflows` or the editor
 - **THEN** titles, toasts, form labels, and empty states resolve via next-intl
 
 #### Scenario: Suplencias, reportes, roles, and items use translations

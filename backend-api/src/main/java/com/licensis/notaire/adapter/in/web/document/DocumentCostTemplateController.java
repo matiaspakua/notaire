@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST API para administrar la plantilla de costos de documentos por tipo de trámite (CU27/CU39).
+ * REST API for managing the template of costos of documents by procedure type (CU27/CU39).
  */
 @RestController
-@RequestMapping("/api/v1/plantilla-costos-documento")
-@Tag(name = "PlantillaCostosDocumento", description = "API para administrar costos esperados de documentos por tipo de trámite")
+@RequestMapping("/api/v1/document-cost-templates")
+@Tag(name = "PlantillaCostosDocumento", description = "API for managing costos esperados of documents by procedure type")
 public class DocumentCostTemplateController {
 
     private final DocumentCostTemplateService documentCostTemplateService;
@@ -61,11 +61,11 @@ public class DocumentCostTemplateController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Creado"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-        @ApiResponse(responseCode = "404", description = "Tipo de trámite o documento no encontrado")
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "404", description = "Procedure type or document not found")
     })
     @PostMapping
-    @Operation(summary = "Definir el costo (fijo o variable) de un tipo de documento en la plantilla de un tipo de trámite")
+    @Operation(summary = "Define the costo (fijo or variable) of a document type in the template of a procedure type")
     public ResponseEntity<Object> createCost(@RequestBody CreateCostRequest request) {
         try {
             DocumentCostTemplate creado = documentCostTemplateService.create(
@@ -82,8 +82,8 @@ public class DocumentCostTemplateController {
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK")
     })
-    @GetMapping("/tipo-tramite/{idProcedureType}")
-    @Operation(summary = "Obtener los costos de documentos definidos para un tipo de trámite")
+    @GetMapping("/procedure-types/{idProcedureType}")
+    @Operation(summary = "Get the costos of documents definidos for a procedure type")
     @Transactional(readOnly = true)
     public ResponseEntity<List<CostTemplateResponse>> getCostosByTypeProcedure(
             @PathVariable Integer idProcedureType) {

@@ -6,7 +6,7 @@ info:
       Traceability: CU58 (RF #55, #94, #119)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/tipo-folio/{{folio_type_id}}"
+  url: "{{base_url}}/api/v1/folio-types/{{folio_type_id}}"
   headers:
     - name: Content-Type
       value: application/json

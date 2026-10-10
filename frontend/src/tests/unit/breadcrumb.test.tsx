@@ -48,42 +48,42 @@ describe("Breadcrumb", () => {
   });
 
   it("renders a crumb per path segment with Spanish labels", () => {
-    renderAt("/dashboard/personas");
+    renderAt("/dashboard/people");
     expect(screen.getByRole("navigation", { name: "Ruta de navegación" })).toBeInTheDocument();
     expect(screen.getByText("Inicio")).toBeInTheDocument();
     expect(screen.getByText("Personas")).toBeInTheDocument();
   });
 
   it("renders English labels in the en locale", () => {
-    renderAt("/dashboard/movimientos-testimonio", "en");
+    renderAt("/dashboard/testimony-movements", "en");
     expect(screen.getByRole("navigation", { name: "Breadcrumb" })).toBeInTheDocument();
     expect(screen.getByText("Home")).toBeInTheDocument();
-    expect(screen.getByText("Testimonio Movements")).toBeInTheDocument();
+    expect(screen.getByText("Testimony Movements")).toBeInTheDocument();
   });
 
   it("labels administration sub-routes by their module, in both locales", () => {
-    renderAt("/dashboard/administracion/documentos", "en");
+    renderAt("/dashboard/administration/documents", "en");
     expect(screen.getByText("Administration")).toBeInTheDocument();
     expect(screen.getByText("Document Types")).toBeInTheDocument();
   });
 
   it("keeps the accent on Próximos Vencimientos", () => {
-    renderAt("/dashboard/proximos-vencimientos");
+    renderAt("/dashboard/upcoming-expirations");
     expect(screen.getByText("Próximos Vencimientos")).toBeInTheDocument();
   });
 
   it("renders the last segment as plain text, not a link", () => {
-    renderAt("/dashboard/personas");
+    renderAt("/dashboard/people");
     expect(screen.getByText("Personas").tagName).not.toBe("A");
   });
 
   it("renders intermediate segments as links to their partial path", () => {
-    renderAt("/dashboard/personas");
+    renderAt("/dashboard/people");
     expect(screen.getByText("Inicio").closest("a")).toHaveAttribute("href", "/dashboard");
   });
 
   it("shows a record id segment as is", () => {
-    renderAt("/dashboard/administracion/workflows/42", "en");
+    renderAt("/dashboard/administration/workflows/42", "en");
     expect(screen.getByText("Workflows")).toBeInTheDocument();
     expect(screen.getByText("42")).toBeInTheDocument();
   });

@@ -6,7 +6,7 @@ info:
       Traceability: CU04 (#655) — a document is presented for a trámite of a gestión, so the procedure is required; nothing is stored
 http:
   method: POST
-  url: "{{base_url}}/api/v1/documento-presentado"
+  url: "{{base_url}}/api/v1/submitted-documents"
   body:
     type: json
     data: |-

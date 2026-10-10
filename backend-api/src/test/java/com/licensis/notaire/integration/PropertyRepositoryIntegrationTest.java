@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Inmueble Repository Integration Tests")
+@DisplayName("Property Repository Integration Tests")
 class PropertyRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -138,13 +138,13 @@ class PropertyRepositoryIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should handle long address strings")
     void shouldHandleLongAddressStrings() {
         Property property = new Property();
-        String longAddress = "Calle " + "X".repeat(100) + " Número 9999, Apartamento 10Z, Piso 50";
+        String longAddress = "Calle " + "X".repeat(100) + " Number 9999, Apartamento 10Z, Piso 50";
         property.setCadastralDesignation("Long Address Test");
         property.setAddress(longAddress);
 
         Property saved = propertyRepository.save(property);
 
         assertThat(saved.getAddress()).startsWith("Calle X");
-        assertThat(saved.getAddress()).contains("Número 9999");
+        assertThat(saved.getAddress()).contains("Number 9999");
     }
 }

@@ -47,7 +47,7 @@ test.describe('CU02 - Iniciar Gestión', () => {
   test('CU02-GW01: golden path — gestión seeded via API aparece en la tabla con número y estado inicial', async ({ page }) => {
     const { numero, estadoInicial } = await seedFullWorkflow(page)
 
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     const row = page.getByRole('row', { name: new RegExp(String(numero)) })
@@ -56,7 +56,7 @@ test.describe('CU02 - Iniciar Gestión', () => {
   })
 
   test('CU02-GW02: modal "nueva gestión" abre y muestra picker de presupuesto', async ({ page }) => {
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     await page.getByTestId('btn-nueva-gestion').click()
@@ -74,7 +74,7 @@ test.describe('CU02 - Iniciar Gestión', () => {
     // Fetch the persona's apellido from the seeded data to locate the option
     const apellido = persona.data!.lastName ?? ''
 
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     await page.getByTestId('btn-nueva-gestion').click()
@@ -101,8 +101,8 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
     // Step 1: seed — createPersona → createPresupuesto → seedGestionWithWorkflow
     const { idGestion, numero, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
 
-    // Step 2: navegar a /dashboard/gestiones y verificar que la gestión aparece con estado inicial
-    await page.goto('/dashboard/gestiones')
+    // Step 2: navegar a /dashboard/managements y verificar que la gestión aparece con estado inicial
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     const row = page.getByRole('row', { name: new RegExp(String(numero)) })
@@ -157,7 +157,7 @@ test.describe('CU13 - Ver historial/bitácora de una gestión', () => {
   test('CU13-GW01: gestión recién creada muestra exactamente 1 entrada en bitácora con el estado inicial', async ({ page }) => {
     const { idGestion, numero, estadoInicial } = await seedFullWorkflow(page)
 
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     await expect(
@@ -176,7 +176,7 @@ test.describe('CU13 - Ver historial/bitácora de una gestión', () => {
   test('CU13-GW02: tras cambiar estado la bitácora acumula una segunda entrada', async ({ page }) => {
     const { idGestion, numero, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
 
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     await expect(
@@ -215,7 +215,7 @@ test.describe('CU83 - Cambiar estado de una gestión', () => {
   test('CU83-GW01: transición a destino válido actualiza el estado visible en la tabla', async ({ page }) => {
     const { idGestion, numero, estadoFinal } = await seedFullWorkflow(page)
 
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     const row = page.getByRole('row', { name: new RegExp(String(numero)) })
@@ -236,7 +236,7 @@ test.describe('CU83 - Cambiar estado de una gestión', () => {
   test('CU83-GW02: el picker sólo ofrece destinos válidos del workflow (no el estado actual)', async ({ page }) => {
     const { idGestion, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
 
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click()
@@ -262,7 +262,7 @@ test.describe('CU16 - Archivar Gestión', () => {
     // so the archive action must be rejected by the backend.
     const { idGestion, numero } = await seedFullWorkflow(page)
 
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     const row = page.getByRole('row', { name: new RegExp(String(numero)) })
@@ -271,7 +271,7 @@ test.describe('CU16 - Archivar Gestión', () => {
     await page.getByTestId(`btn-archivar-gestion-${idGestion}`).click()
     const confirmDialog = page.getByRole('alertdialog')
     await expect(confirmDialog).toBeVisible()
-    await confirmDialog.getByRole('button', { name: /archivar gestión/i }).click()
+    await confirmDialog.getByRole('button', { name: /archive gestión/i }).click()
 
     // Backend should reject: error message must appear
     await expect(page.getByText(/is not allowed/i)).toBeVisible({ timeout: 10000 })
@@ -289,11 +289,11 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU19-GW01: seleccionar cliente en el filtro dispara GET /gestiones/cliente/{id}', async ({ page }) => {
-    // Ensure at least one gestión with a real persona/cliente exists
+  test('CU19-GW01: seleccionar cliente en el filtro dispara GET /managements/client/{id}', async ({ page }) => {
+    // Ensure at least one gestión with a real persona/client exists
     await seedFullWorkflow(page)
 
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     await page.getByTestId('select-filter-cliente-gestion').click()
@@ -308,7 +308,7 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
 
     const searchRequest = page.waitForRequest(
       (req) =>
-        /\/api\/v1\/gestiones\/cliente\/\d+/.test(req.url()) && req.method() === 'GET',
+        /\/api\/v1\/managements\/client\/\d+/.test(req.url()) && req.method() === 'GET',
     )
     await firstOption.click()
     await searchRequest
@@ -317,7 +317,7 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
   test('CU19-GW02: gestión seeded con cliente específico aparece al filtrar por ese cliente', async ({ page }) => {
     const { personaId, numero, personaApellido } = await seedFullWorkflow(page)
 
-    await page.goto('/dashboard/gestiones')
+    await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     // Wait for the filter select to be populated with personas
@@ -337,7 +337,7 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
 
     const searchRequest = page.waitForRequest(
       (req) =>
-        /\/api\/v1\/gestiones\/cliente\/\d+/.test(req.url()) && req.method() === 'GET',
+        /\/api\/v1\/managements\/client\/\d+/.test(req.url()) && req.method() === 'GET',
     )
     await clienteOption.click()
     await searchRequest
@@ -367,7 +367,7 @@ test.describe('Responsive viewports — vista de gestiones', () => {
       const { idGestion, numero, estadoInicial } = await seedFullWorkflow(page)
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height })
-      await page.goto('/dashboard/gestiones')
+      await page.goto('/dashboard/managements')
       await page.waitForLoadState('domcontentloaded')
 
       const row = listRow(page, new RegExp(String(numero)))

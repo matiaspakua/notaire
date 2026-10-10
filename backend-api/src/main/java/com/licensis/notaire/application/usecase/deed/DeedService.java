@@ -51,18 +51,18 @@ public class DeedService {
     }
 
     public List<Deed> findAll() {
-        logger.debug("Finding all escrituras");
+        logger.debug("Finding all deeds");
         return deedRepository.findAll();
     }
 
     @Transactional(readOnly = true)
     public Optional<Deed> findById(Integer id) {
-        logger.debug("Finding escritura by id: {}", id);
+        logger.debug("Finding deed by id: {}", id);
         return deedRepository.findById(id);
     }
 
     public Deed save(Deed entity) {
-        logger.info("Saving escritura with numero: {}", entity.getNumber());
+        logger.info("Saving deed with number: {}", entity.getNumber());
         validateNumbering(entity);
         return deedRepository.save(entity);
     }
@@ -80,13 +80,13 @@ public class DeedService {
 
             if (resultado == DeedNumberingValidationResult.DUPLICATE) {
                 throw new DuplicateDeedNumberException(
-                        "El número " + entity.getNumber() + " ya fue utilizado en el protocolo "
-                                + (isAuxiliary ? "auxiliar" : "principal") + " del año " + folio.getYear());
+                        "The number " + entity.getNumber() + " ya fue utilizado en el protocolo "
+                                + (isAuxiliary ? "auxiliar" : "principal") + " of the year " + folio.getYear());
             }
             if (resultado == DeedNumberingValidationResult.SKIP_UNJUSTIFIED) {
                 throw new UnjustifiedNumberingGapException(
-                        "El número " + entity.getNumber() + " deja un salto en la numeración correlativa; "
-                                + "debe indicar una justificación en observaciones");
+                        "The number " + entity.getNumber() + " deja a salto in the numeración correlativa; "
+                                + "must indicar a justificación in notes");
             }
         });
     }
@@ -102,7 +102,7 @@ public class DeedService {
     }
 
     public void deleteById(Integer id) {
-        logger.info("Deleting escritura with id: {}", id);
+        logger.info("Deleting deed with id: {}", id);
         deedRepository.deleteById(id);
     }
 
@@ -114,7 +114,7 @@ public class DeedService {
 
     @Transactional(readOnly = true)
     public List<Deed> searchPorNumber(Integer number) {
-        logger.debug("Searching escrituras by numero: {}", number);
+        logger.debug("Searching deeds by number: {}", number);
         if (number == null) {
             return deedRepository.findAll();
         }

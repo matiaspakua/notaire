@@ -30,30 +30,30 @@ interface Module {
 
 /** Modules exposed directly in the sidebar (in display order). */
 const SIDEBAR_MODULES: Module[] = [
-  { navLabel: "Gestiones", urlPart: "/dashboard/gestiones", createTestId: "btn-nueva-gestion" },
-  { navLabel: "Presupuestos", urlPart: "/dashboard/presupuestos", createTestId: "btn-nuevo-presupuesto" },
-  { navLabel: "Personas", urlPart: "/dashboard/personas", createTestId: "btn-nueva-persona" },
-  { navLabel: "Escrituras", urlPart: "/dashboard/escrituras" },
-  { navLabel: "Pagos", urlPart: "/dashboard/pagos", createTestId: "btn-nuevo-pago" },
-  { navLabel: "Protocolo", urlPart: "/dashboard/protocolo" },
-  { navLabel: "Inmuebles", urlPart: "/dashboard/inmuebles" },
-  { navLabel: "Copias", urlPart: "/dashboard/copias" },
-  { navLabel: "Suplencias", urlPart: "/dashboard/suplencias", createTestId: "btn-nueva-suplencia" },
-  { navLabel: "Reportes", urlPart: "/dashboard/reportes" },
+  { navLabel: "Gestiones", urlPart: "/dashboard/managements", createTestId: "btn-nueva-gestion" },
+  { navLabel: "Presupuestos", urlPart: "/dashboard/budgets", createTestId: "btn-nuevo-presupuesto" },
+  { navLabel: "Personas", urlPart: "/dashboard/people", createTestId: "btn-nueva-persona" },
+  { navLabel: "Escrituras", urlPart: "/dashboard/deeds" },
+  { navLabel: "Pagos", urlPart: "/dashboard/payments", createTestId: "btn-nuevo-pago" },
+  { navLabel: "Protocolo", urlPart: "/dashboard/protocol" },
+  { navLabel: "Inmuebles", urlPart: "/dashboard/properties" },
+  { navLabel: "Copias", urlPart: "/dashboard/copies" },
+  { navLabel: "Suplencias", urlPart: "/dashboard/substitutions", createTestId: "btn-nueva-suplencia" },
+  { navLabel: "Reportes", urlPart: "/dashboard/reports" },
   { navLabel: "Items", urlPart: "/dashboard/items", createTestId: "btn-nuevo-item" },
-  { navLabel: "Documentos", urlPart: "/dashboard/documentos" },
-  { navLabel: "Auditoría", urlPart: "/dashboard/auditoria" },
+  { navLabel: "Documentos", urlPart: "/dashboard/documents" },
+  { navLabel: "Auditoría", urlPart: "/dashboard/audit" },
 ];
 
 /** Administración sub-pages (reached by direct navigation from the admin hub). */
 const ADMIN_MODULES: Module[] = [
-  { navLabel: "Trámites", urlPart: "/dashboard/administracion/tramites", createTestId: "btn-nuevo-tipo-tramite" },
-  { navLabel: "Conceptos", urlPart: "/dashboard/administracion/conceptos" },
-  { navLabel: "Estados de gestión", urlPart: "/dashboard/administracion/estados-gestion", createTestId: "btn-nuevo-estado" },
-  { navLabel: "Folios", urlPart: "/dashboard/administracion/folios", createTestId: "btn-nuevo-folio" },
-  { navLabel: "Plantillas", urlPart: "/dashboard/administracion/plantillas", createTestId: "btn-nueva-plantilla" },
-  { navLabel: "Tipos de documento", urlPart: "/dashboard/administracion/documentos", createTestId: "btn-nuevo-tipo-documento" },
-  { navLabel: "Usuarios", urlPart: "/dashboard/administracion/usuarios", createTestId: "btn-nuevo-usuario" },
+  { navLabel: "Trámites", urlPart: "/dashboard/administration/procedures", createTestId: "btn-nuevo-tipo-tramite" },
+  { navLabel: "Conceptos", urlPart: "/dashboard/administration/concepts" },
+  { navLabel: "Estados de gestión", urlPart: "/dashboard/administration/management-statuses", createTestId: "btn-nuevo-estado" },
+  { navLabel: "Folios", urlPart: "/dashboard/administration/folios", createTestId: "btn-nuevo-folio" },
+  { navLabel: "Plantillas", urlPart: "/dashboard/administration/templates", createTestId: "btn-nueva-plantilla" },
+  { navLabel: "Tipos de documento", urlPart: "/dashboard/administration/documents", createTestId: "btn-nuevo-tipo-documento" },
+  { navLabel: "Usuarios", urlPart: "/dashboard/administration/users", createTestId: "btn-nuevo-usuario" },
 ];
 
 /**
@@ -67,10 +67,10 @@ function visibleHeading(page: Page) {
 
 async function loginViaUI(page: Page): Promise<void> {
   await page.goto("/login");
-  await expect(page.getByTestId("input-usuario")).toBeVisible();
-  await page.getByTestId("input-usuario").fill(ADMIN_USER);
-  await page.getByTestId("input-contrasenia").fill(ADMIN_PASS);
-  await page.getByTestId("btn-ingresar").click();
+  await expect(page.getByTestId("input-username")).toBeVisible();
+  await page.getByTestId("input-username").fill(ADMIN_USER);
+  await page.getByTestId("input-password").fill(ADMIN_PASS);
+  await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   await expect(page.getByTestId("sidebar")).toBeVisible({ timeout: 10000 });
 }
@@ -122,7 +122,7 @@ test.describe("Supervised full-system tour (login → all modules → logout)", 
 
     await test.step("Open Administración hub", async () => {
       await page.getByTestId("sidebar").getByRole("link", { name: "Administración" }).first().click();
-      await expect(page).toHaveURL(/\/dashboard\/administracion/, { timeout: 10000 });
+      await expect(page).toHaveURL(/\/dashboard\/administration/, { timeout: 10000 });
       await expect(visibleHeading(page)).toBeVisible({ timeout: 10000 });
     });
 
@@ -142,7 +142,7 @@ test.describe("Supervised full-system tour (login → all modules → logout)", 
       await expect(page.getByTestId("btn-logout")).toBeVisible({ timeout: 10000 });
       await page.getByTestId("btn-logout").click();
       await expect(page).toHaveURL(/\/login/, { timeout: 10000 });
-      await expect(page.getByTestId("btn-ingresar")).toBeVisible();
+      await expect(page.getByTestId("btn-sign-in")).toBeVisible();
     });
   });
 });

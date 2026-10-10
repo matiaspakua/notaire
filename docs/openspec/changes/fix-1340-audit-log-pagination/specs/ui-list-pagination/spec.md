@@ -8,7 +8,7 @@ Lists backed by growing tables are paged server-side with a shared footer.
 
 ### Requirement: The audit log is read one page at a time
 
-`/dashboard/auditoria` SHALL request one page of `GET /api/v1/audit-log` (default 20, newest first), show the total, reach the last page, keep page/size/module in the URL and apply the module filter on the server.
+`/dashboard/audit` SHALL request one page of `GET /api/v1/audit-log` (default 20, newest first), show the total, reach the last page, keep page/size/module in the URL and apply the module filter on the server.
 
 #### Scenario: Page and total
 

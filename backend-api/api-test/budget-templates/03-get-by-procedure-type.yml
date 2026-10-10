@@ -3,11 +3,11 @@ info:
   type: http
   seq: 5
   description: |-
-      ## List budget templates by procedure type — GET /api/v1/plantilla-presupuestos/tipo-tramite/{template_procedure_type_id}
+      ## List budget templates by procedure type — GET /api/v1/budget-templates/procedure-types/{template_procedure_type_id}
       Traceability: CU39 (RF #6, #61, #66, #67)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/plantilla-presupuestos/tipo-tramite/{{template_procedure_type_id}}"
+  url: "{{base_url}}/api/v1/budget-templates/procedure-types/{{template_procedure_type_id}}"
   headers:
     - name: Content-Type
       value: application/json

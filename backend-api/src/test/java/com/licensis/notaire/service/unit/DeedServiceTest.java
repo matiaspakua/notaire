@@ -59,7 +59,7 @@ class DeedServiceTest {
         testNotary = new Person();
         testNotary.setPersonId(1);
         testNotary.setFirstName("Juan");
-        testNotary.setLastName("Escribano");
+        testNotary.setLastName("Notary");
         testNotary.setNotaryRegistrationNumber(100);
 
         testDeed = new Deed();
@@ -70,7 +70,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should find all escrituras with pagination")
+    @DisplayName("Should find all deeds with pagination")
     void shouldFindAllPaged() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Deed> page = new PageImpl<>(List.of(testDeed), pageable, 1);
@@ -88,7 +88,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should find all escrituras")
+    @DisplayName("Should find all deeds")
     void shouldFindAll() {
         List<Deed> escrituras = new ArrayList<>();
         escrituras.add(testDeed);
@@ -105,7 +105,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty list when no escrituras exist")
+    @DisplayName("Should return empty list when not deeds exist")
     void shouldReturnEmptyListWhenNoEscriturasExist() {
         when(deedRepository.findAll()).thenReturn(new ArrayList<>());
 
@@ -158,7 +158,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject saving deed when número is a duplicate within its folio scope (CU86)")
+    @DisplayName("Should reject saving deed when number is a duplicate within its folio scope (CU86)")
     void shouldRejectSaveWhenNumberIsDuplicate() {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
@@ -173,7 +173,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject saving deed when número leaves an unjustified salto (CU86)")
+    @DisplayName("Should reject saving deed when number leaves an unjustified salto (CU86)")
     void shouldRejectSaveWhenSaltoIsNotJustified() {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
@@ -188,7 +188,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should save deed when número correlativo is valid (CU86)")
+    @DisplayName("Should save deed when number correlativo is valid (CU86)")
     void shouldSaveWhenNumberingIsOk() {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
@@ -284,7 +284,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should return all escrituras when number is null")
+    @DisplayName("Should return all deeds when number is null")
     void shouldReturnAllEscriturasWhenNumberIsNull() {
         List<Deed> escrituras = new ArrayList<>();
         escrituras.add(testDeed);

@@ -7,7 +7,7 @@ package com.licensis.notaire.business;
 import java.math.BigDecimal;
 
 import com.licensis.notaire.dto.DtoConcept;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
+import com.licensis.notaire.dto.exceptions.InvalidDtoException;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.ArrayList;
@@ -139,8 +139,8 @@ public class Concept implements Serializable, Persistable<Integer>
     }
 
     /**
-     * Retorna una instancia de DtoConcepto con todos los valores actuales de la instancia de
-     * Concepto.
+     * Retorna a instancia of DtoConcepto with all the valores actuales of the instancia of
+     * Concept.
      *
      * @return
      */
@@ -160,7 +160,7 @@ public class Concept implements Serializable, Persistable<Integer>
         return miDto;
     }
 
-    public void setAtributos(DtoConcept nuevoDto) throws DtoInvalidoException
+    public void setAtributos(DtoConcept nuevoDto) throws InvalidDtoException
     {
         this.setIdConcept(nuevoDto.getIdConcept());
 
@@ -213,7 +213,7 @@ public class Concept implements Serializable, Persistable<Integer>
     {
         return "Conceptos[ version=" + version + " ]"
                 + "[ idConcepto=" + idConcept + " ]"
-                + "[ nombre=" + name + " ]";
+                + "[ name=" + name + " ]";
     }
 
     public int getVersion()

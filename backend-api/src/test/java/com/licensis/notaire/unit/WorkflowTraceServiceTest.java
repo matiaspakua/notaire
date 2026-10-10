@@ -210,7 +210,7 @@ class WorkflowTraceServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw when gestion does not exist")
+    @DisplayName("Should throw when management does not exist")
     void shouldThrowWhenManagementDoesNotExist() {
         DeedManagementRepository managementRepository = Mockito.mock(DeedManagementRepository.class);
         Mockito.when(managementRepository.findById(99)).thenReturn(Optional.empty());

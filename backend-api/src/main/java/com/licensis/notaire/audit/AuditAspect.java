@@ -102,7 +102,7 @@ public class AuditAspect {
             record.setFkIdUser(user);
 
             auditService.save(record);
-            log.debug("Audit record created — modulo={}, detalle={}, usuario={}",
+            log.debug("Audit record created — modulo={}, detalle={}, user={}",
                     module, detail, user.getName());
         } catch (RuntimeException ex) {
             // Never break functional flows because of audit failures.

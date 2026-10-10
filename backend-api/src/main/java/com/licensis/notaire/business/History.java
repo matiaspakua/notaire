@@ -26,9 +26,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Clase que representa el historial (registro de cambios de estado) de una gestion de escritura.
- * Cada instancia del historial de una misma gestion de escritura, representa un cambio de estado de
- * la gestion.
+ * Clase that representa the history (registro of cambios of status) of a management of deed.
+ * Each instancia of the history of a misma management of deed, representa a cambio of status of
+ * the management.
  *
  * @author juanca
  */
@@ -69,7 +69,7 @@ public class History implements Serializable, Persistable<Integer>
     private DeedManagement fkIdManagement;
 
     /**
-     * Constructor por default para historial. Asigna al ID el valor de
+     * Constructor by default for history. Asigna to the ID the valor of
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
      */
     public History()
@@ -191,7 +191,7 @@ public class History implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Historial[ idHistorial=" + getIdHistory() + " ]";
+        return "ManagementHistory[ idHistorial=" + getIdHistory() + " ]";
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore

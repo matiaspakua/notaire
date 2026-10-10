@@ -58,12 +58,12 @@ class PaginationTest {
     }
 
     @Test
-    @DisplayName("GET /presupuestos returns page with content and metadata")
+    @DisplayName("GET /budgets returns page with content and metadata")
     void shouldReturnPagedPresupuestos() throws Exception {
         Page<Budget> page = new PageImpl<>(List.of(new Budget()), PageRequest.of(0, 10), 1);
         when(budgetService.findAllPaged(any())).thenReturn(page);
 
-        mockMvc.perform(get("/api/v1/presupuestos?page=0&size=10"))
+        mockMvc.perform(get("/api/v1/budgets?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.totalElements").value(1))
@@ -71,23 +71,23 @@ class PaginationTest {
     }
 
     @Test
-    @DisplayName("GET /presupuestos defaults to page=0 size=20 when no params")
+    @DisplayName("GET /budgets defaults to page=0 size=20 when no params")
     void shouldUseDefaultPaginationParams() throws Exception {
         Page<Budget> page = new PageImpl<>(List.of(), PageRequest.of(0, 20), 0);
         when(budgetService.findAllPaged(any())).thenReturn(page);
 
-        mockMvc.perform(get("/api/v1/presupuestos"))
+        mockMvc.perform(get("/api/v1/budgets"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
     }
 
     @Test
-    @DisplayName("GET /presupuestos with page=1 returns correct page number")
+    @DisplayName("GET /budgets with page=1 returns correct page number")
     void shouldReturnCorrectPageNumber() throws Exception {
         Page<Budget> page = new PageImpl<>(List.of(), PageRequest.of(1, 5), 12);
         when(budgetService.findAllPaged(any())).thenReturn(page);
 
-        mockMvc.perform(get("/api/v1/presupuestos?page=1&size=5"))
+        mockMvc.perform(get("/api/v1/budgets?page=1&size=5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements").value(12))
                 .andExpect(jsonPath("$.totalPages").value(3));

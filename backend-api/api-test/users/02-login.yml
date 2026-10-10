@@ -3,11 +3,11 @@ info:
   type: http
   seq: 2
   description: |-
-      ## Login as the created user — POST /api/v1/usuarios/login
+      ## Login as the created user — POST /api/v1/users/login
       Traceability: CU78 (RF #81, #82, #83, #84, #85)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/usuarios/login"
+  url: "{{base_url}}/api/v1/users/login"
   body:
     type: json
     data: |-
@@ -22,4 +22,4 @@ runtime:
     - type: tests
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
-          test("Login is valid for correct credentials", function () { expect(res.getBody().valido).to.equal(true); });
+          test("Login is valid for correct credentials", function () { expect(res.getBody().valid).to.equal(true); });

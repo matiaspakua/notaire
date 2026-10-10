@@ -7,8 +7,8 @@ import { X } from "lucide-react";
 import { theme } from "@/theme/tokens";
 import { easeApple } from "@/components/motion";
 import type {
-  GestionWorkflowTrace,
-  HistorialEntry,
+  ManagementWorkflowTrace,
+  HistoryEntry,
   TestimonyMovementEntry,
   WorkflowNode,
   WorkflowTransition,
@@ -16,7 +16,7 @@ import type {
 import { formatCalendarDate } from "@/lib/dates";
 
 interface Props {
-  trace: GestionWorkflowTrace;
+  trace: ManagementWorkflowTrace;
 }
 
 /**
@@ -29,7 +29,7 @@ const FLOW_DOT_REPEATS = 2;
 const PULSE_SECONDS = 1.6;
 const PULSE_REPEATS = 3;
 
-/** ManagementStatus id for "Testimonio Ingresado a Inscripcion" (V41 seed). */
+/** ManagementStatus id for "Testimony Ingresado a Inscripcion" (V41 seed). */
 const INSCRIPTION_STATUS_ID = 12;
 
 type NodeStatus = "completed" | "in_progress" | "pending";
@@ -195,7 +195,7 @@ function StatusBadge({ status }: { status: NodeStatus }) {
 interface NodeModalProps {
   node: LaidOutNode;
   status: NodeStatus;
-  trace: GestionWorkflowTrace;
+  trace: ManagementWorkflowTrace;
   onClose: () => void;
 }
 
@@ -203,7 +203,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
   const tw = useTranslations("dashboard.workflow");
   const nodeName = (id: number | undefined) =>
     trace.nodes.find((n) => n.id === id)?.statusManagementName ?? `#${id}`;
-  const history: HistorialEntry[] = trace.history.filter(
+  const history: HistoryEntry[] = trace.history.filter(
     (h) => h.statusManagementId === node.statusManagementId,
   );
   const incoming = trace.transitions.filter((t) => t.destinationNodeId === node.id);

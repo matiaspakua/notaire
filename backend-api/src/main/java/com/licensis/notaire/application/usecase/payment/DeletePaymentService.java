@@ -26,9 +26,9 @@ public class DeletePaymentService implements DeletePaymentUseCase {
     public void delete(Integer paymentId) {
         log.info("Eliminando pago con ID: {}", paymentId);
         if (!payments.existsById(paymentId)) {
-            throw new IllegalArgumentException("Pago no encontrado con ID: " + paymentId);
+            throw new IllegalArgumentException("Payment no encontrado con ID: " + paymentId);
         }
         payments.deleteById(paymentId);
-        log.info("Pago eliminado exitosamente: ID={}", paymentId);
+        log.info("Payment eliminado exitosamente: ID={}", paymentId);
     }
 }

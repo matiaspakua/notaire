@@ -27,7 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RequirementCoverage({"CU47", "CU02"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Gestion resumen financiero — CU47/CU02 aggregate financial summary endpoint")
+@DisplayName("Management financial summary — CU47/CU02 aggregate financial summary endpoint")
 class ManagementResumenFinancieroControllerTest {
 
     @Autowired
@@ -65,7 +65,7 @@ class ManagementResumenFinancieroControllerTest {
                 {"number": %d, "date": "2026-01-01", "encabezado": "Budget Resumen Management IT",
                  "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount, clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -75,13 +75,13 @@ class ManagementResumenFinancieroControllerTest {
 
     private Integer createManagementStatus() {
         ManagementStatus status = new ManagementStatus();
-        status.setName("Estado Resumen Gestion IT");
+        status.setName("Status Resumen Management IT");
         return managementStatusRepository.save(status).getIdManagementStatus();
     }
 
     private Integer createProcedureType() {
         ProcedureType type = new ProcedureType();
-        type.setName("Tramite Resumen Gestion IT");
+        type.setName("Procedure Resumen Management IT");
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -98,7 +98,7 @@ class ManagementResumenFinancieroControllerTest {
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), budgetId, notaryId, statusId,
                 typeProcedureId);
-        MvcResult result = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult result = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -110,21 +110,21 @@ class ManagementResumenFinancieroControllerTest {
         String body = """
                 {"idBudget": %d, "amount": %s, "date": "2026-08-20", "notes": "Payment Resumen Management IT"}
                 """.formatted(idBudget, amount);
-        mockMvc.perform(post("/api/v1/pagos")
+        mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    @DisplayName("Should return the aggregate financial summary for a gestión with a payment")
+    @DisplayName("Should return the aggregate financial summary for a management with a payment")
     void shouldReturnResumenFinancieroForManagement() throws Exception {
         Integer clientId = createPerson("65" + (System.nanoTime() % 1000000));
         Integer budgetId = createBudget(clientId, new java.math.BigDecimal("5000.00"));
         createPayment(budgetId, new java.math.BigDecimal("2000.00"));
         Integer managementId = createManagementWithBudget(budgetId);
 
-        mockMvc.perform(get("/api/v1/gestiones/" + managementId + "/resumen-financiero"))
+        mockMvc.perform(get("/api/v1/managements/" + managementId + "/financial-summary"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idManagement").value(managementId))
                 .andExpect(jsonPath("$.totalPresupuestado").value(5000.00))
@@ -133,9 +133,9 @@ class ManagementResumenFinancieroControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when requesting the financial summary of a non-existent gestión")
+    @DisplayName("Should return 404 when requesting the financial summary of a non-existent management")
     void shouldReturnNotFoundForUnknownManagement() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/999999/resumen-financiero"))
+        mockMvc.perform(get("/api/v1/managements/999999/financial-summary"))
                 .andExpect(status().isNotFound());
     }
 }

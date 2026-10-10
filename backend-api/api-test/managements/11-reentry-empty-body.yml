@@ -3,12 +3,12 @@ info:
   type: http
   seq: 13
   description: |-
-      ## POST /api/v1/gestiones/1/reingreso-documentacion with {} — 400 Bad Request
+      ## POST /api/v1/managements/1/document-reentry with {} — 400 Bad Request
       idProcedure and idDocumentType are required; missing ids used to reach findById and answer 500. Validated before the management lookup.
       Traceability: CU43 (#655)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/gestiones/1/reingreso-documentacion"
+  url: "{{base_url}}/api/v1/managements/1/document-reentry"
   body:
     type: json
     data: |-

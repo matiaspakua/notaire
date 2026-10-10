@@ -1,6 +1,6 @@
 /**
  * TS-0092 - Efecto práctico de las suplencias en la asignación de gestiones
- * CU22 - Registrar Suplencia
+ * CU22 - Registrar Substitution
  * CU59 - Aplicar suplencia a una gestión (redirección automática)
  * CU48 - Dar alta escribano (registro de escribano)
  * CU51 - Modificar escribano (registro de escribano)
@@ -32,7 +32,7 @@ async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
 test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await page.waitForLoadState("domcontentloaded");
   });
 
@@ -109,7 +109,7 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
     });
     expect(suplencia.ok).toBe(true);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
     await page.getByTestId("btn-nueva-gestion").click();
     const dialog = page.getByRole("dialog");
@@ -140,7 +140,7 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
     });
     await createPresupuesto(page, cliente.data!.personId);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
     await page.getByTestId("btn-nueva-gestion").click();
     const dialog = page.getByRole("dialog");

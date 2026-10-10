@@ -6,7 +6,7 @@ info:
       Traceability: CU35 (RF #55, #59, #107, #108, #109)
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/estado-gestion/{{management_status_id}}"
+  url: "{{base_url}}/api/v1/management-statuses/{{management_status_id}}"
   body:
     type: json
     data: |-

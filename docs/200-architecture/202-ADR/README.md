@@ -72,7 +72,7 @@ Cada ADR sigue esta estructura:
 ### Code Organization (3 ADRs)
 
 - **ADR-002**: Estructura Maven multi-módulo (parcialmente reemplazada por ADR-025)
-- **ADR-021**: Piloto de arquitectura hexagonal (solo el slice de pagos/presupuestos)
+- **ADR-021**: Piloto de arquitectura hexagonal (solo el slice de pagos/budgets)
 - **ADR-025**: Retiro del módulo `notaire-shared`; `backend-api` es dueño de sus DTOs
 
 ### API Design (2 ADRs)

@@ -28,7 +28,7 @@ import { listRow } from "./setup/list-locators";
 async function findEstadoArchivada(page: Page): Promise<{ idManagementStatus: number; name: string }> {
   const result = await apiGet<{ idManagementStatus: number; name: string }[]>(
     page,
-    "/estado-gestion/search?name=Archivada",
+    "/management-statuses/search?name=Archivada",
   );
   const match = result.data!.find((e) => e.name === "Archivada");
   if (!match) {
@@ -83,7 +83,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
   }) => {
     const { idGestion, numero } = await seedArchivableGestion(page);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
@@ -110,9 +110,9 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     await page.getByTestId(`btn-archivar-gestion-${idGestion}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
-    await confirmDialog.getByRole("button", { name: /archivar gestión/i }).click();
-    await expect(confirmDialog).toContainText(/espera/i);
-    await confirmDialog.getByRole("button", { name: /archivar de todos modos/i }).click();
+    await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
+    await expect(confirmDialog).toContainText(/wait/i);
+    await confirmDialog.getByRole("button", { name: /archive de todos modos/i }).click();
     await expect(confirmDialog).not.toBeVisible();
 
     await page.getByTestId(`btn-ver-carpetas-${idGestion}`).click();
@@ -123,7 +123,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
   test("edge path: poner en espera sin motivo muestra un error visible", async ({ page }) => {
     const { idGestion, numero } = await seedArchivableGestion(page);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
@@ -146,7 +146,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
   }) => {
     const { idGestion, numero } = await seedArchivableGestion(page);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
@@ -164,9 +164,9 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     await page.getByTestId(`btn-archivar-gestion-${idGestion}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
-    await confirmDialog.getByRole("button", { name: /archivar gestión/i }).click();
-    await expect(confirmDialog).toContainText(/espera/i);
-    await expect(confirmDialog.getByRole("button", { name: /archivar de todos modos/i })).toBeVisible();
+    await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
+    await expect(confirmDialog).toContainText(/wait/i);
+    await expect(confirmDialog.getByRole("button", { name: /archive de todos modos/i })).toBeVisible();
   });
 
   for (const viewport of [
@@ -178,7 +178,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
       const { idGestion, numero } = await seedArchivableGestion(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await page.goto("/dashboard/gestiones");
+      await page.goto("/dashboard/managements");
       await page.waitForLoadState("domcontentloaded");
 
       const row = listRow(page, new RegExp(String(numero)));

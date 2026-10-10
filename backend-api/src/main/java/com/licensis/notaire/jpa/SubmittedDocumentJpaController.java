@@ -16,7 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.Procedure;
 import org.hibernate.StaleObjectStateException;
@@ -25,7 +25,7 @@ import org.hibernate.StaleObjectStateException;
  *
  * @author juanca
  */
-public class SubmittedDocumentJpaController implements Serializable, IPersistenciaJpa
+public class SubmittedDocumentJpaController implements Serializable, JpaPersistence
 {
 
     public SubmittedDocumentJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -44,8 +44,8 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
     public boolean create(SubmittedDocument submittedDocument) throws NonexistentEntityException
     {
 
-        boolean flag = false; //Variable para saber el resultado de la transaccion
-        int version = 0;    //Variable para Version en bd del Objeto
+        boolean flag = false; //Variable for saber the resultado of the transaccion
+        int version = 0;    //Variable for Version in bd of the Objeto
 
         Procedure fkIdProcedure = submittedDocument.getFkIdProcedure();
         EntityManager em = null;
@@ -93,9 +93,9 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
     public boolean edit(SubmittedDocument submittedDocument) throws NonexistentEntityException, ClassModifiedException
     {
 
-        Boolean flag = false; //Variable para saber el resultado de la transaccion
-        int oldVersion = 0; //Variable para Version en memoria del Objeto
-        int version = 0;    //Variable para Version en bd del Objeto
+        Boolean flag = false; //Variable for saber the resultado of the transaccion
+        int oldVersion = 0; //Variable for Version in memoria of the Objeto
+        int version = 0;    //Variable for Version in bd of the Objeto
 
         EntityManager em = getEntityManager();
 
@@ -103,12 +103,12 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
 
         if (persistSubmittedDocument != null)
         {
-            version = persistSubmittedDocument.getVersion(); // Version del Objeto en db
-            oldVersion = submittedDocument.getVersion(); // Version del Objeto en memoria
+            version = persistSubmittedDocument.getVersion(); // Version of the Objeto in db
+            oldVersion = submittedDocument.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {
-                throw new ClassModifiedException("El documento indicado ha sido modificado por otro usuario");
+                throw new ClassModifiedException("The document indicado has been modificado by another user");
 
             } else
             {

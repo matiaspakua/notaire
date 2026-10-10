@@ -77,7 +77,7 @@ class WorkflowValidationServiceTest {
         WorkflowValidationService.ValidationResult result = service.validate(nodes, transitions);
 
         assertThat(result.isValid()).isFalse();
-        assertThat(result.getErrors()).anyMatch(e -> e.contains("más de un nodo inicial"));
+        assertThat(result.getErrors()).anyMatch(e -> e.contains("more of a node inicial"));
     }
 
     @Test
@@ -168,7 +168,7 @@ class WorkflowValidationServiceTest {
 
         assertThat(result.isValid()).isFalse();
         assertThat(result.getErrors()).hasSize(2)
-                .anyMatch(e -> e.contains("más de un nodo inicial"))
+                .anyMatch(e -> e.contains("more of a node inicial"))
                 .anyMatch(e -> e.contains("nodo final"));
     }
 

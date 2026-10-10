@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Governs how a `Pago` (payment applied to a `Presupuesto`) is processed, edited and
+Governs how a `Payment` (payment applied to a `Presupuesto`) is processed, edited and
 retrieved, per CU15 — Procesar pago.
 
 ## Requirements
@@ -10,16 +10,16 @@ retrieved, per CU15 — Procesar pago.
 ### Requirement: Payment records the método de pago used to settle it
 
 The system SHALL persist the payment method (`metodoPago` / `paymentMethod`)
-supplied when a payment is processed or edited via `POST /api/v1/pagos` (JSON
-body) or `PUT /api/v1/pagos/{id}`, and SHALL return it on every subsequent
+supplied when a payment is processed or edited via `POST /api/v1/payments` (JSON
+body) or `PUT /api/v1/payments/{id}`, and SHALL return it on every subsequent
 retrieval of that payment. The field is optional free text; the system SHALL NOT
 reject a payment for omitting it. The alternate create surface
-`POST /api/v1/pagos/params` SHALL NOT exist.
+`POST /api/v1/payments/params` SHALL NOT exist.
 
 #### Scenario: Processing a payment with a payment method
 
 - **WHEN** a payment is processed with a `metodoPago` value (e.g. "Efectivo")
-  via `POST /api/v1/pagos`
+  via `POST /api/v1/payments`
 - **THEN** the payment is created and the response includes the same
   `metodoPago` value
 
@@ -38,7 +38,7 @@ reject a payment for omitting it. The alternate create surface
 #### Scenario: Processing a payment without a payment method
 
 - **WHEN** a payment is processed without a `metodoPago` value via
-  `POST /api/v1/pagos`
+  `POST /api/v1/payments`
 - **THEN** the payment is created successfully and its `metodoPago` is absent
   (not defaulted to an invented value)
 
@@ -51,11 +51,11 @@ reject a payment for omitting it. The alternate create surface
 
 ### Requirement: Payment create returns Location
 
-Successful `POST /api/v1/pagos` SHALL return `201 Created` with a `Location`
-header for `/api/v1/pagos/{id}`.
+Successful `POST /api/v1/payments` SHALL return `201 Created` with a `Location`
+header for `/api/v1/payments/{id}`.
 
 #### Scenario: JSON payment create includes Location header
 
-- **WHEN** a client successfully creates a payment via `POST /api/v1/pagos`
+- **WHEN** a client successfully creates a payment via `POST /api/v1/payments`
 - **THEN** the response is `201 Created` and `Location` identifies the new
   payment resource

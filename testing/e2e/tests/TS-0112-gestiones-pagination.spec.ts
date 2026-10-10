@@ -15,17 +15,17 @@ interface Page_ {
 test.describe("Managements list pagination (#1340)", () => {
   test("shows a page of 20, newest first, with the total and reaches the oldest management", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const newest = await apiGet<Page_>(page, "/gestiones?page=0&size=1&sort=idManagement,desc");
-    const oldest = await apiGet<Page_>(page, "/gestiones?page=0&size=1&sort=idManagement,asc");
+    const newest = await apiGet<Page_>(page, "/managements?page=0&size=1&sort=idManagement,desc");
+    const oldest = await apiGet<Page_>(page, "/managements?page=0&size=1&sort=idManagement,asc");
     expect(newest.ok && oldest.ok).toBe(true);
     test.skip(newest.data!.totalElements <= 20, "needs more than one page of managements");
 
     const requested: string[] = [];
     page.on("request", (r) => {
-      if (/\/api\/v1\/gestiones(\?|$)/.test(r.url())) requested.push(r.url());
+      if (/\/api\/v1\/managements(\?|$)/.test(r.url())) requested.push(r.url());
     });
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.waitForLoadState("networkidle");
     const table = page.getByRole("table");
     await expect(table.locator("tbody tr")).toHaveCount(20);
@@ -48,11 +48,11 @@ test.describe("Managements list pagination (#1340)", () => {
 
   test("the dashboard shows the real managements total", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const total = await apiGet<Page_>(page, "/gestiones?page=0&size=1");
+    const total = await apiGet<Page_>(page, "/managements?page=0&size=1");
     expect(total.ok).toBe(true);
     const requested: string[] = [];
     page.on("request", (r) => {
-      if (/\/api\/v1\/gestiones(\?|$)/.test(r.url())) requested.push(r.url());
+      if (/\/api\/v1\/managements(\?|$)/.test(r.url())) requested.push(r.url());
     });
     await page.goto("/dashboard");
     await page.waitForLoadState("networkidle");

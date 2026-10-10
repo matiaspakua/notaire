@@ -19,21 +19,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Siembra el usuario administrador inicial una única vez, si no existe ninguno.
+ * Siembra the user administrador inicial a única vez, if there is no ninguno.
  *
- * <p>Username y password son configurables vía {@code APP_ADMIN_USER}/
- * {@code APP_ADMIN_PASSWORD} (issue #651); por defecto {@code admin}/{@code admin}
- * en desarrollo. La contraseña se almacena como hash BCrypt (issue #554),
- * coincidiendo con la verificación que realiza {@code UserController#login}.
- * Es un seed de una sola vez: si el usuario ya existe (sembrado por Flyway V2, o
- * porque un operador ya rotó su contraseña) no se toca — de lo contrario cualquier
- * cambio de credenciales quedaría deshecho en cada reinicio del backend (issue
+ * <p>Username and password are configurables vía {@code APP_ADMIN_USER}/
+ * {@code APP_ADMIN_PASSWORD} (issue #651); by defecto {@code admin}/{@code admin}
+ * in desarrollo. The contraseña almacena as hash BCrypt (issue #554),
+ * coincidiendo with the verificación that realiza {@code UserController#login}.
+ * Is a seed of a sola vez: if the user already exists (sembrado by Flyway V2, or
+ * because a operador already rotó its contraseña) not toca — of it contrario any
+ * cambio of credenciales quedaría deshecho in each reinicio of the backend (issue
  * #553).</p>
  *
- * <p>Fuera de los entornos {@code development}/{@code dev}/{@code local}/{@code test}
- * no se siembra el usuario si la contraseña está vacía o es el valor por defecto
+ * <p>Fuera of the entornos {@code development}/{@code dev}/{@code local}/{@code test}
+ * not siembra the user if the contraseña is empty or is the valor by defecto
  * conocido {@code admin}: se registra un error y se omite el seed, de modo que
- * ningún camino de arranque (jar, compose, staging) publique {@code admin/admin}
+ * ningún camino of arranque (jar, compose, staging) publique {@code admin/admin}
  * (issue #1249).</p>
  */
 @Component
@@ -73,22 +73,22 @@ public class DataInitializer implements ApplicationRunner {
         try {
             ensureAdminUser();
         } catch (Exception e) {
-            log.warn("No se pudo garantizar el usuario inicial '{}': {}", adminUsername, e.getMessage());
+            log.warn("Not pudo garantizar the user inicial '{}': {}", adminUsername, e.getMessage());
         }
     }
 
     private void ensureAdminUser() {
         if (isDefaultPassword() && !allowsDefaultSeed()) {
-            log.error("APP_ADMIN_PASSWORD no configurada o con valor por defecto en el entorno '{}': "
-                    + "se omite la creación del usuario '{}' (issue #1249).", environment, adminUsername);
+            log.error("APP_ADMIN_PASSWORD not configured or with valor by defecto in the entorno '{}': "
+                    + " omite the creación of the user '{}' (issue #1249).", environment, adminUsername);
             return;
         }
         if (userRepository.findByName(adminUsername).isPresent()) {
-            log.debug("Usuario '{}' ya existe; no se modifican sus credenciales.", adminUsername);
+            log.debug("UserAccount '{}' ya existe; no se modifican sus credenciales.", adminUsername);
             return;
         }
 
-        log.info("Usuario '{}' no encontrado. Creando usuario administrador inicial...", adminUsername);
+        log.info("UserAccount '{}' not found. Creando user administrador inicial...", adminUsername);
         Person adminPerson = buildAdminPerson();
         personRepository.save(adminPerson);
 
@@ -96,10 +96,10 @@ public class DataInitializer implements ApplicationRunner {
         admin.setName(adminUsername);
         admin.setPassword(passwordEncoder.encode(adminPassword));
         admin.setStatus(true);
-        admin.setType("Escribano");
+        admin.setType("Notary");
         admin.setFkIdPerson(adminPerson);
         userRepository.save(admin);
-        log.info("Usuario administrador inicial '{}' creado correctamente.", adminUsername);
+        log.info("UserAccount administrador inicial '{}' creado correctamente.", adminUsername);
     }
 
     private Person buildAdminPerson() {

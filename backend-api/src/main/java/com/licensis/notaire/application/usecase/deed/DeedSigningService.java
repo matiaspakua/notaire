@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Validates and applies the "Firmar escritura" business action (CU06).
+ * Validates and applies the "Firmar deed" business action (CU06).
  */
 @Service
 @Transactional
@@ -29,29 +29,29 @@ public class DeedSigningService {
     }
 
     /**
-     * Signs an escritura: requires it to be "Sin Firmar" and have at least one folio assigned.
+     * Signs an deed: requires it to be "Sin Firmar" and have at least one folio assigned.
      *
-     * @param idEscritura the escritura ID
-     * @return the signed escritura
-     * @throws ResourceNotFoundException if no escritura with the given ID exists
-     * @throws BusinessValidationException if the escritura is not "Sin Firmar" or has no folio assigned
+     * @param idEscritura the deed ID
+     * @return the signed deed
+     * @throws ResourceNotFoundException if not deed with the given ID exists
+     * @throws BusinessValidationException if the deed is not "Sin Firmar" or has not folio assigned
      */
     public Deed sign(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)
-                .orElseThrow(() -> new ResourceNotFoundException("Escritura no encontrada con ID: " + idDeed));
+                .orElseThrow(() -> new ResourceNotFoundException("Deed no encontrada con ID: " + idDeed));
 
         if (!BusinessConstants.DeedSINFIRMAR.equals(deed.getStatus())) {
             throw new BusinessValidationException(
-                    "La escritura debe estar en estado 'Sin Firmar' para poder firmarse");
+                    "The deed must be in status 'Sin Firmar' for poder firmarse");
         }
 
         if (!folioRepository.existsByFkIdDeedIdDeed(idDeed)) {
             throw new BusinessValidationException(
-                    "La escritura debe tener al menos un folio asignado para poder firmarse");
+                    "The deed must tener to the menos a folio assigned for poder firmarse");
         }
 
         deed.setStatus(BusinessConstants.DeedFIRMADA);
-        log.info("Firmando escritura id: {}", idDeed);
+        log.info("Firmando deed id: {}", idDeed);
         return deedRepository.save(deed);
     }
 }

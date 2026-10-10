@@ -15,8 +15,8 @@ We will implement **JWT (JSON Web Token)** based authentication using **Spring S
 3.  **Token Storage**:
     *   Swing Client: In-memory session.
     *   Next.js: Secure HTTP-only cookies.
-4.  **Authorization**: Role-Based Access Control in the API filter chain (`SecurityAndCorsConfig`): one path and method table instead of `@PreAuthorize` on every controller (#559). The JWT filter resolves the authority from the stored user on each request (`UserAuthorityResolver`): `ROLE_ADMIN` for active users of type Administrador, Admin or Escribano, `ROLE_USER` otherwise; a token whose user is missing or inactive is not authenticated (401). `/usuarios` (except login and logout), `/roles` and `/audit-log` require `ROLE_ADMIN`; mutations of the administrative catalogs and workflow definitions require `ROLE_ADMIN`; catalog reads stay open to authenticated users.
-5.  **Audit**: Integration with `RegistroAuditoria` to track login/logout events.
+4.  **Authorization**: Role-Based Access Control in the API filter chain (`SecurityAndCorsConfig`): one path and method table instead of `@PreAuthorize` on every controller (#559). The JWT filter resolves the authority from the stored user on each request (`UserAuthorityResolver`): `ROLE_ADMIN` for active users of type Administrador, Admin or Escribano, `ROLE_USER` otherwise; a token whose user is missing or inactive is not authenticated (401). `/users` (except login and logout), `/roles` and `/audit-log` require `ROLE_ADMIN`; mutations of the administrative catalogs and workflow definitions require `ROLE_ADMIN`; catalog reads stay open to authenticated users.
+5.  **Audit**: Integration with `AuditRecord` to track login/logout events.
 
 ## Options Considered
 -   **Session-based (JSESSIONID)**: Difficult to scale and problematic for cross-domain (Next.js).

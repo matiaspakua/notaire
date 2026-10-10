@@ -3,11 +3,11 @@ info:
   type: http
   seq: 7
   description: |-
-      ## Employee changing a catalog is forbidden — POST /api/v1/tipo-tramite
+      ## Employee changing a catalog is forbidden — POST /api/v1/procedure-types
       Traceability: CU78 (issue #559)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/tipo-tramite"
+  url: "{{base_url}}/api/v1/procedure-types"
   body:
     type: json
     data: |-

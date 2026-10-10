@@ -16,7 +16,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/documentos");
+    await steps.givenUserIsOnPage("/dashboard/administration/documents");
   });
 
   test("CU27-GW01: Given nuevo tipo de documento, When vence is unchecked, Then dias vencimiento is hidden", async ({

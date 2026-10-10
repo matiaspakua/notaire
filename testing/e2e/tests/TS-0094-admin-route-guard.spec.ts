@@ -17,9 +17,9 @@ import { authenticateAsAdmin } from "./setup/auth";
 
 async function loginAs(page: Page, nombre: string, contrasenia: string) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill(nombre);
-  await page.getByTestId("input-contrasenia").fill(contrasenia);
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill(nombre);
+  await page.getByTestId("input-password").fill(contrasenia);
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }
 
@@ -50,7 +50,7 @@ test.describe("TS-0094 - Admin route guard (CU78 / #1052)", () => {
   test("non-admin EMPLEADO is redirected from admin URLs with message", async ({ page }) => {
     await loginAsNewEmployee(page);
 
-    await page.goto("/dashboard/administracion/usuarios");
+    await page.goto("/dashboard/administration/users");
 
     await expect(page).toHaveURL(/\/dashboard\?forbidden=1/, { timeout: 15000 });
     await expect(page.getByTestId("access-denied-message")).toBeVisible();
@@ -63,7 +63,7 @@ test.describe("TS-0094 - Admin route guard (CU78 / #1052)", () => {
   test("EMPLEADO is redirected from the audit screen (#559)", async ({ page }) => {
     await loginAsNewEmployee(page);
 
-    await page.goto("/dashboard/auditoria");
+    await page.goto("/dashboard/audit");
 
     await expect(page).toHaveURL(/\/dashboard\?forbidden=1/, { timeout: 15000 });
     await expect(page.getByTestId("access-denied-message")).toBeVisible();
@@ -74,15 +74,15 @@ test.describe("TS-0094 - Admin route guard (CU78 / #1052)", () => {
   }) => {
     await loginAsNewEmployee(page);
 
-    for (const path of ["/api/v1/usuarios", "/api/v1/roles", "/api/v1/audit-log"]) {
+    for (const path of ["/api/v1/users", "/api/v1/roles", "/api/v1/audit-log"]) {
       const response = await page.request.get(path);
       expect(response.status(), `GET ${path}`).toBe(403);
     }
-    const create = await page.request.post("/api/v1/tipo-tramite", {
+    const create = await page.request.post("/api/v1/procedure-types", {
       data: { name: `forbidden-${Date.now()}`, notes: "rbac", isArchived: false, isRegistered: false },
     });
     expect(create.status()).toBe(403);
-    const catalog = await page.request.get("/api/v1/tipo-tramite");
+    const catalog = await page.request.get("/api/v1/procedure-types");
     expect(catalog.status()).toBe(200);
   });
 
@@ -99,8 +99,8 @@ test.describe("TS-0094 - Admin route guard (CU78 / #1052)", () => {
 
   test("admin can still open administración usuarios", async ({ page }) => {
     await loginAs(page, "admin", "admin");
-    await page.goto("/dashboard/administracion/usuarios");
-    await expect(page).toHaveURL(/\/dashboard\/administracion\/usuarios/);
+    await page.goto("/dashboard/administration/users");
+    await expect(page).toHaveURL(/\/dashboard\/administration\/users/);
     await expect(page.getByTestId("access-denied-message")).toHaveCount(0);
   });
 });

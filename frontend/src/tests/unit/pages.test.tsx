@@ -4,7 +4,7 @@
  */
 import { describe, it, expect } from "vitest";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
-import type { Persona, GestionDeEscritura, Presupuesto, Pago } from "@/types";
+import type { Person, DeedManagement, Presupuesto, Payment } from "@/types";
 
 // ──────────────────────────────────────────────
 // CU01/CU02 — Gestiones and Presupuestos display
@@ -12,17 +12,17 @@ import type { Persona, GestionDeEscritura, Presupuesto, Pago } from "@/types";
 
 describe("CU02 — Gestiones list display helpers", () => {
   it("renders gestion number as string from number field", () => {
-    const g: GestionDeEscritura = { idManagement: 1, number: 2024001 };
+    const g: DeedManagement = { idManagement: 1, number: 2024001 };
     expect(g.number?.toString()).toBe("2024001");
   });
 
   it("shows tramite count from procedureCount", () => {
-    const g: GestionDeEscritura = { idManagement: 1, procedureCount: 3 };
+    const g: DeedManagement = { idManagement: 1, procedureCount: 3 };
     expect(g.procedureCount).toBe(3);
   });
 
   it("handles missing procedureCount gracefully", () => {
-    const g: GestionDeEscritura = { idManagement: 1 };
+    const g: DeedManagement = { idManagement: 1 };
     expect(g.procedureCount ?? 0).toBe(0);
   });
 });
@@ -66,12 +66,12 @@ describe("CU01 — Presupuesto display helpers", () => {
 
 describe("CU17 — Personas list display helpers", () => {
   it("fullName combines firstName + lastName", () => {
-    const p: Persona = { firstName: "Juan", lastName: "García" };
+    const p: Person = { firstName: "Juan", lastName: "García" };
     expect(fullName(p)).toBe("Juan García");
   });
 
   it("fullName handles missing lastName", () => {
-    const p: Persona = { firstName: "Admin" };
+    const p: Person = { firstName: "Admin" };
     expect(fullName(p)).toBe("Admin");
   });
 
@@ -80,7 +80,7 @@ describe("CU17 — Personas list display helpers", () => {
   });
 
   it("filters clients using isClient flag", () => {
-    const personas: Persona[] = [
+    const personas: Person[] = [
       { personId: 1, firstName: "Cliente A", isClient: true },
       { personId: 2, firstName: "Empleado B", isClient: false },
       { personId: 3, firstName: "Cliente C", isClient: true },
@@ -97,25 +97,25 @@ describe("CU17 — Personas list display helpers", () => {
 
 describe("CU15 — Pagos display helpers", () => {
   it("formats pago amount as currency", () => {
-    const p: Pago = { idPayment: 1, amount: 5000, date: "2025-04-01" };
+    const p: Payment = { idPayment: 1, amount: 5000, date: "2025-04-01" };
     const formatted = formatCurrency(p.amount);
     expect(formatted).toContain("5");
   });
 
   it("pago date renders as formatted date", () => {
-    const p: Pago = { idPayment: 1, date: "2025-04-01T10:30:00" };
+    const p: Payment = { idPayment: 1, date: "2025-04-01T10:30:00" };
     const formatted = formatDate(p.date);
     expect(typeof formatted).toBe("string");
     expect(formatted).not.toBe("—");
   });
 
   it("paymentMethod defaults to '—' when undefined", () => {
-    const p: Pago = { idPayment: 1 };
+    const p: Payment = { idPayment: 1 };
     expect(p.paymentMethod ?? "—").toBe("—");
   });
 
   it("pago linked to presupuesto via fkIdBudget field", () => {
-    const p: Pago = {
+    const p: Payment = {
       idPayment: 1,
       fkIdBudget: { idBudget: 42 },
     };

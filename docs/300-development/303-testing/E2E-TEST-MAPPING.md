@@ -221,7 +221,7 @@ CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
 | TS-0014 | CU15-GW03 | CU15 | Pagos row has no “ver detalle” control | #1146 | Owning CU15 (UI detail action) |
 | TS-0014 | CU47-GW01 | CU47 | Pagos page has no fecha desde/hasta filters | #1146 | Owning CU47 (date filter UI) |
 | TS-0016 | CU23-GW01 | CU23 | Usuarios page has no “ver actividades” | #1146 | Owning CU23 (activities UI) |
-| TS-0016 | CU48-GW01 | CU48 | No `/dashboard/administracion/escribanos` page | #1146 | Owning CU48 (escribanos CRUD) |
+| TS-0016 | CU48-GW01 | CU48 | No `/dashboard/administration/escribanos` page | #1146 | Owning CU48 (escribanos CRUD) |
 | TS-0016 | CU48-GW02 | CU48 | Same — create escribano flow absent | #1146 | Owning CU48 |
 | TS-0017 | CU59-GW01 | CU59 | Suplencias has no escribano filter | #1146 | Owning CU59 (filter UI) |
 | TS-0017 | CU59-GW02 | CU59 | Suplencias table has no “ver” detail | #1146 | Owning CU59 (detail UI) |

@@ -66,11 +66,11 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
 
   test("CU02 management form requires the case dependencies", async ({ page }) => {
     await page.goto("/login");
-    await page.getByTestId("input-usuario").fill(adminUser);
-    await page.getByTestId("input-contrasenia").fill(adminPassword);
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill(adminUser);
+    await page.getByTestId("input-password").fill(adminPassword);
+    await page.getByTestId("btn-sign-in").click();
     await expect(page).toHaveURL(/\/dashboard/);
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.getByTestId("btn-nueva-gestion").click();
 
     await expect(page.getByTestId("select-presupuesto-gestion")).toBeVisible();
@@ -88,18 +88,18 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
 
     await test.step("1. Sign in — the dashboard is the starting point", async () => {
       await page.goto("/login");
-      await page.getByTestId("input-usuario").fill(adminUser);
+      await page.getByTestId("input-username").fill(adminUser);
       await pause(page, 0.5);
-      await page.getByTestId("input-contrasenia").fill(adminPassword);
+      await page.getByTestId("input-password").fill(adminPassword);
       await pause(page, 0.5);
-      await page.getByTestId("btn-ingresar").click();
+      await page.getByTestId("btn-sign-in").click();
       await expect(page).toHaveURL(/\/dashboard/);
       await expect(page.getByTestId("sidebar")).toBeVisible();
       await pause(page, 1.5);
     });
 
     await test.step("2. Define the task type — what work the office will perform", async () => {
-      await go(page, "/dashboard/administracion/tramites");
+      await go(page, "/dashboard/administration/procedures");
       await page.getByTestId("btn-nuevo-tipo-tramite").click();
       await page.getByTestId("input-nombre-tramite").fill(tipoTramite);
       await pause(page);
@@ -110,7 +110,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     });
 
     await test.step("3. Add a charge concept — the building block for quotes", async () => {
-      await go(page, "/dashboard/administracion/conceptos");
+      await go(page, "/dashboard/administration/concepts");
       await page.getByRole("button", { name: /nuevo concepto/i }).click();
       await page.getByTestId("input-nombre-concepto").fill(concepto);
       await page.getByRole("dialog").getByRole("spinbutton").fill("25000");
@@ -122,7 +122,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     });
 
     await test.step("4. Prepare the protocol — create a folio type and a folio", async () => {
-      await go(page, "/dashboard/administracion/folios");
+      await go(page, "/dashboard/administration/folios");
       await page.getByTestId("btn-nuevo-tipo-folio").click();
       await page.getByTestId("input-nombre-tipo-folio").fill(tipoFolio);
       await pause(page);
@@ -142,7 +142,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     });
 
     await test.step("5. Register the client — the person behind the case", async () => {
-      await go(page, "/dashboard/personas");
+      await go(page, "/dashboard/people");
       await page.getByTestId("btn-nueva-persona").click();
       await page.getByTestId("input-firstName").fill("Ana");
       await page.getByTestId("input-lastName").fill(`Tutorial ${runId}`);
@@ -157,10 +157,10 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     });
 
     await test.step("6. Create the quote — link the proposed amount to the client", async () => {
-      await go(page, "/dashboard/presupuestos");
+      await go(page, "/dashboard/budgets");
       await page.getByTestId("btn-nuevo-presupuesto").click();
       await choose(page, "select-persona", new RegExp(cliente, "i"));
-      await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-04");
+      await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-04");
       await page.getByTestId("input-monto").fill("25000");
       await pause(page);
       await saveDialog(page);
@@ -169,7 +169,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     });
 
     await test.step("7. Open the case — link it to the quote, notary, state and task type", async () => {
-      await go(page, "/dashboard/gestiones");
+      await go(page, "/dashboard/managements");
       await page.getByTestId("btn-nueva-gestion").click();
       await page.getByTestId("input-numero-gestion").fill(gestion);
       await pause(page);
@@ -186,13 +186,13 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
 
     await test.step("8. Tour the remaining work areas — records, documents, payments and reporting", async () => {
       for (const path of [
-        "/dashboard/escrituras", "/dashboard/documentos", "/dashboard/pagos",
-        "/dashboard/items", "/dashboard/inmuebles", "/dashboard/copias",
-        "/dashboard/protocolo", "/dashboard/suplencias", "/dashboard/reportes",
-        "/dashboard/auditoria", "/dashboard/administracion/usuarios",
-        "/dashboard/administracion/roles", "/dashboard/administracion/estados-gestion",
-        "/dashboard/administracion/plantillas", "/dashboard/administracion/documentos",
-        "/dashboard/administracion/workflows",
+        "/dashboard/deeds", "/dashboard/documents", "/dashboard/payments",
+        "/dashboard/items", "/dashboard/properties", "/dashboard/copies",
+        "/dashboard/protocol", "/dashboard/substitutions", "/dashboard/reports",
+        "/dashboard/audit", "/dashboard/administration/users",
+        "/dashboard/administration/roles", "/dashboard/administration/management-statuses",
+        "/dashboard/administration/templates", "/dashboard/administration/documents",
+        "/dashboard/administration/workflows",
       ]) {
         await go(page, path);
       }

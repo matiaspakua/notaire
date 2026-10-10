@@ -170,7 +170,7 @@ mvn spotbugs:check -pl backend-api -DskipSpotBugs=false
 
 **Key rules**:
 - New code → use `repository`, not `jpa`.
-- DTOs named `DtoEntityName` (e.g., `DtoUsuario`).
+- DTOs named `DtoEntityName` (e.g., `DtoLoginUser`).
 - REST URLs: `/api/v1/resource` (plural nouns).
 - DB schema source of truth: Flyway migrations (init-db archived at `docs/000-archive/init-db/`).
 

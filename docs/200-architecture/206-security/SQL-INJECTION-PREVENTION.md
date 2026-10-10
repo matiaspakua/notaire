@@ -8,7 +8,7 @@ Notaire uses **Spring Data JPA with Hibernate**. The `JpaRepository` methods (`f
 
 ```java
 // Safe: Spring Data generates a parameterized query
-Optional<Usuario> u = usuarioRepository.findById(id);
+Optional<UserAccount> u = usuarioRepository.findById(id);
 // Hibernate executes: SELECT ... FROM usuarios WHERE id_usuario = ?
 // The value of `id` is bound as a parameter, never interpolated.
 ```
@@ -19,26 +19,26 @@ Optional<Usuario> u = usuarioRepository.findById(id);
 
 ```java
 // Safe — Hibernate generates: ... WHERE nombre = ?
-Optional<Usuario> findFirstByNombre(String nombre);
+Optional<UserAccount> findFirstByNombre(String nombre);
 
 // Safe — Hibernate generates: ... WHERE tipo = ? AND estado = ?
-List<Usuario> findByTipoAndEstado(String tipo, boolean estado);
+List<UserAccount> findByTipoAndEstado(String tipo, boolean estado);
 ```
 
 ### @Query with named parameters
 
 ```java
 // Safe — :nombre is bound as a PreparedStatement parameter
-@Query("SELECT u FROM Usuario u WHERE LOWER(u.nombre) = LOWER(:nombre)")
-Optional<Usuario> findByNombreIgnoreCase(@Param("nombre") String nombre);
+@Query("SELECT u FROM UserAccount u WHERE LOWER(u.nombre) = LOWER(:nombre)")
+Optional<UserAccount> findByNombreIgnoreCase(@Param("nombre") String nombre);
 ```
 
 ### @Query with JPQL positional parameters
 
 ```java
 // Safe — ?1 is a positional bind parameter
-@Query("SELECT g FROM GestionDeEscritura g WHERE g.numero = ?1")
-Optional<GestionDeEscritura> findByNumero(Integer numero);
+@Query("SELECT g FROM DeedManagement g WHERE g.numero = ?1")
+Optional<DeedManagement> findByNumero(Integer numero);
 ```
 
 ## Dangerous patterns — never do this
@@ -47,7 +47,7 @@ Optional<GestionDeEscritura> findByNumero(Integer numero);
 
 ```java
 // DANGEROUS — DO NOT DO THIS
-@Query("SELECT u FROM Usuario u WHERE u.nombre = '" + nombre + "'")
+@Query("SELECT u FROM UserAccount u WHERE u.nombre = '" + nombre + "'")
 // An attacker could pass: ' OR '1'='1 to return all users.
 ```
 
@@ -67,7 +67,7 @@ Use named parameters with `@Query(nativeQuery = true)`:
 ```java
 // Safe native query with parameter binding
 @Query(value = "SELECT * FROM usuarios WHERE nombre = :nombre", nativeQuery = true)
-List<Usuario> findNativeByNombre(@Param("nombre") String nombre);
+List<UserAccount> findNativeByNombre(@Param("nombre") String nombre);
 ```
 
 If using `EntityManager` directly (legacy `jpa` package), always use `createNativeQuery` with parameter setting:
@@ -85,8 +85,8 @@ When query conditions are built at runtime, use the JPA Criteria API:
 
 ```java
 CriteriaBuilder cb = em.getCriteriaBuilder();
-CriteriaQuery<GestionDeEscritura> cq = cb.createQuery(GestionDeEscritura.class);
-Root<GestionDeEscritura> root = cq.from(GestionDeEscritura.class);
+CriteriaQuery<DeedManagement> cq = cb.createQuery(DeedManagement.class);
+Root<DeedManagement> root = cq.from(DeedManagement.class);
 
 List<Predicate> predicates = new ArrayList<>();
 if (tipo != null) {
@@ -113,7 +113,7 @@ The `EdgeCaseBoundaryConditionsTest` includes an SQL injection attempt in the lo
 
 ```java
 // Confirms the login endpoint does not 500 on a SQL injection payload
-mvc.perform(post("/api/v1/usuarios/login")
+mvc.perform(post("/api/v1/users/login")
     .contentType(APPLICATION_JSON)
     .content("{\"nombre\":\"' OR '1'='1\",\"contrasenia\":\"\"}"))
     .andExpect(status().isOk())

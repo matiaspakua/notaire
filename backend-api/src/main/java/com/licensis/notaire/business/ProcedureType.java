@@ -201,7 +201,7 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
     }
 
     public void setAtributos(DtoProcedureType dtoProcedureType) {
-        if (dtoProcedureType.isValido()) {
+        if (dtoProcedureType.isValid()) {
             this.idProcedureType = dtoProcedureType.getIdProcedureType();
             this.name = dtoProcedureType.getName();
             // Null-safe unboxing: PUT payloads may omit boolean flags, which
@@ -261,8 +261,8 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "TipoDeTramite[ idTipoTramite=" + idProcedureType + " ]"
-                + "[ nombre=" + name + " ]";
+        return "ProcedureType[ idTipoTramite=" + idProcedureType + " ]"
+                + "[ name=" + name + " ]";
     }
 
     public int getVersion() {

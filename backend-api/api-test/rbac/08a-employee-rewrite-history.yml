@@ -3,13 +3,13 @@ info:
   type: http
   seq: 9
   description: |-
-      ## Employee changing the audit trail is forbidden — PUT /api/v1/historial/{id}
+      ## Employee changing the audit trail is forbidden — PUT /api/v1/history/{id}
       Only an administrator may rewrite or delete a history row (CU13).
       The id does not exist, so nothing changes even if the rule regressed.
       Traceability: CU78 (issue #1250)
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/historial/999999999"
+  url: "{{base_url}}/api/v1/history/999999999"
   body:
     type: json
     data: |-

@@ -15,7 +15,7 @@ import com.licensis.notaire.business.History;
 class HistoryMapperTest {
 
     @Test
-    @DisplayName("Should map all fields when gestion and status are present")
+    @DisplayName("Should map all fields when management and status are present")
     void shouldMapAllFieldsWhenManagementAndStatusArePresent() {
         Date date = new Date();
         DeedManagement management = new DeedManagement();
@@ -40,7 +40,7 @@ class HistoryMapperTest {
     }
 
     @Test
-    @DisplayName("Should map a null gestion ID when fkIdGestion is null")
+    @DisplayName("Should map a null management ID when fkIdGestion is null")
     void shouldMapNullManagementIdWhenFkIdManagementIsNull() {
         ManagementStatus status = new ManagementStatus();
         status.setIdManagementStatus(3);
@@ -75,7 +75,7 @@ class HistoryMapperTest {
     }
 
     @Test
-    @DisplayName("Should map both gestion and status as null when both FKs are absent")
+    @DisplayName("Should map both management and status as null when both FKs are absent")
     void shouldMapBothNullWhenBothForeignKeysAreAbsent() {
         History history = new History(1, new Date());
         history.setFkIdManagement(null);

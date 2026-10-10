@@ -15,7 +15,7 @@ class ConceptDtoMappingTest {
     void shouldMapConceptToDtoIncludingFlags() {
         Concept concept = new Concept();
         concept.setIdConcept(7);
-        concept.setName("Concepto test");
+        concept.setName("Concept test");
         concept.setValue(new java.math.BigDecimal("150.75"));
         concept.setPercentage(12);
         concept.setEnabled(true);
@@ -25,7 +25,7 @@ class ConceptDtoMappingTest {
         DtoConcept dto = concept.getDto();
 
         assertEquals(7, dto.getIdConcept());
-        assertEquals("Concepto test", dto.getName());
+        assertEquals("Concept test", dto.getName());
         assertEquals(new java.math.BigDecimal("150.75"), dto.getValue());
         assertEquals(12, dto.getPercentage());
         assertTrue(dto.getEnabled());

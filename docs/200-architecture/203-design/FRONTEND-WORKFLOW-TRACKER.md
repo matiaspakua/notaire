@@ -18,7 +18,7 @@ pending).
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/api/v1/gestiones/{id}/workflow-trace` | Aggregated trace: workflow definition, nodes, transitions, history, per-node statuses, optional `testimonyMovements`. Also the **legal-next** contract for CU83 (#804): filter `transitions` by current node → valid destinations for `POST /{id}/transition`. |
+| GET | `/api/v1/managements/{id}/workflow-trace` | Aggregated trace: workflow definition, nodes, transitions, history, per-node statuses, optional `testimonyMovements`. Also the **legal-next** contract for CU83 (#804): filter `transitions` by current node → valid destinations for `POST /{id}/transition`. |
 
 Implemented by `ManagementController` + `WorkflowTraceService.buildTrace()`.
 Returns **400** with `{ "error": ... }` when the gestión does not exist, has
@@ -41,7 +41,7 @@ Flyway `V10__seed_workflow_demo_data.sql` seeds the base graph; `V41__extend_wor
 (#841) extends it:
 
 - "Workflow de Gestión Estándar" — nodes covering Iniciada → Firmada →
-  Testimonio Generado → Testimonio Ingresado a Inscripción → Testimonio
+  Testimony Generado → Testimony Ingresado a Inscripción → Testimony
   Retirado (FINAL), with a fork at *Documentación Completa* → Archivada
 - Statuses 11–13 added; status id 10 (Inscripta) remains as inert catalog
 - The workflow assigned to procedure types Compraventa, Donación, Hipoteca
@@ -66,8 +66,8 @@ unbounded reingreso loop as exclusive workflow nodes.
 |------|------|
 | `frontend/src/app/dashboard/page.tsx` (`WorkflowHero`) | Hero section: trace of the current gestión + search by número de referencia |
 | `frontend/src/components/motion/WorkflowTracker.tsx` | SVG graph: DAG layout, animated edges, traveling dots, node modal |
-| `frontend/src/hooks/useGestionWorkflow.ts` | React Query hook for the trace endpoint |
-| `frontend/src/hooks/useGestiones.ts` (`useGestionByNumero`) | Lookup gestión by número for the search form |
+| `frontend/src/hooks/useManagementWorkflow.ts` | React Query hook for the trace endpoint |
+| `frontend/src/hooks/useManagements.ts` (`useGestionByNumero`) | Lookup gestión by número for the search form |
 
 ### Visualization
 
@@ -89,11 +89,11 @@ existed. Fixed by returning read-model DTOs:
 
 | Endpoint | Fix |
 |----------|-----|
-| `GET /gestiones`, `/gestiones/{id}`, `/gestiones/numero/{n}` | `DtoGestionSummary` via `GestionQueryService` (`@Transactional(readOnly=true)`) |
-| `GET /historial`, `/historial/{id}`, `/historial/gestion/{id}`, `/gestiones/{id}/estado-actual` | `DtoHistorialSummary` (the entity's eager gestión back-reference is circular) |
-| `GET /tipo-tramite` (+ `/search`, `/{id}`) | `@Transactional(readOnly=true)` so `getDto()` can read the lazy `workflowDefinition` |
+| `GET /managements`, `/managements/{id}`, `/managements/number/{n}` | `DtoGestionSummary` via `GestionQueryService` (`@Transactional(readOnly=true)`) |
+| `GET /history`, `/history/{id}`, `/history/management/{id}`, `/managements/{id}/current-status` | `DtoHistorialSummary` (the entity's eager gestión back-reference is circular) |
+| `GET /procedure-types` (+ `/search`, `/{id}`) | `@Transactional(readOnly=true)` so `getDto()` can read the lazy `workflowDefinition` |
 
-`TipoDeTramite.getWorkflowDefinition()` is now `@JsonIgnore`, matching the
+`ProcedureType.getWorkflowDefinition()` is now `@JsonIgnore`, matching the
 class's other lazy associations; API consumers use `workflowDefinitionId` /
 `workflowDefinitionNombre` from `DtoTipoDeTramite`.
 
@@ -101,8 +101,8 @@ class's other lazy associations; API consumers use `workflowDefinitionId` /
 
 | Endpoint | UI caller |
 |----------|-----------|
-| `GET /api/v1/gestiones/{id}/workflow-trace` | Dashboard `WorkflowHero` (default: latest gestión; after search: resolved gestión) |
-| `GET /api/v1/gestiones/numero/{numero}` | Dashboard `WorkflowHero` search form ("Número de referencia") |
+| `GET /api/v1/managements/{id}/workflow-trace` | Dashboard `WorkflowHero` (default: latest gestión; after search: resolved gestión) |
+| `GET /api/v1/managements/number/{numero}` | Dashboard `WorkflowHero` search form ("Número de referencia") |
 
 ## Tests
 

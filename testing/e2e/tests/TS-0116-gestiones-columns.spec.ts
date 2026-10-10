@@ -18,7 +18,7 @@ test.describe("Managements list columns (#1348)", () => {
     const gestion = await createCompleteCaseGestion(page, { presupuestoId: budget.data!.idBudget, encabezado });
     expect(gestion.ok, gestion.error).toBe(true);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     const table = page.getByRole("table");
     await expect(table.getByRole("columnheader", { name: "Carátula" })).toBeVisible({ timeout: 10000 });
     await expect(table.getByRole("columnheader", { name: "Inicio" })).toBeVisible();

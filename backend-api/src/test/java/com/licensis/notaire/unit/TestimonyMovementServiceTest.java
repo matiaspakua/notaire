@@ -59,7 +59,7 @@ class TestimonyMovementServiceTest {
     }
 
     @Nested
-    @DisplayName("Ingresar para inscripción")
+    @DisplayName("Enter for registration")
     class IngresarRegistrationTests {
 
         @Test
@@ -87,7 +87,7 @@ class TestimonyMovementServiceTest {
 
             assertThatThrownBy(() -> testimonyMovementService.registerEntry(5))
                     .isInstanceOf(BusinessValidationException.class)
-                    .hasMessageContaining("trámite de inscripción");
+                    .hasMessageContaining("procedure of registration");
         }
 
         @Test
@@ -112,7 +112,7 @@ class TestimonyMovementServiceTest {
     }
 
     @Nested
-    @DisplayName("Registrar inscripción")
+    @DisplayName("Record registration")
     class RegistrarRegistrationTests {
 
         @Test
@@ -157,7 +157,7 @@ class TestimonyMovementServiceTest {
     class RetirarTests {
 
         @Test
-        @DisplayName("Should register date de salida and number de cartón when testimony is inscripto")
+        @DisplayName("Should register date of salida and number of cartón when testimony is registered")
         void shouldRegisterWithdrawal() {
             TestimonyMovement inscripto = movementConEntry();
             inscripto.setRegistered(true);
@@ -237,11 +237,11 @@ class TestimonyMovementServiceTest {
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
             TestimonyMovement nuevo = testimonyMovementService.reenter(5,
-                    new TestimonyReentry(77, true, "Falta firma del escribano"));
+                    new TestimonyReentry(77, true, "Falta firma of the notary"));
 
             assertThat(nuevo.getCardNumber()).isEqualTo(77);
             assertThat(nuevo.isObservedByRegistry()).isTrue();
-            assertThat(nuevo.getNotes()).isEqualTo("Falta firma del escribano");
+            assertThat(nuevo.getNotes()).isEqualTo("Falta firma of the notary");
             assertThat(retirado.getCardNumber()).isEqualTo(123);
             assertThat(retirado.isObservedByRegistry()).isFalse();
         }
@@ -281,7 +281,7 @@ class TestimonyMovementServiceTest {
         }
 
         @Test
-        @DisplayName("Should reject reingreso when the most recent movement was not withdrawn")
+        @DisplayName("Should reject reentry when the most recent movement was not withdrawn")
         void shouldRejectReingresoWhenNotWithdrawn() {
             TestimonyMovement ingresado = movementConEntry();
             when(testimonyRepository.existsById(5)).thenReturn(true);
@@ -294,7 +294,7 @@ class TestimonyMovementServiceTest {
         }
 
         @Test
-        @DisplayName("Should reject reingreso when testimony has no previous movement")
+        @DisplayName("Should reject reentry when testimony has not previous movement")
         void shouldRejectReingresoWhenNoPreviousMovement() {
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))

@@ -14,7 +14,7 @@ test.describe("Keyboard navigation (#1352)", () => {
   });
 
   test("first Tab focuses a visible skip link; Enter moves focus to main", async ({ page }) => {
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 10000 });
 
     await page.keyboard.press("Tab");
@@ -38,11 +38,11 @@ test.describe("Keyboard navigation (#1352)", () => {
 
   test("after clicking a sidebar link, focus is on the new page h1", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 10000 });
 
     await page.getByTestId("sidebar").getByTestId("nav-gestiones").click();
-    await expect(page).toHaveURL(/\/dashboard\/gestiones$/);
+    await expect(page).toHaveURL(/\/dashboard\/managements$/);
 
     const h1 = page.locator("main h1").first();
     await expect(h1).toBeFocused({ timeout: 5000 });
@@ -50,7 +50,7 @@ test.describe("Keyboard navigation (#1352)", () => {
   });
 
   test("first load does not steal focus from the document", async ({ page }) => {
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 10000 });
     const tag = await page.evaluate(() => document.activeElement?.tagName);
     expect(tag).toBe("BODY");

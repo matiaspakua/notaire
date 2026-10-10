@@ -119,9 +119,9 @@ class RemainingControllersJpaTest {
     //╚══════════════════════════════════════════════════════════════════════════════╝
 
     @Nested
-    @DisplayName("Standard controllers: Copia, DocumentoPresentado, Escritura, EstadoDeGestion, Folio, " +
-            "GestionDeEscritura, Historial, Inmueble, Item, MovimientoTestimonio, Pago, PlantillaPresupuesto, " +
-            "PlantillaTramite, Presupuesto, Suplencia, Testimonio, TipoDeDocumento, TipoDeFolio, TipoDeTramite")
+    @DisplayName("Standard controllers: Copy, SubmittedDocument, Deed, ManagementStatus, Folio, " +
+            "DeedManagement, ManagementHistory, Property, Item, TestimonyMovement, Payment, BudgetTemplate, " +
+            "ProcedureTemplate, Budget, Substitution, Testimony, DocumentType, FolioType, ProcedureType")
     class StandardControllers {
 
         @Nested
@@ -1365,7 +1365,7 @@ class RemainingControllersJpaTest {
     }
 
     //╔══════════════════════════════════════════════════════════════════════════════╗
-    //║  TRAMITE — standard constructor + 4 named queries                          ║
+    //║ PROCEDURE — standard constructor + 4 named queries ║
     //╚══════════════════════════════════════════════════════════════════════════════╝
 
     @Nested

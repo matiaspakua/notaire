@@ -2,7 +2,7 @@ Id,Entidad_Padre,Entidad_Hija,Clave_Foranea,Insertar,Modificar,Borrar,Regla_Nego
 1,Personas,Identificaciones,fk_id_persona,Impedir,Impedir,Cascada,Toda identificación pertenece a una persona
 2,Tipos de Identificación,Identificaciones,fk_id_tipo_identificacion,Impedir,Impedir,Impedir,No borrar tipo de identificación en uso
 3,Personas,Usuarios,fk_id_persona,Impedir,Impedir,Impedir,No borrar persona con cuenta de usuario
-4,Roles,Usuarios,fk_id_rol,Null,Impedir,Null,Usuario puede crearse sin rol asignado
+4,Roles,Usuarios,fk_id_rol,Null,Impedir,Null,UserAccount puede crearse sin rol asignado
 5,Roles,Roles-Permisos,fk_id_rol,Impedir,Impedir,Cascada,Al borrar rol se eliminan sus permisos
 6,Usuarios,Registro Auditoria,fk_id_usuario,Impedir,Impedir,Impedir,No borrar usuario con bitácora de auditoría
 7,Personas,Suplencias,fk_id_suplantado / fk_id_suplente,Impedir,Impedir,Impedir,No borrar escribanos con suplencias
@@ -13,8 +13,8 @@ Id,Entidad_Padre,Entidad_Hija,Clave_Foranea,Insertar,Modificar,Borrar,Regla_Nego
 12,Workflow Definition,Tipos de Trámite,fk_workflow_definition_id,Null,Impedir,Null,Tipo de trámite puede no tener workflow asignado
 13,Personas,Gestiones de Escrituras,fk_id_persona_escribano,Impedir,Impedir,Impedir,Toda gestión requiere escribano responsable
 14,Estados de Gestión,Gestiones de Escrituras,fk_id_estado_de_gestion,Null,Impedir,Null,Gestión puede crearse sin estado consolidado
-15,Gestiones de Escrituras,Historial,fk_id_gestion,Impedir,Impedir,Cascada,Al borrar gestión se borra su historial
-16,Estados de Gestión,Historial,fk_id_estado_gestion,Impedir,Impedir,Impedir,No borrar estado con historial registrado
+15,Gestiones de Escrituras,ManagementHistory,fk_id_gestion,Impedir,Impedir,Cascada,Al borrar gestión se borra su historial
+16,Estados de Gestión,ManagementHistory,fk_id_estado_gestion,Impedir,Impedir,Impedir,No borrar estado con historial registrado
 17,Tipos de Trámite,Plantillas Trámites,fk_id_tipo_tramite,Impedir,Impedir,Cascada,Al borrar tipo de trámite se desvincula plantilla
 18,Tipos de Documento,Plantillas Trámites,fk_id_tipo_documento,Impedir,Impedir,Cascada,Al borrar tipo de doc se desvincula plantilla
 19,Tipos de Trámite,Plantillas Presupuestos,fk_id_tipo_tramite,Impedir,Impedir,Cascada,Al borrar tipo de trámite se desvincula arancel
@@ -35,7 +35,7 @@ Id,Entidad_Padre,Entidad_Hija,Clave_Foranea,Insertar,Modificar,Borrar,Regla_Nego
 34,Tipos de Folio,Folios,fk_id_tipo_folio,Impedir,Impedir,Impedir,No borrar tipo de folio en uso
 35,Escrituras,Folios,fk_id_escritura,Null,Impedir,Null,Folios disponibles o Errose/No Pasó no tienen escritura
 36,Escrituras,Testimonios,fk_id_escritura,Impedir,Impedir,Cascada,No existe testimonio sin escritura matriz
-37,Testimonios,Movimientos Testimonio,fk_id_testimonio,Impedir,Impedir,Cascada,Al borrar testimonio se eliminan movimientos
+37,Testimonios,Movimientos Testimony,fk_id_testimonio,Impedir,Impedir,Cascada,Al borrar testimonio se eliminan movimientos
 38,Testimonios,Copias,fk_id_testimonio,Impedir,Impedir,Cascada,Al borrar testimonio se eliminan sus copias
 39,Personas,Copias,fk_id_persona,Impedir,Impedir,Impedir,No borrar persona destinataria de copia
 40,Folios,Folios-Copias,fk_id_folio,Impedir,Impedir,Impedir,Folio de testimonio asignado

@@ -3,12 +3,12 @@ info:
   type: http
   seq: 6
   description: |-
-      ## Delete concept — DELETE /api/v1/conceptos/{id} (204 No Content)
+      ## Delete concept — DELETE /api/v1/concepts/{id} (204 No Content)
       Traceability: CU37 (RF #55, #60)
 
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/conceptos/{{concept_id}}"
+  url: "{{base_url}}/api/v1/concepts/{{concept_id}}"
   headers:
     - name: Content-Type
       value: application/json

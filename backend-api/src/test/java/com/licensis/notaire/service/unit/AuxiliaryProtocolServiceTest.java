@@ -70,14 +70,14 @@ class AuxiliaryProtocolServiceTest {
     }
 
     @Test
-    @DisplayName("Should not generate carpeta de trámite for a Protocolo Auxiliar deed")
+    @DisplayName("Should not generate procedure folder for a Auxiliary protocol deed")
     void shouldNotGenerateFolderForAuxiliaryDeed() {
         Folio folio = folioAuxiliaryDisponible();
         when(folioRepository.findById(1)).thenReturn(Optional.of(folio));
         when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.empty());
         when(deedRepository.save(any(Deed.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Deed result = protocoloAuxiliaryService.iniciarDeed(1, "body del acta", new Date());
+        Deed result = protocoloAuxiliaryService.iniciarDeed(1, "body of the acta", new Date());
 
         assertThat(result.getProcedureList()).isNullOrEmpty();
     }

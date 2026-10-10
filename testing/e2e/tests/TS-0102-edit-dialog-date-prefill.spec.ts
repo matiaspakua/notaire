@@ -22,7 +22,7 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid"]) {
       expect(budget.ok, budget.error ?? "createPresupuesto failed").toBe(true);
       const id = budget.data!.idBudget;
 
-      await page.goto("/dashboard/presupuestos");
+      await page.goto("/dashboard/budgets");
       await page.waitForLoadState("networkidle");
       await page.getByTestId(`btn-editar-presupuesto-${id}`).click();
       const dialog = page.getByRole("dialog");
@@ -30,7 +30,7 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid"]) {
 
       await dialog.getByTestId("btn-guardar-presupuesto").click();
       await expect(dialog).toBeHidden({ timeout: 15000 });
-      await page.goto("/dashboard/presupuestos");
+      await page.goto("/dashboard/budgets");
       await page.getByTestId(`btn-editar-presupuesto-${id}`).click();
       await expect(page.getByRole("dialog").locator('input[type="date"]')).toHaveValue(DAY);
     });
@@ -44,7 +44,7 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid"]) {
       const pago = await createPago(page, budget.data!.idBudget, { date: DAY });
       expect(pago.ok, pago.error ?? "createPago failed").toBe(true);
 
-      await page.goto("/dashboard/pagos");
+      await page.goto("/dashboard/payments");
       await page.waitForLoadState("networkidle");
       const row = page
         .getByRole("row")

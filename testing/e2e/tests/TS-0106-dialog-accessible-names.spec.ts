@@ -8,18 +8,18 @@
 import { test, expect, type Page } from "@playwright/test";
 
 const CREATE_DIALOGS = [
-  { route: "/dashboard/personas", button: "btn-nueva-persona", es: "Nueva persona", en: "New person" },
-  { route: "/dashboard/presupuestos", button: "btn-nuevo-presupuesto", es: "Nuevo presupuesto", en: "New quote" },
-  { route: "/dashboard/gestiones", button: "btn-nueva-gestion", es: "Nueva gestión", en: "New case" },
-  { route: "/dashboard/escrituras", button: "btn-nueva-escritura", es: "Nueva escritura", en: "New deed" },
-  { route: "/dashboard/pagos", button: "btn-nuevo-pago", es: "Nuevo pago", en: "New payment" },
+  { route: "/dashboard/people", button: "btn-nueva-persona", es: "Nueva persona", en: "New person" },
+  { route: "/dashboard/budgets", button: "btn-nuevo-presupuesto", es: "Nuevo presupuesto", en: "New quote" },
+  { route: "/dashboard/managements", button: "btn-nueva-gestion", es: "Nueva gestión", en: "New case" },
+  { route: "/dashboard/deeds", button: "btn-nueva-escritura", es: "Nueva escritura", en: "New deed" },
+  { route: "/dashboard/payments", button: "btn-nuevo-pago", es: "Nuevo pago", en: "New payment" },
 ];
 
 async function login(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }
 
@@ -38,7 +38,7 @@ test.describe("TS-0106 - dialogs are named by their visible title (#1344)", () =
   test("in English the dialog name and the close button are English", async ({ page, context }) => {
     await login(page);
     await context.addCookies([{ name: "NEXT_LOCALE", value: "en", url: page.url() }]);
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await page.getByTestId("btn-nueva-persona").click();
     const dialog = page.getByRole("dialog", { name: "New person" });
     await expect(dialog).toBeVisible();

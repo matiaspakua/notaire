@@ -35,18 +35,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * REST controller for PlantillaPresupuesto (Budget Templates).
+ * REST controller for BudgetTemplate (Budget Templates).
  *
  * Fix for issue #340: Added proper OptimisticLockException handling to return
  * HTTP 409 Conflict instead of 500 on concurrent modification. Also added
  * version-aware update that fetches current entity state before merging to
  * prevent stale-data overwrites.
  *
- * Covers use cases: CU39, CU49, CU55 (Plantilla de presupuesto management).
+ * Covers use cases: CU39, CU49, CU55 (Budget template management).
  */
 @RestController
-@RequestMapping("/api/v1/plantilla-presupuestos")
-@Tag(name = "PlantillaPresupuesto", description = "API para gestionar plantillas de presupuesto")
+@RequestMapping("/api/v1/budget-templates")
+@Tag(name = "BudgetTemplate", description = "API for managing budget templates")
 public class BudgetTemplateController {
 
     private static final Logger LOG = Logger.getLogger(BudgetTemplateController.class.getName());
@@ -107,20 +107,20 @@ public class BudgetTemplateController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todas las plantillas de presupuesto")
+    @Operation(summary = "Get all budget templates")
     @Transactional(readOnly = true)
     public ResponseEntity<List<BudgetTemplateResponse>> getAll() {
         try {
             return ResponseEntity.ok(getJpaController().findBudgetTemplateEntities()
                     .stream().map(this::toResponse).toList());
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error al obtener plantillas de presupuesto", e);
+            LOG.log(Level.SEVERE, "Error to the get budget templates", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/tipo-tramite/{idProcedureType}")
-    @Operation(summary = "Obtener plantillas de presupuesto por tipo de tramite")
+    @GetMapping("/procedure-types/{idProcedureType}")
+    @Operation(summary = "Get budget templates by procedure type")
     @Transactional(readOnly = true)
     public ResponseEntity<List<BudgetTemplateResponse>> getByTypeProcedure(
             @PathVariable Integer idProcedureType) {
@@ -128,18 +128,18 @@ public class BudgetTemplateController {
             return ResponseEntity.ok(getJpaController().findBudgetTemplates(idProcedureType)
                     .stream().map(this::toResponse).toList());
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error al obtener plantillas por tipo de tramite " + idProcedureType, e);
+            LOG.log(Level.SEVERE, "Error to the get plantillas by procedure type " + idProcedureType, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
-    @Operation(summary = "Crear nueva plantilla de presupuesto")
+    @Operation(summary = "Create budget template")
     public ResponseEntity<?> create(@Valid @RequestBody BudgetTemplateRequest request) {
         Integer procedureTypeId = resolveProcedureTypeId(request);
         Integer conceptId = resolveConceptId(request);
@@ -147,7 +147,7 @@ public class BudgetTemplateController {
             return ResponseEntity.badRequest().body(Map.of("error", "fkIdProcedureType y fkIdConcept son requeridos"));
         }
         if (!conceptRepository.existsById(conceptId) || !procedureTypeRepository.existsById(procedureTypeId)) {
-            return ResponseEntity.badRequest().body(Map.of("error", "concepto o tipo de trámite no encontrado"));
+            return ResponseEntity.badRequest().body(Map.of("error", "concept or procedure type not found"));
         }
         try {
             BudgetTemplate entity = new BudgetTemplate(new BudgetTemplatePK(procedureTypeId, conceptId));
@@ -165,27 +165,27 @@ public class BudgetTemplateController {
             entity.setProcedureType(procedureTypeRef);
             Boolean created = getJpaController().create(entity);
             if (!Boolean.TRUE.equals(created)) {
-                LOG.log(Level.SEVERE, "Plantilla de presupuesto create returned false for tipo={0} concepto={1}",
+                LOG.log(Level.SEVERE, "Budget template create returned false for tipo={0} concept={1}",
                         new Object[]{procedureTypeId, conceptId});
                 return ResponseEntity.internalServerError()
-                        .body(Map.of("error", "Error interno al crear la plantilla"));
+                        .body(Map.of("error", "Error interno to the create the template"));
             }
             BudgetTemplatePK pk = entity.getBudgetTemplatePK();
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("fkIdTipoTramite", pk.getFkIdProcedureType(), "fkIdConcepto", pk.getFkIdConcept()));
         } catch (PreexistingEntityException e) {
-            LOG.log(Level.WARNING, "Plantilla de presupuesto ya existe", e);
+            LOG.log(Level.WARNING, "Budget template already exists", e);
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "La plantilla de presupuesto ya existe para ese tipo de trámite y concepto"));
+                    .body(Map.of("error", "The budget template already exists for that procedure type and concept"));
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error al crear plantilla de presupuesto", e);
+            LOG.log(Level.SEVERE, "Error to the create budget template", e);
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error interno al crear la plantilla"));
+                    .body(Map.of("error", "Error interno to the create the template"));
         }
     }
 
-    @PutMapping("/tipo-tramite/{idProcedureType}/concepto/{idConcept}")
-    @Operation(summary = "Actualizar plantilla de presupuesto")
+    @PutMapping("/procedure-types/{idProcedureType}/concept/{idConcept}")
+    @Operation(summary = "Update budget template")
     public ResponseEntity<?> update(
             @PathVariable Integer idProcedureType,
             @PathVariable Integer idConcept,
@@ -207,24 +207,24 @@ public class BudgetTemplateController {
             return ResponseEntity.ok().build();
 
         } catch (OptimisticLockException e) {
-            LOG.log(Level.WARNING, "Conflicto de concurrencia al actualizar plantilla de presupuesto", e);
+            LOG.log(Level.WARNING, "Conflicto of concurrencia to the update budget template", e);
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Conflicto de concurrencia: la plantilla fue modificada por otro usuario. Recargue y vuelva a intentarlo."));
+                    .body(Map.of("error", "Conflicto of concurrencia: the template was modificada by another user. Recargue and vuelva a intentarlo."));
         } catch (NonexistentEntityException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             Throwable cause = e.getCause();
             while (cause != null) {
                 if (cause instanceof OptimisticLockException) {
-                    LOG.log(Level.WARNING, "Conflicto de concurrencia (wrapped) al actualizar plantilla", cause);
+                    LOG.log(Level.WARNING, "Conflicto of concurrencia (wrapped) to the update template", cause);
                     return ResponseEntity.status(HttpStatus.CONFLICT)
-                            .body(Map.of("error", "Conflicto de concurrencia: la plantilla fue modificada por otro usuario."));
+                            .body(Map.of("error", "Conflicto of concurrencia: the template was modificada by another user."));
                 }
                 cause = cause.getCause();
             }
-            LOG.log(Level.SEVERE, "Error al actualizar plantilla de presupuesto", e);
+            LOG.log(Level.SEVERE, "Error to the update budget template", e);
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error interno al actualizar la plantilla"));
+                    .body(Map.of("error", "Error interno to the update the template"));
         }
     }
 
@@ -232,8 +232,8 @@ public class BudgetTemplateController {
         @ApiResponse(responseCode = "204", description = "Eliminado"),
         @ApiResponse(responseCode = "404", description = "No encontrado")
     })
-    @DeleteMapping("/tipo-tramite/{idProcedureType}/concepto/{idConcept}")
-    @Operation(summary = "Eliminar plantilla de presupuesto")
+    @DeleteMapping("/procedure-types/{idProcedureType}/concept/{idConcept}")
+    @Operation(summary = "Delete budget template")
     public ResponseEntity<?> delete(@PathVariable Integer idProcedureType, @PathVariable Integer idConcept) {
         try {
             getJpaController().destroy(new BudgetTemplatePK(idProcedureType, idConcept));
@@ -241,9 +241,9 @@ public class BudgetTemplateController {
         } catch (NonexistentEntityException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error al eliminar plantilla de presupuesto", e);
+            LOG.log(Level.SEVERE, "Error to the delete budget template", e);
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error interno al eliminar la plantilla"));
+                    .body(Map.of("error", "Error interno to the delete the template"));
         }
     }
 }

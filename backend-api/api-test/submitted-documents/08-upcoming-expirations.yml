@@ -6,7 +6,7 @@ info:
       Traceability: CU42 (#802)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/documento-presentado/proximos-vencimientos?dias=30"
+  url: "{{base_url}}/api/v1/submitted-documents/upcoming-expirations?dias=30"
   headers:
     - name: Content-Type
       value: application/json

@@ -1,4 +1,4 @@
-# Paginate GET /api/v1/historial (slice of #596)
+# Paginate GET /api/v1/history (slice of #596)
 
 > Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md). This proposal documents
 > **only this change**; permanent documentation remains the single source of truth.
@@ -49,7 +49,7 @@ The history list returns the whole `history` table, which gains a row on every s
 
 ### Surface area
 
-- Endpoints: `GET /api/v1/historial` (response is now a page — breaking; new optional query parameters)
+- Endpoints: `GET /api/v1/history` (response is now a page — breaking; new optional query parameters)
 - Entities / Flyway / Configuration: none
 
 ### Architecture review

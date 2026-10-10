@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * CU27/CU39 - Costos (fijos o variables) esperados por tipo de documento dentro
- * de la plantilla de presupuesto de un tipo de trámite (Issue #823).
+ * CU27/CU39 - Costos (fijos or variables) esperados by document type dentro
+ * of the budget template of a procedure type (Issue #823).
  */
 @Service
 @Transactional
@@ -31,7 +31,7 @@ public class DocumentCostTemplateService {
 
         ProcedureType procedureType = documentRepository.findProcedureTypeById(idProcedureType)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "No existe el tipo de trámite con ID: " + idProcedureType));
+                        "There is no the procedure type with ID: " + idProcedureType));
         DocumentType documentType = documentRepository.findDocumentTypeById(idDocumentType)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No existe el tipo de documento con ID: " + idDocumentType));

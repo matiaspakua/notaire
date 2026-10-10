@@ -3,14 +3,14 @@ info:
   type: http
   seq: 5
   description: |-
-      ## Empty body — PUT /api/v1/testimonio/{testimony_id}
+      ## Empty body — PUT /api/v1/testimonies/{testimony_id}
       Issue #655, Owner decision Oct 9: `{}` used to overwrite number, flagged and
       verified with 0/false. It now answers 400 naming the missing fields, and
       05-verify-update still sees the values stored by 04-update.
       Traceability: CU07
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/testimonio/{{testimony_id}}"
+  url: "{{base_url}}/api/v1/testimonies/{{testimony_id}}"
   body:
     type: json
     data: |-

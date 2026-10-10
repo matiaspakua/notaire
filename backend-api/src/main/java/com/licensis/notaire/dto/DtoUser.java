@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * DTO que representa un Usuario.
+ * DTO que representa un UserAccount.
  */
 public class DtoUser
 {
@@ -17,19 +17,19 @@ public class DtoUser
     private String type;
     private String auditRecord;
     private Integer version;
-    private boolean valido = false;
+    private boolean valid = false;
     private Integer roleId;
     private String roleName;
     private String token;
 
-    public boolean isValido()
+    public boolean isValid()
     {
-        return valido;
+        return valid;
     }
 
-    public void setValido(boolean valido)
+    public void setValid(boolean valid)
     {
-        this.valido = valido;
+        this.valid = valid;
     }
 
     public DtoUser()
@@ -112,7 +112,7 @@ public class DtoUser
         return auditRecord;
     }
 
-    //Controlo la version del objeto
+    //Controlo the version of the objeto
     public Integer getVersion()
     {
         return version;
@@ -144,7 +144,7 @@ public class DtoUser
     }
 
     /**
-     * JWT emitido por POST /usuarios/login; ausente fuera de la respuesta de login.
+     * JWT emitido by POST /users/login; ausente fuera of the respuesta of login.
      */
     public String getToken()
     {

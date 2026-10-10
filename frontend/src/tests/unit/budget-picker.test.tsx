@@ -32,7 +32,7 @@ function json(body: unknown, status = 200) {
 }
 
 function route(url: string) {
-  if (/\/presupuestos\?page=0&size=20&sort=idBudget%2Cdesc$/.test(url)) {
+  if (/\/budgets\?page=0&size=20&sort=idBudget%2Cdesc$/.test(url)) {
     return json({ content: NEWEST, number: 0, size: 20, totalElements: 1300, totalPages: 65 });
   }
   if (url.includes("/people/search")) {
@@ -41,8 +41,8 @@ function route(url: string) {
     if (q.get("lastName")?.toLowerCase().startsWith("gar")) return json([{ personId: 7, firstName: "Carla", lastName: "Garcia" }]);
     return json([]);
   }
-  if (/\/presupuestos\/persona\/7$/.test(url)) return json([FAR, FAR2]);
-  if (/\/presupuestos\/12$/.test(url)) return json(FAR);
+  if (/\/budgets\/person\/7$/.test(url)) return json([FAR, FAR2]);
+  if (/\/budgets\/12$/.test(url)) return json(FAR);
   return json({ message: "not found" }, 404);
 }
 
@@ -94,7 +94,7 @@ describe("BudgetPicker (#1340)", () => {
     fireEvent.change(box, { target: { value: "Gar" } });
     expect(await screen.findByRole("option", { name: "#40 — Carla Garcia" })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "#12 — Carla Garcia" })).toBeInTheDocument();
-    expect(urls().some((u) => /\/presupuestos\/persona\/7$/.test(u))).toBe(true);
+    expect(urls().some((u) => /\/budgets\/person\/7$/.test(u))).toBe(true);
   });
 
   it("finds a budget by its number and a client by document number", async () => {
@@ -147,7 +147,7 @@ describe("no screen loads every budget (#1340)", () => {
       return statSync(p).isDirectory() ? files(p) : /\.tsx?$/.test(f) ? [p] : [];
     });
   }
-  it("no page or component calls usePresupuestos() (the size=1000 list)", () => {
+  it("no page or component calls useBudgets() (the size=1000 list)", () => {
     const root = join(__dirname, "..", "..");
     const offenders = [...files(join(root, "app")), ...files(join(root, "components"))].filter((f) =>
       /\busePresupuestos\(\)/.test(readFileSync(f, "utf8")),

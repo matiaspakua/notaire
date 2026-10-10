@@ -42,8 +42,8 @@ Adoptar **next-intl** como librería de internacionalización del frontend Next.
 
 ## Page coverage note (#1059)
 
-Redirect-only stubs (`/`, `/auditoria`, `administracion/items`,
-`administracion/auditoria`) have no UI strings and remain exempt. Canonical
+Redirect-only stubs (`/`, `/audit`, `administracion/items`,
+`administracion/audit`) have no UI strings and remain exempt. Canonical
 dashboard pages and login leftovers consume catalogs via `useTranslations`,
 mirroring the `administracion.usuarios` pattern.
 

@@ -5,7 +5,7 @@
 package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Budget;
 import java.io.Serializable;
@@ -20,7 +20,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class PaymentJpaController implements Serializable, IPersistenciaJpa
+public class PaymentJpaController implements Serializable, JpaPersistence
 {
 
     public PaymentJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -218,10 +218,10 @@ public class PaymentJpaController implements Serializable, IPersistenciaJpa
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Name of the @NamedQuery definido in nuestra clase
             Query q = em.createNamedQuery("Payment.findByBudget");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
+            //It step the name of the parametro of the query, and the valor a search.
             q.setParameter("idPresupuesto", pIdBudget);
 
             misPayments = (List<Payment>) q.getResultList();

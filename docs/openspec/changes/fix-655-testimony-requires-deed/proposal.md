@@ -6,13 +6,13 @@
 | Field | Value |
 |-------|-------|
 | GitHub Issue | #655 |
-| Use Case | CU07 – Generar Testimonio; CU08 – Verificar Testimonio |
+| Use Case | CU07 – Generar Testimony; CU08 – Verificar Testimony |
 | Branch | `fix/655_testimony_requires_deed` |
 | Gate 1 status | draft |
 
 ## Objetivo
 
-`POST /api/v1/testimonio` stored a testimony without any deed (`{}` answered 201), although a testimony is by definition the certified copy of a deed. The Owner decided the bare create requires the deed (#655, Run 7), rather than removing the endpoint.
+`POST /api/v1/testimonies` stored a testimony without any deed (`{}` answered 201), although a testimony is by definition the certified copy of a deed. The Owner decided the bare create requires the deed (#655, Run 7), rather than removing the endpoint.
 
 ## What Changes
 
@@ -43,13 +43,13 @@
 | Module | Touched | What changes |
 |--------|---------|--------------|
 | `backend-api` | yes | `TestimonyController`, OpenAPI, tests, Bruno |
-| `frontend` | no | the UI generates testimonies through `/testimonio/generar` |
+| `frontend` | no | the UI generates testimonies through `/testimonies/generate` |
 | `testing` | no | Playwright helpers already send the deed |
 | Docs / scripts / CI | yes | CHANGELOG, accepted-breaking-changes |
 
 ### Surface area
 
-- Endpoints: `POST /api/v1/testimonio` (`deed` required; 400 without `idDeed`; 404 for an unknown deed; breaking, accepted)
+- Endpoints: `POST /api/v1/testimonies` (`deed` required; 400 without `idDeed`; 404 for an unknown deed; breaking, accepted)
 - Entities / Flyway: none
 - UI: none
 

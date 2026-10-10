@@ -36,7 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 @DisplayName("Próximos vencimientos — CU42 integration tests")
 class UpcomingExpirationControllerIntegrationTest {
 
-    private static final String ENDPOINT = "/api/v1/documento-presentado/proximos-vencimientos";
+    private static final String ENDPOINT = "/api/v1/submitted-documents/upcoming-expirations";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -61,7 +61,7 @@ class UpcomingExpirationControllerIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo trámite CU42 " + System.nanoTime());
+        procedureType.setName("Tipo procedure CU42 " + System.nanoTime());
         procedureType.setEnabled(true);
         procedureType = procedureTypeRepository.save(procedureType);
         Procedure procedure = new Procedure();
@@ -83,7 +83,7 @@ class UpcomingExpirationControllerIntegrationTest {
         String body = """
                 {"typeId": %d, "procedureId": %d, "date": "%s", "delivered": false}
                 """.formatted(typeId, procedureId, entryDate);
-        String response = mockMvc.perform(post("/api/v1/documento-presentado")
+        String response = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         return mapper.readTree(response).get("idSubmittedDocument").asInt();

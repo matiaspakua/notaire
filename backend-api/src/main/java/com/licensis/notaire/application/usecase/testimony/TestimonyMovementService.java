@@ -15,8 +15,8 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
- * Validates and applies the testimonio movement circuit through the property registry:
- * ingreso, inscripción, retiro and reingreso (CU11, CU12, CU44).
+ * Validates and applies the testimony movement circuit through the property registry:
+ * ingreso, registration, retiro and reentry (CU11, CU12, CU44).
  */
 @Service
 @Transactional
@@ -41,101 +41,101 @@ public class TestimonyMovementService {
 
     private void requireTestimonyExists(Integer idTestimony) {
         if (!testimonyRepository.existsById(idTestimony)) {
-            throw new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimony);
+            throw new ResourceNotFoundException("Testimony no encontrado con ID: " + idTestimony);
         }
     }
 
     /**
-     * Presents a verified testimonio for inscription, registering the fecha de ingreso.
+     * Presents a verified testimony for inscription, registering the date of ingreso.
      *
-     * @param idTestimonio the testimonio ID
+     * @param idTestimonio the testimony ID
      * @return the created movement
-     * @throws ResourceNotFoundException if no testimonio with the given ID exists
-     * @throws BusinessValidationException if the testimonio is not verified, or already has an open movement
+     * @throws ResourceNotFoundException if not testimony with the given ID exists
+     * @throws BusinessValidationException if the testimony is not verified, or already has an open movement
      */
     public TestimonyMovement registerEntry(Integer idTestimony) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
-                .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimony));
+                .orElseThrow(() -> new ResourceNotFoundException("Testimony no encontrado con ID: " + idTestimony));
 
         if (!testimony.getVerified()) {
-            throw new BusinessValidationException("El testimonio debe estar verificado para ingresar a inscripción");
+            throw new BusinessValidationException("The testimony must be verified for enter registration");
         }
 
         TestimonyMovement ultimo = lastMovement(idTestimony);
         if (ultimo != null && ultimo.getDateExit() == null) {
-            throw new BusinessValidationException("El testimonio ya está en trámite de inscripción");
+            throw new BusinessValidationException("The testimony already is in procedure of registration");
         }
 
         TestimonyMovement movement = new TestimonyMovement();
         movement.setTestimony(testimony);
         movement.setDateEntry(new Date());
 
-        log.info("Registrando ingreso a inscripción del testimonio id: {}", idTestimony);
+        log.info("Registrando ingreso a registration of the testimony id: {}", idTestimony);
         return testimonyMovementRepository.save(movement);
     }
 
     /**
-     * Marks the most recent movement of a testimonio as inscripto, registering the fecha de inscripción.
+     * Marks the most recent movement of a testimony as registered, registering the date of registration.
      *
-     * @param idTestimonio the testimonio ID
+     * @param idTestimonio the testimony ID
      * @return the updated movement
-     * @throws ResourceNotFoundException if no testimonio with the given ID exists
-     * @throws BusinessValidationException if the testimonio has no movement with fecha de ingreso registered
+     * @throws ResourceNotFoundException if not testimony with the given ID exists
+     * @throws BusinessValidationException if the testimony has not movement with date of ingreso registered
      */
     public TestimonyMovement registerInscription(Integer idTestimony) {
         requireTestimonyExists(idTestimony);
         TestimonyMovement movement = Optional.ofNullable(lastMovement(idTestimony))
                 .orElseThrow(() -> new BusinessValidationException(
-                        "Falta el ingreso a inscripción del testimonio antes de registrar la inscripción"));
+                        "Falta the ingreso a registration of the testimony antes of record the registration"));
 
         movement.setRegistered(true);
         movement.setDateRegistration(new Date());
 
-        log.info("Registrando inscripción del testimonio id: {}", idTestimony);
+        log.info("Registrando registration of the testimony id: {}", idTestimony);
         return testimonyMovementRepository.save(movement);
     }
 
     /**
-     * Withdraws an inscripto testimonio, registering the fecha de salida and numero de cartón.
+     * Withdraws an registered testimony, registering the date of salida and number of cartón.
      *
-     * @param idTestimonio the testimonio ID
+     * @param idTestimonio the testimony ID
      * @param numeroCarton the cartón number
      * @return the updated movement
-     * @throws ResourceNotFoundException if no testimonio with the given ID exists
-     * @throws BusinessValidationException if the testimonio is not inscripto
+     * @throws ResourceNotFoundException if not testimony with the given ID exists
+     * @throws BusinessValidationException if the testimony is not registered
      */
     public TestimonyMovement withdraw(Integer idTestimony, int cardNumber) {
         requireTestimonyExists(idTestimony);
         TestimonyMovement movement = lastMovement(idTestimony);
         if (movement == null || !movement.getRegistered()) {
-            throw new BusinessValidationException("El testimonio no está inscripto");
+            throw new BusinessValidationException("The testimony is not registered");
         }
 
         movement.setDateExit(new Date());
         movement.setCardNumber(cardNumber);
 
-        log.info("Registrando retiro del testimonio id: {}, cartón: {}", idTestimony, cardNumber);
+        log.info("Registrando retiro of the testimony id: {}, cartón: {}", idTestimony, cardNumber);
         return testimonyMovementRepository.save(movement);
     }
 
     /**
-     * Re-enters a withdrawn testimonio, creating a new movement without altering the previous one.
+     * Re-enters a withdrawn testimony, creating a new movement without altering the previous one.
      *
-     * @param idTestimony the testimonio ID
-     * @param reentry cartón number, observation flag and notes captured at the reingreso
+     * @param idTestimony the testimony ID
+     * @param reentry cartón number, observation flag and notes captured at the reentry
      * @return the newly created movement
-     * @throws ResourceNotFoundException if no testimonio with the given ID exists
-     * @throws BusinessValidationException if the testimonio was not previously withdrawn, or the reingreso is
+     * @throws ResourceNotFoundException if not testimony with the given ID exists
+     * @throws BusinessValidationException if the testimony was not previously withdrawn, or the reentry is
      *         observed without observaciones
      */
     public TestimonyMovement reenter(Integer idTestimony, TestimonyReentry reentry) {
         requireTestimonyExists(idTestimony);
         TestimonyMovement ultimo = lastMovement(idTestimony);
         if (ultimo == null || ultimo.getDateExit() == null) {
-            throw new BusinessValidationException("El testimonio no fue retirado, no se puede reingresar");
+            throw new BusinessValidationException("The testimony was not retirado, not can reenter");
         }
         if (reentry.isMissingRequiredNotes()) {
-            throw new BusinessValidationException("El reingreso observado requiere observaciones");
+            throw new BusinessValidationException("The reentry observado requires notes");
         }
 
         TestimonyMovement nuevo = new TestimonyMovement();
@@ -145,7 +145,7 @@ public class TestimonyMovementService {
         nuevo.setObservedByRegistry(reentry.observedByRegistry());
         nuevo.setNotes(reentry.notes());
 
-        log.info("Reingresando testimonio id: {}", idTestimony);
+        log.info("Reingresando testimony id: {}", idTestimony);
         return testimonyMovementRepository.save(nuevo);
     }
 }

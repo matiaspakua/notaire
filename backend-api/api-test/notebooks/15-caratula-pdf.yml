@@ -6,7 +6,7 @@ info:
       Traceability: CU80
 http:
   method: GET
-  url: "{{base_url}}/api/v1/cuadernos/{{nb_id}}/caratula"
+  url: "{{base_url}}/api/v1/notebooks/{{nb_id}}/caratula"
   headers:
     - name: Content-Type
       value: application/json

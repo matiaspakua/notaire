@@ -1,8 +1,8 @@
 package com.licensis.notaire.domain.deed;
 
 /**
- * Result of validating a proposed escritura número against the correlativo
- * expected for its protocolo, año and escribano (CU86).
+ * Result of validating a proposed deed number against the correlativo
+ * expected for its protocolo, year and notary (CU86).
  */
 public enum DeedNumberingValidationResult {
     OK,

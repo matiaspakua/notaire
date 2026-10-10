@@ -53,35 +53,35 @@ async function globalTeardown(): Promise<void> {
     // Authenticate first (needed for DELETE operations)
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.getByTestId("input-usuario").fill("admin");
-    await page.getByTestId("input-contrasenia").fill("admin");
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
     await page.waitForURL(/\/dashboard/, { timeout: 15000 });
 
     // Delete in dependency-safe order (children before parents)
     const deletions: { label: string; path: string }[] = [
       ...(idsToCleanup.presupuestoId
-        ? [{ label: "presupuesto", path: `/presupuestos/${idsToCleanup.presupuestoId}` }]
+        ? [{ label: "presupuesto", path: `/budgets/${idsToCleanup.presupuestoId}` }]
         : []),
       ...(idsToCleanup.folioId
-        ? [{ label: "folio", path: `/folio/${idsToCleanup.folioId}` }]
+        ? [{ label: "folio", path: `/folios/${idsToCleanup.folioId}` }]
         : []),
       ...(idsToCleanup.conceptoId
-        ? [{ label: "concepto", path: `/conceptos/${idsToCleanup.conceptoId}` }]
+        ? [{ label: "concepto", path: `/concepts/${idsToCleanup.conceptoId}` }]
         : []),
       // Delete the usuario before the persona it references, otherwise the
       // persona delete hits a foreign-key constraint.
       ...(idsToCleanup.usuarioId
-        ? [{ label: "usuario", path: `/usuarios/${idsToCleanup.usuarioId}` }]
+        ? [{ label: "usuario", path: `/users/${idsToCleanup.usuarioId}` }]
         : []),
       ...(idsToCleanup.personaId
         ? [{ label: "persona", path: `/people/${idsToCleanup.personaId}` }]
         : []),
       ...(idsToCleanup.tipoTramiteId
-        ? [{ label: "tipo-tramite", path: `/tipo-tramite/${idsToCleanup.tipoTramiteId}` }]
+        ? [{ label: "tipo-tramite", path: `/procedure-types/${idsToCleanup.tipoTramiteId}` }]
         : []),
       ...(idsToCleanup.estadoGestionId
-        ? [{ label: "estado-gestion", path: `/estado-gestion/${idsToCleanup.estadoGestionId}` }]
+        ? [{ label: "estado-gestion", path: `/management-statuses/${idsToCleanup.estadoGestionId}` }]
         : []),
     ];
 

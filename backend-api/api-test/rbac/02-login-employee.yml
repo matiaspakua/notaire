@@ -3,12 +3,12 @@ info:
   type: http
   seq: 2
   description: |-
-      ## Login as the EMPLEADO — POST /api/v1/usuarios/login
+      ## Login as the EMPLEADO — POST /api/v1/users/login
       Stores the token under `employee_token` so the administrator token is untouched.
       Traceability: CU78 (issue #559)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/usuarios/login"
+  url: "{{base_url}}/api/v1/users/login"
   body:
     type: json
     data: |-
@@ -22,6 +22,6 @@ runtime:
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
           test("Employee login is valid", function () {
-            expect(res.getBody().valido).to.equal(true);
+            expect(res.getBody().valid).to.equal(true);
             bru.setVar('employee_token', res.getBody().token);
           });

@@ -1,8 +1,8 @@
 /**
  * CU69 - Gestión de Inmuebles: valuación fiscal (Gherkin style)
  *
- * Covers Issue #879: Inmueble.valuacionFiscal was declared String while the
- * Postgres column is real, so every Inmueble creation failed against the
+ * Covers Issue #879: Property.valuacionFiscal was declared String while the
+ * Postgres column is real, so every Property creation failed against the
  * live schema regardless of the value sent.
  */
 import { test, expect } from "@playwright/test";
@@ -14,7 +14,7 @@ test.describe("CU69 - Gestión de Inmuebles: valuación fiscal", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/inmuebles");
+    await steps.givenUserIsOnPage("/dashboard/properties");
   });
 
   test("CU69-GW01: Given on inmuebles page, When create with a numeric valuación fiscal, Then it is saved", async () => {

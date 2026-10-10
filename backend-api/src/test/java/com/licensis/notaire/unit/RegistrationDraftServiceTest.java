@@ -74,7 +74,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should generate minuta en status Generada with complete data")
+    @DisplayName("Should generate minuta in status Generada with complete data")
     void shouldGenerateDraftWhenDataIsComplete() {
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
         when(procedureRepository.findByFkIdDeedIdDeed(1)).thenReturn(List.of(procedure));
@@ -136,7 +136,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject presentacion when minuta is not en status Generada")
+    @DisplayName("Should reject presentacion when minuta is not in status Generada")
     void shouldRejectSubmissionWhenNotGenerada() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftPRESENTADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
@@ -160,17 +160,17 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject observacion when minuta is not presentada")
+    @DisplayName("Should reject observacion when minuta is not presented")
     void shouldRejectObservacionWhenNotPresentada() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftGENERADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
 
-        assertThatThrownBy(() -> registrationDraftService.observar(1, "Observación", new Date()))
+        assertThatThrownBy(() -> registrationDraftService.observar(1, "Observation", new Date()))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
     @Test
-    @DisplayName("Should register inscripcion definitiva and transition to Inscripto")
+    @DisplayName("Should register registration definitiva and transition to Registered")
     void shouldRegisterRegistrationDefinitiva() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftPRESENTADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
@@ -184,7 +184,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject inscripcion definitiva when minuta is not presentada")
+    @DisplayName("Should reject registration definitiva when minuta is not presented")
     void shouldRejectRegistrationWhenNotPresentada() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftOBSERVADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));

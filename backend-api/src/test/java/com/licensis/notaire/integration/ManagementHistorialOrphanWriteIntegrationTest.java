@@ -82,7 +82,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"number": 1, "date": "2026-01-01", "encabezado": "Budget History IT", "status": "PENDIENTE",
                  "person": {"personId": %d}}
                 """.formatted(clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -120,7 +120,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, status.getIdManagementStatus());
 
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -143,7 +143,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                  "notaryPersonId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId);
 
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -164,7 +164,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"encabezado": "Plain update change", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, statusA.getIdManagementStatus());
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -177,7 +177,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"encabezado": "Plain update change", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, statusB.getIdManagementStatus());
-        mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
+        mockMvc.perform(put("/api/v1/managements/{id}", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isBadRequest());
@@ -200,7 +200,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"encabezado": "Plain update same", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, status.getIdManagementStatus());
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -213,7 +213,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"encabezado": "Plain update same renamed", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted(number, notaryId, status.getIdManagementStatus());
-        mockMvc.perform(put("/api/v1/gestiones/{id}", managementId)
+        mockMvc.perform(put("/api/v1/managements/{id}", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
@@ -236,7 +236,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"number": %d, "encabezado": "Complete-case History", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, statusA.getIdManagementStatus(), typeId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -249,7 +249,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"number": %d, "encabezado": "Complete-case History", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, statusB.getIdManagementStatus(), typeId);
-        mockMvc.perform(put("/api/v1/gestiones/{id}/complete-case", managementId)
+        mockMvc.perform(put("/api/v1/managements/{id}/complete-case", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isBadRequest());
@@ -276,7 +276,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"number": %d, "encabezado": "Complete-case same", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, status.getIdManagementStatus(), typeId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -289,7 +289,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"number": %d, "encabezado": "Complete-case same renamed", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(number, budgetId, notaryId, status.getIdManagementStatus(), typeId);
-        mockMvc.perform(put("/api/v1/gestiones/{id}/complete-case", managementId)
+        mockMvc.perform(put("/api/v1/managements/{id}/complete-case", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
@@ -307,7 +307,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"encabezado": "Estado from history", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, statusA.getIdManagementStatus());
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -326,7 +326,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         second.setDate(new java.util.Date(System.currentTimeMillis() + 60_000L));
         historyRepository.save(second);
 
-        mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", managementId))
+        mockMvc.perform(get("/api/v1/managements/{id}/current-status", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.managementId").value(managementId))
                 .andExpect(jsonPath("$.statusManagementId").value(statusB.getIdManagementStatus()))
@@ -344,7 +344,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"encabezado": "Tie", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """;
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body.formatted((int) (System.nanoTime() % 100000), notaryId,
                                 statusA.getIdManagementStatus())))
@@ -370,7 +370,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         rows.forEach(row -> row.setDate(sameInstant));
         historyRepository.saveAllAndFlush(rows);
 
-        mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", managementId))
+        mockMvc.perform(get("/api/v1/managements/{id}/current-status", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusManagementId").value(statusB.getIdManagementStatus()));
     }
@@ -384,7 +384,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"encabezado": "Estado fallback", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d, "managementStatusId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId, status.getIdManagementStatus());
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -400,7 +400,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         assertThat(managementRepository.findById(managementId).orElseThrow().getFkIdManagementStatus())
                 .isNotNull();
 
-        mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", managementId))
+        mockMvc.perform(get("/api/v1/managements/{id}/current-status", managementId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.managementId").value(managementId))
                 .andExpect(jsonPath("$.statusManagementId").value(status.getIdManagementStatus()))
@@ -411,7 +411,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
     @Test
     @DisplayName("estado-actual returns 404 when management is missing")
     void shouldReturn404EstadoActualWhenManagementMissing() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", 999999))
+        mockMvc.perform(get("/api/v1/managements/{id}/current-status", 999999))
                 .andExpect(status().isNotFound());
     }
 
@@ -423,7 +423,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
                 {"encabezado": "No status", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), notaryId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -435,7 +435,7 @@ class ManagementHistorialOrphanWriteIntegrationTest {
         assertThat(managementRepository.findById(managementId).orElseThrow().getFkIdManagementStatus())
                 .isNull();
 
-        mockMvc.perform(get("/api/v1/gestiones/{id}/estado-actual", managementId))
+        mockMvc.perform(get("/api/v1/managements/{id}/current-status", managementId))
                 .andExpect(status().isNotFound());
     }
 }

@@ -2,7 +2,7 @@
  * TS-0010 - Presupuesto Workflow (CU01 → CU45 → CU47)
  * CU01 - Preparar Presupuesto
  * CU45 - Modificar Presupuesto
- * CU47 - Consultar Pago / Saldo
+ * CU47 - Consultar Payment / Saldo
  * Issues: #796 (saldo picker), #848 (overpayment guard)
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
  */
@@ -45,7 +45,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await authenticateAsAdmin(page);
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
   test("TS-0010-GW01: crear persona via API y presupuesto via UI — aparece en la lista con nombre del cliente", async ({
@@ -58,7 +58,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
 
     // Lean on any name-like field that the API returns; we search by idPersona
     // and verify the presupuesto row shows the client name automatically.
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     await steps.givenModuleIsVisible("Presupuestos");
 
     // WHEN: operador abre el formulario de nuevo presupuesto
@@ -73,7 +73,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     const personaOption = page.getByRole("listbox").getByRole("option").first();
     await expect(personaOption).toBeVisible({ timeout: 5000 });
     // Use the picker option that matches our seeded persona via data attribute
-    const targetOption = page.getByRole("option", { name: new RegExp(`Persona-${idPersona}`, "i") });
+    const targetOption = page.getByRole("option", { name: new RegExp(`Person-${idPersona}`, "i") });
     if (await targetOption.count() > 0) {
       await targetOption.evaluate((el: HTMLElement) => el.click());
     } else {
@@ -83,7 +83,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
 
     // AND: completa fecha y monto
     const today = new Date().toISOString().split("T")[0];
-    await dialog.getByLabel(/fecha/i).fill(today);
+    await dialog.getByLabel(/date/i).fill(today);
     await dialog.getByTestId("input-monto").fill("80000");
 
     // AND: envía el formulario
@@ -111,7 +111,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     expect(presupuestoResult.ok).toBe(true);
 
     // WHEN: recarga la lista
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
     // THEN: la tabla es visible y tiene columna de cliente
@@ -121,20 +121,20 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     // La cabecera debe incluir "cliente" o "persona"
     const headerRow = table.getByRole("row").first();
     const headerText = await headerRow.textContent();
-    expect(headerText?.toLowerCase()).toMatch(/cliente|persona/);
+    expect(headerText?.toLowerCase()).toMatch(/client|persona/);
   });
 });
 
 // ─────────────────────────────────────────────────────────────
-// CU47 – Consultar Pago / Saldo
+// CU47 – Consultar Payment / Saldo
 // ─────────────────────────────────────────────────────────────
-test.describe("CU47 - Consultar Pago / Saldo", () => {
+test.describe("CU47 - Consultar Payment / Saldo", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await authenticateAsAdmin(page);
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
   test("TS-0010-SD01 (#796): el resumen del presupuesto muestra el saldo pendiente", async ({
@@ -143,7 +143,7 @@ test.describe("CU47 - Consultar Pago / Saldo", () => {
     // GIVEN: presupuesto con saldo conocido
     const { idPresupuesto } = await seedPresupuesto(steps, 75000);
 
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
     // WHEN: operador abre el resumen del presupuesto (CU47)
@@ -155,7 +155,7 @@ test.describe("CU47 - Consultar Pago / Saldo", () => {
     await expect(dialog).toBeVisible();
 
     // THEN: el saldo pendiente es visible en el resumen
-    const saldoDisplay = dialog.getByText(/saldo/i);
+    const saldoDisplay = dialog.getByText(/balance/i);
     await expect(saldoDisplay).toBeVisible({ timeout: 5000 });
     await expect(dialog).toContainText("75.000");
   });
@@ -171,7 +171,7 @@ test.describe("CU47 - Consultar Pago / Saldo", () => {
     const pagoResult = await createPago(page, idPresupuesto, { amount: 40000 });
     expect(pagoResult.ok, `createPago failed: ${pagoResult.error}`).toBe(true);
 
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
     const resumenBtn = page.getByTestId(`btn-resumen-presupuesto-${idPresupuesto}`);
@@ -196,7 +196,7 @@ test.describe("CU45 - Modificar Presupuesto", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await authenticateAsAdmin(page);
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
   test("TS-0010-MOD01: editar un presupuesto existente actualiza los datos en la lista", async ({
@@ -211,7 +211,7 @@ test.describe("CU45 - Modificar Presupuesto", () => {
     expect(presupuestoResult.ok).toBe(true);
     const idPresupuesto = presupuestoResult.data!.idBudget;
 
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
     // WHEN: abre el modal de edición
@@ -260,7 +260,7 @@ for (const viewport of [
 
     // Set viewport before navigating
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("domcontentloaded");
 
     // THEN: la lista de presupuestos (tabla o tarjetas, #1356) es visible sin overflow horizontal

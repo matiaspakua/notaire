@@ -6,7 +6,7 @@ info:
       Traceability: CU26 (RF #55, #56)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/tipo-tramite"
+  url: "{{base_url}}/api/v1/procedure-types"
   body:
     type: json
     data: |-

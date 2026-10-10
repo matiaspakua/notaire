@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/workflow-definition")
-@Tag(name = "Workflow Validation", description = "CU72 - Validación de consistencia del workflow")
+@Tag(name = "Workflow Validation", description = "CU72 - Validación of consistencia of the workflow")
 public class WorkflowValidationController {
 
     private final WorkflowDefinitionRepository workflowRepository;

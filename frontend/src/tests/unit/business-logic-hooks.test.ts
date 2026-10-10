@@ -1,23 +1,23 @@
 /**
  * Unit tests for remaining React Query hook query keys and business logic.
- * Covers: useGestiones, usePersonas, usePresupuestos, usePagos, useConceptos,
- *         useEscrituras, useUsuarios, useInmuebles, useCopias, useDocumentos,
- *         useDocumentosPresentados
+ * Covers: useManagements, usePeople, useBudgets, usePayments, useConcepts,
+ *         useDeeds, useUsers, useProperties, useCopies, useDocuments,
+ *         useSubmittedDocuments
  *
  * Use cases: CU01-CU68
  */
 import { describe, it, expect } from "vitest";
 
-import { gestionesKeys } from "@/hooks/useGestiones";
-import { personasKeys } from "@/hooks/usePersonas";
-import { presupuestosKeys } from "@/hooks/usePresupuestos";
-import { pagosKeys } from "@/hooks/usePagos";
-import { conceptosKeys } from "@/hooks/useConceptos";
-import { escriturasKeys } from "@/hooks/useEscrituras";
-import { usuariosKeys } from "@/hooks/useUsuarios";
-import { inmueblesKeys } from "@/hooks/useInmuebles";
-import { copiasKeys } from "@/hooks/useCopias";
-import { documentosKeys } from "@/hooks/useDocumentos";
+import { gestionesKeys } from "@/hooks/useManagements";
+import { personasKeys } from "@/hooks/usePeople";
+import { presupuestosKeys } from "@/hooks/useBudgets";
+import { pagosKeys } from "@/hooks/usePayments";
+import { conceptosKeys } from "@/hooks/useConcepts";
+import { deedsKeys } from "@/hooks/useDeeds";
+import { usuariosKeys } from "@/hooks/useUsers";
+import { inmueblesKeys } from "@/hooks/useProperties";
+import { copiasKeys } from "@/hooks/useCopies";
+import { documentosKeys } from "@/hooks/useDocuments";
 
 // ──────────────────────────────────────────────
 // Query key contracts — all remaining hooks
@@ -73,13 +73,13 @@ describe("conceptosKeys (CU39, CU49)", () => {
   });
 });
 
-describe("escriturasKeys (CU05, CU06)", () => {
+describe("deedsKeys (CU05, CU06)", () => {
   it("all key is ['escrituras']", () => {
-    expect(escriturasKeys.all).toEqual(["escrituras"]);
+    expect(deedsKeys.all).toEqual(["escrituras"]);
   });
 
   it("detail key includes id", () => {
-    expect(escriturasKeys.detail(99)).toEqual(["escrituras", 99]);
+    expect(deedsKeys.detail(99)).toEqual(["escrituras", 99]);
   });
 });
 
@@ -158,10 +158,10 @@ describe("Presupuesto total calculation (CU01, CU39)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Pago saldo computation (CU47)
+// Payment saldo computation (CU47)
 // ──────────────────────────────────────────────
 
-describe("Pago saldo computation (CU47)", () => {
+describe("Payment saldo computation (CU47)", () => {
   function calcularSaldo(totalPresupuesto: number, pagos: { monto?: number }[]): number {
     const totalPaid = pagos.reduce((sum, p) => sum + (p.monto ?? 0), 0);
     return totalPresupuesto - totalPaid;
@@ -189,13 +189,13 @@ describe("Pago saldo computation (CU47)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Escritura number format (CU05)
+// Deed number format (CU05)
 // ──────────────────────────────────────────────
 
-describe("Escritura display label (CU05)", () => {
+describe("Deed display label (CU05)", () => {
   function getEscrituraLabel(numero?: number, fecha?: string): string {
     if (!numero) return "Sin número";
-    return fecha ? `Escritura #${numero} — ${fecha}` : `Escritura #${numero}`;
+    return fecha ? `Deed #${numero} — ${fecha}` : `Deed #${numero}`;
   }
 
   it("returns Sin número when numero is undefined", () => {
@@ -203,19 +203,19 @@ describe("Escritura display label (CU05)", () => {
   });
 
   it("returns label with date when both present", () => {
-    expect(getEscrituraLabel(42, "2026-03-15")).toBe("Escritura #42 — 2026-03-15");
+    expect(getEscrituraLabel(42, "2026-03-15")).toBe("Deed #42 — 2026-03-15");
   });
 
   it("returns label without date when fecha is absent", () => {
-    expect(getEscrituraLabel(7)).toBe("Escritura #7");
+    expect(getEscrituraLabel(7)).toBe("Deed #7");
   });
 });
 
 // ──────────────────────────────────────────────
-// Persona display name (CU17, CU18, CU61)
+// Person display name (CU17, CU18, CU61)
 // ──────────────────────────────────────────────
 
-describe("Persona display name (CU17, CU18, CU61)", () => {
+describe("Person display name (CU17, CU18, CU61)", () => {
   function getDisplayName(persona?: { nombre?: string; apellido?: string }): string {
     if (!persona) return "—";
     const parts = [persona.apellido, persona.nombre].filter(Boolean);
@@ -244,10 +244,10 @@ describe("Persona display name (CU17, CU18, CU61)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Copia type shape (CU44, CU53)
+// Copy type shape (CU44, CU53)
 // ──────────────────────────────────────────────
 
-describe("Copia type shape (CU44, CU53)", () => {
+describe("Copy type shape (CU44, CU53)", () => {
   it("copia has required fields", () => {
     const copia = {
       idCopia: 1,
@@ -267,10 +267,10 @@ describe("Copia type shape (CU44, CU53)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Concepto value type (CU39, CU49)
+// Concept value type (CU39, CU49)
 // ──────────────────────────────────────────────
 
-describe("Concepto type shape (CU39, CU49)", () => {
+describe("Concept type shape (CU39, CU49)", () => {
   it("concepto has nombre and valor", () => {
     const concepto = { idConcepto: 1, nombre: "Honorarios", valor: 1500 };
     expect(concepto.nombre).toBe("Honorarios");
@@ -284,10 +284,10 @@ describe("Concepto type shape (CU39, CU49)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Inmueble type shape (CU08)
+// Property type shape (CU08)
 // ──────────────────────────────────────────────
 
-describe("Inmueble type shape (CU08)", () => {
+describe("Property type shape (CU08)", () => {
   it("inmueble has address fields", () => {
     const inmueble = {
       idInmueble: 1,
@@ -307,10 +307,10 @@ describe("Inmueble type shape (CU08)", () => {
 });
 
 // ──────────────────────────────────────────────
-// TipoDeDocumento type shape (CU27, CU65)
+// DocumentType type shape (CU27, CU65)
 // ──────────────────────────────────────────────
 
-describe("TipoDeDocumento type shape (CU27, CU65)", () => {
+describe("DocumentType type shape (CU27, CU65)", () => {
   it("tipoDeDocumento has id and nombre", () => {
     const tipo = { idTipoDocumento: 3, nombre: "DNI" };
     expect(tipo.idTipoDocumento).toBe(3);
@@ -330,10 +330,10 @@ describe("TipoDeDocumento type shape (CU27, CU65)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Usuario type shape + password hash (CU20, CU21)
+// UserAccount type shape + password hash (CU20, CU21)
 // ──────────────────────────────────────────────
 
-describe("Usuario type shape (CU20, CU21)", () => {
+describe("UserAccount type shape (CU20, CU21)", () => {
   it("usuario has username field", () => {
     const u = { idUsuario: 1, usuario: "admin", idPersona: 5 };
     expect(u.usuario).toBe("admin");

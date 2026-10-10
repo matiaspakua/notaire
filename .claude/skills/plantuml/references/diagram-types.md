@@ -49,7 +49,7 @@ and API/DTO shapes.
 
 ```plantuml
 @startuml
-class Persona {
+class Person {
   -id: Long
   -nombre: String
   -dni: String
@@ -70,10 +70,10 @@ enum EstadoEscritura {
   ANULADA
 }
 
-Persona --|> BaseEntity
-Persona ..|> Auditable
-Persona "1" --> "0..*" Escritura : otorga
-Escritura --> EstadoEscritura
+Person --|> BaseEntity
+Person ..|> Auditable
+Person "1" --> "0..*" Deed : otorga
+Deed --> EstadoEscritura
 @enduml
 ```
 
@@ -122,7 +122,7 @@ participant "REST Controller" as C
 participant "Service" as S
 database "PostgreSQL" as DB
 
-User -> C: POST /api/v1/escrituras
+User -> C: POST /api/v1/deeds
 activate C
 C -> S: crear(dto)
 activate S
@@ -162,8 +162,8 @@ left to right direction
 actor "Notary" as notary
 actor "Client" as client
 rectangle Notaire {
-  usecase "Create Escritura" as UC1
-  usecase "Sign Escritura" as UC2
+  usecase "Create Deed" as UC1
+  usecase "Sign Deed" as UC2
   usecase "Request Copy" as UC3
 }
 notary --> UC1
@@ -282,19 +282,19 @@ arrows. This directly mirrors a relational schema (PK/FK, cardinality).
 
 ```plantuml
 @startuml
-entity Persona {
+entity Person {
   * id : bigint <<PK>>
   --
   nombre : varchar
   dni : varchar
 }
-entity Escritura {
+entity Deed {
   * id : bigint <<PK>>
   --
   * persona_id : bigint <<FK>>
   fecha : date
 }
-Persona ||--o{ Escritura : otorga
+Person ||--o{ Deed : otorga
 @enduml
 ```
 

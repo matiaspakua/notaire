@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit;
 
 
-import com.licensis.notaire.dto.DtoManagementResumenFinanciero;
+import com.licensis.notaire.dto.DtoManagementFinancialSummary;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.ProcedureRepository;
@@ -59,18 +59,18 @@ class ManagementResumenFinancieroServiceTest {
     }
 
     @Nested
-    @DisplayName("Resumen financiero de una gestión")
+    @DisplayName("Financial summary of a management")
     class ObtenerResumenTests {
 
         @Test
-        @DisplayName("Gestión con un único trámite y budget agrega su total, cobrado y saldo")
+        @DisplayName("Management with a único procedure and budget agrega its total, cobrado and balance")
         void shouldSummarizeSingleProcedureManagement() {
             when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(new java.math.BigDecimal("3000.00"));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("3000.00"));
             when(paymentQueries.findByBudget(10)).thenReturn(List.of(paymentOf(new java.math.BigDecimal("2000.00"))));
 
-            DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
+            DtoManagementFinancialSummary resumen = managementResumenFinancieroService.getSummary(1);
 
             assertThat(resumen.idManagement()).isEqualTo(1);
             assertThat(resumen.totalPresupuestado()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
@@ -79,7 +79,7 @@ class ManagementResumenFinancieroServiceTest {
         }
 
         @Test
-        @DisplayName("Gestión con múltiples trámites y presupuestos suma los totales de cada uno")
+        @DisplayName("Management with múltiples procedures and budgets suma the totales of each uno")
         void shouldAggregateMultipleProcedures() {
             when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(new java.math.BigDecimal("4500.00"));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
@@ -89,7 +89,7 @@ class ManagementResumenFinancieroServiceTest {
             when(paymentStatus.pendingBalance(20)).thenReturn(new java.math.BigDecimal("1500.00"));
             when(paymentQueries.findByBudget(20)).thenReturn(List.of(paymentOf(new java.math.BigDecimal("1000.00"))));
 
-            DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
+            DtoManagementFinancialSummary resumen = managementResumenFinancieroService.getSummary(1);
 
             assertThat(resumen.totalPresupuestado()).isEqualByComparingTo(new java.math.BigDecimal("7500.00"));
             assertThat(resumen.totalCobrado()).isEqualByComparingTo(new java.math.BigDecimal("3000.00"));
@@ -97,28 +97,28 @@ class ManagementResumenFinancieroServiceTest {
         }
 
         @Test
-        @DisplayName("Gestión sin payments registrados devuelve cobrado en cero")
+        @DisplayName("Management without payments registrados devuelve cobrado in cero")
         void shouldReturnZeroCollectedWhenNoPayments() {
             when(managementArchiveDebtService.calculatePendingBalance(1)).thenReturn(new java.math.BigDecimal("5000.00"));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("5000.00"));
             when(paymentQueries.findByBudget(10)).thenReturn(List.of());
 
-            DtoManagementResumenFinanciero resumen = managementResumenFinancieroService.getSummary(1);
+            DtoManagementFinancialSummary resumen = managementResumenFinancieroService.getSummary(1);
 
             assertThat(resumen.totalCobrado()).isEqualByComparingTo(new java.math.BigDecimal("0.00"));
             assertThat(resumen.totalPresupuestado()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
         }
 
         @Test
-        @DisplayName("Should throw exception when gestión does not exist")
+        @DisplayName("Should throw exception when management does not exist")
         void shouldThrowExceptionWhenManagementNotFound() {
             when(managementArchiveDebtService.calculatePendingBalance(999))
-                    .thenThrow(new IllegalArgumentException("Gestión no encontrada con ID: 999"));
+                    .thenThrow(new IllegalArgumentException("Management not found with ID: 999"));
 
             assertThatThrownBy(() -> managementResumenFinancieroService.getSummary(999))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Gestión no encontrada");
+                    .hasMessageContaining("Management not found");
         }
     }
 }

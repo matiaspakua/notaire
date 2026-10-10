@@ -3,11 +3,11 @@ info:
   type: http
   seq: 12
   description: |-
-      ## Delete payment — DELETE /api/v1/pagos/{payment_id}
+      ## Delete payment — DELETE /api/v1/payments/{payment_id}
       Traceability: CU15 (RF #3, #20, #21, #22, #23)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/pagos/{{payment_id}}"
+  url: "{{base_url}}/api/v1/payments/{{payment_id}}"
   headers:
     - name: Content-Type
       value: application/json

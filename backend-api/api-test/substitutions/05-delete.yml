@@ -3,11 +3,11 @@ info:
   type: http
   seq: 7
   description: |-
-      ## Delete substitution — DELETE /api/v1/suplencia/{{substitution_id}}
+      ## Delete substitution — DELETE /api/v1/substitutions/{{substitution_id}}
       Traceability: CU22 (RF #43, #113, #114, #115)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/suplencia/{{substitution_id}}"
+  url: "{{base_url}}/api/v1/substitutions/{{substitution_id}}"
   headers:
     - name: Content-Type
       value: application/json

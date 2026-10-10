@@ -21,7 +21,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
- * CU85 - Administrar Carpetas de Trámite, against the real Flyway-managed Postgres
+ * CU85 - Administrar Procedure folders, against the real Flyway-managed Postgres
  * schema. Folder numbers used to be computed as {@code max(number) + 1}, so two
  * concurrent case creations read the same max and the second insert violated
  * {@code uq_carpeta_tramite_numero} (Issue #1038). They now come from a sequence.
@@ -30,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
-@DisplayName("Numeración de carpetas de trámite contra el esquema real (CU85)")
+@DisplayName("Numeración of procedure folders contra the esquema real (CU85)")
 class ProcedureFolderNumberSequencePgIntegrationTest extends BaseIntegrationTest {
 
     private static final int CONCURRENT_REQUESTS = 20;

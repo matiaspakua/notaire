@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Usuario request validation (issue #561)")
+@DisplayName("UserAccount request validation (issue #561)")
 class UserRequestValidationIntegrationTest {
 
     @Autowired
@@ -33,7 +33,7 @@ class UserRequestValidationIntegrationTest {
     @Test
     @DisplayName("POST /users with blank name returns 400")
     void shouldRejectCreateWithBlankName() throws Exception {
-        mockMvc.perform(post("/api/v1/usuarios")
+        mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "", "password": "pass", "type": "EMPLEADO", "active": true}
@@ -44,7 +44,7 @@ class UserRequestValidationIntegrationTest {
     @Test
     @DisplayName("POST /users with missing name returns 400")
     void shouldRejectCreateWithMissingName() throws Exception {
-        mockMvc.perform(post("/api/v1/usuarios")
+        mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"password": "pass", "type": "EMPLEADO", "active": true}
@@ -55,7 +55,7 @@ class UserRequestValidationIntegrationTest {
     @Test
     @DisplayName("POST /users with blank type returns 400")
     void shouldRejectCreateWithBlankType() throws Exception {
-        mockMvc.perform(post("/api/v1/usuarios")
+        mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "someuser", "password": "pass", "type": "", "active": true}
@@ -66,7 +66,7 @@ class UserRequestValidationIntegrationTest {
     @Test
     @DisplayName("POST /users with valid payload still succeeds")
     void shouldAcceptCreateWithValidPayload() throws Exception {
-        mockMvc.perform(post("/api/v1/usuarios")
+        mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "valid_user_561", "password": "pass", "type": "EMPLEADO", \
@@ -78,7 +78,7 @@ class UserRequestValidationIntegrationTest {
     @Test
     @DisplayName("PUT /users/{id} with blank name returns 400")
     void shouldRejectUpdateWithBlankName() throws Exception {
-        mockMvc.perform(put("/api/v1/usuarios/1")
+        mockMvc.perform(put("/api/v1/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "", "password": "", "type": "EMPLEADO", "active": true}

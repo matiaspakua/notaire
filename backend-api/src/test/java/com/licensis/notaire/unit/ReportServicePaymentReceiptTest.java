@@ -80,13 +80,13 @@ class ReportServiceReciboPaymentTest {
     }
 
     @Test
-    @DisplayName("Should generate a PDF recibo with cliente, date, concepto and total for a simple pago")
+    @DisplayName("Should generate a PDF recibo with client, date, concept and total for a simple payment")
     void shouldGenerarReciboConDatosDelPayment() throws Exception {
         Person client = buildClient();
         Payment payment = buildPayment(1, new java.math.BigDecimal("500000"), client);
 
         Item item = new Item();
-        item.setName("Escritura de compraventa");
+        item.setName("Deed de compraventa");
 
         when(paymentRepository.findById(1)).thenReturn(Optional.of(payment));
         when(itemRepository.findByFkIdBudgetIdBudget(10)).thenReturn(List.of(item));
@@ -97,7 +97,7 @@ class ReportServiceReciboPaymentTest {
         assertThat(new String(pdf, 0, Math.min(5, pdf.length))).startsWith("%PDF-");
         String content = new String(pdf, java.nio.charset.StandardCharsets.US_ASCII);
         assertThat(content).contains("Ana Gomez");
-        assertThat(content).contains("Escritura de compraventa");
+        assertThat(content).contains("Deed de compraventa");
         assertThat(content).contains("500000");
     }
 

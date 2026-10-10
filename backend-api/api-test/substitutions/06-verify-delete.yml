@@ -3,11 +3,11 @@ info:
   type: http
   seq: 8
   description: |-
-      ## Verify substitution deleted — GET /api/v1/suplencia/{{substitution_id}}
+      ## Verify substitution deleted — GET /api/v1/substitutions/{{substitution_id}}
       Traceability: CU59 (RF #43, #113, #116)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/suplencia/{{substitution_id}}"
+  url: "{{base_url}}/api/v1/substitutions/{{substitution_id}}"
   headers:
     - name: Content-Type
       value: application/json

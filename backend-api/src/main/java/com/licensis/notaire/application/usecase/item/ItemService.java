@@ -47,13 +47,13 @@ public class ItemService {
     }
 
     /**
-     * CU71 - Consultar descuentos y recargos: devuelve los ítems de tipo DESCUENTO o RECARGO
-     * de un presupuesto, junto con su motivo.
+     * CU71 - Query discounts and surcharges: devuelve the items of tipo DESCUENTO or RECARGO
+     * of a budget, together with its motivo.
      */
     @Transactional(readOnly = true)
     public List<Item> findDiscountsAndSurchargesByBudget(Integer idBudget) {
         if (!budgetRepository.existsById(idBudget)) {
-            throw new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget);
+            throw new ResourceNotFoundException("Budget not found with ID: " + idBudget);
         }
         return itemRepository.findByBudgetId(idBudget).stream()
                 .filter(item -> item.getType() == TypeItem.DESCUENTO || item.getType() == TypeItem.RECARGO)
@@ -87,7 +87,7 @@ public class ItemService {
 
     /**
      * CU45 - Exigir motivo estructurado en descuentos y recargos: rechaza items de tipo
-     * DESCUENTO o RECARGO sin un motivo no vacío.
+     * DESCUENTO or RECARGO without a motivo not empty.
      */
     private void validateReason(Item item) {
         TypeItem type = item.getType();
@@ -96,7 +96,7 @@ public class ItemService {
 
         if (requiresReason && reasonEmpty) {
             throw new BusinessValidationException(
-                    "El motivo es obligatorio para ítems de tipo " + type);
+                    "The motivo is required for items of tipo " + type);
         }
     }
 }

@@ -580,7 +580,7 @@ graph LR
       <span class="tag tag-success" style="margin:0 auto 1rem;">🎬 Demo 1 — Caso real, ya mergeado</span>
       <h1 style="font-size:2.8rem; font-weight:800; letter-spacing:-0.03em;">OpenSpec en producción</h1>
       <p style="font-size:1.1rem; color:var(--text-muted); margin-top:0.6rem;">
-        Issue <span class="pr-link pr-success">#879</span> — Fix de tipo <code>Inmueble.valuacionFiscal</code>
+        Issue <span class="pr-link pr-success">#879</span> — Fix de tipo <code>Property.valuacionFiscal</code>
       </p>
     </div>
   </section>
@@ -594,7 +594,7 @@ graph LR
       <div class="col">
         <div class="card c-error">
           <div class="card-title" style="font-size:0.95rem;">🐛 El bug</div>
-          <p style="font-size:0.875rem; margin-top:0.4rem;"><code>Inmueble.valuacionFiscal</code> era <code>String</code>, pero la columna Flyway <code>inmuebles.valuacion_fiscal</code> es <code>real</code>. Cada <code>POST /api/v1/inmueble</code> fallaba con un error de tipo JDBC.</p>
+          <p style="font-size:0.875rem; margin-top:0.4rem;"><code>Property.valuacionFiscal</code> era <code>String</code>, pero la columna Flyway <code>inmuebles.valuacion_fiscal</code> es <code>real</code>. Cada <code>POST /api/v1/properties</code> fallaba con un error de tipo JDBC.</p>
         </div>
         <div class="card">
           <div class="card-title" style="font-size:0.95rem;">📋 proposal.md (real, resumido)</div>
@@ -602,7 +602,7 @@ graph LR
 <span class="kw">Branch:</span> fix/879_inmueble-valuacion-fiscal-type
 
 <span class="comment"># What Changes</span>
-- Inmueble.valuacionFiscal: String → Float
+- Property.valuacionFiscal: String → Float
 - DtoInmueble.valuacionFiscal: String → Float
 - frontend/types: string → number
 <span style="color:var(--error); font-weight:700;">⚠ BREAKING: JSON string → JSON number</span></pre>
@@ -665,7 +665,7 @@ graph LR
       </div>
       <div class="card c-success">
         <div class="card-title" style="font-size:0.9rem;">💻 Código modificado</div>
-        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;"><code>Inmueble.java</code>, <code>DtoInmueble.java</code>, frontend types.</p>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;"><code>Property.java</code>, <code>DtoInmueble.java</code>, frontend types.</p>
         <a class="pr-link pr-success" style="display:inline-block; margin-top:0.5rem;" href="https://github.com/matiaspakua/notaire/commit/7563215afb88cd5775be64adbfe559cc29025bdd" target="_blank" rel="noopener">ver commit ↗</a>
       </div>
       <div class="card c-success">
@@ -704,7 +704,7 @@ graph LR
       <div class="col">
         <div class="card c-primary">
           <div class="card-title" style="font-size:0.95rem;">🎯 La feature</div>
-          <p style="font-size:0.875rem; margin-top:0.4rem;">Un documento devuelto/vencido necesita reingresarse: el Gestor elige gestión → trámite → tipo de documento según <code>PlantillaTramite</code>, y el sistema crea un <code>DocumentoPresentado(reingresado=true)</code>.</p>
+          <p style="font-size:0.875rem; margin-top:0.4rem;">Un documento devuelto/vencido necesita reingresarse: el Gestor elige gestión → trámite → tipo de documento según <code>ProcedureTemplate</code>, y el sistema crea un <code>SubmittedDocument(reingresado=true)</code>.</p>
         </div>
         <div class="card">
           <div class="card-title" style="font-size:0.95rem;">📋 spec.md (real, resumido)</div>
@@ -745,7 +745,7 @@ Reingresar un tipo de documento
     <div class="grid-3">
       <div class="card c-primary">
         <div class="card-title" style="font-size:0.9rem;">Setup + Foundational</div>
-        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">T008 — 5 DTOs nuevos en <code>notaire-shared</code>. T009 — reutiliza repositorios ya existentes de <code>PlantillaTramite</code> y <code>Tramite</code> (sin migración nueva).</p>
+        <p style="font-size:0.875rem; color:var(--text-muted); margin-top:0.4rem;">T008 — 5 DTOs nuevos en <code>notaire-shared</code>. T009 — reutiliza repositorios ya existentes de <code>ProcedureTemplate</code> y <code>Procedure</code> (sin migración nueva).</p>
       </div>
       <div class="card c-primary">
         <div class="card-title" style="font-size:0.9rem;">User Story 1 → 2 (P1)</div>

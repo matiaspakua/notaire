@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("DataInitializer — usuario admin por defecto")
+@DisplayName("DataInitializer — user admin by defecto")
 class DataInitializerTest {
 
     private static final String BCRYPT_ADMIN = "$2a$12$stub.bcrypt.hash.for.admin.password";

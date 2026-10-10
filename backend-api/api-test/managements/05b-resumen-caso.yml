@@ -7,7 +7,7 @@ info:
       Traceability: CU07; CU11; CU12; CU70
 http:
   method: GET
-  url: "{{base_url}}/api/v1/gestiones/{{mgmt_id}}/resumen-caso"
+  url: "{{base_url}}/api/v1/managements/{{mgmt_id}}/case-summary"
   headers:
     - name: Content-Type
       value: application/json

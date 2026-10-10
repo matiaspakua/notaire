@@ -8,9 +8,9 @@ import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Stagger, StaggerItem, HoverLift } from "@/components/motion";
 import { useAuthStore } from "@/store/auth-store";
-import { useGestionesPage } from "@/hooks/useGestiones";
-import { usePersonasPage } from "@/hooks/usePersonas";
-import { usePresupuestosPage } from "@/hooks/usePresupuestos";
+import { useGestionesPage } from "@/hooks/useManagements";
+import { usePersonasPage } from "@/hooks/usePeople";
+import { usePresupuestosPage } from "@/hooks/useBudgets";
 import { StatValue } from "@/components/dashboard/StatValue";
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
 import { theme } from "@/theme/tokens";
@@ -60,7 +60,7 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1.5">
           <h1 className="text-4xl font-semibold tracking-tight text-foreground">
-            {td("hello")}, {user?.nombre?.split(" ")[0]}
+            {td("hello")}, {user?.name?.split(" ")[0]}
           </h1>
           <p className="text-xl text-muted-foreground font-medium">{td("today")}</p>
         </div>

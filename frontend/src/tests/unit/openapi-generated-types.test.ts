@@ -3,26 +3,26 @@
  */
 import { describe, expect, it } from "vitest";
 import type {
-  DocumentoPresentado,
-  GestionDeEscritura,
+  SubmittedDocument,
+  DeedManagement,
   Presupuesto,
-  PresupuestoResumen,
+  BudgetSummary,
 } from "@/types/api";
-import { gestionesKeys } from "@/hooks/useGestiones";
-import { presupuestosKeys } from "@/hooks/usePresupuestos";
-import { documentosPresentadosKeys } from "@/hooks/useDocumentosPresentados";
+import { gestionesKeys } from "@/hooks/useManagements";
+import { presupuestosKeys } from "@/hooks/useBudgets";
+import { documentosPresentadosKeys } from "@/hooks/useSubmittedDocuments";
 
 describe("openapi generated types (#1260)", () => {
   it("exports schema aliases used by gestiones, presupuestos and documentos hooks", () => {
-    const gestion: GestionDeEscritura = { idManagement: 1, procedureCount: 2 };
+    const gestion: DeedManagement = { idManagement: 1, procedureCount: 2 };
     const budget: Presupuesto = { idBudget: 9, number: 1 };
-    const resumen: PresupuestoResumen = {
+    const resumen: BudgetSummary = {
       idBudget: 9,
       numberBudget: 1,
       total: 100,
       pendingBalance: 0,
     };
-    const doc: DocumentoPresentado = { idSubmittedDocument: 3, delivered: false };
+    const doc: SubmittedDocument = { idSubmittedDocument: 3, delivered: false };
     expect(gestion.idManagement).toBe(1);
     expect(budget.idBudget).toBe(9);
     expect(resumen.total).toBe(100);

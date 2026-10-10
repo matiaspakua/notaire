@@ -69,7 +69,7 @@ public class User implements Serializable, Persistable<Integer> {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdUser", fetch = FetchType.LAZY)
     private List<AuditRecord> auditRecordList;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usuariosList", "presupuestosList", "tramiteList", "suplenciaEscribanoList", "suplenciaReemplazadoList"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "userList", "budgetList", "procedureList", "substitutionList", "substitutionList1"})
     @JoinColumn(name = "fk_id_person", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Person fkIdPerson;
@@ -199,21 +199,21 @@ public class User implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Usuarios[ version=" + version + " ]"
+        return "Users[ version=" + version + " ]"
                 + "[ idUsuario=" + idUser + " ]"
-                + "[ nombre=" + name + " ]"
+                + "[ name=" + name + " ]"
                 + "[ tipo=" + type + " ] "
                 + "[ estado=" + status + " ]";
     }
 
     public void setAtributos(DtoUser dtoUser) {
 
-        // Ref persona de Usuario
+        // Ref persona de UserAccount
         Person miPerson = new Person();
         miPerson.setAtributos(dtoUser.getPersons());
         setFkIdPerson(miPerson);
 
-        // Atributos usuario
+        // Atributos user
         setPassword(dtoUser.getPassword());
         ;
         setStatus(dtoUser.isStatus());

@@ -23,7 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RequirementCoverage({"CU47", "CU02"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Presupuesto resumen — CU47 financial summary endpoint")
+@DisplayName("Budget resumen — CU47 financial summary endpoint")
 class BudgetResumenControllerTest {
 
     @Autowired
@@ -55,7 +55,7 @@ class BudgetResumenControllerTest {
                 {"number": %d, "date": "2026-01-01", "encabezado": "Budget Resumen IT",
                  "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount, clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -67,7 +67,7 @@ class BudgetResumenControllerTest {
         String body = """
                 {"idBudget": %d, "amount": %s, "date": "2026-08-20", "notes": "Payment Resumen IT"}
                 """.formatted(idBudget, amount);
-        mockMvc.perform(post("/api/v1/pagos")
+        mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated());
@@ -79,7 +79,7 @@ class BudgetResumenControllerTest {
         Integer clientId = createPerson("51" + (System.nanoTime() % 1000000));
         Integer budgetId = createBudget(clientId, new java.math.BigDecimal("5000.00"));
 
-        mockMvc.perform(get("/api/v1/presupuestos/" + budgetId + "/resumen"))
+        mockMvc.perform(get("/api/v1/budgets/" + budgetId + "/summary"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idBudget").value(budgetId))
                 .andExpect(jsonPath("$.total").value(5000.00))
@@ -94,7 +94,7 @@ class BudgetResumenControllerTest {
         Integer budgetId = createBudget(clientId, new java.math.BigDecimal("5000.00"));
         createPayment(budgetId, new java.math.BigDecimal("2000.00"));
 
-        mockMvc.perform(get("/api/v1/presupuestos/" + budgetId + "/resumen"))
+        mockMvc.perform(get("/api/v1/budgets/" + budgetId + "/summary"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(5000.00))
                 .andExpect(jsonPath("$.pendingBalance").value(3000.00))
@@ -104,7 +104,7 @@ class BudgetResumenControllerTest {
     @Test
     @DisplayName("Should return 404 when requesting the summary of a non-existent budget")
     void shouldReturnNotFoundForUnknownBudget() throws Exception {
-        mockMvc.perform(get("/api/v1/presupuestos/999999/resumen"))
+        mockMvc.perform(get("/api/v1/budgets/999999/summary"))
                 .andExpect(status().isNotFound());
     }
 }

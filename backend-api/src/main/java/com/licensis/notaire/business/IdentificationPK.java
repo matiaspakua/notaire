@@ -18,10 +18,10 @@ public class IdentificationPK implements Serializable
 {
 
     @Basic(optional = false)
-    @Column(name = "fk_id_persona")
+    @Column(name = "fk_id_person")
     private int fkIdPerson;
     @Basic(optional = false)
-    @Column(name = "fk_id_tipo_identificacion")
+    @Column(name = "fk_id_identification_type")
     private int fkIdIdentificationType;
 
     public IdentificationPK()

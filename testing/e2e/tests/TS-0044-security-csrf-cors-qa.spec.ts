@@ -18,9 +18,9 @@ const ALLOWED_ORIGIN = "http://localhost:3000";
 test.describe("CSRF / cookie posture (issues #691 / #1051)", () => {
   test("login sets HttpOnly auth cookie plus non-credential UX markers", async ({ page }) => {
     await page.goto("/login");
-    await page.getByTestId("input-usuario").fill("admin");
-    await page.getByTestId("input-contrasenia").fill("admin");
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 
     const cookies = await page.context().cookies();
@@ -50,9 +50,9 @@ test.describe("CSRF / cookie posture (issues #691 / #1051)", () => {
 
   test("same-origin proxied API call authenticates via cookie without Bearer", async ({ page }) => {
     await page.goto("/login");
-    await page.getByTestId("input-usuario").fill("admin");
-    await page.getByTestId("input-contrasenia").fill("admin");
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 
     const response = await page.request.get("http://localhost:3000/api/v1/people");

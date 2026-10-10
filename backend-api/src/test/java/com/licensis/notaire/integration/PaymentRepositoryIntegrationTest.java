@@ -56,7 +56,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
         testBudget = new Budget();
         testBudget.setNumber((int) (System.currentTimeMillis() % 10000));
         testBudget.setDate(new Date());
-        testBudget.setEncabezado("Presupuesto Test");
+        testBudget.setEncabezado("Budget Test");
         testBudget.setStatus("PENDIENTE");
         testBudget.setPropertyAmount(new java.math.BigDecimal("500000"));
         testBudget.setFkIdPerson(testPerson);
@@ -139,7 +139,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
         Payment saved = paymentRepository.save(testPayment);
 
         saved.setAmount(new java.math.BigDecimal("120000"));
-        saved.setNotes("Pago actualizado");
+        saved.setNotes("Payment actualizado");
         paymentRepository.save(saved);
 
         Optional<Payment> updated = paymentRepository.findById(saved.getIdPayment());
@@ -147,7 +147,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
         assertThat(updated).isPresent()
                 .hasValueSatisfying(p -> {
                     assertThat(p.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("120000"));
-                    assertThat(p.getNotes()).isEqualTo("Pago actualizado");
+                    assertThat(p.getNotes()).isEqualTo("Payment actualizado");
                 });
     }
 

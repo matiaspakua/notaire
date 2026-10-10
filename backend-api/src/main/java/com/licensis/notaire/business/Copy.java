@@ -81,7 +81,7 @@ public class Copy implements Serializable, Persistable<Integer>
     @JoinColumn(name = "fk_id_person", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Person fkIdPerson;
-    @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_testimony", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"copiaList", "movimientoTestimonioList"})
     private Testimony fkIdTestimony;
@@ -226,7 +226,7 @@ public class Copy implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Copia[ idCopia=" + idCopy + " ]";
+        return "Copy[ idCopia=" + idCopy + " ]";
     }
 
     public int getVersion()

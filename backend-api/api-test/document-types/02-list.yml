@@ -6,7 +6,7 @@ info:
       Traceability: CU65 (RF #55, #57)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/tipo-de-documento"
+  url: "{{base_url}}/api/v1/document-types"
   headers:
     - name: Content-Type
       value: application/json

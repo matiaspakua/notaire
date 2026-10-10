@@ -57,18 +57,18 @@ async function authenticateAdmin(page: Page): Promise<void> {
   await page.goto("/login");
   await page.waitForLoadState("networkidle");
 
-  // Direct API login. Response is a flat map (valido, token, idUsuario, nombre, ...) —
-  // not nested under "usuario" — see UsuarioController#login.
+  // Direct API login. Response is a flat map (valid, token, idUser, name, ...) —
+  // see UserController#login.
   const loginResult = await apiPost<{
-    valido: boolean;
+    valid: boolean;
     token: string;
-    idUsuario: number;
-    nombre: string;
-    tipo: string;
-  }>(page, "/usuarios/login", { name: "admin", password: "admin" });
+    idUser: number;
+    name: string;
+    type: string;
+  }>(page, "/users/login", { name: "admin", password: "admin" });
 
-  if (loginResult.ok && loginResult.data?.valido && loginResult.data.token) {
-    const { token, idUsuario, nombre, tipo } = loginResult.data;
+  if (loginResult.ok && loginResult.data?.valid && loginResult.data.token) {
+    const { token, idUser, name, type } = loginResult.data;
     // HttpOnly JWT cookie for browser proxy auth + UX cookies (#1051 / #1052).
     await page.context().addCookies([
       {
@@ -80,7 +80,7 @@ async function authenticateAdmin(page: Page): Promise<void> {
         sameSite: "Lax",
       },
       { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-      { name: "notaire-auth-role", value: (tipo ?? "ADMIN").toUpperCase(), domain: "localhost", path: "/" },
+      { name: "notaire-auth-role", value: (type ?? "ADMIN").toUpperCase(), domain: "localhost", path: "/" },
     ]);
     // Persist client profile only — never the JWT in localStorage (#1051).
     // Only hydrate when the UX status cookie is present (same as setup/auth.ts).
@@ -97,17 +97,17 @@ async function authenticateAdmin(page: Page): Promise<void> {
           })
         );
       },
-      [{ nombre, tipo, valido: true, idUsuario }] as const
+      [{ name, type, valid: true, idUser }] as const
     );
-    seedData.adminAuth = { token, user: { idUsuario, nombre, tipo } };
+    seedData.adminAuth = { token, user: { idUser, name, type } };
     // Visible to every worker process spawned after global-setup completes — read by
     // tests/setup/api-helpers.ts so page.request-based seed/cleanup calls authenticate.
     process.env.E2E_ADMIN_TOKEN = token;
   } else {
     // Fallback: UI-based login (Set-Cookie establishes HttpOnly JWT).
-    await page.getByTestId("input-usuario").fill("admin");
-    await page.getByTestId("input-contrasenia").fill("admin");
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
     await page.waitForURL(/\/dashboard/, { timeout: 15000 });
 
     const cookies = await page.context().cookies();
@@ -126,9 +126,9 @@ async function seedCatalogData(page: Page): Promise<void> {
   // (name, notes, isArchived, isRegistered, associatesProperties).
   const ttResult = await apiPost<{ idProcedureType: number; name: string }>(
     page,
-    "/tipo-tramite",
+    "/procedure-types",
     {
-      name: `Test Tramite ${seedData.testId}`,
+      name: `Test Procedure ${seedData.testId}`,
       notes: "Seeded by global-setup for E2E tests",
       isArchived: false,
       isRegistered: false,
@@ -141,9 +141,9 @@ async function seedCatalogData(page: Page): Promise<void> {
   // 2. Create a concepto — ConceptController accepts a DtoConcept (name, value, percentage).
   const concResult = await apiPost<{ idConcept: number; name: string }>(
     page,
-    "/conceptos",
+    "/concepts",
     {
-      name: `Test Concepto ${seedData.testId}`,
+      name: `Test Concept ${seedData.testId}`,
       value: 1000.0,
     }
   );
@@ -157,7 +157,7 @@ async function seedCatalogData(page: Page): Promise<void> {
     "/people",
     {
       firstName: "Seed",
-      lastName: `Persona-${seedData.testId}`,
+      lastName: `Person-${seedData.testId}`,
       identificationNumber: `SEED${seedData.testId}`,
       email: `seed-${seedData.testId}@notaire.test`,
       isClient: true,
@@ -177,7 +177,7 @@ async function seedCatalogData(page: Page): Promise<void> {
   if (seedData.seedPersonaId && seedData.seedConceptoId) {
     const presResult = await apiPost<{ idBudget: number }>(
       page,
-      "/presupuestos",
+      "/budgets",
       {
         person: { personId: seedData.seedPersonaId },
         date: "2026-05-27",
@@ -194,7 +194,7 @@ async function seedCatalogData(page: Page): Promise<void> {
   // 5. Create a usuario — UserController's UserRequest is (name, password, type, active).
   const usrResult = await apiPost<{ idUser: number }>(
     page,
-    "/usuarios",
+    "/users",
     {
       name: `testuser-${seedData.testId}`,
       password: "Test1234!",
@@ -210,7 +210,7 @@ async function seedCatalogData(page: Page): Promise<void> {
   // typeFolioId, notaryId, deedId).
   const folioResult = await apiPost<{ idFolio: number }>(
     page,
-    "/folio",
+    "/folios",
     {
       number: Math.floor(10000 + Math.random() * 90000),
       year: 2026,
@@ -227,7 +227,7 @@ async function seedCatalogData(page: Page): Promise<void> {
   // DtoManagementStatus (name, notes).
   const egResult = await apiPost<{ idManagementStatus: number }>(
     page,
-    "/estado-gestion",
+    "/management-statuses",
     {
       name: `Seed Estado ${seedData.testId}`,
       notes: "Seeded by global-setup",

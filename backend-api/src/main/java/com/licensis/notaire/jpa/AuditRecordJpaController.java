@@ -12,9 +12,9 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Query;
 import jakarta.transaction.UserTransaction;
-import com.licensis.notaire.service.AdministradorJpa;
+import com.licensis.notaire.service.JpaAdministrator;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 
@@ -22,7 +22,7 @@ import com.licensis.notaire.business.User;
  *
  * @author juanca
  */
-public class AuditRecordJpaController implements Serializable, IPersistenciaJpa {
+public class AuditRecordJpaController implements Serializable, JpaPersistence {
 
     private AuditRecordJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
@@ -66,7 +66,7 @@ public class AuditRecordJpaController implements Serializable, IPersistenciaJpa 
 
     public static AuditRecordJpaController getInstancia() {
 
-        EntityManagerFactory emf = AdministradorJpa.getEmf();
+        EntityManagerFactory emf = JpaAdministrator.getEmf();
 
         if (instancia == null || (instancia.emf == null && emf != null)) {
             instancia = new AuditRecordJpaController(null, emf);
@@ -193,7 +193,7 @@ public class AuditRecordJpaController implements Serializable, IPersistenciaJpa 
 
             listaAudit = query.getResultList();
 
-            // Filtro el resultado de la busqueda con el Usuario deseado
+            // Filtro el resultado de la busqueda con el UserAccount deseado
             for (int i = 0; i < listaAudit.size(); i++) {
                 if (miUser.getIdUser().equals(listaAudit.get(i).getFkIdUser().getIdUser())) {
                     flag = true;

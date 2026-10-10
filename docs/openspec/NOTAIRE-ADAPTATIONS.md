@@ -528,7 +528,7 @@ cd frontend && npx vitest run <nuevo-test>
 
 - Nombres: `shouldXxxYyy` con `@DisplayName` (backend); `describe/it` (frontend)
 - Nomenclatura E2E: `TS-nnnn-<workflow-name>.spec.ts` con trazabilidad a CU
-- DTOs: `DtoEntityName` (e.g. `DtoUsuario`)
+- DTOs: `DtoEntityName` (e.g. `DtoLoginUser`)
 - Assertions: AssertJ (backend); React Testing Library (frontend)
 
 ---

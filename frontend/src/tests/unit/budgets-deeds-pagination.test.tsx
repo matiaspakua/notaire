@@ -13,7 +13,7 @@ vi.stubGlobal("fetch", mockFetch);
 
 let mockSearchParams = new URLSearchParams();
 const mockReplace = vi.fn();
-let mockPathname = "/dashboard/presupuestos";
+let mockPathname = "/dashboard/budgets";
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: mockReplace }),
   usePathname: () => mockPathname,
@@ -25,10 +25,10 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
-import { usePresupuestosPage } from "@/hooks/usePresupuestos";
-import { useEscriturasPage } from "@/hooks/useEscrituras";
-import PresupuestosPage from "@/app/dashboard/presupuestos/page";
-import EscriturasPage from "@/app/dashboard/escrituras/page";
+import { usePresupuestosPage } from "@/hooks/useBudgets";
+import { useDeedsPage } from "@/hooks/useDeeds";
+import PresupuestosPage from "@/app/dashboard/budgets/page";
+import EscriturasPage from "@/app/dashboard/deeds/page";
 
 const BUDGET = { idBudget: 1192, date: "2026-10-01", status: "BORRADOR", propertyAmount: 1000 };
 const DEED = { idDeed: 845, number: 77001, status: "Borrador" };
@@ -43,7 +43,7 @@ function route(list: RegExp, page: object) {
   return (u: string) => {
     const url = String(u);
     if (list.test(url)) return json(page);
-    if (/\/presupuestos\/\d+$/.test(url)) return json(BUDGET);
+    if (/\/budgets\/\d+$/.test(url)) return json(BUDGET);
     if (/\/(buscar)\?/.test(url)) return json([]);
     if (/\?|size=/.test(url)) return json(EMPTY_PAGE);
     return json([]);
@@ -63,66 +63,66 @@ beforeEach(() => {
 
 describe("paged hooks (#1340)", () => {
   it("usePresupuestosPage requests one page, newest first", async () => {
-    mockFetch.mockImplementation(route(/\/presupuestos\?/, { content: [BUDGET], number: 1, size: 50, totalElements: 1192, totalPages: 24 }));
+    mockFetch.mockImplementation(route(/\/budgets\?/, { content: [BUDGET], number: 1, size: 50, totalElements: 1192, totalPages: 24 }));
     const { result } = renderHook(() => usePresupuestosPage({ page: 1, size: 50 }), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(urls()[0]).toMatch(/\/presupuestos\?page=1&size=50&sort=idBudget%2Cdesc$/);
+    expect(urls()[0]).toMatch(/\/budgets\?page=1&size=50&sort=idBudget%2Cdesc$/);
     expect(result.current.data?.totalElements).toBe(1192);
   });
 
-  it("useEscriturasPage requests one page, newest first", async () => {
-    mockFetch.mockImplementation(route(/\/escrituras\?/, { content: [DEED], number: 1, size: 50, totalElements: 845, totalPages: 17 }));
-    const { result } = renderHook(() => useEscriturasPage({ page: 1, size: 50 }), { wrapper });
+  it("useDeedsPage requests one page, newest first", async () => {
+    mockFetch.mockImplementation(route(/\/deeds\?/, { content: [DEED], number: 1, size: 50, totalElements: 845, totalPages: 17 }));
+    const { result } = renderHook(() => useDeedsPage({ page: 1, size: 50 }), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(urls()[0]).toMatch(/\/escrituras\?page=1&size=50&sort=idDeed%2Cdesc$/);
+    expect(urls()[0]).toMatch(/\/deeds\?page=1&size=50&sort=idDeed%2Cdesc$/);
   });
 });
 
 describe("PresupuestosPage (#1340)", () => {
-  beforeEach(() => { mockPathname = "/dashboard/presupuestos"; });
+  beforeEach(() => { mockPathname = "/dashboard/budgets"; });
 
   it("renders the server page with the footer and never asks for size=1000", async () => {
-    mockFetch.mockImplementation(route(/\/presupuestos\?page=/, { content: [BUDGET], number: 0, size: 20, totalElements: 1192, totalPages: 60 }));
+    mockFetch.mockImplementation(route(/\/budgets\?page=/, { content: [BUDGET], number: 0, size: 20, totalElements: 1192, totalPages: 60 }));
     render(<PresupuestosPage />, { wrapper });
     expect(await screen.findByTestId("btn-items-presupuesto-1192")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
-    expect(urls().some((u) => /\/presupuestos\?page=0&size=20&sort=idBudget%2Cdesc$/.test(u))).toBe(true);
-    expect(urls().filter((u) => /\/presupuestos\?/.test(u)).some((u) => u.includes("size=1000"))).toBe(false);
+    expect(urls().some((u) => /\/budgets\?page=0&size=20&sort=idBudget%2Cdesc$/.test(u))).toBe(true);
+    expect(urls().filter((u) => /\/budgets\?/.test(u)).some((u) => u.includes("size=1000"))).toBe(false);
   });
 
   it("finds a budget by number outside the loaded page", async () => {
-    mockFetch.mockImplementation(route(/\/presupuestos\?page=/, { content: [], number: 0, size: 20, totalElements: 1192, totalPages: 60 }));
+    mockFetch.mockImplementation(route(/\/budgets\?page=/, { content: [], number: 0, size: 20, totalElements: 1192, totalPages: 60 }));
     render(<PresupuestosPage />, { wrapper });
     fireEvent.change(await screen.findByTestId("input-search-presupuesto"), { target: { value: "1192" } });
     expect(await screen.findByTestId("btn-items-presupuesto-1192")).toBeInTheDocument();
-    expect(urls().some((u) => /\/presupuestos\/1192$/.test(u))).toBe(true);
+    expect(urls().some((u) => /\/budgets\/1192$/.test(u))).toBe(true);
   });
 
   it("clamps a page past the end", async () => {
     mockSearchParams = new URLSearchParams("page=99");
-    mockFetch.mockImplementation(route(/\/presupuestos\?page=/, { content: [], number: 99, size: 20, totalElements: 1192, totalPages: 60 }));
+    mockFetch.mockImplementation(route(/\/budgets\?page=/, { content: [], number: 99, size: 20, totalElements: 1192, totalPages: 60 }));
     render(<PresupuestosPage />, { wrapper });
-    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith("/dashboard/presupuestos?page=59", { scroll: false }));
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith("/dashboard/budgets?page=59", { scroll: false }));
   });
 });
 
 describe("EscriturasPage (#1340)", () => {
-  beforeEach(() => { mockPathname = "/dashboard/escrituras"; });
+  beforeEach(() => { mockPathname = "/dashboard/deeds"; });
 
   it("renders the server page with the footer and never asks for size=1000", async () => {
-    mockFetch.mockImplementation(route(/\/escrituras\?page=/, { content: [DEED], number: 0, size: 20, totalElements: 845, totalPages: 43 }));
+    mockFetch.mockImplementation(route(/\/deeds\?page=/, { content: [DEED], number: 0, size: 20, totalElements: 845, totalPages: 43 }));
     render(<EscriturasPage />, { wrapper });
     expect(await screen.findByText("77001")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
-    expect(urls().some((u) => /\/escrituras\?page=0&size=20&sort=idDeed%2Cdesc$/.test(u))).toBe(true);
-    expect(urls().filter((u) => /\/escrituras\?/.test(u)).some((u) => u.includes("size=1000"))).toBe(false);
+    expect(urls().some((u) => /\/deeds\?page=0&size=20&sort=idDeed%2Cdesc$/.test(u))).toBe(true);
+    expect(urls().filter((u) => /\/deeds\?/.test(u)).some((u) => u.includes("size=1000"))).toBe(false);
   });
 
   it("searches by number with the parameter the backend reads", async () => {
-    mockFetch.mockImplementation(route(/\/escrituras\?page=/, { content: [DEED], number: 0, size: 20, totalElements: 845, totalPages: 43 }));
+    mockFetch.mockImplementation(route(/\/deeds\?page=/, { content: [DEED], number: 0, size: 20, totalElements: 845, totalPages: 43 }));
     render(<EscriturasPage />, { wrapper });
     fireEvent.change(await screen.findByTestId("input-search-escritura"), { target: { value: "77001" } });
-    await waitFor(() => expect(urls().some((u) => /\/escrituras\/buscar\?number=77001$/.test(u))).toBe(true));
+    await waitFor(() => expect(urls().some((u) => /\/deeds\/search\?number=77001$/.test(u))).toBe(true));
     expect(urls().some((u) => u.includes("numero="))).toBe(false);
   });
 });

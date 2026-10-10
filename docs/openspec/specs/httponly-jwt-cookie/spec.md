@@ -10,7 +10,7 @@ Source: #1051; owners CU78 – Security and Compliance, CU84 – Login.
 
 ### Requirement: Login establishes an HttpOnly session cookie
 
-Successful `POST /api/v1/usuarios/login` MUST set a session cookie that carries
+Successful `POST /api/v1/users/login` MUST set a session cookie that carries
 the JWT with attributes `HttpOnly`, `SameSite` of `Lax` or `Strict`, and
 `Secure` in production (HTTPS) deployments. The cookie MUST NOT be readable from
 `document.cookie`.

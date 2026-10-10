@@ -16,7 +16,7 @@ The back half of the case workflow exists as separate modules (escrituras, testi
 
 ## What Changes
 
-- `GET /api/v1/gestiones/{id}/resumen-caso` returns the gestión header and, for each escritura reached through its trámites, the testimonios with verified flag, flagged flag, the state of the latest movement (SIN_INGRESAR, INGRESADO, INSCRIPTO, RETIRADO) and the number of copias.
+- `GET /api/v1/managements/{id}/case-summary` returns the gestión header and, for each escritura reached through its trámites, the testimonios with verified flag, flagged flag, the state of the latest movement (SIN_INGRESAR, INGRESADO, INSCRIPTO, RETIRADO) and the number of copias.
 - `ManagementCaseSummaryService` builds it; `DtoManagementCaseSummary`, `DtoCaseDeed` and `DtoCaseTestimony` live in `notaire-shared`.
 - The gestiones screen gets a `Resumen del caso` action opening a dialog with Escrituras, Testimonios, Copias and Pagos; pagos come from the existing `resumen-financiero` endpoint.
 - #774 stays open: creating each linked record directly from the gestión (rather than from its own module) and the full first-case journey spec are listed on the issue as the remaining work.

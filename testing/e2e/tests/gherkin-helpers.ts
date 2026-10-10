@@ -104,7 +104,7 @@ export class GherkinSteps {
   async whenUserSearches(searchTerm: string) {
     const searchInput = this.page
       .getByRole("searchbox")
-      .or(this.page.getByPlaceholder(/buscar/i));
+      .or(this.page.getByPlaceholder(/search/i));
     await searchInput.fill(searchTerm);
   }
 
@@ -321,7 +321,7 @@ export const TestData = {
     domicilio: "Calle Falsa 123",
   },
   presupuesto: {
-    tipoTramite: "Escritura",
+    tipoTramite: "Deed",
     observaciones: "Presupuesto de prueba",
     fecha: new Date().toISOString().split("T")[0],
     monto: 1000,
@@ -345,12 +345,12 @@ export const TestData = {
   },
   suplencia: {
     fechaInicio: new Date().toISOString().split("T")[0],
-    motivo: "Suplencia de prueba",
+    motivo: "Substitution de prueba",
   },
   pago: {
     monto: 5000,
     formaPago: "Efectivo",
-    observaciones: "Pago de prueba E2E",
+    observaciones: "Payment de prueba E2E",
   },
   testimonio: {
     fecha: new Date().toISOString().split("T")[0],
@@ -361,9 +361,9 @@ export const TestData = {
     tieneDeuda: false,
   },
   catalogo: {
-    tipoTramite: { nombre: "Test Tramite", descripcion: "Catálogo de prueba" },
+    tipoTramite: { nombre: "Test Procedure", descripcion: "Catálogo de prueba" },
     tipoDocumento: { nombre: "Test Documento", descripcion: "Catálogo de prueba" },
-    concepto: { nombre: "Test Concepto", descripcion: "Catálogo de prueba", valor: 100 },
+    concepto: { nombre: "Test Concept", descripcion: "Catálogo de prueba", valor: 100 },
     estadoGestion: { nombre: "Test Estado", descripcion: "Catálogo de prueba" },
     folio: { numero: 9999, disponible: true },
   },

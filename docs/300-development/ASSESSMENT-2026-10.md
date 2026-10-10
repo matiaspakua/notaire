@@ -54,8 +54,8 @@ A first Bruno run showed 30 failures. The cause was the session overwriting the 
   passes; 6 rows have no Bruno test. -> #1244
 - 14 scenarios for CU15, CU23, CU24, CU25, CU39, CU42, CU47, CU48, CU59, CU62, CU65, CU66 are
   `test.skip`. -> #1243
-- 10 endpoints have no UI consumer (heuristic scan): `pagos/fecha`, `presupuestos/persona`,
-  `historial/gestion`, `reportes/documentos-por-vencer`, `usuarios/persona`, and the four
+- 10 endpoints have no UI consumer (heuristic scan): `pagos/date`, `presupuestos/person`,
+  `historial/management`, `reportes/documents-due`, `usuarios/person`, and the four
   `tipo-identificacion` operations. -> #1250
 - Epics still open: #771 (cross-module case workflow), #773 and #774 (slices merged, issues
   open), #898 (73 use cases in Next.js).
@@ -78,8 +78,8 @@ Target: hexagonal (`adapter.in.web` -> `application.usecase` -> `repository`/`ad
 - Strengths: versioned path (`/api/v1`), committed OpenAPI artifact diffed in CI,
   `201` + `Location` helper, consistent DTO naming.
 - ADR-023 defines the naming policy but defers all renames; paths remain mixed
-  (`/people`, `/items` vs `/gestiones`, `/pagos`), singular (`/folio`, `/inmueble`, `/copia`),
-  with `/buscar` routes. -> #1245
+  (`/people`, `/items` vs `/managements`, `/payments`), singular (`/folios`, `/properties`, `/copies`),
+  with `/search` routes. -> #1245
 - Paging: 15 files use `Pageable`; other list endpoints are unbounded; no caching layer. -> #596, #597
 
 ## 6. Testing strategy
@@ -103,7 +103,7 @@ Findings:
 
 | Finding | Evidence | Issue |
 |---------|----------|-------|
-| No server-side authorization | No `@PreAuthorize`/`hasRole`; an `EMPLEADO` token got 200 on `/usuarios`, `/roles`, `/audit-log` and 201 creating an `ESCRIBANO` user | #559 (critical, commented) |
+| No server-side authorization | No `@PreAuthorize`/`hasRole`; an `EMPLEADO` token got 200 on `/users`, `/roles`, `/audit-log` and 201 creating an `ESCRIBANO` user | #559 (critical, commented) |
 | Default `admin/admin` seed outside production | `app.admin.*` defaults in `application.properties`; login returns 200 | #1249 |
 | JWT without refresh or revocation | existing | #676 |
 | Outdated JasperReports | existing | #567 |

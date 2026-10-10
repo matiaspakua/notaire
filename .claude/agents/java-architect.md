@@ -50,10 +50,10 @@ When designing architecture or reviewing code structure:
 // Entity (negocio package) — never returned from controllers
 @Entity
 @Table(name = "usuarios")
-public class Usuario { ... }
+public class UserAccount { ... }
 
 // DTO (dto or negocio package) — what the API speaks
-public class DtoUsuario { ... }
+public class DtoLoginUser { ... }
 
 // Controller → Service → Repository (never skip layers)
 ```

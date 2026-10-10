@@ -25,9 +25,9 @@ test.describe("TS-0001 - Login Authentication", () => {
   });
 
   test("displays login form", async ({ page }) => {
-    await expect(page.getByTestId("input-usuario")).toBeVisible();
-    await expect(page.getByTestId("input-contrasenia")).toBeVisible();
-    await expect(page.getByTestId("btn-ingresar")).toBeVisible();
+    await expect(page.getByTestId("input-username")).toBeVisible();
+    await expect(page.getByTestId("input-password")).toBeVisible();
+    await expect(page.getByTestId("btn-sign-in")).toBeVisible();
   });
 
   test("does not disclose backend URL on the public login page (issue #1055)", async ({
@@ -42,23 +42,23 @@ test.describe("TS-0001 - Login Authentication", () => {
   });
 
   test("shows error for empty submission", async ({ page }) => {
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("btn-sign-in").click();
     await expect(page.getByText("Complete usuario y contraseña")).toBeVisible();
   });
 
   test("shows error for wrong credentials", async ({ page }) => {
-    await page.getByTestId("input-usuario").fill("usuario_invalido");
-    await page.getByTestId("input-contrasenia").fill("contrasenia_invalida");
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill("usuario_invalido");
+    await page.getByTestId("input-password").fill("contrasenia_invalida");
+    await page.getByTestId("btn-sign-in").click();
     await expect(
       page.getByText(/incorrectos|servidor/i)
     ).toBeVisible({ timeout: 5000 });
   });
 
   test("redirects to dashboard on successful login", async ({ page }) => {
-    await page.getByTestId("input-usuario").fill("admin");
-    await page.getByTestId("input-contrasenia").fill("admin");
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
   });
 });

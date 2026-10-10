@@ -4,7 +4,7 @@ import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
 import com.licensis.notaire.application.port.in.payment.QueryPaymentsUseCase;
 import com.licensis.notaire.domain.payment.Money;
 import com.licensis.notaire.domain.payment.PaymentDetails;
-import com.licensis.notaire.dto.DtoManagementResumenFinanciero;
+import com.licensis.notaire.dto.DtoManagementFinancialSummary;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.repository.ProcedureRepository;
@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * CU47/CU02 - Resumen financiero agregado de una gestión: total presupuestado,
- * total cobrado y saldo pendiente, sumados a través de los presupuestos de
- * cada trámite vinculado.
+ * CU47/CU02 - Financial summary agregado of a management: total presupuestado,
+ * total cobrado and outstanding balance, sumados a través of the budgets of
+ * each procedure vinculado.
  */
 @Service
 public class ManagementResumenFinancieroService {
@@ -39,7 +39,7 @@ public class ManagementResumenFinancieroService {
     }
 
     @Transactional(readOnly = true)
-    public DtoManagementResumenFinanciero getSummary(Integer idManagement) {
+    public DtoManagementFinancialSummary getSummary(Integer idManagement) {
         BigDecimal pendingBalance = managementArchiveDebtService.calculatePendingBalance(idManagement);
 
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
@@ -61,6 +61,6 @@ public class ManagementResumenFinancieroService {
             totalPresupuestado = Money.of(totalPresupuestado.add(saldoBudget).add(cobradoBudget));
         }
 
-        return new DtoManagementResumenFinanciero(idManagement, totalPresupuestado, totalCobrado, pendingBalance);
+        return new DtoManagementFinancialSummary(idManagement, totalPresupuestado, totalCobrado, pendingBalance);
     }
 }

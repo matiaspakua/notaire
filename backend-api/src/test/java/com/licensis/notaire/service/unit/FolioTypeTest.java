@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("TipoDeFolio Unit Tests")
+@DisplayName("FolioType Unit Tests")
 class FolioTypeTest {
 
     @Test

@@ -10,7 +10,7 @@ const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
 
 import { apiGetPage } from "@/lib/api-client";
-import { useAuditoria } from "@/hooks/useAuditoria";
+import { useAudit } from "@/hooks/useAudit";
 
 function pageResponse(body: unknown) {
   const json = JSON.stringify(body);
@@ -45,14 +45,14 @@ describe("apiGetPage (#1340)", () => {
   });
 });
 
-describe("useAuditoria (#1340)", () => {
+describe("useAudit (#1340)", () => {
   beforeEach(() => mockFetch.mockReset());
 
   it("requests one sorted page with the module filter instead of size=1000", async () => {
     mockFetch.mockReturnValue(
       pageResponse({ content: [{ idAuditRecord: 9 }], page: 1, size: 50, totalElements: 120, totalPages: 3 }),
     );
-    const { result } = renderHook(() => useAuditoria({ page: 1, size: 50, module: "People" }), { wrapper });
+    const { result } = renderHook(() => useAudit({ page: 1, size: 50, module: "People" }), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     const url = String(mockFetch.mock.calls[0][0]);
     expect(url).toMatch(/\/audit-log\?page=1&size=50&sort=date%2Cdesc&module=People$/);

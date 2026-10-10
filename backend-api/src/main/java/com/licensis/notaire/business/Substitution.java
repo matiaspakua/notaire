@@ -25,9 +25,9 @@ import jakarta.persistence.Version;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
- * Clase que representa una suplencia. Una suplencia indicia el reemplazado en el desarrollo y
+ * Clase that representa a substitution. A substitution indicia the reemplazado in the desarrollo and
  * administracion
- * de gestiones de un escribano (suplente) por otro (suplantado), en un determinado periodo de
+ * of managements of a notary (suplente) by another (suplantado), in a determinado period of
  * tiempo (fecha desde,
  * fecha hasta).
  *
@@ -192,7 +192,7 @@ public class Substitution implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Suplencia[ idSuplencia=" + idSubstitution + " ]";
+        return "Substitution[ idSuplencia=" + idSubstitution + " ]";
     }
 
 

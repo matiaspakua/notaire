@@ -57,7 +57,7 @@ class DeedServiceTest {
     class FindAll {
 
         @Test
-        @DisplayName("Should return all escrituras from repository")
+        @DisplayName("Should return all deeds from repository")
         void shouldReturnAllEscrituras() {
             when(deedRepository.findAll()).thenReturn(List.of(testDeed));
 
@@ -68,7 +68,7 @@ class DeedServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty list when no escrituras exist")
+        @DisplayName("Should return empty list when not deeds exist")
         void shouldReturnEmptyListWhenNoneExist() {
             when(deedRepository.findAll()).thenReturn(Collections.emptyList());
 
@@ -170,7 +170,7 @@ class DeedServiceTest {
     class SearchPorNumber {
 
         @Test
-        @DisplayName("Should return all escrituras when number is null")
+        @DisplayName("Should return all deeds when number is null")
         void shouldReturnAllWhenNumberIsNull() {
             when(deedRepository.findAll()).thenReturn(List.of(testDeed));
 

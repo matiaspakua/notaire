@@ -17,7 +17,7 @@ Every `@DeleteMapping` handler SHALL return exactly the 2xx status codes its Ope
 
 #### Scenario: Payment delete
 
-- **WHEN** DELETE /api/v1/pagos/{id} removes an existing payment
+- **WHEN** DELETE /api/v1/payments/{id} removes an existing payment
 - **THEN** the response is 204 with no body
 
 #### Scenario: History delete

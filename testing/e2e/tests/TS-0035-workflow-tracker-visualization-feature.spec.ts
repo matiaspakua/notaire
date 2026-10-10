@@ -19,9 +19,9 @@ import {
 
 async function loginAs(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   await page.waitForLoadState("domcontentloaded");
 }
@@ -99,7 +99,7 @@ test.describe("Workflow hero shows the newest case (#1347)", () => {
       estadoGestionId: estado.data!.idManagementStatus,
     });
     expect(gestion.ok, gestion.error).toBe(true);
-    const trace = await apiGet(page, `/gestiones/${gestion.data!.idManagement}/workflow-trace`);
+    const trace = await apiGet(page, `/managements/${gestion.data!.idManagement}/workflow-trace`);
     expect(trace.ok, trace.error).toBe(true);
 
     await page.goto("/dashboard");

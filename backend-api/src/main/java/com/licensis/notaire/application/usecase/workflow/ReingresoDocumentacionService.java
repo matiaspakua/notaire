@@ -1,10 +1,10 @@
 package com.licensis.notaire.application.usecase.workflow;
 
-import com.licensis.notaire.dto.DtoDocumentNecesario;
+import com.licensis.notaire.dto.DtoRequiredDocument;
 import com.licensis.notaire.dto.DtoDocumentReentered;
-import com.licensis.notaire.dto.DtoManagementReingresoDocumentacion;
-import com.licensis.notaire.dto.DtoReingresoDocumentacionRequest;
-import com.licensis.notaire.dto.DtoProcedureDocumentacionNecesaria;
+import com.licensis.notaire.dto.DtoManagementDocumentReentry;
+import com.licensis.notaire.dto.DtoDocumentReentryRequest;
+import com.licensis.notaire.dto.DtoProcedureRequiredDocumentation;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.SubmittedDocument;
@@ -23,10 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * CU43 - Reingresar documentación: expone, para una gestión, sus trámites
- * junto con la documentación necesaria de cada uno (según su
- * {@code PlantillaTramite}), y permite reingresar un tipo de documento
- * creando un nuevo {@code DocumentoPresentado} con {@code reingresado=true}.
+ * CU43 - Reenter documentation: expone, for a management, their procedures
+ * together with the documentation required of each uno (according to its
+ * {@code ProcedureTemplate}), y permite reingresar un tipo de documento
+ * creando a new {@code SubmittedDocument} with {@code reingresado=true}.
  */
 @Service
 public class ReingresoDocumentacionService {
@@ -46,22 +46,22 @@ public class ReingresoDocumentacionService {
     }
 
     @Transactional(readOnly = true)
-    public DtoManagementReingresoDocumentacion getRequiredDocumentation(Integer idManagement) {
+    public DtoManagementDocumentReentry getRequiredDocumentation(Integer idManagement) {
         DeedManagement management = findManagementOrThrow(idManagement);
-        List<DtoProcedureDocumentacionNecesaria> procedures = procedureRepository
+        List<DtoProcedureRequiredDocumentation> procedures = procedureRepository
                 .findByFkIdManagementIdManagement(idManagement).stream()
                 .map(this::toDtoProcedure)
                 .toList();
-        return new DtoManagementReingresoDocumentacion(management.getIdManagement(), management.getNumber(),
+        return new DtoManagementDocumentReentry(management.getIdManagement(), management.getNumber(),
                 management.getEncabezado(), procedures);
     }
 
     @Transactional
-    public DtoDocumentReentered reenter(Integer idManagement, DtoReingresoDocumentacionRequest request) {
+    public DtoDocumentReentered reenter(Integer idManagement, DtoDocumentReentryRequest request) {
         findManagementOrThrow(idManagement);
         Procedure procedure = procedureRepository.findById(request.idProcedure())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Trámite no encontrado con ID: " + request.idProcedure()));
+                        "Procedure not found with ID: " + request.idProcedure()));
         validateBelongsToManagement(procedure, idManagement);
         DocumentType typeDocument = validateRequiredDocumentation(procedure, request.idDocumentType());
 
@@ -73,14 +73,14 @@ public class ReingresoDocumentacionService {
 
     private DeedManagement findManagementOrThrow(Integer idManagement) {
         return managementRepository.findById(idManagement)
-                .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
+                .orElseThrow(() -> new ResourceNotFoundException("Management not found with ID: " + idManagement));
     }
 
     private static void validateBelongsToManagement(Procedure procedure, Integer idManagement) {
         DeedManagement management = procedure.getFkIdManagement();
         if (management == null || !idManagement.equals(management.getIdManagement())) {
             throw new BusinessValidationException(
-                    "El trámite " + procedure.getIdProcedure() + " no pertenece a la gestión " + idManagement);
+                    "The procedure " + procedure.getIdProcedure() + " not belongs to the management " + idManagement);
         }
     }
 
@@ -90,7 +90,7 @@ public class ReingresoDocumentacionService {
         ProcedureTemplate template = procedureTemplateRepository.findById(pk)
                 .orElseThrow(() -> new BusinessValidationException(
                         "El tipo de documento " + idDocumentType
-                                + " no forma parte de la documentación necesaria del trámite "
+                                + " not forma parte of the documentation required of the procedure "
                                 + procedure.getIdProcedure()));
         return template.getDocumentType();
     }
@@ -111,18 +111,18 @@ public class ReingresoDocumentacionService {
         return document;
     }
 
-    private DtoProcedureDocumentacionNecesaria toDtoProcedure(Procedure procedure) {
+    private DtoProcedureRequiredDocumentation toDtoProcedure(Procedure procedure) {
         Integer idProcedureType = procedure.getFkIdProcedureType().getIdProcedureType();
-        List<DtoDocumentNecesario> documents = procedureTemplateRepository
+        List<DtoRequiredDocument> documents = procedureTemplateRepository
                 .findByProcedureTypeIdProcedureType(idProcedureType).stream()
                 .map(template -> toDtoDocumentNecesario(template.getDocumentType()))
                 .toList();
-        return new DtoProcedureDocumentacionNecesaria(procedure.getIdProcedure(),
+        return new DtoProcedureRequiredDocumentation(procedure.getIdProcedure(),
                 procedure.getFkIdProcedureType().getName(), documents);
     }
 
-    private static DtoDocumentNecesario toDtoDocumentNecesario(DocumentType typeDocument) {
-        return new DtoDocumentNecesario(typeDocument.getIdDocumentType(), typeDocument.getName(),
+    private static DtoRequiredDocument toDtoDocumentNecesario(DocumentType typeDocument) {
+        return new DtoRequiredDocument(typeDocument.getIdDocumentType(), typeDocument.getName(),
                 typeDocument.getExpires(), typeDocument.getDueDays(), typeDocument.getDeliveredBy());
     }
 

@@ -1,6 +1,6 @@
 /**
- * CU20 - Dar Alta Usuario (Gherkin style)
- * CU21 - Modificar Usuario
+ * CU20 - Dar Alta UserAccount (Gherkin style)
+ * CU21 - Modificar UserAccount
  * CU23 - Ver registro de actividades de usuario
  * CU48 - Dar alta escribano
  * CU51 - Modificar escribano
@@ -34,19 +34,19 @@ async function seedEditableUsuario(page: Page): Promise<string> {
     active: true,
   });
   expect(created.ok, created.error ?? "createUsuario failed").toBe(true);
-  await page.goto("/dashboard/administracion/usuarios");
+  await page.goto("/dashboard/administration/users");
   await page.waitForLoadState("networkidle");
   await expect(page.getByRole("table").getByText(username)).toBeVisible({ timeout: 15000 });
   return username;
 }
 
-test.describe("CU20 - Dar Alta Usuario", () => {
+test.describe("CU20 - Dar Alta UserAccount", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/usuarios");
+    await steps.givenUserIsOnPage("/dashboard/administration/users");
   });
 
   test("CU20-GW01: Given on usuarios page, When click nuevo usuario, Then modal opens", async () => {
@@ -79,14 +79,14 @@ test.describe("CU20 - Dar Alta Usuario", () => {
   });
 });
 
-test.describe("CU21 - Modificar Usuario", () => {
+test.describe("CU21 - Modificar UserAccount", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
     await syncAdminTokenFromBrowser(page);
-    await steps.givenUserIsOnPage("/dashboard/administracion/usuarios");
+    await steps.givenUserIsOnPage("/dashboard/administration/users");
   });
 
   test("CU21-GW01: Given usuario exists, When click editar, Then modal opens with data", async ({
@@ -134,7 +134,7 @@ test.describe("CU23 - Ver registro de actividades", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/usuarios");
+    await steps.givenUserIsOnPage("/dashboard/administration/users");
   });
 
   test.skip("CU23-GW01 (#1146): Given on usuarios page, When click ver actividades, Then shows log", async () => {
@@ -148,11 +148,11 @@ test.describe("CU48 - Dar alta escribano", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/usuarios");
+    await steps.givenUserIsOnPage("/dashboard/administration/users");
   });
 
   test.skip("CU48-GW01 (#1146): Given on escribanos page, When click nuevo escribano, Then modal opens", async () => {
-    // Skipped (#1146): no /dashboard/administracion/escribanos page exists in the current frontend.
+    // Skipped (#1146): no /dashboard/administration/escribanos page exists in the current frontend.
     // Escribanos are managed through the Usuarios module.
   });
 

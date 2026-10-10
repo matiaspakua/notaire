@@ -48,8 +48,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 
 @RestController
-@RequestMapping("/api/v1/presupuestos")
-@Tag(name = "Presupuestos", description = "API para gestionar presupuestos")
+@RequestMapping("/api/v1/budgets")
+@Tag(name = "Budgets", description = "API for managing budgets")
 public class BudgetController {
 
     private static final Logger log = LoggerFactory.getLogger(BudgetController.class);
@@ -66,8 +66,8 @@ public class BudgetController {
             String encabezado,
             @NotBlank
             @Schema(allowableValues = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "FACTURADO"},
-                    description = "Estado del presupuesto (#1346). Se acepta cualquier mayúscula/minúscula y se "
-                            + "guarda el código; otro valor responde 400.")
+                    description = "Budget status (#1346). Accepts any uppercase/lowercase and "
+                            + "guarda the código; another valor responde 400.")
             String status,
             @JsonAlias("amount") java.math.BigDecimal propertyAmount,
             String notes,
@@ -75,7 +75,7 @@ public class BudgetController {
             @JsonProperty("person") PersonRef person) {}
 
     // NON_NULL so omitted client association is absent (not "person": null) — matches CU01 /
-    // frontend Presupuesto.person?: DtoPerson and BudgetPersonAssociationPgIntegrationTest.
+    // frontend Budget.person?: DtoPerson and BudgetPersonAssociationPgIntegrationTest.
     @JsonInclude(JsonInclude.Include.NON_NULL)
     record BudgetResponse(
             Integer idBudget,
@@ -168,7 +168,7 @@ public class BudgetController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener presupuestos paginados",
+    @Operation(summary = "Get budgets paginados",
             description = "Parámetros: page (default 0), size (default 20), sort (ej. idPresupuesto,desc)")
     public ResponseEntity<Page<BudgetResponse>> getAll(
             @ParameterObject @PageableDefault(size = 20, sort = "idBudget", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -180,7 +180,7 @@ public class BudgetController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener presupuesto por ID")
+    @Operation(summary = "Get budget by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<BudgetResponse> getById(@PathVariable Integer id) {
         return budgetService.findById(id)
@@ -193,8 +193,8 @@ public class BudgetController {
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
-    @GetMapping("/{id}/resumen")
-    @Operation(summary = "CU47 - Obtener resumen financiero de un presupuesto (total, saldo y pagos)")
+    @GetMapping("/{id}/summary")
+    @Operation(summary = "CU47 - Get financial summary of a budget (total, balance and payments)")
     public ResponseEntity<DtoBudgetResumen> getResumen(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(PaymentWebMapper.toDto(budgetSummaryUseCase.summary(id)));
@@ -203,8 +203,8 @@ public class BudgetController {
         }
     }
 
-    @GetMapping("/persona/{idPerson}")
-    @Operation(summary = "Obtener presupuestos de una persona (CU60)")
+    @GetMapping("/person/{idPerson}")
+    @Operation(summary = "Get budgets of a person (CU60)")
     @Transactional(readOnly = true)
     public ResponseEntity<List<BudgetResponse>> getByPerson(@PathVariable Integer idPerson) {
         return ResponseEntity.ok(budgetService.findByPerson(idPerson).stream().map(this::toResponse).toList());
@@ -212,24 +212,24 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Estado fuera del vocabulario")
+    @ApiResponse(responseCode = "400", description = "Status outside the vocabulary")
 })
-    @GetMapping("/buscar")
-    @Operation(summary = "Buscar presupuestos por estado (CU60)")
+    @GetMapping("/search")
+    @Operation(summary = "Search budgets by status (CU60)")
     @Transactional(readOnly = true)
     public ResponseEntity<List<BudgetResponse>> search(
-            @Parameter(description = "Estado del presupuesto (cualquier mayúscula/minúscula; otro valor responde 400)",
+            @Parameter(description = "Budget status (any uppercase/lowercase; another valor responde 400)",
                     schema = @Schema(allowableValues = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "FACTURADO"})) @RequestParam(required = false) String status) {
         return ResponseEntity.ok(budgetService.findByStatus(canonicalStatus(status)).stream().map(this::toResponse).toList());
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo presupuesto")
+    @Operation(summary = "Create budget")
     public ResponseEntity<BudgetResponse> create(@Valid @RequestBody BudgetRequest request) {
         Budget entity = new Budget();
         applyRequest(entity, request);
@@ -239,11 +239,11 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida (p. ej. estado fuera del vocabulario)"),
+    @ApiResponse(responseCode = "400", description = "Invalid request (p. ej. status outside the vocabulary)"),
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar presupuesto")
+    @Operation(summary = "Update budget")
     public ResponseEntity<BudgetResponse> update(@PathVariable Integer id, @Valid @RequestBody BudgetRequest request) {
         try {
             return budgetService.findById(id)
@@ -263,7 +263,7 @@ public class BudgetController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar presupuesto")
+    @Operation(summary = "Delete budget")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             budgetService.deleteById(id);
@@ -275,14 +275,14 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "El tipo de trámite no tiene plantilla configurada"),
-    @ApiResponse(responseCode = "404", description = "Presupuesto no encontrado")
+    @ApiResponse(responseCode = "400", description = "The procedure type does not have template configured"),
+    @ApiResponse(responseCode = "404", description = "Budget not found")
 })
-    @PostMapping("/{id}/items-desde-plantilla")
-    @Operation(summary = "CU39 - Cargar ítems del presupuesto desde la plantilla del tipo de trámite")
+    @PostMapping("/{id}/items-from-template")
+    @Operation(summary = "CU39 - Load budget items from the template of the procedure type")
     public ResponseEntity<List<ItemResponse>> cargarItemsDesdeTemplate(
             @PathVariable Integer id,
-            @Parameter(description = "ID del tipo de trámite")
+            @Parameter(description = "ID of the procedure type")
             @RequestParam("tipoTramiteId") Integer typeProcedureId) {
         return ResponseEntity.ok(budgetTemplateService.cargarItemsDesdeTemplate(id, typeProcedureId).stream()
                 .map(ItemResponse::from).toList());
@@ -290,10 +290,10 @@ public class BudgetController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Presupuesto o ítem de catálogo no encontrado")
+    @ApiResponse(responseCode = "404", description = "Budget or item of catálogo not found")
 })
-    @PostMapping("/{id}/items-desde-catalogo")
-    @Operation(summary = "CU71 - Agregar al presupuesto copias de ítems existentes del catálogo")
+    @PostMapping("/{id}/items-from-catalog")
+    @Operation(summary = "CU71 - Add to the budget copies of items existentes of the catálogo")
     public ResponseEntity<List<ItemResponse>> addItemsFromCatalog(
             @PathVariable Integer id,
             @RequestBody List<Integer> idItems) {

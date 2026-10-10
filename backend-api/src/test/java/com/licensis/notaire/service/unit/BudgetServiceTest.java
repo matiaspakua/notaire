@@ -40,12 +40,12 @@ class BudgetServiceTest {
         testBudget = new Budget();
         testBudget.setIdBudget(1);
         testBudget.setNumber(1000);
-        testBudget.setEncabezado("Presupuesto Venta");
+        testBudget.setEncabezado("Budget Venta");
         testBudget.setStatus("APROBADO");
     }
 
     @Test
-    @DisplayName("Should find all presupuestos")
+    @DisplayName("Should find all budgets")
     void shouldFindAll() {
         List<Budget> presupuestos = new ArrayList<>();
         presupuestos.add(testBudget);
@@ -62,7 +62,7 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty list when no presupuestos exist")
+    @DisplayName("Should return empty list when not budgets exist")
     void shouldReturnEmptyListWhenNoPresupuestosExist() {
         when(budgetRepository.findAll()).thenReturn(new ArrayList<>());
 
@@ -75,7 +75,7 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should find presupuestos with pagination")
+    @DisplayName("Should find budgets with pagination")
     void shouldFindAllPaged() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Budget> page = new PageImpl<>(List.of(testBudget), pageable, 1);
@@ -119,7 +119,7 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should find presupuestos by person")
+    @DisplayName("Should find budgets by person")
     void shouldFindPresupuestosByPerson() {
         List<Budget> presupuestos = new ArrayList<>();
         presupuestos.add(testBudget);
@@ -137,7 +137,7 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty list when person has no presupuestos")
+    @DisplayName("Should return empty list when person has not budgets")
     void shouldReturnEmptyListWhenPersonHasNoPresupuestos() {
         when(budgetRepository.findByPersonId(999))
                 .thenReturn(new ArrayList<>());
@@ -151,7 +151,7 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should find presupuestos by status")
+    @DisplayName("Should find budgets by status")
     void shouldFindPresupuestosByStatus() {
         List<Budget> presupuestos = new ArrayList<>();
         presupuestos.add(testBudget);
@@ -170,7 +170,7 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should return all presupuestos when status is null")
+    @DisplayName("Should return all budgets when status is null")
     void shouldReturnAllPresupuestosWhenStatusIsNull() {
         List<Budget> presupuestos = new ArrayList<>();
         presupuestos.add(testBudget);
@@ -188,7 +188,7 @@ class BudgetServiceTest {
     }
 
     @Test
-    @DisplayName("Should return all presupuestos when status is blank")
+    @DisplayName("Should return all budgets when status is blank")
     void shouldReturnAllPresupuestosWhenStatusIsBlank() {
         List<Budget> presupuestos = new ArrayList<>();
         presupuestos.add(testBudget);
@@ -223,7 +223,7 @@ class BudgetServiceTest {
 
         assertThat(result).isNotNull()
                 .extracting(Budget::getEncabezado)
-                .isEqualTo("Presupuesto");
+                .isEqualTo("Budget");
         assertThat(result.getNumber()).isNotEqualTo(0);
 
         verify(budgetRepository, times(1)).create(any(Budget.class));
@@ -303,7 +303,7 @@ class BudgetServiceTest {
 
         assertThatThrownBy(() -> budgetService.update(999, testBudget))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("Presupuesto no encontrado");
+                .hasMessageContaining("Budget not found");
 
         verify(budgetRepository, times(1)).existsById(999);
         verify(budgetRepository, never()).update(anyInt(), any(Budget.class));
@@ -327,7 +327,7 @@ class BudgetServiceTest {
 
         assertThatThrownBy(() -> budgetService.deleteById(999))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("Presupuesto no encontrado");
+                .hasMessageContaining("Budget not found");
 
         verify(budgetRepository, times(1)).existsById(999);
         verify(budgetRepository, never()).deleteById(anyInt());

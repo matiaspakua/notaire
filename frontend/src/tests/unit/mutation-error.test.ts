@@ -43,7 +43,7 @@ describe("presentMutationError()", () => {
     const { toast } = await import("sonner");
     const err = new ApiError(
       409,
-      "/pagos",
+      "/payments",
       JSON.stringify({ message: "El monto excede el saldo pendiente" })
     );
 
@@ -56,7 +56,7 @@ describe("presentMutationError()", () => {
 
   it("falls back when the body has no parseable business message", async () => {
     const { toast } = await import("sonner");
-    const err = new ApiError(500, "/pagos", "plain text");
+    const err = new ApiError(500, "/payments", "plain text");
 
     const result = presentMutationError(err, { fallback: "Error al guardar" });
 
@@ -66,7 +66,7 @@ describe("presentMutationError()", () => {
 
   it("does not toast authenticated 401 (session-expiry owns that path)", async () => {
     const { toast } = await import("sonner");
-    const err = new ApiError(401, "/usuarios", "Unauthorized");
+    const err = new ApiError(401, "/users", "Unauthorized");
 
     const result = presentMutationError(err, { fallback: "Error al guardar" });
 
@@ -119,7 +119,7 @@ describe("presentMutationError()", () => {
     const { toast } = await import("sonner");
     const err = new ApiError(
       404,
-      "/documentos/99",
+      "/documents/99",
       JSON.stringify({ message: "Documento no encontrado" })
     );
 
@@ -131,7 +131,7 @@ describe("presentMutationError()", () => {
     const { toast } = await import("sonner");
     const err = new ApiError(
       400,
-      "/presupuestos/1/items-desde-plantilla",
+      "/budgets/1/items-from-template",
       JSON.stringify({ message: "El tipo de trámite no tiene plantilla configurada" })
     );
 

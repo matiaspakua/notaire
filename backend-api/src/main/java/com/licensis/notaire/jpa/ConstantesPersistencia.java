@@ -13,11 +13,11 @@ public interface ConstantesPersistencia
 {
 
     /**
-     * Valor por default que se utiliza para inicializar la version de los objetos.
+     * Valor by default that utiliza for inicializar the version of the objetos.
      */
     int VersionINICIAL = 0;
-//    //Retornan el nombre de la clase que se corresponde a un JPA determinado.
-//    public String JPA_PERSONA = "Persona";
-//    public String JPA_USUARIO = "Usuario";
-//    public String JPA_AUDITORIA ="RegistroAuditoria";
+//  //Retornan the name of the clase that corresponde a a JPA determinado.
+//    public String JPA_PERSONA = "Person";
+//    public String JPA_USUARIO = "UserAccount";
+//    public String JPA_AUDITORIA ="AuditRecord";
 }

@@ -49,7 +49,7 @@ Reject malformed payment requests with 400 before they reach the use case; today
 
 ### Surface area
 
-- Endpoints: `POST /api/v1/pagos`, `PUT /api/v1/pagos/{id}` (stricter contract)
+- Endpoints: `POST /api/v1/payments`, `PUT /api/v1/payments/{id}` (stricter contract)
 - Entities / Flyway / Configuration: none
 
 ### Architecture review

@@ -6,7 +6,7 @@ info:
       Traceability: CU81
 http:
   method: POST
-  url: "{{base_url}}/api/v1/folio"
+  url: "{{base_url}}/api/v1/folios"
   body:
     type: json
     data: |-

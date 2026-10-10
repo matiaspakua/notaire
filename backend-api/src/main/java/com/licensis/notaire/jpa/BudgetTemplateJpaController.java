@@ -7,7 +7,7 @@ package com.licensis.notaire.jpa;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.BudgetTemplatePK;
@@ -24,7 +24,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class BudgetTemplateJpaController implements Serializable, IPersistenciaJpa
+public class BudgetTemplateJpaController implements Serializable, JpaPersistence
 {
 
     public BudgetTemplateJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -52,7 +52,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         budgetTemplate.getBudgetTemplatePK().setFkIdProcedureType(budgetTemplate.getProcedureType().getIdProcedureType());
         if (findBudgetTemplate(budgetTemplate.getBudgetTemplatePK()) != null)
         {
-            throw new PreexistingEntityException("PlantillaPresupuesto " + budgetTemplate.getBudgetTemplatePK() + " already exists.");
+            throw new PreexistingEntityException("BudgetTemplate " + budgetTemplate.getBudgetTemplatePK() + " already exists.");
         }
         EntityManager em = null;
         try
@@ -89,7 +89,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         {
             if (findBudgetTemplate(budgetTemplate.getBudgetTemplatePK()) != null)
             {
-                throw new PreexistingEntityException("PlantillaPresupuesto " + budgetTemplate + " already exists.", ex);
+                throw new PreexistingEntityException("BudgetTemplate " + budgetTemplate + " already exists.", ex);
             }
         }
         finally
@@ -263,10 +263,10 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Name of the @NamedQuery definido in nuestra clase
             Query q = em.createNamedQuery("BudgetTemplate.findByFkIdProcedureType");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
+            //It step the name of the parametro of the query, and the valor a search.
             q.setParameter("fkIdTipoTramite", idProcedureType);
 
             misPlantillas = (List<BudgetTemplate>) q.getResultList();
@@ -289,7 +289,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro una nueva transaccion
+        // Abro a new transaccion
         tx = em.getTransaction();
         tx.begin();
 

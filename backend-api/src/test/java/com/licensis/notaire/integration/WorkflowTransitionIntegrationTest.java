@@ -49,7 +49,7 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
         // Create workflow definition
         workflowDefinition = new WorkflowDefinition();
         workflowDefinition.setName("Workflow Test");
-        workflowDefinition.setDescription("Workflow para pruebas");
+        workflowDefinition.setDescription("Workflow for pruebas");
         workflowDefinition = workflowDefinitionRepository.save(workflowDefinition);
 
         // Create states
@@ -92,7 +92,7 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
         transition.setWorkflowDefinition(workflowDefinition);
         transition.setOriginNode(nodeStart);
         transition.setDestinationNode(nodeIntermedio);
-        transition.setDescription("Transición de inicio a proceso");
+        transition.setDescription("Transition of inicio a proceso");
         transition.setCondition("approved");
 
         WorkflowTransition saved = workflowTransitionRepository.save(transition);

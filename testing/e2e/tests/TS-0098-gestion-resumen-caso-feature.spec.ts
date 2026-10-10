@@ -21,7 +21,7 @@ test.describe("#774 - Resumen del caso", () => {
   test("lists the escritura and the testimonio state of a gestión", async ({ page }) => {
     const escribano = await createPersona(page, { isClient: false });
     expect(escribano.ok, escribano.error ?? "createPersona failed").toBe(true);
-    const gestion = await apiPost<{ idManagement: number }>(page, "/gestiones", {
+    const gestion = await apiPost<{ idManagement: number }>(page, "/managements", {
       encabezado: `Gestión resumen E2E ${uniqueId()}`,
       dateStart: new Date().toISOString().split("T")[0],
       number: uniqueId() % 1_000_000,
@@ -31,26 +31,26 @@ test.describe("#774 - Resumen del caso", () => {
     const idGestion = gestion.data!.idManagement;
 
     const escrituraNumero = uniqueId() % 1_000_000;
-    const escritura = await apiPost<{ idDeed: number }>(page, "/escrituras", {
+    const escritura = await apiPost<{ idDeed: number }>(page, "/deeds", {
       number: escrituraNumero,
       dateDeedrecording: new Date().toISOString().split("T")[0],
-      body: `Escritura resumen E2E ${escrituraNumero}`,
+      body: `Deed resumen E2E ${escrituraNumero}`,
       status: "Firmada",
     });
     expect(escritura.ok, escritura.error ?? "escritura failed").toBe(true);
-    const testimonio = await apiPost(page, `/testimonio/${escritura.data!.idDeed}/generar`, {});
+    const testimonio = await apiPost(page, `/testimonies/${escritura.data!.idDeed}/generate`, {});
     expect(testimonio.ok, testimonio.error ?? "generar testimonio failed").toBe(true);
 
     const tipo = await createTipoTramite(page);
     expect(tipo.ok, tipo.error ?? "createTipoTramite failed").toBe(true);
-    const tramite = await apiPost(page, "/tramites", {
+    const tramite = await apiPost(page, "/procedures", {
       idProcedureType: tipo.data!.idProcedureType,
       idManagement: idGestion,
       idDeed: escritura.data!.idDeed,
     });
     expect(tramite.ok, `createTramite ${tramite.status}`).toBe(true);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.getByTestId(`btn-resumen-caso-${idGestion}`).click();
 
     const dialog = page.getByTestId("dialog-resumen-caso");

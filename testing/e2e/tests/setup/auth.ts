@@ -10,11 +10,11 @@ import type { Page } from "@playwright/test";
 import { apiPost } from "./api-helpers";
 
 interface LoginResponse {
-  valido: boolean;
+  valid: boolean;
   token: string;
-  idUsuario: number;
-  nombre: string;
-  tipo: string;
+  idUser: number;
+  name: string;
+  type: string;
   message?: string;
 }
 
@@ -39,9 +39,9 @@ function readPersistedAdminToken(): string | undefined {
 async function applyAdminSession(
   page: Page,
   token: string,
-  user: { nombre: string; tipo: string; valido: boolean; idUsuario: number },
+  user: { name: string; type: string; valid: boolean; idUser: number },
 ): Promise<void> {
-  const role = (user.tipo ?? "ADMIN").toUpperCase();
+  const role = (user.type ?? "ADMIN").toUpperCase();
   process.env.E2E_ADMIN_TOKEN = token;
 
   await page.context().addCookies([
@@ -87,10 +87,10 @@ export async function authenticateAsAdmin(
   contrasenia: string = "admin",
 ): Promise<void> {
   const fallbackUser = {
-    nombre,
-    tipo: "ADMIN",
-    valido: true,
-    idUsuario: 1,
+    name: nombre,
+    type: "ADMIN",
+    valid: true,
+    idUser: 1,
   };
 
   const persisted = readPersistedAdminToken();
@@ -99,19 +99,19 @@ export async function authenticateAsAdmin(
     return;
   }
 
-  const result = await apiPost<LoginResponse>(page, "/usuarios/login", {
+  const result = await apiPost<LoginResponse>(page, "/users/login", {
     name: nombre,
     password: contrasenia,
   });
   const data = result.ok ? result.data : undefined;
-  const token = data?.valido ? data.token : undefined;
+  const token = data?.valid ? data.token : undefined;
 
   if (token) {
     await applyAdminSession(page, token, {
-      nombre: data?.nombre ?? nombre,
-      tipo: data?.tipo ?? "ADMIN",
-      valido: true,
-      idUsuario: data?.idUsuario ?? 1,
+      name: data?.name ?? nombre,
+      type: data?.type ?? "ADMIN",
+      valid: true,
+      idUser: data?.idUser ?? 1,
     });
     return;
   }
@@ -143,10 +143,10 @@ export async function establishAdminBrowserSession(page: Page): Promise<void> {
       }),
     );
   }, {
-    nombre: "admin",
-    tipo: "ADMIN",
-    valido: true,
-    idUsuario: 1,
+    name: "admin",
+    type: "ADMIN",
+    valid: true,
+    idUser: 1,
   });
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForLoadState("networkidle");

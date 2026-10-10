@@ -2,7 +2,7 @@
 
 ## Context
 
-`GET /presupuestos` is a Spring page sorted by idBudget desc; there is no text search on budgets, but budgets can be read by id and by person, and people have a server search.
+`GET /budgets` is a Spring page sorted by idBudget desc; there is no text search on budgets, but budgets can be read by id and by person, and people have a server search.
 
 ## Goals / Non-Goals
 
@@ -10,7 +10,7 @@ Goal: no form lists budgets from the size=1000 list. Non-goals: a backend budget
 
 ## Decisions
 
-Search by client goes through `/people/search` and then `/presupuestos/persona/{id}` for at most 5 people, so a broad name costs at most 7 requests; a number is tried as a budget number and as a document number at once. The PersonPicker shell is generalised instead of copied, so both pickers keep one keyboard and announcement implementation.
+Search by client goes through `/people/search` and then `/budgets/person/{id}` for at most 5 people, so a broad name costs at most 7 requests; a number is tried as a budget number and as a document number at once. The PersonPicker shell is generalised instead of copied, so both pickers keep one keyboard and announcement implementation.
 
 ## Riesgos / Trade-offs
 

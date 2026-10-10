@@ -65,13 +65,13 @@ class ControllerExceptionMessageLeakTest {
     }
 
     @Test
-    @DisplayName("POST /tipo-folio keeps 409 but no longer echoes the SQL error")
+    @DisplayName("POST /folio-types keeps 409 but no longer echoes the SQL error")
     void folioTypeCreate() throws Exception {
         FolioTypeRepository repo = mock(FolioTypeRepository.class);
         when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
         MockMvc mvc = standaloneSetup(new FolioTypeController(repo, mock(FolioRepository.class))).build();
 
-        MvcResult result = mvc.perform(post("/api/v1/tipo-folio").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = mvc.perform(post("/api/v1/folio-types").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":null}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
@@ -81,7 +81,7 @@ class ControllerExceptionMessageLeakTest {
     }
 
     @Test
-    @DisplayName("PUT /tipo-folio/{id} keeps 500 but no longer echoes the SQL error")
+    @DisplayName("PUT /folio-types/{id} keeps 500 but no longer echoes the SQL error")
     void folioTypeUpdate() throws Exception {
         FolioTypeRepository repo = mock(FolioTypeRepository.class);
         FolioRepository folios = mock(FolioRepository.class);
@@ -90,7 +90,7 @@ class ControllerExceptionMessageLeakTest {
         when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
         MockMvc mvc = standaloneSetup(new FolioTypeController(repo, folios)).build();
 
-        MvcResult result = mvc.perform(put("/api/v1/tipo-folio/1").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = mvc.perform(put("/api/v1/folio-types/1").contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
@@ -100,7 +100,7 @@ class ControllerExceptionMessageLeakTest {
     }
 
     @Test
-    @DisplayName("PUT /tipo-de-documento/{id} keeps 500 but no longer echoes the SQL error")
+    @DisplayName("PUT /document-types/{id} keeps 500 but no longer echoes the SQL error")
     void documentTypeUpdate() throws Exception {
         DocumentTypeRepository repo = mock(DocumentTypeRepository.class);
         ProcedureTemplateRepository templates = mock(ProcedureTemplateRepository.class);
@@ -111,7 +111,7 @@ class ControllerExceptionMessageLeakTest {
         when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
         MockMvc mvc = standaloneSetup(new DocumentTypeController(repo, templates, submitted)).build();
 
-        MvcResult result = mvc.perform(put("/api/v1/tipo-de-documento/1").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = mvc.perform(put("/api/v1/document-types/1").contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
@@ -136,15 +136,15 @@ class ControllerExceptionMessageLeakTest {
     }
 
     @Test
-    @DisplayName("POST /conceptos keeps an application-authored message for the user")
+    @DisplayName("POST /concepts keeps an application-authored message for the user")
     void conceptCreateKeepsBusinessMessage() throws Exception {
         ConceptService service = mock(ConceptService.class);
-        when(service.create(any())).thenThrow(new BusinessValidationException("Ya existe un concepto con ese nombre"));
+        when(service.create(any())).thenThrow(new BusinessValidationException("Already exists a concept with that name"));
         MockMvc mvc = standaloneSetup(new ConceptController(service, mock(BudgetTemplateRepository.class))).build();
 
-        mvc.perform(post("/api/v1/conceptos").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"X\"}"))
+        mvc.perform(post("/api/v1/concepts").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"X\"}"))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("Ya existe un concepto con ese nombre"));
+                .andExpect(jsonPath("$.message").value("Already exists a concept with that name"));
     }
 
     /** Matches {@code catch (Exception e) { ... }} blocks (one nesting level is enough here). */

@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Suplencia Service Integration Tests")
+@DisplayName("Substitution Service Integration Tests")
 class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -217,10 +217,10 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should support complex scenarios")
     void shouldSupportComplexScenarios() {
         // Create multiple personas
-        Person suplente1 = createPerson("Escribano Principal");
-        Person suplente2 = createPerson("Escribano Suplente");
-        Person suplantado1 = createPerson("Escribano A");
-        Person suplantado2 = createPerson("Escribano B");
+        Person suplente1 = createPerson("Notary Principal");
+        Person suplente2 = createPerson("Notary Suplente");
+        Person suplantado1 = createPerson("Notary A");
+        Person suplantado2 = createPerson("Notary B");
 
         // Create overlapping suplencias
         Substitution overlap1 = new Substitution();
@@ -236,13 +236,13 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
         overlap2.setFkIdSubstituted(suplantado2);
         overlap2.setDateStart(toDate(LocalDate.of(2026, 4, 1)));
         overlap2.setDateEnd(toDate(LocalDate.of(2026, 9, 30)));
-        overlap2.setNotes("Período extendido");
+        overlap2.setNotes("Period extendido");
         substitutionRepository.save(overlap2);
 
         List<Substitution> all = substitutionRepository.findAll();
         assertThat(all).hasSize(2);
         assertThat(all).anyMatch(s -> "Primer semestre".equals(s.getNotes()));
-        assertThat(all).anyMatch(s -> "Período extendido".equals(s.getNotes()));
+        assertThat(all).anyMatch(s -> "Period extendido".equals(s.getNotes()));
     }
 
     private Person createPerson(String name) {

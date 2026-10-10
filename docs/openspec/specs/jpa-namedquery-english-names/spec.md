@@ -13,13 +13,13 @@ tails after the #973 domain-schema rename. Source: #1022 (follow-up to #973).
 Every `@NamedQuery(name = "…")` declaration under
 `backend-api/src/main/java/com/licensis/notaire/business/` MUST use an English
 entity prefix from the #1022 rename map (e.g. `Deed`, `User`, `AuditRecord`,
-`Person`, `Folio`, `Item`). Spanish prefixes (`Escritura`, `Usuario`,
-`RegistroAuditoria`, `Concepto`, `Testimonio`, `Suplencia`, `Copia`, `Pago`,
-`Presupuesto`, `Tramite`, `TipoDeTramite`, `TipoDeDocumento`,
-`DocumentoPresentado`, `PlantillaTramite`, `PlantillaPresupuesto`,
-`GestionDeEscritura`, `Historial`, `Inmueble`, `Identificacion`,
-`TipoIdentificacion`, `MovimientoTestimonio`, `TramitesPersonas`, `Cuaderno`,
-`FoliosCopias`, `TipoDeFolio`, `EstadoDeGestion`) MUST NOT appear.
+`Person`, `Folio`, `Item`). Spanish prefixes (`Deed`, `UserAccount`,
+`AuditRecord`, `Concept`, `Testimony`, `Substitution`, `Copy`, `Payment`,
+`Presupuesto`, `Procedure`, `ProcedureType`, `DocumentType`,
+`SubmittedDocument`, `ProcedureTemplate`, `BudgetTemplate`,
+`DeedManagement`, `ManagementHistory`, `Property`, `Identificacion`,
+`IdentificationType`, `TestimonyMovement`, `TramitesPersonas`, `Notebook`,
+`FoliosCopias`, `FolioType`, `ManagementStatus`) MUST NOT appear.
 
 #### Scenario: No Spanish NamedQuery prefixes in business entities
 
@@ -31,12 +31,12 @@ entity prefix from the #1022 rename map (e.g. `Deed`, `User`, `AuditRecord`,
 
 Every `createNamedQuery("…")` call site under `backend-api` (main + test) MUST
 use the English NamedQuery name matching the entity declaration. Call sites
-MUST NOT use `Persona.*` (the entity declares `Person.*`).
+MUST NOT use `Person.*` (the entity declares `Person.*`).
 
-#### Scenario: No Persona createNamedQuery mismatch
+#### Scenario: No Person createNamedQuery mismatch
 
 - **WHEN** the hygiene inventory scans `createNamedQuery("` under `backend-api`
-- **THEN** zero matches start with `Persona.` and zero matches use a forbidden
+- **THEN** zero matches start with `Person.` and zero matches use a forbidden
   Spanish entity prefix
 
 ### Requirement: Method tails are English on Folio, Item, and Person

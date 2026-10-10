@@ -6,7 +6,7 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.dto.DtoProperty;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Property;
 import com.licensis.notaire.business.Procedure;
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class PropertyJpaController implements Serializable, IPersistenciaJpa
+public class PropertyJpaController implements Serializable, JpaPersistence
 {
 
     public PropertyJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -134,7 +134,7 @@ public class PropertyJpaController implements Serializable, IPersistenciaJpa
                 Integer id = property.getIdProperty();
                 if (findProperty(id) == null)
                 {
-                    throw new NonexistentEntityException("The inmueble with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The property with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -163,7 +163,7 @@ public class PropertyJpaController implements Serializable, IPersistenciaJpa
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The inmueble with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The property with id " + id + " no longer exists.", enfe);
             }
             List<Procedure> procedureList = property.getProcedureList();
             for (Procedure procedureListProcedure : procedureList)
@@ -226,10 +226,10 @@ public class PropertyJpaController implements Serializable, IPersistenciaJpa
     }
 
     /**
-     * Busca un inmueble por su nomenclatura catastral.
+     * Busca a property by its cadastral nomenclature.
      *
      * @param dtoInmueble
-     * @return el Inmueble encontrado.
+     * @return el Property encontrado.
      */
     public Property findProperty(DtoProperty dtoProperty)
     {

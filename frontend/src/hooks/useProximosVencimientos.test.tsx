@@ -36,7 +36,7 @@ describe("useProximosVencimientos (CU42)", () => {
     const { result } = renderHook(() => useProximosVencimientos(30), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiGet).toHaveBeenCalledWith("/documento-presentado/proximos-vencimientos?dias=30");
+    expect(apiGet).toHaveBeenCalledWith("/submitted-documents/upcoming-expirations?dias=30");
     expect(result.current.data).toEqual([{ idSubmittedDocument: 1, documentName: "Certificado", daysRemaining: 10 }]);
   });
 });

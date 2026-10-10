@@ -39,7 +39,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
  * REGLA DE NEGOCIO:
  * <p>
  *
- * <lo> <li> Estados posibles de un Folio: -Nuevo -Utilizado -Errose </li> </lo>
+ * <it> <li> Estados posibles of a Folio: -New -Utilizado -Errose </li> </it>
  *
  *
  * @author Tefi
@@ -100,7 +100,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folioList"})
     private FolioType fkIdFolioType;
-    // EAGER, not LAZY: GET /api/v1/folio now serializes the raw entity (see #1006), and with
+    // EAGER, not LAZY: GET /api/v1/folios now serializes the raw entity (see #1006), and with
     // spring.jpa.open-in-view=false the Hibernate session closes as soon as the @Transactional
     // controller method returns — before Jackson gets a chance to initialize a lazy proxy,
     // failing with "Could not initialize proxy ... - no session".
@@ -309,7 +309,7 @@ public class Folio implements Serializable, Persistable<Integer>
 
         if (this.fkIdDeed != null)
         {
-            // Not fkIdEscritura.getDto(): that walks Escritura's lazy folioList, which
+            // Not fkIdEscritura.getDto(): that walks Deed's lazy folioList, which
             // includes this same Folio, and would recurse back into Folio.getDto().
             DtoDeed miDtoDeed = new DtoDeed();
             miDtoDeed.setIdDeed(this.fkIdDeed.getIdDeed());

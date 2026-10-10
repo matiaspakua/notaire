@@ -60,7 +60,7 @@ public class PersonController {
             String phone,
             String email,
             Integer notaryRegistrationNumber,
-            @Schema(description = "Identification type id from GET /tipo-identificacion. Omitted on create: DNI. "
+            @Schema(description = "Identification type id from GET /identification-types. Omitted on create: DNI. "
                     + "An id that is not in the catalog answers 400 (#1361).")
             Integer identificationTypeId,
             @Schema(description = "Legacy nested form of identificationTypeId; identificationTypeId wins when both are sent.")

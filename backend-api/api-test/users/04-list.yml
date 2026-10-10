@@ -3,11 +3,11 @@ info:
   type: http
   seq: 4
   description: |-
-      ## List users — GET /api/v1/usuarios
+      ## List users — GET /api/v1/users
       Traceability: CU20 (RF #43, #44, #45, #82, #83)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/usuarios"
+  url: "{{base_url}}/api/v1/users"
   headers:
     - name: Content-Type
       value: application/json

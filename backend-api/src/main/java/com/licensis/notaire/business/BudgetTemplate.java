@@ -173,6 +173,6 @@ public class BudgetTemplate implements Serializable, Persistable<BudgetTemplateP
     @Override
     public String toString()
     {
-        return "PlantillaPresupuesto[ plantillaPresupuestoPK=" + budgetTemplatePK + " ]";
+        return "BudgetTemplate[ plantillaPresupuestoPK=" + budgetTemplatePK + " ]";
     }
 }

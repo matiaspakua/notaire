@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { DtoUsuario } from "@/types";
+import type { DtoLoginUser } from "@/types";
 import {
   clearAuthCookies,
   isAdminTipo,
@@ -10,11 +10,11 @@ import {
 } from "@/lib/admin-access";
 
 interface AuthState {
-  user: DtoUsuario | null;
+  user: DtoLoginUser | null;
   /** Kept null for browser sessions — JWT lives in HttpOnly cookie (#1051). */
   token: string | null;
   isAuthenticated: boolean;
-  login: (user: DtoUsuario) => void;
+  login: (user: DtoLoginUser) => void;
   logout: () => void;
   isAdmin: () => boolean;
 }
@@ -34,10 +34,10 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
 
-      login: (user: DtoUsuario) => {
+      login: (user: DtoLoginUser) => {
         // Edge proxy reads these non-credential cookies (issue #1052).
         // JWT credential is HttpOnly cookie from the login Set-Cookie (#1051).
-        setAuthCookies(user.tipo ?? "");
+        setAuthCookies(user.type ?? "");
         set({ user, token: null, isAuthenticated: true });
       },
 
@@ -47,7 +47,7 @@ export const useAuthStore = create<AuthState>()(
         set({ user: null, token: null, isAuthenticated: false });
       },
 
-      isAdmin: () => isAdminTipo(get().user?.tipo),
+      isAdmin: () => isAdminTipo(get().user?.type),
     }),
     {
       name: "notaire-auth",

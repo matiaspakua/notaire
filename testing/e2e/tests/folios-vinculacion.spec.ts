@@ -1,5 +1,5 @@
 /**
- * CU87 - Vincular Escritura, Folio y Copia de Testimonio
+ * CU87 - Vincular Deed, Folio y Copy de Testimony
  * CU28 - Ingresar nuevos folios
  * Issue #838
  */
@@ -12,10 +12,10 @@ const ESTADO_ESCRITURA_FIRMADA = 'Firmada'
 /** Seed a escritura already in estado "Firmada" (no folio linked) */
 async function seedEscrituraFirmada(page: Page): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
-  const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+  const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
     dateDeedrecording: new Date().toISOString().split('T')[0],
-    body: `Escritura firmada E2E ${id}`,
+    body: `Deed firmada E2E ${id}`,
     status: ESTADO_ESCRITURA_FIRMADA,
     notes: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
   })
@@ -47,7 +47,7 @@ async function openNewFolioAndFillRequired(page: Page, numeroFolio: number) {
   return dialog
 }
 
-test.describe('CU87 - Vincular Escritura y Folio', () => {
+test.describe('CU87 - Vincular Deed y Folio', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
@@ -58,13 +58,13 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
     const { numero } = await seedEscrituraFirmada(page)
     const numeroFolio = Math.floor(10000 + Math.random() * 90000)
 
-    await page.goto('/dashboard/administracion/folios')
+    await page.goto('/dashboard/administration/folios')
     await page.waitForLoadState('domcontentloaded')
 
     const dialog = await openNewFolioAndFillRequired(page, numeroFolio)
 
     await page.getByTestId('select-escritura-folio').click()
-    const escrituraOption = page.getByRole('option', { name: `Escritura Nº ${numero}` })
+    const escrituraOption = page.getByRole('option', { name: `Deed Nº ${numero}` })
     await escrituraOption.waitFor({ state: 'attached', timeout: 5000 })
     await escrituraOption.evaluate((el: HTMLElement) => el.click())
 
@@ -81,7 +81,7 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
     await expect(row).toContainText(new RegExp(String(numero)))
 
     // And: the escritura screen shows it linked to a folio
-    await page.goto('/dashboard/escrituras')
+    await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
     const escrituraRow = page.getByRole('row').filter({ hasText: new RegExp(String(numero)) })
     await expect(escrituraRow).toBeVisible({ timeout: 10000 })
@@ -93,14 +93,14 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
     const linked = await createFolio(page, 1, { status: 'Nuevo', deedId: idEscritura })
     if (!linked.ok) throw new Error(`Failed to seed linked folio: ${linked.error}`)
 
-    await page.goto('/dashboard/administracion/folios')
+    await page.goto('/dashboard/administration/folios')
     await page.waitForLoadState('domcontentloaded')
 
     const dialog = await openNewFolioAndFillRequired(page, Math.floor(10000 + Math.random() * 90000))
     await page.getByTestId('select-escritura-folio').click()
 
     // Then: the picker never offers an escritura already Utilizado by another folio
-    await expect(page.getByRole('option', { name: `Escritura Nº ${numero}` })).toHaveCount(0)
+    await expect(page.getByRole('option', { name: `Deed Nº ${numero}` })).toHaveCount(0)
 
     // Escape closes the open select; a second Escape (or the first, if focus is on
     // the dialog) dismisses the modal. Never click Cancelar after Escape — the
@@ -118,7 +118,7 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
     const linked = await createFolio(page, 1, { number: numeroFolio, status: 'Nuevo', deedId: idEscritura })
     if (!linked.ok) throw new Error(`Failed to seed linked folio: ${linked.error}`)
 
-    await page.goto('/dashboard/administracion/folios')
+    await page.goto('/dashboard/administration/folios')
     await page.waitForLoadState('domcontentloaded')
 
     const table = page.getByRole('table')
@@ -133,7 +133,7 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
   test('CU87-EDGE03: crear folio sin vincular escritura sigue funcionando (campo opcional)', async ({ page }) => {
     const numeroFolio = Math.floor(10000 + Math.random() * 90000)
 
-    await page.goto('/dashboard/administracion/folios')
+    await page.goto('/dashboard/administration/folios')
     await page.waitForLoadState('domcontentloaded')
 
     const dialog = await openNewFolioAndFillRequired(page, numeroFolio)
@@ -164,7 +164,7 @@ for (const viewport of [
     await authenticateAsAdmin(page)
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
 
-    await page.goto('/dashboard/administracion/folios')
+    await page.goto('/dashboard/administration/folios')
     await page.waitForLoadState('domcontentloaded')
 
     await expect(page.getByRole('heading', { name: /folios/i }).first()).toBeVisible()

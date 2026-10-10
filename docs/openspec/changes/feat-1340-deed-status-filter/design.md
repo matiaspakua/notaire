@@ -6,7 +6,7 @@ Deed statuses are free text stored with the `BusinessConstants` spellings. `Deed
 
 ## Goals / Non-Goals
 
-Goals: one optional, documented status filter on the paged list. Non-goals: a deed status enum or migration, the deed pickers (slice 8b), changing `/escrituras/buscar`.
+Goals: one optional, documented status filter on the paged list. Non-goals: a deed status enum or migration, the deed pickers (slice 8b), changing `/deeds/search`.
 
 ## Decisions
 

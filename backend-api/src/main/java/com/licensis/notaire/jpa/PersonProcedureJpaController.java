@@ -7,7 +7,7 @@ package com.licensis.notaire.jpa;
 import com.licensis.notaire.jpa.exceptions.CreateEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.Procedure;
 import com.licensis.notaire.business.PersonProcedure;
@@ -27,7 +27,7 @@ import jakarta.persistence.criteria.Root;
  *
  * @author matias
  */
-public class PersonProcedureJpaController implements Serializable, IPersistenciaJpa
+public class PersonProcedureJpaController implements Serializable, JpaPersistence
 {
 
     public PersonProcedureJpaController(EntityManagerFactory emf)
@@ -85,7 +85,7 @@ public class PersonProcedureJpaController implements Serializable, IPersistencia
             {
                 throw new PreexistingEntityException("TramitesPersonas " + personProcedure + " already exists.", ex);
             }
-            throw new CreateEntityException("Error creating a entity of type: Tramites Personas");
+            throw new CreateEntityException("Error creating a entity of type: Procedures People");
         }
         finally
         {
@@ -97,10 +97,10 @@ public class PersonProcedureJpaController implements Serializable, IPersistencia
     }
 
     /**
-     * Crea un registro nuevo de tramites_persona.
+     * Crea a registro new of procedures_person.
      *
      * @param tramitesPersonas
-     * @return Verdadero si se pudo crear el registro, falso en caso de que el registro este
+     * @return Verdadero if pudo create the registro, falso in caso of that the registro this
      * repetido (error grave), u ocurra algun otro tipo de error.
      * @throws PreexistingEntityException
      * @throws Exception
@@ -393,7 +393,7 @@ public class PersonProcedureJpaController implements Serializable, IPersistencia
     }
 
     /**
-     * Busca la relacion entre tramite y cliente (un registro en particualar)
+     * Busca the relacion between procedure and client (a registro in particualar)
      *
      * @param idPersona
      * @param idTramite

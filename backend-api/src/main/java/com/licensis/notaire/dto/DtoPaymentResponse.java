@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * API response shape for a payment (Pago), carrying the identifier of its
- * associated presupuesto instead of the JPA entity relation.
+ * API response shape for a payment (Payment), carrying the identifier of its
+ * associated budget instead of the JPA entity relation.
  */
 public record DtoPaymentResponse(
         Integer idPayment,

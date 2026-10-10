@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/documento-presentado")
-@Tag(name = "DocumentoPresentado", description = "API para gestionar documentos presentados")
+@RequestMapping("/api/v1/submitted-documents")
+@Tag(name = "SubmittedDocument", description = "API for managing submitted documents")
 public class SubmittedDocumentController {
 
     private static final Logger log = LoggerFactory.getLogger(SubmittedDocumentController.class);
@@ -66,15 +66,15 @@ public class SubmittedDocumentController {
                     + "otro valor responde 400")
             String date,
             Boolean delivered,
-            @Schema(description = "Id de un trámite existente; si no existe la respuesta es 404")
+            @Schema(description = "Id of a procedure existente; if there is no the respuesta is 404")
             Integer procedureId,
             String deliveredBy,
             String name) {}
 
     /**
-     * POST body. A submitted document is presented for a trámite of a gestión (CU04 / CU72):
+     * POST body. A submitted document is presented for a procedure of a management (CU04 / CU72):
      * without the procedure it never reaches the case summary, the documentation-complete check,
-     * the CU09 debt report, the CU42 expiry list with its gestión, or CU10 external-entity
+     * the CU09 debt report, the CU42 expiry list with its management, or CU10 external-entity
      * movements; without a type it has no name, expiry or delivered-by. Both are required on
      * create (issue #655). PUT keeps {@link SubmittedDocumentRequest}, where every field is
      * optional, so rows stored before this rule can still be edited.
@@ -89,7 +89,7 @@ public class SubmittedDocumentController {
             String date,
             Boolean delivered,
             @NotNull
-            @Schema(description = "Id del trámite de la gestión para el que se presenta el documento; "
+            @Schema(description = "Id of the procedure of the management for the that presenta the document; "
                     + "si no existe la respuesta es 404", requiredMode = Schema.RequiredMode.REQUIRED)
             Integer procedureId,
             String deliveredBy,
@@ -130,7 +130,7 @@ public class SubmittedDocumentController {
         Optional<DocumentType> type = Optional.ofNullable(request.typeId()).map(id -> typeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tipo de documento no encontrado: " + id)));
         Optional<Procedure> procedure = Optional.ofNullable(request.procedureId()).map(id -> procedureRepository
-                .findById(id).orElseThrow(() -> new ResourceNotFoundException("Trámite no encontrado: " + id)));
+                .findById(id).orElseThrow(() -> new ResourceNotFoundException("Procedure not found: " + id)));
         return new Resolved(type, procedure, Optional.ofNullable(request.date()).map(this::parseDate));
     }
 
@@ -204,7 +204,7 @@ public class SubmittedDocumentController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los documentos presentados")
+    @Operation(summary = "Get all submitted documents")
     @Transactional(readOnly = true)
     public ResponseEntity<List<SubmittedDocumentResponse>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
@@ -215,7 +215,7 @@ public class SubmittedDocumentController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener documento presentado por ID")
+    @Operation(summary = "Get submitted document by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<SubmittedDocumentResponse> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -228,11 +228,11 @@ public class SubmittedDocumentController {
     @ApiResponse(responseCode = "201", description = "Creado"),
     @ApiResponse(responseCode = "400",
             description = "Solicitud inválida (falta typeId o procedureId, o la fecha no es un día yyyy-MM-dd)"),
-    @ApiResponse(responseCode = "404", description = "Tipo de documento o trámite no encontrado"),
+    @ApiResponse(responseCode = "404", description = "Document type or procedure not found"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo documento presentado")
+    @Operation(summary = "Create submitted document")
     public ResponseEntity<Object> create(@Valid @RequestBody SubmittedDocumentCreateRequest body) {
         SubmittedDocumentRequest request = body.toRequest();
         Resolved resolved = resolve(request);
@@ -251,10 +251,10 @@ public class SubmittedDocumentController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400", description = "Solicitud inválida (fecha que no es un día yyyy-MM-dd)"),
-    @ApiResponse(responseCode = "404", description = "Documento, tipo de documento o trámite no encontrado")
+    @ApiResponse(responseCode = "404", description = "Document, document type or procedure not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar documento presentado")
+    @Operation(summary = "Update submitted document")
     @Transactional
     public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody SubmittedDocumentRequest request) {
         Optional<SubmittedDocument> stored = repository.findById(id);
@@ -280,7 +280,7 @@ public class SubmittedDocumentController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar documento presentado")
+    @Operation(summary = "Delete submitted document")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();

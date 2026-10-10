@@ -6,13 +6,13 @@
 | Field | Value |
 |-------|-------|
 | GitHub Issue | #579 |
-| Use Case | CU07 – Testimonio; CU08 – Movimientos de testimonio; CU06 – Personas |
+| Use Case | CU07 – Testimony; CU08 – Movimientos de testimonio; CU06 – Personas |
 | Branch | `fix/579_constraint_errors_400_testimony_person` (stacked on `fix/579_constraint_errors_400_catalogs`, #1370) |
 | Gate 1 status | draft |
 
 ## Objetivo
 
-The last controllers that still caught exceptions themselves on create and update (testimony, testimony movement, person) answered 409 or 500 when the data violated a database constraint (e.g. `POST /movimiento-testimonio {}` and the NOT NULL entry date). The Owner decided constraint errors are client errors and answer 400 (Run 7).
+The last controllers that still caught exceptions themselves on create and update (testimony, testimony movement, person) answered 409 or 500 when the data violated a database constraint (e.g. `POST /testimony-movements {}` and the NOT NULL entry date). The Owner decided constraint errors are client errors and answer 400 (Run 7).
 
 ## What Changes
 
@@ -49,7 +49,7 @@ The last controllers that still caught exceptions themselves on create and updat
 
 ### Surface area
 
-- Endpoints: `POST` and `PUT /{id}` of `/api/v1/testimonio`, `/movimiento-testimonio`, `/people` (constraint errors: 409/500 to 400; 400 documented on PUT; not breaking)
+- Endpoints: `POST` and `PUT /{id}` of `/api/v1/testimonies`, `/testimony-movements`, `/people` (constraint errors: 409/500 to 400; 400 documented on PUT; not breaking)
 - Entities / Flyway: none
 - UI: none
 

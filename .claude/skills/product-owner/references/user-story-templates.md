@@ -86,9 +86,9 @@ I need to implement caching layer
 To enable sub-second dashboard load times.
 ```
 
-### Persona Library
+### Person Library
 
-| Persona | Typical Needs | Context |
+| Person | Typical Needs | Context |
 |---------|--------------|---------|
 | End User | Efficiency, simplicity, reliability | Daily core feature usage |
 | Administrator | Control, visibility, security | System management |

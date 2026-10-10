@@ -1,10 +1,10 @@
-# Test Case: Generar Testimonio Exitoso
+# Test Case: Generar Testimony Exitoso
 
 | Atributo | Detalle |
 |---|---|
 | **ID** | TC-007-generar-testimonio-exitosos |
-| **Título** | Generar Testimonio Exitoso |
-| **Nombre** | Generar Testimonio Exitoso |
+| **Título** | Generar Testimony Exitoso |
+| **Nombre** | Generar Testimony Exitoso |
 | **Referencia** | CU07 |
 | **Descripción** | Validar que el sistema permite generar el testimonio de una escritura aprobada. |
 

@@ -22,6 +22,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Breaking
+
+- **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
+  public resources move to English segments (`POST /api/v1/users/login`, `/api/v1/managements`,
+  `/dashboard/people`, and the rest of the former Spanish paths). There is no Spanish alias.
+  Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
+  `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
+  `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
+  `type`, and `person`. `R45` reverses the renames. Message catalogs stay bilingual, and stored
+  status and catalog labels stay as recorded.
+
 ### Changed
 
 - **OpenSpec hygiene after #1477 / #1480**: archive closed-issue tree
@@ -271,7 +282,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `globals.css` adds text-safe `success`, `warning` and `info` tokens (WCAG AA on white and on their /10 tint),
   mapped in `@theme`; `tokens.ts` mirrors them and writes the brand `#0071E3` once (`BRAND_PRIMARY`). The 54 raw
   Tailwind palette classes in 13 files are now semantic (Badge variants, notices, pagos balance panel, workflow
-  editor legend and errors, admin selects, the `useThemeClasses` builders used by testimonios, ReingresarDialog
+  editor legend and errors, admin selects, the `useThemeClasses` builders used by testimonios, ReenterDialog
   and documentos-entidades-externas); the 14 differently coloured dashboard module tiles share one
   `bg-primary/10 text-primary` style, and `ring-primary-300` / `border-error-500`, which generated no CSS, are `ring-ring/40` / `border-destructive`. The partial
   `.dark` block is removed (owner decision 2026-10-09). Guarded by `design-tokens.test.ts` and Playwright TS-0119.

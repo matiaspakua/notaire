@@ -6,7 +6,7 @@ info:
       Traceability: CU50
 http:
   method: GET
-  url: "{{base_url}}/api/v1/reportes/declaracion-jurada-rentas?anio=2026&mes=9"
+  url: "{{base_url}}/api/v1/reports/tax-sworn-statement?anio=2026&mes=9"
   headers:
     - name: Content-Type
       value: application/json

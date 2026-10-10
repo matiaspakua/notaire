@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Suplencia Repository Integration Tests")
+@DisplayName("Substitution Repository Integration Tests")
 class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -63,25 +63,25 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should persist suplencia with all fields")
+    @DisplayName("Should persist substitution with all fields")
     void shouldPersistSubstitutionWithAllFields() {
         Substitution substitution = new Substitution();
         substitution.setFkIdSubstitute(suplente);
         substitution.setFkIdSubstituted(suplantado);
         substitution.setDateStart(toDate(LocalDate.of(2026, 1, 1)));
         substitution.setDateEnd(toDate(LocalDate.of(2026, 6, 30)));
-        substitution.setNotes("Suplencia de prueba");
+        substitution.setNotes("Substitution de prueba");
 
         Substitution saved = substitutionRepository.save(substitution);
 
         assertThat(saved.getIdSubstitution()).isNotNull();
         assertThat(saved.getFkIdSubstitute().getPersonId()).isEqualTo(suplente.getPersonId());
         assertThat(saved.getFkIdSubstituted().getPersonId()).isEqualTo(suplantado.getPersonId());
-        assertThat(saved.getNotes()).isEqualTo("Suplencia de prueba");
+        assertThat(saved.getNotes()).isEqualTo("Substitution de prueba");
     }
 
     @Test
-    @DisplayName("Should retrieve suplencia by ID")
+    @DisplayName("Should retrieve substitution by ID")
     void shouldRetrieveSubstitutionById() {
         Substitution substitution = new Substitution();
         substitution.setFkIdSubstitute(suplente);
@@ -112,7 +112,7 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should update suplencia")
+    @DisplayName("Should update substitution")
     void shouldUpdateSubstitution() {
         Substitution substitution = new Substitution();
         substitution.setFkIdSubstitute(suplente);
@@ -132,7 +132,7 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should delete suplencia")
+    @DisplayName("Should delete substitution")
     void shouldDeleteSubstitution() {
         Substitution substitution = new Substitution();
         substitution.setFkIdSubstitute(suplente);

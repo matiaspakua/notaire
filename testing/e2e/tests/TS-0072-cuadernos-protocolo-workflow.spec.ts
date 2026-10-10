@@ -32,7 +32,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
     const escribanoId = persona.data!.personId;
     const folios = await seedFoliosConsecutivos(page, escribanoId, 10);
 
-    await page.goto("/dashboard/protocolo/cuadernos");
+    await page.goto("/dashboard/protocol/notebooks");
     await page.waitForLoadState("domcontentloaded");
     await page.getByRole("button", { name: /nuevo cuaderno/i }).click();
 
@@ -43,7 +43,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
     }
 
     await dialog.getByRole("button", { name: /crear/i }).click();
-    await expect(page.getByText(/cuaderno creado/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/notebook creado/i)).toBeVisible({ timeout: 10000 });
     await expect(dialog).not.toBeVisible();
     await expect(page.getByRole("button", { name: /descargar pdf/i }).first()).toBeVisible({ timeout: 10000 });
   });
@@ -54,7 +54,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
     const persona = await createPersona(page);
     const folios = await seedFoliosConsecutivos(page, persona.data!.personId, 3);
 
-    await page.goto("/dashboard/protocolo/cuadernos");
+    await page.goto("/dashboard/protocol/notebooks");
     await page.waitForLoadState("domcontentloaded");
     await page.getByRole("button", { name: /nuevo cuaderno/i }).click();
 
@@ -76,7 +76,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
     const persona = await createPersona(page);
     const folios = await seedFoliosConsecutivos(page, persona.data!.personId, 3);
 
-    await page.goto("/dashboard/protocolo/cuadernos");
+    await page.goto("/dashboard/protocol/notebooks");
     await page.waitForLoadState("domcontentloaded");
     await page.getByRole("button", { name: /nuevo cuaderno/i }).click();
 
@@ -96,7 +96,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
       estados: ["Errose"],
     });
 
-    await page.goto("/dashboard/protocolo/cuadernos");
+    await page.goto("/dashboard/protocol/notebooks");
     await page.waitForLoadState("domcontentloaded");
     await page.getByRole("button", { name: /nuevo cuaderno/i }).click();
 
@@ -111,6 +111,6 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
 
     await dialog.getByLabel(/observaciones/i).fill("Folio dañado durante impresión");
     await dialog.getByRole("button", { name: /crear/i }).click();
-    await expect(page.getByText(/cuaderno creado/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/notebook creado/i)).toBeVisible({ timeout: 10000 });
   });
 });

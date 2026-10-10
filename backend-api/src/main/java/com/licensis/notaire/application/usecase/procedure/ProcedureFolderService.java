@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * CU85 - Administrar Carpetas de Trámite: genera automáticamente una carpeta
- * por cada trámite dado de alta y administra su ciclo de vida
- * activa/espera/archivada.
+ * CU85 - Administrar Procedure folders: generates automáticamente a folder
+ * by each procedure dado of alta and administra its ciclo of vida
+ * activa/wait/archivada.
  */
 @Service
 @Transactional
@@ -40,7 +40,7 @@ public class ProcedureFolderService {
         folder.setFkIdManagement(procedure.getFkIdManagement());
         folder.setFkIdProcedure(procedure);
         ProcedureFolder guardada = procedureFolderRepository.save(folder);
-        log.info("Carpeta {} generada para trámite {} de gestión {}", guardada.getNumber(),
+        log.info("Folder {} generada for procedure {} of management {}", guardada.getNumber(),
                 procedure.getIdProcedure(), procedure.getFkIdManagement().getIdManagement());
         return guardada;
     }
@@ -63,10 +63,10 @@ public class ProcedureFolderService {
     public ProcedureFolder ponerEnWait(Integer idFolder, String reason) {
         if (reason == null || reason.isBlank()) {
             throw new BusinessValidationException(
-                    "El motivo es obligatorio para poner una carpeta en espera");
+                    "The motivo is required for put a folder in espera");
         }
         ProcedureFolder folder = procedureFolderRepository.findById(idFolder)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe la carpeta con ID: " + idFolder));
+                .orElseThrow(() -> new ResourceNotFoundException("There is no the folder with ID: " + idFolder));
         folder.setStatus(StatusWait);
         folder.setWaitReason(reason);
         return procedureFolderRepository.save(folder);

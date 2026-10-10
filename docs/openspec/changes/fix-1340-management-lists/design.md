@@ -6,11 +6,11 @@
 
 ## Goals / Non-Goals
 
-Goals: no screen loads `GET /gestiones?size=1000`; the two lists page on the server; the documentos form can pick any management. Non-goals: deed pickers and the `GET /escrituras?status=` filter (slice 8, separate PR), a backend free-text management search.
+Goals: no screen loads `GET /managements?size=1000`; the two lists page on the server; the documentos form can pick any management. Non-goals: deed pickers and the `GET /deeds?status=` filter (slice 8, separate PR), a backend free-text management search.
 
 ## Decisions
 
-Reuse `useGestionesPage`, `useUrlPagination`, `useClampPage` and the `DataTable` pagination prop exactly as `/dashboard/gestiones` does, so the three lists behave the same. `ManagementPicker` mirrors `BudgetPicker` on `SearchCombobox`, built from existing endpoints (number lookup plus client search), so no API change is needed. The label keeps the old `<number> — <heading>` text so users and tests recognise it.
+Reuse `useGestionesPage`, `useUrlPagination`, `useClampPage` and the `DataTable` pagination prop exactly as `/dashboard/managements` does, so the three lists behave the same. `ManagementPicker` mirrors `BudgetPicker` on `SearchCombobox`, built from existing endpoints (number lookup plus client search), so no API change is needed. The label keeps the old `<number> — <heading>` text so users and tests recognise it.
 
 ## Riesgos / Trade-offs
 

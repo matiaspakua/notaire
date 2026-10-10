@@ -52,7 +52,7 @@ class AuditRecordServiceTest {
         testUser = new User();
         testUser.setIdUser(1);
         testUser.setName("testuser");
-        testUser.setType("Escribano");
+        testUser.setType("Notary");
         testUser.setStatus(true);
         testUser.setFkIdPerson(person);
 
@@ -61,7 +61,7 @@ class AuditRecordServiceTest {
         testRecord.setFkIdUser(testUser);
         testRecord.setDate(new Date());
         testRecord.setOperationDetail("LOGIN");
-        testRecord.setModule("USUARIOS");
+        testRecord.setModule("USERS");
     }
 
     @Nested
@@ -123,7 +123,7 @@ class AuditRecordServiceTest {
             Page<DtoAuditRecord> result = service.findAllAsDto(pageable);
 
             assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getModule()).isEqualTo("USUARIOS");
+            assertThat(result.getContent().get(0).getModule()).isEqualTo("USERS");
         }
     }
 
@@ -136,9 +136,9 @@ class AuditRecordServiceTest {
         void shouldReturnRecordsForModule() {
             Pageable pageable = PageRequest.of(0, 5);
             Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
-            when(repository.findByModule("USUARIOS", pageable)).thenReturn(page);
+            when(repository.findByModule("USERS", pageable)).thenReturn(page);
 
-            Page<AuditRecord> result = service.findByModule("USUARIOS", pageable);
+            Page<AuditRecord> result = service.findByModule("USERS", pageable);
 
             assertThat(result.getContent()).containsExactly(testRecord);
         }
@@ -148,12 +148,12 @@ class AuditRecordServiceTest {
         void shouldReturnDtosForModule() {
             Pageable pageable = PageRequest.of(0, 5);
             Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
-            when(repository.findByModule("USUARIOS", pageable)).thenReturn(page);
+            when(repository.findByModule("USERS", pageable)).thenReturn(page);
 
-            Page<DtoAuditRecord> result = service.findByModuleAsDto("USUARIOS", pageable);
+            Page<DtoAuditRecord> result = service.findByModuleAsDto("USERS", pageable);
 
             assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).getModule()).isEqualTo("USUARIOS");
+            assertThat(result.getContent().get(0).getModule()).isEqualTo("USERS");
         }
     }
 
@@ -187,7 +187,7 @@ class AuditRecordServiceTest {
             Optional<DtoAuditRecord> result = service.findByIdAsDto(1);
 
             assertThat(result).isPresent();
-            assertThat(result.get().getModule()).isEqualTo("USUARIOS");
+            assertThat(result.get().getModule()).isEqualTo("USERS");
         }
 
         @Test
@@ -280,7 +280,7 @@ class AuditRecordServiceTest {
     class ToDto {
 
         @Test
-        @DisplayName("Should map entity to DTO with usuario and person")
+        @DisplayName("Should map entity to DTO with user and person")
         void shouldMapEntityWithUserAndPerson() {
             DtoAuditRecord dto = AuditRecordService.toDto(testRecord);
 
@@ -290,7 +290,7 @@ class AuditRecordServiceTest {
         }
 
         @Test
-        @DisplayName("Should map entity to DTO when usuario is null")
+        @DisplayName("Should map entity to DTO when user is null")
         void shouldMapEntityWithoutUser() {
             testRecord.setFkIdUser(null);
             DtoAuditRecord dto = AuditRecordService.toDto(testRecord);

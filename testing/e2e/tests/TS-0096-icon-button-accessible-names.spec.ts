@@ -33,7 +33,7 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
     const created = await createUsuario(page);
     expect(created.ok, created.error ?? "createUsuario failed").toBe(true);
 
-    const table = await openList(page, "/dashboard/administracion/usuarios");
+    const table = await openList(page, "/dashboard/administration/users");
     await expect(table.getByRole("button", { name: /editar|edit/i }).first()).toBeVisible({
       timeout: 15000,
     });
@@ -44,7 +44,7 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
     const created = await createPersona(page);
     expect(created.ok, created.error ?? "createPersona failed").toBe(true);
 
-    const table = await openList(page, "/dashboard/personas");
+    const table = await openList(page, "/dashboard/people");
     await expect(table.getByRole("button", { name: /editar|edit/i }).first()).toBeVisible({
       timeout: 15000,
     });
@@ -57,20 +57,20 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
     const presupuesto = await createPresupuesto(page, persona.data!.personId);
     expect(presupuesto.ok, presupuesto.error ?? "createPresupuesto failed").toBe(true);
 
-    const table = await openList(page, "/dashboard/presupuestos");
+    const table = await openList(page, "/dashboard/budgets");
     await expect(page.getByTestId(/^btn-resumen-presupuesto-/).first()).toBeVisible({
       timeout: 15000,
     });
     await expect(
-      table.getByRole("button", { name: /resumen financiero|financial summary/i }).first(),
+      table.getByRole("button", { name: /summary financiero|financial summary/i }).first(),
     ).toBeVisible();
   });
 
-  test("administracion/conceptos NotaireIcon actions use button aria-label", async ({ page }) => {
+  test("administracion/concepts NotaireIcon actions use button aria-label", async ({ page }) => {
     const created = await createConcepto(page);
     expect(created.ok, created.error ?? "createConcepto failed").toBe(true);
 
-    const table = await openList(page, "/dashboard/administracion/conceptos");
+    const table = await openList(page, "/dashboard/administration/concepts");
     await expect(table.getByRole("button", { name: /editar|edit/i }).first()).toBeVisible({
       timeout: 15000,
     });
@@ -82,7 +82,7 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
     expect(created.ok, created.error ?? "createUsuario failed").toBe(true);
 
     await page.setViewportSize({ width: 320, height: 720 });
-    const table = await openList(page, "/dashboard/administracion/usuarios");
+    const table = await openList(page, "/dashboard/administration/users");
     await expect(table.getByRole("button", { name: /editar|edit/i }).first()).toBeVisible({
       timeout: 15000,
     });

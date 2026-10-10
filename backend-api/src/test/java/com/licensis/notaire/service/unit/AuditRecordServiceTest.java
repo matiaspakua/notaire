@@ -172,7 +172,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros by usuario id")
+    @DisplayName("Should find registros by user id")
     void shouldFindByUserId() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
@@ -189,7 +189,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros by usuario id as DTOs")
+    @DisplayName("Should find registros by user id as DTOs")
     void shouldFindByUserIdAsDto() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
@@ -246,7 +246,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros list by usuario id")
+    @DisplayName("Should find registros list by user id")
     void shouldFindRegistrosByUserIdList() {
         List<AuditRecord> registros = new ArrayList<>();
         registros.add(testRecord);
@@ -263,7 +263,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should find registros list by usuario id as DTOs")
+    @DisplayName("Should find registros list by user id as DTOs")
     void shouldFindRegistrosByUserIdAsDto() {
         List<AuditRecord> registros = new ArrayList<>();
         registros.add(testRecord);
@@ -310,7 +310,7 @@ class AuditRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Should handle null usuario in DTO mapping")
+    @DisplayName("Should handle null user in DTO mapping")
     void shouldHandleNullUserInDtoMapping() {
         AuditRecord recordSinUser = new AuditRecord();
         recordSinUser.setIdAuditRecord(1);

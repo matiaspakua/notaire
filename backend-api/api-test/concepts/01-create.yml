@@ -8,7 +8,7 @@ info:
       Traceability: CU29 (RF #55, #60)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/conceptos"
+  url: "{{base_url}}/api/v1/concepts"
   body:
     type: json
     data: |-

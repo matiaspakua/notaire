@@ -24,8 +24,8 @@ Restricciones:
 Implementar versionado de API mediante **URL path versioning** con **semantic versioning**:
 
 ```
-/api/v1/presupuestos      # Version 1 stable
-/api/v2/presupuestos      # Version 2 (en desarrollo o future)
+/api/v1/budgets      # Version 1 stable
+/api/v2/budgets      # Version 2 (en desarrollo o future)
 ```
 
 ### Estrategia de Versiones
@@ -46,13 +46,13 @@ Implementar versionado de API mediante **URL path versioning** con **semantic ve
 @RestController
 @RequestMapping("/api/v1")
 public class PresupuestoController {
-    @GetMapping("/presupuestos")
+    @GetMapping("/budgets")
     public ResponseEntity<ApiResponse<List<DtoPresupuesto>>> list() { }
     
-    @GetMapping("/presupuestos/{id}")
+    @GetMapping("/budgets/{id}")
     public ResponseEntity<ApiResponse<DtoPresupuesto>> getById() { }
     
-    @PostMapping("/presupuestos")
+    @PostMapping("/budgets")
     public ResponseEntity<ApiResponse<DtoPresupuesto>> create() { }
 }
 ```
@@ -85,8 +85,8 @@ Seguir semver para **release versions** (código), no para API:
 
 ### Option A: URL Path Versioning (SELECCIONADO)
 ```
-GET /api/v1/presupuestos
-GET /api/v2/presupuestos
+GET /api/v1/budgets
+GET /api/v2/budgets
 ```
 
 | Dimensión | Evaluación |
@@ -110,7 +110,7 @@ GET /api/v2/presupuestos
 
 ### Option B: Accept Header Versioning
 ```
-GET /api/presupuestos
+GET /api/budgets
 Accept: application/vnd.notaire.v1+json
 ```
 
@@ -129,7 +129,7 @@ Accept: application/vnd.notaire.v1+json
 
 ### Option C: Query Parameter Versioning
 ```
-GET /api/presupuestos?api-version=1
+GET /api/budgets?api-version=1
 ```
 
 | Dimensión | Evaluación |
@@ -186,14 +186,14 @@ URL versioning es simple de entender y mantener. Si necesitamos múltiples endpo
 ```java
 // Backend v1 (stable)
 @RestController
-@RequestMapping("/api/v1/presupuestos")
+@RequestMapping("/api/v1/budgets")
 public class PresupuestoControllerV1 {
     // Endpoints v1
 }
 
 // Backend v2 (future - si es necesario)
 @RestController
-@RequestMapping("/api/v2/presupuestos")
+@RequestMapping("/api/v2/budgets")
 public class PresupuestoControllerV2 {
     // Endpoints v2 con breaking changes
 }
@@ -214,7 +214,7 @@ public class PresupuestoControllerV2 {
 ### Deprecation Headers
 
 ```java
-@GetMapping("/presupuestos")
+@GetMapping("/budgets")
 @Deprecated
 public ResponseEntity<?> getPresupuestos() {
     return ResponseEntity.ok()

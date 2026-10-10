@@ -53,7 +53,7 @@ test.describe("CU43 - Reingresar documentación", () => {
       "Certificado de Dominio",
     );
 
-    await page.goto("/dashboard/reingreso-documentacion");
+    await page.goto("/dashboard/document-reentry");
     await page.waitForLoadState("domcontentloaded");
 
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
@@ -66,14 +66,14 @@ test.describe("CU43 - Reingresar documentación", () => {
 
     await page.getByTestId(`btn-reingresar-${idTramite}-${idTipoDocumento}`).click();
 
-    await expect(page.getByText(/documento reingresado/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/document reingresado/i)).toBeVisible({ timeout: 10000 });
   });
 
   test("edge path: a gestión without trámites shows the empty state", async ({ page }) => {
     const persona = await createPersona(page);
     const gestion = await createGestionSinTramite(page, persona.data!.personId);
 
-    await page.goto("/dashboard/reingreso-documentacion");
+    await page.goto("/dashboard/document-reentry");
     await page.waitForLoadState("domcontentloaded");
 
     const row = page.getByRole("row", { name: new RegExp(String(gestion.data!.number)) });

@@ -230,7 +230,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "GestionDeEscritura[ idGestion=" + idManagement + " ]"
+        return "DeedManagement[ idGestion=" + idManagement + " ]"
                 + "[ numero=" + number + " ]";
     }
 
@@ -363,7 +363,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
     public DtoPerson getDtoPersonInvolucrada(Person miPerson) {
         DtoPerson dtoPerson = new DtoPerson();
 
-        // Version del objeto
+        // Version of the objeto
         dtoPerson.setVersion(miPerson.getVersion());
         dtoPerson.setId(miPerson.getPersonId());
         dtoPerson.setFirstName(miPerson.getFirstName());

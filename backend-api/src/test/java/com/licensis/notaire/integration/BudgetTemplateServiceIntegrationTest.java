@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("PlantillaPresupuesto Service Integration Tests")
+@DisplayName("BudgetTemplate Service Integration Tests")
 class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -34,7 +34,7 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
     @BeforeEach
     void setUp() {
         testTypeProcedure = new ProcedureType();
-        testTypeProcedure.setName("Escritura de Compraventa");
+        testTypeProcedure.setName("Deed de Compraventa");
         typeProcedureRepository.save(testTypeProcedure);
 
         testConcept = new Concept();
@@ -220,7 +220,7 @@ class BudgetTemplateServiceIntegrationTest extends ServiceIntegrationTest {
 
         for (int i = 0; i < 3; i++) {
             Concept concept = new Concept();
-            concept.setName("Concepto " + i);
+            concept.setName("Concept " + i);
             concept.setValue(java.math.BigDecimal.ZERO);
             concept.setPercentage(0);
             conceptRepository.save(concept);

@@ -9,7 +9,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import es from "../../../messages/es.json";
-import type { GestionWorkflowTrace } from "@/types";
+import type { ManagementWorkflowTrace } from "@/types";
 
 vi.mock("motion/react", async (orig) => {
   const actual = await orig<typeof import("motion/react")>();
@@ -18,9 +18,9 @@ vi.mock("motion/react", async (orig) => {
 
 import WorkflowTracker from "@/components/motion/WorkflowTracker";
 
-const trace: GestionWorkflowTrace = {
+const trace: ManagementWorkflowTrace = {
   managementId: 1,
-  workflowDefinition: { id: 9, name: "Compraventa" } as GestionWorkflowTrace["workflowDefinition"],
+  workflowDefinition: { id: 9, name: "Compraventa" } as ManagementWorkflowTrace["workflowDefinition"],
   nodes: [
     { id: 1, statusManagementName: "Inicio", type: "INITIAL" },
     { id: 2, statusManagementName: "Documentación completa", type: "INTERMEDIATE" },

@@ -88,7 +88,7 @@ class UpcomingExpirationServiceTest {
     }
 
     @Test
-    @DisplayName("Should leave management data empty for an autonomous document without trámite")
+    @DisplayName("Should leave management data empty for an autonomous document without procedure")
     void shouldAllowDocumentWithoutProcedure() {
         SubmittedDocument autonomous = documentDueIn(3);
         autonomous.setFkIdProcedure(null);

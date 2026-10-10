@@ -48,13 +48,13 @@ class ManagementQueryServiceTest {
         testManagement = new DeedManagement();
         testManagement.setIdManagement(1);
         testManagement.setNumber(100);
-        testManagement.setEncabezado("Venta Inmueble");
+        testManagement.setEncabezado("Venta Property");
         testManagement.setDateStart(new Date());
         testManagement.setFkIdManagementStatus(testStatus);
     }
 
     @Test
-    @DisplayName("Should find all gestiones paginated")
+    @DisplayName("Should find all managements paginated")
     void shouldFindAllPaged() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<DeedManagement> page = new PageImpl<>(List.of(testManagement), pageable, 1);
@@ -65,14 +65,14 @@ class ManagementQueryServiceTest {
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .allMatch(dto -> dto.encabezado().equals("Venta Inmueble"));
+                .allMatch(dto -> dto.encabezado().equals("Venta Property"));
         assertThat(result.getTotalElements()).isEqualTo(1);
 
         verify(repository, times(1)).findAll(pageable);
     }
 
     @Test
-    @DisplayName("Should return empty page when no gestiones")
+    @DisplayName("Should return empty page when not managements")
     void shouldReturnEmptyPageWhenNoGestiones() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<DeedManagement> page = new PageImpl<>(new ArrayList<>(), pageable, 0);
@@ -89,7 +89,7 @@ class ManagementQueryServiceTest {
     }
 
     @Test
-    @DisplayName("Should find gestion by id")
+    @DisplayName("Should find management by id")
     void shouldFindManagementById() {
         when(repository.findById(1)).thenReturn(Optional.of(testManagement));
 
@@ -99,7 +99,7 @@ class ManagementQueryServiceTest {
                 .hasValueSatisfying(dto -> {
                     assertThat(dto.idManagement()).isEqualTo(1);
                     assertThat(dto.number()).isEqualTo(100);
-                    assertThat(dto.encabezado()).isEqualTo("Venta Inmueble");
+                    assertThat(dto.encabezado()).isEqualTo("Venta Property");
                     assertThat(dto.statusActual()).isEqualTo("INICIADO");
                 });
 
@@ -107,7 +107,7 @@ class ManagementQueryServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty when gestion id not found")
+    @DisplayName("Should return empty when management id not found")
     void shouldReturnEmptyWhenManagementIdNotFound() {
         when(repository.findById(999)).thenReturn(Optional.empty());
 
@@ -119,7 +119,7 @@ class ManagementQueryServiceTest {
     }
 
     @Test
-    @DisplayName("Should find gestion by number")
+    @DisplayName("Should find management by number")
     void shouldFindManagementByNumber() {
         when(repository.findByNumber(100)).thenReturn(Optional.of(testManagement));
 
@@ -128,14 +128,14 @@ class ManagementQueryServiceTest {
         assertThat(result).isPresent()
                 .hasValueSatisfying(dto -> {
                     assertThat(dto.number()).isEqualTo(100);
-                    assertThat(dto.encabezado()).isEqualTo("Venta Inmueble");
+                    assertThat(dto.encabezado()).isEqualTo("Venta Property");
                 });
 
         verify(repository, times(1)).findByNumber(100);
     }
 
     @Test
-    @DisplayName("Should return empty when gestion number not found")
+    @DisplayName("Should return empty when management number not found")
     void shouldReturnEmptyWhenManagementNumberNotFound() {
         when(repository.findByNumber(999)).thenReturn(Optional.empty());
 

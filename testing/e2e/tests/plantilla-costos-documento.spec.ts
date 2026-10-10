@@ -21,7 +21,7 @@ test.describe("Plantillas - Costos de Documentos", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/plantillas");
+    await steps.givenUserIsOnPage("/dashboard/administration/templates");
   });
 
   test("CU39-GW01: Given no tipo de trámite selected, Then costos de documentos section is hidden", async ({ page }) => {
@@ -40,7 +40,7 @@ test.describe("Plantillas - Costos de Documentos", () => {
     // combination already created (unique constraint) by an earlier/parallel
     // run against the shared "first option" catalog entries.
     const runId = Date.now();
-    const nombreTramite = `Tipo Tramite Costo E2E ${runId}`;
+    const nombreTramite = `Tipo Procedure Costo E2E ${runId}`;
     const nombreDocumento = `Tipo Documento Costo E2E ${runId}`;
     const tipoTramiteResult = await createTipoTramite(page, { name: nombreTramite });
     expect(tipoTramiteResult.ok).toBe(true);

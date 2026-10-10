@@ -5,7 +5,7 @@
 package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoManagementStatus;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
+import com.licensis.notaire.dto.exceptions.InvalidDtoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -27,7 +27,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase que representa un estado de gestion (en un momento del tiempo dado).
+ * Clase that representa a management status (in a momento of the tiempo dado).
  *
  * @author User
  */
@@ -61,7 +61,7 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
     private java.util.Set<History> historyList;
 
     /**
-     * Constructor por default para estado de gestion. Asigna al ID el valor de
+     * Constructor by default for management status. Asigna to the ID the valor of
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
      */
     public ManagementStatus() {
@@ -149,18 +149,18 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "EstadoDeGestion[ idEstadoGestion=" + idManagementStatus + " ]"
-                + "[ nombre=" + name + " ]";
+        return "ManagementStatus[ idEstadoGestion=" + idManagementStatus + " ]"
+                + "[ name=" + name + " ]";
     }
 
-    public void setAtributo(DtoManagementStatus miDto) throws DtoInvalidoException {
-        if (miDto.isValido() == Boolean.TRUE) {
+    public void setAtributo(DtoManagementStatus miDto) throws InvalidDtoException {
+        if (miDto.isValid() == Boolean.TRUE) {
             this.setIdManagementStatus(miDto.getIdManagementStatus());
             this.setName(miDto.getName());
             this.setNotes(miDto.getNotes());
             this.version = miDto.getVersion();
         } else {
-            throw new DtoInvalidoException("Dto invalido");
+            throw new InvalidDtoException("Dto invalido");
         }
     }
 

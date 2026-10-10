@@ -68,9 +68,9 @@ Adoptamos la **Testing Trophy** adaptada al stack actual:
 
 | Flujo | CUs | Prioridad |
 |-------|-----|-----------|
-| Login → Gestión completa → Pago | CU01, CU02, CU15, CU16 | Critical |
+| Login → Gestión completa → Payment | CU01, CU02, CU15, CU16 | Critical |
 | Alta cliente → Búsqueda | CU17, CU18, CU19, CU61 | High |
-| Presupuesto → Escritura → Testimonio | CU01, CU05, CU07 | High |
+| Presupuesto → Deed → Testimony | CU01, CU05, CU07 | High |
 | Admin: alta usuario + suplencia | CU20, CU22 | Medium |
 | Generar reporte mensual | CU24, CU25 | Medium |
 

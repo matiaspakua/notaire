@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@DisplayName("PlantillaPresupuesto — CU30 list endpoints serialize without cyclic recursion")
+@DisplayName("BudgetTemplate — CU30 list endpoints serialize without cyclic recursion")
 class BudgetTemplateSerializationIntegrationTest {
 
     @Autowired
@@ -48,7 +48,7 @@ class BudgetTemplateSerializationIntegrationTest {
     }
 
     private Integer createConcept() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/conceptos")
+        MvcResult result = mockMvc.perform(post("/api/v1/concepts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "Concept Ciclo IT", "value": 100, "percentage": 0, "fixedConcept": true}
@@ -59,7 +59,7 @@ class BudgetTemplateSerializationIntegrationTest {
     }
 
     private Integer createTypeProcedure() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/tipo-tramite")
+        MvcResult result = mockMvc.perform(post("/api/v1/procedure-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "Procedure Ciclo IT", "isRegistered": false, "isArchived": false, "associatesProperties": false}
@@ -73,7 +73,7 @@ class BudgetTemplateSerializationIntegrationTest {
         String body = """
                 {"fkIdProcedureType": %d, "fkIdConcept": %d, "notes": "template ciclo IT"}
                 """.formatted(typeProcedureId, conceptId);
-        mockMvc.perform(post("/api/v1/plantilla-presupuestos")
+        mockMvc.perform(post("/api/v1/budget-templates")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated());
@@ -86,7 +86,7 @@ class BudgetTemplateSerializationIntegrationTest {
         Integer typeProcedureId = createTypeProcedure();
         createTemplate(typeProcedureId, conceptId);
 
-        MvcResult result = mockMvc.perform(get("/api/v1/plantilla-presupuestos"))
+        MvcResult result = mockMvc.perform(get("/api/v1/budget-templates"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -110,13 +110,13 @@ class BudgetTemplateSerializationIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should serialize conceptos list as valid JSON when a plantilla references the concepto")
+    @DisplayName("Should serialize concepts list as valid JSON when a template references the concept")
     void shouldListConceptosWhenTemplateExists() throws Exception {
         Integer conceptId = createConcept();
         Integer typeProcedureId = createTypeProcedure();
         createTemplate(typeProcedureId, conceptId);
 
-        MvcResult result = mockMvc.perform(get("/api/v1/conceptos"))
+        MvcResult result = mockMvc.perform(get("/api/v1/concepts"))
                 .andExpect(status().isOk())
                 .andReturn();
 

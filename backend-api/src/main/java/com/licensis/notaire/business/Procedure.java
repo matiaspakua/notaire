@@ -37,30 +37,30 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Clase que representa un tramite en curso (no es la definicion de un tramite,
- * sino un tramite
- * concreto que se esta llevando a cabo). Posee las referencias hacia el tipo de
- * tramite, el
- * cliente, el presupuesto del cual se origino y el numero de gestion.
+ * Clase that representa a procedure in curso (is not the definicion of a procedure,
+ * sino a procedure
+ * concreto that esta llevando a cabo). Posee the referencias hacia the tipo of
+ * procedure, the
+ * client, the budget of the cual origino and the number of management.
  * <p>
  * REGLA DE NEGOCIO:
  * <p>
  * +
- * Cuando se crea un presupuesto, en la tabla tramites se crea un registo, el
+ * When crea a budget, in the tabla procedures crea a registo, the
  * cual asocia al
- * presupuesto un determinado tramite junto con el tipo de tramite indicado.
+ * budget a determinado procedure together with the procedure type indicado.
  * <p>
  * + Cuando se inicia
- * una gestion, se debe asociar la misma con los registros de tramites asociados
- * a los presupuestos
- * seleccionado. La combinacion de "GestionDeEscritura" y "Tramite" representan
- * el concepto
- * abstracto de una "gestion".
+ * a management, must asociar the misma with the registros of procedures asociados
+ * a the budgets
+ * seleccionado. La combinacion de "DeedManagement" y "Procedure" representan
+ * the concept
+ * abstracto of a "management".
  * <p>
- * + Cuando se iniciar una gestion, pueden haber varios clientes
+ * + When start a management, can haber varios clients
  * involucrados en la misma. La tabla tramites_personas, expresa esta relacion.
  * El atributo
- * personasList es utilizado por el framework de persistencia para escribir
+ * personasList is utilizado by the framework of persistencia for escribir
  * sobre la tabla
  * relacional indicada.
  * <p>
@@ -103,13 +103,13 @@ public class Procedure implements Serializable, Persistable<Integer> {
     @JoinColumn(name = "fk_id_property", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Property fkIdProperty;
-    @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_budget", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Budget fkIdBudget;
-    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_deed", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Deed fkIdDeed;
-    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_deed_management", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private DeedManagement fkIdManagement;
     @JoinColumn(name = "fk_id_procedure_type", referencedColumnName = "id")
@@ -117,9 +117,9 @@ public class Procedure implements Serializable, Persistable<Integer> {
     private ProcedureType fkIdProcedureType;
 
     /**
-     * Constructor por default para Tramite. Inicializa el ID presupuesto segun el
+     * Constructor by default for Procedure. Inicializa the ID budget according to the
      * campo
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, y todas las listas.
+     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, and all the listas.
      */
     public Procedure() {
         this.idProcedure = BusinessConstants.ID_OBJETO_NO_VALIDO;
@@ -303,7 +303,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
         DtoPerson dtoPerson = new DtoPerson();
 
-        // Version del objeto
+        // Version of the objeto
         dtoPerson.setVersion(miPerson.getVersion());
         dtoPerson.setId(miPerson.getPersonId());
         dtoPerson.setFirstName(miPerson.getFirstName());
@@ -356,7 +356,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Tramite[ idTramite=" + getIdProcedure() + " ]";
+        return "Procedure[ idTramite=" + getIdProcedure() + " ]";
     }
 
     @XmlTransient

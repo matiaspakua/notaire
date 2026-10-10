@@ -3,12 +3,12 @@ info:
   type: http
   seq: 1
   description: |-
-      ## Create user — POST /api/v1/usuarios
+      ## Create user — POST /api/v1/users
       Username is unique per run; deleted by `08-delete.yml`.
       Traceability: CU20 (RF #43, #44, #45, #82, #83)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/usuarios"
+  url: "{{base_url}}/api/v1/users"
   body:
     type: json
     data: |-

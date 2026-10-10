@@ -3,11 +3,11 @@ info:
   type: http
   seq: 6
   description: |-
-      ## Update budget — PUT /api/v1/presupuestos/{budget_id}
+      ## Update budget — PUT /api/v1/budgets/{budget_id}
       Traceability: CU45 (RF #4, #7, #8, #9)
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/presupuestos/{{budget_id}}"
+  url: "{{base_url}}/api/v1/budgets/{{budget_id}}"
   body:
     type: json
     data: |-

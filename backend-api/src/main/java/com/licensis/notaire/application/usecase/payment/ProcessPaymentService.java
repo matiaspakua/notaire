@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * CU15 "Procesar Pago" use case: validates a payment against the budget's pending
+ * CU15 "Procesar Payment" use case: validates a payment against the budget's pending
  * balance and registers it.
  *
  * <p>Pure orchestration — the arithmetic lives in {@link BudgetCharges}, the I/O behind
@@ -43,22 +43,22 @@ public class ProcessPaymentService implements ProcessPaymentUseCase {
     public PaymentDetails process(ProcessPaymentCommand command) {
         Integer budgetId = command.budgetId();
         BigDecimal amount = Money.of(command.amount());
-        log.info("Procesando pago para presupuesto {}: monto={}", budgetId, amount);
+        log.info("Procesando payment for budget {}: monto={}", budgetId, amount);
 
         BudgetCharges charges = budgets.findCharges(budgetId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Presupuesto no encontrado con ID: " + budgetId));
+                        "Budget not found with ID: " + budgetId));
 
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El monto del pago debe ser mayor a cero");
+            throw new IllegalArgumentException("The monto of the payment must be mayor a cero");
         }
 
         BigDecimal pendingBalance = charges.pendingBalanceAfter(payments.sumAmountByBudgetId(budgetId));
-        log.info("Saldo pendiente para presupuesto {}: {}", budgetId, pendingBalance);
+        log.info("Outstanding balance for budget {}: {}", budgetId, pendingBalance);
 
         if (amount.compareTo(pendingBalance) > 0) {
             throw new PendingBalanceExceededException(
-                    String.format("El monto del pago ($%.2f) no puede exceder el saldo pendiente ($%.2f)",
+                    String.format("The monto of the payment ($%.2f) cannot exceder the outstanding balance ($%.2f)",
                             amount, pendingBalance));
         }
 
@@ -69,7 +69,7 @@ public class ProcessPaymentService implements ProcessPaymentUseCase {
                 command.notes(),
                 command.paymentMethod()));
 
-        log.info("Pago registrado exitosamente: ID={}", saved.id());
+        log.info("Payment registrado exitosamente: ID={}", saved.id());
         return saved;
     }
 }

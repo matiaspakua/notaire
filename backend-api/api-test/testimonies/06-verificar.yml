@@ -3,11 +3,11 @@ info:
   type: http
   seq: 7
   description: |-
-      ## POST /api/v1/testimonio/{id}/verificar
+      ## POST /api/v1/testimonies/{id}/verify
       Traceability: CU08
 http:
   method: POST
-  url: "{{base_url}}/api/v1/testimonio/{{testimony_id}}/verificar"
+  url: "{{base_url}}/api/v1/testimonies/{{testimony_id}}/verify"
   body:
     type: json
     data: |-

@@ -11,7 +11,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Link | Reference | Status |
 |------|-----------|--------|
 | Issue | #596 | open → in progress |
-| Use Case | CU18 – Dar Alta Cliente; CU54 – Modificar Persona; CU61 – Buscar persona | exists |
+| Use Case | CU18 – Dar Alta Cliente; CU54 – Modificar Person; CU61 – Buscar persona | exists |
 | Specification | `docs/openspec/changes/fix-596-people-pagination/` | Gate 1 draft |
 | Branch | `fix/596_people_pagination` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |

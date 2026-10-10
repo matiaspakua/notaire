@@ -31,11 +31,11 @@ import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 
 /**
- * CU10 - Registrar movimientos de documentación de entidades externas.
+ * CU10 - Record movimientos of documentation of entidades externas.
  */
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Gestion documents de entidades externas (CU10)")
+@DisplayName("Management documents of entidades externas (CU10)")
 class ManagementDocumentsEntidadesExternasIntegrationTest {
 
     @Autowired
@@ -80,7 +80,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
                 {"encabezado": "Management CU10", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d}
                 """.formatted(number, notaryId);
-        MvcResult result = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult result = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -88,7 +88,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
         Integer managementId = mapper.readTree(result.getResponse().getContentAsString()).get("idManagement").asInt();
 
         ProcedureType type = new ProcedureType();
-        type.setName("Tramite CU10 " + number);
+        type.setName("Procedure CU10 " + number);
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -119,14 +119,14 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when the gestión does not exist")
+    @DisplayName("Should return 404 when the management does not exist")
     void shouldReturn404WhenManagementDoesNotExist() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/999999/documentos-entidades-externas"))
+        mockMvc.perform(get("/api/v1/managements/999999/external-entity-documents"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should list the entidad externa documents and nomenclatura catastral of a gestión")
+    @DisplayName("Should list the external entity documents and cadastral nomenclature of a management")
     void shouldListDocumentsEntidadesExternas() throws Exception {
         Integer managementId = createManagementConProcedure(9301);
         createDocumentEntidadExterna(managementId, "Certificado de Dominio");
@@ -140,7 +140,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
         procedure = procedureRepository.save(procedure);
 
         try {
-            mockMvc.perform(get("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas"))
+            mockMvc.perform(get("/api/v1/managements/" + managementId + "/external-entity-documents"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.idManagement").value(managementId))
                     .andExpect(jsonPath("$.cadastralDesignation").value("11-22-33"))
@@ -162,7 +162,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
                 {"prepared": true, "cardNumber": 5, "notes": "Retirado", "delivered": false}
                 """;
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas/"
+        mockMvc.perform(put("/api/v1/managements/" + managementId + "/external-entity-documents/"
                         + document.getIdSubmittedDocument())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -173,7 +173,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 400 when the document does not belong to the gestión")
+    @DisplayName("Should return 400 when the document does not belong to the management")
     void shouldReturn400WhenDocumentDoesNotBelongToManagement() throws Exception {
         Integer managementId = createManagementConProcedure(9303);
         Integer otraManagementId = createManagementConProcedure(9304);
@@ -183,7 +183,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
                 {"delivered": true}
                 """;
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas/"
+        mockMvc.perform(put("/api/v1/managements/" + managementId + "/external-entity-documents/"
                         + document.getIdSubmittedDocument())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
@@ -199,14 +199,14 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
                 {"delivered": true}
                 """;
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas/999999")
+        mockMvc.perform(put("/api/v1/managements/" + managementId + "/external-entity-documents/999999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should keep gestión open when the workflow does not define the completion transition")
+    @DisplayName("Should keep management open when the workflow does not define the completion transition")
     void shouldMarkAllDocumentsDeliveredWithoutFailingWhenNoWorkflow() throws Exception {
         Integer managementId = createManagementConProcedure(9306);
         SubmittedDocument document = createDocumentEntidadExterna(managementId, "Libre de Deuda");
@@ -215,7 +215,7 @@ class ManagementDocumentsEntidadesExternasIntegrationTest {
                 {"delivered": true}
                 """;
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/documentos-entidades-externas/"
+        mockMvc.perform(put("/api/v1/managements/" + managementId + "/external-entity-documents/"
                         + document.getIdSubmittedDocument())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))

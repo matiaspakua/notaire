@@ -9,23 +9,23 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for PlantillaPresupuesto entity and related concurrency logic.
+ * Unit tests for BudgetTemplate entity and related concurrency logic.
  *
  * Tests cover issue #340 — optimistic locking / concurrency handling.
- * The @Version field on PlantillaPresupuesto must be non-null and consistent
+ * The @Version field on BudgetTemplate must be non-null and consistent
  * across reads/writes to prevent OptimisticLockException on concurrent edits.
  *
  * Covers use cases: CU39, CU49, CU55.
  */
-@DisplayName("PlantillaPresupuesto Entity Tests (issue #340)")
+@DisplayName("BudgetTemplate Entity Tests (issue #340)")
 class BudgetTemplateControllerTest {
 
     @Nested
-    @DisplayName("CU39/CU49/CU55 - Plantilla de Presupuesto — Concurrency / Optimistic Lock")
+    @DisplayName("CU39/CU49/CU55 - Budget template — Concurrency / Optimistic Lock")
     class ConcurrencyTests {
 
         @Test
-        @DisplayName("PlantillaPresupuestoPK equality — same PK values must be equal")
+        @DisplayName("BudgetTemplateKey equality — same PK values must be equal")
         void pkEqualityBySameValues() {
             BudgetTemplatePK pk1 = new BudgetTemplatePK(1, 2);
             BudgetTemplatePK pk2 = new BudgetTemplatePK(1, 2);
@@ -34,7 +34,7 @@ class BudgetTemplateControllerTest {
         }
 
         @Test
-        @DisplayName("PlantillaPresupuestoPK inequality — different values must not be equal")
+        @DisplayName("BudgetTemplateKey inequality — different values must not be equal")
         void pkInequalityByDifferentValues() {
             BudgetTemplatePK pk1 = new BudgetTemplatePK(1, 2);
             BudgetTemplatePK pk2 = new BudgetTemplatePK(1, 3);
@@ -42,7 +42,7 @@ class BudgetTemplateControllerTest {
         }
 
         @Test
-        @DisplayName("PlantillaPresupuesto default version must be 0 (JPA @Version initial value)")
+        @DisplayName("BudgetTemplate default version must be 0 (JPA @Version initial value)")
         void defaultVersionIsZero() {
             BudgetTemplate entity = new BudgetTemplate();
             // The @Version field is initialized to 0 in the entity class.
@@ -52,15 +52,15 @@ class BudgetTemplateControllerTest {
         }
 
         @Test
-        @DisplayName("PlantillaPresupuesto notes field — can be set and retrieved")
+        @DisplayName("BudgetTemplate notes field — can be set and retrieved")
         void notesFieldCanBeSetAndRetrieved() {
             BudgetTemplate entity = new BudgetTemplate();
-            entity.setNotes("Test observación para budget estándar");
-            assertThat(entity.getNotes()).isEqualTo("Test observación para budget estándar");
+            entity.setNotes("Test observation for budget estándar");
+            assertThat(entity.getNotes()).isEqualTo("Test observation for budget estándar");
         }
 
         @Test
-        @DisplayName("PlantillaPresupuesto PK assignment — PK fields sync with FK fields")
+        @DisplayName("BudgetTemplate PK assignment — PK fields sync with FK fields")
         void pkAssignmentSyncsFkFields() {
             BudgetTemplatePK pk = new BudgetTemplatePK(5, 10);
             assertThat(pk.getFkIdProcedureType()).isEqualTo(5);
@@ -68,7 +68,7 @@ class BudgetTemplateControllerTest {
         }
 
         @Test
-        @DisplayName("PlantillaPresupuesto with PK constructor — sets PK correctly")
+        @DisplayName("BudgetTemplate with PK constructor — sets PK correctly")
         void constructorWithPkSetsCorrectly() {
             BudgetTemplatePK pk = new BudgetTemplatePK(3, 7);
             BudgetTemplate entity = new BudgetTemplate(pk);
@@ -84,7 +84,7 @@ class BudgetTemplateControllerTest {
         @DisplayName("Update should use current entity version from database — not client version")
         void updateUsesCurrentVersionFromDatabase() {
             // This test documents the expected behavior described in the concurrency fix:
-            // When a client calls PUT /plantilla-presupuestos/..., the controller must:
+            // When a client calls PUT /budget-templates/..., the controller must:
             // 1. Fetch the current entity (including its @Version) from the DB
             // 2. Apply the client changes to the fetched entity
             // 3. Persist the merged entity (version is correct)
@@ -96,7 +96,7 @@ class BudgetTemplateControllerTest {
             fromDb.setNotes("Original notes");
 
             // Simulate client sending update with observaciones but no version
-            String newNotes = "Observaciones actualizadas por el cliente";
+            String newNotes = "Notes actualizadas by the client";
             fromDb.setNotes(newNotes);
 
             assertThat(fromDb.getNotes()).isEqualTo(newNotes);

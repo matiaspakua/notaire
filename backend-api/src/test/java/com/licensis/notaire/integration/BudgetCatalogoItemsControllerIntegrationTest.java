@@ -26,7 +26,7 @@ import java.util.List;
 @RequirementCoverage({"CU71"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Presupuesto — agregar ítems existentes del catálogo (CU71)")
+@DisplayName("Budget — add items existentes of the catálogo (CU71)")
 class BudgetCatalogoItemsControllerIntegrationTest {
 
     @Autowired
@@ -61,7 +61,7 @@ class BudgetCatalogoItemsControllerIntegrationTest {
                 {"number": %d, "date": "2026-01-01", "encabezado": "Budget Catalogo IT",
                  "status": "PENDIENTE", "amount": 1000.00, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -72,7 +72,7 @@ class BudgetCatalogoItemsControllerIntegrationTest {
     private Item createCatalogItem(String name, java.math.BigDecimal value) {
         Item item = new Item(null, name, value);
         item.setPercentage(15);
-        item.setNotes("Item de catálogo IT");
+        item.setNotes("Item of catálogo IT");
         return itemRepository.save(item);
     }
 
@@ -83,7 +83,7 @@ class BudgetCatalogoItemsControllerIntegrationTest {
         Integer budgetId = createBudget(clientId);
         Item catalogItem = createCatalogItem("Sellado IT", new java.math.BigDecimal("500"));
 
-        mockMvc.perform(post("/api/v1/presupuestos/" + budgetId + "/items-desde-catalogo")
+        mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-catalog")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(List.of(catalogItem.getIdItem()))))
                 .andExpect(status().isOk())
@@ -98,7 +98,7 @@ class BudgetCatalogoItemsControllerIntegrationTest {
         Integer clientId = createPerson();
         Integer budgetId = createBudget(clientId);
 
-        mockMvc.perform(post("/api/v1/presupuestos/" + budgetId + "/items-desde-catalogo")
+        mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-catalog")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(List.of(999999))))
                 .andExpect(status().isNotFound());
@@ -109,7 +109,7 @@ class BudgetCatalogoItemsControllerIntegrationTest {
     void shouldReturnNotFoundForUnknownBudget() throws Exception {
         Item catalogItem = createCatalogItem("Honorarios IT", new java.math.BigDecimal("1000"));
 
-        mockMvc.perform(post("/api/v1/presupuestos/999999/items-desde-catalogo")
+        mockMvc.perform(post("/api/v1/budgets/999999/items-from-catalog")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(List.of(catalogItem.getIdItem()))))
                 .andExpect(status().isNotFound());

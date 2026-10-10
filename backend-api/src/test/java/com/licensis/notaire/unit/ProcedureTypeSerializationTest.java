@@ -18,7 +18,7 @@ class ProcedureTypeSerializationTest {
         type.setName("Compraventa");
         WorkflowDefinition definition = new WorkflowDefinition();
         definition.setId(1);
-        definition.setName("Workflow de Gestión Estándar");
+        definition.setName("Workflow of Management Estándar");
         type.setWorkflowDefinition(definition);
 
         String json = new ObjectMapper().writeValueAsString(type);

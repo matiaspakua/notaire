@@ -7,7 +7,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
 
-const PAGES = ["/dashboard/personas", "/dashboard/gestiones", "/dashboard/presupuestos", "/dashboard/administracion/usuarios"];
+const PAGES = ["/dashboard/people", "/dashboard/managements", "/dashboard/budgets", "/dashboard/administration/users"];
 
 async function smallButtons(page: Page) {
   return page.locator("main button:visible, main select:visible").evaluateAll((els) =>
@@ -50,7 +50,7 @@ test.describe("TS-0122 desktop look is unchanged (#1369)", () => {
 
   test("row actions on personas stay 32px tall with a fine pointer", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     const edit = page.locator("main tbody button[aria-label]").first();
     await expect(edit).toBeVisible({ timeout: 10000 });
     const box = await edit.boundingBox();

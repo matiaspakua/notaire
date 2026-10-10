@@ -58,7 +58,7 @@ class BudgetSummaryDtoTest {
 
     @BeforeEach
     void setUp() {
-        descriptor = new BudgetDescriptor(BUDGET_ID, BUDGET_NUMBER, 1, 500, "Gestión Test");
+        descriptor = new BudgetDescriptor(BUDGET_ID, BUDGET_NUMBER, 1, 500, "Management Test");
     }
 
     private PaymentDetails paymentOf(Integer idPayment, java.math.BigDecimal amount) {
@@ -74,7 +74,7 @@ class BudgetSummaryDtoTest {
     class ObtenerResumenTests {
 
         @Test
-        @DisplayName("Presupuesto sin payments muestra saldo igual al total y lista vacía")
+        @DisplayName("Budget without payments muestra balance igual to the total and lista empty")
         void shouldReturnFullBalanceWhenNoPayments() {
             when(budgets.findDescriptor(BUDGET_ID)).thenReturn(Optional.of(descriptor));
             when(paymentQueries.findByBudget(BUDGET_ID)).thenReturn(List.of());
@@ -87,11 +87,11 @@ class BudgetSummaryDtoTest {
             assertThat(resumen.payments()).isEmpty();
             assertThat(resumen.idManagement()).isEqualTo(1);
             assertThat(resumen.numberManagement()).isEqualTo(500);
-            assertThat(resumen.encabezadoManagement()).isEqualTo("Gestión Test");
+            assertThat(resumen.encabezadoManagement()).isEqualTo("Management Test");
         }
 
         @Test
-        @DisplayName("Presupuesto con un pago reduce el saldo y lo incluye en la lista")
+        @DisplayName("Budget with a payment reduce the balance and it incluye in the lista")
         void shouldReturnReducedBalanceWithOnePayment() {
             when(budgets.findDescriptor(BUDGET_ID)).thenReturn(Optional.of(descriptor));
             when(paymentQueries.findByBudget(BUDGET_ID)).thenReturn(List.of(paymentOf(1, new java.math.BigDecimal("2000.00"))));
@@ -108,7 +108,7 @@ class BudgetSummaryDtoTest {
         }
 
         @Test
-        @DisplayName("Presupuesto con múltiples payments muestra el saldo neto y todos los payments")
+        @DisplayName("Budget with múltiples payments muestra the balance neto and all the payments")
         void shouldReturnNetBalanceWithMultiplePayments() {
             when(budgets.findDescriptor(BUDGET_ID)).thenReturn(Optional.of(descriptor));
             when(paymentQueries.findByBudget(BUDGET_ID))
@@ -129,7 +129,7 @@ class BudgetSummaryDtoTest {
 
             assertThatThrownBy(() -> summaryOf(999))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Presupuesto no encontrado");
+                    .hasMessageContaining("Budget not found");
         }
     }
 }

@@ -55,52 +55,52 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
   {
     labelKey: "clientes",
     items: [
-      { labelKey: "personas", href: "/dashboard/personas", icon: Users, featured: true },
-      { labelKey: "inmuebles", href: "/dashboard/inmuebles", icon: Building2, featured: true },
+      { labelKey: "personas", href: "/dashboard/people", icon: Users, featured: true },
+      { labelKey: "inmuebles", href: "/dashboard/properties", icon: Building2, featured: true },
     ],
   },
   {
     labelKey: "tramites",
     items: [
-      { labelKey: "gestiones", href: "/dashboard/gestiones", icon: FolderKanban, featured: true },
-      { labelKey: "presupuestos", href: "/dashboard/presupuestos", icon: Calculator, featured: true },
-      { labelKey: "pagos", href: "/dashboard/pagos", icon: CreditCard, featured: true },
+      { labelKey: "gestiones", href: "/dashboard/managements", icon: FolderKanban, featured: true },
+      { labelKey: "presupuestos", href: "/dashboard/budgets", icon: Calculator, featured: true },
+      { labelKey: "pagos", href: "/dashboard/payments", icon: CreditCard, featured: true },
     ],
   },
   {
     labelKey: "documentacion",
     items: [
-      { labelKey: "documentos", href: "/dashboard/documentos", icon: FileText, featured: true },
-      { labelKey: "documentosNecesarios", href: "/dashboard/documentos-necesarios", icon: ClipboardList },
-      { labelKey: "documentosEntidadesExternas", href: "/dashboard/documentos-entidades-externas", icon: Landmark },
-      { labelKey: "reingresoDocumentacion", href: "/dashboard/reingreso-documentacion", icon: RotateCcw },
-      { labelKey: "proximosVencimientos", href: "/dashboard/proximos-vencimientos", icon: CalendarClock },
+      { labelKey: "documentos", href: "/dashboard/documents", icon: FileText, featured: true },
+      { labelKey: "documentosNecesarios", href: "/dashboard/required-documents", icon: ClipboardList },
+      { labelKey: "documentosEntidadesExternas", href: "/dashboard/external-entity-documents", icon: Landmark },
+      { labelKey: "reingresoDocumentacion", href: "/dashboard/document-reentry", icon: RotateCcw },
+      { labelKey: "proximosVencimientos", href: "/dashboard/upcoming-expirations", icon: CalendarClock },
     ],
   },
   {
     labelKey: "escriturasProtocolo",
     items: [
-      { labelKey: "escrituras", href: "/dashboard/escrituras", icon: ScrollText, featured: true },
-      { labelKey: "testimonios", href: "/dashboard/testimonios", icon: FileCheck2 },
-      { labelKey: "movimientosTestimonio", href: "/dashboard/movimientos-testimonio", icon: ArrowRightLeft },
-      { labelKey: "copias", href: "/dashboard/copias", icon: Copy, featured: true },
-      { labelKey: "minutasInscripcion", href: "/dashboard/minutas-inscripcion", icon: Stamp },
-      { labelKey: "protocolo", href: "/dashboard/protocolo", icon: BookMarked, featured: true },
+      { labelKey: "escrituras", href: "/dashboard/deeds", icon: ScrollText, featured: true },
+      { labelKey: "testimonios", href: "/dashboard/testimonies", icon: FileCheck2 },
+      { labelKey: "movimientosTestimonio", href: "/dashboard/testimony-movements", icon: ArrowRightLeft },
+      { labelKey: "copias", href: "/dashboard/copies", icon: Copy, featured: true },
+      { labelKey: "minutasInscripcion", href: "/dashboard/registration-drafts", icon: Stamp },
+      { labelKey: "protocolo", href: "/dashboard/protocol", icon: BookMarked, featured: true },
     ],
   },
   {
     labelKey: "gestion",
     items: [
-      { labelKey: "reportes", href: "/dashboard/reportes", icon: FileBarChart, featured: true },
-      { labelKey: "auditoria", href: "/dashboard/auditoria", icon: ShieldCheck, adminOnly: true, featured: true },
-      { labelKey: "suplencias", href: "/dashboard/suplencias", icon: UserRoundCog, featured: true },
+      { labelKey: "reportes", href: "/dashboard/reports", icon: FileBarChart, featured: true },
+      { labelKey: "auditoria", href: "/dashboard/audit", icon: ShieldCheck, adminOnly: true, featured: true },
+      { labelKey: "suplencias", href: "/dashboard/substitutions", icon: UserRoundCog, featured: true },
       { labelKey: "items", href: "/dashboard/items", icon: ListTodo, featured: true },
     ],
   },
   {
     labelKey: "administracion",
     items: [
-      { labelKey: "administracion", href: "/dashboard/administracion", icon: Settings, adminOnly: true, featured: true },
+      { labelKey: "administracion", href: "/dashboard/administration", icon: Settings, adminOnly: true, featured: true },
     ],
   },
 ];
@@ -124,11 +124,11 @@ export function isNavItemActive(pathname: string, href: string): boolean {
 /** Canonical routes that replaced duplicate administración pages (#1058). */
 export const CANONICAL_ADMIN_REDIRECTS = [
   {
-    source: "/dashboard/administracion/items",
+    source: "/dashboard/administration/items",
     destination: "/dashboard/items",
   },
   {
-    source: "/dashboard/administracion/auditoria",
-    destination: "/dashboard/auditoria",
+    source: "/dashboard/administration/audit",
+    destination: "/dashboard/audit",
   },
 ] as const;

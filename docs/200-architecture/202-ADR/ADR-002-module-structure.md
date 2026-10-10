@@ -111,10 +111,10 @@ repository/
 ```text
 negocio/
 ├── Presupuesto.java
-├── Persona.java
-├── Escritura.java
+├── Person.java
+├── Deed.java
 ├── Gestion.java
-├── Usuario.java
+├── UserAccount.java
 └── Folio.java
 ```
 

@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST API para la gestión de trámites en Protocolo Auxiliar (CU81).
+ * REST API for the management of procedures in Auxiliary protocol (CU81).
  */
 @RestController
-@RequestMapping("/api/v1/protocolo-auxiliar")
-@Tag(name = "Protocolo Auxiliar", description = "API para gestionar trámites en Protocolo Auxiliar")
+@RequestMapping("/api/v1/auxiliary-protocol")
+@Tag(name = "Protocolo Auxiliar", description = "API for managing procedures in Auxiliary protocol")
 public class AuxiliaryProtocolController {
 
     private final AuxiliaryProtocolService protocoloAuxiliaryService;
@@ -39,7 +39,7 @@ public class AuxiliaryProtocolController {
     public record IniciarDeedRequest(Integer idFolio, String body) {
     }
 
-    @GetMapping("/folios-disponibles")
+    @GetMapping("/available-folios")
     @Operation(summary = "Listar folios de Protocolo Auxiliar disponibles")
     @Transactional(readOnly = true)
     public ResponseEntity<List<FolioResponse>> getAvailableFolios() {
@@ -49,11 +49,11 @@ public class AuxiliaryProtocolController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Creada"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "404", description = "Folio no encontrado")
     })
-    @PostMapping("/escrituras")
-    @Operation(summary = "Iniciar una escritura de Protocolo Auxiliar sobre un folio disponible")
+    @PostMapping("/deeds")
+    @Operation(summary = "Start a deed of Auxiliary protocol on a folio available")
     public ResponseEntity<Object> iniciarDeed(@RequestBody IniciarDeedRequest request) {
         try {
             Deed creada = protocoloAuxiliaryService.iniciarDeed(

@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Regression test for {@code Presupuesto}'s
  * {@code @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)} collection of
- * {@link Pago} — the second highest-risk cascade shape identified in design.md "Riesgos"
+ * {@link Payment} — the second highest-risk cascade shape identified in design.md "Riesgos"
  * for reverting a delete via Hibernate re-managing the loaded, cascaded children in the
  * same persistence context (#957).
  *
@@ -71,7 +71,7 @@ class BudgetDeleteCascadeIntegrationTest {
         budget.setDate(new Date());
         budget.setNumber(1);
         budget.setStatus("ACTIVO");
-        budget.setEncabezado("Cascade Test Presupuesto");
+        budget.setEncabezado("Cascade Test Budget");
         budget.setFkIdPerson(person);
         budget = budgetRepository.save(budget);
 

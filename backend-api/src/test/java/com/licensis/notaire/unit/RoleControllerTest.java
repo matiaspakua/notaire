@@ -49,7 +49,7 @@ class RoleControllerTest {
         Role role = new Role();
         role.setIdRole(id);
         role.setName(name);
-        role.setDescription("Descripción de " + name);
+        role.setDescription("Description of " + name);
         role.setActive(true);
         role.setModulos(List.of("administracion", "users"));
         return role;

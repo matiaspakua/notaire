@@ -21,13 +21,13 @@ test.describe("CU42 - Próximos vencimientos", () => {
     // A document is presented for a trámite (CU04, #655): procedureId is required on create.
     const tipoTramite = await createTipoTramite(page);
     expect(tipoTramite.ok, tipoTramite.error ?? "createTipoTramite failed").toBe(true);
-    const tramite = await apiPost<{ idProcedure: number }>(page, "/tramites", {
+    const tramite = await apiPost<{ idProcedure: number }>(page, "/procedures", {
       idProcedureType: tipoTramite.data!.idProcedureType,
     });
     expect(tramite.ok, tramite.error ?? "create trámite failed").toBe(true);
 
     const name = `Vencimiento E2E ${uniqueId()}`;
-    const documento = await apiPost<{ idSubmittedDocument: number }>(page, "/documento-presentado", {
+    const documento = await apiPost<{ idSubmittedDocument: number }>(page, "/submitted-documents", {
       typeId: tipo.data!.idDocumentType,
       procedureId: tramite.data!.idProcedure,
       date: new Date().toISOString().split("T")[0],
@@ -36,7 +36,7 @@ test.describe("CU42 - Próximos vencimientos", () => {
     });
     expect(documento.ok, documento.error ?? "documento-presentado failed").toBe(true);
 
-    await page.goto("/dashboard/proximos-vencimientos");
+    await page.goto("/dashboard/upcoming-expirations");
     const table = page.getByRole("table");
     await expect(table.getByText(name)).toBeVisible({ timeout: 15000 });
 

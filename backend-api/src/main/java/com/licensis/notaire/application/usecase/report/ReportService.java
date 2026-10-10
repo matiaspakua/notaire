@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
- * Generates the report PDFs exposed by {@code /api/v1/reportes}.
+ * Generates the report PDFs exposed by {@code /api/v1/reports}.
  *
  * <p>The six reports that were JasperReports 3.5.3 templates over the legacy schema
  * (budget, budget with properties, procedure documents, management history, document
@@ -104,30 +104,30 @@ public class ReportService {
 
     public byte[] generateTestimonyCopyReport(Integer idTestimony) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
-                .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimony));
+                .orElseThrow(() -> new ResourceNotFoundException("Testimony no encontrado con ID: " + idTestimony));
 
         if (!testimony.getVerified()) {
             throw new BusinessValidationException(
-                    "El testimonio debe estar verificado para emitir la copia impresa");
+                    "The testimony must be verified for issue the copy impresa");
         }
 
         return generateSimpleTextPdf(
-                "Copia de Testimonio N° " + testimony.getNumber(),
+                "Copy de Testimony N° " + testimony.getNumber(),
                 "CU08",
-                "Testimonio verificado",
+                "Testimony verificado",
                 "Generado: " + LocalDate.now()
         );
     }
 
     public byte[] generateNotebookCoverReport(Integer idNotebook) {
         Notebook notebook = notebookRepository.findById(idNotebook)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe el cuaderno con ID: " + idNotebook));
+                .orElseThrow(() -> new ResourceNotFoundException("There is no the notebook with ID: " + idNotebook));
 
         int folioDesde = (notebook.getNumber() - 1) * FOLIOS_PER_NOTEBOOK + 1;
         int folioHasta = notebook.getNumber() * FOLIOS_PER_NOTEBOOK;
 
         return generateSimpleTextPdf(
-                "Carátula de Cuaderno N° " + notebook.getNumber() + "/" + notebook.getYear(),
+                "Carátula of Notebook N° " + notebook.getNumber() + "/" + notebook.getYear(),
                 "CU80",
                 "Registro N° " + notebook.getFkIdNotaryPerson().getNotaryRegistrationNumber()
                         + " - Folios " + folioDesde + " a " + folioHasta,
@@ -147,12 +147,12 @@ public class ReportService {
     public byte[] generateRegistrationDraftReport(Integer idRegistrationDraft) {
         RegistrationDraft draft = registrationDraftRepository.findById(idRegistrationDraft)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "No existe la minuta de inscripción con ID: " + idRegistrationDraft));
+                        "There is no the registration draft with ID: " + idRegistrationDraft));
 
         return generateSimpleTextPdf(
-                "Minuta de Inscripción N° " + draft.getNumber(),
+                "Registration draft N° " + draft.getNumber(),
                 "CU82",
-                "Escritura N° " + draft.getFkIdDeed().getNumber() + " - Estado: " + draft.getStatus(),
+                "Deed N° " + draft.getFkIdDeed().getNumber() + " - Estado: " + draft.getStatus(),
                 "Generado: " + LocalDate.now()
         );
     }
@@ -189,18 +189,18 @@ public class ReportService {
             stream.append("BT\n");
             stream.append("/F1 20 Tf\n");
             stream.append("50 760 Td\n");
-            stream.append("(Recibo de Pago) Tj\n");
+            stream.append("(Recibo de Payment) Tj\n");
             stream.append("/F1 12 Tf\n");
             stream.append("0 -30 Td\n");
             stream.append("(Cliente: ").append(escapePdfText(client)).append(") Tj\n");
             stream.append("0 -20 Td\n");
             stream.append("(Fecha de pago: ").append(escapePdfText(String.valueOf(date))).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(Concepto(s): ").append(escapePdfText(conceptos)).append(") Tj\n");
+            stream.append("(Concept(s): ").append(escapePdfText(conceptos)).append(") Tj\n");
             stream.append("0 -20 Td\n");
             stream.append("(Total abonado: ").append(escapePdfText(amountText)).append(") Tj\n");
             stream.append("0 -40 Td\n");
-            stream.append("(Recibo generado por backend API - CU15.) Tj\n");
+            stream.append("(Recibo generado by backend API - CU15.) Tj\n");
             stream.append("ET\n");
 
             return buildPdf(stream.toString());
@@ -224,7 +224,7 @@ public class ReportService {
             stream.append("0 -20 Td\n");
             stream.append("(").append(escapePdfText(lineaDate)).append(") Tj\n");
             stream.append("0 -40 Td\n");
-            stream.append("(Reporte operativo generado por backend API.) Tj\n");
+            stream.append("(Reporte operativo generado by backend API.) Tj\n");
             stream.append("ET\n");
 
             return buildPdf(stream.toString());

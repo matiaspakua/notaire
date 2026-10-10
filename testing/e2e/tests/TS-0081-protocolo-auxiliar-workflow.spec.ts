@@ -25,7 +25,7 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
   }) => {
     const idFolio = await seedFolioAuxiliarDisponible(page);
 
-    await page.goto("/dashboard/protocolo/auxiliar");
+    await page.goto("/dashboard/protocol/auxiliary");
     await page.waitForLoadState("domcontentloaded");
 
     const row = rowWithCell(page, idFolio);
@@ -37,7 +37,7 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
     await dialog.getByTestId("textarea-cuerpo-escritura-auxiliar").fill("Cuerpo de la escritura de prueba E2E");
     await dialog.getByRole("button", { name: /crear/i }).click();
 
-    await expect(page.getByText(/escritura iniciada/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/deed iniciada/i)).toBeVisible({ timeout: 10000 });
     await expect(dialog).not.toBeVisible();
     await expect(row).not.toBeVisible();
   });
@@ -45,7 +45,7 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
   test("edge path: submit button stays disabled until the cuerpo field is filled", async ({ page }) => {
     const idFolio = await seedFolioAuxiliarDisponible(page);
 
-    await page.goto("/dashboard/protocolo/auxiliar");
+    await page.goto("/dashboard/protocol/auxiliary");
     await page.waitForLoadState("domcontentloaded");
 
     const row = rowWithCell(page, idFolio);
@@ -61,19 +61,19 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
   });
 
   test("empty state: shows no-data message when there are no available auxiliar folios", async ({ page }) => {
-    await page.goto("/dashboard/protocolo/auxiliar");
+    await page.goto("/dashboard/protocol/auxiliary");
     await page.waitForLoadState("domcontentloaded");
 
-    await expect(page.getByText(/protocolo auxiliar/i).first()).toBeVisible();
+    await expect(page.getByText(/protocol auxiliar/i).first()).toBeVisible();
   });
 
   for (const width of [320, 768, 1024]) {
     test(`has no horizontal overflow at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto("/dashboard/protocolo/auxiliar");
+      await page.goto("/dashboard/protocol/auxiliary");
       await page.waitForLoadState("domcontentloaded");
 
-      await expect(page.getByText(/protocolo auxiliar/i).first()).toBeVisible();
+      await expect(page.getByText(/protocol auxiliar/i).first()).toBeVisible();
       const hasNoOverflow = await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,
       );

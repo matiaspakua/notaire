@@ -17,7 +17,7 @@ interface TestimonioApiResult {
 
 async function seedEscrituraFirmada(page: import("@playwright/test").Page): Promise<{ idEscritura: number; numero: number }> {
   const numero = uniqueId() % 1_000_000;
-  const seeded = await apiPost<{ idDeed: number }>(page, "/escrituras", {
+  const seeded = await apiPost<{ idDeed: number }>(page, "/deeds", {
     number: numero,
     dateDeedrecording: new Date().toISOString().split("T")[0],
     body: `Contenido E2E ${numero}`,
@@ -37,7 +37,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
   test("Golden path: generar testimonio, verificar sin observaciones y emitir copia", async ({ page }) => {
     const { numero } = await seedEscrituraFirmada(page);
 
-    await steps.givenUserIsOnPage("/dashboard/testimonios");
+    await steps.givenUserIsOnPage("/dashboard/testimonies");
     await page.getByTestId("btn-generar-testimonio").click();
     await steps.thenModalIsVisible();
 
@@ -49,7 +49,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
 
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
-    const list = await apiGet<TestimonioApiResult[]>(page, "/testimonio");
+    const list = await apiGet<TestimonioApiResult[]>(page, "/testimonies");
     const idTestimonio = list.data!.find((te) => te.deed?.number === numero)!.idTestimony;
 
     await page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`).click();
@@ -66,10 +66,10 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
 
   test("Edge: verificar con observaciones muestra el testimonio como Observado", async ({ page }) => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page);
-    const generated = await apiPost<{ idTestimony: number }>(page, `/testimonio/${idEscritura}/generar`, {});
+    const generated = await apiPost<{ idTestimony: number }>(page, `/testimonies/${idEscritura}/generate`, {});
     const idTestimonio = generated.data!.idTestimony;
 
-    await steps.givenUserIsOnPage("/dashboard/testimonios");
+    await steps.givenUserIsOnPage("/dashboard/testimonies");
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
@@ -85,10 +85,10 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
 
   test("Edge: emitir copia está bloqueado hasta que el testimonio esté verificado", async ({ page }) => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page);
-    const generated = await apiPost<{ idTestimony: number }>(page, `/testimonio/${idEscritura}/generar`, {});
+    const generated = await apiPost<{ idTestimony: number }>(page, `/testimonies/${idEscritura}/generate`, {});
     const idTestimonio = generated.data!.idTestimony;
 
-    await steps.givenUserIsOnPage("/dashboard/testimonios");
+    await steps.givenUserIsOnPage("/dashboard/testimonies");
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
@@ -103,7 +103,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
   ]) {
     test(`testimonios screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await steps.givenUserIsOnPage("/dashboard/testimonios");
+      await steps.givenUserIsOnPage("/dashboard/testimonies");
       await page.waitForLoadState("networkidle");
       await steps.thenHasNoHorizontalOverflow();
     });

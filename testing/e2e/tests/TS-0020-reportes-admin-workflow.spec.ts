@@ -28,7 +28,7 @@
  * CU58 - Eliminar tipo de folio
  * CU59 - Consultar Suplencias
  * CU60 - Buscar Presupuesto
- * CU62 - Buscar Escritura
+ * CU62 - Buscar Deed
  * CU63 - Buscar Folios
  * CU64 - Buscar Tipo de tramite
  * CU65 - Buscar Tipos de documentos
@@ -50,7 +50,7 @@ test.describe("Reportes — navigation discovery (#1058)", () => {
 
   test("opens Reportes from the sidebar", async ({ page }) => {
     await steps.whenUserOpensSidebarNav("reportes");
-    await expect(page).toHaveURL(/\/dashboard\/reportes/);
+    await expect(page).toHaveURL(/\/dashboard\/reports/);
     await expect(page.locator("h1").filter({ hasText: /\S/ }).first()).toBeVisible();
   });
 });
@@ -93,7 +93,7 @@ test.describe("CU26 - Ingresar nuevo tipo de trámite", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/tramites");
+    await steps.givenUserIsOnPage("/dashboard/administration/procedures");
   });
 
   test("CU26-GW01: Given on tipos tramite, When click nuevo, Then modal opens", async () => {
@@ -115,7 +115,7 @@ test.describe("CU27 - Ingresar nuevo tipo de documento", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/documentos");
+    await steps.givenUserIsOnPage("/dashboard/administration/documents");
   });
 
   test("CU27-GW01: Given on tipos documento, When click nuevo, Then modal opens", async () => {
@@ -136,7 +136,7 @@ test.describe("CU29 - Ingresar nuevo concepto", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/conceptos");
+    await steps.givenUserIsOnPage("/dashboard/administration/concepts");
   });
 
   test("CU29-GW01: Given on conceptos, When click nuevo, Then modal opens", async () => {
@@ -159,7 +159,7 @@ test.describe("CU29 - Ingresar nuevo concepto", () => {
 
     // When — form has Nombre, Descripción, and "Valor base ($)" (no "porcentaje" field)
     await steps.fillAndSubmitForm({
-      "nombre": "Nuevo Concepto Test",
+      "nombre": "Nuevo Concept Test",
       "valor": "100",
     });
 
@@ -174,7 +174,7 @@ test.describe("CU39 - Crear Plantilla Presupuesto", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
   test.skip("CU39-GW01 (#1146): Given on presupuestos, When click plantillas, Then shows plantillas", async () => {
@@ -202,7 +202,7 @@ test.describe("CU60 - Buscar Presupuesto", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
   test("CU60-GW01: Given on presupuestos, When search by number, Then shows results", async () => {
@@ -217,13 +217,13 @@ test.describe("CU60 - Buscar Presupuesto", () => {
   });
 });
 
-test.describe("CU62 - Buscar Escritura", () => {
+test.describe("CU62 - Buscar Deed", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/escrituras");
+    await steps.givenUserIsOnPage("/dashboard/deeds");
   });
 
   test.skip("CU62-GW01 (#1146): Given on escrituras, When search by number, Then shows results", async () => {
@@ -237,11 +237,11 @@ test.describe("CU65 - Buscar Tipos de documentos", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/documentos");
+    await steps.givenUserIsOnPage("/dashboard/administration/documents");
   });
 
   test.skip("CU65-GW01 (#1146): Given on tipos documento, When search, Then shows results", async () => {
-    // Skipped (#1146): administracion/documentos page has no search bar in the current UI.
+    // Skipped (#1146): administracion/documents page has no search bar in the current UI.
   });
 });
 
@@ -251,10 +251,10 @@ test.describe("CU66 - Buscar Conceptos", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/administracion/conceptos");
+    await steps.givenUserIsOnPage("/dashboard/administration/concepts");
   });
 
   test.skip("CU66-GW01 (#1146): Given on conceptos, When search, Then shows results", async () => {
-    // Skipped (#1146): administracion/conceptos page has no search bar in the current UI.
+    // Skipped (#1146): administracion/concepts page has no search bar in the current UI.
   });
 });

@@ -1,12 +1,12 @@
 /**
  * Server-side budget lookup for pickers (#1340). Forms never load the whole
- * budgets table (GET /presupuestos?size=1000 left the oldest of ~1300 out):
+ * budgets table (GET /budgets?size=1000 left the oldest of ~1300 out):
  * they show the newest page and search by budget number or by client.
  */
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import { searchPeople } from "@/hooks/usePersonSearch";
-import { presupuestosKeys, usePresupuestosPage } from "@/hooks/usePresupuestos";
+import { presupuestosKeys, usePresupuestosPage } from "@/hooks/useBudgets";
 import type { Presupuesto } from "@/types";
 
 /** Newest budgets listed before the user types. */
@@ -16,7 +16,7 @@ export const BUDGET_PICKER_MAX_CLIENTS = 5;
 
 async function budgetById(id: string): Promise<Presupuesto[]> {
   try {
-    return [await apiGet<Presupuesto>(`/presupuestos/${id}`)];
+    return [await apiGet<Presupuesto>(`/budgets/${id}`)];
   } catch {
     return []; // 404: no budget with that number
   }
@@ -25,7 +25,7 @@ async function budgetById(id: string): Promise<Presupuesto[]> {
 /**
  * One free-text query: a number is a budget number and also a client document
  * number; any text searches clients (GET /people/search) and lists their
- * budgets (GET /presupuestos/persona/{id}). Newest budget first, no duplicates.
+ * budgets (GET /budgets/person/{id}). Newest budget first, no duplicates.
  */
 export async function searchBudgets(raw: string): Promise<Presupuesto[]> {
   const q = raw.trim();
@@ -34,7 +34,7 @@ export async function searchBudgets(raw: string): Promise<Presupuesto[]> {
   const byClient = await Promise.all(
     people
       .slice(0, BUDGET_PICKER_MAX_CLIENTS)
-      .map((p) => apiGet<Presupuesto[]>(`/presupuestos/persona/${p.personId}`)),
+      .map((p) => apiGet<Presupuesto[]>(`/budgets/person/${p.personId}`)),
   );
   const seen = new Set<number>();
   const clientBudgets = byClient.flat().sort((a, b) => (b.idBudget ?? 0) - (a.idBudget ?? 0));
@@ -64,7 +64,7 @@ export function useRecentBudgets(enabled: boolean) {
 export function useBudget(id: number | undefined, enabled = true) {
   return useQuery({
     queryKey: presupuestosKeys.detail(id ?? -1),
-    queryFn: () => apiGet<Presupuesto>(`/presupuestos/${id}`),
+    queryFn: () => apiGet<Presupuesto>(`/budgets/${id}`),
     enabled: enabled && id != null,
     staleTime: 60_000,
   });

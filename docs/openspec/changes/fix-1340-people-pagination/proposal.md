@@ -12,13 +12,13 @@
 
 ## Objetivo
 
-`/dashboard/personas` loaded `GET /people?size=1000`, so on the dev DB (more than 1000 people) everyone after the 1000th was unreachable from the list, and the duplicate-document toast could not link to an existing person outside those 1000 (Playwright `Dedup-GW02` failed on it). This slice moves the people list to server pages with the shared footer from slice 1.
+`/dashboard/people` loaded `GET /people?size=1000`, so on the dev DB (more than 1000 people) everyone after the 1000th was unreachable from the list, and the duplicate-document toast could not link to an existing person outside those 1000 (Playwright `Dedup-GW02` failed on it). This slice moves the people list to server pages with the shared footer from slice 1.
 
 ## What Changes
 
 - `usePersonasPage({ page, size })`: one page of `GET /people`, sorted `idPerson,desc` (newest first), `keepPreviousData`; `fetchPersona(id)` reads `GET /people/{id}`.
 - New `hooks/useUrlPagination.ts`: page and size in the URL (`?page=&size=`, sizes 20/50/100), shared by the next slices.
-- `/dashboard/personas`: the table shows the current server page with the `Pagination` footer and the real total; a search still uses `GET /people/search` and lists every match without the footer.
+- `/dashboard/people`: the table shows the current server page with the `Pagination` footer and the real total; a search still uses `GET /people/search` and lists every match without the footer.
 - `presentPersonaSaveError`: optional `loadPersona`; the 409 duplicate toast keeps its "Ver persona existente" link when the existing person is not on the loaded page and loads it by id.
 - New `useClampPage`: a page past the end (stale link, last rows deleted) moves to the last page instead of an empty table.
 - `globals.css`: `[data-sonner-toaster] { pointer-events: auto }`. An open Radix dialog sets `pointer-events: none` on `body`, so toast actions were unclickable while a form was open (the duplicate link could be seen but not used).
@@ -48,18 +48,18 @@
 
 | Module | Touched | What changes |
 |--------|---------|--------------|
-| `frontend` | yes | usePersonas, useUrlPagination, personas page, persona-save-error |
+| `frontend` | yes | usePeople, useUrlPagination, personas page, person-save-error |
 | `testing` | yes | Playwright TS-0110 |
 | `backend-api` | no | GET /people already pages with @ParameterObject page/size/sort |
 
 ### Surface area
 
-- Route: /dashboard/personas (query params page, size)
+- Route: /dashboard/people (query params page, size)
 - API: GET /api/v1/people?page&size&sort=idPerson,desc, GET /api/v1/people/{id} (unchanged contract)
 
 ### Architecture review
 
-No architecture change. `usePersonas()` (size=1000) stays for the person pickers on gestiones and presupuestos and the dashboard counter; those need a search-as-you-type picker and the count endpoint (#1358) and are later slices.
+No architecture change. `usePeople()` (size=1000) stays for the person pickers on gestiones and presupuestos and the dashboard counter; those need a search-as-you-type picker and the count endpoint (#1358) and are later slices.
 
 ## Documentation Impact
 

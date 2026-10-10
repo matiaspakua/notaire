@@ -7,7 +7,7 @@ package com.licensis.notaire.jpa;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
@@ -27,7 +27,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class FolioJpaController implements Serializable, IPersistenciaJpa
+public class FolioJpaController implements Serializable, JpaPersistence
 {
 
     public FolioJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -141,8 +141,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                 FolioType fkIdFolioTypeNew = folio.getFkIdFolioType();
                 Deed fkIdDeedOld = persistentFolio.getFkIdDeed();
                 Deed fkIdDeedNew = folio.getFkIdDeed();
-//                List<Copia> copiaListOld = persistentFolio.getCopiaList();
-//                List<Copia> copiaListNew = folio.getCopiaList();
+//                List<Copy> copiaListOld = persistentFolio.getCopiaList();
+//                List<Copy> copiaListNew = folio.getCopiaList();
                 if (fkIdNotaryPersonNew != null)
                 {
                     fkIdNotaryPersonNew = em.getReference(fkIdNotaryPersonNew.getClass(), fkIdNotaryPersonNew.getPersonId());
@@ -158,8 +158,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
                     fkIdDeedNew = em.getReference(fkIdDeedNew.getClass(), fkIdDeedNew.getIdDeed());
                     folio.setFkIdDeed(fkIdDeedNew);
                 }
-//                List<Copia> attachedCopiaListNew = new ArrayList<Copia>();
-//                for (Copia copiaListNewCopiaToAttach : copiaListNew)
+//                List<Copy> attachedCopiaListNew = new ArrayList<Copy>();
+//                for (Copy copiaListNewCopiaToAttach : copiaListNew)
 //                {
 //                    copiaListNewCopiaToAttach = em.getReference(copiaListNewCopiaToAttach.getClass(), copiaListNewCopiaToAttach.getIdCopia());
 //                    attachedCopiaListNew.add(copiaListNewCopiaToAttach);
@@ -197,7 +197,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 //                    fkIdEscrituraNew.getFolioList().add(folio);
 //                    fkIdEscrituraNew = em.merge(fkIdEscrituraNew);
 //                }
-//                for (Copia copiaListOldCopia : copiaListOld)
+//                for (Copy copiaListOldCopia : copiaListOld)
 //                {
 //                    if (!copiaListNew.contains(copiaListOldCopia))
 //                    {
@@ -205,7 +205,7 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 //                        copiaListOldCopia = em.merge(copiaListOldCopia);
 //                    }
 //                }
-//                for (Copia copiaListNewCopia : copiaListNew)
+//                for (Copy copiaListNewCopia : copiaListNew)
 //                {
 //                    if (!copiaListOld.contains(copiaListNewCopia))
 //                    {
@@ -453,8 +453,8 @@ public class FolioJpaController implements Serializable, IPersistenciaJpa
 
         if (persistentFolio != null)
         {
-            version = persistentFolio.getVersion(); // Version del Objeto en db
-            oldVersion = miFolio.getVersion(); // Version del Objeto en memoria
+            version = persistentFolio.getVersion(); // Version of the Objeto in db
+            oldVersion = miFolio.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Integration test: DB + Backend + Login API
-# Verifies the stack is up and POST /api/v1/usuarios/login works.
+# Verifies the stack is up and POST /api/v1/users/login works.
 
 set -e
 BASE_URL="${BASE_URL:-http://localhost:8080}"
@@ -28,10 +28,10 @@ for i in 1 2 3 4 5 6 7 8 9 10; do
 done
 
 # 2) Login API (same contract as frontend Login)
-echo -e "${YELLOW}2. Testing POST /api/v1/usuarios/login (frontend login contract)...${NC}"
+echo -e "${YELLOW}2. Testing POST /api/v1/users/login (frontend login contract)...${NC}"
 BODY_FILE="$(mktemp)"
 trap 'rm -f "$BODY_FILE"' EXIT
-HTTP_CODE=$(curl -sS -o "$BODY_FILE" -w "%{http_code}" -X POST "$BASE_URL/api/v1/usuarios/login" \
+HTTP_CODE=$(curl -sS -o "$BODY_FILE" -w "%{http_code}" -X POST "$BASE_URL/api/v1/users/login" \
   -H "Content-Type: application/json" \
   -d '{"name":"admin","password":"admin"}')
 HTTP_BODY=$(cat "$BODY_FILE")
@@ -50,14 +50,14 @@ else
 fi
 
 # 3) Authorization: anonymous calls are rejected, the login token is accepted
-echo -e "${YELLOW}3. Smoke test GET /api/v1/conceptos: anonymous rejected, login token accepted...${NC}"
+echo -e "${YELLOW}3. Smoke test GET /api/v1/concepts: anonymous rejected, login token accepted...${NC}"
 TOKEN=$(printf '%s' "$HTTP_BODY" | tr -d '\n' | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
 if [ -z "$TOKEN" ]; then
   echo -e "${RED}   Login response carries no token.${NC}"
   exit 1
 fi
-ANON_CODE=$(curl -sS -o /dev/null -w "%{http_code}" "$BASE_URL/api/v1/conceptos")
-AUTH_CODE=$(curl -sS -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/v1/conceptos")
+ANON_CODE=$(curl -sS -o /dev/null -w "%{http_code}" "$BASE_URL/api/v1/concepts")
+AUTH_CODE=$(curl -sS -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/v1/concepts")
 if [ "$ANON_CODE" = "401" ] && [ "$AUTH_CODE" = "200" ]; then
   echo -e "${GREEN}   Anonymous HTTP $ANON_CODE, authenticated HTTP $AUTH_CODE.${NC}"
 else

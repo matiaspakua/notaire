@@ -14,7 +14,7 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequirementCoverage({"CU22", "CU23"})
-@DisplayName("Suplencia Entity Tests")
+@DisplayName("Substitution Entity Tests")
 class SubstitutionEntityTest {
 
     private Date toDate(LocalDate ld) {
@@ -78,9 +78,9 @@ class SubstitutionEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             Substitution substitution = new Substitution();
-            substitution.setNotes("Licencia por enfermedad");
+            substitution.setNotes("Licencia by enfermedad");
 
-            assertThat(substitution.getNotes()).isEqualTo("Licencia por enfermedad");
+            assertThat(substitution.getNotes()).isEqualTo("Licencia by enfermedad");
         }
 
         @Test

@@ -29,16 +29,16 @@ describe("isAdminTipo", () => {
 });
 
 describe("isAdminRoute", () => {
-  it("matches /dashboard/administracion and sub-paths", () => {
-    expect(isAdminRoute("/dashboard/administracion")).toBe(true);
-    expect(isAdminRoute("/dashboard/administracion/usuarios")).toBe(true);
-    expect(isAdminRoute("/dashboard/administracion/roles")).toBe(true);
-    expect(isAdminRoute("/dashboard/auditoria")).toBe(true);
+  it("matches /dashboard/administration and sub-paths", () => {
+    expect(isAdminRoute("/dashboard/administration")).toBe(true);
+    expect(isAdminRoute("/dashboard/administration/users")).toBe(true);
+    expect(isAdminRoute("/dashboard/administration/roles")).toBe(true);
+    expect(isAdminRoute("/dashboard/audit")).toBe(true);
   });
 
   it("does not match other dashboard paths", () => {
     expect(isAdminRoute("/dashboard")).toBe(false);
-    expect(isAdminRoute("/dashboard/gestiones")).toBe(false);
+    expect(isAdminRoute("/dashboard/managements")).toBe(false);
     expect(isAdminRoute("/login")).toBe(false);
   });
 });
@@ -46,27 +46,27 @@ describe("isAdminRoute", () => {
 describe("shouldDenyAdminRoute (edge decision)", () => {
   it("denies non-admin role on administración path (issue #1052)", () => {
     expect(
-      shouldDenyAdminRoute("/dashboard/administracion/usuarios", "1", "EMPLEADO"),
+      shouldDenyAdminRoute("/dashboard/administration/users", "1", "EMPLEADO"),
     ).toBe(true);
   });
 
   it("allows admin-capable role on administración path", () => {
     expect(
-      shouldDenyAdminRoute("/dashboard/administracion/usuarios", "1", "ADMIN"),
+      shouldDenyAdminRoute("/dashboard/administration/users", "1", "ADMIN"),
     ).toBe(false);
     expect(
-      shouldDenyAdminRoute("/dashboard/administracion", "authenticated", "ESCRIBANO"),
+      shouldDenyAdminRoute("/dashboard/administration", "authenticated", "ESCRIBANO"),
     ).toBe(false);
   });
 
   it("denies admin path when role cookie is missing", () => {
-    expect(shouldDenyAdminRoute("/dashboard/administracion/roles", "1", undefined)).toBe(
+    expect(shouldDenyAdminRoute("/dashboard/administration/roles", "1", undefined)).toBe(
       true,
     );
   });
 
   it("does not deny non-admin paths", () => {
-    expect(shouldDenyAdminRoute("/dashboard/gestiones", "1", "EMPLEADO")).toBe(false);
+    expect(shouldDenyAdminRoute("/dashboard/managements", "1", "EMPLEADO")).toBe(false);
   });
 });
 

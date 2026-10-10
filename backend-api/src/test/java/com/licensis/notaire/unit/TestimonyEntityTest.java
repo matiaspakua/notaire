@@ -15,7 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequirementCoverage({"CU51", "CU52", "CU53"})
-@DisplayName("Testimonio Entity Tests")
+@DisplayName("Testimony Entity Tests")
 class TestimonyEntityTest {
 
     @Nested
@@ -79,9 +79,9 @@ class TestimonyEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             Testimony testimony = new Testimony();
-            testimony.setNotes("Requiere notificación al cliente");
+            testimony.setNotes("Requires notificación to the client");
 
-            assertThat(testimony.getNotes()).isEqualTo("Requiere notificación al cliente");
+            assertThat(testimony.getNotes()).isEqualTo("Requires notificación to the client");
         }
 
         @Test

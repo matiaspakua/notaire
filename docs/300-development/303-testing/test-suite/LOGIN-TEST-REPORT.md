@@ -4,7 +4,7 @@
 **Tester:** AI Agent
 **Version:** backend-api (Spring Boot 4.1.0, Java 21)
 **Use Case:** CU-78 — Security and Compliance
-**Endpoint:** `POST /api/v1/usuarios/login`
+**Endpoint:** `POST /api/v1/users/login`
 
 ## Summary
 

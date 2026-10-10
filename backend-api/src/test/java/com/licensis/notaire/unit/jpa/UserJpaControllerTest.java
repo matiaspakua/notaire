@@ -8,7 +8,7 @@ import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityNotFoundException;
@@ -62,7 +62,7 @@ class UserJpaControllerTest {
      * Helper to instantiate a JpaController that has a private constructor.
      */
     @SuppressWarnings("unchecked")
-    private <T extends IPersistenciaJpa> T createWithReflection(Class<T> clazz, Object... args) throws Exception {
+    private <T extends JpaPersistence> T createWithReflection(Class<T> clazz, Object... args) throws Exception {
         for (Constructor<?> ctor : clazz.getDeclaredConstructors()) {
             if (ctor.getParameterCount() == args.length) {
                 ctor.setAccessible(true);
@@ -83,7 +83,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should persist usuario and manage FK references")
+        @DisplayName("should persist user and manage FK references")
         void shouldPersistAndManageFK() {
             Person person = new Person(10);
             List<AuditRecord> raList = new ArrayList<>();
@@ -151,7 +151,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should merge usuario with same FK and no orphan changes")
+        @DisplayName("should merge user with same FK and not orphan changes")
         void shouldMergeSuccessfully() throws Exception {
             Integer id = 1;
             Person person = new Person(10);
@@ -194,7 +194,7 @@ class UserJpaControllerTest {
 
             assertThatThrownBy(() -> controller.edit(inputUser))
                     .isInstanceOf(IllegalOrphanException.class)
-                    .hasMessageContaining("RegistroAuditoria");
+                    .hasMessageContaining("AuditRecord");
 
             verify(em).close();
             verify(tx, never()).commit();
@@ -240,7 +240,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should remove usuario when no orphans")
+        @DisplayName("should remove user when not orphans")
         void shouldRemoveSuccessfully() throws Exception {
             Integer id = 1;
             User user = new User(id, "u", "p", true, "user");
@@ -408,7 +408,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should return usuario when found")
+        @DisplayName("should return user when found")
         void shouldReturnFound() {
             User expected = new User(1);
             List<User> results = new ArrayList<>();

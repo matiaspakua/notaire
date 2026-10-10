@@ -8,9 +8,9 @@ import { apiGet } from "./setup/api-helpers";
 
 const RESOURCES = ["gestiones", "personas", "presupuestos"] as const;
 const PATHS: Record<(typeof RESOURCES)[number], string> = {
-  gestiones: "/gestiones",
+  gestiones: "/managements",
   personas: "/people",
-  presupuestos: "/presupuestos",
+  presupuestos: "/budgets",
 };
 
 async function totalOf(page: Page, path: string): Promise<number> {

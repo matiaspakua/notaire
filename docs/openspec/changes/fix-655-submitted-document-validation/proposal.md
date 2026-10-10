@@ -51,7 +51,7 @@
 
 ### Surface area
 
-- Endpoints: `POST /api/v1/documento-presentado`, `PUT /api/v1/documento-presentado/{id}` (new 400/404 responses, descriptions only in the schema)
+- Endpoints: `POST /api/v1/submitted-documents`, `PUT /api/v1/submitted-documents/{id}` (new 400/404 responses, descriptions only in the schema)
 - Entities: none; Flyway: none
 - Configuration: none
 

@@ -27,7 +27,7 @@ Issue #773, Use Case CU04 – Registrar documentación cliente (#157); CU72 – 
 | A gestión with a linked document | unit | `ManagementCaseSummaryServiceTest` |
 | A gestión without documents | unit | `ManagementCaseSummaryServiceTest` |
 
-- New unit tests (`src/test/java/.../unit/`): `ManagementCaseSummaryServiceTest`, `useDocumentosPresentados` hook test
+- New unit tests (`src/test/java/.../unit/`): `ManagementCaseSummaryServiceTest`, `useSubmittedDocuments` hook test
 - New integration tests: `SubmittedDocumentControllerTest` and `ManagementCaseSummaryIntegrationTest` (H2)
 - Coverage impact: positive: new branches covered; the floor is unchanged
 

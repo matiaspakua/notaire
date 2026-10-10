@@ -19,6 +19,6 @@ On devices whose primary pointer is coarse, every small button and the rows-per-
 
 #### Scenario: Desktop
 
-- **WHEN** a user opens /dashboard/personas with a mouse at 1440px
+- **WHEN** a user opens /dashboard/people with a mouse at 1440px
 - **THEN** the row actions stay 32px tall
 

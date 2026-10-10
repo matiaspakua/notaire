@@ -30,9 +30,9 @@ class PdfBoxReportRendererTest {
     @Test
     @DisplayName("shouldRenderTitleFieldsTableAndTotalsWithSpanishText")
     void shouldRenderTitleFieldsTableAndTotalsWithSpanishText() throws IOException {
-        ReportDocument document = new ReportDocument("Presupuesto N° 12", "CU45", List.of(
-                new Fields("Datos", List.of(new Field("Cliente", "Lucía Peña"), new Field("Trámite", "Compraventa"))),
-                new Table("Conceptos", List.of(Column.left("Concepto", 3), Column.right("Valor", 1)),
+        ReportDocument document = new ReportDocument("Budget N° 12", "CU45", List.of(
+                new Fields("Datos", List.of(new Field("Cliente", "Lucía Peña"), new Field("Procedure", "Compraventa"))),
+                new Table("Conceptos", List.of(Column.left("Concept", 3), Column.right("Valor", 1)),
                         List.of(List.of("Honorarios escribanía", "$ 10.000,00")),
                         "Sin conceptos", List.of(new Field("Total", "$ 10.000,00")))));
 
@@ -41,10 +41,10 @@ class PdfBoxReportRendererTest {
         assertThat(new String(pdf, 0, 5, java.nio.charset.StandardCharsets.US_ASCII)).isEqualTo("%PDF-");
         try (PDDocument parsed = Loader.loadPDF(pdf)) {
             String text = new PDFTextStripper().getText(parsed);
-            assertThat(text).contains("Presupuesto N° 12", "CU45", "Datos", "Cliente", "Lucía Peña", "Trámite",
-                    "Conceptos", "Concepto", "Valor", "Honorarios escribanía", "$ 10.000,00", "Total",
-                    "Página 1 de 1");
-            assertThat(parsed.getDocumentInformation().getTitle()).isEqualTo("Presupuesto N° 12");
+            assertThat(text).contains("Budget N° 12", "CU45", "Datos", "Cliente", "Lucía Peña", "Procedure",
+                    "Conceptos", "Concept", "Valor", "Honorarios escribanía", "$ 10.000,00", "Total",
+                    "Página 1 of 1");
+            assertThat(parsed.getDocumentInformation().getTitle()).isEqualTo("Budget N° 12");
         }
     }
 
@@ -65,7 +65,7 @@ class PdfBoxReportRendererTest {
         for (int i = 1; i <= 120; i++) {
             rows.add(List.of("Fila " + i, "Estado " + i));
         }
-        ReportDocument document = new ReportDocument("Historial", null, List.of(
+        ReportDocument document = new ReportDocument("ManagementHistory", null, List.of(
                 new Table("Movimientos", List.of(Column.left("Detalle", 1), Column.left("Estado", 1)), rows,
                         "", List.of())));
 
@@ -73,7 +73,7 @@ class PdfBoxReportRendererTest {
             int pages = parsed.getNumberOfPages();
             assertThat(pages).isGreaterThan(1);
             String text = new PDFTextStripper().getText(parsed);
-            assertThat(text).contains("Fila 1", "Fila 120", "Página 1 de " + pages, "Página " + pages + " de " + pages);
+            assertThat(text).contains("Fila 1", "Fila 120", "Página 1 of " + pages, "Página " + pages + " de " + pages);
             assertThat(text.split("Detalle", -1)).hasSize(pages + 1);
         }
     }
@@ -81,7 +81,7 @@ class PdfBoxReportRendererTest {
     @Test
     @DisplayName("shouldWrapLongValuesInsteadOfCuttingThem")
     void shouldWrapLongValuesInsteadOfCuttingThem() throws IOException {
-        String longNotes = "Observación " + "muy larga de la gestión ".repeat(20) + "fin-de-texto";
+        String longNotes = "Observation " + "muy larga of the management ".repeat(20) + "fin-de-texto";
         ReportDocument document = new ReportDocument("Notas", null, List.of(
                 new Fields("Detalle", List.of(new Field("Observaciones", longNotes))),
                 new Table("Tabla", List.of(Column.left("Nota", 1), Column.right("Monto", 1)),

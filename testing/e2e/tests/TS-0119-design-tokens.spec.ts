@@ -14,7 +14,7 @@ const SHOTS = "test-results/ui-shots/1365-design-tokens";
 test.describe("Design tokens (#1365)", () => {
   test("primary button, active nav item and focus ring share the brand primary", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     const create = page.getByTestId("btn-nueva-persona");
     await expect(create).toBeVisible();
     await expect(create).toHaveCSS("background-color", BRAND);

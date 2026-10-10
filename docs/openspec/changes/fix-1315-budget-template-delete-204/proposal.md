@@ -12,7 +12,7 @@
 
 ## Objetivo
 
-After #1332 every DELETE handler returned the status its contract documents, but `DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{idProcedureType}/concepto/{idConcept}` still documented (springdoc default) and returned 200. The Owner rule is that DELETE returns 204 everywhere.
+After #1332 every DELETE handler returned the status its contract documents, but `DELETE /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}` still documented (springdoc default) and returned 200. The Owner rule is that DELETE returns 204 everywhere.
 
 ## What Changes
 
@@ -49,7 +49,7 @@ After #1332 every DELETE handler returned the status its contract documents, but
 
 ### Surface area
 
-- Endpoints: `DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{idProcedureType}/concepto/{idConcept}` (200 to 204; breaking, accepted)
+- Endpoints: `DELETE /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}` (200 to 204; breaking, accepted)
 - Entities / Flyway: none
 - UI: none
 

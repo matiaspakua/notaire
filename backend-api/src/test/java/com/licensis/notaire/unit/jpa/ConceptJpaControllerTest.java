@@ -83,7 +83,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should persist concepto and return its id")
+        @DisplayName("should persist concept and return its id")
         void shouldPersistAndReturnId() {
             Concept concept = new Concept(null, "Test Concept", new java.math.BigDecimal("100.0"), 10);
 
@@ -127,7 +127,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should merge concepto when version matches")
+        @DisplayName("should merge concept when version matches")
         void shouldMergeWhenVersionMatches() throws Exception {
             Integer id = 1;
             Concept concept = new Concept(id, "Updated", new java.math.BigDecimal("200"), 20);
@@ -184,7 +184,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should throw IllegalOrphanException when removing referenced PlantillaPresupuesto")
+        @DisplayName("should throw IllegalOrphanException when removing referenced BudgetTemplate")
         void shouldThrowWhenRemovingReferencedTemplate() {
             Integer id = 1;
             BudgetTemplate pp = new BudgetTemplate();
@@ -203,7 +203,7 @@ class ConceptJpaControllerTest {
 
             assertThatThrownBy(() -> controller.edit(concept))
                     .isInstanceOf(IllegalOrphanException.class)
-                    .hasMessageContaining("PlantillaPresupuesto");
+                    .hasMessageContaining("BudgetTemplate");
 
             // Note: edit() does NOT close EM when throwing IllegalOrphanException from the merge path
             verify(em, never()).close();
@@ -221,7 +221,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should remove concepto when no orphans exist")
+        @DisplayName("should remove concept when not orphans exist")
         void shouldRemoveWhenNoOrphans() throws Exception {
             Integer id = 1;
             Concept concept = new Concept(id, "To delete", new java.math.BigDecimal("100"), 10);
@@ -254,7 +254,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should throw IllegalOrphanException when PlantillaPresupuesto references exist")
+        @DisplayName("should throw IllegalOrphanException when BudgetTemplate references exist")
         void shouldThrowWhenOrphansExist() {
             Integer id = 1;
             BudgetTemplate pp = new BudgetTemplate();
@@ -362,7 +362,7 @@ class ConceptJpaControllerTest {
     class FindConcept {
 
         @Test
-        @DisplayName("should return concepto by id")
+        @DisplayName("should return concept by id")
         void shouldFindById() {
             Concept expected = new Concept(1, "Found", new java.math.BigDecimal("100"), 10);
             when(em.find(Concept.class, 1)).thenReturn(expected);

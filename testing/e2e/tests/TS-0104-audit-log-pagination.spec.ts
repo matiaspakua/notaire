@@ -25,7 +25,7 @@ test.describe("Audit log pagination (#1340)", () => {
       if (r.url().includes("/audit-log")) requested.push(r.url());
     });
 
-    await page.goto("/dashboard/auditoria");
+    await page.goto("/dashboard/audit");
     await page.waitForLoadState("networkidle");
     const table = page.getByRole("table");
     await expect(table.locator("tbody tr")).toHaveCount(20);
@@ -49,7 +49,7 @@ test.describe("Audit log pagination (#1340)", () => {
     const people = await apiGet<AuditPage>(page, "/audit-log?page=0&size=1&module=People");
     test.skip(!people.ok || people.data!.totalElements === 0, "no People audit records in this database");
 
-    await page.goto("/dashboard/auditoria");
+    await page.goto("/dashboard/audit");
     await page.waitForLoadState("networkidle");
     const moduleSelect = page.getByLabel(/m[oó]dulo|module/i);
     await moduleSelect.selectOption("People");

@@ -20,13 +20,13 @@ Implementar la auditoría como una **preocupación transversal (cross-cutting co
 - **Filtro de operaciones auditables** (`isAuditableOperation`): solo métodos anotados `@PostMapping`, `@PutMapping`, `@PatchMapping`, `@DeleteMapping`, o cuyo nombre contenga `login`/`logout`. Las operaciones `GET` (lectura) **no se auditan**.
 - **Atribución del usuario**: el actor se resuelve exclusivamente desde el `SecurityContextHolder`, poblado por `JwtAuthenticationFilter` a partir de un JWT válido — nunca desde un header enviado por el cliente. Como todo endpoint de escritura bajo `/api/**` requiere autenticación, en el momento en que el aspecto se ejecuta siempre existe un usuario autenticado.
 - **Persistencia**: cada registro se guarda en la tabla `registro_auditoria` vía `RegistroAuditoriaService` → `RegistroAuditoriaRepository`.
-- **Exposición**: consultable vía `RegistroAuditoriaController` (`GET /api/v1/auditoria`) y visible en el frontend en `/dashboard/auditoria`.
+- **Exposición**: consultable vía `RegistroAuditoriaController` (`GET /api/v1/audit`) y visible en el frontend en `/dashboard/audit`.
 
 ### Por qué AOP (y no auditoría manual por servicio, ni triggers de base de datos)
 
 | Criterio | Spring AOP (elegido) | Auditoría manual en cada servicio | Triggers PostgreSQL |
 |----------|----------------------|-------------------------------------|----------------------|
-| Cobertura garantizada | Sí — un único pointcut cubre todos los controllers presentes y futuros | No — depende de que cada desarrollador recuerde añadirla | Sí, pero a nivel de fila, sin contexto HTTP/usuario JWT |
+| Cobertura garantizada | Sí — un único pointcut cubre todos los controllers presentes y futuros | No — depende de que cada desarrollador recuerde añadirla | Sí, pero a nivel de fila, sin contexto HTTP/user JWT |
 | Acceso al usuario autenticado | Directo vía `SecurityContextHolder` | Directo, pero duplicado en cada servicio | No tiene acceso al contexto de aplicación |
 | Acoplamiento con lógica de negocio | Ninguno — el aspecto vive fuera de los servicios | Alto — mezcla auditoría con lógica de negocio | Ninguno, pero opaco para el equipo de aplicación |
 | Mantenibilidad | Un solo punto de cambio | N cambios (uno por servicio) | Requiere migraciones SQL por tabla |

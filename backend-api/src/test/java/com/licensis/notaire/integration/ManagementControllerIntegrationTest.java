@@ -94,7 +94,7 @@ class ManagementControllerIntegrationTest {
                 {"number": 1, "date": "2026-01-01", "encabezado": "Budget IT", "status": "PENDIENTE",
                  "person": {"personId": %d}}
                 """.formatted(clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -110,7 +110,7 @@ class ManagementControllerIntegrationTest {
 
     private Integer createProcedureType() {
         ProcedureType type = new ProcedureType();
-        type.setName("Tramite IT");
+        type.setName("Procedure IT");
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -127,7 +127,7 @@ class ManagementControllerIntegrationTest {
                  "notaryPersonId": %d}
                 """.formatted(personId);
 
-        mockMvc.perform(post("/api/v1/gestiones")
+        mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
@@ -144,7 +144,7 @@ class ManagementControllerIntegrationTest {
                  "notaryPersonId": %d}
                 """.formatted(personId);
 
-        mockMvc.perform(post("/api/v1/gestiones")
+        mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -158,7 +158,7 @@ class ManagementControllerIntegrationTest {
                 {"number": 9201, "encabezado": "Management IT"}
                 """;
 
-        mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest());
@@ -177,7 +177,7 @@ class ManagementControllerIntegrationTest {
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
 
-        MvcResult result = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult result = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -188,7 +188,7 @@ class ManagementControllerIntegrationTest {
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(managementId);
         assertThat(procedures).as("complete-case should persist a procedure linked to the management").hasSize(1);
         assertThat(procedures.get(0).getFkIdBudget())
-                .as("the persisted tramite should carry the requested presupuestoId as its fkIdPresupuesto")
+                .as("the persisted procedure should carry the requested presupuestoId as its fkIdPresupuesto")
                 .isNotNull()
                 .extracting("idBudget")
                 .isEqualTo(budgetId);
@@ -207,7 +207,7 @@ class ManagementControllerIntegrationTest {
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
 
-        mockMvc.perform(put("/api/v1/gestiones/999999/complete-case")
+        mockMvc.perform(put("/api/v1/managements/999999/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
@@ -225,7 +225,7 @@ class ManagementControllerIntegrationTest {
                 {"number": 9204, "encabezado": "Management IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -237,7 +237,7 @@ class ManagementControllerIntegrationTest {
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/complete-case")
+        mockMvc.perform(put("/api/v1/managements/" + managementId + "/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk())
@@ -257,7 +257,7 @@ class ManagementControllerIntegrationTest {
                 {"number": 9205, "encabezado": "Management IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -269,7 +269,7 @@ class ManagementControllerIntegrationTest {
                 {"number": 9205, "encabezado": "Management IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/complete-case")
+        mockMvc.perform(put("/api/v1/managements/" + managementId + "/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
@@ -297,7 +297,7 @@ class ManagementControllerIntegrationTest {
                  "notaryPersonId": %d}
                 """.formatted(notaryId);
 
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -328,7 +328,7 @@ class ManagementControllerIntegrationTest {
                 {"encabezado": "Plain update substitution IT", "number": 9302,
                  "notaryPersonId": %d}
                 """.formatted(initialNotaryId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -342,7 +342,7 @@ class ManagementControllerIntegrationTest {
                 {"encabezado": "Plain update substitution IT", "number": 9302,
                  "notaryPersonId": %d}
                 """.formatted(requestedNotaryId);
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId)
+        mockMvc.perform(put("/api/v1/managements/" + managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());

@@ -6,7 +6,7 @@ info:
       Traceability: CU72
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/documento-presentado/{{submitted_doc_id}}"
+  url: "{{base_url}}/api/v1/submitted-documents/{{submitted_doc_id}}"
   body:
     type: json
     data: |-

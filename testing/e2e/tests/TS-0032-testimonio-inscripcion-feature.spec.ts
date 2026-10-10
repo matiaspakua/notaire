@@ -14,7 +14,7 @@ import { apiPost, uniqueId } from "./setup/api-helpers";
 
 async function seedTestimonioVerificado(page: import("@playwright/test").Page): Promise<{ idTestimonio: number; numero: number }> {
   const escrituraNumero = uniqueId() % 1_000_000;
-  const escritura = await apiPost<{ idDeed: number }>(page, "/escrituras", {
+  const escritura = await apiPost<{ idDeed: number }>(page, "/deeds", {
     number: escrituraNumero,
     dateDeedrecording: new Date().toISOString().split("T")[0],
     body: `Contenido E2E ${escrituraNumero}`,
@@ -23,7 +23,7 @@ async function seedTestimonioVerificado(page: import("@playwright/test").Page): 
   const numero = uniqueId() % 1_000_000;
   // DtoDeed.number is primitive int — must be included in nested object to avoid 400
   // (see TestimonioControllerIntegrationTest#testimonioBody).
-  const testimonio = await apiPost<{ idTestimony: number }>(page, "/testimonio", {
+  const testimonio = await apiPost<{ idTestimony: number }>(page, "/testimonies", {
     deed: { idDeed: escritura.data!.idDeed, number: escrituraNumero },
     number: numero,
     flagged: false,
@@ -43,11 +43,11 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
   test("Golden path: ingresar, registrar inscripción y retirar", async ({ page }) => {
     const { idTestimonio, numero } = await seedTestimonioVerificado(page);
 
-    await steps.givenUserIsOnPage("/dashboard/movimientos-testimonio");
+    await steps.givenUserIsOnPage("/dashboard/testimony-movements");
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-ingresar-testimonio-${idTestimonio}`).click();
+    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click();
     await steps.thenShowsSuccessMessage("ingresado");
     await expect(row).toContainText(/ingresado/i);
 
@@ -66,14 +66,14 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
   test("Edge: reingresar solo está disponible después de un retiro previo", async ({ page }) => {
     const { idTestimonio, numero } = await seedTestimonioVerificado(page);
 
-    await steps.givenUserIsOnPage("/dashboard/movimientos-testimonio");
+    await steps.givenUserIsOnPage("/dashboard/testimony-movements");
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
     await expect(page.getByTestId(`btn-reingresar-testimonio-${idTestimonio}`)).toHaveCount(0);
-    await expect(page.getByTestId(`btn-ingresar-testimonio-${idTestimonio}`)).toBeVisible();
+    await expect(page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`)).toBeVisible();
 
-    await page.getByTestId(`btn-ingresar-testimonio-${idTestimonio}`).click();
+    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click();
     await steps.thenShowsSuccessMessage("ingresado");
     await page.getByTestId(`btn-registrar-inscripcion-${idTestimonio}`).click();
     await steps.thenShowsSuccessMessage("inscripción registrada");
@@ -103,7 +103,7 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
   ]) {
     test(`movimientos-testimonio screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await steps.givenUserIsOnPage("/dashboard/movimientos-testimonio");
+      await steps.givenUserIsOnPage("/dashboard/testimony-movements");
       await page.waitForLoadState("networkidle");
       await steps.thenHasNoHorizontalOverflow();
     });

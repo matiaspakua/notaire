@@ -29,14 +29,14 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/suplencia")
-@Tag(name = "Suplencia", description = "API para gestionar suplencia")
+@RequestMapping("/api/v1/substitutions")
+@Tag(name = "Substitution", description = "API for managing substitution")
 public class SubstitutionController {
 
     private static final Logger log = LoggerFactory.getLogger(SubstitutionController.class);
 
     /**
-     * Nested person shape for frontend {@code Suplencia.fkIdSubstitute/fkIdSubstituted}
+     * Nested person shape for frontend {@code Substitution.fkIdSubstitute/fkIdSubstituted}
      * ({@code DtoPerson}: personId, name, lastName). Request only needs personId.
      */
     record PersonRef(Integer personId, String name, String lastName) {
@@ -137,7 +137,7 @@ public class SubstitutionController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los suplencia")
+    @Operation(summary = "Get all substitution")
     @Transactional(readOnly = true)
     public ResponseEntity<List<SubstitutionResponse>> getAll() {
         try {
@@ -153,7 +153,7 @@ public class SubstitutionController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener suplencia por ID")
+    @Operation(summary = "Get substitution by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<SubstitutionResponse> getById(@PathVariable Integer id) {
         try {
@@ -169,11 +169,11 @@ public class SubstitutionController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo suplencia")
+    @Operation(summary = "Create substitution")
     public ResponseEntity<Object> create(@Valid @RequestBody SubstitutionRequest request) {
         try {
             Substitution entity = new Substitution();
@@ -193,7 +193,7 @@ public class SubstitutionController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar suplencia")
+    @Operation(summary = "Update substitution")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody SubstitutionRequest request) {
         return service.findById(id).map(existing -> {
             try {
@@ -214,7 +214,7 @@ public class SubstitutionController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar suplencia")
+    @Operation(summary = "Delete substitution")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             if (!service.existsById(id)) {

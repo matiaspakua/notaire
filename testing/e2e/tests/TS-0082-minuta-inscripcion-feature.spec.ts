@@ -20,7 +20,7 @@ interface InmuebleApiResult {
 
 async function seedEscrituraFirmada(page: import("@playwright/test").Page): Promise<{ idEscritura: number; numero: number }> {
   const numero = uniqueId() % 1_000_000;
-  const seeded = await apiPost<EscrituraApiResult>(page, "/escrituras", {
+  const seeded = await apiPost<EscrituraApiResult>(page, "/deeds", {
     number: numero,
     dateDeedrecording: new Date().toISOString().split("T")[0],
     body: `Contenido E2E ${numero}`,
@@ -33,7 +33,7 @@ async function seedInmueble(
   page: import("@playwright/test").Page,
   overrides: Record<string, unknown> = {},
 ): Promise<number> {
-  const seeded = await apiPost<InmuebleApiResult>(page, "/inmueble", {
+  const seeded = await apiPost<InmuebleApiResult>(page, "/properties", {
     cadastralDesignation: `NC-${uniqueId()}`,
     address: "Av. Siempreviva 742",
     fiscalAppraisal: 100000,
@@ -50,7 +50,7 @@ async function seedTramite(
   idEscritura: number,
   idInmueble: number,
 ): Promise<void> {
-  await apiPost(page, "/tramites", {
+  await apiPost(page, "/procedures", {
     idProcedureType: 1,
     idDeed: idEscritura,
     idProperty: idInmueble,
@@ -70,7 +70,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     const idInmueble = await seedInmueble(page);
     await seedTramite(page, idEscritura, idInmueble);
 
-    await steps.givenUserIsOnPage("/dashboard/minutas-inscripcion");
+    await steps.givenUserIsOnPage("/dashboard/registration-drafts");
     await page.getByTestId("select-escritura-minuta").click();
     await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
     await page.getByTestId("btn-generar-minuta").click();
@@ -104,7 +104,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     const idInmueble = await seedInmueble(page);
     await seedTramite(page, idEscritura, idInmueble);
 
-    await steps.givenUserIsOnPage("/dashboard/minutas-inscripcion");
+    await steps.givenUserIsOnPage("/dashboard/registration-drafts");
     await page.getByTestId("select-escritura-minuta").click();
     await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
     await page.getByTestId("btn-generar-minuta").click();
@@ -138,7 +138,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     });
     await seedTramite(page, idEscritura, idInmueble);
 
-    await steps.givenUserIsOnPage("/dashboard/minutas-inscripcion");
+    await steps.givenUserIsOnPage("/dashboard/registration-drafts");
     await page.getByTestId("select-escritura-minuta").click();
     await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
     await page.getByTestId("btn-generar-minuta").click();
@@ -153,7 +153,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
   ]) {
     test(`minutas-inscripcion screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await steps.givenUserIsOnPage("/dashboard/minutas-inscripcion");
+      await steps.givenUserIsOnPage("/dashboard/registration-drafts");
       await page.waitForLoadState("networkidle");
       await steps.thenHasNoHorizontalOverflow();
     });

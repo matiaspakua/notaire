@@ -7,16 +7,16 @@
 
 ## Context
 
-El monolito legacy modelaba el ciclo de vida de una `GestionDeEscritura` (y de un `Tramite`) como un conjunto fijo de estados codificados en Java (`EstadoDeGestion`), con las transiciones válidas dispersas en condicionales dentro de los controladores JPA legacy. Añadir o modificar un estado, o cambiar qué transiciones son válidas para un tipo de trámite, requería cambiar código y desplegar.
+El monolito legacy modelaba el ciclo de vida de una `DeedManagement` (y de un `Procedure`) como un conjunto fijo de estados codificados en Java (`ManagementStatus`), con las transiciones válidas dispersas en condicionales dentro de los controladores JPA legacy. Añadir o modificar un estado, o cambiar qué transiciones son válidas para un tipo de trámite, requería cambiar código y desplegar.
 
-El sistema notarial tiene múltiples tipos de trámite (`TipoDeTramite`), cada uno con su propio flujo de estados válido — un modelo de máquina de estados fija en código no escala a esa variabilidad sin duplicar lógica por tipo.
+El sistema notarial tiene múltiples tipos de trámite (`ProcedureType`), cada uno con su propio flujo de estados válido — un modelo de máquina de estados fija en código no escala a esa variabilidad sin duplicar lógica por tipo.
 
 ## Decision
 
 Modelar el flujo de estados como datos versionados en base de datos, mediante tres entidades JPA en `com.licensis.notaire.negocio`:
 
-- **`WorkflowDefinition`** — una definición de flujo, asociable a uno o más `TipoDeTramite`.
-- **`WorkflowNode`** — un nodo del flujo, vinculado a un `EstadoDeGestion` existente y tipado como `WorkflowNodeType`: `INITIAL`, `INTERMEDIATE` o `FINAL`. Incluye coordenadas (`posicionX`, `posicionY`) para renderizado visual del diagrama en el frontend.
+- **`WorkflowDefinition`** — una definición de flujo, asociable a uno o más `ProcedureType`.
+- **`WorkflowNode`** — un nodo del flujo, vinculado a un `ManagementStatus` existente y tipado como `WorkflowNodeType`: `INITIAL`, `INTERMEDIATE` o `FINAL`. Incluye coordenadas (`posicionX`, `posicionY`) para renderizado visual del diagrama en el frontend.
 - **`WorkflowTransition`** — una arista dirigida entre dos `WorkflowNode` (`nodoOrigen` → `nodoDestino`), con una `condicion` opcional (expresión evaluada para habilitar la transición) y `descripcion` legible.
 
 La validación de transiciones se expone vía `WorkflowValidationController` / `WorkflowValidationService`, y la trazabilidad de instancias de flujo vía `WorkflowTraceService`. La definición y edición de flujos se expone vía `WorkflowDefinitionController`, `WorkflowNodeController` y `WorkflowTransitionController`.
@@ -27,7 +27,7 @@ Todas las entidades incluyen columna `version` para versionado optimista (`@Vers
 
 | Criterio | Motor basado en datos (elegido) | Enum de estados fijo | Motor BPMN externo (Camunda/Flowable) |
 |----------|----------------------------------|------------------------|------------------------------------------|
-| Flexibilidad por tipo de trámite | Alta — cada `TipoDeTramite` referencia su propia `WorkflowDefinition` | Ninguna — un solo flujo para todos los tipos | Alta, pero con modelo de proceso ajeno al dominio |
+| Flexibilidad por tipo de trámite | Alta — cada `ProcedureType` referencia su propia `WorkflowDefinition` | Ninguna — un solo flujo para todos los tipos | Alta, pero con modelo de proceso ajeno al dominio |
 | Complejidad añadida | Media — 3 entidades nuevas, sin motor externo | Mínima | Alta — nuevo runtime, nuevo lenguaje (BPMN XML), curva de aprendizaje |
 | Cambios de flujo sin despliegue | Sí — se editan filas, no código | No | Sí |
 | Encaje con Spring Data JPA existente | Directo — mismas convenciones que el resto del dominio | Directo | Requiere integración adicional |
@@ -39,7 +39,7 @@ Todas las entidades incluyen columna `version` para versionado optimista (`@Vers
 ### Positivos
 
 - Un administrador puede definir o ajustar el flujo de un tipo de trámite sin cambios de código, vía los endpoints `Workflow*Controller`.
-- El modelo es directamente representable como diagrama de estados (ver `docs/200-architecture/204-diagrams/Diagrama de Estados/`), ya que cada `WorkflowNode` mapea 1:1 a un `EstadoDeGestion`.
+- El modelo es directamente representable como diagrama de estados (ver `docs/200-architecture/204-diagrams/Diagrama de Estados/`), ya que cada `WorkflowNode` mapea 1:1 a un `ManagementStatus`.
 - Reutiliza los patrones ya establecidos (JPA, DTOs, repositorios) — no introduce un paradigma nuevo en el backend.
 
 ### Negativos

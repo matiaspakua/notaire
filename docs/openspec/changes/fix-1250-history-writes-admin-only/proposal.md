@@ -12,11 +12,11 @@
 
 ## Objetivo
 
-Any authenticated user could rewrite or delete a management history row, which is the audit trail of state changes. Restrict `PUT`/`DELETE /api/v1/historial/{id}` to administrators (Owner decision on #1250 bucket B: restrict, do not remove) and record the Owner's triage of the allowlisted endpoints.
+Any authenticated user could rewrite or delete a management history row, which is the audit trail of state changes. Restrict `PUT`/`DELETE /api/v1/history/{id}` to administrators (Owner decision on #1250 bucket B: restrict, do not remove) and record the Owner's triage of the allowlisted endpoints.
 
 ## What Changes
 
-- `SecurityAndCorsConfig`: `PUT`/`DELETE /api/v1/historial/*` require `ROLE_ADMIN`.
+- `SecurityAndCorsConfig`: `PUT`/`DELETE /api/v1/history/*` require `ROLE_ADMIN`.
 - `HistoryController`: 403 response and ADMIN note in the OpenAPI docs; `openapi.yaml` regenerated.
 - Bruno `rbac/08a`, `rbac/08b` (employee gets 403); `rbac/09` reordered.
 - `API-AUTHENTICATION-GUIDE.md` RBAC table.
@@ -52,7 +52,7 @@ Any authenticated user could rewrite or delete a management history row, which i
 
 ### Surface area
 
-- Endpoints: `PUT`/`DELETE /api/v1/historial/{id}` (now 403 for non-administrators; documented)
+- Endpoints: `PUT`/`DELETE /api/v1/history/{id}` (now 403 for non-administrators; documented)
 - Entities / Flyway / Configuration: none
 
 ### Architecture review

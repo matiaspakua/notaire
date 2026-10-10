@@ -17,8 +17,8 @@ test.describe("Budget status vocabulary (#1346)", () => {
     expect(budget.ok, budget.error).toBe(true);
     const id = budget.data!.idBudget;
 
-    const searched = page.waitForRequest((r) => /\/presupuestos\/buscar\?status=PENDIENTE$/.test(r.url()));
-    await page.goto("/dashboard/presupuestos");
+    const searched = page.waitForRequest((r) => /\/budgets\/search\?status=PENDIENTE$/.test(r.url()));
+    await page.goto("/dashboard/budgets");
     await page.getByTestId("select-estado").click();
     await page.getByRole("option", { name: "Pendiente", exact: true }).click();
     await searched;
@@ -35,7 +35,7 @@ test.describe("Budget status vocabulary (#1346)", () => {
 
   test("the status filter offers every status of the vocabulary", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    await page.goto("/dashboard/presupuestos");
+    await page.goto("/dashboard/budgets");
     await page.getByTestId("select-estado").click();
     const options = page.getByRole("listbox").getByRole("option");
     await expect(options).toHaveText(["Todos", "Borrador", "Pendiente", "Aprobado", "Rechazado", "Facturado"]);

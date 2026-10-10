@@ -23,7 +23,7 @@ Usar **GitHub Actions** como única plataforma de CI/CD, con workflows separados
 | `performance-test.yml` | Pruebas de carga/rendimiento bajo demanda |
 | `cd.yml` | `build-and-publish`, `release`, `update-description`, `generate-report`, `publish-report` — build y publicación de imágenes Docker tras un `ci.yml` exitoso en `main`; report jobs usan artifacts/summary (no commits a `docs/wiki/cicd-reports/`; #1041) |
 | `test-coverage-report.yml` | Comentario de cobertura JaCoCo en el PR |
-| `deploy-github-page.yml` | Publicación de documentación/reportes estáticos (incluye espejo opcional de markdown CI/CD/E2E bajo `/cicd-reports/`; `contents: read`) |
+| `deploy-github-page.yml` | Publicación de documentación/reports estáticos (incluye espejo opcional de markdown CI/CD/E2E bajo `/cicd-reports/`; `contents: read`) |
 | `claude.yml` / `opencode.yml` / `copilot-setup-steps.yml` | Integración de agentes de IA con el repositorio |
 
 ### Por qué GitHub Actions (y no Jenkins/GitLab CI/CircleCI)

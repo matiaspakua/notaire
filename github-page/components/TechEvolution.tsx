@@ -32,7 +32,7 @@ class NotaireForm extends JFrame {
     color: "var(--spring-green)",
     code: `// 2025 — Clean separation
 @RestController
-@RequestMapping("/api/v1/escrituras")
+@RequestMapping("/api/v1/deeds")
 public class EscrituraController {
 
   @Autowired

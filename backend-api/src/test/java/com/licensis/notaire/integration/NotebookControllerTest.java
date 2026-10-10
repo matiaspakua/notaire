@@ -31,7 +31,7 @@ import java.util.List;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @Transactional
-@DisplayName("CU80 — Cuaderno de folios creation and carátula")
+@DisplayName("CU80 — Notebook of folios creation and carátula")
 class NotebookControllerTest {
 
     @Autowired
@@ -84,11 +84,11 @@ class NotebookControllerTest {
     }
 
     @Test
-    @DisplayName("Should create cuaderno from ten consecutive folios")
+    @DisplayName("Should create notebook from ten consecutive folios")
     void shouldCreateNotebookFromConsecutiveFolios() throws Exception {
-        List<Integer> ids = crearFolios(10, "Nuevo");
+        List<Integer> ids = crearFolios(10, "New");
 
-        mockMvc.perform(post("/api/v1/cuadernos")
+        mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createNotebookBody(ids, null)))
                 .andExpect(status().isCreated())
@@ -96,72 +96,72 @@ class NotebookControllerTest {
     }
 
     @Test
-    @DisplayName("Should reject cuaderno when folio count is not a multiple of ten")
+    @DisplayName("Should reject notebook when folio count is not a multiple of ten")
     void shouldRejectNotebookWhenFolioCountNotMultipleOfTen() throws Exception {
-        List<Integer> ids = crearFolios(5, "Nuevo");
+        List<Integer> ids = crearFolios(5, "New");
 
-        mockMvc.perform(post("/api/v1/cuadernos")
+        mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createNotebookBody(ids, null)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should reject cuaderno with non-consecutive folios")
+    @DisplayName("Should reject notebook with non-consecutive folios")
     void shouldRejectNotebookWithNonConsecutiveFolios() throws Exception {
-        List<Integer> ids = crearFolios(11, "Nuevo");
+        List<Integer> ids = crearFolios(11, "New");
         List<Integer> discontinuos = new ArrayList<>(ids.subList(0, 9));
         discontinuos.add(ids.get(10));
 
-        mockMvc.perform(post("/api/v1/cuadernos")
+        mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createNotebookBody(discontinuos, null)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should reject cuaderno with a folio already assigned")
+    @DisplayName("Should reject notebook with a folio already assigned")
     void shouldRejectNotebookWithFolioAlreadyAssigned() throws Exception {
-        List<Integer> primerLote = crearFolios(10, "Nuevo");
-        mockMvc.perform(post("/api/v1/cuadernos")
+        List<Integer> primerLote = crearFolios(10, "New");
+        mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createNotebookBody(primerLote, null)))
                 .andExpect(status().isCreated());
 
-        List<Integer> segundoLote = crearFolios(10, "Nuevo");
+        List<Integer> segundoLote = crearFolios(10, "New");
         List<Integer> conFolioReasignado = new ArrayList<>(segundoLote.subList(0, 9));
         conFolioReasignado.add(primerLote.get(0));
 
-        mockMvc.perform(post("/api/v1/cuadernos")
+        mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createNotebookBody(conFolioReasignado, null)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should create cuaderno with a justified damaged folio")
+    @DisplayName("Should create notebook with a justified damaged folio")
     void shouldCreateNotebookWithJustifiedDamagedFolio() throws Exception {
-        List<Integer> ids = crearFolios(9, "Nuevo");
+        List<Integer> ids = crearFolios(9, "New");
         ids.addAll(crearFolios(1, "Errose"));
 
-        mockMvc.perform(post("/api/v1/cuadernos")
+        mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createNotebookBody(ids, "Folio 10 dañado, se incluye igualmente")))
+                        .content(createNotebookBody(ids, "Folio 10 dañado, incluye igualmente")))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    @DisplayName("Should generate carátula for an existing cuaderno")
+    @DisplayName("Should generate carátula for an existing notebook")
     void shouldGenerateCaratulaForExistingNotebook() throws Exception {
-        List<Integer> ids = crearFolios(10, "Nuevo");
-        MvcResult creado = mockMvc.perform(post("/api/v1/cuadernos")
+        List<Integer> ids = crearFolios(10, "New");
+        MvcResult creado = mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createNotebookBody(ids, null)))
                 .andExpect(status().isCreated())
                 .andReturn();
         Integer idNotebook = mapper.readTree(creado.getResponse().getContentAsString()).get("idNotebook").asInt();
 
-        MvcResult caratula = mockMvc.perform(get("/api/v1/cuadernos/" + idNotebook + "/caratula"))
+        MvcResult caratula = mockMvc.perform(get("/api/v1/notebooks/" + idNotebook + "/caratula"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -170,9 +170,9 @@ class NotebookControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 404 for carátula of a missing cuaderno")
+    @DisplayName("Should return 404 for carátula of a missing notebook")
     void shouldReturnNotFoundForMissingNotebookCaratula() throws Exception {
-        mockMvc.perform(get("/api/v1/cuadernos/999999/caratula"))
+        mockMvc.perform(get("/api/v1/notebooks/999999/caratula"))
                 .andExpect(status().isNotFound());
     }
 }

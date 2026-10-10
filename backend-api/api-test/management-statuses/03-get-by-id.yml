@@ -6,7 +6,7 @@ info:
       Traceability: CU67 (RF #55, #59, #107, #108)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/estado-gestion/{{management_status_id}}"
+  url: "{{base_url}}/api/v1/management-statuses/{{management_status_id}}"
   headers:
     - name: Content-Type
       value: application/json

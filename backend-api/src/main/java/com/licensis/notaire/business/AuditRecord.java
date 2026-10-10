@@ -60,7 +60,7 @@ public class AuditRecord implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "operation_detail")
     private String operationDetail;
-    @JoinColumn(name = "fk_id_usuario", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_user", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User fkIdUser;
 
@@ -152,7 +152,7 @@ public class AuditRecord implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "negocio.RegistroAuditoria[ idRegistroAuditoria=" + idAuditRecord + " ]";
+        return "negocio.AuditRecord[ idRegistroAuditoria=" + idAuditRecord + " ]";
     }
 
 

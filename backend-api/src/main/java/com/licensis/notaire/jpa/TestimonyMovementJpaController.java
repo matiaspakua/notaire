@@ -7,7 +7,7 @@ package com.licensis.notaire.jpa;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.business.Testimony;
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class TestimonyMovementJpaController implements Serializable, IPersistenciaJpa
+public class TestimonyMovementJpaController implements Serializable, JpaPersistence
 {
 
     public TestimonyMovementJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -84,8 +84,8 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
 
         if (persistentTestimonyMovement != null)
         {
-            version = persistentTestimonyMovement.getVersion(); // Version del Objeto en db
-            oldVersion = testimonyMovement.getVersion(); // Version del Objeto en memoria
+            version = persistentTestimonyMovement.getVersion(); // Version of the Objeto in db
+            oldVersion = testimonyMovement.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {

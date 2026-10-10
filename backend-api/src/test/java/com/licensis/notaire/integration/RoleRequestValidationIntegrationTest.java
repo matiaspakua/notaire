@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Rol request validation (issue #655)")
+@DisplayName("Role request validation (issue #655)")
 class RoleRequestValidationIntegrationTest {
 
     @Autowired

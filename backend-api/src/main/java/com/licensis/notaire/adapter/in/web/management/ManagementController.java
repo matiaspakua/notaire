@@ -1,16 +1,16 @@
 package com.licensis.notaire.adapter.in.web.management;
 
-import com.licensis.notaire.dto.DtoDocumentEntidadExterna;
+import com.licensis.notaire.dto.DtoExternalEntityDocument;
 import com.licensis.notaire.dto.DtoDocumentReentered;
-import com.licensis.notaire.dto.DtoManagementDocumentsEntidadesExternas;
-import com.licensis.notaire.dto.DtoManagementReingresoDocumentacion;
-import com.licensis.notaire.dto.DtoManagementResumenFinanciero;
+import com.licensis.notaire.dto.DtoManagementExternalEntityDocuments;
+import com.licensis.notaire.dto.DtoManagementDocumentReentry;
+import com.licensis.notaire.dto.DtoManagementFinancialSummary;
 import com.licensis.notaire.dto.DtoManagementSummary;
 import com.licensis.notaire.dto.DtoManagementWorkflowTrace;
 import com.licensis.notaire.dto.DtoHistorySummary;
-import com.licensis.notaire.dto.DtoMovementDocumentEntidadExterna;
-import com.licensis.notaire.dto.DtoReingresoDocumentacionRequest;
-import com.licensis.notaire.exception.CarpetasEnWaitException;
+import com.licensis.notaire.dto.DtoExternalEntityDocumentMovement;
+import com.licensis.notaire.dto.DtoDocumentReentryRequest;
+import com.licensis.notaire.exception.FoldersInWaitException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
@@ -73,7 +73,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/gestiones")
+@RequestMapping("/api/v1/managements")
 @Tag(name = "Managements", description = "API for deed managements")
 public class ManagementController {
 
@@ -309,7 +309,7 @@ public class ManagementController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/numero/{number}")
+    @GetMapping("/number/{number}")
     @Operation(summary = "Get management by number")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoManagementSummary> getByNumber(@PathVariable Integer number) {
@@ -318,7 +318,7 @@ public class ManagementController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/cliente/{idPerson}")
+    @GetMapping("/client/{idPerson}")
     @Operation(summary = "CU19 - List managements for a client")
     @Transactional(readOnly = true)
     public ResponseEntity<List<ManagementResponse>> getByClient(@PathVariable Integer idPerson) {
@@ -326,7 +326,7 @@ public class ManagementController {
                 .map(this::toManagementResponse).toList());
     }
 
-    @GetMapping("/{id}/estado-actual")
+    @GetMapping("/{id}/current-status")
     @Operation(summary = "CU13/CU14 - Get current management status",
             description = "Returns the latest History row by date when present; otherwise synthesizes a "
                     + "summary from DeedManagement.fkIdManagementStatus (as-of-now). Missing management "
@@ -557,7 +557,7 @@ public class ManagementController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "Management not found")
     })
-    @GetMapping("/{id}/saldo-pendiente")
+    @GetMapping("/{id}/outstanding-balance")
     @Operation(summary = "CU16 - Calculate aggregated pending balance for a management (RF-22)")
     public ResponseEntity<DtoSaldoPending> getSaldoPending(@PathVariable Integer id) {
         try {
@@ -572,9 +572,9 @@ public class ManagementController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "Management not found")
     })
-    @GetMapping("/{id}/resumen-financiero")
+    @GetMapping("/{id}/financial-summary")
     @Operation(summary = "CU47/CU02 - Get aggregated financial summary for a management")
-    public ResponseEntity<DtoManagementResumenFinanciero> getResumenFinanciero(@PathVariable Integer id) {
+    public ResponseEntity<DtoManagementFinancialSummary> getResumenFinanciero(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(managementResumenFinancieroService.getSummary(id));
         } catch (IllegalArgumentException e) {
@@ -588,7 +588,7 @@ public class ManagementController {
         @ApiResponse(responseCode = "409",
                 description = "Unresolved waiting procedure folders (CU85); confirm to archive")
     })
-    @PostMapping("/{id}/archivar")
+    @PostMapping("/{id}/archive")
     @Operation(summary = "CU16 - Archive a management, warning and recording pending debt (RF-22, RF-37); "
             + "cascades to CU85 procedure folders")
     public ResponseEntity<Object> archiving(@PathVariable Integer id,
@@ -599,8 +599,8 @@ public class ManagementController {
                     result.pendingBalance(), Boolean.TRUE.equals(result.management().getPendingDebtAtArchiving())));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
-        } catch (CarpetasEnWaitException e) {
-            List<Integer> waitingFolderNumbers = e.getCarpetasEnWait().stream()
+        } catch (FoldersInWaitException e) {
+            List<Integer> waitingFolderNumbers = e.getFoldersInWait().stream()
                     .map(ProcedureFolder::getNumber)
                     .toList();
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -625,7 +625,7 @@ public class ManagementController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "Management not found")
     })
-    @GetMapping("/{id}/historial")
+    @GetMapping("/{id}/history")
     @Operation(summary = "CU13 - Get the full management History log, ordered chronologically")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoHistorySummary>> getHistory(@PathVariable Integer id) {
@@ -642,9 +642,9 @@ public class ManagementController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "Management not found")
     })
-    @GetMapping("/{id}/documentos-entidades-externas")
+    @GetMapping("/{id}/external-entity-documents")
     @Operation(summary = "CU10 - Get management documentation handled by external entities")
-    public ResponseEntity<DtoManagementDocumentsEntidadesExternas> getDocumentsEntidadesExternas(
+    public ResponseEntity<DtoManagementExternalEntityDocuments> getDocumentsEntidadesExternas(
             @PathVariable Integer id) {
         return ResponseEntity.ok(documentEntidadExternaService.getDocuments(id));
     }
@@ -654,12 +654,12 @@ public class ManagementController {
         @ApiResponse(responseCode = "400", description = "Invalid document for the management"),
         @ApiResponse(responseCode = "404", description = "Management or document not found")
     })
-    @PutMapping("/{id}/documentos-entidades-externas/{idSubmittedDocument}")
+    @PutMapping("/{id}/external-entity-documents/{idSubmittedDocument}")
     @Operation(summary = "CU10 - Register movement of an external-entity document")
-    public ResponseEntity<DtoDocumentEntidadExterna> registerMovementDocumentEntidadExterna(
+    public ResponseEntity<DtoExternalEntityDocument> registerMovementDocumentEntidadExterna(
             @PathVariable Integer id, @PathVariable Integer idSubmittedDocument,
-            @RequestBody DtoMovementDocumentEntidadExterna movement) {
-        DtoDocumentEntidadExterna result =
+            @RequestBody DtoExternalEntityDocumentMovement movement) {
+        DtoExternalEntityDocument result =
                 documentEntidadExternaService.registerMovement(id, idSubmittedDocument, movement);
         documentEntidadExternaService.tryCompleteDocumentation(id);
         return ResponseEntity.ok(result);
@@ -669,9 +669,9 @@ public class ManagementController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "Management not found")
     })
-    @GetMapping("/{id}/reingreso-documentacion")
+    @GetMapping("/{id}/document-reentry")
     @Operation(summary = "CU43 - Get management procedures with required documentation")
-    public ResponseEntity<DtoManagementReingresoDocumentacion> getRequiredDocumentationForReentry(
+    public ResponseEntity<DtoManagementDocumentReentry> getRequiredDocumentationForReentry(
             @PathVariable Integer id) {
         return ResponseEntity.ok(reingresoDocumentacionService.getRequiredDocumentation(id));
     }
@@ -681,10 +681,10 @@ public class ManagementController {
         @ApiResponse(responseCode = "400", description = "Invalid procedure or document type"),
         @ApiResponse(responseCode = "404", description = "Management or procedure not found")
     })
-    @PostMapping("/{id}/reingreso-documentacion")
+    @PostMapping("/{id}/document-reentry")
     @Operation(summary = "CU43 - Re-enter a document type for a management procedure")
     public ResponseEntity<DtoDocumentReentered> reenterDocumentation(@PathVariable Integer id,
-            @Valid @RequestBody DtoReingresoDocumentacionRequest request) {
+            @Valid @RequestBody DtoDocumentReentryRequest request) {
         DtoDocumentReentered result = reingresoDocumentacionService.reenter(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }

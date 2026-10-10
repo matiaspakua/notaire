@@ -15,11 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU01", "CU45", "CU60"})
-@DisplayName("Presupuesto Entity Tests")
+@DisplayName("Budget Entity Tests")
 class BudgetEntityTest {
 
     @Nested
-    @DisplayName("CU01 - Preparar Presupuesto - Unit Tests")
+    @DisplayName("CU01 - Preparar Budget - Unit Tests")
     class PrepararBudgetTests {
 
         @Test
@@ -70,7 +70,7 @@ class BudgetEntityTest {
         }
 
         @Test
-        @DisplayName("Should associate budget with more than one tramite")
+        @DisplayName("Should associate budget with more than one procedure")
         void shouldAssociateBudgetWithMultipleProcedures() {
             Budget budget = new Budget();
             budget.setIdBudget(1);
@@ -113,11 +113,11 @@ class BudgetEntityTest {
     }
 
     @Nested
-    @DisplayName("CU60 - Buscar Presupuesto - Unit Tests")
+    @DisplayName("CU60 - Search Budget - Unit Tests")
     class SearchBudgetTests {
 
         @Test
-        @DisplayName("Should filter presupuestos by person")
+        @DisplayName("Should filter budgets by person")
         void shouldFilterPresupuestosByPerson() {
             Person persona1 = new Person(1);
             Person persona2 = new Person(2);
@@ -141,7 +141,7 @@ class BudgetEntityTest {
         }
 
         @Test
-        @DisplayName("Should filter presupuestos by status")
+        @DisplayName("Should filter budgets by status")
         void shouldFilterPresupuestosByStatus() {
             Budget presupuesto1 = new Budget(1);
             presupuesto1.setStatus("pendiente");

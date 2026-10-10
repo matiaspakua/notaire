@@ -15,7 +15,7 @@ CU16 (Archivar Gestión) debe advertir al usuario cuando la gestión tiene deuda
 
 ## What Changes
 
-- Backend: `GestionArchiveDebtService` calcula el saldo pendiente agregado de la gestión antes de archivar (expuesto vía `GET /saldo-pendiente`)
+- Backend: `GestionArchiveDebtService` calcula el saldo pendiente agregado de la gestión antes de archivar (expuesto vía `GET /outstanding-balance`)
 - Backend: El archivado **no se bloquea** por deuda; se persiste `deudaPendienteAlArchivar = true` cuando el saldo es positivo
 - Frontend: `gestiones/page.tsx` consulta el saldo pendiente y muestra advertencia con opción de confirmar/cancelar antes de archivar
 - Backend: Tests verifican que el archivo se completa con o sin deuda, registrando correctamente `deudaPendienteAlArchivar`

@@ -36,8 +36,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/folio")
-@Tag(name = "Folio", description = "API para gestionar folio")
+@RequestMapping("/api/v1/folios")
+@Tag(name = "Folio", description = "API for managing folio")
 @Transactional
 public class FolioController {
 
@@ -90,7 +90,7 @@ public class FolioController {
     // FolioResponse keeps the wire names of the frontend Folio type (fkIdNotaryPerson, fkIdDeed); the legacy
     // Folio.getDto() renames them (personNotary/deed/id) and is not used here (see #1006).
     @GetMapping
-    @Operation(summary = "Obtener todos los folios")
+    @Operation(summary = "Get all folios")
     public ResponseEntity<List<FolioResponse>> getAll() {
         try {
             return ResponseEntity.ok(folioRepository.findAll().stream().map(FolioResponse::from).toList());
@@ -101,13 +101,13 @@ public class FolioController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Buscar folios por estado")
+    @Operation(summary = "Search folios by status")
     public ResponseEntity<List<FolioResponse>> search(@RequestParam String status) {
         return ResponseEntity.ok(folioRepository.findByStatus(status).stream().map(FolioResponse::from).toList());
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Verificar si un folio está en uso")
+    @Operation(summary = "Check whether a folio is in uso")
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         return folioRepository.findById(id)
                 .map(f -> ResponseEntity.ok(Map.of("inUse", StatusUTILIZADO.equals(f.getStatus()))))
@@ -119,7 +119,7 @@ public class FolioController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener folio por ID")
+    @Operation(summary = "Get folio by ID")
     public ResponseEntity<FolioResponse> getById(@PathVariable Integer id) {
         return folioRepository.findById(id)
                 .map(folio -> ResponseEntity.ok(FolioResponse.from(folio)))
@@ -128,11 +128,11 @@ public class FolioController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo folio")
+    @Operation(summary = "Create folio")
     public ResponseEntity<FolioResponse> create(@Valid @RequestBody FolioRequest request) {
         if (request.typeFolioId() == null || request.notaryId() == null) {
             return ResponseEntity.badRequest().build();
@@ -163,7 +163,7 @@ public class FolioController {
                 folio.setStatus(StatusUTILIZADO);
             }
             Folio saved = folioRepository.save(folio);
-            return CreatedResponses.of(FolioResponse.from(saved), "/api/v1/folio", saved.getIdFolio());
+            return CreatedResponses.of(FolioResponse.from(saved), "/api/v1/folios", saved.getIdFolio());
         } catch (Exception e) {
             log.error("Failed to create folio", e);
             return ResponseEntity.internalServerError().build();
@@ -172,7 +172,7 @@ public class FolioController {
 
     /**
      * A folio Utilizado can only be re-saved when the request targets the same
-     * escritura it is already linked to (idempotent re-save); any other change
+     * deed it is already linked to (idempotent re-save); any other change
      * while Utilizado is rejected.
      */
     private boolean linksSameDeed(Folio folio, FolioRequest request) {
@@ -187,7 +187,7 @@ public class FolioController {
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar folio")
+    @Operation(summary = "Update folio")
     public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody FolioRequest request) {
         Optional<Folio> existing = folioRepository.findById(id);
         if (existing.isEmpty()) {
@@ -196,7 +196,7 @@ public class FolioController {
         Folio folio = existing.get();
         if (StatusUTILIZADO.equals(folio.getStatus()) && !linksSameDeed(folio, request)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Este folio está en uso (Utilizado) y no puede modificarse."));
+                    .body(Map.of("error", "This folio is in uso (Utilizado) and cannot modificarse."));
         }
         Deed deed = null;
         if (request.deedId() != null) {
@@ -234,7 +234,7 @@ public class FolioController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar folio")
+    @Operation(summary = "Delete folio")
     @Transactional
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         Optional<Folio> opt = folioRepository.findById(id);
@@ -243,11 +243,11 @@ public class FolioController {
         }
         if (StatusUTILIZADO.equals(opt.get().getStatus())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "No se puede eliminar: el folio está en uso (Utilizado)."));
+                    .body(Map.of("error", "Not can delete: the folio is in uso (Utilizado)."));
         }
         try {
             Folio folio = opt.get();
-            // TipoDeFolio.folioList is EAGER + CascadeType.ALL: Hibernate 6 would cascade-persist
+            // FolioType.folioList is EAGER + CascadeType.ALL: Hibernate 6 would cascade-persist
             // the removed entity back through that collection. Remove it first.
             if (folio.getFkIdFolioType() != null && folio.getFkIdFolioType().getFolioList() != null) {
                 folio.getFkIdFolioType().getFolioList().remove(folio);

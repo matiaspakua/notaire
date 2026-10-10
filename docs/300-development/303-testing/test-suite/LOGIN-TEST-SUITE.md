@@ -1,7 +1,7 @@
 # Test Suite — Login Authentication (CU-78)
 
 **Use Case:** CU-78 — Seguridad, Privacidad y Cumplimiento (Security and Compliance)
-**Endpoint:** `POST /api/v1/usuarios/login`
+**Endpoint:** `POST /api/v1/users/login`
 **Issue:** [#824](https://github.com/matiaspakua/notaire/issues/824)
 **Status:** Complete ✅
 
@@ -60,5 +60,5 @@ mvn test -pl backend-api -Dtest=LoginAttemptServiceTest
 mvn test -pl backend-api -Dtest=JwtAuthIntegrationTest
 
 # Full suite
-mvn test -pl backend-api -Dtest="*Login*,*Auth*,*Usuario*"
+mvn test -pl backend-api -Dtest="*Login*,*Auth*,*UserAccount*"
 ```

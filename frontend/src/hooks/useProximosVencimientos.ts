@@ -1,10 +1,10 @@
 /**
  * React Query hook for CU42 — informar próximos vencimientos.
- * Endpoint: GET /api/v1/documento-presentado/proximos-vencimientos?dias=N
+ * Endpoint: GET /api/v1/submitted-documents/upcoming-expirations?dias=N
  */
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
-import type { ProximoVencimiento } from "@/types";
+import type { UpcomingExpiration } from "@/types";
 
 export const proximosVencimientosKeys = {
   byDias: (dias: number) => ["proximosVencimientos", dias] as const,
@@ -13,6 +13,6 @@ export const proximosVencimientosKeys = {
 export function useProximosVencimientos(dias: number) {
   return useQuery({
     queryKey: proximosVencimientosKeys.byDias(dias),
-    queryFn: () => apiGet<ProximoVencimiento[]>(`/documento-presentado/proximos-vencimientos?dias=${dias}`),
+    queryFn: () => apiGet<UpcomingExpiration[]>(`/submitted-documents/upcoming-expirations?dias=${dias}`),
   });
 }

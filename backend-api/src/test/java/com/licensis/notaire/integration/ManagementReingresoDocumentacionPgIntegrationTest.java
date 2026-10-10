@@ -31,7 +31,7 @@ import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 
 /**
- * CU43 - Reingresar documentación, against the real Flyway-managed Postgres
+ * CU43 - Reenter documentation, against the real Flyway-managed Postgres
  * schema. {@link GestionReingresoDocumentacionIntegrationTest} runs on
  * {@code test-h2}, whose {@code ddl-auto=create} schema does not enforce the
  * NOT NULL columns (e.g. {@code liberado}, {@code observado}) that
@@ -42,7 +42,7 @@ import com.licensis.notaire.repository.ProcedureRepository;
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
-@DisplayName("Gestion reingreso de documentación contra el esquema real (CU43)")
+@DisplayName("Management reentry of documentation contra the esquema real (CU43)")
 class ManagementReingresoDocumentacionPgIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
@@ -82,14 +82,14 @@ class ManagementReingresoDocumentacionPgIntegrationTest extends BaseIntegrationT
     }
 
     @Test
-    @DisplayName("Should create a DocumentoPresentado with reentered=true against the real Postgres schema")
+    @DisplayName("Should create a SubmittedDocument with reentered=true against the real Postgres schema")
     void shouldReingresarWhenValidAgainstRealSchema() throws Exception {
         Integer notaryId = createPerson("43pg001");
         String managementBody = """
                 {"encabezado": "Management CU43 pg", "dateStart": "2026-01-01", "number": 943001,
                  "notaryPersonId": %d}
                 """.formatted(notaryId);
-        MvcResult managementResult = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult managementResult = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(managementBody))
                 .andExpect(status().isCreated())
@@ -98,7 +98,7 @@ class ManagementReingresoDocumentacionPgIntegrationTest extends BaseIntegrationT
                 .get("idManagement").asInt();
 
         ProcedureType typeProcedure = new ProcedureType();
-        typeProcedure.setName("Tramite CU43 pg");
+        typeProcedure.setName("Procedure CU43 pg");
         typeProcedure.setEnabled(true);
         typeProcedure.setIsArchived(false);
         typeProcedure.setIsRegistered(false);
@@ -131,7 +131,7 @@ class ManagementReingresoDocumentacionPgIntegrationTest extends BaseIntegrationT
                 {"idProcedure": %d, "idDocumentType": %d}
                 """.formatted(procedure.getIdProcedure(), typeDocument.getIdDocumentType());
 
-        mockMvc.perform(post("/api/v1/gestiones/" + managementId + "/reingreso-documentacion")
+        mockMvc.perform(post("/api/v1/managements/" + managementId + "/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())

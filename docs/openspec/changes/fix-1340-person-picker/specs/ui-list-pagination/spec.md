@@ -28,4 +28,4 @@ Forms that choose a person SHALL search `GET /api/v1/people/search` as the user 
 #### Scenario: No size=1000 anywhere
 
 - **WHEN** the source tree is scanned
-- **THEN** no page or component calls usePersonas()
+- **THEN** no page or component calls usePeople()

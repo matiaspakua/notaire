@@ -37,7 +37,7 @@ class BudgetCatalogItemsServiceTest {
 
     private Item buildCatalogItem(Integer id, String name, java.math.BigDecimal value) {
         Item item = new Item(id, name, value);
-        item.setNotes("Observación de catálogo");
+        item.setNotes("Observation of catálogo");
         item.setPercentage(15);
         return item;
     }
@@ -57,7 +57,7 @@ class BudgetCatalogItemsServiceTest {
         Item copy = result.get(0);
         assertThat(copy.getName()).isEqualTo("Sellado");
         assertThat(copy.getValue()).isEqualByComparingTo(new java.math.BigDecimal("500"));
-        assertThat(copy.getNotes()).isEqualTo("Observación de catálogo");
+        assertThat(copy.getNotes()).isEqualTo("Observation of catálogo");
         assertThat(copy.getFkIdBudget()).isEqualTo(budget);
     }
 

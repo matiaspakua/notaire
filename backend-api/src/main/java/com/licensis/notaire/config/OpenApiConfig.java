@@ -33,9 +33,9 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Notaire API")
                         .version("1.0.0")
-                        .description("Sistema de gestión notarial — API REST backend. "
+                        .description("Sistema of management notarial — API REST backend. "
                                 + "Todos los recursos siguen el prefijo `/api/v1/`. "
-                                + "Las respuestas de error siguen el esquema "
+                                + "The respuestas of error remain the esquema "
                                 + "`{error, message, timestamp, path}`.")
                         .contact(new Contact()
                                 .name("Licensis")
@@ -50,16 +50,16 @@ public class OpenApiConfig {
                 ))
                 .components(new Components()
                         .addResponses("400", new ApiResponse()
-                                .description("Solicitud inválida — parámetros o cuerpo malformado")
+                                .description("Invalid request — parámetros or cuerpo malformado")
                                 .content(jsonContent))
                         .addResponses("404", new ApiResponse()
                                 .description("Recurso no encontrado")
                                 .content(jsonContent))
                         .addResponses("409", new ApiResponse()
-                                .description("Conflicto — el recurso ya existe o viola una restricción")
+                                .description("Conflicto — the recurso already exists or viola a restricción")
                                 .content(jsonContent))
                         .addResponses("500", new ApiResponse()
-                                .description("Error interno del servidor")
+                                .description("Error interno of the server")
                                 .content(jsonContent))
                 );
     }

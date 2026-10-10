@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("UserController — hashing de contraseñas (issue #554)")
+@DisplayName("UserController — hashing of contraseñas (issue #554)")
 class UserControllerHashTest {
 
     private static final String LEGACY_MD5_ADMIN = "21232f297a57a5a743894a0e4a801fc3";
@@ -75,7 +75,7 @@ class UserControllerHashTest {
         when(passwordEncoder.encode("secret")).thenReturn(BCRYPT_HASH);
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        mockMvc.perform(post("/api/v1/usuarios").contentType("application/json")
+        mockMvc.perform(post("/api/v1/users").contentType("application/json")
                 .content("{\"name\":\"juan\",\"password\":\"secret\",\"type\":\"Escribano\",\"active\":true}"));
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
@@ -92,7 +92,7 @@ class UserControllerHashTest {
         when(userRepository.findById(1)).thenReturn(Optional.of(existing));
         when(passwordEncoder.encode("newpass")).thenReturn(BCRYPT_HASH);
 
-        mockMvc.perform(put("/api/v1/usuarios/1").contentType("application/json")
+        mockMvc.perform(put("/api/v1/users/1").contentType("application/json")
                 .content("{\"name\":\"juan\",\"password\":\"newpass\",\"type\":\"Escribano\",\"active\":true}"));
 
         assertThat(existing.getPassword()).isEqualTo(BCRYPT_HASH);
@@ -106,7 +106,7 @@ class UserControllerHashTest {
         user.setName("juan");
         user.setPassword(BCRYPT_HASH);
         user.setStatus(true);
-        user.setType("Escribano");
+        user.setType("Notary");
         when(userRepository.findAll()).thenReturn(List.of(user));
         when(passwordEncoder.matches("secret", BCRYPT_HASH)).thenReturn(true);
         when(jwtTokenService.generateToken("juan")).thenReturn("jwt-token");
@@ -119,7 +119,7 @@ class UserControllerHashTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valido", true);
+        assertThat(body).containsEntry("valid", true);
         verify(userRepository, never()).save(any());
     }
 
@@ -130,7 +130,7 @@ class UserControllerHashTest {
         user.setName("admin");
         user.setPassword(LEGACY_MD5_ADMIN);
         user.setStatus(true);
-        user.setType("Escribano");
+        user.setType("Notary");
         when(userRepository.findAll()).thenReturn(List.of(user));
         when(passwordEncoder.encode("admin")).thenReturn(BCRYPT_HASH);
         when(jwtTokenService.generateToken("admin")).thenReturn("jwt-token");
@@ -143,7 +143,7 @@ class UserControllerHashTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valido", true);
+        assertThat(body).containsEntry("valid", true);
         assertThat(user.getPassword()).isEqualTo(BCRYPT_HASH);
         verify(userRepository).save(user);
     }
@@ -166,7 +166,7 @@ class UserControllerHashTest {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> body = (Map<String, Object>) response.getBody();
-        assertThat(body).containsEntry("valido", false);
+        assertThat(body).containsEntry("valid", false);
         verify(userRepository, never()).save(any());
     }
 }

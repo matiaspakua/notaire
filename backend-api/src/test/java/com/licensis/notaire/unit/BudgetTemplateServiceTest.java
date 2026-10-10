@@ -54,7 +54,7 @@ class BudgetTemplateServiceTest {
     }
 
     @Test
-    @DisplayName("Should load one item per concepto of the type de trámite's plantilla")
+    @DisplayName("Should load one item per concept of the type of procedure's template")
     void shouldLoadItemsFromTemplate() {
         Budget budget = new Budget();
         budget.setIdBudget(1);
@@ -86,15 +86,15 @@ class BudgetTemplateServiceTest {
 
         List<Item> items = budgetTemplateService.cargarItemsDesdeTemplate(1, 5);
 
-        // The item copied the concepto's value at load time; changing the plantilla's
-        // concepto afterwards must not retroactively change the already-loaded item.
+        // The item copied the concept's value at load time; changing the plantilla's
+        // concept afterwards must not retroactively change the already-loaded item.
         template.getConcept().setValue(new java.math.BigDecimal("9999"));
 
         assertThat(items).extracting(Item::getValue).containsExactly(new java.math.BigDecimal("1000"));
     }
 
     @Test
-    @DisplayName("Should reject loading when the type de trámite has no plantilla configured")
+    @DisplayName("Should reject loading when the type of procedure has not template configured")
     void shouldRejectWhenNoTemplateForTypeProcedure() {
         Budget budget = new Budget();
         budget.setIdBudget(1);

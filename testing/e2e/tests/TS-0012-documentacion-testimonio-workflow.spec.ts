@@ -1,5 +1,5 @@
 /**
- * TS-0012 - Documentación y Testimonio Workflow (CU03 → CU07 → CU08 → CU11 → CU12)
+ * TS-0012 - Documentación y Testimony Workflow (CU03 → CU07 → CU08 → CU11 → CU12)
  * CU03 - Listar documentos necesarios
  * CU07 - Generar testimonio
  * CU08 - Verificar testimonio
@@ -33,7 +33,7 @@ async function seedEscrituraFirmada(
   page: import('@playwright/test').Page,
 ): Promise<EscrituraCreada> {
   const numero = uniqueId() % 1_000_000
-  const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+  const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: numero,
     dateDeedrecording: new Date().toISOString().split('T')[0],
     body: `Contenido E2E TS-0012 ${numero}`,
@@ -54,7 +54,7 @@ async function seedTestimonioVerificado(
 ): Promise<TestimonioCreado> {
   const { idEscritura, numero: escrituraNumero } = await seedEscrituraFirmada(page)
   const numero = uniqueId() % 1_000_000
-  const result = await apiPost<{ idTestimony: number }>(page, '/testimonio', {
+  const result = await apiPost<{ idTestimony: number }>(page, '/testimonies', {
     deed: { idDeed: idEscritura, number: escrituraNumero },
     number: numero,
     flagged: false,
@@ -76,7 +76,7 @@ test.describe('CU03 - Listar documentos y certificados necesarios', () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page)
     await steps.givenUserIsLoggedIn()
-    await steps.givenUserIsOnPage('/dashboard/documentos-necesarios')
+    await steps.givenUserIsOnPage('/dashboard/required-documents')
   })
 
   test('CU03-GW01: Given on documentos necesarios, When select trámite, Then shows results section', async ({
@@ -111,7 +111,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     const { idEscritura, numero: escrituraNumero } = await seedEscrituraFirmada(page)
 
     // ── CU07: Generar testimonio ──────────────────────
-    await steps.givenUserIsOnPage('/dashboard/testimonios')
+    await steps.givenUserIsOnPage('/dashboard/testimonies')
     await page.getByTestId('btn-generar-testimonio').click()
     await steps.thenModalIsVisible()
 
@@ -127,7 +127,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     // Retrieve the generated testimonio id from the API
     const list = await apiGet<Array<{ idTestimony: number; deed?: { number?: number } }>>(
       page,
-      '/testimonio',
+      '/testimonies',
     )
     const idTestimonio = list.data!.find(
       (t) => t.deed?.number === escrituraNumero,
@@ -141,11 +141,11 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     await expect(rowTestimonios).toContainText(/verificado/i)
 
     // ── CU11: Ingresar para inscripción ───────────────
-    await steps.givenUserIsOnPage('/dashboard/movimientos-testimonio')
+    await steps.givenUserIsOnPage('/dashboard/testimony-movements')
     const rowMovimientos = rowWithCell(page, escrituraNumero)
     await expect(rowMovimientos).toBeVisible({ timeout: 10_000 })
 
-    await page.getByTestId(`btn-ingresar-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('ingresado')
     await expect(rowMovimientos).toContainText(/ingresado/i)
 
@@ -181,7 +181,7 @@ test.describe('CU07 - Generar testimonio', () => {
   }) => {
     const { numero } = await seedEscrituraFirmada(page)
 
-    await steps.givenUserIsOnPage('/dashboard/testimonios')
+    await steps.givenUserIsOnPage('/dashboard/testimonies')
     await page.getByTestId('btn-generar-testimonio').click()
     await steps.thenModalIsVisible()
 
@@ -213,12 +213,12 @@ test.describe('CU08 - Verificar testimonio', () => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page)
     const generated = await apiPost<{ idTestimony: number }>(
       page,
-      `/testimonio/${idEscritura}/generar`,
+      `/testimonies/${idEscritura}/generate`,
       {},
     )
     const idTestimonio = generated.data!.idTestimony
 
-    await steps.givenUserIsOnPage('/dashboard/testimonios')
+    await steps.givenUserIsOnPage('/dashboard/testimonies')
     const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
@@ -238,12 +238,12 @@ test.describe('CU08 - Verificar testimonio', () => {
     const { idEscritura, numero } = await seedEscrituraFirmada(page)
     const generated = await apiPost<{ idTestimony: number }>(
       page,
-      `/testimonio/${idEscritura}/generar`,
+      `/testimonies/${idEscritura}/generate`,
       {},
     )
     const idTestimonio = generated.data!.idTestimony
 
-    await steps.givenUserIsOnPage('/dashboard/testimonios')
+    await steps.givenUserIsOnPage('/dashboard/testimonies')
     const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
@@ -269,11 +269,11 @@ test.describe('CU11 - Ingresar para inscripción', () => {
   test('CU11-GW01: ingresar y registrar inscripción cambia estado a inscripto', async ({ page }) => {
     const { idTestimonio, numero } = await seedTestimonioVerificado(page)
 
-    await steps.givenUserIsOnPage('/dashboard/movimientos-testimonio')
+    await steps.givenUserIsOnPage('/dashboard/testimony-movements')
     const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
-    await page.getByTestId(`btn-ingresar-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('ingresado')
     await expect(row).toContainText(/ingresado/i)
 
@@ -298,12 +298,12 @@ test.describe('CU12 - Retirar testimonio', () => {
   test('CU12-GW01: retirar después de inscripción → estado retirado', async ({ page }) => {
     const { idTestimonio, numero } = await seedTestimonioVerificado(page)
 
-    await steps.givenUserIsOnPage('/dashboard/movimientos-testimonio')
+    await steps.givenUserIsOnPage('/dashboard/testimony-movements')
     const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     // Move to 'inscripto' first
-    await page.getByTestId(`btn-ingresar-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('ingresado')
     await page.getByTestId(`btn-registrar-inscripcion-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('inscripción registrada')
@@ -337,7 +337,7 @@ for (const viewport of [
     })
 
     test(`testimonios screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
-      await steps.givenUserIsOnPage('/dashboard/testimonios')
+      await steps.givenUserIsOnPage('/dashboard/testimonies')
       await page.waitForLoadState('networkidle')
       await steps.thenHasNoHorizontalOverflow()
     })
@@ -345,7 +345,7 @@ for (const viewport of [
     test(`movimientos-testimonio screen has no horizontal overflow at ${viewport.label}`, async ({
       page,
     }) => {
-      await steps.givenUserIsOnPage('/dashboard/movimientos-testimonio')
+      await steps.givenUserIsOnPage('/dashboard/testimony-movements')
       await page.waitForLoadState('networkidle')
       await steps.thenHasNoHorizontalOverflow()
     })

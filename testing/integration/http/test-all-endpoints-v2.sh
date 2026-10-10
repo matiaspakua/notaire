@@ -45,7 +45,7 @@ assert_status() {
 
 echo -e "${BLUE}=== TESTING AUTHENTICATION ===${NC}"
 AUTH_TOKEN=""
-LOGIN_URL="$BASE_URL/api/v1/usuarios/login"
+LOGIN_URL="$BASE_URL/api/v1/users/login"
 LOGIN_RAW=$(curl -s -w '\n%{http_code}' -X POST "$LOGIN_URL" -H "Content-Type: application/json" -d '{"name":"admin","password":"admin"}')
 LOGIN_STATUS=$(printf '%s' "$LOGIN_RAW" | tail -n1)
 LOGIN_BODY=$(printf '%s' "$LOGIN_RAW" | sed '$d')
@@ -63,15 +63,15 @@ if [ -z "$AUTH_TOKEN" ]; then
 fi
 
 echo -e "${BLUE}=== TESTING CORE READ ENDPOINTS ===${NC}"
-assert_status 200 GET "$BASE_URL/api/v1/conceptos"
+assert_status 200 GET "$BASE_URL/api/v1/concepts"
 assert_status 200 GET "$BASE_URL/api/v1/people"
-assert_status 200 GET "$BASE_URL/api/v1/tramites"
-assert_status 200 GET "$BASE_URL/api/v1/escrituras"
-assert_status 200 GET "$BASE_URL/api/v1/presupuestos"
+assert_status 200 GET "$BASE_URL/api/v1/procedures"
+assert_status 200 GET "$BASE_URL/api/v1/deeds"
+assert_status 200 GET "$BASE_URL/api/v1/budgets"
 assert_status 200 GET "$BASE_URL/api/v1/items"
 
 echo -e "${BLUE}=== TESTING CREATE ENDPOINTS ===${NC}"
-assert_status 201 POST "$BASE_URL/api/v1/conceptos" '{"name":"Concepto Test V2","value":500.0}'
+assert_status 201 POST "$BASE_URL/api/v1/concepts" '{"name":"Concept Test V2","value":500.0}'
 assert_status 201 POST "$BASE_URL/api/v1/items" '{"name":"Item Test V2","value":10.0,"percentage":0,"fixedConcept":false}'
 
 # ============================================================================

@@ -68,7 +68,7 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
                   "propertyAmount": 10000.0
                 }
                 """.formatted(idPerson);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -101,7 +101,7 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
                   "paymentMethod": "Transferencia"
                 }
                 """.formatted(idBudget, amount);
-        MvcResult result = mockMvc.perform(post("/api/v1/pagos")
+        MvcResult result = mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -114,10 +114,10 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
     void shouldReturnPdfForRecibo() throws Exception {
         int idPerson = createClient();
         int idBudget = createBudget(idPerson);
-        createItem(idBudget, "Escritura de compraventa");
+        createItem(idBudget, "Deed de compraventa");
         int idPayment = createPayment(idBudget, new java.math.BigDecimal("4000"));
 
-        MvcResult result = mockMvc.perform(get("/api/v1/reportes/recibo-pago/" + idPayment))
+        MvcResult result = mockMvc.perform(get("/api/v1/reports/payment-receipt/" + idPayment))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_PDF_VALUE))
                 .andReturn();
@@ -128,7 +128,7 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should return 404 for a non-existing pago")
     void shouldReturn404ForNonExistingPayment() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/recibo-pago/999999"))
+        mockMvc.perform(get("/api/v1/reports/payment-receipt/999999"))
                 .andExpect(status().isNotFound());
     }
 }

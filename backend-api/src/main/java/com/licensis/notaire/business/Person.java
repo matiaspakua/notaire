@@ -62,13 +62,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
         name = "people",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_people_identification_type_number",
-                columnNames = {"fk_id_tipo_identificacion", "identification_number"}))
+                columnNames = {"fk_id_identification_type", "identification_number"}))
 @XmlRootElement
 @JsonIgnoreProperties({
         "hibernateLazyInitializer", "handler",
-        "tramiteList", "tramitesPersonasList", "presupuestoList",
-        "GestionDeEscrituraList", "folioList", "suplenciaList", "suplenciaList1",
-        "usuariosList", "copiaList"
+        "procedureList", "personProcedureList", "budgetList",
+        "deedManagementList", "folioList", "substitutionList", "substitutionList1",
+        "userList", "copyList"
 })
 @NamedQueries({
         @NamedQuery(name = "Person.findAll", query = "SELECT p FROM Person p"),
@@ -83,7 +83,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 })
 public class Person implements Serializable, Persistable<Integer> {
 
-    @Column(name = "fecha_nacimiento")
+    @Column(name = "birth_date")
     @Temporal(TemporalType.DATE)
     private Date birthDate;
     @Basic(optional = false)
@@ -139,7 +139,7 @@ public class Person implements Serializable, Persistable<Integer> {
     @JsonIgnore
     @ManyToMany(mappedBy = "personList", fetch = FetchType.LAZY)
     private List<Procedure> procedureList;
-    @JoinColumn(name = "fk_id_tipo_identificacion", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_identification_type", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private IdentificationType fkIdIdentificationType;
     @XmlTransient
@@ -443,7 +443,7 @@ public class Person implements Serializable, Persistable<Integer> {
     @Override
     public String toString() {
         return "Person[ idPersona=" + idPerson + " ]"
-                + "[ nombre=" + name + " ]"
+                + "[ name=" + name + " ]"
                 + "[ apellido=" + lastName + " ]";
     }
 
@@ -454,7 +454,7 @@ public class Person implements Serializable, Persistable<Integer> {
         // Creamos un objeto HashSet
         HashSet hs = new HashSet();
 
-        // Lo cargamos con los valores del array, esto hace quite los repetidos
+        // It cargamos with the valores of the array, esto hace quite the repetidos
         hs.addAll(listaDtoDeed);
 
         // Limpiamos el array
@@ -467,7 +467,7 @@ public class Person implements Serializable, Persistable<Integer> {
 
     public void setAtributos(DtoPerson dtoPerson) {
 
-        // Version del objeto
+        // Version of the objeto
         this.setVersion(dtoPerson.getVersion());
 
         this.setFirstName(dtoPerson.getFirstName());

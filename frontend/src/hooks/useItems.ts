@@ -18,7 +18,7 @@ export function useItems() {
 export function useItemsByPresupuesto(idPresupuesto: number | undefined) {
   return useQuery({
     queryKey: itemsKeys.byPresupuesto(idPresupuesto ?? 0),
-    queryFn: () => apiGet<Item[]>(`/items/presupuesto/${idPresupuesto}`),
+    queryFn: () => apiGet<Item[]>(`/items/budget/${idPresupuesto}`),
     enabled: !!idPresupuesto,
   });
 }
@@ -26,7 +26,7 @@ export function useItemsByPresupuesto(idPresupuesto: number | undefined) {
 export function useDescuentosYRecargos(idPresupuesto: number | undefined) {
   return useQuery({
     queryKey: ["items", "presupuesto", idPresupuesto, "descuentos-recargos"],
-    queryFn: () => apiGet<Item[]>(`/items/presupuesto/${idPresupuesto}/descuentos-recargos`),
+    queryFn: () => apiGet<Item[]>(`/items/budget/${idPresupuesto}/discounts-surcharges`),
     enabled: !!idPresupuesto,
   });
 }

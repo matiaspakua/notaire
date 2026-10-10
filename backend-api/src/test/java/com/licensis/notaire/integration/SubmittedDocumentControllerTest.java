@@ -33,7 +33,7 @@ import com.licensis.notaire.repository.ProcedureRepository;
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("DocumentoPresentado controller — create/update/delete via DTO")
+@DisplayName("SubmittedDocument controller — create/update/delete via DTO")
 class SubmittedDocumentControllerTest {
 
     @Autowired
@@ -72,7 +72,7 @@ class SubmittedDocumentControllerTest {
 
     private Integer createProcedure() {
         ProcedureType type = new ProcedureType();
-        type.setName("Tramite DocumentoPresentadoControllerTest");
+        type.setName("Procedure DocumentoPresentadoControllerTest");
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -92,7 +92,7 @@ class SubmittedDocumentControllerTest {
                 {"typeId": %d, "procedureId": %d, "date": "2024-06-01", "delivered": false}
                 """.formatted(createDocumentType(false, null, "Cliente"), createProcedure());
 
-        mockMvc.perform(post("/api/v1/documento-presentado")
+        mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -107,7 +107,7 @@ class SubmittedDocumentControllerTest {
                 {"typeId": %d, "procedureId": %d, "date": "2024-07-15", "delivered": true}
                 """.formatted(createDocumentType(false, null, "Cliente"), createProcedure());
 
-        mockMvc.perform(post("/api/v1/documento-presentado")
+        mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -115,7 +115,7 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 201 when creating documento presentado linked to a tramite with deliveredBy")
+    @DisplayName("Should return 201 when creating submitted document linked to a procedure with deliveredBy")
     void shouldCreateSubmittedDocumentLinkedToProcedure() throws Exception {
         Integer procedureId = createProcedure();
         String body = """
@@ -123,7 +123,7 @@ class SubmittedDocumentControllerTest {
                  "deliveredBy": "Entidad Externa"}
                 """.formatted(createDocumentType(false, null, "Cliente"), procedureId);
 
-        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+        MvcResult result = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -140,12 +140,12 @@ class SubmittedDocumentControllerTest {
     @Test
     @DisplayName("Should inherit expires, dueDays and deliveredBy from type de documento and compute dateDue")
     void shouldInheritDueFieldsFromDocumentType() throws Exception {
-        Integer typeId = createDocumentType(true, 5, "Escribano");
+        Integer typeId = createDocumentType(true, 5, "Notary");
         String body = """
                 {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false}
                 """.formatted(typeId, createProcedure());
 
-        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+        MvcResult result = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -156,7 +156,7 @@ class SubmittedDocumentControllerTest {
         var saved = submittedDocumentRepository.findById(id).orElseThrow();
         assertThat(saved.getExpires()).isTrue();
         assertThat(saved.getDueDays()).isEqualTo(5);
-        assertThat(saved.getDeliveredBy()).isEqualTo("Escribano");
+        assertThat(saved.getDeliveredBy()).isEqualTo("Notary");
         assertThat(saved.getDateDue()).isEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse("2024-01-06"));
     }
 
@@ -168,7 +168,7 @@ class SubmittedDocumentControllerTest {
                 {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false}
                 """.formatted(typeId, createProcedure());
 
-        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+        MvcResult result = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -185,13 +185,13 @@ class SubmittedDocumentControllerTest {
     @Test
     @DisplayName("Should let an explicit deliveredBy override the value inherited from type de documento")
     void shouldLetExplicitDeliveredByOverrideDocumentType() throws Exception {
-        Integer typeId = createDocumentType(false, null, "Escribano");
+        Integer typeId = createDocumentType(false, null, "Notary");
         String body = """
                 {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false,
                  "deliveredBy": "Entidad Externa"}
                 """.formatted(typeId, createProcedure());
 
-        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+        MvcResult result = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -204,19 +204,19 @@ class SubmittedDocumentControllerTest {
     }
 
     @Test
-    @DisplayName("Should list a document with its type name, date and linked trámite")
+    @DisplayName("Should list a document with its type name, date and linked procedure")
     void shouldListDocumentWithTypeDateAndProcedure() throws Exception {
         Integer typeId = createDocumentType(false, null, "Cliente");
         Integer procedureId = createProcedure();
         String body = """
                 {"typeId": %d, "date": "2026-06-01", "delivered": true, "procedureId": %d, "name": "Doc listado"}
                 """.formatted(typeId, procedureId);
-        MvcResult created = mockMvc.perform(post("/api/v1/documento-presentado")
+        MvcResult created = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated()).andReturn();
         Integer id = mapper.readTree(created.getResponse().getContentAsString()).get("idSubmittedDocument").asInt();
 
-        MvcResult list = mockMvc.perform(get("/api/v1/documento-presentado")).andExpect(status().isOk()).andReturn();
+        MvcResult list = mockMvc.perform(get("/api/v1/submitted-documents")).andExpect(status().isOk()).andReturn();
 
         var row = java.util.stream.StreamSupport
                 .stream(mapper.readTree(list.getResponse().getContentAsString()).spliterator(), false)
@@ -230,7 +230,7 @@ class SubmittedDocumentControllerTest {
     @Test
     @DisplayName("Should return 200 when listing documents presentados")
     void shouldListDocumentsPresentados() throws Exception {
-        mockMvc.perform(get("/api/v1/documento-presentado"))
+        mockMvc.perform(get("/api/v1/submitted-documents"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -242,7 +242,7 @@ class SubmittedDocumentControllerTest {
                 {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false}
                 """.formatted(createDocumentType(false, null, "Cliente"), createProcedure());
 
-        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+        MvcResult result = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -255,7 +255,7 @@ class SubmittedDocumentControllerTest {
                 {"typeId": null, "date": "2024-12-31", "delivered": true}
                 """;
 
-        mockMvc.perform(put("/api/v1/documento-presentado/" + id)
+        mockMvc.perform(put("/api/v1/submitted-documents/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
@@ -268,7 +268,7 @@ class SubmittedDocumentControllerTest {
                 {"typeId": null, "date": "2024-01-01", "delivered": false}
                 """;
 
-        mockMvc.perform(put("/api/v1/documento-presentado/999999")
+        mockMvc.perform(put("/api/v1/submitted-documents/999999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
@@ -281,7 +281,7 @@ class SubmittedDocumentControllerTest {
                 {"typeId": %d, "procedureId": %d, "date": "2024-05-10", "delivered": false}
                 """.formatted(createDocumentType(false, null, "Cliente"), createProcedure());
 
-        MvcResult result = mockMvc.perform(post("/api/v1/documento-presentado")
+        MvcResult result = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -290,7 +290,7 @@ class SubmittedDocumentControllerTest {
         Integer id = mapper.readTree(result.getResponse().getContentAsString())
                 .get("idSubmittedDocument").asInt();
 
-        mockMvc.perform(delete("/api/v1/documento-presentado/" + id))
+        mockMvc.perform(delete("/api/v1/submitted-documents/" + id))
                 .andExpect(status().isNoContent());
     }
 }

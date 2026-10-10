@@ -3,11 +3,11 @@ info:
   type: http
   seq: 7
   description: |-
-      ## Update user — PUT /api/v1/usuarios/{api_user_id}
+      ## Update user — PUT /api/v1/users/{api_user_id}
       Traceability: CU21 (RF #43, #47, #82, #83)
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/usuarios/{{api_user_id}}"
+  url: "{{base_url}}/api/v1/users/{{api_user_id}}"
   body:
     type: json
     data: |-

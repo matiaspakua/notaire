@@ -3,13 +3,13 @@ info:
   type: http
   seq: 2
   description: |-
-      ## Setup — POST /api/v1/gestiones
+      ## Setup — POST /api/v1/managements
       Creates the deed management that the history entries belong to. Status
       "Iniciada" (id 1) is seeded by V2__initial_data.sql.
       Traceability: CU02 (RF #10, #13)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/gestiones"
+  url: "{{base_url}}/api/v1/managements"
   body:
     type: json
     data: |-

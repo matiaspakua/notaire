@@ -33,7 +33,7 @@ transform that yields the same end state if the codemod cannot run).
 Unauthenticated browser navigations to protected app routes MUST redirect to
 `/login`. Authenticated sessions (UX status cookie present) visiting `/login`
 MUST redirect to `/dashboard`. Non-admin roles MUST continue to be denied
-`/dashboard/administracion/**` per #1052 helpers. Paths under `/api/**` MUST
+`/dashboard/administration/**` per #1052 helpers. Paths under `/api/**` MUST
 still bypass edge redirects so the rewrite/BFF can forward credentials
 (including HttpOnly JWT after #1051).
 
@@ -51,7 +51,7 @@ still bypass edge redirects so the rewrite/BFF can forward credentials
 #### Scenario: Non-admin is denied admin routes at the edge
 
 - **WHEN** an authenticated non-admin role cookie is present and the path is
-  under `/dashboard/administracion`
+  under `/dashboard/administration`
 - **THEN** the response redirects away from administración (forbidden dashboard
   path) as today
 

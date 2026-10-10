@@ -93,7 +93,7 @@ A change is **Done** only when **all** of the following are true:
 | Commit | Conventional Commits: `<type>(<scope>): <description>`, ending with `Closes #<issue-number>` (use `Refs #<n>` on intermediate stacked slices; only the final slice closes) |
 | PR title | `[#<issue-number>] type(scope): description` |
 | Code style | Checkstyle: 120-char lines, 4-space indent, no wildcard imports, ordered imports (java → javax → third-party → own) |
-| DTOs | `DtoEntityName` (e.g. `DtoUsuario`) |
+| DTOs | `DtoEntityName` (e.g. `DtoLoginUser`) |
 | REST URLs | `/api/v1/resource` (plural nouns) |
 | Test names | `shouldXxxYyy` with `@DisplayName`; AssertJ assertions |
 | Test folders | `src/test/java/.../unit/` and `integration/`; Playwright under `testing/e2e/tests/` |

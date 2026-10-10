@@ -27,7 +27,7 @@ public class WorkflowValidationService {
         if (initialCount == 0) {
             errors.add("El workflow debe tener exactamente un nodo inicial.");
         } else if (initialCount > 1) {
-            errors.add("El workflow tiene más de un nodo inicial (" + initialCount + ").");
+            errors.add("The workflow has more of a node inicial (" + initialCount + ").");
         }
 
         long finalCount = nodes.stream().filter(n -> n.getType() == WorkflowNodeType.FINAL).count();

@@ -32,49 +32,49 @@ bash testing/scripts/run.sh integration
 
 ```bash
 # Listar
-curl -X GET "http://localhost:8080/api/v1/conceptos" -H "Content-Type: application/json"
+curl -X GET "http://localhost:8080/api/v1/concepts" -H "Content-Type: application/json"
 
 # Crear
-curl -X POST "http://localhost:8080/api/v1/conceptos" \
+curl -X POST "http://localhost:8080/api/v1/concepts" \
   -H "Content-Type: application/json" \
   -d '{"descripcion": "Test", "codigo": "TEST001"}'
 
 # Obtener por ID / actualizar / eliminar
-curl -X GET "http://localhost:8080/api/v1/conceptos/1"
-curl -X PUT "http://localhost:8080/api/v1/conceptos/1" -H "Content-Type: application/json" -d '{"descripcion": "Test", "codigo": "TEST001"}'
-curl -X DELETE "http://localhost:8080/api/v1/conceptos/1"
+curl -X GET "http://localhost:8080/api/v1/concepts/1"
+curl -X PUT "http://localhost:8080/api/v1/concepts/1" -H "Content-Type: application/json" -d '{"descripcion": "Test", "codigo": "TEST001"}'
+curl -X DELETE "http://localhost:8080/api/v1/concepts/1"
 ```
 
 El mismo patrón CRUD aplica a todas las entidades. Endpoints principales
 (verificados contra `@RequestMapping` de cada controller):
 
 ```text
-/api/v1/auth  /api/v1/usuarios  /api/v1/personas  /api/v1/tramites
-/api/v1/escrituras  /api/v1/presupuestos  /api/v1/items  /api/v1/folio
-/api/v1/testimonio  /api/v1/pagos  /api/v1/inmueble  /api/v1/copia
-/api/v1/historial  /api/v1/tipo-de-documento  /api/v1/tipo-identificacion
-/api/v1/suplencia  /api/v1/documento-presentado  /api/v1/movimiento-testimonio
-/api/v1/registro-auditoria  /api/v1/estado-gestion  /api/v1/gestiones
-/api/v1/plantilla-presupuestos  /api/v1/plantilla-tramite  /api/v1/reportes
-/api/v1/roles  /api/v1/tipo-folio  /api/v1/tipo-tramite
+/api/v1/auth  /api/v1/users  /api/v1/people  /api/v1/procedures
+/api/v1/deeds  /api/v1/budgets  /api/v1/items  /api/v1/folios
+/api/v1/testimonies  /api/v1/payments  /api/v1/properties  /api/v1/copies
+/api/v1/history  /api/v1/document-types  /api/v1/identification-types
+/api/v1/substitutions  /api/v1/submitted-documents  /api/v1/testimony-movements
+/api/v1/registro-auditoria  /api/v1/management-statuses  /api/v1/managements
+/api/v1/budget-templates  /api/v1/procedure-templates  /api/v1/reports
+/api/v1/roles  /api/v1/folio-types  /api/v1/procedure-types
 /api/v1/workflow-definition  /api/v1/workflow-node  /api/v1/workflow-transition
 ```
 
-Nota: `usuarios` no tiene campo `email` en `DtoUsuario`; `contrasenia` es
+Nota: `usuarios` no tiene campo `email` en `DtoLoginUser`; `contrasenia` es
 write-only.
 
 ## Patrones útiles
 
 ```bash
 # Paginación
-curl "http://localhost:8080/api/v1/conceptos?page=0&size=10&sort=id,desc"
+curl "http://localhost:8080/api/v1/concepts?page=0&size=10&sort=id,desc"
 
 # Formatear con jq
-curl -s "http://localhost:8080/api/v1/conceptos" | jq '.'
+curl -s "http://localhost:8080/api/v1/concepts" | jq '.'
 
 # Casos de error
-curl -X GET "http://localhost:8080/api/v1/conceptos/99999"   # 404
-curl -X POST "http://localhost:8080/api/v1/conceptos" -H "Content-Type: application/json" -d '{ invalid json }'  # 400
+curl -X GET "http://localhost:8080/api/v1/concepts/99999"   # 404
+curl -X POST "http://localhost:8080/api/v1/concepts" -H "Content-Type: application/json" -d '{ invalid json }'  # 400
 ```
 
 ## Troubleshooting

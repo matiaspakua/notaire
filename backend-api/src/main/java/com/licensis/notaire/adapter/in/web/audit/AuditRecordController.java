@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/audit-log")
-@Tag(name = "RegistroAuditoria", description = "API para consultar auditoria de usuarios (solo lectura; mutaciones denegadas)")
+@Tag(name = "AuditRecord", description = "API for querying audit of users (only lectura; mutaciones denegadas)")
 public class AuditRecordController {
 
     private final AuditRecordService service;
@@ -40,7 +40,7 @@ public class AuditRecordController {
      * backwards compatibility with the existing Swing/Next clients).
      */
     @GetMapping
-    @Operation(summary = "Obtener los registros de auditoria con paginación y filtros opcionales")
+    @Operation(summary = "Get the registros of audit with pagination and filters opcionales")
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) Integer page,
@@ -72,7 +72,7 @@ public class AuditRecordController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener registro de auditoria por ID")
+    @Operation(summary = "Get registro of audit by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoAuditRecord> getById(@PathVariable Integer id) {
         return service.findByIdAsDto(id)
@@ -81,7 +81,7 @@ public class AuditRecordController {
     }
 
     @GetMapping("/user/{idUser}")
-    @Operation(summary = "Obtener registros de auditoria por usuario")
+    @Operation(summary = "Get registros of audit by user")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoAuditRecord>> getByUser(@PathVariable Integer idUser) {
         return ResponseEntity.ok(service.findByUserIdAsDto(idUser));

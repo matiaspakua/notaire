@@ -51,7 +51,7 @@ class RbacIntegrationTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
         employeeToken = tokenForNewUser("EMPLEADO", true);
-        administratorToken = tokenForNewUser("Escribano", true);
+        administratorToken = tokenForNewUser("Notary", true);
     }
 
     private String tokenForNewUser(String type, boolean active) {
@@ -70,23 +70,23 @@ class RbacIntegrationTest {
 
     @ParameterizedTest(name = "employee {0} {1} -> 403")
     @CsvSource({
-        "GET,/api/v1/usuarios",
-        "GET,/api/v1/usuarios/1",
-        "PUT,/api/v1/usuarios/1",
-        "DELETE,/api/v1/usuarios/999999",
+        "GET,/api/v1/users",
+        "GET,/api/v1/users/1",
+        "PUT,/api/v1/users/1",
+        "DELETE,/api/v1/users/999999",
         "GET,/api/v1/roles",
         "POST,/api/v1/roles",
         "GET,/api/v1/audit-log",
-        "POST,/api/v1/tipo-tramite",
-        "PUT,/api/v1/tipo-de-documento/1",
-        "DELETE,/api/v1/conceptos/999999",
-        "POST,/api/v1/estado-gestion",
+        "POST,/api/v1/procedure-types",
+        "PUT,/api/v1/document-types/1",
+        "DELETE,/api/v1/concepts/999999",
+        "POST,/api/v1/management-statuses",
         "POST,/api/v1/workflow-definition",
         "DELETE,/api/v1/workflow-node/999999",
         "PUT,/api/v1/workflow-transition/1",
-        "POST,/api/v1/plantilla-tramite",
-        "POST,/api/v1/tipo-folio",
-        "POST,/api/v1/tipo-identificacion"
+        "POST,/api/v1/procedure-templates",
+        "POST,/api/v1/folio-types",
+        "POST,/api/v1/identification-types"
     })
     @DisplayName("should forbid an employee on administrative families")
     void shouldForbidAnEmployeeOnAdministrativeFamilies(String method, String path) throws Exception {
@@ -95,11 +95,11 @@ class RbacIntegrationTest {
     }
 
     @Test
-    @DisplayName("should not create a user when an employee posts an ESCRIBANO account")
+    @DisplayName("should not create a user when an employee posts an NOTARY account")
     void shouldNotCreateAUserWhenAnEmployeePostsAnEscribanoAccount() throws Exception {
         String name = "escalation-" + UUID.randomUUID();
 
-        mockMvc.perform(post("/api/v1/usuarios")
+        mockMvc.perform(post("/api/v1/users")
                         .header("Authorization", "Bearer " + employeeToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"" + name + "\",\"password\":\"Test1234!\",\"type\":\"ESCRIBANO\","
@@ -111,10 +111,10 @@ class RbacIntegrationTest {
 
     @ParameterizedTest(name = "employee GET {0} -> 200")
     @CsvSource({
-        "/api/v1/tipo-tramite",
-        "/api/v1/conceptos",
-        "/api/v1/estado-gestion",
-        "/api/v1/tipo-de-documento",
+        "/api/v1/procedure-types",
+        "/api/v1/concepts",
+        "/api/v1/management-statuses",
+        "/api/v1/document-types",
         "/api/v1/workflow-definition"
     })
     @DisplayName("should let an employee read catalogs")
@@ -126,7 +126,7 @@ class RbacIntegrationTest {
     @Test
     @DisplayName("should let an administrator list users and roles")
     void shouldLetAnAdministratorListUsersAndRoles() throws Exception {
-        mockMvc.perform(get("/api/v1/usuarios").header("Authorization", "Bearer " + administratorToken))
+        mockMvc.perform(get("/api/v1/users").header("Authorization", "Bearer " + administratorToken))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/roles").header("Authorization", "Bearer " + administratorToken))
                 .andExpect(status().isOk());
@@ -135,9 +135,9 @@ class RbacIntegrationTest {
     }
 
     @Test
-    @DisplayName("should let an administrator create a tipo de tramite")
+    @DisplayName("should let an administrator create a procedure type")
     void shouldLetAnAdministratorCreateATipoDeTramite() throws Exception {
-        mockMvc.perform(post("/api/v1/tipo-tramite")
+        mockMvc.perform(post("/api/v1/procedure-types")
                         .header("Authorization", "Bearer " + administratorToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"rbac-" + UUID.randomUUID()
@@ -148,9 +148,9 @@ class RbacIntegrationTest {
     @Test
     @DisplayName("should reject a token whose user is inactive")
     void shouldRejectATokenWhoseUserIsInactive() throws Exception {
-        String inactiveToken = tokenForNewUser("Escribano", false);
+        String inactiveToken = tokenForNewUser("Notary", false);
 
-        mockMvc.perform(get("/api/v1/tipo-tramite").header("Authorization", "Bearer " + inactiveToken))
+        mockMvc.perform(get("/api/v1/procedure-types").header("Authorization", "Bearer " + inactiveToken))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -159,7 +159,7 @@ class RbacIntegrationTest {
     void shouldRejectATokenWhoseUserNoLongerExists() throws Exception {
         String ghostToken = jwtTokenService.generateToken("ghost-" + UUID.randomUUID());
 
-        mockMvc.perform(get("/api/v1/tipo-tramite").header("Authorization", "Bearer " + ghostToken))
+        mockMvc.perform(get("/api/v1/procedure-types").header("Authorization", "Bearer " + ghostToken))
                 .andExpect(status().isUnauthorized());
     }
 }

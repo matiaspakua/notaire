@@ -94,7 +94,7 @@ class HistoryOrderTieBreakerIntegrationTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {"/api/v1/gestiones/{id}/historial", "/api/v1/historial/gestion/{id}"})
+    @ValueSource(strings = {"/api/v1/managements/{id}/history", "/api/v1/history/management/{id}"})
     @DisplayName("returns date ascending, same-day entries in insertion order")
     void returnsTotalOrder(String path) throws Exception {
         mockMvc.perform(get(path, managementId))

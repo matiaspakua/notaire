@@ -1,9 +1,9 @@
 package com.licensis.notaire.dto;
 
-import com.licensis.notaire.dto.interfaces.DtoValido;
+import com.licensis.notaire.dto.interfaces.ValidDto;
 import java.util.Date;
 
-public class DtoHistory implements DtoValido {
+public class DtoHistory implements ValidDto {
     private Integer idHistory;
     private DtoDeedManagement gestionesDeEscrituras;
     private DtoManagementStatus estadosDeManagement;

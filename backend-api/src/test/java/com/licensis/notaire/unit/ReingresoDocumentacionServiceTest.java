@@ -1,8 +1,8 @@
 package com.licensis.notaire.unit;
 
 import com.licensis.notaire.dto.DtoDocumentReentered;
-import com.licensis.notaire.dto.DtoManagementReingresoDocumentacion;
-import com.licensis.notaire.dto.DtoReingresoDocumentacionRequest;
+import com.licensis.notaire.dto.DtoManagementDocumentReentry;
+import com.licensis.notaire.dto.DtoDocumentReentryRequest;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.SubmittedDocument;
@@ -87,11 +87,11 @@ class ReingresoDocumentacionServiceTest {
     }
 
     @Nested
-    @DisplayName("Obtener documentación necesaria de una gestión")
+    @DisplayName("Get documentation required of a management")
     class ObtenerDocumentacionNecesariaTests {
 
         @Test
-        @DisplayName("Devuelve los trámites de la gestión con su documentación necesaria")
+        @DisplayName("Devuelve the procedures of the management with its documentation required")
         void shouldReturnProceduresWithDocumentacionNecesaria() {
             ProcedureTemplate template = new ProcedureTemplate(new ProcedureTemplatePK(5, 7));
             template.setDocumentType(typeDocument);
@@ -101,7 +101,7 @@ class ReingresoDocumentacionServiceTest {
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedure));
             when(procedureTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of(template));
 
-            DtoManagementReingresoDocumentacion resultado = service.getRequiredDocumentation(1);
+            DtoManagementDocumentReentry resultado = service.getRequiredDocumentation(1);
 
             assertThat(resultado.idManagement()).isEqualTo(1);
             assertThat(resultado.number()).isEqualTo(100);
@@ -114,20 +114,20 @@ class ReingresoDocumentacionServiceTest {
         }
 
         @Test
-        @DisplayName("Devuelve documentación necesaria vacía cuando el trámite no tiene PlantillaTramite")
+        @DisplayName("Devuelve documentation required empty when the procedure does not have ProcedureTemplate")
         void shouldReturnEmptyDocumentacionWhenNoTemplate() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedure));
             when(procedureTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of());
 
-            DtoManagementReingresoDocumentacion resultado = service.getRequiredDocumentation(1);
+            DtoManagementDocumentReentry resultado = service.getRequiredDocumentation(1);
 
             assertThat(resultado.procedures()).hasSize(1);
             assertThat(resultado.procedures().get(0).documentsNecesarios()).isEmpty();
         }
 
         @Test
-        @DisplayName("Lanza ResourceNotFoundException cuando la gestión no existe")
+        @DisplayName("Lanza ResourceNotFoundException when the management there is no")
         void shouldThrowWhenManagementNotFound() {
             when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
@@ -141,7 +141,7 @@ class ReingresoDocumentacionServiceTest {
     class ReingresarTests {
 
         @Test
-        @DisplayName("Crea un DocumentoPresentado con reentered=true heredando datos del TipoDeDocumento")
+        @DisplayName("Crea a SubmittedDocument with reentered=true heredando datos of the DocumentType")
         void shouldCreateSubmittedDocumentWhenValid() {
             ProcedureTemplate template = new ProcedureTemplate(new ProcedureTemplatePK(5, 7));
             template.setDocumentType(typeDocument);
@@ -156,7 +156,7 @@ class ReingresoDocumentacionServiceTest {
                 return doc;
             });
 
-            DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
+            DtoDocumentReentryRequest request = new DtoDocumentReentryRequest(10, 7);
             DtoDocumentReentered resultado = service.reenter(1, request);
 
             assertThat(resultado.idSubmittedDocument()).isEqualTo(50);
@@ -175,20 +175,20 @@ class ReingresoDocumentacionServiceTest {
         }
 
         @Test
-        @DisplayName("Lanza BusinessValidationException cuando el type de documento no forma parte de la PlantillaTramite")
+        @DisplayName("Lanza BusinessValidationException cuando el type de documento no forma parte de la ProcedureTemplate")
         void shouldThrowWhenTypeDocumentNotInTemplate() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findById(10)).thenReturn(Optional.of(procedure));
             when(procedureTemplateRepository.findById(new ProcedureTemplatePK(5, 7))).thenReturn(Optional.empty());
 
-            DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
+            DtoDocumentReentryRequest request = new DtoDocumentReentryRequest(10, 7);
 
             assertThatThrownBy(() -> service.reenter(1, request))
                     .isInstanceOf(BusinessValidationException.class);
         }
 
         @Test
-        @DisplayName("Lanza BusinessValidationException cuando el trámite no pertenece a la gestión")
+        @DisplayName("Lanza BusinessValidationException when the procedure not belongs to the management")
         void shouldThrowWhenProcedureDoesNotBelongToManagement() {
             DeedManagement otraManagement = new DeedManagement();
             otraManagement.setIdManagement(2);
@@ -197,30 +197,30 @@ class ReingresoDocumentacionServiceTest {
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findById(10)).thenReturn(Optional.of(procedure));
 
-            DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
+            DtoDocumentReentryRequest request = new DtoDocumentReentryRequest(10, 7);
 
             assertThatThrownBy(() -> service.reenter(1, request))
                     .isInstanceOf(BusinessValidationException.class);
         }
 
         @Test
-        @DisplayName("Lanza ResourceNotFoundException cuando el trámite no existe")
+        @DisplayName("Lanza ResourceNotFoundException when the procedure there is no")
         void shouldThrowWhenProcedureNotFound() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findById(999)).thenReturn(Optional.empty());
 
-            DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(999, 7);
+            DtoDocumentReentryRequest request = new DtoDocumentReentryRequest(999, 7);
 
             assertThatThrownBy(() -> service.reenter(1, request))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
 
         @Test
-        @DisplayName("Lanza ResourceNotFoundException cuando la gestión no existe")
+        @DisplayName("Lanza ResourceNotFoundException when the management there is no")
         void shouldThrowWhenManagementNotFound() {
             when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
-            DtoReingresoDocumentacionRequest request = new DtoReingresoDocumentacionRequest(10, 7);
+            DtoDocumentReentryRequest request = new DtoDocumentReentryRequest(10, 7);
 
             assertThatThrownBy(() -> service.reenter(999, request))
                     .isInstanceOf(ResourceNotFoundException.class);

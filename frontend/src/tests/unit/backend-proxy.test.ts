@@ -30,7 +30,7 @@ describe("backend-proxy helper (issue #1055)", () => {
 
     expect(resolveBackendBaseUrl()).toBe("http://backend:8080/api/v1");
     expect(joinUpstreamUrl(resolveBackendBaseUrl()!, ["usuarios", "login"])).toBe(
-      "http://backend:8080/api/v1/usuarios/login",
+      "http://backend:8080/api/v1/users/login",
     );
   });
 
@@ -79,7 +79,7 @@ describe("backend-proxy helper (issue #1055)", () => {
 
     const { proxyApiRequest } = await import("@/lib/backend-proxy");
     await proxyApiRequest(
-      new Request("http://localhost:3000/api/v1/gestiones", {
+      new Request("http://localhost:3000/api/v1/managements", {
         method: "GET",
         headers: { cookie: "notaire-auth-token=secret-jwt; other=1" },
       }),
@@ -90,12 +90,12 @@ describe("backend-proxy helper (issue #1055)", () => {
     const upstreamInit = fetchMock.mock.calls[0][1] as RequestInit;
     const headers = new Headers(upstreamInit.headers);
     expect(headers.get("cookie")).toBe("notaire-auth-token=secret-jwt; other=1");
-    expect(fetchMock.mock.calls[0][0]).toBe("http://upstream.test/api/v1/gestiones");
+    expect(fetchMock.mock.calls[0][0]).toBe("http://upstream.test/api/v1/managements");
   });
 
   it("relays Set-Cookie from upstream to the browser response", async () => {
     process.env.BACKEND_URL = "http://upstream.test/api/v1";
-    const upstream = new Response('{"valido":true}', {
+    const upstream = new Response('{"valid":true}', {
       status: 200,
       headers: {
         "content-type": "application/json",
@@ -107,7 +107,7 @@ describe("backend-proxy helper (issue #1055)", () => {
 
     const { proxyApiRequest } = await import("@/lib/backend-proxy");
     const response = await proxyApiRequest(
-      new Request("http://localhost:3000/api/v1/usuarios/login", {
+      new Request("http://localhost:3000/api/v1/users/login", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ name: "admin", password: "admin" }),
@@ -145,7 +145,7 @@ describe("backend-proxy helper (issue #1055)", () => {
       const { proxyApiRequest } = await import("@/lib/backend-proxy");
 
       await proxyApiRequest(
-        new Request("http://localhost:3000/api/v1/personas?dni=123", {
+        new Request("http://localhost:3000/api/v1/people?dni=123", {
           headers: { cookie: "session=secret" },
         }),
         ["personas"],
@@ -156,7 +156,7 @@ describe("backend-proxy helper (issue #1055)", () => {
         service: "notaire-frontend",
         level: "INFO",
         message: "api_proxy",
-        context: { method: "GET", path: "/personas", status: 200 },
+        context: { method: "GET", path: "/people", status: 200 },
       });
       expect(JSON.stringify(entry)).not.toContain("secret");
       expect(JSON.stringify(entry)).not.toContain("dni");
@@ -169,7 +169,7 @@ describe("backend-proxy helper (issue #1055)", () => {
       const { proxyApiRequest } = await import("@/lib/backend-proxy");
 
       const response = await proxyApiRequest(
-        new Request("http://localhost:3000/api/v1/personas"),
+        new Request("http://localhost:3000/api/v1/people"),
         ["personas"],
       );
 

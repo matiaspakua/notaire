@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/estado-gestion")
-@Tag(name = "Estado de Gestion", description = "API para estados de gestion")
+@RequestMapping("/api/v1/management-statuses")
+@Tag(name = "Management status", description = "API for management")
 public class ManagementStatusController {
 
     private final ManagementStatusRepository repository;
@@ -41,7 +41,7 @@ public class ManagementStatusController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los estados de gestion")
+    @Operation(summary = "Get all management statuses")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoManagementStatus>> getAll() {
         List<DtoManagementStatus> result = repository.findAll().stream()
@@ -55,7 +55,7 @@ public class ManagementStatusController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener estado de gestion por ID")
+    @Operation(summary = "Get management status by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoManagementStatus> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -64,7 +64,7 @@ public class ManagementStatusController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Buscar estados de gestion por nombre")
+    @Operation(summary = "Search management statuses by name")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoManagementStatus>> search(@RequestParam String name) {
         List<DtoManagementStatus> result = repository.findByNameContaining(name).stream()
@@ -86,11 +86,11 @@ public class ManagementStatusController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
-    @Operation(summary = "Crear estado de gestion")
+    @Operation(summary = "Create management status")
     public ResponseEntity<Object> create(@RequestBody DtoManagementStatus dto) {
         try {
             if (dto.getVersion() == null) {
@@ -107,12 +107,12 @@ public class ManagementStatusController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
     @ApiResponse(responseCode = "404", description = "No encontrado"),
-    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
+    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar estado de gestion")
+    @Operation(summary = "Update management status")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoManagementStatus dto) {
         Optional<ManagementStatus> existing = repository.findById(id);
         if (existing.isEmpty()) {
@@ -121,7 +121,7 @@ public class ManagementStatusController {
         if (!managementRepository.findByFkIdManagementStatusIdManagementStatus(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error",
-                            "No se puede modificar: el estado está referenciado por gestiones de escritura."));
+                            "Not can update: the status is referenciado by managements of deed."));
         }
         try {
             ManagementStatus entity = existing.get();
@@ -142,7 +142,7 @@ public class ManagementStatusController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar estado de gestion")
+    @Operation(summary = "Delete management status")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -150,7 +150,7 @@ public class ManagementStatusController {
         if (!managementRepository.findByFkIdManagementStatusIdManagementStatus(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error",
-                            "No se puede eliminar: el estado está referenciado por gestiones de escritura."));
+                            "Not can delete: the status is referenciado by managements of deed."));
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();

@@ -17,39 +17,39 @@ type InventoryEntry = {
 /** Inventoried icon-only row actions from OpenSpec / issue #1057 (17 buttons). */
 const INVENTORY: InventoryEntry[] = [
   {
-    relativePath: "src/app/dashboard/administracion/usuarios/page.tsx",
+    relativePath: "src/app/dashboard/administration/users/page.tsx",
     requiredSnippets: ['aria-label={tc("edit")}', 'aria-label={tc("delete")}'],
   },
   {
-    relativePath: "src/app/dashboard/administracion/roles/page.tsx",
+    relativePath: "src/app/dashboard/administration/roles/page.tsx",
     requiredSnippets: ['aria-label={tc("edit")}', 'aria-label={tc("delete")}'],
   },
   {
-    relativePath: "src/app/dashboard/escrituras/page.tsx",
+    relativePath: "src/app/dashboard/deeds/page.tsx",
     requiredSnippets: ['aria-label={tc("edit")}', 'aria-label={tc("delete")}'],
   },
   {
-    relativePath: "src/app/dashboard/pagos/page.tsx",
+    relativePath: "src/app/dashboard/payments/page.tsx",
     requiredSnippets: ['aria-label={tc("edit")}', 'aria-label={tc("delete")}'],
   },
   {
-    relativePath: "src/app/dashboard/personas/page.tsx",
+    relativePath: "src/app/dashboard/people/page.tsx",
     requiredSnippets: ['aria-label={tc("edit")}', 'aria-label={tc("delete")}'],
   },
   {
-    relativePath: "src/app/dashboard/presupuestos/page.tsx",
+    relativePath: "src/app/dashboard/budgets/page.tsx",
     requiredSnippets: ['aria-label={t("resumen.title")}'],
   },
   {
-    relativePath: "src/app/dashboard/administracion/conceptos/page.tsx",
+    relativePath: "src/app/dashboard/administration/concepts/page.tsx",
     requiredSnippets: ['aria-label={tc("edit")}', 'aria-label={tc("delete")}'],
   },
   {
-    relativePath: "src/app/dashboard/administracion/documentos/page.tsx",
+    relativePath: "src/app/dashboard/administration/documents/page.tsx",
     requiredSnippets: ['aria-label={tc("edit")}', 'aria-label={tc("delete")}'],
   },
   {
-    relativePath: "src/app/dashboard/administracion/tramites/page.tsx",
+    relativePath: "src/app/dashboard/administration/procedures/page.tsx",
     requiredSnippets: ['aria-label={tc("edit")}', 'aria-label={tc("delete")}'],
   },
 ];

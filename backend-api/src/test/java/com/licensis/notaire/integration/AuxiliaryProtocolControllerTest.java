@@ -30,7 +30,7 @@ import java.util.Map;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @Transactional
-@DisplayName("CU81 — Gestión de trámites en Protocolo Auxiliar")
+@DisplayName("CU81 — Management of procedures in Auxiliary protocol")
 class AuxiliaryProtocolControllerTest {
 
     @Autowired
@@ -68,7 +68,7 @@ class AuxiliaryProtocolControllerTest {
         Folio folio = new Folio();
         folio.setNumber(number);
         folio.setYear(2026);
-        folio.setStatus("Nuevo");
+        folio.setStatus("New");
         folio.setFkIdFolioType(type);
         folio.setFkIdNotaryPerson(notary);
         return folioRepository.save(folio);
@@ -80,7 +80,7 @@ class AuxiliaryProtocolControllerTest {
         FolioType type = crearTypeAuxiliary();
         crearFolioAuxiliary(type, 501);
 
-        mockMvc.perform(get("/api/v1/protocolo-auxiliar/folios-disponibles"))
+        mockMvc.perform(get("/api/v1/auxiliary-protocol/available-folios"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.number == 501)]").exists());
     }
@@ -88,7 +88,7 @@ class AuxiliaryProtocolControllerTest {
     @Test
     @DisplayName("Should return an empty list when there are no auxiliar folios available")
     void shouldReturnEmptyWhenNoFoliosAuxiliaresAvailable() throws Exception {
-        mockMvc.perform(get("/api/v1/protocolo-auxiliar/folios-disponibles"))
+        mockMvc.perform(get("/api/v1/auxiliary-protocol/available-folios"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", org.hamcrest.Matchers.not(
                         org.hamcrest.Matchers.hasItem(org.hamcrest.Matchers.hasEntry("number", 999999)))));
@@ -102,9 +102,9 @@ class AuxiliaryProtocolControllerTest {
 
         Map<String, Object> body = new HashMap<>();
         body.put("idFolio", folio.getIdFolio());
-        body.put("body", "Acta de certificación de firma");
+        body.put("body", "Acta of certificación of firma");
 
-        mockMvc.perform(post("/api/v1/protocolo-auxiliar/escrituras")
+        mockMvc.perform(post("/api/v1/auxiliary-protocol/deeds")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(body)))
                 .andExpect(status().isCreated())
@@ -115,9 +115,9 @@ class AuxiliaryProtocolControllerTest {
     @DisplayName("Should reject starting an deed when no auxiliar folio is available")
     void shouldRejectDeedWhenNoFolioAuxiliaryAvailable() throws Exception {
         Map<String, Object> body = new HashMap<>();
-        body.put("body", "Acta de certificación de firma");
+        body.put("body", "Acta of certificación of firma");
 
-        mockMvc.perform(post("/api/v1/protocolo-auxiliar/escrituras")
+        mockMvc.perform(post("/api/v1/auxiliary-protocol/deeds")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(body)))
                 .andExpect(status().isBadRequest());

@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it, expect } from "vitest";
 import { EMPTY_DOCUMENT_TYPE } from "@/lib/document-type-form";
-import type { TipoDeDocumento } from "@/types";
+import type { DocumentType } from "@/types";
 
 const ROOT = join(__dirname, "../../..");
 
@@ -17,8 +17,8 @@ describe("Document type enabled/returned form defaults (#800)", () => {
     expect(EMPTY_DOCUMENT_TYPE.expires).toBe(false);
   });
 
-  it("should include returned on the TipoDeDocumento type surface", () => {
-    const sample: TipoDeDocumento = {
+  it("should include returned on the DocumentType type surface", () => {
+    const sample: DocumentType = {
       name: "Deed",
       enabled: true,
       returned: true,
@@ -29,7 +29,7 @@ describe("Document type enabled/returned form defaults (#800)", () => {
 
   it("should wire enabled and returned CheckboxFields on the admin page", () => {
     const src = readFileSync(
-      join(ROOT, "src/app/dashboard/administracion/documentos/page.tsx"),
+      join(ROOT, "src/app/dashboard/administration/documents/page.tsx"),
       "utf8",
     );
     expect(src).toContain('data-testid="checkbox-enabled-documento"');

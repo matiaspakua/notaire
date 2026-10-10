@@ -13,7 +13,7 @@ legacy correspondiente.
 
 ## Actores
 
-- [`actores.puml`](actores.puml) — jerarquía de actores del sistema (Persona, Cliente, Escribano,
+- [`actores.puml`](actores.puml) — jerarquía de actores del sistema (Person, Cliente, Escribano,
   Recepcionista/Gestor, Administrador).
 
 ## Diagramas por módulo

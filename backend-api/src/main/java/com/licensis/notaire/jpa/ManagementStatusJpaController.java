@@ -9,7 +9,7 @@ import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.History;
 import java.io.Serializable;
@@ -26,7 +26,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class ManagementStatusJpaController implements Serializable, IPersistenciaJpa {
+public class ManagementStatusJpaController implements Serializable, JpaPersistence {
 
     public ManagementStatusJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
@@ -117,7 +117,7 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
                         if (illegalOrphanMessages == null) {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain Historial " + historyListOldHistory
+                        illegalOrphanMessages.add("You must retain ManagementHistory " + historyListOldHistory
                                 + " since its fkIdEstadoGestion field is not nullable.");
                     }
                 }
@@ -181,8 +181,8 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This EstadoDeGestion (" + managementStatus
-                        + ") cannot be destroyed since the Historial " + historyListOrphanCheckHistory
+                illegalOrphanMessages.add("This ManagementStatus (" + managementStatus
+                        + ") cannot be destroyed since the ManagementHistory " + historyListOrphanCheckHistory
                         + " in its historialList field has a non-nullable fkIdEstadoGestion field.");
             }
             if (illegalOrphanMessages != null) {
@@ -198,10 +198,10 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
     }
 
     /**
-     * Verifica si el estado de gestion indicado ya se encuentra registrado o no.
+     * Verifica if the management status indicado already encuentra registrado or not.
      *
-     * @param nombreEstado El nombre del estado de gestion.
-     * @return Verdadero si es estado de gestion ya se encuentra registrado, falso
+     * @param nombreEstado The name of the management status.
+     * @return Verdadero if is management status already encuentra registrado, falso
      *         en caso
      *         contrario.
      *

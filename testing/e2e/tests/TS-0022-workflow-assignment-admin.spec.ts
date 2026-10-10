@@ -1,5 +1,5 @@
 /**
- * E2E tests — Workflow assignment to TipoDeTramite
+ * E2E tests — Workflow assignment to ProcedureType
  * CU73: Asignar Workflow a Tipo de Trámite
  * Requires: backend running at localhost:8080, frontend at localhost:3000
  *
@@ -10,9 +10,9 @@ import { createTipoTramite } from "./setup/api-helpers";
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 }
 
@@ -28,11 +28,11 @@ async function arrangeTipoTramite(page: Page): Promise<number> {
   return created.data!.idProcedureType;
 }
 
-test.describe("CU73 - Workflow assignment to TipoDeTramite", () => {
+test.describe("CU73 - Workflow assignment to ProcedureType", () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
     await arrangeTipoTramite(page);
-    await page.goto("/dashboard/administracion/tramites");
+    await page.goto("/dashboard/administration/procedures");
     await expect(page.locator("table tbody tr").first()).toBeVisible({ timeout: 10000 });
   });
 

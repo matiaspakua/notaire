@@ -15,7 +15,7 @@ import jakarta.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
 import com.licensis.notaire.business.Person;
@@ -26,7 +26,7 @@ import org.hibernate.StaleObjectStateException;
  *
  * @author juanca
  */
-public class DeedManagementJpaController implements Serializable, IPersistenciaJpa
+public class DeedManagementJpaController implements Serializable, JpaPersistence
 {
 
     public DeedManagementJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -43,10 +43,10 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Persiste en la base de datos una nueva gestion de escrituras.
+     * Persiste in the database a new management of deeds.
      *
-     * @param unaGestionDeEscritura La nueva gestion de escrituras a persistir.
-     * @return oidGestionEscritura El id de la nueva gestion de escritura, -1 si ocurrio algun
+     * @param unaGestionDeEscritura The new management of deeds a persistir.
+     * @return oidGestionEscritura The id of the new management of deed, -1 if ocurrio algun
      * error.
      */
     public Integer create(DeedManagement unaDeedManagement)
@@ -128,9 +128,9 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Permite modificar una gestion de escritura en la persistencia.
+     * Permite update a management of deed in the persistencia.
      *
-     * @param gestionParaModificar La gestion de escritura a modificar.
+     * @param gestionParaModificar The management of deed a update.
      * @return modificado Verdadero si se pudo modificar, falso en caso contrario.
      *
      * @throws IllegalOrphanException
@@ -178,7 +178,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                         {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain Historial " + historyListOldHistory + " since its fkIdGestion field is not nullable.");
+                        illegalOrphanMessages.add("You must retain ManagementHistory " + historyListOldHistory + " since its fkIdGestion field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null)
@@ -268,9 +268,9 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Permite elimianr una gestion de escritura de la persistencia.
+     * Permite elimianr a management of deed of the persistencia.
      *
-     * @param id El id de la gestion de escritura a eliminar.
+     * @param id The id of the management of deed a delete.
      * @throws IllegalOrphanException
      * @throws NonexistentEntityException
      */
@@ -289,7 +289,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The GestionDeEscritura with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The DeedManagement with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             List<History> historyListOrphanCheck = DeedManagement.getHistoryList();
@@ -299,7 +299,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This GestionDeEscritura (" + DeedManagement + ") cannot be destroyed since the Historial " + historyListOrphanCheckHistory + " in its historialList field has a non-nullable fkIdGestion field.");
+                illegalOrphanMessages.add("This DeedManagement (" + DeedManagement + ") cannot be destroyed since the ManagementHistory " + historyListOrphanCheckHistory + " in its historialList field has a non-nullable fkIdGestion field.");
             }
             if (illegalOrphanMessages != null)
             {
@@ -372,7 +372,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Busca una gestion de escritura en base al numero de gestion.
+     * Busca a management of deed in base to the number of management.
      *
      * @param numeroGestionDeEscritura
      * @return
@@ -389,7 +389,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
 
         if (!listaGestiones.isEmpty())
         {
-            // existe la gestion indicada
+            // exists the management indicada
             return listaGestiones.get(0);
         }
 
@@ -410,7 +410,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
 
         if (!listaGestiones.isEmpty())
         {
-            // existe la gestion indicada
+            // exists the management indicada
             return listaGestiones.get(0);
         }
 
@@ -455,7 +455,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Gestiones en las que participa un cliente (persona) vía TramitesPersonas.
+     * Managements in the that participa a client (person) vía TramitesPersonas.
      */
     @SuppressWarnings("unchecked")
     public List<DeedManagement> findManagementsByClient(Integer idPerson)
@@ -490,9 +490,9 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     public boolean archivingManagements(DeedManagement pGestioneDeEscrituras) throws ClassModifiedException
     {
 
-        Boolean flag = false; //Variable para saber el resultado de la transaccion
-        int oldVersion = 0; //Variable para Version en memoria del Objeto
-        int version = 0;    //Variable para Version en bd del Objeto
+        Boolean flag = false; //Variable for saber the resultado of the transaccion
+        int oldVersion = 0; //Variable for Version in memoria of the Objeto
+        int version = 0;    //Variable for Version in bd of the Objeto
 
         EntityManager em = getEntityManager();
 
@@ -500,12 +500,12 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
 
         if (persistentManagement != null)
         {
-            version = persistentManagement.getVersion(); // Version del Objeto en db
-            oldVersion = pGestioneDeEscrituras.getVersion(); // Version del Objeto en memoria
+            version = persistentManagement.getVersion(); // Version of the Objeto in db
+            oldVersion = pGestioneDeEscrituras.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {
-                throw new ClassModifiedException("La gestion indicada ha sido modificada por otro usuario");
+                throw new ClassModifiedException("The management indicada has been modificada by another user");
 
             } else
             {
@@ -522,7 +522,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                 }
                 catch (Exception e)
                 {
-                    System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
+                    System.out.println("Error de Persistencia: UserAccount JpaController metodo: modificarUsuario");
                 }
             }
         } else
@@ -533,7 +533,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Permite modificar una gestion de escritura.
+     * Permite update a management of deed.
      *
      * @param gestionParaModificar
      * @return
@@ -586,7 +586,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * permite modifica el "estado" de una gestion de escritura.
+     * permite modifica the "status" of a management of deed.
      *
      * @param gestionParaModificar
      * @return

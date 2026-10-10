@@ -1,10 +1,10 @@
 package com.licensis.notaire.dto;
 
-import com.licensis.notaire.dto.interfaces.DtoValido;
+import com.licensis.notaire.dto.interfaces.ValidDto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DtoProcedure implements DtoValido {
+public class DtoProcedure implements ValidDto {
     private Integer idProcedure;
     private DtoDeedManagement managementDeEscrituras;
     private DtoProperty property;

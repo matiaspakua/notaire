@@ -11,9 +11,9 @@ import { createWorkflowDefinition } from "./setup/api-helpers";
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 }
 
@@ -32,7 +32,7 @@ async function arrangeWorkflow(page: Page): Promise<number> {
 test.describe("CU70 - Workflow manager (CRUD)", () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
-    await page.goto("/dashboard/administracion/workflows");
+    await page.goto("/dashboard/administration/workflows");
   });
 
   test("workflows page loads", async ({ page }) => {
@@ -55,7 +55,7 @@ test.describe("CU70 - Workflow editor (graph)", () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
     workflowId = await arrangeWorkflow(page);
-    await page.goto("/dashboard/administracion/workflows");
+    await page.goto("/dashboard/administration/workflows");
     await expect(page.getByTestId(`btn-editor-${workflowId}`)).toBeVisible({ timeout: 10000 });
   });
 

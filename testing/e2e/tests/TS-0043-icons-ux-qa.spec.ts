@@ -86,7 +86,7 @@ test.describe("Icon rendering — Dashboard modules grid", () => {
 test.describe("Icon rendering — Administración hub", () => {
   test.beforeEach(async ({ page }) => {
     await authSetup(page);
-    await page.goto("/dashboard/administracion");
+    await page.goto("/dashboard/administration");
     await page.waitForLoadState("networkidle");
   });
 
@@ -110,11 +110,11 @@ test.describe("Icon rendering — Administración hub", () => {
 
 test.describe("Icon rendering — Admin sub-pages with action icons", () => {
   const adminPages = [
-    { path: "/dashboard/administracion/conceptos", title: "Conceptos" },
-    { path: "/dashboard/administracion/folios", title: "Folios" },
-    { path: "/dashboard/administracion/tramites", title: "Tipos de Trámite" },
-    { path: "/dashboard/administracion/estados-gestion", title: "Estados de Gestión" },
-    { path: "/dashboard/administracion/plantillas", title: "Plantillas de Presupuesto" },
+    { path: "/dashboard/administration/concepts", title: "Conceptos" },
+    { path: "/dashboard/administration/folios", title: "Folios" },
+    { path: "/dashboard/administration/procedures", title: "Tipos de Trámite" },
+    { path: "/dashboard/administration/management-statuses", title: "Estados de Gestión" },
+    { path: "/dashboard/administration/templates", title: "Plantillas de Presupuesto" },
   ];
 
   for (const pageInfo of adminPages) {
@@ -150,8 +150,8 @@ test.describe("Icon rendering — Admin sub-pages with action icons", () => {
 
 test.describe("Icon rendering — CRUD action icons", () => {
   const crudPages = [
-    { path: "/dashboard/personas", testId: "btn-nueva-persona" },
-    { path: "/dashboard/presupuestos", testId: "btn-nuevo-presupuesto" },
+    { path: "/dashboard/people", testId: "btn-nueva-persona" },
+    { path: "/dashboard/budgets", testId: "btn-nuevo-presupuesto" },
   ];
 
   for (const { path } of crudPages) {
@@ -167,27 +167,27 @@ test.describe("Icon rendering — CRUD action icons", () => {
 test.describe("Page load — All pages render without crash", () => {
   const pages = [
     "/dashboard",
-    "/dashboard/gestiones",
-    "/dashboard/presupuestos",
-    "/dashboard/personas",
-    "/dashboard/escrituras",
-    "/dashboard/pagos",
-    "/dashboard/protocolo",
-    "/dashboard/inmuebles",
-    "/dashboard/copias",
+    "/dashboard/managements",
+    "/dashboard/budgets",
+    "/dashboard/people",
+    "/dashboard/deeds",
+    "/dashboard/payments",
+    "/dashboard/protocol",
+    "/dashboard/properties",
+    "/dashboard/copies",
     "/dashboard/items",
-    "/dashboard/documentos",
-    "/dashboard/auditoria",
-    "/dashboard/suplencias",
-    "/dashboard/reportes",
-    "/dashboard/administracion",
-    "/dashboard/administracion/usuarios",
-    "/dashboard/administracion/conceptos",
-    "/dashboard/administracion/documentos",
-    "/dashboard/administracion/folios",
-    "/dashboard/administracion/tramites",
-    "/dashboard/administracion/estados-gestion",
-    "/dashboard/administracion/plantillas",
+    "/dashboard/documents",
+    "/dashboard/audit",
+    "/dashboard/substitutions",
+    "/dashboard/reports",
+    "/dashboard/administration",
+    "/dashboard/administration/users",
+    "/dashboard/administration/concepts",
+    "/dashboard/administration/documents",
+    "/dashboard/administration/folios",
+    "/dashboard/administration/procedures",
+    "/dashboard/administration/management-statuses",
+    "/dashboard/administration/templates",
   ];
 
   for (const path of pages) {

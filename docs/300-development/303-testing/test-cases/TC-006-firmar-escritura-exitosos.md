@@ -1,10 +1,10 @@
-# Test Case: Firmar Escritura Exitoso
+# Test Case: Firmar Deed Exitoso
 
 | Atributo | Detalle |
 |---|---|
 | **ID** | TC-006-firmar-escritura-exitosos |
-| **Título** | Firmar Escritura Exitoso |
-| **Nombre** | Firmar Escritura Exitoso |
+| **Título** | Firmar Deed Exitoso |
+| **Nombre** | Firmar Deed Exitoso |
 | **Referencia** | CU06 |
 | **Descripción** | Validar que el sistema permite registrar la firma de una escritura por parte del escribano y los clientes intervinientes. |
 

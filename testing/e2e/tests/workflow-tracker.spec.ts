@@ -9,9 +9,9 @@ import { type Page, test, expect } from "@playwright/test";
 
 async function loginAs(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   await page.waitForLoadState("domcontentloaded");
 }
@@ -21,7 +21,7 @@ function baseTrace(overrides: Record<string, unknown> = {}) {
     managementId: 1,
     number: 1001,
     encabezado: "Reingreso loop fixture",
-    statusActual: "Testimonio Ingresado a Inscripcion",
+    statusActual: "Testimony Ingresado a Inscripcion",
     workflowDefinition: {
       id: 1,
       name: "Standard management workflow",
@@ -37,25 +37,25 @@ function baseTrace(overrides: Record<string, unknown> = {}) {
       {
         id: 5,
         statusManagementId: 6,
-        statusManagementName: "Gestion con Escritura Firmada",
+        statusManagementName: "Gestion con Deed Firmada",
         type: "INTERMEDIATE",
       },
       {
         id: 8,
         statusManagementId: 11,
-        statusManagementName: "Testimonio Generado",
+        statusManagementName: "Testimony Generado",
         type: "INTERMEDIATE",
       },
       {
         id: 9,
         statusManagementId: 12,
-        statusManagementName: "Testimonio Ingresado a Inscripcion",
+        statusManagementName: "Testimony Ingresado a Inscripcion",
         type: "INTERMEDIATE",
       },
       {
         id: 10,
         statusManagementId: 13,
-        statusManagementName: "Testimonio Retirado",
+        statusManagementName: "Testimony Retirado",
         type: "FINAL",
       },
     ],
@@ -84,7 +84,7 @@ function baseTrace(overrides: Record<string, unknown> = {}) {
 }
 
 async function stubTrace(page: Page, body: Record<string, unknown>) {
-  await page.route("**/api/v1/gestiones/*/workflow-trace", async (route) => {
+  await page.route("**/api/v1/managements/*/workflow-trace", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -170,7 +170,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
           {
             id: 2,
             statusManagementId: 2,
-            statusManagementName: "En Tramite",
+            statusManagementName: "En Procedure",
             type: "FINAL",
           },
         ],

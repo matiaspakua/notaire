@@ -3,12 +3,12 @@ info:
   type: http
   seq: 3
   description: |-
-      ## List deeds with an unknown status — GET /api/v1/escrituras?status=Signed
+      ## List deeds with an unknown status — GET /api/v1/deeds?status=Signed
       Traceability: CU06, issue #1340. The status is one of Sin Firmar, Firmada, Anulada,
       No Paso, Inscripta (any letter case); anything else answers 400.
 http:
   method: GET
-  url: "{{base_url}}/api/v1/escrituras?status=Signed"
+  url: "{{base_url}}/api/v1/deeds?status=Signed"
   headers:
     - name: Authorization
       value: "Bearer {{token}}"

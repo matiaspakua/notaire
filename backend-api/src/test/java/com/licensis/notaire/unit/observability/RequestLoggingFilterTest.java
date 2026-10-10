@@ -51,18 +51,18 @@ class RequestLoggingFilterTest {
     void shouldLogRequestWithTraceIdFromMdc() throws Exception {
         MDC.put("traceId", "4bf92f3577b34da6a3ce929d0e0e4736");
 
-        List<ILoggingEvent> events = run(new MockHttpServletRequest("GET", "/api/v1/personas"), 200);
+        List<ILoggingEvent> events = run(new MockHttpServletRequest("GET", "/api/v1/people"), 200);
 
         assertThat(events).hasSize(1);
         assertThat(events.get(0).getFormattedMessage())
-                .contains("http_request", "method=GET", "path=/api/v1/personas", "status=200", "durationMs=");
+                .contains("http_request", "method=GET", "path=/api/v1/people", "status=200", "durationMs=");
         assertThat(events.get(0).getMDCPropertyMap()).containsEntry("traceId", "4bf92f3577b34da6a3ce929d0e0e4736");
     }
 
     @Test
     @DisplayName("shouldNotLogQueryString")
     void shouldNotLogQueryString() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/v1/personas");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/v1/people");
         request.setQueryString("dni=12345678&token=secret");
 
         List<ILoggingEvent> events = run(request, 200);
@@ -82,7 +82,7 @@ class RequestLoggingFilterTest {
     @Test
     @DisplayName("shouldLogServerErrorsAtWarnLevel")
     void shouldLogServerErrorsAtWarnLevel() throws Exception {
-        List<ILoggingEvent> events = run(new MockHttpServletRequest("POST", "/api/v1/escrituras"), 500);
+        List<ILoggingEvent> events = run(new MockHttpServletRequest("POST", "/api/v1/deeds"), 500);
 
         assertThat(events).hasSize(1);
         assertThat(events.get(0).getLevel().toString()).isEqualTo("WARN");

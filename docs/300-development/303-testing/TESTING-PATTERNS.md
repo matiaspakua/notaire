@@ -120,7 +120,7 @@ class GestionServiceTest {
   void shouldCreateGestionWhenPersonaExists() {
     // ARRANGE
     Long personaId = 1L;
-    Persona persona = new PersonaBuilder().withId(personaId).build();
+    Person persona = new PersonaBuilder().withId(personaId).build();
     
     // Mock the repository call
     when(personaRepository.findById(personaId))
@@ -308,12 +308,12 @@ describe('MyFormComponent', () => {
 
 ```typescript
 import { renderHook, waitFor } from '@testing-library/react';
-import { useGestiones } from './useGestiones';
+import { useManagements } from './useManagements';
 
-describe('useGestiones', () => {
+describe('useManagements', () => {
   test('should load gestiones on mount', async () => {
     // ARRANGE & ACT
-    const { result } = renderHook(() => useGestiones());
+    const { result } = renderHook(() => useManagements());
     
     // ASSERT: Initial state
     expect(result.current.isLoading).toBe(true);
@@ -329,7 +329,7 @@ describe('useGestiones', () => {
 
   test('should handle fetch error', async () => {
     // ARRANGE: Mock API to fail
-    const { result } = renderHook(() => useGestiones());
+    const { result } = renderHook(() => useManagements());
     
     // ASSERT: Error state
     await waitFor(() => {
@@ -358,11 +358,11 @@ describe('useGestiones', () => {
 Every REST endpoint test validates the **contract** (request format, response format, status codes):
 
 ```
-# Bruno test: POST /api/v1/gestiones - Create Gestion
+# Bruno test: POST /api/v1/managements - Create Gestion
 # CU02: Iniciar Gestión
 
 @name createGestion
-POST http://{{baseUrl}}/api/v1/gestiones
+POST http://{{baseUrl}}/api/v1/managements
 Content-Type: application/json
 Authorization: Bearer {{adminToken}}
 
@@ -390,8 +390,8 @@ Authorization: Bearer {{adminToken}}
 Test **all error paths** (400, 401, 403, 404, 500):
 
 ```
-# Test: POST /api/v1/gestiones - Missing required field (400)
-POST http://{{baseUrl}}/api/v1/gestiones
+# Test: POST /api/v1/managements - Missing required field (400)
+POST http://{{baseUrl}}/api/v1/managements
 Content-Type: application/json
 Authorization: Bearer {{adminToken}}
 
@@ -406,8 +406,8 @@ Authorization: Bearer {{adminToken}}
 
 ---
 
-# Test: GET /api/v1/gestiones/999 - Not found (404)
-GET http://{{baseUrl}}/api/v1/gestiones/999
+# Test: GET /api/v1/managements/999 - Not found (404)
+GET http://{{baseUrl}}/api/v1/managements/999
 Authorization: Bearer {{adminToken}}
 
 ? res.status === 404
@@ -415,8 +415,8 @@ Authorization: Bearer {{adminToken}}
 
 ---
 
-# Test: POST /api/v1/gestiones - Unauthorized (401)
-POST http://{{baseUrl}}/api/v1/gestiones
+# Test: POST /api/v1/managements - Unauthorized (401)
+POST http://{{baseUrl}}/api/v1/managements
 Content-Type: application/json
 
 {...}
@@ -434,7 +434,7 @@ POST operations should be **idempotent** when submitted multiple times:
 # Expected: First request → 201 Created, Second → 409 Conflict (or 200 OK)
 
 @name createPresupuesto
-POST http://{{baseUrl}}/api/v1/presupuestos
+POST http://{{baseUrl}}/api/v1/budgets
 Content-Type: application/json
 Authorization: Bearer {{adminToken}}
 
@@ -578,8 +578,8 @@ const numero = "PRE-001";
 const email = "test@example.com";
 
 // Cleanup: Delete by test marker
-await apiDelete(`/api/v1/presupuestos?numero_startswith=PRE-TEST-`);
-await apiDelete(`/api/v1/gestiones?numero_startswith=GES-TEST-`);
+await apiDelete(`/api/v1/budgets?numero_startswith=PRE-TEST-`);
+await apiDelete(`/api/v1/managements?numero_startswith=GES-TEST-`);
 ```
 
 ### Backend H2 payment IT fixture isolation (#916)
@@ -596,7 +596,7 @@ Integer budgetId = BudgetPaymentTestFixtures.createIsolatedBudget(
         mockMvc, new BigDecimal("10000.00"));
 BudgetPaymentTestFixtures.createPayment(mockMvc, budgetId, new BigDecimal("1500.00"), "IT");
 
-// Bad: hardcode seed id for POST /api/v1/pagos
+// Bad: hardcode seed id for POST /api/v1/payments
 // {"idBudget": 1, "amount": 1500.00, ...}
 ```
 

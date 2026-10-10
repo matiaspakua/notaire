@@ -2,7 +2,7 @@
  * Copias: required fields (Gherkin style)
  *
  * Covers Issue #655: the copy number and print date are NOT NULL columns, and
- * POST/PUT /api/v1/copia without them answered 500. The API now answers 400,
+ * POST/PUT /api/v1/copies without them answered 500. The API now answers 400,
  * and the dialog keeps Save disabled until both are filled.
  */
 import { test, expect } from "@playwright/test";
@@ -14,7 +14,7 @@ test.describe("Copias: required number and print date (#655)", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/copias");
+    await steps.givenUserIsOnPage("/dashboard/copies");
   });
 
   test("Given the new copy dialog, When the number or the print date is empty, Then the form cannot be saved", async ({ page }) => {

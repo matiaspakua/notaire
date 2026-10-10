@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * CU47 financial summary for a presupuesto: its gestión, total, pending
+ * CU47 financial summary for a budget: its management, total, pending
  * balance, and the list of payments applied to it.
  */
 public record DtoBudgetResumen(

@@ -78,7 +78,7 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "observed_by_registry")
     private boolean observedByRegistry;
-    @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_testimony", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Testimony fkIdTestimony;
 
@@ -231,7 +231,7 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "MovimientoTestimonio[ idMovimientoTestimonio=" + idTestimonyMovement + " ]"
+        return "TestimonyMovement[ idMovimientoTestimonio=" + idTestimonyMovement + " ]"
                 + "[ idTestimonio=" + fkIdTestimony.getIdTestimony() + " ]";
     }
 

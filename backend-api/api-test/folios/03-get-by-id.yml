@@ -3,11 +3,11 @@ info:
   type: http
   seq: 4
   description: |-
-      ## Get folio by ID — GET /api/v1/folio/{id}
+      ## Get folio by ID — GET /api/v1/folios/{id}
       Traceability: CU63 (RF #55, #58, #94, #95, #96, #99)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/folio/{{folio_id}}"
+  url: "{{base_url}}/api/v1/folios/{{folio_id}}"
   headers:
     - name: Content-Type
       value: application/json

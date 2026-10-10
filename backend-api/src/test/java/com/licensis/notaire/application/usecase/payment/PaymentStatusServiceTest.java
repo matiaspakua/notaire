@@ -90,7 +90,7 @@ class PaymentStatusServiceTest {
     void shouldRejectUnknownBudgetOnPendingBalance() {
         assertThatThrownBy(() -> paymentStatus.pendingBalance(999))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Presupuesto no encontrado con ID: 999");
+                .hasMessage("Budget not found with ID: 999");
     }
 
     @Test
@@ -98,6 +98,6 @@ class PaymentStatusServiceTest {
     void shouldRejectUnknownBudgetOnStatus() {
         assertThatThrownBy(() -> paymentStatus.status(999))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Presupuesto no encontrado con ID: 999");
+                .hasMessage("Budget not found with ID: 999");
     }
 }

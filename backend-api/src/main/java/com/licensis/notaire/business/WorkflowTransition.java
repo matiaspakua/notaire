@@ -29,17 +29,17 @@ public class WorkflowTransition implements Serializable, Persistable<Integer> {
     private WorkflowDefinition workflowDefinition;
 
     @ManyToOne
-    @JoinColumn(name = "fk_nodo_origen_id", nullable = false)
+    @JoinColumn(name = "fk_origin_node_id", nullable = false)
     private WorkflowNode originNode;
 
     @ManyToOne
-    @JoinColumn(name = "fk_nodo_destino_id", nullable = false)
+    @JoinColumn(name = "fk_destination_node_id", nullable = false)
     private WorkflowNode destinationNode;
 
-    @Column(name = "condicion")
+    @Column(name = "condition")
     private String condition;
 
-    @Column(name = "descripcion")
+    @Column(name = "description")
     private String description;
 
     @Version

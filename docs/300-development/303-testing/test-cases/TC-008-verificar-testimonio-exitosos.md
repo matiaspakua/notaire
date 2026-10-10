@@ -1,10 +1,10 @@
-# Test Case: Verificar Testimonio Exitoso
+# Test Case: Verificar Testimony Exitoso
 
 | Atributo | Detalle |
 |---|---|
 | **ID** | TC-008-verificar-testimonio-exitosos |
-| **Título** | Verificar Testimonio Exitoso |
-| **Nombre** | Verificar Testimonio Exitoso |
+| **Título** | Verificar Testimony Exitoso |
+| **Nombre** | Verificar Testimony Exitoso |
 | **Referencia** | CU08 |
 | **Descripción** | Validar que el sistema permite verificar el estado y los detalles de un testimonio existente. |
 

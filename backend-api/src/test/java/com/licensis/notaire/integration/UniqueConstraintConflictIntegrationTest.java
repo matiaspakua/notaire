@@ -80,13 +80,13 @@ class UniqueConstraintConflictIntegrationTest {
     @Test
     @DisplayName("a NOT NULL violation still answers 400 through GlobalExceptionHandler")
     void notNullStillBadRequest() throws Exception {
-        mockMvc.perform(post("/api/v1/tipo-folio").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mockMvc.perform(post("/api/v1/folio-types").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400));
     }
 
     @ParameterizedTest(name = "contract of {1} {0} documents 409")
-    @CsvSource({"/api/v1/roles/{id}, put", "/api/v1/minutas-inscripcion, post", "/api/v1/cuadernos, post"})
+    @CsvSource({"/api/v1/roles/{id}, put", "/api/v1/registration-drafts, post", "/api/v1/notebooks, post"})
     @DisplayName("operations that can hit a unique constraint document 409")
     void contractDocumentsConflict(String path, String method) throws Exception {
         JsonNode spec = mapper.readTree(mockMvc.perform(get("/v3/api-docs"))

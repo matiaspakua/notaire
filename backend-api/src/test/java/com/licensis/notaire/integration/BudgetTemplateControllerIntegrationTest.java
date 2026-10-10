@@ -31,7 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RequirementCoverage({"CU39", "CU49"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Presupuesto — cargar ítems desde la plantilla del type de trámite (CU39)")
+@DisplayName("Budget — load items from the template of the type of procedure (CU39)")
 class BudgetTemplateControllerIntegrationTest {
 
     @Autowired
@@ -72,7 +72,7 @@ class BudgetTemplateControllerIntegrationTest {
                 {"number": %d, "date": "2026-01-01", "encabezado": "Budget Template IT",
                  "status": "PENDIENTE", "amount": 1000.00, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -82,7 +82,7 @@ class BudgetTemplateControllerIntegrationTest {
 
     private ProcedureType createProcedureTypeConTemplate(String nameConcept, java.math.BigDecimal value, int percentage) {
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo Tramite Plantilla IT " + System.nanoTime());
+        procedureType.setName("Tipo Procedure Plantilla IT " + System.nanoTime());
         procedureTypeRepository.save(procedureType);
 
         Concept concept = new Concept();
@@ -102,13 +102,13 @@ class BudgetTemplateControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should load budget items from the type de trámite's plantilla")
+    @DisplayName("Should load budget items from the type of procedure's template")
     void shouldLoadItemsFromTemplate() throws Exception {
         Integer clientId = createPerson();
         Integer budgetId = createBudget(clientId);
         ProcedureType procedureType = createProcedureTypeConTemplate("Honorarios IT", new java.math.BigDecimal("1500"), 10);
 
-        mockMvc.perform(post("/api/v1/presupuestos/" + budgetId + "/items-desde-plantilla")
+        mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-template")
                         .param("tipoTramiteId", procedureType.getIdProcedureType().toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
@@ -117,7 +117,7 @@ class BudgetTemplateControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 400 when the type de trámite has no plantilla configured")
+    @DisplayName("Should return 400 when the type of procedure has not template configured")
     void shouldRejectWhenNoTemplateConfigured() throws Exception {
         Integer clientId = createPerson();
         Integer budgetId = createBudget(clientId);
@@ -126,7 +126,7 @@ class BudgetTemplateControllerIntegrationTest {
         typeSinTemplate.setName("Tipo Sin Plantilla IT " + System.nanoTime());
         procedureTypeRepository.save(typeSinTemplate);
 
-        mockMvc.perform(post("/api/v1/presupuestos/" + budgetId + "/items-desde-plantilla")
+        mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-template")
                         .param("tipoTramiteId", typeSinTemplate.getIdProcedureType().toString()))
                 .andExpect(status().isBadRequest());
     }
@@ -136,7 +136,7 @@ class BudgetTemplateControllerIntegrationTest {
     void shouldReturnNotFoundForUnknownBudget() throws Exception {
         ProcedureType procedureType = createProcedureTypeConTemplate("Sellado IT", new java.math.BigDecimal("500"), 0);
 
-        mockMvc.perform(post("/api/v1/presupuestos/999999/items-desde-plantilla")
+        mockMvc.perform(post("/api/v1/budgets/999999/items-from-template")
                         .param("tipoTramiteId", procedureType.getIdProcedureType().toString()))
                 .andExpect(status().isNotFound());
     }
@@ -149,8 +149,8 @@ class BudgetTemplateControllerIntegrationTest {
         Integer idConcept = budgetTemplateRepository.findByProcedureTypeIdProcedureType(idProcedureType)
                 .get(0).getBudgetTemplatePK().getFkIdConcept();
 
-        mockMvc.perform(delete("/api/v1/plantilla-presupuestos/tipo-tramite/" + idProcedureType
-                        + "/concepto/" + idConcept))
+        mockMvc.perform(delete("/api/v1/budget-templates/procedure-types/" + idProcedureType
+                        + "/concept/" + idConcept))
                 .andExpect(status().isNoContent());
 
         assertThat(budgetTemplateRepository.findByProcedureTypeIdProcedureType(idProcedureType)).isEmpty();

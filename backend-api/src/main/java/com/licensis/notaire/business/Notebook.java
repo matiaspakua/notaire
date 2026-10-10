@@ -18,8 +18,8 @@ import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 
 /**
- * A cuaderno groups exactly ten consecutive folios of the same registro
- * notarial, numbered correlatively per registro/año, so the protocol
+ * A notebook groups exactly ten consecutive folios of the same registro
+ * notarial, numbered correlatively per registro/year, so the protocol
  * carátula (CU80) can be emitted.
  */
 @Entity
@@ -138,6 +138,6 @@ public class Notebook implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Cuaderno[ idCuaderno=" + idNotebook + " ][ numero=" + number + " ][ anio=" + year + " ]";
+        return "Notebook[ idCuaderno=" + idNotebook + " ][ numero=" + number + " ][ anio=" + year + " ]";
     }
 }

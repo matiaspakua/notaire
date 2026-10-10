@@ -1,8 +1,8 @@
 package com.licensis.notaire.dto;
 
 /**
- * CU43 - El {@code DocumentoPresentado} recién creado por un reingreso, con
- * los datos heredados de su {@code TipoDeDocumento}.
+ * CU43 - The {@code SubmittedDocument} recién creado by a reentry, with
+ * the datos heredados of its {@code DocumentType}.
  */
 public record DtoDocumentReentered(
         Integer idSubmittedDocument,

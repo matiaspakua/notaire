@@ -49,7 +49,7 @@ Where:
 | **TS-0019** | `TS-0019-inmuebles-valuacion-workflow.spec.ts` | CU69 | Inmuebles | Property management: valuation fiscal tracking | **MEDIUM** |
 | **TS-0020** | `TS-0020-reportes-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Administración | Reports, catalogs: índices, tipos, folios, conceptos, estados, users | **HIGH** |
 | **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | Workflow Admin | State definition + transition editor (workflow configuration) | **HIGH** |
-| **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | Workflow Admin | Assign workflow to TipoDeTramite | **MEDIUM** |
+| **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | Workflow Admin | Assign workflow to ProcedureType | **MEDIUM** |
 | **TS-0023** | `TS-0023-roles-permisos-admin.spec.ts` | CU43.1 | Seguridad Admin | Role & permission management | **MEDIUM** |
 | **TS-0024** | `TS-0024-admin-module-smoke.spec.ts` | CU20, CU26–CU32, CU57–CU67 | Administración | Smoke test: every admin section loads, create button responds | **MEDIUM** |
 | **TS-0028** | `TS-0028-gestion-historial-feature.spec.ts` | CU13 | Gestiones Feature | Bitácora (audit trail / history view) for gestión | **MEDIUM** |
@@ -114,7 +114,7 @@ test.describe("TS-0010 - Presupuesto Workflow", () => {
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
   test("GW01: Create presupuesto from modal", async () => {
@@ -266,9 +266,9 @@ Header columns (post–English rename, issue #1064):
 | `Notas` / `GitHub_Issue` | Notes and issue links (`Bruno_Test=MISSING` must cite `#953`) |
 
 **Drift guard:** `python3 workspace/sdlc/validate-cu-api-matrix.py` rejects stale Spanish
-controller names, missing required resource bases (`/carpetas`, `/cuadernos`,
-`/minutas-inscripcion`, `/plantilla-costos-documento`, `/protocolo-auxiliar`,
-`/roles`, `/tipo-identificacion`, `/tramites`), invalid `Bruno_Test` values, and
+controller names, missing required resource bases (`/procedure-folders`, `/notebooks`,
+`/registration-drafts`, `/document-cost-templates`, `/auxiliary-protocol`,
+`/roles`, `/identification-types`, `/procedures`), invalid `Bruno_Test` values, and
 `MISSING` rows without `#953`. Wired into `workspace/sdlc/preflight.sh` and
 `sdlc-process.yml` (CU76 / #1064). Bruno request authoring for remaining gaps
 stays on #953.
@@ -291,7 +291,7 @@ docs/200-architecture/204-diagrams/Secuencias/
 ├── CU01.puml (Presupuesto)
 ├── CU02.puml (Gestiones)
 ├── CU05.puml (Escrituras)
-├── CU07.puml (Testimonio)
+├── CU07.puml (Testimony)
 └── ...
 ```
 
@@ -301,7 +301,7 @@ Test comments include `@sequence` links to relevant diagrams so test readers can
 /**
  * TS-0010 - Presupuesto Workflow
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
- * Flow: Usuario → [create presupuesto] → backend API → database → response
+ * Flow: UserAccount → [create presupuesto] → backend API → database → response
  */
 ```
 

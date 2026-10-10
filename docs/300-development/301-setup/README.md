@@ -135,7 +135,7 @@ com.licensis.notaire/
 ├── repository/          # Repositorios JPA
 │   └── PersonaRepository.java
 ├── negocio/             # Entidades
-│   └── Persona.java
+│   └── Person.java
 ├── security/            # JWT y filtros de seguridad
 ├── config/              # Configuración de beans
 ├── jpa/                 # Legacy (a eliminar)

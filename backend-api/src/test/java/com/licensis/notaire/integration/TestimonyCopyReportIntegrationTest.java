@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU08 - Emitir copia impresa de testimonio verificado (issue #832).
+ * CU08 - Issue copy impresa of testimony verified (issue #832).
  */
 @RequirementCoverage({"CU08"})
 @DisplayName("ReportController#generarReporteCopiaTestimonio — CU08 integration tests")
@@ -45,7 +45,7 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
                   "dateDeedrecording": "2026-06-16"
                 }
                 """.formatted((int) (System.currentTimeMillis() % 1_000_000));
-        MvcResult result = mockMvc.perform(post("/api/v1/escrituras")
+        MvcResult result = mockMvc.perform(post("/api/v1/deeds")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -55,7 +55,7 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
 
     private int generarTestimony() throws Exception {
         int idDeed = createDeedFirmada();
-        MvcResult result = mockMvc.perform(post("/api/v1/testimonio/" + idDeed + "/generar"))
+        MvcResult result = mockMvc.perform(post("/api/v1/testimonies/" + idDeed + "/generate"))
                 .andExpect(status().isCreated())
                 .andReturn();
         return mapper.readTree(result.getResponse().getContentAsString()).get("idTestimony").asInt();
@@ -63,7 +63,7 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
 
     private int generarTestimonyVerified() throws Exception {
         int idTestimony = generarTestimony();
-        mockMvc.perform(post("/api/v1/testimonio/" + idTestimony + "/verificar")
+        mockMvc.perform(post("/api/v1/testimonies/" + idTestimony + "/verify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"flagged\": false}"))
                 .andExpect(status().isOk());
@@ -75,7 +75,7 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
     void shouldReturnPdfForVerifiedTestimony() throws Exception {
         int idTestimony = generarTestimonyVerified();
 
-        MvcResult result = mockMvc.perform(get("/api/v1/reportes/testimonio/" + idTestimony + "/copia"))
+        MvcResult result = mockMvc.perform(get("/api/v1/reports/testimonies/" + idTestimony + "/copies"))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_PDF_VALUE))
                 .andReturn();
@@ -88,14 +88,14 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
     void shouldRejectCopyForNonVerifiedTestimony() throws Exception {
         int idTestimony = generarTestimony();
 
-        mockMvc.perform(get("/api/v1/reportes/testimonio/" + idTestimony + "/copia"))
+        mockMvc.perform(get("/api/v1/reports/testimonies/" + idTestimony + "/copies"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("Should return 404 for a non-existing testimony")
     void shouldReturn404ForNonExistingTestimony() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/testimonio/99999/copia"))
+        mockMvc.perform(get("/api/v1/reports/testimonies/99999/copies"))
                 .andExpect(status().isNotFound());
     }
 }

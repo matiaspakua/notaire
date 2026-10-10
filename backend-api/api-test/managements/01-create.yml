@@ -6,7 +6,7 @@ info:
       Traceability: CU02
 http:
   method: POST
-  url: "{{base_url}}/api/v1/gestiones"
+  url: "{{base_url}}/api/v1/managements"
   body:
     type: json
     data: |-

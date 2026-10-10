@@ -18,13 +18,13 @@ The person dialog has a single free "DNI" field, so a foreign client (passport) 
 
 - Backend `PersonController`: `POST /people` and `PUT /people/{id}` answer **400** (`ErrorResponse`, message names `identificationTypeId`) when `identificationTypeId` / `fkIdIdentificationType.idIdentificationType` is not in the catalog; before, create stored DNI and update kept the old type with 200. An omitted type on create still means DNI, now found by name (`DNI`) instead of by id 1.
 - OpenAPI: `PersonRequest.identificationTypeId` and `fkIdIdentificationType` documented (regenerated artifact; descriptions only, no schema change); `api.generated.ts` regenerated.
-- Frontend: `useTiposIdentificacion` (GET `/tipo-identificacion`), a required "Tipo de identificación" select before the number in the person dialog (DNI preselected on create; a stored person without a type must pick one before saving), the number field is labelled "Número de documento", the list shows "CUIT 30…" (type name before the number), `Persona.identificationTypeId`, i18n es/en.
-- `contracts/api-reachability-allowlist.yaml`: `GET /api/v1/tipo-identificacion` removed (the UI now calls it).
+- Frontend: `useTiposIdentificacion` (GET `/identification-types`), a required "Tipo de identificación" select before the number in the person dialog (DNI preselected on create; a stored person without a type must pick one before saving), the number field is labelled "Número de documento", the list shows "CUIT 30…" (type name before the number), `Person.identificationTypeId`, i18n es/en.
+- `contracts/api-reachability-allowlist.yaml`: `GET /api/v1/identification-types` removed (the UI now calls it).
 - Bruno `people/08-create-unknown-identification-type.yml`; `people/01-create.yml` asserts the stored type; `COVERAGE.md`.
 - E2E: TS-0015 #1361 scenarios; specs that located the number by the label `/dni/i` now use `input-dni`.
 - CHANGELOG.
 
-Out of scope (later slice of #1361): the admin catalog page `/dashboard/administracion/tipos-identificacion` and the remaining allowlist entries. `maxLength` from the type's `characters` metadata is not enforced: legacy numbers with dots and test data exceed it, and the backend has no such rule.
+Out of scope (later slice of #1361): the admin catalog page `/dashboard/administration/tipos-identificacion` and the remaining allowlist entries. `maxLength` from the type's `characters` metadata is not enforced: legacy numbers with dots and test data exceed it, and the backend has no such rule.
 
 ## Reglas de negocio
 

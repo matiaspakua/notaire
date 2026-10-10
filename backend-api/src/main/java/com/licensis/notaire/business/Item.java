@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Clase que presenta los items que pueden ser asociados a los presupuestos.
+ * Clase that presenta the items that can be asociados a the budgets.
  *
  * @author juanca
  */
@@ -74,13 +74,13 @@ public class Item implements Serializable, Persistable<Integer>
     private TypeItem type = TypeItem.NORMAL;
     @Column(name = "reason")
     private String reason;
-    @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_budget", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Budget fkIdBudget;
 
     /**
-     * Constructor por defaul de Item. Inicializa el ID presupuesto segun el campo
+     * Constructor by defaul of Item. Inicializa the ID budget according to the campo
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
      */
     public Item()
@@ -218,7 +218,7 @@ public class Item implements Serializable, Persistable<Integer>
     public String toString()
     {
         return "negocio.Item[ idItem=" + idItem + " ]"
-                + "[ nombre=" + name + " ]";
+                + "[ name=" + name + " ]";
     }
 
     public int getVersion()

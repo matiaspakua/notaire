@@ -41,7 +41,7 @@ public class UpcomingExpirationService {
         int window = days == null ? DEFAULT_WINDOW_DAYS : days;
         if (window < 1 || window > MAX_WINDOW_DAYS) {
             throw new BusinessValidationException(
-                    "La ventana de vencimientos debe estar entre 1 y " + MAX_WINDOW_DAYS + " días");
+                    "La ventana de vencimientos debe estar entre 1 y " + MAX_WINDOW_DAYS + " days");
         }
         return repository.findUpcomingExpirations(toDate(today), toDate(today.plusDays(window))).stream()
                 .map(document -> toDto(document, today))

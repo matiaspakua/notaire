@@ -54,8 +54,8 @@ class AdditionalControllersTest {
             when(repo.findAll()).thenReturn(List.of(new ProcedureTemplate()));
             when(repo.findByProcedureTypeIdProcedureType(anyInt())).thenReturn(List.of(new ProcedureTemplate()));
 
-            mvc.perform(get("/api/v1/plantilla-tramite")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/plantilla-tramite/tipo-tramite/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/procedure-templates")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/procedure-templates/procedure-types/1")).andExpect(status().isOk());
         }
     }
 
@@ -79,22 +79,22 @@ class AdditionalControllersTest {
             when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
             when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenReturn(pdf);
 
-            mvc.perform(get("/api/v1/reportes/presupuesto/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/lista-documentos-tramite?nombreTipoTramite=Compraventa"))
+            mvc.perform(get("/api/v1/reports/budget/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/reports/budget-properties/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/reports/procedure-document-list?nombreTipoTramite=Compraventa"))
                     .andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/historial-gestion/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numberManagement=10"))
+            mvc.perform(get("/api/v1/reports/management-history/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/reports/documents-due/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/reports/document-debt?numberManagement=10"))
                     .andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/libro-indice?anio=2024")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual?anio=2024&mes=5"))
+            mvc.perform(get("/api/v1/reports/index-book?anio=2024")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/reports/monthly-sworn-statement?anio=2024&mes=5"))
                     .andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual?anio=2024&mes=13"))
+            mvc.perform(get("/api/v1/reports/monthly-sworn-statement?anio=2024&mes=13"))
                     .andExpect(status().isBadRequest());
-            mvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas?anio=2024&mes=5"))
+            mvc.perform(get("/api/v1/reports/tax-sworn-statement?anio=2024&mes=5"))
                     .andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas?anio=2024&mes=0"))
+            mvc.perform(get("/api/v1/reports/tax-sworn-statement?anio=2024&mes=0"))
                     .andExpect(status().isBadRequest());
 
             // Now all error paths
@@ -108,18 +108,18 @@ class AdditionalControllersTest {
             when(service.generateMonthlyTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
             when(service.generateIncomeTaxDeclarationReport(anyInt(), anyInt())).thenThrow(new RuntimeException("e"));
 
-            mvc.perform(get("/api/v1/reportes/presupuesto/1")).andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/1")).andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/lista-documentos-tramite?nombreTipoTramite=Compraventa"))
+            mvc.perform(get("/api/v1/reports/budget/1")).andExpect(status().isInternalServerError());
+            mvc.perform(get("/api/v1/reports/budget-properties/1")).andExpect(status().isInternalServerError());
+            mvc.perform(get("/api/v1/reports/procedure-document-list?nombreTipoTramite=Compraventa"))
                     .andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/historial-gestion/1")).andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/consultar-deuda-documentos?numberManagement=10"))
+            mvc.perform(get("/api/v1/reports/management-history/1")).andExpect(status().isInternalServerError());
+            mvc.perform(get("/api/v1/reports/documents-due/1")).andExpect(status().isInternalServerError());
+            mvc.perform(get("/api/v1/reports/document-debt?numberManagement=10"))
                     .andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/libro-indice?anio=2024")).andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual?anio=2024&mes=5"))
+            mvc.perform(get("/api/v1/reports/index-book?anio=2024")).andExpect(status().isInternalServerError());
+            mvc.perform(get("/api/v1/reports/monthly-sworn-statement?anio=2024&mes=5"))
                     .andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas?anio=2024&mes=5"))
+            mvc.perform(get("/api/v1/reports/tax-sworn-statement?anio=2024&mes=5"))
                     .andExpect(status().isInternalServerError());
         }
     }
@@ -163,7 +163,7 @@ class AdditionalControllersTest {
             com.licensis.notaire.business.Person escr = new com.licensis.notaire.business.Person();
             escr.setPersonId(99);
             g.setFkIdNotaryPerson(escr);
-            var summary = new com.licensis.notaire.dto.DtoManagementSummary(1, 10, "Gestion", new Date(), null, 0, null);
+            var summary = new com.licensis.notaire.dto.DtoManagementSummary(1, 10, "Management", new Date(), null, 0, null);
             when(queryService.findAll(any(org.springframework.data.domain.Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(summary), org.springframework.data.domain.PageRequest.of(0, 20), 1));
             when(queryService.findById(1)).thenReturn(Optional.of(summary));
@@ -181,24 +181,24 @@ class AdditionalControllersTest {
             when(histRepo.findByFkIdManagementIdManagement(1)).thenReturn(List.of(h));
             when(histRepo.findByFkIdManagementIdManagement(2)).thenReturn(List.of());
 
-            mvc.perform(get("/api/v1/gestiones")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/gestiones/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/gestiones/2")).andExpect(status().isNotFound());
-            mvc.perform(get("/api/v1/gestiones/numero/10")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/gestiones/numero/99")).andExpect(status().isNotFound());
-            mvc.perform(get("/api/v1/gestiones/cliente/5")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/gestiones/1/estado-actual")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/gestiones/2/estado-actual")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/managements")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/managements/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/managements/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/managements/number/10")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/managements/number/99")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/managements/client/5")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/managements/1/current-status")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/managements/2/current-status")).andExpect(status().isNotFound());
 
             String managementBody = "{\"number\":1,\"encabezado\":\"Gestion\"}";
-            mvc.perform(post("/api/v1/gestiones").contentType("application/json")
+            mvc.perform(post("/api/v1/managements").contentType("application/json")
                     .content(managementBody)).andExpect(status().isCreated());
-            mvc.perform(put("/api/v1/gestiones/1").contentType("application/json")
+            mvc.perform(put("/api/v1/managements/1").contentType("application/json")
                     .content(managementBody)).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/gestiones/2").contentType("application/json")
+            mvc.perform(put("/api/v1/managements/2").contentType("application/json")
                     .content(managementBody)).andExpect(status().isNotFound());
-            mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/gestiones/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/managements/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/managements/2")).andExpect(status().isNotFound());
 
             var transitionOutput = new com.licensis.notaire.application.port.in.management.TransitionManagementOutput(1);
             when(transitionUseCase.execute(1, "En Progreso")).thenReturn(transitionOutput);
@@ -212,23 +212,23 @@ class AdditionalControllersTest {
                     .thenThrow(new com.licensis.notaire.exception.ResourceNotFoundException(
                             "Management not found with ID: 2"));
 
-            mvc.perform(post("/api/v1/gestiones/1/transition").contentType("application/json")
+            mvc.perform(post("/api/v1/managements/1/transition").contentType("application/json")
                     .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isOk());
-            mvc.perform(post("/api/v1/gestiones/1/transition").contentType("application/json")
+            mvc.perform(post("/api/v1/managements/1/transition").contentType("application/json")
                     .content("{\"statusDestination\": \"Estado Inexistente\"}")).andExpect(status().isBadRequest());
-            mvc.perform(post("/api/v1/gestiones/2/transition").contentType("application/json")
+            mvc.perform(post("/api/v1/managements/2/transition").contentType("application/json")
                     .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isNotFound());
 
-            mvc.perform(get("/api/v1/gestiones/1/historial")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/gestiones/2/historial")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/managements/1/history")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/managements/2/history")).andExpect(status().isNotFound());
 
             when(repo.save(any(DeedManagement.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/gestiones").contentType("application/json")
+            mvc.perform(post("/api/v1/managements").contentType("application/json")
                     .content(managementBody)).andExpect(status().isInternalServerError());
-            mvc.perform(put("/api/v1/gestiones/1").contentType("application/json")
+            mvc.perform(put("/api/v1/managements/1").contentType("application/json")
                     .content(managementBody)).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/gestiones/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/managements/1")).andExpect(status().isConflict());
         }
     }
 
@@ -251,7 +251,7 @@ class AdditionalControllersTest {
             var mvc = standaloneSetup(new UserController(repo, jwtSvc, metrics, passwordEncoder,
                     new com.licensis.notaire.security.LoginAttemptService(5, 900000), authCookies,
                     mock(com.licensis.notaire.config.TokenRevocationService.class))).build();
-            User u = new User(1, "admin", "abc", true, "Escribano");
+            User u = new User(1, "admin", "abc", true, "Notary");
 
             when(repo.findAll()).thenReturn(List.of(u));
             when(repo.findById(1)).thenReturn(Optional.of(u));
@@ -261,36 +261,36 @@ class AdditionalControllersTest {
             when(repo.existsById(1)).thenReturn(true);
             when(repo.existsById(2)).thenReturn(false);
 
-            mvc.perform(get("/api/v1/usuarios")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/usuarios/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/usuarios/2")).andExpect(status().isNotFound());
-            mvc.perform(get("/api/v1/usuarios/persona/10")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/usuarios/persona/99")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/users")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/users/1")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/users/2")).andExpect(status().isNotFound());
+            mvc.perform(get("/api/v1/users/person/10")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/users/person/99")).andExpect(status().isNotFound());
 
             // create with no password — uses UserRequest format (active, not estado)
             String noPwdJson = """
                     {"name":"user","password":"","type":"Notary","active":true}
                     """;
             when(repo.save(any(User.class))).thenReturn(u);
-            mvc.perform(post("/api/v1/usuarios").contentType("application/json")
+            mvc.perform(post("/api/v1/users").contentType("application/json")
                     .content(noPwdJson)).andExpect(status().isCreated());
             // create with password
             String withPwdJson = """
                     {"name":"user","password":"pwd","type":"Notary","active":true}
                     """;
-            mvc.perform(post("/api/v1/usuarios").contentType("application/json")
+            mvc.perform(post("/api/v1/users").contentType("application/json")
                     .content(withPwdJson)).andExpect(status().isCreated());
 
             String updateJson = """
                     {"name":"admin","password":"","type":"Notary","active":true}
                     """;
-            mvc.perform(put("/api/v1/usuarios/1").contentType("application/json")
+            mvc.perform(put("/api/v1/users/1").contentType("application/json")
                     .content(updateJson)).andExpect(status().isOk());
-            mvc.perform(put("/api/v1/usuarios/2").contentType("application/json")
+            mvc.perform(put("/api/v1/users/2").contentType("application/json")
                     .content(updateJson)).andExpect(status().isNotFound());
 
-            mvc.perform(delete("/api/v1/usuarios/1")).andExpect(status().isNoContent());
-            mvc.perform(delete("/api/v1/usuarios/2")).andExpect(status().isNotFound());
+            mvc.perform(delete("/api/v1/users/1")).andExpect(status().isNoContent());
+            mvc.perform(delete("/api/v1/users/2")).andExpect(status().isNotFound());
 
             // Login flow - all branches
             // Empty users list
@@ -298,13 +298,13 @@ class AdditionalControllersTest {
             DtoUser loginDto = new DtoUser();
             loginDto.setName("admin");
             loginDto.setPassword("admin");
-            mvc.perform(post("/api/v1/usuarios/login").contentType("application/json")
+            mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
             // User found, wrong password
             when(repo.findAll()).thenReturn(List.of(u));
             loginDto.setPassword("wrong");
-            mvc.perform(post("/api/v1/usuarios/login").contentType("application/json")
+            mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
             // User found, valid login - the password 'admin' has known MD5
@@ -312,26 +312,26 @@ class AdditionalControllersTest {
             u.setPassword("21232f297a57a5a743894a0e4a801fc3");
             u.setStatus(true);
             loginDto.setPassword("admin");
-            mvc.perform(post("/api/v1/usuarios/login").contentType("application/json")
+            mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
             // User inactive
             u.setStatus(false);
-            mvc.perform(post("/api/v1/usuarios/login").contentType("application/json")
+            mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
 
             // Failure paths
             when(repo.save(any(User.class))).thenThrow(new RuntimeException("x"));
-            mvc.perform(post("/api/v1/usuarios").contentType("application/json")
+            mvc.perform(post("/api/v1/users").contentType("application/json")
                     .content(noPwdJson)).andExpect(status().isInternalServerError());
-            mvc.perform(put("/api/v1/usuarios/1").contentType("application/json")
+            mvc.perform(put("/api/v1/users/1").contentType("application/json")
                     .content(updateJson)).andExpect(status().isInternalServerError());
             doThrow(new RuntimeException("fk")).when(repo).deleteById(1);
-            mvc.perform(delete("/api/v1/usuarios/1")).andExpect(status().isConflict());
+            mvc.perform(delete("/api/v1/users/1")).andExpect(status().isConflict());
 
-            // Exception during login should still return 200 with valido=false
+            // Exception during login should still return 200 with valid=false
             when(repo.findAll()).thenThrow(new RuntimeException("db down"));
-            mvc.perform(post("/api/v1/usuarios/login").contentType("application/json")
+            mvc.perform(post("/api/v1/users/login").contentType("application/json")
                     .content(mapper.writeValueAsString(loginDto))).andExpect(status().isOk());
         }
     }

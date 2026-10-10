@@ -23,7 +23,7 @@ http://localhost:8080/swagger-ui.html
 
 ### Example Request
 ```bash
-curl -X GET "http://localhost:8080/api/v1/presupuestos" \
+curl -X GET "http://localhost:8080/api/v1/budgets" \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -54,7 +54,7 @@ See [REST-API-REFERENCE.md](REST-API-REFERENCE.md#error-responses) for the full 
 
 ## 🔐 Authentication
 
-`POST /api/v1/usuarios/login` authenticates a user and returns a JWT. Subsequent
+`POST /api/v1/users/login` authenticates a user and returns a JWT. Subsequent
 requests carry `Authorization: Bearer <token>`, validated by `JwtAuthenticationFilter`.
 Details in [REST-API-REFERENCE.md](REST-API-REFERENCE.md#authentication).
 

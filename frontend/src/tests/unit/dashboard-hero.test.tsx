@@ -24,7 +24,7 @@ vi.mock("@/components/motion/WorkflowTracker", () => ({
 }));
 
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
-import { findLatestTracedGestion, LATEST_TRACE_CANDIDATES } from "@/hooks/useGestionWorkflow";
+import { findLatestTracedGestion, LATEST_TRACE_CANDIDATES } from "@/hooks/useManagementWorkflow";
 
 function json(body: unknown, status = 200) {
   const text = JSON.stringify(body);
@@ -39,10 +39,10 @@ const trace = (id: number, number: number, encabezado?: string) => ({
 function routes(ids: number[], traced: number[]) {
   return (u: string) => {
     const url = String(u);
-    if (/\/gestiones\?page=0&size=\d+&sort=idManagement%2Cdesc$/.test(url)) {
+    if (/\/managements\?page=0&size=\d+&sort=idManagement%2Cdesc$/.test(url)) {
       return json({ content: ids.map((id) => ({ idManagement: id, number: 1000 + id })), number: 0, size: ids.length, totalElements: ids.length, totalPages: 1 });
     }
-    const m = url.match(/\/gestiones\/(\d+)\/workflow-trace$/);
+    const m = url.match(/\/managements\/(\d+)\/workflow-trace$/);
     if (m) {
       const id = Number(m[1]);
       return traced.includes(id) ? json(trace(id, 1000 + id, `Caso ${id}`)) : json({ error: "no workflow" }, 400);
@@ -65,7 +65,7 @@ describe("findLatestTracedGestion (#1347)", () => {
     mockFetch.mockImplementation(routes([30, 29, 28, 27], [29, 27]));
     const found = await findLatestTracedGestion();
     expect(found?.trace.managementId).toBe(29);
-    expect(urls()[0]).toMatch(new RegExp(`/gestiones\\?page=0&size=${LATEST_TRACE_CANDIDATES}&sort=idManagement%2Cdesc$`));
+    expect(urls()[0]).toMatch(new RegExp(`/managements\\?page=0&size=${LATEST_TRACE_CANDIDATES}&sort=idManagement%2Cdesc$`));
   });
 
   it("skips a long run of managements without a workflow", async () => {
@@ -96,7 +96,7 @@ describe("WorkflowHero (#1347)", () => {
     render(<WorkflowHero />, { wrapper });
     const empty = await screen.findByTestId("workflow-empty");
     expect(empty).toHaveTextContent("dashboard.workflow.noRecentWorkflow");
-    expect(screen.getByRole("link", { name: "dashboard.workflow.openGestiones" })).toHaveAttribute("href", "/dashboard/gestiones");
+    expect(screen.getByRole("link", { name: "dashboard.workflow.openGestiones" })).toHaveAttribute("href", "/dashboard/managements");
     expect(screen.queryByTestId("workflow-tracker")).not.toBeInTheDocument();
   });
 });

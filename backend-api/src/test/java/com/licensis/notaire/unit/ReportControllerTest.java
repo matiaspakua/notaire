@@ -89,7 +89,7 @@ class ReportControllerTest {
     }
 
     @Test
-    @DisplayName("CU82 - Should generate the minuta de inscripción report")
+    @DisplayName("CU82 - Should generate the registration draft report")
     void shouldGenerateRegistrationDraftReport() {
         byte[] pdfBytes = {1, 2, 3};
         when(reporteService.generateRegistrationDraftReport(1)).thenReturn(pdfBytes);

@@ -24,7 +24,7 @@ in ADR-002 until a follow-up decision extends or rolls back this pilot.
    `PaymentService`, `BudgetResumenService` and the two management summary
    services, with slightly different null handling in each.
 
-The financial workflow (CU15 "Procesar Pago", CU47 "Consultar Estado de Pago") is
+The financial workflow (CU15 "Procesar Payment", CU47 "Consultar Estado de Payment") is
 the highest-value place to fix this: it has the densest business rules, it is
 fully covered by existing tests, and its REST contract is consumed by the
 dashboard, so any regression is immediately visible.
@@ -140,13 +140,13 @@ separate issue with its own use case.
 Every URL, request payload, response payload and status code is identical to the
 pre-refactor controller, including the details that look like bugs:
 
-- `DELETE /api/v1/pagos/{id}` returns **200**, not 204.
+- `DELETE /api/v1/payments/{id}` returns **200**, not 204.
 - An overpayment returns **409** with an empty body
   (`PendingBalanceExceededException`).
 - `PaymentStatus` serialises as `NoPayments`, `PARTIAL`, `PAID` — mixed case,
   because those constants are the published contract.
 
-The one internal change at the edge: `PUT /api/v1/pagos/{id}` binds a
+The one internal change at the edge: `PUT /api/v1/payments/{id}` binds a
 `PaymentUpdateRequest` record instead of the JPA `Payment` entity. The accepted
 JSON fields are the same; the entity simply no longer leaks into the API layer.
 

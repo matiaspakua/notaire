@@ -2,7 +2,7 @@ package com.licensis.notaire.unit.jpa;
 
 import com.licensis.notaire.jpa.AuditRecordJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
 import jakarta.persistence.EntityManager;
@@ -53,7 +53,7 @@ class AuditRecordJpaControllerTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends IPersistenciaJpa> T createWithReflection(Class<T> clazz, Object... args) throws Exception {
+    private <T extends JpaPersistence> T createWithReflection(Class<T> clazz, Object... args) throws Exception {
         for (Constructor<?> ctor : clazz.getDeclaredConstructors()) {
             if (ctor.getParameterCount() == args.length) {
                 ctor.setAccessible(true);
@@ -93,7 +93,7 @@ class AuditRecordJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should handle null FK usuario")
+        @DisplayName("should handle null FK user")
         void shouldHandleNullFk() {
             AuditRecord ra = new AuditRecord(99);
 
@@ -134,7 +134,7 @@ class AuditRecordJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should update FK references when usuario changes")
+        @DisplayName("should update FK references when user changes")
         void shouldUpdateFkWhenUserChanges() throws Exception {
             Integer id = 1;
             User oldUser = new User(10);
@@ -288,7 +288,7 @@ class AuditRecordJpaControllerTest {
     @DisplayName("buscarRegistroAuditoriasUsuario")
     class SearchPorUser {
         @Test
-        @DisplayName("should return filtered list when usuario matches")
+        @DisplayName("should return filtered list when user matches")
         void shouldReturnFiltered() {
             User user = new User(5);
             List<AuditRecord> all = new ArrayList<>();

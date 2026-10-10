@@ -3,13 +3,13 @@ info:
   type: http
   seq: 5
   description: |-
-      ## Missing version — PUT /api/v1/testimonio/{testimony_id}
+      ## Missing version — PUT /api/v1/testimonies/{testimony_id}
       Issue #655, Owner decision Oct 9: version is required on the full update. Without it
       the request answers 400 naming version and nothing is stored.
       Traceability: CU07
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/testimonio/{{testimony_id}}"
+  url: "{{base_url}}/api/v1/testimonies/{{testimony_id}}"
   body:
     type: json
     data: |-

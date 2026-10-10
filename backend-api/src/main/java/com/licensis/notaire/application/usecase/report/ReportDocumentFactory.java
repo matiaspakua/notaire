@@ -61,7 +61,7 @@ import java.util.function.Function;
 public class ReportDocumentFactory {
 
     static final String NOT_RECORDED = "N/A";
-    private static final String PAYMENT_PENDING = "Pago pendiente";
+    private static final String PAYMENT_PENDING = "Payment pendiente";
     private static final DateTimeFormatter DAY = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final Locale SPANISH_ARGENTINA = Locale.of("es", "AR");
 
@@ -95,22 +95,22 @@ public class ReportDocumentFactory {
      */
     public ReportDocument budget(Integer idBudget, boolean withProperties) {
         Budget budget = budgetRepository.findById(idBudget)
-                .orElseThrow(() -> new ResourceNotFoundException("Presupuesto no encontrado con ID: " + idBudget));
+                .orElseThrow(() -> new ResourceNotFoundException("Budget not found with ID: " + idBudget));
         List<Procedure> procedures = procedureRepository.findByFkIdBudgetIdBudget(idBudget);
         BudgetSummary summary = budgetSummary.summary(idBudget);
 
         List<Field> fields = new ArrayList<>(List.of(
-                new Field("Número de presupuesto", String.valueOf(budget.getNumber())),
-                new Field("Fecha de emisión", day(budget.getDate())),
+                new Field("Number of budget", String.valueOf(budget.getNumber())),
+                new Field("Date of emisión", day(budget.getDate())),
                 new Field("Cliente", fullName(budget.getFkIdPerson())),
                 new Field("Encabezado", orNotRecorded(budget.getEncabezado())),
-                new Field("Trámite", joinedOr(procedureTypeNames(procedures), "Sin trámites asociados")),
-                new Field("Gestión", summary.managementNumber() == null
-                        ? "Sin gestión asignada"
+                new Field("Procedure", joinedOr(procedureTypeNames(procedures), "Without procedures asociados")),
+                new Field("Management", summary.managementNumber() == null
+                        ? "Without management assigned"
                         : summary.managementNumber() + " - " + orNotRecorded(summary.managementHeading())),
                 new Field("Estado", orNotRecorded(budget.getStatus()))));
         if (withProperties) {
-            fields.add(new Field("Monto del inmueble", money(budget.getPropertyAmount())));
+            fields.add(new Field("Monto of the property", money(budget.getPropertyAmount())));
         }
 
         // Same item source as the CU47 total (BudgetLookupAdapter), so the lines add up to it.
@@ -125,10 +125,10 @@ public class ReportDocumentFactory {
                 .toList();
 
         List<Section> sections = new ArrayList<>();
-        sections.add(new Fields("Datos del presupuesto", fields));
+        sections.add(new Fields("Datos of the budget", fields));
         if (withProperties) {
             sections.add(new Table("Inmuebles",
-                    List.of(Column.left("Nomenclatura catastral", 2), Column.left("Domicilio", 3),
+                    List.of(Column.left("Cadastral nomenclature", 2), Column.left("Domicilio", 3),
                             Column.right("Valuación fiscal", 1.5f)),
                     distinct(procedures.stream().map(Procedure::getFkIdProperty).toList(), Property::getIdProperty)
                             .stream()
@@ -140,21 +140,21 @@ public class ReportDocumentFactory {
                     "Sin inmuebles asociados", List.of()));
         }
         sections.add(new Table("Conceptos",
-                List.of(Column.left("Concepto", 3), Column.left("Tipo", 1), Column.right("Valor", 1.4f),
+                List.of(Column.left("Concept", 3), Column.left("Tipo", 1), Column.right("Valor", 1.4f),
                         Column.right("Porcentaje", 1)),
                 itemRows, "Sin conceptos cargados",
                 List.of(new Field("Total", money(summary.total())),
                         new Field("Saldo pendiente", money(summary.pendingBalance())))));
 
-        return new ReportDocument("Presupuesto N° " + budget.getNumber(),
-                withProperties ? "Presupuesto con inmuebles (CU01)" : "Presupuesto (CU01)", sections);
+        return new ReportDocument("Budget N° " + budget.getNumber(),
+                withProperties ? "Budget with properties (CU01)" : "Budget (CU01)", sections);
     }
 
     /** Documents a procedure type requires, from its procedure template (CU03). */
     public ReportDocument procedureDocuments(String procedureTypeName) {
         ProcedureType type = procedureTypeRepository.findFirstByNameOrderByIdProcedureTypeAsc(procedureTypeName)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Tipo de trámite no encontrado: " + procedureTypeName));
+                        "Procedure type not found: " + procedureTypeName));
 
         List<List<String>> rows = procedureTemplateRepository
                 .findByProcedureTypeIdProcedureType(type.getIdProcedureType()).stream()
@@ -168,24 +168,24 @@ public class ReportDocumentFactory {
                         orNotRecorded(document.getDeliveredBy())))
                 .toList();
 
-        return new ReportDocument("Documentos por trámite: " + type.getName(), "Listado de documentos (CU03)",
+        return new ReportDocument("Documents by procedure: " + type.getName(), "Listado de documentos (CU03)",
                 List.of(
-                        new Fields("Tipo de trámite", List.of(
-                                new Field("Tipo de trámite", type.getName()),
+                        new Fields("Procedure type", List.of(
+                                new Field("Procedure type", type.getName()),
                                 new Field("Se archiva", yesNo(type.getIsArchived())),
                                 new Field("Se inscribe", yesNo(type.getIsRegistered())),
                                 new Field("Asocia inmuebles", yesNo(type.getAssociatesProperties())),
                                 new Field("Observaciones", orNotRecorded(type.getNotes())))),
                         new Table("Documentos requeridos",
                                 List.of(Column.left("Tipo de documento", 3), Column.left("Vence", 1),
-                                        Column.right("Días de validez", 1.2f), Column.left("Entrega", 2)),
-                                rows, "El tipo de trámite no tiene documentos en su plantilla", List.of())));
+                                        Column.right("Days of validez", 1.2f), Column.left("Entrega", 2)),
+                                rows, "The procedure type does not have documents in its template", List.of())));
     }
 
     /** State history of a management, oldest first (CU13). */
     public ReportDocument managementHistory(Integer idManagement) {
         DeedManagement management = deedManagementRepository.findById(idManagement)
-                .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
+                .orElseThrow(() -> new ResourceNotFoundException("Management not found with ID: " + idManagement));
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
 
         List<List<String>> rows = historyRepository.findByFkIdManagementIdManagement(idManagement).stream()
@@ -197,20 +197,20 @@ public class ReportDocumentFactory {
                         orNotRecorded(entry.getNotes())))
                 .toList();
 
-        return new ReportDocument("Historial de Gestión N° " + management.getNumber(), "Historial de gestión (CU13)",
+        return new ReportDocument("ManagementHistory of Management N° " + management.getNumber(), "ManagementHistory of management (CU13)",
                 List.of(
-                        new Fields("Datos de la gestión", List.of(
-                                new Field("Gestión", String.valueOf(management.getNumber())),
+                        new Fields("Datos of the management", List.of(
+                                new Field("Management", String.valueOf(management.getNumber())),
                                 new Field("Encabezado", orNotRecorded(management.getEncabezado())),
                                 new Field("Estado actual", management.getFkIdManagementStatus() == null
                                         ? NOT_RECORDED : management.getFkIdManagementStatus().getName()),
                                 new Field("Fecha de inicio", day(management.getDateStart())),
-                                new Field("Escribano", fullName(management.getFkIdNotaryPerson())),
+                                new Field("Notary", fullName(management.getFkIdNotaryPerson())),
                                 new Field("Clientes de referencia",
                                         joinedOr(clientNames(procedures), NOT_RECORDED)),
-                                new Field("Trámites", joinedOr(procedureTypeNames(procedures), "Sin trámites")),
+                                new Field("Procedures", joinedOr(procedureTypeNames(procedures), "Without procedures")),
                                 new Field("Observaciones", orNotRecorded(management.getNotes())))),
-                        new Table("Historial de estados",
+                        new Table("ManagementHistory de estados",
                                 List.of(Column.left("Fecha", 1), Column.left("Estado", 1.5f),
                                         Column.left("Observaciones", 4)),
                                 rows, "Sin movimientos registrados", List.of())));
@@ -226,7 +226,7 @@ public class ReportDocumentFactory {
         Person client = procedure == null || procedure.getFkIdBudget() == null
                 ? null : procedure.getFkIdBudget().getFkIdPerson();
 
-        return new ReportDocument("Vencimiento de documento presentado", "Documentos por vencer (CU42)", List.of(
+        return new ReportDocument("Expiration of submitted document", "Documents by vencer (CU42)", List.of(
                 new Fields("Documento", List.of(
                         new Field("Documento", orNotRecorded(document.getName())),
                         new Field("Tipo de documento", document.getDocumentType() == null
@@ -234,23 +234,23 @@ public class ReportDocumentFactory {
                         new Field("Entrega", orNotRecorded(document.getDeliveredBy())),
                         new Field("Preparado", yesNo(document.getPrepared())),
                         new Field("Observado", yesNo(Boolean.TRUE.equals(document.getFlagged()))),
-                        new Field("Número de cartón", document.getCardNumber() == null
+                        new Field("Number of cartón", document.getCardNumber() == null
                                 ? NOT_RECORDED : String.valueOf(document.getCardNumber())),
                         new Field("Fecha de ingreso", day(document.getDateEntry())),
                         new Field("Fecha de salida", day(document.getDateExit())))),
-                new Fields("Vencimiento", List.of(
+                new Fields("Expiration", List.of(
                         new Field("Vence", yesNo(document.getExpires())),
-                        new Field("Fecha de vencimiento", day(document.getDateDue())),
+                        new Field("Date of expiration", day(document.getDateDue())),
                         new Field("Estado", expiryStatus(document.getDateDue())),
-                        new Field("Fecha de liberación", day(document.getDateReleased())))),
-                new Fields("Pago", List.of(
+                        new Field("Date of liberación", day(document.getDateReleased())))),
+                new Fields("Payment", List.of(
                         new Field("Importe a pagar", document.getAmountToPay() == null
                                 ? "No registra" : money(document.getAmountToPay())),
                         new Field("Fecha de pago", paymentDate(document)))),
-                new Fields("Gestión", List.of(
-                        new Field("Gestión N°", management == null ? NOT_RECORDED : String.valueOf(management.getNumber())),
+                new Fields("Management", List.of(
+                        new Field("Management N°", management == null ? NOT_RECORDED : String.valueOf(management.getNumber())),
                         new Field("Encabezado", management == null ? NOT_RECORDED : orNotRecorded(management.getEncabezado())),
-                        new Field("Trámite", procedure == null || procedure.getFkIdProcedureType() == null
+                        new Field("Procedure", procedure == null || procedure.getFkIdProcedureType() == null
                                 ? NOT_RECORDED : procedure.getFkIdProcedureType().getName()),
                         new Field("Cliente de referencia", fullName(client))))));
     }
@@ -259,7 +259,7 @@ public class ReportDocumentFactory {
     public ReportDocument documentDebt(Integer managementNumber) {
         List<DeedManagement> managements = deedManagementRepository.findAllByNumber(managementNumber);
         if (managements.isEmpty()) {
-            throw new ResourceNotFoundException("Gestión no encontrada con número: " + managementNumber);
+            throw new ResourceNotFoundException("Management not found with number: " + managementNumber);
         }
 
         List<List<String>> rows = new ArrayList<>();
@@ -281,17 +281,17 @@ public class ReportDocumentFactory {
             }
         }
 
-        return new ReportDocument("Deuda de documentos - Gestión N° " + managementNumber,
+        return new ReportDocument("Debt of documents - Management N° " + managementNumber,
                 "Consulta de deuda de documentos (CU09)", List.of(
-                        new Fields("Gestión", List.of(
-                                new Field("Gestión N°", String.valueOf(managementNumber)),
+                        new Fields("Management", List.of(
+                                new Field("Management N°", String.valueOf(managementNumber)),
                                 new Field("Encabezado", joinedOr(managements.stream()
                                         .map(DeedManagement::getEncabezado).filter(Objects::nonNull)
                                         .distinct().toList(), NOT_RECORDED)))),
                         new Table("Documentos",
-                                List.of(Column.left("Trámite", 2), Column.left("Documento", 2.5f),
+                                List.of(Column.left("Procedure", 2), Column.left("Documento", 2.5f),
                                         Column.right("Importe", 1.3f), Column.left("Fecha de pago", 1.3f)),
-                                rows, "La gestión no tiene documentos presentados",
+                                rows, "The management does not have submitted documents",
                                 List.of(new Field("Total adeudado", money(owed))))));
     }
 
@@ -312,16 +312,16 @@ public class ReportDocumentFactory {
 
     static String expiryStatus(Date dateDue) {
         if (dateDue == null) {
-            return "Sin vencimiento registrado";
+            return "Without expiration registrado";
         }
         long days = ChronoUnit.DAYS.between(LocalDate.now(), localDate(dateDue));
         if (days < 0) {
-            return "Vencido hace " + (-days) + (days == -1 ? " día" : " días");
+            return "Vencido hace " + (-days) + (days == -1 ? " día" : " days");
         }
         if (days == 0) {
             return "Vence hoy";
         }
-        return "Vence en " + days + (days == 1 ? " día" : " días");
+        return "Vence en " + days + (days == 1 ? " día" : " days");
     }
 
     private static List<String> procedureTypeNames(List<Procedure> procedures) {
@@ -373,7 +373,7 @@ public class ReportDocumentFactory {
     }
 
     static String yesNo(boolean value) {
-        return value ? "Sí" : "No";
+        return value ? "Yes" : "No";
     }
 
     static String day(Date date) {

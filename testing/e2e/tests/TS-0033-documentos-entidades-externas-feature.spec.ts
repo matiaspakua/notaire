@@ -47,7 +47,7 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
       "Certificado de Dominio",
     );
 
-    await page.goto("/dashboard/documentos-entidades-externas");
+    await page.goto("/dashboard/external-entity-documents");
     await page.waitForLoadState("domcontentloaded");
 
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
@@ -83,7 +83,7 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
       tipoTramiteId: tipoTramite.data!.idProcedureType,
     });
 
-    await page.goto("/dashboard/documentos-entidades-externas");
+    await page.goto("/dashboard/external-entity-documents");
     await page.waitForLoadState("domcontentloaded");
 
     const row = page.getByRole("row", { name: new RegExp(String(gestion.data!.number)) });

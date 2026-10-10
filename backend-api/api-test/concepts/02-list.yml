@@ -3,12 +3,12 @@ info:
   type: http
   seq: 2
   description: |-
-      ## List concepts — GET /api/v1/conceptos
+      ## List concepts — GET /api/v1/concepts
       Traceability: CU66 (RF #55, #60)
 
 http:
   method: GET
-  url: "{{base_url}}/api/v1/conceptos"
+  url: "{{base_url}}/api/v1/concepts"
   headers:
     - name: Content-Type
       value: application/json

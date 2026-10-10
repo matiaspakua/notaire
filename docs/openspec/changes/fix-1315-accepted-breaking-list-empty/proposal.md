@@ -12,7 +12,7 @@
 
 ## Objetivo
 
-`backend-api/openapi/accepted-breaking-changes.txt` held 5 entries (4 from #655 for `/api/v1/pagos`, 1 from #596 for `GET /api/v1/historial`) whose breaks are already on main. They accepted nothing, and could silently accept a later break with the same text. The Owner wants the contract coherent and the list empty unless a break is truly unavoidable and justified.
+`backend-api/openapi/accepted-breaking-changes.txt` held 5 entries (4 from #655 for `/api/v1/payments`, 1 from #596 for `GET /api/v1/history`) whose breaks are already on main. They accepted nothing, and could silently accept a later break with the same text. The Owner wants the contract coherent and the list empty unless a break is truly unavoidable and justified.
 
 ## What Changes
 

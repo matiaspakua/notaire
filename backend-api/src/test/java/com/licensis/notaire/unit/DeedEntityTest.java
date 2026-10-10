@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU05", "CU06", "CU52", "CU62"})
-@DisplayName("Escritura Entity Tests")
+@DisplayName("Deed Entity Tests")
 class DeedEntityTest {
 
     @Nested
@@ -31,11 +31,11 @@ class DeedEntityTest {
             deed.setIdDeed(1);
             deed.setNumber(1001);
             deed.setDateDeedrecording(new Date());
-            deed.setBody("Escritura de compraventa");
+            deed.setBody("Deed de compraventa");
             deed.setStatus("firmada");
 
             assertThat(deed.getNumber()).isEqualTo(1001);
-            assertThat(deed.getBody()).isEqualTo("Escritura de compraventa");
+            assertThat(deed.getBody()).isEqualTo("Deed de compraventa");
             assertThat(deed.getStatus()).isEqualTo("firmada");
         }
 
@@ -144,7 +144,7 @@ class DeedEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get tramite list")
+        @DisplayName("Should set and get procedure list")
         void shouldSetAndGetProcedureList() {
             List<Procedure> procedures = new ArrayList<>();
             procedures.add(new Procedure(1));
@@ -269,11 +269,11 @@ class DeedEntityTest {
         void getDtoMapsBasicFields() {
             Deed e = new Deed(5);
             e.setNumber(3001);
-            e.setBody("Escritura de prueba");
+            e.setBody("Deed de prueba");
             var dto = e.getDto();
             assertThat(dto.getIdDeed()).isEqualTo(5);
             assertThat(dto.getNumber()).isEqualTo(3001);
-            assertThat(dto.getBody()).isEqualTo("Escritura de prueba");
+            assertThat(dto.getBody()).isEqualTo("Deed de prueba");
         }
     }
 }

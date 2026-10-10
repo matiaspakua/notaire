@@ -12,11 +12,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequirementCoverage({"CU06", "CU07"})
-@DisplayName("PlantillaPresupuesto Entity Tests")
+@DisplayName("BudgetTemplate Entity Tests")
 class BudgetTemplateEntityTest {
 
     @Nested
-    @DisplayName("PlantillaPresupuestoPK")
+    @DisplayName("BudgetTemplateKey")
     class PrimaryKeyTests {
 
         @Test
@@ -87,7 +87,7 @@ class BudgetTemplateEntityTest {
     }
 
     @Nested
-    @DisplayName("PlantillaPresupuesto fields")
+    @DisplayName("BudgetTemplate fields")
     class TemplateFieldTests {
 
         @Test
@@ -127,20 +127,20 @@ class BudgetTemplateEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get type de tramite")
+        @DisplayName("Should set and get type of procedure")
         void shouldSetAndGetProcedureType() {
             ProcedureType type = new ProcedureType();
-            type.setName("Escritura de Venta");
+            type.setName("Deed de Venta");
 
             BudgetTemplate pp = new BudgetTemplate();
             pp.setProcedureType(type);
 
             assertThat(pp.getProcedureType()).isNotNull();
-            assertThat(pp.getProcedureType().getName()).isEqualTo("Escritura de Venta");
+            assertThat(pp.getProcedureType().getName()).isEqualTo("Deed de Venta");
         }
 
         @Test
-        @DisplayName("Should set and get concepto")
+        @DisplayName("Should set and get concept")
         void shouldSetAndGetConcept() {
             Concept concept = new Concept();
             concept.setName("Honorarios");

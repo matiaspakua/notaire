@@ -3,11 +3,11 @@ info:
   type: http
   seq: 12
   description: |-
-      ## Login with mixed-case username (case-insensitive) — POST /api/v1/usuarios/login
+      ## Login with mixed-case username (case-insensitive) — POST /api/v1/users/login
       Traceability: CU78 (RF #81, #82, #83, #84, #85)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/usuarios/login"
+  url: "{{base_url}}/api/v1/users/login"
   body:
     type: json
     data: |-
@@ -22,4 +22,4 @@ runtime:
     - type: tests
       code: |-
           test("Status 200", function () { expect(res.getStatus()).to.equal(200); });
-          test("Mixed-case username logs in", function () { expect(res.getBody().valido).to.equal(true); });
+          test("Mixed-case username logs in", function () { expect(res.getBody().valid).to.equal(true); });

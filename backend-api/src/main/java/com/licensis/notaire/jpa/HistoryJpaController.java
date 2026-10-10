@@ -6,7 +6,7 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.CreateEntityException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.BusinessConstants;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
@@ -24,7 +24,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class HistoryJpaController implements Serializable, IPersistenciaJpa
+public class HistoryJpaController implements Serializable, JpaPersistence
 {
 
     public HistoryJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -41,10 +41,10 @@ public class HistoryJpaController implements Serializable, IPersistenciaJpa
     }
 
     /**
-     * Crea una nueva instancia de historial.
+     * Crea a new instancia of history.
      *
-     * @param historial La nueva instancia de historial a persistir.
-     * @return idHistorial El del historial persistido,
+     * @param history The new instancia of history a persistir.
+     * @return idHistorial The of the history persistido,
      * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO si ha ocurrido algun error.
      */
     public Integer create(History history) throws CreateEntityException
@@ -83,7 +83,7 @@ public class HistoryJpaController implements Serializable, IPersistenciaJpa
         }
         catch (Exception ex)
         {
-            throw new CreateEntityException("No se pudo crear una entidad tipo: Historial");
+            throw new CreateEntityException("Not pudo create a entidad tipo: ManagementHistory");
         }
         finally
         {
@@ -148,7 +148,7 @@ public class HistoryJpaController implements Serializable, IPersistenciaJpa
                 Integer id = history.getIdHistory();
                 if (findHistory(id) == null)
                 {
-                    throw new NonexistentEntityException("The historial with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The history with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -177,7 +177,7 @@ public class HistoryJpaController implements Serializable, IPersistenciaJpa
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The historial with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The history with id " + id + " no longer exists.", enfe);
             }
             ManagementStatus fkIdManagementStatus = history.getFkIdManagementStatus();
             if (fkIdManagementStatus != null)
@@ -204,10 +204,10 @@ public class HistoryJpaController implements Serializable, IPersistenciaJpa
     }
 
     /**
-     * Retorna el estado actual de una gestion en particular.
+     * Retorna the status actual of a management in particular.
      *
-     * @param idGestion El id de la gestion.
-     * @return estadoActualGestion Una entidad tipo historial con el estado actual de la gestion.
+     * @param idGestion The id of the management.
+     * @return estadoActualGestion A entidad tipo history with the status actual of the management.
      */
     public History findStatusActualManagement(Integer idManagement)
     {
@@ -224,11 +224,11 @@ public class HistoryJpaController implements Serializable, IPersistenciaJpa
     }
 
     /**
-     * Retorna una lista con todos los registros de historial de una gestion en particular (cambios
+     * Retorna a lista with all the registros of history of a management in particular (cambios
      * de estado en el tiempo.
      *
-     * @param idGestion El id de la gestion.
-     * @return registroHistorial una lista con todos los cambios de estado de la gestion.
+     * @param idGestion The id of the management.
+     * @return registroHistorial a lista with all the cambios of status of the management.
      */
     public List<History> findRecordHistial(Integer idManagement)
     {

@@ -1,9 +1,9 @@
 /**
  * TS-0013 - Escrituras Signing Workflow (CU05 → CU06)
- * CU05 - Preparar Escritura
- * CU06 - Firmar Escritura
- * CU52 - Modificar Escritura
- * CU63 - Buscar Escritura
+ * CU05 - Preparar Deed
+ * CU06 - Firmar Deed
+ * CU52 - Modificar Deed
+ * CU63 - Buscar Deed
  * Issue #892 (folio picker)
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU05.puml
  */
@@ -33,10 +33,10 @@ async function seedFolioNuevo(page: Page): Promise<number> {
  */
 async function seedEscrituraConFolio(page: Page, idFolio: number): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
-  const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+  const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
     dateDeedrecording: new Date().toISOString().split('T')[0],
-    body: `Escritura para firma E2E ${id}`,
+    body: `Deed para firma E2E ${id}`,
     status: 'Sin Firmar',
     idFolio,
     notes: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
@@ -53,10 +53,10 @@ async function seedEscrituraConFolio(page: Page, idFolio: number): Promise<{ idE
  */
 async function seedEscrituraSinFolio(page: Page): Promise<{ idEscritura: number; numero: number }> {
   const id = uniqueId()
-  const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+  const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
     dateDeedrecording: new Date().toISOString().split('T')[0],
-    body: `Escritura sin folio E2E ${id}`,
+    body: `Deed sin folio E2E ${id}`,
     status: 'Sin Firmar',
   })
   if (!result.ok || !result.data?.idDeed) {
@@ -66,10 +66,10 @@ async function seedEscrituraSinFolio(page: Page): Promise<{ idEscritura: number;
 }
 
 // ──────────────────────────────────────────────
-// CU05 — Preparar Escritura
+// CU05 — Preparar Deed
 // ──────────────────────────────────────────────
 
-test.describe('CU05 - Preparar Escritura', () => {
+test.describe('CU05 - Preparar Deed', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
@@ -78,7 +78,7 @@ test.describe('CU05 - Preparar Escritura', () => {
     // Seed: ensure at least one folio is available for the picker
     await seedFolioNuevo(page)
 
-    await page.goto('/dashboard/escrituras')
+    await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
     // When: click "Nueva escritura"
@@ -92,7 +92,7 @@ test.describe('CU05 - Preparar Escritura', () => {
     await expect(dialog.getByLabel(/número/i)).toBeVisible()
 
     // Form must have campo "fecha"
-    await expect(dialog.getByLabel(/fecha/i)).toBeVisible()
+    await expect(dialog.getByLabel(/date/i)).toBeVisible()
 
     // Form must have folio selector (Issue #892)
     await expect(dialog.getByTestId('select-folio-escritura')).toBeVisible()
@@ -101,7 +101,7 @@ test.describe('CU05 - Preparar Escritura', () => {
   test('CU05-GW02: golden path — fill form with folio → escritura appears in table as Sin Firmar', async ({ page }) => {
     const idFolio = await seedFolioNuevo(page)
 
-    await page.goto('/dashboard/escrituras')
+    await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
     const numeroEscritura = `${uniqueId()}`
@@ -112,7 +112,7 @@ test.describe('CU05 - Preparar Escritura', () => {
     await expect(dialog).toBeVisible()
 
     await dialog.getByLabel(/número/i).fill(numeroEscritura)
-    await dialog.getByLabel(/fecha/i).fill(new Date().toISOString().split('T')[0])
+    await dialog.getByLabel(/date/i).fill(new Date().toISOString().split('T')[0])
 
     // Select folio using the folio picker
     const folioPicker = dialog.getByTestId('select-folio-escritura')
@@ -145,10 +145,10 @@ test.describe('CU05 - Preparar Escritura', () => {
 })
 
 // ──────────────────────────────────────────────
-// CU06 — Firmar Escritura
+// CU06 — Firmar Deed
 // ──────────────────────────────────────────────
 
-test.describe('CU06 - Firmar Escritura', () => {
+test.describe('CU06 - Firmar Deed', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
@@ -158,7 +158,7 @@ test.describe('CU06 - Firmar Escritura', () => {
     const idFolio = await seedFolioNuevo(page)
     const { idEscritura, numero } = await seedEscrituraConFolio(page, idFolio)
 
-    await page.goto('/dashboard/escrituras')
+    await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
     // The escritura row must be visible
@@ -182,7 +182,7 @@ test.describe('CU06 - Firmar Escritura', () => {
     // Seed: escritura sin folio asignado
     const { idEscritura, numero } = await seedEscrituraSinFolio(page)
 
-    await page.goto('/dashboard/escrituras')
+    await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
     // The escritura row must be visible
@@ -210,7 +210,7 @@ test.describe('CU06 - Firmar Escritura', () => {
         await expect(
           page
             .locator('[data-sonner-toast]')
-            .getByText(/folio|sin folio|no tiene folio|no puede firmar/i)
+            .getByText(/folios|sin folio|no tiene folio|no puede firmar/i)
             .first()
         ).toBeVisible({ timeout: 5000 })
       }
@@ -222,22 +222,22 @@ test.describe('CU06 - Firmar Escritura', () => {
 })
 
 // ──────────────────────────────────────────────
-// CU63 — Buscar Escritura
+// CU63 — Buscar Deed
 // ──────────────────────────────────────────────
 
-test.describe('CU63 - Buscar Escritura', () => {
+test.describe('CU63 - Buscar Deed', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU63-GW01: buscar por número → GET /escrituras/buscar es invocado', async ({ page }) => {
-    await page.goto('/dashboard/escrituras')
+  test('CU63-GW01: buscar por número → GET /deeds/search es invocado', async ({ page }) => {
+    await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
     // Intercept before typing so we don't miss a fast request
     const searchRequestPromise = page.waitForRequest(
       (req) =>
-        req.url().includes('/api/v1/escrituras/buscar') && req.method() === 'GET',
+        req.url().includes('/api/v1/deeds/search') && req.method() === 'GET',
       { timeout: 10000 }
     )
 
@@ -251,15 +251,15 @@ test.describe('CU63 - Buscar Escritura', () => {
     // Seed a known escritura via API so the search has something to find
     const id = uniqueId()
     const numero = `${id}`
-    const result = await apiPost<{ idDeed: number }>(page, '/escrituras', {
+    const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
       number: id,
       dateDeedrecording: new Date().toISOString().split('T')[0],
-      body: `Escritura de búsqueda E2E ${id}`,
+      body: `Deed de búsqueda E2E ${id}`,
       status: 'Sin Firmar',
     })
     if (!result.ok) throw new Error(`Seed failed: ${result.error}`)
 
-    await page.goto('/dashboard/escrituras')
+    await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
     // When: search for the known numero
@@ -285,11 +285,11 @@ for (const viewport of [
     await authenticateAsAdmin(page)
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
 
-    await page.goto('/dashboard/escrituras')
+    await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
     // Page heading visible
-    await expect(page.getByRole('heading', { level: 1, name: /escrituras/i })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: /deeds/i })).toBeVisible()
 
     // "Nueva escritura" button accessible
     await expect(page.getByRole('button', { name: /nueva escritura/i })).toBeVisible()

@@ -25,7 +25,7 @@ export function formatCurrency(amount?: number | null): string {
   }).format(amount);
 }
 
-/** Get full name from Persona (firstName/lastName) or DtoPerson (name/lastName) */
+/** Get full name from Person (firstName/lastName) or DtoPerson (name/lastName) */
 export function fullName(p?: {
   firstName?: string;
   name?: string;

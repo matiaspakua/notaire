@@ -37,7 +37,7 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should accept a número matching the expected correlativo")
+    @DisplayName("Should accept a number matching the expected correlativo")
     void shouldAcceptNumberMatchingExpectedCorrelativo() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
@@ -49,7 +49,7 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should reject a número already used within the same scope")
+    @DisplayName("Should reject a number already used within the same scope")
     void shouldRejectDuplicateNumber() {
         Person notary = createNotary(1);
         inMemoryPort.recordDuplicate(5, 1, 2026, false, null);
@@ -61,7 +61,7 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should require justificación when the número leaves a gap")
+    @DisplayName("Should require justificación when the number leaves a gap")
     void shouldRequireJustificationForGap() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
@@ -79,7 +79,7 @@ class DeedNumberingUseCaseTest {
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
         DeedNumberingValidationResult resultado = deedNumberingUseCase.validate(
-                9, notary, 2026, false, "Escritura anulada N° 6 a 8", null);
+                9, notary, 2026, false, "Deed anulada N° 6 a 8", null);
 
         assertThat(resultado).isEqualTo(DeedNumberingValidationResult.SKIP_JUSTIFIED);
     }

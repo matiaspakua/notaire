@@ -6,7 +6,7 @@ info:
       Traceability: CU01 / CU85
 http:
   method: POST
-  url: "{{base_url}}/api/v1/presupuestos"
+  url: "{{base_url}}/api/v1/budgets"
   body:
     type: json
     data: |-

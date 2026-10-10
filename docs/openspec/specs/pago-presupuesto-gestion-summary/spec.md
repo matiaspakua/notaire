@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Exposes the persisted relationship between a payment (`Pago`) and its
+Exposes the persisted relationship between a payment (`Payment`) and its
 presupuesto, and provides consultable financial summaries — by presupuesto and
 by gestión — of what was budgeted, collected and still owed, per CU47.
 
@@ -10,7 +10,7 @@ by gestión — of what was budgeted, collected and still owed, per CU47.
 
 ### Requirement: A payment response includes its associated presupuesto
 The system SHALL include the identifier of the associated presupuesto in every
-API response representing a `Pago`, whether returned individually, in a list,
+API response representing a `Payment`, whether returned individually, in a list,
 or after being created or edited.
 
 #### Scenario: Retrieving a single payment includes its presupuesto

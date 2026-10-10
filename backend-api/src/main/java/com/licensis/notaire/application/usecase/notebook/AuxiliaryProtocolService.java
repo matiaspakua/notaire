@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Gestiona el alta de trámites en Protocolo Auxiliar (CU81).
+ * Gestiona the alta of procedures in Auxiliary protocol (CU81).
  */
 @Service
 @Transactional
@@ -38,7 +38,7 @@ public class AuxiliaryProtocolService {
 
     public Deed iniciarDeed(Integer idFolio, String body, Date dateDeedrecording) {
         if (idFolio == null) {
-            throw new BusinessValidationException("Debe indicar el folio auxiliar donde iniciar la escritura");
+            throw new BusinessValidationException("Must indicar the folio auxiliar where start the deed");
         }
 
         Folio folio = folioRepository.findById(idFolio)
@@ -48,7 +48,7 @@ public class AuxiliaryProtocolService {
             throw new BusinessValidationException("El folio indicado no pertenece a Protocolo Auxiliar");
         }
         if (folio.getFkIdDeed() != null) {
-            throw new BusinessValidationException("El folio indicado ya tiene una escritura asociada");
+            throw new BusinessValidationException("The folio indicado already has a deed associated");
         }
 
         Deed deed = new Deed();

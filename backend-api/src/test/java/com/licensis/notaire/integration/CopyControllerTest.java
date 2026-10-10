@@ -23,8 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU87 - Vincular Escritura a Folio y Copia a Testimonio (issue #838): rechaza
- * la creación de una copia cuando el testimonio de origen ya tiene un
+ * CU87 - Vincular Deed a Folio y Copy a Testimony (issue #838): rechaza
+ * the creación of a copy when the testimony of origen already has a
  * movimiento inscripto (RF asociado).
  */
 @DisplayName("CopiaController#create — CU87 integration tests")
@@ -88,7 +88,7 @@ class CopyControllerTest extends ServiceIntegrationTest {
         Testimony testimony = createTestimony();
         addMovement(testimony, true);
 
-        mockMvc.perform(post("/api/v1/copia")
+        mockMvc.perform(post("/api/v1/copies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(copyBody(8001, testimony.getIdTestimony())))
                 .andExpect(status().isConflict())
@@ -101,7 +101,7 @@ class CopyControllerTest extends ServiceIntegrationTest {
         Testimony testimony = createTestimony();
         addMovement(testimony, false);
 
-        mockMvc.perform(post("/api/v1/copia")
+        mockMvc.perform(post("/api/v1/copies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(copyBody(8002, testimony.getIdTestimony())))
                 .andExpect(status().isCreated());
@@ -112,7 +112,7 @@ class CopyControllerTest extends ServiceIntegrationTest {
     void shouldCreateCopyWhenTestimonyHasNoMovimientos() throws Exception {
         Testimony testimony = createTestimony();
 
-        mockMvc.perform(post("/api/v1/copia")
+        mockMvc.perform(post("/api/v1/copies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(copyBody(8003, testimony.getIdTestimony())))
                 .andExpect(status().isCreated());

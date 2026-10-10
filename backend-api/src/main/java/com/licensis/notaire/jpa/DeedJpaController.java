@@ -8,7 +8,7 @@ import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Testimony;
@@ -27,7 +27,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class DeedJpaController implements Serializable, IPersistenciaJpa
+public class DeedJpaController implements Serializable, JpaPersistence
 {
 
     public DeedJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -146,8 +146,8 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
 
         if (persistentDeed != null)
         {
-            version = persistentDeed.getVersion(); // Version del Objeto en db
-            oldVersion = deed.getVersion(); // Version del Objeto en memoria
+            version = persistentDeed.getVersion(); // Version of the Objeto in db
+            oldVersion = deed.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {
@@ -170,7 +170,7 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Testimonio " + testimonyListOldTestimony + " since its fkIdEscritura field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Testimony " + testimonyListOldTestimony + " since its fkIdEscritura field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null)
@@ -289,7 +289,7 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The escritura with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The deed with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             List<Testimony> testimonyListOrphanCheck = deed.getTestimonyList();
@@ -299,7 +299,7 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Escritura (" + deed + ") cannot be destroyed since the Testimonio " + testimonyListOrphanCheckTestimony + " in its testimonioList field has a non-nullable fkIdEscritura field.");
+                illegalOrphanMessages.add("This Deed (" + deed + ") cannot be destroyed since the Testimony " + testimonyListOrphanCheckTestimony + " in its testimonioList field has a non-nullable fkIdEscritura field.");
             }
             if (illegalOrphanMessages != null)
             {
@@ -425,8 +425,8 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
 
         if (persistentDeed != null)
         {
-            version = persistentDeed.getVersion(); // Version del Objeto en db
-            oldVersion = miDeed.getVersion(); // Version del Objeto en memoria
+            version = persistentDeed.getVersion(); // Version of the Objeto in db
+            oldVersion = miDeed.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {
@@ -480,8 +480,8 @@ public class DeedJpaController implements Serializable, IPersistenciaJpa
 
         if (persistentDeed != null)
         {
-            version = persistentDeed.getVersion(); // Version del Objeto en db
-            oldVersion = miDeed.getVersion(); // Version del Objeto en memoria
+            version = persistentDeed.getVersion(); // Version of the Objeto in db
+            oldVersion = miDeed.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {

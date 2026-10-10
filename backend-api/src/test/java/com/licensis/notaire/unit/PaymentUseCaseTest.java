@@ -107,7 +107,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.save(any(Payment.class))).thenReturn(savedPayment);
 
             // Act
-            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Pago parcial"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Payment parcial"));
 
             // Assert
             assertThat(result).isNotNull();
@@ -125,7 +125,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(999, new java.math.BigDecimal("1000.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Presupuesto no encontrado");
+                    .hasMessageContaining("Budget not found");
         }
 
         @Test
@@ -137,7 +137,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("0.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                    .hasMessageContaining("The monto of the payment must be mayor a cero");
         }
 
         @Test
@@ -149,7 +149,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(1, new java.math.BigDecimal("-500.00"), new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                    .hasMessageContaining("The monto of the payment must be mayor a cero");
         }
 
         @Test
@@ -161,7 +161,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> processPayment.process(command(1, null, new Date(), "Test")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                    .hasMessageContaining("The monto of the payment must be mayor a cero");
         }
 
         @Test
@@ -213,7 +213,7 @@ class PaymentUseCaseTest {
     }
 
     @Nested
-    @DisplayName("CU47 - Consultar Pago")
+    @DisplayName("CU47 - Consultar Payment")
     class ConsultarPaymentTests {
 
         @Test
@@ -310,7 +310,7 @@ class PaymentUseCaseTest {
             // Act & Assert
             assertThatThrownBy(() -> deletePayment.delete(999))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Pago no encontrado");
+                    .hasMessageContaining("Payment no encontrado");
         }
 
         private Payment createPayment(Integer id, java.math.BigDecimal amount) {
@@ -334,7 +334,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             PaymentDetails result = processPayment.process(
-                    new ProcessPaymentCommand(1, new java.math.BigDecimal("2000.00"), new Date(), "Pago parcial", "Efectivo"));
+                    new ProcessPaymentCommand(1, new java.math.BigDecimal("2000.00"), new Date(), "Payment parcial", "Efectivo"));
 
             assertThat(result.paymentMethod()).isEqualTo("Efectivo");
         }
@@ -346,7 +346,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Pago parcial"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Payment parcial"));
 
             assertThat(result.paymentMethod()).isNull();
         }
@@ -377,7 +377,7 @@ class PaymentUseCaseTest {
             assertThatThrownBy(() -> editPayment.edit(
                     new EditPaymentCommand(999, new java.math.BigDecimal("1000"), new Date(), "Test", "Efectivo")))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Pago no encontrado");
+                    .hasMessageContaining("Payment no encontrado");
 
             verify(paymentRepository, never()).save(any(Payment.class));
         }

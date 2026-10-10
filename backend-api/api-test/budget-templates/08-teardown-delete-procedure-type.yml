@@ -3,11 +3,11 @@ info:
   type: http
   seq: 10
   description: |-
-      ## Teardown - Delete procedure type — DELETE /api/v1/tipo-tramite/{template_procedure_type_id}
+      ## Teardown - Delete procedure type — DELETE /api/v1/procedure-types/{template_procedure_type_id}
       Traceability: CU57 (RF #55, #56)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/tipo-tramite/{{template_procedure_type_id}}"
+  url: "{{base_url}}/api/v1/procedure-types/{{template_procedure_type_id}}"
   headers:
     - name: Content-Type
       value: application/json

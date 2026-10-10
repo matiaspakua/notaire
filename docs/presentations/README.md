@@ -18,7 +18,7 @@ con dos demos basadas en cambios **reales y ya mergeados** en Notaire.
 8-9. **Caso B — Greenfield con Spec Kit** — flujo (diagrama Mermaid) + estructura de artefactos
 9.3. **Por qué SDD necesita ajustes en empresa/legacy** — Jira, GitHub, Confluence, ambientes dev, compliance
 9.5. **¿Qué es Notaire?** — contexto técnico simplificado (diagrama Mermaid basado en SAD §3.2 Technical Context) antes de entrar a las demos
-10-12. **DEMO 1 — OpenSpec real**: Issue #879 → PR #882 (fix) → PR #884 (archive Gate 5) — fix de `Inmueble.valuacionFiscal` (slide 12 incluye links a issue, branch, proposal/design/tasks/spec, commit, test y ambas PRs)
+10-12. **DEMO 1 — OpenSpec real**: Issue #879 → PR #882 (fix) → PR #884 (archive Gate 5) — fix de `Property.valuacionFiscal` (slide 12 incluye links a issue, branch, proposal/design/tasks/spec, commit, test y ambas PRs)
 13-15. **DEMO 2 — Spec Kit real**: Issue #865 (CU-43) → PR #871 (feat) → PR #874 (archive Gate 5) — Reingresar documentación
 15.5. **Demo 2 — Artefactos con links**: issue, branch, spec/plan/tasks/traceability, commit, test E2E y ambas PRs
 16. **Cierre** — cuándo usar cada framework

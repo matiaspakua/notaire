@@ -8,9 +8,9 @@ import { test, expect } from "@playwright/test";
 
 async function loginAsAdmin(page: import("@playwright/test").Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 }
 
@@ -25,8 +25,8 @@ test.describe("Logout flow", () => {
     await expect(page).toHaveURL(/\/login/, { timeout: 5000 });
 
     // Login form visible again — UI shows logged-out state
-    await expect(page.getByTestId("input-usuario")).toBeVisible();
-    await expect(page.getByTestId("btn-ingresar")).toBeVisible();
+    await expect(page.getByTestId("input-username")).toBeVisible();
+    await expect(page.getByTestId("btn-sign-in")).toBeVisible();
 
     // JWT must not remain in localStorage; client auth flag cleared
     const authState = await page.evaluate(() =>

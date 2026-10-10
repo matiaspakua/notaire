@@ -23,7 +23,7 @@
 
 ## 6. Ejecutar regresión
 
-- [x] 6.1 backend verify and full Bruno green; oasdiff passes with one accepted entry (roles/usuarios documentation); run_pipeline.sh not run (no Docker)
+- [x] 6.1 backend verify and full Bruno green; oasdiff passes with one accepted entry (roles/users documentation); run_pipeline.sh not run (no Docker)
 
 ## 7. Ejecutar Playwright
 

@@ -24,7 +24,7 @@ test.describe("#773 - Documento vinculado a un trámite", () => {
     const escribano = await createPersona(page, { isClient: false });
     expect(escribano.ok, escribano.error ?? "createPersona failed").toBe(true);
     const numeroGestion = uniqueId() % 1_000_000;
-    const gestion = await apiPost<{ idManagement: number }>(page, "/gestiones", {
+    const gestion = await apiPost<{ idManagement: number }>(page, "/managements", {
       encabezado: `Gestión documentos E2E ${numeroGestion}`,
       dateStart: new Date().toISOString().split("T")[0],
       number: numeroGestion,
@@ -39,7 +39,7 @@ test.describe("#773 - Documento vinculado a un trámite", () => {
     const tipoDocumento = await createTipoDocumento(page, { name: tipoNombre, expires: false });
     expect(tipoDocumento.ok, tipoDocumento.error ?? "createTipoDocumento failed").toBe(true);
 
-    await page.goto("/dashboard/documentos");
+    await page.goto("/dashboard/documents");
     await page.getByTestId("btn-nuevo-documento").click();
     await page.getByTestId("select-tipo-documento").click();
     await page.getByRole("option", { name: tipoNombre }).click();
@@ -55,7 +55,7 @@ test.describe("#773 - Documento vinculado a un trámite", () => {
     await expect(row).toBeVisible({ timeout: 15000 });
     await expect(row).toContainText(`#${tramite.data!.idProcedure}`);
 
-    await page.goto("/dashboard/gestiones");
+    await page.goto("/dashboard/managements");
     await page.getByTestId(`btn-resumen-caso-${gestion.data!.idManagement}`).click();
     const dialog = page.getByTestId("dialog-resumen-caso");
     await expect(dialog.getByTestId("resumen-documento")).toContainText(tipoNombre, { timeout: 15000 });

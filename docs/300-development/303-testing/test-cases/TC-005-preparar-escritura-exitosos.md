@@ -1,10 +1,10 @@
-# Test Case: Preparar Escritura Exitoso
+# Test Case: Preparar Deed Exitoso
 
 | Atributo | Detalle |
 |---|---|
 | **ID** | TC-005-preparar-escritura-exitosos |
-| **Título** | Preparar Escritura Exitoso |
-| **Nombre** | Preparar Escritura Exitoso |
+| **Título** | Preparar Deed Exitoso |
+| **Nombre** | Preparar Deed Exitoso |
 | **Referencia** | CU05 |
 | **Descripción** | Validar el proceso de preparación de una escritura, incluyendo la identificación de los involucrados y los datos necesarios. |
 

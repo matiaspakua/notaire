@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Unit tests for the CU15 "Procesar Pago" use case, driven entirely through the ports
+ * Unit tests for the CU15 "Procesar Payment" use case, driven entirely through the ports
  * with in-memory fakes — no Spring context, no JPA, no mocks.
  *
  * <p>These carry over the scenarios previously asserted against {@code PaymentService}:
@@ -46,7 +46,7 @@ class ProcessPaymentServiceTest {
     }
 
     private ProcessPaymentCommand command(BigDecimal amount) {
-        return new ProcessPaymentCommand(BUDGET_ID, amount, new Date(), "Pago de prueba", "EFECTIVO");
+        return new ProcessPaymentCommand(BUDGET_ID, amount, new Date(), "Payment de prueba", "EFECTIVO");
     }
 
     @Test
@@ -57,7 +57,7 @@ class ProcessPaymentServiceTest {
         assertThat(registered.id()).isNotNull();
         assertThat(registered.amount()).isEqualByComparingTo(Money.of("2500.00"));
         assertThat(registered.budgetId()).isEqualTo(BUDGET_ID);
-        assertThat(registered.notes()).isEqualTo("Pago de prueba");
+        assertThat(registered.notes()).isEqualTo("Payment de prueba");
         assertThat(registered.paymentMethod()).isEqualTo("EFECTIVO");
         assertThat(payments.all()).hasSize(1);
     }
@@ -119,7 +119,7 @@ class ProcessPaymentServiceTest {
     void shouldRejectNullAmount() {
         assertThatThrownBy(() -> processPayment.process(command(null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("El monto del pago debe ser mayor a cero");
+                .hasMessage("The monto of the payment must be mayor a cero");
     }
 
     @Test
@@ -127,11 +127,11 @@ class ProcessPaymentServiceTest {
     void shouldRejectNonPositiveAmount() {
         assertThatThrownBy(() -> processPayment.process(command(Money.of("0.00"))))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("El monto del pago debe ser mayor a cero");
+                .hasMessage("The monto of the payment must be mayor a cero");
 
         assertThatThrownBy(() -> processPayment.process(command(Money.of("-50.00"))))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("El monto del pago debe ser mayor a cero");
+                .hasMessage("The monto of the payment must be mayor a cero");
     }
 
     @Test
@@ -140,7 +140,7 @@ class ProcessPaymentServiceTest {
         assertThatThrownBy(() -> processPayment.process(
                 new ProcessPaymentCommand(999, Money.of("100.00"), new Date(), null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Presupuesto no encontrado con ID: 999");
+                .hasMessage("Budget not found with ID: 999");
     }
 
     @Test
@@ -148,6 +148,6 @@ class ProcessPaymentServiceTest {
     void shouldCheckBudgetBeforeAmount() {
         assertThatThrownBy(() -> processPayment.process(
                 new ProcessPaymentCommand(999, Money.of("-1.00"), new Date(), null, null)))
-                .hasMessage("Presupuesto no encontrado con ID: 999");
+                .hasMessage("Budget not found with ID: 999");
     }
 }

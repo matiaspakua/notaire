@@ -10,16 +10,16 @@ The following entities have `FetchType.LAZY` associations that are accessed duri
 
 | Entity | Lazy Field | Accessed in `getDto()`? | Controller fix needed |
 |--------|-----------|-------------------------|-----------------------|
-| `Testimonio` | `movimientoTestimonioList` | Yes (iterates) | ✅ Fixed PR #504 |
-| `Testimonio` | `copiaList` | No (not in `getDto()`) | N/A |
-| `Escritura` | `folioList`, `tramiteList`, `testimonioList` | Yes | ✅ Fixed PR #506 |
-| `GestionDeEscritura` | `tramiteList` | Yes | ✅ Fixed PR #506 |
+| `Testimony` | `movimientoTestimonioList` | Yes (iterates) | ✅ Fixed PR #504 |
+| `Testimony` | `copiaList` | No (not in `getDto()`) | N/A |
+| `Deed` | `folioList`, `tramiteList`, `testimonioList` | Yes | ✅ Fixed PR #506 |
+| `DeedManagement` | `tramiteList` | Yes | ✅ Fixed PR #506 |
 | `Presupuesto` | `itemList`, `movimientosPresupuestoList` | Entity returned directly | ✅ Fixed PR #506 |
-| `Tramite` | `tramiteItemList`, `personaList` | Yes | ✅ Fixed PR #506 |
+| `Procedure` | `tramiteItemList`, `personaList` | Yes | ✅ Fixed PR #506 |
 | `WorkflowDefinition` | `steps`, `transitions` | Entity returned directly | ✅ Fixed PR #506 |
-| `Persona` | `identificacionList`, `tramiteList` | Yes | ✅ Fixed PR #506 |
-| `Usuario` | `registroAuditoriaList` | Entity returned directly | ✅ Fixed PR #506 |
-| `TipoDeTramite` | Multiple | Yes | ✅ Fixed PR #506 |
+| `Person` | `identificacionList`, `tramiteList` | Yes | ✅ Fixed PR #506 |
+| `UserAccount` | `registroAuditoriaList` | Entity returned directly | ✅ Fixed PR #506 |
+| `ProcedureType` | Multiple | Yes | ✅ Fixed PR #506 |
 
 All `@GetMapping` methods that map entities with lazy collections now have `@Transactional(readOnly = true)` applied (29 of the 31 `api` controllers use `@Transactional`; `ReporteController` returns PDFs directly and `WorkflowValidationController` has no `@GetMapping`, so neither needs it).
 
@@ -31,7 +31,7 @@ Collections that are large or rarely needed in every query:
 
 ```java
 @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdTestimonio", fetch = FetchType.LAZY)
-private List<MovimientoTestimonio> movimientoTestimonioList = new ArrayList<>();
+private List<TestimonyMovement> movimientoTestimonioList = new ArrayList<>();
 ```
 
 **Requirement**: the code that accesses this list must run inside a transaction.
@@ -42,7 +42,7 @@ Single associations that are almost always needed. The `@ManyToOne` default is `
 
 ```java
 @ManyToOne(optional = false, fetch = FetchType.EAGER)
-private Escritura fkIdEscritura;
+private Deed fkIdEscritura;
 ```
 
 **Caution**: never use `EAGER` on `@OneToMany` / `@ManyToMany` — it generates N+1 queries or Cartesian products.
@@ -90,8 +90,8 @@ public class FooController {
 If the lazy collection is always needed, use a JPQL fetch join instead of changing to EAGER:
 
 ```java
-@Query("SELECT t FROM Testimonio t LEFT JOIN FETCH t.movimientoTestimonioList WHERE t.idTestimonio = :id")
-Optional<Testimonio> findByIdWithMovimientos(@Param("id") Integer id);
+@Query("SELECT t FROM Testimony t LEFT JOIN FETCH t.movimientoTestimonioList WHERE t.idTestimonio = :id")
+Optional<Testimony> findByIdWithMovimientos(@Param("id") Integer id);
 ```
 
 This fetches the collection in a single SQL query without triggering N+1.
@@ -117,11 +117,11 @@ The current architecture calls `.getDto()` inside a stream over `findAll()` resu
 ```java
 // Option 1: EntityGraph on repository method
 @EntityGraph(attributePaths = {"movimientoTestimonioList"})
-List<Testimonio> findAll();
+List<Testimony> findAll();
 
 // Option 2: Explicit JPQL fetch join
-@Query("SELECT t FROM Testimonio t LEFT JOIN FETCH t.movimientoTestimonioList")
-List<Testimonio> findAllWithMovimientos();
+@Query("SELECT t FROM Testimony t LEFT JOIN FETCH t.movimientoTestimonioList")
+List<Testimony> findAllWithMovimientos();
 ```
 
 For the current scale of the Notaire system (notarial office, hundreds of records) the N+1 impact is acceptable. Monitor via the Grafana `notaire-backend` dashboard if response times degrade.

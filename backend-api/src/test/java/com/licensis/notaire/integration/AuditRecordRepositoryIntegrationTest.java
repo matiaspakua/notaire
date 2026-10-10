@@ -75,7 +75,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find registros by usuario id")
+    @DisplayName("Should find registros by user id")
     void shouldFindByUserId() {
         auditRecordRepository.save(testRecord);
 
@@ -86,12 +86,12 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find registros by usuario id paginated")
+    @DisplayName("Should find registros by user id paginated")
     void shouldFindByUserIdPaginated() {
         auditRecordRepository.save(testRecord);
 
         AuditRecord registro2 = new AuditRecord();
-        registro2.setModule("USUARIOS");
+        registro2.setModule("USERS");
         registro2.setOperationDetail("UPDATE");
         registro2.setDate(new Date());
         registro2.setFkIdUser(testUser);
@@ -105,7 +105,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find all registros with usuario")
+    @DisplayName("Should find all registros with user")
     void shouldFindAllWithUser() {
         auditRecordRepository.save(testRecord);
 
@@ -116,7 +116,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find registro by id with usuario")
+    @DisplayName("Should find registro by id with user")
     void shouldFindByIdWithUser() {
         AuditRecord saved = auditRecordRepository.save(testRecord);
 
@@ -130,7 +130,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should find registros by usuario id with usuario")
+    @DisplayName("Should find registros by user id with user")
     void shouldFindByUserIdWithUser() {
         auditRecordRepository.save(testRecord);
 
@@ -141,7 +141,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should maintain referential integrity with usuario")
+    @DisplayName("Should maintain referential integrity with user")
     void shouldMaintainReferentialIntegrityWithUser() {
         AuditRecord saved = auditRecordRepository.save(testRecord);
 

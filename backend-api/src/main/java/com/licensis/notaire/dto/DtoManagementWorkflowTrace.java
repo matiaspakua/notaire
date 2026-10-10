@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Aggregated DTO for GET /api/v1/gestiones/{id}/workflow-trace.
+ * Aggregated DTO for GET /api/v1/managements/{id}/workflow-trace.
  * Combines management info, the workflow definition, its nodes and transitions,
  * the management history, computed per-node statuses, and optional testimony
- * movements for the post-signing reingreso loop (issue #841).
+ * movements for the post-signing reentry loop (issue #841).
  */
 public class DtoManagementWorkflowTrace {
 
@@ -24,7 +24,7 @@ public class DtoManagementWorkflowTrace {
     private List<DtoWorkflowTransition> transitions;
     private List<DtoHistoryEntry> history;
     private Map<Integer, String> nodeStatuses; // nodeId → "completed" | "in_progress" | "pending"
-    /** Testimony movements for the gestión (empty when none); reingreso loop signal. */
+    /** Testimony movements for the management (empty when none); reentry loop signal. */
     private List<DtoTestimonyMovementEntry> testimonyMovements;
 
     public Integer getManagementId() {
@@ -167,7 +167,7 @@ public class DtoManagementWorkflowTrace {
     }
 
     /**
-     * Lightweight testimony movement entry for the secondary reingreso timeline.
+     * Lightweight testimony movement entry for the secondary reentry timeline.
      * {@code returnedObserved} is derived as {@code dateExit != null && !registered}.
      */
     public static class DtoTestimonyMovementEntry {

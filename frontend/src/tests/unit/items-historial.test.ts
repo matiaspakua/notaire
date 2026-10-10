@@ -1,6 +1,6 @@
 /**
- * Unit tests for useItems hook plus Historial/Gestiones business logic.
- * Covers CU01, CU39 (Items), CU13, CU53 (Historial), CU02, CU53 (Gestiones search)
+ * Unit tests for useItems hook plus ManagementHistory/Gestiones business logic.
+ * Covers CU01, CU39 (Items), CU13, CU53 (ManagementHistory), CU02, CU53 (Gestiones search)
  */
 import { describe, it, expect } from "vitest";
 import { itemsKeys } from "@/hooks/useItems";
@@ -71,10 +71,10 @@ describe("Item type shape (CU01, CU39)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Historial type shape contracts
+// ManagementHistory type shape contracts
 // ──────────────────────────────────────────────
 
-describe("Historial type shape (CU13, CU53)", () => {
+describe("ManagementHistory type shape (CU13, CU53)", () => {
   it("historial has correct fields", () => {
     const h = {
       idHistorial: 1,

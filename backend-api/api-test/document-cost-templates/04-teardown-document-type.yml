@@ -6,7 +6,7 @@ info:
       Traceability: CU27
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/tipo-de-documento/{{dct_dt_id}}"
+  url: "{{base_url}}/api/v1/document-types/{{dct_dt_id}}"
   headers:
     - name: Content-Type
       value: application/json

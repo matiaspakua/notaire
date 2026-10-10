@@ -1,7 +1,7 @@
 package com.licensis.notaire.application.port.in.management;
 
 /**
- * Inbound port for CU83 - Transición de estado de gestión.
+ * Inbound port for CU83 - Transition of status of management.
  * Defines the contract for transitioning a management's status against its workflow definition.
  */
 public interface TransitionManagementUseCase {

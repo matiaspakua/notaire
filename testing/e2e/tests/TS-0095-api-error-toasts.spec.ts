@@ -11,9 +11,9 @@ import { test, expect, type Page } from "@playwright/test";
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }
 
@@ -24,7 +24,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     await loginAsAdmin(page);
 
     const serverMessage = "El monto excede el saldo pendiente del presupuesto";
-    await page.route("**/api/v1/pagos", async (route) => {
+    await page.route("**/api/v1/payments", async (route) => {
       if (route.request().method() === "POST") {
         await route.fulfill({
           status: 409,
@@ -33,7 +33,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
             status: 409,
             error: "Conflict",
             message: serverMessage,
-            path: "/api/v1/pagos",
+            path: "/api/v1/payments",
           }),
         });
         return;
@@ -41,7 +41,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
       await route.continue();
     });
 
-    await page.goto("/dashboard/pagos");
+    await page.goto("/dashboard/payments");
     await page.getByTestId("btn-nuevo-pago").click();
     await page.getByTestId("input-monto-pago").fill("999999");
     // Submit even if presupuesto picker is empty — stub owns the failure.
@@ -58,7 +58,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     await loginAsAdmin(page);
 
     const fieldMessage = "name: must not be blank";
-    await page.route("**/api/v1/usuarios", async (route) => {
+    await page.route("**/api/v1/users", async (route) => {
       if (route.request().method() === "POST") {
         await route.fulfill({
           status: 400,
@@ -67,7 +67,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
             status: 400,
             error: "Bad Request",
             message: fieldMessage,
-            path: "/api/v1/usuarios",
+            path: "/api/v1/users",
           }),
         });
         return;
@@ -75,7 +75,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
       await route.continue();
     });
 
-    await page.goto("/dashboard/administracion/usuarios");
+    await page.goto("/dashboard/administration/users");
     await page.getByTestId("btn-nuevo-usuario").click();
     // Bypass client-side empty-name guard so the stubbed API error is exercised.
     await page.getByTestId("input-nombre-usuario").fill("stub-user");
@@ -101,7 +101,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
   }) => {
     await loginAsAdmin(page);
 
-    const serverMessage = "Rol duplicado: ya existe un rol con ese nombre";
+    const serverMessage = "Role duplicado: ya existe un rol con ese nombre";
     await page.route("**/api/v1/roles", async (route) => {
       if (route.request().method() === "POST") {
         await route.fulfill({
@@ -121,7 +121,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
 
     for (const width of [320, 768, 1024] as const) {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto("/dashboard/administracion/roles");
+      await page.goto("/dashboard/administration/roles");
       await page.getByTestId("btn-nuevo-rol").click();
       await page.getByTestId("input-nombre-rol").fill(`rol-e2e-${width}`);
       await page.getByRole("button", { name: /crear|create/i }).click();

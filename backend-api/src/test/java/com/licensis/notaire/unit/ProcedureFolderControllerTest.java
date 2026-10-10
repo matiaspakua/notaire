@@ -60,74 +60,74 @@ class ProcedureFolderControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/carpetas/{id} returns carpeta when found")
+    @DisplayName("GET /api/v1/procedure-folders/{id} returns carpeta when found")
     void shouldReturnFolderById() throws Exception {
         when(procedureFolderService.findById(1)).thenReturn(Optional.of(buildFolder(1, 1, "Activa")));
 
-        mockMvc.perform(get("/api/v1/carpetas/1"))
+        mockMvc.perform(get("/api/v1/procedure-folders/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("Activa"));
     }
 
     @Test
-    @DisplayName("GET /api/v1/carpetas/{id} returns 404 when not found")
+    @DisplayName("GET /api/v1/procedure-folders/{id} returns 404 when not found")
     void shouldReturnNotFoundWhenFolderMissing() throws Exception {
         when(procedureFolderService.findById(999)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/v1/carpetas/999"))
+        mockMvc.perform(get("/api/v1/procedure-folders/999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("GET /api/v1/carpetas?tramiteId= returns the matching carpeta")
+    @DisplayName("GET /api/v1/procedure-folders?tramiteId= returns the matching carpeta")
     void shouldSearchByProcedureId() throws Exception {
         when(procedureFolderService.findByProcedure(10)).thenReturn(Optional.of(buildFolder(1, 1, "Activa")));
 
-        mockMvc.perform(get("/api/v1/carpetas").param("procedureId", "10"))
+        mockMvc.perform(get("/api/v1/procedure-folders").param("procedureId", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idProcedure").value(10));
     }
 
     @Test
-    @DisplayName("GET /api/v1/carpetas?gestionId= returns all carpetas of a gestión")
+    @DisplayName("GET /api/v1/procedure-folders?gestionId= returns all carpetas of a gestión")
     void shouldSearchByManagementId() throws Exception {
         when(procedureFolderService.findByManagement(1)).thenReturn(List.of(buildFolder(1, 1, "Activa")));
 
-        mockMvc.perform(get("/api/v1/carpetas").param("managementId", "1"))
+        mockMvc.perform(get("/api/v1/procedure-folders").param("managementId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idManagement").value(1));
     }
 
     @Test
-    @DisplayName("GET /api/v1/carpetas without filters returns empty list")
+    @DisplayName("GET /api/v1/procedure-folders without filters returns empty list")
     void shouldReturnEmptyListWithoutFilters() throws Exception {
-        mockMvc.perform(get("/api/v1/carpetas"))
+        mockMvc.perform(get("/api/v1/procedure-folders"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/carpetas/{id}/espera puts carpeta en espera with motivo")
+    @DisplayName("PUT /api/v1/procedure-folders/{id}/wait puts carpeta en espera with motivo")
     void shouldPutFolderEnWait() throws Exception {
-        when(procedureFolderService.ponerEnWait(1, "Falta documentación"))
+        when(procedureFolderService.ponerEnWait(1, "Falta documentation"))
                 .thenReturn(buildFolder(1, 1, "Espera"));
 
-        mockMvc.perform(put("/api/v1/carpetas/1/espera")
+        mockMvc.perform(put("/api/v1/procedure-folders/1/wait")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
-                                new ProcedureFolderController.WaitRequest("Falta documentación"))))
+                                new ProcedureFolderController.WaitRequest("Falta documentation"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("Espera"));
     }
 
     @Test
-    @DisplayName("PUT /api/v1/carpetas/{id}/espera returns 400 when motivo is missing")
+    @DisplayName("PUT /api/v1/procedure-folders/{id}/wait returns 400 when motivo is missing")
     void shouldRejectWaitWithoutReason() throws Exception {
         when(procedureFolderService.ponerEnWait(1, null))
                 .thenThrow(new BusinessValidationException("El motivo es obligatorio"));
 
-        mockMvc.perform(put("/api/v1/carpetas/1/espera")
+        mockMvc.perform(put("/api/v1/procedure-folders/1/wait")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new ProcedureFolderController.WaitRequest(null))))
                 .andExpect(status().isBadRequest())
@@ -135,12 +135,12 @@ class ProcedureFolderControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/carpetas/{id}/espera returns 404 when carpeta does not exist")
+    @DisplayName("PUT /api/v1/procedure-folders/{id}/wait returns 404 when carpeta does not exist")
     void shouldReturnNotFoundWhenPuttingWaitOnMissingFolder() throws Exception {
         when(procedureFolderService.ponerEnWait(999, "Motivo"))
-                .thenThrow(new ResourceNotFoundException("No existe la carpeta con ID: 999"));
+                .thenThrow(new ResourceNotFoundException("There is no the folder with ID: 999"));
 
-        mockMvc.perform(put("/api/v1/carpetas/999/espera")
+        mockMvc.perform(put("/api/v1/procedure-folders/999/wait")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new ProcedureFolderController.WaitRequest("Motivo"))))
                 .andExpect(status().isNotFound());

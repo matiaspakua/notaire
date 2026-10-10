@@ -29,7 +29,7 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid", "UT
       await establishAdminBrowserSession(page);
       const id = await seedPayment(page);
 
-      await page.goto("/dashboard/pagos");
+      await page.goto("/dashboard/payments");
       await page.waitForLoadState("networkidle");
       const row = page
         .getByRole("row")

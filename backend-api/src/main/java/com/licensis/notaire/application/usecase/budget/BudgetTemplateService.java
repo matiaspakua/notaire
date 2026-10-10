@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Loads the Conceptos of a TipoDeTramite's PlantillaPresupuesto as Items of a
- * real Presupuesto (CU39).
+ * Loads the Conceptos of a ProcedureType's BudgetTemplate as Items of a
+ * real Budget (CU39).
  */
 @Service
 @Transactional
@@ -37,14 +37,14 @@ public class BudgetTemplateService {
     public List<Item> cargarItemsDesdeTemplate(Integer idBudget, Integer typeProcedureId) {
         Budget budget = budgetRepository.findById(idBudget)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Presupuesto no encontrado con id: " + idBudget));
+                        "Budget not found with ID: " + idBudget));
 
         List<BudgetTemplate> plantillas =
                 budgetTemplateRepository.findByProcedureTypeIdProcedureType(typeProcedureId);
 
         if (plantillas.isEmpty()) {
             throw new BusinessValidationException(
-                    "El tipo de trámite no tiene plantilla configurada");
+                    "The procedure type does not have template configured");
         }
 
         List<Item> items = plantillas.stream()

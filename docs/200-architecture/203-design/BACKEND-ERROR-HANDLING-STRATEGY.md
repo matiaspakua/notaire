@@ -17,8 +17,8 @@ Validation (`@Valid`/`@Validated`) get a response built by
   "timestamp": "2026-06-10T14:00:00.123456",
   "status": 404,
   "error": "Not Found",
-  "message": "GestionDeEscritura with id 42 not found",
-  "path": "/api/v1/gestiones/42"
+  "message": "DeedManagement with id 42 not found",
+  "path": "/api/v1/managements/42"
 }
 ```
 
@@ -94,13 +94,13 @@ semicolon-joined `field: reason` list (see
   "status": 400,
   "error": "Bad Request",
   "message": "nombre: must not be blank; fechaInicio: must not be null",
-  "path": "/api/v1/gestiones"
+  "path": "/api/v1/managements"
 }
 ```
 
 ## Login endpoint special case
 
-The login endpoint (`POST /api/v1/usuarios/login`) returns HTTP 200 for both
+The login endpoint (`POST /api/v1/users/login`) returns HTTP 200 for both
 a successful and a credential-failure attempt, using the `valido` field to
 signal which one occurred. This intentional design prevents HTTP-level
 information leakage (an attacker cannot distinguish "user not found" from

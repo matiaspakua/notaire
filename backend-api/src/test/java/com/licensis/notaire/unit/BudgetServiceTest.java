@@ -44,7 +44,7 @@ class BudgetServiceTest {
         testBudget = new Budget();
         testBudget.setIdBudget(1);
         testBudget.setNumber(1001);
-        testBudget.setEncabezado("Presupuesto test");
+        testBudget.setEncabezado("Budget test");
         testBudget.setStatus("PENDIENTE");
         testBudget.setDate(new Date());
     }
@@ -54,7 +54,7 @@ class BudgetServiceTest {
     class FindAll {
 
         @Test
-        @DisplayName("Should return all presupuestos")
+        @DisplayName("Should return all budgets")
         void shouldReturnAllPresupuestos() {
             when(budgetRepository.findAll()).thenReturn(List.of(testBudget));
 
@@ -65,7 +65,7 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty list when no presupuestos exist")
+        @DisplayName("Should return empty list when not budgets exist")
         void shouldReturnEmptyListWhenNoneExist() {
             when(budgetRepository.findAll()).thenReturn(List.of());
 
@@ -99,7 +99,7 @@ class BudgetServiceTest {
     class FindByPerson {
 
         @Test
-        @DisplayName("Should return presupuestos for a given person")
+        @DisplayName("Should return budgets for a given person")
         void shouldReturnPresupuestosForPerson() {
             when(budgetRepository.findByPersonId(5)).thenReturn(List.of(testBudget));
 
@@ -109,7 +109,7 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty list when person has no presupuestos")
+        @DisplayName("Should return empty list when person has not budgets")
         void shouldReturnEmptyWhenPersonHasNoPresupuestos() {
             when(budgetRepository.findByPersonId(99)).thenReturn(List.of());
 
@@ -122,7 +122,7 @@ class BudgetServiceTest {
     class FindByStatus {
 
         @Test
-        @DisplayName("Should return presupuestos filtered by status")
+        @DisplayName("Should return budgets filtered by status")
         void shouldFilterByStatus() {
             when(budgetRepository.findByStatus("PENDIENTE")).thenReturn(List.of(testBudget));
 
@@ -132,7 +132,7 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should return all presupuestos when status is null")
+        @DisplayName("Should return all budgets when status is null")
         void shouldReturnAllWhenStatusIsNull() {
             when(budgetRepository.findAll()).thenReturn(List.of(testBudget));
 
@@ -143,7 +143,7 @@ class BudgetServiceTest {
         }
 
         @Test
-        @DisplayName("Should return all presupuestos when status is blank")
+        @DisplayName("Should return all budgets when status is blank")
         void shouldReturnAllWhenStatusIsBlank() {
             when(budgetRepository.findAll()).thenReturn(List.of(testBudget));
 
@@ -181,7 +181,7 @@ class BudgetServiceTest {
 
             Budget result = budgetService.create(p);
 
-            assertThat(result.getEncabezado()).isEqualTo("Presupuesto");
+            assertThat(result.getEncabezado()).isEqualTo("Budget");
         }
 
         @Test
@@ -202,12 +202,12 @@ class BudgetServiceTest {
         @Test
         @DisplayName("Should keep provided encabezado when not blank")
         void shouldKeepProvidedEncabezado() {
-            testBudget.setEncabezado("Presupuesto específico");
+            testBudget.setEncabezado("Budget específico");
             when(budgetRepository.create(any(Budget.class))).thenReturn(testBudget);
 
             Budget result = budgetService.create(testBudget);
 
-            assertThat(result.getEncabezado()).isEqualTo("Presupuesto específico");
+            assertThat(result.getEncabezado()).isEqualTo("Budget específico");
         }
     }
 

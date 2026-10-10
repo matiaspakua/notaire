@@ -3,7 +3,7 @@
 ## Purpose
 
 Provides the "Firmar escritura" business action (CU06): a controlled state
-transition that replaces the current unrestricted generic PUT on `Escritura`.
+transition that replaces the current unrestricted generic PUT on `Deed`.
 
 ## Requirements
 

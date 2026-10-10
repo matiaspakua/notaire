@@ -56,21 +56,21 @@ class FlywaySchemaValidationIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 200 for GET /api/v1/testimonio against the Flyway schema")
+    @DisplayName("Should return 200 for GET /api/v1/testimonies against the Flyway schema")
     void shouldListTestimoniosWhenSchemaMatchesEntities() throws Exception {
-        mockMvc.perform(get("/api/v1/testimonio")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/testimonies")).andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return 200 for GET /api/v1/movimiento-testimonio against the Flyway schema")
+    @DisplayName("Should return 200 for GET /api/v1/testimony-movements against the Flyway schema")
     void shouldListMovimientosTestimonyWhenSchemaMatchesEntities() throws Exception {
-        mockMvc.perform(get("/api/v1/movimiento-testimonio")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/testimony-movements")).andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return 200 for GET /api/v1/tipo-folio against the Flyway schema")
+    @DisplayName("Should return 200 for GET /api/v1/folio-types against the Flyway schema")
     void shouldListTiposDeFolioWhenSchemaMatchesEntities() throws Exception {
-        mockMvc.perform(get("/api/v1/tipo-folio")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/folio-types")).andExpect(status().isOk());
     }
 
     @Test
@@ -80,7 +80,7 @@ class FlywaySchemaValidationIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 200 for GET /api/v1/people (Folio to TipoDeFolio join) against the Flyway schema")
+    @DisplayName("Should return 200 for GET /api/v1/people (Folio to FolioType join) against the Flyway schema")
     void shouldListPersonsWhenSchemaMatchesEntities() throws Exception {
         mockMvc.perform(get("/api/v1/people")).andExpect(status().isOk());
     }

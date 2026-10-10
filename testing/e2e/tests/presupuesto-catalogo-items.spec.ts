@@ -27,7 +27,7 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
     expect(itemResult.ok, `createItem failed: ${itemResult.error}`).toBe(true);
 
     // WHEN: operador abre los ítems del presupuesto y agrega el ítem del catálogo
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
@@ -58,7 +58,7 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
     expect(item1.ok).toBe(true);
     expect(item2.ok).toBe(true);
 
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
     const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();

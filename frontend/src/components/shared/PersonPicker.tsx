@@ -11,14 +11,14 @@ import { useTranslations } from "next-intl";
 import { fullName } from "@/lib/utils";
 import { SearchCombobox } from "@/components/shared/SearchCombobox";
 import { usePersona, usePersonSearch, useRecentPersonas } from "@/hooks/usePersonSearch";
-import type { Persona } from "@/types";
+import type { Person } from "@/types";
 
 export interface PersonPickerProps {
   /** Selected person id. */
   value?: number;
   /** The selected person when the form already has it (skips the by-id load). */
-  selected?: Persona;
-  onChange: (person: Persona | undefined) => void;
+  selected?: Person;
+  onChange: (person: Person | undefined) => void;
   "aria-label": string;
   placeholder?: string;
   /** Only list people marked as clients. */
@@ -39,7 +39,7 @@ export function PersonPicker({
   ...rest
 }: PersonPickerProps) {
   const t = useTranslations("personPicker");
-  const [known, setKnown] = useState<Persona | undefined>(selected);
+  const [known, setKnown] = useState<Person | undefined>(selected);
 
   const knownMatches = (selected?.personId === value ? selected : undefined) ?? (known?.personId === value ? known : undefined);
   const loaded = usePersona(value, value != null && !knownMatches);
@@ -57,7 +57,7 @@ export function PersonPicker({
   }
 
   return (
-    <SearchCombobox<Persona>
+    <SearchCombobox<Person>
       {...rest}
       useSource={useSource}
       getKey={(p) => p.personId!}

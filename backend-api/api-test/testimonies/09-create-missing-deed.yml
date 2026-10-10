@@ -7,7 +7,7 @@ info:
       without one is rejected and nothing is stored
 http:
   method: POST
-  url: "{{base_url}}/api/v1/testimonio"
+  url: "{{base_url}}/api/v1/testimonies"
   body:
     type: json
     data: |-

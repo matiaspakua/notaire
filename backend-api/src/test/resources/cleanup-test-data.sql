@@ -41,6 +41,6 @@ TRUNCATE TABLE substitutions;
 TRUNCATE TABLE document_types;
 TRUNCATE TABLE budget_templates;
 TRUNCATE TABLE procedure_templates;
-TRUNCATE TABLE identificaciones;
+TRUNCATE TABLE identifications;
 
 SET REFERENTIAL_INTEGRITY TRUE;

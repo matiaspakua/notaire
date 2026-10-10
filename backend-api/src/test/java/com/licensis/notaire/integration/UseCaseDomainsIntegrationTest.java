@@ -35,22 +35,22 @@ class UseCaseDomainsIntegrationTest {
 
     @Test
     void presupuestosPaymentsDomain() throws Exception {
-        mockMvc.perform(get("/api/v1/presupuestos")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/budgets")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/items")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/pagos")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/presupuestos/persona/1")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/items/presupuesto/1")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/pagos/presupuesto/1")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/payments")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/budgets/person/1")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/items/budget/1")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/payments/budget/1")).andExpect(status().isOk());
     }
 
     @Test
     void gestionesDomain() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/gestiones/cliente/1")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/historial")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/historial/gestion/1")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/estado-gestion")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/tramites")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/managements")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/managements/client/1")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/history")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/history/management/1")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/management-statuses")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/procedures")).andExpect(status().isOk());
     }
 
     @Test
@@ -59,46 +59,46 @@ class UseCaseDomainsIntegrationTest {
         mockMvc.perform(get("/api/v1/people/search")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/people/search").param("firstName", "Admin")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/people/search").param("idIdentificationType", "1")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/tipo-identificacion")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/identification-types")).andExpect(status().isOk());
     }
 
     @Test
     void documentacionDomain() throws Exception {
-        mockMvc.perform(get("/api/v1/documento-presentado")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/tipo-de-documento")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/submitted-documents")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/document-types")).andExpect(status().isOk());
     }
 
     @Test
     void escriturasDomain() throws Exception {
-        mockMvc.perform(get("/api/v1/escrituras")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/inmueble")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/copia")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/deeds")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/properties")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/copies")).andExpect(status().isOk());
     }
 
     @Test
     void testimoniosDomain() throws Exception {
-        mockMvc.perform(get("/api/v1/testimonio")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/movimiento-testimonio")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/testimonies")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/testimony-movements")).andExpect(status().isOk());
     }
 
     @Test
     void administracionCatalogosDomain() throws Exception {
-        mockMvc.perform(get("/api/v1/tipo-tramite")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/tipo-folio")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/conceptos")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/plantilla-presupuestos")).andExpect(status().isOk());
-        mockMvc.perform(get("/api/v1/folio")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/procedure-types")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/folio-types")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/concepts")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/budget-templates")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/folios")).andExpect(status().isOk());
     }
 
     @Test
     void usersAuditDomain() throws Exception {
-        mockMvc.perform(get("/api/v1/usuarios")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/users")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/audit-log")).andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/audit-log/user/1")).andExpect(status().isOk());
     }
 
     @Test
     void suplenciasDomain() throws Exception {
-        mockMvc.perform(get("/api/v1/suplencia")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/substitutions")).andExpect(status().isOk());
     }
 }

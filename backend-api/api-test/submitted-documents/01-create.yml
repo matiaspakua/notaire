@@ -6,7 +6,7 @@ info:
       Traceability: CU04 / CU72 (RF QA Bruno #953). Linked to the trámite from 00-setup-procedure (#655: required on create).
 http:
   method: POST
-  url: "{{base_url}}/api/v1/documento-presentado"
+  url: "{{base_url}}/api/v1/submitted-documents"
   body:
     type: json
     data: |-

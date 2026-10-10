@@ -25,7 +25,7 @@ El presente **Diccionario de Datos** documenta formalmente la totalidad de las t
    - Modelo de seguridad ampliado con tablas `roles` y `role_modules`, vinculando cada usuario con un rol granular (`fk_id_role`).
 4. **Resolución de Cardinalidad Presupuesto–Trámite (V14):**  
    - Eliminación de la clave foránea circular en `budgets` (`fk_id_tramite` deprecada y eliminada en V14); la relación canónica es `procedures.fk_id_presupuesto` (1:N, donde un presupuesto puede originar o abarcar trámites vinculados).
-5. **Alineación de Movimientos de Testimonio y Folios (V3, V4, V5, V6, V13):**  
+5. **Alineación de Movimientos de Testimony y Folios (V3, V4, V5, V6, V13):**  
    - Identificador `id`, fechas de tracto registral, y soporte para documentos autónomos (`submitted_documents.fk_id_tramite` nullable).
 
 ---
@@ -117,7 +117,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `roles` | `id` | — | Sin compensación | Catálogo de perfiles |
 | `role_modules` | `fk_id_role + modulo` | `fk_id_role` | `I: Impedir`, `M: Impedir`, `B: Cascada` | V9; permisos por módulo |
 | `substitutions` | `id` | `fk_id_substituted_person`, `fk_id_substitute_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Cobertura de escribanos |
-| `testimonies` | `id` | `fk_id_deed` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Testimonio generado desde escritura |
+| `testimonies` | `id` | `fk_id_deed` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Testimony generado desde escritura |
 | `document_types` | `id` | — | Sin compensación | Catálogo maestra de documentos |
 | `folio_types` | `id` | — | Sin compensación | Catálogo maestra de folios |
 | `procedure_types` | `id` | `fk_workflow_definition_id` | `I: Null`, `M: Impedir`, `B: Impedir` (por defecto, no cascade) | V8: workflow opcional |
@@ -129,7 +129,7 @@ La base de datos actual refleja la evolución real del sistema a través de Flyw
 | `workflow_node` | `id_workflow_node` | `fk_workflow_definition_id`, `fk_estado_gestion_id` | `I: Impedir`, `M: Impedir`, `B: Cascada` en workflow | Nodos del flujo |
 | `workflow_transition` | `id_workflow_transition` | `fk_workflow_definition_id`, `fk_nodo_origen_id`, `fk_nodo_destino_id` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Transiciones del flujo |
 | `document_cost_templates` | `fk_id_procedure_type + fk_id_document_type` | `fk_id_procedure_type`, `fk_id_document_type` | `I: Impedir`, `M: Impedir`, `B: Cascada` | Costo sugerido por documento |
-| `notebooks` | `id` | `fk_id_notary_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Cuaderno anual de protocolo |
+| `notebooks` | `id` | `fk_id_notary_person` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Notebook anual de protocolo |
 | `procedure_folders` | `id` | `fk_id_gestion`, `fk_id_tramite` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Carpetas numeradas de trámites (CU85) |
 | `registration_drafts` | `id` | `fk_id_escritura` | `I: Impedir`, `M: Impedir`, `B: Impedir` | Borrador de inscripción registral |
 
@@ -165,8 +165,8 @@ Ejemplares impresos en hojas especiales expedidos a partir de un testimonio nota
 | `print_date` | DATE | No | No | Sí | — | — | Fecha de expedición e impresión de la copia |
 | `pickup_date` | DATE | No | No | No | NULL | — | Fecha en que fue retirada por el interesado |
 | `notes` | TEXT | No | No | No | NULL | — | Registro de entrega o atestaciones |
-| `fk_id_testimonio` | INTEGER | No | Sí | No | NULL | `testimonies(id)` | Testimonio matriz originario |
-| `fk_id_person` | INTEGER | No | Sí | No | NULL | `people(id)` | Persona a quien se le expide o entrega la copia |
+| `fk_id_testimonio` | INTEGER | No | Sí | No | NULL | `testimonies(id)` | Testimony matriz originario |
+| `fk_id_person` | INTEGER | No | Sí | No | NULL | `people(id)` | Person a quien se le expide o entrega la copia |
 
 ---
 
@@ -243,10 +243,10 @@ Hojas protocolares provistas por el Colegio Notarial para asentar escrituras pú
 | `year_number` | INTEGER | No | No | Sí | — | — | Año calendario del protocolo correspondiente |
 | `status` | TEXT | No | No | Sí | — | — | Estado (`Disponible`, `Usado`, `Errose`, `No Pasó`) |
 | `notes` | TEXT | No | No | No | NULL | — | Justificación de contingencias o atestados |
-| `fk_id_deed` | INTEGER | No | Sí | No | NULL | `deeds(id)` | Escritura en la que fue utilizado |
+| `fk_id_deed` | INTEGER | No | Sí | No | NULL | `deeds(id)` | Deed en la que fue utilizado |
 | `fk_id_folio_type` | INTEGER | No | Sí | Sí | — | `folio_types(id)` | Clasificación de uso del folio |
 | `fk_id_notary_person` | INTEGER | No | Sí | Sí | — | `people(id)` | Escribano responsable titular del registro |
-| `fk_id_notebook` | INTEGER | No | Sí | No | NULL | `notebooks(id)` | Cuaderno al que pertenece el folio |
+| `fk_id_notebook` | INTEGER | No | Sí | No | NULL | `notebooks(id)` | Notebook al que pertenece el folio |
 
 ---
 
@@ -257,7 +257,7 @@ Tabla asociativa que vincula las hojas de testimonio con las copias expedidas.
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
 | `fk_id_folio` | INTEGER | Sí | Sí | Sí | — | `folios(id)` | Folio especial de testimonio |
-| `fk_id_copy` | INTEGER | Sí | Sí | Sí | — | `copies(id)` | Copia expedida |
+| `fk_id_copy` | INTEGER | Sí | Sí | Sí | — | `copies(id)` | Copy expedida |
 | `version` | INTEGER | No | No | Sí | — | — | Control de concurrencia optimista |
 
 ---
@@ -331,7 +331,7 @@ Desglose arancelario de conceptos liquidados en un presupuesto (V3/V4).
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del ítem |
 | `version` | INTEGER | No | No | Sí | — | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Sí | — | — | Concepto o partida liquidada |
+| `name` | TEXT | No | No | Sí | — | — | Concept o partida liquidada |
 | `amount` | NUMERIC(19,2) | No | No | Sí | — | — | Monto resultante de la línea |
 | `percentage` | INTEGER | No | No | Sí | — | — | Porcentaje aplicado en la liquidación |
 | `fixed_concept` | BOOLEAN | No | No | Sí | — | — | `true` si es importe fijo, `false` si es porcentual |
@@ -352,7 +352,7 @@ Registro del tracto y asientos de presentación registral del testimonio (V5).
 | `version` | INTEGER | No | No | Sí | — | — | Control de concurrencia optimista |
 | `entry_date` | DATE | No | No | Sí | — | — | Fecha de ingreso del movimiento (V5) |
 | `notes` | TEXT | No | No | No | NULL | — | Notas y despachos registrales |
-| `fk_id_testimonio` | INTEGER | No | Sí | No | NULL | `testimonies(id)` | Testimonio objeto del trámite |
+| `fk_id_testimonio` | INTEGER | No | Sí | No | NULL | `testimonies(id)` | Testimony objeto del trámite |
 | `exit_date` | DATE | No | No | No | NULL | — | Fecha de devolución del Registro (V5) |
 | `registration_date` | DATE | No | No | No | NULL | — | Fecha en que se perfeccionó la inscripción (V5) |
 | `registered` | BOOLEAN | No | No | Sí | false | — | `true` si la inscripción resultó favorable (V5) |
@@ -418,7 +418,7 @@ Tabla asociativa M:N que parametriza conceptos arancelarios estándar por tipo d
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
 | `fk_id_procedure_type` | INTEGER | Sí | Sí | Sí | — | `procedure_types(id)` | Tipo de trámite |
-| `fk_id_concept` | INTEGER | Sí | Sí | Sí | — | `concepts(id)` | Concepto presupuestado |
+| `fk_id_concept` | INTEGER | Sí | Sí | Sí | — | `concepts(id)` | Concept presupuestado |
 | `version` | INTEGER | No | No | Sí | — | — | Control de concurrencia optimista |
 | `notes` | TEXT | No | No | No | NULL | — | Reglas particulares de cómputo |
 
@@ -490,7 +490,7 @@ Permisos por módulo asignados a cada rol (introducido en Flyway V9).
 
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
-| `fk_id_role` | INTEGER | Sí | Sí | Sí | — | `roles(id)` | Rol al cual se le concede el permiso |
+| `fk_id_role` | INTEGER | Sí | Sí | Sí | — | `roles(id)` | Role al cual se le concede el permiso |
 | `module` | TEXT | Sí | No | Sí | — | — | Identificador del módulo o acción autorizada |
 
 ---
@@ -527,7 +527,7 @@ Testimonios solemnes expedidos de escrituras públicas matrices (V3/V4).
 | `folder_number` | INTEGER | No | No | No | NULL | — | Número de carpeta registral |
 | `file_number` | INTEGER | No | No | No | NULL | — | Número de expediente del Registro |
 | `reentered` | BOOLEAN | No | No | Sí | false | — | `true` si fue reingresado |
-| `fk_id_deed` | INTEGER | No | Sí | No | NULL | `deeds(id)` | Escritura matriz de origen |
+| `fk_id_deed` | INTEGER | No | Sí | No | NULL | `deeds(id)` | Deed matriz de origen |
 | `observed` | BOOLEAN | No | No | Sí | false | — | `true` si fue observado (V3/V4) |
 | `verified` | BOOLEAN | No | No | Sí | false | — | `true` si el testimonio fue verificado |
 
@@ -559,7 +559,7 @@ Catálogo maestro de tipos de folios notariales (V3/V4).
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Sí | No | Sí | Auto | — | Identificador unívoco del tipo de folio |
 | `version` | INTEGER | No | No | Sí | — | — | Control de concurrencia optimista |
-| `name` | TEXT | No | No | Sí | — | — | Nombre (`Protocolo Principal`, `Protocolo Auxiliar`, `Testimonio`) |
+| `name` | TEXT | No | No | Sí | — | — | Nombre (`Protocolo Principal`, `Protocolo Auxiliar`, `Testimony`) |
 | `notes` | TEXT | No | No | No | NULL | — | Notas del tipo de folio (V3/V4) |
 | `enabled` | BOOLEAN | No | No | Sí | true | — | `true` si está activo para tandas de folios (V3/V4) |
 | `is_auxiliary` | BOOLEAN | No | No | Sí | false | — | `true` si el tipo corresponde a folios auxiliares (de uso complementario) |
@@ -610,9 +610,9 @@ Instancia particular de trámite o negocio jurídico (V13/V14).
 | `notes` | TEXT | No | No | No | NULL | — | Instrucciones u observaciones |
 | `fk_id_procedure_type` | INTEGER | No | Sí | No | NULL | `procedure_types(id)` | Tipo de trámite |
 | `fk_id_gestion` | INTEGER | No | Sí | No | NULL | `deed_managements(id)` | Gestión que lo agrupa (nulo en aux.) |
-| `fk_id_escritura` | INTEGER | No | Sí | No | NULL | `deeds(id)` | Escritura notarial resultante |
+| `fk_id_escritura` | INTEGER | No | Sí | No | NULL | `deeds(id)` | Deed notarial resultante |
 | `fk_id_presupuesto` | INTEGER | No | Sí | No | NULL | `budgets(id)` | Presupuesto económico base (V14) |
-| `fk_id_property` | INTEGER | No | Sí | No | NULL | `properties(id)` | Inmueble objeto del acto (si aplica) |
+| `fk_id_property` | INTEGER | No | Sí | No | NULL | `properties(id)` | Property objeto del acto (si aplica) |
 
 ---
 
@@ -623,9 +623,9 @@ Tabla asociativa que vincula personas con el trámite e indica su rol jurídico.
 | Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |
 |---|---|---|---|---|---|---|---|
 | `fk_id_procedure` | INTEGER | Sí | Sí | Sí | — | `procedures(id)` | Trámite en el que participa |
-| `fk_id_client_person` | INTEGER | Sí | Sí | Sí | — | `people(id)` | Persona que interviene |
+| `fk_id_client_person` | INTEGER | Sí | Sí | Sí | — | `people(id)` | Person que interviene |
 | `version` | INTEGER | No | No | Sí | — | — | Control de concurrencia optimista |
-| `notes` | TEXT | No | No | Sí | '' | — | Rol notarial (`Comprador`, `Vendedor`, `Donante`, `Apoderado`) |
+| `notes` | TEXT | No | No | Sí | '' | — | Role notarial (`Comprador`, `Vendedor`, `Donante`, `Apoderado`) |
 
 ---
 
@@ -639,10 +639,10 @@ Cuentas de operadores del sistema (V9).
 | `version` | INTEGER | No | No | Sí | — | — | Control de concurrencia optimista |
 | `username` | TEXT | No | No | Sí | — | — | Nombre de usuario (login único) |
 | `password` | TEXT | No | No | Sí | — | — | Hash seguro de la contraseña |
-| `user_type` | TEXT | No | No | Sí | — | — | Rol descriptivo legacy |
+| `user_type` | TEXT | No | No | Sí | — | — | Role descriptivo legacy |
 | `status` | BOOLEAN | No | No | Sí | — | — | `true` si la cuenta está activa |
-| `fk_id_person` | INTEGER | No | Sí | No | NULL | `people(id)` | Persona física asociada |
-| `fk_id_role` | INTEGER | No | Sí | No | NULL | `roles(id)` | Rol de seguridad asignado (V9) |
+| `fk_id_person` | INTEGER | No | Sí | No | NULL | `people(id)` | Person física asociada |
+| `fk_id_role` | INTEGER | No | Sí | No | NULL | `roles(id)` | Role de seguridad asignado (V9) |
 
 ---
 
@@ -754,7 +754,7 @@ Borradores de inscripción de una escritura ante el Registro y su seguimiento.
 | `final_registration_number` | VARCHAR(255) | No | No | No | NULL | — | Número definitivo de inscripción |
 | `registry_notes` | TEXT | No | No | No | NULL | — | Observaciones formuladas por el Registro |
 | `correction_date` | DATE | No | No | No | NULL | — | Fecha de la corrección solicitada por el Registro |
-| `fk_id_escritura` | INTEGER | No | Sí | Sí | — | `deeds(id)` | Escritura a inscribir |
+| `fk_id_escritura` | INTEGER | No | Sí | Sí | — | `deeds(id)` | Deed a inscribir |
 
 ---
 

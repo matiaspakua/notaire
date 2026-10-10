@@ -2,7 +2,7 @@ package com.licensis.notaire.dto;
 
 import java.util.List;
 
-/** An escritura reached through a gestión's trámites, with its testimonios. */
+/** An deed reached through a management's procedures, with its testimonies. */
 public record DtoCaseDeed(
         Integer idDeed,
         int number,

@@ -6,7 +6,7 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.ProcedureTemplatePK;
 import com.licensis.notaire.business.DocumentType;
@@ -24,7 +24,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class ProcedureTemplateJpaController implements Serializable, IPersistenciaJpa
+public class ProcedureTemplateJpaController implements Serializable, JpaPersistence
 {
 
     public ProcedureTemplateJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -84,7 +84,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
         {
             if (findProcedureTemplate(procedureTemplate.getProcedureTemplatePK()) != null)
             {
-                throw new PreexistingEntityException("PlantillaTramite " + procedureTemplate + " already exists.", ex);
+                throw new PreexistingEntityException("ProcedureTemplate " + procedureTemplate + " already exists.", ex);
             }
             throw ex;
         }
@@ -268,11 +268,11 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
     }
 
     /**
-     * Busca y encuentra todas las Plantillas de Tramite de un Tipo de Tramite en particular.
+     * Busca and encuentra all the Plantillas of Procedure of a Procedure type in particular.
      *
-     * @param idTipoTramite, Id del Tipo de Tramite al cual pertenecen las Plantillas de Tramite a
-     * buscar.
-     * @return Una lista de las Plantillas de Tramite encontradas.
+     * @param idTipoTramite, Id of the Procedure type to the cual pertenecen the Plantillas of Procedure a
+     * search.
+     * @return A lista of the Plantillas of Procedure encontradas.
      */
     public List<ProcedureTemplate> findProcedureTemplatesByType(int idProcedureType)
     {
@@ -282,10 +282,10 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Name of the @NamedQuery definido in nuestra clase
             Query q = em.createNamedQuery("ProcedureTemplate.findByFkIdProcedureType");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
+            //It step the name of the parametro of the query, and the valor a search.
             q.setParameter("fkIdTipoTramite", idProcedureType);
 
             misPlantillas = (List<ProcedureTemplate>) q.getResultList();
@@ -300,9 +300,9 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
     }
 
     /**
-     * Elimina una Plantilla de Tramite mediante un query DELETE.
+     * Elimina a Template of Procedure mediante a query DELETE.
      *
-     * @param miPlantilla, la Plantilla de Tramite a eliminar.
+     * @param miPlantilla, the Template of Procedure a delete.
      * @return True si se elimino, False de lo contrario.
      */
     public Boolean eliminarProcedureTemplate(ProcedureTemplate miTemplate)
@@ -314,7 +314,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro una nueva transaccion
+        // Abro a new transaccion
         tx = em.getTransaction();
         tx.begin();
 

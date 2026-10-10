@@ -9,7 +9,7 @@ import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.IdentificationTypeLookup;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Folio;
@@ -20,7 +20,7 @@ import com.licensis.notaire.business.Substitution;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.business.PersonProcedure;
 import com.licensis.notaire.business.User;
-import com.licensis.notaire.service.AdministradorJpa;
+import com.licensis.notaire.service.JpaAdministrator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,7 +38,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author matias
  */
-public class PersonJpaController implements Serializable, IPersistenciaJpa {
+public class PersonJpaController implements Serializable, JpaPersistence {
 
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
@@ -282,7 +282,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Presupuesto " + budgetListOldBudget
+                    illegalOrphanMessages.add("You must retain Budget " + budgetListOldBudget
                             + " since its fkIdPersona field is not nullable.");
                 }
             }
@@ -310,7 +310,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Suplencia " + substitutionListOldSubstitution
+                    illegalOrphanMessages.add("You must retain Substitution " + substitutionListOldSubstitution
                             + " since its fkIdSuplente field is not nullable.");
                 }
             }
@@ -319,7 +319,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Suplencia " + substitutionList1OldSubstitution
+                    illegalOrphanMessages.add("You must retain Substitution " + substitutionList1OldSubstitution
                             + " since its fkIdSuplantado field is not nullable.");
                 }
             }
@@ -328,7 +328,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Copia " + copyListOldCopy
+                    illegalOrphanMessages.add("You must retain Copy " + copyListOldCopy
                             + " since its fkIdPersona field is not nullable.");
                 }
             }
@@ -337,7 +337,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Usuario " + userListOldUser
+                    illegalOrphanMessages.add("You must retain UserAccount " + userListOldUser
                             + " since its fkIdPersona field is not nullable.");
                 }
             }
@@ -573,7 +573,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages
-                        .add("This Persona (" + person + ") cannot be destroyed since the TramitesPersonas "
+                        .add("This Person (" + person + ") cannot be destroyed since the TramitesPersonas "
                                 + personProcedureListOrphanCheckPersonProcedure
                                 + " in its tramitesPersonasList field has a non-nullable persona field.");
             }
@@ -582,7 +582,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Presupuesto "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Budget "
                         + budgetListOrphanCheckBudget
                         + " in its presupuestoList field has a non-nullable fkIdPersona field.");
             }
@@ -591,7 +591,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person
+                illegalOrphanMessages.add("This Person (" + person
                         + ") cannot be destroyed since the GestionesDeEscrituras "
                         + gestionesDeEscriturasListOrphanCheckGestionesDeEscrituras
                         + " in its gestionesDeEscriturasList field has a non-nullable fkIdPersonaEscribano field.");
@@ -601,7 +601,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Folio "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Folio "
                         + folioListOrphanCheckFolio
                         + " in its folioList field has a non-nullable fkIdPersonaEscribano field.");
             }
@@ -610,7 +610,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Suplencia "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Substitution "
                         + substitutionListOrphanCheckSubstitution
                         + " in its suplenciaList field has a non-nullable fkIdSuplente field.");
             }
@@ -619,7 +619,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Suplencia "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Substitution "
                         + substitutionList1OrphanCheckSubstitution
                         + " in its suplenciaList1 field has a non-nullable fkIdSuplantado field.");
             }
@@ -628,7 +628,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Copia "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Copy "
                         + copyListOrphanCheckCopy + " in its copiaList field has a non-nullable fkIdPersona field.");
             }
             List<User> userListOrphanCheck = person.getUserList();
@@ -636,9 +636,9 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Persona (" + person + ") cannot be destroyed since the Usuario "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the UserAccount "
                         + userListOrphanCheckUser
-                        + " in its usuarioList field has a non-nullable fkIdPersona field.");
+                        + " in its userList field has a non-nullable fkIdPerson field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -691,7 +691,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 person.setPersonProcedureList(null);
                 person.setUserList(null);
 
-                // persona.setTramiteList(new ArrayList<Tramite>());
+                // persona.setTramiteList(new ArrayList<Procedure>());
             }
 
             return listaPersons;
@@ -724,7 +724,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
     public static PersonJpaController getInstancia() {
 
-        EntityManagerFactory emf = AdministradorJpa.getEmf();
+        EntityManagerFactory emf = JpaAdministrator.getEmf();
 
         if (instancia == null || (instancia.emf == null && emf != null)) {
             instancia = new PersonJpaController(null, emf);
@@ -735,17 +735,17 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
     public Boolean modificarPerson(Person pPerson) throws ClassModifiedException, ClassEliminatedException {
 
-        Boolean flag = false; // Variable para saber el resultado de la transaccion
-        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable para Version en memoria del Objeto
-        int version = ConstantesPersistencia.VersionINICIAL; // Variable para Version en bd del Objeto
+        Boolean flag = false; // Variable for saber the resultado of the transaccion
+        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable for Version in memoria of the Objeto
+        int version = ConstantesPersistencia.VersionINICIAL; // Variable for Version in bd of the Objeto
 
         EntityManager em = getEntityManager();
 
         Person persistentPerson = em.find(Person.class, pPerson.getPersonId());
 
         if (persistentPerson != null) {
-            version = persistentPerson.getVersion(); // Version del Objeto en db
-            oldVersion = pPerson.getVersion(); // Version del Objeto en memoria
+            version = persistentPerson.getVersion(); // Version of the Objeto in db
+            oldVersion = pPerson.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
             {
@@ -755,7 +755,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
                     em.getTransaction().begin();
 
-                    // Atributos Persona
+                    // Atributos Person
                     persistentPerson.setFirstName(pPerson.getFirstName());
                     persistentPerson.setLastName(pPerson.getLastName());
                     persistentPerson.setPhone(pPerson.getPhone());
@@ -764,7 +764,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     persistentPerson.setIdentificationNumber(pPerson.getIdentificationNumber());
 
                     /*
-                     * Tira error cuando el registro de escribano vale NULL if
+                     * Tira error when the registro of notary vale NULL if
                      * (pPersona.getRegistroEscribano() != 0) {
                      * persistentPersona.setRegistroEscribano(pPersona.getRegistroEscribano()); }
                      *
@@ -772,11 +772,11 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     em.getTransaction().commit();
                     em.close();
                 } catch (PersistenceException ex) {
-                    System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
+                    System.out.println("Error de Persistencia: UserAccount JpaController metodo: modificarUsuario");
                     ex.printStackTrace();
                 }
             }
-        } else // Si fue eliminado se dispara una excepcion
+        } else // If was eliminado dispara a excepcion
         {
             throw new ClassEliminatedException("La persona indicada ha sido eliminada");
         }
@@ -785,17 +785,17 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
     public Boolean registrarNotary(Person notary) throws ClassModifiedException, NonexistentEntityException {
 
-        Boolean resultado = false; // Variable para saber el resultado de la transaccion
-        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable para Version en memoria del Objeto
-        int version = ConstantesPersistencia.VersionINICIAL; // Variable para Version en bd del Objeto
+        Boolean resultado = false; // Variable for saber the resultado of the transaccion
+        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable for Version in memoria of the Objeto
+        int version = ConstantesPersistencia.VersionINICIAL; // Variable for Version in bd of the Objeto
 
         EntityManager em = getEntityManager();
 
         Person persistentPerson = em.find(Person.class, notary.getPersonId());
 
         if (persistentPerson != null) {
-            version = persistentPerson.getVersion(); // Version del Objeto en db
-            oldVersion = notary.getVersion(); // Version del Objeto en memoria
+            version = persistentPerson.getVersion(); // Version of the Objeto in db
+            oldVersion = notary.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
             {
@@ -816,7 +816,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     em.close();
                 }
             }
-        } else // Si fue eliminado se dispara una excepcion
+        } else // If was eliminado dispara a excepcion
         {
             throw new NonexistentEntityException("No existe la persona indicada");
         }
@@ -825,17 +825,17 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
 
     public Boolean modificarClient(Person pClient) throws ClassModifiedException, ClassEliminatedException {
 
-        Boolean flag = false; // Variable para saber el resultado de la transaccion
-        int oldVersion = 0; // Variable para Version en memoria del Objeto
-        int version = 0; // Variable para Version en bd del Objeto
+        Boolean flag = false; // Variable for saber the resultado of the transaccion
+        int oldVersion = 0; // Variable for Version in memoria of the Objeto
+        int version = 0; // Variable for Version in bd of the Objeto
 
         EntityManager em = getEntityManager();
 
         Person persistentPerson = em.find(Person.class, pClient.getPersonId());
 
         if (persistentPerson != null) {
-            version = persistentPerson.getVersion(); // Version del Objeto en db
-            oldVersion = pClient.getVersion(); // Version del Objeto en memoria
+            version = persistentPerson.getVersion(); // Version of the Objeto in db
+            oldVersion = pClient.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
             {
@@ -845,7 +845,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                 try {
                     em.getTransaction().begin();
 
-                    // Atributos Persona
+                    // Atributos Person
                     persistentPerson.setFirstName(pClient.getFirstName());
                     persistentPerson.setLastName(pClient.getLastName());
                     persistentPerson.setPhone(pClient.getPhone());
@@ -853,7 +853,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     persistentPerson.setFkIdIdentificationType(pClient.getFkIdIdentificationType());
                     persistentPerson.setIdentificationNumber(pClient.getIdentificationNumber());
 
-                    // La version del objeto queda a cargo de Hivernate
+                    // The version of the objeto queda a cargo of Hivernate
                     // Atributos Cliente
                     persistentPerson.setNationality(pClient.getNationality());
                     persistentPerson.setBirthDate(pClient.getBirthDate());
@@ -872,10 +872,10 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
                     em.close();
                     flag = true;
                 } catch (Exception e) {
-                    System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
+                    System.out.println("Error de Persistencia: UserAccount JpaController metodo: modificarUsuario");
                 }
             }
-        } else // Si fue eliminado se dispara una excepcion
+        } else // If was eliminado dispara a excepcion
         {
             throw new ClassEliminatedException("El cliente indicado ha sido eliminado o no existe");
         }
@@ -883,21 +883,21 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
     }
 
     /**
-     * Metodo JPA que permite buscar si existe o no , una persona con el mismo tipo
+     * Metodo JPA that permite search if exists or not, a person with the mismo tipo
      * de
-     * Identificacion y numero.
+     * Identification and number.
      *
      * @param pNumeroIdentificacion
      * @param pTipoIdentificacion
-     * @return Retorno una lista de personas
+     * @return Retorno a lista of people
      */
     public Person findPersonTypeIdentificationNumber(DtoPerson dtoPerson) { // No pueden repetirse un mismo numero y
-                                                                                // tipo de identificacion
+                                                                                // identification type
 
         EntityManager em = getEntityManager();
         List<Person> listaPerson = null;
         Person person = null;
-        // acocio el nombre de la identificacion con su id correspondiente, para la
+        // acocio the name of the identification with its id correspondiente, for the
         // busqueda
         dtoPerson.getDtoIdentificationType().setIdIdentificationType(
                 IdentificationTypeLookup.shared().idOf(dtoPerson.getDtoIdentificationType().getName()));
@@ -923,13 +923,13 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
     }
 
     /**
-     * Metodo JPA, que permite buscar personas por aproximacion de nombre y apellido
+     * Metodo JPA, that permite search people by aproximacion of name and apellido
      *
      * @param dtoPersona
      * @return
      */
     public List<Person> findPersonNameLastName(DtoPerson dtoPerson) { // No pueden repetirse un mismo numero y
-                                                                            // tipo de identificacion
+                                                                            // identification type
 
         EntityManager em = getEntityManager();
 
@@ -948,7 +948,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
     }
 
     /**
-     * Metodo que devuelve todas las personas, con su red de objetos cada una
+     * Metodo that devuelve all the people, with its red of objetos each a
      *
      * @return
      */
@@ -968,7 +968,7 @@ public class PersonJpaController implements Serializable, IPersistenciaJpa {
     }
 
     public Person findPersonNotary(Person miPerson) { // No pueden repetirse un mismo numero y tipo de
-                                                             // identificacion
+                                                             // identification
 
         EntityManager em = getEntityManager();
 

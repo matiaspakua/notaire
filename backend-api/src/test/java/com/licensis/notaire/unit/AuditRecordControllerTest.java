@@ -66,7 +66,7 @@ class AuditRecordControllerTest {
         DtoUser user = new DtoUser();
         user.setIdUser(1);
         user.setName("admin");
-        user.setType("Escribano");
+        user.setType("Notary");
         user.setStatus(true);
         user.setPersons(person);
 
@@ -165,7 +165,7 @@ class AuditRecordControllerTest {
     }
 
     @Test
-    @DisplayName("Should return registros by usuario id")
+    @DisplayName("Should return registros by user id")
     void shouldReturnRegistrosByUserId() throws Exception {
         when(service.findByUserIdAsDto(1)).thenReturn(List.of(sampleDto));
 

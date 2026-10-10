@@ -7,7 +7,7 @@ package com.licensis.notaire.jpa;
 import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Copy;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.Person;
@@ -25,7 +25,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class CopyJpaController implements Serializable, IPersistenciaJpa
+public class CopyJpaController implements Serializable, JpaPersistence
 {
 
     public CopyJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -348,8 +348,8 @@ public class CopyJpaController implements Serializable, IPersistenciaJpa
 
         if (persistentCopy != null)
         {
-            version = persistentCopy.getVersion(); // Version del Objeto en db
-            oldVersion = copy.getVersion(); // Version del Objeto en memoria
+            version = persistentCopy.getVersion(); // Version of the Objeto in db
+            oldVersion = copy.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {

@@ -51,7 +51,7 @@ describe("edge proxy route guards (issue #1056 / CU84)", () => {
   it("denies non-admin administración routes at the edge", async () => {
     const proxy = await loadProxy();
     const response = proxy(
-      request("/dashboard/administracion/usuarios", {
+      request("/dashboard/administration/users", {
         [AUTH_STATUS_COOKIE]: "1",
         [AUTH_ROLE_COOKIE]: "EMPLEADO",
       }),

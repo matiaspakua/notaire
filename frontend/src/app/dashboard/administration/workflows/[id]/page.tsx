@@ -1,0 +1,327 @@
+"use client";
+import { useState, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useTranslations } from "next-intl";
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  MiniMap,
+  addEdge,
+  useNodesState,
+  useEdgesState,
+  type Node,
+  type Edge,
+  type Connection,
+  Handle,
+  Position,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import {
+  useWorkflowDefinitions,
+  useWorkflowNodes,
+  useWorkflowTransitions,
+  useCreateWorkflowNode,
+  useUpdateWorkflowNode,
+  useDeleteWorkflowNode,
+  useCreateWorkflowTransition,
+  useDeleteWorkflowTransition,
+} from "@/hooks/useWorkflow";
+import { apiPost } from "@/lib/api-client";
+import { presentMutationError } from "@/lib/mutation-error";
+import type { WorkflowNodeType } from "@/types";
+import { useManagementStatuses } from "@/hooks/useManagementStatuses";
+import { theme } from "@/theme/tokens";
+import { getNodeMeta, withNodeIcon } from "@/lib/workflow-node-meta";
+
+function WorkflowNodeComponent({ data }: { data: { label: string; type: string } }) {
+  const meta = getNodeMeta(data.type);
+  return (
+    <div
+      style={{
+        background: meta.background,
+        border: `2px solid ${meta.border}`,
+        color: meta.color,
+        borderRadius: "8px",
+        padding: "8px 16px",
+        fontWeight: 600,
+        fontSize: "13px",
+        minWidth: "120px",
+        textAlign: "center",
+      }}
+    >
+      <Handle type="target" position={Position.Left} />
+      {data.label}
+      <Handle type="source" position={Position.Right} />
+    </div>
+  );
+}
+
+const nodeTypes = { workflowNode: WorkflowNodeComponent };
+
+export default function WorkflowEditorPage() {
+  const t = useTranslations("administracion.workflows.editor");
+  const tc = useTranslations("common");
+  const params = useParams();
+  const router = useRouter();
+  const workflowId = Number(params.id);
+
+  const { data: workflows = [] } = useWorkflowDefinitions();
+  const workflow = workflows.find((wf) => wf.id === workflowId);
+  const { data: rawNodes = [], refetch: refetchNodes } = useWorkflowNodes(workflowId);
+  const { data: rawTransitions = [], refetch: refetchTransitions } = useWorkflowTransitions(workflowId);
+
+  const { data: estados = [] } = useManagementStatuses();
+  const createNode = useCreateWorkflowNode();
+  const updateNode = useUpdateWorkflowNode();
+  const deleteNodeMut = useDeleteWorkflowNode();
+  const createTransition = useCreateWorkflowTransition();
+  const deleteTransitionMut = useDeleteWorkflowTransition();
+
+  const [editMode, setEditMode] = useState(false);
+  const [addNodeOpen, setAddNodeOpen] = useState(false);
+  const [newNodeEstadoId, setNewNodeEstadoId] = useState<number | "">("");
+  const [newNodeTipo, setNewNodeTipo] = useState<WorkflowNodeType>("INTERMEDIATE");
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  const flowNodes: Node[] = rawNodes.map((n) => ({
+    id: String(n.id),
+    type: "workflowNode",
+    position: { x: n.positionX ?? 0, y: n.positionY ?? 0 },
+    data: {
+      label: withNodeIcon(
+        n.statusManagementName ?? t("nodeFallback", { id: n.id ?? 0 }),
+        n.type ?? "INTERMEDIATE",
+      ),
+      tipo: n.type ?? "INTERMEDIATE",
+    },
+  }));
+
+  const flowEdges: Edge[] = rawTransitions.map((tr) => ({
+    id: String(tr.id),
+    source: String(tr.originNodeId),
+    target: String(tr.destinationNodeId),
+    label: tr.description ?? undefined,
+    animated: false,
+    style: { stroke: theme.colors.neutral[500] },
+  }));
+
+  const [nodes, , onNodesChange] = useNodesState(flowNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(flowEdges);
+
+  const onConnect = useCallback(
+    async (connection: Connection) => {
+      if (!editMode) return;
+      setEdges((eds) => addEdge(connection, eds));
+      try {
+        await createTransition.mutateAsync({
+          workflowDefinitionId: workflowId,
+          originNodeId: Number(connection.source),
+          destinationNodeId: Number(connection.target),
+        });
+        refetchTransitions();
+      } catch (err) {
+        presentMutationError(err, { fallback: t("errorCreateTransition") });
+      }
+    },
+    [editMode, createTransition, workflowId, refetchTransitions, setEdges, t]
+  );
+
+  async function handleNodeDragStop(_: unknown, node: Node) {
+    if (!editMode) return;
+    try {
+      await updateNode.mutateAsync({
+        id: Number(node.id),
+        data: {
+          workflowDefinitionId: workflowId,
+          positionX: node.position.x,
+          positionY: node.position.y,
+        },
+      });
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorSavePosition") });
+    }
+  }
+
+  async function handleAddNode() {
+    if (!newNodeEstadoId) {
+      toast.error(t("selectStatus"));
+      return;
+    }
+    try {
+      await createNode.mutateAsync({
+        workflowDefinitionId: workflowId,
+        statusManagementId: Number(newNodeEstadoId),
+        type: newNodeTipo,
+        positionX: 100 + rawNodes.length * 160,
+        positionY: 100,
+      });
+      setAddNodeOpen(false);
+      setNewNodeEstadoId("");
+      setNewNodeTipo("INTERMEDIATE");
+      refetchNodes();
+      toast.success(t("nodeAdded"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorAddNode") });
+    }
+  }
+
+  async function handleDeleteNode(nodeId: string) {
+    try {
+      await deleteNodeMut.mutateAsync({ id: Number(nodeId), workflowId });
+      refetchNodes();
+      refetchTransitions();
+      toast.success(t("nodeDeleted"));
+    } catch (err) {
+      presentMutationError(err, {
+        fallback: t("errorDeleteNodeHasTransitions"),
+      });
+    }
+  }
+
+  async function handleDeleteEdge(edgeId: string) {
+    try {
+      await deleteTransitionMut.mutateAsync({ id: Number(edgeId), workflowId });
+      refetchTransitions();
+      toast.success(t("transitionDeleted"));
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorDeleteTransition") });
+    }
+  }
+
+  async function handleValidate() {
+    try {
+      const result = await apiPost<{ valid: boolean; errors: string[] }>(
+        `/workflow-definition/${workflowId}/validate`,
+        {}
+      );
+      setValidationErrors(result.errors ?? []);
+      if (result.valid) {
+        toast.success(t("valid"));
+      } else {
+        toast.error(t("invalid"));
+      }
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorValidate") });
+    }
+  }
+
+  return (
+    <div>
+      <AppHeader
+        title={workflow?.name ?? t("title")}
+        description={workflow?.description ?? ""}
+        actions={
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={() => router.back()}>
+              {t("back")}
+            </Button>
+            <Button
+              variant={editMode ? "default" : "secondary"}
+              onClick={() => setEditMode((v) => !v)}
+              data-testid="btn-toggle-edit"
+            >
+              {editMode ? t("editMode") : t("viewMode")}
+            </Button>
+            {editMode && (
+              <Button onClick={() => setAddNodeOpen(true)} data-testid="btn-add-node">
+                {t("addNode")}
+              </Button>
+            )}
+            <Button variant="secondary" onClick={handleValidate} data-testid="btn-validate">
+              {t("validate")}
+            </Button>
+          </div>
+        }
+      />
+
+      {validationErrors.length > 0 && (
+        <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/30" data-testid="validation-errors">
+          <p className="text-sm font-semibold text-destructive mb-1">{t("consistencyErrors")}</p>
+          <ul className="list-disc list-inside text-sm text-destructive">
+            {validationErrors.map((e, i) => <li key={i}>{e}</li>)}
+          </ul>
+        </div>
+      )}
+
+      <div className="mb-3 flex gap-3 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-success/20 border border-success inline-block" />{t("types.INITIAL")}</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-info/20 border border-info inline-block" />{t("types.INTERMEDIATE")}</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-destructive/20 border border-destructive inline-block" />{t("types.FINAL")}</span>
+      </div>
+
+      <div
+        style={{ height: theme.sizes.workflowEditor.height }}
+        className="rounded-xl border border-border overflow-hidden"
+        data-testid="workflow-editor"
+      >
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          onNodesChange={editMode ? onNodesChange : undefined}
+          onEdgesChange={editMode ? onEdgesChange : undefined}
+          onConnect={editMode ? onConnect : undefined}
+          onNodeDragStop={editMode ? handleNodeDragStop : undefined}
+          onNodeDoubleClick={editMode ? (_, node) => handleDeleteNode(node.id) : undefined}
+          onEdgeDoubleClick={editMode ? (_, edge) => handleDeleteEdge(edge.id) : undefined}
+          nodesDraggable={editMode}
+          nodesConnectable={editMode}
+          fitView
+        >
+          <Background />
+          <Controls />
+          <MiniMap />
+        </ReactFlow>
+      </div>
+      {editMode && (
+        <p className="text-xs text-muted-foreground mt-1">
+          {t("hint")}
+        </p>
+      )}
+
+      <Dialog open={addNodeOpen} onOpenChange={setAddNodeOpen}>
+        <DialogContent>
+          <FormContainer>
+            <FormSection dialogTitle title={t("addNodeTitle")}>
+              <FormField label={t("fields.estado")} required>
+                <select
+                  className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
+                  value={newNodeEstadoId}
+                  onChange={(e) => setNewNodeEstadoId(e.target.value ? Number(e.target.value) : "")}
+                  data-testid="select-estado-nodo"
+                >
+                  <option value="">{t("fields.estadoPlaceholder")}</option>
+                  {estados.map((e) => (
+                    <option key={e.idManagementStatus} value={e.idManagementStatus}>{e.name}</option>
+                  ))}
+                </select>
+              </FormField>
+              <FormField label={t("fields.tipo")} required>
+                <select
+                  className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
+                  value={newNodeTipo}
+                  onChange={(e) => setNewNodeTipo(e.target.value as WorkflowNodeType)}
+                  data-testid="select-tipo-nodo"
+                >
+                  <option value="INITIAL">{t("types.INITIAL")}</option>
+                  <option value="INTERMEDIATE">{t("types.INTERMEDIATE")}</option>
+                  <option value="FINAL">{t("types.FINAL")}</option>
+                </select>
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setAddNodeOpen(false)}>{tc("cancel")}</Button>
+              <Button onClick={handleAddNode} data-testid="btn-confirmar-nodo">{tc("add")}</Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

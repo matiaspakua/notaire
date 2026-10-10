@@ -17,7 +17,7 @@ class FolioTest {
         folio.setIdFolio(2);
         folio.setNumber(20);
         folio.setYear(2026);
-        folio.setStatus("Nuevo");
+        folio.setStatus("New");
         folio.setFkIdFolioType(new FolioType("Protocolo Principal"));
 
         assertThat(folio.getFkIdDeed()).isNull();

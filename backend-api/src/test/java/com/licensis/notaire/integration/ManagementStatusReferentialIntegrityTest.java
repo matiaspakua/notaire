@@ -35,7 +35,7 @@ import com.licensis.notaire.repository.PersonRepository;
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @Transactional
-@DisplayName("CU28 — EstadoDeGestion referential integrity and search (issue #437)")
+@DisplayName("CU28 — ManagementStatus referential integrity and search (issue #437)")
 class ManagementStatusReferentialIntegrityTest {
 
     @Autowired
@@ -59,7 +59,7 @@ class ManagementStatusReferentialIntegrityTest {
     }
 
     private int createStatus(String name) throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/v1/estado-gestion")
+        MvcResult result = mockMvc.perform(post("/api/v1/management-statuses")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "%s", "notes": "Test"}
@@ -76,29 +76,29 @@ class ManagementStatusReferentialIntegrityTest {
         DeedManagement management = new DeedManagement();
         management.setDateStart(new Date());
         management.setNumber(90000 + idManagementStatus);
-        management.setEncabezado("Test gestion for status " + idManagementStatus);
+        management.setEncabezado("Test management for status " + idManagementStatus);
         management.setFkIdNotaryPerson(notary);
         management.setFkIdManagementStatus(status);
         managementRepository.save(management);
     }
 
     @Test
-    @DisplayName("Should return inUse=false when no gestion references the status")
+    @DisplayName("Should return inUse=false when not management references the status")
     void shouldReturnInUseFalseWhenStatusIsNotReferenced() throws Exception {
         int id = createStatus("EstadoFree_InUse");
 
-        mockMvc.perform(get("/api/v1/estado-gestion/" + id + "/in-use"))
+        mockMvc.perform(get("/api/v1/management-statuses/" + id + "/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(false));
     }
 
     @Test
-    @DisplayName("Should return inUse=true when a gestion references the status")
+    @DisplayName("Should return inUse=true when a management references the status")
     void shouldReturnInUseTrueWhenStatusIsReferenced() throws Exception {
         int id = createStatus("EstadoUsed_InUse");
         linkStatusToManagement(id);
 
-        mockMvc.perform(get("/api/v1/estado-gestion/" + id + "/in-use"))
+        mockMvc.perform(get("/api/v1/management-statuses/" + id + "/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(true));
     }
@@ -109,7 +109,7 @@ class ManagementStatusReferentialIntegrityTest {
         int id = createStatus("EstadoEditBlocked");
         linkStatusToManagement(id);
 
-        mockMvc.perform(put("/api/v1/estado-gestion/" + id)
+        mockMvc.perform(put("/api/v1/management-statuses/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "StatusEditBlockedUpdated", "notes": "Updated"}
@@ -123,7 +123,7 @@ class ManagementStatusReferentialIntegrityTest {
     void shouldAllowEditingStatusNotInUse() throws Exception {
         int id = createStatus("EstadoEditAllowed");
 
-        mockMvc.perform(put("/api/v1/estado-gestion/" + id)
+        mockMvc.perform(put("/api/v1/management-statuses/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "StatusEditAllowedUpdated", "notes": "Updated"}
@@ -137,7 +137,7 @@ class ManagementStatusReferentialIntegrityTest {
         int id = createStatus("EstadoDeleteBlocked");
         linkStatusToManagement(id);
 
-        mockMvc.perform(delete("/api/v1/estado-gestion/" + id))
+        mockMvc.perform(delete("/api/v1/management-statuses/" + id))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").exists());
     }
@@ -147,7 +147,7 @@ class ManagementStatusReferentialIntegrityTest {
     void shouldSearchEstadosByName() throws Exception {
         createStatus("BuscarEsteEstado");
 
-        mockMvc.perform(get("/api/v1/estado-gestion/search").param("name", "BuscarEste"))
+        mockMvc.perform(get("/api/v1/management-statuses/search").param("name", "BuscarEste"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].name").value("BuscarEsteEstado"));

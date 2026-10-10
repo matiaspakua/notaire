@@ -35,8 +35,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/tipo-tramite")
-@Tag(name = "Tipo de Tramite", description = "API para tipos de tramite")
+@RequestMapping("/api/v1/procedure-types")
+@Tag(name = "Tipo de Procedure", description = "API for procedure")
 public class ProcedureTypeController {
 
     private final ProcedureTypeRepositoryPort repository;
@@ -59,7 +59,7 @@ public class ProcedureTypeController {
 
     @GetMapping
     @Transactional(readOnly = true)
-    @Operation(summary = "Obtener todos los tipos de tramite")
+    @Operation(summary = "Get all procedure types")
     public ResponseEntity<List<DtoProcedureType>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream()
                 .map(ProcedureType::getDto)
@@ -68,7 +68,7 @@ public class ProcedureTypeController {
 
     @GetMapping("/search")
     @Transactional(readOnly = true)
-    @Operation(summary = "Buscar tipos de tramite por nombre")
+    @Operation(summary = "Search procedure types by name")
     public ResponseEntity<List<DtoProcedureType>> search(@RequestParam String name) {
         return ResponseEntity.ok(repository.findByNameContaining(name).stream()
                 .map(ProcedureType::getDto)
@@ -81,7 +81,7 @@ public class ProcedureTypeController {
 })
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    @Operation(summary = "Obtener tipo de tramite por ID")
+    @Operation(summary = "Get procedure type by ID")
     public ResponseEntity<DtoProcedureType> getById(@PathVariable Integer id) {
         return repository.findById(id)
                 .map(e -> ResponseEntity.ok(e.getDto()))
@@ -89,7 +89,7 @@ public class ProcedureTypeController {
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Verificar si el tipo de tramite está en uso")
+    @Operation(summary = "Check whether the procedure type is in uso")
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -102,11 +102,11 @@ public class ProcedureTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
-    @Operation(summary = "Crear tipo de tramite")
+    @Operation(summary = "Create procedure type")
     public ResponseEntity<Object> create(@RequestBody DtoProcedureType dto) {
         try {
             dto.setEnabled(true);
@@ -127,12 +127,12 @@ public class ProcedureTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
     @ApiResponse(responseCode = "404", description = "No encontrado"),
-    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
+    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar tipo de tramite")
+    @Operation(summary = "Update procedure type")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoProcedureType dto) {
         Optional<ProcedureType> existing = repository.findById(id);
         if (existing.isEmpty()) {
@@ -142,7 +142,7 @@ public class ProcedureTypeController {
                 || !budgetTemplateRepository.findByProcedureTypeIdProcedureType(id).isEmpty()
                 || !procedureRepository.findByFkIdProcedureTypeIdProcedureType(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Este tipo de trámite está en uso y no puede modificarse. Cree uno nuevo."));
+                    .body(Map.of("error", "This procedure type is in uso and cannot modificarse. Cree uno new."));
         }
         try {
             dto.setIdProcedureType(id);
@@ -160,7 +160,7 @@ public class ProcedureTypeController {
     @ApiResponse(responseCode = "404", description = "No encontrado")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar tipo de tramite")
+    @Operation(summary = "Delete procedure type")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -169,7 +169,7 @@ public class ProcedureTypeController {
                 || !budgetTemplateRepository.findByProcedureTypeIdProcedureType(id).isEmpty()
                 || !procedureRepository.findByFkIdProcedureTypeIdProcedureType(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "No se puede eliminar: el tipo de trámite está siendo utilizado en plantillas o trámites."));
+                    .body(Map.of("error", "Not can delete: the procedure type is siendo utilizado in plantillas or procedures."));
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -182,7 +182,7 @@ public class ProcedureTypeController {
      */
     @Schema(name = "WorkflowAssignmentRequest")
     public record WorkflowAssignmentRequest(
-            @Schema(description = "Workflow activo a asignar, o null para desasignar el actual",
+            @Schema(description = "Workflow active a assign, or null for unassign the actual",
                     requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
             Integer workflowDefinitionId) {
     }
@@ -190,12 +190,12 @@ public class ProcedureTypeController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400",
-            description = "Cuerpo vacío o inválido: workflowDefinitionId es obligatorio (entero, o null para desasignar)"),
-    @ApiResponse(responseCode = "404", description = "Tipo de trámite o workflow no encontrado"),
-    @ApiResponse(responseCode = "409", description = "El workflow seleccionado no está activo")
+            description = "Empty or invalid body: workflowDefinitionId is required (entero, or null for unassign)"),
+    @ApiResponse(responseCode = "404", description = "Procedure type or workflow not found"),
+    @ApiResponse(responseCode = "409", description = "The workflow seleccionado is not active")
 })
     @PutMapping("/{id}/workflow")
-    @Operation(summary = "Asignar o desasignar workflow a tipo de tramite")
+    @Operation(summary = "Assign or unassign workflow a procedure type")
     public ResponseEntity<Object> assignWorkflow(@PathVariable Integer id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(
                     mediaType = "application/json",
@@ -204,7 +204,7 @@ public class ProcedureTypeController {
         RequiredFields.check().present(body.containsKey("workflowDefinitionId"), "workflowDefinitionId").orThrow();
         Object wfIdObj = body.get("workflowDefinitionId");
         if (wfIdObj != null && !(wfIdObj instanceof Integer)) {
-            throw new BusinessValidationException("workflowDefinitionId: debe ser un número entero o null");
+            throw new BusinessValidationException("workflowDefinitionId: must be an integer or null");
         }
         Optional<ProcedureType> existing = repository.findById(id);
         if (existing.isEmpty()) {
@@ -223,7 +223,7 @@ public class ProcedureTypeController {
         }
         if (!wf.get().isActive()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "El workflow seleccionado no está activo."));
+                    .body(Map.of("error", "The workflow seleccionado is not active."));
         }
         type.setWorkflowDefinition(wf.get());
         repository.save(type);

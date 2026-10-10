@@ -36,10 +36,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * standard {@code ErrorResponse} naming every missing field, instead of 200. "Incomplete" means a
  * required field of the entity is missing: the POST rule or the NOT NULL column it maps to.
  * <ul>
- *   <li>{@code PUT /testimonio/{id}}: {@code number}, {@code flagged}, {@code verified} (NOT NULL
+ *   <li>{@code PUT /testimonies/{id}}: {@code number}, {@code flagged}, {@code verified} (NOT NULL
  *       columns; {@code {}} used to overwrite them with 0/false).</li>
- *   <li>{@code PUT /tramites/{id}}: {@code idProcedureType} (required on POST).</li>
- *   <li>{@code PUT /tipo-tramite/{id}/workflow}: {@code workflowDefinitionId} must be present;
+ *   <li>{@code PUT /procedures/{id}}: {@code idProcedureType} (required on POST).</li>
+ *   <li>{@code PUT /procedure-types/{id}/workflow}: {@code workflowDefinitionId} must be present;
  *       an explicit {@code null} unassigns ({@code {}} used to unassign silently).</li>
  * </ul>
  */
@@ -57,7 +57,7 @@ class IncompletePutBodiesIntegrationTest {
     @Autowired
     private DeedRepository deedRepository;
 
-    /** POST /testimonio requires an existing deed (#1335), so each fixture testimony copies one. */
+    /** POST /testimonies requires an existing deed (#1335), so each fixture testimony copies one. */
     private int seedDeed() {
         Deed deed = new Deed();
         deed.setNumber((int) (System.nanoTime() % 1_000_000));
@@ -82,30 +82,30 @@ class IncompletePutBodiesIntegrationTest {
     }
 
     private int createProcedureType() throws Exception {
-        return postJson("/api/v1/tipo-tramite", "{\"name\":\"T655-" + System.nanoTime() + "\"}")
+        return postJson("/api/v1/procedure-types", "{\"name\":\"T655-" + System.nanoTime() + "\"}")
                 .get("idProcedureType").asInt();
     }
 
-    // ---------------------------------------------------------------- PUT /testimonio/{id}
+    // ---------------------------------------------------------------- PUT /testimonies/{id}
 
     private int createTestimony() throws Exception {
-        return postJson("/api/v1/testimonio",
+        return postJson("/api/v1/testimonies",
                 "{\"number\":57,\"flagged\":true,\"verified\":true,\"notes\":\"keep\",\"deed\":{\"idDeed\":"
                         + seedDeed() + ",\"number\":0}}").get("idTestimony").asInt();
     }
 
     @Test
-    @DisplayName("PUT /testimonio/{id} with {} answers 400 naming number, flagged and verified, and stores nothing")
+    @DisplayName("PUT /testimonies/{id} with {} answers 400 naming number, flagged and verified, and stores nothing")
     void testimonyEmptyBodyIsRejected() throws Exception {
         int id = createTestimony();
 
-        mockMvc.perform(put("/api/v1/testimonio/" + id).contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mockMvc.perform(put("/api/v1/testimonies/" + id).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value(allOf(containsString("number: es obligatorio"),
                         containsString("flagged: es obligatorio"), containsString("verified: es obligatorio"))));
 
-        JsonNode stored = getJson("/api/v1/testimonio/" + id);
+        JsonNode stored = getJson("/api/v1/testimonies/" + id);
         assertThat(stored.get("number").asInt()).isEqualTo(57);
         assertThat(stored.get("flagged").asBoolean()).isTrue();
         assertThat(stored.get("verified").asBoolean()).isTrue();
@@ -113,90 +113,90 @@ class IncompletePutBodiesIntegrationTest {
     }
 
     @Test
-    @DisplayName("PUT /testimonio/{id} with only some required fields answers 400 naming the missing ones")
+    @DisplayName("PUT /testimonies/{id} with only some required fields answers 400 naming the missing ones")
     void testimonyIncompleteBodyIsRejected() throws Exception {
         int id = createTestimony();
 
-        mockMvc.perform(put("/api/v1/testimonio/" + id).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/v1/testimonies/" + id).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"number\":58,\"flagged\":false}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(allOf(containsString("verified: es obligatorio"),
                         not(containsString("number")), not(containsString("flagged")))));
 
-        assertThat(getJson("/api/v1/testimonio/" + id).get("number").asInt()).isEqualTo(57);
+        assertThat(getJson("/api/v1/testimonies/" + id).get("number").asInt()).isEqualTo(57);
     }
 
     @Test
-    @DisplayName("PUT /testimonio/{id} with a complete body still answers 200 and stores it")
+    @DisplayName("PUT /testimonies/{id} with a complete body still answers 200 and stores it")
     void testimonyCompleteBodyIsStored() throws Exception {
         int id = createTestimony();
 
-        mockMvc.perform(put("/api/v1/testimonio/" + id).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/v1/testimonies/" + id).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"number\":59,\"flagged\":false,\"verified\":false,\"notes\":\"n\",\"version\":0}"))
                 .andExpect(status().isOk());
 
-        JsonNode stored = getJson("/api/v1/testimonio/" + id);
+        JsonNode stored = getJson("/api/v1/testimonies/" + id);
         assertThat(stored.get("number").asInt()).isEqualTo(59);
         assertThat(stored.get("flagged").asBoolean()).isFalse();
         assertThat(stored.get("verified").asBoolean()).isFalse();
     }
 
-    // ---------------------------------------------------------------- PUT /tramites/{id}
+    // ---------------------------------------------------------------- PUT /procedures/{id}
 
     @Test
-    @DisplayName("PUT /tramites/{id} without idProcedureType answers 400 and keeps the stored procedure")
+    @DisplayName("PUT /procedures/{id} without idProcedureType answers 400 and keeps the stored procedure")
     void procedureWithoutTypeIsRejected() throws Exception {
         int type = createProcedureType();
-        int id = postJson("/api/v1/tramites", "{\"idProcedureType\":" + type + ",\"notes\":\"keep\"}")
+        int id = postJson("/api/v1/procedures", "{\"idProcedureType\":" + type + ",\"notes\":\"keep\"}")
                 .get("idProcedure").asInt();
 
         for (String body : List.of("{}", "{\"notes\":\"x\"}")) {
-            mockMvc.perform(put("/api/v1/tramites/" + id).contentType(MediaType.APPLICATION_JSON).content(body))
+            mockMvc.perform(put("/api/v1/procedures/" + id).contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.message").value("idProcedureType: es obligatorio"));
         }
-        assertThat(getJson("/api/v1/tramites/" + id).get("notes").asText()).isEqualTo("keep");
+        assertThat(getJson("/api/v1/procedures/" + id).get("notes").asText()).isEqualTo("keep");
 
-        mockMvc.perform(put("/api/v1/tramites/" + id).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/v1/procedures/" + id).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"idProcedureType\":" + type + ",\"notes\":\"new\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.notes").value("new"));
     }
 
     @Test
-    @DisplayName("POST /tramites without idProcedureType answers 400 with the same ErrorResponse")
+    @DisplayName("POST /procedures without idProcedureType answers 400 with the same ErrorResponse")
     void procedureCreateWithoutTypeUsesErrorResponse() throws Exception {
-        mockMvc.perform(post("/api/v1/tramites").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mockMvc.perform(post("/api/v1/procedures").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("idProcedureType: es obligatorio"));
     }
 
-    // ---------------------------------------------------------------- PUT /tipo-tramite/{id}/workflow
+    // ---------------------------------------------------------------- PUT /procedure-types/{id}/workflow
 
     @Test
-    @DisplayName("PUT /tipo-tramite/{id}/workflow with {} answers 400; an explicit null still unassigns")
+    @DisplayName("PUT /procedure-types/{id}/workflow with {} answers 400; an explicit null still unassigns")
     void workflowAssignmentRequiresTheField() throws Exception {
         int type = createProcedureType();
 
-        mockMvc.perform(put("/api/v1/tipo-tramite/" + type + "/workflow").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/v1/procedure-types/" + type + "/workflow").contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value(containsString("workflowDefinitionId: es obligatorio")));
 
-        mockMvc.perform(put("/api/v1/tipo-tramite/" + type + "/workflow").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/v1/procedure-types/" + type + "/workflow").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"workflowDefinitionId\":null}"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("PUT /tipo-tramite/{id}/workflow with a non-integer id answers 400, not 500")
+    @DisplayName("PUT /procedure-types/{id}/workflow with a non-integer id answers 400, not 500")
     void workflowAssignmentRejectsNonIntegerId() throws Exception {
         int type = createProcedureType();
 
-        mockMvc.perform(put("/api/v1/tipo-tramite/" + type + "/workflow").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/v1/procedure-types/" + type + "/workflow").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"workflowDefinitionId\":\"abc\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400));
@@ -206,9 +206,9 @@ class IncompletePutBodiesIntegrationTest {
 
     @ParameterizedTest(name = "contract of PUT {0} documents 400 and requires {1}")
     @CsvSource({
-        "/api/v1/testimonio/{id}, number;flagged;verified",
-        "/api/v1/tramites/{id}, idProcedureType",
-        "/api/v1/tipo-tramite/{id}/workflow, workflowDefinitionId"
+        "/api/v1/testimonies/{id}, number;flagged;verified",
+        "/api/v1/procedures/{id}, idProcedureType",
+        "/api/v1/procedure-types/{id}/workflow, workflowDefinitionId"
     })
     @DisplayName("the contract documents 400 and the required request fields")
     void contractDocumentsRequiredFields(String path, String requiredFields) throws Exception {

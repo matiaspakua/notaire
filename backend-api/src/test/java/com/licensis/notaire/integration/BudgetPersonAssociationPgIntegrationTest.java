@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * CU01 - Preparar Presupuesto, against the real Flyway-managed Postgres
+ * CU01 - Preparar Budget, against the real Flyway-managed Postgres
  * schema. After #1068/#1124, create/update bind {@code BudgetRequest} (accepts
  * nested {@code person.personId} or flat {@code personId}) and return
  * {@code BudgetResponse} with nested {@code person} matching frontend
@@ -33,7 +33,7 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
-@DisplayName("Presupuesto - asociación con person (CU01)")
+@DisplayName("Budget - asociación with person (CU01)")
 class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
@@ -61,7 +61,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should link the Presupuesto to the client when created with the field the frontend sends")
+    @DisplayName("Should link the Budget to the client when created with the field the frontend sends")
     void shouldPersistPersonAssociationOnCreate() throws Exception {
         Integer personId = createPerson("883pg001");
         String body = """
@@ -69,7 +69,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
                  "status": "BORRADOR", "person": {"personId": %d}}
                 """.formatted(personId);
 
-        mockMvc.perform(post("/api/v1/presupuestos")
+        mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -79,14 +79,14 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should link the Presupuesto to the client when edited to add one")
+    @DisplayName("Should link the Budget to the client when edited to add one")
     void shouldPersistPersonAssociationOnUpdate() throws Exception {
         Integer personId = createPerson("883pg002");
         String createBody = """
                 {"number": 883002, "date": "2026-01-01", "encabezado": "Budget CU01 pg sin client",
                  "status": "BORRADOR"}
                 """;
-        MvcResult createResult = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult createResult = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -99,7 +99,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
                  "status": "BORRADOR", "person": {"personId": %d}}
                 """.formatted(personId);
 
-        mockMvc.perform(put("/api/v1/presupuestos/" + budgetId)
+        mockMvc.perform(put("/api/v1/budgets/" + budgetId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk())
@@ -109,14 +109,14 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should still create a Presupuesto when the client association is omitted")
+    @DisplayName("Should still create a Budget when the client association is omitted")
     void shouldCreateWithoutPersonWhenOmitted() throws Exception {
         String body = """
                 {"number": 883003, "date": "2026-01-01", "encabezado": "Budget CU01 pg opcional",
                  "status": "BORRADOR"}
                 """;
 
-        mockMvc.perform(post("/api/v1/presupuestos")
+        mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -124,14 +124,14 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return the client association when reading a single Presupuesto")
+    @DisplayName("Should return the client association when reading a single Budget")
     void shouldReturnPersonFieldOnGetById() throws Exception {
         Integer personId = createPerson("883pg004");
         String body = """
                 {"number": 883004, "date": "2026-01-01", "encabezado": "Budget CU01 pg detail",
                  "status": "BORRADOR", "person": {"personId": %d}}
                 """.formatted(personId);
-        MvcResult createResult = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult createResult = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -139,7 +139,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
         Integer budgetId = mapper.readTree(createResult.getResponse().getContentAsString())
                 .get("idBudget").asInt();
 
-        mockMvc.perform(get("/api/v1/presupuestos/" + budgetId))
+        mockMvc.perform(get("/api/v1/budgets/" + budgetId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.person.personId").value(personId))
                 .andExpect(jsonPath("$.person.name").value("Client IT"))
@@ -159,7 +159,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
                  "status": "BORRADOR"}
                 """;
 
-        MvcResult withPersonResult = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult withPersonResult = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(withPersonBody))
                 .andExpect(status().isCreated())
@@ -167,7 +167,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
         Integer withPersonId = mapper.readTree(withPersonResult.getResponse().getContentAsString())
                 .get("idBudget").asInt();
 
-        MvcResult withoutPersonResult = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult withoutPersonResult = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(withoutPersonBody))
                 .andExpect(status().isCreated())
@@ -175,11 +175,11 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
         Integer withoutPersonId = mapper.readTree(withoutPersonResult.getResponse().getContentAsString())
                 .get("idBudget").asInt();
 
-        mockMvc.perform(get("/api/v1/presupuestos/" + withPersonId))
+        mockMvc.perform(get("/api/v1/budgets/" + withPersonId))
                 .andExpect(jsonPath("$.person.personId").value(personId))
                 .andExpect(jsonPath("$.person.name").value("Client IT"))
                 .andExpect(jsonPath("$.person.lastName").value("CU01"));
-        mockMvc.perform(get("/api/v1/presupuestos/" + withoutPersonId))
+        mockMvc.perform(get("/api/v1/budgets/" + withoutPersonId))
                 .andExpect(jsonPath("$.person").doesNotExist());
     }
 }

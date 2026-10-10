@@ -75,8 +75,8 @@ Rate limiting is a deployment-level concern. Implement via:
 - **Monitoring** — Prometheus alert `SuspiciousLoginActivity` fires when bad-credential login rate exceeds 30/min.
 
 Priority endpoints for rate limiting:
-1. `POST /api/v1/usuarios/login` — brute-force target
-2. `GET /api/v1/reportes/*` — expensive PDF generation
+1. `POST /api/v1/users/login` — brute-force target
+2. `GET /api/v1/reports/*` — expensive PDF generation
 
 ## File upload security
 
@@ -91,19 +91,19 @@ Currently there are no file upload endpoints. When implemented:
 
 ```java
 // Test missing required field → 400
-mvc.perform(post("/api/v1/usuarios")
+mvc.perform(post("/api/v1/users")
     .contentType(APPLICATION_JSON)
     .content("{\"contrasenia\":\"pwd\"}"))  // nombre missing
     .andExpect(status().isBadRequest());
 
 // Test oversized field → 400
-mvc.perform(post("/api/v1/usuarios/login")
+mvc.perform(post("/api/v1/users/login")
     .contentType(APPLICATION_JSON)
     .content("{\"nombre\":\"" + "x".repeat(5000) + "\",\"contrasenia\":\"\"}"))
     .andExpect(status().isOk());  // login returns 200 with valido:false
 
 // Test SQL injection attempt → no 500
-mvc.perform(post("/api/v1/usuarios/login")
+mvc.perform(post("/api/v1/users/login")
     .contentType(APPLICATION_JSON)
     .content("{\"nombre\":\"' OR '1'='1\",\"contrasenia\":\"\"}"))
     .andExpect(status().isOk());

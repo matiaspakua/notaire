@@ -39,7 +39,7 @@ public class SecurityAndCorsConfig {
     private static final String PRODUCTION_ENVIRONMENT = "production";
 
     private static final String[] ADMIN_ONLY_PATHS = {
-        "/api/v1/usuarios/**",
+        "/api/v1/users/**",
         "/api/v1/roles/**",
         "/api/v1/audit-log/**"
     };
@@ -48,15 +48,15 @@ public class SecurityAndCorsConfig {
         "/api/v1/workflow-definition/**",
         "/api/v1/workflow-node/**",
         "/api/v1/workflow-transition/**",
-        "/api/v1/tipo-tramite/**",
-        "/api/v1/tipo-de-documento/**",
-        "/api/v1/tipo-folio/**",
-        "/api/v1/tipo-identificacion/**",
-        "/api/v1/conceptos/**",
-        "/api/v1/estado-gestion/**",
-        "/api/v1/plantilla-tramite/**",
-        "/api/v1/plantilla-presupuestos/**",
-        "/api/v1/plantilla-costos-documento/**"
+        "/api/v1/procedure-types/**",
+        "/api/v1/document-types/**",
+        "/api/v1/folio-types/**",
+        "/api/v1/identification-types/**",
+        "/api/v1/concepts/**",
+        "/api/v1/management-statuses/**",
+        "/api/v1/procedure-templates/**",
+        "/api/v1/budget-templates/**",
+        "/api/v1/document-cost-templates/**"
     };
 
     /**
@@ -64,7 +64,7 @@ public class SecurityAndCorsConfig {
      * user may read it or record a new row, but only an administrator may rewrite or delete
      * one (issue #1250).
      */
-    private static final String HISTORY_ENTRY_PATH = "/api/v1/historial/*";
+    private static final String HISTORY_ENTRY_PATH = "/api/v1/history/*";
 
     private static final HttpMethod[] ADMIN_HISTORY_METHODS = {HttpMethod.PUT, HttpMethod.DELETE};
 
@@ -184,8 +184,8 @@ public class SecurityAndCorsConfig {
             .securityMatcher("/api/**")
             .authorizeHttpRequests(auth -> {
                 auth.requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll();
-                auth.requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login").permitAll();
-                auth.requestMatchers(HttpMethod.POST, "/api/v1/usuarios/logout").permitAll();
+                auth.requestMatchers(HttpMethod.POST, "/api/v1/users/login").permitAll();
+                auth.requestMatchers(HttpMethod.POST, "/api/v1/users/logout").permitAll();
                 auth.requestMatchers(ADMIN_ONLY_PATHS).hasRole(UserAuthorityResolver.ADMIN_ROLE);
                 for (HttpMethod method : WRITE_METHODS) {
                     auth.requestMatchers(method, ADMIN_WRITE_PATHS).hasRole(UserAuthorityResolver.ADMIN_ROLE);
@@ -248,13 +248,13 @@ public class SecurityAndCorsConfig {
         }
         if (Arrays.asList(allowedHeaders).contains("*")) {
             throw new IllegalStateException(
-                    "cors.allowed-headers no puede ser '*' en producción. "
-                    + "Configurá una lista explícita de headers permitidos.");
+                    "cors.allowed-headers cannot be '*' in producción. "
+                    + "Configurá a lista explícita of headers permitidos.");
         }
         if (Arrays.asList(allowedOrigins).contains("*")) {
             throw new IllegalStateException(
-                    "cors.allowed-origins no puede ser '*' en producción. "
-                    + "Configurá los orígenes del frontend explícitamente.");
+                    "cors.allowed-origins cannot be '*' in producción. "
+                    + "Configurá the orígenes of the frontend explícitamente.");
         }
     }
 

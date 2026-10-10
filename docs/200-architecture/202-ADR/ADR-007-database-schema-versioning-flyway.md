@@ -226,7 +226,7 @@ VALUES (0, '<< BASELINE >>', 'BASELINE', NOW());
 
 ## Technical Details
 
-### Tabla de Historial
+### Tabla de ManagementHistory
 
 Flyway crea automáticamente:
 

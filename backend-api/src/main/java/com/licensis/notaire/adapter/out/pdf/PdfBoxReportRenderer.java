@@ -32,7 +32,7 @@ import java.util.List;
  *
  * <p>Renders A4 pages with the standard Helvetica font (WinAnsi encoding, which covers
  * Spanish text). Long values wrap, tables break across pages repeating their header,
- * and every page gets a footer with the generation time and "Página i de n".
+ * and every page gets a footer with the generation time and "Página i of n".
  * Characters the standard font cannot encode are replaced with {@code ?} rather than
  * failing the whole report.
  */

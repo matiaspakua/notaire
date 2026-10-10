@@ -2,9 +2,9 @@ package com.licensis.notaire.unit;
 
 
 import com.licensis.notaire.application.port.out.document.ExternalDocumentRepositoryPort;
-import com.licensis.notaire.dto.DtoDocumentEntidadExterna;
-import com.licensis.notaire.dto.DtoManagementDocumentsEntidadesExternas;
-import com.licensis.notaire.dto.DtoMovementDocumentEntidadExterna;
+import com.licensis.notaire.dto.DtoExternalEntityDocument;
+import com.licensis.notaire.dto.DtoManagementExternalEntityDocuments;
+import com.licensis.notaire.dto.DtoExternalEntityDocumentMovement;
 import com.licensis.notaire.exception.BusinessValidationException;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.business.BusinessConstants;
@@ -85,11 +85,11 @@ class ExternalEntityDocumentServiceTest {
     }
 
     @Nested
-    @DisplayName("Obtener documents de entidades externas de una gestión")
+    @DisplayName("Get documents of entidades externas of a management")
     class ObtenerDocumentsTests {
 
         @Test
-        @DisplayName("Devuelve la gestión con sus documents de entidad externa y nomenclatura catastral")
+        @DisplayName("Devuelve the management with their documents of external entity and cadastral nomenclature")
         void shouldReturnManagementWithDocumentsAndDesignation() {
             Property property = new Property();
             property.setCadastralDesignation("12-34-56");
@@ -100,7 +100,7 @@ class ExternalEntityDocumentServiceTest {
             when(documentRepository.findByManagementAndDeliveredBy(
                     1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
 
-            DtoManagementDocumentsEntidadesExternas resultado = documentEntidadExternaService.getDocuments(1);
+            DtoManagementExternalEntityDocuments resultado = documentEntidadExternaService.getDocuments(1);
 
             assertThat(resultado.idManagement()).isEqualTo(1);
             assertThat(resultado.number()).isEqualTo(100);
@@ -111,21 +111,21 @@ class ExternalEntityDocumentServiceTest {
         }
 
         @Test
-        @DisplayName("Nomenclatura catastral es null cuando ningún trámite tiene property asociado")
+        @DisplayName("Cadastral nomenclature is null when ningún procedure has property associated")
         void shouldReturnNullDesignationWhenNoProperty() {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findProceduresByManagementId(1)).thenReturn(List.of(procedure));
             when(documentRepository.findByManagementAndDeliveredBy(
                     1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of());
 
-            DtoManagementDocumentsEntidadesExternas resultado = documentEntidadExternaService.getDocuments(1);
+            DtoManagementExternalEntityDocuments resultado = documentEntidadExternaService.getDocuments(1);
 
             assertThat(resultado.cadastralDesignation()).isNull();
             assertThat(resultado.documents()).isEmpty();
         }
 
         @Test
-        @DisplayName("Lanza ResourceNotFoundException cuando la gestión no existe")
+        @DisplayName("Lanza ResourceNotFoundException when the management there is no")
         void shouldThrowWhenManagementNotFound() {
             when(documentRepository.findManagementById(999)).thenReturn(Optional.empty());
 
@@ -139,7 +139,7 @@ class ExternalEntityDocumentServiceTest {
     class RegistrarMovementTests {
 
         @Test
-        @DisplayName("Actualiza los campos de movimiento del documento")
+        @DisplayName("Actualiza the campos of movimiento of the document")
         void shouldUpdateMovementFields() {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findSubmittedDocumentById(50)).thenReturn(Optional.of(document));
@@ -147,10 +147,10 @@ class ExternalEntityDocumentServiceTest {
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
             Date dateEntry = new Date();
-            DtoMovementDocumentEntidadExterna movement = new DtoMovementDocumentEntidadExterna(
+            DtoExternalEntityDocumentMovement movement = new DtoExternalEntityDocumentMovement(
                     true, 7, dateEntry, null, false, new java.math.BigDecimal("1500"), null, null, "Retirado a tiempo", false);
 
-            DtoDocumentEntidadExterna resultado =
+            DtoExternalEntityDocument resultado =
                     documentEntidadExternaService.registerMovement(1, 50, movement);
 
             assertThat(resultado.prepared()).isTrue();
@@ -163,7 +163,7 @@ class ExternalEntityDocumentServiceTest {
         }
 
         @Test
-        @DisplayName("Lanza BusinessValidationException cuando el documento no pertenece a la gestión indicada")
+        @DisplayName("Lanza BusinessValidationException when the document not belongs to the management indicada")
         void shouldThrowWhenDocumentDoesNotBelongToManagement() {
             DeedManagement otraManagement = new DeedManagement();
             otraManagement.setIdManagement(2);
@@ -175,7 +175,7 @@ class ExternalEntityDocumentServiceTest {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findSubmittedDocumentById(50)).thenReturn(Optional.of(document));
 
-            DtoMovementDocumentEntidadExterna movement = new DtoMovementDocumentEntidadExterna(
+            DtoExternalEntityDocumentMovement movement = new DtoExternalEntityDocumentMovement(
                     true, null, null, null, null, null, null, null, null, null);
 
             assertThatThrownBy(() -> documentEntidadExternaService.registerMovement(1, 50, movement))
@@ -190,7 +190,7 @@ class ExternalEntityDocumentServiceTest {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findSubmittedDocumentById(50)).thenReturn(Optional.of(document));
 
-            DtoMovementDocumentEntidadExterna movement = new DtoMovementDocumentEntidadExterna(
+            DtoExternalEntityDocumentMovement movement = new DtoExternalEntityDocumentMovement(
                     true, null, null, null, null, null, null, null, null, null);
 
             assertThatThrownBy(() -> documentEntidadExternaService.registerMovement(1, 50, movement))
@@ -203,7 +203,7 @@ class ExternalEntityDocumentServiceTest {
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findSubmittedDocumentById(999)).thenReturn(Optional.empty());
 
-            DtoMovementDocumentEntidadExterna movement = new DtoMovementDocumentEntidadExterna(
+            DtoExternalEntityDocumentMovement movement = new DtoExternalEntityDocumentMovement(
                     true, null, null, null, null, null, null, null, null, null);
 
             assertThatThrownBy(() -> documentEntidadExternaService.registerMovement(1, 999, movement))
@@ -212,11 +212,11 @@ class ExternalEntityDocumentServiceTest {
     }
 
     @Nested
-    @DisplayName("Intentar completar la documentación de entidades externas")
+    @DisplayName("Intentar completar the documentation of entidades externas")
     class IntentarCompletarDocumentacionTests {
 
         @Test
-        @DisplayName("Transiciona la gestión a Documentacion Completa cuando todos los documents quedan entregados")
+        @DisplayName("Transitions the management a Documentation Completa when all the documents quedan entregados")
         void shouldTransitionManagementWhenAllDocumentsDelivered() {
             document.setDelivered(true);
             when(documentRepository.findByManagementAndDeliveredBy(
@@ -232,7 +232,7 @@ class ExternalEntityDocumentServiceTest {
         }
 
         @Test
-        @DisplayName("No transiciona la gestión cuando quedan documents sin entregar")
+        @DisplayName("Not transitions the management when quedan documents without entregar")
         void shouldNotTransitionWhenDocumentsPending() {
             when(documentRepository.findByManagementAndDeliveredBy(
                     1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
@@ -243,13 +243,13 @@ class ExternalEntityDocumentServiceTest {
         }
 
         @Test
-        @DisplayName("No propaga la excepción si el workflow no admite la transición automática")
+        @DisplayName("Not propaga the excepción if the workflow not admite the transition automática")
         void shouldSwallowBusinessValidationExceptionOnAutoTransition() {
             document.setDelivered(true);
             when(documentRepository.findByManagementAndDeliveredBy(
                     1, BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA)).thenReturn(List.of(document));
             when(managementTransitionService.transition(eq(1), eq(BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA)))
-                    .thenThrow(new BusinessValidationException("Transición no permitida"));
+                    .thenThrow(new BusinessValidationException("Transition not permitida"));
 
             documentEntidadExternaService.tryCompleteDocumentation(1);
 

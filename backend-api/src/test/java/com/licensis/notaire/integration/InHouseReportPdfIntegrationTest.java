@@ -153,7 +153,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setNumber(MANAGEMENT_NUMBER);
         management.setDateStart(date(LocalDate.of(2026, 9, 16)));
-        management.setEncabezado("Gestión Peña");
+        management.setEncabezado("Management Peña");
         management.setFkIdNotaryPerson(client);
         management.setFkIdManagementStatus(status);
         management = managementRepository.save(management);
@@ -166,8 +166,8 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         procedure.setFkIdProperty(property);
         procedure = procedureRepository.save(procedure);
 
-        historyRepository.save(history(management, status, LocalDate.of(2026, 9, 16), "Inicio de gestión"));
-        historyRepository.save(history(management, status, LocalDate.of(2026, 9, 20), "Documentación presentada"));
+        historyRepository.save(history(management, status, LocalDate.of(2026, 9, 16), "Inicio of management"));
+        historyRepository.save(history(management, status, LocalDate.of(2026, 9, 20), "Documentation presented"));
 
         dueDate = date(LocalDate.now().plusDays(10));
         SubmittedDocument document = new SubmittedDocument();
@@ -192,9 +192,9 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("shouldRenderTheBudgetReportFromItsItemsAndCharges")
     void shouldRenderTheBudgetReportFromItsItemsAndCharges() throws Exception {
-        String text = pdfText(get("/api/v1/reportes/presupuesto/{id}", budgetId));
+        String text = pdfText(get("/api/v1/reports/budget/{id}", budgetId));
 
-        assertThat(text).contains("Presupuesto N° " + MANAGEMENT_NUMBER, "Lucía Peña", "15/09/2026",
+        assertThat(text).contains("Budget N° " + MANAGEMENT_NUMBER, "Lucía Peña", "15/09/2026",
                 PROCEDURE_TYPE, "Honorarios escribanía", "$ 10.000,00", "Sellado", "$ 2.500,00");
         // CU47 total: item lines plus the cost of the documents submitted for the budget.
         assertThat(text).contains("Total", "$ 15.500,00", "Saldo pendiente");
@@ -204,64 +204,64 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("shouldRenderTheBudgetReportWithTheLinkedProperties")
     void shouldRenderTheBudgetReportWithTheLinkedProperties() throws Exception {
-        String text = pdfText(get("/api/v1/reportes/presupuesto-inmuebles/{id}", budgetId));
+        String text = pdfText(get("/api/v1/reports/budget-properties/{id}", budgetId));
 
-        assertThat(text).contains("Presupuesto N° " + MANAGEMENT_NUMBER, "Honorarios escribanía",
+        assertThat(text).contains("Budget N° " + MANAGEMENT_NUMBER, "Honorarios escribanía",
                 "Inmuebles", "01-02-003-004", "$ 98.765,43", "Calle Falsa 123", "$ 15.500,00");
     }
 
     @Test
     @DisplayName("shouldRenderTheRequiredDocumentsOfAProcedureType")
     void shouldRenderTheRequiredDocumentsOfAProcedureType() throws Exception {
-        String text = pdfText(get("/api/v1/reportes/lista-documentos-tramite")
+        String text = pdfText(get("/api/v1/reports/procedure-document-list")
                 .param("nombreTipoTramite", PROCEDURE_TYPE));
 
-        assertThat(text).contains(PROCEDURE_TYPE, "Se archiva", "Sí", "Informe de dominio 567", "30",
+        assertThat(text).contains(PROCEDURE_TYPE, "Se archiva", "Yes", "Informe de dominio 567", "30",
                 "Registro de la Propiedad", "Certificado catastral 567", "Catastro");
     }
 
     @Test
     @DisplayName("shouldRenderTheHistoryOfAManagement")
     void shouldRenderTheHistoryOfAManagement() throws Exception {
-        String text = pdfText(get("/api/v1/reportes/historial-gestion/{id}", managementId));
+        String text = pdfText(get("/api/v1/reports/management-history/{id}", managementId));
 
-        assertThat(text).contains("Gestión N° " + MANAGEMENT_NUMBER, "Gestión Peña", "Lucía Peña",
-                PROCEDURE_TYPE, "16/09/2026", "Inicio de gestión", "20/09/2026", "Documentación presentada");
-        assertThat(text.indexOf("Inicio de gestión")).isLessThan(text.indexOf("Documentación presentada"));
+        assertThat(text).contains("Management N° " + MANAGEMENT_NUMBER, "Management Peña", "Lucía Peña",
+                PROCEDURE_TYPE, "16/09/2026", "Inicio of management", "20/09/2026", "Documentation presented");
+        assertThat(text.indexOf("Inicio of management")).isLessThan(text.indexOf("Documentation presented"));
     }
 
     @Test
     @DisplayName("shouldRenderTheExpiryDetailOfASubmittedDocument")
     void shouldRenderTheExpiryDetailOfASubmittedDocument() throws Exception {
-        String text = pdfText(get("/api/v1/reportes/documentos-por-vencer/{id}", submittedDocumentId));
+        String text = pdfText(get("/api/v1/reports/documents-due/{id}", submittedDocumentId));
 
         assertThat(text).contains("Informe de dominio", "Informe de dominio 567",
-                String.valueOf(MANAGEMENT_NUMBER), "Gestión Peña", "Lucía Peña", "77", "$ 3.000,00",
-                new SimpleDateFormat("dd/MM/yyyy").format(dueDate), "Vence en 10 días");
+                String.valueOf(MANAGEMENT_NUMBER), "Management Peña", "Lucía Peña", "77", "$ 3.000,00",
+                new SimpleDateFormat("dd/MM/yyyy").format(dueDate), "Vence in 10 days");
     }
 
     @Test
     @DisplayName("shouldRenderTheDocumentDebtOfAManagementNumber")
     void shouldRenderTheDocumentDebtOfAManagementNumber() throws Exception {
-        String text = pdfText(get("/api/v1/reportes/consultar-deuda-documentos")
+        String text = pdfText(get("/api/v1/reports/document-debt")
                 .param("numberManagement", String.valueOf(MANAGEMENT_NUMBER)));
 
-        assertThat(text).contains(PROCEDURE_TYPE, "Informe de dominio", "$ 3.000,00", "Pago pendiente",
+        assertThat(text).contains(PROCEDURE_TYPE, "Informe de dominio", "$ 3.000,00", "Payment pendiente",
                 "Total adeudado");
     }
 
     @Test
     @DisplayName("shouldAnswer404WhenTheReportedAggregateDoesNotExist")
     void shouldAnswer404WhenTheReportedAggregateDoesNotExist() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/presupuesto/{id}", 999_999)).andExpect(status().isNotFound());
-        mockMvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/{id}", 999_999))
+        mockMvc.perform(get("/api/v1/reports/budget/{id}", 999_999)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/v1/reports/budget-properties/{id}", 999_999))
                 .andExpect(status().isNotFound());
-        mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite").param("nombreTipoTramite", "No existe 567"))
+        mockMvc.perform(get("/api/v1/reports/procedure-document-list").param("nombreTipoTramite", "No existe 567"))
                 .andExpect(status().isNotFound());
-        mockMvc.perform(get("/api/v1/reportes/historial-gestion/{id}", 999_999)).andExpect(status().isNotFound());
-        mockMvc.perform(get("/api/v1/reportes/documentos-por-vencer/{id}", 999_999))
+        mockMvc.perform(get("/api/v1/reports/management-history/{id}", 999_999)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/v1/reports/documents-due/{id}", 999_999))
                 .andExpect(status().isNotFound());
-        mockMvc.perform(get("/api/v1/reportes/consultar-deuda-documentos").param("numberManagement", "999999"))
+        mockMvc.perform(get("/api/v1/reports/document-debt").param("numberManagement", "999999"))
                 .andExpect(status().isNotFound());
     }
 

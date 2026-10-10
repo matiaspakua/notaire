@@ -40,12 +40,12 @@ async function pause(page: Page, ms = PAUSE): Promise<void> {
 
 async function loginViaUI(page: Page): Promise<void> {
   await page.goto("/login");
-  await expect(page.getByTestId("input-usuario")).toBeVisible({ timeout: 10000 });
-  await page.getByTestId("input-usuario").fill(ADMIN_USER);
+  await expect(page.getByTestId("input-username")).toBeVisible({ timeout: 10000 });
+  await page.getByTestId("input-username").fill(ADMIN_USER);
   await pause(page, 400);
-  await page.getByTestId("input-contrasenia").fill(ADMIN_PASS);
+  await page.getByTestId("input-password").fill(ADMIN_PASS);
   await pause(page, 400);
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   await expect(page.getByTestId("sidebar")).toBeVisible({ timeout: 10000 });
 }
@@ -157,7 +157,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Gestiones — List, Create, Edit", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/gestiones");
+      await navigateTo(page, "/dashboard/managements");
       await assertHeadingVisible(page);
       await assertTableVisible(page);
     });
@@ -182,7 +182,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Presupuestos — List, Search, Filter, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/presupuestos");
+      await navigateTo(page, "/dashboard/budgets");
       await assertHeadingVisible(page);
       await assertTableVisible(page);
     });
@@ -218,7 +218,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Personas — List, Search, Filter, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/personas");
+      await navigateTo(page, "/dashboard/people");
       await assertHeadingVisible(page);
       await assertTableVisible(page);
     });
@@ -262,14 +262,14 @@ test.describe.serial("Full Application Tour — single login → all modules →
   });
 
   test("Escrituras — List", async () => {
-    await navigateTo(page, "/dashboard/escrituras");
+    await navigateTo(page, "/dashboard/deeds");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
   test("Pagos — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/pagos");
+      await navigateTo(page, "/dashboard/payments");
       await assertHeadingVisible(page);
     });
 
@@ -284,19 +284,19 @@ test.describe.serial("Full Application Tour — single login → all modules →
   });
 
   test("Protocolo — List", async () => {
-    await navigateTo(page, "/dashboard/protocolo");
+    await navigateTo(page, "/dashboard/protocol");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
   test("Inmuebles — List", async () => {
-    await navigateTo(page, "/dashboard/inmuebles");
+    await navigateTo(page, "/dashboard/properties");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
   test("Copias — List", async () => {
-    await navigateTo(page, "/dashboard/copias");
+    await navigateTo(page, "/dashboard/copies");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
@@ -308,13 +308,13 @@ test.describe.serial("Full Application Tour — single login → all modules →
   });
 
   test("Documentos — List", async () => {
-    await navigateTo(page, "/dashboard/documentos");
+    await navigateTo(page, "/dashboard/documents");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
   test("Auditoría — List", async () => {
-    await navigateTo(page, "/dashboard/auditoria");
+    await navigateTo(page, "/dashboard/audit");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
@@ -342,14 +342,14 @@ test.describe.serial("Full Application Tour — single login → all modules →
   });
 
   test("Administración — Hub page", async () => {
-    await navigateTo(page, "/dashboard/administracion");
+    await navigateTo(page, "/dashboard/administration");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
   test("Admin Trámites — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/tramites");
+      await navigateTo(page, "/dashboard/administration/procedures");
       await assertHeadingVisible(page);
     });
 
@@ -362,7 +362,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
   });
 
   test("Admin Conceptos — List and Search", async () => {
-    await navigateTo(page, "/dashboard/administracion/conceptos");
+    await navigateTo(page, "/dashboard/administration/concepts");
     await assertHeadingVisible(page);
     const searchInput = page.getByTestId("input-search-concepto");
     await searchInput.fill("test");
@@ -373,7 +373,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Admin Estados Gestión — List, Search, Create, Edit", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/estados-gestion");
+      await navigateTo(page, "/dashboard/administration/management-statuses");
       await assertHeadingVisible(page);
     });
 
@@ -405,7 +405,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Admin Folios — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/folios");
+      await navigateTo(page, "/dashboard/administration/folios");
       await assertHeadingVisible(page);
     });
 
@@ -419,7 +419,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Admin Plantillas — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/plantillas");
+      await navigateTo(page, "/dashboard/administration/templates");
       await assertHeadingVisible(page);
     });
 
@@ -433,7 +433,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Admin Tipos Documento — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/documentos");
+      await navigateTo(page, "/dashboard/administration/documents");
       await assertHeadingVisible(page);
     });
 
@@ -460,7 +460,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Admin Usuarios — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/usuarios");
+      await navigateTo(page, "/dashboard/administration/users");
       await assertHeadingVisible(page);
     });
 
@@ -474,7 +474,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Admin Roles — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/roles");
+      await navigateTo(page, "/dashboard/administration/roles");
       await assertHeadingVisible(page);
     });
 
@@ -487,16 +487,16 @@ test.describe.serial("Full Application Tour — single login → all modules →
   });
 
   test("Admin Auditoría — redirects to canonical", async () => {
-    // Legacy admin path must resolve to /dashboard/auditoria (#1058).
-    await navigateTo(page, "/dashboard/administracion/auditoria");
-    await expect(page).toHaveURL(/\/dashboard\/auditoria/);
+    // Legacy admin path must resolve to /dashboard/audit (#1058).
+    await navigateTo(page, "/dashboard/administration/audit");
+    await expect(page).toHaveURL(/\/dashboard\/audit/);
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
   test("Admin Workflows — List, Search, Create, Editor", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/workflows");
+      await navigateTo(page, "/dashboard/administration/workflows");
       await assertHeadingVisible(page);
     });
 
@@ -516,7 +516,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Open editor for first workflow", async () => {
-      await navigateTo(page, "/dashboard/administracion/workflows");
+      await navigateTo(page, "/dashboard/administration/workflows");
       await page.waitForLoadState("networkidle");
       // Find the first editor button (dynamic testid: btn-editor-{id})
       const editorBtn = page.locator("[data-testid^='btn-editor-']").first();
@@ -529,7 +529,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
         await expect(editorCanvas).toBeVisible({ timeout: 10000 });
         await pause(page, PAUSE);
         // Navigate back
-        await page.goto("/dashboard/administracion/workflows");
+        await page.goto("/dashboard/administration/workflows");
         await page.waitForLoadState("networkidle");
         await pause(page, 600);
       }
@@ -584,6 +584,6 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
     await page.getByTestId("btn-logout").click();
     await expect(page).toHaveURL(/\/login/, { timeout: 10000 });
-    await expect(page.getByTestId("btn-ingresar")).toBeVisible();
+    await expect(page.getByTestId("btn-sign-in")).toBeVisible();
   });
 });

@@ -8,7 +8,7 @@ TBD - created by archiving change fix-main-ci-1124-fallout. Update Purpose after
 
 ### Requirement: Budget template DTO create hydrates JPA associations
 
-`POST /api/v1/plantilla-presupuestos` SHALL accept a request DTO with
+`POST /api/v1/budget-templates` SHALL accept a request DTO with
 `fkIdProcedureType` and `fkIdConcept` (or nested `budgetTemplatePK`) and SHALL
 set `BudgetTemplate.concept` and `BudgetTemplate.procedureType` from those IDs
 before calling legacy `BudgetTemplateJpaController.create`, so create does not

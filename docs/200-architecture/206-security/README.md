@@ -24,7 +24,7 @@ Please include the following information:
 
 ## Data Classification & Threat Model
 
-Notaire manages **notarial deeds and personal data** (`Persona` records
+Notaire manages **notarial deeds and personal data** (`Person` records
 include DNI, email, and legal-act involvement) subject to Argentine legal
 retention requirements (see the SAD's Legal Constraints, §2.3) — a breach
 exposes both PII and legally-binding document metadata, not just
@@ -33,11 +33,11 @@ application data.
 ### Data sensitivity
 | Category | Examples | Sensitivity |
 |----------|----------|--------------|
-| PII | `Persona` (DNI, email, nombre/apellido) | High — regulated personal data |
-| Legal/notarial records | `Escritura`, `Testimonio`, `Folio`, `DocumentoPresentado` | High — legally binding, indefinite retention |
-| Financial | `Presupuesto`, `Pago` | Medium — budget/payment amounts, no card data stored |
-| Operational | `RegistroAuditoria`, `Historial` | Medium — who-did-what audit trail, itself a control |
-| Credentials | `Usuario.password` (BCrypt hash) | Critical |
+| PII | `Person` (DNI, email, nombre/apellido) | High — regulated personal data |
+| Legal/notarial records | `Deed`, `Testimony`, `Folio`, `SubmittedDocument` | High — legally binding, indefinite retention |
+| Financial | `Presupuesto`, `Payment` | Medium — budget/payment amounts, no card data stored |
+| Operational | `AuditRecord`, `ManagementHistory` | Medium — who-did-what audit trail, itself a control |
+| Credentials | `UserAccount.password` (BCrypt hash) | Critical |
 
 ### Primary threats and current mitigations
 | Threat | Mitigation | Gap |
@@ -54,7 +54,7 @@ this table is superseded by a formal STRIDE threat model:
 [THREAT-MODEL-AUTH-AUDIT.md](THREAT-MODEL-AUTH-AUDIT.md), with numbered
 security requirements (`SR-01`..`SR-10`) and an explicit
 Mitigated/Partial/Open status per threat. Other subsystems (e.g.
-Escritura/Testimonio legal documents, Presupuesto financial data) are not
+Deed/Testimony legal documents, Presupuesto financial data) are not
 yet covered by a formal threat model — see the SAD's Risks and Technical
 Debt, §11.1, and issue #1028's follow-up recommendations.
 

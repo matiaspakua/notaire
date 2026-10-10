@@ -46,7 +46,7 @@ class LoginRateLimitIntegrationTest {
     }
 
     private void attemptLoginWithWrongPassword() throws Exception {
-        mockMvc.perform(post("/api/v1/usuarios/login")
+        mockMvc.perform(post("/api/v1/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"name": "admin", "password": "wrongpassword"}
@@ -60,13 +60,13 @@ class LoginRateLimitIntegrationTest {
         attemptLoginWithWrongPassword();
         attemptLoginWithWrongPassword();
 
-        mockMvc.perform(post("/api/v1/usuarios/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isTooManyRequests())
-                .andExpect(jsonPath("$.valido").value(false));
+                .andExpect(jsonPath("$.valid").value(false));
     }
 
     @Test
@@ -74,13 +74,13 @@ class LoginRateLimitIntegrationTest {
     void shouldNotLockAccountBeforeMaxFailedAttempts() throws Exception {
         attemptLoginWithWrongPassword();
 
-        mockMvc.perform(post("/api/v1/usuarios/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.valido").value(true));
+                .andExpect(jsonPath("$.valid").value(true));
     }
 
     @Test
@@ -89,23 +89,23 @@ class LoginRateLimitIntegrationTest {
         attemptLoginWithWrongPassword();
         attemptLoginWithWrongPassword();
 
-        mockMvc.perform(post("/api/v1/usuarios/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.valido").value(true));
+                .andExpect(jsonPath("$.valid").value(true));
 
         attemptLoginWithWrongPassword();
         attemptLoginWithWrongPassword();
 
-        mockMvc.perform(post("/api/v1/usuarios/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "admin", "password": "admin"}
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.valido").value(true));
+                .andExpect(jsonPath("$.valid").value(true));
     }
 }

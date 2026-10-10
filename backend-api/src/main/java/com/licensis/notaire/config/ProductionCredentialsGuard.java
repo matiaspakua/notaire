@@ -72,8 +72,8 @@ public class ProductionCredentialsGuard {
 
         if (!insecureProperties.isEmpty()) {
             throw new IllegalStateException(
-                    "Credenciales inseguras detectadas en producción: " + String.join(", ", insecureProperties)
-                    + ". Configurá valores propios antes de iniciar la aplicación en este entorno.");
+                    "Credenciales inseguras detectadas in producción: " + String.join(", ", insecureProperties)
+                    + ". Configurá valores propios antes of start the aplicación in this entorno.");
         }
     }
 

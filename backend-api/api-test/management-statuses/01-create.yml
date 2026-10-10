@@ -6,7 +6,7 @@ info:
       Traceability: CU30 (RF #55, #59, #107, #108, #109)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/estado-gestion"
+  url: "{{base_url}}/api/v1/management-statuses"
   body:
     type: json
     data: |-

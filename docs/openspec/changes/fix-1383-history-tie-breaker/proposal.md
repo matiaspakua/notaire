@@ -12,12 +12,12 @@
 
 ## Objetivo
 
-`history.event_date` is a SQL `DATE`, so every entry recorded on the same day has the same instant. `GET /gestiones/{id}/historial` sorted by date only (same-day order = whatever the database returned), `GET /historial/gestion/{id}` did not sort at all, and the workflow trace picked the "latest" status by date only, while the current-state lookup and the history report already broke ties by `idHistory`. The bitácora's newest entry could therefore be wrong and change between calls; this is the cause of the recurring TS-0011 / TS-0028 e2e flakes.
+`history.event_date` is a SQL `DATE`, so every entry recorded on the same day has the same instant. `GET /managements/{id}/history` sorted by date only (same-day order = whatever the database returned), `GET /history/management/{id}` did not sort at all, and the workflow trace picked the "latest" status by date only, while the current-state lookup and the history report already broke ties by `idHistory`. The bitácora's newest entry could therefore be wrong and change between calls; this is the cause of the recurring TS-0011 / TS-0028 e2e flakes.
 
 ## What Changes
 
 - New `business/HistoryOrder.CHRONOLOGICAL` comparator: event date ascending, then `idHistory` ascending (nulls last).
-- Used by every history read path: `ManagementBitacoraService.getHistory` (`GET /gestiones/{id}/historial`), `HistoryController.getByManagement` (`GET /historial/gestion/{id}`, was unsorted), `WorkflowTraceService` (trace `history` list and `computeNodeStatuses`), `ManagementController` current state, `ReportDocumentFactory.managementHistory`.
+- Used by every history read path: `ManagementBitacoraService.getHistory` (`GET /managements/{id}/history`), `HistoryController.getByManagement` (`GET /history/management/{id}`, was unsorted), `WorkflowTraceService` (trace `history` list and `computeNodeStatuses`), `ManagementController` current state, `ReportDocumentFactory.managementHistory`.
 - Bruno `history/05-get-by-management.yml` asserts the order of both endpoints.
 - CHANGELOG.
 
@@ -51,7 +51,7 @@ Out of scope: migrating `event_date` to `timestamp` (stores the time of day; nee
 
 ### Surface area
 
-- Endpoints: `GET /api/v1/gestiones/{id}/historial`, `GET /api/v1/historial/gestion/{id}`, `GET /api/v1/gestiones/{id}/workflow-trace`, `GET /api/v1/gestiones/{id}/estado-actual`, the history report PDF. Response schemas unchanged; only the order of list items is now defined. No migration.
+- Endpoints: `GET /api/v1/managements/{id}/history`, `GET /api/v1/history/management/{id}`, `GET /api/v1/managements/{id}/workflow-trace`, `GET /api/v1/managements/{id}/current-status`, the history report PDF. Response schemas unchanged; only the order of list items is now defined. No migration.
 
 ### Architecture review
 

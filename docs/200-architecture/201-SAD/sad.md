@@ -33,7 +33,7 @@
 
 **Notaire** is a notarial management system for Argentine escribanías (notary offices). It manages the complete lifecycle of notarial operations including:
 
-- **Gestiones de Escritura** — Notarial deed management workflows
+- **Gestiones de Deed** — Notarial deed management workflows
 - **Personas** — People registry (individuals and legal entities involved in deeds)
 - **Escrituras** — Deed registry with folios, copias, and testimonios
 - **Presupuestos** — Budget/quote management with payment tracking
@@ -318,8 +318,8 @@ package "com.licensis.notaire" {
     [WorkflowTraceService]
     [WorkflowValidationService]
     [GestionQueryService]
-    [AdministradorJpa]
-    [AdministradorValidaciones]
+    [JpaAdministrator]
+    [ValidationAdministrator]
   }
 
   package "repository\n(31 Spring Data JPA)" as repo {
@@ -332,12 +332,12 @@ package "com.licensis.notaire" {
   }
 
   package "negocio\n(32 Domain Entities)" as dom #LightYellow {
-    [GestionDeEscritura]
-    [Persona]
-    [Escritura]
+    [DeedManagement]
+    [Person]
+    [Deed]
     [Presupuesto]
-    [Tramite]
-    [Usuario]
+    [Procedure]
+    [UserAccount]
     [WorkflowDefinition]
     [WorkflowNode]
     [WorkflowTransition]
@@ -423,15 +423,15 @@ package "frontend/src" {
   }
 
   package "hooks\n(20 TanStack Query hooks)" as hooks {
-    [useGestiones]
-    [usePersonas]
+    [useManagements]
+    [usePeople]
     [useEscrituras]
-    [usePresupuestos]
-    [usePagos]
-    [useUsuarios]
+    [useBudgets]
+    [usePayments]
+    [useUsers]
     [useWorkflow]
-    [useReportes]
-    [useAuditoria]
+    [useReports]
+    [useAudit]
     [... +11 more]
   }
 
@@ -482,7 +482,7 @@ services consume the REST API through the OpenAPI contract, not a Java library.
 @startuml
 title Core Domain Model — Notaire
 
-entity "GestionDeEscritura" as gestion {
+entity "DeedManagement" as gestion {
   * id : Long <<PK>>
   --
   numero : String
@@ -492,14 +492,14 @@ entity "GestionDeEscritura" as gestion {
   workflow_id : Long <<FK>>
 }
 
-entity "Escritura" as escritura {
+entity "Deed" as escritura {
   * id : Long <<PK>>
   --
   numero : Integer
   fecha : Date
 }
 
-entity "Persona" as persona {
+entity "Person" as persona {
   * id : Long <<PK>>
   --
   nombre : String
@@ -515,7 +515,7 @@ entity "Presupuesto" as presupuesto {
   fecha : Date
 }
 
-entity "Tramite" as tramite {
+entity "Procedure" as tramite {
   * id : Long <<PK>>
   --
   nombre : String
@@ -523,7 +523,7 @@ entity "Tramite" as tramite {
   tipo_tramite_id : Long <<FK>>
 }
 
-entity "TipoDeTramite" as tipoTramite {
+entity "ProcedureType" as tipoTramite {
   * id : Long <<PK>>
   --
   nombre : String
@@ -537,35 +537,35 @@ entity "Folio" as folio {
   tipo_id : Long <<FK>>
 }
 
-entity "Pago" as pago {
+entity "Payment" as pago {
   * id : Long <<PK>>
   --
   monto : BigDecimal
   fecha : Date
 }
 
-entity "Testimonio" as testimonio {
+entity "Testimony" as testimonio {
   * id : Long <<PK>>
 }
 
-entity "DocumentoPresentado" as doc {
+entity "SubmittedDocument" as doc {
   * id : Long <<PK>>
 }
 
-entity "Usuario" as usuario {
+entity "UserAccount" as usuario {
   * id : Long <<PK>>
   --
   username : String
   password : String (BCrypt)
 }
 
-entity "Rol" as rol {
+entity "Role" as rol {
   * id : Long <<PK>>
   --
   nombre : String
 }
 
-entity "RegistroAuditoria" as audit {
+entity "AuditRecord" as audit {
   * id : Long <<PK>>
   --
   accion : String
@@ -639,7 +639,7 @@ participant "JwtTokenService" as JWT
 participant "PostgreSQL" as DB
 
 B -> FE : Login form submit
-FE -> Sec : POST /api/v1/usuario/login\n{nombre, contrasenia}
+FE -> Sec : POST /api/v1/user/login\n{nombre, contrasenia}
 Sec -> Ctrl : Pass through (public endpoint)
 Ctrl -> Login : isLocked(nombre)
 Login --> Ctrl : locked? (ConcurrentHashMap lookup, no DB access)
@@ -647,7 +647,7 @@ alt Too many attempts (5 failures / 15 min lockout)
   Ctrl --> FE : 429 Too Many Requests
 else
   Ctrl -> DB : findByNombre(nombre)
-  DB --> Ctrl : Usuario entity
+  DB --> Ctrl : UserAccount entity
   Ctrl -> Ctrl : BCrypt.matches(contrasenia)\n(or legacy MD5 auto-migration)
   alt Valid credentials
     Ctrl -> Login : onLoginSucceeded(nombre)
@@ -666,11 +666,11 @@ end
 @enduml
 ```
 
-### 6.2 Create Gestión de Escritura
+### 6.2 Create Gestión de Deed
 
 ```plantuml
 @startuml
-title Runtime — Crear nueva Gestión de Escritura
+title Runtime — Crear nueva Gestión de Deed
 
 participant "Escribano" as User
 participant "Frontend\n(Next.js)" as Client
@@ -681,7 +681,7 @@ participant "GestionDeEscrituraRepository" as Repo
 participant "PostgreSQL" as DB
 
 User -> Client : Fill gestión form + submit
-Client -> Auth : POST /api/v1/gestion\nAuthorization: Bearer <jwt>
+Client -> Auth : POST /api/v1/management\nAuthorization: Bearer <jwt>
 Auth -> Auth : Validate JWT signature + expiry
 Auth -> Ctrl : Authorized request (user context)
 Ctrl -> Repo : save(entity)\n(controller calls repository directly —\nno intermediate service layer for this endpoint)
@@ -710,7 +710,7 @@ participant "PostgreSQL\n(JPA repositories)" as DB
 participant "ReportRenderer port\n(PdfBoxReportRenderer)" as Renderer
 
 U -> FE : Select report + parameters
-FE -> Ctrl : GET /api/v1/reportes/{report-name}/{params}\n(one endpoint per report, e.g. /presupuesto/{id})
+FE -> Ctrl : GET /api/v1/reports/{report-name}/{params}\n(one endpoint per report, e.g. /budget/{id})
 Ctrl -> Svc : generate...Report(params)
 Svc -> Factory : build ReportDocument (read-only transaction)
 Factory -> DB : load the aggregate (budget, management, ...)
@@ -846,7 +846,7 @@ Loki --> Graf : depends_on
 - Coarse-grained only: every `/api/**` request must be authenticated (valid JWT);
   there is no per-role authorization yet — no `@PreAuthorize` annotations exist in
   the codebase.
-- The `Rol` entity/table exists for future RBAC; extending enforcement means
+- The `Role` entity/table exists for future RBAC; extending enforcement means
   replacing `.anyRequest().authenticated()` with per-route role checks in
   `SecurityAndCorsConfig` (see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md#extending-rbac)).
 
@@ -866,7 +866,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
   "status": 400,
   "error": "Bad Request",
   "message": "Validation failed",
-  "path": "/api/v1/persona",
+  "path": "/api/v1/person",
   "code": "VAL_001",
   "details": { "field": "dni", "message": "Must be numeric" }
 }
@@ -885,8 +885,8 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 - `AuditModuleResolver` maps controllers to functional modules.
 - `AuditOperationDescriber` generates human-readable operation descriptions.
 - Records stored in `registro_auditoria` table.
-- Queryable via `RegistroAuditoriaController` → `/api/v1/auditoria`.
-- Frontend audit view at `/auditoria` page.
+- Queryable via `RegistroAuditoriaController` → `/api/v1/audit`.
+- Frontend audit view at `/audit` page.
 
 ### 8.4 Database Schema Management
 
@@ -912,7 +912,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 | V10 | Seed workflow demo data |
 | V11 | Align conceptos version with init-db |
 | V12 | Create postgres_exporter role (pg_monitor) |
-| V13 | Make tramites nombre/numero optional |
+| V13 | Make tramites nombre/number optional |
 | V14 | Drop presupuestos FK to tramite |
 | R14 | Restore presupuestos FK (repeatable) |
 
@@ -955,7 +955,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 ### 8.7 API Design
 
 - All endpoints under `/api/v1/` prefix.
-- RESTful resource naming (Spanish domain: `/gestion`, `/persona`, `/escritura`).
+- RESTful resource naming (Spanish domain: `/management`, `/person`, `/deed`).
 - OpenAPI 3.0 documentation via `OpenApiConfig` at `/swagger-ui.html`.
 - Response wrapping with the DTOs in `backend-api` (`com.licensis.notaire.dto`).
 - Pagination support on list endpoints.
@@ -1088,11 +1088,11 @@ O --> (Deployability Docker)
 |------|----------|----------|--------|
 | 26 legacy JPA controllers | `com.licensis.notaire.jpa` | High | Large — one per entity |
 | ~~`ControllerNegocio.java` God class (5,337 lines)~~ | removed in #900 (`business/BusinessController.java` deleted) | Resolved | — |
-| `AdministradorJpa` in service layer | `service/AdministradorJpa.java` | Medium | Medium |
-| `AdministradorValidaciones` mixed concerns | `service/AdministradorValidaciones.java` | Medium | Medium |
+| `JpaAdministrator` in service layer | `service/JpaAdministrator.java` | Medium | Medium |
+| `ValidationAdministrator` mixed concerns | `service/ValidationAdministrator.java` | Medium | Medium |
 | Missing service classes for some entities | `service/` | Medium | Medium |
 | Legacy Swing tree deleted from `main` (#1046) | git history only | Resolved | — |
-| `ConstantesGui.java` in audit package | `audit/ConstantesGui.java` | Low | Small |
+| `GuiConstants.java` in audit package | `audit/GuiConstants.java` | Low | Small |
 
 ### 11.3 Evolution Roadmap
 
@@ -1119,7 +1119,7 @@ O --> (Deployability Docker)
 
 1. **Complete Next.js frontend pages for all 73 use cases** — tracking issue [#898](https://github.com/matiaspakua/notaire/issues/898).
    Key open items: Gestiones (#804, #806), Escrituras (#838, #839), Presupuestos (#797, #821, #822, #823), Personas (#829, #835).
-2. **Fix critical bugs blocking frontend** — #829 (Persona create), #835 (persona dedup), #799 (uniqueness), #801 (DocumentoPresentado mapping).
+2. **Fix critical bugs blocking frontend** — #829 (Person create), #835 (persona dedup), #799 (uniqueness), #801 (SubmittedDocument mapping).
 3. ~~Extract `ControllerNegocio` logic into dedicated service classes~~ — resolved by deleting the class ([#900](https://github.com/matiaspakua/notaire/issues/900)); its only live behaviour moved to `IdentificationTypeLookup`.
 
 #### Medium Term (Phase 6 — Deprecation)
@@ -1146,7 +1146,7 @@ O --> (Deployability Docker)
 | 🟠 High | Business logic in controllers, not services | [#578](https://github.com/matiaspakua/notaire/issues/578) | Phase 6 |
 | 🟠 High | Controllers return JPA entities instead of DTOs | [#577](https://github.com/matiaspakua/notaire/issues/577) | Phase 6 |
 | 🟠 High | `GlobalExceptionHandler` bypassed in 26 controllers | [#579](https://github.com/matiaspakua/notaire/issues/579) | Phase 6 |
-| 🟡 Medium | `AdministradorJpa` singleton in service layer | [#584](https://github.com/matiaspakua/notaire/issues/584) | Phase 6 |
+| 🟡 Medium | `JpaAdministrator` singleton in service layer | [#584](https://github.com/matiaspakua/notaire/issues/584) | Phase 6 |
 | 🟡 Medium | Domain entities depend on DTOs (inverted dependency) | [#580](https://github.com/matiaspakua/notaire/issues/580) | Phase 6 |
 
 ---
@@ -1158,15 +1158,15 @@ O --> (Deployability Docker)
 | **Escribanía** | Argentine notary office |
 | **Escribano** | Licensed notary public (primary system user) |
 | **Gestor** | Clerk/assistant who manages daily procedures |
-| **Gestión de Escritura** | Notarial deed management case — the core business entity |
-| **Escritura** | Notarial deed (legal document) |
+| **Gestión de Deed** | Notarial deed management case — the core business entity |
+| **Deed** | Notarial deed (legal document) |
 | **Folio** | Numbered page in the notarial protocol book |
-| **Testimonio** | Certified copy of a notarial deed |
-| **Copia** | Copy of a folio or deed |
+| **Testimony** | Certified copy of a notarial deed |
+| **Copy** | Copy of a folio or deed |
 | **Presupuesto** | Budget/quote for notarial services |
 | **Trámite** | Administrative procedure linked to a gestión |
-| **Persona** | Individual or legal entity involved in notarial acts |
-| **Inmueble** | Real estate property involved in notarial acts |
+| **Person** | Individual or legal entity involved in notarial acts |
+| **Property** | Real estate property involved in notarial acts |
 | **API REST** | HTTP/JSON interface between frontend and backend |
 | **DTO** | Data Transfer Object — API contract between layers |
 | **JPA** | Java Persistence API (Hibernate implementation) |

@@ -30,11 +30,11 @@ import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 
 /**
- * CU43 - Reingresar documentación.
+ * CU43 - Reenter documentation.
  */
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Gestion reingreso de documentación (CU43)")
+@DisplayName("Management reentry of documentation (CU43)")
 class ManagementReingresoDocumentacionIntegrationTest {
 
     @Autowired
@@ -82,7 +82,7 @@ class ManagementReingresoDocumentacionIntegrationTest {
                 {"encabezado": "Management CU43", "dateStart": "2026-01-01", "number": %d,
                  "notaryPersonId": %d}
                 """.formatted(number, notaryId);
-        MvcResult result = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult result = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -90,7 +90,7 @@ class ManagementReingresoDocumentacionIntegrationTest {
         Integer managementId = mapper.readTree(result.getResponse().getContentAsString()).get("idManagement").asInt();
 
         ProcedureType type = new ProcedureType();
-        type.setName("Tramite CU43 " + number);
+        type.setName("Procedure CU43 " + number);
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -128,20 +128,20 @@ class ManagementReingresoDocumentacionIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when the gestión does not exist (GET)")
+    @DisplayName("Should return 404 when the management does not exist (GET)")
     void shouldReturn404OnGetWhenManagementDoesNotExist() throws Exception {
-        mockMvc.perform(get("/api/v1/gestiones/999999/reingreso-documentacion"))
+        mockMvc.perform(get("/api/v1/managements/999999/document-reentry"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Should list trámites with their documentación necesaria")
+    @DisplayName("Should list procedures with their documentation required")
     void shouldListProceduresWithDocumentacionNecesaria() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9401);
         DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-1");
         createProcedureTemplate(management.procedureType(), typeDocument);
 
-        mockMvc.perform(get("/api/v1/gestiones/" + management.idManagement() + "/reingreso-documentacion"))
+        mockMvc.perform(get("/api/v1/managements/" + management.idManagement() + "/document-reentry"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idManagement").value(management.idManagement()))
                 .andExpect(jsonPath("$.procedures[0].idProcedure").value(management.idProcedure()))
@@ -150,17 +150,17 @@ class ManagementReingresoDocumentacionIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return empty documentación necesaria when the trámite has no PlantillaTramite")
+    @DisplayName("Should return empty documentation required when the procedure has not ProcedureTemplate")
     void shouldReturnEmptyDocumentacionWhenNoTemplate() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9402);
 
-        mockMvc.perform(get("/api/v1/gestiones/" + management.idManagement() + "/reingreso-documentacion"))
+        mockMvc.perform(get("/api/v1/managements/" + management.idManagement() + "/document-reentry"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.procedures[0].documentsNecesarios").isEmpty());
     }
 
     @Test
-    @DisplayName("Should create a DocumentoPresentado with reentered=true when the pair is valid")
+    @DisplayName("Should create a SubmittedDocument with reentered=true when the pair is valid")
     void shouldReingresarWhenValid() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9403);
         DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-3");
@@ -170,7 +170,7 @@ class ManagementReingresoDocumentacionIntegrationTest {
                 {"idProcedure": %d, "idDocumentType": %d}
                 """.formatted(management.idProcedure(), typeDocument.getIdDocumentType());
 
-        mockMvc.perform(post("/api/v1/gestiones/" + management.idManagement() + "/reingreso-documentacion")
+        mockMvc.perform(post("/api/v1/managements/" + management.idManagement() + "/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -180,7 +180,7 @@ class ManagementReingresoDocumentacionIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 400 when the type de documento is not part of the PlantillaTramite")
+    @DisplayName("Should return 400 when the type de documento is not part of the ProcedureTemplate")
     void shouldReturn400WhenTypeDocumentNotInTemplate() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9404);
         DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-4");
@@ -189,14 +189,14 @@ class ManagementReingresoDocumentacionIntegrationTest {
                 {"idProcedure": %d, "idDocumentType": %d}
                 """.formatted(management.idProcedure(), typeDocument.getIdDocumentType());
 
-        mockMvc.perform(post("/api/v1/gestiones/" + management.idManagement() + "/reingreso-documentacion")
+        mockMvc.perform(post("/api/v1/managements/" + management.idManagement() + "/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should return 400 when the trámite does not belong to the gestión")
+    @DisplayName("Should return 400 when the procedure does not belong to the management")
     void shouldReturn400WhenProcedureDoesNotBelongToManagement() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9405);
         ManagementConProcedure otraManagement = createManagementConProcedure(9406);
@@ -207,14 +207,14 @@ class ManagementReingresoDocumentacionIntegrationTest {
                 {"idProcedure": %d, "idDocumentType": %d}
                 """.formatted(otraManagement.idProcedure(), typeDocument.getIdDocumentType());
 
-        mockMvc.perform(post("/api/v1/gestiones/" + management.idManagement() + "/reingreso-documentacion")
+        mockMvc.perform(post("/api/v1/managements/" + management.idManagement() + "/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Should return 404 when the trámite does not exist")
+    @DisplayName("Should return 404 when the procedure does not exist")
     void shouldReturn404WhenProcedureDoesNotExist() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9407);
         DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-6");
@@ -223,7 +223,7 @@ class ManagementReingresoDocumentacionIntegrationTest {
                 {"idProcedure": 999999, "idDocumentType": %d}
                 """.formatted(typeDocument.getIdDocumentType());
 
-        mockMvc.perform(post("/api/v1/gestiones/" + management.idManagement() + "/reingreso-documentacion")
+        mockMvc.perform(post("/api/v1/managements/" + management.idManagement() + "/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());

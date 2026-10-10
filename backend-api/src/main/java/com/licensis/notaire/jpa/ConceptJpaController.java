@@ -8,7 +8,7 @@ import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.business.BudgetTemplate;
 import java.io.Serializable;
@@ -24,7 +24,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class ConceptJpaController implements Serializable, IPersistenciaJpa
+public class ConceptJpaController implements Serializable, JpaPersistence
 {
 
     private static ConceptJpaController instancia = null;
@@ -106,8 +106,8 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
 
         if (persistentConcept != null)
         {
-            version = persistentConcept.getVersion(); // Version del Objeto en db
-            oldVersion = concept.getVersion(); // Version del Objeto en memoria
+            version = persistentConcept.getVersion(); // Version of the Objeto in db
+            oldVersion = concept.getVersion(); // Version of the Objeto in memoria
 
             if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
             {
@@ -131,7 +131,7 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
                         {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain PlantillaPresupuesto " + budgetTemplateListOldBudgetTemplate + " since its concepto field is not nullable.");
+                        illegalOrphanMessages.add("You must retain BudgetTemplate " + budgetTemplateListOldBudgetTemplate + " since its concept field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null)
@@ -204,7 +204,7 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This Concepto (" + concept + ") cannot be destroyed since the PlantillaPresupuesto " + budgetTemplateListOrphanCheckBudgetTemplate + " in its plantillaPresupuestoList field has a non-nullable concepto field.");
+                    illegalOrphanMessages.add("This Concept (" + concept + ") cannot be destroyed since the BudgetTemplate " + budgetTemplateListOrphanCheckBudgetTemplate + " in its plantillaPresupuestoList field has a non-nullable concept field.");
                 }
                 if (illegalOrphanMessages != null)
                 {
@@ -221,7 +221,7 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
         }
         catch (EntityNotFoundException enfe)
         {
-            throw new NonexistentEntityException("The concepto with id " + id + " no longer exists.", enfe);
+            throw new NonexistentEntityException("The concept with id " + id + " no longer exists.", enfe);
         }
         finally
         {

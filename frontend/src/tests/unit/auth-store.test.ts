@@ -4,7 +4,7 @@
  */
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { partializeAuthState, useAuthStore } from "@/store/auth-store";
-import type { DtoUsuario } from "@/types";
+import type { DtoLoginUser } from "@/types";
 
 // Mock localStorage for Zustand persist middleware
 const localStorageMock = {
@@ -32,18 +32,18 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-const adminUser: DtoUsuario = {
-  idUsuario: 1,
-  nombre: "admin",
-  tipo: "ADMIN",
-  valido: true,
+const adminUser: DtoLoginUser = {
+  idUser: 1,
+  name: "admin",
+  type: "ADMIN",
+  valid: true,
 };
 
-const empleadoUser: DtoUsuario = {
-  idUsuario: 2,
-  nombre: "empleado1",
-  tipo: "EMPLEADO",
-  valido: true,
+const empleadoUser: DtoLoginUser = {
+  idUser: 2,
+  name: "empleado1",
+  type: "EMPLEADO",
+  valid: true,
 };
 
 describe("useAuthStore — login()", () => {
@@ -115,12 +115,12 @@ describe("useAuthStore — isAdmin()", () => {
   });
 
   it("returns true for tipo ESCRIBANO", () => {
-    useAuthStore.setState({ user: { ...adminUser, tipo: "ESCRIBANO" }, isAuthenticated: true });
+    useAuthStore.setState({ user: { ...adminUser, type: "ESCRIBANO" }, isAuthenticated: true });
     expect(useAuthStore.getState().isAdmin()).toBe(true);
   });
 
   it("returns true for tipo ADMINISTRADOR", () => {
-    useAuthStore.setState({ user: { ...adminUser, tipo: "ADMINISTRADOR" }, isAuthenticated: true });
+    useAuthStore.setState({ user: { ...adminUser, type: "ADMINISTRADOR" }, isAuthenticated: true });
     expect(useAuthStore.getState().isAdmin()).toBe(true);
   });
 

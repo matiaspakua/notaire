@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Issue #655, Owner decision (Oct 9): a missing or stale {@code version} on an update must not
- * answer 500. {@code PUT /testimonio/{id}} requires {@code version} (400 when absent) and answers
+ * answer 500. {@code PUT /testimonies/{id}} requires {@code version} (400 when absent) and answers
  * {@code 409 Conflict} when it is not the stored one (optimistic lock). Every update whose
  * failure goes through {@code ErrorResponses.updateFailed} or {@code GlobalExceptionHandler}
  * answers 409 for an optimistic-lock failure, so the catalog PUTs with a stale version get 409 too.
@@ -53,7 +53,7 @@ class StaleOrMissingVersionIntegrationTest {
     @Autowired
     private DeedRepository deedRepository;
 
-    /** POST /testimonio requires an existing deed (#1335), so each fixture testimony copies one. */
+    /** POST /testimonies requires an existing deed (#1335), so each fixture testimony copies one. */
     private int seedDeed() {
         Deed deed = new Deed();
         deed.setNumber((int) (System.nanoTime() % 1_000_000));
@@ -77,7 +77,7 @@ class StaleOrMissingVersionIntegrationTest {
     }
 
     private int createTestimony() throws Exception {
-        return json(mockMvc.perform(post("/api/v1/testimonio").contentType(MediaType.APPLICATION_JSON)
+        return json(mockMvc.perform(post("/api/v1/testimonies").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"number\":71,\"flagged\":true,\"verified\":true,\"notes\":\"keep\","
                                 + "\"deed\":{\"idDeed\":" + seedDeed() + ",\"number\":0}}"))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString())
@@ -85,76 +85,76 @@ class StaleOrMissingVersionIntegrationTest {
     }
 
     private void putTestimony(int id, String body, int expected) throws Exception {
-        mockMvc.perform(put("/api/v1/testimonio/" + id).contentType(MediaType.APPLICATION_JSON).content(body))
+        mockMvc.perform(put("/api/v1/testimonies/" + id).contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().is(expected));
     }
 
     @Test
-    @DisplayName("PUT /testimonio/{id} without version answers 400 naming version and stores nothing")
+    @DisplayName("PUT /testimonies/{id} without version answers 400 naming version and stores nothing")
     void testimonyMissingVersionIsRejected() throws Exception {
         int id = createTestimony();
 
-        mockMvc.perform(put("/api/v1/testimonio/" + id).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/v1/testimonies/" + id).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"number\":72,\"flagged\":false,\"verified\":false}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("version: es obligatorio"));
 
-        assertThat(getJson("/api/v1/testimonio/" + id).get("number").asInt()).isEqualTo(71);
+        assertThat(getJson("/api/v1/testimonies/" + id).get("number").asInt()).isEqualTo(71);
     }
 
     @Test
-    @DisplayName("PUT /testimonio/{id} with a stale version answers 409 and keeps the newer data")
+    @DisplayName("PUT /testimonies/{id} with a stale version answers 409 and keeps the newer data")
     void testimonyStaleVersionIsConflict() throws Exception {
         int id = createTestimony();
-        int version = getJson("/api/v1/testimonio/" + id).get("version").asInt();
+        int version = getJson("/api/v1/testimonies/" + id).get("version").asInt();
 
         putTestimony(id, "{\"number\":73,\"flagged\":true,\"verified\":true,\"version\":" + version + "}", 200);
-        assertThat(getJson("/api/v1/testimonio/" + id).get("version").asInt()).isEqualTo(version + 1);
+        assertThat(getJson("/api/v1/testimonies/" + id).get("version").asInt()).isEqualTo(version + 1);
 
-        mockMvc.perform(put("/api/v1/testimonio/" + id).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/v1/testimonies/" + id).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"number\":74,\"flagged\":false,\"verified\":false,\"version\":" + version + "}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.error").value("Conflict"))
                 .andExpect(jsonPath("$.message").value(STALE_MESSAGE));
 
-        JsonNode stored = getJson("/api/v1/testimonio/" + id);
+        JsonNode stored = getJson("/api/v1/testimonies/" + id);
         assertThat(stored.get("number").asInt()).isEqualTo(73);
         assertThat(stored.get("version").asInt()).isEqualTo(version + 1);
     }
 
     @Test
-    @DisplayName("PUT /testimonio/{id} with a version ahead of the stored one also answers 409")
+    @DisplayName("PUT /testimonies/{id} with a version ahead of the stored one also answers 409")
     void testimonyFutureVersionIsConflict() throws Exception {
         int id = createTestimony();
-        int version = getJson("/api/v1/testimonio/" + id).get("version").asInt();
+        int version = getJson("/api/v1/testimonies/" + id).get("version").asInt();
 
         putTestimony(id, "{\"number\":75,\"flagged\":true,\"verified\":true,\"version\":" + (version + 5) + "}", 409);
-        assertThat(getJson("/api/v1/testimonio/" + id).get("number").asInt()).isEqualTo(71);
+        assertThat(getJson("/api/v1/testimonies/" + id).get("number").asInt()).isEqualTo(71);
     }
 
     @Test
     @DisplayName("a catalog PUT with a stale version answers 409 instead of 500")
     void catalogStaleVersionIsConflict() throws Exception {
-        JsonNode created = json(mockMvc.perform(post("/api/v1/tipo-folio").contentType(MediaType.APPLICATION_JSON)
+        JsonNode created = json(mockMvc.perform(post("/api/v1/folio-types").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"TF655-" + System.nanoTime() + "\"}"))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
         int id = created.get("idFolioType").asInt();
-        JsonNode current = getJson("/api/v1/tipo-folio/" + id);
+        JsonNode current = getJson("/api/v1/folio-types/" + id);
         String stale = current.toString().replaceFirst("\"version\":\\d+",
                 "\"version\":" + (current.get("version").asInt() + 5));
 
-        mockMvc.perform(put("/api/v1/tipo-folio/" + id).contentType(MediaType.APPLICATION_JSON).content(stale))
+        mockMvc.perform(put("/api/v1/folio-types/" + id).contentType(MediaType.APPLICATION_JSON).content(stale))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value(containsString("reload it")));
     }
 
     @Test
-    @DisplayName("the contract of PUT /testimonio/{id} requires version and documents 409")
+    @DisplayName("the contract of PUT /testimonies/{id} requires version and documents 409")
     void contractRequiresVersionAndDocuments409() throws Exception {
         JsonNode spec = getJson("/v3/api-docs");
-        JsonNode operation = spec.path("paths").path("/api/v1/testimonio/{id}").path("put");
+        JsonNode operation = spec.path("paths").path("/api/v1/testimonies/{id}").path("put");
 
         List<String> codes = new ArrayList<>();
         operation.path("responses").fieldNames().forEachRemaining(codes::add);
@@ -169,9 +169,9 @@ class StaleOrMissingVersionIntegrationTest {
 
     @ParameterizedTest(name = "contract of PUT {0} documents 409 for a stale version")
     @ValueSource(strings = {
-        "/api/v1/tipo-folio/{id}", "/api/v1/estado-gestion/{id}", "/api/v1/tipo-de-documento/{id}",
-        "/api/v1/tipo-tramite/{id}", "/api/v1/conceptos/{id}", "/api/v1/workflow-definition/{id}",
-        "/api/v1/movimiento-testimonio/{id}"
+        "/api/v1/folio-types/{id}", "/api/v1/management-statuses/{id}", "/api/v1/document-types/{id}",
+        "/api/v1/procedure-types/{id}", "/api/v1/concepts/{id}", "/api/v1/workflow-definition/{id}",
+        "/api/v1/testimony-movements/{id}"
     })
     @DisplayName("every PUT that copies version from the body documents 409")
     void versionedUpdatesDocument409(String path) throws Exception {
@@ -182,19 +182,19 @@ class StaleOrMissingVersionIntegrationTest {
     }
 
     @Test
-    @DisplayName("PUT /movimiento-testimonio/{id} with a stale version answers 409 instead of 500")
+    @DisplayName("PUT /testimony-movements/{id} with a stale version answers 409 instead of 500")
     void testimonyMovementStaleVersionIsConflict() throws Exception {
         int testimony = createTestimony();
-        JsonNode created = json(mockMvc.perform(post("/api/v1/movimiento-testimonio").contentType(MediaType.APPLICATION_JSON)
+        JsonNode created = json(mockMvc.perform(post("/api/v1/testimony-movements").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"testimony\":{\"idTestimony\":" + testimony + "},\"registered\":false,"
                                 + "\"dateEntry\":\"2026-10-01\"}"))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
         int id = created.get("idTestimonyMovement").asInt();
         com.fasterxml.jackson.databind.node.ObjectNode current =
-                (com.fasterxml.jackson.databind.node.ObjectNode) getJson("/api/v1/movimiento-testimonio/" + id);
+                (com.fasterxml.jackson.databind.node.ObjectNode) getJson("/api/v1/testimony-movements/" + id);
         String stale = current.put("version", current.get("version").asInt() + 5).toString();
 
-        mockMvc.perform(put("/api/v1/movimiento-testimonio/" + id).contentType(MediaType.APPLICATION_JSON).content(stale))
+        mockMvc.perform(put("/api/v1/testimony-movements/" + id).contentType(MediaType.APPLICATION_JSON).content(stale))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value(STALE_MESSAGE));
     }

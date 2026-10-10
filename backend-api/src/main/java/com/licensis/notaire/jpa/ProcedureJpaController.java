@@ -6,7 +6,7 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
@@ -33,7 +33,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author matias
  */
-public class ProcedureJpaController implements Serializable, IPersistenciaJpa
+public class ProcedureJpaController implements Serializable, JpaPersistence
 {
 
     public ProcedureJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -195,7 +195,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("You must retain Presupuesto " + fkIdBudgetOld + " since its fkIdTramite field is not nullable.");
+                illegalOrphanMessages.add("You must retain Budget " + fkIdBudgetOld + " since its fkIdTramite field is not nullable.");
             }
             for (SubmittedDocument documentsSubmittedListOldDocumentsSubmitted : documentsSubmittedListOld)
             {
@@ -216,7 +216,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain TramitesPersonas " + personProcedureListOldPersonProcedure + " since its tramite field is not nullable.");
+                    illegalOrphanMessages.add("You must retain TramitesPersonas " + personProcedureListOldPersonProcedure + " since its procedure field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null)
@@ -344,7 +344,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 Integer id = procedure.getIdProcedure();
                 if (findProcedure(id) == null)
                 {
-                    throw new NonexistentEntityException("The tramite with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The procedure with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -425,7 +425,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The tramite with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The procedure with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             Budget fkIdBudgetOrphanCheck = procedure.getFkIdBudget();
@@ -435,7 +435,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Tramite (" + procedure + ") cannot be destroyed since the Presupuesto " + fkIdBudgetOrphanCheck + " in its fkIdPresupuesto field has a non-nullable fkIdTramite field.");
+                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the Budget " + fkIdBudgetOrphanCheck + " in its fkIdPresupuesto field has a non-nullable fkIdTramite field.");
             }
             List<SubmittedDocument> documentsSubmittedListOrphanCheck = procedure.getSubmittedDocumentList();
             for (SubmittedDocument documentsSubmittedListOrphanCheckDocumentsSubmitted : documentsSubmittedListOrphanCheck)
@@ -444,7 +444,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Tramite (" + procedure + ") cannot be destroyed since the DocumentosPresentado " + documentsSubmittedListOrphanCheckDocumentsSubmitted + " in its documentosPresentadoList field has a non-nullable fkIdTramite field.");
+                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the DocumentosPresentado " + documentsSubmittedListOrphanCheckDocumentsSubmitted + " in its documentosPresentadoList field has a non-nullable fkIdTramite field.");
             }
             List<PersonProcedure> personProcedureListOrphanCheck = procedure.getPersonProcedureList();
             for (PersonProcedure personProcedureListOrphanCheckPersonProcedure : personProcedureListOrphanCheck)
@@ -453,7 +453,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Tramite (" + procedure + ") cannot be destroyed since the TramitesPersonas " + personProcedureListOrphanCheckPersonProcedure + " in its tramitesPersonasList field has a non-nullable tramite field.");
+                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the TramitesPersonas " + personProcedureListOrphanCheckPersonProcedure + " in its tramitesPersonasList field has a non-nullable procedure field.");
             }
             if (illegalOrphanMessages != null)
             {
@@ -580,10 +580,10 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Name of the @NamedQuery definido in nuestra clase
             Query q = em.createNamedQuery("Procedure.findByIdBudget");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
+            //It step the name of the parametro of the query, and the valor a search.
             q.setParameter("idPresupuesto", idBudget);
 
             miProcedure = (List<Procedure>) q.getResultList();
@@ -619,7 +619,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro una nueva transaccion
+        // Abro a new transaccion
         tx = em.getTransaction();
         tx.begin();
 

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 /**
- * CU47 "Consultar Estado de Pago": derives the pending balance and the aggregated
+ * CU47 "Consultar Estado de Payment": derives the pending balance and the aggregated
  * status of a budget from its charges and the amount already paid.
  */
 @Service
@@ -33,7 +33,7 @@ public class PaymentStatusService implements GetPaymentStatusUseCase {
     @Transactional(readOnly = true)
     public BigDecimal pendingBalance(Integer budgetId) {
         BigDecimal pendingBalance = charges(budgetId).pendingBalanceAfter(payments.sumAmountByBudgetId(budgetId));
-        log.debug("Saldo pendiente para presupuesto {}: {}", budgetId, pendingBalance);
+        log.debug("Outstanding balance for budget {}: {}", budgetId, pendingBalance);
         return pendingBalance;
     }
 
@@ -48,6 +48,6 @@ public class PaymentStatusService implements GetPaymentStatusUseCase {
     private BudgetCharges charges(Integer budgetId) {
         return budgets.findCharges(budgetId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Presupuesto no encontrado con ID: " + budgetId));
+                        "Budget not found with ID: " + budgetId));
     }
 }

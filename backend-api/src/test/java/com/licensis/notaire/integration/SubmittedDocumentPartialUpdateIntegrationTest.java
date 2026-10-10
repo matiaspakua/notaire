@@ -54,7 +54,7 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         expiringType = new DocumentType();
-        expiringType.setName("Tipo con vencimiento");
+        expiringType.setName("Tipo with expiration");
         expiringType.setExpires(true);
         expiringType.setDueDays(10);
         expiringType.setDeliveredBy("Cliente");
@@ -62,7 +62,7 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
         expiringType = documentTypeRepository.save(expiringType);
 
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo trámite doc");
+        procedureType.setName("Tipo procedure doc");
         procedureType.setEnabled(true);
         procedureType = procedureTypeRepository.save(procedureType);
         procedure = new Procedure();
@@ -71,7 +71,7 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
 
         stored = new SubmittedDocument();
         stored.setDocumentType(expiringType);
-        stored.setName("Escritura original");
+        stored.setName("Deed original");
         stored.setNotes("nota previa");
         stored.setDelivered(false);
         stored.setPrepared(true);
@@ -85,7 +85,7 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
     }
 
     private void putJson(Integer id, String json, int expectedStatus) throws Exception {
-        mockMvc.perform(put("/api/v1/documento-presentado/" + id)
+        mockMvc.perform(put("/api/v1/submitted-documents/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().is(expectedStatus));
@@ -103,7 +103,7 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
 
         SubmittedDocument after = reload();
         assertThat(after.getDelivered()).isTrue();
-        assertThat(after.getName()).isEqualTo("Escritura original");
+        assertThat(after.getName()).isEqualTo("Deed original");
         assertThat(after.getNotes()).isEqualTo("nota previa");
         assertThat(after.getFkIdProcedure().getIdProcedure()).isEqualTo(procedure.getIdProcedure());
         assertThat(after.getPrepared()).isTrue();
@@ -115,10 +115,10 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
     @Test
     @DisplayName("shouldKeepFlagsWhenOnlyTheNameIsSent")
     void shouldKeepFlagsWhenOnlyTheNameIsSent() throws Exception {
-        putJson(stored.getIdSubmittedDocument(), "{\"name\":\"Nombre nuevo\"}", 200);
+        putJson(stored.getIdSubmittedDocument(), "{\'name\':\'Nombre nuevo\'}", 200);
 
         SubmittedDocument after = reload();
-        assertThat(after.getName()).isEqualTo("Nombre nuevo");
+        assertThat(after.getName()).isEqualTo("Name new");
         assertThat(after.getFlagged()).isTrue();
         assertThat(after.getFkIdProcedure().getIdProcedure()).isEqualTo(procedure.getIdProcedure());
     }

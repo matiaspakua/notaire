@@ -6,7 +6,7 @@ info:
       Traceability: CU82
 http:
   method: POST
-  url: "{{base_url}}/api/v1/minutas-inscripcion"
+  url: "{{base_url}}/api/v1/registration-drafts"
   body:
     type: json
     data: |-

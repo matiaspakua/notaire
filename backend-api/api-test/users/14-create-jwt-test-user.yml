@@ -3,12 +3,12 @@ info:
   type: http
   seq: 14
   description: |-
-      ## Fixture — POST /api/v1/usuarios
+      ## Fixture — POST /api/v1/users
       Username is unique per run; deleted by `16-delete-jwt-test-user.yml`.
       Traceability: CU20 (RF #43, #44, #45, #82, #83)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/usuarios"
+  url: "{{base_url}}/api/v1/users"
   body:
     type: json
     data: |-

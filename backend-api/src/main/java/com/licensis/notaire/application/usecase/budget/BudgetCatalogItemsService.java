@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Adds copies of existing catalog Items (CU71) to a real Presupuesto.
+ * Adds copies of existing catalog Items (CU71) to a real Budget.
  */
 @Service
 @Transactional
@@ -29,7 +29,7 @@ public class BudgetCatalogItemsService {
     public List<Item> addItemsFromCatalog(Integer idBudget, List<Integer> idItems) {
         Budget budget = budgetRepository.findById(idBudget)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Presupuesto no encontrado con id: " + idBudget));
+                        "Budget not found with ID: " + idBudget));
 
         List<Item> copies = idItems.stream()
                 .map(idItem -> copyItemFromCatalog(budget, idItem))
@@ -41,7 +41,7 @@ public class BudgetCatalogItemsService {
     private Item copyItemFromCatalog(Budget budget, Integer idItem) {
         Item catalogItem = itemRepository.findById(idItem)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Ítem de catálogo no encontrado con id: " + idItem));
+                        "Item of catálogo not found with ID: " + idItem));
 
         Item copy = new Item();
         copy.setName(catalogItem.getName());

@@ -32,9 +32,9 @@ class FolioRequestValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /folio with blank status returns 400")
+    @DisplayName("POST /folios with blank status returns 400")
     void shouldRejectCreateWithBlankStatus() throws Exception {
-        mockMvc.perform(post("/api/v1/folio")
+        mockMvc.perform(post("/api/v1/folios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"number": 1655, "year": 2026, "status": "", "typeFolioId": 1, "notaryId": 1}
@@ -43,9 +43,9 @@ class FolioRequestValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /folio with missing status returns 400")
+    @DisplayName("POST /folios with missing status returns 400")
     void shouldRejectCreateWithMissingStatus() throws Exception {
-        mockMvc.perform(post("/api/v1/folio")
+        mockMvc.perform(post("/api/v1/folios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"number": 1656, "year": 2026, "typeFolioId": 1, "notaryId": 1}
@@ -54,9 +54,9 @@ class FolioRequestValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("PUT /folio/{id} with blank status returns 400")
+    @DisplayName("PUT /folios/{id} with blank status returns 400")
     void shouldRejectUpdateWithBlankStatus() throws Exception {
-        String response = mockMvc.perform(post("/api/v1/folio")
+        String response = mockMvc.perform(post("/api/v1/folios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"number": 1657, "year": 2026, "status": "Nuevo", "typeFolioId": 1, "notaryId": 1}
@@ -65,7 +65,7 @@ class FolioRequestValidationIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         int id = new ObjectMapper().readTree(response).get("idFolio").asInt();
 
-        mockMvc.perform(put("/api/v1/folio/" + id)
+        mockMvc.perform(put("/api/v1/folios/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"number": 1657, "year": 2026, "status": "", "typeFolioId": 1, "notaryId": 1}

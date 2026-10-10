@@ -66,7 +66,7 @@ class PrometheusMetricsIntegrationTest {
     @DisplayName("Prometheus response contains notaire login attempt counters after login")
     void prometheusContainsLoginMetricsAfterLogin() throws Exception {
         // Trigger a successful login
-        mockMvc.perform(post("/api/v1/usuarios/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "admin", "password": "admin"}
@@ -74,7 +74,7 @@ class PrometheusMetricsIntegrationTest {
                 .andExpect(status().isOk());
 
         // Trigger a failed login
-        mockMvc.perform(post("/api/v1/usuarios/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "admin", "password": "wrong"}

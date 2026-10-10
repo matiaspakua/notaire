@@ -26,7 +26,7 @@ import com.licensis.notaire.jpa.IdentificationTypeJpaController;
 import com.licensis.notaire.jpa.ProcedureJpaController;
 import com.licensis.notaire.jpa.PersonProcedureJpaController;
 import com.licensis.notaire.jpa.UserJpaController;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.transaction.UserTransaction;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ import java.lang.reflect.Constructor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("IPersistenciaJpa implementation tests")
+@DisplayName("JpaPersistence implementation tests")
 @ExtendWith(MockitoExtension.class)
 class IPersistenciaJpaTest {
 
@@ -53,7 +53,7 @@ class IPersistenciaJpaTest {
      * Helper to instantiate a JpaController that has a private constructor.
      */
     @SuppressWarnings("unchecked")
-    private <T extends IPersistenciaJpa> T createWithReflection(Class<T> clazz, Object... args) {
+    private <T extends JpaPersistence> T createWithReflection(Class<T> clazz, Object... args) {
         try {
             Constructor<?>[] constructors = clazz.getDeclaredConstructors();
             Constructor<?> target = null;

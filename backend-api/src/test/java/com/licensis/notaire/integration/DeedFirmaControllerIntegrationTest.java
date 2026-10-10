@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU06 - Firmar escritura (issue #832). Linking a Folio to an Escritura has no REST endpoint yet
+ * CU06 - Firmar deed (issue #832). Linking a Folio to an Deed has not REST endpoint yet
  * (deferred to issue #838), so tests assign it directly through the repository.
  */
 @RequirementCoverage({"CU06"})
@@ -65,7 +65,7 @@ class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
                   "dateDeedrecording": "2026-06-16"
                 }
                 """.formatted((int) (System.currentTimeMillis() % 1_000_000), status);
-        MvcResult result = mockMvc.perform(post("/api/v1/escrituras")
+        MvcResult result = mockMvc.perform(post("/api/v1/deeds")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -80,7 +80,7 @@ class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
         identificationType = identificationTypeRepository.save(identificationType);
 
         Person notary = new Person();
-        notary.setFirstName("Escribano");
+        notary.setFirstName("Notary");
         notary.setLastName("Test");
         notary.setIdentificationNumber(String.valueOf(System.currentTimeMillis() % 100_000_000));
         notary.setIsClient(false);
@@ -96,7 +96,7 @@ class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
         Folio folio = new Folio();
         folio.setNumber((int) (System.currentTimeMillis() % 1_000_000));
         folio.setYear(2026);
-        folio.setStatus("Nuevo");
+        folio.setStatus("New");
         folio.setFkIdNotaryPerson(notary);
         folio.setFkIdFolioType(folioType);
         folio.setFkIdDeed(new com.licensis.notaire.business.Deed(idDeed));
@@ -109,7 +109,7 @@ class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
         int idDeed = createDeed("Sin Firmar");
         assignFolio(idDeed);
 
-        mockMvc.perform(post("/api/v1/escrituras/" + idDeed + "/firmar"))
+        mockMvc.perform(post("/api/v1/deeds/" + idDeed + "/sign"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idDeed").value(idDeed))
                 .andExpect(jsonPath("$.status").value("Firmada"));
@@ -120,7 +120,7 @@ class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
     void shouldRejectSigningWhenNoFolioAssigned() throws Exception {
         int idDeed = createDeed("Sin Firmar");
 
-        mockMvc.perform(post("/api/v1/escrituras/" + idDeed + "/firmar"))
+        mockMvc.perform(post("/api/v1/deeds/" + idDeed + "/sign"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -130,14 +130,14 @@ class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
         int idDeed = createDeed("Firmada");
         assignFolio(idDeed);
 
-        mockMvc.perform(post("/api/v1/escrituras/" + idDeed + "/firmar"))
+        mockMvc.perform(post("/api/v1/deeds/" + idDeed + "/sign"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("Should return 404 when signing a non-existing deed")
     void shouldReturn404WhenSigningNonExistingDeed() throws Exception {
-        mockMvc.perform(post("/api/v1/escrituras/99999/firmar"))
+        mockMvc.perform(post("/api/v1/deeds/99999/sign"))
                 .andExpect(status().isNotFound());
     }
 }

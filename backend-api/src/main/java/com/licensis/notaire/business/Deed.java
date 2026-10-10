@@ -329,10 +329,10 @@ public class Deed implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Escritura[ idEscritura=" + idDeed + " ]"
+        return "Deed[ idEscritura=" + idDeed + " ]"
                 + "[ numero=" + number
                 + ", fecha escrituracion: " + this.dateDeedrecording
-                + ", fecha inscripcion: " + this.dateRegistration
+                + ", date registration: " + this.dateRegistration
                 + ", Estado: " + this.status + " ]";
     }
 

@@ -60,7 +60,7 @@ class ManagementTransitionServiceTest {
     @BeforeEach
     void setUp() {
         statusInicial = new ManagementStatus(1, "Iniciada");
-        statusDestination = new ManagementStatus(2, "En trámite");
+        statusDestination = new ManagementStatus(2, "In procedure");
 
         workflowDefinition = new WorkflowDefinition(1);
 
@@ -90,11 +90,11 @@ class ManagementTransitionServiceTest {
         transition.setDestinationNode(destinationNode);
 
         when(managementRepository.findById(1)).thenReturn(Optional.of(management));
-        when(statusRepository.findByName("En trámite")).thenReturn(Optional.of(statusDestination));
+        when(statusRepository.findByName("In procedure")).thenReturn(Optional.of(statusDestination));
         when(workflowTransitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of(transition));
         when(managementRepository.save(management)).thenReturn(management);
 
-        DeedManagement result = managementTransitionService.transition(1, "En trámite");
+        DeedManagement result = managementTransitionService.transition(1, "In procedure");
 
         assertThat(result.getFkIdManagementStatus()).isEqualTo(statusDestination);
     }
@@ -103,13 +103,13 @@ class ManagementTransitionServiceTest {
     @DisplayName("Should reject invalid transition")
     void shouldRejectInvalidTransition() {
         when(managementRepository.findById(1)).thenReturn(Optional.of(management));
-        when(statusRepository.findByName("En trámite")).thenReturn(Optional.of(statusDestination));
+        when(statusRepository.findByName("In procedure")).thenReturn(Optional.of(statusDestination));
         when(workflowTransitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
 
-        assertThatThrownBy(() -> managementTransitionService.transition(1, "En trámite"))
+        assertThatThrownBy(() -> managementTransitionService.transition(1, "In procedure"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("Iniciada")
-                .hasMessageContaining("En trámite");
+                .hasMessageContaining("In procedure");
     }
 
     @Test
@@ -120,7 +120,7 @@ class ManagementTransitionServiceTest {
 
         when(managementRepository.findById(1)).thenReturn(Optional.of(management));
 
-        assertThatThrownBy(() -> managementTransitionService.transition(1, "En trámite"))
+        assertThatThrownBy(() -> managementTransitionService.transition(1, "In procedure"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("workflow");
     }
@@ -130,7 +130,7 @@ class ManagementTransitionServiceTest {
     void shouldRejectTransitionWhenManagementNotFound() {
         when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> managementTransitionService.transition(999, "En trámite"))
+        assertThatThrownBy(() -> managementTransitionService.transition(999, "In procedure"))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("999");
     }

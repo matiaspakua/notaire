@@ -11,12 +11,12 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { SearchCombobox } from "@/components/shared/SearchCombobox";
 import { useManagement, useManagementSearch, useRecentManagements } from "@/hooks/useManagementSearch";
-import type { GestionDeEscritura } from "@/types";
+import type { DeedManagement } from "@/types";
 
 export interface ManagementPickerProps {
   /** Selected management id. */
   value?: number;
-  onChange: (management: GestionDeEscritura | undefined) => void;
+  onChange: (management: DeedManagement | undefined) => void;
   "aria-label": string;
   placeholder?: string;
   allowClear?: boolean;
@@ -26,13 +26,13 @@ export interface ManagementPickerProps {
 }
 
 /** "<number> — <heading>": the number first, so it reads the same in es and en. */
-export function managementLabel(g: GestionDeEscritura): string {
+export function managementLabel(g: DeedManagement): string {
   return g.encabezado ? `${g.number} — ${g.encabezado}` : String(g.number ?? `#${g.idManagement}`);
 }
 
 export function ManagementPicker({ value, onChange, allowClear = false, ...rest }: ManagementPickerProps) {
   const t = useTranslations("managementPicker");
-  const [known, setKnown] = useState<GestionDeEscritura | undefined>();
+  const [known, setKnown] = useState<DeedManagement | undefined>();
 
   const knownMatches = known?.idManagement === value ? known : undefined;
   const loaded = useManagement(value, value != null && !knownMatches);
@@ -49,7 +49,7 @@ export function ManagementPicker({ value, onChange, allowClear = false, ...rest 
   }
 
   return (
-    <SearchCombobox<GestionDeEscritura>
+    <SearchCombobox<DeedManagement>
       {...rest}
       useSource={useSource}
       getKey={(g) => g.idManagement!}

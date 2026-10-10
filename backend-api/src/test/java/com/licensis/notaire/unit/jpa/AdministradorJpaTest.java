@@ -2,8 +2,8 @@ package com.licensis.notaire.unit.jpa;
 
 import com.licensis.notaire.jpa.ConceptJpaController;
 import com.licensis.notaire.jpa.exceptions.NonexistentJpaException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
-import com.licensis.notaire.service.AdministradorJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
+import com.licensis.notaire.service.JpaAdministrator;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-@DisplayName("AdministradorJpa unit tests")
+@DisplayName("JpaAdministrator unit tests")
 class AdministradorJpaTest {
 
     private EntityManagerFactory mockEmf;
@@ -25,15 +25,15 @@ class AdministradorJpaTest {
     @BeforeEach
     void setUp() throws Exception {
         // Use reflection to reset the singleton state
-        java.lang.reflect.Field instanciaField = AdministradorJpa.class.getDeclaredField("instancia");
+        java.lang.reflect.Field instanciaField = JpaAdministrator.class.getDeclaredField("instancia");
         instanciaField.setAccessible(true);
         instanciaField.set(null, null);
 
-        java.lang.reflect.Field emfField = AdministradorJpa.class.getDeclaredField("emf");
+        java.lang.reflect.Field emfField = JpaAdministrator.class.getDeclaredField("emf");
         emfField.setAccessible(true);
         emfField.set(null, null);
 
-        java.lang.reflect.Field milistaJpasField = AdministradorJpa.class.getDeclaredField("milistaJpas");
+        java.lang.reflect.Field milistaJpasField = JpaAdministrator.class.getDeclaredField("milistaJpas");
         milistaJpasField.setAccessible(true);
         milistaJpasField.set(null, null);
 
@@ -42,15 +42,15 @@ class AdministradorJpaTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        java.lang.reflect.Field instanciaField = AdministradorJpa.class.getDeclaredField("instancia");
+        java.lang.reflect.Field instanciaField = JpaAdministrator.class.getDeclaredField("instancia");
         instanciaField.setAccessible(true);
         instanciaField.set(null, null);
 
-        java.lang.reflect.Field emfField = AdministradorJpa.class.getDeclaredField("emf");
+        java.lang.reflect.Field emfField = JpaAdministrator.class.getDeclaredField("emf");
         emfField.setAccessible(true);
         emfField.set(null, null);
 
-        java.lang.reflect.Field milistaJpasField = AdministradorJpa.class.getDeclaredField("milistaJpas");
+        java.lang.reflect.Field milistaJpasField = JpaAdministrator.class.getDeclaredField("milistaJpas");
         milistaJpasField.setAccessible(true);
         milistaJpasField.set(null, null);
     }
@@ -62,8 +62,8 @@ class AdministradorJpaTest {
         @Test
         @DisplayName("should return singleton instance")
         void shouldReturnSingleton() {
-            AdministradorJpa first = AdministradorJpa.getInstancia();
-            AdministradorJpa second = AdministradorJpa.getInstancia();
+            JpaAdministrator first = JpaAdministrator.getInstancia();
+            JpaAdministrator second = JpaAdministrator.getInstancia();
             assertThat(first).isSameAs(second);
         }
     }
@@ -75,8 +75,8 @@ class AdministradorJpaTest {
         @Test
         @DisplayName("should set EMF and deregister when instancia is null")
         void shouldSetEmfWithoutLoadingList() {
-            AdministradorJpa.setEmf(mockEmf);
-            assertThat(AdministradorJpa.getEmf()).isSameAs(mockEmf);
+            JpaAdministrator.setEmf(mockEmf);
+            assertThat(JpaAdministrator.getEmf()).isSameAs(mockEmf);
             // milistaJpas should be null since instancia is null (no call to cargarListaJpas)
             // Note: after getInstancia(), setEmf will trigger cargarListaJpas()
         }
@@ -85,12 +85,12 @@ class AdministradorJpaTest {
         @DisplayName("should reload JPA list when instancia already exists")
         void shouldReloadListWhenInstanciaExists() {
             // First get instance (instancia created, but no emf yet)
-            AdministradorJpa.getInstancia();
+            JpaAdministrator.getInstancia();
 
             // Now set EMF - should trigger cargarListaJpas via the if (instancia != null) block
-            AdministradorJpa.setEmf(mockEmf);
+            JpaAdministrator.setEmf(mockEmf);
 
-            Collection<IPersistenciaJpa> list = AdministradorJpa.getMilistaJpas();
+            Collection<JpaPersistence> list = JpaAdministrator.getMilistaJpas();
             assertThat(list).isNotNull();
             assertThat(list).isNotEmpty();
         }
@@ -102,7 +102,7 @@ class AdministradorJpaTest {
 
         @BeforeEach
         void setUp() {
-            AdministradorJpa.getInstancia();
+            JpaAdministrator.getInstancia();
         }
 
         @Test
@@ -110,9 +110,9 @@ class AdministradorJpaTest {
         void shouldPopulateAllControllers() {
             // This test verifies that calling setEmf after instancia triggers cargarListaJpas
             // which adds all 26 controllers to the list
-            AdministradorJpa.setEmf(mockEmf);
+            JpaAdministrator.setEmf(mockEmf);
 
-            Collection<IPersistenciaJpa> list = AdministradorJpa.getMilistaJpas();
+            Collection<JpaPersistence> list = JpaAdministrator.getMilistaJpas();
             assertThat(list).isNotNull();
             assertThat(list).hasSizeGreaterThan(20);
 
@@ -136,14 +136,14 @@ class AdministradorJpaTest {
 
         @BeforeEach
         void setUp() {
-            AdministradorJpa.getInstancia();
-            AdministradorJpa.setEmf(mockEmf);
+            JpaAdministrator.getInstancia();
+            JpaAdministrator.setEmf(mockEmf);
         }
 
         @Test
         @DisplayName("should return matching JPA by class name")
         void shouldFindMatchingJpa() throws Exception {
-            IPersistenciaJpa jpa = AdministradorJpa.getInstancia()
+            JpaPersistence jpa = JpaAdministrator.getInstancia()
                     .obtenerJpa("ConceptJpaController");
             assertThat(jpa).isNotNull();
             assertThat(jpa).isInstanceOf(ConceptJpaController.class);
@@ -153,7 +153,7 @@ class AdministradorJpaTest {
         @DisplayName("should throw NonexistentJpaException when not found")
         void shouldThrowWhenNotFound() {
             assertThatThrownBy(() ->
-                    AdministradorJpa.getInstancia().obtenerJpa("NonExistentJpa"))
+                    JpaAdministrator.getInstancia().obtenerJpa("NonExistentJpa"))
                     .isInstanceOf(NonexistentJpaException.class)
                     .hasMessage("El JPA indicado no existe.");
         }
@@ -166,9 +166,9 @@ class AdministradorJpaTest {
         @Test
         @DisplayName("should allow direct list manipulation")
         void shouldAllowDirectListAccess() {
-            java.util.ArrayList<IPersistenciaJpa> customList = new java.util.ArrayList<>();
-            AdministradorJpa.setMilistaJpas(customList);
-            assertThat(AdministradorJpa.getMilistaJpas()).isSameAs(customList);
+            java.util.ArrayList<JpaPersistence> customList = new java.util.ArrayList<>();
+            JpaAdministrator.setMilistaJpas(customList);
+            assertThat(JpaAdministrator.getMilistaJpas()).isSameAs(customList);
         }
     }
 
@@ -179,14 +179,14 @@ class AdministradorJpaTest {
         @Test
         @DisplayName("should return null when not set")
         void shouldReturnNullWhenNotSet() {
-            assertThat(AdministradorJpa.getEmf()).isNull();
+            assertThat(JpaAdministrator.getEmf()).isNull();
         }
 
         @Test
         @DisplayName("should return set EMF")
         void shouldReturnSetEmf() {
-            AdministradorJpa.setEmf(mockEmf);
-            assertThat(AdministradorJpa.getEmf()).isSameAs(mockEmf);
+            JpaAdministrator.setEmf(mockEmf);
+            assertThat(JpaAdministrator.getEmf()).isSameAs(mockEmf);
         }
     }
 }

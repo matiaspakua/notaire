@@ -5,7 +5,7 @@
 package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoFolioType;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
+import com.licensis.notaire.dto.exceptions.InvalidDtoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -27,12 +27,12 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase que representa un tipo de folio en particular que puede ser para el protocolo: principal,
+ * Clase that representa a folio type in particular that can be for the protocolo: principal,
  * auxiliar, etc.
  * <p>
  * REGLA DE NEGOCIO<p>
- * <li> Los tipos de folios no se pueden eliminar (debido a
- * que se tiene que mantener un historia de los mismos), por lo tanto, solo se le puede cambiar el
+ * <li> The tipos of folios not can delete (debido a
+ * that has that mantener a historia of the mismos), by it tanto, only it can cambiar the
  * estado a "INHABILITADO". </li>
  */
 @Entity
@@ -65,7 +65,7 @@ public class FolioType implements Serializable, Persistable<Integer>
     // (FolioController, legacy JpaControllers) runs inside a transaction. EAGER here made
     // loading a single Folio cascade into loading every other Folio of the same type just to
     // populate an ignored field, and once enough rows accumulated it starved the request
-    // (see #1006 — GET /api/v1/folio failing with "Failed to write request").
+    // (see #1006 — GET /api/v1/folios failing with "Failed to write request").
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdFolioType", fetch = FetchType.LAZY)
     private List<Folio> folioList;
     @Basic(optional = false)
@@ -189,8 +189,8 @@ public class FolioType implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "TipoDeFolio[ idTipoFolio=" + idFolioType + " ]"
-                + "[ nombre=" + name + " ]";
+        return "FolioType[ idTipoFolio=" + idFolioType + " ]"
+                + "[ name=" + name + " ]";
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
@@ -209,9 +209,9 @@ public class FolioType implements Serializable, Persistable<Integer>
 
     }
 
-    public void setAtributos(DtoFolioType dtoFolioType) throws DtoInvalidoException
+    public void setAtributos(DtoFolioType dtoFolioType) throws InvalidDtoException
     {
-        if (dtoFolioType.isValido())
+        if (dtoFolioType.isValid())
         {
             this.setIdFolioType(dtoFolioType.getIdFolioType());
             this.setName(dtoFolioType.getName());
@@ -221,7 +221,7 @@ public class FolioType implements Serializable, Persistable<Integer>
             this.setVersion(dtoFolioType.getVersion());
         } else
         {
-            throw new DtoInvalidoException("El dto indicado no es valido.");
+            throw new InvalidDtoException("El dto indicado no es valid.");
         }
 
     }

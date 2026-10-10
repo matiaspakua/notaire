@@ -3,13 +3,13 @@ info:
   type: http
   seq: 1
   description: |-
-      ## Setup — POST /api/v1/presupuestos
+      ## Setup — POST /api/v1/budgets
       Creates a budget with `propertyAmount` set so there is a pending balance to pay
       against; deleted by `13-teardown-delete-budget.yml`.
       Traceability: CU01 (RF #4, #5, #7, #9)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/presupuestos"
+  url: "{{base_url}}/api/v1/budgets"
   body:
     type: json
     data: |-

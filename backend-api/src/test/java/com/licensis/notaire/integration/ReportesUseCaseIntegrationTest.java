@@ -33,9 +33,9 @@ class ReportesUseCaseIntegrationTest {
     // --- Simple PDF endpoints (no DB connection needed) ---
 
     @Test
-    @DisplayName("CU24: libro de índice returns valid PDF bytes")
+    @DisplayName("CU24: libro of índice returns valid PDF bytes")
     void shouldGenerateLibroIndicePdf() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/v1/reportes/libro-indice")
+        MvcResult result = mockMvc.perform(get("/api/v1/reports/index-book")
                         .param("anio", "2026"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/pdf"))
@@ -49,7 +49,7 @@ class ReportesUseCaseIntegrationTest {
     @Test
     @DisplayName("CU25: declaracion jurada mensual returns valid PDF bytes")
     void shouldGenerateDeclaracionJuradaMensualPdf() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual")
+        MvcResult result = mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("anio", "2026")
                         .param("mes", "6"))
                 .andExpect(status().isOk())
@@ -64,7 +64,7 @@ class ReportesUseCaseIntegrationTest {
     @Test
     @DisplayName("CU50: declaracion jurada de rentas returns valid PDF bytes")
     void shouldGenerateDeclaracionJuradaRentasPdf() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas")
+        MvcResult result = mockMvc.perform(get("/api/v1/reports/tax-sworn-statement")
                         .param("anio", "2026")
                         .param("mes", "6"))
                 .andExpect(status().isOk())
@@ -81,19 +81,19 @@ class ReportesUseCaseIntegrationTest {
     @Test
     @DisplayName("Month 1 and 12 are valid for DDJJ endpoints")
     void shouldAcceptBoundaryMonths() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual")
+        mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("anio", "2026").param("mes", "1"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual")
+        mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("anio", "2026").param("mes", "12"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas")
+        mockMvc.perform(get("/api/v1/reports/tax-sworn-statement")
                         .param("anio", "2026").param("mes", "1"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas")
+        mockMvc.perform(get("/api/v1/reports/tax-sworn-statement")
                         .param("anio", "2026").param("mes", "12"))
                 .andExpect(status().isOk());
     }
@@ -101,19 +101,19 @@ class ReportesUseCaseIntegrationTest {
     @Test
     @DisplayName("Month 0 and 13 are rejected for both DDJJ endpoints")
     void shouldRejectInvalidMonthForDeclaraciones() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual")
+        mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("anio", "2026").param("mes", "13"))
                 .andExpect(status().isBadRequest());
 
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual")
+        mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("anio", "2026").param("mes", "0"))
                 .andExpect(status().isBadRequest());
 
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas")
+        mockMvc.perform(get("/api/v1/reports/tax-sworn-statement")
                         .param("anio", "2026").param("mes", "0"))
                 .andExpect(status().isBadRequest());
 
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas")
+        mockMvc.perform(get("/api/v1/reports/tax-sworn-statement")
                         .param("anio", "2026").param("mes", "13"))
                 .andExpect(status().isBadRequest());
     }
@@ -126,43 +126,43 @@ class ReportesUseCaseIntegrationTest {
     @DisplayName("CU01/CU45: budget endpoint handles missing data gracefully")
     void shouldHandleBudgetEndpointGracefully() throws Exception {
         int nonExistentId = 99999;
-        mockMvc.perform(get("/api/v1/reportes/presupuesto/" + nonExistentId))
+        mockMvc.perform(get("/api/v1/reports/budget/" + nonExistentId))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("CU01/CU45: budget-inmuebles endpoint handles missing data gracefully")
     void shouldHandleBudgetPropertiesEndpointGracefully() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/99999"))
+        mockMvc.perform(get("/api/v1/reports/budget-properties/99999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("CU03: lista-documents-tramite endpoint handles unknown tramite gracefully")
+    @DisplayName("CU03: lista-documents-tramite endpoint handles unknown procedure gracefully")
     void shouldHandleListaDocumentsProcedureEndpointGracefully() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite")
+        mockMvc.perform(get("/api/v1/reports/procedure-document-list")
                         .param("nombreTipoTramite", "TramiteQueNoExiste"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("CU13: history-gestion endpoint handles missing gestion gracefully")
+    @DisplayName("CU13: history-gestion endpoint handles missing management gracefully")
     void shouldHandleHistoryManagementEndpointGracefully() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/historial-gestion/99999"))
+        mockMvc.perform(get("/api/v1/reports/management-history/99999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("CU42: documents-por-vencer endpoint handles missing document gracefully")
     void shouldHandleDocumentsPorVencerEndpointGracefully() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/documentos-por-vencer/99999"))
+        mockMvc.perform(get("/api/v1/reports/documents-due/99999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("CU09: consultar-deuda-documents endpoint handles missing gestion gracefully")
+    @DisplayName("CU09: consultar-deuda-documents endpoint handles missing management gracefully")
     void shouldHandleConsultarDebtDocumentsEndpointGracefully() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/consultar-deuda-documentos")
+        mockMvc.perform(get("/api/v1/reports/document-debt")
                         .param("numberManagement", "99999"))
                 .andExpect(status().isNotFound());
     }
@@ -170,8 +170,8 @@ class ReportesUseCaseIntegrationTest {
     @Test
     @DisplayName("Special characters in nombreTipoTramite are matched literally, never a server error")
     void shouldHandleSpecialCharsInProcedureParam() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite")
-                        .param("nombreTipoTramite", "Compra/Venta (especial) & más"))
+        mockMvc.perform(get("/api/v1/reports/procedure-document-list")
+                        .param("nombreTipoTramite", "Compra/Venta (especial) & more"))
                 .andExpect(status().isNotFound());
     }
 
@@ -179,19 +179,19 @@ class ReportesUseCaseIntegrationTest {
     @DisplayName("All report endpoints are mapped (not 404)")
     void shouldMapAllReportEndpoints() throws Exception {
         MvcResult[] results = new MvcResult[] {
-                mockMvc.perform(get("/api/v1/reportes/presupuesto/1")).andReturn(),
-                mockMvc.perform(get("/api/v1/reportes/presupuesto-inmuebles/1")).andReturn(),
-                mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite").param("nombreTipoTramite", "x"))
+                mockMvc.perform(get("/api/v1/reports/budget/1")).andReturn(),
+                mockMvc.perform(get("/api/v1/reports/budget-properties/1")).andReturn(),
+                mockMvc.perform(get("/api/v1/reports/procedure-document-list").param("nombreTipoTramite", "x"))
                         .andReturn(),
-                mockMvc.perform(get("/api/v1/reportes/historial-gestion/1")).andReturn(),
-                mockMvc.perform(get("/api/v1/reportes/documentos-por-vencer/1")).andReturn(),
-                mockMvc.perform(get("/api/v1/reportes/consultar-deuda-documentos").param("numberManagement", "1"))
+                mockMvc.perform(get("/api/v1/reports/management-history/1")).andReturn(),
+                mockMvc.perform(get("/api/v1/reports/documents-due/1")).andReturn(),
+                mockMvc.perform(get("/api/v1/reports/document-debt").param("numberManagement", "1"))
                         .andReturn(),
-                mockMvc.perform(get("/api/v1/reportes/libro-indice").param("anio", "2026"))
+                mockMvc.perform(get("/api/v1/reports/index-book").param("anio", "2026"))
                         .andReturn(),
-                mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual").param("anio", "2026").param("mes", "6"))
+                mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement").param("anio", "2026").param("mes", "6"))
                         .andReturn(),
-                mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-rentas").param("anio", "2026").param("mes", "6"))
+                mockMvc.perform(get("/api/v1/reports/tax-sworn-statement").param("anio", "2026").param("mes", "6"))
                         .andReturn()
         };
 
