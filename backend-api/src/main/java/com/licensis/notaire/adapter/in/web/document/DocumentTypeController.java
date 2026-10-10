@@ -111,12 +111,13 @@ public class DocumentTypeController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
-            return ErrorResponses.conflict(e);
+            return ErrorResponses.createFailed(e);
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponse(responseCode = "400", description = "Bad request"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
@@ -141,7 +142,7 @@ public class DocumentTypeController {
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ErrorResponses.serverError(e);
+            return ErrorResponses.updateFailed(e);
         }
     }
 
