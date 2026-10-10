@@ -24,7 +24,10 @@
     "brandSubtitle": "Notary Office",
     "documentosNecesarios": "Required Documents",
     "reingresoDocumentacion": "Re-submit Documentation",
-    "proximosVencimientos": "Upcoming Expirations"
+    "proximosVencimientos": "Upcoming Expirations",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mainNav": "Main navigation"
   },
   "common": {
     "create": "Create",

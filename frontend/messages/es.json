@@ -24,7 +24,10 @@
     "brandSubtitle": "Escribanía",
     "documentosNecesarios": "Documentos Necesarios",
     "reingresoDocumentacion": "Reingresar Documentación",
-    "proximosVencimientos": "Próximos Vencimientos"
+    "proximosVencimientos": "Próximos Vencimientos",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "mainNav": "Navegación principal"
   },
   "common": {
     "create": "Crear",
