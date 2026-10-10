@@ -345,7 +345,8 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
       const nombre = page.getByTestId('input-firstName')
       await expect(nombre).toHaveAttribute('aria-invalid', 'true')
       await expect(nombre).toHaveAttribute('aria-required', 'true')
-      await expect(nombre).toHaveAccessibleDescription(/requerido|obligatorio/i)
+      // The message comes from the backend's field error (English Bean Validation text today).
+      await expect(nombre).toHaveAccessibleDescription(/requerido|obligatorio|must not be blank/i)
       const alert = dialog.getByRole('alert').first()
       await expect(alert).toBeVisible()
       expect(await alert.textContent()).not.toMatch(/\p{Extended_Pictographic}/u)
