@@ -200,3 +200,10 @@
     inset: 0;
   }
 }
+
+/* An open Radix dialog sets pointer-events: none on <body>; the toaster lives
+   outside the dialog, so its action buttons ("Ver persona existente") would be
+   unclickable while a form is open (#1340). */
+[data-sonner-toaster] {
+  pointer-events: auto;
+}
