@@ -10,7 +10,6 @@ import type { ReactNode } from "react";
 vi.mock("@/lib/api-client", () => ({
   apiGet: vi.fn(),
   apiGetPage: vi.fn(),
-  apiGetPaged: vi.fn(),
   apiPost: vi.fn(),
   apiPut: vi.fn(),
   apiDelete: vi.fn(),

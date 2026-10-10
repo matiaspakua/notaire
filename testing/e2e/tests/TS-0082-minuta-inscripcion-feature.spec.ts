@@ -9,6 +9,7 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { apiPost, uniqueId } from "./setup/api-helpers";
+import { chooseDeed } from "./setup/deed-picker";
 
 interface EscrituraApiResult {
   idDeed: number;
@@ -71,8 +72,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     await seedTramite(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/minutas-inscripcion");
-    await page.getByTestId("select-escritura-minuta").click();
-    await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
+    await chooseDeed(page, "select-escritura-minuta", numero);
     await page.getByTestId("btn-generar-minuta").click();
     await steps.thenShowsSuccessMessage("generada");
 
@@ -105,8 +105,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     await seedTramite(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/minutas-inscripcion");
-    await page.getByTestId("select-escritura-minuta").click();
-    await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
+    await chooseDeed(page, "select-escritura-minuta", numero);
     await page.getByTestId("btn-generar-minuta").click();
     await steps.thenShowsSuccessMessage("generada");
 
@@ -139,8 +138,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     await seedTramite(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/minutas-inscripcion");
-    await page.getByTestId("select-escritura-minuta").click();
-    await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
+    await chooseDeed(page, "select-escritura-minuta", numero);
     await page.getByTestId("btn-generar-minuta").click();
 
     await steps.thenShowsErrorMessage("catastrales");

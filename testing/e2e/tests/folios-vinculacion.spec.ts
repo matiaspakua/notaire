@@ -6,6 +6,7 @@
 import { type Page, test, expect } from '@playwright/test'
 import { authenticateAsAdmin } from './setup/auth'
 import { apiPost, createFolio, uniqueId } from './setup/api-helpers'
+import { chooseDeed, searchDeed } from './setup/deed-picker'
 
 const ESTADO_ESCRITURA_FIRMADA = 'Firmada'
 
@@ -63,10 +64,7 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
 
     const dialog = await openNewFolioAndFillRequired(page, numeroFolio)
 
-    await page.getByTestId('select-escritura-folio').click()
-    const escrituraOption = page.getByRole('option', { name: `Escritura Nº ${numero}` })
-    await escrituraOption.waitFor({ state: 'attached', timeout: 5000 })
-    await escrituraOption.evaluate((el: HTMLElement) => el.click())
+    await chooseDeed(page, 'select-escritura-folio', numero)
 
     await dialog.getByRole('button', { name: /guardar/i }).click()
 
@@ -97,12 +95,13 @@ test.describe('CU87 - Vincular Escritura y Folio', () => {
     await page.waitForLoadState('domcontentloaded')
 
     const dialog = await openNewFolioAndFillRequired(page, Math.floor(10000 + Math.random() * 90000))
-    await page.getByTestId('select-escritura-folio').click()
+    const option = await searchDeed(page, 'select-escritura-folio', numero)
 
     // Then: the picker never offers an escritura already Utilizado by another folio
-    await expect(page.getByRole('option', { name: `Escritura Nº ${numero}` })).toHaveCount(0)
+    await expect(page.getByText(/^(sin resultados|no results)$/i)).toBeVisible({ timeout: 8000 })
+    await expect(option).toHaveCount(0)
 
-    // Escape closes the open select; a second Escape (or the first, if focus is on
+    // Escape closes the open picker; a second Escape (or the first, if focus is on
     // the dialog) dismisses the modal. Never click Cancelar after Escape — the
     // button is gone once the dialog is already closed (CI flake CU87-EDGE01).
     await page.keyboard.press('Escape')

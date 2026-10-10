@@ -6,7 +6,7 @@
  * typed (debounced) query; this component owns the popup, keyboard and
  * announcements. Like the APG combobox, focus alone does not open the popup (a
  * dialog that autofocuses the field stays readable); a click, typing or
- * ArrowDown does. Used by PersonPicker and BudgetPicker.
+ * ArrowDown does. Used by PersonPicker, BudgetPicker, ManagementPicker and DeedPicker.
  */
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Search, X } from "lucide-react";
