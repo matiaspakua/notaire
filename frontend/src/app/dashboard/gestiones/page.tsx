@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Archive, RefreshCcw, History, FolderClock, ClipboardList } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, FormHeader } from "@/theme/form-patterns";
 import {
-  useGestiones,
+  useGestionesPage,
   useGestionesByCliente,
   useCreateCompleteGestion,
   useUpdateGestion,
@@ -26,7 +26,8 @@ import {
   usePonerCarpetaEnEspera,
 } from "@/hooks/useGestiones";
 import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
-import { usePersonas } from "@/hooks/usePersonas";
+import { PersonPicker } from "@/components/shared/PersonPicker";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { usePresupuestos } from "@/hooks/usePresupuestos";
 import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
@@ -35,16 +36,30 @@ import { ApiError } from "@/lib/api-client";
 import { fullName, formatCurrency, formatDate, extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 import { GestionResumenDialog } from "./GestionResumenDialog";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const ESTADO_CARPETA_ACTIVA = "Activa";
 
 const ESTADO_ARCHIVADA = "Archivada";
 
 export default function GestionesPage() {
+  return (
+    <Suspense>
+      <GestionesList />
+    </Suspense>
+  );
+}
+
+function GestionesList() {
   const t = useTranslations("gestiones");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
-  const { data: gestiones = [], isLoading } = useGestiones();
-  const { data: personas = [] } = usePersonas();
+  // One server page at a time, page and size in the URL (#1340): the list used
+  // to load size=1000, hiding older managements and rendering 1000 rows.
+  const paging = useUrlPagination();
+  const { data: gestionesPage, isLoading, isFetching } = useGestionesPage({ page: paging.page, size: paging.size });
+  const gestiones = gestionesPage?.content ?? [];
+  useClampPage(paging, gestionesPage?.totalPages);
   const { data: presupuestos = [] } = usePresupuestos();
   const { data: estados = [] } = useEstadosGestion();
   const { data: tiposTramite = [] } = useTiposTramite();
@@ -151,8 +166,8 @@ export default function GestionesPage() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
@@ -330,25 +345,37 @@ export default function GestionesPage() {
       />
 
       <div className="px-4 pb-4 flex items-center gap-2">
-        <Select value={clienteFilter || "all"} onValueChange={(v) => setClienteFilter(v === "all" ? "" : v)}>
-          <SelectTrigger className="w-56" data-testid="select-filter-cliente-gestion">
-            <SelectValue placeholder={t("filterByCliente")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{tc("all")}</SelectItem>
-            {personas.filter((p) => p.isClient).map((p) => (
-              <SelectItem key={p.personId} value={String(p.personId)}>{fullName(p)}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Server search over clients instead of the first 1000 people (#1340). */}
+        <PersonPicker
+          value={clienteFilter ? Number(clienteFilter) : undefined}
+          onChange={(person) => setClienteFilter(person?.personId != null ? String(person.personId) : "")}
+          aria-label={t("filterByCliente")}
+          placeholder={t("filterByCliente")}
+          clientsOnly
+          allowClear
+          className="w-full sm:w-80"
+          data-testid="select-filter-cliente-gestion"
+        />
       </div>
 
       <DataTable
         data={visibleGestiones}
         columns={columns}
         isLoading={isLoadingVisible}
+        isFetching={!clienteFilter && isFetching}
         keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
+        pagination={
+          clienteFilter
+            ? undefined
+            : {
+                page: gestionesPage?.number ?? paging.page,
+                size: paging.size,
+                totalElements: gestionesPage?.totalElements ?? 0,
+                onPageChange: paging.setPage,
+                onSizeChange: paging.setSize,
+              }
+        }
       />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -381,10 +408,12 @@ export default function GestionesPage() {
                     </Select>
                   </FormField>
                   <FormField label={t("fields.escribano")} required>
-                    <Select value={escribanoId} onValueChange={setEscribanoId}>
-                      <SelectTrigger data-testid="select-escribano-gestion"><SelectValue placeholder="Seleccionar escribano..." /></SelectTrigger>
-                      <SelectContent>{personas.map((p) => <SelectItem key={p.personId} value={String(p.personId)}>{fullName(p)}</SelectItem>)}</SelectContent>
-                    </Select>
+                    <PersonPicker
+                      value={escribanoId ? Number(escribanoId) : undefined}
+                      onChange={(person) => setEscribanoId(person?.personId != null ? String(person.personId) : "")}
+                      aria-label={t("fields.escribano")}
+                      data-testid="select-escribano-gestion"
+                    />
                   </FormField>
                   <FormField label={t("fields.estado")} required>
                     <Select value={estadoId} onValueChange={setEstadoId}>

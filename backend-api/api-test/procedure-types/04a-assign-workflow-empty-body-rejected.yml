@@ -1,0 +1,30 @@
+info:
+  name: Assign workflow with an empty body answers 400
+  type: http
+  seq: 4
+  description: |-
+      ## Empty body — PUT /api/v1/tipo-tramite/{procedure_type_id}/workflow
+      Issue #655, Owner decision Oct 9: `{}` used to unassign the workflow
+      silently. workflowDefinitionId is now required; an explicit null unassigns
+      (04b).
+      Traceability: CU26
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/tipo-tramite/{{procedure_type_id}}/workflow"
+  body:
+    type: json
+    data: |-
+        {}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400", function () { expect(res.getStatus()).to.equal(400); });
+          test("Names workflowDefinitionId", function () {
+            expect(res.getBody().message).to.contain('workflowDefinitionId: es obligatorio');
+          });

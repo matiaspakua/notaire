@@ -1,0 +1,34 @@
+info:
+  name: Update testimony with an empty body answers 400
+  type: http
+  seq: 5
+  description: |-
+      ## Empty body — PUT /api/v1/testimonio/{testimony_id}
+      Issue #655, Owner decision Oct 9: `{}` used to overwrite number, flagged and
+      verified with 0/false. It now answers 400 naming the missing fields, and
+      05-verify-update still sees the values stored by 04-update.
+      Traceability: CU07
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/testimonio/{{testimony_id}}"
+  body:
+    type: json
+    data: |-
+        {}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400", function () { expect(res.getStatus()).to.equal(400); });
+          test("Names every missing field", function () {
+            const m = res.getBody().message;
+            expect(m).to.contain('number: es obligatorio');
+            expect(m).to.contain('flagged: es obligatorio');
+            expect(m).to.contain('verified: es obligatorio');
+            expect(m).to.contain('version: es obligatorio');
+          });

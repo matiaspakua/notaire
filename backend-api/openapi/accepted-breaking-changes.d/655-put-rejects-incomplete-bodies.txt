@@ -1,0 +1,22 @@
+# #655 (CU07 / CU53 / CU26), Owner decision Oct 9: an empty or incomplete PUT
+# answers 400. PUT /testimonio/{id} without number, flagged or verified used to
+# overwrite the stored values with 0/false (data loss); PUT /tramites/{id} now
+# requires idProcedureType like POST, which already rejected a request without
+# it at runtime (only the schema is new); PUT /tipo-tramite/{id}/workflow with
+# {} silently unassigned the workflow, and an explicit null still unassigns.
+# The UI never calls the testimony or procedure PUT and always sends
+# workflowDefinitionId (number or null); Bruno and Playwright already send
+# complete bodies.
+PUT /api/v1/testimonio/{id} the request property `flagged` became required
+PUT /api/v1/testimonio/{id} the request property `number` became required
+PUT /api/v1/testimonio/{id} the request property `verified` became required
+PUT /api/v1/tipo-tramite/{id}/workflow added the new required request property `workflowDefinitionId`
+POST /api/v1/tramites the request property `idProcedureType` became required
+PUT /api/v1/tramites/{id} the request property `idProcedureType` became required
+
+# #655 (CU07), Owner decision Oct 9: a missing or stale version must not answer
+# 500. PUT /testimonio/{id} requires the version the client read (400 when
+# absent, 409 when it is not the stored one). Without it the DTO defaulted to 0,
+# which only worked on a never-updated row and otherwise hit the optimistic lock
+# as a 500. The UI never calls this PUT; Bruno and the integration tests send it.
+PUT /api/v1/testimonio/{id} the request property `version` became required

@@ -70,6 +70,10 @@
       "next": "Página siguiente",
       "last": "Última página",
       "rowsPerPage": "Filas por página"
+    },
+    "errors": {
+      "inUse": "No se puede eliminar: el registro está en uso por otros registros.",
+      "notFound": "El registro ya no existe. Actualice la lista."
     }
   },
   "dashboard": {
@@ -1133,5 +1137,14 @@
       "montoDeuda": "Monto de deuda",
       "observaciones": "Observaciones"
     }
+  },
+  "personPicker": {
+    "placeholder": "Buscar por nombre, apellido o documento…",
+    "searching": "Buscando…",
+    "noResults": "Sin resultados",
+    "results": "{count} resultados",
+    "recentHint": "Personas más recientes. Escriba para buscar.",
+    "clear": "Quitar selección",
+    "loadError": "No se pudo cargar la lista de personas"
   }
 }

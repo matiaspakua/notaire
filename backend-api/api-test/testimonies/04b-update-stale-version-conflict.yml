@@ -1,0 +1,31 @@
+info:
+  name: Update testimony with a stale version answers 409
+  type: http
+  seq: 5
+  description: |-
+      ## Stale version — PUT /api/v1/testimonio/{testimony_id}
+      Issue #655, Owner decision Oct 9: 04-update already moved the stored version past
+      the one read in 03-get-by-id, so sending that old version is an optimistic-lock
+      conflict. It answers 409 (it was a 500) and 05-verify-update still sees 04's notes.
+      Traceability: CU07
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/testimonio/{{testimony_id}}"
+  body:
+    type: json
+    data: |-
+        {"number": {{testimony_number}}, "flagged": true, "verified": true, "notes": "stale write", "version": {{testimony_version}}}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 409", function () { expect(res.getStatus()).to.equal(409); });
+          test("Standard ErrorResponse asks to reload", function () {
+            expect(res.getBody().status).to.equal(409);
+            expect(res.getBody().message).to.contain('reload it');
+          });

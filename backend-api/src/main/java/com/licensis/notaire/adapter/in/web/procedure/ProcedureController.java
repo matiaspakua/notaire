@@ -4,6 +4,7 @@ import com.licensis.notaire.adapter.in.web.support.DeedRef;
 import com.licensis.notaire.adapter.in.web.support.ManagementRef;
 import com.licensis.notaire.adapter.in.web.support.ProcedureTypeRef;
 import com.licensis.notaire.adapter.in.web.support.PropertyRef;
+import com.licensis.notaire.adapter.in.web.support.RequiredFields;
 import com.licensis.notaire.business.Budget;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
@@ -17,6 +18,7 @@ import com.licensis.notaire.application.port.out.property.PropertyRepositoryPort
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.DeedRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 
@@ -92,8 +93,16 @@ public class ProcedureController {
         }
     }
 
-    public record ProcedureRequest(Integer idProcedureType, Integer idProperty, Integer idDeed,
-            Integer idManagement, Integer idBudget, String notes) {
+    /**
+     * Body of create and full update. {@code idProcedureType} is required on both (issue #655,
+     * Owner decision Oct 9: an empty or incomplete PUT answers 400). {@code notes} is stored as
+     * sent; an absent association id keeps the stored association.
+     */
+    public record ProcedureRequest(
+            @Schema(description = "Tipo de trámite; debe existir (404 si no)",
+                    requiredMode = Schema.RequiredMode.REQUIRED)
+            Integer idProcedureType,
+            Integer idProperty, Integer idDeed, Integer idManagement, Integer idBudget, String notes) {
     }
 
     @GetMapping
@@ -119,16 +128,14 @@ public class ProcedureController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+    @ApiResponse(responseCode = "400", description = "Solicitud inválida: idProcedureType es obligatorio"),
     @ApiResponse(responseCode = "404", description = "Referencia no encontrada"),
     @ApiResponse(responseCode = "409", description = "Conflicto")
 })
     @PostMapping
     @Operation(summary = "Crear nuevo trámite")
     public ResponseEntity<Object> create(@RequestBody ProcedureRequest request) {
-        if (request.idProcedureType() == null) {
-            return ResponseEntity.badRequest().body(Map.of("message", "idProcedureType is required"));
-        }
+        RequiredFields.require(request.idProcedureType(), "idProcedureType");
         Procedure entity;
         try {
             entity = hydrate(new Procedure(), request);
@@ -146,11 +153,15 @@ public class ProcedureController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "400", description = "Cuerpo vacío o incompleto: idProcedureType es obligatorio"),
+    @ApiResponse(responseCode = "404", description = "Trámite o referencia no encontrados")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar trámite")
+    @Operation(summary = "Actualizar trámite",
+               description = "idProcedureType es obligatorio (400 si falta); notes se guarda tal como se envía y "
+                       + "una asociación ausente conserva la actual.")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProcedureRequest request) {
+        RequiredFields.require(request.idProcedureType(), "idProcedureType");
         Procedure existing = repository.findById(id).orElse(null);
         if (existing == null) {
             return ResponseEntity.notFound().build();

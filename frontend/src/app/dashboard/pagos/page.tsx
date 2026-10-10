@@ -25,6 +25,7 @@ import { ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Pago } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 
 const PAGO_FIELD_NAMES = ["amount", "date", "paymentMethod", "notes", "idBudget"];
@@ -33,6 +34,7 @@ const EMPTY: Partial<Pago> = { idBudget: undefined, amount: undefined, date: "",
 
 export default function PagosPage() {
   const t = useTranslations("pagos");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: pagos = [], isLoading } = usePagos();
@@ -101,7 +103,7 @@ export default function PagosPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }
