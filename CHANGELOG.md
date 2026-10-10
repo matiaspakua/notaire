@@ -24,6 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **One motion system, and route changes no longer wait for an exit animation** (issue #1368, RNF-05/RNF-03):
+  `globals.css` defines `--motion-*` durations (fast 120ms, base 180ms, slow 240ms, exit 180ms, page 160ms) and
+  easings with `duration-fast|base|slow|exit|page` and `ease-standard|emphasized|exit` utilities, mirrored by
+  `theme/motion.ts` for motion/react. The 22 ad-hoc `duration-NNN` / `transition-all` classes and
+  `.apple-button { transition: all }` (with its hover scale) are gone; dialogs enter in 240ms emphasized and leave in
+  180ms; pages fade up 4px in 160ms without `AnimatePresence mode="wait"` (was 200ms exit + 400ms enter); staggered
+  entrances are capped at 6 x 30ms. Guarded by `motion-tokens.test.ts` and Playwright TS-0120.
 - **One design-token source for colour, and the half-built dark mode is gone** (issue #1365, RNF-05/RNF-09, CU76):
   `globals.css` adds text-safe `success`, `warning` and `info` tokens (WCAG AA on white and on their /10 tint),
   mapped in `@theme`; `tokens.ts` mirrors them and writes the brand `#0071E3` once (`BRAND_PRIMARY`). The 54 raw

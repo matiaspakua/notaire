@@ -49,8 +49,8 @@ test.describe("Motion tokens (#1368)", () => {
     samples.sort((a, b) => a - b);
     const median = samples[Math.floor(samples.length / 2)];
     test.info().annotations.push({ type: "median-ms", description: String(Math.round(median)) });
-    // Old timing: 200ms exit + 400ms enter. New: 160ms fade, no exit wait.
-    expect(median).toBeLessThan(450);
+    // Old timing: 200ms exit + 400ms enter (median ~450ms). New: 160ms fade, no exit wait.
+    expect(median).toBeLessThan(300);
   });
 
   test("dialogs use the motion tokens", async ({ page }) => {
