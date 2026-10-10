@@ -9,8 +9,9 @@ name: OpenAPI Contract
 # diff after the freshness check — fail-on ERR applies only once a base
 # artifact exists.
 #
-# Intended breaks: list the exact oasdiff line in
-# backend-api/openapi/accepted-breaking-changes.txt with its issue (#655).
+# Intended breaks: list the exact oasdiff line in this pull request's own
+# backend-api/openapi/accepted-breaking-changes.d/<issue>-<slug>.txt (#1315,
+# see the README there).
 on:
   pull_request:
     branches: [ main ]
@@ -98,23 +99,27 @@ jobs:
           echo "43a4e328e2d13ba1552d760aa68d2485c75c5621f309f6ff64ae895188345247  /tmp/oasdiff.tar.gz" | sha256sum -c -
           tar -xzf /tmp/oasdiff.tar.gz -C /tmp oasdiff
 
-      - name: Detect breaking OpenAPI changes (oasdiff)
+      # One file per pull request in accepted-breaking-changes.d (#1315), so
+      # accepting a break never conflicts with another open pull request. Files
+      # unchanged on the base belong to merged pull requests: their breaks are in
+      # the base spec already and they are never ignored (listed for deletion).
+      # This pull request's entries must still match a current break (no stale
+      # entry or typo) and are the only list the diff below ignores.
+      - name: "Accepted breaking changes: assemble and check"
         if: steps.base.outputs.has_base == 'true'
-        run: |
-          # Owner-accepted breaks only, one traceable line each (see the file header).
-          /tmp/oasdiff breaking .openapi-ci/base-openapi.yaml backend-api/openapi/openapi.yaml \
-            --fail-on ERR \
-            --err-ignore backend-api/openapi/accepted-breaking-changes.txt \
-            --format githubactions
-
-      # Keep the accepted list empty by default (#1315): an entry whose break is
-      # already on main matches nothing and would hide a later break with the same
-      # text, so the next PR after its merge must remove it. Pull requests only:
-      # on main the base equals the revision and every entry would look stale.
-      - name: Accepted breaking list has no stale entries
-        if: steps.base.outputs.has_base == 'true' && github.event_name == 'pull_request'
         run: |
           set -euo pipefail
           # Uses the oasdiff binary installed above.
           OASDIFF=/tmp/oasdiff python3 workspace/sdlc/check-accepted-breaking-changes.py \
-            .openapi-ci/base-openapi.yaml backend-api/openapi/openapi.yaml
+            .openapi-ci/base-openapi.yaml backend-api/openapi/openapi.yaml \
+            --base-ref "origin/${{ github.base_ref || 'main' }}" \
+            --write-ignore .openapi-ci/accepted-breaking-changes.txt
+
+      - name: Detect breaking OpenAPI changes (oasdiff)
+        if: steps.base.outputs.has_base == 'true'
+        run: |
+          # Owner-accepted breaks of this pull request only (assembled above).
+          /tmp/oasdiff breaking .openapi-ci/base-openapi.yaml backend-api/openapi/openapi.yaml \
+            --fail-on ERR \
+            --err-ignore .openapi-ci/accepted-breaking-changes.txt \
+            --format githubactions
