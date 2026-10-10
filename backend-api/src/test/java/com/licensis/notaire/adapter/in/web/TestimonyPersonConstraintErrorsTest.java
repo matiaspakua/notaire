@@ -107,6 +107,9 @@ class TestimonyPersonConstraintErrorsTest {
     private static final String PERSON = "{\"firstName\":\"Ana\",\"lastName\":\"Paz\",\"identificationNumber\":\"1\","
             + "\"isClient\":false}";
     private static final String TESTIMONY = "{\"number\":1,\"deed\":{\"idDeed\":1,\"number\":1}}";
+    /** PUT /testimonio/{id} requires number, flagged, verified and version (#655). */
+    private static final String TESTIMONY_UPDATE = "{\"number\":1,\"flagged\":false,\"verified\":false,\"version\":0,"
+            + "\"deed\":{\"idDeed\":1,\"number\":1}}";
 
     @Test
     @DisplayName("POST /movimiento-testimonio answers 400, not 409, on a constraint violation")
@@ -133,7 +136,7 @@ class TestimonyPersonConstraintErrorsTest {
     @DisplayName("PUT /testimonio/{id} answers 400, not 500, on a constraint violation")
     void testimonyUpdate() throws Exception {
         assertConstraint400(send(testimonies(new DataIntegrityViolationException(SQL_LEAK)), true,
-                "/api/v1/testimonio/1", TESTIMONY));
+                "/api/v1/testimonio/1", TESTIMONY_UPDATE));
     }
 
     @Test
@@ -158,7 +161,7 @@ class TestimonyPersonConstraintErrorsTest {
         send(movements(boom), true, "/api/v1/movimiento-testimonio/1", "{}")
                 .andExpect(status().isInternalServerError());
         send(testimonies(boom), false, "/api/v1/testimonio", TESTIMONY).andExpect(status().isConflict());
-        send(testimonies(boom), true, "/api/v1/testimonio/1", TESTIMONY).andExpect(status().isInternalServerError());
+        send(testimonies(boom), true, "/api/v1/testimonio/1", TESTIMONY_UPDATE).andExpect(status().isInternalServerError());
         send(people(boom), false, "/api/v1/people", PERSON).andExpect(status().isConflict());
         send(people(boom), true, "/api/v1/people/1", PERSON).andExpect(status().isConflict());
     }
