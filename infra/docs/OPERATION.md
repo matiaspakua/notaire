@@ -32,6 +32,12 @@ curl http://localhost:9187/metrics | head
 
 ## Dashboards and logs
 
+- Start here: stack overview http://localhost:3001/d/notaire-stack-status, Notaire only
+  http://localhost:3001/d/notaire-status. Both link to the specialist dashboards below.
+  Triage: a red service tile or firing alert points to the matching specialist view
+  (API/JVM: backend, DB: PostgreSQL, logins: auth, error evidence: logs).
+  Status tiles come from blackbox probes (reachability, not a business transaction);
+  a probe that is `0` for 2 minutes fires `ServiceDown`.
 - Backend: http://localhost:3001/d/notaire-backend
 - PostgreSQL: http://localhost:3001/d/notaire-postgres
 - Auth and security: http://localhost:3001/d/notaire-auth
@@ -46,9 +52,21 @@ bash infra/scripts/run-sonar.sh
 ```
 
 Waits for SonarQube, handles the first-login password change, generates an
-analysis token (saved as `SONAR_TOKEN` in your env file), runs the backend tests
-with JaCoCo and submits the analysis. Results:
-http://localhost:9000/dashboard?id=notaire-backend.
+analysis token (saved as `SONAR_TOKEN` in your env file), applies the "Notaire way"
+quality gate and a 30-day new-code period to both projects, then analyzes:
+
+- `notaire-backend`: backend tests + JaCoCo, Maven scanner (settings in `backend-api/pom.xml`).
+- `notaire-frontend`: Vitest `lcov` coverage + ESLint JSON report, scanner container
+  (`frontend/sonar-project.properties`; needs Docker and the running infra stack).
+
+Each analysis waits for its quality gate and the script exits non-zero if one fails.
+Results: http://localhost:9000/dashboard?id=notaire-backend and `?id=notaire-frontend`.
+
+Community features in use: quality gates on new code, quality profiles ("Sonar way"),
+security hotspots, coverage and test-result import, external ESLint issues, duplication
+and maintainability/reliability/security ratings, new-code period. Not used (paid
+editions): pull-request decoration and, depending on your Community Build version,
+branch analysis.
 
 ## Reports
 

@@ -72,6 +72,10 @@ authoritative, up-to-date service list, ports, and credentials.
 - Logback event rate
 - Custom business metrics (operation counts, durations, API errors, login attempts)
 
+**Overview dashboards (start here):** `notaire-stack-status` (every service in the stack) and
+`notaire-status` (Notaire only). Both show availability from blackbox probes, firing alerts and recent
+errors, and link to the specialist dashboards below.
+
 **Grafana Dashboard:** `notaire-backend` (pre-provisioned)
 
 - API request rate & response time (P95)

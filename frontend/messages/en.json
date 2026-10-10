@@ -30,6 +30,14 @@
     "closeMenu": "Close menu",
     "mainNav": "Main navigation"
   },
+  "navGroups": {
+    "clientes": "Clients",
+    "tramites": "Cases",
+    "documentacion": "Documents",
+    "escriturasProtocolo": "Deeds and protocol",
+    "gestion": "Management",
+    "administracion": "Administration"
+  },
   "common": {
     "create": "Create",
     "update": "Update",
@@ -1229,6 +1237,15 @@
     "recentHint": "Newest budgets. Type to search.",
     "clear": "Clear selection",
     "loadError": "Could not load the budgets"
+  },
+  "managementPicker": {
+    "placeholder": "Search by case number, client or document…",
+    "searching": "Searching…",
+    "noResults": "No results",
+    "results": "{count} results",
+    "recentHint": "Newest cases. Type to search.",
+    "clear": "Clear selection",
+    "loadError": "Could not load the cases"
   },
   "breadcrumb": {
     "label": "Breadcrumb",

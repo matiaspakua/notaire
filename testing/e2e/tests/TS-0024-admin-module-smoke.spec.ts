@@ -15,7 +15,7 @@ test.describe("Administración hub (ADMIN only)", () => {
 
   test("hub shows all admin module cards", async ({ page }) => {
     await expect(
-      page.getByRole("heading", { name: /administración/i })
+      page.getByRole("heading", { level: 1, name: /administración/i })
     ).toBeVisible();
     await expect(page.getByText(/usuarios/i).first()).toBeVisible();
     await expect(page.getByText(/conceptos/i).first()).toBeVisible();

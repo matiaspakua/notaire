@@ -43,8 +43,10 @@ test.describe("#773 - Documento vinculado a un trámite", () => {
     await page.getByTestId("btn-nuevo-documento").click();
     await page.getByTestId("select-tipo-documento").click();
     await page.getByRole("option", { name: tipoNombre }).click();
+    // Server-search management picker (#1340): type the case number, then pick it.
     await page.getByTestId("select-gestion-documento").click();
-    await page.getByRole("option", { name: new RegExp(String(numeroGestion)) }).click();
+    await page.getByTestId("select-gestion-documento").fill(String(numeroGestion));
+    await page.getByRole("option", { name: new RegExp(`^${numeroGestion} `) }).click();
     await page.getByTestId("select-tramite-documento").click();
     await page.getByRole("listbox").getByRole("option").first().click();
     await page.getByTestId("btn-guardar-documento").click();

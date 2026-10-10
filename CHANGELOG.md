@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Pages Architecture links enterprise readiness reports** (CU76, #1242): deep-links to
+  `ASSESSMENT-2026-10.md` and `DOCUMENTATION-AUDIT-2026-10.md`.
+- **OpenSpec hygiene**: archive closed-issue trees for #1408 / #1367 / #1466 and shipped
+  `docs-1445-owner-phase0-evidence` so `validate-sdlc-plan` stays green.
 - **Owner evidence on Pages + ADR-024** (CU76): Architecture Owner pack shows
   P0.1–P0.5 Done and links `REPO-METRICS-BASELINE.md` (path-scoped **6/17**); Modules
   links plan + baseline; ADR-024 measured evidence records dorny/paths-filter count.
@@ -272,6 +276,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `.apple-button { transition: all }` (with its hover scale) are gone; dialogs enter in 240ms emphasized and leave in
   180ms; pages fade up 4px in 160ms without `AnimatePresence mode="wait"` (was 200ms exit + 400ms enter); staggered
   entrances are capped at 6 x 30ms. Guarded by `motion-tokens.test.ts` and Playwright TS-0120.
+- **Grouped sidebar (#1367).** The sidebar's flat 22-link list is now Inicio plus six collapsible sections with headings: Clientes, Trámites, Documentación, Escrituras y protocolo, Gestión and Administración. The browser remembers collapsed sections, and the section holding the current page always opens. The dashboard module grid is built from the same config, in sidebar order. Auditoría is now hidden from non-admins, matching its route guard. Opening Documentos necesarios no longer also highlights Documentos.
 
 ### Fixed
 
@@ -795,6 +800,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated Docker Compose to remove init-db volume mounts
 - Configured Spring Boot to use Flyway with `spring.flyway.*` properties
+- **Management lists and picker beyond 1000 cases** (#1340, CU10/CU43/CU04): the
+  external-entity documents and documentation re-entry screens read one server page of
+  managements (newest first, page in the URL) and the document form picks its management
+  with a searchable `ManagementPicker` (case number, client name or document). They loaded
+  `GET /gestiones?size=1000`, so every case after the 1000th was missing.
 
 ### Added
 

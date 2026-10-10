@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
 import { Eye, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -9,16 +9,31 @@ import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useGestiones } from "@/hooks/useGestiones";
+import { useGestionesPage } from "@/hooks/useGestiones";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { useReingresarDocumentacion, useReingresoDocumentacion } from "@/hooks/useReingresoDocumentacion";
 import { extractApiError } from "@/lib/utils";
 import type { DocumentoNecesario, GestionDeEscritura, TramiteDocumentacionNecesaria } from "@/types";
 
 export default function ReingresoDocumentacionPage() {
+  // useUrlPagination reads useSearchParams, which needs a Suspense boundary.
+  return (
+    <Suspense>
+      <ReingresoDocumentacionList />
+    </Suspense>
+  );
+}
+
+function ReingresoDocumentacionList() {
   const t = useTranslations("reingresoDocumentacion");
   const tc = useTranslations("common");
 
-  const { data: gestiones = [], isLoading } = useGestiones();
+  // One server page at a time, newest first, page and size in the URL (#1340):
+  // the list used to load size=1000 and silently miss every later case.
+  const paging = useUrlPagination();
+  const { data: gestionesPage, isLoading, isFetching } = useGestionesPage({ page: paging.page, size: paging.size });
+  const gestiones = gestionesPage?.content ?? [];
+  useClampPage(paging, gestionesPage?.totalPages);
 
   const [selectedGestionId, setSelectedGestionId] = useState<number | null>(null);
   const { data: detalle, isLoading: isLoadingDetalle } = useReingresoDocumentacion(selectedGestionId ?? undefined);
@@ -126,8 +141,16 @@ export default function ReingresoDocumentacionPage() {
         data={gestiones}
         columns={gestionColumns}
         isLoading={isLoading}
+        isFetching={isFetching}
         keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
+        pagination={{
+          page: gestionesPage?.number ?? paging.page,
+          size: paging.size,
+          totalElements: gestionesPage?.totalElements ?? 0,
+          onPageChange: paging.setPage,
+          onSizeChange: paging.setSize,
+        }}
       />
 
       <Dialog open={!!selectedGestionId} onOpenChange={(v) => !v && setSelectedGestionId(null)}>

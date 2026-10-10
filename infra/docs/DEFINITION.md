@@ -28,7 +28,7 @@ infra/
 | Grafana | dashboards over Prometheus and Loki | 3001 |
 | Loki + Promtail | structured JSON log storage and Docker log shipping | 3100 |
 | PostgreSQL exporter | database metrics for Prometheus | 9187 |
-| SonarQube CE (+ own database) | static analysis of the backend | 9000 |
+| SonarQube CE (+ own database) | static analysis of backend and frontend, quality gate "Notaire way" | 9000 |
 | Homer | landing page linking every service | 8888 |
 
 Jenkins, Nexus and Dependency-Track were removed in 2026-06: not wired to the
@@ -41,11 +41,14 @@ running application.
 | Backend API | Actuator/Micrometer `/actuator/prometheus`, Basic auth | `notaire-backend` |
 | PostgreSQL | postgres-exporter | `notaire-postgres` |
 | Grafana, Loki | `/metrics` | `grafana`, `loki` |
+| All stack services (11) | blackbox exporter HTTP/TCP probes, `probe_success{service=...}` | `probe-<service>` |
 
 ### Dashboards (provisioned in Grafana)
 
 | UID | Shows |
 |-----|-------|
+| `notaire-stack-status` | overview: availability of every service, firing alerts, errors from Loki |
+| `notaire-status` | overview: frontend, backend, PostgreSQL, pgAdmin, API rate/5xx/p95, alerts, errors |
 | `notaire-backend` | JVM, HTTP, DB pool, log volume |
 | `notaire-postgres` | connections, transactions, size |
 | `notaire-logs` | backend and frontend logs from Loki |

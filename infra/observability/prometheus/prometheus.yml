@@ -66,3 +66,183 @@ scrape_configs:
         labels:
           service: 'monitoring'
           app: 'loki'
+
+  # --- Availability probes (blackbox exporter): one probe_success series per
+  # service, labelled with a stable `service` name. No credentials: only
+  # unauthenticated readiness endpoints or bare TCP ports are probed.
+  - job_name: 'probe-frontend'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://notaire-frontend:3000/']
+        labels:
+          service: 'frontend'
+          scope: 'notaire'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'frontend'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-backend'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://notary-backend:8080/actuator/health/liveness']
+        labels:
+          service: 'backend'
+          scope: 'notaire'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'backend'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-postgres'
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets: ['notary-postgres:5432']
+        labels:
+          service: 'postgres'
+          scope: 'notaire'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'postgres'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-pgadmin'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://notary-pgadmin:80/']
+        labels:
+          service: 'pgadmin'
+          scope: 'notaire'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'pgadmin'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-prometheus'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://prometheus:9090/-/healthy']
+        labels:
+          service: 'prometheus'
+          scope: 'stack'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'prometheus'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-grafana'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://devsecops-grafana:3000/api/health']
+        labels:
+          service: 'grafana'
+          scope: 'stack'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'grafana'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-loki'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://devsecops-loki:3100/ready']
+        labels:
+          service: 'loki'
+          scope: 'stack'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'loki'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-promtail'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://promtail:9080/ready']
+        labels:
+          service: 'promtail'
+          scope: 'stack'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'promtail'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-sonarqube'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://devsecops-sonarqube:9000/api/system/status']
+        labels:
+          service: 'sonarqube'
+          scope: 'stack'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'sonarqube'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-sonar-db'
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets: ['devsecops-sonar-db:5432']
+        labels:
+          service: 'sonar-db'
+          scope: 'stack'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'sonar-db'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'probe-homer'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://dashboard:8080/']
+        labels:
+          service: 'homer'
+          scope: 'stack'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: instance
+        replacement: 'homer'
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

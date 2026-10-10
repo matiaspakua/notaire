@@ -30,6 +30,14 @@
     "closeMenu": "Cerrar menú",
     "mainNav": "Navegación principal"
   },
+  "navGroups": {
+    "clientes": "Clientes",
+    "tramites": "Trámites",
+    "documentacion": "Documentación",
+    "escriturasProtocolo": "Escrituras y protocolo",
+    "gestion": "Gestión",
+    "administracion": "Administración"
+  },
   "common": {
     "create": "Crear",
     "update": "Actualizar",
@@ -1229,6 +1237,15 @@
     "recentHint": "Presupuestos más recientes. Escriba para buscar.",
     "clear": "Quitar selección",
     "loadError": "No se pudo cargar la lista de presupuestos"
+  },
+  "managementPicker": {
+    "placeholder": "Buscar por número de gestión, cliente o documento…",
+    "searching": "Buscando…",
+    "noResults": "Sin resultados",
+    "results": "{count} resultados",
+    "recentHint": "Gestiones más recientes. Escriba para buscar.",
+    "clear": "Quitar selección",
+    "loadError": "No se pudieron cargar las gestiones"
   },
   "breadcrumb": {
     "label": "Ruta de navegación",

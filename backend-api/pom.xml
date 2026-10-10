@@ -15,6 +15,13 @@
 
     <properties>
         <skipSpotBugs>true</skipSpotBugs>
+        <sonar.projectKey>notaire-backend</sonar.projectKey>
+        <sonar.projectName>Notaire Backend</sonar.projectName>
+        <sonar.sources>src/main/java,src/main/resources</sonar.sources>
+        <sonar.tests>src/test/java</sonar.tests>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.exclusions>**/com/licensis/notaire/jpa/**,**/com/licensis/notaire/dto/**</sonar.coverage.exclusions>
+        <sonar.junit.reportPaths>${project.build.directory}/surefire-reports</sonar.junit.reportPaths>
     </properties>
 
     <dependencyManagement>
