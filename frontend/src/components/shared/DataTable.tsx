@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Pagination, type PaginationProps } from "@/components/shared/Pagination";
 
 const MotionTableRow = motion.create(TableRow);
 
@@ -26,6 +27,10 @@ interface DataTableProps<T> {
   isLoading?: boolean;
   emptyMessage?: string;
   keyExtractor: (row: T) => string | number;
+  /** A newer page is loading while the previous rows stay visible (#1340). */
+  isFetching?: boolean;
+  /** Server-side pagination footer (#1340); omit for lists rendered whole. */
+  pagination?: PaginationProps;
 }
 
 export function DataTable<T>({
@@ -34,10 +39,12 @@ export function DataTable<T>({
   isLoading,
   emptyMessage = "Sin datos disponibles",
   keyExtractor,
+  isFetching,
+  pagination,
 }: DataTableProps<T>) {
   return (
     <div className="rounded-[24px] border border-border/40 overflow-hidden bg-white apple-shadow animate-in fade-in duration-500">
-      <Table>
+      <Table aria-busy={isFetching || isLoading ? true : undefined}>
         <TableHeader>
           <TableRow className="bg-secondary/50 border-b border-border/40 hover:bg-secondary/50">
             {columns.map((col) => (
@@ -94,6 +101,7 @@ export function DataTable<T>({
           )}
         </TableBody>
       </Table>
+      {pagination && <Pagination {...pagination} />}
     </div>
   );
 }
