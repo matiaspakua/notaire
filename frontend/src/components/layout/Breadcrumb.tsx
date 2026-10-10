@@ -2,51 +2,41 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
-const SEGMENT_LABELS: Record<string, string> = {
-  dashboard: "Dashboard",
-  administracion: "Administración",
-  usuarios: "Usuarios",
-  tramites: "Tipos de Trámite",
-  documentos: "Tipos de Documento",
-  folios: "Tipos de Folio",
-  conceptos: "Conceptos",
-  "estados-gestion": "Estados de Gestión",
-  plantillas: "Plantillas",
-  items: "Ítems",
-  auditoria: "Auditoría",
-  workflows: "Workflows",
-  roles: "Roles y Permisos",
-  suplencias: "Suplencias",
-  personas: "Personas",
-  escrituras: "Escrituras",
-  gestiones: "Gestiones",
-  protocolo: "Protocolo",
-  presupuestos: "Presupuestos",
-  pagos: "Pagos",
-  copias: "Copias",
-  reportes: "Reportes",
-  inmuebles: "Inmuebles",
-};
+function camelCase(segment: string): string {
+  return segment.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
+}
 
-function labelForSegment(segment: string): string {
-  return SEGMENT_LABELS[segment] ?? segment.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+/**
+ * Message key for a route segment (#1354). Administration sub-routes have their
+ * own labels ("documentos" there means document types); record ids have none.
+ */
+export function breadcrumbKey(segment: string, parent?: string): string {
+  const group = parent === "administracion" ? "admin" : "segments";
+  return `breadcrumb.${group}.${camelCase(segment)}`;
 }
 
 export function Breadcrumb() {
   const pathname = usePathname();
+  const t = useTranslations();
   const segments = pathname.split("/").filter(Boolean);
 
   if (segments.length <= 1) return null;
 
-  const crumbs = segments.map((seg, i) => ({
-    label: labelForSegment(seg),
-    href: "/" + segments.slice(0, i + 1).join("/"),
-    isLast: i === segments.length - 1,
-  }));
+  const crumbs = segments.map((seg, i) => {
+    const key = breadcrumbKey(seg, segments[i - 1]);
+    return {
+      // Ids and unknown segments are shown as is; the unit test requires a key
+      // for every static route, so no Spanish fallback is needed.
+      label: t.has(key) ? t(key) : decodeURIComponent(seg),
+      href: "/" + segments.slice(0, i + 1).join("/"),
+      isLast: i === segments.length - 1,
+    };
+  });
 
   return (
-    <nav aria-label="Breadcrumb" data-testid="breadcrumb">
+    <nav aria-label={t("breadcrumb.label")} data-testid="breadcrumb">
       <ol className="flex items-center gap-1 text-sm text-muted-foreground flex-wrap">
         {crumbs.map((crumb, i) => (
           <li key={crumb.href} className="flex items-center gap-1">

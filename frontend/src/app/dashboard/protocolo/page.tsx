@@ -53,7 +53,7 @@ export default function ProtocoloPage() {
       link.download = filename;
       link.click();
       URL.revokeObjectURL(link.href);
-      toast.success("Reporte descargado");
+      toast.success(t("reportDownloaded"));
       setReportDialog(null);
     } catch (err) {
       presentMutationError(err, { fallback: t("errorReport") });
@@ -63,9 +63,9 @@ export default function ProtocoloPage() {
   }
 
   const reportTitle = {
-    "libro-indice": "Generar Libro de Índices",
-    "declaracion-jurada-mensual": "Generar Declaración Jurada Mensual",
-    "declaracion-jurada-rentas": "Generar Declaración Jurada de Rentas",
+    "libro-indice": t("reports.libroIndice.title"),
+    "declaracion-jurada-mensual": t("reports.ddjjMensual.title"),
+    "declaracion-jurada-rentas": t("reports.ddjjRentas.title"),
   }[reportDialog ?? ""] ?? "";
 
   const columns: Column<Folio>[] = [
@@ -76,7 +76,7 @@ export default function ProtocoloPage() {
       key: "disponible",
       header: tc("status"),
       render: (f) =>
-        f.status !== "Utilizado" ? <Badge variant="success">Disponible</Badge> : <Badge variant="secondary">En uso</Badge>,
+        f.status !== "Utilizado" ? <Badge variant="success">{t("available")}</Badge> : <Badge variant="secondary">{t("inUse")}</Badge>,
     },
   ];
 
@@ -100,13 +100,13 @@ export default function ProtocoloPage() {
               </Link>
             </Button>
             <Button variant="outline" onClick={() => setReportDialog("libro-indice")}>
-              <FileText className="h-4 w-4" />Libro de Índices
+              <FileText className="h-4 w-4" />{t("reports.libroIndice.button")}
             </Button>
             <Button variant="outline" onClick={() => setReportDialog("declaracion-jurada-mensual")}>
-              <FileText className="h-4 w-4" />DDJJ Mensual
+              <FileText className="h-4 w-4" />{t("reports.ddjjMensual.button")}
             </Button>
             <Button variant="outline" onClick={() => setReportDialog("declaracion-jurada-rentas")}>
-              <FileText className="h-4 w-4" />DDJJ Rentas
+              <FileText className="h-4 w-4" />{t("reports.ddjjRentas.button")}
             </Button>
           </div>
         }
