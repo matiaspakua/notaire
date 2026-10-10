@@ -267,7 +267,10 @@
       "folio": "Folio",
       "observaciones": "Observaciones",
       "presupuesto": "Presupuesto",
-      "inmueble": "Inmueble"
+      "inmueble": "Inmueble",
+      "encabezado": "Carátula",
+      "inicio": "Inicio",
+      "tramites": "Trámites"
     },
     "resumen": {
       "action": "Resumen del caso",
