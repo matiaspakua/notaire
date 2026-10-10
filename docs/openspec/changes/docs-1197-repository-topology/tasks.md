@@ -92,3 +92,7 @@
 - [x] Refresh ADR-024 measured evidence after P0.1–P0.5
 - [x] Note on ADR-022 that #1261 packaging ≠ Owner decision
 
+- [x] Point ADR-022 / plan / Pages at live Owner issue #1435 (replaces closed #1261)
+
+- [x] Refresh P0.6 Owner decision tracker links after auto-close of prior issues
+
