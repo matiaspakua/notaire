@@ -57,9 +57,12 @@ async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
 async function chooseInDialogCombobox(page: Page, option: RegExp, testId?: string): Promise<void> {
   const dialog = page.getByRole("dialog");
   const trigger = testId ? dialog.getByTestId(testId) : dialog.getByRole("combobox");
+  // Read the tag before clicking: an open Radix select hides the dialog from the
+  // accessibility tree, so the dialog locator no longer resolves afterwards.
+  const isSearchInput = (await trigger.evaluate((el) => el.tagName)) === "INPUT";
   await trigger.click();
   // Management pickers are server-search comboboxes (#1340): type the number first.
-  if ((await trigger.evaluate((el) => el.tagName)) === "INPUT") {
+  if (isSearchInput) {
     await trigger.fill(option.source.replace(/^\^/, "").trim());
   }
   await pause(page, 0.5);
