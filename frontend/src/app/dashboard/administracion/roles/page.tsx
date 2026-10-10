@@ -133,7 +133,7 @@ export default function RolesPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editRol") : t("newRol")}>
+            <FormSection dialogTitle title={isEditMode ? t("editRol") : t("newRol")}>
               <FormField label={tc("name")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}

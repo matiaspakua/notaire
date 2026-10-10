@@ -177,6 +177,20 @@ class ReachabilityTest(unittest.TestCase):
             self.assertRegex(key, r"^(GET|POST|PUT|DELETE|PATCH) /api/v1/", f"bad allowlist key {key!r}")
             self.assertTrue(str(reason or "").strip(), f"{key} needs a reason")
 
+    def test_owner_decisions_are_recorded(self):
+        """Owner decisions of 2026-10-09 (#1336): the expiring-documents report (#1363) and manual
+        testimony-movement editing (#1364) stay API-only, so no entry still waits for a decision."""
+        allowlist = load_allowlist()
+        pending = sorted(k for k, r in allowlist.items() if "Owner to reclassify" in str(r))
+        self.assertEqual(pending, [], "entries still waiting for an Owner decision:\n  " + "\n  ".join(pending))
+        for key in (
+            "GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}",
+            "POST /api/v1/movimiento-testimonio",
+            "PUT /api/v1/movimiento-testimonio/{id}",
+            "DELETE /api/v1/movimiento-testimonio/{id}",
+        ):
+            self.assertIn("API-only", str(allowlist.get(key)), f"{key} is API-only by Owner decision")
+
     def test_every_endpoint_is_called_from_the_ui_or_allowlisted(self):
         _, unreferenced = unreferenced_endpoints()
         missing = sorted(unreferenced - set(load_allowlist()))

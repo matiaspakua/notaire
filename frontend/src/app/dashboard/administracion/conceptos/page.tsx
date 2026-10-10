@@ -130,7 +130,7 @@ export default function ConceptosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editConcepto") : t("newConcepto")}>
+            <FormSection dialogTitle title={isEditMode ? t("editConcepto") : t("newConcepto")}>
               <FormField label={t("fields.nombre")} required>
                 <Input
                   value={editing.name ?? ""}

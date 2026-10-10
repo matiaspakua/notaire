@@ -237,7 +237,7 @@ export default function PlantillasPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editPlantilla") : t("newPlantilla")}>
+            <FormSection dialogTitle title={isEditMode ? t("editPlantilla") : t("newPlantilla")}>
               <FormField label={t("fields.tipoTramite")} required>
                 <Select value={tipoTramiteId} onValueChange={setTipoTramiteId}>
                   <SelectTrigger data-testid="select-tipo-tramite" disabled={isEditMode}>
@@ -347,7 +347,7 @@ export default function PlantillasPage() {
       <Dialog open={costoModalOpen} onOpenChange={setCostoModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("costosDocumento.newCosto")}>
+            <FormSection dialogTitle title={t("costosDocumento.newCosto")}>
               <FormField label={t("costosDocumento.fields.tipoDocumento")} required>
                 <Select value={costoTipoDocumentoId} onValueChange={setCostoTipoDocumentoId}>
                   <SelectTrigger data-testid="select-tipo-documento-costo">

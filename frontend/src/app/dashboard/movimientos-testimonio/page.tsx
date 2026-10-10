@@ -145,7 +145,7 @@ export default function MovimientosTestimonioPage() {
       <Dialog open={!!retirarId} onOpenChange={(v) => !v && setRetirarId(null)}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("retirar")}>
+            <FormSection dialogTitle title={t("retirar")}>
               <FormField label={t("fields.numeroCarton")} required>
                 <Input type="number" value={numeroCarton} onChange={(e) => setNumeroCarton(e.target.value)} data-testid="input-numero-carton" />
               </FormField>

@@ -288,7 +288,7 @@ export default function WorkflowEditorPage() {
       <Dialog open={addNodeOpen} onOpenChange={setAddNodeOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("addNodeTitle")}>
+            <FormSection dialogTitle title={t("addNodeTitle")}>
               <FormField label={t("fields.estado")} required>
                 <select
                   className="w-full border border-neutral-300 rounded-lg px-3 py-2 text-sm bg-white"

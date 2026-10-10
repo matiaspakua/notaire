@@ -60,6 +60,17 @@
     "no": "No",
     "active": "Activo",
     "inactive": "Inactivo",
+    "close": "Cerrar",
+    "pagination": {
+      "label": "Paginación",
+      "status": "{from}–{to} de {total}",
+      "page": "Página {page} de {pages}",
+      "first": "Primera página",
+      "previous": "Página anterior",
+      "next": "Página siguiente",
+      "last": "Última página",
+      "rowsPerPage": "Filas por página"
+    },
     "errors": {
       "inUse": "No se puede eliminar: el registro está en uso por otros registros.",
       "notFound": "El registro ya no existe. Actualice la lista."
@@ -678,14 +689,15 @@
     "title": "Auditoría",
     "description": "Registro de actividades del sistema",
     "noData": "No hay registros de auditoría",
-    "searchPlaceholder": "Buscar por usuario u operación...",
+    "searchPlaceholder": "Buscar en esta página por usuario u operación...",
     "fields": {
       "fecha": "Fecha",
       "usuario": "Usuario",
       "operacion": "Operación",
       "modulo": "Módulo"
     },
-    "allModules": "Todos los módulos"
+    "allModules": "Todos los módulos",
+    "moduleFilter": "Módulo"
   },
   "administracion": {
     "title": "Administración",

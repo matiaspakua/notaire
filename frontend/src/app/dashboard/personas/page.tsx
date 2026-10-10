@@ -197,7 +197,7 @@ export default function PersonasPage() {
           value={searchNombre}
           onChange={(e) => setSearchNombre(e.target.value)}
           data-testid="input-search-firstName"
-          className="w-40"
+          className="w-full sm:w-40"
         />
         <Input
           placeholder={t("searchPlaceholders.apellido")}
@@ -205,7 +205,7 @@ export default function PersonasPage() {
           value={searchApellido}
           onChange={(e) => setSearchApellido(e.target.value)}
           data-testid="input-search-lastName"
-          className="w-40"
+          className="w-full sm:w-40"
         />
         <Input
           placeholder={t("searchPlaceholders.dni")}
@@ -213,7 +213,7 @@ export default function PersonasPage() {
           value={searchDni}
           onChange={(e) => setSearchDni(e.target.value)}
           data-testid="input-search-dni"
-          className="w-36"
+          className="w-full sm:w-36"
         />
         <Button
           variant={filterClientes ? "default" : "secondary"}
@@ -236,7 +236,7 @@ export default function PersonasPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-md">
           <FormContainer>
-            <FormSection title={isEditMode ? t("editPersona") : t("newPersona")}>
+            <FormSection dialogTitle title={isEditMode ? t("editPersona") : t("newPersona")}>
               <div className="grid grid-cols-2 gap-3">
                 <FormField label={t("fields.nombre")} required error={fieldErrors.firstName}>
                   <Input

@@ -38,6 +38,7 @@ import {
 import { useReingresoDocumentacion } from "@/hooks/useReingresoDocumentacion";
 import type { DocumentoPresentado } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { toDateInputValue, todayInputValue } from "@/lib/dates";
 
 export default function DocumentosPage() {
   const t = useTranslations("documentos");
@@ -60,7 +61,7 @@ export default function DocumentosPage() {
 
   function openCreate() {
     setEditing(null);
-    setForm({ ...EMPTY_DOCUMENTO_FORM, fecha: new Date().toISOString().split("T")[0] });
+    setForm({ ...EMPTY_DOCUMENTO_FORM, fecha: todayInputValue() });
     setModalOpen(true);
   }
 
@@ -68,7 +69,7 @@ export default function DocumentosPage() {
     setEditing(d);
     setForm({
       tipoId: d.type?.idDocumentType?.toString() ?? "",
-      fecha: d.date?.split("T")[0] ?? "",
+      fecha: toDateInputValue(d.date),
       entregado: d.delivered ?? false,
       gestionId: "",
       tramiteId: d.procedureId?.toString() ?? "",
@@ -188,7 +189,7 @@ export default function DocumentosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={editing ? t("editDocumento") : t("newDocumento")}>
+            <FormSection dialogTitle title={editing ? t("editDocumento") : t("newDocumento")}>
               <FormField label={tc("type")} required={!editing}>
                 <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
                   <SelectTrigger data-testid="select-tipo-documento">

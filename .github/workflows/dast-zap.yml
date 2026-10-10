@@ -21,7 +21,9 @@ jobs:
     timeout-minutes: 30
     services:
       postgres:
-        image: postgres:16.15-alpine
+        # Docker Hub library image via Google's public pull-through cache: anonymous
+        # Docker Hub pulls hit the 429 rate limit on shared runners (#1380).
+        image: mirror.gcr.io/library/postgres:16.15-alpine
         env:
           POSTGRES_DB: notaire
           POSTGRES_USER: notaire

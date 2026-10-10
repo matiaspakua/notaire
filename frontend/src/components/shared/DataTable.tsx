@@ -2,6 +2,7 @@
 
 import { Table as TableIcon } from "lucide-react";
 import { motion } from "motion/react";
+import { useMediaQuery, MOBILE_QUERY } from "@/hooks/useMediaQuery";
 import {
   Table,
   TableBody,
@@ -10,14 +11,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Pagination, type PaginationProps } from "@/components/shared/Pagination";
 
 const MotionTableRow = motion.create(TableRow);
+const rowTransition = (i: number) => ({ duration: 0.3, ease: [0.4, 0, 0.2, 1] as const, delay: Math.min(i * 0.03, 0.3) });
 
 export interface Column<T> {
   key: string;
   header: string;
   render: (row: T) => React.ReactNode;
   className?: string;
+  /**
+   * Card layout below 768px (#1356). "primary" is the card title (default: the
+   * first column that is not `id` or `actions`), "actions" renders as the card's
+   * button row (default for key `actions`), "hidden" leaves the column out.
+   */
+  mobile?: "primary" | "actions" | "hidden";
 }
 
 interface DataTableProps<T> {
@@ -26,6 +35,10 @@ interface DataTableProps<T> {
   isLoading?: boolean;
   emptyMessage?: string;
   keyExtractor: (row: T) => string | number;
+  /** A newer page is loading while the previous rows stay visible (#1340). */
+  isFetching?: boolean;
+  /** Server-side pagination footer (#1340); omit for lists rendered whole. */
+  pagination?: PaginationProps;
 }
 
 export function DataTable<T>({
@@ -34,10 +47,24 @@ export function DataTable<T>({
   isLoading,
   emptyMessage = "Sin datos disponibles",
   keyExtractor,
+  isFetching,
+  pagination,
 }: DataTableProps<T>) {
+  const isMobile = useMediaQuery(MOBILE_QUERY);
+  if (isMobile) {
+    return (
+      <MobileCards
+        data={data}
+        columns={columns}
+        isLoading={isLoading}
+        emptyMessage={emptyMessage}
+        keyExtractor={keyExtractor}
+      />
+    );
+  }
   return (
     <div className="rounded-[24px] border border-border/40 overflow-hidden bg-white apple-shadow animate-in fade-in duration-500">
-      <Table>
+      <Table aria-busy={isFetching || isLoading ? true : undefined}>
         <TableHeader>
           <TableRow className="bg-secondary/50 border-b border-border/40 hover:bg-secondary/50">
             {columns.map((col) => (
@@ -81,7 +108,7 @@ export function DataTable<T>({
                 key={keyExtractor(row)}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1], delay: Math.min(i * 0.03, 0.3) }}
+                transition={rowTransition(i)}
                 className="border-b border-border/20 last:border-0 hover:bg-secondary/30 transition-colors duration-200 group"
               >
                 {columns.map((col) => (
@@ -94,7 +121,97 @@ export function DataTable<T>({
           )}
         </TableBody>
       </Table>
+      {pagination && <Pagination {...pagination} />}
     </div>
+  );
+}
+
+function isActions<T>(col: Column<T>) {
+  return col.mobile === "actions" || (col.mobile === undefined && col.key === "actions");
+}
+
+function MobileCards<T>({
+  data,
+  columns,
+  isLoading,
+  emptyMessage,
+  keyExtractor,
+}: Required<Pick<DataTableProps<T>, "data" | "columns" | "emptyMessage" | "keyExtractor">> &
+  Pick<DataTableProps<T>, "isLoading">) {
+  const visible = columns.filter((c) => c.mobile !== "hidden");
+  const actions = visible.filter(isActions);
+  const fields = visible.filter((c) => !isActions(c));
+  const title =
+    fields.find((c) => c.mobile === "primary") ??
+    fields.find((c) => c.key !== "id") ??
+    fields[0];
+  const details = fields.filter((c) => c !== title);
+
+  if (isLoading) {
+    return (
+      <ul role="list" data-testid="data-table-cards" aria-busy="true" className="flex flex-col gap-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <li key={i} className="rounded-2xl border border-border/40 bg-white p-4 apple-shadow">
+            <div className="h-5 w-2/3 bg-secondary animate-pulse rounded-full" />
+            <div className="mt-3 h-4 w-full bg-secondary animate-pulse rounded-full" />
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border/40 bg-white apple-shadow h-48 flex flex-col items-center justify-center gap-3 text-muted-foreground">
+        <div className="bg-secondary p-4 rounded-full">
+          <TableIcon className="h-8 w-8 opacity-20" />
+        </div>
+        <p className="text-lg font-medium">{emptyMessage}</p>
+      </div>
+    );
+  }
+
+  return (
+    <ul role="list" data-testid="data-table-cards" className="flex flex-col gap-3">
+      {data.map((row, i) => (
+        <motion.li
+          key={keyExtractor(row)}
+          data-testid="data-table-card"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={rowTransition(i)}
+          className="rounded-2xl border border-border/40 bg-white p-4 apple-shadow"
+        >
+          {title && (
+            <div data-testid="data-table-card-title" className="text-base font-semibold text-foreground break-words">
+              {title.render(row)}
+            </div>
+          )}
+          {details.length > 0 && (
+            <dl className="mt-2 grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-sm">
+              {details.map((col) => (
+                <div key={col.key} className="contents">
+                  <dt className="text-muted-foreground">{col.header}</dt>
+                  <dd className="text-foreground font-medium break-words min-w-0">{col.render(row)}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {actions.length > 0 && (
+            <div
+              data-testid="data-table-card-actions"
+              className="mt-3 flex flex-wrap justify-end gap-2 border-t border-border/40 pt-2 [&_button]:min-h-11 [&_button]:min-w-11"
+            >
+              {actions.map((col) => (
+                <div key={col.key} className="contents">
+                  {col.render(row)}
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.li>
+      ))}
+    </ul>
   );
 }
 

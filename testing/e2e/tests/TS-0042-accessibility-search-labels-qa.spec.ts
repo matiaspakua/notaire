@@ -30,7 +30,7 @@ test.describe("Search inputs expose an accessible label (#608)", () => {
 
   test("auditoria page search input is labeled", async ({ page }) => {
     await page.goto("/dashboard/auditoria");
-    await expect(page.getByLabel("Buscar por usuario u operación...", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("Buscar en esta página por usuario u operación...", { exact: true })).toBeVisible();
   });
 
   test("administracion/workflows page search input is labeled", async ({ page }) => {

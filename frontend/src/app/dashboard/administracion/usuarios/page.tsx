@@ -140,7 +140,7 @@ export default function UsuariosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editUsuario") : t("newUsuario")}>
+            <FormSection dialogTitle title={isEditMode ? t("editUsuario") : t("newUsuario")}>
               <FormField label={t("fields.nombre")} required error={fieldErrors.name}>
                 <Input
                   value={editing.name ?? ""}

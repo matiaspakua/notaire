@@ -223,7 +223,7 @@ export default function ItemsPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editItem") : t("newItem")}>
+            <FormSection dialogTitle title={isEditMode ? t("editItem") : t("newItem")}>
               <FormField label={t("fields.presupuestoId")}>
                 <Input
                   type="number"

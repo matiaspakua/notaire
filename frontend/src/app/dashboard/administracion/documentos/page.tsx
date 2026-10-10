@@ -165,7 +165,7 @@ export default function DocumentosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editDoc") : t("newDoc")}>
+            <FormSection dialogTitle title={isEditMode ? t("editDoc") : t("newDoc")}>
               <FormField label={tc("name")} required>
                 <Input
                   value={editing.name ?? ""}
