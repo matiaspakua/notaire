@@ -134,7 +134,7 @@ export default function DocumentosPage() {
       render: (d) => (
         <span className="flex items-center gap-1.5">
           {d.delivered ? (
-            <CheckCircle className="h-4 w-4 text-emerald-500" />
+            <CheckCircle className="h-4 w-4 text-success" />
           ) : (
             <XCircle className="h-4 w-4 text-muted-foreground/40" />
           )}

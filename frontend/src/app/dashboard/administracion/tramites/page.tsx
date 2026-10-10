@@ -182,7 +182,7 @@ export default function TramitesPage() {
               />
               <FormField label="Workflow">
                 <select
-                  className="w-full h-12 rounded-xl border border-neutral-300 px-3 text-sm bg-white"
+                  className="w-full h-12 rounded-xl border border-input px-3 text-sm bg-background"
                   value={selectedWorkflowId}
                   onChange={(e) => setSelectedWorkflowId(e.target.value)}
                   data-testid="select-workflow-tramite"

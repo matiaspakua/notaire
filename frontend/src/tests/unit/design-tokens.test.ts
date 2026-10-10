@@ -113,16 +113,16 @@ describe("design tokens: one source (#1365)", () => {
   });
 
   it.each([
-    ["primary", () => colors.primary[600]],
-    ["ring", () => colors.primary[600]],
-    ["destructive", () => colors.error[700]],
-    ["success", () => colors.success[700]],
-    ["warning", () => colors.warning[700]],
-    ["info", () => colors.info[700]],
-  ] as const)("tokens.ts mirrors --%s from globals.css", (name, hex) => {
+    ["primary", colors.primary[600]],
+    ["ring", colors.primary[600]],
+    ["destructive", colors.error[700]],
+    ["success", colors.success[700]],
+    ["warning", colors.warning[700]],
+    ["info", colors.info[700]],
+  ] as [string, string][])("tokens.ts mirrors --%s from globals.css", (name, hex) => {
     const value = rootVar(name);
     expect(value, `--${name} missing in :root`).toBeDefined();
-    expect(channelDistance(hslToHex(value!), hex()), `--${name} ${hslToHex(value!)} vs tokens.ts ${hex()}`).toBeLessThanOrEqual(2);
+    expect(channelDistance(hslToHex(value!), hex), `--${name} ${hslToHex(value!)} vs tokens.ts ${hex}`).toBeLessThanOrEqual(2);
   });
 
   it.each(["success", "warning", "info", "destructive"])(
