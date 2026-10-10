@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **OpenSpec hygiene after #1457 / #1458**: archive shipped Gate 1 trees
+  `docs-1445-archive-1456-gate1` and `docs-1256-metrics-path-filter`.
 - **Repo metrics path-scoping count** (CU76, #1256): `repo-metrics.py` counts
   `dorny/paths-filter` workflows (P0.2) as well as classic `on.paths`; baseline regenerated
   (6/17 path-scoped).
