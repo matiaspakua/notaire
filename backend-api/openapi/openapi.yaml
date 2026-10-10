@@ -71,6 +71,14 @@ components:
         propertyAmount:
           type: number
         status:
+          description: Estado del presupuesto (#1346). Se acepta cualquier mayúscula/minúscula y se guarda el código; otro
+            valor responde 400.
+          enum:
+          - BORRADOR
+          - PENDIENTE
+          - APROBADO
+          - RECHAZADO
+          - FACTURADO
           minLength: 1
           type: string
       required:
@@ -6426,11 +6434,17 @@ paths:
     get:
       operationId: search_3
       parameters:
-      - description: Estado del presupuesto
+      - description: Estado del presupuesto (cualquier mayúscula/minúscula; otro valor responde 400)
         in: query
         name: status
         required: false
         schema:
+          enum:
+          - BORRADOR
+          - PENDIENTE
+          - APROBADO
+          - RECHAZADO
+          - FACTURADO
           type: string
       responses:
         '200':
@@ -6441,6 +6455,14 @@ paths:
                   $ref: '#/components/schemas/BudgetResponse'
                 type: array
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/BudgetResponse'
+                type: array
+          description: Estado fuera del vocabulario
       summary: Buscar presupuestos por estado (CU60)
       tags:
       - Presupuestos
@@ -6531,6 +6553,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/BudgetResponse'
           description: OK
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BudgetResponse'
+          description: Solicitud inválida (p. ej. estado fuera del vocabulario)
         '404':
           content:
             '*/*':

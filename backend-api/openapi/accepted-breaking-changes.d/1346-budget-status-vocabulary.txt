@@ -1,0 +1,10 @@
+# #1346 (RF-02 / RF-06 / CU60), Owner default Oct 10: the budget status is one
+# vocabulary, the stored codes BORRADOR, PENDIENTE, APROBADO, RECHAZADO,
+# FACTURADO. It was free text, so the UI could neither filter nor edit the
+# "Pendiente" budgets that make up most of the data. Writes and the status search
+# accept any letter case and use the code; any other value answers 400. V44 maps
+# the stored Spanish and English spellings. The UI only ever sends codes; the
+# Bruno, Java and Playwright fixtures send codes too.
+POST /api/v1/presupuestos request property `status` was restricted to a list of enum values
+PUT /api/v1/presupuestos/{id} request property `status` was restricted to a list of enum values
+GET /api/v1/presupuestos/buscar the `query` request parameter `status` was restricted to a list of enum values
