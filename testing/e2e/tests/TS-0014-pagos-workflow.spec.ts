@@ -63,6 +63,8 @@ test.describe("CU15 - Procesar Pago", () => {
 
     const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await presupuestoSelector.click();
+    // Budget pickers search the server (#1340): type the client first.
+    await presupuestoSelector.fill(apellido);
 
     const presupuestoOption = page.getByRole("option", { name: new RegExp(apellido, "i") });
     await expect(presupuestoOption).toBeVisible();
@@ -71,8 +73,9 @@ test.describe("CU15 - Procesar Pago", () => {
     const saldoDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
     await expect(saldoDisplay).toBeVisible({ timeout: 5000 });
 
-    const saldoText = await page.getByRole("dialog").getByText(new RegExp(String(montoPresupuesto))).textContent();
-    expect(saldoText).toContain(String(montoPresupuesto));
+    // The picker shows "#<id> — <client>"; the budget amount is in the balance panel (#1340).
+    await expect(presupuestoSelector).toHaveValue(new RegExp(apellido, "i"));
+    await expect(page.getByRole("dialog").getByText(/Presupuestado: \$\s?75\.000/)).toBeVisible();
   });
 
   test("CU15-SALDO-03 (#796): Saldo updates when presupuesto selection changes", async ({ page }) => {
@@ -84,6 +87,8 @@ test.describe("CU15 - Procesar Pago", () => {
 
     const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await presupuestoSelector.click();
+    // Budget pickers search the server (#1340): type the client first.
+    await presupuestoSelector.fill(apellido1);
     await page.getByRole("option", { name: new RegExp(apellido1, "i") }).click();
 
     let saldoDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
@@ -91,6 +96,10 @@ test.describe("CU15 - Procesar Pago", () => {
     const saldoText1 = await saldoDisplay.locator("../..").textContent();
 
     await presupuestoSelector.click();
+
+    // Budget pickers search the server (#1340): type the client first.
+
+    await presupuestoSelector.fill(apellido2);
     await page.getByRole("option", { name: new RegExp(apellido2, "i") }).click();
 
     saldoDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
@@ -109,6 +118,8 @@ test.describe("CU15 - Procesar Pago", () => {
 
     const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await presupuestoSelector.click();
+    // Budget pickers search the server (#1340): type the client first.
+    await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
@@ -128,6 +139,8 @@ test.describe("CU15 - Procesar Pago", () => {
 
     const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await presupuestoSelector.click();
+    // Budget pickers search the server (#1340): type the client first.
+    await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
@@ -181,6 +194,8 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
 
     const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await presupuestoSelector.click();
+    // Budget pickers search the server (#1340): type the client first.
+    await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     const badge = page.getByTestId("estado-pago-badge");
@@ -201,6 +216,8 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
 
     const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await presupuestoSelector.click();
+    // Budget pickers search the server (#1340): type the client first.
+    await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     const badge = page.getByTestId("estado-pago-badge");
@@ -221,6 +238,8 @@ test.describe("CU47 - Consultar Pago (Estado de Pago #821)", () => {
 
     const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await presupuestoSelector.click();
+    // Budget pickers search the server (#1340): type the client first.
+    await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     const badge = page.getByTestId("estado-pago-badge");
