@@ -163,6 +163,12 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
               e.preventDefault();
               (e.currentTarget as HTMLElement).querySelector<HTMLElement>("nav a")?.focus();
             }}
+            onCloseAutoFocus={(e) => {
+              // There is no Radix Dialog.Trigger (the toggle lives in the layout header),
+              // so Radix has nothing to return focus to: send it back to the toggle.
+              e.preventDefault();
+              document.querySelector<HTMLElement>(`[aria-controls="${MOBILE_SIDEBAR_ID}"]`)?.focus();
+            }}
             className={cn("fixed inset-y-0 left-0 z-40 flex overflow-y-auto md:hidden", panel)}
           >
             <DialogPrimitive.Title className="sr-only">{t("mainNav")}</DialogPrimitive.Title>
