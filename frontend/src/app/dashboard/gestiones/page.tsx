@@ -28,12 +28,12 @@ import {
 import { useGestionWorkflowTrace } from "@/hooks/useGestionWorkflow";
 import { PersonPicker } from "@/components/shared/PersonPicker";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
-import { usePresupuestos } from "@/hooks/usePresupuestos";
+import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { useInmuebles } from "@/hooks/useInmuebles";
 import { ApiError } from "@/lib/api-client";
-import { fullName, formatCurrency, formatDate, extractApiError } from "@/lib/utils";
+import { formatCurrency, formatDate, extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 import { GestionResumenDialog } from "./GestionResumenDialog";
 import { useDeleteError } from "@/hooks/useDeleteError";
@@ -60,7 +60,6 @@ function GestionesList() {
   const { data: gestionesPage, isLoading, isFetching } = useGestionesPage({ page: paging.page, size: paging.size });
   const gestiones = gestionesPage?.content ?? [];
   useClampPage(paging, gestionesPage?.totalPages);
-  const { data: presupuestos = [] } = usePresupuestos();
   const { data: estados = [] } = useEstadosGestion();
   const { data: tiposTramite = [] } = useTiposTramite();
   const { data: inmuebles = [] } = useInmuebles();
@@ -394,18 +393,13 @@ function GestionesList() {
               {!editing && (
                 <>
                   <FormField label={t("fields.presupuesto")} required>
-                    <Select value={presupuestoId} onValueChange={setPresupuestoId}>
-                      <SelectTrigger data-testid="select-presupuesto-gestion"><SelectValue placeholder="Seleccionar presupuesto..." /></SelectTrigger>
-                      <SelectContent>
-                        {presupuestos.map((p) => (
-                          <SelectItem key={p.idBudget} value={String(p.idBudget)}>
-                            {p.person
-                              ? `Presupuesto #${p.idBudget} — ${fullName(p.person)} (${formatCurrency(p.propertyAmount)})`
-                              : `Presupuesto #${p.idBudget}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    {/* Server search instead of the first 1000 budgets (#1340). */}
+                    <BudgetPicker
+                      value={presupuestoId ? Number(presupuestoId) : undefined}
+                      onChange={(budget) => setPresupuestoId(budget?.idBudget != null ? String(budget.idBudget) : "")}
+                      aria-label={t("fields.presupuesto")}
+                      data-testid="select-presupuesto-gestion"
+                    />
                   </FormField>
                   <FormField label={t("fields.escribano")} required>
                     <PersonPicker
