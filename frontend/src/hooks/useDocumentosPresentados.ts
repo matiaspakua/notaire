@@ -1,6 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
-import type { DocumentoPresentado, DocumentoPresentadoRequest } from "@/types";
+import type {
+  DocumentoPresentado,
+  DocumentoPresentadoRequest,
+  DocumentoPresentadoUpdateRequest,
+} from "@/types/api";
 
 export const documentosPresentadosKeys = {
   all: ["documentosPresentados"] as const,
@@ -25,7 +29,7 @@ export function useCreateDocumentoPresentado() {
 export function useUpdateDocumentoPresentado() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: DocumentoPresentadoRequest }) =>
+    mutationFn: ({ id, data }: { id: number; data: DocumentoPresentadoUpdateRequest }) =>
       apiPut<void>(`/documento-presentado/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: documentosPresentadosKeys.all }),
   });

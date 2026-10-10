@@ -26,22 +26,22 @@ describe("documento presentado form (#655)", () => {
 
   it("offers the gestión/trámite link on create and on documents that have none yet", () => {
     expect(showsTramiteLink(null)).toBe(true);
-    expect(showsTramiteLink({ idSubmittedDocument: 1, procedureId: null })).toBe(true);
+    expect(showsTramiteLink({ idSubmittedDocument: 1, procedureId: undefined })).toBe(true);
     expect(showsTramiteLink({ idSubmittedDocument: 1, procedureId: 11 })).toBe(false);
   });
 
-  it("maps the form to the API request", () => {
+  it("maps a complete form to the OpenAPI create request (#1260)", () => {
     expect(toDocumentoRequest(complete)).toEqual({
       typeId: 3,
       date: "2026-09-05",
       delivered: false,
       procedureId: 11,
     });
-    expect(toDocumentoRequest({ ...complete, fecha: "", tramiteId: "" })).toEqual({
+    expect(toDocumentoRequest({ ...complete, fecha: "" })).toEqual({
       typeId: 3,
-      date: null,
+      date: undefined,
       delivered: false,
-      procedureId: null,
+      procedureId: 11,
     });
   });
 });

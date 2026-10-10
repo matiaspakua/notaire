@@ -1,12 +1,11 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { gestionWorkflowKeys } from "@/hooks/useGestionWorkflow";
+import type { DtoSaldoPendiente, GestionDeEscritura } from "@/types/api";
 import type {
   CarpetaTramite,
   CreateCompleteGestionInput,
   DtoGestionArchivada,
-  DtoSaldoPendiente,
-  GestionDeEscritura,
   Historial,
 } from "@/types";
 

@@ -13,7 +13,8 @@
 ## Seams (what this module reads from outside)
 
 - Every evidence file named in `seams.yaml`, read-only, by the guard.
-- `backend-api/openapi/openapi.yaml` and the `frontend/src` sources (tests excluded), read-only, by the reachability guard.
+- `backend-api/openapi/openapi.yaml` and the `frontend/src` sources (tests and `*.generated.ts`
+  excluded), read-only, by the reachability guard.
 
 ## Must not
 

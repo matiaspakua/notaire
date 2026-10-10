@@ -469,7 +469,7 @@ function PresupuestosList() {
                   </div>
                 </FormSection>
                 <FormSection title={t("resumen.pagosSection")}>
-                  {resumen.payments.length === 0 ? (
+                  {(resumen.payments ?? []).length === 0 ? (
                     <p className="text-sm text-muted-foreground" data-testid="resumen-sin-pagos">
                       {t("resumen.noPagos")}
                     </p>
@@ -484,7 +484,7 @@ function PresupuestosList() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {resumen.payments.map((pago) => (
+                        {(resumen.payments ?? []).map((pago) => (
                           <TableRow key={pago.idPayment}>
                             <TableCell>{pago.idPayment}</TableCell>
                             <TableCell>{formatCurrency(pago.amount)}</TableCell>
