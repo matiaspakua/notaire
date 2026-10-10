@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/1346_budget_status_vocabulary` | created from updated `main` |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | pushed |
-| Pull Request | — | pending |
+| Pull Request | [#1407](https://github.com/matiaspakua/notaire/pull/1407) | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
