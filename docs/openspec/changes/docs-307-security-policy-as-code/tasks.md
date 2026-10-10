@@ -66,10 +66,10 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in Conventional Commits format
-- [ ] 9.2 Commit message ends with `Closes #307`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHA in `traceability.md`
+- [x] 9.1 Commit in Conventional Commits format
+- [x] 9.2 Commit message ends with `Closes #307`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHA in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -101,7 +101,7 @@
 - [x] Coverage at or above the JaCoCo ratchet floor — unchanged, no Java edit
 - [x] Playwright E2E green for UI changes — n/a, no UI surface
 - [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
