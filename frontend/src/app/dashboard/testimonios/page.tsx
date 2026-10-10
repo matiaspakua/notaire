@@ -8,15 +8,12 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useThemeClasses } from "@/theme";
 import { useTestimonios, useGenerarTestimonio, useVerificarTestimonio, descargarCopiaTestimonio } from "@/hooks/useTestimonios";
-import { useEscrituras } from "@/hooks/useEscrituras";
+import { DeedPicker } from "@/components/shared/DeedPicker";
 import { extractApiError } from "@/lib/utils";
 import type { Testimonio } from "@/types";
-
-const ESTADO_FIRMADA = "Firmada";
 
 export default function TestimoniosPage() {
   const t = useTranslations("testimonios");
@@ -24,7 +21,6 @@ export default function TestimoniosPage() {
   const themeClass = useThemeClasses();
 
   const { data: testimonios = [], isLoading } = useTestimonios();
-  const { data: escrituras = [] } = useEscrituras();
   const generarMutation = useGenerarTestimonio();
   const verificarMutation = useVerificarTestimonio();
 
@@ -34,8 +30,6 @@ export default function TestimoniosPage() {
   const [observado, setObservado] = useState(false);
   const [observaciones, setObservaciones] = useState("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
-
-  const escriturasFirmadas = escrituras.filter((e) => e.status === ESTADO_FIRMADA);
 
   function openGenerar() {
     setIdEscritura("");
@@ -143,18 +137,12 @@ export default function TestimoniosPage() {
           <FormContainer>
             <FormSection dialogTitle title={t("newTestimonio")}>
               <FormField label={t("fields.escritura")} required>
-                <Select value={idEscritura} onValueChange={setIdEscritura}>
-                  <SelectTrigger data-testid="select-escritura-testimonio">
-                    <SelectValue placeholder={t("selectEscritura")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {escriturasFirmadas.map((e) => (
-                      <SelectItem key={e.idDeed} value={String(e.idDeed)}>
-                        {t("fields.numero")} {e.number}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <DeedPicker
+                  value={idEscritura ? Number(idEscritura) : undefined}
+                  onChange={(deed) => setIdEscritura(deed?.idDeed != null ? String(deed.idDeed) : "")}
+                  aria-label={t("fields.escritura")}
+                  data-testid="select-escritura-testimonio"
+                />
               </FormField>
             </FormSection>
             <FormActions align="right">
