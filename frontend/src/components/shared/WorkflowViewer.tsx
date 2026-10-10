@@ -60,7 +60,7 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
   if (nodes.length === 0) {
     return (
       <div
-        className="flex items-center justify-center h-64 rounded-xl border border-dashed border-neutral-300 text-muted-foreground text-sm"
+        className="flex items-center justify-center h-64 rounded-xl border border-dashed border-border text-muted-foreground text-sm"
         data-testid={testId}
       >
         Sin nodos. Agrega estados al workflow.
@@ -71,7 +71,7 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
   return (
     <div
       style={{ height: theme.sizes.workflowViewer.height }}
-      className="rounded-xl border border-neutral-200 overflow-hidden"
+      className="rounded-xl border border-border overflow-hidden"
       data-testid={testId}
     >
       <ReactFlow
