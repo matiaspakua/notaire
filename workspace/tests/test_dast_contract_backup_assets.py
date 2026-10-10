@@ -11,8 +11,10 @@ Asserts:
 - OpenAPI export script exists and documents regeneration
 - PR OpenAPI contract workflow fails on breaking changes
 - Owner-accepted breaking changes are listed, one traceable line each, in
-  backend-api/openapi/accepted-breaking-changes.txt, the only file the
-  oasdiff step reads as err-ignore, and preflight.sh runs the same diff
+  one file per pull request under backend-api/openapi/accepted-breaking-changes.d/
+  (#1315); the checker assembles the pull request's own entries into
+  .openapi-ci/accepted-breaking-changes.txt, the only file the oasdiff step
+  reads as err-ignore, and preflight.sh runs the same diff
 - Backup→restore smoke workflow skips with an explicit #256 signal when
   backup tooling is absent (no false-green restore)
 
@@ -45,8 +47,10 @@ OPENAPI_ARTIFACT = os.path.join(
 )
 EXPORT_SCRIPT = os.path.join(REPO_ROOT, "backend-api", "tools", "export-openapi.sh")
 BACKUP_SENTINEL = os.path.join(REPO_ROOT, "infra", "scripts", "backup-postgres.sh")
-ACCEPTED_BREAKING_REL = "backend-api/openapi/accepted-breaking-changes.txt"
-ACCEPTED_BREAKING = os.path.join(REPO_ROOT, *ACCEPTED_BREAKING_REL.split("/"))
+ACCEPTED_DIR_REL = "backend-api/openapi/accepted-breaking-changes.d"
+ACCEPTED_DIR = os.path.join(REPO_ROOT, *ACCEPTED_DIR_REL.split("/"))
+# Assembled by workspace/sdlc/check-accepted-breaking-changes.py --write-ignore.
+ACCEPTED_BREAKING_REL = ".openapi-ci/accepted-breaking-changes.txt"
 PREFLIGHT = os.path.join(REPO_ROOT, "workspace", "sdlc", "preflight.sh")
 # oasdiff err-ignore lines: "<METHOD> <path> <change text as oasdiff prints it>".
 ACCEPTED_ENTRY = re.compile(r"^(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) /\S* \S.*$")
@@ -166,34 +170,38 @@ class OpenApiContractTest(unittest.TestCase):
 
     def test_accepted_breaking_changes_are_traceable(self):
         self.assertTrue(
-            os.path.isfile(ACCEPTED_BREAKING),
-            f"expected accepted-breaking list at {ACCEPTED_BREAKING}",
+            os.path.isdir(ACCEPTED_DIR),
+            f"expected accepted-breaking directory at {ACCEPTED_DIR}",
         )
-        with open(ACCEPTED_BREAKING, encoding="utf-8") as f:
-            lines = f.read().splitlines()
-        issue_seen = False
-        for number, line in enumerate(lines, start=1):
-            if not line.strip():
+        for name in sorted(os.listdir(ACCEPTED_DIR)):
+            if not name.endswith(".txt"):
                 continue
-            if line.startswith("#"):
-                issue_seen = issue_seen or bool(ISSUE_REF.search(line))
-                continue
-            self.assertRegex(
-                line,
-                ACCEPTED_ENTRY,
-                f"line {number}: expected '<METHOD> <path> <oasdiff text>'",
-            )
-            self.assertTrue(
-                issue_seen,
-                f"line {number}: an entry needs a preceding '# #<issue>' comment",
-            )
+            self.assertRegex(name, r"^[0-9]+-", f"{name}: start the file name with the issue number")
+            with open(os.path.join(ACCEPTED_DIR, name), encoding="utf-8") as f:
+                lines = f.read().splitlines()
+            issue_seen = False
+            for number, line in enumerate(lines, start=1):
+                if not line.strip():
+                    continue
+                if line.startswith("#"):
+                    issue_seen = issue_seen or bool(ISSUE_REF.search(line))
+                    continue
+                self.assertRegex(
+                    line,
+                    ACCEPTED_ENTRY,
+                    f"{name}:{number}: expected '<METHOD> <path> <oasdiff text>'",
+                )
+                self.assertTrue(
+                    issue_seen,
+                    f"{name}:{number}: an entry needs a preceding '# #<issue>' comment",
+                )
 
     def test_preflight_runs_the_same_breaking_diff(self):
         with open(PREFLIGHT, encoding="utf-8") as f:
             script = f.read()
         self.assertIn("oasdiff breaking", script)
         self.assertIn("--fail-on ERR", script)
-        self.assertIn(ACCEPTED_BREAKING_REL, script)
+        self.assertIn(ACCEPTED_DIR_REL, script)
 
 
 class BackupRestoreSmokeTest(unittest.TestCase):
