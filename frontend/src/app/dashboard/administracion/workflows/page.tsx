@@ -107,7 +107,7 @@ export default function WorkflowsPage() {
       header: "",
       className: "w-32",
       render: (wf) => (
-        <div className="flex gap-1 justify-end">
+        <div className="flex gap-2 justify-end">
           <Button size="sm" variant="ghost" asChild data-testid={`btn-editor-${wf.id}`}>
             <Link href={`/dashboard/administracion/workflows/${wf.id}`}>{t("editGraph")}</Link>
           </Button>

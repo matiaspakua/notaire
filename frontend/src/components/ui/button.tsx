@@ -19,9 +19,12 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-11 px-5 py-2.5",
-        sm: "h-8 rounded-[8px] px-3 text-xs",
+        // 32px on desktop; at least 44x44 on touch screens (#1369, WCAG 2.5.5).
+        sm: "h-8 rounded-[8px] px-3 text-xs pointer-coarse:h-11 pointer-coarse:min-w-11",
         lg: "h-12 rounded-[16px] px-8 text-base",
         icon: "h-11 w-11",
+        /** Icon-only action: a 32px square on desktop, 44px on touch screens (#1369). */
+        "icon-sm": "h-8 w-8 rounded-[8px] pointer-coarse:h-11 pointer-coarse:w-11",
       },
     },
     defaultVariants: { variant: "default", size: "default" },
