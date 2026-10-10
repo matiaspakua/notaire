@@ -25,12 +25,12 @@ Each item is one issue, one OpenSpec change, one PR, independent of the Owner's 
 
 | Id | Issue | Work | Acceptance |
 |----|-------|------|------------|
-| P0.1 | #1256 / #1417 | `workspace/ci/repo-metrics.py` prints offline git/tree metrics; baseline committed as `REPO-METRICS-BASELINE.md` | Script runs offline; unit test; doc updated (path under `workspace/` per ADR-026 — not `scripts/`) |
-| P0.2 | #1257 | Path classifier job (`changes`) in `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `openapi-contract.yml`; docs, OpenSpec and agent-only PRs skip Java, Vitest and Playwright; required check names unchanged through aggregator jobs that succeed when their inputs are skipped | Path filter + aggregator `success\|skipped` + invariant guards on `cursor/ci-1257-path-scoped-cf98`; AC = docs-only PR green with no Java/E2E leaves; backend change still runs everything it affects |
-| P0.3 | #1258 | Shard the Playwright suite across a matrix (3 shards) and merge reports | E2E job wall-clock 6 min or less; report merged; flake rate unchanged over 10 runs |
-| P0.4 | #1259 | Move rules that are needed only for some areas out of the always-loaded imports (path-scoped guidance in `AGENTS.md`/skills); keep Constitution, workflow and general rules | Always-loaded context 8,000 tokens or less, measured by P0.1; `check-agent-rules.sh` green |
-| P0.5 | #1260 | Generate TypeScript API types from `backend-api/openapi/openapi.yaml` (openapi-typescript), replace hand-written DTO types incrementally, CI fails on drift | **In progress** on `cursor/feat-1260-openapi-ts-types-cf98`: `api.generated.ts` + drift check + gestiones/presupuestos/documentos/dashboard aliases |
-| P0.6 | #1261 | Owner decision on `deprecated/` (764 files, 13.4 MB): archive behind tag `archive-monorepo-pre-split` and remove from the tree; decide whether to run the history purge deferred by ADR-022 | Decision recorded in ADR-022; if approved, tree and guards updated |
+| P0.1 | #1256 / #1417 | `workspace/ci/repo-metrics.py` prints offline git/tree metrics; baseline committed as `REPO-METRICS-BASELINE.md` | **Done** — script offline; unit test; baseline under `workspace/` (ADR-026); GitHub issue #1256 may still show OPEN (agents get 403 on close — Owner can close as completed) |
+| P0.2 | #1257 | Path classifier job (`changes`) in `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `openapi-contract.yml`; docs, OpenSpec and agent-only PRs skip Java, Vitest and Playwright; required check names unchanged through aggregator jobs that succeed when their inputs are skipped | **Done** — squash-merged as #1422 (`c4070b3c`) |
+| P0.3 | #1258 | Shard the Playwright suite across a matrix (3 shards) and merge reports | **Done** — squash-merged as #1425 (`d3eed416`); fail-closed `e2e-merge-reports` keeps check name `UI E2E Tests (Playwright)` |
+| P0.4 | #1259 | Move rules that are needed only for some areas out of the always-loaded imports (path-scoped guidance in `AGENTS.md`/skills); keep Constitution, workflow and general rules | **Done** — squash-merged as #1424 (`6e817569`); ~2k tokens via `agent-context-budget.py` |
+| P0.5 | #1260 | Generate TypeScript API types from `backend-api/openapi/openapi.yaml` (openapi-typescript), replace hand-written DTO types incrementally, CI fails on drift | **Done** — squash-merged as #1423 (`5fc5d635`); `api.generated.ts` + Frontend CI drift check |
+| P0.6 | #1438 | Owner decision on `deprecated/` (~767 files, 13.4 MB): archive behind tag `archive-monorepo-pre-split` and remove it from the tree; decide whether to run the history purge deferred by ADR-022 | **Waiting Owner on #1438** — ADR-022 §Pending Option A/B/C; do not auto-close tracker |
 
 `LICENSE` (#1226) is a prerequisite for every extraction and tracked there.
 
@@ -173,13 +173,13 @@ and three or more repositories exist.
 
 | Item | Issue |
 |------|-------|
-| Umbrella, decision and criteria | #1197 |
+| Umbrella, decision and criteria (live Owner tracker) | #1445 (replaces closed #1197/#1443) |
 | P0.1 metrics | #1256 |
 | P0.2 path-scoped CI | #1257 |
 | P0.3 E2E sharding | #1258 |
 | P0.4 agent context | #1259 |
 | P0.5 generated API types | #1260 |
-| P0.6 `deprecated/` and history purge decision | #1261 |
+| P0.6 `deprecated/` and history purge decision | #1438 |
 | `LICENSE` prerequisite | #1226 |
 | Testing standalone (phases 1 to 3) | #1190 |
 | Infra standalone | #1179 |

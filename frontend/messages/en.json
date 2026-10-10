@@ -120,7 +120,8 @@
       },
       "managementFallback": "Management #{number}",
       "noRecentWorkflow": "None of the most recent managements has a workflow assigned.",
-      "openGestiones": "Open managements"
+      "openGestiones": "Open managements",
+      "diagramRole": "flow diagram"
     },
     "gestiones": {
       "label": "Cases",

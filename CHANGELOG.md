@@ -24,11 +24,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Pages Architecture lists Owner decision pack** (CU76): `/docs/architecture/` names
+  blocking issues #1445 (ADR-024), #1438 (deprecated/ A/B/C), and #1226 (LICENSE) with
+  deep-links; unit guard pins the pack; archive completed `docs-1445-archive-hygiene-1452`.
+- **OpenSpec hygiene after #1452**: archive shipped `docs-1445-archive-pages-umbrella`.
+- **OpenSpec hygiene after #1451**: archive shipped `docs-1445-pages-owner-umbrella`.
+- **Pages Architecture surfaces live Owner umbrella #1445** (CU76): ADR-024 entry on
+  `/docs/architecture/` names the open tracker (same pattern as ADR-022 → #1438); unit
+  guard pins the string; archive completed `docs-1445-archive-closed-umbrella` OpenSpec.
+- **OpenSpec active-set hygiene**: archive `docs-1197-repository-topology` (tied to closed
+  umbrella) and the merged `docs-1445-openspec-archive` tree so `validate-sdlc-plan.sh` /
+  `workspace/verify` stay green.
+- **OpenSpec hygiene + business README Pages link**: archive shipped docs-1441/1443/1445
+  packaging changes; `docs/100-business/README.md` links the public Business Docs page.
+- **Live Owner topology tracker is #1445** (CU76): ADR-024 / REPO-SPLIT-PLAN point at #1445 after
+  prior umbrellas were closed by GitHub keyword parsing in packaging PRs. Keep #1445 open until
+  Owner decisions are recorded.
+
+- **Business Docs on GitHub Pages** (#1441, CU76, #1197): curated `/docs/business/` page with
+  deep-links into `docs/100-business/` (requirements, use cases, actors, traceability, manuals);
+  Docs chrome nav and home card include Business; unit guard in `workspace/tests/`.
+- **P0.6 Owner decision tracker refreshed** (#1197, CU76): ADR-022 / REPO-SPLIT-PLAN / Pages Architecture point at the current open Owner issue after prior trackers were auto-closed by merges.
+- **Live Owner tracker for `deprecated/` decision is #1435** (issue #1197 P0.6, CU76): ADR-022 / REPO-SPLIT-PLAN / Pages Architecture point at #1435 after #1261 was auto-closed by packaging PR #1429.
+- **Heavy-CI gate accepts `gh pr checks` status `skipping`** (issue #1197 / #1257, CU76): `check-heavy-ci.sh` treats path-scoped skips the same as `skip`/`skipped` so docs-only PRs are mergeable after suite aggregators go green.
+- **ADR-024 measured evidence refreshed after Phase 0** (issue #1197, CU76): path-scoped CI, ~2k agent context, OpenAPI-generated frontend types, and Playwright shards recorded; ADR-022 notes that #1261 packaging does not complete the Owner decision.
+- **Owner decision packaging for `deprecated/` / history purge** (issue #1261, CU76, #1197 P0.6): ADR-022 adds a Pending Owner decision section (Option A/B/C); GitHub Pages Architecture links ADR-022; agents must not delete `deprecated/` or rewrite history until the Owner records a choice.
 - **Frontend API types generated from OpenAPI** (issue #1260, CU76, #1197 P0.5):
   `openapi-typescript` writes `frontend/src/types/api.generated.ts`; `npm run openapi:types:check`
   fails Frontend CI on drift. Gestiones, presupuestos, documentos (and dashboard counts via those
   hooks) use generated schema aliases from `src/types/api.ts`.
 - **Always-loaded agent context ≤8k tokens** (issue #1259 / #1197 P0.4, CU76): slim `AGENTS.md` with an on-demand rule/skill table; add `CONSTITUTION-AGENT-CARD.md` digest (full Constitution on demand); set `alwaysApply: false` on large frontend/Java/refactoring rules and the frontend-design skill; add `workspace/ci/agent-context-budget.py` + unit test; refresh `REPO-METRICS-BASELINE.md` (~2k tokens est.).
+- **Playwright E2E runs as a three-shard matrix** (issue #1258, CU76, #1197 P0.3):
+  `playwright-e2e.yml` shards UI E2E with `--shard=i/3`, merges blob reports in
+  `e2e-merge-reports` (check name stays `UI E2E Tests (Playwright)` for
+  `check-heavy-ci.sh`), and fails closed if any shard failed. CI
+  `playwright.config.ts` adds the blob reporter; invariants guard the matrix.
+  `check-heavy-ci.sh` accepts path-scoped `skip`/`skipped` for docs-only PRs.
 - **Path-scoped CI skips Java and E2E on docs-only PRs** (issue #1257, CU76, #1197 P0.2):
   `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, and `openapi-contract.yml` add a
   `Path filter` (`dorny/paths-filter`) job; leaf jobs gate on filter outputs; suite
@@ -217,6 +248,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **No more hardcoded Spanish (or English) UI strings** (issue #1354, RNF-05/ADR-015): in English the breadcrumb, several column headers, form labels and placeholders, the protocol report buttons and badges, the payment balance panel and the empty-table message were still Spanish, and the language switcher's screen-reader name was English in the Spanish UI. The breadcrumb now reads its labels from the catalogs (administration sub-routes have their own), about 50 literals moved to `messages/es.json`/`en.json`, and a Vitest static scan fails if a literal UI string is added again. Playwright TS-0040 checks the English screens.
+- **The dashboard workflow graph is reachable by screen readers and its motion stops** (issue #1353, RF-23/CU76): the graph was an image (`role="img"`) containing focusable step buttons, so screen readers couldn't reach the steps (axe `nested-interactive`), and the active-edge dot and current-step pulse looped forever. The graph is now a named group described as a flow diagram, each step is a button named with its state, and both animations stop after 4.8 seconds (WCAG 2.2.2). Vitest `workflow-tracker-a11y.test.tsx` and Playwright TS-0035 cover it.
 - **Dashboard counts no longer flash 0 while loading** (issue #1358, RNF-03): since #1397 the three stat cards count with `size=1` page requests instead of downloading lists of 1000, but each card still showed `0` until its count arrived (and after an error). The cards now show a skeleton (announced as loading) until the total arrives, a dash if it fails, and the exact total formatted for the locale. Playwright TS-0118 checks the counts against the API, that only `size=1` requests are made, and the skeleton.
 - **Dialogs and confirm dialogs animate in and out** (issue #1349, RNF-05/RNF-06): the shadcn classes `animate-in`, `fade-in` and `zoom-in-95` had no CSS behind them (tw-animate-css was not installed), so dialogs popped in and vanished mid-click. `tw-animate-css` is now a devDependency imported in `globals.css`. Overlays fade, and content fades and scales from 0.95 on enter (200ms) and reverses on exit (150ms) through Radix `data-state`. The table and login fades now run too. Under `prefers-reduced-motion` the existing global rule leaves no perceptible motion. Playwright TS-0117 covers it.
 - **The mobile navigation drawer behaves as a modal sheet** (issue #1350, RNF-10/CU76): below 768px the drawer left focus on the toggle, ignored Escape, let Tab reach the page behind it, had no close button, let the page scroll, and its toggle had no `aria-expanded` and an English-only name. It is now a Radix dialog sheet: focus starts on the first navigation link, Tab stays inside, Escape, the new translated close button or a tap outside close it and return focus to the toggle, and the page does not scroll behind it. The toggle exposes `aria-expanded`/`aria-controls` and the translated `navigation.openMenu`. Playwright TS-0041 covers it.

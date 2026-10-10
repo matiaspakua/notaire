@@ -23,6 +23,11 @@ Todo cambio de código debe estar asociado a un Caso de Uso existente (ver
 [`.claude/rules/ai-agent-workflow.md`](../../.claude/rules/ai-agent-workflow.md)). Si no existe,
 debe crearse aquí antes de crear el issue correspondiente.
 
+## Public site
+
+Curated entry on GitHub Pages: [Business Docs](https://matiaspakua.github.io/notaire/docs/business/)
+(deep-links back into this tree).
+
 ## Navigation
 
 - [← Documentación](../)

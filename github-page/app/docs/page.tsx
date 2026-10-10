@@ -3,6 +3,11 @@ import { DOCS, REPO } from "@/lib/docs-content";
 
 const cards = [
   {
+    href: "/docs/business/",
+    title: "Business",
+    body: "Requirements, use cases (CUxx), actors, traceability matrix and manuals under docs/100-business/.",
+  },
+  {
     href: "/docs/modules/",
     title: "Module ownership",
     body: "Nine in-repo modules (ADR-026). One folder, one fleet, one verify — prepare #1197 without splitting repos.",
@@ -37,7 +42,8 @@ export default function DocsHomePage() {
           <a className="text-[#0A84FF] underline-offset-2 hover:underline" href={`${DOCS}`}>
             docs/
           </a>{" "}
-          on GitHub; this tab is the curated entry for modules, architecture, testing and DevSecOps.
+          on GitHub; this tab is the curated entry for business, modules, architecture, testing and
+          DevSecOps.
         </p>
       </header>
 

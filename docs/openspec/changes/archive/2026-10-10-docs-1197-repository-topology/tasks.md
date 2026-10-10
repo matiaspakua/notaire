@@ -86,3 +86,13 @@
 - [ ] Permanent documentation updated and consistent
 - [ ] Commits atomic, Conventional Commits, `Closes #1197` on the last
 - [ ] Merged via PR; smoke evidence recorded; Issue closed (Gate 5)
+
+## Evidence refresh (2026-10-10)
+
+- [x] Refresh ADR-024 measured evidence after P0.1–P0.5
+- [x] Note on ADR-022 that #1261 packaging ≠ Owner decision
+
+- [x] Point ADR-022 / plan / Pages at live Owner issue #1435 (replaces closed #1261)
+
+- [x] Refresh P0.6 Owner decision tracker links after auto-close of prior issues
+
