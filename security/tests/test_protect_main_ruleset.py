@@ -37,7 +37,9 @@ REQUIRED_CHECK_NAMES = (
 AGGREGATOR_SPECS = (
     ("ci.yml", "CI", ("build", "unit-tests", "integration-tests", "coverage", "quality", "security", "docker-build")),
     ("frontend-ci.yml", "Frontend CI", ("typecheck", "unit-tests", "build")),
-    ("playwright-e2e.yml", "Playwright E2E", ("api-tests", "e2e-tests")),
+    # #1258: aggregator watches the fail-closed merge job (keeps heavy-CI check name),
+    # not the shard matrix job id.
+    ("playwright-e2e.yml", "Playwright E2E", ("api-tests", "e2e-merge-reports")),
     ("pr-validation.yml", "PR Validation", ("validate-pr", "lint", "sdlc-plan", "quick-build", "branch-naming", "dependency-analysis")),
 )
 

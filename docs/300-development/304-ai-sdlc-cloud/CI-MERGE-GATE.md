@@ -48,9 +48,10 @@ Light-only green (Validate PR, Code Lint, Frontend Vitest/TypeScript, Process
 Checks, CodeQL Analyze, …) is **insufficient** — even when a subscription says
 “all N checks success.”
 
-Docs-only PRs are not exempt: `playwright-e2e.yml` still runs on PRs into
-`main`, so Bruno + Playwright remain required unless the workflow is
-explicitly skipped for that tip.
+Docs-only PRs (path-scoped CI #1257): leaf Java/Bruno/Playwright jobs are
+**skipped**; suite aggregators and `check-heavy-ci.sh` treat `skip`/`skipped` as
+success. Product PRs still require Bruno + `UI E2E Tests (Playwright)` (the
+merge job after #1258 shards) to be success.
 
 Local mirror before push: [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md)
 (`bash workspace/sdlc/preflight.sh`, optionally `--full`).
