@@ -1,10 +1,13 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useFormFieldAria } from "@/theme/form-field-context";
 
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => (
+  ({ className, type, ...rest }, ref) => {
+    const props = useFormFieldAria(rest);
+    return (
     <input
       type={type}
       className={cn(
@@ -14,7 +17,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       ref={ref}
       {...props}
     />
-  )
+    );
+  }
 );
 Input.displayName = "Input";
 
