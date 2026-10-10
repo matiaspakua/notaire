@@ -111,7 +111,9 @@ jobs:
     timeout-minutes: 20
     services:
       postgres:
-        image: postgres:16.15-alpine
+        # Docker Hub library image via Google's public pull-through cache: anonymous
+        # Docker Hub pulls hit the 429 rate limit on shared runners (#1380).
+        image: mirror.gcr.io/library/postgres:16.15-alpine
         env:
           POSTGRES_DB: notaire
           POSTGRES_USER: notaire
@@ -220,7 +222,9 @@ jobs:
     timeout-minutes: 45
     services:
       postgres:
-        image: postgres:16.15-alpine
+        # Docker Hub library image via Google's public pull-through cache: anonymous
+        # Docker Hub pulls hit the 429 rate limit on shared runners (#1380).
+        image: mirror.gcr.io/library/postgres:16.15-alpine
         env:
           POSTGRES_DB: notaire
           POSTGRES_USER: notaire
@@ -311,7 +315,20 @@ jobs:
       # chrome: the "chromium" project pins channel:"chrome" (testing/e2e/playwright.config.ts).
       # webkit: the "mobile" project emulates iPhone SE, which uses the WebKit engine.
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium chrome webkit
+        # Retried: a truncated browser download (e.g. the Chrome .deb, "Invalid archive
+        # signature") is a transient CDN failure, not a test failure (#1380).
+        run: |
+          for attempt in 1 2 3; do
+            if npx playwright install --with-deps chromium chrome webkit; then
+              exit 0
+            fi
+            if [ "$attempt" = 3 ]; then
+              echo "ERROR: could not install Playwright browsers after 3 attempts" >&2
+              exit 1
+            fi
+            echo "Playwright browser install failed (attempt $attempt/3); retrying in 30s" >&2
+            sleep 30
+          done
         working-directory: testing/e2e
 
       # ── Run Playwright E2E tests ──

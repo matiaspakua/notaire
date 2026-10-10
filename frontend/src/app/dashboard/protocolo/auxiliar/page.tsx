@@ -91,7 +91,7 @@ export default function ProtocoloAuxiliarPage() {
       <Dialog open={!!selectedFolio} onOpenChange={(v) => !v && setSelectedFolio(null)}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={t("iniciarEscritura")}>
+            <FormSection dialogTitle title={t("iniciarEscritura")}>
               <FormField label={t("fields.folio")}>
                 <span className="text-sm font-medium">
                   N° {selectedFolio?.number} — {selectedFolio?.fkIdFolioType?.name}

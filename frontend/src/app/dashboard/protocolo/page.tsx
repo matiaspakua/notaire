@@ -122,7 +122,7 @@ export default function ProtocoloPage() {
       <Dialog open={!!reportDialog} onOpenChange={(v) => !v && setReportDialog(null)}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={reportTitle}>
+            <FormSection dialogTitle title={reportTitle}>
               <FormField label={tc("year")} required>
                 <Input type="number" value={reportYear} onChange={(e) => setReportYear(e.target.value)} />
               </FormField>
