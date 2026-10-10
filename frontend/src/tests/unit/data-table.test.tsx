@@ -63,3 +63,16 @@ describe("DataTable", () => {
     expect(skeletons.length).toBeGreaterThan(0);
   });
 });
+
+describe("DataTable default empty message (#1354)", () => {
+  it("uses the translated common.noData when no emptyMessage is given", async () => {
+    const { NextIntlClientProvider } = await import("next-intl");
+    const en = (await import("../../../messages/en.json")).default;
+    render(
+      <NextIntlClientProvider locale="en" messages={en}>
+        <DataTable data={[]} columns={columns} keyExtractor={(r) => r.id} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText("No data")).toBeDefined();
+  });
+});

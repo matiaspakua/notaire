@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
 import { theme } from "@/theme/tokens";
+import en from "../../../messages/en.json";
 import { WorkflowViewer, toFlowNodes, toFlowEdges } from "@/components/shared/WorkflowViewer";
 import type { WorkflowNode, WorkflowTransition } from "@/types";
 
@@ -60,8 +62,12 @@ describe("WorkflowViewer node styling (#613)", () => {
     expect(edge.style?.stroke).toBe(theme.colors.neutral[500]);
   });
 
-  it("renders the empty state without any nodes", () => {
-    render(<WorkflowViewer nodes={[]} transitions={[]} data-testid="wf-viewer" />);
-    expect(screen.getByTestId("wf-viewer")).toBeInTheDocument();
+  it("renders the translated empty state without any nodes (#1354)", () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={en}>
+        <WorkflowViewer nodes={[]} transitions={[]} data-testid="wf-viewer" />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByTestId("wf-viewer")).toHaveTextContent("No nodes. Add statuses to the workflow.");
   });
 });

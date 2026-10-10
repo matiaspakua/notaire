@@ -151,3 +151,57 @@ test.describe("l10n — Admin pages translations", () => {
     });
   });
 });
+
+// #1354 — no hardcoded Spanish left in the English UI (breadcrumb, headers, buttons)
+test.describe("l10n — hardcoded strings (#1354)", () => {
+  test("pagos: English breadcrumb and column headers", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/pagos");
+    const crumb = page.getByRole("navigation", { name: "Breadcrumb" });
+    await expect(crumb).toContainText("Home", { timeout: 10000 });
+    await expect(crumb).toContainText("Payments");
+    const head = page.locator("thead").first();
+    await expect(head).toContainText("Budget", { timeout: 10000 });
+    await expect(head).not.toContainText("Presupuesto");
+  });
+
+  test("copias: English column headers", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/copias");
+    const head = page.locator("thead").first();
+    await expect(head).toContainText("Print date", { timeout: 10000 });
+    await expect(head).not.toContainText("Fecha");
+    await expect(head).not.toContainText("Testimonio ");
+  });
+
+  test("protocolo: English report buttons and status badges", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/protocolo");
+    await expect(page.getByRole("button", { name: "Index Book" })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("button", { name: "Monthly Affidavit" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Revenue Affidavit" })).toBeVisible();
+    await expect(page.getByRole("main")).not.toContainText("DDJJ");
+    await expect(page.getByRole("main")).not.toContainText("Disponible");
+  });
+
+  test("administracion/usuarios: English breadcrumb, role header and status", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/administracion/usuarios");
+    const crumb = page.getByRole("navigation", { name: "Breadcrumb" });
+    await expect(crumb).toContainText("Administration", { timeout: 10000 });
+    await expect(crumb).toContainText("Users");
+    const head = page.locator("thead").first();
+    await expect(head).toContainText("Role", { timeout: 10000 });
+    await expect(page.getByRole("main")).not.toContainText("Inactivo");
+  });
+
+  test("movimientos-testimonio: English breadcrumb", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/movimientos-testimonio");
+    const crumb = page.getByRole("navigation", { name: "Breadcrumb" });
+    await expect(crumb).toContainText("Testimonio Movements", { timeout: 10000 });
+    await expect(crumb).not.toContainText("Movimientos");
+  });
+
+  test("es: the language switcher and breadcrumb have Spanish accessible names", async ({ page }) => {
+    await setupAuthAndGo(page, "/dashboard/proximos-vencimientos");
+    await expect(page.getByRole("group", { name: "Selector de idioma" })).toBeVisible({ timeout: 10000 });
+    const crumb = page.getByRole("navigation", { name: "Ruta de navegación" });
+    await expect(crumb).toContainText("Próximos Vencimientos");
+  });
+});
