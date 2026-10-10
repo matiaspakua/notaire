@@ -22,18 +22,12 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
+# Keep in sync with workspace/ci/agent-context-budget.py (#1259 / #1197 P0.4).
 ALWAYS_LOADED = [
     "CLAUDE.md",
     "AGENTS.md",
-    "CONSTITUTION.md",
-    ".claude/rules/general.md",
-    ".claude/rules/programming.md",
-    ".claude/rules/code-quality.md",
-    ".claude/rules/refactoring.md",
+    "CONSTITUTION-AGENT-CARD.md",
     ".claude/rules/ai-agent-workflow.md",
-    ".claude/rules/ui-ux-design.md",
-    ".claude/rules/database-migrations.md",
-    ".claude/rules/hooks.md",
 ]
 
 

@@ -1,7 +1,7 @@
 ---
 title: Java Programming Best Practices
 description: General rules for clean and maintainable Java code
-alwaysApply: true
+alwaysApply: false
 ---
 
 ## Fundamental Principles

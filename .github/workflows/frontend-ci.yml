@@ -110,6 +110,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: OpenAPI generated types drift check (#1260)
+        run: npm run openapi:types:check
+
       - name: TypeScript type-check
         run: npm run typecheck
 
