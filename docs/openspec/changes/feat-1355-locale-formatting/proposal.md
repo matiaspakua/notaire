@@ -18,7 +18,7 @@
 
 - `lib/format.ts`: one map from the app locale to the Intl locale (`es` to `es-AR`, `en` to `en-GB`), plus `formatMoney` (ARS) and `formatNumber`.
 - `hooks/useFormat.ts`: `date` (calendar date, #1339), `instant`, `currency`, `number` and `longDate` for the active locale (next-intl `useLocale`).
-- All 48 screen call sites (16 files), the dashboard date and `StatValue` use the hook. `formatDate`/`formatCurrency` stay in `lib/utils.ts` as es-AR wrappers for non-React code.
+- All 49 screen call sites (17 files, including the #1491 deed picker), the dashboard date and `StatValue` use the hook. `formatDate`/`formatCurrency` stay in `lib/utils.ts` as es-AR wrappers for non-React code.
 - Guard tests: no screen names `es-AR`, `en-US` or `en-GB`, and none calls the es-AR helpers.
 - TS-0040: pagos shows `08/07/2026` and `ARS 75,123.xx` in en, `8/7/2026` and `$ 75.123,xx` in es.
 - CHANGELOG entry.

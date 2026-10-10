@@ -16,6 +16,7 @@ vi.stubGlobal("fetch", mockFetch);
 vi.mock("next-intl", () => ({
   useTranslations: (ns: string) => (key: string, values?: Record<string, unknown>) =>
     values ? `${ns}.${key} ${Object.values(values).join(" ")}` : `${ns}.${key}`,
+  useLocale: () => "es",
 }));
 
 import { DeedPicker } from "@/components/shared/DeedPicker";
