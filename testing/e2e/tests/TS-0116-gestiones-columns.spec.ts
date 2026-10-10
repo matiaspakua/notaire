@@ -29,7 +29,7 @@ test.describe("Managements list columns (#1348)", () => {
     await expect(row).toContainText(encabezado);
     await expect(row).toContainText(String(gestion.data!.number));
     // Started today (complete-case sets the start date): shown as a calendar date.
-    const today = new Intl.DateTimeFormat("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date());
+    const today = new Intl.DateTimeFormat("es-AR").format(new Date());
     await expect(row).toContainText(today);
   });
 });

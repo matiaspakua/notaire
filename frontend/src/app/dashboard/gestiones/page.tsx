@@ -33,6 +33,7 @@ import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { useInmuebles } from "@/hooks/useInmuebles";
 import { ApiError } from "@/lib/api-client";
+import { formatCalendarDate } from "@/lib/dates";
 import { fullName, formatCurrency, formatDate, extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 import { GestionResumenDialog } from "./GestionResumenDialog";
@@ -240,20 +241,40 @@ function GestionesList() {
 
   const columns: Column<GestionDeEscritura>[] = [
     {
-      key: "id",
-      header: tc("id"),
-      render: (g) => <span className="text-muted-foreground text-xs">{g.idManagement}</span>,
-      className: "w-16",
-    },
-    {
       key: "numero",
       header: t("fields.numero"),
-      render: (g) => <span className="font-medium">{g.number ?? "—"}</span>,
+      render: (g) => (
+        <div className="flex flex-col">
+          <span className="font-medium">{g.number ?? "—"}</span>
+          {/* The internal id stays available as secondary text (#1348). */}
+          <span className="text-muted-foreground text-xs">
+            {tc("id")} {g.idManagement}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: "encabezado",
+      header: t("fields.encabezado"),
+      render: (g) =>
+        g.encabezado ? (
+          <span className="block max-w-[18rem] truncate" title={g.encabezado}>
+            {g.encabezado}
+          </span>
+        ) : (
+          "—"
+        ),
+    },
+    {
+      key: "inicio",
+      header: t("fields.inicio"),
+      render: (g) => <span className="whitespace-nowrap">{formatCalendarDate(g.dateStart)}</span>,
     },
     {
       key: "tramites",
-      header: t("fields.tipo"),
+      header: t("fields.tramites"),
       render: (g) => g.procedureCount ?? 0,
+      className: "text-right",
     },
     {
       key: "estado",

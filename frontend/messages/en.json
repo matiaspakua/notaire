@@ -265,7 +265,10 @@
       "folio": "Folio",
       "observaciones": "Observations",
       "presupuesto": "Quote",
-      "inmueble": "Property"
+      "inmueble": "Property",
+      "encabezado": "Case title",
+      "inicio": "Started",
+      "tramites": "Procedures"
     },
     "resumen": {
       "action": "Case summary",
