@@ -13,6 +13,7 @@
   --color-popover-foreground: hsl(var(--popover-foreground));
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-text: hsl(var(--primary-text));
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
   --color-muted: hsl(var(--muted));
@@ -42,6 +43,8 @@
        white text on it is 4.7:1 (WCAG AA); the old 211 100% 50% was 3.9:1. */
     --primary: 210.1 100% 44.5%;
     --primary-foreground: 0 0% 100%;
+    /* Primary as text on light grays: 5.5:1 on neutral[100] (the brand primary is 4.3:1), #1341. */
+    --primary-text: 210 100% 38.4%;
 
     /* Apple light gray background */
     --secondary: 0 0% 95%;
@@ -54,7 +57,8 @@
     --accent-foreground: 0 0% 10%;
 
     /* Apple destructive red */
-    --destructive: 0 84% 55%;
+    /* tokens.ts error[700]: 5.9:1 on white, and for white text on it (#1341). */
+    --destructive: 0 74% 45%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 0 0% 90%;
@@ -66,7 +70,7 @@
     /* Apple sidebar - translucent light */
     --sidebar: 0 0% 97%;
     --sidebar-foreground: 0 0% 15%;
-    --sidebar-muted: 0 0% 45%;
+    --sidebar-muted: 0 0% 40%;
     --sidebar-border: 0 0% 91%;
     --sidebar-hover: 0 0% 92%;
     --sidebar-active: 210.1 100% 44.5%;
@@ -82,6 +86,7 @@
 
     --primary: 211 100% 50%;
     --primary-foreground: 0 0% 100%;
+    --primary-text: 211 100% 65%;
 
     --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 95%;
