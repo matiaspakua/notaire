@@ -21,8 +21,8 @@ export const colors = {
     200: "#EBEBF0",   // Light gray
     300: "#E5E5EA",   // Light gray
     400: "#D2D2D7",   // Gray
-    500: "#A2A2A6",   // Medium gray
-    600: "#86868B",   // Dark gray
+    500: "#A2A2A6",   // Borders and disabled states only (2.5:1, not for readable text)
+    600: "#6E6E73",   // Secondary text: 5.1:1 on [0], 4.9:1 on [50], 4.7:1 on [100] (WCAG AA, #1341)
     700: "#5A5A5F",   // Darker gray
     800: "#3A3A3C",   // Very dark gray
     900: "#1D1D1F",   // Almost black (foreground)
@@ -62,6 +62,7 @@ export const colors = {
     100: "#FFD1D1",
     500: "#FF453A", // Apple red
     600: "#FF3B30",
+    700: "#C81E1E", // Error text: 5.9:1 on white, 5.0:1 on [50] (WCAG AA, #1341)
   },
 
   info: {
@@ -271,7 +272,7 @@ export const semantic = {
     labelSecondary: colors.neutral[600],
     errorBg: colors.error[50],
     errorBorder: colors.error[500],
-    errorText: colors.error[600],
+    errorText: colors.error[700],
     helperText: colors.neutral[600],
   },
 

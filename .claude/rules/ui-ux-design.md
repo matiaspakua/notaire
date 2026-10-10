@@ -81,12 +81,13 @@ This document defines mandatory UI/UX standards for all frontend development in 
 
 | Color | Use Case | Token |
 |-------|----------|-------|
-| **Primary Blue** | Buttons, links, focus states | `theme.colors.primary[600]` |
+| **Primary Blue** | Button fills, focus states | `theme.colors.primary[600]` / `bg-primary` |
+| **Primary text** | Links and blue text on light grays (5.5:1 on `#F5F5F7`) | `text-primary-text` (`--primary-text`) |
 | **Neutral 900** | Body text, headings | `theme.colors.neutral[900]` |
-| **Neutral 600** | Secondary text, labels | `theme.colors.neutral[600]` |
-| **Neutral 400** | Borders, dividers | `theme.colors.neutral[400]` |
+| **Neutral 600** | Secondary text, labels (`#6E6E73`: 5.1:1 on `neutral[0]`, 4.9:1 on `[50]`, 4.7:1 on `[100]`) | `theme.colors.neutral[600]` / `text-muted-foreground` |
+| **Neutral 400/500** | Borders, dividers, disabled states only, never readable text | `theme.colors.neutral[400]` |
 | **Success Green** | Success messages, checkmarks | `theme.colors.success[500]` |
-| **Error Red** | Errors, destructive actions | `theme.colors.error[500]` |
+| **Error Red** | Errors, destructive actions (`--destructive` `#C81E1E`: 5.9:1 on white) | `theme.colors.error[500]` / `text-destructive` |
 | **Warning Orange** | Warnings, cautions | `theme.colors.warning[500]` |
 
 ### Color Rules

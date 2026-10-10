@@ -60,7 +60,7 @@ export function WorkflowViewer({ nodes, transitions, "data-testid": testId }: Wo
   if (nodes.length === 0) {
     return (
       <div
-        className="flex items-center justify-center h-64 rounded-xl border border-dashed border-neutral-300 text-neutral-400 text-sm"
+        className="flex items-center justify-center h-64 rounded-xl border border-dashed border-neutral-300 text-muted-foreground text-sm"
         data-testid={testId}
       >
         Sin nodos. Agrega estados al workflow.
