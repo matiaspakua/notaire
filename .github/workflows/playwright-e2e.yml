@@ -43,6 +43,76 @@ env:
   ACTUATOR_PASSWORD: ci-e2e-actuator-pass
 
 jobs:
+  changes:
+    name: Path filter
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      backend: ${{ steps.out.outputs.backend }}
+      frontend: ${{ steps.out.outputs.frontend }}
+      testing: ${{ steps.out.outputs.testing }}
+      docs: ${{ steps.out.outputs.docs }}
+      ci: ${{ steps.out.outputs.ci }}
+      openapi: ${{ steps.out.outputs.openapi }}
+      product: ${{ steps.out.outputs.product }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: filter
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'backend-api/**'
+              - 'pom.xml'
+              - 'Dockerfile'
+              - 'Dockerfile.*'
+              - 'docker-compose.yml'
+            frontend:
+              - 'frontend/**'
+            testing:
+              - 'testing/**'
+            openapi:
+              - 'backend-api/openapi/**'
+              - 'backend-api/tools/export-openapi.sh'
+            docs:
+              - 'docs/**'
+              - 'CONSTITUTION.md'
+              - 'AGENTS.md'
+              - 'CHANGELOG.md'
+              - '.claude/**'
+              - 'github-page/**'
+            ci:
+              - '.github/workflows/**'
+              - 'workspace/sdlc/**'
+              - 'workspace/tests/**'
+              - 'workspace/ci/**'
+              - 'security/**'
+              - 'contracts/**'
+      - id: out
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            for k in backend frontend testing docs ci openapi product; do
+              echo "$k=true" >> "$GITHUB_OUTPUT"
+            done
+            exit 0
+          fi
+          echo "backend=${{ steps.filter.outputs.backend }}" >> "$GITHUB_OUTPUT"
+          echo "frontend=${{ steps.filter.outputs.frontend }}" >> "$GITHUB_OUTPUT"
+          echo "testing=${{ steps.filter.outputs.testing }}" >> "$GITHUB_OUTPUT"
+          echo "docs=${{ steps.filter.outputs.docs }}" >> "$GITHUB_OUTPUT"
+          echo "ci=${{ steps.filter.outputs.ci }}" >> "$GITHUB_OUTPUT"
+          echo "openapi=${{ steps.filter.outputs.openapi }}" >> "$GITHUB_OUTPUT"
+          product=false
+          if [ "${{ steps.filter.outputs.backend }}" = "true" ] \
+            || [ "${{ steps.filter.outputs.frontend }}" = "true" ] \
+            || [ "${{ steps.filter.outputs.testing }}" = "true" ] \
+            || [ "${{ steps.filter.outputs.ci }}" = "true" ]; then
+            product=true
+          fi
+          echo "product=$product" >> "$GITHUB_OUTPUT"
+
   # ──────────────────────────────────────────────
   # JOB 1: Backend Build
   # ──────────────────────────────────────────────
@@ -50,6 +120,8 @@ jobs:
     name: Build Backend API
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: [changes]
+    if: ${{ needs.changes.outputs.product == 'true' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -76,6 +148,8 @@ jobs:
     name: Build Frontend
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: [changes]
+    if: ${{ needs.changes.outputs.product == 'true' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -445,7 +519,7 @@ jobs:
     name: Playwright E2E
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [api-tests, e2e-tests]
+    needs: [changes, api-tests, e2e-tests]
     if: ${{ always() && !cancelled() }}
     steps:
       - name: Require Playwright / Bruno suite jobs success
@@ -459,8 +533,9 @@ jobs:
             name="${pair%%=*}"
             result="${pair#*=}"
             echo "${name}=${result}"
-            if [ "${result}" != "success" ]; then
-              failed=1
-            fi
+            case "${result}" in
+              success|skipped) ;;
+              *) failed=1 ;;
+            esac
           done
           exit "${failed}"
