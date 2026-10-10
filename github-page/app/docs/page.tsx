@@ -10,7 +10,7 @@ const cards = [
   {
     href: "/docs/modules/",
     title: "Module ownership",
-    body: "Nine in-repo modules (ADR-026). One folder, one fleet, one verify — prepare #1197 without splitting repos.",
+    body: "Nine in-repo modules (ADR-026). One folder, one fleet, one verify — Owner tracker #1445; no repo split yet.",
   },
   {
     href: "/docs/architecture/",

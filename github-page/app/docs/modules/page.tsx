@@ -9,8 +9,16 @@ export default function DocsModulesPage() {
           Module ownership
         </h1>
         <p className="text-neutral-600 max-w-3xl leading-relaxed">
-          Phase 0 of repository topology (#1197): keep one monorepo, give every folder a clear
-          responsibility (ADR-026). Extraction happens later, only behind evidence gates.
+          Phase 0 of repository topology: keep one monorepo, give every folder a clear
+          responsibility (ADR-026). Live Owner umbrella{" "}
+          <a
+            className="text-[#0A84FF] hover:underline"
+            href="https://github.com/matiaspakua/notaire/issues/1445"
+          >
+            #1445
+          </a>{" "}
+          (prior #1197 closed by keyword parsing). Extraction happens later, only behind evidence
+          gates.
         </p>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
           <a
