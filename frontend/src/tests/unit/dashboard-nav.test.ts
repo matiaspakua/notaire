@@ -104,3 +104,100 @@ describe("canonical admin redirects (#1058)", () => {
     expect(source).not.toMatch(/useAuditoria/);
   });
 });
+
+// ---------------------------------------------------------------------------
+// #1367 — task-based sidebar sections shared with the dashboard module grid
+// ---------------------------------------------------------------------------
+import { readdirSync, statSync } from "node:fs";
+import {
+  DASHBOARD_NAV_GROUPS,
+  DASHBOARD_NAV_HOME,
+  DASHBOARD_MODULES,
+} from "@/lib/dashboard-nav";
+import { ADMIN_ROUTE_PREFIXES } from "@/lib/admin-access";
+
+describe("DASHBOARD_NAV_GROUPS (#1367)", () => {
+  it("has the six owner-approved sections in order with their members", () => {
+    const shape = DASHBOARD_NAV_GROUPS.map((g) => [g.labelKey, g.items.map((i) => i.labelKey)]);
+    expect(shape).toEqual([
+      ["clientes", ["personas", "inmuebles"]],
+      ["tramites", ["gestiones", "presupuestos", "pagos"]],
+      [
+        "documentacion",
+        ["documentos", "documentosNecesarios", "documentosEntidadesExternas", "reingresoDocumentacion", "proximosVencimientos"],
+      ],
+      [
+        "escriturasProtocolo",
+        ["escrituras", "testimonios", "movimientosTestimonio", "copias", "minutasInscripcion", "protocolo"],
+      ],
+      ["gestion", ["reportes", "auditoria", "suplencias", "items"]],
+      ["administracion", ["administracion"]],
+    ]);
+    expect(DASHBOARD_NAV_HOME.href).toBe("/dashboard");
+  });
+
+  it("translates every section label in es and en", () => {
+    const es = (esMessages.navigation as Record<string, unknown>).groups as Record<string, string> | undefined;
+    const en = (enMessages.navigation as Record<string, unknown>).groups as Record<string, string> | undefined;
+    for (const g of DASHBOARD_NAV_GROUPS) {
+      expect(es?.[g.labelKey], `es navigation.groups.${g.labelKey}`).toBeTruthy();
+      expect(en?.[g.labelKey], `en navigation.groups.${g.labelKey}`).toBeTruthy();
+    }
+  });
+
+  it("lists every top-level dashboard route exactly once", () => {
+    const dir = resolve(__dirname, "../../app/dashboard");
+    const routes = readdirSync(dir)
+      .filter((d) => statSync(resolve(dir, d)).isDirectory() && existsSync(resolve(dir, d, "page.tsx")))
+      .map((d) => `/dashboard/${d}`)
+      .sort();
+    const hrefs = DASHBOARD_NAV_GROUPS.flatMap((g) => g.items.map((i) => i.href));
+    expect([...hrefs].sort()).toEqual(routes);
+    expect(new Set(hrefs).size).toBe(hrefs.length);
+    expect(DASHBOARD_NAV_ITEMS.map((i) => i.href)).toEqual(["/dashboard", ...hrefs]);
+  });
+
+  it("marks exactly the admin-guarded routes as adminOnly", () => {
+    const adminHrefs = DASHBOARD_NAV_ITEMS.filter((i) => i.adminOnly).map((i) => i.href).sort();
+    expect(adminHrefs).toEqual([...ADMIN_ROUTE_PREFIXES].sort());
+  });
+});
+
+describe("DASHBOARD_MODULES (#1367)", () => {
+  it("is derived from the featured nav items, in sidebar order", () => {
+    const featured = DASHBOARD_NAV_GROUPS.flatMap((g) => g.items).filter((i) => i.featured);
+    expect(DASHBOARD_MODULES).toEqual(featured);
+    expect(DASHBOARD_MODULES.map((m) => m.href)).toEqual([
+      "/dashboard/personas",
+      "/dashboard/inmuebles",
+      "/dashboard/gestiones",
+      "/dashboard/presupuestos",
+      "/dashboard/pagos",
+      "/dashboard/documentos",
+      "/dashboard/escrituras",
+      "/dashboard/copias",
+      "/dashboard/protocolo",
+      "/dashboard/reportes",
+      "/dashboard/auditoria",
+      "/dashboard/suplencias",
+      "/dashboard/items",
+      "/dashboard/administracion",
+    ]);
+  });
+
+  it("has a dashboard label and description for every module in es and en", () => {
+    for (const m of DASHBOARD_MODULES) {
+      for (const msgs of [esMessages, enMessages]) {
+        const entry = (msgs.dashboard as Record<string, unknown>)[m.labelKey] as Record<string, string> | undefined;
+        expect(entry?.label, `dashboard.${m.labelKey}.label`).toBeTruthy();
+        expect(entry?.description, `dashboard.${m.labelKey}.description`).toBeTruthy();
+      }
+    }
+  });
+
+  it("the dashboard page no longer keeps its own module array", () => {
+    const src = readFileSync(resolve(__dirname, "../../app/dashboard/page.tsx"), "utf8");
+    expect(src).toContain("DASHBOARD_MODULES");
+    expect(src).not.toMatch(/const modules\s*:/);
+  });
+});
