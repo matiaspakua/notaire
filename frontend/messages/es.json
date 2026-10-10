@@ -59,7 +59,18 @@
     "yes": "Sí",
     "no": "No",
     "active": "Activo",
-    "inactive": "Inactivo"
+    "inactive": "Inactivo",
+    "close": "Cerrar"
+    "pagination": {
+      "label": "Paginación",
+      "status": "{from}–{to} de {total}",
+      "page": "Página {page} de {pages}",
+      "first": "Primera página",
+      "previous": "Página anterior",
+      "next": "Página siguiente",
+      "last": "Última página",
+      "rowsPerPage": "Filas por página"
+    }
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -674,14 +685,15 @@
     "title": "Auditoría",
     "description": "Registro de actividades del sistema",
     "noData": "No hay registros de auditoría",
-    "searchPlaceholder": "Buscar por usuario u operación...",
+    "searchPlaceholder": "Buscar en esta página por usuario u operación...",
     "fields": {
       "fecha": "Fecha",
       "usuario": "Usuario",
       "operacion": "Operación",
       "modulo": "Módulo"
     },
-    "allModules": "Todos los módulos"
+    "allModules": "Todos los módulos",
+    "moduleFilter": "Módulo"
   },
   "administracion": {
     "title": "Administración",

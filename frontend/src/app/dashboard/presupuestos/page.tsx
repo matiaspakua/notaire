@@ -36,6 +36,7 @@ import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import type { Presupuesto } from "@/types";
+import { toDateInputValue } from "@/lib/dates";
 
 const NO_TEMPLATE = "none";
 
@@ -264,7 +265,7 @@ export default function PresupuestosPage() {
           value={searchPresupuesto}
           onChange={(e) => setSearchPresupuesto(e.target.value)}
           data-testid="input-search-presupuesto"
-          className="w-52"
+          className="w-full sm:w-52"
         />
         <Select value={filterEstado} onValueChange={setFilterEstado}>
           <SelectTrigger data-testid="select-estado" className="w-44">
@@ -291,7 +292,7 @@ export default function PresupuestosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editPresupuesto") : t("newPresupuesto")}>
+            <FormSection dialogTitle title={isEditMode ? t("editPresupuesto") : t("newPresupuesto")}>
               <FormField
                 label={t("fields.cliente")}
                 required
@@ -319,7 +320,7 @@ export default function PresupuestosPage() {
               <FormField label={tc("date")} required>
                 <Input
                   type="date"
-                  value={editing.date ?? ""}
+                  value={toDateInputValue(editing.date)}
                   onChange={(e) => setEditing({ ...editing, date: e.target.value })}
                 />
               </FormField>
@@ -381,7 +382,7 @@ export default function PresupuestosPage() {
       <Dialog open={resumenId !== null} onOpenChange={(v) => !v && setResumenId(null)}>
         <DialogContent className="max-w-2xl" data-testid="dialog-resumen-presupuesto">
           <FormContainer>
-            <FormHeader title={t("resumen.title")} />
+            <FormHeader dialogTitle title={t("resumen.title")} />
             {isResumenLoading && (
               <p className="text-sm text-muted-foreground">{tc("loading")}</p>
             )}
@@ -460,7 +461,7 @@ export default function PresupuestosPage() {
       <Dialog open={itemsPresupuestoId !== null} onOpenChange={(v) => !v && setItemsPresupuestoId(null)}>
         <DialogContent className="max-w-2xl" data-testid="dialog-items-presupuesto">
           <FormContainer>
-            <FormHeader title={t("items.title")} />
+            <FormHeader dialogTitle title={t("items.title")} />
 
             <FormSection title={t("items.plantillaSection")}>
               <FormField

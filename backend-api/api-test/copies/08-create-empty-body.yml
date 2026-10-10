@@ -1,0 +1,31 @@
+info:
+  name: Create with empty body is rejected
+  type: http
+  seq: 8
+  description: |-
+      ## POST /api/v1/copia with {} — 400 Bad Request
+      number and datePrinting are required (NOT NULL columns); an empty body used to answer 500. Nothing is stored.
+      Traceability: CU08 (#655)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/copia"
+  body:
+    type: json
+    data: |-
+        {}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request", function () { expect(res.getStatus()).to.equal(400); });
+          test("Standard ErrorResponse naming the required fields", function () {
+            const b = res.getBody();
+            expect(b.status).to.equal(400);
+            expect(b.message).to.include("number");
+            expect(b.message).to.include("datePrinting");
+          });

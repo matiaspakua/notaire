@@ -153,7 +153,7 @@ export default function TramitesPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editTramite") : t("newTramite")}>
+            <FormSection dialogTitle title={isEditMode ? t("editTramite") : t("newTramite")}>
               <FormField label={t("fields.nombre")} required>
                 <Input
                   value={editing.name ?? ""}

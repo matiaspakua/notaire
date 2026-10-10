@@ -10,6 +10,7 @@ import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { authenticateAsAdmin } from "./setup/auth";
 import { createPersona, createPresupuesto, createPago } from "./setup/api-helpers";
+import { listView } from "./setup/list-locators";
 
 // ─────────────────────────────────────────────────────────────
 // Seed helper: creates a persona + presupuesto via API
@@ -262,8 +263,8 @@ for (const viewport of [
     await steps.givenUserIsOnPage("/dashboard/presupuestos");
     await page.waitForLoadState("domcontentloaded");
 
-    // THEN: la tabla de presupuestos es visible sin overflow horizontal
-    await expect(page.getByRole("table")).toBeVisible({ timeout: 8000 });
+    // THEN: la lista de presupuestos (tabla o tarjetas, #1356) es visible sin overflow horizontal
+    await expect(listView(page)).toBeVisible({ timeout: 8000 });
     await steps.thenHasNoHorizontalOverflow();
   });
 }
