@@ -68,6 +68,41 @@ CodeQL (`codeql.yml`) is listed by `--list` and skipped locally. It needs the
 GitHub-hosted CodeQL bundle and `security-events: write` to upload results, so
 a laptop run would not match CI.
 
+## Path-scoped CI on pull requests (#1257 / #1197 P0.2)
+
+On **pull_request** events, `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, and
+`openapi-contract.yml` classify changed paths with a `Path filter` (`changes`) job:
+
+| Filter output | Typical paths | Effect when false (and `ci` false) |
+|---------------|---------------|-------------------------------------|
+| `backend` | `backend-api/**`, root Maven/Docker | Skip Java build/test/coverage leaves |
+| `frontend` | `frontend/**` | Skip Vitest / Next build leaves |
+| `testing` / `product` | `testing/**` or backend/frontend/ci | Skip Playwright/Bruno stack when `product` false |
+| `openapi` | OpenAPI artifact / export script | Skip OpenAPI contract job when unused |
+| `docs` | `docs/**`, `CONSTITUTION.md`, `AGENTS.md`, `.claude/**`, `github-page/**` | Alone → all heavy leaves skip |
+| `ci` | `.github/workflows/**`, `workspace/sdlc/**`, `workspace/tests/**`, … | Forces full relevant suites |
+
+**`push` to `main`, `workflow_dispatch`, and `schedule` always run the full suite**
+(filter outputs forced true).
+
+Required check **names** (`CI`, `Frontend CI`, `Playwright E2E`, …) stay green because
+suite aggregators treat intentional `skipped` as success. Do **not** add workflow-level
+`on.paths` that omit an entire required workflow on `main`.
+
+Local `preflight.sh` still mirrors the full gate set for developers who run it; path
+scoping is a CI wall-clock optimization, not a license to skip local verification before
+pushing product changes.
+
+Guards: `python3 workspace/tests/test_ci_workflow_invariants.py`.
+
+### Playwright shards (#1258 / #1197 P0.3)
+
+On product PRs, `e2e-tests` runs a 3-shard matrix (`--shard=i/3`). Blob reports
+merge in `e2e-merge-reports`, whose check name stays **`UI E2E Tests (Playwright)`**
+so `check-heavy-ci.sh` still matches. The merge job fails if any shard failed.
+Docs-only path filters still skip the whole E2E stack (aggregator + heavy-CI
+script accept `skipped`).
+
 ### What `--fix` fixes automatically
 
 | Problem | Fix applied |
@@ -180,7 +215,8 @@ insufficient — see
 bash workspace/sdlc/check-heavy-ci.sh <pr-number>
 ```
 
-Required terminal success: Integration Tests, Coverage Gate (`mvn verify`),
-API Tests (Bruno), UI E2E Tests (Playwright). Docs-only PRs may still run
-Playwright. If those jobs fail with Budget/person / `undefined, undefined` on a
-tip behind `main`, rebase onto `main` first (#1132).
+Required terminal success (or path-scoped `skip`/`skipped`): Integration Tests,
+Coverage Gate (`mvn verify`), API Tests (Bruno), UI E2E Tests (Playwright).
+Docs-only PRs skip those leaves via #1257. If product jobs fail with
+Budget/person / `undefined, undefined` on a tip behind `main`, rebase onto
+`main` first (#1132).

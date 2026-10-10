@@ -1,9 +1,11 @@
+import Link from "next/link";
+
 export function Footer() {
   return (
     <footer className="py-12 px-6 border-t" style={{ borderColor: "rgba(0,0,0,0.06)", background: "var(--bg-dark)" }}>
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0a84ff, #af52de)" }}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0a84ff, #0071e3)" }}>
             <span className="text-white font-bold text-xs" style={{ fontFamily: "var(--font-mono)" }}>N</span>
           </div>
           <div>
@@ -14,6 +16,11 @@ export function Footer() {
 
         <div className="text-neutral-500 text-xs text-center">
           Built with ❤️ and Claude AI · Spring Boot · Next.js · PostgreSQL
+          <div className="mt-1">
+            <Link href="/docs/" className="text-[#0A84FF] hover:underline">
+              Technical Docs
+            </Link>
+          </div>
         </div>
 
         <a

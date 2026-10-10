@@ -43,6 +43,76 @@ env:
   ACTUATOR_PASSWORD: ci-e2e-actuator-pass
 
 jobs:
+  changes:
+    name: Path filter
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      backend: ${{ steps.out.outputs.backend }}
+      frontend: ${{ steps.out.outputs.frontend }}
+      testing: ${{ steps.out.outputs.testing }}
+      docs: ${{ steps.out.outputs.docs }}
+      ci: ${{ steps.out.outputs.ci }}
+      openapi: ${{ steps.out.outputs.openapi }}
+      product: ${{ steps.out.outputs.product }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: filter
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'backend-api/**'
+              - 'pom.xml'
+              - 'Dockerfile'
+              - 'Dockerfile.*'
+              - 'docker-compose.yml'
+            frontend:
+              - 'frontend/**'
+            testing:
+              - 'testing/**'
+            openapi:
+              - 'backend-api/openapi/**'
+              - 'backend-api/tools/export-openapi.sh'
+            docs:
+              - 'docs/**'
+              - 'CONSTITUTION.md'
+              - 'AGENTS.md'
+              - 'CHANGELOG.md'
+              - '.claude/**'
+              - 'github-page/**'
+            ci:
+              - '.github/workflows/**'
+              - 'workspace/sdlc/**'
+              - 'workspace/tests/**'
+              - 'workspace/ci/**'
+              - 'security/**'
+              - 'contracts/**'
+      - id: out
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            for k in backend frontend testing docs ci openapi product; do
+              echo "$k=true" >> "$GITHUB_OUTPUT"
+            done
+            exit 0
+          fi
+          echo "backend=${{ steps.filter.outputs.backend }}" >> "$GITHUB_OUTPUT"
+          echo "frontend=${{ steps.filter.outputs.frontend }}" >> "$GITHUB_OUTPUT"
+          echo "testing=${{ steps.filter.outputs.testing }}" >> "$GITHUB_OUTPUT"
+          echo "docs=${{ steps.filter.outputs.docs }}" >> "$GITHUB_OUTPUT"
+          echo "ci=${{ steps.filter.outputs.ci }}" >> "$GITHUB_OUTPUT"
+          echo "openapi=${{ steps.filter.outputs.openapi }}" >> "$GITHUB_OUTPUT"
+          product=false
+          if [ "${{ steps.filter.outputs.backend }}" = "true" ] \
+            || [ "${{ steps.filter.outputs.frontend }}" = "true" ] \
+            || [ "${{ steps.filter.outputs.testing }}" = "true" ] \
+            || [ "${{ steps.filter.outputs.ci }}" = "true" ]; then
+            product=true
+          fi
+          echo "product=$product" >> "$GITHUB_OUTPUT"
+
   # ──────────────────────────────────────────────
   # JOB 1: Backend Build
   # ──────────────────────────────────────────────
@@ -50,6 +120,8 @@ jobs:
     name: Build Backend API
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: [changes]
+    if: ${{ needs.changes.outputs.product == 'true' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -76,6 +148,8 @@ jobs:
     name: Build Frontend
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: [changes]
+    if: ${{ needs.changes.outputs.product == 'true' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -213,13 +287,17 @@ jobs:
           fail-on-error: false
 
   # ──────────────────────────────────────────────
-  # JOB 4: UI E2E Tests (Playwright) — requires DB + backend + frontend
+  # JOB 4: UI E2E Tests (Playwright) — sharded (#1258 / #1197 P0.3)
   # ──────────────────────────────────────────────
   e2e-tests:
-    name: UI E2E Tests (Playwright)
+    name: UI E2E shard ${{ matrix.shard }}/3
     runs-on: ubuntu-latest
     needs: [backend-build, frontend-build]
-    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    timeout-minutes: 30
     services:
       postgres:
         # Docker Hub library image via Google's public pull-through cache: anonymous
@@ -340,17 +418,100 @@ jobs:
       - name: Run Playwright E2E tests
         run: |
           if [ -n "${{ inputs.test_filter }}" ]; then
-            npx playwright test --grep "${{ inputs.test_filter }}"
+            npx playwright test --shard=${{ matrix.shard }}/3 --grep "${{ inputs.test_filter }}"
           else
-            npx playwright test
+            npx playwright test --shard=${{ matrix.shard }}/3
           fi
         working-directory: testing/e2e
         env:
           CI: true
           E2E_CLEANUP: ${{ env.E2E_CLEANUP }}
 
-      # ── Upload Playwright results ──
-      - name: Upload Playwright report
+      # ── Upload blob report for merge-reports (#1258) ──
+      - name: Upload Playwright blob report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-blob-shard-${{ matrix.shard }}
+          path: testing/e2e/blob-report/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      # ── Per-shard HTML / junit for triage ──
+      - name: Upload Playwright shard report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-report-shard-${{ matrix.shard }}
+          path: |
+            testing/e2e/playwright-report/
+            testing/e2e/test-results/
+          retention-days: 30
+
+      - name: Upload traces
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-traces-shard-${{ matrix.shard }}
+          path: testing/e2e/test-results/traces/
+          retention-days: 7
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v3
+        if: always()
+        continue-on-error: true
+        with:
+          name: UI E2E Test Results (${{ matrix.shard }}/3)
+          path: testing/e2e/test-results/results.xml
+          reporter: java-junit
+          fail-on-error: false
+
+  # ──────────────────────────────────────────────
+  # JOB 4b: Merge shard reports — keep heavy-CI check name (#1258)
+  # Exact check-run name must remain "UI E2E Tests (Playwright)" for
+  # workspace/sdlc/check-heavy-ci.sh.
+  # ──────────────────────────────────────────────
+  e2e-merge-reports:
+    name: UI E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+    needs: [e2e-tests]
+    if: ${{ always() && !cancelled() && needs.e2e-tests.result != 'skipped' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: testing/e2e/package-lock.json
+
+      - name: Install E2E suite dependencies
+        run: npm ci
+        working-directory: testing/e2e
+
+      - name: Download shard blob reports
+        uses: actions/download-artifact@v8
+        with:
+          pattern: playwright-blob-shard-*
+          path: testing/e2e/all-blob-reports
+          merge-multiple: true
+
+      - name: Fail if any shard failed
+        if: needs.e2e-tests.result != 'success'
+        run: |
+          echo "e2e-tests result=${{ needs.e2e-tests.result }} — fail-closed merge (#1258)" >&2
+          exit 1
+
+      - name: Merge blob reports
+        run: npx playwright merge-reports --reporter html,json,junit ./all-blob-reports
+        working-directory: testing/e2e
+        env:
+          PLAYWRIGHT_HTML_REPORT: playwright-report
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results/results.json
+          PLAYWRIGHT_JUNIT_OUTPUT_NAME: test-results/results.xml
+
+      - name: Upload merged Playwright report
         uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -359,26 +520,7 @@ jobs:
             testing/e2e/playwright-report/
             testing/e2e/test-results/
           retention-days: 30
-
-      # ── Upload trace on failure ──
-      - name: Upload traces
-        uses: actions/upload-artifact@v7
-        if: failure()
-        with:
-          name: playwright-traces
-          path: testing/e2e/test-results/traces/
-          retention-days: 7
-
-      # ── Publish test results as a check ──
-      - name: Publish test results
-        uses: dorny/test-reporter@v3
-        if: always()
-        continue-on-error: true
-        with:
-          name: UI E2E Test Results
-          path: testing/e2e/test-results/results.xml
-          reporter: java-junit
-          fail-on-error: false
+          if-no-files-found: ignore
 
   # ──────────────────────────────────────────────
   # JOB 5: Generate and publish coverage report
@@ -386,7 +528,7 @@ jobs:
   coverage-report:
     name: Business Coverage Report
     runs-on: ubuntu-latest
-    needs: [api-tests, e2e-tests]
+    needs: [api-tests, e2e-merge-reports]
     # Artifact + job summary only — never on a pull_request run (issue #1041).
     if: always() && github.event_name != 'pull_request'
     timeout-minutes: 10
@@ -445,7 +587,7 @@ jobs:
     name: Playwright E2E
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [api-tests, e2e-tests]
+    needs: [changes, api-tests, e2e-merge-reports]
     if: ${{ always() && !cancelled() }}
     steps:
       - name: Require Playwright / Bruno suite jobs success
@@ -454,13 +596,14 @@ jobs:
           failed=0
           for pair in \
             "api-tests=${{ needs.api-tests.result }}" \
-            "e2e-tests=${{ needs.e2e-tests.result }}"
+            "e2e-merge-reports=${{ needs.e2e-merge-reports.result }}"
           do
             name="${pair%%=*}"
             result="${pair#*=}"
             echo "${name}=${result}"
-            if [ "${result}" != "success" ]; then
-              failed=1
-            fi
+            case "${result}" in
+              success|skipped) ;;
+              *) failed=1 ;;
+            esac
           done
           exit "${failed}"

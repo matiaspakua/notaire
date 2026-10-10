@@ -11,10 +11,11 @@
  */
 
 import { motion, AnimatePresence, type Variants, type Transition } from "motion/react";
-import type { ReactNode } from "react";
+import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
+import { motion as tokens } from "@/theme/motion";
 
-// Apple's standard easing curve (matches theme.transitions.timing.ease).
-export const easeApple = [0.4, 0, 0.2, 1] as const;
+/** Standard easing from the motion tokens (#1368); kept under its old name for callers. */
+export const easeApple = tokens.ease.standard;
 
 export const springSoft: Transition = { type: "spring", stiffness: 260, damping: 26, mass: 0.9 };
 
@@ -22,24 +23,33 @@ export const springSoft: Transition = { type: "spring", stiffness: 260, damping:
 // Variants
 // ---------------------------------------------------------------------------
 
+/** Delay of the i-th staggered item: 30ms steps, capped at 6 items (#1368). */
+export function staggerDelay(index: number): number {
+  return Math.min(Math.max(index, 0), tokens.stagger.maxItems - 1) * tokens.stagger.step;
+}
+
+/** Route content: a 160ms fade-up with no exit, so navigation never waits (#1368). */
 export const pageVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: tokens.distance.sm },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: easeApple, when: "beforeChildren", staggerChildren: 0.045 },
+    transition: { duration: tokens.duration.page, ease: tokens.ease.standard },
   },
-  exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: easeApple } },
 };
 
 export const staggerContainer: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.05, delayChildren: 0.04 } },
+  visible: {},
 };
 
 export const fadeUpItem: Variants = {
-  hidden: { opacity: 0, y: 14 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: easeApple } },
+  hidden: { opacity: 0, y: tokens.distance.sm },
+  visible: (index: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: tokens.duration.base, ease: tokens.ease.standard, delay: staggerDelay(index) },
+  }),
 };
 
 // ---------------------------------------------------------------------------
@@ -54,7 +64,7 @@ interface MotionBoxProps {
 /** Page-level entrance transition. Key it by pathname to re-run on navigation. */
 export function PageTransition({ children, className }: MotionBoxProps) {
   return (
-    <motion.div className={className} initial="hidden" animate="visible" exit="exit" variants={pageVariants}>
+    <motion.div className={className} initial="hidden" animate="visible" variants={pageVariants}>
       {children}
     </motion.div>
   );
@@ -64,15 +74,24 @@ export function PageTransition({ children, className }: MotionBoxProps) {
 export function Stagger({ children, className }: MotionBoxProps) {
   return (
     <motion.div className={className} initial="hidden" animate="visible" variants={staggerContainer}>
-      {children}
+      {Children.map(children, (child, index) =>
+        isValidElement(child) && child.type === StaggerItem
+          ? cloneElement(child as ReactElement<StaggerItemProps>, { index })
+          : child,
+      )}
     </motion.div>
   );
 }
 
+interface StaggerItemProps extends MotionBoxProps {
+  /** Position in the parent <Stagger>; set by Stagger itself. */
+  index?: number;
+}
+
 /** Single item inside a <Stagger>. Fades and slides up in sequence. */
-export function StaggerItem({ children, className }: MotionBoxProps) {
+export function StaggerItem({ children, className, index = 0 }: StaggerItemProps) {
   return (
-    <motion.div className={className} variants={fadeUpItem}>
+    <motion.div className={className} variants={fadeUpItem} custom={index}>
       {children}
     </motion.div>
   );
@@ -83,9 +102,9 @@ export function FadeIn({ children, className, delay = 0 }: MotionBoxProps & { de
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: tokens.distance.sm }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: easeApple, delay }}
+      transition={{ duration: tokens.duration.base, ease: tokens.ease.standard, delay }}
     >
       {children}
     </motion.div>
@@ -98,7 +117,7 @@ export function HoverLift({ children, className, lift = 6 }: MotionBoxProps & { 
     <motion.div
       className={className}
       whileHover={{ y: -lift, transition: { ...springSoft } }}
-      whileTap={{ scale: 0.98 }}
+      whileTap={{ scale: tokens.press.scale }}
     >
       {children}
     </motion.div>

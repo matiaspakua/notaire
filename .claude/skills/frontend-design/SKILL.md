@@ -1,7 +1,7 @@
 ---
 title: Frontend Design System Implementation
 description: Skill for implementing Apple-inspired design system in frontend forms
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Frontend Design System Implementation Skill

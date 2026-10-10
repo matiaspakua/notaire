@@ -1,7 +1,7 @@
 ---
 title: UI/UX Design Best Practices
 description: Mandatory UI/UX rules for Notaire frontend development
-alwaysApply: true
+alwaysApply: false
 ---
 
 # UI/UX Design Best Practices

@@ -1,7 +1,7 @@
 ---
 title: Refactoring Rules — Current Architecture
 description: Rules for refactoring within the current Notaire stack (Spring Boot 4.1 + Next.js)
-alwaysApply: true
+alwaysApply: false
 ---
 
 ## Architecture Overview

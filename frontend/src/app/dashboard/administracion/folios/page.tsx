@@ -422,7 +422,7 @@ export default function FoliosAdminPage() {
                     <SelectItem value="none">{t("fields.escrituraPlaceholder")}</SelectItem>
                     {escriturasVinculables.map((e) => (
                       <SelectItem key={e.idDeed} value={String(e.idDeed)}>
-                        Escritura Nº {e.number}
+                        {t("escrituraOption", { number: e.number ?? "—" })}
                       </SelectItem>
                     ))}
                   </SelectContent>

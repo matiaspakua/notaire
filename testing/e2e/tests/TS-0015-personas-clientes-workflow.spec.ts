@@ -333,6 +333,25 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
       await expect(dialog).toBeVisible()
     },
   )
+
+  test(
+    'A11y-#1351: un campo con error queda inválido y descrito por su mensaje',
+    async ({ page }) => {
+      await page.getByTestId('btn-nueva-persona').click()
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible()
+      await submitForm(page)
+
+      const nombre = page.getByTestId('input-firstName')
+      await expect(nombre).toHaveAttribute('aria-invalid', 'true')
+      await expect(nombre).toHaveAttribute('aria-required', 'true')
+      // The message comes from the backend's field error (English Bean Validation text today).
+      await expect(nombre).toHaveAccessibleDescription(/requerido|obligatorio|must not be blank/i)
+      const alert = dialog.getByRole('alert').first()
+      await expect(alert).toBeVisible()
+      expect(await alert.textContent()).not.toMatch(/\p{Extended_Pictographic}/u)
+    },
+  )
 })
 
 // ---------------------------------------------------------------------------
@@ -512,4 +531,28 @@ test.describe('Personas screen - responsive viewports', () => {
       },
     )
   }
+})
+
+// ---------------------------------------------------------------------------
+// #1357 - Search-as-you-type is debounced and keeps the table stable
+// ---------------------------------------------------------------------------
+
+test.describe('#1357 - Debounced personas search', () => {
+  test('typing a surname quickly sends one /people/search request and finds the person', async ({ page }) => {
+    await loginAndGoToPersonas(page)
+    const created = await createPersona(page)
+    const lastName = created.data!.lastName!
+    const searches: string[] = []
+    page.on('request', (r) => {
+      if (r.url().includes('/people/search')) searches.push(r.url())
+    })
+
+    await page.getByTestId('input-search-lastName').pressSequentially(lastName, { delay: 40 })
+    await expect(page.getByRole('cell', { name: lastName }).first()).toBeVisible({ timeout: 10_000 })
+    await page.waitForTimeout(500)
+    await page.screenshot({ path: 'test-results/ui-shots/1357-personas-search/search-desktop.png' })
+
+    expect(searches).toHaveLength(1)
+    expect(decodeURIComponent(searches[0])).toContain(`lastName=${lastName}`)
+  })
 })

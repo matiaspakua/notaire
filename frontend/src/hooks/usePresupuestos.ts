@@ -1,7 +1,8 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetPage, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { itemsKeys } from "@/hooks/useItems";
-import type { Item, Presupuesto, PresupuestoResumen } from "@/types";
+import type { Presupuesto, PresupuestoResumen } from "@/types/api";
+import type { Item } from "@/types";
 
 export const presupuestosKeys = {
   all: ["presupuestos"] as const,

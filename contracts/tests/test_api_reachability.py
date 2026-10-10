@@ -5,11 +5,12 @@ OpenAPI contract is called from the frontend, or is listed in contracts/api-reac
 with a reason. A new endpoint without a UI consumer fails here, and so does an allowlist entry that is
 stale (the endpoint was removed or the UI now calls it).
 
-The scan is static and heuristic. It reads string and template literals in frontend/src (tests and
-comments excluded), turns `${...}` into a wildcard segment and drops query strings. A literal passed
-straight to apiGet/apiGetPaged/apiGetBytes/apiPost/apiPut/apiDelete counts only for that HTTP method;
-any other literal (for example a path kept in a variable) counts for every method. A wildcard binds to
-the endpoints whose path parameter sits in the same place; only when none exists does it also cover
+The scan is static and heuristic. It reads string and template literals in frontend/src (tests,
+comments, and `*.generated.ts` excluded — generated OpenAPI path maps are not UI consumers), turns
+`${...}` into a wildcard segment and drops query strings. A literal passed straight to
+apiGet/apiGetPaged/apiGetBytes/apiPost/apiPut/apiDelete counts only for that HTTP method; any other
+literal (for example a path kept in a variable) counts for every method. A wildcard binds to the
+endpoints whose path parameter sits in the same place; only when none exists does it also cover
 fixed segments (`/movimiento-testimonio/${id}/${action}`).
 
 Run with: python3 contracts/tests/test_api_reachability.py
@@ -39,6 +40,7 @@ BLOCK_COMMENT = re.compile(r"/\*.*?\*/", re.S)
 LINE_COMMENT = re.compile(r"(?m)^\s*//.*$")
 PATH_LIKE = re.compile(r"^/[a-z][a-z0-9-]*(/|$)")
 TEST_FILE = re.compile(r"(^|/)(tests|__tests__)/|\.test\.tsx?$")
+GENERATED_FILE = re.compile(r"\.generated\.tsx?$")
 
 
 def segments(path):
@@ -102,10 +104,13 @@ def reachable(endpoints, calls):
 
 
 def read_frontend_sources():
+    """Hand-written frontend sources only — skip tests and OpenAPI-generated path maps."""
     return {
         str(p.relative_to(FRONTEND_SRC)): p.read_text(encoding="utf-8")
         for p in FRONTEND_SRC.rglob("*")
-        if p.suffix in (".ts", ".tsx") and p.is_file()
+        if p.suffix in (".ts", ".tsx")
+        and p.is_file()
+        and not GENERATED_FILE.search(str(p.relative_to(FRONTEND_SRC)))
     }
 
 
@@ -165,6 +170,11 @@ class ScannerTest(unittest.TestCase):
     def test_comments_and_test_files_are_not_consumers(self):
         self.assertEqual(self.covered("// apiGet('/pagos')\n/* apiGet('/pagos/fecha') */"), set())
         self.assertEqual(self.covered("apiGet('/pagos')", name="tests/unit/pagos.test.tsx"), set())
+
+    def test_generated_openapi_maps_are_not_consumers(self):
+        """openapi-typescript path maps embed every `/api/v1/...` key; they are not UI calls (#1260)."""
+        self.assertTrue(GENERATED_FILE.search("types/api.generated.ts"))
+        self.assertFalse(any(GENERATED_FILE.search(n) for n in read_frontend_sources()))
 
     def test_literal_must_start_with_a_fixed_segment(self):
         self.assertEqual(self.covered("const href = `/${slug}`;"), set())

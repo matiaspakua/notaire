@@ -38,7 +38,11 @@ npm run lint        # ESLint (flat config, zero-warning gate)
 npm run typecheck   # TypeScript type-check (tsc --noEmit)
 npm run test        # Vitest unit tests
 npm run test:watch  # Watch mode
+npm run openapi:types        # Regenerate src/types/api.generated.ts from OpenAPI (#1260)
+npm run openapi:types:check  # Fail if committed generated types are stale (CI)
 ```
+
+API types: see [`docs/200-architecture/203-design/FRONTEND-OPENAPI-TYPES.md`](../docs/200-architecture/203-design/FRONTEND-OPENAPI-TYPES.md).
 
 Playwright E2E is not part of this module: see [`testing/e2e`](../testing/e2e) (`cd testing/e2e && npm test`).
 

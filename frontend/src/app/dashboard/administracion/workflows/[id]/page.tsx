@@ -241,23 +241,23 @@ export default function WorkflowEditorPage() {
       />
 
       {validationErrors.length > 0 && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200" data-testid="validation-errors">
-          <p className="text-sm font-semibold text-red-700 mb-1">{t("consistencyErrors")}</p>
-          <ul className="list-disc list-inside text-sm text-red-600">
+        <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/30" data-testid="validation-errors">
+          <p className="text-sm font-semibold text-destructive mb-1">{t("consistencyErrors")}</p>
+          <ul className="list-disc list-inside text-sm text-destructive">
             {validationErrors.map((e, i) => <li key={i}>{e}</li>)}
           </ul>
         </div>
       )}
 
-      <div className="mb-3 flex gap-3 text-xs text-neutral-500">
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-green-200 border border-green-600 inline-block" />{t("types.INITIAL")}</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-blue-200 border border-blue-600 inline-block" />{t("types.INTERMEDIATE")}</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-200 border border-red-600 inline-block" />{t("types.FINAL")}</span>
+      <div className="mb-3 flex gap-3 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-success/20 border border-success inline-block" />{t("types.INITIAL")}</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-info/20 border border-info inline-block" />{t("types.INTERMEDIATE")}</span>
+        <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-destructive/20 border border-destructive inline-block" />{t("types.FINAL")}</span>
       </div>
 
       <div
         style={{ height: theme.sizes.workflowEditor.height }}
-        className="rounded-xl border border-neutral-200 overflow-hidden"
+        className="rounded-xl border border-border overflow-hidden"
         data-testid="workflow-editor"
       >
         <ReactFlow
@@ -291,7 +291,7 @@ export default function WorkflowEditorPage() {
             <FormSection dialogTitle title={t("addNodeTitle")}>
               <FormField label={t("fields.estado")} required>
                 <select
-                  className="w-full border border-neutral-300 rounded-lg px-3 py-2 text-sm bg-white"
+                  className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
                   value={newNodeEstadoId}
                   onChange={(e) => setNewNodeEstadoId(e.target.value ? Number(e.target.value) : "")}
                   data-testid="select-estado-nodo"
@@ -304,7 +304,7 @@ export default function WorkflowEditorPage() {
               </FormField>
               <FormField label={t("fields.tipo")} required>
                 <select
-                  className="w-full border border-neutral-300 rounded-lg px-3 py-2 text-sm bg-white"
+                  className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
                   value={newNodeTipo}
                   onChange={(e) => setNewNodeTipo(e.target.value as WorkflowNodeType)}
                   data-testid="select-tipo-nodo"

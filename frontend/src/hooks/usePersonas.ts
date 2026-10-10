@@ -1,12 +1,57 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { Persona } from "@/types";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 export const personasKeys = {
   all: ["personas"] as const,
   detail: (id: number) => ["personas", id] as const,
   page: (params: PersonasPageParams) => ["personas", "page", params] as const,
+  search: (params: PersonasSearchParams) => ["personas", "search", { ...params }] as const,
 };
+
+/** Criteria of the personas search (#1357); primitives only, so they are a stable query key. */
+export interface PersonasSearchParams {
+  firstName: string;
+  lastName: string;
+  identificationNumber: string;
+  onlyClients: boolean;
+}
+
+/** Wait after the last keystroke before searching (#1357). */
+export const PERSONAS_SEARCH_DEBOUNCE_MS = 300;
+
+/**
+ * GET /people/search for the personas list (#1357). The criteria are debounced,
+ * so typing a surname sends one request; the previous results stay on screen
+ * while the next ones load, and a stale response never replaces a newer one
+ * (each criteria set has its own cache entry).
+ */
+export function useSearchPersonas(params: PersonasSearchParams) {
+  const debounced = useDebouncedValue(params, PERSONAS_SEARCH_DEBOUNCE_MS);
+  const settled: PersonasSearchParams = {
+    firstName: debounced.firstName.trim(),
+    lastName: debounced.lastName.trim(),
+    identificationNumber: debounced.identificationNumber.trim(),
+    onlyClients: debounced.onlyClients,
+  };
+  const active = !!(settled.firstName || settled.lastName || settled.identificationNumber || settled.onlyClients);
+  const query = useQuery({
+    queryKey: personasKeys.search(settled),
+    enabled: active,
+    queryFn: () => {
+      // Backend route is /people/search (PersonController#searchPeople).
+      const qs = new URLSearchParams();
+      if (settled.firstName) qs.set("firstName", settled.firstName);
+      if (settled.lastName) qs.set("lastName", settled.lastName);
+      if (settled.identificationNumber) qs.set("identificationNumber", settled.identificationNumber);
+      if (settled.onlyClients) qs.set("isClient", "true");
+      return apiGet<Persona[]>(`/people/search?${qs.toString()}`);
+    },
+    placeholderData: keepPreviousData,
+  });
+  return { active, results: query.data ?? [], isLoading: query.isLoading, isFetching: query.isFetching };
+}
 
 export interface PersonasPageParams {
   page: number;

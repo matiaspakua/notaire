@@ -2,8 +2,14 @@
 
 **Status:** Proposed — awaiting Owner decision
 **Date:** 2026-10-05
-**Deciders:** Owner (issue #1197 / CU76)
-**Related:** ADR-021, ADR-022, #1179 (infra standalone), #1190 (testing standalone), #1242 (assessment)
+**Deciders:** Owner (live tracker **#1445** / CU76; prior umbrellas #1197/#1443 were closed by keyword parsing)
+**Related:** ADR-021, ADR-022, #1179 (infra standalone), #1190 (testing standalone), #1242 (assessment), #1438 (P0.6)
+
+> **Tracker note (2026-10-10):** Prior umbrellas #1197 and #1443 were closed by GitHub
+> keyword parsing in packaging PR bodies (not by Owner decision). Agents cannot reopen (403).
+> Remaining Owner work (ADR-024 A+B vs C, plus #1438 / #1226) is tracked on **#1445**.
+> Keep #1445 open until decisions are recorded here.
+
 
 ## Context
 
@@ -19,13 +25,13 @@ proposal against `main` @ `610fa7b0` and records a topology that reaches those g
 |----------|-----------------------|
 | Who maintains it? | One human maintainer plus AI agents and bots (all-time commits: Owner 886, CI Bot 472, dependabot 77) |
 | History size | 1,723 commits; `.git` 167 MB, `size-pack` 130 MiB; tracked `deprecated/` is 13.4 MB in 764 files; `docs/` is 15.6 MB |
-| Where does CI time go? (PR #1254, 12 min to last required check) | Playwright E2E 11 min 05 s (starts PostgreSQL, the backend jar and the frontend, then runs the suite); Integration 3 min 14 s; Coverage gate 3 min 10 s; Docker build 3 min 17 s; Bruno 1 min 49 s; Unit tests **56 s** |
+| Where does CI time go? (PR #1254 baseline; P0.3 update) | Baseline: Playwright E2E ~11 min single job. **P0.3 / #1258 / #1425:** 3-shard matrix + fail-closed merge (`UI E2E Tests (Playwright)`). Integration ~3 min; Coverage ~3 min; Docker ~3 min; Bruno ~2 min; Unit ~1 min |
 | Is Testcontainers the backend bottleneck? | No. Testcontainers appears in 2 test files; 66 integration test classes run on H2; 8 use PostgreSQL |
-| Do workflows skip irrelevant work? | No. 2 of 17 workflows have `paths:` filters. Of 125 PRs merged since 2026-09-01, **51 (41%) touch no backend, frontend or testing code** yet run the full Java and Playwright pipeline |
+| Do workflows skip irrelevant work? | **Improved (P0.2 / #1257 / #1422):** `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, and `openapi-contract.yml` path-filter on PRs; suite aggregators accept intentional `skipped`. Historical note: before P0.2, 2/17 workflows had `paths:` and ~41% of PRs (2026-09) ran full Java/E2E without product code |
 | How often does one change cross the proposed boundaries? (370 PR merges since 2026-04-25) | backend and frontend in the same PR: 18%; code and docs: 32% (40% since September); code and an OpenSpec change: 17% (44% since September) |
-| What does the agent always load? | `CLAUDE.md` plus eight rule files: about 16,000 tokens. The "150k tokens" figure is not supported; agents read files on demand |
+| What does the agent always load? | **Improved (P0.4 / #1259 / #1424):** always-loaded context ≈ **2k tokens** (`workspace/ci/agent-context-budget.py`); `CONSTITUTION-AGENT-CARD.md` + slim `AGENTS.md`; large rules/skills on demand. The "150k tokens" figure remains unsupported |
 | How coupled are the guards? | 11 scripts under `scripts/` read three or more top-level areas (docs, backend, frontend, testing, openspec, infra, local-ai); the ERD and data dictionary generators read Flyway migrations, the CU-API matrix validator reads the matrix in `docs/` and the backend controllers |
-| Contract between backend and frontend | `backend-api/openapi/openapi.yaml` is committed and diffed in CI; the frontend uses hand-written types (`frontend/src/types/index.ts`), no generated client |
+| Contract between backend and frontend | **Improved (P0.5 / #1260 / #1423):** OpenAPI committed + oasdiff in CI; frontend generates `frontend/src/types/api.generated.ts` (`openapi-typescript`) with Frontend CI drift check; gestiones/presupuestos/documentos/dashboard use generated aliases |
 | Prior Owner decisions | #1190 (2026-10-03): Bruno API tests and `pg-integration` stay with the backend module; k6 stays in `infra/`; the E2E suite moves to `testing/` and the real repository split is a later, separate phase |
 | Repository facts | Public repository owned by a user account (no organisation `notaire-org`), no `LICENSE` file (#1226) |
 
@@ -43,6 +49,7 @@ proposal against `main` @ `610fa7b0` and records a topology that reaches those g
 1. **Do phase 0 inside the monorepo**: baseline metrics, path-scoped CI, trimmed agent context,
    generated frontend types from the committed OpenAPI contract, size reduction. These deliver most of
    the stated benefits at no coordination cost.
+   **Status 2026-10-10:** P0.1–P0.5 done on `main`; P0.6 packaged in ADR-022 (Owner choice still required).
 2. **Keep the core together** in `notaire`: `backend-api`, `frontend` (`notaire-shared` was retired, ADR-025), business and
    architecture `docs/`, `docs/openspec/`, `CONSTITUTION.md`, the SDLC guards in `scripts/`, Bruno API
    tests, Flyway migrations and the schema guard test. They change together and are released together.

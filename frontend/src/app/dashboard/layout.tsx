@@ -3,11 +3,16 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
-import { AppSidebar } from "@/components/layout/AppSidebar";
+import { useTranslations } from "next-intl";
+import { AppSidebar, MOBILE_SIDEBAR_ID } from "@/components/layout/AppSidebar";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
+import { SkipLink } from "@/components/layout/SkipLink";
+import { ROUTE_PATH_ATTR, useRouteFocus } from "@/hooks/useRouteFocus";
 import { useAuthStore } from "@/store/auth-store";
 import { AnimatePresence, PageTransition } from "@/components/motion";
 import { theme } from "@/theme/tokens";
+
+const MAIN_CONTENT_ID = "main-content";
 
 export default function DashboardLayout({
   children,
@@ -18,6 +23,9 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const tn = useTranslations("navigation");
+  // #1352: after client-side navigation, focus the new page's <h1>.
+  useRouteFocus(pathname, MAIN_CONTENT_ID);
   // Delay auth check until after client hydration so Zustand can read localStorage.
   // Without this, the layout redirects before persist has loaded the stored auth state.
   const [mounted, setMounted] = useState(false);
@@ -34,6 +42,14 @@ export default function DashboardLayout({
     }
   }, [mounted, isAuthenticated, router]);
 
+  // The sheet is mobile-only: close it if the viewport grows to the desktop layout.
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const onChange = (e: MediaQueryListEvent) => { if (e.matches) setSidebarOpen(false); };
+    desktop.addEventListener("change", onChange);
+    return () => desktop.removeEventListener("change", onChange);
+  }, []);
+
   if (!mounted || !isAuthenticated) return null;
 
   return (
@@ -41,6 +57,7 @@ export default function DashboardLayout({
       className="flex min-h-screen"
       style={{ backgroundColor: theme.colors.neutral[100] }}
     >
+      <SkipLink targetId={MAIN_CONTENT_ID} />
       <AppSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex-1 flex flex-col min-w-0">
         {/* Each page renders its own AppHeader with a title; a title-less one
@@ -49,16 +66,30 @@ export default function DashboardLayout({
           <button
             data-testid="btn-sidebar-toggle"
             onClick={() => setSidebarOpen(true)}
-            aria-label="Open menu"
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-[10px] border border-border/60 text-foreground hover:bg-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+            aria-label={tn("openMenu")}
+            aria-expanded={sidebarOpen}
+            aria-controls={MOBILE_SIDEBAR_ID}
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-[10px] border border-border/60 text-foreground hover:bg-accent transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
           <Breadcrumb />
         </div>
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
-          <AnimatePresence mode="wait" initial={false}>
-            <PageTransition key={pathname}>{children}</PageTransition>
+        <main
+          id={MAIN_CONTENT_ID}
+          tabIndex={-1}
+          className="flex-1 overflow-y-auto p-6 lg:p-8 focus:outline-none"
+        >
+          {/* initial={false}: the first render is not animated (nor are its
+              children, e.g. the workflow tracker's pulse). Pages have no exit
+              variant and the default "sync" mode is used, so the old page
+              unmounts at once and the new one fades in without waiting (#1368).
+              The data-route-path wrapper lets useRouteFocus focus only the
+              incoming page's <h1> (#1352). */}
+          <AnimatePresence initial={false}>
+            <PageTransition key={pathname}>
+              <div {...{ [ROUTE_PATH_ATTR]: pathname }}>{children}</div>
+            </PageTransition>
           </AnimatePresence>
         </main>
       </div>

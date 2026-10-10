@@ -2,9 +2,11 @@
 
 > **arc42 Template v8.2** — based on [docs.arc42.org](https://docs.arc42.org/home/)
 >
-> **Version:** 3.1 | **Date:** 2026-09-01 | **Author:** Architecture Team
+> **Version:** 3.2 | **Date:** 2026-10-10 | **Author:** Architecture Team
 >
-> **Changelog v3.1**: §11.3 Evolution Roadmap fully aligned with GitHub Project [Notaire Dashboard #4](https://github.com/users/matiaspakua/projects/4) — milestones #6–#11, tracking issues #898–#902, tech-debt and risk issue references added.
+> **Changelog v3.2**: Delivery tracking points at [Notaire — Delivery Board #1](https://github.com/users/matiaspakua/projects/1) (Project #4 is gone). In-repo module ownership: [MODULE-OWNERSHIP.md](../../300-development/MODULE-OWNERSHIP.md) / ADR-026. Active diagrams: Mermaid only (ADR-027). Technical docs also render on GitHub Pages `/docs/`.
+>
+> **Changelog v3.1**: §11.3 Evolution Roadmap aligned with GitHub Project milestones #6–#11, tracking issues #898–#902, tech-debt and risk issue references (board link corrected in v3.2).
 
 ---
 
@@ -1199,7 +1201,12 @@ O --> (Deployability Docker)
 
 ### Diagram Sources
 
-All PlantUML diagram sources are in `docs/200-architecture/204-diagrams/`:
+**Active diagrams use Mermaid** ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)). Module ownership
+Mermaid lives in [`MODULE-OWNERSHIP.md`](../../300-development/MODULE-OWNERSHIP.md) and on GitHub Pages
+`/docs/`. Policy: [`204-diagrams/README.md`](../204-diagrams/README.md).
+
+Legacy PlantUML sources remain in `docs/200-architecture/204-diagrams/` until migrated (do not add new
+`.puml` for active docs):
 
 - `architecture-legacy.puml` — Legacy monolithic architecture
 - `architecture-target.puml` — Target three-tier architecture

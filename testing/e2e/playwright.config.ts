@@ -12,12 +12,22 @@ export default defineConfig({
   workers: process.env.CI ? 2 : 2,
   // Default hang budget; demo/tutorial specs override with test.describe.configure({ timeout }).
   timeout: 90000,
-  reporter: [
-    ["html", { outputFolder: "playwright-report", open: "never" }],
-    ["json", { outputFile: "test-results/results.json" }],
-    ["junit", { outputFile: "test-results/results.xml" }],
-    ["./tests/reporters/coverage-report.ts", { outputFile: "test-results/coverage-report.html" }],
-  ],
+  // CI adds blob reporter so shard jobs can merge reports (#1258). Do not pass
+  // --reporter on the CLI (#658) — that would drop json/junit/coverage paths.
+  reporter: process.env.CI
+    ? [
+        ["blob", { outputDir: "blob-report" }],
+        ["html", { outputFolder: "playwright-report", open: "never" }],
+        ["json", { outputFile: "test-results/results.json" }],
+        ["junit", { outputFile: "test-results/results.xml" }],
+        ["./tests/reporters/coverage-report.ts", { outputFile: "test-results/coverage-report.html" }],
+      ]
+    : [
+        ["html", { outputFolder: "playwright-report", open: "never" }],
+        ["json", { outputFile: "test-results/results.json" }],
+        ["junit", { outputFile: "test-results/results.xml" }],
+        ["./tests/reporters/coverage-report.ts", { outputFile: "test-results/coverage-report.html" }],
+      ],
   globalSetup: "./tests/setup/global-setup",
   globalTeardown: "./tests/setup/global-teardown",
   use: {

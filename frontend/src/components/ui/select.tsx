@@ -4,17 +4,20 @@ import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useFormFieldAria } from "@/theme/form-field-context";
 
 const Select = SelectPrimitive.Root;
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, ...rest }, ref) => {
+  const props = useFormFieldAria(rest);
+  return (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-12 w-full items-center justify-between rounded-[12px] border border-[hsl(var(--border))] bg-white px-4 py-2.5 text-base shadow-sm transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring apple-focus disabled:cursor-not-allowed disabled:opacity-50",
+      "flex h-12 w-full items-center justify-between rounded-[12px] border border-[hsl(var(--border))] bg-white px-4 py-2.5 text-base shadow-sm transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring apple-focus disabled:cursor-not-allowed disabled:opacity-50",
       className
     )}
     {...props}
@@ -24,7 +27,8 @@ const SelectTrigger = React.forwardRef<
       <ChevronDown className="h-4 w-4 opacity-50" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
-));
+  );
+});
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectValue = SelectPrimitive.Value;
@@ -89,7 +93,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-pointer select-none items-center rounded-[8px] px-3 py-2 pr-8 text-sm outline-none transition-colors duration-150 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-pointer select-none items-center rounded-[8px] px-3 py-2 pr-8 text-sm outline-none transition-colors duration-fast focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}

@@ -69,7 +69,7 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
-      <div className="w-full max-w-[400px] space-y-8 animate-in fade-in duration-700">
+      <div className="w-full max-w-[400px] space-y-8 animate-in fade-in-0 duration-slow ease-standard">
         <div className="text-center space-y-4">
           <div className="flex justify-center">
             <motion.div
@@ -92,7 +92,7 @@ function LoginForm() {
           <p
             data-testid="session-expired-message"
             role="status"
-            className="rounded-[12px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 text-center font-medium"
+            className="rounded-[12px] border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning text-center font-medium"
           >
             {t("sessionExpired")}
           </p>

@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* shadcn enter/exit utilities (animate-in, fade-in-0, zoom-in-95, ...) used by dialogs (#1349). */
+@import "tw-animate-css";
 
 /* Tailwind v4 generates colour utilities (bg-primary, text-muted-foreground,
    border-border/40...) only for colours registered here (#1337). `inline`
@@ -22,9 +24,47 @@
   --color-accent-foreground: hsl(var(--accent-foreground));
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+}
+
+/* Motion tokens (#1368): the CSS source of timing, mirrored by theme/motion.ts
+   for motion/react. Use `duration-fast|base|slow|exit|page` and
+   `ease-standard|emphasized|exit`; numeric durations and transitions of every
+   property are rejected by tests/unit/motion-tokens.test.ts. */
+@theme inline {
+  --ease-standard: var(--motion-ease-standard);
+  --ease-emphasized: var(--motion-ease-emphasized);
+  --ease-exit: var(--motion-ease-exit);
+}
+
+/* --tw-duration also drives tw-animate-css enter/exit animations. */
+@utility duration-fast {
+  --tw-duration: var(--motion-duration-fast);
+  transition-duration: var(--motion-duration-fast);
+}
+@utility duration-base {
+  --tw-duration: var(--motion-duration-base);
+  transition-duration: var(--motion-duration-base);
+}
+@utility duration-slow {
+  --tw-duration: var(--motion-duration-slow);
+  transition-duration: var(--motion-duration-slow);
+}
+@utility duration-exit {
+  --tw-duration: var(--motion-duration-exit);
+  transition-duration: var(--motion-duration-exit);
+}
+@utility duration-page {
+  --tw-duration: var(--motion-duration-page);
+  transition-duration: var(--motion-duration-page);
 }
 
 @layer base {
@@ -61,6 +101,15 @@
     --destructive: 0 74% 45%;
     --destructive-foreground: 0 0% 100%;
 
+    /* Status colours (#1365), mirrored by tokens.ts success/warning/info[700].
+       Text-safe: >= 4.5:1 on white and on their own /10 tint, and under white text. */
+    --success: 134.3 61.8% 26.7%;
+    --success-foreground: 0 0% 100%;
+    --warning: 31.2 100% 30.2%;
+    --warning-foreground: 0 0% 100%;
+    --info: 210 100% 38.4%;
+    --info-foreground: 0 0% 100%;
+
     --border: 0 0% 90%;
     --input: 0 0% 90%;
     --ring: 210.1 100% 44.5%;
@@ -75,35 +124,20 @@
     --sidebar-hover: 0 0% 92%;
     --sidebar-active: 210.1 100% 44.5%;
     --sidebar-active-foreground: 0 0% 100%;
+
+    /* Motion tokens (#1368), see the @utility block above. */
+    --motion-duration-instant: 0ms;
+    --motion-duration-fast: 120ms;
+    --motion-duration-base: 180ms;
+    --motion-duration-slow: 240ms;
+    --motion-duration-exit: 180ms;
+    --motion-duration-page: 160ms;
+    --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --motion-ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+    --motion-ease-exit: cubic-bezier(0.3, 0, 1, 1);
+    --motion-distance-sm: 4px;
   }
 
-  .dark {
-    --background: 0 0% 5%;
-    --foreground: 0 0% 95%;
-
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 95%;
-
-    --primary: 211 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    --primary-text: 211 100% 65%;
-
-    --secondary: 0 0% 14%;
-    --secondary-foreground: 0 0% 95%;
-
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 60%;
-
-    --accent: 0 0% 14%;
-    --accent-foreground: 0 0% 95%;
-
-    --destructive: 0 84% 55%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 211 100% 50%;
-  }
 }
 
 @layer base {
@@ -181,12 +215,11 @@
   }
 
   /* Apple-style button hover */
+  /* Hover changes colour/shadow only; press feedback is scale(0.98) (#1368). */
   .apple-button {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .apple-button:hover {
-    transform: scale(1.02);
+    transition-property: background-color, box-shadow, transform;
+    transition-duration: var(--motion-duration-fast);
+    transition-timing-function: var(--motion-ease-standard);
   }
 
   .apple-button:active {
@@ -208,7 +241,6 @@
 
   /* Neutralise the decorative button scale so motion-sensitive users get no
      movement (the transforms are otherwise driven by transitions above). */
-  .apple-button:hover,
   .apple-button:active {
     transform: none !important;
   }

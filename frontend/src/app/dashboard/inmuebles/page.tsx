@@ -117,7 +117,7 @@ export default function InmueblesPage() {
     },
     {
       key: "nomenclatura",
-      header: "Nomenclatura Catastral",
+      header: t("fields.nomenclatura"),
       render: (i) => <span className="font-medium">{i.cadastralDesignation ?? "—"}</span>,
     },
     {
@@ -178,12 +178,12 @@ export default function InmueblesPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={editing ? t("editInmueble") : t("newInmueble")}>
-              <FormField label="Nomenclatura Catastral" required>
+              <FormField label={t("fields.nomenclatura")} required>
                 <Input
                   data-testid="input-nomenclatura"
                   value={form.nomenclaturaCatastral}
                   onChange={(e) => setForm({ ...form, nomenclaturaCatastral: e.target.value })}
-                  placeholder="Ej: 01-02-03-04-05"
+                  placeholder={t("fields.nomenclaturaPlaceholder")}
                 />
               </FormField>
               <FormField label={t("fields.domicilio")}>
@@ -222,7 +222,7 @@ export default function InmueblesPage() {
                   data-testid="input-tomo-folio-finca"
                   value={form.tomoFolioFinca}
                   onChange={(e) => setForm({ ...form, tomoFolioFinca: e.target.value })}
-                  placeholder="T1-F2-FN3"
+                  placeholder={t("fields.tomoFolioFincaPlaceholder")}
                 />
               </FormField>
               <FormField label={t("fields.linderos")}>
@@ -230,7 +230,7 @@ export default function InmueblesPage() {
                   data-testid="input-linderos"
                   value={form.linderos}
                   onChange={(e) => setForm({ ...form, linderos: e.target.value })}
-                  placeholder="Norte, Sur, Este, Oeste"
+                  placeholder={t("fields.linderosPlaceholder")}
                 />
               </FormField>
             </FormSection>

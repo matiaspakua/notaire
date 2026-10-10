@@ -109,17 +109,17 @@ export default function CopiasPage() {
     },
     {
       key: "fechaImpresion",
-      header: "Fecha Impresión",
+      header: t("columns.fechaImpresion"),
       render: (c) => formatCalendarDate(c.datePrinting),
     },
     {
       key: "fechaRetiro",
-      header: "Fecha Retiro",
+      header: t("columns.fechaRetiro"),
       render: (c) => formatCalendarDate(c.dateWithdrawal),
     },
     {
       key: "testimonio",
-      header: "Testimonio",
+      header: t("columns.testimonio"),
       render: (c) => c.fkIdTestimony?.number ? `#${c.fkIdTestimony.number}` : "—",
       className: "w-32",
     },
@@ -178,14 +178,14 @@ export default function CopiasPage() {
                 />
               </FormField>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label="Fecha de Impresión" required>
+                <FormField label={t("fields.fechaImpresion")} required>
                   <Input
                     type="date"
                     value={form.fechaImpresion}
                     onChange={(e) => setForm({ ...form, fechaImpresion: e.target.value })}
                   />
                 </FormField>
-                <FormField label="Fecha de Retiro">
+                <FormField label={t("fields.fechaRetiro")}>
                   <Input
                     type="date"
                     value={form.fechaRetiro}

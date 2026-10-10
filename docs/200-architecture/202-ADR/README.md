@@ -32,6 +32,7 @@ Los Architecture Decision Records documentan las decisiones arquitectónicas imp
 | [024](ADR-024-repository-topology.md) | Repository Topology — Evidence-Gated Decomposition | Proposed | 2026-10-05 | Repository structure |
 | [025](ADR-025-retire-notaire-shared.md) | Retire the notaire-shared Module | Accepted | 2026-10-05 | Code organization |
 | [026](ADR-026-module-separation.md) | Module Separation Inside the Repository | Accepted | 2026-10-06 | Code organization |
+| [027](ADR-027-mermaid-diagrams.md) | Mermaid as Canonical Diagram Language | Accepted | 2026-10-10 | Documentation |
 
 ## ADR Status Legend
 

@@ -9,6 +9,7 @@ Referencia completa de la API REST del proyecto Notaire.
 - **[BACKEND-ERROR-HANDLING-STRATEGY.md](BACKEND-ERROR-HANDLING-STRATEGY.md)** — Exception handling and error response conventions.
 - **[FRONTEND-DESIGN-SYSTEM.md](FRONTEND-DESIGN-SYSTEM.md)** — Theme tokens, form patterns, quick reference, form checklist, and UI conventions.
 - **[FRONTEND-WORKFLOW-TRACKER.md](FRONTEND-WORKFLOW-TRACKER.md)** — Dashboard animated gestión-workflow visualization (backend endpoint, DTOs, frontend components, tests).
+- **[FRONTEND-OPENAPI-TYPES.md](FRONTEND-OPENAPI-TYPES.md)** — OpenAPI→TypeScript generation, drift check, and hook migration policy (#1260).
 
 ## 🚀 Quick Start
 

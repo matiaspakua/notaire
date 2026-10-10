@@ -118,3 +118,26 @@ test.describe("Workflow hero shows the newest case (#1347)", () => {
     await expect(page.getByRole("button", { name: /ver todos|view all/i })).toHaveCount(0);
   });
 });
+
+test.describe("Workflow tracker accessibility (#1353)", () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAs(page);
+  });
+
+  test("the diagram is a named group whose steps are buttons with their state", async ({ page }) => {
+    const tracker = page.getByTestId("workflow-tracker");
+    await expect(tracker).toBeVisible({ timeout: 15000 });
+    await expect(tracker.locator('svg[role="img"]')).toHaveCount(0);
+    const diagram = tracker.locator('svg[role="group"]');
+    await expect(diagram).toHaveAttribute("aria-roledescription", "diagrama de flujo");
+    const nodes = tracker.locator('[data-testid^="workflow-node-"]:not([data-testid="workflow-node-modal"])');
+    const steps = diagram.getByRole("button", { name: /—\s*(Completada|En curso|Pendiente)$/ });
+    await expect(steps).toHaveCount(await nodes.count());
+  });
+
+  test("no looping animation runs forever", async ({ page }) => {
+    const tracker = page.getByTestId("workflow-tracker");
+    await expect(tracker).toBeVisible({ timeout: 15000 });
+    await expect(tracker.locator('animateMotion[repeatCount="indefinite"]')).toHaveCount(0);
+  });
+});
