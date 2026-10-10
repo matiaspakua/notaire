@@ -79,6 +79,8 @@ test.describe('CU02 - Iniciar Gestión', () => {
 
     await page.getByTestId('btn-nueva-gestion').click()
     await page.getByTestId('select-presupuesto-gestion').click()
+    // Budget pickers search the server (#1340): type the client first.
+    await page.getByTestId('select-presupuesto-gestion').fill(apellido)
 
     await expect(
       page.getByRole('option', { name: new RegExp(apellido, 'i') }),

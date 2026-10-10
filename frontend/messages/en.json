@@ -444,6 +444,7 @@
     "noData": "No payments registered",
     "emitirRecibo": "Issue receipt",
     "fields": {
+      "presupuesto": "Budget",
       "fecha": "Date",
       "monto": "Amount",
       "metodoPago": "Payment method",
@@ -1152,5 +1153,14 @@
     "recentHint": "Newest people. Type to search.",
     "clear": "Clear selection",
     "loadError": "Could not load the people list"
+  },
+  "budgetPicker": {
+    "placeholder": "Search by number, client or document…",
+    "searching": "Searching…",
+    "noResults": "No results",
+    "results": "{count} results",
+    "recentHint": "Newest budgets. Type to search.",
+    "clear": "Clear selection",
+    "loadError": "Could not load the budgets"
   }
 }

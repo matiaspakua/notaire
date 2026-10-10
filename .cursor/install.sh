@@ -6,6 +6,23 @@ cd /workspace
 
 export DEBIAN_FRONTEND=noninteractive
 
+# --- JDK 26 (repo java.version=26; CI uses Temurin 26) ---
+# Recurring Cloud builds fail with "release version 26 not supported" on JDK 21 images.
+if ! java -version 2>&1 | grep -q '"26'; then
+  curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public \
+    | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/adoptium.gpg
+  echo "deb [signed-by=/usr/share/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb $(. /etc/os-release && echo "$VERSION_CODENAME") main" \
+    | sudo tee /etc/apt/sources.list.d/adoptium.list >/dev/null
+  sudo apt-get update -qq
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq temurin-26-jdk
+fi
+if [ -d /usr/lib/jvm/temurin-26-jdk-amd64 ]; then
+  export JAVA_HOME=/usr/lib/jvm/temurin-26-jdk-amd64
+  export PATH="$JAVA_HOME/bin:$PATH"
+  sudo ln -sfn "$JAVA_HOME/bin/java" /usr/local/bin/java
+  sudo ln -sfn "$JAVA_HOME/bin/javac" /usr/local/bin/javac
+fi
+
 # --- Node on default PATH (login shells + sudo) ---
 NODE_BIN=""
 if [ -x /home/ubuntu/.nvm/versions/node/v22.22.2/bin/node ]; then

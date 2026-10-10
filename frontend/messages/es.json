@@ -444,6 +444,7 @@
     "noData": "No hay pagos registrados",
     "emitirRecibo": "Emitir recibo",
     "fields": {
+      "presupuesto": "Presupuesto",
       "fecha": "Fecha",
       "monto": "Monto",
       "metodoPago": "Método de Pago",
@@ -1152,5 +1153,14 @@
     "recentHint": "Personas más recientes. Escriba para buscar.",
     "clear": "Quitar selección",
     "loadError": "No se pudo cargar la lista de personas"
+  },
+  "budgetPicker": {
+    "placeholder": "Buscar por número, cliente o documento…",
+    "searching": "Buscando…",
+    "noResults": "Sin resultados",
+    "results": "{count} resultados",
+    "recentHint": "Presupuestos más recientes. Escriba para buscar.",
+    "clear": "Quitar selección",
+    "loadError": "No se pudo cargar la lista de presupuestos"
   }
 }
