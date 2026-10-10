@@ -17,6 +17,19 @@
 # workspace/sdlc/check-accepted-breaking-changes.py fails the next pull request
 # until the entry and its comment are removed.
 
+# #655 (CU08 / CU82 / CU43): these requests answered 500 whenever the field was
+# missing: the copy's print date and number are NOT NULL columns, and the
+# registration draft and document re-entry passed a null id to findById. No
+# request that omitted them ever succeeded, so no working client breaks; the
+# shipped UI already sends them (the copies dialog now also blocks Save without
+# them, same PR); Bruno and Playwright already sent them.
+POST /api/v1/copia the request property `datePrinting` became required
+POST /api/v1/copia the request property `number` became required
+PUT /api/v1/copia/{id} the request property `datePrinting` became required
+PUT /api/v1/copia/{id} the request property `number` became required
+POST /api/v1/gestiones/{id}/reingreso-documentacion the request property `idDocumentType` became required
+POST /api/v1/gestiones/{id}/reingreso-documentacion the request property `idProcedure` became required
+POST /api/v1/minutas-inscripcion the request property `idDeed` became required
 # #1315 (CU49, Owner rule Run 7: every DELETE answers 204 No Content): the
 # budget template concept delete was the last DELETE answering 200 (springdoc
 # default). The shipped frontend calls it through apiDelete, which only checks

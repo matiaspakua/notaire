@@ -120,7 +120,7 @@ class ControllerExceptionMessageLeakTest {
     }
 
     @Test
-    @DisplayName("POST /workflow-definition keeps 409 and the error body no longer carries the SQL text")
+    @DisplayName("POST /workflow-definition answers 400 on a constraint and the error body carries no SQL text")
     void workflowDefinitionCreate() throws Exception {
         WorkflowDefinitionRepository repo = mock(WorkflowDefinitionRepository.class);
         when(repo.save(any())).thenThrow(new DataIntegrityViolationException(SQL_LEAK));
@@ -129,8 +129,8 @@ class ControllerExceptionMessageLeakTest {
 
         MvcResult result = mvc.perform(post("/api/v1/workflow-definition").contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value(GENERIC_CONFLICT))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(GENERIC_CONSTRAINT))
                 .andReturn();
         assertNoLeak(result);
     }
