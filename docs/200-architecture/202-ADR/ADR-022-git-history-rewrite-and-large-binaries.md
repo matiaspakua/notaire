@@ -87,20 +87,17 @@ The follow-up MUST:
 - Someone with release write access must publish the `docs-manuals` asset if it
   is not already present.
 
-## Pending Owner decision (#1261 / #1197 P0.6)
+## Pending Owner decision (#1438 / #1197 P0.6)
 
 The deferred history rewrite (Decision §2) and the largest tip-tree weight outside
-`docs/` are now tracked as issue **#1261**. Measured tip weight (2026-10-10,
+`docs/` are tracked as issue **#1438** (prior #1261/#1435 were auto-closed by merges; keep this issue open until a choice is recorded). Measured tip weight (2026-10-10,
 `workspace/ci/repo-metrics.py`): `deprecated/` ≈ **13.4 MB** / **767 files**;
 `docs/` ≈ 20 MB; always-loaded agent context ≈ 2k tokens (post-#1259).
 
 **Agents must not delete `deprecated/` or run `git filter-repo` until the Owner
 records a choice here.**
 
-> **Note:** GitHub may show issue #1261 as closed after the packaging PR (#1429).
-> That PR only documented Option A/B/C — it did **not** execute a decision.
-> The Owner must still pick an option (and reopen #1261 or open a follow-up issue
-> if the tracker entry must stay open).
+> **Note:** Keep issue #1438 open until Option A/B/C is recorded here. Packaging docs PRs must not close the decision tracker.
 
 | Option | Tip tree | History | Notes |
 |--------|----------|---------|-------|
@@ -117,7 +114,7 @@ records a choice here.**
 ## Related
 
 - Issue #1050 (this change), CU76
-- Owner follow-up: #1261 (#1197 P0.6), ADR-024
+- Owner follow-up: #1438 (#1197 P0.6; replaces closed #1261/#1435), ADR-024
 - Related cleanup: #585, #682
 - CODEOWNERS Swing removal already done under #1046 (verify-only here)
 - Spec: `docs/openspec/changes/chore-1050-repo-hygiene/`

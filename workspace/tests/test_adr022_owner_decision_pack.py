@@ -20,7 +20,7 @@ class Adr022OwnerDecisionPackTest(unittest.TestCase):
     def test_adr022_documents_pending_1261_options(self):
         with open(ADR_022, encoding="utf-8") as fh:
             text = fh.read()
-        self.assertIn("#1261", text)
+        self.assertIn("#1438", text, "ADR-022 must reference live Owner issue #1438")
         self.assertRegex(text, r"(?i)pending owner decision")
         for opt in ("Option A", "Option B", "Option C"):
             self.assertIn(opt, text, f"ADR-022 must list {opt}")
@@ -34,7 +34,7 @@ class Adr022OwnerDecisionPackTest(unittest.TestCase):
             text = fh.read()
         self.assertIn('id: "022"', text)
         self.assertIn("ADR-022-git-history-rewrite-and-large-binaries.md", text)
-        self.assertIn("#1261", text)
+        self.assertIn("#1438", text, "ADR-022 must reference live Owner issue #1438")
 
 
 if __name__ == "__main__":
