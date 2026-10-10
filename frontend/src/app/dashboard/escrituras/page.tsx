@@ -24,6 +24,7 @@ import {
 import { formatDate, extractApiError } from "@/lib/utils";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import type { Escritura, Folio } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 
 const EMPTY: Partial<Escritura> = { number: undefined, dateDeedrecording: "", body: "" };
@@ -39,6 +40,7 @@ export default function EscriturasPage() {
 
 function EscriturasList() {
   const t = useTranslations("escrituras");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: folios = [] } = useQuery({
@@ -97,7 +99,7 @@ function EscriturasList() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch { toast.error(t("errorDelete")); }
+    } catch (err) { showDeleteError(err, t("errorDelete")); }
     finally { setDeleteId(null); }
   }
 

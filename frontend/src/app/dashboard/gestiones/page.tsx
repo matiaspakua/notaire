@@ -36,6 +36,7 @@ import { ApiError } from "@/lib/api-client";
 import { fullName, formatCurrency, formatDate, extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 import { GestionResumenDialog } from "./GestionResumenDialog";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const ESTADO_CARPETA_ACTIVA = "Activa";
 
@@ -51,6 +52,7 @@ export default function GestionesPage() {
 
 function GestionesList() {
   const t = useTranslations("gestiones");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000, hiding older managements and rendering 1000 rows.
@@ -164,8 +166,8 @@ function GestionesList() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

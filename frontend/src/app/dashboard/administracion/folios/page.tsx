@@ -17,6 +17,7 @@ import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
 import { useEscrituras } from "@/hooks/useEscrituras";
 import type { Folio, Persona } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const ESTADOS_FOLIO = ["Nuevo", "Utilizado", "Errose"] as const;
 const ESTADO_UTILIZADO = "Utilizado";
@@ -55,6 +56,7 @@ const EMPTY: FolioFormState = {
 
 export default function FoliosAdminPage() {
   const t = useTranslations("administracion.folios");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const queryClient = useQueryClient();
@@ -137,12 +139,12 @@ export default function FoliosAdminPage() {
     try {
       const { inUse } = await apiGet<{ inUse: boolean }>(`/tipo-folio/${tf.idFolioType}/in-use`);
       if (inUse) {
-        toast.error(t("tiposDeFolio.inUseCannotDelete"));
+        toast.warning(t("tiposDeFolio.inUseCannotDelete"));
         return;
       }
       setTipoDeleteId(tf.idFolioType);
-    } catch {
-      toast.error(t("tiposDeFolio.errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("tiposDeFolio.errorDelete"));
     }
   }
 
@@ -154,7 +156,7 @@ export default function FoliosAdminPage() {
       toast.success(t("tiposDeFolio.deleted"));
       refetchTiposFolio();
     } catch (err) {
-      toast.error(extractApiError(err) ?? t("tiposDeFolio.errorDelete"));
+      showDeleteError(err, t("tiposDeFolio.errorDelete"));
     } finally {
       setTipoDeleting(false);
       setTipoDeleteId(null);
@@ -256,7 +258,7 @@ export default function FoliosAdminPage() {
       toast.success(t("deleted"));
       refetch();
     } catch (err) {
-      toast.error(extractApiError(err) ?? t("errorDelete"));
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleting(false);
       setDeleteId(null);

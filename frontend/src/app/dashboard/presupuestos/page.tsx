@@ -37,6 +37,7 @@ import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import type { Presupuesto } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 
 const NO_TEMPLATE = "none";
@@ -53,6 +54,7 @@ export default function PresupuestosPage() {
 
 function PresupuestosList() {
   const t = useTranslations("presupuestos");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const createMutation = useCreatePresupuesto();
@@ -201,7 +203,7 @@ function PresupuestosList() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

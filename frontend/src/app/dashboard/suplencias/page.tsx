@@ -20,6 +20,7 @@ import {
 import { presentMutationError } from "@/lib/mutation-error";
 import { formatDate } from "@/lib/utils";
 import type { Suplencia } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 
 const EMPTY: Partial<Suplencia> = {
@@ -34,6 +35,7 @@ function personaName(p: Suplencia["fkIdSubstituted"]): string {
 
 export default function SuplenciasPage() {
   const t = useTranslations("suplencias");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
   const { data: suplencias = [], isLoading } = useSuplencias();
   const createMutation = useCreateSuplencia();
@@ -91,7 +93,7 @@ export default function SuplenciasPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

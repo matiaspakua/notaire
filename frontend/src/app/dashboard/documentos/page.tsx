@@ -37,10 +37,12 @@ import {
 } from "@/lib/documento-presentado-form";
 import { useReingresoDocumentacion } from "@/hooks/useReingresoDocumentacion";
 import type { DocumentoPresentado } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue, todayInputValue } from "@/lib/dates";
 
 export default function DocumentosPage() {
   const t = useTranslations("documentos");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data: documentos = [], isLoading } = useDocumentosPresentados();
@@ -97,7 +99,7 @@ export default function DocumentosPage() {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

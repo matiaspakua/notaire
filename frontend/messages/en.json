@@ -70,6 +70,10 @@
       "next": "Next page",
       "last": "Last page",
       "rowsPerPage": "Rows per page"
+    },
+    "errors": {
+      "inUse": "Cannot be deleted: the record is still used by other records.",
+      "notFound": "The record no longer exists. Refresh the list."
     }
   },
   "dashboard": {

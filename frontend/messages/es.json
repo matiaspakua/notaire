@@ -70,6 +70,10 @@
       "next": "Página siguiente",
       "last": "Última página",
       "rowsPerPage": "Filas por página"
+    },
+    "errors": {
+      "inUse": "No se puede eliminar: el registro está en uso por otros registros.",
+      "notFound": "El registro ya no existe. Actualice la lista."
     }
   },
   "dashboard": {

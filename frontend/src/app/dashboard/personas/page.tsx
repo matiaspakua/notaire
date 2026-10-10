@@ -25,6 +25,7 @@ import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { fullName } from "@/lib/utils";
 import { presentPersonaSaveError } from "@/lib/persona-save-error";
 import type { Persona } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<Persona> = {
   firstName: "",
@@ -46,6 +47,7 @@ export default function PersonasPage() {
 
 function PersonasList() {
   const t = useTranslations("personas");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   // One server page at a time, page and size in the URL (#1340): the list used
@@ -130,8 +132,8 @@ function PersonasList() {
     try {
       await deleteMutation.mutateAsync(deleteId);
       toast.success(t("deleted"));
-    } catch {
-      toast.error(t("errorDelete"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleteId(null);
     }

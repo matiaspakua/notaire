@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { PlantillaPresupuesto, TipoDeTramite, Concepto, TipoDeDocumento, PlantillaCostoDocumento } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
 
 interface PlantillaKey {
   tipoTramiteId: number;
@@ -23,6 +24,7 @@ interface PlantillaKey {
 
 export default function PlantillasPage() {
   const t = useTranslations("administracion.plantillas");
+  const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
   const { data = [], isLoading, refetch } = useQuery({
@@ -161,7 +163,7 @@ export default function PlantillasPage() {
       toast.success(t("deleted"));
       refetch();
     } catch (err) {
-      presentMutationError(err, { fallback: t("errorDelete") });
+      showDeleteError(err, t("errorDelete"));
     } finally {
       setDeleting(false);
       setDeleteKey(null);
