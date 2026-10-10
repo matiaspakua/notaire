@@ -1306,5 +1306,13 @@
   },
   "workflowViewer": {
     "empty": "No nodes. Add statuses to the workflow."
+  },
+  "status": {
+    "folio": {
+      "nuevo": "New",
+      "utilizado": "Used",
+      "asignado": "Assigned to a notebook",
+      "errose": "Voided"
+    }
   }
 }

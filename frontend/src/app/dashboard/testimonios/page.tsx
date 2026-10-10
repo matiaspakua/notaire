@@ -6,6 +6,8 @@ import { Plus, CheckCircle2, Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { testimonyStatus } from "@/lib/status-maps";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
@@ -74,16 +76,11 @@ export default function TestimoniosPage() {
     }
   }
 
-  function estadoLabel(testimonio: Testimonio): string {
-    if (!testimonio.verified) return t("estadoGenerado");
-    return testimonio.flagged ? t("estadoObservado") : t("estadoVerificado");
-  }
-
   const columns: Column<Testimonio>[] = [
     { key: "id", header: tc("id"), render: (te) => <span className="text-xs text-muted-foreground">{te.idTestimony}</span>, className: "w-12" },
     { key: "numero", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
     { key: "escritura", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
-    { key: "estado", header: t("fields.estado"), render: (te) => estadoLabel(te) },
+    { key: "estado", header: t("fields.estado"), render: (te) => <StatusBadge domain="testimony" value={testimonyStatus(te)} /> },
     {
       key: "actions",
       header: "",
