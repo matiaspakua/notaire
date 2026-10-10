@@ -50,7 +50,7 @@ async function fillPersonaForm(
 
   await page.getByTestId('input-firstName').fill(opts.nombre)
   await page.getByTestId('input-lastName').fill(opts.apellido)
-  await dialog.getByLabel(/dni/i).fill(opts.dni)
+  await dialog.getByTestId('input-dni').fill(opts.dni)
 
   if (opts.esCliente) {
     // CU18: checking this checkbox registers the person as a client at creation time.
@@ -87,7 +87,7 @@ test.describe('CU17 - Dar Alta Persona', () => {
       await expect(dialog).toBeVisible()
       await expect(page.getByTestId('input-firstName')).toBeVisible()
       await expect(page.getByTestId('input-lastName')).toBeVisible()
-      await expect(dialog.getByLabel(/dni/i)).toBeVisible()
+      await expect(dialog.getByTestId('input-dni')).toBeVisible()
 
       // CU18 mechanism: checkbox must be present in the creation form
       await expect(dialog.getByTestId('check-es-cliente')).toBeVisible()
@@ -554,5 +554,43 @@ test.describe('#1357 - Debounced personas search', () => {
 
     expect(searches).toHaveLength(1)
     expect(decodeURIComponent(searches[0])).toContain(`lastName=${lastName}`)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// #1361 - Identification type (RF-37): required, DNI preselected
+// ---------------------------------------------------------------------------
+
+test.describe('#1361 - Identification type in the person form', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAndGoToPersonas(page)
+  })
+
+  test('a new person starts on DNI, the type select comes before the number', async ({ page }) => {
+    await page.getByTestId('btn-nueva-persona').click()
+    const dialog = page.getByRole('dialog')
+    const typeSelect = dialog.getByRole('combobox', { name: /tipo de identificación/i })
+    await expect(typeSelect).toBeVisible()
+    await expect(typeSelect).toHaveText(/^DNI$/)
+    const selectBox = await typeSelect.boundingBox()
+    const numberBox = await dialog.getByTestId('input-dni').boundingBox()
+    expect(selectBox && numberBox && (selectBox.y < numberBox.y || selectBox.x < numberBox.x)).toBeTruthy()
+  })
+
+  test('creating a person with type CUIT persists it and lists "CUIT <number>"', async ({ page }) => {
+    const cuit = `30${String(uniqueId() % 1_000_000_000).padStart(9, '0')}`
+    const apellido = `Cuit${uniqueId() % 100_000}`
+    await page.getByTestId('btn-nueva-persona').click()
+    const dialog = page.getByRole('dialog')
+    await page.getByTestId('input-firstName').fill('Empresa')
+    await page.getByTestId('input-lastName').fill(apellido)
+    await dialog.getByRole('combobox', { name: /tipo de identificación/i }).click()
+    await page.getByRole('listbox').getByRole('option', { name: 'CUIT', exact: true }).click()
+    await dialog.getByTestId('input-dni').fill(cuit)
+    await submitForm(page)
+    await expect(page.locator('[data-sonner-toast]').getByText(/creada/i)).toBeVisible({ timeout: 8000 })
+
+    await page.getByTestId('input-search-dni').fill(cuit)
+    await expect(page.getByText(`CUIT ${cuit}`, { exact: true }).first()).toBeVisible({ timeout: 8000 })
   })
 })

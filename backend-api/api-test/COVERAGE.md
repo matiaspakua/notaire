@@ -54,7 +54,7 @@ the value but update did not. Hardened in `setAtributos`.
 | budgets | `/presupuestos` | ✅ | `persona/{id}`, `buscar?status=` | CU01, CU60, CU45 |
 | concepts | `/conceptos` | ✅ | — | CU29, CU66, CU34, CU37 |
 | copies | `/copia` | ✅ | requires `datePrinting` | CU70 |
-| deeds | `/escrituras` | search only | `buscar?number=` | CU62 |
+| deeds | `/escrituras` | search + list | `buscar?number=`; paged list `?status=` (any letter case, unknown → 400, #1340) | CU06, CU07, CU62, CU82 |
 | document-cost-templates | `/plantilla-costos-documento` | POST + GET | by `tipo-tramite/{id}` (no DELETE API) | CU39 |
 | document-types | `/tipo-de-documento` | ✅ | — | CU27, CU65, CU32, CU38 |
 | folio-types | `/tipo-folio` | ✅ | — | CU36, CU68, CU40, CU58 |
@@ -66,7 +66,7 @@ the value but update did not. Hardened in `setAtributos`.
 | managements | `/gestiones` | ✅ | by number; estado-actual (History latest or entity-status fallback when empty — #806); PUT update keeps same `managementStatusId` (status changes via `/transition` — #804); `/resumen-caso` lists the escrituras, testimonios and copias (#774) | CU02, CU07, CU13, CU14, CU53, CU83 |
 | notebooks | `/cuadernos` | POST/GET | 10-folio fixture; carátula PDF | CU80 |
 | payments | `/pagos` | ✅ | `presupuesto/{id}`, `saldo`, `estado`, over-limit 409, non-positive update 400, receipt PDF | CU01, CU15, CU47, CU45 |
-| people | `/people` | ✅ | `search?lastName=`, 409 duplicate | CU17, CU18, CU61, CU46, CU54, CU41 |
+| people | `/people` | ✅ | `search?lastName=`, 409 duplicate, 400 unknown identification type (#1361) | CU17, CU18, CU61, CU46, CU54, CU41 |
 | procedure-folders | `/carpetas` | GET + espera | via complete-case fixture | CU85 |
 | procedure-templates | `/plantilla-tramite` | read-only | list, `tipo-tramite/{id}` | CU79, CU03 |
 | procedure-types | `/tipo-tramite` | ✅ | — | CU26, CU64, CU31, CU57 |

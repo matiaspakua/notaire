@@ -283,6 +283,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   180ms; pages fade up 4px in 160ms without `AnimatePresence mode="wait"` (was 200ms exit + 400ms enter); staggered
   entrances are capped at 6 x 30ms. Guarded by `motion-tokens.test.ts` and Playwright TS-0120.
 - **Grouped sidebar (#1367).** The sidebar's flat 22-link list is now Inicio plus six collapsible sections with headings: Clientes, Trámites, Documentación, Escrituras y protocolo, Gestión and Administración. The browser remembers collapsed sections, and the section holding the current page always opens. The dashboard module grid is built from the same config, in sidebar order. Auditoría is now hidden from non-admins, matching its route guard. Opening Documentos necesarios no longer also highlights Documentos.
+- **Identification type in the person form (#1361).** The person dialog has a required "Tipo de identificación" select before the number, with DNI preselected for a new person (Owner decision); a person stored without a type must pick one before saving. The list shows the type before the number ("CUIT 30712345678") and the number field is labelled "Número de documento". `POST /people` and `PUT /people/{id}` now answer 400 for an identification type id that is not in the catalog (create used to store DNI silently, update kept the old type); an omitted type on create still means DNI, now found by name instead of by id 1.
 
 ### Fixed
 
@@ -811,6 +812,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   managements (newest first, page in the URL) and the document form picks its management
   with a searchable `ManagementPicker` (case number, client name or document). They loaded
   `GET /gestiones?size=1000`, so every case after the 1000th was missing.
+- **Touch targets** (#1369, RNF-06/RNF-07): on touch screens (coarse pointer) small buttons
+  and the rows-per-page select are at least 44x44 and row actions sit 8px apart, so taps no
+  longer miss or hit the neighbouring delete button. Desktop keeps the 32px compact buttons.
 - **The bitácora lists same-day entries in the order they were recorded** (issue #1383, CU13): `history.event_date` only keeps the day and nothing broke ties, so `GET /gestiones/{id}/historial` returned same-day entries in whatever order the database gave, `GET /historial/gestion/{id}` was not sorted at all, and the workflow trace could pick the wrong current step. Every history read path (bitácora, history by management, workflow trace, current state, history report) now uses one order: event date, then `idHistory`. This was behind the recurring TS-0011/TS-0028 e2e flakes. JUnit `HistoryOrderTieBreakerIntegrationTest` and Bruno `history/05` cover it.
 
 ### Added
@@ -1187,6 +1191,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Quick reference for developers
   - Common patterns and templates
   - Testing and validation commands
+- **Deed list status filter** (#1340, CU06/CU07/CU82): `GET /api/v1/escrituras` takes an
+  optional `status` (Sin Firmar, Firmada, Anulada, No Paso, Inscripta; any letter case,
+  anything else answers 400) and returns one page of deeds in that status, so deed pickers
+  no longer need the whole list to find signed deeds. Non-breaking.
 
 ### Deprecated
 

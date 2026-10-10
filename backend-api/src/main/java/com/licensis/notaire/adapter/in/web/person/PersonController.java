@@ -6,6 +6,8 @@ import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.IdentificationType;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
 import com.licensis.notaire.application.usecase.person.PersonService;
+import com.licensis.notaire.exception.BusinessValidationException;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/api/v1/people")
@@ -57,7 +60,10 @@ public class PersonController {
             String phone,
             String email,
             Integer notaryRegistrationNumber,
+            @Schema(description = "Identification type id from GET /tipo-identificacion. Omitted on create: DNI. "
+                    + "An id that is not in the catalog answers 400 (#1361).")
             Integer identificationTypeId,
+            @Schema(description = "Legacy nested form of identificationTypeId; identificationTypeId wins when both are sent.")
             IdentificationTypeRef fkIdIdentificationType) {}
 
     public record PersonResponse(
@@ -106,6 +112,8 @@ public class PersonController {
         }
     }
 
+    static final String DEFAULT_IDENTIFICATION_TYPE = "DNI";
+
     private final PersonService personService;
     private final IdentificationTypeRepository identificationTypeRepository;
 
@@ -145,12 +153,28 @@ public class PersonController {
         }
     }
 
-    private IdentificationType resolveType(PersonRequest request, IdentificationType fallback) {
+    /**
+     * The requested identification type, {@code fallback} when none was sent, or a 400 when the id
+     * is not in the catalog (it used to fall back silently, so a typo stored DNI; #1361).
+     */
+    private IdentificationType resolveType(PersonRequest request, Supplier<IdentificationType> fallback) {
         Integer typeId = resolveIdentificationTypeId(request);
-        if (typeId != null) {
-            return identificationTypeRepository.findById(typeId).orElse(fallback);
+        if (typeId == null) {
+            return fallback.get();
         }
-        return fallback;
+        return identificationTypeRepository.findById(typeId)
+                .orElseThrow(() -> new BusinessValidationException(
+                        "identificationTypeId: unknown identification type " + typeId));
+    }
+
+    /** DNI, the default type of a new person (Owner decision on #1361), found by name, not by id. */
+    private IdentificationType defaultIdentificationType() {
+        return identificationTypeRepository.findByName(DEFAULT_IDENTIFICATION_TYPE)
+                .orElseGet(() -> {
+                    IdentificationType ti = new IdentificationType();
+                    ti.setName(DEFAULT_IDENTIFICATION_TYPE);
+                    return identificationTypeRepository.save(ti);
+                });
     }
 
     @GetMapping
@@ -183,14 +207,8 @@ public class PersonController {
     @PostMapping
     @Operation(summary = "Create new person")
     public ResponseEntity<Object> createPerson(@Valid @RequestBody PersonRequest request) {
+        IdentificationType type = resolveType(request, this::defaultIdentificationType);
         try {
-            IdentificationType defaultType = identificationTypeRepository.findById(1)
-                    .orElseGet(() -> {
-                        IdentificationType ti = new IdentificationType();
-                        ti.setName("DNI");
-                        return identificationTypeRepository.save(ti);
-                    });
-            IdentificationType type = resolveType(request, defaultType);
             Person person = new Person();
             applyRequest(person, request, type);
             Person saved = personService.save(person);
@@ -213,7 +231,7 @@ public class PersonController {
     public ResponseEntity<Object> updatePerson(@PathVariable Integer id, @Valid @RequestBody PersonRequest request) {
         return personService.findById(id)
                 .map(existing -> {
-                    IdentificationType type = resolveType(request, existing.getFkIdIdentificationType());
+                    IdentificationType type = resolveType(request, existing::getFkIdIdentificationType);
                     applyRequest(existing, request, type);
                     try {
                         Person updated = personService.save(existing);

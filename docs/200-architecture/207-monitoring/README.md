@@ -81,6 +81,12 @@ OTLP export needs both `micrometer-registry-otlp` and `spring-boot-opentelemetry
 the collector, which forwards them to Tempo. In Grafana, Explore -> Tempo finds traces by service/name; a trace links to
 its Loki logs by `service`. Frontend spans are not instrumented yet.
 
+**Log fields and log-to-trace navigation:** the backend writes one `http_request` line per API request (method, path, status,
+duration; never the query string, headers or body; Actuator is skipped), and the frontend BFF proxy writes one `api_proxy`
+line per proxied request, both as structured JSON. Promtail stores `traceId`/`spanId` as Loki *structured metadata* (not
+labels, which would be high-cardinality), so `{container="notary-backend"} | traceId="<id>"` finds a request's lines and the
+Loki datasource's `TraceID` derived field opens the trace in Tempo. Loki needs `allow_structured_metadata: true`.
+
 **Overview dashboards (start here):** `notaire-stack-status` (every service in the stack) and
 `notaire-status` (Notaire only). Both show availability from blackbox probes, firing alerts and recent
 errors, and link to the specialist dashboards below.

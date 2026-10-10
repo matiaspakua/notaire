@@ -41,5 +41,6 @@ runtime:
             const b = res.getBody();
             expect(b).to.have.property('personId');
             expect(b.isClient).to.equal(true);
+            expect(b.identificationTypeId).to.equal(1);
             bru.setVar('person_id', b.personId);
           });

@@ -211,7 +211,9 @@
       "telefono": "Phone",
       "domicilio": "Address",
       "esCliente": "Is client",
-      "registroEscribano": "Notary registration number"
+      "registroEscribano": "Notary registration number",
+      "tipoIdentificacion": "Identification type",
+      "numeroIdentificacion": "Document number"
     },
     "helperText": {
       "registroEscribano": "Notarial registry number. Used to identify the notary in substitutions."
@@ -224,6 +226,12 @@
       "nombre": "Search by first name...",
       "apellido": "Search by last name...",
       "dni": "Search by ID..."
+    },
+    "placeholders": {
+      "tipoIdentificacion": "Choose a type"
+    },
+    "validation": {
+      "tipoIdentificacionRequired": "Choose the identification type."
     }
   },
   "gestiones": {

@@ -6,6 +6,8 @@
  * Forwards Cookie / Set-Cookie for HttpOnly JWT sessions (#1051).
  */
 
+import { logger } from "@/lib/logger";
+
 const HOP_BY_HOP_HEADERS = new Set([
   "connection",
   "keep-alive",
@@ -91,7 +93,7 @@ export async function proxyApiRequest(
 ): Promise<Response> {
   const base = resolveBackendBaseUrl();
   if (!base) {
-    console.error("[backend-proxy] BACKEND_URL is not configured");
+    logger.error("api_proxy_not_configured", { reason: "BACKEND_URL is not configured" });
     return Response.json(
       { error: "Backend proxy is not configured" },
       { status: 503 },
@@ -111,14 +113,16 @@ export async function proxyApiRequest(
     init.body = await request.arrayBuffer();
   }
 
+  const startedAt = Date.now();
+  const target = { method: request.method, path: `/${pathSegments.filter(Boolean).join("/")}` };
   let upstream: Response;
   try {
     upstream = await fetch(upstreamUrl.toString(), init);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "unknown error";
-    console.error("[backend-proxy] upstream fetch failed:", message);
+    logger.error("api_proxy_upstream_failed", target, error);
     return Response.json({ error: "Upstream unavailable" }, { status: 502 });
   }
+  logger.info("api_proxy", { ...target, status: upstream.status, durationMs: Date.now() - startedAt });
 
   return new Response(upstream.body, {
     status: upstream.status,
