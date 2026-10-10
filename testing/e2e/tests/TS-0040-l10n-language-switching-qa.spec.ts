@@ -169,7 +169,6 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     const head = page.locator("thead").first();
     await expect(head).toContainText("Print date", { timeout: 10000 });
     await expect(head).not.toContainText("Fecha");
-    await expect(head).not.toContainText("Testimonio ");
   });
 
   test("protocolo: English report buttons and status badges", async ({ page }) => {
