@@ -14,6 +14,11 @@ PLAN = os.path.join(REPO_ROOT, "docs", "300-development", "REPO-SPLIT-PLAN.md")
 PAGES_ARCH = os.path.join(
     REPO_ROOT, "github-page", "app", "docs", "architecture", "page.tsx"
 )
+PAGES_MODULES = os.path.join(REPO_ROOT, "github-page", "app", "docs", "modules", "page.tsx")
+PAGES_DOCS_HOME = os.path.join(REPO_ROOT, "github-page", "app", "docs", "page.tsx")
+MODULE_OWNERSHIP = os.path.join(
+    REPO_ROOT, "docs", "300-development", "MODULE-OWNERSHIP.md"
+)
 LIVE = "1445"
 
 
@@ -77,6 +82,40 @@ class Adr024OwnerTrackerTest(unittest.TestCase):
             text = fh.read()
         self.assertIn("ASSESSMENT-2026-10.md", text)
         self.assertIn("DOCUMENTATION-AUDIT-2026-10.md", text)
+
+    def test_module_ownership_topology_parent_is_live_tracker(self):
+        """MODULE-OWNERSHIP must not present closed #1197 as the live Owner tracker."""
+        with open(MODULE_OWNERSHIP, encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertRegex(
+            text,
+            rf"(?i)Topology parent:.*#{LIVE}",
+            f"MODULE-OWNERSHIP Topology parent must name live tracker #{LIVE}",
+        )
+        self.assertIn(
+            f"https://github.com/matiaspakua/notaire/issues/{LIVE}",
+            text,
+        )
+
+    def test_pages_modules_surfaces_live_owner_tracker(self):
+        """Modules Pages must name live Owner umbrella for sibling-agent sync."""
+        with open(PAGES_MODULES, encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertIn(
+            f"#{LIVE}",
+            text,
+            f"Modules Pages must name live Owner tracker #{LIVE}",
+        )
+        self.assertIn(
+            f"https://github.com/matiaspakua/notaire/issues/{LIVE}",
+            text,
+        )
+
+    def test_pages_docs_home_module_card_names_live_tracker(self):
+        """Docs home module-ownership card must point agents at #1445."""
+        with open(PAGES_DOCS_HOME, encoding="utf-8") as fh:
+            text = fh.read()
+        self.assertIn(f"#{LIVE}", text)
 
 
 if __name__ == "__main__":

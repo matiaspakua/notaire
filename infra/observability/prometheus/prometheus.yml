@@ -246,3 +246,34 @@ scrape_configs:
         replacement: 'homer'
       - target_label: __address__
         replacement: blackbox-exporter:9115
+
+  # --- Metrics pipeline: OTLP collector, frontend, containers, host ---
+  - job_name: 'otel-collector'
+    static_configs:
+      - targets: ['otel-collector:8889']
+        labels:
+          service: 'otel-collector'
+          app: 'otel'
+
+  - job_name: 'frontend-metrics'
+    metrics_path: '/api/metrics'
+    static_configs:
+      - targets: ['notaire-frontend:3000']
+        labels:
+          service: 'frontend-metrics'
+          app: 'frontend'
+          scope: 'notaire'
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          service: 'cadvisor'
+          app: 'containers'
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'node-exporter'
+          app: 'host'

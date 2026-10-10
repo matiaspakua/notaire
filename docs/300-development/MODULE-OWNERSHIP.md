@@ -1,8 +1,8 @@
-# Module Ownership Map (Monorepo — #1197 Phase 0)
+# Module Ownership Map (Monorepo — Phase 0)
 
 > **Status:** Authoritative for in-repo boundaries.  
 > **Source of truth:** [`workspace/modules.yaml`](../../workspace/modules.yaml) (ADR-026).  
-> **Topology parent:** [#1197](https://github.com/matiaspakua/notaire/issues/1197) / [ADR-024](../200-architecture/202-ADR/ADR-024-repository-topology.md) — **no sibling repositories yet**.  
+> **Topology parent:** [#1445](https://github.com/matiaspakua/notaire/issues/1445) (live Owner umbrella; replaces closed [#1197](https://github.com/matiaspakua/notaire/issues/1197)) / [ADR-024](../200-architecture/202-ADR/ADR-024-repository-topology.md) — **no sibling repositories yet**.  
 > **Use Case:** CU76.
 
 Each top-level module has one responsibility, one fleet, a `MODULE.md` contract, and a

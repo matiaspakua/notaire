@@ -55,6 +55,7 @@ services:
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,metrics,prometheus,info,threaddump
       MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: true
       MANAGEMENT_HEALTH_DISKSPACE_ENABLED: "false"
+      MANAGEMENT_OTLP_METRICS_EXPORT_URL: ${OTEL_METRICS_URL:-http://devsecops-otel-collector:4318/v1/metrics}
       LOG_LEVEL_APP: INFO
       ENVIRONMENT: development
     ports:

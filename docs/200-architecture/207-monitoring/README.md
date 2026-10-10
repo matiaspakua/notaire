@@ -72,6 +72,11 @@ authoritative, up-to-date service list, ports, and credentials.
 - Logback event rate
 - Custom business metrics (operation counts, durations, API errors, login attempts)
 
+**Metrics topology:** the backend exposes Actuator metrics (scraped with Basic auth) and also pushes them over OTLP to
+`devsecops-otel-collector`, which Prometheus scrapes. The frontend serves Node runtime metrics at `/api/metrics`;
+cAdvisor and node-exporter cover containers and the host. On Docker Desktop the last two describe the Linux VM.
+OTLP export needs both `micrometer-registry-otlp` and `spring-boot-opentelemetry` on the backend classpath.
+
 **Overview dashboards (start here):** `notaire-stack-status` (every service in the stack) and
 `notaire-status` (Notaire only). Both show availability from blackbox probes, firing alerts and recent
 errors, and link to the specialist dashboards below.
