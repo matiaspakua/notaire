@@ -113,3 +113,12 @@ describe("presentPersonaSaveError duplicate link outside the loaded page (#1340)
     expect(loadPersona).toHaveBeenCalledWith(7);
   });
 });
+
+describe("toast actions over an open dialog (#1340)", () => {
+  it("keeps the toaster clickable while a modal sets pointer-events: none on body", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { resolve } = await import("node:path");
+    const css = readFileSync(resolve(__dirname, "../../app/globals.css"), "utf8");
+    expect(css).toMatch(/\[data-sonner-toaster\][^{]*\{[^}]*pointer-events:\s*auto/);
+  });
+});
