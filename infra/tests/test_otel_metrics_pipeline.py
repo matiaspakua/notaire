@@ -47,7 +47,10 @@ class MetricsPipelineTest(unittest.TestCase):
         self.assertIn("otel-collector", jobs_by_service())
 
     def test_backend_exports_otlp_and_keeps_actuator(self):
-        self.assertIn("micrometer-registry-otlp", read("backend-api", "pom.xml"))
+        pom = read("backend-api", "pom.xml")
+        self.assertIn("micrometer-registry-otlp", pom)
+        # Boot 4 only auto-configures OTLP export when this module is on the classpath.
+        self.assertIn("spring-boot-opentelemetry", pom)
         props = read("backend-api", "src", "main", "resources", "application.properties")
         self.assertIn("management.otlp.metrics.export.url", props)
         self.assertIn("management.endpoints.web.exposure.include", props)
