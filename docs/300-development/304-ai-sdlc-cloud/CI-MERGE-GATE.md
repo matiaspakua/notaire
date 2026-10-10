@@ -49,7 +49,8 @@ Checks, CodeQL Analyze, …) is **insufficient** — even when a subscription sa
 “all N checks success.”
 
 Docs-only PRs (path-scoped CI #1257): leaf Java/Bruno/Playwright jobs are
-**skipped**; suite aggregators and `check-heavy-ci.sh` treat `skip`/`skipped` as
+**skipped**; suite aggregators and `check-heavy-ci.sh` treat `skip`/`skipped`/`skipping`
+(as printed by `gh pr checks`) as
 success. Product PRs still require Bruno + `UI E2E Tests (Playwright)` (the
 merge job after #1258 shards) to be success.
 
