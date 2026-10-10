@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- **Sec by Design program** (CU78, #307): system threat model (STRIDE and
+  LINDDUN), OWASP Top 10 map, toolchain selection, security Grafana dashboard,
+  login-lockout alert, and a failing secret scan in CI.
+
 ### Changed
 
 - **OpenSpec hygiene after #1477 / #1480**: archive closed-issue tree

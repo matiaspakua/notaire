@@ -1,0 +1,36 @@
+@startuml
+left to right direction
+skinparam shadowing false
+title Notaire trust boundaries
+
+actor "Notary staff\n(browser)" as staff
+actor "API client" as apiClient
+
+rectangle "Trust boundary: public internet" as edge {
+}
+
+rectangle "Trust boundary: Next.js frontend" as fe {
+  component "Next.js BFF\n/api/v1 proxy" as bff
+}
+
+rectangle "Trust boundary: backend-api" as api {
+  component "Interceptor\nJwtAuthenticationFilter" as filter
+  component "Validator\nROLE_ADMIN / ROLE_USER" as rbac
+  component "Use cases\nPersona, Escritura, Presupuesto" as uc
+}
+
+database "Trust boundary: PostgreSQL\nPII and notarial records" as db
+
+staff --> bff : HTTPS cookie
+apiClient --> filter : Bearer JWT
+bff --> filter : server-side HTTP
+filter --> rbac : authenticated identity
+rbac --> uc : authorized request
+uc --> db : parameterized SQL
+
+note bottom of edge
+  Untrusted input: headers, body, query.
+  X-Notaire-User is not an identity.
+  Trust boundary between the browser and the API.
+end note
+@enduml

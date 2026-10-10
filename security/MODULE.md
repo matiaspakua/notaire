@@ -25,6 +25,8 @@ They stay next to what they protect, because the tool reads them from a fixed pl
 | Auth, input validation, SQL injection, threat model | `docs/200-architecture/206-security/` | knowledge base |
 | Threat-modeling skill, security auditor agent | `.claude/skills/secure-threat-modeling`, `.claude/agents/security-auditor.md` | central catalogs |
 | Application security code | `backend-api/src/main/java/.../security` | product code |
+| Policy as code and secret scan | `security/policy/security-policy.yml`, `security/scan_secrets.py` | enforced by `security/verify.sh` and the CI security job (#307) |
+| Sec by Design program | `docs/200-architecture/206-security/CYBERSECURITY-PROGRAM.md` | knowledge base |
 
 ## Seams (what this module reads from outside)
 

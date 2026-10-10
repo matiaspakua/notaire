@@ -1,0 +1,29 @@
+# Security policy as code (issue #307, CU78).
+# Normative prose lives in docs/200-architecture/206-security/CYBERSECURITY-PROGRAM.md.
+version: 1
+use_case: CU78
+owner: Oficial de Seguridad
+review_cadence: quarterly
+tools:
+  sast: codeql
+  sca: trivy
+  secrets: security/scan_secrets.py
+  dast: zap
+  sbom: trivy-cyclonedx
+  signing: cosign
+severity_sla:
+  critical_days: 7
+  high_days: 30
+  medium_days: 90
+  low_days: 180
+secret_scan:
+  enforced_in: .github/workflows/ci.yml
+  reference_tool: gitleaks
+  ignore_literals:
+    - AKIAIOSFODNN7EXAMPLE
+  ignore_path_prefixes: []
+exceptions:
+  procedure: >
+    An exception is a time-boxed waiver recorded on the pull request and
+    approved by the repository owner. It names the control, the residual
+    risk, and the expiry date. It is not a silent skip of this policy.
