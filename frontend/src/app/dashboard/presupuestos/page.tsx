@@ -292,7 +292,7 @@ export default function PresupuestosPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
-            <FormSection title={isEditMode ? t("editPresupuesto") : t("newPresupuesto")}>
+            <FormSection dialogTitle title={isEditMode ? t("editPresupuesto") : t("newPresupuesto")}>
               <FormField
                 label={t("fields.cliente")}
                 required
@@ -382,7 +382,7 @@ export default function PresupuestosPage() {
       <Dialog open={resumenId !== null} onOpenChange={(v) => !v && setResumenId(null)}>
         <DialogContent className="max-w-2xl" data-testid="dialog-resumen-presupuesto">
           <FormContainer>
-            <FormHeader title={t("resumen.title")} />
+            <FormHeader dialogTitle title={t("resumen.title")} />
             {isResumenLoading && (
               <p className="text-sm text-muted-foreground">{tc("loading")}</p>
             )}
@@ -461,7 +461,7 @@ export default function PresupuestosPage() {
       <Dialog open={itemsPresupuestoId !== null} onOpenChange={(v) => !v && setItemsPresupuestoId(null)}>
         <DialogContent className="max-w-2xl" data-testid="dialog-items-presupuesto">
           <FormContainer>
-            <FormHeader title={t("items.title")} />
+            <FormHeader dialogTitle title={t("items.title")} />
 
             <FormSection title={t("items.plantillaSection")}>
               <FormField
