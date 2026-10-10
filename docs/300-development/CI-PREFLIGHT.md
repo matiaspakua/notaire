@@ -68,6 +68,33 @@ CodeQL (`codeql.yml`) is listed by `--list` and skipped locally. It needs the
 GitHub-hosted CodeQL bundle and `security-events: write` to upload results, so
 a laptop run would not match CI.
 
+## Path-scoped CI on pull requests (#1257 / #1197 P0.2)
+
+On **pull_request** events, `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, and
+`openapi-contract.yml` classify changed paths with a `Path filter` (`changes`) job:
+
+| Filter output | Typical paths | Effect when false (and `ci` false) |
+|---------------|---------------|-------------------------------------|
+| `backend` | `backend-api/**`, root Maven/Docker | Skip Java build/test/coverage leaves |
+| `frontend` | `frontend/**` | Skip Vitest / Next build leaves |
+| `testing` / `product` | `testing/**` or backend/frontend/ci | Skip Playwright/Bruno stack when `product` false |
+| `openapi` | OpenAPI artifact / export script | Skip OpenAPI contract job when unused |
+| `docs` | `docs/**`, `CONSTITUTION.md`, `AGENTS.md`, `.claude/**`, `github-page/**` | Alone → all heavy leaves skip |
+| `ci` | `.github/workflows/**`, `workspace/sdlc/**`, `workspace/tests/**`, … | Forces full relevant suites |
+
+**`push` to `main`, `workflow_dispatch`, and `schedule` always run the full suite**
+(filter outputs forced true).
+
+Required check **names** (`CI`, `Frontend CI`, `Playwright E2E`, …) stay green because
+suite aggregators treat intentional `skipped` as success. Do **not** add workflow-level
+`on.paths` that omit an entire required workflow on `main`.
+
+Local `preflight.sh` still mirrors the full gate set for developers who run it; path
+scoping is a CI wall-clock optimization, not a license to skip local verification before
+pushing product changes.
+
+Guards: `python3 workspace/tests/test_ci_workflow_invariants.py`.
+
 ### What `--fix` fixes automatically
 
 | Problem | Fix applied |

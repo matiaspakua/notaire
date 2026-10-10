@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Path-scoped CI skips Java and E2E on docs-only PRs** (issue #1257, CU76, #1197 P0.2):
+  `ci.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, and `openapi-contract.yml` add a
+  `Path filter` (`dorny/paths-filter`) job; leaf jobs gate on filter outputs; suite
+  aggregators accept intentional `skipped` so required check names stay green.
+  `push` to `main` / dispatch / schedule still run the full suite. Guards in
+  `workspace/tests/test_ci_workflow_invariants.py`; documented in `CI-PREFLIGHT.md`
+  and `CONSTITUTION.md`.
 - **Constitution AI SDLC guardrails** (issues #1414–#1417 / CU76): Tooling Map and §10 now require heavy-CI merge authority (`check-heavy-ci.sh`), Playwright serialization, Englishize of touched non-i18n Spanish, and issue-status sync via PR `Closes`/`Refs` when Issues write is 403; Impact Analysis uses `workspace/modules.yaml`; active diagrams are Mermaid (ADR-027); OpenSpec path and Pages `/docs/` are explicit.
 - **GitHub Pages Technical Docs tab + #1197 Phase 0 documentation readiness** (issues #1414, #1415, #1416, #1417, CU76): `github-page` adds a Docs navigation surface (`/docs/`) for module ownership, architecture (SAD/ADR), testing and DevSecOps; Mermaid is the canonical active diagram language (ADR-027); `MODULE-OWNERSHIP.md` and `workspace/ci/repo-metrics.py` + `REPO-METRICS-BASELINE.md` document in-repo folder ownership and the topology metrics baseline without splitting repositories; SAD Project #4 link corrected to Delivery Board #1. Deploy workflow unchanged.
 - **Cloud Agent install pins Temurin JDK 26** (issue #1401, CU76): `.cursor/install.sh` idempotently installs Temurin 26 and sets `JAVA_HOME` / `/usr/local/bin/java` so Cursor Cloud recurring builds match repo `java.version=26` and CI (tip installs were failing with `release version 26 not supported` on JDK 21 images).

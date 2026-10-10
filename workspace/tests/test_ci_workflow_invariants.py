@@ -34,6 +34,32 @@ WORKFLOWS_DIR = os.path.join(REPO_ROOT, ".github", "workflows")
 CI_WORKFLOW = "ci.yml"
 PAGE_WORKFLOW = "deploy-github-page.yml"
 PLAYWRIGHT_WORKFLOW = "playwright-e2e.yml"
+FRONTEND_WORKFLOW = "frontend-ci.yml"
+OPENAPI_WORKFLOW = "openapi-contract.yml"
+
+SUITE_AGGREGATORS = {
+    CI_WORKFLOW: ("suite-ci", "CI"),
+    FRONTEND_WORKFLOW: ("suite-frontend-ci", "Frontend CI"),
+    PLAYWRIGHT_WORKFLOW: ("suite-playwright-e2e", "Playwright E2E"),
+}
+
+PATH_FILTER_WORKFLOWS = (
+    CI_WORKFLOW,
+    FRONTEND_WORKFLOW,
+    PLAYWRIGHT_WORKFLOW,
+    OPENAPI_WORKFLOW,
+)
+
+
+def _aggregator_run_script(workflow_file, job_id):
+    wf = load_workflow(workflow_file)
+    job = wf.get("jobs", {}).get(job_id, {})
+    for step in job.get("steps", []) or []:
+        run = step.get("run")
+        if isinstance(run, str) and "result" in run:
+            return run
+    return ""
+
 
 # The page deploy workflow must watch this CI workflow (its `name:`).
 CI_WORKFLOW_NAME = "CI - Build, Test & Security"
@@ -138,6 +164,63 @@ class PlaywrightWorkflowInvariantsTest(unittest.TestCase):
         job = self.pw.get("jobs", {}).get("coverage-report")
         self.assertIsNotNone(job)
         self.assertIn("'pull_request'", job.get("if", ""))
+
+
+
+class PathScopedCiInvariantsTest(unittest.TestCase):
+    """#1257 — path filters + aggregators accept intentional skips."""
+
+    def test_path_filter_workflows_have_changes_job(self):
+        for name in PATH_FILTER_WORKFLOWS:
+            with self.subTest(workflow=name):
+                jobs = load_workflow(name).get("jobs", {})
+                self.assertIn("changes", jobs)
+                self.assertEqual(jobs["changes"].get("name"), "Path filter")
+
+    def test_suite_aggregator_names_unchanged(self):
+        for workflow_file, (job_id, display_name) in SUITE_AGGREGATORS.items():
+            with self.subTest(workflow=workflow_file):
+                job = load_workflow(workflow_file).get("jobs", {}).get(job_id, {})
+                self.assertEqual(job.get("name"), display_name)
+
+    def test_suite_aggregators_accept_skipped(self):
+        for workflow_file, (job_id, _) in SUITE_AGGREGATORS.items():
+            with self.subTest(workflow=workflow_file):
+                script = _aggregator_run_script(workflow_file, job_id)
+                self.assertIn("skipped", script)
+                self.assertIn("success|skipped", script.replace(" ", ""))
+
+    def test_ci_build_gated_on_backend_or_ci_filter(self):
+        build = load_workflow(CI_WORKFLOW).get("jobs", {}).get("build", {})
+        job_if = build.get("if", "")
+        self.assertIn("changes.outputs.backend", job_if)
+        self.assertIn("changes.outputs.ci", job_if)
+
+    def test_frontend_roots_gated_on_frontend_or_ci_filter(self):
+        jobs = load_workflow(FRONTEND_WORKFLOW).get("jobs", {})
+        for job_id in ("typecheck", "unit-tests"):
+            with self.subTest(job=job_id):
+                job_if = jobs[job_id].get("if", "")
+                self.assertIn("changes.outputs.frontend", job_if)
+                self.assertIn("changes.outputs.ci", job_if)
+
+    def test_playwright_roots_gated_on_product_filter(self):
+        jobs = load_workflow(PLAYWRIGHT_WORKFLOW).get("jobs", {})
+        for job_id in ("backend-build", "frontend-build"):
+            with self.subTest(job=job_id):
+                job_if = jobs[job_id].get("if", "")
+                self.assertIn("changes.outputs.product", job_if)
+
+    def test_workflows_do_not_use_on_paths_that_starve_main(self):
+        """Job-level if is OK; workflow-level on.paths would drop required checks on main."""
+        for name in PATH_FILTER_WORKFLOWS:
+            with self.subTest(workflow=name):
+                on = load_workflow(name).get("on", {})
+                for event in ("pull_request", "push"):
+                    cfg = on.get(event)
+                    if isinstance(cfg, dict):
+                        self.assertNotIn("paths", cfg)
+
 
 
 if __name__ == "__main__":
