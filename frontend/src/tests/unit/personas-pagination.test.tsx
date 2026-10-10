@@ -87,6 +87,22 @@ describe("PersonasPage (#1340)", () => {
   });
 });
 
+describe("PersonasPage out-of-range page (#1340)", () => {
+  beforeEach(() => {
+    mockFetch.mockReset();
+    mockReplace.mockReset();
+  });
+
+  it("moves a page past the end (stale link, deleted rows) to the last page", async () => {
+    mockSearchParams = new URLSearchParams("page=99");
+    mockFetch.mockReturnValue(
+      pageResponse({ content: [], number: 99, size: 20, totalElements: 1104, totalPages: 56 }),
+    );
+    render(<PersonasPage />, { wrapper });
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith("/dashboard/personas?page=55", { scroll: false }));
+  });
+});
+
 describe("presentPersonaSaveError duplicate link outside the loaded page (#1340)", () => {
   it("offers the link and loads the existing person by id when it is not on the page", async () => {
     const { toast } = await import("sonner");
