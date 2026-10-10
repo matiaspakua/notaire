@@ -777,6 +777,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
+  with a "Saltar al contenido" / "Skip to content" link that appears on the first Tab and moves focus to
+  `<main id="main-content">` (WCAG 2.4.1). After a client-side navigation, focus moves to the new page's `<h1>`
+  instead of staying on the clicked sidebar link (WCAG 2.4.3). The first load and `?page=`/filter changes leave
+  focus alone. Guarded by `dashboard-layout.test.tsx` and Playwright TS-0108.
 - **Guard: every REST endpoint has a UI consumer or an allowlist reason** (issue #1250, CU76, CONSTITUTION §4): `contracts/tests/test_api_reachability.py` scans `frontend/src` (tests and comments excluded) for API paths, method-aware for the `api-client` helpers, and fails on any OpenAPI endpoint the UI does not call unless `contracts/api-reachability-allowlist.yaml` lists it with a reason; stale entries (endpoint removed or now called) fail too. The allowlist starts with the 53 endpoints unreferenced today, the 10 from #1250 plus 43 the method-aware scan adds, all marked for triage; #1250 stays open for that triage.
 - **Workflow tracker post-signing reingreso loop (strategy b)** (issue #841,
   CU83 / CU06 / CU07 / CU11 / CU44): seed `ManagementStatus` 11–13 and replace
