@@ -41,11 +41,14 @@ running application.
 | Backend API | Actuator/Micrometer `/actuator/prometheus`, Basic auth | `notaire-backend` |
 | PostgreSQL | postgres-exporter | `notaire-postgres` |
 | Grafana, Loki | `/metrics` | `grafana`, `loki` |
+| All stack services (11) | blackbox exporter HTTP/TCP probes, `probe_success{service=...}` | `probe-<service>` |
 
 ### Dashboards (provisioned in Grafana)
 
 | UID | Shows |
 |-----|-------|
+| `notaire-stack-status` | overview: availability of every service, firing alerts, errors from Loki |
+| `notaire-status` | overview: frontend, backend, PostgreSQL, pgAdmin, API rate/5xx/p95, alerts, errors |
 | `notaire-backend` | JVM, HTTP, DB pool, log volume |
 | `notaire-postgres` | connections, transactions, size |
 | `notaire-logs` | backend and frontend logs from Loki |
