@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `fix/1340_gestiones_pagination` | stacked on #1394 |
 | Tasks | `tasks.md` | in progress |
 | Commits | see branch | pushed |
-| Pull Request | — | pending |
+| Pull Request | #1396 | open |
 | CI run | — | pending |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
