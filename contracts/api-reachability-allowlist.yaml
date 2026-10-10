@@ -46,7 +46,6 @@ endpoints:
   "DELETE /api/v1/testimonio/{id}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "GET /api/v1/testimonio/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"
   "PUT /api/v1/testimonio/{id}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
-  "GET /api/v1/tipo-identificacion": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "POST /api/v1/tipo-identificacion": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "DELETE /api/v1/tipo-identificacion/{id}": "UI backlog (#1250 bucket C): expose in the UI with a Playwright scenario"
   "GET /api/v1/tipo-identificacion/{id}": "API-only (#1250 bucket A): REST read-by-id; the UI works from lists"

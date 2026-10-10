@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import {
   usePersonasPage,
@@ -25,6 +26,7 @@ import { fullName } from "@/lib/utils";
 import { presentPersonaSaveError } from "@/lib/persona-save-error";
 import type { Persona } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { defaultIdentificationTypeId, useTiposIdentificacion } from "@/hooks/useTiposIdentificacion";
 
 const EMPTY: Partial<Persona> = {
   firstName: "",
@@ -58,6 +60,9 @@ function PersonasList() {
   const createMutation = useCreatePersona();
   const updateMutation = useUpdatePersona();
   const deleteMutation = useDeletePersona();
+  const { data: typesData } = useTiposIdentificacion();
+  const identificationTypes = Array.isArray(typesData) ? typesData : [];
+  const typeNames = new Map(identificationTypes.map((ti) => [ti.idIdentificationType, ti.name]));
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -96,14 +101,25 @@ function PersonasList() {
     setModalOpen(true);
   }
 
+  // A new person starts on DNI (Owner decision, #1361); a stored person keeps its own type,
+  // and one stored without a type must pick one before saving.
+  const selectedTypeId =
+    editing.identificationTypeId ?? (isEditMode ? undefined : defaultIdentificationTypeId(identificationTypes));
+
   async function handleSave() {
     setFieldErrors({});
+    if (selectedTypeId == null) {
+      setFieldErrors({ identificationTypeId: t("validation.tipoIdentificacionRequired") });
+      return;
+    }
+    const data: Partial<Persona> = { ...editing, identificationTypeId: selectedTypeId };
+    delete data.fkIdIdentificationType;
     try {
       if (isEditMode && editing.personId) {
-        await updateMutation.mutateAsync({ id: editing.personId, data: editing });
+        await updateMutation.mutateAsync({ id: editing.personId, data });
         toast.success(t("updated"));
       } else {
-        await createMutation.mutateAsync(editing);
+        await createMutation.mutateAsync(data);
         toast.success(t("created"));
       }
       setModalOpen(false);
@@ -146,8 +162,13 @@ function PersonasList() {
     },
     {
       key: "dni",
-      header: `${t("fields.dni")} / ${t("fields.cuil")}`,
-      render: (p) => p.identificationNumber ?? p.taxId ?? "—",
+      header: `${t("fields.numeroIdentificacion")} / ${t("fields.cuil")}`,
+      render: (p) => {
+        const number = p.identificationNumber ?? p.taxId;
+        if (!number) return "—";
+        const typeName = p.identificationTypeId != null ? typeNames.get(p.identificationTypeId) : undefined;
+        return typeName ? `${typeName} ${number}` : number;
+      },
     },
     {
       key: "email",
@@ -277,7 +298,24 @@ function PersonasList() {
                 </FormField>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <FormField label={t("fields.dni")} error={fieldErrors.identificationNumber}>
+                <FormField label={t("fields.tipoIdentificacion")} required error={fieldErrors.identificationTypeId}>
+                  <Select
+                    value={selectedTypeId != null ? String(selectedTypeId) : ""}
+                    onValueChange={(v) => setEditing({ ...editing, identificationTypeId: Number(v) })}
+                  >
+                    <SelectTrigger data-testid="select-identification-type" aria-invalid={!!fieldErrors.identificationTypeId}>
+                      <SelectValue placeholder={t("placeholders.tipoIdentificacion")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {identificationTypes.map((ti) => (
+                        <SelectItem key={ti.idIdentificationType} value={String(ti.idIdentificationType)}>
+                          {ti.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormField>
+                <FormField label={t("fields.numeroIdentificacion")} error={fieldErrors.identificationNumber}>
                   <Input
                     value={editing.identificationNumber ?? ""}
                     onChange={(e) => setEditing({ ...editing, identificationNumber: e.target.value })}
@@ -285,14 +323,14 @@ function PersonasList() {
                     aria-invalid={!!fieldErrors.identificationNumber}
                   />
                 </FormField>
-                <FormField label={t("fields.cuil")} error={fieldErrors.taxId}>
-                  <Input
-                    value={editing.taxId ?? ""}
-                    onChange={(e) => setEditing({ ...editing, taxId: e.target.value })}
-                    aria-invalid={!!fieldErrors.taxId}
-                  />
-                </FormField>
               </div>
+              <FormField label={t("fields.cuil")} error={fieldErrors.taxId}>
+                <Input
+                  value={editing.taxId ?? ""}
+                  onChange={(e) => setEditing({ ...editing, taxId: e.target.value })}
+                  aria-invalid={!!fieldErrors.taxId}
+                />
+              </FormField>
               <FormField label={t("fields.email")} error={fieldErrors.email}>
                 <Input
                   type="email"

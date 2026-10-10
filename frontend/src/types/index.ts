@@ -55,6 +55,16 @@ export interface Persona {
   notaryRegistrationNumber?: number;
   isClient?: boolean;
   fkIdIdentificationType?: { idIdentificationType?: number; name?: string; characters?: string };
+  /** PersonResponse/PersonRequest identification type id (GET /tipo-identificacion); null on legacy rows. */
+  identificationTypeId?: number | null;
+  version?: number;
+}
+
+/** GET /api/v1/tipo-identificacion — IdentificationTypeResponse. */
+export interface TipoIdentificacion {
+  idIdentificationType: number;
+  name: string;
+  characters?: string | null;
   version?: number;
 }
 

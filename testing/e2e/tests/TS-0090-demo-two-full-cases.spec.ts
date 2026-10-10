@@ -153,7 +153,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await page.getByTestId("btn-nueva-persona").click();
     await page.getByTestId("input-firstName").fill(def.clienteNombre);
     await page.getByTestId("input-lastName").fill(def.clienteApellido);
-    await page.getByRole("dialog").getByLabel(/dni/i).fill(`DNI${runId}${def.label}`);
+    await page.getByRole("dialog").getByTestId("input-dni").fill(`DNI${runId}${def.label}`);
     await page.getByLabel(/email/i).fill(`${def.label.toLowerCase()}.demo.${runId}@notaire.test`);
     await page.getByTestId("check-es-cliente").click();
     await saveDialog(page);

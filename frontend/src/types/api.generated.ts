@@ -3911,9 +3911,13 @@ export interface components {
             birthDate?: string;
             email?: string;
             firstName: string;
+            /** @description Legacy nested form of identificationTypeId; identificationTypeId wins when both are sent. */
             fkIdIdentificationType?: components["schemas"]["IdentificationTypeRef"];
             identificationNumber: string;
-            /** Format: int32 */
+            /**
+             * Format: int32
+             * @description Identification type id from GET /tipo-identificacion. Omitted on create: DNI. An id that is not in the catalog answers 400 (#1361).
+             */
             identificationTypeId?: number;
             isClient?: boolean;
             lastName: string;
