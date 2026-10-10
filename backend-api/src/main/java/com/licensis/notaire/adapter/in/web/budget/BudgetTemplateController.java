@@ -228,12 +228,16 @@ public class BudgetTemplateController {
         }
     }
 
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Eliminado"),
+        @ApiResponse(responseCode = "404", description = "No encontrado")
+    })
     @DeleteMapping("/tipo-tramite/{idProcedureType}/concepto/{idConcept}")
     @Operation(summary = "Eliminar plantilla de presupuesto")
     public ResponseEntity<?> delete(@PathVariable Integer idProcedureType, @PathVariable Integer idConcept) {
         try {
             getJpaController().destroy(new BudgetTemplatePK(idProcedureType, idConcept));
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (NonexistentEntityException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {

@@ -1,0 +1,33 @@
+info:
+  name: Create second role
+  type: http
+  seq: 1
+  description: |-
+      ## Create a second role — POST /api/v1/roles
+      Setup for 05a (duplicate name answers 409, issue #579).
+      Traceability: CU76
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/roles"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "{{roles_name}}-second",
+          "description": "Bruno E2E second role",
+          "active": true,
+          "modulos": []
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Returns idRole", function () {
+            bru.setVar('roles_second_id', res.getBody().idRole);
+          });

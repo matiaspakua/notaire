@@ -36,6 +36,7 @@ import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import type { Presupuesto } from "@/types";
+import { toDateInputValue } from "@/lib/dates";
 
 const NO_TEMPLATE = "none";
 
@@ -319,7 +320,7 @@ export default function PresupuestosPage() {
               <FormField label={tc("date")} required>
                 <Input
                   type="date"
-                  value={editing.date ?? ""}
+                  value={toDateInputValue(editing.date)}
                   onChange={(e) => setEditing({ ...editing, date: e.target.value })}
                 />
               </FormField>
