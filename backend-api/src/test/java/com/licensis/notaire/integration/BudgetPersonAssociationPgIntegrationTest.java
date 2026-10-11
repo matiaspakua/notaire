@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * CU01 - Preparar Budget, against the real Flyway-managed Postgres
+ * CU01 - Prepare a budget, against the real Flyway-managed Postgres
  * schema. After #1068/#1124, create/update bind {@code BudgetRequest} (accepts
  * nested {@code person.personId} or flat {@code personId}) and return
  * {@code BudgetResponse} with nested {@code person} matching frontend

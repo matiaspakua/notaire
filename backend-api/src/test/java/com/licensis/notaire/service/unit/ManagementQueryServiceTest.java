@@ -149,14 +149,14 @@ class ManagementQueryServiceTest {
     @Test
     @DisplayName("Should handle null status in summary mapping")
     void shouldHandleNullStatusInMapping() {
-        DeedManagement managementSinStatus = new DeedManagement();
-        managementSinStatus.setIdManagement(1);
-        managementSinStatus.setNumber(100);
-        managementSinStatus.setHeading("Test");
-        managementSinStatus.setDateStart(new Date());
-        managementSinStatus.setFkIdManagementStatus(null);
+        DeedManagement managementWithoutStatus = new DeedManagement();
+        managementWithoutStatus.setIdManagement(1);
+        managementWithoutStatus.setNumber(100);
+        managementWithoutStatus.setHeading("Test");
+        managementWithoutStatus.setDateStart(new Date());
+        managementWithoutStatus.setFkIdManagementStatus(null);
 
-        when(repository.findById(1)).thenReturn(Optional.of(managementSinStatus));
+        when(repository.findById(1)).thenReturn(Optional.of(managementWithoutStatus));
 
         Optional<DtoManagementSummary> result = service.findById(1);
 

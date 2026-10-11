@@ -43,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English fixture names** (#1490, CU75): person fixtures use `Client`,
+  `Lawyer`, and `Criminal`. Budget headings use `Updatable budget` and a
+  `Budget` prefix. The management mock heading is `Management` and the
+  transition sample is `In progress`. Audit samples use module `DOCUMENTS`.
+  Helpers are `managementWithoutStatus`, `recordWithoutUser`,
+  `shouldCalculateStatusWithNoPayments`, `findByModule`, and record methods
+  without `Registros`. Stored statuses `PENDIENTE`, `BORRADOR`, and
+  `APROBADO` stay, along with `NoPayments`, `Pérez`, and the role
+  `Escribano`. Delivered-by `Cliente` stays.
 - **English signing identifiers** (#1490, CU75): the signing service comment
   says `Sign a deed`. The controller field is `deedSigningService`. Tests
   name `createSignedDeed`, `nextNumber`, `next`, `nextAuxiliary`,

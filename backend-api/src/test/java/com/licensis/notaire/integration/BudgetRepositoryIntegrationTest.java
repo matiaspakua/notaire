@@ -40,7 +40,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         typeId = identificationTypeRepository.save(typeId);
 
         person = new Person();
-        person.setFirstName("Cliente");
+        person.setFirstName("Client");
         person.setLastName("Test");
         person.setIdentificationNumber("99999999");
         person.setIsClient(true);
@@ -90,7 +90,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber(3001);
         budget.setDate(new Date());
-        budget.setHeading("Budget Actualizable");
+        budget.setHeading("Updatable budget");
         budget.setStatus("BORRADOR");
         budget.setFkIdPerson(person);
         Budget saved = budgetRepository.save(budget);
@@ -106,7 +106,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should support multiple budgets")
     void shouldSupportMultipleBudgets() {
-        String uniqueHeading = "Pres" + System.nanoTime();
+        String uniqueHeading = "Budget" + System.nanoTime();
         String[] statuses = {"BORRADOR", "PENDIENTE", "APROBADO", "RECHAZADO", "CANCELLED"};
         for (int i = 0; i < statuses.length; i++) {
             Budget budget = new Budget();

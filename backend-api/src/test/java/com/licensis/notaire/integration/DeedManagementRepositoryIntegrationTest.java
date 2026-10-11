@@ -230,7 +230,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         identificationTypeRepository.save(identificationType);
 
         Person client = new Person();
-        client.setFirstName("Cliente");
+        client.setFirstName("Client");
         client.setLastName("Test");
         client.setIdentificationNumber("12345678");
         client.setIsClient(true);
