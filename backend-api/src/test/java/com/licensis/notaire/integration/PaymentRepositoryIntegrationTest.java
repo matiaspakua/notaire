@@ -139,7 +139,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
         Payment saved = paymentRepository.save(testPayment);
 
         saved.setAmount(new java.math.BigDecimal("120000"));
-        saved.setNotes("Payment actualizado");
+        saved.setNotes("Updated payment");
         paymentRepository.save(saved);
 
         Optional<Payment> updated = paymentRepository.findById(saved.getIdPayment());
@@ -147,7 +147,7 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
         assertThat(updated).isPresent()
                 .hasValueSatisfying(p -> {
                     assertThat(p.getAmount()).isEqualByComparingTo(new java.math.BigDecimal("120000"));
-                    assertThat(p.getNotes()).isEqualTo("Payment actualizado");
+                    assertThat(p.getNotes()).isEqualTo("Updated payment");
                 });
     }
 

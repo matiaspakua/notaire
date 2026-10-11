@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English updated phrases** (#1490, CU75): tests name updates in English
+  (`Updated name`, `Updated name ok`, `Updated item`, `Updated payment`,
+  `Updated description`, and `Updated management IT`). Deed bodies say
+  `Signed deed for a testimony movement` and `Signed deed for a testimony copy`.
+  The helper is `createSignedDeed`. The notebook result is `created`.
+  Stored status `Firmada` stays.
 - **English synthetic phrases** (#1490, CU75): tests use English phrases and
   local names (`Name`, `No data available`, `Client A`, `Employee B`,
   `PAID`, `CANCELLED`, `Approved by the client`, `notes only`,

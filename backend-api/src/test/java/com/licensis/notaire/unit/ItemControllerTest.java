@@ -174,7 +174,7 @@ class ItemControllerTest {
 
         String json = """
                 {
-                    "name": "Item actualizado",
+                    "name": "Updated item",
                     "value": 2000.0
                 }
                 """;
@@ -192,7 +192,7 @@ class ItemControllerTest {
 
         String json = """
                 {
-                    "name": "Item actualizado",
+                    "name": "Updated item",
                     "value": 2000.0
                 }
                 """;
