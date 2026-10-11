@@ -4,17 +4,16 @@ Comprehensive test coverage measurement and automated reporting across all layer
 
 ## Current Coverage Status
 
-| Layer | Type | Coverage | Target |
-|-------|------|----------|--------|
-| Backend (Java) | JaCoCo Lines | ~84% | 80% |
-| Backend (Java) | JaCoCo Branches | ~74% | 80% |
-| Frontend (React) | Vitest | ~15% lines / ~10% branches (2026-10-03) | raise-only floor 14/9/10/14 (stmt/branch/fn/line); target 80% |
-| E2E (UI) | Playwright | 33 spec files, per Caso de Uso | — |
-| API | Bruno (YAML suite) | 104 requests, 16 resources | — |
+| Layer | Type | Enforced floor | Aspirational |
+|-------|------|----------------|--------------|
+| Backend (Java) | JaCoCo Lines | **80%** (`pom.xml`) | 80% |
+| Backend (Java) | JaCoCo Branches | **65%** (`pom.xml`) | 80% |
+| Frontend (React) | Vitest | raise-only **14/9/10/14** (stmt/branch/fn/line) | 80% (#1246) |
+| E2E (UI) | Playwright | TS-nnnn naming + critical CU coverage | — |
+| API | Bruno (YAML suite) | CU-API matrix drift guard | 100% endpoints |
 
-Current figures per `.claude/rules/code-quality.md` (backend) and
-[`backend-api/api-test/COVERAGE.md`](../../../../backend-api/api-test/COVERAGE.md) (API). Re-verify
-before quoting exact numbers elsewhere — they drift.
+Live suite volumes: [`../INVENTORY.md`](../INVENTORY.md). API status:
+[`backend-api/api-test/COVERAGE.md`](../../../../backend-api/api-test/COVERAGE.md).
 
 ## Automation
 
@@ -43,7 +42,7 @@ open backend-api/target/site/jacoco/index.html
 
 ### Coverage Enforcement
 
-- Ratchet floor: 70% line, 25% branch (enforced via `mvn verify`; raised as coverage improves, never lowered)
+- Ratchet floor: **80% line / 65% branch** (enforced via `mvn verify`; raised as coverage improves, never lowered)
 - Target: 80% line / 80% branch (aspirational)
 - Excluded: legacy `jpa` and `service.Administrador*` packages
 

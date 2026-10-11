@@ -280,6 +280,27 @@ class DocTraceabilityTest(unittest.TestCase):
         commit(repo, "docs: readme", "docs/README.md")
         self.assertEqual(run_doc(base, repo).returncode, 0)
 
+    def test_accepts_claimed_path_with_en_dash(self):
+        """git quotepath C-quotes en-dashes; claims must still match (CU76)."""
+        repo, base = new_repo()
+        doc = "docs/100-business/102-use-cases/CU76 – Quality Assurance.md"
+        trace = "docs/openspec/changes/docs-case/traceability.md"
+        body = (
+            "# Traceability\n\n## Permanent documentation updated\n\n"
+            "| Document | Updated | Commit |\n"
+            "|----------|---------|--------|\n"
+            f"| `{doc}` | yes | this PR |\n\n"
+            "## Gate log\n"
+        )
+        for path, content in ((trace, body), (doc, "# CU76\n")):
+            full = os.path.join(repo, path)
+            os.makedirs(os.path.dirname(full), exist_ok=True)
+            with open(full, "w", encoding="utf-8") as handle:
+                handle.write(content)
+        git(repo, "add", "-A")
+        git(repo, "commit", "-q", "-m", "docs: cu76 en-dash")
+        self.assertEqual(run_doc(base, repo).returncode, 0, run_doc(base, repo).stdout)
+
 
 class SchemaLineTest(unittest.TestCase):
     def test_validator_fails_change_without_schema_line(self):

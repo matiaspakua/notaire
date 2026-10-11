@@ -24,8 +24,10 @@ YES = {"yes", "sí", "si"}
 
 
 def git(args: list[str]) -> str:
+    # core.quotepath=false: paths with en-dashes (e.g. CU76 – …) must match
+    # traceability claims literally, not as C-quoted "\342\200\223" forms.
     result = subprocess.run(
-        ["git", *args],
+        ["git", "-c", "core.quotepath=false", *args],
         check=True,
         capture_output=True,
         text=True,

@@ -32,7 +32,7 @@ context: |
     on main. Merge only via Pull Request.
   - Commits: Conventional Commits ending with `Closes #<issue-number>`.
   - Gate 3 blocks the PR: full suite green (unit, integration, regression, E2E),
-    coverage at or above the JaCoCo ratchet floor (70% line / 25% branch),
+    coverage at or above the JaCoCo ratchet floor (80% line / 65% branch),
     Playwright green for UI changes, Checkstyle/Spotless clean, permanent documentation updated.
     E2E tests must follow TS-nnnn-<workflow-name> nomenclature with CU traceability
     (docs/300-development/303-testing/E2E-TEST-MAPPING.md).

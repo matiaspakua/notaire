@@ -439,17 +439,19 @@ every condition is satisfied.
 
 ## 7. Testing Rules
 
-**Master Reference**: [`docs/300-development/303-testing/TEST-PLAN.md`](docs/300-development/303-testing/TEST-PLAN.md)
+**Master Test Plan (MTP)**: [`docs/300-development/303-testing/TEST-PLAN.md`](docs/300-development/303-testing/TEST-PLAN.md)  
+**Process architecture**: [`docs/300-development/303-testing/PROCESS-ARCHITECTURE.md`](docs/300-development/303-testing/PROCESS-ARCHITECTURE.md)  
+**Living inventory**: [`docs/300-development/303-testing/INVENTORY.md`](docs/300-development/303-testing/INVENTORY.md) (generated; regenerate after suite changes)
 
 Every modification must produce or update:
 
-| Test level | Required for | Location | Coverage Target |
-|------------|--------------|----------|-----------------|
-| **Unit Tests** | All changes | `backend-api/src/test/java/.../unit/` | 70–85% line |
-| **Component Tests** | React/frontend changes | `frontend/src/**/*.test.tsx` (Vitest) | 60–75% line |
-| **Integration Tests** | All changes with data/API impact | `backend-api/src/test/java/.../integration/` (H2 + Testcontainers/PostgreSQL) | 60–75% coverage |
-| **API Contract Tests** | When a contract (API DTO/schema) changes | `backend-api/api-test/` (Bruno) | 80–100% endpoints |
-| **Playwright E2E** | Any UI change; new workflows | `testing/e2e/tests/TS-nnnn-*.spec.ts` | 1–2 per Use Case |
+| Test level | Required for | Location | Coverage note |
+|------------|--------------|----------|---------------|
+| **Unit Tests** | All changes | `backend-api/src/test/java/.../unit/` | Counts in INVENTORY |
+| **Component Tests** | React/frontend changes | `frontend/src/**/*.test.tsx` (Vitest) | Raise-only floors in `vitest.config.ts` |
+| **Integration Tests** | Data/API impact | `backend-api/src/test/java/.../integration/` (H2 + Testcontainers/PostgreSQL) | Counts in INVENTORY |
+| **API Contract Tests** | Contract (DTO/schema) changes | `backend-api/api-test/` (Bruno) + OpenAPI | Matrix + oasdiff |
+| **Playwright E2E** | Any UI change; new workflows | `testing/e2e/tests/TS-nnnn-*.spec.ts` | 1+ suite per critical CU |
 | **Regression Tests** | All changes — full suite must stay green | entire suite | — |
 
 ### Testing Fixtures & Patterns
@@ -464,25 +466,29 @@ All tests must follow fixture patterns documented in:
 
 ### Test Pyramid & Execution Strategy
 
+Fail-fast pyramid (volume from INVENTORY — never hard-code suite counts here):
+
 ```text
-                     ╱╲
-                    ╱  ╲  E2E (Playwright)  ~5% tests, 60 min weekly
-                   ╱    ╲ 35 suites, 448 tests (TS-nnnn nomenclature)
-                  ╱──────╲
-                 ╱        ╲ API Tests (Bruno) + Contract
-                ╱──────────╲ ~15% tests, 10 min daily
-               ╱  Component ╱ React + Vitest
-              ╱   Tests    ╱ ~20% tests, 5 min per commit
-             ╱────────────╲
-            ╱  Unit Tests ╱  Java + Mockito
-           ╱ (Backend)   ╱   ~60% tests, 2 min per commit
-          ╱────────────────╲
-         ╲__________________╲
+        +-------------------------------+
+        | Security / Performance        |
+        +-------------------------------+
+      +-----------------------------------+
+      | Playwright E2E (TS-nnnn)          |
+      +-----------------------------------+
+    +---------------------------------------+
+    | Bruno API + OpenAPI contract          |
+    +---------------------------------------+
+  +-------------------------------------------+
+  | Integration (Spring) + Database V&V       |
+  +-------------------------------------------+
++-----------------------------------------------+
+| Unit (JUnit) + Component (Vitest)             |
++-----------------------------------------------+
 
 Execution Strategy:
-1. Per Commit: Unit tests (instant feedback)
-2. Per PR: Unit + Component + API tests (10 min)
-3. Pre-Merge: Add E2E tests (60 min, full validation)
+1. Per Commit: Unit / component tests (instant feedback)
+2. Per PR: Unit + Integration + Vitest + path-scoped Bruno/Playwright
+3. Pre-merge / heavy CI: Integration + Coverage + Bruno + Playwright must pass
 ```
 
 ### Rules
@@ -498,6 +504,7 @@ Execution Strategy:
 - **E2E tests must be autocontenido** (not depend on other tests) except where
   clearly justified and documented.
 - **E2E test nomenclature**: `TS-nnnn-<workflow-name>.spec.ts` with CU traceability.
+  Drift guard: `python3 workspace/sdlc/validate-testing-inventory.py`.
   See [`E2E-TEST-MAPPING.md`](docs/300-development/303-testing/E2E-TEST-MAPPING.md).
 
 ### Coverage Enforcement
@@ -505,9 +512,9 @@ Execution Strategy:
 | Tool | Check | Enforced at | Ratchet Floor |
 |------|-------|-------------|---------------|
 | JaCoCo | Line + branch coverage (backend) | `mvn verify` (Gate 3) | 80% line / 65% branch |
-| Vitest | Line coverage (frontend) | CI job `frontend-ci` | 75% line |
-| Bruno | REST endpoint coverage | CI job `playwright-e2e` | 80–100% endpoints |
-| Playwright | E2E workflow coverage | CI job `playwright-e2e` | 1+ test per Use Case |
+| Vitest | Coverage thresholds (frontend) | CI job `frontend-ci` | raise-only: statements/lines **14%**, branches **9%**, functions **10%** (`vitest.config.ts`); aspirational 80% is #1246 |
+| Bruno | REST endpoint coverage | CI job `playwright-e2e` + CU matrix | Matrix complete or `MISSING`+#953 |
+| Playwright | E2E workflow coverage | CI job `playwright-e2e` | 1+ test per critical Use Case; TS-nnnn naming |
 
 ---
 
@@ -722,7 +729,8 @@ drift.
 
 ---
 
-*Last reviewed: 2026-10-10 (AI SDLC tooling map, issue sync, Mermaid/modules,
-heavy-CI merge gate, path-scoped CI #1257 / #1197 P0.2). This Constitution
-supersedes the process summary in `.claude/rules/ai-agent-workflow.md` where they
-conflict; that document remains the operational implementation.*
+*Last reviewed: 2026-10-11 (testing MTP / inventory #1511; AI SDLC tooling map,
+issue sync, Mermaid/modules, heavy-CI merge gate, path-scoped CI #1257 /
+#1197 P0.2). This Constitution supersedes the process summary in
+`.claude/rules/ai-agent-workflow.md` where they conflict; that document remains
+the operational implementation.*

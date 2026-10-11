@@ -1,105 +1,91 @@
 # ADR-006: Testing Strategy
 
-**Status:** Accepted
-**Date:** 2026-04-13
-**Deciders:** Matías Miguez
-**Related:** ADR-001, ADR-005
+**Status:** Accepted (updated 2026-10-11, #1511)  
+**Date:** 2026-04-13  
+**Deciders:** Matías Miguez  
+**Related:** ADR-001, ADR-005, ADR-012, ADR-026, CU76
 
 ## Context
 
-The project needs a clear testing strategy that covers every part of the
-system: the backend (Spring Boot), the frontend (Next.js), and the full stack
-deployed on Kubernetes.
+The project needs a clear testing strategy that covers the backend (Spring Boot),
+the frontend (Next.js), black-box QA under `testing/`, and CI gates. Early text
+in this ADR described a small Testing Trophy and tools (Page Object Model,
+Gatling, MockMvc-as-contract) that no longer match practice. This update keeps
+the same decision — multi-level automated testing with fail-fast feedback —
+and records the current architecture.
 
 ## Decision
 
-We adopt the **Testing Trophy**, adapted to the current stack:
+We adopt a **fail-fast test pyramid** (trophy-shaped middle for API/integration),
+documented in the Master Test Plan:
 
-```
-        ┌──────────────────────────────┐
-        │   E2E Tests (Playwright)     │  ← Full business flows
-        │   ~10-20 critical tests      │
-        └──────────────────────────────┘
-      ┌────────────────────────────────────┐
-      │   Integration Tests                │  ← API tests, DB tests
-      │   (Spring Boot Test + H2/PG)       │
-      │   ~50-100 tests                    │
-      └────────────────────────────────────┘
-    ┌────────────────────────────────────────────┐
-    │   Unit Tests (JUnit 5 + Vitest)            │  ← Business logic
-    │   Backend: services, validators            │
-    │   Frontend: components, hooks, utils       │
-    │   ~200+ tests                              │
-    └────────────────────────────────────────────┘
+- **MTP:** [`docs/300-development/303-testing/TEST-PLAN.md`](../../300-development/303-testing/TEST-PLAN.md)
+- **Process architecture:** [`PROCESS-ARCHITECTURE.md`](../../300-development/303-testing/PROCESS-ARCHITECTURE.md)
+- **Living inventory:** [`INVENTORY.md`](../../300-development/303-testing/INVENTORY.md)
+
+```text
+        Security / Performance (weekly / pipeline)
+      Playwright E2E — TS-nnnn (GherkinSteps + API helpers)
+    Bruno API + OpenAPI contract (oasdiff)
+  Integration — Spring H2 + Testcontainers PG + DB V&V
+Unit (JUnit 5) + Component (Vitest)
 ```
 
-### Backend Testing (Java)
+### Backend
 
-| Type | Tools | Scope | Requirement |
-|------|-------------|-------|-----------|
-| Unit | JUnit 5 + Mockito + AssertJ | Services, validators | 80% coverage |
-| Integration | @SpringBootTest + Testcontainers | Controllers, repositories | Every endpoint |
-| API Contract | MockMvc + Spring Security Test | Auth, roles, status codes | Happy and sad paths |
-| Performance | Gatling / k6 | API under load | Baseline documented |
-| Security | OWASP ZAP | Every endpoint | 0 CRITICAL/HIGH |
+| Type | Tools | Scope | Gate |
+|------|-------|-------|------|
+| Unit | JUnit 5 + Mockito + AssertJ | Services, validators | `mvn test` |
+| Integration | `@SpringBootTest` + H2 / Testcontainers | Controllers, repositories | `ci.yml` |
+| API | Bruno collection | HTTP contract | `playwright-e2e.yml` |
+| OpenAPI | committed YAML + oasdiff | Breaking changes | `openapi-contract.yml` |
+| Coverage | JaCoCo | Line/branch | **80% / 65%** enforced |
+| Performance | k6 (`infra/performance/k6`) | Load baseline | weekly |
+| Security | Semgrep/Trivy/CodeQL + ZAP | SAST/SCA/DAST | gates + weekly DAST |
 
-**Backend conventions:**
-
-- Methods: `shouldXxxWhenYyy()` with `@DisplayName`
-- Pattern: Arrange / Act / Assert
-- One assert per test when possible
-- Tests in `src/test/java/.../unit/` and `integration/`
-- Tagging with `@Tag("unit")` and `@Tag("integration")`
-
-### Frontend Testing (TypeScript)
+### Frontend
 
 | Type | Tools | Scope |
-|------|-------------|-------|
-| Unit | Vitest + Testing Library | Components, hooks, utils |
-| Visual | Storybook (optional) | Component states |
-| E2E | Playwright | Complete user journeys |
-| Accessibility | axe-core + Playwright | WCAG 2.1 compliance |
+|------|-------|-------|
+| Unit / component | Vitest + Testing Library | Components, hooks, utils |
+| E2E | Playwright in `testing/e2e` | User journeys (`TS-nnnn-*.spec.ts`) |
+| Accessibility | axe / dedicated QA specs | WCAG-oriented checks |
 
-**Frontend conventions:**
+Vitest floors are **raise-only** in `vitest.config.ts` (currently ~14% lines);
+the long-term 80% target is tracked separately (#1246).
 
-- Test files: `*.test.ts` next to the code
-- E2E in `testing/e2e/tests/*.spec.ts`
-- Page Object Model for E2E
+### E2E conventions
 
-### E2E Tests — Priority flows
+- Nomenclature: `TS-nnnn-<workflow-name>.spec.ts` (mandatory; inventory guard).
+- Fixtures: **GherkinSteps** (not a classical Page Object Model).
+- Traceability: CU comments + [`CU-API-MATRIX.csv`](../../300-development/303-testing/CU-API-MATRIX.csv).
+- Skip policy: open `#issue` for product gaps only (#1066).
 
-| Flow | Use cases | Priority |
-|-------|-----|-----------|
-| Login → full management → payment | CU01, CU02, CU15, CU16 | Critical |
-| Register a client → search | CU17, CU18, CU19, CU61 | High |
-| Budget → deed → testimony | CU01, CU05, CU07 | High |
-| Admin: register a user + substitution | CU20, CU22 | Medium |
-| Generate the monthly report | CU24, CU25 | Medium |
-
-### CI Pipeline
+### CI Pipeline (current)
 
 ```yaml
-# On every pull request:
-1. Backend: mvn test (unit + integration)
-2. Backend: JaCoCo coverage report (80% gate)
-3. Backend: Checkstyle + SpotBugs
-4. Backend: Trivy vulnerability scan
-5. Frontend: vitest run
-6. Frontend: playwright test (headless)
-7. Build: Docker images
-8. Security: OWASP ZAP (weekly on main)
+# Product PRs (path-scoped aggregators, #1257):
+1. Backend: unit + integration (H2 + PG) + JaCoCo 80/65
+2. Checkstyle / Spotless / SpotBugs / Trivy (as configured)
+3. Frontend: tsc, ESLint, Vitest, Next build
+4. Bruno + Playwright (when UI/API paths change)
+5. Process: OpenSpec plan, CU matrix, testing inventory, TDD evidence
+# Weekly / dispatch: DAST ZAP, k6
 ```
+
+Local mirror: `bash workspace/sdlc/preflight.sh` (`--full` for stack-backed suites).
 
 ## Consequences
 
-- Tagged tests let us run only unit tests for fast feedback
-- Testcontainers removes differences between H2 and PostgreSQL in integration tests
-- Playwright E2E in CI checks that the 68 use cases work end to end
-- The 80% coverage gate keeps backend quality
+- Tagged/path-scoped jobs keep feedback fast without dropping required check names.
+- Living inventory prevents MTP/README count rot (#1511).
+- Bruno + OpenAPI replace “MockMvc as the only API contract” narrative.
+- Large E2E inventory is accepted; criticality bands in the MTP guide ROI.
+- Agents and humans share one MTP + process architecture under CU76.
 
 ## References
 
+- Master Test Plan — `docs/300-development/303-testing/TEST-PLAN.md`
+- Specialization guidelines (QA Automation / MTP / pirámide / trazabilidad)
 - [Testing Trophy (Kent C. Dodds)](https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications)
-- [Spring Boot Testing Guide](https://docs.spring.io/spring-boot/docs/current/reference/html/test-auto-configuration.html)
-- [Testcontainers for Java](https://java.testcontainers.org/)
-- [Playwright Documentation](https://playwright.dev/docs/intro)
+- [Playwright](https://playwright.dev/docs/intro) · [Testcontainers](https://java.testcontainers.org/)
