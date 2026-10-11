@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English source-surface purpose** (#1490, CU75): the living spec says
+  the domain model maps database identifiers to English names. The
+  historical login contrast `POST /api/v1/usuarios/login` stays, along
+  with the forbidden segments `usuarios`, `gestiones`, `tramites`,
+  `presupuestos`, and `escrituras`.
 - **Withdraw comment citation** (#1490, CU75): the testimony-movement
   hook names the retired `/retirar` path and `numeroCarton`. The live
   call stays `/testimony-movements/{id}/withdraw` with `cardNumber`.
