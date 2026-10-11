@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English compensation diagram** (#1490, CU75):
+  The compensation spreadsheet and diagram use current table names
+  (`people`, `deed_managements`, `procedures`) and current foreign keys
+  (`fk_id_person`, `fk_id_notary_person`, `fk_origin_node_id`). Actions are
+  `Restrict`, `Cascade`, and `Null`. `identifications` stays labeled as the
+  legacy table Flyway does not create. Stored labels `Protocolo Auxiliar`,
+  `Errose`, and `No Pasó` stay. The removed column `budgets.fk_id_tramite`
+  stays in the legend. Filenames stay as recorded.
 - **English ERD spreadsheet** (#1490, CU75):
   `Modelo Relacional Escribania - Entidades.csv` uses English headers
   (`Entity`, `Attribute`, `Description`) and English type labels (`Strong`,
