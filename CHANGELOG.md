@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Documents-due report allowlist uses the English path parameter** (CU76, #1490):
+  `GET /api/v1/reports/documents-due/{idSubmittedDocument}`.
 - **Case-process documentation and a traceability check** (CU76, CU02, #921):
   `GESTION.md` is the step-by-step analysis of a gestión. The legacy activity
   diagram matches the seeded workflow. `check-doc-traceability.py` rejects an
