@@ -32,26 +32,26 @@ describe("procedureTemplateKeys", () => {
 describe("useProcedureTemplate (CU03)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("fetches required documents via GET /procedure-templates/procedure-types/{id}", async () => {
-    vi.mocked(apiGet).mockResolvedValue([
-      {
-        notes: "",
-        procedureType: { idProcedureType: 7, name: "Compraventa" },
-        documentType: { idDocumentType: 1, name: "DNI", expires: false, deliveredBy: "Cliente" },
-      },
-    ]);
+  it("fetches the flat checklist rows and joins the document type by fkIdDocumentType (#1362)", async () => {
+    vi.mocked(apiGet).mockImplementation((path: string) =>
+      Promise.resolve(
+        path.startsWith("/document-types")
+          ? [{ idDocumentType: 1, name: "DNI", expires: false, deliveredBy: "Cliente" }]
+          : [{ fkIdProcedureType: 7, fkIdDocumentType: 1, notes: "", version: 0 }],
+      ) as never,
+    );
 
     const { result } = renderHook(() => useProcedureTemplate(7), { wrapper: createWrapper() });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => expect(result.current.data?.[0]?.documentType?.name).toBe("DNI"));
     expect(apiGet).toHaveBeenCalledWith("/procedure-templates/procedure-types/7");
-    expect(result.current.data?.[0].documentType?.name).toBe("DNI");
+    expect(result.current.data?.[0].fkIdDocumentType).toBe(1);
   });
 
   it("does not fetch when procedureTypeId is undefined", () => {
     const { result } = renderHook(() => useProcedureTemplate(undefined), { wrapper: createWrapper() });
 
     expect(result.current.fetchStatus).toBe("idle");
-    expect(apiGet).not.toHaveBeenCalled();
+    expect(apiGet).not.toHaveBeenCalledWith(expect.stringContaining("/procedure-templates"));
   });
 });
