@@ -17,7 +17,7 @@ test.describe("Administration hub (ADMIN only)", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /administración/i })
     ).toBeVisible();
-    await expect(page.getByText(/users/i).first()).toBeVisible();
+    await expect(page.getByText(/usuarios/i).first()).toBeVisible();
     await expect(page.getByText(/concepts/i).first()).toBeVisible();
     await expect(page.getByText(/tipos de trámite/i).first()).toBeVisible();
     await expect(page.getByText(/estados de gestión/i).first()).toBeVisible();
@@ -99,7 +99,7 @@ test.describe("CU37 — Concepts", () => {
   });
 
   test("page loads with correct title", async ({ page }) => {
-    await expect(page.getByRole("heading", { name: /concepts/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /conceptos/i })).toBeVisible();
   });
 
   test("typing in search calls GET /concepts/search", async ({ page }) => {
@@ -194,7 +194,7 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
     await expect(dialog).toBeHidden();
 
     await page.getByTestId("input-search-folio-type").fill(uniqueName);
-    await expect(page.getByText(/protocol auxiliar/i).first()).toBeVisible();
+    await expect(page.getByText(/protocolo auxiliar/i).first()).toBeVisible();
   });
 });
 
@@ -206,7 +206,7 @@ test.describe("CU39/CU49/CU55 — Budget templates", () => {
 
   test("page loads with correct title", async ({ page }) => {
     await expect(
-      page.getByRole("heading", { name: /templates de presupuesto/i })
+      page.getByRole("heading", { name: /plantillas de presupuesto/i })
     ).toBeVisible();
   });
 

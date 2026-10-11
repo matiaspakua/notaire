@@ -471,7 +471,7 @@ test.describe('People screen - responsive viewports', () => {
 
         // People heading visible
         await expect(
-          page.getByRole('heading', { name: /people/i }),
+          page.getByRole('heading', { name: /personas/i }),
         ).toBeVisible()
 
         // No horizontal scroll at this breakpoint

@@ -37,7 +37,7 @@ test.describe("CU81 - Procedure management in the auxiliary protocol", () => {
     await dialog.getByTestId("textarea-deed-body-auxiliary").fill("E2E test deed body");
     await dialog.getByRole("button", { name: /crear/i }).click();
 
-    await expect(page.getByText(/deed iniciada/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/escritura iniciada/i)).toBeVisible({ timeout: 10000 });
     await expect(dialog).not.toBeVisible();
     await expect(row).not.toBeVisible();
   });
@@ -64,7 +64,7 @@ test.describe("CU81 - Procedure management in the auxiliary protocol", () => {
     await page.goto("/dashboard/protocol/auxiliary");
     await page.waitForLoadState("domcontentloaded");
 
-    await expect(page.getByText(/protocol auxiliar/i).first()).toBeVisible();
+    await expect(page.getByText(/protocolo auxiliar/i).first()).toBeVisible();
   });
 
   for (const width of [320, 768, 1024]) {
@@ -73,7 +73,7 @@ test.describe("CU81 - Procedure management in the auxiliary protocol", () => {
       await page.goto("/dashboard/protocol/auxiliary");
       await page.waitForLoadState("domcontentloaded");
 
-      await expect(page.getByText(/protocol auxiliar/i).first()).toBeVisible();
+      await expect(page.getByText(/protocolo auxiliar/i).first()).toBeVisible();
       const hasNoOverflow = await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth,
       );

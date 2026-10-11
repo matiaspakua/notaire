@@ -104,7 +104,7 @@ export class GherkinSteps {
   async whenUserSearches(searchTerm: string) {
     const searchInput = this.page
       .getByRole("searchbox")
-      .or(this.page.getByPlaceholder(/search/i));
+      .or(this.page.getByPlaceholder(/buscar/i));
     await searchInput.fill(searchTerm);
   }
 

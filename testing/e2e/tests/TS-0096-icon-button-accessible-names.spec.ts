@@ -62,7 +62,7 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
       timeout: 15000,
     });
     await expect(
-      table.getByRole("button", { name: /summary financiero|financial summary/i }).first(),
+      table.getByRole("button", { name: /resumen financiero|financial summary/i }).first(),
     ).toBeVisible();
   });
 

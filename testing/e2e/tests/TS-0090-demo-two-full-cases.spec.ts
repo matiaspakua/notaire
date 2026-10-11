@@ -174,7 +174,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await go(page, "/dashboard/budgets");
     await page.getByTestId("btn-new-budget").click();
     await choose(page, "select-person", new RegExp(def.clientLastName, "i"));
-    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-04");
+    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-04");
     await page.getByTestId("input-amount").fill(def.budgetAmount);
     await saveDialog(page);
     await page.getByTestId("input-search-budget").fill(def.clientLastName);
@@ -199,7 +199,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await go(page, "/dashboard/deeds");
     await page.getByRole("button", { name: /nueva escritura/i }).click();
     await page.getByRole("dialog").getByLabel(/número/i).fill(def.deedNumber);
-    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-05");
+    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-05");
     await choose(page, "select-folio-deed", new RegExp(def.folioType, "i"));
     await page
       .getByRole("dialog")
@@ -243,7 +243,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     // The document is presented for the case's procedure (CU04, #655).
     await chooseInDialogCombobox(page, new RegExp(`^${def.managementNumber} `), "select-management-document");
     await chooseFirst(page, "select-procedure-document");
-    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-06");
+    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-06");
     await page.getByRole("dialog").getByLabel(/document entregado/i).click();
     await saveDialog(page);
   });
@@ -252,7 +252,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await go(page, "/dashboard/payments");
     await page.getByTestId("btn-new-payment").click();
     await choose(page, "select-budget-payment", new RegExp(def.clientLastName, "i"));
-    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-07");
+    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-07");
     await page.getByRole("dialog").getByLabel(/monto/i).fill(def.paymentAmount);
     await saveDialog(page);
   });

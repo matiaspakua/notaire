@@ -92,7 +92,7 @@ test.describe('CU05 - Prepare a deed', () => {
     await expect(dialog.getByLabel(/número/i)).toBeVisible()
 
     // Form must have a date field
-    await expect(dialog.getByLabel(/date/i)).toBeVisible()
+    await expect(dialog.getByLabel(/fecha/i)).toBeVisible()
 
     // Form must have folio selector (Issue #892)
     await expect(dialog.getByTestId('select-folio-deed')).toBeVisible()
@@ -112,7 +112,7 @@ test.describe('CU05 - Prepare a deed', () => {
     await expect(dialog).toBeVisible()
 
     await dialog.getByLabel(/número/i).fill(numberDeed)
-    await dialog.getByLabel(/date/i).fill(new Date().toISOString().split('T')[0])
+    await dialog.getByLabel(/fecha/i).fill(new Date().toISOString().split('T')[0])
 
     // Select folio using the folio picker
     const folioPicker = dialog.getByTestId('select-folio-deed')
@@ -210,7 +210,7 @@ test.describe('CU06 - Sign a deed', () => {
         await expect(
           page
             .locator('[data-sonner-toast]')
-            .getByText(/folios|sin folio|no tiene folio|no puede firmar/i)
+            .getByText(/folio|sin folio|no tiene folio|no puede firmar/i)
             .first()
         ).toBeVisible({ timeout: 5000 })
       }
@@ -289,7 +289,7 @@ for (const viewport of [
     await page.waitForLoadState('domcontentloaded')
 
     // Page heading visible
-    await expect(page.getByRole('heading', { level: 1, name: /deeds/i })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: /escrituras/i })).toBeVisible()
 
     // New-deed button is accessible
     await expect(page.getByRole('button', { name: /nueva escritura/i })).toBeVisible()

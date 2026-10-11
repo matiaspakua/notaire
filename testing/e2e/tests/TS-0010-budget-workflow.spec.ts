@@ -82,7 +82,7 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
 
     // AND: fills the date and the amount
     const today = new Date().toISOString().split("T")[0];
-    await dialog.getByLabel(/date/i).fill(today);
+    await dialog.getByLabel(/fecha/i).fill(today);
     await dialog.getByTestId("input-amount").fill("80000");
 
     // AND: submits the form
@@ -154,7 +154,7 @@ test.describe("CU47 - Consult payment / outstanding balance", () => {
     await expect(dialog).toBeVisible();
 
     // THEN: the pending balance is visible in the summary
-    const balanceDisplay = dialog.getByText(/balance/i);
+    const balanceDisplay = dialog.getByText(/saldo/i);
     await expect(balanceDisplay).toBeVisible({ timeout: 5000 });
     await expect(dialog).toContainText("75.000");
   });
