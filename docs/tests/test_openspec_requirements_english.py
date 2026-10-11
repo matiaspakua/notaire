@@ -36,6 +36,12 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "testimonio-movimiento-inscripcion",
             "tipo-documento-vencimiento-config",
             "cuadernos-de-folios",
+            "api-authorization",
+            "pago-presupuesto-gestion-summary",
+            "presupuesto-tramite-relation",
+            "gestion-asignacion-suplencia",
+            "deed-management-entity-null-safety",
+            "gestion-archive-debt-check",
         ):
             path = SPECS / spec_id / "spec.md"
             text = path.read_text(encoding="utf-8")
@@ -247,6 +253,73 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "quienEntrega",
         ):
             self.assertNotIn(retired, circuit, retired)
+        auth = (SPECS / "api-authorization" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("Escribano", auth)
+        self.assertIn("Administrador", auth)
+        self.assertIn("EMPLEADO", auth)
+        self.assertIn("ESCRIBANO", auth)
+        self.assertIn("/api/v1/procedure-types", auth)
+        self.assertIn("/api/v1/concepts", auth)
+        self.assertIn("/api/v1/management-statuses", auth)
+        self.assertIn("CU78", auth)
+        payment_summary = (SPECS / "pago-presupuesto-gestion-summary" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`idBudget`", payment_summary)
+        self.assertIn("`pendingBalance`", payment_summary)
+        self.assertIn("`managementHeading`", payment_summary)
+        self.assertIn("GET /api/v1/budgets/{id}/summary", payment_summary)
+        self.assertIn("GET /api/v1/managements/{id}/financial-summary", payment_summary)
+        self.assertIn("`Budget`", payment_summary)
+        self.assertIn("CU47", payment_summary)
+        relation = (SPECS / "presupuesto-tramite-relation" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`Budget`", relation)
+        self.assertIn("`Procedure`", relation)
+        self.assertIn("fk_id_budget", relation)
+        self.assertIn("`procedureList`", relation)
+        self.assertIn("CU02", relation)
+        self.assertIn("CU45", relation)
+        substitution = (SPECS / "gestion-asignacion-suplencia" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`fkIdSubstitute`", substitution)
+        self.assertIn("`notaryPersonId`", substitution)
+        self.assertIn("Management redirected by active substitution", substitution)
+        self.assertIn("POST /api/v1/managements", substitution)
+        self.assertIn("CU22", substitution)
+        null_safety = (SPECS / "deed-management-entity-null-safety" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`getDto()`", null_safety)
+        self.assertIn("`getDtoNotary()`", null_safety)
+        self.assertIn("`personNotary`", null_safety)
+        self.assertIn("`fkIdIdentificationType`", null_safety)
+        self.assertIn("DeedManagementEntityTest", null_safety)
+        archive = (SPECS / "gestion-archive-debt-check" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`pendingBalance`", archive)
+        self.assertIn("`pendingDebtAtArchiving`", archive)
+        self.assertIn("`confirmado`", archive)
+        self.assertIn('"Archivada"', archive)
+        self.assertIn("`ProcedureType`", archive)
+        self.assertIn("GET /api/v1/managements/{id}/outstanding-balance", archive)
+        self.assertIn("POST /api/v1/managements/{id}/archive", archive)
+        self.assertIn("CU16", archive)
+        self.assertIn("CU83", archive)
+        finance = "\n".join(
+            (SPECS / spec_id / "spec.md").read_text(encoding="utf-8")
+            for spec_id in (
+                "api-authorization",
+                "pago-presupuesto-gestion-summary",
+                "presupuesto-tramite-relation",
+                "gestion-asignacion-suplencia",
+                "deed-management-entity-null-safety",
+                "gestion-archive-debt-check",
+            )
+        )
+        for retired in (
+            "El sistema SHALL",
+            "tipo de trámite",
+            "tipo-tramite",
+            "gestión",
+            "trámites",
+            "setAtributos",
+            "saldo pendiente",
+        ):
+            self.assertNotIn(retired, finance, retired)
 
 
 if __name__ == "__main__":

@@ -43,6 +43,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English authorization, payment-summary, and archive requirement prose** (#1490, CU75):
+  `api-authorization`, `pago-presupuesto-gestion-summary`,
+  `presupuesto-tramite-relation`, `gestion-asignacion-suplencia`,
+  `deed-management-entity-null-safety`, and `gestion-archive-debt-check`
+  state requirements in English. Spec ids stay. Live names stay:
+  `/api/v1/procedure-types`, `idBudget`, `pendingBalance`,
+  `managementHeading`, `fk_id_budget`, `procedureList`, `fkIdSubstitute`,
+  `notaryPersonId`, `pendingDebtAtArchiving`, `getDto()`, and
+  `personNotary`. Stored labels `Administrador`, `Escribano`, `EMPLEADO`,
+  `ESCRIBANO`, and `Archivada` stay, along with the archive query flag
+  `confirmado` and the notes prefix
+  `Management redirected by active substitution`. Official titles
+  `Iniciar Gestión` and `Modificar presupuesto` stay.
 - **English workflow, history, registry, and notebook requirement prose** (#1490, CU75):
   `gestion-workflow-transicion`, `gestion-bitacora`, `minuta-inscripcion`,
   `testimonio-movimiento-inscripcion`, `tipo-documento-vencimiento-config`,
