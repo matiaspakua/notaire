@@ -43,6 +43,7 @@ running application.
 | Backend API | Actuator/Micrometer `/actuator/prometheus`, Basic auth | `notaire-backend` |
 | PostgreSQL | postgres-exporter | `notaire-postgres` |
 | Grafana, Loki | `/metrics` | `grafana`, `loki` |
+| Tempo, Alertmanager, Promtail, collector self-metrics | `/metrics` | `tempo-metrics`, `alertmanager-metrics`, `promtail-metrics`, `otel-collector-self` |
 | Tempo (traces, via the collector) | OTLP gRPC `tempo:4317`, query `tempo:3200` (Grafana datasource `tempo`) | n/a |
 | OTel Collector (OTLP from the backend) | `otel-collector:8889` | `otel-collector` |
 | Frontend (Node runtime, scrape counter) | `/api/metrics` | `frontend-metrics` |
@@ -53,6 +54,10 @@ running application.
 
 | UID | Shows |
 |-----|-------|
+| `notaire-infra-resources` | Docker host CPU, memory, load, disk, network; aggregate container usage |
+| `notaire-frontend` | Node runtime health, proxied-request counts by status, frontend logs |
+| `notaire-observability-health` | Prometheus, Loki, Tempo, Alertmanager, Promtail, collector: up, throughput, failures |
+| `notaire-traces` | recent backend traces (Tempo) and request log lines linked to them |
 | `notaire-stack-status` | overview: availability of every service, firing alerts, errors from Loki |
 | `notaire-status` | overview: frontend, backend, PostgreSQL, pgAdmin, API rate/5xx/p95, alerts, errors |
 | `notaire-backend` | JVM, HTTP, DB pool, log volume |

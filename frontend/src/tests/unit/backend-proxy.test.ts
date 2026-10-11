@@ -155,7 +155,7 @@ describe("backend-proxy helper (issue #1055)", () => {
       expect(entry).toMatchObject({
         service: "notaire-frontend",
         level: "INFO",
-        message: "api_proxy",
+        message: expect.stringMatching(/^api_proxy method=GET path=\/people status=200 durationMs=\d+$/),
         context: { method: "GET", path: "/people", status: 200 },
       });
       expect(JSON.stringify(entry)).not.toContain("secret");

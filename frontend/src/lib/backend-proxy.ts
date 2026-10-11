@@ -122,7 +122,13 @@ export async function proxyApiRequest(
     logger.error("api_proxy_upstream_failed", target, error);
     return Response.json({ error: "Upstream unavailable" }, { status: 502 });
   }
-  logger.info("api_proxy", { ...target, status: upstream.status, durationMs: Date.now() - startedAt });
+  const durationMs = Date.now() - startedAt;
+  // Promtail keeps only `message`, so the queryable fields must be in the text (as in the backend).
+  logger.info(`api_proxy method=${target.method} path=${target.path} status=${upstream.status} durationMs=${durationMs}`, {
+    ...target,
+    status: upstream.status,
+    durationMs,
+  });
 
   return new Response(upstream.body, {
     status: upstream.status,
