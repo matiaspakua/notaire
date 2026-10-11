@@ -43,6 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English agent skill prose** (#1490, CU75):
+  The motion-design skill and the Bruno collection skill are written in
+  English. Library names, the install commands, and the Bruno file layout stay.
 - **English entity debug names and test titles** (#1490, CU75):
   `User.toString` starts with `User[` and `Concept.toString` starts with
   `Concept[`. Tour and workflow titles say deeds, properties, copies,
