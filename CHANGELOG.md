@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English entity round-trips** (#1490, CU75): budget and deed setter fixtures
+  use `pending`, `approved`, `signed`, `unsigned`, `voided`, and `not_passed`.
+  Nested tests are `PrepareBudgetTests`, `PrepareDeedTests`, and
+  `SetAttributesTests`. The concept round-trip method is `getDtoAndSetAttributes`.
+  The deed comment names `setProcedures`. Stored heading `Compraventa` and
+  constructor status `FIRMADA` stay.
 - **English mixed phrases** (#1490, CU75): fixtures use English phrases
   (`Discount without reason`, `Discount for early payment`,
   `Surcharge for late payment`, `Item without a type`,

@@ -19,8 +19,8 @@ import com.licensis.notaire.testing.RequirementCoverage;
 class BudgetEntityTest {
 
     @Nested
-    @DisplayName("CU01 - Preparar Budget - Unit Tests")
-    class PrepararBudgetTests {
+    @DisplayName("CU01 - Prepare budget - Unit Tests")
+    class PrepareBudgetTests {
 
         @Test
         @DisplayName("Should create budget with required fields")
@@ -30,12 +30,12 @@ class BudgetEntityTest {
             budget.setNumber(1001);
             budget.setDate(new Date());
             budget.setHeading("Compraventa property");
-            budget.setStatus("pendiente");
+            budget.setStatus("pending");
             budget.setPropertyAmount(new java.math.BigDecimal("500000.00"));
 
             assertThat(budget.getNumber()).isEqualTo(1001);
             assertThat(budget.getHeading()).isEqualTo("Compraventa property");
-            assertThat(budget.getStatus()).isEqualTo("pendiente");
+            assertThat(budget.getStatus()).isEqualTo("pending");
             assertThat(budget.getPropertyAmount()).isEqualByComparingTo(new java.math.BigDecimal("500000.00"));
         }
 
@@ -47,10 +47,10 @@ class BudgetEntityTest {
             budget.setNumber(1001);
             budget.setDate(new Date());
             budget.setHeading("Compraventa");
-            budget.setStatus("pendiente");
+            budget.setStatus("pending");
 
-            budget.setStatus("aprobado");
-            assertThat(budget.getStatus()).isEqualTo("aprobado");
+            budget.setStatus("approved");
+            assertThat(budget.getStatus()).isEqualTo("approved");
         }
 
         @Test

@@ -209,7 +209,7 @@ class ProcedureEntityTest {
 
     @Nested
     @DisplayName("setAttributes branches")
-    class SetAtributosTests {
+    class SetAttributesTests {
 
         private DtoProcedure baseDto() {
             DtoProcedureType typeDto = new DtoProcedureType();
