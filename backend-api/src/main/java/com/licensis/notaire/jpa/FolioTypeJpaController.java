@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -89,7 +89,7 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public boolean edit(FolioType folioType) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassEliminatedException
+    public boolean edit(FolioType folioType) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassDeletedException
     {
 
         Integer version = PersistenceConstants.INITIAL_VERSION;
@@ -168,7 +168,7 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
             }
         } else
         {
-            throw new ClassEliminatedException("The folio type with ID:" + folioType.getIdFolioType() + " no longer exists");
+            throw new ClassDeletedException("The folio type with ID:" + folioType.getIdFolioType() + " no longer exists");
         }
 
         return result;

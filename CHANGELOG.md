@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English name for the deleted-record JPA exception** (#1490, CU75):
+  `ClassEliminatedException` is now `ClassDeletedException`. Call sites and
+  unit tests use the new name. The deprecated tree keeps the old class.
+  Thrown messages that already said the record was deleted stay.
 - **English delete locals, success logs, and leftover test comments** (#1490, CU75):
   JPA delete flags use `removed`, and item and payment success logs are English.
   Remaining Playwright and integration-test comments use English use-case names.

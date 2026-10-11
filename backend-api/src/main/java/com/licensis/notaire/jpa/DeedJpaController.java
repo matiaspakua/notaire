@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -132,7 +132,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
         return created;
     }
 
-    public Boolean edit(Deed deed) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassEliminatedException
+    public Boolean edit(Deed deed) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
         Boolean modificada = false;
@@ -264,7 +264,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
             modificada = true;
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         if (em != null)
@@ -411,7 +411,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public Boolean modifyDeed(Deed deed) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyDeed(Deed deed) throws ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
         Boolean modificada = false;
@@ -460,13 +460,13 @@ public class DeedJpaController implements Serializable, JpaPersistence
             em.close();
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         return modificada;
     }
 
-    public Boolean modifyDeedSimple(Deed deed) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyDeedSimple(Deed deed) throws ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
         Boolean modificada = false;
@@ -501,7 +501,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
             em.close();
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         return modificada;

@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -130,7 +130,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
         return oid;
     }
 
-    public Boolean edit(ProcedureType procedureType) throws ClassModifiedException, ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean edit(ProcedureType procedureType) throws ClassModifiedException, ClassDeletedException, IllegalOrphanException, NonexistentEntityException
     {
 
         Boolean modified = false;
@@ -174,13 +174,13 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         return modified;
     }
 
-    public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean destroy(Integer id) throws ClassDeletedException, IllegalOrphanException, NonexistentEntityException
     {
         EntityManager em = null;
         Boolean removed = false;
@@ -233,7 +233,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
                 removed = true;
             } else
             {
-                throw new ClassEliminatedException();
+                throw new ClassDeletedException();
             }
         }
         catch (EntityNotFoundException enfe)

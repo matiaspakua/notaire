@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
 import com.licensis.notaire.jpa.JpaPersistence;
@@ -280,7 +280,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public Boolean deleteBudgetTemplate(BudgetTemplate template) throws ClassEliminatedException
+    public Boolean deleteBudgetTemplate(BudgetTemplate template) throws ClassDeletedException
     {
 
         Boolean removed = false;
@@ -317,7 +317,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         em.close();

@@ -5,7 +5,7 @@
 package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -731,7 +731,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
     }
 
-    public Boolean modifyPerson(Person pPerson) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modifyPerson(Person pPerson) throws ClassModifiedException, ClassDeletedException {
 
         Boolean flag = false; // Whether the transaction succeeded
         int oldVersion = PersistenceConstants.INITIAL_VERSION; // Version of the object in memory
@@ -770,7 +770,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             }
         } else // Already deleted: throw
         {
-            throw new ClassEliminatedException("The indicated person has been deleted");
+            throw new ClassDeletedException("The indicated person has been deleted");
         }
         return flag;
     }
@@ -815,7 +815,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         return result;
     }
 
-    public Boolean modifyClient(Person pClient) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modifyClient(Person pClient) throws ClassModifiedException, ClassDeletedException {
 
         Boolean flag = false; // Whether the transaction succeeded
         int oldVersion = 0; // Version of the object in memory
@@ -869,7 +869,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
             }
         } else // Already deleted: throw
         {
-            throw new ClassEliminatedException("The indicated client has been deleted or does not exist");
+            throw new ClassDeletedException("The indicated client has been deleted or does not exist");
         }
         return flag;
     }

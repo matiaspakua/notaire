@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -385,7 +385,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
         return testimony;
     }
 
-    public Boolean modifyTestimony(Testimony testimony) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyTestimony(Testimony testimony) throws ClassModifiedException, ClassDeletedException
     {
 
         Boolean flag = false; // Whether the transaction succeeded
@@ -416,7 +416,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
             }
         } else // A missing row raises an exception.
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
         return flag;
     }

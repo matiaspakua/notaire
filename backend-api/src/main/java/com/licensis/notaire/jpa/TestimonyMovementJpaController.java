@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.JpaPersistence;
@@ -72,7 +72,7 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
         return created;
     }
 
-    public Boolean edit(TestimonyMovement testimonyMovement) throws ClassEliminatedException, ClassModifiedException
+    public Boolean edit(TestimonyMovement testimonyMovement) throws ClassDeletedException, ClassModifiedException
     {
         EntityManager em = null;
         Boolean modified = false;
@@ -120,7 +120,7 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
         return modified;
     }

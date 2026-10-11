@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.JpaPersistence;
@@ -111,7 +111,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public void edit(Folio folio) throws NonexistentEntityException, ClassModifiedException, ClassEliminatedException
+    public void edit(Folio folio) throws NonexistentEntityException, ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
         Integer version = PersistenceConstants.INITIAL_VERSION;
@@ -222,7 +222,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
     }
 
@@ -440,7 +440,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public void updateFolio(Folio folio) throws ClassModifiedException, ClassEliminatedException
+    public void updateFolio(Folio folio) throws ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
 
@@ -469,7 +469,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
             em.close();
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
     }
 

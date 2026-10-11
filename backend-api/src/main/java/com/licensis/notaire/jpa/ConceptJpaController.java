@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -92,7 +92,7 @@ public class ConceptJpaController implements Serializable, JpaPersistence
         return oid;
     }
 
-    public Boolean edit(Concept concept) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean edit(Concept concept) throws ClassDeletedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
     {
         Boolean result = Boolean.FALSE;
         Integer version = PersistenceConstants.INITIAL_VERSION;
@@ -172,13 +172,13 @@ public class ConceptJpaController implements Serializable, JpaPersistence
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         return result;
     }
 
-    public Boolean destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException, ClassEliminatedException
+    public Boolean destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException, ClassDeletedException
     {
         Boolean result = Boolean.FALSE;
 
@@ -216,7 +216,7 @@ public class ConceptJpaController implements Serializable, JpaPersistence
                 result = Boolean.TRUE;
             } else
             {
-                throw new ClassEliminatedException();
+                throw new ClassDeletedException();
             }
         }
         catch (EntityNotFoundException enfe)

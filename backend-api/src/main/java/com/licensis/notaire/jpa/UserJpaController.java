@@ -13,7 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Query;
 import jakarta.transaction.UserTransaction;
 import com.licensis.notaire.service.JpaAdministrator;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -288,7 +288,7 @@ public class UserJpaController implements Serializable, JpaPersistence {
         }
     }
 
-    public Boolean modifyUser(User pUser) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modifyUser(User pUser) throws ClassModifiedException, ClassDeletedException {
 
         Boolean flag = false; // Whether the transaction succeeded
         int oldVersion = 0; // Version of the object in memory
@@ -315,7 +315,7 @@ public class UserJpaController implements Serializable, JpaPersistence {
                     flag = true;
                 }
             } else {
-                throw new ClassEliminatedException("The indicated client has already been deleted");
+                throw new ClassDeletedException("The indicated client has already been deleted");
             }
         } finally {
             em.close();

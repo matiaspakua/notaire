@@ -1,7 +1,7 @@
 package com.licensis.notaire.unit.jpa;
 
 import com.licensis.notaire.jpa.UserJpaController;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -483,7 +483,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should throw ClassEliminatedException when entity not found")
+        @DisplayName("should throw ClassDeletedException when entity not found")
         void shouldThrowWhenNotFound() {
             Integer id = 999;
             User inputUser = new User(id, "u", "p", true, "user");
@@ -491,7 +491,7 @@ class UserJpaControllerTest {
             when(em.find(User.class, id)).thenReturn(null);
 
             assertThatThrownBy(() -> controller.modifyUser(inputUser))
-                    .isInstanceOf(ClassEliminatedException.class);
+                    .isInstanceOf(ClassDeletedException.class);
 
             verify(em).close();
         }

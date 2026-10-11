@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -88,7 +88,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
         return oid;
     }
 
-    public Boolean edit(DocumentType documentType) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean edit(DocumentType documentType) throws ClassDeletedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
     {
         EntityManager em = null;
         Boolean modified = false;
@@ -164,7 +164,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         if (em != null)
@@ -175,7 +175,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
         return modified;
     }
 
-    public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean destroy(Integer id) throws ClassDeletedException, IllegalOrphanException, NonexistentEntityException
     {
         EntityManager em = null;
         Boolean removed = false;
@@ -218,7 +218,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
                 removed = true;
             } else
             {
-                throw new ClassEliminatedException();
+                throw new ClassDeletedException();
             }
         }
         finally

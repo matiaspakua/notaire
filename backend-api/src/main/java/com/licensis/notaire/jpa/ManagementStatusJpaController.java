@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -86,7 +86,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
     }
 
     public Boolean edit(ManagementStatus managementStatus) throws IllegalOrphanException, NonexistentEntityException,
-            ClassEliminatedException, ClassModifiedException {
+            ClassDeletedException, ClassModifiedException {
         Integer version = PersistenceConstants.INITIAL_VERSION;
         Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
         Boolean result = Boolean.FALSE;
@@ -156,7 +156,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
                 }
             }
         } else {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         return result;

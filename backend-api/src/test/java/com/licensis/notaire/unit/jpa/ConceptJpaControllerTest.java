@@ -2,7 +2,7 @@ package com.licensis.notaire.unit.jpa;
 
 
 import com.licensis.notaire.jpa.ConceptJpaController;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
@@ -168,7 +168,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should throw ClassEliminatedException when entity not found and not close EM")
+        @DisplayName("should throw ClassDeletedException when entity not found and not close EM")
         void shouldThrowWhenEntityNotFound() {
             Integer id = 999;
             Concept concept = new Concept(id, "Ghost", new java.math.BigDecimal("100"), 10);
@@ -176,7 +176,7 @@ class ConceptJpaControllerTest {
             when(em.find(Concept.class, id)).thenReturn(null);
 
             assertThatThrownBy(() -> controller.edit(concept))
-                    .isInstanceOf(ClassEliminatedException.class);
+                    .isInstanceOf(ClassDeletedException.class);
 
             // Note: edit() does NOT close EM in this path (it's a bug in the source)
             verify(em, never()).close();
@@ -240,14 +240,14 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should throw ClassEliminatedException when entity not found")
+        @DisplayName("should throw ClassDeletedException when entity not found")
         void shouldThrowWhenEntityNotFound() {
             Integer id = 999;
 
             when(em.find(Concept.class, id)).thenReturn(null);
 
             assertThatThrownBy(() -> controller.destroy(id))
-                    .isInstanceOf(ClassEliminatedException.class);
+                    .isInstanceOf(ClassDeletedException.class);
 
             verify(em).close();
             verify(tx, never()).commit();

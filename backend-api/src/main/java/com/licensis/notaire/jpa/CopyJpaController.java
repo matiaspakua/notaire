@@ -4,7 +4,7 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.JpaPersistence;
@@ -335,7 +335,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
         return copies;
     }
 
-    public Boolean modifyCopy(Copy copy) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyCopy(Copy copy) throws ClassModifiedException, ClassDeletedException
     {
         EntityManager em = null;
         Boolean modificada = false;
@@ -363,7 +363,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
             modificada = true;
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
         if (em != null)
         {
