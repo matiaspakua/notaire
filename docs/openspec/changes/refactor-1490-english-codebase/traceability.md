@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/refactor-1490-english-codebase/` | written |
 | Branch | `cursor/english-codebase-01e0` | created from `origin/main` |
 | Tasks | `tasks.md` | in progress |
-| Commits | `9c536900`, `329247ba`, `86b51c34` | created |
+| Commits | `9c536900`, `329247ba`, `86b51c34`, `93300933` | created |
 | Pull Request | #1495 | draft |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
