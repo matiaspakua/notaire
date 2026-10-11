@@ -145,7 +145,7 @@ class ManagementDocumentReentryIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idManagement").value(management.idManagement()))
                 .andExpect(jsonPath("$.procedures[0].idProcedure").value(management.idProcedure()))
-                .andExpect(jsonPath("$.procedures[0].documentsNecesarios[0].name")
+                .andExpect(jsonPath("$.procedures[0].requiredDocuments[0].name")
                         .value("Certificado de Dominio CU43-1"));
     }
 
@@ -156,7 +156,7 @@ class ManagementDocumentReentryIntegrationTest {
 
         mockMvc.perform(get("/api/v1/managements/" + management.idManagement() + "/document-reentry"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.procedures[0].documentsNecesarios").isEmpty());
+                .andExpect(jsonPath("$.procedures[0].requiredDocuments").isEmpty());
     }
 
     @Test

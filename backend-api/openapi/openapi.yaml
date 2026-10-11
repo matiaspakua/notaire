@@ -611,8 +611,16 @@ components:
       type: object
     DtoDeedManagement:
       properties:
-        clientReferencia:
-          $ref: '#/components/schemas/DtoPerson'
+        archiveNumber:
+          format: int32
+          type: integer
+        associatedProcedures:
+          items:
+            $ref: '#/components/schemas/DtoProcedure'
+          type: array
+        binderNumber:
+          format: int32
+          type: integer
         dateStart:
           format: date-time
           type: string
@@ -621,23 +629,13 @@ components:
         idManagement:
           format: int32
           type: integer
-        listaClientesInvolucrados:
+        involvedClients:
           items:
             $ref: '#/components/schemas/DtoPerson'
-          type: array
-        listaProceduresAsociados:
-          items:
-            $ref: '#/components/schemas/DtoProcedure'
           type: array
         notes:
           type: string
         number:
-          format: int32
-          type: integer
-        numberArchivo:
-          format: int32
-          type: integer
-        numberBibliorato:
           format: int32
           type: integer
         personNotary:
@@ -646,6 +644,8 @@ components:
           items:
             $ref: '#/components/schemas/DtoHistory'
           type: array
+        referenceClient:
+          $ref: '#/components/schemas/DtoPerson'
         status:
           $ref: '#/components/schemas/DtoManagementStatus'
         valid:
@@ -1207,13 +1207,13 @@ components:
       type: object
     DtoProcedureRequiredDocumentation:
       properties:
-        documentsNecesarios:
-          items:
-            $ref: '#/components/schemas/DtoRequiredDocument'
-          type: array
         idProcedure:
           format: int32
           type: integer
+        requiredDocuments:
+          items:
+            $ref: '#/components/schemas/DtoRequiredDocument'
+          type: array
         typeProcedureName:
           type: string
       type: object
@@ -6287,7 +6287,7 @@ paths:
       - Procedure folders
   /api/v1/procedure-folders/{id}/wait:
     put:
-      operationId: ponerEnWait
+      operationId: putOnHold
       parameters:
       - in: path
         name: id
@@ -6307,20 +6307,20 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Folder puesta in espera
+          description: Folder put on hold
         '400':
           content:
             '*/*':
               schema:
                 type: object
-          description: Motivo no informado
+          description: Reason not provided
         '404':
           content:
             '*/*':
               schema:
                 type: object
           description: Folder not found
-      summary: CU85 - Put a procedure folder in espera, with motivo required
+      summary: CU85 - Put a procedure folder on hold; a reason is required
       tags:
       - Procedure folders
   /api/v1/procedure-templates:

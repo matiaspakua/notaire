@@ -119,13 +119,13 @@ function DocumentReentryList() {
         <h3 className="text-sm font-semibold mb-2">
           {t("fields.tramite")}: {procedure.typeProcedureName ?? "—"}
         </h3>
-        {procedure.documentsNecesarios.length === 0 ? (
+        {procedure.requiredDocuments.length === 0 ? (
           <p className="text-sm text-muted-foreground" data-testid={`empty-documents-${procedure.idProcedure}`}>
             {t("noDocumentosNecesarios")}
           </p>
         ) : (
           <DataTable
-            data={procedure.documentsNecesarios}
+            data={procedure.requiredDocuments}
             columns={documentColumns(procedure.idProcedure)}
             keyExtractor={(d) => d.idDocumentType}
           />

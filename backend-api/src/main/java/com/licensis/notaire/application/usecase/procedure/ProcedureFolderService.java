@@ -14,16 +14,15 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * CU85 - Administrar Procedure folders: generates automáticamente a folder
- * by each procedure dado of alta and administra its ciclo of vida
- * activa/wait/archivada.
+ * CU85 - Manage procedure folders: generates a folder for each new procedure
+ * and manages its lifecycle (active, on hold, archived).
  */
 @Service
 @Transactional
 public class ProcedureFolderService {
 
-    static final String StatusACTIVA = "Activa";
-    static final String StatusWait = "Espera";
+    static final String STATUS_ACTIVE = "Activa";
+    static final String STATUS_ON_HOLD = "Espera";
 
     private static final Logger log = LoggerFactory.getLogger(ProcedureFolderService.class);
 
@@ -36,13 +35,13 @@ public class ProcedureFolderService {
     public ProcedureFolder generateFolderForProcedure(Procedure procedure) {
         ProcedureFolder folder = new ProcedureFolder();
         folder.setNumber(procedureFolderRepository.nextFolderNumber());
-        folder.setStatus(StatusACTIVA);
+        folder.setStatus(STATUS_ACTIVE);
         folder.setFkIdManagement(procedure.getFkIdManagement());
         folder.setFkIdProcedure(procedure);
-        ProcedureFolder guardada = procedureFolderRepository.save(folder);
-        log.info("Folder {} generada for procedure {} of management {}", guardada.getNumber(),
+        ProcedureFolder saved = procedureFolderRepository.save(folder);
+        log.info("Folder {} generated for procedure {} of management {}", saved.getNumber(),
                 procedure.getIdProcedure(), procedure.getFkIdManagement().getIdManagement());
-        return guardada;
+        return saved;
     }
 
     @Transactional(readOnly = true)
@@ -60,14 +59,14 @@ public class ProcedureFolderService {
         return procedureFolderRepository.findByFkIdManagementIdManagement(idManagement);
     }
 
-    public ProcedureFolder ponerEnWait(Integer idFolder, String reason) {
+    public ProcedureFolder putOnHold(Integer idFolder, String reason) {
         if (reason == null || reason.isBlank()) {
             throw new BusinessValidationException(
                     "The reason is required to put a folder on hold");
         }
         ProcedureFolder folder = procedureFolderRepository.findById(idFolder)
                 .orElseThrow(() -> new ResourceNotFoundException("Folder not found with ID: " + idFolder));
-        folder.setStatus(StatusWait);
+        folder.setStatus(STATUS_ON_HOLD);
         folder.setWaitReason(reason);
         return procedureFolderRepository.save(folder);
     }

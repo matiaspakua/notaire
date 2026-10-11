@@ -108,8 +108,8 @@ class DocumentReentryServiceTest {
             assertThat(result.procedures()).hasSize(1);
             assertThat(result.procedures().get(0).idProcedure()).isEqualTo(10);
             assertThat(result.procedures().get(0).typeProcedureName()).isEqualTo("Compraventa");
-            assertThat(result.procedures().get(0).documentsNecesarios()).hasSize(1);
-            assertThat(result.procedures().get(0).documentsNecesarios().get(0).name())
+            assertThat(result.procedures().get(0).requiredDocuments()).hasSize(1);
+            assertThat(result.procedures().get(0).requiredDocuments().get(0).name())
                     .isEqualTo("Certificado de Dominio");
         }
 
@@ -123,7 +123,7 @@ class DocumentReentryServiceTest {
             DtoManagementDocumentReentry result = service.getRequiredDocumentation(1);
 
             assertThat(result.procedures()).hasSize(1);
-            assertThat(result.procedures().get(0).documentsNecesarios()).isEmpty();
+            assertThat(result.procedures().get(0).requiredDocuments()).isEmpty();
         }
 
         @Test

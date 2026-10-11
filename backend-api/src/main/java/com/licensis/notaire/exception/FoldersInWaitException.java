@@ -4,11 +4,11 @@ import com.licensis.notaire.business.ProcedureFolder;
 import java.util.List;
 
 /**
- * Thrown by {@code GestionArchiveDebtService.archivar} when a management has
+ * Thrown by {@code ManagementArchiveDebtService.archiving} when a management has
  * procedure folders still in "Espera" and archiving was not explicitly
- * confirmed (CU85, CU16 — Excepción 5.1). Intentionally NOT a
- * {@link NotaireException} subclass: {@code GestionController}'s local
- * try/catch maps this directly to HTTP 409 with the pending carpetas.
+ * confirmed (CU85, CU16 — exception 5.1). Intentionally not a
+ * {@link NotaireException} subclass: {@code ManagementController}'s local
+ * try/catch maps this directly to HTTP 409 with the pending folders.
  */
 public class FoldersInWaitException extends RuntimeException {
 

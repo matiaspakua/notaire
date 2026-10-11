@@ -29,8 +29,8 @@ import java.util.Set;
 @Service
 public class ManagementArchiveDebtService {
 
-    private static final String StatusARCHIVADA = "Archivada";
-    private static final String StatusWait = "Espera";
+    private static final String STATUS_ARCHIVED = "Archivada";
+    private static final String STATUS_ON_HOLD = "Espera";
 
     private static final Logger log = LoggerFactory.getLogger(ManagementArchiveDebtService.class);
 
@@ -98,10 +98,10 @@ public class ManagementArchiveDebtService {
      * with {@link FoldersInWaitException} (CU85 — exception 5.1).
      */
     @Transactional
-    public ArchiveResult archiving(Integer idManagement, boolean confirmado) {
+    public ArchiveResult archiving(Integer idManagement, boolean confirmed) {
         List<ProcedureFolder> foldersInWait =
-                procedureFolderRepository.findByFkIdManagementIdManagementAndStatus(idManagement, StatusWait);
-        if (!foldersInWait.isEmpty() && !confirmado) {
+                procedureFolderRepository.findByFkIdManagementIdManagementAndStatus(idManagement, STATUS_ON_HOLD);
+        if (!foldersInWait.isEmpty() && !confirmed) {
             throw new FoldersInWaitException(
                     "The management has procedure folders on hold that are unresolved; "
                             + "confirm explicitly to archive anyway",
@@ -110,21 +110,21 @@ public class ManagementArchiveDebtService {
 
         BigDecimal pendingBalance = calculatePendingBalance(idManagement);
 
-        DeedManagement management = managementTransitionService.transition(idManagement, StatusARCHIVADA);
+        DeedManagement management = managementTransitionService.transition(idManagement, STATUS_ARCHIVED);
         management.setPendingDebtAtArchiving(
                 pendingBalance != null && pendingBalance.compareTo(BigDecimal.ZERO) > 0);
         DeedManagement archivedManagement = managementRepository.save(management);
 
         archiveFolders(idManagement);
 
-        log.info("Management {} archivada with deudaPendienteAlArchivar={}", idManagement,
+        log.info("Management {} archived with pendingDebtAtArchiving={}", idManagement,
                 archivedManagement.getPendingDebtAtArchiving());
         return new ArchiveResult(archivedManagement, pendingBalance);
     }
 
     private void archiveFolders(Integer idManagement) {
-        List<ProcedureFolder> carpetas = procedureFolderRepository.findByFkIdManagementIdManagement(idManagement);
-        carpetas.forEach(folder -> folder.setStatus(StatusARCHIVADA));
-        procedureFolderRepository.saveAll(carpetas);
+        List<ProcedureFolder> folders = procedureFolderRepository.findByFkIdManagementIdManagement(idManagement);
+        folders.forEach(folder -> folder.setStatus(STATUS_ARCHIVED));
+        procedureFolderRepository.saveAll(folders);
     }
 }

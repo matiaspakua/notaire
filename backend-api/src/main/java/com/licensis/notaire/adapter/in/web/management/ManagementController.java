@@ -592,9 +592,9 @@ public class ManagementController {
     @Operation(summary = "CU16 - Archive a management, warning and recording pending debt (RF-22, RF-37); "
             + "cascades to CU85 procedure folders")
     public ResponseEntity<Object> archiving(@PathVariable Integer id,
-            @RequestParam(name = "confirmado", defaultValue = "false") boolean confirmado) {
+            @RequestParam(name = "confirmado", defaultValue = "false") boolean confirmed) {
         try {
-            ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(id, confirmado);
+            ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(id, confirmed);
             return ResponseEntity.ok(new DtoArchivedManagement(result.management().getIdManagement(),
                     result.pendingBalance(), Boolean.TRUE.equals(result.management().getPendingDebtAtArchiving())));
         } catch (IllegalArgumentException e) {
@@ -604,7 +604,7 @@ public class ManagementController {
                     .map(ProcedureFolder::getNumber)
                     .toList();
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("message", e.getMessage(), "carpetasEnEsperaNumero", waitingFolderNumbers));
+                    .body(Map.of("message", e.getMessage(), "waitingFolderNumbers", waitingFolderNumbers));
         }
     }
 

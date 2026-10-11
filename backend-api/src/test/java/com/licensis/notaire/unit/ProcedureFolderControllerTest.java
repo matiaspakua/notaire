@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RequirementCoverage({"CU85"})
 @ExtendWith(MockitoExtension.class)
-@DisplayName("CarpetaTramiteController unit tests")
+@DisplayName("ProcedureFolderController tests")
 class ProcedureFolderControllerTest {
 
     @Mock
@@ -60,7 +60,7 @@ class ProcedureFolderControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/procedure-folders/{id} returns carpeta when found")
+    @DisplayName("GET /api/v1/procedure-folders/{id} returns the folder when found")
     void shouldReturnFolderById() throws Exception {
         when(procedureFolderService.findById(1)).thenReturn(Optional.of(buildFolder(1, 1, "Activa")));
 
@@ -79,7 +79,7 @@ class ProcedureFolderControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/procedure-folders?tramiteId= returns the matching carpeta")
+    @DisplayName("GET /api/v1/procedure-folders?procedureId= returns the matching folder")
     void shouldSearchByProcedureId() throws Exception {
         when(procedureFolderService.findByProcedure(10)).thenReturn(Optional.of(buildFolder(1, 1, "Activa")));
 
@@ -89,7 +89,7 @@ class ProcedureFolderControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/procedure-folders?gestionId= returns all carpetas of a gestión")
+    @DisplayName("GET /api/v1/procedure-folders?managementId= returns all folders of a management")
     void shouldSearchByManagementId() throws Exception {
         when(procedureFolderService.findByManagement(1)).thenReturn(List.of(buildFolder(1, 1, "Activa")));
 
@@ -108,41 +108,41 @@ class ProcedureFolderControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/v1/procedure-folders/{id}/wait puts carpeta en espera with motivo")
-    void shouldPutFolderEnWait() throws Exception {
-        when(procedureFolderService.ponerEnWait(1, "Falta documentation"))
+    @DisplayName("PUT /api/v1/procedure-folders/{id}/wait puts the folder on hold when a reason is provided")
+    void shouldPutFolderOnHold() throws Exception {
+        when(procedureFolderService.putOnHold(1, "Missing documentation"))
                 .thenReturn(buildFolder(1, 1, "Espera"));
 
         mockMvc.perform(put("/api/v1/procedure-folders/1/wait")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
-                                new ProcedureFolderController.WaitRequest("Falta documentation"))))
+                                new ProcedureFolderController.WaitRequest("Missing documentation"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("Espera"));
     }
 
     @Test
-    @DisplayName("PUT /api/v1/procedure-folders/{id}/wait returns 400 when motivo is missing")
+    @DisplayName("PUT /api/v1/procedure-folders/{id}/wait returns 400 when the reason is missing")
     void shouldRejectWaitWithoutReason() throws Exception {
-        when(procedureFolderService.ponerEnWait(1, null))
-                .thenThrow(new BusinessValidationException("El motivo es obligatorio"));
+        when(procedureFolderService.putOnHold(1, null))
+                .thenThrow(new BusinessValidationException("The reason is required to put a folder on hold"));
 
         mockMvc.perform(put("/api/v1/procedure-folders/1/wait")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new ProcedureFolderController.WaitRequest(null))))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("El motivo es obligatorio"));
+                .andExpect(jsonPath("$.message").value("The reason is required to put a folder on hold"));
     }
 
     @Test
-    @DisplayName("PUT /api/v1/procedure-folders/{id}/wait returns 404 when carpeta does not exist")
+    @DisplayName("PUT /api/v1/procedure-folders/{id}/wait returns 404 when the folder does not exist")
     void shouldReturnNotFoundWhenPuttingWaitOnMissingFolder() throws Exception {
-        when(procedureFolderService.ponerEnWait(999, "Motivo"))
-                .thenThrow(new ResourceNotFoundException("There is no the folder with ID: 999"));
+        when(procedureFolderService.putOnHold(999, "Reason"))
+                .thenThrow(new ResourceNotFoundException("Folder not found with ID: 999"));
 
         mockMvc.perform(put("/api/v1/procedure-folders/999/wait")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(new ProcedureFolderController.WaitRequest("Motivo"))))
+                        .content(mapper.writeValueAsString(new ProcedureFolderController.WaitRequest("Reason"))))
                 .andExpect(status().isNotFound());
     }
 }

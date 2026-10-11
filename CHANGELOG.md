@@ -41,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English document-reentry and deed-management fields** (#1490, CU75):
+  required-document JSON is `requiredDocuments`. Deed-management JSON uses
+  `involvedClients`, `referenceClient`, `associatedProcedures`, `archiveNumber`,
+  and `binderNumber`. Putting a folder on hold is `putOnHold`. The archive
+  conflict body uses `waitingFolderNumbers`. The archive query flag `confirmado`
+  stays, as do stored statuses `Activa`, `Espera`, and `Archivada`.
 - **English financial-summary and persistence type names** (#1490, CU75):
   `ManagementFinancialSummaryService`, `DtoBudgetSummary`, `DtoPendingBalance`,
   and `PersistenceConstants` replace the Spanish type names. Financial-summary

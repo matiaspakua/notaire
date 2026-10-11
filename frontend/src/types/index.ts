@@ -507,7 +507,7 @@ export interface RequiredDocument {
 export interface ProcedureRequiredDocumentation {
   idProcedure: number;
   typeProcedureName?: string;
-  documentsNecesarios: RequiredDocument[];
+  requiredDocuments: RequiredDocument[];
 }
 
 /** CU43 - GET /managements/{id}/document-reentry response — DtoManagementDocumentReentry. */

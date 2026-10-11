@@ -58,27 +58,27 @@ public class ProcedureFolderController {
     public ResponseEntity<List<DtoProcedureFolder>> search(
             @RequestParam(required = false) Integer managementId,
             @RequestParam(required = false) Integer procedureId) {
-        List<ProcedureFolder> carpetas;
+        List<ProcedureFolder> folders;
         if (procedureId != null) {
-            carpetas = procedureFolderService.findByProcedure(procedureId).map(List::of).orElse(List.of());
+            folders = procedureFolderService.findByProcedure(procedureId).map(List::of).orElse(List.of());
         } else if (managementId != null) {
-            carpetas = procedureFolderService.findByManagement(managementId);
+            folders = procedureFolderService.findByManagement(managementId);
         } else {
-            carpetas = List.of();
+            folders = List.of();
         }
-        return ResponseEntity.ok(carpetas.stream().map(ProcedureFolder::getDto).toList());
+        return ResponseEntity.ok(folders.stream().map(ProcedureFolder::getDto).toList());
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Folder puesta in espera"),
-        @ApiResponse(responseCode = "400", description = "Motivo no informado"),
+        @ApiResponse(responseCode = "200", description = "Folder put on hold"),
+        @ApiResponse(responseCode = "400", description = "Reason not provided"),
         @ApiResponse(responseCode = "404", description = "Folder not found")
     })
     @PutMapping("/{id}/wait")
-    @Operation(summary = "CU85 - Put a procedure folder in espera, with motivo required")
-    public ResponseEntity<Object> ponerEnWait(@PathVariable Integer id, @RequestBody WaitRequest request) {
+    @Operation(summary = "CU85 - Put a procedure folder on hold; a reason is required")
+    public ResponseEntity<Object> putOnHold(@PathVariable Integer id, @RequestBody WaitRequest request) {
         try {
-            DtoProcedureFolder dto = procedureFolderService.ponerEnWait(id, request.reason()).getDto();
+            DtoProcedureFolder dto = procedureFolderService.putOnHold(id, request.reason()).getDto();
             return ResponseEntity.ok(dto);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();

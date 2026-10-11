@@ -46,7 +46,7 @@ describe("useDocumentReentry (CU43)", () => {
         {
           idProcedure: 1,
           typeProcedureName: "Compraventa",
-          documentsNecesarios: [{ idDocumentType: 5, name: "Certificado de Dominio", expires: true }],
+          requiredDocuments: [{ idDocumentType: 5, name: "Certificado de Dominio", expires: true }],
         },
       ],
     });
@@ -56,7 +56,7 @@ describe("useDocumentReentry (CU43)", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiGet).toHaveBeenCalledWith("/managements/9/document-reentry");
-    expect(result.current.data?.procedures[0].documentsNecesarios[0].name).toBe("Certificado de Dominio");
+    expect(result.current.data?.procedures[0].requiredDocuments[0].name).toBe("Certificado de Dominio");
   });
 
   it("does not fetch when gestionId is undefined", () => {

@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU16", "RF-22", "RF-37"})
-@DisplayName("GestionArchiveDebtService Tests")
+@DisplayName("ManagementArchiveDebtService tests")
 @ExtendWith(MockitoExtension.class)
 class ManagementArchiveDebtServiceTest {
 
@@ -86,19 +86,19 @@ class ManagementArchiveDebtServiceTest {
     class CalcularSaldoPendingTests {
 
         @Test
-        @DisplayName("Management with a único procedure and budget devuelve the balance of that budget")
+        @DisplayName("Management with one procedure and budget returns that budget's balance")
         void shouldReturnSingleBudgetBalanceForSingleProcedure() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("5000.00"));
 
-            java.math.BigDecimal saldo = managementArchiveDebtService.calculatePendingBalance(1);
+            java.math.BigDecimal pendingBalance = managementArchiveDebtService.calculatePendingBalance(1);
 
-            assertThat(saldo).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
+            assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
         }
 
         @Test
-        @DisplayName("Management with múltiples procedures and budgets suma the balance of each budget")
+        @DisplayName("Management with multiple procedures and budgets sums each budget's balance")
         void shouldSumBalancesAcrossMultipleProceduresAndPresupuestos() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
@@ -106,21 +106,21 @@ class ManagementArchiveDebtServiceTest {
             when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("3000.00"));
             when(paymentStatus.pendingBalance(20)).thenReturn(new java.math.BigDecimal("1500.00"));
 
-            java.math.BigDecimal saldo = managementArchiveDebtService.calculatePendingBalance(1);
+            java.math.BigDecimal pendingBalance = managementArchiveDebtService.calculatePendingBalance(1);
 
-            assertThat(saldo).isEqualByComparingTo(new java.math.BigDecimal("4500.00"));
+            assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("4500.00"));
         }
 
         @Test
-        @DisplayName("Management cuyos budgets están totalmente pagados devuelve cero")
+        @DisplayName("Management whose budgets are fully paid returns zero")
         void shouldReturnZeroWhenAllPresupuestosAreFullyPaid() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
             when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));
 
-            java.math.BigDecimal saldo = managementArchiveDebtService.calculatePendingBalance(1);
+            java.math.BigDecimal pendingBalance = managementArchiveDebtService.calculatePendingBalance(1);
 
-            assertThat(saldo).isEqualByComparingTo(new java.math.BigDecimal("0.00"));
+            assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("0.00"));
         }
 
         @Test
@@ -135,24 +135,24 @@ class ManagementArchiveDebtServiceTest {
     }
 
     @Nested
-    @DisplayName("Archivar management")
+    @DisplayName("Archive a management")
     class ArchivingTests {
 
         @Test
-        @DisplayName("Archiving succeeds when the transition to Archivada is valid AND no deuda pendiente")
+        @DisplayName("Archiving succeeds when the transition to Archivada is valid and there is no outstanding balance")
         void shouldArchiveWhenTransitionValidAndNoDebt() {
-            ManagementStatus archivada = new ManagementStatus(3, "Archivada");
-            testManagement.setFkIdManagementStatus(archivada);
+            ManagementStatus archivedStatus = new ManagementStatus(3, "Archivada");
+            testManagement.setFkIdManagementStatus(archivedStatus);
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));  // No deuda - required for archive
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));  // No outstanding balance — required to archive
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
 
-            assertThat(result.management().getFkIdManagementStatus()).isEqualTo(archivada);
+            assertThat(result.management().getFkIdManagementStatus()).isEqualTo(archivedStatus);
             assertThat(result.management().getPendingDebtAtArchiving()).isFalse();
         }
 
@@ -171,14 +171,14 @@ class ManagementArchiveDebtServiceTest {
         }
 
         @Test
-        @DisplayName("CU16: Archive succeeds and records deuda pendiente when saldo is positive (warning, not a block)")
-        void shouldArchiveAndFlagDebtWhenSaldoPositive() {
-            ManagementStatus archivada = new ManagementStatus(3, "Archivada");
-            testManagement.setFkIdManagementStatus(archivada);
+        @DisplayName("CU16: Archive succeeds and records outstanding debt when the balance is positive")
+        void shouldArchiveAndFlagDebtWhenBalancePositive() {
+            ManagementStatus archivedStatus = new ManagementStatus(3, "Archivada");
+            testManagement.setFkIdManagementStatus(archivedStatus);
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("20000.00"));  // Deuda exists
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("20000.00"));  // Outstanding balance exists
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
@@ -189,14 +189,14 @@ class ManagementArchiveDebtServiceTest {
         }
 
         @Test
-        @DisplayName("Issue #169: Archive succeeds when saldo pendiente is zero")
-        void shouldArchiveSuccessfullyWhenNoDeutaPending() {
-            ManagementStatus archivada = new ManagementStatus(3, "Archivada");
-            testManagement.setFkIdManagementStatus(archivada);
+        @DisplayName("Issue #169: Archive succeeds when the outstanding balance is zero")
+        void shouldArchiveSuccessfullyWhenNoDebtPending() {
+            ManagementStatus archivedStatus = new ManagementStatus(3, "Archivada");
+            testManagement.setFkIdManagementStatus(archivedStatus);
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedureFor(10)));
-            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));  // No deuda
+            when(paymentStatus.pendingBalance(10)).thenReturn(new java.math.BigDecimal("0.00"));  // No outstanding balance
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
 
@@ -208,9 +208,9 @@ class ManagementArchiveDebtServiceTest {
 
         @Test
         @DisplayName("CU16: Archive succeeds and aggregates debt across multiple budgets")
-        void shouldArchiveAndAggregateDebtAcrossMultiplePresupuestos() {
-            ManagementStatus archivada = new ManagementStatus(3, "Archivada");
-            testManagement.setFkIdManagementStatus(archivada);
+        void shouldArchiveAndAggregateDebtAcrossMultipleBudgets() {
+            ManagementStatus archivedStatus = new ManagementStatus(3, "Archivada");
+            testManagement.setFkIdManagementStatus(archivedStatus);
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(testManagement));
             when(procedureRepository.findByFkIdManagementIdManagement(1))
@@ -229,9 +229,9 @@ class ManagementArchiveDebtServiceTest {
 
         @Test
         @DisplayName("CU85: Archiving cascades all procedure folders of the management to Archivada")
-        void shouldCascadeArchiveCarpetasWhenManagementArchived() {
-            ManagementStatus archivada = new ManagementStatus(3, "Archivada");
-            testManagement.setFkIdManagementStatus(archivada);
+        void shouldCascadeArchiveFoldersWhenManagementArchived() {
+            ManagementStatus archivedStatus = new ManagementStatus(3, "Archivada");
+            testManagement.setFkIdManagementStatus(archivedStatus);
             ProcedureFolder folder = new ProcedureFolder();
             folder.setStatus("Activa");
 
@@ -251,7 +251,7 @@ class ManagementArchiveDebtServiceTest {
 
         @Test
         @DisplayName("CU85: Archiving is rejected when a procedure folder is in Espera and not confirmed")
-        void shouldRejectArchiveWhenFolderEnWaitAndNotConfirmed() {
+        void shouldRejectArchiveWhenFolderOnHoldAndNotConfirmed() {
             ProcedureFolder folderEnWait = new ProcedureFolder();
             folderEnWait.setNumber(1);
             folderEnWait.setStatus("Espera");
@@ -265,10 +265,10 @@ class ManagementArchiveDebtServiceTest {
         }
 
         @Test
-        @DisplayName("CU85: Archiving proceeds despite carpetas en Espera when explicitly confirmed")
-        void shouldArchiveWhenFolderEnWaitButConfirmed() {
-            ManagementStatus archivada = new ManagementStatus(3, "Archivada");
-            testManagement.setFkIdManagementStatus(archivada);
+        @DisplayName("CU85: Archiving proceeds despite folders in Espera when explicitly confirmed")
+        void shouldArchiveWhenFolderOnHoldButConfirmed() {
+            ManagementStatus archivedStatus = new ManagementStatus(3, "Archivada");
+            testManagement.setFkIdManagementStatus(archivedStatus);
             ProcedureFolder folderEnWait = new ProcedureFolder();
             folderEnWait.setNumber(1);
             folderEnWait.setStatus("Espera");
@@ -283,7 +283,7 @@ class ManagementArchiveDebtServiceTest {
 
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1, true);
 
-            assertThat(result.management().getFkIdManagementStatus()).isEqualTo(archivada);
+            assertThat(result.management().getFkIdManagementStatus()).isEqualTo(archivedStatus);
         }
     }
 }

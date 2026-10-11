@@ -1519,8 +1519,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** CU85 - Put a procedure folder in espera, with motivo required */
-        put: operations["ponerEnWait"];
+        /** CU85 - Put a procedure folder on hold; a reason is required */
+        put: operations["putOnHold"];
         post?: never;
         delete?: never;
         options?: never;
@@ -3019,23 +3019,23 @@ export interface components {
             version?: number;
         };
         DtoDeedManagement: {
-            clientReferencia?: components["schemas"]["DtoPerson"];
+            /** Format: int32 */
+            archiveNumber?: number;
+            associatedProcedures?: components["schemas"]["DtoProcedure"][];
+            /** Format: int32 */
+            binderNumber?: number;
             /** Format: date-time */
             dateStart?: string;
             heading?: string;
             /** Format: int32 */
             idManagement?: number;
-            listaClientesInvolucrados?: components["schemas"]["DtoPerson"][];
-            listaProceduresAsociados?: components["schemas"]["DtoProcedure"][];
+            involvedClients?: components["schemas"]["DtoPerson"][];
             notes?: string;
             /** Format: int32 */
             number?: number;
-            /** Format: int32 */
-            numberArchivo?: number;
-            /** Format: int32 */
-            numberBibliorato?: number;
             personNotary?: components["schemas"]["DtoPerson"];
             recordHistory?: components["schemas"]["DtoHistory"][];
+            referenceClient?: components["schemas"]["DtoPerson"];
             status?: components["schemas"]["DtoManagementStatus"];
             valid?: boolean;
             /** Format: int32 */
@@ -3341,9 +3341,9 @@ export interface components {
             waitReason?: string;
         };
         DtoProcedureRequiredDocumentation: {
-            documentsNecesarios?: components["schemas"]["DtoRequiredDocument"][];
             /** Format: int32 */
             idProcedure?: number;
+            requiredDocuments?: components["schemas"]["DtoRequiredDocument"][];
             typeProcedureName?: string;
         };
         DtoProcedureTemplate: {
@@ -8370,7 +8370,7 @@ export interface operations {
             };
         };
     };
-    ponerEnWait: {
+    putOnHold: {
         parameters: {
             query?: never;
             header?: never;
@@ -8385,7 +8385,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Folder puesta in espera */
+            /** @description Folder put on hold */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -8394,7 +8394,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Motivo no informado */
+            /** @description Reason not provided */
             400: {
                 headers: {
                     [name: string]: unknown;

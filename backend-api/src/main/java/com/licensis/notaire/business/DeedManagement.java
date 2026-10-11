@@ -256,7 +256,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
             for (int i = 0; i < procedureList.size(); i++) {
                 listaDtoProcedures.add(this.getDtoProcedure(procedureList.get(i)));
             }
-            dtoManagement.setListaProceduresAsociados(listaDtoProcedures);
+            dtoManagement.setAssociatedProcedures(listaDtoProcedures);
         }
 
         /*
@@ -281,7 +281,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
                 }
             }
 
-            dtoManagement.setListaClientesInvolucrados(listaDtoPersons);
+            dtoManagement.setInvolvedClients(listaDtoPersons);
         }
 
         // Management status — null when unset
