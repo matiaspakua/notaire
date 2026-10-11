@@ -22,18 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- **E2E reliability inventory uses the English spec names** (CU76, #1490):
-  payments, users/notaries, substitutions, and reports.
-- **Documents-due report allowlist uses the English path parameter** (CU76, #1490):
-  `GET /api/v1/reports/documents-due/{idSubmittedDocument}`.
-- **Case-process documentation and a traceability check** (CU76, CU02, #921):
-  `GESTION.md` is the step-by-step analysis of a gestión. The legacy activity
-  diagram matches the seeded workflow. `check-doc-traceability.py` rejects an
-  OpenSpec change whose traceability claims a permanent document the diff does
-  not touch (Constitution §8).
-
 ### Breaking
 
 - **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
@@ -55,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Case-process documentation and a traceability check** (CU76, CU02, #921):
+  `GESTION.md` is the step-by-step analysis of a gestión. The legacy activity
+  diagram matches the seeded workflow. `check-doc-traceability.py` rejects an
+  OpenSpec change whose traceability claims a permanent document the diff does
+  not touch (Constitution §8).
+- **Documents-due report allowlist uses the English path parameter** (CU76, #1490):
+  `GET /api/v1/reports/documents-due/{idSubmittedDocument}`.
+- **E2E reliability inventory uses the English spec names** (CU76, #1490):
+  payments, users/notaries, substitutions, and reports.
 - **English names kept with status badges and the app-shell skeleton** (#1490, CU75):
   The #1366 `StatusBadge` and the #1359 app-shell skeleton land on the English
   screens. Management badges read `currentStatus`. Testimony badges use
