@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Document-type unit filename** (#1490, CU75): the form-defaults unit
+  test is `document-type-enabled-returned.test.ts`. The archived #800
+  design keeps `tipo-documento-enabled-returned.test.ts`.
 - **Open Playwright filenames** (#1490, CU75): open change notes cite
   `TS-0098-management-case-summary-feature.spec.ts`,
   `TS-0099-document-procedure-link.spec.ts`, and
