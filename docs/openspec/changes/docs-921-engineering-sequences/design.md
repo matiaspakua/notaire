@@ -34,6 +34,8 @@ so the availability answer is not only in a pull request.
 `presupuesto-from-template`.
 [CU01, CU39, and CU71 still name `/dashboard/presupuestos`] → The live screen is in
 `presupuesto-from-template`.
+[CU10 still names `/dashboard/documentos-entidades-externas`] → The live screen is in
+`DOC-GESTION`.
 [CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in

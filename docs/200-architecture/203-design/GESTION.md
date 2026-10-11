@@ -121,6 +121,8 @@ sequenceDiagram
 
 ### 3.2 Documentation that can complete the management
 
+The screen is `/dashboard/external-entity-documents`.
+
 ```mermaid
 sequenceDiagram
   actor Clerk
