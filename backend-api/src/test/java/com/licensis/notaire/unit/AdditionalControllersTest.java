@@ -154,7 +154,8 @@ class AdditionalControllersTest {
                     mock(com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService.class),
                     statusLogService, statusWriteGuard, transitionUseCase, transitionWebMapper,
                     externalEntityDocumentService, documentReentryService,
-                    mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class)))
+                    mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class),
+                    mock(com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService.class)))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                     .build();

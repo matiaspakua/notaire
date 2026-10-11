@@ -21,6 +21,13 @@
   (`fk_id_document_type`); `DocumentType.submittedDocumentCollection` uses
   `mappedBy = "documentType"`. No cascade-delete from type to submitted documents.
 
+## Required + presented matrix (#773)
+
+When a trámite is confirmed via complete-case, pending required documents are
+materialized as undelivered `SubmittedDocument` rows. The case-summary matrix
+therefore shows both the CU03 checklist and later client-registered / re-entered
+documents for the same gestión.
+
 ## Curso de Eventos
 
 | Paso | Actor | Sistema |

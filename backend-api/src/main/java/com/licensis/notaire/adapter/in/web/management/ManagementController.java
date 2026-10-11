@@ -30,6 +30,7 @@ import com.licensis.notaire.repository.BudgetRepository;
 import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 import com.licensis.notaire.application.usecase.procedure.ProcedureFolderService;
+import com.licensis.notaire.application.usecase.procedure.RequiredDocumentationOnConfirmService;
 import com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService;
 import com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService;
 import com.licensis.notaire.application.usecase.management.ManagementStatusLogService;
@@ -99,6 +100,7 @@ public class ManagementController {
     private final ExternalEntityDocumentService externalEntityDocumentService;
     private final DocumentReentryService documentReentryService;
     private final ProcedureFolderService procedureFolderService;
+    private final RequiredDocumentationOnConfirmService requiredDocumentationOnConfirmService;
 
     public ManagementController(DeedManagementRepository repository,
                              HistoryRepository historyRepository,
@@ -116,7 +118,8 @@ public class ManagementController {
                              TransitionManagementWebMapper transitionManagementWebMapper,
                              ExternalEntityDocumentService externalEntityDocumentService,
                              DocumentReentryService documentReentryService,
-                             ProcedureFolderService procedureFolderService) {
+                             ProcedureFolderService procedureFolderService,
+                             RequiredDocumentationOnConfirmService requiredDocumentationOnConfirmService) {
         this.repository = repository;
         this.historyRepository = historyRepository;
         this.workflowTraceService = workflowTraceService;
@@ -137,6 +140,7 @@ public class ManagementController {
         this.externalEntityDocumentService = externalEntityDocumentService;
         this.documentReentryService = documentReentryService;
         this.procedureFolderService = procedureFolderService;
+        this.requiredDocumentationOnConfirmService = requiredDocumentationOnConfirmService;
     }
 
     public record DtoPendingBalance(java.math.BigDecimal pendingBalance) {}
@@ -215,6 +219,7 @@ public class ManagementController {
         applyProcedureDependencies(procedure, dependencies);
         Procedure saved = procedureRepository.save(procedure);
         procedureFolderService.generateFolderForProcedure(saved);
+        requiredDocumentationOnConfirmService.seedRequiredDocuments(saved);
     }
 
     private void updateProcedure(Procedure procedure, CaseDependencies dependencies) {

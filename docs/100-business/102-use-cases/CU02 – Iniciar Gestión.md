@@ -14,12 +14,21 @@
 
 ## API notes (initial status)
 
-On `POST /api/v1/gestiones/complete-case`, when the procedure type has a
+On `POST /api/v1/managements/complete-case`, when the procedure type has a
 `WorkflowDefinition`, the initial `statusManagementId` must be a start
 (`INITIAL`) node of that workflow (or any node if no INITIAL is defined).
-Plain `POST /api/v1/gestiones` has no procedure yet, so any defined management
+Plain `POST /api/v1/managements` has no procedure yet, so any defined management
 status is accepted. Initial assignment does not require a prior transition edge.
 Status is recorded in History (CU13 / #806).
+
+## Implementation note (#773 — required documents on confirm)
+
+After complete-case creates a new procedure (and its folder), the system materializes
+one pending submitted document per `ProcedureTemplate` row for that procedure type
+(CU03 catalog). Those rows appear in `GET /api/v1/managements/{id}/case-summary`
+with undelivered flags so the gestión surface shows the checklist without a separate
+CU03/CU43 call. PUT complete-case that only updates an existing procedure does not
+re-seed or wipe registered documents.
 
 ## Curso de Eventos
 
