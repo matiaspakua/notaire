@@ -104,7 +104,11 @@ export function useCreateCompleteManagement() {
   return useMutation({
     mutationFn: (data: CreateCompleteManagementInput) =>
       apiPost<DeedManagement>("/managements/complete-case", toCompleteCaseRequest(data)),
-    onSuccess: () => qc.invalidateQueries({ queryKey: managementsKeys.all }),
+    onSuccess: () => {
+      // #773 — complete-case seeds required docs; refresh list + case-summary caches.
+      qc.invalidateQueries({ queryKey: managementsKeys.all });
+      qc.invalidateQueries({ queryKey: ["management-case-summary"] });
+    },
   });
 }
 
