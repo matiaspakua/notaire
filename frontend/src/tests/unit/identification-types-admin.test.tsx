@@ -102,6 +102,21 @@ describe("Identification types admin page (#1361)", () => {
     expect(calls("POST")).toHaveLength(0);
   });
 
+  it("uses the API rule for the length: a whole number from 1 to 50 (#1526)", async () => {
+    render(<IdentificationTypesPage />, { wrapper });
+    await screen.findByText("DNI");
+    fireEvent.click(screen.getByTestId("btn-new-identification-type"));
+    const dialog = await screen.findByRole("dialog");
+    fireEvent.change(within(dialog).getByTestId("input-identification-type-name"), { target: { value: "Cédula" } });
+    for (const value of ["51", "0", "abc"]) {
+      toastError.mockClear();
+      fireEvent.change(within(dialog).getByTestId("input-identification-type-characters"), { target: { value } });
+      fireEvent.click(within(dialog).getByTestId("btn-save-identification-type"));
+      await waitFor(() => expect(toastError).toHaveBeenCalledWith("administracion.tiposIdentificacion.charactersRequired"));
+    }
+    expect(calls("POST")).toHaveLength(0);
+  });
+
   it("explains a duplicate name in the UI language", async () => {
     mockFetch.mockImplementation((input: RequestInfo | URL, init?: RequestInit) =>
       (init?.method ?? "GET") === "POST"
