@@ -1,5 +1,5 @@
 /**
- * CU39 - Cargar ítems del budget desde la template del tipo de trámite.
+ * CU39 - Load budget items from the procedure type template.
  * Issue #834.
  */
 import { test, expect } from "@playwright/test";
@@ -22,7 +22,7 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
   });
 
   test("loads the procedure type's template items into the budget", async ({ page }) => {
-    // GIVEN: budget, tipo de trámite con template configurada
+    // GIVEN: a budget and a procedure type with a configured template
     const personResult = await createPerson(page);
     expect(personResult.ok).toBe(true);
     const budgetResult = await createBudget(page, personResult.data!.personId);
@@ -45,7 +45,7 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     );
     expect(templateResult.ok, `createBudgetTemplate failed: ${templateResult.error}`).toBe(true);
 
-    // WHEN: operador abre los ítems del budget y elige el tipo de trámite
+    // WHEN: the operator opens the budget items and chooses the procedure type
     await steps.givenUserIsOnPage("/dashboard/budgets");
     const itemsBtn = page.getByTestId(`btn-items-budget-${idBudget}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
@@ -68,7 +68,7 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
   });
 
   test("creates the budget from the form with the procedure type's template items", async ({ page }) => {
-    // GIVEN: person, tipo de trámite con template configurada
+    // GIVEN: a person and a procedure type with a configured template
     const lastName = `Plantilla-${Date.now()}`;
     const personResult = await createPerson(page, { lastName });
     expect(personResult.ok).toBe(true);
@@ -84,7 +84,7 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     );
     expect(templateResult.ok, `createBudgetTemplate failed: ${templateResult.error}`).toBe(true);
 
-    // WHEN: el operador crea el budget eligiendo client, amount y tipo de trámite
+    // WHEN: the operator creates the budget choosing client, amount, and procedure type
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.getByTestId("btn-new-budget").click();
     await page.getByTestId("select-person").fill(lastName);

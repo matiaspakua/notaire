@@ -1,8 +1,8 @@
 /**
- * #773 - Registrar documentación del client contra un trámite y verla desde la gestión.
+ * #773 - Record a client's documentation against a procedure and view it from the management.
  *
- * The Documents screen creates a document choosing its type, a gestión and one of its trámites; the
- * list shows the type and the linked trámite, and the case summary of the gestión lists the document.
+ * The Documents screen creates a document by choosing its type, a management, and one of its procedures; the
+ * list shows the type and the linked procedure, and the management case summary lists the document.
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";

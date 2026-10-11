@@ -1,9 +1,9 @@
 /**
- * TS-0092 - Efecto práctico de las substitutions en la asignación de managements
- * CU22 - Registrar Substitution
- * CU59 - Aplicar substitution a una gestión (redirección automática)
- * CU48 - Dar alta notary (registro de notary)
- * CU51 - Modificar notary (registro de notary)
+ * TS-0092 - Practical effect of substitutions on management assignment
+ * CU22 - Register a substitution
+ * CU59 - Apply a substitution to a management (automatic redirect)
+ * CU48 - Register a notary
+ * CU51 - Update a notary
  * Issue #836
  */
 import { type Page, test, expect } from "@playwright/test";
@@ -81,7 +81,7 @@ test.describe("CU48/CU51 - Notary registration on people", () => {
 });
 
 // ---------------------------------------------------------------------------
-// CU22/CU59 - Redirección automática de la gestión al notary suplente
+// CU22/CU59 - Automatic redirect of the management to the substitute notary
 // ---------------------------------------------------------------------------
 
 test.describe("CU22/CU59 - Management redirect when a substitution is active", () => {

@@ -1,9 +1,9 @@
 /**
- * Tipo de Documento - Vencimiento y responsable (CU27/CU32/CU42)
+ * Document type - expiration and responsible party (CU27/CU32/CU42)
  *
- * Covers: CU27 (Ingresar nuevo tipo de document), CU32 (Modificar tipo de
- * document) — loading vence/diasVencimiento/quienEntrega so CU42 (Informar
- * próximos vencimientos) has data to report on.
+ * Covers: CU27 (enter a new document type) and CU32 (update a document
+ * type) — loading vence/diasVencimiento/quienEntrega so CU42 (report
+ * upcoming expirations) has data to report on.
  *
  * Reference: docs/openspec/changes/tipo-document-vencimiento-config
  */

@@ -1,9 +1,9 @@
 /**
- * TS-0013 - Escrituras Signing Workflow (CU05 → CU06)
- * CU05 - Preparar Deed
- * CU06 - Firmar Deed
- * CU52 - Modificar Deed
- * CU63 - Buscar Deed
+ * TS-0013 - Deed signing workflow (CU05 → CU06)
+ * CU05 - Prepare a deed
+ * CU06 - Sign a deed
+ * CU52 - Update a deed
+ * CU63 - Search deeds
  * Issue #892 (folio picker)
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU05.puml
  */
@@ -222,7 +222,7 @@ test.describe('CU06 - Firmar Deed', () => {
 })
 
 // ──────────────────────────────────────────────
-// CU63 — Buscar Deed
+// CU63 — Search deeds
 // ──────────────────────────────────────────────
 
 test.describe('CU63 - Search deeds', () => {

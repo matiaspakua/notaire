@@ -1,9 +1,9 @@
 /**
- * CU20 - Dar Alta UserAccount (Gherkin style)
- * CU21 - Modificar UserAccount
- * CU23 - Ver registro de actividades de usuario
- * CU48 - Dar alta notary
- * CU51 - Modificar notary
+ * CU20 - Register a user account (Gherkin style)
+ * CU21 - Update a user account
+ * CU23 - View a user's activity log
+ * CU48 - Register a notary
+ * CU51 - Update a notary
  */
 import { test, expect, type Page } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
@@ -56,7 +56,7 @@ test.describe("CU20 - Register a user", () => {
     // When
     await steps.whenUserClicksButton("nuevo usuario");
 
-    // Then — modal title is "Nuevo usuario" (i18n lowercase); form has Name, Contraseña, Tipo
+    // Then — modal title is the catalog string "Nuevo usuario"; form has Name, password, and type
     await steps.thenModalIsVisible("Nuevo usuario");
     await steps.thenFormHasField("nombre");
     await steps.thenFormHasField("contraseña");
@@ -138,7 +138,7 @@ test.describe("CU23 - Ver registro de actividades", () => {
   });
 
   test.skip("CU23-GW01 (#1146): Given on usuarios page, When click ver actividades, Then shows log", async () => {
-    // Skipped (#1146): no "ver actividades" button on the usuarios page.
+    // Skipped (#1146): no "ver actividades" button on the users page.
   });
 });
 

@@ -1,6 +1,6 @@
 /**
  * E2E tests — Logout flow
- * CU: Autenticación de usuario (AUTH-001 traceability, gap E-09)
+ * CU: User authentication (AUTH-001 traceability, gap E-09)
  * Issue #1051 — HttpOnly JWT cookie cleared on logout
  * Requires: backend running at localhost:8080, frontend at localhost:3000
  */

@@ -1,5 +1,5 @@
 /**
- * E2E tests — Reingresar documentación (CU43).
+ * E2E tests — Reenter documentation (CU43).
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
@@ -20,8 +20,8 @@ async function seedManagementWithRequiredDocumentation(page: Page, nameDocument:
   const budget = await createBudget(page, person.data!.personId);
   const estado = await createManagementStatus(page);
   const typeProcedure = await createProcedureType(page);
-  // `complete-case` creates the gestión AND its single trámite in one call;
-  // creating a second trámite for the same typeProcedure here would duplicate
+  // `complete-case` creates the management and its single procedure in one call;
+  // creating a second procedure for the same procedure type here would duplicate
   // the "Certificado de Dominio" row and break the dialog's strict-mode lookup.
   const management = await createCompleteCaseManagement(page, {
     budgetId: budget.data!.idBudget,

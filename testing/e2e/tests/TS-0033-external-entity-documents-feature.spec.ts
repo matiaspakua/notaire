@@ -1,5 +1,5 @@
 /**
- * E2E tests — Registrar movements de documentación de entities externas (CU10).
+ * E2E tests — Record external-entity document movements (CU10).
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";

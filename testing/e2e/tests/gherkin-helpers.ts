@@ -66,7 +66,7 @@ export class GherkinSteps {
   }
 
   /**
-   * List pages commonly have a "Buscar por {campo}..." search input whose
+   * List pages commonly have a catalog search input such as "Buscar por {campo}..." whose
    * aria-label also matches a modal field's label regex (e.g. /name/i
    * matches both "Name" and "Buscar por name..."). Scoping to the open
    * dialog when one exists avoids that ambiguity for form-field lookups.

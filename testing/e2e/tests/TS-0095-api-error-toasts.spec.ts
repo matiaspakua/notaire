@@ -1,7 +1,7 @@
 /**
  * TS-0095 - API error toasts / field errors on CRUD mutations
  *
- * Covers: CU15 – Procesar pago; CU20 – Dar alta usuario
+ * Covers: CU15 – Process a payment; CU20 – Register a user
  * Issues: #1054 (surface backend messages), #615 (E2E validation gap — focused slice)
  *
  * Approach: stub API 4xx with known ErrorResponse bodies so assertions are

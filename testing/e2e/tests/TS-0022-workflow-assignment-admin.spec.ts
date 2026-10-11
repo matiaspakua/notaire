@@ -16,7 +16,7 @@ async function loginAsAdmin(page: Page) {
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 }
 
-/** Create a tipo de trámite; fail the test if arrange/seed fails (do not skip). */
+/** Create a procedure type; fail the test if arrange/seed fails (do not skip). */
 async function arrangeTypeProcedure(page: Page): Promise<number> {
   const created = await createProcedureType(page, {
     name: `Asignación E2E ${Date.now()}`,

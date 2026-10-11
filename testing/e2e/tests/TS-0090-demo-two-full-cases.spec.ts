@@ -3,8 +3,8 @@
  *
  * Creates 2 complete, comparable "managements" through the real Notaire UI
  * (no direct API/SQL), each with every dependent entity: client,
- * budget, tipo de trámite, folio, gestión, property, deed (firmada),
- * testimony (verificado), document presentado, pago and copia.
+ * budget, procedure type, folio, management, property, signed deed,
+ * verified testimony, submitted document, payment, and copy.
  *
  * Intended for live-demo prep: run once against a dev stack to populate the
  * database with two side-by-side cases before showing the app. Reference
@@ -240,7 +240,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await go(page, "/dashboard/documents");
     await page.getByRole("button", { name: /nuevo documento/i }).click();
     await chooseInDialogCombobox(page, new RegExp(def.typeDocument, "i"), "select-tipo-documento");
-    // The document is presented for the case's trámite (CU04, #655).
+    // The document is presented for the case's procedure (CU04, #655).
     await chooseInDialogCombobox(page, new RegExp(`^${def.managementNumber} `), "select-gestion-documento");
     await chooseFirst(page, "select-tramite-documento");
     await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-06");

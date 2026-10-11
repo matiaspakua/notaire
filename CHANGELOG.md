@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English end-to-end comments** (#1490, CU75): Playwright file headers
+  and step comments use English use-case names. Catalog button labels,
+  placeholders such as `Buscar por name...`, and stored types
+  `DESCUENTO` and `RECARGO` stay.
 - **English startup and OpenAPI messages** (#1490, CU75): JWT secret
   failures, the production-credentials guard, the login failure log, and
   the OpenAPI info, server, and error descriptions are English. Stored

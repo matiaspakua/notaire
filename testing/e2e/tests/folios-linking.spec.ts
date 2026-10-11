@@ -1,6 +1,6 @@
 /**
  * CU87 - Vincular Deed, Folio y Copy de Testimony
- * CU28 - Ingresar nuevos folios
+ * CU28 - Enter new folios
  * Issue #838
  */
 import { type Page, test, expect } from '@playwright/test'

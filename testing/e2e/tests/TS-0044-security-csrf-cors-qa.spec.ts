@@ -1,6 +1,6 @@
 /**
  * E2E tests — CSRF protection posture and CORS enforcement (issue #691 / #1051)
- * CU: Autenticación de usuario / Seguridad
+ * CU: User authentication / security
  *
  * Browser sessions now use an HttpOnly SameSite=Lax JWT cookie via the
  * same-origin Next proxy. CSRF remains disabled on the API; ambient cookie

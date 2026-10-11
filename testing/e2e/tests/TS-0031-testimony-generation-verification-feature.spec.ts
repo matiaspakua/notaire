@@ -1,9 +1,9 @@
 /**
- * CU07/CU08 - Generación y verificación de testimony (issue #832)
+ * CU07/CU08 - Generate and verify a testimony (issue #832)
  *
- * Golden path: generar testimony desde una deed firmada → verificar
- * sin notes → emitir copia. Edge paths: verificar con notes;
- * emitir copia antes de verificar (bloqueado, per design.md — Playwright
+ * Golden path: generate a testimony from a signed deed, verify it
+ * without notes, then issue a copy. Edge paths: verify with notes;
+ * issue a copy before verification (blocked, per design.md — Playwright
  * Strategy).
  */
 import { test, expect } from "@playwright/test";

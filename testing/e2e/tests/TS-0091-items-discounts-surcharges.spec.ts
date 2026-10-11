@@ -1,7 +1,7 @@
 /**
- * TS-0091 - Items - Descuentos y Recargos (CU45/CU71)
+ * TS-0091 - Items - discounts and surcharges (CU45/CU71)
  *
- * Covers: CU45 (Modificar Presupuesto), CU71 (Gestión de Items)
+ * Covers: CU45 (update a budget), CU71 (manage items)
  * Test Level: E2E UI/UX
  *
  * Workflow:

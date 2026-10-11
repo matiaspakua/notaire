@@ -1,7 +1,7 @@
 /**
- * #774 - Resumen del caso de una gestión.
+ * #774 - Management case summary.
  *
- * A gestión whose trámite has a signed deed with a generated testimony is seeded through the API;
+ * A management whose procedure has a signed deed with a generated testimony is seeded through the API;
  * the case summary dialog of the managements screen must list the deed and the testimony state.
  */
 import { test, expect } from "@playwright/test";

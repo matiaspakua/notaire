@@ -69,7 +69,7 @@ async function globalTeardown(): Promise<void> {
       ...(idsToCleanup.conceptId
         ? [{ label: "concepto", path: `/concepts/${idsToCleanup.conceptId}` }]
         : []),
-      // Delete the usuario before the person it references, otherwise the
+      // Delete the user before the person it references, otherwise the
       // person delete hits a foreign-key constraint.
       ...(idsToCleanup.usuarioId
         ? [{ label: "usuario", path: `/users/${idsToCleanup.usuarioId}` }]

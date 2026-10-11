@@ -1,10 +1,10 @@
 /**
  * TS-0011 - Managements Workflow (CU02 → CU13 → CU83 → CU16)
- * CU02 - Iniciar Gestión
- * CU13 - Ver history/bitácora
- * CU83 - Cambiar estado (workflow)
- * CU16 - Archivar Gestión
- * CU19 - Buscar managements por client
+ * CU02 - Start a management
+ * CU13 - View history
+ * CU83 - Change status (workflow)
+ * CU16 - Archive a management
+ * CU19 - Search managements by client
  * Issues: #833, #804 (workflow-enforced status writes; UI uses /transition)
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU02.puml
  */
@@ -101,7 +101,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
     // Step 1: seed — createPerson → createBudget → seedManagementWithWorkflow
     const { idManagement, number, initialStatus, finalStatus } = await seedFullWorkflow(page)
 
-    // Step 2: navegar a /dashboard/managements y verificar que la gestión aparece con estado inicial
+    // Step 2: open /dashboard/managements and check that the management appears with its initial status
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
@@ -109,7 +109,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
     await expect(row).toBeVisible({ timeout: 10000 })
     await expect(row).toContainText(initialStatus)
 
-    // Step 3 (CU13): ver bitácora — debe tener 1 entrada con el estado inicial
+    // Step 3 (CU13): open history — it must have 1 entry with the initial status
     await page.getByTestId(`btn-view-history-${idManagement}`).click()
     let dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
@@ -121,7 +121,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
     await dialog.getByRole('button', { name: /cerrar|close/i }).click()
     await expect(dialog).not.toBeVisible()
 
-    // Step 4 (CU83): cambiar estado → seleccionar estado final → confirmar → verificar en tabla
+    // Step 4 (CU83): change status, select the final status, confirm, and check the table
     await page.getByTestId(`btn-change-status-${idManagement}`).click()
     dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
@@ -133,7 +133,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
 
     await expect(row).toContainText(finalStatus)
 
-    // Step 5 (CU13): ver bitácora nuevamente — debe tener 2 entradas (inicial + final)
+    // Step 5 (CU13): open history again — it must have 2 entries (initial and final)
     await page.getByTestId(`btn-view-history-${idManagement}`).click()
     dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
@@ -146,7 +146,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
 })
 
 // ──────────────────────────────────────────────
-// CU13 - Ver history/bitácora
+// CU13 - View history
 // ──────────────────────────────────────────────
 
 test.describe("CU13 - View a management's history", () => {
@@ -191,7 +191,7 @@ test.describe("CU13 - View a management's history", () => {
     await dialog.getByTestId('btn-confirm-transicion').click()
     await expect(dialog).not.toBeVisible()
 
-    // Ver bitácora con 2 entradas
+    // View history with 2 entries
     await page.getByTestId(`btn-view-history-${idManagement}`).click()
     dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
@@ -275,13 +275,13 @@ test.describe('CU16 - Archive a management', () => {
 
     // Backend should reject: error message must appear
     await expect(page.getByText(/is not allowed/i)).toBeVisible({ timeout: 10000 })
-    // Row and archive button remain — gestión was NOT archived
+    // Row and archive button remain — the management was not archived
     await expect(page.getByTestId(`btn-archive-management-${idManagement}`)).toBeVisible()
   })
 })
 
 // ──────────────────────────────────────────────
-// CU19 - Buscar managements por client
+// CU19 - Search managements by client
 // ──────────────────────────────────────────────
 
 test.describe('CU19 - Search managements by client', () => {
@@ -290,7 +290,7 @@ test.describe('CU19 - Search managements by client', () => {
   })
 
   test('CU19-GW01: choosing a client in the filter calls GET /managements/client/{id}', async ({ page }) => {
-    // Ensure at least one gestión with a real person/client exists
+    // Ensure at least one management with a real person/client exists
     await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
@@ -328,7 +328,7 @@ test.describe('CU19 - Search managements by client', () => {
 
     // Select the option matching the seeded person specifically — picking
     // the first non-"Todos" option would filter by an unrelated person
-    // accumulated from other test runs, hiding the seeded gestión.
+    // accumulated from other test runs, hiding the seeded management.
     const clientOption = page.getByRole('option', { name: new RegExp(personLastName) })
 
     if ((await clientOption.count()) === 0) {
@@ -342,7 +342,7 @@ test.describe('CU19 - Search managements by client', () => {
     await clientOption.click()
     await searchRequest
 
-    // The row for the seeded gestión number must remain visible after filtering
+    // The row for the seeded management number must remain visible after filtering
     await expect(
       page.getByRole('row', { name: new RegExp(String(number)) }),
     ).toBeVisible({ timeout: 8000 })

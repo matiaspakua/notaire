@@ -1,40 +1,40 @@
 /**
- * CU24 - Generar libro de índices (Gherkin style)
- * CU25 - Generar Declaración Jurada del mes
- * CU26 - Ingresar nuevo tipo de trámite
- * CU27 - Ingresar nuevo tipo de document
- * CU28 - Ingresar nuevos folios
- * CU29 - Ingresar nuevo concept
- * CU30 - Ingresar nuevo estado de Gestión
- * CU31 - Modificar tipo de trámite
- * CU32 - Modificar tipo de document
- * CU33 - Modificar folio
- * CU34 - Modificar concept
- * CU35 - Modificar estado de Gestión
- * CU36 - Ingresar tipos de folio
- * CU37 - Eliminar concept
- * CU38 - Eliminar tipo de document
- * CU39 - Crear Template Presupuesto
- * CU40 - Modificar tipo de folio
- * CU42 - Informar próximos vencimientos
- * CU43 - Reingresar documentación
- * CU44 - Reingresar testimony
- * CU45 - Modificar budget
- * CU49 - Eliminar Template Presupuesto
- * CU50 - Generar Declaración Jurada de Rentas
- * CU55 - Modificar Client
- * CU56 - Registrar inscripcion
- * CU57 - Eliminar tipo de trámite
- * CU58 - Eliminar tipo de folio
- * CU59 - Consultar Suplencias
- * CU60 - Buscar Presupuesto
- * CU62 - Buscar Deed
- * CU63 - Buscar Folios
- * CU64 - Buscar Tipo de procedure
- * CU65 - Buscar Tipos de documents
- * CU66 - Buscar Conceptos
- * CU67 - Buscar Estados de Gestión
- * CU68 - Buscar tipos de folios
+ * CU24 - Generate the index book (Gherkin style)
+ * CU25 - Generate the monthly sworn statement
+ * CU26 - Enter a new procedure type
+ * CU27 - Enter a new document type
+ * CU28 - Enter new folios
+ * CU29 - Enter a new concept
+ * CU30 - Enter a new management status
+ * CU31 - Update a procedure type
+ * CU32 - Update a document type
+ * CU33 - Update a folio
+ * CU34 - Update a concept
+ * CU35 - Update a management status
+ * CU36 - Enter folio types
+ * CU37 - Delete a concept
+ * CU38 - Delete a document type
+ * CU39 - Create a budget template
+ * CU40 - Update a folio type
+ * CU42 - Report upcoming expirations
+ * CU43 - Reenter documentation
+ * CU44 - Reenter a testimony
+ * CU45 - Update a budget
+ * CU49 - Delete a budget template
+ * CU50 - Generate the tax sworn statement
+ * CU55 - Update a client
+ * CU56 - Record a registration
+ * CU57 - Delete a procedure type
+ * CU58 - Delete a folio type
+ * CU59 - Look up substitutions
+ * CU60 - Search budgets
+ * CU62 - Search deeds
+ * CU63 - Search folios
+ * CU64 - Search procedure types
+ * CU65 - Search document types
+ * CU66 - Search concepts
+ * CU67 - Search management statuses
+ * CU68 - Search folio types
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";

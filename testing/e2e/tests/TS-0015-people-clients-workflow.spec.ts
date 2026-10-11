@@ -1,10 +1,10 @@
 /**
- * TS-0015 - People y Clientes Workflow (CU17 → CU18 → CU61)
- * CU17 - Dar Alta Person
- * CU18 - Dar Alta Client (via checkbox 'es client')
- * CU41 - Modificar Client
- * CU61 - Buscar person o client
- * Issue #835 (validación duplicados por DNI)
+ * TS-0015 - People and clients workflow (CU17 → CU18 → CU61)
+ * CU17 - Register a person
+ * CU18 - Register a client (via the client checkbox)
+ * CU41 - Update a client
+ * CU61 - Search for a person or client
+ * Issue #835 (duplicate validation by identification number)
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU17.puml
  */
 import { type Page, test, expect } from '@playwright/test'
@@ -15,7 +15,7 @@ import { createPerson, uniqueId } from './setup/api-helpers'
 // ---------------------------------------------------------------------------
 // NOTE ON CU18 MECHANISM
 // ---------------------------------------------------------------------------
-// CU18 "Dar Alta Client" is NOT a separate button or screen. The "Es client"
+// CU18 "Register a client" is not a separate button or screen. The catalog label "Es client"
 // checkbox inside the person creation/edit form is the sole mechanism: checking
 // it during person creation (CU17) or editing (CU41) simultaneously registers
 // the person as a client. There is no standalone "client upgrade" flow.
@@ -68,7 +68,7 @@ async function submitForm(page: Page): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// CU17 - Dar Alta Person (Golden Path)
+// CU17 - Register a person (golden path)
 // ---------------------------------------------------------------------------
 
 test.describe('CU17 - Register a person', () => {
@@ -159,7 +159,7 @@ test.describe('CU17 - Register a person', () => {
 })
 
 // ---------------------------------------------------------------------------
-// CU18 - Dar Alta Client (via checkbox mechanism)
+// CU18 - Register a client (via the checkbox)
 // ---------------------------------------------------------------------------
 
 test.describe('CU18 - Register a client via the is-client checkbox', () => {
@@ -355,7 +355,7 @@ test.describe('Issue #835 - Deduplication by DNI', () => {
 })
 
 // ---------------------------------------------------------------------------
-// CU61 - Buscar person o client
+// CU61 - Search for a person or client
 // ---------------------------------------------------------------------------
 
 test.describe('CU61 - Search for a person or client', () => {

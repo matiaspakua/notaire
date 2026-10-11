@@ -1,8 +1,8 @@
 /**
- * TS-0010 - Presupuesto Workflow (CU01 → CU45 → CU47)
- * CU01 - Preparar Presupuesto
- * CU45 - Modificar Presupuesto
- * CU47 - Consultar Payment / Saldo
+ * TS-0010 - Budget workflow (CU01 → CU45 → CU47)
+ * CU01 - Prepare a budget
+ * CU45 - Update a budget
+ * CU47 - Look up a payment / balance
  * Issues: #796 (saldo picker), #848 (overpayment guard)
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
  */
@@ -188,7 +188,7 @@ test.describe("CU47 - Consult payment / outstanding balance", () => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// CU45 – Modificar Presupuesto
+// CU45 – Update a budget
 // ─────────────────────────────────────────────────────────────
 test.describe("CU45 - Modify a budget", () => {
   let steps: GherkinSteps;

@@ -1,10 +1,10 @@
 /**
- * CU82 - Generar y hacer seguimiento de la Minuta de Inscripción (issue #839)
+ * CU82 - Generate and track the registration draft (issue #839)
  *
- * Golden path: generar registrationDraft desde una deed firmada con property con
- * datos catastrales/registrales completos → presentar ante el Registro →
- * inscribir en forma definitiva. Edge paths: observar (subsanación) tras
- * presentar; generar bloqueado cuando faltan datos catastrales/registrales.
+ * Golden path: generate a registration draft from a signed deed whose property has
+ * complete cadastral and registry data, submit it to the registry, then
+ * register it permanently. Edge paths: flag it for correction after
+ * submission; generation is blocked when cadastral or registry data is missing.
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";

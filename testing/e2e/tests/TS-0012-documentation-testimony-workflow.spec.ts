@@ -1,10 +1,10 @@
 /**
- * TS-0012 - Documentación y Testimony Workflow (CU03 → CU07 → CU08 → CU11 → CU12)
- * CU03 - Listar documents required
- * CU07 - Generar testimony
- * CU08 - Verificar testimony
- * CU11 - Ingresar para inscripción
- * CU12 - Retirar testimony
+ * TS-0012 - Documentation and testimony workflow (CU03 → CU07 → CU08 → CU11 → CU12)
+ * CU03 - List required documents
+ * CU07 - Generate a testimony
+ * CU08 - Verify a testimony
+ * CU11 - Enter for registration
+ * CU12 - Withdraw a testimony
  * Issue #832
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU07.puml
  */
@@ -110,7 +110,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     // ── Seed ──────────────────────────────────────────
     const { idDeed, number: deedNumber } = await seedSignedDeed(page)
 
-    // ── CU07: Generar testimony ──────────────────────
+    // ── CU07: Generate a testimony ──────────────────────
     await steps.givenUserIsOnPage('/dashboard/testimonies')
     await page.getByTestId('btn-generate-testimony').click()
     await steps.thenModalIsVisible()
@@ -140,7 +140,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     await steps.thenShowsSuccessMessage('verificado')
     await expect(rowTestimonies).toContainText(/verificado/i)
 
-    // ── CU11: Ingresar para inscripción ───────────────
+    // ── CU11: Enter for registration ───────────────
     await steps.givenUserIsOnPage('/dashboard/testimony-movements')
     const rowMovements = rowWithCell(page, deedNumber)
     await expect(rowMovements).toBeVisible({ timeout: 10_000 })
@@ -165,7 +165,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
 })
 
 // ──────────────────────────────────────────────
-// CU07 — Generar testimony (unit / edge)
+// CU07 — Generate a testimony (unit / edge)
 // ──────────────────────────────────────────────
 
 test.describe('CU07 - Generar testimonio', () => {

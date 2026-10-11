@@ -1,13 +1,13 @@
 /**
- * Plantillas - Costos de Documents (CU27/CU39)
+ * Templates - Document costs (CU27/CU39)
  *
- * Covers: CU27 (Ingresar Nuevo Tipo de Documento), CU39 (Crear Template Presupuesto)
+ * Covers: CU27 (enter a new document type), CU39 (create a budget template)
  * Test Level: E2E UI/UX
  *
  * Workflow:
- *   - Select a tipo de trámite in the plantillas page
- *   - Define a fixed or variable cost for a tipo de document
- *   - Verify the cost appears in the costos de documents table
+ *   - Select a procedure type on the templates page
+ *   - Define a fixed or variable cost for a document type
+ *   - Verify the cost appears in the document costs table
  *
  * Reference: docs/openspec/changes/costos-documents-budget
  */
@@ -36,7 +36,7 @@ test.describe("Plantillas - Costos de Documentos", () => {
   });
 
   test("CU27-GW01: Given costo form open, When creating a fixed cost, Then it is saved and listed", async ({ page }) => {
-    // A fresh tipo-trámite + tipo-document pair avoids colliding with a
+    // A fresh procedure type and document type pair avoids colliding with a
     // combination already created (unique constraint) by an earlier/parallel
     // run against the shared "first option" catalog entries.
     const runId = Date.now();
