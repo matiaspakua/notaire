@@ -107,7 +107,7 @@ describe("Identification types admin page (#1361)", () => {
     await screen.findByText("DNI");
     fireEvent.click(screen.getByTestId("btn-new-identification-type"));
     const dialog = await screen.findByRole("dialog");
-    fireEvent.change(within(dialog).getByTestId("input-identification-type-name"), { target: { value: "Cédula" } });
+    fireEvent.change(within(dialog).getByTestId("input-identification-type-name"), { target: { value: "Identity card" } });
     for (const value of ["51", "0", "abc"]) {
       toastError.mockClear();
       fireEvent.change(within(dialog).getByTestId("input-identification-type-characters"), { target: { value } });
