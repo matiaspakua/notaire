@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English testimony labels** (#1490, CU75):
+  The English catalog says `Testimonies`, `Generate testimony`, and
+  `No testimonies registered`. Message keys stay `testimonios`. The Spanish
+  catalog stays `Testimonios`. The copy filename `testimonio_*_copia.pdf` stays.
 - **English lifecycle pointers** (#1490, CU75):
   The legacy state-diagram folder, the design index, the SAD runtime view,
   the system threat model, and the GitHub board note name management, deed,
