@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English audit column keys** (#1490, CU75): the audit table keys are
+  `module` and `detail`. The procedure-template note is
+  `Observation test`. Message key `fields.modulo` stays. The role
+  field `modulos` and test id `check-modulo-` stay.
 - **English cost fixture phrases** (#1490, CU75): the document type is
   `Previous deed`. Display names say `costs`. The printed-copy comment
   names a verified testimony. Delivered-by `Cliente` stays. Stored

@@ -46,7 +46,7 @@ class ProcedureTemplateControllerTest {
 
     private ProcedureTemplate buildTemplate(int idProcedureType, int idDocumentType) {
         ProcedureTemplate pt = new ProcedureTemplate(new ProcedureTemplatePK(idProcedureType, idDocumentType));
-        pt.setNotes("Obs test");
+        pt.setNotes("Observation test");
         return pt;
     }
 
