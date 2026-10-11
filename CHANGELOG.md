@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English database-migration decision** (#1490, CU75):
+  ADR-004 is English. The live database is PostgreSQL 16 with Flyway, Hibernate
+  `ddl-auto` `none`, and table `budgets`. The Liquibase sketch and the MySQL
+  table `presupuesto` stay as that original plan. Applied migrations V1–V44 stay
+  immutable. Stored statuses such as `BORRADOR` stay.
 - **English catalog-item identifiers** (#1490, CU75):
   The budget controller field is `budgetCatalogItemsService`. The budgets page
   uses `catalogItems`, `addFromCatalogMutation`, and `handleAddFromCatalog`.
