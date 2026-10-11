@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired substitution dates** (#1490, CU75): the engineering-sequences
+  design names the fields CU22 still writes, `fechaInicio` and `fechaFin`.
+  The live fields are `dateStart` and `dateEnd`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired deed link field** (#1490, CU75): the engineering-sequences
   design names the field CU87 still writes, `escrituraId`.
   The live field is `deedId`. The heading `Riesgos / Trade-offs`
