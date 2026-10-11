@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English Java test identifiers** (#1490, CU75):
+  External-entity, document-reentry, and management-transition tests use
+  English method and variable names such as `createExternalEntityDocument`
+  and `intermediateStatus`. Budget search coverage calls `status=PENDIENTE`.
+  Person name lookup stubs use `name` and `lastName`. Stored labels such as
+  `Compraventa`, `Certificado de Dominio`, `Cliente`, and `Entidad Externa`
+  stay.
 - **English payment and workflow identifiers** (#1490, CU75):
   The payment status type is `PaymentStatus` and its cache key is `status`.
   Workflow traces use `management-workflow-trace`. The budget setter is

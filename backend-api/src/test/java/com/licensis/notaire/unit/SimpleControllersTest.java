@@ -531,7 +531,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/budgets/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/budgets/2")).andExpect(status().isNotFound());
             mvc.perform(get("/api/v1/budgets/person/5")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/budgets/search?estado=activo")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/budgets/search?status=PENDIENTE")).andExpect(status().isOk());
 
             String budgetBody = """
                     {"number":1,"heading":"Test","status":"PENDIENTE","propertyAmount":10.0}
@@ -873,7 +873,7 @@ class SimpleControllersTest {
     }
 
     @Nested
-    @DisplayName("TipoIdentificacionController")
+    @DisplayName("IdentificationTypeController")
     class IdentificationTypeControllerTests {
         private final IdentificationTypeRepository repo = mock(IdentificationTypeRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =

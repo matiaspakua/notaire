@@ -1350,8 +1350,8 @@ class RemainingControllersJpaTest {
         @DisplayName("findPersonByFirstAndLastName uses named query")
         void findNameLastName() {
             when(mockEm.createNamedQuery("Person.findByPersonNameLastName")).thenReturn(mockQuery);
-            when(mockQuery.setParameter(eq("nombre"), anyString())).thenReturn(mockQuery);
-            when(mockQuery.setParameter(eq("apellido"), anyString())).thenReturn(mockQuery);
+            when(mockQuery.setParameter(eq("name"), anyString())).thenReturn(mockQuery);
+            when(mockQuery.setParameter(eq("lastName"), anyString())).thenReturn(mockQuery);
             when(mockQuery.getResultList()).thenReturn(List.of(mock(Person.class)));
 
             DtoPerson dto = new DtoPerson();

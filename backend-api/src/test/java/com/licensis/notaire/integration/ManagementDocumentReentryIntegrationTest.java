@@ -73,10 +73,10 @@ class ManagementDocumentReentryIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
-    private record ManagementConProcedure(Integer idManagement, Integer idProcedure, ProcedureType procedureType) {
+    private record ManagementWithProcedure(Integer idManagement, Integer idProcedure, ProcedureType procedureType) {
     }
 
-    private ManagementConProcedure createManagementConProcedure(Integer number) throws Exception {
+    private ManagementWithProcedure createManagementWithProcedure(Integer number) throws Exception {
         Integer notaryId = createPerson("43100" + number);
         String body = """
                 {"heading": "Management CU43", "dateStart": "2026-01-01", "number": %d,
@@ -105,25 +105,25 @@ class ManagementDocumentReentryIntegrationTest {
         procedure.setFkIdManagement(managementRef);
         procedure = procedureRepository.save(procedure);
 
-        return new ManagementConProcedure(managementId, procedure.getIdProcedure(), type);
+        return new ManagementWithProcedure(managementId, procedure.getIdProcedure(), type);
     }
 
     private DocumentType createDocumentType(String name) {
-        DocumentType typeDocument = new DocumentType();
-        typeDocument.setName(name);
-        typeDocument.setEnabled(true);
-        typeDocument.setReturned(false);
-        typeDocument.setExpires(true);
-        typeDocument.setDueDays(30);
-        typeDocument.setDeliveredBy("Cliente");
-        return documentTypeRepository.save(typeDocument);
+        DocumentType documentType = new DocumentType();
+        documentType.setName(name);
+        documentType.setEnabled(true);
+        documentType.setReturned(false);
+        documentType.setExpires(true);
+        documentType.setDueDays(30);
+        documentType.setDeliveredBy("Cliente");
+        return documentTypeRepository.save(documentType);
     }
 
-    private void createProcedureTemplate(ProcedureType typeProcedure, DocumentType typeDocument) {
+    private void createProcedureTemplate(ProcedureType procedureType, DocumentType documentType) {
         ProcedureTemplate template = new ProcedureTemplate(
-                new ProcedureTemplatePK(typeProcedure.getIdProcedureType(), typeDocument.getIdDocumentType()));
-        template.setProcedureType(typeProcedure);
-        template.setDocumentType(typeDocument);
+                new ProcedureTemplatePK(procedureType.getIdProcedureType(), documentType.getIdDocumentType()));
+        template.setProcedureType(procedureType);
+        template.setDocumentType(documentType);
         procedureTemplateRepository.save(template);
     }
 
@@ -137,9 +137,9 @@ class ManagementDocumentReentryIntegrationTest {
     @Test
     @DisplayName("Should list procedures with their documentation required")
     void shouldListProceduresWithRequiredDocumentation() throws Exception {
-        ManagementConProcedure management = createManagementConProcedure(9401);
-        DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-1");
-        createProcedureTemplate(management.procedureType(), typeDocument);
+        ManagementWithProcedure management = createManagementWithProcedure(9401);
+        DocumentType documentType = createDocumentType("Certificado de Dominio CU43-1");
+        createProcedureTemplate(management.procedureType(), documentType);
 
         mockMvc.perform(get("/api/v1/managements/" + management.idManagement() + "/document-reentry"))
                 .andExpect(status().isOk())
@@ -152,7 +152,7 @@ class ManagementDocumentReentryIntegrationTest {
     @Test
     @DisplayName("Should return empty documentation required when the procedure has not ProcedureTemplate")
     void shouldReturnEmptyDocumentationWhenNoTemplate() throws Exception {
-        ManagementConProcedure management = createManagementConProcedure(9402);
+        ManagementWithProcedure management = createManagementWithProcedure(9402);
 
         mockMvc.perform(get("/api/v1/managements/" + management.idManagement() + "/document-reentry"))
                 .andExpect(status().isOk())
@@ -162,13 +162,13 @@ class ManagementDocumentReentryIntegrationTest {
     @Test
     @DisplayName("Should create a SubmittedDocument with reentered=true when the pair is valid")
     void shouldReenterWhenValid() throws Exception {
-        ManagementConProcedure management = createManagementConProcedure(9403);
-        DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-3");
-        createProcedureTemplate(management.procedureType(), typeDocument);
+        ManagementWithProcedure management = createManagementWithProcedure(9403);
+        DocumentType documentType = createDocumentType("Certificado de Dominio CU43-3");
+        createProcedureTemplate(management.procedureType(), documentType);
 
         String body = """
                 {"idProcedure": %d, "idDocumentType": %d}
-                """.formatted(management.idProcedure(), typeDocument.getIdDocumentType());
+                """.formatted(management.idProcedure(), documentType.getIdDocumentType());
 
         mockMvc.perform(post("/api/v1/managements/" + management.idManagement() + "/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -182,12 +182,12 @@ class ManagementDocumentReentryIntegrationTest {
     @Test
     @DisplayName("Should return 400 when the document type is not part of the ProcedureTemplate")
     void shouldReturn400WhenTypeDocumentNotInTemplate() throws Exception {
-        ManagementConProcedure management = createManagementConProcedure(9404);
-        DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-4");
+        ManagementWithProcedure management = createManagementWithProcedure(9404);
+        DocumentType documentType = createDocumentType("Certificado de Dominio CU43-4");
 
         String body = """
                 {"idProcedure": %d, "idDocumentType": %d}
-                """.formatted(management.idProcedure(), typeDocument.getIdDocumentType());
+                """.formatted(management.idProcedure(), documentType.getIdDocumentType());
 
         mockMvc.perform(post("/api/v1/managements/" + management.idManagement() + "/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -198,14 +198,14 @@ class ManagementDocumentReentryIntegrationTest {
     @Test
     @DisplayName("Should return 400 when the procedure does not belong to the management")
     void shouldReturn400WhenProcedureDoesNotBelongToManagement() throws Exception {
-        ManagementConProcedure management = createManagementConProcedure(9405);
-        ManagementConProcedure otraManagement = createManagementConProcedure(9406);
-        DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-5");
-        createProcedureTemplate(otraManagement.procedureType(), typeDocument);
+        ManagementWithProcedure management = createManagementWithProcedure(9405);
+        ManagementWithProcedure otherManagement = createManagementWithProcedure(9406);
+        DocumentType documentType = createDocumentType("Certificado de Dominio CU43-5");
+        createProcedureTemplate(otherManagement.procedureType(), documentType);
 
         String body = """
                 {"idProcedure": %d, "idDocumentType": %d}
-                """.formatted(otraManagement.idProcedure(), typeDocument.getIdDocumentType());
+                """.formatted(otherManagement.idProcedure(), documentType.getIdDocumentType());
 
         mockMvc.perform(post("/api/v1/managements/" + management.idManagement() + "/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -216,12 +216,12 @@ class ManagementDocumentReentryIntegrationTest {
     @Test
     @DisplayName("Should return 404 when the procedure does not exist")
     void shouldReturn404WhenProcedureDoesNotExist() throws Exception {
-        ManagementConProcedure management = createManagementConProcedure(9407);
-        DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-6");
+        ManagementWithProcedure management = createManagementWithProcedure(9407);
+        DocumentType documentType = createDocumentType("Certificado de Dominio CU43-6");
 
         String body = """
                 {"idProcedure": 999999, "idDocumentType": %d}
-                """.formatted(typeDocument.getIdDocumentType());
+                """.formatted(documentType.getIdDocumentType());
 
         mockMvc.perform(post("/api/v1/managements/" + management.idManagement() + "/document-reentry")
                         .contentType(MediaType.APPLICATION_JSON)

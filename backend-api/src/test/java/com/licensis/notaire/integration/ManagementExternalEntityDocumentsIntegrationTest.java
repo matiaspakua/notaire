@@ -31,7 +31,7 @@ import com.licensis.notaire.repository.ProcedureTypeRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
 
 /**
- * CU10 - Record movimientos of documentation of entidades externas.
+ * CU10 - Record movements of external-entity documentation.
  */
 @SpringBootTest
 @ActiveProfiles("test-h2")
@@ -74,7 +74,7 @@ class ManagementExternalEntityDocumentsIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
     }
 
-    private Integer createManagementConProcedure(Integer number) throws Exception {
+    private Integer createManagementWithProcedure(Integer number) throws Exception {
         Integer notaryId = createPerson("42100" + number);
         String body = """
                 {"heading": "Management CU10", "dateStart": "2026-01-01", "number": %d,
@@ -106,7 +106,7 @@ class ManagementExternalEntityDocumentsIntegrationTest {
         return managementId;
     }
 
-    private SubmittedDocument createDocumentEntidadExterna(Integer idManagement, String name) {
+    private SubmittedDocument createExternalEntityDocument(Integer idManagement, String name) {
         Procedure procedure = procedureRepository.findByFkIdManagementIdManagement(idManagement).get(0);
         SubmittedDocument document = new SubmittedDocument();
         document.setName(name);
@@ -127,12 +127,12 @@ class ManagementExternalEntityDocumentsIntegrationTest {
 
     @Test
     @DisplayName("Should list the external entity documents and cadastral nomenclature of a management")
-    void shouldListDocumentsEntidadesExternas() throws Exception {
-        Integer managementId = createManagementConProcedure(9301);
-        createDocumentEntidadExterna(managementId, "Certificado de Dominio");
+    void shouldListExternalEntityDocuments() throws Exception {
+        Integer managementId = createManagementWithProcedure(9301);
+        createExternalEntityDocument(managementId, "Certificado de Dominio");
 
         Property property = new Property();
-        property.setAddress("Calle Falsa 123");
+        property.setAddress("123 Fake Street");
         property.setCadastralDesignation("11-22-33");
         property = propertyRepository.save(property);
         Procedure procedure = procedureRepository.findByFkIdManagementIdManagement(managementId).get(0);
@@ -154,12 +154,12 @@ class ManagementExternalEntityDocumentsIntegrationTest {
 
     @Test
     @DisplayName("Should register the movement of a document and return it updated")
-    void shouldRegistrarMovement() throws Exception {
-        Integer managementId = createManagementConProcedure(9302);
-        SubmittedDocument document = createDocumentEntidadExterna(managementId, "Informe de Dominio");
+    void shouldRegisterMovement() throws Exception {
+        Integer managementId = createManagementWithProcedure(9302);
+        SubmittedDocument document = createExternalEntityDocument(managementId, "Informe de Dominio");
 
         String body = """
-                {"prepared": true, "cardNumber": 5, "notes": "Retirado", "delivered": false}
+                {"prepared": true, "cardNumber": 5, "notes": "Withdrawn", "delivered": false}
                 """;
 
         mockMvc.perform(put("/api/v1/managements/" + managementId + "/external-entity-documents/"
@@ -169,15 +169,15 @@ class ManagementExternalEntityDocumentsIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.prepared").value(true))
                 .andExpect(jsonPath("$.cardNumber").value(5))
-                .andExpect(jsonPath("$.notes").value("Retirado"));
+                .andExpect(jsonPath("$.notes").value("Withdrawn"));
     }
 
     @Test
     @DisplayName("Should return 400 when the document does not belong to the management")
     void shouldReturn400WhenDocumentDoesNotBelongToManagement() throws Exception {
-        Integer managementId = createManagementConProcedure(9303);
-        Integer otraManagementId = createManagementConProcedure(9304);
-        SubmittedDocument document = createDocumentEntidadExterna(otraManagementId, "Informe de Dominio");
+        Integer managementId = createManagementWithProcedure(9303);
+        Integer otherManagementId = createManagementWithProcedure(9304);
+        SubmittedDocument document = createExternalEntityDocument(otherManagementId, "Informe de Dominio");
 
         String body = """
                 {"delivered": true}
@@ -193,7 +193,7 @@ class ManagementExternalEntityDocumentsIntegrationTest {
     @Test
     @DisplayName("Should return 404 when the document does not exist")
     void shouldReturn404WhenDocumentDoesNotExist() throws Exception {
-        Integer managementId = createManagementConProcedure(9305);
+        Integer managementId = createManagementWithProcedure(9305);
 
         String body = """
                 {"delivered": true}
@@ -208,8 +208,8 @@ class ManagementExternalEntityDocumentsIntegrationTest {
     @Test
     @DisplayName("Should keep management open when the workflow does not define the completion transition")
     void shouldMarkAllDocumentsDeliveredWithoutFailingWhenNoWorkflow() throws Exception {
-        Integer managementId = createManagementConProcedure(9306);
-        SubmittedDocument document = createDocumentEntidadExterna(managementId, "Libre de Deuda");
+        Integer managementId = createManagementWithProcedure(9306);
+        SubmittedDocument document = createExternalEntityDocument(managementId, "Libre de Deuda");
 
         String body = """
                 {"delivered": true}

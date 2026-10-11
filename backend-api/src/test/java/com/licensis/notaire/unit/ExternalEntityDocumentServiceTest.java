@@ -148,7 +148,7 @@ class ExternalEntityDocumentServiceTest {
 
             Date dateEntry = new Date();
             DtoExternalEntityDocumentMovement movement = new DtoExternalEntityDocumentMovement(
-                    true, 7, dateEntry, null, false, new java.math.BigDecimal("1500"), null, null, "Retirado a tiempo", false);
+                    true, 7, dateEntry, null, false, new java.math.BigDecimal("1500"), null, null, "Withdrawn on time", false);
 
             DtoExternalEntityDocument result =
                     externalEntityDocumentService.registerMovement(1, 50, movement);
@@ -157,7 +157,7 @@ class ExternalEntityDocumentServiceTest {
             assertThat(result.cardNumber()).isEqualTo(7);
             assertThat(result.dateEntry()).isEqualTo(dateEntry);
             assertThat(result.amountToPay()).isEqualByComparingTo(new java.math.BigDecimal("1500"));
-            assertThat(result.notes()).isEqualTo("Retirado a tiempo");
+            assertThat(result.notes()).isEqualTo("Withdrawn on time");
             assertThat(result.delivered()).isFalse();
             verify(managementTransitionService, never()).transition(anyInt(), any());
         }
@@ -165,12 +165,12 @@ class ExternalEntityDocumentServiceTest {
         @Test
         @DisplayName("Throws BusinessValidationException when the document does not belong to the indicated management")
         void shouldThrowWhenDocumentDoesNotBelongToManagement() {
-            DeedManagement otraManagement = new DeedManagement();
-            otraManagement.setIdManagement(2);
-            Procedure otroProcedure = new Procedure();
-            otroProcedure.setIdProcedure(20);
-            otroProcedure.setFkIdManagement(otraManagement);
-            document.setFkIdProcedure(otroProcedure);
+            DeedManagement otherManagement = new DeedManagement();
+            otherManagement.setIdManagement(2);
+            Procedure otherProcedure = new Procedure();
+            otherProcedure.setIdProcedure(20);
+            otherProcedure.setFkIdManagement(otherManagement);
+            document.setFkIdProcedure(otherProcedure);
 
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
             when(documentRepository.findSubmittedDocumentById(50)).thenReturn(Optional.of(document));
@@ -184,7 +184,7 @@ class ExternalEntityDocumentServiceTest {
 
         @Test
         @DisplayName("Throws BusinessValidationException when the document is not for an external entity")
-        void shouldThrowWhenDocumentIsNotEntidadExterna() {
+        void shouldThrowWhenDocumentIsNotExternalEntity() {
             document.setDeliveredBy(BusinessConstants.DOCUMENTACIONClient);
 
             when(documentRepository.findManagementById(1)).thenReturn(Optional.of(management));
@@ -213,7 +213,7 @@ class ExternalEntityDocumentServiceTest {
 
     @Nested
     @DisplayName("Attempt to complete the external-entity documentation")
-    class IntentarCompletarDocumentacionTests {
+    class TryCompleteDocumentationTests {
 
         @Test
         @DisplayName("Transitions the management to Documentacion Completa when every document is delivered")

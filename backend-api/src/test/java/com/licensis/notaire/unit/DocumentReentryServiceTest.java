@@ -55,9 +55,9 @@ class DocumentReentryServiceTest {
     private DocumentReentryService service;
 
     private DeedManagement management;
-    private ProcedureType typeProcedure;
+    private ProcedureType procedureType;
     private Procedure procedure;
-    private DocumentType typeDocument;
+    private DocumentType documentType;
 
     @BeforeEach
     void setUp() {
@@ -69,21 +69,21 @@ class DocumentReentryServiceTest {
         management.setNumber(100);
         management.setHeading("Compraventa");
 
-        typeProcedure = new ProcedureType();
-        typeProcedure.setIdProcedureType(5);
-        typeProcedure.setName("Compraventa");
+        procedureType = new ProcedureType();
+        procedureType.setIdProcedureType(5);
+        procedureType.setName("Compraventa");
 
         procedure = new Procedure();
         procedure.setIdProcedure(10);
         procedure.setFkIdManagement(management);
-        procedure.setFkIdProcedureType(typeProcedure);
+        procedure.setFkIdProcedureType(procedureType);
 
-        typeDocument = new DocumentType();
-        typeDocument.setIdDocumentType(7);
-        typeDocument.setName("Certificado de Dominio");
-        typeDocument.setExpires(true);
-        typeDocument.setDueDays(30);
-        typeDocument.setDeliveredBy("Cliente");
+        documentType = new DocumentType();
+        documentType.setIdDocumentType(7);
+        documentType.setName("Certificado de Dominio");
+        documentType.setExpires(true);
+        documentType.setDueDays(30);
+        documentType.setDeliveredBy("Cliente");
     }
 
     @Nested
@@ -92,10 +92,10 @@ class DocumentReentryServiceTest {
 
         @Test
         @DisplayName("Returns the management procedures with their required documentation")
-        void shouldReturnProceduresWithDocumentacionNecesaria() {
+        void shouldReturnProceduresWithRequiredDocumentation() {
             ProcedureTemplate template = new ProcedureTemplate(new ProcedureTemplatePK(5, 7));
-            template.setDocumentType(typeDocument);
-            template.setProcedureType(typeProcedure);
+            template.setDocumentType(documentType);
+            template.setProcedureType(procedureType);
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedure));
@@ -144,8 +144,8 @@ class DocumentReentryServiceTest {
         @DisplayName("Creates a submitted document with reentered=true from the document type")
         void shouldCreateSubmittedDocumentWhenValid() {
             ProcedureTemplate template = new ProcedureTemplate(new ProcedureTemplatePK(5, 7));
-            template.setDocumentType(typeDocument);
-            template.setProcedureType(typeProcedure);
+            template.setDocumentType(documentType);
+            template.setProcedureType(procedureType);
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findById(10)).thenReturn(Optional.of(procedure));
@@ -190,9 +190,9 @@ class DocumentReentryServiceTest {
         @Test
         @DisplayName("Throws BusinessValidationException when the procedure does not belong to the management")
         void shouldThrowWhenProcedureDoesNotBelongToManagement() {
-            DeedManagement otraManagement = new DeedManagement();
-            otraManagement.setIdManagement(2);
-            procedure.setFkIdManagement(otraManagement);
+            DeedManagement otherManagement = new DeedManagement();
+            otherManagement.setIdManagement(2);
+            procedure.setFkIdManagement(otherManagement);
 
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findById(10)).thenReturn(Optional.of(procedure));

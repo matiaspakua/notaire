@@ -76,10 +76,10 @@ class ManagementTransitionControllerIntegrationTest {
 
     private MockMvc mockMvc;
     private ManagementStatus initialStatus;
-    private ManagementStatus statusIntermedio;
-    private ManagementStatus statusInalcanzable;
+    private ManagementStatus intermediateStatus;
+    private ManagementStatus unreachableStatus;
     private Integer managementId;
-    private Integer managementSinProcedureId;
+    private Integer managementWithoutProcedureId;
 
     @BeforeEach
     void setUp() {
@@ -94,55 +94,55 @@ class ManagementTransitionControllerIntegrationTest {
     }
 
     private void seedWorkflowAndManagement() {
-        initialStatus = managementStatus("Transicion Inicial");
-        statusIntermedio = managementStatus("Transicion Intermedio");
-        statusInalcanzable = managementStatus("Transicion Inalcanzable");
+        initialStatus = managementStatus("Initial transition");
+        intermediateStatus = managementStatus("Intermediate transition");
+        unreachableStatus = managementStatus("Unreachable transition");
 
         WorkflowDefinition definition = new WorkflowDefinition();
-        definition.setName("Workflow Transicion IT " + System.nanoTime());
+        definition.setName("Workflow transition IT " + System.nanoTime());
         definition.setActive(true);
         definition = workflowDefinitionRepository.save(definition);
 
-        WorkflowNode nodeInicial = new WorkflowNode();
-        nodeInicial.setWorkflowDefinition(definition);
-        nodeInicial.setManagementStatus(initialStatus);
-        nodeInicial.setType(WorkflowNodeType.INITIAL);
-        nodeInicial = workflowNodeRepository.save(nodeInicial);
+        WorkflowNode initialNode = new WorkflowNode();
+        initialNode.setWorkflowDefinition(definition);
+        initialNode.setManagementStatus(initialStatus);
+        initialNode.setType(WorkflowNodeType.INITIAL);
+        initialNode = workflowNodeRepository.save(initialNode);
 
-        WorkflowNode nodeIntermedio = new WorkflowNode();
-        nodeIntermedio.setWorkflowDefinition(definition);
-        nodeIntermedio.setManagementStatus(statusIntermedio);
-        nodeIntermedio.setType(WorkflowNodeType.FINAL);
-        workflowNodeRepository.save(nodeIntermedio);
+        WorkflowNode intermediateNode = new WorkflowNode();
+        intermediateNode.setWorkflowDefinition(definition);
+        intermediateNode.setManagementStatus(intermediateStatus);
+        intermediateNode.setType(WorkflowNodeType.FINAL);
+        workflowNodeRepository.save(intermediateNode);
 
-        WorkflowTransition transicion = new WorkflowTransition();
-        transicion.setWorkflowDefinition(definition);
-        transicion.setOriginNode(nodeInicial);
-        transicion.setDestinationNode(nodeIntermedio);
-        workflowTransitionRepository.save(transicion);
+        WorkflowTransition transition = new WorkflowTransition();
+        transition.setWorkflowDefinition(definition);
+        transition.setOriginNode(initialNode);
+        transition.setDestinationNode(intermediateNode);
+        workflowTransitionRepository.save(transition);
 
         ProcedureType type = new ProcedureType();
-        type.setName("Tipo Transicion IT");
+        type.setName("Transition type IT");
         type.setWorkflowDefinition(definition);
         type = procedureTypeRepository.save(type);
 
         managementId = createManagement(initialStatus, type, true);
-        managementSinProcedureId = createManagement(initialStatus, type, false);
+        managementWithoutProcedureId = createManagement(initialStatus, type, false);
 
         entityManager.flush();
         entityManager.clear();
     }
 
-    private Integer createManagement(ManagementStatus status, ProcedureType type, boolean conProcedure) {
+    private Integer createManagement(ManagementStatus status, ProcedureType type, boolean withProcedure) {
         DeedManagement management = new DeedManagement();
         management.setNumber((int) (System.nanoTime() % 100000));
-        management.setHeading("Management Transicion IT");
+        management.setHeading("Transition management IT");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(status);
         management.setFkIdNotaryPerson(personRepository.findAll().get(0));
         management = managementRepository.save(management);
 
-        if (conProcedure) {
+        if (withProcedure) {
             Procedure procedure = new Procedure();
             procedure.setFkIdManagement(management);
             procedure.setFkIdProcedureType(type);
@@ -156,15 +156,15 @@ class ManagementTransitionControllerIntegrationTest {
     void shouldApplyValidTransition() throws Exception {
         mockMvc.perform(post("/api/v1/managements/{id}/transition", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
+                        .content("{\"statusDestination\": \"" + intermediateStatus.getName() + "\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.currentStatus").value(statusIntermedio.getName()));
+                .andExpect(jsonPath("$.currentStatus").value(intermediateStatus.getName()));
 
         assertThat(managementRepository.findById(managementId))
                 .isPresent()
                 .get()
                 .extracting(g -> g.getFkIdManagementStatus().getName())
-                .isEqualTo(statusIntermedio.getName());
+                .isEqualTo(intermediateStatus.getName());
         assertThat(historyRepository.findByFkIdManagementIdManagement(managementId)).isNotEmpty();
     }
 
@@ -173,7 +173,7 @@ class ManagementTransitionControllerIntegrationTest {
     void shouldRejectInvalidTransition() throws Exception {
         mockMvc.perform(post("/api/v1/managements/{id}/transition", managementId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"statusDestination\": \"" + statusInalcanzable.getName() + "\"}"))
+                        .content("{\"statusDestination\": \"" + unreachableStatus.getName() + "\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").exists());
 
@@ -187,9 +187,9 @@ class ManagementTransitionControllerIntegrationTest {
     @Test
     @DisplayName("Management without a workflow rejects any transition")
     void shouldRejectTransitionWhenNoWorkflowDefinition() throws Exception {
-        mockMvc.perform(post("/api/v1/managements/{id}/transition", managementSinProcedureId)
+        mockMvc.perform(post("/api/v1/managements/{id}/transition", managementWithoutProcedureId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
+                        .content("{\"statusDestination\": \"" + intermediateStatus.getName() + "\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").exists());
     }
@@ -199,7 +199,7 @@ class ManagementTransitionControllerIntegrationTest {
     void shouldReturn404WhenManagementDoesNotExist() throws Exception {
         mockMvc.perform(post("/api/v1/managements/999999/transition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
+                        .content("{\"statusDestination\": \"" + intermediateStatus.getName() + "\"}"))
                 .andExpect(status().isNotFound());
     }
 }
