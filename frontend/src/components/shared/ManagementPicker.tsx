@@ -54,7 +54,7 @@ export function ManagementPicker({ value, onChange, allowClear = false, ...rest 
       useSource={useSource}
       getKey={(g) => g.idManagement!}
       getLabel={managementLabel}
-      renderDetail={(g) => g.statusActual ?? undefined}
+      renderDetail={(g) => g.currentStatus ?? undefined}
       displayValue={current ? managementLabel(current) : ""}
       selectedKey={value}
       onSelect={(g) => { setKnown(g); onChange(g); }}

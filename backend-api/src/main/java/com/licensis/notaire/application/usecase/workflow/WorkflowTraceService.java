@@ -98,7 +98,7 @@ public class WorkflowTraceService {
         trace.setNumber(management.getNumber());
         trace.setHeading(management.getHeading());
         trace.setDateStart(management.getDateStart());
-        trace.setStatusActual(management.getFkIdManagementStatus() != null
+        trace.setCurrentStatus(management.getFkIdManagementStatus() != null
                 ? management.getFkIdManagementStatus().getName() : null);
 
         DtoWorkflowDefinition defDto = new DtoWorkflowDefinition();

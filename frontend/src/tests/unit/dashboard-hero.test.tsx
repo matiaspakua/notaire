@@ -32,7 +32,7 @@ function json(body: unknown, status = 200) {
 }
 
 const trace = (id: number, number: number, heading?: string) => ({
-  managementId: id, number, heading, statusActual: "Iniciada", nodes: [], transitions: [], history: [], nodeStatuses: {},
+  managementId: id, number, heading, currentStatus: "Iniciada", nodes: [], transitions: [], history: [], nodeStatuses: {},
 });
 
 /** Managements newest first; `traced` ids have a workflow, the rest answer 400. */

@@ -332,7 +332,7 @@ public class ManagementController {
                     + "summary from DeedManagement.fkIdManagementStatus (as-of-now). Missing management "
                     + "or null status yields 404.")
     @Transactional(readOnly = true)
-    public ResponseEntity<DtoHistorySummary> getStatusActual(@PathVariable Integer id) {
+    public ResponseEntity<DtoHistorySummary> getCurrentStatus(@PathVariable Integer id) {
         Optional<DeedManagement> managementOpt = repository.findById(id);
         if (managementOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -537,7 +537,7 @@ public class ManagementController {
     @Operation(summary = "Get workflow trace for a management (nodes, transitions, history, node statuses)",
             description = "CU83 legal-next contract: clients derive valid destination statuses from "
                     + "`transitions` whose `originNodeId` matches the current node (the node whose "
-                    + "status equals `statusActual`). The managements UI must offer only those "
+                    + "status equals `currentStatus`). The managements UI must offer only those "
                     + "destinations when changing status via POST /{id}/transition.")
     @Transactional(readOnly = true)
     public ResponseEntity<Object> getWorkflowTrace(@PathVariable Integer id) {

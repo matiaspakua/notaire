@@ -108,7 +108,7 @@ class ManagementQueryServiceTest {
             assertThat(result.get().idManagement()).isEqualTo(1);
             assertThat(result.get().number()).isEqualTo(100);
             assertThat(result.get().heading()).isEqualTo("Test Management");
-            assertThat(result.get().statusActual()).isEqualTo("En Proceso");
+            assertThat(result.get().currentStatus()).isEqualTo("En Proceso");
         }
 
         @Test
@@ -165,7 +165,7 @@ class ManagementQueryServiceTest {
             assertThat(summary.number()).isEqualTo(100);
             assertThat(summary.heading()).isEqualTo("Test Management");
             assertThat(summary.dateStart()).isNotNull();
-            assertThat(summary.statusActual()).isEqualTo("En Proceso");
+            assertThat(summary.currentStatus()).isEqualTo("En Proceso");
             assertThat(summary.procedureCount()).isZero();
         }
 
@@ -178,7 +178,7 @@ class ManagementQueryServiceTest {
             Optional<DtoManagementSummary> result = queryService.findById(1);
 
             assertThat(result).isPresent();
-            assertThat(result.get().statusActual()).isNull();
+            assertThat(result.get().currentStatus()).isNull();
         }
 
         @Test
@@ -204,7 +204,7 @@ class ManagementQueryServiceTest {
 
             assertThat(result).isPresent();
             assertThat(result.get().procedureCount()).isZero();
-            assertThat(result.get().statusActual()).isNull();
+            assertThat(result.get().currentStatus()).isNull();
         }
     }
 }

@@ -323,7 +323,7 @@ class ManagementWorkflowStatusWriteEnforcementIntegrationTest {
 
         MvcResult result = mockMvc.perform(get("/api/v1/managements/{id}/workflow-trace", managementId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusActual").value(startStatus.getName()))
+                .andExpect(jsonPath("$.currentStatus").value(startStatus.getName()))
                 .andExpect(jsonPath("$.transitions").isArray())
                 .andReturn();
 

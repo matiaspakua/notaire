@@ -24,7 +24,7 @@ const PAGES: { route: string; api: string; paged: boolean; row: Record<string, u
     route: "/dashboard/managements",
     api: "**/api/v1/managements?**",
     paged: true,
-    row: { idManagement: ROW_ID, number: "TS0109", procedureCount: 1, statusActual: "INICIADA" },
+    row: { idManagement: ROW_ID, number: "TS0109", procedureCount: 1, currentStatus: "INICIADA" },
   },
   {
     route: "/dashboard/budgets",

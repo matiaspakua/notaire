@@ -31,6 +31,6 @@ public class TransitionManagementWebMapper {
     /**
      * Simple DTO for HTTP response payload.
      */
-    public record ManagementSummaryDto(Integer id, String statusActual) {
+    public record ManagementSummaryDto(Integer id, String currentStatus) {
     }
 }

@@ -97,7 +97,7 @@ Initial assignment does not require a prior transition edge.
 The system SHALL expose legal next destinations for a gestión by
 `GET /api/v1/managements/{id}/workflow-trace`: clients derive valid
 destination statuses from `transitions` whose `originNodeId` matches the
-current node (the node whose status equals `statusActual`). The gestiones
+current node (the node whose status equals `currentStatus`). The gestiones
 UI MUST offer only those destinations when changing status.
 
 #### Scenario: Workflow-trace lists transitions usable as legal next states

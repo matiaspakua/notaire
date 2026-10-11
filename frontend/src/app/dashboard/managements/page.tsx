@@ -102,7 +102,7 @@ function ManagementsList() {
   const visibleManagements = clientFilter ? managementsByClient : managements;
   const isLoadingVisible = clientFilter ? isLoadingByClient : isLoading;
 
-  const currentNode = trace?.nodes.find((n) => n.statusManagementName === trace.statusActual);
+  const currentNode = trace?.nodes.find((n) => n.statusManagementName === trace.currentStatus);
   const validDestinations = trace && currentNode
     ? trace.transitions
         .filter((tr) => tr.originNodeId === currentNode.id)
@@ -278,7 +278,7 @@ function ManagementsList() {
     {
       key: "status",
       header: t("fields.estado"),
-      render: (g) => g.statusActual ?? "—",
+      render: (g) => g.currentStatus ?? "—",
     },
     {
       key: "actions",
@@ -288,7 +288,7 @@ function ManagementsList() {
           <Button size="sm" variant="ghost" onClick={() => openEdit(g)} aria-label={tc("edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
-          {g.statusActual !== ESTADO_ARCHIVADA && (
+          {g.currentStatus !== ESTADO_ARCHIVADA && (
             <Button
               size="sm"
               variant="ghost"
@@ -326,7 +326,7 @@ function ManagementsList() {
           >
             <FolderClock className="h-4 w-4" />
           </Button>
-          {g.statusActual !== ESTADO_ARCHIVADA && (
+          {g.currentStatus !== ESTADO_ARCHIVADA && (
             <Button
               size="sm"
               variant="ghost"

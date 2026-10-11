@@ -1015,6 +1015,8 @@ components:
       type: object
     DtoManagementSummary:
       properties:
+        currentStatus:
+          type: string
         dateStart:
           format: date-time
           type: string
@@ -1031,8 +1033,6 @@ components:
         procedureCount:
           format: int32
           type: integer
-        statusActual:
-          type: string
       type: object
     DtoPaymentResponse:
       properties:
@@ -5388,7 +5388,7 @@ paths:
     get:
       description: Returns the latest History row by date when present; otherwise synthesizes a summary from DeedManagement.fkIdManagementStatus
         (as-of-now). Missing management or null status yields 404.
-      operationId: getStatusActual
+      operationId: getCurrentStatus
       parameters:
       - in: path
         name: id
@@ -5662,8 +5662,8 @@ paths:
   /api/v1/managements/{id}/workflow-trace:
     get:
       description: 'CU83 legal-next contract: clients derive valid destination statuses from `transitions` whose `originNodeId`
-        matches the current node (the node whose status equals `statusActual`). The managements UI must offer only those destinations
-        when changing status via POST /{id}/transition.'
+        matches the current node (the node whose status equals `currentStatus`). The managements UI must offer only those
+        destinations when changing status via POST /{id}/transition.'
       operationId: getWorkflowTrace
       parameters:
       - in: path

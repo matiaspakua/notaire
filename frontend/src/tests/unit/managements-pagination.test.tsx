@@ -27,7 +27,7 @@ vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 import { useManagementsPage } from "@/hooks/useManagements";
 import ManagementsPage from "@/app/dashboard/managements/page";
 
-const ROW = { idManagement: 1312, number: 98765, statusActual: "Iniciada", procedureCount: 1 };
+const ROW = { idManagement: 1312, number: 98765, currentStatus: "Iniciada", procedureCount: 1 };
 
 function json(body: unknown) {
   const text = JSON.stringify(body);

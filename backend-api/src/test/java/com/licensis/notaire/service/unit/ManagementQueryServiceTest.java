@@ -100,7 +100,7 @@ class ManagementQueryServiceTest {
                     assertThat(dto.idManagement()).isEqualTo(1);
                     assertThat(dto.number()).isEqualTo(100);
                     assertThat(dto.heading()).isEqualTo("Venta Property");
-                    assertThat(dto.statusActual()).isEqualTo("INICIADO");
+                    assertThat(dto.currentStatus()).isEqualTo("INICIADO");
                 });
 
         verify(repository, times(1)).findById(1);
@@ -162,7 +162,7 @@ class ManagementQueryServiceTest {
 
         assertThat(result).isPresent()
                 .hasValueSatisfying(dto -> {
-                    assertThat(dto.statusActual()).isNull();
+                    assertThat(dto.currentStatus()).isNull();
                 });
 
         verify(repository, times(1)).findById(1);

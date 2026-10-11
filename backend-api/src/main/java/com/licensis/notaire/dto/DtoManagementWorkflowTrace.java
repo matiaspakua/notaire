@@ -17,7 +17,7 @@ public class DtoManagementWorkflowTrace {
     private Integer number;
     private String heading;
     private Date dateStart;
-    private String statusActual;
+    private String currentStatus;
 
     private DtoWorkflowDefinition workflowDefinition;
     private List<DtoWorkflowNode> nodes;
@@ -59,12 +59,12 @@ public class DtoManagementWorkflowTrace {
         this.dateStart = dateStart;
     }
 
-    public String getStatusActual() {
-        return statusActual;
+    public String getCurrentStatus() {
+        return currentStatus;
     }
 
-    public void setStatusActual(String statusActual) {
-        this.statusActual = statusActual;
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
     }
 
     public DtoWorkflowDefinition getWorkflowDefinition() {

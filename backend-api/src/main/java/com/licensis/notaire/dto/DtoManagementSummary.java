@@ -12,7 +12,7 @@ public record DtoManagementSummary(
         int number,
         String heading,
         Date dateStart,
-        String statusActual,
+        String currentStatus,
         int procedureCount,
         String notes) {
 }

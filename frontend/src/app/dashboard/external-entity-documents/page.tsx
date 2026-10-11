@@ -98,7 +98,7 @@ function ExternalEntityDocumentsList() {
   const managementColumns: Column<DeedManagement>[] = [
     { key: "number", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.number}</span> },
     { key: "heading", header: t("fields.encabezado"), render: (g) => g.heading ?? "—" },
-    { key: "currentStatus", header: tc("status"), render: (g) => g.statusActual ?? "—" },
+    { key: "currentStatus", header: tc("status"), render: (g) => g.currentStatus ?? "—" },
     {
       key: "actions",
       header: "",

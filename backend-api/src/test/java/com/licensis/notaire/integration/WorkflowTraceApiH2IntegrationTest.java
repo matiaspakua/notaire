@@ -173,7 +173,7 @@ class WorkflowTraceApiH2IntegrationTest {
                 .andExpect(jsonPath("$.managementId").value(managementId))
                 .andExpect(jsonPath("$.number").value(987654))
                 .andExpect(jsonPath("$.heading").value("Management Trace Test"))
-                .andExpect(jsonPath("$.statusActual").value("Trace En Curso"))
+                .andExpect(jsonPath("$.currentStatus").value("Trace En Curso"))
                 .andExpect(jsonPath("$.workflowDefinition.name").value("Workflow Trace Test"))
                 .andExpect(jsonPath("$.nodes", hasSize(3)))
                 .andExpect(jsonPath("$.transitions", hasSize(2)))
@@ -214,7 +214,7 @@ class WorkflowTraceApiH2IntegrationTest {
         mockMvc.perform(get("/api/v1/managements/number/{numero}", 987654))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.number").value(987654))
-                .andExpect(jsonPath("$.statusActual").value("Trace En Curso"))
+                .andExpect(jsonPath("$.currentStatus").value("Trace En Curso"))
                 .andExpect(jsonPath("$.procedureCount").value(1));
     }
 

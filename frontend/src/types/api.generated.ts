@@ -1117,7 +1117,7 @@ export interface paths {
          * CU13/CU14 - Get current management status
          * @description Returns the latest History row by date when present; otherwise synthesizes a summary from DeedManagement.fkIdManagementStatus (as-of-now). Missing management or null status yields 404.
          */
-        get: operations["getStatusActual"];
+        get: operations["getCurrentStatus"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1255,7 +1255,7 @@ export interface paths {
         };
         /**
          * Get workflow trace for a management (nodes, transitions, history, node statuses)
-         * @description CU83 legal-next contract: clients derive valid destination statuses from `transitions` whose `originNodeId` matches the current node (the node whose status equals `statusActual`). The managements UI must offer only those destinations when changing status via POST /{id}/transition.
+         * @description CU83 legal-next contract: clients derive valid destination statuses from `transitions` whose `originNodeId` matches the current node (the node whose status equals `currentStatus`). The managements UI must offer only those destinations when changing status via POST /{id}/transition.
          */
         get: operations["getWorkflowTrace"];
         put?: never;
@@ -3249,6 +3249,7 @@ export interface components {
             version?: number;
         };
         DtoManagementSummary: {
+            currentStatus?: string;
             /** Format: date-time */
             dateStart?: string;
             heading?: string;
@@ -3259,7 +3260,6 @@ export interface components {
             number?: number;
             /** Format: int32 */
             procedureCount?: number;
-            statusActual?: string;
         };
         DtoPaymentResponse: {
             amount?: number;
@@ -7368,7 +7368,7 @@ export interface operations {
             };
         };
     };
-    getStatusActual: {
+    getCurrentStatus: {
         parameters: {
             query?: never;
             header?: never;

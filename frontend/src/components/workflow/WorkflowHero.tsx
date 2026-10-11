@@ -52,9 +52,9 @@ export function WorkflowHero() {
           {trace && (
             <p className="text-sm text-muted-foreground mt-1" data-testid="workflow-subtitle">
               {caseLabel(trace, (number) => tw("managementFallback", { number: number ?? "—" }))}
-              {trace.statusActual && (
+              {trace.currentStatus && (
                 <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary-text">
-                  {trace.statusActual}
+                  {trace.currentStatus}
                 </span>
               )}
             </p>

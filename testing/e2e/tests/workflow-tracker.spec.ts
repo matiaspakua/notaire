@@ -21,7 +21,7 @@ function baseTrace(overrides: Record<string, unknown> = {}) {
     managementId: 1,
     number: 1001,
     heading: "Reingreso loop fixture",
-    statusActual: "Testimony Ingresado a Inscripcion",
+    currentStatus: "Testimony Ingresado a Inscripcion",
     workflowDefinition: {
       id: 1,
       name: "Standard management workflow",

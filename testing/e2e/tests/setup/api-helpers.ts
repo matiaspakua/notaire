@@ -266,7 +266,7 @@ export async function createBudget(
 export async function createCompleteCaseManagement(
   page: Page,
   overrides: Partial<CompleteCaseManagementPayload> & { budgetId: number },
-): Promise<ApiResult<{ idManagement: number; number: number; statusActual: string }>> {
+): Promise<ApiResult<{ idManagement: number; number: number; currentStatus: string }>> {
   const merged: CompleteCaseManagementPayload = {
     // `number` is a Postgres `integer` column; uniqueId() is Date.now()-based and overflows it.
     number: uniqueId() % 1_000_000,

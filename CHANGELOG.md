@@ -36,7 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
   `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
   (`managementHeading` on budget summaries). Upcoming expirations take the query
-  parameter `days`. `R45` reverses the schema
+  parameter `days`. Management summaries and workflow traces use the JSON
+  field `currentStatus`. The current-status read operation id is
+  `getCurrentStatus`. `R45` reverses the schema
   renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
 
 ### Changed

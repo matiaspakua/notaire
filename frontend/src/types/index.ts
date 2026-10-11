@@ -433,7 +433,7 @@ export interface ManagementWorkflowTrace {
   number?: number;
   heading?: string;
   dateStart?: string;
-  statusActual?: string;
+  currentStatus?: string;
   workflowDefinition?: WorkflowDefinition;
   nodes: WorkflowNode[];
   transitions: WorkflowTransition[];

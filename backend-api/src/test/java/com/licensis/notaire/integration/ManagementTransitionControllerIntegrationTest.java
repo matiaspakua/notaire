@@ -158,7 +158,7 @@ class ManagementTransitionControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"statusDestination\": \"" + statusIntermedio.getName() + "\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusActual").value(statusIntermedio.getName()));
+                .andExpect(jsonPath("$.currentStatus").value(statusIntermedio.getName()));
 
         assertThat(managementRepository.findById(managementId))
                 .isPresent()
