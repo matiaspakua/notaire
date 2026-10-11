@@ -1,358 +1,228 @@
-# Test Plan — Notaire E2E Test Suite (TS-nnnn)
+# Master Test Plan (MTP) — Notaire
 
-**Current**: 35 organized E2E test suites (consolidated from 41 original files) covering 68+ business use cases.
+**Document ID:** DOC-TESTPLAN-001  
+**Authority:** Constitution §7 (this file is the master reference)  
+**Use Case:** CU76 — Quality Assurance and Testing Infrastructure  
+**Related:** [PROCESS-ARCHITECTURE.md](PROCESS-ARCHITECTURE.md), [INVENTORY.md](INVENTORY.md), [ADR-006](../../200-architecture/202-ADR/ADR-006-testing-strategy.md)
 
-## 1. Test Nomenclature & Organization (TS-nnnn)
-
-All E2E test suites follow the naming convention: **`TS-nnnn-<workflow-name>.spec.ts`**
-
-Where:
-
-- **TS** = Test Suite prefix (E2E, end-to-end)
-- **nnnn** = 4-digit sequential number (0001, 0002, ..., 0071)
-- **`<workflow-name>`** = Descriptive workflow identifier (kebab-case)
-
-### Test Suite Categories
-
-| Range | Category | Count | Purpose |
-|-------|----------|-------|---------|
-| TS-0001–TS-0003 | **Authentication & Navigation** | 3 | Login, logout, dashboard access (foundation) |
-| TS-0010–TS-0035 | **Core Business Workflows** | 26 | Primary business Use Cases (high value) |
-| TS-0040–TS-0050 | **Quality Assurance / Technical** | 9 | Localization, accessibility, responsive, security |
-| TS-0060, TS-0070–TS-0071 | **Regression & Tutorial** | 3 | Full app tour, onboarding demos |
+This Master Test Plan defines Notaire’s product-wide testing strategy: levels,
+artifact identification, traceability, environments, automation triggers,
+evidence, and exit criteria. It follows DevSecOps / QA Automation practices
+(fail-fast pyramid, living knowledge base, forward/backward traceability).
 
 ---
 
-## 2. Test Inventory & Use Case Traceability
+## 1. Introduction
 
-### TS-0001–TS-0003: Foundation (Authentication & Dashboard)
+### 1.1 Product
 
-| Suite | Filename | Primary CU(s) | Scope | Fixture |
-|-------|----------|---------------|-------|---------|
-| **TS-0001** | `TS-0001-login-authentication.spec.ts` | AUTH-001 | User login via UI form | Form fill, JWT token validation |
-| **TS-0002** | `TS-0002-logout-authentication.spec.ts` | AUTH-001 | Logout + redirect to /login | Session cleanup verification |
-| **TS-0003** | `TS-0003-dashboard-navigation.spec.ts` | Navigation | Sidebar, module access, role-based visibility | Role-based layout rendering |
+Notaire is a three-tier notarial management system: PostgreSQL 16, Spring Boot
+REST API (`backend-api/`), Next.js frontend (`frontend/`), with black-box QA
+suites under `testing/`.
 
-### TS-0010–TS-0035: Core Business Workflows
+### 1.2 Purpose of the Master Test Plan
 
-| Suite | Filename | Primary CU(s) | Business Domain | Workflow Type | Value |
-|-------|----------|---------------|------------------|---------------|-------|
-| **TS-0010** | `TS-0010-budget-workflow.spec.ts` | CU01, CU39, CU45, CU49, CU55, CU60 | Budgets | Budget lifecycle: create → modify → view → archive | **HIGH** |
-| **TS-0011** | `TS-0011-managements-crud-workflow.spec.ts` | CU02, CU13, CU14, CU16, CU19, CU53 | Deed managements | Case management: create → history → state → archive | **HIGH** |
-| **TS-0012** | `TS-0012-documentation-testimony-workflow.spec.ts` | CU03–CU12 | Documents | Document registration → testimony generation/verification → inscription | **HIGH** |
-| **TS-0013** | `TS-0013-deeds-signing-workflow.spec.ts` | CU05, CU06, CU52, CU63 | Deeds | Deed preparation → signing → modification → search | **HIGH** |
-| **TS-0014** | `TS-0014-payments-workflow.spec.ts` | CU15, CU47 | Payments | Payment processing + consultation | **HIGH** |
-| **TS-0015** | `TS-0015-people-clients-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61 | People and clients | Entity lifecycle: create → modify → view → search (people and clients) | **HIGH** |
-| **TS-0016** | `TS-0016-users-notaries-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | Users and notaries | User and notary lifecycle: create → modify → activity log. Stored role `ESCRIBANO` stays. | **HIGH** |
-| **TS-0017** | `TS-0017-substitutions-workflow.spec.ts` | CU22, CU59 | Substitutions | Proxy/substitution: register → consult. Nav key `suplencias` stays. | **MEDIUM** |
-| **TS-0018** | `TS-0018-document-reentry-workflow.spec.ts` | CU43 | Re-enter documents | Document re-entry workflow | **MEDIUM** |
-| **TS-0019** | `TS-0019-properties-valuation-workflow.spec.ts` | CU69 | Properties | Property management: fiscal valuation tracking | **MEDIUM** |
-| **TS-0020** | `TS-0020-reports-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Administration | Reports and catalogs: indexes, types, folios, concepts, statuses, users. Nav key `reportes` stays. | **HIGH** |
-| **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | Workflow Admin | State definition + transition editor (workflow configuration) | **HIGH** |
-| **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | Workflow Admin | Assign workflow to ProcedureType | **MEDIUM** |
-| **TS-0023** | `TS-0023-roles-permissions-admin.spec.ts` | CU43.1 | Security admin | Role and permission management | **MEDIUM** |
-| **TS-0024** | `TS-0024-admin-module-smoke.spec.ts` | CU20, CU26–CU32, CU57–CU67 | Administration | Smoke test: every admin section loads, create button responds | **MEDIUM** |
-| **TS-0028** | `TS-0028-management-history-feature.spec.ts` | CU13 | Deed managements | History log for a deed management | **MEDIUM** |
-| **TS-0029** | `TS-0029-management-status-transition-feature.spec.ts` | CU83 | Deed managements | Status-transition workflow with validation | **MEDIUM** |
-| **TS-0031** | `TS-0031-testimony-generation-verification-feature.spec.ts` | CU07, CU08 | Documents | Testimony generation + verification (golden path + edge cases) | **HIGH** |
-| **TS-0032** | `TS-0032-testimony-registration-feature.spec.ts` | CU11, CU12, CU44 | Documents | Testimony inscription circuit (enter → register → withdraw) | **HIGH** |
-| **TS-0033** | `TS-0033-external-entity-documents-feature.spec.ts` | CU10 | Documents | External entity document tracking | **MEDIUM** |
-| **TS-0035** | `TS-0035-workflow-tracker-visualization-feature.spec.ts` | CU70, CU71 | Dashboard Feature | Animated workflow tracker on dashboard landing | **LOW** |
+- Define what is in scope for verification and validation.
+- Assign test levels, owners, and CI triggers (fail-fast).
+- Define unique IDs for test artifacts (identificación).
+- Point to the living inventory so suite counts never rot in prose.
 
-### TS-0040–TS-0050: Quality Assurance & Technical
+### 1.3 Audience
 
-| Suite | Filename | Focus | Test Type | Priority |
-|-------|----------|-------|-----------|----------|
-| **TS-0040** | `TS-0040-l10n-language-switching-qa.spec.ts` | Localization (i18n) | Language switcher: ES ↔ EN | Medium |
-| **TS-0041** | `TS-0041-responsive-viewport-qa.spec.ts` | Responsive design | Mobile (320px) + tablet (768px) + desktop (1024px+) | Medium |
-| **TS-0042** | `TS-0042-accessibility-search-labels-qa.spec.ts` | WCAG accessibility (#608) | Label association (screen reader): 9 search inputs | Medium |
-| **TS-0043** | `TS-0043-icons-ux-qa.spec.ts` | Icon rendering | PNG icon load verification across all pages | Low |
-| **TS-0044** | `TS-0044-security-csrf-cors-qa.spec.ts` | Security posture (#691) | CSRF + CORS enforcement (JWT Bearer pattern) | High |
-| **TS-0045** | `TS-0045-breadcrumb-navigation-qa.spec.ts` | Navigation component (#434) | Breadcrumb trail in admin module | Low |
-| **TS-0050** | `TS-0050-cu-health-matrix-smoke.spec.ts` | Smoke / health check | CU endpoint health matrix (all 68 CU endpoints respond) | Medium |
-
-### TS-0060, TS-0070–TS-0071, TS-0090: Regression & Tutorials
-
-| Suite | Filename | Scope | Value |
-|-------|----------|-------|-------|
-| **TS-0060** | `TS-0060-full-application-tour-regression.spec.ts` | Complete end-to-end tour: login → all modules → logout (create/edit/delete) | **HIGHEST** (catch regressions) |
-| **TS-0070** | `TS-0070-supervised-tour-tutorial.spec.ts` | Human-watchable, paced tour for demos / recording | Reference |
-| **TS-0071** | `TS-0071-first-case-tutorial-onboarding.spec.ts` | Learner-friendly: CU01–CU05, recording-ready (TUTORIAL_PAUSE_MS) | Onboarding |
-| **TS-0090** | `TS-0090-demo-two-full-cases.spec.ts` | Seeds two full, comparable cases through the UI for live-demo prep | Reference |
-
-### TS-0091: Feature — Items
-
-| Suite | Filename | Primary CU(s) | Scope |
-|-------|----------|---------------|-------|
-| **TS-0091** | `TS-0091-items-discounts-surcharges.spec.ts` | CU45, CU71 | Discount and surcharge item validation + report query |
+Developers, QA, AI coding agents, and reviewers operating under the AI SDLC
+(`docs/300-development/304-ai-sdlc-cloud/`).
 
 ---
 
-## 3. Fixture Patterns & Test Architecture
+## 2. Scope
 
-### Fixture Framework: GherkinSteps + API Helpers
+### 2.1 System under test (SUT)
 
-Every E2E suite uses a **Given-When-Then (Gherkin)** pattern via the `GherkinSteps` class for readability and consistency:
+| Surface | In scope |
+|---------|----------|
+| Backend domain / services | Unit + Spring integration |
+| REST API | Bruno, OpenAPI contract, Spring ITs |
+| Database migrations | Flyway V&V (`testing/database/`) |
+| Web UI | Vitest + Playwright E2E |
+| Security | SAST/SCA (gates), DAST (ZAP weekly), CSRF/CORS E2E |
+| Performance | k6 (`infra/performance/k6`, weekly) |
 
-```typescript
-/**
- * CU01 - Prepare a budget
- * Sequence diagram: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
- *
- * Fixtures:
- * - GherkinSteps (Given-When-Then helpers)
- * - API create helpers: createPerson(), createBudget()
- * - Global auth: global-setup.ts injects E2E_ADMIN_TOKEN
- */
-import { test, expect } from "@playwright/test";
-import { GherkinSteps } from "./gherkin-helpers";
+### 2.2 Out of scope
 
-test.describe("CU01 - Prepare a budget", () => {
-  let steps: GherkinSteps;
-
-  test.beforeEach(async ({ page }) => {
-    steps = new GherkinSteps(page);
-    await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/budgets");
-  });
-
-  test("GW01: create a budget from the dialog", async () => {
-    // The default locale is Spanish, so the visible heading stays.
-    await steps.givenModuleIsVisible("Presupuestos");
-    await page.getByTestId("btn-new-budget").click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-  });
-});
-```
-
-### Fixture Components
-
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| **GherkinSteps** | `testing/e2e/tests/gherkin-helpers.ts` | Given-When-Then step definitions (login, modal, form, table assertions) |
-| **API Helpers** | `testing/e2e/tests/setup/api-helpers.ts` | Shared functions: `createPerson()`, `createBudget()`, `seedManagement()` |
-| **Global Setup** | `testing/e2e/tests/setup/global-setup.ts` | Runs once per worker: login as admin, extract JWT to `process.env.E2E_ADMIN_TOKEN` |
-| **Global Teardown** | `testing/e2e/tests/setup/global-teardown.ts` | Cleanup after suite (close browser, audit logs) |
-| **Auth Helper** | `testing/e2e/tests/setup/auth.ts` | Inject cached token or re-login (`authenticateAsAdmin()`) |
-
-### Fixture Validation Rules
-
-Every test suite **MUST**:
-
-1. ✅ Use `GherkinSteps` for UI navigation (not inline `page.click()`)
-2. ✅ Use API helpers (not browser-based form filling for expensive operations)
-3. ✅ Have `test.beforeEach()` that prepares the page (login, navigate, seed data)
-4. ✅ Include header comments with CU reference(s) + sequence diagram link
-5. ✅ Use `await expect(...)` assertions (Playwright built-in, not custom)
-6. ✅ No hardcoded auth tokens (use `process.env.E2E_ADMIN_TOKEN` from global-setup)
-7. ✅ No tests with `test.skip()` without a SOLID justification comment
-8. ✅ One logical behavior per test (AAA pattern: Arrange → Act → Assert)
+- Retired Swing / Robot E2E (`testing/e2e-swing/`) — ADR-012 / #811
+- Production data as fixtures (synthetic / seeded only)
+- Raising Vitest floors to 80% in this document (tracked #1246)
 
 ---
 
-## 4. Test Consolidation Strategy
+## 3. Strategy
 
-### Rationale for Consolidation
+### 3.1 Criticality
 
-To minimize E2E test count (lower runtime, higher ROI per test), 6 low-value tests were consolidated into their parent workflow suites:
+| Priority | Meaning | Examples |
+|----------|---------|----------|
+| Critical | Blocks merge / revenue flows | Auth, budgets, gestiones, payments, deeds |
+| High | Core CU golden paths | Testimony, people/clients, admin catalogs |
+| Medium | Secondary admin / QA attributes | i18n, a11y, responsive |
+| Low | Demos / tutorials | TS-0070, TS-0071, TS-0090 |
 
-| Consolidated From | Merged Into | Reason |
-|-------------------|-------------|--------|
-| `cu70-workflow-viewer.spec.ts` | **TS-0021** (workflow-editor) | Viewer is read-only variant; editor tests cover both paths |
-| `presupuestos.spec.ts` (module CRUD) | **TS-0010** (budget-workflow) | Duplicate coverage; TS-0010 has golden path + gherkin |
-| `personas.spec.ts` (module CRUD) | **TS-0015** (people-clients-workflow) | Duplicate coverage; TS-0015 has full lifecycle |
-| `suplencias.spec.ts` (module view) | **TS-0017** (substitutions-workflow) | Duplicate coverage; TS-0017 is complete |
-| `escritura-firma.spec.ts` (edge cases) | **TS-0013** (deeds-signing-workflow) | Edge paths now in TS-0013; low ROI as standalone |
-| `crud-gestiones.spec.ts` (CRUD duplicate) | **TS-0011** (managements-crud-workflow) | Exact duplicate; TS-0011 is canonical |
-
-**Result**: 41 files → 35 organized suites (6 deletions, 0 new tests added).
-
----
-
-## 5. Test Levels & Coverage Pyramid
-
-Per [`CONSTITUTION.md`](../../../.claude/rules/ai-agent-workflow.md), all changes flow through:
+### 3.2 Test levels (fail-fast pyramid)
 
 ```text
-Unit (80% target) → Integration (80% target) → API (Bruno) → Frontend unit (Vitest) → E2E (Playwright, per CU)
+        +-------------------------------+
+        | Security / Performance        |  weekly / pipeline
+        +-------------------------------+
+      +-----------------------------------+
+      | Playwright E2E (TS-nnnn)          |  PR (path-scoped) + --full
+      +-----------------------------------+
+    +---------------------------------------+
+    | Bruno API + OpenAPI contract          |  PR (path-scoped)
+    +---------------------------------------+
+  +-------------------------------------------+
+  | Integration (Spring H2 + PG) + DB V&V     |  PR / database-vv
+  +-------------------------------------------+
++-----------------------------------------------+
+| Unit (JUnit) + Component (Vitest)             |  every product PR
++-----------------------------------------------+
 ```
 
-| Level | Validates | Count |
-|-------|-----------|-------|
-| **Unit** | Single class/method (mocked dependencies) | Backend: `src/test/java/.../unit/` |
-| **Integration** | Spring context + repo/service, real PostgreSQL | Backend: `.../integration/` |
-| **API (Bruno)** | Real HTTP contract of every endpoint | `backend-api/api-test/` (297 requests / 508 tests; OpenCollection, Bruno CLI ≥4.x; #953 closed zero-coverage gap) |
-| **API contract (OpenAPI)** | Committed OpenAPI + PR breaking-diff (`oasdiff`) | `backend-api/openapi/openapi.yaml`; regenerate via `bash backend-api/tools/export-openapi.sh` (#1067); intended breaks listed per pull request in `backend-api/openapi/accepted-breaking-changes.d/` (#655, #1315) |
-| **DAST (OWASP ZAP)** | Baseline dynamic scan of the running API | `.github/workflows/dast-zap.yml` (weekly + dispatch; warn-first; complements Trivy) |
-| **Backup→restore smoke** | Restoreability once automated backups exist | `.github/workflows/backup-restore-smoke.yml` (skipped/blocked on #256 until `infra/scripts/backup-postgres.sh` lands) |
-| **Frontend unit (Vitest)** | React components/hooks in isolation | `frontend/src/**/*.test.ts` |
-| **E2E (Playwright)** | Full Use Case through the actual browser UI | `testing/e2e/tests/TS-nnnn-*.spec.ts` (35 suites, 448 tests) |
+Live counts: **[INVENTORY.md](INVENTORY.md)** (generated; do not copy numbers here).
+
+### 3.3 Identificación (artifact IDs)
+
+| Kind | Pattern | Example | Role |
+|------|---------|---------|------|
+| Use Case | `CU##` | CU01 | Business requirement |
+| Logical test case | `TC-*` | TC-001, TC-LOGIN-001 | Narrative / design (optional) |
+| Automation suite (E2E) | `TS-nnnn-*.spec.ts` | TS-0010-budget-workflow | Playwright script |
+| Bruno request | folder / `NN-name.yml` | `budgets/01-create.yml` | API automation |
+| JUnit class | `*Test.java` | `BudgetServiceTest` | Unit / integration |
+| Document | `DOC-*` | DOC-TESTPLAN-001 | Knowledge base |
+| Issue | `#n` | #1511 | Work tracking |
+
+**Traceability chain:**  
+`Issue → CU → (TC) → TS / Bruno / JUnit → evidence (CI artifacts)`.
+
+Forward/backward: every Essential CU appears in
+[`CU-API-MATRIX.csv`](CU-API-MATRIX.csv); every Playwright file must match
+`TS-nnnn-*.spec.ts` (guard: `validate-testing-inventory.py`).
 
 ---
 
-## 6. Running & Validating Tests
+## 4. Coverage floors (enforced vs aspirational)
 
-### Local Commands
+| Tool | Enforced floor | Aspirational target | Source of truth |
+|------|----------------|---------------------|-----------------|
+| JaCoCo (backend) | **80% line / 65% branch** | 80% / 80% | `backend-api/pom.xml` |
+| Vitest (frontend) | **raise-only** `statements/lines 14`, `branches 9`, `functions 10` | 80% line (#1246) | `frontend/vitest.config.ts` |
+| Bruno | Matrix drift guard; gaps as `MISSING`+#953 | 100% endpoints | `validate-cu-api-matrix.py` |
+| Playwright | ≥1 suite per critical CU workflow; TS naming | Full CU matrix | INVENTORY + E2E mapping |
 
-```bash
-# Run all E2E tests (from testing/e2e)
-cd testing/e2e && npm test
-
-# Run single test suite
-npx playwright test TS-0001-login-authentication
-
-# Run with headed browser (watch)
-HEADED=1 npx playwright test TS-0010-budget-workflow
-
-# Run with debug inspector
-npx playwright test --debug
-
-# Generate HTML report
-npx playwright show-report
-
-# Full CI preflight (includes E2E + API + Docker build)
-bash workspace/sdlc/preflight.sh --full
-```
-
-### CI Pipeline
-
-The GitHub Actions pipeline verifies all test levels before merge:
-
-1. Build + unit tests
-2. Integration tests (PostgreSQL)
-3. API tests (Bruno)
-4. E2E Playwright (35 suites)
-5. Frontend unit (Vitest)
-6. Security (Trivy)
-
-See [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md) for local↔CI mapping.
+Never document a floor that tools do not enforce.
 
 ---
 
-## 7. Test Reporting & Metrics
+## 5. Environments and execution
 
-| Report | Source | Location |
-|--------|--------|----------|
-| E2E results (Playwright HTML) | `cd testing/e2e && npm test` | `testing/e2e/playwright-report/index.html` |
-| E2E trace/artifacts | On failure | `test-results/` (traces, videos, screenshots) |
-| Coverage (JaCoCo backend) | `mvn jacoco:report` | `backend-api/target/site/jacoco/` |
-| Coverage (Vitest frontend) | `npm run test:coverage` | `frontend/coverage/` |
-| API results (Bruno) | `bru run . -r` | `backend-api/api-test/COVERAGE.md` |
+| Trigger | Suites |
+|---------|--------|
+| Local commit | Unit (backend/frontend) |
+| `preflight.sh` | Process guards + inventory + verify + Vitest + e2e lint |
+| `preflight.sh --full` | + Playwright + Bruno + DB V&V + Docker smoke |
+| PR (path-scoped) | Matching leaf jobs; aggregators accept intentional skip |
+| `main` / schedule | Full heavy suite; weekly ZAP / k6 |
 
-**Target coverage**: 80% line / 80% branch (enforced ratchet floor: 70% line / 25% branch).
-
----
-
-## 8. Traceability: CU → Test Suite → Endpoints
-
-Full traceability is maintained in [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv).
-Header columns (post–English rename, issue #1064):
-
-| Column | Meaning |
-|--------|---------|
-| `CU_ID` / `CU_Nombre` | Use Case id and name |
-| `Modulo` / `Grado` | Business module and priority |
-| `Entidad` / `Operacion` | Domain entity and operation |
-| `Controller` | Current English REST controller class under `adapter.in.web` (or `N/A`) |
-| `HTTP_Method` / `Endpoint` | Contract surface |
-| `Bruno_Test` | Relative Bruno path (`folder/` or `folder/file.yml`), or sentinel `MISSING` / `N/A` — never status words |
-| `Endpoint_Status` / `Bruno_Status` | Implementation / Bruno health |
-| `Notas` / `GitHub_Issue` | Notes and issue links (`Bruno_Test=MISSING` must cite `#953`) |
-
-**Drift guard:** `python3 workspace/sdlc/validate-cu-api-matrix.py` rejects stale Spanish
-controller names, missing required resource bases (`/procedure-folders`, `/notebooks`,
-`/registration-drafts`, `/document-cost-templates`, `/auxiliary-protocol`,
-`/roles`, `/identification-types`, `/procedures`), invalid `Bruno_Test` values, and
-`MISSING` rows without `#953`. Wired into `workspace/sdlc/preflight.sh` and
-`sdlc-process.yml` (CU76 / #1064). Bruno request authoring for remaining gaps
-stays on #953.
-
-Use this CSV to:
-
-1. Verify every CU maps to its REST controller/endpoint
-2. Ensure consistency: endpoint → Bruno path (or `#953` gap)
-3. Track issues to features
-4. Audit test completeness per CU
+Commands and suite ownership: [testing/README.md](../../../testing/README.md),
+[CI-PREFLIGHT.md](../CI-PREFLIGHT.md), [PROCESS-ARCHITECTURE.md](PROCESS-ARCHITECTURE.md).
 
 ---
 
-## 9. Sequence Diagrams & Test Choreography
+## 6. E2E automation (Playwright)
 
-Each major workflow (TS-0010 through TS-0035) references sequence diagrams at:
+### 6.1 Nomenclature
 
-```text
-docs/200-architecture/204-diagrams/Secuencias/
-├── CU01.puml (Budget)
-├── CU02.puml (Deed management)
-├── CU05.puml (Deed)
-├── CU07.puml (Testimony)
-└── ...
-```
+All UI E2E specs: **`TS-nnnn-<workflow-name>.spec.ts`**.
 
-Test comments include `@sequence` links to relevant diagrams so test readers can see the actor flow:
+Category bands (guidance; inventory is authoritative):
 
-```typescript
-/**
- * TS-0010 - Budget workflow
- * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
- * Flow: user → create budget → backend API → database → response
- */
-```
+| Range | Category |
+|-------|----------|
+| TS-0001–0003 | Auth & navigation |
+| TS-0010–0035 | Core business workflows |
+| TS-0040–0051 | QA / technical / API cycle |
+| TS-0060–0091 | Regression, tutorials, items |
+| TS-0092–0125 | Feature / UX / a11y / motion |
+| TS-0130–0138 | Former unprefixed feature specs (renamed #1511) |
 
----
+Full table: [INVENTORY.md](INVENTORY.md). CU narrative mapping:
+[E2E-TEST-MAPPING.md](E2E-TEST-MAPPING.md).
 
-## 10. Skipped Tests Policy
+### 6.2 Fixtures
 
-Tests **MAY** be skipped only if:
+GherkinSteps + API helpers + global auth setup. Patterns:
+[TESTING-PATTERNS.md](TESTING-PATTERNS.md).
 
-1. A linked **open** GitHub issue documents the blocker in the skip title/reason
-   (e.g. `test.skip("CU15-GW03 (#1146): …")` — see #1066 / CU76)
-2. A clear, descriptive `test.skip()` comment explains the reason
-3. It is a genuine product/UI gap — **not** missing seed data (arrange via API helpers)
+### 6.3 Skip policy
 
-**Example**:
+`test.skip` only with an open `#issue` for a real product gap — never empty
+tables or timing flakes (#1066 / CU76). Guard:
+`testing/tests/test_e2e_reliability.py`.
 
-```typescript
-test.skip("CU01-GW02 (#1146): Create a budget with every field", async () => {
-  // Skipped (#1146): the budget form does not have a procedure-type dropdown.
-  // Re-enable once the API and form schema are updated.
-});
-```
+### 6.4 Quality gates for E2E
 
-**Avoid**:
-
-- ❌ `test.skip()` with no comment or without `#issue`
-- ❌ Runtime skip when the table/list is empty (seed the row instead — #1066)
-- ❌ Skipped tests for flaky timing (fix waits; do not raise CI retries above 1)
-- ❌ Skipped tests for "future work" (remove them or implement)
-- ❌ H2 payment ITs that POST against seed `idBudget=1` (arrange a dedicated
-  budget via `BudgetPaymentTestFixtures` — #916; do not rely on
-  `@DirtiesContext(AFTER_EACH)` as the primary isolation strategy)
-- ❌ Controller unit mega-tests that mix happy-path stubs with
-  `RuntimeException("x")` error stubs in the same method (`SimpleControllersTest`
-  pattern — #916)
+Before merge (UI changes): stack green, issue-linked skips only, CU comments,
+specific assertions. Heavy CI merge gate:
+`bash workspace/sdlc/check-heavy-ci.sh <pr>`.
 
 ---
 
-## 11. Quality Gates for E2E Tests
+## 7. Traceability: CU → API → Bruno
 
-Before merging a PR, all E2E tests **MUST**:
+[`CU-API-MATRIX.csv`](CU-API-MATRIX.csv) +
+`python3 workspace/sdlc/validate-cu-api-matrix.py` (preflight / sdlc-process).
 
-- ✅ Pass on the current Docker stack (no manual restarts)
-- ✅ Have zero skipped tests (unless issue-linked per §10)
-- ✅ Follow fixture patterns (GherkinSteps, no hardcoded auth)
-- ✅ Include CU reference comments + sequence diagram links
-- ✅ Have valid, specific assertions (no generic `expect(page).toBeTruthy()`)
+Logical case examples (not complete catalog):
+[`test-cases/`](test-cases/README.md). Login design notes:
+[`test-suite/LOGIN-TEST-SUITE.md`](test-suite/LOGIN-TEST-SUITE.md).
 
-Violations block merge. Use `/code-review` to audit compliance.
+---
+
+## 8. Evidence and reporting
+
+| Evidence | Location |
+|----------|----------|
+| Playwright HTML / traces | `testing/e2e/playwright-report/`, Actions artifacts |
+| JaCoCo / Vitest | `backend-api/target/site/jacoco/`, `frontend/coverage/` |
+| Bruno | `backend-api/api-test/COVERAGE.md` |
+| Pipeline dashboard | `reports/pipeline/<ts>/` via `run_pipeline.sh` |
+| Aggregated coverage site | `test-coverage-report.yml` (never bot-commit wiki reports — #1041) |
+
+---
+
+## 9. Flaky tests and change policy
+
+- CI Playwright retries ≤ 1; `trace: on-first-retry`.
+- Quarantine requires Owner + open issue; no silent disable.
+- Inventory or matrix drift fails the process gate — regenerate, do not edit
+  generated tables by hand.
+
+---
+
+## 10. Exit criteria (release / Gate 3–5)
+
+- [ ] Unit + integration + Vitest green at enforced floors
+- [ ] Bruno + OpenAPI contract gates green (or accepted-breaking entry)
+- [ ] Playwright green for UI surface; inventory validation green
+- [ ] Security local gates + heavy CI for merge
+- [ ] Permanent docs updated; OpenSpec change archiveable
 
 ---
 
 ## Navigation
 
-- [← Testing](README.md)
-- [Development Plan](../DEVELOPMENT-PLAN.md)
-- [Testing Patterns](TESTING-PATTERNS.md) ⭐ **NEW** - Fixture patterns & concrete examples
-- [E2E Test Mapping](E2E-TEST-MAPPING.md) (detailed TS-nnnn reference)
+- [← Testing README](README.md)
+- [Process architecture](PROCESS-ARCHITECTURE.md)
+- [Living inventory](INVENTORY.md)
+- [Testing patterns](TESTING-PATTERNS.md)
+- [E2E mapping](E2E-TEST-MAPPING.md)
 - [CU-API-MATRIX.csv](CU-API-MATRIX.csv)
-- [Sequence Diagrams](../../200-architecture/204-diagrams/Secuencias/)

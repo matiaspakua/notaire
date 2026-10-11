@@ -27,7 +27,9 @@ SPANISH = re.compile(
 
 class TestCasesEnglishTest(unittest.TestCase):
     def test_english_filenames_replace_the_spanish_ones(self):
-        names = sorted(path.name for path in CASES.glob("*.md"))
+        names = sorted(
+            path.name for path in CASES.glob("*.md") if path.name != "README.md"
+        )
         self.assertEqual(REQUIRED, names)
 
     def test_prose_is_english(self):

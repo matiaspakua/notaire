@@ -44,6 +44,7 @@ Local check                     CI job                          Workflow
 branch naming                   Branch Naming Convention Check   pr-validation.yml  (warn)
 sdlc plan (openspec changes)    SDLC Plan Validation             pr-validation.yml  (BLOCKING)
 CU-API matrix validation        Process Checks                    sdlc-process.yml   (BLOCKING)
+testing inventory validation    Process Checks / local            preflight + testing/tests (#1511)
 commit messages                 Process Checks                    sdlc-process.yml   (BLOCKING)
 tdd evidence                    Process Checks                    sdlc-process.yml   (BLOCKING)
 sdlc exception label            Process Checks                    sdlc-process.yml   (BLOCKING; skipped here until a PR exists)
@@ -139,6 +140,9 @@ run "sdlc plan validation" bash workspace/sdlc/validate-sdlc-plan.sh
 # CU ↔ API matrix must track English adapter.in.web controllers (#1064, CU76).
 # Also exercised by process-script self-tests under workspace/tests/.
 run "CU-API matrix validation" python3 workspace/sdlc/validate-cu-api-matrix.py
+
+# Living testing inventory + TS-nnnn Playwright naming (#1511, CU76).
+run "testing inventory validation" python3 workspace/sdlc/validate-testing-inventory.py
 
 # Process checks over the branch (sdlc-process.yml). Labels come from the open
 # PR, if there is one: the sdlc-exception label is a human decision.
