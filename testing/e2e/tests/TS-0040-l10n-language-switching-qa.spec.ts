@@ -53,8 +53,8 @@ test.describe("Language Switcher — l10n feature", () => {
   test("sidebar navigation labels are in Spanish by default", async ({ page }) => {
     await setupAuthAndGo(page);
     // Sidebar shows Spanish nav links
-    await expect(page.getByRole("link", { name: /managements/i }).first()).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole("link", { name: /people/i }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("link", { name: /gestiones/i }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("link", { name: /personas/i }).first()).toBeVisible({ timeout: 10000 });
   });
 
   test("clicking EN button switches UI to English", async ({ page }) => {
@@ -95,7 +95,7 @@ test.describe("Language Switcher — l10n feature", () => {
       "true",
       { timeout: 10000 },
     );
-    await expect(page.getByRole("link", { name: /managements/i }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("link", { name: /gestiones/i }).first()).toBeVisible({ timeout: 10000 });
   });
 });
 
@@ -129,7 +129,7 @@ test.describe("l10n — Login page translations", () => {
 test.describe("l10n — Admin pages translations", () => {
   test("users page shows Spanish title by default", async ({ page }) => {
     await setupAuthAndGo(page, "/dashboard/administration/users");
-    await expect(page.getByRole("heading", { name: /users/i })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("heading", { name: /usuarios/i })).toBeVisible({ timeout: 10000 });
   });
 
   test("users page shows English title when locale is EN", async ({ page }) => {

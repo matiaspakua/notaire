@@ -49,7 +49,7 @@ test.describe("CU15 - Process a payment", () => {
   test("CU15-SALDO-01 (#796): the payment form has a budget picker, not a numeric input", async ({ page }) => {
     await steps.whenUserClicksButton("nuevo pago");
 
-    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await expect(budgetSelector).toBeVisible();
   });
 
@@ -61,7 +61,7 @@ test.describe("CU15 - Process a payment", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await budgetSelector.fill(lastName);
@@ -70,7 +70,7 @@ test.describe("CU15 - Process a payment", () => {
     await expect(budgetOption).toBeVisible();
     await budgetOption.click();
 
-    const balanceDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
+    const balanceDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
     await expect(balanceDisplay).toBeVisible({ timeout: 5000 });
 
     // The picker shows "#<id> — <client>"; the budget amount is in the balance panel (#1340).
@@ -85,13 +85,13 @@ test.describe("CU15 - Process a payment", () => {
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
 
-    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await budgetSelector.fill(apellido1);
     await page.getByRole("option", { name: new RegExp(apellido1, "i") }).click();
 
-    let balanceDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
+    let balanceDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
     await expect(balanceDisplay).toBeVisible();
     const balanceText1 = await balanceDisplay.locator("../..").textContent();
 
@@ -102,7 +102,7 @@ test.describe("CU15 - Process a payment", () => {
     await budgetSelector.fill(apellido2);
     await page.getByRole("option", { name: new RegExp(apellido2, "i") }).click();
 
-    balanceDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
+    balanceDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
     await expect(balanceDisplay).toBeVisible();
     const balanceText2 = await balanceDisplay.locator("../..").textContent();
 
@@ -116,13 +116,13 @@ test.describe("CU15 - Process a payment", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await budgetSelector.fill(lastName);
     await page.getByRole("option", { name: new RegExp(lastName, "i") }).click();
 
-    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-09-01");
+    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
     await page.getByRole("dialog").locator('input[type="number"]').fill("999999");
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
 
@@ -137,13 +137,13 @@ test.describe("CU15 - Process a payment", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await budgetSelector.fill(lastName);
     await page.getByRole("option", { name: new RegExp(lastName, "i") }).click();
 
-    await page.getByRole("dialog").getByLabel(/date/i).fill("2026-09-01");
+    await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-09-01");
     await page.getByRole("dialog").locator('input[type="number"]').fill("10000");
     await page.getByRole("dialog").getByRole("button", { name: /guardar|crear/i }).click();
 
@@ -192,7 +192,7 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await budgetSelector.fill(lastName);
@@ -214,7 +214,7 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await budgetSelector.fill(lastName);
@@ -236,7 +236,7 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
     await budgetSelector.fill(lastName);

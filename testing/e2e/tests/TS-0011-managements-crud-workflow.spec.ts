@@ -271,7 +271,7 @@ test.describe('CU16 - Archive a management', () => {
     await page.getByTestId(`btn-archive-management-${idManagement}`).click()
     const confirmDialog = page.getByRole('alertdialog')
     await expect(confirmDialog).toBeVisible()
-    await confirmDialog.getByRole('button', { name: /archive gestión/i }).click()
+    await confirmDialog.getByRole('button', { name: /archivar gestión/i }).click()
 
     // Backend should reject: error message must appear
     await expect(page.getByText(/is not allowed/i)).toBeVisible({ timeout: 10000 })

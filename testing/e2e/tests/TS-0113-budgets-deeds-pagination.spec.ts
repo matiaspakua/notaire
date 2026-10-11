@@ -78,7 +78,7 @@ test.describe("Budgets and deeds list pagination (#1340)", () => {
     const number = newest.data!.content[0].number;
     await page.getByTestId("input-search-deed").fill(String(number));
     const rows = page.getByRole("table").locator("tbody tr");
-    await expect.poll(() => seen.some((u) => u.includes(`buscar?number=${number}`))).toBe(true);
+    await expect.poll(() => seen.some((u) => u.includes(`search?number=${number}`))).toBe(true);
     await expect(rows.first().locator("td").first()).toHaveText(String(newest.data!.content[0].idDeed));
     expect(await rows.count()).toBeLessThan(20);
   });

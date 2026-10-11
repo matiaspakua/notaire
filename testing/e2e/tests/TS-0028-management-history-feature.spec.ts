@@ -76,7 +76,7 @@ test.describe("CU13 - View a management's history", () => {
     await page.getByTestId(`btn-archive-management-${idManagement}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
-    await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
+    await confirmDialog.getByRole("button", { name: /archivar gestión/i }).click();
 
     await expect(page.getByText(/is not allowed/i)).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId(`btn-archive-management-${idManagement}`)).toBeVisible();

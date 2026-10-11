@@ -66,7 +66,7 @@ test.describe("CU43 - Re-enter documentation", () => {
 
     await page.getByTestId(`btn-reenter-${idProcedure}-${idDocumentType}`).click();
 
-    await expect(page.getByText(/document reingresado/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/documento reingresado/i)).toBeVisible({ timeout: 10000 });
   });
 
   test("edge path: a management without procedures shows the empty state", async ({ page }) => {

@@ -27,7 +27,7 @@ test.describe("Budget picker (#1340)", () => {
     await page.waitForLoadState("networkidle");
     await page.getByTestId("btn-new-payment").click();
     const dialog = page.getByRole("dialog");
-    const picker = dialog.getByRole("combobox", { name: /budget|budget/i });
+    const picker = dialog.getByRole("combobox", { name: /presupuesto|budget/i });
     await expect(picker).toHaveAttribute("aria-expanded", "false");
     await picker.click();
     await expect(picker).toHaveAttribute("aria-expanded", "true");
@@ -38,7 +38,7 @@ test.describe("Budget picker (#1340)", () => {
     await picker.press("Enter");
     await expect(picker).toHaveValue(new RegExp(`^#${id} `));
     await expect(picker).toHaveAttribute("aria-expanded", "false");
-    await expect(dialog.getByText(/balance pendiente/i)).toBeVisible({ timeout: 8000 });
+    await expect(dialog.getByText(/saldo pendiente/i)).toBeVisible({ timeout: 8000 });
     expect(requested.some((u) => u.includes("size=1000"))).toBe(false);
   });
 

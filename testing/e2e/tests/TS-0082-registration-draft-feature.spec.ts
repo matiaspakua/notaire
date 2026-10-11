@@ -141,7 +141,7 @@ test.describe("CU82 - Generate and track the registration draft", () => {
     await chooseDeed(page, "select-deed-registration-draft", number);
     await page.getByTestId("btn-generate-registration-draft").click();
 
-    await steps.thenShowsErrorMessage("catastrales");
+    await steps.thenShowsErrorMessage("cadastral");
   });
 
   for (const viewport of [
