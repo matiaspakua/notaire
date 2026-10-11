@@ -47,7 +47,14 @@ class LivingSpecDeadNamesEnglishTest(unittest.TestCase):
         self.assertIn("When person create or update fails", person)
         self.assertIn("person create/update fails", person)
         self.assertIn("opens the new-person dialog", person)
-        self.assertIn("TS-0015-personas-clientes-workflow.spec.ts", person)
+        self.assertIn("TS-0015-people-clients-workflow.spec.ts", person)
+        self.assertNotIn("TS-0015-personas-clientes-workflow.spec.ts", person)
+        archive = (
+            ROOT
+            / "docs/openspec/changes/archive/2026-10-03-fix-945-persona-validation-toast"
+            / "specs/persona-validation-error-toast/spec.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("TS-0015-personas-clientes-workflow.spec.ts", archive)
         self.assertIn("DNI", person)
         self.assertNotIn("persona create", person)
         self.assertNotIn("Personas", person)

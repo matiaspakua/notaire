@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Person validation E2E filename** (#1490, CU75): the living spec names
+  `TS-0015-people-clients-workflow.spec.ts`. The archived #945 spec keeps
+  `TS-0015-personas-clientes-workflow.spec.ts`.
 - **Report query fixture** (#1490, CU75): the document-list hook encodes
   `Purchase/Sale & more`. The stored procedure type `Compraventa` stays.
 - **Runtime proxy edge file** (#1490, CU75): the living spec names

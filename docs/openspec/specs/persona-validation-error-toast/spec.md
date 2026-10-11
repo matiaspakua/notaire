@@ -58,7 +58,7 @@ the user can correct fields.
 ### Requirement: Dedup-EDGE E2E passes
 
 The existing Playwright case `Dedup-EDGE` in
-`TS-0015-personas-clientes-workflow.spec.ts` MUST pass on the change’s PR (and
+`TS-0015-people-clients-workflow.spec.ts` MUST pass on the change’s PR (and
 remain passable on `main` after merge).
 
 #### Scenario: Dedup-EDGE passes in the Playwright suite
