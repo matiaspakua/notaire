@@ -1,9 +1,10 @@
 # E2E Test Mapping — TS-nnnn Nomenclature & Traceability
 
-**Complete reference** for all 35 organized E2E test suites (consolidated from 41 original files).
+Narrative CU ↔ TS mapping for reviewers. **Authoritative file list and counts:**
+[`INVENTORY.md`](INVENTORY.md) (generated). Master strategy:
+[`TEST-PLAN.md`](TEST-PLAN.md). Matrix: [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv).
 
-Generated: 2026-08-31 | Updated: TEST-PLAN.md TS-nnnn table
-Use this document alongside [`TEST-PLAN.md`](TEST-PLAN.md) and [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv).
+Updated: 2026-10-11 (#1511) — unprefixed specs renamed to TS-0130–TS-0138.
 
 ---
 
@@ -11,9 +12,10 @@ Use this document alongside [`TEST-PLAN.md`](TEST-PLAN.md) and [`CU-API-MATRIX.c
 
 ```text
 TS-0001 to TS-0003    = Foundation (Auth, Dashboard)
-TS-0010 to TS-0035    = Core Business Workflows (26 high-value suites)
-TS-0040 to TS-0051    = Quality Assurance / Technical (9 utility suites)
-TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
+TS-0010 to TS-0035    = Core Business Workflows
+TS-0040 to TS-0051    = Quality Assurance / Technical
+TS-0060 to TS-0125    = Regression, tutorials, feature/UX suites
+TS-0130 to TS-0138    = Former unprefixed feature specs (#1511)
 ```
 
 ---

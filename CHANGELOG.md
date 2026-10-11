@@ -22,6 +22,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Testing process architecture (MTP + living inventory)** (#1511, CU76):
+  `TEST-PLAN.md` is the Master Test Plan for all levels; added
+  `PROCESS-ARCHITECTURE.md` and generated `INVENTORY.md` with
+  `validate-testing-inventory.py` in preflight. ADR-006 and Constitution §7
+  document enforced JaCoCo 80%/65% and Vitest raise-only floors. Nine unprefixed
+  Playwright specs renamed to `TS-0130`–`TS-0138`.
+
 ### Breaking
 
 - **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):

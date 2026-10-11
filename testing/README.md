@@ -5,8 +5,10 @@ integration to acceptance. This folder is self-contained and prepared to live in
 repository; for now it sits inside the application repository (#1190, #1191).
 
 Unit tests and API tests stay with `backend-api/` and `frontend/` because they are part of each
-module's development loop. The project-level testing strategy stays in
-[`docs/300-development/303-testing/`](../docs/300-development/303-testing/README.md); everything
+module's development loop. The project-level Master Test Plan and process architecture stay in
+[`docs/300-development/303-testing/`](../docs/300-development/303-testing/README.md)
+([`TEST-PLAN.md`](../docs/300-development/303-testing/TEST-PLAN.md),
+[`INVENTORY.md`](../docs/300-development/303-testing/INVENTORY.md)); everything
 specific to running and extending these suites is documented here.
 
 ## Guides

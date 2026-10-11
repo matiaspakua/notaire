@@ -34,7 +34,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Testimony update without version | `StaleOrMissingVersionIntegrationTest.testimonyMissingVersionIsRejected`, Bruno `testimonies/04c`, `04a` | passing |
 | Stale testimony version | `StaleOrMissingVersionIntegrationTest.testimonyStaleVersionIsConflict` / `testimonyFutureVersionIsConflict`, Bruno `testimonies/04b` | passing |
 | Stale version on another versioned update | `StaleOrMissingVersionIntegrationTest.catalogStaleVersionIsConflict` / `testimonyMovementStaleVersionIsConflict` / `versionedUpdatesDocument409`, `GlobalExceptionHandlerOptimisticLockTest`, `ErrorResponsesTest`, Bruno `testimony-movements/04b` | passing |
-| UI sends the version it read | `testing/e2e/tests/folio-type-edit-version.spec.ts` | passing |
+| UI sends the version it read | `testing/e2e/tests/TS-0135-folio-type-edit-version.spec.ts` | passing |
 
 ## Permanent documentation updated
 
