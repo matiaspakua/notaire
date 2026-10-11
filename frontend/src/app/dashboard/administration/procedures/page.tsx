@@ -113,6 +113,9 @@ export default function ProceduresPage() {
       key: "actions", header: "", className: "w-36",
       render: (item) => (
         <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(item)} aria-label={tc("edit")} data-testid="btn-edit-procedure">
+            <NotaireIcon src="/icons/actions/generate.png" alt="" size={16} />
+          </Button>
           <Button
             size="icon-sm"
             variant="ghost"
@@ -123,9 +126,6 @@ export default function ProceduresPage() {
             data-testid="btn-required-docs-procedure"
           >
             <FileCheck aria-hidden />
-          </Button>
-          <Button size="sm" variant="ghost" onClick={() => openEdit(item)} aria-label={tc("edit")}>
-            <NotaireIcon src="/icons/actions/generate.png" alt="" size={16} />
           </Button>
           <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(item)} data-testid="btn-delete-procedure" aria-label={tc("delete")}>
             <NotaireIcon src="/icons/actions/delete.png" alt="" size={16} />
