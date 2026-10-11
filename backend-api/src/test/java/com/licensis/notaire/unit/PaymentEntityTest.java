@@ -17,7 +17,7 @@ class PaymentEntityTest {
 
     @Nested
     @DisplayName("CU15 - Process payment - Unit Tests")
-    class ProcesarPaymentTests {
+    class ProcessPaymentTests {
 
         @Test
         @DisplayName("Should create a payment with the required fields")
@@ -103,7 +103,7 @@ class PaymentEntityTest {
         @Test
         @DisplayName("not equal to different type")
         void notEqualToDifferentType() {
-            assertThat(new Payment(1)).isNotEqualTo("not a pago");
+            assertThat(new Payment(1)).isNotEqualTo("not a payment");
         }
 
         @Test

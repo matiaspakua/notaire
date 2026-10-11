@@ -110,31 +110,31 @@ class NotebookControllerTest {
     @DisplayName("Should reject notebook with non-consecutive folios")
     void shouldRejectNotebookWithNonConsecutiveFolios() throws Exception {
         List<Integer> ids = createFolios(11, "New");
-        List<Integer> discontinuos = new ArrayList<>(ids.subList(0, 9));
-        discontinuos.add(ids.get(10));
+        List<Integer> discontinuous = new ArrayList<>(ids.subList(0, 9));
+        discontinuous.add(ids.get(10));
 
         mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createNotebookBody(discontinuos, null)))
+                        .content(createNotebookBody(discontinuous, null)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("Should reject notebook with a folio already assigned")
     void shouldRejectNotebookWithFolioAlreadyAssigned() throws Exception {
-        List<Integer> primerLote = createFolios(10, "New");
+        List<Integer> firstBatch = createFolios(10, "New");
         mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createNotebookBody(primerLote, null)))
+                        .content(createNotebookBody(firstBatch, null)))
                 .andExpect(status().isCreated());
 
-        List<Integer> segundoLote = createFolios(10, "New");
-        List<Integer> conFolioReasignado = new ArrayList<>(segundoLote.subList(0, 9));
-        conFolioReasignado.add(primerLote.get(0));
+        List<Integer> secondBatch = createFolios(10, "New");
+        List<Integer> withReassignedFolio = new ArrayList<>(secondBatch.subList(0, 9));
+        withReassignedFolio.add(firstBatch.get(0));
 
         mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createNotebookBody(conFolioReasignado, null)))
+                        .content(createNotebookBody(withReassignedFolio, null)))
                 .andExpect(status().isBadRequest());
     }
 

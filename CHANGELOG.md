@@ -59,8 +59,129 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+
+
 ### Changed
 
+- **English sign and delivery locals** (#1490, CU75): the deeds page
+  uses `UNSIGNED_STATUS`, `signMutation`, and `signId`. The delivery
+  flag is `allDelivered`. Audit lists are `records`. The stored status
+  `Sin Firmar` stays, along with message keys `errorFirmar`,
+  `firmarEscritura`, and `firmarConfirmTitle`.
+- **English verification identifiers** (#1490, CU75): the testimony
+  controller field is `generationVerificationService`. The verification
+  test class is `TestimonyVerificationServiceTest`. Withdrawal rejection
+  is `shouldRejectWithdrawalWhenTestimonyNotFound`. The JPA nested class
+  is `LoadJpaList`. The audit fixture is `record2`. The index-book test
+  is `shouldGenerateIndexBookPdf`. The coverage guard is
+  `shouldNotReferenceNonexistentServicesPackageInPomExclusions`. The
+  forbidden package fragment `servicios` stays, along with operation id
+  `getCostosByTypeProcedure` and the report path `/api/v1/reports/index-book`.
+- **English transition fixtures** (#1490, CU75): workflow fixtures use
+  `Initial`, `Intermediate`, and `Unreachable`. The history note is
+  `Initial status change`. Notebook locals are `firstBatch`,
+  `secondBatch`, `withReassignedFolio`, and `discontinuous`. The
+  substitution lookup takes `substitution`, and the fetch comment says
+  the entity serializes while the entity manager is closed. Stored
+  status `En proceso` stays, along with folio statuses `New` and
+  `Errose`.
+- **English date parameters and note fixtures** (#1490, CU75): date
+  checks use `startDate`, `endDate`, and `today`. Note fixtures use
+  `notes`. Substitution comments name the notary and substitute and the
+  start and end date range. The tracker case degrades without
+  post-signing nodes. Punctuation checks `¿` and `¡` stay, along with
+  the visible labels `Suplencias`, `nueva suplencia`, and `registrada`,
+  the nav key `suplencias`, and the stored statuses `Testimonio Generado`
+  and `Gestion con Escritura Firmada`.
+- **English sample names** (#1490, CU75): budget and people fixtures
+  use `Ana Latest` and `Bruno Recent`. Person validation uses `Other`,
+  `Duplicate`, and `New`. Summary fixtures use `Summary IT`,
+  `CaseSummary`, and `Summary Management IT`. The report display says
+  procedure-document list. Dedup fixtures use `Duplicate`, `Another`,
+  and `Paged`. Person names `Ana`, `Bruno`, and `Perez` stay, along with
+  the default-locale checks `/creada/i` and `/ya existe/i`.
+- **English workflow stub heading** (#1490, CU75): the tracker comment
+  quotes the seeded label `Testimonio Ingresado a Inscripcion`. The E2E
+  stub uses `Gestion con Escritura Firmada`, `Testimonio Generado`,
+  `Testimonio Ingresado a Inscripcion`, and `Testimonio Retirado`. The
+  synthetic heading is `Reentry loop fixture`. Stored statuses `Iniciada`
+  and `En Tramite` stay.
+- **English workflow assignment copy** (#1490, CU75): the assignment
+  request names the active workflow, an integer, and unassigning the
+  current one. The conflict says the selected workflow is not active.
+  The operation assigns or unassigns a workflow on a procedure type.
+  The inactive fixture is `Inactive workflow`. Stored procedure type
+  `Compraventa` stays.
+- **English reentry comments** (#1490, CU75): the Postgres reentry test
+  names `submitted_documents`, `released`, and `observed`, and its display
+  says against the real schema. The concept regression comment names
+  `enabled`. Stored document type `Certificado de Dominio` and stored
+  role `Cliente` stay. The message key `liberado` stays.
+- **English CU10 comments** (#1490, CU75): the external-entity read model
+  describes the course of events, the start date, the notary in charge,
+  and external entities. The management query display says start date.
+  The receipt display says PDF receipt. Stored procedure type
+  `Compraventa` stays.
+- **English hash and movement names** (#1490, CU75): the legacy MD5 helper
+  uses `plainText`, `md5Hex`, `lowNibble`, and `highNibble`. Testimony
+  movement tests say `shouldListTestimonyMovementsWhenRequested`,
+  `shouldReturnEmptyListOfMovements`,
+  `shouldCreateCopyWhenTestimonyHasNoMovements`, and
+  `shouldListTestimonyMovementsWhenSchemaMatchesEntities`. The movement
+  list variable is `movements`. The receipt heading is
+  `Budget receipt E2E`. Stored status `PENDIENTE` stays, along with the
+  message key `movimientosTestimonio`.
+- **English leftover fixture words** (#1490, CU75): document costs use
+  `amountsToPay`. Payment notes say `Test payment`. Deed search uses
+  `number`. The non-numeric management path is `not-a-number`. Synthetic
+  trace statuses are `Trace Started`, `Trace In Progress`, and
+  `Trace Closed`. Document fixtures are `Ownership report` and
+  `Debt clearance`. The debt comment says `Total debt`. Stored status
+  `Archivada` stays.
+- **English numbering names** (#1490, CU75): auxiliary deed numbering uses
+  `findMaxAuxiliaryDeedNumber` and `calculateNextAuxiliaryNumber`. The
+  withdrawal test is `shouldRejectWithdrawalWhenNotInscribed`. Concept
+  fixtures are `ConceptFree_InUse`, `ConceptUsed_InUse`,
+  `ConceptEditBlocked`, `ConceptEditAllowed`, and `ConceptDeleteBlocked`.
+  Comments name `idPerson`, `HistoryDeleteIntegrationTest`,
+  `identification type`, `type=1`, and `folio types`.
+- **English local identifiers** (#1490, CU75): the payments page uses
+  `PaymentsPage`, `PAYMENT_FIELD_NAMES`, `paymentReceipt`, and
+  `handleIssueReceipt`. Reports take `idPayment`. Managements use
+  `STATUS_ARCHIVED`. Document lists use `documentTypes`. Auth tests say
+  `type ADMIN`, `type ADMINISTRADOR`, and `type EMPLEADO`. Property,
+  payment, history, and auxiliary-folio tests use English method and
+  variable names. Stored status `Archivada`, seed label
+  `Protocolo Auxiliar`, filename `recibo_pago_`, and message keys
+  `pagos`, `estadoSinPagos`, `emitirRecibo`, `saldoExcedido`,
+  `selectTipo`, and `editDocumento` stay.
+- **English helper names** (#1490, CU75): deed tests use `folioWithNotary` and
+  `shouldRejectSaveWhenGapIsNotJustified`. Archive tests use
+  `createProcedureTypeWithWorkflowToArchived` and `transition`. Template
+  tests use `createProcedureTypeWithTemplate` and `conceptName`. The stamp
+  duty fixture is `Stamp duty`. The amount field test id is
+  `input-amount-to-pay`. Stored status `Archivada` and seed concept
+  `Honorarios` stay, along with the message key `importeAPagar`.
+- **English property words** (#1490, CU75): the property form state uses
+  `volumeFolioLandRecord` and `boundaries`. Test ids are
+  `input-cadastral-designation`, `input-fiscal-appraisal`, and
+  `input-boundaries`. Fixtures use `Without designation`, `Another street`,
+  `Null`, `Empty`, `Blank`, `North, South, East, West`, `Fake Street`,
+  `Street without designation`, `Siempreviva Avenue`, `Volume 1 Folio 2`,
+  `DEED-001`, and `not a payment`. The registration-draft display says
+  `cadastral/registry`. Message keys `inmuebles`, `nomenclatura`,
+  `domicilio`, `valuacionFiscal`, `matricula`, `tomoFolioFinca`,
+  `linderos`, and `registralData` stay, along with `Pérez`, `Soltero`,
+  `Firmada`, and `Efectivo`.
+- **English address fixtures** (#1490, CU75): property and person fixtures use
+  `Fake Street`, `Main Street`, `Street`, `Apartment`, `Floor`,
+  `Corrientes Avenue`, and `Designation`. The extra concept is
+  `Additional fee`. Payment notes are `First payment`, `Edited`, and
+  `Partial payment`. Sample names are `roleValid655` and `typeValid655`.
+  Process-payment tests are `ProcessPaymentTests`. Stored methods
+  `Efectivo`, `Transferencia`, and `Cheque` stay, along with `Pérez` and
+  the role field `modulos`.
 - **Testing process architecture (MTP + living inventory)** (#1511, CU76):
   `TEST-PLAN.md` is the Master Test Plan for all levels; added
   `PROCESS-ARCHITECTURE.md` and generated `INVENTORY.md` with
@@ -132,8 +253,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   headings (`New name`, `Listed document`, `Missing grantor signature`,
   `Missing survey plan`, `Missing cadastral certificate`, `without client`,
   and `Case`). The last management number query aliases `latestManagement`.
-  The historical table name `documentos_presentados` stays, along with the
-  cadastral label `nomenclatura catastral`.
+  The live reentry table name is `submitted_documents` (Flyway keeps the
+  historical `documentos_presentados` rename). The cadastral label
+  `nomenclatura catastral` stays.
 - **English type fixture names** (#1490, CU75): Java tests name synthetic
   types in English (`Type_unused_`, `Type #655`, `Case summary type`,
   `Type Trace Test`, and `Base fee`). The traceability registry names the
@@ -1165,6 +1287,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+
+
 ### Fixed
 
 - **Spanish UI copy, E2E locators and management create restored after the English rename** (issue #1502, RNF-04): the #1495 identifier rename also rewrote 27 Spanish values in `frontend/messages/es.json`, so users saw "Person actualizada", "Property creado", "Nuevo Notebook", "Concept creado", "Substitution registrada" and a "Role" column. The values are restored from the pre-rename catalog (sentence-case fixes that stay Spanish are kept; `en.json` untouched), Playwright `TS-0023` expects "Rol" again, and Vitest `es-catalog-spanish.test.ts` fails if an English entity name from the rename map reaches an es.json value. The same rename had rewritten the Spanish UI text that Playwright locators match (`/fecha/` became `/date/`, `/presupuesto/` became `/budget/`, `nav-gestiones` became `nav-managements`) in 21 specs, and left the management create sending `procedureTypeId` where `CompleteCaseRequest` reads `typeProcedureId` (UI creates answered 400); both are fixed (`toCompleteCaseRequest`, Vitest `useManagements.create-wire.test.tsx`), `TS-0072` expects the English notebook validation messages, and the CU39 no-template E2E case picks its procedure type by exact name, so main's E2E jobs pass again.
@@ -1701,6 +1826,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+
+
 ### Added
 
 - **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
@@ -2086,10 +2214,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+
+
 ### Deprecated
 
 - `init-db/01-schema.sql` - Superseded by Flyway migration
 - `init-db/02-data.sql` - Superseded by Flyway migration
+
+
+
 
 
 
@@ -2111,6 +2245,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING — unused payment params create** (issue #1065, CU76):
   `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
   `POST /api/v1/pagos` (JSON body).
+
+
+
 
 
 
@@ -2190,6 +2327,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `spring.security.user.*` keys (`admin`/`admin`) from `application.properties`
   and deleted the legacy Swing-era `config.properties` (plain-text database
   credentials) that no code read. Actuator auth is unchanged (#1069)
+
+
+
 
 
 

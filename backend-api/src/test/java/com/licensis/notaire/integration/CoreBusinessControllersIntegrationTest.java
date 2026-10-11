@@ -140,7 +140,7 @@ class CoreBusinessControllersIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "name": "Honorario adicional",
+                                      "name": "Additional fee",
                                       "value": 5000,
                                       "percentage": 0,
                                       "enabled": true,
@@ -370,16 +370,16 @@ class CoreBusinessControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU82 - Should save matricula, tomo/folios/finca and linderos")
-        void shouldSaveRegistrationNumberVolumeFolioLandRecordYBoundaries() throws Exception {
+        @DisplayName("CU82 - Should save registration number, volume/folio/land record, and boundaries")
+        void shouldSaveRegistrationNumberVolumeFolioLandRecordAndBoundaries() throws Exception {
             String body = """
                     {
                       "cadastralDesignation": "123-456-789",
-                      "address": "Calle Falsa 123",
+                      "address": "Fake Street 123",
                       "fiscalAppraisal": 1000.00,
                       "registrationNumber": "M-1",
                       "volumeFolioLandRecord": "T1-F2-FN3",
-                      "boundaries": "Norte, Sur, Este, Oeste"
+                      "boundaries": "North, South, East, West"
                     }
                     """;
 
@@ -389,7 +389,7 @@ class CoreBusinessControllersIntegrationTest {
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.registrationNumber", is("M-1")))
                     .andExpect(jsonPath("$.volumeFolioLandRecord", is("T1-F2-FN3")))
-                    .andExpect(jsonPath("$.boundaries", is("Norte, Sur, Este, Oeste")));
+                    .andExpect(jsonPath("$.boundaries", is("North, South, East, West")));
         }
     }
 }

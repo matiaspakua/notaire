@@ -36,11 +36,11 @@ async function seedProperty(
 ): Promise<number> {
   const seeded = await apiPost<PropertyApiResult>(page, "/properties", {
     cadastralDesignation: `NC-${uniqueId()}`,
-    address: "Av. Siempreviva 742",
+    address: "Siempreviva Avenue 742",
     fiscalAppraisal: 100000,
     registrationNumber: `MAT-${uniqueId()}`,
-    volumeFolioLandRecord: "Tomo 1 Folio 2",
-    boundaries: "Norte, Sur, Este, Oeste",
+    volumeFolioLandRecord: "Volume 1 Folio 2",
+    boundaries: "North, South, East, West",
     ...overrides,
   });
   return seeded.data!.idProperty;

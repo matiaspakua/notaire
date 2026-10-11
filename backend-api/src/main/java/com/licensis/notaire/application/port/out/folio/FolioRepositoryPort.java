@@ -19,7 +19,7 @@ public interface FolioRepositoryPort {
 
     List<Folio> findAvailableAuxiliaryFolios();
 
-    Optional<Integer> findMaxNumberDeedAuxiliary();
+    Optional<Integer> findMaxAuxiliaryDeedNumber();
 
     List<Folio> findAllByIdIn(List<Integer> ids);
 

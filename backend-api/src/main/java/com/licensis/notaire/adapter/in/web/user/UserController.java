@@ -350,21 +350,21 @@ public class UserController {
      * Legacy MD5 hash, kept only to check credentials seeded before the BCrypt
      * migration (issue #554). It is not used to create new hashes.
      */
-    private String legacyMd5Hash(String stringAEncriptar) {
+    private String legacyMd5Hash(String plainText) {
         char[] hexChars = {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
         };
         try {
             MessageDigest msgd = MessageDigest.getInstance("MD5");
-            byte[] bytes = msgd.digest(stringAEncriptar.getBytes());
-            StringBuilder strbCadenaMD5 = new StringBuilder(2 * bytes.length);
+            byte[] bytes = msgd.digest(plainText.getBytes());
+            StringBuilder md5Hex = new StringBuilder(2 * bytes.length);
             for (int i = 0; i < bytes.length; i++) {
-                int bajo = (int) (bytes[i] & 0x0f);
-                int alto = (int) ((bytes[i] & 0xf0) >> 4);
-                strbCadenaMD5.append(hexChars[alto]);
-                strbCadenaMD5.append(hexChars[bajo]);
+                int lowNibble = (int) (bytes[i] & 0x0f);
+                int highNibble = (int) ((bytes[i] & 0xf0) >> 4);
+                md5Hex.append(hexChars[highNibble]);
+                md5Hex.append(hexChars[lowNibble]);
             }
-            return strbCadenaMD5.toString();
+            return md5Hex.toString();
         } catch (NoSuchAlgorithmException e) {
             return null;
         }

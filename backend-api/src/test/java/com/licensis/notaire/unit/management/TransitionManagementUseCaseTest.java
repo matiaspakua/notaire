@@ -51,11 +51,11 @@ class TransitionManagementUseCaseTest {
         // Arrange
         var initialStatus = new ManagementStatus();
         initialStatus.setIdManagementStatus(1);
-        initialStatus.setName("Inicial");
+        initialStatus.setName("Initial");
 
-        var statusIntermedio = new ManagementStatus();
-        statusIntermedio.setIdManagementStatus(2);
-        statusIntermedio.setName("Intermedio");
+        var intermediateStatus = new ManagementStatus();
+        intermediateStatus.setIdManagementStatus(2);
+        intermediateStatus.setName("Intermediate");
 
         var management = new DeedManagement();
         management.setIdManagement(1);
@@ -67,18 +67,18 @@ class TransitionManagementUseCaseTest {
 
         fakeManagementRepository.save(management);
         fakeStatusRepository.save(initialStatus);
-        fakeStatusRepository.save(statusIntermedio);
+        fakeStatusRepository.save(intermediateStatus);
         fakeWorkflowLookup.setWorkflow(workflow);
-        fakeTransitionValidator.allowTransition(workflow, initialStatus, statusIntermedio);
+        fakeTransitionValidator.allowTransition(workflow, initialStatus, intermediateStatus);
 
         // Act
-        TransitionManagementOutput output = useCase.execute(1, "Intermedio");
+        TransitionManagementOutput output = useCase.execute(1, "Intermediate");
 
         // Assert
         assertThat(output.managementId()).isEqualTo(1);
         var updatedManagement = fakeManagementRepository.findById(1);
         assertThat(updatedManagement).isNotNull();
-        assertThat(updatedManagement.getFkIdManagementStatus().getName()).isEqualTo("Intermedio");
+        assertThat(updatedManagement.getFkIdManagementStatus().getName()).isEqualTo("Intermediate");
         assertThat(fakeStatusLog.wasStatusRegistered(1)).isTrue();
     }
 
@@ -88,11 +88,11 @@ class TransitionManagementUseCaseTest {
         // Arrange
         var initialStatus = new ManagementStatus();
         initialStatus.setIdManagementStatus(1);
-        initialStatus.setName("Inicial");
+        initialStatus.setName("Initial");
 
-        var statusInasequible = new ManagementStatus();
-        statusInasequible.setIdManagementStatus(3);
-        statusInasequible.setName("Inalcanzable");
+        var unreachableStatus = new ManagementStatus();
+        unreachableStatus.setIdManagementStatus(3);
+        unreachableStatus.setName("Unreachable");
 
         var management = new DeedManagement();
         management.setIdManagement(1);
@@ -103,12 +103,12 @@ class TransitionManagementUseCaseTest {
 
         fakeManagementRepository.save(management);
         fakeStatusRepository.save(initialStatus);
-        fakeStatusRepository.save(statusInasequible);
+        fakeStatusRepository.save(unreachableStatus);
         fakeWorkflowLookup.setWorkflow(workflow);
         // Validator has no allowed transitions
 
         // Act & Assert
-        assertThatThrownBy(() -> useCase.execute(1, "Inalcanzable"))
+        assertThatThrownBy(() -> useCase.execute(1, "Unreachable"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("is not allowed");
 
@@ -119,7 +119,7 @@ class TransitionManagementUseCaseTest {
     @Test
     @DisplayName("Missing management throws ResourceNotFoundException")
     void shouldThrowResourceNotFoundWhenManagementNotFound() {
-        assertThatThrownBy(() -> useCase.execute(999, "Intermedio"))
+        assertThatThrownBy(() -> useCase.execute(999, "Intermediate"))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("not found");
     }
@@ -130,7 +130,7 @@ class TransitionManagementUseCaseTest {
         // Arrange
         var initialStatus = new ManagementStatus();
         initialStatus.setIdManagementStatus(1);
-        initialStatus.setName("Inicial");
+        initialStatus.setName("Initial");
 
         var management = new DeedManagement();
         management.setIdManagement(1);

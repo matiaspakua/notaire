@@ -43,7 +43,7 @@ import { useFormat } from "@/hooks/useFormat";
 
 const STATUS_FOLDER_ACTIVE = "Activa";
 
-const ESTADO_ARCHIVADA = "Archivada";
+const STATUS_ARCHIVED = "Archivada";
 
 export default function ManagementsPage() {
   return (
@@ -336,7 +336,7 @@ function ManagementsList() {
           >
             <Pencil className="h-4 w-4" />
           </Button>
-          {g.currentStatus !== ESTADO_ARCHIVADA && (
+          {g.currentStatus !== STATUS_ARCHIVED && (
             <Button
               size="sm"
               variant="ghost"
@@ -374,7 +374,7 @@ function ManagementsList() {
           >
             <FolderClock className="h-4 w-4" />
           </Button>
-          {g.currentStatus !== ESTADO_ARCHIVADA && (
+          {g.currentStatus !== STATUS_ARCHIVED && (
             <Button
               size="sm"
               variant="ghost"

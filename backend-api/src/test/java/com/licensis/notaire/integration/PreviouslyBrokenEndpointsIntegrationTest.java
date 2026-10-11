@@ -17,7 +17,7 @@ import org.springframework.web.context.WebApplicationContext;
 /**
  * Behavioural regression tests for the controllers whose read endpoints previously
  * returned HTTP 500 due to entity/schema drift (testimony, testimony movement,
- * tipo-folio, items). Runs on the H2 profile for fast feedback and covers the list
+ * folio types, items). Runs on the H2 profile for fast feedback and covers the list
  * and not-found branches. The schema-level guard lives in
  * {@link InitDbSchemaValidationIntegrationTest}.
  */
@@ -55,7 +55,7 @@ class PreviouslyBrokenEndpointsIntegrationTest {
 
     @Test
     @DisplayName("Should return a JSON array for GET /api/v1/testimony-movements")
-    void shouldListMovimientosTestimonyWhenRequested() throws Exception {
+    void shouldListTestimonyMovementsWhenRequested() throws Exception {
         mockMvc.perform(get("/api/v1/testimony-movements"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());

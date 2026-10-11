@@ -100,11 +100,11 @@ class PaymentRepositoryIntegrationTest extends RepositoryIntegrationTest {
     void shouldSumAmountByBudget() {
         paymentRepository.save(testPayment);
 
-        Payment pago2 = new Payment();
-        pago2.setAmount(new java.math.BigDecimal("50000"));
-        pago2.setDate(new Date());
-        pago2.setBudget(testBudget);
-        paymentRepository.save(pago2);
+        Payment payment2 = new Payment();
+        payment2.setAmount(new java.math.BigDecimal("50000"));
+        payment2.setDate(new Date());
+        payment2.setBudget(testBudget);
+        paymentRepository.save(payment2);
 
         java.math.BigDecimal sum = paymentRepository.sumAmountByBudgetId(testBudget.getIdBudget());
 

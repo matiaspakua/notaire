@@ -182,7 +182,7 @@ public class ProcedureTypeController {
      */
     @Schema(name = "WorkflowAssignmentRequest")
     public record WorkflowAssignmentRequest(
-            @Schema(description = "Workflow active a assign, or null for unassign the actual",
+            @Schema(description = "Active workflow to assign, or null to unassign the current one",
                     requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
             Integer workflowDefinitionId) {
     }
@@ -190,12 +190,12 @@ public class ProcedureTypeController {
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
     @ApiResponse(responseCode = "400",
-            description = "Empty or invalid body: workflowDefinitionId is required (entero, or null for unassign)"),
+            description = "Empty or invalid body: workflowDefinitionId is required (an integer, or null to unassign)"),
     @ApiResponse(responseCode = "404", description = "Procedure type or workflow not found"),
-    @ApiResponse(responseCode = "409", description = "The workflow seleccionado is not active")
+    @ApiResponse(responseCode = "409", description = "The selected workflow is not active")
 })
     @PutMapping("/{id}/workflow")
-    @Operation(summary = "Assign or unassign workflow a procedure type")
+    @Operation(summary = "Assign or unassign a workflow on a procedure type")
     public ResponseEntity<Object> assignWorkflow(@PathVariable Integer id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, content = @Content(
                     mediaType = "application/json",
@@ -223,7 +223,7 @@ public class ProcedureTypeController {
         }
         if (!wf.get().isActive()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "The workflow seleccionado is not active."));
+                    .body(Map.of("error", "The selected workflow is not active."));
         }
         type.setWorkflowDefinition(wf.get());
         repository.save(type);

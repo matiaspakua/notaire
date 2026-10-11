@@ -29,7 +29,7 @@ import { toDateInputValue } from "@/lib/dates";
 import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Deed> = { number: undefined, dateDeedrecording: "", body: "" };
-const ESTADO_SIN_FIRMAR = "Sin Firmar";
+const UNSIGNED_STATUS = "Sin Firmar";
 
 export default function DeedsPage() {
   return (
@@ -52,11 +52,11 @@ function DeedsList() {
   const createMutation = useCreateDeed();
   const updateMutation = useUpdateDeed();
   const deleteMutation = useDeleteDeed();
-  const firmarMutation = useSignDeed();
+  const signMutation = useSignDeed();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [firmarId, setFirmarId] = useState<number | null>(null);
+  const [signId, setSignId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Deed>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
   const [searchNumber, setSearchNumber] = useState("");
@@ -106,12 +106,12 @@ function DeedsList() {
   }
 
   async function handleSign() {
-    if (!firmarId) return;
+    if (!signId) return;
     try {
-      await firmarMutation.mutateAsync(firmarId);
+      await signMutation.mutateAsync(signId);
       toast.success(t("firmada"));
     } catch (err) { toast.error(extractApiError(err) ?? t("errorFirmar")); }
-    finally { setFirmarId(null); }
+    finally { setSignId(null); }
   }
 
   const columns: Column<Deed>[] = [
@@ -131,11 +131,11 @@ function DeedsList() {
       key: "actions", header: "", className: "w-32",
       render: (e) => (
         <div className="flex gap-2 justify-end">
-          {e.status === ESTADO_SIN_FIRMAR && (
+          {e.status === UNSIGNED_STATUS && (
             <Button
               size="sm"
               variant="ghost"
-              onClick={() => setFirmarId(e.idDeed!)}
+              onClick={() => setSignId(e.idDeed!)}
               aria-label={t("firmarEscritura")}
               data-testid={`btn-sign-deed-${e.idDeed}`}
             >
@@ -229,10 +229,10 @@ function DeedsList() {
       <ConfirmDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)} onConfirm={handleDelete} loading={deleteMutation.isPending} />
 
       <ConfirmDialog
-        open={!!firmarId}
-        onOpenChange={(v) => !v && setFirmarId(null)}
+        open={!!signId}
+        onOpenChange={(v) => !v && setSignId(null)}
         onConfirm={handleSign}
-        loading={firmarMutation.isPending}
+        loading={signMutation.isPending}
         title={t("firmarConfirmTitle")}
         description={t("firmarConfirmDescription")}
         confirmLabel={t("firmarEscritura")}

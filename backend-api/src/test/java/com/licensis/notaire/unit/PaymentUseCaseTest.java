@@ -90,7 +90,7 @@ class PaymentUseCaseTest {
 
     @Nested
     @DisplayName("CU15 - Process payment")
-    class ProcesarPaymentTests {
+    class ProcessPaymentTests {
 
         @Test
         @DisplayName("Should process payment successfully with valid data")
@@ -107,7 +107,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.save(any(Payment.class))).thenReturn(savedPayment);
 
             // Act
-            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Payment parcial"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Partial payment"));
 
             // Assert
             assertThat(result).isNotNull();
@@ -328,25 +328,25 @@ class PaymentUseCaseTest {
 
         @Test
         @DisplayName("Should persist paymentMethod when processing a payment")
-        void shouldPersistPaymentMethodWhenProcesarPayment() {
+        void shouldPersistPaymentMethodWhenProcessingPayment() {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             PaymentDetails result = processPayment.process(
-                    new ProcessPaymentCommand(1, new java.math.BigDecimal("2000.00"), new Date(), "Payment parcial", "Efectivo"));
+                    new ProcessPaymentCommand(1, new java.math.BigDecimal("2000.00"), new Date(), "Partial payment", "Efectivo"));
 
             assertThat(result.paymentMethod()).isEqualTo("Efectivo");
         }
 
         @Test
         @DisplayName("Should allow null paymentMethod when processing a payment")
-        void shouldAllowNullPaymentMethodOnProcesarPayment() {
+        void shouldAllowNullPaymentMethodOnProcessingPayment() {
             when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
             when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("0"));
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Payment parcial"));
+            PaymentDetails result = processPayment.process(command(1, new java.math.BigDecimal("2000.00"), new Date(), "Partial payment"));
 
             assertThat(result.paymentMethod()).isNull();
         }
@@ -364,7 +364,7 @@ class PaymentUseCaseTest {
             when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
             PaymentDetails result = editPayment.edit(
-                    new EditPaymentCommand(1, new java.math.BigDecimal("1000"), new Date(), "Editado", "Transferencia"));
+                    new EditPaymentCommand(1, new java.math.BigDecimal("1000"), new Date(), "Edited", "Transferencia"));
 
             assertThat(result.paymentMethod()).isEqualTo("Transferencia");
         }

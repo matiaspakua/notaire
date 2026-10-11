@@ -175,7 +175,7 @@ class TestimonyMovementServiceTest {
 
         @Test
         @DisplayName("Should reject withdrawal when the testimony is not inscribed")
-        void shouldRejectWithdrawalWhenNotInscripto() {
+        void shouldRejectWithdrawalWhenNotInscribed() {
             TestimonyMovement entered = movementWithEntry();
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))
@@ -188,7 +188,7 @@ class TestimonyMovementServiceTest {
 
         @Test
         @DisplayName("Should throw ResourceNotFoundException when testimony does not exist")
-        void shouldRejectRetirarWhenTestimonyNotFound() {
+        void shouldRejectWithdrawalWhenTestimonyNotFound() {
             when(testimonyRepository.existsById(999)).thenReturn(false);
 
             assertThatThrownBy(() -> testimonyMovementService.withdraw(999, 123))

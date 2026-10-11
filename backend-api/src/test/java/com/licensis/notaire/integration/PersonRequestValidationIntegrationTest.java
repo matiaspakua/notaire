@@ -95,7 +95,7 @@ class PersonRequestValidationIntegrationTest {
         String response = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"firstName": "Otro", "lastName": "Duplicado", "identificationNumber": "20123456", "isClient": true}
+                                {"firstName": "Other", "lastName": "Duplicate", "identificationNumber": "20123456", "isClient": true}
                                 """))
                 .andExpect(status().isConflict())
                 .andReturn().getResponse().getContentAsString();
@@ -110,7 +110,7 @@ class PersonRequestValidationIntegrationTest {
         String createResponse = mockMvc.perform(post("/api/v1/people")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"firstName": "Nueva", "lastName": "Person", "identificationNumber": "88888888", "isClient": true}
+                                {"firstName": "New", "lastName": "Person", "identificationNumber": "88888888", "isClient": true}
                                 """))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
@@ -120,7 +120,7 @@ class PersonRequestValidationIntegrationTest {
         mockMvc.perform(put("/api/v1/people/" + newPersonId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"firstName": "Nueva", "lastName": "Person", "identificationNumber": "20123456", "isClient": true}
+                                {"firstName": "New", "lastName": "Person", "identificationNumber": "20123456", "isClient": true}
                                 """))
                 .andExpect(status().isConflict());
     }

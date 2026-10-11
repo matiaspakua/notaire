@@ -98,7 +98,7 @@ class JpaAdministratorTest {
 
     @Nested
     @DisplayName("loadJpaList")
-    class CargarListaJpas {
+    class LoadJpaList {
 
         @BeforeEach
         void setUp() {

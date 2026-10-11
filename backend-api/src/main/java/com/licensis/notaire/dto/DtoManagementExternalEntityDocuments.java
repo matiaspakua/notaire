@@ -4,10 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * CU10 - Read-model for the management detail screen (step 4 of the Curso of
- * Eventos): number of management, heading, date of inicio, notary a
- * cargo, cadastral nomenclature (if the management involucra a Property) and the
- * documentation that must be presented by entidades externas.
+ * CU10 - Read-model for the management detail screen (step 4 of the course of
+ * events): management number, heading, start date, notary in
+ * charge, cadastral designation (if the management involves a property) and the
+ * documentation that must be presented by external entities.
  */
 public record DtoManagementExternalEntityDocuments(
         Integer idManagement,

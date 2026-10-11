@@ -21,8 +21,8 @@ import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import type { Budget } from "@/types";
 
 const NEWEST: Budget[] = [
-  { idBudget: 1300, propertyAmount: 1000, person: { personId: 1500, name: "Ana", lastName: "Nueva" } },
-  { idBudget: 1299, propertyAmount: 2000, person: { personId: 1499, name: "Bruno", lastName: "Reciente" } },
+  { idBudget: 1300, propertyAmount: 1000, person: { personId: 1500, name: "Ana", lastName: "Latest" } },
+  { idBudget: 1299, propertyAmount: 2000, person: { personId: 1499, name: "Bruno", lastName: "Recent" } },
 ];
 const FAR: Budget = { idBudget: 12, propertyAmount: 5000, person: { personId: 7, name: "Carla", lastName: "Garcia" } };
 const FAR2: Budget = { idBudget: 40, propertyAmount: 7000, person: { personId: 7, name: "Carla", lastName: "Garcia" } };
@@ -83,7 +83,7 @@ describe("BudgetPicker (#1340)", () => {
     fireEvent.click(box);
     const listbox = await screen.findByRole("listbox");
     expect(box).toHaveAttribute("aria-controls", listbox.id);
-    expect(await screen.findByRole("option", { name: "#1300 — Ana Nueva" })).toBeInTheDocument();
+    expect(await screen.findByRole("option", { name: "#1300 — Ana Latest" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("budgetPicker.recentHint");
     expect(urls().some((u) => u.includes("size=1000"))).toBe(false);
   });
@@ -113,9 +113,9 @@ describe("BudgetPicker (#1340)", () => {
     render(<Harness onPick={onPick} />, { wrapper });
     const box = screen.getByRole("combobox", { name: "Budget" });
     fireEvent.click(box);
-    await screen.findByRole("option", { name: "#1300 — Ana Nueva" });
+    await screen.findByRole("option", { name: "#1300 — Ana Latest" });
     fireEvent.change(box, { target: { value: "Gar" } });
-    expect(screen.queryByRole("option", { name: "#1300 — Ana Nueva" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "#1300 — Ana Latest" })).not.toBeInTheDocument();
     fireEvent.keyDown(box, { key: "ArrowDown" });
     fireEvent.keyDown(box, { key: "Enter" });
     expect(onPick).not.toHaveBeenCalled();

@@ -25,7 +25,7 @@ class HistoryMapperTest {
         status.setName("En proceso");
 
         History history = new History(1, date);
-        history.setNotes("Cambio de status inicial");
+        history.setNotes("Initial status change");
         history.setFkIdManagement(management);
         history.setFkIdManagementStatus(status);
 
@@ -33,7 +33,7 @@ class HistoryMapperTest {
 
         assertThat(dto.idHistory()).isEqualTo(1);
         assertThat(dto.date()).isEqualTo(date);
-        assertThat(dto.notes()).isEqualTo("Cambio de status inicial");
+        assertThat(dto.notes()).isEqualTo("Initial status change");
         assertThat(dto.managementId()).isEqualTo(7);
         assertThat(dto.statusManagementId()).isEqualTo(3);
         assertThat(dto.statusManagementName()).isEqualTo("En proceso");

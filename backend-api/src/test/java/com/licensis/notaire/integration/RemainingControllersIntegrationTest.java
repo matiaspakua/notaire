@@ -196,7 +196,7 @@ class RemainingControllersIntegrationTest {
 
         @Test
         @DisplayName("Should return a page of history records")
-        void shouldReturnAllHistoriales() throws Exception {
+        void shouldReturnAllHistoryRecords() throws Exception {
             mockMvc.perform(get("/api/v1/history"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))

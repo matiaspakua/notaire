@@ -132,7 +132,7 @@ class ConceptControllerTest {
     @Test
     @DisplayName("PUT /api/v1/concepts/{id} should return 200 when payload omits enabled")
     void shouldUpdateConceptWhenEnabledOmitted() throws Exception {
-        // Regression: a payload without 'habilitado' must not NPE while unboxing
+        // Regression: a payload without 'enabled' must not NPE while unboxing
         // a null Boolean — the controller preserves the existing enabled state.
         Concept existing = buildEntity();
         when(service.findById(1)).thenReturn(Optional.of(existing));

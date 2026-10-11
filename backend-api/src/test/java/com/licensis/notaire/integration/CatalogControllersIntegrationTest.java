@@ -267,7 +267,7 @@ class CatalogControllersIntegrationTest {
 
         @Test
         @DisplayName("CU10 - Should return 200 and empty list when no movements exist")
-        void shouldReturnEmptyListOfMovimientos() throws Exception {
+        void shouldReturnEmptyListOfMovements() throws Exception {
             mockMvc.perform(get("/api/v1/testimony-movements"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))

@@ -54,7 +54,7 @@ class PropertyRequestValidationIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         stored = new Property();
         stored.setCadastralDesignation("NC-655-STORED");
-        stored.setAddress("Calle #655");
+        stored.setAddress("Street #655");
         stored = propertyRepository.save(stored);
     }
 
@@ -66,10 +66,10 @@ class PropertyRequestValidationIntegrationTest {
     @ParameterizedTest(name = "create with body {0} is rejected")
     @ValueSource(strings = {
         "{}",
-        "{\"address\": \"Sin nomenclatura\"}",
-        "{\"cadastralDesignation\": null, \"address\": \"Nula\"}",
-        "{\"cadastralDesignation\": \"\", \"address\": \"Vacia\"}",
-        "{\"cadastralDesignation\": \"   \", \"address\": \"Blanca\"}"
+        "{\"address\": \"Without designation\"}",
+        "{\"cadastralDesignation\": null, \"address\": \"Null\"}",
+        "{\"cadastralDesignation\": \"\", \"address\": \"Empty\"}",
+        "{\"cadastralDesignation\": \"   \", \"address\": \"Blank\"}"
     })
     @DisplayName("create without a cadastral designation is rejected and stores nothing")
     void createRequiresCadastralDesignation(String body) throws Exception {
@@ -86,13 +86,13 @@ class PropertyRequestValidationIntegrationTest {
     @DisplayName("a full update without a cadastral designation is rejected and keeps the stored one")
     void updateRequiresCadastralDesignation() throws Exception {
         mockMvc.perform(put(URL + "/" + stored.getIdProperty()).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"address\": \"Otra calle\"}"))
+                        .content("{\"address\": \"Another street\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(containsString("cadastralDesignation")));
 
         Property reloaded = propertyRepository.findById(stored.getIdProperty()).orElseThrow();
         assertThat(reloaded.getCadastralDesignation()).isEqualTo("NC-655-STORED");
-        assertThat(reloaded.getAddress()).isEqualTo("Calle #655");
+        assertThat(reloaded.getAddress()).isEqualTo("Street #655");
     }
 
     @Test

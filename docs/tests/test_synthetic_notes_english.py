@@ -44,7 +44,7 @@ class SyntheticNotesEnglishTest(unittest.TestCase):
         self.assertNotIn("Falta", testimony)
         self.assertNotIn("otorgante", testimony)
 
-        verify = read("unit/TestimonyVerificacionServiceTest.java")
+        verify = read("unit/TestimonyVerificationServiceTest.java")
         self.assertIn("Missing a signature", verify)
         self.assertNotIn("Falta", verify)
 
@@ -83,7 +83,8 @@ class SyntheticNotesEnglishTest(unittest.TestCase):
         self.assertNotIn("Caso", hero)
 
         historical = read("integration/ManagementDocumentReentryPgIntegrationTest.java")
-        self.assertIn("documentos_presentados", historical)
+        self.assertIn("submitted_documents", historical)
+        self.assertNotIn("documentos_presentados", historical)
 
 
 if __name__ == "__main__":

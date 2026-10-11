@@ -23,7 +23,7 @@ test.describe("CU22 - Register a substitution", () => {
     // When
     await steps.whenUserClicksButton("nueva suplencia");
 
-    // Then — modal uses IDs for notary/suplente (numeric inputs), and date range (Desde/Hasta)
+    // Then — modal uses IDs for notary and substitute (numeric inputs), and a start and end date range
     await steps.thenModalIsVisible("Nueva suplencia");
     await expect(steps.page.getByTestId("input-notary-id")).toBeVisible();
     await expect(steps.page.getByTestId("input-substitute-id")).toBeVisible();
@@ -36,7 +36,7 @@ test.describe("CU22 - Register a substitution", () => {
     await steps.whenUserClicksButton("nueva suplencia");
     await steps.thenModalIsVisible();
 
-    // When — fill notary ID, suplente ID, and date range via testids
+    // When — fill notary ID, substitute ID, and the date range via testids
     await steps.page.getByTestId("input-notary-id").fill("1");
     await steps.page.getByTestId("input-substitute-id").fill("1");
     await steps.page.getByTestId("input-start-date").fill("2026-05-01");

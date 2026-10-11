@@ -242,7 +242,7 @@ function ExternalEntityDocumentsList() {
                   onChange={(e) =>
                     setMovement((m) => ({ ...m, amountToPay: e.target.value ? Number(e.target.value) : undefined }))
                   }
-                  data-testid="input-importe-a-pagar"
+                  data-testid="input-amount-to-pay"
                 />
               </FormField>
               <FormField label={t("fields.fechaPago")}>

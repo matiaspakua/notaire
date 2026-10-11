@@ -69,9 +69,9 @@ class ManagementArchiveIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         archived = managementStatusRepository.findByName("Archivada").orElseGet(() -> {
-            ManagementStatus nuevo = new ManagementStatus();
-            nuevo.setName("Archivada");
-            return managementStatusRepository.save(nuevo);
+            ManagementStatus created = new ManagementStatus();
+            created.setName("Archivada");
+            return managementStatusRepository.save(created);
         });
     }
 
@@ -107,7 +107,7 @@ class ManagementArchiveIntegrationTest {
         return managementStatusRepository.save(status);
     }
 
-    private Integer createProcedureTypeConWorkflowHaciaArchivada(ManagementStatus initialStatus) {
+    private Integer createProcedureTypeWithWorkflowToArchived(ManagementStatus initialStatus) {
         WorkflowDefinition definition = new WorkflowDefinition();
         definition.setName("Workflow Archive IT " + System.nanoTime());
         definition.setActive(true);
@@ -125,11 +125,11 @@ class ManagementArchiveIntegrationTest {
         destinationNode.setType(WorkflowNodeType.FINAL);
         destinationNode = workflowNodeRepository.save(destinationNode);
 
-        WorkflowTransition transicion = new WorkflowTransition();
-        transicion.setWorkflowDefinition(definition);
-        transicion.setOriginNode(originNode);
-        transicion.setDestinationNode(destinationNode);
-        workflowTransitionRepository.save(transicion);
+        WorkflowTransition transition = new WorkflowTransition();
+        transition.setWorkflowDefinition(definition);
+        transition.setOriginNode(originNode);
+        transition.setDestinationNode(destinationNode);
+        workflowTransitionRepository.save(transition);
 
         ProcedureType type = new ProcedureType();
         type.setName("Procedure Archive IT");
@@ -147,7 +147,7 @@ class ManagementArchiveIntegrationTest {
         Integer budgetId = createBudget(clientId, propertyAmount);
         ManagementStatus initialStatus = createManagementStatus();
         Integer statusId = initialStatus.getIdManagementStatus();
-        Integer typeProcedureId = createProcedureTypeConWorkflowHaciaArchivada(initialStatus);
+        Integer typeProcedureId = createProcedureTypeWithWorkflowToArchived(initialStatus);
         String body = """
                 {"number": %d, "heading": "Management Archive IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}

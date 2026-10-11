@@ -156,7 +156,7 @@ class ManagementExternalEntityDocumentsIntegrationTest {
     @DisplayName("Should register the movement of a document and return it updated")
     void shouldRegisterMovement() throws Exception {
         Integer managementId = createManagementWithProcedure(9302);
-        SubmittedDocument document = createExternalEntityDocument(managementId, "Informe de Dominio");
+        SubmittedDocument document = createExternalEntityDocument(managementId, "Ownership report");
 
         String body = """
                 {"prepared": true, "cardNumber": 5, "notes": "Withdrawn", "delivered": false}
@@ -177,7 +177,7 @@ class ManagementExternalEntityDocumentsIntegrationTest {
     void shouldReturn400WhenDocumentDoesNotBelongToManagement() throws Exception {
         Integer managementId = createManagementWithProcedure(9303);
         Integer otherManagementId = createManagementWithProcedure(9304);
-        SubmittedDocument document = createExternalEntityDocument(otherManagementId, "Informe de Dominio");
+        SubmittedDocument document = createExternalEntityDocument(otherManagementId, "Ownership report");
 
         String body = """
                 {"delivered": true}
@@ -209,7 +209,7 @@ class ManagementExternalEntityDocumentsIntegrationTest {
     @DisplayName("Should keep management open when the workflow does not define the completion transition")
     void shouldMarkAllDocumentsDeliveredWithoutFailingWhenNoWorkflow() throws Exception {
         Integer managementId = createManagementWithProcedure(9306);
-        SubmittedDocument document = createExternalEntityDocument(managementId, "Libre de Deuda");
+        SubmittedDocument document = createExternalEntityDocument(managementId, "Debt clearance");
 
         String body = """
                 {"delivered": true}

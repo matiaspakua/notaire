@@ -83,7 +83,7 @@ class ProcedureTypeWorkflowAssignmentTest {
     void shouldReturn409WhenWorkflowInactive() throws Exception {
         ProcedureType type = buildType();
         WorkflowDefinition wf = new WorkflowDefinition(5);
-        wf.setName("Workflow Inactivo");
+        wf.setName("Inactive workflow");
         wf.setActive(false);
 
         when(repository.findById(1)).thenReturn(Optional.of(type));
