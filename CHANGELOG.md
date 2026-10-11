@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired current status field** (#1490, CU75): the engineering-sequences
+  design names the field CU83 still writes, `statusActual`.
+  The live field is `currentStatus`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired substitution dates** (#1490, CU75): the engineering-sequences
   design names the fields CU22 still writes, `fechaInicio` and `fechaFin`.
   The live fields are `dateStart` and `dateEnd`. The heading `Riesgos / Trade-offs`
