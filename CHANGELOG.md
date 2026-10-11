@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired due-date formula** (#1490, CU75): the engineering-sequences
+  design names the formula CU42 still writes,
+  `fechaVencimiento = fechaIngreso + diasVencimiento`.
+  The live fields are `dateDue`, `dateEntry`, and `dueDays`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Retired reentered flag** (#1490, CU75): the engineering-sequences
   design names the flag CU43 still writes, `reingresado=true`.
   The live field is `reentered`. The heading `Riesgos / Trade-offs`

@@ -80,6 +80,8 @@ so the availability answer is not only in a pull request.
 `currentStatus`.
 [CU43 still names `reingresado=true`] → The live field is
 `reentered`.
+[CU42 still names `fechaVencimiento = fechaIngreso + diasVencimiento`] → The live fields are
+`dateDue`, `dateEntry`, and `dueDays`.
 [CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in
