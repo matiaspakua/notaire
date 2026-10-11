@@ -67,18 +67,18 @@
 
 ## 9. Atomic commits
 
-- [ ] 9.1 Conventional Commits; Gate 1 pack separate from implement/archive commits when useful
-- [ ] 9.2 Closing commit/PR uses `Closes #1252` only when AC are fully met; otherwise `Related: #1252` / `Refs: #1252`
-- [ ] 9.3 No secrets, no unrelated product edits, no CHANGELOG until cleared
-- [ ] 9.4 Record commit SHAs in `traceability.md`
+- [x] 9.1 Conventional Commits; Gate 1 pack separate from implement/archive commits when useful
+- [x] 9.2 Closing commit/PR uses `Closes #1252` only when AC are fully met; otherwise `Related: #1252` / `Refs: #1252`
+- [x] 9.3 No secrets, no unrelated product edits, no CHANGELOG until cleared
+- [x] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request and CI validation
 
-- [ ] 10.1 `git push -u origin cursor/chore-1252-openspec-archive-hygiene-69d3`
-- [ ] 10.2 Open PR referencing #1252 and CU76 (draft OK for Gate 1-only pack)
+- [x] 10.1 `git push -u origin cursor/chore-1252-openspec-archive-hygiene-69d3`
+- [x] 10.2 Open PR referencing #1252 and CU76 (draft OK for Gate 1-only pack)
 - [ ] 10.3 Wait for required workflows; docs/process PRs may path-skip heavy product jobs
 - [ ] 10.4 Gate 4 — CI green, review, no conflicts, docs complete for the landed slice
-- [ ] 10.5 Record the PR number in `traceability.md`
+- [x] 10.5 Record the PR number in `traceability.md`
 
 ## 11. Deploy
 
@@ -102,7 +102,7 @@
 - [x] Coverage ratchet unchanged — no Java edit
 - [x] Playwright not applicable
 - [x] Permanent documentation updated (Gate 3) except CHANGELOG serialization
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, smoke passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
