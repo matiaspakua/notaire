@@ -4,8 +4,8 @@ import { useTranslations } from "next-intl";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormHeader, FormSection } from "@/theme/form-patterns";
 import { useGestionResumenCaso, useGestionResumenFinanciero } from "@/hooks/useGestionResumen";
-import { formatCurrency, formatDate } from "@/lib/utils";
 import type { DocumentoCaso } from "@/types";
+import { useFormat } from "@/hooks/useFormat";
 
 function documentFlags(documento: DocumentoCaso, t: (key: string) => string): string[] {
   const flags: [boolean, string][] = [
@@ -25,6 +25,7 @@ interface GestionResumenDialogProps {
 
 /** #774 - Escrituras, testimonios (with registry state), copias and pagos of a gestión. */
 export function GestionResumenDialog({ gestionId, onClose }: GestionResumenDialogProps) {
+  const fmt = useFormat();
   const t = useTranslations("gestiones.resumen");
   const { data: caso, isLoading } = useGestionResumenCaso(gestionId ?? undefined);
   const { data: financiero } = useGestionResumenFinanciero(gestionId ?? undefined);
@@ -69,7 +70,7 @@ export function GestionResumenDialog({ gestionId, onClose }: GestionResumenDialo
                       <div className="font-medium">{documento.typeName ?? documento.name ?? "—"}</div>
                       <div className="text-muted-foreground">
                         {t("tramiteDocumento", { id: documento.idProcedure })}
-                        {documento.dateDue ? ` · ${t("vence", { fecha: formatDate(documento.dateDue) })}` : ""}
+                        {documento.dateDue ? ` · ${t("vence", { fecha: fmt.date(documento.dateDue) })}` : ""}
                         {documentFlags(documento, t).map((flag) => ` · ${flag}`).join("")}
                       </div>
                     </div>
@@ -79,9 +80,9 @@ export function GestionResumenDialog({ gestionId, onClose }: GestionResumenDialo
               <FormSection title={t("pagos")}>
                 {financiero ? (
                   <div className="text-sm space-y-1" data-testid="resumen-pagos">
-                    <div>{t("totalPresupuestado")}: {formatCurrency(financiero.totalPresupuestado)}</div>
-                    <div>{t("totalCobrado")}: {formatCurrency(financiero.totalCobrado)}</div>
-                    <div>{t("saldoPendiente")}: {formatCurrency(financiero.pendingBalance)}</div>
+                    <div>{t("totalPresupuestado")}: {fmt.currency(financiero.totalPresupuestado)}</div>
+                    <div>{t("totalCobrado")}: {fmt.currency(financiero.totalCobrado)}</div>
+                    <div>{t("saldoPendiente")}: {fmt.currency(financiero.pendingBalance)}</div>
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">{t("sinPagos")}</p>

@@ -34,6 +34,7 @@ authoritative, up-to-date service list, ports, and credentials.
 │   - notaire-postgres  │◄───────┤   Loki :3100          │
 │   - notaire-logs      │        │   (log storage)       │
 │   - notaire-auth      │        └───────────┬────────────┘
+│   - notaire-security  │
 └───────────────────────┘                    ▲
                                              ▲
                                              │

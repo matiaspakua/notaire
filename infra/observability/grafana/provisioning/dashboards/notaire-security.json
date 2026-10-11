@@ -1,0 +1,99 @@
+{
+  "title": "Notaire Security Posture",
+  "version": 1,
+  "uid": "notaire-security",
+  "description": "Login abuse signals and firing security alerts. CVE triage stays on the GitHub Security tab.",
+  "tags": ["notaire", "security"],
+  "schemaVersion": 39,
+  "timezone": "browser",
+  "editable": true,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "links": [
+    {
+      "title": "Authentication",
+      "type": "link",
+      "url": "/d/notaire-auth",
+      "icon": "dashboard",
+      "targetBlank": false
+    }
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "type": "gauge",
+      "title": "Login failure ratio",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "100 * sum(rate(notaire_operation_total{operation=\"login\",status!=\"success\"}[5m])) / clamp_min(sum(rate(notaire_operation_total{operation=\"login\"}[5m])), 0.0001)",
+          "legendFormat": "failure %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "noValue": "no data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 25 },
+              { "color": "red", "value": 50 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Bad credentials (1h)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(increase(notaire_operation_total{operation=\"login\",status=\"bad_credentials\"}[1h]))",
+          "legendFormat": "bad_credentials"
+        }
+      ],
+      "fieldConfig": { "defaults": { "noValue": "0" } }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Locked logins (1h)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(increase(notaire_operation_total{operation=\"login\",status=\"locked\"}[1h]))",
+          "legendFormat": "locked"
+        }
+      ],
+      "fieldConfig": { "defaults": { "noValue": "0" } }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Firing security alerts",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "count(ALERTS{alertstate=\"firing\",alertname=~\"HighLoginFailureRate|SuspiciousLoginActivity|LoginLockoutSpike\"}) or vector(0)",
+          "legendFormat": "firing"
+        }
+      ],
+      "description": "HighLoginFailureRate, SuspiciousLoginActivity, LoginLockoutSpike",
+      "fieldConfig": { "defaults": { "noValue": "0" } }
+    }
+  ]
+}

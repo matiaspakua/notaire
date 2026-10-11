@@ -5,12 +5,13 @@ seguridad, observabilidad, DevSecOps y deployment.
 
 ## Estructura
 
-| Carpeta | Contenido |
+| Entrada | Contenido |
 |---------|-----------|
 | [`201-SAD/`](201-SAD/) | Software Architecture Document, estructurado según arc42 |
 | [`202-ADR/`](202-ADR/) | Architecture Decision Records — decisiones arquitectónicas relevantes |
 | [`203-design/`](203-design/) | Diseño de API y sistema de diseño (design system) del frontend |
-| [`204-diagrams/`](204-diagrams/) | Diagramas PlantUML: casos de uso, clases, estados, secuencia |
+| [`203-design/CICLO-DE-VIDA.md`](203-design/CICLO-DE-VIDA.md) | Estados, secuencias y componentes del ciclo notarial (Mermaid) |
+| [`204-diagrams/`](204-diagrams/) | Diagramas. Los `.puml` son legado; el ciclo vigente está en diseño |
 | [`205-data-model/`](205-data-model/) | ERD, diccionario de datos y diagrama de compensación (integridad referencial) |
 | [`206-security/`](206-security/) | Autenticación, validación de entrada y prevención de inyección SQL |
 | [`207-monitoring/`](207-monitoring/) | Observabilidad: Prometheus, Grafana, Loki |
@@ -20,7 +21,8 @@ seguridad, observabilidad, DevSecOps y deployment.
 ## Punto de entrada
 
 El [SAD](201-SAD/sad.md) es el documento raíz: da contexto, restricciones, vista de bloques y
-runtime, y enlaza a los ADRs y diagramas específicos según corresponda.
+runtime, y enlaza a los ADRs y diagramas específicos según corresponda. El ciclo de estados
+del dominio está en [CICLO-DE-VIDA.md](203-design/CICLO-DE-VIDA.md).
 
 ## Fuente de verdad del esquema de base de datos
 

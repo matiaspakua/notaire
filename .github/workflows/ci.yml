@@ -302,6 +302,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
+      - name: Enforce secret-detection policy
+        run: |
+          python3 -m pip install --disable-pip-version-check pyyaml==6.0.1
+          python3 security/scan_secrets.py
+
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:

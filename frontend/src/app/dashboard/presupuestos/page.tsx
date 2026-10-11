@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, Receipt, ListChecks } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -35,11 +36,12 @@ import { PersonPicker } from "@/components/shared/PersonPicker";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
-import { formatDate, formatCurrency, fullName } from "@/lib/utils";
+import { fullName } from "@/lib/utils";
 import { BUDGET_STATUSES, DEFAULT_BUDGET_STATUS, budgetStatusLabelKey, normalizeBudgetStatus } from "@/lib/budget-status";
 import type { Presupuesto } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 const NO_TEMPLATE = "none";
 
@@ -54,6 +56,7 @@ export default function PresupuestosPage() {
 }
 
 function PresupuestosList() {
+  const fmt = useFormat();
   const t = useTranslations("presupuestos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -185,12 +188,6 @@ function PresupuestosList() {
     setModalOpen(true);
   }
 
-  /** Translated label of a stored status; a value outside the vocabulary shows as stored (#1346). */
-  function statusLabel(status: string | undefined) {
-    const code = normalizeBudgetStatus(status);
-    return code ? t(budgetStatusLabelKey(code)) : status || "—";
-  }
-
   async function handleSave() {
     try {
       if (isEditMode && editing.idBudget) {
@@ -230,7 +227,7 @@ function PresupuestosList() {
     {
       key: "fecha",
       header: tc("date"),
-      render: (p) => formatDate(p.date),
+      render: (p) => fmt.date(p.date),
     },
     {
       key: "persona",
@@ -240,12 +237,12 @@ function PresupuestosList() {
     {
       key: "monto",
       header: tc("amount"),
-      render: (p) => <span className="font-medium">{formatCurrency(p.propertyAmount)}</span>,
+      render: (p) => <span className="font-medium">{fmt.currency(p.propertyAmount)}</span>,
     },
     {
       key: "estado",
       header: tc("status"),
-      render: (p) => statusLabel(p.status),
+      render: (p) => <StatusBadge domain="budget" value={p.status} />,
     },
     {
       key: "actions",
@@ -460,11 +457,11 @@ function PresupuestosList() {
                     </div>
                     <div>
                       <p className="text-muted-foreground">{tc("amount")} {t("resumen.total").toLowerCase()}</p>
-                      <p className="font-medium">{formatCurrency(resumen.total)}</p>
+                      <p className="font-medium">{fmt.currency(resumen.total)}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.saldo")}</p>
-                      <p className="font-medium">{formatCurrency(resumen.pendingBalance)}</p>
+                      <p className="font-medium">{fmt.currency(resumen.pendingBalance)}</p>
                     </div>
                   </div>
                 </FormSection>
@@ -487,8 +484,8 @@ function PresupuestosList() {
                         {(resumen.payments ?? []).map((pago) => (
                           <TableRow key={pago.idPayment}>
                             <TableCell>{pago.idPayment}</TableCell>
-                            <TableCell>{formatCurrency(pago.amount)}</TableCell>
-                            <TableCell>{formatDate(pago.date)}</TableCell>
+                            <TableCell>{fmt.currency(pago.amount)}</TableCell>
+                            <TableCell>{fmt.date(pago.date)}</TableCell>
                             <TableCell>{pago.notes ?? "—"}</TableCell>
                           </TableRow>
                         ))}
@@ -554,7 +551,7 @@ function PresupuestosList() {
                     <SelectContent>
                       {catalogoItems.map((item) => (
                         <SelectItem key={item.idItem} value={item.idItem!.toString()}>
-                          {item.name} — {formatCurrency(item.value)}
+                          {item.name} — {fmt.currency(item.value)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -591,14 +588,14 @@ function PresupuestosList() {
                       {presupuestoItems.map((item) => (
                         <TableRow key={item.idItem}>
                           <TableCell>{item.name}</TableCell>
-                          <TableCell>{formatCurrency(item.value)}</TableCell>
+                          <TableCell>{fmt.currency(item.value)}</TableCell>
                           <TableCell>{item.percentage ?? 0}%</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                   <div className="flex justify-end pt-2 text-sm font-medium" data-testid="items-subtotal">
-                    {t("items.subtotal")}: {formatCurrency(itemsSubtotal)}
+                    {t("items.subtotal")}: {fmt.currency(itemsSubtotal)}
                   </div>
                 </>
               )}

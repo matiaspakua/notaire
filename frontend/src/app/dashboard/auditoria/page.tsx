@@ -10,9 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuditoria } from "@/hooks/useAuditoria";
 import type { RegistroAuditoria } from "@/types";
-import { formatInstant } from "@/lib/dates";
 import { AUDIT_MODULES } from "@/lib/audit-modules";
 import { PAGE_SIZE_OPTIONS } from "@/components/shared/Pagination";
+import { useFormat } from "@/hooks/useFormat";
 
 const DEFAULT_SIZE = PAGE_SIZE_OPTIONS[0];
 
@@ -30,6 +30,7 @@ export default function AuditoriaPage() {
 }
 
 function AuditoriaList() {
+  const fmt = useFormat();
   const t = useTranslations("auditoria");
   const tc = useTranslations("common");
   const router = useRouter();
@@ -81,7 +82,7 @@ function AuditoriaList() {
       header: t("fields.fecha"),
       render: (r) => (
         <span className="text-sm">
-          {formatInstant(r.date)}
+          {fmt.instant(r.date)}
         </span>
       ),
       className: "w-44",

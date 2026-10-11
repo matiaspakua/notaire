@@ -1306,5 +1306,13 @@
   },
   "workflowViewer": {
     "empty": "Sin nodos. Agrega estados al workflow."
+  },
+  "status": {
+    "folio": {
+      "nuevo": "Nuevo",
+      "utilizado": "Utilizado",
+      "asignado": "Asignado a cuaderno",
+      "errose": "Errose"
+    }
   }
 }

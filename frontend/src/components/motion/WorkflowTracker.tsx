@@ -13,7 +13,7 @@ import type {
   WorkflowNode,
   WorkflowTransition,
 } from "@/types";
-import { formatCalendarDate } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 interface Props {
   trace: GestionWorkflowTrace;
@@ -200,6 +200,7 @@ interface NodeModalProps {
 }
 
 function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
+  const fmt = useFormat();
   const tw = useTranslations("dashboard.workflow");
   const nodeName = (id: number | undefined) =>
     trace.nodes.find((n) => n.id === id)?.statusManagementName ?? `#${id}`;
@@ -318,7 +319,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
                     style={{ backgroundColor: theme.colors.neutral[100] }}
                   >
                     <p className="font-medium" style={{ color: theme.colors.neutral[900] }}>
-                      {formatCalendarDate(h.date)}
+                      {fmt.date(h.date)}
                     </p>
                     {h.notes && (
                       <p className="mt-0.5" style={{ color: theme.colors.neutral[600] }}>
@@ -344,9 +345,9 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
                     data-testid="workflow-movement-entry"
                   >
                     <p className="font-medium" style={{ color: theme.colors.neutral[900] }}>
-                      {formatCalendarDate(m.dateEntry)}
+                      {fmt.date(m.dateEntry)}
                       {m.dateExit
-                        ? ` → ${formatCalendarDate(m.dateExit)}`
+                        ? ` → ${fmt.date(m.dateExit)}`
                         : ` → ${tw("reentry.open")}`}
                     </p>
                     {m.returnedObserved && (

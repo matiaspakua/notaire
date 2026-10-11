@@ -10,10 +10,10 @@
  */
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { formatDate } from "@/lib/utils";
 import { SearchCombobox } from "@/components/shared/SearchCombobox";
 import { useDeed, useDeedSearch, useRecentSignedDeeds } from "@/hooks/useDeedSearch";
 import type { Escritura } from "@/types";
+import { useFormat } from "@/hooks/useFormat";
 
 export interface DeedPickerProps {
   /** Selected deed id. */
@@ -31,6 +31,7 @@ export interface DeedPickerProps {
 
 export function DeedPicker({ value, onChange, exclude, allowClear = false, ...rest }: DeedPickerProps) {
   const t = useTranslations("deedPicker");
+  const fmt = useFormat();
   const [known, setKnown] = useState<Escritura | undefined>();
   const label = (d: Escritura) => t("option", { number: d.number ?? d.idDeed ?? "—" });
 
@@ -55,7 +56,7 @@ export function DeedPicker({ value, onChange, exclude, allowClear = false, ...re
       useSource={useSource}
       getKey={(d) => d.idDeed!}
       getLabel={label}
-      renderDetail={(d) => (d.dateDeedrecording ? formatDate(d.dateDeedrecording) : undefined)}
+      renderDetail={(d) => (d.dateDeedrecording ? fmt.date(d.dateDeedrecording) : undefined)}
       displayValue={current ? label(current) : ""}
       selectedKey={value}
       onSelect={(d) => { setKnown(d); onChange(d); }}

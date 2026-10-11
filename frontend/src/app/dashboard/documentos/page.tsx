@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { presentMutationError } from "@/lib/mutation-error";
-import { formatDate } from "@/lib/utils";
 import {
   useDocumentosPresentados,
   useCreateDocumentoPresentado,
@@ -39,8 +38,10 @@ import { useReingresoDocumentacion } from "@/hooks/useReingresoDocumentacion";
 import type { DocumentoPresentado } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue, todayInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 export default function DocumentosPage() {
+  const fmt = useFormat();
   const t = useTranslations("documentos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -125,7 +126,7 @@ export default function DocumentosPage() {
     {
       key: "fecha",
       header: tc("date"),
-      render: (d) => formatDate(d.date),
+      render: (d) => fmt.date(d.date),
     },
     {
       key: "entregado",
