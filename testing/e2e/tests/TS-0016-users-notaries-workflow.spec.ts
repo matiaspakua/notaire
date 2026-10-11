@@ -69,8 +69,8 @@ test.describe("CU20 - Register a user", () => {
     await steps.thenModalIsVisible();
 
     // When — fill name via testid; tipo is a Select (combobox), activo defaults to true
-    await steps.page.getByTestId("input-name-user").fill(TestData.usuario.username);
-    await steps.page.getByLabel(/contraseña/i).fill(TestData.usuario.password);
+    await steps.page.getByTestId("input-name-user").fill(TestData.user.username);
+    await steps.page.getByLabel(/contraseña/i).fill(TestData.user.password);
     await steps.whenUserSubmitsForm();
 
     // Then

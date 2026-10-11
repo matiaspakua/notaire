@@ -247,7 +247,7 @@ export async function createPerson(
 export async function createBudget(
   page: Page,
   personId: number,
-  _conceptoId?: number,
+  _conceptId?: number,
   overrides: Partial<BudgetPayload> = {},
 ): Promise<ApiResult<{ idBudget: number }>> {
   return apiPost(page, "/budgets", {
@@ -735,9 +735,9 @@ export async function brunoGetBudgetsByPerson(
 
 export async function brunoGetManagementsByClient(
   page: Page,
-  clienteId: number,
+  clientId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/managements/client/${clienteId}`);
+  return apiGet(page, `/managements/client/${clientId}`);
 }
 
 export async function brunoGetHistoryByManagement(
@@ -756,9 +756,9 @@ export async function brunoSearchPeople(
 
 export async function brunoGetAuditRecords(
   page: Page,
-  usuarioId: number,
+  userId: number,
 ): Promise<ApiResult> {
-  return apiGet(page, `/audit-log/user/${usuarioId}`);
+  return apiGet(page, `/audit-log/user/${userId}`);
 }
 
 export async function brunoGetCurrentManagementStatus(

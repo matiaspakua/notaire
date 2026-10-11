@@ -29,13 +29,13 @@ interface CuCheck {
 // ──────────────────────────────────────────────
 
 // Helpers to create dynamic paths using seed data
-const seedPersonId = () => Number(process.env.E2E_SEED_PERSONA_ID || "1");
-const seedBudgetId = () => Number(process.env.E2E_SEED_PRESUPUESTO_ID || "1");
-const seedManagementId = () => Number(process.env.E2E_SEED_GESTION_ID || "1");
-const seedConceptId = () => Number(process.env.E2E_SEED_CONCEPTO_ID || "1");
-const seedUserId = () => Number(process.env.E2E_SEED_USUARIO_ID || "1");
+const seedPersonId = () => Number(process.env.E2E_SEED_PERSON_ID || "1");
+const seedBudgetId = () => Number(process.env.E2E_SEED_BUDGET_ID || "1");
+const seedManagementId = () => Number(process.env.E2E_SEED_MANAGEMENT_ID || "1");
+const seedConceptId = () => Number(process.env.E2E_SEED_CONCEPT_ID || "1");
+const seedUserId = () => Number(process.env.E2E_SEED_USER_ID || "1");
 const seedFolioId = () => Number(process.env.E2E_SEED_FOLIO_ID || "1");
-const seedStatusManagementId = () => Number(process.env.E2E_SEED_ESTADO_GESTION_ID || "1");
+const seedManagementStatusId = () => Number(process.env.E2E_SEED_MANAGEMENT_STATUS_ID || "1");
 
 const CU_CHECKS: CuCheck[] = [
   // ── Auth / System ──

@@ -21,13 +21,13 @@ interface SeedData {
   seedManagementId: number | null;
   seedDeedId: number | null;
   seedConceptId: number | null;
-  seedTypeProcedureId: number | null;
-  seedStatusManagementId: number | null;
-  seedTypeDocumentId: number | null;
-  seedUsuarioId: number | null;
+  seedProcedureTypeId: number | null;
+  seedManagementStatusId: number | null;
+  seedDocumentTypeId: number | null;
+  seedUserId: number | null;
   seedFolioId: number | null;
   seedSubstitutionId: number | null;
-  seedPagoId: number | null;
+  seedPaymentId: number | null;
   seedTestimonyId: number | null;
 }
 
@@ -40,13 +40,13 @@ export const seedData: SeedData = {
   seedManagementId: null,
   seedDeedId: null,
   seedConceptId: null,
-  seedTypeProcedureId: null,
-  seedStatusManagementId: null,
-  seedTypeDocumentId: null,
-  seedUsuarioId: null,
+  seedProcedureTypeId: null,
+  seedManagementStatusId: null,
+  seedDocumentTypeId: null,
+  seedUserId: null,
   seedFolioId: null,
   seedSubstitutionId: null,
-  seedPagoId: null,
+  seedPaymentId: null,
   seedTestimonyId: null,
 };
 
@@ -135,7 +135,7 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   );
   if (ttResult.ok && ttResult.data?.idProcedureType) {
-    seedData.seedTypeProcedureId = ttResult.data.idProcedureType;
+    seedData.seedProcedureTypeId = ttResult.data.idProcedureType;
   }
 
   // 2. Create a concept — ConceptController accepts a DtoConcept (name, value, percentage).
@@ -203,7 +203,7 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   );
   if (usrResult.ok && usrResult.data?.idUser) {
-    seedData.seedUsuarioId = usrResult.data.idUser;
+    seedData.seedUserId = usrResult.data.idUser;
   }
 
   // 6. Create a folio — FolioController's FolioRequest is (number, year, status, notes,
@@ -234,7 +234,7 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   );
   if (statusResult.ok && statusResult.data?.idManagementStatus) {
-    seedData.seedStatusManagementId = statusResult.data.idManagementStatus;
+    seedData.seedManagementStatusId = statusResult.data.idManagementStatus;
   }
 }
 
@@ -268,21 +268,21 @@ async function globalSetup(): Promise<void> {
       personId: seedData.seedPersonId,
       budgetId: seedData.seedBudgetId,
       conceptId: seedData.seedConceptId,
-      procedureTypeId: seedData.seedTypeProcedureId,
-      usuarioId: seedData.seedUsuarioId,
+      procedureTypeId: seedData.seedProcedureTypeId,
+      userId: seedData.seedUserId,
       folioId: seedData.seedFolioId,
-      managementStatusId: seedData.seedStatusManagementId,
+      managementStatusId: seedData.seedManagementStatusId,
     });
 
     // Step 3: Export seed data to environment for test specs
     process.env.E2E_TEST_ID = String(seedData.testId);
-    process.env.E2E_SEED_PERSONA_ID = String(seedData.seedPersonId ?? "");
-    process.env.E2E_SEED_PRESUPUESTO_ID = String(seedData.seedBudgetId ?? "");
-    process.env.E2E_SEED_CONCEPTO_ID = String(seedData.seedConceptId ?? "");
-    process.env.E2E_SEED_TIPO_TRAMITE_ID = String(seedData.seedTypeProcedureId ?? "");
-    process.env.E2E_SEED_USUARIO_ID = String(seedData.seedUsuarioId ?? "");
+    process.env.E2E_SEED_PERSON_ID = String(seedData.seedPersonId ?? "");
+    process.env.E2E_SEED_BUDGET_ID = String(seedData.seedBudgetId ?? "");
+    process.env.E2E_SEED_CONCEPT_ID = String(seedData.seedConceptId ?? "");
+    process.env.E2E_SEED_PROCEDURE_TYPE_ID = String(seedData.seedProcedureTypeId ?? "");
+    process.env.E2E_SEED_USER_ID = String(seedData.seedUserId ?? "");
     process.env.E2E_SEED_FOLIO_ID = String(seedData.seedFolioId ?? "");
-    process.env.E2E_SEED_ESTADO_GESTION_ID = String(seedData.seedStatusManagementId ?? "");
+    process.env.E2E_SEED_MANAGEMENT_STATUS_ID = String(seedData.seedManagementStatusId ?? "");
 
     // Persist JWT for workers — process.env set here is not inherited by test
     // workers, and mid-suite login 429 (lockout) must not strand later specs.

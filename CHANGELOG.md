@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English E2E seed identifiers** (#1490, CU75):
+  Playwright seed env vars are `E2E_SEED_PERSON_ID`, `E2E_SEED_BUDGET_ID`,
+  `E2E_SEED_CONCEPT_ID`, `E2E_SEED_PROCEDURE_TYPE_ID`, `E2E_SEED_USER_ID`,
+  and `E2E_SEED_MANAGEMENT_STATUS_ID`. `TestData` keys match the live
+  payloads (`firstName`, `heading`, `propertyAmount`). Stored labels stay,
+  including `Firmada`, `Soltero`, `Masculino`, `EMPLEADO`, `Habilitado`,
+  `Efectivo`, `Pendiente`, and `DNI`. Spanish form labels such as
+  `contraseña` stay because the default locale is Spanish.
 - **English frontend-test and error-handling samples** (#1490, CU75):
   `FRONTEND-TESTING-GUIDE.md` names `managementsKeys`,
   `substitutions-reports.test.ts`, and the current `TS-nnnn` specs.

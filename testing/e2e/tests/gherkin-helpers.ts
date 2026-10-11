@@ -301,71 +301,71 @@ export class GherkinSteps {
  */
 export const TestData = {
   person: {
-    nombre: "Juan",
-    apellido: "Pérez",
-    tipoIdentificacion: "DNI",
-    numberIdentification: "12345678",
-    telefono: "1234567890",
-    correo: "juan.perez@test.com",
-    nacionalidad: "Argentina",
-    fechaNacimiento: "1990-01-01",
-    cuit: "20-12345678-9",
+    firstName: "Juan",
+    lastName: "Pérez",
+    identificationType: "DNI",
+    identificationNumber: "12345678",
+    phone: "1234567890",
+    email: "juan.perez@test.com",
+    nationality: "Argentina",
+    birthDate: "1990-01-01",
+    taxId: "20-12345678-9",
   },
   client: {
-    nacionalidad: "Argentina",
-    fechaNacimiento: "1990-01-01",
-    cuit: "20-12345678-9",
-    estadoCivil: "Soltero",
-    sexo: "Masculino",
-    ocupacion: "Empleado",
-    domicilio: "Calle Falsa 123",
+    nationality: "Argentina",
+    birthDate: "1990-01-01",
+    taxId: "20-12345678-9",
+    maritalStatus: "Soltero",
+    sex: "Masculino",
+    occupation: "Empleado",
+    address: "Calle Falsa 123",
   },
   budget: {
-    typeProcedure: "Deed",
-    notes: "Presupuesto de prueba",
-    fecha: new Date().toISOString().split("T")[0],
-    monto: 1000,
+    procedureType: "Deed",
+    notes: "Test budget",
+    date: new Date().toISOString().split("T")[0],
+    propertyAmount: 1000,
   },
   management: {
-    numberManagement: "TEST-001",
-    detalle: "Gestión de prueba",
-    fechaInicio: new Date().toISOString().split("T")[0],
+    number: "TEST-001",
+    heading: "Test management",
+    startDate: new Date().toISOString().split("T")[0],
   },
   deed: {
-    numberDeed: "ESC-001",
-    fecha: new Date().toISOString().split("T")[0],
-    cuerpo: "Contenido de la escritura de prueba",
-    estado: "Firmada",
+    number: "ESC-001",
+    date: new Date().toISOString().split("T")[0],
+    body: "Test deed body",
+    status: "Firmada",
   },
-  usuario: {
+  user: {
     username: "testuser",
     password: "Test1234!",
-    tipo: "EMPLEADO",
-    estado: "Habilitado",
+    type: "EMPLEADO",
+    status: "Habilitado",
   },
   substitution: {
-    fechaInicio: new Date().toISOString().split("T")[0],
-    motivo: "Substitution de prueba",
+    startDate: new Date().toISOString().split("T")[0],
+    reason: "Test substitution",
   },
-  pago: {
-    monto: 5000,
-    formaPago: "Efectivo",
-    notes: "Payment de prueba E2E",
+  payment: {
+    amount: 5000,
+    paymentMethod: "Efectivo",
+    notes: "E2E test payment",
   },
   testimony: {
-    fecha: new Date().toISOString().split("T")[0],
-    estado: "Pendiente",
+    date: new Date().toISOString().split("T")[0],
+    status: "Pendiente",
   },
-  documentPresentado: {
-    nombre: "Documento de prueba",
-    tieneDebt: false,
+  submittedDocument: {
+    name: "Test document",
+    hasDebt: false,
   },
-  catalogo: {
-    typeProcedure: { nombre: "Test Procedure", descripcion: "Catálogo de prueba" },
-    typeDocument: { nombre: "Test Documento", descripcion: "Catálogo de prueba" },
-    concept: { nombre: "Test Concept", descripcion: "Catálogo de prueba", valor: 100 },
-    statusManagement: { nombre: "Test Estado", descripcion: "Catálogo de prueba" },
-    folio: { numero: 9999, disponible: true },
+  catalog: {
+    procedureType: { name: "Test Procedure", description: "Test catalog" },
+    documentType: { name: "Test document type", description: "Test catalog" },
+    concept: { name: "Test Concept", description: "Test catalog", value: 100 },
+    managementStatus: { name: "Test status", description: "Test catalog" },
+    folio: { number: 9999, available: true },
   },
 };
 
@@ -374,13 +374,13 @@ export const TestData = {
  */
 export function getSeedId(entity: string): number | null {
   const map: Record<string, string> = {
-    person: "E2E_SEED_PERSONA_ID",
-    budget: "E2E_SEED_PRESUPUESTO_ID",
-    concept: "E2E_SEED_CONCEPTO_ID",
-    type_procedure: "E2E_SEED_TIPO_TRAMITE_ID",
-    usuario: "E2E_SEED_USUARIO_ID",
+    person: "E2E_SEED_PERSON_ID",
+    budget: "E2E_SEED_BUDGET_ID",
+    concept: "E2E_SEED_CONCEPT_ID",
+    procedure_type: "E2E_SEED_PROCEDURE_TYPE_ID",
+    user: "E2E_SEED_USER_ID",
     folio: "E2E_SEED_FOLIO_ID",
-    status_management: "E2E_SEED_ESTADO_GESTION_ID",
+    management_status: "E2E_SEED_MANAGEMENT_STATUS_ID",
   };
   const envKey = map[entity];
   if (!envKey) return null;
