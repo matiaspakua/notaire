@@ -48,12 +48,15 @@ services:
     container_name: devsecops-sonarqube
     restart: unless-stopped
     ports:
-      - "9000:9000"
+      # Loopback only: anonymous browse (#1413) must not be LAN-reachable.
+      - "127.0.0.1:9000:9000"
     environment:
       - SONAR_JDBC_URL=jdbc:postgresql://sonar-db:5432/sonar
       - SONAR_JDBC_USERNAME=${SONAR_DB_USER:-sonar}
       - SONAR_JDBC_PASSWORD=${SONAR_DB_PASSWORD:-sonar}
       - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      # Local browse without login; analysis still uses a token (run-sonar.sh).
+      - SONAR_FORCEAUTHENTICATION=false
     ulimits:
       nofile:
         soft: 65536
@@ -245,7 +248,8 @@ services:
     container_name: devsecops-grafana
     restart: unless-stopped
     ports:
-      - "3001:3000"
+      # Loopback only: anonymous Admin (#1413) must not be LAN-reachable.
+      - "127.0.0.1:3001:3000"
     volumes:
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./grafana/provisioning:/etc/grafana/provisioning

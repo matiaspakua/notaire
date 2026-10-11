@@ -10,6 +10,7 @@
 - Drill-down dashboards `notaire-infra-resources`, `notaire-frontend`, `notaire-observability-health`, `notaire-traces`
 - Overview dashboards `notaire-stack-status` (whole stack) and `notaire-status` (Notaire only)
 - Specialist dashboards `notaire-backend`, `notaire-postgres`, `notaire-auth`, `notaire-logs`
+- Local Grafana/SonarQube: anonymous browse (Grafana Admin, Sonar `forceAuthentication=false`), ports bound to `127.0.0.1` (#1413; guard `infra/tests/test_local_tools_no_login.py`). Prod/Kustomize stay authenticated.
 
 ## Seams (what this module reads from outside)
 
