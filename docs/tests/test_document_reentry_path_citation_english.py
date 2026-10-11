@@ -40,6 +40,21 @@ EXTERNAL = (
     "`GET/PUT /api/v1/gestiones/{id}/documentos-entidades-externas"
     "[/{idDocumentoPresentado}]`"
 )
+CU53 = (
+    ROOT
+    / "docs"
+    / "100-business"
+    / "102-use-cases"
+    / "CU53 - Modificar Gestión.md"
+)
+CU83 = (
+    ROOT
+    / "docs"
+    / "100-business"
+    / "102-use-cases"
+    / "CU83 – Definir Workflow de Estados y Transiciones.md"
+)
+TRANSITION = "`POST /api/v1/gestiones/{id}/transition`"
 
 
 class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
@@ -65,6 +80,17 @@ class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
         self.assertIn(EXTERNAL, text)
         self.assertIn(EXTERNAL.strip("`"), use_case)
         self.assertIn("`DOC-GESTION`", text)
+
+    def test_design_cites_the_path_cu53_and_cu83_still_name(self):
+        text = DESIGN.read_text(encoding="utf-8")
+        self.assertIn(TRANSITION, text)
+        self.assertIn(TRANSITION.strip("`"), CU53.read_text(encoding="utf-8"))
+        self.assertIn(TRANSITION.strip("`"), CU83.read_text(encoding="utf-8"))
+        self.assertIn("`DOC-GESTION`", text)
+        live = (
+            ROOT / "docs" / "200-architecture" / "203-design" / "GESTION.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("`POST /api/v1/managements/{id}/transition`", live)
 
 
 if __name__ == "__main__":
