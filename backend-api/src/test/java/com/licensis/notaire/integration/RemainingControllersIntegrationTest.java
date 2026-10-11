@@ -79,6 +79,7 @@ class RemainingControllersIntegrationTest {
                             .content("""
                                     {
                                       "name": "Pasaporte",
+                                      "characters": "9",
                                       "version": 0
                                     }
                                     """))
