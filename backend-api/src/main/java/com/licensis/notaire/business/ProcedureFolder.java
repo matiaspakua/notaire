@@ -110,7 +110,7 @@ public class ProcedureFolder implements Serializable {
 
     @Override
     public String toString() {
-        return "ProcedureFolder[ idCarpeta=" + idFolder + " ][ numero=" + number + " ][ estado=" + status + " ]";
+        return "ProcedureFolder[ idFolder=" + idFolder + " ][ number=" + number + " ][ status=" + status + " ]";
     }
 
     public DtoProcedureFolder getDto() {

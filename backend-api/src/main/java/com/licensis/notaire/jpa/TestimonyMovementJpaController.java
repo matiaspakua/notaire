@@ -75,7 +75,7 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
     public Boolean edit(TestimonyMovement testimonyMovement) throws ClassEliminatedException, ClassModifiedException
     {
         EntityManager em = null;
-        Boolean modificado = false;
+        Boolean modified = false;
         int version = 0;
         int oldVersion = 0;
         em = getEntityManager();
@@ -112,7 +112,7 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
                     fkIdTestimonyNew = em.merge(fkIdTestimonyNew);
                 }
                 em.getTransaction().commit();
-                modificado = true;
+                modified = true;
             }
             if (em != null)
             {
@@ -122,7 +122,7 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
         {
             throw new ClassEliminatedException();
         }
-        return modificado;
+        return modified;
     }
 
     public void destroy(Integer id) throws NonexistentEntityException

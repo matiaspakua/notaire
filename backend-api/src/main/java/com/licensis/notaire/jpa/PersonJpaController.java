@@ -963,10 +963,10 @@ public class PersonJpaController implements Serializable, JpaPersistence {
     /**
      * Looks up a notary by registration number.
      *
-     * @param miPerson person carrying the notary registration number
+     * @param notary person carrying the notary registration number
      * @return the matching notary, or null when none exists
      */
-    public Person findPersonNotary(Person miPerson) {
+    public Person findPersonNotary(Person notary) {
 
         EntityManager em = getEntityManager();
 
@@ -974,7 +974,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         Person person = null;
 
         Query query = em.createNamedQuery("Person.findByNotaryRegistrationNumber");
-        query.setParameter("notaryRegistrationNumber", miPerson.getNotaryRegistrationNumber());
+        query.setParameter("notaryRegistrationNumber", notary.getNotaryRegistrationNumber());
 
         listaPerson = query.getResultList();
 

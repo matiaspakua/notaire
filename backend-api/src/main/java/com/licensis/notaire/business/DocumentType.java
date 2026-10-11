@@ -183,59 +183,59 @@ public class DocumentType implements Serializable, Persistable<Integer>
         this.procedureTemplateList = procedureTemplateList;
     }
 
-    public void setAttributes(DtoDocumentType miDto)
+    public void setAttributes(DtoDocumentType dto)
     {
-        if (miDto.getIdDocumentType() != null)
+        if (dto.getIdDocumentType() != null)
         {
-            this.idDocumentType = miDto.getIdDocumentType();
+            this.idDocumentType = dto.getIdDocumentType();
         }
 
-        this.name = miDto.getName();
-        this.expires = miDto.isExpires();
+        this.name = dto.getName();
+        this.expires = dto.isExpires();
 
         if (this.expires)
         {
-            this.dueDays = miDto.getDueDays();
+            this.dueDays = dto.getDueDays();
         } else
         {
             this.dueDays = null;
         }
 
-        this.deliveredBy = miDto.getDeliveredBy();
+        this.deliveredBy = dto.getDeliveredBy();
         // Preserve current version / flags when omitted (nullable in the DTO).
         // Create path defaults enabled=true and returned=false in the controller.
-        if (miDto.getVersion() != null) {
-            this.version = miDto.getVersion();
+        if (dto.getVersion() != null) {
+            this.version = dto.getVersion();
         }
-        if (miDto.getEnabled() != null) {
-            enabled = miDto.getEnabled();
+        if (dto.getEnabled() != null) {
+            enabled = dto.getEnabled();
         }
-        if (miDto.getReturned() != null) {
-            returned = miDto.getReturned();
+        if (dto.getReturned() != null) {
+            returned = dto.getReturned();
         }
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoDocumentType getDto()
     {
-        DtoDocumentType miDto = new DtoDocumentType();
+        DtoDocumentType dto = new DtoDocumentType();
 
-        miDto.setIdDocumentType(this.idDocumentType);
-        miDto.setName(this.name);
-        miDto.setExpires(this.expires);
+        dto.setIdDocumentType(this.idDocumentType);
+        dto.setName(this.name);
+        dto.setExpires(this.expires);
 
-        if (miDto.isExpires())
+        if (dto.isExpires())
         {
-            miDto.setDueDays(this.dueDays);
+            dto.setDueDays(this.dueDays);
         }
 
-        miDto.setDeliveredBy(this.deliveredBy);
+        dto.setDeliveredBy(this.deliveredBy);
 
-        miDto.setVersion(version);
-        miDto.setEnabled(enabled);
-        miDto.setReturned(returned);
+        dto.setVersion(version);
+        dto.setEnabled(enabled);
+        dto.setReturned(returned);
 
-        return miDto;
+        return dto;
     }
 
     @Override

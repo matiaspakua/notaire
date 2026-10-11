@@ -198,38 +198,38 @@ public class Testimony implements Serializable, Persistable<Integer>
         this.copyList = copyList;
     }
 
-    public void setAttributes(DtoTestimony miDto)
+    public void setAttributes(DtoTestimony dto)
     {
 
-        if (miDto.getIdTestimony() != null)
+        if (dto.getIdTestimony() != null)
         {
-            idTestimony = miDto.getIdTestimony();
+            idTestimony = dto.getIdTestimony();
         }
 
-        number = miDto.getNumber();
-        notes = miDto.getNotes();
-        flagged = miDto.isFlagged();
-        verified = miDto.isVerified();
-        version = miDto.getVersion();
+        number = dto.getNumber();
+        notes = dto.getNotes();
+        flagged = dto.isFlagged();
+        verified = dto.isVerified();
+        version = dto.getVersion();
 
-        if (miDto.getDeed() != null)
+        if (dto.getDeed() != null)
         {
-            Deed miDeed = new Deed();
-            miDeed.setIdDeed(miDto.getDeed().getIdDeed());
+            Deed deed = new Deed();
+            deed.setIdDeed(dto.getDeed().getIdDeed());
 
-            fkIdDeed = miDeed;
+            fkIdDeed = deed;
         }
 
-        if (miDto.getTestimonyMovements() != null && !miDto.getTestimonyMovements().isEmpty())
+        if (dto.getTestimonyMovements() != null && !dto.getTestimonyMovements().isEmpty())
         {
             testimonyMovementList = new ArrayList<>();
 
-            for (Iterator<DtoTestimonyMovement> it = miDto.getTestimonyMovements().iterator(); it.hasNext();)
+            for (Iterator<DtoTestimonyMovement> it = dto.getTestimonyMovements().iterator(); it.hasNext();)
             {
                 DtoTestimonyMovement dtoTestimonyMovement = it.next();
-                TestimonyMovement miTestimonyMovement = new TestimonyMovement();
-                miTestimonyMovement.setAttributes(dtoTestimonyMovement);
-                testimonyMovementList.add(miTestimonyMovement);
+                TestimonyMovement testimonyMovement = new TestimonyMovement();
+                testimonyMovement.setAttributes(dtoTestimonyMovement);
+                testimonyMovementList.add(testimonyMovement);
             }
         }
     }
@@ -237,35 +237,35 @@ public class Testimony implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTestimony getDto()
     {
-        DtoTestimony miDto = new DtoTestimony();
+        DtoTestimony dto = new DtoTestimony();
 
-        miDto.setIdTestimony(idTestimony);
-        miDto.setNumber(number);
-        miDto.setNotes(notes);
-        miDto.setFlagged(flagged);
-        miDto.setVerified(verified);
-        miDto.setVersion(version);
+        dto.setIdTestimony(idTestimony);
+        dto.setNumber(number);
+        dto.setNotes(notes);
+        dto.setFlagged(flagged);
+        dto.setVerified(verified);
+        dto.setVersion(version);
 
         if (fkIdDeed != null)
         {
-            miDto.setDeed(fkIdDeed.getDto());
+            dto.setDeed(fkIdDeed.getDto());
         }
 
         if (testimonyMovementList != null && !testimonyMovementList.isEmpty())
         {
-            List<DtoTestimonyMovement> miLista = new ArrayList<>();
+            List<DtoTestimonyMovement> movementDtos = new ArrayList<>();
 
             for (Iterator<TestimonyMovement> it = testimonyMovementList.iterator(); it.hasNext();)
             {
                 TestimonyMovement testimonyMovement = it.next();
-                DtoTestimonyMovement miDtoTestimonyMovement = testimonyMovement.getDto();
-                miLista.add(miDtoTestimonyMovement);
+                DtoTestimonyMovement testimonyMovementDto = testimonyMovement.getDto();
+                movementDtos.add(testimonyMovementDto);
             }
 
-            miDto.setTestimonyMovements(miLista);
+            dto.setTestimonyMovements(movementDtos);
         }
 
-        return miDto;
+        return dto;
     }
 
     @Override
@@ -296,9 +296,9 @@ public class Testimony implements Serializable, Persistable<Integer>
     public String toString()
     {
         String deedId = fkIdDeed != null ? String.valueOf(fkIdDeed.getIdDeed()) : "null";
-        return "Testimony[ idTestimonio=" + idTestimony + " ]"
-                + "[ numero=" + number + " ]"
-                + "[ idEscritura=" + deedId + " ]";
+        return "Testimony[ idTestimony=" + idTestimony + " ]"
+                + "[ number=" + number + " ]"
+                + "[ idDeed=" + deedId + " ]";
     }
 
     public int getVersion()

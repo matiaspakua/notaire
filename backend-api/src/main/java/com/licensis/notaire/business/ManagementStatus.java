@@ -149,16 +149,16 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "ManagementStatus[ idEstadoGestion=" + idManagementStatus + " ]"
+        return "ManagementStatus[ idManagementStatus=" + idManagementStatus + " ]"
                 + "[ name=" + name + " ]";
     }
 
-    public void setAttribute(DtoManagementStatus miDto) throws InvalidDtoException {
-        if (miDto.isValid() == Boolean.TRUE) {
-            this.setIdManagementStatus(miDto.getIdManagementStatus());
-            this.setName(miDto.getName());
-            this.setNotes(miDto.getNotes());
-            this.version = miDto.getVersion();
+    public void setAttribute(DtoManagementStatus dto) throws InvalidDtoException {
+        if (dto.isValid() == Boolean.TRUE) {
+            this.setIdManagementStatus(dto.getIdManagementStatus());
+            this.setName(dto.getName());
+            this.setNotes(dto.getNotes());
+            this.version = dto.getVersion();
         } else {
             throw new InvalidDtoException("Dto invalido");
         }
@@ -166,14 +166,14 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoManagementStatus getDto() throws NullPointerException {
-        DtoManagementStatus miDto = new DtoManagementStatus();
+        DtoManagementStatus dto = new DtoManagementStatus();
 
-        miDto.setIdManagementStatus(this.getIdManagementStatus());
-        miDto.setName(this.getName());
-        miDto.setNotes(this.getNotes());
-        miDto.setVersion(this.getVersion());
+        dto.setIdManagementStatus(this.getIdManagementStatus());
+        dto.setName(this.getName());
+        dto.setNotes(this.getNotes());
+        dto.setVersion(this.getVersion());
 
-        return miDto;
+        return dto;
     }
 
     public int getVersion() {

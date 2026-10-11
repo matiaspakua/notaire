@@ -167,7 +167,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
 
     public boolean edit(Procedure procedure) throws IllegalOrphanException, NonexistentEntityException, Exception
     {
-        Boolean modificado = false;
+        Boolean modified = false;
         EntityManager em = null;
         try
         {
@@ -334,7 +334,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
                 }
             }
             em.getTransaction().commit();
-            modificado = true;
+            modified = true;
         }
         catch (Exception ex)
         {
@@ -356,12 +356,12 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return modificado;
+        return modified;
     }
 
     public Boolean editProcedure(Procedure procedureModificado)
     {
-        Boolean modificado = Boolean.FALSE;
+        Boolean modified = Boolean.FALSE;
 
         try
         {
@@ -376,18 +376,18 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
 
             em.getTransaction().commit();
             em.close();
-            modificado = Boolean.TRUE;
+            modified = Boolean.TRUE;
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        return modificado;
+        return modified;
     }
 
     public Boolean editProcedureManagementOnly(Procedure procedureModificado)
     {
-        Boolean modificado = Boolean.FALSE;
+        Boolean modified = Boolean.FALSE;
 
         try
         {
@@ -401,13 +401,13 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
 
             em.getTransaction().commit();
             em.close();
-            modificado = Boolean.TRUE;
+            modified = Boolean.TRUE;
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        return modificado;
+        return modified;
     }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
@@ -547,22 +547,22 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public Procedure encontrarProcedure(Integer id)
+    public Procedure findProcedureCopy(Integer id)
     {
         Procedure procedure = new Procedure();
         EntityManager em = getEntityManager();
         try
         {
-            Procedure miProcedure = em.find(Procedure.class, id);
+            Procedure found = em.find(Procedure.class, id);
 
-            procedure.setIdProcedure(miProcedure.getIdProcedure());
-            procedure.setFkIdDeed(miProcedure.getFkIdDeed());
-            procedure.setFkIdManagement(miProcedure.getFkIdManagement());
-            procedure.setFkIdProperty(miProcedure.getFkIdProperty());
-            procedure.setFkIdBudget(miProcedure.getFkIdBudget());
-            procedure.setFkIdProcedureType(miProcedure.getFkIdProcedureType());
-            procedure.setNotes(miProcedure.getNotes());
-            procedure.setVersion(miProcedure.getVersion());
+            procedure.setIdProcedure(found.getIdProcedure());
+            procedure.setFkIdDeed(found.getFkIdDeed());
+            procedure.setFkIdManagement(found.getFkIdManagement());
+            procedure.setFkIdProperty(found.getFkIdProperty());
+            procedure.setFkIdBudget(found.getFkIdBudget());
+            procedure.setFkIdProcedureType(found.getFkIdProcedureType());
+            procedure.setNotes(found.getNotes());
+            procedure.setVersion(found.getVersion());
         }
         finally
         {
@@ -571,29 +571,26 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         return procedure;
     }
 
-    public List<Procedure> encontrarProcedureBudget(Integer idBudget)
+    public List<Procedure> findProceduresByBudget(Integer idBudget)
     {
 
         EntityManager em = getEntityManager();
 
-        List<Procedure> miProcedure = null;
+        List<Procedure> procedures = null;
 
         try
         {
-            // Name of the @NamedQuery definido in nuestra clase
             Query q = em.createNamedQuery("Procedure.findByIdBudget");
-
-            //It step the name of the parametro of the query, and the valor a search.
             q.setParameter("idBudget", idBudget);
 
-            miProcedure = (List<Procedure>) q.getResultList();
+            procedures = (List<Procedure>) q.getResultList();
 
         }
         finally
         {
             em.close();
         }
-        return miProcedure;
+        return procedures;
     }
 
     public int getProcedureCount()
@@ -613,19 +610,18 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public Boolean asociarBudget(Procedure miProcedure)
+    public Boolean associateBudget(Procedure procedure)
     {
-        Boolean modificado = false;
+        Boolean modified = false;
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro a new transaccion
         tx = em.getTransaction();
         tx.begin();
 
         Query q = em.createQuery("UPDATE Procedure t SET t.fkIdBudget.idBudget = :idBudget WHERE t.idProcedure = :id");
-        q.setParameter("idBudget", miProcedure.getFkIdBudget().getIdBudget());
-        q.setParameter("id", miProcedure.getIdProcedure());
+        q.setParameter("idBudget", procedure.getFkIdBudget().getIdBudget());
+        q.setParameter("id", procedure.getIdProcedure());
 
         int updated = q.executeUpdate();
 
@@ -635,10 +631,10 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
 
         if (updated > 0)
         {
-            modificado = true;
+            modified = true;
         }
 
-        return modificado;
+        return modified;
     }
 
     @Override

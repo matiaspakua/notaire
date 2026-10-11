@@ -175,18 +175,18 @@ public class Property implements Serializable, Persistable<Integer> {
     }
 
     public DtoProperty getDto() {
-        DtoProperty miDto = new DtoProperty();
+        DtoProperty dto = new DtoProperty();
 
-        miDto.setAddress(this.getAddress());
-        miDto.setIdProperty(this.getIdProperty());
-        miDto.setCadastralDesignation(this.getCadastralDesignation());
-        miDto.setNotes(this.getNotes());
-        miDto.setFiscalAppraisal(this.getFiscalAppraisal());
-        miDto.setRegistrationNumber(this.getRegistrationNumber());
-        miDto.setVolumeFolioLandRecord(this.getVolumeFolioLandRecord());
-        miDto.setBoundaries(this.getBoundaries());
+        dto.setAddress(this.getAddress());
+        dto.setIdProperty(this.getIdProperty());
+        dto.setCadastralDesignation(this.getCadastralDesignation());
+        dto.setNotes(this.getNotes());
+        dto.setFiscalAppraisal(this.getFiscalAppraisal());
+        dto.setRegistrationNumber(this.getRegistrationNumber());
+        dto.setVolumeFolioLandRecord(this.getVolumeFolioLandRecord());
+        dto.setBoundaries(this.getBoundaries());
 
-        return miDto;
+        return dto;
     }
 
 
@@ -214,8 +214,8 @@ public class Property implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Property[ idInmueble=" + idProperty + " ]"
-                + "[ nomenclatura=" + cadastralDesignation + " ]";
+        return "Property[ idProperty=" + idProperty + " ]"
+                + "[ cadastralDesignation=" + cadastralDesignation + " ]";
     }
 
     public int getVersion() {

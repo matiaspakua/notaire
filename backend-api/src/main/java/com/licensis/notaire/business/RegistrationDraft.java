@@ -219,8 +219,8 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "RegistrationDraft[ idMinutaInscripcion=" + idRegistrationDraft + " ][ numero=" + number
-                + " ][ estado=" + status + " ]";
+        return "RegistrationDraft[ idRegistrationDraft=" + idRegistrationDraft + " ][ number=" + number
+                + " ][ status=" + status + " ]";
     }
 
     public DtoRegistrationDraft getDto() {

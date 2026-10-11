@@ -146,17 +146,17 @@ public class Concept implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoConcept getDto()
     {
-        DtoConcept miDto = new DtoConcept();
+        DtoConcept dto = new DtoConcept();
 
-        miDto.setIdConcept(this.getIdConcept());
-        miDto.setName(this.getName());
-        miDto.setValue(this.getValue());
-        miDto.setPercentage(this.getPercentage());
-        miDto.setVersion(this.version);
-        miDto.setEnabled(enabled);
-        miDto.setFixed(fixedConcept);
+        dto.setIdConcept(this.getIdConcept());
+        dto.setName(this.getName());
+        dto.setValue(this.getValue());
+        dto.setPercentage(this.getPercentage());
+        dto.setVersion(this.version);
+        dto.setEnabled(enabled);
+        dto.setFixed(fixedConcept);
 
-        return miDto;
+        return dto;
     }
 
     public void setAttributes(DtoConcept nuevoDto) throws InvalidDtoException

@@ -133,7 +133,7 @@ public class Identification implements Serializable
     @Override
     public String toString()
     {
-        return "Identification[ identificacionPK=" + identificationPK + " ]"
-                + "[ numero=" + number + " ]";
+        return "Identification[ identificationKey=" + identificationPK + " ]"
+                + "[ number=" + number + " ]";
     }
 }

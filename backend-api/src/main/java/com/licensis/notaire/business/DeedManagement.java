@@ -230,8 +230,8 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "DeedManagement[ idGestion=" + idManagement + " ]"
-                + "[ numero=" + number + " ]";
+        return "DeedManagement[ idManagement=" + idManagement + " ]"
+                + "[ number=" + number + " ]";
     }
 
 

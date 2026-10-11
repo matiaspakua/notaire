@@ -231,8 +231,8 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "TestimonyMovement[ idMovimientoTestimonio=" + idTestimonyMovement + " ]"
-                + "[ idTestimonio=" + fkIdTestimony.getIdTestimony() + " ]";
+        return "TestimonyMovement[ idTestimonyMovement=" + idTestimonyMovement + " ]"
+                + "[ idTestimony=" + fkIdTestimony.getIdTestimony() + " ]";
     }
 
     public int getVersion()
@@ -248,45 +248,45 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTestimonyMovement getDto()
     {
-        DtoTestimonyMovement miDto = new DtoTestimonyMovement();
+        DtoTestimonyMovement dto = new DtoTestimonyMovement();
 
-        miDto.setIdTestimonyMovement(idTestimonyMovement);
-        miDto.setDateEntry(dateEntry);
-        miDto.setDateRegistration(dateRegistration);
-        miDto.setDateExit(dateExit);
-        miDto.setRegistered(registered);
-        miDto.setCardNumber(cardNumber);
-        miDto.setNotes(notes);
-        miDto.setObservedByRegistry(observedByRegistry);
-        miDto.setVersion(version);
+        dto.setIdTestimonyMovement(idTestimonyMovement);
+        dto.setDateEntry(dateEntry);
+        dto.setDateRegistration(dateRegistration);
+        dto.setDateExit(dateExit);
+        dto.setRegistered(registered);
+        dto.setCardNumber(cardNumber);
+        dto.setNotes(notes);
+        dto.setObservedByRegistry(observedByRegistry);
+        dto.setVersion(version);
 
-        DtoTestimony miDtoTestimony = new DtoTestimony();
-        miDtoTestimony.setIdTestimony(fkIdTestimony.getIdTestimony());
-        miDto.setTestimony(miDtoTestimony);
+        DtoTestimony testimonyDto = new DtoTestimony();
+        testimonyDto.setIdTestimony(fkIdTestimony.getIdTestimony());
+        dto.setTestimony(testimonyDto);
 
-        return miDto;
+        return dto;
     }
 
-    public void setAttributes(DtoTestimonyMovement miDto)
+    public void setAttributes(DtoTestimonyMovement dto)
     {
 
-        if (miDto.getIdTestimonyMovement() != null)
+        if (dto.getIdTestimonyMovement() != null)
         {
-            idTestimonyMovement = miDto.getIdTestimonyMovement();
+            idTestimonyMovement = dto.getIdTestimonyMovement();
         }
 
-        dateEntry = miDto.getDateEntry();
-        dateRegistration = miDto.getDateRegistration();
-        dateExit = miDto.getDateExit();
-        registered = miDto.isRegistered();
-        cardNumber = miDto.getCardNumber();
-        notes = miDto.getNotes();
-        observedByRegistry = miDto.isObservedByRegistry();
-        version = miDto.getVersion();
+        dateEntry = dto.getDateEntry();
+        dateRegistration = dto.getDateRegistration();
+        dateExit = dto.getDateExit();
+        registered = dto.isRegistered();
+        cardNumber = dto.getCardNumber();
+        notes = dto.getNotes();
+        observedByRegistry = dto.isObservedByRegistry();
+        version = dto.getVersion();
 
-        if (miDto.getTestimony() != null)
+        if (dto.getTestimony() != null)
         {
-            fkIdTestimony = new Testimony(miDto.getTestimony().getIdTestimony());
+            fkIdTestimony = new Testimony(dto.getTestimony().getIdTestimony());
         }
     }
 }

@@ -442,26 +442,22 @@ public class Person implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Person[ idPersona=" + idPerson + " ]"
+        return "Person[ idPerson=" + idPerson + " ]"
                 + "[ name=" + name + " ]"
-                + "[ apellido=" + lastName + " ]";
+                + "[ lastName=" + lastName + " ]";
     }
 
 
 
-    public ArrayList<DtoDeedManagement> elimimarDuplicados(ArrayList<DtoDeedManagement> listaDtoDeed) {
+    public ArrayList<DtoDeedManagement> removeDuplicates(ArrayList<DtoDeedManagement> deedManagements) {
 
-        // Creamos un objeto HashSet
+        // A set drops duplicate managements.
         HashSet hs = new HashSet();
+        hs.addAll(deedManagements);
+        deedManagements.clear();
+        deedManagements.addAll(hs);
 
-        // It cargamos with the valores of the array, esto hace quite the repetidos
-        hs.addAll(listaDtoDeed);
-
-        // Limpiamos el array
-        listaDtoDeed.clear();
-        listaDtoDeed.addAll(hs);
-
-        return listaDtoDeed;
+        return deedManagements;
 
     }
 

@@ -139,7 +139,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
      */
     public Boolean edit(DeedManagement managementParaModificar) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException
     {
-        Boolean modificado = Boolean.FALSE;
+        Boolean modified = Boolean.FALSE;
 
         int version;
         int oldVersion;
@@ -254,7 +254,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                     }
                 }
                 em.getTransaction().commit();
-                modificado = Boolean.TRUE;
+                modified = Boolean.TRUE;
             }
         }
         finally
@@ -264,7 +264,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return modificado;
+        return modified;
     }
 
     /**

@@ -56,9 +56,9 @@ public class AuxiliaryProtocolController {
     @Operation(summary = "Start a deed of Auxiliary protocol on a folio available")
     public ResponseEntity<Object> iniciarDeed(@RequestBody IniciarDeedRequest request) {
         try {
-            Deed creada = protocoloAuxiliaryService.iniciarDeed(
+            Deed created = protocoloAuxiliaryService.iniciarDeed(
                     request.idFolio(), request.body(), new Date());
-            return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (BusinessValidationException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (ResourceNotFoundException e) {

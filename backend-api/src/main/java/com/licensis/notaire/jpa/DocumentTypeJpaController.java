@@ -91,7 +91,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
     public Boolean edit(DocumentType documentType) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
     {
         EntityManager em = null;
-        Boolean modificado = false;
+        Boolean modified = false;
         Integer version = -1;
         Integer oldVersion = -1;
 
@@ -160,7 +160,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
                 }
 
                 em.getTransaction().commit();
-                modificado = true;
+                modified = true;
             }
         } else
         {
@@ -172,7 +172,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
             em.close();
         }
 
-        return modificado;
+        return modified;
     }
 
     public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
@@ -278,7 +278,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
     {
         EntityManager em = getEntityManager();
 
-        List<DocumentType> miDocumentType = null;
+        List<DocumentType> documentType = null;
 
         try
         {
@@ -288,9 +288,9 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
             //It step the name of the parametro of the query, and the valor a search.
             q.setParameter("name", name);
 
-            miDocumentType = (List<DocumentType>) q.getResultList();
+            documentType = (List<DocumentType>) q.getResultList();
 
-            return miDocumentType;
+            return documentType;
 
         }
         finally

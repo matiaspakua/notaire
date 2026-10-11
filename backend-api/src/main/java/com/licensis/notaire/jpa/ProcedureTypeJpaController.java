@@ -133,7 +133,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
     public Boolean edit(ProcedureType procedureType) throws ClassModifiedException, ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
     {
 
-        Boolean modificado = false;
+        Boolean modified = false;
         Integer version = -1;
         Integer oldVersion = -1;
 
@@ -169,7 +169,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
 
                 em.getTransaction().commit();
                 em.close();
-                modificado = true;
+                modified = true;
 
             }
         } else
@@ -177,7 +177,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
             throw new ClassEliminatedException();
         }
 
-        return modificado;
+        return modified;
     }
 
     public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException

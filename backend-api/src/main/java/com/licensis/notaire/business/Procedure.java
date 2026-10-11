@@ -214,40 +214,40 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoProcedure getDto() {
-        DtoProcedure miDto = new DtoProcedure();
+        DtoProcedure dto = new DtoProcedure();
 
-        miDto.setIdProcedure(getIdProcedure());
-        miDto.setNotes(notes);
-        miDto.setProcedureType(fkIdProcedureType.getDto());
+        dto.setIdProcedure(getIdProcedure());
+        dto.setNotes(notes);
+        dto.setProcedureType(fkIdProcedureType.getDto());
 
         if (fkIdDeed != null) {
-            DtoDeed miDtoDeed = new DtoDeed();
+            DtoDeed deedDto = new DtoDeed();
 
-            miDtoDeed.setIdDeed(fkIdDeed.getIdDeed());
-            miDtoDeed.setNumber(fkIdDeed.getNumber());
+            deedDto.setIdDeed(fkIdDeed.getIdDeed());
+            deedDto.setNumber(fkIdDeed.getNumber());
 
-            miDto.setDeed(miDtoDeed);
+            dto.setDeed(deedDto);
         }
 
         if (fkIdManagement != null) {
-            DtoDeedManagement miDtoDeedManagement = new DtoDeedManagement();
+            DtoDeedManagement deedManagementDto = new DtoDeedManagement();
 
-            miDtoDeedManagement.setIdManagement(fkIdManagement.getIdManagement());
-            miDtoDeedManagement.setNumber(fkIdManagement.getNumber());
+            deedManagementDto.setIdManagement(fkIdManagement.getIdManagement());
+            deedManagementDto.setNumber(fkIdManagement.getNumber());
 
-            DtoPerson miNotary = new DtoPerson();
-            miNotary.setId(fkIdManagement.getFkIdNotaryPerson().getPersonId());
-            miNotary.setNotaryRegistrationNumber(fkIdManagement.getFkIdNotaryPerson().getNotaryRegistrationNumber());
+            DtoPerson notary = new DtoPerson();
+            notary.setId(fkIdManagement.getFkIdNotaryPerson().getPersonId());
+            notary.setNotaryRegistrationNumber(fkIdManagement.getFkIdNotaryPerson().getNotaryRegistrationNumber());
 
-            miDtoDeedManagement.setPersonNotary(miNotary);
+            deedManagementDto.setPersonNotary(notary);
 
-            miDto.setDeedManagement(miDtoDeedManagement);
+            dto.setDeedManagement(deedManagementDto);
         }
 
         if (fkIdProperty != null) {
-            miDto.setProperty(fkIdProperty.getDto());
+            dto.setProperty(fkIdProperty.getDto());
         } else {
-            miDto.setProperty(null);
+            dto.setProperty(null);
         }
 
         if (this.fkIdBudget != null) {
@@ -255,12 +255,12 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
             budget.setIdBudget(fkIdBudget.getIdBudget());
 
-            miDto.setBudget(budget);
+            dto.setBudget(budget);
         }
 
         this.submittedDocumentList = new ArrayList<>();
 
-        return miDto;
+        return dto;
     }
 
     public DtoSubmittedDocument setDtoDocument(SubmittedDocument document) {
@@ -288,36 +288,36 @@ public class Procedure implements Serializable, Persistable<Integer> {
         return dtoSubmittedDocument;
     }
 
-    public DtoPerson getDtoPerson(Person miPerson) {
+    public DtoPerson getDtoPerson(Person person) {
 
         DtoPerson dtoPerson = new DtoPerson();
 
         // Version of the objeto
-        dtoPerson.setVersion(miPerson.getVersion());
-        dtoPerson.setId(miPerson.getPersonId());
-        dtoPerson.setFirstName(miPerson.getFirstName());
-        dtoPerson.setLastName(miPerson.getLastName());
-        dtoPerson.setTaxId(miPerson.getTaxId());
-        dtoPerson.setEmail(miPerson.getEmail());
-        dtoPerson.setIsClient(miPerson.getIsClient());
-        dtoPerson.setMaritalStatus(miPerson.getMaritalStatus());
-        dtoPerson.setBirthDate(miPerson.getBirthDate());
-        dtoPerson.setNationality(miPerson.getNationality());
-        dtoPerson.setIdentificationNumber(miPerson.getIdentificationNumber());
-        dtoPerson.setMarriageCount(miPerson.getMarriageCount());
-        dtoPerson.setOccupation(miPerson.getOccupation());
-        dtoPerson.setAddress(miPerson.getAddress());
-        dtoPerson.setNotaryRegistrationNumber(miPerson.getNotaryRegistrationNumber());
-        dtoPerson.setSex(miPerson.getSex());
-        dtoPerson.setPhone(miPerson.getPhone());
+        dtoPerson.setVersion(person.getVersion());
+        dtoPerson.setId(person.getPersonId());
+        dtoPerson.setFirstName(person.getFirstName());
+        dtoPerson.setLastName(person.getLastName());
+        dtoPerson.setTaxId(person.getTaxId());
+        dtoPerson.setEmail(person.getEmail());
+        dtoPerson.setIsClient(person.getIsClient());
+        dtoPerson.setMaritalStatus(person.getMaritalStatus());
+        dtoPerson.setBirthDate(person.getBirthDate());
+        dtoPerson.setNationality(person.getNationality());
+        dtoPerson.setIdentificationNumber(person.getIdentificationNumber());
+        dtoPerson.setMarriageCount(person.getMarriageCount());
+        dtoPerson.setOccupation(person.getOccupation());
+        dtoPerson.setAddress(person.getAddress());
+        dtoPerson.setNotaryRegistrationNumber(person.getNotaryRegistrationNumber());
+        dtoPerson.setSex(person.getSex());
+        dtoPerson.setPhone(person.getPhone());
 
         DtoIdentificationType dtoIdentificationType = new DtoIdentificationType();
-        dtoIdentificationType.setIdIdentificationType(miPerson.getFkIdIdentificationType().getIdIdentificationType());
+        dtoIdentificationType.setIdIdentificationType(person.getFkIdIdentificationType().getIdIdentificationType());
 
         dtoPerson.setDtoIdentificationType(dtoIdentificationType);
 
         dtoIdentificationType.setName(IdentificationTypeLookup.shared()
-                .nameOf(miPerson.getFkIdIdentificationType().getIdIdentificationType()));
+                .nameOf(person.getFkIdIdentificationType().getIdIdentificationType()));
 
         return dtoPerson;
     }
@@ -345,7 +345,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Procedure[ idTramite=" + getIdProcedure() + " ]";
+        return "Procedure[ idProcedure=" + getIdProcedure() + " ]";
     }
 
     @XmlTransient

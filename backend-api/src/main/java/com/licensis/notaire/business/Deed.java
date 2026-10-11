@@ -258,17 +258,17 @@ public class Deed implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoDeed getDto()
     {
-        DtoDeed miDtoDeed = new DtoDeed();
+        DtoDeed deedDto = new DtoDeed();
 
-        miDtoDeed.setIdDeed(idDeed);
-        miDtoDeed.setDateDeedrecording(dateDeedrecording);
-        miDtoDeed.setNumber(number);
-        miDtoDeed.setBody(body);
-        miDtoDeed.setStatus(status);
-        miDtoDeed.setRegistrationEntryNumber(registrationEntryNumber);
-        miDtoDeed.setDateRegistration(dateRegistration);
+        deedDto.setIdDeed(idDeed);
+        deedDto.setDateDeedrecording(dateDeedrecording);
+        deedDto.setNumber(number);
+        deedDto.setBody(body);
+        deedDto.setStatus(status);
+        deedDto.setRegistrationEntryNumber(registrationEntryNumber);
+        deedDto.setDateRegistration(dateRegistration);
 
-        miDtoDeed.setVersion(version);
+        deedDto.setVersion(version);
 
         if (folioList != null && !folioList.isEmpty())
         {
@@ -276,13 +276,13 @@ public class Deed implements Serializable, Persistable<Integer>
             for (Iterator<Folio> it = folioList.iterator(); it.hasNext();)
             {
                 Folio folio = it.next();
-                DtoFolio miDtoFolio = folio.getDto();
+                DtoFolio folioDto = folio.getDto();
 
-                miDtoDeed.getFolios().add(miDtoFolio);
+                deedDto.getFolios().add(folioDto);
             }
         } else
         {
-            miDtoDeed.setFolios(null);
+            deedDto.setFolios(null);
         }
 
         if (procedureList != null && !procedureList.isEmpty())
@@ -290,16 +290,16 @@ public class Deed implements Serializable, Persistable<Integer>
             for (Iterator<Procedure> it = procedureList.iterator(); it.hasNext();)
             {
                 Procedure procedure = it.next();
-                DtoProcedure miDtoProcedure = procedure.getDto();
+                DtoProcedure procedureDto = procedure.getDto();
 
-                miDtoDeed.getProcedures().add(miDtoProcedure);
+                deedDto.getProcedures().add(procedureDto);
             }
         } else
         {
-            miDtoDeed.setProcedures(null);
+            deedDto.setProcedures(null);
         }
 
-        return miDtoDeed;
+        return deedDto;
     }
 
     @Override
@@ -329,11 +329,11 @@ public class Deed implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Deed[ idEscritura=" + idDeed + " ]"
-                + "[ numero=" + number
-                + ", fecha escrituracion: " + this.dateDeedrecording
+        return "Deed[ idDeed=" + idDeed + " ]"
+                + "[ number=" + number
+                + ", deed recording date: " + this.dateDeedrecording
                 + ", date registration: " + this.dateRegistration
-                + ", Estado: " + this.status + " ]";
+                + ", status: " + this.status + " ]";
     }
 
     public int getVersion()

@@ -42,7 +42,7 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
 
     public Boolean create(ProcedureTemplate procedureTemplate) throws PreexistingEntityException
     {
-        Boolean creada = false;
+        Boolean created = false;
         if (procedureTemplate.getProcedureTemplatePK() == null)
         {
             procedureTemplate.setProcedureTemplatePK(new ProcedureTemplatePK());
@@ -78,7 +78,7 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
                 documentType = em.merge(documentType);
             }
             em.getTransaction().commit();
-            creada = true;
+            created = true;
         }
         catch (Exception ex)
         {
@@ -95,7 +95,7 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
                 em.close();
             }
         }
-        return creada;
+        return created;
     }
 
     public void edit(ProcedureTemplate procedureTemplate) throws NonexistentEntityException, Exception
@@ -302,10 +302,10 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
     /**
      * Elimina a Template of Procedure mediante a query DELETE.
      *
-     * @param miPlantilla, the Template of Procedure a delete.
+     * @param template, the Template of Procedure a delete.
      * @return True si se elimino, False de lo contrario.
      */
-    public Boolean deleteProcedureTemplate(ProcedureTemplate miTemplate)
+    public Boolean deleteProcedureTemplate(ProcedureTemplate template)
     {
 
         Boolean eliminada = false;
@@ -322,8 +322,8 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
         Query query = em.createQuery("DELETE FROM ProcedureTemplate p WHERE p.procedureTemplatePK.fkIdProcedureType = ?1 AND  p.procedureTemplatePK.fkIdDocumentType = ?2");
 
         //Seteo el parametro 1 y 2
-        query.setParameter(1, miTemplate.getProcedureTemplatePK().getFkIdProcedureType());
-        query.setParameter(2, miTemplate.getProcedureTemplatePK().getFkIdDocumentType());
+        query.setParameter(1, template.getProcedureTemplatePK().getFkIdProcedureType());
+        query.setParameter(2, template.getProcedureTemplatePK().getFkIdDocumentType());
 
         // Ejecuto el query
         deleted = query.executeUpdate();

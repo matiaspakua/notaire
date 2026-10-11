@@ -220,22 +220,22 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoProcedureType getDto() {
-        DtoProcedureType miDto = new DtoProcedureType();
+        DtoProcedureType dto = new DtoProcedureType();
 
-        miDto.setIdProcedureType(idProcedureType);
-        miDto.setName(name);
-        miDto.setIsArchived(isArchived);
-        miDto.setIsRegistered(isRegistered);
-        miDto.setAssociatesProperties(associatesProperties);
-        miDto.setNotes(notes);
-        miDto.setVersion(version);
-        miDto.setEnabled(enabled);
+        dto.setIdProcedureType(idProcedureType);
+        dto.setName(name);
+        dto.setIsArchived(isArchived);
+        dto.setIsRegistered(isRegistered);
+        dto.setAssociatesProperties(associatesProperties);
+        dto.setNotes(notes);
+        dto.setVersion(version);
+        dto.setEnabled(enabled);
         if (workflowDefinition != null) {
-            miDto.setWorkflowDefinitionId(workflowDefinition.getId());
-            miDto.setWorkflowDefinitionName(workflowDefinition.getName());
+            dto.setWorkflowDefinitionId(workflowDefinition.getId());
+            dto.setWorkflowDefinitionName(workflowDefinition.getName());
         }
 
-        return miDto;
+        return dto;
     }
 
     @Override
@@ -261,7 +261,7 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "ProcedureType[ idTipoTramite=" + idProcedureType + " ]"
+        return "ProcedureType[ idProcedureType=" + idProcedureType + " ]"
                 + "[ name=" + name + " ]";
     }
 

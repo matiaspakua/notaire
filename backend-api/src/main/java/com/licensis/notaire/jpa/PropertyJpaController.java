@@ -237,7 +237,7 @@ public class PropertyJpaController implements Serializable, JpaPersistence
         EntityManager em = getEntityManager();
 
         List<Property> properties = null;
-        Property miProperty = null;
+        Property property = null;
 
         Query query = em.createNamedQuery("Property.findByCadastralDesignation");
         query.setParameter("cadastralDesignation", dtoProperty.getCadastralDesignation());
@@ -246,10 +246,10 @@ public class PropertyJpaController implements Serializable, JpaPersistence
 
         if (properties != null && !properties.isEmpty())
         {
-            miProperty = properties.get(0);
+            property = properties.get(0);
         }
 
-        return miProperty;
+        return property;
     }
 
     public int getPropertyCount()

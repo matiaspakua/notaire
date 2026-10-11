@@ -45,7 +45,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
 
     public Boolean create(Deed deed)
     {
-        Boolean creada = false;
+        Boolean created = false;
 
         if (deed.getFolioList() == null)
         {
@@ -120,7 +120,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
                 }
             }
             em.getTransaction().commit();
-            creada = true;
+            created = true;
         }
         finally
         {
@@ -129,7 +129,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return creada;
+        return created;
     }
 
     public Boolean edit(Deed deed) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassEliminatedException
@@ -411,7 +411,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public Boolean modifyDeed(Deed miDeed) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyDeed(Deed deed) throws ClassModifiedException, ClassEliminatedException
     {
         EntityManager em = null;
         Boolean modificada = false;
@@ -421,12 +421,12 @@ public class DeedJpaController implements Serializable, JpaPersistence
 
         em = getEntityManager();
         em.getTransaction().begin();
-        Deed persistentDeed = em.find(Deed.class, miDeed.getIdDeed());
+        Deed persistentDeed = em.find(Deed.class, deed.getIdDeed());
 
         if (persistentDeed != null)
         {
             version = persistentDeed.getVersion(); // Version of the object in the database
-            oldVersion = miDeed.getVersion(); // Version of the object in memory
+            oldVersion = deed.getVersion(); // Version of the object in memory
 
             if (version != oldVersion) // Versions differ: someone else modified the object
             {
@@ -434,22 +434,22 @@ public class DeedJpaController implements Serializable, JpaPersistence
 
             }
 
-            persistentDeed.setBody(miDeed.getBody());
-            persistentDeed.setStatus(miDeed.getStatus());
-            persistentDeed.setDateDeedrecording(miDeed.getDateDeedrecording());
-            persistentDeed.setDateRegistration(miDeed.getDateRegistration());
+            persistentDeed.setBody(deed.getBody());
+            persistentDeed.setStatus(deed.getStatus());
+            persistentDeed.setDateDeedrecording(deed.getDateDeedrecording());
+            persistentDeed.setDateRegistration(deed.getDateRegistration());
 
             persistentDeed.setFolioList(new ArrayList<Folio>());
-            for (Iterator<Folio> it = miDeed.getFolioList().iterator(); it.hasNext();)
+            for (Iterator<Folio> it = deed.getFolioList().iterator(); it.hasNext();)
             {
                 Folio folio = it.next();
                 persistentDeed.getFolioList().add(folio);
             }
 
-            persistentDeed.setRegistrationEntryNumber(miDeed.getRegistrationEntryNumber());
-            persistentDeed.setNumber(miDeed.getNumber());
+            persistentDeed.setRegistrationEntryNumber(deed.getRegistrationEntryNumber());
+            persistentDeed.setNumber(deed.getNumber());
             persistentDeed.setProcedureList(new ArrayList<Procedure>());
-            for (Iterator<Procedure> it = miDeed.getProcedureList().iterator(); it.hasNext();)
+            for (Iterator<Procedure> it = deed.getProcedureList().iterator(); it.hasNext();)
             {
                 Procedure procedure = it.next();
                 persistentDeed.getProcedureList().add(procedure);
@@ -466,7 +466,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
         return modificada;
     }
 
-    public Boolean modifyDeedSimple(Deed miDeed) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyDeedSimple(Deed deed) throws ClassModifiedException, ClassEliminatedException
     {
         EntityManager em = null;
         Boolean modificada = false;
@@ -476,12 +476,12 @@ public class DeedJpaController implements Serializable, JpaPersistence
 
         em = getEntityManager();
         em.getTransaction().begin();
-        Deed persistentDeed = em.find(Deed.class, miDeed.getIdDeed());
+        Deed persistentDeed = em.find(Deed.class, deed.getIdDeed());
 
         if (persistentDeed != null)
         {
             version = persistentDeed.getVersion(); // Version of the object in the database
-            oldVersion = miDeed.getVersion(); // Version of the object in memory
+            oldVersion = deed.getVersion(); // Version of the object in memory
 
             if (version != oldVersion) // Versions differ: someone else modified the object
             {
@@ -489,12 +489,12 @@ public class DeedJpaController implements Serializable, JpaPersistence
 
             }
 
-            persistentDeed.setBody(miDeed.getBody());
-            persistentDeed.setStatus(miDeed.getStatus());
-            persistentDeed.setDateDeedrecording(miDeed.getDateDeedrecording());
-            persistentDeed.setDateRegistration(miDeed.getDateRegistration());
-            persistentDeed.setRegistrationEntryNumber(miDeed.getRegistrationEntryNumber());
-            persistentDeed.setNumber(miDeed.getNumber());
+            persistentDeed.setBody(deed.getBody());
+            persistentDeed.setStatus(deed.getStatus());
+            persistentDeed.setDateDeedrecording(deed.getDateDeedrecording());
+            persistentDeed.setDateRegistration(deed.getDateRegistration());
+            persistentDeed.setRegistrationEntryNumber(deed.getRegistrationEntryNumber());
+            persistentDeed.setNumber(deed.getNumber());
 
             em.getTransaction().commit();
             modificada = true;

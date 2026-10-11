@@ -43,7 +43,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
 
     public int create(Copy copy)
     {
-        int creada = -1;
+        int created = -1;
         if (copy.getFolioList() == null)
         {
             copy.setFolioList(new ArrayList<Folio>());
@@ -89,7 +89,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
                 folioListFolio = em.merge(folioListFolio);
             }
             em.getTransaction().commit();
-            creada = copy.getIdCopy();
+            created = copy.getIdCopy();
         }
         finally
         {
@@ -98,7 +98,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return creada;
+        return created;
     }
 
     public void edit(Copy copy) throws NonexistentEntityException, Exception
@@ -297,9 +297,9 @@ public class CopyJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public int createCopy(Copy miCopy)
+    public int createCopy(Copy copy)
     {
-        int creada = -1;
+        int created = -1;
 
         EntityManager em = null;
         try
@@ -307,10 +307,10 @@ public class CopyJpaController implements Serializable, JpaPersistence
             em = getEntityManager();
             em.getTransaction().begin();
 
-            em.persist(miCopy);
+            em.persist(copy);
 
             em.getTransaction().commit();
-            creada = miCopy.getIdCopy();
+            created = copy.getIdCopy();
         }
         finally
         {
@@ -319,7 +319,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return creada;
+        return created;
     }
 
     public List<Copy> searchCopiesTestimony(Integer idTestimony)

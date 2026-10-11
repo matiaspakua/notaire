@@ -138,6 +138,6 @@ public class Notebook implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Notebook[ idCuaderno=" + idNotebook + " ][ numero=" + number + " ][ anio=" + year + " ]";
+        return "Notebook[ idNotebook=" + idNotebook + " ][ number=" + number + " ][ year=" + year + " ]";
     }
 }

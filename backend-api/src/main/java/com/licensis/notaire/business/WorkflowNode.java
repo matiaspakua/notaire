@@ -147,6 +147,6 @@ public class WorkflowNode implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "WorkflowNode[id=" + id + ", tipo=" + type + "]";
+        return "WorkflowNode[id=" + id + ", type=" + type + "]";
     }
 }

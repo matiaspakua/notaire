@@ -318,8 +318,8 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
             submittedDocument.setName(document.getName());
             submittedDocument.setDeliveredBy(document.getDeliveredBy());
 
-            Procedure miProcedure = document.getFkIdProcedure();
-            submittedDocument.setFkIdProcedure(miProcedure);
+            Procedure procedure = document.getFkIdProcedure();
+            submittedDocument.setFkIdProcedure(procedure);
 
             em.persist(submittedDocument);
             em.flush();

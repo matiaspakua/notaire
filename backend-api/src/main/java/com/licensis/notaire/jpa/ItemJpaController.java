@@ -73,7 +73,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
     public Boolean edit(Item item) throws NonexistentEntityException, Exception
     {
         EntityManager em = null;
-        Boolean modificado = Boolean.FALSE;
+        Boolean modified = Boolean.FALSE;
         try
         {
             em = getEntityManager();
@@ -98,7 +98,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
                 fkIdBudgetNew = em.merge(fkIdBudgetNew);
             }
             em.getTransaction().commit();
-            modificado = Boolean.TRUE;
+            modified = Boolean.TRUE;
         }
         catch (Exception ex)
         {
@@ -121,7 +121,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
             }
         }
 
-        return modificado;
+        return modified;
     }
 
     public Boolean destroy(Integer id) throws NonexistentEntityException
@@ -249,7 +249,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
         return this.getClass().getName();
     }
 
-    public Boolean deleteItem(Item miItem)
+    public Boolean deleteItem(Item item)
     {
 
         Boolean eliminado = false;
@@ -266,7 +266,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
         Query query = em.createQuery("DELETE FROM Item i WHERE i.idItem = ?1");
 
         //Seteo el parametro 1
-        query.setParameter(1, miItem.getIdItem());
+        query.setParameter(1, item.getIdItem());
 
         // Ejecuto el query
         deleted = query.executeUpdate();

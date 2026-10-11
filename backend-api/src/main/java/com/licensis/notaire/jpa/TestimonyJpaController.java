@@ -385,7 +385,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
         return testimony;
     }
 
-    public Boolean modifyTestimony(Testimony miTestimony) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyTestimony(Testimony testimony) throws ClassModifiedException, ClassEliminatedException
     {
 
         Boolean flag = false; // Whether the transaction succeeded
@@ -394,12 +394,12 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
 
         EntityManager em = getEntityManager();
 
-        Testimony persistentTestimony = em.find(Testimony.class, miTestimony.getIdTestimony());
+        Testimony persistentTestimony = em.find(Testimony.class, testimony.getIdTestimony());
 
         if (persistentTestimony != null)
         {
             version = persistentTestimony.getVersion(); // Version of the object in the database
-            oldVersion = miTestimony.getVersion(); // Version of the object in memory
+            oldVersion = testimony.getVersion(); // Version of the object in memory
 
             if (version != oldVersion) // Versions differ: someone else modified the object
             {
@@ -408,7 +408,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
             {
                 em.getTransaction().begin();
 
-                persistentTestimony.setFlagged(miTestimony.getFlagged());
+                persistentTestimony.setFlagged(testimony.getFlagged());
 
                 em.getTransaction().commit();
                 em.close();

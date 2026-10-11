@@ -189,23 +189,23 @@ public class FolioType implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "FolioType[ idTipoFolio=" + idFolioType + " ]"
+        return "FolioType[ idFolioType=" + idFolioType + " ]"
                 + "[ name=" + name + " ]";
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoFolioType getDto()
     {
-        DtoFolioType miDtoFolioType = new DtoFolioType();
+        DtoFolioType folioTypeDto = new DtoFolioType();
 
-        miDtoFolioType.setIdFolioType(this.getIdFolioType());
-        miDtoFolioType.setName(this.getName());
-        miDtoFolioType.setNotes(this.getNotes());
-        miDtoFolioType.setEnabled(this.enabled);
-        miDtoFolioType.setIsAuxiliary(this.isAuxiliary);
-        miDtoFolioType.setVersion(this.getVersion());
+        folioTypeDto.setIdFolioType(this.getIdFolioType());
+        folioTypeDto.setName(this.getName());
+        folioTypeDto.setNotes(this.getNotes());
+        folioTypeDto.setEnabled(this.enabled);
+        folioTypeDto.setIsAuxiliary(this.isAuxiliary);
+        folioTypeDto.setVersion(this.getVersion());
 
-        return miDtoFolioType;
+        return folioTypeDto;
 
     }
 

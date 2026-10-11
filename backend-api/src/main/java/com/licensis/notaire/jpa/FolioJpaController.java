@@ -335,21 +335,21 @@ public class FolioJpaController implements Serializable, JpaPersistence
     public List<Folio> findFoliosByRecordYear(Integer record, Integer year)
     {
         EntityManager em = getEntityManager();
-        List<Folio> miListaFolios = null;
+        List<Folio> folios = null;
         try
         {
             Query q = em.createNamedQuery("Folio.findByYearAndRegistration");
             q.setParameter("year", year);
             q.setParameter("registration", record);
-            miListaFolios = q.getResultList();
+            folios = q.getResultList();
 
-            for (Iterator<Folio> it = miListaFolios.iterator(); it.hasNext();)
+            for (Iterator<Folio> it = folios.iterator(); it.hasNext();)
             {
                 Folio folio = it.next();
                 folio.setFkIdNotaryPerson(null);
             }
 
-            return miListaFolios;
+            return folios;
         }
         finally
         {
@@ -361,21 +361,21 @@ public class FolioJpaController implements Serializable, JpaPersistence
     public List<Folio> findFoliosByNumber(Integer number)
     {
         EntityManager em = getEntityManager();
-        List<Folio> miListaFolios = null;
+        List<Folio> folios = null;
         try
         {
             Query q = em.createNamedQuery("Folio.findByNumber");
             q.setParameter("number", number);
 
-            miListaFolios = q.getResultList();
+            folios = q.getResultList();
 
-            for (Iterator<Folio> it = miListaFolios.iterator(); it.hasNext();)
+            for (Iterator<Folio> it = folios.iterator(); it.hasNext();)
             {
                 Folio folio = it.next();
                 folio.setFkIdNotaryPerson(null);
             }
 
-            return miListaFolios;
+            return folios;
         }
         finally
         {
@@ -440,7 +440,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public void updateFolio(Folio miFolio) throws ClassModifiedException, ClassEliminatedException
+    public void updateFolio(Folio folio) throws ClassModifiedException, ClassEliminatedException
     {
         EntityManager em = null;
 
@@ -449,12 +449,12 @@ public class FolioJpaController implements Serializable, JpaPersistence
 
         em = getEntityManager();
         em.getTransaction().begin();
-        Folio persistentFolio = em.find(Folio.class, miFolio.getIdFolio());
+        Folio persistentFolio = em.find(Folio.class, folio.getIdFolio());
 
         if (persistentFolio != null)
         {
             version = persistentFolio.getVersion(); // Version of the object in the database
-            oldVersion = miFolio.getVersion(); // Version of the object in memory
+            oldVersion = folio.getVersion(); // Version of the object in memory
 
             if (version != oldVersion) // Versions differ: someone else modified the object
             {
@@ -462,7 +462,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
 
             }
 
-            persistentFolio.setStatus(miFolio.getStatus());
+            persistentFolio.setStatus(folio.getStatus());
 
             em.getTransaction().commit();
 

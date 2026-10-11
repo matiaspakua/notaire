@@ -192,7 +192,7 @@ public class Substitution implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Substitution[ idSuplencia=" + idSubstitution + " ]";
+        return "Substitution[ idSubstitution=" + idSubstitution + " ]";
     }
 
 

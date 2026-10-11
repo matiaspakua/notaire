@@ -200,18 +200,18 @@ public class User implements Serializable, Persistable<Integer> {
     @Override
     public String toString() {
         return "Users[ version=" + version + " ]"
-                + "[ idUsuario=" + idUser + " ]"
+                + "[ idUser=" + idUser + " ]"
                 + "[ name=" + name + " ]"
-                + "[ tipo=" + type + " ] "
-                + "[ estado=" + status + " ]";
+                + "[ type=" + type + " ] "
+                + "[ status=" + status + " ]";
     }
 
     public void setAttributes(DtoUser dtoUser) {
 
         // Ref persona de UserAccount
-        Person miPerson = new Person();
-        miPerson.setAttributes(dtoUser.getPersons());
-        setFkIdPerson(miPerson);
+        Person person = new Person();
+        person.setAttributes(dtoUser.getPersons());
+        setFkIdPerson(person);
 
         // Atributos user
         setPassword(dtoUser.getPassword());

@@ -278,8 +278,8 @@ public class Folio implements Serializable, Persistable<Integer>
     public String toString()
     {
         return "Folio[ idFolio=" + idFolio + " ]"
-                + "[ numero=" + number + " ]"
-                + "[ anio=" + year + " ]";
+                + "[ number=" + number + " ]"
+                + "[ year=" + year + " ]";
     }
 
 
@@ -287,38 +287,38 @@ public class Folio implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoFolio getDto()
     {
-        DtoFolio miDtoFolio = new DtoFolio();
+        DtoFolio folioDto = new DtoFolio();
 
-        miDtoFolio.setIdFolio(this.idFolio);
-        miDtoFolio.setNumber(this.number);
-        miDtoFolio.setStatus(this.status);
-        miDtoFolio.setNotes(this.notes);
-        miDtoFolio.setYear(this.year);
-        miDtoFolio.setVersion(this.getVersion());
+        folioDto.setIdFolio(this.idFolio);
+        folioDto.setNumber(this.number);
+        folioDto.setStatus(this.status);
+        folioDto.setNotes(this.notes);
+        folioDto.setYear(this.year);
+        folioDto.setVersion(this.getVersion());
 
         if (this.getFkIdNotaryPerson() != null)
         {
-            DtoPerson miPerson = new DtoPerson();
-            miPerson.setId(fkIdNotaryPerson.getPersonId());
-            miPerson.setNotaryRegistrationNumber(fkIdNotaryPerson.getNotaryRegistrationNumber());
+            DtoPerson person = new DtoPerson();
+            person.setId(fkIdNotaryPerson.getPersonId());
+            person.setNotaryRegistrationNumber(fkIdNotaryPerson.getNotaryRegistrationNumber());
 
-            miDtoFolio.setPersonNotary(miPerson);
+            folioDto.setPersonNotary(person);
         }
 
-        miDtoFolio.setFolioType(this.fkIdFolioType.getDto());
+        folioDto.setFolioType(this.fkIdFolioType.getDto());
 
         if (this.fkIdDeed != null)
         {
             // Not fkIdDeed.getDto(): that walks Deed's lazy folioList, which
             // includes this same Folio, and would recurse back into Folio.getDto().
-            DtoDeed miDtoDeed = new DtoDeed();
-            miDtoDeed.setIdDeed(this.fkIdDeed.getIdDeed());
-            miDtoDeed.setNumber(this.fkIdDeed.getNumber());
-            miDtoDeed.setStatus(this.fkIdDeed.getStatus());
-            miDtoFolio.setDeed(miDtoDeed);
+            DtoDeed deedDto = new DtoDeed();
+            deedDto.setIdDeed(this.fkIdDeed.getIdDeed());
+            deedDto.setNumber(this.fkIdDeed.getNumber());
+            deedDto.setStatus(this.fkIdDeed.getStatus());
+            folioDto.setDeed(deedDto);
         }
 
-        return miDtoFolio;
+        return folioDto;
     }
 
     public int getVersion()

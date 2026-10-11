@@ -127,7 +127,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
     public Boolean edit(Budget budget)
             throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException {
         EntityManager em = null;
-        Boolean modificado = Boolean.FALSE;
+        Boolean modified = Boolean.FALSE;
         Integer version = -1;
         Integer oldVersion = -1;
 
@@ -263,13 +263,13 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
                     }
                 }
                 em.getTransaction().commit();
-                modificado = Boolean.TRUE;
+                modified = Boolean.TRUE;
                 if (em != null) {
                     em.close();
                 }
             }
         }
-        return modificado;
+        return modified;
     }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
@@ -352,14 +352,14 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
 
     public Budget findBudget(Integer id) {
         EntityManager em = getEntityManager();
-        Budget miBudget = null;
+        Budget budget = null;
 
-        miBudget = em.find(Budget.class, id);
-        if (miBudget != null) {
-            miBudget.setItemList(null);
-            miBudget.setProcedureList(null);
+        budget = em.find(Budget.class, id);
+        if (budget != null) {
+            budget.setItemList(null);
+            budget.setProcedureList(null);
         }
-        return miBudget;
+        return budget;
     }
 
     public int getBudgetCount() {
@@ -396,7 +396,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
             for (Iterator<Budget> it = misPresupuestos.iterator(); it.hasNext();) {
                 Budget budget = it.next();
 
-                budget.setProcedureList(jpaProcedure.encontrarProcedureBudget(budget.getIdBudget()));
+                budget.setProcedureList(jpaProcedure.findProceduresByBudget(budget.getIdBudget()));
             }
 
         } finally {
@@ -437,7 +437,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
     public Budget findBudgetsById(Integer idBudget) {
         EntityManager em = getEntityManager();
 
-        Budget miBudget = null;
+        Budget budget = null;
 
         try {
             // Name of the @NamedQuery declared on Budget
@@ -446,11 +446,11 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
             // It step the name of the parametro of the query, and the valor a search.
             q.setParameter("idBudget", idBudget);
 
-            miBudget = (Budget) q.getResultList().get(0);
+            budget = (Budget) q.getResultList().get(0);
         } finally {
             em.close();
         }
-        return miBudget;
+        return budget;
     }
 
     @Override

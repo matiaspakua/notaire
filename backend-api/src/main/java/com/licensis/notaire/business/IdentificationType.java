@@ -149,7 +149,7 @@ public class IdentificationType implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "IdentificationType[ idTipoIdentificacion=" + idIdentificationType + " ]"
+        return "IdentificationType[ idIdentificationType=" + idIdentificationType + " ]"
                 + "[ name=" + name + " ]";
     }
 

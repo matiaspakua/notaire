@@ -221,7 +221,7 @@ public class Budget implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Budget[ idPresupuesto=" + idBudget + " ]";
+        return "Budget[ idBudget=" + idBudget + " ]";
     }
 
     public int getNumber() {

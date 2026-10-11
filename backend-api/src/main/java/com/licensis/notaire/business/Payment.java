@@ -174,10 +174,10 @@ public class Payment implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Payment[ idPago=" + idPayment
-                + ", Fecha pago: " + this.getDate()
-                + ", Monto pago: " + this.amount
-                + ", Observaciones: " + this.notes + "]";
+        return "Payment[ idPayment=" + idPayment
+                + ", payment date: " + this.getDate()
+                + ", amount: " + this.amount
+                + ", notes: " + this.notes + "]";
     }
 
     public int getVersion()

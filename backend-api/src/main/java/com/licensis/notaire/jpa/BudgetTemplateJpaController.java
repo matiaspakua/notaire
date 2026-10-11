@@ -42,7 +42,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
 
     public Boolean create(BudgetTemplate budgetTemplate) throws PreexistingEntityException
     {
-        Boolean creada = false;
+        Boolean created = false;
 
         if (budgetTemplate.getBudgetTemplatePK() == null)
         {
@@ -83,7 +83,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
                 concept = em.merge(concept);
             }
             em.getTransaction().commit();
-            creada = true;
+            created = true;
         }
         catch (Exception ex)
         {
@@ -99,7 +99,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return creada;
+        return created;
     }
 
     public void edit(BudgetTemplate budgetTemplate) throws NonexistentEntityException, Exception
@@ -280,7 +280,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public Boolean deleteBudgetTemplate(BudgetTemplate miTemplate) throws ClassEliminatedException
+    public Boolean deleteBudgetTemplate(BudgetTemplate template) throws ClassEliminatedException
     {
 
         Boolean eliminada = false;
@@ -293,17 +293,17 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
         tx = em.getTransaction();
         tx.begin();
 
-        BudgetTemplate miBudgetTemplate = this.findBudgetTemplate(miTemplate.getBudgetTemplatePK());
+        BudgetTemplate budgetTemplate = this.findBudgetTemplate(template.getBudgetTemplatePK());
 
-        if (miBudgetTemplate != null)
+        if (budgetTemplate != null)
         {
 
             // Creo el query
             Query query = em.createQuery("DELETE FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdProcedureType = ?1 AND  p.budgetTemplatePK.fkIdConcept = ?2");
 
             //Seteo el parametro 1 y 2
-            query.setParameter(1, miTemplate.getBudgetTemplatePK().getFkIdProcedureType());
-            query.setParameter(2, miTemplate.getBudgetTemplatePK().getFkIdConcept());
+            query.setParameter(1, template.getBudgetTemplatePK().getFkIdProcedureType());
+            query.setParameter(2, template.getBudgetTemplatePK().getFkIdConcept());
 
             // Ejecuto el query
             deleted = query.executeUpdate();

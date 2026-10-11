@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English locals and debug labels** (#1490, CU75): `mi`-prefixed locals,
+  `created`, and `modified` replace the Spanish names. Entity `toString`
+  labels are English (`number`, `year`, `status`, `lastName`). Message
+  catalog keys stay.
 - **English JPA relationship names** (#1490, CU75): generated locals,
   orphan messages, and `toString` labels use English relationship names
   (`fkIdPerson`, `budgetTemplateList`, `auditRecordList`, `DeedManagements`).

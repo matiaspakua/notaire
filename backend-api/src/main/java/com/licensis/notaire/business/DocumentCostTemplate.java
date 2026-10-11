@@ -148,6 +148,6 @@ public class DocumentCostTemplate implements Serializable, Persistable<DocumentC
     @Override
     @JsonIgnore
     public String toString() {
-        return "DocumentCostTemplate[ plantillaCostoDocumentoPK=" + documentCostTemplatePK + " ]";
+        return "DocumentCostTemplate[ documentCostTemplateKey=" + documentCostTemplatePK + " ]";
     }
 }

@@ -226,7 +226,7 @@ public class Copy implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Copy[ idCopia=" + idCopy + " ]";
+        return "Copy[ idCopy=" + idCopy + " ]";
     }
 
     public int getVersion()
