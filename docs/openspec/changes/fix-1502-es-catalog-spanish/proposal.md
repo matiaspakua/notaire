@@ -20,6 +20,7 @@ The English identifier rename (#1495) also replaced entity words inside Spanish 
 - Vitest `es-catalog-spanish.test.ts`: fails when an es.json value contains an English entity name from the rename map ("Roles" excluded: it is also Spanish).
 - Playwright `TS-0023`: the users table header is "Rol" again (the rename had changed the assertion to "Role").
 - Playwright `TS-0072` edge paths expect the English notebook validation messages the backend returns since #1495.
+- Playwright `budget-template.spec.ts` (CU39 no-template case) picks the procedure type it created by exact name; #1495 renamed the seeded name to English, so the old `/Sin Plantilla E2E/` pattern found nothing on a fresh CI database.
 - Playwright specs (21 files): Spanish locator text restored from the pre-#1495 specs where the UI renders Spanish; English kept where the test runs in EN or matches the English API (`search?number=`, the `cadastral` message).
 - `useCreateCompleteManagement` and the E2E helper `createCompleteCaseManagement` map `procedureTypeId` to `typeProcedureId` (shared `toCompleteCaseRequest`); Vitest `useManagements.create-wire.test.tsx`.
 - The generated-types drift and the Spanish Bruno assertion (`workflow-nodes/10`) that also kept main red were fixed on main by #1512 while this change was open, so they are no longer part of this diff.
