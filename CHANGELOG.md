@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **SAD API design collections** (#1490, CU75): section 8.7 names the
+  English collections `/managements`, `/people`, and `/deeds`. The
+  parenthetical no longer calls those paths a Spanish domain.
 - **September 2026 audit index citation** (#1490, CU75): the #1065 row
   names the unused `POST /pagos/params` path recorded on baseline `5a8fa14`.
   The column `State (at audit)` stays. The later notes on #1040 and #1042 stay.
