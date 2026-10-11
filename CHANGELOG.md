@@ -64,6 +64,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English change-contract requirements** (#1490, CU75): the
+  archive-debt change spec names a management, `pendingBalance`, and
+  `pendingDebtAtArchiving`. The incomplete-PUT delta names
+  `is required` and the live paths `folio-types`,
+  `management-statuses`, `document-types`, `procedure-types`,
+  `concepts`, `workflow-definition`, and `testimony-movements`. The
+  people-list delta names the people screen. The change slugs
+  `gestion-archive-deuda-check`,
+  `fix-655-put-rejects-incomplete-bodies`, and
+  `fix-596-people-pagination` stay. Stored status `Archivada` stays.
+  The official filename `CU16 – Archivar Gestión.md` stays. The
+  historical test `GestionArchiveIntegrationTest` stays. `usePeople`
+  and `GET /api/v1/people` stay.
 - **English property-designation requirements** (#1490, CU75): the
   properties delta names the Properties dialog and a cadastral
   designation. The change slug
