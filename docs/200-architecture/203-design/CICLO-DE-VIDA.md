@@ -236,12 +236,13 @@ cadastral and registry data on the property.
 ```mermaid
 stateDiagram-v2
   [*] --> Generada
-  Generada --> Presentada: Entry date and number
-  Presentada --> Observado: Registry observation
-  Presentada --> Inscripto: Receipt and final registration
+  Generada --> Submitted: Entry date and number
+  Submitted --> Observado: Registry observation
+  Submitted --> Inscripto: Receipt and final registration
+  state "Presentado para inscripción" as Submitted
 ```
 
-`Observado` has no coded return to `Presentada` and no path to `Inscripto`.
+`Observado` has no coded return to `Presentado para inscripción` and no path to `Inscripto`.
 Registering is accepted only from `Presentado para inscripción`.
 
 ### 3.6 Documentation

@@ -24,8 +24,9 @@ import java.util.Date;
 
 /**
  * Registration draft of a deed on a property filed with the property
- * registry, and its registry workflow (CU82): Generada,
- * Presentada, Observada, Inscripta.
+ * registry, and its registry workflow (CU82): {@code Generada},
+ * {@code Presentado para inscripción}, {@code Observado}, {@code Inscripto}.
+ * Deed status {@code Inscripta} is a different stored value.
  */
 @Entity
 @Table(name = "registration_drafts")

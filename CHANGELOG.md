@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English registration-draft statuses** (#1490, CU82): comments, the
+  lifecycle diagram, and the engineering gap row name the stored statuses
+  `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto`.
+  Constant names are `RegistrationDraftGenerated`, `RegistrationDraftSubmitted`,
+  `RegistrationDraftObserved`, and `RegistrationDraftRegistered`. Deed status
+  `Inscripta` stays. Released changelog text that recorded the older
+  participles stays.
 - **English sequence check** (#1490, #1508): `test_gestion_sequences.py`
   requires the English sentences for no return from `Observado` and for
   re-entry that does not move the management.

@@ -65,11 +65,11 @@ class RegistrationDraftControllerTest {
     @DisplayName("GET /api/v1/registration-drafts/{id} returns the registration draft when found")
     void shouldReturnDraftById() throws Exception {
         when(registrationDraftService.findById(1))
-                .thenReturn(Optional.of(buildDraft(1, 1, BusinessConstants.RegistrationDraftGENERADA)));
+                .thenReturn(Optional.of(buildDraft(1, 1, BusinessConstants.RegistrationDraftGenerated)));
 
         mockMvc.perform(get("/api/v1/registration-drafts/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftGENERADA));
+                .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftGenerated));
     }
 
     @Test
@@ -85,14 +85,14 @@ class RegistrationDraftControllerTest {
     @DisplayName("POST /api/v1/registration-drafts generates a registration draft when data is complete")
     void shouldGenerateDraftWhenDataIsComplete() throws Exception {
         when(registrationDraftService.generate(1))
-                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftGENERADA));
+                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftGenerated));
 
         mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new RegistrationDraftController.GenerateRequest(1))))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/registration-drafts/1"))
-                .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftGENERADA));
+                .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftGenerated));
     }
 
     @Test
@@ -125,33 +125,33 @@ class RegistrationDraftControllerTest {
     @DisplayName("PUT /api/v1/registration-drafts/{id}/submit registers the submission")
     void shouldRegisterSubmission() throws Exception {
         when(registrationDraftService.submit(any(), any(), anyString()))
-                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftPRESENTADA));
+                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftSubmitted));
 
         mockMvc.perform(put("/api/v1/registration-drafts/1/submit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
                                 new RegistrationDraftController.SubmitRequest(new Date(), "ENT-123"))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftPRESENTADA));
+                .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftSubmitted));
     }
 
     @Test
     @DisplayName("PUT /api/v1/registration-drafts/{id}/observe registers the observation")
-    void shouldRegisterObservacion() throws Exception {
+    void shouldRegisterObservation() throws Exception {
         when(registrationDraftService.observe(anyInt(), anyString(), any()))
-                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftOBSERVADA));
+                .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftObserved));
 
         mockMvc.perform(put("/api/v1/registration-drafts/1/observe")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
                                 new RegistrationDraftController.ObserveRequest("Falta plano", new Date()))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftOBSERVADA));
+                .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftObserved));
     }
 
     @Test
     @DisplayName("PUT /api/v1/registration-drafts/{id}/register registers the final registration")
-    void shouldRegisterRegistrationDefinitiva() throws Exception {
+    void shouldRegisterFinalRegistration() throws Exception {
         when(registrationDraftService.recordRegistration(anyInt(), any(), anyString()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftRegistered));
 
