@@ -1,7 +1,7 @@
 /**
  * TS-0014 - Pagos Workflow (CU15 → CU47)
  * CU15 - Procesar Payment
- * CU47 - Consultar Payment
+ * CU47 - Look up a payment
  * Issue #796 (budget picker + saldo pendiente visibility)
  * Issue #821 (estado de pago badge: SIN_PAGOS / PARCIAL / SALDADO)
  * Issue #848 (overpayment rejection message)
@@ -177,7 +177,7 @@ test.describe("CU15 - Procesar Payment", () => {
   });
 });
 
-test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
+test.describe("CU47 - Look up a payment (payment status #821)", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

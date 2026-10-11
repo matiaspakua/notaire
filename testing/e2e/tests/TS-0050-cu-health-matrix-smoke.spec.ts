@@ -41,14 +41,14 @@ const CU_CHECKS: CuCheck[] = [
   // ── Auth / System ──
   { id: "CU-AUTH", name: "Login", method: "POST", path: "/users/login", expectStatus: 200 },
 
-  // ── People / Clientes (CU17, CU18, CU41, CU46, CU54, CU61) ──
+  // ── People / clients (CU17, CU18, CU41, CU46, CU54, CU61) ──
   { id: "CU17", name: "Register a person", method: "POST", path: "/people", expectStatus: 201 },
   { id: "CU18", name: "Register a client", method: "POST", path: "/people", expectStatus: 201 },
   { id: "CU46", name: "View client detail", method: "GET", path: () => `/people/${seedPersonId()}`, expectStatus: 200 },
   { id: "CU54", name: "Update a person", method: "GET", path: "/people", expectStatus: 200 },
   { id: "CU61", name: "Search for a person or client", method: "GET", path: "/people/search?firstName=test", expectStatus: 200 },
 
-  // ── Presupuestos (CU01, CU45, CU60) ──
+  // ── Budgets (CU01, CU45, CU60) ──
   { id: "CU01", name: "Prepare a budget", method: "GET", path: "/budgets", expectStatus: 200 },
   { id: "CU45", name: "Update a budget", method: "GET", path: "/budgets", expectStatus: 200 },
   { id: "CU60", name: "Search for a budget", method: "GET", path: () => `/budgets/person/${seedPersonId()}`, expectStatus: 200 },
@@ -61,17 +61,17 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU53", name: "Update a management", method: "GET", path: "/managements", expectStatus: 200 },
   { id: "CU56", name: "Record a registration", method: "GET", path: "/managements", expectStatus: 200 },
 
-  // ── Escrituras (CU05, CU06, CU52, CU62) ──
+  // ── Deeds (CU05, CU06, CU52, CU62) ──
   { id: "CU05", name: "Prepare a deed", method: "GET", path: "/deeds", expectStatus: 200 },
   { id: "CU06", name: "Sign a deed", method: "GET", path: "/deeds", expectStatus: 200 },
-  { id: "CU52", name: "Modificar Deed", method: "GET", path: "/deeds", expectStatus: 200 },
-  { id: "CU62", name: "Buscar Deed", method: "GET", path: "/deeds/search", expectStatus: 200 },
+  { id: "CU52", name: "Update a deed", method: "GET", path: "/deeds", expectStatus: 200 },
+  { id: "CU62", name: "Search for a deed", method: "GET", path: "/deeds/search", expectStatus: 200 },
   // available-notaries endpoint (CU48 related)
   { id: "CU48-SUB", name: "Available notaries (GET)", method: "GET", path: "/deeds/available-notaries", expectStatus: 200 },
 
-  // ── Testimonios (CU07, CU08) ──
+  // ── Testimonies (CU07, CU08) ──
   { id: "CU07", name: "Generate a testimony", method: "GET", path: "/testimonies", expectStatus: 200 },
-  { id: "CU08", name: "Verificar Testimony", method: "GET", path: "/testimonies", expectStatus: 200 },
+  { id: "CU08", name: "Verify a testimony", method: "GET", path: "/testimonies", expectStatus: 200 },
 
   // ── Documents (CU03, CU04, CU09, CU42, CU43) ──
   { id: "CU03", name: "List documents", method: "GET", path: "/submitted-documents", expectStatus: 200 },
@@ -79,24 +79,24 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU42", name: "Report upcoming expirations", method: "GET", path: "/submitted-documents", expectStatus: 200 },
   { id: "CU43", name: "Re-enter documentation", method: "GET", path: "/submitted-documents", expectStatus: 200 },
 
-  // ── Pagos (CU15, CU47) ──
+  // ── Payments (CU15, CU47) ──
   { id: "CU15", name: "Process a payment", method: "GET", path: "/payments", expectStatus: 200 },
-  { id: "CU47", name: "Consultar Payment", method: "GET", path: "/payments", expectStatus: 200 },
+  { id: "CU47", name: "Look up a payment", method: "GET", path: "/payments", expectStatus: 200 },
 
-  // ── Usuarios (CU20, CU21, CU23, CU48, CU51) ──
+  // ── Users (CU20, CU21, CU23, CU48, CU51) ──
   { id: "CU20", name: "Register a user", method: "GET", path: "/users", expectStatus: 200 },
-  { id: "CU21", name: "Modificar UserAccount", method: "GET", path: "/users", expectStatus: 200 },
+  { id: "CU21", name: "Update a user account", method: "GET", path: "/users", expectStatus: 200 },
   { id: "CU48", name: "Register a notary", method: "GET", path: "/people", expectStatus: 200 },
   { id: "CU51", name: "Update a notary", method: "GET", path: "/people", expectStatus: 200 },
 
-  // ── Suplencias (CU22, CU59) ──
-  { id: "CU22", name: "Registrar Substitution", method: "GET", path: "/substitutions", expectStatus: 200 },
+  // ── Substitutions (CU22, CU59) ──
+  { id: "CU22", name: "Register a substitution", method: "GET", path: "/substitutions", expectStatus: 200 },
   { id: "CU59", name: "Look up substitutions", method: "GET", path: "/substitutions", expectStatus: 200 },
 
-  // ── Auditoría (CU23) ──
+  // ── Audit (CU23) ──
   { id: "CU23-AUD", name: "View the activity log", method: "GET", path: () => `/audit-log/user/${seedUserId()}`, expectStatus: 200 },
 
-  // ── Catálogos (CU26-CU40, CU57-CU68) ──
+  // ── Catalogs (CU26-CU40, CU57-CU68) ──
   { id: "CU26", name: "Create a procedure type", method: "GET", path: "/procedure-types", expectStatus: 200 },
   { id: "CU27", name: "Create a document type", method: "GET", path: "/document-types", expectStatus: 200 },
   { id: "CU28", name: "Create folios", method: "GET", path: "/folios", expectStatus: 200 },
@@ -125,17 +125,17 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU13", name: "View management history", method: "GET", path: () => `/history/management/${seedManagementId()}`, expectStatus: 200 },
   { id: "CU11", name: "Submit for registration", method: "GET", path: "/history", expectStatus: 200 },
 
-  // ── Movimiento Testimony (CU10, CU12, CU44) ──
+  // ── Testimony movements (CU10, CU12, CU44) ──
   { id: "CU10", name: "Record document movements", method: "GET", path: "/testimony-movements", expectStatus: 200 },
   { id: "CU12", name: "Withdraw a testimony", method: "GET", path: "/testimony-movements", expectStatus: 200 },
   { id: "CU44", name: "Re-enter a testimony", method: "GET", path: "/testimony-movements", expectStatus: 200 },
 
-  // ── Plantillas (CU39, CU49, CU55) ──
+  // ── Templates (CU39, CU49, CU55) ──
   // CU39 already listed above
   { id: "CU49", name: "Delete a budget template", method: "GET", path: "/budget-templates", expectStatus: 200 },
   { id: "CU55", name: "Update a budget template", method: "GET", path: "/budget-templates", expectStatus: 200 },
 
-  // ── Inmuebles, Copias, Items ──
+  // ── Properties, copies, items ──
   { id: "CU-INM", name: "Properties", method: "GET", path: "/properties", expectStatus: 200 },
   { id: "CU-COP", name: "Copies", method: "GET", path: "/copies", expectStatus: 200 },
   { id: "CU-ITEM", name: "Items", method: "GET", path: "/items", expectStatus: 200 },

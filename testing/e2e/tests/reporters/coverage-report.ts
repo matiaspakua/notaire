@@ -28,7 +28,7 @@ interface CuEntry {
   id: string;
   name: string;
   module: string;
-  grado: string;
+  priority: string;
 }
 
 /**
@@ -49,74 +49,74 @@ interface CuTestResult {
  * CU matrix data — canonical source of truth
  */
 const CU_MATRIX: CuEntry[] = [
-  { id: "CU01", name: "Preparar Presupuesto", module: "Presupuestos", grado: "Esencial" },
-  { id: "CU02", name: "Iniciar Gestión", module: "Gestiones", grado: "Esencial" },
-  { id: "CU03", name: "Lista documentos y certificados necesarios", module: "Gestiones", grado: "Esencial" },
-  { id: "CU04", name: "Registrar documentación cliente", module: "Gestiones", grado: "Esencial" },
-  { id: "CU05", name: "Preparar escritura", module: "Gestiones", grado: "Esencial" },
-  { id: "CU06", name: "Firmar escritura", module: "Gestiones", grado: "Esencial" },
-  { id: "CU07", name: "Generar testimonio", module: "Gestiones", grado: "Esencial" },
-  { id: "CU08", name: "Verificar Testimony", module: "Gestiones", grado: "Necesario" },
-  { id: "CU09", name: "Registrar deudas documentos de Cliente", module: "Gestiones", grado: "Esencial" },
-  { id: "CU10", name: "Registrar movimientos documentación", module: "Gestiones", grado: "Esencial" },
-  { id: "CU11", name: "Ingresar para inscripción", module: "Gestiones", grado: "Esencial" },
-  { id: "CU12", name: "Retirar testimonio", module: "Gestiones", grado: "Necesario" },
-  { id: "CU13", name: "Ver historial de gestión", module: "Gestiones", grado: "Estaría Bueno" },
-  { id: "CU14", name: "Consultar estado gestión", module: "Gestiones", grado: "Necesario" },
-  { id: "CU15", name: "Procesar pago", module: "Pagos", grado: "Estaría Bueno" },
-  { id: "CU16", name: "Archivar Gestión", module: "Gestiones", grado: "Necesario" },
-  { id: "CU17", name: "Dar Alta persona", module: "Clientes", grado: "Esencial" },
-  { id: "CU18", name: "Dar Alta Cliente", module: "Clientes", grado: "Esencial" },
-  { id: "CU19", name: "Buscar gestiones de un Cliente", module: "Clientes", grado: "Necesario" },
-  { id: "CU20", name: "Dar alta usuario", module: "Administracion", grado: "Esencial" },
-  { id: "CU21", name: "Modificar UserAccount", module: "Administracion", grado: "Esencial" },
-  { id: "CU22", name: "Registrar Substitution", module: "Administracion", grado: "Esencial" },
-  { id: "CU23", name: "Ver registro de actividades de usuario", module: "Administracion", grado: "Necesario" },
-  { id: "CU24", name: "Generar libro de índices", module: "Protocolos", grado: "Estaría Bueno" },
-  { id: "CU25", name: "Generar Declaración Jurada del mes", module: "Protocolos", grado: "Estaría Bueno" },
-  { id: "CU26", name: "Ingresar nuevo tipo de trámite", module: "Administracion", grado: "Esencial" },
-  { id: "CU27", name: "Ingresar nuevo tipo de documento", module: "Administracion", grado: "Esencial" },
-  { id: "CU28", name: "Ingresar nuevos folios", module: "Protocolos", grado: "Esencial" },
-  { id: "CU29", name: "Ingresar nuevo concepto", module: "Administracion", grado: "Esencial" },
-  { id: "CU30", name: "Ingresar nuevo estado de Gestión", module: "Administracion", grado: "Esencial" },
-  { id: "CU31", name: "Modificar tipo de trámite", module: "Administracion", grado: "Esencial" },
-  { id: "CU32", name: "Modificar tipo de documento", module: "Administracion", grado: "Esencial" },
-  { id: "CU33", name: "Modificar folio", module: "Protocolos", grado: "Esencial" },
-  { id: "CU34", name: "Modificar concepto", module: "Administracion", grado: "Esencial" },
-  { id: "CU35", name: "Modificar estado de Gestión", module: "Administracion", grado: "Esencial" },
-  { id: "CU36", name: "Ingresar tipos de folio", module: "Administracion", grado: "Esencial" },
-  { id: "CU37", name: "Eliminar concepto", module: "Administracion", grado: "Esencial" },
-  { id: "CU38", name: "Eliminar tipo de documento", module: "Administracion", grado: "Esencial" },
-  { id: "CU39", name: "Crear Plantilla Presupuesto", module: "Administracion", grado: "Esencial" },
-  { id: "CU40", name: "Modificar Tipo de folio", module: "Administracion", grado: "Esencial" },
-  { id: "CU41", name: "Modificar Cliente", module: "Clientes", grado: "Esencial" },
-  { id: "CU42", name: "Informar próximos vencimientos", module: "Gestiones", grado: "Necesario" },
-  { id: "CU43", name: "Reingresar documentación", module: "Gestiones", grado: "Esencial" },
-  { id: "CU44", name: "Reingresar testimonio", module: "Gestiones", grado: "Esencial" },
-  { id: "CU45", name: "Modificar presupuesto", module: "Presupuestos", grado: "Esencial" },
-  { id: "CU46", name: "Ver detalle cliente", module: "Clientes", grado: "Esencial" },
-  { id: "CU47", name: "Consultar Payment", module: "Pagos", grado: "Estaría Bueno" },
-  { id: "CU48", name: "Dar alta escribano", module: "Administracion", grado: "Esencial" },
-  { id: "CU49", name: "Eliminar Plantilla Presupuesto", module: "Administracion", grado: "Esencial" },
-  { id: "CU50", name: "Generar Declaración Jurada de Rentas", module: "Protocolos", grado: "Estaría Bueno" },
-  { id: "CU51", name: "Modificar escribano", module: "Administracion", grado: "Esencial" },
-  { id: "CU52", name: "Modificar Deed", module: "Gestiones", grado: "Esencial" },
-  { id: "CU53", name: "Modificar Gestión", module: "Gestiones", grado: "Esencial" },
-  { id: "CU54", name: "Modificar Persona", module: "Clientes", grado: "Esencial" },
-  { id: "CU55", name: "Modificar Plantilla Presupuesto", module: "Administracion", grado: "Esencial" },
-  { id: "CU56", name: "Registrar inscripción", module: "Gestiones", grado: "Esencial" },
-  { id: "CU57", name: "Eliminar tipo de trámite", module: "Administracion", grado: "Esencial" },
-  { id: "CU58", name: "Eliminar Tipo de folio", module: "Administracion", grado: "Esencial" },
-  { id: "CU59", name: "Consultar Suplencias", module: "Administracion", grado: "Necesario" },
-  { id: "CU60", name: "Buscar Presupuesto", module: "Presupuestos", grado: "Necesario" },
-  { id: "CU61", name: "Buscar persona o cliente", module: "Clientes", grado: "Necesario" },
-  { id: "CU62", name: "Buscar Deed", module: "Gestiones", grado: "Necesario" },
-  { id: "CU63", name: "Buscar Folios", module: "Protocolos", grado: "Necesario" },
-  { id: "CU64", name: "Buscar Tipo de tramite", module: "Administracion", grado: "Necesario" },
-  { id: "CU65", name: "Buscar Tipos de documentos", module: "Administracion", grado: "Necesario" },
-  { id: "CU66", name: "Buscar Conceptos", module: "Administracion", grado: "Necesario" },
-  { id: "CU67", name: "Buscar Estados de Gestión", module: "Administracion", grado: "Necesario" },
-  { id: "CU68", name: "Buscar tipos de folios", module: "Administracion", grado: "Necesario" },
+  { id: "CU01", name: "Prepare a budget", module: "Budgets", priority: "Essential" },
+  { id: "CU02", name: "Start a management", module: "Managements", priority: "Essential" },
+  { id: "CU03", name: "List required documents and certificates", module: "Managements", priority: "Essential" },
+  { id: "CU04", name: "Record client documentation", module: "Managements", priority: "Essential" },
+  { id: "CU05", name: "Prepare a deed", module: "Managements", priority: "Essential" },
+  { id: "CU06", name: "Sign a deed", module: "Managements", priority: "Essential" },
+  { id: "CU07", name: "Generate a testimony", module: "Managements", priority: "Essential" },
+  { id: "CU08", name: "Verify a testimony", module: "Managements", priority: "Necessary" },
+  { id: "CU09", name: "Record client document debts", module: "Managements", priority: "Essential" },
+  { id: "CU10", name: "Record external-entity document movements", module: "Managements", priority: "Essential" },
+  { id: "CU11", name: "Enter for registration", module: "Managements", priority: "Essential" },
+  { id: "CU12", name: "Withdraw a testimony", module: "Managements", priority: "Necessary" },
+  { id: "CU13", name: "View management history", module: "Managements", priority: "Nice to have" },
+  { id: "CU14", name: "Look up management status", module: "Managements", priority: "Necessary" },
+  { id: "CU15", name: "Process a payment", module: "Payments", priority: "Nice to have" },
+  { id: "CU16", name: "Archive a management", module: "Managements", priority: "Necessary" },
+  { id: "CU17", name: "Register a person", module: "Clients", priority: "Essential" },
+  { id: "CU18", name: "Register a client", module: "Clients", priority: "Essential" },
+  { id: "CU19", name: "Search a client's managements", module: "Clients", priority: "Necessary" },
+  { id: "CU20", name: "Create a user", module: "Administration", priority: "Essential" },
+  { id: "CU21", name: "Update a user account", module: "Administration", priority: "Essential" },
+  { id: "CU22", name: "Register a substitution", module: "Administration", priority: "Essential" },
+  { id: "CU23", name: "View user activity log", module: "Administration", priority: "Necessary" },
+  { id: "CU24", name: "Generate the index book", module: "Protocols", priority: "Nice to have" },
+  { id: "CU25", name: "Generate the monthly sworn statement", module: "Protocols", priority: "Nice to have" },
+  { id: "CU26", name: "Enter a new procedure type", module: "Administration", priority: "Essential" },
+  { id: "CU27", name: "Enter a new document type", module: "Administration", priority: "Essential" },
+  { id: "CU28", name: "Enter new folios", module: "Protocols", priority: "Essential" },
+  { id: "CU29", name: "Enter a new concept", module: "Administration", priority: "Essential" },
+  { id: "CU30", name: "Enter a new management status", module: "Administration", priority: "Essential" },
+  { id: "CU31", name: "Update a procedure type", module: "Administration", priority: "Essential" },
+  { id: "CU32", name: "Update a document type", module: "Administration", priority: "Essential" },
+  { id: "CU33", name: "Update a folio", module: "Protocols", priority: "Essential" },
+  { id: "CU34", name: "Update a concept", module: "Administration", priority: "Essential" },
+  { id: "CU35", name: "Update a management status", module: "Administration", priority: "Essential" },
+  { id: "CU36", name: "Enter folio types", module: "Administration", priority: "Essential" },
+  { id: "CU37", name: "Delete a concept", module: "Administration", priority: "Essential" },
+  { id: "CU38", name: "Delete a document type", module: "Administration", priority: "Essential" },
+  { id: "CU39", name: "Create a budget template", module: "Administration", priority: "Essential" },
+  { id: "CU40", name: "Update a folio type", module: "Administration", priority: "Essential" },
+  { id: "CU41", name: "Update a client", module: "Clients", priority: "Essential" },
+  { id: "CU42", name: "Report upcoming expirations", module: "Managements", priority: "Necessary" },
+  { id: "CU43", name: "Re-enter documentation", module: "Managements", priority: "Essential" },
+  { id: "CU44", name: "Re-enter a testimony", module: "Managements", priority: "Essential" },
+  { id: "CU45", name: "Update a budget", module: "Budgets", priority: "Essential" },
+  { id: "CU46", name: "View client details", module: "Clients", priority: "Essential" },
+  { id: "CU47", name: "Look up a payment", module: "Payments", priority: "Nice to have" },
+  { id: "CU48", name: "Register a notary", module: "Administration", priority: "Essential" },
+  { id: "CU49", name: "Delete a budget template", module: "Administration", priority: "Essential" },
+  { id: "CU50", name: "Generate the tax sworn statement", module: "Protocols", priority: "Nice to have" },
+  { id: "CU51", name: "Update a notary", module: "Administration", priority: "Essential" },
+  { id: "CU52", name: "Update a deed", module: "Managements", priority: "Essential" },
+  { id: "CU53", name: "Update a management", module: "Managements", priority: "Essential" },
+  { id: "CU54", name: "Update a person", module: "Clients", priority: "Essential" },
+  { id: "CU55", name: "Update a budget template", module: "Administration", priority: "Essential" },
+  { id: "CU56", name: "Record a registration", module: "Managements", priority: "Essential" },
+  { id: "CU57", name: "Delete a procedure type", module: "Administration", priority: "Essential" },
+  { id: "CU58", name: "Delete a folio type", module: "Administration", priority: "Essential" },
+  { id: "CU59", name: "Look up substitutions", module: "Administration", priority: "Necessary" },
+  { id: "CU60", name: "Search for a budget", module: "Budgets", priority: "Necessary" },
+  { id: "CU61", name: "Search for a person or client", module: "Clients", priority: "Necessary" },
+  { id: "CU62", name: "Search for a deed", module: "Managements", priority: "Necessary" },
+  { id: "CU63", name: "Search folios", module: "Protocols", priority: "Necessary" },
+  { id: "CU64", name: "Search procedure types", module: "Administration", priority: "Necessary" },
+  { id: "CU65", name: "Search document types", module: "Administration", priority: "Necessary" },
+  { id: "CU66", name: "Search concepts", module: "Administration", priority: "Necessary" },
+  { id: "CU67", name: "Search management statuses", module: "Administration", priority: "Necessary" },
+  { id: "CU68", name: "Search folio types", module: "Administration", priority: "Necessary" },
 ];
 
 /**
@@ -148,7 +148,7 @@ interface CoverageStats {
   passRate: number;
   coveragePct: number;
   byModule: Record<string, { total: number; pass: number; fail: number }>;
-  byGrado: Record<string, { total: number; pass: number }>;
+  byPriority: Record<string, { total: number; pass: number }>;
 }
 
 class CoverageReport implements Reporter {
@@ -224,21 +224,21 @@ class CoverageReport implements Reporter {
     let notRun = 0;
 
     const byModule: Record<string, { total: number; pass: number; fail: number }> = {};
-    const byGrado: Record<string, { total: number; pass: number }> = {};
+    const byPriority: Record<string, { total: number; pass: number }> = {};
 
     for (const cu of CU_MATRIX) {
       const r = this.results.get(cu.id)!;
       if (!byModule[cu.module]) byModule[cu.module] = { total: 0, pass: 0, fail: 0 };
-      if (!byGrado[cu.grado]) byGrado[cu.grado] = { total: 0, pass: 0 };
+      if (!byPriority[cu.priority]) byPriority[cu.priority] = { total: 0, pass: 0 };
 
       byModule[cu.module].total++;
-      byGrado[cu.grado].total++;
+      byPriority[cu.priority].total++;
 
       switch (r.status) {
         case "pass":
           passed++;
           byModule[cu.module].pass++;
-          byGrado[cu.grado].pass++;
+          byPriority[cu.priority].pass++;
           break;
         case "fail":
           failed++;
@@ -256,7 +256,7 @@ class CoverageReport implements Reporter {
     const coveragePct = total > 0 ? Math.round(((passed + failed) / total) * 100) : 0;
     const passRate = total > 0 ? Math.round((passed / total) * 100) : 0;
 
-    return { total, passed, failed, skipped, notRun, passRate, coveragePct, byModule, byGrado };
+    return { total, passed, failed, skipped, notRun, passRate, coveragePct, byModule, byPriority };
   }
 
   private generateHtml(stats: CoverageStats): string {
@@ -272,7 +272,7 @@ class CoverageReport implements Reporter {
           <td>${cu.id}</td>
           <td>${cu.name}</td>
           <td>${cu.module}</td>
-          <td>${cu.grado}</td>
+          <td>${cu.priority}</td>
           <td class="status-${statusClass}">${statusIcon} ${r.status.toUpperCase()}</td>
           <td>${r.duration > 0 ? (r.duration / 1000).toFixed(1) + "s" : "-"}</td>
           <td><small>${r.testTitle || "-"}</small></td>
@@ -290,11 +290,11 @@ class CoverageReport implements Reporter {
           <td>${m.total > 0 ? Math.round((m.pass / m.total) * 100) : 0}%</td>
         </tr>`).join("\n");
 
-    const gradoRows = Object.entries(stats.byGrado)
+    const priorityRows = Object.entries(stats.byPriority)
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([grado, g]) => `
+      .map(([priority, g]) => `
         <tr>
-          <td>${grado}</td>
+          <td>${priority}</td>
           <td>${g.total}</td>
           <td class="pass">${g.pass}</td>
           <td>${g.total > 0 ? Math.round((g.pass / g.total) * 100) : 0}%</td>
@@ -386,10 +386,10 @@ class CoverageReport implements Reporter {
     <tbody>${moduleRows}</tbody>
   </table>
 
-  <h2>🏷️ Coverage by Priority (Grado)</h2>
+  <h2>🏷️ Coverage by Priority</h2>
   <table>
     <thead><tr><th>Priority</th><th>Total</th><th>Pass</th><th>Rate</th></tr></thead>
-    <tbody>${gradoRows}</tbody>
+    <tbody>${priorityRows}</tbody>
   </table>
 
   <h2>📋 Detailed CU Matrix (${stats.total} Use Cases)</h2>

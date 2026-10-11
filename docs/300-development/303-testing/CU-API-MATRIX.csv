@@ -1,96 +1,96 @@
 CU_ID,CU_Nombre,Modulo,Grado,Entidad,Operacion,Controller,HTTP_Method,Endpoint,Bruno_Test,Endpoint_Status,Bruno_Status,Notas,GitHub_Issue
-CU01,Preparar Presupuesto,Presupuestos,Esencial,Presupuesto,Create,BudgetController,POST,/api/v1/budgets,budgets/01-create.yml,OK,OK,,#154
-CU01,Preparar Presupuesto (reporte),Presupuestos,Esencial,Presupuesto,Report,ReportController,GET,/api/v1/reports/budget/{id},MISSING,OK,NO-TEST,Requiere ID existente; Bruno gap #953,#154
-CU02,Iniciar Gestión,Gestiones,Esencial,DeedManagement,Create,ManagementController,POST,/api/v1/managements,history/01-create-management.yml,OK,OK,,#155
-CU03,Lista documentos y certificados necesarios,Gestiones,Esencial,ProcedureTemplate,Read,ProcedureTemplateController,GET,/api/v1/procedure-templates/procedure-types/{id},procedure-templates/02-get-by-procedure-type.yml,OK,OK,Sin test Bruno,#156
-CU04,Registrar documentación cliente,Gestiones,Esencial,SubmittedDocument,Create,SubmittedDocumentController,POST,/api/v1/submitted-documents,submitted-documents/,OK,OK,Bruno #953,#157
-CU05,Preparar escritura,Gestiones,Esencial,Deed,Create,DeedController,POST,/api/v1/deeds,MISSING,OK,NO-TEST,Bruno gap #953,#158
-CU06,Firmar escritura,Gestiones,Esencial,Deed,Update,DeedController,PUT,/api/v1/deeds/{id},MISSING,OK,NO-TEST,Actualiza estado firma; Bruno gap #953,#159
-CU07,Generar testimonio,Gestiones,Esencial,Testimony,Create,TestimonyController,POST,/api/v1/testimonies,testimonies/,OK,OK,GET devuelve 500; Bruno #953,#160
-CU07,Generar testimonio (resumen del caso),Gestiones,Esencial,DeedManagement,Read,ManagementCaseSummaryController,GET,/api/v1/managements/{id}/case-summary,managements/05b-resumen-caso.yml,OK,OK,Escrituras testimonios y copias de la gestión; Bruno #774,#160
-CU08,Verificar Testimony,Gestiones,Necesario,Testimony,Read,TestimonyController,GET,/api/v1/testimonies/{id},testimonies/,OK,OK,GET /testimonies devuelve 500; Bruno #953,#161
-CU09,Registrar deudas documentos de Cliente,Gestiones,Esencial,SubmittedDocument,Create,SubmittedDocumentController,POST,/api/v1/submitted-documents,submitted-documents/,OK,OK,Flag deuda en documento; Bruno #953,#162
-CU10,Registrar movimientos documentación de entidades externas,Gestiones,Esencial,ExternalEntityDocument,Read/Update,ManagementController,GET/PUT,/api/v1/managements/{id}/external-entity-documents[/{idDocumentoPresentado}],managements/,OK,OK,Implementado #863; E2E Playwright golden+edge path; Bruno #953,#163
-CU11,Ingresar para inscripción,Gestiones,Esencial,ManagementHistory,Create,HistoryController,POST,/api/v1/history,history/02-create.yml,OK,OK,Estado inscripcion,#164
-CU12,Retirar testimonio,Gestiones,Necesario,TestimonyMovement,Update,TestimonyMovementController,PUT,/api/v1/testimony-movements/{id},testimony-movements/,OK,OK,GET base devuelve 500; Bruno #953,#165
-CU13,Ver historial de gestión,Gestiones,Estaría Bueno,ManagementHistory,Read,HistoryController,GET,/api/v1/history/management/{id},history/05-get-by-management.yml,OK,OK,,#166
-CU14,Consultar estado gestión,Gestiones,Necesario,DeedManagement,Read,ManagementController,GET,/api/v1/managements/{id}/current-status,managements/,OK,OK,Reemplazado por Ver Detalle; Bruno #953,#167
-CU15,Procesar pago,Pagos,Estaría Bueno,Payment,Business-Op,PaymentController,POST,/api/v1/payments,payments/01-create.yml,OK,OK,Incluye caso rechazo por saldo insuficiente (pagos/07),#168
-CU15,Procesar pago (recibo PDF),Pagos,Estaría Bueno,Payment,Report,ReportController,GET,/api/v1/reports/payment-receipt/{idPago},payments/10-get-receipt-pdf.yml,OK,OK,,#23
-CU16,Archivar Gestión,Gestiones,Necesario,DeedManagement,Update,ManagementController,PUT,/api/v1/managements/{id},managements/,OK,OK,Actualiza estado a archivado; Bruno #953,#169
-CU17,Dar Alta persona,Clientes,Esencial,Person,Create,PersonController,POST,/api/v1/people,people/01-create.yml,OK,OK,,#170
-CU18,Dar Alta Cliente,Clientes,Esencial,Person,Create,PersonController,POST,/api/v1/people,people/01-create.yml,OK,OK,esCliente=true,#171
-CU19,Buscar gestiones de un Cliente,Clientes,Necesario,DeedManagement,Search,ManagementController,GET,/api/v1/managements/client/{idPersona},managements/,OK,OK,Bruno #953,#172
-CU20,Dar alta usuario,Administracion,Esencial,UserAccount,Create,UserController,POST,/api/v1/users,users/01-create.yml,OK,OK,,#173
-CU21,Modificar UserAccount,Administracion,Esencial,UserAccount,Update,UserController,PUT,/api/v1/users/{id},users/07-update.yml,OK,OK,Green in the idempotent suite (#1035),#174
-CU22,Registrar Substitution,Administracion,Esencial,Substitution,Create,SubstitutionController,POST,/api/v1/substitutions,substitutions/01-create.yml,OK,OK,Solo test GET existe,#175
-CU23,Ver registro de actividades de usuario,Administracion,Necesario,AuditRecord,Read,AuditRecordController,GET,/api/v1/audit-log/user/{idUser},audit-records/01-list.yml,OK,OK,Test cubre GET all no by-user,#176
-CU24,Generar libro de índices,Protocolos,Estaría Bueno,Reporte,Report,ReportController,GET,/api/v1/reports/index-book,report-pdfs/01-libro-indice.yml,OK,OK,0% doc - endpoint existe sin test; Bruno #953,#177
-CU25,Generar Declaración Jurada del mes,Protocolos,Estaría Bueno,Reporte,Report,ReportController,GET,/api/v1/reports/monthly-sworn-statement,report-pdfs/02-declaracion-jurada-mensual.yml,OK,OK,0% doc - endpoint existe sin test; Bruno #953,#178
-CU26,Ingresar nuevo tipo de trámite,Administracion,Esencial,ProcedureType,Create,ProcedureTypeController,POST,/api/v1/procedure-types,procedure-types/01-create.yml,OK,OK,,#179
-CU27,Ingresar nuevo tipo de documento,Administracion,Esencial,DocumentType,Create,DocumentTypeController,POST,/api/v1/document-types,document-types/01-create.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#180
-CU28,Ingresar nuevos folios,Protocolos,Esencial,Folio,Create,FolioController,POST,/api/v1/folios,folios/01-create.yml,OK,OK,,#181
-CU29,Ingresar nuevo concepto,Administracion,Esencial,Concept,Create,ConceptController,POST,/api/v1/concepts,concepts/01-create.yml,OK,OK,,#182
-CU30,Ingresar nuevo estado de Gestión,Administracion,Esencial,ManagementStatus,Create,ManagementStatusController,POST,/api/v1/management-statuses,management-statuses/01-create.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#183
-CU31,Modificar tipo de trámite,Administracion,Esencial,ProcedureType,Update,ProcedureTypeController,PUT,/api/v1/procedure-types/{id},procedure-types/04-update.yml,OK,OK,,#184
-CU32,Modificar tipo de documento,Administracion,Esencial,DocumentType,Update,DocumentTypeController,PUT,/api/v1/document-types/{id},document-types/04-update.yml,500-ERROR,OK,GET base devuelve 500,#185
-CU33,Modificar folio,Protocolos,Esencial,Folio,Update,FolioController,PUT,/api/v1/folios/{id},MISSING,OK,NO-TEST,Sin test PUT; Bruno gap #953,#186
-CU34,Modificar concepto,Administracion,Esencial,Concept,Update,ConceptController,PUT,/api/v1/concepts/{id},concepts/04-update.yml,OK,OK,,#187
-CU35,Modificar estado de Gestión,Administracion,Esencial,ManagementStatus,Update,ManagementStatusController,PUT,/api/v1/management-statuses/{id},management-statuses/04-update.yml,500-ERROR,OK,GET base devuelve 500,#188
-CU36,Ingresar tipos de folio,Administracion,Esencial,FolioType,Create,FolioTypeController,POST,/api/v1/folio-types,folio-types/01-create.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#189
-CU37,Eliminar concepto,Administracion,Esencial,Concept,Delete,ConceptController,DELETE,/api/v1/concepts/{id},concepts/06-delete.yml,OK,OK,,#190
-CU38,Eliminar tipo de documento,Administracion,Esencial,DocumentType,Delete,DocumentTypeController,DELETE,/api/v1/document-types/{id},document-types/06-delete.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#191
-CU39,Crear Plantilla Presupuesto,Administracion,Esencial,BudgetTemplate,Create,BudgetTemplateController,POST,/api/v1/budget-templates,budget-templates/01-create.yml,OK,OK,ERROR en concurrencia - sin test POST,#192
-CU40,Modificar Tipo de folio,Administracion,Esencial,FolioType,Update,FolioTypeController,PUT,/api/v1/folio-types/{id},folio-types/04-update.yml,500-ERROR,OK,GET base devuelve 500,#193
-CU41,Modificar Cliente,Clientes,Esencial,Person,Update,PersonController,PUT,/api/v1/people/{id},people/05-update.yml,OK,OK,Green in the idempotent suite (#1035),#194
-CU42,Informar próximos vencimientos,Gestiones,Necesario,SubmittedDocument,Read,UpcomingExpirationController,GET,/api/v1/submitted-documents/upcoming-expirations,submitted-documents/08-upcoming-expirations.yml,OK,OK,Ventana dias 1-365 (por defecto 30); Bruno #802,#195
-CU43,Reingresar documentación,Gestiones,Esencial,SubmittedDocument,Create,ManagementController,GET/POST,/api/v1/managements/{id}/document-reentry,managements/,OK,OK,Implementado #865; E2E Playwright golden+edge path; Bruno #953,#196
-CU44,Reingresar testimonio,Gestiones,Esencial,TestimonyMovement,Update,TestimonyMovementController,PUT,/api/v1/testimony-movements/{id},testimony-movements/,OK,OK,GET base devuelve 500; Bruno #953,#197
-CU45,Modificar presupuesto,Presupuestos,Esencial,Presupuesto,Update,BudgetController,PUT,/api/v1/budgets/{id},budgets/06-update.yml,OK,OK,,#198
-CU46,Ver detalle cliente,Clientes,Esencial,Person,Read,PersonController,GET,/api/v1/people/{id},people/03-get-by-id.yml,OK,OK,Green in the idempotent suite (#1035),#199
-CU47,Consultar Payment,Pagos,Estaría Bueno,Payment,Read,PaymentController,GET,/api/v1/payments/{id},payments/03-get-by-id.yml,OK,OK,,#200
-CU48,Dar alta escribano,Administracion,Esencial,Person,Create,PersonController,POST,/api/v1/people,people/01-create.yml,OK,OK,registroEscribano != null en body,#201
-CU48,Dar alta escribano (disponibles),Administracion,Esencial,Deed,Read,DeedController,GET,/api/v1/deeds/available-notaries,MISSING,500-ERROR,NO-TEST,GET devuelve 500; Bruno gap #953,#201
-CU49,Eliminar Plantilla Presupuesto,Administracion,Esencial,BudgetTemplate,Delete,BudgetTemplateController,DELETE,/api/v1/budget-templates/procedure-types/{t}/concept/{c},budget-templates/05-delete.yml,OK,OK,ERROR en concurrencia - sin test DELETE,#202
-CU50,Generar Declaración Jurada de Rentas,Protocolos,Estaría Bueno,Reporte,Report,ReportController,GET,/api/v1/reports/tax-sworn-statement,report-pdfs/04-declaracion-jurada-rentas.yml,OK,OK,0% doc - endpoint existe sin test; Bruno #953,#203
-CU51,Modificar escribano,Administracion,Esencial,Person,Update,PersonController,PUT,/api/v1/people/{id},people/05-update.yml,OK,OK,Green in the idempotent suite (#1035),#204
-CU52,Modificar Deed,Gestiones,Esencial,Deed,Update,DeedController,PUT,/api/v1/deeds/{id},MISSING,OK,NO-TEST,ERROR de concurrencia reportado; Bruno gap #953,#205
-CU53,Modificar Gestión,Gestiones,Esencial,DeedManagement,Update,ManagementController,PUT,/api/v1/managements/{id},managements/,OK,OK,Bruno #953,#206
-CU54,Modificar Person,Clientes,Esencial,Person,Update,PersonController,PUT,/api/v1/people/{id},people/05-update.yml,OK,OK,Green in the idempotent suite (#1035),#207
-CU55,Modificar Plantilla Presupuesto,Administracion,Esencial,BudgetTemplate,Update,BudgetTemplateController,PUT,/api/v1/budget-templates/procedure-types/{t}/concept/{c},budget-templates/04-update.yml,OK,OK,ERROR de concurrencia - sin test PUT,#208
-CU56,Registrar inscripción,Gestiones,Esencial,DeedManagement,Business-Op,ManagementController,PUT,/api/v1/managements/{id},managements/,OK,OK,Actualiza estado a inscripto; Bruno #953,#209
-CU57,Eliminar tipo de trámite,Administracion,Esencial,ProcedureType,Delete,ProcedureTypeController,DELETE,/api/v1/procedure-types/{id},procedure-types/06-delete.yml,OK,OK,Green in the idempotent suite (#1035),#210
-CU58,Eliminar Tipo de folio,Administracion,Esencial,FolioType,Delete,FolioTypeController,DELETE,/api/v1/folio-types/{id},folio-types/06-delete.yml,500-ERROR,OK,GET base devuelve 500,#211
-CU59,Consultar Suplencias,Administracion,Necesario,Substitution,Read,SubstitutionController,GET,/api/v1/substitutions,substitutions/02-list.yml,OK,OK,Test en carpeta escrituras (mover),#212
-CU60,Buscar Presupuesto,Presupuestos,Necesario,Presupuesto,Search,BudgetController,GET,/api/v1/budgets/person/{idPersona},budgets/04-by-person.yml,OK,OK,,#213
-CU61,Buscar persona o cliente,Clientes,Necesario,Person,Search,PersonController,GET,/api/v1/people/search,people/04-search.yml,OK,OK,,#214
-CU62,Buscar Deed,Gestiones,Necesario,Deed,Search,DeedController,GET,/api/v1/deeds/search,deeds/01-search.yml,OK,OK,Sin test Bruno,#215
-CU63,Buscar Folios,Protocolos,Necesario,Folio,Search,FolioController,GET,/api/v1/folios,folios/02-list.yml,OK,OK,Sin query params de filtro,#216
-CU64,Buscar Tipo de tramite,Administracion,Necesario,ProcedureType,Search,ProcedureTypeController,GET,/api/v1/procedure-types,procedure-types/02-list.yml,OK,OK,,#217
-CU65,Buscar Tipos de documentos,Administracion,Necesario,DocumentType,Search,DocumentTypeController,GET,/api/v1/document-types,document-types/02-list.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#218
-CU66,Buscar Conceptos,Administracion,Necesario,Concept,Search,ConceptController,GET,/api/v1/concepts,concepts/02-list.yml,OK,OK,,#219
-CU67,Buscar Estados de Gestión,Administracion,Necesario,ManagementStatus,Search,ManagementStatusController,GET,/api/v1/management-statuses,management-statuses/02-list.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#220
-CU68,Buscar tipos de folios,Administracion,Necesario,FolioType,Search,FolioTypeController,GET,/api/v1/folio-types,folio-types/02-list.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#221
-CU69,Gestión de Inmuebles,Gestiones,Necesario,Property,CRUD,PropertyController,GET,/api/v1/properties,properties/02-list.yml,OK,OK,CRUD completo (create/list/get/update/delete) cubierto tras migrar el controller de InmuebleJpaController a InmuebleRepository,#292
-CU70,Gestión de Copias,Gestiones,Necesario,Copy,CRUD,CopyController,GET,/api/v1/copies,copies/,OK,OK,"CRUD completo sin test Bruno (create requiere fkIdTestimonio, ver COVERAGE.md); Bruno #953",#243
-CU71,Gestión de Ítems,Presupuestos,Necesario,Item,CRUD,ItemController,GET,/api/v1/items,items/03-get-all.yml,OK,OK,CRUD completo + /budget/{idPresupuesto}; incluye regresión del bug fkIdPresupuesto (ver COVERAGE.md),#300
-CU72,Gestión de Documentos Presentados,Gestiones,Necesario,SubmittedDocument,CRUD,SubmittedDocumentController,GET,/api/v1/submitted-documents,submitted-documents/,OK,OK,Endpoints ya verificados OK via filas CU04/CU09/CU42/CU43; sin test Bruno dedicado; Bruno #953,#163
-CU73,Registro de Auditoría,Administracion,Necesario,AuditRecord,Search,AuditRecordController,GET,/api/v1/audit-log,audit-records/01-list.yml,OK,OK,Distinto de CU23 (filtra por usuario); este CU cubre el listado general,#309
-CU74,Estrategia de Rendimiento y Caché,Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,"Requisito no funcional transversal, no mapea a un endpoint unico. Ver SAD paragraph 8 Cross-cutting Concepts","#298, #278, #277, #290, #303"
-CU75,Gestión de Base de Datos y Migraciones,Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,"Requisito no funcional transversal. Ver ADR-004, ADR-007 y .claude/rules/database-migrations.md","#264, #275, #292, #271, #270"
-CU76,Aseguramiento de Calidad e Infraestructura de Pruebas,Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Requisito no funcional transversal. Ver ADR-006 y docs/300-development/303-testing/,"#276, #295, #296"
-CU77,Monitoreo de Operaciones y Gestión de Incidentes,Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Requisito no funcional transversal. Ver ADR-009 y docs/200-architecture/207-monitoring/,"#253, #255, #270, #271, #273, #301, #304, #305, #306, #308"
-CU78,"Seguridad, Privacidad y Cumplimiento",Transversal,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Requisito no funcional transversal. Ver ADR-008 y docs/200-architecture/206-security/,"#254, #267, #280, #281, #282, #283, #307, #309"
-CU79,Administrar Plantillas de Trámite,Administracion,Esencial,ProcedureTemplate,Search,ProcedureTemplateController,GET,/api/v1/procedure-templates,procedure-templates/01-list.yml,OK,OK,"Solo lectura cubierta (list, get-by-tipo-tramite); create/update/delete sin test Bruno",#310
-CU80,Administrar Cuadernos de Folios,Protocolos,Esencial,Notebook,CRUD,NotebookController,GET,/api/v1/notebooks,notebooks/,OK,OK,Implemented; Bruno folder from #953,#311
-CU81,Gestión de Trámites en Protocolo Auxiliar,Gestiones,Esencial,AuxiliaryProtocol,Business-Op,AuxiliaryProtocolController,GET,/api/v1/auxiliary-protocol/available-folios,auxiliary-protocol/,OK,OK,Implemented; Bruno folder from #953,#312
-CU82,Generar Minuta de Inscripción,Gestiones,Esencial,RegistrationDraft,Business-Op,RegistrationDraftController,POST,/api/v1/registration-drafts,registration-drafts/,OK,OK,Implemented; Bruno folder from #953 (happy-path deferred),#313
-CU83,Definir Workflow de Estados,Administracion,Necesario,WorkflowDefinition,CRUD,WorkflowDefinitionController,GET,/api/v1/workflow-definition,workflow-definitions/,OK,OK,"CRUD completo GET/POST/PUT/DELETE; cubierto por WorkflowDefinitionControllerTest (unit), sin test Bruno manual; Bruno #953",#451
-CU83,Definir Nodos de Workflow,Administracion,Necesario,WorkflowNode,CRUD,WorkflowNodeController,GET,/api/v1/workflow-node/by-workflow/{workflowId},workflow-nodes/,OK,OK,"CRUD completo; cubierto por WorkflowNodeControllerTest (unit), sin test Bruno manual; Bruno #953",#451
-CU83,Definir Transiciones de Workflow,Administracion,Necesario,WorkflowTransition,CRUD,WorkflowTransitionController,GET,/api/v1/workflow-transition/by-workflow/{workflowId},workflow-transitions/,OK,OK,"CRUD completo; cubierto por WorkflowTransitionControllerTest (unit), sin test Bruno manual; Bruno #953",#451
-CU83,Validar Consistencia de Workflow,Administracion,Necesario,WorkflowDefinition,Validate,WorkflowValidationController,POST,/api/v1/workflow-definition/{id}/validate,workflow-definitions/,OK,OK,"Cubierto por WorkflowValidationControllerTest/ServiceTest (unit) y WorkflowTraceApiH2IntegrationTest, sin test Bruno manual; Bruno #953",#454
-CU85,Administrar Carpetas de Trámite,Gestiones,Esencial,ProcedureFolder,CRUD,ProcedureFolderController,GET,/api/v1/procedure-folders,procedure-folders/,OK,OK,Bruno folder from #953,#953
-CU39,Plantilla costos documento (API),Administracion,Esencial,DocumentCostTemplate,Create/Read,DocumentCostTemplateController,POST,/api/v1/document-cost-templates,document-cost-templates/,OK,OK,Resource inventory row; Bruno folder from #953,#192
-CU76,Administrar Roles (API),Administracion,Necesario,Role,CRUD,RoleController,GET,/api/v1/roles,roles/,OK,OK,Resource inventory row; Bruno folder from #953,#1064
-CU17,Tipos de identificación (API),Clientes,Esencial,IdentificationType,CRUD,IdentificationTypeController,GET,/api/v1/identification-types,identification-types/,OK,OK,Resource inventory row; Bruno folder from #953,#170
-CU02,Trámites (API inventory),Gestiones,Esencial,Procedure,CRUD,ProcedureController,GET,/api/v1/procedures,procedures/,OK,OK,Resource inventory row; Bruno folder from #953,#155
+CU01,Prepare a budget,Budgets,Essential,Budget,Create,BudgetController,POST,/api/v1/budgets,budgets/01-create.yml,OK,OK,,#154
+CU01,Prepare a budget (report),Budgets,Essential,Budget,Report,ReportController,GET,/api/v1/reports/budget/{id},MISSING,OK,NO-TEST,Requires an existing id; Bruno gap #953,#154
+CU02,Start a management,Managements,Essential,DeedManagement,Create,ManagementController,POST,/api/v1/managements,history/01-create-management.yml,OK,OK,,#155
+CU03,List required documents and certificates,Managements,Essential,ProcedureTemplate,Read,ProcedureTemplateController,GET,/api/v1/procedure-templates/procedure-types/{id},procedure-templates/02-get-by-procedure-type.yml,OK,OK,No Bruno test,#156
+CU04,Record client documentation,Managements,Essential,SubmittedDocument,Create,SubmittedDocumentController,POST,/api/v1/submitted-documents,submitted-documents/,OK,OK,Bruno #953,#157
+CU05,Prepare a deed,Managements,Essential,Deed,Create,DeedController,POST,/api/v1/deeds,MISSING,OK,NO-TEST,Bruno gap #953,#158
+CU06,Sign a deed,Managements,Essential,Deed,Update,DeedController,PUT,/api/v1/deeds/{id},MISSING,OK,NO-TEST,Updates the signature status; Bruno gap #953,#159
+CU07,Generate a testimony,Managements,Essential,Testimony,Create,TestimonyController,POST,/api/v1/testimonies,testimonies/,OK,OK,GET returns 500; Bruno #953,#160
+CU07,Generate a testimony (case summary),Managements,Essential,DeedManagement,Read,ManagementCaseSummaryController,GET,/api/v1/managements/{id}/case-summary,managements/05b-resumen-caso.yml,OK,OK,"Deeds, testimonies, and copies of the management; Bruno #774",#160
+CU08,Verify a testimony,Managements,Necessary,Testimony,Read,TestimonyController,GET,/api/v1/testimonies/{id},testimonies/,OK,OK,GET /testimonies returns 500; Bruno #953,#161
+CU09,Record client document debts,Managements,Essential,SubmittedDocument,Create,SubmittedDocumentController,POST,/api/v1/submitted-documents,submitted-documents/,OK,OK,Debt flag on the document; Bruno #953,#162
+CU10,Record external-entity document movements,Managements,Essential,ExternalEntityDocument,Read/Update,ManagementController,GET/PUT,/api/v1/managements/{id}/external-entity-documents[/{idSubmittedDocument}],managements/,OK,OK,Implemented #863; E2E Playwright golden and edge path; Bruno #953,#163
+CU11,Enter for registration,Managements,Essential,ManagementHistory,Create,HistoryController,POST,/api/v1/history,history/02-create.yml,OK,OK,Registration status,#164
+CU12,Withdraw a testimony,Managements,Necessary,TestimonyMovement,Update,TestimonyMovementController,PUT,/api/v1/testimony-movements/{id},testimony-movements/,OK,OK,Base GET returns 500; Bruno #953,#165
+CU13,View management history,Managements,Nice to have,ManagementHistory,Read,HistoryController,GET,/api/v1/history/management/{id},history/05-get-by-management.yml,OK,OK,,#166
+CU14,Look up management status,Managements,Necessary,DeedManagement,Read,ManagementController,GET,/api/v1/managements/{id}/current-status,managements/,OK,OK,Replaced by view details; Bruno #953,#167
+CU15,Process a payment,Payments,Nice to have,Payment,Business-Op,PaymentController,POST,/api/v1/payments,payments/01-create.yml,OK,OK,Includes the insufficient-balance rejection case (payments/07),#168
+CU15,Process a payment (PDF receipt),Payments,Nice to have,Payment,Report,ReportController,GET,/api/v1/reports/payment-receipt/{idPayment},payments/10-get-receipt-pdf.yml,OK,OK,,#23
+CU16,Archive a management,Managements,Necessary,DeedManagement,Update,ManagementController,PUT,/api/v1/managements/{id},managements/,OK,OK,Updates the status to archived; Bruno #953,#169
+CU17,Register a person,Clients,Essential,Person,Create,PersonController,POST,/api/v1/people,people/01-create.yml,OK,OK,,#170
+CU18,Register a client,Clients,Essential,Person,Create,PersonController,POST,/api/v1/people,people/01-create.yml,OK,OK,isClient=true,#171
+CU19,Search a client's managements,Clients,Necessary,DeedManagement,Search,ManagementController,GET,/api/v1/managements/client/{idPerson},managements/,OK,OK,Bruno #953,#172
+CU20,Create a user,Administration,Essential,UserAccount,Create,UserController,POST,/api/v1/users,users/01-create.yml,OK,OK,,#173
+CU21,Update a user account,Administration,Essential,UserAccount,Update,UserController,PUT,/api/v1/users/{id},users/07-update.yml,OK,OK,Green in the idempotent suite (#1035),#174
+CU22,Register a substitution,Administration,Essential,Substitution,Create,SubstitutionController,POST,/api/v1/substitutions,substitutions/01-create.yml,OK,OK,Only a GET test exists,#175
+CU23,View user activity log,Administration,Necessary,AuditRecord,Read,AuditRecordController,GET,/api/v1/audit-log/user/{idUser},audit-records/01-list.yml,OK,OK,"The test covers GET all, not by user",#176
+CU24,Generate the index book,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/index-book,report-pdfs/01-libro-indice.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#177
+CU25,Generate the monthly sworn statement,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/monthly-sworn-statement,report-pdfs/02-declaracion-jurada-mensual.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#178
+CU26,Enter a new procedure type,Administration,Essential,ProcedureType,Create,ProcedureTypeController,POST,/api/v1/procedure-types,procedure-types/01-create.yml,OK,OK,,#179
+CU27,Enter a new document type,Administration,Essential,DocumentType,Create,DocumentTypeController,POST,/api/v1/document-types,document-types/01-create.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#180
+CU28,Enter new folios,Protocols,Essential,Folio,Create,FolioController,POST,/api/v1/folios,folios/01-create.yml,OK,OK,,#181
+CU29,Enter a new concept,Administration,Essential,Concept,Create,ConceptController,POST,/api/v1/concepts,concepts/01-create.yml,OK,OK,,#182
+CU30,Enter a new management status,Administration,Essential,ManagementStatus,Create,ManagementStatusController,POST,/api/v1/management-statuses,management-statuses/01-create.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#183
+CU31,Update a procedure type,Administration,Essential,ProcedureType,Update,ProcedureTypeController,PUT,/api/v1/procedure-types/{id},procedure-types/04-update.yml,OK,OK,,#184
+CU32,Update a document type,Administration,Essential,DocumentType,Update,DocumentTypeController,PUT,/api/v1/document-types/{id},document-types/04-update.yml,500-ERROR,OK,Base GET returns 500,#185
+CU33,Update a folio,Protocols,Essential,Folio,Update,FolioController,PUT,/api/v1/folios/{id},MISSING,OK,NO-TEST,No PUT test; Bruno gap #953,#186
+CU34,Update a concept,Administration,Essential,Concept,Update,ConceptController,PUT,/api/v1/concepts/{id},concepts/04-update.yml,OK,OK,,#187
+CU35,Update a management status,Administration,Essential,ManagementStatus,Update,ManagementStatusController,PUT,/api/v1/management-statuses/{id},management-statuses/04-update.yml,500-ERROR,OK,Base GET returns 500,#188
+CU36,Enter folio types,Administration,Essential,FolioType,Create,FolioTypeController,POST,/api/v1/folio-types,folio-types/01-create.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#189
+CU37,Delete a concept,Administration,Essential,Concept,Delete,ConceptController,DELETE,/api/v1/concepts/{id},concepts/06-delete.yml,OK,OK,,#190
+CU38,Delete a document type,Administration,Essential,DocumentType,Delete,DocumentTypeController,DELETE,/api/v1/document-types/{id},document-types/06-delete.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#191
+CU39,Create a budget template,Administration,Essential,BudgetTemplate,Create,BudgetTemplateController,POST,/api/v1/budget-templates,budget-templates/01-create.yml,OK,OK,Concurrency error — no POST test,#192
+CU40,Update a folio type,Administration,Essential,FolioType,Update,FolioTypeController,PUT,/api/v1/folio-types/{id},folio-types/04-update.yml,500-ERROR,OK,Base GET returns 500,#193
+CU41,Update a client,Clients,Essential,Person,Update,PersonController,PUT,/api/v1/people/{id},people/05-update.yml,OK,OK,Green in the idempotent suite (#1035),#194
+CU42,Report upcoming expirations,Managements,Necessary,SubmittedDocument,Read,UpcomingExpirationController,GET,/api/v1/submitted-documents/upcoming-expirations,submitted-documents/08-upcoming-expirations.yml,OK,OK,Window of 1-365 days (default 30); Bruno #802,#195
+CU43,Re-enter documentation,Managements,Essential,SubmittedDocument,Create,ManagementController,GET/POST,/api/v1/managements/{id}/document-reentry,managements/,OK,OK,Implemented #865; E2E Playwright golden and edge path; Bruno #953,#196
+CU44,Re-enter a testimony,Managements,Essential,TestimonyMovement,Update,TestimonyMovementController,PUT,/api/v1/testimony-movements/{id},testimony-movements/,OK,OK,Base GET returns 500; Bruno #953,#197
+CU45,Update a budget,Budgets,Essential,Budget,Update,BudgetController,PUT,/api/v1/budgets/{id},budgets/06-update.yml,OK,OK,,#198
+CU46,View client details,Clients,Essential,Person,Read,PersonController,GET,/api/v1/people/{id},people/03-get-by-id.yml,OK,OK,Green in the idempotent suite (#1035),#199
+CU47,Look up a payment,Payments,Nice to have,Payment,Read,PaymentController,GET,/api/v1/payments/{id},payments/03-get-by-id.yml,OK,OK,,#200
+CU48,Register a notary,Administration,Essential,Person,Create,PersonController,POST,/api/v1/people,people/01-create.yml,OK,OK,notaryRegistrationNumber != null in the body,#201
+CU48,Register a notary (available),Administration,Essential,Deed,Read,DeedController,GET,/api/v1/deeds/available-notaries,MISSING,500-ERROR,NO-TEST,GET returns 500; Bruno gap #953,#201
+CU49,Delete a budget template,Administration,Essential,BudgetTemplate,Delete,BudgetTemplateController,DELETE,/api/v1/budget-templates/procedure-types/{t}/concept/{c},budget-templates/05-delete.yml,OK,OK,Concurrency error — no DELETE test,#202
+CU50,Generate the tax sworn statement,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/tax-sworn-statement,report-pdfs/04-declaracion-jurada-rentas.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#203
+CU51,Update a notary,Administration,Essential,Person,Update,PersonController,PUT,/api/v1/people/{id},people/05-update.yml,OK,OK,Green in the idempotent suite (#1035),#204
+CU52,Update a deed,Managements,Essential,Deed,Update,DeedController,PUT,/api/v1/deeds/{id},MISSING,OK,NO-TEST,Reported concurrency error; Bruno gap #953,#205
+CU53,Update a management,Managements,Essential,DeedManagement,Update,ManagementController,PUT,/api/v1/managements/{id},managements/,OK,OK,Bruno #953,#206
+CU54,Update a person,Clients,Essential,Person,Update,PersonController,PUT,/api/v1/people/{id},people/05-update.yml,OK,OK,Green in the idempotent suite (#1035),#207
+CU55,Update a budget template,Administration,Essential,BudgetTemplate,Update,BudgetTemplateController,PUT,/api/v1/budget-templates/procedure-types/{t}/concept/{c},budget-templates/04-update.yml,OK,OK,Concurrency error — no PUT test,#208
+CU56,Record a registration,Managements,Essential,DeedManagement,Business-Op,ManagementController,PUT,/api/v1/managements/{id},managements/,OK,OK,Updates the status to registered; Bruno #953,#209
+CU57,Delete a procedure type,Administration,Essential,ProcedureType,Delete,ProcedureTypeController,DELETE,/api/v1/procedure-types/{id},procedure-types/06-delete.yml,OK,OK,Green in the idempotent suite (#1035),#210
+CU58,Delete a folio type,Administration,Essential,FolioType,Delete,FolioTypeController,DELETE,/api/v1/folio-types/{id},folio-types/06-delete.yml,500-ERROR,OK,Base GET returns 500,#211
+CU59,Look up substitutions,Administration,Necessary,Substitution,Read,SubstitutionController,GET,/api/v1/substitutions,substitutions/02-list.yml,OK,OK,Test lives in the deeds folder (move it),#212
+CU60,Search for a budget,Budgets,Necessary,Budget,Search,BudgetController,GET,/api/v1/budgets/person/{idPerson},budgets/04-by-person.yml,OK,OK,,#213
+CU61,Search for a person or client,Clients,Necessary,Person,Search,PersonController,GET,/api/v1/people/search,people/04-search.yml,OK,OK,,#214
+CU62,Search for a deed,Managements,Necessary,Deed,Search,DeedController,GET,/api/v1/deeds/search,deeds/01-search.yml,OK,OK,No Bruno test,#215
+CU63,Search folios,Protocols,Necessary,Folio,Search,FolioController,GET,/api/v1/folios,folios/02-list.yml,OK,OK,No filter query parameters,#216
+CU64,Search procedure types,Administration,Necessary,ProcedureType,Search,ProcedureTypeController,GET,/api/v1/procedure-types,procedure-types/02-list.yml,OK,OK,,#217
+CU65,Search document types,Administration,Necessary,DocumentType,Search,DocumentTypeController,GET,/api/v1/document-types,document-types/02-list.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#218
+CU66,Search concepts,Administration,Necessary,Concept,Search,ConceptController,GET,/api/v1/concepts,concepts/02-list.yml,OK,OK,,#219
+CU67,Search management statuses,Administration,Necessary,ManagementStatus,Search,ManagementStatusController,GET,/api/v1/management-statuses,management-statuses/02-list.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#220
+CU68,Search folio types,Administration,Necessary,FolioType,Search,FolioTypeController,GET,/api/v1/folio-types,folio-types/02-list.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#221
+CU69,Property management,Managements,Necessary,Property,CRUD,PropertyController,GET,/api/v1/properties,properties/02-list.yml,OK,OK,Full CRUD (create/list/get/update/delete) covered after moving the controller off the legacy property JPA controller,#292
+CU70,Copy management,Managements,Necessary,Copy,CRUD,CopyController,GET,/api/v1/copies,copies/,OK,OK,"Full CRUD without a Bruno test (create requires the testimony id, see COVERAGE.md); Bruno #953",#243
+CU71,Item management,Budgets,Necessary,Item,CRUD,ItemController,GET,/api/v1/items,items/03-get-all.yml,OK,OK,Full CRUD plus /budget/{idBudget}; includes the regression for the budget foreign-key bug (see COVERAGE.md),#300
+CU72,Submitted document management,Managements,Necessary,SubmittedDocument,CRUD,SubmittedDocumentController,GET,/api/v1/submitted-documents,submitted-documents/,OK,OK,Endpoints already verified via rows CU04/CU09/CU42/CU43; no dedicated Bruno test; Bruno #953,#163
+CU73,Audit log,Administration,Necessary,AuditRecord,Search,AuditRecordController,GET,/api/v1/audit-log,audit-records/01-list.yml,OK,OK,Distinct from CU23 (filters by user); this use case covers the general list,#309
+CU74,Performance and cache strategy,Cross-cutting,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Cross-cutting non-functional requirement; it does not map to a single endpoint. See SAD paragraph 8 Cross-cutting Concepts,"#298, #278, #277, #290, #303"
+CU75,Database management and migrations,Cross-cutting,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,"Cross-cutting non-functional requirement. See ADR-004, ADR-007, and .claude/rules/database-migrations.md","#264, #275, #292, #271, #270"
+CU76,Quality assurance and test infrastructure,Cross-cutting,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Cross-cutting non-functional requirement. See ADR-006 and docs/300-development/303-testing/,"#276, #295, #296"
+CU77,Operations monitoring and incident management,Cross-cutting,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Cross-cutting non-functional requirement. See ADR-009 and docs/200-architecture/207-monitoring/,"#253, #255, #270, #271, #273, #301, #304, #305, #306, #308"
+CU78,"Security, privacy, and compliance",Cross-cutting,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Cross-cutting non-functional requirement. See ADR-008 and docs/200-architecture/206-security/,"#254, #267, #280, #281, #282, #283, #307, #309"
+CU79,Manage procedure templates,Administration,Essential,ProcedureTemplate,Search,ProcedureTemplateController,GET,/api/v1/procedure-templates,procedure-templates/01-list.yml,OK,OK,"Read paths covered (list, get by procedure type); create/update/delete have no Bruno test",#310
+CU80,Manage folio notebooks,Protocols,Essential,Notebook,CRUD,NotebookController,GET,/api/v1/notebooks,notebooks/,OK,OK,Implemented; Bruno folder from #953,#311
+CU81,Procedures in the auxiliary protocol,Managements,Essential,AuxiliaryProtocol,Business-Op,AuxiliaryProtocolController,GET,/api/v1/auxiliary-protocol/available-folios,auxiliary-protocol/,OK,OK,Implemented; Bruno folder from #953,#312
+CU82,Generate a registration draft,Managements,Essential,RegistrationDraft,Business-Op,RegistrationDraftController,POST,/api/v1/registration-drafts,registration-drafts/,OK,OK,Implemented; Bruno folder from #953 (happy-path deferred),#313
+CU83,Define a status workflow,Administration,Necessary,WorkflowDefinition,CRUD,WorkflowDefinitionController,GET,/api/v1/workflow-definition,workflow-definitions/,OK,OK,"Full CRUD GET/POST/PUT/DELETE; covered by WorkflowDefinitionControllerTest (unit), no manual Bruno test; Bruno #953",#451
+CU83,Define workflow nodes,Administration,Necessary,WorkflowNode,CRUD,WorkflowNodeController,GET,/api/v1/workflow-node/by-workflow/{workflowId},workflow-nodes/,OK,OK,"Full CRUD; covered by WorkflowNodeControllerTest (unit), no manual Bruno test; Bruno #953",#451
+CU83,Define workflow transitions,Administration,Necessary,WorkflowTransition,CRUD,WorkflowTransitionController,GET,/api/v1/workflow-transition/by-workflow/{workflowId},workflow-transitions/,OK,OK,"Full CRUD; covered by WorkflowTransitionControllerTest (unit), no manual Bruno test; Bruno #953",#451
+CU83,Validate workflow consistency,Administration,Necessary,WorkflowDefinition,Validate,WorkflowValidationController,POST,/api/v1/workflow-definition/{id}/validate,workflow-definitions/,OK,OK,"Covered by WorkflowValidationControllerTest/ServiceTest (unit) and WorkflowTraceApiH2IntegrationTest, no manual Bruno test; Bruno #953",#454
+CU85,Manage procedure folders,Managements,Essential,ProcedureFolder,CRUD,ProcedureFolderController,GET,/api/v1/procedure-folders,procedure-folders/,OK,OK,Bruno folder from #953,#953
+CU39,Document cost template (API),Administration,Essential,DocumentCostTemplate,Create/Read,DocumentCostTemplateController,POST,/api/v1/document-cost-templates,document-cost-templates/,OK,OK,Resource inventory row; Bruno folder from #953,#192
+CU76,Manage roles (API),Administration,Necessary,Role,CRUD,RoleController,GET,/api/v1/roles,roles/,OK,OK,Resource inventory row; Bruno folder from #953,#1064
+CU17,Identification types (API),Clients,Essential,IdentificationType,CRUD,IdentificationTypeController,GET,/api/v1/identification-types,identification-types/,OK,OK,Resource inventory row; Bruno folder from #953,#170
+CU02,Procedures (API inventory),Managements,Essential,Procedure,CRUD,ProcedureController,GET,/api/v1/procedures,procedures/,OK,OK,Resource inventory row; Bruno folder from #953,#155

@@ -79,7 +79,7 @@ test.describe("CU20 - Register a user", () => {
   });
 });
 
-test.describe("CU21 - Modificar UserAccount", () => {
+test.describe("CU21 - Update a user account", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

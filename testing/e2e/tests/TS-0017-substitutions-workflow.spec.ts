@@ -1,11 +1,11 @@
 /**
- * CU22 - Registrar Substitution (Gherkin style)
+ * CU22 - Register a substitution (Gherkin style)
  * CU59 - Consultar Suplencias
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 
-test.describe("CU22 - Registrar Substitution", () => {
+test.describe("CU22 - Register a substitution", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

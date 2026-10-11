@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * CU47 "Consultar Payment": assembles the financial summary of a budget.
+ * CU47 "Look up a payment": assembles the financial summary of a budget.
  *
  * <p>The total is derived as {@code pendingBalance + totalPaid} rather than
  * recomputed from the budget charges, preserving the previous formula with exact

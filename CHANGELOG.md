@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English use-case titles in the coverage matrix** (#1490, CU75):
+  the Playwright coverage reporter, `CU-API-MATRIX.csv`, and the leftover
+  health-check titles use English use-case names, modules, and priorities.
+  Matrix path variables match the live API (`idPerson`, `idPayment`,
+  `idSubmittedDocument`). CSV column headers stay. Message catalogs stay.
 - **English logout, budget-search, and leftover API wording** (#1490, CU75):
   the logout summary and description, the budget-search status parameter,
   workflow create validation messages, and the "in use" operation summaries

@@ -126,7 +126,7 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// CU47 – Consultar Payment / Saldo
+// CU47 – Look up a payment / balance
 // ─────────────────────────────────────────────────────────────
 test.describe("CU47 - Consult payment / outstanding balance", () => {
   let steps: GherkinSteps;

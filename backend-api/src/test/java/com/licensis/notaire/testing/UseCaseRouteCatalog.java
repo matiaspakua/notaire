@@ -60,7 +60,7 @@ public final class UseCaseRouteCatalog {
                 new UseCaseRoute("CU44", "Reenter a testimony", RequestMethod.PUT, "/api/v1/testimonies/{id}"),
                 new UseCaseRoute("CU45", "Update a budget", RequestMethod.PUT, "/api/v1/budgets/{id}"),
                 new UseCaseRoute("CU46", "View client details", RequestMethod.GET, "/api/v1/people/{id}"),
-                new UseCaseRoute("CU47", "Consultar Payment", RequestMethod.GET, "/api/v1/payments/budget/{idBudget}"),
+                new UseCaseRoute("CU47", "Look up a payment", RequestMethod.GET, "/api/v1/payments/budget/{idBudget}"),
                 new UseCaseRoute("CU48", "Register a notary", RequestMethod.POST, "/api/v1/people"),
                 new UseCaseRoute("CU49", "Delete Template Budget", RequestMethod.DELETE, "/api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}"),
                 new UseCaseRoute("CU50", "Generate the tax sworn statement", RequestMethod.GET, "/api/v1/reports/tax-sworn-statement"),
