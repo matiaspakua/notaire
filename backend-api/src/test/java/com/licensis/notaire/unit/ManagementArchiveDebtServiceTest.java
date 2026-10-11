@@ -219,7 +219,7 @@ class ManagementArchiveDebtServiceTest {
             when(paymentStatus.pendingBalance(20)).thenReturn(new java.math.BigDecimal("25000.00"));
             when(managementTransitionService.transition(1, "Archivada")).thenReturn(testManagement);
             when(managementRepository.save(testManagement)).thenReturn(testManagement);
-            // Total deuda = 40000
+            // Total debt = 40000
 
             ManagementArchiveDebtService.ArchiveResult result = managementArchiveDebtService.archiving(1);
 

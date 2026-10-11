@@ -453,7 +453,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/deeds/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/deeds/2")).andExpect(status().isNotFound());
             mvc.perform(get("/api/v1/deeds/available-notaries")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/deeds/search?numero=10")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/deeds/search?number=10")).andExpect(status().isOk());
 
             String deedBody = "{\"number\":10,\"status\":\"BORRADOR\",\"body\":\"x\"}";
             mvc.perform(post("/api/v1/deeds").contentType("application/json")

@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English leftover fixture words** (#1490, CU75): document costs use
+  `amountsToPay`. Payment notes say `Test payment`. Deed search uses
+  `number`. The non-numeric management path is `not-a-number`. Synthetic
+  trace statuses are `Trace Started`, `Trace In Progress`, and
+  `Trace Closed`. Document fixtures are `Ownership report` and
+  `Debt clearance`. The debt comment says `Total debt`. Stored status
+  `Archivada` stays.
 - **English numbering names** (#1490, CU75): auxiliary deed numbering uses
   `findMaxAuxiliaryDeedNumber` and `calculateNextAuxiliaryNumber`. The
   withdrawal test is `shouldRejectWithdrawalWhenNotInscribed`. Concept
