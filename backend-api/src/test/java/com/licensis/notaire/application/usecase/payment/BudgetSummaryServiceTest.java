@@ -38,7 +38,7 @@ class BudgetSummaryServiceTest {
                 new PaymentQueryService(payments));
 
         budgets.given(BUDGET_ID, new BudgetCharges(List.of(ChargeLine.charge(new java.math.BigDecimal("10000"), null)), null, new java.math.BigDecimal("0")));
-        budgets.given(BUDGET_ID, new BudgetDescriptor(BUDGET_ID, 55, 7, 99, "Management of prueba"));
+        budgets.given(BUDGET_ID, new BudgetDescriptor(BUDGET_ID, 55, 7, 99, "Test management"));
     }
 
     @Test
@@ -50,7 +50,7 @@ class BudgetSummaryServiceTest {
         assertThat(summary.budgetNumber()).isEqualTo(55);
         assertThat(summary.managementId()).isEqualTo(7);
         assertThat(summary.managementNumber()).isEqualTo(99);
-        assertThat(summary.managementHeading()).isEqualTo("Management of prueba");
+        assertThat(summary.managementHeading()).isEqualTo("Test management");
     }
 
     @Test

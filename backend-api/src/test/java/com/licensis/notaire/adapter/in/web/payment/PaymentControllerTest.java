@@ -80,7 +80,7 @@ class PaymentControllerTest {
     }
 
     private PaymentDetails buildPayment() {
-        return new PaymentDetails(1, 10, new java.math.BigDecimal("500.0"), new Date(), null, "Payment de prueba");
+        return new PaymentDetails(1, 10, new java.math.BigDecimal("500.0"), new Date(), null, "Test payment");
     }
 
     private Date toDate(LocalDate localDate) {
@@ -253,7 +253,7 @@ class PaymentControllerTest {
                     "idBudget": 10,
                     "amount": 500.0,
                     "date": "2026-06-16",
-                    "notes": "Payment de prueba"
+                    "notes": "Test payment"
                 }
                 """;
 
@@ -269,7 +269,7 @@ class PaymentControllerTest {
         assertThat(command.getValue().budgetId()).isEqualTo(10);
         assertThat(command.getValue().amount()).isEqualByComparingTo(new java.math.BigDecimal("500.0"));
         assertThat(command.getValue().date()).isNotNull();
-        assertThat(command.getValue().notes()).isEqualTo("Payment de prueba");
+        assertThat(command.getValue().notes()).isEqualTo("Test payment");
     }
 
     @Test
@@ -282,7 +282,7 @@ class PaymentControllerTest {
                     "idBudget": 10,
                     "amount": 500.0,
                     "date": "2026-06-16",
-                    "notes": "Payment de prueba"
+                    "notes": "Test payment"
                 }
                 """;
 

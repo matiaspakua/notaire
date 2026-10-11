@@ -146,7 +146,7 @@ class NotebookControllerTest {
 
         mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(createNotebookBody(ids, "Folio 10 dañado, incluye igualmente")))
+                        .content(createNotebookBody(ids, "Folio 10 is damaged and is included anyway")))
                 .andExpect(status().isCreated());
     }
 

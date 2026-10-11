@@ -70,14 +70,14 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
         substitution.setFkIdSubstituted(substituted);
         substitution.setDateStart(toDate(LocalDate.of(2026, 1, 1)));
         substitution.setDateEnd(toDate(LocalDate.of(2026, 6, 30)));
-        substitution.setNotes("Substitution de prueba");
+        substitution.setNotes("Test substitution");
 
         Substitution saved = substitutionRepository.save(substitution);
 
         assertThat(saved.getIdSubstitution()).isNotNull();
         assertThat(saved.getFkIdSubstitute().getPersonId()).isEqualTo(substitute.getPersonId());
         assertThat(saved.getFkIdSubstituted().getPersonId()).isEqualTo(substituted.getPersonId());
-        assertThat(saved.getNotes()).isEqualTo("Substitution de prueba");
+        assertThat(saved.getNotes()).isEqualTo("Test substitution");
     }
 
     @Test

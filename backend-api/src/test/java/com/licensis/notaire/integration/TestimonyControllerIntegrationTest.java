@@ -44,7 +44,7 @@ class TestimonyControllerIntegrationTest {
         String deedBody = """
                 {
                   "number": 3001,
-                  "body": "Deed de prueba para testimony",
+                  "body": "Test deed for testimony",
                   "status": "BORRADOR",
                   "dateDeedrecording": "2026-06-16"
                 }
@@ -62,7 +62,7 @@ class TestimonyControllerIntegrationTest {
         String deedBody = """
                 {
                   "number": 3002,
-                  "body": "Deed firmada de prueba para generar testimony",
+                  "body": "Test signed deed for testimony generation",
                   "status": "Firmada",
                   "dateDeedrecording": "2026-06-16"
                 }
@@ -111,7 +111,7 @@ class TestimonyControllerIntegrationTest {
                 {
                   "number": 1001,
                   "flagged": false,
-                  "notes": "Testimony de prueba",
+                  "notes": "Test testimony",
                   "deed": {"idDeed": %d, "number": 0}
                 }
                 """.formatted(deedId);

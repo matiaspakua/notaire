@@ -109,7 +109,7 @@ class PropertyRepositoryIntegrationTest extends ServiceIntegrationTest {
     void shouldHandleNullableFields() {
         Property property = new Property();
         property.setCadastralDesignation("Test 456");
-        property.setAddress("Dirección Mínima");
+        property.setAddress("Minimum address");
         property.setFiscalAppraisal(null);
         property.setNotes(null);
 

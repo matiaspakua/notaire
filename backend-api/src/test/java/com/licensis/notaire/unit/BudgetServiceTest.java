@@ -202,12 +202,12 @@ class BudgetServiceTest {
         @Test
         @DisplayName("Should keep provided heading when not blank")
         void shouldKeepProvidedHeading() {
-            testBudget.setHeading("Budget específico");
+            testBudget.setHeading("Specific budget");
             when(budgetRepository.create(any(Budget.class))).thenReturn(testBudget);
 
             Budget result = budgetService.create(testBudget);
 
-            assertThat(result.getHeading()).isEqualTo("Budget específico");
+            assertThat(result.getHeading()).isEqualTo("Specific budget");
         }
     }
 

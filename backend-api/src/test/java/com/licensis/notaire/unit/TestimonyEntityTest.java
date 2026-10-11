@@ -79,9 +79,9 @@ class TestimonyEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             Testimony testimony = new Testimony();
-            testimony.setNotes("Requires notificación to the client");
+            testimony.setNotes("Requires notification to the client");
 
-            assertThat(testimony.getNotes()).isEqualTo("Requires notificación to the client");
+            assertThat(testimony.getNotes()).isEqualTo("Requires notification to the client");
         }
 
         @Test

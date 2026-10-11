@@ -61,8 +61,8 @@ class SubmittedDocumentEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             SubmittedDocument doc = new SubmittedDocument();
-            doc.setNotes("Requires notificación to the registro");
-            assertThat(doc.getNotes()).isEqualTo("Requires notificación to the registro");
+            doc.setNotes("Requires notification to the registry");
+            assertThat(doc.getNotes()).isEqualTo("Requires notification to the registry");
         }
 
         @Test

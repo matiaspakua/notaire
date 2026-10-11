@@ -109,7 +109,7 @@ test.describe("CU80 - Manage folio notebooks", () => {
     await expect(page.getByText(/requiere una justificaci/i)).toBeVisible({ timeout: 10000 });
     await expect(dialog).toBeVisible();
 
-    await dialog.getByLabel(/observaciones/i).fill("Folio dañado durante impresión");
+    await dialog.getByLabel(/observaciones/i).fill("Folio damaged during printing");
     await dialog.getByRole("button", { name: /crear/i }).click();
     await expect(page.getByText(/notebook creado/i)).toBeVisible({ timeout: 10000 });
   });

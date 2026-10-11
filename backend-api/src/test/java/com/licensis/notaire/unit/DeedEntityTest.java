@@ -269,11 +269,11 @@ class DeedEntityTest {
         void getDtoMapsBasicFields() {
             Deed e = new Deed(5);
             e.setNumber(3001);
-            e.setBody("Deed de prueba");
+            e.setBody("Test deed");
             var dto = e.getDto();
             assertThat(dto.getIdDeed()).isEqualTo(5);
             assertThat(dto.getNumber()).isEqualTo(3001);
-            assertThat(dto.getBody()).isEqualTo("Deed de prueba");
+            assertThat(dto.getBody()).isEqualTo("Test deed");
         }
     }
 }

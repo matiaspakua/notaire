@@ -165,7 +165,7 @@ class BusinessWorkflowIntegrationTest {
                             .content("""
                                     {
                                       "number": 20250001,
-                                      "heading": "Gestión de prueba",
+                                      "heading": "Test management",
                                       "dateStart": "2025-01-15",
                                       "notaryPersonId": 1
                                     }
@@ -219,7 +219,7 @@ class BusinessWorkflowIntegrationTest {
                                     {
                                       "number": 20250001,
                                       "date": "2025-01-15",
-                                      "heading": "Budget de prueba",
+                                      "heading": "Test budget",
                                       "amount": 15000.00,
                                       "status": "PENDIENTE"
                                     }
@@ -333,7 +333,7 @@ class BusinessWorkflowIntegrationTest {
                             .content("""
                                     {
                                       "number": 2025001,
-                                      "body": "Body de la deed de prueba",
+                                      "body": "Test deed body",
                                       "status": "BORRADOR",
                                       "dateDeedrecording": "2025-01-15"
                                     }
@@ -459,7 +459,7 @@ class BusinessWorkflowIntegrationTest {
                             .content("""
                                     {
                                       "name": "Compraventa property",
-                                      "description": "Operación de compraventa",
+                                      "description": "Compraventa operation",
                                       "isArchived": true,
                                       "isRegistered": false,
                                       "associatesProperties": true

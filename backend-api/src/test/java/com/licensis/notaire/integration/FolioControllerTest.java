@@ -247,7 +247,7 @@ class FolioControllerTest {
         String body = """
                 {
                   "number": %d,
-                  "body": "Deed de prueba para vinculación de folio",
+                  "body": "Test deed for folio linking",
                   "status": "Sin Firmar",
                   "dateDeedrecording": "2026-06-16"
                 }

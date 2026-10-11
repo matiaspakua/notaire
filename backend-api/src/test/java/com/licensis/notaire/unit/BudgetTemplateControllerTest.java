@@ -55,8 +55,8 @@ class BudgetTemplateControllerTest {
         @DisplayName("BudgetTemplate notes field — can be set and retrieved")
         void notesFieldCanBeSetAndRetrieved() {
             BudgetTemplate entity = new BudgetTemplate();
-            entity.setNotes("Test observation for budget estándar");
-            assertThat(entity.getNotes()).isEqualTo("Test observation for budget estándar");
+            entity.setNotes("Test observation for a standard budget");
+            assertThat(entity.getNotes()).isEqualTo("Test observation for a standard budget");
         }
 
         @Test

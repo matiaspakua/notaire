@@ -87,11 +87,11 @@ class PaymentEntityTest {
             Payment payment = new Payment(2);
             payment.setDate(new Date());
             payment.setAmount(new java.math.BigDecimal("200.0"));
-            payment.setNotes("Observation of prueba");
+            payment.setNotes("Test observation");
 
             String str = payment.toString();
 
-            assertThat(str).contains("Observation of prueba");
+            assertThat(str).contains("Test observation");
         }
 
         @Test

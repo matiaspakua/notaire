@@ -46,7 +46,7 @@ class ProcessPaymentServiceTest {
     }
 
     private ProcessPaymentCommand command(BigDecimal amount) {
-        return new ProcessPaymentCommand(BUDGET_ID, amount, new Date(), "Payment de prueba", "EFECTIVO");
+        return new ProcessPaymentCommand(BUDGET_ID, amount, new Date(), "Test payment", "EFECTIVO");
     }
 
     @Test
@@ -57,7 +57,7 @@ class ProcessPaymentServiceTest {
         assertThat(registered.id()).isNotNull();
         assertThat(registered.amount()).isEqualByComparingTo(Money.of("2500.00"));
         assertThat(registered.budgetId()).isEqualTo(BUDGET_ID);
-        assertThat(registered.notes()).isEqualTo("Payment de prueba");
+        assertThat(registered.notes()).isEqualTo("Test payment");
         assertThat(registered.paymentMethod()).isEqualTo("EFECTIVO");
         assertThat(payments.all()).hasSize(1);
     }

@@ -49,7 +49,7 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
         // Create workflow definition
         workflowDefinition = new WorkflowDefinition();
         workflowDefinition.setName("Workflow Test");
-        workflowDefinition.setDescription("Workflow for pruebas");
+        workflowDefinition.setDescription("Workflow for tests");
         workflowDefinition = workflowDefinitionRepository.save(workflowDefinition);
 
         // Create states

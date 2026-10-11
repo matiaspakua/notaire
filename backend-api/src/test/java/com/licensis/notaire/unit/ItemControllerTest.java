@@ -51,7 +51,7 @@ class ItemControllerTest {
 
     private Item buildItem(Integer id, TypeItem type, String reason) {
         Item item = new Item(id);
-        item.setName("Item de prueba");
+        item.setName("Test item");
         item.setValue(new java.math.BigDecimal("1000"));
         item.setType(type);
         item.setReason(reason);
@@ -133,7 +133,7 @@ class ItemControllerTest {
 
         String json = """
                 {
-                    "name": "Item de prueba",
+                    "name": "Test item",
                     "value": 1000.0
                 }
                 """;

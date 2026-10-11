@@ -458,7 +458,7 @@ class PaymentUseCaseTest {
 
         private Item buildItem(TypeItem type, java.math.BigDecimal value) {
             Item item = new Item();
-            item.setName("Item de prueba");
+            item.setName("Test item");
             item.setValue(value);
             item.setType(type);
             return item;

@@ -26,11 +26,11 @@ class WorkflowEntityTest {
         void shouldCreateWorkflowDefinitionWithRequiredFields() {
             WorkflowDefinition wf = new WorkflowDefinition();
             wf.setName("Workflow Compraventa");
-            wf.setDescription("Workflow estándar for procedures of compraventa");
+            wf.setDescription("Standard workflow for Compraventa procedures");
             wf.setActive(false);
 
             assertThat(wf.getName()).isEqualTo("Workflow Compraventa");
-            assertThat(wf.getDescription()).isEqualTo("Workflow estándar for procedures of compraventa");
+            assertThat(wf.getDescription()).isEqualTo("Standard workflow for Compraventa procedures");
             assertThat(wf.isActive()).isFalse();
         }
 

@@ -72,7 +72,7 @@ class BudgetRepositoryIntegrationTest extends ServiceIntegrationTest {
         Budget budget = new Budget();
         budget.setNumber(2001);
         budget.setDate(new Date());
-        budget.setHeading("Budget Recuperación");
+        budget.setHeading("Budget recovery");
         budget.setStatus("PENDIENTE");
         budget.setFkIdPerson(person);
         Budget saved = budgetRepository.save(budget);

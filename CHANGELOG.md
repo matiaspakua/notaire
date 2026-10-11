@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English test fixture prose** (#1490, CU75):
+  Backend and Playwright fixtures use English free-text values such as
+  `Test deed`, `Test payment`, and `Standard workflow`. Stored labels and
+  person names stay, including `Compraventa`, `Firmada`, and `García`.
+  Visible Spanish form labels such as `observaciones` and `valuación fiscal`
+  stay because the default locale is Spanish.
 - **English E2E seed identifiers** (#1490, CU75):
   Playwright seed env vars are `E2E_SEED_PERSON_ID`, `E2E_SEED_BUDGET_ID`,
   `E2E_SEED_CONCEPT_ID`, `E2E_SEED_PROCEDURE_TYPE_ID`, `E2E_SEED_USER_ID`,

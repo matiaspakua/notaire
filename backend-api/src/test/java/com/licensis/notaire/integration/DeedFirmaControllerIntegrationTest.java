@@ -60,7 +60,7 @@ class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
         String body = """
                 {
                   "number": %d,
-                  "body": "Deed de prueba para firma",
+                  "body": "Test deed for signing",
                   "status": "%s",
                   "dateDeedrecording": "2026-06-16"
                 }

@@ -65,7 +65,7 @@ class ProcedureControllerFkHydrationIntegrationTest {
         Deed deed = new Deed();
         deed.setNumber(number);
         deed.setDateDeedrecording(new Date());
-        deed.setBody("Cuerpo of deed of prueba");
+        deed.setBody("Test deed body");
         deed.setStatus("Firmada");
         deed = deedRepository.save(deed);
         return deed.getIdDeed();

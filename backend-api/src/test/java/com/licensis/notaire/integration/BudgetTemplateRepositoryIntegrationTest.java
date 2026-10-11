@@ -52,7 +52,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
         testTemplate.setBudgetTemplatePK(pk);
         testTemplate.setProcedureType(testTypeProcedure);
         testTemplate.setConcept(testConcept);
-        testTemplate.setNotes("Template estándar");
+        testTemplate.setNotes("Standard template");
         templateRepository.save(testTemplate);
     }
 
@@ -69,7 +69,7 @@ class BudgetTemplateRepositoryIntegrationTest extends ServiceIntegrationTest {
         List<BudgetTemplate> found = templateRepository.findByProcedureTypeIdProcedureType(testTypeProcedure.getIdProcedureType());
 
         assertThat(found).isNotEmpty()
-                .anyMatch(p -> p.getNotes().equals("Template estándar"));
+                .anyMatch(p -> p.getNotes().equals("Standard template"));
     }
 
     @Test

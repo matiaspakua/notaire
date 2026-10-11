@@ -34,7 +34,7 @@ test.describe("CU81 - Procedure management in the auxiliary protocol", () => {
 
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    await dialog.getByTestId("textarea-deed-body-auxiliary").fill("Cuerpo de la escritura de prueba E2E");
+    await dialog.getByTestId("textarea-deed-body-auxiliary").fill("E2E test deed body");
     await dialog.getByRole("button", { name: /crear/i }).click();
 
     await expect(page.getByText(/deed iniciada/i)).toBeVisible({ timeout: 10000 });

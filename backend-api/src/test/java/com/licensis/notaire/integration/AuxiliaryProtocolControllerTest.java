@@ -102,7 +102,7 @@ class AuxiliaryProtocolControllerTest {
 
         Map<String, Object> body = new HashMap<>();
         body.put("idFolio", folio.getIdFolio());
-        body.put("body", "Acta of certificación of firma");
+        body.put("body", "Record of signature certification");
 
         mockMvc.perform(post("/api/v1/auxiliary-protocol/deeds")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -115,7 +115,7 @@ class AuxiliaryProtocolControllerTest {
     @DisplayName("Should reject starting a deed when no auxiliary folio is available")
     void shouldRejectDeedWhenNoFolioAuxiliaryAvailable() throws Exception {
         Map<String, Object> body = new HashMap<>();
-        body.put("body", "Acta of certificación of firma");
+        body.put("body", "Record of signature certification");
 
         mockMvc.perform(post("/api/v1/auxiliary-protocol/deeds")
                         .contentType(MediaType.APPLICATION_JSON)

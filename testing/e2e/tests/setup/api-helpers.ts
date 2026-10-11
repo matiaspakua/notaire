@@ -677,7 +677,7 @@ export async function createSubstitution(
     fkIdSubstitute: { personId: idSuplente },
     fkIdSubstituted: { personId: idSuplantado },
     dateStart: new Date().toISOString().split("T")[0],
-    notes: "Substitution E2E de prueba",
+    notes: "E2E test substitution",
     ...overrides,
   });
 }

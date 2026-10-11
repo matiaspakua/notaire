@@ -121,9 +121,9 @@ class BudgetTemplateEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             BudgetTemplate pp = new BudgetTemplate();
-            pp.setNotes("Honorarios notariales estándar");
+            pp.setNotes("Standard notarial fees");
 
-            assertThat(pp.getNotes()).isEqualTo("Honorarios notariales estándar");
+            assertThat(pp.getNotes()).isEqualTo("Standard notarial fees");
         }
 
         @Test
