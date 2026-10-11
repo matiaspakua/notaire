@@ -116,10 +116,10 @@ test.describe("CU22/CU59 - Management redirect when a substitution is active", (
     await expect(dialog).toBeVisible();
 
     await page.getByTestId("input-management-number").fill(String(uniqueId() % 1_000_000));
-    await choose(page, "select-presupuesto-gestion", new RegExp(client.data!.lastName!, "i"));
-    await choose(page, "select-escribano-gestion", new RegExp(notary.data!.lastName!, "i"));
-    await chooseFirst(page, "select-estado-gestion");
-    await chooseFirst(page, "select-tipo-tramite-gestion");
+    await choose(page, "select-budget-management", new RegExp(client.data!.lastName!, "i"));
+    await choose(page, "select-notary-management", new RegExp(notary.data!.lastName!, "i"));
+    await chooseFirst(page, "select-status-management");
+    await chooseFirst(page, "select-procedure-type-management");
 
     await page.getByTestId("btn-save-management").click();
 
@@ -147,10 +147,10 @@ test.describe("CU22/CU59 - Management redirect when a substitution is active", (
     await expect(dialog).toBeVisible();
 
     await page.getByTestId("input-management-number").fill(String(uniqueId() % 1_000_000));
-    await choose(page, "select-presupuesto-gestion", new RegExp(client.data!.lastName!, "i"));
-    await choose(page, "select-escribano-gestion", new RegExp(notary.data!.lastName!, "i"));
-    await chooseFirst(page, "select-estado-gestion");
-    await chooseFirst(page, "select-tipo-tramite-gestion");
+    await choose(page, "select-budget-management", new RegExp(client.data!.lastName!, "i"));
+    await choose(page, "select-notary-management", new RegExp(notary.data!.lastName!, "i"));
+    await chooseFirst(page, "select-status-management");
+    await chooseFirst(page, "select-procedure-type-management");
 
     await page.getByTestId("btn-save-management").click();
 

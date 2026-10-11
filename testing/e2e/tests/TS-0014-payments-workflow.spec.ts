@@ -22,7 +22,7 @@ async function seedBudget(page: Page, amount: number): Promise<{ idBudget: numbe
   }
   const budgetResult = await createBudget(page, personResult.data.personId, undefined, { propertyAmount: amount });
   if (!budgetResult.ok || !budgetResult.data?.idBudget) {
-    throw new Error(`Failed to seed presupuesto: ${budgetResult.error ?? JSON.stringify(budgetResult.data)}`);
+    throw new Error(`Failed to seed budget: ${budgetResult.error ?? JSON.stringify(budgetResult.data)}`);
   }
   return { idBudget: budgetResult.data.idBudget, lastName: personResult.data.lastName! };
 }

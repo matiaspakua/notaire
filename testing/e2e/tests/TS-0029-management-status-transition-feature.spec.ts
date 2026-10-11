@@ -33,7 +33,7 @@ test.describe("CU83 - Change a management's status", () => {
 
     await dialog.getByTestId("select-new-status").click();
     await page.getByRole("option", { name: finalStatus }).click();
-    await dialog.getByTestId("btn-confirm-transicion").click();
+    await dialog.getByTestId("btn-confirm-transition").click();
 
     await expect(dialog).not.toBeVisible();
     await expect(row).toContainText(finalStatus);
@@ -73,7 +73,7 @@ test.describe("CU83 - Change a management's status", () => {
       await expect(dialog).toBeVisible();
       await dialog.getByTestId("select-new-status").click();
       await page.getByRole("option", { name: finalStatus }).click();
-      await dialog.getByTestId("btn-confirm-transicion").click();
+      await dialog.getByTestId("btn-confirm-transition").click();
       await expect(dialog).not.toBeVisible();
     });
   }

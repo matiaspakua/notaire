@@ -9,8 +9,8 @@ import { test, expect, type Page } from "@playwright/test";
 
 const CREATE_DIALOGS = [
   { route: "/dashboard/people", button: "btn-nueva-persona", es: "Nueva persona", en: "New person" },
-  { route: "/dashboard/budgets", button: "btn-nuevo-presupuesto", es: "Nuevo presupuesto", en: "New quote" },
-  { route: "/dashboard/managements", button: "btn-nueva-gestion", es: "Nueva gestión", en: "New case" },
+  { route: "/dashboard/budgets", button: "btn-new-budget", es: "Nuevo presupuesto", en: "New quote" },
+  { route: "/dashboard/managements", button: "btn-new-management", es: "Nueva gestión", en: "New case" },
   { route: "/dashboard/deeds", button: "btn-nueva-escritura", es: "Nueva escritura", en: "New deed" },
   { route: "/dashboard/payments", button: "btn-nuevo-pago", es: "Nuevo pago", en: "New payment" },
 ];

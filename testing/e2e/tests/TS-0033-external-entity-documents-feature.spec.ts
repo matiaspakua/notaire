@@ -59,13 +59,13 @@ test.describe("CU10 - Record movements of external-entity documentation", () => 
     await expect(detalleDialog.getByText("Certificado de Dominio")).toBeVisible();
 
     await page.getByTestId(`btn-edit-document-${idDocumentPresentado}`).click();
-    const movementDialog = page.getByTestId("dialog-movimiento");
+    const movementDialog = page.getByTestId("dialog-movement");
     await expect(movementDialog).toBeVisible();
 
     await movementDialog.getByTestId("input-card-number").fill("42");
     await movementDialog.getByTestId("input-notes").fill("Retirado del registro");
     await movementDialog.getByTestId("checkbox-delivered").click();
-    await movementDialog.getByTestId("btn-save-movimiento").click();
+    await movementDialog.getByTestId("btn-save-movement").click();
 
     await expect(page.getByText(/movimiento registrado/i)).toBeVisible({ timeout: 10000 });
     await expect(movementDialog).not.toBeVisible();

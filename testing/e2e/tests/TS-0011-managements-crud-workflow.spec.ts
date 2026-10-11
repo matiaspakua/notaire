@@ -128,7 +128,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
 
     await dialog.getByTestId('select-new-status').click()
     await page.getByRole('option', { name: finalStatus }).click()
-    await dialog.getByTestId('btn-confirm-transicion').click()
+    await dialog.getByTestId('btn-confirm-transition').click()
     await expect(dialog).not.toBeVisible()
 
     await expect(row).toContainText(finalStatus)
@@ -188,7 +188,7 @@ test.describe("CU13 - View a management's history", () => {
     let dialog = page.getByRole('dialog')
     await dialog.getByTestId('select-new-status').click()
     await page.getByRole('option', { name: finalStatus }).click()
-    await dialog.getByTestId('btn-confirm-transicion').click()
+    await dialog.getByTestId('btn-confirm-transition').click()
     await expect(dialog).not.toBeVisible()
 
     // View history with 2 entries
@@ -227,7 +227,7 @@ test.describe("CU83 - Change a management's status", () => {
 
     await dialog.getByTestId('select-new-status').click()
     await page.getByRole('option', { name: finalStatus }).click()
-    await dialog.getByTestId('btn-confirm-transicion').click()
+    await dialog.getByTestId('btn-confirm-transition').click()
 
     await expect(dialog).not.toBeVisible()
     await expect(row).toContainText(finalStatus)

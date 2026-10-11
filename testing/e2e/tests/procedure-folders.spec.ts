@@ -96,10 +96,10 @@ test.describe("CU85 - Manage procedure folders", () => {
     const item = dialog.getByTestId("folder-item").first();
     await expect(item).toContainText("Activa");
 
-    await item.getByTestId(/^btn-poner-en-espera-/).click();
+    await item.getByTestId(/^btn-place-on-hold-/).click();
     dialog = page.getByRole("dialog");
     await dialog.getByTestId("input-wait-reason").fill("Falta documentación del titular");
-    await dialog.getByTestId("btn-confirm-espera").click();
+    await dialog.getByTestId("btn-confirm-wait").click();
     await expect(dialog).not.toBeVisible();
 
     await page.getByTestId(`btn-view-folders-${idManagement}`).click();
@@ -120,7 +120,7 @@ test.describe("CU85 - Manage procedure folders", () => {
     await expect(dialog.getByTestId("folder-item").first()).toContainText("Archivada");
   });
 
-  test("edge path: poner en espera sin motivo muestra un error visible", async ({ page }) => {
+  test("edge path: placing on hold without a reason shows a visible error", async ({ page }) => {
     const { idManagement, number } = await seedArchivableManagement(page);
 
     await page.goto("/dashboard/managements");
@@ -133,12 +133,12 @@ test.describe("CU85 - Manage procedure folders", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    await dialog.getByTestId(/^btn-poner-en-espera-/).click();
-    const esperaDialog = page.getByRole("dialog");
-    await esperaDialog.getByTestId("btn-confirm-espera").click();
+    await dialog.getByTestId(/^btn-place-on-hold-/).click();
+    const waitDialog = page.getByRole("dialog");
+    await waitDialog.getByTestId("btn-confirm-wait").click();
 
     await expect(page.getByText(/motivo es obligatorio/i)).toBeVisible({ timeout: 10000 });
-    await expect(esperaDialog).toBeVisible();
+    await expect(waitDialog).toBeVisible();
   });
 
   test("edge path: archiving a management with a folder on hold requires explicit confirmation", async ({
@@ -154,10 +154,10 @@ test.describe("CU85 - Manage procedure folders", () => {
 
     await page.getByTestId(`btn-view-folders-${idManagement}`).click();
     let dialog = page.getByRole("dialog");
-    await dialog.getByTestId(/^btn-poner-en-espera-/).click();
+    await dialog.getByTestId(/^btn-place-on-hold-/).click();
     dialog = page.getByRole("dialog");
     await dialog.getByTestId("input-wait-reason").fill("Falta documentación");
-    await dialog.getByTestId("btn-confirm-espera").click();
+    await dialog.getByTestId("btn-confirm-wait").click();
     await expect(dialog).not.toBeVisible();
     await page.keyboard.press("Escape");
 

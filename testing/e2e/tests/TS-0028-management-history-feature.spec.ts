@@ -31,7 +31,7 @@ test.describe("CU13 - View a management's history", () => {
     let dialog = page.getByRole("dialog");
     await dialog.getByTestId("select-new-status").click();
     await page.getByRole("option", { name: finalStatus }).click();
-    await dialog.getByTestId("btn-confirm-transicion").click();
+    await dialog.getByTestId("btn-confirm-transition").click();
     await expect(dialog).not.toBeVisible();
 
     await page.getByTestId(`btn-view-history-${idManagement}`).click();

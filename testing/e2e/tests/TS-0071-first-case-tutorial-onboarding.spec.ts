@@ -159,7 +159,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     await test.step("6. Create the quote — link the proposed amount to the client", async () => {
       await go(page, "/dashboard/budgets");
       await page.getByTestId("btn-new-budget").click();
-      await choose(page, "select-persona", new RegExp(client, "i"));
+      await choose(page, "select-person", new RegExp(client, "i"));
       await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-04");
       await page.getByTestId("input-amount").fill("25000");
       await pause(page);
@@ -175,10 +175,10 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
       await pause(page);
       // Budget options are labeled with the client's name, so the tutorial links the
       // case to its own quote rather than relying on list order.
-      await choose(page, "select-presupuesto-gestion", new RegExp(client, "i"));
-      await chooseFirst(page, "select-escribano-gestion");
-      await chooseFirst(page, "select-estado-gestion");
-      await choose(page, "select-tipo-tramite-gestion", new RegExp(typeProcedure, "i"));
+      await choose(page, "select-budget-management", new RegExp(client, "i"));
+      await chooseFirst(page, "select-notary-management");
+      await chooseFirst(page, "select-status-management");
+      await choose(page, "select-procedure-type-management", new RegExp(typeProcedure, "i"));
       await saveDialog(page);
       await expect(page.getByRole("table")).toContainText(management);
       await pause(page);

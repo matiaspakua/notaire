@@ -204,7 +204,7 @@ function ExternalEntityDocumentsList() {
       </Dialog>
 
       <Dialog open={!!editingDocument} onOpenChange={(v) => !v && setEditingDocument(null)}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto" data-testid="dialog-movimiento">
+        <DialogContent className="max-h-[85vh] overflow-y-auto" data-testid="dialog-movement">
           <FormContainer>
             <FormSection dialogTitle title={t("registrarMovimiento")}>
               <FormField label={t("fields.numeroCarton")}>
@@ -293,7 +293,7 @@ function ExternalEntityDocumentsList() {
               <Button
                 onClick={handleGuardarMovement}
                 disabled={registerMutation.isPending}
-                data-testid="btn-save-movimiento"
+                data-testid="btn-save-movement"
               >
                 {tc("save")}
               </Button>

@@ -30,8 +30,8 @@ interface Module {
 
 /** Modules exposed directly in the sidebar (in display order). */
 const SIDEBAR_MODULES: Module[] = [
-  { navLabel: "Gestiones", urlPart: "/dashboard/managements", createTestId: "btn-nueva-gestion" },
-  { navLabel: "Presupuestos", urlPart: "/dashboard/budgets", createTestId: "btn-nuevo-presupuesto" },
+  { navLabel: "Gestiones", urlPart: "/dashboard/managements", createTestId: "btn-new-management" },
+  { navLabel: "Presupuestos", urlPart: "/dashboard/budgets", createTestId: "btn-new-budget" },
   { navLabel: "Personas", urlPart: "/dashboard/people", createTestId: "btn-nueva-persona" },
   { navLabel: "Escrituras", urlPart: "/dashboard/deeds" },
   { navLabel: "Pagos", urlPart: "/dashboard/payments", createTestId: "btn-nuevo-pago" },

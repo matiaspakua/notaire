@@ -164,10 +164,10 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Create", async () => {
       const uniqueNumber = String(Date.now()).slice(-5);
-      await openModal(page, "btn-nueva-gestion");
+      await openModal(page, "btn-new-management");
       await page.getByTestId("input-management-number").fill(uniqueNumber);
       await pause(page, PAUSE);
-      await saveAndDismiss(page, "btn-guardar-gestion");
+      await saveAndDismiss(page, "btn-save-management");
     });
 
     await test.step("Edit first row", async () => {
@@ -209,7 +209,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nuevo-presupuesto");
+      await openModal(page, "btn-new-budget");
       await expect(page.getByTestId("input-amount")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);

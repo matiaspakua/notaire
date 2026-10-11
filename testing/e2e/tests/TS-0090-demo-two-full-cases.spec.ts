@@ -80,7 +80,7 @@ async function saveDialog(page: Page): Promise<void> {
 interface CaseDefinition {
   label: string;
   clientName: string;
-  clientApellido: string;
+  clientLastName: string;
   typeProcedure: string;
   tipoFolio: string;
   typeDocument: string;
@@ -98,7 +98,7 @@ function buildCaseDefinition(label: "A" | "B", suffix: string): CaseDefinition {
   return {
     label,
     clientName: label === "A" ? "María" : "Carlos",
-    clientApellido: `Demo${label} ${suffix}`,
+    clientLastName: `Demo${label} ${suffix}`,
     typeProcedure: `Compraventa Demo ${label} ${suffix}`,
     tipoFolio: `Protocolo Demo ${label} ${suffix}`,
     typeDocument: `DNI Comprador Demo ${label} ${suffix}`,
@@ -152,13 +152,13 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await go(page, "/dashboard/people");
     await page.getByTestId("btn-new-person").click();
     await page.getByTestId("input-firstName").fill(def.clientName);
-    await page.getByTestId("input-lastName").fill(def.clientApellido);
+    await page.getByTestId("input-lastName").fill(def.clientLastName);
     await page.getByRole("dialog").getByTestId("input-dni").fill(`DNI${runId}${def.label}`);
     await page.getByLabel(/email/i).fill(`${def.label.toLowerCase()}.demo.${runId}@notaire.test`);
     await page.getByTestId("check-is-client").click();
     await saveDialog(page);
-    await page.getByTestId("input-search-lastName").fill(def.clientApellido);
-    await expect(page.getByRole("table")).toContainText(def.clientApellido);
+    await page.getByTestId("input-search-lastName").fill(def.clientLastName);
+    await expect(page.getByRole("table")).toContainText(def.clientLastName);
   });
 
   await test.step(`[Caso ${def.label}] Property`, async () => {
@@ -173,22 +173,22 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   await test.step(`[Caso ${def.label}] Presupuesto`, async () => {
     await go(page, "/dashboard/budgets");
     await page.getByTestId("btn-new-budget").click();
-    await choose(page, "select-persona", new RegExp(def.clientApellido, "i"));
+    await choose(page, "select-person", new RegExp(def.clientLastName, "i"));
     await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-04");
     await page.getByTestId("input-amount").fill(def.budgetAmount);
     await saveDialog(page);
-    await page.getByTestId("input-search-budget").fill(def.clientApellido);
-    await expect(page.getByRole("table")).toContainText(def.clientApellido);
+    await page.getByTestId("input-search-budget").fill(def.clientLastName);
+    await expect(page.getByRole("table")).toContainText(def.clientLastName);
   });
 
   await test.step(`[Caso ${def.label}] Gestión`, async () => {
     await go(page, "/dashboard/managements");
     await page.getByTestId("btn-new-management").click();
     await page.getByTestId("input-management-number").fill(def.managementNumber);
-    await choose(page, "select-presupuesto-gestion", new RegExp(def.clientApellido, "i"));
-    await chooseFirst(page, "select-escribano-gestion");
-    await chooseFirst(page, "select-estado-gestion");
-    await choose(page, "select-tipo-tramite-gestion", new RegExp(def.typeProcedure, "i"));
+    await choose(page, "select-budget-management", new RegExp(def.clientLastName, "i"));
+    await chooseFirst(page, "select-notary-management");
+    await chooseFirst(page, "select-status-management");
+    await choose(page, "select-procedure-type-management", new RegExp(def.typeProcedure, "i"));
     await choose(page, "select-inmueble-gestion", new RegExp(def.propertyAddress, "i"));
     await saveDialog(page);
     await expect(page.getByRole("table")).toContainText(def.managementNumber);
@@ -251,7 +251,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   await test.step(`[Caso ${def.label}] Payment`, async () => {
     await go(page, "/dashboard/payments");
     await page.getByTestId("btn-new-payment").click();
-    await choose(page, "select-presupuesto-pago", new RegExp(def.clientApellido, "i"));
+    await choose(page, "select-budget-payment", new RegExp(def.clientLastName, "i"));
     await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-07");
     await page.getByRole("dialog").getByLabel(/monto/i).fill(def.paymentAmount);
     await saveDialog(page);

@@ -519,7 +519,7 @@ function ManagementsList() {
               <Button
                 onClick={handleTransition}
                 disabled={!selectedStatus || transitionMutation.isPending}
-                data-testid="btn-confirm-transicion"
+                data-testid="btn-confirm-transition"
               >
                 {t("confirmTransition")}
               </Button>
@@ -586,7 +586,7 @@ function ManagementsList() {
                 <Button
                   onClick={handlePutOnHold}
                   disabled={putOnHoldMutation.isPending}
-                  data-testid="btn-confirm-espera"
+                  data-testid="btn-confirm-wait"
                 >
                   {t("confirmEspera")}
                 </Button>
@@ -615,7 +615,7 @@ function ManagementsList() {
                           size="sm"
                           variant="secondary"
                           onClick={() => setWaitFolderId(c.idFolder!)}
-                          data-testid={`btn-poner-en-espera-${c.idFolder}`}
+                          data-testid={`btn-place-on-hold-${c.idFolder}`}
                         >
                           {t("ponerEnEspera")}
                         </Button>
