@@ -1,9 +1,9 @@
-' Actividad del trámite, alineada al workflow sembrado (V10 + V41) y a
+' Management activity, aligned with the seeded workflow (V10 + V41) and
 ' docs/200-architecture/203-design/GESTION.md.
-' No es la fuente de verdad de los estados (ADR-027). Esa es CICLO-DE-VIDA.md §3.1.
-' La firma de la escritura y la minuta no son aristas de esta actividad.
+' Not the source of truth for states (ADR-027). That is CICLO-DE-VIDA.md §3.1.
+' Signing the deed and the registration draft are not edges of this activity.
 @startuml
-title Actividad — trámite de una gestión
+title Management activity
 
 skinparam shadowing false
 skinparam defaultFontName Arial
@@ -17,50 +17,51 @@ skinparam activity {
 
 start
 
-:Cliente solicita un trámite;
-:Gestor identifica cliente y presupuesto\n(CU61, CU60, CU01);
+:The client requests a procedure;
+:The clerk identifies the client and the budget\n(CU61, CU60, CU01);
+:Start the management;
 :POST /api/v1/managements/complete-case;
-:Gestión en Iniciada;
+:Management is Iniciada;
 
-:Transición «Se asignan trámites»;
+:Transition "Procedures are assigned";
 :En Tramite;
 
-:Documentación del cliente y de entidades externas\n(CU04, CU10);
-:Transición «Documentación presentada»;
+:Client documents and external-entity documents\n(CU04, CU10);
+:Transition "Documents submitted";
 :Documentacion Completa;
 
-if (¿Archivar sin escritura?) then (sí)
+if (Archive without a deed?) then (yes)
   :POST /api/v1/managements/{id}/archive;
-  if (¿Carpeta en Espera sin confirmar?) then (sí)
-    :409 — la gestión no cambia;
+  if (A folder is in Espera and not confirmed?) then (yes)
+    :409 — the management does not change;
     stop
   else (no)
-    :Saldo mayor a cero: advertencia, no bloquea;
+    :Balance above zero: warning, it does not block;
     :Archivada;
     stop
   endif
-else (seguir con la escritura)
+else (continue with the deed)
 endif
 
-:Transición «Se redacta la escritura»;
+:Transition "The deed is drafted";
 :Gestion con Escritura Sin Firmar;
 
 note right
   POST /api/v1/deeds/{id}/sign
-  cambia deeds.status a Firmada.
-  No mueve este nodo.
+  sets deeds.status to Firmada.
+  It does not move this node.
 end note
 
-:Transición «Las partes firman»;
+:Transition "The parties sign";
 :Gestion con Escritura Firmada;
 
-:Transición «Se genera el testimonio»;
+:Transition "The testimony is generated";
 :Testimonio Generado;
 
-:Transición «Ingreso a inscripción»;
+:Transition "Submitted for registration";
 :Testimonio Ingresado a Inscripcion;
 
-:Transición «Retiro»;
+:Transition "Withdrawn";
 :Testimonio Retirado;
 stop
 @enduml

@@ -12,7 +12,8 @@ vulnerability count from GitHub is not scraped into Grafana.
 | Is lockout tripping? | `status="locked"` | `LoginLockoutSpike` in `infra/observability/prometheus/alert-rules.yml` |
 | Is the API up? | `up`, `probe_success` | Existing stack alerts |
 | What did a request do? | method, path, status, duration, trace id | `RequestLoggingFilter`, Loki, Tempo |
-| Which control failed in CI? | Secret scan, CodeQL, Trivy artifact | GitHub Actions and the Security tab |
+| Which control failed in CI? | Secret scan, Semgrep, CodeQL, Trivy artifact, security case report | GitHub Actions artifact `security-case-report` |
+| Which local case failed before the PR? | `reports/security/latest/report.json` | `python3 security/run_gates.py --profile local` |
 
 Login statuses emitted by `UserController`: `success`, `bad_credentials`,
 `inactive`, `not_found`, `locked`, `error`.
@@ -59,7 +60,7 @@ model. That is the guide §3.7 template, kept short on purpose.
 
 ## What this does not monitor
 
-- Read access to `Persona` (SR-08).
+- Read access to `Person` (SR-08).
 - Object-level authorization failures, until those checks exist (SR-11).
 - Container syscalls (Falco is a later candidate).
 - General API rate-limit breaches (#280).

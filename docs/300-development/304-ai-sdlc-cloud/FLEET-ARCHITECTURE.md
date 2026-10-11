@@ -244,14 +244,14 @@ Operational failures while landing the fleet. Full table:
 7. **Stale PR: rebase first** — Budget/person / `undefined, undefined` Integration or Playwright failures on a tip behind `main` are usually fixed by rebasing onto #1132’s nested `BudgetResponse.person`, not by new product code.
 8. **CodeQL: advanced XOR default setup** — do not enable GitHub Code Scanning default setup beside `.github/workflows/codeql.yml`; use `wait-for-processing: false` and/or `security/enable-gh-secure.sh --apply` ([DevSecOps](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup)).
 9. **Serialize heavy CI** — prefer one heavy-CI PR at a time; docs/rebase tips wait; do not open new product PRs until the in-flight Integration/Playwright suite finishes ([`CI-MERGE-GATE.md` — Runner contention](CI-MERGE-GATE.md#runner-contention--serialize-heavy-ci)).
-10. **Security change gate (Sec by Design)** — a diff that touches authentication, authorization, personal data, secrets, dependencies, or a public endpoint updates the threat model in the same change and passes `bash security/verify.sh` before push. Do not weaken the secret scan, CodeQL, or image-pin tests. Active testing stays inside a written scope ([cybersecurity program](../../200-architecture/206-security/CYBERSECURITY-PROGRAM.md)).
+10. **Security change gate (Sec by Design)** — a diff that touches authentication, authorization, personal data, secrets, dependencies, or a public endpoint updates the threat model and `security/cases/catalog.yml` in the same change. Before a pull request, `bash workspace/sdlc/run_pipeline.sh` must pass; its security phase is `python3 security/run_gates.py --profile local`. `bash security/verify.sh` remains the module check. Do not weaken the secret scan, Semgrep, CodeQL, Trivy, or image-pin tests. Active testing stays inside a written scope ([cybersecurity program](../../200-architecture/206-security/CYBERSECURITY-PROGRAM.md)).
 
 ---
 
 ## 10. Permanent domain model
 
 OpenSpec records the **delta** of one change. The picture of the running
-domain — gestión, deed, testimony, documents, budget, payment, folders — is
+domain — management, deed, testimony, documents, budget, payment, folders — is
 [CICLO-DE-VIDA.md](../../200-architecture/203-design/CICLO-DE-VIDA.md).
 The method for artifacts, traceability, and the process boxes is
 [INGENIERIA.md](../INGENIERIA.md), taken from the
@@ -274,7 +274,7 @@ states:
    into the use case.
 
 Work-item status on the delivery board is a different machine. Do not describe
-an issue `In Progress` as a gestión `En Tramite`.
+an issue `In Progress` as a management in status `En Tramite`.
 
 ## 11. Related docs
 

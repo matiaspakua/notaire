@@ -72,3 +72,22 @@ When the user wants to propose a new change:
 - Run `openspec validate` after creating or modifying artifacts
 - Check `openspec status` before starting work to understand the current state
 - When archiving, ensure all tasks are completed and validated first
+
+## Security is part of every change
+
+Security is a gate in the AI SDLC, not a follow-up. The process and architecture
+are `docs/200-architecture/206-security/CYBERSECURITY-PROGRAM.md`. The security
+test schema is `security/cases/catalog.yml`. Run it with
+`python3 security/run_gates.py --profile local`.
+
+When you propose or apply a change:
+
+1. If the diff touches authentication, authorization, personal data, secrets,
+   dependencies, or a public endpoint, update the threat model and the matching
+   case in `security/cases/catalog.yml` in the same change.
+2. Name the affected `SEC-*` cases in the change's testing strategy. Threat-model,
+   SAST, DAST, SCA, and secret cases are specified there and reported by the runner.
+3. Do not weaken a scanner, a case, or the exception procedure to make a gate green.
+4. Before the pull request, `bash workspace/sdlc/run_pipeline.sh` must pass. It
+   runs the local profile, then the DAST baseline against the stack. CI runs the
+   same catalog and adds CodeQL and OWASP ZAP.

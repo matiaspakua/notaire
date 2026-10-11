@@ -1,109 +1,109 @@
 @startuml
 title Core Domain Model — Notaire
 
-entity "GestionDeEscritura" as gestion {
+entity "DeedManagement" as management {
   * id : Long <<PK>>
   --
-  numero : String
-  fecha : Date
-  estado_id : Long <<FK>>
-  escritura_id : Long <<FK>>
+  number : String
+  date : Date
+  status_id : Long <<FK>>
+  deed_id : Long <<FK>>
   workflow_id : Long <<FK>>
 }
 
-entity "Escritura" as escritura {
+entity "Deed" as deed {
   * id : Long <<PK>>
   --
-  numero : Integer
-  fecha : Date
+  number : Integer
+  date : Date
 }
 
-entity "Persona" as persona {
+entity "Person" as person {
   * id : Long <<PK>>
   --
-  nombre : String
-  apellido : String
+  name : String
+  last_name : String
   dni : String
   email : String
 }
 
-entity "Presupuesto" as presupuesto {
+entity "Budget" as budget {
   * id : Long <<PK>>
   --
-  monto : BigDecimal
-  fecha : Date
+  amount : BigDecimal
+  date : Date
 }
 
-entity "Tramite" as tramite {
+entity "Procedure" as procedure {
   * id : Long <<PK>>
   --
-  nombre : String
-  numero : String
-  tipo_tramite_id : Long <<FK>>
+  name : String
+  number : String
+  procedure_type_id : Long <<FK>>
 }
 
-entity "TipoDeTramite" as tipoTramite {
+entity "ProcedureType" as procedureType {
   * id : Long <<PK>>
   --
-  nombre : String
+  name : String
   workflow_id : Long <<FK>>
 }
 
 entity "Folio" as folio {
   * id : Long <<PK>>
   --
-  numero : String
-  tipo_id : Long <<FK>>
+  number : String
+  type_id : Long <<FK>>
 }
 
-entity "Pago" as pago {
+entity "Payment" as payment {
   * id : Long <<PK>>
   --
-  monto : BigDecimal
-  fecha : Date
+  amount : BigDecimal
+  date : Date
 }
 
-entity "Testimonio" as testimonio {
+entity "Testimony" as testimony {
   * id : Long <<PK>>
 }
 
-entity "DocumentoPresentado" as doc {
+entity "SubmittedDocument" as doc {
   * id : Long <<PK>>
 }
 
-entity "Usuario" as usuario {
+entity "User" as user {
   * id : Long <<PK>>
   --
   username : String
   password : String (BCrypt)
 }
 
-entity "Rol" as rol {
+entity "Role" as role {
   * id : Long <<PK>>
   --
-  nombre : String
+  name : String
 }
 
-entity "RegistroAuditoria" as audit {
+entity "AuditRecord" as audit {
   * id : Long <<PK>>
   --
-  accion : String
-  modulo : String
-  usuario : String
+  action : String
+  module : String
+  user : String
   timestamp : Timestamp
 }
 
 entity "WorkflowDefinition" as wfDef {
   * id : Long <<PK>>
   --
-  nombre : String
+  name : String
 }
 
 entity "WorkflowNode" as wfNode {
   * id : Long <<PK>>
   --
-  nombre : String
-  tipo : NodeType
+  name : String
+  node_type : NodeType
 }
 
 entity "WorkflowTransition" as wfTrans {
@@ -113,18 +113,18 @@ entity "WorkflowTransition" as wfTrans {
   to_node_id : Long <<FK>>
 }
 
-gestion ||--o{ tramite
-gestion ||--o{ presupuesto
-gestion }o--|| escritura
-gestion ||--o{ folio
-gestion ||--o{ doc
-tramite }o--|| tipoTramite
-tramite }o--o{ persona
-presupuesto ||--o{ pago
-escritura ||--o{ testimonio
-usuario }o--|| rol
-usuario ||--o{ audit
+management ||--o{ procedure
+management ||--o{ budget
+management }o--|| deed
+management ||--o{ folio
+management ||--o{ doc
+procedure }o--|| procedureType
+procedure }o--o{ person
+budget ||--o{ payment
+deed ||--o{ testimony
+user }o--|| role
+user ||--o{ audit
 wfDef ||--o{ wfNode
 wfDef ||--o{ wfTrans
-tipoTramite }o--o| wfDef
+procedureType }o--o| wfDef
 @enduml

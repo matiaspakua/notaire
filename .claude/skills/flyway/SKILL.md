@@ -25,9 +25,9 @@ R{version}__{description}.sql
 ```
 
 **Examples:**
-- `V3__add_users_email_index.sql`
+- `V3__add_users_username_index.sql`
 - `V4__add_audit_log_table.sql`
-- `R3__rollback_users_email_index.sql`
+- `R3__rollback_users_username_index.sql`
 
 ### 3. Migration Script Structure
 
@@ -45,12 +45,12 @@ R{version}__{description}.sql
 -- -----------------------------------------------------------------------------
 
 -- Your SQL here
-CREATE INDEX idx_users_email ON usuarios(email);
+CREATE INDEX idx_users_username ON users(username);
 
 -- -----------------------------------------------------------------------------
 -- Verification (optional)
 -- -----------------------------------------------------------------------------
--- SELECT COUNT(*) FROM pg_indexes WHERE indexname = 'idx_users_email';
+-- SELECT COUNT(*) FROM pg_indexes WHERE indexname = 'idx_users_username';
 ```
 
 ### 4. Rollback Scripts (When Needed)
@@ -68,7 +68,7 @@ CREATE INDEX idx_users_email ON usuarios(email);
 -- DOWN Migration (Rollback)
 -- -----------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS idx_users_email;
+DROP INDEX IF EXISTS idx_users_username;
 ```
 
 ### 5. Best Practices
@@ -88,17 +88,17 @@ DROP INDEX IF EXISTS idx_users_email;
 For reference data that needs to be versioned:
 
 ```sql
--- V5__add_default_conceptos.sql
+-- V5__add_default_concepts.sql
 
 -- Check if data exists (idempotent)
-INSERT INTO conceptos (version, id_concepto, nombre, valor, porcentaje, habilitado, concepto_fijo)
-SELECT 1, 99, 'Nuevo Concept', 100, 0, true, true
+INSERT INTO concepts (version, id, name, amount, percentage, enabled, fixed_concept)
+SELECT 1, 99, 'New Concept', 100, 0, true, true
 WHERE NOT EXISTS (
-    SELECT 1 FROM conceptos WHERE nombre = 'Nuevo Concept'
+    SELECT 1 FROM concepts WHERE name = 'New Concept'
 );
 
 -- Update sequence
-SELECT setval('conceptos_id_concepto_seq', COALESCE(MAX(id_concepto), 1)) FROM conceptos;
+SELECT setval('concepts_id_seq', COALESCE(MAX(id), 1)) FROM concepts;
 ```
 
 ### 7. Configuration Reference

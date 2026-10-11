@@ -269,8 +269,12 @@ Conventional Commits; each commit references the issue (`Closes #<issue-number>`
 **17.5 Ejecutar el pipeline completo.** Before opening the PR, run
 `bash workspace/sdlc/run_pipeline.sh` — the single, dashboarded pre-PR gate. It brings
 the Docker stack up itself and composes `validate-sdlc-plan.sh` +
-`preflight.sh --full` + a markdown-lint pass, writing one HTML dashboard under
+`python3 security/run_gates.py --profile local` (threat-model, secret, SAST, and SCA
+cases, then the DAST baseline once the API is up) + `preflight.sh --full` + a
+markdown-lint pass, writing one HTML dashboard under
 `reports/pipeline/<timestamp>/index.html`. Do not open the PR until it passes.
+The case catalog is `security/cases/catalog.yml`. CI runs the same catalog and
+adds CodeQL and OWASP ZAP.
 
 **18. Crear Pull Request.** Open a PR from the branch to `main` using
 `.github/PULL_REQUEST_TEMPLATE.md`, referencing the Issue and Use Case.
@@ -414,6 +418,7 @@ every condition is satisfied.
 - [ ] Playwright E2E is failing for UI changes
 - [ ] Checkstyle / Spotless / lint gates fail
 - [ ] `bash workspace/sdlc/run_pipeline.sh` has not been run, or last failed
+- [ ] Local security cases fail (`python3 security/run_gates.py --profile local`)
 
 ### Gate 4 — Do not merge if
 
@@ -706,11 +711,11 @@ drift.
 | Frontend | `frontend-ci.yml` (TypeScript, ESLint, Vitest, Next.js build) |
 | E2E | `playwright-e2e.yml` (Playwright suite in `testing/e2e` + Bruno API suite) |
 | Local preflight | `bash workspace/sdlc/preflight.sh [--fix / --fast / --full]`; pre-push hook |
-| Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
+| Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `python3 security/run_gates.py --profile local` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | `ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml` |
 | **Merge gate (heavy CI)** | `bash workspace/sdlc/check-heavy-ci.sh <pr>` — Integration + Coverage + Bruno + Playwright must pass; light-only green is not mergeable ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
 | Path-scoped CI | `dorny/paths-filter` job `changes` in `ci.yml` / `frontend-ci.yml` / `playwright-e2e.yml` / `openapi-contract.yml`; aggregators accept `success\|skipped`; invariants in `workspace/tests/test_ci_workflow_invariants.py` (#1257) |
-| Security | Trivy (`ci.yml` security job); CodeQL; DAST/ZAP where configured; `security/` module for rulesets-as-code |
+| Security | Local case catalog `security/cases/catalog.yml` via `python3 security/run_gates.py` (Semgrep, secret scan, Trivy, DAST baseline). CI adds CodeQL and OWASP ZAP and runs the same catalog. `security/` module for rulesets-as-code |
 | Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend image to GHCR; no automated smoke test |
 | Public documentation site | `deploy-github-page.yml` → https://matiaspakua.github.io/notaire/ (story) and `/docs/` (technical Docs tab) |
 | Agent rules | `AGENTS.md`, `.claude/rules/*`, `.claude/skills/*`, `.claude/agents/*`; Cursor Cloud fleet: `docs/300-development/304-ai-sdlc-cloud/` |

@@ -10,4 +10,5 @@ python3 security/tests/test_protect_main_ruleset.py
 python3 security/tests/test_dependabot_hygiene.py
 python3 security/tests/test_image_pins_and_dependabot.py
 python3 security/tests/test_security_policy.py
+python3 security/tests/test_security_cases.py
 python3 security/scan_secrets.py

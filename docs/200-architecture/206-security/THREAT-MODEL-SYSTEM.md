@@ -9,7 +9,7 @@ their own register: [THREAT-MODEL-AUTH-AUDIT.md](THREAT-MODEL-AUTH-AUDIT.md)
 
 Diagram: [diagrams/trust-boundaries.puml](diagrams/trust-boundaries.puml).
 
-Owners: Oficial de Seguridad for acceptance, Equipo de Desarrollo for the
+Owners: the Security Officer for acceptance, the Development Team for the
 control. Likelihood and impact are ordinal (low, medium, high). They are not
 percentages.
 
@@ -18,10 +18,10 @@ percentages.
 | Asset | Classification | Examples |
 |-------|----------------|----------|
 | Credentials | Critical | BCrypt hash, JWT secret, actuator password |
-| Personal data | High | `Persona` DNI, email, name |
-| Notarial records | High | `Escritura`, `Testimonio`, `Folio` — indefinite retention (SAD §2.3) |
-| Financial records | Medium | `Presupuesto`, `Pago` — amounts, no card data |
-| Audit trail | Medium | `registro_auditoria`, management history |
+| Personal data | High | `Person` DNI, email, name |
+| Notarial records | High | `Deed`, `Testimony`, `Folio` — indefinite retention (SAD §2.3) |
+| Financial records | Medium | `Budget`, `Payment` — amounts, no card data |
+| Audit trail | Medium | `audit_records`, management history |
 
 Actors: notary staff in the browser, an API client with a Bearer token, an
 anonymous caller, a compromised low-privilege user, and an operator with
@@ -49,7 +49,7 @@ already in the tree. No exploitation procedure is specified here.
 
 | ID | Asset | Boundary | Threat | Impact | Likelihood | Mitigation | Verification | Residual |
 |----|-------|----------|--------|--------|------------|------------|--------------|----------|
-| SR-11 | Persona, Escritura | API | Authenticated user reads or changes another client's record by changing an id (IDOR) | High | Medium | Function-level RBAC only. Object ownership is not checked | No object-level test yet. Gap is explicit | Open |
+| SR-11 | Person, Deed | API | Authenticated user reads or changes another client's record by changing an id (IDOR) | High | Medium | Function-level RBAC only. Object ownership is not checked | No object-level test yet. Gap is explicit | Open |
 | SR-12 | Session | Browser → BFF | Stolen JWT from script-readable storage, or a long-lived Bearer token | High | Low | HttpOnly cookie for the browser (#1051). API clients still receive a token in the login JSON | `frontend` security-header tests; auth guide | Partial |
 | SR-13 | Build | CI → registry | Vulnerable dependency or base image is published | High | Medium | Trivy report, Dependabot, pinned images, cosign SBOM | `security/tests/test_image_pins_and_dependabot.py` | Partial — Trivy does not fail CI |
 | SR-14 | Repository | Developer → git | Private key or token committed | High | Low | `python3 security/scan_secrets.py` fails the security job | `security/tests/test_security_policy.py` | Partial — push protection is outside git |
@@ -66,7 +66,7 @@ remaining object-level gap that `SR-06` used to describe too broadly.
 | ID | Privacy threat | Data | Mitigation | Verification | Residual |
 |----|----------------|------|------------|--------------|----------|
 | LD-1 | Identifiability | DNI, email, name | Access requires a JWT. Field-level minimization is not implemented | Schema and API responses still return identifiers to any authenticated caller | Open |
-| LD-2 | Linkability | Same person across gestión, escritura, and presupuesto | Identifiers are stable keys. That is required for the notarial record | SAD data model | Accepted for the notarial purpose |
+| LD-2 | Linkability | Same person across management, deed, and budget | Identifiers are stable keys. That is required for the notarial record | SAD data model | Accepted for the notarial purpose |
 | LD-3 | Disclosure | Request logs | `RequestLoggingFilter` logs method, path, status, and duration. It does not log query, headers, or body (#1463) | `RequestLoggingFilterTest` | Partial — the path can still contain a record id |
 | LD-4 | Unawareness | Data subjects | No in-product privacy notice | Issue #309 | Open |
 | LD-5 | Non-compliance | Retention and statute mapping | Notarial retention is indefinite by SAD §2.3. A statute map is not an engineering claim | Issue #309 | Open |

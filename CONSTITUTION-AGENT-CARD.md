@@ -10,7 +10,9 @@
 3. **TDD**: write failing tests first; observe the failure; then implement.
 4. **Branch** `<type>/<#>_desc` from updated `main`; never commit to `main`.
 5. **Quality gates absolute**: unit + integration + coverage ratchet; Playwright for UI;
-   `bash workspace/sdlc/preflight.sh` before push; heavy CI via `check-heavy-ci.sh` before merge.
+   local security cases via `python3 security/run_gates.py --profile local` inside
+   `bash workspace/sdlc/run_pipeline.sh`; `bash workspace/sdlc/preflight.sh` before push;
+   heavy CI via `check-heavy-ci.sh` before merge.
 6. **Flyway** is schema source of truth; never edit applied migrations.
 7. **Docs are part of Done**; no secrets in git; design-system tokens on frontend.
 8. **Path-scoped CI (#1257)**: docs-only PRs skip Java/E2E leaves; aggregators accept `skipped`;

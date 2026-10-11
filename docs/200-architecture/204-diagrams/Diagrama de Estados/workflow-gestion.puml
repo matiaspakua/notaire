@@ -1,28 +1,28 @@
 @startuml
-title Alta de una gestión — POST /api/v1/managements/complete-case
+title Create a management — POST /api/v1/managements/complete-case
 
 skinparam shadowing false
 
-participant "Escribano / Gestor" as User
+participant "Notary (Escribano)" as User
 participant "Frontend" as Client
 participant "REST API" as API
 participant "ManagementController" as Ctrl
 participant "Workflow" as WF
 participant "PostgreSQL" as DB
 
-User -> Client : Iniciar la gestión con presupuesto
+User -> Client : Start the management with a budget
 Client -> API : POST /api/v1/managements/complete-case
 API -> Ctrl : completeCase(dto)
-Ctrl -> WF : El estado es un nodo INITIAL
-alt El tipo tiene workflow y el estado es inicial
+Ctrl -> WF : The status is an INITIAL node
+alt The procedure type has a workflow and the status is initial
   WF --> Ctrl : Iniciada
   Ctrl -> DB : INSERT INTO deed_managements
   DB --> Ctrl : id
   Ctrl --> API : 201 Created
   API --> Client : JSON
-  Client --> User : Número de gestión
-else El estado no es inicial
+  Client --> User : Management number
+else The status is not initial
   Ctrl --> API : 400
-  API --> Client : No se crea la gestión
+  API --> Client : The management is not created
 end
 @enduml
