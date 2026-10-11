@@ -4,7 +4,7 @@
  * Covers: CU17 (identification types), RF-53 (administer base tables)
  * Issue: #1361 (slice 2)
  *
- * Golden path: ADMIN opens Administración → Tipos de identificación, creates a
+ * Golden path: ADMIN opens Administration → Identification types, creates a
  * type, edits its number length and deletes it.
  * Edges: a type people use is not deleted (the person stays), a name that
  * already exists in another letter case is rejected, and a non-admin is sent

@@ -2,7 +2,7 @@
  * TS-0121 — Grouped sidebar (#1367, RNF-10 / RNF-06, CU76).
  * Six task-based sections with headings; the current route's section is open;
  * collapsed sections persist across reloads; the dashboard module grid comes
- * from the same config; non-admins get neither Administración nor Auditoría.
+ * from the same config; non-admins get neither Administration nor Audit.
  */
 import { test, expect, type Page } from "@playwright/test";
 import { createUser } from "./setup/api-helpers";

@@ -1,5 +1,5 @@
 /**
- * Playwright E2E tests — Administración module.
+ * Playwright E2E tests — Administration module.
  * CU20, CU26, CU27, CU29, CU57, CU64, CU65, CU66, CU67
  *
  * Requires backend running on http://localhost:8080.

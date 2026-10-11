@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English E2E header comments** (#1490, CU75): the file headers
+  name a procedure and the administration screens. Visible labels
+  stay, including `/administración/i`, the link `Administración`,
+  `Trámites`, `nav-administracion`, and `nav-auditoria`. The official
+  title `CU53 - Modificar gestión` stays. The column title
+  `Tipo de Trámite` stays.
 - **English document-link requirements** (#1490, CU75):
   `document-procedure-link` and `required-docs-on-confirm` name a
   procedure and a management. The Documents screen stays the screen

@@ -5,7 +5,7 @@
  * Issue: #1052
  *
  * Golden path:
- *   admin creates EMPLEADO → login as EMPLEADO → open administración URL
+ *   admin creates EMPLEADO → login as EMPLEADO → open the administration URL
  *   → /dashboard?forbidden=1 + access-denied message (no admin UI)
  *
  * Server side (#559): the same EMPLEADO session gets 403 from the user, role and
