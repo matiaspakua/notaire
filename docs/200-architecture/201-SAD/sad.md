@@ -2,7 +2,9 @@
 
 > **arc42 Template v8.2** — based on [docs.arc42.org](https://docs.arc42.org/home/)
 >
-> **Version:** 3.2 | **Date:** 2026-10-10 | **Author:** Architecture Team
+> **Version:** 3.3 | **Date:** 2026-10-11 | **Author:** Architecture Team
+>
+> **Changelog v3.3**: English names for the current schema (Java 26, Spring Boot 4.1.1, Flyway through V45). Stored labels such as `Escribano` stay.
 >
 > **Changelog v3.2**: Delivery tracking points at [Notaire — Delivery Board #1](https://github.com/users/matiaspakua/projects/1) (Project #4 is gone). In-repo module ownership: [MODULE-OWNERSHIP.md](../../300-development/MODULE-OWNERSHIP.md) / ADR-026. Active diagrams: Mermaid only (ADR-027). Technical docs also render on GitHub Pages `/docs/`.
 >
@@ -31,14 +33,14 @@
 
 ### 1.1 Requirements Overview
 
-**Notaire** is a notarial management system for Argentine escribanías (notary offices). It manages the complete lifecycle of notarial operations including:
+**Notaire** is a notarial management system for Argentine notary offices. It manages the complete lifecycle of notarial operations including:
 
-- **Gestiones de Deed** — Notarial deed management workflows
-- **Personas** — People registry (individuals and legal entities involved in deeds)
-- **Escrituras** — Deed registry with folios, copias, and testimonios
-- **Presupuestos** — Budget/quote management with payment tracking
-- **Trámites** — Procedure management linked to people and gestiones
-- **Auditoría** — Complete audit trail for legal compliance
+- **Deed managements** — Notarial case workflows
+- **People** — Registry of individuals and legal entities involved in deeds
+- **Deeds** — Deed registry with folios, copies, and testimonies
+- **Budgets** — Quotes and payment tracking
+- **Procedures** — Notarial acts linked to people and deed managements
+- **Audit** — Audit trail for legal compliance
 
 The system originated as a monolithic Java Swing desktop application with direct MySQL access. It is being modernized into a three-tier web architecture while preserving all 73 original use cases.
 
@@ -57,7 +59,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 | Role | Expectations |
 |------|-------------|
 | **Escribano (Notary)** | Reliable system for daily operations; data integrity; legal compliance |
-| **Gestor (Clerk)** | Efficient workflow for managing gestiones and trámites |
+| **Gestor (Clerk)** | Efficient workflow for managing deed managements and procedures |
 | **Architect / Lead Dev** | Clean architecture; testable; documented decisions (ADRs) |
 | **DevOps / SRE** | Observable system; automated deployments; container orchestration |
 | **Product Owner** | Feature velocity; migration from legacy without data loss |
@@ -70,8 +72,8 @@ The system originated as a monolithic Java Swing desktop application with direct
 
 | Constraint | Description |
 |-----------|-------------|
-| Java 21 LTS | Backend runtime — mandated for long-term support |
-| Spring Boot 4.1.0 | Backend framework — latest stable release |
+| Java 26 | Backend runtime, from the root `pom.xml` |
+| Spring Boot 4.1.1 | Backend framework |
 | PostgreSQL 16 | Database — migrated from MySQL 5.7 |
 | Next.js 16 / React 19 | Frontend framework with App Router |
 | Docker / Docker Compose | Containerization for all services |
@@ -106,20 +108,20 @@ The system originated as a monolithic Java Swing desktop application with direct
 @startuml
 title System Context — Notaire (Business View)
 
-actor "Escribano\n(Notario)" as Escribano
-actor "Gestor\n(Empleado)" as Gestor
-actor "Administrador" as Admin
+actor "Notary\n(Escribano)" as Escribano
+actor "Clerk\n(Gestor)" as Gestor
+actor "Administrator" as Admin
 
-rectangle "Sistema Notaire" as Notaire {
+rectangle "Notaire" as Notaire {
 }
 
-database "Base de Datos\nNotarial" as DB
+database "Notarial\ndatabase" as DB
 
-Escribano --> Notaire : Gestiones, Escrituras,\nPresupuestos, Reportes
-Gestor --> Notaire : Trámites, Personas,\nDocumentos, Pagos
-Admin --> Notaire : Usuarios, Roles,\nConfiguración, Auditoría
+Escribano --> Notaire : Deed managements, Deeds,\nBudgets, Reports
+Gestor --> Notaire : Procedures, People,\nDocuments, Payments
+Admin --> Notaire : Users, Roles,\nConfiguration, Audit
 
-Notaire --> DB : Persistencia
+Notaire --> DB : Persistence
 @enduml
 ```
 
@@ -171,7 +173,7 @@ Graf --> Loki : Log queries
 
 | Decision | Rationale | ADR |
 |----------|-----------|-----|
-| Spring Boot 4.1 + Java 21 | Modern LTS stack with strong ecosystem | ADR-001 |
+| Spring Boot 4.1.1 + Java 26 | Current platform in the root `pom.xml` | ADR-001 |
 | Maven multi-module | Separation of shared, backend, and frontend concerns | ADR-002 |
 | URL-path API versioning (`/api/v1`) | Simple, explicit, cacheable | ADR-003 |
 | PostgreSQL 16 (from MySQL 5.7) | Superior JSON support, CTEs, full-text search | ADR-004 |
@@ -482,142 +484,154 @@ services consume the REST API through the OpenAPI contract, not a Java library.
 @startuml
 title Core Domain Model — Notaire
 
-entity "DeedManagement" as gestion {
+entity "DeedManagement" as deedManagement {
   * id : Long <<PK>>
   --
-  numero : String
-  fecha : Date
-  estado_id : Long <<FK>>
-  escritura_id : Long <<FK>>
-  workflow_id : Long <<FK>>
+  number : Integer
+  start_date : Date
+  heading : String
+  fk_id_management_status : Long <<FK>>
 }
 
-entity "Deed" as escritura {
+entity "Deed" as deed {
   * id : Long <<PK>>
   --
-  numero : Integer
-  fecha : Date
+  number : Integer
+  deed_date : Date
 }
 
-entity "Person" as persona {
+entity "Person" as person {
   * id : Long <<PK>>
   --
-  nombre : String
-  apellido : String
-  dni : String
+  first_name : String
+  last_name : String
+  identification_number : String
   email : String
 }
 
-entity "Presupuesto" as presupuesto {
+entity "Budget" as budget {
   * id : Long <<PK>>
   --
-  monto : BigDecimal
-  fecha : Date
+  number : Integer
+  budget_date : Date
+  heading : String
+  fk_id_person : Long <<FK>>
 }
 
-entity "Procedure" as tramite {
+entity "Procedure" as procedure {
   * id : Long <<PK>>
   --
-  nombre : String
-  numero : String
-  tipo_tramite_id : Long <<FK>>
+  name : String
+  number : Integer
+  fk_id_procedure_type : Long <<FK>>
+  fk_id_deed_management : Long <<FK>>
+  fk_id_deed : Long <<FK>>
+  fk_id_budget : Long <<FK>>
 }
 
-entity "ProcedureType" as tipoTramite {
+entity "ProcedureType" as procedureType {
   * id : Long <<PK>>
   --
-  nombre : String
-  workflow_id : Long <<FK>>
+  name : String
+  fk_workflow_definition_id : Long <<FK>>
 }
 
 entity "Folio" as folio {
   * id : Long <<PK>>
   --
-  numero : String
-  tipo_id : Long <<FK>>
+  number : Integer
+  fk_id_folio_type : Long <<FK>>
+  fk_id_deed : Long <<FK>>
 }
 
-entity "Payment" as pago {
+entity "Payment" as payment {
   * id : Long <<PK>>
   --
-  monto : BigDecimal
-  fecha : Date
+  amount : BigDecimal
+  payment_date : Date
+  fk_id_budget : Long <<FK>>
 }
 
-entity "Testimony" as testimonio {
+entity "Testimony" as testimony {
   * id : Long <<PK>>
+  --
+  fk_id_deed : Long <<FK>>
 }
 
-entity "SubmittedDocument" as doc {
+entity "SubmittedDocument" as document {
   * id : Long <<PK>>
+  --
+  fk_id_procedure : Long <<FK>>
+  fk_id_document_type : Long <<FK>>
 }
 
-entity "UserAccount" as usuario {
+entity "User" as user {
   * id : Long <<PK>>
   --
   username : String
-  password : String (BCrypt)
+  password : String
+  fk_id_role : Long <<FK>>
 }
 
-entity "Role" as rol {
+entity "Role" as role {
   * id : Long <<PK>>
   --
-  nombre : String
+  name : String
 }
 
 entity "AuditRecord" as audit {
   * id : Long <<PK>>
   --
-  accion : String
-  modulo : String
-  usuario : String
-  timestamp : Timestamp
+  module : String
+  operation_detail : String
+  fk_id_user : Long <<FK>>
 }
 
-entity "WorkflowDefinition" as wfDef {
-  * id : Long <<PK>>
+entity "WorkflowDefinition" as workflowDefinition {
+  * id_workflow_definition : Long <<PK>>
   --
-  nombre : String
+  name : String
 }
 
-entity "WorkflowNode" as wfNode {
-  * id : Long <<PK>>
+entity "WorkflowNode" as workflowNode {
+  * id_workflow_node : Long <<PK>>
   --
-  nombre : String
-  tipo : NodeType
+  node_type : String
+  fk_workflow_definition_id : Long <<FK>>
 }
 
-entity "WorkflowTransition" as wfTrans {
-  * id : Long <<PK>>
+entity "WorkflowTransition" as workflowTransition {
+  * id_workflow_transition : Long <<PK>>
   --
-  from_node_id : Long <<FK>>
-  to_node_id : Long <<FK>>
+  fk_origin_node_id : Long <<FK>>
+  fk_destination_node_id : Long <<FK>>
 }
 
-gestion ||--o{ tramite
-gestion ||--o{ presupuesto
-gestion }o--|| escritura
-gestion ||--o{ folio
-gestion ||--o{ doc
-tramite }o--|| tipoTramite
-tramite }o--o{ persona
-presupuesto ||--o{ pago
-escritura ||--o{ testimonio
-usuario }o--|| rol
-usuario ||--o{ audit
-wfDef ||--o{ wfNode
-wfDef ||--o{ wfTrans
-tipoTramite }o--o| wfDef
+deedManagement |o--o{ procedure
+procedure }o--o| procedureType
+procedure }o--o| deed
+procedure }o--o| budget
+person ||--o{ budget
+budget ||--o{ payment
+deed |o--o{ folio
+deed ||--o{ testimony
+procedure |o--o{ document
+role |o--o{ user
+user ||--o{ audit
+workflowDefinition ||--o{ workflowNode
+workflowDefinition ||--o{ workflowTransition
+procedureType }o--o| workflowDefinition
 @enduml
 ```
 
-This is a simplified view of the 6 most-referenced entities. The full 32-table
-schema — every column, type, FK, and its Flyway migration provenance (V1–V14)
+This is a simplified view of the core entities. The full 37-table
+schema — every column, type, foreign key, and its Flyway provenance (V1 through V45)
 — is maintained in the
 [Diccionario de Datos](../205-data-model/Diccionario%20de%20Datos.md), with the
 complete ERD at
-[`205-data-model/ERD/`](../205-data-model/ERD/). Both are kept in sync with
-Flyway on every migration (see the dictionary's §6.3 validation log).
+[`205-data-model/ERD/`](../205-data-model/ERD/). `docs/tests/test_data_dictionary_sync.py`
+fails when the dictionary drifts from that ERD. A budget links to a procedure
+through `procedures.fk_id_budget`. `budgets.fk_id_tramite` was removed in V14.
 
 ---
 
@@ -866,9 +880,9 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
   "status": 400,
   "error": "Bad Request",
   "message": "Validation failed",
-  "path": "/api/v1/person",
-  "code": "VAL_001",
-  "details": { "field": "dni", "message": "Must be numeric" }
+  "path": "/api/v1/people",
+  "traceId": "abc123",
+  "details": { "field": "identificationNumber", "message": "Must be numeric" }
 }
 ```
 
@@ -892,7 +906,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 
 - **Flyway** is the single source of truth for database schema.
 - Migrations located at `backend-api/src/main/resources/db/migration/`.
-- Docker starts PostgreSQL **empty**; Flyway applies V1→V14 sequentially on backend startup.
+- Docker starts PostgreSQL **empty**; Flyway applies the versioned migrations on backend startup, through V45. Applied files V1–V44 stay immutable.
 - Historical `init-db/` scripts archived at `docs/000-archive/init-db/`.
 - Repeatable migrations (`R__`) used for reversible operations.
 
@@ -904,17 +918,18 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 | V2 | Initial seed data |
 | V3 | Add missing entity columns |
 | V4 | Fix missing schema columns |
-| V5 | Fix movimientos_testimonio schema |
-| V6 | Make documentos_presentados tramite optional |
+| V5 | Align `testimony_movements` with the JPA entity |
+| V6 | Make `submitted_documents.fk_id_procedure` optional |
 | V7 | Add workflow tables |
-| V8 | Add workflow to tipo_tramite |
+| V8 | Link `procedure_types` to a workflow |
 | V9 | Add roles and permissions |
 | V10 | Seed workflow demo data |
-| V11 | Align conceptos version with init-db |
+| V11 | Align `concepts.version` with the archived init script |
 | V12 | Create postgres_exporter role (pg_monitor) |
-| V13 | Make tramites nombre/number optional |
-| V14 | Drop presupuestos FK to tramite |
-| R14 | Restore presupuestos FK (repeatable) |
+| V13 | Make `procedures.name` and `procedures.number` optional |
+| V14 | Drop `budgets.fk_id_tramite`. The canonical link is `procedures.fk_id_budget` |
+| R14 | Manual rollback script that restores `budgets.fk_id_tramite`. Flyway does not run it |
+| V45 | Rename the remaining Spanish identifiers. `R45` reverses that rename |
 
 ### 8.5 Observability
 
@@ -1099,27 +1114,27 @@ O --> (Deployability Docker)
 > 📊 **Estado vivo**: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1) ·
 > [`docs/github/README.md`](../../github/README.md) ·
 > [DEVELOPMENT-PLAN §5](../../300-development/DEVELOPMENT-PLAN.md).
-> Snapshots históricos (no actualizar): [`docs/000-archive/github/`](../../000-archive/github/).
+> Historical snapshots (do not update): [`docs/000-archive/github/`](../../000-archive/github/).
 >
-> El roadmap está sincronizado con los milestones y el Delivery Board de GitHub.
-> Cada ítem tiene un issue de tracking con criterios de aceptación, labels, y milestone asignado.
+> The roadmap matches the GitHub milestones and the Delivery Board.
+> Each item has a tracking issue with acceptance criteria, labels, and a milestone.
 
 #### Migration Phases — Alignment with GitHub Milestones
 
 | Phase | GitHub Milestone | Status | Tracking Issue |
 |-------|-----------------|--------|----------------|
-| Phase 1 — Analysis | [#6 Phase 1 — Analysis](https://github.com/matiaspakua/notaire/milestone/6) | ✅ Complete | Legacy documentado, 73 CU catalogados |
-| Phase 2 — Foundation | [#7 Phase 2 — Foundation](https://github.com/matiaspakua/notaire/milestone/7) | ✅ Complete | Módulo de DTOs compartidos (retirado, ADR-025), Maven multi-módulo, Docker Compose |
-| Phase 3 — Backend API | [#8 Phase 3 — Backend API](https://github.com/matiaspakua/notaire/milestone/8) | ✅ Complete | 31 controllers, 32 entidades, Flyway V1→V14 |
-| Phase 4 — Modern Frontend | [#9 Phase 4 — Modern Frontend](https://github.com/matiaspakua/notaire/milestone/9) | 🔄 In Progress | [#898](https://github.com/matiaspakua/notaire/issues/898) — 73 CU en Next.js 16 |
+| Phase 1 — Analysis | [#6 Phase 1 — Analysis](https://github.com/matiaspakua/notaire/milestone/6) | ✅ Complete | Legacy documented, 73 use cases catalogued |
+| Phase 2 — Foundation | [#7 Phase 2 — Foundation](https://github.com/matiaspakua/notaire/milestone/7) | ✅ Complete | Shared DTO module (retired, ADR-025), Maven multi-module, Docker Compose |
+| Phase 3 — Backend API | [#8 Phase 3 — Backend API](https://github.com/matiaspakua/notaire/milestone/8) | ✅ Complete | 31 controllers, 32 entities, Flyway V1 through V14 |
+| Phase 4 — Modern Frontend | [#9 Phase 4 — Modern Frontend](https://github.com/matiaspakua/notaire/milestone/9) | 🔄 In Progress | [#898](https://github.com/matiaspakua/notaire/issues/898) — 73 use cases in Next.js 16 |
 | Phase 5 — Observability | [#10 Phase 5 — Observability](https://github.com/matiaspakua/notaire/milestone/10) | ✅ Complete | LPG stack + SonarQube + Homer |
 | Phase 6 — Deprecation | [#11 Phase 6 — Deprecation](https://github.com/matiaspakua/notaire/milestone/11) | 🔶 Partial | Swing removed from active build; remaining work is `jpa` cleanup ([#899](https://github.com/matiaspakua/notaire/issues/899)) |
 
 #### Short Term (Phase 4 — Modern Frontend)
 
 1. **Complete Next.js frontend pages for all 73 use cases** — tracking issue [#898](https://github.com/matiaspakua/notaire/issues/898).
-   Key open items: Gestiones (#804, #806), Escrituras (#838, #839), Presupuestos (#797, #821, #822, #823), Personas (#829, #835).
-2. **Fix critical bugs blocking frontend** — #829 (Person create), #835 (persona dedup), #799 (uniqueness), #801 (SubmittedDocument mapping).
+   Key open items: deed managements (#804, #806), deeds (#838, #839), budgets (#797, #821, #822, #823), people (#829, #835).
+2. **Fix critical bugs blocking frontend** — #829 (Person create), #835 (person deduplication), #799 (uniqueness), #801 (SubmittedDocument mapping).
 3. ~~Extract `ControllerNegocio` logic into dedicated service classes~~ — resolved by deleting the class ([#900](https://github.com/matiaspakua/notaire/issues/900)); its only live behaviour moved to `IdentificationTypeLookup`.
 
 #### Medium Term (Phase 6 — Deprecation)
@@ -1155,16 +1170,16 @@ O --> (Deployability Docker)
 
 | Term | Definition |
 |------|-----------|
-| **Escribanía** | Argentine notary office |
-| **Escribano** | Licensed notary public (primary system user) |
-| **Gestor** | Clerk/assistant who manages daily procedures |
-| **Gestión de Deed** | Notarial deed management case — the core business entity |
-| **Deed** | Notarial deed (legal document) |
+| **Notary office** | Argentine notary office. The Spanish word escribanía remains in some stored labels. |
+| **Notary (Escribano)** | Licensed notary public. The stored role name `ESCRIBANO` stays. |
+| **Clerk (Gestor)** | Assistant who manages daily procedures |
+| **Deed management** | Notarial case. Table `deed_managements`. |
+| **Deed** | Notarial deed (legal document). Table `deeds`. |
 | **Folio** | Numbered page in the notarial protocol book |
 | **Testimony** | Certified copy of a notarial deed |
 | **Copy** | Copy of a folio or deed |
-| **Presupuesto** | Budget/quote for notarial services |
-| **Trámite** | Administrative procedure linked to a gestión |
+| **Budget** | Quote for notarial services. Table `budgets`. Stored statuses such as `BORRADOR` stay. |
+| **Procedure** | Notarial act linked to a deed management. Table `procedures`. Message keys such as `gestiones` stay. |
 | **Person** | Individual or legal entity involved in notarial acts |
 | **Property** | Real estate property involved in notarial acts |
 | **API REST** | HTTP/JSON interface between frontend and backend |
@@ -1214,4 +1229,4 @@ Legacy PlantUML sources remain in `docs/200-architecture/204-diagrams/` until mi
 - `backend-package-structure.puml` — Backend internal structure
 - `data-model-core.puml` — Core entity relationships
 - `migration-phases.puml` — Migration phases overview
-- [`Casos de Uso/`](../204-diagrams/Casos%20de%20Uso/) — Use-case diagrams grouped by module (gestiones, administración, clientes, pagos, protocolos, presupuestos)
+- [`Casos de Uso/`](../204-diagrams/Casos%20de%20Uso/) — Use-case diagrams grouped by module (deed managements, administration, clients, payments, protocols, budgets). The folder name stays.

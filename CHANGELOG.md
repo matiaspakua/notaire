@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English software architecture document** (#1490, CU75):
+  The SAD uses current names (`deed_managements`, `procedures`, `budgets`,
+  `User`) and the platform in the root `pom.xml` (Java 26, Spring Boot 4.1.1).
+  The core diagram uses current columns, including `procedures.fk_id_budget`.
+  `budgets.fk_id_tramite` stays as the column V14 removed. Stored labels
+  `Escribano` and `ESCRIBANO` stay. The `Casos de Uso` folder name stays.
 - **English compensation diagram** (#1490, CU75):
   The compensation spreadsheet and diagram use current table names
   (`people`, `deed_managements`, `procedures`) and current foreign keys
