@@ -3,19 +3,19 @@
 title CU01 — Ingresar gestión de escritura
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide iniciar una nueva gestión de escritura.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Tipo de trámite; Cliente; Documentos a presentar)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona el tipo de trámite y busca/ingresa al cliente.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra los datos del cliente y solicita los documentos a presentar.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los documentos presentados.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra los documentos y crea la gestión.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to start a new deed management.
+System -> System : Escribano
+Actor -> Actor : Requests: (Procedure type; Client; Documents to submit)
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects the procedure type and looks up or enters the client.
+System -> System : Escribano
+Actor -> Actor : Shows the client data and asks for the documents to submit.
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the submitted documents.
+System -> System : Escribano
+Actor -> Actor : Records the documents and creates the management.
+System -> System : System
 
 @enduml

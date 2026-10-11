@@ -3,19 +3,19 @@
 title CU48 — Eliminar Plantilla Presupuesto
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide eliminar una plantilla de presupuesto.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Presenta una lista de tipos de trámite con plantillas.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona un tipo de trámite.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita confirmación para eliminar.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano confirma.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra eliminación.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to delete a budget template.
+System -> System : Escribano
+Actor -> Actor : Presents a list of procedure types that have templates.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a procedure type.
+System -> System : Escribano
+Actor -> Actor : Asks for confirmation to delete.
+System -> System : System
+Actor -> Actor : The notary (Escribano) confirms.
+System -> System : Escribano
+Actor -> Actor : Records the deletion.
+System -> System : System
 
 @enduml

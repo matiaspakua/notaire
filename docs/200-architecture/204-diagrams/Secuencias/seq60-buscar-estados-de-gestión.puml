@@ -3,15 +3,15 @@
 title CU60 — Buscar Estados de Gestión
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano solicita la lista de estados de gestión.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Busca y devuelve una lista de estados.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona uno.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra el detalle del estado.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) requests the list of management statuses.
+System -> System : Escribano
+Actor -> Actor : Looks up and returns a list of statuses.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects one.
+System -> System : Escribano
+Actor -> Actor : Shows the status detail.
+System -> System : System
 
 @enduml

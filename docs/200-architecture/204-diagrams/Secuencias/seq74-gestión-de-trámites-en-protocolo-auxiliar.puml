@@ -3,35 +3,35 @@
 title CU74 — Gestión de Trámites en Protocolo Auxiliar
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : Un cliente solicita un trámite de protocolo auxiliar.
-Sistema -> Sistema : Cliente
-Actor -> Actor : Solicita datos de identificación y tipo de trámite.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El recepcionista ingresa los datos del cliente.
-Sistema -> Sistema : Recepcionista
-Actor -> Actor : Busca al cliente o permite registro rápido.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano inicia la confección de la escritura.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Presenta folios de Protocolo Auxiliar y asigna número.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano redacta el cuerpo del acta.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Valida la integridad del texto y correlatividad.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El cliente y el Escribano firman.
-Sistema -> Sistema : Cliente
-Actor -> Actor : El Escribano registra la firma.
-Sistema -> Sistema : Escribano
-Actor -> Actor : El Escribano solicita generación del testimonio.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Genera el testimonio numerado.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano entrega el testimonio.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Actualiza el estado a Finalizado/Entregado.
-Sistema -> Sistema : Sistema
+Actor -> Actor : A client requests an auxiliary-protocol procedure.
+System -> System : Client
+Actor -> Actor : Requests identification data and the procedure type.
+System -> System : System
+Actor -> Actor : The receptionist enters the client data.
+System -> System : Receptionist
+Actor -> Actor : Looks up the client or allows quick registration.
+System -> System : System
+Actor -> Actor : The notary (Escribano) starts drafting the deed.
+System -> System : Escribano
+Actor -> Actor : Presents Protocolo Auxiliar folios and assigns a number.
+System -> System : System
+Actor -> Actor : The notary (Escribano) drafts the body of the record.
+System -> System : Escribano
+Actor -> Actor : Validates the integrity of the text and the sequence.
+System -> System : System
+Actor -> Actor : The client and the notary (Escribano) sign.
+System -> System : Client
+Actor -> Actor : The notary (Escribano) records the signature.
+System -> System : Escribano
+Actor -> Actor : The notary (Escribano) requests generation of the testimony.
+System -> System : Escribano
+Actor -> Actor : Generates the numbered testimony.
+System -> System : System
+Actor -> Actor : The notary (Escribano) delivers the testimony.
+System -> System : Escribano
+Actor -> Actor : Updates the status to Finalizado/Entregado.
+System -> System : System
 
 @enduml

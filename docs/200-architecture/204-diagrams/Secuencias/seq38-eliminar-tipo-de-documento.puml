@@ -3,15 +3,15 @@
 title CU38 — Eliminar tipo de documento
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide eliminar un tipo de documento.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra una lista de todos los tipos de documento disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona uno y confirma su eliminación.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Elimina el documento seleccionado.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to delete a document type.
+System -> System : Escribano
+Actor -> Actor : Shows a list of every available document type.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects one and confirms its deletion.
+System -> System : Escribano
+Actor -> Actor : Deletes the selected document.
+System -> System : System
 
 @enduml

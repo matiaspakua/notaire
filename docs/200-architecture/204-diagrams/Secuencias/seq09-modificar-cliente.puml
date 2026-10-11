@@ -3,19 +3,19 @@
 title CU09 — Modificar cliente
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide modificar un cliente.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Nombre; Apellido; Tipo y número de identificación)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los datos de búsqueda.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Busca y presenta los datos del cliente encontrado.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano modifica los datos necesarios.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Guarda los cambios realizados.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to modify a client.
+System -> System : Escribano
+Actor -> Actor : Requests: (First name; Last name; Identification type and number)
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the search data.
+System -> System : Escribano
+Actor -> Actor : Looks up and presents the data of the client found.
+System -> System : System
+Actor -> Actor : The notary (Escribano) modifies the necessary data.
+System -> System : Escribano
+Actor -> Actor : Saves the changes made.
+System -> System : System
 
 @enduml

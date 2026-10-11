@@ -3,19 +3,19 @@
 title CU15 — Modificar gestión
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano busca una gestión.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra la lista de gestiones disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona una gestión.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra los datos de la gestión.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano modifica los datos necesarios.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Guarda los cambios realizados.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) looks up a management.
+System -> System : Escribano
+Actor -> Actor : Shows the list of available managements.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a management.
+System -> System : Escribano
+Actor -> Actor : Shows the management data.
+System -> System : System
+Actor -> Actor : The notary (Escribano) modifies the necessary data.
+System -> System : Escribano
+Actor -> Actor : Saves the changes made.
+System -> System : System
 
 @enduml

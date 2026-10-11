@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English CU sequence steps** (#1490, CU75):
+  The 83 use-case sequence diagrams under `Secuencias/` describe each step in
+  English. The participant is `Notaire system`. CU titles and filenames stay.
+  The stored role `Escribano` stays, along with `Protocolo Auxiliar`,
+  `Asignados a cuaderno`, `Presentado`, and `Finalizado / Entregado`.
 - **English management state diagrams** (#1490, CU75):
   `workflow-gestion.puml` calls `ManagementController` at
   `POST /api/v1/managements` and inserts into `deed_managements` and

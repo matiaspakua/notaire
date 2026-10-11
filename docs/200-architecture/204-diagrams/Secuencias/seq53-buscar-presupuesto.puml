@@ -2,20 +2,20 @@
 !theme plain
 title CU53 — Buscar Presupuesto
 
-actor "Recepcionista" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Receptionist (Recepcionista)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : El Recepcionista/Gestor requiere un presupuesto.
-Sistema -> Sistema : Recepcionista
-Actor -> Actor : Solicita: (Número de presupuesto; Nombre y apellido; Tipo y número de identificación)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Recepcionista/Gestor indica los datos.
-Sistema -> Sistema : Recepcionista
-Actor -> Actor : Busca y retorna el/los presupuesto.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Recepcionista/Gestor selecciona un presupuesto.
-Sistema -> Sistema : Recepcionista
-Actor -> Actor : Presenta un reporte del presupuesto.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The receptionist (Recepcionista) or clerk (Gestor) needs a budget.
+System -> System : Receptionist
+Actor -> Actor : Requests: (Budget number; First and last name; Identification type and number)
+System -> System : System
+Actor -> Actor : The receptionist (Recepcionista) or clerk (Gestor) enters the data.
+System -> System : Receptionist
+Actor -> Actor : Looks up and returns the budget or budgets.
+System -> System : System
+Actor -> Actor : The receptionist (Recepcionista) or clerk (Gestor) selects a budget.
+System -> System : Receptionist
+Actor -> Actor : Presents a budget report.
+System -> System : System
 
 @enduml
