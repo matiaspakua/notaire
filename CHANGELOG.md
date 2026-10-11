@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English property-designation requirements** (#1490, CU75): the
+  properties delta names the Properties dialog and a cadastral
+  designation. The change slug
+  `fix-655-property-cadastral-designation-required` stays.
+  `cadastralDesignation`, `POST /api/v1/properties`, and
+  `PUT /api/v1/properties/{id}` stay. The visible label
+  `nomenclatura catastral` in TS-0090 stays.
 - **English open-change requirements** (#1490, CU75): the case-summary
   spec and the submitted-document delta name a management and a
   procedure. The change slugs `feat-774-gestion-resumen-caso` and

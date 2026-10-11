@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Registering and maintaining the properties (inmuebles) involved in a deed.
+Registering and maintaining the properties involved in a deed.
 
 ## MODIFIED Requirements
 
@@ -27,9 +27,9 @@ Registering and maintaining the properties (inmuebles) involved in a deed.
 
 ### Requirement: Form enforces the designation
 
-The Inmuebles dialog SHALL keep Save disabled while the nomenclatura catastral is blank.
+The Properties dialog SHALL keep Save disabled while the cadastral designation is blank.
 
 #### Scenario: Form
 
-- **WHEN** the user fills other fields but leaves the nomenclatura blank or only spaces
+- **WHEN** the user fills other fields but leaves the designation blank or only spaces
 - **THEN** Save is disabled, and it is enabled once a designation is typed
