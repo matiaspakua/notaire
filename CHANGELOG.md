@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English cleanup comments and role fixture** (#1490, CU75): the
+  cleanup comments name `people`, `deed_managements`, and `deeds`. The
+  role description is `Administrator`. The synthetic role name is
+  `OPERATOR`. The role field `modulos` and module key `administracion`
+  stay. `GuiConstants.ADMINISTRATOR` stays `Administrador`.
 - **English H2 seed phrases** (#1490, CU75): the concept is `Base fee`.
   The budget heading is `Test budget`. The procedure-type note is
   `Compraventa procedure`. Stored labels `De documento`, `Iniciada`,
