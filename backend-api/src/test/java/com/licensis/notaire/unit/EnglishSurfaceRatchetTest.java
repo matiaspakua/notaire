@@ -1,5 +1,7 @@
 package com.licensis.notaire.unit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.dto.DtoManagementStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -138,6 +140,24 @@ class EnglishSurfaceRatchetTest {
         assertThat(folio).contains("\"folioList\"");
         assertThat(folio).contains("\"tramiteList\"");
         assertThat(folio).contains("\"testimonioList\"");
+    }
+
+    @Test
+    @DisplayName("Should name management-status histories in English and keep the wire key")
+    void shouldNameManagementStatusHistoriesInEnglish() {
+        String text = read(repoRoot().resolve(
+                "backend-api/src/main/java/com/licensis/notaire/dto/DtoManagementStatus.java"));
+        assertThat(text).contains("getHistories");
+        assertThat(text).doesNotContain("getHistorials");
+        assertThat(text).contains("@JsonProperty(\"historials\")");
+    }
+
+    @Test
+    @DisplayName("Should keep the management-status wire key historials")
+    void shouldKeepTheManagementStatusWireKey() throws Exception {
+        String json = new ObjectMapper().writeValueAsString(new DtoManagementStatus());
+        assertThat(json).contains("\"historials\"");
+        assertThat(json).doesNotContain("\"histories\"");
     }
 
     private static boolean containsSegment(String text, String segment) {

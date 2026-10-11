@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Management-status histories accessor** (#1490, CU75): `DtoManagementStatus`
+  names the set `histories` (`getHistories` / `setHistories`). The JSON key
+  stays `historials`.
 - **Retired association ignores** (#1490, CU75): Jackson ignore lists on
   `Copy`, `Deed`, `Folio`, `Testimony`, and `IdentificationType` no longer
   name `fkIdEscritura`, `fkIdTestimonio`, `fkIdTipoIdentificacion`,
