@@ -29,6 +29,15 @@ class WorkflowFixturePhrasesEnglishTest(unittest.TestCase):
         self.assertNotIn("especial", reports)
         self.assertNotIn("Compra/Venta", reports)
 
+        hooks = read("frontend/src/tests/unit/useReports-contract.test.ts")
+        self.assertIn('download("Purchase/Sale & more")', hooks)
+        self.assertIn(
+            "procedureTypeName=Purchase%2FSale%20%26%20more",
+            hooks,
+        )
+        self.assertNotIn("Compra/Venta", hooks)
+        self.assertNotIn("más", hooks)
+
     def test_remaining_person_prefixes_are_english(self):
         people = read("testing/e2e/tests/TS-0015-people-clients-workflow.spec.ts")
         self.assertIn("`Create${", people)

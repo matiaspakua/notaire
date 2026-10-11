@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Report query fixture** (#1490, CU75): the document-list hook encodes
+  `Purchase/Sale & more`. The stored procedure type `Compraventa` stays.
 - **Runtime proxy edge file** (#1490, CU75): the living spec names
   `frontend/src/proxy.ts`. The archived #1055 spec keeps
   `middleware.ts` or `proxy.ts`.
