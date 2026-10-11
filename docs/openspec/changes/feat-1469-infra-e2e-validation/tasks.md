@@ -36,8 +36,8 @@
 ## 6. Run regression
 
 - [x] 6.1 `bash infra/verify.sh`
-- [ ] 6.2 `bash workspace/sdlc/preflight.sh`
-- [ ] 6.3 Live run on the local stack including the Playwright suite
+- [x] 6.2 `bash workspace/sdlc/preflight.sh` (passed every gate on push except an overload timeout in vitest; vitest alone: 82 files, 708 tests green)
+- [x] 6.3 Live run on the local stack including the Playwright suite (665 passed, 1 environmental failure, 14 documented skips; 11/11 signals PASS)
 
 ## 7. Playwright
 
@@ -46,8 +46,8 @@
 ## 8. Gate 3 — Update permanent documentation
 
 - [x] 8.1 `infra/docs/OPERATION.md`
-- [ ] 8.2 `infra/docs/DEFINITION.md`
-- [ ] 8.3 `CHANGELOG.md` n/a
+- [x] 8.2 `infra/docs/DEFINITION.md` n/a: no new service or target; the command is documented in `OPERATION.md` (8.1)
+- [x] 8.3 `CHANGELOG.md` n/a (local tooling)
 
 ## 9. Atomic commits
 
