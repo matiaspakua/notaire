@@ -43,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English testing-pattern samples** (#1490, CU75):
+  `docs/300-development/303-testing/TESTING-PATTERNS.md` uses `Budget`,
+  `BudgetService`, and `BudgetRepositoryPort`. Management create JSON is
+  `number`, `heading`, and `notes`. Budget create JSON is `date`, `heading`,
+  `status` (`BORRADOR`), `propertyAmount`, and `personId`. Error samples
+  read `ErrorResponse.message`. The people-form sample submits `firstName`
+  and `lastName`. Visible Spanish labels on the live screen stay
+  (`Nombre`, `Apellido`, `Guardar`), and message keys stay
+  `personas.fields.nombre`.
 - **English development setup guide** (#1490, CU75):
   `docs/300-development/301-setup/README.md` is English. The JDK line matches
   the root `pom.xml` (Java 26). The package tree names `PersonController`,
