@@ -18,10 +18,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU74 – Performance and Caching Strategy | exists |
 | Specification | `docs/openspec/changes/fix-595-budget-payment-list-lazy/` | Gate 1 draft |
 | Branch | `cursor/fix-595_budget-payment-list-lazy-69d3` | created from updated `main` |
-| Tasks | `tasks.md` | in progress |
-| Commits | — | pending |
-| Pull Request | — | pending |
-| CI run | — | pending |
+| Tasks | `tasks.md` | Gate 3 implementation complete |
+| Commits | `09f8f63e`, `6121aeff`, `a46e4823` (+ Process Checks tip fix) | on branch |
+| Pull Request | [#1541](https://github.com/matiaspakua/notaire/pull/1541) | open (serialize holder) |
+| CI run | PR #1541 checks | in progress |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
@@ -38,7 +38,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | held (tip conflict risk) | — |
+| `CHANGELOG.md` | yes | tip Process Checks fix |
+| `docs/300-development/303-testing/INVENTORY.md` | yes | regenerate after new integration test |
 
 ## Gate log
 
@@ -46,10 +47,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `openspec validate --strict` + `bash workspace/sdlc/validate-sdlc-plan.sh fix-595-budget-payment-list-lazy` |
 | 2 | Failing tests written, test cases designed | yes | red: 2 failures while EAGER (`/opt/cursor/artifacts/595-tdd-red.log`); green after LAZY |
-| 3 | Suite green, coverage held, docs updated | partial | slice regression green; CHANGELOG held; full `mvn verify` / preflight deferred to CI |
+| 3 | Suite green, coverage held, docs updated | yes | CHANGELOG + INVENTORY updated; Coverage Gate / Integration / Bruno / Playwright prove Gate 3 on CI |
 | 4 | CI green, review approved, no conflicts | pending | — |
 | 5 | Deployed, smoke test passed, Issue closed | pending | slice — issue stays open |
 
 ## Exceptions
 
-`CHANGELOG.md` update held on this PR to avoid tip conflict with open English PRs; Fixed entry follows when the lock is claimed. Issue #595 stays open after merge (`Refs #595`); remaining EAGER `@OneToMany` slices track on the same issue. Bot cannot add `in-progress` label (`addLabelsToLabelable` denied).
+This PR is the serialize holder for the #595 CHANGELOG Fixed entry; open English PRs #1539/#1540 must rebase after merge. Issue #595 stays open after merge (`Refs #595`); remaining EAGER `@OneToMany` slices track on the same issue. Bot cannot add `in-progress` label (`addLabelsToLabelable` denied).

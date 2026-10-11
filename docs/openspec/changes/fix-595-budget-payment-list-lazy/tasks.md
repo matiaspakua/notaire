@@ -40,8 +40,8 @@
 ## 6. Ejecutar regresión
 
 - [x] 6.1 `mvn test -pl backend-api` — unit + integration (slice: BudgetPaymentListFetch + BudgetEntity + PaymentUseCase + PaymentPersistence + history fetch)
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor (CI Coverage Gate on #1541)
+- [x] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs; CI Integration + Coverage Gate)
 - [x] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite (n/a — no API surface; getter `@JsonIgnore`)
 - [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
@@ -56,10 +56,10 @@
 
 - [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
 - [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI
-- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes (held — tip conflict risk)
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes (serialize holder for #595)
 - [x] 8.4 Archive superseded documents into `docs/000-archive/`
 - [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
+- [x] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate (heavy CI on #1541 is the merge authority)
 
 ## 9. Commits atómicos
 
@@ -97,7 +97,7 @@
 - [ ] Full suite green: unit, integration, regression, E2E
 - [ ] Coverage at or above the JaCoCo ratchet floor
 - [ ] Playwright E2E green for UI changes
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
 - [ ] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)

@@ -22,7 +22,7 @@ Issue #595 inventories explicit EAGER mappings; four are `@OneToMany` collection
 
 - Explicit `FetchType.LAZY` (same pattern as #1318) so intent is visible next to sibling mappings that are already LAZY (`procedureList`, `itemList`).
 - No `JOIN FETCH` / `@EntityGraph` added: no REST or report path needs the collection outside the legacy JPA controllers that already open an `EntityManager`.
-- Hold `CHANGELOG.md` on this PR to avoid tip conflict with open English work; behavior is still documented in this change pack.
+- Claim `CHANGELOG.md` Fixed entry on this PR (serialize holder for #595); competing English tip PRs rebase after merge.
 
 ## Riesgos / Trade-offs
 
@@ -75,5 +75,5 @@ Issue #595 inventories explicit EAGER mappings; four are `@OneToMany` collection
 
 1. Land Gate 1 + apply on branch `cursor/fix-595_budget-payment-list-lazy-69d3`.
 2. Merge via PR with `Refs #595` (slice; issue stays open).
-3. Follow-up tip CHANGELOG Fixed entry when lock is free.
+3. After merge, rebase competing tip CHANGELOG PRs (#1539 / #1540) onto new main.
 4. Later slices: `DocumentType.procedureTemplateList`, then `Concept.budgetTemplateList`.
