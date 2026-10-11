@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired validation detail** (#1490, CU75): the engineering-sequences
+  design names the detail CU20 still writes, `campo: mensaje`.
+  The live validation text is `field: message`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Retired item type and reason** (#1490, CU75): the engineering-sequences
   design names the fields CU71 still writes, `tipo` and `motivo`.
   The live fields are `type` and `reason`. Stored item types `NORMAL`,
