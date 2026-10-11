@@ -47,7 +47,7 @@ export default function DocumentsPage() {
   const tc = useTranslations("common");
 
   const { data: documents = [], isLoading } = useSubmittedDocuments();
-  const { data: tiposDoc = [] } = useDocumentTypes();
+  const { data: documentTypes = [] } = useDocumentTypes();
   const createMutation = useCreateSubmittedDocument();
   const updateMutation = useUpdateSubmittedDocument();
   const deleteMutation = useDeleteSubmittedDocument();
@@ -196,9 +196,9 @@ export default function DocumentsPage() {
                     <SelectValue placeholder={t("selectTipo")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposDoc.map((tipo) => (
-                      <SelectItem key={tipo.idDocumentType} value={tipo.idDocumentType!.toString()}>
-                        {tipo.name}
+                    {documentTypes.map((documentType) => (
+                      <SelectItem key={documentType.idDocumentType} value={documentType.idDocumentType!.toString()}>
+                        {documentType.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

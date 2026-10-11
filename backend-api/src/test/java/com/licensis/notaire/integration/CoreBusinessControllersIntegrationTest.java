@@ -370,8 +370,8 @@ class CoreBusinessControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU82 - Should save matricula, tomo/folios/finca and linderos")
-        void shouldSaveRegistrationNumberVolumeFolioLandRecordYBoundaries() throws Exception {
+        @DisplayName("CU82 - Should save registration number, volume/folio/land record, and boundaries")
+        void shouldSaveRegistrationNumberVolumeFolioLandRecordAndBoundaries() throws Exception {
             String body = """
                     {
                       "cadastralDesignation": "123-456-789",

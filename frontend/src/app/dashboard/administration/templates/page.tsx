@@ -39,7 +39,7 @@ export default function TemplatesPage() {
     queryKey: ["concepts"],
     queryFn: () => apiGet<Concept[]>("/concepts"),
   });
-  const { data: tiposDocument = [] } = useQuery({
+  const { data: documentTypes = [] } = useQuery({
     queryKey: ["document-types"],
     queryFn: () => apiGet<DocumentType[]>("/document-types"),
   });
@@ -94,7 +94,7 @@ export default function TemplatesPage() {
   }
 
   const typeDocumentName = (id?: number) =>
-    tiposDocument.find((x) => x.idDocumentType === id)?.name ?? `#${id}`;
+    documentTypes.find((x) => x.idDocumentType === id)?.name ?? `#${id}`;
 
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -354,7 +354,7 @@ export default function TemplatesPage() {
                     <SelectValue placeholder={t("costosDocumento.fields.tipoDocumentoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposDocument.map((td) => (
+                    {documentTypes.map((td) => (
                       <SelectItem key={td.idDocumentType} value={String(td.idDocumentType)}>
                         {td.name}
                       </SelectItem>

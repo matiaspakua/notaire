@@ -22,11 +22,11 @@ import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 import { useFormat } from "@/hooks/useFormat";
 
-const PAGO_FIELD_NAMES = ["amount", "date", "paymentMethod", "notes", "idBudget"];
+const PAYMENT_FIELD_NAMES = ["amount", "date", "paymentMethod", "notes", "idBudget"];
 
 const EMPTY: Partial<Payment> = { idBudget: undefined, amount: undefined, date: "", paymentMethod: "", notes: "" };
 
-export default function PagosPage() {
+export default function PaymentsPage() {
   const fmt = useFormat();
   const t = useTranslations("pagos");
   const showDeleteError = useDeleteError();
@@ -36,7 +36,7 @@ export default function PagosPage() {
   const createMutation = useCreatePayment();
   const updateMutation = useUpdatePayment();
   const deleteMutation = useDeletePayment();
-  const reciboPago = usePaymentReceipt();
+  const paymentReceipt = usePaymentReceipt();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -85,7 +85,7 @@ export default function PagosPage() {
       presentMutationError(err, {
         fallback:
           err instanceof ApiError && err.status === 409 ? t("saldoExcedido") : t("errorSave"),
-        fieldNames: PAGO_FIELD_NAMES,
+        fieldNames: PAYMENT_FIELD_NAMES,
         setFieldErrors,
       });
     }
@@ -103,9 +103,9 @@ export default function PagosPage() {
     }
   }
 
-  async function handleEmitirRecibo(idPago: number) {
+  async function handleIssueReceipt(idPayment: number) {
     try {
-      await reciboPago.download(idPago);
+      await paymentReceipt.download(idPayment);
     } catch (err) {
       presentMutationError(err, { fallback: t("errorRecibo") });
     }
@@ -121,7 +121,7 @@ export default function PagosPage() {
       key: "actions", header: "", className: "w-32",
       render: (p) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" title={t("emitirRecibo")} onClick={() => handleEmitirRecibo(p.idPayment!)}><FileText className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" title={t("emitirRecibo")} onClick={() => handleIssueReceipt(p.idPayment!)}><FileText className="h-4 w-4" /></Button>
           <Button size="sm" variant="ghost" onClick={() => openEdit(p)} aria-label={tc("edit")}><Pencil className="h-4 w-4" /></Button>
           <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(p.idPayment!)} aria-label={tc("delete")}><Trash2 className="h-4 w-4" /></Button>
         </div>
