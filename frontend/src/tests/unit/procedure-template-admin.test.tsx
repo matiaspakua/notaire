@@ -24,7 +24,7 @@ import { RequiredDocumentsDialog } from "@/app/dashboard/administration/procedur
 const DOC_TYPES = [
   { idDocumentType: 1, name: "Libre Deuda Municipal", expires: true, dueDays: 30, deliveredBy: "Entidad" },
   { idDocumentType: 2, name: "Informe de Dominio", expires: true, dueDays: 60, deliveredBy: "Entidad" },
-  { idDocumentType: 3, name: "Título de propiedad", expires: false, deliveredBy: "Cliente" },
+  { idDocumentType: 3, name: "Property title", expires: false, deliveredBy: "Cliente" },
 ];
 let rows = [{ fkIdProcedureType: 7, fkIdDocumentType: 1, notes: "Original", version: 0 }];
 let postStatus = 201;

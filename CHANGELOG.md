@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English property-title fixture** (#1490, CU75): the procedure-template
+  unit catalog names the synthetic document `Property title`. Seed names
+  `Libre Deuda Municipal` and `Informe de Dominio` stay, along with
+  `Cliente`, `Entidad`, `Compraventa`, and the visible label
+  `Administración → Trámites`.
 - **English catalog Playwright filenames** (#1490, CU75): the
   budget-template delete note names `TS-0131-budget-template.spec.ts`.
   The catalog-constraint note names
