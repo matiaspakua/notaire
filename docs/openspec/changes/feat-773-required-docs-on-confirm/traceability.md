@@ -32,11 +32,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
 | Complete-case seeds pending required documents from procedure template | `ManagementCompleteCaseRequiredDocsIntegrationTest` + unit | covered |
-| Case summary lists pending required documents after confirm | IT + Bruno `05b-case-summary.yml` + TS-0140 | covered |
+| Case summary lists pending required documents after confirm | IT + Bruno `05b-case-summary.yml` + TS-0141 | covered |
 | Idempotent seed skips existing document types for the procedure | `RequiredDocumentationOnConfirmServiceTest` + IT | covered |
 | PUT complete-case on existing procedure does not wipe registered docs | `ManagementCompleteCaseRequiredDocsIntegrationTest` | covered |
 | Empty template yields no seeded documents | `RequiredDocumentationOnConfirmServiceTest` | covered |
-| E2E: checklist visible after complete-case | `TS-0140-required-docs-on-confirm.spec.ts` | covered |
+| E2E: checklist visible after complete-case | `TS-0141-required-docs-on-confirm.spec.ts` | covered |
 
 ## Permanent documentation updated
 

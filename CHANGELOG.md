@@ -1840,7 +1840,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   PUT only updates an existing procedure. `GET /api/v1/managements/{id}/case-summary`
   lists the checklist; the management summary dialog shows it. Covered by
   `RequiredDocumentationOnConfirmServiceTest`,
-  `ManagementCompleteCaseRequiredDocsIntegrationTest`, and Playwright TS-0140.
+  `ManagementCompleteCaseRequiredDocsIntegrationTest`, and Playwright TS-0141.
 - **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
   with a "Saltar al contenido" / "Skip to content" link that appears on the first Tab and moves focus to
   `<main id="main-content">` (WCAG 2.4.1). After a client-side navigation, focus moves to the new page's `<h1>`

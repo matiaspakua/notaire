@@ -56,7 +56,7 @@
 ## 7. Ejecutar Playwright
 
 - [x] 7.1 Add/update focused E2E for post-confirm checklist (not full tutorial rewrite)
-- [x] 7.2 `cd testing/e2e && npx playwright test TS-0140-required-docs-on-confirm.spec.ts` — green
+- [x] 7.2 `cd testing/e2e && npx playwright test TS-0141-required-docs-on-confirm.spec.ts` — green
 - [x] 7.3 Verify affected dialog/panel at 1024px (and 768 if layout changes)
 - [x] 7.4 If FE surface deferred with foreman approval, record n/a with reason here (FE invalidateQueries + dialog)
 
@@ -93,7 +93,7 @@
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [x] 12.1 Smoke: complete-case → case-summary shows template doc names (API + TS-0140)
+- [x] 12.1 Smoke: complete-case → case-summary shows template doc names (API + TS-0141)
 - [x] 12.2 Rollback path still valid (revert-safe, no Flyway)
 - [ ] 12.3 Close #773 via `Closes #773`
 - [ ] 12.4 `openspec archive feat-773-required-docs-on-confirm`
