@@ -64,6 +64,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English retired test filenames** (#1490, CU75): the copies
+  change names `TS-0132-copies-required-fields.spec.ts`. The
+  people-pagination change names `people-pagination.test.tsx` and
+  `TS-0015-people-clients-workflow.spec.ts`. Headings
+  `Módulos afectados` and `Riesgos / Trade-offs` stay. Official titles
+  stay, including `CU08 – Copias de testimonio`,
+  `CU82 – Minuta de inscripción`,
+  `CU43 – Reingreso de documentación`, `CU18 – Dar Alta Cliente`,
+  `CU54 – Modificar Persona`, and `CU61 – Buscar persona`. Task
+  headings `Crear branch`, `Implementación`, `Ejecutar regresión`,
+  `Ejecutar Playwright`, `Commits atómicos`, and
+  `Pull Request y validación CI` stay.
 - **English lifecycle proposals** (#1490, CU75): the assessment
   and domain-lifecycle proposals name a management and the
   create-management sequence. Headings `Objetivo`, `Reglas de negocio`,

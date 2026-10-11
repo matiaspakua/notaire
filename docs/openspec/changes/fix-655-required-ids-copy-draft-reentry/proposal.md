@@ -48,7 +48,7 @@ The #655 empty-body probe (re-run on `main` b39fcdaf, throwaway DB) found three 
 |--------|---------|--------------|
 | `backend-api` | yes | 3 controllers, 1 request DTO, OpenAPI, tests, Bruno |
 | `frontend` | yes | copies dialog requires number and print date |
-| `testing` | yes | Playwright `copias-required-fields.spec.ts` |
+| `testing` | yes | Playwright `TS-0132-copies-required-fields.spec.ts` |
 | Docs / scripts / CI | yes | CHANGELOG, accepted-breaking-changes |
 
 ### Surface area

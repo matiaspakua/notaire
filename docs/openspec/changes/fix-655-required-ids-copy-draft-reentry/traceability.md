@@ -29,7 +29,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Empty copy | `backend-api/src/test/java/com/licensis/notaire/integration/RequiredRequestIdsIntegrationTest.java, Bruno copies/08-create-empty-body` | passing |
 | Copy update without print date | `backend-api/src/test/java/com/licensis/notaire/integration/RequiredRequestIdsIntegrationTest.java` | passing |
 | Registration draft and re-entry without ids | `backend-api/src/test/java/com/licensis/notaire/integration/RequiredRequestIdsIntegrationTest.java, Bruno registration-drafts/06, managements/11` | passing |
-| Copies dialog | `testing/e2e/tests/copias-required-fields.spec.ts` | passing |
+| Copies dialog | `testing/e2e/tests/TS-0132-copies-required-fields.spec.ts` | passing |
 | Contract | `backend-api/src/test/java/com/licensis/notaire/integration/RequiredRequestIdsIntegrationTest.java` | passing |
 
 ## Permanent documentation updated
