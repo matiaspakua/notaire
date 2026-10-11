@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Catalog items path** (#1490, CU75): the living
+  `presupuesto-catalogo-items` spec names
+  `POST /api/v1/budgets/{id}/items-from-catalog`. The
+  engineering-sequences design names the path CU71 still writes,
+  `POST /api/v1/presupuestos/{id}/items-desde-catalogo`. The archived
+  proposal keeps that path. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
 - **Upcoming expirations query** (#1490, CU75): the living
   `upcoming-expirations` spec names the query `days` on
   `GET /api/v1/submitted-documents/upcoming-expirations`. The
