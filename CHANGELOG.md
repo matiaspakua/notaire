@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English workflow stub heading** (#1490, CU75): the tracker comment
+  quotes the seeded label `Testimonio Ingresado a Inscripcion`. The E2E
+  stub uses `Gestion con Escritura Firmada`, `Testimonio Generado`,
+  `Testimonio Ingresado a Inscripcion`, and `Testimonio Retirado`. The
+  synthetic heading is `Reentry loop fixture`. Stored statuses `Iniciada`
+  and `En Tramite` stay.
 - **English workflow assignment copy** (#1490, CU75): the assignment
   request names the active workflow, an integer, and unassigning the
   current one. The conflict says the selected workflow is not active.

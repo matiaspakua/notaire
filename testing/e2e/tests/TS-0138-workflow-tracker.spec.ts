@@ -20,8 +20,8 @@ function baseTrace(overrides: Record<string, unknown> = {}) {
   return {
     managementId: 1,
     number: 1001,
-    heading: "Reingreso loop fixture",
-    currentStatus: "Testimony Ingresado a Inscripcion",
+    heading: "Reentry loop fixture",
+    currentStatus: "Testimonio Ingresado a Inscripcion",
     workflowDefinition: {
       id: 1,
       name: "Standard management workflow",
@@ -37,25 +37,25 @@ function baseTrace(overrides: Record<string, unknown> = {}) {
       {
         id: 5,
         statusManagementId: 6,
-        statusManagementName: "Gestion con Deed Firmada",
+        statusManagementName: "Gestion con Escritura Firmada",
         type: "INTERMEDIATE",
       },
       {
         id: 8,
         statusManagementId: 11,
-        statusManagementName: "Testimony Generado",
+        statusManagementName: "Testimonio Generado",
         type: "INTERMEDIATE",
       },
       {
         id: 9,
         statusManagementId: 12,
-        statusManagementName: "Testimony Ingresado a Inscripcion",
+        statusManagementName: "Testimonio Ingresado a Inscripcion",
         type: "INTERMEDIATE",
       },
       {
         id: 10,
         statusManagementId: 13,
-        statusManagementName: "Testimony Retirado",
+        statusManagementName: "Testimonio Retirado",
         type: "FINAL",
       },
     ],
