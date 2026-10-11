@@ -34,7 +34,7 @@ class ReportsUseCaseIntegrationTest {
 
     @Test
     @DisplayName("CU24: the index book returns valid PDF bytes")
-    void shouldGenerateLibroIndicePdf() throws Exception {
+    void shouldGenerateIndexBookPdf() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/reports/index-book")
                         .param("year", "2026"))
                 .andExpect(status().isOk())

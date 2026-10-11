@@ -127,14 +127,14 @@ public class TestimonyController {
     }
 
     private final TestimonyRepository repository;
-    private final TestimonyGenerationVerificationService generationVerificacionService;
+    private final TestimonyGenerationVerificationService generationVerificationService;
     private final DeedRepository deedRepository;
 
     public TestimonyController(TestimonyRepository repository,
-            TestimonyGenerationVerificationService generationVerificacionService,
+            TestimonyGenerationVerificationService generationVerificationService,
             DeedRepository deedRepository) {
         this.repository = repository;
-        this.generationVerificacionService = generationVerificacionService;
+        this.generationVerificationService = generationVerificationService;
         this.deedRepository = deedRepository;
     }
 
@@ -249,7 +249,7 @@ public class TestimonyController {
                        + "'Firmada'")
     @Transactional
     public ResponseEntity<DtoTestimony> generate(@PathVariable Integer idDeed) {
-        Testimony testimony = generationVerificacionService.generate(idDeed);
+        Testimony testimony = generationVerificationService.generate(idDeed);
         return ResponseEntity.status(HttpStatus.CREATED).body(testimony.getDto());
     }
 
@@ -262,7 +262,7 @@ public class TestimonyController {
                description = "Records the verification of a testimony, marking whether it was observed and why")
     @Transactional
     public ResponseEntity<DtoTestimony> verify(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
-        Testimony testimony = generationVerificacionService.verify(id, dto.isFlagged(), dto.getNotes());
+        Testimony testimony = generationVerificationService.verify(id, dto.isFlagged(), dto.getNotes());
         return ResponseEntity.ok(testimony.getDto());
     }
 }

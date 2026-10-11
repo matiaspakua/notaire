@@ -64,6 +64,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English verification identifiers** (#1490, CU75): the testimony
+  controller field is `generationVerificationService`. The verification
+  test class is `TestimonyVerificationServiceTest`. Withdrawal rejection
+  is `shouldRejectWithdrawalWhenTestimonyNotFound`. The JPA nested class
+  is `LoadJpaList`. The audit fixture is `record2`. The index-book test
+  is `shouldGenerateIndexBookPdf`. The coverage guard is
+  `shouldNotReferenceNonexistentServicesPackageInPomExclusions`. The
+  forbidden package fragment `servicios` stays, along with operation id
+  `getCostosByTypeProcedure` and the report path `/api/v1/reports/index-book`.
 - **English transition fixtures** (#1490, CU75): workflow fixtures use
   `Initial`, `Intermediate`, and `Unreachable`. The history note is
   `Initial status change`. Notebook locals are `firstBatch`,

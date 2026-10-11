@@ -90,12 +90,12 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
     void shouldFindByUserIdPaginated() {
         auditRecordRepository.save(testRecord);
 
-        AuditRecord registro2 = new AuditRecord();
-        registro2.setModule("USERS");
-        registro2.setOperationDetail("UPDATE");
-        registro2.setDate(new Date());
-        registro2.setFkIdUser(testUser);
-        auditRecordRepository.save(registro2);
+        AuditRecord record2 = new AuditRecord();
+        record2.setModule("USERS");
+        record2.setOperationDetail("UPDATE");
+        record2.setDate(new Date());
+        record2.setFkIdUser(testUser);
+        auditRecordRepository.save(record2);
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> found = auditRecordRepository.findByFkIdUserIdUser(testUser.getIdUser(), pageable);

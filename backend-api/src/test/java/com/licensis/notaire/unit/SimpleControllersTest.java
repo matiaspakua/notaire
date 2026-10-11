@@ -592,12 +592,12 @@ class SimpleControllersTest {
     @DisplayName("TestimonyController")
     class TestimonyControllerTests {
         private final TestimonyRepository repo = mock(TestimonyRepository.class);
-        private final TestimonyGenerationVerificationService generationVerificacionService =
+        private final TestimonyGenerationVerificationService generationVerificationService =
                 mock(TestimonyGenerationVerificationService.class);
         private final com.licensis.notaire.repository.DeedRepository deedRepo =
                 mock(com.licensis.notaire.repository.DeedRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TestimonyController(repo, generationVerificacionService, deedRepo)).build();
+                standaloneSetup(new TestimonyController(repo, generationVerificationService, deedRepo)).build();
 
         private Testimony build() {
             Testimony t = new Testimony();

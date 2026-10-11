@@ -28,7 +28,7 @@ class JacocoCoverageConfigConsistencyTest {
 
     @Test
     @DisplayName("Should not reference the nonexistent servicios package in JaCoCo exclusions")
-    void shouldNotReferenceNonexistentServiciosPackageInPomExclusions() throws IOException {
+    void shouldNotReferenceNonexistentServicesPackageInPomExclusions() throws IOException {
         String pomContent = Files.readString(Paths.get(POM_PATH));
 
         assertThat(pomContent)
