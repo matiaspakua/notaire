@@ -52,7 +52,7 @@ without a migration plan.
 - **Pros:** Clear target for new endpoints; renames can be batched; create
   responses become discoverable via `Location`.
 - **Cons:** Temporary dual vocabulary until phased renames complete; clients
-  must treat minuta create as `201` (was `200`); clients must stop calling
+  must treat registration-draft create as `201` (was `200`); clients must stop calling
   `/payments/params` (removed).
 
 ## Follow-up (out of this ADR's first slice)

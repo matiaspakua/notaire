@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English registration-draft consequence** (#1490, CU75): ADR-023 says
+  clients must treat registration-draft create as `201`. The spec id
+  `minuta-inscripcion` stays, along with the gloss `Minuta de Inscripción`
+  and `POST /api/v1/registration-drafts`.
 - **English client actor id** (#1490, CU75): the case-process diagram
   names the client actor `client`. The label `Client` stays. The actor
   ids `gestor` and `escribano` stay, along with `escribano[Escribano]`.
