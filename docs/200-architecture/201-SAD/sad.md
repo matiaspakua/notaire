@@ -2,7 +2,9 @@
 
 > **arc42 Template v8.2** — based on [docs.arc42.org](https://docs.arc42.org/home/)
 >
-> **Version:** 3.3 | **Date:** 2026-10-11 | **Author:** Architecture Team
+> **Version:** 3.4 | **Date:** 2026-10-11 | **Author:** Architecture Team
+>
+> **Changelog v3.4**: §6 points at [GESTION.md](../203-design/GESTION.md) for the case-process analysis. States stay in CICLO-DE-VIDA.md.
 >
 > **Changelog v3.3**: English names for the current schema (Java 26, Spring Boot 4.1.1, Flyway through V45). §6 points at [CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md) as the single domain lifecycle. Stored labels such as `Escribano` stay. Existing PlantUML runtime sketches stay legacy (ADR-027).
 >
@@ -637,9 +639,11 @@ through `procedures.fk_id_budget`. `budgets.fk_id_tramite` was removed in V14.
 
 ## 6. Runtime View
 
-Domain lifecycles — gestión, deed, testimony, registration draft, documents,
+Domain lifecycles — management, deed, testimony, registration draft, documents,
 budget, payment, procedure folder — are specified once in
-[CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md). The PlantUML sequences in
+[CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md). The step-by-step case
+process (use cases, dependencies, sequences) is
+[GESTION.md](../203-design/GESTION.md). The PlantUML sequences in
 this section are legacy runtime sketches ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
 Do not add a second state machine here.
 
@@ -1119,7 +1123,7 @@ O --> (Deployability Docker)
 
 ### 11.3 Evolution Roadmap
 
-> 📊 **Estado vivo**: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1) ·
+> 📊 **Live status**: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1) ·
 > [`docs/github/README.md`](../../github/README.md) ·
 > [DEVELOPMENT-PLAN §5](../../300-development/DEVELOPMENT-PLAN.md).
 > Historical snapshots (do not update): [`docs/000-archive/github/`](../../000-archive/github/).

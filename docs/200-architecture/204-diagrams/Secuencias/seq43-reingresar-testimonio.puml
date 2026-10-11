@@ -2,22 +2,22 @@
 !theme plain
 title CU43 — Reingresar testimonio
 
-actor "Gestor" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Clerk (Gestor)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : Un testimonio ha sido devuelto observado.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor/Escribano decide registrar el reingreso.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Muestra una lista de escrituras disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor/Escribano selecciona una escritura.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Muestra: (Número; Fecha; Folios; Nomenclaturas) y solicita: (Fecha salida; Fecha reingreso; Número cartón; Si observado; Observaciones)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor/Escribano ingresa los datos y confirma.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Registra el reingreso del testimonio.
-Sistema -> Sistema : Sistema
+Actor -> Actor : A testimony was returned Observado.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) or notary (Escribano) decides to record the re-entry.
+System -> System : Clerk
+Actor -> Actor : Shows a list of available deeds.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) or notary (Escribano) selects a deed.
+System -> System : Clerk
+Actor -> Actor : Shows: (Number; Date; Folios; Cadastral codes) and requests: (Departure date; Re-entry date; Card number; Whether Observado; Notes)
+System -> System : System
+Actor -> Actor : The clerk (Gestor) or notary (Escribano) enters the data and confirms.
+System -> System : Clerk
+Actor -> Actor : Records the testimony re-entry.
+System -> System : System
 
 @enduml

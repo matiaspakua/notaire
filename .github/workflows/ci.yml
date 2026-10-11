@@ -296,8 +296,11 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: build
+    timeout-minutes: 30
+    # Independent of the Java build so a docs-only pull request still runs the
+    # secret scan, Semgrep catalog, and Trivy report (#1506).
+    needs: [changes]
+    if: always() && needs.changes.result == 'success'
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -306,6 +309,23 @@ jobs:
         run: |
           python3 -m pip install --disable-pip-version-check pyyaml==6.0.1
           python3 security/scan_secrets.py
+
+      - name: Enforce security case catalog
+        run: |
+          python3 -m pip install --disable-pip-version-check 'semgrep==1.180.0'
+          python3 security/run_gates.py --profile ci --no-install
+
+      - name: Upload security case report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: security-case-report
+          path: reports/security/latest/
+          retention-days: 30
+
+      - name: Publish security case summary
+        if: always()
+        run: python3 security/publish_summary.py reports/security/latest/report.json >> "$GITHUB_STEP_SUMMARY"
 
       - name: Set up JDK
         uses: actions/setup-java@v6

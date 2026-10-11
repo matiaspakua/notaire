@@ -17,7 +17,7 @@ export MIGRATIONS_DIR
 EXPORTER_USER="${POSTGRES_EXPORTER_USER:-notaire_exporter}"
 EXPORTER_PASSWORD="${POSTGRES_EXPORTER_PASSWORD:-vv-exporter-throwaway}"
 # Migrations Flyway must ignore on purpose (manual rollback scripts), space separated.
-EXPECTED_IGNORED="${EXPECTED_IGNORED:-R14__restore_presupuestos_fk_id_tramite.sql}"
+EXPECTED_IGNORED="${EXPECTED_IGNORED:-R14__restore_presupuestos_fk_id_tramite.sql R45__rename_remaining_spanish_identifiers.sql}"
 
 PROJECT="${DB_VV_PROJECT:-notaire-db-vv-$$}"
 COMPOSE=(docker compose -p "$PROJECT" -f "$DB_DIR/docker-compose.yml")
@@ -95,7 +95,7 @@ check_files_against_history() {
     ignored="$(ignored_files | tr '\n' ' ' | sed 's/ $//')"
     expected="$(printf '%s\n' $EXPECTED_IGNORED | sort | tr '\n' ' ' | sed 's/ $//')"
     if [ "$ignored" = "$expected" ]; then
-        echo "PASS the only ignored SQL file is the documented manual rollback ($ignored)" | record
+        echo "PASS the only ignored SQL files are the documented manual rollbacks ($ignored)" | record
     else
         echo "FAIL ignored SQL files are [$ignored], expected [$expected]" | record
     fi

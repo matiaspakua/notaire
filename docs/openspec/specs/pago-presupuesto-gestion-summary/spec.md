@@ -3,80 +3,97 @@
 ## Purpose
 
 Exposes the persisted relationship between a payment (`Payment`) and its
-presupuesto, and provides consultable financial summaries — by presupuesto and
-by gestión — of what was budgeted, collected and still owed, per CU47.
+`Budget`, and provides consultable financial summaries — by budget and by
+management — of what was budgeted, collected and still owed, per CU47.
 
 ## Requirements
 
-### Requirement: A payment response includes its associated presupuesto
-The system SHALL include the identifier of the associated presupuesto in every
-API response representing a `Payment`, whether returned individually, in a list,
-or after being created or edited.
+### Requirement: A payment response includes its associated budget
 
-#### Scenario: Retrieving a single payment includes its presupuesto
-- **WHEN** a payment that is associated with a presupuesto is retrieved by ID
-- **THEN** the response includes the identifier of that presupuesto
+The system SHALL include the identifier of the associated budget (`idBudget`)
+in every API response representing a `Payment`, whether returned individually,
+in a list, or after being created or edited.
 
-#### Scenario: Listing payments by presupuesto includes the presupuesto on each entry
-- **WHEN** the payments associated with a presupuesto are listed
-- **THEN** each returned payment includes the identifier of that presupuesto
+#### Scenario: Retrieving a single payment includes its budget
 
-#### Scenario: Creating a payment returns the associated presupuesto
-- **WHEN** a payment is processed against a presupuesto
-- **THEN** the response for the created payment includes the identifier of
-  that presupuesto
+- **WHEN** a payment that is associated with a budget is retrieved by ID
+- **THEN** the response includes the `idBudget` of that budget
 
-### Requirement: Presupuesto financial summary for CU47
-The system SHALL provide, for a given presupuesto, a summary containing the
-associated gestión number, the gestión header, the presupuesto number, the
-presupuesto total, the pending balance, and the list of payments applied to
-it (each with payment number, amount, date, and observations), per CU47.
+#### Scenario: Listing payments by budget includes the budget on each entry
 
-#### Scenario: Presupuesto with no payments
-- **WHEN** the financial summary of a presupuesto with no payments applied is
+- **WHEN** the payments associated with a budget are listed
+- **THEN** each returned payment includes the `idBudget` of that budget
+
+#### Scenario: Creating a payment returns the associated budget
+
+- **WHEN** a payment is processed against a budget
+- **THEN** the response for the created payment includes the `idBudget` of
+  that budget
+
+### Requirement: Budget financial summary for CU47
+
+The system SHALL provide, for a given budget, a summary containing the
+associated management number, the management header (`managementHeading`),
+the budget number, the budget total, the pending balance (`pendingBalance`),
+and the list of payments applied to it (each with payment number, `amount`,
+date, and `notes`), per CU47. The path is
+`GET /api/v1/budgets/{id}/summary`.
+
+#### Scenario: Budget with no payments
+
+- **WHEN** the financial summary of a budget with no payments applied is
   requested
-- **THEN** the response shows a pending balance equal to the presupuesto total
+- **THEN** the response shows a `pendingBalance` equal to the budget total
   and an empty list of payments
 
-#### Scenario: Presupuesto with one payment
-- **WHEN** the financial summary of a presupuesto with one payment applied is
-  requested
-- **THEN** the response shows the reduced pending balance and a list
-  containing that payment's number, amount, date, and observations
+#### Scenario: Budget with one payment
 
-#### Scenario: Presupuesto with multiple payments
-- **WHEN** the financial summary of a presupuesto with several payments
-  applied is requested
-- **THEN** the response shows the pending balance net of all payments and a
+- **WHEN** the financial summary of a budget with one payment applied is
+  requested
+- **THEN** the response shows the reduced `pendingBalance` and a list
+  containing that payment's number, `amount`, date, and `notes`
+
+#### Scenario: Budget with multiple payments
+
+- **WHEN** the financial summary of a budget with several payments applied
+  is requested
+- **THEN** the response shows the `pendingBalance` net of all payments and a
   list containing every payment applied
 
-#### Scenario: Requesting the summary of a non-existent presupuesto
-- **WHEN** the financial summary of a presupuesto ID that does not exist is
+#### Scenario: Requesting the summary of a budget that does not exist
+
+- **WHEN** the financial summary of a budget id that does not exist is
   requested
 - **THEN** the system responds with a not-found error
 
-### Requirement: Gestión financial summary
-The system SHALL provide, for a given gestión, an aggregate financial summary
-containing the total amount budgeted, the total amount collected, and the
-pending balance, summed across every presupuesto linked to the gestión's
-trámites.
+### Requirement: Management financial summary
 
-#### Scenario: Gestión with a single trámite and presupuesto
-- **WHEN** the financial summary of a gestión with one trámite linked to one
-  presupuesto is requested
-- **THEN** the response shows that presupuesto's total as the total budgeted,
-  the sum of its payments as the total collected, and its pending balance as
-  the saldo
+The system SHALL provide, for a given management, an aggregate financial
+summary containing the total amount budgeted (`totalBudgeted`), the total
+amount collected (`totalCollected`), and the pending balance
+(`pendingBalance`), summed across every budget linked to the management's
+procedures. The path is `GET /api/v1/managements/{id}/financial-summary`.
 
-#### Scenario: Gestión with multiple trámites and presupuestos
-- **WHEN** the financial summary of a gestión with several trámites, each
-  linked to its own presupuesto, is requested
-- **THEN** the response shows the sum of every linked presupuesto's total as
-  the total budgeted, the sum of every payment across them as the total
-  collected, and the sum of their pending balances as the saldo
+#### Scenario: Management with a single procedure and budget
 
-#### Scenario: Gestión with no payments registered
-- **WHEN** the financial summary of a gestión whose linked presupuestos have
+- **WHEN** the financial summary of a management with one procedure linked
+  to one budget is requested
+- **THEN** the response shows that budget's total as `totalBudgeted`, the
+  sum of its payments as `totalCollected`, and its pending balance as
+  `pendingBalance`
+
+#### Scenario: Management with multiple procedures and budgets
+
+- **WHEN** the financial summary of a management with several procedures,
+  each linked to its own budget, is requested
+- **THEN** the response shows the sum of every linked budget's total as
+  `totalBudgeted`, the sum of every payment across them as
+  `totalCollected`, and the sum of their pending balances as
+  `pendingBalance`
+
+#### Scenario: Management with no payments registered
+
+- **WHEN** the financial summary of a management whose linked budgets have
   no payments applied is requested
-- **THEN** the response shows a total collected of zero and a saldo equal to
-  the total budgeted
+- **THEN** the response shows a `totalCollected` of zero and a
+  `pendingBalance` equal to `totalBudgeted`

@@ -3,19 +3,19 @@
 title CU62 — Gestión de Inmuebles
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano selecciona la opción de gestión de inmuebles.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra la interfaz de gestión de inmuebles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los datos del inmueble.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Valida los datos ingresados.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano confirma el registro.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Guarda la información y confirma.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) selects the property management option.
+System -> System : Escribano
+Actor -> Actor : Shows the property management screen.
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the property data.
+System -> System : Escribano
+Actor -> Actor : Validates the entered data.
+System -> System : System
+Actor -> Actor : The notary (Escribano) confirms the registration.
+System -> System : Escribano
+Actor -> Actor : Saves the information and confirms.
+System -> System : System
 
 @enduml

@@ -18,7 +18,9 @@
 # -----------------------------
 # This script does not reimplement any check — it calls:
 #   - workspace/sdlc/validate-sdlc-plan.sh
+#   - python3 security/run_gates.py     (security case catalog, before the PR)
 #   - workspace/stack/start.sh          (idempotent; blocks until backend+frontend healthy)
+#   - python3 security/run_gates.py --only dast   (baseline once the API is up)
 #   - workspace/sdlc/preflight.sh --full
 # Add or change a gate in preflight.sh or .github/workflows/ and this script
 # picks it up automatically; nothing to update here.
@@ -26,6 +28,8 @@
 # GATES                            CI job
 # --------------------------------  ------------------------------------------
 # sdlc plan validation             pr-validation.yml (via preflight.sh)
+# security gates                   ci.yml Security Scan + codeql.yml + dast-zap.yml
+# security dast baseline           dast-zap.yml (deeper; local check is the baseline)
 # preflight --full (everything     ci.yml, pr-validation.yml, frontend-ci.yml,
 #   preflight.sh --list covers)      playwright-e2e.yml (via preflight.sh)
 # markdown-lint (changed *.md      CI job: none — local-only for now, see
@@ -104,12 +108,21 @@ OVERALL_FAILED=0
 phase "sdlc plan validation" bash workspace/sdlc/validate-sdlc-plan.sh || OVERALL_FAILED=1
 
 # -----------------------------------------------------------------------------
-# 2. Bring the Docker stack up (idempotent; blocks until backend+frontend are healthy)
+# 2. Security case catalog (threat model, secrets, Semgrep, Trivy). DAST waits
+#    until the API is up. preflight skips this phase when it already ran here.
+# -----------------------------------------------------------------------------
+phase "security gates" python3 security/run_gates.py --profile local --skip-dast --report-dir "$REPORT_DIR/security" || OVERALL_FAILED=1
+export NOTAIRE_SECURITY_GATES_DONE=1
+
+# -----------------------------------------------------------------------------
+# 3. Bring the Docker stack up (idempotent; blocks until backend+frontend are healthy)
 # -----------------------------------------------------------------------------
 if docker info >/dev/null 2>&1; then
     phase "docker stack up" bash workspace/stack/start.sh || OVERALL_FAILED=1
+    phase "security dast baseline" python3 security/run_gates.py --profile local --only dast --no-install --base-url "http://127.0.0.1:${BACKEND_PORT:-8080}" --report-dir "$REPORT_DIR/security-dast" || OVERALL_FAILED=1
 else
     phase_skip "docker stack up" "docker not running — preflight's server-backed suites will fail"
+    phase_skip "security dast baseline" "docker not running — the API baseline needs the stack"
 fi
 
 # -----------------------------------------------------------------------------
@@ -180,6 +193,10 @@ DASHBOARD="$REPORT_DIR/index.html"
         echo "<li><a href=\"file://$REPORT_DIR/eslint-report.html\">Frontend lint (ESLint)</a></li>"
     [ -f "$REPO_ROOT/testing/e2e/playwright-report/index.html" ] && \
         echo "<li><a href=\"file://$REPO_ROOT/testing/e2e/playwright-report/index.html\">E2E tests (Playwright)</a></li>"
+    [ -f "$REPORT_DIR/security/index.html" ] && \
+        echo "<li><a href=\"file://$REPORT_DIR/security/index.html\">Security cases</a></li>"
+    [ -f "$REPORT_DIR/security-dast/index.html" ] && \
+        echo "<li><a href=\"file://$REPORT_DIR/security-dast/index.html\">Security DAST baseline</a></li>"
     echo "</ul><p><a href=\"file://$SUMMARY_LOG\">Full pipeline log</a></p>"
     echo "</body></html>"
 } > "$DASHBOARD"

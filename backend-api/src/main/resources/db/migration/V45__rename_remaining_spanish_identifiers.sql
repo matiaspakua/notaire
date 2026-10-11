@@ -6,16 +6,33 @@
 -- Description: Issue #1490 / CU75. Renames the Spanish table and columns that
 --              the English JPA model still mapped after epic #973. Data,
 --              constraints, and indexes stay attached to the renamed objects.
+-- Amended:     #1499, with Owner approval (CONSTITUTION section 12 exception):
+--              the identifications step failed on every fresh database. Databases
+--              that already applied the original V45 need `flyway repair`.
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
 -- UP Migration
 -- -----------------------------------------------------------------------------
 
-ALTER TABLE identificaciones RENAME TO identifications;
-ALTER TABLE identifications RENAME COLUMN numero TO number;
-ALTER TABLE identifications RENAME COLUMN fk_id_persona TO fk_id_person;
-ALTER TABLE identifications RENAME COLUMN fk_id_tipo_identificacion TO fk_id_identification_type;
+-- Flyway never created "identificaciones" (see V26): it only exists on legacy databases built outside
+-- Flyway. Rename it where it exists; create the English table where it does not (#1499).
+DO $$
+BEGIN
+    IF to_regclass('public.identificaciones') IS NOT NULL THEN
+        ALTER TABLE identificaciones RENAME TO identifications;
+        ALTER TABLE identifications RENAME COLUMN numero TO number;
+        ALTER TABLE identifications RENAME COLUMN fk_id_persona TO fk_id_person;
+        ALTER TABLE identifications RENAME COLUMN fk_id_tipo_identificacion TO fk_id_identification_type;
+    ELSE
+        CREATE TABLE IF NOT EXISTS identifications (
+            fk_id_person integer NOT NULL REFERENCES people (id),
+            fk_id_identification_type integer NOT NULL REFERENCES identification_types (id),
+            number integer NOT NULL,
+            PRIMARY KEY (fk_id_person, fk_id_identification_type)
+        );
+    END IF;
+END $$;
 
 ALTER TABLE people RENAME COLUMN fecha_nacimiento TO birth_date;
 ALTER TABLE people RENAME COLUMN fk_id_tipo_identificacion TO fk_id_identification_type;

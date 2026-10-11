@@ -1,7 +1,11 @@
+' Management activity, aligned with the seeded workflow (V10 + V41) and
+' docs/200-architecture/203-design/GESTION.md.
+' Not the source of truth for states (ADR-027). That is CICLO-DE-VIDA.md §3.1.
+' Signing the deed and the registration draft are not edges of this activity.
 @startuml
-title Transición de estados de una gestión
+title Management activity
 
-skinparam shadowing true
+skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam activity {
   BackgroundColor #F6EBD8
@@ -13,60 +17,51 @@ skinparam activity {
 
 start
 
-:Solicita iniciar una gestión;
+:The client requests a procedure;
+:The clerk identifies the client and the budget\n(CU61, CU60, CU01);
+:Start the management;
+:POST /api/v1/managements/complete-case;
+:Management is Iniciada;
 
-if (¿Es cliente?) then (sí)
-  :Buscar cliente;
-else (no)
-  if (¿Requiere alta de persona?) then (sí)
-    :Dar alta persona;
+:Transition "Procedures are assigned";
+:En Tramite;
+
+:Client documents and external-entity documents\n(CU04, CU10);
+:Transition "Documents submitted";
+:Documentacion Completa;
+
+if (Archive without a deed?) then (yes)
+  :POST /api/v1/managements/{id}/archive;
+  if (A folder is in Espera and not confirmed?) then (yes)
+    :409 — the management does not change;
+    stop
+  else (no)
+    :Balance above zero: warning, it does not block;
+    :Archivada;
+    stop
   endif
-  :Dar alta cliente;
+else (continue with the deed)
 endif
 
-if (¿Existe presupuesto?) then (sí)
-  :Buscar presupuesto;
-else (no)
-  :Crear presupuesto;
-endif
+:Transition "The deed is drafted";
+:Gestion con Escritura Sin Firmar;
 
-:Iniciar gestión;
+note right
+  POST /api/v1/deeds/{id}/sign
+  sets deeds.status to Firmada.
+  It does not move this node.
+end note
 
-repeat
-  :En espera de documentación;
-repeat while (¿Documentación completa?) is (no) not (sí)
+:Transition "The parties sign";
+:Gestion con Escritura Firmada;
 
-repeat
-  :Preparar escritura;
+:Transition "The testimony is generated";
+:Testimonio Generado;
 
-  if (Resultado de la escritura) then (firmar)
-    :Firmar escritura;
-    :Generar testimonio;
+:Transition "Submitted for registration";
+:Testimonio Ingresado a Inscripcion;
 
-    if (¿Requiere inscripción?) then (sí)
-      :Ingresar para inscripción;
-
-      while (¿Volvió observado?) is (sí)
-        :Registrar reingreso;
-        :Ingresar para inscripción;
-      endwhile (no)
-    endif
-
-    repeat
-      :Retirar testimonio;
-    repeat while (¿Todos los testimonios retirados?) is (no) not (sí)
-  elseif (anular)
-    :Escritura anulada;
-  else (no pasó)
-    :Escritura no pasó;
-  endif
-
-repeat while (¿Existen más trámites en la gestión?) is (sí) not (no)
-
-if (¿Saldo pendiente > 0?) then (sí)
-  :Mostrar advertencia de deuda pendiente (no bloqueante);
-endif
-
-:Archivar gestión;
+:Transition "Withdrawn";
+:Testimonio Retirado;
 stop
 @enduml

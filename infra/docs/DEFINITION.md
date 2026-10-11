@@ -31,6 +31,7 @@ infra/
 | PostgreSQL exporter | database metrics for Prometheus | 9187 |
 | SonarQube CE (+ own database) | static analysis of backend and frontend, quality gate "Notaire way" | 9000 |
 | Homer | landing page linking every service | 8888 |
+| Security reports | nginx serving `reports/security` (case catalog HTML and JSON) | 8890 |
 
 Jenkins, Nexus and Dependency-Track were removed in 2026-06: not wired to the
 running application.
@@ -47,7 +48,7 @@ running application.
 | OTel Collector (OTLP from the backend) | `otel-collector:8889` | `otel-collector` |
 | Frontend (Node runtime, scrape counter) | `/api/metrics` | `frontend-metrics` |
 | Containers / host (Docker VM) | cAdvisor / node-exporter | `cadvisor`, `node-exporter` |
-| All stack services (11) | blackbox exporter HTTP/TCP probes, `probe_success{service=...}` | `probe-<service>` |
+| All stack services (12) | blackbox exporter HTTP/TCP probes, `probe_success{service=...}` | `probe-<service>` |
 
 ### Dashboards (provisioned in Grafana)
 

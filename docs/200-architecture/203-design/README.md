@@ -10,7 +10,8 @@ Complete reference for the Notaire REST API.
 - **[FRONTEND-DESIGN-SYSTEM.md](FRONTEND-DESIGN-SYSTEM.md)** — Theme tokens, form patterns, quick reference, form checklist, and UI conventions.
 - **[FRONTEND-WORKFLOW-TRACKER.md](FRONTEND-WORKFLOW-TRACKER.md)** — Dashboard animated management-workflow visualization (backend endpoint, DTOs, frontend components, tests).
 - **[FRONTEND-OPENAPI-TYPES.md](FRONTEND-OPENAPI-TYPES.md)** — OpenAPI→TypeScript generation, drift check, and hook migration policy (#1260).
-- **[CICLO-DE-VIDA.md](CICLO-DE-VIDA.md)** — Canonical lifecycles: gestión, deed, testimony, documents, budget, payment, folders. Mermaid only.
+- **[CICLO-DE-VIDA.md](CICLO-DE-VIDA.md)** — Canonical lifecycles: management, deed, testimony, documents, budget, payment, folders. Mermaid only.
+- **[GESTION.md](GESTION.md)** — Case process: use cases, step dependencies, one sequence per step.
 
 ## 🚀 Quick Start
 

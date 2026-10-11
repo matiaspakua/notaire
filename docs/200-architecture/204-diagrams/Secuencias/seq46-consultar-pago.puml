@@ -2,20 +2,20 @@
 !theme plain
 title CU46 — Consultar pago
 
-actor "Recepcionista" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Receptionist (Recepcionista)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : El Recepcionista/Escribano decide consultar pagos.
-Sistema -> Sistema : Recepcionista
-Actor -> Actor : Solicita: (Número de presupuesto; Nombre y apellido; Tipo y número de identificación)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Recepcionista/Escribano ingresa los datos.
-Sistema -> Sistema : Recepcionista
-Actor -> Actor : Presenta la lista de presupuestos.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Recepcionista/Escribano selecciona un presupuesto.
-Sistema -> Sistema : Recepcionista
-Actor -> Actor : Presenta: (Número de gestión; Número de presupuesto; Total; Saldo; Número de pago; Monto; Fecha; Observaciones)
-Sistema -> Sistema : Sistema
+Actor -> Actor : The receptionist (Recepcionista) or notary (Escribano) decides to look up payments.
+System -> System : Receptionist
+Actor -> Actor : Requests: (Budget number; First and last name; Identification type and number)
+System -> System : System
+Actor -> Actor : The receptionist (Recepcionista) or notary (Escribano) enters the data.
+System -> System : Receptionist
+Actor -> Actor : Presents the list of budgets.
+System -> System : System
+Actor -> Actor : The receptionist (Recepcionista) or notary (Escribano) selects a budget.
+System -> System : Receptionist
+Actor -> Actor : Presents: (Management number; Budget number; Total; Balance; Payment number; Amount; Date; Notes)
+System -> System : System
 
 @enduml

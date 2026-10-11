@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Notaire security reports</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+    a { color: #0969da; }
+    code { background: #f6f8fa; padding: 0.1rem 0.3rem; }
+  </style>
+</head>
+<body>
+  <h1>Security reports</h1>
+  <p>Local case catalog for CU78. Generate or refresh it with
+    <code>python3 security/run_gates.py --profile local --skip-dast</code>
+    or <code>bash workspace/sdlc/run_pipeline.sh</code>.</p>
+  <ul>
+    <li><a href="reports/latest/index.html">Latest case report</a></li>
+    <li><a href="reports/latest/report.json">Latest case report (JSON)</a></li>
+    <li><a href="http://localhost:3001/d/notaire-security">Grafana security dashboard</a> (login signals)</li>
+    <li><a href="http://localhost:9000">SonarQube</a></li>
+  </ul>
+  <p>GitHub Actions keeps the same catalog on the Security Scan job. The run
+    summary and the <code>security-case-report</code> artifact are the remote
+    view. A hosted copy of this page is a later step.</p>
+</body>
+</html>

@@ -3,19 +3,19 @@
 title CU23 — Eliminar tipo de trámite
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide eliminar un tipo de trámite.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra una lista de todos los tipos de trámite disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona un tipo de trámite.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra la información del tipo de trámite seleccionado.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano confirma la eliminación.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Elimina el tipo de trámite seleccionado.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to delete a procedure type.
+System -> System : Escribano
+Actor -> Actor : Shows a list of every available procedure type.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a procedure type.
+System -> System : Escribano
+Actor -> Actor : Shows the information for the selected procedure type.
+System -> System : System
+Actor -> Actor : The notary (Escribano) confirms the deletion.
+System -> System : Escribano
+Actor -> Actor : Deletes the selected procedure type.
+System -> System : System
 
 @enduml

@@ -2,79 +2,97 @@
 
 ## Purpose
 
-Permite agrupar los folios notariales en cuadernos correlativos de diez
-folios, tal como exige la normativa del protocolo, y emitir la carátula
-oficial de cada cuaderno (CU80).
+Allows grouping notarial folios into consecutive notebooks of ten folios,
+as the protocol rules require, and issuing the official cover of each
+notebook (CU80).
 
 ## Requirements
 
-### Requirement: Generar cuaderno a partir de un rango de folios
-El sistema SHALL permitir generar un cuaderno agrupando exactamente diez
-folios consecutivos de un mismo registro notarial.
+### Requirement: Generate a notebook from a folio range
 
-#### Scenario: Alta de cuaderno con rango válido
-- **WHEN** se solicita generar un cuaderno indicando diez folios disponibles,
-  consecutivos y de un mismo registro notarial
-- **THEN** el sistema crea el cuaderno, le asigna el siguiente número
-  correlativo disponible para ese registro y año, y agrupa los diez folios
+The system SHALL allow generating a notebook by grouping exactly ten
+consecutive folios of the same notarial register. The create path is
+`POST /api/v1/notebooks` with `idsFolio` and `idNotary`.
 
-#### Scenario: Cantidad de folios no múltiplo de diez
-- **WHEN** se solicita generar un cuaderno indicando una cantidad de folios
-  que no es múltiplo exacto de diez
-- **THEN** el sistema rechaza la solicitud y no crea ningún cuaderno
+#### Scenario: Create a notebook with a valid range
 
-#### Scenario: Rango de folios discontinuo
-- **WHEN** se solicita generar un cuaderno indicando folios con faltantes o
-  numeración no consecutiva
-- **THEN** el sistema rechaza la solicitud, informando la discontinuidad, y
-  no crea ningún cuaderno
+- **WHEN** generating a notebook is requested with ten available,
+  consecutive folios of the same notarial register
+- **THEN** the system creates the notebook, assigns the next available
+  consecutive number for that register and year, and groups the ten folios
 
-#### Scenario: Folio ya asignado a otro cuaderno
-- **WHEN** se solicita generar un cuaderno incluyendo un folio que ya está
-  asignado a otro cuaderno
-- **THEN** el sistema rechaza la solicitud y no crea ningún cuaderno
+#### Scenario: Folio count is not a multiple of ten
 
-#### Scenario: Lote con folio dañado o anulado justificado
-- **WHEN** se solicita generar un cuaderno cuyo rango incluye un folio en
-  estado dañado o anulado, junto con una justificación para ese folio
-- **THEN** el sistema crea el cuaderno incluyendo el folio afectado, con la
-  justificación registrada como observación del cuaderno
+- **WHEN** generating a notebook is requested with a folio count that is
+  not an exact multiple of ten
+- **THEN** the system rejects the request and creates no notebook
 
-### Requirement: Marcar los folios como asignados a cuaderno
-El sistema SHALL actualizar el estado de cada folio agrupado a "Asignado a
-cuaderno" al generarse el cuaderno que lo contiene.
+#### Scenario: Discontinuous folio range
 
-#### Scenario: Estado de folio tras generar el cuaderno
-- **WHEN** un cuaderno se genera exitosamente
-- **THEN** cada uno de sus diez folios queda con estado "Asignado a cuaderno"
+- **WHEN** generating a notebook is requested with missing folios or
+  non-consecutive numbering
+- **THEN** the system rejects the request, reports the discontinuity, and
+  creates no notebook
 
-### Requirement: Numerar cuadernos correlativamente por registro y año
-El sistema SHALL asignar a cada cuaderno un número correlativo dentro de su
-registro notarial y año, sin duplicados.
+#### Scenario: Folio already assigned to another notebook
 
-#### Scenario: Primer cuaderno del año para un registro
-- **WHEN** se genera el primer cuaderno de un registro notarial en un año
-  determinado
-- **THEN** el cuaderno recibe el número 1
+- **WHEN** generating a notebook is requested including a folio already
+  assigned to another notebook
+- **THEN** the system rejects the request and creates no notebook
 
-#### Scenario: Conflicto de numeración
-- **WHEN** se genera un nuevo cuaderno para un registro y año que ya tienen
-  cuadernos numerados, y el número esperado ya está tomado
-- **THEN** el sistema recalcula y asigna el siguiente número correlativo
-  disponible, sin requerir intervención manual
+#### Scenario: Batch that includes a damaged folio with a justification
 
-### Requirement: Emitir la carátula oficial de un cuaderno
-El sistema SHALL generar la carátula oficial de un cuaderno, indicando año,
-registro del escribano, número de cuaderno, rango de folios y el detalle de
-las escrituras o trámites otorgados en esos folios.
+- **WHEN** generating a notebook is requested whose range includes a folio
+  in status "Errose" or "no pasó", together with a justification for that
+  folio
+- **THEN** the system creates the notebook including the affected folio,
+  with the justification recorded as the notebook's notes
 
-#### Scenario: Emisión de carátula de un cuaderno existente
-- **WHEN** se solicita la carátula de un cuaderno ya generado
-- **THEN** el sistema entrega un documento con año, registro del escribano,
-  número de cuaderno, rango de folios y el detalle de escrituras/trámites
-  otorgados en los folios que lo componen
+### Requirement: Mark the folios as assigned to a notebook
 
-#### Scenario: Emisión de carátula de un cuaderno inexistente
-- **WHEN** se solicita la carátula de un cuaderno que no existe
-- **THEN** el sistema rechaza la solicitud indicando que el cuaderno no fue
-  encontrado
+The system SHALL update the status of each grouped folio to
+"Asignado a cuaderno" when the notebook that contains it is generated.
+
+#### Scenario: Folio status after the notebook is generated
+
+- **WHEN** a notebook is generated successfully
+- **THEN** each of its ten folios has status "Asignado a cuaderno"
+
+### Requirement: Number notebooks consecutively by register and year
+
+The system SHALL assign each notebook a consecutive number within its
+notarial register and year, with no duplicates.
+
+#### Scenario: First notebook of the year for a register
+
+- **WHEN** the first notebook of a notarial register is generated in a
+  given year
+- **THEN** the notebook receives number 1
+
+#### Scenario: Numbering conflict
+
+- **WHEN** a new notebook is generated for a register and year that already
+  have numbered notebooks, and the expected number is already taken
+- **THEN** the system recalculates and assigns the next available
+  consecutive number, without requiring manual intervention
+
+### Requirement: Issue the official cover of a notebook
+
+The system SHALL generate the official cover of a notebook, stating the
+year, the notary (Escribano) register, the notebook number, the folio
+range, and the detail of the deeds or procedures granted on those folios.
+The path is `GET /api/v1/notebooks/{id}/cover`. The download name stays
+`notebook_{id}_cover.pdf`.
+
+#### Scenario: Issue the cover of an existing notebook
+
+- **WHEN** the cover of an already generated notebook is requested
+- **THEN** the system delivers a document with the year, the notary
+  (Escribano) register, the notebook number, the folio range, and the
+  detail of deeds and procedures granted on the folios that compose it
+
+#### Scenario: Issue the cover of a notebook that does not exist
+
+- **WHEN** the cover of a notebook that does not exist is requested
+- **THEN** the system rejects the request, stating that the notebook was
+  not found

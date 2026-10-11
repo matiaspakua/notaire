@@ -1,78 +1,77 @@
-# Notaire — Índice de Hallazgos de Negocio
+# Notaire — Business finding index
 
-> Índice único de trazabilidad hallazgo↔Issue. Regla del proyecto: todo
-> hallazgo de negocio debe tener un Issue de GitHub asociado, sin
-> excepciones (`CONSTITUTION.md` §4). **La descripción detallada, criterios
-> de aceptación y notas técnicas de cada hallazgo viven en su Issue de
-> GitHub** — este archivo es solo el índice resumido; no duplicar
-> contenido acá.
+> Single finding↔Issue traceability index. Project rule: every business
+> finding must have an associated GitHub Issue, with no exceptions
+> (`CONSTITUTION.md` §4). **The detailed description, acceptance criteria,
+> and technical notes of each finding live in its GitHub Issue** — this
+> file is only the summary index; do not duplicate that content here.
 >
-> Método: cruce de los 78+ Casos de Uso (`docs/100-business/102-use-cases/`)
-> contra los 95 Requerimientos Funcionales del SRS (`requerimientos.csv`),
-> el diagrama de estados del ciclo de vida de una gestión
-> (`docs/200-architecture/204-diagrams/Diagrama de Estados/transicion-de-estados.puml`)
-> y una validación end-to-end de que una gestión puede iniciarse y
-> completarse usando los módulos hoy implementados. Siete pasadas
-> acumuladas desde 2026-08-11 hasta 2026-09-07 (historial de pasadas al
-> final del archivo).
+> Method: cross-check of the 78+ use cases (`docs/100-business/102-use-cases/`)
+> against the 95 functional requirements of the SRS (`requerimientos.csv`),
+> the state diagram of a management's lifecycle
+> (`docs/200-architecture/204-diagrams/Diagrama de Estados/transicion-de-estados.puml`),
+> and an end-to-end check that a management can be started and completed
+> with the modules implemented at the time. Seven passes accumulated from
+> 2026-08-11 through 2026-09-07 (pass history at the end of the file).
 >
-> Columna **Estado OpenSpec**: fase real del change en `docs/openspec/changes/`
-> (`openspec status --change <id> --json`), no del Issue. Valores usados:
-> `Sin change` (hallazgo sin proposal), `Propuesto` (proposal/traceability/
-> specs/design/tasks = `done`, cero tareas de implementación tildadas),
-> `Aplicado, sin archivar` (código mergeado pero el directorio sigue en
-> `docs/openspec/changes/` en vez de `changes/archive/`), `Archivado` (change
-> movido a `changes/archive/`), `Huérfano/inválido` (change sin
-> `.openspec.yaml`/schema válido para el CLI actual).
+> **OpenSpec status** column: the real phase of the change under
+> `docs/openspec/changes/` (`openspec status --change <id> --json`), not
+> the Issue. Values used: `No change` (finding without a proposal),
+> `Proposed` (proposal/traceability/specs/design/tasks = `done`, zero
+> implementation tasks checked), `Applied, not archived` (code merged but
+> the directory is still under `docs/openspec/changes/` instead of
+> `changes/archive/`), `Archived` (change moved to `changes/archive/`),
+> `Orphan/invalid` (change without a `.openspec.yaml` or a schema the
+> current CLI accepts).
 
-## Pendientes (abiertos)
+## Open
 
-| Título | Descripción breve | Issue | Criticidad | Estado OpenSpec |
+| Title | Short description | Issue | Severity | OpenSpec status |
 |---|---|---|---|---|
-| Protocolo notarial no se puede armar desde el sistema | Sin acción para vincular escritura↔folio ni copia↔testimonio | [#838](https://github.com/matiaspakua/notaire/issues/838) | Media | Propuesto (`folio-vinculacion-escritura`, 0/70 tareas) |
-| Workflow tracker no modela el bucle de reingreso de testimonio | El motor de workflow representa un único "estado actual"; no puede capturar reintentos de inscripción | [#841](https://github.com/matiaspakua/notaire/issues/841) | Media | Propuesto (`gestion-workflow-reingreso-testimonio`, 0/69 tareas) |
-| CU84/CSV sin trazabilidad RF↔GitHub ID | `CU84 - Login.md` no sigue el template estándar; 2 filas del CSV de requerimientos sin `GitHub_ID` válido | [#956](https://github.com/matiaspakua/notaire/issues/956) | Baja | Sin change (hallazgo documental) |
-| Change de OpenSpec huérfano sin limpiar | `gestion-archive-deuda-check` quedó sin archivar tras revertirse su código bajo #914 | [#169](https://github.com/matiaspakua/notaire/issues/169) | Baja | Huérfano/inválido (`.openspec.yaml` sin `schema`; solo `proposal.md`+`spec.md`, sin traceability/design/tasks) |
-| Cobertura global de branches del frontend bajo el umbral de CI | `Frontend CI` falla `Unit Tests (Vitest)` con `branches (5.91%) does not meet global threshold (6%)`; reproducible en un worktree limpio de `main`, no introducido por ningún PR en curso | [#966](https://github.com/matiaspakua/notaire/issues/966) | Media | Sin change (hallazgo de infraestructura de CI/calidad) |
+| The notarial protocol cannot be assembled from the system | No action links deed↔folio or copy↔testimony | [#838](https://github.com/matiaspakua/notaire/issues/838) | Medium | Proposed (`folio-vinculacion-escritura`, 0/70 tasks) |
+| The workflow tracker does not model the testimony re-entry loop | The workflow engine represents a single "current status"; it cannot capture inscription retries | [#841](https://github.com/matiaspakua/notaire/issues/841) | Medium | Proposed (`gestion-workflow-reingreso-testimonio`, 0/69 tasks) |
+| CU84/CSV has no RF↔GitHub ID traceability | `CU84 - Login.md` does not follow the standard template; 2 rows of the requirements CSV have no valid `GitHub_ID` | [#956](https://github.com/matiaspakua/notaire/issues/956) | Low | No change (documentation finding) |
+| Orphan OpenSpec change left uncleaned | `gestion-archive-deuda-check` was left unarchived after its code was reverted under #914 | [#169](https://github.com/matiaspakua/notaire/issues/169) | Low | Orphan/invalid (`.openspec.yaml` without `schema`; only `proposal.md`+`spec.md`, no traceability/design/tasks) |
+| Frontend global branch coverage is under the CI threshold | `Frontend CI` fails `Unit Tests (Vitest)` with `branches (5.91%) does not meet global threshold (6%)`; reproducible on a clean `main` worktree, not introduced by any PR in flight | [#966](https://github.com/matiaspakua/notaire/issues/966) | Medium | No change (CI/quality infrastructure finding) |
 
-## Resueltos (mergeados y archivados)
+## Resolved (merged and archived)
 
-| Título | Descripción breve | Issue | Criticidad | Estado OpenSpec |
+| Title | Short description | Issue | Severity | OpenSpec status |
 |---|---|---|---|---|
-| Suplencias sin efecto práctico en gestiones | Registrar una suplencia no redirige casos nuevos al escribano suplente | [#836](https://github.com/matiaspakua/notaire/issues/836) | Media | Archivado (`2026-09-07-suplencia-efecto-en-gestiones`, PR [#970](https://github.com/matiaspakua/notaire/pull/970) mergeado 2026-09-07) |
-| `DELETE` silencioso en ~30 entidades | `Persistable.isNew()` mal inferido sobre `version` primitivo hacía que varias entidades no se borraran pese a devolver `200 OK` | [#957](https://github.com/matiaspakua/notaire/issues/957) | Alta | Archivado (`2026-09-07-silent-delete-persistable-fix`, PR [#965](https://github.com/matiaspakua/notaire/pull/965) mergeado 2026-09-07) |
-| Recibo de pago nunca se emite | Paso final de CU15 (entregar comprobante al cliente) sin ninguna forma de imprimirse o emitirse | [#23](https://github.com/matiaspakua/notaire/issues/23) | Alta | Archivado (`2026-09-07-recibo-de-pago-pdf`) |
-| Presupuestar sin plantillas ni catálogo de ítems | Plantillas de precio y catálogo de ítems existen pero no se usaban al armar un presupuesto real | [#834](https://github.com/matiaspakua/notaire/issues/834) | Media | Archivado (`presupuesto-plantillas-y-catalogo-items`, PR [#962](https://github.com/matiaspakua/notaire/pull/962) mergeado 2026-09-07) |
-| Proceso de negocio no verificaba deuda al archivar | `GestionArchiveDebtService` agregado al archivado de gestión | [#819](https://github.com/matiaspakua/notaire/issues/819) | Alta | Archivado (`2026-08-20-verify-debt-on-gestion-archive`) |
-| Person duplicada sin validación | Sin chequeo de tipo+número de documento repetido al dar de alta cliente | [#835](https://github.com/matiaspakua/notaire/issues/835) | Alta | Archivado (`2026-09-02-persona-validacion-duplicados`) |
-| Circuito legal post-firma sin pantalla | Firma, testimonio, verificación, inscripción y retiro (CU06–CU12) sin UI | [#832](https://github.com/matiaspakua/notaire/issues/832) | Alta | Archivado (`2026-08-27-escritura-post-firma-legal-cycle`) |
-| ManagementHistory/motor de estados sin conectar a la pantalla real | Transiciones de gestión no validaban contra `WorkflowDefinition`; sin bitácora | [#833](https://github.com/matiaspakua/notaire/issues/833) | Alta | Archivado (`2026-08-28-gestion-workflow-y-bitacora`) |
-| Bloque completo del SRS sin desarrollo (protocolo) | Cuadernos, carpetas de trámite, protocolo auxiliar, minuta de inscripción, numeración correlativa — ~20 RF sin ningún desarrollo | [#839](https://github.com/matiaspakua/notaire/issues/839) | Alta | Archivado (`protocolo-auxiliar-tramites`, `protocolo-carpetas-de-tramite`, `protocolo-cuadernos-de-folios`, `protocolo-minuta-inscripcion`, `protocolo-numeracion-escrituras`) |
-| Deed sin picker de folio | Bloqueaba la firma de escritura y la demo E2E completa | [#892](https://github.com/matiaspakua/notaire/issues/892) | Alta | Archivado (`2026-09-02-escritura-folio-picker-form`) |
-| `GET /managements/client/{id}` devolvía lista vacía hardcodeada | Encontrado en auditoría de suite Playwright | [#943](https://github.com/matiaspakua/notaire/issues/943) | Alta | Sin change formal (fix directo) |
-| Cobranza sin resumen a nivel de gestión | Payment se registraba contra presupuesto suelto, sin resumen por caso | [#820](https://github.com/matiaspakua/notaire/issues/820) | Media | Archivado (`2026-08-26-payment-financial-tracking`) |
-| Método de pago no persistido | "Efectivo"/"transferencia" se perdía al guardar el pago | [#792](https://github.com/matiaspakua/notaire/issues/792) | Media | Archivado (`2026-08-20-persist-metodo-pago-on-pago`) |
-| Sin tope que impida cobrar de más | Único chequeo real era `monto <= 0`, sin validar contra saldo pendiente | [#848](https://github.com/matiaspakua/notaire/issues/848) | Media | Archivado (`2026-09-02-pago-limite-saldo-pendiente`) |
-| Saldo pendiente no visible al cobrar | CU15/CU47 exigen mostrar saldo antes de cobrar; no existía | [#796](https://github.com/matiaspakua/notaire/issues/796) | Media | Archivado (`2026-09-03-pago-presupuesto-picker-saldo`) |
-| Pagos parciales/en cuotas sin circuito | RF-22 exige cobro en cuotas y advertencia de deuda al cerrar; no existía ninguno de los dos | [#821](https://github.com/matiaspakua/notaire/issues/821) | Media | Archivado (`2026-09-02-pagos-parciales-cuotas`) |
-| Descuentos y recargos sin motivo estructurado | Sin forma de marcar un ítem como descuento/recargo con motivo | [#822](https://github.com/matiaspakua/notaire/issues/822) | Media | Archivado (`2026-09-02-descuentos-recargos-presupuesto`) |
-| Costos de documentos sin conexión al presupuesto | `importeAPagar` de `SubmittedDocument` no sumaba a ningún total/balance | [#823](https://github.com/matiaspakua/notaire/issues/823) | Media | Archivado (`2026-09-03-costos-documentos-presupuesto`) |
-| Tipos de documento sin reglas propias (vencimiento) | Pantalla solo permitía cargar el nombre; sin vencimiento, plazo ni responsable | [#837](https://github.com/matiaspakua/notaire/issues/837) | Media | Archivado (`2026-09-04-tipo-documento-vencimiento-config`) |
-| `ManagementHistory.fecha` con precisión de fecha-solo | Rompía el orden de la bitácora cuando dos eventos ocurrían el mismo día | [#946](https://github.com/matiaspakua/notaire/issues/946) | Media | Sin change formal (fix directo) |
-| Columnas DNI/CUIT de personas siempre vacías | Mismatch de nombre de campo entre backend y tipo del frontend | [#939](https://github.com/matiaspakua/notaire/issues/939) | Media | Sin change formal (fix directo) |
-| Falta campo "observaciones" en formulario de escritura | Impedía justificar saltos en la numeración correlativa | [#950](https://github.com/matiaspakua/notaire/issues/950) | Media | Sin change formal (fix directo) |
-| Demo E2E — tipo de Property mal mapeado | Bloqueaba Caso B de la demo end-to-end | [#879](https://github.com/matiaspakua/notaire/issues/879) | Media | Archivado (`2026-08-31-fix-inmueble-valuacion-fiscal-type`) |
-| Demo E2E — asociación de presupuesto rota | Bloqueaba flujo completo de demo | [#883](https://github.com/matiaspakua/notaire/issues/883) | Media | Sin change formal (fix directo) |
-| Demo E2E — labels de pickers inconsistentes | Bloqueaba selección en formularios de la demo | [#889](https://github.com/matiaspakua/notaire/issues/889) | Baja | Sin change formal (fix directo) |
+| Substitutions had no practical effect on managements | Registering a substitution did not redirect new cases to the substitute notary | [#836](https://github.com/matiaspakua/notaire/issues/836) | Medium | Archived (`2026-09-07-suplencia-efecto-en-gestiones`, PR [#970](https://github.com/matiaspakua/notaire/pull/970) merged 2026-09-07) |
+| Silent `DELETE` on ~30 entities | `Persistable.isNew()` was inferred badly on a primitive `version`, so several entities were not deleted even though the call returned `200 OK` | [#957](https://github.com/matiaspakua/notaire/issues/957) | High | Archived (`2026-09-07-silent-delete-persistable-fix`, PR [#965](https://github.com/matiaspakua/notaire/pull/965) merged 2026-09-07) |
+| The payment receipt was never issued | The last step of CU15 (hand the receipt to the client) had no way to print or issue it | [#23](https://github.com/matiaspakua/notaire/issues/23) | High | Archived (`2026-09-07-recibo-de-pago-pdf`) |
+| Budgeting had no templates or item catalog | Price templates and the item catalog existed but were not used when building a real budget | [#834](https://github.com/matiaspakua/notaire/issues/834) | Medium | Archived (`presupuesto-plantillas-y-catalogo-items`, PR [#962](https://github.com/matiaspakua/notaire/pull/962) merged 2026-09-07) |
+| The business process did not check debt when archiving | `GestionArchiveDebtService` was added to management archiving | [#819](https://github.com/matiaspakua/notaire/issues/819) | High | Archived (`2026-08-20-verify-debt-on-gestion-archive`) |
+| A duplicate person was not validated | No check for a repeated identification type and number when creating a client | [#835](https://github.com/matiaspakua/notaire/issues/835) | High | Archived (`2026-09-02-persona-validacion-duplicados`) |
+| The post-signing legal circuit had no screen | Signing, testimony, verification, inscription, and withdrawal (CU06–CU12) had no UI | [#832](https://github.com/matiaspakua/notaire/issues/832) | High | Archived (`2026-08-27-escritura-post-firma-legal-cycle`) |
+| ManagementHistory and the state engine were not connected to the real screen | Management transitions were not validated against `WorkflowDefinition`; there was no history log | [#833](https://github.com/matiaspakua/notaire/issues/833) | High | Archived (`2026-08-28-gestion-workflow-y-bitacora`) |
+| A whole SRS block had no development (protocol) | Notebooks, procedure folders, auxiliary protocol, registration draft, and sequential numbering — about 20 functional requirements with no development | [#839](https://github.com/matiaspakua/notaire/issues/839) | High | Archived (`protocolo-auxiliar-tramites`, `protocolo-carpetas-de-tramite`, `protocolo-cuadernos-de-folios`, `protocolo-minuta-inscripcion`, `protocolo-numeracion-escrituras`) |
+| A deed had no folio picker | It blocked signing the deed and the full E2E demo | [#892](https://github.com/matiaspakua/notaire/issues/892) | High | Archived (`2026-09-02-escritura-folio-picker-form`) |
+| `GET /managements/client/{id}` returned a hardcoded empty list | Found in the Playwright suite audit | [#943](https://github.com/matiaspakua/notaire/issues/943) | High | No change formal (direct fix) |
+| Collection had no management-level summary | A payment was recorded against a loose budget, with no summary per case | [#820](https://github.com/matiaspakua/notaire/issues/820) | Medium | Archived (`2026-08-26-payment-financial-tracking`) |
+| The payment method was not persisted | `"Efectivo"`/`"transferencia"` was lost when the payment was saved | [#792](https://github.com/matiaspakua/notaire/issues/792) | Medium | Archived (`2026-08-20-persist-metodo-pago-on-pago`) |
+| Nothing stopped an overcharge | The only real check was `monto <= 0`, with no check against the outstanding balance | [#848](https://github.com/matiaspakua/notaire/issues/848) | Medium | Archived (`2026-09-02-pago-limite-saldo-pendiente`) |
+| The outstanding balance was not visible when collecting | CU15/CU47 require showing the balance before collecting; it did not exist | [#796](https://github.com/matiaspakua/notaire/issues/796) | Medium | Archived (`2026-09-03-pago-presupuesto-picker-saldo`) |
+| Partial payments and installments had no circuit | RF-22 requires installment collection and a debt warning on close; neither existed | [#821](https://github.com/matiaspakua/notaire/issues/821) | Medium | Archived (`2026-09-02-pagos-parciales-cuotas`) |
+| Discounts and surcharges had no structured reason | There was no way to mark an item as a discount or surcharge with a reason | [#822](https://github.com/matiaspakua/notaire/issues/822) | Medium | Archived (`2026-09-02-descuentos-recargos-presupuesto`) |
+| Document costs were not connected to the budget | `importeAPagar` on `SubmittedDocument` was not added to any total or balance | [#823](https://github.com/matiaspakua/notaire/issues/823) | Medium | Archived (`2026-09-03-costos-documentos-presupuesto`) |
+| Document types had no rules of their own (due date) | The screen only allowed entering the name; no due date, term, or responsible party | [#837](https://github.com/matiaspakua/notaire/issues/837) | Medium | Archived (`2026-09-04-tipo-documento-vencimiento-config`) |
+| `ManagementHistory.fecha` had date-only precision | It broke history order when two events happened on the same day | [#946](https://github.com/matiaspakua/notaire/issues/946) | Medium | No change formal (direct fix) |
+| Person DNI/CUIT columns were always empty | Field-name mismatch between the backend and the frontend type | [#939](https://github.com/matiaspakua/notaire/issues/939) | Medium | No change formal (direct fix) |
+| The deed form had no "observaciones" field | It blocked justifying gaps in sequential numbering | [#950](https://github.com/matiaspakua/notaire/issues/950) | Medium | No change formal (direct fix) |
+| E2E demo — Property type mapped badly | It blocked case B of the end-to-end demo | [#879](https://github.com/matiaspakua/notaire/issues/879) | Medium | Archived (`2026-08-31-fix-inmueble-valuacion-fiscal-type`) |
+| E2E demo — budget association was broken | It blocked the full demo flow | [#883](https://github.com/matiaspakua/notaire/issues/883) | Medium | No change formal (direct fix) |
+| E2E demo — picker labels were inconsistent | It blocked selection in the demo forms | [#889](https://github.com/matiaspakua/notaire/issues/889) | Low | No change formal (direct fix) |
 
-## ManagementHistory de pasadas
+## Pass history
 
-1. **2026-08-11** — relevamiento técnico-funcional inicial (`explore_functional_report.md`).
-2. **2026-08-19** — pasada exhaustiva de cobranza (pagos parciales, descuentos, recargos, costos adicionales) y diagrama de estados de una gestión.
-3. **2026-08-21** — triage de los 13 hallazgos originales consolidado en este documento; revisión del motor de workflow contra el diagrama de estados y la pantalla principal (agregó el hallazgo del bucle de reingreso, hoy #841).
-4. **2026-08-26** — consolidación del sub-hallazgo de sobrepago (#848) de vuelta en este documento.
-5. **2026-09-05** — verificación completa de `backend-api/` y `frontend/` contra `main`; confirmó la resolución de la mayoría de los hallazgos de cobranza y del bloque de protocolo; agregó el hallazgo del change de OpenSpec huérfano (#169) y el de `DELETE` silencioso transversal (#957).
-6. **2026-09-05** — validación de trazabilidad RF↔CU (95/95 Requerimientos Funcionales cubiertos, con la excepción documental de CU84/#956) y validación end-to-end de que una gestión puede iniciarse y completarse hoy usando pantallas reales para cada paso del ciclo de vida (CU02–CU16), no solo API. Reescritura completa de este archivo a formato de índice (contenido detallado migrado a cada Issue de GitHub).
-7. **2026-09-07** — agregada columna **Estado OpenSpec** a ambas tablas, derivada de `openspec status --change <id> --json` (no del estado del Issue). Confirmó y archivó `presupuesto-plantillas-y-catalogo-items` (#834, PR #962 mergeado el mismo día); movió #23 y #834 a Resueltos. Corrigió el hallazgo #957: NO está mergeado (issue sigue abierto, sin PR); el código existe solo en la rama local sin pushear `fix/957_silent-delete-persistable-fix` — se revierte a Pendientes. Confirmó que `gestion-archive-deuda-check` (#169) tiene `.openspec.yaml` sin `schema` válido, por lo que el CLI no puede leer su status.
-8. **2026-09-07** — mergeado PR [#965](https://github.com/matiaspakua/notaire/pull/965) (`fix/957_silent-delete-persistable-fix`), sincronizado y archivado el change `silent-delete-persistable-fix`; movió #957 a Resueltos. El PR expuso un hallazgo nuevo, no relacionado con el fix (confirmado reproducible en `main` limpio): `Frontend CI` falla el umbral global de cobertura de branches (5.91% < 6%) desde el 2026-09-02 sin haber sido detectado — creado issue [#966](https://github.com/matiaspakua/notaire/issues/966) y agregado a Pendientes.
-9. **2026-09-07** — mergeado PR [#970](https://github.com/matiaspakua/notaire/pull/970) (`feat/836_suplencia-efecto-en-gestiones`); CD (`CD - Build & Publish Docker`) verde sobre `main@5996b3d`, issue #836 cerrado automáticamente al mergear, smoke test confirmado (`/actuator/health` UP, TS-0092 verde en CI sobre el commit de merge). Sincronizados los delta specs a `docs/openspec/specs/gestion-asignacion-suplencia/` y `docs/openspec/specs/persona-credencial-escribano/` (capacidades nuevas) y archivado el change a `2026-09-07-suplencia-efecto-en-gestiones`; movió #836 a Resueltos.
+1. **2026-08-11** — initial technical and functional survey (`explore_functional_report.md`).
+2. **2026-08-19** — exhaustive pass on collection (partial payments, discounts, surcharges, extra costs) and the state diagram of a management.
+3. **2026-08-21** — triage of the 13 original findings consolidated in this document; review of the workflow engine against the state diagram and the main screen (added the re-entry-loop finding, now #841).
+4. **2026-08-26** — the overpayment sub-finding (#848) was consolidated back into this document.
+5. **2026-09-05** — full check of `backend-api/` and `frontend/` against `main`; confirmed that most collection findings and the protocol block were resolved; added the orphan OpenSpec change finding (#169) and the cross-cutting silent `DELETE` (#957).
+6. **2026-09-05** — RF↔CU traceability check (95/95 functional requirements covered, with the documentation exception of CU84/#956) and an end-to-end check that a management can be started and completed using real screens for each lifecycle step (CU02–CU16), not only the API. This file was rewritten as an index (detailed content moved to each GitHub Issue).
+7. **2026-09-07** — the **OpenSpec status** column was added to both tables, derived from `openspec status --change <id> --json` (not from the Issue status). Confirmed and archived `presupuesto-plantillas-y-catalogo-items` (#834, PR #962 merged the same day); moved #23 and #834 to Resolved. Corrected finding #957: it was NOT merged (the issue stayed open, with no PR); the code existed only on the local unpushed branch `fix/957_silent-delete-persistable-fix` — it was moved back to Open. Confirmed that `gestion-archive-deuda-check` (#169) has a `.openspec.yaml` without a valid `schema`, so the CLI cannot read its status.
+8. **2026-09-07** — merged PR [#965](https://github.com/matiaspakua/notaire/pull/965) (`fix/957_silent-delete-persistable-fix`), synced and archived the change `silent-delete-persistable-fix`; moved #957 to Resolved. The PR exposed a new finding, unrelated to the fix (confirmed reproducible on a clean `main`): `Frontend CI` had been failing the global branch-coverage threshold (5.91% < 6%) since 2026-09-02 without being detected — created issue [#966](https://github.com/matiaspakua/notaire/issues/966) and added it to Open.
+9. **2026-09-07** — merged PR [#970](https://github.com/matiaspakua/notaire/pull/970) (`feat/836_suplencia-efecto-en-gestiones`); CD (`CD - Build & Publish Docker`) was green on `main@5996b3d`, issue #836 closed automatically on merge, and the smoke test was confirmed (`/actuator/health` UP, TS-0092 green in CI on the merge commit). Delta specs were synced to `docs/openspec/specs/gestion-asignacion-suplencia/` and `docs/openspec/specs/persona-credencial-escribano/` (new capabilities) and the change was archived to `2026-09-07-suplencia-efecto-en-gestiones`; moved #836 to Resolved.

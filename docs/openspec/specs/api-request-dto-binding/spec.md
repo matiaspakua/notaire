@@ -59,7 +59,7 @@ version for clients to read.
 ### Requirement: Public audit-log mutation MUST be disabled
 
 `POST /api/v1/audit-log` SHALL NOT accept client-created audit entities.
-Audit rows SHALL be written only by server-side auditing (`AuditoriaAspect`).
+Audit rows SHALL be written only by server-side auditing (`AuditAspect`).
 
 #### Scenario: Audit-log POST is rejected
 

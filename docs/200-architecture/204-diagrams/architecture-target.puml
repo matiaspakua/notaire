@@ -2,7 +2,7 @@
 title Target Notaire Architecture — Modern Three-Tier
 left to right direction
 
-actor "Usuario final" as User
+actor "End user" as User
 
 node "Frontend Web\n(Next.js 16 / React 19)" {
   [React UI + Design Tokens] as WebUI
@@ -14,12 +14,12 @@ node "Frontend Swing (Deprecated)" #LightGray {
   [REST Client] as SwingClient
 }
 
-node "Backend API\n(Spring Boot 4.1 / Java 21)" {
+node "Backend API\n(Spring Boot 4.1 / Java 26)" {
   [REST Controllers] as API
   [Spring Security + JWT] as Sec
   [Business Services] as Svc
   [Spring Data JPA Repositories] as Repo
-  [Domain Entities (negocio)] as Domain
+  [Domain Entities (business)] as Domain
   [Audit Aspect] as Audit
 }
 

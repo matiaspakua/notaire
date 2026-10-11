@@ -2,112 +2,114 @@
 
 ## Purpose
 
-Records every relevant estado change of a gestión (creation, valid
-transition, archiving) as a `ManagementHistory` entry, and exposes that history
-for consultation, so the bitácora CU13 promises to show is actually
-populated for real gestiones.
+Records every relevant status change of a management (creation, valid
+transition, archiving) as a `ManagementHistory` entry, and exposes that
+history for consultation, so the history CU13 promises to show is actually
+populated for real managements.
 
 ## Requirements
 
-### Requirement: Registrar en ManagementHistory los cambios de estado de una gestión
+### Requirement: Record management status changes in ManagementHistory
 
 The system SHALL create a History entry (status, date, and optional notes)
-whenever a gestión status is first set or changes on any write path that
+whenever a management status is first set or changes on any write path that
 persists status — including plain create, plain update, and complete-case
 update — in addition to complete-case create, valid workflow transition, and
 archive already covered by #833, per CU13 / RF-110 / CU02 / CU53.
 
-#### Scenario: Alta de gestión registra su estado inicial
+#### Scenario: Creating a management records its initial status
 
-- **WHEN** se crea una nueva gestión
-- **THEN** el sistema registra una entrada en `ManagementHistory` con el estado
-  inicial de la gestión y la fecha de creación
+- **WHEN** a new management is created
+- **THEN** the system records a `ManagementHistory` entry with the
+  management's initial status and the creation date
 
-#### Scenario: Transición válida registra el nuevo estado
+#### Scenario: A valid transition records the new status
 
-- **WHEN** una gestión cambia de estado mediante una transición válida
-- **THEN** el sistema registra una nueva entrada en `ManagementHistory` con el
-  estado destino y la fecha del cambio
+- **WHEN** a management changes status through a valid transition
+- **THEN** the system records a new `ManagementHistory` entry with the
+  destination status and the change date
 
-#### Scenario: Archivado registra el estado archivado
+#### Scenario: Archiving records the archived status
 
-- **WHEN** una gestión es archivada
-- **THEN** el sistema registra una nueva entrada en `ManagementHistory` con el
-  estado "Archivada" y la fecha del archivado
+- **WHEN** a management is archived
+- **THEN** the system records a new `ManagementHistory` entry with status
+  "Archivada" and the archive date
 
 #### Scenario: Plain create with status writes initial History
 
-- **WHEN** a client creates a gestión via plain POST with a management status
+- **WHEN** a client creates a management via plain POST with a management status
 - **THEN** the system appends one History row for that initial status
 
 #### Scenario: Plain create without status writes no History
 
-- **WHEN** a client creates a gestión via plain POST without a management status
+- **WHEN** a client creates a management via plain POST without a management status
 - **THEN** the system does not invent a History row
 
 #### Scenario: Plain update that changes status writes History
 
-- **WHEN** a client updates a gestión via plain PUT and the status id differs
+- **WHEN** a client updates a management via plain PUT and the status id differs
   from the previous status id
 - **THEN** the system appends a History row for the new status
 
 #### Scenario: Plain update that keeps status writes no History
 
-- **WHEN** a client updates a gestión via plain PUT and the status id is
+- **WHEN** a client updates a management via plain PUT and the status id is
   unchanged (or omitted so status stays the same)
 - **THEN** the system does not append a History row for that update
 
 #### Scenario: Complete-case update that changes status writes History
 
-- **WHEN** a client updates a gestión via PUT complete-case and the status id
+- **WHEN** a client updates a management via PUT complete-case and the status id
   differs from the previous status id
 - **THEN** the system appends a History row for the new status
 
 #### Scenario: Complete-case update that keeps status writes no History
 
-- **WHEN** a client updates a gestión via PUT complete-case and the status id
+- **WHEN** a client updates a management via PUT complete-case and the status id
   is unchanged
 - **THEN** the system does not append a History row for that update
 
-### Requirement: Consultar la bitácora de una gestión
+### Requirement: Read a management's history
 
-El sistema SHALL permitir consultar el `ManagementHistory` completo de una
-gestión, ordenado cronológicamente, según CU13.
+The system SHALL allow reading the full `ManagementHistory` of a management,
+ordered chronologically, per CU13, via
+`GET /api/v1/managements/{id}/history`.
 
-#### Scenario: Consulta devuelve el historial completo ordenado
+#### Scenario: The read returns the full history in order
 
-- **WHEN** un usuario consulta la bitácora de una gestión con entradas de
-  `ManagementHistory` registradas
-- **THEN** el sistema responde con todas las entradas de `ManagementHistory` de
-  esa gestión, ordenadas por fecha
+- **WHEN** a user reads the history of a management that has recorded
+  `ManagementHistory` entries
+- **THEN** the system responds with every `ManagementHistory` entry of that
+  management, ordered by date
 
-### Requirement: Current status falls back to entity status when History empty
+### Requirement: Current status falls back to entity status when History is empty
 
-The system SHALL expose the current status of a gestión via
-`GET .../current-status`. When History rows exist, the latest by date is used.
-When History is empty, the system MUST synthesize a summary from the gestión's
-current status association (management id and as-of-now). Missing gestión or
-null status MUST yield 404. Per CU13 / RF-24.
+The system SHALL expose the current status of a management via
+`GET /api/v1/managements/{id}/current-status`. When History rows exist, the
+latest by date is used. When History is empty, the system MUST synthesize a
+summary from the management's current status association (management id and
+as-of-now). A missing management or a null status MUST yield 404. Per CU13 /
+RF-24.
 
-#### Scenario: estado-actual from History when rows exist
+#### Scenario: Current status comes from History when rows exist
 
-- **WHEN** a client requests current status for a gestión that has History rows
+- **WHEN** a client requests current status for a management that has History rows
 - **THEN** the system returns 200 with the latest History summary by date
 
-#### Scenario: estado-actual entity-status fallback when History empty
+#### Scenario: Current status falls back to the entity status when History is empty
 
-- **WHEN** a client requests current status for an existing gestión that has a
+- **WHEN** a client requests current status for an existing management that has a
   status but no History rows
 - **THEN** the system returns 200 with a synthesized summary from the entity
   status (management id, status id/name, as-of-now)
 
-#### Scenario: estado-actual 404 when gestión missing
+#### Scenario: Current status returns 404 when the management is missing
 
-- **WHEN** a client requests current status for a gestión id that does not exist
+- **WHEN** a client requests current status for a management id that does not exist
 - **THEN** the system returns 404
 
-#### Scenario: estado-actual 404 when status null and History empty
+#### Scenario: Current status returns 404 when status is null and History is empty
 
-- **WHEN** a client requests current status for an existing gestión with no
+- **WHEN** a client requests current status for an existing management with no
   History rows and no status assigned
 - **THEN** the system returns 404

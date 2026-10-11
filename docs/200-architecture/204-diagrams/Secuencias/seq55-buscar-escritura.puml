@@ -2,20 +2,20 @@
 !theme plain
 title CU55 — Buscar Escritura
 
-actor "Gestor" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Clerk (Gestor)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : Un cliente consulta datos de una escritura.
-Sistema -> Sistema : Cliente
-Actor -> Actor : El Gestor/Recepcionista/Escribano solicita: (Escribano; Número de escritura)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor/Recepcionista/Escribano ingresa los datos.
-Sistema -> Sistema : Cliente
-Actor -> Actor : Busca y muestra una lista de escrituras.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor/Recepcionista/Escribano selecciona una escritura.
-Sistema -> Sistema : Cliente
-Actor -> Actor : Muestra el detalle de la escritura.
-Sistema -> Sistema : Sistema
+Actor -> Actor : A client looks up deed data.
+System -> System : Client
+Actor -> Actor : The clerk (Gestor), receptionist (Recepcionista), or notary (Escribano) requests: (Escribano; Deed number)
+System -> System : System
+Actor -> Actor : The clerk (Gestor), receptionist (Recepcionista), or notary (Escribano) enters the data.
+System -> System : Client
+Actor -> Actor : Looks up and shows a list of deeds.
+System -> System : System
+Actor -> Actor : The clerk (Gestor), receptionist (Recepcionista), or notary (Escribano) selects a deed.
+System -> System : Client
+Actor -> Actor : Shows the deed detail.
+System -> System : System
 
 @enduml

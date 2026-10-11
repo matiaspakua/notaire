@@ -16,6 +16,30 @@ services:
       - devsecops-network
       - notaire-app-network
 
+  # Local security case reports (issue #1506). The catalog runner writes
+  # reports/security/latest; this server only publishes that directory.
+  security-reports:
+    image: nginx:1.27.5-alpine
+    container_name: devsecops-security-reports
+    restart: unless-stopped
+    ports:
+      - "8890:80"
+    volumes:
+      - ./security-reports/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./security-reports/index.html:/usr/share/nginx/html/index.html:ro
+      - ../../reports/security:/usr/share/nginx/html/reports:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    labels:
+      service: "security-reports"
+      app: "devsecops"
+    networks:
+      - devsecops-network
+
   # --- SECURITY & QUALITY ---
   sonarqube:
     image: sonarqube:26.9.0.129388-community

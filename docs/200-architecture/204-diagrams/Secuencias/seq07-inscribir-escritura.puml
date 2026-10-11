@@ -3,19 +3,19 @@
 title CU07 — Inscribir escritura
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano busca una escritura firmada.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra la lista de escrituras disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona una escritura.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra los datos de la escritura y solicita inscribir.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano confirma la inscripción.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra la inscripción de la escritura.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) looks up a signed deed.
+System -> System : Escribano
+Actor -> Actor : Shows the list of available deeds.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a deed.
+System -> System : Escribano
+Actor -> Actor : Shows the deed data and asks to register it.
+System -> System : System
+Actor -> Actor : The notary (Escribano) confirms the registration.
+System -> System : Escribano
+Actor -> Actor : Records the deed registration.
+System -> System : System
 
 @enduml

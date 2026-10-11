@@ -3,15 +3,15 @@
 title CU40 — Modificar tipo de folio
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide modificar el nombre y/o observaciones de un tipo de folio.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Presenta una lista de todos los tipos de folios registrados.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona uno y modifica los datos.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra los cambios realizados.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to modify the name and/or notes of a folio type.
+System -> System : Escribano
+Actor -> Actor : Presents a list of every registered folio type.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects one and modifies the data.
+System -> System : Escribano
+Actor -> Actor : Records the changes made.
+System -> System : System
 
 @enduml

@@ -5,9 +5,7 @@
 Close the frontend i18n coverage gap for remaining dashboard pages and login
 leftover strings so English locale switching (TS-0040) does not leave Spanish
 hardcoded copy on those surfaces. Source: #1059; CU76; ADR-015.
-
 ## Requirements
-
 ### Requirement: Gap page namespaces exist in both catalogs
 
 The message catalogs `frontend/messages/es.json` and `frontend/messages/en.json`
@@ -47,26 +45,28 @@ concerns MUST NOT remain in `login/page.tsx`.
 
 ### Requirement: Gap UI pages call useTranslations for user-visible copy
 
-The gap UI pages (workflows list, workflows editor, suplencias, reportes, roles,
-dashboard/items) SHALL call `useTranslations` for page-specific copy and reuse
-`common` for shared actions/labels where an existing key fits. Redirect-only
-stubs (`/`, `/audit`, `administracion/items`, `administracion/audit`)
-are exempt because they have no UI strings.
+The gap UI pages (workflows list, workflows editor, label keys `suplencias`,
+`reportes`, and `administracion`, roles, dashboard/items) SHALL call
+`useTranslations` for page-specific copy and reuse `common` for shared
+actions/labels where an existing key fits. Redirect-only stubs (`/`, `/audit`,
+`administracion/items`, `administracion/audit`) are exempt because they have
+no UI strings.
 
 #### Scenario: Workflows list and editor use translations
 
 - **WHEN** a user opens `/dashboard/administration/workflows` or the editor
 - **THEN** titles, toasts, form labels, and empty states resolve via next-intl
 
-#### Scenario: Suplencias, reportes, roles, and items use translations
+#### Scenario: Substitutions, reports, roles, and items use translations
 
-- **WHEN** a user opens those pages
+- **WHEN** a user opens the pages for label keys `suplencias`, `reportes`,
+  roles, and items
 - **THEN** titles, toasts, form labels, columns, and empty states resolve via
   next-intl (roles completes remaining hardcoded strings beyond common edit/delete)
 
-#### Scenario: Auditoria all-modules filter is translated
+#### Scenario: Audit all-modules filter is translated
 
-- **WHEN** a user opens the canonical auditoria page filter
+- **WHEN** a user opens the canonical `auditoria` page filter
 - **THEN** the all-modules option label is translated (not a Spanish literal)
 
 ### Requirement: Missing required keys fail tests
@@ -85,3 +85,23 @@ catalog.
 - **WHEN** TS-0040 (or a focused extension) runs against a wired gap page with
   locale `en`
 - **THEN** at least one former gap page title is asserted in English
+
+### Requirement: Formatted values follow the active locale
+
+Screens SHALL format dates, timestamps, numbers and money through one locale-aware formatter: `es` uses es-AR, `en` uses en-GB (day first), and money is always ARS. No screen SHALL hardcode a locale.
+
+#### Scenario: English formats
+
+- **WHEN** the UI language is English and a payment of 75123.45 on 2026-07-08 is listed
+- **THEN** the row shows `08/07/2026` and `ARS 75,123.45`
+
+#### Scenario: Spanish formats
+
+- **WHEN** the UI language is Spanish and the same payment is listed
+- **THEN** the row shows `8/7/2026` and `$ 75.123,45`
+
+#### Scenario: No hardcoded locale
+
+- **WHEN** the screen sources are scanned
+- **THEN** none names es-AR, en-US or en-GB or calls the es-AR-only helpers
+

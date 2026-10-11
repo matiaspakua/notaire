@@ -1,5 +1,5 @@
 AuditRecordController#getAll
-AuxiliaryProtocolController#iniciarDeed
+AuxiliaryProtocolController#startDeed
 BudgetTemplateController#create
 BudgetTemplateController#delete
 BudgetTemplateController#update
@@ -34,16 +34,16 @@ PersonController#deletePerson
 PersonController#updatePerson
 ProcedureController#create
 ProcedureController#update
-ProcedureFolderController#ponerEnWait
+ProcedureFolderController#putOnHold
 ProcedureTypeController#assignWorkflow
 ProcedureTypeController#create
 ProcedureTypeController#delete
 ProcedureTypeController#update
 PropertyController#create
 RegistrationDraftController#generate
-RegistrationDraftController#inscribir
-RegistrationDraftController#observar
-RegistrationDraftController#presentar
+RegistrationDraftController#observe
+RegistrationDraftController#recordRegistration
+RegistrationDraftController#submit
 RoleController#assignRoleToUser
 RoleController#createRole
 SubmittedDocumentController#create

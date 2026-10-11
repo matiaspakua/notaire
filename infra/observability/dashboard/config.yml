@@ -56,6 +56,11 @@ services:
         subtitle: "SAST & Code Quality"
         tag: "Static"
         url: "http://localhost:9000"
+      - name: "Security reports"
+        logo: "https://www.sonarqube.org/favicon.ico"
+        subtitle: "Case catalog, Semgrep, secrets, Trivy, DAST"
+        tag: "Report"
+        url: "http://localhost:8890"
 
   - name: "Observability"
     icon: "fas fa-chart-line"

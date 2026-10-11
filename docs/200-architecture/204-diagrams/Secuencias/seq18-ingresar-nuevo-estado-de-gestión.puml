@@ -3,15 +3,15 @@
 title CU18 — Ingresar nuevo estado de gestión
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide dar de alta un nuevo estado de gestión.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Nombre del estado; Observaciones)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los datos solicitados.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra el nuevo estado de gestión.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to register a new management status.
+System -> System : Escribano
+Actor -> Actor : Requests: (Status name; Notes)
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the requested data.
+System -> System : Escribano
+Actor -> Actor : Records the new management status.
+System -> System : System
 
 @enduml

@@ -1,11 +1,14 @@
-# Diagramas de estados (legado)
+# State diagrams (legacy)
 
-Los `.puml` de esta carpeta no son la fuente de verdad ([ADR-027](../../202-ADR/ADR-027-mermaid-diagrams.md)).
+The `.puml` files in this folder are not the source of truth
+([ADR-027](../../202-ADR/ADR-027-mermaid-diagrams.md)).
 
-El modelo vigente — gestión, escritura, testimonio, minuta, documentación,
-presupuesto, pago y carpeta — está en
+The current model — management, deed, testimony, registration draft,
+documents, budget, payment, and procedure folder — is in
 [CICLO-DE-VIDA.md](../../203-design/CICLO-DE-VIDA.md).
 
-`transicion-de-estados.puml` es una actividad de negocio. El grafo que el
-motor aplica es el de la sección de gestión de ese documento. No coinciden
-en el archivado; la divergencia está registrada ahí.
+`transicion-de-estados.puml` is the business activity of that same graph:
+archive leaves Documentación completa, and a withdrawn testimony is final.
+`workflow-gestion.puml` is the create call
+`POST /api/v1/managements/complete-case`. The step-by-step dependencies are in
+[GESTION.md](../../203-design/GESTION.md).

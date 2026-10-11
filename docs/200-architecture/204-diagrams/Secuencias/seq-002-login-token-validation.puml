@@ -7,19 +7,18 @@ participant "Frontend" as FE
 participant "JwtAuthenticationFilter" as Filter
 participant "JwtTokenService" as JWT
 participant "SecurityContext" as SecCtx
-participant "UsuarioController" as Ctrl
+participant "UserController" as Ctrl
 
 == Token Validation ==
 
 User -> FE: Access protected resource
-FE -> Filter: GET /api/v1/usuarios (with Bearer token)
+FE -> Filter: GET /api/v1/users (with Bearer token)
 activate Filter
 
 alt TC-07: Missing token
   Filter -> Filter: No Authorization header
   Filter --> FE: 401 Unauthorized
   deactivate Filter
-  stop
 end
 
 alt TC-06: Invalid token
@@ -29,7 +28,6 @@ alt TC-06: Invalid token
   deactivate JWT
   Filter --> FE: 401 Unauthorized
   deactivate Filter
-  stop
 end
 
 alt TC-05: Expired token
@@ -39,7 +37,6 @@ alt TC-05: Expired token
   deactivate JWT
   Filter --> FE: 401 Unauthorized
   deactivate Filter
-  stop
 end
 
 alt TC-08: Valid token
@@ -55,7 +52,7 @@ alt TC-08: Valid token
   deactivate Filter
 
   == API Access ==
-  FE -> Ctrl: GET /api/v1/usuarios
+  FE -> Ctrl: GET /api/v1/users
   activate Ctrl
   Ctrl -> Ctrl: Process request
   Ctrl --> FE: 200 OK {users list}

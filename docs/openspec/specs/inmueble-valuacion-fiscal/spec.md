@@ -1,35 +1,39 @@
 # inmueble-valuacion-fiscal Specification
 
 ## Purpose
-Defines the data type and creation/update behavior of an Property's `valuación
-fiscal` (assessed property value) field, so that the entity, DTO, and frontend
-all agree with the Postgres schema (`inmuebles.valuacion_fiscal real`, since
-`V1__initial_schema.sql`). See CU69 – Gestión de Inmuebles for the field's
-business meaning.
+
+Defines the data type and the create and update behavior of a property's
+fiscal appraisal (`fiscalAppraisal`), so that the entity, DTO, and frontend
+agree with the live Postgres column `properties.fiscal_valuation`
+`NUMERIC(19, 2)`. See CU69 – Gestión de Inmuebles for the field's business
+meaning.
+
 ## Requirements
-### Requirement: Property valuación fiscal is a numeric field
 
-The system SHALL represent an Property's `valuacionFiscal` as a numeric value
-(matching the Postgres `real` column) end to end: entity, DTO, and the REST
-API request/response body.
+### Requirement: Property fiscal appraisal is a numeric field
 
-#### Scenario: Create Property with a numeric valuación fiscal
+The system SHALL represent a property's `fiscalAppraisal` as a numeric value
+(matching `properties.fiscal_valuation`) end to end: entity, DTO, and the
+REST API request and response body.
+
+#### Scenario: Create a property with a numeric fiscal appraisal
 
 - **WHEN** `POST /api/v1/properties` is called with a JSON body whose
-  `valuacionFiscal` is a number (e.g. `150000.5`)
-- **THEN** the Property is created and persisted with that value, and the
-  response body returns `valuacionFiscal` as a JSON number equal to the
+  `fiscalAppraisal` is a number (for example `150000.5`)
+- **THEN** the property is created and persisted with that value, and the
+  response body returns `fiscalAppraisal` as a JSON number equal to the
   value sent
 
-#### Scenario: Create Property without a valuación fiscal
+#### Scenario: Create a property without a fiscal appraisal
 
-- **WHEN** `POST /api/v1/properties` is called with `valuacionFiscal` omitted
+- **WHEN** `POST /api/v1/properties` is called with `fiscalAppraisal` omitted
   or `null`
-- **THEN** the Property is created successfully with `valuacionFiscal`
+- **THEN** the property is created successfully with `fiscalAppraisal`
   persisted as `null`
 
-<!-- An "update valuación fiscal" scenario was deliberately not included:
-InmuebleController's PUT /api/v1/properties/{id} path throws an unrelated
-NullPointerException (tramiteList, see Issue #880) for any Property update,
-independent of this field's type. Tracked separately, out of scope here. -->
+#### Scenario: Update a property's fiscal appraisal
 
+- **WHEN** `PUT /api/v1/properties/{id}` is called with a numeric
+  `fiscalAppraisal`
+- **THEN** the property is updated and the stored `fiscalAppraisal` equals
+  the value sent

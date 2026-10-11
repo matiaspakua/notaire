@@ -47,6 +47,7 @@ CU-API matrix validation        Process Checks                    sdlc-process.y
 commit messages                 Process Checks                    sdlc-process.yml   (BLOCKING)
 tdd evidence                    Process Checks                    sdlc-process.yml   (BLOCKING)
 sdlc exception label            Process Checks                    sdlc-process.yml   (BLOCKING; skipped here until a PR exists)
+doc traceability                Process Checks                    sdlc-process.yml   (BLOCKING)
 agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
@@ -72,6 +73,7 @@ playwright e2e          (--full) UI E2E Tests (Playwright)       playwright-e2e.
 bruno api tests         (--full) API Tests (Bruno)               playwright-e2e.yml
 docker build/smoke      (--full) Build Docker Image              ci.yml             (image scan not replicated locally)
 codeql analysis                 Analyze (CodeQL)                 codeql.yml         (GitHub-hosted only; not replicated locally)
+security gates (local)          Security Scan                    ci.yml             (BLOCKING; Semgrep + secrets + Trivy; DAST in run_pipeline.sh)
 MAP
             exit 0 ;;
         -h|--help) sed -n '3,28p' "${BASH_SOURCE[0]}"; exit 0 ;;
@@ -143,6 +145,7 @@ run "CU-API matrix validation" python3 workspace/sdlc/validate-cu-api-matrix.py
 PR_LABELS="$(gh pr view --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || true)"
 export PR_LABELS
 run "commit messages" bash workspace/sdlc/check-commit-messages.sh origin/main
+run "doc traceability" python3 workspace/sdlc/check-doc-traceability.py origin/main
 run "tdd evidence" bash workspace/sdlc/check-tdd-evidence.sh origin/main
 if gh pr view >/dev/null 2>&1; then
     run "sdlc exception label" bash workspace/sdlc/check-sdlc-exception.sh origin/main
@@ -158,6 +161,15 @@ run "process script self-tests" bash -c \
      && python3 -m unittest discover -s testing/tests \
      && python3 -m unittest discover -s docs/tests \
      && python3 -m unittest discover -s backend-api/tools/tests"
+
+# Security case catalog (CU78, #1500). The same command is a phase of
+# run_pipeline.sh, which then runs the DAST baseline against the stack.
+# Skip the duplicate when that phase already passed in this process.
+if [ "${NOTAIRE_SECURITY_GATES_DONE:-0}" = "1" ]; then
+    skip "security gates (local)" "already run by run_pipeline.sh"
+else
+    run "security gates (local)" python3 security/run_gates.py --profile local --skip-dast
+fi
 
 # Mirrors: OpenAPI commit + breaking diff (openapi-contract.yml), breaking half.
 # Same oasdiff rule and the same Owner-accepted entries as CI: the checker

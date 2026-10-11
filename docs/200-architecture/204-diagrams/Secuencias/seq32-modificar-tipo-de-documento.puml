@@ -3,19 +3,19 @@
 title CU32 — Modificar tipo de documento
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide modificar los datos de un tipo de documento.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra una lista de todos los tipos de documento disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona uno de ellos.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Presenta: (Nombre; Si posee vencimiento; Días de validez; Quién lo entrega)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano modifica los datos necesarios.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Guarda los cambios realizados.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to modify a document type.
+System -> System : Escribano
+Actor -> Actor : Shows a list of every available document type.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects one of them.
+System -> System : Escribano
+Actor -> Actor : Presents: (Name; Whether it expires; Days of validity; Who submits it)
+System -> System : System
+Actor -> Actor : The notary (Escribano) modifies the necessary data.
+System -> System : Escribano
+Actor -> Actor : Saves the changes made.
+System -> System : System
 
 @enduml

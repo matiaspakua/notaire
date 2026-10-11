@@ -2,22 +2,22 @@
 !theme plain
 title TC-LOGIN-10/11: LoginAttemptService Lockout and Reset Logic
 
-participant "UsuarioController" as Ctrl
+participant "UserController" as Ctrl
 participant "LoginAttemptService" as LAS
 database "Cache\n(free for 5 min)" as Cache
 
 == Failed Login Attempts ==
 
 loop 5 failed login attempts
-  Ctrl -> LAS: onLoginFailed(nombre)
+  Ctrl -> LAS: onLoginFailed(name)
   activate LAS
-  LAS -> Cache: increment(nombre)
+  LAS -> Cache: increment(name)
   activate Cache
   Cache --> LAS: count
   deactivate Cache
   LAS -> LAS: Check if count >= 5
   alt count >= 5
-    LAS -> Cache: setLocked(nombre, 30min)
+    LAS -> Cache: setLocked(name, 30min)
     activate Cache
     Cache --> LAS: void
     deactivate Cache
@@ -28,9 +28,9 @@ end
 
 == Lock Check ==
 
-Ctrl -> LAS: isLocked(nombre)
+Ctrl -> LAS: isLocked(name)
 activate LAS
-LAS -> Cache: getLockedUntil(nombre)
+LAS -> Cache: getLockedUntil(name)
 activate Cache
 alt locked and not expired
   Cache --> LAS: timestamp (future)
@@ -44,9 +44,9 @@ deactivate LAS
 
 == Successful Login Resets Counter ==
 
-Ctrl -> LAS: onLoginSucceeded(nombre)
+Ctrl -> LAS: onLoginSucceeded(name)
 activate LAS
-LAS -> Cache: remove(nombre)
+LAS -> Cache: remove(name)
 activate Cache
 Cache --> LAS: void
 deactivate Cache

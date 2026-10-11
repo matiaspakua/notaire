@@ -1,14 +1,14 @@
 @startuml clientes
 !theme plain
 left to right direction
-title Casos de Uso — Módulo Clientes
+title Use cases — Clients module
 
-actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor "Receptionist / Clerk (Gestor)" as ReceptionistClerk
 actor Escribano
-actor Persona
-actor Cliente
+actor Person
+actor Client
 
-rectangle "Módulo Clientes" {
+rectangle "Clients module" {
   usecase "CU17 - Dar Alta persona" as CU17
   usecase "CU54 - Modificar Persona" as CU54
   usecase "CU18 - Dar Alta Cliente" as CU18
@@ -18,19 +18,19 @@ rectangle "Módulo Clientes" {
   usecase "CU19 - Buscar gestiones de un Cliente" as CU19
 }
 
-RecepcionistaGestor --> CU17 : solicita
-RecepcionistaGestor --> CU18 : solicita
-RecepcionistaGestor --> CU41 : requiere
-RecepcionistaGestor --> CU46 : requiere
-Escribano --> CU46 : requiere
-Escribano --> CU19 : solicita
+ReceptionistClerk --> CU17 : requests
+ReceptionistClerk --> CU18 : requests
+ReceptionistClerk --> CU41 : needs
+ReceptionistClerk --> CU46 : needs
+Escribano --> CU46 : needs
+Escribano --> CU19 : requests
 
-Persona --> CU17 : aporta datos
-Persona --> CU54 : aporta datos
-Persona --> CU18 : aporta datos
-Cliente --> CU41 : aporta datos
-Cliente --> CU61 : solicita
-Cliente --> CU19 : solicita
+Person --> CU17 : provides data
+Person --> CU54 : provides data
+Person --> CU18 : provides data
+Client --> CU41 : provides data
+Client --> CU61 : requests
+Client --> CU19 : requests
 
 CU18 ..> CU61 : <<include>>
 CU54 ..> CU61 : <<include>>

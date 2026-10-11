@@ -25,7 +25,7 @@ production pentest.
 | Injection | JPA queries | Parameterized persistence. See [SQL injection prevention](SQL-INJECTION-PREVENTION.md) | Mitigated for known query paths |
 | Secrets | Env and CI | `.env` gitignored, `ProductionCredentialsGuard`, this change's secret scan | Partial — GitHub push protection is an admin setting |
 | Dependencies | Maven, npm, images | Dependabot, Trivy (report-only), image pins | Partial — Trivy does not fail the build |
-| Privacy | `Persona` DNI and email; notarial records | Auth gate, request logs omit query, headers, and body (#1463) | Partial — reads of PII are not audited (SR-08) |
+| Privacy | `Person` DNI and email; notarial records | Auth gate, request logs omit query, headers, and body (#1463) | Partial — reads of PII are not audited (SR-08) |
 | Runtime | Login metrics | Prometheus alerts and Grafana `notaire-auth` | Partial — no general API rate limit (#280) |
 
 Function-level RBAC is recorded in the
@@ -57,7 +57,7 @@ measured and improved. They are not a certified score.
 
 ### 3.1 Threat assessment
 
-STRIDE covers security properties. LINDDUN covers privacy of `Persona` and
+STRIDE covers security properties. LINDDUN covers privacy of `Person` and
 notarial records. The system model is
 [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md). Authentication and the audit
 trail stay in [THREAT-MODEL-AUTH-AUDIT.md](THREAT-MODEL-AUTH-AUDIT.md). The
@@ -103,8 +103,23 @@ a written decision adds them.
 | IAST | None | — | Needs an agent in the test JVM; no current signal that CodeQL plus ZAP miss a class of defect we can name |
 | RASP | None | — | Runtime blocking agents are a later production control, not a test |
 | SCA | Trivy fs and image; Dependabot | `ci.yml`, `.github/dependabot.yml` | Commercial SCA was not added beside Trivy |
-| Secrets | `security/scan_secrets.py` fails CI | `security/policy/security-policy.yml` | Gitleaks is the reference OSS rule set; the Python gate has no extra action to pin |
+| Secrets | `security/scan_secrets.py` fails CI and the local gate | `security/policy/security-policy.yml` | Gitleaks is the reference OSS rule set; the Python gate has no extra action to pin |
+| SAST, local | Semgrep rules in `security/semgrep/notaire.yml` | `python3 security/run_gates.py` | CodeQL stays the deeper CI SAST |
+| DAST, local | Unauthenticated baseline | `security/dast_baseline.py` | ZAP stays the weekly CI DAST |
 | Pentest | Rules of engagement only | [SECURITY-TOOLS.md](SECURITY-TOOLS.md) | No standing authorization to attack a shared environment |
+
+### Local gate before the pull request
+
+The security test schema is `security/cases/catalog.yml`. Each case names a
+local tool and the CI control. `python3 security/run_gates.py --profile local`
+runs the threat-model, secret, Semgrep, and Trivy cases and writes
+`reports/security/latest/index.html`. `bash workspace/sdlc/run_pipeline.sh`
+runs that command before the rest of the pipeline, then runs the DAST baseline
+against the API. The HTML report is also served by the infra service
+`security-reports` at `http://localhost:8890` (#1506). Install the pinned tools with
+`bash security/tools/ensure_local_tools.sh` (the local profile does this
+itself). Trivy findings stay report-only until #282. The baseline checks
+health and an anonymous 401. It does not exploit the API.
 
 Pentest phases, when an owner later authorizes one, follow the six CIPHER
 steps in the guide §3.4.10: pre-engagement, reconnaissance, threat mapping,
@@ -157,7 +172,7 @@ That template is the guide §3.7; it is not a new product feature.
 
 ## 7. Privacy, licenses, and the law
 
-Guide §3.9. Notarial records are retained indefinitely (SAD §2.3). `Persona`
+Guide §3.9. Notarial records are retained indefinitely (SAD §2.3). `Person`
 holds regulated identifiers. LINDDUN rows in the system threat model are the
 engineering view. Mapping those rows to a specific statute, and choosing
 product licenses with counsel, remains issue **#309**. This page does not

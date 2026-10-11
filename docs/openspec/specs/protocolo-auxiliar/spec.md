@@ -1,68 +1,69 @@
 # protocolo-auxiliar Specification
 
 ## Purpose
-Distingue los folios de Protocolo Auxiliar de los de Protocolo Principal y
-permite iniciar escrituras de Protocolo Auxiliar con numeración correlativa
-propia y sin generación de carpeta de trámite (CU81).
-## Requirements
-### Requirement: Distinguir tipos de folio de Protocolo Auxiliar
-El sistema SHALL permitir marcar un tipo de folio como perteneciente al
-Protocolo Auxiliar.
 
-#### Scenario: Marcar un tipo de folio como auxiliar
-- **WHEN** se marca un tipo de folio como perteneciente al Protocolo
-  Auxiliar
-- **THEN** el sistema guarda la marca y ese tipo queda disponible para
+Distinguishes Protocolo Auxiliar folios from Protocolo Principal folios and
+allows starting an auxiliary-protocol deed with its own consecutive number
+and without generating a procedure folder (CU81).
+
+## Requirements
+
+### Requirement: Mark a folio type as Protocolo Auxiliar
+The system SHALL allow marking a folio type as belonging to Protocolo
+Auxiliar through `isAuxiliary`.
+
+#### Scenario: Mark a folio type as auxiliary
+- **WHEN** a folio type is marked as belonging to Protocolo Auxiliar
+  (`isAuxiliary = true`)
+- **THEN** the system stores the mark and that type is available for
   Protocolo Auxiliar
 
-#### Scenario: Tipo de folio sin marcar es de Protocolo Principal
-- **WHEN** se consulta un tipo de folio que no fue marcado como auxiliar
-- **THEN** el sistema lo considera parte del Protocolo Principal
+#### Scenario: An unmarked folio type belongs to Protocolo Principal
+- **WHEN** a folio type that was not marked as auxiliary is read
+- **THEN** the system treats it as part of Protocolo Principal
 
-### Requirement: Listar folios de Protocolo Auxiliar disponibles
-El sistema SHALL permitir listar los folios de tipo auxiliar que no tienen
-escritura asociada.
+### Requirement: List available Protocolo Auxiliar folios
+The system SHALL list auxiliary folios that have no associated deed, via
+`GET /api/v1/auxiliary-protocol/available-folios`.
 
-#### Scenario: Hay folios auxiliares disponibles
-- **WHEN** se solicita el listado de folios de Protocolo Auxiliar
-  disponibles y existen folios de tipo auxiliar sin escritura asociada
-- **THEN** el sistema devuelve esos folios
+#### Scenario: Available auxiliary folios exist
+- **WHEN** the list of available Protocolo Auxiliar folios is requested
+  and auxiliary folios without an associated deed exist
+- **THEN** the system returns those folios
 
-#### Scenario: No hay folios auxiliares disponibles
-- **WHEN** se solicita el listado de folios de Protocolo Auxiliar
-  disponibles y no existe ninguno sin escritura asociada
-- **THEN** el sistema informa la falta de folios auxiliares disponibles
+#### Scenario: No auxiliary folios are available
+- **WHEN** the list of available Protocolo Auxiliar folios is requested
+  and none exist without an associated deed
+- **THEN** the system reports that no auxiliary folios are available
 
-### Requirement: Iniciar escritura de Protocolo Auxiliar con numeración propia
-El sistema SHALL permitir iniciar una escritura de Protocolo Auxiliar sobre
-un folio auxiliar disponible, asignándole el siguiente número correlativo
-dentro de la numeración del Protocolo Auxiliar, independiente de la
-numeración del Protocolo Principal.
+### Requirement: Start a Protocolo Auxiliar deed with its own numbering
+The system SHALL start a Protocolo Auxiliar deed on an available auxiliary
+folio (`POST /api/v1/auxiliary-protocol/deeds` with `idFolio`), assigning
+the next consecutive number in the Protocolo Auxiliar sequence, independent
+of Protocolo Principal numbering.
 
-#### Scenario: Alta de escritura de Protocolo Auxiliar con folio disponible
-- **WHEN** se inicia una escritura de Protocolo Auxiliar indicando un folio
-  auxiliar disponible y un cliente
-- **THEN** el sistema crea la escritura, le asigna el siguiente número
-  correlativo del Protocolo Auxiliar y la vincula al folio elegido
+#### Scenario: Start an auxiliary deed on an available folio
+- **WHEN** a Protocolo Auxiliar deed is started with an available auxiliary
+  `idFolio`
+- **THEN** the system creates the deed, assigns the next consecutive
+  Protocolo Auxiliar number, and links it to the chosen folio
 
-#### Scenario: Intento de iniciar escritura sin folio auxiliar disponible
-- **WHEN** se intenta iniciar una escritura de Protocolo Auxiliar y no hay
-  ningún folio auxiliar disponible
-- **THEN** el sistema rechaza la solicitud informando la falta de folios y
-  no crea ninguna escritura
+#### Scenario: Attempt to start a deed when no auxiliary folio is available
+- **WHEN** starting a Protocolo Auxiliar deed is attempted and no auxiliary
+  folio is available
+- **THEN** the system rejects the request, reports the lack of folios, and
+  creates no deed
 
-#### Scenario: Numeración del Protocolo Auxiliar independiente del Principal
-- **WHEN** se inicia una nueva escritura de Protocolo Auxiliar y ya existen
-  escrituras numeradas en el Protocolo Principal
-- **THEN** el número correlativo asignado continúa la secuencia del
-  Protocolo Auxiliar, sin verse afectado por la numeración del Protocolo
-  Principal
+#### Scenario: Protocolo Auxiliar numbering is independent of Protocolo Principal
+- **WHEN** a new Protocolo Auxiliar deed is started and numbered deeds
+  already exist in Protocolo Principal
+- **THEN** the assigned consecutive number continues the Protocolo Auxiliar
+  sequence and is not affected by Protocolo Principal numbering
 
-### Requirement: No generar carpeta de trámite en Protocolo Auxiliar
-El sistema SHALL iniciar la escritura de Protocolo Auxiliar sin generar
-carpeta de trámite.
+### Requirement: Do not generate a procedure folder for Protocolo Auxiliar
+The system SHALL start the Protocolo Auxiliar deed without generating a
+procedure folder.
 
-#### Scenario: Deed de Protocolo Auxiliar sin carpeta
-- **WHEN** se inicia una escritura de Protocolo Auxiliar
-- **THEN** el sistema no genera ninguna carpeta de trámite asociada
-
+#### Scenario: Protocolo Auxiliar deed without a folder
+- **WHEN** a Protocolo Auxiliar deed is started
+- **THEN** the system generates no associated procedure folder

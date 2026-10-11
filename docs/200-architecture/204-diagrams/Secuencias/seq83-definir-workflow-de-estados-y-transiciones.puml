@@ -2,24 +2,24 @@
 !theme plain
 title CU83 — Definir Workflow de Estados y Transiciones
 
-actor "Administrador" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Administrator (Administrador)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : El Administrador crea una nueva WorkflowDefinition y la asocia a uno o más TipoDeTramite.
-Sistema -> Sistema : Administrador
-Actor -> Actor : El sistema registra la definición y la habilita para edición del grafo.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Administrador agrega WorkflowNodes, cada uno vinculado a un EstadoDeGestion existente.
-Sistema -> Sistema : Administrador
-Actor -> Actor : Marca el nodo inicial y el/los nodo(s) final(es).
-Sistema -> Sistema : Administrador
-Actor -> Actor : El Administrador agrega WorkflowTransitions dirigidas entre nodos, opcionalmente con condición.
-Sistema -> Sistema : Administrador
-Actor -> Actor : El Administrador solicita validar el workflow.
-Sistema -> Sistema : Administrador
-Actor -> Actor : El sistema verifica la consistencia del grafo (nodo inicial único, nodo FINAL alcanzable).
-Sistema -> Sistema : Sistema
-Actor -> Actor : El sistema persiste la definición validada, disponible para gestiones del tipo de trámite asociado.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The administrator creates a new WorkflowDefinition and associates it with one or more ProcedureType records.
+System -> System : Administrator
+Actor -> Actor : The system records the definition and enables graph editing.
+System -> System : System
+Actor -> Actor : The administrator adds WorkflowNodes, each linked to an existing ManagementStatus.
+System -> System : Administrator
+Actor -> Actor : Marks the initial node and the final node or nodes.
+System -> System : Administrator
+Actor -> Actor : The administrator adds directed WorkflowTransitions between nodes, optionally with a condition.
+System -> System : Administrator
+Actor -> Actor : The administrator requests workflow validation.
+System -> System : Administrator
+Actor -> Actor : The system checks graph consistency (a single initial node, and a reachable FINAL node).
+System -> System : System
+Actor -> Actor : The system persists the validated definition, available for managements of the associated procedure type.
+System -> System : System
 
 @enduml

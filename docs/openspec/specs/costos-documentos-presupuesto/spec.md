@@ -2,49 +2,49 @@
 
 ## Purpose
 
-Conecta el costo de un documento presentado (sello, impuesto) al total del
-presupuesto de su trámite, y permite definir gastos fijos o variables
-esperados por tipo de documento en la plantilla de presupuesto de un tipo
-de trámite (CU27, CU39).
+Connects the cost of a submitted document (stamp, tax) to the total of the
+budget of its procedure, and allows defining expected fixed or variable
+expenses by document type on the budget template of a procedure
+type (CU27, CU39).
 
 ## Requirements
 
-### Requirement: Incluir el costo de los documentos en el total del presupuesto
-El sistema SHALL sumar el costo (`importeAPagar`) de los documentos
-presentados asociados a los trámites de un presupuesto al calcular su
+### Requirement: Include document costs in the budget total
+The system SHALL add the cost (`amountToPay`) of the submitted
+documents linked to the procedures of a budget when calculating its
 total.
 
-#### Scenario: Presupuesto con un documento con costo asociado
-- **WHEN** un presupuesto tiene un trámite con un documento presentado cuyo
-  costo es mayor a cero
-- **THEN** el total del presupuesto incluye ese costo
+#### Scenario: Budget with one document that has a cost
+- **WHEN** a budget has a procedure with a submitted document whose
+  cost is greater than zero
+- **THEN** the budget total includes that cost
 
-#### Scenario: Presupuesto con varios documentos con costo
-- **WHEN** un presupuesto tiene un trámite con varios documentos
-  presentados, cada uno con un costo asociado
-- **THEN** el total del presupuesto incluye la suma de todos esos costos
+#### Scenario: Budget with several documents that have a cost
+- **WHEN** a budget has a procedure with several submitted
+  documents, each with an associated cost
+- **THEN** the budget total includes the sum of all those costs
 
-#### Scenario: Presupuesto sin documentos con costo
-- **WHEN** un presupuesto no tiene ningún documento presentado con costo
-  asociado
-- **THEN** el total del presupuesto se calcula igual que hoy, sin ningún
-  costo adicional
+#### Scenario: Budget with no documents that have a cost
+- **WHEN** a budget has no submitted document with an associated
+  cost
+- **THEN** the budget total is calculated as it is today, with no extra
+  cost
 
-### Requirement: Definir gastos fijos o variables por tipo de documento en la plantilla
-El sistema SHALL permitir definir, para un tipo de trámite, un gasto fijo o
-variable esperado asociado a un tipo de documento.
+### Requirement: Define fixed or variable expenses by document type on the template
+The system SHALL allow defining, for a procedure type, an expected fixed or
+variable expense linked to a document type.
 
-#### Scenario: Definir un gasto fijo por tipo de documento
-- **WHEN** se define en la plantilla de presupuesto de un tipo de trámite
-  un gasto fijo para un tipo de documento
-- **THEN** el sistema acepta y persiste esa definición
+#### Scenario: Define a fixed expense by document type
+- **WHEN** a fixed expense for a document type is defined on the budget
+  template of a procedure type
+- **THEN** the system accepts and stores that definition
 
-#### Scenario: Definir un gasto variable por tipo de documento
-- **WHEN** se define en la plantilla de presupuesto de un tipo de trámite
-  un gasto variable (porcentaje) para un tipo de documento
-- **THEN** el sistema acepta y persiste esa definición
+#### Scenario: Define a variable expense by document type
+- **WHEN** a variable expense (a percentage) for a document type is defined
+  on the budget template of a procedure type
+- **THEN** the system accepts and stores that definition
 
-#### Scenario: Consultar los gastos por tipo de documento de una plantilla
-- **WHEN** se consulta la plantilla de presupuesto de un tipo de trámite
-  que tiene gastos definidos por tipo de documento
-- **THEN** el sistema responde con esos gastos
+#### Scenario: Read the document-type expenses of a template
+- **WHEN** the budget template of a procedure type that has document-type
+  expenses defined is read
+- **THEN** the system responds with those expenses

@@ -1,20 +1,20 @@
 @startuml administracion-tipos-de-folio
 !theme plain
 left to right direction
-title Casos de Uso — Módulo Tipos de Folio (Administración)
+title Use cases — Folio types module (Administration)
 
 actor Escribano
 
-rectangle "Módulo Tipos de Folio" {
+rectangle "Folio types module" {
   usecase "CU36 - Ingresar tipos de folio" as CU36
   usecase "CU40 - Modificar tipo de folio" as CU40
   usecase "CU58 - Eliminar tipo de folio" as CU58
   usecase "CU68 - Buscar tipos de folios" as CU68
 }
 
-Escribano --> CU36 : requiere
-Escribano --> CU40 : requiere
-Escribano --> CU58 : requiere
+Escribano --> CU36 : needs
+Escribano --> CU40 : needs
+Escribano --> CU58 : needs
 
 CU40 ..> CU68 : <<include>>
 CU58 ..> CU68 : <<include>>

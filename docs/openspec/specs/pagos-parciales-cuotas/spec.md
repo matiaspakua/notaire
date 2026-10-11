@@ -1,69 +1,71 @@
 # pagos-parciales-cuotas Specification
 
 ## Purpose
-Permite registrar pagos parciales sobre un presupuesto sin exigir que un
-único pago cubra el saldo total, y distingue explícitamente si un
-presupuesto está sin pagos, parcialmente abonado o saldado al consultarlo
-(CU15, CU47).
+
+Allows recording partial payments against a budget without requiring a
+single payment to cover the outstanding balance, and distinguishes whether
+a budget is `NoPayments`, `PARTIAL`, or `PAID` when its payment status is
+read (CU15, CU47).
+
 ## Requirements
-### Requirement: Registrar un pago sin exigir que cubra el saldo total
-El sistema SHALL aceptar el registro de un pago sobre un presupuesto cuyo
-monto sea menor al saldo pendiente, sin rechazarlo por no cubrir el total.
 
-#### Scenario: Payment que cubre el total del presupuesto
-- **WHEN** se registra un único pago cuyo monto es igual al total del
-  presupuesto
-- **THEN** el sistema acepta el pago y el saldo pendiente queda en cero
+### Requirement: Record a payment that does not cover the outstanding balance
+The system SHALL accept recording a payment on a budget whose `amount` is
+less than the outstanding balance, without rejecting it for not covering
+the total.
 
-#### Scenario: Payment parcial que no cubre el total
-- **WHEN** se registra un pago cuyo monto es menor al saldo pendiente del
-  presupuesto
-- **THEN** el sistema acepta el pago sin exigir que cubra el resto del
-  saldo
+#### Scenario: A payment that covers the budget total
+- **WHEN** a single payment is recorded whose `amount` equals the budget
+  total
+- **THEN** the system accepts the payment and the outstanding balance is
+  zero
 
-#### Scenario: Secuencia de pagos parciales que suman el total
-- **WHEN** se registran varios pagos parciales sobre el mismo presupuesto
-  cuya suma iguala su total
-- **THEN** el sistema acepta cada pago individualmente y el saldo
-  pendiente llega a cero tras el último
+#### Scenario: A partial payment that does not cover the total
+- **WHEN** a payment is recorded whose `amount` is less than the budget's
+  outstanding balance
+- **THEN** the system accepts the payment without requiring it to cover
+  the rest of the balance
 
-### Requirement: Determinar el estado de pago de un presupuesto
-El sistema SHALL determinar el estado de pago de un presupuesto como "sin
-pagos" cuando no tiene ningún pago registrado, "parcialmente abonado"
-cuando tiene pagos registrados y su saldo pendiente es mayor a cero, y
-"saldado" cuando su saldo pendiente es cero.
+#### Scenario: A sequence of partial payments that sum to the total
+- **WHEN** several partial payments are recorded on the same budget and
+  their amounts sum to its total
+- **THEN** the system accepts each payment individually and the outstanding
+  balance reaches zero after the last one
 
-#### Scenario: Presupuesto sin pagos registrados
-- **WHEN** se consulta el estado de pago de un presupuesto que no tiene
-  ningún pago registrado
-- **THEN** el sistema informa el estado "sin pagos"
+### Requirement: Determine a budget's payment status
+The system SHALL determine a budget's payment status as `NoPayments` when
+it has no payment recorded, `PARTIAL` when it has payments recorded and its
+outstanding balance is greater than zero, and `PAID` when its outstanding
+balance is zero. `GET /api/v1/payments/budget/{id}/status` serialises those
+enum names.
 
-#### Scenario: Presupuesto parcialmente abonado
-- **WHEN** se consulta el estado de pago de un presupuesto que tiene al
-  menos un pago registrado y un saldo pendiente mayor a cero
-- **THEN** el sistema informa el estado "parcialmente abonado"
+#### Scenario: Budget with no payments recorded
+- **WHEN** the payment status of a budget with no payment recorded is read
+- **THEN** the system reports `NoPayments`
 
-#### Scenario: Presupuesto saldado
-- **WHEN** se consulta el estado de pago de un presupuesto cuyo saldo
-  pendiente es cero
-- **THEN** el sistema informa el estado "saldado"
+#### Scenario: Partially paid budget
+- **WHEN** the payment status of a budget that has at least one payment
+  recorded and an outstanding balance greater than zero is read
+- **THEN** the system reports `PARTIAL`
 
-### Requirement: Consultar el estado de pago de un presupuesto (CU47)
-El sistema SHALL permitir consultar el estado de pago de un presupuesto de
-forma independiente de la lista de sus pagos, para distinguir visualmente
-uno parcialmente abonado de uno saldado.
+#### Scenario: Fully paid budget
+- **WHEN** the payment status of a budget whose outstanding balance is zero
+  is read
+- **THEN** the system reports `PAID`
 
-#### Scenario: Consultar el estado de un presupuesto parcialmente abonado
-- **WHEN** se consulta el estado de pago de un presupuesto parcialmente
-  abonado
-- **THEN** el sistema responde con el estado "parcialmente abonado"
+### Requirement: Read a budget's payment status (CU47)
+The system SHALL allow reading a budget's payment status independently of
+the list of its payments, so a `PARTIAL` budget is distinguished from a
+`PAID` one.
 
-#### Scenario: Consultar el estado de un presupuesto saldado
-- **WHEN** se consulta el estado de pago de un presupuesto saldado
-- **THEN** el sistema responde con el estado "saldado"
+#### Scenario: Read the status of a partially paid budget
+- **WHEN** the payment status of a partially paid budget is read
+- **THEN** the system responds with `PARTIAL`
 
-#### Scenario: Consultar el estado de un presupuesto inexistente
-- **WHEN** se consulta el estado de pago de un presupuesto cuyo ID no
-  existe
-- **THEN** el sistema responde con un error de no encontrado
+#### Scenario: Read the status of a fully paid budget
+- **WHEN** the payment status of a fully paid budget is read
+- **THEN** the system responds with `PAID`
 
+#### Scenario: Read the status of a budget that does not exist
+- **WHEN** the payment status of a budget whose id does not exist is read
+- **THEN** the system responds with a not-found error

@@ -7,26 +7,26 @@ transition that replaces the current unrestricted generic PUT on `Deed`.
 
 ## Requirements
 
-### Requirement: Firmar escritura con validación de estado y folio
-El sistema SHALL permitir firmar una escritura solo cuando está en estado
-"Sin Firmar" y tiene al menos un folio asignado, según CU06 y RF-27. La
-acción SHALL rechazar la firma en cualquier otro caso, en lugar de aceptar
-un cambio de estado arbitrario vía el endpoint CRUD genérico.
+### Requirement: Sign a deed only when it is Sin Firmar and has a folio
+The system SHALL allow signing a deed only when it is in status
+"Sin Firmar" and has at least one folio assigned, per CU06 and RF-27. The
+action SHALL reject the signature in every other case, instead of accepting
+an arbitrary status change through the generic CRUD endpoint.
 
-#### Scenario: Firma exitosa de una escritura lista
-- **WHEN** el Escribano invoca la acción de firma sobre una escritura en
-  estado "Sin Firmar" que tiene folio(s) asignado(s)
-- **THEN** el sistema cambia el estado de la escritura a "Firmada" y
-  responde con la escritura actualizada
+#### Scenario: Successful signature of a deed that is ready
+- **WHEN** the notary (Escribano) invokes the signature action on a deed in
+  status "Sin Firmar" that has one or more folios assigned
+- **THEN** the system changes the deed status to "Firmada" and
+  responds with the updated deed
 
-#### Scenario: Rechazo por escritura ya firmada
-- **WHEN** el Escribano invoca la acción de firma sobre una escritura que ya
-  está en estado "Firmada" o posterior
-- **THEN** el sistema rechaza la operación sin modificar el estado y
-  responde con un error que indica el estado actual
+#### Scenario: Rejection because the deed is already signed
+- **WHEN** the notary (Escribano) invokes the signature action on a deed that
+  is already in status "Firmada" or later
+- **THEN** the system rejects the operation without changing the status and
+  responds with an error that reports the current status
 
-#### Scenario: Rechazo por falta de folio asignado
-- **WHEN** el Escribano invoca la acción de firma sobre una escritura en
-  estado "Sin Firmar" que no tiene ningún folio asignado
-- **THEN** el sistema rechaza la operación sin modificar el estado y
-  responde con un error que indica la falta de folio
+#### Scenario: Rejection because no folio is assigned
+- **WHEN** the notary (Escribano) invokes the signature action on a deed in
+  status "Sin Firmar" that has no folio assigned
+- **THEN** the system rejects the operation without changing the status and
+  responds with an error that reports the missing folio

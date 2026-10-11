@@ -197,7 +197,7 @@ public class ReportDocumentFactory {
                         orNotRecorded(entry.getNotes())))
                 .toList();
 
-        return new ReportDocument("History of management No. " + management.getNumber(), "History of management (CU13)",
+        return new ReportDocument("History of Management N° " + management.getNumber(), "History of management (CU13)",
                 List.of(
                         new Fields("Management details", List.of(
                                 new Field("Management", String.valueOf(management.getNumber())),

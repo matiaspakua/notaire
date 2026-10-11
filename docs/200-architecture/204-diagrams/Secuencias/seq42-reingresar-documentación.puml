@@ -2,24 +2,24 @@
 !theme plain
 title CU42 — Reingresar documentación
 
-actor "Gestor" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Clerk (Gestor)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : El Gestor/Escribano solicita la lista de gestiones.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Presenta la lista de gestiones.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor/Escribano selecciona una gestión.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Muestra los trámites y documentación.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor/Escribano selecciona un trámite.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Muestra la documentación necesaria.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor/Escribano indica el tipo de documento a reingresar.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Agrega el documento a la lista de documentos presentados.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The clerk (Gestor) or notary (Escribano) requests the list of managements.
+System -> System : Clerk
+Actor -> Actor : Presents the list of managements.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) or notary (Escribano) selects a management.
+System -> System : Clerk
+Actor -> Actor : Shows the procedures and documentation.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) or notary (Escribano) selects a procedure.
+System -> System : Clerk
+Actor -> Actor : Shows the required documentation.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) or notary (Escribano) indicates the document type to re-enter.
+System -> System : Clerk
+Actor -> Actor : Adds the document to the list of submitted documents.
+System -> System : System
 
 @enduml
