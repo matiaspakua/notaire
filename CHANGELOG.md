@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **E2E reliability inventory uses the English spec names** (CU76, #1490):
+  payments, users/notaries, substitutions, and reports.
 - **Documents-due report allowlist uses the English path parameter** (CU76, #1490):
   `GET /api/v1/reports/documents-due/{idSubmittedDocument}`.
 - **Case-process documentation and a traceability check** (CU76, CU02, #921):
