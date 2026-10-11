@@ -27,8 +27,8 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | CU78 (login lockout, #689) | TS-0100 | Account lockout after repeated failed logins |
 | CU15 / CU20 (#1054) | TS-0095 | API business errors on mutation toasts / field errors |
 | CU76 / WCAG (#1057) | TS-0096 | Icon-only button accessible names (`getByRole` by name) |
-| CU01–CU09 | TS-0010 to TS-0014 | Presupuesto, Gestiones, Documentación, Escrituras |
-| CU10–CU23 | TS-0015 to TS-0023 | Personas, Usuarios, Suplencias, Reportes |
+| CU01–CU09 | TS-0010 to TS-0014 | Budgets, deed managements, documents, deeds |
+| CU10–CU23 | TS-0015 to TS-0023 | People, users, substitutions, reports |
 | CU24–CU68 | TS-0020 to TS-0035 | Administration, Workflows, Features |
 | Navigation, QA | TS-0003, TS-0040–0051 | Foundation & Utility |
 | Regression | TS-0060, TS-0070–0071 | Full app tour, Tutorials |
@@ -48,7 +48,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | **TS-0094** | `TS-0094-admin-route-guard.spec.ts` | CU78 (#1052) | Create EMPLEADO via API | Login as non-admin + admin URL | forbidden redirect + message + viewports | ✅ Passing |
 | **TS-0100** | `TS-0100-login-account-lockout.spec.ts` | CU78 (#689, #560) | Unique throwaway username | Failed logins via the form | lockout message + stays locked + 320/1024 px | ✅ Passing |
 | **TS-0095** | `TS-0095-api-error-toasts.spec.ts` | CU15, CU20 (#1054, #615 slice) | Route stub 4xx ErrorResponse | Login + CRUD mutation | server toast + FormField/aria-invalid + viewports | ✅ Added |
-| **TS-0096** | `TS-0096-icon-button-accessible-names.spec.ts` | CU76 / WCAG (#1057) | Admin login + list pages | Usuarios, personas, presupuestos, conceptos | `getByRole('button', { name })` + 320px | ✅ Added |
+| **TS-0096** | `TS-0096-icon-button-accessible-names.spec.ts` | CU76 / WCAG (#1057) | Admin login + list pages | Users, people, budgets, concepts | `getByRole('button', { name })` + 320px | ✅ Added |
 
 **Fixture Pattern**: Direct page navigation + form fill (no GherkinSteps needed, simple auth flow)
 **Dependencies**: None (foundation for all other tests)
@@ -58,7 +58,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 ### Core Business Workflows (TS-0010–TS-0035)
 
-#### Presupuesto & Gestiones (TS-0010–TS-0012)
+#### Budgets and deed managements (TS-0010–TS-0012)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Assertions | Value |
 |----|----|-------|------|-------|----------|-------|
@@ -76,7 +76,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 **Setup**: givenUserIsLoggedIn() + givenUserIsOnPage("/dashboard/...")
 **Dependencies**: TS-0001 (login must succeed), API helpers, global-setup auth
 
-#### Documentación, Escrituras, Pagos, Personas (TS-0012–TS-0015)
+#### Documents, deeds, payments, and people (TS-0012–TS-0015)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
@@ -90,7 +90,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 - `escritura-firma.spec.ts` → edge cases merged into TS-0013
 - `cu70-workflow-viewer.spec.ts` → removed (read-only variant of editor)
 
-#### Usuarios, Suplencias, Reingreso, Inmuebles (TS-0016–TS-0019)
+#### Users, substitutions, re-entry, and properties (TS-0016–TS-0019)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
@@ -105,7 +105,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 |----|----|-------|------|-------|-------|
 | **TS-0020** | `TS-0020-reports-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | 7 intentional gaps cite #1146 | **HIGH** |
 | **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | API arrange + editor | 0 (self-seeds workflow; #1066) | **HIGH** |
-| **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | API arrange + table | 0 (self-seeds tipo-tramite; #1066) | **MEDIUM** |
+| **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | API arrange + table | 0 (self-seeds a procedure type; #1066) | **MEDIUM** |
 | **TS-0023** | `TS-0023-roles-permissions-admin.spec.ts` | CU43.1 | Direct nav + form | 0 | **MEDIUM** |
 | **TS-0024** | `TS-0024-admin-module-smoke.spec.ts` | CU20–CU32, CU57–CU67 | Direct nav + buttons | 0 | **MEDIUM** |
 | **TS-0028** | `TS-0028-management-history-feature.spec.ts` | CU13 | GherkinSteps + API seed | 0 | **MEDIUM** |
@@ -141,7 +141,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 | TS | Filename | Scope | Test Type | Value | Run |
 |----|----|-------|---------|-------|-----|
 | **TS-0060** | `TS-0060-full-application-tour-regression.spec.ts` | Complete E2E tour | Regression / smoke | **HIGHEST** | Every PR |
-| **TS-0070** | `TS-0070-supervised-tour-tutorial.spec.ts` | Paced walkthrough via sidebar (incl. Suplencias/Reportes; Items/Auditoría canonical) | Human-watchable demo | Reference | On demand |
+| **TS-0070** | `TS-0070-supervised-tour-tutorial.spec.ts` | Paced walkthrough via sidebar (nav keys `suplencias` and `reportes`; Items and Audit canonical) | Human-watchable demo | Reference | On demand |
 | **TS-0071** | `TS-0071-first-case-tutorial-onboarding.spec.ts` | Learner-friendly | Recording demo (CU01–CU05) | Onboarding | On demand |
 | **TS-0090** | `TS-0090-demo-two-full-cases.spec.ts` | Seeds two comparable full cases via UI | Live-demo data seed | Reference | On demand |
 
@@ -218,20 +218,20 @@ CU21 edit is **not** in this inventory (unskipped in #1057). Vitest
 
 | TS | Skip id | Owning CU | Product gap (summary) | Citation | Product tracking |
 |----|---------|-----------|-----------------------|----------|------------------|
-| TS-0014 | CU15-GW03 | CU15 | Pagos row has no “ver detalle” control | #1146 | Owning CU15 (UI detail action) |
-| TS-0014 | CU47-GW01 | CU47 | Pagos page has no fecha desde/hasta filters | #1146 | Owning CU47 (date filter UI) |
-| TS-0016 | CU23-GW01 | CU23 | Usuarios page has no “ver actividades” | #1146 | Owning CU23 (activities UI) |
-| TS-0016 | CU48-GW01 | CU48 | No `/dashboard/administration/escribanos` page | #1146 | Owning CU48 (escribanos CRUD) |
-| TS-0016 | CU48-GW02 | CU48 | Same — create escribano flow absent | #1146 | Owning CU48 |
-| TS-0017 | CU59-GW01 | CU59 | Suplencias has no escribano filter | #1146 | Owning CU59 (filter UI) |
-| TS-0017 | CU59-GW02 | CU59 | Suplencias table has no “ver” detail | #1146 | Owning CU59 (detail UI) |
-| TS-0020 | CU24-GW01 | CU24 | Reportes lacks “libro índices” named action | #1146 | Owning CU24 (report action/copy) |
-| TS-0020 | CU25-GW01 | CU25 | Reportes lacks mes / declaración jurada UI | #1146 | Owning CU25 |
-| TS-0020 | CU39-GW01 | CU39 | Presupuestos lacks “plantillas” button | #1146 | Owning CU39 |
-| TS-0020 | CU42-GW01 | CU42 | Dashboard lacks alertas / vencimientos | #1146 | Owning CU42 |
-| TS-0020 | CU62-GW01 | CU62 | Escrituras page has no search bar | #1146 | Owning CU62 |
-| TS-0020 | CU65-GW01 | CU65 | Tipos documento page has no search | #1146 | Owning CU65 |
-| TS-0020 | CU66-GW01 | CU66 | Conceptos page has no search | #1146 | Owning CU66 |
+| TS-0014 | CU15-GW03 | CU15 | Payments rows have no “ver” detail control | #1146 | Owning CU15 (UI detail action) |
+| TS-0014 | CU47-GW01 | CU47 | Payments page has no “fecha desde” / “fecha hasta” filters | #1146 | Owning CU47 (date filter UI) |
+| TS-0016 | CU23-GW01 | CU23 | Users page has no “ver actividades” action | #1146 | Owning CU23 (activities UI) |
+| TS-0016 | CU48-GW01 | CU48 | No `/dashboard/administration/notaries` page. Notaries are managed as users. | #1146 | Owning CU48 (notary CRUD) |
+| TS-0016 | CU48-GW02 | CU48 | Same — create-notary flow is absent | #1146 | Owning CU48 |
+| TS-0017 | CU59-GW01 | CU59 | Substitutions (`nav-suplencias`) has no notary filter | #1146 | Owning CU59 (filter UI) |
+| TS-0017 | CU59-GW02 | CU59 | Substitutions table has no “ver” detail | #1146 | Owning CU59 (detail UI) |
+| TS-0020 | CU24-GW01 | CU24 | Reports (`nav-reportes`) has no “libro índices” named action | #1146 | Owning CU24 (report action/copy) |
+| TS-0020 | CU25-GW01 | CU25 | Reports has no “mes” dropdown or “declaración jurada” button | #1146 | Owning CU25 |
+| TS-0020 | CU39-GW01 | CU39 | Budgets page has no templates button | #1146 | Owning CU39 |
+| TS-0020 | CU42-GW01 | CU42 | Dashboard has no alerts or upcoming-expirations section | #1146 | Owning CU42 |
+| TS-0020 | CU62-GW01 | CU62 | Deeds page has no search bar | #1146 | Owning CU62 |
+| TS-0020 | CU65-GW01 | CU65 | Document-types page has no search | #1146 | Owning CU65 |
+| TS-0020 | CU66-GW01 | CU66 | Concepts page has no search | #1146 | Owning CU66 |
 
 ### Resolved / not counted as feature-gap debt
 
@@ -272,7 +272,7 @@ in the same change.
    - Merged: Module view tests subsumed
 
 5. **`escritura-firma.spec.ts`** → TS-0013-deeds-signing-workflow
-   - Consolidation: Edge path tests (sin folio, ya firmada)
+   - Consolidation: Edge path tests (no folio, already signed as `Firmada`)
    - Merged: Signing workflow + edge cases now in TS-0013
 
 6. **`cu70-workflow-viewer.spec.ts`** → DELETED

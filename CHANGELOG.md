@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English E2E test inventory** (#1490, CU75):
+  `TEST-PLAN.md` and `E2E-TEST-MAPPING.md` name the suites in English
+  (budgets, deed managements, documents, deeds, payments). Visible UI
+  strings the tests still assert stay, including the heading `Presupuestos`
+  and the quoted gaps “ver”, “libro índices”, and “declaración jurada”.
+  Nav keys `suplencias` and `reportes` stay. Retired spec filenames such as
+  `presupuestos.spec.ts` stay. CSV headers `CU_Nombre`, `Modulo`, `Entidad`,
+  `Operacion`, and `Notas` stay because the matrix validator reads them.
 - **English test-case writeups** (#1490, CU75):
   The nine cases under `docs/300-development/303-testing/test-cases/` use
   English filenames and prose (`TC-001-prepare-budget-success.md` through
