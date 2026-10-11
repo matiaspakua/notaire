@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English ERD spreadsheet** (#1490, CU75):
+  `Modelo Relacional Escribania - Entidades.csv` uses English headers
+  (`Entity`, `Attribute`, `Description`) and English type labels (`Strong`,
+  `Integer`, `Text`, `yes` / `no`). Description cells match the data
+  dictionary. `users` is `Weak / strong`, as in the dictionary index. Stored
+  labels such as `No Pasó` and `Workflow de Gestión Estándar` stay.
+  `docs/tools/generate_erd.py` writes those English labels on the next
+  regeneration.
 - **English data-dictionary descriptions** (#1490, CU75):
   Column descriptions, the table index, the compensation notes, and sections
   1, 3, 6.2, and 6.3 of the data dictionary are English. Stored labels such

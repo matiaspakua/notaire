@@ -45,7 +45,7 @@ def svg_entities(path):
 
 def csv_entities():
     with open(CSV_FILE, encoding="utf-8", newline="") as handle:
-        return {row[0] for row in csv.reader(handle) if row and row[0] != "Nombre Entidad"}
+        return {row[0] for row in csv.reader(handle) if row and row[0] != "Entity"}
 
 
 class ErdUsesEnglishSchemaTest(unittest.TestCase):
