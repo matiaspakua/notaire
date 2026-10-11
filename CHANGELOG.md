@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English lifecycle and engineering method** (#1490, CU75):
+  `CICLO-DE-VIDA.md` and `INGENIERIA.md` are written in English. Sequences
+  call `POST /api/v1/managements/{id}/transition`, `GET /api/v1/deeds`, and
+  `POST /api/v1/payments`. A payment over the balance is an empty 409.
+  Stored statuses such as `Iniciada`, `En Tramite`, `Firmada`, and
+  `Workflow de Gestión Estándar` stay. The guide title and the name
+  Matías Miguez stay.
 - **English names kept with status badges and the app-shell skeleton** (#1490, CU75):
   The #1366 `StatusBadge` and the #1359 app-shell skeleton land on the English
   screens. Management badges read `currentStatus`. Testimony badges use
