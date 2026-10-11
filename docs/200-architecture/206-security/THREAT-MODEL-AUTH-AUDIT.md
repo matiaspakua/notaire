@@ -5,7 +5,7 @@
 > (audit-trail flow). STRIDE-based. Produced under issue #1028 as the
 > repo's first formal threat model, replacing the informal risk register in
 > [`README.md`](README.md#data-classification--threat-model) for these two
-> subsystems. Related: CU84 (Login), CU73 (Registro de Auditoría),
+> subsystems. Related: CU84 (Login), CU73 (audit log),
 > [ADR-018](../202-ADR/ADR-018-rate-limiting-policy.md),
 > [ADR-019](../202-ADR/ADR-019-secrets-management.md).
 

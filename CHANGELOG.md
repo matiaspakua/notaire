@@ -43,6 +43,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English frontend-test and error-handling samples** (#1490, CU75):
+  `FRONTEND-TESTING-GUIDE.md` names `managementsKeys`,
+  `substitutions-reports.test.ts`, and the current `TS-nnnn` specs.
+  The auth sample uses `name`, `type`, and `valid`. The seeded login is
+  `users.username` / `users.password` / `users.user_type` after V37; the
+  V2 script still inserts into `usuarios`. Button assertions stay
+  `Nuevo` and `Cancelar` because the default locale is Spanish.
+  `BACKEND-ERROR-HANDLING-STRATEGY.md` shows a `heading` validation
+  message and the login field `valid`. CU73 in the auth threat model
+  is the audit log. The October assessment names CU72 and CU79 in English.
 - **English testing-pattern samples** (#1490, CU75):
   `docs/300-development/303-testing/TESTING-PATTERNS.md` uses `Budget`,
   `BudgetService`, and `BudgetRepositoryPort`. Management create JSON is

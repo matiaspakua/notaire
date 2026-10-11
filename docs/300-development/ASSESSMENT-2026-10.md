@@ -48,7 +48,7 @@ A first Bruno run showed 30 failures. The cause was the session overwriting the 
 - 87 use case documents (CU01-CU87); `CU-API-MATRIX.csv` has 96 rows; 38 controllers expose
   230 mapped endpoints; 39 dashboard pages.
 - 82 of 87 use cases are referenced by at least one Playwright spec. No spec references CU72
-  (Documentos Presentados) or CU79 (Plantillas de Trámite); CU74-CU78 are non-functional and
+  (submitted documents) or CU79 (procedure templates); CU74-CU78 are non-functional and
   traced by prose only.
 - The matrix is stale: 12 rows show `500-ERROR` although the endpoints return 200 and Bruno
   passes; 6 rows have no Bruno test. -> #1244
