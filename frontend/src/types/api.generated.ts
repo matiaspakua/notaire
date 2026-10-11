@@ -62,7 +62,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Listar folios de Protocolo Auxiliar disponibles */
+        /** List available auxiliary-protocol folios */
         get: operations["getAvailableFolios"];
         put?: never;
         post?: never;
@@ -82,7 +82,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Start a deed of Auxiliary protocol on a folio available */
-        post: operations["iniciarDeed"];
+        post: operations["startDeed"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2000,8 +2000,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generate reporte of lista of documents by procedure
-         * @description Generates a PDF with the documents that requires a procedure type according to its template (expiration, days of validez and who the entrega)
+         * Generate the document list report for a procedure
+         * @description Generates a PDF with the documents a procedure type requires according to its template (expiration, validity days, and who delivers them)
          */
         get: operations["generateProcedureDocumentsListReport"];
         put?: never;
@@ -2896,11 +2896,11 @@ export interface components {
             /** Format: int32 */
             idBudget?: number;
             items?: components["schemas"]["DtoItem"][];
-            listaProcedures?: components["schemas"]["DtoProcedure"][];
             notes?: string;
             /** Format: int32 */
             number?: number;
             person?: components["schemas"]["DtoPerson"];
+            procedures?: components["schemas"]["DtoProcedure"][];
             propertyAmount?: number;
             /** @deprecated */
             saldo?: number;
@@ -3650,11 +3650,6 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
-        IniciarDeedRequest: {
-            body?: string;
-            /** Format: int32 */
-            idFolio?: number;
-        };
         ItemRequest: {
             /** Format: int32 */
             budgetId?: number;
@@ -4069,6 +4064,11 @@ export interface components {
             sorted?: boolean;
             unsorted?: boolean;
         };
+        StartDeedRequest: {
+            body?: string;
+            /** Format: int32 */
+            idFolio?: number;
+        };
         SubmitRequest: {
             /** Format: date-time */
             dateSubmission?: string;
@@ -4385,7 +4385,7 @@ export interface operations {
             };
         };
     };
-    iniciarDeed: {
+    startDeed: {
         parameters: {
             query?: never;
             header?: never;
@@ -4394,11 +4394,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["IniciarDeedRequest"];
+                "application/json": components["schemas"]["StartDeedRequest"];
             };
         };
         responses: {
-            /** @description Creada */
+            /** @description Created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -5281,7 +5281,7 @@ export interface operations {
     getAll_18: {
         parameters: {
             query?: {
-                /** @description Deed status (any uppercase/lowercase; another valor responde 400). Without this parámetro listan all. */
+                /** @description Deed status (any letter case; any other value responds 400). Without this parameter, every deed is listed. */
                 status?: "Sin Firmar" | "Firmada" | "Anulada" | "No Paso" | "Inscripta";
                 /** @description Zero-based page index (0..N) */
                 page?: number;
@@ -9443,7 +9443,7 @@ export interface operations {
                     "application/pdf": string;
                 };
             };
-            /** @description Parámetro invalid */
+            /** @description Invalid parameter */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9461,7 +9461,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
+            /** @description Unexpected error generating the PDF (no body) */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -9491,7 +9491,7 @@ export interface operations {
                     "application/pdf": string;
                 };
             };
-            /** @description Parámetro invalid */
+            /** @description Invalid parameter */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9509,7 +9509,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
+            /** @description Unexpected error generating the PDF (no body) */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -9539,7 +9539,7 @@ export interface operations {
                     "application/pdf": string;
                 };
             };
-            /** @description Parámetro invalid */
+            /** @description Invalid parameter */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9557,7 +9557,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
+            /** @description Unexpected error generating the PDF (no body) */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -9587,7 +9587,7 @@ export interface operations {
                     "application/pdf": string;
                 };
             };
-            /** @description Parámetro invalid */
+            /** @description Invalid parameter */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9605,7 +9605,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
+            /** @description Unexpected error generating the PDF (no body) */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -9658,7 +9658,7 @@ export interface operations {
                     "application/pdf": string;
                 };
             };
-            /** @description Parámetro invalid */
+            /** @description Invalid parameter */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9676,7 +9676,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
+            /** @description Unexpected error generating the PDF (no body) */
             500: {
                 headers: {
                     [name: string]: unknown;
@@ -9763,7 +9763,7 @@ export interface operations {
                     "application/pdf": string;
                 };
             };
-            /** @description Parámetro invalid */
+            /** @description Invalid parameter */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9781,7 +9781,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Error inesperado al generar el PDF (sin cuerpo) */
+            /** @description Unexpected error generating the PDF (no body) */
             500: {
                 headers: {
                     [name: string]: unknown;

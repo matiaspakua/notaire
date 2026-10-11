@@ -268,29 +268,28 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
     }
 
     /**
-     * Busca and encuentra all the Plantillas of Procedure of a Procedure type in particular.
+     * Finds every procedure template for one procedure type.
      *
-     * @param idTipoTramite, Id of the Procedure type to the cual pertenecen the Plantillas of Procedure a
-     * search.
-     * @return A lista of the Plantillas of Procedure encontradas.
+     * @param idProcedureType procedure type id
+     * @return the templates for that procedure type
      */
     public List<ProcedureTemplate> findProcedureTemplatesByType(int idProcedureType)
     {
         EntityManager em = getEntityManager();
 
-        List<ProcedureTemplate> misPlantillas = null;
+        List<ProcedureTemplate> templates = null;
 
         try
         {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Named query declared on the entity.
             Query q = em.createNamedQuery("ProcedureTemplate.findByFkIdProcedureType");
 
-            //It step the name of the parametro of the query, and the valor a search.
+            // Bind the named query parameter.
             q.setParameter("fkIdProcedureType", idProcedureType);
 
-            misPlantillas = (List<ProcedureTemplate>) q.getResultList();
+            templates = (List<ProcedureTemplate>) q.getResultList();
 
-            return misPlantillas;
+            return templates;
 
         }
         finally
@@ -314,18 +313,18 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro a new transaccion
+        // Open a transaction.
         tx = em.getTransaction();
         tx.begin();
 
-        // Creo el query
+        // Build the query.
         Query query = em.createQuery("DELETE FROM ProcedureTemplate p WHERE p.procedureTemplatePK.fkIdProcedureType = ?1 AND  p.procedureTemplatePK.fkIdDocumentType = ?2");
 
-        //Seteo el parametro 1 y 2
+        // Bind parameters 1 and 2.
         query.setParameter(1, template.getProcedureTemplatePK().getFkIdProcedureType());
         query.setParameter(2, template.getProcedureTemplatePK().getFkIdDocumentType());
 
-        // Ejecuto el query
+        // Run the query.
         deleted = query.executeUpdate();
 
         // Hago commit
@@ -353,11 +352,11 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
 
         EntityManager em = getEntityManager();
 
-        List<ProcedureTemplate> listaTemplateProcedures = null;
+        List<ProcedureTemplate> procedureTemplates = null;
 
         Query query = em.createNamedQuery("ProcedureTemplate.findAll");
-        listaTemplateProcedures = query.getResultList();
+        procedureTemplates = query.getResultList();
 
-        return listaTemplateProcedures;
+        return procedureTemplates;
     }
 }

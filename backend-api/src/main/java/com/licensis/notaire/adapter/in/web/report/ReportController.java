@@ -68,11 +68,11 @@ public class ReportController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "PDF of the budget"),
-        @ApiResponse(responseCode = "400", description = "Parámetro invalid", content = @Content(
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Budget not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
     @GetMapping(value = "/budget/{idBudget}", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -88,11 +88,11 @@ public class ReportController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "PDF of the budget with properties"),
-        @ApiResponse(responseCode = "400", description = "Parámetro invalid", content = @Content(
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Budget not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
     @GetMapping(value = "/budget-properties/{idBudget}", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -108,17 +108,17 @@ public class ReportController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "PDF with the documents of the procedure type"),
-        @ApiResponse(responseCode = "400", description = "Parámetro invalid", content = @Content(
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Procedure type not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
     @GetMapping(value = "/procedure-document-list", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generate reporte of lista of documents by procedure",
-               description = "Generates a PDF with the documents that requires a procedure type according to its "
-                       + "template (expiration, days of validez and who the entrega)")
+    @Operation(summary = "Generate the document list report for a procedure",
+               description = "Generates a PDF with the documents a procedure type requires according to its "
+                       + "template (expiration, validity days, and who delivers them)")
     public ResponseEntity<byte[]> generateProcedureDocumentsListReport(
             @Parameter(description = "Name of the procedure type")
             @RequestParam("procedureTypeName") @NotBlank String nameTypeProcedure) {
@@ -128,11 +128,11 @@ public class ReportController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "PDF with the history of the management"),
-        @ApiResponse(responseCode = "400", description = "Parámetro invalid", content = @Content(
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Management not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
     @GetMapping(value = "/management-history/{idManagement}", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -148,11 +148,11 @@ public class ReportController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "PDF with the expiration of the submitted document"),
-        @ApiResponse(responseCode = "400", description = "Parámetro invalid", content = @Content(
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "Submitted document not found", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
     @GetMapping(value = "/documents-due/{idSubmittedDocument}", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -168,11 +168,11 @@ public class ReportController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "PDF with the debt of documents of the management"),
-        @ApiResponse(responseCode = "400", description = "Parámetro invalid", content = @Content(
+        @ApiResponse(responseCode = "400", description = "Invalid parameter", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "There is no management with that number", content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class))),
-        @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
+        @ApiResponse(responseCode = "500", description = "Unexpected error generating the PDF (no body)",
                 content = @Content)
     })
     @GetMapping(value = "/document-debt", produces = MediaType.APPLICATION_PDF_VALUE)

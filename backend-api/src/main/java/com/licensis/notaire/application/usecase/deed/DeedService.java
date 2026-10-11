@@ -80,13 +80,13 @@ public class DeedService {
 
             if (result == DeedNumberingValidationResult.DUPLICATE) {
                 throw new DuplicateDeedNumberException(
-                        "The number " + entity.getNumber() + " ya fue utilizado en el protocolo "
-                                + (isAuxiliary ? "auxiliar" : "principal") + " of the year " + folio.getYear());
+                        "The number " + entity.getNumber() + " was already used in the "
+                                + (isAuxiliary ? "auxiliary" : "main") + " protocol for year " + folio.getYear());
             }
             if (result == DeedNumberingValidationResult.SKIP_UNJUSTIFIED) {
                 throw new UnjustifiedNumberingGapException(
-                        "The number " + entity.getNumber() + " deja a salto in the numeración correlativa; "
-                                + "must indicar a justificación in notes");
+                        "The number " + entity.getNumber() + " leaves a gap in the sequence; "
+                                + "a justification is required in notes");
             }
         });
     }

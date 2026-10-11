@@ -100,9 +100,9 @@ public class DtoTestimony implements ValidDto
         return this.copies;
     }
 
-    public void setCopies(List<DtoCopy> misCopies)
+    public void setCopies(List<DtoCopy> copies)
     {
-        this.copies = misCopies;
+        this.copies = copies;
     }
 
     public List<DtoTestimonyMovement> getTestimonyMovements()

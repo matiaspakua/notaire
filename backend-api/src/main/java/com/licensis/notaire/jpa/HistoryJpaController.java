@@ -223,13 +223,12 @@ public class HistoryJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * Retorna a lista with all the registros of history of a management in particular (cambios
-     * de estado en el tiempo.
+     * Returns every history record for one management.
      *
-     * @param idGestion The id of the management.
-     * @return registroHistorial a lista with all the cambios of status of the management.
+     * @param idManagement the management id
+     * @return the status changes for that management
      */
-    public List<History> findRecordHistial(Integer idManagement)
+    public List<History> findHistoryRecords(Integer idManagement)
     {
         List<History> recordHistory = new ArrayList<History>();
 

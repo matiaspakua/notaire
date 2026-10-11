@@ -266,14 +266,14 @@ public class ConceptJpaController implements Serializable, JpaPersistence
     {
 
         EntityManager em = getEntityManager();
-        List<Concept> listaConcept = new ArrayList<>();
+        List<Concept> concepts = new ArrayList<>();
 
         Query query = em.createNamedQuery("Concept.findByName");
         query.setParameter("name", nameConcept);
 
-        listaConcept = query.getResultList();
+        concepts = query.getResultList();
 
-        return listaConcept;
+        return concepts;
     }
 
     public Concept findConcept(Integer id)

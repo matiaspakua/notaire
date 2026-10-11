@@ -222,19 +222,19 @@ public class ItemJpaController implements Serializable, JpaPersistence
     {
         EntityManager em = getEntityManager();
 
-        List<Item> misItems = null;
+        List<Item> items = null;
 
         try
         {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Named query declared on the entity.
             Query q = em.createNamedQuery("Item.findByBudget");
 
-            //It step the name of the parametro of the query, and the valor a search.
+            // Bind the named query parameter.
             q.setParameter("idBudget", pIdBudget);
 
-            misItems = (List<Item>) q.getResultList();
+            items = (List<Item>) q.getResultList();
 
-            return misItems;
+            return items;
 
         }
         finally
@@ -258,17 +258,17 @@ public class ItemJpaController implements Serializable, JpaPersistence
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro a new transaccion
+        // Open a transaction.
         tx = em.getTransaction();
         tx.begin();
 
-        // Creo el query
+        // Build the query.
         Query query = em.createQuery("DELETE FROM Item i WHERE i.idItem = ?1");
 
-        //Seteo el parametro 1
+        // Bind parameter 1.
         query.setParameter(1, item.getIdItem());
 
-        // Ejecuto el query
+        // Run the query.
         deleted = query.executeUpdate();
 
         // Hago commit

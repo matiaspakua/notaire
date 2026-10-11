@@ -283,27 +283,27 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
     {
         EntityManager em = getEntityManager();
 
-        List<ProcedureType> misTiposDeProcedure = null;
+        List<ProcedureType> procedureTypes = null;
 
         try
         {
             // Name of the @NamedQuery declared on ProcedureType
             Query q = em.createNamedQuery("ProcedureType.findByIdProcedureType");
 
-            //It step the name of the parametro of the query, and the valor a search.
+            // Bind the named query parameter.
             q.setParameter("idProcedureType", id);
 
-            misTiposDeProcedure = (List<ProcedureType>) q.getResultList();
+            procedureTypes = (List<ProcedureType>) q.getResultList();
 
-            if (misTiposDeProcedure != null)
+            if (procedureTypes != null)
             {
 
-                misTiposDeProcedure.get(0).setBudgetTemplateList(new ArrayList<BudgetTemplate>());
-                misTiposDeProcedure.get(0).setProcedureTemplateList(new ArrayList<ProcedureTemplate>());
-                misTiposDeProcedure.get(0).setProcedureList(new ArrayList<Procedure>());
+                procedureTypes.get(0).setBudgetTemplateList(new ArrayList<BudgetTemplate>());
+                procedureTypes.get(0).setProcedureTemplateList(new ArrayList<ProcedureTemplate>());
+                procedureTypes.get(0).setProcedureList(new ArrayList<Procedure>());
             }
 
-            return misTiposDeProcedure;
+            return procedureTypes;
 
         }
         finally
@@ -316,19 +316,19 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
     {
         EntityManager em = getEntityManager();
 
-        List<ProcedureType> misTiposDeProcedure = null;
+        List<ProcedureType> procedureTypes = null;
 
         try
         {
             // Name of the @NamedQuery declared on ProcedureType
             Query q = em.createNamedQuery("ProcedureType.findByName");
 
-            //It step the name of the parametro of the query, and the valor a search.
+            // Bind the named query parameter.
             q.setParameter("name", name);
 
-            misTiposDeProcedure = (List<ProcedureType>) q.getResultList();
+            procedureTypes = (List<ProcedureType>) q.getResultList();
 
-            return misTiposDeProcedure;
+            return procedureTypes;
 
         }
         finally

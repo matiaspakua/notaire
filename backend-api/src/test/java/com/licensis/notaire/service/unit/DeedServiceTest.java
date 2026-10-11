@@ -173,7 +173,7 @@ class DeedServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject saving deed when number leaves an unjustified salto (CU86)")
+    @DisplayName("Should reject saving a deed when the number leaves an unjustified gap (CU86)")
     void shouldRejectSaveWhenSaltoIsNotJustified() {
         Folio folio = folioConNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);

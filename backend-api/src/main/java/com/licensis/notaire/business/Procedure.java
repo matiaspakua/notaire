@@ -284,7 +284,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
         dtoSubmittedDocument.setPrepared(document.getPrepared());
         dtoSubmittedDocument.setExpires(document.getExpires());
 
-        // No se hace set de fkidtramite , porque se produce bucle
+        // Do not set the procedure id here; that would recurse.
         return dtoSubmittedDocument;
     }
 

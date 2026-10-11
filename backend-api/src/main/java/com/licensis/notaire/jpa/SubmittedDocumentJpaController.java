@@ -248,7 +248,7 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
         }
     }
 
-    public List<SubmittedDocument> findDocumentsPresentados()
+    public List<SubmittedDocument> findSubmittedDocuments()
     {
         EntityManager em = getEntityManager();
 
@@ -263,16 +263,16 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
     public List<SubmittedDocument> findDocumentsPorVencer()
     {
         EntityManager em = getEntityManager();
-        List<SubmittedDocument> listaDocumentPorVencer = new ArrayList<>();
+        List<SubmittedDocument> documentsDue = new ArrayList<>();
 
         Date dateActual = Calendar.getInstance().getTime();
 
         Query query = em.createNamedQuery("SubmittedDocument.findByDueDate");
         query.setParameter("dueDate", dateActual);
 
-        listaDocumentPorVencer = query.getResultList();
+        documentsDue = query.getResultList();
 
-        return listaDocumentPorVencer;
+        return documentsDue;
     }
 
     private Boolean findSubmittedDocument(SubmittedDocument submittedDocument)
@@ -287,11 +287,11 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
         em = getEntityManager();
         em.getTransaction().begin();
 
-        ArrayList<SubmittedDocument> listaDocumentPresentados = (ArrayList<SubmittedDocument>) this.findDocumentsPresentados();
+        ArrayList<SubmittedDocument> submittedDocuments = (ArrayList<SubmittedDocument>) this.findSubmittedDocuments();
 
-        for (int i = 0; i < listaDocumentPresentados.size() && !flag; i++)
+        for (int i = 0; i < submittedDocuments.size() && !flag; i++)
         {
-            SubmittedDocument submittedDocumentPersist = listaDocumentPresentados.get(i);
+            SubmittedDocument submittedDocumentPersist = submittedDocuments.get(i);
             int idProcedurePersist = submittedDocumentPersist.getFkIdProcedure().getIdProcedure();
             String nameDocumentPersist = submittedDocumentPersist.getName();
 

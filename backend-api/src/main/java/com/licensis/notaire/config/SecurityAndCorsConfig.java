@@ -248,13 +248,13 @@ public class SecurityAndCorsConfig {
         }
         if (Arrays.asList(allowedHeaders).contains("*")) {
             throw new IllegalStateException(
-                    "cors.allowed-headers cannot be '*' in producción. "
-                    + "Configurá a lista explícita of headers permitidos.");
+                    "cors.allowed-headers cannot be '*' in production. "
+                    + "Configure an explicit allow-list of headers.");
         }
         if (Arrays.asList(allowedOrigins).contains("*")) {
             throw new IllegalStateException(
-                    "cors.allowed-origins cannot be '*' in producción. "
-                    + "Configurá the orígenes of the frontend explícitamente.");
+                    "cors.allowed-origins cannot be '*' in production. "
+                    + "Configure the frontend origins explicitly.");
         }
     }
 

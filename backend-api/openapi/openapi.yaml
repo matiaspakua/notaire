@@ -388,10 +388,6 @@ components:
           items:
             $ref: '#/components/schemas/DtoItem'
           type: array
-        listaProcedures:
-          items:
-            $ref: '#/components/schemas/DtoProcedure'
-          type: array
         notes:
           type: string
         number:
@@ -399,6 +395,10 @@ components:
           type: integer
         person:
           $ref: '#/components/schemas/DtoPerson'
+        procedures:
+          items:
+            $ref: '#/components/schemas/DtoProcedure'
+          type: array
         propertyAmount:
           type: number
         saldo:
@@ -1739,14 +1739,6 @@ components:
           format: int32
           type: integer
       type: object
-    IniciarDeedRequest:
-      properties:
-        body:
-          type: string
-        idFolio:
-          format: int32
-          type: integer
-      type: object
     ItemRequest:
       properties:
         budgetId:
@@ -2491,6 +2483,14 @@ components:
         unsorted:
           type: boolean
       type: object
+    StartDeedRequest:
+      properties:
+        body:
+          type: string
+        idFolio:
+          format: int32
+          type: integer
+      type: object
     SubmitRequest:
       properties:
         dateSubmission:
@@ -2854,17 +2854,17 @@ paths:
                   $ref: '#/components/schemas/FolioResponse'
                 type: array
           description: OK
-      summary: Listar folios de Protocolo Auxiliar disponibles
+      summary: List available auxiliary-protocol folios
       tags:
-      - Protocolo Auxiliar
+      - Auxiliary protocol
   /api/v1/auxiliary-protocol/deeds:
     post:
-      operationId: iniciarDeed
+      operationId: startDeed
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/IniciarDeedRequest'
+              $ref: '#/components/schemas/StartDeedRequest'
         required: true
       responses:
         '201':
@@ -2872,7 +2872,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Creada
+          description: Created
         '400':
           content:
             '*/*':
@@ -2887,7 +2887,7 @@ paths:
           description: Folio not found
       summary: Start a deed of Auxiliary protocol on a folio available
       tags:
-      - Protocolo Auxiliar
+      - Auxiliary protocol
   /api/v1/budget-templates:
     get:
       operationId: getAll_21
@@ -3635,7 +3635,7 @@ paths:
     get:
       operationId: getAll_18
       parameters:
-      - description: Deed status (any uppercase/lowercase; another valor responde 400). Without this parámetro listan all.
+      - description: Deed status (any letter case; any other value responds 400). Without this parameter, every deed is listed.
         in: query
         name: status
         required: false
@@ -7182,7 +7182,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-          description: Parámetro invalid
+          description: Invalid parameter
         '404':
           content:
             application/json:
@@ -7190,7 +7190,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Budget not found
         '500':
-          description: Error inesperado al generar el PDF (sin cuerpo)
+          description: Unexpected error generating the PDF (no body)
       summary: Generate reporte of budget with properties
       tags:
       - Reportes
@@ -7221,7 +7221,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-          description: Parámetro invalid
+          description: Invalid parameter
         '404':
           content:
             application/json:
@@ -7229,7 +7229,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Budget not found
         '500':
-          description: Error inesperado al generar el PDF (sin cuerpo)
+          description: Unexpected error generating the PDF (no body)
       summary: Generate reporte of budget
       tags:
       - Reportes
@@ -7260,7 +7260,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-          description: Parámetro invalid
+          description: Invalid parameter
         '404':
           content:
             application/json:
@@ -7268,7 +7268,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: There is no management with that number
         '500':
-          description: Error inesperado al generar el PDF (sin cuerpo)
+          description: Unexpected error generating the PDF (no body)
       summary: Generar reporte de consulta de deuda de documentos
       tags:
       - Reportes
@@ -7299,7 +7299,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-          description: Parámetro invalid
+          description: Invalid parameter
         '404':
           content:
             application/json:
@@ -7307,7 +7307,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Submitted document not found
         '500':
-          description: Error inesperado al generar el PDF (sin cuerpo)
+          description: Unexpected error generating the PDF (no body)
       summary: Generate reporte of documents by vencer
       tags:
       - Reportes
@@ -7363,7 +7363,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-          description: Parámetro invalid
+          description: Invalid parameter
         '404':
           content:
             application/json:
@@ -7371,7 +7371,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Management not found
         '500':
-          description: Error inesperado al generar el PDF (sin cuerpo)
+          description: Unexpected error generating the PDF (no body)
       summary: Generate reporte of management history
       tags:
       - Reportes
@@ -7442,8 +7442,8 @@ paths:
       - Reportes
   /api/v1/reports/procedure-document-list:
     get:
-      description: Generates a PDF with the documents that requires a procedure type according to its template (expiration,
-        days of validez and who the entrega)
+      description: Generates a PDF with the documents a procedure type requires according to its template (expiration, validity
+        days, and who delivers them)
       operationId: generateProcedureDocumentsListReport
       parameters:
       - description: Name of the procedure type
@@ -7466,7 +7466,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-          description: Parámetro invalid
+          description: Invalid parameter
         '404':
           content:
             application/json:
@@ -7474,8 +7474,8 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: Procedure type not found
         '500':
-          description: Error inesperado al generar el PDF (sin cuerpo)
-      summary: Generate reporte of lista of documents by procedure
+          description: Unexpected error generating the PDF (no body)
+      summary: Generate the document list report for a procedure
       tags:
       - Reportes
   /api/v1/reports/registration-draft/{idRegistrationDraft}:
@@ -9195,8 +9195,6 @@ tags:
   name: Property
 - description: CU70/CU71 - Nodos de workflows de estados
   name: Workflow Node
-- description: API for managing procedures in Auxiliary protocol
-  name: Protocolo Auxiliar
 - description: API for querying audit of users (only lectura; mutaciones denegadas)
   name: AuditRecord
 - description: API for generating PDF reports
@@ -9209,5 +9207,7 @@ tags:
   name: Managements
 - description: API for managing users
   name: Users
+- description: API for managing procedures in the auxiliary protocol
+  name: Auxiliary protocol
 - description: API for managing costos esperados of documents by procedure type
   name: PlantillaCostosDocumento

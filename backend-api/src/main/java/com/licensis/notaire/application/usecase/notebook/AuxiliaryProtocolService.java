@@ -36,7 +36,7 @@ public class AuxiliaryProtocolService {
         return folioRepository.findMaxNumberDeedAuxiliary().orElse(0) + 1;
     }
 
-    public Deed iniciarDeed(Integer idFolio, String body, Date dateDeedrecording) {
+    public Deed startDeed(Integer idFolio, String body, Date dateDeedrecording) {
         if (idFolio == null) {
             throw new BusinessValidationException("Must indicar the folio auxiliar where start the deed");
         }

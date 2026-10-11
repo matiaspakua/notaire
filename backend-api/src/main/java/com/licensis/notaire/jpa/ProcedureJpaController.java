@@ -517,16 +517,16 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
             }
-            List<Procedure> listaProcedures = q.getResultList();
+            List<Procedure> procedures = q.getResultList();
 
-            for (Iterator<Procedure> it = listaProcedures.iterator(); it.hasNext();)
+            for (Iterator<Procedure> it = procedures.iterator(); it.hasNext();)
             {
                 Procedure procedure = it.next();
                 procedure.setPersonList(new ArrayList<Person>());
                 procedure.setSubmittedDocumentList(new ArrayList<SubmittedDocument>());
             }
 
-            return listaProcedures;
+            return procedures;
         }
         finally
         {

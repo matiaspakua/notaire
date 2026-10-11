@@ -890,7 +890,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
      */
     public Person findPersonTypeIdentificationNumber(DtoPerson dtoPerson) {
         EntityManager em = getEntityManager();
-        List<Person> listaPerson = null;
+        List<Person> people = null;
         Person person = null;
         // Resolve the identification type name to its id before the lookup.
         dtoPerson.getDtoIdentificationType().setIdIdentificationType(
@@ -902,12 +902,12 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         Query query = em.createNamedQuery("Person.findByIdentificationNumber");
         query.setParameter("identificationNumber", identificationNumber);
 
-        listaPerson = query.getResultList();
+        people = query.getResultList();
 
-        if (!listaPerson.isEmpty()) {
-            for (int i = 0; i < listaPerson.size(); i++) {
-                if (listaPerson.get(i).getFkIdIdentificationType().getIdIdentificationType() == idIdentificationType) {
-                    person = listaPerson.get(i);
+        if (!people.isEmpty()) {
+            for (int i = 0; i < people.size(); i++) {
+                if (people.get(i).getFkIdIdentificationType().getIdIdentificationType() == idIdentificationType) {
+                    person = people.get(i);
                 }
 
             }
@@ -926,7 +926,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
         EntityManager em = getEntityManager();
 
-        List<Person> listaPerson = null;
+        List<Person> people = null;
         Person person = null;
         String name = "%" + dtoPerson.getFirstName() + "%";
         String lastName = "%" + dtoPerson.getLastName() + "%";
@@ -935,9 +935,9 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         query.setParameter("name", name);
         query.setParameter("lastName", lastName);
 
-        listaPerson = query.getResultList();
+        people = query.getResultList();
 
-        return listaPerson;
+        return people;
     }
 
     /**
@@ -948,16 +948,16 @@ public class PersonJpaController implements Serializable, JpaPersistence {
     public List<Person> findPersons() {
         EntityManager em = getEntityManager();
 
-        List<Person> listaPerson = null;
+        List<Person> people = null;
         Person person = null;
         try {
             Query query = em.createNamedQuery("Person.findAll");
 
-            listaPerson = query.getResultList();
+            people = query.getResultList();
         } catch (PersistenceException ex) {
             ex.printStackTrace();
         }
-        return listaPerson;
+        return people;
     }
 
     /**
@@ -970,16 +970,16 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
         EntityManager em = getEntityManager();
 
-        List<Person> listaPerson = null;
+        List<Person> people = null;
         Person person = null;
 
         Query query = em.createNamedQuery("Person.findByNotaryRegistrationNumber");
         query.setParameter("notaryRegistrationNumber", notary.getNotaryRegistrationNumber());
 
-        listaPerson = query.getResultList();
+        people = query.getResultList();
 
-        if (listaPerson != null) {
-            person = listaPerson.get(0);
+        if (people != null) {
+            person = people.get(0);
         }
 
         return person;

@@ -259,19 +259,19 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
     {
         EntityManager em = getEntityManager();
 
-        List<BudgetTemplate> misPlantillas = null;
+        List<BudgetTemplate> templates = null;
 
         try
         {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Named query declared on the entity.
             Query q = em.createNamedQuery("BudgetTemplate.findByFkIdProcedureType");
 
-            //It step the name of the parametro of the query, and the valor a search.
+            // Bind the named query parameter.
             q.setParameter("fkIdProcedureType", idProcedureType);
 
-            misPlantillas = (List<BudgetTemplate>) q.getResultList();
+            templates = (List<BudgetTemplate>) q.getResultList();
 
-            return misPlantillas;
+            return templates;
 
         }
         finally
@@ -289,7 +289,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro a new transaccion
+        // Open a transaction.
         tx = em.getTransaction();
         tx.begin();
 
@@ -298,14 +298,14 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
         if (budgetTemplate != null)
         {
 
-            // Creo el query
+            // Build the query.
             Query query = em.createQuery("DELETE FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdProcedureType = ?1 AND  p.budgetTemplatePK.fkIdConcept = ?2");
 
-            //Seteo el parametro 1 y 2
+            // Bind parameters 1 and 2.
             query.setParameter(1, template.getBudgetTemplatePK().getFkIdProcedureType());
             query.setParameter(2, template.getBudgetTemplatePK().getFkIdConcept());
 
-            // Ejecuto el query
+            // Run the query.
             deleted = query.executeUpdate();
 
             // Hago commit

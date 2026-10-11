@@ -61,7 +61,7 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should require justificación when the number leaves a gap")
+    @DisplayName("Should require a justification when the number leaves a gap")
     void shouldRequireJustificationForGap() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
@@ -73,7 +73,7 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should accept a gap when a justificación is provided")
+    @DisplayName("Should accept a gap when a justification is provided")
     void shouldAcceptGapWithJustification() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);

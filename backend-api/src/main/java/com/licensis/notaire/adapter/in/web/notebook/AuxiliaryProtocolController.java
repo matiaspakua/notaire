@@ -27,36 +27,36 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/auxiliary-protocol")
-@Tag(name = "Protocolo Auxiliar", description = "API for managing procedures in Auxiliary protocol")
+@Tag(name = "Auxiliary protocol", description = "API for managing procedures in the auxiliary protocol")
 public class AuxiliaryProtocolController {
 
-    private final AuxiliaryProtocolService protocoloAuxiliaryService;
+    private final AuxiliaryProtocolService auxiliaryProtocolService;
 
-    public AuxiliaryProtocolController(AuxiliaryProtocolService protocoloAuxiliaryService) {
-        this.protocoloAuxiliaryService = protocoloAuxiliaryService;
+    public AuxiliaryProtocolController(AuxiliaryProtocolService auxiliaryProtocolService) {
+        this.auxiliaryProtocolService = auxiliaryProtocolService;
     }
 
-    public record IniciarDeedRequest(Integer idFolio, String body) {
+    public record StartDeedRequest(Integer idFolio, String body) {
     }
 
     @GetMapping("/available-folios")
-    @Operation(summary = "Listar folios de Protocolo Auxiliar disponibles")
+    @Operation(summary = "List available auxiliary-protocol folios")
     @Transactional(readOnly = true)
     public ResponseEntity<List<FolioResponse>> getAvailableFolios() {
         return ResponseEntity.ok(
-                protocoloAuxiliaryService.listAvailableFolios().stream().map(FolioResponse::from).toList());
+                auxiliaryProtocolService.listAvailableFolios().stream().map(FolioResponse::from).toList());
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creada"),
+        @ApiResponse(responseCode = "201", description = "Created"),
         @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "404", description = "Folio not found")
     })
     @PostMapping("/deeds")
     @Operation(summary = "Start a deed of Auxiliary protocol on a folio available")
-    public ResponseEntity<Object> iniciarDeed(@RequestBody IniciarDeedRequest request) {
+    public ResponseEntity<Object> startDeed(@RequestBody StartDeedRequest request) {
         try {
-            Deed created = protocoloAuxiliaryService.iniciarDeed(
+            Deed created = auxiliaryProtocolService.startDeed(
                     request.idFolio(), request.body(), new Date());
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (BusinessValidationException e) {

@@ -282,10 +282,10 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
 
         try
         {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Named query declared on the entity.
             Query q = em.createNamedQuery("DocumentType.findByName");
 
-            //It step the name of the parametro of the query, and the valor a search.
+            // Bind the named query parameter.
             q.setParameter("name", name);
 
             documentType = (List<DocumentType>) q.getResultList();

@@ -214,19 +214,19 @@ public class PaymentJpaController implements Serializable, JpaPersistence
     {
         EntityManager em = getEntityManager();
 
-        List<Payment> misPayments = null;
+        List<Payment> payments = null;
 
         try
         {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Named query declared on the entity.
             Query q = em.createNamedQuery("Payment.findByBudget");
 
-            //It step the name of the parametro of the query, and the valor a search.
+            // Bind the named query parameter.
             q.setParameter("idBudget", pIdBudget);
 
-            misPayments = (List<Payment>) q.getResultList();
+            payments = (List<Payment>) q.getResultList();
 
-            return misPayments;
+            return payments;
 
         }
         finally

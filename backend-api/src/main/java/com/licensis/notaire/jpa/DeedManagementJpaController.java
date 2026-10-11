@@ -385,12 +385,12 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         Query query = em.createNamedQuery("DeedManagement.findByNumber");
         query.setParameter("number", numberDeedManagement);
 
-        List<DeedManagement> listaGestiones = query.getResultList();
+        List<DeedManagement> managements = query.getResultList();
 
-        if (!listaGestiones.isEmpty())
+        if (!managements.isEmpty())
         {
             // exists the management indicada
-            return listaGestiones.get(0);
+            return managements.get(0);
         }
 
         DeedManagement emptyManagement = new DeedManagement();
@@ -406,12 +406,12 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         Query query = em.createNamedQuery("DeedManagement.findByIdManagement");
         query.setParameter("idManagement", idManagement);
 
-        List<DeedManagement> listaGestiones = query.getResultList();
+        List<DeedManagement> managements = query.getResultList();
 
-        if (!listaGestiones.isEmpty())
+        if (!managements.isEmpty())
         {
             // exists the management indicada
-            return listaGestiones.get(0);
+            return managements.get(0);
         }
 
         DeedManagement emptyManagement = new DeedManagement();
@@ -479,12 +479,12 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     {
         EntityManager em = getEntityManager();
 
-        List<DeedManagement> listaGestiones = null;
+        List<DeedManagement> managements = null;
         Person person = null;
         Query query = em.createNamedQuery("DeedManagement.findAll");
-        listaGestiones = query.getResultList();
+        managements = query.getResultList();
 
-        return listaGestiones;
+        return managements;
     }
 
     public boolean archivingManagements(DeedManagement pGestioneDeEscrituras) throws ClassModifiedException

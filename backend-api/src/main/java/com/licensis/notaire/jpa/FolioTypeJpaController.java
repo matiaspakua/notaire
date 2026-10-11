@@ -220,9 +220,9 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
     public boolean checkFolioTypeExists(String name)
     {
 
-        List<FolioType> listaTypeDeFolios = this.findFolioTypeEntities();
+        List<FolioType> folioTypes = this.findFolioTypeEntities();
 
-        for (Iterator<FolioType> it = listaTypeDeFolios.iterator(); it.hasNext();)
+        for (Iterator<FolioType> it = folioTypes.iterator(); it.hasNext();)
         {
             FolioType folioType = it.next();
 

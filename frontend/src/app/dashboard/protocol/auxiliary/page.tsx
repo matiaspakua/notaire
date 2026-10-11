@@ -40,7 +40,7 @@ export default function ProtocoloAuxiliarPage() {
     if (!selectedFolio) return;
     setSaving(true);
     try {
-      // Backend body is IniciarDeedRequest(idFolio, body) — not cuerpo.
+      // Backend body is StartDeedRequest(idFolio, body).
       await apiPost<Deed>("/auxiliary-protocol/deeds", {
         idFolio: selectedFolio.idFolio,
         body: cuerpo,

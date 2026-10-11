@@ -209,9 +209,9 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
     public boolean verifyManagementStatusExists(String nameStatus) {
         boolean result = false;
 
-        List<ManagementStatus> listaEstadosDeGestiones = this.findManagementStatusEntities();
+        List<ManagementStatus> managementStatuses = this.findManagementStatusEntities();
 
-        for (Iterator<ManagementStatus> it = listaEstadosDeGestiones.iterator(); it.hasNext();) {
+        for (Iterator<ManagementStatus> it = managementStatuses.iterator(); it.hasNext();) {
             ManagementStatus managementStatus = it.next();
 
             if (managementStatus.getName().equals(nameStatus)) {

@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English list locals and auxiliary-protocol operation** (#1490, CU75):
+  list locals use English names. Starting an auxiliary-protocol deed is
+  `startDeed`. Budget JSON uses `procedures`. Deed-number and CORS messages
+  are English. The PDF filename `lista_documentos.pdf` stays. Message catalog
+  keys stay.
 - **English locals and debug labels** (#1490, CU75): `mi`-prefixed locals,
   `created`, and `modified` replace the Spanish names. Entity `toString`
   labels are English (`number`, `year`, `status`, `lastName`). Message

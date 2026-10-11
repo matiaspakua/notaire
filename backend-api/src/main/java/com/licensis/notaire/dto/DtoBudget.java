@@ -22,7 +22,7 @@ public class DtoBudget implements ValidDto {
     private String notes;
     private Integer version = 0;
     private DtoPerson person;
-    private List<DtoProcedure> listaProcedures = new ArrayList<>();
+    private List<DtoProcedure> procedures = new ArrayList<>();
     private List<DtoItem> items = new ArrayList<>();
 
     public DtoBudget() {
@@ -100,12 +100,12 @@ public class DtoBudget implements ValidDto {
         this.person = persons;
     }
 
-    public List<DtoProcedure> getListaProcedures() {
-        return this.listaProcedures;
+    public List<DtoProcedure> getProcedures() {
+        return this.procedures;
     }
 
-    public void setListaProcedures(List<DtoProcedure> procedures) {
-        this.listaProcedures = procedures;
+    public void setProcedures(List<DtoProcedure> procedures) {
+        this.procedures = procedures;
     }
 
     public List<DtoItem> getItems() {

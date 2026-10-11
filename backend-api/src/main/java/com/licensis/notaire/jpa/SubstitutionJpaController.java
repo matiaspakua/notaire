@@ -204,16 +204,16 @@ public class SubstitutionJpaController implements Serializable, JpaPersistence
 
     public List<Substitution> findSubstitutionsByYear(Substitution unaSubstitution)
     {
-        List<Substitution> listaSuplencias = new ArrayList<>();
+        List<Substitution> substitutions = new ArrayList<>();
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("Substitution.findSubstitutionsByYear");
         query.setParameter("startDate", unaSubstitution.getDateStart());
         query.setParameter("endDate", unaSubstitution.getDateEnd());
 
-        listaSuplencias = query.getResultList();
+        substitutions = query.getResultList();
 
-        return listaSuplencias;
+        return substitutions;
     }
 
     public Substitution findSubstitution(Integer id)

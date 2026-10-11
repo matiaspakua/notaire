@@ -402,14 +402,14 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
     public List<PersonProcedure> findClientProcedures(Integer idPerson, Integer idProcedure)
     {
         EntityManager em = getEntityManager();
-        List<PersonProcedure> listaPersonProcedure = null;
+        List<PersonProcedure> personProcedures = null;
         Query query = em.createNamedQuery("PersonProcedure.findByProcedureClient");
         query.setParameter("fkIdClientPerson", idPerson);
         query.setParameter("fkIdProcedure", idProcedure);
 
-        listaPersonProcedure = query.getResultList();
+        personProcedures = query.getResultList();
 
-        return listaPersonProcedure;
+        return personProcedures;
     }
 
     @Override

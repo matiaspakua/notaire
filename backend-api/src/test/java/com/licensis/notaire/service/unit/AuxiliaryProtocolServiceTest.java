@@ -33,11 +33,11 @@ class AuxiliaryProtocolServiceTest {
     @Mock
     private DeedOperationPort deedRepository;
 
-    private AuxiliaryProtocolService protocoloAuxiliaryService;
+    private AuxiliaryProtocolService auxiliaryProtocolService;
 
     @BeforeEach
     void setUp() {
-        protocoloAuxiliaryService = new AuxiliaryProtocolService(folioRepository, deedRepository);
+        auxiliaryProtocolService = new AuxiliaryProtocolService(folioRepository, deedRepository);
     }
 
     private Folio folioAuxiliaryDisponible() {
@@ -50,13 +50,13 @@ class AuxiliaryProtocolServiceTest {
     }
 
     @Test
-    @DisplayName("Should keep auxiliar numbering independent from the numeración of Protocolo Principal")
+    @DisplayName("Should keep auxiliary numbering independent of the main protocol numbering")
     void shouldKeepAuxiliaryNumberingIndependentFromPrincipal() {
         when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.of(5));
 
-        int siguiente = protocoloAuxiliaryService.calculateNextNumberAuxiliary();
+        int nextNumber = auxiliaryProtocolService.calculateNextNumberAuxiliary();
 
-        assertThat(siguiente).isEqualTo(6);
+        assertThat(nextNumber).isEqualTo(6);
     }
 
     @Test
@@ -64,9 +64,9 @@ class AuxiliaryProtocolServiceTest {
     void shouldStartAuxiliaryNumberingAtOne() {
         when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.empty());
 
-        int siguiente = protocoloAuxiliaryService.calculateNextNumberAuxiliary();
+        int nextNumber = auxiliaryProtocolService.calculateNextNumberAuxiliary();
 
-        assertThat(siguiente).isEqualTo(1);
+        assertThat(nextNumber).isEqualTo(1);
     }
 
     @Test
@@ -77,7 +77,7 @@ class AuxiliaryProtocolServiceTest {
         when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.empty());
         when(deedRepository.save(any(Deed.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Deed result = protocoloAuxiliaryService.iniciarDeed(1, "body of the acta", new Date());
+        Deed result = auxiliaryProtocolService.startDeed(1, "body of the acta", new Date());
 
         assertThat(result.getProcedureList()).isNullOrEmpty();
     }
@@ -91,7 +91,7 @@ class AuxiliaryProtocolServiceTest {
         folio.setFkIdFolioType(principal);
         when(folioRepository.findById(2)).thenReturn(Optional.of(folio));
 
-        assertThatThrownBy(() -> protocoloAuxiliaryService.iniciarDeed(2, "body", new Date()))
+        assertThatThrownBy(() -> auxiliaryProtocolService.startDeed(2, "body", new Date()))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
@@ -102,14 +102,14 @@ class AuxiliaryProtocolServiceTest {
         folio.setFkIdDeed(new Deed(99));
         when(folioRepository.findById(1)).thenReturn(Optional.of(folio));
 
-        assertThatThrownBy(() -> protocoloAuxiliaryService.iniciarDeed(1, "body", new Date()))
+        assertThatThrownBy(() -> auxiliaryProtocolService.startDeed(1, "body", new Date()))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
     @Test
     @DisplayName("Should reject starting an deed when no idFolio is provided")
     void shouldRejectDeedWhenNoFolioIndicated() {
-        assertThatThrownBy(() -> protocoloAuxiliaryService.iniciarDeed(null, "body", new Date()))
+        assertThatThrownBy(() -> auxiliaryProtocolService.startDeed(null, "body", new Date()))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
@@ -118,7 +118,7 @@ class AuxiliaryProtocolServiceTest {
     void shouldRejectDeedWhenFolioNotFound() {
         when(folioRepository.findById(99)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> protocoloAuxiliaryService.iniciarDeed(99, "body", new Date()))
+        assertThatThrownBy(() -> auxiliaryProtocolService.startDeed(99, "body", new Date()))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

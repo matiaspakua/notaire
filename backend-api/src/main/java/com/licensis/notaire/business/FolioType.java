@@ -27,13 +27,10 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase that representa a folio type in particular that can be for the protocolo: principal,
- * auxiliar, etc.
+ * A folio type, such as the main protocol or the auxiliary protocol.
  * <p>
- * REGLA DE NEGOCIO<p>
- * <li> The tipos of folios not can delete (debido a
- * that has that mantener a historia of the mismos), by it tanto, only it can cambiar the
- * estado a "INHABILITADO". </li>
+ * Business rule: folio types are not deleted, so the history of existing
+ * folios stays intact. A type can only be marked disabled.
  */
 @Entity
 @Table(name = "folio_types")

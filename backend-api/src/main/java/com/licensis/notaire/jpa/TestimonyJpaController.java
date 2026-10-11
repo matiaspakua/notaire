@@ -361,14 +361,14 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
     public List<Testimony> findTestimoniesDeed(Integer idDeed)
     {
         EntityManager em = getEntityManager();
-        List<Testimony> lista = null;
+        List<Testimony> testimonies = null;
 
         Query query = em.createNamedQuery("Testimony.findByDeed");
         query.setParameter("idDeed", idDeed);
 
-        lista = (List<Testimony>) query.getResultList();
+        testimonies = (List<Testimony>) query.getResultList();
 
-        return lista;
+        return testimonies;
     }
 
     public Testimony findTestimonyById(Integer idTestimony)
@@ -414,7 +414,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
                 em.close();
                 flag = true;
             }
-        } else //If was eliminado dispara a excepcion
+        } else // A missing row raises an exception.
         {
             throw new ClassEliminatedException();
         }

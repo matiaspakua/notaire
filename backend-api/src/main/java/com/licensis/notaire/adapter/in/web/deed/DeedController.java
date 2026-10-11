@@ -113,8 +113,8 @@ public class DeedController {
     @Operation(summary = "Get all deeds, optionally only the of a status")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<DeedResponse>> getAll(
-            @Parameter(description = "Deed status (any uppercase/lowercase; another valor responde 400). "
-                    + "Without this parámetro listan all.",
+            @Parameter(description = "Deed status (any letter case; any other value responds 400). "
+                    + "Without this parameter, every deed is listed.",
                     schema = @Schema(allowableValues = {"Sin Firmar", "Firmada", "Anulada", "No Paso", "Inscripta"}))
             @RequestParam(required = false) String status,
             @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
