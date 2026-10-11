@@ -14,11 +14,11 @@ Notaire enforces validation at two layers:
 Use `jakarta.validation` annotations on request DTOs or `@RequestBody` records:
 
 ```java
-public record UsuarioRequest(
-    @NotBlank String nombre,
-    @Size(min = 0, max = 255) String contrasenia,
-    @NotBlank String tipo,
-    boolean activo
+public record UserRequest(
+    @NotBlank String name,
+    @Size(min = 0, max = 255) String password,
+    @NotBlank String type,
+    boolean active
 ) {}
 ```
 
@@ -26,7 +26,7 @@ Activate with `@Valid` on the parameter:
 
 ```java
 @PostMapping
-public ResponseEntity<?> create(@Valid @RequestBody UsuarioRequest request) { ... }
+public ResponseEntity<?> create(@Valid @RequestBody UserRequest request) { ... }
 ```
 
 ### Annotation reference by field type

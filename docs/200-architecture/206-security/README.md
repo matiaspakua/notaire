@@ -35,7 +35,7 @@ application data.
 |----------|----------|--------------|
 | PII | `Person` (DNI, email, nombre/apellido) | High — regulated personal data |
 | Legal/notarial records | `Deed`, `Testimony`, `Folio`, `SubmittedDocument` | High — legally binding, indefinite retention |
-| Financial | `Presupuesto`, `Payment` | Medium — budget/payment amounts, no card data stored |
+| Financial | `Budget`, `Payment` | Medium — budget/payment amounts, no card data stored |
 | Operational | `AuditRecord`, `ManagementHistory` | Medium — who-did-what audit trail, itself a control |
 | Credentials | `UserAccount.password` (BCrypt hash) | Critical |
 
@@ -47,14 +47,14 @@ application data.
 | Credential leakage via defaults | `ProductionCredentialsGuard` blocks startup on default `.env` values in production | Only catches the literal `"admin"` default, not weak passwords generally — see [ADR-019](../202-ADR/ADR-019-secrets-management.md) |
 | API surface reconnaissance | Swagger UI/spec denied in production | Non-production environments remain fully open — see [ADR-020](../202-ADR/ADR-020-openapi-exposure-policy.md) |
 | SQL injection | JPA/Hibernate parameterized queries throughout (see [SQL Injection Prevention](SQL-INJECTION-PREVENTION.md)) | None known |
-| Tampering with audit trail | `RegistroAuditoriaService` records acting user from `SecurityContextHolder` (JWT identity), never a client-supplied header | GETs are not audited (read access to PII is not logged) |
+| Tampering with audit trail | `AuditRecordService` records acting user from `SecurityContextHolder` (JWT identity), never a client-supplied header | GETs are not audited (read access to PII is not logged) |
 
 For the two highest-risk subsystems — authentication and the audit trail —
 this table is superseded by a formal STRIDE threat model:
 [THREAT-MODEL-AUTH-AUDIT.md](THREAT-MODEL-AUTH-AUDIT.md), with numbered
 security requirements (`SR-01`..`SR-10`) and an explicit
 Mitigated/Partial/Open status per threat. Other subsystems (e.g.
-Deed/Testimony legal documents, Presupuesto financial data) are not
+Deed/Testimony legal documents, budget financial data) are not
 yet covered by a formal threat model — see the SAD's Risks and Technical
 Debt, §11.1, and issue #1028's follow-up recommendations.
 

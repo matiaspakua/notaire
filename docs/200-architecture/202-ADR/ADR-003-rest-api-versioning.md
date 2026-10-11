@@ -45,15 +45,15 @@ Implementar versionado de API mediante **URL path versioning** con **semantic ve
 ```java
 @RestController
 @RequestMapping("/api/v1")
-public class PresupuestoController {
+public class BudgetController {
     @GetMapping("/budgets")
-    public ResponseEntity<ApiResponse<List<DtoPresupuesto>>> list() { }
+    public ResponseEntity<ApiResponse<List<DtoBudget>>> list() { }
     
     @GetMapping("/budgets/{id}")
-    public ResponseEntity<ApiResponse<DtoPresupuesto>> getById() { }
+    public ResponseEntity<ApiResponse<DtoBudget>> getById() { }
     
     @PostMapping("/budgets")
-    public ResponseEntity<ApiResponse<DtoPresupuesto>> create() { }
+    public ResponseEntity<ApiResponse<DtoBudget>> create() { }
 }
 ```
 
@@ -187,15 +187,15 @@ URL versioning es simple de entender y mantener. Si necesitamos múltiples endpo
 // Backend v1 (stable)
 @RestController
 @RequestMapping("/api/v1/budgets")
-public class PresupuestoControllerV1 {
+public class BudgetControllerV1 {
     // Endpoints v1
 }
 
-// Backend v2 (future - si es necesario)
+// Backend v2 (future, if needed)
 @RestController
 @RequestMapping("/api/v2/budgets")
-public class PresupuestoControllerV2 {
-    // Endpoints v2 con breaking changes
+public class BudgetControllerV2 {
+    // v2 endpoints with breaking changes
 }
 ```
 
@@ -216,7 +216,7 @@ public class PresupuestoControllerV2 {
 ```java
 @GetMapping("/budgets")
 @Deprecated
-public ResponseEntity<?> getPresupuestos() {
+public ResponseEntity<?> getBudgets() {
     return ResponseEntity.ok()
         .header("Deprecation", "true")
         .header("Sunset", "Sun, 31 Dec 2024 23:59:59 GMT")

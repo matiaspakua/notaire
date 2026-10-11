@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English architecture type names and audit decision** (#1490, CU75):
+  The SAD, ADRs, and security notes name the current classes (`ManagementController`,
+  `AuditAspect`, `DeedManagementRepository`) and tables (`audit_records`,
+  `deed_managements`, `users`). ADR-013 and the use-case diagram index are
+  English. Stored type `Escribano` stays. Legacy `.puml` filenames stay.
 - **English endpoint registry and API test guide** (#1490, CU75):
   The REST endpoint registry names the current controllers (`DeedController`,
   `ManagementController`, `AuditRecordController`) and the current path

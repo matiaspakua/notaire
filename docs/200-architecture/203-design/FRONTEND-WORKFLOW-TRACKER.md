@@ -67,7 +67,7 @@ unbounded reingreso loop as exclusive workflow nodes.
 | `frontend/src/app/dashboard/page.tsx` (`WorkflowHero`) | Hero section: trace of the current gestión + search by número de referencia |
 | `frontend/src/components/motion/WorkflowTracker.tsx` | SVG graph: DAG layout, animated edges, traveling dots, node modal |
 | `frontend/src/hooks/useManagementWorkflow.ts` | React Query hook for the trace endpoint |
-| `frontend/src/hooks/useManagements.ts` (`useGestionByNumero`) | Lookup gestión by número for the search form |
+| `frontend/src/hooks/useManagements.ts` (`useManagementByNumber`) | Look up a management by number for the search form |
 
 ### Visualization
 
@@ -89,8 +89,8 @@ existed. Fixed by returning read-model DTOs:
 
 | Endpoint | Fix |
 |----------|-----|
-| `GET /managements`, `/managements/{id}`, `/managements/number/{n}` | `DtoGestionSummary` via `GestionQueryService` (`@Transactional(readOnly=true)`) |
-| `GET /history`, `/history/{id}`, `/history/management/{id}`, `/managements/{id}/current-status` | `DtoHistorialSummary` (the entity's eager gestión back-reference is circular) |
+| `GET /managements`, `/managements/{id}`, `/managements/number/{n}` | `DtoManagementSummary` via `ManagementQueryService` (`@Transactional(readOnly=true)`) |
+| `GET /history`, `/history/{id}`, `/history/management/{id}`, `/managements/{id}/current-status` | `DtoHistorySummary` (the entity's eager gestión back-reference is circular) |
 | `GET /procedure-types` (+ `/search`, `/{id}`) | `@Transactional(readOnly=true)` so `getDto()` can read the lazy `workflowDefinition` |
 
 `ProcedureType.getWorkflowDefinition()` is now `@JsonIgnore`, matching the

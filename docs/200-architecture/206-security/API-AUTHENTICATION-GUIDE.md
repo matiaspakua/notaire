@@ -9,7 +9,7 @@ Notaire uses **JWT (JSON Web Tokens)** for stateless API authentication, impleme
 ## Architecture
 
 ```text
-Client ──POST /api/v1/users/login──► UsuarioController
+Client ──POST /api/v1/users/login──► UserController
                                               │
                                     ──────────▼──────────
                                     │ passwordMatches()   │
@@ -112,11 +112,11 @@ boolean valid = jwtTokenService.isValid(token);
 
 ```json
 {
-  "valido": true,
-  "idUsuario": 1,
-  "nombre": "admin",
-  "tipo": "Escribano",
-  "estado": true,
+  "valid": true,
+  "idUser": 1,
+  "name": "admin",
+  "type": "Escribano",
+  "status": true,
   "token": "eyJhbGciOiJIUzI1NiJ9..."
 }
 ```
@@ -130,7 +130,7 @@ UserAccount ──M:1──► Role
 Role     ──name, description──► (ENUM: Escribano, Secretario, Admin, ...)
 ```
 
-The `Role` entity is stored in the `roles` table. `UsuarioController` exposes the role in the `UsuarioResponse` DTO.
+The `Role` entity is stored in the `roles` table. `UserController` exposes the role in the `UserResponse` DTO.
 
 ### Current state
 

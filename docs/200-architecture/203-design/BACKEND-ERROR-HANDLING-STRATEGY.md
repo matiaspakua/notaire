@@ -113,7 +113,7 @@ Rate limiting is a separate case with its own distinct status: once
 `LoginAttemptService` locks an account out, the endpoint returns **429** (Too
 Many Requests) with a `message` field describing the lockout — not 200 and
 not 423 (Locked), which issue #685 originally assumed before its own
-verification against `UsuarioController.login()` corrected it. The frontend
+verification against `UserController.login()` corrected it. The frontend
 reads this `message` field to show a lockout-specific error instead of a
 generic one (issue #756).
 
@@ -158,7 +158,7 @@ private int version = 0;
 
 **Key rule**: never pass the raw client request body directly to an update
 method — always fetch the current entity first and apply changes onto it, so
-the correct `@Version` is carried. See `PlantillaPresupuestoController.java`
+the correct `@Version` is carried. See `BudgetTemplateController.java`
 for the reference implementation (fix for issue #340).
 
 ## Testing error paths

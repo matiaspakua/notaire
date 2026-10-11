@@ -293,14 +293,14 @@ title Building Block View — Level 2: backend-api
 package "com.licensis.notaire" {
 
   package "api\n(31 REST Controllers)" as api {
-    [GestionController]
-    [PersonaController]
-    [EscrituraController]
-    [PresupuestoController]
-    [UsuarioController]
-    [ReporteController]
+    [ManagementController]
+    [PersonController]
+    [DeedController]
+    [BudgetController]
+    [UserController]
+    [ReportController]
     [FolioController]
-    [PagoController]
+    [PaymentController]
     [WorkflowDefinitionController]
     [WorkflowNodeController]
     [WorkflowTransitionController]
@@ -309,33 +309,33 @@ package "com.licensis.notaire" {
   }
 
   package "service\n(Business Logic)" as svc {
-    [PagoService]
-    [PersonaService]
-    [EscrituraService]
-    [PresupuestoService]
-    [ReporteService]
-    [RegistroAuditoriaService]
+    [PaymentQueryService]
+    [PersonService]
+    [DeedService]
+    [BudgetService]
+    [ReportService]
+    [AuditRecordService]
     [WorkflowTraceService]
     [WorkflowValidationService]
-    [GestionQueryService]
+    [ManagementQueryService]
     [JpaAdministrator]
     [ValidationAdministrator]
   }
 
   package "repository\n(31 Spring Data JPA)" as repo {
-    [GestionDeEscrituraRepository]
-    [PersonaRepository]
-    [EscrituraRepository]
-    [PresupuestoRepository]
-    [UsuarioRepository]
+    [DeedManagementRepository]
+    [PersonRepository]
+    [DeedRepository]
+    [BudgetRepository]
+    [UserRepository]
     [... +26 more]
   }
 
-  package "negocio\n(32 Domain Entities)" as dom #LightYellow {
+  package "business\n(32 Domain Entities)" as dom #LightYellow {
     [DeedManagement]
     [Person]
     [Deed]
-    [Presupuesto]
+    [Budget]
     [Procedure]
     [UserAccount]
     [WorkflowDefinition]
@@ -374,7 +374,7 @@ package "com.licensis.notaire" {
   }
 
   package "audit" as aud {
-    [AuditoriaAspect]
+    [AuditAspect]
     [AuditModuleResolver]
     [AuditOperationDescriber]
   }
@@ -425,7 +425,7 @@ package "frontend/src" {
   package "hooks\n(20 TanStack Query hooks)" as hooks {
     [useManagements]
     [usePeople]
-    [useEscrituras]
+    [useDeeds]
     [useBudgets]
     [usePayments]
     [useUsers]
@@ -632,66 +632,66 @@ title Runtime — User Authentication
 participant "Browser" as B
 participant "Next.js\nFrontend" as FE
 participant "SecurityAndCorsConfig\n+ JwtAuthenticationFilter" as Sec
-participant "UsuarioController" as Ctrl
+participant "UserController" as Ctrl
 participant "LoginAttemptService\n(in-memory, per-username)" as Login
-participant "AuditoriaAspect" as Audit
+participant "AuditAspect" as Audit
 participant "JwtTokenService" as JWT
 participant "PostgreSQL" as DB
 
 B -> FE : Login form submit
-FE -> Sec : POST /api/v1/user/login\n{nombre, contrasenia}
+FE -> Sec : POST /api/v1/users/login\n{name, password}
 Sec -> Ctrl : Pass through (public endpoint)
-Ctrl -> Login : isLocked(nombre)
+Ctrl -> Login : isLocked(name)
 Login --> Ctrl : locked? (ConcurrentHashMap lookup, no DB access)
 alt Too many attempts (5 failures / 15 min lockout)
   Ctrl --> FE : 429 Too Many Requests
 else
-  Ctrl -> DB : findByNombre(nombre)
-  DB --> Ctrl : UserAccount entity
-  Ctrl -> Ctrl : BCrypt.matches(contrasenia)\n(or legacy MD5 auto-migration)
+  Ctrl -> DB : find user by name
+  DB --> Ctrl : User entity
+  Ctrl -> Ctrl : BCrypt.matches(password)\n(or legacy MD5 auto-migration)
   alt Valid credentials
-    Ctrl -> Login : onLoginSucceeded(nombre)
-    Ctrl -> JWT : generateToken(nombre)
+    Ctrl -> Login : onLoginSucceeded(name)
+    Ctrl -> JWT : generateToken(name)
     JWT --> Ctrl : JWT string
-    Ctrl -> Audit : AOP around login() —\nINSERT registro_auditoria (LOGIN)
-    Audit -> DB : INSERT registro_auditoria
-    Ctrl --> FE : 200 {valido, token, idUsuario,\nnombre, estado, tipo, version, personas}
+    Ctrl -> Audit : AOP around login() —\nINSERT audit_records (LOGIN)
+    Audit -> DB : INSERT audit_records
+    Ctrl --> FE : 200 {valid, token, idUser,\nname, status, type, version, person}
     FE -> FE : Store token in localStorage\n(Zustand persist, useAuthStore)
     FE --> B : Redirect to /dashboard
   else Invalid credentials
-    Ctrl -> Login : onLoginFailed(nombre)
-    Ctrl --> FE : 200 {valido: false}
+    Ctrl -> Login : onLoginFailed(name)
+    Ctrl --> FE : 200 {valid: false}
   end
 end
 @enduml
 ```
 
-### 6.2 Create Gestión de Deed
+### 6.2 Create a deed management
 
 ```plantuml
 @startuml
-title Runtime — Crear nueva Gestión de Deed
+title Runtime — Create a deed management
 
-participant "Escribano" as User
+participant "Notary" as User
 participant "Frontend\n(Next.js)" as Client
 participant "JwtAuthFilter" as Auth
-participant "GestionController" as Ctrl
-participant "AuditoriaAspect" as Audit
-participant "GestionDeEscrituraRepository" as Repo
+participant "ManagementController" as Ctrl
+participant "AuditAspect" as Audit
+participant "DeedManagementRepository" as Repo
 participant "PostgreSQL" as DB
 
-User -> Client : Fill gestión form + submit
-Client -> Auth : POST /api/v1/management\nAuthorization: Bearer <jwt>
+User -> Client : Fill management form + submit
+Client -> Auth : POST /api/v1/managements\nAuthorization: Bearer <jwt>
 Auth -> Auth : Validate JWT signature + expiry
 Auth -> Ctrl : Authorized request (user context)
 Ctrl -> Repo : save(entity)\n(controller calls repository directly —\nno intermediate service layer for this endpoint)
-Repo -> DB : INSERT INTO gestiones_de_escrituras
+Repo -> DB : INSERT INTO deed_managements
 DB --> Repo : Generated ID
 Repo --> Ctrl : Saved entity
-Ctrl -> Audit : AOP around create() —\nINSERT INTO registro_auditoria\n(CREATE, gestion, user, timestamp)
-Audit -> DB : INSERT INTO registro_auditoria
+Ctrl -> Audit : AOP around create() —\nINSERT INTO audit_records\n(CREATE, management, user, timestamp)
+Audit -> DB : INSERT INTO audit_records
 Ctrl --> Client : 201 Created {entity}
-Client --> User : Show success + gestión number
+Client --> User : Show success + management number
 @enduml
 ```
 
@@ -881,12 +881,12 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 
 ### 8.3 Audit Trail
 
-- `AuditoriaAspect` (Spring AOP) intercepts annotated controller methods.
+- `AuditAspect` (Spring AOP) intercepts annotated controller methods.
 - `AuditModuleResolver` maps controllers to functional modules.
 - `AuditOperationDescriber` generates human-readable operation descriptions.
-- Records stored in `registro_auditoria` table.
-- Queryable via `RegistroAuditoriaController` → `/api/v1/audit`.
-- Frontend audit view at `/audit` page.
+- Records stored in the `audit_records` table.
+- Queryable via `AuditRecordController` → `/api/v1/audit-log`.
+- Frontend audit view at `/dashboard/audit`.
 
 ### 8.4 Database Schema Management
 

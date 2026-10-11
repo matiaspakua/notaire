@@ -41,7 +41,7 @@ notaire/ (pom.xml agregador)
 │   │   ├── api/              # REST Controllers
 │   │   ├── service/          # Lógica de negocio
 │   │   ├── repository/       # Spring Data JPA
-│   │   ├── negocio/          # @Entity Domain classes
+│   │   ├── business/         # @Entity Domain classes
 │   │   ├── config/           # Spring configurations
 │   │   ├── exception/        # Custom exceptions
 │   │   ├── dto/              # Response DTOs
@@ -76,11 +76,11 @@ notaire/ (pom.xml agregador)
 
 ```text
 api/
-├── PresupuestoController.java
-├── PersonaController.java
-├── EscrituraController.java
-├── GestionController.java
-├── RegistroAuditoriaController.java
+├── BudgetController.java
+├── PersonController.java
+├── DeedController.java
+├── ManagementController.java
+├── AuditRecordController.java
 └── ReporteController.java
 ```
 
@@ -88,32 +88,32 @@ api/
 
 ```text
 service/
-├── PresupuestoService.java
-├── PersonaService.java
-├── EscrituraService.java
-├── GestionService.java
-└── RegistroAuditoriaService.java
+├── BudgetService.java
+├── PersonService.java
+├── DeedService.java
+├── ManagementService.java
+└── AuditRecordService.java
 ```
 
 **repository/** (Spring Data JPA)
 
 ```text
 repository/
-├── PresupuestoRepository.java
-├── PersonaRepository.java
-├── EscrituraRepository.java
-├── GestionRepository.java
-└── UsuarioRepository.java
+├── BudgetRepository.java
+├── PersonRepository.java
+├── DeedRepository.java
+├── ManagementRepository.java
+└── UserRepository.java
 ```
 
-**negocio/** (Domain entities)
+**business/** (Domain entities)
 
 ```text
-negocio/
-├── Presupuesto.java
+business/
+├── Budget.java
 ├── Person.java
 ├── Deed.java
-├── Gestion.java
+├── DeedManagement.java
 ├── UserAccount.java
 └── Folio.java
 ```
@@ -143,10 +143,10 @@ exception/
 
 ```text
 dto/
-├── DtoPresupuesto.java
-├── DtoPersona.java
-├── DtoEscritura.java
-├── DtoGestion.java
+├── DtoBudget.java
+├── DtoPerson.java
+├── DtoDeed.java
+├── DtoDeedManagement.java
 └── ApiResponse.java
 ```
 
@@ -237,7 +237,7 @@ Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds
    Statement stmt = connection.createStatement();
    
    // CORRECTO - Repository injection
-   @Autowired private PresupuestoRepository repo;
+   @Autowired private BudgetRepository repo;
    ```
 
 3. **NO excepciones silenciosas**
@@ -274,7 +274,7 @@ Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds
    Connection conn = DriverManager.getConnection(...);
    
    // CORRECTO
-   PresupuestoResponse dto = apiClient.getPresupuesto(id);
+   BudgetResponse dto = apiClient.getBudget(id);
    ```
 
 3. **Usar ApiClient para todas las operaciones**
@@ -282,8 +282,8 @@ Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds
    ```java
    @Autowired private ApiClient apiClient;
    
-   void loadPresupuestos() {
-       List<DtoPresupuesto> items = apiClient.listPresupuestos();
+   void loadBudgets() {
+       List<DtoBudget> items = apiClient.listBudgets();
    }
    ```
 
