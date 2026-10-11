@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Plain management update** (#1490, CU75): the engineering-sequences
+  design names the path CU22 still writes, `PUT /api/v1/gestiones`.
+  The live call stays in `gestion-asignacion-suplencia`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Audit screen** (#1490, CU75): the engineering-sequences design names
   the screens CU23 still writes, `/dashboard/auditoria` and
   `/dashboard/administracion/auditoria`. The live screen stays in
