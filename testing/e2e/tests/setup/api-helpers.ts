@@ -114,6 +114,8 @@ export interface PersonPayload {
   firstName: string;
   lastName: string;
   identificationNumber: string;
+  /** Identification type id (GET /identification-types); omitted means DNI (#1361). */
+  identificationTypeId?: number;
   email?: string;
   phone?: string;
   isClient?: boolean;

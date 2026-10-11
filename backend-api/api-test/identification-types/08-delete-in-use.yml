@@ -1,0 +1,24 @@
+info:
+  name: Delete an identification type that people use (409)
+  type: http
+  seq: 8
+  description: |-
+      Issue #1361: a type that people use is not deleted (it used to answer 204 and
+      cascade-delete those people). 409 with the reason; the person stays.
+      Traceability: CU17 (RF #12, #38, #39), RF-53
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/identification-types/{{identification_type_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 409 Conflict", function () { expect(res.getStatus()).to.equal(409); });
+          test("Says the type is in use", function () {
+            expect(String(res.getBody().message)).to.contain('in use');
+          });

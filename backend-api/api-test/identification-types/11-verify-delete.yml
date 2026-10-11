@@ -1,7 +1,7 @@
 info:
   name: Verify identification type deleted
   type: http
-  seq: 7
+  seq: 11
   description: |-
       Traceability: CU17 (RF #12, #38, #39)
 http:

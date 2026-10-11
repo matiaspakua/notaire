@@ -876,8 +876,10 @@ class SimpleControllersTest {
     @DisplayName("IdentificationTypeController")
     class IdentificationTypeControllerTests {
         private final IdentificationTypeRepository repo = mock(IdentificationTypeRepository.class);
+        private final com.licensis.notaire.repository.PersonRepository people =
+                mock(com.licensis.notaire.repository.PersonRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new IdentificationTypeController(repo))
+                standaloneSetup(new IdentificationTypeController(repo, people))
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .build();
 
@@ -901,7 +903,13 @@ class SimpleControllersTest {
 
             String typeBody = "{\"name\":\"DNI\",\"characters\":\"8\"}";
             mvc.perform(post("/api/v1/identification-types").contentType("application/json")
-                    .content(typeBody)).andExpect(status().isCreated());
+                    .content("{\"name\":\"CUIT\",\"characters\":\"11\"}")).andExpect(status().isCreated());
+            // #1361: one row per name in any letter case; a type people use is not deleted.
+            mvc.perform(post("/api/v1/identification-types").contentType("application/json")
+                    .content("{\"name\":\" dni \",\"characters\":\"8\"}")).andExpect(status().isConflict());
+            when(people.existsByFkIdIdentificationTypeIdIdentificationType(1)).thenReturn(true);
+            mvc.perform(delete("/api/v1/identification-types/1")).andExpect(status().isConflict());
+            when(people.existsByFkIdIdentificationTypeIdIdentificationType(1)).thenReturn(false);
             mvc.perform(put("/api/v1/identification-types/1").contentType("application/json")
                     .content(typeBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/identification-types/2").contentType("application/json")

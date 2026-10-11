@@ -10,7 +10,7 @@ http:
   body:
     type: json
     data: |-
-        {"name":"E2E Identification Type Updated","characters":"11"}
+        {"name":"{{identification_type_name}} Updated","characters":"11"}
   headers:
     - name: Content-Type
       value: application/json

@@ -6588,8 +6588,22 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Another identification type already has this name */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6617,6 +6631,13 @@ export interface operations {
             };
             /** @description Not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The identification type is in use by people */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

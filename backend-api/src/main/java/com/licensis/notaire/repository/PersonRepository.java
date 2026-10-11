@@ -34,6 +34,9 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     List<Person> findByFkIdIdentificationTypeIdIdentificationType(Integer idIdentificationType);
 
+    /** Whether any person uses the identification type (delete guard, issue #1361). */
+    boolean existsByFkIdIdentificationTypeIdIdentificationType(Integer idIdentificationType);
+
     @Query("SELECT p FROM Person p WHERE p.notaryRegistrationNumber IS NOT NULL")
     List<Person> findAllNotaries();
 

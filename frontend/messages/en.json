@@ -801,6 +801,10 @@
         "label": "Case Statuses",
         "description": "Case lifecycle statuses"
       },
+      "tiposIdentificacion": {
+        "label": "Identification types",
+        "description": "DNI, CUIT, passport and each number's length"
+      },
       "plantillas": {
         "label": "Quote Templates",
         "description": "Reusable quote templates"
@@ -906,6 +910,27 @@
       "workflowSection": "Workflow Diagram",
       "selectWorkflow": "Select workflow...",
       "workflowFilter": "Workflow to display"
+    },
+    "tiposIdentificacion": {
+      "title": "Identification types",
+      "description": "The document types the person form offers",
+      "new": "New identification type",
+      "edit": "Edit identification type",
+      "created": "Identification type created",
+      "updated": "Identification type updated",
+      "deleted": "Identification type deleted",
+      "errorSave": "Could not save the identification type",
+      "errorDelete": "Could not delete the identification type",
+      "duplicateName": "An identification type with this name already exists",
+      "nameRequired": "Name is required",
+      "charactersRequired": "Enter the number's length in characters (1 to 99)",
+      "noData": "No identification types",
+      "fields": {
+        "name": "Name",
+        "namePlaceholder": "e.g. CUIT",
+        "characters": "Number characters",
+        "charactersHelp": "Maximum length of the document number for this type"
+      }
     },
     "folios": {
       "title": "Folios",
@@ -1331,6 +1356,7 @@
       "templates": "Budget Templates",
       "concepts": "Concepts",
       "managementStatuses": "Management Statuses",
+      "identificationTypes": "Identification types",
       "users": "Users"
     }
   },
