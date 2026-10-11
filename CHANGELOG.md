@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English is-client comments** (#1490, CU75): the people-workflow
+  notes name the is-client checkbox. The visible label `Es cliente`
+  stays, along with the toast match `/creada/i` and the row match
+  `/^cliente$|^sí$/i`.
 - **English required-documents comment** (#1490, CU75): the checklist
   dialog says it is ADMIN only, like the rest of the administration
   section. The visible section name `Administración` stays.

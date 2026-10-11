@@ -15,7 +15,7 @@ import { createPerson, uniqueId } from './setup/api-helpers'
 // ---------------------------------------------------------------------------
 // NOTE ON CU18 MECHANISM
 // ---------------------------------------------------------------------------
-// CU18 "Register a client" is not a separate button or screen. The catalog label "Es client"
+// CU18 "Register a client" is not a separate button or screen. The catalog label "Es cliente"
 // checkbox inside the person creation/edit form is the sole mechanism: checking
 // it during person creation (CU17) or editing (CU41) simultaneously registers
 // the person as a client. There is no standalone "client upgrade" flow.
@@ -100,7 +100,7 @@ test.describe('CU17 - Register a person', () => {
       const dni = `17${uniqueId() % 10_000_000}`
       const lastName = `Create${uniqueId() % 100_000}`
 
-      // When — create without the es-client checkbox
+      // When — create without the is-client checkbox
       await fillPersonForm(page, {
         name: 'Carlos',
         lastName,
@@ -125,13 +125,13 @@ test.describe('CU17 - Register a person', () => {
   test(
     'CU17-GW03: creating a person with is-client checked (CU17 + CU18) → they appear in the table with the client flag',
     async ({ page }) => {
-      // NOTE (CU18): the 'es client' checkbox IS the CU18 registration mechanism.
+      // NOTE (CU18): the is-client checkbox (catalog label "Es cliente") IS the CU18 registration mechanism.
       // Creating a person with this checkbox checked simultaneously registers
       // the person as a client. No separate step is needed.
       const dni = `18${uniqueId() % 10_000_000}`
       const lastName = `Client${uniqueId() % 100_000}`
 
-      // When — create WITH the es-client checkbox (CU17 + CU18 in one step)
+      // When — create WITH the is-client checkbox (CU17 + CU18 in one step)
       await fillPersonForm(page, {
         name: 'María',
         lastName,
@@ -163,7 +163,7 @@ test.describe('CU17 - Register a person', () => {
 // ---------------------------------------------------------------------------
 
 test.describe('CU18 - Register a client via the is-client checkbox', () => {
-  // NOTE: CU18 is exercised through the person form's 'es client' checkbox.
+  // NOTE: CU18 is exercised through the person form's is-client checkbox. The visible label is "Es cliente".
   // There is no separate button, screen, or API flow for client registration.
   // All tests here are real, not skipped.
 
@@ -177,7 +177,7 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
       const dni = `CU18${uniqueId() % 10_000_000}`
       const lastName = `IsClient${uniqueId() % 100_000}`
 
-      // When — person created with es-client checked (the CU18 mechanism)
+      // When — person created with the is-client checkbox checked (the CU18 mechanism)
       await fillPersonForm(page, {
         name: 'Lucía',
         lastName,
@@ -205,12 +205,12 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
   test(
     'CU18-GW02: a person without the is-client checkbox can be promoted to client by editing (CU41)',
     async ({ page }) => {
-      // NOTE (CU41): editing an existing person and checking 'es client'
+      // NOTE (CU41): editing an existing person and checking the is-client checkbox
       // promotes them to client status. This is the CU41 path.
       const dni = `CU41${uniqueId() % 10_000_000}`
       const lastName = `Promote${uniqueId() % 100_000}`
 
-      // Given — person created without es-client
+      // Given — person created without the is-client checkbox
       await fillPersonForm(page, {
         name: 'Pedro',
         lastName,
@@ -231,7 +231,7 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
       const editDialog = page.getByRole('dialog')
       await expect(editDialog).toBeVisible()
 
-      // And — check the es-client checkbox to promote the person (CU18/CU41)
+      // And — check the is-client checkbox to promote the person (CU18/CU41)
       const checkbox = editDialog.getByTestId('check-is-client')
       await checkbox.check()
       await expect(checkbox).toBeChecked()
