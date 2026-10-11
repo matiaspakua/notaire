@@ -43,6 +43,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English management state diagrams** (#1490, CU75):
+  `workflow-gestion.puml` calls `ManagementController` at
+  `POST /api/v1/managements` and inserts into `deed_managements` and
+  `audit_records`. The activity diagram is in English. The stored status
+  `No Pasó` and the role `Escribano` stay. The folder name
+  `Diagrama de Estados` stays.
+- **English login sequences** (#1490, CU75):
+  The seven login diagrams call `UserController` at `POST /api/v1/users/login`
+  and `GET /api/v1/users`. The JSON field is `valid`. The lockout message is
+  `Account temporarily locked after too many failed attempts.` CU titles in
+  the other sequence files stay.
+- **English architecture diagrams** (#1490, CU75):
+  The core model, package diagram, target architecture, and legacy Swing
+  diagram name `DeedManagement`, `Person`, `Budget`, `adapter.in.web`, and
+  `business`. The target stack is Java 26. The stored role `Escribano` stays.
+  `dni` stays on the person sketch. Sequence filenames under `Secuencias/` stay.
+- **English OpenSpec adaptations guide** (#1490, CU75):
+  `docs/openspec/NOTAIRE-ADAPTATIONS.md` describes installation, gates, and
+  orchestration in English. The backend prerequisite is Java 26. Required
+  headings `Objetivo`, `Reglas de negocio`, `Módulos afectados`, and
+  `Actualizar documentación permanente` stay. Archived change slugs stay.
+- **English security asset names** (#1490, CU75):
+  The system threat model, cybersecurity program, monitoring note, and
+  trust-boundary diagram name `Person`, `Deed`, `Testimony`, `Budget`,
+  `Payment`, and `audit_records`. Owner prose says Security Officer and
+  Development Team. The policy owner `Oficial de Seguridad`, CU78, and the
+  actor list stay. The GitHub page's 2026 sample clicks `New procedure`.
+  The 2014 monolith sample still shows `escrituras`.
+- **English SDD presentation** (#1490, CU75):
+  The slide deck and `docs/presentations/README.md` describe OpenSpec and
+  Spec Kit in English. Archived paths, `Property.valuacionFiscal`, and the
+  name Matías Miguez stay. The phrase `Use Case (Caso de Uso)` stays.
+- **English local-model setup scripts** (#1490, CU75):
+  `setup-omlx-codex.sh` and `stop-omlx.sh` report progress in English.
+  Presets, profiles, ports, and the `: applied` patch marker stay.
+- **English local-model guide** (#1490, CU75):
+  `local-ai/README.md` describes the oMLX stack, presets, and Metal memory
+  limit in English. Model names, profiles, and commands stay. The Cursor Cloud
+  fleet still does not use `local-ai/`.
+- **English documentation index and backend README** (#1490, CU75):
+  `docs/README.md` and `backend-api/README.md` name the lifecycle, the method,
+  and the REST service in English. Filenames `CICLO-DE-VIDA.md` and
+  `INGENIERIA.md` stay. The constitution step `Actualizar documentación permanente` stays.
+- **English postgres business metrics** (#1490, CU75):
+  The exporter queries count `deeds`, `budgets`, `users`, and `people`.
+  The postgres dashboard reads `deeds_total`, `budgets_total`, `users_total`,
+  and `people_total`. Deed status stays the stored label. The exporter role
+  remains `pg_monitor` only.
+- **English repository README** (#1490, CU75):
+  The root README and the frontend module table name managements, budgets,
+  people, deeds, payments, and administration. The stack is Java 26 and
+  Spring Boot 4.1.1. The name Matías Miguez stays. The required phrase
+  `Use Case (Caso de Uso)` stays.
+- **English migration samples** (#1490, CU75):
+  Flyway skill and database-migration examples insert into `concepts` and
+  index `users(username)`. The deed-lifecycle note uses the stored status
+  `Firmada`. Applied migrations V1–V44 stay unchanged.
+- **English diagram and workflow samples** (#1490, CU75):
+  The PlantUML skill examples use `Person`, `Deed`, `deeds`, and `DeedDto`.
+  The workflow skill sample is `users.spec.ts` and `User authentication`.
+  The person name `Ana García` stays. The required heading `Use Case (Caso de Uso)` stays.
+- **English testimony labels** (#1490, CU75):
+  The English catalog says `Testimonies`, `Generate testimony`, and
+  `No testimonies registered`. Message keys stay `testimonios`. The Spanish
+  catalog stays `Testimonios`. The copy filename `testimonio_*_copia.pdf` stays.
+- **English lifecycle pointers** (#1490, CU75):
+  The legacy state-diagram folder, the design index, the SAD runtime view,
+  the system threat model, and the GitHub board note name management, deed,
+  and budget. Stored statuses and the folder name `Diagrama de Estados` stay.
+- **English lifecycle and engineering method** (#1490, CU75):
+  `CICLO-DE-VIDA.md` and `INGENIERIA.md` are written in English. Sequences
+  call `POST /api/v1/managements/{id}/transition`, `GET /api/v1/deeds`, and
+  `POST /api/v1/payments`. A payment over the balance is an empty 409.
+  Stored statuses such as `Iniciada`, `En Tramite`, `Firmada`, and
+  `Workflow de Gestión Estándar` stay. The guide title and the name
+  Matías Miguez stay.
 - **English names kept with status badges and the app-shell skeleton** (#1490, CU75):
   The #1366 `StatusBadge` and the #1359 app-shell skeleton land on the English
   screens. Management badges read `currentStatus`. Testimony badges use

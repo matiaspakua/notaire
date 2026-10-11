@@ -1,11 +1,11 @@
 #!/bin/bash
-# stop-omlx.sh — detiene el stack IA local (servidor oMLX + app menú)
+# stop-omlx.sh — stops the local AI stack (oMLX server + menu-bar app)
 set -u
 
 log() { printf '==> %s\n' "$*"; }
 ok()  { printf ' OK %s\n' "$*"; }
 
-log "Deteniendo servidor oMLX"
+log "Stopping the oMLX server"
 [ -x "$HOME/.omlx/bin/omlx" ] && "$HOME/.omlx/bin/omlx" stop >/dev/null 2>&1
 pkill -f omlx-server 2>/dev/null && sleep 2
 osascript -e 'quit app "oMLX"' >/dev/null 2>&1
@@ -17,7 +17,7 @@ if curl -sf -m 3 localhost:8000/v1/models >/dev/null 2>&1; then
 fi
 
 if curl -sf -m 3 localhost:8000/v1/models >/dev/null 2>&1; then
-  echo " ERROR: el servidor sigue respondiendo en :8000"
+  echo " ERROR: the server is still responding on :8000"
   exit 1
 fi
-ok "stack detenido (puerto 8000 libre)"
+ok "stack stopped (port 8000 is free)"

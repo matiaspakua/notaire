@@ -35,7 +35,7 @@ V{next_version}__{short_description}.sql
 -- File: V3__add_user_preferences_table.sql
 CREATE TABLE user_preferences (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES usuarios(id_usuario),
+    user_id INTEGER REFERENCES users(id),
     theme VARCHAR(50) DEFAULT 'light'
 );
 
@@ -81,11 +81,11 @@ Write SQL that can be run multiple times safely:
 
 ```sql
 -- GOOD: Idempotent
-CREATE INDEX IF NOT EXISTS idx_users_email ON usuarios(email);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 DROP TABLE IF EXISTS temp_table;
 
 -- BAD: Will fail on second run
-CREATE INDEX idx_users_email ON usuarios(email);
+CREATE INDEX idx_users_username ON users(username);
 CREATE TABLE new_table (...);
 ```
 
@@ -95,8 +95,8 @@ After INSERT with SERIAL columns, always reset sequences:
 
 ```sql
 -- After inserting with explicit ID
-INSERT INTO conceptos (version, id_concepto, nombre, ...) VALUES (1, 99, 'New', ...);
-SELECT setval('conceptos_id_concepto_seq', COALESCE(MAX(id_concepto), 1)) FROM conceptos;
+INSERT INTO concepts (version, id, name, ...) VALUES (1, 99, 'New', ...);
+SELECT setval('concepts_id_seq', COALESCE(MAX(id), 1)) FROM concepts;
 ```
 
 ## Rollback Strategy

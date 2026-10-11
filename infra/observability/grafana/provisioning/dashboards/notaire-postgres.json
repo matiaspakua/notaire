@@ -78,20 +78,20 @@
       "gridPos": { "h": 8, "w": 8, "x": 0, "y": 12 },
       "targets": [
         {
-          "expr": "escrituras_total",
-          "legendFormat": "Escrituras ({{estado_nombre}})"
+          "expr": "deeds_total",
+          "legendFormat": "Deeds ({{status}})"
         },
         {
-          "expr": "presupuestos_total",
-          "legendFormat": "Presupuestos total"
+          "expr": "budgets_total",
+          "legendFormat": "Budgets"
         },
         {
-          "expr": "personas_total",
-          "legendFormat": "Personas total"
+          "expr": "people_total",
+          "legendFormat": "People"
         },
         {
-          "expr": "usuarios_total",
-          "legendFormat": "Usuarios total"
+          "expr": "users_total",
+          "legendFormat": "Users"
         }
       ],
       "description": "Notaire business entity counts from the database"

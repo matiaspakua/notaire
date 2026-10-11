@@ -251,7 +251,7 @@ Operational failures while landing the fleet. Full table:
 ## 10. Permanent domain model
 
 OpenSpec records the **delta** of one change. The picture of the running
-domain — gestión, deed, testimony, documents, budget, payment, folders — is
+domain — management, deed, testimony, documents, budget, payment, folders — is
 [CICLO-DE-VIDA.md](../../200-architecture/203-design/CICLO-DE-VIDA.md).
 The method for artifacts, traceability, and the process boxes is
 [INGENIERIA.md](../INGENIERIA.md), taken from the
@@ -268,7 +268,7 @@ states:
 3. Do not add a new `.puml` for the same lifecycle ([ADR-027](../../200-architecture/202-ADR/ADR-027-mermaid-diagrams.md)).
 
 Work-item status on the delivery board is a different machine. Do not describe
-an issue `In Progress` as a gestión `En Tramite`.
+an issue `In Progress` as a management in status `En Tramite`.
 
 ## 11. Related docs
 

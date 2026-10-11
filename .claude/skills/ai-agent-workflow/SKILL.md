@@ -87,7 +87,7 @@ gh issue create \
 Implement JWT-based authentication for the Notaire API.
 
 ## Use Case (Caso de Uso)
-UC-12: Autenticación de usuario
+UC-12: User authentication
 
 ## Acceptance Criteria
 - [ ] POST /api/v1/auth/login returns JWT on valid credentials
@@ -175,7 +175,7 @@ src/test/java/com/licensis/notaire/
 
 testing/e2e/
 └── tests/
-    └── usuarios.spec.ts
+    └── users.spec.ts
 ```
 
 ### Test Naming

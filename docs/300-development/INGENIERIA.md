@@ -1,240 +1,242 @@
-# Ingeniería de software — método aplicado a Notaire
+# Software engineering — method applied to Notaire
 
-Cómo se organiza la información, cómo se identifican los artefactos y cómo
-corren los procesos desde el requerimiento hasta la operación.
+How information is organized, how artifacts are identified, and how the
+processes run from the requirement to operation.
 
-Guía de referencia:
+Reference guide:
 [TPF Especialización — DevSecOps desde QA Automation](https://github.com/matiaspakua/tech.notes.io/blob/main/pages/sw_eng_specialization/final_projects_specialization.md)
-(Matías Miguez). De esa guía se toman las prácticas de abajo. El calendario
-Scrum de tres semanas, GitFlow (`develop` / `master`) y el caso SecTx no se
-copian: Notaire ya tiene mainline, tablero y Constitución.
+(Matías Miguez). The practices below are taken from that guide. The
+three-week Scrum calendar, GitFlow (`develop` / `master`), and the SecTx
+case are not copied: Notaire already has a mainline, a board, and a
+Constitution.
 
-El producto (estados, secuencias, componentes) está en
+The product (states, sequences, components) is in
 [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md).
-Este archivo es el proceso.
+This file is the process.
 
-## 1. Qué se adopta
+## 1. What is adopted
 
-| Práctica de la guía | En Notaire |
-|---------------------|------------|
-| Base de conocimiento única | Este repositorio, `docs/` |
-| Artefactos con ID, entrada y salida de cada proceso | §2 y §4 |
-| Trazabilidad hacia atrás y hacia adelante | §3 y el ciclo de vida |
-| Diseño liviano al inicio, detalle al implementar (RDUF) | OpenSpec del cambio + documentos permanentes |
-| C4, niveles 1 a 3 | [CICLO-DE-VIDA.md §5](../200-architecture/203-design/CICLO-DE-VIDA.md#5-vistas-c4) |
-| QA por modelo: pirámide y cuatro fases | [TEST-PLAN.md](303-testing/TEST-PLAN.md) es el plan maestro |
-| Seguridad desde el diseño | [modelo de amenazas](../200-architecture/206-security/THREAT-MODEL-AUTH-AUDIT.md), `SR-01`… |
-| Diseñar para operar y operar para diseñar | [DEPLOYMENT-PLAN.md](DEPLOYMENT-PLAN.md), [monitoreo](../200-architecture/207-monitoring/README.md) |
-| Pipeline con lazo de feedback | §6 |
-| KIS: no armar un laberinto de carpetas | Se mantiene `100` / `200` / `300` |
+| Practice from the guide | In Notaire |
+|-------------------------|------------|
+| Single knowledge base | This repository, `docs/` |
+| Artifacts with an ID, and an input and output for each process | §2 and §4 |
+| Traceability backward and forward | §3 and the lifecycle |
+| Light design up front, detail at implementation (RDUF) | The change's OpenSpec plus permanent documents |
+| C4, levels 1 to 3 | [CICLO-DE-VIDA.md §5](../200-architecture/203-design/CICLO-DE-VIDA.md#5-c4-views) |
+| QA by model: pyramid and four phases | [TEST-PLAN.md](303-testing/TEST-PLAN.md) is the master plan |
+| Security from design | [threat model](../200-architecture/206-security/THREAT-MODEL-AUTH-AUDIT.md), `SR-01`… |
+| Design to operate, and operate to design | [DEPLOYMENT-PLAN.md](DEPLOYMENT-PLAN.md), [monitoring](../200-architecture/207-monitoring/README.md) |
+| Pipeline with a feedback loop | §6 |
+| KIS: do not build a maze of folders | `100` / `200` / `300` stay |
 
-## 2. Identificación
+## 2. Identification
 
-El ID que ya existe es el que se cita. No se renombran los archivos.
+The ID that already exists is the one that is cited. Files are not renamed.
 
-| Prefijo | Qué identifica | Dónde |
-|---------|----------------|-------|
-| `RF #n` / `RNF` | Requerimiento | `docs/100-business/101-requirements/` |
-| `CUxx` | Caso de uso | `docs/100-business/102-use-cases/` |
-| `ADR-nnn` | Decisión de arquitectura | `docs/200-architecture/202-ADR/` |
-| `SR-nn` | Requerimiento de seguridad | modelo de amenazas de autenticación y auditoría |
-| `TC-nnn` | Caso de prueba de negocio | `docs/300-development/303-testing/test-cases/` |
-| `TS-nnnn` | Suite E2E | `testing/e2e`, índice en el plan de pruebas |
-| `#n` | Issue de trabajo | tablero de GitHub |
-| `DOC-CICLO` | Modelo de estados del dominio | [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) |
-| `DOC-SAD` | Arquitectura arc42 | [sad.md](../200-architecture/201-SAD/sad.md) |
-| `DOC-ING` | Este método | este archivo |
-| `DOC-MTP` | Plan maestro de pruebas | [TEST-PLAN.md](303-testing/TEST-PLAN.md) |
+| Prefix | What it identifies | Where |
+|--------|--------------------|-------|
+| `RF #n` / `RNF` | Requirement | `docs/100-business/101-requirements/` |
+| `CUxx` | Use case | `docs/100-business/102-use-cases/` |
+| `ADR-nnn` | Architecture decision | `docs/200-architecture/202-ADR/` |
+| `SR-nn` | Security requirement | authentication and audit threat model |
+| `TC-nnn` | Business test case | `docs/300-development/303-testing/test-cases/` |
+| `TS-nnnn` | E2E suite | `testing/e2e`, index in the test plan |
+| `#n` | Work issue | GitHub board |
+| `DOC-CICLO` | Domain state model | [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) |
+| `DOC-SAD` | arc42 architecture | [sad.md](../200-architecture/201-SAD/sad.md) |
+| `DOC-ING` | This method | this file |
+| `DOC-MTP` | Master test plan | [TEST-PLAN.md](303-testing/TEST-PLAN.md) |
 
-Un artefacto cita el ID del anterior y del siguiente. Un caso de uso cita su
-`RF`. Un issue cita su `CU`. Un commit y un PR citan el `#n`. Una prueba
-`TS-` o `TC-` cita el `CU`.
+An artifact cites the ID of the previous one and of the next one. A use
+case cites its `RF`. An issue cites its `CU`. A commit and a PR cite the
+`#n`. A `TS-` or `TC-` test cites the `CU`.
 
-## 3. Trazabilidad
+## 3. Traceability
 
-Hacia adelante: el requerimiento se puede seguir hasta la pantalla y hasta
-el log de operación. Hacia atrás: un incidente o un bug se puede seguir
-hasta el caso de uso y el requerimiento.
+Forward: a requirement can be followed to the screen and to the operational
+log. Backward: an incident or a bug can be followed to the use case and the
+requirement.
 
 ```mermaid
 flowchart LR
   rf[RF] --> cu[CU]
-  cu --> modelo[DOC-CICLO]
-  modelo --> spec[OpenSpec]
+  cu --> model[DOC-CICLO]
+  model --> spec[OpenSpec]
   spec --> issue[Issue]
-  issue --> codigo[Código y Flyway]
-  codigo --> prueba[TC o TS]
-  prueba --> operacion[Despliegue y observabilidad]
-  operacion --> rf
+  issue --> code[Code and Flyway]
+  code --> test[TC or TS]
+  test --> operation[Deployment and observability]
+  operation --> rf
 ```
 
-Ejemplo, cobrar (CU15):
+Example, collecting a payment (CU15):
 
-| Sentido | Paso |
-|---------|------|
-| Atrás | Recibo o saldo raro → `PaymentStatus` → CU15 → RF de abonar y de cuotas |
-| Adelante | RF → CU15 → §3.8 del ciclo de vida → spec `pagos` → `POST /api/v1/pagos` → Bruno / `TS-` de presupuestos → aviso de deuda al archivar |
+| Direction | Step |
+|-----------|------|
+| Backward | Odd receipt or balance → `PaymentStatus` → CU15 → RF to pay and to installments |
+| Forward | RF → CU15 → lifecycle §3.8 → spec `pagos` → `POST /api/v1/payments` → Bruno / budget `TS-` → debt warning at archive |
 
-La matriz RF ↔ CU sigue en
-[trazabilidad](../100-business/104-traceability/Matriz%20de%20Trazabilidad%20Requerimientos-Casos%20de%20Uso.md).
+The RF ↔ CU matrix stays in
+[traceability](../100-business/104-traceability/Matriz%20de%20Trazabilidad%20Requerimientos-Casos%20de%20Uso.md).
 
-## 4. Procesos de alto nivel
+## 4. High-level processes
 
-Cada caja es un proceso. El equipo puede ser la misma gente. La interfaz
-entre cajas es un artefacto, no una reunión sin registro.
+Each box is a process. The team can be the same people. The interface
+between boxes is an artifact, not a meeting without a record.
 
 ```mermaid
 flowchart LR
-  entrada[Negocio o fallo en producción] --> mesa[Mesa de entrada]
-  mesa --> refine[Refinamiento]
-  refine --> construir[Construcción]
-  construir --> verificar[Verificación]
-  verificar --> entregar[Entrega]
-  entregar --> operar[Operación]
-  operar --> entrada
+  entry[Business or a failure in production] --> desk[Intake]
+  desk --> refine[Refinement]
+  refine --> build[Construction]
+  build --> verify[Verification]
+  verify --> deliver[Delivery]
+  deliver --> operate[Operation]
+  operate --> entry
 ```
 
-| Proceso | Entra | Sale | Quién lo usa |
-|---------|-------|------|----------------|
-| Mesa de entrada | Pedido de negocio o defecto observado | Issue con `CU`, prioridad, área, hito | [Tablero](../github/README.md) |
-| Refinamiento | Issue abierto | OpenSpec: propuesta, spec, diseño, tareas | Gate 1, `openspec validate` |
-| Construcción | Spec y prueba que falla | Código, migración si hace falta, `DOC-CICLO` si movió un estado | TDD, rama desde `main` |
-| Verificación | Cambio en la rama | Unitarias, integración, contrato, E2E, SAST | [CI-PREFLIGHT.md](CI-PREFLIGHT.md) |
-| Entrega | CI pesado en verde y review | Imagen publicada, issue cerrado | [CD](../200-architecture/209-deployment/README.md) publica; el apply al cluster es manual |
-| Operación | Versión en marcha | Métricas, logs, alertas, bitácora | CU77, Prometheus, Grafana, Loki |
-| Vuelta | Hallazgo de operación o de uso | Issue nuevo en la mesa | Cierra el lazo |
+| Process | In | Out | Who uses it |
+|---------|----|-----|-------------|
+| Intake | Business request or an observed defect | Issue with `CU`, priority, area, milestone | [Board](../github/README.md) |
+| Refinement | Open issue | OpenSpec: proposal, spec, design, tasks | Gate 1, `openspec validate` |
+| Construction | Spec and a failing test | Code, a migration if needed, `DOC-CICLO` if a state moved | TDD, branch from `main` |
+| Verification | Change on the branch | Unit, integration, contract, E2E, SAST | [CI-PREFLIGHT.md](CI-PREFLIGHT.md) |
+| Delivery | Heavy CI green and review | Published image, issue closed | [CD](../200-architecture/209-deployment/README.md) publishes; applying to the cluster is manual |
+| Operation | A running version | Metrics, logs, alerts, history | CU77, Prometheus, Grafana, Loki |
+| Return | An operational or usage finding | A new issue at intake | Closes the loop |
 
-El tablero es Kanban de tres columnas: Todo, In Progress, Done. La etiqueta
-`in-review` no es una columna. Eso está separado de los estados de una
-gestión: [ciclo de vida §7](../200-architecture/203-design/CICLO-DE-VIDA.md#7-gestión-del-trabajo).
+The board is a three-column Kanban: Todo, In Progress, Done. The
+`in-review` label is not a column. That is separate from the statuses of a
+management: [lifecycle §7](../200-architecture/203-design/CICLO-DE-VIDA.md#7-managing-the-work).
 
-## 5. Diseño por disciplina
+## 5. Design by discipline
 
-Estrategia: diseño preliminar (RDUF). El OpenSpec del cambio alcanza para
-construir. El documento permanente se actualiza cuando el cambio queda. No
-se reescribe el sistema entero antes de codear, y no se deja el modelo solo
-en el PR.
+Strategy: preliminary design (RDUF). The change's OpenSpec is enough to
+build. The permanent document is updated when the change lands. The whole
+system is not rewritten before coding, and the model is not left only in
+the PR.
 
 ### 5.1 QA
 
-El plan maestro (`DOC-MTP`) nombra `TS-nnnn` y los ata a casos de uso. Cada
-prueba automatizada sigue cuatro fases: preparar, ejercer el sistema,
-verificar, limpiar.
+The master plan (`DOC-MTP`) names `TS-nnnn` and ties them to use cases.
+Each automated test follows four phases: prepare, exercise the system,
+verify, clean up.
 
-Pirámide que el pipeline ya separa, de más frecuentes a más caras:
+The pyramid the pipeline already separates, from most frequent to most
+expensive:
 
-1. Unitarias (`ci.yml`, Vitest).
-2. Integración y contrato (API, Bruno, OpenAPI).
-3. E2E de UI (Playwright).
-4. Carga (k6, workflow de performance) y seguridad (CodeQL, Trivy, ZAP).
+1. Unit (`ci.yml`, Vitest).
+2. Integration and contract (API, Bruno, OpenAPI).
+3. UI E2E (Playwright).
+4. Load (k6, performance workflow) and security (CodeQL, Trivy, ZAP).
 
-### 5.2 Desarrollo
+### 5.2 Development
 
-Modelo de arquitectura: C4 en el ciclo de vida, SAD arc42, ADR por decisión.
-El código vive en un solo repositorio con ramas cortas sobre `main`. El
-nombre de la rama y el commit citan el issue. No hay rama `develop` ni
-`master` de larga vida.
+Architecture model: C4 in the lifecycle, arc42 SAD, an ADR per decision.
+The code lives in one repository with short branches on `main`. The branch
+name and the commit cite the issue. There is no long-lived `develop` or
+`master` branch.
 
-### 5.3 Seguridad
+### 5.3 Security
 
-El modelo de amenazas de login y auditoría numera `SR-01` en adelante y
-marca cada uno como mitigado, parcial o abierto. Un cambio de autenticación,
-secreto o esquema pasa por ese documento. CodeQL, Trivy y ZAP están en los
-workflows; un hallazgo de CodeQL no falla el job por sí solo. El detalle de
-esa política está en
+The login and audit threat model numbers `SR-01` onward and marks each one
+mitigated, partial, or open. A change to authentication, a secret, or the
+schema goes through that document. CodeQL, Trivy, and ZAP are in the
+workflows; a CodeQL finding does not fail the job by itself. The detail of
+that policy is in
 [DevSecOps](../200-architecture/208-devsecops/README.md).
 
-### 5.4 Operación
+### 5.4 Operation
 
-Doce factores, en el estado actual del producto:
+Twelve factors, in the product's current state:
 
-| Factor | Situación |
+| Factor | Situation |
 |--------|-----------|
-| Un código, varios deploys | Un repositorio; compose local, compose de producción, Kustomize de staging |
-| Dependencias explícitas | Maven y npm |
-| Configuración fuera del código | Variables de entorno, [ADR-019](../200-architecture/202-ADR/ADR-019-secrets-management.md) |
-| Servicios de apoyo adjuntos | PostgreSQL, y el stack de observabilidad aparte |
-| Build, release, run separados | CI construye; CD publica la imagen en GHCR; una persona aplica el compose o el Kustomize |
-| Procesos sin estado | La API no guarda sesión de negocio; el JWT y PostgreSQL llevan el estado |
-| Puerto | Backend en 8080 |
-| Concurrencia | Réplicas del contenedor |
-| Arranque y apagado | Contenedores |
-| Paridad de ambientes | Compose acerca local y producción; no hay apply automático al cluster |
-| Logs como flujo | Loki |
-| Tareas de admin de un solo uso | Flyway al arrancar; smoke de backup en workflow propio |
+| One codebase, many deploys | One repository; local compose, production compose, staging Kustomize |
+| Explicit dependencies | Maven and npm |
+| Configuration outside the code | Environment variables, [ADR-019](../200-architecture/202-ADR/ADR-019-secrets-management.md) |
+| Attached backing services | PostgreSQL, and the observability stack apart |
+| Build, release, run separated | CI builds; CD publishes the image to GHCR; a person applies compose or Kustomize |
+| Stateless processes | The API does not store business session; the JWT and PostgreSQL hold the state |
+| Port | Backend on 8080 |
+| Concurrency | Container replicas |
+| Startup and shutdown | Containers |
+| Environment parity | Compose brings local and production closer; there is no automatic apply to the cluster |
+| Logs as a stream | Loki |
+| One-off admin tasks | Flyway at startup; backup smoke in its own workflow |
 
-Métricas de flujo, sin números inventados. Se leen del tablero cuando haga
-falta: trabajo cerrado por semana, tiempo de Todo a Done, cuántos issues
-están en curso, y el reparto entre funcionalidad, defecto, riesgo y deuda.
-Esas cuatro clases ya tienen etiquetas (`enhancement`, `bug`, `risk`,
+Flow metrics, with no invented numbers. They are read from the board when
+needed: work closed per week, time from Todo to Done, how many issues are
+in progress, and the split among feature, defect, risk, and debt. Those
+four classes already have labels (`enhancement`, `bug`, `risk`,
 `tech-debt`).
 
-La operación devuelve diseño cuando una alerta, un audit o un fallo de CI
-abre un issue. Ese issue vuelve a entrar por la mesa.
+Operation returns design when an alert, an audit, or a CI failure opens an
+issue. That issue enters again through intake.
 
 ## 6. Pipeline
 
-Nivel 0, las cajas. El lazo de abajo es el feedback: si una caja falla, el
-trabajo vuelve a la mesa, no se publica.
+Level 0, the boxes. The loop below is the feedback: if a box fails, the
+work returns to intake and is not published.
 
 ```mermaid
 flowchart TB
-  subgraph entrega [Entrega]
-    analisis[Análisis] --> diseno[Diseño]
-    diseno --> implementacion[Implementación]
-    implementacion --> prueba[Prueba]
-    prueba --> publicacion[Publicación de imagen]
+  subgraph delivery [Delivery]
+    analysis[Analysis] --> design[Design]
+    design --> implementation[Implementation]
+    implementation --> test[Test]
+    test --> publish[Image publication]
   end
-  subgraph seguridad [Seguridad en el mismo camino]
-    sast[CodeQL y Trivy]
+  subgraph security [Security on the same path]
+    sast[CodeQL and Trivy]
     dast[ZAP]
   end
-  implementacion --> sast
-  prueba --> dast
-  publicacion --> operar[Operar]
-  operar --> feedback[Issue o alerta]
-  feedback --> analisis
+  implementation --> sast
+  test --> dast
+  publish --> operate[Operate]
+  operate --> feedback[Issue or alert]
+  feedback --> analysis
 ```
 
-Nivel 1, los workflows que existen hoy
+Level 1, the workflows that exist today
 ([CI-PREFLIGHT.md](CI-PREFLIGHT.md)):
 
-| Etapa | Workflow | Qué corta el camino |
-|-------|----------|---------------------|
-| Construcción | `ci.yml` build | No compila |
-| Prueba rápida | unitarias, integración, cobertura, frontend Vitest | Falla el test o baja la cobertura |
-| Contrato | `openapi-contract.yml`, Bruno dentro de Playwright | El contrato o la API no coinciden |
-| Seguridad | `codeql.yml`, Trivy en `ci.yml`, `dast-zap.yml` | Trivy de imagen es reporte; CodeQL informa y no bloquea solo |
-| Calidad de código | `pr-validation.yml` (Checkstyle, Spotless), ESLint | Lint |
-| E2E | `playwright-e2e.yml` | La UI no cumple el caso de uso |
-| Proceso | `sdlc-process.yml` | Commit, evidencia TDD, reglas de agente |
-| Publicación | `cd.yml` | Publica imagen firmada; no despliega el cluster |
-| Datos | `database-vv.yml`, `backup-restore-smoke.yml` | La migración o el restore no cierran |
+| Stage | Workflow | What cuts the path |
+|-------|----------|--------------------|
+| Build | `ci.yml` build | It does not compile |
+| Fast test | unit, integration, coverage, frontend Vitest | A test fails or coverage drops |
+| Contract | `openapi-contract.yml`, Bruno inside Playwright | The contract or the API do not match |
+| Security | `codeql.yml`, Trivy in `ci.yml`, `dast-zap.yml` | Image Trivy is a report; CodeQL reports and does not block alone |
+| Code quality | `pr-validation.yml` (Checkstyle, Spotless), ESLint | Lint |
+| E2E | `playwright-e2e.yml` | The UI does not meet the use case |
+| Process | `sdlc-process.yml` | Commit, TDD evidence, agent rules |
+| Publication | `cd.yml` | Publishes a signed image; does not deploy the cluster |
+| Data | `database-vv.yml`, `backup-restore-smoke.yml` | The migration or the restore does not close |
 
-Nivel 2 se baja solo cuando una etapa lo pide. Hoy el detalle que ya está
-escrito es el modelo de amenazas del login y la política de CodeQL. No se
-agrega un pentest genérico ni un control que el repositorio no ejecuta.
+Level 2 is written only when a stage asks for it. Today the detail that is
+already written is the login threat model and the CodeQL policy. A generic
+pentest is not added, nor a control the repository does not run.
 
 ## 7. Roles
 
-La misma persona puede cubrir más de un rol. Los agentes de la flota Cloud
-ejecutan el rol; no reemplazan el artefacto.
+The same person can cover more than one role. The Cloud fleet agents
+execute the role; they do not replace the artifact.
 
-| Rol | Responsabilidad | Dónde está escrito |
-|-----|-----------------|--------------------|
-| Producto | Prioridad, hito, caso de uso en el issue | [github/README.md](../github/README.md) |
-| Analista | Requerimiento, caso de uso, estados | `docs/100-business/`, `DOC-CICLO` |
-| Desarrollo | TDD, API, UI | módulos `backend-api` y `frontend` |
-| QA | Pirámide, `TS-` / `TC-` | `DOC-MTP` |
-| Seguridad | `SR-`, SAST, secretos | `docs/200-architecture/206-security/` |
-| Operación | Imagen, salud, logs, alertas | `docs/200-architecture/207-monitoring/`, CU77 |
-| Flota | Gate 1, CI, review, merge | [FLEET-ARCHITECTURE.md](304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md) |
+| Role | Responsibility | Where it is written |
+|------|----------------|---------------------|
+| Product | Priority, milestone, use case on the issue | [github/README.md](../github/README.md) |
+| Analyst | Requirement, use case, states | `docs/100-business/`, `DOC-CICLO` |
+| Development | TDD, API, UI | `backend-api` and `frontend` modules |
+| QA | Pyramid, `TS-` / `TC-` | `DOC-MTP` |
+| Security | `SR-`, SAST, secrets | `docs/200-architecture/206-security/` |
+| Operation | Image, health, logs, alerts | `docs/200-architecture/207-monitoring/`, CU77 |
+| Fleet | Gate 1, CI, review, merge | [FLEET-ARCHITECTURE.md](304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md) |
 
-## 8. Regla para un cambio
+## 8. Rule for a change
 
-1. El issue cita `CUxx` o `RF`.
-2. El OpenSpec describe solo el delta.
-3. Si el delta mueve un estado de `DOC-CICLO`, ese archivo se edita en el mismo PR.
-4. La prueba cita el caso de uso (`TS-` o `TC-`).
-5. El PR cita el issue. El merge cierra el issue.
-6. Si la operación muestra un fallo, el fallo vuelve como issue. No se documenta solo en el chat.
+1. The issue cites `CUxx` or `RF`.
+2. The OpenSpec describes only the delta.
+3. If the delta moves a state in `DOC-CICLO`, that file is edited in the same PR.
+4. The test cites the use case (`TS-` or `TC-`).
+5. The PR cites the issue. The merge closes the issue.
+6. If operation shows a failure, the failure comes back as an issue. It is not documented only in chat.
