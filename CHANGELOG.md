@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English business-finding index** (#1490, CU75):
+  `docs/openspec/explore.md` states the finding↔Issue record in English.
+  The filename stays. Change slugs stay, including
+  `folio-vinculacion-escritura`, `gestion-archive-deuda-check`, and
+  `presupuesto-plantillas-y-catalogo-items`. Finding identifiers stay,
+  including `GestionArchiveDebtService`, `importeAPagar`,
+  `ManagementHistory.fecha`, `"Efectivo"`, and `"observaciones"`.
+  Issue numbers and the use-case filename `CU84 - Login.md` stay.
 - **English source comments** (#1490, CU75): the redirect comment in
   `frontend/next.config.ts` says administration pages, and the status-map
   comment names the catalog namespace `administracion.estadosGestion`. Stored
