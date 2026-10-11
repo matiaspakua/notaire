@@ -64,6 +64,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English catalog Playwright filenames** (#1490, CU75): the
+  budget-template delete note names `TS-0131-budget-template.spec.ts`.
+  The catalog-constraint note names
+  `TS-0134-document-type-expiration-config.spec.ts` and
+  `TS-0130-budget-catalog-items.spec.ts`. The incomplete-PUT task list
+  names `TS-0135-folio-type-edit-version.spec.ts` and
+  `TS-0136-folios-linking.spec.ts`. The heading `Riesgos / Trade-offs`
+  stays, along with `Crear branch`, `Implementación`, and
+  `Ejecutar Playwright`. Spec ids stay.
 - **English checklist fixture notes** (#1490, CU75): required-document
   samples say `Original and copy` and `Certified copy`. Created names
   say `Procedure checklist E2E`, `Document checklist E2E`,
