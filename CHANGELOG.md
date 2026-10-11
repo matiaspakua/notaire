@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **E2E sequence pointers** (#1490, CU75): the Playwright headers cite
+  `seq01-ingresar-gestión-de-escritura.puml`,
+  `seq02-ingresar-gestión-de-trámite.puml`,
+  `seq05-preparar-escritura.puml`,
+  `seq07-inscribir-escritura.puml`, and
+  `seq17-buscar-gestiones-de-un-cliente.puml`. The sequence titles stay.
 - **RBAC notary filename** (#1490, CU75): the Bruno request file is
   `04-employee-create-notary.yml`. The stored type `ESCRIBANO` stays.
 - **Document-type unit filename** (#1490, CU75): the form-defaults unit

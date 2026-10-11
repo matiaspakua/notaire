@@ -5,7 +5,7 @@
  * CU41 - Update a client
  * CU61 - Search for a person or client
  * Issue #835 (duplicate validation by identification number)
- * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU17.puml
+ * Sequence: docs/200-architecture/204-diagrams/Secuencias/seq17-buscar-gestiones-de-un-cliente.puml
  */
 import { type Page, test, expect } from '@playwright/test'
 import { GherkinSteps } from './gherkin-helpers'

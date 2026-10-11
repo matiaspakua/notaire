@@ -4,7 +4,7 @@
  * CU45 - Update a budget
  * CU47 - Look up a payment / balance
  * Issues: #796 (pending-balance picker), #848 (overpayment guard)
- * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
+ * Sequence: docs/200-architecture/204-diagrams/Secuencias/seq01-ingresar-gestión-de-escritura.puml
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";

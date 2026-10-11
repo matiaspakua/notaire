@@ -6,7 +6,7 @@
  * CU16 - Archive a management
  * CU19 - Search managements by client
  * Issues: #833, #804 (workflow-enforced status writes; UI uses /transition)
- * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU02.puml
+ * Sequence: docs/200-architecture/204-diagrams/Secuencias/seq02-ingresar-gestión-de-trámite.puml
  */
 import { type Page, test, expect } from '@playwright/test'
 import { authenticateAsAdmin } from './setup/auth'

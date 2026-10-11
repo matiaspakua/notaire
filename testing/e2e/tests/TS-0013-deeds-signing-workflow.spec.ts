@@ -5,7 +5,7 @@
  * CU52 - Update a deed
  * CU63 - Search deeds
  * Issue #892 (folio picker)
- * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU05.puml
+ * Sequence: docs/200-architecture/204-diagrams/Secuencias/seq05-preparar-escritura.puml
  */
 import { type Page, test, expect } from '@playwright/test'
 import { GherkinSteps } from './gherkin-helpers'

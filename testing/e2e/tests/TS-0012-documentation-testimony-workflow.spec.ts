@@ -6,7 +6,7 @@
  * CU11 - Enter for registration
  * CU12 - Withdraw a testimony
  * Issue #832
- * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU07.puml
+ * Sequence: docs/200-architecture/204-diagrams/Secuencias/seq07-inscribir-escritura.puml
  */
 import { test, expect } from '@playwright/test'
 import { GherkinSteps } from './gherkin-helpers'
