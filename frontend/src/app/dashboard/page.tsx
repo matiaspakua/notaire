@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Calculator, FolderKanban, Users } from "lucide-react";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Stagger, StaggerItem, HoverLift } from "@/components/motion";
 import { useAuthStore } from "@/store/auth-store";
@@ -15,6 +15,7 @@ import { StatValue } from "@/components/dashboard/StatValue";
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
 import { theme } from "@/theme/tokens";
 import { DASHBOARD_MODULES } from "@/lib/dashboard-nav";
+import { useFormat } from "@/hooks/useFormat";
 
 function AccessDeniedBanner() {
   const td = useTranslations("dashboard");
@@ -35,7 +36,6 @@ function AccessDeniedBanner() {
 
 export default function DashboardPage() {
   const td = useTranslations("dashboard");
-  const locale = useLocale();
   const { user, isAdmin } = useAuthStore();
   // Only the totals are needed: size=1 pages, never the lists (#1340, #1358).
   const gestionesPage = useGestionesPage({ page: 0, size: 1 });
@@ -44,7 +44,7 @@ export default function DashboardPage() {
 
   // One config for the sidebar and this grid (#1367).
   const visibleModules = DASHBOARD_MODULES.filter((m) => !m.adminOnly || isAdmin());
-  const dateLocale = locale === "en" ? "en-US" : "es-AR";
+  const fmt = useFormat();
 
   const stats = [
     { labelKey: "gestiones.label", query: gestionesPage, icon: FolderKanban, tint: "bg-primary/10", iconColor: "text-primary" },
@@ -69,7 +69,7 @@ export default function DashboardPage() {
             className="text-sm font-semibold"
             style={{ color: theme.colors.neutral[800] }}
           >
-            {new Date().toLocaleDateString(dateLocale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+            {fmt.longDate(new Date())}
           </p>
         </div>
       </div>

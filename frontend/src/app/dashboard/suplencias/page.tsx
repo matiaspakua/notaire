@@ -18,10 +18,10 @@ import {
   useDeleteSuplencia,
 } from "@/hooks/useSuplencias";
 import { presentMutationError } from "@/lib/mutation-error";
-import { formatDate } from "@/lib/utils";
 import type { Suplencia } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Suplencia> = {
   dateStart: "",
@@ -34,6 +34,7 @@ function personaName(p: Suplencia["fkIdSubstituted"]): string {
 }
 
 export default function SuplenciasPage() {
+  const fmt = useFormat();
   const t = useTranslations("suplencias");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -124,12 +125,12 @@ export default function SuplenciasPage() {
     {
       key: "desde",
       header: t("fields.desde"),
-      render: (s) => formatDate(s.dateStart),
+      render: (s) => fmt.date(s.dateStart),
     },
     {
       key: "hasta",
       header: t("fields.hasta"),
-      render: (s) => formatDate(s.dateEnd),
+      render: (s) => fmt.date(s.dateEnd),
     },
     {
       key: "actions",

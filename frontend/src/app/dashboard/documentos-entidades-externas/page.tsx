@@ -18,9 +18,10 @@ import {
   useDocumentosEntidadExterna,
   useRegistrarMovimientoDocumentoEntidadExterna,
 } from "@/hooks/useDocumentosEntidadExterna";
-import { extractApiError, formatDate } from "@/lib/utils";
+import { extractApiError } from "@/lib/utils";
 import type { DocumentoEntidadExterna, GestionDeEscritura, MovimientoDocumentoEntidadExternaInput } from "@/types";
 import { toDateInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 const emptyMovimiento: MovimientoDocumentoEntidadExternaInput = {
   prepared: false,
@@ -45,6 +46,7 @@ export default function DocumentosEntidadesExternasPage() {
 }
 
 function DocumentosEntidadesExternasList() {
+  const fmt = useFormat();
   const t = useTranslations("documentosEntidadesExternas");
   const tc = useTranslations("common");
   const themeClass = useThemeClasses();
@@ -130,8 +132,8 @@ function DocumentosEntidadesExternasList() {
         </Badge>
       ),
     },
-    { key: "dateEntry", header: t("fields.fechaIngreso"), render: (d) => formatDate(d.dateEntry) },
-    { key: "dateExit", header: t("fields.fechaSalida"), render: (d) => formatDate(d.dateExit) },
+    { key: "dateEntry", header: t("fields.fechaIngreso"), render: (d) => fmt.date(d.dateEntry) },
+    { key: "dateExit", header: t("fields.fechaSalida"), render: (d) => fmt.date(d.dateExit) },
     {
       key: "actions",
       header: "",

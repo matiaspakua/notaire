@@ -33,11 +33,11 @@ import { useEstadosGestion } from "@/hooks/useEstadosGestion";
 import { useTiposTramite } from "@/hooks/useTiposTramite";
 import { useInmuebles } from "@/hooks/useInmuebles";
 import { ApiError } from "@/lib/api-client";
-import { formatCalendarDate } from "@/lib/dates";
-import { formatCurrency, formatDate, extractApiError } from "@/lib/utils";
+import { extractApiError } from "@/lib/utils";
 import type { GestionDeEscritura } from "@/types";
 import { GestionResumenDialog } from "./GestionResumenDialog";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { useFormat } from "@/hooks/useFormat";
 
 const ESTADO_CARPETA_ACTIVA = "Activa";
 
@@ -52,6 +52,7 @@ export default function GestionesPage() {
 }
 
 function GestionesList() {
+  const fmt = useFormat();
   const t = useTranslations("gestiones");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -267,7 +268,7 @@ function GestionesList() {
     {
       key: "inicio",
       header: t("fields.inicio"),
-      render: (g) => <span className="whitespace-nowrap">{formatCalendarDate(g.dateStart)}</span>,
+      render: (g) => <span className="whitespace-nowrap">{fmt.date(g.dateStart)}</span>,
     },
     {
       key: "tramites",
@@ -485,7 +486,7 @@ function GestionesList() {
             ? archiveConflict
             : saldoPendiente && (saldoPendiente.pendingBalance ?? 0) > 0
               ? t("archiveConfirmDescriptionWithDebt", {
-                  monto: formatCurrency(saldoPendiente.pendingBalance ?? 0),
+                  monto: fmt.currency(saldoPendiente.pendingBalance ?? 0),
                 })
               : t("archiveConfirmDescriptionNoDebt")
         }
@@ -539,7 +540,7 @@ function GestionesList() {
                 {historial.map((h) => (
                   <div key={h.idHistory} data-testid="bitacora-item" className="border-b pb-2">
                     <div className="font-medium">{h.statusManagementName}</div>
-                    <div className="text-xs text-muted-foreground">{formatDate(h.date)}</div>
+                    <div className="text-xs text-muted-foreground">{fmt.date(h.date)}</div>
                     {h.notes && <div className="text-sm">{h.notes}</div>}
                   </div>
                 ))}
