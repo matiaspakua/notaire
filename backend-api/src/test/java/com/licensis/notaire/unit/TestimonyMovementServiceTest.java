@@ -175,7 +175,7 @@ class TestimonyMovementServiceTest {
 
         @Test
         @DisplayName("Should reject withdrawal when the testimony is not inscribed")
-        void shouldRejectWithdrawalWhenNotInscripto() {
+        void shouldRejectWithdrawalWhenNotInscribed() {
             TestimonyMovement entered = movementWithEntry();
             when(testimonyRepository.existsById(5)).thenReturn(true);
             when(testimonyMovementRepository.findTopByFkIdTestimonyIdTestimonyOrderByIdTestimonyMovementDesc(5))

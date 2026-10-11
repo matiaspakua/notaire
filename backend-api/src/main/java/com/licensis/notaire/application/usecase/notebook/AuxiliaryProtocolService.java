@@ -32,8 +32,8 @@ public class AuxiliaryProtocolService {
         return folioRepository.findAvailableAuxiliaryFolios();
     }
 
-    public int calculateNextNumberAuxiliary() {
-        return folioRepository.findMaxNumberDeedAuxiliary().orElse(0) + 1;
+    public int calculateNextAuxiliaryNumber() {
+        return folioRepository.findMaxAuxiliaryDeedNumber().orElse(0) + 1;
     }
 
     public Deed startDeed(Integer idFolio, String body, Date dateDeedrecording) {
@@ -52,7 +52,7 @@ public class AuxiliaryProtocolService {
         }
 
         Deed deed = new Deed();
-        deed.setNumber(calculateNextNumberAuxiliary());
+        deed.setNumber(calculateNextAuxiliaryNumber());
         deed.setBody(body);
         deed.setDateDeedrecording(dateDeedrecording);
         Deed saved = deedRepository.save(deed);

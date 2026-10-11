@@ -561,7 +561,7 @@ class BusinessWorkflowIntegrationTest {
         @Order(4)
         @DisplayName("POST duplicate budget template (same type=1/concept=1 created in Order 3) returns 409 Conflict")
         void createDuplicateTemplateReturns409() throws Exception {
-            // Order 3 already created (tipo=1, concept=1). Re-posting the same PK must return 409.
+            // Order 3 already created (type=1, concept=1). Re-posting the same PK must return 409.
             String body = """
                     {"fkIdProcedureType":1,"fkIdConcept":1}
                     """;

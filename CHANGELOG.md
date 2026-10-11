@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English numbering names** (#1490, CU75): auxiliary deed numbering uses
+  `findMaxAuxiliaryDeedNumber` and `calculateNextAuxiliaryNumber`. The
+  withdrawal test is `shouldRejectWithdrawalWhenNotInscribed`. Concept
+  fixtures are `ConceptFree_InUse`, `ConceptUsed_InUse`,
+  `ConceptEditBlocked`, `ConceptEditAllowed`, and `ConceptDeleteBlocked`.
+  Comments name `idPerson`, `HistoryDeleteIntegrationTest`,
+  `identification type`, `type=1`, and `folio types`.
 - **English local identifiers** (#1490, CU75): the payments page uses
   `PaymentsPage`, `PAYMENT_FIELD_NAMES`, `paymentReceipt`, and
   `handleIssueReceipt`. Reports take `idPayment`. Managements use

@@ -998,7 +998,7 @@ class EntitiesBasicTest {
             assertThat(new User(1)).isNotEqualTo(new User(2));
             assertThat(new User(1)).isNotEqualTo("x");
             assertThat(u1.toString()).contains("10");
-            // getDto wraps a try/catch but won't NPE because we set fkIdPerson with idPersona
+            // getDto wraps a try/catch but won't NPE because we set fkIdPerson with idPerson
             // and Person.getDto handles nulls. Let's call it to cover.
             try {
             } catch (Exception e) {

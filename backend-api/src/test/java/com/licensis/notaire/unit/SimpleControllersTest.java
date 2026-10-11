@@ -1050,7 +1050,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/people/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/people/2")).andExpect(status().isNotFound());
 
-            // POST with missing tipo identification should use default
+            // POST with missing identification type should use default
             String person2Body = """
                     {"firstName":"Ana","lastName":"Gomez","identificationNumber":"87654321","isClient":false}
                     """;
