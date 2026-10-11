@@ -28,8 +28,80 @@ so the availability answer is not only in a pull request.
 
 ## Riesgos / Trade-offs
 
-[CU43 still names `GET/POST /api/v1/gestiones/{id}/reingreso-documentacion`, and CU44 still names `POST /api/v1/movimiento-testimonio/{id}/reenter`] → The live call is in
+[CU43 still names `GET/POST /api/v1/gestiones/{id}/reingreso-documentacion`, CU44 still names `POST /api/v1/movimiento-testimonio/{id}/reenter`, CU10 still names `GET/PUT /api/v1/gestiones/{id}/documentos-entidades-externas[/{idDocumentoPresentado}]`, CU53 and CU83 still name `POST /api/v1/gestiones/{id}/transition`, CU22 still names `PUT /api/v1/gestiones/complete-case`, CU83 still names `GET /api/v1/gestiones/{id}/workflow-trace`, CU13 still names `GET /api/v1/gestiones/{id}/historial` and `GET /api/v1/gestiones/{id}/estado-actual`, and CU53 still names `PUT /api/v1/gestiones/{id}` and `PUT /api/v1/gestiones/{id}/complete-case`] → The live call is in
 `DOC-GESTION`. Rewriting every file is a different change.
+[CU01 and CU39 still name `POST /api/v1/presupuestos/{id}/items-desde-plantilla`] → The live call is in
+`presupuesto-from-template`.
+[CU01, CU39, and CU71 still name `/dashboard/presupuestos`] → The live screen is in
+`presupuesto-from-template`.
+[CU10 still names `/dashboard/documentos-entidades-externas`] → The live screen is in
+`DOC-GESTION`.
+[CU43 still names `/dashboard/reingreso-documentacion`] → The live screen is in
+`DOC-GESTION`.
+[CU22 and CU59 still name `/dashboard/suplencias`] → The live screen is in
+`dashboard-nav-canonical-routes`.
+[CU24, CU25, and CU50 still name `/dashboard/reportes`] → The live screen is in
+`dashboard-nav-canonical-routes`.
+[CU23 still names `/dashboard/auditoria` and `/dashboard/administracion/auditoria`] → The live screen is in
+`dashboard-nav-canonical-routes`.
+[CU22 still names `PUT /api/v1/gestiones`] → The live call is in
+`gestion-asignacion-suplencia`.
+[CU78 still names `/dashboard/administracion/**`] → The live screen is in
+`admin-route-guard`.
+[CU83 and CU13 still name `PUT /gestiones/{id}` and `PUT /gestiones/{id}/complete-case`] → The live call is in
+`DOC-GESTION`.
+[CU13 still names `POST /gestiones` and `GET /gestiones/{id}/estado-actual`] → The live call is in
+`DOC-GESTION`.
+[EVALUACION-DOCUMENTACION still names `POST /api/v1/gestion` and `gestiones_de_escrituras`] → The live call is in
+`DOC-GESTION`.
+[CU43 still names `ReingresoDocumentacionService` and CU10 still names `DocumentoEntidadExternaService`] → The live classes are
+`DocumentReentryService` and `ExternalEntityDocumentService`.
+[CU43 still names `PlantillaTramite`] → The live class is
+`ProcedureTemplate`.
+[CU43 and CU42 still name `DocumentoPresentado`] → The live class is
+`SubmittedDocument`.
+[CU83 and CU39 still name `TipoDeTramite`] → The live class is
+`ProcedureType`.
+[CU83 still names `EstadoDeGestion`] → The live class is
+`ManagementStatus`.
+[CU39 still names `PlantillaPresupuesto`] → The live class is
+`BudgetTemplate`.
+[CU39 still names `PlantillaCostoDocumento`] → The live class is
+`DocumentCostTemplate`.
+[CU27 still names `DocumentoPresentado.importeAPagar`] → The live field is
+`amountToPay`.
+[CU71 still names `fk_id_presupuesto`] → The live column is
+`fk_id_budget`.
+[CU87 still names `escrituraId`] → The live field is
+`deedId`.
+[CU22 still names `fechaInicio` and `fechaFin`] → The live fields are
+`dateStart` and `dateEnd`.
+[CU83 still names `statusActual`] → The live field is
+`currentStatus`.
+[CU43 still names `reingresado=true`] → The live field is
+`reentered`.
+[CU42 still names `fechaVencimiento = fechaIngreso + diasVencimiento`] → The live fields are
+`dateDue`, `dateEntry`, and `dueDays`.
+[CU13 still names `ManagementBitacoraService`] → The live class is
+`ManagementStatusLogService`.
+[CU10 still names `idDocumentoPresentado`] → The live path variable is
+`idSubmittedDocument`.
+[CU39 still names `tipoTramiteId`] → The live query parameter is
+`procedureTypeId`.
+[CU45 still names `idPresupuesto`] → The live path variable is
+`idBudget`.
+[CU71 still names `tipo` and `motivo`] → The live fields are
+`type` and `reason`.
+[CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
+`upcoming-expirations`.
+[CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in
+`presupuesto-catalogo-items`.
+[CU45 still names `GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos`] → The live call is in
+`descuentos-recargos-presupuesto`.
+[CU47 still names `GET /api/v1/presupuestos/{id}/resumen`] → The live call is in
+`pago-presupuesto-gestion-summary`.
+[CU47 still names `GET /api/v1/pagos/presupuesto/{id}/estado`] → The live call is in
+`pagos-parciales-cuotas`.
 [Dictionary stays stale] → #1222, recorded as not a missing sequence.
 
 ## Testing Strategy

@@ -12,7 +12,8 @@ scratch for each one.
 The system SHALL allow one or more existing catalog `Item`s to be
 linked to a `Budget`, creating a copy of each one with its name,
 amount, percentage, and notes, linked to that `Budget`, per
-CU71 and RF-07.
+CU71 and RF-07. The add path is
+`POST /api/v1/budgets/{id}/items-from-catalog`.
 
 #### Scenario: Successful add of one catalog item
 - **WHEN** a user selects an existing catalog item and adds it

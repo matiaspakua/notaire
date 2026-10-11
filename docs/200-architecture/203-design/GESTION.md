@@ -67,9 +67,13 @@ the management node.
 
 The management status changes only through
 `POST /api/v1/managements/{id}/transition` or through
-`POST /api/v1/managements/{id}/archive`. A `PUT` that changes the status
-answers 400. Stored procedure types `Sucesion` and `Poder` have no seeded
-workflow: any transition answers 400.
+`POST /api/v1/managements/{id}/archive`. A status change on
+`PUT /api/v1/managements/{id}` or
+`PUT /api/v1/managements/{id}/complete-case` answers 400. Legal next destinations come from
+`GET /api/v1/managements/{id}/workflow-trace`. The history log is
+`GET /api/v1/managements/{id}/history`. The current status is
+`GET /api/v1/managements/{id}/current-status`. Stored procedure types
+`Sucesion` and `Poder` have no seeded workflow: any transition answers 400.
 
 | Step | Node before | Must exist | Use case | Call | Not enough |
 |------|-------------|-------------------|----------|---------|------------|
@@ -116,6 +120,8 @@ sequenceDiagram
 ```
 
 ### 3.2 Documentation that can complete the management
+
+The screen is `/dashboard/external-entity-documents`.
 
 ```mermaid
 sequenceDiagram
@@ -286,8 +292,8 @@ an exit; it does not store the observation. The use case uses `reenter`.
 
 ### 3.8 Re-enter a document
 
-CU43. It is not a management status and it does not fire the
-documentation-complete edge.
+CU43. The screen is `/dashboard/document-reentry`. It is not a management
+status and it does not fire the documentation-complete edge.
 
 ```mermaid
 sequenceDiagram

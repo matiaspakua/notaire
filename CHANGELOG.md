@@ -64,6 +64,211 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired item type and reason** (#1490, CU75): the engineering-sequences
+  design names the fields CU71 still writes, `tipo` and `motivo`.
+  The live fields are `type` and `reason`. Stored item types `NORMAL`,
+  `DESCUENTO`, and `RECARGO` stay. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired budget id** (#1490, CU75): the engineering-sequences
+  design names the path variable CU45 still writes, `idPresupuesto`.
+  The live path variable is `idBudget`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Retired procedure-type query** (#1490, CU75): the engineering-sequences
+  design names the query parameter CU39 still writes, `tipoTramiteId`.
+  The live query parameter is `procedureTypeId`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Retired submitted-document id** (#1490, CU75): the engineering-sequences
+  design names the path variable CU10 still writes, `idDocumentoPresentado`.
+  The live path variable is `idSubmittedDocument`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Retired status log service** (#1490, CU75): the engineering-sequences
+  design names the class CU13 still writes, `ManagementBitacoraService`.
+  The live class is `ManagementStatusLogService`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Retired due-date formula** (#1490, CU75): the engineering-sequences
+  design names the formula CU42 still writes,
+  `fechaVencimiento = fechaIngreso + diasVencimiento`.
+  The live fields are `dateDue`, `dateEntry`, and `dueDays`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Retired reentered flag** (#1490, CU75): the engineering-sequences
+  design names the flag CU43 still writes, `reingresado=true`.
+  The live field is `reentered`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired current status field** (#1490, CU75): the engineering-sequences
+  design names the field CU83 still writes, `statusActual`.
+  The live field is `currentStatus`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired substitution dates** (#1490, CU75): the engineering-sequences
+  design names the fields CU22 still writes, `fechaInicio` and `fechaFin`.
+  The live fields are `dateStart` and `dateEnd`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired deed link field** (#1490, CU75): the engineering-sequences
+  design names the field CU87 still writes, `escrituraId`.
+  The live field is `deedId`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired budget foreign key** (#1490, CU75): the engineering-sequences
+  design names the column CU71 still writes, `fk_id_presupuesto`.
+  The live column is `fk_id_budget`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired amount to pay** (#1490, CU75): the engineering-sequences
+  design names the field CU27 still writes, `DocumentoPresentado.importeAPagar`.
+  The live field is `amountToPay`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired document cost template** (#1490, CU75): the engineering-sequences
+  design names the type CU39 still writes, `PlantillaCostoDocumento`.
+  The live class is `DocumentCostTemplate`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired budget template** (#1490, CU75): the engineering-sequences
+  design names the type CU39 still writes, `PlantillaPresupuesto`.
+  The live class is `BudgetTemplate`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired management status** (#1490, CU75): the engineering-sequences
+  design names the type CU83 still writes, `EstadoDeGestion`.
+  The live class is `ManagementStatus`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired procedure type** (#1490, CU75): the engineering-sequences
+  design names the type CU83 and CU39 still write, `TipoDeTramite`.
+  The live class is `ProcedureType`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired submitted document** (#1490, CU75): the engineering-sequences
+  design names the type CU43 and CU42 still write, `DocumentoPresentado`.
+  The live class is `SubmittedDocument`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired procedure template** (#1490, CU75): the engineering-sequences
+  design names the type CU43 still writes, `PlantillaTramite`.
+  The live class is `ProcedureTemplate`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired document services** (#1490, CU75): the engineering-sequences
+  design names the classes CU43 and CU10 still write,
+  `ReingresoDocumentacionService` and `DocumentoEntidadExternaService`.
+  The live classes are `DocumentReentryService` and
+  `ExternalEntityDocumentService`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Retired case create** (#1490, CU75): the engineering-sequences design
+  names the path and table EVALUACION-DOCUMENTACION still writes,
+  `POST /api/v1/gestion` and `gestiones_de_escrituras`. The live call
+  stays in `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Short management create and status** (#1490, CU75): the engineering-sequences
+  design names the paths CU13 still writes, `POST /gestiones` and
+  `GET /gestiones/{id}/estado-actual`. The live calls stay in
+  `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Short management updates** (#1490, CU75): the engineering-sequences
+  design names the paths CU83 and CU13 still write, `PUT /gestiones/{id}`
+  and `PUT /gestiones/{id}/complete-case`. The live calls stay in
+  `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Admin screen** (#1490, CU75): the engineering-sequences design names
+  the screen CU78 still writes, `/dashboard/administracion/**`.
+  The live screen stays in `admin-route-guard`. The label key
+  `administracion` stays. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Plain management update** (#1490, CU75): the engineering-sequences
+  design names the path CU22 still writes, `PUT /api/v1/gestiones`.
+  The live call stays in `gestion-asignacion-suplencia`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Audit screen** (#1490, CU75): the engineering-sequences design names
+  the screens CU23 still writes, `/dashboard/auditoria` and
+  `/dashboard/administracion/auditoria`. The live screen stays in
+  `dashboard-nav-canonical-routes`. The label key `auditoria` stays.
+  The heading `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Reports screen** (#1490, CU75): the engineering-sequences design names
+  the screen CU24, CU25, and CU50 still write, `/dashboard/reportes`.
+  The live screen stays in `dashboard-nav-canonical-routes`. The label
+  key `reportes` stays. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Substitutions screen** (#1490, CU75): the engineering-sequences design
+  names the screen CU22 and CU59 still write, `/dashboard/suplencias`.
+  The live screen stays in `dashboard-nav-canonical-routes`. The label
+  key `suplencias` stays. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Document re-entry screen** (#1490, CU75): `DOC-GESTION` names
+  `/dashboard/document-reentry`. The engineering-sequences design names
+  the screen CU43 still writes, `/dashboard/reingreso-documentacion`.
+  The heading `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **External-entity documents screen** (#1490, CU75): `DOC-GESTION` names
+  `/dashboard/external-entity-documents`. The engineering-sequences design
+  names the screen CU10 still writes,
+  `/dashboard/documentos-entidades-externas`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Budget screen** (#1490, CU75): the living
+  `presupuesto-from-template` spec names `/dashboard/budgets`. The
+  engineering-sequences design names the screen CU01, CU39, and CU71
+  still write, `/dashboard/presupuestos`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Upcoming expirations screen** (#1490, CU75): the living
+  `upcoming-expirations` spec names `/dashboard/upcoming-expirations`.
+  The engineering-sequences design names the screen CU42 still writes,
+  `/dashboard/proximos-vencimientos`. The archived proposal keeps that
+  screen. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Payment consult paths** (#1490, CU75): the engineering-sequences
+  design names the paths CU47 still writes,
+  `GET /api/v1/presupuestos/{id}/resumen` and
+  `GET /api/v1/pagos/presupuesto/{id}/estado`. The live calls stay in
+  `pago-presupuesto-gestion-summary` and `pagos-parciales-cuotas`.
+  The heading `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Discounts and surcharges path** (#1490, CU75): the living
+  `descuentos-recargos-presupuesto` spec names
+  `GET /api/v1/items/budget/{idBudget}/discounts-surcharges`. The
+  engineering-sequences design names the path CU45 still writes,
+  `GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos`.
+  The archived design keeps that path. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Catalog items path** (#1490, CU75): the living
+  `presupuesto-catalogo-items` spec names
+  `POST /api/v1/budgets/{id}/items-from-catalog`. The
+  engineering-sequences design names the path CU71 still writes,
+  `POST /api/v1/presupuestos/{id}/items-desde-catalogo`. The archived
+  proposal keeps that path. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Upcoming expirations query** (#1490, CU75): the living
+  `upcoming-expirations` spec names the query `days` on
+  `GET /api/v1/submitted-documents/upcoming-expirations`. The
+  engineering-sequences design names the path CU42 still writes,
+  `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N`.
+  The archived change keeps `dias`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Budget template path** (#1490, CU75): the engineering-sequences
+  design names the path CU01 and CU39 still write,
+  `POST /api/v1/presupuestos/{id}/items-desde-plantilla`. The live call
+  stays in `presupuesto-from-template`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
+- **Rejected status PUT paths** (#1490, CU75): `DOC-GESTION` names the
+  live updates `PUT /api/v1/managements/{id}` and
+  `PUT /api/v1/managements/{id}/complete-case`. A status change on either
+  answers 400. The engineering-sequences design names the paths CU53 still
+  writes, `PUT /api/v1/gestiones/{id}` and
+  `PUT /api/v1/gestiones/{id}/complete-case`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Management history paths** (#1490, CU75): `DOC-GESTION` names the
+  live reads `GET /api/v1/managements/{id}/history` and
+  `GET /api/v1/managements/{id}/current-status`. The engineering-sequences
+  design names the paths CU13 still writes,
+  `GET /api/v1/gestiones/{id}/historial` and
+  `GET /api/v1/gestiones/{id}/estado-actual`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Workflow-trace path** (#1490, CU75): `DOC-GESTION` names the live
+  legal-next read `GET /api/v1/managements/{id}/workflow-trace`. The
+  engineering-sequences design names the path CU83 still writes,
+  `GET /api/v1/gestiones/{id}/workflow-trace`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
+- **Complete-case path citation** (#1490, CU75): the
+  engineering-sequences design names the path CU22 still writes,
+  `PUT /api/v1/gestiones/complete-case`. The live call stays in
+  `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Management transition path citation** (#1490, CU75): the
+  engineering-sequences design names the path CU53 and CU83 still write,
+  `POST /api/v1/gestiones/{id}/transition`. The live call stays in
+  `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **External-entity document path citation** (#1490, CU75): the
+  engineering-sequences design names the path CU10 still writes,
+  `GET/PUT /api/v1/gestiones/{id}/documentos-entidades-externas[/{idDocumentoPresentado}]`.
+  The live call stays in `DOC-GESTION`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **k6 script path** (#1490, CU75): the living load-test spec names
   `infra/performance/k6/load-test.js`, the file the weekly workflow runs.
   The archived change keeps `performance-test/k6/load-test.js`.
