@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/tipo-identificacion")
-@Tag(name = "TipoIdentificacion", description = "API para gestionar tipos de identificacion")
+@RequestMapping("/api/v1/identification-types")
+@Tag(name = "IdentificationType", description = "API for managing identification types")
 public class IdentificationTypeController {
 
     private static final Logger log = LoggerFactory.getLogger(IdentificationTypeController.class);
@@ -61,7 +61,7 @@ public class IdentificationTypeController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los tipos de identificacion")
+    @Operation(summary = "Get all identification types")
     @Transactional(readOnly = true)
     public ResponseEntity<List<IdentificationTypeResponse>> getAll() {
         return ResponseEntity.ok(repository.findAll().stream().map(this::toResponse).toList());
@@ -69,10 +69,10 @@ public class IdentificationTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener tipo de identificacion por ID")
+    @Operation(summary = "Get identification type by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<IdentificationTypeResponse> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -82,12 +82,12 @@ public class IdentificationTypeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo tipo de identificacion")
+    @Operation(summary = "Create identification type")
     public ResponseEntity<Object> create(@Valid @RequestBody IdentificationTypeRequest request) {
         try {
             IdentificationType entity = new IdentificationType();
@@ -95,17 +95,17 @@ public class IdentificationTypeController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
         } catch (Exception e) {
-            log.error("Failed to create tipo de identificacion", e);
+            log.error("Failed to create identification type", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar tipo de identificacion")
+    @Operation(summary = "Update identification type")
     public ResponseEntity<Void> update(@PathVariable Integer id,
             @Valid @RequestBody IdentificationTypeRequest request) {
         return repository.findById(id).map(existing -> {
@@ -114,18 +114,18 @@ public class IdentificationTypeController {
                 repository.save(existing);
                 return ResponseEntity.ok().<Void>build();
             } catch (Exception e) {
-                log.error("Failed to update tipo de identificacion id {}", id, e);
+                log.error("Failed to update identification type id {}", id, e);
                 return ResponseEntity.internalServerError().<Void>build();
             }
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar tipo de identificacion")
+    @Operation(summary = "Delete identification type")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -134,7 +134,7 @@ public class IdentificationTypeController {
             repository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("Failed to delete tipo de identificacion id {}", id, e);
+            log.error("Failed to delete identification type id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

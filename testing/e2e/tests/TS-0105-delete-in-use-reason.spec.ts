@@ -1,7 +1,7 @@
 /**
  * TS-0105 - Delete failures show why (issue #1345)
  *
- * Covers: CU76 (RF-38 Modificación de clientes, RF-53 Administrar tablas base)
+ * Covers: CU76 (RF-38 Update clients, RF-53 Administer base tables)
  * Issue: #1345 — delete handlers toasted a generic "Error al eliminar" and hid
  * the backend's 409 "in use" reason.
  *
@@ -15,9 +15,9 @@ const SERVER_REASON = "Cannot delete: person is referenced by other records.";
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }
 
@@ -40,7 +40,7 @@ async function stubPeople(page: Page, deleteStatus: number, deleteBody: string) 
 }
 
 async function deleteTheRow(page: Page) {
-  await page.goto("/dashboard/personas");
+  await page.goto("/dashboard/people");
   const row = page.getByRole("row").filter({ hasText: "TS0105" });
   await row.getByRole("button", { name: /eliminar|delete/i }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: /eliminar|delete/i }).click();

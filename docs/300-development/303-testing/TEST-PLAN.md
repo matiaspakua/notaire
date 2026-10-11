@@ -1,6 +1,6 @@
 # Test Plan — Notaire E2E Test Suite (TS-nnnn)
 
-**Current**: 35 organized E2E test suites (consolidated from 41 original files) covering 68+ business Use Cases (Casos de Uso).
+**Current**: 35 organized E2E test suites (consolidated from 41 original files) covering 68+ business use cases.
 
 ## 1. Test Nomenclature & Organization (TS-nnnn)
 
@@ -37,26 +37,26 @@ Where:
 
 | Suite | Filename | Primary CU(s) | Business Domain | Workflow Type | Value |
 |-------|----------|---------------|------------------|---------------|-------|
-| **TS-0010** | `TS-0010-presupuesto-workflow.spec.ts` | CU01, CU39, CU45, CU49, CU55, CU60 | Presupuestos | Budget lifecycle: create → modify → view → archive | **HIGH** |
-| **TS-0011** | `TS-0011-gestiones-crud-workflow.spec.ts` | CU02, CU13, CU14, CU16, CU19, CU53 | Gestiones | Case management: create → history → state → archive | **HIGH** |
-| **TS-0012** | `TS-0012-documentacion-testimonio-workflow.spec.ts` | CU03–CU12 | Documentación | Document registration → testimony generation/verification → inscription | **HIGH** |
-| **TS-0013** | `TS-0013-escrituras-signing-workflow.spec.ts` | CU05, CU06, CU52, CU63 | Escrituras | Deed preparation → signing → modification → search | **HIGH** |
-| **TS-0014** | `TS-0014-pagos-workflow.spec.ts` | CU15, CU47 | Pagos | Payment processing + consultation | **HIGH** |
-| **TS-0015** | `TS-0015-personas-clientes-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61 | Personas/Clientes | Entity lifecycle: create → modify → view → search (personas + clients) | **HIGH** |
-| **TS-0016** | `TS-0016-usuarios-escribanos-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | Usuarios/Escribanos | User & notary lifecycle: create → modify → activity log | **HIGH** |
-| **TS-0017** | `TS-0017-suplencias-workflow.spec.ts` | CU22, CU59 | Suplencias | Proxy/substitution: register → consult | **MEDIUM** |
-| **TS-0018** | `TS-0018-reingreso-documentacion-workflow.spec.ts` | CU43 | Reingresar Documentación | Document re-entry workflow | **MEDIUM** |
-| **TS-0019** | `TS-0019-inmuebles-valuacion-workflow.spec.ts` | CU69 | Inmuebles | Property management: valuation fiscal tracking | **MEDIUM** |
-| **TS-0020** | `TS-0020-reportes-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Administración | Reports, catalogs: índices, tipos, folios, conceptos, estados, users | **HIGH** |
+| **TS-0010** | `TS-0010-budget-workflow.spec.ts` | CU01, CU39, CU45, CU49, CU55, CU60 | Budgets | Budget lifecycle: create → modify → view → archive | **HIGH** |
+| **TS-0011** | `TS-0011-managements-crud-workflow.spec.ts` | CU02, CU13, CU14, CU16, CU19, CU53 | Deed managements | Case management: create → history → state → archive | **HIGH** |
+| **TS-0012** | `TS-0012-documentation-testimony-workflow.spec.ts` | CU03–CU12 | Documents | Document registration → testimony generation/verification → inscription | **HIGH** |
+| **TS-0013** | `TS-0013-deeds-signing-workflow.spec.ts` | CU05, CU06, CU52, CU63 | Deeds | Deed preparation → signing → modification → search | **HIGH** |
+| **TS-0014** | `TS-0014-payments-workflow.spec.ts` | CU15, CU47 | Payments | Payment processing + consultation | **HIGH** |
+| **TS-0015** | `TS-0015-people-clients-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61 | People and clients | Entity lifecycle: create → modify → view → search (people and clients) | **HIGH** |
+| **TS-0016** | `TS-0016-users-notaries-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | Users and notaries | User and notary lifecycle: create → modify → activity log. Stored role `ESCRIBANO` stays. | **HIGH** |
+| **TS-0017** | `TS-0017-substitutions-workflow.spec.ts` | CU22, CU59 | Substitutions | Proxy/substitution: register → consult. Nav key `suplencias` stays. | **MEDIUM** |
+| **TS-0018** | `TS-0018-document-reentry-workflow.spec.ts` | CU43 | Re-enter documents | Document re-entry workflow | **MEDIUM** |
+| **TS-0019** | `TS-0019-properties-valuation-workflow.spec.ts` | CU69 | Properties | Property management: fiscal valuation tracking | **MEDIUM** |
+| **TS-0020** | `TS-0020-reports-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Administration | Reports and catalogs: indexes, types, folios, concepts, statuses, users. Nav key `reportes` stays. | **HIGH** |
 | **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | Workflow Admin | State definition + transition editor (workflow configuration) | **HIGH** |
-| **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | Workflow Admin | Assign workflow to TipoDeTramite | **MEDIUM** |
-| **TS-0023** | `TS-0023-roles-permisos-admin.spec.ts` | CU43.1 | Seguridad Admin | Role & permission management | **MEDIUM** |
-| **TS-0024** | `TS-0024-admin-module-smoke.spec.ts` | CU20, CU26–CU32, CU57–CU67 | Administración | Smoke test: every admin section loads, create button responds | **MEDIUM** |
-| **TS-0028** | `TS-0028-gestion-historial-feature.spec.ts` | CU13 | Gestiones Feature | Bitácora (audit trail / history view) for gestión | **MEDIUM** |
-| **TS-0029** | `TS-0029-gestion-estado-transition-feature.spec.ts` | CU83 | Gestiones Feature | State transition workflow (cambiar estado) with validation | **MEDIUM** |
-| **TS-0031** | `TS-0031-testimonio-generacion-verificacion-feature.spec.ts` | CU07, CU08 | Documentación Feature | Testimony generation + verification (golden path + edge cases) | **HIGH** |
-| **TS-0032** | `TS-0032-testimonio-inscripcion-feature.spec.ts` | CU11, CU12, CU44 | Documentación Feature | Testimony inscription circuit (enter → register → withdraw) | **HIGH** |
-| **TS-0033** | `TS-0033-documentos-entidades-externas-feature.spec.ts` | CU10 | Documentación Feature | External entity document tracking | **MEDIUM** |
+| **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | Workflow Admin | Assign workflow to ProcedureType | **MEDIUM** |
+| **TS-0023** | `TS-0023-roles-permissions-admin.spec.ts` | CU43.1 | Security admin | Role and permission management | **MEDIUM** |
+| **TS-0024** | `TS-0024-admin-module-smoke.spec.ts` | CU20, CU26–CU32, CU57–CU67 | Administration | Smoke test: every admin section loads, create button responds | **MEDIUM** |
+| **TS-0028** | `TS-0028-management-history-feature.spec.ts` | CU13 | Deed managements | History log for a deed management | **MEDIUM** |
+| **TS-0029** | `TS-0029-management-status-transition-feature.spec.ts` | CU83 | Deed managements | Status-transition workflow with validation | **MEDIUM** |
+| **TS-0031** | `TS-0031-testimony-generation-verification-feature.spec.ts` | CU07, CU08 | Documents | Testimony generation + verification (golden path + edge cases) | **HIGH** |
+| **TS-0032** | `TS-0032-testimony-registration-feature.spec.ts` | CU11, CU12, CU44 | Documents | Testimony inscription circuit (enter → register → withdraw) | **HIGH** |
+| **TS-0033** | `TS-0033-external-entity-documents-feature.spec.ts` | CU10 | Documents | External entity document tracking | **MEDIUM** |
 | **TS-0035** | `TS-0035-workflow-tracker-visualization-feature.spec.ts` | CU70, CU71 | Dashboard Feature | Animated workflow tracker on dashboard landing | **LOW** |
 
 ### TS-0040–TS-0050: Quality Assurance & Technical
@@ -84,7 +84,7 @@ Where:
 
 | Suite | Filename | Primary CU(s) | Scope |
 |-------|----------|---------------|-------|
-| **TS-0091** | `TS-0091-items-descuentos-recargos.spec.ts` | CU45, CU71 | Descuento/recargo item validation + report query |
+| **TS-0091** | `TS-0091-items-discounts-surcharges.spec.ts` | CU45, CU71 | Discount and surcharge item validation + report query |
 
 ---
 
@@ -96,37 +96,31 @@ Every E2E suite uses a **Given-When-Then (Gherkin)** pattern via the `GherkinSte
 
 ```typescript
 /**
- * CU01 - Preparar Presupuesto
- * Test CU references: https://docs.notaire.app/casos-de-uso/cu01
+ * CU01 - Prepare a budget
  * Sequence diagram: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
- * 
+ *
  * Fixtures:
  * - GherkinSteps (Given-When-Then helpers)
- * - API create helpers: createPersona(), createPresupuesto()
+ * - API create helpers: createPerson(), createBudget()
  * - Global auth: global-setup.ts injects E2E_ADMIN_TOKEN
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 
-test.describe("TS-0010 - Presupuesto Workflow", () => {
+test.describe("CU01 - Prepare a budget", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
     steps = new GherkinSteps(page);
     await steps.givenUserIsLoggedIn();
-    await steps.givenUserIsOnPage("/dashboard/presupuestos");
+    await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
-  test("GW01: Create presupuesto from modal", async () => {
-    // Given
+  test("GW01: create a budget from the dialog", async () => {
+    // The default locale is Spanish, so the visible heading stays.
     await steps.givenModuleIsVisible("Presupuestos");
-    
-    // When
-    await steps.whenUserClicksButton("nuevo presupuesto");
-    
-    // Then
-    await steps.thenModalIsVisible("Nuevo Presupuesto");
-    await steps.thenFormHasField("fecha");
+    await page.getByTestId("btn-new-budget").click();
+    await expect(page.getByRole("dialog")).toBeVisible();
   });
 });
 ```
@@ -136,7 +130,7 @@ test.describe("TS-0010 - Presupuesto Workflow", () => {
 | Component | Location | Purpose |
 |-----------|----------|---------|
 | **GherkinSteps** | `testing/e2e/tests/gherkin-helpers.ts` | Given-When-Then step definitions (login, modal, form, table assertions) |
-| **API Helpers** | `testing/e2e/tests/setup/api-helpers.ts` | Shared functions: `createPersona()`, `createPresupuesto()`, `seedGestion()` |
+| **API Helpers** | `testing/e2e/tests/setup/api-helpers.ts` | Shared functions: `createPerson()`, `createBudget()`, `seedManagement()` |
 | **Global Setup** | `testing/e2e/tests/setup/global-setup.ts` | Runs once per worker: login as admin, extract JWT to `process.env.E2E_ADMIN_TOKEN` |
 | **Global Teardown** | `testing/e2e/tests/setup/global-teardown.ts` | Cleanup after suite (close browser, audit logs) |
 | **Auth Helper** | `testing/e2e/tests/setup/auth.ts` | Inject cached token or re-login (`authenticateAsAdmin()`) |
@@ -165,11 +159,11 @@ To minimize E2E test count (lower runtime, higher ROI per test), 6 low-value tes
 | Consolidated From | Merged Into | Reason |
 |-------------------|-------------|--------|
 | `cu70-workflow-viewer.spec.ts` | **TS-0021** (workflow-editor) | Viewer is read-only variant; editor tests cover both paths |
-| `presupuestos.spec.ts` (module CRUD) | **TS-0010** (presupuesto-workflow) | Duplicate coverage; TS-0010 has golden path + gherkin |
-| `personas.spec.ts` (module CRUD) | **TS-0015** (personas-clientes-workflow) | Duplicate coverage; TS-0015 has full lifecycle |
-| `suplencias.spec.ts` (module view) | **TS-0017** (suplencias-workflow) | Duplicate coverage; TS-0017 is complete |
-| `escritura-firma.spec.ts` (edge cases) | **TS-0013** (escrituras-signing-workflow) | Edge paths now in TS-0013; low ROI as standalone |
-| `crud-gestiones.spec.ts` (CRUD duplicate) | **TS-0011** (gestiones-crud-workflow) | Exact duplicate; TS-0011 is canonical |
+| `presupuestos.spec.ts` (module CRUD) | **TS-0010** (budget-workflow) | Duplicate coverage; TS-0010 has golden path + gherkin |
+| `personas.spec.ts` (module CRUD) | **TS-0015** (people-clients-workflow) | Duplicate coverage; TS-0015 has full lifecycle |
+| `suplencias.spec.ts` (module view) | **TS-0017** (substitutions-workflow) | Duplicate coverage; TS-0017 is complete |
+| `escritura-firma.spec.ts` (edge cases) | **TS-0013** (deeds-signing-workflow) | Edge paths now in TS-0013; low ROI as standalone |
+| `crud-gestiones.spec.ts` (CRUD duplicate) | **TS-0011** (managements-crud-workflow) | Exact duplicate; TS-0011 is canonical |
 
 **Result**: 41 files → 35 organized suites (6 deletions, 0 new tests added).
 
@@ -208,7 +202,7 @@ cd testing/e2e && npm test
 npx playwright test TS-0001-login-authentication
 
 # Run with headed browser (watch)
-HEADED=1 npx playwright test TS-0010-presupuesto-workflow
+HEADED=1 npx playwright test TS-0010-budget-workflow
 
 # Run with debug inspector
 npx playwright test --debug
@@ -266,9 +260,9 @@ Header columns (post–English rename, issue #1064):
 | `Notas` / `GitHub_Issue` | Notes and issue links (`Bruno_Test=MISSING` must cite `#953`) |
 
 **Drift guard:** `python3 workspace/sdlc/validate-cu-api-matrix.py` rejects stale Spanish
-controller names, missing required resource bases (`/carpetas`, `/cuadernos`,
-`/minutas-inscripcion`, `/plantilla-costos-documento`, `/protocolo-auxiliar`,
-`/roles`, `/tipo-identificacion`, `/tramites`), invalid `Bruno_Test` values, and
+controller names, missing required resource bases (`/procedure-folders`, `/notebooks`,
+`/registration-drafts`, `/document-cost-templates`, `/auxiliary-protocol`,
+`/roles`, `/identification-types`, `/procedures`), invalid `Bruno_Test` values, and
 `MISSING` rows without `#953`. Wired into `workspace/sdlc/preflight.sh` and
 `sdlc-process.yml` (CU76 / #1064). Bruno request authoring for remaining gaps
 stays on #953.
@@ -288,10 +282,10 @@ Each major workflow (TS-0010 through TS-0035) references sequence diagrams at:
 
 ```text
 docs/200-architecture/204-diagrams/Secuencias/
-├── CU01.puml (Presupuesto)
-├── CU02.puml (Gestiones)
-├── CU05.puml (Escrituras)
-├── CU07.puml (Testimonio)
+├── CU01.puml (Budget)
+├── CU02.puml (Deed management)
+├── CU05.puml (Deed)
+├── CU07.puml (Testimony)
 └── ...
 ```
 
@@ -299,9 +293,9 @@ Test comments include `@sequence` links to relevant diagrams so test readers can
 
 ```typescript
 /**
- * TS-0010 - Presupuesto Workflow
+ * TS-0010 - Budget workflow
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
- * Flow: Usuario → [create presupuesto] → backend API → database → response
+ * Flow: user → create budget → backend API → database → response
  */
 ```
 
@@ -319,9 +313,9 @@ Tests **MAY** be skipped only if:
 **Example**:
 
 ```typescript
-test.skip("CU01-GW02 (#1146): Create presupuesto with all fields", async () => {
-  // Skipped (#1146): presupuesto form does not have a "tipo tramite" dropdown per design.
-  // Re-enable once API and form schema are updated.
+test.skip("CU01-GW02 (#1146): Create a budget with every field", async () => {
+  // Skipped (#1146): the budget form does not have a procedure-type dropdown.
+  // Re-enable once the API and form schema are updated.
 });
 ```
 
@@ -332,7 +326,7 @@ test.skip("CU01-GW02 (#1146): Create presupuesto with all fields", async () => {
 - ❌ Skipped tests for flaky timing (fix waits; do not raise CI retries above 1)
 - ❌ Skipped tests for "future work" (remove them or implement)
 - ❌ H2 payment ITs that POST against seed `idBudget=1` (arrange a dedicated
-  presupuesto via `BudgetPaymentTestFixtures` — #916; do not rely on
+  budget via `BudgetPaymentTestFixtures` — #916; do not rely on
   `@DirtiesContext(AFTER_EACH)` as the primary isolation strategy)
 - ❌ Controller unit mega-tests that mix happy-path stubs with
   `RuntimeException("x")` error stubs in the same method (`SimpleControllersTest`

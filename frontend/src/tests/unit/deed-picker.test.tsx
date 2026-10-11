@@ -20,14 +20,14 @@ vi.mock("next-intl", () => ({
 }));
 
 import { DeedPicker } from "@/components/shared/DeedPicker";
-import type { Escritura } from "@/types";
+import type { Deed } from "@/types";
 
-const NEWEST: Escritura[] = [
+const NEWEST: Deed[] = [
   { idDeed: 1500, number: 1500, status: "Firmada" },
   { idDeed: 1499, number: 1499, status: "Firmada" },
 ];
-const OLD_SIGNED: Escritura = { idDeed: 12, number: 77, status: "Firmada" };
-const OLD_UNSIGNED: Escritura = { idDeed: 13, number: 77, status: "Sin Firmar" };
+const OLD_SIGNED: Deed = { idDeed: 12, number: 77, status: "Firmada" };
+const OLD_UNSIGNED: Deed = { idDeed: 13, number: 77, status: "Sin Firmar" };
 
 function json(body: unknown, status = 200) {
   const text = JSON.stringify(body);
@@ -35,12 +35,12 @@ function json(body: unknown, status = 200) {
 }
 
 function route(url: string) {
-  if (/\/escrituras\?page=0&size=20&sort=idDeed%2Cdesc&status=Firmada$/.test(url)) {
+  if (/\/deeds\?page=0&size=20&sort=idDeed%2Cdesc&status=Firmada$/.test(url)) {
     return json({ content: NEWEST, number: 0, size: 20, totalElements: 1200, totalPages: 60 });
   }
-  if (/\/escrituras\/buscar\?number=77$/.test(url)) return json([OLD_SIGNED, OLD_UNSIGNED]);
-  if (/\/escrituras\/buscar\?number=\d+$/.test(url)) return json([]);
-  if (/\/escrituras\/12$/.test(url)) return json(OLD_SIGNED);
+  if (/\/deeds\/search\?number=77$/.test(url)) return json([OLD_SIGNED, OLD_UNSIGNED]);
+  if (/\/deeds\/search\?number=\d+$/.test(url)) return json([]);
+  if (/\/deeds\/12$/.test(url)) return json(OLD_SIGNED);
   return json({ message: "not found" }, 404);
 }
 
@@ -55,8 +55,8 @@ function Harness({
   exclude,
 }: {
   initial?: number;
-  onPick?: (d?: Escritura) => void;
-  exclude?: (d: Escritura) => boolean;
+  onPick?: (d?: Deed) => void;
+  exclude?: (d: Deed) => boolean;
 }) {
   const [id, setId] = useState<number | undefined>(initial);
   return (
@@ -67,7 +67,7 @@ function Harness({
         onPick?.(d);
       }}
       exclude={exclude}
-      aria-label="Escritura"
+      aria-label="Deed"
       data-testid="picker"
     />
   );
@@ -83,7 +83,7 @@ describe("DeedPicker (#1340)", () => {
 
   it("is an ARIA combobox that opens with the newest signed deeds and never asks for size=1000", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Escritura" });
+    const box = screen.getByRole("combobox", { name: "Deed" });
     fireEvent.click(box);
     const listbox = await screen.findByRole("listbox");
     expect(box).toHaveAttribute("aria-controls", listbox.id);
@@ -96,7 +96,7 @@ describe("DeedPicker (#1340)", () => {
   it("finds an old deed by number on the server and lists only signed ones", async () => {
     const onPick = vi.fn();
     render(<Harness onPick={onPick} />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Escritura" });
+    const box = screen.getByRole("combobox", { name: "Deed" });
     fireEvent.click(box);
     fireEvent.change(box, { target: { value: "77" } });
     const options = await screen.findAllByRole("option", { name: "deedPicker.option 77" });
@@ -104,12 +104,12 @@ describe("DeedPicker (#1340)", () => {
     fireEvent.click(options[0]);
     expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ idDeed: 12 }));
     expect(box).toHaveValue("deedPicker.option 77");
-    expect(urls().some((u) => /\/escrituras\/buscar\?number=77$/.test(u))).toBe(true);
+    expect(urls().some((u) => /\/deeds\/search\?number=77$/.test(u))).toBe(true);
   });
 
   it("hides excluded deeds (folio form: already linked to another folio)", async () => {
     render(<Harness exclude={(d) => d.idDeed === 1500} />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Escritura" });
+    const box = screen.getByRole("combobox", { name: "Deed" });
     fireEvent.click(box);
     expect(await screen.findByRole("option", { name: "deedPicker.option 1499" })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: "deedPicker.option 1500" })).not.toBeInTheDocument();
@@ -117,12 +117,12 @@ describe("DeedPicker (#1340)", () => {
 
   it("shows the current deed of a form by loading it by id", async () => {
     render(<Harness initial={12} />, { wrapper });
-    await waitFor(() => expect(screen.getByRole("combobox", { name: "Escritura" })).toHaveValue("deedPicker.option 77"));
+    await waitFor(() => expect(screen.getByRole("combobox", { name: "Deed" })).toHaveValue("deedPicker.option 77"));
   });
 
   it("announces when nothing matches", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Escritura" });
+    const box = screen.getByRole("combobox", { name: "Deed" });
     fireEvent.click(box);
     fireEvent.change(box, { target: { value: "999999" } });
     expect(await screen.findByText("deedPicker.noResults")).toBeInTheDocument();
@@ -137,13 +137,13 @@ describe("no screen loads every deed (#1340)", () => {
     });
   }
   const root = join(__dirname, "..", "..");
-  it("useEscrituras() (the size=1000 list) is gone and no screen calls it", () => {
+  it("useDeeds() (the size=1000 list) is gone and no screen calls it", () => {
     const offenders = [...files(join(root, "app")), ...files(join(root, "components")), ...files(join(root, "hooks"))]
-      .filter((f) => /\buseEscrituras\(\)/.test(readFileSync(f, "utf8")));
+      .filter((f) => /\buseDeeds\(\)/.test(readFileSync(f, "utf8")));
     expect(offenders).toEqual([]);
   });
   it("the testimony, registration-draft and folio forms use the DeedPicker", () => {
-    for (const page of ["testimonios", "minutas-inscripcion", "administracion/folios"]) {
+    for (const page of ["testimonies", "registration-drafts", "administration/folios"]) {
       expect(readFileSync(join(root, "app", "dashboard", page, "page.tsx"), "utf8")).toMatch(/<DeedPicker\b/);
     }
   });

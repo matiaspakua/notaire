@@ -29,11 +29,11 @@ test.describe("Shared status badge (#1366)", () => {
   });
 
   for (const route of [
-    "/dashboard/presupuestos",
-    "/dashboard/gestiones",
-    "/dashboard/testimonios",
-    "/dashboard/administracion/usuarios",
-    "/dashboard/administracion/folios",
+    "/dashboard/budgets",
+    "/dashboard/managements",
+    "/dashboard/testimonies",
+    "/dashboard/administration/users",
+    "/dashboard/administration/folios",
   ]) {
     test(`${route}: every row's status is a badge with tone, icon and text`, async ({ page }) => {
       await expectBadgeOnEveryRow(page, route);
@@ -41,7 +41,7 @@ test.describe("Shared status badge (#1366)", () => {
   }
 
   test("budgets: a Pendiente budget is a warning badge labelled with the translated status", async ({ page }) => {
-    await page.goto("/dashboard/presupuestos");
+    await page.goto("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
     const pending = page.getByRole("table").getByTestId("status-badge").filter({ hasText: /^Pendiente$/ });
     test.skip((await pending.count()) === 0, "no pending budget on the first page");

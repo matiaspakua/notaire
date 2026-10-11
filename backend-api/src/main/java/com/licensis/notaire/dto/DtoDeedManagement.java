@@ -1,62 +1,62 @@
 package com.licensis.notaire.dto;
 
-import com.licensis.notaire.dto.interfaces.DtoValido;
+import com.licensis.notaire.dto.interfaces.ValidDto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class DtoDeedManagement implements DtoValido {
+public class DtoDeedManagement implements ValidDto {
     private Integer idManagement;
     private DtoPerson personNotary;
-    private DtoPerson clientReferencia;
-    private List<DtoPerson> listaClientesInvolucrados;
+    private DtoPerson referenceClient;
+    private List<DtoPerson> involvedClients;
     private int number;
     private Date dateStart;
-    private String encabezado;
+    private String heading;
     private String notes;
-    private Integer numberArchivo;
-    private Integer numberBibliorato;
-    private List<DtoProcedure> listaProceduresAsociados;
+    private Integer archiveNumber;
+    private Integer binderNumber;
+    private List<DtoProcedure> associatedProcedures;
     private List<DtoHistory> recordHistory;
     private DtoManagementStatus status;
     private int version;
 
     public DtoDeedManagement() {
-        this.listaClientesInvolucrados = new ArrayList<>();
-        this.listaProceduresAsociados = new ArrayList<>();
+        this.involvedClients = new ArrayList<>();
+        this.associatedProcedures = new ArrayList<>();
     }
 
-    public DtoDeedManagement(DtoPerson person, int number, Date dateStart, String encabezado) {
+    public DtoDeedManagement(DtoPerson person, int number, Date dateStart, String heading) {
         this.personNotary = person;
         this.number = number;
         this.dateStart = dateStart;
-        this.encabezado = encabezado;
-        this.listaClientesInvolucrados = new ArrayList<>();
-        this.listaProceduresAsociados = new ArrayList<>();
+        this.heading = heading;
+        this.involvedClients = new ArrayList<>();
+        this.associatedProcedures = new ArrayList<>();
     }
 
     public Integer getIdManagement() { return idManagement; }
     public void setIdManagement(Integer idManagement) { this.idManagement = idManagement; }
     public DtoPerson getPersonNotary() { return personNotary; }
     public void setPersonNotary(DtoPerson personNotary) { this.personNotary = personNotary; }
-    public DtoPerson getClientReferencia() { return clientReferencia; }
-    public void setClientReferencia(DtoPerson clientReferencia) { this.clientReferencia = clientReferencia; }
-    public List<DtoPerson> getListaClientesInvolucrados() { return listaClientesInvolucrados; }
-    public void setListaClientesInvolucrados(List<DtoPerson> listaClientesInvolucrados) { if (listaClientesInvolucrados != null) this.listaClientesInvolucrados.addAll(listaClientesInvolucrados); }
+    public DtoPerson getReferenceClient() { return referenceClient; }
+    public void setReferenceClient(DtoPerson referenceClient) { this.referenceClient = referenceClient; }
+    public List<DtoPerson> getInvolvedClients() { return involvedClients; }
+    public void setInvolvedClients(List<DtoPerson> involvedClients) { if (involvedClients != null) this.involvedClients.addAll(involvedClients); }
     public int getNumber() { return number; }
     public void setNumber(int number) { this.number = number; }
     public Date getDateStart() { return dateStart; }
     public void setDateStart(Date dateStart) { this.dateStart = dateStart; }
-    public String getEncabezado() { return encabezado; }
-    public void setEncabezado(String encabezado) { this.encabezado = encabezado; }
+    public String getHeading() { return heading; }
+    public void setHeading(String heading) { this.heading = heading; }
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
-    public Integer getNumberArchivo() { return numberArchivo; }
-    public void setNumberArchivo(Integer numberArchivo) { this.numberArchivo = numberArchivo; }
-    public Integer getNumberBibliorato() { return numberBibliorato; }
-    public void setNumberBibliorato(Integer numberBibliorato) { this.numberBibliorato = numberBibliorato; }
-    public List<DtoProcedure> getListaProceduresAsociados() { return listaProceduresAsociados; }
-    public void setListaProceduresAsociados(List<DtoProcedure> listaProceduresAsociados) { if (listaProceduresAsociados != null) this.listaProceduresAsociados.addAll(listaProceduresAsociados); }
+    public Integer getArchiveNumber() { return archiveNumber; }
+    public void setArchiveNumber(Integer archiveNumber) { this.archiveNumber = archiveNumber; }
+    public Integer getBinderNumber() { return binderNumber; }
+    public void setBinderNumber(Integer binderNumber) { this.binderNumber = binderNumber; }
+    public List<DtoProcedure> getAssociatedProcedures() { return associatedProcedures; }
+    public void setAssociatedProcedures(List<DtoProcedure> associatedProcedures) { if (associatedProcedures != null) this.associatedProcedures.addAll(associatedProcedures); }
     public List<DtoHistory> getRecordHistory() { return recordHistory; }
     public void setRecordHistory(List<DtoHistory> recordHistory) { this.recordHistory = recordHistory; }
     public DtoManagementStatus getStatus() { return status; }

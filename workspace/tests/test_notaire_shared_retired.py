@@ -28,9 +28,9 @@ DEPRECATED_MODULE = REPO_ROOT / "deprecated" / MODULE
 MOVED_SOURCES = (
     BACKEND_JAVA / "dto" / "DtoPerson.java",
     BACKEND_JAVA / "dto" / "GenericDto.java",
-    BACKEND_JAVA / "dto" / "interfaces" / "DtoValido.java",
+    BACKEND_JAVA / "dto" / "interfaces" / "ValidDto.java",
     BACKEND_JAVA / "dto" / "TypeItem.java",
-    BACKEND_JAVA / "dto" / "exceptions" / "DtoInvalidoException.java",
+    BACKEND_JAVA / "dto" / "exceptions" / "InvalidDtoException.java",
     BACKEND_JAVA / "jpa" / "exceptions" / "PreexistingEntityException.java",
 )
 DEAD_SOURCE = BACKEND_JAVA / "observability" / "SharedModuleMetrics.java"

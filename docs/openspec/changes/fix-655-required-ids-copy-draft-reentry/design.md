@@ -6,12 +6,12 @@
 
 ## Goals / Non-Goals
 
-Goal: these three endpoints answer 400 naming the missing fields. Non-goals: `PUT /tramites/{id}` and `PUT /tipo-tramite/{id}/workflow` accepting `{}` (next slice), `PUT /testimonio/{id}` with `{}` overwriting the number (next slice), the copy endpoint's empty 500 body on other failures (#579).
+Goal: these three endpoints answer 400 naming the missing fields. Non-goals: `PUT /procedures/{id}` and `PUT /procedure-types/{id}/workflow` accepting `{}` (next slice), `PUT /testimonies/{id}` with `{}` overwriting the number (next slice), the copy endpoint's empty 500 body on other failures (#579).
 
 ## Decisions
 
 - Copy `number` is required too: the dialog labels it required, the column is NOT NULL, and a missing number silently stored 0.
-- PUT `/copia/{id}` requires both fields because it replaces both columns (a null print date was a 500).
+- PUT `/copies/{id}` requires both fields because it replaces both columns (a null print date was a 500).
 - The re-entry body is validated before the management lookup, so `{}` answers 400 even for an unknown management.
 
 ## Riesgos / Trade-offs

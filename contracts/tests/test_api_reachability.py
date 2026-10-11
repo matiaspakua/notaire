@@ -11,7 +11,7 @@ comments, and `*.generated.ts` excluded — generated OpenAPI path maps are not 
 apiGet/apiGetPaged/apiGetBytes/apiPost/apiPut/apiDelete counts only for that HTTP method; any other
 literal (for example a path kept in a variable) counts for every method. A wildcard binds to the
 endpoints whose path parameter sits in the same place; only when none exists does it also cover
-fixed segments (`/movimiento-testimonio/${id}/${action}`).
+fixed segments (`/testimony-movements/${id}/${action}`).
 
 Run with: python3 contracts/tests/test_api_reachability.py
 """
@@ -44,7 +44,7 @@ GENERATED_FILE = re.compile(r"\.generated\.tsx?$")
 
 
 def segments(path):
-    """'/api/v1/pagos/{id}' -> ('pagos', '{}')."""
+    """'/api/v1/payments/{id}' -> ('pagos', '{}')."""
     if path.startswith(API_PREFIX + "/"):
         path = path[len(API_PREFIX):]
     return tuple(WILDCARD if s.startswith("{") else s for s in path.strip("/").split("/"))
@@ -125,30 +125,30 @@ def load_allowlist():
 
 class ScannerTest(unittest.TestCase):
     SPEC = {"paths": {
-        "/api/v1/pagos": {"get": {}, "post": {}},
-        "/api/v1/pagos/{id}": {"get": {}, "put": {}, "delete": {}},
-        "/api/v1/pagos/fecha": {"get": {}},
+        "/api/v1/payments": {"get": {}, "post": {}},
+        "/api/v1/payments/{id}": {"get": {}, "put": {}, "delete": {}},
+        "/api/v1/payments/date": {"get": {}},
         "/api/v1/mov/{id}/ingresar": {"post": {}},
         "/api/v1/mov/{id}/retirar": {"post": {}},
-        "/api/v1/usuarios/logout": {"post": {}},
+        "/api/v1/users/logout": {"post": {}},
     }}
 
-    def covered(self, source, name="hooks/usePagos.ts"):
+    def covered(self, source, name="hooks/usePayments.ts"):
         endpoints = openapi_endpoints(self.SPEC)
         return reachable(endpoints, frontend_calls({name: source}))
 
     def test_openapi_endpoints_are_method_and_path(self):
-        self.assertIn("DELETE /api/v1/pagos/{id}", openapi_endpoints(self.SPEC))
+        self.assertIn("DELETE /api/v1/payments/{id}", openapi_endpoints(self.SPEC))
         self.assertEqual(len(openapi_endpoints(self.SPEC)), 9)
 
     def test_client_call_counts_only_for_its_method(self):
-        self.assertEqual(self.covered("apiPut<void>(`/pagos/${id}`, data)"), {"PUT /api/v1/pagos/{id}"})
+        self.assertEqual(self.covered("apiPut<void>(`/payments/${id}`, data)"), {"PUT /api/v1/payments/{id}"})
 
     def test_generic_type_arguments_are_skipped(self):
-        self.assertEqual(self.covered("apiGet<Page<Pago>>('/pagos')"), {"GET /api/v1/pagos"})
+        self.assertEqual(self.covered("apiGet<Page<Payment>>('/payments')"), {"GET /api/v1/payments"})
 
     def test_wildcard_prefers_the_path_parameter_over_a_fixed_segment(self):
-        self.assertNotIn("GET /api/v1/pagos/fecha", self.covered("apiGet(`/pagos/${id}`)"))
+        self.assertNotIn("GET /api/v1/payments/date", self.covered("apiGet(`/payments/${id}`)"))
 
     def test_wildcard_covers_fixed_segments_when_no_parameter_fits(self):
         self.assertEqual(
@@ -158,18 +158,18 @@ class ScannerTest(unittest.TestCase):
 
     def test_bare_literal_counts_for_every_method_and_query_is_dropped(self):
         self.assertEqual(
-            self.covered('const path = "/pagos?size=5";'), {"GET /api/v1/pagos", "POST /api/v1/pagos"}
+            self.covered('const path = "/payments?size=5";'), {"GET /api/v1/payments", "POST /api/v1/payments"}
         )
 
     def test_base_url_prefix_is_ignored(self):
         self.assertEqual(
-            self.covered("fetch(`${BASE_URL}/usuarios/logout`, {})"), {"POST /api/v1/usuarios/logout"}
+            self.covered("fetch(`${BASE_URL}/users/logout`, {})"), {"POST /api/v1/users/logout"}
         )
-        self.assertEqual(self.covered('fetch("/api/v1/usuarios/logout")'), {"POST /api/v1/usuarios/logout"})
+        self.assertEqual(self.covered('fetch("/api/v1/users/logout")'), {"POST /api/v1/users/logout"})
 
     def test_comments_and_test_files_are_not_consumers(self):
-        self.assertEqual(self.covered("// apiGet('/pagos')\n/* apiGet('/pagos/fecha') */"), set())
-        self.assertEqual(self.covered("apiGet('/pagos')", name="tests/unit/pagos.test.tsx"), set())
+        self.assertEqual(self.covered("// apiGet('/payments')\n/* apiGet('/payments/date') */"), set())
+        self.assertEqual(self.covered("apiGet('/payments')", name="tests/unit/payments.test.tsx"), set())
 
     def test_generated_openapi_maps_are_not_consumers(self):
         """openapi-typescript path maps embed every `/api/v1/...` key; they are not UI calls (#1260)."""
@@ -194,10 +194,10 @@ class ReachabilityTest(unittest.TestCase):
         pending = sorted(k for k, r in allowlist.items() if "Owner to reclassify" in str(r))
         self.assertEqual(pending, [], "entries still waiting for an Owner decision:\n  " + "\n  ".join(pending))
         for key in (
-            "GET /api/v1/reportes/documentos-por-vencer/{idDocumentoPresentado}",
-            "POST /api/v1/movimiento-testimonio",
-            "PUT /api/v1/movimiento-testimonio/{id}",
-            "DELETE /api/v1/movimiento-testimonio/{id}",
+            "GET /api/v1/reports/documents-due/{idDocumentoPresentado}",
+            "POST /api/v1/testimony-movements",
+            "PUT /api/v1/testimony-movements/{id}",
+            "DELETE /api/v1/testimony-movements/{id}",
         ):
             self.assertIn("API-only", str(allowlist.get(key)), f"{key} is API-only by Owner decision")
 

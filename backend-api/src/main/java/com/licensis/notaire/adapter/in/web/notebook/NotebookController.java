@@ -30,22 +30,22 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST API para administrar cuadernos de folios (CU80).
+ * REST API for managing folio notebooks (CU80).
  */
 @RestController
-@RequestMapping("/api/v1/cuadernos")
+@RequestMapping("/api/v1/notebooks")
 @Validated
-@Tag(name = "Cuadernos", description = "API para administrar cuadernos de folios")
+@Tag(name = "Notebooks", description = "API for managing folio notebooks")
 public class NotebookController {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookController.class);
 
     private final NotebookService notebookService;
-    private final ReportService reporteService;
+    private final ReportService reportService;
 
-    public NotebookController(NotebookService notebookService, ReportService reporteService) {
+    public NotebookController(NotebookService notebookService, ReportService reportService) {
         this.notebookService = notebookService;
-        this.reporteService = reporteService;
+        this.reportService = reportService;
     }
 
     public record NotebookResponse(Integer idNotebook, int number, int year, String notes,
@@ -64,18 +64,18 @@ public class NotebookController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los cuadernos")
+    @Operation(summary = "Get all notebooks")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<NotebookResponse>> getAllCuadernos() {
+    public ResponseEntity<List<NotebookResponse>> getAllNotebooks() {
         return ResponseEntity.ok(notebookService.findAll().stream().map(NotebookResponse::from).toList());
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener cuaderno por ID")
+    @Operation(summary = "Get notebook by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<NotebookResponse> getNotebookById(@PathVariable Integer id) {
         return notebookService.findById(id)
@@ -84,18 +84,18 @@ public class NotebookController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-        @ApiResponse(responseCode = "404", description = "Escribano o folio no encontrado"),
-        @ApiResponse(responseCode = "409", description = "Ya existe un cuaderno con ese número para el año y escribano")
+        @ApiResponse(responseCode = "201", description = "Created"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "404", description = "Notary or folio not found"),
+        @ApiResponse(responseCode = "409", description = "A notebook already exists with that number for the year and notary")
     })
     @PostMapping
-    @Operation(summary = "Crear un nuevo cuaderno a partir de diez folios consecutivos")
+    @Operation(summary = "Create a notebook from ten consecutive folios")
     public ResponseEntity<Object> createNotebook(@RequestBody CreateNotebookRequest request) {
         try {
-            Notebook creado = notebookService.createNotebook(
+            Notebook created = notebookService.createNotebook(
                     request.idsFolio(), request.idNotary(), request.year(), request.notes());
-            return ResponseEntity.status(HttpStatus.CREATED).body(NotebookResponse.from(creado));
+            return ResponseEntity.status(HttpStatus.CREATED).body(NotebookResponse.from(created));
         } catch (BusinessValidationException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (ResourceNotFoundException e) {
@@ -105,19 +105,19 @@ public class NotebookController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Cuaderno no encontrado")
+        @ApiResponse(responseCode = "404", description = "Notebook not found")
     })
-    @GetMapping(value = "/{id}/caratula", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generar la carátula PDF de un cuaderno")
-    public ResponseEntity<byte[]> getCaratula(@PathVariable Integer id) {
+    @GetMapping(value = "/{id}/cover", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the cover PDF of a notebook")
+    public ResponseEntity<byte[]> getCover(@PathVariable Integer id) {
         try {
-            byte[] pdf = reporteService.generateNotebookCoverReport(id);
+            byte[] pdf = reportService.generateNotebookCoverReport(id);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"cuaderno_" + id + "_caratula.pdf\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"notebook_" + id + "_cover.pdf\"")
                     .body(pdf);
         } catch (ResourceNotFoundException e) {
-            logger.info("Carátula solicitada para cuaderno inexistente: {}", id);
+            logger.info("Cover requested for a missing notebook: {}", id);
             return ResponseEntity.notFound().build();
         }
     }

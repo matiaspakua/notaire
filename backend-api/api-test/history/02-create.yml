@@ -3,12 +3,12 @@ info:
   type: http
   seq: 3
   description: |-
-      ## Create history entry — POST /api/v1/historial
+      ## Create history entry — POST /api/v1/history
       Records a history event for the management created in setup.
       Traceability: CU11 (RF #3, #32, #34, #118)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/historial"
+  url: "{{base_url}}/api/v1/history"
   body:
     type: json
     data: |-

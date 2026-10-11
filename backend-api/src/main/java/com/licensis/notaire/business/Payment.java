@@ -37,10 +37,10 @@ import org.springframework.data.domain.Persistable;
 @NamedQueries(
         {
             @NamedQuery(name = "Payment.findAll", query = "SELECT p FROM Payment p"),
-            @NamedQuery(name = "Payment.findByIdPayment", query = "SELECT p FROM Payment p WHERE p.idPayment = :idPago"),
+            @NamedQuery(name = "Payment.findByIdPayment", query = "SELECT p FROM Payment p WHERE p.idPayment = :idPayment"),
             @NamedQuery(name = "Payment.findByAmount", query = "SELECT p FROM Payment p WHERE p.amount = :amount"),
-            @NamedQuery(name = "Payment.findByDate", query = "SELECT p FROM Payment p WHERE p.date = :fecha"),
-            @NamedQuery(name = "Payment.findByBudget", query = "SELECT p FROM Payment p WHERE p.fkIdBudget.idBudget = :idPresupuesto")
+            @NamedQuery(name = "Payment.findByDate", query = "SELECT p FROM Payment p WHERE p.date = :date"),
+            @NamedQuery(name = "Payment.findByBudget", query = "SELECT p FROM Payment p WHERE p.fkIdBudget.idBudget = :idBudget")
         })
 public class Payment implements Serializable, Persistable<Integer>
 {
@@ -66,7 +66,7 @@ public class Payment implements Serializable, Persistable<Integer>
     private String notes;
     @Column(name = "payment_method")
     private String paymentMethod;
-    @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_budget", referencedColumnName = "id")
     @JsonIgnore
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Budget fkIdBudget;
@@ -174,10 +174,10 @@ public class Payment implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Pago[ idPago=" + idPayment
-                + ", Fecha pago: " + this.getDate()
-                + ", Monto pago: " + this.amount
-                + ", Observaciones: " + this.notes + "]";
+        return "Payment[ idPayment=" + idPayment
+                + ", payment date: " + this.getDate()
+                + ", amount: " + this.amount
+                + ", notes: " + this.notes + "]";
     }
 
     public int getVersion()

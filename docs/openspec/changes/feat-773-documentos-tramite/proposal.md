@@ -19,7 +19,7 @@ The Documentos screen sends tipoId, fecha and entregado while the API reads type
 - The Documentos screen and its hooks send `typeId`, `date`, `delivered` and `procedureId` and read `type`, `date`, `delivered` and `procedureId`, matching `SubmittedDocumentController`.
 - The create form gets optional Gestión and Trámite selectors (the trámites of the chosen gestión come from the existing CU43 endpoint); the list shows the linked trámite.
 - `SubmittedDocumentResponse` also returns `procedureId`.
-- `GET /gestiones/{id}/resumen-caso` adds `documents`: name, type, trámite, prepared, released, observed, delivered, reentered and due date of every document of the gestión's trámites; the case summary dialog lists them.
+- `GET /managements/{id}/case-summary` adds `documents`: name, type, trámite, prepared, released, observed, delivered, reentered and due date of every document of the gestión's trámites; the case summary dialog lists them.
 - #773 stays open: listing the required documents automatically at the moment a trámite is confirmed is not part of this slice (CU43 and the Documentos necesarios screen list them on demand).
 
 ## Reglas de negocio

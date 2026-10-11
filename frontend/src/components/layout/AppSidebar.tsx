@@ -150,14 +150,14 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
       <div className="mx-4 mb-6 p-4 rounded-[16px] bg-white/50 border border-white/20 apple-shadow">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground text-sm font-bold">
-            {user?.nombre?.charAt(0).toUpperCase() ?? "U"}
+            {user?.name?.charAt(0).toUpperCase() ?? "U"}
           </div>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-[hsl(var(--sidebar-foreground))] truncate">
-              {user?.nombre ?? "—"}
+              {user?.name ?? "—"}
             </p>
             <p className="text-[11px] text-[hsl(var(--sidebar-muted))] font-medium capitalize">
-              {user?.tipo?.toLowerCase() ?? ""}
+              {user?.type?.toLowerCase() ?? ""}
             </p>
           </div>
         </div>

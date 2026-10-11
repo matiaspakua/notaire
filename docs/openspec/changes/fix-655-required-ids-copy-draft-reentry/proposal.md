@@ -12,13 +12,13 @@
 
 ## Objetivo
 
-The #655 empty-body probe (re-run on `main` b39fcdaf, throwaway DB) found three endpoints that answer 500 for `{}`: `POST /api/v1/copia` (NOT NULL `print_date`), `POST /api/v1/minutas-inscripcion` and `POST /api/v1/gestiones/{id}/reingreso-documentacion` (a null id reached `findById`). Missing required data is a client error and must answer 400 naming the field.
+The #655 empty-body probe (re-run on `main` b39fcdaf, throwaway DB) found three endpoints that answer 500 for `{}`: `POST /api/v1/copies` (NOT NULL `print_date`), `POST /api/v1/registration-drafts` and `POST /api/v1/managements/{id}/document-reentry` (a null id reached `findById`). Missing required data is a client error and must answer 400 naming the field.
 
 ## What Changes
 
 - `CopyController.CopyRequest`: `number` and `datePrinting` are `@NotNull` and documented as required (POST and PUT; PUT replaces both columns).
 - `RegistrationDraftController.GenerateRequest.idDeed` is `@NotNull`, and `generate` validates its body (`@Valid`).
-- `DtoReingresoDocumentacionRequest.idProcedure` and `idDocumentType` are `@NotNull` (request-only record), and `ManagementController.reenterDocumentation` validates its body.
+- `DtoDocumentReentryRequest.idProcedure` and `idDocumentType` are `@NotNull` (request-only record), and `ManagementController.reenterDocumentation` validates its body.
 - Copies dialog: the print date is labelled required, and Save stays disabled until the number and print date are filled.
 - `openapi.yaml` regenerated; the 7 `request property became required` breaks are accepted under #655 with the justification (no request without them ever succeeded). The 7 stale entries already on `main` are removed.
 
@@ -53,7 +53,7 @@ The #655 empty-body probe (re-run on `main` b39fcdaf, throwaway DB) found three 
 
 ### Surface area
 
-- Endpoints: `POST /copia`, `PUT /copia/{id}`, `POST /minutas-inscripcion`, `POST /gestiones/{id}/reingreso-documentacion` (500 to 400 for missing fields; required documented)
+- Endpoints: `POST /copies`, `PUT /copies/{id}`, `POST /registration-drafts`, `POST /managements/{id}/document-reentry` (500 to 400 for missing fields; required documented)
 - Entities / Flyway: none
 - UI: copies dialog
 

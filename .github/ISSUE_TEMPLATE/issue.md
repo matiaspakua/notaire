@@ -37,7 +37,7 @@ Examples:
 ## Acceptance Criteria
 
 <!-- Define what needs to be done to complete this issue. Examples:
-- [ ] API endpoint implemented: POST /api/v1/documentos
+- [ ] API endpoint implemented: POST /api/v1/documents
 - [ ] Unit tests written (80%+ coverage)
 - [ ] Integration tests pass
 - [ ] E2E tests pass (if UI)

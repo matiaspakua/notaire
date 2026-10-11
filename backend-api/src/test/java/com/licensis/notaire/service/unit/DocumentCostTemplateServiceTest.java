@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PlantillaCostoDocumentoService Unit Tests (Issue #823)")
+@DisplayName("DocumentCostTemplateService Unit Tests (Issue #823)")
 class DocumentCostTemplateServiceTest {
 
     @Mock
@@ -45,7 +45,7 @@ class DocumentCostTemplateServiceTest {
     }
 
     @Test
-    @DisplayName("Should accept fixed cost for type de documento")
+    @DisplayName("Should accept fixed cost for document type")
     void shouldAcceptFixedCostForTypeDocument() {
         when(documentRepository.findProcedureTypeById(1)).thenReturn(Optional.of(procedureType));
         when(documentRepository.findDocumentTypeById(1)).thenReturn(Optional.of(documentType));
@@ -59,7 +59,7 @@ class DocumentCostTemplateServiceTest {
     }
 
     @Test
-    @DisplayName("Should accept variable cost for type de documento")
+    @DisplayName("Should accept variable cost for document type")
     void shouldAcceptVariableCostForTypeDocument() {
         when(documentRepository.findProcedureTypeById(1)).thenReturn(Optional.of(procedureType));
         when(documentRepository.findDocumentTypeById(1)).thenReturn(Optional.of(documentType));
@@ -77,7 +77,7 @@ class DocumentCostTemplateServiceTest {
     void shouldRejectWhenBothFixedAndVariableCostProvided() {
         assertThatThrownBy(() -> documentCostTemplateService.create(1, 1, new java.math.BigDecimal("1500"), new java.math.BigDecimal("5")))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("exactamente uno");
+                .hasMessageContaining("Exactly one");
     }
 
     @Test
@@ -85,6 +85,6 @@ class DocumentCostTemplateServiceTest {
     void shouldRejectWhenNeitherFixedNorVariableCostProvided() {
         assertThatThrownBy(() -> documentCostTemplateService.create(1, 1, null, null))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("exactamente uno");
+                .hasMessageContaining("Exactly one");
     }
 }

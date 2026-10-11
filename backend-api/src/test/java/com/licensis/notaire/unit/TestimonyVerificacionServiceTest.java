@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU08"})
-@DisplayName("TestimonioGeneracionVerificacionService - Verificación Tests")
+@DisplayName("TestimonyGenerationService - verification Tests")
 @ExtendWith(MockitoExtension.class)
 class TestimonyVerificacionServiceTest {
 
@@ -62,11 +62,11 @@ class TestimonyVerificacionServiceTest {
         when(testimonyRepository.findById(5)).thenReturn(Optional.of(testimony));
         when(testimonyRepository.save(testimony)).thenReturn(testimony);
 
-        Testimony verified = testimonyService.verify(5, true, "Falta una firma");
+        Testimony verified = testimonyService.verify(5, true, "Falta a firma");
 
         assertThat(verified.getVerified()).isTrue();
         assertThat(verified.getFlagged()).isTrue();
-        assertThat(verified.getNotes()).isEqualTo("Falta una firma");
+        assertThat(verified.getNotes()).isEqualTo("Falta a firma");
     }
 
     @Test

@@ -1,6 +1,6 @@
 /**
  * E2E tests — Workflow editor (interactive)
- * CU70: Definir Workflow de Estados de Gestión
+ * CU70: Define a management-status workflow
  * CU71: Definir Transiciones entre Estados
  * Requires: backend running at localhost:8080, frontend at localhost:3000
  *
@@ -11,9 +11,9 @@ import { createWorkflowDefinition } from "./setup/api-helpers";
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 }
 
@@ -32,20 +32,20 @@ async function arrangeWorkflow(page: Page): Promise<number> {
 test.describe("CU70 - Workflow manager (CRUD)", () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
-    await page.goto("/dashboard/administracion/workflows");
+    await page.goto("/dashboard/administration/workflows");
   });
 
   test("workflows page loads", async ({ page }) => {
-    await expect(page.getByTestId("btn-nuevo-workflow")).toBeVisible();
+    await expect(page.getByTestId("btn-new-workflow")).toBeVisible();
     await expect(page.getByTestId("search-workflows")).toBeVisible();
   });
 
   test("can create a new workflow", async ({ page }) => {
-    const nombre = `Test Workflow E2E ${Date.now()}`;
-    await page.getByTestId("btn-nuevo-workflow").click();
-    await page.getByTestId("input-nombre-workflow").fill(nombre);
-    await page.getByTestId("btn-guardar-workflow").click();
-    await expect(page.getByText(nombre)).toBeVisible({ timeout: 5000 });
+    const name = `Test Workflow E2E ${Date.now()}`;
+    await page.getByTestId("btn-new-workflow").click();
+    await page.getByTestId("input-name-workflow").fill(name);
+    await page.getByTestId("btn-save-workflow").click();
+    await expect(page.getByText(name)).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -55,7 +55,7 @@ test.describe("CU70 - Workflow editor (graph)", () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
     workflowId = await arrangeWorkflow(page);
-    await page.goto("/dashboard/administracion/workflows");
+    await page.goto("/dashboard/administration/workflows");
     await expect(page.getByTestId(`btn-editor-${workflowId}`)).toBeVisible({ timeout: 10000 });
   });
 

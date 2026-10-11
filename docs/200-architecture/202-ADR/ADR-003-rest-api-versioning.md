@@ -1,4 +1,4 @@
-# ADR-003: Estrategia de Versionado de API REST
+# ADR-003: REST API versioning strategy
 
 **Status:** Accepted  
 **Date:** 2024-03-20  
@@ -7,216 +7,243 @@
 
 ## Context
 
-El proyecto migrará de arquitectura monolítica a REST API. Esto requiere una estrategia clara de versionado para:
+The project moved from a monolith to a REST API. That needs a versioning strategy so that:
 
-- Permitir evolución de la API sin romper clientes existentes
-- Facilitar rollback de cambios
-- Mantener múltiples versiones en paralelo si es necesario
-- Comunicar cambios breaking a clientes claramente
+- The API can evolve without breaking existing clients
+- Changes can be rolled back
+- More than one version can run in parallel when needed
+- Breaking changes are communicated clearly
 
-Restricciones:
-- Equipo pequeño (no recursos para mantener 10 versiones simultáneas)
-- Clientes varían (GUI Swing, futuros clientes web/móvil)
-- Necesidad de cambios rápidos durante refactoring
+Constraints:
+
+- Small team (no capacity to keep ten versions alive at once)
+- Clients vary (the retired Swing GUI, and later web clients)
+- Fast changes were needed during the refactor
 
 ## Decision
 
-Implementar versionado de API mediante **URL path versioning** con **semantic versioning**:
+Version the API with **URL path versioning** and use **semantic versioning** for releases:
 
+```text
+/api/v1/budgets      # Version 1, stable
+/api/v2/budgets      # Version 2, only if a breaking generation is needed
 ```
-/api/v1/presupuestos      # Version 1 stable
-/api/v2/presupuestos      # Version 2 (en desarrollo o future)
-```
 
-### Estrategia de Versiones
+There is no `/api/v2` surface today. Current controllers use `/api/v1`.
 
-**Version 1 (v1):** Actual - Entidades principales
-- Presupuestos, Personas, Escrituras, Gestiones
+### Version strategy
+
+**Version 1 (v1):** current — main resources
+
+- Budgets, people, deeds, managements
 - Status: STABLE
-- End of Life: A determinar (mín. 12 meses post v2)
+- End of life: to be decided (at least 12 months after a v2 exists)
 
-**Version 2 (v2):** Futuro - Refactoring mayor
-- Cambios en estructura de respuestas
-- Status: En planificación
-- Pre-requisito: Todos clientes migren a v1 primero
+**Version 2 (v2):** future — a larger refactor
 
-### Estructura de Endpoints
+- Changes to response shape
+- Status: not started
+- Prerequisite: clients are on v1 first
+
+### Endpoint shape
+
+`BudgetController` is mapped at `/api/v1/budgets`. It returns the resource
+directly (`BudgetResponse`, `Page<BudgetResponse>`, `DtoBudgetSummary`), not an
+`ApiResponse` envelope. Errors use `ErrorResponse`.
 
 ```java
 @RestController
-@RequestMapping("/api/v1")
-public class PresupuestoController {
-    @GetMapping("/presupuestos")
-    public ResponseEntity<ApiResponse<List<DtoPresupuesto>>> list() { }
-    
-    @GetMapping("/presupuestos/{id}")
-    public ResponseEntity<ApiResponse<DtoPresupuesto>> getById() { }
-    
-    @PostMapping("/presupuestos")
-    public ResponseEntity<ApiResponse<DtoPresupuesto>> create() { }
+@RequestMapping("/api/v1/budgets")
+public class BudgetController {
+    @GetMapping
+    public ResponseEntity<Page<BudgetResponse>> getAll() { }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BudgetResponse> getById() { }
+
+    @PostMapping
+    public ResponseEntity<BudgetResponse> create() { }
 }
 ```
 
-### Semantic Versioning
+### Semantic versioning
 
-Seguir semver para **release versions** (código), no para API:
+Semver applies to **release versions** (the code), not to the URL segment:
 
-- `1.0.0` → Primer release con API v1 estable
-- `1.1.0` → Nuevo endpoint en v1 (compatible hacia atrás)
-- `1.1.1` → Bug fix en v1
-- `2.0.0` → Breaking changes (requiere API v2)
+- `1.0.0` → first release with a stable API v1
+- `1.1.0` → new endpoint on v1 (backward compatible)
+- `1.1.1` → bug fix on v1
+- `2.0.0` → breaking changes (needs API v2)
 
-### Política de Breaking Changes
+### Breaking-change policy
 
-**Permitido sin cambio de versión:**
-- Agregar campo opcional en response
-- Agregar nuevo endpoint
-- Deprecar endpoint (agregar `@Deprecated` + header `Warning: 299`)
-- Cambiar formato de fecha (si parsing es backward compatible)
+**Allowed without a version change:**
 
-**Requiere cambio de versión:**
-- Remover campo en response
-- Cambiar tipo de dato en campo existente
-- Cambiar significado de un campo
-- Cambiar estructura de errores
-- Cambiar comportamiento funcional
+- Add an optional response field
+- Add a new endpoint
+- Deprecate an endpoint (`@Deprecated` plus header `Warning: 299`)
+- Change a date format when parsing stays backward compatible
 
-## Options Considered
+**Requires a version change:**
 
-### Option A: URL Path Versioning (SELECCIONADO)
+- Remove a response field
+- Change the type of an existing field
+- Change the meaning of a field
+- Change the error structure
+- Change functional behavior
+
+## Options considered
+
+### Option A: URL path versioning (selected)
+
+```text
+GET /api/v1/budgets
+GET /api/v2/budgets
 ```
-GET /api/v1/presupuestos
-GET /api/v2/presupuestos
-```
 
-| Dimensión | Evaluación |
-|-----------|-----------|
-| Claridad | Muy alta |
-| SEO friendly | Sí |
-| Caching | Fácil |
-| Documentación | Clara |
-| Complejidad implementación | Baja |
+| Dimension | Assessment |
+|-----------|------------|
+| Clarity | Very high |
+| SEO friendly | Yes |
+| Caching | Easy |
+| Documentation | Clear |
+| Implementation complexity | Low |
 
 **Pros:**
-- Muy legible en logs y monitoreo
-- Fácil de documentar
-- Browser-friendly para explorar
-- Straightforward en routing
+
+- Easy to read in logs and monitoring
+- Easy to document
+- Browser-friendly to explore
+- Straightforward routing
 
 **Cons:**
-- Código duplicado entre versiones
-- URL path "contaminado"
-- Requiere mantener controllers múltiples
 
-### Option B: Accept Header Versioning
-```
-GET /api/presupuestos
+- Duplicated code between versions
+- The version sits in the URL path
+- Multiple controllers must be kept
+
+### Option B: Accept-header versioning
+
+```text
+GET /api/budgets
 Accept: application/vnd.notaire.v1+json
 ```
 
-| Dimensión | Evaluación |
-|-----------|-----------|
-| Claridad | Media |
+| Dimension | Assessment |
+|-----------|------------|
+| Clarity | Medium |
 | Standards compliance | RESTful |
-| Debugging | Difícil |
-| HTTP caching | Complejo |
+| Debugging | Hard |
+| HTTP caching | Complex |
 
 **Cons:**
-- Menos intuitivo
-- Difícil debuggear en browser
-- Problemas con caching HTTP
-- Requiere cliente conocer header names
 
-### Option C: Query Parameter Versioning
+- Less intuitive
+- Hard to debug in a browser
+- HTTP caching is awkward
+- The client must know the header names
+
+### Option C: Query-parameter versioning
+
+```text
+GET /api/budgets?api-version=1
 ```
-GET /api/presupuestos?api-version=1
-```
 
-| Dimensión | Evaluación |
-|-----------|-----------|
-| Claridad | Alta |
-| Caching | Problemático |
-| REST compliance | Bajo |
+| Dimension | Assessment |
+|-----------|------------|
+| Clarity | High |
+| Caching | Problematic |
+| REST compliance | Low |
 
 **Cons:**
-- Considera parámetro de routing, no versión
-- Caching problemático (query strings)
-- No estándar REST
 
-### Option D: No versionado (monolithic)
+- Treats a routing concern as a query parameter
+- Caching is problematic (query strings)
+- Not a common REST versioning style
+
+### Option D: No versioning (monolith)
 
 **Cons:**
-- Breaking changes obligan actualizar todos clientes
-- Imposible rollback sin afectar usuarios
-- Problemas en transición de tecnologías
 
-## Trade-off Analysis
+- Breaking changes force every client to update
+- Rollback affects users
+- Technology transitions are harder
 
-**URL Clarity vs. Code Duplication**
+## Trade-off analysis
 
-URL path versioning es muy claro (mejor debugging, logging) a costo de duplicación de código. La duplicación es inevitable de todas formas si mantenemos versiones en paralelo, así que mejor documentado.
+**URL clarity versus code duplication**
 
-**Standards Compliance vs. Pragmatismo**
+URL path versioning is clear (better debugging and logging) at the cost of duplicated code. Parallel versions duplicate code anyway, so the duplication should be explicit.
 
-Header versioning es más "RESTful" pero URL versioning es más práctico para un equipo pequeño. El pragmatismo gana aquí.
+**Standards compliance versus pragmatism**
 
-**Simplicity vs. Flexibility**
+Header versioning is closer to a strict REST style. URL versioning is more practical for a small team. Pragmatism wins here.
 
-URL versioning es simple de entender y mantener. Si necesitamos múltiples endpoints por versión, es straightforward crear carpetas separadas.
+**Simplicity versus flexibility**
+
+URL versioning is simple to understand and maintain. Extra endpoints for a version are a separate controller mapping.
 
 ## Consequences
 
-### Positivas
-- **Claridad absoluta**: URL muestra versión claramente
-- **Debuggeabilidad**: Logs y monitoreo triviales
-- **Caching HTTP**: Works with standard caching
-- **Browser exploration**: URL legible sin herramientas especiales
-- **Migration path clara**: Clientes saben exactamente qué cambió
+### Positive
 
-### Desafíos
-- **Duplicación de código**: v1 y v2 controllers coexisten
-- **Mantenimiento**: Bug fixes deben aplicarse en múltiples versiones
-- **URL paths más largos**: `/api/v1/` vs `/api/`
-- **Documentación doble**: Swagger para v1 y v2 por separado
+- **Clear URLs**: the path shows the version
+- **Easy debugging**: logs and monitoring stay simple
+- **HTTP caching**: works with ordinary caches
+- **Browser exploration**: the URL is readable without special tools
+- **Clear migration path**: clients can see which generation they call
 
-## Implementation Details
+### Challenges
 
-### Controller Structure
+- **Duplicated code**: v1 and v2 controllers would coexist
+- **Maintenance**: bug fixes must be applied to each live version
+- **Longer paths**: `/api/v1/` instead of `/api/`
+- **Two doc sets**: OpenAPI for v1 and v2 separately, once v2 exists
+
+## Implementation details
+
+### Controller structure
 
 ```java
-// Backend v1 (stable)
+// v1 (stable) — this is the class that exists today
 @RestController
-@RequestMapping("/api/v1/presupuestos")
-public class PresupuestoControllerV1 {
-    // Endpoints v1
+@RequestMapping("/api/v1/budgets")
+public class BudgetController {
+    // v1 endpoints
 }
 
-// Backend v2 (future - si es necesario)
+// v2 (future, if needed)
 @RestController
-@RequestMapping("/api/v2/presupuestos")
-public class PresupuestoControllerV2 {
-    // Endpoints v2 con breaking changes
+@RequestMapping("/api/v2/budgets")
+public class BudgetControllerV2 {
+    // v2 endpoints with breaking changes
 }
 ```
 
-### Response Structure
+### Error body
+
+Successful responses return the resource. Errors return `ErrorResponse`:
 
 ```json
 {
-  "success": true,
-  "data": { /* Entity */ },
-  "error": null,
-  "timestamp": "2024-03-20T10:30:00Z",
-  "version": "1.0.0"
+  "timestamp": "2024-03-20T10:30:00",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Budget not found",
+  "path": "/api/v1/budgets/1",
+  "traceId": "abc",
+  "details": null
 }
 ```
 
-### Deprecation Headers
+Stored budget status values such as `BORRADOR` and `PENDIENTE` stay.
+
+### Deprecation headers
 
 ```java
-@GetMapping("/presupuestos")
+@GetMapping
 @Deprecated
-public ResponseEntity<?> getPresupuestos() {
+public ResponseEntity<?> getBudgets() {
     return ResponseEntity.ok()
         .header("Deprecation", "true")
         .header("Sunset", "Sun, 31 Dec 2024 23:59:59 GMT")
@@ -224,65 +251,54 @@ public ResponseEntity<?> getPresupuestos() {
 }
 ```
 
-### Swagger/OpenAPI Documentation
+### OpenAPI
 
-```yaml
-# swagger-ui: /swagger-ui.html
+Live docs are served at `/v3/api-docs`. The UI is `/swagger-ui.html`.
+A split of `/v3/api-docs/v1` and `/v3/api-docs/v2` is only needed once v2 exists.
 
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    urls[0]:
-      name: v1 (stable)
-      url: /v3/api-docs/v1
-    urls[1]:
-      name: v2 (beta)
-      url: /v3/api-docs/v2
-```
+## Migration plan
 
-## Migration Plan
-
-1. **Phase 1** (Current): Stabilizar v1
-   - Todos endpoints en `/api/v1`
-   - Swagger UI con v1 como default
+1. **Phase 1** (current): keep v1 stable
+   - Endpoints under `/api/v1`
+   - Swagger UI documents v1
    - Release 1.0.0
 
-2. **Phase 2** (Meses 3-6): Deprecate legacy
-   - Marcar endpoints legacy como `@Deprecated`
-   - Agregar headers de deprecation
-   - Notificar a clientes 6 meses antes de EOL
+2. **Phase 2** (months 3–6): deprecate legacy operations
+   - Mark legacy endpoints `@Deprecated`
+   - Add deprecation headers
+   - Tell clients six months before end of life
 
-3. **Phase 3** (Meses 6+): Create v2 si es necesario
-   - Branches para v1 y v2
-   - Mantener v1 por mín. 12 meses
-   - Define EOL para v1
+3. **Phase 3** (month 6 onward): create v2 only if needed
+   - Keep v1 and v2 side by side
+   - Keep v1 for at least 12 months
+   - Define end of life for v1
 
-4. **Phase 4** (Meses 18+): Sunset v1
-   - Remover v1 endpoints
-   - Keep documentación histórica
+4. **Phase 4** (month 18 onward): sunset v1
+   - Remove v1 endpoints
+   - Keep historical documentation
 
 ## Governance
 
-### Change Control Board
+### Change control
 
-- Cambios a v1 requieren aprobación (breaking changes bloqueadas)
-- Cambios a v2+ solo requieren feature review
-- Bug fixes aplicables a múltiples versiones tienen SLA de 2 semanas
+- Changes to v1 need approval (breaking changes are blocked)
+- Changes to v2 and later need a feature review
+- Bug fixes that apply to more than one version have a two-week SLA
 
-### Client Migration SLA
+### Client migration SLA
 
-- Breaking changes: notificación 6 meses anticipada
-- Deprecation period: mín. 12 meses
-- Para cliente crítico: SLA extendido por acuerdo
+- Breaking changes: six months' notice
+- Deprecation period: at least 12 months
+- A critical client can extend the SLA by agreement
 
 ## Related ADRs
 
-- ADR-001: Arquitectura de microservicios
-- ADR-004: Seguridad y autenticación
-- ADR-005: Testing strategy
+- ADR-001: Microservices architecture
+- ADR-008: Security and authentication
+- ADR-006: Testing strategy
+- ADR-010: Error handling
 
-## See Also
+## See also
 
 - [Semantic Versioning](https://semver.org/)
 - [API Versioning Best Practices](https://cloud.google.com/apis/design/versioning)

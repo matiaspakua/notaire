@@ -41,7 +41,7 @@ services:
         logo: "https://nextjs.org/favicon.ico"
         subtitle: "Business operation audit log (UI)"
         tag: "Audit"
-        url: "http://localhost:3000/dashboard/auditoria"
+        url: "http://localhost:3000/dashboard/audit"
       - name: "pgAdmin"
         logo: "https://www.pgadmin.org/favicon.ico"
         subtitle: "Database Management"

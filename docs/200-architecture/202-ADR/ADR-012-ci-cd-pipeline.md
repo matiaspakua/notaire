@@ -1,4 +1,4 @@
-# ADR-012: CI/CD Pipeline con GitHub Actions
+# ADR-012: CI/CD pipeline with GitHub Actions
 
 **Status:** Accepted
 **Date:** 2026-03-24
@@ -7,48 +7,48 @@
 
 ## Context
 
-El proyecto necesita validar automáticamente cada cambio (build, tests, cobertura, seguridad, calidad de código) antes de fusionarlo a `main`, y publicar artefactos desplegables sin intervención manual. La suite de calidad incluye Checkstyle, SpotBugs, JaCoCo, Trivy y Spotless, además de tests unitarios, de integración, HTTP (`testing/`) y E2E Playwright — demasiados pasos para ejecutar consistentemente a mano en cada PR.
+The project needs to check every change automatically (build, tests, coverage, security, code quality) before merging it to `main`, and to publish deployable artifacts without a manual step. The quality suite includes Checkstyle, SpotBugs, JaCoCo, Trivy, and Spotless, plus unit tests, integration tests, HTTP tests (`testing/`), and Playwright E2E — too many steps to run consistently by hand on every pull request.
 
 ## Decision
 
-Usar **GitHub Actions** como única plataforma de CI/CD, con workflows separados por responsabilidad en `.github/workflows/`:
+Use **GitHub Actions** as the only CI/CD platform, with workflows split by responsibility under `.github/workflows/`:
 
-| Workflow | Responsabilidad |
+| Workflow | Responsibility |
 |----------|------------------|
-| `ci.yml` | Pipeline principal: `build`, `unit-tests`, `integration-tests`, `coverage`, `security` (Trivy), `docker-build`, `quality` (Checkstyle/SpotBugs/Spotless), `generate-reports`, `publish-reports` (artifact + `$GITHUB_STEP_SUMMARY` only — no git commits of reports; #1041) |
-| `pr-validation.yml` | Gates específicos de pull request (título convencional, issue vinculado, tamaño del diff) |
-| `playwright-e2e.yml` | Suite E2E Playwright del frontend |
+| `ci.yml` | Main pipeline: `build`, `unit-tests`, `integration-tests`, `coverage`, `security` (Trivy), `docker-build`, `quality` (Checkstyle/SpotBugs/Spotless), `generate-reports`, `publish-reports` (artifact + `$GITHUB_STEP_SUMMARY` only — no git commits of reports; #1041) |
+| `pr-validation.yml` | Pull-request gates (conventional title, linked issue, diff size) |
+| `playwright-e2e.yml` | Frontend Playwright E2E suite |
 | ~~`e2e-swing.yml`~~ | Retired in #1083; leftovers closed in #811 (hygiene + docs). Swing client absent. |
-| `frontend-ci.yml` | Lint/build/test del módulo `frontend/` (Next.js) |
-| `performance-test.yml` | Pruebas de carga/rendimiento bajo demanda |
-| `cd.yml` | `build-and-publish`, `release`, `update-description`, `generate-report`, `publish-report` — build y publicación de imágenes Docker tras un `ci.yml` exitoso en `main`; report jobs usan artifacts/summary (no commits a `docs/wiki/cicd-reports/`; #1041) |
-| `test-coverage-report.yml` | Comentario de cobertura JaCoCo en el PR |
-| `deploy-github-page.yml` | Publicación de documentación/reportes estáticos (incluye espejo opcional de markdown CI/CD/E2E bajo `/cicd-reports/`; `contents: read`) |
-| `claude.yml` / `opencode.yml` / `copilot-setup-steps.yml` | Integración de agentes de IA con el repositorio |
+| `frontend-ci.yml` | Lint, build, and test for the `frontend/` module (Next.js) |
+| `performance-test.yml` | Load and performance tests on demand |
+| `cd.yml` | `build-and-publish`, `release`, `update-description`, `generate-report`, `publish-report` — build and publish Docker images after a successful `ci.yml` on `main`; report jobs use artifacts and the step summary (no commits to `docs/wiki/cicd-reports/`; #1041) |
+| `test-coverage-report.yml` | JaCoCo coverage comment on the pull request |
+| `deploy-github-page.yml` | Publish static documentation and reports (includes an optional markdown mirror of CI/CD and E2E under `/cicd-reports/`; `contents: read`) |
+| `claude.yml` / `opencode.yml` / `copilot-setup-steps.yml` | AI agent integration with the repository |
 
-### Por qué GitHub Actions (y no Jenkins/GitLab CI/CircleCI)
+### Why GitHub Actions (not Jenkins, GitLab CI, or CircleCI)
 
-| Criterio | GitHub Actions | Jenkins | GitLab CI |
+| Criterion | GitHub Actions | Jenkins | GitLab CI |
 |----------|----------------|---------|-----------|
-| Alojamiento | Nativo en GitHub (donde vive el código) | Requiere servidor propio | Requiere GitLab (no es donde vive el código) |
-| Costo inicial | Incluido en el plan de GitHub | Infraestructura a mantener | Requiere migrar de plataforma |
-| Curva de aprendizaje | YAML declarativo, gran catálogo de actions reutilizables | Groovy/Jenkinsfile, plugins propios | YAML propio, similar en complejidad |
-| Integración con PRs/Issues | Nativa (checks, comentarios automáticos) | Requiere plugins | Nativa solo si se migra a GitLab |
+| Hosting | Native on GitHub (where the code lives) | Needs its own server | Needs GitLab (not where the code lives) |
+| Initial cost | Included in the GitHub plan | Infrastructure to maintain | Requires moving platforms |
+| Learning curve | Declarative YAML, a large catalog of reusable actions | Groovy/Jenkinsfile, its own plugins | Its own YAML, similar complexity |
+| Pull request and issue integration | Native (checks, automatic comments) | Needs plugins | Native only if the repo moves to GitLab |
 
-**Decisión:** GitHub Actions, por ser la opción de menor fricción dado que el repositorio ya vive en GitHub y el flujo de trabajo (`.claude/rules/ai-agent-workflow.md`) depende de Issues y PRs de GitHub.
+**Decision:** GitHub Actions, because it is the lowest-friction option: the repository already lives on GitHub, and the workflow (`.claude/rules/ai-agent-workflow.md`) depends on GitHub issues and pull requests.
 
 ## Consequences
 
-### Positivos
+### Positive
 
-- Cada PR recibe automáticamente el resultado de build, tests, cobertura y seguridad antes de poder fusionarse.
-- `workspace/sdlc/preflight.sh` replica localmente los mismos gates que corren en CI, evitando sorpresas (ver `docs/300-development/CI-PREFLIGHT.md`).
-- La publicación de imágenes Docker (`cd.yml`) solo ocurre tras un `ci.yml` exitoso en `main`, evitando publicar builds rotos.
+- Every pull request automatically gets build, test, coverage, and security results before it can merge.
+- `workspace/sdlc/preflight.sh` runs the same gates locally that CI runs, so failures are not a surprise (see `docs/300-development/CI-PREFLIGHT.md`).
+- Docker image publication (`cd.yml`) happens only after a successful `ci.yml` on `main`, so broken builds are not published.
 
-### Negativos
+### Negative
 
-- Spotless corre solo en el job "Code Lint" de CI, no está enlazado al ciclo de vida de Maven — un desarrollador puede tener `mvn verify` en verde localmente y aun así fallar en CI por formato (ver issue #705). Mitigado por `workspace/sdlc/preflight.sh --fix`.
-- Múltiples workflows YAML incrementan el costo de mantenimiento: cualquier gate nuevo debe añadirse tanto en `.github/workflows/` como en `workspace/sdlc/preflight.sh` en el mismo PR (regla explícita en `CLAUDE.md`).
+- Spotless runs only in the CI "Code Lint" job. It is not bound to the Maven lifecycle, so a developer can have a green local `mvn verify` and still fail CI on formatting (see issue #705). Mitigated by `workspace/sdlc/preflight.sh --fix`.
+- Several YAML workflows raise the maintenance cost: any new gate must be added in `.github/workflows/` and in `workspace/sdlc/preflight.sh` in the same pull request (an explicit rule in `CLAUDE.md`).
 
 ### Report publish channel (issue #1041)
 

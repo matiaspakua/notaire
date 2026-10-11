@@ -34,8 +34,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQueries(
         {
             @NamedQuery(name = "AuditRecord.findAll", query = "SELECT r FROM AuditRecord r"),
-            @NamedQuery(name = "AuditRecord.findByIdAuditRecord", query = "SELECT r FROM AuditRecord r WHERE r.idAuditRecord = :idRegistroAuditoria"),
-            @NamedQuery(name = "AuditRecord.findByDate", query = "SELECT r FROM AuditRecord r WHERE r.date = :fecha")
+            @NamedQuery(name = "AuditRecord.findByIdAuditRecord", query = "SELECT r FROM AuditRecord r WHERE r.idAuditRecord = :idAuditRecord"),
+            @NamedQuery(name = "AuditRecord.findByDate", query = "SELECT r FROM AuditRecord r WHERE r.date = :date")
         })
 public class AuditRecord implements Serializable, Persistable<Integer>
 {
@@ -60,7 +60,7 @@ public class AuditRecord implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "operation_detail")
     private String operationDetail;
-    @JoinColumn(name = "fk_id_usuario", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_user", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User fkIdUser;
 
@@ -91,7 +91,7 @@ public class AuditRecord implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idAuditRecord == null || idAuditRecord.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idAuditRecord == null || idAuditRecord.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -152,7 +152,7 @@ public class AuditRecord implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "negocio.RegistroAuditoria[ idRegistroAuditoria=" + idAuditRecord + " ]";
+        return "AuditRecord[ idAuditRecord=" + idAuditRecord + " ]";
     }
 
 

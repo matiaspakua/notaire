@@ -48,8 +48,8 @@ import java.util.List;
  * layered implementation.
  */
 @RestController
-@RequestMapping("/api/v1/pagos")
-@Tag(name = "Pago", description = "API para gestionar pagos (CU15, CU47)")
+@RequestMapping("/api/v1/payments")
+@Tag(name = "Payment", description = "API for managing payments (CU15, CU47)")
 public class PaymentController {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentController.class);
@@ -73,22 +73,22 @@ public class PaymentController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los pagos")
+    @Operation(summary = "Get all payments")
     public ResponseEntity<List<DtoPaymentResponse>> getAll() {
         try {
             return ResponseEntity.ok(PaymentWebMapper.toDtoList(queryPaymentsUseCase.findAll()));
         } catch (Exception e) {
-            log.error("Error al obtener pagos", e);
+            log.error("Failed to list payments", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @GetMapping("/{id}")
-    @Operation(summary = "CU47 - Consultar pago por ID")
+    @Operation(summary = "CU47 - Query payment by ID")
     public ResponseEntity<DtoPaymentResponse> getById(@PathVariable Integer id) {
         try {
             return queryPaymentsUseCase.findById(id)
@@ -96,75 +96,75 @@ public class PaymentController {
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
-            log.error("Error al consultar pago ID={}", id, e);
+            log.error("Failed to look up payment ID={}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/presupuesto/{idBudget}")
-    @Operation(summary = "Obtener pagos por presupuesto")
+    @GetMapping("/budget/{idBudget}")
+    @Operation(summary = "Get payments by budget")
     public ResponseEntity<List<DtoPaymentResponse>> getByBudget(@PathVariable Integer idBudget) {
         try {
             return ResponseEntity.ok(PaymentWebMapper.toDtoList(queryPaymentsUseCase.findByBudget(idBudget)));
         } catch (Exception e) {
-            log.error("Error al obtener pagos por presupuesto ID={}", idBudget, e);
+            log.error("Failed to list payments for budget ID={}", idBudget, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/presupuesto/{idBudget}/saldo")
-    @Operation(summary = "Calcular saldo pendiente de un presupuesto")
-    public ResponseEntity<BigDecimal> getSaldoPending(@PathVariable Integer idBudget) {
+    @GetMapping("/budget/{idBudget}/balance")
+    @Operation(summary = "Calculate outstanding balance of a budget")
+    public ResponseEntity<BigDecimal> getPendingBalance(@PathVariable Integer idBudget) {
         try {
             return ResponseEntity.ok(paymentStatusUseCase.pendingBalance(idBudget));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Error al calcular saldo pendiente", e);
+            log.error("Failed to calculate the pending balance", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
-    @GetMapping("/presupuesto/{idBudget}/estado")
-    @Operation(summary = "CU47 - Calcular estado de pago (SIN_PAGOS, PARCIAL, SALDADO) de un presupuesto")
+    @GetMapping("/budget/{idBudget}/status")
+    @Operation(summary = "CU47 - Calculate status of payment (SIN_PAGOS, PARCIAL, SALDADO) of a budget")
     public ResponseEntity<PaymentStatus> getStatusPayment(@PathVariable Integer idBudget) {
         try {
             return ResponseEntity.ok(paymentStatusUseCase.status(idBudget));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Error al calcular estado de pago", e);
+            log.error("Failed to calculate the payment status", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/fecha")
-    @Operation(summary = "Obtener pagos por rango de fechas")
+    @GetMapping("/date")
+    @Operation(summary = "Get payments by date range")
     public ResponseEntity<List<DtoPaymentResponse>> getByDateRange(
-            @Parameter(description = "Fecha inicio (YYYY-MM-DD)")
+            @Parameter(description = "Start date (YYYY-MM-DD)")
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @Parameter(description = "Fecha fin (YYYY-MM-DD)")
+            @Parameter(description = "End date (YYYY-MM-DD)")
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         try {
             return ResponseEntity.ok(
                     PaymentWebMapper.toDtoList(queryPaymentsUseCase.findByDateRange(startDate, endDate)));
         } catch (Exception e) {
-            log.error("Error al obtener pagos por fecha", e);
+            log.error("Failed to list payments by date", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creado"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-        @ApiResponse(responseCode = "409", description = "Conflicto")
+        @ApiResponse(responseCode = "201", description = "Created"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "409", description = "Conflict")
     })
     @PostMapping
-    @Operation(summary = "CU15 - Procesar pago (JSON body)")
+    @Operation(summary = "CU15 - Process a payment (JSON body)")
     public ResponseEntity<DtoPaymentResponse> processPayment(@Valid @RequestBody PaymentRequest request) {
         return register(new ProcessPaymentCommand(
                 request.idBudget(), request.amount(), request.date(),
@@ -174,25 +174,25 @@ public class PaymentController {
     private ResponseEntity<DtoPaymentResponse> register(ProcessPaymentCommand command) {
         try {
             PaymentDetails payment = processPaymentUseCase.process(command);
-            return CreatedResponses.of(PaymentWebMapper.toDto(payment), "/api/v1/pagos", payment.id());
+            return CreatedResponses.of(PaymentWebMapper.toDto(payment), "/api/v1/payments", payment.id());
         } catch (PendingBalanceExceededException e) {
-            log.warn("Pago rechazado por exceder el saldo pendiente: {}", e.getMessage());
+            log.warn("Payment rejected because it exceeds the outstanding balance: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException e) {
-            log.warn("Error de validación al procesar pago: {}", e.getMessage());
+            log.warn("Validation error while processing the payment: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            log.error("Error al procesar pago", e);
+            log.error("Failed to process the payment", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @PutMapping("/{id}")
-    @Operation(summary = "Editar pago")
+    @Operation(summary = "Edit a payment")
     public ResponseEntity<DtoPaymentResponse> update(@PathVariable Integer id,
             @Valid @RequestBody PaymentUpdateRequest request) {
         try {
@@ -202,17 +202,17 @@ public class PaymentController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Error al actualizar pago ID={}", id, e);
+            log.error("Failed to update payment ID={}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Eliminado"),
-        @ApiResponse(responseCode = "404", description = "No encontrado")
+        @ApiResponse(responseCode = "204", description = "Deleted"),
+        @ApiResponse(responseCode = "404", description = "Not found")
     })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar pago")
+    @Operation(summary = "Delete payment")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             deletePaymentUseCase.delete(id);
@@ -220,13 +220,13 @@ public class PaymentController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Error al eliminar pago ID={}", id, e);
+            log.error("Failed to delete payment ID={}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     /**
-     * Request body of {@code POST /api/v1/pagos} (CU15).
+     * Request body of {@code POST /api/v1/payments} (CU15).
      */
     public record PaymentRequest(
             @NotNull Integer idBudget,
@@ -246,7 +246,7 @@ public class PaymentController {
     }
 
     /**
-     * Request body of {@code PUT /api/v1/pagos/{id}}. Replaces the previous use of the
+     * Request body of {@code PUT /api/v1/payments/{id}}. Replaces the previous use of the
      * JPA {@code Payment} entity as a request body; the accepted JSON fields are the
      * same, and any null field leaves the stored value untouched.
      */

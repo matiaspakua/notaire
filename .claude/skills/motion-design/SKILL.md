@@ -1,190 +1,191 @@
-# Motion Design para la Web
+# Motion Design for the Web
 
-Skill para agentes AI orientada a crear sitios web de alto impacto visual mediante motion design, creative coding e interactive web design. Diseñada para producir experiencias web modernas, inmersivas, rápidas y mantenibles usando herramientas libres y open source.
-
----
-
-## Propósito
-
-Esta skill guía la creación de webs visualmente sobresalientes, con un stack coherente de animación, tipografía, gráficos, texturas, composición, interacción y rendimiento.
-
-Objetivos:
-
-- Construir experiencias web tipo premium, editoriales, inmersivas o inspiradas en estándares de showcase.
-- Priorizar consistencia visual, rendimiento, accesibilidad y control técnico.
-- Usar librerías open source maduras, compatibles entre sí y mantenibles.
-- Traducir principios de motion design y UX avanzada en decisiones concretas de implementación.
-
-No está pensada para sitios corporativos genéricos, layouts de plantilla o interfaces sin dirección visual clara.
+Skill for AI agents that build visually strong websites through motion design, creative coding, and interactive web design. It produces modern, immersive, fast, and maintainable web experiences with free and open-source tools.
 
 ---
 
-## Cuándo usar esta skill
+## Purpose
 
-Usar esta skill cuando el usuario pida alguna de estas metas:
+This skill guides visually outstanding websites with a coherent stack for animation, typography, graphics, textures, composition, interaction, and performance.
 
-- Una web impresionante, inmersiva o muy visual.
-- Un sitio con scroll narrativo, microinteracciones y animación avanzada.
-- Una experiencia tipo Awwwards, portfolio premium o landing de alto nivel.
-- Una web con 3D, WebGL, texturas, transiciones sofisticadas o storytelling interactivo.
-- Un sistema visual donde tipografía, motion, composición y gráficos trabajen como una sola dirección de arte.
+Goals:
 
-No usar esta skill como base principal para:
+- Build premium, editorial, or immersive web experiences, including ones aimed at showcase standards.
+- Prefer visual consistency, performance, accessibility, and technical control.
+- Use mature open-source libraries that work together and stay maintainable.
+- Turn motion-design and advanced UX principles into concrete implementation decisions.
 
-- Dashboards CRUD sin ambición visual.
-- Formularios administrativos convencionales.
-- Sitios donde el objetivo principal sea solo velocidad de entrega sin refinamiento visual.
+It is not meant for generic corporate sites, template layouts, or interfaces without a clear visual direction.
 
 ---
 
-## Resultado esperado
+## When to use this skill
 
-La salida debe ser una web que cumpla estas propiedades:
+Use this skill when the user asks for one of these outcomes:
 
-- Dirección visual clara y no genérica.
-- Motion intencional, no decorativo.
-- Tipografía con jerarquía fuerte.
-- Ritmo visual entre secciones.
-- Profundidad mediante capas, contraste, textura, luz o 3D cuando proceda.
-- Navegación comprensible pese a la riqueza visual.
-- Rendimiento razonable y degradación progresiva.
-- Accesibilidad suficiente para producción real.
+- A striking, immersive, or highly visual website.
+- A site with narrative scroll, microinteractions, and advanced animation.
+- An Awwwards-style experience, a premium portfolio, or a high-end landing page.
+- A site with 3D, WebGL, textures, sophisticated transitions, or interactive storytelling.
+- A visual system where typography, motion, composition, and graphics share one art direction.
 
-La meta no es “poner efectos”. La meta es construir una experiencia coherente donde diseño, interacción y tecnología se refuercen mutuamente.
+Do not use this skill as the main basis for:
+
+- CRUD dashboards without visual ambition.
+- Conventional administrative forms.
+- Sites whose main goal is delivery speed without visual refinement.
 
 ---
 
-## Principios operativos
+## Expected result
 
-### 1. El concepto manda
+The output should be a website with these properties:
 
-No elegir librerías, animaciones o estilos antes de fijar el concepto visual.
+- A clear visual direction that is not generic.
+- Intentional motion, not decoration.
+- Typography with a strong hierarchy.
+- Visual rhythm between sections.
+- Depth through layers, contrast, texture, light, or 3D when it fits.
+- Navigation that stays understandable despite the visual richness.
+- Reasonable performance and progressive degradation.
+- Accessibility sufficient for real production.
 
-Definir primero:
+The goal is not to "add effects." The goal is a coherent experience where design, interaction, and technology reinforce each other.
 
-- Tipo de sitio: portfolio, landing, brand experience, editorial, producto, instalación digital.
-- Tono: sobrio, futurista, brutalista, cinemático, táctil, experimental, elegante, técnico.
-- Densidad visual: mínima, balanceada o intensa.
-- Papel del motion: utilitario, expresivo, narrativo o inmersivo.
-- Nivel de tridimensionalidad: plano, pseudo-3D, WebGL parcial o escena 3D protagonista.
+---
 
-Toda decisión posterior debe derivar de eso.
+## Operating principles
 
-### 2. El motion debe comunicar
+### 1. The concept leads
 
-Toda animación debe cumplir al menos una función:
+Do not pick libraries, animations, or styles before the visual concept is fixed.
 
-- Guiar atención.
-- Explicar jerarquía.
-- Dar continuidad espacial.
-- Indicar causa y efecto.
-- Aumentar sensación material o profundidad.
-- Crear ritmo narrativo.
+Define first:
 
-Eliminar toda animación que no aporte una de esas funciones.
+- Site type: portfolio, landing, brand experience, editorial, product, or digital installation.
+- Tone: sober, futuristic, brutalist, cinematic, tactile, experimental, elegant, or technical.
+- Visual density: minimal, balanced, or intense.
+- Role of motion: utilitarian, expressive, narrative, or immersive.
+- Depth: flat, pseudo-3D, partial WebGL, or a 3D scene as the lead.
 
-### 3. La composición precede al efecto
+Every later decision should follow from that.
 
-Una web mediocre con animaciones sigue siendo mediocre. Primero resolver:
+### 2. Motion must communicate
+
+Every animation should do at least one of these jobs:
+
+- Guide attention.
+- Explain hierarchy.
+- Give spatial continuity.
+- Show cause and effect.
+- Increase a sense of material or depth.
+- Create narrative rhythm.
+
+Remove any animation that does none of those jobs.
+
+### 3. Composition comes before effects
+
+A mediocre page with animations is still mediocre. Resolve these first:
 
 - Grid.
-- Jerarquía tipográfica.
-- Espaciado.
-- Contraste.
-- Orden de lectura.
-- Agrupación.
-- Proporción entre bloques.
+- Typographic hierarchy.
+- Spacing.
+- Contrast.
+- Reading order.
+- Grouping.
+- Proportion between blocks.
 
-Solo después añadir motion, texturas, 3D y efectos.
+Add motion, textures, 3D, and effects only after that.
 
-### 4. Una o dos ideas fuertes por pantalla
+### 4. One or two strong ideas per screen
 
-Evitar acumulación de recursos vistosos. Una pantalla potente suele apoyarse en una combinación dominante:
+Avoid piling on showy resources. A strong screen usually rests on one dominant combination:
 
-- Tipografía + scroll reveal.
-- Imagen/3D + cámara/scroll.
-- Capas translúcidas + textura + parallax.
-- Gráficos animados + narrativa.
+- Typography plus scroll reveal.
+- Image or 3D plus camera or scroll.
+- Translucent layers plus texture plus parallax.
+- Animated graphics plus narrative.
 
-Demasiadas ideas simultáneas destruyen el foco.
+Too many ideas at once destroy focus.
 
-### 5. Rendimiento como restricción creativa
+### 5. Performance is a creative constraint
 
-La calidad visual no justifica interacciones lentas, scroll roto o jank. El rendimiento es parte del diseño.
+Visual quality does not justify slow interactions, broken scroll, or jank. Performance is part of the design.
 
 ---
 
-## Stack recomendado
+## Recommended stack
 
-Usar por defecto este stack coherente, moderno y open source.
+Use this coherent, modern, open-source stack by default.
 
-### Base de aplicación
+### Application base
 
-- Next.js: framework principal para sitios modernos con routing, SSR, optimización y buena integración con React.
-- React: base de composición e interactividad.
-- TypeScript: obligatorio cuando el proyecto tenga complejidad media o alta.
-- Vite: alternativa válida para sitios más pequeños o experimentales sin necesidad de SSR.
+- Next.js: primary framework for modern sites, with routing, SSR, optimization, and a solid React fit.
+- React: composition and interactivity.
+- TypeScript: required when the project has medium or high complexity.
+- Vite: a valid alternative for smaller or experimental sites that do not need SSR.
 
-### Estilos y sistema visual
+### Styles and visual system
 
-- Tailwind CSS: para velocidad, consistencia y diseño por tokens.
-- CSS moderno nativo: variables, container queries, clamp, color-mix, nesting.
-- OKLCH: espacio de color recomendado para paletas y gradientes más controlables.
+- Tailwind CSS: speed, consistency, and token-based design.
+- Modern native CSS: variables, container queries, clamp, color-mix, and nesting.
+- OKLCH: recommended color space for more controllable palettes and gradients.
 
-### Motion principal
+### Primary motion
 
-- GSAP: motor principal de animación.
-- GSAP ScrollTrigger: para secuencias ligadas al scroll.
-- Motion One: alternativa ligera para microinteracciones o proyectos más simples.
-- Framer Motion: útil en React para transiciones de componentes, pero no debe sustituir a GSAP cuando el foco es una experiencia visual avanzada.
+- GSAP: primary animation engine.
+- GSAP ScrollTrigger: sequences tied to scroll.
+- Motion One: a light alternative for microinteractions or simpler projects.
+- Framer Motion: useful in React for component transitions, and it should not replace GSAP when the focus is an advanced visual experience.
 
-### Scroll y navegación cinética
+### Scroll and kinetic navigation
 
-- Lenis: smooth scroll moderno y compatible con GSAP.
+- Lenis: modern smooth scroll that works with GSAP.
 
-### 3D, WebGL y visuales avanzados
+### 3D, WebGL, and advanced visuals
 
-- Three.js: estándar para 3D en web.
-- React Three Fiber: capa recomendada si el proyecto usa React.
-- Drei: utilidades para acelerar trabajo con React Three Fiber.
-- OGL: alternativa minimalista si se quiere más control y menos abstracción.
-- shaders GLSL o WebGL custom: para distorsiones, ruido, displacement, blobs, fondos vivos y transiciones materiales.
+- Three.js: the standard for 3D on the web.
+- React Three Fiber: the recommended layer when the project uses React.
+- Drei: utilities that speed up React Three Fiber work.
+- OGL: a minimal alternative when you want more control and less abstraction.
+- GLSL or custom WebGL shaders: distortions, noise, displacement, blobs, living backgrounds, and material transitions.
 
 ### Data visualization
 
-- D3: para gráficos custom de alto nivel.
-- Observable Plot: para visualización elegante con menos complejidad.
-- Chart.js: solo si se requiere simplicidad y no se necesita dirección visual sofisticada.
+- D3: high-end custom charts.
+- Observable Plot: elegant visualization with less complexity.
+- Chart.js: only when simplicity is required and a sophisticated visual direction is not.
 
-### Tipografía
+### Typography
 
-- Fontshare: fuente prioritaria por calidad y menor saturación estética.
-- Google Fonts: soporte adicional para familias variables bien mantenidas.
-- Variable fonts: recomendadas por flexibilidad de peso, ancho y rendimiento.
+- Fontshare: preferred source for quality and less aesthetic saturation.
+- Google Fonts: extra support for well-maintained variable families.
+- Variable fonts: recommended for weight, width, and performance flexibility.
 
-### Iconografía y vectores
+### Iconography and vectors
 
-- Lucide: iconografía principal.
-- SVG inline: obligatorio para logos, máscaras, paths y elementos animables.
-- Lottie solo si existe una razón clara; evitar dependencia excesiva de assets exportados si la misma solución puede construirse con SVG/CSS/JS.
+- Lucide: primary iconography.
+- Inline SVG: required for logos, masks, paths, and elements that will be animated.
+- Lottie only when there is a clear reason. Avoid heavy dependence on exported assets when the same solution can be built with SVG, CSS, or JS.
 
-### Texturas y profundidad
+### Texture and depth
 
 - SVG filters.
 - CSS masks.
 - mix-blend-mode.
 - backdrop-filter.
-- ruido procedural en SVG o canvas.
-- gradientes en OKLCH.
+- Procedural noise in SVG or canvas.
+- Gradients in OKLCH.
 
 ---
 
-## Instalación base recomendada
+## Recommended base install
 
-Para un stack React/Next.js:
+For a React/Next.js stack:
 
 ```bash
 npx create-next-app@latest my-site --typescript --eslint --app
 cd my-site
 npm install gsap @studio-freight/lenis three @react-three/fiber @react-three/drei lucide-react d3
 npm install -D tailwindcss postcss autoprefixer
+```

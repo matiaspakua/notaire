@@ -66,133 +66,133 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
 
   test("CU02 management form requires the case dependencies", async ({ page }) => {
     await page.goto("/login");
-    await page.getByTestId("input-usuario").fill(adminUser);
-    await page.getByTestId("input-contrasenia").fill(adminPassword);
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill(adminUser);
+    await page.getByTestId("input-password").fill(adminPassword);
+    await page.getByTestId("btn-sign-in").click();
     await expect(page).toHaveURL(/\/dashboard/);
-    await page.goto("/dashboard/gestiones");
-    await page.getByTestId("btn-nueva-gestion").click();
+    await page.goto("/dashboard/managements");
+    await page.getByTestId("btn-new-management").click();
 
-    await expect(page.getByTestId("select-presupuesto-gestion")).toBeVisible();
-    await expect(page.getByTestId("select-escribano-gestion")).toBeVisible();
-    await expect(page.getByTestId("select-estado-gestion")).toBeVisible();
-    await expect(page.getByTestId("select-tipo-tramite-gestion")).toBeVisible();
+    await expect(page.getByTestId("select-budget-management")).toBeVisible();
+    await expect(page.getByTestId("select-notary-management")).toBeVisible();
+    await expect(page.getByTestId("select-status-management")).toBeVisible();
+    await expect(page.getByTestId("select-procedure-type-management")).toBeVisible();
   });
 
   test("a new user can set up and follow a complete first case", async ({ page }) => {
-    const tipoTramite = `Compraventa tutorial ${runId}`;
-    const concepto = `Honorarios tutorial ${runId}`;
-    const tipoFolio = `Protocolo tutorial ${runId}`;
-    const cliente = `Ana Tutorial ${runId}`;
-    const gestion = `900${runId}`;
+    const procedureType = `Compraventa tutorial ${runId}`;
+    const concept = `Honorarios tutorial ${runId}`;
+    const folioType = `Protocol tutorial ${runId}`;
+    const client = `Ana Tutorial ${runId}`;
+    const management = `900${runId}`;
 
     await test.step("1. Sign in — the dashboard is the starting point", async () => {
       await page.goto("/login");
-      await page.getByTestId("input-usuario").fill(adminUser);
+      await page.getByTestId("input-username").fill(adminUser);
       await pause(page, 0.5);
-      await page.getByTestId("input-contrasenia").fill(adminPassword);
+      await page.getByTestId("input-password").fill(adminPassword);
       await pause(page, 0.5);
-      await page.getByTestId("btn-ingresar").click();
+      await page.getByTestId("btn-sign-in").click();
       await expect(page).toHaveURL(/\/dashboard/);
       await expect(page.getByTestId("sidebar")).toBeVisible();
       await pause(page, 1.5);
     });
 
     await test.step("2. Define the task type — what work the office will perform", async () => {
-      await go(page, "/dashboard/administracion/tramites");
-      await page.getByTestId("btn-nuevo-tipo-tramite").click();
-      await page.getByTestId("input-nombre-tramite").fill(tipoTramite);
+      await go(page, "/dashboard/administration/procedures");
+      await page.getByTestId("btn-new-procedure-type").click();
+      await page.getByTestId("input-name-procedure").fill(procedureType);
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-tramite").fill(tipoTramite);
-      await expect(page.getByRole("table")).toContainText(tipoTramite);
+      await page.getByTestId("input-search-procedure").fill(procedureType);
+      await expect(page.getByRole("table")).toContainText(procedureType);
       await pause(page);
     });
 
     await test.step("3. Add a charge concept — the building block for quotes", async () => {
-      await go(page, "/dashboard/administracion/conceptos");
+      await go(page, "/dashboard/administration/concepts");
       await page.getByRole("button", { name: /nuevo concepto/i }).click();
-      await page.getByTestId("input-nombre-concepto").fill(concepto);
+      await page.getByTestId("input-name-concept").fill(concept);
       await page.getByRole("dialog").getByRole("spinbutton").fill("25000");
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-concepto").fill(concepto);
-      await expect(page.getByRole("table")).toContainText(concepto);
+      await page.getByTestId("input-search-concept").fill(concept);
+      await expect(page.getByRole("table")).toContainText(concept);
       await pause(page);
     });
 
     await test.step("4. Prepare the protocol — create a folio type and a folio", async () => {
-      await go(page, "/dashboard/administracion/folios");
-      await page.getByTestId("btn-nuevo-tipo-folio").click();
-      await page.getByTestId("input-nombre-tipo-folio").fill(tipoFolio);
+      await go(page, "/dashboard/administration/folios");
+      await page.getByTestId("btn-new-folio-type").click();
+      await page.getByTestId("input-name-folio-type").fill(folioType);
       await pause(page);
-      await page.getByTestId("btn-save-tipo-folio").click();
+      await page.getByTestId("btn-save-folio-type").click();
       await expect(page.getByRole("dialog")).toBeHidden();
       await pause(page);
 
-      await page.getByTestId("btn-nuevo-folio").click();
-      await page.getByTestId("input-numero-folio").fill(`8${runId}`);
-      await choose(page, "select-estado-folio", /nuevo/i);
-      await choose(page, "select-tipo-folio", new RegExp(tipoFolio, "i"));
+      await page.getByTestId("btn-new-folio").click();
+      await page.getByTestId("input-folio-number").fill(`8${runId}`);
+      await choose(page, "select-status-folio", /nuevo/i);
+      await choose(page, "select-folio-type", new RegExp(folioType, "i"));
       // The office's existing notary is selected from the live list; this makes the
       // tutorial usable even when no tutorial user has an Escribano role.
-      await chooseFirst(page, "select-escribano-folio");
+      await chooseFirst(page, "select-notary-folio");
       await pause(page);
       await saveDialog(page);
     });
 
     await test.step("5. Register the client — the person behind the case", async () => {
-      await go(page, "/dashboard/personas");
-      await page.getByTestId("btn-nueva-persona").click();
+      await go(page, "/dashboard/people");
+      await page.getByTestId("btn-new-person").click();
       await page.getByTestId("input-firstName").fill("Ana");
       await page.getByTestId("input-lastName").fill(`Tutorial ${runId}`);
       await page.getByRole("dialog").getByTestId("input-dni").fill(`DNI${runId}`);
       await page.getByLabel(/email/i).fill(`ana.tutorial.${runId}@notaire.test`);
-      await page.getByTestId("check-es-cliente").click();
+      await page.getByTestId("check-is-client").click();
       await pause(page);
       await saveDialog(page);
       await page.getByTestId("input-search-firstName").fill("Ana");
-      await expect(page.getByRole("table")).toContainText(cliente);
+      await expect(page.getByRole("table")).toContainText(client);
       await pause(page);
     });
 
     await test.step("6. Create the quote — link the proposed amount to the client", async () => {
-      await go(page, "/dashboard/presupuestos");
-      await page.getByTestId("btn-nuevo-presupuesto").click();
-      await choose(page, "select-persona", new RegExp(cliente, "i"));
-      await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-04");
-      await page.getByTestId("input-monto").fill("25000");
+      await go(page, "/dashboard/budgets");
+      await page.getByTestId("btn-new-budget").click();
+      await choose(page, "select-person", new RegExp(client, "i"));
+      await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-04");
+      await page.getByTestId("input-amount").fill("25000");
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-presupuesto").fill("Ana");
+      await page.getByTestId("input-search-budget").fill("Ana");
       await pause(page);
     });
 
     await test.step("7. Open the case — link it to the quote, notary, state and task type", async () => {
-      await go(page, "/dashboard/gestiones");
-      await page.getByTestId("btn-nueva-gestion").click();
-      await page.getByTestId("input-numero-gestion").fill(gestion);
+      await go(page, "/dashboard/managements");
+      await page.getByTestId("btn-new-management").click();
+      await page.getByTestId("input-management-number").fill(management);
       await pause(page);
       // Budget options are labeled with the client's name, so the tutorial links the
       // case to its own quote rather than relying on list order.
-      await choose(page, "select-presupuesto-gestion", new RegExp(cliente, "i"));
-      await chooseFirst(page, "select-escribano-gestion");
-      await chooseFirst(page, "select-estado-gestion");
-      await choose(page, "select-tipo-tramite-gestion", new RegExp(tipoTramite, "i"));
+      await choose(page, "select-budget-management", new RegExp(client, "i"));
+      await chooseFirst(page, "select-notary-management");
+      await chooseFirst(page, "select-status-management");
+      await choose(page, "select-procedure-type-management", new RegExp(procedureType, "i"));
       await saveDialog(page);
-      await expect(page.getByRole("table")).toContainText(gestion);
+      await expect(page.getByRole("table")).toContainText(management);
       await pause(page);
     });
 
     await test.step("8. Tour the remaining work areas — records, documents, payments and reporting", async () => {
       for (const path of [
-        "/dashboard/escrituras", "/dashboard/documentos", "/dashboard/pagos",
-        "/dashboard/items", "/dashboard/inmuebles", "/dashboard/copias",
-        "/dashboard/protocolo", "/dashboard/suplencias", "/dashboard/reportes",
-        "/dashboard/auditoria", "/dashboard/administracion/usuarios",
-        "/dashboard/administracion/roles", "/dashboard/administracion/estados-gestion",
-        "/dashboard/administracion/plantillas", "/dashboard/administracion/documentos",
-        "/dashboard/administracion/workflows",
+        "/dashboard/deeds", "/dashboard/documents", "/dashboard/payments",
+        "/dashboard/items", "/dashboard/properties", "/dashboard/copies",
+        "/dashboard/protocol", "/dashboard/substitutions", "/dashboard/reports",
+        "/dashboard/audit", "/dashboard/administration/users",
+        "/dashboard/administration/roles", "/dashboard/administration/management-statuses",
+        "/dashboard/administration/templates", "/dashboard/administration/documents",
+        "/dashboard/administration/workflows",
       ]) {
         await go(page, path);
       }

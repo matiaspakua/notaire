@@ -47,7 +47,7 @@ El sistema SHALL incluir la escritura vinculada, si existe, en la respuesta
 de consulta de un folio.
 
 #### Scenario: Consultar un folio con escritura vinculada
-- **WHEN** se consulta un folio (`GET /api/v1/folio/{id}` o el listado) que
+- **WHEN** se consulta un folio (`GET /api/v1/folios/{id}` o el listado) que
   tiene una escritura vinculada
 - **THEN** la respuesta incluye los datos de esa escritura
 

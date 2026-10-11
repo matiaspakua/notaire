@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
  * very same repository interactions are still asserted.
  */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PagoService Unit Tests")
+@DisplayName("PaymentService Unit Tests")
 class PaymentPersistenceAdapterTest {
 
     @Mock
@@ -95,7 +95,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should process valid pago")
+    @DisplayName("Should process a valid payment")
     void shouldProcessValidPayment() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
@@ -120,7 +120,7 @@ class PaymentPersistenceAdapterTest {
         assertThatThrownBy(() -> processPayment.process(
                 new ProcessPaymentCommand(999, new java.math.BigDecimal("1000"), testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Presupuesto no encontrado");
+                .hasMessageContaining("Budget not found");
 
         verify(budgetRepository, times(1)).findById(999);
         verify(paymentRepository, never()).save(any(Payment.class));
@@ -134,7 +134,7 @@ class PaymentPersistenceAdapterTest {
         assertThatThrownBy(() -> processPayment.process(
                 new ProcessPaymentCommand(1, null, testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                .hasMessageContaining("The payment amount must be greater than zero");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }
@@ -147,7 +147,7 @@ class PaymentPersistenceAdapterTest {
         assertThatThrownBy(() -> processPayment.process(
                 new ProcessPaymentCommand(1, new java.math.BigDecimal("0"), testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                .hasMessageContaining("The payment amount must be greater than zero");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }
@@ -160,13 +160,13 @@ class PaymentPersistenceAdapterTest {
         assertThatThrownBy(() -> processPayment.process(
                 new ProcessPaymentCommand(1, new java.math.BigDecimal("-100"), testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                .hasMessageContaining("The payment amount must be greater than zero");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }
 
     @Test
-    @DisplayName("Should consult pago by id")
+    @DisplayName("Should look up a payment by id")
     void shouldConsultPaymentById() {
         when(paymentRepository.findById(1)).thenReturn(Optional.of(testPayment));
 
@@ -180,7 +180,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should return empty when pago not found")
+    @DisplayName("Should return empty when the payment is not found")
     void shouldReturnEmptyWhenPaymentNotFound() {
         when(paymentRepository.findById(999)).thenReturn(Optional.empty());
 
@@ -210,8 +210,8 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should calculate saldo pendiente correctly")
-    void shouldCalculateSaldoPending() {
+    @DisplayName("Should calculate the pending balance correctly")
+    void shouldCalculatePendingBalance() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("1000"));
 
@@ -224,8 +224,8 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should calculate saldo pendiente with null totalPaid")
-    void shouldCalculateSaldoPendingWithNullTotal() {
+    @DisplayName("Should calculate the pending balance with a null total paid")
+    void shouldCalculatePendingBalanceWithNullTotal() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 
@@ -248,8 +248,8 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should report status PARTIAL when saldo pendiente is positive but some payments exist")
-    void shouldCalculateStatusPaymentParcial() {
+    @DisplayName("Should report status PARTIAL when the pending balance is positive but some payments exist")
+    void shouldCalculatePartialPaymentStatus() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("1000"));
 
@@ -259,7 +259,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should report status PAID when saldo pendiente is zero")
+    @DisplayName("Should report status PAID when the pending balance is zero")
     void shouldCalculateStatusPaymentSaldado() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("5000"));
@@ -308,7 +308,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should delete pago")
+    @DisplayName("Should delete the payment")
     void shouldDeletePayment() {
         when(paymentRepository.existsById(1)).thenReturn(true);
 
@@ -319,19 +319,19 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when deleting non-existent pago")
+    @DisplayName("Should throw exception when deleting a payment that does not exist")
     void shouldThrowExceptionWhenDeletingNonExistentPayment() {
         when(paymentRepository.existsById(999)).thenReturn(false);
 
         assertThatThrownBy(() -> deletePayment.delete(999))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Pago no encontrado");
+                .hasMessageContaining("Payment not found");
 
         verify(paymentRepository, never()).deleteById(anyInt());
     }
 
     @Test
-    @DisplayName("Should edit pago")
+    @DisplayName("Should edit the payment")
     void shouldEditarPayment() {
         Payment editedPayment = new Payment();
         editedPayment.setIdPayment(1);
@@ -352,31 +352,31 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when editing non-existent pago")
+    @DisplayName("Should throw exception when editing a payment that does not exist")
     void shouldThrowExceptionWhenEditingNonExistentPayment() {
         when(paymentRepository.existsById(999)).thenReturn(false);
 
         assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(999, new java.math.BigDecimal("1000"), testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Pago no encontrado");
+                .hasMessageContaining("Payment not found");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }
 
     @Test
-    @DisplayName("Should throw exception when editing pago with invalid amount")
+    @DisplayName("Should throw exception when editing a payment with an invalid amount")
     void shouldThrowExceptionWhenEditingWithInvalidAmount() {
         when(paymentRepository.existsById(1)).thenReturn(true);
 
         assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(1, new java.math.BigDecimal("-100"), testDate, "Test", null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("El monto del pago debe ser mayor a cero");
+                .hasMessageContaining("The payment amount must be greater than zero");
 
         verify(paymentRepository, never()).save(any(Payment.class));
     }
 
     @Test
-    @DisplayName("Should include documento presentado cost in budget total (Issue #823)")
+    @DisplayName("Should include the submitted-document cost in the budget total (Issue #823)")
     void shouldIncludeDocumentCostInBudgetTotal() {
         testBudget.setProcedureList(List.of(procedureWithDocumentCosts(new java.math.BigDecimal("1500"))));
 
@@ -389,7 +389,7 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should sum multiple documento presentado costs in budget total (Issue #823)")
+    @DisplayName("Should sum multiple submitted-document costs in the budget total (Issue #823)")
     void shouldSumMultipleDocumentCostsInBudgetTotal() {
         testBudget.setProcedureList(List.of(procedureWithDocumentCosts(new java.math.BigDecimal("1000"), new java.math.BigDecimal("500"))));
 

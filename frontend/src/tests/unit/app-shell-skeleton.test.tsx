@@ -15,7 +15,7 @@ const auth = { isAuthenticated: true };
 const replace = vi.fn();
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/dashboard/personas",
+  usePathname: () => "/dashboard/people",
   useRouter: () => ({ replace, push: vi.fn() }),
 }));
 

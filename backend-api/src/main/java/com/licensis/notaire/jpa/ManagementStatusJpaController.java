@@ -4,12 +4,12 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.History;
 import java.io.Serializable;
@@ -26,7 +26,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class ManagementStatusJpaController implements Serializable, IPersistenciaJpa {
+public class ManagementStatusJpaController implements Serializable, JpaPersistence {
 
     public ManagementStatusJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
@@ -69,8 +69,8 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
                 }
             }
 
-            if (this.verificarExistenciaManagementStatus(managementStatus.getName())) {
-                throw new PreexistingEntityException("La entidad ya existe");
+            if (this.verifyManagementStatusExists(managementStatus.getName())) {
+                throw new PreexistingEntityException("The entity already exists");
             }
 
             em.getTransaction().commit();
@@ -86,10 +86,10 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
     }
 
     public Boolean edit(ManagementStatus managementStatus) throws IllegalOrphanException, NonexistentEntityException,
-            ClassEliminatedException, ClassModifiedException {
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
-        Boolean resultado = Boolean.FALSE;
+            ClassDeletedException, ClassModifiedException {
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
+        Boolean result = Boolean.FALSE;
         EntityManager em = null;
 
         em = getEntityManager();
@@ -101,7 +101,7 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
             version = persistentManagementStatus.getVersion();
             oldVersion = managementStatus.getVersion();
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico o elimino el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified or deleted the object
             {
                 if (em != null) {
                     em.close();
@@ -117,8 +117,8 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
                         if (illegalOrphanMessages == null) {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain Historial " + historyListOldHistory
-                                + " since its fkIdEstadoGestion field is not nullable.");
+                        illegalOrphanMessages.add("You must retain History " + historyListOldHistory
+                                + " since its fkIdManagementStatus field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null) {
@@ -150,16 +150,16 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
                 }
                 em.getTransaction().commit();
 
-                resultado = Boolean.TRUE;
+                result = Boolean.TRUE;
                 if (em != null) {
                     em.close();
                 }
             }
         } else {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
-        return resultado;
+        return result;
     }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
@@ -173,7 +173,7 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
                 managementStatus = em.getReference(ManagementStatus.class, id);
                 managementStatus.getIdManagementStatus();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The estadoDeGestion with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The management status with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             java.util.Set<History> historyListOrphanCheck = managementStatus.getHistoryList();
@@ -181,9 +181,9 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This EstadoDeGestion (" + managementStatus
-                        + ") cannot be destroyed since the Historial " + historyListOrphanCheckHistory
-                        + " in its historialList field has a non-nullable fkIdEstadoGestion field.");
+                illegalOrphanMessages.add("This ManagementStatus (" + managementStatus
+                        + ") cannot be destroyed since the History " + historyListOrphanCheckHistory
+                        + " in its historyList field has a non-nullable fkIdManagementStatus field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -198,27 +198,25 @@ public class ManagementStatusJpaController implements Serializable, IPersistenci
     }
 
     /**
-     * Verifica si el estado de gestion indicado ya se encuentra registrado o no.
+     * Checks whether a management status with the given name is already stored.
      *
-     * @param nombreEstado El nombre del estado de gestion.
-     * @return Verdadero si es estado de gestion ya se encuentra registrado, falso
-     *         en caso
-     *         contrario.
+     * @param nameStatus the name of the management status
+     * @return true when that status is already stored, false otherwise
      *
      */
-    public boolean verificarExistenciaManagementStatus(String nameStatus) {
-        boolean resultado = false;
+    public boolean verifyManagementStatusExists(String nameStatus) {
+        boolean result = false;
 
-        List<ManagementStatus> listaEstadosDeGestiones = this.findManagementStatusEntities();
+        List<ManagementStatus> managementStatuses = this.findManagementStatusEntities();
 
-        for (Iterator<ManagementStatus> it = listaEstadosDeGestiones.iterator(); it.hasNext();) {
+        for (Iterator<ManagementStatus> it = managementStatuses.iterator(); it.hasNext();) {
             ManagementStatus managementStatus = it.next();
 
             if (managementStatus.getName().equals(nameStatus)) {
                 return true;
             }
         }
-        return resultado;
+        return result;
     }
 
     public List<ManagementStatus> findManagementStatusEntities() {

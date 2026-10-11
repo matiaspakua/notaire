@@ -3,13 +3,13 @@ info:
   type: http
   seq: 11
   description: |-
-      ## Teardown — DELETE /api/v1/escrituras/{id}
+      ## Teardown — DELETE /api/v1/deeds/{id}
       Removes the deed from 00-setup-deed; its testimony was deleted by
       08-teardown-testimony.
       Traceability: CU12 (#655)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/escrituras/{{tm_deed_id}}"
+  url: "{{base_url}}/api/v1/deeds/{{tm_deed_id}}"
   headers:
     - name: Authorization
       value: "Bearer {{token}}"

@@ -16,31 +16,31 @@ shared helper (not ad-hoc string concatenation per controller).
 
 #### Scenario: Registration draft create returns 201 and Location
 
-- **WHEN** a client successfully POSTs `/api/v1/minutas-inscripcion` with a
+- **WHEN** a client successfully POSTs `/api/v1/registration-drafts` with a
   valid generate request
 - **THEN** the response status is `201 Created`, the body includes the created
-  draft id, and `Location` points at `/api/v1/minutas-inscripcion/{id}`
+  draft id, and `Location` points at `/api/v1/registration-drafts/{id}`
 
 #### Scenario: Sample payment create includes Location
 
-- **WHEN** a client successfully POSTs `/api/v1/pagos` with a valid payment body
+- **WHEN** a client successfully POSTs `/api/v1/payments` with a valid payment body
 - **THEN** the response status is `201 Created` and `Location` points at
-  `/api/v1/pagos/{id}`
+  `/api/v1/payments/{id}`
 
 #### Scenario: Sample folio create includes Location
 
-- **WHEN** a client successfully POSTs `/api/v1/folio` with a valid folio body
+- **WHEN** a client successfully POSTs `/api/v1/folios` with a valid folio body
 - **THEN** the response status is `201 Created` and `Location` points at
-  `/api/v1/folio/{id}`
+  `/api/v1/folios/{id}`
 
 ### Requirement: Unused payment params create route is removed
 
-`POST /api/v1/pagos/params` SHALL NOT be exposed. Payment creation remains
-available via `POST /api/v1/pagos` (JSON body).
+`POST /api/v1/payments/params` SHALL NOT be exposed. Payment creation remains
+available via `POST /api/v1/payments` (JSON body).
 
 #### Scenario: Payment params create is absent
 
-- **WHEN** a client POSTs `/api/v1/pagos/params` with query parameters that
+- **WHEN** a client POSTs `/api/v1/payments/params` with query parameters that
   previously created a payment
 - **THEN** the server does not create a payment through that route (no matching
   handler: typically `404` or `405`)

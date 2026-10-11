@@ -6,7 +6,7 @@ info:
       Traceability: CU07 / CU08 (RF QA Bruno #953). The deed comes from 00-setup-deed (#655: required).
 http:
   method: POST
-  url: "{{base_url}}/api/v1/testimonio"
+  url: "{{base_url}}/api/v1/testimonies"
   body:
     type: json
     data: |-

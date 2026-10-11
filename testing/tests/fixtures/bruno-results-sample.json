@@ -63,7 +63,7 @@
         "shouldStopRunnerExecution": false,
         "runDuration": 0.25541129,
         "name": "Get All Registros de Auditoria",
-        "suitename": "/home/runner/work/notaire/notaire/backend-api/api-test/auditoria/get-registros-auditoria",
+        "suitename": "/home/runner/work/notaire/notaire/backend-api/api-test/audit/get-registros-auditoria",
         "path": "auditoria/get-registros-auditoria.yml",
         "iterationIndex": 0
       },
@@ -73,7 +73,7 @@
         },
         "request": {
           "method": "POST",
-          "url": "http://localhost:8080/api/v1/usuarios/login",
+          "url": "http://localhost:8080/api/v1/users/login",
           "headers": {
             "content-type": "application/json"
           },
@@ -110,7 +110,7 @@
             },
             "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc4NDc0OTQzNSwiZXhwIjoxNzg0ODM1ODM1fQ.JwRwvak0BHlPB-Wm-Ywk4hZiV0m38_IIcqr8cyYXYAA"
           },
-          "url": "http://localhost/api/v1/usuarios/login",
+          "url": "http://localhost/api/v1/users/login",
           "responseTime": 515,
           "duration": 515,
           "size": 303

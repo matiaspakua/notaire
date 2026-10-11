@@ -47,4 +47,4 @@ A create or update whose data violates a unique constraint (SQLState 23505) SHAL
 #### Scenario: Contract
 
 - **WHEN** the OpenAPI document is generated
-- **THEN** `PUT /roles/{id}`, `POST /minutas-inscripcion` and `POST /cuadernos` list a 409 response
+- **THEN** `PUT /roles/{id}`, `POST /registration-drafts` and `POST /notebooks` list a 409 response

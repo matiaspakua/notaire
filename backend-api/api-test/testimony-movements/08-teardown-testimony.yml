@@ -6,7 +6,7 @@ info:
       Traceability: CU12
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/testimonio/{{tm_testimony_id}}"
+  url: "{{base_url}}/api/v1/testimonies/{{tm_testimony_id}}"
   headers:
     - name: Content-Type
       value: application/json

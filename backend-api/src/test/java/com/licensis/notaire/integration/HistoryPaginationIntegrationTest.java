@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * {@code GET /api/v1/historial} is paginated (slice of issue #596): the history table
+ * {@code GET /api/v1/history} is paginated (slice of issue #596): the history table
  * grows with every state change, so the list answers a Spring Data page bounded by
  * {@code size} instead of the whole table. Each test seeds its own rows and rolls back.
  */
@@ -60,7 +60,7 @@ class HistoryPaginationIntegrationTest {
 
         Person person = new Person();
         person.setFirstName("Pag");
-        person.setLastName("Historial");
+        person.setLastName("History");
         person.setIdentificationNumber("59610");
         person.setFkIdIdentificationType(identificationTypeRepository.findById(1).orElseThrow());
         person = personRepository.save(person);
@@ -69,7 +69,7 @@ class HistoryPaginationIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setDateStart(new Date());
         management.setNumber(59610);
-        management.setEncabezado("pagination");
+        management.setHeading("pagination");
         management.setFkIdNotaryPerson(person);
         management.setFkIdManagementStatus(status);
         management = managementRepository.save(management);
@@ -87,7 +87,7 @@ class HistoryPaginationIntegrationTest {
     @Test
     @DisplayName("shouldReturnRequestedPageSize")
     void shouldReturnRequestedPageSize() throws Exception {
-        mockMvc.perform(get("/api/v1/historial").param("size", "2"))
+        mockMvc.perform(get("/api/v1/history").param("size", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
                 .andExpect(jsonPath("$.size").value(2))
@@ -97,7 +97,7 @@ class HistoryPaginationIntegrationTest {
     @Test
     @DisplayName("shouldDefaultToTwentyPerPage")
     void shouldDefaultToTwentyPerPage() throws Exception {
-        mockMvc.perform(get("/api/v1/historial"))
+        mockMvc.perform(get("/api/v1/history"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size").value(20))
                 .andExpect(jsonPath("$.number").value(0))
@@ -107,7 +107,7 @@ class HistoryPaginationIntegrationTest {
     @Test
     @DisplayName("shouldSortNewestFirstWhenAsked")
     void shouldSortNewestFirstWhenAsked() throws Exception {
-        mockMvc.perform(get("/api/v1/historial").param("size", "1").param("sort", "idHistory,desc"))
+        mockMvc.perform(get("/api/v1/history").param("size", "1").param("sort", "idHistory,desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].idHistory").value(newestId))
                 .andExpect(jsonPath("$.content[0].notes").value("pagination 2"))

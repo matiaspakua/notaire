@@ -3,12 +3,12 @@ info:
   type: http
   seq: 9
   description: |-
-      ## Fixture — POST /api/v1/usuarios
+      ## Fixture — POST /api/v1/users
       Mixed-case username, unique per run; deleted by `13-delete-case-test-user.yml`.
       Traceability: CU20 (RF #43, #44, #45, #82, #83)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/usuarios"
+  url: "{{base_url}}/api/v1/users"
   body:
     type: json
     data: |-

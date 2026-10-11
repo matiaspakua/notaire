@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * CU42 - Informar próximos vencimientos: lists the unreleased submitted documents whose due date falls between
+ * CU42 - Upcoming expirations: lists the unreleased submitted documents whose due date falls between
  * today and today plus a window of days, both inclusive.
  */
 @Service
@@ -41,7 +41,7 @@ public class UpcomingExpirationService {
         int window = days == null ? DEFAULT_WINDOW_DAYS : days;
         if (window < 1 || window > MAX_WINDOW_DAYS) {
             throw new BusinessValidationException(
-                    "La ventana de vencimientos debe estar entre 1 y " + MAX_WINDOW_DAYS + " días");
+                    "The expiration window must be between 1 and " + MAX_WINDOW_DAYS + " days");
         }
         return repository.findUpcomingExpirations(toDate(today), toDate(today.plusDays(window))).stream()
                 .map(document -> toDto(document, today))
@@ -56,7 +56,7 @@ public class UpcomingExpirationService {
                 document.getIdSubmittedDocument(),
                 document.getName(),
                 management.map(DeedManagement::getNumber).orElse(null),
-                management.map(DeedManagement::getEncabezado).orElse(null),
+                management.map(DeedManagement::getHeading).orElse(null),
                 document.getPrepared(),
                 toLocalDate(document.getDateEntry()),
                 toLocalDate(document.getDateExit()),

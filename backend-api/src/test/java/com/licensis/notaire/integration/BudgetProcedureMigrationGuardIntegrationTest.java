@@ -47,7 +47,7 @@ class BudgetProcedureMigrationGuardIntegrationTest {
             "exporterPassword", "test_exporter_password");
 
     @Test
-    @DisplayName("V14 refuses to drop presupuestos.fk_id_tramite when a non-null row exists")
+    @DisplayName("V14 refuses to drop budgets.fk_id_procedure when a non-null row exists")
     void v14FailsWhenLegacyColumnHoldsData() throws SQLException {
         Flyway.configure()
                 .dataSource(POSTGRESQL_CONTAINER.getJdbcUrl(), POSTGRESQL_CONTAINER.getUsername(),
@@ -63,7 +63,7 @@ class BudgetProcedureMigrationGuardIntegrationTest {
                 Statement statement = connection.createStatement()) {
             statement.execute("INSERT INTO tramites (version, numero, nombre) VALUES (0, 1, 'Compraventa')");
             statement.execute(
-                    "INSERT INTO presupuestos (version, numero, fecha, encabezado, estado, fk_id_tramite) "
+                    "INSERT INTO presupuestos (version, numero, fecha, heading, estado, fk_id_tramite) "
                             + "VALUES (0, 1, CURRENT_DATE, 'Test', 'pendiente', "
                             + "(SELECT id_tramite FROM tramites ORDER BY id_tramite DESC LIMIT 1))");
         }

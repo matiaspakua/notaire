@@ -70,7 +70,7 @@ class WorkflowConstraintErrorsIntegrationTest {
     }
 
     private int managementStatus() throws Exception {
-        return created("/api/v1/estado-gestion", "{\"name\":\"E579-" + System.nanoTime() + "\"}")
+        return created("/api/v1/management-statuses", "{\"name\":\"E579-" + System.nanoTime() + "\"}")
                 .get("idManagementStatus").asInt();
     }
 

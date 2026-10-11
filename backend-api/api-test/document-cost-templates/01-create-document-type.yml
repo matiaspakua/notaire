@@ -6,7 +6,7 @@ info:
       Traceability: CU27
 http:
   method: POST
-  url: "{{base_url}}/api/v1/tipo-de-documento"
+  url: "{{base_url}}/api/v1/document-types"
   body:
     type: json
     data: |-

@@ -27,7 +27,7 @@
 
 ## 7. Ejecutar Playwright
 
-- [x] 7.1 TS-0024, TS-0028, TS-0060, TS-0071, TS-0092, carpetas-de-tramite (chromium, 69 passed)
+- [x] 7.1 TS-0024, TS-0028, TS-0060, TS-0071, TS-0092, procedure-folders (chromium, 69 passed)
 
 ## 8. Gate 3 — Actualizar documentación permanente
 

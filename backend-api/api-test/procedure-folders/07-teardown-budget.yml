@@ -6,7 +6,7 @@ info:
       Traceability: CU85
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/presupuestos/{{pf_budget_id}}"
+  url: "{{base_url}}/api/v1/budgets/{{pf_budget_id}}"
   headers:
     - name: Content-Type
       value: application/json

@@ -12,15 +12,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.licensis.notaire.testing.RequirementCoverage;
 
 @RequirementCoverage({"CU15", "CU47"})
-@DisplayName("Pago Entity Tests")
+@DisplayName("Payment Entity Tests")
 class PaymentEntityTest {
 
     @Nested
-    @DisplayName("CU15 - Procesar pago - Unit Tests")
+    @DisplayName("CU15 - Process payment - Unit Tests")
     class ProcesarPaymentTests {
 
         @Test
-        @DisplayName("Should create pago with required fields")
+        @DisplayName("Should create a payment with the required fields")
         void shouldCreatePaymentWithRequiredFields() {
             Payment payment = new Payment();
             payment.setIdPayment(1);
@@ -60,7 +60,7 @@ class PaymentEntityTest {
     }
 
     @Nested
-    @DisplayName("setAtributos branches")
+    @DisplayName("setAttributes branches")
     class SetAtributosTests {
 
     }
@@ -87,11 +87,11 @@ class PaymentEntityTest {
             Payment payment = new Payment(2);
             payment.setDate(new Date());
             payment.setAmount(new java.math.BigDecimal("200.0"));
-            payment.setNotes("Observación de prueba");
+            payment.setNotes("Test observation");
 
             String str = payment.toString();
 
-            assertThat(str).contains("Observación de prueba");
+            assertThat(str).contains("Test observation");
         }
 
         @Test

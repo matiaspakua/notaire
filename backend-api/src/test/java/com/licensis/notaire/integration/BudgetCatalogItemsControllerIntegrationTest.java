@@ -1,0 +1,117 @@
+package com.licensis.notaire.integration;
+
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.licensis.notaire.business.Item;
+import com.licensis.notaire.repository.ItemRepository;
+import com.licensis.notaire.testing.RequirementCoverage;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.util.List;
+
+@RequirementCoverage({"CU71"})
+@SpringBootTest
+@ActiveProfiles("test-h2")
+@DisplayName("Budget — add existing catalog items (CU71)")
+class BudgetCatalogItemsControllerIntegrationTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private ItemRepository itemRepository;
+
+    private MockMvc mockMvc;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
+    private Integer createPerson() throws Exception {
+        String body = """
+                {"firstName": "Client", "lastName": "Catalog IT", "identificationNumber": "%s",
+                 "isClient": true, "identificationType": {"idIdentificationType": 1}}
+                """.formatted("70" + (System.nanoTime() % 1000000));
+        MvcResult result = mockMvc.perform(post("/api/v1/people")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andReturn();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("personId").asInt();
+    }
+
+    private Integer createBudget(Integer clientId) throws Exception {
+        String body = """
+                {"number": %d, "date": "2026-01-01", "heading": "Budget catalog IT",
+                 "status": "PENDIENTE", "amount": 1000.00, "person": {"personId": %d}}
+                """.formatted((int) (System.nanoTime() % 100000), clientId);
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andReturn();
+        return mapper.readTree(result.getResponse().getContentAsString()).get("idBudget").asInt();
+    }
+
+    private Item createCatalogItem(String name, java.math.BigDecimal value) {
+        Item item = new Item(null, name, value);
+        item.setPercentage(15);
+        item.setNotes("Catalog item IT");
+        return itemRepository.save(item);
+    }
+
+    @Test
+    @DisplayName("Should add a copy of a catalog item to the budget")
+    void shouldAddCatalogItemToBudget() throws Exception {
+        Integer clientId = createPerson();
+        Integer budgetId = createBudget(clientId);
+        Item catalogItem = createCatalogItem("Stamp IT", new java.math.BigDecimal("500"));
+
+        mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-catalog")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(List.of(catalogItem.getIdItem()))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].name").value("Stamp IT"))
+                .andExpect(jsonPath("$[0].value").value(500.0));
+    }
+
+    @Test
+    @DisplayName("Should return 404 when a referenced catalog item does not exist")
+    void shouldReturnNotFoundForUnknownCatalogItem() throws Exception {
+        Integer clientId = createPerson();
+        Integer budgetId = createBudget(clientId);
+
+        mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-catalog")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(List.of(999999))))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Should return 404 when the budget does not exist")
+    void shouldReturnNotFoundForUnknownBudget() throws Exception {
+        Item catalogItem = createCatalogItem("Fees IT", new java.math.BigDecimal("1000"));
+
+        mockMvc.perform(post("/api/v1/budgets/999999/items-from-catalog")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(List.of(catalogItem.getIdItem()))))
+                .andExpect(status().isNotFound());
+    }
+}

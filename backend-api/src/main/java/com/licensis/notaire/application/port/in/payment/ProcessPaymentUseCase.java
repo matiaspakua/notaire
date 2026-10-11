@@ -3,7 +3,7 @@ package com.licensis.notaire.application.port.in.payment;
 import com.licensis.notaire.domain.payment.PaymentDetails;
 
 /**
- * Inbound port for CU15 "Procesar Pago": register a payment against a budget.
+ * Inbound port for CU15 "Process payment": register a payment against a budget.
  *
  * <p>Driving adapters (REST, CLI, batch) depend on this contract; it deliberately
  * speaks only plain values and domain types, never HTTP or JPA types.

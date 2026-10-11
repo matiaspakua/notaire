@@ -4,10 +4,10 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.BudgetTemplatePK;
@@ -24,7 +24,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class BudgetTemplateJpaController implements Serializable, IPersistenciaJpa
+public class BudgetTemplateJpaController implements Serializable, JpaPersistence
 {
 
     public BudgetTemplateJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -42,7 +42,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
 
     public Boolean create(BudgetTemplate budgetTemplate) throws PreexistingEntityException
     {
-        Boolean creada = false;
+        Boolean created = false;
 
         if (budgetTemplate.getBudgetTemplatePK() == null)
         {
@@ -52,7 +52,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         budgetTemplate.getBudgetTemplatePK().setFkIdProcedureType(budgetTemplate.getProcedureType().getIdProcedureType());
         if (findBudgetTemplate(budgetTemplate.getBudgetTemplatePK()) != null)
         {
-            throw new PreexistingEntityException("PlantillaPresupuesto " + budgetTemplate.getBudgetTemplatePK() + " already exists.");
+            throw new PreexistingEntityException("BudgetTemplate " + budgetTemplate.getBudgetTemplatePK() + " already exists.");
         }
         EntityManager em = null;
         try
@@ -83,13 +83,13 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
                 concept = em.merge(concept);
             }
             em.getTransaction().commit();
-            creada = true;
+            created = true;
         }
         catch (Exception ex)
         {
             if (findBudgetTemplate(budgetTemplate.getBudgetTemplatePK()) != null)
             {
-                throw new PreexistingEntityException("PlantillaPresupuesto " + budgetTemplate + " already exists.", ex);
+                throw new PreexistingEntityException("BudgetTemplate " + budgetTemplate + " already exists.", ex);
             }
         }
         finally
@@ -99,7 +99,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
                 em.close();
             }
         }
-        return creada;
+        return created;
     }
 
     public void edit(BudgetTemplate budgetTemplate) throws NonexistentEntityException, Exception
@@ -157,7 +157,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
                 BudgetTemplatePK id = budgetTemplate.getBudgetTemplatePK();
                 if (findBudgetTemplate(id) == null)
                 {
-                    throw new NonexistentEntityException("The plantillaPresupuesto with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The budget template with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -181,7 +181,7 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
             BudgetTemplate budgetTemplate = em.find(BudgetTemplate.class, id);
             if (budgetTemplate == null)
             {
-                throw new NonexistentEntityException("The plantillaPresupuesto with id " + id + " no longer exists.");
+                throw new NonexistentEntityException("The budget template with id " + id + " no longer exists.");
             }
             // find(), not getReference(): a proxy does not match the loaded instance in the parents'
             // cascade-ALL lists, so it stayed there and flush re-persisted it, undoing the delete.
@@ -259,19 +259,19 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
     {
         EntityManager em = getEntityManager();
 
-        List<BudgetTemplate> misPlantillas = null;
+        List<BudgetTemplate> templates = null;
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Named query declared on the entity.
             Query q = em.createNamedQuery("BudgetTemplate.findByFkIdProcedureType");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("fkIdTipoTramite", idProcedureType);
+            // Bind the named query parameter.
+            q.setParameter("fkIdProcedureType", idProcedureType);
 
-            misPlantillas = (List<BudgetTemplate>) q.getResultList();
+            templates = (List<BudgetTemplate>) q.getResultList();
 
-            return misPlantillas;
+            return templates;
 
         }
         finally
@@ -280,49 +280,49 @@ public class BudgetTemplateJpaController implements Serializable, IPersistenciaJ
         }
     }
 
-    public Boolean eliminarBudgetTemplate(BudgetTemplate miTemplate) throws ClassEliminatedException
+    public Boolean deleteBudgetTemplate(BudgetTemplate template) throws ClassDeletedException
     {
 
-        Boolean eliminada = false;
+        Boolean removed = false;
         int deleted = 0;
 
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro una nueva transaccion
+        // Open a transaction.
         tx = em.getTransaction();
         tx.begin();
 
-        BudgetTemplate miBudgetTemplate = this.findBudgetTemplate(miTemplate.getBudgetTemplatePK());
+        BudgetTemplate budgetTemplate = this.findBudgetTemplate(template.getBudgetTemplatePK());
 
-        if (miBudgetTemplate != null)
+        if (budgetTemplate != null)
         {
 
-            // Creo el query
+            // Build the query.
             Query query = em.createQuery("DELETE FROM BudgetTemplate p WHERE p.budgetTemplatePK.fkIdProcedureType = ?1 AND  p.budgetTemplatePK.fkIdConcept = ?2");
 
-            //Seteo el parametro 1 y 2
-            query.setParameter(1, miTemplate.getBudgetTemplatePK().getFkIdProcedureType());
-            query.setParameter(2, miTemplate.getBudgetTemplatePK().getFkIdConcept());
+            // Bind parameters 1 and 2.
+            query.setParameter(1, template.getBudgetTemplatePK().getFkIdProcedureType());
+            query.setParameter(2, template.getBudgetTemplatePK().getFkIdConcept());
 
-            // Ejecuto el query
+            // Run the query.
             deleted = query.executeUpdate();
 
-            // Hago commit
+            // Commit the transaction.
             tx.commit();
 
             if (deleted > 0)
             {
-                eliminada = true;
+                removed = true;
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
         em.close();
 
-        return eliminada;
+        return removed;
     }
 
     @Override

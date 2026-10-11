@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class EntityEqualityEdgeCaseTest {
 
     @Nested
-    @DisplayName("Presupuesto")
+    @DisplayName("Budget")
     class BudgetEqualityTests {
 
         @Test
@@ -80,7 +80,7 @@ class EntityEqualityEdgeCaseTest {
     }
 
     @Nested
-    @DisplayName("Persona")
+    @DisplayName("Person")
     class PersonEqualityTests {
 
         @Test
@@ -121,7 +121,7 @@ class EntityEqualityEdgeCaseTest {
     }
 
     @Nested
-    @DisplayName("Tramite")
+    @DisplayName("Procedure")
     class ProcedureEqualityTests {
 
         @Test
@@ -144,7 +144,7 @@ class EntityEqualityEdgeCaseTest {
     }
 
     @Nested
-    @DisplayName("Suplencia")
+    @DisplayName("Substitution")
     class SubstitutionEqualityTests {
 
         @Test
@@ -161,7 +161,7 @@ class EntityEqualityEdgeCaseTest {
     }
 
     @Nested
-    @DisplayName("Copia")
+    @DisplayName("Copy")
     class CopyEqualityTests {
 
         @Test
@@ -219,7 +219,7 @@ class EntityEqualityEdgeCaseTest {
     }
 
     @Nested
-    @DisplayName("Inmueble")
+    @DisplayName("Property")
     class PropertyEqualityTests {
 
         @Test
@@ -293,7 +293,7 @@ class EntityEqualityEdgeCaseTest {
     }
 
     @Nested
-    @DisplayName("TipoDeFolio")
+    @DisplayName("FolioType")
     class FolioTypeEqualityTests {
 
         @Test
@@ -322,7 +322,7 @@ class EntityEqualityEdgeCaseTest {
     }
 
     @Nested
-    @DisplayName("TipoIdentificacion")
+    @DisplayName("IdentificationType")
     class IdentificationTypeEqualityTests {
 
         @Test
@@ -351,7 +351,7 @@ class EntityEqualityEdgeCaseTest {
     }
 
     @Nested
-    @DisplayName("RegistroAuditoria")
+    @DisplayName("AuditRecord")
     class AuditRecordEqualityTests {
 
         @Test

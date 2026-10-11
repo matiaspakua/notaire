@@ -23,42 +23,42 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST API para la gestión de trámites en Protocolo Auxiliar (CU81).
+ * REST API for the management of procedures in Auxiliary protocol (CU81).
  */
 @RestController
-@RequestMapping("/api/v1/protocolo-auxiliar")
-@Tag(name = "Protocolo Auxiliar", description = "API para gestionar trámites en Protocolo Auxiliar")
+@RequestMapping("/api/v1/auxiliary-protocol")
+@Tag(name = "Auxiliary protocol", description = "API for managing procedures in the auxiliary protocol")
 public class AuxiliaryProtocolController {
 
-    private final AuxiliaryProtocolService protocoloAuxiliaryService;
+    private final AuxiliaryProtocolService auxiliaryProtocolService;
 
-    public AuxiliaryProtocolController(AuxiliaryProtocolService protocoloAuxiliaryService) {
-        this.protocoloAuxiliaryService = protocoloAuxiliaryService;
+    public AuxiliaryProtocolController(AuxiliaryProtocolService auxiliaryProtocolService) {
+        this.auxiliaryProtocolService = auxiliaryProtocolService;
     }
 
-    public record IniciarDeedRequest(Integer idFolio, String body) {
+    public record StartDeedRequest(Integer idFolio, String body) {
     }
 
-    @GetMapping("/folios-disponibles")
-    @Operation(summary = "Listar folios de Protocolo Auxiliar disponibles")
+    @GetMapping("/available-folios")
+    @Operation(summary = "List available auxiliary-protocol folios")
     @Transactional(readOnly = true)
     public ResponseEntity<List<FolioResponse>> getAvailableFolios() {
         return ResponseEntity.ok(
-                protocoloAuxiliaryService.listAvailableFolios().stream().map(FolioResponse::from).toList());
+                auxiliaryProtocolService.listAvailableFolios().stream().map(FolioResponse::from).toList());
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Creada"),
-        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-        @ApiResponse(responseCode = "404", description = "Folio no encontrado")
+        @ApiResponse(responseCode = "201", description = "Created"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "404", description = "Folio not found")
     })
-    @PostMapping("/escrituras")
-    @Operation(summary = "Iniciar una escritura de Protocolo Auxiliar sobre un folio disponible")
-    public ResponseEntity<Object> iniciarDeed(@RequestBody IniciarDeedRequest request) {
+    @PostMapping("/deeds")
+    @Operation(summary = "Start an auxiliary-protocol deed on an available folio")
+    public ResponseEntity<Object> startDeed(@RequestBody StartDeedRequest request) {
         try {
-            Deed creada = protocoloAuxiliaryService.iniciarDeed(
+            Deed created = auxiliaryProtocolService.startDeed(
                     request.idFolio(), request.body(), new Date());
-            return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (BusinessValidationException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         } catch (ResourceNotFoundException e) {

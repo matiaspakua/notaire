@@ -4,11 +4,11 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.BudgetTemplate;
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.ProcedureType;
@@ -26,7 +26,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class ProcedureTypeJpaController implements Serializable, IPersistenciaJpa
+public class ProcedureTypeJpaController implements Serializable, JpaPersistence
 {
 
     public ProcedureTypeJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -130,10 +130,10 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
         return oid;
     }
 
-    public Boolean edit(ProcedureType procedureType) throws ClassModifiedException, ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean edit(ProcedureType procedureType) throws ClassModifiedException, ClassDeletedException, IllegalOrphanException, NonexistentEntityException
     {
 
-        Boolean modificado = false;
+        Boolean modified = false;
         Integer version = -1;
         Integer oldVersion = -1;
 
@@ -145,10 +145,10 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
 
         if (procedureTypeEncontrado != null)
         {
-            version = procedureTypeEncontrado.getVersion(); // Version del Objeto en db
-            oldVersion = procedureType.getVersion(); // Version del Objeto en memoria
+            version = procedureTypeEncontrado.getVersion(); // Version of the object in the database
+            oldVersion = procedureType.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {
@@ -169,21 +169,21 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
 
                 em.getTransaction().commit();
                 em.close();
-                modificado = true;
+                modified = true;
 
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
-        return modificado;
+        return modified;
     }
 
-    public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean destroy(Integer id) throws ClassDeletedException, IllegalOrphanException, NonexistentEntityException
     {
         EntityManager em = null;
-        Boolean eliminado = false;
+        Boolean removed = false;
         try
         {
             em = getEntityManager();
@@ -204,7 +204,7 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This TipoDeTramite (" + procedureType + ") cannot be destroyed since the PlantillaPresupuesto " + budgetTemplateListOrphanCheckBudgetTemplate + " in its plantillaPresupuestoList field has a non-nullable tipoDeTramite field.");
+                    illegalOrphanMessages.add("This ProcedureType (" + procedureType + ") cannot be destroyed since the BudgetTemplate " + budgetTemplateListOrphanCheckBudgetTemplate + " in its budgetTemplateList field has a non-nullable procedureType field.");
                 }
                 List<ProcedureTemplate> procedureTemplateListOrphanCheck = procedureType.getProcedureTemplateList();
                 for (ProcedureTemplate procedureTemplateListOrphanCheckProcedureTemplate : procedureTemplateListOrphanCheck)
@@ -213,7 +213,7 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This TipoDeTramite (" + procedureType + ") cannot be destroyed since the PlantillaTramite " + procedureTemplateListOrphanCheckProcedureTemplate + " in its plantillaTramiteList field has a non-nullable tipoDeTramite field.");
+                    illegalOrphanMessages.add("This ProcedureType (" + procedureType + ") cannot be destroyed since the ProcedureTemplate " + procedureTemplateListOrphanCheckProcedureTemplate + " in its procedureTemplateList field has a non-nullable procedureType field.");
                 }
                 List<Procedure> procedureListOrphanCheck = procedureType.getProcedureList();
                 for (Procedure procedureListOrphanCheckProcedure : procedureListOrphanCheck)
@@ -222,7 +222,7 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This TipoDeTramite (" + procedureType + ") cannot be destroyed since the Tramite " + procedureListOrphanCheckProcedure + " in its tramiteList field has a non-nullable fkIdTipoTramite field.");
+                    illegalOrphanMessages.add("This ProcedureType (" + procedureType + ") cannot be destroyed since the Procedure " + procedureListOrphanCheckProcedure + " in its procedureList field has a non-nullable fkIdProcedureType field.");
                 }
                 if (illegalOrphanMessages != null)
                 {
@@ -230,15 +230,15 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
                 }
                 em.remove(procedureType);
                 em.getTransaction().commit();
-                eliminado = true;
+                removed = true;
             } else
             {
-                throw new ClassEliminatedException();
+                throw new ClassDeletedException();
             }
         }
         catch (EntityNotFoundException enfe)
         {
-            throw new NonexistentEntityException("The concepto with id " + id + " no longer exists.", enfe);
+            throw new NonexistentEntityException("The concept with id " + id + " no longer exists.", enfe);
         }
         finally
         {
@@ -247,7 +247,7 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
                 em.close();
             }
         }
-        return eliminado;
+        return removed;
     }
 
     public List<ProcedureType> findProcedureTypeEntities()
@@ -283,27 +283,27 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
     {
         EntityManager em = getEntityManager();
 
-        List<ProcedureType> misTiposDeProcedure = null;
+        List<ProcedureType> procedureTypes = null;
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Name of the @NamedQuery declared on ProcedureType
             Query q = em.createNamedQuery("ProcedureType.findByIdProcedureType");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("idTipoTramite", id);
+            // Bind the named query parameter.
+            q.setParameter("idProcedureType", id);
 
-            misTiposDeProcedure = (List<ProcedureType>) q.getResultList();
+            procedureTypes = (List<ProcedureType>) q.getResultList();
 
-            if (misTiposDeProcedure != null)
+            if (procedureTypes != null)
             {
 
-                misTiposDeProcedure.get(0).setBudgetTemplateList(new ArrayList<BudgetTemplate>());
-                misTiposDeProcedure.get(0).setProcedureTemplateList(new ArrayList<ProcedureTemplate>());
-                misTiposDeProcedure.get(0).setProcedureList(new ArrayList<Procedure>());
+                procedureTypes.get(0).setBudgetTemplateList(new ArrayList<BudgetTemplate>());
+                procedureTypes.get(0).setProcedureTemplateList(new ArrayList<ProcedureTemplate>());
+                procedureTypes.get(0).setProcedureList(new ArrayList<Procedure>());
             }
 
-            return misTiposDeProcedure;
+            return procedureTypes;
 
         }
         finally
@@ -316,19 +316,19 @@ public class ProcedureTypeJpaController implements Serializable, IPersistenciaJp
     {
         EntityManager em = getEntityManager();
 
-        List<ProcedureType> misTiposDeProcedure = null;
+        List<ProcedureType> procedureTypes = null;
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Name of the @NamedQuery declared on ProcedureType
             Query q = em.createNamedQuery("ProcedureType.findByName");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
+            // Bind the named query parameter.
             q.setParameter("name", name);
 
-            misTiposDeProcedure = (List<ProcedureType>) q.getResultList();
+            procedureTypes = (List<ProcedureType>) q.getResultList();
 
-            return misTiposDeProcedure;
+            return procedureTypes;
 
         }
         finally

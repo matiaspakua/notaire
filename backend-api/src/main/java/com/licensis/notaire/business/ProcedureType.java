@@ -37,10 +37,10 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "ProcedureType.findAll", query = "SELECT t FROM ProcedureType t"),
-        @NamedQuery(name = "ProcedureType.findByIdProcedureType", query = "SELECT t FROM ProcedureType t WHERE t.idProcedureType = :idTipoTramite"),
-        @NamedQuery(name = "ProcedureType.findByIsArchived", query = "SELECT t FROM ProcedureType t WHERE t.isArchived = :seArchiva"),
-        @NamedQuery(name = "ProcedureType.findByIsRegistered", query = "SELECT t FROM ProcedureType t WHERE t.isRegistered = :seInscribe"),
-        @NamedQuery(name = "ProcedureType.findByAssociatesProperties", query = "SELECT t FROM ProcedureType t WHERE t.associatesProperties = :asociaInmuebles"),
+        @NamedQuery(name = "ProcedureType.findByIdProcedureType", query = "SELECT t FROM ProcedureType t WHERE t.idProcedureType = :idProcedureType"),
+        @NamedQuery(name = "ProcedureType.findByIsArchived", query = "SELECT t FROM ProcedureType t WHERE t.isArchived = :isArchived"),
+        @NamedQuery(name = "ProcedureType.findByIsRegistered", query = "SELECT t FROM ProcedureType t WHERE t.isRegistered = :isRegistered"),
+        @NamedQuery(name = "ProcedureType.findByAssociatesProperties", query = "SELECT t FROM ProcedureType t WHERE t.associatesProperties = :associatesProperties"),
         @NamedQuery(name = "ProcedureType.findByName", query = "SELECT t FROM ProcedureType t WHERE t.name = :name")
 })
 public class ProcedureType implements Serializable, Persistable<Integer> {
@@ -109,7 +109,7 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idProcedureType == null || idProcedureType.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idProcedureType == null || idProcedureType.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -200,12 +200,12 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
         this.workflowDefinition = workflowDefinition;
     }
 
-    public void setAtributos(DtoProcedureType dtoProcedureType) {
-        if (dtoProcedureType.isValido()) {
+    public void setAttributes(DtoProcedureType dtoProcedureType) {
+        if (dtoProcedureType.isValid()) {
             this.idProcedureType = dtoProcedureType.getIdProcedureType();
             this.name = dtoProcedureType.getName();
             // Null-safe unboxing: PUT payloads may omit boolean flags, which
-            // previously NPE'd (e.g. getAsociaInmuebles() null on update).
+            // previously NPE'd (for example getAssociatesProperties() null on update).
             this.isArchived = Boolean.TRUE.equals(dtoProcedureType.getIsArchived());
             this.isRegistered = Boolean.TRUE.equals(dtoProcedureType.getIsRegistered());
             this.associatesProperties = Boolean.TRUE.equals(dtoProcedureType.getAssociatesProperties());
@@ -220,22 +220,22 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoProcedureType getDto() {
-        DtoProcedureType miDto = new DtoProcedureType();
+        DtoProcedureType dto = new DtoProcedureType();
 
-        miDto.setIdProcedureType(idProcedureType);
-        miDto.setName(name);
-        miDto.setIsArchived(isArchived);
-        miDto.setIsRegistered(isRegistered);
-        miDto.setAssociatesProperties(associatesProperties);
-        miDto.setNotes(notes);
-        miDto.setVersion(version);
-        miDto.setEnabled(enabled);
+        dto.setIdProcedureType(idProcedureType);
+        dto.setName(name);
+        dto.setIsArchived(isArchived);
+        dto.setIsRegistered(isRegistered);
+        dto.setAssociatesProperties(associatesProperties);
+        dto.setNotes(notes);
+        dto.setVersion(version);
+        dto.setEnabled(enabled);
         if (workflowDefinition != null) {
-            miDto.setWorkflowDefinitionId(workflowDefinition.getId());
-            miDto.setWorkflowDefinitionName(workflowDefinition.getName());
+            dto.setWorkflowDefinitionId(workflowDefinition.getId());
+            dto.setWorkflowDefinitionName(workflowDefinition.getName());
         }
 
-        return miDto;
+        return dto;
     }
 
     @Override
@@ -261,8 +261,8 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "TipoDeTramite[ idTipoTramite=" + idProcedureType + " ]"
-                + "[ nombre=" + name + " ]";
+        return "ProcedureType[ idProcedureType=" + idProcedureType + " ]"
+                + "[ name=" + name + " ]";
     }
 
     public int getVersion() {

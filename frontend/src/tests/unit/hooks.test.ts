@@ -3,7 +3,7 @@
  * Tests verify query keys, enabled conditions, and mutation side effects.
  * All HTTP calls are mocked via vi.mock.
  *
- * Covers: useEstadosGestion, useTiposTramite, useAuditoria
+ * Covers: useManagementStatuses, useProcedureTypes, useAudit
  */
 import { describe, it, expect } from "vitest";
 
@@ -11,38 +11,38 @@ import { describe, it, expect } from "vitest";
 // Query key contracts
 // ──────────────────────────────────────────────
 
-import { estadosGestionKeys } from "@/hooks/useEstadosGestion";
-import { tiposTramiteKeys } from "@/hooks/useTiposTramite";
-import { auditoriaKeys } from "@/hooks/useAuditoria";
+import { managementStatusKeys } from "@/hooks/useManagementStatuses";
+import { procedureTypeKeys } from "@/hooks/useProcedureTypes";
+import { auditKeys } from "@/hooks/useAudit";
 
 describe("React Query key contracts", () => {
-  describe("estadosGestionKeys", () => {
-    it("all key is ['estadosGestion']", () => {
-      expect(estadosGestionKeys.all).toEqual(["estadosGestion"]);
+  describe("managementStatusKeys", () => {
+    it("all key is ['managementStatuses']", () => {
+      expect(managementStatusKeys.all).toEqual(["managementStatuses"]);
     });
 
     it("detail key includes id", () => {
-      expect(estadosGestionKeys.detail(5)).toEqual(["estadosGestion", 5]);
+      expect(managementStatusKeys.detail(5)).toEqual(["managementStatuses", 5]);
     });
   });
 
-  describe("tiposTramiteKeys", () => {
-    it("all key is ['tiposTramite']", () => {
-      expect(tiposTramiteKeys.all).toEqual(["tiposTramite"]);
+  describe("procedureTypeKeys", () => {
+    it("all key is ['procedureTypes']", () => {
+      expect(procedureTypeKeys.all).toEqual(["procedureTypes"]);
     });
 
     it("detail key includes id", () => {
-      expect(tiposTramiteKeys.detail(3)).toEqual(["tiposTramite", 3]);
+      expect(procedureTypeKeys.detail(3)).toEqual(["procedureTypes", 3]);
     });
   });
 
-  describe("auditoriaKeys", () => {
+  describe("auditKeys", () => {
     it("all key is ['auditoria']", () => {
-      expect(auditoriaKeys.all).toEqual(["auditoria"]);
+      expect(auditKeys.all).toEqual(["audit"]);
     });
 
-    it("byUsuario key includes user id", () => {
-      expect(auditoriaKeys.byUsuario(12)).toEqual(["auditoria", "usuario", 12]);
+    it("byUser key includes user id", () => {
+      expect(auditKeys.byUser(12)).toEqual(["audit", "user", 12]);
     });
   });
 });
@@ -52,40 +52,40 @@ describe("React Query key contracts", () => {
 // ──────────────────────────────────────────────
 
 import type {
-  EstadoDeGestion,
-  TipoDeTramite,
+  ManagementStatus,
+  ProcedureType,
   Folio,
-  PlantillaPresupuesto,
-  RegistroAuditoria,
+  BudgetTemplate,
+  AuditRecord,
 } from "@/types";
 
 describe("TypeScript type shape contracts", () => {
-  it("EstadoDeGestion uses idManagementStatus", () => {
-    const e: EstadoDeGestion = { idManagementStatus: 1, name: "En proceso" };
+  it("ManagementStatus uses idManagementStatus", () => {
+    const e: ManagementStatus = { idManagementStatus: 1, name: "En proceso" };
     expect(e.idManagementStatus).toBe(1);
   });
 
-  it("TipoDeTramite uses idProcedureType", () => {
-    const t: TipoDeTramite = { idProcedureType: 2, name: "Compraventa" };
+  it("ProcedureType uses idProcedureType", () => {
+    const t: ProcedureType = { idProcedureType: 2, name: "Compraventa" };
     expect(t.idProcedureType).toBe(2);
   });
 
-  it("PlantillaPresupuesto uses budgetTemplatePK", () => {
-    const p: PlantillaPresupuesto = {
+  it("BudgetTemplate uses budgetTemplatePK", () => {
+    const p: BudgetTemplate = {
       budgetTemplatePK: { fkIdProcedureType: 2, fkIdConcept: 1 },
       procedureType: { name: "Cobro base" },
     };
     expect(p.budgetTemplatePK?.fkIdConcept).toBe(1);
   });
 
-  it("RegistroAuditoria uses idAuditRecord and operationDetail", () => {
-    const r: RegistroAuditoria = {
+  it("AuditRecord uses idAuditRecord and operationDetail", () => {
+    const r: AuditRecord = {
       idAuditRecord: 100,
-      operationDetail: "Creó gestión #45",
-      module: "Gestiones",
+      operationDetail: "Created management #45",
+      module: "Managements",
     };
     expect(r.idAuditRecord).toBe(100);
-    expect(r.operationDetail).toBe("Creó gestión #45");
+    expect(r.operationDetail).toBe("Created management #45");
   });
 
   it("Folio has number and fkIdFolioType", () => {
@@ -104,36 +104,36 @@ describe("TypeScript type shape contracts", () => {
 // ──────────────────────────────────────────────
 
 describe("API endpoint path contracts", () => {
-  it("EstadoDeGestion endpoint is /estado-gestion (not /estados-gestion)", () => {
+  it("ManagementStatus endpoint is /management-statuses (not /management-statuses)", () => {
     // Document the backend API path for CI/CD integration tests
-    const path = "/estado-gestion";
-    expect(path).toBe("/estado-gestion");
+    const path = "/management-statuses";
+    expect(path).toBe("/management-statuses");
   });
 
-  it("TipoDeTramite endpoint is /tipo-tramite", () => {
-    expect("/tipo-tramite").toBe("/tipo-tramite");
+  it("ProcedureType endpoint is /procedure-types", () => {
+    expect("/procedure-types").toBe("/procedure-types");
   });
 
-  it("Folio endpoint is /folio (singular)", () => {
-    expect("/folio").toBe("/folio");
+  it("Folio endpoint is /folios (singular)", () => {
+    expect("/folios").toBe("/folios");
   });
 
-  it("PlantillaPresupuesto endpoint is /plantilla-presupuestos", () => {
-    expect("/plantilla-presupuestos").toBe("/plantilla-presupuestos");
+  it("BudgetTemplate endpoint is /budget-templates", () => {
+    expect("/budget-templates").toBe("/budget-templates");
   });
 
-  it("PlantillaPresupuesto composite PUT path is correct", () => {
-    const idTipoTramite = 3;
-    const idConcepto = 7;
-    const path = `/plantilla-presupuestos/tipo-tramite/${idTipoTramite}/concepto/${idConcepto}`;
-    expect(path).toBe("/plantilla-presupuestos/tipo-tramite/3/concepto/7");
+  it("BudgetTemplate composite PUT path is correct", () => {
+    const idTypeProcedure = 3;
+    const idConcept = 7;
+    const path = `/budget-templates/procedure-types/${idTypeProcedure}/concept/${idConcept}`;
+    expect(path).toBe("/budget-templates/procedure-types/3/concept/7");
   });
 
-  it("RegistroAuditoria endpoint is /audit-log", () => {
+  it("AuditRecord endpoint is /audit-log", () => {
     expect("/audit-log").toBe("/audit-log");
   });
 
-  it("RegistroAuditoria by user path includes usuario segment", () => {
+  it("AuditRecord by user path includes the user segment", () => {
     const userId = 5;
     const path = `/audit-log/user/${userId}`;
     expect(path).toBe("/audit-log/user/5");
@@ -145,7 +145,7 @@ describe("API endpoint path contracts", () => {
 // ──────────────────────────────────────────────
 
 describe("Conditional query enabled logic", () => {
-  it("useAuditoriaByUsuario — enabled when idUsuario > 0", () => {
+  it("useAuditByUser — enabled when userId > 0", () => {
     const enabled = (id: number | null) => id !== null && id > 0;
     expect(enabled(1)).toBe(true);
     expect(enabled(null)).toBe(false);

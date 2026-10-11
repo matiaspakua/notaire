@@ -8,7 +8,7 @@ Registering and maintaining the properties (inmuebles) involved in a deed.
 
 ### Requirement: Cadastral designation required
 
-`POST /api/v1/inmueble` and `PUT /api/v1/inmueble/{id}` SHALL reject a body whose `cadastralDesignation` is missing, null, empty or blank with 400 naming the field, and SHALL change nothing; the contract SHALL mark it required on both.
+`POST /api/v1/properties` and `PUT /api/v1/properties/{id}` SHALL reject a body whose `cadastralDesignation` is missing, null, empty or blank with 400 naming the field, and SHALL change nothing; the contract SHALL mark it required on both.
 
 #### Scenario: Create without designation
 

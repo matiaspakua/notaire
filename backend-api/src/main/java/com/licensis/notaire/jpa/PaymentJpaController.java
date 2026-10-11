@@ -5,7 +5,7 @@
 package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Budget;
 import java.io.Serializable;
@@ -20,7 +20,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class PaymentJpaController implements Serializable, IPersistenciaJpa
+public class PaymentJpaController implements Serializable, JpaPersistence
 {
 
     public PaymentJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -105,7 +105,7 @@ public class PaymentJpaController implements Serializable, IPersistenciaJpa
                 Integer id = payment.getIdPayment();
                 if (findPayment(id) == null)
                 {
-                    throw new NonexistentEntityException("The pago with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The payment with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -134,7 +134,7 @@ public class PaymentJpaController implements Serializable, IPersistenciaJpa
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The pago with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The payment with id " + id + " no longer exists.", enfe);
             }
             Budget fkIdBudget = payment.getBudget();
             if (fkIdBudget != null)
@@ -214,19 +214,19 @@ public class PaymentJpaController implements Serializable, IPersistenciaJpa
     {
         EntityManager em = getEntityManager();
 
-        List<Payment> misPayments = null;
+        List<Payment> payments = null;
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Named query declared on the entity.
             Query q = em.createNamedQuery("Payment.findByBudget");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("idPresupuesto", pIdBudget);
+            // Bind the named query parameter.
+            q.setParameter("idBudget", pIdBudget);
 
-            misPayments = (List<Payment>) q.getResultList();
+            payments = (List<Payment>) q.getResultList();
 
-            return misPayments;
+            return payments;
 
         }
         finally

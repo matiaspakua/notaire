@@ -3,12 +3,12 @@ info:
   type: http
   seq: 6
   description: |-
-      ## POST /api/v1/minutas-inscripcion with {} — 400 Bad Request
+      ## POST /api/v1/registration-drafts with {} — 400 Bad Request
       idDeed is required; a missing id used to reach findById and answer 500.
       Traceability: CU82 (#655)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/minutas-inscripcion"
+  url: "{{base_url}}/api/v1/registration-drafts"
   body:
     type: json
     data: |-

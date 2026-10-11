@@ -15,9 +15,9 @@ import { test, expect, type Page } from "@playwright/test";
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }
 
@@ -54,7 +54,7 @@ test.describe("TS-0093 - Session expiry (CU84 / #1053 / #1051)", () => {
     // Wait for the expired-login URL rather than requiring goto to complete.
     await Promise.all([
       page.waitForURL(/\/login\?expired=1/, { timeout: 15000 }),
-      page.goto("/dashboard/gestiones", { waitUntil: "commit" }).catch((err: Error) => {
+      page.goto("/dashboard/managements", { waitUntil: "commit" }).catch((err: Error) => {
         if (!/ERR_ABORTED|frame was detached/i.test(String(err))) {
           throw err;
         }
@@ -69,9 +69,9 @@ test.describe("TS-0093 - Session expiry (CU84 / #1053 / #1051)", () => {
     expect(parsed?.state?.token ?? null).toBeNull();
     expect(parsed?.state?.isAuthenticated ?? false).toBe(false);
 
-    await page.getByTestId("input-usuario").fill("admin");
-    await page.getByTestId("input-contrasenia").fill("admin");
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
     await expect(page.getByTestId("session-expired-message")).toHaveCount(0);
   });

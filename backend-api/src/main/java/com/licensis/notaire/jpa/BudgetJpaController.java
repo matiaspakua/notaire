@@ -7,7 +7,7 @@ package com.licensis.notaire.jpa;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Item;
 import com.licensis.notaire.business.Payment;
 import com.licensis.notaire.business.Person;
@@ -27,7 +27,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class BudgetJpaController implements Serializable, IPersistenciaJpa {
+public class BudgetJpaController implements Serializable, JpaPersistence {
 
     public BudgetJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
@@ -127,7 +127,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
     public Boolean edit(Budget budget)
             throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException {
         EntityManager em = null;
-        Boolean modificado = Boolean.FALSE;
+        Boolean modified = Boolean.FALSE;
         Integer version = -1;
         Integer oldVersion = -1;
 
@@ -136,10 +136,10 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
         Budget persistentBudget = em.find(Budget.class, budget.getIdBudget());
 
         if (persistentBudget != null) {
-            version = persistentBudget.getVersion(); // Version del Objeto en db
-            oldVersion = budget.getVersion(); // Version del Objeto en memoria
+            version = persistentBudget.getVersion(); // Version of the object in the database
+            oldVersion = budget.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null) {
                     em.close();
@@ -162,8 +162,8 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
                         if (illegalOrphanMessages == null) {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain Pago " + paymentListOldPayment
-                                + " since its fkIdPresupuesto field is not nullable.");
+                        illegalOrphanMessages.add("You must retain Payment " + paymentListOldPayment
+                                + " since its fkIdBudget field is not nullable.");
                     }
                 }
                 for (Procedure procedureListOldProcedure : procedureListOld) {
@@ -171,8 +171,8 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
                         if (illegalOrphanMessages == null) {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain Tramite " + procedureListOldProcedure
-                                + " since its fkIdPresupuesto field is not nullable.");
+                        illegalOrphanMessages.add("You must retain Procedure " + procedureListOldProcedure
+                                + " since its fkIdBudget field is not nullable.");
                     }
                 }
                 for (Item itemListOldItem : itemListOld) {
@@ -181,7 +181,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
                         illegalOrphanMessages.add("You must retain Item " + itemListOldItem
-                                + " since its fkIdPresupuesto field is not nullable.");
+                                + " since its fkIdBudget field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null) {
@@ -263,13 +263,13 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
                     }
                 }
                 em.getTransaction().commit();
-                modificado = Boolean.TRUE;
+                modified = Boolean.TRUE;
                 if (em != null) {
                     em.close();
                 }
             }
         }
-        return modificado;
+        return modified;
     }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
@@ -283,7 +283,7 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
                 budget = em.getReference(Budget.class, id);
                 budget.getIdBudget();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The presupuesto with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The budget with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             java.util.Set<Payment> paymentListOrphanCheck = budget.getPaymentList();
@@ -291,25 +291,25 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Presupuesto (" + budget + ") cannot be destroyed since the Pago "
-                        + paymentListOrphanCheckPayment + " in its pagoList field has a non-nullable fkIdPresupuesto field.");
+                illegalOrphanMessages.add("This Budget (" + budget + ") cannot be destroyed since the Payment "
+                        + paymentListOrphanCheckPayment + " in its paymentList field has a non-nullable fkIdBudget field.");
             }
             List<Procedure> procedureListOrphanCheck = budget.getProcedureList();
             for (Procedure procedureListOrphanCheckProcedure : procedureListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Presupuesto (" + budget
-                        + ") cannot be destroyed since the Tramite " + procedureListOrphanCheckProcedure
-                        + " in its tramiteList field has a non-nullable fkIdPresupuesto field.");
+                illegalOrphanMessages.add("This Budget (" + budget
+                        + ") cannot be destroyed since the Procedure " + procedureListOrphanCheckProcedure
+                        + " in its procedureList field has a non-nullable fkIdBudget field.");
             }
             List<Item> itemListOrphanCheck = budget.getItemList();
             for (Item itemListOrphanCheckItem : itemListOrphanCheck) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Presupuesto (" + budget + ") cannot be destroyed since the Item "
-                        + itemListOrphanCheckItem + " in its itemList field has a non-nullable fkIdPresupuesto field.");
+                illegalOrphanMessages.add("This Budget (" + budget + ") cannot be destroyed since the Item "
+                        + itemListOrphanCheckItem + " in its itemList field has a non-nullable fkIdBudget field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -352,14 +352,14 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
 
     public Budget findBudget(Integer id) {
         EntityManager em = getEntityManager();
-        Budget miBudget = null;
+        Budget budget = null;
 
-        miBudget = em.find(Budget.class, id);
-        if (miBudget != null) {
-            miBudget.setItemList(null);
-            miBudget.setProcedureList(null);
+        budget = em.find(Budget.class, id);
+        if (budget != null) {
+            budget.setItemList(null);
+            budget.setProcedureList(null);
         }
-        return miBudget;
+        return budget;
     }
 
     public int getBudgetCount() {
@@ -373,85 +373,83 @@ public class BudgetJpaController implements Serializable, IPersistenciaJpa {
     }
 
     /**
-     * Busca todos los presupuestos asociados a una persona.
+     * Finds every budget linked to a person.
      *
-     * @param pIdPersona El ID de la persona.
-     * @return misPresupuestos Una lista con todos los presupuestos asociados a la
-     *         persona indicada.
+     * @param pIdPerson the person id
+     * @return the budgets linked to that person
      */
     public List<Budget> findBudgetsPerson(Integer pIdPerson) {
         EntityManager em = getEntityManager();
 
-        List<Budget> misPresupuestos = new ArrayList<>();
+        List<Budget> budgets = new ArrayList<>();
 
         try {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Name of the @NamedQuery declared on Budget
             Query q = em.createNamedQuery("Budget.findByPerson");
 
-            // Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("idPersona", pIdPerson);
+            // Bind the named query parameter.
+            q.setParameter("idPerson", pIdPerson);
 
-            misPresupuestos = (List<Budget>) q.getResultList();
+            budgets = (List<Budget>) q.getResultList();
             ProcedureJpaController jpaProcedure = new ProcedureJpaController(utx, emf);
 
-            for (Iterator<Budget> it = misPresupuestos.iterator(); it.hasNext();) {
+            for (Iterator<Budget> it = budgets.iterator(); it.hasNext();) {
                 Budget budget = it.next();
 
-                budget.setProcedureList(jpaProcedure.encontrarProcedureBudget(budget.getIdBudget()));
+                budget.setProcedureList(jpaProcedure.findProceduresByBudget(budget.getIdBudget()));
             }
 
         } finally {
             em.close();
         }
-        return misPresupuestos;
+        return budgets;
     }
 
     /**
-     * Busca un los presupuesto asociados a una persona (incluyendo las referencias
-     * hacia el
-     * tramite).
+     * Finds the budgets associated with a person, including their procedure
+     * references.
      *
-     * @param pIdPersona
-     * @param pIdTramite
+     * @param pIdPerson person id
+     * @param pIdProcedure procedure id
      * @return
      */
     public List<Budget> findBudgetsPersonProcedure(Integer pIdPerson, Integer pIdProcedure) {
         EntityManager em = getEntityManager();
 
-        List<Budget> misPresupuestos = new ArrayList<>();
+        List<Budget> budgets = new ArrayList<>();
 
         try {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Name of the @NamedQuery declared on Budget
             Query q = em.createNamedQuery("Budget.findByPersonProcedure");
 
-            // Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("idPersona", pIdPerson);
-            q.setParameter("idTramite", pIdProcedure);
+            // Bind the named query parameter.
+            q.setParameter("idPerson", pIdPerson);
+            q.setParameter("idProcedure", pIdProcedure);
 
-            misPresupuestos = (List<Budget>) q.getResultList();
+            budgets = (List<Budget>) q.getResultList();
         } finally {
             em.close();
         }
-        return misPresupuestos;
+        return budgets;
     }
 
     public Budget findBudgetsById(Integer idBudget) {
         EntityManager em = getEntityManager();
 
-        Budget miBudget = null;
+        Budget budget = null;
 
         try {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Name of the @NamedQuery declared on Budget
             Query q = em.createNamedQuery("Budget.findByIdBudget");
 
-            // Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("idPresupuesto", idBudget);
+            // Bind the named query parameter.
+            q.setParameter("idBudget", idBudget);
 
-            miBudget = (Budget) q.getResultList().get(0);
+            budget = (Budget) q.getResultList().get(0);
         } finally {
             em.close();
         }
-        return miBudget;
+        return budget;
     }
 
     @Override

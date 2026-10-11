@@ -4,12 +4,12 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Folio;
 import com.licensis.notaire.business.FolioType;
 import java.io.Serializable;
@@ -26,7 +26,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author matias
  */
-public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
+public class FolioTypeJpaController implements Serializable, JpaPersistence
 {
 
     public FolioTypeJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -75,7 +75,7 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
 
             if (this.checkFolioTypeExists(folioType.getName()))
             {
-                throw new PreexistingEntityException("El tipo de folio indicado ya existe");
+                throw new PreexistingEntityException("The indicated folio type already exists");
             }
 
             em.getTransaction().commit();
@@ -89,12 +89,12 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public boolean edit(FolioType folioType) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassEliminatedException
+    public boolean edit(FolioType folioType) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassDeletedException
     {
 
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
-        Boolean resultado = Boolean.FALSE;
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
+        Boolean result = Boolean.FALSE;
 
         EntityManager em = null;
 
@@ -131,7 +131,7 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
                         {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain Folio " + folioListOldFolio + " since its fkIdTipoFolio field is not nullable.");
+                        illegalOrphanMessages.add("You must retain Folio " + folioListOldFolio + " since its fkIdFolioType field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null)
@@ -164,14 +164,14 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
 
                 em.getTransaction().commit();
 
-                resultado = true;
+                result = true;
             }
         } else
         {
-            throw new ClassEliminatedException("El tipo de folio con ID:" + folioType.getIdFolioType() + ", ya no existe");
+            throw new ClassDeletedException("The folio type with ID:" + folioType.getIdFolioType() + " no longer exists");
         }
 
-        return resultado;
+        return result;
     }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
@@ -189,7 +189,7 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The tipoDeFolio with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The folio type with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             List<Folio> folioListOrphanCheck = folioType.getFolioList();
@@ -199,7 +199,7 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This TipoDeFolio (" + folioType + ") cannot be destroyed since the Folio " + folioListOrphanCheckFolio + " in its folioList field has a non-nullable fkIdTipoFolio field.");
+                illegalOrphanMessages.add("This FolioType (" + folioType + ") cannot be destroyed since the Folio " + folioListOrphanCheckFolio + " in its folioList field has a non-nullable fkIdFolioType field.");
             }
             if (illegalOrphanMessages != null)
             {
@@ -220,9 +220,9 @@ public class FolioTypeJpaController implements Serializable, IPersistenciaJpa
     public boolean checkFolioTypeExists(String name)
     {
 
-        List<FolioType> listaTypeDeFolios = this.findFolioTypeEntities();
+        List<FolioType> folioTypes = this.findFolioTypeEntities();
 
-        for (Iterator<FolioType> it = listaTypeDeFolios.iterator(); it.hasNext();)
+        for (Iterator<FolioType> it = folioTypes.iterator(); it.hasNext();)
         {
             FolioType folioType = it.next();
 

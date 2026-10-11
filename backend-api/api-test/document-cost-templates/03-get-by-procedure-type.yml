@@ -6,7 +6,7 @@ info:
       Traceability: CU39
 http:
   method: GET
-  url: "{{base_url}}/api/v1/plantilla-costos-documento/tipo-tramite/{{dct_pt_id}}"
+  url: "{{base_url}}/api/v1/document-cost-templates/procedure-types/{{dct_pt_id}}"
   headers:
     - name: Content-Type
       value: application/json

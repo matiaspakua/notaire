@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * CU69 - Gestión de Inmuebles, against the real Flyway-managed Postgres
+ * CU69 - Management of Properties, against the real Flyway-managed Postgres
  * schema. After #1061, {@code properties.fiscal_valuation} is {@code NUMERIC(19,2)}
  * and {@code Property.fiscalAppraisal} is {@code BigDecimal}. Global Jackson
  * {@code ALWAYS} inclusion means a null appraisal is serialized as JSON null
@@ -29,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
-@DisplayName("Inmueble valuación fiscal contra el esquema real (CU69)")
+@DisplayName("Property fiscal appraisal against the real schema (CU69)")
 class PropertyFiscalAppraisalPgIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
@@ -43,14 +43,14 @@ class PropertyFiscalAppraisalPgIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create Inmueble with a numeric fiscalAppraisal against the real Postgres schema")
+    @DisplayName("Should create Property with a numeric fiscalAppraisal against the real Postgres schema")
     void shouldCreatePropertyWithNumericFiscalAppraisal() throws Exception {
         String body = """
                 {"cadastralDesignation": "NC-879-001", "address": "Calle Falsa 123",
                  "fiscalAppraisal": 150000.5}
                 """;
 
-        mockMvc.perform(post("/api/v1/inmueble")
+        mockMvc.perform(post("/api/v1/properties")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -58,13 +58,13 @@ class PropertyFiscalAppraisalPgIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should create Inmueble with a null fiscalAppraisal against the real Postgres schema")
+    @DisplayName("Should create Property with a null fiscalAppraisal against the real Postgres schema")
     void shouldCreatePropertyWithNullFiscalAppraisal() throws Exception {
         String body = """
                 {"cadastralDesignation": "NC-879-002", "address": "Calle Falsa 456"}
                 """;
 
-        mockMvc.perform(post("/api/v1/inmueble")
+        mockMvc.perform(post("/api/v1/properties")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())

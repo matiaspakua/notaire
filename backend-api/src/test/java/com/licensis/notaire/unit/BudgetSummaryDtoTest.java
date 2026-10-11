@@ -8,7 +8,7 @@ import com.licensis.notaire.application.port.out.payment.BudgetDescriptor;
 import com.licensis.notaire.application.port.out.payment.BudgetLookupPort;
 import com.licensis.notaire.application.usecase.payment.BudgetSummaryService;
 import com.licensis.notaire.domain.payment.PaymentDetails;
-import com.licensis.notaire.dto.DtoBudgetResumen;
+import com.licensis.notaire.dto.DtoBudgetSummary;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,10 +32,10 @@ import static org.mockito.Mockito.when;
  *
  * <p>Formerly {@code BudgetResumenServiceTest}: same expectations, now pinned on
  * {@link BudgetSummaryService} plus the inbound-adapter mapping to
- * {@link DtoBudgetResumen}, which is what the REST client actually sees.
+ * {@link DtoBudgetSummary}, which is what the REST client actually sees.
  */
 @RequirementCoverage({"CU47"})
-@DisplayName("PresupuestoResumenService Tests")
+@DisplayName("Budget summary DTO tests")
 @ExtendWith(MockitoExtension.class)
 class BudgetSummaryDtoTest {
 
@@ -58,68 +58,68 @@ class BudgetSummaryDtoTest {
 
     @BeforeEach
     void setUp() {
-        descriptor = new BudgetDescriptor(BUDGET_ID, BUDGET_NUMBER, 1, 500, "Gestión Test");
+        descriptor = new BudgetDescriptor(BUDGET_ID, BUDGET_NUMBER, 1, 500, "Management Test");
     }
 
     private PaymentDetails paymentOf(Integer idPayment, java.math.BigDecimal amount) {
         return new PaymentDetails(idPayment, BUDGET_ID, amount, new Date(), null, null);
     }
 
-    private DtoBudgetResumen summaryOf(Integer budgetId) {
+    private DtoBudgetSummary summaryOf(Integer budgetId) {
         return PaymentWebMapper.toDto(budgetSummaryService.summary(budgetId));
     }
 
     @Nested
-    @DisplayName("Resumen financiero de un budget")
-    class ObtenerResumenTests {
+    @DisplayName("Financial summary of a budget")
+    class SummaryTests {
 
         @Test
-        @DisplayName("Presupuesto sin payments muestra saldo igual al total y lista vacía")
+        @DisplayName("Budget without payments shows a balance equal to the total and an empty list")
         void shouldReturnFullBalanceWhenNoPayments() {
             when(budgets.findDescriptor(BUDGET_ID)).thenReturn(Optional.of(descriptor));
             when(paymentQueries.findByBudget(BUDGET_ID)).thenReturn(List.of());
             when(paymentStatus.pendingBalance(BUDGET_ID)).thenReturn(new java.math.BigDecimal("5000.00"));
 
-            DtoBudgetResumen resumen = summaryOf(BUDGET_ID);
+            DtoBudgetSummary summary = summaryOf(BUDGET_ID);
 
-            assertThat(resumen.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
-            assertThat(resumen.total()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
-            assertThat(resumen.payments()).isEmpty();
-            assertThat(resumen.idManagement()).isEqualTo(1);
-            assertThat(resumen.numberManagement()).isEqualTo(500);
-            assertThat(resumen.encabezadoManagement()).isEqualTo("Gestión Test");
+            assertThat(summary.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
+            assertThat(summary.total()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
+            assertThat(summary.payments()).isEmpty();
+            assertThat(summary.idManagement()).isEqualTo(1);
+            assertThat(summary.numberManagement()).isEqualTo(500);
+            assertThat(summary.managementHeading()).isEqualTo("Management Test");
         }
 
         @Test
-        @DisplayName("Presupuesto con un pago reduce el saldo y lo incluye en la lista")
+        @DisplayName("Budget with one payment reduces the balance and includes that payment in the list")
         void shouldReturnReducedBalanceWithOnePayment() {
             when(budgets.findDescriptor(BUDGET_ID)).thenReturn(Optional.of(descriptor));
             when(paymentQueries.findByBudget(BUDGET_ID)).thenReturn(List.of(paymentOf(1, new java.math.BigDecimal("2000.00"))));
             when(paymentStatus.pendingBalance(BUDGET_ID)).thenReturn(new java.math.BigDecimal("3000.00"));
 
-            DtoBudgetResumen resumen = summaryOf(BUDGET_ID);
+            DtoBudgetSummary summary = summaryOf(BUDGET_ID);
 
-            assertThat(resumen.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("3000.00"));
-            assertThat(resumen.total()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
-            assertThat(resumen.payments()).hasSize(1);
-            assertThat(resumen.payments().get(0).idPayment()).isEqualTo(1);
-            assertThat(resumen.payments().get(0).amount()).isEqualByComparingTo(new java.math.BigDecimal("2000.00"));
-            assertThat(resumen.payments().get(0).idBudget()).isEqualTo(BUDGET_ID);
+            assertThat(summary.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("3000.00"));
+            assertThat(summary.total()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
+            assertThat(summary.payments()).hasSize(1);
+            assertThat(summary.payments().get(0).idPayment()).isEqualTo(1);
+            assertThat(summary.payments().get(0).amount()).isEqualByComparingTo(new java.math.BigDecimal("2000.00"));
+            assertThat(summary.payments().get(0).idBudget()).isEqualTo(BUDGET_ID);
         }
 
         @Test
-        @DisplayName("Presupuesto con múltiples payments muestra el saldo neto y todos los payments")
+        @DisplayName("Budget with multiple payments shows the net balance and every payment")
         void shouldReturnNetBalanceWithMultiplePayments() {
             when(budgets.findDescriptor(BUDGET_ID)).thenReturn(Optional.of(descriptor));
             when(paymentQueries.findByBudget(BUDGET_ID))
                     .thenReturn(List.of(paymentOf(1, new java.math.BigDecimal("2000.00")), paymentOf(2, new java.math.BigDecimal("1000.00"))));
             when(paymentStatus.pendingBalance(BUDGET_ID)).thenReturn(new java.math.BigDecimal("2000.00"));
 
-            DtoBudgetResumen resumen = summaryOf(BUDGET_ID);
+            DtoBudgetSummary summary = summaryOf(BUDGET_ID);
 
-            assertThat(resumen.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("2000.00"));
-            assertThat(resumen.total()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
-            assertThat(resumen.payments()).hasSize(2);
+            assertThat(summary.pendingBalance()).isEqualByComparingTo(new java.math.BigDecimal("2000.00"));
+            assertThat(summary.total()).isEqualByComparingTo(new java.math.BigDecimal("5000.00"));
+            assertThat(summary.payments()).hasSize(2);
         }
 
         @Test
@@ -129,7 +129,7 @@ class BudgetSummaryDtoTest {
 
             assertThatThrownBy(() -> summaryOf(999))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("Presupuesto no encontrado");
+                    .hasMessageContaining("Budget not found");
         }
     }
 }

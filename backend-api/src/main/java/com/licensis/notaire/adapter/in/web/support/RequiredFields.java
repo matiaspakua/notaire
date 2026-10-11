@@ -20,7 +20,7 @@ public final class RequiredFields {
 
     /**
      * Starts a check that collects every missing field and throws one 400 naming them all,
-     * {@code "a: es obligatorio; b: es obligatorio"} (issue #655, incomplete PUT bodies).
+     * {@code "a: is required; b: is required"} (issue #655, incomplete PUT bodies).
      */
     public static Check check() {
         return new Check();
@@ -52,7 +52,7 @@ public final class RequiredFields {
             if (!missing.isEmpty()) {
                 StringBuilder message = new StringBuilder();
                 for (String field : missing) {
-                    message.append(message.isEmpty() ? "" : "; ").append(field).append(": es obligatorio");
+                    message.append(message.isEmpty() ? "" : "; ").append(field).append(": is required");
                 }
                 throw new BusinessValidationException(message.toString());
             }
@@ -62,7 +62,7 @@ public final class RequiredFields {
     /** Returns {@code value}, or throws a 400 naming {@code field} when it is {@code null}. */
     public static <T> T require(T value, String field) {
         if (value == null) {
-            throw new BusinessValidationException(field + ": es obligatorio");
+            throw new BusinessValidationException(field + ": is required");
         }
         return value;
     }
@@ -84,7 +84,7 @@ public final class RequiredFields {
             for (E constant : type.getEnumConstants()) {
                 accepted.append(accepted.isEmpty() ? "" : ", ").append(constant.name());
             }
-            throw new BusinessValidationException(field + ": valor no válido '" + value + "'; valores aceptados: "
+            throw new BusinessValidationException(field + ": invalid value '" + value + "'; accepted values: "
                     + accepted);
         }
     }

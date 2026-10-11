@@ -1,7 +1,7 @@
 /**
  * TS-0095 - API error toasts / field errors on CRUD mutations
  *
- * Covers: CU15 – Procesar pago; CU20 – Dar alta usuario
+ * Covers: CU15 – Process a payment; CU20 – Register a user
  * Issues: #1054 (surface backend messages), #615 (E2E validation gap — focused slice)
  *
  * Approach: stub API 4xx with known ErrorResponse bodies so assertions are
@@ -11,20 +11,21 @@ import { test, expect, type Page } from "@playwright/test";
 
 async function loginAsAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByTestId("input-usuario").fill("admin");
-  await page.getByTestId("input-contrasenia").fill("admin");
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("input-username").fill("admin");
+  await page.getByTestId("input-password").fill("admin");
+  await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }
 
 test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
-  test("pago mutation shows server message in toast (not only generic fallback)", async ({
+  test("a payment mutation shows the server message in the toast (not only the generic fallback)", async ({
     page,
   }) => {
     await loginAsAdmin(page);
 
-    const serverMessage = "El monto excede el saldo pendiente del presupuesto";
-    await page.route("**/api/v1/pagos", async (route) => {
+    const serverMessage =
+      "The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)";
+    await page.route("**/api/v1/payments", async (route) => {
       if (route.request().method() === "POST") {
         await route.fulfill({
           status: 409,
@@ -33,7 +34,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
             status: 409,
             error: "Conflict",
             message: serverMessage,
-            path: "/api/v1/pagos",
+            path: "/api/v1/payments",
           }),
         });
         return;
@@ -41,10 +42,10 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
       await route.continue();
     });
 
-    await page.goto("/dashboard/pagos");
-    await page.getByTestId("btn-nuevo-pago").click();
-    await page.getByTestId("input-monto-pago").fill("999999");
-    // Submit even if presupuesto picker is empty — stub owns the failure.
+    await page.goto("/dashboard/payments");
+    await page.getByTestId("btn-new-payment").click();
+    await page.getByTestId("input-amount-payment").fill("999999");
+    // Submit even if budget picker is empty — stub owns the failure.
     await page.getByRole("button", { name: /crear|create/i }).click();
 
     await expect(
@@ -52,13 +53,13 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     ).toBeVisible({ timeout: 10000 });
   });
 
-  test("usuario form shows FormField error and aria-invalid for field detail", async ({
+  test("user form shows FormField error and aria-invalid for field detail", async ({
     page,
   }) => {
     await loginAsAdmin(page);
 
     const fieldMessage = "name: must not be blank";
-    await page.route("**/api/v1/usuarios", async (route) => {
+    await page.route("**/api/v1/users", async (route) => {
       if (route.request().method() === "POST") {
         await route.fulfill({
           status: 400,
@@ -67,7 +68,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
             status: 400,
             error: "Bad Request",
             message: fieldMessage,
-            path: "/api/v1/usuarios",
+            path: "/api/v1/users",
           }),
         });
         return;
@@ -75,16 +76,16 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
       await route.continue();
     });
 
-    await page.goto("/dashboard/administracion/usuarios");
-    await page.getByTestId("btn-nuevo-usuario").click();
+    await page.goto("/dashboard/administration/users");
+    await page.getByTestId("btn-new-user").click();
     // Bypass client-side empty-name guard so the stubbed API error is exercised.
-    await page.getByTestId("input-nombre-usuario").fill("stub-user");
+    await page.getByTestId("input-name-user").fill("stub-user");
     await page.getByRole("button", { name: /crear|create/i }).click();
 
     await expect(
       page.locator("[data-sonner-toast]").getByText(fieldMessage)
     ).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId("input-nombre-usuario")).toHaveAttribute(
+    await expect(page.getByTestId("input-name-user")).toHaveAttribute(
       "aria-invalid",
       "true"
     );
@@ -93,7 +94,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     await expect(
       page.getByRole("dialog").getByRole("alert").filter({ hasText: /must not be blank/i })
     ).toBeVisible();
-    await expect(page.getByTestId("input-nombre-usuario")).toHaveAccessibleDescription(/must not be blank/i);
+    await expect(page.getByTestId("input-name-user")).toHaveAccessibleDescription(/must not be blank/i);
   });
 
   test("error toast / field error visible at 320px, 768px, and 1024px", async ({
@@ -101,7 +102,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
   }) => {
     await loginAsAdmin(page);
 
-    const serverMessage = "Rol duplicado: ya existe un rol con ese nombre";
+    const serverMessage = "The submitted data duplicates an existing record";
     await page.route("**/api/v1/roles", async (route) => {
       if (route.request().method() === "POST") {
         await route.fulfill({
@@ -121,9 +122,9 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
 
     for (const width of [320, 768, 1024] as const) {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto("/dashboard/administracion/roles");
-      await page.getByTestId("btn-nuevo-rol").click();
-      await page.getByTestId("input-nombre-rol").fill(`rol-e2e-${width}`);
+      await page.goto("/dashboard/administration/roles");
+      await page.getByTestId("btn-new-role").click();
+      await page.getByTestId("input-name-role").fill(`role-e2e-${width}`);
       await page.getByRole("button", { name: /crear|create/i }).click();
       await expect(
         page.locator("[data-sonner-toast]").getByText(serverMessage)

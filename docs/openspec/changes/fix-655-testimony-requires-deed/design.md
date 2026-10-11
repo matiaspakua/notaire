@@ -2,7 +2,7 @@
 
 ## Context
 
-Issue #655 lists endpoints that accept incomplete bodies; one is the bare `POST /testimonio`. Run 7: the Owner asked to require the deed unless removing the endpoint was clearly cleaner. The UI generates testimonies with `POST /testimonio/generar` (signed deed). The bare create is still used by the Playwright seed helpers (`createTestimonio`, TS-0032), Bruno and backend tests, which all send a deed.
+Issue #655 lists endpoints that accept incomplete bodies; one is the bare `POST /testimonies`. Run 7: the Owner asked to require the deed unless removing the endpoint was clearly cleaner. The UI generates testimonies with `POST /testimonies/generate` (signed deed). The bare create is still used by the Playwright seed helpers (`createTestimonio`, TS-0032), Bruno and backend tests, which all send a deed.
 
 ## Goals / Non-Goals
 
@@ -10,7 +10,7 @@ Goal: no new testimony without its deed. Non-goals: testimonies already stored w
 
 ## Decisions
 
-Require the deed instead of removing the endpoint: removal would force the seeds to go through `/generar` (which needs a signed deed and generated content), and remove allowlist and contract entries, for no user-visible gain. A subclass of `DtoTestimony` keeps the request shape identical, so oasdiff reports only `deed` becoming required.
+Require the deed instead of removing the endpoint: removal would force the seeds to go through `/generate` (which needs a signed deed and generated content), and remove allowlist and contract entries, for no user-visible gain. A subclass of `DtoTestimony` keeps the request shape identical, so oasdiff reports only `deed` becoming required.
 
 ## Riesgos / Trade-offs
 

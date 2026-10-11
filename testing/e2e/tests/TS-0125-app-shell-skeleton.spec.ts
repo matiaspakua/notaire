@@ -15,7 +15,7 @@ test.describe("App-shell skeleton (#1359)", () => {
     try {
       await noJs.addCookies(cookies);
       const raw = await noJs.newPage();
-      await raw.goto("/dashboard/personas");
+      await raw.goto("/dashboard/people");
       const shell = raw.getByTestId("app-shell-skeleton");
       await expect(shell).toBeVisible();
       await expect(shell).toHaveAttribute("aria-busy", "true");
@@ -35,7 +35,7 @@ test.describe("App-shell skeleton (#1359)", () => {
         }
       }).observe({ type: "layout-shift", buffered: true });
     });
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await expect(page.getByTestId("sidebar")).toBeVisible();
     await expect(page.getByTestId("app-shell-skeleton")).toHaveCount(0);
     await page.waitForLoadState("networkidle");

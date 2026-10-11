@@ -18,14 +18,14 @@ vi.mock("next-intl", () => ({
 }));
 
 import { BudgetPicker } from "@/components/shared/BudgetPicker";
-import type { Presupuesto } from "@/types";
+import type { Budget } from "@/types";
 
-const NEWEST: Presupuesto[] = [
+const NEWEST: Budget[] = [
   { idBudget: 1300, propertyAmount: 1000, person: { personId: 1500, name: "Ana", lastName: "Nueva" } },
   { idBudget: 1299, propertyAmount: 2000, person: { personId: 1499, name: "Bruno", lastName: "Reciente" } },
 ];
-const FAR: Presupuesto = { idBudget: 12, propertyAmount: 5000, person: { personId: 7, name: "Carla", lastName: "Garcia" } };
-const FAR2: Presupuesto = { idBudget: 40, propertyAmount: 7000, person: { personId: 7, name: "Carla", lastName: "Garcia" } };
+const FAR: Budget = { idBudget: 12, propertyAmount: 5000, person: { personId: 7, name: "Carla", lastName: "Garcia" } };
+const FAR2: Budget = { idBudget: 40, propertyAmount: 7000, person: { personId: 7, name: "Carla", lastName: "Garcia" } };
 
 function json(body: unknown, status = 200) {
   const text = JSON.stringify(body);
@@ -33,7 +33,7 @@ function json(body: unknown, status = 200) {
 }
 
 function route(url: string) {
-  if (/\/presupuestos\?page=0&size=20&sort=idBudget%2Cdesc$/.test(url)) {
+  if (/\/budgets\?page=0&size=20&sort=idBudget%2Cdesc$/.test(url)) {
     return json({ content: NEWEST, number: 0, size: 20, totalElements: 1300, totalPages: 65 });
   }
   if (url.includes("/people/search")) {
@@ -42,8 +42,8 @@ function route(url: string) {
     if (q.get("lastName")?.toLowerCase().startsWith("gar")) return json([{ personId: 7, firstName: "Carla", lastName: "Garcia" }]);
     return json([]);
   }
-  if (/\/presupuestos\/persona\/7$/.test(url)) return json([FAR, FAR2]);
-  if (/\/presupuestos\/12$/.test(url)) return json(FAR);
+  if (/\/budgets\/person\/7$/.test(url)) return json([FAR, FAR2]);
+  if (/\/budgets\/12$/.test(url)) return json(FAR);
   return json({ message: "not found" }, 404);
 }
 
@@ -52,7 +52,7 @@ function wrapper({ children }: { children: ReactNode }) {
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }
 
-function Harness({ initial, onPick }: { initial?: number; onPick?: (b?: Presupuesto) => void }) {
+function Harness({ initial, onPick }: { initial?: number; onPick?: (b?: Budget) => void }) {
   const [id, setId] = useState<number | undefined>(initial);
   return (
     <BudgetPicker
@@ -61,7 +61,7 @@ function Harness({ initial, onPick }: { initial?: number; onPick?: (b?: Presupue
         setId(b?.idBudget);
         onPick?.(b);
       }}
-      aria-label="Presupuesto"
+      aria-label="Budget"
       data-testid="picker"
     />
   );
@@ -77,7 +77,7 @@ describe("BudgetPicker (#1340)", () => {
 
   it("is an ARIA combobox that opens with the newest budgets and never asks for size=1000", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Presupuesto" });
+    const box = screen.getByRole("combobox", { name: "Budget" });
     fireEvent.focus(box);
     expect(box).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(box);
@@ -90,17 +90,17 @@ describe("BudgetPicker (#1340)", () => {
 
   it("finds every budget of a client searched by name", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Presupuesto" });
+    const box = screen.getByRole("combobox", { name: "Budget" });
     fireEvent.click(box);
     fireEvent.change(box, { target: { value: "Gar" } });
     expect(await screen.findByRole("option", { name: "#40 — Carla Garcia" })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "#12 — Carla Garcia" })).toBeInTheDocument();
-    expect(urls().some((u) => /\/presupuestos\/persona\/7$/.test(u))).toBe(true);
+    expect(urls().some((u) => /\/budgets\/person\/7$/.test(u))).toBe(true);
   });
 
   it("finds a budget by its number and a client by document number", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Presupuesto" });
+    const box = screen.getByRole("combobox", { name: "Budget" });
     fireEvent.click(box);
     fireEvent.change(box, { target: { value: "12" } });
     expect(await screen.findByRole("option", { name: "#12 — Carla Garcia" })).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe("BudgetPicker (#1340)", () => {
   it("selects with the keyboard and never acts on a stale list while typing", async () => {
     const onPick = vi.fn();
     render(<Harness onPick={onPick} />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Presupuesto" });
+    const box = screen.getByRole("combobox", { name: "Budget" });
     fireEvent.click(box);
     await screen.findByRole("option", { name: "#1300 — Ana Nueva" });
     fireEvent.change(box, { target: { value: "Gar" } });
@@ -129,12 +129,12 @@ describe("BudgetPicker (#1340)", () => {
 
   it("shows the current budget of a form by loading it by id", async () => {
     render(<Harness initial={12} />, { wrapper });
-    await waitFor(() => expect(screen.getByRole("combobox", { name: "Presupuesto" })).toHaveValue("#12 — Carla Garcia"));
+    await waitFor(() => expect(screen.getByRole("combobox", { name: "Budget" })).toHaveValue("#12 — Carla Garcia"));
   });
 
   it("announces when nothing matches", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Presupuesto" });
+    const box = screen.getByRole("combobox", { name: "Budget" });
     fireEvent.click(box);
     fireEvent.change(box, { target: { value: "zzz" } });
     expect(await screen.findByText("budgetPicker.noResults")).toBeInTheDocument();
@@ -148,10 +148,10 @@ describe("no screen loads every budget (#1340)", () => {
       return statSync(p).isDirectory() ? files(p) : /\.tsx?$/.test(f) ? [p] : [];
     });
   }
-  it("no page or component calls usePresupuestos() (the size=1000 list)", () => {
+  it("no page or component calls useBudgets() (the size=1000 list)", () => {
     const root = join(__dirname, "..", "..");
     const offenders = [...files(join(root, "app")), ...files(join(root, "components"))].filter((f) =>
-      /\busePresupuestos\(\)/.test(readFileSync(f, "utf8")),
+      /\buseBudgets\(\)/.test(readFileSync(f, "utf8")),
     );
     expect(offenders).toEqual([]);
   });

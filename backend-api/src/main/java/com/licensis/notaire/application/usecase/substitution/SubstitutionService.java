@@ -54,15 +54,15 @@ public class SubstitutionService {
     }
 
     @Transactional(readOnly = true)
-    public List<Substitution> findByFkIdSubstitute(Person suplente) {
-        logger.debug("Finding substitutions by substitute: {}", suplente);
-        return repository.findByFkIdSubstitute(suplente);
+    public List<Substitution> findByFkIdSubstitute(Person substitute) {
+        logger.debug("Finding substitutions by substitute: {}", substitute);
+        return repository.findByFkIdSubstitute(substitute);
     }
 
     @Transactional(readOnly = true)
-    public List<Substitution> findByFkIdSubstituteIdPerson(Integer idSuplente) {
-        logger.debug("Finding substitutions by substitute id: {}", idSuplente);
-        return repository.findByFkIdSubstituteIdPerson(idSuplente);
+    public List<Substitution> findByFkIdSubstituteIdPerson(Integer substituteId) {
+        logger.debug("Finding substitutions by substitute id: {}", substituteId);
+        return repository.findByFkIdSubstituteIdPerson(substituteId);
     }
 
     @Transactional(readOnly = true)

@@ -6,7 +6,7 @@ info:
       Traceability: CU39
 http:
   method: POST
-  url: "{{base_url}}/api/v1/plantilla-costos-documento"
+  url: "{{base_url}}/api/v1/document-cost-templates"
   body:
     type: json
     data: |-

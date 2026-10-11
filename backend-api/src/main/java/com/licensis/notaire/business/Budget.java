@@ -34,7 +34,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase que representa un presupuesto.
+ * A budget.
  *
  * @author juanca
  */
@@ -43,11 +43,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "Budget.findAll", query = "SELECT p FROM Budget p"),
-        @NamedQuery(name = "Budget.findByIdBudget", query = "SELECT p FROM Budget p WHERE p.idBudget = :idPresupuesto"),
-        @NamedQuery(name = "Budget.findByDate", query = "SELECT p FROM Budget p WHERE p.date = :fecha"),
+        @NamedQuery(name = "Budget.findByIdBudget", query = "SELECT p FROM Budget p WHERE p.idBudget = :idBudget"),
+        @NamedQuery(name = "Budget.findByDate", query = "SELECT p FROM Budget p WHERE p.date = :date"),
         @NamedQuery(name = "Budget.findByNumber", query = "SELECT p FROM Budget p WHERE p.number = :number"),
         @NamedQuery(name = "Budget.findByStatus", query = "SELECT p FROM Budget p WHERE p.status = :status"),
-        @NamedQuery(name = "Budget.findByPerson", query = "SELECT p FROM Budget p WHERE p.fkIdPerson.idPerson = :idPersona"),
+        @NamedQuery(name = "Budget.findByPerson", query = "SELECT p FROM Budget p WHERE p.fkIdPerson.idPerson = :idPerson"),
 })
 public class Budget implements Serializable, Persistable<Integer> {
 
@@ -68,7 +68,7 @@ public class Budget implements Serializable, Persistable<Integer> {
 
     @Basic(optional = false)
     @Column(name = "heading")
-    private String encabezado;
+    private String heading;
 
     @Column(name = "notes")
     private String notes;
@@ -101,12 +101,11 @@ public class Budget implements Serializable, Persistable<Integer> {
     private List<Item> itemList = new ArrayList<>();
 
     /**
-     * Constructor por default de presupuesto. Inicializa el ID presupuesto segun el
-     * campo
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, y todas las listas de objetos.
+     * Default constructor. Initializes the id from
+     * {@link BusinessConstants#INVALID_OBJECT_ID}, and the object lists.
      */
     public Budget() {
-        this.idBudget = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idBudget = BusinessConstants.INVALID_OBJECT_ID;
         this.itemList = new ArrayList<>();
         this.paymentList = new java.util.HashSet<>();
         this.procedureList = new ArrayList<>();
@@ -116,11 +115,11 @@ public class Budget implements Serializable, Persistable<Integer> {
         this.idBudget = idBudget;
     }
 
-    public Budget(Integer idBudget, int number, Date date, String encabezado, String status) {
+    public Budget(Integer idBudget, int number, Date date, String heading, String status) {
         this.idBudget = idBudget;
         this.number = number;
         this.date = date;
-        this.encabezado = encabezado;
+        this.heading = heading;
         this.status = status;
     }
     @Override
@@ -135,7 +134,7 @@ public class Budget implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idBudget == null || idBudget.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idBudget == null || idBudget.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -221,7 +220,7 @@ public class Budget implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Presupuesto[ idPresupuesto=" + idBudget + " ]";
+        return "Budget[ idBudget=" + idBudget + " ]";
     }
 
     public int getNumber() {
@@ -232,12 +231,12 @@ public class Budget implements Serializable, Persistable<Integer> {
         this.number = number;
     }
 
-    public String getEncabezado() {
-        return encabezado;
+    public String getHeading() {
+        return heading;
     }
 
-    public void setEncabezado(String encabezado) {
-        this.encabezado = encabezado;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
     public String getStatus() {
@@ -278,7 +277,7 @@ public class Budget implements Serializable, Persistable<Integer> {
     }
 
     @Deprecated
-    public void setSaldo(BigDecimal saldo) {
+    public void setSaldo(BigDecimal balance) {
     }
 
     @Deprecated

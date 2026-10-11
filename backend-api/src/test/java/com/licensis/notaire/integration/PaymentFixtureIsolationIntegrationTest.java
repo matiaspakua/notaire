@@ -19,13 +19,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Issue #916 — proves payment mutation ITs must not hardcode seed {@code idBudget=1}.
- * After the seed presupuesto is exhausted, a dedicated fixture still accepts payments
+ * After the seed budget is exhausted, a dedicated fixture still accepts payments
  * while a further payment against seed id 1 is rejected by the #848 guard.
  */
 @RequirementCoverage({"CU15", "CU76"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Payment fixture isolation — seed budget vs dedicated presupuesto (#916)")
+@DisplayName("Payment fixture isolation — seed budget vs dedicated budget (#916)")
 class PaymentFixtureIsolationIntegrationTest {
 
     private static final int SEED_BUDGET_ID = 1;
@@ -45,7 +45,7 @@ class PaymentFixtureIsolationIntegrationTest {
     void shouldAcceptPaymentAgainstDedicatedBudgetAfterSeedBudgetExhausted() throws Exception {
         exhaustSeedBudgetIfNeeded();
 
-        mockMvc.perform(post("/api/v1/pagos")
+        mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

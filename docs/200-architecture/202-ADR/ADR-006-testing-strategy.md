@@ -7,18 +7,18 @@
 
 ## Context
 
-El proyecto necesita una estrategia de testing clara que cubra todos los componentes
-del sistema: backend (Spring Boot), frontend (Next.js), y el stack completo desplegado
-en Kubernetes.
+The project needs a clear testing strategy that covers every part of the
+system: the backend (Spring Boot), the frontend (Next.js), and the full stack
+deployed on Kubernetes.
 
 ## Decision
 
-Adoptamos la **Testing Trophy** adaptada al stack actual:
+We adopt the **Testing Trophy**, adapted to the current stack:
 
 ```
         ┌──────────────────────────────┐
-        │   E2E Tests (Playwright)     │  ← Flujos completos de negocio
-        │   ~10-20 tests críticos      │
+        │   E2E Tests (Playwright)     │  ← Full business flows
+        │   ~10-20 critical tests      │
         └──────────────────────────────┘
       ┌────────────────────────────────────┐
       │   Integration Tests                │  ← API tests, DB tests
@@ -26,58 +26,60 @@ Adoptamos la **Testing Trophy** adaptada al stack actual:
       │   ~50-100 tests                    │
       └────────────────────────────────────┘
     ┌────────────────────────────────────────────┐
-    │   Unit Tests (JUnit 5 + Vitest)            │  ← Lógica de negocio
-    │   Backend: servicios, validators           │
-    │   Frontend: componentes, hooks, utils      │
+    │   Unit Tests (JUnit 5 + Vitest)            │  ← Business logic
+    │   Backend: services, validators            │
+    │   Frontend: components, hooks, utils       │
     │   ~200+ tests                              │
     └────────────────────────────────────────────┘
 ```
 
 ### Backend Testing (Java)
 
-| Tipo | Herramientas | Scope | Requisito |
+| Type | Tools | Scope | Requirement |
 |------|-------------|-------|-----------|
 | Unit | JUnit 5 + Mockito + AssertJ | Services, validators | 80% coverage |
-| Integration | @SpringBootTest + Testcontainers | Controllers, repositories | Todos los endpoints |
-| API Contract | MockMvc + Spring Security Test | Auth, roles, status codes | Happy + sad paths |
-| Performance | Gatling / k6 | API bajo carga | Baseline documented |
-| Security | OWASP ZAP | Todos los endpoints | 0 CRITICAL/HIGH |
+| Integration | @SpringBootTest + Testcontainers | Controllers, repositories | Every endpoint |
+| API Contract | MockMvc + Spring Security Test | Auth, roles, status codes | Happy and sad paths |
+| Performance | Gatling / k6 | API under load | Baseline documented |
+| Security | OWASP ZAP | Every endpoint | 0 CRITICAL/HIGH |
 
-**Convenciones backend:**
-- Métodos: `shouldXxxWhenYyy()` con `@DisplayName`
-- Patrón: Arrange / Act / Assert
-- Un assert por test cuando sea posible
-- Tests en `src/test/java/.../unit/` e `integration/`
-- Tagging con `@Tag("unit")` y `@Tag("integration")`
+**Backend conventions:**
+
+- Methods: `shouldXxxWhenYyy()` with `@DisplayName`
+- Pattern: Arrange / Act / Assert
+- One assert per test when possible
+- Tests in `src/test/java/.../unit/` and `integration/`
+- Tagging with `@Tag("unit")` and `@Tag("integration")`
 
 ### Frontend Testing (TypeScript)
 
-| Tipo | Herramientas | Scope |
+| Type | Tools | Scope |
 |------|-------------|-------|
 | Unit | Vitest + Testing Library | Components, hooks, utils |
-| Visual | Storybook (opcional) | Component states |
-| E2E | Playwright | User journeys completos |
+| Visual | Storybook (optional) | Component states |
+| E2E | Playwright | Complete user journeys |
 | Accessibility | axe-core + Playwright | WCAG 2.1 compliance |
 
-**Convenciones frontend:**
-- Archivos de test: `*.test.ts` junto al código
-- E2E en `testing/e2e/tests/*.spec.ts`
-- Page Object Model para E2E
+**Frontend conventions:**
 
-### E2E Tests - Flujos Prioritarios
+- Test files: `*.test.ts` next to the code
+- E2E in `testing/e2e/tests/*.spec.ts`
+- Page Object Model for E2E
 
-| Flujo | CUs | Prioridad |
+### E2E Tests — Priority flows
+
+| Flow | Use cases | Priority |
 |-------|-----|-----------|
-| Login → Gestión completa → Pago | CU01, CU02, CU15, CU16 | Critical |
-| Alta cliente → Búsqueda | CU17, CU18, CU19, CU61 | High |
-| Presupuesto → Escritura → Testimonio | CU01, CU05, CU07 | High |
-| Admin: alta usuario + suplencia | CU20, CU22 | Medium |
-| Generar reporte mensual | CU24, CU25 | Medium |
+| Login → full management → payment | CU01, CU02, CU15, CU16 | Critical |
+| Register a client → search | CU17, CU18, CU19, CU61 | High |
+| Budget → deed → testimony | CU01, CU05, CU07 | High |
+| Admin: register a user + substitution | CU20, CU22 | Medium |
+| Generate the monthly report | CU24, CU25 | Medium |
 
 ### CI Pipeline
 
 ```yaml
-# Por cada PR:
+# On every pull request:
 1. Backend: mvn test (unit + integration)
 2. Backend: JaCoCo coverage report (80% gate)
 3. Backend: Checkstyle + SpotBugs
@@ -85,15 +87,15 @@ Adoptamos la **Testing Trophy** adaptada al stack actual:
 5. Frontend: vitest run
 6. Frontend: playwright test (headless)
 7. Build: Docker images
-8. Security: OWASP ZAP (weekly en main)
+8. Security: OWASP ZAP (weekly on main)
 ```
 
 ## Consequences
 
-- Tests etiquetados permiten ejecutar solo unit tests en feedback rápido
-- Testcontainers elimina diferencias entre H2 y PostgreSQL en integration tests
-- Playwright E2E en CI garantiza que los 68 CUs funcionan end-to-end
-- Coverage gate del 80% mantiene calidad del backend
+- Tagged tests let us run only unit tests for fast feedback
+- Testcontainers removes differences between H2 and PostgreSQL in integration tests
+- Playwright E2E in CI checks that the 68 use cases work end to end
+- The 80% coverage gate keeps backend quality
 
 ## References
 

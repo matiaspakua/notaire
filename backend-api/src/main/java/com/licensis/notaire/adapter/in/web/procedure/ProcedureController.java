@@ -44,8 +44,8 @@ import java.util.NoSuchElementException;
 
 
 @RestController
-@RequestMapping("/api/v1/tramites")
-@Tag(name = "Trámites", description = "API para gestionar trámites")
+@RequestMapping("/api/v1/procedures")
+@Tag(name = "Procedures", description = "API for managing procedures")
 public class ProcedureController {
 
     private static final Logger log = LoggerFactory.getLogger(ProcedureController.class);
@@ -99,14 +99,14 @@ public class ProcedureController {
      * sent; an absent association id keeps the stored association.
      */
     public record ProcedureRequest(
-            @Schema(description = "Tipo de trámite; debe existir (404 si no)",
+            @Schema(description = "Procedure type; must existir (404 if not)",
                     requiredMode = Schema.RequiredMode.REQUIRED)
             Integer idProcedureType,
             Integer idProperty, Integer idDeed, Integer idManagement, Integer idBudget, String notes) {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los trámites")
+    @Operation(summary = "Get all procedures")
     @Transactional(readOnly = true)
     public ResponseEntity<Page<ProcedureResponse>> getAll(
             @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
@@ -115,10 +115,10 @@ public class ProcedureController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener trámite por ID")
+    @Operation(summary = "Get procedure by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<ProcedureResponse> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -127,13 +127,13 @@ public class ProcedureController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida: idProcedureType es obligatorio"),
-    @ApiResponse(responseCode = "404", description = "Referencia no encontrada"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request: idProcedureType is required"),
+    @ApiResponse(responseCode = "404", description = "Reference not found"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo trámite")
+    @Operation(summary = "Create procedure")
     public ResponseEntity<Object> create(@RequestBody ProcedureRequest request) {
         RequiredFields.require(request.idProcedureType(), "idProcedureType");
         Procedure entity;
@@ -146,20 +146,20 @@ public class ProcedureController {
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(ProcedureResponse.from(entity));
         } catch (Exception e) {
-            log.error("Failed to create tramite", e);
+            log.error("Failed to create procedure", e);
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Cuerpo vacío o incompleto: idProcedureType es obligatorio"),
-    @ApiResponse(responseCode = "404", description = "Trámite o referencia no encontrados")
+    @ApiResponse(responseCode = "400", description = "Empty or incomplete body: idProcedureType is required"),
+    @ApiResponse(responseCode = "404", description = "Procedure or reference not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar trámite",
-               description = "idProcedureType es obligatorio (400 si falta); notes se guarda tal como se envía y "
-                       + "una asociación ausente conserva la actual.")
+    @Operation(summary = "Update procedure",
+               description = "idProcedureType is required (400 if it is missing); notes are stored as sent and "
+                       + "a missing association keeps the current one.")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProcedureRequest request) {
         RequiredFields.require(request.idProcedureType(), "idProcedureType");
         Procedure existing = repository.findById(id).orElse(null);
@@ -176,7 +176,7 @@ public class ProcedureController {
             entity = repository.save(entity);
             return ResponseEntity.ok(ProcedureResponse.from(entity));
         } catch (Exception e) {
-            log.error("Failed to update tramite id {}", id, e);
+            log.error("Failed to update procedure id {}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -215,11 +215,11 @@ public class ProcedureController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar trámite")
+    @Operation(summary = "Delete procedure")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -228,7 +228,7 @@ public class ProcedureController {
             repository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("Failed to delete tramite id {}", id, e);
+            log.error("Failed to delete procedure id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

@@ -27,7 +27,7 @@ alwaysApply: false
 
 - DTOs live in `backend-api` (`com.licensis.notaire.dto`); the `notaire-shared` module was retired (ADR-025)
 - External services and clients consume the REST API (`/api/v1`, OpenAPI), never Java DTO classes
-- Naming: `DtoEntityName` (e.g. `DtoUsuario`, `DtoPersona`) — never `*RequestDTO` / `*ResponseDTO` suffixes
+- Naming: `DtoEntityName` (e.g. `DtoLoginUser`, `DtoPersona`) — never `*RequestDTO` / `*ResponseDTO` suffixes
 
 ### Frontend (`frontend/`)
 

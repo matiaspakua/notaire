@@ -6,19 +6,19 @@
  */
 import { test, expect, type Page } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
-import { createPago, createPersona, createPresupuesto } from "./setup/api-helpers";
+import { createPayment, createPerson, createBudget } from "./setup/api-helpers";
 
 async function seedPayment(page: Page): Promise<number> {
-  const persona = await createPersona(page);
-  expect(persona.ok, persona.error ?? "createPersona failed").toBe(true);
-  const budget = await createPresupuesto(page, persona.data!.personId, undefined, {
+  const person = await createPerson(page);
+  expect(person.ok, person.error ?? "createPerson failed").toBe(true);
+  const budget = await createBudget(page, person.data!.personId, undefined, {
     date: "2026-08-07",
     propertyAmount: 10000, // a payment may not exceed the budget balance
   });
-  expect(budget.ok, budget.error ?? "createPresupuesto failed").toBe(true);
-  const pago = await createPago(page, budget.data!.idBudget, { date: "2026-08-07" });
-  expect(pago.ok, pago.error ?? "createPago failed").toBe(true);
-  return pago.data!.idPayment;
+  expect(budget.ok, budget.error ?? "createBudget failed").toBe(true);
+  const payment = await createPayment(page, budget.data!.idBudget, { date: "2026-08-07" });
+  expect(payment.ok, payment.error ?? "createPayment failed").toBe(true);
+  return payment.data!.idPayment;
 }
 
 for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid", "UTC"]) {
@@ -29,7 +29,7 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid", "UT
       await establishAdminBrowserSession(page);
       const id = await seedPayment(page);
 
-      await page.goto("/dashboard/pagos");
+      await page.goto("/dashboard/payments");
       await page.waitForLoadState("networkidle");
       const row = page
         .getByRole("row")

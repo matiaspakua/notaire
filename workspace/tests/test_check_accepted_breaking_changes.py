@@ -56,10 +56,10 @@ HISTORY_CHANGE = {
     "text": "the response's body `type` changed from `array<object>` to `object` for status `200`",
     "level": 3,
     "operation": "GET",
-    "path": "/api/v1/historial",
+    "path": "/api/v1/history",
 }
 HISTORY_ENTRY = (
-    "GET /api/v1/historial the response's body `type` changed from `array<object>` "
+    "GET /api/v1/history the response's body `type` changed from `array<object>` "
     "to `object` for status `200`"
 )
 PAGOS_CHANGE = {
@@ -67,9 +67,9 @@ PAGOS_CHANGE = {
     "text": "the request property `amount` became required",
     "level": 3,
     "operation": "POST",
-    "path": "/api/v1/pagos",
+    "path": "/api/v1/payments",
 }
-PAGOS_ENTRY = "POST /api/v1/pagos the request property `amount` became required"
+PAGOS_ENTRY = "POST /api/v1/payments the request property `amount` became required"
 
 
 def git(cwd: str, *args: str) -> None:
@@ -182,7 +182,7 @@ class PullRequestFilesTest(CheckerTestCase):
         self.assertEqual(result.returncode, 0, result.output)
 
     def test_entry_for_another_operation_does_not_match(self):
-        entry = HISTORY_ENTRY.replace("GET /api/v1/historial", "GET /api/v1/gestiones")
+        entry = HISTORY_ENTRY.replace("GET /api/v1/history", "GET /api/v1/managements")
         self.accepted("596-history.txt", f"# #596\n{entry}\n")
         self.assertEqual(self.run_checker([HISTORY_CHANGE]).returncode, 1)
 
@@ -267,7 +267,7 @@ class RealOasdiffTest(CheckerTestCase):
         openapi: 3.0.1
         info: {{title: t, version: '1'}}
         paths:
-          /api/v1/historial:
+          /api/v1/history:
             get:
               responses:
                 '200':

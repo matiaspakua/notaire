@@ -28,8 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Summary of what a gestión has produced after signing: the distinct escrituras of its trámites, their
- * testimonios with the state of the registry circuit (CU11, CU12, CU44) and the copias issued (CU70).
+ * Summary of what a management has produced after signing: the distinct deeds of its procedures, their
+ * testimonies with the state of the registry circuit (CU11, CU12, CU44) and the copies issued (CU70).
  */
 @Service
 public class ManagementCaseSummaryService {
@@ -51,14 +51,14 @@ public class ManagementCaseSummaryService {
     }
 
     /**
-     * @param idManagement the gestión ID
-     * @return the case summary, with an empty deed list when no trámite has an escritura
-     * @throws ResourceNotFoundException if the gestión does not exist
+     * @param idManagement the management ID
+     * @return the case summary, with an empty deed list when no procedure has a deed
+     * @throws ResourceNotFoundException if the management does not exist
      */
     @Transactional(readOnly = true)
     public DtoManagementCaseSummary getSummary(Integer idManagement) {
         DeedManagement management = managementRepository.findById(idManagement)
-                .orElseThrow(() -> new ResourceNotFoundException("Gestión no encontrada con ID: " + idManagement));
+                .orElseThrow(() -> new ResourceNotFoundException("Management not found with ID: " + idManagement));
 
         Map<Integer, Deed> deedsById = procedureRepository.findByFkIdManagementIdManagement(idManagement).stream()
                 .map(Procedure::getFkIdDeed)
@@ -72,7 +72,7 @@ public class ManagementCaseSummaryService {
                 .map(ManagementCaseSummaryService::toCaseDocument)
                 .toList();
         return new DtoManagementCaseSummary(management.getIdManagement(), management.getNumber(),
-                management.getEncabezado(), deeds, documents);
+                management.getHeading(), deeds, documents);
     }
 
     private static DtoCaseDocument toCaseDocument(SubmittedDocument document) {

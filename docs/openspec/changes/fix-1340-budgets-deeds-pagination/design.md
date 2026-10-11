@@ -13,7 +13,7 @@ Slices 2–4 (#1392, #1394, #1396) added `useUrlPagination`, `useClampPage`, the
 
 1. **Newest first** (`idBudget,desc`, `idDeed,desc`): a row just created is on page 1.
 2. **Filters leave paging.** The status list and the number search come from their own endpoints (unpaged) and hide the footer; clearing them returns to the URL page.
-3. **Budget number via `GET /presupuestos/{id}`.** The old client-side search only looked in the loaded rows; a number is now found on any page. A client name still filters the rows shown, since the backend has no such search.
+3. **Budget number via `GET /budgets/{id}`.** The old client-side search only looked in the loaded rows; a number is now found on any page. A client name still filters the rows shown, since the backend has no such search.
 4. **Fix the parameter names in the frontend** (`status`, `number`): the backend contract is right; the UI sent names it ignores.
 
 ## Riesgos / Trade-offs

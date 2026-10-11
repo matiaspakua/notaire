@@ -1,8 +1,8 @@
 package com.licensis.notaire.dto;
 
-import com.licensis.notaire.dto.interfaces.DtoValido;
+import com.licensis.notaire.dto.interfaces.ValidDto;
 
-public class DtoIdentificationType implements DtoValido {
+public class DtoIdentificationType implements ValidDto {
     private Integer idIdentificationType;
     private String name;
     private String characters;

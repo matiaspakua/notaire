@@ -49,11 +49,11 @@ describe("fullName()", () => {
     expect(fullName(undefined)).toBe("—");
   });
 
-  it("concatenates nombre and apellido", () => {
+  it("concatenates first name and last name", () => {
     expect(fullName({ firstName: "Juan", lastName: "García" })).toBe("Juan García");
   });
 
-  it("handles missing apellido", () => {
+  it("handles a missing last name", () => {
     expect(fullName({ firstName: "Juan" })).toBe("Juan");
   });
 
@@ -69,14 +69,14 @@ describe("extractApiError()", () => {
   });
 
   it("extracts the message from a 404 ApiError body (widened beyond 400/409)", () => {
-    const err = new ApiError(404, "/escrituras/1", JSON.stringify({ message: "Not found" }));
+    const err = new ApiError(404, "/deeds/1", JSON.stringify({ message: "Not found" }));
     expect(extractApiError(err)).toBe("Not found");
   });
 
   it("extracts the message from a 422 ApiError body", () => {
     const err = new ApiError(
       422,
-      "/pagos",
+      "/payments",
       JSON.stringify({ message: "Unprocessable payment" })
     );
     expect(extractApiError(err)).toBe("Unprocessable payment");
@@ -85,27 +85,29 @@ describe("extractApiError()", () => {
   it("extracts the message from a 500 ApiError body when present", () => {
     const err = new ApiError(
       500,
-      "/reportes",
+      "/reports",
       JSON.stringify({ message: "Report generation failed" })
     );
     expect(extractApiError(err)).toBe("Report generation failed");
   });
 
   it("returns null for authenticated 401 (session-expiry path owns that UX)", () => {
-    const err = new ApiError(401, "/usuarios", JSON.stringify({ message: "Unauthorized" }));
+    const err = new ApiError(401, "/users", JSON.stringify({ message: "Unauthorized" }));
     expect(extractApiError(err)).toBeNull();
   });
 
   it("extracts the message field from a 400 BusinessValidationException body", () => {
     const err = new Error(
-      '[400] /escrituras/1/firmar: {"status":400,"error":"Bad Request","message":"La escritura no está en estado \'Sin Firmar\'"}'
+      '[400] /deeds/1/sign: {"status":400,"error":"Bad Request","message":"The deed must be in status \'Sin Firmar\' to be signed"}'
     );
-    expect(extractApiError(err)).toBe("La escritura no está en estado 'Sin Firmar'");
+    expect(extractApiError(err)).toBe("The deed must be in status 'Sin Firmar' to be signed");
   });
 
   it("extracts the error field from a 409 Conflict body as a fallback", () => {
-    const err = new Error('[409] /movimiento-testimonio: {"error":"Ya existe un movimiento abierto"}');
-    expect(extractApiError(err)).toBe("Ya existe un movimiento abierto");
+    const err = new Error(
+      '[409] /testimony-movements: {"error":"The testimony is already in registration"}'
+    );
+    expect(extractApiError(err)).toBe("The testimony is already in registration");
   });
 
   it("prefers ApiError.status and ApiError.body over message regex", () => {
@@ -118,7 +120,7 @@ describe("extractApiError()", () => {
   });
 
   it("returns null when the body is not parseable JSON", () => {
-    const err = new Error("[400] /escrituras/1/firmar: not json");
+    const err = new Error("[400] /deeds/1/sign: not json");
     expect(extractApiError(err)).toBeNull();
   });
 

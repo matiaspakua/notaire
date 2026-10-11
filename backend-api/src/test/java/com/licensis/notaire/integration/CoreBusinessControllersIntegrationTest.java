@@ -105,13 +105,13 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("ConceptoController - CU29/CU34/CU37/CU66")
+    @DisplayName("ConceptController - CU29/CU34/CU37/CU66")
     class ConceptControllerTests {
 
         @Test
-        @DisplayName("CU66 - Should return all conceptos")
-        void shouldReturnAllConceptos() throws Exception {
-            mockMvc.perform(get("/api/v1/conceptos"))
+        @DisplayName("CU66 - Should return all concepts")
+        void shouldReturnAllConcepts() throws Exception {
+            mockMvc.perform(get("/api/v1/concepts"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)))
@@ -119,24 +119,24 @@ class CoreBusinessControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU66 - Should return concepto by ID")
+        @DisplayName("CU66 - Should return concept by ID")
         void shouldReturnConceptById() throws Exception {
-            mockMvc.perform(get("/api/v1/conceptos/1"))
+            mockMvc.perform(get("/api/v1/concepts/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.idConcept", is(1)));
         }
 
         @Test
-        @DisplayName("CU66 - Should return 404 for non-existing concepto")
+        @DisplayName("CU66 - Should return 404 for non-existing concept")
         void shouldReturn404ForNonExistingConcept() throws Exception {
-            mockMvc.perform(get("/api/v1/conceptos/9999"))
+            mockMvc.perform(get("/api/v1/concepts/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("CU29 - Should create new concepto")
+        @DisplayName("CU29 - Should create new concept")
         void shouldCreateConcept() throws Exception {
-            mockMvc.perform(post("/api/v1/conceptos")
+            mockMvc.perform(post("/api/v1/concepts")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
@@ -153,13 +153,13 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("PresupuestoController - CU01/CU45/CU60")
+    @DisplayName("BudgetController - CU01/CU45/CU60")
     class BudgetControllerTests {
 
         @Test
-        @DisplayName("CU45 - Should return all presupuestos")
-        void shouldReturnAllPresupuestos() throws Exception {
-            mockMvc.perform(get("/api/v1/presupuestos"))
+        @DisplayName("CU45 - Should return all budgets")
+        void shouldReturnAllBudgets() throws Exception {
+            mockMvc.perform(get("/api/v1/budgets"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.content", isA(java.util.List.class)));
@@ -168,7 +168,7 @@ class CoreBusinessControllersIntegrationTest {
         @Test
         @DisplayName("CU45 - Should return budget by ID")
         void shouldReturnBudgetById() throws Exception {
-            mockMvc.perform(get("/api/v1/presupuestos/1"))
+            mockMvc.perform(get("/api/v1/budgets/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.idBudget", is(1)));
         }
@@ -176,20 +176,20 @@ class CoreBusinessControllersIntegrationTest {
         @Test
         @DisplayName("CU45 - Should return 404 for non-existing budget")
         void shouldReturn404ForNonExistingBudget() throws Exception {
-            mockMvc.perform(get("/api/v1/presupuestos/9999"))
+            mockMvc.perform(get("/api/v1/budgets/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
         @DisplayName("CU01 - Should create new budget")
         void shouldCreateBudget() throws Exception {
-            mockMvc.perform(post("/api/v1/presupuestos")
+            mockMvc.perform(post("/api/v1/budgets")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
                                       "number": 20250099,
                                       "date": "2025-06-01",
-                                      "encabezado": "Budget test",
+                                      "heading": "Budget test",
                                       "status": "PENDIENTE",
                                       "propertyAmount": 50000.00,
                                       "version": 0
@@ -200,13 +200,13 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("EscrituraController - CU05/CU06/CU52/CU62")
+    @DisplayName("DeedController - CU05/CU06/CU52/CU62")
     class DeedControllerTests {
 
         @Test
-        @DisplayName("CU06 - Should return all escrituras")
-        void shouldReturnAllEscrituras() throws Exception {
-            mockMvc.perform(get("/api/v1/escrituras"))
+        @DisplayName("CU06 - Should return all deeds")
+        void shouldReturnAllDeeds() throws Exception {
+            mockMvc.perform(get("/api/v1/deeds"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.content", isA(java.util.List.class)));
@@ -215,14 +215,14 @@ class CoreBusinessControllersIntegrationTest {
         @Test
         @DisplayName("CU06 - Should return 404 for non-existing deed")
         void shouldReturn404ForNonExistingDeed() throws Exception {
-            mockMvc.perform(get("/api/v1/escrituras/9999"))
+            mockMvc.perform(get("/api/v1/deeds/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("CU05 - Should return escribanos disponibles")
-        void shouldReturnEscribanosDisponibles() throws Exception {
-            mockMvc.perform(get("/api/v1/escrituras/escribanos-disponibles"))
+        @DisplayName("CU05 - Should return available notaries")
+        void shouldReturnAvailableNotaries() throws Exception {
+            mockMvc.perform(get("/api/v1/deeds/available-notaries"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
@@ -235,7 +235,7 @@ class CoreBusinessControllersIntegrationTest {
         @Test
         @DisplayName("CU20 - Should return all users")
         void shouldReturnAllUsers() throws Exception {
-            mockMvc.perform(get("/api/v1/usuarios"))
+            mockMvc.perform(get("/api/v1/users"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
@@ -244,7 +244,7 @@ class CoreBusinessControllersIntegrationTest {
         @Test
         @DisplayName("CU20 - Should login with admin credentials")
         void shouldLoginWithAdminCredentials() throws Exception {
-            mockMvc.perform(post("/api/v1/usuarios/login")
+            mockMvc.perform(post("/api/v1/users/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
@@ -253,13 +253,13 @@ class CoreBusinessControllersIntegrationTest {
                                     }
                                     """))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.valido", is(true)));
+                    .andExpect(jsonPath("$.valid", is(true)));
         }
 
         @Test
         @DisplayName("CU20 - Should reject invalid credentials")
         void shouldRejectInvalidCredentials() throws Exception {
-            mockMvc.perform(post("/api/v1/usuarios/login")
+            mockMvc.perform(post("/api/v1/users/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
@@ -268,18 +268,18 @@ class CoreBusinessControllersIntegrationTest {
                                     }
                                     """))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.valido", is(false)));
+                    .andExpect(jsonPath("$.valid", is(false)));
         }
     }
 
     @Nested
-    @DisplayName("TipoDeTramiteController - CU26/CU31/CU57/CU64")
+    @DisplayName("ProcedureTypeController - CU26/CU31/CU57/CU64")
     class ProcedureTypeControllerTests {
 
         @Test
-        @DisplayName("CU64 - Should return all tipos de tramite")
-        void shouldReturnAllTiposDeProcedure() throws Exception {
-            mockMvc.perform(get("/api/v1/tipo-tramite"))
+        @DisplayName("CU64 - Should return all procedure types")
+        void shouldReturnAllProcedureTypes() throws Exception {
+            mockMvc.perform(get("/api/v1/procedure-types"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)))
@@ -287,9 +287,9 @@ class CoreBusinessControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU26 - Should create new type de tramite")
+        @DisplayName("CU26 - Should create new type of procedure")
         void shouldCreateProcedureType() throws Exception {
-            mockMvc.perform(post("/api/v1/tipo-tramite")
+            mockMvc.perform(post("/api/v1/procedure-types")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
@@ -307,11 +307,11 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("RegistroAuditoriaController - CU23")
+    @DisplayName("AuditRecordController - CU23")
     class AuditRecordControllerTests {
 
         @Test
-        @DisplayName("CU23 - Should return all registros de auditoria")
+        @DisplayName("CU23 - Should return all audit records")
         void shouldReturnAllRegistrosAudit() throws Exception {
             mockMvc.perform(get("/api/v1/audit-log"))
                     .andExpect(status().isOk())
@@ -320,7 +320,7 @@ class CoreBusinessControllersIntegrationTest {
         }
 
         @Test
-        @DisplayName("CU23 - Should return 200 for auditoria by usuario")
+        @DisplayName("CU23 - Should return 200 for audit by user")
         void shouldReturnAuditByUser() throws Exception {
             mockMvc.perform(get("/api/v1/audit-log/user/1"))
                     .andExpect(status().isOk())
@@ -335,7 +335,7 @@ class CoreBusinessControllersIntegrationTest {
         @Test
         @DisplayName("CU63 - Should return all folios")
         void shouldReturnAllFolios() throws Exception {
-            mockMvc.perform(get("/api/v1/folio"))
+            mockMvc.perform(get("/api/v1/folios"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
@@ -343,13 +343,13 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("SuplenciaController - CU22/CU59")
+    @DisplayName("SubstitutionController - CU22/CU59")
     class SubstitutionControllerTests {
 
         @Test
-        @DisplayName("CU59 - Should return all suplencias")
-        void shouldReturnAllSuplencias() throws Exception {
-            mockMvc.perform(get("/api/v1/suplencia"))
+        @DisplayName("CU59 - Should return all substitutions")
+        void shouldReturnAllSubstitutions() throws Exception {
+            mockMvc.perform(get("/api/v1/substitutions"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
@@ -357,20 +357,20 @@ class CoreBusinessControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("InmuebleController")
+    @DisplayName("PropertyController")
     class PropertyControllerTests {
 
         @Test
-        @DisplayName("Should return all inmuebles")
+        @DisplayName("Should return all properties")
         void shouldReturnAllProperties() throws Exception {
-            mockMvc.perform(get("/api/v1/inmueble"))
+            mockMvc.perform(get("/api/v1/properties"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("CU82 - Should save matricula, tomo/folio/finca and linderos")
+        @DisplayName("CU82 - Should save matricula, tomo/folios/finca and linderos")
         void shouldSaveRegistrationNumberVolumeFolioLandRecordYBoundaries() throws Exception {
             String body = """
                     {
@@ -383,7 +383,7 @@ class CoreBusinessControllersIntegrationTest {
                     }
                     """;
 
-            mockMvc.perform(post("/api/v1/inmueble")
+            mockMvc.perform(post("/api/v1/properties")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body))
                     .andExpect(status().isCreated())

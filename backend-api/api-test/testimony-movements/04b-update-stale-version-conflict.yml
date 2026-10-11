@@ -3,14 +3,14 @@ info:
   type: http
   seq: 6
   description: |-
-      ## Stale version — PUT /api/v1/movimiento-testimonio/{tm_movement_id}
+      ## Stale version — PUT /api/v1/testimony-movements/{tm_movement_id}
       Issue #655, Owner decision Oct 9: 04-update moved the stored version to 1, so
       version 0 is an optimistic-lock conflict. It answers 409 (it was a 500 or was
       silently ignored) and 05-verify-update still sees 04's notes.
       Traceability: CU12
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/movimiento-testimonio/{{tm_movement_id}}"
+  url: "{{base_url}}/api/v1/testimony-movements/{{tm_movement_id}}"
   body:
     type: json
     data: |-

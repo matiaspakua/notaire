@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * CU27/CU39 - Costos (fijos o variables) esperados por tipo de documento dentro
- * de la plantilla de presupuesto de un tipo de trámite (Issue #823).
+ * CU27/CU39 - Expected costs (fixed or variable) by document type inside
+ * the budget template of a procedure type (Issue #823).
  */
 @Service
 @Transactional
@@ -31,10 +31,10 @@ public class DocumentCostTemplateService {
 
         ProcedureType procedureType = documentRepository.findProcedureTypeById(idProcedureType)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "No existe el tipo de trámite con ID: " + idProcedureType));
+                        "Procedure type not found with ID: " + idProcedureType));
         DocumentType documentType = documentRepository.findDocumentTypeById(idDocumentType)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "No existe el tipo de documento con ID: " + idDocumentType));
+                        "Document type not found with ID: " + idDocumentType));
 
         DocumentCostTemplate cost = new DocumentCostTemplate(
                 procedureType.getIdProcedureType(), documentType.getIdDocumentType());
@@ -51,11 +51,11 @@ public class DocumentCostTemplateService {
     }
 
     private void validateExactlyOneCost(java.math.BigDecimal fixedAmount, java.math.BigDecimal variablePercentage) {
-        boolean tieneFixedAmount = fixedAmount != null;
-        boolean tieneVariablePercentage = variablePercentage != null;
-        if (tieneFixedAmount == tieneVariablePercentage) {
+        boolean hasFixedAmount = fixedAmount != null;
+        boolean hasVariablePercentage = variablePercentage != null;
+        if (hasFixedAmount == hasVariablePercentage) {
             throw new BusinessValidationException(
-                    "Debe indicarse exactamente uno entre monto fijo y porcentaje variable");
+                    "Exactly one of fixed amount and variable percentage must be provided");
         }
     }
 }

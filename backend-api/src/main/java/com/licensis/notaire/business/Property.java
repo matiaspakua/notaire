@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase que representa a un inmueble.
+ * A property.
  *
  * @author juanca
  */
@@ -37,7 +37,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "Property.findAll", query = "SELECT i FROM Property i"),
-        @NamedQuery(name = "Property.findByIdProperty", query = "SELECT i FROM Property i WHERE i.idProperty = :idInmueble"),
+        @NamedQuery(name = "Property.findByIdProperty", query = "SELECT i FROM Property i WHERE i.idProperty = :idProperty"),
         @NamedQuery(name = "Property.findByCadastralDesignation", query = "SELECT i FROM Property i WHERE i.cadastralDesignation = :cadastralDesignation")
 })
 public class Property implements Serializable, Persistable<Integer> {
@@ -72,12 +72,11 @@ public class Property implements Serializable, Persistable<Integer> {
     private List<Procedure> procedureList;
 
     /**
-     * Constructor por default de Inmueble. Inicializa el ID presupuesto segun el
-     * campo
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, y las listas internas.
+     * Default constructor. Initializes the id from
+     * {@link BusinessConstants#INVALID_OBJECT_ID}, and the internal lists.
      */
     public Property() {
-        this.idProperty = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idProperty = BusinessConstants.INVALID_OBJECT_ID;
         this.procedureList = new ArrayList<>();
     }
 
@@ -96,7 +95,7 @@ public class Property implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idProperty == null || idProperty.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idProperty == null || idProperty.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -175,18 +174,18 @@ public class Property implements Serializable, Persistable<Integer> {
     }
 
     public DtoProperty getDto() {
-        DtoProperty miDto = new DtoProperty();
+        DtoProperty dto = new DtoProperty();
 
-        miDto.setAddress(this.getAddress());
-        miDto.setIdProperty(this.getIdProperty());
-        miDto.setCadastralDesignation(this.getCadastralDesignation());
-        miDto.setNotes(this.getNotes());
-        miDto.setFiscalAppraisal(this.getFiscalAppraisal());
-        miDto.setRegistrationNumber(this.getRegistrationNumber());
-        miDto.setVolumeFolioLandRecord(this.getVolumeFolioLandRecord());
-        miDto.setBoundaries(this.getBoundaries());
+        dto.setAddress(this.getAddress());
+        dto.setIdProperty(this.getIdProperty());
+        dto.setCadastralDesignation(this.getCadastralDesignation());
+        dto.setNotes(this.getNotes());
+        dto.setFiscalAppraisal(this.getFiscalAppraisal());
+        dto.setRegistrationNumber(this.getRegistrationNumber());
+        dto.setVolumeFolioLandRecord(this.getVolumeFolioLandRecord());
+        dto.setBoundaries(this.getBoundaries());
 
-        return miDto;
+        return dto;
     }
 
 
@@ -214,8 +213,8 @@ public class Property implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Inmueble[ idInmueble=" + idProperty + " ]"
-                + "[ nomenclatura=" + cadastralDesignation + " ]";
+        return "Property[ idProperty=" + idProperty + " ]"
+                + "[ cadastralDesignation=" + cadastralDesignation + " ]";
     }
 
     public int getVersion() {

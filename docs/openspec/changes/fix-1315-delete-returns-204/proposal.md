@@ -6,13 +6,13 @@
 | Field | Value |
 |-------|-------|
 | GitHub Issue | #1315 |
-| Use Case | CU15 – Procesar pago; CU13 – Gestionar historial de gestion; CU21 – Modificar Usuario (and the other CRUD use cases with a DELETE) |
+| Use Case | CU15 – Procesar pago; CU13 – Gestionar historial de gestion; CU21 – Modificar UserAccount (and the other CRUD use cases with a DELETE) |
 | Branch | `fix/1315_delete_returns_204` |
 | Gate 1 status | draft |
 
 ## Objetivo
 
-The OpenAPI contract documents `204 No Content` for `DELETE /pagos/{id}`, `DELETE /historial/{id}` and 15 other DELETE endpoints, but they answered `200 OK` with an empty body. `DELETE /roles/usuarios/{idUser}` had the opposite mismatch (documented 200, returned 204). The Owner chose to make the implementation match the spec (204) and to audit every DELETE endpoint.
+The OpenAPI contract documents `204 No Content` for `DELETE /payments/{id}`, `DELETE /history/{id}` and 15 other DELETE endpoints, but they answered `200 OK` with an empty body. `DELETE /roles/users/{idUser}` had the opposite mismatch (documented 200, returned 204). The Owner chose to make the implementation match the spec (204) and to audit every DELETE endpoint.
 
 ## What Changes
 
@@ -20,7 +20,7 @@ The OpenAPI contract documents `204 No Content` for `DELETE /pagos/{id}`, `DELET
 - `RoleController` documents the 204 it always returned (`@ApiResponses` 204/404); `openapi.yaml` regenerated.
 - New guard `DeleteStatusMatchesContractTest`: for every `@DeleteMapping`, the documented 2xx codes equal the codes the handler returns.
 - Existing MockMvc/integration tests and 21 Bruno requests assert 204.
-- `accepted-breaking-changes.txt`: the roles/usuarios 200 to 204 documentation change, justified; CHANGELOG entry.
+- `accepted-breaking-changes.txt`: the roles/users 200 to 204 documentation change, justified; CHANGELOG entry.
 
 ## Reglas de negocio
 
@@ -51,7 +51,7 @@ The OpenAPI contract documents `204 No Content` for `DELETE /pagos/{id}`, `DELET
 
 ### Surface area
 
-- Endpoints: the 17 DELETE endpoints above answer 204 instead of 200 (documented as 204 already); `DELETE /roles/usuarios/{idUser}` documentation 200 to 204 (runtime unchanged)
+- Endpoints: the 17 DELETE endpoints above answer 204 instead of 200 (documented as 204 already); `DELETE /roles/users/{idUser}` documentation 200 to 204 (runtime unchanged)
 - Entities / Flyway / Configuration: none
 
 ### Architecture review
@@ -63,5 +63,5 @@ No architecture change. The guard is a source-level test in the web adapter test
 | Permanent document | What must change |
 |--------------------|------------------|
 | `CHANGELOG.md` | Fixed entry |
-| `backend-api/openapi/openapi.yaml` | regenerated (roles/usuarios) |
+| `backend-api/openapi/openapi.yaml` | regenerated (roles/users) |
 | `backend-api/openapi/accepted-breaking-changes.txt` | accepted entry |

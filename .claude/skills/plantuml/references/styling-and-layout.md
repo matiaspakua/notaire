@@ -70,9 +70,9 @@ once per diagram, or centralize it in a shared `!include`d file (see
 
 ```plantuml
 @startuml
-title Notaire — Escritura Lifecycle
-class Escritura
-note right of Escritura
+title Notaire — Deed Lifecycle
+class Deed
+note right of Deed
   Immutable once **FIRMADA**.
   See ADR-004 for the audit trail design.
 end note

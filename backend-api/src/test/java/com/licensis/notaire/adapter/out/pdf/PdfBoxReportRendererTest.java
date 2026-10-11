@@ -28,34 +28,34 @@ class PdfBoxReportRendererTest {
     private final PdfBoxReportRenderer renderer = new PdfBoxReportRenderer();
 
     @Test
-    @DisplayName("shouldRenderTitleFieldsTableAndTotalsWithSpanishText")
-    void shouldRenderTitleFieldsTableAndTotalsWithSpanishText() throws IOException {
-        ReportDocument document = new ReportDocument("Presupuesto N° 12", "CU45", List.of(
-                new Fields("Datos", List.of(new Field("Cliente", "Lucía Peña"), new Field("Trámite", "Compraventa"))),
-                new Table("Conceptos", List.of(Column.left("Concepto", 3), Column.right("Valor", 1)),
-                        List.of(List.of("Honorarios escribanía", "$ 10.000,00")),
-                        "Sin conceptos", List.of(new Field("Total", "$ 10.000,00")))));
+    @DisplayName("shouldRenderTitleFieldsTableAndTotals")
+    void shouldRenderTitleFieldsTableAndTotals() throws IOException {
+        ReportDocument document = new ReportDocument("Budget N° 12", "CU45", List.of(
+                new Fields("Details", List.of(new Field("Client", "Lucía Peña"), new Field("Procedure", "Compraventa"))),
+                new Table("Concepts", List.of(Column.left("Concept", 3), Column.right("Amount", 1)),
+                        List.of(List.of("Notarial fees", "$ 10.000,00")),
+                        "No concepts", List.of(new Field("Total", "$ 10.000,00")))));
 
         byte[] pdf = renderer.render(document);
 
         assertThat(new String(pdf, 0, 5, java.nio.charset.StandardCharsets.US_ASCII)).isEqualTo("%PDF-");
         try (PDDocument parsed = Loader.loadPDF(pdf)) {
             String text = new PDFTextStripper().getText(parsed);
-            assertThat(text).contains("Presupuesto N° 12", "CU45", "Datos", "Cliente", "Lucía Peña", "Trámite",
-                    "Conceptos", "Concepto", "Valor", "Honorarios escribanía", "$ 10.000,00", "Total",
-                    "Página 1 de 1");
-            assertThat(parsed.getDocumentInformation().getTitle()).isEqualTo("Presupuesto N° 12");
+            assertThat(text).contains("Budget N° 12", "CU45", "Details", "Client", "Lucía Peña", "Procedure",
+                    "Concepts", "Concept", "Amount", "Notarial fees", "$ 10.000,00", "Total",
+                    "Page 1 of 1");
+            assertThat(parsed.getDocumentInformation().getTitle()).isEqualTo("Budget N° 12");
         }
     }
 
     @Test
     @DisplayName("shouldShowTheEmptyMessageForATableWithoutRows")
     void shouldShowTheEmptyMessageForATableWithoutRows() throws IOException {
-        ReportDocument document = new ReportDocument("Inmuebles", null, List.of(
-                new Table("Inmuebles", List.of(Column.left("Nomenclatura", 1)), List.of(),
-                        "Sin inmuebles asociados", List.of())));
+        ReportDocument document = new ReportDocument("Properties", null, List.of(
+                new Table("Properties", List.of(Column.left("Designation", 1)), List.of(),
+                        "No linked properties", List.of())));
 
-        assertThat(text(renderer.render(document))).contains("Sin inmuebles asociados");
+        assertThat(text(renderer.render(document))).contains("No linked properties");
     }
 
     @Test
@@ -63,40 +63,40 @@ class PdfBoxReportRendererTest {
     void shouldBreakLongTablesAcrossPagesRepeatingTheHeader() throws IOException {
         List<List<String>> rows = new ArrayList<>();
         for (int i = 1; i <= 120; i++) {
-            rows.add(List.of("Fila " + i, "Estado " + i));
+            rows.add(List.of("Row " + i, "Status " + i));
         }
-        ReportDocument document = new ReportDocument("Historial", null, List.of(
-                new Table("Movimientos", List.of(Column.left("Detalle", 1), Column.left("Estado", 1)), rows,
+        ReportDocument document = new ReportDocument("History", null, List.of(
+                new Table("Movements", List.of(Column.left("Detail", 1), Column.left("Status", 1)), rows,
                         "", List.of())));
 
         try (PDDocument parsed = Loader.loadPDF(renderer.render(document))) {
             int pages = parsed.getNumberOfPages();
             assertThat(pages).isGreaterThan(1);
             String text = new PDFTextStripper().getText(parsed);
-            assertThat(text).contains("Fila 1", "Fila 120", "Página 1 de " + pages, "Página " + pages + " de " + pages);
-            assertThat(text.split("Detalle", -1)).hasSize(pages + 1);
+            assertThat(text).contains("Row 1", "Row 120", "Page 1 of " + pages, "Page " + pages + " of " + pages);
+            assertThat(text.split("Detail", -1)).hasSize(pages + 1);
         }
     }
 
     @Test
     @DisplayName("shouldWrapLongValuesInsteadOfCuttingThem")
     void shouldWrapLongValuesInsteadOfCuttingThem() throws IOException {
-        String longNotes = "Observación " + "muy larga de la gestión ".repeat(20) + "fin-de-texto";
-        ReportDocument document = new ReportDocument("Notas", null, List.of(
-                new Fields("Detalle", List.of(new Field("Observaciones", longNotes))),
-                new Table("Tabla", List.of(Column.left("Nota", 1), Column.right("Monto", 1)),
+        String longNotes = "Observation " + "very long management note ".repeat(20) + "end-of-text";
+        ReportDocument document = new ReportDocument("Notes", null, List.of(
+                new Fields("Detail", List.of(new Field("Notes", longNotes))),
+                new Table("Table", List.of(Column.left("Note", 1), Column.right("Amount", 1)),
                         List.of(List.of(longNotes, "1")), "", List.of())));
 
         String text = text(renderer.render(document));
 
-        assertThat(text.split("fin-de-texto", -1)).hasSize(3);
+        assertThat(text.split("end-of-text", -1)).hasSize(3);
     }
 
     @Test
     @DisplayName("shouldReplaceCharactersTheStandardFontCannotEncode")
     void shouldReplaceCharactersTheStandardFontCannotEncode() throws IOException {
         ReportDocument document = new ReportDocument("Símbolos ✓", null, List.of(
-                new Fields("Datos", List.of(new Field("Nota", "línea uno\nlínea\tdos 漢 €")))));
+                new Fields("Details", List.of(new Field("Note", "línea uno\nlínea\tdos 漢 €")))));
 
         String text = text(renderer.render(document));
 

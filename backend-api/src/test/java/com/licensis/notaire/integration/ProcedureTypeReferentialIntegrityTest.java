@@ -28,7 +28,7 @@ import com.licensis.notaire.repository.BudgetTemplateRepository;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@DisplayName("TipoDeTramite — referential integrity checks")
+@DisplayName("ProcedureType — referential integrity checks")
 class ProcedureTypeReferentialIntegrityTest {
 
     @Autowired
@@ -46,28 +46,28 @@ class ProcedureTypeReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should return inUse=false when type de tramite is not referenced")
+    @DisplayName("Should return inUse=false when type of procedure is not referenced")
     void shouldReturnInUseFalseWhenNotReferenced() throws Exception {
         int id = createTypeProcedure("Tramite_unused_" + System.nanoTime());
 
-        mockMvc.perform(get("/api/v1/tipo-tramite/" + id + "/in-use"))
+        mockMvc.perform(get("/api/v1/procedure-types/" + id + "/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(false));
     }
 
     @Test
-    @DisplayName("Should return inUse=true when type de tramite is referenced by plantilla budget")
+    @DisplayName("Should return inUse=true when type of procedure is referenced by template budget")
     void shouldReturnInUseTrueWhenReferencedByBudgetTemplate() throws Exception {
         int id = createTypeProcedure("Tramite_used_" + System.nanoTime());
         linkToBudgetTemplate(id);
 
-        mockMvc.perform(get("/api/v1/tipo-tramite/" + id + "/in-use"))
+        mockMvc.perform(get("/api/v1/procedure-types/" + id + "/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(true));
     }
 
     @Test
-    @DisplayName("Should return 409 when editing type de tramite that is in use")
+    @DisplayName("Should return 409 when editing type of procedure that is in use")
     void shouldReturn409WhenEditingTypeProcedureInUse() throws Exception {
         int id = createTypeProcedure("Tramite_edit_conflict_" + System.nanoTime());
         linkToBudgetTemplate(id);
@@ -76,7 +76,7 @@ class ProcedureTypeReferentialIntegrityTest {
                 {"name": "Name actualizado", "isArchived": false, "isRegistered": false, "associatesProperties": false}
                 """;
 
-        mockMvc.perform(put("/api/v1/tipo-tramite/" + id)
+        mockMvc.perform(put("/api/v1/procedure-types/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isConflict())
@@ -84,7 +84,7 @@ class ProcedureTypeReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should allow editing type de tramite that is not in use")
+    @DisplayName("Should allow editing type of procedure that is not in use")
     void shouldAllowEditingTypeProcedureNotInUse() throws Exception {
         int id = createTypeProcedure("Tramite_edit_ok_" + System.nanoTime());
 
@@ -92,30 +92,30 @@ class ProcedureTypeReferentialIntegrityTest {
                 {"name": "Name actualizado ok", "isArchived": false, "isRegistered": false, "associatesProperties": false}
                 """;
 
-        mockMvc.perform(put("/api/v1/tipo-tramite/" + id)
+        mockMvc.perform(put("/api/v1/procedure-types/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return 409 when deleting type de tramite that is in use")
+    @DisplayName("Should return 409 when deleting type of procedure that is in use")
     void shouldReturn409WhenDeletingTypeProcedureInUse() throws Exception {
         int id = createTypeProcedure("Tramite_delete_conflict_" + System.nanoTime());
         linkToBudgetTemplate(id);
 
-        mockMvc.perform(delete("/api/v1/tipo-tramite/" + id))
+        mockMvc.perform(delete("/api/v1/procedure-types/" + id))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
-    @DisplayName("Should search tipos de tramite by name")
-    void shouldSearchTiposProcedureByName() throws Exception {
+    @DisplayName("Should search procedure types by name")
+    void shouldSearchProcedureTypesByName() throws Exception {
         String uniqueName = "SearchableTramite_" + System.nanoTime();
         createTypeProcedure(uniqueName);
 
-        mockMvc.perform(get("/api/v1/tipo-tramite/search")
+        mockMvc.perform(get("/api/v1/procedure-types/search")
                         .param("name", "SearchableTramite"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.name =~ /.*SearchableTramite.*/)]").exists());
@@ -126,7 +126,7 @@ class ProcedureTypeReferentialIntegrityTest {
                 {"name": "%s", "isArchived": false, "isRegistered": false, "associatesProperties": false}
                 """, name);
 
-        MvcResult result = mockMvc.perform(post("/api/v1/tipo-tramite")
+        MvcResult result = mockMvc.perform(post("/api/v1/procedure-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())

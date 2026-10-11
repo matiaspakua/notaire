@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
-@DisplayName("PresupuestoPlantillaService Tests (CU39)")
+@DisplayName("BudgetTemplateService Tests (CU39)")
 @ExtendWith(MockitoExtension.class)
 class BudgetTemplateServiceTest {
 
@@ -54,7 +54,7 @@ class BudgetTemplateServiceTest {
     }
 
     @Test
-    @DisplayName("Should load one item per concepto of the type de trámite's plantilla")
+    @DisplayName("Should load one item per concept of the type of procedure's template")
     void shouldLoadItemsFromTemplate() {
         Budget budget = new Budget();
         budget.setIdBudget(1);
@@ -65,7 +65,7 @@ class BudgetTemplateServiceTest {
         ));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> items = budgetTemplateService.cargarItemsDesdeTemplate(1, 5);
+        List<Item> items = budgetTemplateService.loadItemsFromTemplate(1, 5);
 
         assertThat(items).hasSize(2);
         assertThat(items).extracting(Item::getName).containsExactlyInAnyOrder("Honorarios", "Sellado");
@@ -74,7 +74,7 @@ class BudgetTemplateServiceTest {
     }
 
     @Test
-    @DisplayName("Should not recalculate loaded items when the plantilla changes later")
+    @DisplayName("Should not recalculate loaded items when the budget template changes later")
     void shouldNotRecalculateLoadedItemsWhenTemplateChanges() {
         Budget budget = new Budget();
         budget.setIdBudget(1);
@@ -84,26 +84,26 @@ class BudgetTemplateServiceTest {
                 .thenReturn(List.of(template));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> items = budgetTemplateService.cargarItemsDesdeTemplate(1, 5);
+        List<Item> items = budgetTemplateService.loadItemsFromTemplate(1, 5);
 
-        // The item copied the concepto's value at load time; changing the plantilla's
-        // concepto afterwards must not retroactively change the already-loaded item.
+        // The item copied the concept's value at load time; changing the template's
+        // concept afterwards must not retroactively change the already-loaded item.
         template.getConcept().setValue(new java.math.BigDecimal("9999"));
 
         assertThat(items).extracting(Item::getValue).containsExactly(new java.math.BigDecimal("1000"));
     }
 
     @Test
-    @DisplayName("Should reject loading when the type de trámite has no plantilla configured")
+    @DisplayName("Should reject loading when the type of procedure has not template configured")
     void shouldRejectWhenNoTemplateForTypeProcedure() {
         Budget budget = new Budget();
         budget.setIdBudget(1);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(budgetTemplateRepository.findByProcedureTypeIdProcedureType(99)).thenReturn(List.of());
 
-        assertThatThrownBy(() -> budgetTemplateService.cargarItemsDesdeTemplate(1, 99))
+        assertThatThrownBy(() -> budgetTemplateService.loadItemsFromTemplate(1, 99))
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessageContaining("plantilla");
+                .hasMessageContaining("template");
     }
 
     @Test
@@ -111,7 +111,7 @@ class BudgetTemplateServiceTest {
     void shouldRejectWhenBudgetDoesNotExist() {
         when(budgetRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> budgetTemplateService.cargarItemsDesdeTemplate(999, 5))
+        assertThatThrownBy(() -> budgetTemplateService.loadItemsFromTemplate(999, 5))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

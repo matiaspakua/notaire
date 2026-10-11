@@ -8,7 +8,7 @@ Registering and maintaining the documents clients submit for a gestión's trámi
 
 ### Requirement: Create requires type and procedure
 
-`POST /api/v1/documento-presentado` SHALL reject a body without `typeId` or `procedureId` with 400 naming the missing field and SHALL store nothing; the contract SHALL mark both required on create and neither on update.
+`POST /api/v1/submitted-documents` SHALL reject a body without `typeId` or `procedureId` with 400 naming the missing field and SHALL store nothing; the contract SHALL mark both required on create and neither on update.
 
 #### Scenario: Missing type
 

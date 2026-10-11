@@ -89,7 +89,7 @@ describe("hardcoded UI strings (#1354)", () => {
   it("flags a re-added literal of each kind", () => {
     expect(findHardcodedStrings('<Input placeholder="Seleccionar tipo" />')).toHaveLength(1);
     expect(findHardcodedStrings('<div aria-label="Language selector">')).toHaveLength(1);
-    expect(findHardcodedStrings('{ key: "x", header: "Presupuesto" }')).toHaveLength(1);
+    expect(findHardcodedStrings('{ key: "x", header: "Budget" }')).toHaveLength(1);
     expect(findHardcodedStrings('toast.success("Reporte descargado");')).toHaveLength(1);
     expect(findHardcodedStrings("<Badge>Disponible</Badge>")).toHaveLength(1);
     expect(findHardcodedStrings('const m = { a: "Generar Declaración Jurada" };')).toHaveLength(1);

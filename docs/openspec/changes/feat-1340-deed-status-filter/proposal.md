@@ -12,11 +12,11 @@
 
 ## Objetivo
 
-The testimonios, minutas-inscripcion and folios screens offer only signed deeds, and they get them by loading `GET /escrituras?size=1000` and filtering on the client. A searchable deed picker (slice 8b) cannot do that: a newest-20 page filtered on the client can be empty while signed deeds exist. The paged deed list gets an optional, non-breaking `status` filter so the server returns one page of deeds in one status.
+The testimonios, minutas-inscripcion and folios screens offer only signed deeds, and they get them by loading `GET /deeds?size=1000` and filtering on the client. A searchable deed picker (slice 8b) cannot do that: a newest-20 page filtered on the client can be empty while signed deeds exist. The paged deed list gets an optional, non-breaking `status` filter so the server returns one page of deeds in one status.
 
 ## What Changes
 
-- `GET /api/v1/escrituras?status=<status>&page&size&sort`: optional `status`, one of `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, `Inscripta` (the stored `BusinessConstants` spellings), matched in any letter case; any other value answers 400 naming the accepted values. Without `status` the list is unchanged.
+- `GET /api/v1/deeds?status=<status>&page&size&sort`: optional `status`, one of `Sin Firmar`, `Firmada`, `Anulada`, `No Paso`, `Inscripta` (the stored `BusinessConstants` spellings), matched in any letter case; any other value answers 400 naming the accepted values. Without `status` the list is unchanged.
 - `DeedRepository.findByStatus(String, Pageable)`, `DeedService.findAllPaged(String, Pageable)`.
 - OpenAPI artifact regenerated (new optional query parameter with its enum, 400 with `ErrorResponse`); `frontend/src/types/api.generated.ts` regenerated.
 - Bruno: `deeds/02-list-by-status.yml`, `deeds/03-list-invalid-status.yml`; `api-test/COVERAGE.md`.
@@ -51,7 +51,7 @@ The testimonios, minutas-inscripcion and folios screens offer only signed deeds,
 
 ### Surface area
 
-- Endpoints: `GET /api/v1/escrituras` gains optional `status` (non-breaking)
+- Endpoints: `GET /api/v1/deeds` gains optional `status` (non-breaking)
 - Entities / Flyway / configuration: none
 
 ### Architecture review

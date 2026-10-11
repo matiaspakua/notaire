@@ -8,7 +8,7 @@ Protect REST write endpoints by accepting only validated request DTOs.
 
 ### Requirement: Copy, registration draft and re-entry require their fields
 
-`POST /copia` and `PUT /copia/{id}` SHALL require `number` and `datePrinting`, `POST /minutas-inscripcion` SHALL require `idDeed`, and `POST /gestiones/{id}/reingreso-documentacion` SHALL require `idProcedure` and `idDocumentType`; a missing field SHALL answer 400 naming it and store nothing, and the contract SHALL mark the fields required.
+`POST /copies` and `PUT /copies/{id}` SHALL require `number` and `datePrinting`, `POST /registration-drafts` SHALL require `idDeed`, and `POST /managements/{id}/document-reentry` SHALL require `idProcedure` and `idDocumentType`; a missing field SHALL answer 400 naming it and store nothing, and the contract SHALL mark the fields required.
 
 #### Scenario: Empty copy
 

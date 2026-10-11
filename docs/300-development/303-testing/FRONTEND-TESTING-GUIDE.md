@@ -36,12 +36,12 @@ All unit tests live under `frontend/src/tests/unit/` (19 files):
 src/tests/unit/
 ├── api-client.test.ts               # Authorization header propagation (issue #552)
 ├── auth-store.test.ts               # Zustand auth store (login, logout, isAdmin)
-├── business-logic-hooks.test.ts     # gestionesKeys and related query-key contracts (CU02, CU13, CU24)
+├── business-logic-hooks.test.ts     # managementsKeys and related query-key contracts (CU02, CU13, CU24)
 ├── hooks.test.ts                    # React Query key contracts, type shapes, API path contracts
 ├── i18n.test.ts                     # isSupportedLocale and locale helpers
-├── items-historial.test.ts          # itemsKeys query-key contracts
+├── items-history.test.ts            # itemsKeys query-key contracts
 ├── next-config-security-headers.test.ts  # next.config security headers
-├── suplencias-reportes.test.ts      # suplenciasKeys query-key contracts
+├── substitutions-reports.test.ts    # substitutionsKeys query-key contracts
 ├── utils.test.ts                    # cn(), formatDate, formatCurrency, fullName()
 ├── workflow-node-meta.test.ts       # Workflow node metadata (issue #646)
 ├── app-header.test.tsx              # AppHeader component
@@ -108,26 +108,27 @@ describe("MyComponent", () => {
 
 ## E2E Test Structure
 
-All Playwright E2E tests live under `testing/e2e/tests/` (34 spec files as of 2026-08-19,
-plus `gherkin-helpers.ts` shared step helpers, `reporters/`, and `setup/`). Most files map
-to one or more Use Cases and are named accordingly (`cu01-presupuesto.spec.ts`,
-`cu17-18-personas-clientes.spec.ts`, `cu70-workflow-editor.spec.ts`, etc.); a handful cover
-cross-cutting concerns instead of a single CU:
+All Playwright E2E tests live under `testing/e2e/tests/` (plus `gherkin-helpers.ts`
+shared step helpers, `reporters/`, and `setup/`). Current specs use `TS-nnnn-*.spec.ts`
+names. Retired filenames such as `cu01-presupuesto.spec.ts`,
+`cu17-18-personas-clientes.spec.ts`, and `presupuestos.spec.ts` stay as history.
+The inventory is [`E2E-TEST-MAPPING.md`](E2E-TEST-MAPPING.md). A handful of specs
+cover cross-cutting concerns:
 
 | File | Covers |
 |------|--------|
-| `00-supervised-tour.spec.ts` | Full-system smoke tour: login → every module → logout |
-| `01-first-case-tutorial.spec.ts` | End-to-end tutorial: setup through a full notarial case |
-| `login.spec.ts` / `logout.spec.ts` | Auth flow |
-| `dashboard.spec.ts` | Dashboard navigation and route guards |
-| `admin.spec.ts` | Administración hub (ADMIN-only modules) |
-| `api-cycle.spec.ts` | Backend proxy connectivity/health |
-| `cu-matrix.spec.ts` | CU coverage matrix health check |
-| `a11y-search-inputs.spec.ts` | Accessibility — search input labels |
-| `mobile-viewport.spec.ts` | Responsive/mobile layout |
-| `l10n-language-switcher.spec.ts` | Localization / language switcher |
-| `security-csrf-cors.spec.ts` | CSRF/CORS security headers |
-| `icons-ux.spec.ts` | Icon usage/UX consistency |
+| `TS-0070-supervised-tour-tutorial.spec.ts` | Full-system smoke tour: login → every module → logout |
+| `TS-0071-first-case-tutorial-onboarding.spec.ts` | End-to-end tutorial: setup through a full notarial case |
+| `TS-0001-login-authentication.spec.ts` / `TS-0002-logout-authentication.spec.ts` | Auth flow |
+| `TS-0003-dashboard-navigation.spec.ts` | Dashboard navigation and route guards |
+| `TS-0024-admin-module-smoke.spec.ts` | Administration hub (ADMIN-only modules) |
+| `TS-0051-api-full-cycle-integration.spec.ts` | Backend proxy connectivity/health |
+| `TS-0050-cu-health-matrix-smoke.spec.ts` | CU coverage matrix health check |
+| `TS-0042-accessibility-search-labels-qa.spec.ts` | Accessibility — search input labels |
+| `TS-0041-responsive-viewport-qa.spec.ts` | Responsive/mobile layout |
+| `TS-0040-l10n-language-switching-qa.spec.ts` | Localization / language switcher |
+| `TS-0044-security-csrf-cors-qa.spec.ts` | CSRF/CORS security headers |
+| `TS-0043-icons-ux-qa.spec.ts` | Icon usage/UX consistency |
 
 See the directory itself for the full, current list — it changes often enough that a
 complete static copy here would go stale quickly.
@@ -150,7 +151,7 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem("notaire-auth", JSON.stringify({
       state: {
-        user: { nombre: "admin", tipo: "ADMIN", valido: true },
+        user: { name: "admin", type: "ADMIN", valid: true },
         isAuthenticated: true,
       },
       version: 0,
@@ -177,6 +178,7 @@ test.describe("MyModule (CUxx)", () => {
   });
 
   test("create button opens modal", async ({ page }) => {
+    // Default locale is Spanish: buttons read "Nuevo …" and "Cancelar".
     await page.getByRole("button", { name: /nuevo/i }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
   });
@@ -227,12 +229,16 @@ npm test
 Unit tests use mocked data via `vi.mock()` and direct object construction. E2E tests rely on the backend's seeded test data (initial Flyway migrations).
 
 Key default test data:
-- Seeded user (`V2__initial_data.sql`): `nombre=admin`, `contrasenia=admin` (plaintext
-  login value; stored as an MD5 hash), `tipo=Escribano`
-- The login endpoint validates against the `usuarios` table in the database
-- The `tipo: "ADMIN"` value in the `beforeEach` example above is injected directly into
-  `localStorage` for tests that need admin-only UI without a real backend round-trip — it
-  does not reflect the seeded user's actual `tipo`
+- Seeded user (`V2__initial_data.sql`, renamed by `V37`): login name `admin`,
+  password `admin` (plaintext login value; stored as an MD5 hash), stored type
+  `Escribano`. Live columns are `users.username`, `users.password`, and
+  `users.user_type`. The V2 script still inserts into `usuarios`
+  (`nombre`, `contrasenia`, `tipo`); that file is an applied migration.
+- The login endpoint validates against the `users` table. The JSON fields are
+  `valid`, `name`, and `type`.
+- The `type: "ADMIN"` value in the `beforeEach` example above is injected directly into
+  `localStorage` for tests that need admin-only UI without a real backend round-trip. It
+  does not reflect the seeded user's stored type `Escribano`.
 
 ## Test Coverage
 

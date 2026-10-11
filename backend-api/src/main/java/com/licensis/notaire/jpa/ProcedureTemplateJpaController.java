@@ -6,7 +6,7 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.jpa.exceptions.PreexistingEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.ProcedureTemplate;
 import com.licensis.notaire.business.ProcedureTemplatePK;
 import com.licensis.notaire.business.DocumentType;
@@ -24,7 +24,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class ProcedureTemplateJpaController implements Serializable, IPersistenciaJpa
+public class ProcedureTemplateJpaController implements Serializable, JpaPersistence
 {
 
     public ProcedureTemplateJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -42,7 +42,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
 
     public Boolean create(ProcedureTemplate procedureTemplate) throws PreexistingEntityException
     {
-        Boolean creada = false;
+        Boolean created = false;
         if (procedureTemplate.getProcedureTemplatePK() == null)
         {
             procedureTemplate.setProcedureTemplatePK(new ProcedureTemplatePK());
@@ -78,13 +78,13 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
                 documentType = em.merge(documentType);
             }
             em.getTransaction().commit();
-            creada = true;
+            created = true;
         }
         catch (Exception ex)
         {
             if (findProcedureTemplate(procedureTemplate.getProcedureTemplatePK()) != null)
             {
-                throw new PreexistingEntityException("PlantillaTramite " + procedureTemplate + " already exists.", ex);
+                throw new PreexistingEntityException("ProcedureTemplate " + procedureTemplate + " already exists.", ex);
             }
             throw ex;
         }
@@ -95,7 +95,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
                 em.close();
             }
         }
-        return creada;
+        return created;
     }
 
     public void edit(ProcedureTemplate procedureTemplate) throws NonexistentEntityException, Exception
@@ -153,7 +153,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
                 ProcedureTemplatePK id = procedureTemplate.getProcedureTemplatePK();
                 if (findProcedureTemplate(id) == null)
                 {
-                    throw new NonexistentEntityException("The plantillaTramite with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The procedure template with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -170,7 +170,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
     public Boolean destroy(ProcedureTemplatePK id) throws NonexistentEntityException
     {
         EntityManager em = null;
-        Boolean eliminado = false;
+        Boolean removed = false;
         try
         {
             em = getEntityManager();
@@ -183,7 +183,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The plantillaTramite with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The procedure template with id " + id + " no longer exists.", enfe);
             }
             ProcedureType procedureType = procedureTemplate.getProcedureType();
             if (procedureType != null)
@@ -199,7 +199,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
             }
             em.remove(procedureTemplate);
             em.getTransaction().commit();
-            eliminado = true;
+            removed = true;
         }
         finally
         {
@@ -208,7 +208,7 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
                 em.close();
             }
         }
-        return eliminado;
+        return removed;
     }
 
     public List<ProcedureTemplate> findProcedureTemplateEntities()
@@ -268,29 +268,28 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
     }
 
     /**
-     * Busca y encuentra todas las Plantillas de Tramite de un Tipo de Tramite en particular.
+     * Finds every procedure template for one procedure type.
      *
-     * @param idTipoTramite, Id del Tipo de Tramite al cual pertenecen las Plantillas de Tramite a
-     * buscar.
-     * @return Una lista de las Plantillas de Tramite encontradas.
+     * @param idProcedureType procedure type id
+     * @return the templates for that procedure type
      */
     public List<ProcedureTemplate> findProcedureTemplatesByType(int idProcedureType)
     {
         EntityManager em = getEntityManager();
 
-        List<ProcedureTemplate> misPlantillas = null;
+        List<ProcedureTemplate> templates = null;
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
+            // Named query declared on the entity.
             Query q = em.createNamedQuery("ProcedureTemplate.findByFkIdProcedureType");
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("fkIdTipoTramite", idProcedureType);
+            // Bind the named query parameter.
+            q.setParameter("fkIdProcedureType", idProcedureType);
 
-            misPlantillas = (List<ProcedureTemplate>) q.getResultList();
+            templates = (List<ProcedureTemplate>) q.getResultList();
 
-            return misPlantillas;
+            return templates;
 
         }
         finally
@@ -300,45 +299,45 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
     }
 
     /**
-     * Elimina una Plantilla de Tramite mediante un query DELETE.
+     * Deletes a procedure template with a DELETE query.
      *
-     * @param miPlantilla, la Plantilla de Tramite a eliminar.
-     * @return True si se elimino, False de lo contrario.
+     * @param template the procedure template to delete
+     * @return true when a row was deleted, false otherwise
      */
-    public Boolean eliminarProcedureTemplate(ProcedureTemplate miTemplate)
+    public Boolean deleteProcedureTemplate(ProcedureTemplate template)
     {
 
-        Boolean eliminada = false;
+        Boolean removed = false;
         int deleted = 0;
 
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro una nueva transaccion
+        // Open a transaction.
         tx = em.getTransaction();
         tx.begin();
 
-        // Creo el query
+        // Build the query.
         Query query = em.createQuery("DELETE FROM ProcedureTemplate p WHERE p.procedureTemplatePK.fkIdProcedureType = ?1 AND  p.procedureTemplatePK.fkIdDocumentType = ?2");
 
-        //Seteo el parametro 1 y 2
-        query.setParameter(1, miTemplate.getProcedureTemplatePK().getFkIdProcedureType());
-        query.setParameter(2, miTemplate.getProcedureTemplatePK().getFkIdDocumentType());
+        // Bind parameters 1 and 2.
+        query.setParameter(1, template.getProcedureTemplatePK().getFkIdProcedureType());
+        query.setParameter(2, template.getProcedureTemplatePK().getFkIdDocumentType());
 
-        // Ejecuto el query
+        // Run the query.
         deleted = query.executeUpdate();
 
-        // Hago commit
+        // Commit the transaction.
         tx.commit();
 
         em.close();
 
         if (deleted > 0)
         {
-            eliminada = true;
+            removed = true;
         }
 
-        return eliminada;
+        return removed;
 
     }
 
@@ -353,11 +352,11 @@ public class ProcedureTemplateJpaController implements Serializable, IPersistenc
 
         EntityManager em = getEntityManager();
 
-        List<ProcedureTemplate> listaTemplateProcedures = null;
+        List<ProcedureTemplate> procedureTemplates = null;
 
         Query query = em.createNamedQuery("ProcedureTemplate.findAll");
-        listaTemplateProcedures = query.getResultList();
+        procedureTemplates = query.getResultList();
 
-        return listaTemplateProcedures;
+        return procedureTemplates;
     }
 }

@@ -18,7 +18,7 @@ be represented as identifier fields, not nested entity graphs.
 
 #### Scenario: Property create ignores client-supplied id and version
 
-- **WHEN** a client POSTs `/api/v1/inmueble` with a body that also contains
+- **WHEN** a client POSTs `/api/v1/properties` with a body that also contains
   `id` / `version` values alongside writable property fields
 - **THEN** the server creates a new property with a generated id and
   server-managed version, and does not persist the client-supplied id/version
@@ -37,7 +37,7 @@ be represented as identifier fields, not nested entity graphs.
 
 #### Scenario: Budget create accepts only writable budget fields
 
-- **WHEN** a client POSTs `/api/v1/presupuestos` with a budget request DTO
+- **WHEN** a client POSTs `/api/v1/budgets` with a budget request DTO
   (number, date, heading, status, amounts, notes, personId) and extra
   server-managed keys
 - **THEN** the server creates the budget from writable fields only and returns

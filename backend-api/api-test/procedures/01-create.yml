@@ -3,13 +3,13 @@ info:
   type: http
   seq: 1
   description: |-
-      ## Create procedure — POST /api/v1/tramites
+      ## Create procedure — POST /api/v1/procedures
       Uses seeded procedure type 1 (referenced only, never modified);
       deleted by `06-delete.yml`.
       Traceability: CU02 (RF #3, #10)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/tramites"
+  url: "{{base_url}}/api/v1/procedures"
   body:
     type: json
     data: |-

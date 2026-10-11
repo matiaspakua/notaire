@@ -26,7 +26,7 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Regression test for the historial delete silently no-op-ing (CU13 audit trail).
+ * Regression test for the history delete silently no-op-ing (CU13 audit trail).
  *
  * <p>The bug only reproduces when the row being deleted was created and committed in a
  * prior, separate transaction — exactly what happens across two real HTTP requests. A
@@ -78,7 +78,7 @@ class HistoryDeleteIntegrationTest {
         DeedManagement management = new DeedManagement();
         management.setDateStart(new Date());
         management.setNumber(1);
-        management.setEncabezado("test");
+        management.setHeading("test");
         management.setFkIdNotaryPerson(person);
         management.setFkIdManagementStatus(status);
         management = managementRepository.save(management);

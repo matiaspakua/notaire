@@ -105,7 +105,7 @@ class WorkflowTraceServiceTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(100);
         management.setNumber(1001);
-        management.setEncabezado("Trace with testimony");
+        management.setHeading("Trace with testimony");
         management.setDateStart(new Date(1_000L));
         management.setFkIdManagementStatus(new ManagementStatus(12));
         management.setProcedureList(List.of(procedure));
@@ -128,7 +128,7 @@ class WorkflowTraceServiceTest {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(200);
         management.setNumber(2002);
-        management.setEncabezado("Trace without testimony");
+        management.setHeading("Trace without testimony");
         management.setDateStart(new Date(1_000L));
         management.setFkIdManagementStatus(new ManagementStatus(2));
         management.setProcedureList(List.of(procedure));
@@ -210,7 +210,7 @@ class WorkflowTraceServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw when gestion does not exist")
+    @DisplayName("Should throw when management does not exist")
     void shouldThrowWhenManagementDoesNotExist() {
         DeedManagementRepository managementRepository = Mockito.mock(DeedManagementRepository.class);
         Mockito.when(managementRepository.findById(99)).thenReturn(Optional.empty());

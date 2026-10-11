@@ -49,7 +49,7 @@ esa justificación junto a la escritura.
 El sistema SHALL controlar la correlatividad del Protocolo Auxiliar en
 forma independiente de la del Protocolo Principal.
 
-#### Scenario: Escritura de Protocolo Auxiliar no afecta la numeración del Principal
+#### Scenario: Deed de Protocolo Auxiliar no afecta la numeración del Principal
 - **WHEN** se guarda una escritura sobre un folio de Protocolo Auxiliar
 - **THEN** el sistema calcula y valida su correlativo únicamente contra
   otras escrituras de Protocolo Auxiliar del mismo año y escribano, sin

@@ -447,7 +447,7 @@ const [loading, setLoading] = useState(false);
 ```tsx
 <FormField label="Document Type" required>
   <Select value={type} onChange={setType}>
-    <option>Escritura de Venta</option>
+    <option>Deed de Venta</option>
     <option>Poder Notarial</option>
   </Select>
 </FormField>

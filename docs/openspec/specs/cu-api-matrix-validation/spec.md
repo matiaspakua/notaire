@@ -31,9 +31,9 @@ names of `@RestController` types under
 ### Requirement: Required resource base paths MUST appear in the matrix
 
 The matrix Endpoint column MUST reference each of these live resource bases at
-least once: `/carpetas`, `/cuadernos`, `/minutas-inscripcion`,
-`/plantilla-costos-documento`, `/protocolo-auxiliar`, `/roles`,
-`/tipo-identificacion`, `/tramites`.
+least once: `/procedure-folders`, `/notebooks`, `/registration-drafts`,
+`/document-cost-templates`, `/auxiliary-protocol`, `/roles`,
+`/identification-types`, `/procedures`.
 
 #### Scenario: Missing required resource base fails validation
 

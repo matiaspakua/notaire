@@ -6,7 +6,7 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.Deed;
 import com.licensis.notaire.business.DeedManagement;
@@ -33,7 +33,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author matias
  */
-public class ProcedureJpaController implements Serializable, IPersistenciaJpa
+public class ProcedureJpaController implements Serializable, JpaPersistence
 {
 
     public ProcedureJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -167,7 +167,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
 
     public boolean edit(Procedure procedure) throws IllegalOrphanException, NonexistentEntityException, Exception
     {
-        Boolean modificado = false;
+        Boolean modified = false;
         EntityManager em = null;
         try
         {
@@ -195,7 +195,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("You must retain Presupuesto " + fkIdBudgetOld + " since its fkIdTramite field is not nullable.");
+                illegalOrphanMessages.add("You must retain Budget " + fkIdBudgetOld + " since its fkIdProcedure field is not nullable.");
             }
             for (SubmittedDocument documentsSubmittedListOldDocumentsSubmitted : documentsSubmittedListOld)
             {
@@ -205,7 +205,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain DocumentosPresentado " + documentsSubmittedListOldDocumentsSubmitted + " since its fkIdTramite field is not nullable.");
+                    illegalOrphanMessages.add("You must retain SubmittedDocument " + documentsSubmittedListOldDocumentsSubmitted + " since its fkIdProcedure field is not nullable.");
                 }
             }
             for (PersonProcedure personProcedureListOldPersonProcedure : personProcedureListOld)
@@ -216,7 +216,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain TramitesPersonas " + personProcedureListOldPersonProcedure + " since its tramite field is not nullable.");
+                    illegalOrphanMessages.add("You must retain PersonProcedure " + personProcedureListOldPersonProcedure + " since its procedure field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null)
@@ -334,7 +334,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 }
             }
             em.getTransaction().commit();
-            modificado = true;
+            modified = true;
         }
         catch (Exception ex)
         {
@@ -344,7 +344,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 Integer id = procedure.getIdProcedure();
                 if (findProcedure(id) == null)
                 {
-                    throw new NonexistentEntityException("The tramite with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The procedure with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -356,12 +356,12 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 em.close();
             }
         }
-        return modificado;
+        return modified;
     }
 
-    public Boolean editProcedure(Procedure procedureModificado)
+    public Boolean editProcedure(Procedure updatedProcedure)
     {
-        Boolean modificado = Boolean.FALSE;
+        Boolean modified = Boolean.FALSE;
 
         try
         {
@@ -369,25 +369,25 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
 
             em.getTransaction().begin();
 
-            Procedure procedureViejo = em.find(Procedure.class, procedureModificado.getIdProcedure());
+            Procedure existingProcedure = em.find(Procedure.class, updatedProcedure.getIdProcedure());
 
-            procedureViejo.setFkIdManagement(procedureModificado.getFkIdManagement());
-            procedureViejo.setFkIdDeed(procedureModificado.getFkIdDeed());
+            existingProcedure.setFkIdManagement(updatedProcedure.getFkIdManagement());
+            existingProcedure.setFkIdDeed(updatedProcedure.getFkIdDeed());
 
             em.getTransaction().commit();
             em.close();
-            modificado = Boolean.TRUE;
+            modified = Boolean.TRUE;
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        return modificado;
+        return modified;
     }
 
-    public Boolean editProcedureManagementOnly(Procedure procedureModificado)
+    public Boolean editProcedureManagementOnly(Procedure updatedProcedure)
     {
-        Boolean modificado = Boolean.FALSE;
+        Boolean modified = Boolean.FALSE;
 
         try
         {
@@ -395,19 +395,19 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
 
             em.getTransaction().begin();
 
-            Procedure procedureViejo = em.find(Procedure.class, procedureModificado.getIdProcedure());
+            Procedure existingProcedure = em.find(Procedure.class, updatedProcedure.getIdProcedure());
 
-            procedureViejo.setFkIdManagement(procedureModificado.getFkIdManagement());
+            existingProcedure.setFkIdManagement(updatedProcedure.getFkIdManagement());
 
             em.getTransaction().commit();
             em.close();
-            modificado = Boolean.TRUE;
+            modified = Boolean.TRUE;
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        return modificado;
+        return modified;
     }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException
@@ -425,7 +425,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The tramite with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The procedure with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             Budget fkIdBudgetOrphanCheck = procedure.getFkIdBudget();
@@ -435,7 +435,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Tramite (" + procedure + ") cannot be destroyed since the Presupuesto " + fkIdBudgetOrphanCheck + " in its fkIdPresupuesto field has a non-nullable fkIdTramite field.");
+                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the Budget " + fkIdBudgetOrphanCheck + " in its fkIdBudget field has a non-nullable fkIdProcedure field.");
             }
             List<SubmittedDocument> documentsSubmittedListOrphanCheck = procedure.getSubmittedDocumentList();
             for (SubmittedDocument documentsSubmittedListOrphanCheckDocumentsSubmitted : documentsSubmittedListOrphanCheck)
@@ -444,7 +444,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Tramite (" + procedure + ") cannot be destroyed since the DocumentosPresentado " + documentsSubmittedListOrphanCheckDocumentsSubmitted + " in its documentosPresentadoList field has a non-nullable fkIdTramite field.");
+                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the SubmittedDocument " + documentsSubmittedListOrphanCheckDocumentsSubmitted + " in its submittedDocumentList field has a non-nullable fkIdProcedure field.");
             }
             List<PersonProcedure> personProcedureListOrphanCheck = procedure.getPersonProcedureList();
             for (PersonProcedure personProcedureListOrphanCheckPersonProcedure : personProcedureListOrphanCheck)
@@ -453,7 +453,7 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Tramite (" + procedure + ") cannot be destroyed since the TramitesPersonas " + personProcedureListOrphanCheckPersonProcedure + " in its tramitesPersonasList field has a non-nullable tramite field.");
+                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the PersonProcedure " + personProcedureListOrphanCheckPersonProcedure + " in its personProcedureList field has a non-nullable procedure field.");
             }
             if (illegalOrphanMessages != null)
             {
@@ -517,16 +517,16 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
                 q.setMaxResults(maxResults);
                 q.setFirstResult(firstResult);
             }
-            List<Procedure> listaProcedures = q.getResultList();
+            List<Procedure> procedures = q.getResultList();
 
-            for (Iterator<Procedure> it = listaProcedures.iterator(); it.hasNext();)
+            for (Iterator<Procedure> it = procedures.iterator(); it.hasNext();)
             {
                 Procedure procedure = it.next();
                 procedure.setPersonList(new ArrayList<Person>());
                 procedure.setSubmittedDocumentList(new ArrayList<SubmittedDocument>());
             }
 
-            return listaProcedures;
+            return procedures;
         }
         finally
         {
@@ -547,22 +547,22 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Procedure encontrarProcedure(Integer id)
+    public Procedure findProcedureCopy(Integer id)
     {
         Procedure procedure = new Procedure();
         EntityManager em = getEntityManager();
         try
         {
-            Procedure miProcedure = em.find(Procedure.class, id);
+            Procedure found = em.find(Procedure.class, id);
 
-            procedure.setIdProcedure(miProcedure.getIdProcedure());
-            procedure.setFkIdDeed(miProcedure.getFkIdDeed());
-            procedure.setFkIdManagement(miProcedure.getFkIdManagement());
-            procedure.setFkIdProperty(miProcedure.getFkIdProperty());
-            procedure.setFkIdBudget(miProcedure.getFkIdBudget());
-            procedure.setFkIdProcedureType(miProcedure.getFkIdProcedureType());
-            procedure.setNotes(miProcedure.getNotes());
-            procedure.setVersion(miProcedure.getVersion());
+            procedure.setIdProcedure(found.getIdProcedure());
+            procedure.setFkIdDeed(found.getFkIdDeed());
+            procedure.setFkIdManagement(found.getFkIdManagement());
+            procedure.setFkIdProperty(found.getFkIdProperty());
+            procedure.setFkIdBudget(found.getFkIdBudget());
+            procedure.setFkIdProcedureType(found.getFkIdProcedureType());
+            procedure.setNotes(found.getNotes());
+            procedure.setVersion(found.getVersion());
         }
         finally
         {
@@ -571,29 +571,26 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
         return procedure;
     }
 
-    public List<Procedure> encontrarProcedureBudget(Integer idBudget)
+    public List<Procedure> findProceduresByBudget(Integer idBudget)
     {
 
         EntityManager em = getEntityManager();
 
-        List<Procedure> miProcedure = null;
+        List<Procedure> procedures = null;
 
         try
         {
-            // Nombre del @NamedQuery definido en nuestra clase
             Query q = em.createNamedQuery("Procedure.findByIdBudget");
+            q.setParameter("idBudget", idBudget);
 
-            //Le paso el nombre del parametro del query, y el valor a buscar.
-            q.setParameter("idPresupuesto", idBudget);
-
-            miProcedure = (List<Procedure>) q.getResultList();
+            procedures = (List<Procedure>) q.getResultList();
 
         }
         finally
         {
             em.close();
         }
-        return miProcedure;
+        return procedures;
     }
 
     public int getProcedureCount()
@@ -613,19 +610,18 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
         }
     }
 
-    public Boolean asociarBudget(Procedure miProcedure)
+    public Boolean associateBudget(Procedure procedure)
     {
-        Boolean modificado = false;
+        Boolean modified = false;
         EntityManager em = this.getEntityManager();
         EntityTransaction tx = null;
 
-        // Abro una nueva transaccion
         tx = em.getTransaction();
         tx.begin();
 
-        Query q = em.createQuery("UPDATE Procedure t SET t.fkIdBudget.idBudget = :idPresupuesto WHERE t.idProcedure = :id");
-        q.setParameter("idPresupuesto", miProcedure.getFkIdBudget().getIdBudget());
-        q.setParameter("id", miProcedure.getIdProcedure());
+        Query q = em.createQuery("UPDATE Procedure t SET t.fkIdBudget.idBudget = :idBudget WHERE t.idProcedure = :id");
+        q.setParameter("idBudget", procedure.getFkIdBudget().getIdBudget());
+        q.setParameter("id", procedure.getIdProcedure());
 
         int updated = q.executeUpdate();
 
@@ -635,10 +631,10 @@ public class ProcedureJpaController implements Serializable, IPersistenciaJpa
 
         if (updated > 0)
         {
-            modificado = true;
+            modified = true;
         }
 
-        return modificado;
+        return modified;
     }
 
     @Override

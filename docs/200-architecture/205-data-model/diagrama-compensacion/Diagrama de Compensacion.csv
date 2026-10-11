@@ -1,42 +1,42 @@
-Id,Entidad_Padre,Entidad_Hija,Clave_Foranea,Insertar,Modificar,Borrar,Regla_Negocio
-1,Personas,Identificaciones,fk_id_persona,Impedir,Impedir,Cascada,Toda identificación pertenece a una persona
-2,Tipos de Identificación,Identificaciones,fk_id_tipo_identificacion,Impedir,Impedir,Impedir,No borrar tipo de identificación en uso
-3,Personas,Usuarios,fk_id_persona,Impedir,Impedir,Impedir,No borrar persona con cuenta de usuario
-4,Roles,Usuarios,fk_id_rol,Null,Impedir,Null,Usuario puede crearse sin rol asignado
-5,Roles,Roles-Permisos,fk_id_rol,Impedir,Impedir,Cascada,Al borrar rol se eliminan sus permisos
-6,Usuarios,Registro Auditoria,fk_id_usuario,Impedir,Impedir,Impedir,No borrar usuario con bitácora de auditoría
-7,Personas,Suplencias,fk_id_suplantado / fk_id_suplente,Impedir,Impedir,Impedir,No borrar escribanos con suplencias
-8,Workflow Definition,Workflow Node,fk_workflow_definition_id,Impedir,Impedir,Cascada,Al borrar workflow se eliminan sus nodos
-9,Workflow Definition,Workflow Transition,fk_workflow_definition_id,Impedir,Impedir,Cascada,Al borrar workflow se eliminan sus transiciones
-10,Estados de Gestión,Workflow Node,fk_estado_gestion_id,Impedir,Impedir,Impedir,No borrar estado asociado a nodos
-11,Workflow Node,Workflow Transition,fk_nodo_origen / fk_nodo_destino,Impedir,Impedir,Cascada,Al borrar nodo se eliminan transiciones
-12,Workflow Definition,Tipos de Trámite,fk_workflow_definition_id,Null,Impedir,Null,Tipo de trámite puede no tener workflow asignado
-13,Personas,Gestiones de Escrituras,fk_id_persona_escribano,Impedir,Impedir,Impedir,Toda gestión requiere escribano responsable
-14,Estados de Gestión,Gestiones de Escrituras,fk_id_estado_de_gestion,Null,Impedir,Null,Gestión puede crearse sin estado consolidado
-15,Gestiones de Escrituras,Historial,fk_id_gestion,Impedir,Impedir,Cascada,Al borrar gestión se borra su historial
-16,Estados de Gestión,Historial,fk_id_estado_gestion,Impedir,Impedir,Impedir,No borrar estado con historial registrado
-17,Tipos de Trámite,Plantillas Trámites,fk_id_tipo_tramite,Impedir,Impedir,Cascada,Al borrar tipo de trámite se desvincula plantilla
-18,Tipos de Documento,Plantillas Trámites,fk_id_tipo_documento,Impedir,Impedir,Cascada,Al borrar tipo de doc se desvincula plantilla
-19,Tipos de Trámite,Plantillas Presupuestos,fk_id_tipo_tramite,Impedir,Impedir,Cascada,Al borrar tipo de trámite se desvincula arancel
-20,Conceptos,Plantillas Presupuestos,fk_id_concepto,Impedir,Impedir,Cascada,Al borrar concepto se desvincula arancel
-21,Personas,Presupuestos,fk_id_persona,Impedir,Impedir,Impedir,No borrar cliente con cotizaciones emitidas
-22,Presupuestos,Items,fk_id_presupuesto,Impedir,Impedir,Cascada,Al borrar presupuesto se eliminan sus líneas
-23,Presupuestos,Pagos,fk_id_presupuesto,Impedir,Impedir,Impedir,No existen pagos sin presupuesto. No borrar presupuesto con pagos
-24,Presupuestos,Trámites,fk_id_presupuesto,Impedir,Impedir,Impedir,V14: Todo trámite requiere presupuesto base
-25,Tipos de Trámite,Trámites,fk_id_tipo_tramite,Impedir,Impedir,Impedir,No borrar tipo de trámite con trámites en curso
-26,Gestiones de Escrituras,Trámites,fk_id_gestion,Null,Impedir,Null,Protocolo Auxiliar no requiere carpeta de gestión
-27,Escrituras,Trámites,fk_id_escritura,Null,Impedir,Null,El trámite nace sin escritura hasta su otorgamiento
-28,Inmuebles,Trámites,fk_id_inmueble,Null,Impedir,Null,Trámites que no involucran inmuebles tienen FK nula
-29,Trámites,Trámites-Personas,fk_id_tramite,Impedir,Impedir,Cascada,Al borrar trámite se desvinculan las partes
-30,Personas,Trámites-Personas,fk_id_persona_cliente,Impedir,Impedir,Impedir,No borrar persona que interviene en actos
-31,Trámites,Documentos Presentados,fk_id_tramite,Null,Impedir,Cascada,V6: Permite documentos autónomos previo a asignación
-32,Tipos de Documento,Documentos Presentados,fk_id_tipo_documento,Null,Impedir,Impedir,Tipo de documento maestro
-33,Personas,Folios,fk_id_persona_escribano,Impedir,Impedir,Impedir,No borrar escribano con folios asignados
-34,Tipos de Folio,Folios,fk_id_tipo_folio,Impedir,Impedir,Impedir,No borrar tipo de folio en uso
-35,Escrituras,Folios,fk_id_escritura,Null,Impedir,Null,Folios disponibles o Errose/No Pasó no tienen escritura
-36,Escrituras,Testimonios,fk_id_escritura,Impedir,Impedir,Cascada,No existe testimonio sin escritura matriz
-37,Testimonios,Movimientos Testimonio,fk_id_testimonio,Impedir,Impedir,Cascada,Al borrar testimonio se eliminan movimientos
-38,Testimonios,Copias,fk_id_testimonio,Impedir,Impedir,Cascada,Al borrar testimonio se eliminan sus copias
-39,Personas,Copias,fk_id_persona,Impedir,Impedir,Impedir,No borrar persona destinataria de copia
-40,Folios,Folios-Copias,fk_id_folio,Impedir,Impedir,Impedir,Folio de testimonio asignado
-41,Copias,Folios-Copias,fk_id_copia,Impedir,Impedir,Cascada,Al borrar copia se desasocia el folio
+Id,Parent,Child,Foreign key,Insert,Update,Delete,Business rule
+1,people,identifications,fk_id_person,Restrict,Restrict,Cascade,Every identification belongs to a person. Flyway does not create `identifications`; V45 renames it only when the legacy table is already present.
+2,identification_types,identifications,fk_id_identification_type,Restrict,Restrict,Restrict,Do not delete an identification type that is in use. Flyway does not create `identifications`; V45 renames it only when the legacy table is already present.
+3,people,users,fk_id_person,Restrict,Restrict,Restrict,Do not delete a person who has a user account.
+4,roles,users,fk_id_role,Null,Restrict,Null,A user can be created without an assigned role.
+5,roles,role_modules,fk_id_role,Restrict,Restrict,Cascade,Deleting a role deletes its module permissions.
+6,users,audit_records,fk_id_user,Restrict,Restrict,Restrict,Do not delete a user who has an audit log.
+7,people,substitutions,fk_id_substituted_person / fk_id_substitute_person,Restrict,Restrict,Restrict,Do not delete notaries who have substitutions.
+8,workflow_definition,workflow_node,fk_workflow_definition_id,Restrict,Restrict,Cascade,Deleting a workflow deletes its nodes.
+9,workflow_definition,workflow_transition,fk_workflow_definition_id,Restrict,Restrict,Cascade,Deleting a workflow deletes its transitions.
+10,management_statuses,workflow_node,fk_management_status_id,Restrict,Restrict,Restrict,Do not delete a status that is used by workflow nodes.
+11,workflow_node,workflow_transition,fk_origin_node_id / fk_destination_node_id,Restrict,Restrict,Cascade,Deleting a node deletes its transitions.
+12,workflow_definition,procedure_types,fk_workflow_definition_id,Null,Restrict,Null,A procedure type may have no workflow assigned.
+13,people,deed_managements,fk_id_notary_person,Restrict,Restrict,Restrict,Every deed management requires a responsible notary.
+14,management_statuses,deed_managements,fk_id_management_status,Null,Restrict,Null,A deed management can be created without a settled status.
+15,deed_managements,history,fk_id_deed_management,Restrict,Restrict,Cascade,Deleting a deed management deletes its history.
+16,management_statuses,history,fk_id_management_status,Restrict,Restrict,Restrict,Do not delete a status that has history rows.
+17,procedure_types,procedure_templates,fk_id_procedure_type,Restrict,Restrict,Cascade,Deleting a procedure type detaches its document template.
+18,document_types,procedure_templates,fk_id_document_type,Restrict,Restrict,Cascade,Deleting a document type detaches the template.
+19,procedure_types,budget_templates,fk_id_procedure_type,Restrict,Restrict,Cascade,Deleting a procedure type detaches the fee template.
+20,concepts,budget_templates,fk_id_concept,Restrict,Restrict,Cascade,Deleting a concept detaches the fee template.
+21,people,budgets,fk_id_person,Restrict,Restrict,Restrict,Do not delete a client who has issued quotes.
+22,budgets,items,fk_id_budget,Restrict,Restrict,Cascade,Deleting a budget deletes its lines.
+23,budgets,payments,fk_id_budget,Restrict,Restrict,Restrict,Payments cannot exist without a budget. Do not delete a budget that has payments.
+24,budgets,procedures,fk_id_budget,Restrict,Restrict,Restrict,V14: every procedure requires a base budget.
+25,procedure_types,procedures,fk_id_procedure_type,Restrict,Restrict,Restrict,Do not delete a procedure type that has procedures in progress.
+26,deed_managements,procedures,fk_id_deed_management,Null,Restrict,Null,`Protocolo Auxiliar` does not require a deed-management folder.
+27,deeds,procedures,fk_id_deed,Null,Restrict,Null,The procedure starts without a deed until the act is granted.
+28,properties,procedures,fk_id_property,Null,Restrict,Null,Procedures that do not involve property have a null foreign key.
+29,procedures,person_procedures,fk_id_procedure,Restrict,Restrict,Cascade,Deleting a procedure detaches the parties.
+30,people,person_procedures,fk_id_client_person,Restrict,Restrict,Restrict,Do not delete a person who takes part in an act.
+31,procedures,submitted_documents,fk_id_procedure,Null,Restrict,Cascade,V6: autonomous documents are allowed before a procedure is assigned.
+32,document_types,submitted_documents,fk_id_document_type,Null,Restrict,Restrict,Master document type.
+33,people,folios,fk_id_notary_person,Restrict,Restrict,Restrict,Do not delete a notary who has assigned folios.
+34,folio_types,folios,fk_id_folio_type,Restrict,Restrict,Restrict,Do not delete a folio type that is in use.
+35,deeds,folios,fk_id_deed,Null,Restrict,Null,"Folios that are available, or stored as `Errose` / `No Pasó`, have no deed."
+36,deeds,testimonies,fk_id_deed,Restrict,Restrict,Cascade,A testimony cannot exist without a source deed.
+37,testimonies,testimony_movements,fk_id_testimony,Restrict,Restrict,Cascade,Deleting a testimony deletes its movements.
+38,testimonies,copies,fk_id_testimony,Restrict,Restrict,Cascade,Deleting a testimony deletes its copies.
+39,people,copies,fk_id_person,Restrict,Restrict,Restrict,Do not delete a person who is the recipient of a copy.
+40,folios,folio_copies,fk_id_folio,Restrict,Restrict,Restrict,Folio assigned to a testimony.
+41,copies,folio_copies,fk_id_copy,Restrict,Restrict,Cascade,Deleting a copy detaches the folio.

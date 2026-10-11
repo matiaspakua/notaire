@@ -57,7 +57,7 @@ public class Role implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idRole == null || idRole.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idRole == null || idRole.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

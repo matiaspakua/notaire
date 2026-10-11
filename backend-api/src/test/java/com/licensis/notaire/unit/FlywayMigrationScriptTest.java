@@ -122,7 +122,7 @@ class FlywayMigrationScriptTest {
                 .as("Should insert admin user")
                 .contains("INSERT INTO usuarios");
 
-        // Should reference the escribano persona
+        // Should reference the notary person
         assertThat(dataContent)
                 .as("Admin user should reference notary")
                 .contains("Escribano");

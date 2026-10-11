@@ -22,8 +22,524 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Breaking
+
+- **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
+  public resources move to English segments (`POST /api/v1/users/login`, `/api/v1/managements`,
+  `/dashboard/people`, and the rest of the former Spanish paths). There is no Spanish alias.
+  Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
+  `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
+  `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
+  `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
+  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
+  notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
+  `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
+  `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
+  (`managementHeading` on budget summaries). Upcoming expirations take the query
+  parameter `days`. Management summaries and workflow traces use the JSON
+  field `currentStatus`. The current-status read operation id is
+  `getCurrentStatus`. `R45` reverses the schema
+  renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
+
 ### Changed
 
+- **English names kept with status badges and the app-shell skeleton** (#1490, CU75):
+  The #1366 `StatusBadge` and the #1359 app-shell skeleton land on the English
+  screens. Management badges read `currentStatus`. Testimony badges use
+  `testimonyStatus`. Stored statuses such as `Pendiente` stay.
+- **English names kept with locale formatting and deed pickers** (#1490, CU75):
+  The #1355 `useFormat` hook and the #1340 deed picker land on the English
+  screens. Testimony, registration-draft, and folio forms use `DeedPicker`
+  against `/deeds`. `usePeople()` and `useDeeds()` stay removed. Stored
+  statuses `Firmada` and `Sin Firmar` stay.
+- **English skipped-case titles** (#1490, CU75):
+  Skipped and smoke titles say reports, deeds, concepts, copies, users, and
+  administration. Icon alts `Agregar`, `Cancelar`, and `Guardar`, and the
+  visible labels `declaración jurada` and `Descargar PDF`, stay.
+- **English agent skill prose** (#1490, CU75):
+  The motion-design skill and the Bruno collection skill are written in
+  English. Library names, the install commands, and the Bruno file layout stay.
+- **English entity debug names and test titles** (#1490, CU75):
+  `User.toString` starts with `User[` and `Concept.toString` starts with
+  `Concept[`. Tour and workflow titles say deeds, properties, copies,
+  reports, concepts, users, payments, and folders. Visible Spanish labels
+  and stored statuses stay.
+- **English helper and architecture names** (#1490, CU75):
+  E2E helpers and comments name `User` and `History`. The SAD domain
+  diagram, the security data table, and the API coverage notes use those
+  class names. The Java architect sample uses `users` and `DtoUser`. The
+  stored status `Sin Firmar` and the default history status `Iniciado` stay.
+- **English test titles and PDF fixtures** (#1490, CU75):
+  User and history tests name the live types `User` and `History`, and the
+  user field `active`. PDF samples use `No concepts`, `Properties`,
+  `History`, and `Notes`. Accent fixtures `Símbolos` and `línea`, the
+  procedure name `Compraventa`, and the status `En Tramite` stay.
+- **English persistence and report names** (#1490, CU75):
+  Creating a history row reports `Could not create an entity of type: History`.
+  Orphan checks name `User`, `History`, and `DeedManagement`. The management
+  history PDF is titled `History of management`. The English catalog says
+  `Case type` for document costs. Stored status labels stay.
+- **Spanish catalog nouns restored** (#1490, CU75):
+  `es.json` again says `Usuario`, `Escritura`, `Testimonio`, `Copia`, `Pago`,
+  and `Historial` where class names had replaced those words. The English
+  catalog stays in English. A copy rejected because of a registered movement
+  reports `The testimony already has a registered movement and does not accept new copies.`
+- **English lazy-association names** (#1490, CU75):
+  The JPA lazy-loading guide lists the live collections `testimonyMovementList`,
+  `procedureList`, `itemList`, `auditRecordList`, and `nodes`. Samples join
+  `Testimony.testimonyMovementList`. Java display names say `typeFolioId`,
+  `budgetId`, and concepts. Stored statuses such as `Nuevo`, `Utilizado`,
+  and `Errose` stay.
+- **English login contract in the security guides** (#1490, CU75):
+  The authentication, validation, and SQL-injection guides, plus the login
+  test reports, use the live field `valid` and the JSON names `name` and
+  `password`. Samples use `User`, `users.username`, and `deed_managements.number`.
+  Administrator write paths match `SecurityAndCorsConfig`. A locked account
+  is documented as HTTP 429. Stored role names such as `Escribano` stay.
+- **English Playwright case identifiers** (#1490, CU75):
+  Folio and deed selects use `select-folio-type` and `select-folio-deed`.
+  Case fixtures name `folioType` and `copyNumber`. Seed failures, payment
+  locals, API suite titles, and the management picker accessible name are
+  English. Stored statuses such as `Firmada` and `Sin Firmar` stay, and
+  default-locale labels such as `/número/i` and `/archivar de todos modos/i` stay.
+- **English validation messages and DTO guide** (#1490, CU75):
+  A missing auxiliary folio reports `The auxiliary folio where the deed starts is required`.
+  A workflow node update with no fields reports `provide at least one field to update`.
+  An invalid management-status DTO reports `Invalid DTO`. The budget search
+  description says `for example`. The DTO mapping guide uses the live fields
+  `budgetTemplatePK`, `idProcedureType`, `valid`, and `operationDetail`.
+  Stored labels such as `Protocolo Auxiliar`, `Compraventa`, and `Honorarios` stay.
+- **English audit and Playwright identifiers** (#1490, CU75):
+  The audit module filter is `moduleFilter` and its test id is
+  `select-audit-module`. Playwright uses the live ids `select-status-folio`,
+  `select-deed-testimony`, and `select-document-type`. Seed locals use
+  `procedureType`, `documentType`, and `status`. Stored labels such as
+  `Nuevo`, `Errose`, `Utilizado`, `Compraventa`, and `Honorarios` stay.
+  Default-locale labels such as `nuevo cuaderno` stay.
+- **English Java test identifiers** (#1490, CU75):
+  External-entity, document-reentry, and management-transition tests use
+  English method and variable names such as `createExternalEntityDocument`
+  and `intermediateStatus`. Budget search coverage calls `status=PENDIENTE`.
+  Person name lookup stubs use `name` and `lastName`. Stored labels such as
+  `Compraventa`, `Certificado de Dominio`, `Cliente`, and `Entidad Externa`
+  stay.
+- **English payment and workflow identifiers** (#1490, CU75):
+  The payment status type is `PaymentStatus` and its cache key is `status`.
+  Workflow traces use `management-workflow-trace`. The budget setter is
+  `setSelectedProcedureTypeId`. Editor node data uses `type`, which the
+  node component already reads. The viewer fallback label is `Node`.
+  Message keys such as `fields.estado` and `estadosGestion` stay. Stored
+  status samples such as `PENDIENTE` stay.
+- **English testimony and request fixtures** (#1490, CU75):
+  Testimony samples use `number`, `verified`, `idTestimonyMovement`, and
+  `registered`. Withdraw and reentry inputs use `cardNumber`, and the
+  reentry field test id is `input-reentry-card-number`. Document reentry
+  samples use `idSubmittedDocument` and `reentered`. API client samples
+  post `number`. Message keys such as `reingresado` and
+  `fields.numeroCarton` stay.
+- **English external-document identifiers** (#1490, CU75):
+  The external-entity document cache key is `externalEntityDocuments` /
+  `management`. The movement input is `idSubmittedDocument`. Playwright
+  create buttons use the live ids such as `btn-new-person` and
+  `btn-new-deed`. Default-locale labels such as `Nueva persona` and
+  `Certificado de Dominio` stay.
+- **English summary locals** (#1490, CU75):
+  Budget and payment screens store the summary in `summary` and the
+  payment state in `paymentStatus`. Message keys such as `resumen.title`,
+  `gestiones.resumen`, and `estadoSinPagos` stay. The archive confirmation
+  assertion matches `Archivar de todos modos`.
+- **English screen test ids** (#1490, CU75):
+  Playwright uses the live ids `btn-new-management`, `btn-new-budget`,
+  `select-budget-management`, `btn-confirm-transition`, and
+  `btn-place-on-hold`. Default-locale labels such as `Gestiones`,
+  `Presupuestos`, and `Nueva gestión` stay.
+- **English API collection filenames** (#1490, CU75):
+  Bruno report requests use English filenames such as `01-index-book.yml`,
+  `06-budget.yml`, and `10-management-history.yml`. The case summary
+  request is `05b-case-summary.yml`. `CU-API-MATRIX.csv` points at those
+  paths. Seeded `Compraventa` stays.
+- **English Playwright identifiers** (#1490, CU75):
+  Payment and people specs use `lastName`, `balanceDisplay`, and
+  `check-is-client`. The people checkbox still reads
+  `t("fields.esCliente")`. The default-locale label
+  `Buscar por apellido...` stays.
+- **English icon filenames** (#1490, CU75):
+  Public icons use English names such as `save.png`, `delete.png`,
+  `users.png`, `management-statuses.png`, and `budget-templates.png`.
+  The folder `icons/modules` replaces `icons/modulos`. Message-catalog
+  keys such as `estadosGestion` and `usuarios` stay.
+- **English withdraw test id and history samples** (#1490, CU75):
+  The testimony withdraw button test id is `btn-confirm-withdraw`.
+  History samples live in `items-history.test.ts`. Deed-sign and
+  testimony-movement fixtures use the live English sentences, and the
+  stored status `Sin Firmar` stays. Search mocks match `/search`.
+  Default-locale delete fallbacks such as `Error al eliminar` stay.
+- **English mutation-error samples** (#1490, CU75):
+  The local budget-total sample uses `calculateTotal`, `price`, and
+  `quantity`. Mutation-error fixtures use the live English sentences
+  `The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)`
+  and `The submitted data duplicates an existing record`. The default-locale
+  plantilla fallback stays Spanish because the budgets page passes
+  `t("items.errorNoPlantilla")`.
+- **English report test names** (#1490, CU75):
+  `NotebookController` stores `reportService`. Payment logs say
+  `Editing payment` and `Deleting payment`. Report tests are
+  `ReportServicePaymentReceiptTest`, `PaymentReceiptReportIntegrationTest`,
+  and `ReportsUseCaseIntegrationTest`. The audit filter uses the module
+  `Concepts`. PDF filenames such as `recibo_pago_` and `lista_documentos.pdf`
+  stay Spanish. Person names and `Compraventa` stay.
+- **English test fixture prose** (#1490, CU75):
+  Backend and Playwright fixtures use English free-text values such as
+  `Test deed`, `Test payment`, and `Standard workflow`. Stored labels and
+  person names stay, including `Compraventa`, `Firmada`, and `García`.
+  Visible Spanish form labels such as `observaciones` and `valuación fiscal`
+  stay because the default locale is Spanish.
+- **English E2E seed identifiers** (#1490, CU75):
+  Playwright seed env vars are `E2E_SEED_PERSON_ID`, `E2E_SEED_BUDGET_ID`,
+  `E2E_SEED_CONCEPT_ID`, `E2E_SEED_PROCEDURE_TYPE_ID`, `E2E_SEED_USER_ID`,
+  and `E2E_SEED_MANAGEMENT_STATUS_ID`. `TestData` keys match the live
+  payloads (`firstName`, `heading`, `propertyAmount`). Stored labels stay,
+  including `Firmada`, `Soltero`, `Masculino`, `EMPLEADO`, `Habilitado`,
+  `Efectivo`, `Pendiente`, and `DNI`. Spanish form labels such as
+  `contraseña` stay because the default locale is Spanish.
+- **English frontend-test and error-handling samples** (#1490, CU75):
+  `FRONTEND-TESTING-GUIDE.md` names `managementsKeys`,
+  `substitutions-reports.test.ts`, and the current `TS-nnnn` specs.
+  The auth sample uses `name`, `type`, and `valid`. The seeded login is
+  `users.username` / `users.password` / `users.user_type` after V37; the
+  V2 script still inserts into `usuarios`. Button assertions stay
+  `Nuevo` and `Cancelar` because the default locale is Spanish.
+  `BACKEND-ERROR-HANDLING-STRATEGY.md` shows a `heading` validation
+  message and the login field `valid`. CU73 in the auth threat model
+  is the audit log. The October assessment names CU72 and CU79 in English.
+- **English testing-pattern samples** (#1490, CU75):
+  `docs/300-development/303-testing/TESTING-PATTERNS.md` uses `Budget`,
+  `BudgetService`, and `BudgetRepositoryPort`. Management create JSON is
+  `number`, `heading`, and `notes`. Budget create JSON is `date`, `heading`,
+  `status` (`BORRADOR`), `propertyAmount`, and `personId`. Error samples
+  read `ErrorResponse.message`. The people-form sample submits `firstName`
+  and `lastName`. Visible Spanish labels on the live screen stay
+  (`Nombre`, `Apellido`, `Guardar`), and message keys stay
+  `personas.fields.nombre`.
+- **English development setup guide** (#1490, CU75):
+  `docs/300-development/301-setup/README.md` is English. The JDK line matches
+  the root `pom.xml` (Java 26). The package tree names `PersonController`,
+  `DtoPerson`, and `adapter.in.web`. Index examples are `people.id`,
+  `deeds.id`, and `budgets.id`. The example test class is `BudgetEntityTest`.
+- **English E2E test inventory** (#1490, CU75):
+  `TEST-PLAN.md` and `E2E-TEST-MAPPING.md` name the suites in English
+  (budgets, deed managements, documents, deeds, payments). Visible UI
+  strings the tests still assert stay, including the heading `Presupuestos`
+  and the quoted gaps “ver”, “libro índices”, and “declaración jurada”.
+  Nav keys `suplencias` and `reportes` stay. Retired spec filenames such as
+  `presupuestos.spec.ts` stay. CSV headers `CU_Nombre`, `Modulo`, `Entidad`,
+  `Operacion`, and `Notas` stay because the matrix validator reads them.
+- **English test-case writeups** (#1490, CU75):
+  The nine cases under `docs/300-development/303-testing/test-cases/` use
+  English filenames and prose (`TC-001-prepare-budget-success.md` through
+  `TC-009-register-document-debts-success.md`). The stored deed status
+  `Firmada` stays. Use-case ids CU01 and CU04 through CU09 stay.
+- **English software architecture document** (#1490, CU75):
+  The SAD uses current names (`deed_managements`, `procedures`, `budgets`,
+  `User`) and the platform in the root `pom.xml` (Java 26, Spring Boot 4.1.1).
+  The core diagram uses current columns, including `procedures.fk_id_budget`.
+  `budgets.fk_id_tramite` stays as the column V14 removed. Stored labels
+  `Escribano` and `ESCRIBANO` stay. The `Casos de Uso` folder name stays.
+- **English compensation diagram** (#1490, CU75):
+  The compensation spreadsheet and diagram use current table names
+  (`people`, `deed_managements`, `procedures`) and current foreign keys
+  (`fk_id_person`, `fk_id_notary_person`, `fk_origin_node_id`). Actions are
+  `Restrict`, `Cascade`, and `Null`. `identifications` stays labeled as the
+  legacy table Flyway does not create. Stored labels `Protocolo Auxiliar`,
+  `Errose`, and `No Pasó` stay. The removed column `budgets.fk_id_tramite`
+  stays in the legend. Filenames stay as recorded.
+- **English ERD spreadsheet** (#1490, CU75):
+  `Modelo Relacional Escribania - Entidades.csv` uses English headers
+  (`Entity`, `Attribute`, `Description`) and English type labels (`Strong`,
+  `Integer`, `Text`, `yes` / `no`). Description cells match the data
+  dictionary. `users` is `Weak / strong`, as in the dictionary index. Stored
+  labels such as `No Pasó` and `Workflow de Gestión Estándar` stay.
+  `docs/tools/generate_erd.py` writes those English labels on the next
+  regeneration.
+- **English data-dictionary descriptions** (#1490, CU75):
+  Column descriptions, the table index, the compensation notes, and sections
+  1, 3, 6.2, and 6.3 of the data dictionary are English. Stored labels such
+  as `No Pasó`, `Workflow de Gestión Estándar`, `Honorarios`, and `DNI` stay.
+  Historical names `identificaciones`, `nombre`, `numero`, and `fk_id_tramite`
+  stay where they name the pre-rename schema.
+- **English data-dictionary column names** (#1490, CU75):
+  The data dictionary, the ERD, and the compensation diagram use the V45
+  column names (`fk_id_budget`, `birth_date`, `node_type`, and the rest).
+  Headings, table summaries, and section 6.1 are English. Stored labels such
+  as `Honorarios`, `BORRADOR`, and `Workflow de Gestión Estándar` stay.
+  `identificaciones` is not a Flyway-created table. Flag cells use `Yes`.
+- **English ADR index** (#1490, CU75):
+  The ADR index is English. Dates for ADR-005, ADR-006, and ADR-007 match each
+  decision file. The platform line matches the root `pom.xml`: Java 26 and
+  Spring Boot 4.1.1. Message keys such as `suplencias` and `reportes` stay.
+- **English Flyway schema-versioning decision** (#1490, CU75):
+  ADR-007 is English. Dependencies are `spring-boot-starter-flyway` and
+  `flyway-database-postgresql`. `V1__initial_schema.sql`, `V2__initial_data.sql`,
+  and `V45__rename_remaining_spanish_identifiers.sql` exist. Applied migration
+  filenames V1–V44 stay. Seeded label `Workflow de Gestión Estándar` stays.
+  `spring.flyway.clean-disabled` stays `true`.
+- **English database-migration decision** (#1490, CU75):
+  ADR-004 is English. The live database is PostgreSQL 16 with Flyway, Hibernate
+  `ddl-auto` `none`, and table `budgets`. The Liquibase sketch and the MySQL
+  table `presupuesto` stay as that original plan. Applied migrations V1–V44 stay
+  immutable. Stored statuses such as `BORRADOR` stay.
+- **English catalog-item identifiers** (#1490, CU75):
+  The budget controller field is `budgetCatalogItemsService`. The budgets page
+  uses `catalogItems`, `addFromCatalogMutation`, and `handleAddFromCatalog`.
+  The add button test id is `btn-add-from-catalog`. Message keys
+  `items.agregarCatalogo`, `items.addedFromCatalogo`, and `items.catalogoSection`
+  stay. Stored budget status `PENDIENTE` stays.
+- **English API versioning decision** (#1490, CU75):
+  ADR-003 is English. The live budget controller is `BudgetController` at
+  `/api/v1/budgets`. Errors use `ErrorResponse` (`timestamp`, `status`, `error`,
+  `message`, `path`, `traceId`, `details`). Stored statuses such as `BORRADOR`
+  and `PENDIENTE` stay. There is no `/api/v2` surface.
+- **English module-structure decision** (#1490, CU75):
+  ADR-002 is English. Samples name current types (`ReportController`,
+  `DeedManagementRepository`, `User`, `SecurityAndCorsConfig`). The coverage
+  exclusion `service.Administrador*` stays. `frontend-swing` and `notaire-shared`
+  stay retired.
+- **English frontend-migration decision** (#1490, CU75):
+  ADR-005 is English. The original planned routes (`gestiones`, `clientes`,
+  `escrituras`, `presupuestos`, `protocolos`, `administracion`, `reportes`) stay
+  as that design. Shipped dashboard routes are English. Message keys such as
+  `suplencias` and `reportes` stay.
+- **English development and testing indexes** (#1490, CU75):
+  The development index and the testing inventory are English. Commands, suite
+  counts, and the coverage exclusion `service.Administrador*` stay.
+- **English testing strategy and workflow tracker** (#1490, CU75):
+  ADR-006 is English. The workflow tracker uses management, procedure, history,
+  and `workflowDefinitionName` on `DtoProcedureType`. Seeded labels such as
+  `Workflow de Gestión Estándar`, `Iniciada`, and `Compraventa` stay.
+- **English service-migration decision and API examples** (#1490, CU75):
+  ADR-001 is English. The API design index shows budget JSON as `idBudget`,
+  `number`, `date`, and `status` (`BORRADOR` stays), and the error body as
+  `status`, `error`, `message`, and `path`.
+- **English workflow, i18n, and CI decisions** (#1490, CU75):
+  ADR-012, ADR-014, ADR-015, the architecture index, and the legacy class-diagram
+  note are English. Workflow fields are `positionX`, `positionY`, `originNode`,
+  `destinationNode`, `condition`, and `description`. Message keys such as
+  `suplencias` and `administracion.usuarios` stay.
+- **English architecture type names and audit decision** (#1490, CU75):
+  The SAD, ADRs, and security notes name the current classes (`ManagementController`,
+  `AuditAspect`, `DeedManagementRepository`) and tables (`audit_records`,
+  `deed_managements`, `users`). ADR-013 and the use-case diagram index are
+  English. Stored type `Escribano` stays. Legacy `.puml` filenames stay.
+- **English endpoint registry and API test guide** (#1490, CU75):
+  The REST endpoint registry names the current controllers (`DeedController`,
+  `ManagementController`, `AuditRecordController`) and the current path
+  parameters. The manual API guide uses English and the `audit-log` path.
+  Archived change folders stay historical.
+- **English Playwright titles and remaining API descriptions** (#1490, CU75):
+  Playwright suite and test titles use English. Payment date parameters are
+  start date and end date. A verified testimony and the cadastral designation
+  are described in English. Visible Spanish UI text, stored statuses such as
+  `Sin Firmar` and `Observado`, and `Protocolo Auxiliar` stay.
+- **English audit comments, management update locals, and flagged-testimony description** (#1490, CU75):
+  Audit comments name `audit_records.module` and `operation_detail`. Deed
+  management update parameters use `updatedManagement`. The flagged-testimony
+  OpenAPI description is English. Testimony movement test titles use entry,
+  inscription, and withdrawal. Role JSON `modulos` stays. Applied migration
+  `V1` table names stay.
+- **English testimony messages and leftover identifiers** (#1490, CU75):
+  Testimony movement errors say withdrawn, registration entry, and observed
+  re-entry. Substitute lookup parameters, folio and procedure update locals,
+  property form state, and audit page components use English names. Message
+  keys such as `fields.valuacionFiscal`, `fields.domicilio`, and
+  `fields.matricula` stay. The deprecated JSON field `saldo` stays.
+- **English test identifiers for templates, substitutions, and properties** (#1490, CU75):
+  Java test locals and method names use template, substitute, property, budget,
+  procedure, and amount. Fixture notes asserted by those tests use the same
+  English words. The named-query hygiene method name stays. Stored samples such
+  as `Protocolo Auxiliar` stay.
+- **English payment wording and protocol locals** (#1490, CU75):
+  Payment logs, comments, and test titles say pending balance and amount.
+  Protocol pages use `notebooks`, `availableFolios`, and `deedBody`. Query
+  keys are `notebooks` and `auxiliary-protocol`. Message keys such as
+  `protocolo.cuadernos` and `fields.cuerpo` stay. The deprecated JSON field
+  `saldo` stays.
+- **English API coverage notes and leftover test titles** (#1490, CU75):
+  Bruno descriptions and `COVERAGE.md` filter notes use the live English
+  paths (`person`, `search`, `management`, `budget`, `current-status`,
+  `procedure-types`). Copy failure logs say `copy`. Test suite titles use
+  Managements, Deeds, and People. Stored catalog samples such as `Protocolo`
+  stay.
+- **English persistence messages and update locals** (#1490, CU75):
+  budget-template conflict errors, payment and template failure logs, and
+  persistence `println` lines are English. Update flags use `updated`.
+  `findDeedManagementById` and `searchMovementsByTestimony` replace the
+  Spanish method names. Damaged folio statuses stay `Errose` and `no pasó`.
+- **English name for the deleted-record JPA exception** (#1490, CU75):
+  `ClassEliminatedException` is now `ClassDeletedException`. Call sites and
+  unit tests use the new name. The deprecated tree keeps the old class.
+  Thrown messages that already said the record was deleted stay.
+- **English delete locals, success logs, and leftover test comments** (#1490, CU75):
+  JPA delete flags use `removed`, and item and payment success logs are English.
+  Remaining Playwright and integration-test comments use English use-case names.
+  Stored payment-status codes `SIN_PAGOS`, `PARCIAL`, and `SALDADO` stay.
+  UI matchers that follow the Spanish catalogs stay.
+- **English use-case titles in the coverage matrix** (#1490, CU75):
+  the Playwright coverage reporter, `CU-API-MATRIX.csv`, and the leftover
+  health-check titles use English use-case names, modules, and priorities.
+  Matrix path variables match the live API (`idPerson`, `idPayment`,
+  `idSubmittedDocument`). CSV column headers stay. Message catalogs stay.
+- **English logout, budget-search, and leftover API wording** (#1490, CU75):
+  the logout summary and description, the budget-search status parameter,
+  workflow create validation messages, and the "in use" operation summaries
+  are English. Conflict errors for a concept, folio type, or procedure type
+  that is already in use say the record cannot be modified. Stored status
+  codes and message-catalog keys stay.
+- **English REST API reference** (#1490, CU75):
+  `docs/200-architecture/203-design/REST-API-REFERENCE.md` uses English
+  resource names and the current JSON fields (`name`, `password`, `valid`,
+  `idUser`, `firstName`, `lastName`). The audit path is `/audit-log`.
+  Stored status codes and PDF filenames stay.
+- **English end-to-end comments** (#1490, CU75): Playwright file headers
+  and step comments use English use-case names. Catalog button labels,
+  placeholders such as `Buscar por name...`, and stored types
+  `DESCUENTO` and `RECARGO` stay.
+- **English startup and OpenAPI messages** (#1490, CU75): JWT secret
+  failures, the production-credentials guard, the login failure log, and
+  the OpenAPI info, server, and error descriptions are English. Stored
+  budget status codes such as `PENDIENTE` stay.
+- **English PDF report labels** (#1490, CU75): in-house report headings,
+  column names, and empty-state messages are English (`Pending balance`,
+  `Properties`, `Is archived`, `Payment pending`, `Total owed`). Stored
+  catalog names inside a report, such as `Honorarios escribanía`, stay.
+  PDF download filenames stay. The renderer still draws accented text.
+- **English sentinels, test titles, and API tags** (#1490, CU75):
+  `INVALID_OBJECT_ID` and `INITIAL_DTO_ID` replace the Spanish sentinel
+  constants. Playwright titles, helper comments, and workflow seed locals
+  use English names. OpenAPI tags and history/audit descriptions are
+  English (`Concepts`, `Notebooks`, `Folio type`, `Procedure type`,
+  `Document cost template`). Stored labels such as `PENDIENTE`, `Nuevo`,
+  `Archivada`, `Activa`, and `Entidad Externa` stay. Message catalogs stay
+  bilingual.
+- **English end-to-end spec filenames** (#1490, CU75): Playwright and Robot
+  specs use English filenames, such as `TS-0010-budget-workflow.spec.ts`
+  and `procedure-folders.spec.ts`. The living test index matches those
+  names. Archived plans keep the filenames they were written with.
+- **English test method names and frontend component locals** (#1490, CU75):
+  JUnit method names, page components, React Query keys, and local helpers
+  use English names. Message catalog keys such as `estadoFilter`,
+  `tiposDeFolio`, and `costosDocumento.fields.tipoCosto` stay. Stored labels
+  such as `Nuevo`, `Utilizado`, `DESCUENTO`, `RECARGO`, `ADMINISTRADOR`, and
+  `ESCRIBANO` stay.
+- **English frontend locals and column keys** (#1490, CU75): Data table
+  column ids, substitution date inputs, and React Query keys for management
+  statuses, procedure types, and procedure templates use English names.
+  Local test fixtures use English field names. Message catalog keys such as
+  `fields.estado`, `fields.suplente`, and `administracion.estadosGestion` stay.
+  Stored labels such as `APROBADO`, `Activo`, `En trámite`, and `Honorarios` stay.
+  PDF filenames stay.
+- **English comments** (#1490, CU75): Class and method comments in the
+  live backend and a few frontend notes use English. Stored workflow
+  labels such as `Generada`, `Presentada`, `Observada`, `Inscripta`,
+  `Sin Firmar`, and `Firmada` stay inside those comments. Message
+  catalog keys stay.
+- **English API descriptions** (#1490, CU75): OpenAPI summaries and
+  descriptions use English. Missing-field validation says `is required`.
+  Delete conflicts say `Cannot delete`. Stored statuses such as `Generada`,
+  `Firmada`, `Sin Firmar`, and `Utilizado` stay. PDF filenames stay.
+  Message catalog keys stay.
+- **English test titles** (#1490, CU75): JUnit display names and nested
+  test class names use English type names. Stored labels such as
+  `Protocolo Auxiliar`, `Protocolo Principal`, `Generada`, `Presentado`,
+  `Observado`, `Utilizado`, and `Sin Firmar` stay inside those titles.
+  Message catalog keys stay.
+- **English list locals and auxiliary-protocol operation** (#1490, CU75):
+  list locals use English names. Starting an auxiliary-protocol deed is
+  `startDeed`. Budget JSON uses `procedures`. Deed-number and CORS messages
+  are English. The PDF filename `lista_documentos.pdf` stays. Message catalog
+  keys stay.
+- **English locals and debug labels** (#1490, CU75): `mi`-prefixed locals,
+  `created`, and `modified` replace the Spanish names. Entity `toString`
+  labels are English (`number`, `year`, `status`, `lastName`). Message
+  catalog keys stay.
+- **English JPA relationship names** (#1490, CU75): generated locals,
+  orphan messages, and `toString` labels use English relationship names
+  (`fkIdPerson`, `budgetTemplateList`, `auditRecordList`, `DeedManagements`).
+  Creating a budget template returns `fkIdProcedureType` and `fkIdConcept`.
+  Jackson `@JsonIgnoreProperties` values stay as they are. Message catalog
+  keys stay.
+- **English case-summary key and JPA helper names** (#1490, CU75):
+  the management case-summary cache key is `caseSummary`. Involved-person
+  mapping is `getInvolvedPersonDto`. Audit lookup is `searchAuditRecordsByUser`.
+  Message catalog keys stay.
+- **English singleton accessors** (#1490, CU75): JPA and session
+  singletons use `getInstance()` and the field `instance`.
+- **English document-reentry and deed-management fields** (#1490, CU75):
+  required-document JSON is `requiredDocuments`. Deed-management JSON uses
+  `involvedClients`, `referenceClient`, `associatedProcedures`, `archiveNumber`,
+  and `binderNumber`. Putting a folder on hold is `putOnHold`. The archive
+  conflict body uses `waitingFolderNumbers`. The archive query flag `confirmado`
+  stays, as do stored statuses `Activa`, `Espera`, and `Archivada`.
+- **English financial-summary and persistence type names** (#1490, CU75):
+  `ManagementFinancialSummaryService`, `DtoBudgetSummary`, `DtoPendingBalance`,
+  and `PersistenceConstants` replace the Spanish type names. Financial-summary
+  JSON fields are `totalBudgeted` and `totalCollected`. Message catalog keys
+  `totalPresupuestado`, `totalCobrado`, and `saldoPendiente` stay.
+- **English status-log and document-reentry type names** (#1490, CU75):
+  `ManagementStatusLogService`, `ManagementStatusLogPort`, and `DocumentReentryService`
+  replace the Spanish type names. External-entity document operations are
+  `getExternalEntityDocuments` and `registerExternalEntityDocumentMovement`.
+  Message catalog key `viewBitacora` stays.
+- **English validation messages and API descriptions** (#1490, CU75): exception
+  and validation text, PDF labels, and OpenAPI response descriptions (`Not found`,
+  `Created`, `Conflict`) are English. The status log parameter is `statusLog`.
+  External-entity document locals use `detail` and `registerMutation`. Stored
+  labels stay, including folio status `Asignado a cuaderno`, damaged statuses
+  `Errose` and `no pasó`, and `Protocolo Auxiliar`. Message catalog keys stay.
+- **English copy dates and testimony-movement handlers** (#1490, CU75): the copy
+  form uses `datePrinting` and `dateWithdrawal`. Testimony movement handlers
+  use enter, register, withdraw, and re-enter. Document re-entry posts
+  `reentry` and caches under `documentReentry`. Message catalog keys stay.
+- **English document, testimony, and folder-hold locals** (#1490, CU75): the
+  submitted-document form uses `typeId`, `date`, and `delivered`. Testimony
+  verification passes `flagged`. Re-entry passes `observedByRegistry`. The
+  testimony query key is `testimonies`. Putting a folder on hold passes
+  `reason`. Message catalog keys and the archive query flag `confirmado` stay.
+- **English document-type cache key and registration-draft fields** (#1490, CU75):
+  the document-type query key is `documentTypes`. Registration-draft form state
+  uses the English wire names (`dateSubmission`, `registryEntryNumber`,
+  `registryNotes`, `dateCorrection`, `dateReception`, `finalRegistrationNumber`).
+  Management transition passes `statusDestination`. Message catalog keys and
+  stored statuses (`Generada`, `Firmada`, `Inscripto`) stay.
+- **English Playwright and unit test titles** (#1490, CU75): `describe` / `test` / `it`
+  titles in `testing/e2e` and the frontend unit tests name the flows in English.
+  Selectors that match Spanish screen copy, stored statuses (`Firmada`, `Archivada`,
+  `SIN_PAGOS`), and message catalog keys stay as recorded.
+- **English comments on archive, person, budget, and procedure types** (#1490, CU75):
+  javadoc on the archive-debt service, deed-management and person persistence,
+  budget lookup, user password checks, testimony movements, document re-entry,
+  and the procedure entity is English. Stored statuses `Archivada` and `Espera` stay.
+- **Stored status and role labels kept** (#1490, CU75): `BusinessConstants` and audit
+  `GuiConstants` values stay the recorded Spanish labels (`Iniciada`, `Firmada`,
+  `Documentacion Completa`, `Escribano`). The initial administrator type is `Escribano`
+  again. Frontend hook and page comments are English. Behavior of those labels is unchanged.
+- **English page-local identifiers** (#1490, CU75): frontend and Playwright locals,
+  parameters, and component names use English stems (`managementId`, `number`,
+  `PeoplePage`). Message catalog keys, `{numero}` / `{dias}` / `{tramite}`
+  placeholders, stored status labels, and JSON names that are still Spanish
+  (`documentsNecesarios`, `listaClientesInvolucrados`) stay as recorded.
+- **English `data-testid` values** (#1490, CU75): dashboard controls and the Playwright
+  specs that look them up use English ids (`btn-new-budget`, `btn-save-management`,
+  `select-procedure-type`). Message catalog keys are unchanged.
+- **English Playwright helper names** (#1490, CU75): setup functions and payload
+  types in `testing/e2e/tests/setup/api-helpers.ts` use English names
+  (`createPerson`, `createBudget`, `createCompleteCaseManagement`,
+  `createDocumentType`). Spec-local seed helpers follow the same names.
+  Spec filenames are unchanged.
+- **English caller fields for complete-case and budget creation** (#1490, CU75):
+  `CreateCompleteManagementInput` and the Playwright complete-case helper use
+  `budgetId`, `notaryId`, `statusManagementId`, `procedureTypeId`, and `propertyId`.
+  `useCreateBudget` returns `budget` and takes `procedureTypeId`. Message catalog keys
+  and stored labels such as folio status `Nuevo` stay as recorded.
 - **Process Checks diff the pull request, not a stale base** (CU76, #921):
   `sdlc-process.yml` and `check-sdlc-exception.sh` use the merge commit's first parent.
   An OpenSpec path that landed on `main` after the PR opened no longer satisfies the gate.
@@ -274,7 +790,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `globals.css` adds text-safe `success`, `warning` and `info` tokens (WCAG AA on white and on their /10 tint),
   mapped in `@theme`; `tokens.ts` mirrors them and writes the brand `#0071E3` once (`BRAND_PRIMARY`). The 54 raw
   Tailwind palette classes in 13 files are now semantic (Badge variants, notices, pagos balance panel, workflow
-  editor legend and errors, admin selects, the `useThemeClasses` builders used by testimonios, ReingresarDialog
+  editor legend and errors, admin selects, the `useThemeClasses` builders used by testimonios, ReenterDialog
   and documentos-entidades-externas); the 14 differently coloured dashboard module tiles share one
   `bg-primary/10 text-primary` style, and `ring-primary-300` / `border-error-500`, which generated no CSS, are `ring-ring/40` / `border-destructive`. The partial
   `.dark` block is removed (owner decision 2026-10-09). Guarded by `design-tokens.test.ts` and Playwright TS-0119.

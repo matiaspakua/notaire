@@ -36,13 +36,13 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQueries(
         {
             @NamedQuery(name = "TestimonyMovement.findAll", query = "SELECT m FROM TestimonyMovement m"),
-            @NamedQuery(name = "TestimonyMovement.findByIdTestimonyMovement", query = "SELECT m FROM TestimonyMovement m WHERE m.idTestimonyMovement = :idMovimientoTestimonio"),
-            @NamedQuery(name = "TestimonyMovement.findByEntryDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateEntry = :fechaIngreso"),
-            @NamedQuery(name = "TestimonyMovement.findByExitDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateExit = :fechaSalida"),
-            @NamedQuery(name = "TestimonyMovement.findByRegistrationDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateRegistration = :fechaInscripcion"),
+            @NamedQuery(name = "TestimonyMovement.findByIdTestimonyMovement", query = "SELECT m FROM TestimonyMovement m WHERE m.idTestimonyMovement = :idTestimonyMovement"),
+            @NamedQuery(name = "TestimonyMovement.findByEntryDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateEntry = :entryDate"),
+            @NamedQuery(name = "TestimonyMovement.findByExitDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateExit = :exitDate"),
+            @NamedQuery(name = "TestimonyMovement.findByRegistrationDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateRegistration = :registrationDate"),
             @NamedQuery(name = "TestimonyMovement.findByRegistered", query = "SELECT m FROM TestimonyMovement m WHERE m.registered = :registered"),
-            @NamedQuery(name = "TestimonyMovement.findByTestimony", query = "SELECT m FROM TestimonyMovement m WHERE m.fkIdTestimony.idTestimony = :idTestimonio"),
-            @NamedQuery(name = "TestimonyMovement.findByCardNumber", query = "SELECT m FROM TestimonyMovement m WHERE m.cardNumber = :numeroCarton")
+            @NamedQuery(name = "TestimonyMovement.findByTestimony", query = "SELECT m FROM TestimonyMovement m WHERE m.fkIdTestimony.idTestimony = :idTestimony"),
+            @NamedQuery(name = "TestimonyMovement.findByCardNumber", query = "SELECT m FROM TestimonyMovement m WHERE m.cardNumber = :cardNumber")
         })
 public class TestimonyMovement implements Serializable, Persistable<Integer>
 {
@@ -78,7 +78,7 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "observed_by_registry")
     private boolean observedByRegistry;
-    @JoinColumn(name = "fk_id_testimonio", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_testimony", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Testimony fkIdTestimony;
 
@@ -110,7 +110,7 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idTestimonyMovement == null || idTestimonyMovement.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idTestimonyMovement == null || idTestimonyMovement.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -231,8 +231,8 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "MovimientoTestimonio[ idMovimientoTestimonio=" + idTestimonyMovement + " ]"
-                + "[ idTestimonio=" + fkIdTestimony.getIdTestimony() + " ]";
+        return "TestimonyMovement[ idTestimonyMovement=" + idTestimonyMovement + " ]"
+                + "[ idTestimony=" + fkIdTestimony.getIdTestimony() + " ]";
     }
 
     public int getVersion()
@@ -248,45 +248,45 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoTestimonyMovement getDto()
     {
-        DtoTestimonyMovement miDto = new DtoTestimonyMovement();
+        DtoTestimonyMovement dto = new DtoTestimonyMovement();
 
-        miDto.setIdTestimonyMovement(idTestimonyMovement);
-        miDto.setDateEntry(dateEntry);
-        miDto.setDateRegistration(dateRegistration);
-        miDto.setDateExit(dateExit);
-        miDto.setRegistered(registered);
-        miDto.setCardNumber(cardNumber);
-        miDto.setNotes(notes);
-        miDto.setObservedByRegistry(observedByRegistry);
-        miDto.setVersion(version);
+        dto.setIdTestimonyMovement(idTestimonyMovement);
+        dto.setDateEntry(dateEntry);
+        dto.setDateRegistration(dateRegistration);
+        dto.setDateExit(dateExit);
+        dto.setRegistered(registered);
+        dto.setCardNumber(cardNumber);
+        dto.setNotes(notes);
+        dto.setObservedByRegistry(observedByRegistry);
+        dto.setVersion(version);
 
-        DtoTestimony miDtoTestimony = new DtoTestimony();
-        miDtoTestimony.setIdTestimony(fkIdTestimony.getIdTestimony());
-        miDto.setTestimony(miDtoTestimony);
+        DtoTestimony testimonyDto = new DtoTestimony();
+        testimonyDto.setIdTestimony(fkIdTestimony.getIdTestimony());
+        dto.setTestimony(testimonyDto);
 
-        return miDto;
+        return dto;
     }
 
-    public void setAtributos(DtoTestimonyMovement miDto)
+    public void setAttributes(DtoTestimonyMovement dto)
     {
 
-        if (miDto.getIdTestimonyMovement() != null)
+        if (dto.getIdTestimonyMovement() != null)
         {
-            idTestimonyMovement = miDto.getIdTestimonyMovement();
+            idTestimonyMovement = dto.getIdTestimonyMovement();
         }
 
-        dateEntry = miDto.getDateEntry();
-        dateRegistration = miDto.getDateRegistration();
-        dateExit = miDto.getDateExit();
-        registered = miDto.isRegistered();
-        cardNumber = miDto.getCardNumber();
-        notes = miDto.getNotes();
-        observedByRegistry = miDto.isObservedByRegistry();
-        version = miDto.getVersion();
+        dateEntry = dto.getDateEntry();
+        dateRegistration = dto.getDateRegistration();
+        dateExit = dto.getDateExit();
+        registered = dto.isRegistered();
+        cardNumber = dto.getCardNumber();
+        notes = dto.getNotes();
+        observedByRegistry = dto.isObservedByRegistry();
+        version = dto.getVersion();
 
-        if (miDto.getTestimony() != null)
+        if (dto.getTestimony() != null)
         {
-            fkIdTestimony = new Testimony(miDto.getTestimony().getIdTestimony());
+            fkIdTestimony = new Testimony(dto.getTestimony().getIdTestimony());
         }
     }
 }

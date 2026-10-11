@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Output of {@link GetBudgetSummaryUseCase} (CU47): the transport-agnostic financial
- * summary of a budget. The inbound web adapter maps this onto {@code DtoBudgetResumen}.
+ * summary of a budget. The inbound web adapter maps this onto {@code DtoBudgetSummary}.
  *
  * @param budgetId         budget identifier
  * @param budgetNumber     business number of the budget

@@ -32,7 +32,7 @@ import java.util.List;
  *
  * <p>Renders A4 pages with the standard Helvetica font (WinAnsi encoding, which covers
  * Spanish text). Long values wrap, tables break across pages repeating their header,
- * and every page gets a footer with the generation time and "Página i de n".
+ * and every page gets a footer with the generation time and "Page i of n".
  * Characters the standard font cannot encode are replaced with {@code ?} rather than
  * failing the whole report.
  */
@@ -81,12 +81,12 @@ public class PdfBoxReportRenderer implements ReportRenderer {
             pdf.save(out);
             return out.toByteArray();
         } catch (IOException e) {
-            throw new UncheckedIOException("Error al generar el reporte PDF: " + document.title(), e);
+            throw new UncheckedIOException("Failed to generate the PDF report: " + document.title(), e);
         }
     }
 
     private static String footerText() {
-        return "Notaire — generado el " + LocalDateTime.now().format(GENERATED_AT);
+        return "Notaire — generated on " + LocalDateTime.now().format(GENERATED_AT);
     }
 
     private static void addFooters(PDDocument pdf, String footerText) throws IOException {
@@ -98,7 +98,7 @@ public class PdfBoxReportRenderer implements ReportRenderer {
                 stream.setNonStrokingColor(GRAY, GRAY, GRAY);
                 float y = MARGIN / 2;
                 showText(stream, font, FOOTER_SIZE, MARGIN, y, sanitize(font, footerText));
-                String pageLabel = "Página " + (i + 1) + " de " + pages;
+                String pageLabel = "Page " + (i + 1) + " of " + pages;
                 float width = width(font, FOOTER_SIZE, pageLabel);
                 showText(stream, font, FOOTER_SIZE, PAGE_SIZE.getWidth() - MARGIN - width, y, pageLabel);
             }

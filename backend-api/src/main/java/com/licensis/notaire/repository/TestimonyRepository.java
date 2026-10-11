@@ -18,6 +18,6 @@ public interface TestimonyRepository extends JpaRepository<Testimony, Integer> {
 
     List<Testimony> findByFlagged(boolean flagged);
 
-    @Query("SELECT t FROM Testimony t WHERE t.number = :numero")
-    List<Testimony> findByNumberTestimony(@Param("numero") int number);
+    @Query("SELECT t FROM Testimony t WHERE t.number = :number")
+    List<Testimony> findByNumberTestimony(@Param("number") int number);
 }

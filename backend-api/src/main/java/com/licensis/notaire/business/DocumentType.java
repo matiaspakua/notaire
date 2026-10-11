@@ -37,9 +37,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @NamedQueries(
         {
             @NamedQuery(name = "DocumentType.findAll", query = "SELECT t FROM DocumentType t"),
-            @NamedQuery(name = "DocumentType.findByIdDocumentType", query = "SELECT t FROM DocumentType t WHERE t.idDocumentType = :idTipoDocumento"),
-            @NamedQuery(name = "DocumentType.findByExpires", query = "SELECT t FROM DocumentType t WHERE t.expires = :vence"),
-            @NamedQuery(name = "DocumentType.findByDueDays", query = "SELECT t FROM DocumentType t WHERE t.dueDays = :diasVencimiento"),
+            @NamedQuery(name = "DocumentType.findByIdDocumentType", query = "SELECT t FROM DocumentType t WHERE t.idDocumentType = :idDocumentType"),
+            @NamedQuery(name = "DocumentType.findByExpires", query = "SELECT t FROM DocumentType t WHERE t.expires = :expires"),
+            @NamedQuery(name = "DocumentType.findByDueDays", query = "SELECT t FROM DocumentType t WHERE t.dueDays = :dueDays"),
             @NamedQuery(name = "DocumentType.findByName", query = "SELECT t FROM DocumentType t WHERE t.name = :name")
         })
 public class DocumentType implements Serializable, Persistable<Integer>
@@ -107,7 +107,7 @@ public class DocumentType implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idDocumentType == null || idDocumentType.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idDocumentType == null || idDocumentType.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -183,59 +183,59 @@ public class DocumentType implements Serializable, Persistable<Integer>
         this.procedureTemplateList = procedureTemplateList;
     }
 
-    public void setAtributos(DtoDocumentType miDto)
+    public void setAttributes(DtoDocumentType dto)
     {
-        if (miDto.getIdDocumentType() != null)
+        if (dto.getIdDocumentType() != null)
         {
-            this.idDocumentType = miDto.getIdDocumentType();
+            this.idDocumentType = dto.getIdDocumentType();
         }
 
-        this.name = miDto.getName();
-        this.expires = miDto.isExpires();
+        this.name = dto.getName();
+        this.expires = dto.isExpires();
 
         if (this.expires)
         {
-            this.dueDays = miDto.getDueDays();
+            this.dueDays = dto.getDueDays();
         } else
         {
             this.dueDays = null;
         }
 
-        this.deliveredBy = miDto.getDeliveredBy();
+        this.deliveredBy = dto.getDeliveredBy();
         // Preserve current version / flags when omitted (nullable in the DTO).
         // Create path defaults enabled=true and returned=false in the controller.
-        if (miDto.getVersion() != null) {
-            this.version = miDto.getVersion();
+        if (dto.getVersion() != null) {
+            this.version = dto.getVersion();
         }
-        if (miDto.getEnabled() != null) {
-            enabled = miDto.getEnabled();
+        if (dto.getEnabled() != null) {
+            enabled = dto.getEnabled();
         }
-        if (miDto.getReturned() != null) {
-            returned = miDto.getReturned();
+        if (dto.getReturned() != null) {
+            returned = dto.getReturned();
         }
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoDocumentType getDto()
     {
-        DtoDocumentType miDto = new DtoDocumentType();
+        DtoDocumentType dto = new DtoDocumentType();
 
-        miDto.setIdDocumentType(this.idDocumentType);
-        miDto.setName(this.name);
-        miDto.setExpires(this.expires);
+        dto.setIdDocumentType(this.idDocumentType);
+        dto.setName(this.name);
+        dto.setExpires(this.expires);
 
-        if (miDto.isExpires())
+        if (dto.isExpires())
         {
-            miDto.setDueDays(this.dueDays);
+            dto.setDueDays(this.dueDays);
         }
 
-        miDto.setDeliveredBy(this.deliveredBy);
+        dto.setDeliveredBy(this.deliveredBy);
 
-        miDto.setVersion(version);
-        miDto.setEnabled(enabled);
-        miDto.setReturned(returned);
+        dto.setVersion(version);
+        dto.setEnabled(enabled);
+        dto.setReturned(returned);
 
-        return miDto;
+        return dto;
     }
 
     @Override

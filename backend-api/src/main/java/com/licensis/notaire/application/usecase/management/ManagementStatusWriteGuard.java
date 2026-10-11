@@ -14,7 +14,7 @@ import java.util.List;
  * Shared guard for management status writes (CU83 / #804).
  * <p>
  * Post-create status mutations must go through
- * {@code POST /api/v1/gestiones/{id}/transition}. Create-time assignment is
+ * {@code POST /api/v1/managements/{id}/transition}. Create-time assignment is
  * allowed without a prior edge, but when a workflow exists the chosen status
  * must be a workflow node (prefer INITIAL/start nodes).
  */
@@ -42,7 +42,7 @@ public class ManagementStatusWriteGuard {
             return;
         }
         throw new BusinessValidationException(
-                "Status changes must use POST /api/v1/gestiones/{id}/transition; "
+                "Status changes must use POST /api/v1/managements/{id}/transition; "
                         + "generic update cannot change management status");
     }
 

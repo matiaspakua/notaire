@@ -3,14 +3,14 @@ info:
   type: http
   seq: 6
   description: |-
-      ## Get history by management — GET /api/v1/historial/gestion/{managementId}
-      Also checks that this endpoint and GET /api/v1/gestiones/{id}/historial return the
+      ## Get history by management — GET /api/v1/history/management/{managementId}
+      Also checks that this endpoint and GET /api/v1/managements/{id}/history return the
       same total order: event date ascending, then idHistory ascending (#1383). The
       management has its initial row (today) and the entry dated 2026-09-05 from 02.
       Traceability: CU13 (RF #3, #24, #26, #110)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/historial/gestion/{{history_management_id}}"
+  url: "{{base_url}}/api/v1/history/management/{{history_management_id}}"
   headers:
     - name: Content-Type
       value: application/json
@@ -22,11 +22,11 @@ runtime:
       code: |-
           const baseUrl = bru.getEnvVar('base_url');
           const managementId = bru.getVar('history_management_id');
-          const bitacora = await axios.get(
-            `${baseUrl}/api/v1/gestiones/${managementId}/historial`,
+          const history = await axios.get(
+            `${baseUrl}/api/v1/managements/${managementId}/history`,
             { headers: { Authorization: `Bearer ${bru.getVar('token')}` } }
           );
-          bru.setVar('history_bitacora_ids', JSON.stringify(bitacora.data.map((h) => h.idHistory)));
+          bru.setVar('history_ids', JSON.stringify(history.data.map((h) => h.idHistory)));
     - type: tests
       code: |-
           test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
@@ -43,7 +43,7 @@ runtime:
               expect(prev < cur || (prev === cur && rows[i - 1].idHistory < rows[i].idHistory)).to.be.true;
             }
           });
-          test("#1383 bitácora endpoint returns the same order", function () {
+          test("#1383 history endpoint returns the same order", function () {
             const ids = res.getBody().map((h) => h.idHistory);
-            expect(JSON.parse(bru.getVar('history_bitacora_ids'))).to.deep.equal(ids);
+            expect(JSON.parse(bru.getVar('history_ids'))).to.deep.equal(ids);
           });

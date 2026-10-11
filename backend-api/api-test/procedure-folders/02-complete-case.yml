@@ -6,13 +6,13 @@ info:
       Traceability: CU85
 http:
   method: POST
-  url: "{{base_url}}/api/v1/gestiones/complete-case"
+  url: "{{base_url}}/api/v1/managements/complete-case"
   body:
     type: json
     data: |-
         {
           "number": {{pf_mgmt_number}},
-          "encabezado": "Bruno folder management",
+          "heading": "Bruno folder management",
           "budgetId": {{pf_budget_id}},
           "notaryId": {{pf_notary_id}},
           "statusManagementId": 1,

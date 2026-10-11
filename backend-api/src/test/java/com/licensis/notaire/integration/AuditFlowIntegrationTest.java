@@ -64,7 +64,7 @@ class AuditFlowIntegrationTest {
         long before = auditRepository.count();
 
         // Only state-changing operations are audited; a POST (create) qualifies.
-        mockMvc.perform(post("/api/v1/estado-gestion")
+        mockMvc.perform(post("/api/v1/management-statuses")
                         .contentType("application/json")
                         .content("{\"name\":\"Audit IT\",\"notes\":\"audit flow\"}"))
                 .andExpect(status().isCreated());
@@ -86,7 +86,7 @@ class AuditFlowIntegrationTest {
         long before = auditRepository.count();
 
         // GET is a read; it must not produce an audit record.
-        mockMvc.perform(get("/api/v1/conceptos"))
+        mockMvc.perform(get("/api/v1/concepts"))
                 .andExpect(status().isOk());
 
         long after = auditRepository.count();
@@ -109,7 +109,7 @@ class AuditFlowIntegrationTest {
     @DisplayName("Should expose audit records via paginated DTO endpoint")
     void shouldExposeAuditRecordsViaPaginatedDtoEndpoint() throws Exception {
         // First, generate an audit row.
-        mockMvc.perform(get("/api/v1/conceptos")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/concepts")).andExpect(status().isOk());
 
         mockMvc.perform(get("/api/v1/audit-log?page=0&size=5&sort=date,desc"))
                 .andExpect(status().isOk())
@@ -121,9 +121,9 @@ class AuditFlowIntegrationTest {
     @Test
     @DisplayName("Should support filtering audit records by module")
     void shouldFilterAuditRecordsByModule() throws Exception {
-        mockMvc.perform(get("/api/v1/conceptos")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/concepts")).andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/audit-log?page=0&size=10&module=Conceptos"))
+        mockMvc.perform(get("/api/v1/audit-log?page=0&size=10&module=Concepts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
     }

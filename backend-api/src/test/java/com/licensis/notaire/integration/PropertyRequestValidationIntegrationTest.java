@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Issue #655 (CU69 / CU82): a property is identified by its cadastral designation
- * (nomenclatura catastral). The UI already labels it required; the API must reject a
+ * (cadastral nomenclature). The UI already labels it required; the API must reject a
  * create or full update without it instead of storing an unidentifiable property.
  */
 @SpringBootTest
@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Property requests require the cadastral designation (issue #655)")
 class PropertyRequestValidationIntegrationTest {
 
-    private static final String URL = "/api/v1/inmueble";
+    private static final String URL = "/api/v1/properties";
 
     @Autowired
     private WebApplicationContext webApplicationContext;

@@ -4,10 +4,10 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.TestimonyMovement;
 import com.licensis.notaire.business.Testimony;
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class TestimonyMovementJpaController implements Serializable, IPersistenciaJpa
+public class TestimonyMovementJpaController implements Serializable, JpaPersistence
 {
 
     public TestimonyMovementJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -41,7 +41,7 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
     public Boolean create(TestimonyMovement testimonyMovement)
     {
         EntityManager em = null;
-        Boolean creado = false;
+        Boolean created = false;
         try
         {
             em = getEntityManager();
@@ -59,7 +59,7 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
                 fkIdTestimony = em.merge(fkIdTestimony);
             }
             em.getTransaction().commit();
-            creado = true;
+            created = true;
         }
         finally
         {
@@ -69,13 +69,13 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
             }
         }
 
-        return creado;
+        return created;
     }
 
-    public Boolean edit(TestimonyMovement testimonyMovement) throws ClassEliminatedException, ClassModifiedException
+    public Boolean edit(TestimonyMovement testimonyMovement) throws ClassDeletedException, ClassModifiedException
     {
         EntityManager em = null;
-        Boolean modificado = false;
+        Boolean modified = false;
         int version = 0;
         int oldVersion = 0;
         em = getEntityManager();
@@ -84,10 +84,10 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
 
         if (persistentTestimonyMovement != null)
         {
-            version = persistentTestimonyMovement.getVersion(); // Version del Objeto en db
-            oldVersion = testimonyMovement.getVersion(); // Version del Objeto en memoria
+            version = persistentTestimonyMovement.getVersion(); // Version of the object in the database
+            oldVersion = testimonyMovement.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 
@@ -112,7 +112,7 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
                     fkIdTestimonyNew = em.merge(fkIdTestimonyNew);
                 }
                 em.getTransaction().commit();
-                modificado = true;
+                modified = true;
             }
             if (em != null)
             {
@@ -120,9 +120,9 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
-        return modificado;
+        return modified;
     }
 
     public void destroy(Integer id) throws NonexistentEntityException
@@ -141,7 +141,7 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The movimientoTestimonio with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The testimony movement with id " + id + " no longer exists.", enfe);
             }
             Testimony fkIdTestimony = testimonyMovement.getTestimony();
             if (fkIdTestimony != null)
@@ -204,31 +204,31 @@ public class TestimonyMovementJpaController implements Serializable, IPersistenc
         }
     }
 
-    public List<TestimonyMovement> searchMovimientosPorTestimony(Integer idTestimony)
+    public List<TestimonyMovement> searchMovementsByTestimony(Integer idTestimony)
     {
-        List<TestimonyMovement> movTestimony = null;
+        List<TestimonyMovement> movements = null;
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("TestimonyMovement.findByTestimony");
-        query.setParameter("idTestimonio", idTestimony);
+        query.setParameter("idTestimony", idTestimony);
 
-        movTestimony = (List<TestimonyMovement>) query.getResultList();
+        movements = (List<TestimonyMovement>) query.getResultList();
 
-        return movTestimony;
+        return movements;
     }
 
     public TestimonyMovement findMovementById(Integer idMovement)
     {
 
-        TestimonyMovement movTestimony = null;
+        TestimonyMovement movement = null;
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("TestimonyMovement.findByIdTestimonyMovement");
-        query.setParameter("idMovimientoTestimonio", idMovement);
+        query.setParameter("idTestimonyMovement", idMovement);
 
-        movTestimony = (TestimonyMovement) query.getResultList().get(0);
+        movement = (TestimonyMovement) query.getResultList().get(0);
 
-        return movTestimony;
+        return movement;
     }
 
     public int getTestimonyMovementCount()

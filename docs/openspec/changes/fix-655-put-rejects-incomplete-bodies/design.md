@@ -6,7 +6,7 @@
 
 ## Goals / Non-Goals
 
-Goal: the three PUTs reject empty or incomplete bodies with a field-level 400 and the contract says so. Non-goals: PATCH semantics; changing how absent association ids are handled on `PUT /tramites/{id}` (kept); the testimony `version` handling; the bare testimony create (#1335).
+Goal: the three PUTs reject empty or incomplete bodies with a field-level 400 and the contract says so. Non-goals: PATCH semantics; changing how absent association ids are handled on `PUT /procedures/{id}` (kept); the testimony `version` handling; the bare testimony create (#1335).
 
 ## Decisions
 

@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU07"})
-@DisplayName("TestimonioGeneracionVerificacionService - Generación Tests")
+@DisplayName("TestimonyGenerationService - generation Tests")
 @ExtendWith(MockitoExtension.class)
 class TestimonyGenerationServiceTest {
 

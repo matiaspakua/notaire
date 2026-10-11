@@ -40,7 +40,7 @@ package "Subjects and Security" {
     * identification_number : TEXT
     tax_id : TEXT
     sex : TEXT
-    fecha_nacimiento : DATE
+    birth_date : DATE
     marital_status : TEXT
     marriage_count : INT
     occupation : TEXT
@@ -56,7 +56,7 @@ package "Subjects and Security" {
     nationality : TEXT
     profession : TEXT
     notes : TEXT
-    fk_id_tipo_identificacion : INT <<FK>>
+    fk_id_identification_type : INT <<FK>>
     * is_notary : BOOLEAN
     version : INT
   }
@@ -113,7 +113,7 @@ package "Subjects and Security" {
     * date : TIMESTAMP
     * module : TEXT
     * operation_detail : TEXT
-    fk_id_usuario : INT <<FK>>
+    fk_id_user : INT <<FK>>
     version : INT
   }
 
@@ -165,7 +165,7 @@ package "Budgeting and Payments" {
     * amount : NUMERIC
     * percentage : INT
     * fixed_concept : BOOLEAN
-    fk_id_presupuesto : INT <<FK>>
+    fk_id_budget : INT <<FK>>
     notes : TEXT
     * item_type : TEXT
     reason : TEXT
@@ -178,7 +178,7 @@ package "Budgeting and Payments" {
     * payment_date : DATE
     * amount : NUMERIC
     notes : TEXT
-    fk_id_presupuesto : INT <<FK>>
+    fk_id_budget : INT <<FK>>
     payment_method : TEXT
     version : INT
   }
@@ -236,9 +236,9 @@ package "Deed Management and Workflows" {
     name : TEXT
     notes : TEXT
     fk_id_procedure_type : INT <<FK>>
-    fk_id_gestion : INT <<FK>>
-    fk_id_escritura : INT <<FK>>
-    fk_id_presupuesto : INT <<FK>>
+    fk_id_deed_management : INT <<FK>>
+    fk_id_deed : INT <<FK>>
+    fk_id_budget : INT <<FK>>
     fk_id_property : INT <<FK>>
     version : INT
   }
@@ -257,8 +257,8 @@ package "Deed Management and Workflows" {
     * number : INT <<UNIQUE>>
     * status : TEXT
     wait_reason : TEXT
-    * fk_id_gestion : INT <<FK>>
-    * fk_id_tramite : INT <<FK, UNIQUE>>
+    * fk_id_deed_management : INT <<FK>>
+    * fk_id_procedure : INT <<FK, UNIQUE>>
   }
 
   entity "properties" as properties {
@@ -287,9 +287,9 @@ package "Deed Management and Workflows" {
   entity "workflow_definition" as workflow_definition {
     * id_workflow_definition : INT <<PK, generated>>
     --
-    * nombre : TEXT
-    descripcion : TEXT
-    * activo : BOOLEAN
+    * name : TEXT
+    description : TEXT
+    * active : BOOLEAN
     version : INT
   }
 
@@ -297,10 +297,10 @@ package "Deed Management and Workflows" {
     * id_workflow_node : INT <<PK, generated>>
     --
     * fk_workflow_definition_id : INT <<FK>>
-    * fk_estado_gestion_id : INT <<FK>>
-    * tipo : TEXT
-    posicion_x : REAL
-    posicion_y : REAL
+    * fk_management_status_id : INT <<FK>>
+    * node_type : TEXT
+    position_x : REAL
+    position_y : REAL
     version : INT
   }
 
@@ -308,10 +308,10 @@ package "Deed Management and Workflows" {
     * id_workflow_transition : INT <<PK, generated>>
     --
     * fk_workflow_definition_id : INT <<FK>>
-    * fk_nodo_origen_id : INT <<FK>>
-    * fk_nodo_destino_id : INT <<FK>>
-    condicion : TEXT
-    descripcion : TEXT
+    * fk_origin_node_id : INT <<FK>>
+    * fk_destination_node_id : INT <<FK>>
+    condition : TEXT
+    description : TEXT
     version : INT
   }
 }
@@ -367,7 +367,7 @@ package "Documentation and Certificates" {
     delivered : BOOLEAN
     reentered : BOOLEAN
     * delivered_by : TEXT
-    fk_id_tramite : INT <<FK>>
+    fk_id_procedure : INT <<FK>>
     fk_id_document_type : INT <<FK>>
     version : INT
   }
@@ -443,7 +443,7 @@ package "Protocols, Deeds and Registration" {
     --
     * entry_date : DATE
     notes : TEXT
-    fk_id_testimonio : INT <<FK>>
+    fk_id_testimony : INT <<FK>>
     exit_date : DATE
     registration_date : DATE
     * registered : BOOLEAN
@@ -459,7 +459,7 @@ package "Protocols, Deeds and Registration" {
     * print_date : DATE
     pickup_date : DATE
     notes : TEXT
-    fk_id_testimonio : INT <<FK>>
+    fk_id_testimony : INT <<FK>>
     fk_id_person : INT <<FK>>
     version : INT
   }
@@ -484,18 +484,18 @@ package "Protocols, Deeds and Registration" {
     final_registration_number : TEXT
     registry_notes : TEXT
     correction_date : DATE
-    * fk_id_escritura : INT <<FK, UNIQUE>>
+    * fk_id_deed : INT <<FK, UNIQUE>>
     version : INT
   }
 }
 
 ' RELATIONSHIPS AND CARDINALITIES (label = foreign-key column)
-users |o--o{ audit_records : "fk_id_usuario"
+users |o--o{ audit_records : "fk_id_user"
 concepts ||--o{ budget_templates : "fk_id_concept"
 procedure_types ||--o{ budget_templates : "fk_id_procedure_type"
 people |o--o{ budgets : "fk_id_person"
 people |o--o{ copies : "fk_id_person"
-testimonies |o--o{ copies : "fk_id_testimonio"
+testimonies |o--o{ copies : "fk_id_testimony"
 management_statuses |o--o{ deed_managements : "fk_id_management_status"
 people |o--o{ deed_managements : "fk_id_notary_person"
 document_types ||--o{ document_cost_templates : "fk_id_document_type"
@@ -508,36 +508,36 @@ people ||--o{ folios : "fk_id_notary_person"
 notebooks |o--o{ folios : "fk_id_notebook"
 deed_managements |o--o{ history : "fk_id_deed_management"
 management_statuses |o--o{ history : "fk_id_management_status"
-budgets |o--o{ items : "fk_id_presupuesto"
+budgets |o--o{ items : "fk_id_budget"
 people ||--o{ notebooks : "fk_id_notary_person"
-budgets |o--o{ payments : "fk_id_presupuesto"
-identification_types |o--o{ people : "fk_id_tipo_identificacion"
+budgets |o--o{ payments : "fk_id_budget"
+identification_types |o--o{ people : "fk_id_identification_type"
 people ||--o{ person_procedures : "fk_id_client_person"
 procedures ||--o{ person_procedures : "fk_id_procedure"
-deed_managements ||--o{ procedure_folders : "fk_id_gestion"
-procedures ||--o| procedure_folders : "fk_id_tramite"
+deed_managements ||--o{ procedure_folders : "fk_id_deed_management"
+procedures ||--o| procedure_folders : "fk_id_procedure"
 document_types ||--o{ procedure_templates : "fk_id_document_type"
 procedure_types ||--o{ procedure_templates : "fk_id_procedure_type"
 workflow_definition |o--o{ procedure_types : "fk_workflow_definition_id"
-deeds |o--o{ procedures : "fk_id_escritura"
-deed_managements |o--o{ procedures : "fk_id_gestion"
-budgets |o--o{ procedures : "fk_id_presupuesto"
+deeds |o--o{ procedures : "fk_id_deed"
+deed_managements |o--o{ procedures : "fk_id_deed_management"
+budgets |o--o{ procedures : "fk_id_budget"
 procedure_types |o--o{ procedures : "fk_id_procedure_type"
 properties |o--o{ procedures : "fk_id_property"
-deeds ||--o| registration_drafts : "fk_id_escritura"
+deeds ||--o| registration_drafts : "fk_id_deed"
 roles ||--o{ role_modules : "fk_id_role"
 document_types |o--o{ submitted_documents : "fk_id_document_type"
-procedures |o--o{ submitted_documents : "fk_id_tramite"
+procedures |o--o{ submitted_documents : "fk_id_procedure"
 people |o--o{ substitutions : "fk_id_substitute_person"
 people |o--o{ substitutions : "fk_id_substituted_person"
 deeds |o--o{ testimonies : "fk_id_deed"
-testimonies |o--o{ testimony_movements : "fk_id_testimonio"
+testimonies |o--o{ testimony_movements : "fk_id_testimony"
 people |o--o{ users : "fk_id_person"
 roles |o--o{ users : "fk_id_role"
-management_statuses ||--o{ workflow_node : "fk_estado_gestion_id"
+management_statuses ||--o{ workflow_node : "fk_management_status_id"
 workflow_definition ||--o{ workflow_node : "fk_workflow_definition_id"
-workflow_node ||--o{ workflow_transition : "fk_nodo_destino_id"
-workflow_node ||--o{ workflow_transition : "fk_nodo_origen_id"
+workflow_node ||--o{ workflow_transition : "fk_destination_node_id"
+workflow_node ||--o{ workflow_transition : "fk_origin_node_id"
 workflow_definition ||--o{ workflow_transition : "fk_workflow_definition_id"
 
 @enduml

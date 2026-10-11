@@ -3,13 +3,13 @@
 ## Purpose
 
 Records every relevant estado change of a gestión (creation, valid
-transition, archiving) as a `Historial` entry, and exposes that history
+transition, archiving) as a `ManagementHistory` entry, and exposes that history
 for consultation, so the bitácora CU13 promises to show is actually
 populated for real gestiones.
 
 ## Requirements
 
-### Requirement: Registrar en Historial los cambios de estado de una gestión
+### Requirement: Registrar en ManagementHistory los cambios de estado de una gestión
 
 The system SHALL create a History entry (status, date, and optional notes)
 whenever a gestión status is first set or changes on any write path that
@@ -20,19 +20,19 @@ archive already covered by #833, per CU13 / RF-110 / CU02 / CU53.
 #### Scenario: Alta de gestión registra su estado inicial
 
 - **WHEN** se crea una nueva gestión
-- **THEN** el sistema registra una entrada en `Historial` con el estado
+- **THEN** el sistema registra una entrada en `ManagementHistory` con el estado
   inicial de la gestión y la fecha de creación
 
 #### Scenario: Transición válida registra el nuevo estado
 
 - **WHEN** una gestión cambia de estado mediante una transición válida
-- **THEN** el sistema registra una nueva entrada en `Historial` con el
+- **THEN** el sistema registra una nueva entrada en `ManagementHistory` con el
   estado destino y la fecha del cambio
 
 #### Scenario: Archivado registra el estado archivado
 
 - **WHEN** una gestión es archivada
-- **THEN** el sistema registra una nueva entrada en `Historial` con el
+- **THEN** el sistema registra una nueva entrada en `ManagementHistory` con el
   estado "Archivada" y la fecha del archivado
 
 #### Scenario: Plain create with status writes initial History
@@ -71,20 +71,20 @@ archive already covered by #833, per CU13 / RF-110 / CU02 / CU53.
 
 ### Requirement: Consultar la bitácora de una gestión
 
-El sistema SHALL permitir consultar el `Historial` completo de una
+El sistema SHALL permitir consultar el `ManagementHistory` completo de una
 gestión, ordenado cronológicamente, según CU13.
 
 #### Scenario: Consulta devuelve el historial completo ordenado
 
 - **WHEN** un usuario consulta la bitácora de una gestión con entradas de
-  `Historial` registradas
-- **THEN** el sistema responde con todas las entradas de `Historial` de
+  `ManagementHistory` registradas
+- **THEN** el sistema responde con todas las entradas de `ManagementHistory` de
   esa gestión, ordenadas por fecha
 
 ### Requirement: Current status falls back to entity status when History empty
 
 The system SHALL expose the current status of a gestión via
-`GET .../estado-actual`. When History rows exist, the latest by date is used.
+`GET .../current-status`. When History rows exist, the latest by date is used.
 When History is empty, the system MUST synthesize a summary from the gestión's
 current status association (management id and as-of-now). Missing gestión or
 null status MUST yield 404. Per CU13 / RF-24.

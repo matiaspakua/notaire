@@ -20,7 +20,7 @@ Logout only cleared the HttpOnly cookie, so a token copied before logout (from a
 - New `revoked_tokens` table (Flyway `V43`), `RevokedToken` entity and `RevokedTokenRepository`.
 - New `TokenRevocationService`: `revoke(token)` stores the id until the token's expiry (purging expired rows), `isRevoked(token)`.
 - `JwtAuthenticationFilter` skips revoked tokens (401 on protected endpoints); token extraction moves to `RequestTokenResolver`, shared with logout.
-- `POST /api/v1/usuarios/logout` revokes the presented token (Bearer or cookie) before clearing the cookie; request and response unchanged, OpenAPI description updated.
+- `POST /api/v1/users/logout` revokes the presented token (Bearer or cookie) before clearing the cookie; request and response unchanged, OpenAPI description updated.
 - Data dictionary and ERD regenerated; API authentication guide and CHANGELOG updated.
 
 ## Reglas de negocio
@@ -53,7 +53,7 @@ Logout only cleared the HttpOnly cookie, so a token copied before logout (from a
 
 ### Surface area
 
-- Endpoints: `POST /api/v1/usuarios/logout` (behaviour: revokes the token; contract unchanged)
+- Endpoints: `POST /api/v1/users/logout` (behaviour: revokes the token; contract unchanged)
 - Entities / Flyway: `RevokedToken`, `V43__create_revoked_tokens.sql`
 - Configuration: none
 

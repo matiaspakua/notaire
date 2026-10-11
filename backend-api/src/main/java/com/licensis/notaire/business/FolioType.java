@@ -5,7 +5,7 @@
 package com.licensis.notaire.business;
 
 import com.licensis.notaire.dto.DtoFolioType;
-import com.licensis.notaire.dto.exceptions.DtoInvalidoException;
+import com.licensis.notaire.dto.exceptions.InvalidDtoException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -27,13 +27,10 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
- * Clase que representa un tipo de folio en particular que puede ser para el protocolo: principal,
- * auxiliar, etc.
+ * A folio type, such as the main protocol or the auxiliary protocol.
  * <p>
- * REGLA DE NEGOCIO<p>
- * <li> Los tipos de folios no se pueden eliminar (debido a
- * que se tiene que mantener un historia de los mismos), por lo tanto, solo se le puede cambiar el
- * estado a "INHABILITADO". </li>
+ * Business rule: folio types are not deleted, so the history of existing
+ * folios stays intact. A type can only be marked disabled.
  */
 @Entity
 @Table(name = "folio_types")
@@ -41,7 +38,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @NamedQueries(
         {
             @NamedQuery(name = "FolioType.findAll", query = "SELECT t FROM FolioType t"),
-            @NamedQuery(name = "FolioType.findByIdFolioType", query = "SELECT t FROM FolioType t WHERE t.idFolioType = :idTipoFolio")
+            @NamedQuery(name = "FolioType.findByIdFolioType", query = "SELECT t FROM FolioType t WHERE t.idFolioType = :idFolioType")
         })
 public class FolioType implements Serializable, Persistable<Integer>
 {
@@ -65,7 +62,7 @@ public class FolioType implements Serializable, Persistable<Integer>
     // (FolioController, legacy JpaControllers) runs inside a transaction. EAGER here made
     // loading a single Folio cascade into loading every other Folio of the same type just to
     // populate an ignored field, and once enough rows accumulated it starved the request
-    // (see #1006 — GET /api/v1/folio failing with "Failed to write request").
+    // (see #1006 — GET /api/v1/folios failing with "Failed to write request").
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdFolioType", fetch = FetchType.LAZY)
     private List<Folio> folioList;
     @Basic(optional = false)
@@ -106,7 +103,7 @@ public class FolioType implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idFolioType == null || idFolioType.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idFolioType == null || idFolioType.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -189,29 +186,29 @@ public class FolioType implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "TipoDeFolio[ idTipoFolio=" + idFolioType + " ]"
-                + "[ nombre=" + name + " ]";
+        return "FolioType[ idFolioType=" + idFolioType + " ]"
+                + "[ name=" + name + " ]";
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoFolioType getDto()
     {
-        DtoFolioType miDtoFolioType = new DtoFolioType();
+        DtoFolioType folioTypeDto = new DtoFolioType();
 
-        miDtoFolioType.setIdFolioType(this.getIdFolioType());
-        miDtoFolioType.setName(this.getName());
-        miDtoFolioType.setNotes(this.getNotes());
-        miDtoFolioType.setEnabled(this.enabled);
-        miDtoFolioType.setIsAuxiliary(this.isAuxiliary);
-        miDtoFolioType.setVersion(this.getVersion());
+        folioTypeDto.setIdFolioType(this.getIdFolioType());
+        folioTypeDto.setName(this.getName());
+        folioTypeDto.setNotes(this.getNotes());
+        folioTypeDto.setEnabled(this.enabled);
+        folioTypeDto.setIsAuxiliary(this.isAuxiliary);
+        folioTypeDto.setVersion(this.getVersion());
 
-        return miDtoFolioType;
+        return folioTypeDto;
 
     }
 
-    public void setAtributos(DtoFolioType dtoFolioType) throws DtoInvalidoException
+    public void setAttributes(DtoFolioType dtoFolioType) throws InvalidDtoException
     {
-        if (dtoFolioType.isValido())
+        if (dtoFolioType.isValid())
         {
             this.setIdFolioType(dtoFolioType.getIdFolioType());
             this.setName(dtoFolioType.getName());
@@ -221,7 +218,7 @@ public class FolioType implements Serializable, Persistable<Integer>
             this.setVersion(dtoFolioType.getVersion());
         } else
         {
-            throw new DtoInvalidoException("El dto indicado no es valido.");
+            throw new InvalidDtoException("The indicated DTO is not valid.");
         }
 
     }

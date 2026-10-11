@@ -186,7 +186,7 @@ export async function apiGetBytes(path: string): Promise<Blob> {
 /** Clears the HttpOnly auth cookie via the backend logout endpoint (#1051). */
 export async function apiLogout(): Promise<void> {
   try {
-    await fetch(`${BASE_URL}/usuarios/logout`, {
+    await fetch(`${BASE_URL}/users/logout`, {
       ...DEFAULT_FETCH_INIT,
       method: "POST",
       headers: buildHeaders({ "Content-Type": "application/json" }),

@@ -14,11 +14,11 @@ class CreatedResponsesTest {
     @Test
     @DisplayName("should return 201 with Location for collection path and id")
     void shouldReturnCreatedWithLocation() {
-        ResponseEntity<String> response = CreatedResponses.of("body", "/api/v1/pagos", 42);
+        ResponseEntity<String> response = CreatedResponses.of("body", "/api/v1/payments", 42);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isEqualTo("body");
         assertThat(response.getHeaders().getLocation()).isNotNull();
-        assertThat(response.getHeaders().getLocation().getPath()).isEqualTo("/api/v1/pagos/42");
+        assertThat(response.getHeaders().getLocation().getPath()).isEqualTo("/api/v1/payments/42");
     }
 }

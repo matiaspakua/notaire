@@ -52,7 +52,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class EntitiesBasicTest {
 
     @Nested
-    @DisplayName("Concepto")
+    @DisplayName("Concept")
     class ConceptTests {
         @Test
         @DisplayName("Constructors and getters/setters")
@@ -104,7 +104,7 @@ class EntitiesBasicTest {
         }
 
         @Test
-        @DisplayName("getDto and setAtributos roundtrip")
+        @DisplayName("getDto and setAttributes roundtrip")
         void getDtoAndSetAtributos() throws Exception {
             Concept c = new Concept(1);
             c.setName("X");
@@ -124,7 +124,7 @@ class EntitiesBasicTest {
             assertThat(dto.isFixed()).isTrue();
 
             Concept c2 = new Concept();
-            c2.setAtributos(dto);
+            c2.setAttributes(dto);
             assertThat(c2.getIdConcept()).isEqualTo(1);
             assertThat(c2.getName()).isEqualTo("X");
             assertThat(c2.getValue()).isEqualByComparingTo(new java.math.BigDecimal("10"));
@@ -132,13 +132,13 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("EstadoDeGestion")
+    @DisplayName("ManagementStatus")
     class ManagementStatusTests {
         @Test
         @DisplayName("constructors/setters/equals/getDto")
         void all() throws Exception {
             ManagementStatus e1 = new ManagementStatus();
-            assertThat(e1.getIdManagementStatus()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            assertThat(e1.getIdManagementStatus()).isEqualTo(BusinessConstants.INVALID_OBJECT_ID);
 
             ManagementStatus e2 = new ManagementStatus(7);
             assertThat(e2.getIdManagementStatus()).isEqualTo(7);
@@ -171,7 +171,7 @@ class EntitiesBasicTest {
             dto.setName("X");
             dto.setNotes("y");
             dto.setVersion(2);
-            e1.setAtributo(dto);
+            e1.setAttribute(dto);
             assertThat(e1.getName()).isEqualTo("X");
 
             DtoManagementStatus outDto = e1.getDto();
@@ -180,7 +180,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("Copia")
+    @DisplayName("Copy")
     class CopyTests {
         @Test
         @DisplayName("constructors and accessors and equals")
@@ -226,15 +226,15 @@ class EntitiesBasicTest {
     @DisplayName("Folio")
     class FolioTests {
         @Test
-        @DisplayName("constructors/accessors/equals/setAtributos")
+        @DisplayName("constructors/accessors/equals/setAttributes")
         void all() {
             Folio f1 = new Folio();
             Folio f2 = new Folio(1);
-            Folio f3 = new Folio(2, 100, 2024, "Nuevo");
+            Folio f3 = new Folio(2, 100, 2024, "New");
             assertThat(f2.getIdFolio()).isEqualTo(1);
             assertThat(f3.getNumber()).isEqualTo(100);
             assertThat(f3.getYear()).isEqualTo(2024);
-            assertThat(f3.getStatus()).isEqualTo("Nuevo");
+            assertThat(f3.getStatus()).isEqualTo("New");
 
             f1.setIdFolio(5);
             f1.setNumber(101);
@@ -262,17 +262,17 @@ class EntitiesBasicTest {
             assertThat(new Folio(1)).isNotEqualTo("x");
             assertThat(f1.toString()).contains("5");
 
-            // setAtributos + getDto roundtrip (DtoFolio must be valid)
+            // setAttributes + getDto roundtrip (DtoFolio must be valid)
             DtoFolio dto = new DtoFolio();
             dto.setIdFolio(50);
             dto.setNumber(5);
             dto.setYear(2022);
-            dto.setStatus("Nuevo");
+            dto.setStatus("New");
             dto.setNotes("obs");
             dto.setVersion(1);
 
             Folio target = new Folio();
-            // setAtributos only updates if dto.isValido() — DtoFolio may have specific rules
+            // setAttributes only updates if dto.isValid() — DtoFolio may have specific rules
             // (we just verify no exception is thrown)
             assertThat(target).isNotNull();
 
@@ -283,7 +283,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("FoliosCopias + PK")
+    @DisplayName("FolioCopies + PK")
     class FolioCopiesTests {
         @Test
         @DisplayName("PK equality and hashCode")
@@ -334,13 +334,13 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("Historial")
+    @DisplayName("History")
     class HistoryTests {
         @Test
         @DisplayName("All members and equals")
         void all() {
             History h1 = new History();
-            assertThat(h1.getIdHistory()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            assertThat(h1.getIdHistory()).isEqualTo(BusinessConstants.INVALID_OBJECT_ID);
             History h2 = new History(1);
             assertThat(h2.getIdHistory()).isEqualTo(1);
             Date d = new Date();
@@ -364,12 +364,12 @@ class EntitiesBasicTest {
             assertThat(new History(1)).isNotEqualTo("x");
             assertThat(h1.toString()).contains("3");
 
-            // setAtributos is a no-op
+            // setAttributes is a no-op
         }
     }
 
     @Nested
-    @DisplayName("Identificacion + PK")
+    @DisplayName("Identification + PK")
     class IdentificationTests {
         @Test
         @DisplayName("PK behaviour")
@@ -426,13 +426,13 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("Inmueble")
+    @DisplayName("Property")
     class PropertyTests {
         @Test
         @DisplayName("All")
         void all() {
             Property i1 = new Property();
-            assertThat(i1.getIdProperty()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            assertThat(i1.getIdProperty()).isEqualTo(BusinessConstants.INVALID_OBJECT_ID);
             Property i2 = new Property(1);
             assertThat(i2.getIdProperty()).isEqualTo(1);
 
@@ -469,7 +469,7 @@ class EntitiesBasicTest {
         @DisplayName("All")
         void all() {
             Item i1 = new Item();
-            assertThat(i1.getIdItem()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            assertThat(i1.getIdItem()).isEqualTo(BusinessConstants.INVALID_OBJECT_ID);
             Item i2 = new Item(1);
             assertThat(i2.getIdItem()).isEqualTo(1);
             Item i3 = new Item(2, "n", new java.math.BigDecimal("100"));
@@ -500,7 +500,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("Testimonio")
+    @DisplayName("Testimony")
     class TestimonyTests {
         @Test
         @DisplayName("All")
@@ -531,7 +531,7 @@ class EntitiesBasicTest {
             assertThat(new Testimony(1)).isEqualTo(new Testimony(1));
             assertThat(new Testimony(1)).isNotEqualTo(new Testimony(2));
             assertThat(new Testimony(1)).isNotEqualTo("x");
-            // toString requires fkIdEscritura to be set
+            // toString requires fkIdDeed to be set
             assertThat(t1.toString()).contains("10");
 
             DtoTestimony dto = t1.getDto();
@@ -544,13 +544,13 @@ class EntitiesBasicTest {
             dto2.setFlagged(true);
             dto2.setVersion(1);
             Testimony t3 = new Testimony();
-            t3.setAtributos(dto2);
+            t3.setAttributes(dto2);
             assertThat(t3.getIdTestimony()).isEqualTo(99);
         }
     }
 
     @Nested
-    @DisplayName("MovimientoTestimonio")
+    @DisplayName("TestimonyMovement")
     class TestimonyMovementTests {
         @Test
         @DisplayName("All")
@@ -598,14 +598,14 @@ class EntitiesBasicTest {
             dto2.setTestimony(dtoT);
 
             TestimonyMovement m3 = new TestimonyMovement();
-            m3.setAtributos(dto2);
+            m3.setAttributes(dto2);
             assertThat(m3.getIdTestimonyMovement()).isEqualTo(50);
             assertThat(m3.getTestimony()).isNotNull();
         }
     }
 
     @Nested
-    @DisplayName("PlantillaPresupuesto + PK")
+    @DisplayName("BudgetTemplate + PK")
     class BudgetTemplateTests {
         @Test
         @DisplayName("All")
@@ -648,7 +648,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("PlantillaTramite + PK")
+    @DisplayName("ProcedureTemplate + PK")
     class ProcedureTemplateTests {
         @Test
         @DisplayName("All")
@@ -691,7 +691,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("RegistroAuditoria")
+    @DisplayName("AuditRecord")
     class AuditRecordTests {
         @Test
         @DisplayName("All")
@@ -722,12 +722,12 @@ class EntitiesBasicTest {
             assertThat(new AuditRecord(1)).isNotEqualTo("x");
             assertThat(r1.toString()).contains("10");
 
-            // setAtributos doesn't do much
+            // setAttributes doesn't do much
         }
     }
 
     @Nested
-    @DisplayName("TipoDeDocumento")
+    @DisplayName("DocumentType")
     class DocumentTypeTests {
         @Test
         @DisplayName("All")
@@ -768,13 +768,13 @@ class EntitiesBasicTest {
             dto2.setEnabled(true);
             dto2.setVersion(0);
             DocumentType t3 = new DocumentType();
-            t3.setAtributos(dto2);
+            t3.setAttributes(dto2);
             assertThat(t3.getName()).isEqualTo("RG");
         }
     }
 
     @Nested
-    @DisplayName("TipoDeFolio")
+    @DisplayName("FolioType")
     class FolioTypeTests {
         @Test
         @DisplayName("All")
@@ -810,13 +810,13 @@ class EntitiesBasicTest {
             dto2.setIdFolioType(99);
             dto2.setName("NewName");
             FolioType t5 = new FolioType();
-            t5.setAtributos(dto2);
+            t5.setAttributes(dto2);
             assertThat(t5.getName()).isEqualTo("NewName");
         }
     }
 
     @Nested
-    @DisplayName("TipoDeTramite")
+    @DisplayName("ProcedureType")
     class ProcedureTypeTests {
         @Test
         @DisplayName("All")
@@ -860,13 +860,13 @@ class EntitiesBasicTest {
             dto2.setEnabled(true);
             dto2.setVersion(0);
             ProcedureType t3 = new ProcedureType();
-            t3.setAtributos(dto2);
+            t3.setAttributes(dto2);
             assertThat(t3.getName()).isEqualTo("New");
         }
     }
 
     @Nested
-    @DisplayName("TipoIdentificacion")
+    @DisplayName("IdentificationType")
     class IdentificationTypeTests {
         @Test
         @DisplayName("All")
@@ -896,7 +896,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("Tramite")
+    @DisplayName("Procedure")
     class ProcedureTests {
         @Test
         @DisplayName("Basic accessors and equals")
@@ -923,7 +923,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("TramitesPersonas + PK")
+    @DisplayName("PersonProcedure + PK")
     class PersonProcedureTests {
         @Test
         @DisplayName("All")
@@ -964,7 +964,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("Usuario")
+    @DisplayName("User")
     class UserTests {
         @Test
         @DisplayName("All")
@@ -998,17 +998,17 @@ class EntitiesBasicTest {
             assertThat(new User(1)).isNotEqualTo(new User(2));
             assertThat(new User(1)).isNotEqualTo("x");
             assertThat(u1.toString()).contains("10");
-            // getDto wraps a try/catch but won't NPE because we set fkIdPersona with idPersona
-            // and Persona.getDto handles nulls. Let's call it to cover.
+            // getDto wraps a try/catch but won't NPE because we set fkIdPerson with idPersona
+            // and Person.getDto handles nulls. Let's call it to cover.
             try {
             } catch (Exception e) {
-                // OK, some setups may NPE inside Persona.getDto
+                // OK, some setups may NPE inside Person.getDto
             }
         }
     }
 
     @Nested
-    @DisplayName("Suplencia")
+    @DisplayName("Substitution")
     class SubstitutionTests {
         @Test
         @DisplayName("Basic accessors")
@@ -1041,13 +1041,13 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("ConstantesNegocio")
+    @DisplayName("BusinessConstants")
     class BusinessConstantsTests {
         @Test
         @DisplayName("Constants are accessible")
         void constants() {
             // Trigger class loading and reach trivial fields
-            assertThat(BusinessConstants.ID_OBJETO_NO_VALIDO).isNotNull();
+            assertThat(BusinessConstants.INVALID_OBJECT_ID).isNotNull();
         }
     }
 }

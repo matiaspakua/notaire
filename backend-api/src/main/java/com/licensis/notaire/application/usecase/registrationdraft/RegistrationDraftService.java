@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * CU82 - Generar Minuta de Inscripción: genera y hace seguimiento del
- * circuito registral (Generada -> Presentada -> Observada / Inscripta) de
- * una escritura sobre un inmueble ante el Registro de la Propiedad Inmueble.
+ * CU82 - Generates a registration draft and tracks the registry workflow
+ * (Generada -> Presentada -> Observada / Inscripta) of a deed on a property
+ * filed with the property registry.
  */
 @Service
 @Transactional
@@ -40,11 +40,11 @@ public class RegistrationDraftService {
 
     public RegistrationDraft generate(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe la escritura con ID: " + idDeed));
+                .orElseThrow(() -> new ResourceNotFoundException("Deed not found with ID: " + idDeed));
 
         if (!BusinessConstants.DeedFIRMADA.equals(deed.getStatus())) {
             throw new BusinessValidationException(
-                    "La escritura debe estar firmada para generar la minuta de inscripción");
+                    "The deed must be in status 'Firmada' to generate the registration draft");
         }
 
         Property property = findProcedureProperty(idDeed);
@@ -64,32 +64,32 @@ public class RegistrationDraftService {
                 .filter(java.util.Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new BusinessValidationException(
-                        "No existe un trámite con inmueble asociado a la escritura"));
+                        "There is no procedure with property associated to the deed"));
     }
 
     private void validateCompleteData(Property property) {
-        List<String> faltantes = new ArrayList<>();
+        List<String> missing = new ArrayList<>();
         if (isEmptyValue(property.getCadastralDesignation())) {
-            faltantes.add("nomenclatura catastral");
+            missing.add("cadastral nomenclature");
         }
         if (property.getFiscalAppraisal() == null) {
-            faltantes.add("valuación fiscal");
+            missing.add("fiscal appraisal");
         }
         if (isEmptyValue(property.getAddress())) {
-            faltantes.add("domicilio");
+            missing.add("address");
         }
         if (isEmptyValue(property.getRegistrationNumber())) {
-            faltantes.add("matrícula");
+            missing.add("registration number");
         }
         if (isEmptyValue(property.getVolumeFolioLandRecord())) {
-            faltantes.add("tomo/folio/finca");
+            missing.add("volume/folios/parcel");
         }
         if (isEmptyValue(property.getBoundaries())) {
-            faltantes.add("linderos");
+            missing.add("boundaries");
         }
-        if (!faltantes.isEmpty()) {
+        if (!missing.isEmpty()) {
             throw new BusinessValidationException(
-                    "Faltan datos catastrales/registrales del inmueble: " + String.join(", ", faltantes));
+                    "Missing cadastral/registry data for the property: " + String.join(", ", missing));
         }
     }
 
@@ -108,11 +108,11 @@ public class RegistrationDraftService {
         return registrationDraftRepository.findById(id);
     }
 
-    public RegistrationDraft presentar(Integer id, Date dateSubmission, String registryEntryNumber) {
+    public RegistrationDraft submit(Integer id, Date dateSubmission, String registryEntryNumber) {
         RegistrationDraft draft = searchDraft(id);
         if (!BusinessConstants.RegistrationDraftGENERADA.equals(draft.getStatus())) {
             throw new BusinessValidationException(
-                    "La minuta debe estar en estado Generada para registrar la presentación");
+                    "The registration draft must be in status Generada to record the submission");
         }
         draft.setDateSubmission(dateSubmission);
         draft.setRegistryEntryNumber(registryEntryNumber);
@@ -120,11 +120,11 @@ public class RegistrationDraftService {
         return registrationDraftRepository.save(draft);
     }
 
-    public RegistrationDraft observar(Integer id, String registryNotes, Date dateCorrection) {
+    public RegistrationDraft observe(Integer id, String registryNotes, Date dateCorrection) {
         RegistrationDraft draft = searchDraft(id);
         if (!BusinessConstants.RegistrationDraftPRESENTADA.equals(draft.getStatus())) {
             throw new BusinessValidationException(
-                    "La minuta debe estar presentada para registrar una observación del Registro");
+                    "The registration draft must be submitted to record a registry observation");
         }
         draft.setRegistryNotes(registryNotes);
         draft.setDateCorrection(dateCorrection);
@@ -132,11 +132,11 @@ public class RegistrationDraftService {
         return registrationDraftRepository.save(draft);
     }
 
-    public RegistrationDraft inscribir(Integer id, Date dateReception, String finalRegistrationNumber) {
+    public RegistrationDraft recordRegistration(Integer id, Date dateReception, String finalRegistrationNumber) {
         RegistrationDraft draft = searchDraft(id);
         if (!BusinessConstants.RegistrationDraftPRESENTADA.equals(draft.getStatus())) {
             throw new BusinessValidationException(
-                    "La minuta debe estar presentada para registrar la inscripción definitiva");
+                    "The registration draft must be submitted to record the final registration");
         }
         draft.setDateReception(dateReception);
         draft.setFinalRegistrationNumber(finalRegistrationNumber);
@@ -146,6 +146,6 @@ public class RegistrationDraftService {
 
     private RegistrationDraft searchDraft(Integer id) {
         return registrationDraftRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe la minuta de inscripción con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Registration draft not found with ID: " + id));
     }
 }

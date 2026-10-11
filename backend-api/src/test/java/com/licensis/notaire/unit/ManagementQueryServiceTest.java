@@ -26,7 +26,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@DisplayName("GestionQueryService unit tests")
+@DisplayName("ManagementQueryService unit tests")
 @ExtendWith(MockitoExtension.class)
 class ManagementQueryServiceTest {
 
@@ -44,12 +44,12 @@ class ManagementQueryServiceTest {
         testStatus = new ManagementStatus(5);
         testStatus.setName("En Proceso");
 
-        testManagement = new DeedManagement(1, 100, new Date(), "Test Gestion");
+        testManagement = new DeedManagement(1, 100, new Date(), "Test Management");
         testManagement.setFkIdManagementStatus(testStatus);
     }
 
-    private DeedManagement createManagement(Integer id, int number, String encabezado) {
-        DeedManagement g = new DeedManagement(id, number, new Date(), encabezado);
+    private DeedManagement createManagement(Integer id, int number, String heading) {
+        DeedManagement g = new DeedManagement(id, number, new Date(), heading);
         g.setFkIdManagementStatus(testStatus);
         return g;
     }
@@ -63,8 +63,8 @@ class ManagementQueryServiceTest {
         void shouldReturnPagedSummaries() {
             Pageable pageable = PageRequest.of(0, 10);
             List<DeedManagement> entities = List.of(
-                    createManagement(1, 100, "Gestion A"),
-                    createManagement(2, 200, "Gestion B"));
+                    createManagement(1, 100, "Management A"),
+                    createManagement(2, 200, "Management B"));
             Page<DeedManagement> entityPage = new PageImpl<>(entities, pageable, 2);
             when(repository.findAll(pageable)).thenReturn(entityPage);
 
@@ -72,8 +72,8 @@ class ManagementQueryServiceTest {
 
             assertThat(result).hasSize(2);
             assertThat(result.getContent())
-                    .extracting(DtoManagementSummary::encabezado)
-                    .containsExactly("Gestion A", "Gestion B");
+                    .extracting(DtoManagementSummary::heading)
+                    .containsExactly("Management A", "Management B");
             assertThat(result.getContent())
                     .extracting(DtoManagementSummary::number)
                     .containsExactly(100, 200);
@@ -81,7 +81,7 @@ class ManagementQueryServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty page when no gestiones exist")
+        @DisplayName("Should return an empty page when no managements exist")
         void shouldReturnEmptyPageWhenNoneExist() {
             Pageable pageable = PageRequest.of(0, 10);
             when(repository.findAll(pageable)).thenReturn(Page.empty(pageable));
@@ -98,7 +98,7 @@ class ManagementQueryServiceTest {
     class FindById {
 
         @Test
-        @DisplayName("Should return summary when gestion found by ID")
+        @DisplayName("Should return summary when management found by ID")
         void shouldReturnSummaryWhenFound() {
             when(repository.findById(1)).thenReturn(Optional.of(testManagement));
 
@@ -107,12 +107,12 @@ class ManagementQueryServiceTest {
             assertThat(result).isPresent();
             assertThat(result.get().idManagement()).isEqualTo(1);
             assertThat(result.get().number()).isEqualTo(100);
-            assertThat(result.get().encabezado()).isEqualTo("Test Gestion");
-            assertThat(result.get().statusActual()).isEqualTo("En Proceso");
+            assertThat(result.get().heading()).isEqualTo("Test Management");
+            assertThat(result.get().currentStatus()).isEqualTo("En Proceso");
         }
 
         @Test
-        @DisplayName("Should return empty when gestion not found")
+        @DisplayName("Should return empty when management not found")
         void shouldReturnEmptyWhenNotFound() {
             when(repository.findById(999)).thenReturn(Optional.empty());
 
@@ -123,11 +123,11 @@ class ManagementQueryServiceTest {
     }
 
     @Nested
-    @DisplayName("findByNumero")
+    @DisplayName("findByNumber")
     class FindByNumber {
 
         @Test
-        @DisplayName("Should return summary when gestion found by number")
+        @DisplayName("Should return summary when management found by number")
         void shouldReturnSummaryWhenFound() {
             when(repository.findByNumber(100)).thenReturn(Optional.of(testManagement));
 
@@ -138,7 +138,7 @@ class ManagementQueryServiceTest {
         }
 
         @Test
-        @DisplayName("Should return empty when no gestion matches number")
+        @DisplayName("Should return empty when no management matches the number")
         void shouldReturnEmptyWhenNotFound() {
             when(repository.findByNumber(999)).thenReturn(Optional.empty());
 
@@ -163,14 +163,14 @@ class ManagementQueryServiceTest {
             DtoManagementSummary summary = result.get();
             assertThat(summary.idManagement()).isEqualTo(1);
             assertThat(summary.number()).isEqualTo(100);
-            assertThat(summary.encabezado()).isEqualTo("Test Gestion");
+            assertThat(summary.heading()).isEqualTo("Test Management");
             assertThat(summary.dateStart()).isNotNull();
-            assertThat(summary.statusActual()).isEqualTo("En Proceso");
+            assertThat(summary.currentStatus()).isEqualTo("En Proceso");
             assertThat(summary.procedureCount()).isZero();
         }
 
         @Test
-        @DisplayName("Should handle null estadoDeGestion gracefully")
+        @DisplayName("Should handle null managementStatus gracefully")
         void shouldHandleNullStatus() {
             testManagement.setFkIdManagementStatus(null);
             when(repository.findById(1)).thenReturn(Optional.of(testManagement));
@@ -178,7 +178,7 @@ class ManagementQueryServiceTest {
             Optional<DtoManagementSummary> result = queryService.findById(1);
 
             assertThat(result).isPresent();
-            assertThat(result.get().statusActual()).isNull();
+            assertThat(result.get().currentStatus()).isNull();
         }
 
         @Test
@@ -194,7 +194,7 @@ class ManagementQueryServiceTest {
         }
 
         @Test
-        @DisplayName("Should return zero procedureCount when tramiteList is null")
+        @DisplayName("Should return zero procedureCount when procedureList is null")
         void shouldReturnZeroProcedureCountWhenListIsNull() {
             testManagement.setProcedureList(null);
             testManagement.setFkIdManagementStatus(null);
@@ -204,7 +204,7 @@ class ManagementQueryServiceTest {
 
             assertThat(result).isPresent();
             assertThat(result.get().procedureCount()).isZero();
-            assertThat(result.get().statusActual()).isNull();
+            assertThat(result.get().currentStatus()).isNull();
         }
     }
 }

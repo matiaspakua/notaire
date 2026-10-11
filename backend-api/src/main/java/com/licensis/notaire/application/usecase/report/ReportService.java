@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
- * Generates the report PDFs exposed by {@code /api/v1/reportes}.
+ * Generates the report PDFs exposed by {@code /api/v1/reports}.
  *
  * <p>The six reports that were JasperReports 3.5.3 templates over the legacy schema
  * (budget, budget with properties, procedure documents, management history, document
@@ -86,100 +86,100 @@ public class ReportService {
 
     public byte[] generateIndexBookReport(Integer year) throws Exception {
         return generateSimpleTextPdf(
-                "Libro de Indice",
+                "Index book",
                 "CU24",
-                "Periodo: " + year,
-                "Generado: " + LocalDate.now()
+                "Period: " + year,
+                "Generated: " + LocalDate.now()
         );
     }
 
-    public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer mes) throws Exception {
+    public byte[] generateMonthlyTaxDeclarationReport(Integer year, Integer month) throws Exception {
         return generateSimpleTextPdf(
-                "Declaracion Jurada Mensual",
+                "Monthly sworn statement",
                 "CU25",
-                "Periodo: " + mes + "/" + year,
-                "Generado: " + LocalDate.now()
+                "Period: " + month + "/" + year,
+                "Generated: " + LocalDate.now()
         );
     }
 
     public byte[] generateTestimonyCopyReport(Integer idTestimony) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
-                .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimony));
+                .orElseThrow(() -> new ResourceNotFoundException("Testimony not found with ID: " + idTestimony));
 
         if (!testimony.getVerified()) {
             throw new BusinessValidationException(
-                    "El testimonio debe estar verificado para emitir la copia impresa");
+                    "The testimony must be verified to issue the printed copy");
         }
 
         return generateSimpleTextPdf(
-                "Copia de Testimonio N° " + testimony.getNumber(),
+                "Testimony copy No. " + testimony.getNumber(),
                 "CU08",
-                "Testimonio verificado",
-                "Generado: " + LocalDate.now()
+                "Verified testimony",
+                "Generated: " + LocalDate.now()
         );
     }
 
     public byte[] generateNotebookCoverReport(Integer idNotebook) {
         Notebook notebook = notebookRepository.findById(idNotebook)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe el cuaderno con ID: " + idNotebook));
+                .orElseThrow(() -> new ResourceNotFoundException("Notebook not found with ID: " + idNotebook));
 
-        int folioDesde = (notebook.getNumber() - 1) * FOLIOS_PER_NOTEBOOK + 1;
-        int folioHasta = notebook.getNumber() * FOLIOS_PER_NOTEBOOK;
+        int folioFrom = (notebook.getNumber() - 1) * FOLIOS_PER_NOTEBOOK + 1;
+        int folioTo = notebook.getNumber() * FOLIOS_PER_NOTEBOOK;
 
         return generateSimpleTextPdf(
-                "Carátula de Cuaderno N° " + notebook.getNumber() + "/" + notebook.getYear(),
+                "Cover of notebook No. " + notebook.getNumber() + "/" + notebook.getYear(),
                 "CU80",
-                "Registro N° " + notebook.getFkIdNotaryPerson().getNotaryRegistrationNumber()
-                        + " - Folios " + folioDesde + " a " + folioHasta,
-                "Generado: " + LocalDate.now()
+                "Registry No. " + notebook.getFkIdNotaryPerson().getNotaryRegistrationNumber()
+                        + " - Folios " + folioFrom + " to " + folioTo,
+                "Generated: " + LocalDate.now()
         );
     }
 
-    public byte[] generateIncomeTaxDeclarationReport(Integer year, Integer mes) throws Exception {
+    public byte[] generateIncomeTaxDeclarationReport(Integer year, Integer month) throws Exception {
         return generateSimpleTextPdf(
-                "Declaracion Jurada de Rentas",
+                "Income tax sworn statement",
                 "CU50",
-                "Periodo: " + mes + "/" + year,
-                "Generado: " + LocalDate.now()
+                "Period: " + month + "/" + year,
+                "Generated: " + LocalDate.now()
         );
     }
 
     public byte[] generateRegistrationDraftReport(Integer idRegistrationDraft) {
         RegistrationDraft draft = registrationDraftRepository.findById(idRegistrationDraft)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "No existe la minuta de inscripción con ID: " + idRegistrationDraft));
+                        "Registration draft not found with ID: " + idRegistrationDraft));
 
         return generateSimpleTextPdf(
-                "Minuta de Inscripción N° " + draft.getNumber(),
+                "Registration draft N° " + draft.getNumber(),
                 "CU82",
-                "Escritura N° " + draft.getFkIdDeed().getNumber() + " - Estado: " + draft.getStatus(),
-                "Generado: " + LocalDate.now()
+                "Deed N° " + draft.getFkIdDeed().getNumber() + " - Status: " + draft.getStatus(),
+                "Generated: " + LocalDate.now()
         );
     }
 
     @Transactional(readOnly = true)
     public byte[] generatePaymentReceiptReport(Integer idPayment) {
         Payment payment = paymentRepository.findById(idPayment)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe el pago con ID: " + idPayment));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + idPayment));
 
         Budget budget = payment.getBudget();
         Person client = budget != null ? budget.getFkIdPerson() : null;
         String nameClient = client != null
                 ? (client.getFirstName() + " " + client.getLastName()).trim()
-                : "Cliente no identificado";
+                : "Unidentified client";
 
-        String conceptos = budget != null
+        String concepts = budget != null
                 ? itemRepository.findByFkIdBudgetIdBudget(budget.getIdBudget()).stream()
                         .map(Item::getName)
                         .filter(name -> name != null && !name.isBlank())
                         .reduce((a, b) -> a + ", " + b)
-                        .orElse("Sin conceptos detallados")
-                : "Sin conceptos detallados";
+                        .orElse("No concepts listed")
+                : "No concepts listed";
 
-        return generateReceiptPdf(nameClient, payment.getDate(), conceptos, payment.getAmount());
+        return generateReceiptPdf(nameClient, payment.getDate(), concepts, payment.getAmount());
     }
 
-    private byte[] generateReceiptPdf(String client, java.util.Date date, String conceptos,
+    private byte[] generateReceiptPdf(String client, java.util.Date date, String concepts,
             java.math.BigDecimal amount) {
         try {
             String amountText = amount == null
@@ -189,47 +189,47 @@ public class ReportService {
             stream.append("BT\n");
             stream.append("/F1 20 Tf\n");
             stream.append("50 760 Td\n");
-            stream.append("(Recibo de Pago) Tj\n");
+            stream.append("(Payment receipt) Tj\n");
             stream.append("/F1 12 Tf\n");
             stream.append("0 -30 Td\n");
-            stream.append("(Cliente: ").append(escapePdfText(client)).append(") Tj\n");
+            stream.append("(Client: ").append(escapePdfText(client)).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(Fecha de pago: ").append(escapePdfText(String.valueOf(date))).append(") Tj\n");
+            stream.append("(Payment date: ").append(escapePdfText(String.valueOf(date))).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(Concepto(s): ").append(escapePdfText(conceptos)).append(") Tj\n");
+            stream.append("(Concepts: ").append(escapePdfText(concepts)).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(Total abonado: ").append(escapePdfText(amountText)).append(") Tj\n");
+            stream.append("(Amount paid: ").append(escapePdfText(amountText)).append(") Tj\n");
             stream.append("0 -40 Td\n");
-            stream.append("(Recibo generado por backend API - CU15.) Tj\n");
+            stream.append("(Receipt generated by the backend API - CU15.) Tj\n");
             stream.append("ET\n");
 
             return buildPdf(stream.toString());
         } catch (Exception e) {
-            throw new RuntimeException("Error al generar el recibo de pago: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to generate the payment receipt: " + e.getMessage(), e);
         }
     }
 
-    private byte[] generateSimpleTextPdf(String titulo, String cuId, String lineaPeriodo, String lineaDate) {
+    private byte[] generateSimpleTextPdf(String title, String cuId, String periodLine, String dateLine) {
         try {
             StringBuilder stream = new StringBuilder();
             stream.append("BT\n");
             stream.append("/F1 20 Tf\n");
             stream.append("50 760 Td\n");
-            stream.append("(").append(escapePdfText(titulo)).append(") Tj\n");
+            stream.append("(").append(escapePdfText(title)).append(") Tj\n");
             stream.append("/F1 12 Tf\n");
             stream.append("0 -30 Td\n");
-            stream.append("(Caso de uso: ").append(escapePdfText(cuId)).append(") Tj\n");
+            stream.append("(Use case: ").append(escapePdfText(cuId)).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(").append(escapePdfText(lineaPeriodo)).append(") Tj\n");
+            stream.append("(").append(escapePdfText(periodLine)).append(") Tj\n");
             stream.append("0 -20 Td\n");
-            stream.append("(").append(escapePdfText(lineaDate)).append(") Tj\n");
+            stream.append("(").append(escapePdfText(dateLine)).append(") Tj\n");
             stream.append("0 -40 Td\n");
-            stream.append("(Reporte operativo generado por backend API.) Tj\n");
+            stream.append("(Operational report generated by the backend API.) Tj\n");
             stream.append("ET\n");
 
             return buildPdf(stream.toString());
         } catch (Exception e) {
-            throw new RuntimeException("Error al generar PDF textual: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to generate the text PDF: " + e.getMessage(), e);
         }
     }
 

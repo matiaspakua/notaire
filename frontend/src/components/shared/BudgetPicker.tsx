@@ -1,4 +1,5 @@
 "use client";
+import { useFormat } from "@/hooks/useFormat";
 
 /**
  * Searchable budget picker (#1340) on the shared SearchCombobox. An empty query
@@ -11,13 +12,12 @@ import { useTranslations } from "next-intl";
 import { fullName } from "@/lib/utils";
 import { SearchCombobox } from "@/components/shared/SearchCombobox";
 import { useBudget, useBudgetSearch, useRecentBudgets } from "@/hooks/useBudgetSearch";
-import type { Presupuesto } from "@/types";
-import { useFormat } from "@/hooks/useFormat";
+import type { Budget } from "@/types";
 
 export interface BudgetPickerProps {
   /** Selected budget id. */
   value?: number;
-  onChange: (budget: Presupuesto | undefined) => void;
+  onChange: (budget: Budget | undefined) => void;
   "aria-label": string;
   placeholder?: string;
   allowClear?: boolean;
@@ -27,14 +27,14 @@ export interface BudgetPickerProps {
 }
 
 /** "#<number> — <client>": the number first, so it reads the same in es and en. */
-export function budgetLabel(b: Presupuesto): string {
+export function budgetLabel(b: Budget): string {
   return b.person ? `#${b.idBudget} — ${fullName(b.person)}` : `#${b.idBudget}`;
 }
 
 export function BudgetPicker({ value, onChange, allowClear = false, ...rest }: BudgetPickerProps) {
   const fmt = useFormat();
   const t = useTranslations("budgetPicker");
-  const [known, setKnown] = useState<Presupuesto | undefined>();
+  const [known, setKnown] = useState<Budget | undefined>();
 
   const knownMatches = known?.idBudget === value ? known : undefined;
   const loaded = useBudget(value, value != null && !knownMatches);
@@ -51,7 +51,7 @@ export function BudgetPicker({ value, onChange, allowClear = false, ...rest }: B
   }
 
   return (
-    <SearchCombobox<Presupuesto>
+    <SearchCombobox<Budget>
       {...rest}
       useSource={useSource}
       getKey={(b) => b.idBudget!}

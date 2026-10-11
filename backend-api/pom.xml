@@ -272,10 +272,10 @@
                                 <exclude>com.sun/**/*</exclude>
                                 <exclude>sun/**/*</exclude>
                                 <exclude>com/licensis/notaire/jpa/**/*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorJpa*</exclude>
+                                <exclude>com/licensis/notaire/service/JpaAdministrator*</exclude>
                                 <exclude>com/licensis/notaire/service/AdministradorReportes*</exclude>
                                 <exclude>com/licensis/notaire/service/AdministradorSesion*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorValidaciones*</exclude>
+                                <exclude>com/licensis/notaire/service/ValidationAdministrator*</exclude>
                                 <exclude>com/licensis/notaire/service/Conexion*</exclude>
                                 <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>
@@ -291,10 +291,10 @@
                             <excludes>
                                 <exclude>com/licensis/notaire/jpa/**/*</exclude>
                                 <exclude>com/licensis/notaire/jpa/exceptions/**/*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorJpa*</exclude>
+                                <exclude>com/licensis/notaire/service/JpaAdministrator*</exclude>
                                 <exclude>com/licensis/notaire/service/AdministradorReportes*</exclude>
                                 <exclude>com/licensis/notaire/service/AdministradorSesion*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorValidaciones*</exclude>
+                                <exclude>com/licensis/notaire/service/ValidationAdministrator*</exclude>
                                 <exclude>com/licensis/notaire/service/Conexion*</exclude>
                                 <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>
@@ -317,10 +317,10 @@
                         <configuration>
                             <excludes>
                                 <exclude>com/licensis/notaire/jpa/**/*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorJpa*</exclude>
+                                <exclude>com/licensis/notaire/service/JpaAdministrator*</exclude>
                                 <exclude>com/licensis/notaire/service/AdministradorReportes*</exclude>
                                 <exclude>com/licensis/notaire/service/AdministradorSesion*</exclude>
-                                <exclude>com/licensis/notaire/service/AdministradorValidaciones*</exclude>
+                                <exclude>com/licensis/notaire/service/ValidationAdministrator*</exclude>
                                 <exclude>com/licensis/notaire/service/Conexion*</exclude>
                                 <exclude>com/licensis/notaire/NotaireBackendApplication*</exclude>
                             </excludes>

@@ -19,7 +19,7 @@ class RequiredFieldsTest {
                 .notNull(null, "verified")
                 .orThrow())
                 .isInstanceOf(BusinessValidationException.class)
-                .hasMessage("number: es obligatorio; verified: es obligatorio");
+                .hasMessage("number: is required; verified: is required");
     }
 
     @Test

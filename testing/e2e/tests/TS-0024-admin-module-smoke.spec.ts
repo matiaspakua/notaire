@@ -7,18 +7,18 @@
 import { test, expect } from "@playwright/test";
 import { authenticateAsAdmin as adminAuthSetup } from "./setup/auth";
 
-test.describe("Administración hub (ADMIN only)", () => {
+test.describe("Administration hub (ADMIN only)", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion");
+    await page.goto("/dashboard/administration");
   });
 
   test("hub shows all admin module cards", async ({ page }) => {
     await expect(
       page.getByRole("heading", { level: 1, name: /administración/i })
     ).toBeVisible();
-    await expect(page.getByText(/usuarios/i).first()).toBeVisible();
-    await expect(page.getByText(/conceptos/i).first()).toBeVisible();
+    await expect(page.getByText(/users/i).first()).toBeVisible();
+    await expect(page.getByText(/concepts/i).first()).toBeVisible();
     await expect(page.getByText(/tipos de trámite/i).first()).toBeVisible();
     await expect(page.getByText(/estados de gestión/i).first()).toBeVisible();
   });
@@ -28,10 +28,10 @@ test.describe("Administración hub (ADMIN only)", () => {
   });
 });
 
-test.describe("CU67 — Estados de Gestión", () => {
+test.describe("CU67 — Management statuses", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/estados-gestion");
+    await page.goto("/dashboard/administration/management-statuses");
   });
 
   test("page loads with correct title", async ({ page }) => {
@@ -53,19 +53,19 @@ test.describe("CU67 — Estados de Gestión", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
   });
 
-  test("CU67 — typing in search calls GET /estado-gestion/search", async ({ page }) => {
+  test("CU67 — typing in search calls GET /management-statuses/search", async ({ page }) => {
     const searchRequest = page.waitForRequest((req) =>
-      req.url().includes("/api/v1/estado-gestion/search") && req.method() === "GET"
+      req.url().includes("/api/v1/management-statuses/search") && req.method() === "GET"
     );
-    await page.getByTestId("search-estados").fill("Iniciada");
+    await page.getByTestId("search-statuses").fill("Iniciada");
     await searchRequest;
   });
 });
 
-test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
+test.describe("CU26/CU57/CU64 — Procedure types", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/tramites");
+    await page.goto("/dashboard/administration/procedures");
   });
 
   test("page loads with correct title", async ({ page }) => {
@@ -74,7 +74,7 @@ test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
     ).toBeVisible();
   });
 
-  test("modal has nombre, descripcion and checkbox fields", async ({ page }) => {
+  test("modal has name, description, and checkbox fields", async ({ page }) => {
     await page.getByRole("button", { name: /nuevo tipo/i }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByLabel(/nombre/i)).toBeVisible();
@@ -83,49 +83,49 @@ test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
     await expect(dialog.getByLabel(/se inscribe/i)).toBeVisible();
   });
 
-  test("CU26/CU64 — typing in search calls GET /tipo-tramite/search", async ({ page }) => {
+  test("CU26/CU64 — typing in search calls GET /procedure-types/search", async ({ page }) => {
     const searchRequest = page.waitForRequest((req) =>
-      req.url().includes("/api/v1/tipo-tramite/search") && req.method() === "GET"
+      req.url().includes("/api/v1/procedure-types/search") && req.method() === "GET"
     );
-    await page.getByTestId("input-search-tramite").fill("Compraventa");
+    await page.getByTestId("input-search-procedure").fill("Compraventa");
     await searchRequest;
   });
 });
 
-test.describe("CU37 — Conceptos", () => {
+test.describe("CU37 — Concepts", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/conceptos");
+    await page.goto("/dashboard/administration/concepts");
   });
 
   test("page loads with correct title", async ({ page }) => {
-    await expect(page.getByRole("heading", { name: /conceptos/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /concepts/i })).toBeVisible();
   });
 
-  test("typing in search calls GET /conceptos/search", async ({ page }) => {
+  test("typing in search calls GET /concepts/search", async ({ page }) => {
     const searchRequest = page.waitForRequest((req) =>
-      req.url().includes("/api/v1/conceptos/search") && req.method() === "GET"
+      req.url().includes("/api/v1/concepts/search") && req.method() === "GET"
     );
-    await page.getByTestId("input-search-concepto").fill("Honorarios");
+    await page.getByTestId("input-search-concept").fill("Honorarios");
     await searchRequest;
   });
 });
 
-test.describe("CU38 — Tipos de Documento", () => {
+test.describe("CU38 — Document types", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/documentos");
+    await page.goto("/dashboard/administration/documents");
   });
 
   test("page loads with correct title", async ({ page }) => {
     await expect(page.getByRole("heading", { name: /tipos de documento/i })).toBeVisible();
   });
 
-  test("typing in search calls GET /tipo-de-documento/search", async ({ page }) => {
+  test("typing in search calls GET /document-types/search", async ({ page }) => {
     const searchRequest = page.waitForRequest((req) =>
-      req.url().includes("/api/v1/tipo-de-documento/search") && req.method() === "GET"
+      req.url().includes("/api/v1/document-types/search") && req.method() === "GET"
     );
-    await page.getByTestId("input-search-documento").fill("DNI");
+    await page.getByTestId("input-search-document").fill("DNI");
     await searchRequest;
   });
 });
@@ -133,7 +133,7 @@ test.describe("CU38 — Tipos de Documento", () => {
 test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/folios");
+    await page.goto("/dashboard/administration/folios");
   });
 
   test("page loads with correct title", async ({ page }) => {
@@ -142,85 +142,85 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
     ).toBeVisible();
   });
 
-  test("modal has numero, anio and estado fields", async ({ page }) => {
+  test("modal has number, year, and status fields", async ({ page }) => {
     await page.getByRole("button", { name: /nuevo folio/i }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByLabel(/número/i)).toBeVisible();
     await expect(dialog.getByLabel(/año/i)).toBeVisible();
   });
 
-  test("CU63 — estado filter select is present and usable", async ({ page }) => {
-    await expect(page.getByTestId("select-filter-estado-folio")).toBeVisible();
+  test("CU63 — status filter select is present and usable", async ({ page }) => {
+    await expect(page.getByTestId("select-filter-status-folio")).toBeVisible();
   });
 
-  test("Tipos de Folio section: full CRUD via search + create + edit + delete", async ({ page }) => {
+  test("Folio types section: full CRUD via search + create + edit + delete", async ({ page }) => {
     const uniqueName = `TipoTest${Date.now()}`;
     const renamed = `${uniqueName}-edit`;
 
     await expect(page.getByRole("heading", { name: /tipos de folio/i })).toBeVisible();
 
-    await page.getByTestId("btn-nuevo-tipo-folio").click();
+    await page.getByTestId("btn-new-folio-type").click();
     const createDialog = page.getByRole("dialog");
-    await createDialog.getByTestId("input-nombre-tipo-folio").fill(uniqueName);
-    await createDialog.getByTestId("btn-save-tipo-folio").click();
+    await createDialog.getByTestId("input-name-folio-type").fill(uniqueName);
+    await createDialog.getByTestId("btn-save-folio-type").click();
     await expect(createDialog).toBeHidden();
 
-    await page.getByTestId("input-search-tipo-folio").fill(uniqueName);
+    await page.getByTestId("input-search-folio-type").fill(uniqueName);
     const row = page.getByText(uniqueName, { exact: true });
     await expect(row).toBeVisible();
 
-    await page.getByTestId("btn-edit-tipo-folio").first().click();
+    await page.getByTestId("btn-edit-folio-type").first().click();
     const editDialog = page.getByRole("dialog");
-    await editDialog.getByTestId("input-nombre-tipo-folio").fill(renamed);
-    await editDialog.getByTestId("btn-save-tipo-folio").click();
+    await editDialog.getByTestId("input-name-folio-type").fill(renamed);
+    await editDialog.getByTestId("btn-save-folio-type").click();
     await expect(editDialog).toBeHidden();
 
-    await page.getByTestId("input-search-tipo-folio").fill(renamed);
+    await page.getByTestId("input-search-folio-type").fill(renamed);
     await expect(page.getByText(renamed, { exact: true })).toBeVisible();
 
-    await page.getByTestId("btn-delete-tipo-folio").first().click();
+    await page.getByTestId("btn-delete-folio-type").first().click();
     await page.getByRole("alertdialog").getByRole("button", { name: /eliminar/i }).click();
     await expect(page.getByText(renamed, { exact: true })).toBeHidden();
   });
 
-  test("CU81 — marking a tipo de folio as Protocolo Auxiliar via checkbox persists the flag", async ({ page }) => {
+  test("CU81 — marking a folio type as Protocolo Auxiliar via checkbox persists the flag", async ({ page }) => {
     const uniqueName = `TipoAuxiliarTest${Date.now()}`;
 
-    await page.getByTestId("btn-nuevo-tipo-folio").click();
+    await page.getByTestId("btn-new-folio-type").click();
     const dialog = page.getByRole("dialog");
-    await dialog.getByTestId("input-nombre-tipo-folio").fill(uniqueName);
-    await dialog.getByTestId("checkbox-es-auxiliar-tipo-folio").click();
-    await dialog.getByTestId("btn-save-tipo-folio").click();
+    await dialog.getByTestId("input-name-folio-type").fill(uniqueName);
+    await dialog.getByTestId("checkbox-is-auxiliary-folio-type").click();
+    await dialog.getByTestId("btn-save-folio-type").click();
     await expect(dialog).toBeHidden();
 
-    await page.getByTestId("input-search-tipo-folio").fill(uniqueName);
-    await expect(page.getByText(/protocolo auxiliar/i).first()).toBeVisible();
+    await page.getByTestId("input-search-folio-type").fill(uniqueName);
+    await expect(page.getByText(/protocol auxiliar/i).first()).toBeVisible();
   });
 });
 
-test.describe("CU39/CU49/CU55 — Plantillas de Presupuesto", () => {
+test.describe("CU39/CU49/CU55 — Budget templates", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/administracion/plantillas");
+    await page.goto("/dashboard/administration/templates");
   });
 
   test("page loads with correct title", async ({ page }) => {
     await expect(
-      page.getByRole("heading", { name: /plantillas de presupuesto/i })
+      page.getByRole("heading", { name: /templates de presupuesto/i })
     ).toBeVisible();
   });
 
-  test("modal requires tipo de tramite and concepto", async ({ page }) => {
+  test("the modal requires a procedure type and a concept", async ({ page }) => {
     await page.getByRole("button", { name: /nueva plantilla/i }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("combobox").first()).toBeVisible();
   });
 });
 
-test.describe("Auditoría (read-only)", () => {
+test.describe("Audit (read-only)", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
-    await page.goto("/dashboard/auditoria");
+    await page.goto("/dashboard/audit");
   });
 
   test("page loads with audit heading", async ({ page }) => {

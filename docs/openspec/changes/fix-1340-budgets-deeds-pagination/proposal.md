@@ -12,14 +12,14 @@
 
 ## Objetivo
 
-`/dashboard/presupuestos` and `/dashboard/escrituras` loaded `size=1000`: on the dev database (more than 1000 budgets) budgets after the 1000th were unreachable, and the dashboard counted at most 1000 budgets. Both filters were also broken: the status filter sent `?estado=` and the deed search `?numero=`, while the backend reads `status` and `number`, so each answered every row unfiltered.
+`/dashboard/budgets` and `/dashboard/deeds` loaded `size=1000`: on the dev database (more than 1000 budgets) budgets after the 1000th were unreachable, and the dashboard counted at most 1000 budgets. Both filters were also broken: the status filter sent `?estado=` and the deed search `?numero=`, while the backend reads `status` and `number`, so each answered every row unfiltered.
 
 ## What Changes
 
-- `usePresupuestosPage` (`sort=idBudget,desc`) and `useEscriturasPage` (`sort=idDeed,desc`): one page of `GET /presupuestos` and `GET /escrituras`, `keepPreviousData`.
+- `usePresupuestosPage` (`sort=idBudget,desc`) and `useEscriturasPage` (`sort=idDeed,desc`): one page of `GET /budgets` and `GET /deeds`, `keepPreviousData`.
 - Both screens show the server page with the shared `Pagination` footer, the real total and `page`/`size` in the URL (`useUrlPagination`, `useClampPage`).
-- Budgets: the status filter calls `GET /presupuestos/buscar?status=` (every budget of that status, no footer); a number in the search box is read with `GET /presupuestos/{id}`, so it is found on any page; a client name filters the rows shown.
-- Deeds: the number search calls `GET /escrituras/buscar?number=` (exact match, no footer).
+- Budgets: the status filter calls `GET /budgets/search?status=` (every budget of that status, no footer); a number in the search box is read with `GET /budgets/{id}`, so it is found on any page; a client name filters the rows shown.
+- Deeds: the number search calls `GET /deeds/search?number=` (exact match, no footer).
 - Dashboard: the budgets counter shows `totalElements`.
 - E2E robustness: `presupuesto-plantilla` GW01 uses its own uniquely named procedure type instead of `.last()` (it raced with parallel tests).
 - Vitest `budgets-deeds-pagination.test.tsx`; Playwright `TS-0113`; CHANGELOG entry.
@@ -48,18 +48,18 @@
 
 | Module | Touched | What changes |
 |--------|---------|--------------|
-| `frontend` | yes | usePresupuestos, useEscrituras, presupuestos page, escrituras page, dashboard page |
+| `frontend` | yes | useBudgets, useEscrituras, presupuestos page, escrituras page, dashboard page |
 | `testing` | yes | Playwright TS-0113, presupuesto-plantilla GW01 |
-| `backend-api` | no | GET /presupuestos and GET /escrituras already page with @ParameterObject page/size/sort |
+| `backend-api` | no | GET /budgets and GET /deeds already page with @ParameterObject page/size/sort |
 
 ### Surface area
 
-- Routes: /dashboard/presupuestos, /dashboard/escrituras (query params page, size), /dashboard
-- API (unchanged contract): GET /api/v1/presupuestos?page&size&sort, GET /api/v1/presupuestos/buscar?status, GET /api/v1/presupuestos/{id}, GET /api/v1/escrituras?page&size&sort, GET /api/v1/escrituras/buscar?number
+- Routes: /dashboard/budgets, /dashboard/deeds (query params page, size), /dashboard
+- API (unchanged contract): GET /api/v1/budgets?page&size&sort, GET /api/v1/budgets/search?status, GET /api/v1/budgets/{id}, GET /api/v1/deeds?page&size&sort, GET /api/v1/deeds/search?number
 
 ### Architecture review
 
-No architecture change. Backend gaps, reported and not changed here: `GET /presupuestos/buscar` and `GET /escrituras/buscar` return unpaged lists, and there is no budget search by client name (a name filters only the rows shown). `usePresupuestos()` / `useEscrituras()` (size=1000) stay for the selects of gestiones, pagos, testimonios, minutas and folios: later slices with a searchable picker.
+No architecture change. Backend gaps, reported and not changed here: `GET /budgets/search` and `GET /deeds/search` return unpaged lists, and there is no budget search by client name (a name filters only the rows shown). `useBudgets()` / `useEscrituras()` (size=1000) stay for the selects of gestiones, pagos, testimonios, minutas and folios: later slices with a searchable picker.
 
 ## Documentation Impact
 

@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/testimonio")
-@Tag(name = "Testimonio", description = "API para gestionar testimonio")
+@RequestMapping("/api/v1/testimonies")
+@Tag(name = "Testimony", description = "API for managing testimony")
 public class TestimonyController {
 
     /**
@@ -52,7 +52,7 @@ public class TestimonyController {
         private boolean versionSent;
 
         @Override
-        @Schema(description = "Número del testimonio", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Number of the testimony", requiredMode = Schema.RequiredMode.REQUIRED)
         public int getNumber() {
             return super.getNumber();
         }
@@ -64,7 +64,7 @@ public class TestimonyController {
         }
 
         @Override
-        @Schema(description = "Testimonio observado", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Flagged testimony", requiredMode = Schema.RequiredMode.REQUIRED)
         public boolean isFlagged() {
             return super.isFlagged();
         }
@@ -76,7 +76,7 @@ public class TestimonyController {
         }
 
         @Override
-        @Schema(description = "Testimonio verificado", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Verified testimony", requiredMode = Schema.RequiredMode.REQUIRED)
         public boolean isVerified() {
             return super.isVerified();
         }
@@ -88,8 +88,8 @@ public class TestimonyController {
         }
 
         @Override
-        @Schema(description = "Versión leída del testimonio (bloqueo optimista): 409 si ya no es la "
-                + "almacenada", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Version read from the testimony (optimistic lock): 409 when it is no longer the "
+                + "stored version", requiredMode = Schema.RequiredMode.REQUIRED)
         public int getVersion() {
             return super.getVersion();
         }
@@ -114,12 +114,12 @@ public class TestimonyController {
     /**
      * Body of the bare create: the same fields as {@link DtoTestimony}, with the deed required.
      * A testimony is a certified copy of a deed (CU07 / CU08), so it cannot exist without one
-     * (issue #655). The UI creates testimonies through {@code POST /{idDeed}/generar}.
+     * (issue #655). The UI creates testimonies through {@code POST /{idDeed}/generate}.
      */
     public static class TestimonyCreateRequest extends DtoTestimony {
         @Override
         @NotNull
-        @Schema(description = "Escritura de la que el testimonio es copia; `idDeed` debe existir (404 si no)",
+        @Schema(description = "Deed this testimony copies; `idDeed` must exist (404 if it does not)",
                 requiredMode = Schema.RequiredMode.REQUIRED)
         public DtoDeed getDeed() {
             return super.getDeed();
@@ -139,7 +139,7 @@ public class TestimonyController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los testimonio")
+    @Operation(summary = "Get all testimony")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoTestimony>> getAll() {
         List<DtoTestimony> result = repository.findAll().stream()
@@ -150,10 +150,10 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener testimonio por ID")
+    @Operation(summary = "Get testimony by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoTestimony> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -162,24 +162,24 @@ public class TestimonyController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida (falta la escritura o su idDeed)"),
-    @ApiResponse(responseCode = "404", description = "Escritura no encontrada"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request (the deed or its idDeed is missing)"),
+    @ApiResponse(responseCode = "404", description = "Deed not found"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nuevo testimonio")
+    @Operation(summary = "Create testimony")
     public ResponseEntity<Object> create(@Valid @RequestBody TestimonyCreateRequest dto) {
         Integer idDeed = dto.getDeed().getIdDeed();
         if (idDeed == null) {
-            throw new BusinessValidationException("deed.idDeed: es obligatorio");
+            throw new BusinessValidationException("deed.idDeed: is required");
         }
         if (!deedRepository.existsById(idDeed)) {
-            throw new ResourceNotFoundException("Escritura no encontrada: " + idDeed);
+            throw new ResourceNotFoundException("Deed not found: " + idDeed);
         }
         try {
             Testimony entity = new Testimony();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -189,16 +189,16 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Cuerpo vacío o incompleto: number, flagged, verified y version son "
-            + "obligatorios"),
-    @ApiResponse(responseCode = "404", description = "No encontrado"),
-    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el testimonio")
+    @ApiResponse(responseCode = "400", description = "Empty or incomplete body: number, flagged, verified, and version are "
+            + "required"),
+    @ApiResponse(responseCode = "404", description = "Not found"),
+    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the testimony")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar testimonio",
-               description = "Reemplaza el testimonio. number, flagged, verified y version son obligatorios (400 si "
-                       + "falta alguno); notes se guarda tal como se envía y una escritura ausente conserva la actual. "
-                       + "version es la leída: si ya no es la almacenada responde 409 (bloqueo optimista).")
+    @Operation(summary = "Update testimony",
+               description = "Replaces the testimony. number, flagged, verified, and version are required (400 if "
+                       + "any of them is missing); notes are stored as sent, and a missing deed keeps the current one. "
+                       + "version is the one that was read: a mismatch with the stored version responds 409 (optimistic lock).")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody TestimonyUpdateRequest dto) {
         dto.requireComplete();
         Optional<Testimony> existing = repository.findById(id);
@@ -211,7 +211,7 @@ public class TestimonyController {
         }
         try {
             dto.setIdTestimony(id);
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -220,11 +220,11 @@ public class TestimonyController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar testimonio")
+    @Operation(summary = "Delete testimony")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -234,34 +234,34 @@ public class TestimonyController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("No se puede eliminar: el testimonio está referenciado por otros registros.");
+                    .body("Cannot delete: the testimony is referenced by other records.");
         }
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "La escritura no está en estado 'Firmada'"),
-    @ApiResponse(responseCode = "404", description = "Escritura no encontrada")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "The deed is not in status 'Firmada'"),
+    @ApiResponse(responseCode = "404", description = "Deed not found")
 })
-    @PostMapping("/{idDeed}/generar")
-    @Operation(summary = "Generar testimonio de una escritura firmada",
-               description = "Genera un testimonio con número asignado por el sistema a partir de una escritura "
+    @PostMapping("/{idDeed}/generate")
+    @Operation(summary = "Generate a testimony from a signed deed",
+               description = "Generates a testimony with a number assigned by the system from a deed "
                        + "'Firmada'")
     @Transactional
-    public ResponseEntity<DtoTestimony> generar(@PathVariable Integer idDeed) {
+    public ResponseEntity<DtoTestimony> generate(@PathVariable Integer idDeed) {
         Testimony testimony = generationVerificacionService.generate(idDeed);
         return ResponseEntity.status(HttpStatus.CREATED).body(testimony.getDto());
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Testimonio no encontrado")
+    @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
-    @PostMapping("/{id}/verificar")
-    @Operation(summary = "Verificar testimonio",
-               description = "Registra la verificación de un testimonio, marcando si fue observado y por qué")
+    @PostMapping("/{id}/verify")
+    @Operation(summary = "Check testimony",
+               description = "Records the verification of a testimony, marking whether it was observed and why")
     @Transactional
-    public ResponseEntity<DtoTestimony> verificar(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
+    public ResponseEntity<DtoTestimony> verify(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
         Testimony testimony = generationVerificacionService.verify(id, dto.isFlagged(), dto.getNotes());
         return ResponseEntity.ok(testimony.getDto());
     }

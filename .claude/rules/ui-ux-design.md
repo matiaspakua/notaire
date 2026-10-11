@@ -234,7 +234,7 @@ Every form MUST follow this pattern:
 // Select/Dropdown
 <FormField label="Document Type" required>
   <Select>
-    <option>Escritura de Venta</option>
+    <option>Deed de Venta</option>
     <option>Poder Notarial</option>
   </Select>
 </FormField>

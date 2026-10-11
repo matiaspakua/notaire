@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Generates and verifies testimonios of a signed escritura (CU07, CU08).
+ * Generates and verifies testimonies of a signed deed (CU07, CU08).
  */
 @Service
 @Transactional
@@ -31,20 +31,20 @@ public class TestimonyGenerationVerificationService {
     }
 
     /**
-     * Generates a testimonio from a signed escritura. The testimonio number is system-assigned.
+     * Generates a testimony from a signed deed. The testimony number is system-assigned.
      *
-     * @param idEscritura the escritura ID
-     * @return the generated testimonio
-     * @throws ResourceNotFoundException if no escritura with the given ID exists
-     * @throws BusinessValidationException if the escritura is not "Firmada"
+     * @param idDeed the deed ID
+     * @return the generated testimony
+     * @throws ResourceNotFoundException if no deed with the given ID exists
+     * @throws BusinessValidationException if the deed is not "Firmada"
      */
     public Testimony generate(Integer idDeed) {
         Deed deed = deedRepository.findById(idDeed)
-                .orElseThrow(() -> new ResourceNotFoundException("Escritura no encontrada con ID: " + idDeed));
+                .orElseThrow(() -> new ResourceNotFoundException("Deed not found with ID: " + idDeed));
 
         if (!BusinessConstants.DeedFIRMADA.equals(deed.getStatus())) {
             throw new BusinessValidationException(
-                    "La escritura debe estar en estado 'Firmada' para generar su testimonio");
+                    "The deed must be in status 'Firmada' to generate its testimony");
         }
 
         Testimony testimony = new Testimony();
@@ -53,28 +53,28 @@ public class TestimonyGenerationVerificationService {
         testimony.setVerified(false);
         testimony.setFlagged(false);
 
-        log.info("Generando testimonio para escritura id: {}", idDeed);
+        log.info("Generating testimony for deed id: {}", idDeed);
         return testimonyRepository.save(testimony);
     }
 
     /**
-     * Verifies a testimonio, recording whether it was observed and why.
+     * Verifies a testimony, recording whether it was observed and why.
      *
-     * @param idTestimonio the testimonio ID
-     * @param observado whether the testimonio was found to have observations
-     * @param observaciones the reason, when observado is true
-     * @return the verified testimonio
-     * @throws ResourceNotFoundException if no testimonio with the given ID exists
+     * @param idTestimony the testimony id
+     * @param flagged whether the testimony was found to have observations
+     * @param notes the reason, when flagged is true
+     * @return the verified testimony
+     * @throws ResourceNotFoundException if no testimony with the given id exists
      */
     public Testimony verify(Integer idTestimony, boolean flagged, String notes) {
         Testimony testimony = testimonyRepository.findById(idTestimony)
-                .orElseThrow(() -> new ResourceNotFoundException("Testimonio no encontrado con ID: " + idTestimony));
+                .orElseThrow(() -> new ResourceNotFoundException("Testimony not found with ID: " + idTestimony));
 
         testimony.setVerified(true);
         testimony.setFlagged(flagged);
         testimony.setNotes(notes);
 
-        log.info("Verificando testimonio id: {}, observado: {}", idTestimony, flagged);
+        log.info("Verifying testimony id: {}, flagged: {}", idTestimony, flagged);
         return testimonyRepository.save(testimony);
     }
 }

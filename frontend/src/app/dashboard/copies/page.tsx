@@ -1,0 +1,228 @@
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { DataTable, type Column } from "@/components/shared/DataTable";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
+import {
+  useCopies,
+  useCreateCopy,
+  useUpdateCopy,
+  useDeleteCopy,
+} from "@/hooks/useCopies";
+import { presentMutationError } from "@/lib/mutation-error";
+import type { Copy } from "@/types";
+import { useDeleteError } from "@/hooks/useDeleteError";
+import { toDateInputValue, todayInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
+
+export default function CopiesPage() {
+  const fmt = useFormat();
+  const t = useTranslations("copias");
+  const showDeleteError = useDeleteError();
+  const tc = useTranslations("common");
+
+  const { data: copies = [], isLoading } = useCopies();
+  const createMutation = useCreateCopy();
+  const updateMutation = useUpdateCopy();
+  const deleteMutation = useDeleteCopy();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [editing, setEditing] = useState<Copy | null>(null);
+  const [form, setForm] = useState({
+    number: "",
+    datePrinting: "",
+    dateWithdrawal: "",
+    notes: "",
+  });
+
+  function openCreate() {
+    setEditing(null);
+    setForm({ number: "", datePrinting: todayInputValue(), dateWithdrawal: "", notes: "" });
+    setModalOpen(true);
+  }
+
+  function openEdit(c: Copy) {
+    setEditing(c);
+    setForm({
+      number: c.number?.toString() ?? "",
+      datePrinting: toDateInputValue(c.datePrinting),
+      dateWithdrawal: toDateInputValue(c.dateWithdrawal),
+      notes: c.notes ?? "",
+    });
+    setModalOpen(true);
+  }
+
+  // The copy number and print date are required by the API on create and update (#655).
+  const canSave = form.number.trim() !== "" && form.datePrinting !== "";
+
+  async function handleSave() {
+    const data: Partial<Copy> = {
+      number: form.number ? Number(form.number) : undefined,
+      datePrinting: form.datePrinting || undefined,
+      dateWithdrawal: form.dateWithdrawal || undefined,
+      notes: form.notes || undefined,
+    };
+    try {
+      if (editing?.idCopy) {
+        await updateMutation.mutateAsync({ id: editing.idCopy, data });
+        toast.success(t("updated"));
+      } else {
+        await createMutation.mutateAsync(data);
+        toast.success(t("created"));
+      }
+      setModalOpen(false);
+    } catch (err) {
+      presentMutationError(err, { fallback: t("errorSave") });
+    }
+  }
+
+  async function handleDelete() {
+    if (!deleteId) return;
+    try {
+      await deleteMutation.mutateAsync(deleteId);
+      toast.success(t("deleted"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
+    } finally {
+      setDeleteId(null);
+    }
+  }
+
+  const columns: Column<Copy>[] = [
+    {
+      key: "id",
+      header: tc("id"),
+      render: (c) => <span className="text-muted-foreground text-xs">{c.idCopy}</span>,
+      className: "w-16",
+    },
+    {
+      key: "number",
+      header: tc("number"),
+      render: (c) => <span className="font-medium">{c.number ?? "—"}</span>,
+    },
+    {
+      key: "datePrinting",
+      header: t("columns.fechaImpresion"),
+      render: (c) => fmt.date(c.datePrinting),
+    },
+    {
+      key: "dateWithdrawal",
+      header: t("columns.fechaRetiro"),
+      render: (c) => fmt.date(c.dateWithdrawal),
+    },
+    {
+      key: "testimony",
+      header: t("columns.testimonio"),
+      render: (c) => c.fkIdTestimony?.number ? `#${c.fkIdTestimony.number}` : "—",
+      className: "w-32",
+    },
+    {
+      key: "actions",
+      header: "",
+      render: (c) => (
+        <div className="flex gap-1 justify-end">
+          <Button size="icon" variant="ghost" onClick={() => openEdit(c)} aria-label={tc("edit")}>
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setDeleteId(c.idCopy!)}
+            aria-label={tc("delete")}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+      className: "w-24",
+    },
+  ];
+
+  return (
+    <div>
+      <AppHeader
+        title={t("title")}
+        actions={
+          <Button onClick={openCreate}>
+            <Plus className="h-4 w-4" />
+            {t("newCopia")}
+          </Button>
+        }
+      />
+
+      <DataTable
+        data={copies}
+        columns={columns}
+        isLoading={isLoading}
+        keyExtractor={(c) => c.idCopy!}
+        emptyMessage={t("noData")}
+      />
+
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent>
+          <FormContainer>
+            <FormSection dialogTitle title={editing ? t("editCopia") : t("newCopia")}>
+              <FormField label={tc("number")} required>
+                <Input
+                  type="number"
+                  value={form.number}
+                  onChange={(e) => setForm({ ...form, number: e.target.value })}
+                />
+              </FormField>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField label={t("fields.fechaImpresion")} required>
+                  <Input
+                    type="date"
+                    value={form.datePrinting}
+                    onChange={(e) => setForm({ ...form, datePrinting: e.target.value })}
+                  />
+                </FormField>
+                <FormField label={t("fields.fechaRetiro")}>
+                  <Input
+                    type="date"
+                    value={form.dateWithdrawal}
+                    onChange={(e) => setForm({ ...form, dateWithdrawal: e.target.value })}
+                  />
+                </FormField>
+              </div>
+              <FormField label={tc("observations")}>
+                <Input
+                  value={form.notes}
+                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                />
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
+                {tc("cancel")}
+              </Button>
+              <Button
+                onClick={handleSave}
+                disabled={!canSave || createMutation.isPending || updateMutation.isPending}
+              >
+                {editing ? tc("update") : tc("create")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(v) => !v && setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleteMutation.isPending}
+      />
+    </div>
+  );
+}

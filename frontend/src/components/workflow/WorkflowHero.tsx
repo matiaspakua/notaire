@@ -14,13 +14,13 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import WorkflowTracker from "@/components/motion/WorkflowTracker";
-import { useGestionByNumero } from "@/hooks/useGestiones";
-import { useGestionWorkflowTrace, useLatestTracedGestion } from "@/hooks/useGestionWorkflow";
+import { useManagementByNumber } from "@/hooks/useManagements";
+import { useManagementWorkflowTrace, useLatestTracedManagement } from "@/hooks/useManagementWorkflow";
 import { theme } from "@/theme/tokens";
-import type { GestionWorkflowTrace } from "@/types";
+import type { ManagementWorkflowTrace } from "@/types";
 
-function caseLabel(trace: GestionWorkflowTrace, fallback: (number: number | undefined) => string): string {
-  return trace.encabezado ? `#${trace.number} — ${trace.encabezado}` : fallback(trace.number);
+function caseLabel(trace: ManagementWorkflowTrace, fallback: (number: number | undefined) => string): string {
+  return trace.heading ? `#${trace.number} — ${trace.heading}` : fallback(trace.number);
 }
 
 export function WorkflowHero() {
@@ -28,21 +28,21 @@ export function WorkflowHero() {
   const tw = useTranslations("dashboard.workflow");
 
   const [refInput, setRefInput] = useState("");
-  const [searchedNumero, setSearchedNumero] = useState<number | undefined>();
-  const searching = searchedNumero != null;
-  const byNumero = useGestionByNumero(searchedNumero);
-  const searchedTrace = useGestionWorkflowTrace(searching ? byNumero.data?.idManagement : undefined);
-  const latest = useLatestTracedGestion(!searching);
+  const [searchedNumber, setSearchedNumber] = useState<number | undefined>();
+  const searching = searchedNumber != null;
+  const byNumber = useManagementByNumber(searchedNumber);
+  const searchedTrace = useManagementWorkflowTrace(searching ? byNumber.data?.idManagement : undefined);
+  const latest = useLatestTracedManagement(!searching);
 
-  const notFound = searching && byNumero.isError;
+  const notFound = searching && byNumber.isError;
   const trace = searching ? searchedTrace.data : latest.data?.trace;
-  const loading = searching ? searchedTrace.isLoading && byNumero.data != null : latest.isLoading;
+  const loading = searching ? searchedTrace.isLoading && byNumber.data != null : latest.isLoading;
   const noRecentWorkflow = !searching && latest.isSuccess && latest.data === null;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const numero = Number.parseInt(refInput.trim(), 10);
-    setSearchedNumero(Number.isNaN(numero) ? undefined : numero);
+    const number = Number.parseInt(refInput.trim(), 10);
+    setSearchedNumber(Number.isNaN(number) ? undefined : number);
   }
 
   return (
@@ -53,9 +53,9 @@ export function WorkflowHero() {
           {trace && (
             <p className="text-sm text-muted-foreground mt-1" data-testid="workflow-subtitle">
               {caseLabel(trace, (number) => tw("managementFallback", { number: number ?? "—" }))}
-              {trace.statusActual && (
+              {trace.currentStatus && (
                 <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary-text">
-                  {trace.statusActual}
+                  {trace.currentStatus}
                 </span>
               )}
             </p>
@@ -95,7 +95,7 @@ export function WorkflowHero() {
           className="flex flex-col items-start gap-3 rounded-[28px] border border-dashed border-[hsl(var(--border))] bg-white/60 p-8 text-sm text-muted-foreground"
         >
           <p>{tw("noRecentWorkflow")}</p>
-          <Link href="/dashboard/gestiones" className="font-semibold text-primary-text underline-offset-4 hover:underline apple-focus rounded">
+          <Link href="/dashboard/managements" className="font-semibold text-primary-text underline-offset-4 hover:underline apple-focus rounded">
             {tw("openGestiones")}
           </Link>
         </div>

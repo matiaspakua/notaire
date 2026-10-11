@@ -86,6 +86,6 @@ public class FolioCopiesPK implements Serializable
     @Override
     public String toString()
     {
-        return "negocio.FoliosCopiasPK[ fkIdFolio=" + fkIdFolio + ", fkIdCopia=" + fkIdCopy + " ]";
+        return "FolioCopiesPK[ fkIdFolio=" + fkIdFolio + ", fkIdCopy=" + fkIdCopy + " ]";
     }
 }

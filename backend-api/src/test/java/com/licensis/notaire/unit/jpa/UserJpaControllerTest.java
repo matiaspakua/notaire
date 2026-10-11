@@ -1,14 +1,14 @@
 package com.licensis.notaire.unit.jpa;
 
 import com.licensis.notaire.jpa.UserJpaController;
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.AuditRecord;
 import com.licensis.notaire.business.User;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("UsuarioJpaController unit tests")
+@DisplayName("UserJpaController unit tests")
 @ExtendWith(MockitoExtension.class)
 class UserJpaControllerTest {
 
@@ -62,7 +62,7 @@ class UserJpaControllerTest {
      * Helper to instantiate a JpaController that has a private constructor.
      */
     @SuppressWarnings("unchecked")
-    private <T extends IPersistenciaJpa> T createWithReflection(Class<T> clazz, Object... args) throws Exception {
+    private <T extends JpaPersistence> T createWithReflection(Class<T> clazz, Object... args) throws Exception {
         for (Constructor<?> ctor : clazz.getDeclaredConstructors()) {
             if (ctor.getParameterCount() == args.length) {
                 ctor.setAccessible(true);
@@ -83,7 +83,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should persist usuario and manage FK references")
+        @DisplayName("should persist user and manage FK references")
         void shouldPersistAndManageFK() {
             Person person = new Person(10);
             List<AuditRecord> raList = new ArrayList<>();
@@ -151,7 +151,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should merge usuario with same FK and no orphan changes")
+        @DisplayName("should merge user with same FK and not orphan changes")
         void shouldMergeSuccessfully() throws Exception {
             Integer id = 1;
             Person person = new Person(10);
@@ -194,7 +194,7 @@ class UserJpaControllerTest {
 
             assertThatThrownBy(() -> controller.edit(inputUser))
                     .isInstanceOf(IllegalOrphanException.class)
-                    .hasMessageContaining("RegistroAuditoria");
+                    .hasMessageContaining("AuditRecord");
 
             verify(em).close();
             verify(tx, never()).commit();
@@ -240,7 +240,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should remove usuario when no orphans")
+        @DisplayName("should remove the user when there are no orphans")
         void shouldRemoveSuccessfully() throws Exception {
             Integer id = 1;
             User user = new User(id, "u", "p", true, "user");
@@ -316,7 +316,7 @@ class UserJpaControllerTest {
     // -- find methods -----------------------------------------------------
 
     @Nested
-    @DisplayName("findUsuariosEntities")
+    @DisplayName("findUsersEntities")
     class FindUsersEntities {
         @Test
         @DisplayName("should return all")
@@ -347,7 +347,7 @@ class UserJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findUsuarios")
+    @DisplayName("findUsers")
     class FindUsers {
         @Test
         @DisplayName("should find by id")
@@ -362,7 +362,7 @@ class UserJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("getUsuariosCount")
+    @DisplayName("getUsersCount")
     class GetUsersCount {
         @Test
         @DisplayName("should return count")
@@ -378,7 +378,7 @@ class UserJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("buscarUsuarios")
+    @DisplayName("searchUsers")
     class SearchUsers {
         @Test
         @DisplayName("should use named query")
@@ -396,10 +396,10 @@ class UserJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("findUsuarioByPersona")
+    @DisplayName("findUserByPerson")
     class FindUserByPerson {
         @Test
-        @DisplayName("should return null when idPersona is null")
+        @DisplayName("should return null when idPerson is null")
         void shouldReturnNullWhenNullArg() {
             User result = controller.findUserByPerson(null);
             assertThat(result).isNull();
@@ -408,7 +408,7 @@ class UserJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should return usuario when found")
+        @DisplayName("should return user when found")
         void shouldReturnFound() {
             User expected = new User(1);
             List<User> results = new ArrayList<>();
@@ -419,7 +419,7 @@ class UserJpaControllerTest {
             User result = controller.findUserByPerson(10);
 
             assertThat(result).isSameAs(expected);
-            verify(query).setParameter("idPersona", 10);
+            verify(query).setParameter("idPerson", 10);
             verify(em).close();
         }
 
@@ -436,11 +436,11 @@ class UserJpaControllerTest {
         }
     }
 
-    // -- modificarUsuario -------------------------------------------------
+    // -- modifyUser -------------------------------------------------
 
     @Nested
-    @DisplayName("modificarUsuario")
-    class ModificarUser {
+    @DisplayName("modifyUser")
+    class ModifyUser {
         @Test
         @DisplayName("should update entity fields when version matches")
         void shouldUpdateWhenVersionMatches() throws Exception {
@@ -454,7 +454,7 @@ class UserJpaControllerTest {
             when(em.find(User.class, id)).thenReturn(persistentUser);
             when(em.getTransaction()).thenReturn(tx);
 
-            Boolean result = controller.modificarUser(inputUser);
+            Boolean result = controller.modifyUser(inputUser);
 
             assertThat(result).isTrue();
             assertThat(persistentUser.getName()).isEqualTo("new");
@@ -476,31 +476,31 @@ class UserJpaControllerTest {
 
             when(em.find(User.class, id)).thenReturn(persistentUser);
 
-            assertThatThrownBy(() -> controller.modificarUser(inputUser))
+            assertThatThrownBy(() -> controller.modifyUser(inputUser))
                     .isInstanceOf(ClassModifiedException.class);
 
             verify(em).close();
         }
 
         @Test
-        @DisplayName("should throw ClassEliminatedException when entity not found")
+        @DisplayName("should throw ClassDeletedException when entity not found")
         void shouldThrowWhenNotFound() {
             Integer id = 999;
             User inputUser = new User(id, "u", "p", true, "user");
 
             when(em.find(User.class, id)).thenReturn(null);
 
-            assertThatThrownBy(() -> controller.modificarUser(inputUser))
-                    .isInstanceOf(ClassEliminatedException.class);
+            assertThatThrownBy(() -> controller.modifyUser(inputUser))
+                    .isInstanceOf(ClassDeletedException.class);
 
             verify(em).close();
         }
     }
 
-    // -- getNombreJpa -----------------------------------------------------
+    // -- getNameJpa -----------------------------------------------------
 
     @Nested
-    @DisplayName("getNombreJpa")
+    @DisplayName("getNameJpa")
     class GetNameJpa {
         @Test
         @DisplayName("should return class name")

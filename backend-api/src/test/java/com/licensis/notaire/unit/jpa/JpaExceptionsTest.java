@@ -1,6 +1,6 @@
 package com.licensis.notaire.unit.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.CreateEntityException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
@@ -158,13 +158,13 @@ class JpaExceptionsTest {
     }
 
     @Nested
-    @DisplayName("ClassEliminatedException")
-    class ClassEliminatedExceptionTests {
+    @DisplayName("ClassDeletedException")
+    class ClassDeletedExceptionTests {
 
         @Test
         @DisplayName("Default constructor should create exception without message or cause")
         void defaultConstructor() {
-            ClassEliminatedException ex = new ClassEliminatedException();
+            ClassDeletedException ex = new ClassDeletedException();
             assertThat(ex.getMessage()).isNull();
             assertThat(ex.getCause()).isNull();
         }
@@ -172,16 +172,16 @@ class JpaExceptionsTest {
         @Test
         @DisplayName("Should accept message only")
         void shouldAcceptMessageOnly() {
-            ClassEliminatedException ex = new ClassEliminatedException("Entity was eliminated");
-            assertThat(ex.getMessage()).isEqualTo("Entity was eliminated");
+            ClassDeletedException ex = new ClassDeletedException("Entity was deleted");
+            assertThat(ex.getMessage()).isEqualTo("Entity was deleted");
         }
 
         @Test
         @DisplayName("Should accept message and cause")
         void shouldAcceptMessageAndCause() {
             Throwable cause = new RuntimeException("Root cause");
-            ClassEliminatedException ex = new ClassEliminatedException("Entity was eliminated", cause);
-            assertThat(ex.getMessage()).isEqualTo("Entity was eliminated");
+            ClassDeletedException ex = new ClassDeletedException("Entity was deleted", cause);
+            assertThat(ex.getMessage()).isEqualTo("Entity was deleted");
             assertThat(ex.getCause()).isSameAs(cause);
         }
     }

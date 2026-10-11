@@ -6,7 +6,7 @@ info:
       Traceability: CU08
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/testimonio/{{testimony_id}}"
+  url: "{{base_url}}/api/v1/testimonies/{{testimony_id}}"
   body:
     type: json
     data: |-

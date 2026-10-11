@@ -195,7 +195,7 @@ class AgentRulesTest(unittest.TestCase):
             "# Refactoring\n"
             "Package root `com.licensis.notaire`. "
             "Spring Boot 4.1, Java 26, PostgreSQL 16, Next.js frontend. "
-            "DTOs named `DtoUsuario`.\n"
+            "DTOs named `DtoLoginUser`.\n"
         )
 
     def test_rejects_obsolete_package_in_refactoring_md(self):

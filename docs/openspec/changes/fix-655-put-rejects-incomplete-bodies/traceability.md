@@ -29,7 +29,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Empty testimony update | `backend-api/src/test/java/com/licensis/notaire/integration/IncompletePutBodiesIntegrationTest.java`, Bruno `testimonies/04a` + `05` | passing |
 | Incomplete testimony update | `IncompletePutBodiesIntegrationTest.testimonyIncompleteBodyIsRejected`, `RequiredFieldsTest` | passing |
 | Procedure update without type | `IncompletePutBodiesIntegrationTest.procedureWithoutTypeIsRejected`, Bruno `procedures/04a` + `05` | passing |
-| Workflow assignment | `IncompletePutBodiesIntegrationTest.workflowAssignment*`, Bruno `procedure-types/04a`–`04b`, `frontend/src/hooks/useTiposTramite.test.tsx` | passing |
+| Workflow assignment | `IncompletePutBodiesIntegrationTest.workflowAssignment*`, Bruno `procedure-types/04a`–`04b`, `frontend/src/hooks/useProcedureTypes.test.tsx` | passing |
 | Contract | `IncompletePutBodiesIntegrationTest.contractDocumentsRequiredFields` | passing |
 | Testimony update without version | `StaleOrMissingVersionIntegrationTest.testimonyMissingVersionIsRejected`, Bruno `testimonies/04c`, `04a` | passing |
 | Stale testimony version | `StaleOrMissingVersionIntegrationTest.testimonyStaleVersionIsConflict` / `testimonyFutureVersionIsConflict`, Bruno `testimonies/04b` | passing |

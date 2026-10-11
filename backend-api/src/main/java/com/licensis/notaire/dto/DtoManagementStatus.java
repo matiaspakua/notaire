@@ -1,10 +1,10 @@
 package com.licensis.notaire.dto;
 
-import com.licensis.notaire.dto.interfaces.DtoValido;
+import com.licensis.notaire.dto.interfaces.ValidDto;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DtoManagementStatus extends GenericDto implements DtoValido {
+public class DtoManagementStatus extends GenericDto implements ValidDto {
     private Integer idManagementStatus;
     private String name;
     private String notes;
@@ -12,7 +12,7 @@ public class DtoManagementStatus extends GenericDto implements DtoValido {
     private Integer version;
 
     public DtoManagementStatus() {
-        this.version = DtoValido.VersionINICIAL;
+        this.version = ValidDto.INITIAL_VERSION;
     }
 
     public DtoManagementStatus(String name) {

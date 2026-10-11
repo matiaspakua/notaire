@@ -26,9 +26,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Clase que representa el historial (registro de cambios de estado) de una gestion de escritura.
- * Cada instancia del historial de una misma gestion de escritura, representa un cambio de estado de
- * la gestion.
+ * Status-change record for a deed management. Each instance belongs to one management
+ * and records one status change.
  *
  * @author juanca
  */
@@ -38,9 +37,9 @@ import org.springframework.data.domain.Persistable;
 @NamedQueries(
         {
             @NamedQuery(name = "History.findAll", query = "SELECT h FROM History h"),
-            @NamedQuery(name = "History.findByIdHistory", query = "SELECT h FROM History h WHERE h.idHistory = :idHistorial"),
-            @NamedQuery(name = "History.findByIdManagement", query = "SELECT h FROM History h WHERE h.fkIdManagement.idManagement = :idGestion"),
-            @NamedQuery(name = "History.findByDate", query = "SELECT h FROM History h WHERE h.date = :fecha")
+            @NamedQuery(name = "History.findByIdHistory", query = "SELECT h FROM History h WHERE h.idHistory = :idHistory"),
+            @NamedQuery(name = "History.findByIdManagement", query = "SELECT h FROM History h WHERE h.fkIdManagement.idManagement = :idManagement"),
+            @NamedQuery(name = "History.findByDate", query = "SELECT h FROM History h WHERE h.date = :date")
         })
 public class History implements Serializable, Persistable<Integer>
 {
@@ -69,12 +68,12 @@ public class History implements Serializable, Persistable<Integer>
     private DeedManagement fkIdManagement;
 
     /**
-     * Constructor por default para historial. Asigna al ID el valor de
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO.
+     * Default constructor. Assigns the id from
+     * {@link BusinessConstants#INVALID_OBJECT_ID}.
      */
     public History()
     {
-        this.idHistory = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idHistory = BusinessConstants.INVALID_OBJECT_ID;
     }
 
     public History(Integer idHistory)
@@ -111,7 +110,7 @@ public class History implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew()
     {
-        return idHistory == null || idHistory.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idHistory == null || idHistory.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
     public String getNotes()
@@ -191,7 +190,7 @@ public class History implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Historial[ idHistorial=" + getIdHistory() + " ]";
+        return "History[ idHistory=" + getIdHistory() + " ]";
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore
@@ -202,8 +201,8 @@ public class History implements Serializable, Persistable<Integer>
         dto.setIdHistory(this.idHistory);
         dto.setVersion(this.version);
         dto.setDate(this.date);
-        dto.setGestionesDeEscrituras(this.getFkIdManagement().getDto());
-        dto.setEstadosDeManagement(this.fkIdManagementStatus.getDto());
+        dto.setDeedManagement(this.getFkIdManagement().getDto());
+        dto.setManagementStatus(this.fkIdManagementStatus.getDto());
         dto.setNotes(this.notes);
 
         return dto;

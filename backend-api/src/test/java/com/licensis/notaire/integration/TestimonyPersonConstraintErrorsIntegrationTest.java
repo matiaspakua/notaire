@@ -46,16 +46,16 @@ class TestimonyPersonConstraintErrorsIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /movimiento-testimonio with an empty body answers 400, not 409")
+    @DisplayName("POST /testimony-movements with an empty body answers 400, not 409")
     void emptyMovementIsBadRequest() throws Exception {
-        mockMvc.perform(post("/api/v1/movimiento-testimonio").contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mockMvc.perform(post("/api/v1/testimony-movements").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("The submitted data violates a database constraint"));
     }
 
     @ParameterizedTest(name = "contract of {0} documents 400 on POST and PUT")
-    @CsvSource({"/api/v1/movimiento-testimonio", "/api/v1/testimonio", "/api/v1/people"})
+    @CsvSource({"/api/v1/testimony-movements", "/api/v1/testimonies", "/api/v1/people"})
     @DisplayName("the contract documents 400 on create and update")
     void contractDocumentsBadRequest(String url) throws Exception {
         JsonNode spec = mapper.readTree(mockMvc.perform(get("/v3/api-docs"))

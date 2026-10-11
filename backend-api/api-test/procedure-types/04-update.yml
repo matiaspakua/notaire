@@ -6,7 +6,7 @@ info:
       Traceability: CU31 (RF #55, #56)
 http:
   method: PUT
-  url: "{{base_url}}/api/v1/tipo-tramite/{{procedure_type_id}}"
+  url: "{{base_url}}/api/v1/procedure-types/{{procedure_type_id}}"
   body:
     type: json
     data: |-

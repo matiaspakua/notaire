@@ -19,22 +19,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Siembra el usuario administrador inicial una única vez, si no existe ninguno.
+ * Seeds the initial administrator once, when that user does not exist yet.
  *
- * <p>Username y password son configurables vía {@code APP_ADMIN_USER}/
- * {@code APP_ADMIN_PASSWORD} (issue #651); por defecto {@code admin}/{@code admin}
- * en desarrollo. La contraseña se almacena como hash BCrypt (issue #554),
- * coincidiendo con la verificación que realiza {@code UserController#login}.
- * Es un seed de una sola vez: si el usuario ya existe (sembrado por Flyway V2, o
- * porque un operador ya rotó su contraseña) no se toca — de lo contrario cualquier
- * cambio de credenciales quedaría deshecho en cada reinicio del backend (issue
- * #553).</p>
+ * <p>Username and password come from {@code APP_ADMIN_USER}/
+ * {@code APP_ADMIN_PASSWORD} (issue #651); the default is {@code admin}/{@code admin}
+ * in development. The password is stored as a BCrypt hash (issue #554),
+ * which is what {@code UserController#login} verifies.
+ * The seed runs once: if the user already exists (Flyway V2, or an operator
+ * already rotated the password) it is left unchanged. Otherwise a restart
+ * would undo a credential change (issue #553).</p>
  *
- * <p>Fuera de los entornos {@code development}/{@code dev}/{@code local}/{@code test}
- * no se siembra el usuario si la contraseña está vacía o es el valor por defecto
- * conocido {@code admin}: se registra un error y se omite el seed, de modo que
- * ningún camino de arranque (jar, compose, staging) publique {@code admin/admin}
- * (issue #1249).</p>
+ * <p>Outside {@code development}/{@code dev}/{@code local}/{@code test},
+ * the seed is skipped when the password is empty or the known default
+ * {@code admin}. An error is logged so no startup path (jar, compose, staging)
+ * publishes {@code admin/admin} (issue #1249).</p>
  */
 @Component
 public class DataInitializer implements ApplicationRunner {
@@ -73,22 +71,22 @@ public class DataInitializer implements ApplicationRunner {
         try {
             ensureAdminUser();
         } catch (Exception e) {
-            log.warn("No se pudo garantizar el usuario inicial '{}': {}", adminUsername, e.getMessage());
+            log.warn("Could not ensure the initial user '{}': {}", adminUsername, e.getMessage());
         }
     }
 
     private void ensureAdminUser() {
         if (isDefaultPassword() && !allowsDefaultSeed()) {
-            log.error("APP_ADMIN_PASSWORD no configurada o con valor por defecto en el entorno '{}': "
-                    + "se omite la creación del usuario '{}' (issue #1249).", environment, adminUsername);
+            log.error("APP_ADMIN_PASSWORD is missing or still the default in environment '{}': "
+                    + "skipping creation of user '{}' (issue #1249).", environment, adminUsername);
             return;
         }
         if (userRepository.findByName(adminUsername).isPresent()) {
-            log.debug("Usuario '{}' ya existe; no se modifican sus credenciales.", adminUsername);
+            log.debug("User '{}' already exists; credentials are left unchanged.", adminUsername);
             return;
         }
 
-        log.info("Usuario '{}' no encontrado. Creando usuario administrador inicial...", adminUsername);
+        log.info("User '{}' was not found. Creating the initial administrator...", adminUsername);
         Person adminPerson = buildAdminPerson();
         personRepository.save(adminPerson);
 
@@ -99,7 +97,7 @@ public class DataInitializer implements ApplicationRunner {
         admin.setType("Escribano");
         admin.setFkIdPerson(adminPerson);
         userRepository.save(admin);
-        log.info("Usuario administrador inicial '{}' creado correctamente.", adminUsername);
+        log.info("Initial administrator '{}' was created.", adminUsername);
     }
 
     private Person buildAdminPerson() {

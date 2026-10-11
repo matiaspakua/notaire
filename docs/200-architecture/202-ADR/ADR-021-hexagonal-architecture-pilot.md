@@ -24,7 +24,7 @@ in ADR-002 until a follow-up decision extends or rolls back this pilot.
    `PaymentService`, `BudgetResumenService` and the two management summary
    services, with slightly different null handling in each.
 
-The financial workflow (CU15 "Procesar Pago", CU47 "Consultar Estado de Pago") is
+The financial workflow (CU15 "Procesar Payment", CU47 "Consultar Estado de Payment") is
 the highest-value place to fix this: it has the densest business rules, it is
 fully covered by existing tests, and its REST contract is consumed by the
 dashboard, so any regression is immediately visible.
@@ -78,7 +78,7 @@ starts where the business operation starts, not where HTTP arrives.
 - **Keep a deprecated `PaymentService` facade delegating to the use cases.**
   Rejected: a facade that nothing needs is dead code, and keeping it invites new
   callers to bypass the ports. The two remaining consumers
-  (`ManagementArchiveDebtService`, `ManagementResumenFinancieroService`) were
+  (`ManagementArchiveDebtService`, `ManagementFinancialSummaryService`) were
   rewired to the inbound ports instead, which is a two-line change each.
 
 ## Trade-off Analysis
@@ -125,7 +125,7 @@ separate issue with its own use case.
 - **`PaymentWebMapper` is public as a transitional seam.** `BudgetController` still
   lives in the legacy `api` package while it consumes `GetBudgetSummaryUseCase`.
   The mapper goes back to package-private when the budget slice is migrated.
-- **`ManagementResumenFinancieroService` and `ManagementArchiveDebtService` remain
+- **`ManagementFinancialSummaryService` and `ManagementArchiveDebtService` remain
   layered services** that consume payment inbound ports. They are the natural
   candidates for the next slice.
 - **Decide whether to extend the pattern.** The pilot should be reviewed after one
@@ -140,13 +140,13 @@ separate issue with its own use case.
 Every URL, request payload, response payload and status code is identical to the
 pre-refactor controller, including the details that look like bugs:
 
-- `DELETE /api/v1/pagos/{id}` returns **200**, not 204.
+- `DELETE /api/v1/payments/{id}` returns **200**, not 204.
 - An overpayment returns **409** with an empty body
   (`PendingBalanceExceededException`).
 - `PaymentStatus` serialises as `NoPayments`, `PARTIAL`, `PAID` — mixed case,
   because those constants are the published contract.
 
-The one internal change at the edge: `PUT /api/v1/pagos/{id}` binds a
+The one internal change at the edge: `PUT /api/v1/payments/{id}` binds a
 `PaymentUpdateRequest` record instead of the JPA `Payment` entity. The accepted
 JSON fields are the same; the entity simply no longer leaks into the API layer.
 
@@ -170,7 +170,7 @@ same exception messages, none weakened:
 | `unit/PaymentServiceTest` | `unit/PaymentUseCaseTest` | use cases over real adapters, mocked repositories |
 | `service/unit/PaymentServiceTest` | `adapter/out/persistence/payment/PaymentPersistenceAdapterTest` | the outbound adapters, mocked repositories |
 | `unit/PaymentControllerTest` | `adapter/in/web/payment/PaymentControllerTest` | the controller over mocked inbound ports |
-| `unit/BudgetResumenServiceTest` | `unit/BudgetSummaryDtoTest` | `BudgetSummaryService` + web mapping to `DtoBudgetResumen` |
+| `unit/BudgetResumenServiceTest` | `unit/BudgetSummaryDtoTest` | `BudgetSummaryService` + web mapping to `DtoBudgetSummary` |
 | `integration/PaymentServiceIntegrationTest` | `integration/PaymentUseCaseIntegrationTest` | use-case beans end-to-end over real JPA adapters |
 
 New tests added by the pilot: `domain/payment/BudgetChargesTest` (framework-free

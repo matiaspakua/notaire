@@ -19,10 +19,10 @@ from generate_erd import DICTIONARY, load_schema
 
 TODO = "TODO"
 ON_DELETE = {"a": "NO ACTION", "r": "RESTRICT", "c": "CASCADE", "n": "SET NULL", "d": "SET DEFAULT"}
-COLUMN_HEADER = ("| Columna | Tipo de Dato | PK | FK | Not Null | Default | Referencia | Descripción |\n"
+COLUMN_HEADER = ("| Column | Data type | PK | FK | Not null | Default | Reference | Description |\n"
                  "|---|---|---|---|---|---|---|---|")
-INDEX_HEADER = ("| Nº | Tabla | Paquete / Módulo | Tipo Entidad | Descripción |\n|---|---|---|---|---|")
-MATRIX_HEADER = ("| Tabla Origen | Columna FK | Tabla Destino | Columna PK | Acción ON DELETE |\n"
+INDEX_HEADER = ("| # | Table | Package / module | Entity type | Description |\n|---|---|---|---|---|")
+MATRIX_HEADER = ("| Source table | FK column | Target table | PK column | ON DELETE |\n"
                  "|---|---|---|---|---|")
 
 
@@ -78,8 +78,8 @@ def default_text(column):
 
 def column_row(table, name, column, pks, fks, descriptions):
     reference = fks.get((table, name))
-    cells = [f"`{name}`", sql_type(column), "Sí" if name in pks.get(table, []) else "No",
-             "Sí" if reference else "No", "No" if column["nullable"] else "Sí", default_text(column),
+    cells = [f"`{name}`", sql_type(column), "Yes" if name in pks.get(table, []) else "No",
+             "Yes" if reference else "No", "No" if column["nullable"] else "Yes", default_text(column),
              f"`{reference['ref_table']}({reference['ref_columns'][0]})`" if reference else "—",
              descriptions.get((table, name)) or TODO]
     return "| " + " | ".join(cells) + " |"
@@ -104,7 +104,7 @@ def render_index(order, index):
 def render_tables(order, tables, pks, fks, summaries, descriptions):
     out = []
     for number, table in enumerate(order, 1):
-        out += [f"### {number}. `{table}`", "", summaries.get(table, f"{TODO}: describir la tabla."), "", COLUMN_HEADER]
+        out += [f"### {number}. `{table}`", "", summaries.get(table, f"{TODO}: describe the table."), "", COLUMN_HEADER]
         out += [column_row(table, name, tables[table][name], pks, fks, descriptions)
                 for name in ordered_columns(tables[table], pks.get(table, []))]
         out += ["", "---", ""]
@@ -134,7 +134,7 @@ def main():
     order = table_order(tables, index)
     fk_by_column = {(f["table_name"], f["columns"][0]): f for f in fks}
     sections[2] = replace_table(sections[2], render_index(order, index))
-    sections[2] = [re.sub(r"\(\d+ tablas,", f"({len(order)} tablas,", line) for line in sections[2]]
+    sections[2] = [re.sub(r"\(\d+ tables,", f"({len(order)} tables,", line) for line in sections[2]]
     sections[4] = sections[4][:next(i for i, l in enumerate(sections[4]) if l.startswith("### "))] + \
         render_tables(order, tables, pks, fk_by_column, summaries, descriptions)
     sections[5] = replace_table(sections[5], render_matrix(order, tables, fks, pks))

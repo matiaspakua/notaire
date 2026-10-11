@@ -48,33 +48,33 @@ class RemainingControllersIntegrationTest {
     class IdentificationTypeTests {
 
         @Test
-        @DisplayName("Should return all tipos de identificacion")
-        void shouldReturnAllTiposIdentification() throws Exception {
-            mockMvc.perform(get("/api/v1/tipo-identificacion"))
+        @DisplayName("Should return all identification types")
+        void shouldReturnAllIdentificationTypes() throws Exception {
+            mockMvc.perform(get("/api/v1/identification-types"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("Should return type de identificacion by ID")
+        @DisplayName("Should return type of identification by ID")
         void shouldReturnIdentificationTypeById() throws Exception {
-            mockMvc.perform(get("/api/v1/tipo-identificacion/1"))
+            mockMvc.perform(get("/api/v1/identification-types/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.idIdentificationType", is(1)));
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existing type de identificacion")
+        @DisplayName("Should return 404 for non-existing type of identification")
         void shouldReturn404ForNonExisting() throws Exception {
-            mockMvc.perform(get("/api/v1/tipo-identificacion/9999"))
+            mockMvc.perform(get("/api/v1/identification-types/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("Should create new type de identificacion")
+        @DisplayName("Should create new type of identification")
         void shouldCreateIdentificationType() throws Exception {
-            mockMvc.perform(post("/api/v1/tipo-identificacion")
+            mockMvc.perform(post("/api/v1/identification-types")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
@@ -87,96 +87,96 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("GestionController - CU02/CU13/CU14/CU24/CU25")
+    @DisplayName("ManagementController - CU02/CU13/CU14/CU24/CU25")
     class ManagementTests {
 
         @Test
-        @DisplayName("Should return all gestiones")
-        void shouldReturnAllGestiones() throws Exception {
-            mockMvc.perform(get("/api/v1/gestiones"))
+        @DisplayName("Should return all managements")
+        void shouldReturnAllManagements() throws Exception {
+            mockMvc.perform(get("/api/v1/managements"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.content", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existing gestion")
+        @DisplayName("Should return 404 for non-existing management")
         void shouldReturn404ForNonExistingManagement() throws Exception {
-            mockMvc.perform(get("/api/v1/gestiones/9999"))
+            mockMvc.perform(get("/api/v1/managements/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("Should return empty list when searching by client with no gestiones")
-        void shouldReturnEmptyListForClientWithNoGestiones() throws Exception {
-            mockMvc.perform(get("/api/v1/gestiones/cliente/9999"))
+        @DisplayName("Should return empty list when searching by client with not managements")
+        void shouldReturnEmptyListForClientWithNoManagements() throws Exception {
+            mockMvc.perform(get("/api/v1/managements/client/9999"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
     }
 
     @Nested
-    @DisplayName("TramiteController - CU04/CU11")
+    @DisplayName("ProcedureController - CU04/CU11")
     class ProcedureTests {
 
         @Test
         @DisplayName("Should return all procedures")
         void shouldReturnAllProcedures() throws Exception {
-            mockMvc.perform(get("/api/v1/tramites"))
+            mockMvc.perform(get("/api/v1/procedures"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.content", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existing tramite")
+        @DisplayName("Should return 404 for non-existing procedure")
         void shouldReturn404ForNonExistingProcedure() throws Exception {
-            mockMvc.perform(get("/api/v1/tramites/9999"))
+            mockMvc.perform(get("/api/v1/procedures/9999"))
                     .andExpect(status().isNotFound());
         }
     }
 
     @Nested
-    @DisplayName("PagoController - CU15/CU47")
+    @DisplayName("PaymentController - CU15/CU47")
     class PaymentTests {
 
         @Test
         @DisplayName("Should return all payments")
         void shouldReturnAllPayments() throws Exception {
-            mockMvc.perform(get("/api/v1/pagos"))
+            mockMvc.perform(get("/api/v1/payments"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existing pago")
+        @DisplayName("Should return 404 for a missing payment")
         void shouldReturn404ForNonExistingPayment() throws Exception {
-            mockMvc.perform(get("/api/v1/pagos/9999"))
+            mockMvc.perform(get("/api/v1/payments/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
         @DisplayName("Should return payments by budget")
         void shouldReturnPaymentsByBudget() throws Exception {
-            mockMvc.perform(get("/api/v1/pagos/presupuesto/1"))
+            mockMvc.perform(get("/api/v1/payments/budget/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("CU47 - Should return saldo for budget")
-        void shouldReturnSaldoForBudget() throws Exception {
-            mockMvc.perform(get("/api/v1/pagos/presupuesto/1/saldo"))
+        @DisplayName("CU47 - Should return the balance for a budget")
+        void shouldReturnBalanceForBudget() throws Exception {
+            mockMvc.perform(get("/api/v1/payments/budget/1/balance"))
                     .andExpect(status().isOk());
         }
 
         @Test
-        @DisplayName("CU15 - Should create new pago against dedicated presupuesto (#916)")
+        @DisplayName("CU15 - Should create new payment against dedicated budget (#916)")
         void shouldCreatePayment() throws Exception {
             Integer budgetId = BudgetPaymentTestFixtures.createIsolatedBudget(
                     mockMvc, new BigDecimal("10000.00"));
-            mockMvc.perform(post("/api/v1/pagos")
+            mockMvc.perform(post("/api/v1/payments")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
@@ -191,13 +191,13 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("HistorialController - CU09/CU16/CU43/CU48")
+    @DisplayName("HistoryController - CU09/CU16/CU43/CU48")
     class HistoryTests {
 
         @Test
-        @DisplayName("Should return a page of historiales")
+        @DisplayName("Should return a page of history records")
         void shouldReturnAllHistoriales() throws Exception {
-            mockMvc.perform(get("/api/v1/historial"))
+            mockMvc.perform(get("/api/v1/history"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.content", isA(java.util.List.class)));
@@ -206,49 +206,49 @@ class RemainingControllersIntegrationTest {
         @Test
         @DisplayName("Should return 404 for non-existing history")
         void shouldReturn404ForNonExistingHistory() throws Exception {
-            mockMvc.perform(get("/api/v1/historial/9999"))
+            mockMvc.perform(get("/api/v1/history/9999"))
                     .andExpect(status().isNotFound());
         }
     }
 
     @Nested
-    @DisplayName("DocumentoPresentadoController - CU42/CU50/CU56")
+    @DisplayName("SubmittedDocumentController - CU42/CU50/CU56")
     class SubmittedDocumentTests {
 
         @Test
         @DisplayName("Should return all documents presentados")
         void shouldReturnAllDocumentsPresentados() throws Exception {
-            mockMvc.perform(get("/api/v1/documento-presentado"))
+            mockMvc.perform(get("/api/v1/submitted-documents"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existing documento presentado")
+        @DisplayName("Should return 404 for a missing submitted document")
         void shouldReturn404ForNonExistingSubmittedDocument() throws Exception {
-            mockMvc.perform(get("/api/v1/documento-presentado/9999"))
+            mockMvc.perform(get("/api/v1/submitted-documents/9999"))
                     .andExpect(status().isNotFound());
         }
     }
 
     @Nested
-    @DisplayName("CopiaController - CU44/CU53")
+    @DisplayName("CopyController - CU44/CU53")
     class CopyTests {
 
         @Test
-        @DisplayName("Should return all copias")
+        @DisplayName("Should return all copies")
         void shouldReturnAllCopies() throws Exception {
-            mockMvc.perform(get("/api/v1/copia"))
+            mockMvc.perform(get("/api/v1/copies"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("Should return 404 for non-existing copia")
+        @DisplayName("Should return 404 for a missing copy")
         void shouldReturn404ForNonExistingCopy() throws Exception {
-            mockMvc.perform(get("/api/v1/copia/9999"))
+            mockMvc.perform(get("/api/v1/copies/9999"))
                     .andExpect(status().isNotFound());
         }
     }
@@ -275,50 +275,50 @@ class RemainingControllersIntegrationTest {
     }
 
     @Nested
-    @DisplayName("PlantillaPresupuestoController - CU39/CU49/CU55")
+    @DisplayName("BudgetTemplateController - CU39/CU49/CU55")
     class BudgetTemplateTests {
 
         @Test
-        @DisplayName("CU39 - Should return all plantillas de budget")
-        void shouldReturnAllPlantillasBudget() throws Exception {
-            mockMvc.perform(get("/api/v1/plantilla-presupuestos"))
+        @DisplayName("CU39 - Should return all budget templates")
+        void shouldReturnAllBudgetTemplates() throws Exception {
+            mockMvc.perform(get("/api/v1/budget-templates"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("CU39 - Should return 404 for non-existing plantilla")
+        @DisplayName("CU39 - Should return 404 for a missing budget template")
         void shouldReturn404ForNonExistingTemplate() throws Exception {
-            mockMvc.perform(get("/api/v1/plantilla-presupuestos/9999"))
+            mockMvc.perform(get("/api/v1/budget-templates/9999"))
                     .andExpect(status().isNotFound());
         }
 
         @Test
-        @DisplayName("CU49 - Should return 404 for non-existing plantilla de budget")
+        @DisplayName("CU49 - Should return 404 for a missing budget template")
         void shouldReturn404ForNonExistingBudgetTemplate() throws Exception {
-            mockMvc.perform(get("/api/v1/plantilla-presupuestos/9999"))
+            mockMvc.perform(get("/api/v1/budget-templates/9999"))
                     .andExpect(status().isNotFound());
         }
     }
 
     @Nested
-    @DisplayName("PlantillaTramiteController - CU25/CU33")
+    @DisplayName("ProcedureTemplateController - CU25/CU33")
     class ProcedureTemplateTests {
 
         @Test
-        @DisplayName("Should return all plantillas de tramite")
-        void shouldReturnAllPlantillasProcedure() throws Exception {
-            mockMvc.perform(get("/api/v1/plantilla-tramite"))
+        @DisplayName("Should return all procedure templates")
+        void shouldReturnAllProcedureTemplates() throws Exception {
+            mockMvc.perform(get("/api/v1/procedure-templates"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }
 
         @Test
-        @DisplayName("Should return empty list for non-existing type tramite")
+        @DisplayName("Should return empty list for non-existing type procedure")
         void shouldReturnEmptyListForNonExistingTypeProcedure() throws Exception {
-            mockMvc.perform(get("/api/v1/plantilla-tramite/tipo-tramite/9999"))
+            mockMvc.perform(get("/api/v1/procedure-templates/procedure-types/9999"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", isA(java.util.List.class)));
         }

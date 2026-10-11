@@ -14,7 +14,7 @@ Use `@ParameterObject` so the contract shows optional `page`/`size`/`sort` (addi
 
 ## Riesgos / Trade-offs
 
-External clients that read `GET /api/v1/historial` as an array must read `content`; none ship in this repository.
+External clients that read `GET /api/v1/history` as an array must read `content`; none ship in this repository.
 
 ## Testing Strategy
 
@@ -22,7 +22,7 @@ External clients that read `GET /api/v1/historial` as an array must read `conten
 
 ## Regression Strategy
 
-Full backend suite; Bruno `history` folder; Playwright TS-0050 health matrix (68 passed, includes `GET /historial`) against this backend on PostgreSQL.
+Full backend suite; Bruno `history` folder; Playwright TS-0050 health matrix (68 passed, includes `GET /history`) against this backend on PostgreSQL.
 
 ## Playwright Strategy
 

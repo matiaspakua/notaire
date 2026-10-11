@@ -31,16 +31,16 @@ public class ManagementTransitionService {
     private final DeedManagementRepository managementRepository;
     private final ManagementStatusRepository statusRepository;
     private final WorkflowTransitionRepository workflowTransitionRepository;
-    private final ManagementBitacoraService managementBitacoraService;
+    private final ManagementStatusLogService statusLogService;
 
     public ManagementTransitionService(DeedManagementRepository managementRepository,
             ManagementStatusRepository statusRepository,
             WorkflowTransitionRepository workflowTransitionRepository,
-            ManagementBitacoraService managementBitacoraService) {
+            ManagementStatusLogService statusLogService) {
         this.managementRepository = managementRepository;
         this.statusRepository = statusRepository;
         this.workflowTransitionRepository = workflowTransitionRepository;
-        this.managementBitacoraService = managementBitacoraService;
+        this.statusLogService = statusLogService;
     }
 
     /**
@@ -64,7 +64,7 @@ public class ManagementTransitionService {
 
         management.setFkIdManagementStatus(destination);
         DeedManagement transitioned = managementRepository.save(management);
-        managementBitacoraService.registerStatus(transitioned, null);
+        statusLogService.registerStatus(transitioned, null);
         log.info("Management {} transitioned to status '{}'", idManagement, destination.getName());
         return transitioned;
     }

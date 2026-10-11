@@ -27,8 +27,8 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should start correlativo at one when no deed exists yet in scope")
-    void shouldStartCorrelativoAtOneWhenScopeIsEmpty() {
+    @DisplayName("Should start the sequence at one when no deed exists yet in scope")
+    void shouldStartSequenceAtOneWhenScopeIsEmpty() {
         Person notary = createNotary(1);
 
         int siguiente = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, false);
@@ -37,55 +37,55 @@ class DeedNumberingUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should accept a número matching the expected correlativo")
-    void shouldAcceptNumberMatchingExpectedCorrelativo() {
+    @DisplayName("Should accept a number matching the expected sequence")
+    void shouldAcceptNumberMatchingExpectedSequence() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
-        DeedNumberingValidationResult resultado = deedNumberingUseCase.validate(
+        DeedNumberingValidationResult result = deedNumberingUseCase.validate(
                 6, notary, 2026, false, null, null);
 
-        assertThat(resultado).isEqualTo(DeedNumberingValidationResult.OK);
+        assertThat(result).isEqualTo(DeedNumberingValidationResult.OK);
     }
 
     @Test
-    @DisplayName("Should reject a número already used within the same scope")
+    @DisplayName("Should reject a number already used within the same scope")
     void shouldRejectDuplicateNumber() {
         Person notary = createNotary(1);
         inMemoryPort.recordDuplicate(5, 1, 2026, false, null);
 
-        DeedNumberingValidationResult resultado = deedNumberingUseCase.validate(
+        DeedNumberingValidationResult result = deedNumberingUseCase.validate(
                 5, notary, 2026, false, null, null);
 
-        assertThat(resultado).isEqualTo(DeedNumberingValidationResult.DUPLICATE);
+        assertThat(result).isEqualTo(DeedNumberingValidationResult.DUPLICATE);
     }
 
     @Test
-    @DisplayName("Should require justificación when the número leaves a gap")
+    @DisplayName("Should require a justification when the number leaves a gap")
     void shouldRequireJustificationForGap() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
-        DeedNumberingValidationResult resultado = deedNumberingUseCase.validate(
+        DeedNumberingValidationResult result = deedNumberingUseCase.validate(
                 9, notary, 2026, false, null, null);
 
-        assertThat(resultado).isEqualTo(DeedNumberingValidationResult.SKIP_UNJUSTIFIED);
+        assertThat(result).isEqualTo(DeedNumberingValidationResult.SKIP_UNJUSTIFIED);
     }
 
     @Test
-    @DisplayName("Should accept a gap when a justificación is provided")
+    @DisplayName("Should accept a gap when a justification is provided")
     void shouldAcceptGapWithJustification() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
-        DeedNumberingValidationResult resultado = deedNumberingUseCase.validate(
-                9, notary, 2026, false, "Escritura anulada N° 6 a 8", null);
+        DeedNumberingValidationResult result = deedNumberingUseCase.validate(
+                9, notary, 2026, false, "Deed anulada N° 6 a 8", null);
 
-        assertThat(resultado).isEqualTo(DeedNumberingValidationResult.SKIP_JUSTIFIED);
+        assertThat(result).isEqualTo(DeedNumberingValidationResult.SKIP_JUSTIFIED);
     }
 
     @Test
-    @DisplayName("Should keep Protocolo Auxiliar numbering independent from Protocolo Principal")
+    @DisplayName("Should keep Protocolo Auxiliar numbering independent of Protocolo Principal")
     void shouldKeepAuxiliaryNumberingIndependentFromPrincipal() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, true, null, 2);

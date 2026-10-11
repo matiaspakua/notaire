@@ -8,7 +8,7 @@ Lists backed by growing tables are paged server-side with a shared footer.
 
 ### Requirement: The people list is read one page at a time
 
-`/dashboard/personas` SHALL request one page of `GET /api/v1/people` (default 20, newest first), show the total, reach the last page and keep page/size in the URL; a search SHALL list every match from `GET /api/v1/people/search`.
+`/dashboard/people` SHALL request one page of `GET /api/v1/people` (default 20, newest first), show the total, reach the last page and keep page/size in the URL; a search SHALL list every match from `GET /api/v1/people/search`.
 
 #### Scenario: Page and total
 

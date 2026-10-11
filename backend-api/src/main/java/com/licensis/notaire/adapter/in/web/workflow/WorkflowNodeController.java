@@ -34,7 +34,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/workflow-node")
-@Tag(name = "Workflow Node", description = "CU70/CU71 - Nodos de workflows de estados")
+@Tag(name = "Workflow Node", description = "CU70/CU71 - Workflow status nodes")
 public class WorkflowNodeController {
 
     private final WorkflowNodeRepository repository;
@@ -53,7 +53,7 @@ public class WorkflowNodeController {
     }
 
     @GetMapping("/by-workflow/{workflowId}")
-    @Operation(summary = "Obtener nodos por workflow")
+    @Operation(summary = "Get nodes by workflow")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoWorkflowNode>> getByWorkflow(@PathVariable Integer workflowId) {
         return ResponseEntity.ok(repository.findByWorkflowDefinitionId(workflowId)
@@ -62,10 +62,10 @@ public class WorkflowNodeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener nodo por ID")
+    @Operation(summary = "Get node by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoWorkflowNode> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -74,13 +74,13 @@ public class WorkflowNodeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida: workflowDefinitionId, statusManagementId "
-            + "y type (INITIAL, INTERMEDIATE o FINAL) son obligatorios"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request: workflowDefinitionId, statusManagementId "
+            + "and type (INITIAL, INTERMEDIATE or FINAL) are required"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear nodo en un workflow")
+    @Operation(summary = "Create node in a workflow")
     public ResponseEntity<Object> create(@RequestBody DtoWorkflowNode dto) {
         Integer workflowId = RequiredFields.require(dto.getWorkflowDefinitionId(), "workflowDefinitionId");
         Integer statusId = RequiredFields.require(dto.getStatusManagementId(), "statusManagementId");
@@ -109,15 +109,16 @@ public class WorkflowNodeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida: indicar al menos type, positionX o "
-            + "positionY; type debe ser INITIAL, INTERMEDIATE o FINAL"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "400", description = "Invalid request: provide at least type, positionX, or "
+            + "positionY; type must be INITIAL, INTERMEDIATE, or FINAL"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar nodo")
+    @Operation(summary = "Update node")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoWorkflowNode dto) {
         if (dto.getType() == null && dto.getPositionX() == null && dto.getPositionY() == null) {
-            throw new BusinessValidationException("type, positionX, positionY: indicar al menos un campo a actualizar");
+            throw new BusinessValidationException(
+                    "type, positionX, positionY: provide at least one field to update");
         }
         WorkflowNodeType type = dto.getType() == null
                 ? null : RequiredFields.parseEnum(dto.getType(), WorkflowNodeType.class, "type");
@@ -144,18 +145,18 @@ public class WorkflowNodeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar nodo")
+    @Operation(summary = "Delete node")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         if (transitionRepository.existsByOriginNodeIdOrDestinationNodeId(id, id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "No se puede eliminar: el nodo tiene transiciones asociadas."));
+                    .body(Map.of("error", "Cannot delete: the node has associated transitions."));
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();

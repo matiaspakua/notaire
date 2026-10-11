@@ -3,11 +3,11 @@ info:
   type: http
   seq: 11
   description: |-
-      ## Cleanup as administrator — DELETE /api/v1/usuarios/{id}
+      ## Cleanup as administrator — DELETE /api/v1/users/{id}
       Traceability: CU78 (issue #559)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/usuarios/{{rbac_employee_id}}"
+  url: "{{base_url}}/api/v1/users/{{rbac_employee_id}}"
   headers:
     - name: Content-Type
       value: application/json

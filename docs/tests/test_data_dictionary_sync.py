@@ -52,8 +52,8 @@ def dictionary_columns(lines):
         row = COLUMN_ROW.match(line)
         if table and row:
             cells = [c.strip() for c in row.group(2).split("|")]
-            tables[table][row.group(1)] = {"pk": cells[1] == "Sí", "fk": cells[2] == "Sí",
-                                           "not_null": cells[3] == "Sí", "description": cells[-1]}
+            tables[table][row.group(1)] = {"pk": cells[1] == "Yes", "fk": cells[2] == "Yes",
+                                           "not_null": cells[3] == "Yes", "description": cells[-1]}
     return tables
 
 
@@ -65,8 +65,9 @@ def schema_columns():
     tables = OrderedDict()
     with open(CSV_FILE, encoding="utf-8", newline="") as handle:
         for row in csv.DictReader(handle):
-            tables.setdefault(row["Nombre Entidad"], OrderedDict())[row["Atributo"]] = {
-                "pk": row["PK"] == "x", "fk": row["FK"] == "x", "not_null": row["NULL"] != "x"}
+            tables.setdefault(row["Entity"], OrderedDict())[row["Attribute"]] = {
+                "pk": row["PK"] == "x", "fk": row["FK"] == "x", "not_null": row["NULL"] != "x",
+                "description": row["Description"]}
     return tables
 
 
@@ -108,6 +109,12 @@ class DataDictionarySyncTest(unittest.TestCase):
 
     def test_referential_matrix_equals_the_schema_foreign_keys(self):
         self.assertEqual(schema_relationships(), self.matrix)
+
+    def test_csv_descriptions_match_the_dictionary(self):
+        mismatches = [f"{table}.{column}" for table, cols in self.schema.items()
+                      for column, flags in cols.items()
+                      if self.documented.get(table, {}).get(column, {}).get("description") != flags["description"]]
+        self.assertEqual([], mismatches)
 
     def test_no_description_is_left_as_todo(self):
         todo = [f"{t}.{c}" for t, cols in self.documented.items() for c, info in cols.items()

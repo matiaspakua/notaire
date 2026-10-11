@@ -77,7 +77,7 @@ When business logic is in a `@Service` class, the transaction should be on the s
 @Service
 public class EscrituraService {
     @Transactional(readOnly = true)
-    public Page<Escritura> findAllPaged(Pageable pageable) {
+    public Page<Deed> findAllPaged(Pageable pageable) {
         return repository.findAll(pageable);
     }
 }
@@ -118,4 +118,4 @@ void shouldReturnAll() throws Exception {
 
 - `@.claude/rules/database-migrations.md` — schema management
 - `JPA-LAZY-LOADING-GUIDE.md` — which entities have lazy associations and why
-- Issues: #277 (this guide), #278 (lazy loading guide), #503 (Testimonio fix), #505 (systemic fix)
+- Issues: #277 (this guide), #278 (lazy loading guide), #503 (Testimony fix), #505 (systemic fix)

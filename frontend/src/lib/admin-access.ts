@@ -9,15 +9,15 @@
 export const AUTH_STATUS_COOKIE = "notaire-auth-status";
 export const AUTH_ROLE_COOKIE = "notaire-auth-role";
 export const FORBIDDEN_QUERY = "forbidden=1";
-export const ADMIN_ROUTE_PREFIXES = ["/dashboard/administracion", "/dashboard/auditoria"] as const;
+export const ADMIN_ROUTE_PREFIXES = ["/dashboard/administration", "/dashboard/audit"] as const;
 
-const ADMIN_TIPOS = new Set(["ADMIN", "ADMINISTRADOR", "ESCRIBANO"]);
+const ADMIN_TYPES = new Set(["ADMIN", "ADMINISTRADOR", "ESCRIBANO"]);
 
-export function isAdminTipo(tipo?: string | null): boolean {
-  if (!tipo) {
+export function isAdminType(userType?: string | null): boolean {
+  if (!userType) {
     return false;
   }
-  return ADMIN_TIPOS.has(tipo.trim().toUpperCase());
+  return ADMIN_TYPES.has(userType.trim().toUpperCase());
 }
 
 export function isAdminRoute(pathname: string): boolean {
@@ -27,7 +27,7 @@ export function isAdminRoute(pathname: string): boolean {
 }
 
 /**
- * Edge decision: deny administración when the session marker is present but
+ * Edge decision: deny administration when the session marker is present but
  * the role cookie is missing or not admin-capable.
  */
 export function shouldDenyAdminRoute(
@@ -41,14 +41,14 @@ export function shouldDenyAdminRoute(
   if (!authStatus) {
     return false;
   }
-  return !isAdminTipo(role);
+  return !isAdminType(role);
 }
 
-export function setAuthCookies(tipo: string): void {
+export function setAuthCookies(userType: string): void {
   if (typeof document === "undefined") {
     return;
   }
-  const normalized = (tipo || "").trim().toUpperCase() || "UNKNOWN";
+  const normalized = (userType || "").trim().toUpperCase() || "UNKNOWN";
   document.cookie = `${AUTH_STATUS_COOKIE}=1; path=/; SameSite=Lax`;
   document.cookie = `${AUTH_ROLE_COOKIE}=${encodeURIComponent(normalized)}; path=/; SameSite=Lax`;
 }

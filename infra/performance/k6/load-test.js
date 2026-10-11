@@ -28,7 +28,7 @@ export const options = {
 
 export function setup() {
   const loginRes = http.post(
-      `${BASE_URL}/api/v1/usuarios/login`,
+      `${BASE_URL}/api/v1/users/login`,
       JSON.stringify({ name: ADMIN_USER, password: ADMIN_PASSWORD }),
       { headers: { 'Content-Type': 'application/json' } },
   );
@@ -46,9 +46,9 @@ export default function (data) {
   };
 
   const endpoints = [
-    { name: 'gestiones', url: `${BASE_URL}/api/v1/gestiones` },
-    { name: 'presupuestos', url: `${BASE_URL}/api/v1/presupuestos` },
-    { name: 'tramites', url: `${BASE_URL}/api/v1/tramites` },
+    { name: 'gestiones', url: `${BASE_URL}/api/v1/managements` },
+    { name: 'presupuestos', url: `${BASE_URL}/api/v1/budgets` },
+    { name: 'tramites', url: `${BASE_URL}/api/v1/procedures` },
   ];
 
   for (const endpoint of endpoints) {

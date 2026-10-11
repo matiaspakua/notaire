@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/documento-presentado")
-@Tag(name = "DocumentoPresentado", description = "API para gestionar documentos presentados")
+@RequestMapping("/api/v1/submitted-documents")
+@Tag(name = "SubmittedDocument", description = "API for managing submitted documents")
 public class UpcomingExpirationController {
 
     private final UpcomingExpirationService upcomingExpirationService;
@@ -27,14 +27,14 @@ public class UpcomingExpirationController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "400", description = "La ventana de días está fuera de 1 a 365")
+        @ApiResponse(responseCode = "400", description = "The window of days is outside 1 to 365")
     })
-    @GetMapping("/proximos-vencimientos")
-    @Operation(summary = "CU42 - Informar próximos vencimientos",
-               description = "Documentos presentados que vencen entre hoy y hoy más 'dias' días (por defecto 30), "
-                       + "no liberados, ordenados por fecha de vencimiento")
+    @GetMapping("/upcoming-expirations")
+    @Operation(summary = "CU42 - Report upcoming expirations",
+               description = "Submitted documents that expire between today and today plus 'days' days (default 30), "
+                       + "not released, ordered by expiration date")
     public ResponseEntity<List<DtoUpcomingExpiration>> getUpcoming(
-            @RequestParam(required = false) Integer dias) {
-        return ResponseEntity.ok(upcomingExpirationService.findUpcoming(dias, LocalDate.now()));
+            @RequestParam(name = "days", required = false) Integer days) {
+        return ResponseEntity.ok(upcomingExpirationService.findUpcoming(days, LocalDate.now()));
     }
 }

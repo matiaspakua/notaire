@@ -6,7 +6,7 @@ info:
       Traceability: CU04 (#655) — an impossible day is rejected instead of silently dropped
 http:
   method: POST
-  url: "{{base_url}}/api/v1/documento-presentado"
+  url: "{{base_url}}/api/v1/submitted-documents"
   body:
     type: json
     data: |-

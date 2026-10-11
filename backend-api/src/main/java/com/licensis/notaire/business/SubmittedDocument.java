@@ -36,18 +36,18 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQueries(
         {
             @NamedQuery(name = "SubmittedDocument.findAll", query = "SELECT d FROM SubmittedDocument d"),
-            @NamedQuery(name = "SubmittedDocument.findByIdSubmittedDocument", query = "SELECT d FROM SubmittedDocument d WHERE d.idSubmittedDocument = :idDocumentoPresentado"),
-            @NamedQuery(name = "SubmittedDocument.findByCardNumber", query = "SELECT d FROM SubmittedDocument d WHERE d.cardNumber = :numeroCarton"),
-            @NamedQuery(name = "SubmittedDocument.findByEntryDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateEntry = :fechaIngreso"),
-            @NamedQuery(name = "SubmittedDocument.findByExitDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateExit = :fechaSalida"),
+            @NamedQuery(name = "SubmittedDocument.findByIdSubmittedDocument", query = "SELECT d FROM SubmittedDocument d WHERE d.idSubmittedDocument = :idSubmittedDocument"),
+            @NamedQuery(name = "SubmittedDocument.findByCardNumber", query = "SELECT d FROM SubmittedDocument d WHERE d.cardNumber = :cardNumber"),
+            @NamedQuery(name = "SubmittedDocument.findByEntryDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateEntry = :entryDate"),
+            @NamedQuery(name = "SubmittedDocument.findByExitDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateExit = :exitDate"),
             @NamedQuery(name = "SubmittedDocument.findByPrepared", query = "SELECT d FROM SubmittedDocument d WHERE d.prepared = :prepared"),
-            @NamedQuery(name = "SubmittedDocument.findByExpires", query = "SELECT d FROM SubmittedDocument d WHERE d.expires = :vence"),
-            @NamedQuery(name = "SubmittedDocument.findByDueDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateDue >= :fechaVencimiento"),
-            @NamedQuery(name = "SubmittedDocument.findByDueDays", query = "SELECT d FROM SubmittedDocument d WHERE d.dueDays = :diasVencimiento"),
-            @NamedQuery(name = "SubmittedDocument.findByAmountToPay", query = "SELECT d FROM SubmittedDocument d WHERE d.amountToPay = :importeAPagar"),
-            @NamedQuery(name = "SubmittedDocument.findByPaymentDate", query = "SELECT d FROM SubmittedDocument d WHERE d.datePayment = :fechaPago"),
+            @NamedQuery(name = "SubmittedDocument.findByExpires", query = "SELECT d FROM SubmittedDocument d WHERE d.expires = :expires"),
+            @NamedQuery(name = "SubmittedDocument.findByDueDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateDue >= :dueDate"),
+            @NamedQuery(name = "SubmittedDocument.findByDueDays", query = "SELECT d FROM SubmittedDocument d WHERE d.dueDays = :dueDays"),
+            @NamedQuery(name = "SubmittedDocument.findByAmountToPay", query = "SELECT d FROM SubmittedDocument d WHERE d.amountToPay = :amountToPay"),
+            @NamedQuery(name = "SubmittedDocument.findByPaymentDate", query = "SELECT d FROM SubmittedDocument d WHERE d.datePayment = :paymentDate"),
             @NamedQuery(name = "SubmittedDocument.findByReleased", query = "SELECT d FROM SubmittedDocument d WHERE d.released = :released"),
-            @NamedQuery(name = "SubmittedDocument.findByReleasedDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateReleased = :fechaLiberado"),
+            @NamedQuery(name = "SubmittedDocument.findByReleasedDate", query = "SELECT d FROM SubmittedDocument d WHERE d.dateReleased = :releasedDate"),
             @NamedQuery(name = "SubmittedDocument.findByFlagged", query = "SELECT d FROM SubmittedDocument d WHERE d.flagged = :flagged")
         })
 public class SubmittedDocument implements Serializable, Persistable<Integer>
@@ -110,7 +110,7 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     private BigDecimal amountToPay;
     @Column(name = "notes")
     private String notes;
-    @JoinColumn(name = "fk_id_tramite", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_procedure", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Procedure fkIdProcedure;
 
@@ -127,7 +127,7 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     {
         this.idSubmittedDocument = idSubmittedDocument;
         this.name = name;
-        //this.fechaIngreso = fechaIngreso;
+        //this.dateEntry = dateEntry;
         this.prepared = prepared;
         this.expires = expires;
         this.released = released;
@@ -146,7 +146,7 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idSubmittedDocument == null || idSubmittedDocument.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idSubmittedDocument == null || idSubmittedDocument.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

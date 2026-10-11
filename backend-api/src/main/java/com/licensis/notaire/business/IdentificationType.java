@@ -36,7 +36,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NamedQueries({
         @NamedQuery(name = "IdentificationType.findAll", query = "SELECT t FROM IdentificationType t"),
-        @NamedQuery(name = "IdentificationType.findByIdIdentificationType", query = "SELECT t FROM IdentificationType t WHERE t.idIdentificationType = :idTipoIdentificacion")
+        @NamedQuery(name = "IdentificationType.findByIdIdentificationType", query = "SELECT t FROM IdentificationType t WHERE t.idIdentificationType = :idIdentificationType")
 })
 public class IdentificationType implements Serializable, Persistable<Integer> {
 
@@ -87,7 +87,7 @@ public class IdentificationType implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idIdentificationType == null || idIdentificationType.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idIdentificationType == null || idIdentificationType.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -149,8 +149,8 @@ public class IdentificationType implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "TipoIdentificacion[ idTipoIdentificacion=" + idIdentificationType + " ]"
-                + "[ nombre=" + name + " ]";
+        return "IdentificationType[ idIdentificationType=" + idIdentificationType + " ]"
+                + "[ name=" + name + " ]";
     }
 
 

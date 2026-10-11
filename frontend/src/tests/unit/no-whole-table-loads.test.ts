@@ -28,6 +28,6 @@ describe("no whole-table loads (#1340)", () => {
 
   it("the unused size=1000 hooks are gone", () => {
     const hooks = readdirSync(join(SRC, "hooks")).map((f) => readFileSync(join(SRC, "hooks", f), "utf8")).join("\n");
-    expect(hooks).not.toMatch(/export function (usePersonas|useEscrituras|useGestiones|usePresupuestos)\(\)/);
+    expect(hooks).not.toMatch(/export function (usePeople|useDeeds|useManagements|useBudgets|usePersonas|useEscrituras|useGestiones|usePresupuestos)\(\)/);
   });
 });

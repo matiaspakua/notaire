@@ -8,7 +8,7 @@ info:
       Traceability: CU14; CU13
 http:
   method: GET
-  url: "{{base_url}}/api/v1/gestiones/{{mgmt_id}}/estado-actual"
+  url: "{{base_url}}/api/v1/managements/{{mgmt_id}}/current-status"
   headers:
     - name: Content-Type
       value: application/json

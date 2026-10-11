@@ -6,10 +6,10 @@ package com.licensis.notaire.jpa;
 
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Person;
 import com.licensis.notaire.business.IdentificationType;
-import com.licensis.notaire.service.AdministradorJpa;
+import com.licensis.notaire.service.JpaAdministrator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,9 @@ import jakarta.transaction.UserTransaction;
  *
  * @author juanca
  */
-public class IdentificationTypeJpaController implements Serializable, IPersistenciaJpa {
+public class IdentificationTypeJpaController implements Serializable, JpaPersistence {
 
-    private static IdentificationTypeJpaController instancia = null;
+    private static IdentificationTypeJpaController instance = null;
 
     public IdentificationTypeJpaController(UserTransaction utx, EntityManagerFactory emf) {
         this.utx = utx;
@@ -90,8 +90,8 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Persona " + personListOldPerson
-                            + " since its fkIdTipoIdentificacion field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Person " + personListOldPerson
+                            + " since its fkIdIdentificationType field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -126,7 +126,7 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
             if (msg == null || msg.length() == 0) {
                 Integer id = identificationType.getIdIdentificationType();
                 if (findIdentificationType(id) == null) {
-                    throw new NonexistentEntityException("The tipoIdentificacion with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The identification type with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -147,7 +147,7 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
                 identificationType = em.getReference(IdentificationType.class, id);
                 identificationType.getIdIdentificationType();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipoIdentificacion with id " + id + " no longer exists.",
+                throw new NonexistentEntityException("The identification type with id " + id + " no longer exists.",
                         enfe);
             }
             List<String> illegalOrphanMessages = null;
@@ -156,9 +156,9 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This TipoIdentificacion (" + identificationType
-                        + ") cannot be destroyed since the Persona " + personListOrphanCheckPerson
-                        + " in its personaList field has a non-nullable fkIdTipoIdentificacion field.");
+                illegalOrphanMessages.add("This IdentificationType (" + identificationType
+                        + ") cannot be destroyed since the Person " + personListOrphanCheckPerson
+                        + " in its personList field has a non-nullable fkIdIdentificationType field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
@@ -213,14 +213,14 @@ public class IdentificationTypeJpaController implements Serializable, IPersisten
         }
     }
 
-    public static IdentificationTypeJpaController getInstancia() {
+    public static IdentificationTypeJpaController getInstance() {
 
-        EntityManagerFactory emf = AdministradorJpa.getEmf();
+        EntityManagerFactory emf = JpaAdministrator.getEmf();
 
-        if (instancia == null || (instancia.emf == null && emf != null)) {
-            instancia = new IdentificationTypeJpaController(null, emf);
+        if (instance == null || (instance.emf == null && emf != null)) {
+            instance = new IdentificationTypeJpaController(null, emf);
         }
-        return instancia;
+        return instance;
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 public final class IdentificationTypeLookup {
 
     private static final IdentificationTypeLookup SHARED = new IdentificationTypeLookup(
-            () -> IdentificationTypeJpaController.getInstancia().findIdentificationTypeEntities());
+            () -> IdentificationTypeJpaController.getInstance().findIdentificationTypeEntities());
 
     private final Supplier<List<IdentificationType>> catalog;
 

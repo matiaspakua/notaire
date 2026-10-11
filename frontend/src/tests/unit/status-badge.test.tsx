@@ -98,12 +98,12 @@ describe("<StatusBadge> (#1366)", () => {
 
 describe("status columns use <StatusBadge> (#1366)", () => {
   const pages: Record<string, string> = {
-    presupuestos: "presupuestos/page.tsx",
-    gestiones: "gestiones/page.tsx",
-    testimonios: "testimonios/page.tsx",
-    protocolo: "protocolo/page.tsx",
-    usuarios: "administracion/usuarios/page.tsx",
-    folios: "administracion/folios/page.tsx",
+    budgets: "budgets/page.tsx",
+    managements: "managements/page.tsx",
+    testimonies: "testimonies/page.tsx",
+    protocol: "protocol/page.tsx",
+    users: "administration/users/page.tsx",
+    folios: "administration/folios/page.tsx",
   };
   for (const [name, rel] of Object.entries(pages)) {
     it(`${name} renders its status through StatusBadge, with no ad-hoc status badge`, () => {

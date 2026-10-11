@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/tipo-folio")
-@Tag(name = "Tipo de Folio", description = "API para tipos de folio")
+@RequestMapping("/api/v1/folio-types")
+@Tag(name = "Folio type", description = "API for folio types")
 public class FolioTypeController {
 
     private final FolioTypeRepository repository;
@@ -40,7 +40,7 @@ public class FolioTypeController {
     }
 
     @GetMapping
-    @Operation(summary = "Obtener todos los tipos de folio")
+    @Operation(summary = "Get all folio types")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoFolioType>> getAll() {
         List<DtoFolioType> result = repository.findAll().stream()
@@ -50,7 +50,7 @@ public class FolioTypeController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Buscar tipos de folio por nombre")
+    @Operation(summary = "Search folio types by name")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoFolioType>> search(@RequestParam String name) {
         List<DtoFolioType> result = repository.findByNameContaining(name).stream()
@@ -60,7 +60,7 @@ public class FolioTypeController {
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Verificar si un tipo de folio está en uso")
+    @Operation(summary = "Check whether a folio type is in use")
     @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
@@ -72,10 +72,10 @@ public class FolioTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener tipo de folio por ID")
+    @Operation(summary = "Get folio type by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoFolioType> getById(@PathVariable Integer id) {
         return repository.findById(id)
@@ -84,16 +84,16 @@ public class FolioTypeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Creado"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "409", description = "Conflicto")
+    @ApiResponse(responseCode = "201", description = "Created"),
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Crear tipo de folio")
+    @Operation(summary = "Create folio type")
     public ResponseEntity<Object> create(@RequestBody DtoFolioType dto) {
         try {
             FolioType entity = new FolioType();
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             entity = repository.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(entity.getDto());
         } catch (Exception e) {
@@ -103,12 +103,12 @@ public class FolioTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
-    @ApiResponse(responseCode = "404", description = "No encontrado"),
-    @ApiResponse(responseCode = "409", description = "version no es la almacenada: otro usuario modificó el registro")
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "404", description = "Not found"),
+    @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the record")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar tipo de folio")
+    @Operation(summary = "Update folio type")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody DtoFolioType dto) {
         Optional<FolioType> existing = repository.findById(id);
         if (existing.isEmpty()) {
@@ -116,12 +116,12 @@ public class FolioTypeController {
         }
         if (!folioRepository.findByFkIdFolioTypeIdFolioType(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Este tipo de folio está en uso y no puede modificarse. Cree uno nuevo."));
+                    .body(Map.of("error", "This folio type is in use and cannot be modified. Create a new one."));
         }
         try {
             FolioType entity = existing.get();
             dto.setIdFolioType(id);
-            entity.setAtributos(dto);
+            entity.setAttributes(dto);
             repository.save(entity);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -130,25 +130,25 @@ public class FolioTypeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
-    @ApiResponse(responseCode = "404", description = "No encontrado")
+    @ApiResponse(responseCode = "204", description = "Deleted"),
+    @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar tipo de folio")
+    @Operation(summary = "Delete folio type")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         if (!folioRepository.findByFkIdFolioTypeIdFolioType(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "No se puede eliminar: el tipo de folio está siendo utilizado por folios."));
+                    .body(Map.of("error", "Cannot delete: the folio type is in use by folios."));
         }
         try {
             repository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("No se puede eliminar: el tipo de folio está referenciado por otros registros.");
+                    .body("Cannot delete: the folio type is referenced by other records.");
         }
     }
 }

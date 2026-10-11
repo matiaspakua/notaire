@@ -5,7 +5,7 @@
  */
 import { useAuthStore } from "@/store/auth-store";
 
-const LOGIN_API_PATH = "/usuarios/login";
+const LOGIN_API_PATH = "/users/login";
 export const SESSION_EXPIRED_LOGIN_URL = "/login?expired=1";
 
 let handlingSessionExpiry = false;
@@ -43,7 +43,7 @@ function clearHttpOnlyAuthCookieBestEffort(): void {
     return;
   }
   try {
-    const result = fetch("/api/v1/usuarios/logout", {
+    const result = fetch("/api/v1/users/logout", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },

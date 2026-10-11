@@ -9,7 +9,7 @@
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
-import { createPago, createPersona, createPresupuesto } from "./setup/api-helpers";
+import { createPayment, createPerson, createBudget } from "./setup/api-helpers";
 
 async function setupAuthAndGo(page: Page, path = "/dashboard") {
   await authenticateAsAdmin(page);
@@ -53,8 +53,8 @@ test.describe("Language Switcher — l10n feature", () => {
   test("sidebar navigation labels are in Spanish by default", async ({ page }) => {
     await setupAuthAndGo(page);
     // Sidebar shows Spanish nav links
-    await expect(page.getByRole("link", { name: /gestiones/i }).first()).toBeVisible({ timeout: 10000 });
-    await expect(page.getByRole("link", { name: /personas/i }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("link", { name: /managements/i }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("link", { name: /people/i }).first()).toBeVisible({ timeout: 10000 });
   });
 
   test("clicking EN button switches UI to English", async ({ page }) => {
@@ -95,7 +95,7 @@ test.describe("Language Switcher — l10n feature", () => {
       "true",
       { timeout: 10000 },
     );
-    await expect(page.getByRole("link", { name: /gestiones/i }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("link", { name: /managements/i }).first()).toBeVisible({ timeout: 10000 });
   });
 });
 
@@ -127,26 +127,26 @@ test.describe("l10n — Login page translations", () => {
 });
 
 test.describe("l10n — Admin pages translations", () => {
-  test("usuarios page shows Spanish title by default", async ({ page }) => {
-    await setupAuthAndGo(page, "/dashboard/administracion/usuarios");
-    await expect(page.getByRole("heading", { name: /usuarios/i })).toBeVisible({ timeout: 10000 });
+  test("users page shows Spanish title by default", async ({ page }) => {
+    await setupAuthAndGo(page, "/dashboard/administration/users");
+    await expect(page.getByRole("heading", { name: /users/i })).toBeVisible({ timeout: 10000 });
   });
 
-  test("usuarios page shows English title when locale is EN", async ({ page }) => {
-    await setupAuthWithLocale(page, "en", "/dashboard/administracion/usuarios");
+  test("users page shows English title when locale is EN", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/administration/users");
     await expect(page.getByRole("heading", { name: /users/i })).toBeVisible({ timeout: 10000 });
   });
 
   // #1059 — former gap pages now wired through next-intl
   test("roles page shows English title when locale is EN", async ({ page }) => {
-    await setupAuthWithLocale(page, "en", "/dashboard/administracion/roles");
+    await setupAuthWithLocale(page, "en", "/dashboard/administration/roles");
     await expect(page.getByRole("heading", { name: /roles and permissions/i })).toBeVisible({
       timeout: 10000,
     });
   });
 
   test("workflows page shows English title when locale is EN", async ({ page }) => {
-    await setupAuthWithLocale(page, "en", "/dashboard/administracion/workflows");
+    await setupAuthWithLocale(page, "en", "/dashboard/administration/workflows");
     await expect(page.getByRole("heading", { name: /status workflows/i })).toBeVisible({
       timeout: 10000,
     });
@@ -155,8 +155,8 @@ test.describe("l10n — Admin pages translations", () => {
 
 // #1354 — no hardcoded Spanish left in the English UI (breadcrumb, headers, buttons)
 test.describe("l10n — hardcoded strings (#1354)", () => {
-  test("pagos: English breadcrumb and column headers", async ({ page }) => {
-    await setupAuthWithLocale(page, "en", "/dashboard/pagos");
+  test("payments: English breadcrumb and column headers", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/payments");
     const crumb = page.getByRole("navigation", { name: "Breadcrumb" });
     await expect(crumb).toContainText("Home", { timeout: 10000 });
     await expect(crumb).toContainText("Payments");
@@ -165,15 +165,15 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     await expect(head).not.toContainText("Presupuesto");
   });
 
-  test("copias: English column headers", async ({ page }) => {
-    await setupAuthWithLocale(page, "en", "/dashboard/copias");
+  test("copies: English column headers", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/copies");
     const head = page.locator("thead").first();
     await expect(head).toContainText("Print date", { timeout: 10000 });
     await expect(head).not.toContainText("Fecha");
   });
 
-  test("protocolo: English report buttons and status badges", async ({ page }) => {
-    await setupAuthWithLocale(page, "en", "/dashboard/protocolo");
+  test("protocol: English report buttons and status badges", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/protocol");
     await expect(page.getByRole("button", { name: "Index Book" })).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole("button", { name: "Monthly Affidavit" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Revenue Affidavit" })).toBeVisible();
@@ -181,8 +181,8 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     await expect(page.getByRole("main")).not.toContainText("Disponible");
   });
 
-  test("administracion/usuarios: English breadcrumb, role header and status", async ({ page }) => {
-    await setupAuthWithLocale(page, "en", "/dashboard/administracion/usuarios");
+  test("administration/users: English breadcrumb, role header and status", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/administration/users");
     const crumb = page.getByRole("navigation", { name: "Breadcrumb" });
     await expect(crumb).toContainText("Administration", { timeout: 10000 });
     await expect(crumb).toContainText("Users");
@@ -191,15 +191,15 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     await expect(page.getByRole("main")).not.toContainText("Inactivo");
   });
 
-  test("movimientos-testimonio: English breadcrumb", async ({ page }) => {
-    await setupAuthWithLocale(page, "en", "/dashboard/movimientos-testimonio");
+  test("testimony-movements: English breadcrumb", async ({ page }) => {
+    await setupAuthWithLocale(page, "en", "/dashboard/testimony-movements");
     const crumb = page.getByRole("navigation", { name: "Breadcrumb" });
-    await expect(crumb).toContainText("Testimonio Movements", { timeout: 10000 });
+    await expect(crumb).toContainText("Testimony Movements", { timeout: 10000 });
     await expect(crumb).not.toContainText("Movimientos");
   });
 
   test("es: the language switcher and breadcrumb have Spanish accessible names", async ({ page }) => {
-    await setupAuthAndGo(page, "/dashboard/proximos-vencimientos");
+    await setupAuthAndGo(page, "/dashboard/upcoming-expirations");
     await expect(page.getByRole("group", { name: "Selector de idioma" })).toBeVisible({ timeout: 10000 });
     const crumb = page.getByRole("navigation", { name: "Ruta de navegación" });
     await expect(crumb).toContainText("Próximos Vencimientos");
@@ -209,30 +209,30 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     // A unique amount on a fixed day, so the row is found whatever else is listed.
     async function seedPayment(page: Page): Promise<number> {
       await authenticateAsAdmin(page);
-      const person = await createPersona(page);
+      const person = await createPerson(page);
       expect(person.ok, person.error).toBe(true);
-      const budget = await createPresupuesto(page, person.data!.personId, undefined, {
+      const budget = await createBudget(page, person.data!.personId, undefined, {
         propertyAmount: 100000, // a payment may not exceed the budget balance
       });
       expect(budget.ok, budget.error).toBe(true);
       const cents = 10 + Math.floor(Math.random() * 89);
       const amount = Number(`75123.${cents}`);
-      const pago = await createPago(page, budget.data!.idBudget, { amount, date: "2026-07-08" });
-      expect(pago.ok, pago.error).toBe(true);
+      const payment = await createPayment(page, budget.data!.idBudget, { amount, date: "2026-07-08" });
+      expect(payment.ok, payment.error).toBe(true);
       return cents;
     }
 
-    test("en: pagos shows day-first dates and ARS 75,123.xx", async ({ page }) => {
+    test("en: payments shows day-first dates and ARS 75,123.xx", async ({ page }) => {
       const cents = await seedPayment(page);
-      await setupAuthWithLocale(page, "en", "/dashboard/pagos");
+      await setupAuthWithLocale(page, "en", "/dashboard/payments");
       const row = page.getByRole("row").filter({ hasText: new RegExp(`ARS\\s75,123\\.${cents}`) });
       await expect(row.first()).toBeAttached({ timeout: 15000 });
       await expect(row.first()).toContainText("08/07/2026");
     });
 
-    test("es: pagos shows 8/7/2026 and $ 75.123,xx", async ({ page }) => {
+    test("es: payments shows 8/7/2026 and $ 75.123,xx", async ({ page }) => {
       const cents = await seedPayment(page);
-      await setupAuthWithLocale(page, "es", "/dashboard/pagos");
+      await setupAuthWithLocale(page, "es", "/dashboard/payments");
       const row = page.getByRole("row").filter({ hasText: new RegExp(`\\$\\s75\\.123,${cents}`) });
       await expect(row.first()).toBeAttached({ timeout: 15000 });
       await expect(row.first()).toContainText("8/7/2026");

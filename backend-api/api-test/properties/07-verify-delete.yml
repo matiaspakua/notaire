@@ -3,11 +3,11 @@ info:
   type: http
   seq: 7
   description: |-
-      ## Verify property deleted — GET /api/v1/inmueble/{property_id}
+      ## Verify property deleted — GET /api/v1/properties/{property_id}
       Traceability: CU69 (RF #117)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/inmueble/{{property_id}}"
+  url: "{{base_url}}/api/v1/properties/{{property_id}}"
   headers:
     - name: Content-Type
       value: application/json

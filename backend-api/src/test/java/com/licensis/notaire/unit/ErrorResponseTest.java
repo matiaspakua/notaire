@@ -13,13 +13,13 @@ class ErrorResponseTest {
     @Test
     @DisplayName("Should serialize all constructor-provided fields, not an empty object")
     void shouldSerializeAllFields() throws Exception {
-        ErrorResponse errorResponse = new ErrorResponse(400, "Bad Request", "invalid data", "/api/v1/gestiones");
+        ErrorResponse errorResponse = new ErrorResponse(400, "Bad Request", "invalid data", "/api/v1/managements");
 
         String json = new ObjectMapper().writeValueAsString(errorResponse);
 
         assertThat(json).contains("\"status\":400");
         assertThat(json).contains("\"error\":\"Bad Request\"");
         assertThat(json).contains("\"message\":\"invalid data\"");
-        assertThat(json).contains("\"path\":\"/api/v1/gestiones\"");
+        assertThat(json).contains("\"path\":\"/api/v1/managements\"");
     }
 }

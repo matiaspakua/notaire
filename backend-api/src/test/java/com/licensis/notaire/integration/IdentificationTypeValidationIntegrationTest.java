@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("TipoIdentificacion request validation (issue #655)")
+@DisplayName("IdentificationType request validation (issue #655)")
 class IdentificationTypeValidationIntegrationTest {
 
     @Autowired
@@ -33,7 +33,7 @@ class IdentificationTypeValidationIntegrationTest {
     @Test
     @DisplayName("POST /type-identificacion with blank name returns 400")
     void shouldRejectCreateWithBlankName() throws Exception {
-        mockMvc.perform(post("/api/v1/tipo-identificacion")
+        mockMvc.perform(post("/api/v1/identification-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "", "characters": "9"}
@@ -44,7 +44,7 @@ class IdentificationTypeValidationIntegrationTest {
     @Test
     @DisplayName("POST /type-identificacion with missing name returns 400")
     void shouldRejectCreateWithMissingName() throws Exception {
-        mockMvc.perform(post("/api/v1/tipo-identificacion")
+        mockMvc.perform(post("/api/v1/identification-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"characters": "9"}
@@ -55,7 +55,7 @@ class IdentificationTypeValidationIntegrationTest {
     @Test
     @DisplayName("POST /type-identificacion with valid payload still succeeds")
     void shouldAcceptCreateWithValidPayload() throws Exception {
-        mockMvc.perform(post("/api/v1/tipo-identificacion")
+        mockMvc.perform(post("/api/v1/identification-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "typeValido655", "characters": "9"}
@@ -66,7 +66,7 @@ class IdentificationTypeValidationIntegrationTest {
     @Test
     @DisplayName("PUT /type-identificacion/{id} with blank name returns 400")
     void shouldRejectUpdateWithBlankName() throws Exception {
-        mockMvc.perform(put("/api/v1/tipo-identificacion/1")
+        mockMvc.perform(put("/api/v1/identification-types/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"name": "", "characters": "9"}

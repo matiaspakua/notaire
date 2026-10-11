@@ -15,7 +15,7 @@
 
 ## 4. Implementación
 
-- [x] 4.1 Paged lists, ManagementPicker, useGestiones removed
+- [x] 4.1 Paged lists, ManagementPicker, useManagements removed
 
 ## 5. Actualizar tests existentes
 

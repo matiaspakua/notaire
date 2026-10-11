@@ -4,18 +4,18 @@
 
 Genera la Minuta de Inscripción para escrituras sobre inmuebles y hace
 seguimiento de su circuito registral (presentación, observaciones,
-inscripción definitiva) ante el Registro de la Propiedad Inmueble (CU82).
+inscripción definitiva) ante el Registro de la Propiedad Property (CU82).
 
 ## Requirements
 
 ### Requirement: Registrar datos registrales del inmueble
 
-El sistema SHALL permitir registrar la matrícula, tomo/folio/finca y
+El sistema SHALL permitir registrar la matrícula, tomo/folios/finca y
 linderos de un inmueble.
 
 #### Scenario: Cargar datos registrales de un inmueble
 
-- **WHEN** se completan la matrícula, el tomo/folio/finca y los linderos de
+- **WHEN** se completan la matrícula, el tomo/folios/finca y los linderos de
   un inmueble
 - **THEN** el sistema guarda esos datos junto con la nomenclatura catastral
   y la valuación fiscal existentes
@@ -25,8 +25,8 @@ linderos de un inmueble.
 El sistema SHALL permitir generar la Minuta de Inscripción para una escritura
 sobre un inmueble con trámite aprobado, siempre que estén completos los
 datos catastrales y registrales requeridos. A successful generate via
-`POST /api/v1/minutas-inscripcion` SHALL return HTTP `201 Created` with a
-`Location` header pointing at `/api/v1/minutas-inscripcion/{id}`.
+`POST /api/v1/registration-drafts` SHALL return HTTP `201 Created` with a
+`Location` header pointing at `/api/v1/registration-drafts/{id}`.
 
 #### Scenario: Generar minuta con datos completos
 
@@ -52,7 +52,7 @@ datos catastrales y registrales requeridos. A successful generate via
 ### Requirement: Presentar la minuta ante el Registro
 
 El sistema SHALL permitir registrar la presentación de la minuta ante el
-Registro de la Propiedad Inmueble.
+Registro de la Propiedad Property.
 
 #### Scenario: Registrar presentación
 

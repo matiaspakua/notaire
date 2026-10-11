@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Reporte controller request validation (issue #561)")
+@DisplayName("Report controller request validation (issue #561)")
 class ReportControllerValidationIntegrationTest {
 
     @Autowired
@@ -31,40 +31,40 @@ class ReportControllerValidationIntegrationTest {
     @Test
     @DisplayName("GET budget report with non-positive idBudget returns 400")
     void shouldRejectBudgetReportWithNonPositiveId() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/presupuesto/0"))
+        mockMvc.perform(get("/api/v1/reports/budget/0"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("GET budget report with negative idBudget returns 400")
     void shouldRejectBudgetReportWithNegativeId() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/presupuesto/-1"))
+        mockMvc.perform(get("/api/v1/reports/budget/-1"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("GET lista-documents-tramite with blank nombreTipoTramite returns 400")
-    void shouldRejectListaDocumentsWithBlankNameTypeProcedure() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/lista-documentos-tramite")
-                        .param("nombreTipoTramite", "   "))
+    @DisplayName("GET procedure-documents with a blank procedureTypeName returns 400")
+    void shouldRejectProcedureDocumentListWithBlankProcedureTypeName() throws Exception {
+        mockMvc.perform(get("/api/v1/reports/procedure-document-list")
+                        .param("procedureTypeName", "   "))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("GET declaracion-jurada-mensual with mes=13 returns 400")
+    @DisplayName("GET monthly-sworn-statement with month=13 returns 400")
     void shouldRejectDeclaracionJuradaMensualWithMesOutOfRange() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual")
-                        .param("anio", "2026")
-                        .param("mes", "13"))
+        mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
+                        .param("year", "2026")
+                        .param("month", "13"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("GET declaracion-jurada-mensual with non-positive anio returns 400")
+    @DisplayName("GET monthly-sworn-statement with a non-positive year returns 400")
     void shouldRejectDeclaracionJuradaMensualWithNonPositiveYear() throws Exception {
-        mockMvc.perform(get("/api/v1/reportes/declaracion-jurada-mensual")
-                        .param("anio", "0")
-                        .param("mes", "6"))
+        mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
+                        .param("year", "0")
+                        .param("month", "6"))
                 .andExpect(status().isBadRequest());
     }
 }

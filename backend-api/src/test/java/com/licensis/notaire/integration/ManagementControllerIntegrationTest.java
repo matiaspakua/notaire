@@ -91,10 +91,10 @@ class ManagementControllerIntegrationTest {
 
     private Integer createBudget(Integer clientId) throws Exception {
         String body = """
-                {"number": 1, "date": "2026-01-01", "encabezado": "Budget IT", "status": "PENDIENTE",
+                {"number": 1, "date": "2026-01-01", "heading": "Budget IT", "status": "PENDIENTE",
                  "person": {"personId": %d}}
                 """.formatted(clientId);
-        MvcResult result = mockMvc.perform(post("/api/v1/presupuestos")
+        MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -110,7 +110,7 @@ class ManagementControllerIntegrationTest {
 
     private Integer createProcedureType() {
         ProcedureType type = new ProcedureType();
-        type.setName("Tramite IT");
+        type.setName("Procedure IT");
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -119,15 +119,15 @@ class ManagementControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return 400 with a body, not a bare 500, when encabezado is missing")
-    void shouldReturn400WhenEncabezadoIsMissing() throws Exception {
+    @DisplayName("Should return 400 with a body, not a bare 500, when heading is missing")
+    void shouldReturn400WhenHeadingIsMissing() throws Exception {
         Integer personId = createPerson();
         String body = """
                 {"dateStart": "2026-01-01", "number": 9101,
                  "notaryPersonId": %d}
                 """.formatted(personId);
 
-        mockMvc.perform(post("/api/v1/gestiones")
+        mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
@@ -140,11 +140,11 @@ class ManagementControllerIntegrationTest {
     void shouldCreateManagementWithValidData() throws Exception {
         Integer personId = createPerson();
         String body = """
-                {"encabezado": "Management IT", "dateStart": "2026-01-01", "number": 9102,
+                {"heading": "Management IT", "dateStart": "2026-01-01", "number": 9102,
                  "notaryPersonId": %d}
                 """.formatted(personId);
 
-        mockMvc.perform(post("/api/v1/gestiones")
+        mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -155,10 +155,10 @@ class ManagementControllerIntegrationTest {
     @DisplayName("Should return 400 from complete-case when a required dependency is missing")
     void shouldReturn400FromCompleteCaseWhenDependencyIsMissing() throws Exception {
         String body = """
-                {"number": 9201, "encabezado": "Management IT"}
+                {"number": 9201, "heading": "Management IT"}
                 """;
 
-        mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest());
@@ -173,11 +173,11 @@ class ManagementControllerIntegrationTest {
         Integer statusId = createManagementStatus();
         Integer typeProcedureId = createProcedureType();
         String body = """
-                {"number": 9202, "encabezado": "Management IT", "budgetId": %d,
+                {"number": 9202, "heading": "Management IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
 
-        MvcResult result = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult result = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -188,7 +188,7 @@ class ManagementControllerIntegrationTest {
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(managementId);
         assertThat(procedures).as("complete-case should persist a procedure linked to the management").hasSize(1);
         assertThat(procedures.get(0).getFkIdBudget())
-                .as("the persisted tramite should carry the requested presupuestoId as its fkIdPresupuesto")
+                .as("the persisted procedure should carry the requested budgetId as its fkIdBudget")
                 .isNotNull()
                 .extracting("idBudget")
                 .isEqualTo(budgetId);
@@ -203,11 +203,11 @@ class ManagementControllerIntegrationTest {
         Integer statusId = createManagementStatus();
         Integer typeProcedureId = createProcedureType();
         String body = """
-                {"number": 9203, "encabezado": "Management IT", "budgetId": %d,
+                {"number": 9203, "heading": "Management IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
 
-        mockMvc.perform(put("/api/v1/gestiones/999999/complete-case")
+        mockMvc.perform(put("/api/v1/managements/999999/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound());
@@ -222,10 +222,10 @@ class ManagementControllerIntegrationTest {
         Integer statusId = createManagementStatus();
         Integer typeProcedureId = createProcedureType();
         String createBody = """
-                {"number": 9204, "encabezado": "Management IT", "budgetId": %d,
+                {"number": 9204, "heading": "Management IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -233,11 +233,11 @@ class ManagementControllerIntegrationTest {
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString()).get("idManagement").asInt();
 
         String updateBody = """
-                {"number": 9204, "encabezado": "Management IT actualizada", "budgetId": %d,
+                {"number": 9204, "heading": "Management IT actualizada", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
 
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/complete-case")
+        mockMvc.perform(put("/api/v1/managements/" + managementId + "/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk())
@@ -246,7 +246,7 @@ class ManagementControllerIntegrationTest {
 
     @Test
     @DisplayName("Should redirect a management to the substitute when the requested notary has an active substitution")
-    void shouldRedirectToSuplenteWhenUpdatingManagementNotary() throws Exception {
+    void shouldRedirectToSubstituteWhenUpdatingManagementNotary() throws Exception {
         Integer clientId = createPerson("42000016");
         Integer notaryId = createPerson("42000017");
         Integer substituteId = createPerson("42000018");
@@ -254,10 +254,10 @@ class ManagementControllerIntegrationTest {
         Integer statusId = createManagementStatus();
         Integer typeProcedureId = createProcedureType();
         String createBody = """
-                {"number": 9205, "encabezado": "Management IT", "budgetId": %d,
+                {"number": 9205, "heading": "Management IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones/complete-case")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -266,10 +266,10 @@ class ManagementControllerIntegrationTest {
         createActiveSubstitution(notaryId, substituteId);
 
         String updateBody = """
-                {"number": 9205, "encabezado": "Management IT", "budgetId": %d,
+                {"number": 9205, "heading": "Management IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId + "/complete-case")
+        mockMvc.perform(put("/api/v1/managements/" + managementId + "/complete-case")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
@@ -293,11 +293,11 @@ class ManagementControllerIntegrationTest {
         createActiveSubstitution(notaryId, substituteId);
 
         String body = """
-                {"encabezado": "Plain create substitution IT", "number": 9301,
+                {"heading": "Plain create substitution IT", "number": 9301,
                  "notaryPersonId": %d}
                 """.formatted(notaryId);
 
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -325,10 +325,10 @@ class ManagementControllerIntegrationTest {
         Integer substituteId = createPerson("42000023");
 
         String createBody = """
-                {"encabezado": "Plain update substitution IT", "number": 9302,
+                {"heading": "Plain update substitution IT", "number": 9302,
                  "notaryPersonId": %d}
                 """.formatted(initialNotaryId);
-        MvcResult created = mockMvc.perform(post("/api/v1/gestiones")
+        MvcResult created = mockMvc.perform(post("/api/v1/managements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createBody))
                 .andExpect(status().isCreated())
@@ -339,10 +339,10 @@ class ManagementControllerIntegrationTest {
         createActiveSubstitution(requestedNotaryId, substituteId);
 
         String updateBody = """
-                {"encabezado": "Plain update substitution IT", "number": 9302,
+                {"heading": "Plain update substitution IT", "number": 9302,
                  "notaryPersonId": %d}
                 """.formatted(requestedNotaryId);
-        mockMvc.perform(put("/api/v1/gestiones/" + managementId)
+        mockMvc.perform(put("/api/v1/managements/" + managementId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());

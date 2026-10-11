@@ -3,11 +3,11 @@ info:
   type: http
   seq: 9
   description: |-
-      ## Delete history entry — DELETE /api/v1/historial/{id}
+      ## Delete history entry — DELETE /api/v1/history/{id}
       Traceability: CU13 (RF #3, #24, #26, #110)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/historial/{{history_id}}"
+  url: "{{base_url}}/api/v1/history/{{history_id}}"
   headers:
     - name: Content-Type
       value: application/json

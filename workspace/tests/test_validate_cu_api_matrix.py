@@ -18,14 +18,14 @@ PREFLIGHT = SCRIPTS / "preflight.sh"
 MATRIX = REPO / "docs" / "300-development" / "303-testing" / "CU-API-MATRIX.csv"
 
 REQUIRED_BASES = (
-    "/carpetas",
-    "/cuadernos",
-    "/minutas-inscripcion",
-    "/plantilla-costos-documento",
-    "/protocolo-auxiliar",
+    "/procedure-folders",
+    "/notebooks",
+    "/registration-drafts",
+    "/document-cost-templates",
+    "/auxiliary-protocol",
     "/roles",
-    "/tipo-identificacion",
-    "/tramites",
+    "/identification-types",
+    "/procedures",
 )
 
 HEADER = [
@@ -96,35 +96,35 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
         )
         web.mkdir(parents=True)
         (web / "BudgetController.java").write_text(
-            _controller_java("BudgetController", "/api/v1/presupuestos"), encoding="utf-8"
+            _controller_java("BudgetController", "/api/v1/budgets"), encoding="utf-8"
         )
         (web / "NotebookController.java").write_text(
-            _controller_java("NotebookController", "/api/v1/cuadernos"), encoding="utf-8"
+            _controller_java("NotebookController", "/api/v1/notebooks"), encoding="utf-8"
         )
         (web / "ProcedureFolderController.java").write_text(
-            _controller_java("ProcedureFolderController", "/api/v1/carpetas"), encoding="utf-8"
+            _controller_java("ProcedureFolderController", "/api/v1/procedure-folders"), encoding="utf-8"
         )
         (web / "RegistrationDraftController.java").write_text(
-            _controller_java("RegistrationDraftController", "/api/v1/minutas-inscripcion"),
+            _controller_java("RegistrationDraftController", "/api/v1/registration-drafts"),
             encoding="utf-8",
         )
         (web / "DocumentCostTemplateController.java").write_text(
-            _controller_java("DocumentCostTemplateController", "/api/v1/plantilla-costos-documento"),
+            _controller_java("DocumentCostTemplateController", "/api/v1/document-cost-templates"),
             encoding="utf-8",
         )
         (web / "AuxiliaryProtocolController.java").write_text(
-            _controller_java("AuxiliaryProtocolController", "/api/v1/protocolo-auxiliar"),
+            _controller_java("AuxiliaryProtocolController", "/api/v1/auxiliary-protocol"),
             encoding="utf-8",
         )
         (web / "RoleController.java").write_text(
             _controller_java("RoleController", "/api/v1/roles"), encoding="utf-8"
         )
         (web / "IdentificationTypeController.java").write_text(
-            _controller_java("IdentificationTypeController", "/api/v1/tipo-identificacion"),
+            _controller_java("IdentificationTypeController", "/api/v1/identification-types"),
             encoding="utf-8",
         )
         (web / "ProcedureController.java").write_text(
-            _controller_java("ProcedureController", "/api/v1/tramites"), encoding="utf-8"
+            _controller_java("ProcedureController", "/api/v1/procedures"), encoding="utf-8"
         )
         self.matrix = self.root / "docs" / "300-development" / "303-testing" / "CU-API-MATRIX.csv"
 
@@ -141,7 +141,7 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
                 CU_ID="CU01",
                 Controller="BudgetController",
                 HTTP_Method="POST",
-                Endpoint="/api/v1/presupuestos",
+                Endpoint="/api/v1/budgets",
                 Bruno_Test="budgets/01-create.yml",
                 Endpoint_Status="OK",
                 Bruno_Status="OK",
@@ -151,7 +151,7 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
                 CU_ID="CU80",
                 Controller="NotebookController",
                 HTTP_Method="GET",
-                Endpoint="/api/v1/cuadernos",
+                Endpoint="/api/v1/notebooks",
                 Bruno_Test="notebooks/",
                 Endpoint_Status="OK",
                 Bruno_Status="OK",
@@ -161,7 +161,7 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
                 CU_ID="CU85",
                 Controller="ProcedureFolderController",
                 HTTP_Method="GET",
-                Endpoint="/api/v1/carpetas",
+                Endpoint="/api/v1/procedure-folders",
                 Bruno_Test="procedure-folders/",
                 Endpoint_Status="OK",
                 Bruno_Status="OK",
@@ -171,7 +171,7 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
                 CU_ID="CU82",
                 Controller="RegistrationDraftController",
                 HTTP_Method="POST",
-                Endpoint="/api/v1/minutas-inscripcion",
+                Endpoint="/api/v1/registration-drafts",
                 Bruno_Test="registration-drafts/",
                 Endpoint_Status="OK",
                 Bruno_Status="OK",
@@ -181,7 +181,7 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
                 CU_ID="CU39",
                 Controller="DocumentCostTemplateController",
                 HTTP_Method="POST",
-                Endpoint="/api/v1/plantilla-costos-documento",
+                Endpoint="/api/v1/document-cost-templates",
                 Bruno_Test="document-cost-templates/",
                 Endpoint_Status="OK",
                 Bruno_Status="OK",
@@ -191,7 +191,7 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
                 CU_ID="CU81",
                 Controller="AuxiliaryProtocolController",
                 HTTP_Method="GET",
-                Endpoint="/api/v1/protocolo-auxiliar/folios-disponibles",
+                Endpoint="/api/v1/auxiliary-protocol/available-folios",
                 Bruno_Test="auxiliary-protocol/",
                 Endpoint_Status="OK",
                 Bruno_Status="OK",
@@ -211,7 +211,7 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
                 CU_ID="CU17",
                 Controller="IdentificationTypeController",
                 HTTP_Method="GET",
-                Endpoint="/api/v1/tipo-identificacion",
+                Endpoint="/api/v1/identification-types",
                 Bruno_Test="identification-types/",
                 Endpoint_Status="OK",
                 Bruno_Status="OK",
@@ -221,7 +221,7 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
                 CU_ID="CU02",
                 Controller="ProcedureController",
                 HTTP_Method="GET",
-                Endpoint="/api/v1/tramites",
+                Endpoint="/api/v1/procedures",
                 Bruno_Test="procedures/",
                 Endpoint_Status="OK",
                 Bruno_Status="OK",
@@ -231,7 +231,7 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
                 CU_ID="CU05",
                 Controller="BudgetController",
                 HTTP_Method="POST",
-                Endpoint="/api/v1/presupuestos",
+                Endpoint="/api/v1/budgets",
                 Bruno_Test="MISSING",
                 Endpoint_Status="OK",
                 Bruno_Status="NO-TEST",
@@ -265,11 +265,11 @@ class ValidateCuApiMatrixTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_should_reject_missing_required_resource_base(self) -> None:
-        rows = [r for r in self._good_rows() if "/carpetas" not in r["Endpoint"]]
+        rows = [r for r in self._good_rows() if "/procedure-folders" not in r["Endpoint"]]
         _write_matrix(self.matrix, rows)
         result = self._run()
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("/carpetas", result.stdout + result.stderr)
+        self.assertIn("/procedure-folders", result.stdout + result.stderr)
 
     def test_should_pass_when_all_required_resource_bases_present(self) -> None:
         _write_matrix(self.matrix, self._good_rows())

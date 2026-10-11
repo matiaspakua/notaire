@@ -40,12 +40,12 @@ async function pause(page: Page, ms = PAUSE): Promise<void> {
 
 async function loginViaUI(page: Page): Promise<void> {
   await page.goto("/login");
-  await expect(page.getByTestId("input-usuario")).toBeVisible({ timeout: 10000 });
-  await page.getByTestId("input-usuario").fill(ADMIN_USER);
+  await expect(page.getByTestId("input-username")).toBeVisible({ timeout: 10000 });
+  await page.getByTestId("input-username").fill(ADMIN_USER);
   await pause(page, 400);
-  await page.getByTestId("input-contrasenia").fill(ADMIN_PASS);
+  await page.getByTestId("input-password").fill(ADMIN_PASS);
   await pause(page, 400);
-  await page.getByTestId("btn-ingresar").click();
+  await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   await expect(page.getByTestId("sidebar")).toBeVisible({ timeout: 10000 });
 }
@@ -142,7 +142,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     // Workflow hero section
     const hero = page.getByTestId("workflow-hero");
     await expect(hero).toBeVisible({ timeout: 10000 });
-    // Search an existing workflow reference (seeded gestion numero 1001)
+    // Search an existing workflow reference (seeded management number 1001)
     const searchInput = page.getByTestId("workflow-search-form").locator("input");
     await searchInput.fill("1001");
     await pause(page, 600);
@@ -155,19 +155,19 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
   });
 
-  test("Gestiones — List, Create, Edit", async () => {
+  test("Managements — List, Create, Edit", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/gestiones");
+      await navigateTo(page, "/dashboard/managements");
       await assertHeadingVisible(page);
       await assertTableVisible(page);
     });
 
     await test.step("Create", async () => {
-      const uniqueNumero = String(Date.now()).slice(-5);
-      await openModal(page, "btn-nueva-gestion");
-      await page.getByTestId("input-numero-gestion").fill(uniqueNumero);
+      const uniqueNumber = String(Date.now()).slice(-5);
+      await openModal(page, "btn-new-management");
+      await page.getByTestId("input-management-number").fill(uniqueNumber);
       await pause(page, PAUSE);
-      await saveAndDismiss(page, "btn-guardar-gestion");
+      await saveAndDismiss(page, "btn-save-management");
     });
 
     await test.step("Edit first row", async () => {
@@ -180,23 +180,23 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Presupuestos — List, Search, Filter, Create", async () => {
+  test("Budgets — List, Search, Filter, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/presupuestos");
+      await navigateTo(page, "/dashboard/budgets");
       await assertHeadingVisible(page);
       await assertTableVisible(page);
     });
 
     await test.step("Search", async () => {
-      const searchInput = page.getByTestId("input-search-presupuesto");
+      const searchInput = page.getByTestId("input-search-budget");
       await searchInput.fill("test");
       await pause(page, PAUSE);
       await searchInput.clear();
       await pause(page, 400);
     });
 
-    await test.step("Filter by estado", async () => {
-      const trigger = page.getByTestId("select-estado");
+    await test.step("Filter by status", async () => {
+      const trigger = page.getByTestId("select-status");
       await trigger.click();
       await pause(page, 400);
       const firstOption = page.getByRole("listbox").getByRole("option").first();
@@ -209,28 +209,28 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nuevo-presupuesto");
-      await expect(page.getByTestId("input-monto")).toBeVisible();
+      await openModal(page, "btn-new-budget");
+      await expect(page.getByTestId("input-amount")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
   });
 
-  test("Personas — List, Search, Filter, Create", async () => {
+  test("People — List, Search, Filter, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/personas");
+      await navigateTo(page, "/dashboard/people");
       await assertHeadingVisible(page);
       await assertTableVisible(page);
     });
 
-    await test.step("Search by nombre", async () => {
+    await test.step("Search by first name", async () => {
       await page.getByTestId("input-search-firstName").fill("Juan");
       await pause(page, PAUSE);
       await page.getByTestId("input-search-firstName").clear();
       await pause(page, 400);
     });
 
-    await test.step("Search by apellido", async () => {
+    await test.step("Search by lastName", async () => {
       await page.getByTestId("input-search-lastName").fill("Pérez");
       await pause(page, PAUSE);
       await page.getByTestId("input-search-lastName").clear();
@@ -245,15 +245,15 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Filter clientes", async () => {
-      await page.getByTestId("btn-filter-clientes").click();
+      await page.getByTestId("btn-filter-clients").click();
       await pause(page, PAUSE);
       // Toggle back
-      await page.getByTestId("btn-filter-clientes").click();
+      await page.getByTestId("btn-filter-clients").click();
       await pause(page, 400);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nueva-persona");
+      await openModal(page, "btn-new-person");
       await expect(page.getByTestId("input-firstName")).toBeVisible();
       await expect(page.getByTestId("input-lastName")).toBeVisible();
       await pause(page, PAUSE);
@@ -261,42 +261,42 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Escrituras — List", async () => {
-    await navigateTo(page, "/dashboard/escrituras");
+  test("Deeds — List", async () => {
+    await navigateTo(page, "/dashboard/deeds");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Pagos — List, Create", async () => {
+  test("Payments — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/pagos");
+      await navigateTo(page, "/dashboard/payments");
       await assertHeadingVisible(page);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      const btn = page.getByTestId("btn-nuevo-pago");
+      const btn = page.getByTestId("btn-new-payment");
       if (await btn.isVisible().catch(() => false)) {
-        await openModal(page, "btn-nuevo-pago");
+        await openModal(page, "btn-new-payment");
         await pause(page, PAUSE);
         await closeModalViaButton(page);
       }
     });
   });
 
-  test("Protocolo — List", async () => {
-    await navigateTo(page, "/dashboard/protocolo");
+  test("Protocol — List", async () => {
+    await navigateTo(page, "/dashboard/protocol");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Inmuebles — List", async () => {
-    await navigateTo(page, "/dashboard/inmuebles");
+  test("Properties — List", async () => {
+    await navigateTo(page, "/dashboard/properties");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Copias — List", async () => {
-    await navigateTo(page, "/dashboard/copias");
+  test("Copies — List", async () => {
+    await navigateTo(page, "/dashboard/copies");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
@@ -308,77 +308,77 @@ test.describe.serial("Full Application Tour — single login → all modules →
   });
 
   test("Documentos — List", async () => {
-    await navigateTo(page, "/dashboard/documentos");
+    await navigateTo(page, "/dashboard/documents");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Auditoría — List", async () => {
-    await navigateTo(page, "/dashboard/auditoria");
+  test("Audit — List", async () => {
+    await navigateTo(page, "/dashboard/audit");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Suplencias — List, Create", async () => {
+  test("Substitutions — List, Create", async () => {
     await test.step("List via sidebar", async () => {
       await navigateViaSidebar(page, "suplencias");
       await assertHeadingVisible(page);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      const btn = page.getByTestId("btn-nueva-suplencia");
+      const btn = page.getByTestId("btn-new-substitution");
       if (await btn.isVisible().catch(() => false)) {
-        await openModal(page, "btn-nueva-suplencia");
+        await openModal(page, "btn-new-substitution");
         await pause(page, PAUSE);
         await closeModalViaButton(page);
       }
     });
   });
 
-  test("Reportes — List", async () => {
+  test("Reports — List", async () => {
     await navigateViaSidebar(page, "reportes");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Administración — Hub page", async () => {
-    await navigateTo(page, "/dashboard/administracion");
+  test("Administration — Hub page", async () => {
+    await navigateTo(page, "/dashboard/administration");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Admin Trámites — List, Create", async () => {
+  test("Admin procedures — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/tramites");
+      await navigateTo(page, "/dashboard/administration/procedures");
       await assertHeadingVisible(page);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nuevo-tipo-tramite");
-      await expect(page.getByTestId("input-nombre-tramite")).toBeVisible();
+      await openModal(page, "btn-new-procedure-type");
+      await expect(page.getByTestId("input-name-procedure")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
   });
 
-  test("Admin Conceptos — List and Search", async () => {
-    await navigateTo(page, "/dashboard/administracion/conceptos");
+  test("Admin Concepts — List and Search", async () => {
+    await navigateTo(page, "/dashboard/administration/concepts");
     await assertHeadingVisible(page);
-    const searchInput = page.getByTestId("input-search-concepto");
+    const searchInput = page.getByTestId("input-search-concept");
     await searchInput.fill("test");
     await pause(page, PAUSE);
     await searchInput.clear();
     await pause(page, 400);
   });
 
-  test("Admin Estados Gestión — List, Search, Create, Edit", async () => {
+  test("Admin management statuses — List, Search, Create, Edit", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/estados-gestion");
+      await navigateTo(page, "/dashboard/administration/management-statuses");
       await assertHeadingVisible(page);
     });
 
     await test.step("Search", async () => {
-      const searchInput = page.getByTestId("search-estados");
+      const searchInput = page.getByTestId("search-statuses");
       await searchInput.fill("inicial");
       await pause(page, PAUSE);
       await searchInput.clear();
@@ -386,14 +386,14 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Create", async () => {
-      await openModal(page, "btn-nuevo-estado");
-      await page.getByTestId("input-nombre-estado").fill(`Estado E2E ${Date.now()}`);
+      await openModal(page, "btn-new-status");
+      await page.getByTestId("input-name-status").fill(`Status E2E ${Date.now()}`);
       await pause(page, PAUSE);
       await saveAndDismiss(page);
     });
 
     await test.step("Edit first row", async () => {
-      const editBtn = page.getByTestId("btn-edit-estado").first();
+      const editBtn = page.getByTestId("btn-edit-status").first();
       if (await editBtn.isVisible().catch(() => false)) {
         await editBtn.click();
         await expect(page.getByRole("dialog")).toBeVisible({ timeout: 6000 });
@@ -405,68 +405,68 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Admin Folios — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/folios");
+      await navigateTo(page, "/dashboard/administration/folios");
       await assertHeadingVisible(page);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nuevo-folio");
-      await expect(page.getByTestId("input-numero-folio")).toBeVisible();
+      await openModal(page, "btn-new-folio");
+      await expect(page.getByTestId("input-folio-number")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
   });
 
-  test("Admin Plantillas — List, Create", async () => {
+  test("Admin templates — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/plantillas");
+      await navigateTo(page, "/dashboard/administration/templates");
       await assertHeadingVisible(page);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nueva-plantilla");
-      await expect(page.getByTestId("input-observaciones-plantilla")).toBeVisible();
+      await openModal(page, "btn-new-template");
+      await expect(page.getByTestId("input-notes-template")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
   });
 
-  test("Admin Tipos Documento — List, Create", async () => {
+  test("Admin document types — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/documentos");
+      await navigateTo(page, "/dashboard/administration/documents");
       await assertHeadingVisible(page);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nuevo-tipo-documento");
-      await expect(page.getByTestId("input-nombre-documento")).toBeVisible();
+      await openModal(page, "btn-new-document-type");
+      await expect(page.getByTestId("input-name-document")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
   });
 
-  test("Ítems — List, Create", async () => {
+  test("Items — List, Create", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/items");
       await assertHeadingVisible(page);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nuevo-item");
+      await openModal(page, "btn-new-item");
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
   });
 
-  test("Admin Usuarios — List, Create", async () => {
+  test("Admin Users — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/usuarios");
+      await navigateTo(page, "/dashboard/administration/users");
       await assertHeadingVisible(page);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nuevo-usuario");
-      await expect(page.getByTestId("input-nombre-usuario")).toBeVisible();
+      await openModal(page, "btn-new-user");
+      await expect(page.getByTestId("input-name-user")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
@@ -474,29 +474,29 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
   test("Admin Roles — List, Create", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/roles");
+      await navigateTo(page, "/dashboard/administration/roles");
       await assertHeadingVisible(page);
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nuevo-rol");
-      await expect(page.getByTestId("input-nombre-rol")).toBeVisible();
+      await openModal(page, "btn-new-role");
+      await expect(page.getByTestId("input-name-role")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
   });
 
-  test("Admin Auditoría — redirects to canonical", async () => {
-    // Legacy admin path must resolve to /dashboard/auditoria (#1058).
-    await navigateTo(page, "/dashboard/administracion/auditoria");
-    await expect(page).toHaveURL(/\/dashboard\/auditoria/);
+  test("Admin audit — redirects to the canonical route", async () => {
+    // Legacy admin path must resolve to /dashboard/audit (#1058).
+    await navigateTo(page, "/dashboard/administration/audit");
+    await expect(page).toHaveURL(/\/dashboard\/audit/);
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
   test("Admin Workflows — List, Search, Create, Editor", async () => {
     await test.step("List", async () => {
-      await navigateTo(page, "/dashboard/administracion/workflows");
+      await navigateTo(page, "/dashboard/administration/workflows");
       await assertHeadingVisible(page);
     });
 
@@ -509,14 +509,14 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Open create modal and cancel", async () => {
-      await openModal(page, "btn-nuevo-workflow");
-      await expect(page.getByTestId("input-nombre-workflow")).toBeVisible();
+      await openModal(page, "btn-new-workflow");
+      await expect(page.getByTestId("input-name-workflow")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
 
     await test.step("Open editor for first workflow", async () => {
-      await navigateTo(page, "/dashboard/administracion/workflows");
+      await navigateTo(page, "/dashboard/administration/workflows");
       await page.waitForLoadState("networkidle");
       // Find the first editor button (dynamic testid: btn-editor-{id})
       const editorBtn = page.locator("[data-testid^='btn-editor-']").first();
@@ -529,7 +529,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
         await expect(editorCanvas).toBeVisible({ timeout: 10000 });
         await pause(page, PAUSE);
         // Navigate back
-        await page.goto("/dashboard/administracion/workflows");
+        await page.goto("/dashboard/administration/workflows");
         await page.waitForLoadState("networkidle");
         await pause(page, 600);
       }
@@ -542,7 +542,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
 
     const searchInput = page.getByTestId("workflow-search-form").locator("input");
-    // Search for seeded gestion 1001
+    // Search for seeded management 1001
     await searchInput.fill("1001");
     await pause(page, 600);
     await page.keyboard.press("Enter");
@@ -584,6 +584,6 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
     await page.getByTestId("btn-logout").click();
     await expect(page).toHaveURL(/\/login/, { timeout: 10000 });
-    await expect(page.getByTestId("btn-ingresar")).toBeVisible();
+    await expect(page.getByTestId("btn-sign-in")).toBeVisible();
   });
 });

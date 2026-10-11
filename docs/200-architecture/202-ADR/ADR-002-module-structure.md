@@ -1,4 +1,4 @@
-# ADR-002: Estructura de Módulos Maven y Organización de Paquetes
+# ADR-002: Maven module structure and package organization
 
 **Status:** Accepted  
 **Date:** 2024-03-20  
@@ -14,107 +14,106 @@
 > **Update (see ADR-025):** the `notaire-shared` module below was retired under #1255.
 > Its classes live in `backend-api` and the folder is archived in
 > `deprecated/notaire-shared/`; the reactor now has the single module `backend-api`.
+>
+> **Update (see ADR-021):** REST controllers live under
+> `com.licensis.notaire.adapter.in.web`. Use-case services live under
+> `com.licensis.notaire.application.usecase`. The package samples below name
+> types that exist today.
 
 ## Context
 
-El sistema Notaire tiene tres responsabilidades distintas que necesitan organización clara:
+Notaire had three distinct responsibilities that needed a clear layout:
 
-1. **Backend API REST**: Lógica de negocio y persistencia
-2. **Frontend Swing**: Interfaz de usuario
-3. **Código Compartido**: DTOs y utilidades comunes
+1. **REST API backend**: business logic and persistence
+2. **Swing frontend**: user interface
+3. **Shared code**: DTOs and common utilities
 
-La estructura monolítica anterior mezclaba estas responsabilidades. Se necesita una estructura de módulos Maven que:
+The previous monolith mixed those responsibilities. A Maven module layout was needed to:
 
-- Enforce la separación de responsabilidades
-- Facilite el testing independiente
-- Permita builds selectivos
-- Facilite el versionado y release de componentes
+- Enforce separation of responsibilities
+- Make independent testing possible
+- Allow selective builds
+- Make component versioning and release easier
 
 ## Decision
 
-Implementar estructura Maven multi-módulo con 3 módulos principales:
+Use a multi-module Maven structure with three main modules. Two of those modules
+are retired (see the updates above). The reactor module that remains is
+`backend-api`.
 
 ```text
-notaire/ (pom.xml agregador)
+notaire/ (aggregator pom.xml)
 ├── backend-api/
 │   ├── src/main/java/com/licensis/notaire/
-│   │   ├── api/              # REST Controllers
-│   │   ├── service/          # Lógica de negocio
+│   │   ├── adapter/in/web/   # REST controllers
+│   │   ├── application/      # use-case services
 │   │   ├── repository/       # Spring Data JPA
-│   │   ├── negocio/          # @Entity Domain classes
-│   │   ├── config/           # Spring configurations
-│   │   ├── exception/        # Custom exceptions
-│   │   ├── dto/              # Response DTOs
-│   │   └── util/             # Utilities
+│   │   ├── business/         # @Entity domain classes
+│   │   ├── dto/              # response DTOs
+│   │   ├── config/           # Spring configuration
+│   │   ├── exception/        # custom exceptions
+│   │   ├── jpa/              # legacy JPA controllers
+│   │   ├── service/          # JpaAdministrator, SessionAdministrator, ValidationAdministrator
+│   │   └── util/             # utilities
 │   └── src/test/java/com/licensis/notaire/
-│       ├── unit/             # Unit tests
-│       └── integration/      # Integration tests
+│       ├── unit/             # unit tests
+│       └── integration/      # integration tests
 │
-├── frontend-swing/
-│   ├── src/main/java/com/licensis/notaire/
-│   │   ├── gui/              # Swing frames/panels
-│   │   ├── client/           # REST client
-│   │   ├── controller/       # GUI controllers/presenters
-│   │   ├── model/            # GUI-specific models
-│   │   └── util/             # GUI utilities
-│   └── src/test/java/        # Swing tests
+├── frontend-swing/           # removed from the tree (#1046); history stays in git
 │
-├── notaire-shared/
-│   ├── src/main/java/com/licensis/notaire/
-│   │   └── shared/
-│   │       ├── dto/          # Common DTOs
-│   │       ├── constant/     # Constants
-│   │       └── util/         # Shared utilities
-│   └── src/test/java/
+├── notaire-shared/           # retired (#1255); archived at deprecated/notaire-shared/
 │
-└── pom.xml (agregador)
+└── pom.xml (aggregator)
 ```
 
-### Backend-API: Capas internas
+The coverage exclusion `service.Administrador*` stays as the JaCoCo rule name.
+The classes in that package are `JpaAdministrator`, `SessionAdministrator`, and
+`ValidationAdministrator`.
 
-**api/** (REST Controllers)
+### Backend-API: internal layers
+
+**adapter/in/web/** (REST controllers)
 
 ```text
-api/
-├── PresupuestoController.java
-├── PersonaController.java
-├── EscrituraController.java
-├── GestionController.java
-├── RegistroAuditoriaController.java
-└── ReporteController.java
+adapter/in/web/
+├── budget/BudgetController.java
+├── person/PersonController.java
+├── deed/DeedController.java
+├── management/ManagementController.java
+├── audit/AuditRecordController.java
+└── report/ReportController.java
 ```
 
-**service/** (Orquestación de negocio)
+**application/usecase/** (business orchestration)
 
 ```text
-service/
-├── PresupuestoService.java
-├── PersonaService.java
-├── EscrituraService.java
-├── GestionService.java
-└── RegistroAuditoriaService.java
+application/usecase/
+├── budget/BudgetService.java
+├── person/PersonService.java
+├── deed/DeedService.java
+└── audit/AuditRecordService.java
 ```
 
 **repository/** (Spring Data JPA)
 
 ```text
 repository/
-├── PresupuestoRepository.java
-├── PersonaRepository.java
-├── EscrituraRepository.java
-├── GestionRepository.java
-└── UsuarioRepository.java
+├── BudgetRepository.java
+├── PersonRepository.java
+├── DeedRepository.java
+├── DeedManagementRepository.java
+└── UserRepository.java
 ```
 
-**negocio/** (Domain entities)
+**business/** (domain entities)
 
 ```text
-negocio/
-├── Presupuesto.java
-├── Persona.java
-├── Escritura.java
-├── Gestion.java
-├── Usuario.java
+business/
+├── Budget.java
+├── Person.java
+├── Deed.java
+├── DeedManagement.java
+├── User.java
 └── Folio.java
 ```
 
@@ -122,203 +121,212 @@ negocio/
 
 ```text
 config/
-├── DataSourceConfig.java
 ├── JpaConfig.java
-├── SecurityConfig.java
-├── RestClientConfig.java
-└── CorsConfig.java
+├── SecurityAndCorsConfig.java
+├── OpenApiConfig.java
+└── ObservabilityConfig.java
 ```
 
-**exception/** (Custom exceptions)
+**exception/** (custom exceptions)
 
 ```text
 exception/
 ├── NotaireException.java
 ├── ResourceNotFoundException.java
 ├── BusinessValidationException.java
-└── DataAccessException.java
+└── ErrorResponse.java
 ```
 
-**dto/** (Response DTOs)
+**dto/** (response DTOs)
 
 ```text
 dto/
-├── DtoPresupuesto.java
-├── DtoPersona.java
-├── DtoEscritura.java
-├── DtoGestion.java
-└── ApiResponse.java
+├── DtoBudget.java
+├── DtoPerson.java
+├── DtoDeed.java
+├── DtoDeedManagement.java
+└── DtoHistorySummary.java
 ```
 
-## Options Considered
+## Options considered
 
 ### Option A: Single monolithic JAR
 
-| Dimensión | Evaluación |
-|-----------|-----------|
-| Complejidad | Baja |
-| Deploy independiente | No |
-| Testabilidad | Media |
+| Dimension | Assessment |
+|-----------|------------|
+| Complexity | Low |
+| Independent deploy | No |
+| Testability | Medium |
 
 **Cons:**
 
-- No permite separar FE/BE builds
-- Dificulta testing independiente
-- Legacy structure
+- Frontend and backend builds cannot be separated
+- Independent testing is harder
+- This is the legacy structure
 
-### Option B: Multi-módulo Maven (SELECCIONADO)
+### Option B: Multi-module Maven (selected)
 
-| Dimensión | Evaluación |
-|-----------|-----------|
-| Complejidad | Media |
-| Deploy independiente | Sí |
-| Testabilidad | Alta |
+| Dimension | Assessment |
+|-----------|------------|
+| Complexity | Medium |
+| Independent deploy | Yes |
+| Testability | High |
 
 **Pros:**
 
-- Separación clara de responsabilidades
-- Builds selectivos (`mvn -pl backend-api -am`)
-- Dependency management centralizado
-- Facilita CI/CD granular
-- Versioning independiente de módulos
+- Clear separation of responsibilities
+- Selective builds (`mvn -pl backend-api -am`)
+- Centralized dependency management
+- Granular CI/CD
+- Independent module versioning
 
-### Option C: Monorepo Gradle
+### Option C: Gradle monorepo
 
-| Dimensión | Evaluación |
-|-----------|-----------|
-| Complejidad | Alta |
-| Performance | Mejor en monorepos grandes |
+| Dimension | Assessment |
+|-----------|------------|
+| Complexity | High |
+| Performance | Better for large monorepos |
 
 **Cons:**
 
-- Curva de aprendizaje para equipo Maven
-- Migración costosa desde Maven
+- Learning curve for a Maven team
+- Costly migration away from Maven
 
-## Trade-off Analysis
+## Trade-off analysis
 
-### Complejidad vs. Separación
+### Complexity versus separation
 
-La estructura multi-módulo añade cierta complejidad inicial (gestión de dependencias entre módulos), pero el beneficio de separación es mayor. Permite que equipos trabajen independientemente sin conflictos de merge.
+A multi-module layout adds some upfront complexity (dependencies between modules),
+but the separation is worth it. Teams can work independently with fewer merge conflicts.
 
-### Build time vs. Seguridad de cambios
+### Build time versus change safety
 
-Los builds selectivos (`mvn -pl backend-api`) reducen tiempo, permitiendo builds rápidos sin esperar a la GUI. Cada módulo puede testearse independientemente.
+Selective builds (`mvn -pl backend-api`) are faster because the backend does not
+wait for the GUI. Each module can be tested on its own.
 
 ## Consequences
 
-### Positivas
+### Positive
 
-- **Separación clara**: No hay imports cruzados BE→GUI
-- **Builds independientes**: Backend sin esperar frontend
-- **Testing granular**: Unidad tests por módulo
-- **Deployment independiente**: Backend actualiza sin GUI
+- **Clear separation**: no cross-imports from backend to GUI
+- **Independent builds**: the backend does not wait for the frontend
+- **Granular testing**: unit tests per module
+- **Independent deployment**: the backend can ship without the GUI
 
-### Desafíos
+### Challenges
 
-- **Versionado de dependencias**: Mantener compatibilidad entre módulos
-- **Shared module overhead**: Pequeño overhead de coordinación
-- **Build más lento**: Multi-módulo requiere builds secuenciales
+- **Dependency versions**: keep modules compatible with each other
+- **Shared-module overhead**: a small coordination cost
+- **Slower full build**: a multi-module reactor builds modules in order
 
-## Implementation Rules
+## Implementation rules
 
 ### Backend-API
 
-1. **NO se permiten imports de Swing**
+1. **No Swing imports**
 
    ```java
-   // PROHIBIDO
+   // Forbidden
    import javax.swing.*;
    ```
 
-2. **NO acceso directo a BD desde controllers**
+2. **No direct database access from controllers**
 
    ```java
-   // INCORRECTO - Direct JDBC
+   // Incorrect — direct JDBC
    Statement stmt = connection.createStatement();
-   
-   // CORRECTO - Repository injection
-   @Autowired private PresupuestoRepository repo;
+
+   // Correct — repository injection
+   @Autowired private BudgetRepository repo;
    ```
 
-3. **NO excepciones silenciosas**
+3. **No swallowed exceptions**
 
    ```java
-   // INCORRECTO
+   // Incorrect
    try { ... } catch (Exception e) { }
-   
-   // CORRECTO
-   catch (SQLException e) {
+
+   // Correct
+   catch (Exception e) {
        LOGGER.error("Database error", e);
-       throw new DataAccessException("Failed to fetch", e);
+       throw new ResourceNotFoundException("Failed to fetch", e);
    }
    ```
 
 ### Frontend-Swing
 
-1. **NO lógica de negocio en GUI**
+These rules applied to the retired Swing client. The active UI is `frontend/`.
+
+1. **No business logic in the GUI**
 
    ```java
-   // INCORRECTO
-   if (presupuesto.monto > 1000) {
-       // cálculo de impuestos
+   // Incorrect
+   if (budget.getAmount() > 1000) {
+       // tax calculation
    }
-   
-   // CORRECTO
-   BigDecimal impuestos = apiClient.calcularImpuestos(presupuesto);
+
+   // Correct
+   BigDecimal taxes = apiClient.calculateTaxes(budget);
    ```
 
-2. **NO acceso directo a BD**
+2. **No direct database access**
 
    ```java
-   // INCORRECTO
+   // Incorrect
    Connection conn = DriverManager.getConnection(...);
-   
-   // CORRECTO
-   PresupuestoResponse dto = apiClient.getPresupuesto(id);
+
+   // Correct
+   DtoBudget dto = apiClient.getBudget(id);
    ```
 
-3. **Usar ApiClient para todas las operaciones**
+3. **Use ApiClient for every operation**
 
    ```java
    @Autowired private ApiClient apiClient;
-   
-   void loadPresupuestos() {
-       List<DtoPresupuesto> items = apiClient.listPresupuestos();
+
+   void loadBudgets() {
+       List<DtoBudget> items = apiClient.listBudgets();
    }
    ```
 
 ### Notaire-Shared
 
-- Sólo DTOs, constantes, y utilidades compartidas
-- Versionado independiente
-- No imports de backend-api o frontend-swing
+Retired under ADR-025. While it existed:
 
-## Build Commands
+- Only DTOs, constants, and shared utilities
+- Versioned on its own
+- No imports from `backend-api` or `frontend-swing`
+
+## Build commands
 
 ```bash
-# Build completo
+# Full build
 mvn clean install
 
-# Build backend solo
+# Backend only
 mvn clean install -pl backend-api -am
 
-# Build frontend solo (module excluded from root reactor; build standalone)
-cd deprecated-frontend-swing && mvn clean install
+# Swing only (module removed from the root reactor; history stays in git)
+# Do not rebuild frontend-swing. See ADR-005.
 
-# Tests backend
+# Backend tests
 mvn test -pl backend-api
 
-# Verificación de calidad
+# Quality check
 mvn verify -pl backend-api
 ```
 
 ## Related ADRs
 
-- ADR-001: Migración a microservicios
-- ADR-003: Versionado de API REST
-- ADR-004: Testing strategy
+- ADR-001: Microservices architecture
+- ADR-003: REST API versioning
+- ADR-004: MySQL to PostgreSQL migration
+- ADR-005: Frontend migration from Java Swing to Next.js
+- ADR-006: Testing strategy
+- ADR-021: Hexagonal architecture pilot
+- ADR-025: Retire `notaire-shared`
 
-## See Also
+## See also
 
-- CLAUDE.md: Convenciones de código
-- Backend Architecture section
+- `CLAUDE.md`: code conventions
+- [Architecture index](../README.md)

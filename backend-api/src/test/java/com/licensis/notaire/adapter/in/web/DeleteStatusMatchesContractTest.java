@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Issue #1315 (Owner decision, Run 7): a DELETE handler returns the success status its OpenAPI
  * annotations document. The contract documents {@code 204 No Content} for deletes; 17 handlers
- * returned {@code 200 OK}, and {@code DELETE /roles/usuarios/{idUser}} returned 204 while the
+ * returned {@code 200 OK}, and {@code DELETE /roles/users/{idUser}} returned 204 while the
  * contract (springdoc default, no annotation) said 200.
  *
  * <p>For every {@code @DeleteMapping} method the 2xx codes in its {@code @ApiResponse}
@@ -69,7 +69,7 @@ class DeleteStatusMatchesContractTest {
     @DisplayName("every DELETE handler documents 204 No Content as its only success status")
     void deleteHandlersDocumentNoContent() throws IOException {
         // Owner rule (#1315, Run 7 follow-up): DELETE returns 204 everywhere, including
-        // DELETE /plantilla-presupuestos/tipo-tramite/{id}/concepto/{id}, which relied on the
+        // DELETE /budget-templates/procedure-types/{id}/concept/{id}, which relied on the
         // springdoc default 200.
         List<String> offenders = new ArrayList<>();
         try (Stream<Path> files = Files.walk(WEB)) {

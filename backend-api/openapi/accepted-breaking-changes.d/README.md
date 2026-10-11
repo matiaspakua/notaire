@@ -21,7 +21,7 @@ introduces it:
 
 ```text
 # #596: no frontend screen reads this list; the per-management history is unchanged.
-GET /api/v1/historial the response's body `type` changed from `array<object>` to `object` for status `200`
+GET /api/v1/history the response's body `type` changed from `array<object>` to `object` for status `200`
 ```
 
 ## What the gate does

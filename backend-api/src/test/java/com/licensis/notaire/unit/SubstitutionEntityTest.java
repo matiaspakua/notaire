@@ -14,7 +14,7 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequirementCoverage({"CU22", "CU23"})
-@DisplayName("Suplencia Entity Tests")
+@DisplayName("Substitution Entity Tests")
 class SubstitutionEntityTest {
 
     private Date toDate(LocalDate ld) {
@@ -78,34 +78,34 @@ class SubstitutionEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             Substitution substitution = new Substitution();
-            substitution.setNotes("Licencia por enfermedad");
+            substitution.setNotes("Licencia by enfermedad");
 
-            assertThat(substitution.getNotes()).isEqualTo("Licencia por enfermedad");
+            assertThat(substitution.getNotes()).isEqualTo("Licencia by enfermedad");
         }
 
         @Test
-        @DisplayName("Should set and get suplente")
-        void shouldSetAndGetSuplente() {
-            Person suplente = new Person();
-            suplente.setFirstName("Carlos");
-            suplente.setLastName("Rodriguez");
+        @DisplayName("Should set and get the substitute")
+        void shouldSetAndGetSubstitute() {
+            Person substitute = new Person();
+            substitute.setFirstName("Carlos");
+            substitute.setLastName("Rodriguez");
 
             Substitution substitution = new Substitution();
-            substitution.setFkIdSubstitute(suplente);
+            substitution.setFkIdSubstitute(substitute);
 
             assertThat(substitution.getFkIdSubstitute()).isNotNull();
             assertThat(substitution.getFkIdSubstitute().getFirstName()).isEqualTo("Carlos");
         }
 
         @Test
-        @DisplayName("Should set and get suplantado")
-        void shouldSetAndGetSuplantado() {
-            Person suplantado = new Person();
-            suplantado.setFirstName("Maria");
-            suplantado.setLastName("Gomez");
+        @DisplayName("Should set and get the substituted person")
+        void shouldSetAndGetSubstituted() {
+            Person substituted = new Person();
+            substituted.setFirstName("Maria");
+            substituted.setLastName("Gomez");
 
             Substitution substitution = new Substitution();
-            substitution.setFkIdSubstituted(suplantado);
+            substitution.setFkIdSubstituted(substituted);
 
             assertThat(substitution.getFkIdSubstituted()).isNotNull();
             assertThat(substitution.getFkIdSubstituted().getFirstName()).isEqualTo("Maria");

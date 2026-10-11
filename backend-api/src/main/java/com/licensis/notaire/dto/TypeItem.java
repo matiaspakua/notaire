@@ -1,8 +1,8 @@
 package com.licensis.notaire.dto;
 
 /**
- * Clasificación de un ítem de presupuesto (CU45, CU71).
- * {@code NORMAL} es el valor por defecto cuando un ítem no especifica tipo.
+ * Classification of a budget item (CU45, CU71).
+ * {@code NORMAL} is the default when an item does not specify a type.
  */
 public enum TypeItem {
     NORMAL,

@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("TipoDeFolioController unit tests — CU68 Buscar tipos de folio + integridad referencial")
+@DisplayName("FolioTypeController unit tests — CU68 Search folio types + referential integrity")
 @ExtendWith(MockitoExtension.class)
 class FolioTypeControllerTest {
 
@@ -54,10 +54,10 @@ class FolioTypeControllerTest {
     }
 
     @Test
-    @DisplayName("CU68 — GET /search?name= should return matching tipos de folio")
+    @DisplayName("CU68 — GET /search?name= should return matching folio types")
     void shouldSearchByName() throws Exception {
         when(repository.findByNameContaining("Proto")).thenReturn(List.of(buildEntity()));
-        mockMvc.perform(get("/api/v1/tipo-folio/search").param("name", "Proto"))
+        mockMvc.perform(get("/api/v1/folio-types/search").param("name", "Proto"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Protocolo"));
     }
@@ -67,7 +67,7 @@ class FolioTypeControllerTest {
     void shouldReportNotInUse() throws Exception {
         when(repository.existsById(1)).thenReturn(true);
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of());
-        mockMvc.perform(get("/api/v1/tipo-folio/1/in-use"))
+        mockMvc.perform(get("/api/v1/folio-types/1/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(false));
     }
@@ -77,21 +77,21 @@ class FolioTypeControllerTest {
     void shouldReportInUse() throws Exception {
         when(repository.existsById(1)).thenReturn(true);
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of(new Folio()));
-        mockMvc.perform(get("/api/v1/tipo-folio/1/in-use"))
+        mockMvc.perform(get("/api/v1/folio-types/1/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(true));
     }
 
     @Test
-    @DisplayName("GET /{id}/in-use should return 404 when type de folio does not exist")
+    @DisplayName("GET /{id}/in-use should return 404 when folio type does not exist")
     void shouldReturn404WhenCheckingInUseForMissingType() throws Exception {
         when(repository.existsById(99)).thenReturn(false);
-        mockMvc.perform(get("/api/v1/tipo-folio/99/in-use"))
+        mockMvc.perform(get("/api/v1/folio-types/99/in-use"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("PUT /{id} should return 409 when type de folio is in use")
+    @DisplayName("PUT /{id} should return 409 when folio type is in use")
     void shouldReturn409WhenUpdatingInUseType() throws Exception {
         when(repository.findById(1)).thenReturn(Optional.of(buildEntity()));
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of(new Folio()));
@@ -99,14 +99,14 @@ class FolioTypeControllerTest {
         DtoFolioType dto = new DtoFolioType();
         dto.setName("Protocolo Modificado");
 
-        mockMvc.perform(put("/api/v1/tipo-folio/1")
+        mockMvc.perform(put("/api/v1/folio-types/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(dto)))
                 .andExpect(status().isConflict());
     }
 
     @Test
-    @DisplayName("PUT /{id} should succeed when type de folio is not in use")
+    @DisplayName("PUT /{id} should succeed when folio type is not in use")
     void shouldUpdateWhenNotInUse() throws Exception {
         FolioType existing = buildEntity();
         when(repository.findById(1)).thenReturn(Optional.of(existing));
@@ -116,34 +116,34 @@ class FolioTypeControllerTest {
         DtoFolioType dto = new DtoFolioType();
         dto.setName("Protocolo Modificado");
 
-        mockMvc.perform(put("/api/v1/tipo-folio/1")
+        mockMvc.perform(put("/api/v1/folio-types/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("DELETE /{id} should return 409 when type de folio is in use")
+    @DisplayName("DELETE /{id} should return 409 when folio type is in use")
     void shouldReturn409WhenDeletingInUseType() throws Exception {
         when(repository.existsById(1)).thenReturn(true);
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of(new Folio()));
 
-        mockMvc.perform(delete("/api/v1/tipo-folio/1"))
+        mockMvc.perform(delete("/api/v1/folio-types/1"))
                 .andExpect(status().isConflict());
     }
 
     @Test
-    @DisplayName("DELETE /{id} should succeed when type de folio is not in use")
+    @DisplayName("DELETE /{id} should succeed when folio type is not in use")
     void shouldDeleteWhenNotInUse() throws Exception {
         when(repository.existsById(1)).thenReturn(true);
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of());
 
-        mockMvc.perform(delete("/api/v1/tipo-folio/1"))
+        mockMvc.perform(delete("/api/v1/folio-types/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("CU81 — PUT /{id} should mark a type de folio as Protocolo Auxiliar")
+    @DisplayName("CU81 — PUT /{id} should mark a folio type as Protocolo Auxiliar")
     void shouldMarkFolioTypeAsAuxiliary() throws Exception {
         FolioType existing = buildEntity();
         when(repository.findById(1)).thenReturn(Optional.of(existing));
@@ -154,7 +154,7 @@ class FolioTypeControllerTest {
         dto.setName("Protocolo Auxiliar");
         dto.setIsAuxiliary(true);
 
-        mockMvc.perform(put("/api/v1/tipo-folio/1")
+        mockMvc.perform(put("/api/v1/folio-types/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());

@@ -18,13 +18,13 @@ vi.mock("next-intl", () => ({
 
 import { PersonPicker } from "@/components/shared/PersonPicker";
 import { buildPersonSearchQueries } from "@/hooks/usePersonSearch";
-import type { Persona } from "@/types";
+import type { Person } from "@/types";
 
-const NEWEST: Persona[] = [
+const NEWEST: Person[] = [
   { personId: 1500, firstName: "Ana", lastName: "Nueva", identificationNumber: "111", isClient: true },
   { personId: 1499, firstName: "Bruno", lastName: "Reciente", identificationNumber: "222", isClient: false },
 ];
-const FAR: Persona = { personId: 7, firstName: "Carla", lastName: "Garcia", identificationNumber: "30111222", isClient: true };
+const FAR: Person = { personId: 7, firstName: "Carla", lastName: "Garcia", identificationNumber: "30111222", isClient: true };
 
 function json(body: unknown, status = 200) {
   const text = JSON.stringify(body);
@@ -50,7 +50,7 @@ function wrapper({ children }: { children: ReactNode }) {
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }
 
-function Harness({ initial, clientsOnly, onPick }: { initial?: number; clientsOnly?: boolean; onPick?: (p?: Persona) => void }) {
+function Harness({ initial, clientsOnly, onPick }: { initial?: number; clientsOnly?: boolean; onPick?: (p?: Person) => void }) {
   const [id, setId] = useState<number | undefined>(initial);
   return (
     <PersonPicker
@@ -203,10 +203,10 @@ describe("no screen loads every person (#1340)", () => {
       return statSync(p).isDirectory() ? files(p) : /\.tsx?$/.test(f) ? [p] : [];
     });
   }
-  it("no page or component calls usePersonas() (the size=1000 list)", () => {
+  it("no page or component calls usePeople() (the size=1000 list)", () => {
     const root = join(__dirname, "..", "..");
     const offenders = [...files(join(root, "app")), ...files(join(root, "components"))].filter((f) =>
-      /\busePersonas\(\)/.test(readFileSync(f, "utf8")),
+      /\busePeople\(\)/.test(readFileSync(f, "utf8")),
     );
     expect(offenders).toEqual([]);
   });

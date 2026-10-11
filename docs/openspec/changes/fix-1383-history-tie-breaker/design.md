@@ -16,7 +16,7 @@ Goals: one total, deterministic order on every read path. Non-goals: keeping the
 
 ## Riesgos / Trade-offs
 
-A client that relied on the unsorted `GET /historial/gestion/{id}` order (insertion order in practice) sees date order now; for rows written by the app the two coincide, because each write uses the current day.
+A client that relied on the unsorted `GET /history/management/{id}` order (insertion order in practice) sees date order now; for rows written by the app the two coincide, because each write uses the current day.
 
 ## Testing Strategy
 

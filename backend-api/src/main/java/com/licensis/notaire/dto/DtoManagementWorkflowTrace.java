@@ -6,25 +6,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Aggregated DTO for GET /api/v1/gestiones/{id}/workflow-trace.
+ * Aggregated DTO for GET /api/v1/managements/{id}/workflow-trace.
  * Combines management info, the workflow definition, its nodes and transitions,
  * the management history, computed per-node statuses, and optional testimony
- * movements for the post-signing reingreso loop (issue #841).
+ * movements for the post-signing reentry loop (issue #841).
  */
 public class DtoManagementWorkflowTrace {
 
     private Integer managementId;
     private Integer number;
-    private String encabezado;
+    private String heading;
     private Date dateStart;
-    private String statusActual;
+    private String currentStatus;
 
     private DtoWorkflowDefinition workflowDefinition;
     private List<DtoWorkflowNode> nodes;
     private List<DtoWorkflowTransition> transitions;
     private List<DtoHistoryEntry> history;
     private Map<Integer, String> nodeStatuses; // nodeId → "completed" | "in_progress" | "pending"
-    /** Testimony movements for the gestión (empty when none); reingreso loop signal. */
+    /** Testimony movements for the management (empty when none); reentry loop signal. */
     private List<DtoTestimonyMovementEntry> testimonyMovements;
 
     public Integer getManagementId() {
@@ -43,12 +43,12 @@ public class DtoManagementWorkflowTrace {
         this.number = number;
     }
 
-    public String getEncabezado() {
-        return encabezado;
+    public String getHeading() {
+        return heading;
     }
 
-    public void setEncabezado(String encabezado) {
-        this.encabezado = encabezado;
+    public void setHeading(String heading) {
+        this.heading = heading;
     }
 
     public Date getDateStart() {
@@ -59,12 +59,12 @@ public class DtoManagementWorkflowTrace {
         this.dateStart = dateStart;
     }
 
-    public String getStatusActual() {
-        return statusActual;
+    public String getCurrentStatus() {
+        return currentStatus;
     }
 
-    public void setStatusActual(String statusActual) {
-        this.statusActual = statusActual;
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
     }
 
     public DtoWorkflowDefinition getWorkflowDefinition() {
@@ -167,7 +167,7 @@ public class DtoManagementWorkflowTrace {
     }
 
     /**
-     * Lightweight testimony movement entry for the secondary reingreso timeline.
+     * Lightweight testimony movement entry for the secondary reentry timeline.
      * {@code returnedObserved} is derived as {@code dateExit != null && !registered}.
      */
     public static class DtoTestimonyMovementEntry {

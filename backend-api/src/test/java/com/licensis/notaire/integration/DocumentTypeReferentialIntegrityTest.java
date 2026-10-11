@@ -28,7 +28,7 @@ import com.licensis.notaire.repository.ProcedureTemplateRepository;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@DisplayName("TipoDeDocumento — referential integrity checks")
+@DisplayName("DocumentType — referential integrity checks")
 class DocumentTypeReferentialIntegrityTest {
 
     @Autowired
@@ -46,28 +46,28 @@ class DocumentTypeReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should return inUse=false when type de documento is not referenced")
+    @DisplayName("Should return inUse=false when document type is not referenced")
     void shouldReturnInUseFalseWhenNotReferenced() throws Exception {
         int id = createTypeDocument("Tipo_unused_" + System.nanoTime());
 
-        mockMvc.perform(get("/api/v1/tipo-de-documento/" + id + "/in-use"))
+        mockMvc.perform(get("/api/v1/document-types/" + id + "/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(false));
     }
 
     @Test
-    @DisplayName("Should return inUse=true when type de documento is referenced by plantilla tramite")
+    @DisplayName("Should return inUse=true when type of document is referenced by template procedure")
     void shouldReturnInUseTrueWhenReferencedByProcedureTemplate() throws Exception {
         int id = createTypeDocument("Tipo_used_" + System.nanoTime());
         linkToProcedureTemplate(id);
 
-        mockMvc.perform(get("/api/v1/tipo-de-documento/" + id + "/in-use"))
+        mockMvc.perform(get("/api/v1/document-types/" + id + "/in-use"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inUse").value(true));
     }
 
     @Test
-    @DisplayName("Should return 409 when editing type de documento that is in use")
+    @DisplayName("Should return 409 when editing document type that is in use")
     void shouldReturn409WhenEditingTypeDocumentInUse() throws Exception {
         int id = createTypeDocument("Tipo_edit_conflict_" + System.nanoTime());
         linkToProcedureTemplate(id);
@@ -76,7 +76,7 @@ class DocumentTypeReferentialIntegrityTest {
                 {"name": "Name actualizado", "expires": false}
                 """;
 
-        mockMvc.perform(put("/api/v1/tipo-de-documento/" + id)
+        mockMvc.perform(put("/api/v1/document-types/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isConflict())
@@ -84,7 +84,7 @@ class DocumentTypeReferentialIntegrityTest {
     }
 
     @Test
-    @DisplayName("Should allow editing type de documento that is not in use")
+    @DisplayName("Should allow editing document type that is not in use")
     void shouldAllowEditingTypeDocumentNotInUse() throws Exception {
         int id = createTypeDocument("Tipo_edit_ok_" + System.nanoTime());
 
@@ -92,30 +92,30 @@ class DocumentTypeReferentialIntegrityTest {
                 {"name": "Name actualizado ok", "expires": false}
                 """;
 
-        mockMvc.perform(put("/api/v1/tipo-de-documento/" + id)
+        mockMvc.perform(put("/api/v1/document-types/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return 409 when deleting type de documento that is in use")
+    @DisplayName("Should return 409 when deleting document type that is in use")
     void shouldReturn409WhenDeletingTypeDocumentInUse() throws Exception {
         int id = createTypeDocument("Tipo_delete_conflict_" + System.nanoTime());
         linkToProcedureTemplate(id);
 
-        mockMvc.perform(delete("/api/v1/tipo-de-documento/" + id))
+        mockMvc.perform(delete("/api/v1/document-types/" + id))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
-    @DisplayName("Should search tipos de documento by name")
-    void shouldSearchTiposDocumentByName() throws Exception {
+    @DisplayName("Should search document types by name")
+    void shouldSearchDocumentTypesByName() throws Exception {
         String uniqueName = "SearchableDoc_" + System.nanoTime();
         createTypeDocument(uniqueName);
 
-        mockMvc.perform(get("/api/v1/tipo-de-documento/search")
+        mockMvc.perform(get("/api/v1/document-types/search")
                         .param("name", "SearchableDoc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.name =~ /.*SearchableDoc.*/)]").exists());
@@ -129,7 +129,7 @@ class DocumentTypeReferentialIntegrityTest {
                 {"name": "%s", "expires": false, "enabled": false, "returned": true, "deliveredBy": ""}
                 """, name);
 
-        MvcResult result = mockMvc.perform(post("/api/v1/tipo-de-documento")
+        MvcResult result = mockMvc.perform(post("/api/v1/document-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -140,7 +140,7 @@ class DocumentTypeReferentialIntegrityTest {
         int id = mapper.readTree(result.getResponse().getContentAsString())
                 .get("idDocumentType").asInt();
 
-        mockMvc.perform(get("/api/v1/tipo-de-documento/" + id))
+        mockMvc.perform(get("/api/v1/document-types/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.enabled").value(false))
                 .andExpect(jsonPath("$.returned").value(true));
@@ -155,12 +155,12 @@ class DocumentTypeReferentialIntegrityTest {
                 {"name": "Name flags updated", "expires": false, "enabled": false, "returned": true, "deliveredBy": ""}
                 """;
 
-        mockMvc.perform(put("/api/v1/tipo-de-documento/" + id)
+        mockMvc.perform(put("/api/v1/document-types/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateBody))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/tipo-de-documento/" + id))
+        mockMvc.perform(get("/api/v1/document-types/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Name flags updated"))
                 .andExpect(jsonPath("$.enabled").value(false))
@@ -175,7 +175,7 @@ class DocumentTypeReferentialIntegrityTest {
                 {"name": "%s", "expires": false}
                 """, name);
 
-        mockMvc.perform(post("/api/v1/tipo-de-documento")
+        mockMvc.perform(post("/api/v1/document-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -188,7 +188,7 @@ class DocumentTypeReferentialIntegrityTest {
                 {"name": "%s", "expires": false}
                 """, name);
 
-        MvcResult result = mockMvc.perform(post("/api/v1/tipo-de-documento")
+        MvcResult result = mockMvc.perform(post("/api/v1/document-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())

@@ -1,0 +1,124 @@
+package com.licensis.notaire.integration;
+
+import com.licensis.notaire.business.ManagementStatus;
+import com.licensis.notaire.business.DeedManagement;
+import com.licensis.notaire.business.History;
+import com.licensis.notaire.repository.ManagementStatusRepository;
+import com.licensis.notaire.repository.DeedManagementRepository;
+import com.licensis.notaire.repository.HistoryRepository;
+import com.licensis.notaire.repository.PersonRepository;
+import com.licensis.notaire.testing.RequirementCoverage;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.util.Date;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+ * Integration tests for GET /api/v1/managements/{id}/history.
+ * Seeds history entries out of chronological order and asserts the
+ * endpoint returns them sorted by date, per CU13.
+ */
+@RequirementCoverage({"CU13"})
+@SpringBootTest
+@Transactional
+@ActiveProfiles("test-h2")
+@DisplayName("GET /managements/{id}/history — returns the ordered history (CU13)")
+class ManagementStatusLogControllerIntegrationTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+    @Autowired
+    private ManagementStatusRepository statusRepository;
+    @Autowired
+    private DeedManagementRepository managementRepository;
+    @Autowired
+    private HistoryRepository historyRepository;
+    @Autowired
+    private PersonRepository personRepository;
+
+    private MockMvc mockMvc;
+    private Integer managementWithHistoryId;
+    private Integer managementWithoutHistoryId;
+    private ManagementStatus initialStatus;
+    private ManagementStatus statusFinal;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        seedManagementsWithHistory();
+    }
+
+    private ManagementStatus managementStatus(String name) {
+        ManagementStatus status = new ManagementStatus();
+        status.setName(name + " " + System.nanoTime());
+        return statusRepository.save(status);
+    }
+
+    private Integer createManagement(ManagementStatus status) {
+        DeedManagement management = new DeedManagement();
+        management.setNumber((int) (System.nanoTime() % 100000));
+        management.setHeading("Management status log IT");
+        management.setDateStart(new Date());
+        management.setFkIdManagementStatus(status);
+        management.setFkIdNotaryPerson(personRepository.findAll().get(0));
+        return managementRepository.save(management).getIdManagement();
+    }
+
+    private void history(Integer idManagement, ManagementStatus status, long epochMillis) {
+        History entry = new History();
+        entry.setFkIdManagement(managementRepository.findById(idManagement).orElseThrow());
+        entry.setFkIdManagementStatus(status);
+        entry.setDate(new Date(epochMillis));
+        historyRepository.save(entry);
+    }
+
+    private void seedManagementsWithHistory() {
+        initialStatus = managementStatus("Initial status");
+        statusFinal = managementStatus("Final status");
+
+        managementWithHistoryId = createManagement(statusFinal);
+        long oneDayMillis = 86_400_000L;
+        history(managementWithHistoryId, statusFinal, 3 * oneDayMillis);
+        history(managementWithHistoryId, initialStatus, oneDayMillis);
+
+        managementWithoutHistoryId = createManagement(initialStatus);
+    }
+
+    @Test
+    @DisplayName("Query returns the full ordered history")
+    void shouldReturnOrderedHistory() throws Exception {
+        mockMvc.perform(get("/api/v1/managements/{id}/history", managementWithHistoryId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].statusManagementName").value(initialStatus.getName()))
+                .andExpect(jsonPath("$[1].statusManagementName").value(statusFinal.getName()));
+    }
+
+    @Test
+    @DisplayName("Should return an empty list when the management has not history entries")
+    void shouldReturnEmptyListWhenNoHistoryEntries() throws Exception {
+        mockMvc.perform(get("/api/v1/managements/{id}/history", managementWithoutHistoryId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    @DisplayName("Should return 404 when the management does not exist")
+    void shouldReturn404WhenManagementDoesNotExist() throws Exception {
+        mockMvc.perform(get("/api/v1/managements/999999/history"))
+                .andExpect(status().isNotFound());
+    }
+}

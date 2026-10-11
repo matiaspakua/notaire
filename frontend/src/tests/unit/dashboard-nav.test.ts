@@ -1,6 +1,6 @@
 /**
  * Unit tests for dashboard primary navigation (#1058).
- * Gate 2: written to fail until Suplencias/Reportes nav + canonical redirects exist.
+ * Gate 2: written to fail until the substitutions and reports nav and canonical redirects exist.
  */
 import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
@@ -14,40 +14,40 @@ import enMessages from "../../../messages/en.json";
 import nextConfig from "../../../next.config";
 
 describe("DASHBOARD_NAV_ITEMS (#1058)", () => {
-  it("exposes Suplencias at the canonical route", () => {
+  it("exposes substitutions at the canonical route", () => {
     const item = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "suplencias");
     expect(item).toBeDefined();
-    expect(item?.href).toBe("/dashboard/suplencias");
+    expect(item?.href).toBe("/dashboard/substitutions");
     expect(item?.adminOnly).toBeFalsy();
   });
 
-  it("exposes Reportes at the canonical route", () => {
+  it("exposes reports at the canonical route", () => {
     const item = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "reportes");
     expect(item).toBeDefined();
-    expect(item?.href).toBe("/dashboard/reportes");
+    expect(item?.href).toBe("/dashboard/reports");
     expect(item?.adminOnly).toBeFalsy();
   });
 
-  it("exposes Próximos vencimientos (CU42) at its route with i18n labels", () => {
+  it("exposes Upcoming expirations (CU42) at its route with i18n labels", () => {
     const item = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "proximosVencimientos");
-    expect(item?.href).toBe("/dashboard/proximos-vencimientos");
+    expect(item?.href).toBe("/dashboard/upcoming-expirations");
     expect(esMessages.navigation.proximosVencimientos).toBeTruthy();
     expect(enMessages.navigation.proximosVencimientos).toBeTruthy();
   });
 
-  it("keeps Administración admin-gated", () => {
+  it("keeps Administration admin-gated", () => {
     const admin = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "administracion");
     expect(admin?.adminOnly).toBe(true);
-    expect(admin?.href).toBe("/dashboard/administracion");
+    expect(admin?.href).toBe("/dashboard/administration");
   });
 
-  it("points Items and Auditoría at canonical dashboard routes", () => {
+  it("points Items and Audit at canonical dashboard routes", () => {
     expect(DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "items")?.href).toBe(
       "/dashboard/items",
     );
     expect(
       DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "auditoria")?.href,
-    ).toBe("/dashboard/auditoria");
+    ).toBe("/dashboard/audit");
   });
 });
 
@@ -76,10 +76,10 @@ describe("canonical admin redirects (#1058)", () => {
     }
   });
 
-  it("does not keep a full duplicate Items page under administración", () => {
+  it("does not keep a full duplicate Items page under administration", () => {
     const adminItems = resolve(
       __dirname,
-      "../../app/dashboard/administracion/items/page.tsx",
+      "../../app/dashboard/administration/items/page.tsx",
     );
     if (!existsSync(adminItems)) {
       return;
@@ -87,21 +87,21 @@ describe("canonical admin redirects (#1058)", () => {
     const source = readFileSync(adminItems, "utf8");
     // Redirect-only stubs are fine; a full CRUD page is not.
     expect(source).toMatch(/redirect\s*\(/);
-    expect(source).not.toMatch(/useDescuentosYRecargos/);
+    expect(source).not.toMatch(/useDiscountsAndSurcharges/);
     expect(source).not.toMatch(/btn-nuevo-item/);
   });
 
-  it("does not keep a full duplicate Auditoría page under administración", () => {
+  it("does not keep a full duplicate Audit page under administration", () => {
     const adminAuditoria = resolve(
       __dirname,
-      "../../app/dashboard/administracion/auditoria/page.tsx",
+      "../../app/dashboard/administration/audit/page.tsx",
     );
     if (!existsSync(adminAuditoria)) {
       return;
     }
     const source = readFileSync(adminAuditoria, "utf8");
     expect(source).toMatch(/redirect\s*\(/);
-    expect(source).not.toMatch(/useAuditoria/);
+    expect(source).not.toMatch(/useAudit/);
   });
 });
 
@@ -168,20 +168,20 @@ describe("DASHBOARD_MODULES (#1367)", () => {
     const featured = DASHBOARD_NAV_GROUPS.flatMap((g) => g.items).filter((i) => i.featured);
     expect(DASHBOARD_MODULES).toEqual(featured);
     expect(DASHBOARD_MODULES.map((m) => m.href)).toEqual([
-      "/dashboard/personas",
-      "/dashboard/inmuebles",
-      "/dashboard/gestiones",
-      "/dashboard/presupuestos",
-      "/dashboard/pagos",
-      "/dashboard/documentos",
-      "/dashboard/escrituras",
-      "/dashboard/copias",
-      "/dashboard/protocolo",
-      "/dashboard/reportes",
-      "/dashboard/auditoria",
-      "/dashboard/suplencias",
+      "/dashboard/people",
+      "/dashboard/properties",
+      "/dashboard/managements",
+      "/dashboard/budgets",
+      "/dashboard/payments",
+      "/dashboard/documents",
+      "/dashboard/deeds",
+      "/dashboard/copies",
+      "/dashboard/protocol",
+      "/dashboard/reports",
+      "/dashboard/audit",
+      "/dashboard/substitutions",
       "/dashboard/items",
-      "/dashboard/administracion",
+      "/dashboard/administration",
     ]);
   });
 

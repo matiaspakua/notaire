@@ -146,11 +146,11 @@ try {
 The `apiPost`, `apiPut`, `apiDelete` functions in `src/lib/api-client.ts` throw `Error` objects whose message includes the HTTP status code:
 
 ```typescript
-throw new Error(`POST /presupuestos → 409`);
+throw new Error(`POST /budgets → 409`);
 ```
 
 ## References
 
 - `PlantillaPresupuestoController.java` — reference implementation for concurrency fix
 - `NonexistentEntityException.java`, `PreexistingEntityException.java` — custom exception classes
-- Issue #340 — PlantillaPresupuesto concurrency fix
+- Issue #340 — BudgetTemplate concurrency fix

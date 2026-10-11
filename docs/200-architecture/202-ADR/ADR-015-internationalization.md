@@ -1,4 +1,4 @@
-# ADR-015: Internacionalización del Frontend con next-intl
+# ADR-015: Frontend internationalization with next-intl
 
 **Status:** Accepted
 **Date:** 2026-05-23
@@ -7,45 +7,45 @@
 
 ## Context
 
-Notaire es un sistema para escribanías argentinas, con contenido, formularios y mensajes en español. El plan de producto contempla que el sistema pueda ofrecerse en otras jurisdicciones de habla no hispana, y en cualquier caso las cadenas de texto de la interfaz estaban hardcodeadas en los componentes React, mezclando presentación con contenido y dificultando cualquier cambio de copy sin tocar código.
+Notaire is a system for Argentine notary offices, with content, forms, and messages in Spanish. The product plan allows offering the system in other, non-Spanish-speaking jurisdictions. In any case, interface strings were hardcoded in React components, mixing presentation with content and making any copy change require a code edit.
 
 ## Decision
 
-Adoptar **next-intl** como librería de internacionalización del frontend Next.js 16 (App Router), con:
+Adopt **next-intl** as the internationalization library for the Next.js 16 frontend (App Router), with:
 
-- **Catálogos de mensajes** en `frontend/messages/{locale}.json` — actualmente `es.json` (locale por defecto) y `en.json`.
-- **Resolución de locale** centralizada en `frontend/src/i18n/request.ts`, integrada con el App Router de Next.js (`next-intl` provee el plugin de configuración server-side).
-- **Server actions** de cambio de idioma en `frontend/src/i18n/actions.ts`.
-- Cobertura de test dedicada (`frontend/src/tests/unit/i18n.test.ts`) que verifica que ambos catálogos existen y están sincronizados en claves, incluyendo namespaces de cobertura de páginas (workflows, roles, suplencias, reportes, items) y leftovers de login (issue #1059).
+- **Message catalogs** in `frontend/messages/{locale}.json` — currently `es.json` (default locale) and `en.json`.
+- **Locale resolution** centralized in `frontend/src/i18n/request.ts`, integrated with the Next.js App Router (`next-intl` provides the server-side configuration plugin).
+- **Language-switch server actions** in `frontend/src/i18n/actions.ts`.
+- Dedicated test coverage (`frontend/src/tests/unit/i18n.test.ts`) that checks both catalogs exist and stay in sync on keys, including page-coverage namespaces (`workflows`, `roles`, `suplencias`, `reportes`, `items`) and login leftovers (issue #1059). Message keys stay Spanish.
 
-### Por qué next-intl (y no react-i18next, ni next-i18next)
+### Why next-intl (not react-i18next, and not next-i18next)
 
-| Criterio | next-intl (elegido) | react-i18next | next-i18next |
+| Criterion | next-intl (chosen) | react-i18next | next-i18next |
 |----------|----------------------|----------------|----------------|
-| Soporte App Router (Next.js 13+) | Nativo, diseñado para Server Components | Requiere wrappers manuales para RSC | Diseñado para Pages Router, soporte limitado en App Router |
-| Tipado TypeScript de claves de mensaje | Sí, vía inferencia de tipos sobre el JSON | Parcial | Parcial |
-| Tamaño / dependencias | Ligera, sin dependencia de `i18next` como runtime | Requiere el ecosistema completo de `i18next` | Requiere `i18next` + `react-i18next` |
-| Mantenimiento activo para Next.js 16 | Sí | Sí (agnóstico de framework) | Menor — próximo a stale para App Router |
+| App Router support (Next.js 13+) | Native, designed for Server Components | Needs manual wrappers for RSC | Designed for the Pages Router; limited App Router support |
+| TypeScript typing of message keys | Yes, by inferring types from the JSON | Partial | Partial |
+| Size / dependencies | Light, no `i18next` runtime dependency | Needs the full `i18next` ecosystem | Needs `i18next` + `react-i18next` |
+| Active maintenance for Next.js 16 | Yes | Yes (framework-agnostic) | Weaker — near stale for the App Router |
 
 ## Consequences
 
-### Positivos
+### Positive
 
-- Los textos de la interfaz están centralizados en `frontend/messages/*.json`, separados del código de los componentes — alineado con el principio de "no hardcodear valores" de `.claude/rules/ui-ux-design.md`.
-- Server Components pueden resolver mensajes sin JavaScript adicional en el cliente, preservando el presupuesto de rendimiento de `<2s` interactivo establecido en el SAD.
-- El test `i18n.test.ts` previene que un catálogo quede desincronizado (clave presente en `es.json` pero ausente en `en.json`), evitando textos en blanco en producción.
+- Interface text lives in `frontend/messages/*.json`, separate from component code — aligned with the "do not hardcode values" principle in `.claude/rules/ui-ux-design.md`.
+- Server Components can resolve messages without extra client JavaScript, keeping the SAD's interactive budget of under 2 seconds.
+- `i18n.test.ts` prevents a catalog from drifting (a key present in `es.json` but missing in `en.json`), which would show blank text in production.
 
-### Negativos
+### Negative
 
-- Todo nuevo componente debe usar las claves de mensaje en lugar de strings literales — requiere disciplina de code review; no hay lint automatizado que lo fuerce todavía.
-- Solo `es` (por defecto) y `en` están cubiertos; añadir una jurisdicción con otro idioma requiere un catálogo completo antes de habilitarla.
+- Every new component must use message keys instead of string literals. That needs code-review discipline; no automated lint forces it yet.
+- Only `es` (the default) and `en` are covered. Adding a jurisdiction with another language requires a complete catalog before it can be enabled.
 
 ## Page coverage note (#1059)
 
-Redirect-only stubs (`/`, `/auditoria`, `administracion/items`,
-`administracion/auditoria`) have no UI strings and remain exempt. Canonical
+Redirect-only stubs (`/`, `/audit`, `administracion/items`,
+`administracion/audit`) have no UI strings and remain exempt. Canonical
 dashboard pages and login leftovers consume catalogs via `useTranslations`,
-mirroring the `administracion.usuarios` pattern.
+mirroring the `administracion.usuarios` pattern. Those keys stay Spanish.
 
 ## Related ADRs
 

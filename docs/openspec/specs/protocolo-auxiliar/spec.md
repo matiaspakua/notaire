@@ -62,7 +62,7 @@ numeración del Protocolo Principal.
 El sistema SHALL iniciar la escritura de Protocolo Auxiliar sin generar
 carpeta de trámite.
 
-#### Scenario: Escritura de Protocolo Auxiliar sin carpeta
+#### Scenario: Deed de Protocolo Auxiliar sin carpeta
 - **WHEN** se inicia una escritura de Protocolo Auxiliar
 - **THEN** el sistema no genera ninguna carpeta de trámite asociada
 

@@ -23,10 +23,10 @@ import {
   useCreateItem,
   useUpdateItem,
   useDeleteItem,
-  useDescuentosYRecargos,
+  useDiscountsAndSurcharges,
 } from "@/hooks/useItems";
 import { presentMutationError } from "@/lib/mutation-error";
-import type { Item, TipoItem } from "@/types";
+import type { Item, ItemType } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { useFormat } from "@/hooks/useFormat";
 
@@ -36,7 +36,7 @@ const EMPTY: Partial<Item> = {
   type: "NORMAL",
 };
 
-const TIPO_VALUES: TipoItem[] = ["NORMAL", "DESCUENTO", "RECARGO"];
+const ITEM_TYPE_VALUES: ItemType[] = ["NORMAL", "DESCUENTO", "RECARGO"];
 
 export default function ItemsPage() {
   const fmt = useFormat();
@@ -52,26 +52,26 @@ export default function ItemsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Item>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [presupuestoId, setPresupuestoId] = useState("");
-  const [reporteId, setReporteId] = useState("");
-  const [reporteQuery, setReporteQuery] = useState<number | undefined>(undefined);
-  const { data: descuentosRecargos = [], isFetching: reporteLoading } =
-    useDescuentosYRecargos(reporteQuery);
+  const [budgetId, setBudgetId] = useState("");
+  const [reportId, setReportId] = useState("");
+  const [reportQuery, setReportQuery] = useState<number | undefined>(undefined);
+  const { data: discountsAndSurcharges = [], isFetching: reportLoading } =
+    useDiscountsAndSurcharges(reportQuery);
 
-  function tipoLabel(tipo: TipoItem): string {
-    return t(`types.${tipo}`);
+  function itemTypeLabel(itemType: ItemType): string {
+    return t(`types.${itemType}`);
   }
 
   function openCreate() {
     setEditing(EMPTY);
-    setPresupuestoId("");
+    setBudgetId("");
     setIsEditMode(false);
     setModalOpen(true);
   }
 
   function openEdit(item: Item) {
     setEditing(item);
-    setPresupuestoId(item.fkIdBudget?.idBudget?.toString() ?? "");
+    setBudgetId(item.fkIdBudget?.idBudget?.toString() ?? "");
     setIsEditMode(true);
     setModalOpen(true);
   }
@@ -85,7 +85,7 @@ export default function ItemsPage() {
     const payload: Partial<Item> = {
       ...editing,
       type,
-      fkIdBudget: presupuestoId ? { idBudget: Number(presupuestoId) } : undefined,
+      fkIdBudget: budgetId ? { idBudget: Number(budgetId) } : undefined,
     };
     try {
       if (isEditMode && editing.idItem) {
@@ -121,24 +121,24 @@ export default function ItemsPage() {
       className: "w-12",
     },
     {
-      key: "nombre",
+      key: "name",
       header: t("fields.nombre"),
       render: (i) => i.name ?? "—",
     },
     {
-      key: "valor",
+      key: "value",
       header: t("fields.valor"),
       render: (i) => <span className="font-medium">{fmt.currency(i.value)}</span>,
     },
     {
-      key: "presupuesto",
+      key: "budget",
       header: t("fields.presupuesto"),
       render: (i) => i.fkIdBudget?.idBudget ? `#${i.fkIdBudget.idBudget}` : "—",
     },
     {
-      key: "tipo",
+      key: "type",
       header: t("fields.tipo"),
-      render: (i) => tipoLabel(i.type ?? "NORMAL"),
+      render: (i) => itemTypeLabel(i.type ?? "NORMAL"),
     },
     {
       key: "actions",
@@ -169,7 +169,7 @@ export default function ItemsPage() {
         title={t("title")}
         description={t("description")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-item">
+          <Button onClick={openCreate} data-testid="btn-new-item">
             <Plus className="h-4 w-4" />
             {t("newItem")}
           </Button>
@@ -190,31 +190,31 @@ export default function ItemsPage() {
             <FormField label={t("fields.presupuestoId")}>
               <Input
                 type="number"
-                value={reporteId}
-                onChange={(e) => setReporteId(e.target.value)}
+                value={reportId}
+                onChange={(e) => setReportId(e.target.value)}
                 placeholder={t("fields.presupuestoPlaceholder")}
-                data-testid="input-reporte-presupuesto-id"
+                data-testid="input-report-budget-id"
               />
             </FormField>
             <Button
               variant="secondary"
-              onClick={() => setReporteQuery(reporteId ? Number(reporteId) : undefined)}
-              data-testid="btn-consultar-reporte"
+              onClick={() => setReportQuery(reportId ? Number(reportId) : undefined)}
+              data-testid="btn-query-report"
             >
               {t("report.consult")}
             </Button>
           </div>
-          {reporteQuery && (
+          {reportQuery && (
             <DataTable
-              data={descuentosRecargos}
-              isLoading={reporteLoading}
+              data={discountsAndSurcharges}
+              isLoading={reportLoading}
               keyExtractor={(i) => i.idItem!}
               emptyMessage={t("report.empty")}
               columns={[
-                { key: "nombre", header: t("fields.nombre"), render: (i) => i.name ?? "—" },
-                { key: "tipo", header: t("fields.tipo"), render: (i) => tipoLabel(i.type ?? "NORMAL") },
-                { key: "motivo", header: t("fields.motivo"), render: (i) => i.reason ?? "—" },
-                { key: "valor", header: t("fields.valor"), render: (i) => fmt.currency(i.value) },
+                { key: "name", header: t("fields.nombre"), render: (i) => i.name ?? "—" },
+                { key: "type", header: t("fields.tipo"), render: (i) => itemTypeLabel(i.type ?? "NORMAL") },
+                { key: "reason", header: t("fields.motivo"), render: (i) => i.reason ?? "—" },
+                { key: "value", header: t("fields.valor"), render: (i) => fmt.currency(i.value) },
               ]}
             />
           )}
@@ -228,10 +228,10 @@ export default function ItemsPage() {
               <FormField label={t("fields.presupuestoId")}>
                 <Input
                   type="number"
-                  value={presupuestoId}
-                  onChange={(e) => setPresupuestoId(e.target.value)}
+                  value={budgetId}
+                  onChange={(e) => setBudgetId(e.target.value)}
                   placeholder={t("fields.presupuestoPlaceholder")}
-                  data-testid="input-presupuesto-id"
+                  data-testid="input-budget-id"
                 />
               </FormField>
               <div className="grid grid-cols-2 gap-3">
@@ -239,7 +239,7 @@ export default function ItemsPage() {
                   <Input
                     value={editing.name ?? ""}
                     onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                    data-testid="input-cantidad"
+                    data-testid="input-quantity"
                   />
                 </FormField>
                 <FormField label={t("fields.valorLabel")}>
@@ -248,22 +248,22 @@ export default function ItemsPage() {
                     step="0.01"
                     value={editing.value ?? ""}
                     onChange={(e) => setEditing({ ...editing, value: parseFloat(e.target.value) })}
-                    data-testid="input-precio"
+                    data-testid="input-price"
                   />
                 </FormField>
               </div>
               <FormField label={t("fields.tipoItem")}>
                 <Select
                   value={editing.type ?? "NORMAL"}
-                  onValueChange={(v) => setEditing({ ...editing, type: v as TipoItem })}
+                  onValueChange={(v) => setEditing({ ...editing, type: v as ItemType })}
                 >
-                  <SelectTrigger data-testid="select-tipo-item">
+                  <SelectTrigger data-testid="select-item-type">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {TIPO_VALUES.map((tipo) => (
-                      <SelectItem key={tipo} value={tipo}>
-                        {tipoLabel(tipo)}
+                    {ITEM_TYPE_VALUES.map((itemType) => (
+                      <SelectItem key={itemType} value={itemType}>
+                        {itemTypeLabel(itemType)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -275,7 +275,7 @@ export default function ItemsPage() {
                     value={editing.reason ?? ""}
                     onChange={(e) => setEditing({ ...editing, reason: e.target.value })}
                     placeholder={t("fields.motivoPlaceholder")}
-                    data-testid="input-motivo"
+                    data-testid="input-reason"
                   />
                 </FormField>
               )}
@@ -287,7 +287,7 @@ export default function ItemsPage() {
               <Button
                 onClick={handleSave}
                 disabled={createMutation.isPending || updateMutation.isPending}
-                data-testid="btn-guardar-item"
+                data-testid="btn-save-item"
               >
                 {isEditMode ? tc("update") : tc("create")}
               </Button>

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU06"})
-@DisplayName("EscrituraFirmaService Tests")
+@DisplayName("DeedSigningService Tests")
 @ExtendWith(MockitoExtension.class)
 class DeedSigningServiceTest {
 

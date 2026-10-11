@@ -15,7 +15,7 @@ import jakarta.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
 import com.licensis.notaire.business.Person;
@@ -26,7 +26,7 @@ import org.hibernate.StaleObjectStateException;
  *
  * @author juanca
  */
-public class DeedManagementJpaController implements Serializable, IPersistenciaJpa
+public class DeedManagementJpaController implements Serializable, JpaPersistence
 {
 
     public DeedManagementJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -43,58 +43,57 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Persiste en la base de datos una nueva gestion de escrituras.
+     * Persists a new deed management.
      *
-     * @param unaGestionDeEscritura La nueva gestion de escrituras a persistir.
-     * @return oidGestionEscritura El id de la nueva gestion de escritura, -1 si ocurrio algun
-     * error.
+     * @param deedManagement the deed management to persist
+     * @return the id of the new deed management, or -1 when creation fails
      */
-    public Integer create(DeedManagement unaDeedManagement)
+    public Integer create(DeedManagement deedManagement)
     {
         Integer oidManagementDeed = new Integer(-1);
-        if (unaDeedManagement.getHistoryList() == null)
+        if (deedManagement.getHistoryList() == null)
         {
-            unaDeedManagement.setHistoryList(new ArrayList<History>());
+            deedManagement.setHistoryList(new ArrayList<History>());
         }
-        if (unaDeedManagement.getProcedureList() == null)
+        if (deedManagement.getProcedureList() == null)
         {
-            unaDeedManagement.setProcedureList(new ArrayList<Procedure>());
+            deedManagement.setProcedureList(new ArrayList<Procedure>());
         }
         EntityManager em = null;
         try
         {
             em = getEntityManager();
             em.getTransaction().begin();
-            Person fkIdNotaryPerson = unaDeedManagement.getFkIdNotaryPerson();
+            Person fkIdNotaryPerson = deedManagement.getFkIdNotaryPerson();
             if (fkIdNotaryPerson != null)
             {
                 fkIdNotaryPerson = em.getReference(fkIdNotaryPerson.getClass(), fkIdNotaryPerson.getPersonId());
-                unaDeedManagement.setFkIdNotaryPerson(fkIdNotaryPerson);
+                deedManagement.setFkIdNotaryPerson(fkIdNotaryPerson);
             }
             List<History> attachedHistoryList = new ArrayList<History>();
-            for (History historyListHistoryToAttach : unaDeedManagement.getHistoryList())
+            for (History historyListHistoryToAttach : deedManagement.getHistoryList())
             {
                 historyListHistoryToAttach = em.getReference(historyListHistoryToAttach.getClass(), historyListHistoryToAttach.getIdHistory());
                 attachedHistoryList.add(historyListHistoryToAttach);
             }
-            unaDeedManagement.setHistoryList(attachedHistoryList);
+            deedManagement.setHistoryList(attachedHistoryList);
             List<Procedure> attachedProcedureList = new ArrayList<Procedure>();
-            for (Procedure procedureListProcedureToAttach : unaDeedManagement.getProcedureList())
+            for (Procedure procedureListProcedureToAttach : deedManagement.getProcedureList())
             {
                 procedureListProcedureToAttach = em.getReference(procedureListProcedureToAttach.getClass(), procedureListProcedureToAttach.getIdProcedure());
                 attachedProcedureList.add(procedureListProcedureToAttach);
             }
-            unaDeedManagement.setProcedureList(attachedProcedureList);
-            em.persist(unaDeedManagement);
+            deedManagement.setProcedureList(attachedProcedureList);
+            em.persist(deedManagement);
             if (fkIdNotaryPerson != null)
             {
-                fkIdNotaryPerson.getDeedManagementList().add(unaDeedManagement);
+                fkIdNotaryPerson.getDeedManagementList().add(deedManagement);
                 fkIdNotaryPerson = em.merge(fkIdNotaryPerson);
             }
-            for (History historyListHistory : unaDeedManagement.getHistoryList())
+            for (History historyListHistory : deedManagement.getHistoryList())
             {
                 DeedManagement oldFkIdManagementOfHistoryListHistory = historyListHistory.getFkIdManagement();
-                historyListHistory.setFkIdManagement(unaDeedManagement);
+                historyListHistory.setFkIdManagement(deedManagement);
                 historyListHistory = em.merge(historyListHistory);
                 if (oldFkIdManagementOfHistoryListHistory != null)
                 {
@@ -102,10 +101,10 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                     oldFkIdManagementOfHistoryListHistory = em.merge(oldFkIdManagementOfHistoryListHistory);
                 }
             }
-            for (Procedure procedureListProcedure : unaDeedManagement.getProcedureList())
+            for (Procedure procedureListProcedure : deedManagement.getProcedureList())
             {
                 DeedManagement oldFkIdManagementOfProcedureListProcedure = procedureListProcedure.getFkIdManagement();
-                procedureListProcedure.setFkIdManagement(unaDeedManagement);
+                procedureListProcedure.setFkIdManagement(deedManagement);
                 procedureListProcedure = em.merge(procedureListProcedure);
                 if (oldFkIdManagementOfProcedureListProcedure != null)
                 {
@@ -115,7 +114,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
             }
             em.getTransaction().commit();
 
-            oidManagementDeed = unaDeedManagement.getIdManagement();
+            oidManagementDeed = deedManagement.getIdManagement();
         }
         finally
         {
@@ -128,18 +127,18 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Permite modificar una gestion de escritura en la persistencia.
+     * Updates a deed management in persistence.
      *
-     * @param gestionParaModificar La gestion de escritura a modificar.
-     * @return modificado Verdadero si se pudo modificar, falso en caso contrario.
+     * @param updatedManagement the deed management to update
+     * @return true when the update is stored, false otherwise
      *
      * @throws IllegalOrphanException
      * @throws NonexistentEntityException
      * @throws Exception
      */
-    public Boolean edit(DeedManagement managementParaModificar) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException
+    public Boolean edit(DeedManagement updatedManagement) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException
     {
-        Boolean modificado = Boolean.FALSE;
+        Boolean modified = Boolean.FALSE;
 
         int version;
         int oldVersion;
@@ -149,12 +148,12 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         {
             em = getEntityManager();
 
-            DeedManagement persistentManagement = em.find(DeedManagement.class, managementParaModificar.getIdManagement());
+            DeedManagement persistentManagement = em.find(DeedManagement.class, updatedManagement.getIdManagement());
 
             if (persistentManagement != null)
             {
                 version = persistentManagement.getVersion();
-                oldVersion = managementParaModificar.getVersion();
+                oldVersion = updatedManagement.getVersion();
 
                 if (version != oldVersion)
                 {
@@ -162,13 +161,13 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                 }
 
                 em.getTransaction().begin();
-                DeedManagement persistentDeedManagement = em.find(DeedManagement.class, managementParaModificar.getIdManagement());
+                DeedManagement persistentDeedManagement = em.find(DeedManagement.class, updatedManagement.getIdManagement());
                 Person fkIdNotaryPersonOld = persistentDeedManagement.getFkIdNotaryPerson();
-                Person fkIdNotaryPersonNew = managementParaModificar.getFkIdNotaryPerson();
+                Person fkIdNotaryPersonNew = updatedManagement.getFkIdNotaryPerson();
                 List<History> historyListOld = persistentDeedManagement.getHistoryList();
-                List<History> historyListNew = managementParaModificar.getHistoryList();
+                List<History> historyListNew = updatedManagement.getHistoryList();
                 List<Procedure> procedureListOld = persistentDeedManagement.getProcedureList();
-                List<Procedure> procedureListNew = managementParaModificar.getProcedureList();
+                List<Procedure> procedureListNew = updatedManagement.getProcedureList();
                 List<String> illegalOrphanMessages = null;
                 for (History historyListOldHistory : historyListOld)
                 {
@@ -178,7 +177,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                         {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain Historial " + historyListOldHistory + " since its fkIdGestion field is not nullable.");
+                        illegalOrphanMessages.add("You must retain History " + historyListOldHistory + " since its fkIdManagement field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null)
@@ -188,7 +187,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                 if (fkIdNotaryPersonNew != null)
                 {
                     fkIdNotaryPersonNew = em.getReference(fkIdNotaryPersonNew.getClass(), fkIdNotaryPersonNew.getPersonId());
-                    managementParaModificar.setFkIdNotaryPerson(fkIdNotaryPersonNew);
+                    updatedManagement.setFkIdNotaryPerson(fkIdNotaryPersonNew);
                 }
                 List<History> attachedHistoryListNew = new ArrayList<History>();
                 for (History historyListNewHistoryToAttach : historyListNew)
@@ -197,7 +196,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                     attachedHistoryListNew.add(historyListNewHistoryToAttach);
                 }
                 historyListNew = attachedHistoryListNew;
-                managementParaModificar.setHistoryList(historyListNew);
+                updatedManagement.setHistoryList(historyListNew);
                 List<Procedure> attachedProcedureListNew = new ArrayList<Procedure>();
                 for (Procedure procedureListNewProcedureToAttach : procedureListNew)
                 {
@@ -205,16 +204,16 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                     attachedProcedureListNew.add(procedureListNewProcedureToAttach);
                 }
                 procedureListNew = attachedProcedureListNew;
-                managementParaModificar.setProcedureList(procedureListNew);
-                managementParaModificar = em.merge(managementParaModificar);
+                updatedManagement.setProcedureList(procedureListNew);
+                updatedManagement = em.merge(updatedManagement);
                 if (fkIdNotaryPersonOld != null && !fkIdNotaryPersonOld.equals(fkIdNotaryPersonNew))
                 {
-                    fkIdNotaryPersonOld.getDeedManagementList().remove(managementParaModificar);
+                    fkIdNotaryPersonOld.getDeedManagementList().remove(updatedManagement);
                     fkIdNotaryPersonOld = em.merge(fkIdNotaryPersonOld);
                 }
                 if (fkIdNotaryPersonNew != null && !fkIdNotaryPersonNew.equals(fkIdNotaryPersonOld))
                 {
-                    fkIdNotaryPersonNew.getDeedManagementList().add(managementParaModificar);
+                    fkIdNotaryPersonNew.getDeedManagementList().add(updatedManagement);
                     fkIdNotaryPersonNew = em.merge(fkIdNotaryPersonNew);
                 }
                 for (History historyListNewHistory : historyListNew)
@@ -222,9 +221,9 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                     if (!historyListOld.contains(historyListNewHistory))
                     {
                         DeedManagement oldFkIdManagementOfHistoryListNewHistory = historyListNewHistory.getFkIdManagement();
-                        historyListNewHistory.setFkIdManagement(managementParaModificar);
+                        historyListNewHistory.setFkIdManagement(updatedManagement);
                         historyListNewHistory = em.merge(historyListNewHistory);
-                        if (oldFkIdManagementOfHistoryListNewHistory != null && !oldFkIdManagementOfHistoryListNewHistory.equals(managementParaModificar))
+                        if (oldFkIdManagementOfHistoryListNewHistory != null && !oldFkIdManagementOfHistoryListNewHistory.equals(updatedManagement))
                         {
                             oldFkIdManagementOfHistoryListNewHistory.getHistoryList().remove(historyListNewHistory);
                             oldFkIdManagementOfHistoryListNewHistory = em.merge(oldFkIdManagementOfHistoryListNewHistory);
@@ -244,9 +243,9 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                     if (!procedureListOld.contains(procedureListNewProcedure))
                     {
                         DeedManagement oldFkIdManagementOfProcedureListNewProcedure = procedureListNewProcedure.getFkIdManagement();
-                        procedureListNewProcedure.setFkIdManagement(managementParaModificar);
+                        procedureListNewProcedure.setFkIdManagement(updatedManagement);
                         procedureListNewProcedure = em.merge(procedureListNewProcedure);
-                        if (oldFkIdManagementOfProcedureListNewProcedure != null && !oldFkIdManagementOfProcedureListNewProcedure.equals(managementParaModificar))
+                        if (oldFkIdManagementOfProcedureListNewProcedure != null && !oldFkIdManagementOfProcedureListNewProcedure.equals(updatedManagement))
                         {
                             oldFkIdManagementOfProcedureListNewProcedure.getProcedureList().remove(procedureListNewProcedure);
                             oldFkIdManagementOfProcedureListNewProcedure = em.merge(oldFkIdManagementOfProcedureListNewProcedure);
@@ -254,7 +253,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                     }
                 }
                 em.getTransaction().commit();
-                modificado = Boolean.TRUE;
+                modified = Boolean.TRUE;
             }
         }
         finally
@@ -264,13 +263,13 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                 em.close();
             }
         }
-        return modificado;
+        return modified;
     }
 
     /**
-     * Permite elimianr una gestion de escritura de la persistencia.
+     * Deletes a deed management from persistence.
      *
-     * @param id El id de la gestion de escritura a eliminar.
+     * @param id the deed management id to delete
      * @throws IllegalOrphanException
      * @throws NonexistentEntityException
      */
@@ -289,7 +288,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The GestionDeEscritura with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The DeedManagement with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             List<History> historyListOrphanCheck = DeedManagement.getHistoryList();
@@ -299,7 +298,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This GestionDeEscritura (" + DeedManagement + ") cannot be destroyed since the Historial " + historyListOrphanCheckHistory + " in its historialList field has a non-nullable fkIdGestion field.");
+                illegalOrphanMessages.add("This DeedManagement (" + DeedManagement + ") cannot be destroyed since the History " + historyListOrphanCheckHistory + " in its historyList field has a non-nullable fkIdManagement field.");
             }
             if (illegalOrphanMessages != null)
             {
@@ -372,12 +371,12 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Busca una gestion de escritura en base al numero de gestion.
+     * Finds a deed management by its number.
      *
-     * @param numeroGestionDeEscritura
-     * @return
+     * @param numberDeedManagement the management number
+     * @return the matching management
      */
-    public DeedManagement findDeedManagementPorNumber(Integer numberDeedManagement)
+    public DeedManagement findDeedManagementByNumber(Integer numberDeedManagement)
     {
 
         EntityManager em = getEntityManager();
@@ -385,38 +384,38 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         Query query = em.createNamedQuery("DeedManagement.findByNumber");
         query.setParameter("number", numberDeedManagement);
 
-        List<DeedManagement> listaGestiones = query.getResultList();
+        List<DeedManagement> managements = query.getResultList();
 
-        if (!listaGestiones.isEmpty())
+        if (!managements.isEmpty())
         {
-            // existe la gestion indicada
-            return listaGestiones.get(0);
+            // The indicated management exists.
+            return managements.get(0);
         }
 
-        DeedManagement managementVacia = new DeedManagement();
-        managementVacia.setNumber(ConstantesPersistencia.VersionINICIAL);
-        return managementVacia;
+        DeedManagement emptyManagement = new DeedManagement();
+        emptyManagement.setNumber(PersistenceConstants.INITIAL_VERSION);
+        return emptyManagement;
     }
 
-    public DeedManagement findDeedManagementPorId(Integer idManagement)
+    public DeedManagement findDeedManagementById(Integer idManagement)
     {
 
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("DeedManagement.findByIdManagement");
-        query.setParameter("idGestion", idManagement);
+        query.setParameter("idManagement", idManagement);
 
-        List<DeedManagement> listaGestiones = query.getResultList();
+        List<DeedManagement> managements = query.getResultList();
 
-        if (!listaGestiones.isEmpty())
+        if (!managements.isEmpty())
         {
-            // existe la gestion indicada
-            return listaGestiones.get(0);
+            // The indicated management exists.
+            return managements.get(0);
         }
 
-        DeedManagement managementVacia = new DeedManagement();
-        managementVacia.setNumber(ConstantesPersistencia.VersionINICIAL);
-        return managementVacia;
+        DeedManagement emptyManagement = new DeedManagement();
+        emptyManagement.setNumber(PersistenceConstants.INITIAL_VERSION);
+        return emptyManagement;
     }
 
     public int getDeedManagementCount()
@@ -433,20 +432,20 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         }
     }
 
-    public int obtenerUltimoNumberManagement()
+    public int getLastManagementNumber()
     {
         EntityManager em = getEntityManager();
-        int resultado = 0;
+        int result = 0;
         try
         {
             Query q = em.createQuery("select max(number) as ultimaGestion from DeedManagement");
 
             if (q.getSingleResult() != null)
             {
-                resultado = (int) q.getSingleResult();
+                result = (int) q.getSingleResult();
             }
 
-            return resultado;
+            return result;
         }
         finally
         {
@@ -455,7 +454,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Gestiones en las que participa un cliente (persona) vía TramitesPersonas.
+     * Managements in which a client (person) takes part, via the person-procedure link.
      */
     @SuppressWarnings("unchecked")
     public List<DeedManagement> findManagementsByClient(Integer idPerson)
@@ -465,8 +464,8 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         {
             Query q = em.createQuery(
                     "SELECT DISTINCT t.fkIdManagement FROM com.licensis.notaire.business.PersonProcedure tp "
-                            + "JOIN tp.procedure t WHERE tp.personProcedurePK.fkIdClientPerson = :idPersona");
-            q.setParameter("idPersona", idPerson);
+                            + "JOIN tp.procedure t WHERE tp.personProcedurePK.fkIdClientPerson = :idPerson");
+            q.setParameter("idPerson", idPerson);
             return (List<DeedManagement>) q.getResultList();
         }
         finally
@@ -479,41 +478,41 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     {
         EntityManager em = getEntityManager();
 
-        List<DeedManagement> listaGestiones = null;
+        List<DeedManagement> managements = null;
         Person person = null;
         Query query = em.createNamedQuery("DeedManagement.findAll");
-        listaGestiones = query.getResultList();
+        managements = query.getResultList();
 
-        return listaGestiones;
+        return managements;
     }
 
-    public boolean archivingManagements(DeedManagement pGestioneDeEscrituras) throws ClassModifiedException
+    public boolean archivingManagements(DeedManagement managementToArchive) throws ClassModifiedException
     {
 
-        Boolean flag = false; //Variable para saber el resultado de la transaccion
-        int oldVersion = 0; //Variable para Version en memoria del Objeto
-        int version = 0;    //Variable para Version en bd del Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = 0; // Version of the object in memory
+        int version = 0;    // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
-        DeedManagement persistentManagement = em.find(DeedManagement.class, pGestioneDeEscrituras.getIdManagement());
+        DeedManagement persistentManagement = em.find(DeedManagement.class, managementToArchive.getIdManagement());
 
         if (persistentManagement != null)
         {
-            version = persistentManagement.getVersion(); // Version del Objeto en db
-            oldVersion = pGestioneDeEscrituras.getVersion(); // Version del Objeto en memoria
+            version = persistentManagement.getVersion(); // Version of the object in the database
+            oldVersion = managementToArchive.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
-                throw new ClassModifiedException("La gestion indicada ha sido modificada por otro usuario");
+                throw new ClassModifiedException("The indicated management was modified by another user");
 
             } else
             {
                 try
                 {
                     em.getTransaction().begin();
-                    persistentManagement.setFkIdManagementStatus(pGestioneDeEscrituras.getFkIdManagementStatus());
-                    persistentManagement.setNotes(pGestioneDeEscrituras.getNotes());
+                    persistentManagement.setFkIdManagementStatus(managementToArchive.getFkIdManagementStatus());
+                    persistentManagement.setNotes(managementToArchive.getNotes());
 
                     em.getTransaction().commit();
                     em.close();
@@ -522,7 +521,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
                 }
                 catch (Exception e)
                 {
-                    System.out.println("Error de Persistencia: Usuario JpaController metodo: modificarUsuario");
+                    System.out.println("Persistence error: DeedManagementJpaController method archivingManagements");
                 }
             }
         } else
@@ -533,15 +532,15 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
     }
 
     /**
-     * Permite modificar una gestion de escritura.
+     * Updates a deed management.
      *
-     * @param gestionParaModificar
-     * @return
+     * @param updatedManagement the management to update
+     * @return true when the update is stored
      * @throws ClassModifiedException
      */
-    public boolean modificarDeedManagement(DeedManagement managementParaModificar) throws ClassModifiedException
+    public boolean modifyDeedManagement(DeedManagement updatedManagement) throws ClassModifiedException
     {
-        boolean resultado = false;
+        boolean result = false;
 
         int version;
         int oldVersion;
@@ -551,12 +550,12 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         {
             em = getEntityManager();
 
-            DeedManagement persistentManagement = em.find(DeedManagement.class, managementParaModificar.getIdManagement());
+            DeedManagement persistentManagement = em.find(DeedManagement.class, updatedManagement.getIdManagement());
 
             if (persistentManagement != null)
             {
                 version = persistentManagement.getVersion();
-                oldVersion = managementParaModificar.getVersion();
+                oldVersion = updatedManagement.getVersion();
 
                 if (version != oldVersion)
                 {
@@ -565,13 +564,13 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
 
                 em.getTransaction().begin();
 
-                persistentManagement.setEncabezado(managementParaModificar.getEncabezado());
-                persistentManagement.setNotes(managementParaModificar.getNotes());
-                persistentManagement.setFkIdManagementStatus(managementParaModificar.getFkIdManagementStatus());
-                //persistentGestion.setHistorialList(gestionParaModificar.getHistorialList());
+                persistentManagement.setHeading(updatedManagement.getHeading());
+                persistentManagement.setNotes(updatedManagement.getNotes());
+                persistentManagement.setFkIdManagementStatus(updatedManagement.getFkIdManagementStatus());
+                // The history list is not copied on this update path.
 
                 em.getTransaction().commit();
-                resultado = true;
+                result = true;
             }
         }
         finally
@@ -582,19 +581,19 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
             }
         }
 
-        return resultado;
+        return result;
     }
 
     /**
-     * permite modifica el "estado" de una gestion de escritura.
+     * Updates the status of a deed management.
      *
-     * @param gestionParaModificar
-     * @return
+     * @param updatedManagement the management whose status changes
+     * @return true when the status is stored
      * @throws ClassModifiedException
      */
-    public boolean modificarManagementStatusDeDeed(DeedManagement managementParaModificar) throws ClassModifiedException
+    public boolean modifyDeedManagementStatus(DeedManagement updatedManagement) throws ClassModifiedException
     {
-        boolean resultado = false;
+        boolean result = false;
 
         int version;
         int oldVersion;
@@ -604,12 +603,12 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
         {
             em = getEntityManager();
 
-            DeedManagement persistentManagement = em.find(DeedManagement.class, managementParaModificar.getIdManagement());
+            DeedManagement persistentManagement = em.find(DeedManagement.class, updatedManagement.getIdManagement());
 
             if (persistentManagement != null)
             {
                 version = persistentManagement.getVersion();
-                oldVersion = managementParaModificar.getVersion();
+                oldVersion = updatedManagement.getVersion();
 
                 if (version != oldVersion)
                 {
@@ -618,10 +617,10 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
 
                 em.getTransaction().begin();
 
-                persistentManagement.setFkIdManagementStatus(managementParaModificar.getFkIdManagementStatus());
+                persistentManagement.setFkIdManagementStatus(updatedManagement.getFkIdManagementStatus());
 
                 em.getTransaction().commit();
-                resultado = true;
+                result = true;
             }
         }
         finally
@@ -632,7 +631,7 @@ public class DeedManagementJpaController implements Serializable, IPersistenciaJ
             }
         }
 
-        return resultado;
+        return result;
     }
 
     @Override

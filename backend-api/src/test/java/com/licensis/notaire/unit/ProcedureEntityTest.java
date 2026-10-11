@@ -20,7 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequirementCoverage({"CU02", "CU13", "CU14"})
-@DisplayName("Tramite Entity Tests")
+@DisplayName("Procedure Entity Tests")
 class ProcedureEntityTest {
 
     @Nested
@@ -69,7 +69,7 @@ class ProcedureEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get type de tramite")
+        @DisplayName("Should set and get type of procedure")
         void shouldSetAndGetProcedureType() {
             ProcedureType type = new ProcedureType();
             type.setIdProcedureType(10);
@@ -122,7 +122,7 @@ class ProcedureEntityTest {
         }
 
         @Test
-        @DisplayName("Should set and get gestion de deed")
+        @DisplayName("Should set and get management of deed")
         void shouldSetAndGetDeedManagement() {
             DeedManagement management = new DeedManagement();
             management.setNumber(5001);
@@ -186,7 +186,7 @@ class ProcedureEntityTest {
         void shouldNotBeEqualToDifferentType() {
             Procedure procedure = new Procedure(1);
 
-            assertThat(procedure).isNotEqualTo("not a tramite");
+            assertThat(procedure).isNotEqualTo("not a procedure");
         }
 
         @Test
@@ -208,7 +208,7 @@ class ProcedureEntityTest {
     }
 
     @Nested
-    @DisplayName("setAtributos branches")
+    @DisplayName("setAttributes branches")
     class SetAtributosTests {
 
         private DtoProcedure baseDto() {
@@ -218,7 +218,7 @@ class ProcedureEntityTest {
             DtoProcedure dto = new DtoProcedure();
             dto.setIdProcedure(10);
             dto.setNotes("obs");
-            dto.setTiposDeProcedure(typeDto);
+            dto.setProcedureType(typeDto);
             return dto;
         }
 
@@ -291,7 +291,7 @@ class ProcedureEntityTest {
         }
 
         @Test
-        @DisplayName("getDto with gestion set — covers non-null gestion branch")
+        @DisplayName("getDto with management set — covers non-null management branch")
         void getDtoWithManagement() {
             Procedure procedure = baseProcedure();
             DeedManagement management = new DeedManagement();

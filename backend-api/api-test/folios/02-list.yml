@@ -3,12 +3,12 @@ info:
   type: http
   seq: 3
   description: |-
-      ## List folios — GET /api/v1/folio
+      ## List folios — GET /api/v1/folios
       Regression for #416 — raw entity serialization must not 500.
       Traceability: CU63 (RF #55, #58, #94, #95, #96, #99)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/folio"
+  url: "{{base_url}}/api/v1/folios"
   headers:
     - name: Content-Type
       value: application/json

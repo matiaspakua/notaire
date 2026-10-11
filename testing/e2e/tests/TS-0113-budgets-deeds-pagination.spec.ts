@@ -37,12 +37,12 @@ async function expectPagedList(page: Page, route: string, newestId: number, olde
 test.describe("Budgets and deeds list pagination (#1340)", () => {
   test("budgets: a page of 20, newest first, the total, the oldest budget and the real dashboard count", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const newest = await apiGet<Paged<{ idBudget: number }>>(page, "/presupuestos?page=0&size=1&sort=idBudget,desc");
-    const oldest = await apiGet<Paged<{ idBudget: number }>>(page, "/presupuestos?page=0&size=1&sort=idBudget,asc");
+    const newest = await apiGet<Paged<{ idBudget: number }>>(page, "/budgets?page=0&size=1&sort=idBudget,desc");
+    const oldest = await apiGet<Paged<{ idBudget: number }>>(page, "/budgets?page=0&size=1&sort=idBudget,asc");
     test.skip(newest.data!.totalElements <= 20, "needs more than one page of budgets");
-    const seen = track(page, /\/api\/v1\/presupuestos(\?|$)/);
+    const seen = track(page, /\/api\/v1\/budgets(\?|$)/);
 
-    await expectPagedList(page, "/dashboard/presupuestos", newest.data!.content[0].idBudget, oldest.data!.content[0].idBudget, newest.data!.totalElements);
+    await expectPagedList(page, "/dashboard/budgets", newest.data!.content[0].idBudget, oldest.data!.content[0].idBudget, newest.data!.totalElements);
 
     await page.goto("/dashboard");
     await page.waitForLoadState("networkidle");
@@ -54,9 +54,9 @@ test.describe("Budgets and deeds list pagination (#1340)", () => {
 
   test("budgets: the status filter asks the backend for that status", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const seen = track(page, /\/api\/v1\/presupuestos\/buscar/);
-    await page.goto("/dashboard/presupuestos");
-    await page.getByTestId("select-estado").click();
+    const seen = track(page, /\/api\/v1\/budgets\/search/);
+    await page.goto("/dashboard/budgets");
+    await page.getByTestId("select-status").click();
     await page.getByRole("option", { name: "Aprobado" }).click();
     await expect.poll(() => seen.some((u) => /[?&]status=APROBADO/.test(u))).toBe(true);
     const cells = page.getByRole("table").locator("tbody tr td:nth-child(5)");
@@ -67,18 +67,18 @@ test.describe("Budgets and deeds list pagination (#1340)", () => {
 
   test("deeds: a page of 20, newest first, the total, the oldest deed and the number search", async ({ page }) => {
     await establishAdminBrowserSession(page);
-    const newest = await apiGet<Paged<{ idDeed: number; number: number }>>(page, "/escrituras?page=0&size=1&sort=idDeed,desc");
-    const oldest = await apiGet<Paged<{ idDeed: number }>>(page, "/escrituras?page=0&size=1&sort=idDeed,asc");
+    const newest = await apiGet<Paged<{ idDeed: number; number: number }>>(page, "/deeds?page=0&size=1&sort=idDeed,desc");
+    const oldest = await apiGet<Paged<{ idDeed: number }>>(page, "/deeds?page=0&size=1&sort=idDeed,asc");
     test.skip(newest.data!.totalElements <= 20, "needs more than one page of deeds");
-    const seen = track(page, /\/api\/v1\/escrituras(\?|\/buscar)/);
+    const seen = track(page, /\/api\/v1\/deeds(\?|\/search)/);
 
-    await expectPagedList(page, "/dashboard/escrituras", newest.data!.content[0].idDeed, oldest.data!.content[0].idDeed, newest.data!.totalElements);
+    await expectPagedList(page, "/dashboard/deeds", newest.data!.content[0].idDeed, oldest.data!.content[0].idDeed, newest.data!.totalElements);
     expect(seen.some((u) => u.includes("size=1000"))).toBe(false);
 
-    const numero = newest.data!.content[0].number;
-    await page.getByTestId("input-search-escritura").fill(String(numero));
+    const number = newest.data!.content[0].number;
+    await page.getByTestId("input-search-deed").fill(String(number));
     const rows = page.getByRole("table").locator("tbody tr");
-    await expect.poll(() => seen.some((u) => u.includes(`buscar?number=${numero}`))).toBe(true);
+    await expect.poll(() => seen.some((u) => u.includes(`buscar?number=${number}`))).toBe(true);
     await expect(rows.first().locator("td").first()).toHaveText(String(newest.data!.content[0].idDeed));
     expect(await rows.count()).toBeLessThan(20);
   });

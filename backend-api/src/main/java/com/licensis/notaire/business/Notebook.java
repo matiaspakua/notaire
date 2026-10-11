@@ -1,6 +1,6 @@
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.jpa.ConstantesPersistencia;
+import com.licensis.notaire.jpa.PersistenceConstants;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,16 +18,16 @@ import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 
 /**
- * A cuaderno groups exactly ten consecutive folios of the same registro
- * notarial, numbered correlatively per registro/año, so the protocol
- * carátula (CU80) can be emitted.
+ * A notebook groups exactly ten consecutive folios of the same notary
+ * registry, numbered in sequence per registry and year, so the protocol
+ * cover (CU80) can be issued.
  */
 @Entity
 @Table(name = "notebooks")
 @NamedQueries({
     @NamedQuery(name = "Notebook.findAll", query = "SELECT c FROM Notebook c"),
     @NamedQuery(name = "Notebook.findByYearAndNotary",
-            query = "SELECT c FROM Notebook c WHERE c.year = :anio AND c.fkIdNotaryPerson = :escribano")
+            query = "SELECT c FROM Notebook c WHERE c.year = :year AND c.fkIdNotaryPerson = :notary")
 })
 public class Notebook implements Serializable, Persistable<Integer> {
 
@@ -58,7 +58,7 @@ public class Notebook implements Serializable, Persistable<Integer> {
     @Basic(optional = false)
     @Column(name = "version")
     @Version
-    private int version = ConstantesPersistencia.VersionINICIAL;
+    private int version = PersistenceConstants.INITIAL_VERSION;
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public Integer getId() {
@@ -71,7 +71,7 @@ public class Notebook implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idNotebook == null || idNotebook.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idNotebook == null || idNotebook.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
@@ -138,6 +138,6 @@ public class Notebook implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Cuaderno[ idCuaderno=" + idNotebook + " ][ numero=" + number + " ][ anio=" + year + " ]";
+        return "Notebook[ idNotebook=" + idNotebook + " ][ number=" + number + " ][ year=" + year + " ]";
     }
 }

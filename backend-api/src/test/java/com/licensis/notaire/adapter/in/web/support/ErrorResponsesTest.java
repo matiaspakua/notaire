@@ -53,10 +53,10 @@ class ErrorResponsesTest {
     @DisplayName("application-authored NotaireException messages are kept for the user")
     void applicationMessagesAreKept() {
         ResponseEntity<Object> response = ErrorResponses.conflict(
-                new BusinessValidationException("Ya existe un concepto con ese nombre"));
+                new BusinessValidationException("Already exists a concept with that name"));
 
         ErrorResponse body = (ErrorResponse) response.getBody();
-        assertThat(body.getMessage()).isEqualTo("Ya existe un concepto con ese nombre");
+        assertThat(body.getMessage()).isEqualTo("Already exists a concept with that name");
     }
 
     @Test

@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByFkIdPersonIdPerson(Integer idPerson);
 
-    // A persona may be linked to more than one usuario; "findFirst" avoids a
+    // A person may be linked to more than one user; "findFirst" avoids a
     // NonUniqueResult 500 when several rows match.
     Optional<User> findFirstByFkIdPersonIdPerson(Integer idPerson);
 

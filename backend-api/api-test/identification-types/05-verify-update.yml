@@ -6,7 +6,7 @@ info:
       Traceability: CU17 (RF #12, #38, #39)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/tipo-identificacion/{{identification_type_id}}"
+  url: "{{base_url}}/api/v1/identification-types/{{identification_type_id}}"
   headers:
     - name: Content-Type
       value: application/json

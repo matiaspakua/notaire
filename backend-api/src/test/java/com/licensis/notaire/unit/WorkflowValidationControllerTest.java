@@ -66,12 +66,12 @@ class WorkflowValidationControllerTest {
         when(nodeRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
         when(transitionRepository.findByWorkflowDefinitionId(1)).thenReturn(List.of());
         when(validationService.validate(any(), any())).thenReturn(
-                ValidationResult.invalid(List.of("Falta nodo inicial", "Falta nodo final")));
+                ValidationResult.invalid(List.of("Missing initial node", "Missing final node")));
 
         mockMvc.perform(post("/api/v1/workflow-definition/1/validate"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.valid").value(false))
-                .andExpect(jsonPath("$.errors[0]").value("Falta nodo inicial"));
+                .andExpect(jsonPath("$.errors[0]").value("Missing initial node"));
     }
 
     @Test

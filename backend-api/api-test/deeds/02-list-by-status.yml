@@ -3,12 +3,12 @@ info:
   type: http
   seq: 2
   description: |-
-      ## List deeds in one status — GET /api/v1/escrituras?status=Firmada
+      ## List deeds in one status — GET /api/v1/deeds?status=Firmada
       Traceability: CU06/CU07/CU82, issue #1340. Deed pickers list only signed deeds;
       the optional status filter pages them on the server (any letter case).
 http:
   method: GET
-  url: "{{base_url}}/api/v1/escrituras?status=firmada&size=5"
+  url: "{{base_url}}/api/v1/deeds?status=firmada&size=5"
   headers:
     - name: Authorization
       value: "Bearer {{token}}"

@@ -28,7 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @RequirementCoverage({"CU42"})
-@DisplayName("UpcomingExpirationService — CU42 próximos vencimientos")
+@DisplayName("UpcomingExpirationService — CU42 upcoming expirations")
 @ExtendWith(MockitoExtension.class)
 class UpcomingExpirationServiceTest {
 
@@ -47,7 +47,7 @@ class UpcomingExpirationServiceTest {
     private static SubmittedDocument documentDueIn(int days) {
         DeedManagement management = new DeedManagement();
         management.setNumber(7);
-        management.setEncabezado("Compraventa Pérez");
+        management.setHeading("Compraventa Pérez");
         Procedure procedure = new Procedure();
         procedure.setFkIdManagement(management);
 
@@ -88,7 +88,7 @@ class UpcomingExpirationServiceTest {
     }
 
     @Test
-    @DisplayName("Should leave management data empty for an autonomous document without trámite")
+    @DisplayName("Should leave management data empty for an autonomous document without procedure")
     void shouldAllowDocumentWithoutProcedure() {
         SubmittedDocument autonomous = documentDueIn(3);
         autonomous.setFkIdProcedure(null);

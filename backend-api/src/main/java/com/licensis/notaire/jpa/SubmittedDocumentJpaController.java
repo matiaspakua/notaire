@@ -16,7 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.UserTransaction;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.SubmittedDocument;
 import com.licensis.notaire.business.Procedure;
 import org.hibernate.StaleObjectStateException;
@@ -25,7 +25,7 @@ import org.hibernate.StaleObjectStateException;
  *
  * @author juanca
  */
-public class SubmittedDocumentJpaController implements Serializable, IPersistenciaJpa
+public class SubmittedDocumentJpaController implements Serializable, JpaPersistence
 {
 
     public SubmittedDocumentJpaController(UserTransaction utx, EntityManagerFactory emf)
@@ -44,8 +44,8 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
     public boolean create(SubmittedDocument submittedDocument) throws NonexistentEntityException
     {
 
-        boolean flag = false; //Variable para saber el resultado de la transaccion
-        int version = 0;    //Variable para Version en bd del Objeto
+        boolean flag = false; // Whether the transaction succeeded
+        int version = 0;    // Version of the object in the database
 
         Procedure fkIdProcedure = submittedDocument.getFkIdProcedure();
         EntityManager em = null;
@@ -93,9 +93,9 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
     public boolean edit(SubmittedDocument submittedDocument) throws NonexistentEntityException, ClassModifiedException
     {
 
-        Boolean flag = false; //Variable para saber el resultado de la transaccion
-        int oldVersion = 0; //Variable para Version en memoria del Objeto
-        int version = 0;    //Variable para Version en bd del Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = 0; // Version of the object in memory
+        int version = 0;    // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
@@ -103,12 +103,12 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
 
         if (persistSubmittedDocument != null)
         {
-            version = persistSubmittedDocument.getVersion(); // Version del Objeto en db
-            oldVersion = submittedDocument.getVersion(); // Version del Objeto en memoria
+            version = persistSubmittedDocument.getVersion(); // Version of the object in the database
+            oldVersion = submittedDocument.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
-                throw new ClassModifiedException("El documento indicado ha sido modificado por otro usuario");
+                throw new ClassModifiedException("The indicated document has been modified by another user");
 
             } else
             {
@@ -145,7 +145,7 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
                         Integer id = submittedDocument.getIdSubmittedDocument();
                         if (findSubmittedDocument(id) == null)
                         {
-                            throw new NonexistentEntityException("The documentoPresentado with id " + id + " no longer exists.");
+                            throw new NonexistentEntityException("The submitted document with id " + id + " no longer exists.");
                         }
                     }
                     throw ex;
@@ -172,7 +172,7 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The documentoPresentado with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The submitted document with id " + id + " no longer exists.", enfe);
             }
             Procedure fkIdProcedure = submittedDocument.getFkIdProcedure();
             if (fkIdProcedure != null)
@@ -248,31 +248,31 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
         }
     }
 
-    public List<SubmittedDocument> findDocumentsPresentados()
+    public List<SubmittedDocument> findSubmittedDocuments()
     {
         EntityManager em = getEntityManager();
 
-        List<SubmittedDocument> listDocumentPresentados = null;
+        List<SubmittedDocument> submittedDocuments = null;
 
         Query query = em.createNamedQuery("SubmittedDocument.findAll");
-        listDocumentPresentados = query.getResultList();
+        submittedDocuments = query.getResultList();
 
-        return listDocumentPresentados;
+        return submittedDocuments;
     }
 
-    public List<SubmittedDocument> findDocumentsPorVencer()
+    public List<SubmittedDocument> findDocumentsDue()
     {
         EntityManager em = getEntityManager();
-        List<SubmittedDocument> listaDocumentPorVencer = new ArrayList<>();
+        List<SubmittedDocument> documentsDue = new ArrayList<>();
 
-        Date dateActual = Calendar.getInstance().getTime();
+        Date currentDate = Calendar.getInstance().getTime();
 
         Query query = em.createNamedQuery("SubmittedDocument.findByDueDate");
-        query.setParameter("fechaVencimiento", dateActual);
+        query.setParameter("dueDate", currentDate);
 
-        listaDocumentPorVencer = query.getResultList();
+        documentsDue = query.getResultList();
 
-        return listaDocumentPorVencer;
+        return documentsDue;
     }
 
     private Boolean findSubmittedDocument(SubmittedDocument submittedDocument)
@@ -287,11 +287,11 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
         em = getEntityManager();
         em.getTransaction().begin();
 
-        ArrayList<SubmittedDocument> listaDocumentPresentados = (ArrayList<SubmittedDocument>) this.findDocumentsPresentados();
+        ArrayList<SubmittedDocument> submittedDocuments = (ArrayList<SubmittedDocument>) this.findSubmittedDocuments();
 
-        for (int i = 0; i < listaDocumentPresentados.size() && !flag; i++)
+        for (int i = 0; i < submittedDocuments.size() && !flag; i++)
         {
-            SubmittedDocument submittedDocumentPersist = listaDocumentPresentados.get(i);
+            SubmittedDocument submittedDocumentPersist = submittedDocuments.get(i);
             int idProcedurePersist = submittedDocumentPersist.getFkIdProcedure().getIdProcedure();
             String nameDocumentPersist = submittedDocumentPersist.getName();
 
@@ -318,8 +318,8 @@ public class SubmittedDocumentJpaController implements Serializable, IPersistenc
             submittedDocument.setName(document.getName());
             submittedDocument.setDeliveredBy(document.getDeliveredBy());
 
-            Procedure miProcedure = document.getFkIdProcedure();
-            submittedDocument.setFkIdProcedure(miProcedure);
+            Procedure procedure = document.getFkIdProcedure();
+            submittedDocument.setFkIdProcedure(procedure);
 
             em.persist(submittedDocument);
             em.flush();

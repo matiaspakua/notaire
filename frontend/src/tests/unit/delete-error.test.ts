@@ -44,22 +44,28 @@ describe("presentDeleteError()", () => {
 
   it("409 with a JSON body uses its message as the detail", async () => {
     const { toast } = await import("sonner");
-    const err = new ApiError(409, "/conceptos/3", JSON.stringify({ message: "Concepto usado en 2 presupuestos" }));
+    const err = new ApiError(
+      409,
+      "/concepts/3",
+      JSON.stringify({ message: "Cannot delete: the concept is in use on budget templates." })
+    );
 
     presentDeleteError(err, OPTS);
 
-    expect(toast.warning).toHaveBeenCalledWith(OPTS.inUse, { description: "Concepto usado en 2 presupuestos" });
+    expect(toast.warning).toHaveBeenCalledWith(OPTS.inUse, {
+      description: "Cannot delete: the concept is in use on budget templates.",
+    });
   });
 
   it("409 without a body still warns with the in-use text", async () => {
     const { toast } = await import("sonner");
-    presentDeleteError(new ApiError(409, "/gestiones/9", ""), OPTS);
+    presentDeleteError(new ApiError(409, "/managements/9", ""), OPTS);
     expect(toast.warning).toHaveBeenCalledWith(OPTS.inUse, undefined);
   });
 
   it("404 says the record no longer exists", async () => {
     const { toast } = await import("sonner");
-    const result = presentDeleteError(new ApiError(404, "/escrituras/9", ""), OPTS);
+    const result = presentDeleteError(new ApiError(404, "/deeds/9", ""), OPTS);
     expect(result.kind).toBe("not-found");
     expect(toast.error).toHaveBeenCalledWith(OPTS.notFound);
   });

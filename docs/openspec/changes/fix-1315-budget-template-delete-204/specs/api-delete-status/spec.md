@@ -8,7 +8,7 @@ DELETE endpoints answer the success status documented in the OpenAPI contract.
 
 ### Requirement: Budget template delete answers 204
 
-`DELETE /api/v1/plantilla-presupuestos/tipo-tramite/{idProcedureType}/concepto/{idConcept}` SHALL answer 204 No Content with no body when it removes the template, and 404 when it does not exist; every DELETE handler SHALL document 204 as its only success status.
+`DELETE /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}` SHALL answer 204 No Content with no body when it removes the template, and 404 when it does not exist; every DELETE handler SHALL document 204 as its only success status.
 
 #### Scenario: Delete answers 204
 

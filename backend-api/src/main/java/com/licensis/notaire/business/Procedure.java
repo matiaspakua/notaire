@@ -37,33 +37,22 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Clase que representa un tramite en curso (no es la definicion de un tramite,
- * sino un tramite
- * concreto que se esta llevando a cabo). Posee las referencias hacia el tipo de
- * tramite, el
- * cliente, el presupuesto del cual se origino y el numero de gestion.
+ * A procedure that is underway (a concrete case, not the procedure-type
+ * definition). It references the procedure type, the client, the budget it
+ * came from, and the management number.
  * <p>
- * REGLA DE NEGOCIO:
+ * Business rule:
  * <p>
- * +
- * Cuando se crea un presupuesto, en la tabla tramites se crea un registo, el
- * cual asocia al
- * presupuesto un determinado tramite junto con el tipo de tramite indicado.
+ * Creating a budget inserts a row in {@code procedures} that links that budget
+ * to a procedure and the chosen procedure type.
  * <p>
- * + Cuando se inicia
- * una gestion, se debe asociar la misma con los registros de tramites asociados
- * a los presupuestos
- * seleccionado. La combinacion de "GestionDeEscritura" y "Tramite" representan
- * el concepto
- * abstracto de una "gestion".
+ * Starting a management associates it with the procedure rows of the selected
+ * budgets. {@code DeedManagement} and {@code Procedure} together are the
+ * management.
  * <p>
- * + Cuando se iniciar una gestion, pueden haber varios clientes
- * involucrados en la misma. La tabla tramites_personas, expresa esta relacion.
- * El atributo
- * personasList es utilizado por el framework de persistencia para escribir
- * sobre la tabla
- * relacional indicada.
- * <p>
+ * A management can involve several clients. The {@code person_procedures}
+ * table stores that link. {@code personProcedureList} is the persistence mapping
+ * for that table.
  *
  * @author juanca
  */
@@ -72,8 +61,8 @@ import org.springframework.data.domain.Persistable;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "Procedure.findAll", query = "SELECT t FROM Procedure t"),
-        @NamedQuery(name = "Procedure.findByIdProcedure", query = "SELECT t FROM Procedure t WHERE t.idProcedure = :idTramite"),
-        @NamedQuery(name = "Procedure.findByIdBudget", query = "SELECT t FROM Procedure t WHERE t.fkIdBudget.idBudget = :idPresupuesto")
+        @NamedQuery(name = "Procedure.findByIdProcedure", query = "SELECT t FROM Procedure t WHERE t.idProcedure = :idProcedure"),
+        @NamedQuery(name = "Procedure.findByIdBudget", query = "SELECT t FROM Procedure t WHERE t.fkIdBudget.idBudget = :idBudget")
 })
 public class Procedure implements Serializable, Persistable<Integer> {
 
@@ -103,13 +92,13 @@ public class Procedure implements Serializable, Persistable<Integer> {
     @JoinColumn(name = "fk_id_property", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Property fkIdProperty;
-    @JoinColumn(name = "fk_id_presupuesto", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_budget", referencedColumnName = "id")
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Budget fkIdBudget;
-    @JoinColumn(name = "fk_id_escritura", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_deed", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Deed fkIdDeed;
-    @JoinColumn(name = "fk_id_gestion", referencedColumnName = "id")
+    @JoinColumn(name = "fk_id_deed_management", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private DeedManagement fkIdManagement;
     @JoinColumn(name = "fk_id_procedure_type", referencedColumnName = "id")
@@ -117,12 +106,11 @@ public class Procedure implements Serializable, Persistable<Integer> {
     private ProcedureType fkIdProcedureType;
 
     /**
-     * Constructor por default para Tramite. Inicializa el ID presupuesto segun el
-     * campo
-     * {@link ConstantesNegocio}.ID_OBJETO_NO_VALIDO, y todas las listas.
+     * Default constructor. Initializes the id from
+     * {@link BusinessConstants#INVALID_OBJECT_ID}, and the lists.
      */
     public Procedure() {
-        this.idProcedure = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idProcedure = BusinessConstants.INVALID_OBJECT_ID;
         this.submittedDocumentList = new ArrayList<>();
         this.personList = new ArrayList<>();
     }
@@ -150,7 +138,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
     @Override
     @JsonIgnore
     public boolean isNew() {
-        return idProcedure == null || idProcedure.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idProcedure == null || idProcedure.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
     public String getNotes() {
@@ -225,40 +213,40 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     public DtoProcedure getDto() {
-        DtoProcedure miDto = new DtoProcedure();
+        DtoProcedure dto = new DtoProcedure();
 
-        miDto.setIdProcedure(getIdProcedure());
-        miDto.setNotes(notes);
-        miDto.setTiposDeProcedure(fkIdProcedureType.getDto());
+        dto.setIdProcedure(getIdProcedure());
+        dto.setNotes(notes);
+        dto.setProcedureType(fkIdProcedureType.getDto());
 
         if (fkIdDeed != null) {
-            DtoDeed miDtoDeed = new DtoDeed();
+            DtoDeed deedDto = new DtoDeed();
 
-            miDtoDeed.setIdDeed(fkIdDeed.getIdDeed());
-            miDtoDeed.setNumber(fkIdDeed.getNumber());
+            deedDto.setIdDeed(fkIdDeed.getIdDeed());
+            deedDto.setNumber(fkIdDeed.getNumber());
 
-            miDto.setDeed(miDtoDeed);
+            dto.setDeed(deedDto);
         }
 
         if (fkIdManagement != null) {
-            DtoDeedManagement miDtoDeedManagement = new DtoDeedManagement();
+            DtoDeedManagement deedManagementDto = new DtoDeedManagement();
 
-            miDtoDeedManagement.setIdManagement(fkIdManagement.getIdManagement());
-            miDtoDeedManagement.setNumber(fkIdManagement.getNumber());
+            deedManagementDto.setIdManagement(fkIdManagement.getIdManagement());
+            deedManagementDto.setNumber(fkIdManagement.getNumber());
 
-            DtoPerson miNotary = new DtoPerson();
-            miNotary.setId(fkIdManagement.getFkIdNotaryPerson().getPersonId());
-            miNotary.setNotaryRegistrationNumber(fkIdManagement.getFkIdNotaryPerson().getNotaryRegistrationNumber());
+            DtoPerson notary = new DtoPerson();
+            notary.setId(fkIdManagement.getFkIdNotaryPerson().getPersonId());
+            notary.setNotaryRegistrationNumber(fkIdManagement.getFkIdNotaryPerson().getNotaryRegistrationNumber());
 
-            miDtoDeedManagement.setPersonNotary(miNotary);
+            deedManagementDto.setPersonNotary(notary);
 
-            miDto.setDeedManagement(miDtoDeedManagement);
+            dto.setDeedManagement(deedManagementDto);
         }
 
         if (fkIdProperty != null) {
-            miDto.setProperty(fkIdProperty.getDto());
+            dto.setProperty(fkIdProperty.getDto());
         } else {
-            miDto.setProperty(null);
+            dto.setProperty(null);
         }
 
         if (this.fkIdBudget != null) {
@@ -266,12 +254,12 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
             budget.setIdBudget(fkIdBudget.getIdBudget());
 
-            miDto.setBudget(budget);
+            dto.setBudget(budget);
         }
 
         this.submittedDocumentList = new ArrayList<>();
 
-        return miDto;
+        return dto;
     }
 
     public DtoSubmittedDocument setDtoDocument(SubmittedDocument document) {
@@ -295,40 +283,40 @@ public class Procedure implements Serializable, Persistable<Integer> {
         dtoSubmittedDocument.setPrepared(document.getPrepared());
         dtoSubmittedDocument.setExpires(document.getExpires());
 
-        // No se hace set de fkidtramite , porque se produce bucle
+        // Do not set the procedure id here; that would recurse.
         return dtoSubmittedDocument;
     }
 
-    public DtoPerson getDtoPerson(Person miPerson) {
+    public DtoPerson getDtoPerson(Person person) {
 
         DtoPerson dtoPerson = new DtoPerson();
 
-        // Version del objeto
-        dtoPerson.setVersion(miPerson.getVersion());
-        dtoPerson.setId(miPerson.getPersonId());
-        dtoPerson.setFirstName(miPerson.getFirstName());
-        dtoPerson.setLastName(miPerson.getLastName());
-        dtoPerson.setTaxId(miPerson.getTaxId());
-        dtoPerson.setEmail(miPerson.getEmail());
-        dtoPerson.setIsClient(miPerson.getIsClient());
-        dtoPerson.setMaritalStatus(miPerson.getMaritalStatus());
-        dtoPerson.setBirthDate(miPerson.getBirthDate());
-        dtoPerson.setNationality(miPerson.getNationality());
-        dtoPerson.setIdentificationNumber(miPerson.getIdentificationNumber());
-        dtoPerson.setMarriageCount(miPerson.getMarriageCount());
-        dtoPerson.setOccupation(miPerson.getOccupation());
-        dtoPerson.setAddress(miPerson.getAddress());
-        dtoPerson.setNotaryRegistrationNumber(miPerson.getNotaryRegistrationNumber());
-        dtoPerson.setSex(miPerson.getSex());
-        dtoPerson.setPhone(miPerson.getPhone());
+        // Version of the object
+        dtoPerson.setVersion(person.getVersion());
+        dtoPerson.setId(person.getPersonId());
+        dtoPerson.setFirstName(person.getFirstName());
+        dtoPerson.setLastName(person.getLastName());
+        dtoPerson.setTaxId(person.getTaxId());
+        dtoPerson.setEmail(person.getEmail());
+        dtoPerson.setIsClient(person.getIsClient());
+        dtoPerson.setMaritalStatus(person.getMaritalStatus());
+        dtoPerson.setBirthDate(person.getBirthDate());
+        dtoPerson.setNationality(person.getNationality());
+        dtoPerson.setIdentificationNumber(person.getIdentificationNumber());
+        dtoPerson.setMarriageCount(person.getMarriageCount());
+        dtoPerson.setOccupation(person.getOccupation());
+        dtoPerson.setAddress(person.getAddress());
+        dtoPerson.setNotaryRegistrationNumber(person.getNotaryRegistrationNumber());
+        dtoPerson.setSex(person.getSex());
+        dtoPerson.setPhone(person.getPhone());
 
         DtoIdentificationType dtoIdentificationType = new DtoIdentificationType();
-        dtoIdentificationType.setIdIdentificationType(miPerson.getFkIdIdentificationType().getIdIdentificationType());
+        dtoIdentificationType.setIdIdentificationType(person.getFkIdIdentificationType().getIdIdentificationType());
 
         dtoPerson.setDtoIdentificationType(dtoIdentificationType);
 
         dtoIdentificationType.setName(IdentificationTypeLookup.shared()
-                .nameOf(miPerson.getFkIdIdentificationType().getIdIdentificationType()));
+                .nameOf(person.getFkIdIdentificationType().getIdIdentificationType()));
 
         return dtoPerson;
     }
@@ -356,7 +344,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Tramite[ idTramite=" + getIdProcedure() + " ]";
+        return "Procedure[ idProcedure=" + getIdProcedure() + " ]";
     }
 
     @XmlTransient

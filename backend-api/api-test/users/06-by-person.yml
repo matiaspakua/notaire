@@ -3,12 +3,12 @@ info:
   type: http
   seq: 6
   description: |-
-      ## Get user by person — GET /api/v1/usuarios/persona/{idPerson}
+      ## Get user by person — GET /api/v1/users/person/{idPerson}
       Uses seeded person 1, linked to the seeded admin user (read only).
       Traceability: CU20 (RF #43, #44, #45, #82, #83)
 http:
   method: GET
-  url: "{{base_url}}/api/v1/usuarios/persona/1"
+  url: "{{base_url}}/api/v1/users/person/1"
   headers:
     - name: Content-Type
       value: application/json

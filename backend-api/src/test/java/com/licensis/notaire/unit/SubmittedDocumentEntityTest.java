@@ -53,16 +53,16 @@ class SubmittedDocumentEntityTest {
         @DisplayName("Should set and get name")
         void shouldSetAndGetName() {
             SubmittedDocument doc = new SubmittedDocument();
-            doc.setName("Escritura de compraventa");
-            assertThat(doc.getName()).isEqualTo("Escritura de compraventa");
+            doc.setName("Deed de compraventa");
+            assertThat(doc.getName()).isEqualTo("Deed de compraventa");
         }
 
         @Test
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             SubmittedDocument doc = new SubmittedDocument();
-            doc.setNotes("Requiere notificación al registro");
-            assertThat(doc.getNotes()).isEqualTo("Requiere notificación al registro");
+            doc.setNotes("Requires notification to the registry");
+            assertThat(doc.getNotes()).isEqualTo("Requires notification to the registry");
         }
 
         @Test

@@ -12,12 +12,12 @@ Every endpoint that returns or interprets a management's history SHALL order it 
 
 #### Scenario: Bitácora lists same-day entries in insertion order
 
-- **WHEN** a management gets two state changes on the same day and a client calls GET /api/v1/gestiones/{id}/historial
+- **WHEN** a management gets two state changes on the same day and a client calls GET /api/v1/managements/{id}/history
 - **THEN** the entries come back in the order they were recorded, on every call
 
 #### Scenario: History by management is sorted
 
-- **WHEN** a client calls GET /api/v1/historial/gestion/{id}
+- **WHEN** a client calls GET /api/v1/history/management/{id}
 - **THEN** the entries come back by event date ascending, then idHistory ascending
 
 #### Scenario: Workflow trace picks the last same-day entry as current

@@ -69,11 +69,11 @@ class EditPaymentServiceTest {
     void shouldRejectNonPositiveAmount() {
         assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(existing.id(), new java.math.BigDecimal("0"), null, null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("El monto del pago debe ser mayor a cero");
+                .hasMessage("The payment amount must be greater than zero");
 
         assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(existing.id(), new java.math.BigDecimal("-5"), null, null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("El monto del pago debe ser mayor a cero");
+                .hasMessage("The payment amount must be greater than zero");
     }
 
     @Test
@@ -81,13 +81,13 @@ class EditPaymentServiceTest {
     void shouldRejectUnknownPayment() {
         assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(999, new java.math.BigDecimal("100"), null, null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Pago no encontrado con ID: 999");
+                .hasMessage("Payment not found with ID: 999");
     }
 
     @Test
     @DisplayName("Should reject an unknown payment before validating the amount")
     void shouldCheckExistenceBeforeAmount() {
         assertThatThrownBy(() -> editPayment.edit(new EditPaymentCommand(999, new java.math.BigDecimal("-1"), null, null, null)))
-                .hasMessage("Pago no encontrado con ID: 999");
+                .hasMessage("Payment not found with ID: 999");
     }
 }

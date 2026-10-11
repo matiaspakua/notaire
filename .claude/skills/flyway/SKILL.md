@@ -92,9 +92,9 @@ For reference data that needs to be versioned:
 
 -- Check if data exists (idempotent)
 INSERT INTO conceptos (version, id_concepto, nombre, valor, porcentaje, habilitado, concepto_fijo)
-SELECT 1, 99, 'Nuevo Concepto', 100, 0, true, true
+SELECT 1, 99, 'Nuevo Concept', 100, 0, true, true
 WHERE NOT EXISTS (
-    SELECT 1 FROM conceptos WHERE nombre = 'Nuevo Concepto'
+    SELECT 1 FROM conceptos WHERE nombre = 'Nuevo Concept'
 );
 
 -- Update sequence

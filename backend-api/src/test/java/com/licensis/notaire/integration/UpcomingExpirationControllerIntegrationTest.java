@@ -29,14 +29,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-/** CU42 - Informar próximos vencimientos (issue #802): window query over submitted documents. */
+/** CU42 - Report upcoming expirations (issue #802): window query over submitted documents. */
 @RequirementCoverage({"CU42"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Próximos vencimientos — CU42 integration tests")
+@DisplayName("Upcoming expirations — CU42 integration tests")
 class UpcomingExpirationControllerIntegrationTest {
 
-    private static final String ENDPOINT = "/api/v1/documento-presentado/proximos-vencimientos";
+    private static final String ENDPOINT = "/api/v1/submitted-documents/upcoming-expirations";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -61,7 +61,7 @@ class UpcomingExpirationControllerIntegrationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo trámite CU42 " + System.nanoTime());
+        procedureType.setName("Tipo procedure CU42 " + System.nanoTime());
         procedureType.setEnabled(true);
         procedureType = procedureTypeRepository.save(procedureType);
         Procedure procedure = new Procedure();
@@ -83,7 +83,7 @@ class UpcomingExpirationControllerIntegrationTest {
         String body = """
                 {"typeId": %d, "procedureId": %d, "date": "%s", "delivered": false}
                 """.formatted(typeId, procedureId, entryDate);
-        String response = mockMvc.perform(post("/api/v1/documento-presentado")
+        String response = mockMvc.perform(post("/api/v1/submitted-documents")
                         .contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         return mapper.readTree(response).get("idSubmittedDocument").asInt();
@@ -114,7 +114,7 @@ class UpcomingExpirationControllerIntegrationTest {
             submittedDocumentRepository.save(d);
         });
 
-        List<Integer> ids = upcomingIds("?dias=30");
+        List<Integer> ids = upcomingIds("?days=30");
 
         assertThat(ids).contains(dueIn5, dueIn20);
         assertThat(ids.indexOf(dueIn5)).isLessThan(ids.indexOf(dueIn20));
@@ -122,7 +122,7 @@ class UpcomingExpirationControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should apply a 30-day window when dias is omitted")
+    @DisplayName("Should apply a 30-day window when days is omitted")
     void shouldDefaultTheWindow() throws Exception {
         int dueIn25 = submit(documentType(true, 25), LocalDate.now());
         int dueIn45 = submit(documentType(true, 45), LocalDate.now());
@@ -135,7 +135,7 @@ class UpcomingExpirationControllerIntegrationTest {
     @Test
     @DisplayName("Should return 400 for a window outside 1 to 365 days")
     void shouldRejectAnInvalidWindow() throws Exception {
-        mockMvc.perform(get(ENDPOINT + "?dias=0")).andExpect(status().isBadRequest());
-        mockMvc.perform(get(ENDPOINT + "?dias=366")).andExpect(status().isBadRequest());
+        mockMvc.perform(get(ENDPOINT + "?days=0")).andExpect(status().isBadRequest());
+        mockMvc.perform(get(ENDPOINT + "?days=366")).andExpect(status().isBadRequest());
     }
 }

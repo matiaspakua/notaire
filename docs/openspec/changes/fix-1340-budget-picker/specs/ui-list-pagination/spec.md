@@ -28,4 +28,4 @@ Forms that choose a budget SHALL list the newest budgets for an empty query, sea
 #### Scenario: No size=1000 for budgets
 
 - **WHEN** the source tree is scanned
-- **THEN** no page or component calls usePresupuestos()
+- **THEN** no page or component calls useBudgets()

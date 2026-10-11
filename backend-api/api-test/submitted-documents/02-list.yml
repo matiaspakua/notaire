@@ -6,7 +6,7 @@ info:
       Traceability: CU72
 http:
   method: GET
-  url: "{{base_url}}/api/v1/documento-presentado"
+  url: "{{base_url}}/api/v1/submitted-documents"
   headers:
     - name: Content-Type
       value: application/json

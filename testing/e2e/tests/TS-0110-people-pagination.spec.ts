@@ -1,7 +1,7 @@
 /**
  * Playwright E2E — the people list is paginated server-side (#1340 slice 2, CU18/CU54).
  * The list used to request size=1000, so on a database with more people every
- * person after the 1000th was unreachable from /dashboard/personas.
+ * person after the 1000th was unreachable from /dashboard/people.
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
@@ -25,7 +25,7 @@ test.describe("People list pagination (#1340)", () => {
       if (/\/api\/v1\/people(\?|$)/.test(r.url())) requested.push(r.url());
     });
 
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await page.waitForLoadState("networkidle");
     const table = page.getByRole("table");
     await expect(table.locator("tbody tr")).toHaveCount(20);
@@ -58,9 +58,9 @@ test.describe("People list pagination (#1340)", () => {
     const target = oldest.data!.content.find((p) => p.identificationNumber);
     test.skip(!target, "no old person with a document number");
 
-    await page.goto("/dashboard/personas");
+    await page.goto("/dashboard/people");
     await page.waitForLoadState("networkidle");
-    await page.getByTestId("btn-nueva-persona").click();
+    await page.getByTestId("btn-new-person").click();
     await page.getByTestId("input-firstName").fill("Duplicado");
     await page.getByTestId("input-lastName").fill("Paginado");
     await page.getByTestId("input-dni").fill(target!.identificationNumber!);

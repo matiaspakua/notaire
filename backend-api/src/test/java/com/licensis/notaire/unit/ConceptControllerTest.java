@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("ConceptoController unit tests")
+@DisplayName("ConceptController unit tests")
 @ExtendWith(MockitoExtension.class)
 class ConceptControllerTest {
 
@@ -59,29 +59,29 @@ class ConceptControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/conceptos should return 200 with mapped DTOs")
-    void shouldReturnAllConceptos() throws Exception {
+    @DisplayName("GET /api/v1/concepts should return 200 with mapped DTOs")
+    void shouldReturnAllConcepts() throws Exception {
         when(service.findAll()).thenReturn(List.of(buildEntity()));
-        mockMvc.perform(get("/api/v1/conceptos"))
+        mockMvc.perform(get("/api/v1/concepts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].idConcept").value(1))
                 .andExpect(jsonPath("$[0].name").value("Honorarios"));
     }
 
     @Test
-    @DisplayName("GET /api/v1/conceptos/{id} should return 200 when found")
+    @DisplayName("GET /api/v1/concepts/{id} should return 200 when found")
     void shouldReturnConceptByIdWhenFound() throws Exception {
         when(service.findById(1)).thenReturn(Optional.of(buildEntity()));
-        mockMvc.perform(get("/api/v1/conceptos/1"))
+        mockMvc.perform(get("/api/v1/concepts/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idConcept").value(1));
     }
 
     @Test
-    @DisplayName("GET /api/v1/conceptos/{id} should return 404 when not found")
+    @DisplayName("GET /api/v1/concepts/{id} should return 404 when not found")
     void shouldReturn404WhenConceptMissing() throws Exception {
         when(service.findById(999)).thenReturn(Optional.empty());
-        mockMvc.perform(get("/api/v1/conceptos/999"))
+        mockMvc.perform(get("/api/v1/concepts/999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -97,40 +97,40 @@ class ConceptControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/conceptos should return 201 when created")
+    @DisplayName("POST /api/v1/concepts should return 201 when created")
     void shouldCreateConcept() throws Exception {
         when(service.create(any(Concept.class))).thenReturn(buildEntity());
-        mockMvc.perform(post("/api/v1/conceptos")
+        mockMvc.perform(post("/api/v1/concepts")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    @DisplayName("POST /api/v1/conceptos should return 409 when save fails")
+    @DisplayName("POST /api/v1/concepts should return 409 when save fails")
     void shouldReturn409WhenCreateFails() throws Exception {
         when(service.create(any(Concept.class))).thenThrow(new RuntimeException("boom"));
-        mockMvc.perform(post("/api/v1/conceptos")
+        mockMvc.perform(post("/api/v1/concepts")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
                 .andExpect(status().isConflict());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/conceptos/{id} should return 200 when update succeeds")
+    @DisplayName("PUT /api/v1/concepts/{id} should return 200 when update succeeds")
     void shouldUpdateConcept() throws Exception {
         Concept existing = buildEntity();
         when(service.findById(1)).thenReturn(Optional.of(existing));
         when(service.update(1, existing)).thenReturn(existing);
 
-        mockMvc.perform(put("/api/v1/conceptos/1")
+        mockMvc.perform(put("/api/v1/concepts/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/conceptos/{id} should return 200 when payload omits habilitado")
+    @DisplayName("PUT /api/v1/concepts/{id} should return 200 when payload omits enabled")
     void shouldUpdateConceptWhenEnabledOmitted() throws Exception {
         // Regression: a payload without 'habilitado' must not NPE while unboxing
         // a null Boolean — the controller preserves the existing enabled state.
@@ -141,59 +141,59 @@ class ConceptControllerTest {
         DtoConcept partial = buildDto();
         partial.setEnabled(null);
 
-        mockMvc.perform(put("/api/v1/conceptos/1")
+        mockMvc.perform(put("/api/v1/concepts/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(partial)))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/conceptos/{id} should return 404 when not found")
+    @DisplayName("PUT /api/v1/concepts/{id} should return 404 when not found")
     void shouldReturn404WhenUpdatingMissingConcept() throws Exception {
         when(service.findById(99)).thenReturn(Optional.empty());
-        mockMvc.perform(put("/api/v1/conceptos/99")
+        mockMvc.perform(put("/api/v1/concepts/99")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/conceptos/{id} should return 500 when save fails")
+    @DisplayName("PUT /api/v1/concepts/{id} should return 500 when save fails")
     void shouldReturn500WhenUpdateSaveFails() throws Exception {
         Concept existing = buildEntity();
         when(service.findById(1)).thenReturn(Optional.of(existing));
         when(service.update(1, existing)).thenThrow(new RuntimeException("boom"));
 
-        mockMvc.perform(put("/api/v1/conceptos/1")
+        mockMvc.perform(put("/api/v1/concepts/1")
                         .contentType("application/json")
                         .content(mapper.writeValueAsString(buildDto())))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/conceptos/{id} should return 204 when deleted")
+    @DisplayName("DELETE /api/v1/concepts/{id} should return 204 when deleted")
     void shouldDeleteConcept() throws Exception {
         when(service.findById(1)).thenReturn(Optional.of(buildEntity()));
-        mockMvc.perform(delete("/api/v1/conceptos/1"))
+        mockMvc.perform(delete("/api/v1/concepts/1"))
                 .andExpect(status().isNoContent());
         verify(service).deleteById(1);
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/conceptos/{id} should return 404 when missing")
+    @DisplayName("DELETE /api/v1/concepts/{id} should return 404 when missing")
     void shouldReturn404WhenDeletingMissingConcept() throws Exception {
         when(service.findById(99)).thenReturn(Optional.empty());
-        mockMvc.perform(delete("/api/v1/conceptos/99"))
+        mockMvc.perform(delete("/api/v1/concepts/99"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/conceptos/{id} should return 409 when concepto is in use")
+    @DisplayName("DELETE /api/v1/concepts/{id} should return 409 when the concept is in use")
     void shouldReturn409WhenConceptIsInUse() throws Exception {
         com.licensis.notaire.business.BudgetTemplate pp = new com.licensis.notaire.business.BudgetTemplate();
         when(service.findById(1)).thenReturn(Optional.of(buildEntity()));
         when(templateRepository.findByConceptIdConcept(1)).thenReturn(List.of(pp));
-        mockMvc.perform(delete("/api/v1/conceptos/1"))
+        mockMvc.perform(delete("/api/v1/concepts/1"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").exists());
     }

@@ -1,0 +1,637 @@
+"use client";
+
+import { Suspense, useState } from "react";
+import { toast } from "sonner";
+import { Plus, Pencil, Trash2, Archive, RefreshCcw, History, FolderClock, ClipboardList } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { DataTable, type Column } from "@/components/shared/DataTable";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FormContainer, FormSection, FormField, FormActions, FormHeader } from "@/theme/form-patterns";
+import {
+  useManagementsPage,
+  useManagementsByClient,
+  useCreateCompleteManagement,
+  useUpdateManagement,
+  useDeleteManagement,
+  useOutstandingBalance,
+  useArchiveManagement,
+  useTransitionManagement,
+  useHistory,
+  useFoldersByManagement,
+  usePutFolderOnHold,
+} from "@/hooks/useManagements";
+import { useManagementWorkflowTrace } from "@/hooks/useManagementWorkflow";
+import { PersonPicker } from "@/components/shared/PersonPicker";
+import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
+import { BudgetPicker } from "@/components/shared/BudgetPicker";
+import { useManagementStatuses } from "@/hooks/useManagementStatuses";
+import { useProcedureTypes } from "@/hooks/useProcedureTypes";
+import { useProperties } from "@/hooks/useProperties";
+import { ApiError } from "@/lib/api-client";
+import { extractApiError } from "@/lib/utils";
+import type { DeedManagement } from "@/types";
+import { ManagementSummaryDialog } from "./ManagementSummaryDialog";
+import { useDeleteError } from "@/hooks/useDeleteError";
+import { useFormat } from "@/hooks/useFormat";
+
+const STATUS_FOLDER_ACTIVE = "Activa";
+
+const ESTADO_ARCHIVADA = "Archivada";
+
+export default function ManagementsPage() {
+  return (
+    <Suspense>
+      <ManagementsList />
+    </Suspense>
+  );
+}
+
+function ManagementsList() {
+  const fmt = useFormat();
+  const t = useTranslations("gestiones");
+  const showDeleteError = useDeleteError();
+  const tc = useTranslations("common");
+  // One server page at a time, page and size in the URL (#1340): the list used
+  // to load size=1000, hiding older managements and rendering 1000 rows.
+  const paging = useUrlPagination();
+  const { data: managementsPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
+  const managements = managementsPage?.content ?? [];
+  useClampPage(paging, managementsPage?.totalPages);
+  const { data: statuses = [] } = useManagementStatuses();
+  const { data: procedureTypes = [] } = useProcedureTypes();
+  const { data: properties = [] } = useProperties();
+  const createCompleteMutation = useCreateCompleteManagement();
+  const updateMutation = useUpdateManagement();
+  const deleteMutation = useDeleteManagement();
+  const archiveMutation = useArchiveManagement();
+  const transitionMutation = useTransitionManagement();
+  const putOnHoldMutation = usePutFolderOnHold();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [archiveId, setArchiveId] = useState<number | null>(null);
+  const [archiveConflict, setArchiveConflict] = useState<string | null>(null);
+  const [transitionId, setTransitionId] = useState<number | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [historyId, setHistoryId] = useState<number | null>(null);
+  const [foldersManagementId, setFoldersManagementId] = useState<number | null>(null);
+  const [resumenCasoId, setResumenCasoId] = useState<number | null>(null);
+  const [waitFolderId, setWaitFolderId] = useState<number | null>(null);
+  const [waitReason, setWaitReason] = useState("");
+  const [editing, setEditing] = useState<DeedManagement | null>(null);
+  const [number, setNumber] = useState("");
+  const [clientFilter, setClientFilter] = useState("");
+  const [budgetId, setBudgetId] = useState("");
+  const [notaryId, setNotaryId] = useState("");
+  const [statusId, setStatusId] = useState("");
+  const [procedureTypeId, setProcedureTypeId] = useState("");
+  const [propertyId, setPropertyId] = useState("");
+
+  const { data: managementsByClient = [], isLoading: isLoadingByClient } = useManagementsByClient(
+    clientFilter ? Number(clientFilter) : 0
+  );
+  const { data: outstandingBalance } = useOutstandingBalance(archiveId ?? undefined);
+  const { data: trace } = useManagementWorkflowTrace(transitionId ?? undefined);
+  const { data: history = [] } = useHistory(historyId ?? undefined);
+  const { data: folders = [] } = useFoldersByManagement(foldersManagementId ?? undefined);
+
+  const visibleManagements = clientFilter ? managementsByClient : managements;
+  const isLoadingVisible = clientFilter ? isLoadingByClient : isLoading;
+
+  const currentNode = trace?.nodes.find((n) => n.statusManagementName === trace.currentStatus);
+  const validDestinations = trace && currentNode
+    ? trace.transitions
+        .filter((tr) => tr.originNodeId === currentNode.id)
+        .map((tr) => trace.nodes.find((n) => n.id === tr.destinationNodeId))
+        .filter((n): n is NonNullable<typeof n> => !!n && !!n.statusManagementName)
+    : [];
+
+  function openCreate() {
+    setEditing(null);
+    setNumber("");
+    setBudgetId("");
+    setNotaryId("");
+    setStatusId("");
+    setProcedureTypeId("");
+    setPropertyId("");
+    setModalOpen(true);
+  }
+
+  function openEdit(g: DeedManagement) {
+    setEditing(g);
+    setNumber(g.number?.toString() ?? "");
+    setModalOpen(true);
+  }
+
+  async function handleSave() {
+    try {
+      if (editing?.idManagement) {
+        await updateMutation.mutateAsync({
+          id: editing.idManagement,
+          data: { number: number ? Number(number) : undefined },
+        });
+        toast.success(t("updated"));
+      } else {
+        const created = await createCompleteMutation.mutateAsync({
+          number: Number(number),
+          budgetId: Number(budgetId),
+          notaryId: Number(notaryId),
+          statusManagementId: Number(statusId),
+          procedureTypeId: Number(procedureTypeId),
+          propertyId: propertyId ? Number(propertyId) : undefined,
+        });
+        toast.success(t("created"));
+        notifySubstitutionRedirect(created.notes);
+      }
+    } catch {
+      toast.error(t("errorSave"));
+    } finally {
+      setModalOpen(false);
+    }
+  }
+
+  function notifySubstitutionRedirect(notes?: string) {
+    if (notes?.includes("redirected by active substitution")
+        || notes?.includes("redirigida por suplencia activa")) {
+      toast.info(t("suplenciaRedirected"), { description: notes });
+    }
+  }
+
+  async function handleDelete() {
+    if (!deleteId) return;
+    try {
+      await deleteMutation.mutateAsync(deleteId);
+      toast.success(t("deleted"));
+    } catch (err) {
+      showDeleteError(err, t("errorDelete"));
+    } finally {
+      setDeleteId(null);
+    }
+  }
+
+  async function handleArchive() {
+    if (!archiveId) return;
+    try {
+      await archiveMutation.mutateAsync({ id: archiveId, confirmado: !!archiveConflict });
+      toast.success(t("archived"));
+      setArchiveId(null);
+      setArchiveConflict(null);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        setArchiveConflict(extractApiError(err) ?? t("archiveConflictTitle"));
+        return;
+      }
+      toast.error(extractApiError(err) ?? t("errorArchive"));
+      setArchiveId(null);
+      setArchiveConflict(null);
+    }
+  }
+
+  function closeArchiveDialog(open: boolean) {
+    if (!open) {
+      setArchiveId(null);
+      setArchiveConflict(null);
+    }
+  }
+
+  async function handlePutOnHold() {
+    if (!waitFolderId || !foldersManagementId) return;
+    if (!waitReason.trim()) {
+      toast.error(t("errorMotivoRequerido"));
+      return;
+    }
+    try {
+      await putOnHoldMutation.mutateAsync({
+        idFolder: waitFolderId,
+        reason: waitReason,
+        managementId: foldersManagementId,
+      });
+      toast.success(t("carpetaEnEspera"));
+      setWaitFolderId(null);
+      setWaitReason("");
+      setFoldersManagementId(null);
+    } catch (err) {
+      toast.error(extractApiError(err) ?? t("errorCarpetaEspera"));
+    }
+  }
+
+  async function handleTransition() {
+    if (!transitionId || !selectedStatus) return;
+    try {
+      await transitionMutation.mutateAsync({ id: transitionId, statusDestination: selectedStatus });
+      toast.success(t("transitioned"));
+      setTransitionId(null);
+      setSelectedStatus("");
+    } catch (err) {
+      toast.error(extractApiError(err) ?? t("errorTransition"));
+    }
+  }
+
+  function closeTransitionDialog(open: boolean) {
+    if (!open) {
+      setTransitionId(null);
+      setSelectedStatus("");
+    }
+  }
+
+  const columns: Column<DeedManagement>[] = [
+    {
+      key: "number",
+      header: t("fields.numero"),
+      render: (g) => (
+        <div className="flex flex-col">
+          <span className="font-medium">{g.number ?? "—"}</span>
+          {/* The internal id stays available as secondary text (#1348). */}
+          <span className="text-muted-foreground text-xs">
+            {tc("id")} {g.idManagement}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: "heading",
+      header: t("fields.encabezado"),
+      render: (g) =>
+        g.heading ? (
+          <span className="block max-w-[18rem] truncate" title={g.heading}>
+            {g.heading}
+          </span>
+        ) : (
+          "—"
+        ),
+    },
+    {
+      key: "start",
+      header: t("fields.inicio"),
+      render: (g) => <span className="whitespace-nowrap">{fmt.date(g.dateStart)}</span>,
+    },
+    {
+      key: "procedures",
+      header: t("fields.tramites"),
+      render: (g) => g.procedureCount ?? 0,
+      className: "text-right",
+    },
+    {
+      key: "status",
+      header: t("fields.estado"),
+      render: (g) => <StatusBadge domain="management" value={g.currentStatus} />,
+    },
+    {
+      key: "actions",
+      header: "",
+      render: (g) => (
+        <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" onClick={() => openEdit(g)} aria-label={tc("edit")}>
+            <Pencil className="h-4 w-4" />
+          </Button>
+          {g.currentStatus !== ESTADO_ARCHIVADA && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setTransitionId(g.idManagement!)}
+              aria-label={t("changeState")}
+              data-testid={`btn-change-status-${g.idManagement}`}
+            >
+              <RefreshCcw className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setHistoryId(g.idManagement!)}
+            aria-label={t("viewBitacora")}
+            data-testid={`btn-view-history-${g.idManagement}`}
+          >
+            <History className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setResumenCasoId(g.idManagement!)}
+            aria-label={t("resumen.action")}
+            data-testid={`btn-summary-case-${g.idManagement}`}
+          >
+            <ClipboardList className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setFoldersManagementId(g.idManagement!)}
+            aria-label={t("viewCarpetas")}
+            data-testid={`btn-view-folders-${g.idManagement}`}
+          >
+            <FolderClock className="h-4 w-4" />
+          </Button>
+          {g.currentStatus !== ESTADO_ARCHIVADA && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setArchiveId(g.idManagement!)}
+              aria-label={t("archiveGestion")}
+              data-testid={`btn-archive-management-${g.idManagement}`}
+            >
+              <Archive className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setDeleteId(g.idManagement!)}
+            aria-label={tc("delete")}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+      className: "w-56",
+    },
+  ];
+
+  return (
+    <div>
+      <AppHeader
+        title={t("title")}
+        actions={
+          <Button onClick={openCreate} data-testid="btn-new-management">
+            <Plus className="h-4 w-4" />
+            {t("newGestion")}
+          </Button>
+        }
+      />
+
+      <div className="px-4 pb-4 flex items-center gap-2">
+        {/* Server search over clients instead of the first 1000 people (#1340). */}
+        <PersonPicker
+          value={clientFilter ? Number(clientFilter) : undefined}
+          onChange={(person) => setClientFilter(person?.personId != null ? String(person.personId) : "")}
+          aria-label={t("clienteFilter")}
+          placeholder={t("filterByCliente")}
+          clientsOnly
+          allowClear
+          className="w-full sm:w-80"
+          data-testid="select-filter-client-management"
+        />
+      </div>
+
+      <DataTable
+        data={visibleManagements}
+        columns={columns}
+        isLoading={isLoadingVisible}
+        isFetching={!clientFilter && isFetching}
+        keyExtractor={(g) => g.idManagement!}
+        emptyMessage={t("noData")}
+        pagination={
+          clientFilter
+            ? undefined
+            : {
+                page: managementsPage?.number ?? paging.page,
+                size: paging.size,
+                totalElements: managementsPage?.totalElements ?? 0,
+                onPageChange: paging.setPage,
+                onSizeChange: paging.setSize,
+              }
+        }
+      />
+
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent>
+          <FormContainer>
+            <FormSection dialogTitle title={editing ? t("editGestion") : t("newGestion")}>
+              <FormField label={t("fields.numero")} required>
+                <Input
+                  type="number"
+                  value={number}
+                  onChange={(e) => setNumber(e.target.value)}
+                  placeholder={t("fields.numeroPlaceholder")}
+                  data-testid="input-management-number"
+                />
+              </FormField>
+              {!editing && (
+                <>
+                  <FormField label={t("fields.presupuesto")} required>
+                    {/* Server search instead of the first 1000 budgets (#1340). */}
+                    <BudgetPicker
+                      value={budgetId ? Number(budgetId) : undefined}
+                      onChange={(budget) => setBudgetId(budget?.idBudget != null ? String(budget.idBudget) : "")}
+                      aria-label={t("fields.presupuesto")}
+                      data-testid="select-budget-management"
+                    />
+                  </FormField>
+                  <FormField label={t("fields.escribano")} required>
+                    <PersonPicker
+                      value={notaryId ? Number(notaryId) : undefined}
+                      onChange={(person) => setNotaryId(person?.personId != null ? String(person.personId) : "")}
+                      aria-label={t("fields.escribano")}
+                      data-testid="select-notary-management"
+                    />
+                  </FormField>
+                  <FormField label={t("fields.estado")} required>
+                    <Select value={statusId} onValueChange={setStatusId}>
+                      <SelectTrigger data-testid="select-status-management"><SelectValue placeholder={t("selectEstado")} /></SelectTrigger>
+                      <SelectContent>{statuses.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label={t("fields.tipo")} required>
+                    <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
+                      <SelectTrigger data-testid="select-procedure-type-management"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
+                      <SelectContent>{procedureTypes.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label={t("fields.inmueble")}>
+                    <Select value={propertyId} onValueChange={setPropertyId}>
+                      <SelectTrigger data-testid="select-property-management"><SelectValue placeholder={t("selectInmueble")} /></SelectTrigger>
+                      <SelectContent>{properties.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? t("inmuebleFallback", { id: i.idProperty ?? "—" })}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormField>
+                </>
+              )}
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
+                {tc("cancel")}
+              </Button>
+              <Button
+                onClick={handleSave}
+                disabled={createCompleteMutation.isPending || updateMutation.isPending}
+                data-testid="btn-save-management"
+              >
+                {editing ? tc("update") : tc("create")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(v) => !v && setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleteMutation.isPending}
+      />
+
+      <ConfirmDialog
+        open={!!archiveId}
+        onOpenChange={closeArchiveDialog}
+        onConfirm={handleArchive}
+        loading={archiveMutation.isPending}
+        title={archiveConflict ? t("archiveConflictTitle") : t("archiveConfirmTitle")}
+        description={
+          archiveConflict
+            ? archiveConflict
+            : outstandingBalance && (outstandingBalance.pendingBalance ?? 0) > 0
+              ? t("archiveConfirmDescriptionWithDebt", {
+                  monto: fmt.currency(outstandingBalance.pendingBalance ?? 0),
+                })
+              : t("archiveConfirmDescriptionNoDebt")
+        }
+        confirmLabel={archiveConflict ? t("archiveConfirmAnyway") : t("archiveGestion")}
+      />
+
+      <Dialog open={!!transitionId} onOpenChange={closeTransitionDialog}>
+        <DialogContent>
+          <FormContainer>
+            <FormHeader dialogTitle title={t("changeState")} description={t("selectNewStateDescription")} />
+            <FormSection title={t("selectNewState")}>
+              <FormField label={t("selectNewState")} required>
+                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                  <SelectTrigger data-testid="select-new-status">
+                    <SelectValue placeholder={t("selectNewState")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {validDestinations.map((n) => (
+                      <SelectItem key={n.id} value={n.statusManagementName!}>
+                        {n.statusManagementName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormField>
+            </FormSection>
+            <FormActions align="right">
+              <Button variant="secondary" onClick={() => closeTransitionDialog(false)}>
+                {tc("cancel")}
+              </Button>
+              <Button
+                onClick={handleTransition}
+                disabled={!selectedStatus || transitionMutation.isPending}
+                data-testid="btn-confirm-transition"
+              >
+                {t("confirmTransition")}
+              </Button>
+            </FormActions>
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!historyId} onOpenChange={(v) => !v && setHistoryId(null)}>
+        <DialogContent>
+          <FormContainer>
+            <FormHeader dialogTitle title={t("bitacoraTitle")} />
+            {history.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t("bitacoraEmpty")}</p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {history.map((h) => (
+                  <div key={h.idHistory} data-testid="history-item" className="border-b pb-2">
+                    <div className="font-medium">{h.statusManagementName}</div>
+                    <div className="text-xs text-muted-foreground">{fmt.date(h.date)}</div>
+                    {h.notes && <div className="text-sm">{h.notes}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </FormContainer>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={!!foldersManagementId}
+        onOpenChange={(v) => {
+          if (!v) {
+            setFoldersManagementId(null);
+            setWaitFolderId(null);
+            setWaitReason("");
+          }
+        }}
+      >
+        <DialogContent>
+          {waitFolderId ? (
+            <FormContainer>
+              <FormHeader dialogTitle title={t("ponerEnEsperaTitle")} />
+              <FormSection title={t("ponerEnEsperaTitle")}>
+                <FormField label={t("motivoEspera")} required helperText={t("motivoEsperaHelper")}>
+                  <Input
+                    value={waitReason}
+                    onChange={(e) => setWaitReason(e.target.value)}
+                    placeholder={t("motivoEsperaPlaceholder")}
+                    data-testid="input-wait-reason"
+                  />
+                </FormField>
+              </FormSection>
+              <FormActions align="right">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setWaitFolderId(null);
+                    setWaitReason("");
+                  }}
+                >
+                  {tc("cancel")}
+                </Button>
+                <Button
+                  onClick={handlePutOnHold}
+                  disabled={putOnHoldMutation.isPending}
+                  data-testid="btn-confirm-wait"
+                >
+                  {t("confirmEspera")}
+                </Button>
+              </FormActions>
+            </FormContainer>
+          ) : (
+            <FormContainer>
+              <FormHeader title={t("carpetasTitle")} />
+              {folders.length === 0 ? (
+                <p className="text-sm text-muted-foreground">{t("carpetasEmpty")}</p>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {folders.map((c) => (
+                    <div
+                      key={c.idFolder}
+                      data-testid="folder-item"
+                      className="border-b pb-2 flex items-center justify-between"
+                    >
+                      <div>
+                        <div className="font-medium">{t("carpetaNumero", { numero: c.number ?? 0 })}</div>
+                        <div className="text-xs text-muted-foreground">{c.status}</div>
+                        {c.waitReason && <div className="text-sm">{c.waitReason}</div>}
+                      </div>
+                      {c.status === STATUS_FOLDER_ACTIVE && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => setWaitFolderId(c.idFolder!)}
+                          data-testid={`btn-place-on-hold-${c.idFolder}`}
+                        >
+                          {t("ponerEnEspera")}
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </FormContainer>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <ManagementSummaryDialog managementId={resumenCasoId} onClose={() => setResumenCasoId(null)} />
+    </div>
+  );
+}

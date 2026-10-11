@@ -4,8 +4,8 @@
  */
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
-import { fetchPersona, personasKeys, usePersonasPage } from "@/hooks/usePersonas";
-import type { Persona } from "@/types";
+import { fetchPerson, peopleKeys, usePeoplePage } from "@/hooks/usePeople";
+import type { Person } from "@/types";
 
 export type PersonSearchParams = { firstName?: string; lastName?: string; identificationNumber?: string };
 
@@ -27,10 +27,10 @@ export function buildPersonSearchQueries(raw: string): PersonSearchParams[] {
   return [{ firstName: words[0], lastName: words.slice(1).join(" ") }, { lastName: q }];
 }
 
-export async function searchPeople(raw: string): Promise<Persona[]> {
+export async function searchPeople(raw: string): Promise<Person[]> {
   const queries = buildPersonSearchQueries(raw);
   const results = await Promise.all(
-    queries.map((params) => apiGet<Persona[]>(`/people/search?${new URLSearchParams(params).toString()}`)),
+    queries.map((params) => apiGet<Person[]>(`/people/search?${new URLSearchParams(params).toString()}`)),
   );
   const seen = new Set<number>();
   return results.flat().filter((p) => {
@@ -43,7 +43,7 @@ export async function searchPeople(raw: string): Promise<Persona[]> {
 export function usePersonSearch(query: string, enabled: boolean) {
   const q = query.trim();
   return useQuery({
-    queryKey: ["personas", "picker-search", q],
+    queryKey: ["people", "picker-search", q],
     queryFn: () => searchPeople(q),
     enabled: enabled && q.length > 0,
     placeholderData: keepPreviousData,
@@ -51,15 +51,15 @@ export function usePersonSearch(query: string, enabled: boolean) {
 }
 
 /** The newest people, for an empty picker query. */
-export function useRecentPersonas(enabled: boolean) {
-  return usePersonasPage({ page: 0, size: PICKER_RECENT_SIZE }, { enabled });
+export function useRecentPeople(enabled: boolean) {
+  return usePeoplePage({ page: 0, size: PICKER_RECENT_SIZE }, { enabled });
 }
 
 /** One person by id, so an edit form shows its current person whatever page it is on. */
-export function usePersona(id: number | undefined, enabled = true) {
+export function usePerson(id: number | undefined, enabled = true) {
   return useQuery({
-    queryKey: personasKeys.detail(id ?? -1),
-    queryFn: () => fetchPersona(id!),
+    queryKey: peopleKeys.detail(id ?? -1),
+    queryFn: () => fetchPerson(id!),
     enabled: enabled && id != null,
     staleTime: 60_000,
   });

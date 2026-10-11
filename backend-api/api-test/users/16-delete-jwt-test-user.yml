@@ -3,11 +3,11 @@ info:
   type: http
   seq: 16
   description: |-
-      ## Teardown - Delete JWT structure fixture — DELETE /api/v1/usuarios/{jwt_user_id}
+      ## Teardown - Delete JWT structure fixture — DELETE /api/v1/users/{jwt_user_id}
       Traceability: CU21 (RF #43, #47, #82, #83)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/usuarios/{{jwt_user_id}}"
+  url: "{{base_url}}/api/v1/users/{{jwt_user_id}}"
   headers:
     - name: Content-Type
       value: application/json

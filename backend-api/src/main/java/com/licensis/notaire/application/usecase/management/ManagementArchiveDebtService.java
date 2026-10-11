@@ -1,7 +1,7 @@
 package com.licensis.notaire.application.usecase.management;
 
 import com.licensis.notaire.application.port.in.payment.GetPaymentStatusUseCase;
-import com.licensis.notaire.exception.CarpetasEnWaitException;
+import com.licensis.notaire.exception.FoldersInWaitException;
 import com.licensis.notaire.business.ProcedureFolder;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.Budget;
@@ -21,16 +21,16 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * CU16 - Archivar Gestión: calcula el saldo pendiente agregado de una gestión
- * (RF-22) y persiste si quedó archivada con deuda (RF-37). Delega la
- * validación de la transición de estado (y su registro en bitácora) a
- * {@link GestionTransitionService} (CU83, CU13).
+ * CU16 — Archive a management: computes the management's aggregated outstanding
+ * balance (RF-22) and records whether it was archived with debt (RF-37).
+ * Status-transition checks, including the history entry, are delegated to
+ * {@link ManagementTransitionService} (CU83, CU13).
  */
 @Service
 public class ManagementArchiveDebtService {
 
-    private static final String StatusARCHIVADA = "Archivada";
-    private static final String StatusWait = "Espera";
+    private static final String STATUS_ARCHIVED = "Archivada";
+    private static final String STATUS_ON_HOLD = "Espera";
 
     private static final Logger log = LoggerFactory.getLogger(ManagementArchiveDebtService.class);
 
@@ -52,80 +52,79 @@ public class ManagementArchiveDebtService {
     }
 
     /**
-     * Suma el saldo pendiente de cada presupuesto vinculado a los trámites de la gestión.
+     * Sums the outstanding balance of each budget linked to the management's procedures.
      */
     @Transactional(readOnly = true)
     public BigDecimal calculatePendingBalance(Integer idManagement) {
         managementRepository.findById(idManagement)
-                .orElseThrow(() -> new IllegalArgumentException("Gestión no encontrada con ID: " + idManagement));
+                .orElseThrow(() -> new IllegalArgumentException("Management not found with ID: " + idManagement));
 
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
-        Set<Integer> idsBudgetContados = new HashSet<>();
-        BigDecimal saldo = Money.zero();
+        Set<Integer> countedBudgetIds = new HashSet<>();
+        BigDecimal pendingBalance = Money.zero();
         for (Procedure procedure : procedures) {
             Budget budget = procedure.getFkIdBudget();
-            if (budget == null || !idsBudgetContados.add(budget.getIdBudget())) {
+            if (budget == null || !countedBudgetIds.add(budget.getIdBudget())) {
                 continue;
             }
-            saldo = Money.of(saldo.add(paymentStatus.pendingBalance(budget.getIdBudget())));
+            pendingBalance = Money.of(pendingBalance.add(paymentStatus.pendingBalance(budget.getIdBudget())));
         }
 
-        log.debug("Saldo pendiente agregado para gestión {}: {}", idManagement, saldo);
-        return saldo;
+        log.debug("Aggregated outstanding balance for management {}: {}", idManagement, pendingBalance);
+        return pendingBalance;
     }
 
     /**
-     * Resultado de archivar una gestión: la gestión ya archivada junto con el
-     * saldo pendiente agregado calculado en el momento del archivado.
+     * Result of archiving a management: the archived management and the aggregated
+     * outstanding balance calculated at that moment.
      */
     public record ArchiveResult(DeedManagement management, BigDecimal pendingBalance) { }
 
     /**
-     * CU16 - Archiva la gestión sin exigir confirmación de carpetas en espera.
-     * Equivalente a {@code archivar(idGestion, false)}.
+     * CU16 — Archives the management without requiring confirmation of folders in wait.
+     * Equivalent to {@code archiving(idManagement, false)}.
      */
     public ArchiveResult archiving(Integer idManagement) {
         return archiving(idManagement, false);
     }
 
     /**
-     * CU16 - Archiva la gestión, cambia todas sus carpetas de trámite a
-     * "Archivada" (CU85) y registra si quedó con deuda pendiente (RF-22,
-     * RF-37). The archivado no se bloquea por la existencia de deuda: la
-     * advertencia de saldo pendiente se muestra al usuario antes de confirmar
-     * (ver GET /saldo-pendiente), pero la confirmación del archivado siempre
-     * se persiste con o sin deuda. Si alguna carpeta sigue en "Espera" y
-     * {@code confirmado} es falso, se rechaza el archivado con
-     * {@link CarpetasEnEsperaException} (CU85 — Excepción 5.1).
+     * CU16 — Archives the management, moves every procedure folder to the stored
+     * status "Archivada" (CU85), and records whether debt was still outstanding
+     * (RF-22, RF-37). Debt does not block the archive: the outstanding-balance
+     * warning is shown before confirmation (GET /outstanding-balance), and the
+     * archive is stored with or without debt. If a folder is still in the stored
+     * status "Espera" and {@code confirmado} is false, the archive is rejected
+     * with {@link FoldersInWaitException} (CU85 — exception 5.1).
      */
     @Transactional
-    public ArchiveResult archiving(Integer idManagement, boolean confirmado) {
-        List<ProcedureFolder> carpetasEnWait =
-                procedureFolderRepository.findByFkIdManagementIdManagementAndStatus(idManagement, StatusWait);
-        if (!carpetasEnWait.isEmpty() && !confirmado) {
-            throw new CarpetasEnWaitException(
-                    "La gestión tiene carpetas de trámite en espera sin resolver; "
-                            + "confirme explícitamente para archivar de todos modos",
-                    carpetasEnWait);
+    public ArchiveResult archiving(Integer idManagement, boolean confirmed) {
+        List<ProcedureFolder> foldersInWait =
+                procedureFolderRepository.findByFkIdManagementIdManagementAndStatus(idManagement, STATUS_ON_HOLD);
+        if (!foldersInWait.isEmpty() && !confirmed) {
+            throw new FoldersInWaitException(
+                    "The management has procedure folders on hold that are unresolved; "
+                            + "confirm explicitly to archive anyway",
+                    foldersInWait);
         }
 
         BigDecimal pendingBalance = calculatePendingBalance(idManagement);
 
-        DeedManagement management = managementTransitionService.transition(idManagement, StatusARCHIVADA);
+        DeedManagement management = managementTransitionService.transition(idManagement, STATUS_ARCHIVED);
         management.setPendingDebtAtArchiving(
                 pendingBalance != null && pendingBalance.compareTo(BigDecimal.ZERO) > 0);
         DeedManagement archivedManagement = managementRepository.save(management);
 
         archiveFolders(idManagement);
 
-        log.info("Gestión {} archivada con deudaPendienteAlArchivar={}", idManagement,
+        log.info("Management {} archived with pendingDebtAtArchiving={}", idManagement,
                 archivedManagement.getPendingDebtAtArchiving());
         return new ArchiveResult(archivedManagement, pendingBalance);
     }
 
     private void archiveFolders(Integer idManagement) {
-        List<ProcedureFolder> carpetas = procedureFolderRepository.findByFkIdManagementIdManagement(idManagement);
-        carpetas.forEach(folder -> folder.setStatus(StatusARCHIVADA));
-        procedureFolderRepository.saveAll(carpetas);
+        List<ProcedureFolder> folders = procedureFolderRepository.findByFkIdManagementIdManagement(idManagement);
+        folders.forEach(folder -> folder.setStatus(STATUS_ARCHIVED));
+        procedureFolderRepository.saveAll(folders);
     }
 }

@@ -12,15 +12,15 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { SearchCombobox } from "@/components/shared/SearchCombobox";
 import { useDeed, useDeedSearch, useRecentSignedDeeds } from "@/hooks/useDeedSearch";
-import type { Escritura } from "@/types";
+import type { Deed } from "@/types";
 import { useFormat } from "@/hooks/useFormat";
 
 export interface DeedPickerProps {
   /** Selected deed id. */
   value?: number;
-  onChange: (deed: Escritura | undefined) => void;
+  onChange: (deed: Deed | undefined) => void;
   /** Deeds to leave out of the options (the current value still shows). */
-  exclude?: (deed: Escritura) => boolean;
+  exclude?: (deed: Deed) => boolean;
   "aria-label": string;
   placeholder?: string;
   allowClear?: boolean;
@@ -32,8 +32,8 @@ export interface DeedPickerProps {
 export function DeedPicker({ value, onChange, exclude, allowClear = false, ...rest }: DeedPickerProps) {
   const t = useTranslations("deedPicker");
   const fmt = useFormat();
-  const [known, setKnown] = useState<Escritura | undefined>();
-  const label = (d: Escritura) => t("option", { number: d.number ?? d.idDeed ?? "—" });
+  const [known, setKnown] = useState<Deed | undefined>();
+  const label = (d: Deed) => t("option", { number: d.number ?? d.idDeed ?? "—" });
 
   const knownMatches = known?.idDeed === value ? known : undefined;
   const loaded = useDeed(value, value != null && !knownMatches);
@@ -51,7 +51,7 @@ export function DeedPicker({ value, onChange, exclude, allowClear = false, ...re
   }
 
   return (
-    <SearchCombobox<Escritura>
+    <SearchCombobox<Deed>
       {...rest}
       useSource={useSource}
       getKey={(d) => d.idDeed!}

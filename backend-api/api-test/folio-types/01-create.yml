@@ -6,7 +6,7 @@ info:
       Traceability: CU36 (RF #55, #94, #119)
 http:
   method: POST
-  url: "{{base_url}}/api/v1/tipo-folio"
+  url: "{{base_url}}/api/v1/folio-types"
   body:
     type: json
     data: |-

@@ -3,7 +3,7 @@
  *
  * Responsibilities:
  *  1. Authenticate as admin and store auth cookie/localStorage
- *  2. Seed base catalog data via API (tipos de trámite, conceptos, etc.)
+ *  2. Seed base catalog data via API (procedure types, concepts, etc.)
  *  3. Export shared test data as environment variables
  *  4. Verify backend and frontend are reachable
  *
@@ -16,38 +16,38 @@ import { apiPost, apiGet, apiPut, apiDelete } from "./api-helpers";
 interface SeedData {
   testId: number;
   adminAuth: { token: string; user: any } | null;
-  seedPersonaId: number | null;
-  seedPresupuestoId: number | null;
-  seedGestionId: number | null;
-  seedEscrituraId: number | null;
-  seedConceptoId: number | null;
-  seedTipoTramiteId: number | null;
-  seedEstadoGestionId: number | null;
-  seedTipoDocumentoId: number | null;
-  seedUsuarioId: number | null;
+  seedPersonId: number | null;
+  seedBudgetId: number | null;
+  seedManagementId: number | null;
+  seedDeedId: number | null;
+  seedConceptId: number | null;
+  seedProcedureTypeId: number | null;
+  seedManagementStatusId: number | null;
+  seedDocumentTypeId: number | null;
+  seedUserId: number | null;
   seedFolioId: number | null;
-  seedSuplenciaId: number | null;
-  seedPagoId: number | null;
-  seedTestimonioId: number | null;
+  seedSubstitutionId: number | null;
+  seedPaymentId: number | null;
+  seedTestimonyId: number | null;
 }
 
 // Global seed data accessible by tests via process.env
 export const seedData: SeedData = {
   testId: Date.now(),
   adminAuth: null,
-  seedPersonaId: null,
-  seedPresupuestoId: null,
-  seedGestionId: null,
-  seedEscrituraId: null,
-  seedConceptoId: null,
-  seedTipoTramiteId: null,
-  seedEstadoGestionId: null,
-  seedTipoDocumentoId: null,
-  seedUsuarioId: null,
+  seedPersonId: null,
+  seedBudgetId: null,
+  seedManagementId: null,
+  seedDeedId: null,
+  seedConceptId: null,
+  seedProcedureTypeId: null,
+  seedManagementStatusId: null,
+  seedDocumentTypeId: null,
+  seedUserId: null,
   seedFolioId: null,
-  seedSuplenciaId: null,
-  seedPagoId: null,
-  seedTestimonioId: null,
+  seedSubstitutionId: null,
+  seedPaymentId: null,
+  seedTestimonyId: null,
 };
 
 /**
@@ -57,18 +57,18 @@ async function authenticateAdmin(page: Page): Promise<void> {
   await page.goto("/login");
   await page.waitForLoadState("networkidle");
 
-  // Direct API login. Response is a flat map (valido, token, idUsuario, nombre, ...) —
-  // not nested under "usuario" — see UsuarioController#login.
+  // Direct API login. Response is a flat map (valid, token, idUser, name, ...) —
+  // see UserController#login.
   const loginResult = await apiPost<{
-    valido: boolean;
+    valid: boolean;
     token: string;
-    idUsuario: number;
-    nombre: string;
-    tipo: string;
-  }>(page, "/usuarios/login", { name: "admin", password: "admin" });
+    idUser: number;
+    name: string;
+    type: string;
+  }>(page, "/users/login", { name: "admin", password: "admin" });
 
-  if (loginResult.ok && loginResult.data?.valido && loginResult.data.token) {
-    const { token, idUsuario, nombre, tipo } = loginResult.data;
+  if (loginResult.ok && loginResult.data?.valid && loginResult.data.token) {
+    const { token, idUser, name, type } = loginResult.data;
     // HttpOnly JWT cookie for browser proxy auth + UX cookies (#1051 / #1052).
     await page.context().addCookies([
       {
@@ -80,7 +80,7 @@ async function authenticateAdmin(page: Page): Promise<void> {
         sameSite: "Lax",
       },
       { name: "notaire-auth-status", value: "authenticated", domain: "localhost", path: "/" },
-      { name: "notaire-auth-role", value: (tipo ?? "ADMIN").toUpperCase(), domain: "localhost", path: "/" },
+      { name: "notaire-auth-role", value: (type ?? "ADMIN").toUpperCase(), domain: "localhost", path: "/" },
     ]);
     // Persist client profile only — never the JWT in localStorage (#1051).
     // Only hydrate when the UX status cookie is present (same as setup/auth.ts).
@@ -97,17 +97,17 @@ async function authenticateAdmin(page: Page): Promise<void> {
           })
         );
       },
-      [{ nombre, tipo, valido: true, idUsuario }] as const
+      [{ name, type, valid: true, idUser }] as const
     );
-    seedData.adminAuth = { token, user: { idUsuario, nombre, tipo } };
+    seedData.adminAuth = { token, user: { idUser, name, type } };
     // Visible to every worker process spawned after global-setup completes — read by
     // tests/setup/api-helpers.ts so page.request-based seed/cleanup calls authenticate.
     process.env.E2E_ADMIN_TOKEN = token;
   } else {
     // Fallback: UI-based login (Set-Cookie establishes HttpOnly JWT).
-    await page.getByTestId("input-usuario").fill("admin");
-    await page.getByTestId("input-contrasenia").fill("admin");
-    await page.getByTestId("btn-ingresar").click();
+    await page.getByTestId("input-username").fill("admin");
+    await page.getByTestId("input-password").fill("admin");
+    await page.getByTestId("btn-sign-in").click();
     await page.waitForURL(/\/dashboard/, { timeout: 15000 });
 
     const cookies = await page.context().cookies();
@@ -122,42 +122,42 @@ async function authenticateAdmin(page: Page): Promise<void> {
  * Seed catalog data needed by most tests
  */
 async function seedCatalogData(page: Page): Promise<void> {
-  // 1. Create a tipo de trámite — ProcedureTypeController accepts a DtoProcedureType
+  // 1. Create a procedure type — ProcedureTypeController accepts a DtoProcedureType
   // (name, notes, isArchived, isRegistered, associatesProperties).
   const ttResult = await apiPost<{ idProcedureType: number; name: string }>(
     page,
-    "/tipo-tramite",
+    "/procedure-types",
     {
-      name: `Test Tramite ${seedData.testId}`,
+      name: `Test Procedure ${seedData.testId}`,
       notes: "Seeded by global-setup for E2E tests",
       isArchived: false,
       isRegistered: false,
     }
   );
   if (ttResult.ok && ttResult.data?.idProcedureType) {
-    seedData.seedTipoTramiteId = ttResult.data.idProcedureType;
+    seedData.seedProcedureTypeId = ttResult.data.idProcedureType;
   }
 
-  // 2. Create a concepto — ConceptController accepts a DtoConcept (name, value, percentage).
+  // 2. Create a concept — ConceptController accepts a DtoConcept (name, value, percentage).
   const concResult = await apiPost<{ idConcept: number; name: string }>(
     page,
-    "/conceptos",
+    "/concepts",
     {
-      name: `Test Concepto ${seedData.testId}`,
+      name: `Test Concept ${seedData.testId}`,
       value: 1000.0,
     }
   );
   if (concResult.ok && concResult.data?.idConcept) {
-    seedData.seedConceptoId = concResult.data.idConcept;
+    seedData.seedConceptId = concResult.data.idConcept;
   }
 
-  // 3. Create a persona (client) — PersonController accepts the raw Person entity.
+  // 3. Create a person (client) — PersonController accepts the raw Person entity.
   const persResult = await apiPost<{ personId: number; firstName: string; lastName: string }>(
     page,
     "/people",
     {
       firstName: "Seed",
-      lastName: `Persona-${seedData.testId}`,
+      lastName: `Person-${seedData.testId}`,
       identificationNumber: `SEED${seedData.testId}`,
       email: `seed-${seedData.testId}@notaire.test`,
       isClient: true,
@@ -169,32 +169,32 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   );
   if (persResult.ok && persResult.data?.personId) {
-    seedData.seedPersonaId = persResult.data.personId;
+    seedData.seedPersonId = persResult.data.personId;
   }
 
-  // 4. Create a presupuesto (if we have a persona) — BudgetController accepts the raw
-  // Budget entity (encabezado, status, notes, person).
-  if (seedData.seedPersonaId && seedData.seedConceptoId) {
-    const presResult = await apiPost<{ idBudget: number }>(
+  // 4. Create a budget (if we have a person) — BudgetController accepts the raw
+  // Budget entity (heading, status, notes, person).
+  if (seedData.seedPersonId && seedData.seedConceptId) {
+    const budgetResult = await apiPost<{ idBudget: number }>(
       page,
-      "/presupuestos",
+      "/budgets",
       {
-        person: { personId: seedData.seedPersonaId },
+        person: { personId: seedData.seedPersonId },
         date: "2026-05-27",
-        encabezado: "Presupuesto E2E Seed",
+        heading: "Budget E2E Seed",
         status: "PENDIENTE",
-        notes: `Presupuesto semilla ${seedData.testId}`,
+        notes: `Seed budget ${seedData.testId}`,
       }
     );
-    if (presResult.ok && presResult.data?.idBudget) {
-      seedData.seedPresupuestoId = presResult.data.idBudget;
+    if (budgetResult.ok && budgetResult.data?.idBudget) {
+      seedData.seedBudgetId = budgetResult.data.idBudget;
     }
   }
 
-  // 5. Create a usuario — UserController's UserRequest is (name, password, type, active).
+  // 5. Create a user — UserController's UserRequest is (name, password, type, active).
   const usrResult = await apiPost<{ idUser: number }>(
     page,
-    "/usuarios",
+    "/users",
     {
       name: `testuser-${seedData.testId}`,
       password: "Test1234!",
@@ -203,38 +203,38 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   );
   if (usrResult.ok && usrResult.data?.idUser) {
-    seedData.seedUsuarioId = usrResult.data.idUser;
+    seedData.seedUserId = usrResult.data.idUser;
   }
 
   // 6. Create a folio — FolioController's FolioRequest is (number, year, status, notes,
   // typeFolioId, notaryId, deedId).
   const folioResult = await apiPost<{ idFolio: number }>(
     page,
-    "/folio",
+    "/folios",
     {
       number: Math.floor(10000 + Math.random() * 90000),
       year: 2026,
       status: "Nuevo",
       typeFolioId: 1,
-      notaryId: seedData.seedPersonaId || 1,
+      notaryId: seedData.seedPersonId || 1,
     }
   );
   if (folioResult.ok && folioResult.data?.idFolio) {
     seedData.seedFolioId = folioResult.data.idFolio;
   }
 
-  // 7. Create an estado de gestión — ManagementStatusController accepts a
+  // 7. Create a management status — ManagementStatusController accepts a
   // DtoManagementStatus (name, notes).
-  const egResult = await apiPost<{ idManagementStatus: number }>(
+  const statusResult = await apiPost<{ idManagementStatus: number }>(
     page,
-    "/estado-gestion",
+    "/management-statuses",
     {
-      name: `Seed Estado ${seedData.testId}`,
+      name: `Seed status ${seedData.testId}`,
       notes: "Seeded by global-setup",
     }
   );
-  if (egResult.ok && egResult.data?.idManagementStatus) {
-    seedData.seedEstadoGestionId = egResult.data.idManagementStatus;
+  if (statusResult.ok && statusResult.data?.idManagementStatus) {
+    seedData.seedManagementStatusId = statusResult.data.idManagementStatus;
   }
 }
 
@@ -265,24 +265,24 @@ async function globalSetup(): Promise<void> {
     console.log("[global-setup] Seeding test data...");
     await seedCatalogData(page);
     console.log("[global-setup] Seed complete:", {
-      personaId: seedData.seedPersonaId,
-      presupuestoId: seedData.seedPresupuestoId,
-      conceptoId: seedData.seedConceptoId,
-      tipoTramiteId: seedData.seedTipoTramiteId,
-      usuarioId: seedData.seedUsuarioId,
+      personId: seedData.seedPersonId,
+      budgetId: seedData.seedBudgetId,
+      conceptId: seedData.seedConceptId,
+      procedureTypeId: seedData.seedProcedureTypeId,
+      userId: seedData.seedUserId,
       folioId: seedData.seedFolioId,
-      estadoGestionId: seedData.seedEstadoGestionId,
+      managementStatusId: seedData.seedManagementStatusId,
     });
 
     // Step 3: Export seed data to environment for test specs
     process.env.E2E_TEST_ID = String(seedData.testId);
-    process.env.E2E_SEED_PERSONA_ID = String(seedData.seedPersonaId ?? "");
-    process.env.E2E_SEED_PRESUPUESTO_ID = String(seedData.seedPresupuestoId ?? "");
-    process.env.E2E_SEED_CONCEPTO_ID = String(seedData.seedConceptoId ?? "");
-    process.env.E2E_SEED_TIPO_TRAMITE_ID = String(seedData.seedTipoTramiteId ?? "");
-    process.env.E2E_SEED_USUARIO_ID = String(seedData.seedUsuarioId ?? "");
+    process.env.E2E_SEED_PERSON_ID = String(seedData.seedPersonId ?? "");
+    process.env.E2E_SEED_BUDGET_ID = String(seedData.seedBudgetId ?? "");
+    process.env.E2E_SEED_CONCEPT_ID = String(seedData.seedConceptId ?? "");
+    process.env.E2E_SEED_PROCEDURE_TYPE_ID = String(seedData.seedProcedureTypeId ?? "");
+    process.env.E2E_SEED_USER_ID = String(seedData.seedUserId ?? "");
     process.env.E2E_SEED_FOLIO_ID = String(seedData.seedFolioId ?? "");
-    process.env.E2E_SEED_ESTADO_GESTION_ID = String(seedData.seedEstadoGestionId ?? "");
+    process.env.E2E_SEED_MANAGEMENT_STATUS_ID = String(seedData.seedManagementStatusId ?? "");
 
     // Persist JWT for workers — process.env set here is not inherited by test
     // workers, and mid-suite login 429 (lockout) must not strand later specs.

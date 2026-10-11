@@ -3,11 +3,11 @@ info:
   type: http
   seq: 9
   description: |-
-      ## Teardown - Delete concept — DELETE /api/v1/conceptos/{template_concept_id}
+      ## Teardown - Delete concept — DELETE /api/v1/concepts/{template_concept_id}
       Traceability: CU37 (RF #55, #60)
 http:
   method: DELETE
-  url: "{{base_url}}/api/v1/conceptos/{{template_concept_id}}"
+  url: "{{base_url}}/api/v1/concepts/{{template_concept_id}}"
   headers:
     - name: Content-Type
       value: application/json

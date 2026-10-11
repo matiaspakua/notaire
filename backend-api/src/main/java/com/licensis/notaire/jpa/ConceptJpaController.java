@@ -4,11 +4,11 @@
  */
 package com.licensis.notaire.jpa;
 
-import com.licensis.notaire.jpa.exceptions.ClassEliminatedException;
+import com.licensis.notaire.jpa.exceptions.ClassDeletedException;
 import com.licensis.notaire.jpa.exceptions.ClassModifiedException;
 import com.licensis.notaire.jpa.exceptions.IllegalOrphanException;
 import com.licensis.notaire.jpa.exceptions.NonexistentEntityException;
-import com.licensis.notaire.jpa.interfaz.IPersistenciaJpa;
+import com.licensis.notaire.jpa.JpaPersistence;
 import com.licensis.notaire.business.Concept;
 import com.licensis.notaire.business.BudgetTemplate;
 import java.io.Serializable;
@@ -24,10 +24,10 @@ import jakarta.transaction.UserTransaction;
  *
  * @author User
  */
-public class ConceptJpaController implements Serializable, IPersistenciaJpa
+public class ConceptJpaController implements Serializable, JpaPersistence
 {
 
-    private static ConceptJpaController instancia = null;
+    private static ConceptJpaController instance = null;
     private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
@@ -92,11 +92,11 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
         return oid;
     }
 
-    public Boolean edit(Concept concept) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
+    public Boolean edit(Concept concept) throws ClassDeletedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
     {
-        Boolean resultado = Boolean.FALSE;
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
+        Boolean result = Boolean.FALSE;
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
         EntityManager em = null;
 
         em = getEntityManager();
@@ -106,10 +106,10 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
 
         if (persistentConcept != null)
         {
-            version = persistentConcept.getVersion(); // Version del Objeto en db
-            oldVersion = concept.getVersion(); // Version del Objeto en memoria
+            version = persistentConcept.getVersion(); // Version of the object in the database
+            oldVersion = concept.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {
@@ -131,7 +131,7 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
                         {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain PlantillaPresupuesto " + budgetTemplateListOldBudgetTemplate + " since its concepto field is not nullable.");
+                        illegalOrphanMessages.add("You must retain BudgetTemplate " + budgetTemplateListOldBudgetTemplate + " since its concept field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null)
@@ -163,7 +163,7 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
                 }
 
                 em.getTransaction().commit();
-                resultado = Boolean.TRUE;
+                result = Boolean.TRUE;
 
                 if (em != null)
                 {
@@ -172,15 +172,15 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
             }
         } else
         {
-            throw new ClassEliminatedException();
+            throw new ClassDeletedException();
         }
 
-        return resultado;
+        return result;
     }
 
-    public Boolean destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException, ClassEliminatedException
+    public Boolean destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException, ClassDeletedException
     {
-        Boolean resultado = Boolean.FALSE;
+        Boolean result = Boolean.FALSE;
 
         EntityManager em = null;
         try
@@ -204,7 +204,7 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This Concepto (" + concept + ") cannot be destroyed since the PlantillaPresupuesto " + budgetTemplateListOrphanCheckBudgetTemplate + " in its plantillaPresupuestoList field has a non-nullable concepto field.");
+                    illegalOrphanMessages.add("This Concept (" + concept + ") cannot be destroyed since the BudgetTemplate " + budgetTemplateListOrphanCheckBudgetTemplate + " in its budgetTemplateList field has a non-nullable concept field.");
                 }
                 if (illegalOrphanMessages != null)
                 {
@@ -213,15 +213,15 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
 
                 em.remove(concept);
                 em.getTransaction().commit();
-                resultado = Boolean.TRUE;
+                result = Boolean.TRUE;
             } else
             {
-                throw new ClassEliminatedException();
+                throw new ClassDeletedException();
             }
         }
         catch (EntityNotFoundException enfe)
         {
-            throw new NonexistentEntityException("The concepto with id " + id + " no longer exists.", enfe);
+            throw new NonexistentEntityException("The concept with id " + id + " no longer exists.", enfe);
         }
         finally
         {
@@ -230,7 +230,7 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
                 em.close();
             }
         }
-        return resultado;
+        return result;
     }
 
     public List<Concept> findConceptEntities()
@@ -266,14 +266,14 @@ public class ConceptJpaController implements Serializable, IPersistenciaJpa
     {
 
         EntityManager em = getEntityManager();
-        List<Concept> listaConcept = new ArrayList<>();
+        List<Concept> concepts = new ArrayList<>();
 
         Query query = em.createNamedQuery("Concept.findByName");
         query.setParameter("name", nameConcept);
 
-        listaConcept = query.getResultList();
+        concepts = query.getResultList();
 
-        return listaConcept;
+        return concepts;
     }
 
     public Concept findConcept(Integer id)
