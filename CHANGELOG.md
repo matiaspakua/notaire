@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English documentation index and backend README** (#1490, CU75):
+  `docs/README.md` and `backend-api/README.md` name the lifecycle, the method,
+  and the REST service in English. Filenames `CICLO-DE-VIDA.md` and
+  `INGENIERIA.md` stay. The constitution step `Actualizar documentación permanente` stays.
 - **English postgres business metrics** (#1490, CU75):
   The exporter queries count `deeds`, `budgets`, `users`, and `people`.
   The postgres dashboard reads `deeds_total`, `budgets_total`, `users_total`,
