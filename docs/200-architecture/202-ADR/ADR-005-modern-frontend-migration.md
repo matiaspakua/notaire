@@ -1,4 +1,4 @@
-# ADR-005: Migración de Frontend Java Swing a Next.js
+# ADR-005: Frontend migration from Java Swing to Next.js
 
 **Status:** Accepted (Swing directory deleted under #1046)
 **Date:** 2026-04-13
@@ -8,69 +8,70 @@
 
 ## Context
 
-El módulo `frontend-swing` fue creado como paso intermedio en la migración del monolito:
-fue refactorizado para usar el backend REST en lugar de acceso directo a la base de datos,
-pero seguía siendo una aplicación Java Swing de escritorio.
+The `frontend-swing` module was an intermediate step in the monolith migration:
+it was refactored to call the REST backend instead of the database directly,
+but it was still a desktop Java Swing application.
 
-> **Estado actual:** la migración a Next.js está implementada en el directorio `frontend/`
-> (no `frontend-nextjs/` como se planteaba originalmente en este ADR). El módulo Swing fue
-> primero renombrado a `deprecated-frontend-swing/` y excluido del reactor Maven raíz, y
-> luego **eliminado del árbol** en issue #1046 (Dependabot log4j noise). La historia queda
-> en git; no recrear el cliente Swing.
+> **Current state:** the Next.js migration is implemented in `frontend/`
+> (not `frontend-nextjs/`, which this ADR originally proposed). The Swing module
+> was first renamed to `deprecated-frontend-swing/` and excluded from the root
+> Maven reactor, then **removed from the tree** in issue #1046 (Dependabot log4j
+> noise). History remains in git; do not recreate the Swing client.
 
-### Problemas actuales con Java Swing
+### Problems with Java Swing
 
-- **Tecnología deprecated:** Java Swing no recibe mejoras activas desde Java 8. Oracle no lo desarrolla activamente para uso moderno.
-- **Sin soporte web/móvil:** Aplicación de escritorio solamente, sin acceso desde navegador.
-- **UX desactualizada:** Look and feel limitado, sin componentes modernos (tablas reactivas, gráficas, dashboards).
-- **Testing difícil:** Swing requiere herramientas especializadas (AssertJ-Swing, UISpec4J) que son complejas y frágiles.
-- **Distribución compleja:** Requiere JRE instalado en cada cliente, updates manuales.
-- **Integración con herramientas modernas:** No se integra fácilmente con DevTools, CI/CD de frontend, ni ecosistema npm.
+- **Deprecated technology:** Java Swing has had no active improvements since Java 8. Oracle does not develop it for modern use.
+- **No web or mobile support:** Desktop only, with no browser access.
+- **Outdated UX:** Limited look and feel, without modern components (reactive tables, charts, dashboards).
+- **Difficult testing:** Swing needs specialized tools (AssertJ-Swing, UISpec4J) that are complex and brittle.
+- **Complex distribution:** Each client needs a JRE, and updates are manual.
+- **Poor fit with modern tooling:** Hard to integrate with DevTools, frontend CI/CD, or the npm ecosystem.
 
-### Opciones Evaluadas
+### Options considered
 
-| Opción | Pros | Contras |
-|--------|------|---------|
-| Mantener Swing | Sin migración | Todos los problemas arriba |
-| JavaFX | Mismo ecosistema Java | Igualmente deprecated, poca adopción |
-| Electron | Familiar para Java devs | Bundle muy pesado, no web-native |
-| Angular | Robusto, tipado | Más verboso, curva de aprendizaje |
-| **Next.js (React)** | Ecosystem enorme, SSR, TypeScript, testing moderno | Requiere aprender JS/TS |
-| Vue.js / Nuxt | Simple, progresivo | Menor ecosystem que React |
+| Option | Pros | Cons |
+|--------|------|------|
+| Keep Swing | No migration | Every problem listed above |
+| JavaFX | Same Java ecosystem | Also deprecated, little adoption |
+| Electron | Familiar to Java developers | Very heavy bundle, not web-native |
+| Angular | Robust, typed | More verbose, steeper learning curve |
+| **Next.js (React)** | Large ecosystem, SSR, TypeScript, modern testing | Requires learning JS/TS |
+| Vue.js / Nuxt | Simple, progressive | Smaller ecosystem than React |
 
-### Criterios de Decisión
+### Decision criteria
 
-1. Soporte TypeScript nativo (type safety comparable a Java)
-2. Testing moderno (unit + E2E automatizado)
-3. Rendimiento y SEO (server-side rendering)
-4. Ecosistema de componentes UI maduros
-5. Facilidad de integración con REST API
-6. Deployable como contenedor
+1. Native TypeScript support (type safety comparable to Java)
+2. Modern testing (unit + automated E2E)
+3. Performance and SEO (server-side rendering)
+4. Mature UI component ecosystem
+5. Easy integration with the REST API
+6. Deployable as a container
 
 ## Decision
 
-**Migrar el frontend a Next.js 15 con TypeScript** como tecnología base, complementado por:
+**Migrate the frontend to Next.js 15 with TypeScript** as the base technology, plus:
 
-> Actualización 2026-10: el frontend corre hoy sobre Next.js 16 / React 19; la decisión (Next.js + TypeScript) no cambia.
+> Update 2026-10: the frontend now runs on Next.js 16 / React 19. The decision (Next.js + TypeScript) does not change.
 
-- **Tailwind CSS** para estilos utilitarios
-- **shadcn/ui** para componentes accesibles y customizables
-- **React Query (TanStack Query)** para manejo de estado servidor y cache de API
-- **Zustand** para estado cliente (auth, UI state)
-- **Vitest + Testing Library** para tests unitarios de componentes
-- **Playwright** para tests E2E automatizados
+- **Tailwind CSS** for utility styles
+- **shadcn/ui** for accessible, customizable components
+- **React Query (TanStack Query)** for server state and API cache
+- **Zustand** for client state (auth, UI state)
+- **Vitest + Testing Library** for component unit tests
+- **Playwright** for automated E2E tests
 
-### Arquitectura del Nuevo Frontend
+### New frontend architecture
 
-> El árbol siguiente refleja el diseño original de este ADR. La estructura real
-> implementada vive en `frontend/` (no `frontend-nextjs/`) bajo un directorio `src/`, con
-> algunas carpetas renombradas — ver estructura actual más abajo.
+> The tree below is this ADR's original design. The implemented structure lives
+> in `frontend/` (not `frontend-nextjs/`) under `src/`, with some folders renamed.
+> See the current structure further down. The Spanish segments in the original
+> tree are the routes this ADR planned; they were not shipped.
 
 ```text
 frontend-nextjs/
 ├── app/                    # Next.js App Router
-│   ├── (auth)/             # Páginas públicas (login)
-│   ├── (dashboard)/        # Páginas protegidas
+│   ├── (auth)/             # Public pages (login)
+│   ├── (dashboard)/        # Protected pages
 │   │   ├── gestiones/      # CU01-CU16 (core workflow)
 │   │   ├── clientes/       # CU17-CU19, CU41, CU46
 │   │   ├── escrituras/     # CU52, CU62
@@ -81,44 +82,49 @@ frontend-nextjs/
 │   └── api/                # Route handlers (BFF pattern)
 ├── components/
 │   ├── ui/                 # shadcn/ui components
-│   ├── forms/              # Form components por dominio
-│   ├── tables/             # Data tables con paginación
+│   ├── forms/              # Form components by domain
+│   ├── tables/             # Data tables with pagination
 │   └── layout/             # Navigation, sidebar, header
 ├── lib/
-│   ├── api-client.ts       # HTTP client (tipo-safe, basado en fetch)
+│   ├── api-client.ts       # HTTP client (type-safe, fetch-based)
 │   ├── auth.ts             # JWT management
 │   └── utils.ts            # Helpers
 ├── hooks/                  # Custom React hooks
 ├── stores/                 # Zustand stores
-├── types/                  # TypeScript types (mirrors DTOs del backend)
+├── types/                  # TypeScript types (mirrors backend DTOs)
 ├── tests/
 │   ├── unit/               # Vitest tests
 │   └── e2e/                # Playwright tests
 └── public/                 # Static assets
 ```
 
-**Estructura actual (`frontend/`):**
+**Current structure (`frontend/`):**
 
 ```text
 frontend/
 ├── src/
-│   ├── app/                # Next.js App Router (dashboard/, login/, auditoria/)
+│   ├── app/                # Next.js App Router (dashboard/, login/, audit/ redirect stub)
 │   ├── components/         # ui/, layout/, motion/, shared/
-│   ├── hooks/               # Custom React hooks
-│   ├── lib/                 # api-client, utils
-│   ├── store/                # Zustand stores (auth-store, etc.)
-│   ├── theme/                 # Design tokens + form patterns (tokens.ts, form-patterns.tsx)
-│   ├── i18n/                  # Internationalization
-│   ├── types/                 # TypeScript types (mirrors backend DTOs)
-│   └── tests/                 # Vitest unit/component tests
-└── public/                  # Static assets
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/                # api-client, utils
+│   ├── store/              # Zustand stores (auth-store, and others)
+│   ├── theme/              # Design tokens + form patterns (tokens.ts, form-patterns.tsx)
+│   ├── i18n/               # Internationalization
+│   ├── types/              # TypeScript types (mirrors backend DTOs)
+│   └── tests/              # Vitest unit/component tests
+└── public/                 # Static assets
 ```
 
-### Estrategia de Migración (Backend For Frontend)
+Dashboard routes are English (`managements/`, `people/`, `deeds/`, `budgets/`,
+`protocol/`, `administration/`). Message keys such as `suplencias` and
+`reportes` stay Spanish. Redirect-only stubs (`/`, `/audit`,
+`administracion/items`, `administracion/audit`) stay.
 
-El backend REST existente (`/api/v1`) se expone directamente al nuevo frontend.
-Para casos donde se necesite composición de múltiples APIs o transformaciones específicas,
-se usarán Next.js Route Handlers como BFF (Backend For Frontend) liviano.
+### Migration strategy (Backend for Frontend)
+
+The existing REST backend (`/api/v1`) is exposed directly to the new frontend.
+Where several APIs must be composed, or a response needs a frontend-specific
+shape, Next.js Route Handlers act as a light BFF (Backend for Frontend).
 
 ```text
 Browser → Next.js (SSR/CSR) → Spring Boot REST API → PostgreSQL
@@ -131,71 +137,71 @@ Browser → Next.js (SSR/CSR) → Spring Boot REST API → PostgreSQL
 
 ## Consequences
 
-### Positivo
+### Positive
 
-- **Testing completo:** Vitest (unit) + Playwright (E2E) cubren todos los 68 CUs
-- **UX moderna:** Componentes accesibles, responsive, dark mode
-- **Type safety:** TypeScript en frontend + Java en backend = sistema end-to-end tipado
-- **Deploy:** Docker container deployable en Kubernetes igual que el backend
-- **Developer experience:** Hot reload, DevTools, ecosistema npm
-- **CI/CD:** Integración nativa con GitHub Actions para lint, tests, build
+- **Full testing:** Vitest (unit) + Playwright (E2E) cover all 68 use cases
+- **Modern UX:** Accessible, responsive components, with dark mode
+- **Type safety:** TypeScript on the frontend and Java on the backend
+- **Deploy:** A Docker container, deployable on Kubernetes the same way as the backend
+- **Developer experience:** Hot reload, DevTools, and the npm ecosystem
+- **CI/CD:** Native GitHub Actions integration for lint, tests, and build
 
-### Negativo
+### Negative
 
-- **Curva de aprendizaje:** Equipo Java necesita aprender React/TypeScript
-- **Dos stacks:** Java (backend) + TypeScript (frontend) en el mismo repo
-- **Migración costosa:** Los 68 CUs necesitan reimplementarse
-- **Duplicación de tipos:** DTOs en Java y types en TypeScript (mitigado con OpenAPI codegen)
+- **Learning curve:** The Java team needs to learn React/TypeScript
+- **Two stacks:** Java (backend) and TypeScript (frontend) in the same repo
+- **Costly migration:** All 68 use cases need to be reimplemented
+- **Duplicated types:** Java DTOs and TypeScript types (mitigated by OpenAPI codegen)
 
-### Mitigaciones
+### Mitigations
 
-- Usar `openapi-typescript` para generar types automáticamente desde la spec de Swagger
-- Migración incremental: un módulo de CUs por sprint
-- El módulo Swing fue retirado del árbol (#1046); el cliente activo es solo `frontend/`
+- Use `openapi-typescript` to generate types from the OpenAPI spec
+- Incremental migration: one use-case module at a time
+- The Swing module was removed from the tree (#1046); the active client is only `frontend/`
 
-## Implementation Plan
+## Implementation plan
 
-> **Nota de estado:** este plan de sprints refleja la intención original del ADR. La
-> migración está sustancialmente implementada en `frontend/` (Next.js 16, no un módulo
-> Maven — ver [Solution Strategy](../201-SAD/sad.md)). Para el estado real de cobertura
-> por Caso de Uso, ver la matriz de trazabilidad
-> [`CU-API-MATRIX.csv`](../../300-development/303-testing/CU-API-MATRIX.csv) en vez de
-> los checkboxes por sprint a continuación, que no se han mantenido actualizados.
+> **Status note:** this sprint plan is the ADR's original intent. The migration
+> is substantially implemented in `frontend/` (Next.js 16, not a Maven module —
+> see [Solution Strategy](../201-SAD/sad.md)). For real coverage by use case, use
+> the traceability matrix
+> [`CU-API-MATRIX.csv`](../../300-development/303-testing/CU-API-MATRIX.csv)
+> instead of the sprint checkboxes below, which were not kept up to date.
 
-### Sprint 1: Setup Base
+### Sprint 1: Base setup
 
-- [ ] Crear módulo `frontend-nextjs` en el mono-repo Maven
-- [ ] Setup Next.js 15 + TypeScript + Tailwind + shadcn/ui
-- [ ] Implementar autenticación JWT con Spring Security
-- [ ] Crear layout base: sidebar con todos los módulos
+- [ ] Create the `frontend-nextjs` module in the Maven monorepo
+- [ ] Set up Next.js 15 + TypeScript + Tailwind + shadcn/ui
+- [ ] Implement JWT authentication with Spring Security
+- [ ] Create the base layout: a sidebar with every module
 
-### Sprint 2-3: Core Workflow
+### Sprint 2-3: Core workflow
 
-- [ ] Migrar CU01-CU16: Gestiones (workflow principal del negocio)
-- [ ] Tests Playwright para el flujo completo gestión → escritura → pago
+- [ ] Migrate CU01-CU16: managements (the core business workflow)
+- [ ] Playwright tests for the full management → deed → payment flow
 
-### Sprint 4-5: Clientes & Personas
+### Sprint 4-5: Clients and people
 
-- [ ] Migrar CU17-CU19, CU41, CU46, CU54, CU61
+- [ ] Migrate CU17-CU19, CU41, CU46, CU54, CU61
 
-### Sprint 6-7: Administración
+### Sprint 6-7: Administration
 
-- [ ] Migrar CU20-CU23, CU26-CU38, CU48, CU51
+- [ ] Migrate CU20-CU23, CU26-CU38, CU48, CU51
 
-### Sprint 8: Presupuestos & Escrituras
+### Sprint 8: Budgets and deeds
 
-- [ ] Migrar CU39, CU45, CU49, CU52, CU55, CU60, CU62
+- [ ] Migrate CU39, CU45, CU49, CU52, CU55, CU60, CU62
 
-### Sprint 9: Reportes & Protocolos
+### Sprint 9: Reports and protocol
 
-- [ ] Migrar CU24, CU25, CU50 (PDF via JasperReports API)
-- [ ] Migrar CU28, CU33, CU36, CU40, CU63-CU68
+- [ ] Migrate CU24, CU25, CU50 (PDF via the JasperReports API)
+- [ ] Migrate CU28, CU33, CU36, CU40, CU63-CU68
 
-### Sprint 10: E2E & Deprecation
+### Sprint 10: E2E and deprecation
 
-- [x] Playwright E2E para todos los flujos (`testing/e2e/tests/`, 33+ `cuNN-*.spec.ts`)
-- [x] Deprecar y eliminar `frontend-swing` / `deprecated-frontend-swing` del árbol
-      (excluido del reactor; borrado completo en #1046 — historial en git)
+- [x] Playwright E2E for every flow (`testing/e2e/tests/`, 33+ `cuNN-*.spec.ts`)
+- [x] Deprecate and remove `frontend-swing` / `deprecated-frontend-swing` from the tree
+      (excluded from the reactor; full delete in #1046 — history remains in git)
 
 ## References
 

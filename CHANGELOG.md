@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English frontend-migration decision** (#1490, CU75):
+  ADR-005 is English. The original planned routes (`gestiones`, `clientes`,
+  `escrituras`, `presupuestos`, `protocolos`, `administracion`, `reportes`) stay
+  as that design. Shipped dashboard routes are English. Message keys such as
+  `suplencias` and `reportes` stay.
 - **English development and testing indexes** (#1490, CU75):
   The development index and the testing inventory are English. Commands, suite
   counts, and the coverage exclusion `service.Administrador*` stay.
