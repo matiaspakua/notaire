@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English screen test ids** (#1490, CU75):
+  Playwright uses the live ids `btn-new-management`, `btn-new-budget`,
+  `select-budget-management`, `btn-confirm-transition`, and
+  `btn-place-on-hold`. Default-locale labels such as `Gestiones`,
+  `Presupuestos`, and `Nueva gestión` stay.
 - **English API collection filenames** (#1490, CU75):
   Bruno report requests use English filenames such as `01-index-book.yml`,
   `06-budget.yml`, and `10-management-history.yml`. The case summary
