@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **September 2026 audit index citation** (#1490, CU75): the #1065 row
+  names the unused `POST /pagos/params` path recorded on baseline `5a8fa14`.
+  The column `State (at audit)` stays. The later notes on #1040 and #1042 stay.
 - **October 2026 assessment citations** (#1490, CU75): the baseline
   measurements name `pagos/fecha`, `presupuestos/persona`,
   `historial/gestion`, `reportes/documentos-por-vencer`, `usuarios/persona`,
