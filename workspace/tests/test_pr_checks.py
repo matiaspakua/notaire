@@ -230,6 +230,57 @@ class AgentRulesTest(unittest.TestCase):
         self.assertEqual(run("check-agent-rules.sh", self.root, cwd=self.root).returncode, 0)
 
 
+TRACEABILITY = """# Traceability
+
+## Permanent documentation updated
+
+| Document | Updated | Commit |
+|----------|---------|--------|
+| `docs/200-architecture/203-design/GESTION.md` | yes | this PR |
+| `docs/README.md` | no | — |
+
+## Gate log
+"""
+
+
+def run_doc(base, cwd):
+    return subprocess.run(
+        ["python3", os.path.join(SCRIPTS, "check-doc-traceability.py"), base],
+        cwd=cwd, capture_output=True, text=True,
+    )
+
+
+class DocTraceabilityTest(unittest.TestCase):
+    def test_rejects_a_claimed_document_missing_from_the_diff(self):
+        repo, base = new_repo()
+        path = "docs/openspec/changes/docs-case/traceability.md"
+        full = os.path.join(repo, path)
+        os.makedirs(os.path.dirname(full))
+        with open(full, "w") as handle:
+            handle.write(TRACEABILITY)
+        commit(repo, "docs(openspec): plan", path)
+        result = run_doc(base, repo)
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("GESTION.md", result.stdout)
+
+    def test_accepts_when_every_claimed_document_is_in_the_diff(self):
+        repo, base = new_repo()
+        trace = "docs/openspec/changes/docs-case/traceability.md"
+        doc = "docs/200-architecture/203-design/GESTION.md"
+        for path, body in ((trace, TRACEABILITY), (doc, "# Gestión\n")):
+            full = os.path.join(repo, path)
+            os.makedirs(os.path.dirname(full), exist_ok=True)
+            with open(full, "w") as handle:
+                handle.write(body)
+        commit(repo, "docs: case analysis", trace, doc)
+        self.assertEqual(run_doc(base, repo).returncode, 0)
+
+    def test_ignores_a_diff_with_no_traceability_file(self):
+        repo, base = new_repo()
+        commit(repo, "docs: readme", "docs/README.md")
+        self.assertEqual(run_doc(base, repo).returncode, 0)
+
+
 class SchemaLineTest(unittest.TestCase):
     def test_validator_fails_change_without_schema_line(self):
         root = tempfile.mkdtemp(prefix="schema-")

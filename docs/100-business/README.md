@@ -11,6 +11,7 @@ especificación técnica posterior (OpenSpec, arquitectura, implementación).
 | [`102-use-cases/`](102-use-cases/) | Catálogo de casos de uso de negocio (`CUxx`), uno por documento |
 | [`103-actors/`](103-actors/) | Actores del sistema y su jerarquía |
 | [`104-traceability/`](104-traceability/) | Matriz de trazabilidad Requerimientos ↔ Casos de Uso |
+| [`EVALUACION-DOCUMENTACION.md`](EVALUACION-DOCUMENTACION.md) | Corte de coherencia: requisitos, actividad de la gestión, huecos por proceso |
 | [`105-manuals/`](105-manuals/) | Manuales de instalación, sistema y usuario (PDF de usuario vía Release — ver [README](105-manuals/README.md) / ADR-022) |
 
 ## Flujo de trazabilidad
@@ -21,6 +22,8 @@ Requerimientos (SRS) → Casos de Uso (CUxx) → Ciclo de vida → Issues GitHub
 
 El modelo de estados (gestión, pago, documentación, escritura, testimonio) vive
 una sola vez en [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md).
+El recorrido del trámite, paso a paso, está en
+[GESTION.md](../200-architecture/203-design/GESTION.md).
 Las fichas de caso de uso no copian el grafo. La identificación de artefactos
 y el camino RF → CU → prueba → operación están en
 [INGENIERIA.md](../300-development/INGENIERIA.md).

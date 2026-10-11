@@ -47,6 +47,7 @@ CU-API matrix validation        Process Checks                    sdlc-process.y
 commit messages                 Process Checks                    sdlc-process.yml   (BLOCKING)
 tdd evidence                    Process Checks                    sdlc-process.yml   (BLOCKING)
 sdlc exception label            Process Checks                    sdlc-process.yml   (BLOCKING; skipped here until a PR exists)
+doc traceability                Process Checks                    sdlc-process.yml   (BLOCKING)
 agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
@@ -144,6 +145,7 @@ run "CU-API matrix validation" python3 workspace/sdlc/validate-cu-api-matrix.py
 PR_LABELS="$(gh pr view --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || true)"
 export PR_LABELS
 run "commit messages" bash workspace/sdlc/check-commit-messages.sh origin/main
+run "doc traceability" python3 workspace/sdlc/check-doc-traceability.py origin/main
 run "tdd evidence" bash workspace/sdlc/check-tdd-evidence.sh origin/main
 if gh pr view >/dev/null 2>&1; then
     run "sdlc exception label" bash workspace/sdlc/check-sdlc-exception.sh origin/main

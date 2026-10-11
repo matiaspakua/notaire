@@ -240,3 +240,4 @@ execute the role; they do not replace the artifact.
 4. The test cites the use case (`TS-` or `TC-`).
 5. The PR cites the issue. The merge closes the issue.
 6. If operation shows a failure, the failure comes back as an issue. It is not documented only in chat.
+7. The change's traceability names the permanent documents the delta touches (use case, `DOC-CICLO` section, SAD or ADR, diagram). Those files are in the same diff. `workspace/sdlc/check-doc-traceability.py` checks it. Do not copy the diagram into a second file to satisfy the rule.
