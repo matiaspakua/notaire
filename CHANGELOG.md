@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Upcoming expirations query** (#1490, CU75): the living
+  `upcoming-expirations` spec names the query `days` on
+  `GET /api/v1/submitted-documents/upcoming-expirations`. The
+  engineering-sequences design names the path CU42 still writes,
+  `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N`.
+  The archived change keeps `dias`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Budget template path** (#1490, CU75): the engineering-sequences
   design names the path CU01 and CU39 still write,
   `POST /api/v1/presupuestos/{id}/items-desde-plantilla`. The live call

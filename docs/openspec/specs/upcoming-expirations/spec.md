@@ -31,16 +31,17 @@ The system MUST NOT return documents that do not expire, have no due date, are a
 
 ### Requirement: The window is validated
 
-The system MUST reject with 400 a window smaller than 1 or larger than 365 days and MUST use 30 days when none is given.
+The system MUST reject with 400 a window smaller than 1 or larger than 365 days and MUST use 30 days when none is given. The read is
+`GET /api/v1/submitted-documents/upcoming-expirations` and the query name is `days`.
 
 #### Scenario: Invalid window
 
-- **WHEN** the endpoint is called with dias=0 or dias=366
+- **WHEN** the endpoint is called with days=0 or days=366
 - **THEN** the response is 400
 
 #### Scenario: Default window
 
-- **WHEN** the endpoint is called without dias
+- **WHEN** the endpoint is called without days
 - **THEN** a 30-day window is applied
 
 ### Requirement: The UI lists the upcoming expirations
