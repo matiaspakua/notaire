@@ -16,7 +16,7 @@ import {
 import { FormContainer, FormSection, FormField } from "@/theme/form-patterns";
 import { useProcedureTypes } from "@/hooks/useProcedureTypes";
 import { useProcedureTemplate } from "@/hooks/useProcedureTemplate";
-import type { ProcedureTemplate } from "@/types";
+import type { ProcedureTemplateRow } from "@/types";
 
 export default function DocumentsRequiredPage() {
   const t = useTranslations("documentosNecesarios");
@@ -27,7 +27,7 @@ export default function DocumentsRequiredPage() {
   const idTypeProcedure = procedureId ? Number(procedureId) : undefined;
   const { data: documents = [], isLoading, isFetched } = useProcedureTemplate(idTypeProcedure);
 
-  const columns: Column<ProcedureTemplate>[] = [
+  const columns: Column<ProcedureTemplateRow>[] = [
     {
       key: "name",
       header: t("fields.nombre"),
@@ -102,7 +102,7 @@ export default function DocumentsRequiredPage() {
                 columns={columns}
                 isLoading={isLoading}
                 emptyMessage={t("noDocuments")}
-                keyExtractor={(p) => `${p.procedureType?.idProcedureType}-${p.documentType?.idDocumentType}`}
+                keyExtractor={(p) => `${p.fkIdProcedureType}-${p.fkIdDocumentType}`}
               />
             )}
           </div>

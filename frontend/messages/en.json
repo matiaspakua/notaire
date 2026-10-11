@@ -998,7 +998,28 @@
         "seArchiva": "Is archived",
         "seInscribe": "Is registered",
         "sinWorkflow": "— No workflow —"
-      }
+      },
+      "requiredDocs": {
+        "title": "Required documents: {name}",
+        "description": "Documents the client or an entity must provide for this procedure.",
+        "empty": "This procedure has no required documents yet.",
+        "addTitle": "Add a document",
+        "documentType": "Document type",
+        "selectDocument": "Choose a document type",
+        "notes": "Notes",
+        "notesPlaceholder": "E.g. original and copy",
+        "add": "Add",
+        "documentRequired": "Choose a document type.",
+        "added": "Document added",
+        "updated": "Notes updated",
+        "removed": "Document removed",
+        "duplicate": "That document is already on this procedure's list",
+        "errorSave": "Couldn't save the required document",
+        "errorDelete": "Couldn't remove the required document",
+        "removeTitle": "Remove this document?",
+        "removeDescription": "{name} will no longer be requested for new cases of this procedure."
+      },
+      "requiredDocsAction": "Required documents"
     },
     "plantillas": {
       "title": "Quote Templates",

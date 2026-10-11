@@ -121,9 +121,16 @@ export interface DocumentType {
   returned?: boolean;
 }
 
+/** GET /api/v1/procedure-templates…: one row of a procedure type's required-documents checklist (CU55). */
 export interface ProcedureTemplate {
-  notes?: string;
-  procedureType?: { idProcedureType?: number; name?: string };
+  fkIdProcedureType: number;
+  fkIdDocumentType: number;
+  notes?: string | null;
+  version?: number;
+}
+
+/** A checklist row joined with its document type from the catalog (#1362). */
+export interface ProcedureTemplateRow extends ProcedureTemplate {
   documentType?: DocumentType;
 }
 
