@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English testing strategy and workflow tracker** (#1490, CU75):
+  ADR-006 is English. The workflow tracker uses management, procedure, history,
+  and `workflowDefinitionName` on `DtoProcedureType`. Seeded labels such as
+  `Workflow de Gestión Estándar`, `Iniciada`, and `Compraventa` stay.
 - **English service-migration decision and API examples** (#1490, CU75):
   ADR-001 is English. The API design index shows budget JSON as `idBudget`,
   `number`, `date`, and `status` (`BORRADOR` stays), and the error body as

@@ -1,4 +1,4 @@
-# Workflow Tracker — Animated Gestión Workflow on the Dashboard
+# Workflow Tracker — Animated management workflow on the dashboard
 
 **Issue:** [#453](https://github.com/matiaspakua/notaire/issues/453) (parent #436)
 **Use Cases:** [CU83 – Definir Workflow de Estados y Transiciones](../../100-business/102-use-cases/CU83%20%E2%80%93%20Definir%20Workflow%20de%20Estados%20y%20Transiciones.md)
@@ -7,10 +7,10 @@
 ## Overview
 
 The dashboard landing page (`/dashboard`) renders an animated, interactive
-visualization of a gestión's workflow: the directed graph of Estados de
-Gestión defined for the gestión's tipo de trámite, overlaid with the gestión's
-real historial so each node shows live progress (completed → in progress →
-pending).
+visualization of a management's workflow: the directed graph of management
+statuses defined for the management's procedure type, overlaid with the
+management's real history so each node shows live progress (completed → in
+progress → pending).
 
 ## Backend
 
@@ -21,9 +21,9 @@ pending).
 | GET | `/api/v1/managements/{id}/workflow-trace` | Aggregated trace: workflow definition, nodes, transitions, history, per-node statuses, optional `testimonyMovements`. Also the **legal-next** contract for CU83 (#804): filter `transitions` by current node → valid destinations for `POST /{id}/transition`. |
 
 Implemented by `ManagementController` + `WorkflowTraceService.buildTrace()`.
-Returns **400** with `{ "error": ... }` when the gestión does not exist, has
-no trámites, or its tipo de trámite has no workflow definition assigned.
-Generic PUT status mutations are rejected (#804); the gestiones UI already uses
+Returns **400** with `{ "error": ... }` when the management does not exist, has
+no procedures, or its procedure type has no workflow definition assigned.
+Generic PUT status mutations are rejected (#804); the managements UI already uses
 `/transition` with destinations from this trace.
 
 ### Node status computation
@@ -45,9 +45,9 @@ Flyway `V10__seed_workflow_demo_data.sql` seeds the base graph; `V41__extend_wor
   Retirado (FINAL), with a fork at *Documentación Completa* → Archivada
 - Statuses 11–13 added; status id 10 (Inscripta) remains as inert catalog
 - The workflow assigned to procedure types Compraventa, Donación, Hipoteca
-- Two sample gestiones (1001, 1002) with procedures and history
+- Two sample managements (1001, 1002) with procedures and history
 
-### Testimony movements / reingreso loop (#841, strategy b)
+### Testimony movements / re-entry loop (#841, strategy b)
 
 `buildTrace` also returns `testimonyMovements` (empty when none): chronological
 `TestimonyMovement` rows for the first procedure→deed→testimony chain, with
@@ -55,16 +55,16 @@ Flyway `V10__seed_workflow_demo_data.sql` seeds the base graph; `V41__extend_wor
 
 The animated tracker (`WorkflowTracker.tsx`) keeps the mutually exclusive node
 graph for linear post-signing statuses and shows a **secondary timeline** plus
-a reingreso count badge on the inscription node (`statusManagementId === 12`)
+a re-entry count badge on the inscription node (`statusManagementId === 12`)
 when the returned-observed count is greater than zero. This does not model the
-unbounded reingreso loop as exclusive workflow nodes.
+unbounded re-entry loop as exclusive workflow nodes.
 ## Frontend
 
 ### Components
 
 | File | Role |
 |------|------|
-| `frontend/src/app/dashboard/page.tsx` (`WorkflowHero`) | Hero section: trace of the current gestión + search by número de referencia |
+| `frontend/src/app/dashboard/page.tsx` (`WorkflowHero`) | Hero section: trace of the current management + search by reference number |
 | `frontend/src/components/motion/WorkflowTracker.tsx` | SVG graph: DAG layout, animated edges, traveling dots, node modal |
 | `frontend/src/hooks/useManagementWorkflow.ts` | React Query hook for the trace endpoint |
 | `frontend/src/hooks/useManagements.ts` (`useManagementByNumber`) | Look up a management by number for the search form |
@@ -78,7 +78,7 @@ unbounded reingreso loop as exclusive workflow nodes.
   active edges, pulse halo on the in-progress node, spring modal.
 - **Interaction:** nodes are keyboard-focusable buttons; clicking (or
   Enter/Space) opens a detail modal with incoming/outgoing transitions and
-  the matching historial entries; Escape closes.
+  the matching history entries; Escape closes.
 - **Styling:** theme tokens only (`@/theme/tokens`), Apple easing curve.
 
 ## API serialization fixes (latent bugs surfaced by the seed data)
@@ -90,19 +90,19 @@ existed. Fixed by returning read-model DTOs:
 | Endpoint | Fix |
 |----------|-----|
 | `GET /managements`, `/managements/{id}`, `/managements/number/{n}` | `DtoManagementSummary` via `ManagementQueryService` (`@Transactional(readOnly=true)`) |
-| `GET /history`, `/history/{id}`, `/history/management/{id}`, `/managements/{id}/current-status` | `DtoHistorySummary` (the entity's eager gestión back-reference is circular) |
+| `GET /history`, `/history/{id}`, `/history/management/{id}`, `/managements/{id}/current-status` | `DtoHistorySummary` (the entity's eager management back-reference is circular) |
 | `GET /procedure-types` (+ `/search`, `/{id}`) | `@Transactional(readOnly=true)` so `getDto()` can read the lazy `workflowDefinition` |
 
 `ProcedureType.getWorkflowDefinition()` is now `@JsonIgnore`, matching the
 class's other lazy associations; API consumers use `workflowDefinitionId` /
-`workflowDefinitionNombre` from `DtoTipoDeTramite`.
+`workflowDefinitionName` from `DtoProcedureType`.
 
 ## Endpoint → UI traceability
 
 | Endpoint | UI caller |
 |----------|-----------|
-| `GET /api/v1/managements/{id}/workflow-trace` | Dashboard `WorkflowHero` (default: latest gestión; after search: resolved gestión) |
-| `GET /api/v1/managements/number/{numero}` | Dashboard `WorkflowHero` search form ("Número de referencia") |
+| `GET /api/v1/managements/{id}/workflow-trace` | Dashboard `WorkflowHero` (default: latest management; after search: the resolved management) |
+| `GET /api/v1/managements/number/{number}` | Dashboard `WorkflowHero` search form (reference number) |
 
 ## Tests
 
