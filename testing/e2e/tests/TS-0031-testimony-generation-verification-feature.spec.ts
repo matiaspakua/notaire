@@ -9,6 +9,7 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { apiGet, apiPost, uniqueId } from "./setup/api-helpers";
+import { chooseDeed } from "./setup/deed-picker";
 
 interface TestimonyApiResult {
   idTestimony: number;
@@ -41,8 +42,7 @@ test.describe("CU07/CU08 - Generate and verify a testimony", () => {
     await page.getByTestId("btn-generate-testimony").click();
     await steps.thenModalIsVisible();
 
-    await page.getByTestId("select-deed-testimony").click();
-    await page.getByRole("option", { name: new RegExp(String(number)) }).click();
+    await chooseDeed(page, "select-deed-testimony", number);
     await page.getByTestId("btn-save-testimony").click();
     await steps.thenShowsSuccessMessage("generado");
     await steps.thenModalIsNotVisible();

@@ -8,15 +8,12 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useThemeClasses } from "@/theme";
 import { useTestimonies, useGenerateTestimony, useVerifyTestimony, downloadTestimonyCopy } from "@/hooks/useTestimonies";
-import { useDeeds } from "@/hooks/useDeeds";
+import { DeedPicker } from "@/components/shared/DeedPicker";
 import { extractApiError } from "@/lib/utils";
 import type { Testimony } from "@/types";
-
-const STATUS_SIGNED = "Firmada";
 
 export default function TestimoniesPage() {
   const t = useTranslations("testimonios");
@@ -24,7 +21,6 @@ export default function TestimoniesPage() {
   const themeClass = useThemeClasses();
 
   const { data: testimonies = [], isLoading } = useTestimonies();
-  const { data: deeds = [] } = useDeeds();
   const generateMutation = useGenerateTestimony();
   const verifyMutation = useVerifyTestimony();
 
@@ -34,8 +30,6 @@ export default function TestimoniesPage() {
   const [flagged, setFlagged] = useState(false);
   const [notes, setNotes] = useState("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
-
-  const deedsSigned = deeds.filter((e) => e.status === STATUS_SIGNED);
 
   function openGenerate() {
     setIdDeed("");
@@ -143,18 +137,12 @@ export default function TestimoniesPage() {
           <FormContainer>
             <FormSection dialogTitle title={t("newTestimonio")}>
               <FormField label={t("fields.escritura")} required>
-                <Select value={idDeed} onValueChange={setIdDeed}>
-                  <SelectTrigger data-testid="select-deed-testimony">
-                    <SelectValue placeholder={t("selectEscritura")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {deedsSigned.map((e) => (
-                      <SelectItem key={e.idDeed} value={String(e.idDeed)}>
-                        {t("fields.numero")} {e.number}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <DeedPicker
+                  value={idDeed ? Number(idDeed) : undefined}
+                  onChange={(deed) => setIdDeed(deed?.idDeed != null ? String(deed.idDeed) : "")}
+                  aria-label={t("fields.escritura")}
+                  data-testid="select-deed-testimony"
+                />
               </FormField>
             </FormSection>
             <FormActions align="right">

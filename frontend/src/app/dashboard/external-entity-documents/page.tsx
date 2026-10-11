@@ -18,9 +18,10 @@ import {
   useExternalEntityDocuments,
   useRegisterExternalEntityDocumentMovement,
 } from "@/hooks/useExternalEntityDocuments";
-import { extractApiError, formatDate } from "@/lib/utils";
+import { extractApiError } from "@/lib/utils";
 import type { ExternalEntityDocument, DeedManagement, ExternalEntityDocumentMovementInput } from "@/types";
 import { toDateInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 const emptyMovement: ExternalEntityDocumentMovementInput = {
   prepared: false,
@@ -45,6 +46,7 @@ export default function ExternalEntityDocumentsPage() {
 }
 
 function ExternalEntityDocumentsList() {
+  const fmt = useFormat();
   const t = useTranslations("documentosEntidadesExternas");
   const tc = useTranslations("common");
   const themeClass = useThemeClasses();
@@ -130,8 +132,8 @@ function ExternalEntityDocumentsList() {
         </Badge>
       ),
     },
-    { key: "dateEntry", header: t("fields.fechaIngreso"), render: (d) => formatDate(d.dateEntry) },
-    { key: "dateExit", header: t("fields.fechaSalida"), render: (d) => formatDate(d.dateExit) },
+    { key: "dateEntry", header: t("fields.fechaIngreso"), render: (d) => fmt.date(d.dateEntry) },
+    { key: "dateExit", header: t("fields.fechaSalida"), render: (d) => fmt.date(d.dateExit) },
     {
       key: "actions",
       header: "",

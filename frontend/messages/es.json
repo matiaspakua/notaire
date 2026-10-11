@@ -361,7 +361,6 @@
   "testimonios": {
     "title": "Testimonios",
     "newTestimonio": "Generar testimonio",
-    "selectEscritura": "Seleccionar escritura...",
     "generated": "Testimonio generado",
     "errorGenerate": "Error al generar el testimonio",
     "verificarTestimonio": "Verificar testimonio",
@@ -586,7 +585,6 @@
     "title": "Minutas de Inscripción",
     "generarSection": "Generar minuta",
     "buscarSection": "Buscar minuta existente",
-    "selectEscritura": "Seleccionar escritura",
     "generarMinuta": "Generar minuta",
     "descargarReporte": "Descargar formulario",
     "presentar": "Presentar",
@@ -949,8 +947,7 @@
         "noData": "No hay tipos de folio",
         "esAuxiliar": "Protocolo Auxiliar"
       },
-      "estadoFilter": "Filtrar por estado",
-      "escrituraOption": "Escritura Nº {number}"
+      "estadoFilter": "Filtrar por estado"
     },
     "tramites": {
       "title": "Tipos de Trámite",
@@ -1254,6 +1251,16 @@
     "recentHint": "Gestiones más recientes. Escriba para buscar.",
     "clear": "Quitar selección",
     "loadError": "No se pudieron cargar las gestiones"
+  },
+  "deedPicker": {
+    "option": "Escritura Nº {number}",
+    "placeholder": "Buscar escritura firmada por número…",
+    "searching": "Buscando…",
+    "noResults": "Sin resultados",
+    "results": "{count} resultados",
+    "recentHint": "Escrituras firmadas más recientes. Escriba un número para buscar.",
+    "clear": "Quitar selección",
+    "loadError": "No se pudieron cargar las escrituras"
   },
   "breadcrumb": {
     "label": "Ruta de navegación",

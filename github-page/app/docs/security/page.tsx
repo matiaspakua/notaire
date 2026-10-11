@@ -17,6 +17,10 @@ const controls = [
     title: "Repository protection",
     body: "security/ module holds rulesets-as-code and the control map; apply with admin PAT (#1040).",
   },
+  {
+    title: "Sec by Design",
+    body: "Threat model, security requirements, policy-as-code, and a failing secret scan. Program: CYBERSECURITY-PROGRAM.md (#307).",
+  },
 ];
 
 export default function DocsSecurityPage() {

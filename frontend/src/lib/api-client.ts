@@ -84,18 +84,6 @@ export interface SpringPage<T> {
   size: number;
 }
 
-const PAGE_SIZE_ALL = 1000;
-
-/**
- * Fetches a paginated Spring Data endpoint and returns the unwrapped content.
- * Uses a large page size because list screens render the full collection.
- */
-export async function apiGetPaged<T>(path: string): Promise<T[]> {
-  const separator = path.includes("?") ? "&" : "?";
-  const page = await apiGet<SpringPage<T>>(`${path}${separator}size=${PAGE_SIZE_ALL}`);
-  return page.content;
-}
-
 export interface PageRequest {
   page?: number;
   size?: number;

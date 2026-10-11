@@ -21,11 +21,12 @@ import {
   useDeleteDeed,
   useSignDeed,
 } from "@/hooks/useDeeds";
-import { formatDate, extractApiError } from "@/lib/utils";
+import { extractApiError } from "@/lib/utils";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import type { Deed, Folio } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Deed> = { number: undefined, dateDeedrecording: "", body: "" };
 const ESTADO_SIN_FIRMAR = "Sin Firmar";
@@ -39,6 +40,7 @@ export default function DeedsPage() {
 }
 
 function DeedsList() {
+  const fmt = useFormat();
   const t = useTranslations("escrituras");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -115,7 +117,7 @@ function DeedsList() {
   const columns: Column<Deed>[] = [
     { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idDeed}</span>, className: "w-12" },
     { key: "number", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.number ?? "—"}</span> },
-    { key: "date", header: tc("date"), render: (e) => formatDate(e.dateDeedrecording) },
+    { key: "date", header: tc("date"), render: (e) => fmt.date(e.dateDeedrecording) },
     { key: "status", header: t("fields.estado"), render: (e) => e.status ?? "—" },
     {
       key: "folio",

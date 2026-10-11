@@ -12,6 +12,7 @@ import { test, expect } from '@playwright/test'
 import { GherkinSteps } from './gherkin-helpers'
 import { authenticateAsAdmin } from './setup/auth'
 import { apiPost, apiGet, uniqueId } from './setup/api-helpers'
+import { chooseDeed } from './setup/deed-picker'
 import { rowWithCell } from './setup/rows'
 
 // ──────────────────────────────────────────────
@@ -115,8 +116,7 @@ test.describe('CU07→CU08→CU11→CU12 — Full legal cycle (golden path)', ()
     await page.getByTestId('btn-generate-testimony').click()
     await steps.thenModalIsVisible()
 
-    await page.getByTestId('select-deed-testimony').click()
-    await page.getByRole('option', { name: new RegExp(String(deedNumber)) }).click()
+    await chooseDeed(page, 'select-deed-testimony', deedNumber)
     await page.getByTestId('btn-save-testimony').click()
     await steps.thenShowsSuccessMessage('generado')
     await steps.thenModalIsNotVisible()
@@ -185,8 +185,7 @@ test.describe('CU07 - Generate a testimony', () => {
     await page.getByTestId('btn-generate-testimony').click()
     await steps.thenModalIsVisible()
 
-    await page.getByTestId('select-deed-testimony').click()
-    await page.getByRole('option', { name: new RegExp(String(number)) }).click()
+    await chooseDeed(page, 'select-deed-testimony', number)
     await page.getByTestId('btn-save-testimony').click()
     await steps.thenShowsSuccessMessage('generado')
     await steps.thenModalIsNotVisible()

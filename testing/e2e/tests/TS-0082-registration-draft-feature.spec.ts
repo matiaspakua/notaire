@@ -9,6 +9,7 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { apiPost, uniqueId } from "./setup/api-helpers";
+import { chooseDeed } from "./setup/deed-picker";
 
 interface DeedApiResult {
   idDeed: number;
@@ -71,8 +72,7 @@ test.describe("CU82 - Generate and track the registration draft", () => {
     await seedProcedure(page, idDeed, idProperty);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
-    await page.getByTestId("select-deed-registration-draft").click();
-    await page.getByRole("option", { name: new RegExp(String(number)) }).click();
+    await chooseDeed(page, "select-deed-registration-draft", number);
     await page.getByTestId("btn-generate-registration-draft").click();
     await steps.thenShowsSuccessMessage("generada");
 
@@ -105,8 +105,7 @@ test.describe("CU82 - Generate and track the registration draft", () => {
     await seedProcedure(page, idDeed, idProperty);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
-    await page.getByTestId("select-deed-registration-draft").click();
-    await page.getByRole("option", { name: new RegExp(String(number)) }).click();
+    await chooseDeed(page, "select-deed-registration-draft", number);
     await page.getByTestId("btn-generate-registration-draft").click();
     await steps.thenShowsSuccessMessage("generada");
 
@@ -139,8 +138,7 @@ test.describe("CU82 - Generate and track the registration draft", () => {
     await seedProcedure(page, idDeed, idProperty);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
-    await page.getByTestId("select-deed-registration-draft").click();
-    await page.getByRole("option", { name: new RegExp(String(number)) }).click();
+    await chooseDeed(page, "select-deed-registration-draft", number);
     await page.getByTestId("btn-generate-registration-draft").click();
 
     await steps.thenShowsErrorMessage("catastrales");

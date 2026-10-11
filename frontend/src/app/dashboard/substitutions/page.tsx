@@ -18,10 +18,10 @@ import {
   useDeleteSubstitution,
 } from "@/hooks/useSubstitutions";
 import { presentMutationError } from "@/lib/mutation-error";
-import { formatDate } from "@/lib/utils";
 import type { Substitution } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Substitution> = {
   dateStart: "",
@@ -34,6 +34,7 @@ function personName(p: Substitution["fkIdSubstituted"]): string {
 }
 
 export default function SubstitutionsPage() {
+  const fmt = useFormat();
   const t = useTranslations("suplencias");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -124,12 +125,12 @@ export default function SubstitutionsPage() {
     {
       key: "startDate",
       header: t("fields.desde"),
-      render: (s) => formatDate(s.dateStart),
+      render: (s) => fmt.date(s.dateStart),
     },
     {
       key: "endDate",
       header: t("fields.hasta"),
-      render: (s) => formatDate(s.dateEnd),
+      render: (s) => fmt.date(s.dateEnd),
     },
     {
       key: "actions",

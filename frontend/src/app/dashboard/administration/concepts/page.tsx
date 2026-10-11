@@ -14,13 +14,15 @@ import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import { useConcepts, useCreateConcept, useUpdateConcept, useDeleteConcept } from "@/hooks/useConcepts";
-import { formatCurrency, extractApiError } from "@/lib/utils";
+import { extractApiError } from "@/lib/utils";
 import type { Concept } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { useFormat } from "@/hooks/useFormat";
 
 const EMPTY: Partial<Concept> = { name: "", value: undefined };
 
 export default function ConceptsPage() {
+  const fmt = useFormat();
   const t = useTranslations("administracion.conceptos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -94,7 +96,7 @@ export default function ConceptsPage() {
   const columns: Column<Concept>[] = [
     { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idConcept}</span>, className: "w-12" },
     { key: "name", header: t("fields.nombre"), render: (c) => <span className="font-medium">{c.name}</span> },
-    { key: "value", header: t("fields.valorBase"), render: (c) => formatCurrency(c.value) },
+    { key: "value", header: t("fields.valorBase"), render: (c) => fmt.currency(c.value) },
     {
       key: "actions", header: "", className: "w-24",
       render: (c) => (

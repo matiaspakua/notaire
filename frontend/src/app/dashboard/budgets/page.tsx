@@ -35,11 +35,12 @@ import { PersonPicker } from "@/components/shared/PersonPicker";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { useItems, useItemsByBudget } from "@/hooks/useItems";
 import { useProcedureTypes } from "@/hooks/useProcedureTypes";
-import { formatDate, formatCurrency, fullName } from "@/lib/utils";
+import { fullName } from "@/lib/utils";
 import { BUDGET_STATUSES, DEFAULT_BUDGET_STATUS, budgetStatusLabelKey, normalizeBudgetStatus } from "@/lib/budget-status";
 import type { Budget } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 const NO_TEMPLATE = "none";
 
@@ -54,6 +55,7 @@ export default function BudgetsPage() {
 }
 
 function BudgetsList() {
+  const fmt = useFormat();
   const t = useTranslations("presupuestos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -230,7 +232,7 @@ function BudgetsList() {
     {
       key: "date",
       header: tc("date"),
-      render: (p) => formatDate(p.date),
+      render: (p) => fmt.date(p.date),
     },
     {
       key: "person",
@@ -240,7 +242,7 @@ function BudgetsList() {
     {
       key: "amount",
       header: tc("amount"),
-      render: (p) => <span className="font-medium">{formatCurrency(p.propertyAmount)}</span>,
+      render: (p) => <span className="font-medium">{fmt.currency(p.propertyAmount)}</span>,
     },
     {
       key: "status",
@@ -460,11 +462,11 @@ function BudgetsList() {
                     </div>
                     <div>
                       <p className="text-muted-foreground">{tc("amount")} {t("resumen.total").toLowerCase()}</p>
-                      <p className="font-medium">{formatCurrency(summary.total)}</p>
+                      <p className="font-medium">{fmt.currency(summary.total)}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t("resumen.saldo")}</p>
-                      <p className="font-medium">{formatCurrency(summary.pendingBalance)}</p>
+                      <p className="font-medium">{fmt.currency(summary.pendingBalance)}</p>
                     </div>
                   </div>
                 </FormSection>
@@ -487,8 +489,8 @@ function BudgetsList() {
 {(summary.payments ?? []).map((payment) => (
                 <TableRow key={payment.idPayment}>
                   <TableCell>{payment.idPayment}</TableCell>
-                  <TableCell>{formatCurrency(payment.amount)}</TableCell>
-                  <TableCell>{formatDate(payment.date)}</TableCell>
+                  <TableCell>{fmt.currency(payment.amount)}</TableCell>
+                  <TableCell>{fmt.date(payment.date)}</TableCell>
                   <TableCell>{payment.notes ?? "—"}</TableCell>
                           </TableRow>
                         ))}
@@ -554,7 +556,7 @@ function BudgetsList() {
                     <SelectContent>
                       {catalogItems.map((item) => (
                         <SelectItem key={item.idItem} value={item.idItem!.toString()}>
-                          {item.name} — {formatCurrency(item.value)}
+                          {item.name} — {fmt.currency(item.value)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -591,14 +593,14 @@ function BudgetsList() {
                       {budgetItems.map((item) => (
                         <TableRow key={item.idItem}>
                           <TableCell>{item.name}</TableCell>
-                          <TableCell>{formatCurrency(item.value)}</TableCell>
+                          <TableCell>{fmt.currency(item.value)}</TableCell>
                           <TableCell>{item.percentage ?? 0}%</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                   <div className="flex justify-end pt-2 text-sm font-medium" data-testid="items-subtotal">
-                    {t("items.subtotal")}: {formatCurrency(itemsSubtotal)}
+                    {t("items.subtotal")}: {fmt.currency(itemsSubtotal)}
                   </div>
                 </>
               )}

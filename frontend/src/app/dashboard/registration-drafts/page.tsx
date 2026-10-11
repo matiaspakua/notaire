@@ -8,7 +8,6 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { theme } from "@/theme/tokens";
 import {
@@ -19,10 +18,9 @@ import {
   useRegisterRegistrationDraft,
   downloadRegistrationDraftReport,
 } from "@/hooks/useRegistrationDrafts";
-import { useDeeds } from "@/hooks/useDeeds";
+import { DeedPicker } from "@/components/shared/DeedPicker";
 import { extractApiError } from "@/lib/utils";
 
-const STATUS_SIGNED = "Firmada";
 const STATUS_GENERATED = "Generada";
 const STATUS_SUBMITTED = "Presentado para inscripción";
 const STATUS_FLAGGED = "Observado";
@@ -32,7 +30,6 @@ export default function RegistrationDraftsRegistrationPage() {
   const t = useTranslations("minutasInscripcion");
   const tc = useTranslations("common");
 
-  const { data: deeds = [] } = useDeeds();
   const generateMutation = useGenerateRegistrationDraft();
   const submitMutation = useSubmitRegistrationDraft();
   const observeMutation = useObserveRegistrationDraft();
@@ -56,8 +53,6 @@ export default function RegistrationDraftsRegistrationPage() {
   const [finalRegistrationNumber, setFinalRegistrationNumber] = useState("");
 
   const { data: registrationDraft, isLoading } = useRegistrationDraft(registrationDraftId);
-  const deedsSigned = deeds.filter((e) => e.status === STATUS_SIGNED);
-
   function statusLabel(status?: string): string {
     switch (status) {
       case STATUS_GENERATED:
@@ -140,18 +135,12 @@ export default function RegistrationDraftsRegistrationPage() {
       <FormContainer>
         <FormSection title={t("generarSection")}>
           <FormField label={t("fields.escritura")} required>
-            <Select value={idDeed} onValueChange={setIdDeed}>
-              <SelectTrigger data-testid="select-deed-registration-draft">
-                <SelectValue placeholder={t("selectEscritura")} />
-              </SelectTrigger>
-              <SelectContent>
-                {deedsSigned.map((e) => (
-                  <SelectItem key={e.idDeed} value={String(e.idDeed)}>
-                    {t("fields.numero")} {e.number}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <DeedPicker
+              value={idDeed ? Number(idDeed) : undefined}
+              onChange={(deed) => setIdDeed(deed?.idDeed != null ? String(deed.idDeed) : "")}
+              aria-label={t("fields.escritura")}
+              data-testid="select-deed-registration-draft"
+            />
           </FormField>
           <FormActions align="left">
             <Button

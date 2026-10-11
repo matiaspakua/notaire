@@ -1,4 +1,5 @@
 "use client";
+import { useFormat } from "@/hooks/useFormat";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -12,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useTestimonies } from "@/hooks/useTestimonies";
 import { useEnterRegistration, useRegisterInscription, useWithdraw, useReenter } from "@/hooks/useTestimonyMovements";
-import { extractApiError, formatDate } from "@/lib/utils";
+import { extractApiError } from "@/lib/utils";
 import { ReenterDialog, type ReentryDetails } from "./ReenterDialog";
 import type { Testimony, TestimonyMovement } from "@/types";
 
@@ -35,6 +36,7 @@ function statusMovement(testimony: Testimony): StatusMovement {
 }
 
 export default function MovementsTestimonyPage() {
+  const fmt = useFormat();
   const t = useTranslations("movimientosTestimonio");
   const tc = useTranslations("common");
 
@@ -99,9 +101,9 @@ export default function MovementsTestimonyPage() {
     { key: "number", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
     { key: "deed", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
     { key: "status", header: t("fields.estado"), render: (te) => t(`estados.${statusMovement(te)}`) },
-    { key: "entryDate", header: t("fields.fechaIngreso"), render: (te) => formatDate(latestMovement(te)?.dateEntry) },
-    { key: "registrationDate", header: t("fields.fechaInscripcion"), render: (te) => formatDate(latestMovement(te)?.dateRegistration) },
-    { key: "exitDate", header: t("fields.fechaSalida"), render: (te) => formatDate(latestMovement(te)?.dateExit) },
+    { key: "entryDate", header: t("fields.fechaIngreso"), render: (te) => fmt.date(latestMovement(te)?.dateEntry) },
+    { key: "registrationDate", header: t("fields.fechaInscripcion"), render: (te) => fmt.date(latestMovement(te)?.dateRegistration) },
+    { key: "exitDate", header: t("fields.fechaSalida"), render: (te) => fmt.date(latestMovement(te)?.dateExit) },
     {
       key: "actions",
       header: "",

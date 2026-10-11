@@ -21,6 +21,8 @@ which define the mandatory workflow.
 | [`REPO-METRICS-BASELINE.md`](REPO-METRICS-BASELINE.md) | Reproducible repo metrics for topology decisions (#1256 / #1417) |
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Map of local checks (`workspace/sdlc/preflight.sh`) to CI jobs |
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
+| [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) | Permanent domain model. A change that moves a state updates this file in the same PR |
+| [`INGENIERIA.md`](INGENIERIA.md) | Artifact IDs, forward/back trace, and process boxes. Method from the specialization guide, fitted to this repo |
 
 OpenSpec and the Constitution: see [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../openspec/NOTAIRE-ADAPTATIONS.md)
 (SpecKit, removed in #1083: [`docs/000-archive/speckit/`](../000-archive/speckit/)).
@@ -30,7 +32,10 @@ OpenSpec and the Constitution: see [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../o
 1. Read [`CONSTITUTION.md`](../../CONSTITUTION.md) and
    [`.claude/rules/ai-agent-workflow.md`](../../.claude/rules/ai-agent-workflow.md) — the
    mandatory flow (issue + use case → branch → TDD → tests → commit → pull request).
-2. Run `bash workspace/sdlc/preflight.sh` before every push (see
+2. When a change moves a domain state, update
+   [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md). The artifact
+   and traceability method is in [`INGENIERIA.md`](INGENIERIA.md).
+3. Run `bash workspace/sdlc/preflight.sh` before every push (see
    [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md); `mvn verify` alone is not enough).
 
 ## Navigation

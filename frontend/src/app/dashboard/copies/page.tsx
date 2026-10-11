@@ -20,9 +20,11 @@ import {
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Copy } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
-import { formatCalendarDate, toDateInputValue, todayInputValue } from "@/lib/dates";
+import { toDateInputValue, todayInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 export default function CopiesPage() {
+  const fmt = useFormat();
   const t = useTranslations("copias");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -110,12 +112,12 @@ export default function CopiesPage() {
     {
       key: "datePrinting",
       header: t("columns.fechaImpresion"),
-      render: (c) => formatCalendarDate(c.datePrinting),
+      render: (c) => fmt.date(c.datePrinting),
     },
     {
       key: "dateWithdrawal",
       header: t("columns.fechaRetiro"),
-      render: (c) => formatCalendarDate(c.dateWithdrawal),
+      render: (c) => fmt.date(c.dateWithdrawal),
     },
     {
       key: "testimony",

@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { apiGetPage, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { Deed } from "@/types";
 
 export const deedsKeys = {
@@ -19,13 +19,6 @@ export function useDeedsPage(params: { page: number; size: number }, options: { 
       apiGetPage<Deed>("/deeds", { page: params.page, size: params.size, sort: DEEDS_SORT }),
     placeholderData: keepPreviousData,
     enabled: options.enabled ?? true,
-  });
-}
-
-export function useDeeds() {
-  return useQuery({
-    queryKey: deedsKeys.all,
-    queryFn: () => apiGetPaged<Deed>("/deeds"),
   });
 }
 

@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-client";
+import { apiGet, apiGetPage, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { Person } from "@/types";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
@@ -78,13 +78,6 @@ export function usePeoplePage(params: PeoplePageParams, options: { enabled?: boo
 /** One person by id, for links to a record that is not on the loaded page. */
 export function fetchPerson(id: number) {
   return apiGet<Person>(`/people/${id}`);
-}
-
-export function usePeople() {
-  return useQuery({
-    queryKey: peopleKeys.all,
-    queryFn: () => apiGetPaged<Person>("/people"),
-  });
 }
 
 export function useCreatePerson() {

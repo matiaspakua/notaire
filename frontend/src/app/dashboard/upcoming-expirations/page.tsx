@@ -1,4 +1,5 @@
 "use client";
+import { useFormat } from "@/hooks/useFormat";
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
@@ -7,13 +8,13 @@ import { DataTable, type Column } from "@/components/shared/DataTable";
 import { FormField } from "@/theme/form-patterns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUpcomingExpirations } from "@/hooks/useUpcomingExpirations";
-import { formatCurrency, formatDate } from "@/lib/utils";
 import type { UpcomingExpiration } from "@/types";
 
 const WINDOW_OPTIONS = [7, 15, 30, 60, 90];
 const DEFAULT_WINDOW = 30;
 
 export default function UpcomingExpirationsPage() {
+  const fmt = useFormat();
   const t = useTranslations("proximosVencimientos");
   const [days, setDays] = useState(DEFAULT_WINDOW);
   const { data: expirations = [], isLoading } = useUpcomingExpirations(days);
@@ -25,12 +26,12 @@ export default function UpcomingExpirationsPage() {
       header: t("fields.gestion"),
       render: (v) => (v.managementNumber != null ? `${v.managementNumber} — ${v.managementHeading ?? ""}` : "—"),
     },
-    { key: "entryDate", header: t("fields.fechaIngreso"), render: (v) => formatDate(v.dateEntry) },
-    { key: "dueDate", header: t("fields.fechaVencimiento"), render: (v) => formatDate(v.dateDue) },
+    { key: "entryDate", header: t("fields.fechaIngreso"), render: (v) => fmt.date(v.dateEntry) },
+    { key: "dueDate", header: t("fields.fechaVencimiento"), render: (v) => fmt.date(v.dateDue) },
     { key: "daysRemaining", header: t("fields.diasRestantes"), render: (v) => v.daysRemaining },
     { key: "prepared", header: t("fields.preparado"), render: (v) => (v.prepared ? t("si") : t("no")) },
     { key: "observed", header: t("fields.observado"), render: (v) => (v.observed ? t("si") : t("no")) },
-    { key: "amountDue", header: t("fields.montoDeuda"), render: (v) => formatCurrency(v.amountToPay) },
+    { key: "amountDue", header: t("fields.montoDeuda"), render: (v) => fmt.currency(v.amountToPay) },
     { key: "notes", header: t("fields.observaciones"), render: (v) => v.notes ?? "—" },
   ];
 

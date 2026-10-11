@@ -39,7 +39,7 @@ Every entity has a `version` column for optimistic locking (`@Version`, applied 
 ### Positive
 
 - An administrator can define or adjust the flow of a procedure type without a code change, through the `Workflow*Controller` endpoints.
-- The model maps directly to a state diagram (see `docs/200-architecture/204-diagrams/Diagrama de Estados/`), because each `WorkflowNode` maps 1:1 to a `ManagementStatus`.
+- The model maps directly to a state diagram, because each `WorkflowNode` maps 1:1 to a `ManagementStatus`. The seeded graph and the neighboring machines (payment, documentation, deed, testimony) are in [CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md). The `.puml` files under `204-diagrams/Diagrama de Estados/` are legacy.
 - It reuses the established patterns (JPA, DTOs, repositories) and does not introduce a new backend paradigm.
 
 ### Negative

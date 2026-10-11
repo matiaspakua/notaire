@@ -17,16 +17,17 @@ import { BudgetPicker } from "@/components/shared/BudgetPicker";
 import { usePaymentReceipt } from "@/hooks/useReports";
 import { ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
-import { formatDate, formatCurrency } from "@/lib/utils";
 import type { Payment } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
+import { useFormat } from "@/hooks/useFormat";
 
 const PAGO_FIELD_NAMES = ["amount", "date", "paymentMethod", "notes", "idBudget"];
 
 const EMPTY: Partial<Payment> = { idBudget: undefined, amount: undefined, date: "", paymentMethod: "", notes: "" };
 
 export default function PagosPage() {
+  const fmt = useFormat();
   const t = useTranslations("pagos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -113,8 +114,8 @@ export default function PagosPage() {
   const columns: Column<Payment>[] = [
     { key: "id", header: tc("id"), render: (p) => <span className="text-xs text-muted-foreground">{p.idPayment}</span>, className: "w-12" },
     { key: "budget", header: t("fields.presupuesto"), render: (p) => <span className="text-xs text-muted-foreground">#{p.idBudget ?? p.fkIdBudget?.idBudget ?? "—"}</span>, className: "w-20" },
-    { key: "date", header: tc("date"), render: (p) => formatDate(p.date) },
-    { key: "amount", header: tc("amount"), render: (p) => <span className="font-medium">{formatCurrency(p.amount)}</span> },
+    { key: "date", header: tc("date"), render: (p) => fmt.date(p.date) },
+    { key: "amount", header: tc("amount"), render: (p) => <span className="font-medium">{fmt.currency(p.amount)}</span> },
     { key: "method", header: t("fields.metodoPago"), render: (p) => p.paymentMethod ?? "—" },
     {
       key: "actions", header: "", className: "w-32",
@@ -170,12 +171,12 @@ export default function PagosPage() {
                         )}
                       </div>
                       <div className="text-lg font-semibold text-foreground" data-testid="pending-balance-amount">
-                        {formatCurrency(summary.pendingBalance || 0)}
+                        {fmt.currency(summary.pendingBalance || 0)}
                       </div>
                       <div className="text-xs text-muted-foreground pt-1">
                         {t("saldo.summary", {
-                          budgeted: formatCurrency(summary.total || 0),
-                          paid: formatCurrency((summary.total || 0) - (summary.pendingBalance || 0)),
+                          budgeted: fmt.currency(summary.total || 0),
+                          paid: fmt.currency((summary.total || 0) - (summary.pendingBalance || 0)),
                         })}
                       </div>
                     </div>

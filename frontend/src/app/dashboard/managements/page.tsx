@@ -33,11 +33,11 @@ import { useManagementStatuses } from "@/hooks/useManagementStatuses";
 import { useProcedureTypes } from "@/hooks/useProcedureTypes";
 import { useProperties } from "@/hooks/useProperties";
 import { ApiError } from "@/lib/api-client";
-import { formatCalendarDate } from "@/lib/dates";
-import { formatCurrency, formatDate, extractApiError } from "@/lib/utils";
+import { extractApiError } from "@/lib/utils";
 import type { DeedManagement } from "@/types";
 import { ManagementSummaryDialog } from "./ManagementSummaryDialog";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { useFormat } from "@/hooks/useFormat";
 
 const STATUS_FOLDER_ACTIVE = "Activa";
 
@@ -52,6 +52,7 @@ export default function ManagementsPage() {
 }
 
 function ManagementsList() {
+  const fmt = useFormat();
   const t = useTranslations("gestiones");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -267,7 +268,7 @@ function ManagementsList() {
     {
       key: "start",
       header: t("fields.inicio"),
-      render: (g) => <span className="whitespace-nowrap">{formatCalendarDate(g.dateStart)}</span>,
+      render: (g) => <span className="whitespace-nowrap">{fmt.date(g.dateStart)}</span>,
     },
     {
       key: "procedures",
@@ -485,7 +486,7 @@ function ManagementsList() {
             ? archiveConflict
             : outstandingBalance && (outstandingBalance.pendingBalance ?? 0) > 0
               ? t("archiveConfirmDescriptionWithDebt", {
-                  monto: formatCurrency(outstandingBalance.pendingBalance ?? 0),
+                  monto: fmt.currency(outstandingBalance.pendingBalance ?? 0),
                 })
               : t("archiveConfirmDescriptionNoDebt")
         }
@@ -539,7 +540,7 @@ function ManagementsList() {
                 {history.map((h) => (
                   <div key={h.idHistory} data-testid="history-item" className="border-b pb-2">
                     <div className="font-medium">{h.statusManagementName}</div>
-                    <div className="text-xs text-muted-foreground">{formatDate(h.date)}</div>
+                    <div className="text-xs text-muted-foreground">{fmt.date(h.date)}</div>
                     {h.notes && <div className="text-sm">{h.notes}</div>}
                   </div>
                 ))}

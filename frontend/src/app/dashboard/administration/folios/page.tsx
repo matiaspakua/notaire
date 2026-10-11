@@ -15,13 +15,12 @@ import { FormContainer, FormSection, FormField, FormActions, CheckboxField } fro
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import { extractApiError } from "@/lib/utils";
-import { useDeeds } from "@/hooks/useDeeds";
-import type { Folio, Person } from "@/types";
+import { DeedPicker } from "@/components/shared/DeedPicker";
+import type { Deed, Folio, Person } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
 const FOLIO_STATUSES = ["Nuevo", "Utilizado", "Errose"] as const;
 const STATUS_IN_USE = "Utilizado";
-const STATUS_DEED_SIGNED = "Firmada";
 
 interface FolioTypeRow {
   idFolioType: number;
@@ -168,7 +167,6 @@ export default function FoliosAdminPage() {
     queryFn: () => apiGet<Person[]>("/deeds/available-notaries"),
   });
 
-  const { data: deeds = [] } = useDeeds();
   const { data: allFolios = [] } = useQuery({
     queryKey: ["folios"],
     queryFn: () => apiGet<Folio[]>("/folios"),
@@ -176,13 +174,9 @@ export default function FoliosAdminPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState<FolioFormState>(EMPTY);
-  const deedsLinkable = deeds.filter((e) => {
-    if (e.status !== STATUS_DEED_SIGNED) return false;
-    const yaVinculada = allFolios.some(
-      (f) => f.fkIdDeed?.idDeed === e.idDeed && f.idFolio !== form.idFolio
-    );
-    return !yaVinculada;
-  });
+  /** A deed already linked to another folio cannot be linked again (CU87). */
+  const linkedToAnotherFolio = (deed: Deed) =>
+    allFolios.some((f) => f.fkIdDeed?.idDeed === deed.idDeed && f.idFolio !== form.idFolio);
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
@@ -411,22 +405,15 @@ export default function FoliosAdminPage() {
                 </Select>
               </FormField>
               <FormField label={t("fields.escritura")}>
-                <Select
-                  value={form.deedId !== undefined ? String(form.deedId) : "none"}
-                  onValueChange={(v) => setForm({ ...form, deedId: v === "none" ? undefined : Number(v) })}
-                >
-                  <SelectTrigger data-testid="select-deed-folio">
-                    <SelectValue placeholder={t("fields.escrituraPlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">{t("fields.escrituraPlaceholder")}</SelectItem>
-                    {deedsLinkable.map((e) => (
-                      <SelectItem key={e.idDeed} value={String(e.idDeed)}>
-                        {t("escrituraOption", { number: e.number ?? "—" })}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <DeedPicker
+                  value={form.deedId}
+                  onChange={(deed) => setForm({ ...form, deedId: deed?.idDeed })}
+                  exclude={linkedToAnotherFolio}
+                  allowClear
+                  aria-label={t("fields.escritura")}
+                  placeholder={t("fields.escrituraPlaceholder")}
+                  data-testid="select-deed-folio"
+                />
               </FormField>
               <FormField label={tc("observations")}>
                 <Input

@@ -1,10 +1,10 @@
 "use client";
+import { useFormat } from "@/hooks/useFormat";
 
 import { useTranslations } from "next-intl";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormHeader, FormSection } from "@/theme/form-patterns";
 import { useManagementCaseSummary, useManagementFinancialSummary } from "@/hooks/useManagementSummary";
-import { formatCurrency, formatDate } from "@/lib/utils";
 import type { CaseDocument } from "@/types";
 
 function documentFlags(document: CaseDocument, t: (key: string) => string): string[] {
@@ -25,6 +25,7 @@ interface ManagementSummaryDialogProps {
 
 /** #774 - Deeds, testimonies (with registry state), copies, and payments of a management. */
 export function ManagementSummaryDialog({ managementId, onClose }: ManagementSummaryDialogProps) {
+  const fmt = useFormat();
   const t = useTranslations("gestiones.resumen");
   const { data: caseSummary, isLoading } = useManagementCaseSummary(managementId ?? undefined);
   const { data: financialSummary } = useManagementFinancialSummary(managementId ?? undefined);
@@ -69,7 +70,7 @@ export function ManagementSummaryDialog({ managementId, onClose }: ManagementSum
                       <div className="font-medium">{document.typeName ?? document.name ?? "—"}</div>
                       <div className="text-muted-foreground">
                         {t("tramiteDocumento", { id: document.idProcedure })}
-                        {document.dateDue ? ` · ${t("vence", { fecha: formatDate(document.dateDue) })}` : ""}
+                        {document.dateDue ? ` · ${t("vence", { fecha: fmt.date(document.dateDue) })}` : ""}
                         {documentFlags(document, t).map((flag) => ` · ${flag}`).join("")}
                       </div>
                     </div>
@@ -79,9 +80,9 @@ export function ManagementSummaryDialog({ managementId, onClose }: ManagementSum
               <FormSection title={t("pagos")}>
                 {financialSummary ? (
                   <div className="text-sm space-y-1" data-testid="summary-payments">
-                    <div>{t("totalPresupuestado")}: {formatCurrency(financialSummary.totalBudgeted)}</div>
-                    <div>{t("totalCobrado")}: {formatCurrency(financialSummary.totalCollected)}</div>
-                    <div>{t("saldoPendiente")}: {formatCurrency(financialSummary.pendingBalance)}</div>
+                    <div>{t("totalPresupuestado")}: {fmt.currency(financialSummary.totalBudgeted)}</div>
+                    <div>{t("totalCobrado")}: {fmt.currency(financialSummary.totalCollected)}</div>
+                    <div>{t("saldoPendiente")}: {fmt.currency(financialSummary.pendingBalance)}</div>
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">{t("sinPagos")}</p>

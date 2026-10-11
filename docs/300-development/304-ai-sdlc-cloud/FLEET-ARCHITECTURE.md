@@ -244,10 +244,33 @@ Operational failures while landing the fleet. Full table:
 7. **Stale PR: rebase first** — Budget/person / `undefined, undefined` Integration or Playwright failures on a tip behind `main` are usually fixed by rebasing onto #1132’s nested `BudgetResponse.person`, not by new product code.
 8. **CodeQL: advanced XOR default setup** — do not enable GitHub Code Scanning default setup beside `.github/workflows/codeql.yml`; use `wait-for-processing: false` and/or `security/enable-gh-secure.sh --apply` ([DevSecOps](../../200-architecture/208-devsecops/README.md#codeql-advanced-vs-default-setup)).
 9. **Serialize heavy CI** — prefer one heavy-CI PR at a time; docs/rebase tips wait; do not open new product PRs until the in-flight Integration/Playwright suite finishes ([`CI-MERGE-GATE.md` — Runner contention](CI-MERGE-GATE.md#runner-contention--serialize-heavy-ci)).
+10. **Security change gate (Sec by Design)** — a diff that touches authentication, authorization, personal data, secrets, dependencies, or a public endpoint updates the threat model in the same change and passes `bash security/verify.sh` before push. Do not weaken the secret scan, CodeQL, or image-pin tests. Active testing stays inside a written scope ([cybersecurity program](../../200-architecture/206-security/CYBERSECURITY-PROGRAM.md)).
 
 ---
 
-## 10. Related docs
+## 10. Permanent domain model
+
+OpenSpec records the **delta** of one change. The picture of the running
+domain — gestión, deed, testimony, documents, budget, payment, folders — is
+[CICLO-DE-VIDA.md](../../200-architecture/203-design/CICLO-DE-VIDA.md).
+The method for artifacts, traceability, and the process boxes is
+[INGENIERIA.md](../INGENIERIA.md), taken from the
+[specialization guide](https://github.com/matiaspakua/tech.notes.io/blob/main/pages/sw_eng_specialization/final_projects_specialization.md)
+and fitted to this repository's mainline and board.
+
+In the docs phase, when a change adds, removes, or conditions one of those
+states:
+
+1. Edit `CICLO-DE-VIDA.md` in the same PR. Flyway remains the schema source of
+   truth; if the seeded graph changes, the migration and that file move together.
+2. Leave the use-case narrative in `docs/100-business/102-use-cases/` unless the
+   actor's steps changed. Do not paste the state graph into every use case.
+3. Do not add a new `.puml` for the same lifecycle ([ADR-027](../../200-architecture/202-ADR/ADR-027-mermaid-diagrams.md)).
+
+Work-item status on the delivery board is a different machine. Do not describe
+an issue `In Progress` as a gestión `En Tramite`.
+
+## 11. Related docs
 
 - [`ENVIRONMENT-CHECKLIST.md`](ENVIRONMENT-CHECKLIST.md) — Cloud environment.json inputs + process learnings table
 - [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) — light CI false-positive; required terminal checks before merge
