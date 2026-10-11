@@ -453,6 +453,61 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
         ):
             self.assertNotIn(retired, screens, retired)
 
+    def test_leftover_titles_name_the_live_contract(self):
+        i18n = (SPECS / "frontend-i18n-page-coverage" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn(
+            "#### Scenario: Substitutions, reports, roles, and items use translations",
+            i18n,
+        )
+        self.assertIn(
+            "#### Scenario: Audit all-modules filter is translated",
+            i18n,
+        )
+        for key in ("`suplencias`", "`reportes`", "`auditoria`", "`administracion`"):
+            self.assertIn(key, i18n, key)
+        self.assertNotIn("#### Scenario: Suplencias", i18n)
+        self.assertNotIn("#### Scenario: Auditoria", i18n)
+
+        icons = (SPECS / "icon-button-accessible-names" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("#### Scenario: Budget summary action is named", icons)
+        self.assertIn("icon-only budget summary", icons)
+        self.assertIn("“Editar”", icons)
+        self.assertIn("“Eliminar”", icons)
+        self.assertIn("/editar/i", icons)
+        self.assertIn("personas", icons)
+        self.assertIn("administracion", icons)
+        self.assertIn("tramites", icons)
+        self.assertNotIn("presupuesto summary", icons)
+        self.assertNotIn("Presupuesto resumen", icons)
+
+        load = (SPECS / "k6-load-test-restore" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn(
+            "#### Scenario: Script covers managements, budgets, and procedures with Bearer auth",
+            load,
+        )
+        self.assertIn("/api/v1/managements", load)
+        self.assertIn("/api/v1/budgets", load)
+        self.assertIn("/api/v1/procedures", load)
+        self.assertNotIn("gestiones presupuestos", load)
+
+        reports = (SPECS / "report-pdfs" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("Payment pending", reports)
+        self.assertNotIn("Payment pendiente", reports)
+
+        binding = (SPECS / "api-request-dto-binding" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`AuditAspect`", binding)
+        self.assertNotIn("AuditoriaAspect", binding)
+
+        sad = (
+            Path(__file__).resolve().parents[1]
+            / "200-architecture"
+            / "201-SAD"
+            / "sad.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("**Live status**", sad)
+        self.assertIn("Escribano", sad)
+        self.assertNotIn("Estado vivo", sad)
+
 
 if __name__ == "__main__":
     unittest.main()

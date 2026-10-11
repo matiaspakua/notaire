@@ -43,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English leftover requirement titles** (#1490, CU75):
+  `frontend-i18n-page-coverage`, `icon-button-accessible-names`,
+  `k6-load-test-restore`, `report-pdfs`, and `api-request-dto-binding` name
+  the live contract in English. Spec ids stay. Label keys `suplencias`,
+  `reportes`, `auditoria`, and `administracion` stay, along with module keys
+  `personas` and `tramites`, default-locale names “Editar” and “Eliminar”,
+  and the selector `/editar/i`. The document-debt PDF text is `Payment pending`.
+  Server-side auditing is `AuditAspect`. The SAD roadmap label is `Live status`.
+  Stored role `Escribano` stays.
 - **English case-process design** (#1490, CU75):
   `docs/200-architecture/203-design/GESTION.md` states the central process in
   English. The filename stays. Official use-case titles stay (`CU01 Preparar

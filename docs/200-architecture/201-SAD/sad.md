@@ -1123,7 +1123,7 @@ O --> (Deployability Docker)
 
 ### 11.3 Evolution Roadmap
 
-> 📊 **Estado vivo**: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1) ·
+> 📊 **Live status**: [Notaire — Delivery Board](https://github.com/users/matiaspakua/projects/1) ·
 > [`docs/github/README.md`](../../github/README.md) ·
 > [DEVELOPMENT-PLAN §5](../../300-development/DEVELOPMENT-PLAN.md).
 > Historical snapshots (do not update): [`docs/000-archive/github/`](../../000-archive/github/).

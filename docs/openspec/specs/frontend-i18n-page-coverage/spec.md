@@ -47,26 +47,28 @@ concerns MUST NOT remain in `login/page.tsx`.
 
 ### Requirement: Gap UI pages call useTranslations for user-visible copy
 
-The gap UI pages (workflows list, workflows editor, suplencias, reportes, roles,
-dashboard/items) SHALL call `useTranslations` for page-specific copy and reuse
-`common` for shared actions/labels where an existing key fits. Redirect-only
-stubs (`/`, `/audit`, `administracion/items`, `administracion/audit`)
-are exempt because they have no UI strings.
+The gap UI pages (workflows list, workflows editor, label keys `suplencias`,
+`reportes`, and `administracion`, roles, dashboard/items) SHALL call
+`useTranslations` for page-specific copy and reuse `common` for shared
+actions/labels where an existing key fits. Redirect-only stubs (`/`, `/audit`,
+`administracion/items`, `administracion/audit`) are exempt because they have
+no UI strings.
 
 #### Scenario: Workflows list and editor use translations
 
 - **WHEN** a user opens `/dashboard/administration/workflows` or the editor
 - **THEN** titles, toasts, form labels, and empty states resolve via next-intl
 
-#### Scenario: Suplencias, reportes, roles, and items use translations
+#### Scenario: Substitutions, reports, roles, and items use translations
 
-- **WHEN** a user opens those pages
+- **WHEN** a user opens the pages for label keys `suplencias`, `reportes`,
+  roles, and items
 - **THEN** titles, toasts, form labels, columns, and empty states resolve via
   next-intl (roles completes remaining hardcoded strings beyond common edit/delete)
 
-#### Scenario: Auditoria all-modules filter is translated
+#### Scenario: Audit all-modules filter is translated
 
-- **WHEN** a user opens the canonical auditoria page filter
+- **WHEN** a user opens the canonical `auditoria` page filter
 - **THEN** the all-modules option label is translated (not a Spanish literal)
 
 ### Requirement: Missing required keys fail tests
