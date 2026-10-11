@@ -1,5 +1,5 @@
 /**
- * CU69 - Gestión de Inmuebles: valuación fiscal (Gherkin style)
+ * CU69 - Property management: tax valuation (Gherkin style)
  *
  * Covers Issue #879: Property.valuacionFiscal was declared String while the
  * Postgres column is real, so every Property creation failed against the

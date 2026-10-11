@@ -36,7 +36,7 @@ async function seedFullWorkflow(page: Page): Promise<SeededManagement> {
 }
 
 // ──────────────────────────────────────────────
-// CU02 - Iniciar Gestión
+// CU02 - Start a management
 // ──────────────────────────────────────────────
 
 test.describe('CU02 - Start a management', () => {
@@ -249,7 +249,7 @@ test.describe("CU83 - Change a management's status", () => {
 })
 
 // ──────────────────────────────────────────────
-// CU16 - Archivar Gestión
+// CU16 - Archive a management
 // ──────────────────────────────────────────────
 
 test.describe('CU16 - Archive a management', () => {
@@ -350,7 +350,7 @@ test.describe('CU19 - Search managements by client', () => {
 })
 
 // ──────────────────────────────────────────────
-// Responsive viewports — vista de managements
+// Responsive viewports — managements view
 // ──────────────────────────────────────────────
 
 test.describe('Responsive viewports — managements view', () => {
@@ -373,7 +373,7 @@ test.describe('Responsive viewports — managements view', () => {
       const row = listRow(page, new RegExp(String(number)))
       await expect(row).toBeVisible({ timeout: 10000 })
 
-      // Bitácora accessible at every breakpoint
+      // History is accessible at every breakpoint
       await page.getByTestId(`btn-view-history-${idManagement}`).click()
       const dialog = page.getByRole('dialog')
       await expect(dialog).toBeVisible()

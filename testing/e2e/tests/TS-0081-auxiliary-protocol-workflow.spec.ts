@@ -1,5 +1,5 @@
 /**
- * E2E tests — Gestión de Trámites en Protocolo Auxiliar (CU81).
+ * E2E tests — Procedures in the auxiliary protocol (CU81).
  */
 import { test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";

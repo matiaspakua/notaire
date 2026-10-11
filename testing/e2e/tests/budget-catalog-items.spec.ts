@@ -1,5 +1,5 @@
 /**
- * CU71 - Agregar al budget copias de ítems existentes del catálogo.
+ * CU71 - Add copies of existing catalog items to a budget.
  * Issue #834.
  */
 import { test, expect } from "@playwright/test";
@@ -16,7 +16,7 @@ test.describe("CU71 - Add catalog items (golden path)", () => {
   });
 
   test("adds a catalog item to the budget and shows it in the breakdown", async ({ page }) => {
-    // GIVEN: budget y un ítem reutilizable en el catálogo
+    // GIVEN: a budget and a reusable catalog item
     const personResult = await createPerson(page);
     expect(personResult.ok).toBe(true);
     const budgetResult = await createBudget(page, personResult.data!.personId);
@@ -26,7 +26,7 @@ test.describe("CU71 - Add catalog items (golden path)", () => {
     const itemResult = await createItem(page, { name: "Sellado E2E", value: 750 });
     expect(itemResult.ok, `createItem failed: ${itemResult.error}`).toBe(true);
 
-    // WHEN: operador abre los ítems del budget y agrega el ítem del catálogo
+    // WHEN: the operator opens the budget items and adds the catalog item
     await steps.givenUserIsOnPage("/dashboard/budgets");
     const itemsBtn = page.getByTestId(`btn-items-budget-${idBudget}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
@@ -39,7 +39,7 @@ test.describe("CU71 - Add catalog items (golden path)", () => {
     await page.getByRole("option", { name: /Sellado E2E/i }).last().click();
     await dialog.getByTestId("btn-agregar-catalogo").click();
 
-    // THEN: el ítem agregado aparece en el desglose con su subtotal
+    // THEN: the added item appears in the breakdown with its subtotal
     const table = dialog.getByTestId("table-items-budget");
     await expect(table).toBeVisible({ timeout: 8000 });
     await expect(table).toContainText("Sellado E2E");
@@ -75,7 +75,7 @@ test.describe("CU71 - Add catalog items (golden path)", () => {
     await page.getByRole("option", { name: /Item Dos E2E/i }).last().click();
     await dialog.getByTestId("btn-agregar-catalogo").click();
 
-    // THEN: ambos ítems y el subtotal combinado son visibles
+    // THEN: both items and the combined subtotal are visible
     const table = dialog.getByTestId("table-items-budget");
     await expect(table).toContainText("Item Uno E2E");
     await expect(table).toContainText("Item Dos E2E");

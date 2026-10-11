@@ -183,7 +183,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
     public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
     {
         EntityManager em = null;
-        Boolean eliminado = false;
+        Boolean removed = false;
         try
         {
             em = getEntityManager();
@@ -230,7 +230,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
                 }
                 em.remove(procedureType);
                 em.getTransaction().commit();
-                eliminado = true;
+                removed = true;
             } else
             {
                 throw new ClassEliminatedException();
@@ -247,7 +247,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return eliminado;
+        return removed;
     }
 
     public List<ProcedureType> findProcedureTypeEntities()

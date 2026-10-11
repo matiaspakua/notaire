@@ -82,7 +82,7 @@ public class ItemService {
             throw new ResourceNotFoundException("Item not found with ID: " + id);
         }
         itemRepository.deleteById(id);
-        log.info("Item eliminado exitosamente: ID={}", id);
+        log.info("Item deleted successfully: ID={}", id);
     }
 
     /**

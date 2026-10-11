@@ -283,7 +283,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
     public Boolean deleteBudgetTemplate(BudgetTemplate template) throws ClassEliminatedException
     {
 
-        Boolean eliminada = false;
+        Boolean removed = false;
         int deleted = 0;
 
         EntityManager em = this.getEntityManager();
@@ -308,12 +308,12 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
             // Run the query.
             deleted = query.executeUpdate();
 
-            // Hago commit
+            // Commit the transaction.
             tx.commit();
 
             if (deleted > 0)
             {
-                eliminada = true;
+                removed = true;
             }
         } else
         {
@@ -322,7 +322,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
 
         em.close();
 
-        return eliminada;
+        return removed;
     }
 
     @Override

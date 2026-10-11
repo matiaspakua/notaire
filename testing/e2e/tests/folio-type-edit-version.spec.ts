@@ -3,7 +3,7 @@
  * dialog sent only { name, isAuxiliary }, so the backend read version 0: the first edit
  * worked, every later edit of the same folio type failed (500, now 409), and notes and
  * enabled were reset. The dialog now sends the loaded row with the edited fields.
- * CU64 — Tipos de folio.
+ * CU64 — Folio types.
  */
 import { test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";

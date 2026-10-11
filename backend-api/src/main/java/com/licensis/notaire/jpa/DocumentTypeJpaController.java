@@ -178,7 +178,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
     public Boolean destroy(Integer id) throws ClassEliminatedException, IllegalOrphanException, NonexistentEntityException
     {
         EntityManager em = null;
-        Boolean eliminado = false;
+        Boolean removed = false;
         try
         {
             em = getEntityManager();
@@ -215,7 +215,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
                 }
                 em.remove(documentType);
                 em.getTransaction().commit();
-                eliminado = true;
+                removed = true;
             } else
             {
                 throw new ClassEliminatedException();
@@ -229,7 +229,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
             }
         }
 
-        return eliminado;
+        return removed;
     }
 
     public List<DocumentType> findDocumentTypeEntities()

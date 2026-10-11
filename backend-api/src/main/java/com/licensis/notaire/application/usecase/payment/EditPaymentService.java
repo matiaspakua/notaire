@@ -45,7 +45,7 @@ public class EditPaymentService implements EditPaymentUseCase {
         PaymentDetails updated = payments.applyChanges(paymentId, new PaymentChanges(
                 amount, command.date(), command.notes(), command.paymentMethod()));
 
-        log.info("Payment editado exitosamente: ID={}", updated.id());
+        log.info("Payment updated successfully: ID={}", updated.id());
         return updated;
     }
 }

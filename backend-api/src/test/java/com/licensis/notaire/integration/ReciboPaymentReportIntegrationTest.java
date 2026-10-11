@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU15 - Emitir recibo de pago (issue #23).
+ * CU15 - Issue a payment receipt (issue #23).
  */
 @RequirementCoverage({"CU15"})
 @DisplayName("ReportController#generatePaymentReceiptReport — CU15 integration tests")

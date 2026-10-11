@@ -26,7 +26,7 @@ async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// CU48/CU51 - Registro de notary en el formulario de people
+// CU48/CU51 - Notary registration on the people form
 // ---------------------------------------------------------------------------
 
 test.describe("CU48/CU51 - Notary registration on people", () => {

@@ -1,6 +1,6 @@
 /**
  * E2E tests — Workflow assignment to ProcedureType
- * CU73: Asignar Workflow a Tipo de Trámite
+ * CU73: Assign a workflow to a procedure type
  * Requires: backend running at localhost:8080, frontend at localhost:3000
  *
  * Arranges its own tipo-procedure via API helpers (#1066) — never skips when the table is empty.

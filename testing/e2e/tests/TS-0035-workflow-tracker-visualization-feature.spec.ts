@@ -1,6 +1,6 @@
 /**
  * E2E tests — Animated workflow tracker on the dashboard landing page
- * CU: CU70 (Workflow de Estados de Gestión), CU71 (Trazabilidad de Trámites)
+ * CU: CU70 (management-status workflow), CU71 (procedure traceability)
  * Issue: #453
  */
 import { type Page, test, expect } from "@playwright/test";

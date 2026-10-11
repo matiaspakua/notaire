@@ -1,7 +1,7 @@
 /**
  * TS-0106 - Dialogs have accessible names (issue #1344)
  *
- * Covers: RNF-06 (Diseño de ventanas), CU76
+ * Covers: RNF-06 (window design), CU76
  * Issue: #1344 — 28 of 30 form dialogs had no DialogTitle, so `role=dialog`
  * had no accessible name, and the close button said "Cerrar" in English too.
  */

@@ -2,8 +2,8 @@
  * TS-0014 - Pagos Workflow (CU15 → CU47)
  * CU15 - Procesar Payment
  * CU47 - Look up a payment
- * Issue #796 (budget picker + saldo pendiente visibility)
- * Issue #821 (estado de pago badge: SIN_PAGOS / PARCIAL / SALDADO)
+ * Issue #796 (budget picker and pending-balance visibility)
+ * Issue #821 (payment-status badge: SIN_PAGOS / PARCIAL / SALDADO)
  * Issue #848 (overpayment rejection message)
  */
 import { type Page, test, expect } from "@playwright/test";

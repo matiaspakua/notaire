@@ -126,7 +126,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
 
     public Boolean destroy(Integer id) throws NonexistentEntityException
     {
-        Boolean eliminado = false;
+        Boolean removed = false;
         EntityManager em = null;
         try
         {
@@ -150,7 +150,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
             }
             em.remove(item);
             em.getTransaction().commit();
-            eliminado = true;
+            removed = true;
         }
         finally
         {
@@ -159,7 +159,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return eliminado;
+        return removed;
     }
 
     public List<Item> findItemEntities()
@@ -252,7 +252,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
     public Boolean deleteItem(Item item)
     {
 
-        Boolean eliminado = false;
+        Boolean removed = false;
         int deleted = 0;
 
         EntityManager em = this.getEntityManager();
@@ -271,16 +271,16 @@ public class ItemJpaController implements Serializable, JpaPersistence
         // Run the query.
         deleted = query.executeUpdate();
 
-        // Hago commit
+        // Commit the transaction.
         tx.commit();
 
         em.close();
 
         if (deleted > 0)
         {
-            eliminado = true;
+            removed = true;
         }
 
-        return eliminado;
+        return removed;
     }
 }

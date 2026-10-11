@@ -3,7 +3,7 @@
  * CU01 - Prepare a budget
  * CU45 - Update a budget
  * CU47 - Look up a payment / balance
- * Issues: #796 (saldo picker), #848 (overpayment guard)
+ * Issues: #796 (pending-balance picker), #848 (overpayment guard)
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU01.puml
  */
 import { test, expect } from "@playwright/test";
@@ -61,12 +61,12 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await steps.givenModuleIsVisible("Presupuestos");
 
-    // WHEN: operador abre el formulario de nuevo budget
+    // WHEN: the operator opens the new-budget form
     await page.getByTestId("btn-new-budget").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    // AND: selecciona person en el picker
+    // AND: selects a person in the picker
     await dialog.getByTestId("select-person").click();
     // The option text is "<name> <apellido>" — idPerson is embedded as data-value or similar;
     // we select the first option that contains the person we just created.
@@ -86,11 +86,11 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
     await dialog.getByLabel(/date/i).fill(today);
     await dialog.getByTestId("input-amount").fill("80000");
 
-    // AND: envía el formulario
+    // AND: submits the form
     await dialog.getByRole("button", { name: /guardar|crear/i }).click();
     await expect(dialog).not.toBeVisible({ timeout: 8000 });
 
-    // THEN: el budget aparece en la lista
+    // THEN: the budget appears in the list
     await expect(page.getByRole("table")).toBeVisible({ timeout: 8000 });
     const table = page.getByRole("table");
     await expect(table).toBeVisible();
@@ -110,11 +110,11 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
     const budgetResult = await createBudget(page, idPerson, undefined, { propertyAmount: 60000 });
     expect(budgetResult.ok).toBe(true);
 
-    // WHEN: recarga la lista
+    // WHEN: the list is reloaded
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
-    // THEN: la tabla es visible y tiene columna de client
+    // THEN: the table is visible and has a client column
     const table = page.getByRole("table");
     await expect(table).toBeVisible({ timeout: 8000 });
 
@@ -140,13 +140,13 @@ test.describe("CU47 - Consult payment / outstanding balance", () => {
   test("TS-0010-SD01 (#796): the budget summary shows the outstanding balance", async ({
     page,
   }) => {
-    // GIVEN: budget con saldo conocido
+    // GIVEN: a budget with a known balance
     const { idBudget } = await seedBudget(steps, 75000);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
-    // WHEN: operador abre el resumen del budget (CU47)
+    // WHEN: the operator opens the budget summary (CU47)
     const resumenBtn = page.getByTestId(`btn-summary-budget-${idBudget}`);
     await expect(resumenBtn).toBeVisible({ timeout: 8000 });
     await resumenBtn.click();
@@ -154,7 +154,7 @@ test.describe("CU47 - Consult payment / outstanding balance", () => {
     const dialog = page.getByTestId("dialog-summary-budget");
     await expect(dialog).toBeVisible();
 
-    // THEN: el saldo pendiente es visible en el resumen
+    // THEN: the pending balance is visible in the summary
     const saldoDisplay = dialog.getByText(/balance/i);
     await expect(saldoDisplay).toBeVisible({ timeout: 5000 });
     await expect(dialog).toContainText("75.000");
@@ -163,11 +163,11 @@ test.describe("CU47 - Consult payment / outstanding balance", () => {
   test("TS-0010-SD02 (#821): after recording a partial payment via API the summary shows the new balance", async ({
     page,
   }) => {
-    // GIVEN: budget con amount 80000 y sin pagos
+    // GIVEN: a budget with amount 80000 and no payments
     const { idBudget } = await seedBudget(steps, 80000);
 
-    // WHEN: se registra un pago parcial (40000 < 80000) vía API — el registro de pagos
-    // en sí se cubre en TS-0014 (CU15); aquí verificamos que CU47 refleje el saldo actualizado.
+    // WHEN: a partial payment is recorded (40000 < 80000) through the API — recording
+    // payments is covered in TS-0014 (CU15); here CU47 must show the updated balance.
     const pagoResult = await createPayment(page, idBudget, { amount: 40000 });
     expect(pagoResult.ok, `createPayment failed: ${pagoResult.error}`).toBe(true);
 
@@ -181,8 +181,8 @@ test.describe("CU47 - Consult payment / outstanding balance", () => {
     const dialog = page.getByTestId("dialog-summary-budget");
     await expect(dialog).toBeVisible();
 
-    // THEN: el resumen muestra el saldo pendiente actualizado (80000 - 40000 = 40000)
-    // y lista el pago registrado.
+    // THEN: the summary shows the updated pending balance (80000 - 40000 = 40000)
+    // and lists the recorded payment.
     await expect(dialog).toContainText("40.000");
   });
 });
@@ -214,7 +214,7 @@ test.describe("CU45 - Modify a budget", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
-    // WHEN: abre el modal de edición
+    // WHEN: the edit dialog opens
     const editBtn = page.getByTestId(`btn-edit-budget-${idBudget}`);
     await expect(editBtn).toBeVisible({ timeout: 8000 });
     await editBtn.click();
@@ -222,7 +222,7 @@ test.describe("CU45 - Modify a budget", () => {
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    // AND: modifica el amount
+    // AND: changes the amount
     const amountInput = dialog
       .getByTestId("input-amount")
       .or(dialog.getByLabel(/monto/i));
@@ -232,7 +232,7 @@ test.describe("CU45 - Modify a budget", () => {
     await dialog.getByRole("button", { name: /guardar|actualizar/i }).click();
     await expect(dialog).not.toBeVisible({ timeout: 8000 });
 
-    // THEN: la tabla refleja el nuevo amount
+    // THEN: the table shows the new amount
     await page.waitForLoadState("networkidle");
     const table = page.getByRole("table");
     await expect(table).toContainText("35.000");
@@ -240,7 +240,7 @@ test.describe("CU45 - Modify a budget", () => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// Viewports – módulo de budgets responsive (320 / 768 / 1024 px)
+// Viewports – responsive budgets module (320 / 768 / 1024 px)
 // ─────────────────────────────────────────────────────────────
 for (const viewport of [
   { width: 320, height: 568, label: "320px (mobile)" },
@@ -263,7 +263,7 @@ for (const viewport of [
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("domcontentloaded");
 
-    // THEN: la lista de budgets (tabla o tarjetas, #1356) es visible sin overflow horizontal
+    // THEN: the budget list (table or cards, #1356) is visible without horizontal overflow
     await expect(listView(page)).toBeVisible({ timeout: 8000 });
     await steps.thenHasNoHorizontalOverflow();
   });

@@ -154,7 +154,7 @@ test.describe('CU06 - Firmar Deed', () => {
   })
 
   test('CU06-GW01: golden path — deed Sin Firmar with a folio → sign → status Firmada', async ({ page }) => {
-    // Seed: folio + deed con folio asignado
+    // Seed: a folio plus a deed with a folio assigned
     const idFolio = await seedNewFolio(page)
     const { idDeed, number } = await seedDeedWithFolio(page, idFolio)
 
@@ -179,7 +179,7 @@ test.describe('CU06 - Firmar Deed', () => {
   })
 
   test('CU06-EDGE01: deed Sin Firmar without a folio → the sign button is disabled or shows an error', async ({ page }) => {
-    // Seed: deed sin folio asignado
+    // Seed: a deed with no folio assigned
     const { idDeed, number } = await seedDeedWithoutFolio(page)
 
     await page.goto('/dashboard/deeds')

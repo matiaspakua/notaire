@@ -1,7 +1,7 @@
 /**
  * TS-0107 - Text contrast meets WCAG AA (issue #1341)
  *
- * Covers: RNF-09 (Uso de colores en la GUI), CU76
+ * Covers: RNF-09 (use of colors in the GUI), CU76
  * Issue: #1341 — axe reported color-contrast on every dashboard route: table
  * headers (#86868B, 3.3:1), the sidebar subtitle (4.4:1), delete icons
  * (#ED2C2C, 4.2:1), the workflow legend and report card descriptions.

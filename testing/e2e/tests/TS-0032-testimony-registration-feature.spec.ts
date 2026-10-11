@@ -1,10 +1,10 @@
 /**
- * CU11/CU12/CU44 - Circuito de inscripción de testimony (issue #832)
+ * CU11/CU12/CU44 - Testimony registration cycle (issue #832)
  *
- * Golden path: ingresar para inscripción → registrar inscripción → retirar.
- * Edge path: reingresar sin retiro previo (bloqueado, per design.md —
- * Playwright Strategy). Testimonios are seeded already "Signed"/generado/
- * verificado directly via the generic CRUD endpoints (design.md — Non-Goals:
+ * Golden path: enter for registration → record the registration → withdraw.
+ * Edge path: re-enter without a prior withdrawal (blocked, per design.md —
+ * Playwright Strategy). Testimonies are seeded already signed, generated,
+ * and verified directly via the generic CRUD endpoints (design.md — Non-Goals:
  * these endpoints stay open) so each test starts from the exact movement
  * state it exercises.
  */

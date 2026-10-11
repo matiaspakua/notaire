@@ -133,7 +133,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
       (t) => t.deed?.number === deedNumber,
     )!.idTestimony
 
-    // ── CU08: Verificar sin notes ─────────────
+    // ── CU08: Verify without notes ─────────────
     await page.getByTestId(`btn-verify-testimony-${idTestimony}`).click()
     await steps.thenModalIsVisible()
     await page.getByTestId('btn-confirm-verify-testimony').click()
@@ -149,7 +149,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     await steps.thenShowsSuccessMessage('ingresado')
     await expect(rowMovements).toContainText(/ingresado/i)
 
-    // ── CU11: Registrar inscripción ───────────────────
+    // ── CU11: Enter for registration ───────────────────
     await page.getByTestId(`btn-record-registration-${idTestimony}`).click()
     await steps.thenShowsSuccessMessage('inscripción registrada')
     await expect(rowMovements).toContainText(/inscripto/i)

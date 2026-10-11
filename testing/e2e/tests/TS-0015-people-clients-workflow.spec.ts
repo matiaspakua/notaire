@@ -251,7 +251,7 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
 })
 
 // ---------------------------------------------------------------------------
-// Issue #835 - Deduplicación por DNI
+// Issue #835 - Deduplicate by identification number
 // ---------------------------------------------------------------------------
 
 test.describe('Issue #835 - Deduplication by DNI', () => {

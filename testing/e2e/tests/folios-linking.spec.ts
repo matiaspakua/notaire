@@ -1,5 +1,5 @@
 /**
- * CU87 - Vincular Deed, Folio y Copy de Testimony
+ * CU87 - Link a deed, a folio, and a testimony copy
  * CU28 - Enter new folios
  * Issue #838
  */

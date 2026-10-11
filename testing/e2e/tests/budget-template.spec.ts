@@ -57,10 +57,10 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     await dialog.getByTestId("select-procedure-type-items").click();
     await page.getByRole("option", { name: typeProcedureName, exact: true }).click();
 
-    // AND: carga los ítems de la template
+    // AND: loads the template items
     await dialog.getByTestId("btn-load-template").click();
 
-    // THEN: el ítem de la template aparece en el desglose con su subtotal
+    // THEN: the template item appears in the breakdown with its subtotal
     const table = dialog.getByTestId("table-items-budget");
     await expect(table).toBeVisible({ timeout: 8000 });
     await expect(table).toContainText("Honorarios E2E");
@@ -95,7 +95,7 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     await page.getByRole("option", { name: typeProcedureName }).click();
     await page.getByTestId("btn-save-budget").click();
 
-    // THEN: los ítems de la template ya están en el desglose del nuevo budget
+    // THEN: the template items are already in the new budget breakdown
     const row = page.getByRole("row").filter({ hasText: lastName }).first();
     await expect(row).toBeVisible({ timeout: 8000 });
     await row.getByRole("button", { name: /ítems|items/i }).click();

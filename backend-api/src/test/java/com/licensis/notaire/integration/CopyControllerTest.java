@@ -23,9 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU87 - Vincular Deed a Folio y Copy a Testimony (issue #838): rechaza
- * the creación of a copy when the testimony of origen already has a
- * movimiento inscripto (RF asociado).
+ * CU87 - Link a deed to a folio and a copy to a testimony (issue #838): rejects
+ * creating a copy when the source testimony already has a
+ * registered movement (related requirement).
  */
 @DisplayName("CopyController#create — CU87 integration tests")
 class CopyControllerTest extends ServiceIntegrationTest {

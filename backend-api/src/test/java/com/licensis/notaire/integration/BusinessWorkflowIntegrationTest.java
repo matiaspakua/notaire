@@ -45,7 +45,7 @@ class BusinessWorkflowIntegrationTest {
     }
 
     // ──────────────────────────────────────────────
-    // CU03 — Autenticación / Login workflow
+    // CU03 — Authentication / login workflow
     // ──────────────────────────────────────────────
 
     @Nested

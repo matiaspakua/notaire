@@ -1,6 +1,6 @@
 /**
  * E2E tests — Breadcrumb navigation in admin module
- * Issue #434: Breadcrumb navigation en el módulo de Administración
+ * Issue #434: Breadcrumb navigation in the administration module
  */
 import { test, expect } from "@playwright/test";
 

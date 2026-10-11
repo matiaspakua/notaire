@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-/** CU42 - Informar próximos vencimientos (issue #802): window query over submitted documents. */
+/** CU42 - Report upcoming expirations (issue #802): window query over submitted documents. */
 @RequirementCoverage({"CU42"})
 @SpringBootTest
 @ActiveProfiles("test-h2")

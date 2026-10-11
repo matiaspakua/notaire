@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English delete locals, success logs, and leftover test comments** (#1490, CU75):
+  JPA delete flags use `removed`, and item and payment success logs are English.
+  Remaining Playwright and integration-test comments use English use-case names.
+  Stored payment-status codes `SIN_PAGOS`, `PARCIAL`, and `SALDADO` stay.
+  UI matchers that follow the Spanish catalogs stay.
 - **English use-case titles in the coverage matrix** (#1490, CU75):
   the Playwright coverage reporter, `CU-API-MATRIX.csv`, and the leftover
   health-check titles use English use-case names, modules, and priorities.

@@ -1,6 +1,6 @@
 /**
  * E2E tests — Workflow editor (interactive)
- * CU70: Definir Workflow de Estados de Gestión
+ * CU70: Define a management-status workflow
  * CU71: Definir Transiciones entre Estados
  * Requires: backend running at localhost:8080, frontend at localhost:3000
  *

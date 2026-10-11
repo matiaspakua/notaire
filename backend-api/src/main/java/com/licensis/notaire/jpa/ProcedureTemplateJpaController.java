@@ -170,7 +170,7 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
     public Boolean destroy(ProcedureTemplatePK id) throws NonexistentEntityException
     {
         EntityManager em = null;
-        Boolean eliminado = false;
+        Boolean removed = false;
         try
         {
             em = getEntityManager();
@@ -199,7 +199,7 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
             }
             em.remove(procedureTemplate);
             em.getTransaction().commit();
-            eliminado = true;
+            removed = true;
         }
         finally
         {
@@ -208,7 +208,7 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
                 em.close();
             }
         }
-        return eliminado;
+        return removed;
     }
 
     public List<ProcedureTemplate> findProcedureTemplateEntities()
@@ -299,15 +299,15 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
     }
 
     /**
-     * Elimina a Template of Procedure mediante a query DELETE.
+     * Deletes a procedure template with a DELETE query.
      *
-     * @param template, the Template of Procedure a delete.
-     * @return True si se elimino, False de lo contrario.
+     * @param template the procedure template to delete
+     * @return true when a row was deleted, false otherwise
      */
     public Boolean deleteProcedureTemplate(ProcedureTemplate template)
     {
 
-        Boolean eliminada = false;
+        Boolean removed = false;
         int deleted = 0;
 
         EntityManager em = this.getEntityManager();
@@ -327,17 +327,17 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
         // Run the query.
         deleted = query.executeUpdate();
 
-        // Hago commit
+        // Commit the transaction.
         tx.commit();
 
         em.close();
 
         if (deleted > 0)
         {
-            eliminada = true;
+            removed = true;
         }
 
-        return eliminada;
+        return removed;
 
     }
 

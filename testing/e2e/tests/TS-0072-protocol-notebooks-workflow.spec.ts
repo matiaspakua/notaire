@@ -1,5 +1,5 @@
 /**
- * E2E tests — Administrar Cuadernos de Folios (CU80).
+ * E2E tests — Manage folio notebooks (CU80).
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";

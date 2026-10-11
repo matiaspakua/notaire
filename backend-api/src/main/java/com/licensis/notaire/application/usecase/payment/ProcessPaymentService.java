@@ -69,7 +69,7 @@ public class ProcessPaymentService implements ProcessPaymentUseCase {
                 command.notes(),
                 command.paymentMethod()));
 
-        log.info("Payment registrado exitosamente: ID={}", saved.id());
+        log.info("Payment recorded successfully: ID={}", saved.id());
         return saved;
     }
 }
