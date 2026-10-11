@@ -4,8 +4,9 @@
 
 Define how the Notaire web client presents backend mutation failures so users
 see business-rule messages (and field errors when available) instead of generic
-toasts on CRUD screens. Source exemplars: CU15 – Procesar pago; CU20/CU21
-usuarios; surface area includes CU26–CU30 tablas base pages listed in #1054.
+toasts on CRUD screens. Source exemplars: CU15 – Procesar pago; CU20 – Dar alta usuario and
+CU21 – Modificar Usuario; surface area includes the CU26–CU30 base-catalog
+pages listed in #1054.
 
 ## Requirements
 

@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Error-toast exemplars** (#1490, CU75): the living spec `api-error-toasts`
+  cites `CU20 – Dar alta usuario` and `CU21 – Modificar Usuario`, and names
+  the CU26–CU30 base-catalog pages. The archived spec keeps `usuarios` and
+  `tablas base`.
 - **Upcoming-expiration purpose** (#1490, CU75): the living spec
   `documento-presentado-herencia-vencimiento` cites the official title
   `CU42 – Informar próximos vencimientos`. The archived spec keeps
