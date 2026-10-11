@@ -1,0 +1,20 @@
+info:
+  name: Remove a required document
+  type: http
+  seq: 7
+  description: |-
+      Issue #1362: DELETE removes the row (it used to answer 204 and keep it).
+      Traceability: CU55 (RF #53), CU03 (RF #14, #15)
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/procedure-templates/1/{{procedure_template_document_type_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 204 No Content", function () { expect(res.getStatus()).to.equal(204); });

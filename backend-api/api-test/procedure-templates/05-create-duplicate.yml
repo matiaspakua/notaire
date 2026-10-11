@@ -1,0 +1,27 @@
+info:
+  name: Adding the same document twice is rejected
+  type: http
+  seq: 5
+  description: |-
+      Issue #1362: the (procedure type, document type) pair is the key, so a second POST is 409.
+      Traceability: CU55 (RF #53), CU03 (RF #14, #15)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/procedure-templates"
+  body:
+    type: json
+    data: |-
+        {
+          "fkIdProcedureType": 1,
+          "fkIdDocumentType": {{procedure_template_document_type_id}}
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 409 Conflict", function () { expect(res.getStatus()).to.equal(409); });
