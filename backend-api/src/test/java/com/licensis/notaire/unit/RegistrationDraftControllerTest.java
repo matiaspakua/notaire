@@ -113,7 +113,7 @@ class RegistrationDraftControllerTest {
     @DisplayName("POST /api/v1/registration-drafts returns 404 when the deed does not exist")
     void shouldReturnNotFoundWhenDeedMissing() throws Exception {
         when(registrationDraftService.generate(999))
-                .thenThrow(new ResourceNotFoundException("No existe la deed con ID: 999"));
+                .thenThrow(new ResourceNotFoundException("Deed not found with ID: 999"));
 
         mockMvc.perform(post("/api/v1/registration-drafts")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -166,7 +166,7 @@ class AuditRecordControllerTest {
 
     @Test
     @DisplayName("Should return audit records by user id")
-    void shouldReturnRegistrosByUserId() throws Exception {
+    void shouldReturnRecordsByUserId() throws Exception {
         when(service.findByUserIdAsDto(1)).thenReturn(List.of(sampleDto));
 
         mockMvc.perform(get("/api/v1/audit-log/user/1"))

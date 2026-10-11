@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Validates and applies the "Firmar deed" business action (CU06).
+ * Validates and applies the "Sign a deed" business action (CU06).
  */
 @Service
 @Transactional

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("DataInitializer — user admin by defecto")
+@DisplayName("DataInitializer — default admin user")
 class DataInitializerTest {
 
     private static final String BCRYPT_ADMIN = "$2a$12$stub.bcrypt.hash.for.admin.password";
@@ -57,7 +57,7 @@ class DataInitializerTest {
     void shouldNotModifyExistingAdminUser() {
         User existing = new User();
         existing.setName("admin");
-        existing.setPassword("hash-ya-rotado-por-el-operador");
+        existing.setPassword("hash-already-rotated-by-the-operator");
         existing.setStatus(false);
         when(userRepository.findByName("admin")).thenReturn(Optional.of(existing));
 
@@ -65,7 +65,7 @@ class DataInitializerTest {
 
         verify(userRepository, never()).save(any());
         verify(personRepository, never()).save(any());
-        assertThat(existing.getPassword()).isEqualTo("hash-ya-rotado-por-el-operador");
+        assertThat(existing.getPassword()).isEqualTo("hash-already-rotated-by-the-operator");
         assertThat(existing.getStatus()).isFalse();
     }
 

@@ -105,7 +105,7 @@ class EntitiesBasicTest {
 
         @Test
         @DisplayName("getDto and setAttributes roundtrip")
-        void getDtoAndSetAtributos() throws Exception {
+        void getDtoAndSetAttributes() throws Exception {
             Concept c = new Concept(1);
             c.setName("X");
             c.setValue(new java.math.BigDecimal("10"));

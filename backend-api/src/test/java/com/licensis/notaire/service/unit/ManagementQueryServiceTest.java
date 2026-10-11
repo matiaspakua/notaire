@@ -48,7 +48,7 @@ class ManagementQueryServiceTest {
         testManagement = new DeedManagement();
         testManagement.setIdManagement(1);
         testManagement.setNumber(100);
-        testManagement.setHeading("Venta Property");
+        testManagement.setHeading("Sale property");
         testManagement.setDateStart(new Date());
         testManagement.setFkIdManagementStatus(testStatus);
     }
@@ -65,7 +65,7 @@ class ManagementQueryServiceTest {
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .allMatch(dto -> dto.heading().equals("Venta Property"));
+                .allMatch(dto -> dto.heading().equals("Sale property"));
         assertThat(result.getTotalElements()).isEqualTo(1);
 
         verify(repository, times(1)).findAll(pageable);
@@ -99,7 +99,7 @@ class ManagementQueryServiceTest {
                 .hasValueSatisfying(dto -> {
                     assertThat(dto.idManagement()).isEqualTo(1);
                     assertThat(dto.number()).isEqualTo(100);
-                    assertThat(dto.heading()).isEqualTo("Venta Property");
+                    assertThat(dto.heading()).isEqualTo("Sale property");
                     assertThat(dto.currentStatus()).isEqualTo("INICIADO");
                 });
 
@@ -128,7 +128,7 @@ class ManagementQueryServiceTest {
         assertThat(result).isPresent()
                 .hasValueSatisfying(dto -> {
                     assertThat(dto.number()).isEqualTo(100);
-                    assertThat(dto.heading()).isEqualTo("Venta Property");
+                    assertThat(dto.heading()).isEqualTo("Sale property");
                 });
 
         verify(repository, times(1)).findByNumber(100);
@@ -149,14 +149,14 @@ class ManagementQueryServiceTest {
     @Test
     @DisplayName("Should handle null status in summary mapping")
     void shouldHandleNullStatusInMapping() {
-        DeedManagement managementSinStatus = new DeedManagement();
-        managementSinStatus.setIdManagement(1);
-        managementSinStatus.setNumber(100);
-        managementSinStatus.setHeading("Test");
-        managementSinStatus.setDateStart(new Date());
-        managementSinStatus.setFkIdManagementStatus(null);
+        DeedManagement managementWithoutStatus = new DeedManagement();
+        managementWithoutStatus.setIdManagement(1);
+        managementWithoutStatus.setNumber(100);
+        managementWithoutStatus.setHeading("Test");
+        managementWithoutStatus.setDateStart(new Date());
+        managementWithoutStatus.setFkIdManagementStatus(null);
 
-        when(repository.findById(1)).thenReturn(Optional.of(managementSinStatus));
+        when(repository.findById(1)).thenReturn(Optional.of(managementWithoutStatus));
 
         Optional<DtoManagementSummary> result = service.findById(1);
 

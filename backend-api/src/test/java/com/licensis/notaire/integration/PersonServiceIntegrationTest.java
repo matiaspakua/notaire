@@ -311,8 +311,8 @@ class PersonServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should search people filtering by isClient = false")
     void shouldSearchPeopleFilteringByIsClientFalse() {
         Person notClient = new Person();
-        notClient.setFirstName("Abogado");
-        notClient.setLastName("Penal");
+        notClient.setFirstName("Lawyer");
+        notClient.setLastName("Criminal");
         notClient.setIdentificationNumber("ID-" + UUID.randomUUID().toString().substring(0, 8));
         notClient.setIsClient(false);
         notClient.setFkIdIdentificationType(identificationType);

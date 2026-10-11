@@ -82,7 +82,7 @@ class ProcedureSerializationIntegrationTest {
         MvcResult result = mockMvc.perform(post("/api/v1/budgets")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"number": 1, "heading": "budget ciclo IT", "status": "PENDIENTE",
+                                {"number": 1, "heading": "budget cycle IT", "status": "PENDIENTE",
                                  "date": "2026-07-24"}
                                 """))
                 .andExpect(status().isCreated())
@@ -92,7 +92,7 @@ class ProcedureSerializationIntegrationTest {
 
     private Integer createProcedureForBudget(Integer typeProcedureId, Integer budgetId) throws Exception {
         String body = """
-                {"notes": "procedure ciclo IT", "idProcedureType": %d, "idBudget": %d}
+                {"notes": "procedure cycle IT", "idProcedureType": %d, "idBudget": %d}
                 """.formatted(typeProcedureId, budgetId);
         MvcResult result = mockMvc.perform(post("/api/v1/procedures")
                         .contentType(MediaType.APPLICATION_JSON)

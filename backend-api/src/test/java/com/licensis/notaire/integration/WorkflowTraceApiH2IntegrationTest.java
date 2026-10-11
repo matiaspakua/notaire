@@ -41,8 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Integration tests for GET /api/v1/managements/{id}/workflow-trace.
  * Seeds a workflow (INITIAL → INTERMEDIATE → FINAL), a management whose procedure
- * uses that workflow's tipo, and history entries covering the first two
- * estados, then asserts the aggregated trace and computed node statuses.
+ * uses that workflow's procedure type, and history entries covering the first two
+ * statuses, then asserts the aggregated trace and computed node statuses.
  */
 @RequirementCoverage({"CU83"})
 @SpringBootTest

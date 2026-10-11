@@ -97,13 +97,13 @@ class ItemControllerTest {
     @DisplayName("GET /api/v1/items/budget/{id}/discounts-surcharges should return discounts and surcharges")
     void shouldReturnDiscountsAndSurchargesForBudget() throws Exception {
         when(itemService.findDiscountsAndSurchargesByBudget(10)).thenReturn(List.of(
-                buildItem(1, TypeItem.DESCUENTO, "Descuento by pronto payment")
+                buildItem(1, TypeItem.DESCUENTO, "Discount for early payment")
         ));
 
         mockMvc.perform(get("/api/v1/items/budget/10/discounts-surcharges"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].type").value("DESCUENTO"))
-                .andExpect(jsonPath("$[0].reason").value("Descuento by pronto payment"));
+                .andExpect(jsonPath("$[0].reason").value("Discount for early payment"));
     }
 
     @Test
@@ -153,7 +153,7 @@ class ItemControllerTest {
 
         String json = """
                 {
-                    "name": "Descuento sin reason",
+                    "name": "Discount without reason",
                     "value": 500.0,
                     "type": "DESCUENTO",
                     "fixedConcept": false
@@ -174,7 +174,7 @@ class ItemControllerTest {
 
         String json = """
                 {
-                    "name": "Item actualizado",
+                    "name": "Updated item",
                     "value": 2000.0
                 }
                 """;
@@ -192,7 +192,7 @@ class ItemControllerTest {
 
         String json = """
                 {
-                    "name": "Item actualizado",
+                    "name": "Updated item",
                     "value": 2000.0
                 }
                 """;

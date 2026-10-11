@@ -65,7 +65,7 @@ class DeedServiceTest {
         testDeed = new Deed();
         testDeed.setIdDeed(1);
         testDeed.setNumber(100);
-        testDeed.setBody("Venta de propiedad");
+        testDeed.setBody("parcel sale");
         testDeed.setStatus("FIRMADA");
     }
 

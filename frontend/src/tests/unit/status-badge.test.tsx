@@ -57,7 +57,7 @@ describe("resolveStatus (#1366)", () => {
 
   it("treats anything outside a vocabulary as neutral with the raw text", () => {
     expect(resolveStatus("budget", "ACTIVO")).toEqual({ tone: "neutral", labelKey: null, raw: "ACTIVO" });
-    expect(resolveStatus("management", "Estado E2E 42")).toEqual({ tone: "neutral", labelKey: null, raw: "Estado E2E 42" });
+    expect(resolveStatus("management", "Status E2E 42")).toEqual({ tone: "neutral", labelKey: null, raw: "Status E2E 42" });
     expect(resolveStatus("folio", undefined)).toEqual({ tone: "neutral", labelKey: null, raw: "" });
   });
 });
@@ -81,8 +81,8 @@ describe("<StatusBadge> (#1366)", () => {
   });
 
   it("never crashes or renders blank on an unknown or missing value", () => {
-    renderBadge("management", "Estado E2E 42");
-    expect(screen.getByTestId("status-badge")).toHaveTextContent("Estado E2E 42");
+    renderBadge("management", "Status E2E 42");
+    expect(screen.getByTestId("status-badge")).toHaveTextContent("Status E2E 42");
     expect(screen.getByTestId("status-badge")).toHaveAttribute("data-tone", "neutral");
     renderBadge("folio", null);
     expect(screen.getAllByTestId("status-badge")[1]).toHaveTextContent("—");
