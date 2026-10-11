@@ -149,6 +149,7 @@ public class ProcedureTemplateController {
     })
     @DeleteMapping("/{idProcedureType}/{idDocumentType}")
     @Operation(summary = "Delete procedure template (CU55)")
+    @Transactional
     public ResponseEntity<Void> delete(@PathVariable Integer idProcedureType,
             @PathVariable Integer idDocumentType) {
         ProcedureTemplatePK pk = new ProcedureTemplatePK(idProcedureType, idDocumentType);
