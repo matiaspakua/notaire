@@ -16,7 +16,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Branch | `cursor/1511-testing-architecture-b585` | created |
 | Tasks | `tasks.md` | groups 1–8 complete |
 | Commits | `e600eb89`, `b546fcb5`, `e3266425` | done |
-| Pull Request | pending | pending |
+| Pull Request | [#1513](https://github.com/matiaspakua/notaire/pull/1513) | open |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
 | Release / tag | n/a (docs/process) | pending |
@@ -39,13 +39,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/300-development/303-testing/TEST-PLAN.md` | pending | pending |
-| `docs/300-development/303-testing/PROCESS-ARCHITECTURE.md` | pending | pending |
-| `docs/300-development/303-testing/INVENTORY.md` | pending | pending |
-| `docs/200-architecture/202-ADR/ADR-006-testing-strategy.md` | pending | pending |
-| `CONSTITUTION.md` §7 | pending | pending |
-| CU76 | pending | pending |
-| `CHANGELOG.md` | pending | pending |
+| `docs/300-development/303-testing/TEST-PLAN.md` | yes | branch |
+| `docs/300-development/303-testing/PROCESS-ARCHITECTURE.md` | yes | branch |
+| `docs/300-development/303-testing/INVENTORY.md` | yes | branch |
+| `docs/200-architecture/202-ADR/ADR-006-testing-strategy.md` | yes | branch |
+| `CONSTITUTION.md` | yes | branch |
+| `docs/100-business/102-use-cases/CU76 – Quality Assurance and Testing Infrastructure.md` | yes | branch |
+| `CHANGELOG.md` | yes | branch |
 
 ## Gate log
 
