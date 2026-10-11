@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English required-documents comment** (#1490, CU75): the checklist
+  dialog says it is ADMIN only, like the rest of the administration
+  section. The visible section name `Administración` stays.
 - **English use-case module pointers** (#1490, CU75): included use
   cases point at `Budget`, `Clients`, `Deeds`, `Concepts`, and
   `Procedures`. Official titles stay, including `Buscar Presupuesto`,
