@@ -800,6 +800,10 @@
         "label": "Estados de Gestión",
         "description": "Estados del ciclo de vida de las gestiones"
       },
+      "tiposIdentificacion": {
+        "label": "Tipos de identificación",
+        "description": "DNI, CUIT, pasaporte y la longitud de cada número"
+      },
       "plantillas": {
         "label": "Plantillas Presupuesto",
         "description": "Plantillas reutilizables para presupuestos"
@@ -905,6 +909,27 @@
       "workflowSection": "Diagrama de Workflow",
       "selectWorkflow": "Seleccionar workflow...",
       "workflowFilter": "Workflow a visualizar"
+    },
+    "tiposIdentificacion": {
+      "title": "Tipos de identificación",
+      "description": "Los tipos de documento que ofrece el formulario de personas",
+      "new": "Nuevo tipo de identificación",
+      "edit": "Editar tipo de identificación",
+      "created": "Tipo de identificación creado",
+      "updated": "Tipo de identificación actualizado",
+      "deleted": "Tipo de identificación eliminado",
+      "errorSave": "Error al guardar el tipo de identificación",
+      "errorDelete": "No se pudo eliminar el tipo de identificación",
+      "duplicateName": "Ya existe un tipo de identificación con ese nombre",
+      "nameRequired": "El nombre es obligatorio",
+      "charactersRequired": "Indicá la cantidad de caracteres del número (1 a 99)",
+      "noData": "No hay tipos de identificación",
+      "fields": {
+        "name": "Nombre",
+        "namePlaceholder": "Ej.: CUIT",
+        "characters": "Caracteres del número",
+        "charactersHelp": "Longitud máxima del número de documento para este tipo"
+      }
     },
     "folios": {
       "title": "Folios",
@@ -1330,6 +1355,7 @@
       "templates": "Plantillas Presupuesto",
       "concepts": "Conceptos",
       "managementStatuses": "Estados de Gestión",
+      "identificationTypes": "Tipos de identificación",
       "users": "Usuarios"
     }
   },
