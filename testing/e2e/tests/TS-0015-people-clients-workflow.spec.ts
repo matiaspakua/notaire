@@ -33,15 +33,15 @@ async function loginAndGoToPeople(page: Page): Promise<void> {
   await steps.givenUserIsOnPage('/dashboard/people')
 }
 
-/** Opens "Nueva person" modal and fills the required fields.
- *  `esClient` controls whether the checkbox is checked (CU18 path). */
+/** Opens the new-person modal and fills the required fields.
+ *  `isClient` controls whether the checkbox is checked (CU18 path). */
 async function fillPersonForm(
   page: Page,
   opts: {
     name: string
-    apellido: string
+    lastName: string
     dni: string
-    esClient?: boolean
+    isClient?: boolean
   },
 ): Promise<void> {
   await page.getByTestId('btn-new-person').click()
@@ -49,12 +49,12 @@ async function fillPersonForm(
   await expect(dialog).toBeVisible()
 
   await page.getByTestId('input-firstName').fill(opts.name)
-  await page.getByTestId('input-lastName').fill(opts.apellido)
+  await page.getByTestId('input-lastName').fill(opts.lastName)
   await dialog.getByTestId('input-dni').fill(opts.dni)
 
-  if (opts.esClient) {
+  if (opts.isClient) {
     // CU18: checking this checkbox registers the person as a client at creation time.
-    const checkbox = dialog.getByTestId('check-es-client')
+    const checkbox = dialog.getByTestId('check-is-client')
     await checkbox.check()
     await expect(checkbox).toBeChecked()
   }
@@ -90,7 +90,7 @@ test.describe('CU17 - Register a person', () => {
       await expect(dialog.getByTestId('input-dni')).toBeVisible()
 
       // CU18 mechanism: checkbox must be present in the creation form
-      await expect(dialog.getByTestId('check-es-client')).toBeVisible()
+      await expect(dialog.getByTestId('check-is-client')).toBeVisible()
     },
   )
 
@@ -98,14 +98,14 @@ test.describe('CU17 - Register a person', () => {
     'CU17-GW02: creating a person without checking is-client → the person appears in the table, not as a client',
     async ({ page }) => {
       const dni = `17${uniqueId() % 10_000_000}`
-      const apellido = `Alta${uniqueId() % 100_000}`
+      const lastName = `Alta${uniqueId() % 100_000}`
 
       // When — create without the es-client checkbox
       await fillPersonForm(page, {
         name: 'Carlos',
-        apellido,
+        lastName,
         dni,
-        esClient: false,
+        isClient: false,
       })
       await submitForm(page)
 
@@ -114,10 +114,10 @@ test.describe('CU17 - Register a person', () => {
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      await page.getByTestId('input-search-lastName').fill(apellido)
+      await page.getByTestId('input-search-lastName').fill(lastName)
       await expect(page.getByRole('table')).toBeVisible()
       await expect(
-        page.getByRole('table').getByText(new RegExp(apellido, 'i')),
+        page.getByRole('table').getByText(new RegExp(lastName, 'i')),
       ).toBeVisible()
     },
   )
@@ -129,14 +129,14 @@ test.describe('CU17 - Register a person', () => {
       // Creating a person with this checkbox checked simultaneously registers
       // the person as a client. No separate step is needed.
       const dni = `18${uniqueId() % 10_000_000}`
-      const apellido = `Cliente${uniqueId() % 100_000}`
+      const lastName = `Cliente${uniqueId() % 100_000}`
 
       // When — create WITH the es-client checkbox (CU17 + CU18 in one step)
       await fillPersonForm(page, {
         name: 'María',
-        apellido,
+        lastName,
         dni,
-        esClient: true,
+        isClient: true,
       })
       await submitForm(page)
 
@@ -146,9 +146,9 @@ test.describe('CU17 - Register a person', () => {
       ).toBeVisible({ timeout: 8000 })
 
       // And — person appears in the table
-      await page.getByTestId('input-search-lastName').fill(apellido)
+      await page.getByTestId('input-search-lastName').fill(lastName)
       await expect(page.getByRole('table')).toBeVisible()
-      const row = page.getByRole('row', { name: new RegExp(apellido, 'i') })
+      const row = page.getByRole('row', { name: new RegExp(lastName, 'i') })
       await expect(row).toBeVisible()
 
       // And — the row indicates the person is a client
@@ -175,14 +175,14 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
     'CU18-GW01: a person created with the is-client checkbox appears as a client',
     async ({ page }) => {
       const dni = `CU18${uniqueId() % 10_000_000}`
-      const apellido = `EsCliente${uniqueId() % 100_000}`
+      const lastName = `EsCliente${uniqueId() % 100_000}`
 
       // When — person created with es-client checked (the CU18 mechanism)
       await fillPersonForm(page, {
         name: 'Lucía',
-        apellido,
+        lastName,
         dni,
-        esClient: true,
+        isClient: true,
       })
       await submitForm(page)
 
@@ -192,10 +192,10 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
       ).toBeVisible({ timeout: 8000 })
 
       // And — searching for the person shows her in the table as a client
-      await page.getByTestId('input-search-lastName').fill(apellido)
+      await page.getByTestId('input-search-lastName').fill(lastName)
       await expect(page.getByRole('table')).toBeVisible()
 
-      const row = page.getByRole('row', { name: new RegExp(apellido, 'i') })
+      const row = page.getByRole('row', { name: new RegExp(lastName, 'i') })
       await expect(row).toBeVisible()
       // The row must reflect client status (column value, badge, or icon)
       await expect(row.getByText(/^cliente$|^sí$/i)).toBeVisible()
@@ -208,14 +208,14 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
       // NOTE (CU41): editing an existing person and checking 'es client'
       // promotes them to client status. This is the CU41 path.
       const dni = `CU41${uniqueId() % 10_000_000}`
-      const apellido = `Promover${uniqueId() % 100_000}`
+      const lastName = `Promover${uniqueId() % 100_000}`
 
       // Given — person created without es-client
       await fillPersonForm(page, {
         name: 'Pedro',
-        apellido,
+        lastName,
         dni,
-        esClient: false,
+        isClient: false,
       })
       await submitForm(page)
       await expect(
@@ -223,16 +223,16 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
       ).toBeVisible({ timeout: 8000 })
 
       // When — open the person for editing
-      await page.getByTestId('input-search-lastName').fill(apellido)
+      await page.getByTestId('input-search-lastName').fill(lastName)
       await expect(page.getByRole('table')).toBeVisible()
-      const row = page.getByRole('row', { name: new RegExp(apellido, 'i') })
+      const row = page.getByRole('row', { name: new RegExp(lastName, 'i') })
       await row.getByRole('button').first().click()
 
       const editDialog = page.getByRole('dialog')
       await expect(editDialog).toBeVisible()
 
       // And — check the es-client checkbox to promote the person (CU18/CU41)
-      const checkbox = editDialog.getByTestId('check-es-client')
+      const checkbox = editDialog.getByTestId('check-is-client')
       await checkbox.check()
       await expect(checkbox).toBeChecked()
       await submitForm(page)
@@ -243,8 +243,8 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
       ).toBeVisible({ timeout: 8000 })
 
       // And — person now shows as client
-      await page.getByTestId('input-search-lastName').fill(apellido)
-      const updatedRow = page.getByRole('row', { name: new RegExp(apellido, 'i') })
+      await page.getByTestId('input-search-lastName').fill(lastName)
+      const updatedRow = page.getByRole('row', { name: new RegExp(lastName, 'i') })
       await expect(updatedRow.getByText(/client|sí/i)).toBeVisible()
     },
   )
@@ -265,14 +265,14 @@ test.describe('Issue #835 - Deduplication by DNI', () => {
       const dni = `DUP${uniqueId() % 10_000_000}`
 
       // Given — first person created successfully
-      await fillPersonForm(page, { name: 'Original', apellido: 'Duplicado', dni })
+      await fillPersonForm(page, { name: 'Original', lastName: 'Duplicado', dni })
       await submitForm(page)
       await expect(
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
       // When — attempt to create a second person with the same DNI
-      await fillPersonForm(page, { name: 'Otra', apellido: 'Person', dni })
+      await fillPersonForm(page, { name: 'Otra', lastName: 'Person', dni })
       await submitForm(page)
 
       // Then — error toast references duplicate document
@@ -291,13 +291,13 @@ test.describe('Issue #835 - Deduplication by DNI', () => {
     async ({ page }) => {
       const dni = `DUP2${uniqueId() % 10_000_000}`
 
-      await fillPersonForm(page, { name: 'Primero', apellido: 'Exist', dni })
+      await fillPersonForm(page, { name: 'Primero', lastName: 'Exist', dni })
       await submitForm(page)
       await expect(
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      await fillPersonForm(page, { name: 'Segundo', apellido: 'Dup', dni })
+      await fillPersonForm(page, { name: 'Segundo', lastName: 'Dup', dni })
       await submitForm(page)
 
       // Then — link to existing person is shown in the toast
@@ -371,20 +371,20 @@ test.describe('CU61 - Search for a person or client', () => {
     async ({ page }) => {
       const steps = new GherkinSteps(page)
 
-      // Given — a person was created via API with a unique apellido
+      // Given — a person was created via API with a unique lastName
       const result = await createPerson(page, {
         lastName: `BuscaApellido${uniqueId() % 100_000}`,
         identificationNumber: `CU61A${uniqueId() % 10_000_000}`,
       })
       expect(result.ok).toBe(true)
-      const apellido = result.data ? (result.data as any).lastName : undefined
+      const lastName = result.data ? (result.data as any).lastName : undefined
 
-      // When — reload list and search by apellido
+      // When — reload list and search by lastName
       await page.reload()
       await page.waitForLoadState('networkidle')
 
-      if (apellido) {
-        await page.getByTestId('input-search-lastName').fill(apellido)
+      if (lastName) {
+        await page.getByTestId('input-search-lastName').fill(lastName)
       } else {
         // fallback: search with a partial known value
         await page.getByTestId('input-search-lastName').fill('BuscaApellido')
@@ -440,7 +440,7 @@ test.describe('CU61 - Search for a person or client', () => {
     async ({ page }) => {
       const steps = new GherkinSteps(page)
 
-      // When — apellido search that will never match
+      // When — lastName search that will never match
       await page.getByTestId('input-search-lastName').fill('ZZZZNoExiste999XY')
 
       // Then — empty state message
@@ -512,14 +512,14 @@ test.describe('People screen - responsive viewports', () => {
         await page.waitForLoadState('domcontentloaded')
 
         // Create original
-        await fillPersonForm(page, { name: 'Primero', apellido: 'VP', dni })
+        await fillPersonForm(page, { name: 'Primero', lastName: 'VP', dni })
         await submitForm(page)
         await expect(
           page.locator('[data-sonner-toast]').getByText(/creada/i),
         ).toBeVisible({ timeout: 8000 })
 
         // Attempt duplicate
-        await fillPersonForm(page, { name: 'Segundo', apellido: 'VP', dni })
+        await fillPersonForm(page, { name: 'Segundo', lastName: 'VP', dni })
         await submitForm(page)
 
         // Then — duplicate error is visible even on narrow screens
@@ -579,11 +579,11 @@ test.describe('#1361 - Identification type in the person form', () => {
 
   test('creating a person with type CUIT persists it and lists "CUIT <number>"', async ({ page }) => {
     const cuit = `30${String(uniqueId() % 1_000_000_000).padStart(9, '0')}`
-    const apellido = `Cuit${uniqueId() % 100_000}`
+    const lastName = `Cuit${uniqueId() % 100_000}`
     await page.getByTestId('btn-new-person').click()
     const dialog = page.getByRole('dialog')
     await page.getByTestId('input-firstName').fill('Empresa')
-    await page.getByTestId('input-lastName').fill(apellido)
+    await page.getByTestId('input-lastName').fill(lastName)
     await dialog.getByRole('combobox', { name: /tipo de identificación/i }).click()
     await page.getByRole('listbox').getByRole('option', { name: 'CUIT', exact: true }).click()
     await dialog.getByTestId('input-dni').fill(cuit)

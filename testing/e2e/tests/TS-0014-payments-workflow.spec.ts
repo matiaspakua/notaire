@@ -14,8 +14,8 @@ import { createPerson, createBudget, createPayment } from "./setup/api-helpers";
 // Seed helpers
 // ──────────────────────────────────────────────
 
-/** Seed a person + budget with a given amount, returning both IDs and the apellido used to find it in the UI. */
-async function seedBudget(page: Page, amount: number): Promise<{ idBudget: number; apellido: string }> {
+/** Seed a person + budget with a given amount, returning both IDs and the lastName used to find it in the UI. */
+async function seedBudget(page: Page, amount: number): Promise<{ idBudget: number; lastName: string }> {
   const personResult = await createPerson(page);
   if (!personResult.ok || !personResult.data?.personId) {
     throw new Error(`Failed to seed persona: ${personResult.error ?? JSON.stringify(personResult.data)}`);
@@ -24,7 +24,7 @@ async function seedBudget(page: Page, amount: number): Promise<{ idBudget: numbe
   if (!budgetResult.ok || !budgetResult.data?.idBudget) {
     throw new Error(`Failed to seed presupuesto: ${budgetResult.error ?? JSON.stringify(budgetResult.data)}`);
   }
-  return { idBudget: budgetResult.data.idBudget, apellido: personResult.data.lastName! };
+  return { idBudget: budgetResult.data.idBudget, lastName: personResult.data.lastName! };
 }
 
 test.describe("CU15 - Process a payment", () => {
@@ -55,7 +55,7 @@ test.describe("CU15 - Process a payment", () => {
 
   test("CU15-SALDO-02 (#796): selecting a budget shows its client name and outstanding balance", async ({ page }) => {
     const amountBudget = 75000;
-    const { apellido } = await seedBudget(page, amountBudget);
+    const { lastName } = await seedBudget(page, amountBudget);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -64,23 +64,23 @@ test.describe("CU15 - Process a payment", () => {
     const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await budgetSelector.fill(apellido);
+    await budgetSelector.fill(lastName);
 
-    const budgetOption = page.getByRole("option", { name: new RegExp(apellido, "i") });
+    const budgetOption = page.getByRole("option", { name: new RegExp(lastName, "i") });
     await expect(budgetOption).toBeVisible();
     await budgetOption.click();
 
-    const saldoDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
-    await expect(saldoDisplay).toBeVisible({ timeout: 5000 });
+    const balanceDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
+    await expect(balanceDisplay).toBeVisible({ timeout: 5000 });
 
     // The picker shows "#<id> — <client>"; the budget amount is in the balance panel (#1340).
-    await expect(budgetSelector).toHaveValue(new RegExp(apellido, "i"));
+    await expect(budgetSelector).toHaveValue(new RegExp(lastName, "i"));
     await expect(page.getByRole("dialog").getByText(/Presupuestado: \$\s?75\.000/)).toBeVisible();
   });
 
   test("CU15-SALDO-03 (#796): the balance updates when the budget selection changes", async ({ page }) => {
-    const { apellido: apellido1 } = await seedBudget(page, 50000);
-    const { apellido: apellido2 } = await seedBudget(page, 100000);
+    const { lastName: apellido1 } = await seedBudget(page, 50000);
+    const { lastName: apellido2 } = await seedBudget(page, 100000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -91,9 +91,9 @@ test.describe("CU15 - Process a payment", () => {
     await budgetSelector.fill(apellido1);
     await page.getByRole("option", { name: new RegExp(apellido1, "i") }).click();
 
-    let saldoDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
-    await expect(saldoDisplay).toBeVisible();
-    const saldoText1 = await saldoDisplay.locator("../..").textContent();
+    let balanceDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
+    await expect(balanceDisplay).toBeVisible();
+    const balanceText1 = await balanceDisplay.locator("../..").textContent();
 
     await budgetSelector.click();
 
@@ -102,15 +102,15 @@ test.describe("CU15 - Process a payment", () => {
     await budgetSelector.fill(apellido2);
     await page.getByRole("option", { name: new RegExp(apellido2, "i") }).click();
 
-    saldoDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
-    await expect(saldoDisplay).toBeVisible();
-    const saldoText2 = await saldoDisplay.locator("../..").textContent();
+    balanceDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
+    await expect(balanceDisplay).toBeVisible();
+    const balanceText2 = await balanceDisplay.locator("../..").textContent();
 
-    expect(saldoText1).not.toBe(saldoText2);
+    expect(balanceText1).not.toBe(balanceText2);
   });
 
   test("CU15-SALDO-04 (#848): submitting an amount over the outstanding balance shows a specific rejection message", async ({ page }) => {
-    const { apellido } = await seedBudget(page, 50000);
+    const { lastName } = await seedBudget(page, 50000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -119,8 +119,8 @@ test.describe("CU15 - Process a payment", () => {
     const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await budgetSelector.fill(apellido);
-    await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
+    await budgetSelector.fill(lastName);
+    await page.getByRole("option", { name: new RegExp(lastName, "i") }).click();
 
     await page.getByRole("dialog").getByLabel(/date/i).fill("2026-09-01");
     await page.getByRole("dialog").locator('input[type="number"]').fill("999999");
@@ -131,7 +131,7 @@ test.describe("CU15 - Process a payment", () => {
   });
 
   test("CU15-GW02: Given the form is open, When it is filled and submitted, Then the payment is recorded", async ({ page }) => {
-    const { apellido } = await seedBudget(page, 50000);
+    const { lastName } = await seedBudget(page, 50000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -140,8 +140,8 @@ test.describe("CU15 - Process a payment", () => {
     const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await budgetSelector.fill(apellido);
-    await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
+    await budgetSelector.fill(lastName);
+    await page.getByRole("option", { name: new RegExp(lastName, "i") }).click();
 
     await page.getByRole("dialog").getByLabel(/date/i).fill("2026-09-01");
     await page.getByRole("dialog").locator('input[type="number"]').fill("10000");
@@ -186,7 +186,7 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
   });
 
   test("ESTADO-01: a new budget without payments shows the SIN_PAGOS badge", async ({ page }) => {
-    const { apellido } = await seedBudget(page, 60000);
+    const { lastName } = await seedBudget(page, 60000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -195,8 +195,8 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
     const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await budgetSelector.fill(apellido);
-    await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
+    await budgetSelector.fill(lastName);
+    await page.getByRole("option", { name: new RegExp(lastName, "i") }).click();
 
     const badge = page.getByTestId("status-payment-badge");
     await expect(badge).toBeVisible({ timeout: 5000 });
@@ -204,7 +204,7 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
   });
 
   test("ESTADO-02: a budget with a partial payment shows the PARCIAL badge", async ({ page }) => {
-    const { idBudget, apellido } = await seedBudget(page, 100000);
+    const { idBudget, lastName } = await seedBudget(page, 100000);
     const pagoResult = await createPayment(page, idBudget, { amount: 40000 });
     if (!pagoResult.ok) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
@@ -217,8 +217,8 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
     const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await budgetSelector.fill(apellido);
-    await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
+    await budgetSelector.fill(lastName);
+    await page.getByRole("option", { name: new RegExp(lastName, "i") }).click();
 
     const badge = page.getByTestId("status-payment-badge");
     await expect(badge).toBeVisible({ timeout: 5000 });
@@ -226,7 +226,7 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
   });
 
   test("ESTADO-03: a fully paid budget shows the SALDADO badge", async ({ page }) => {
-    const { idBudget, apellido } = await seedBudget(page, 80000);
+    const { idBudget, lastName } = await seedBudget(page, 80000);
     const pagoResult = await createPayment(page, idBudget, { amount: 80000 });
     if (!pagoResult.ok) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
@@ -239,8 +239,8 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
     const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await budgetSelector.fill(apellido);
-    await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
+    await budgetSelector.fill(lastName);
+    await page.getByRole("option", { name: new RegExp(lastName, "i") }).click();
 
     const badge = page.getByTestId("status-payment-badge");
     await expect(badge).toBeVisible({ timeout: 5000 });

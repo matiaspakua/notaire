@@ -368,7 +368,7 @@ function PeopleList() {
                 label={t("fields.esCliente")}
                 checked={editing.isClient ?? false}
                 onChange={(checked) => setEditing({ ...editing, isClient: checked })}
-                data-testid="check-es-client"
+                data-testid="check-is-client"
               />
             </FormSection>
             <FormActions align="right">

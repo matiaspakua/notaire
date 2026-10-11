@@ -37,7 +37,7 @@ test.describe("CU48/CU51 - Notary registration on people", () => {
   });
 
   test("CU48-GW01: registering a person with a notary registration number is saved", async ({ page }) => {
-    const apellido = `Escribano${uniqueId() % 100_000}`;
+    const lastName = `Escribano${uniqueId() % 100_000}`;
     const dni = `48${uniqueId() % 10_000_000}`;
 
     await page.getByTestId("btn-new-person").click();
@@ -45,7 +45,7 @@ test.describe("CU48/CU51 - Notary registration on people", () => {
     await expect(dialog).toBeVisible();
 
     await page.getByTestId("input-firstName").fill("Juan");
-    await page.getByTestId("input-lastName").fill(apellido);
+    await page.getByTestId("input-lastName").fill(lastName);
     await dialog.getByTestId("input-dni").fill(dni);
     await page.getByTestId("input-notary-registration").fill("123");
 
@@ -60,12 +60,12 @@ test.describe("CU48/CU51 - Notary registration on people", () => {
       lastName: `Modif${uniqueId() % 100_000}`,
       identificationNumber: `51${uniqueId() % 10_000_000}`,
     });
-    const apellido = person.data!.lastName!;
+    const lastName = person.data!.lastName!;
 
     await page.reload();
     await page.waitForLoadState("domcontentloaded");
-    await page.getByTestId("input-search-lastName").fill(apellido);
-    const row = page.getByRole("row", { name: new RegExp(apellido, "i") });
+    await page.getByTestId("input-search-lastName").fill(lastName);
+    const row = page.getByRole("row", { name: new RegExp(lastName, "i") });
     await expect(row).toBeVisible({ timeout: 10000 });
     await row.getByRole("button").first().click();
 

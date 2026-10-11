@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English Playwright identifiers** (#1490, CU75):
+  Payment and people specs use `lastName`, `balanceDisplay`, and
+  `check-is-client`. The people checkbox still reads
+  `t("fields.esCliente")`. The default-locale label
+  `Buscar por apellido...` stays.
 - **English icon filenames** (#1490, CU75):
   Public icons use English names such as `save.png`, `delete.png`,
   `users.png`, `management-statuses.png`, and `budget-templates.png`.

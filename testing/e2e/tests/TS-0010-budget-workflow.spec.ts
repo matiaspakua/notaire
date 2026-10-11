@@ -24,7 +24,6 @@ async function seedBudget(
   const personResult = await createPerson(page);
   expect(personResult.ok, `createPerson failed: ${personResult.error}`).toBe(true);
   const idPerson = personResult.data!.personId;
-  const apellido = personResult.data as any;
 
   const budgetResult = await createBudget(page, idPerson, undefined, {
     propertyAmount: amountOverride,
@@ -68,7 +67,7 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
 
     // AND: selects a person in the picker
     await dialog.getByTestId("select-person").click();
-    // The option text is "<name> <apellido>" — idPerson is embedded as data-value or similar;
+    // The option text is "<first name> <last name>" — idPerson is embedded as data-value or similar;
     // we select the first option that contains the person we just created.
     const personOption = page.getByRole("listbox").getByRole("option").first();
     await expect(personOption).toBeVisible({ timeout: 5000 });
@@ -81,7 +80,7 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
       await personOption.evaluate((el: HTMLElement) => el.click());
     }
 
-    // AND: completa fecha y amount
+    // AND: fills the date and the amount
     const today = new Date().toISOString().split("T")[0];
     await dialog.getByLabel(/date/i).fill(today);
     await dialog.getByTestId("input-amount").fill("80000");
@@ -147,16 +146,16 @@ test.describe("CU47 - Consult payment / outstanding balance", () => {
     await page.waitForLoadState("networkidle");
 
     // WHEN: the operator opens the budget summary (CU47)
-    const resumenBtn = page.getByTestId(`btn-summary-budget-${idBudget}`);
-    await expect(resumenBtn).toBeVisible({ timeout: 8000 });
-    await resumenBtn.click();
+    const summaryBtn = page.getByTestId(`btn-summary-budget-${idBudget}`);
+    await expect(summaryBtn).toBeVisible({ timeout: 8000 });
+    await summaryBtn.click();
 
     const dialog = page.getByTestId("dialog-summary-budget");
     await expect(dialog).toBeVisible();
 
     // THEN: the pending balance is visible in the summary
-    const saldoDisplay = dialog.getByText(/balance/i);
-    await expect(saldoDisplay).toBeVisible({ timeout: 5000 });
+    const balanceDisplay = dialog.getByText(/balance/i);
+    await expect(balanceDisplay).toBeVisible({ timeout: 5000 });
     await expect(dialog).toContainText("75.000");
   });
 
@@ -174,9 +173,9 @@ test.describe("CU47 - Consult payment / outstanding balance", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
-    const resumenBtn = page.getByTestId(`btn-summary-budget-${idBudget}`);
-    await expect(resumenBtn).toBeVisible({ timeout: 8000 });
-    await resumenBtn.click();
+    const summaryBtn = page.getByTestId(`btn-summary-budget-${idBudget}`);
+    await expect(summaryBtn).toBeVisible({ timeout: 8000 });
+    await summaryBtn.click();
 
     const dialog = page.getByTestId("dialog-summary-budget");
     await expect(dialog).toBeVisible();

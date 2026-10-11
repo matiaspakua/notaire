@@ -230,7 +230,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
       await pause(page, 400);
     });
 
-    await test.step("Search by apellido", async () => {
+    await test.step("Search by lastName", async () => {
       await page.getByTestId("input-search-lastName").fill("Pérez");
       await pause(page, PAUSE);
       await page.getByTestId("input-search-lastName").clear();

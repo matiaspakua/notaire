@@ -71,8 +71,8 @@ test.describe('CU02 - Start a management', () => {
     const personId = person.data!.personId
     await createBudget(page, personId)
 
-    // Fetch the person's apellido from the seeded data to locate the option
-    const apellido = person.data!.lastName ?? ''
+    // Fetch the person's lastName from the seeded data to locate the option
+    const lastName = person.data!.lastName ?? ''
 
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
@@ -80,10 +80,10 @@ test.describe('CU02 - Start a management', () => {
     await page.getByTestId('btn-new-management').click()
     await page.getByTestId('select-budget-management').click()
     // Budget pickers search the server (#1340): type the client first.
-    await page.getByTestId('select-budget-management').fill(apellido)
+    await page.getByTestId('select-budget-management').fill(lastName)
 
     await expect(
-      page.getByRole('option', { name: new RegExp(apellido, 'i') }),
+      page.getByRole('option', { name: new RegExp(lastName, 'i') }),
     ).toBeVisible({ timeout: 8000 })
   })
 })
