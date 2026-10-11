@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English catalog-item identifiers** (#1490, CU75):
+  The budget controller field is `budgetCatalogItemsService`. The budgets page
+  uses `catalogItems`, `addFromCatalogMutation`, and `handleAddFromCatalog`.
+  The add button test id is `btn-add-from-catalog`. Message keys
+  `items.agregarCatalogo`, `items.addedFromCatalogo`, and `items.catalogoSection`
+  stay. Stored budget status `PENDIENTE` stays.
 - **English API versioning decision** (#1490, CU75):
   ADR-003 is English. The live budget controller is `BudgetController` at
   `/api/v1/budgets`. Errors use `ErrorResponse` (`timestamp`, `status`, `error`,

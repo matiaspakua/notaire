@@ -501,13 +501,13 @@ class SimpleControllersTest {
                 mock(com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase.class);
         private final com.licensis.notaire.application.usecase.budget.BudgetTemplateService budgetTemplateService =
                 mock(com.licensis.notaire.application.usecase.budget.BudgetTemplateService.class);
-        private final com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService budgetCatalogoItemsService =
+        private final com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService budgetCatalogItemsService =
                 mock(com.licensis.notaire.application.usecase.budget.BudgetCatalogItemsService.class);
         private final com.licensis.notaire.repository.PersonRepository personRepository =
                 mock(com.licensis.notaire.repository.PersonRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
                 standaloneSetup(new BudgetController(service, budgetSummaryUseCase,
-                        budgetTemplateService, budgetCatalogoItemsService, personRepository))
+                        budgetTemplateService, budgetCatalogItemsService, personRepository))
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
 
@@ -556,7 +556,7 @@ class SimpleControllersTest {
             mvc.perform(post("/api/v1/budgets/1/items-from-template?procedureTypeId=5"))
                     .andExpect(status().isOk());
 
-            when(budgetCatalogoItemsService.addItemsFromCatalog(eq(1), anyList()))
+            when(budgetCatalogItemsService.addItemsFromCatalog(eq(1), anyList()))
                     .thenReturn(List.of(item));
             mvc.perform(post("/api/v1/budgets/1/items-from-catalog").contentType("application/json")
                     .content(mapper.writeValueAsString(List.of(1))))

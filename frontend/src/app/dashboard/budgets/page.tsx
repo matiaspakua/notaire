@@ -76,11 +76,11 @@ function BudgetsList() {
   const { data: budgetItems = [], isLoading: isItemsLoading } =
     useItemsByBudget(itemsBudgetId ?? undefined);
   const { data: procedureTypes = [] } = useProcedureTypes();
-  const { data: catalogoItems = [] } = useItems();
+  const { data: catalogItems = [] } = useItems();
   const [selectedProcedureTypeId, setSelectedTypeProcedureId] = useState<string>("");
   const [selectedCatalogItemId, setSelectedCatalogItemId] = useState<string>("");
   const loadTemplateMutation = useLoadItemsFromTemplate();
-  const agregarCatalogoMutation = useAddItemsFromCatalog();
+  const addFromCatalogMutation = useAddItemsFromCatalog();
 
   function openItems(p: Budget) {
     setItemsBudgetId(p.idBudget!);
@@ -107,10 +107,10 @@ function BudgetsList() {
     }
   }
 
-  async function handleAgregarCatalogo() {
+  async function handleAddFromCatalog() {
     if (!itemsBudgetId || !selectedCatalogItemId) return;
     try {
-      await agregarCatalogoMutation.mutateAsync({
+      await addFromCatalogMutation.mutateAsync({
         idBudget: itemsBudgetId,
         idItems: [Number(selectedCatalogItemId)],
       });
@@ -544,15 +544,15 @@ function BudgetsList() {
             <FormSection title={t("items.catalogoSection")}>
               <FormField
                 label={t("items.selectCatalogItem")}
-                helperText={catalogoItems.length === 0 ? t("items.noCatalogItems") : undefined}
+                helperText={catalogItems.length === 0 ? t("items.noCatalogItems") : undefined}
               >
                 <div className="flex gap-2">
                   <Select value={selectedCatalogItemId} onValueChange={setSelectedCatalogItemId}>
-                    <SelectTrigger data-testid="select-catalog-item" disabled={catalogoItems.length === 0}>
+                    <SelectTrigger data-testid="select-catalog-item" disabled={catalogItems.length === 0}>
                       <SelectValue placeholder={t("items.selectCatalogItem")} />
                     </SelectTrigger>
                     <SelectContent>
-                      {catalogoItems.map((item) => (
+                      {catalogItems.map((item) => (
                         <SelectItem key={item.idItem} value={item.idItem!.toString()}>
                           {item.name} — {formatCurrency(item.value)}
                         </SelectItem>
@@ -560,9 +560,9 @@ function BudgetsList() {
                     </SelectContent>
                   </Select>
                   <Button
-                    data-testid="btn-agregar-catalogo"
-                    disabled={!selectedCatalogItemId || agregarCatalogoMutation.isPending}
-                    onClick={handleAgregarCatalogo}
+                    data-testid="btn-add-from-catalog"
+                    disabled={!selectedCatalogItemId || addFromCatalogMutation.isPending}
+                    onClick={handleAddFromCatalog}
                   >
                     {t("items.agregarCatalogo")}
                   </Button>

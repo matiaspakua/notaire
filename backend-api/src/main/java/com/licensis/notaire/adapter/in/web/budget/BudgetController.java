@@ -91,18 +91,18 @@ public class BudgetController {
     private final BudgetService budgetService;
     private final GetBudgetSummaryUseCase budgetSummaryUseCase;
     private final BudgetTemplateService budgetTemplateService;
-    private final BudgetCatalogItemsService budgetCatalogoItemsService;
+    private final BudgetCatalogItemsService budgetCatalogItemsService;
     private final PersonRepository personRepository;
 
     public BudgetController(BudgetService budgetService,
             GetBudgetSummaryUseCase budgetSummaryUseCase,
             BudgetTemplateService budgetTemplateService,
-            BudgetCatalogItemsService budgetCatalogoItemsService,
+            BudgetCatalogItemsService budgetCatalogItemsService,
             PersonRepository personRepository) {
         this.budgetService = budgetService;
         this.budgetSummaryUseCase = budgetSummaryUseCase;
         this.budgetTemplateService = budgetTemplateService;
-        this.budgetCatalogoItemsService = budgetCatalogoItemsService;
+        this.budgetCatalogItemsService = budgetCatalogItemsService;
         this.personRepository = personRepository;
     }
 
@@ -297,7 +297,7 @@ public class BudgetController {
     public ResponseEntity<List<ItemResponse>> addItemsFromCatalog(
             @PathVariable Integer id,
             @RequestBody List<Integer> idItems) {
-        return ResponseEntity.ok(budgetCatalogoItemsService.addItemsFromCatalog(id, idItems).stream()
+        return ResponseEntity.ok(budgetCatalogItemsService.addItemsFromCatalog(id, idItems).stream()
                 .map(ItemResponse::from).toList());
     }
 }

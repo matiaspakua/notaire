@@ -41,7 +41,7 @@ class PaginationTest {
     private BudgetTemplateService budgetTemplateService;
 
     @Mock
-    private BudgetCatalogItemsService budgetCatalogoItemsService;
+    private BudgetCatalogItemsService budgetCatalogItemsService;
 
     @Mock
     private com.licensis.notaire.repository.PersonRepository personRepository;
@@ -52,7 +52,7 @@ class PaginationTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(
                 new BudgetController(budgetService, budgetSummaryUseCase,
-                        budgetTemplateService, budgetCatalogoItemsService, personRepository))
+                        budgetTemplateService, budgetCatalogItemsService, personRepository))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

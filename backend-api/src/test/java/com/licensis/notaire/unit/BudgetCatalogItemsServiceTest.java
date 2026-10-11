@@ -33,11 +33,11 @@ class BudgetCatalogItemsServiceTest {
     private ItemRepositoryPort itemRepository;
 
     @InjectMocks
-    private BudgetCatalogItemsService budgetCatalogoItemsService;
+    private BudgetCatalogItemsService budgetCatalogItemsService;
 
     private Item buildCatalogItem(Integer id, String name, java.math.BigDecimal value) {
         Item item = new Item(id, name, value);
-        item.setNotes("Observation of catálogo");
+        item.setNotes("Catalog observation");
         item.setPercentage(15);
         return item;
     }
@@ -51,13 +51,13 @@ class BudgetCatalogItemsServiceTest {
         when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", new java.math.BigDecimal("500"))));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> result = budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(10));
+        List<Item> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10));
 
         assertThat(result).hasSize(1);
         Item copy = result.get(0);
         assertThat(copy.getName()).isEqualTo("Sellado");
         assertThat(copy.getValue()).isEqualByComparingTo(new java.math.BigDecimal("500"));
-        assertThat(copy.getNotes()).isEqualTo("Observation of catálogo");
+        assertThat(copy.getNotes()).isEqualTo("Catalog observation");
         assertThat(copy.getFkIdBudget()).isEqualTo(budget);
     }
 
@@ -71,7 +71,7 @@ class BudgetCatalogItemsServiceTest {
         when(itemRepository.findById(11)).thenReturn(Optional.of(buildCatalogItem(11, "Honorarios", new java.math.BigDecimal("1000"))));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> result = budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(10, 11));
+        List<Item> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10, 11));
 
         assertThat(result).hasSize(2);
         assertThat(result).extracting(Item::getName).containsExactlyInAnyOrder("Sellado", "Honorarios");
@@ -85,7 +85,7 @@ class BudgetCatalogItemsServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(itemRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> budgetCatalogoItemsService.addItemsFromCatalog(1, List.of(999)))
+        assertThatThrownBy(() -> budgetCatalogItemsService.addItemsFromCatalog(1, List.of(999)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("999");
     }
@@ -95,7 +95,7 @@ class BudgetCatalogItemsServiceTest {
     void shouldRejectWhenBudgetDoesNotExist() {
         when(budgetRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> budgetCatalogoItemsService.addItemsFromCatalog(999, List.of(10)))
+        assertThatThrownBy(() -> budgetCatalogItemsService.addItemsFromCatalog(999, List.of(10)))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

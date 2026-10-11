@@ -23,7 +23,7 @@ test.describe("CU71 - Add catalog items (golden path)", () => {
     expect(budgetResult.ok).toBe(true);
     const idBudget = budgetResult.data!.idBudget;
 
-    const itemResult = await createItem(page, { name: "Sellado E2E", value: 750 });
+    const itemResult = await createItem(page, { name: "Stamp E2E", value: 750 });
     expect(itemResult.ok, `createItem failed: ${itemResult.error}`).toBe(true);
 
     // WHEN: the operator opens the budget items and adds the catalog item
@@ -36,13 +36,13 @@ test.describe("CU71 - Add catalog items (golden path)", () => {
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId("select-catalog-item").click();
-    await page.getByRole("option", { name: /Sellado E2E/i }).last().click();
-    await dialog.getByTestId("btn-agregar-catalogo").click();
+    await page.getByRole("option", { name: /Stamp E2E/i }).last().click();
+    await dialog.getByTestId("btn-add-from-catalog").click();
 
     // THEN: the added item appears in the breakdown with its subtotal
     const table = dialog.getByTestId("table-items-budget");
     await expect(table).toBeVisible({ timeout: 8000 });
-    await expect(table).toContainText("Sellado E2E");
+    await expect(table).toContainText("Stamp E2E");
     await expect(dialog.getByTestId("items-subtotal")).toContainText("750");
   });
 
@@ -53,8 +53,8 @@ test.describe("CU71 - Add catalog items (golden path)", () => {
     expect(budgetResult.ok).toBe(true);
     const idBudget = budgetResult.data!.idBudget;
 
-    const item1 = await createItem(page, { name: "Item Uno E2E", value: 200 });
-    const item2 = await createItem(page, { name: "Item Dos E2E", value: 300 });
+    const item1 = await createItem(page, { name: "Item one E2E", value: 200 });
+    const item2 = await createItem(page, { name: "Item two E2E", value: 300 });
     expect(item1.ok).toBe(true);
     expect(item2.ok).toBe(true);
 
@@ -67,18 +67,18 @@ test.describe("CU71 - Add catalog items (golden path)", () => {
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId("select-catalog-item").click();
-    await page.getByRole("option", { name: /Item Uno E2E/i }).last().click();
-    await dialog.getByTestId("btn-agregar-catalogo").click();
-    await expect(dialog.getByTestId("table-items-budget")).toContainText("Item Uno E2E");
+    await page.getByRole("option", { name: /Item one E2E/i }).last().click();
+    await dialog.getByTestId("btn-add-from-catalog").click();
+    await expect(dialog.getByTestId("table-items-budget")).toContainText("Item one E2E");
 
     await dialog.getByTestId("select-catalog-item").click();
-    await page.getByRole("option", { name: /Item Dos E2E/i }).last().click();
-    await dialog.getByTestId("btn-agregar-catalogo").click();
+    await page.getByRole("option", { name: /Item two E2E/i }).last().click();
+    await dialog.getByTestId("btn-add-from-catalog").click();
 
     // THEN: both items and the combined subtotal are visible
     const table = dialog.getByTestId("table-items-budget");
-    await expect(table).toContainText("Item Uno E2E");
-    await expect(table).toContainText("Item Dos E2E");
+    await expect(table).toContainText("Item one E2E");
+    await expect(table).toContainText("Item two E2E");
     await expect(dialog.getByTestId("items-subtotal")).toContainText("500");
   });
 });
