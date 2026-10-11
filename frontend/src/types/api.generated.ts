@@ -1665,7 +1665,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Assign or unassign workflow a procedure type */
+        /** Assign or unassign a workflow on a procedure type */
         put: operations["assignWorkflow"];
         post?: never;
         delete?: never;
@@ -4234,7 +4234,7 @@ export interface components {
         WorkflowAssignmentRequest: {
             /**
              * Format: int32
-             * @description Workflow active a assign, or null for unassign the actual
+             * @description Active workflow to assign, or null to unassign the current one
              */
             workflowDefinitionId: number | null;
         };
@@ -8894,7 +8894,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Empty or invalid body: workflowDefinitionId is required (entero, or null for unassign) */
+            /** @description Empty or invalid body: workflowDefinitionId is required (an integer, or null to unassign) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8912,7 +8912,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description The workflow seleccionado is not active */
+            /** @description The selected workflow is not active */
             409: {
                 headers: {
                     [name: string]: unknown;

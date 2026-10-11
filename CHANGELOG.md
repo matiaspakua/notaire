@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English workflow assignment copy** (#1490, CU75): the assignment
+  request names the active workflow, an integer, and unassigning the
+  current one. The conflict says the selected workflow is not active.
+  The operation assigns or unassigns a workflow on a procedure type.
+  The inactive fixture is `Inactive workflow`. Stored procedure type
+  `Compraventa` stays.
 - **English reentry comments** (#1490, CU75): the Postgres reentry test
   names `submitted_documents`, `released`, and `observed`, and its display
   says against the real schema. The concept regression comment names
