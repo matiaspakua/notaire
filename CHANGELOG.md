@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Budget-procedure survey citation** (#1490, CU75): the living spec names
+  `docs/openspec/explore.md`. The archived cardinality spec keeps
+  `openspec/explore_functional_report.md`.
 - **Workflow tracker E2E filename** (#1490, CU75): the design cites
   `testing/e2e/tests/TS-0138-workflow-tracker.spec.ts`. The e2e-suite
   spec keeps the historical name `workflow-tracker.spec.ts`.
