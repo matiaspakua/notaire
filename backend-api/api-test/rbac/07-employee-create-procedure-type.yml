@@ -1,5 +1,5 @@
 info:
-  name: Employee cannot create a tipo de tramite
+  name: Employee cannot create a procedure type
   type: http
   seq: 7
   description: |-

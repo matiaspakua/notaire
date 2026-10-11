@@ -1,13 +1,14 @@
 info:
-  name: Report - presupuesto unknown id 404
+  name: Report - procedure document list unknown type 404
   type: http
-  seq: 10
+  seq: 4
   description: |-
-      ## GET /api/v1/reports/budget/{idPresupuesto} for a missing budget
-      Traceability: CU01
+      ## GET /api/v1/reports/procedure-document-list with an unknown procedure type
+      Answers 404 instead of an empty or broken report (#567).
+      Traceability: CU03
 http:
   method: GET
-  url: "{{base_url}}/api/v1/reports/budget/999999999"
+  url: "{{base_url}}/api/v1/reports/procedure-document-list?procedureTypeName=Does%20not%20exist%20E2E%20567"
   headers:
     - name: Content-Type
       value: application/json

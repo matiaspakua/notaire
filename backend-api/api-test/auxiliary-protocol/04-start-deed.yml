@@ -10,7 +10,7 @@ http:
   body:
     type: json
     data: |-
-        {"idFolio": {{ap_folio_id}}, "body": "Bruno E2E protocolo auxiliar"}
+        {"idFolio": {{ap_folio_id}}, "body": "Bruno E2E auxiliary protocol"}
   headers:
     - name: Content-Type
       value: application/json

@@ -7,7 +7,7 @@ CU04,Record client documentation,Managements,Essential,SubmittedDocument,Create,
 CU05,Prepare a deed,Managements,Essential,Deed,Create,DeedController,POST,/api/v1/deeds,MISSING,OK,NO-TEST,Bruno gap #953,#158
 CU06,Sign a deed,Managements,Essential,Deed,Update,DeedController,PUT,/api/v1/deeds/{id},MISSING,OK,NO-TEST,Updates the signature status; Bruno gap #953,#159
 CU07,Generate a testimony,Managements,Essential,Testimony,Create,TestimonyController,POST,/api/v1/testimonies,testimonies/,OK,OK,GET returns 500; Bruno #953,#160
-CU07,Generate a testimony (case summary),Managements,Essential,DeedManagement,Read,ManagementCaseSummaryController,GET,/api/v1/managements/{id}/case-summary,managements/05b-resumen-caso.yml,OK,OK,"Deeds, testimonies, and copies of the management; Bruno #774",#160
+CU07,Generate a testimony (case summary),Managements,Essential,DeedManagement,Read,ManagementCaseSummaryController,GET,/api/v1/managements/{id}/case-summary,managements/05b-case-summary.yml,OK,OK,"Deeds, testimonies, and copies of the management; Bruno #774",#160
 CU08,Verify a testimony,Managements,Necessary,Testimony,Read,TestimonyController,GET,/api/v1/testimonies/{id},testimonies/,OK,OK,GET /testimonies returns 500; Bruno #953,#161
 CU09,Record client document debts,Managements,Essential,SubmittedDocument,Create,SubmittedDocumentController,POST,/api/v1/submitted-documents,submitted-documents/,OK,OK,Debt flag on the document; Bruno #953,#162
 CU10,Record external-entity document movements,Managements,Essential,ExternalEntityDocument,Read/Update,ManagementController,GET/PUT,/api/v1/managements/{id}/external-entity-documents[/{idSubmittedDocument}],managements/,OK,OK,Implemented #863; E2E Playwright golden and edge path; Bruno #953,#163
@@ -25,8 +25,8 @@ CU20,Create a user,Administration,Essential,UserAccount,Create,UserController,PO
 CU21,Update a user account,Administration,Essential,UserAccount,Update,UserController,PUT,/api/v1/users/{id},users/07-update.yml,OK,OK,Green in the idempotent suite (#1035),#174
 CU22,Register a substitution,Administration,Essential,Substitution,Create,SubstitutionController,POST,/api/v1/substitutions,substitutions/01-create.yml,OK,OK,Only a GET test exists,#175
 CU23,View user activity log,Administration,Necessary,AuditRecord,Read,AuditRecordController,GET,/api/v1/audit-log/user/{idUser},audit-records/01-list.yml,OK,OK,"The test covers GET all, not by user",#176
-CU24,Generate the index book,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/index-book,report-pdfs/01-libro-indice.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#177
-CU25,Generate the monthly sworn statement,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/monthly-sworn-statement,report-pdfs/02-declaracion-jurada-mensual.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#178
+CU24,Generate the index book,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/index-book,report-pdfs/01-index-book.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#177
+CU25,Generate the monthly sworn statement,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/monthly-sworn-statement,report-pdfs/02-monthly-sworn-statement.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#178
 CU26,Enter a new procedure type,Administration,Essential,ProcedureType,Create,ProcedureTypeController,POST,/api/v1/procedure-types,procedure-types/01-create.yml,OK,OK,,#179
 CU27,Enter a new document type,Administration,Essential,DocumentType,Create,DocumentTypeController,POST,/api/v1/document-types,document-types/01-create.yml,500-ERROR,OK,Green in the idempotent suite (#1035),#180
 CU28,Enter new folios,Protocols,Essential,Folio,Create,FolioController,POST,/api/v1/folios,folios/01-create.yml,OK,OK,,#181
@@ -52,7 +52,7 @@ CU47,Look up a payment,Payments,Nice to have,Payment,Read,PaymentController,GET,
 CU48,Register a notary,Administration,Essential,Person,Create,PersonController,POST,/api/v1/people,people/01-create.yml,OK,OK,notaryRegistrationNumber != null in the body,#201
 CU48,Register a notary (available),Administration,Essential,Deed,Read,DeedController,GET,/api/v1/deeds/available-notaries,MISSING,500-ERROR,NO-TEST,GET returns 500; Bruno gap #953,#201
 CU49,Delete a budget template,Administration,Essential,BudgetTemplate,Delete,BudgetTemplateController,DELETE,/api/v1/budget-templates/procedure-types/{t}/concept/{c},budget-templates/05-delete.yml,OK,OK,Concurrency error — no DELETE test,#202
-CU50,Generate the tax sworn statement,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/tax-sworn-statement,report-pdfs/04-declaracion-jurada-rentas.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#203
+CU50,Generate the tax sworn statement,Protocols,Nice to have,Report,Report,ReportController,GET,/api/v1/reports/tax-sworn-statement,report-pdfs/04-tax-sworn-statement.yml,OK,OK,0% documented — endpoint exists without a test; Bruno #953,#203
 CU51,Update a notary,Administration,Essential,Person,Update,PersonController,PUT,/api/v1/people/{id},people/05-update.yml,OK,OK,Green in the idempotent suite (#1035),#204
 CU52,Update a deed,Managements,Essential,Deed,Update,DeedController,PUT,/api/v1/deeds/{id},MISSING,OK,NO-TEST,Reported concurrency error; Bruno gap #953,#205
 CU53,Update a management,Managements,Essential,DeedManagement,Update,ManagementController,PUT,/api/v1/managements/{id},managements/,OK,OK,Bruno #953,#206

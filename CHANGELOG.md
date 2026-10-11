@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English API collection filenames** (#1490, CU75):
+  Bruno report requests use English filenames such as `01-index-book.yml`,
+  `06-budget.yml`, and `10-management-history.yml`. The case summary
+  request is `05b-case-summary.yml`. `CU-API-MATRIX.csv` points at those
+  paths. Seeded `Compraventa` stays.
 - **English Playwright identifiers** (#1490, CU75):
   Payment and people specs use `lastName`, `balanceDisplay`, and
   `check-is-client`. The people checkbox still reads

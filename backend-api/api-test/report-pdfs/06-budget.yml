@@ -1,14 +1,14 @@
 info:
-  name: Report - presupuesto con inmuebles PDF
+  name: Report - budget PDF
   type: http
-  seq: 8
+  seq: 7
   description: |-
-      ## GET /api/v1/reports/budget-properties/{idPresupuesto}
+      ## GET /api/v1/reports/budget/{idBudget}
       Rendered in-house from the current schema since #567 (was a broken Jasper template).
       Traceability: CU01
 http:
   method: GET
-  url: "{{base_url}}/api/v1/reports/budget-properties/{{report_budget_id}}"
+  url: "{{base_url}}/api/v1/reports/budget/{{report_budget_id}}"
   headers:
     - name: Content-Type
       value: application/json
