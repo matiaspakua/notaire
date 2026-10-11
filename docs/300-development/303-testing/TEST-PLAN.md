@@ -24,7 +24,7 @@ suites under `testing/`.
 
 - Define what is in scope for verification and validation.
 - Assign test levels, owners, and CI triggers (fail-fast).
-- Define unique IDs for test artifacts (identificación).
+- Define unique IDs for test artifacts (identification).
 - Point to the living inventory so suite counts never rot in prose.
 
 ### 1.3 Audience
@@ -61,7 +61,7 @@ Developers, QA, AI coding agents, and reviewers operating under the AI SDLC
 
 | Priority | Meaning | Examples |
 |----------|---------|----------|
-| Critical | Blocks merge / revenue flows | Auth, budgets, gestiones, payments, deeds |
+| Critical | Blocks merge / revenue flows | Auth, budgets, managements, payments, deeds |
 | High | Core CU golden paths | Testimony, people/clients, admin catalogs |
 | Medium | Secondary admin / QA attributes | i18n, a11y, responsive |
 | Low | Demos / tutorials | TS-0070, TS-0071, TS-0090 |
@@ -88,7 +88,7 @@ Developers, QA, AI coding agents, and reviewers operating under the AI SDLC
 
 Live counts: **[INVENTORY.md](INVENTORY.md)** (generated; do not copy numbers here).
 
-### 3.3 Identificación (artifact IDs)
+### 3.3 Identification (artifact IDs)
 
 | Kind | Pattern | Example | Role |
 |------|---------|---------|------|

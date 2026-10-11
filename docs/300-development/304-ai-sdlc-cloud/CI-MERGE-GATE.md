@@ -81,7 +81,7 @@ Also confirm no required check on the head SHA is still `pending` / `queued` /
 ## Stale PR diagnosis — rebase before inventing product fixes
 
 If **Integration** and/or **Playwright** fail with Budget/person /
-`undefined, undefined` symptoms (presupuesto pickers showing missing client
+`undefined, undefined` symptoms (budget pickers showing missing client
 names) and the branch is **behind `main`**, **rebase onto `main` first**.
 
 Do not invent product fixes for a class of failures already fixed on `main`.

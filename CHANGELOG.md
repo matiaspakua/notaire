@@ -64,6 +64,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English testing practice names** (#1490, CU75): the master plan
+  section is `Identification`. Critical examples include `managements`.
+  Process practices are `Organization / knowledge base`, `Identification`,
+  `Traceability`, and `Pyramid / fail-fast`. The testing ADR cites
+  `pyramid / traceability`. The topology note names
+  `managements/budgets/documents/dashboard`. The merge-gate note says
+  `budget pickers`. The missing-cadastral check says
+  `cadastral designation` and `Bruno without a cadastral designation`.
+  Retired filenames such as `crud-gestiones.spec.ts` stay. The visible
+  label `/nomenclatura catastral/i` stays. The planned route sketch in
+  ADR-005 stays.
 - **English registry path names** (#1490, CU75): the role section is
   `RoleController`. The documents-due path variable is
   `{idSubmittedDocument}`. The auxiliary-deed check reads `idDeed`.
