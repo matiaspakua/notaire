@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Runtime proxy edge file** (#1490, CU75): the living spec names
+  `frontend/src/proxy.ts`. The archived #1055 spec keeps
+  `middleware.ts` or `proxy.ts`.
 - **E2E sequence pointers** (#1490, CU75): the Playwright headers cite
   `seq01-ingresar-gestión-de-escritura.puml`,
   `seq02-ingresar-gestión-de-trámite.puml`,
