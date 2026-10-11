@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired document cost template** (#1490, CU75): the engineering-sequences
+  design names the type CU39 still writes, `PlantillaCostoDocumento`.
+  The live class is `DocumentCostTemplate`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired budget template** (#1490, CU75): the engineering-sequences
   design names the type CU39 still writes, `PlantillaPresupuesto`.
   The live class is `BudgetTemplate`. The heading `Riesgos / Trade-offs`
