@@ -59,10 +59,10 @@ test.describe('CU02 - Iniciar Gestión', () => {
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
-    await page.getByTestId('btn-nueva-gestion').click()
+    await page.getByTestId('btn-new-management').click()
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
-    await expect(page.getByTestId('select-presupuesto-gestion')).toBeVisible()
+    await expect(page.getByTestId('select-budget-management')).toBeVisible()
   })
 
   test('CU02-GW03: picker de presupuesto muestra el nombre del cliente asociado (#889)', async ({ page }) => {
@@ -77,10 +77,10 @@ test.describe('CU02 - Iniciar Gestión', () => {
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
-    await page.getByTestId('btn-nueva-gestion').click()
-    await page.getByTestId('select-presupuesto-gestion').click()
+    await page.getByTestId('btn-new-management').click()
+    await page.getByTestId('select-budget-management').click()
     // Budget pickers search the server (#1340): type the client first.
-    await page.getByTestId('select-presupuesto-gestion').fill(apellido)
+    await page.getByTestId('select-budget-management').fill(apellido)
 
     await expect(
       page.getByRole('option', { name: new RegExp(apellido, 'i') }),
@@ -110,11 +110,11 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
     await expect(row).toContainText(estadoInicial)
 
     // Step 3 (CU13): ver bitácora — debe tener 1 entrada con el estado inicial
-    await page.getByTestId(`btn-ver-bitacora-${idGestion}`).click()
+    await page.getByTestId(`btn-view-history-${idGestion}`).click()
     let dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    const items = dialog.getByTestId('bitacora-item')
+    const items = dialog.getByTestId('history-item')
     await expect(items).toHaveCount(1)
     await expect(items.first()).toContainText(estadoInicial)
 
@@ -122,23 +122,23 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
     await expect(dialog).not.toBeVisible()
 
     // Step 4 (CU83): cambiar estado → seleccionar estado final → confirmar → verificar en tabla
-    await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click()
+    await page.getByTestId(`btn-change-status-${idGestion}`).click()
     dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    await dialog.getByTestId('select-nuevo-estado').click()
+    await dialog.getByTestId('select-new-status').click()
     await page.getByRole('option', { name: estadoFinal }).click()
-    await dialog.getByTestId('btn-confirmar-transicion').click()
+    await dialog.getByTestId('btn-confirm-transicion').click()
     await expect(dialog).not.toBeVisible()
 
     await expect(row).toContainText(estadoFinal)
 
     // Step 5 (CU13): ver bitácora nuevamente — debe tener 2 entradas (inicial + final)
-    await page.getByTestId(`btn-ver-bitacora-${idGestion}`).click()
+    await page.getByTestId(`btn-view-history-${idGestion}`).click()
     dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    const updatedItems = dialog.getByTestId('bitacora-item')
+    const updatedItems = dialog.getByTestId('history-item')
     await expect(updatedItems).toHaveCount(2)
     await expect(updatedItems.nth(0)).toContainText(estadoInicial)
     await expect(updatedItems.nth(1)).toContainText(estadoFinal)
@@ -164,11 +164,11 @@ test.describe('CU13 - Ver historial/bitácora de una gestión', () => {
       page.getByRole('row', { name: new RegExp(String(numero)) }),
     ).toBeVisible({ timeout: 10000 })
 
-    await page.getByTestId(`btn-ver-bitacora-${idGestion}`).click()
+    await page.getByTestId(`btn-view-history-${idGestion}`).click()
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    const items = dialog.getByTestId('bitacora-item')
+    const items = dialog.getByTestId('history-item')
     await expect(items).toHaveCount(1)
     await expect(items.first()).toContainText(estadoInicial)
   })
@@ -184,19 +184,19 @@ test.describe('CU13 - Ver historial/bitácora de una gestión', () => {
     ).toBeVisible({ timeout: 10000 })
 
     // Cambiar estado
-    await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click()
+    await page.getByTestId(`btn-change-status-${idGestion}`).click()
     let dialog = page.getByRole('dialog')
-    await dialog.getByTestId('select-nuevo-estado').click()
+    await dialog.getByTestId('select-new-status').click()
     await page.getByRole('option', { name: estadoFinal }).click()
-    await dialog.getByTestId('btn-confirmar-transicion').click()
+    await dialog.getByTestId('btn-confirm-transicion').click()
     await expect(dialog).not.toBeVisible()
 
     // Ver bitácora con 2 entradas
-    await page.getByTestId(`btn-ver-bitacora-${idGestion}`).click()
+    await page.getByTestId(`btn-view-history-${idGestion}`).click()
     dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    const items = dialog.getByTestId('bitacora-item')
+    const items = dialog.getByTestId('history-item')
     await expect(items).toHaveCount(2)
     await expect(items.nth(0)).toContainText(estadoInicial)
     await expect(items.nth(1)).toContainText(estadoFinal)
@@ -221,13 +221,13 @@ test.describe('CU83 - Cambiar estado de una gestión', () => {
     const row = page.getByRole('row', { name: new RegExp(String(numero)) })
     await expect(row).toBeVisible({ timeout: 10000 })
 
-    await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click()
+    await page.getByTestId(`btn-change-status-${idGestion}`).click()
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    await dialog.getByTestId('select-nuevo-estado').click()
+    await dialog.getByTestId('select-new-status').click()
     await page.getByRole('option', { name: estadoFinal }).click()
-    await dialog.getByTestId('btn-confirmar-transicion').click()
+    await dialog.getByTestId('btn-confirm-transicion').click()
 
     await expect(dialog).not.toBeVisible()
     await expect(row).toContainText(estadoFinal)
@@ -239,9 +239,9 @@ test.describe('CU83 - Cambiar estado de una gestión', () => {
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
-    await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click()
+    await page.getByTestId(`btn-change-status-${idGestion}`).click()
     const dialog = page.getByRole('dialog')
-    await dialog.getByTestId('select-nuevo-estado').click()
+    await dialog.getByTestId('select-new-status').click()
 
     await expect(page.getByRole('option', { name: estadoFinal })).toBeVisible()
     await expect(page.getByRole('option', { name: estadoInicial })).toHaveCount(0)
@@ -268,7 +268,7 @@ test.describe('CU16 - Archivar Gestión', () => {
     const row = page.getByRole('row', { name: new RegExp(String(numero)) })
     await expect(row).toBeVisible({ timeout: 10000 })
 
-    await page.getByTestId(`btn-archivar-gestion-${idGestion}`).click()
+    await page.getByTestId(`btn-archive-management-${idGestion}`).click()
     const confirmDialog = page.getByRole('alertdialog')
     await expect(confirmDialog).toBeVisible()
     await confirmDialog.getByRole('button', { name: /archive gestión/i }).click()
@@ -276,7 +276,7 @@ test.describe('CU16 - Archivar Gestión', () => {
     // Backend should reject: error message must appear
     await expect(page.getByText(/is not allowed/i)).toBeVisible({ timeout: 10000 })
     // Row and archive button remain — gestión was NOT archived
-    await expect(page.getByTestId(`btn-archivar-gestion-${idGestion}`)).toBeVisible()
+    await expect(page.getByTestId(`btn-archive-management-${idGestion}`)).toBeVisible()
   })
 })
 
@@ -296,7 +296,7 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
-    await page.getByTestId('select-filter-cliente-gestion').click()
+    await page.getByTestId('select-filter-client-management').click()
     // Scoped to the picker's listbox: the pagination footer's page-size <select>
     // also has options (#1340). seedFullWorkflow guarantees at least one client.
     const firstOption = page
@@ -321,7 +321,7 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
     await page.waitForLoadState('domcontentloaded')
 
     // Wait for the filter select to be populated with personas
-    const filterSelect = page.getByTestId('select-filter-cliente-gestion')
+    const filterSelect = page.getByTestId('select-filter-client-management')
     await filterSelect.click()
     // The client filter searches the server (#1340): type the seeded last name.
     await filterSelect.fill(personaApellido)
@@ -374,10 +374,10 @@ test.describe('Responsive viewports — vista de gestiones', () => {
       await expect(row).toBeVisible({ timeout: 10000 })
 
       // Bitácora accessible at every breakpoint
-      await page.getByTestId(`btn-ver-bitacora-${idGestion}`).click()
+      await page.getByTestId(`btn-view-history-${idGestion}`).click()
       const dialog = page.getByRole('dialog')
       await expect(dialog).toBeVisible()
-      await expect(dialog.getByTestId('bitacora-item').first()).toContainText(estadoInicial)
+      await expect(dialog.getByTestId('history-item').first()).toContainText(estadoInicial)
     })
   }
 })

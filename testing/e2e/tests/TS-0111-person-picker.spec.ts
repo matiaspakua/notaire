@@ -22,7 +22,7 @@ test.describe("Person picker (#1340)", () => {
 
     await page.goto("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
-    await page.getByTestId("btn-nuevo-presupuesto").click();
+    await page.getByTestId("btn-new-budget").click();
     const dialog = page.getByRole("dialog");
     const picker = dialog.getByRole("combobox", { name: /client|client/i });
     await expect(picker).toHaveAttribute("aria-expanded", "false");
@@ -39,9 +39,9 @@ test.describe("Person picker (#1340)", () => {
     await expect(dialog).toBeVisible();
 
     await dialog.locator('input[type="date"]').fill(new Date().toISOString().split("T")[0]);
-    await dialog.getByTestId("input-monto").fill("1000");
+    await dialog.getByTestId("input-amount").fill("1000");
     const post = page.waitForRequest((r) => /\/api\/v1\/budgets$/.test(r.url()) && r.method() === "POST");
-    await dialog.getByTestId("btn-guardar-presupuesto").click();
+    await dialog.getByTestId("btn-save-budget").click();
     expect((await post).postDataJSON().person.personId).toBe(person.data!.personId);
 
     expect(requested.some((u) => u.includes("/people/search"))).toBe(true);

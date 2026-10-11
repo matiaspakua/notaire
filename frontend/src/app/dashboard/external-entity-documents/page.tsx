@@ -110,7 +110,7 @@ function DocumentosEntidadesExternasList() {
             variant="ghost"
             onClick={() => setSelectedGestionId(g.idManagement!)}
             aria-label={t("verDocumentos")}
-            data-testid={`btn-ver-documentos-${g.idManagement}`}
+            data-testid={`btn-view-documents-${g.idManagement}`}
           >
             <Eye className="h-4 w-4" />
           </Button>
@@ -143,7 +143,7 @@ function DocumentosEntidadesExternasList() {
             variant="ghost"
             onClick={() => openEditar(d)}
             aria-label={t("registrarMovimiento")}
-            data-testid={`btn-editar-documento-${d.idSubmittedDocument}`}
+            data-testid={`btn-edit-document-${d.idSubmittedDocument}`}
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -214,7 +214,7 @@ function DocumentosEntidadesExternasList() {
                   onChange={(e) =>
                     setMovimiento((m) => ({ ...m, cardNumber: e.target.value ? Number(e.target.value) : undefined }))
                   }
-                  data-testid="input-numero-carton"
+                  data-testid="input-card-number"
                 />
               </FormField>
               <FormField label={t("fields.fechaIngreso")}>
@@ -222,7 +222,7 @@ function DocumentosEntidadesExternasList() {
                   type="date"
                   value={toDateInputValue(movimiento.dateEntry)}
                   onChange={(e) => setMovimiento((m) => ({ ...m, dateEntry: e.target.value }))}
-                  data-testid="input-fecha-ingreso"
+                  data-testid="input-entry-date"
                 />
               </FormField>
               <FormField label={t("fields.fechaSalida")}>
@@ -230,7 +230,7 @@ function DocumentosEntidadesExternasList() {
                   type="date"
                   value={toDateInputValue(movimiento.dateExit)}
                   onChange={(e) => setMovimiento((m) => ({ ...m, dateExit: e.target.value }))}
-                  data-testid="input-fecha-salida"
+                  data-testid="input-exit-date"
                 />
               </FormField>
               <FormField label={t("fields.importeAPagar")}>
@@ -248,7 +248,7 @@ function DocumentosEntidadesExternasList() {
                   type="date"
                   value={toDateInputValue(movimiento.datePayment)}
                   onChange={(e) => setMovimiento((m) => ({ ...m, datePayment: e.target.value }))}
-                  data-testid="input-fecha-pago"
+                  data-testid="input-payment-date"
                 />
               </FormField>
               <FormField label={t("fields.fechaLiberado")}>
@@ -256,7 +256,7 @@ function DocumentosEntidadesExternasList() {
                   type="date"
                   value={toDateInputValue(movimiento.dateReleased)}
                   onChange={(e) => setMovimiento((m) => ({ ...m, dateReleased: e.target.value }))}
-                  data-testid="input-fecha-liberado"
+                  data-testid="input-released-date"
                 />
               </FormField>
               <FormField label={t("fields.observaciones")}>
@@ -293,7 +293,7 @@ function DocumentosEntidadesExternasList() {
               <Button
                 onClick={handleGuardarMovimiento}
                 disabled={registrarMutation.isPending}
-                data-testid="btn-guardar-movimiento"
+                data-testid="btn-save-movimiento"
               >
                 {tc("save")}
               </Button>

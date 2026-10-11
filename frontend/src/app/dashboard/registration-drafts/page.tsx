@@ -141,7 +141,7 @@ export default function MinutasInscripcionPage() {
         <FormSection title={t("generarSection")}>
           <FormField label={t("fields.escritura")} required>
             <Select value={idEscritura} onValueChange={setIdEscritura}>
-              <SelectTrigger data-testid="select-escritura-minuta">
+              <SelectTrigger data-testid="select-deed-registration-draft">
                 <SelectValue placeholder={t("selectEscritura")} />
               </SelectTrigger>
               <SelectContent>
@@ -157,7 +157,7 @@ export default function MinutasInscripcionPage() {
             <Button
               onClick={handleGenerar}
               disabled={!idEscritura || generarMutation.isPending}
-              data-testid="btn-generar-minuta"
+              data-testid="btn-generate-registration-draft"
             >
               <FileCheck2 className="h-4 w-4" />
               {t("generarMinuta")}
@@ -170,11 +170,11 @@ export default function MinutasInscripcionPage() {
             <div className="flex gap-2">
               <Input
                 type="number"
-                data-testid="input-buscar-minuta"
+                data-testid="input-search-registration-draft"
                 value={buscarId}
                 onChange={(e) => setBuscarId(e.target.value)}
               />
-              <Button variant="secondary" onClick={handleBuscar} data-testid="btn-buscar-minuta">
+              <Button variant="secondary" onClick={handleBuscar} data-testid="btn-search-registration-draft">
                 <Search className="h-4 w-4" />
                 {tc("search")}
               </Button>
@@ -187,7 +187,7 @@ export default function MinutasInscripcionPage() {
         {minuta && (
           <FormSection title={`${t("fields.numero")} ${minuta.number}`}>
             <FormField label={t("fields.estado")}>
-              <span data-testid="minuta-estado" className="font-medium">
+              <span data-testid="registration-draft-status" className="font-medium">
                 {estadoLabel(minuta.status)}
               </span>
             </FormField>
@@ -197,14 +197,14 @@ export default function MinutasInscripcionPage() {
                 variant="secondary"
                 onClick={handleDescargar}
                 disabled={downloading}
-                data-testid="btn-descargar-minuta"
+                data-testid="btn-download-registration-draft"
               >
                 <Download className="h-4 w-4" />
                 {t("descargarReporte")}
               </Button>
 
               {minuta.status === ESTADO_GENERADA && (
-                <Button onClick={() => setPresentarOpen(true)} data-testid="btn-presentar-minuta">
+                <Button onClick={() => setPresentarOpen(true)} data-testid="btn-submit-registration-draft">
                   <Send className="h-4 w-4" />
                   {t("presentar")}
                 </Button>
@@ -215,12 +215,12 @@ export default function MinutasInscripcionPage() {
                   <Button
                     variant="secondary"
                     onClick={() => setObservarOpen(true)}
-                    data-testid="btn-observar-minuta"
+                    data-testid="btn-observe-registration-draft"
                   >
                     <ShieldAlert className="h-4 w-4" />
                     {t("observar")}
                   </Button>
-                  <Button onClick={() => setInscribirOpen(true)} data-testid="btn-inscribir-minuta">
+                  <Button onClick={() => setInscribirOpen(true)} data-testid="btn-register-registration-draft">
                     <Stamp className="h-4 w-4" />
                     {t("inscribir")}
                   </Button>
@@ -238,14 +238,14 @@ export default function MinutasInscripcionPage() {
               <FormField label={t("fields.fechaPresentacion")} required>
                 <Input
                   type="date"
-                  data-testid="input-fecha-presentacion"
+                  data-testid="input-submission-date"
                   value={fechaPresentacion}
                   onChange={(e) => setFechaPresentacion(e.target.value)}
                 />
               </FormField>
               <FormField label={t("fields.numeroEntradaRegistral")} required>
                 <Input
-                  data-testid="input-numero-entrada-registral"
+                  data-testid="input-registry-entry-number"
                   value={numeroEntradaRegistral}
                   onChange={(e) => setNumeroEntradaRegistral(e.target.value)}
                 />
@@ -258,7 +258,7 @@ export default function MinutasInscripcionPage() {
               <Button
                 onClick={handlePresentar}
                 disabled={!fechaPresentacion || !numeroEntradaRegistral || presentarMutation.isPending}
-                data-testid="btn-confirmar-presentar"
+                data-testid="btn-confirm-submit"
               >
                 {t("presentar")}
               </Button>
@@ -273,7 +273,7 @@ export default function MinutasInscripcionPage() {
             <FormSection dialogTitle title={t("observar")}>
               <FormField label={t("fields.observacionesRegistro")} required>
                 <Input
-                  data-testid="input-observaciones-registro"
+                  data-testid="input-notes-registro"
                   value={observacionesRegistro}
                   onChange={(e) => setObservacionesRegistro(e.target.value)}
                 />
@@ -281,7 +281,7 @@ export default function MinutasInscripcionPage() {
               <FormField label={t("fields.fechaSubsanacion")} required>
                 <Input
                   type="date"
-                  data-testid="input-fecha-subsanacion"
+                  data-testid="input-correction-date"
                   value={fechaSubsanacion}
                   onChange={(e) => setFechaSubsanacion(e.target.value)}
                 />
@@ -294,7 +294,7 @@ export default function MinutasInscripcionPage() {
               <Button
                 onClick={handleObservar}
                 disabled={!observacionesRegistro || !fechaSubsanacion || observarMutation.isPending}
-                data-testid="btn-confirmar-observar"
+                data-testid="btn-confirm-observe"
               >
                 {t("observar")}
               </Button>
@@ -310,14 +310,14 @@ export default function MinutasInscripcionPage() {
               <FormField label={t("fields.fechaRecepcion")} required>
                 <Input
                   type="date"
-                  data-testid="input-fecha-recepcion"
+                  data-testid="input-receipt-date"
                   value={fechaRecepcion}
                   onChange={(e) => setFechaRecepcion(e.target.value)}
                 />
               </FormField>
               <FormField label={t("fields.numeroInscripcionDefinitivo")} required>
                 <Input
-                  data-testid="input-numero-inscripcion-definitivo"
+                  data-testid="input-final-registration-number"
                   value={numeroInscripcionDefinitivo}
                   onChange={(e) => setNumeroInscripcionDefinitivo(e.target.value)}
                 />
@@ -332,7 +332,7 @@ export default function MinutasInscripcionPage() {
                 disabled={
                   !fechaRecepcion || !numeroInscripcionDefinitivo || inscribirMutation.isPending
                 }
-                data-testid="btn-confirmar-inscribir"
+                data-testid="btn-confirm-register"
               >
                 {t("inscribir")}
               </Button>

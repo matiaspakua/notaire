@@ -132,7 +132,7 @@ export default function PagosPage() {
     <div>
       <AppHeader
         title={t("title")}
-        actions={<Button onClick={openCreate} data-testid="btn-nuevo-pago"><Plus className="h-4 w-4" />{t("newPago")}</Button>}
+        actions={<Button onClick={openCreate} data-testid="btn-new-payment"><Plus className="h-4 w-4" />{t("newPago")}</Button>}
       />
       <DataTable data={pagos} columns={columns} isLoading={isLoading} keyExtractor={(p) => p.idPayment!} emptyMessage={t("noData")} />
 
@@ -147,7 +147,7 @@ export default function PagosPage() {
                   value={editing.idBudget ?? undefined}
                   onChange={(budget) => setEditing({ ...editing, idBudget: budget?.idBudget })}
                   aria-label={t("fields.presupuesto")}
-                  data-testid="select-presupuesto-pago"
+                  data-testid="select-budget-payment"
                 />
               </FormField>
 
@@ -162,7 +162,7 @@ export default function PagosPage() {
                         <div className="text-sm text-muted-foreground">{t("saldo.pending")}</div>
                         {estadoPago && (
                           <span
-                            data-testid="estado-pago-badge"
+                            data-testid="status-payment-badge"
                             className="rounded-full bg-info/10 px-2 py-0.5 text-xs font-medium text-info"
                           >
                             {estadoPagoLabel[estadoPago]}
@@ -200,7 +200,7 @@ export default function PagosPage() {
                   value={editing.amount ?? ""}
                   onChange={(e) => setEditing({ ...editing, amount: parseFloat(e.target.value) })}
                   aria-invalid={!!fieldErrors.amount}
-                  data-testid="input-monto-pago"
+                  data-testid="input-amount-payment"
                 />
               </FormField>
               <FormField

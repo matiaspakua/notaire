@@ -112,22 +112,22 @@ export default function MovimientosTestimonioPage() {
         return (
           <div className="flex gap-2 justify-end">
             {estado === "sinIngresar" && (
-              <Button size="sm" variant="ghost" onClick={() => handleIngresar(id)} aria-label={t("ingresar")} data-testid={`btn-sign-in-testimonio-${id}`}>
+              <Button size="sm" variant="ghost" onClick={() => handleIngresar(id)} aria-label={t("ingresar")} data-testid={`btn-sign-in-testimony-${id}`}>
                 <LogIn className="h-4 w-4" />
               </Button>
             )}
             {estado === "ingresado" && (
-              <Button size="sm" variant="ghost" onClick={() => handleRegistrar(id)} aria-label={t("registrarInscripcion")} data-testid={`btn-registrar-inscripcion-${id}`}>
+              <Button size="sm" variant="ghost" onClick={() => handleRegistrar(id)} aria-label={t("registrarInscripcion")} data-testid={`btn-record-registration-${id}`}>
                 <Stamp className="h-4 w-4" />
               </Button>
             )}
             {estado === "inscripto" && (
-              <Button size="sm" variant="ghost" onClick={() => openRetirar(id)} aria-label={t("retirar")} data-testid={`btn-retirar-testimonio-${id}`}>
+              <Button size="sm" variant="ghost" onClick={() => openRetirar(id)} aria-label={t("retirar")} data-testid={`btn-withdraw-testimony-${id}`}>
                 <LogOut className="h-4 w-4" />
               </Button>
             )}
             {estado === "retirado" && (
-              <Button size="sm" variant="ghost" onClick={() => setReingresarId(id)} aria-label={t("reingresar")} data-testid={`btn-reingresar-testimonio-${id}`}>
+              <Button size="sm" variant="ghost" onClick={() => setReingresarId(id)} aria-label={t("reingresar")} data-testid={`btn-reenter-testimony-${id}`}>
                 <RotateCcw className="h-4 w-4" />
               </Button>
             )}
@@ -147,14 +147,14 @@ export default function MovimientosTestimonioPage() {
           <FormContainer>
             <FormSection dialogTitle title={t("retirar")}>
               <FormField label={t("fields.numeroCarton")} required>
-                <Input type="number" value={numeroCarton} onChange={(e) => setNumeroCarton(e.target.value)} data-testid="input-numero-carton" />
+                <Input type="number" value={numeroCarton} onChange={(e) => setNumeroCarton(e.target.value)} data-testid="input-card-number" />
               </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setRetirarId(null)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleRetirar} disabled={!numeroCarton || retirarMutation.isPending} data-testid="btn-confirmar-retiro">
+              <Button onClick={handleRetirar} disabled={!numeroCarton || retirarMutation.isPending} data-testid="btn-confirm-retiro">
                 {t("retirar")}
               </Button>
             </FormActions>

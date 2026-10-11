@@ -124,7 +124,7 @@ export default function DocumentosPage() {
           <Button size="sm" variant="ghost" onClick={() => openEdit(tipo)} aria-label={tc("edit")}>
             <NotaireIcon src="/icons/actions/generate.png" alt="" size={16} />
           </Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(tipo)} data-testid="btn-delete-documento" aria-label={tc("delete")}>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(tipo)} data-testid="btn-delete-document" aria-label={tc("delete")}>
             <NotaireIcon src="/icons/actions/borrar.png" alt="" size={16} />
           </Button>
         </div>
@@ -138,7 +138,7 @@ export default function DocumentosPage() {
         title={t("title")}
         description={t("description")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-tipo-documento">
+          <Button onClick={openCreate} data-testid="btn-new-document-type">
             <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
             {t("newDoc")}
           </Button>
@@ -151,7 +151,7 @@ export default function DocumentosPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
-          data-testid="input-search-documento"
+          data-testid="input-search-document"
         />
       </div>
       <DataTable
@@ -171,20 +171,20 @@ export default function DocumentosPage() {
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("namePlaceholder")}
-                  data-testid="input-nombre-documento"
+                  data-testid="input-name-document"
                 />
               </FormField>
               <CheckboxField
                 label={t("fields.enabled")}
                 checked={editing.enabled ?? true}
                 onChange={(checked) => setEditing({ ...editing, enabled: checked })}
-                data-testid="checkbox-enabled-documento"
+                data-testid="checkbox-enabled-document"
               />
               <CheckboxField
                 label={t("fields.returned")}
                 checked={editing.returned ?? false}
                 onChange={(checked) => setEditing({ ...editing, returned: checked })}
-                data-testid="checkbox-returned-documento"
+                data-testid="checkbox-returned-document"
               />
               <CheckboxField
                 label={t("fields.vence")}
@@ -192,7 +192,7 @@ export default function DocumentosPage() {
                 onChange={(checked) =>
                   setEditing({ ...editing, expires: checked, dueDays: checked ? editing.dueDays : null })
                 }
-                data-testid="checkbox-vence-documento"
+                data-testid="checkbox-expires-document"
               />
               {editing.expires && (
                 <FormField label={t("fields.diasVencimiento")} required>
@@ -203,7 +203,7 @@ export default function DocumentosPage() {
                     onChange={(e) =>
                       setEditing({ ...editing, dueDays: e.target.value ? parseInt(e.target.value) : null })
                     }
-                    data-testid="input-dias-vencimiento-documento"
+                    data-testid="input-due-days-document"
                   />
                 </FormField>
               )}
@@ -211,7 +211,7 @@ export default function DocumentosPage() {
                 <Input
                   value={editing.deliveredBy ?? ""}
                   onChange={(e) => setEditing({ ...editing, deliveredBy: e.target.value })}
-                  data-testid="input-quien-entrega-documento"
+                  data-testid="input-delivered-by-document"
                 />
               </FormField>
             </FormSection>

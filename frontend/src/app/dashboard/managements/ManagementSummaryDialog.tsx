@@ -34,7 +34,7 @@ export function ManagementSummaryDialog({ gestionId, onClose }: ManagementSummar
 
   return (
     <Dialog open={!!gestionId} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent data-testid="dialog-resumen-caso">
+      <DialogContent data-testid="dialog-summary-case">
         <FormContainer>
           <FormHeader dialogTitle title={t("title")} description={caso ? `${caso.managementNumber} — ${caso.heading ?? ""}` : undefined} />
           {isLoading ? (
@@ -43,13 +43,13 @@ export function ManagementSummaryDialog({ gestionId, onClose }: ManagementSummar
             <>
               <FormSection title={t("escrituras")}>
                 {deeds.length === 0 ? (
-                  <p className="text-sm text-muted-foreground" data-testid="resumen-sin-escrituras">{t("sinEscrituras")}</p>
+                  <p className="text-sm text-muted-foreground" data-testid="summary-empty-deeds">{t("sinEscrituras")}</p>
                 ) : (
                   deeds.map((deed) => (
-                    <div key={deed.idDeed} className="border-b pb-2" data-testid="resumen-escritura">
+                    <div key={deed.idDeed} className="border-b pb-2" data-testid="summary-deed">
                       <div className="font-medium">{t("escritura", { numero: deed.number })}</div>
                       {deed.testimonies.map((testimony) => (
-                        <div key={testimony.idTestimony} className="text-sm" data-testid="resumen-testimonio">
+                        <div key={testimony.idTestimony} className="text-sm" data-testid="summary-testimony">
                           {t("testimonio", { numero: testimony.number })}: {t(`estados.${testimony.state}`)}
                           {testimony.verified ? ` · ${t("verificado")}` : ""}
                           {testimony.flagged ? ` · ${t("observado")}` : ""}
@@ -62,10 +62,10 @@ export function ManagementSummaryDialog({ gestionId, onClose }: ManagementSummar
               </FormSection>
               <FormSection title={t("documentos")}>
                 {documents.length === 0 ? (
-                  <p className="text-sm text-muted-foreground" data-testid="resumen-sin-documentos">{t("sinDocumentos")}</p>
+                  <p className="text-sm text-muted-foreground" data-testid="summary-empty-documents">{t("sinDocumentos")}</p>
                 ) : (
                   documents.map((documento) => (
-                    <div key={documento.idSubmittedDocument} className="text-sm border-b pb-2" data-testid="resumen-documento">
+                    <div key={documento.idSubmittedDocument} className="text-sm border-b pb-2" data-testid="summary-document">
                       <div className="font-medium">{documento.typeName ?? documento.name ?? "—"}</div>
                       <div className="text-muted-foreground">
                         {t("tramiteDocumento", { id: documento.idProcedure })}
@@ -78,7 +78,7 @@ export function ManagementSummaryDialog({ gestionId, onClose }: ManagementSummar
               </FormSection>
               <FormSection title={t("pagos")}>
                 {financiero ? (
-                  <div className="text-sm space-y-1" data-testid="resumen-pagos">
+                  <div className="text-sm space-y-1" data-testid="summary-payments">
                     <div>{t("totalPresupuestado")}: {formatCurrency(financiero.totalPresupuestado)}</div>
                     <div>{t("totalCobrado")}: {formatCurrency(financiero.totalCobrado)}</div>
                     <div>{t("saldoPendiente")}: {formatCurrency(financiero.pendingBalance)}</div>

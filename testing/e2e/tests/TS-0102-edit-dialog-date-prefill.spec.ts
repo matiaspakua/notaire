@@ -24,14 +24,14 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid"]) {
 
       await page.goto("/dashboard/budgets");
       await page.waitForLoadState("networkidle");
-      await page.getByTestId(`btn-editar-presupuesto-${id}`).click();
+      await page.getByTestId(`btn-edit-budget-${id}`).click();
       const dialog = page.getByRole("dialog");
       await expect(dialog.locator('input[type="date"]')).toHaveValue(DAY);
 
-      await dialog.getByTestId("btn-guardar-presupuesto").click();
+      await dialog.getByTestId("btn-save-budget").click();
       await expect(dialog).toBeHidden({ timeout: 15000 });
       await page.goto("/dashboard/budgets");
-      await page.getByTestId(`btn-editar-presupuesto-${id}`).click();
+      await page.getByTestId(`btn-edit-budget-${id}`).click();
       await expect(page.getByRole("dialog").locator('input[type="date"]')).toHaveValue(DAY);
     });
 

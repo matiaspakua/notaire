@@ -56,7 +56,7 @@ test.describe("Budgets and deeds list pagination (#1340)", () => {
     await establishAdminBrowserSession(page);
     const seen = track(page, /\/api\/v1\/budgets\/search/);
     await page.goto("/dashboard/budgets");
-    await page.getByTestId("select-estado").click();
+    await page.getByTestId("select-status").click();
     await page.getByRole("option", { name: "Aprobado" }).click();
     await expect.poll(() => seen.some((u) => /[?&]status=APROBADO/.test(u))).toBe(true);
     const cells = page.getByRole("table").locator("tbody tr td:nth-child(5)");
@@ -76,7 +76,7 @@ test.describe("Budgets and deeds list pagination (#1340)", () => {
     expect(seen.some((u) => u.includes("size=1000"))).toBe(false);
 
     const numero = newest.data!.content[0].number;
-    await page.getByTestId("input-search-escritura").fill(String(numero));
+    await page.getByTestId("input-search-deed").fill(String(numero));
     const rows = page.getByRole("table").locator("tbody tr");
     await expect.poll(() => seen.some((u) => u.includes(`buscar?number=${numero}`))).toBe(true);
     await expect(rows.first().locator("td").first()).toHaveText(String(newest.data!.content[0].idDeed));

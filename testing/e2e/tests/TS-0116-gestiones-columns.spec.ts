@@ -25,7 +25,7 @@ test.describe("Managements list columns (#1348)", () => {
     await expect(table.getByRole("columnheader", { name: "Trámites" })).toBeVisible();
     await expect(table.getByRole("columnheader", { name: "Tipo de Trámite" })).toHaveCount(0);
 
-    const row = table.getByRole("row").filter({ has: page.getByTestId(`btn-ver-bitacora-${gestion.data!.idManagement}`) });
+    const row = table.getByRole("row").filter({ has: page.getByTestId(`btn-view-history-${gestion.data!.idManagement}`) });
     await expect(row).toContainText(heading);
     await expect(row).toContainText(String(gestion.data!.number));
     // Started today (complete-case sets the start date): shown as a calendar date.

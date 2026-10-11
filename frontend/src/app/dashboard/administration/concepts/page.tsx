@@ -100,7 +100,7 @@ export default function ConceptosPage() {
       render: (c) => (
         <div className="flex gap-2 justify-end">
           <Button size="sm" variant="ghost" onClick={() => openEdit(c)} aria-label={tc("edit")}><NotaireIcon src="/icons/actions/generate.png" alt="" size={16} /></Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(c)} data-testid="btn-delete-concepto" aria-label={tc("delete")}><NotaireIcon src="/icons/actions/borrar.png" alt="" size={16} /></Button>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(c)} data-testid="btn-delete-concept" aria-label={tc("delete")}><NotaireIcon src="/icons/actions/borrar.png" alt="" size={16} /></Button>
         </div>
       ),
     },
@@ -121,7 +121,7 @@ export default function ConceptosPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-64"
-          data-testid="input-search-concepto"
+          data-testid="input-search-concept"
         />
       </div>
 
@@ -135,7 +135,7 @@ export default function ConceptosPage() {
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                  data-testid="input-nombre-concepto"
+                  data-testid="input-name-concept"
                 />
               </FormField>
               <FormField label={t("fields.valorBaseInput")}>

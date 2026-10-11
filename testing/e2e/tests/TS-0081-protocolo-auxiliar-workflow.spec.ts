@@ -34,7 +34,7 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
 
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    await dialog.getByTestId("textarea-cuerpo-escritura-auxiliar").fill("Cuerpo de la escritura de prueba E2E");
+    await dialog.getByTestId("textarea-deed-body-auxiliary").fill("Cuerpo de la escritura de prueba E2E");
     await dialog.getByRole("button", { name: /crear/i }).click();
 
     await expect(page.getByText(/deed iniciada/i)).toBeVisible({ timeout: 10000 });
@@ -56,7 +56,7 @@ test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
     const submit = dialog.getByRole("button", { name: /crear/i });
     await expect(submit).toBeDisabled();
 
-    await dialog.getByTestId("textarea-cuerpo-escritura-auxiliar").fill("Contenido");
+    await dialog.getByTestId("textarea-deed-body-auxiliary").fill("Contenido");
     await expect(submit).toBeEnabled();
   });
 

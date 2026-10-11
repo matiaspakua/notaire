@@ -40,24 +40,24 @@ test.describe("#773 - Documento vinculado a un trámite", () => {
     expect(tipoDocumento.ok, tipoDocumento.error ?? "createDocumentType failed").toBe(true);
 
     await page.goto("/dashboard/documents");
-    await page.getByTestId("btn-nuevo-documento").click();
-    await page.getByTestId("select-tipo-documento").click();
+    await page.getByTestId("btn-new-document").click();
+    await page.getByTestId("select-document-type").click();
     await page.getByRole("option", { name: tipoNombre }).click();
     // Server-search management picker (#1340): type the case number, then pick it.
-    await page.getByTestId("select-gestion-documento").click();
-    await page.getByTestId("select-gestion-documento").fill(String(numeroGestion));
+    await page.getByTestId("select-management-document").click();
+    await page.getByTestId("select-management-document").fill(String(numeroGestion));
     await page.getByRole("option", { name: new RegExp(`^${numeroGestion} `) }).click();
-    await page.getByTestId("select-tramite-documento").click();
+    await page.getByTestId("select-procedure-document").click();
     await page.getByRole("listbox").getByRole("option").first().click();
-    await page.getByTestId("btn-guardar-documento").click();
+    await page.getByTestId("btn-save-document").click();
 
     const row = page.getByRole("row").filter({ hasText: tipoNombre }).first();
     await expect(row).toBeVisible({ timeout: 15000 });
     await expect(row).toContainText(`#${tramite.data!.idProcedure}`);
 
     await page.goto("/dashboard/managements");
-    await page.getByTestId(`btn-resumen-caso-${gestion.data!.idManagement}`).click();
-    const dialog = page.getByTestId("dialog-resumen-caso");
-    await expect(dialog.getByTestId("resumen-documento")).toContainText(tipoNombre, { timeout: 15000 });
+    await page.getByTestId(`btn-summary-case-${gestion.data!.idManagement}`).click();
+    const dialog = page.getByTestId("dialog-summary-case");
+    await expect(dialog.getByTestId("summary-document")).toContainText(tipoNombre, { timeout: 15000 });
   });
 });

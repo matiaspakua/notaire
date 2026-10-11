@@ -25,7 +25,7 @@ test.describe("CU22 - Registrar Substitution", () => {
 
     // Then — modal uses IDs for escribano/suplente (numeric inputs), and date range (Desde/Hasta)
     await steps.thenModalIsVisible("Nueva suplencia");
-    await expect(steps.page.getByTestId("input-escribano-id")).toBeVisible();
+    await expect(steps.page.getByTestId("input-notary-id")).toBeVisible();
     await expect(steps.page.getByTestId("input-suplente-id")).toBeVisible();
     await expect(steps.page.getByTestId("input-desde")).toBeVisible();
     await expect(steps.page.getByTestId("input-hasta")).toBeVisible();
@@ -37,11 +37,11 @@ test.describe("CU22 - Registrar Substitution", () => {
     await steps.thenModalIsVisible();
 
     // When — fill escribano ID, suplente ID, and date range via testids
-    await steps.page.getByTestId("input-escribano-id").fill("1");
+    await steps.page.getByTestId("input-notary-id").fill("1");
     await steps.page.getByTestId("input-suplente-id").fill("1");
     await steps.page.getByTestId("input-desde").fill("2026-05-01");
     await steps.page.getByTestId("input-hasta").fill("2026-05-31");
-    await steps.page.getByTestId("btn-guardar-suplencia").click();
+    await steps.page.getByTestId("btn-save-substitution").click();
 
     // Then — wait for modal to close, then verify success and table
     await steps.thenShowsSuccessMessage("registrada");

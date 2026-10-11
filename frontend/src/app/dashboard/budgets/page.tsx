@@ -255,7 +255,7 @@ function BudgetsList() {
           <Button
             size="sm"
             variant="ghost"
-            data-testid={`btn-resumen-presupuesto-${p.idBudget}`}
+            data-testid={`btn-summary-budget-${p.idBudget}`}
             aria-label={t("resumen.title")}
             onClick={() => setResumenId(p.idBudget!)}
           >
@@ -265,7 +265,7 @@ function BudgetsList() {
             size="sm"
             variant="ghost"
             aria-label={t("items.title")}
-            data-testid={`btn-items-presupuesto-${p.idBudget}`}
+            data-testid={`btn-items-budget-${p.idBudget}`}
             onClick={() => openItems(p)}
           >
             <ListChecks className="h-4 w-4" />
@@ -273,7 +273,7 @@ function BudgetsList() {
           <Button
             size="sm"
             variant="ghost"
-            data-testid={`btn-editar-presupuesto-${p.idBudget}`}
+            data-testid={`btn-edit-budget-${p.idBudget}`}
             aria-label={tc("edit")}
             onClick={() => openEdit(p)}
           >
@@ -283,7 +283,7 @@ function BudgetsList() {
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            data-testid={`btn-eliminar-presupuesto-${p.idBudget}`}
+            data-testid={`btn-delete-budget-${p.idBudget}`}
             aria-label={tc("delete")}
             onClick={() => setDeleteId(p.idBudget!)}
           >
@@ -300,7 +300,7 @@ function BudgetsList() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-presupuesto">
+          <Button onClick={openCreate} data-testid="btn-new-budget">
             <Plus className="h-4 w-4" />
             {t("newPresupuesto")}
           </Button>
@@ -313,11 +313,11 @@ function BudgetsList() {
           aria-label={t("searchPlaceholder")}
           value={searchBudget}
           onChange={(e) => setSearchBudget(e.target.value)}
-          data-testid="input-search-presupuesto"
+          data-testid="input-search-budget"
           className="w-full sm:w-52"
         />
         <Select value={filterEstado} onValueChange={setFilterEstado}>
-          <SelectTrigger data-testid="select-estado" className="w-44" aria-label={t("estadoFilter")}>
+          <SelectTrigger data-testid="select-status" className="w-44" aria-label={t("estadoFilter")}>
             <SelectValue placeholder={`${tc("status")}...`} />
           </SelectTrigger>
           <SelectContent>
@@ -360,7 +360,7 @@ function BudgetsList() {
                   selected={editing.person}
                   onChange={(person) => setEditing({ ...editing, person })}
                   aria-label={t("fields.cliente")}
-                  data-testid="select-persona"
+                  data-testid="select-person"
                 />
               </FormField>
               <FormField label={tc("date")} required>
@@ -376,13 +376,13 @@ function BudgetsList() {
                   step="0.01"
                   value={editing.propertyAmount ?? ""}
                   onChange={(e) => setEditing({ ...editing, propertyAmount: parseFloat(e.target.value) })}
-                  data-testid="input-monto"
+                  data-testid="input-amount"
                 />
               </FormField>
               {!isEditMode && (
                 <FormField label={t("fields.tipoTramite")} helperText={t("fields.tipoTramiteAyuda")}>
                   <Select value={newProcedureTypeId} onValueChange={setTipoTramiteNuevoId}>
-                    <SelectTrigger data-testid="select-tipo-tramite-nuevo">
+                    <SelectTrigger data-testid="select-procedure-type-new">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -401,7 +401,7 @@ function BudgetsList() {
                   value={editing.status ?? DEFAULT_BUDGET_STATUS}
                   onValueChange={(v) => setEditing({ ...editing, status: v })}
                 >
-                  <SelectTrigger data-testid="select-estado-presupuesto" aria-label={tc("status")}>
+                  <SelectTrigger data-testid="select-status-budget" aria-label={tc("status")}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -420,7 +420,7 @@ function BudgetsList() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} data-testid="btn-guardar-presupuesto">
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} data-testid="btn-save-budget">
                 {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>
@@ -429,14 +429,14 @@ function BudgetsList() {
       </Dialog>
 
       <Dialog open={resumenId !== null} onOpenChange={(v) => !v && setResumenId(null)}>
-        <DialogContent className="max-w-2xl" data-testid="dialog-resumen-presupuesto">
+        <DialogContent className="max-w-2xl" data-testid="dialog-summary-budget">
           <FormContainer>
             <FormHeader dialogTitle title={t("resumen.title")} />
             {isResumenLoading && (
               <p className="text-sm text-muted-foreground">{tc("loading")}</p>
             )}
             {resumenError && (
-              <p className="text-sm text-destructive" data-testid="resumen-not-found">
+              <p className="text-sm text-destructive" data-testid="summary-not-found">
                 {resumenError instanceof ApiError && resumenError.status === 404
                   ? t("resumen.notFound")
                   : t("errorSave")}
@@ -470,7 +470,7 @@ function BudgetsList() {
                 </FormSection>
                 <FormSection title={t("resumen.pagosSection")}>
                   {(resumen.payments ?? []).length === 0 ? (
-                    <p className="text-sm text-muted-foreground" data-testid="resumen-sin-pagos">
+                    <p className="text-sm text-muted-foreground" data-testid="summary-empty-payments">
                       {t("resumen.noPagos")}
                     </p>
                   ) : (
@@ -508,7 +508,7 @@ function BudgetsList() {
       </Dialog>
 
       <Dialog open={itemsBudgetId !== null} onOpenChange={(v) => !v && setItemsBudgetId(null)}>
-        <DialogContent className="max-w-2xl" data-testid="dialog-items-presupuesto">
+        <DialogContent className="max-w-2xl" data-testid="dialog-items-budget">
           <FormContainer>
             <FormHeader dialogTitle title={t("items.title")} />
 
@@ -519,7 +519,7 @@ function BudgetsList() {
               >
                 <div className="flex gap-2">
                   <Select value={selectedProcedureTypeId} onValueChange={setSelectedTipoTramiteId}>
-                    <SelectTrigger data-testid="select-tipo-tramite-items" disabled={tiposTramite.length === 0}>
+                    <SelectTrigger data-testid="select-procedure-type-items" disabled={tiposTramite.length === 0}>
                       <SelectValue placeholder={t("items.selectTipoTramite")} />
                     </SelectTrigger>
                     <SelectContent>
@@ -531,7 +531,7 @@ function BudgetsList() {
                     </SelectContent>
                   </Select>
                   <Button
-                    data-testid="btn-cargar-plantilla"
+                    data-testid="btn-load-template"
                     disabled={!selectedProcedureTypeId || cargarPlantillaMutation.isPending}
                     onClick={handleCargarPlantilla}
                   >
@@ -574,12 +574,12 @@ function BudgetsList() {
               {isItemsLoading ? (
                 <p className="text-sm text-muted-foreground">{tc("loading")}</p>
               ) : presupuestoItems.length === 0 ? (
-                <p className="text-sm text-muted-foreground" data-testid="items-sin-datos">
+                <p className="text-sm text-muted-foreground" data-testid="items-empty-data">
                   {t("items.noData")}
                 </p>
               ) : (
                 <>
-                  <Table data-testid="table-items-presupuesto">
+                  <Table data-testid="table-items-budget">
                     <TableHeader>
                       <TableRow>
                         <TableHead>{t("items.columns.nombre")}</TableHead>

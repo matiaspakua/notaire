@@ -62,12 +62,12 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     await steps.givenModuleIsVisible("Presupuestos");
 
     // WHEN: operador abre el formulario de nuevo presupuesto
-    await page.getByTestId("btn-nuevo-presupuesto").click();
+    await page.getByTestId("btn-new-budget").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
     // AND: selecciona persona en el picker
-    await dialog.getByTestId("select-persona").click();
+    await dialog.getByTestId("select-person").click();
     // The option text is "<nombre> <apellido>" — idPersona is embedded as data-value or similar;
     // we select the first option that contains the persona we just created.
     const personaOption = page.getByRole("listbox").getByRole("option").first();
@@ -84,7 +84,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     // AND: completa fecha y monto
     const today = new Date().toISOString().split("T")[0];
     await dialog.getByLabel(/date/i).fill(today);
-    await dialog.getByTestId("input-monto").fill("80000");
+    await dialog.getByTestId("input-amount").fill("80000");
 
     // AND: envía el formulario
     await dialog.getByRole("button", { name: /guardar|crear/i }).click();
@@ -147,11 +147,11 @@ test.describe("CU47 - Consultar Payment / Saldo", () => {
     await page.waitForLoadState("networkidle");
 
     // WHEN: operador abre el resumen del presupuesto (CU47)
-    const resumenBtn = page.getByTestId(`btn-resumen-presupuesto-${idPresupuesto}`);
+    const resumenBtn = page.getByTestId(`btn-summary-budget-${idPresupuesto}`);
     await expect(resumenBtn).toBeVisible({ timeout: 8000 });
     await resumenBtn.click();
 
-    const dialog = page.getByTestId("dialog-resumen-presupuesto");
+    const dialog = page.getByTestId("dialog-summary-budget");
     await expect(dialog).toBeVisible();
 
     // THEN: el saldo pendiente es visible en el resumen
@@ -174,11 +174,11 @@ test.describe("CU47 - Consultar Payment / Saldo", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
-    const resumenBtn = page.getByTestId(`btn-resumen-presupuesto-${idPresupuesto}`);
+    const resumenBtn = page.getByTestId(`btn-summary-budget-${idPresupuesto}`);
     await expect(resumenBtn).toBeVisible({ timeout: 8000 });
     await resumenBtn.click();
 
-    const dialog = page.getByTestId("dialog-resumen-presupuesto");
+    const dialog = page.getByTestId("dialog-summary-budget");
     await expect(dialog).toBeVisible();
 
     // THEN: el resumen muestra el saldo pendiente actualizado (80000 - 40000 = 40000)
@@ -215,7 +215,7 @@ test.describe("CU45 - Modificar Presupuesto", () => {
     await page.waitForLoadState("networkidle");
 
     // WHEN: abre el modal de edición
-    const editBtn = page.getByTestId(`btn-editar-presupuesto-${idPresupuesto}`);
+    const editBtn = page.getByTestId(`btn-edit-budget-${idPresupuesto}`);
     await expect(editBtn).toBeVisible({ timeout: 8000 });
     await editBtn.click();
 
@@ -224,7 +224,7 @@ test.describe("CU45 - Modificar Presupuesto", () => {
 
     // AND: modifica el monto
     const montoInput = dialog
-      .getByTestId("input-monto")
+      .getByTestId("input-amount")
       .or(dialog.getByLabel(/monto/i));
     await montoInput.clear();
     await montoInput.fill("35000");

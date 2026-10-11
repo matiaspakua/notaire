@@ -56,7 +56,7 @@ test.describe("Motion tokens (#1368)", () => {
   test("dialogs use the motion tokens", async ({ page }) => {
     await establishAdminBrowserSession(page);
     await page.goto("/dashboard/people");
-    await page.getByTestId("btn-nueva-persona").click();
+    await page.getByTestId("btn-new-person").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     const timing = await dialog.evaluate((el) => {
@@ -76,7 +76,7 @@ test.describe("Motion tokens (#1368)", () => {
       const wrapper = page.locator("main > div").first();
       await expect(wrapper).toBeVisible();
       await expect(wrapper).toHaveCSS("transform", "none");
-      await page.getByTestId("btn-nueva-persona").click();
+      await page.getByTestId("btn-new-person").click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
       const seconds = await dialog.evaluate((el) => parseFloat(getComputedStyle(el).animationDuration));

@@ -57,7 +57,7 @@ test.describe("TS-0094 - Admin route guard (CU78 / #1052)", () => {
     await expect(page.getByTestId("access-denied-message")).toContainText(
       /permisos|permission/i,
     );
-    await expect(page.getByTestId("btn-nuevo-usuario")).toHaveCount(0);
+    await expect(page.getByTestId("btn-new-user")).toHaveCount(0);
   });
 
   test("EMPLEADO is redirected from the audit screen (#559)", async ({ page }) => {

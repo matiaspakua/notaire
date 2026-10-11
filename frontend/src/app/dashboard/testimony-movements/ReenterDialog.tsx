@@ -39,15 +39,15 @@ export function ReenterDialog({ open, isPending, onCancel, onConfirm }: Reingres
         <FormContainer>
           <FormSection dialogTitle title={t("reingresar")}>
             <FormField label={t("fields.numeroCarton")}>
-              <Input type="number" value={numeroCarton} onChange={(e) => setNumeroCarton(e.target.value)} data-testid="input-reingreso-carton" />
+              <Input type="number" value={numeroCarton} onChange={(e) => setNumeroCarton(e.target.value)} data-testid="input-reentry-carton" />
             </FormField>
-            <CheckboxField label={t("fields.observadoPorRegistro")} checked={observado} onChange={setObservado} data-testid="checkbox-reingreso-observado" />
+            <CheckboxField label={t("fields.observadoPorRegistro")} checked={observado} onChange={setObservado} data-testid="checkbox-reentry-observed" />
             <FormField label={t("fields.observaciones")} required={observado}>
               <textarea
                 className={themeClass("textarea")}
                 value={observaciones}
                 onChange={(e) => setObservaciones(e.target.value)}
-                data-testid="input-reingreso-observaciones"
+                data-testid="input-reentry-notes"
               />
             </FormField>
           </FormSection>
@@ -58,7 +58,7 @@ export function ReenterDialog({ open, isPending, onCancel, onConfirm }: Reingres
             <Button
               onClick={() => onConfirm({ numeroCarton: Number(numeroCarton) || 0, observadoPorRegistro: observado, observaciones })}
               disabled={faltanObservaciones || isPending}
-              data-testid="btn-confirmar-reingreso"
+              data-testid="btn-confirm-reentry"
             >
               {t("reingresar")}
             </Button>

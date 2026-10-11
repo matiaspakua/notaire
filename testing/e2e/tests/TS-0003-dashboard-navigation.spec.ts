@@ -94,7 +94,7 @@ test.describe("Gestiones module (CU02, CU13-CU16)", () => {
     await page.waitForLoadState("domcontentloaded");
 
     await expect(page.getByRole("heading", { name: "Gestiones" })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId("btn-nueva-gestion")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId("btn-new-management")).toBeVisible({ timeout: 10000 });
   });
 });
 
@@ -105,7 +105,7 @@ test.describe("Personas module (CU17, CU18)", () => {
     await page.waitForLoadState("domcontentloaded");
 
     await expect(page.getByRole("heading", { name: "Personas y Clientes" })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId("btn-nueva-persona")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId("btn-new-person")).toBeVisible({ timeout: 10000 });
   });
 });
 
@@ -116,6 +116,6 @@ test.describe("Presupuestos module (CU01)", () => {
     await page.waitForLoadState("domcontentloaded");
 
     await expect(page.getByRole("heading", { name: "Presupuestos" })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId("btn-nuevo-presupuesto")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId("btn-new-budget")).toBeVisible({ timeout: 10000 });
   });
 });

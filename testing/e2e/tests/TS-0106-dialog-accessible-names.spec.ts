@@ -39,7 +39,7 @@ test.describe("TS-0106 - dialogs are named by their visible title (#1344)", () =
     await login(page);
     await context.addCookies([{ name: "NEXT_LOCALE", value: "en", url: page.url() }]);
     await page.goto("/dashboard/people");
-    await page.getByTestId("btn-nueva-persona").click();
+    await page.getByTestId("btn-new-person").click();
     const dialog = page.getByRole("dialog", { name: "New person" });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("button", { name: "Close" })).toBeVisible();

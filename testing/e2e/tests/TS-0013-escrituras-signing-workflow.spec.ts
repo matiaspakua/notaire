@@ -95,7 +95,7 @@ test.describe('CU05 - Preparar Deed', () => {
     await expect(dialog.getByLabel(/date/i)).toBeVisible()
 
     // Form must have folio selector (Issue #892)
-    await expect(dialog.getByTestId('select-folio-escritura')).toBeVisible()
+    await expect(dialog.getByTestId('select-folio-deed')).toBeVisible()
   })
 
   test('CU05-GW02: golden path — fill form with folio → escritura appears in table as Sin Firmar', async ({ page }) => {
@@ -115,7 +115,7 @@ test.describe('CU05 - Preparar Deed', () => {
     await dialog.getByLabel(/date/i).fill(new Date().toISOString().split('T')[0])
 
     // Select folio using the folio picker
-    const folioPicker = dialog.getByTestId('select-folio-escritura')
+    const folioPicker = dialog.getByTestId('select-folio-deed')
     await folioPicker.click()
     // Pick the first available folio option
     const folioOption = page.getByRole('listbox').getByRole('option').first()
@@ -166,7 +166,7 @@ test.describe('CU06 - Firmar Deed', () => {
     await expect(row).toBeVisible({ timeout: 10000 })
 
     // When: click the firmar button for this escritura
-    await page.getByTestId(`btn-firmar-escritura-${idEscritura}`).click()
+    await page.getByTestId(`btn-sign-deed-${idEscritura}`).click()
 
     // Confirm in the dialog/alert
     const confirmDialog = page.getByRole('dialog').or(page.getByRole('alertdialog'))
@@ -190,7 +190,7 @@ test.describe('CU06 - Firmar Deed', () => {
     await expect(row).toBeVisible({ timeout: 10000 })
 
     // The firmar button should be either absent, disabled, or trigger an error
-    const firmarBtn = page.getByTestId(`btn-firmar-escritura-${idEscritura}`)
+    const firmarBtn = page.getByTestId(`btn-sign-deed-${idEscritura}`)
     const firmarBtnExists = await firmarBtn.isVisible({ timeout: 3000 }).catch(() => false)
 
     if (firmarBtnExists) {
@@ -241,7 +241,7 @@ test.describe('CU63 - Buscar Deed', () => {
       { timeout: 10000 }
     )
 
-    await page.getByTestId('input-search-escritura').fill('1')
+    await page.getByTestId('input-search-deed').fill('1')
 
     // Then: the search endpoint was called
     await searchRequestPromise
@@ -263,7 +263,7 @@ test.describe('CU63 - Buscar Deed', () => {
     await page.waitForLoadState('domcontentloaded')
 
     // When: search for the known numero
-    await page.getByTestId('input-search-escritura').fill(numero)
+    await page.getByTestId('input-search-deed').fill(numero)
 
     // Then: the matching row is visible in the table
     const table = page.getByRole('table')
@@ -295,7 +295,7 @@ for (const viewport of [
     await expect(page.getByRole('button', { name: /nueva escritura/i })).toBeVisible()
 
     // Search input accessible
-    await expect(page.getByTestId('input-search-escritura')).toBeVisible()
+    await expect(page.getByTestId('input-search-deed')).toBeVisible()
 
     // No horizontal overflow (ui-ux-design.md — Responsive Design)
     const noOverflow = await page.evaluate(

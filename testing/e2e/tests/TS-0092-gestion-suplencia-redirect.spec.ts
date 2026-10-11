@@ -40,14 +40,14 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
     const apellido = `Escribano${uniqueId() % 100_000}`;
     const dni = `48${uniqueId() % 10_000_000}`;
 
-    await page.getByTestId("btn-nueva-persona").click();
+    await page.getByTestId("btn-new-person").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
     await page.getByTestId("input-firstName").fill("Juan");
     await page.getByTestId("input-lastName").fill(apellido);
     await dialog.getByTestId("input-dni").fill(dni);
-    await page.getByTestId("input-registro-escribano").fill("123");
+    await page.getByTestId("input-notary-registration").fill("123");
 
     await dialog.getByRole("button", { name: /crear|guardar/i }).click();
     await expect(
@@ -71,7 +71,7 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
 
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    await page.getByTestId("input-registro-escribano").fill("456");
+    await page.getByTestId("input-notary-registration").fill("456");
     await dialog.getByRole("button", { name: /actualizar|guardar/i }).click();
 
     await expect(
@@ -111,17 +111,17 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
-    await page.getByTestId("btn-nueva-gestion").click();
+    await page.getByTestId("btn-new-management").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    await page.getByTestId("input-numero-gestion").fill(String(uniqueId() % 1_000_000));
+    await page.getByTestId("input-management-number").fill(String(uniqueId() % 1_000_000));
     await choose(page, "select-presupuesto-gestion", new RegExp(cliente.data!.lastName!, "i"));
     await choose(page, "select-escribano-gestion", new RegExp(escribano.data!.lastName!, "i"));
     await chooseFirst(page, "select-estado-gestion");
     await chooseFirst(page, "select-tipo-tramite-gestion");
 
-    await page.getByTestId("btn-guardar-gestion").click();
+    await page.getByTestId("btn-save-management").click();
 
     await expect(
       page.locator("[data-sonner-toast]").getByText(/creada/i),
@@ -142,17 +142,17 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
-    await page.getByTestId("btn-nueva-gestion").click();
+    await page.getByTestId("btn-new-management").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    await page.getByTestId("input-numero-gestion").fill(String(uniqueId() % 1_000_000));
+    await page.getByTestId("input-management-number").fill(String(uniqueId() % 1_000_000));
     await choose(page, "select-presupuesto-gestion", new RegExp(cliente.data!.lastName!, "i"));
     await choose(page, "select-escribano-gestion", new RegExp(escribano.data!.lastName!, "i"));
     await chooseFirst(page, "select-estado-gestion");
     await chooseFirst(page, "select-tipo-tramite-gestion");
 
-    await page.getByTestId("btn-guardar-gestion").click();
+    await page.getByTestId("btn-save-management").click();
 
     await expect(
       page.locator("[data-sonner-toast]").getByText(/creada/i),

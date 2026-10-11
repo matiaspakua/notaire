@@ -52,20 +52,20 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
 
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
-    await page.getByTestId(`btn-ver-documentos-${idGestion}`).click();
+    await page.getByTestId(`btn-view-documents-${idGestion}`).click();
 
     const detalleDialog = page.getByRole("dialog");
     await expect(detalleDialog).toBeVisible();
     await expect(detalleDialog.getByText("Certificado de Dominio")).toBeVisible();
 
-    await page.getByTestId(`btn-editar-documento-${idDocumentoPresentado}`).click();
+    await page.getByTestId(`btn-edit-document-${idDocumentoPresentado}`).click();
     const movimientoDialog = page.getByTestId("dialog-movimiento");
     await expect(movimientoDialog).toBeVisible();
 
-    await movimientoDialog.getByTestId("input-numero-carton").fill("42");
+    await movimientoDialog.getByTestId("input-card-number").fill("42");
     await movimientoDialog.getByTestId("input-notes").fill("Retirado del registro");
     await movimientoDialog.getByTestId("checkbox-delivered").click();
-    await movimientoDialog.getByTestId("btn-guardar-movimiento").click();
+    await movimientoDialog.getByTestId("btn-save-movimiento").click();
 
     await expect(page.getByText(/movimiento registrado/i)).toBeVisible({ timeout: 10000 });
     await expect(movimientoDialog).not.toBeVisible();
@@ -88,7 +88,7 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
 
     const row = page.getByRole("row", { name: new RegExp(String(gestion.data!.number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
-    await page.getByTestId(`btn-ver-documentos-${gestion.data!.idManagement}`).click();
+    await page.getByTestId(`btn-view-documents-${gestion.data!.idManagement}`).click();
 
     const detalleDialog = page.getByRole("dialog");
     await expect(detalleDialog).toBeVisible();

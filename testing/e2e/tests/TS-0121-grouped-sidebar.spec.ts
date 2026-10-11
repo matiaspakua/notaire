@@ -42,15 +42,15 @@ test.describe("TS-0121 grouped sidebar (#1367)", () => {
     const clientes = sidebar(page).getByRole("button", { name: "Clientes" });
     await clientes.click();
     await expect(clientes).toHaveAttribute("aria-expanded", "false");
-    await expect(sidebar(page).getByTestId("nav-personas")).toHaveCount(0);
+    await expect(sidebar(page).getByTestId("nav-people")).toHaveCount(0);
 
     await page.reload();
     await expect(sidebar(page).getByRole("button", { name: "Clientes" })).toHaveAttribute("aria-expanded", "false");
-    await expect(sidebar(page).getByTestId("nav-personas")).toHaveCount(0);
+    await expect(sidebar(page).getByTestId("nav-people")).toHaveCount(0);
 
     await page.goto("/dashboard/people");
     await expect(sidebar(page).getByRole("button", { name: "Clientes" })).toHaveAttribute("aria-expanded", "true");
-    await expect(sidebar(page).getByTestId("nav-personas")).toHaveAttribute("aria-current", "page");
+    await expect(sidebar(page).getByTestId("nav-people")).toHaveAttribute("aria-current", "page");
   });
 
   test("the dashboard module grid follows the sidebar order", async ({ page }) => {

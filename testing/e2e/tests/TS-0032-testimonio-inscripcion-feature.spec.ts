@@ -47,18 +47,18 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click();
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click();
     await steps.thenShowsSuccessMessage("ingresado");
     await expect(row).toContainText(/ingresado/i);
 
-    await page.getByTestId(`btn-registrar-inscripcion-${idTestimonio}`).click();
+    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click();
     await steps.thenShowsSuccessMessage("inscripción registrada");
     await expect(row).toContainText(/inscripto/i);
 
-    await page.getByTestId(`btn-retirar-testimonio-${idTestimonio}`).click();
+    await page.getByTestId(`btn-withdraw-testimony-${idTestimonio}`).click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("input-numero-carton").fill("123");
-    await page.getByTestId("btn-confirmar-retiro").click();
+    await page.getByTestId("input-card-number").fill("123");
+    await page.getByTestId("btn-confirm-retiro").click();
     await steps.thenShowsSuccessMessage("retirado");
     await expect(row).toContainText(/retirado/i);
   });
@@ -70,28 +70,28 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await expect(page.getByTestId(`btn-reingresar-testimonio-${idTestimonio}`)).toHaveCount(0);
-    await expect(page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`)).toBeVisible();
+    await expect(page.getByTestId(`btn-reenter-testimony-${idTestimonio}`)).toHaveCount(0);
+    await expect(page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`)).toBeVisible();
 
-    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click();
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click();
     await steps.thenShowsSuccessMessage("ingresado");
-    await page.getByTestId(`btn-registrar-inscripcion-${idTestimonio}`).click();
+    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click();
     await steps.thenShowsSuccessMessage("inscripción registrada");
-    await page.getByTestId(`btn-retirar-testimonio-${idTestimonio}`).click();
+    await page.getByTestId(`btn-withdraw-testimony-${idTestimonio}`).click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("input-numero-carton").fill("456");
-    await page.getByTestId("btn-confirmar-retiro").click();
+    await page.getByTestId("input-card-number").fill("456");
+    await page.getByTestId("btn-confirm-retiro").click();
     await steps.thenShowsSuccessMessage("retirado");
 
-    await expect(page.getByTestId(`btn-reingresar-testimonio-${idTestimonio}`)).toBeVisible();
-    await page.getByTestId(`btn-reingresar-testimonio-${idTestimonio}`).click();
+    await expect(page.getByTestId(`btn-reenter-testimony-${idTestimonio}`)).toBeVisible();
+    await page.getByTestId(`btn-reenter-testimony-${idTestimonio}`).click();
 
-    await page.getByTestId("input-reingreso-carton").fill("77");
-    await page.getByTestId("checkbox-reingreso-observado").check();
-    await expect(page.getByTestId("btn-confirmar-reingreso")).toBeDisabled();
-    await page.getByTestId("input-reingreso-observaciones").fill("Falta sello del registro");
-    await expect(page.getByTestId("btn-confirmar-reingreso")).toBeEnabled();
-    await page.getByTestId("btn-confirmar-reingreso").click();
+    await page.getByTestId("input-reentry-carton").fill("77");
+    await page.getByTestId("checkbox-reentry-observed").check();
+    await expect(page.getByTestId("btn-confirm-reentry")).toBeDisabled();
+    await page.getByTestId("input-reentry-notes").fill("Falta sello del registro");
+    await expect(page.getByTestId("btn-confirm-reentry")).toBeEnabled();
+    await page.getByTestId("btn-confirm-reentry").click();
     await steps.thenShowsSuccessMessage("reingresado");
     await expect(row).toContainText(/ingresado/i);
   });

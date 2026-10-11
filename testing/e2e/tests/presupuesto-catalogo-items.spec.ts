@@ -28,11 +28,11 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
 
     // WHEN: operador abre los ítems del presupuesto y agrega el ítem del catálogo
     await steps.givenUserIsOnPage("/dashboard/budgets");
-    const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
+    const itemsBtn = page.getByTestId(`btn-items-budget-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
 
-    const dialog = page.getByTestId("dialog-items-presupuesto");
+    const dialog = page.getByTestId("dialog-items-budget");
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId("select-catalog-item").click();
@@ -40,7 +40,7 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
     await dialog.getByTestId("btn-agregar-catalogo").click();
 
     // THEN: el ítem agregado aparece en el desglose con su subtotal
-    const table = dialog.getByTestId("table-items-presupuesto");
+    const table = dialog.getByTestId("table-items-budget");
     await expect(table).toBeVisible({ timeout: 8000 });
     await expect(table).toContainText("Sellado E2E");
     await expect(dialog.getByTestId("items-subtotal")).toContainText("750");
@@ -59,24 +59,24 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
     expect(item2.ok).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
-    const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
+    const itemsBtn = page.getByTestId(`btn-items-budget-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
 
-    const dialog = page.getByTestId("dialog-items-presupuesto");
+    const dialog = page.getByTestId("dialog-items-budget");
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId("select-catalog-item").click();
     await page.getByRole("option", { name: /Item Uno E2E/i }).last().click();
     await dialog.getByTestId("btn-agregar-catalogo").click();
-    await expect(dialog.getByTestId("table-items-presupuesto")).toContainText("Item Uno E2E");
+    await expect(dialog.getByTestId("table-items-budget")).toContainText("Item Uno E2E");
 
     await dialog.getByTestId("select-catalog-item").click();
     await page.getByRole("option", { name: /Item Dos E2E/i }).last().click();
     await dialog.getByTestId("btn-agregar-catalogo").click();
 
     // THEN: ambos ítems y el subtotal combinado son visibles
-    const table = dialog.getByTestId("table-items-presupuesto");
+    const table = dialog.getByTestId("table-items-budget");
     await expect(table).toContainText("Item Uno E2E");
     await expect(table).toContainText("Item Dos E2E");
     await expect(dialog.getByTestId("items-subtotal")).toContainText("500");

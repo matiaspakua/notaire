@@ -41,6 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English `data-testid` values** (#1490, CU75): dashboard controls and the Playwright
+  specs that look them up use English ids (`btn-new-budget`, `btn-save-management`,
+  `select-procedure-type`). Message catalog keys are unchanged.
 - **English Playwright helper names** (#1490, CU75): setup functions and payload
   types in `testing/e2e/tests/setup/api-helpers.ts` use English names
   (`createPerson`, `createBudget`, `createCompleteCaseManagement`,

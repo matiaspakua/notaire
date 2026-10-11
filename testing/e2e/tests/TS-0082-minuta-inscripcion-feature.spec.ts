@@ -71,32 +71,32 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     await seedProcedure(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
-    await page.getByTestId("select-escritura-minuta").click();
+    await page.getByTestId("select-deed-registration-draft").click();
     await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
-    await page.getByTestId("btn-generar-minuta").click();
+    await page.getByTestId("btn-generate-registration-draft").click();
     await steps.thenShowsSuccessMessage("generada");
 
-    await expect(page.getByTestId("minuta-estado")).toHaveText(/Generada/i);
+    await expect(page.getByTestId("registration-draft-status")).toHaveText(/Generada/i);
 
-    await page.getByTestId("btn-presentar-minuta").click();
+    await page.getByTestId("btn-submit-registration-draft").click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("input-fecha-presentacion").fill(new Date().toISOString().split("T")[0]);
-    await page.getByTestId("input-numero-entrada-registral").fill(`ENT-${uniqueId()}`);
-    await page.getByTestId("btn-confirmar-presentar").click();
+    await page.getByTestId("input-submission-date").fill(new Date().toISOString().split("T")[0]);
+    await page.getByTestId("input-registry-entry-number").fill(`ENT-${uniqueId()}`);
+    await page.getByTestId("btn-confirm-submit").click();
     await steps.thenShowsSuccessMessage("Presentación");
     await steps.thenModalIsNotVisible();
 
-    await expect(page.getByTestId("minuta-estado")).toHaveText(/Presentado para inscripción/i);
+    await expect(page.getByTestId("registration-draft-status")).toHaveText(/Presentado para inscripción/i);
 
-    await page.getByTestId("btn-inscribir-minuta").click();
+    await page.getByTestId("btn-register-registration-draft").click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("input-fecha-recepcion").fill(new Date().toISOString().split("T")[0]);
-    await page.getByTestId("input-numero-inscripcion-definitivo").fill(`INS-${uniqueId()}`);
-    await page.getByTestId("btn-confirmar-inscribir").click();
+    await page.getByTestId("input-receipt-date").fill(new Date().toISOString().split("T")[0]);
+    await page.getByTestId("input-final-registration-number").fill(`INS-${uniqueId()}`);
+    await page.getByTestId("btn-confirm-register").click();
     await steps.thenShowsSuccessMessage("definitiva");
     await steps.thenModalIsNotVisible();
 
-    await expect(page.getByTestId("minuta-estado")).toHaveText(/Inscripto/i);
+    await expect(page.getByTestId("registration-draft-status")).toHaveText(/Inscripto/i);
   });
 
   test("Edge: observar tras presentar muestra la minuta como Observado", async ({ page }) => {
@@ -105,26 +105,26 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     await seedProcedure(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
-    await page.getByTestId("select-escritura-minuta").click();
+    await page.getByTestId("select-deed-registration-draft").click();
     await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
-    await page.getByTestId("btn-generar-minuta").click();
+    await page.getByTestId("btn-generate-registration-draft").click();
     await steps.thenShowsSuccessMessage("generada");
 
-    await page.getByTestId("btn-presentar-minuta").click();
+    await page.getByTestId("btn-submit-registration-draft").click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("input-fecha-presentacion").fill(new Date().toISOString().split("T")[0]);
-    await page.getByTestId("input-numero-entrada-registral").fill(`ENT-${uniqueId()}`);
-    await page.getByTestId("btn-confirmar-presentar").click();
+    await page.getByTestId("input-submission-date").fill(new Date().toISOString().split("T")[0]);
+    await page.getByTestId("input-registry-entry-number").fill(`ENT-${uniqueId()}`);
+    await page.getByTestId("btn-confirm-submit").click();
     await steps.thenShowsSuccessMessage("Presentación");
 
-    await page.getByTestId("btn-observar-minuta").click();
+    await page.getByTestId("btn-observe-registration-draft").click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("input-observaciones-registro").fill("Falta certificado catastral");
-    await page.getByTestId("input-fecha-subsanacion").fill(new Date().toISOString().split("T")[0]);
-    await page.getByTestId("btn-confirmar-observar").click();
+    await page.getByTestId("input-notes-registro").fill("Falta certificado catastral");
+    await page.getByTestId("input-correction-date").fill(new Date().toISOString().split("T")[0]);
+    await page.getByTestId("btn-confirm-observe").click();
     await steps.thenShowsSuccessMessage("Observación");
 
-    await expect(page.getByTestId("minuta-estado")).toHaveText(/Observado/i);
+    await expect(page.getByTestId("registration-draft-status")).toHaveText(/Observado/i);
   });
 
   test("Edge: generar está bloqueado cuando el inmueble no tiene datos catastrales/registrales completos", async ({
@@ -139,9 +139,9 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     await seedProcedure(page, idEscritura, idInmueble);
 
     await steps.givenUserIsOnPage("/dashboard/registration-drafts");
-    await page.getByTestId("select-escritura-minuta").click();
+    await page.getByTestId("select-deed-registration-draft").click();
     await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
-    await page.getByTestId("btn-generar-minuta").click();
+    await page.getByTestId("btn-generate-registration-draft").click();
 
     await steps.thenShowsErrorMessage("catastrales");
   });

@@ -51,11 +51,11 @@ test.describe("#774 - Resumen del caso", () => {
     expect(tramite.ok, `createProcedure ${tramite.status}`).toBe(true);
 
     await page.goto("/dashboard/managements");
-    await page.getByTestId(`btn-resumen-caso-${idGestion}`).click();
+    await page.getByTestId(`btn-summary-case-${idGestion}`).click();
 
-    const dialog = page.getByTestId("dialog-resumen-caso");
-    await expect(dialog.getByTestId("resumen-escritura")).toContainText(String(escrituraNumero), { timeout: 15000 });
-    await expect(dialog.getByTestId("resumen-testimonio")).toContainText(/sin ingresar|not filed/i);
-    await expect(dialog.getByTestId("resumen-pagos")).toBeVisible();
+    const dialog = page.getByTestId("dialog-summary-case");
+    await expect(dialog.getByTestId("summary-deed")).toContainText(String(escrituraNumero), { timeout: 15000 });
+    await expect(dialog.getByTestId("summary-testimony")).toContainText(/sin ingresar|not filed/i);
+    await expect(dialog.getByTestId("summary-payments")).toBeVisible();
   });
 });

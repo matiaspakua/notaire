@@ -20,8 +20,8 @@ test.describe("CU431 — Gestión de Roles y Permisos", () => {
 
   test("new role button opens modal", async ({ page }) => {
     await page.goto("/dashboard/administration/roles");
-    await page.getByTestId("btn-nuevo-rol").click();
-    await expect(page.getByTestId("input-nombre-rol")).toBeVisible();
+    await page.getByTestId("btn-new-role").click();
+    await expect(page.getByTestId("input-name-role")).toBeVisible();
   });
 
   test("usuarios page shows rol column", async ({ page }) => {
@@ -31,7 +31,7 @@ test.describe("CU431 — Gestión de Roles y Permisos", () => {
 
   test("usuario edit modal shows rol selector", async ({ page }) => {
     await page.goto("/dashboard/administration/users");
-    await page.getByTestId("btn-nuevo-usuario").click();
-    await expect(page.getByTestId("select-rol-usuario")).toBeVisible();
+    await page.getByTestId("btn-new-user").click();
+    await expect(page.getByTestId("select-role-user")).toBeVisible();
   });
 });

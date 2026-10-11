@@ -135,7 +135,7 @@ function EscriturasList() {
               variant="ghost"
               onClick={() => setFirmarId(e.idDeed!)}
               aria-label={t("firmarEscritura")}
-              data-testid={`btn-firmar-escritura-${e.idDeed}`}
+              data-testid={`btn-sign-deed-${e.idDeed}`}
             >
               <Signature className="h-4 w-4" />
             </Button>
@@ -151,7 +151,7 @@ function EscriturasList() {
     <div>
       <AppHeader
         title={t("title")}
-        actions={<Button onClick={openCreate} data-testid="btn-nueva-escritura"><Plus className="h-4 w-4" />{t("newEscritura")}</Button>}
+        actions={<Button onClick={openCreate} data-testid="btn-new-deed"><Plus className="h-4 w-4" />{t("newEscritura")}</Button>}
       />
       <div className="px-4 pb-4">
         <Input
@@ -161,7 +161,7 @@ function EscriturasList() {
           onChange={(e) => setSearchNumero(e.target.value)}
           className="w-full sm:w-48"
           type="number"
-          data-testid="input-search-escritura"
+          data-testid="input-search-deed"
         />
       </div>
       <DataTable
@@ -196,7 +196,7 @@ function EscriturasList() {
               </FormField>
               <FormField label={t("fields.folio")} required={!isEditMode}>
                 <Select value={editing.idFolio?.toString() ?? ""} onValueChange={(v) => setEditing({ ...editing, idFolio: parseInt(v) })}>
-                  <SelectTrigger data-testid="select-folio-escritura">
+                  <SelectTrigger data-testid="select-folio-deed">
                     <SelectValue placeholder={t("fields.folio")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -212,7 +212,7 @@ function EscriturasList() {
                 <Input
                   value={editing.notes ?? ""}
                   onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
-                  data-testid="input-observaciones-escritura"
+                  data-testid="input-notes-deed"
                 />
               </FormField>
             </FormSection>

@@ -323,7 +323,7 @@ export default function FoliosAdminPage() {
         title={t("title")}
         description={t("description")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-folio">
+          <Button onClick={openCreate} data-testid="btn-new-folio">
             <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
             {t("newFolio")}
           </Button>
@@ -331,7 +331,7 @@ export default function FoliosAdminPage() {
       />
       <div className="px-4 pb-4 flex items-center gap-2">
         <Select value={estadoFilter || "all"} onValueChange={(v) => setEstadoFilter(v === "all" ? "" : v)}>
-          <SelectTrigger className="w-48" data-testid="select-filter-estado-folio" aria-label={t("estadoFilter")}>
+          <SelectTrigger className="w-48" data-testid="select-filter-status-folio" aria-label={t("estadoFilter")}>
             <SelectValue placeholder={t("fields.estadoPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
@@ -355,7 +355,7 @@ export default function FoliosAdminPage() {
                   value={form.number ?? ""}
                   onChange={(e) => setForm({ ...form, number: e.target.value === "" ? undefined : Number(e.target.value) })}
                   placeholder="1001"
-                  data-testid="input-numero-folio"
+                  data-testid="input-folio-number"
                 />
               </FormField>
               <FormField label={tc("year")}>
@@ -368,7 +368,7 @@ export default function FoliosAdminPage() {
               </FormField>
               <FormField label={t("fields.estado")} required>
                 <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                  <SelectTrigger data-testid="select-estado-folio">
+                  <SelectTrigger data-testid="select-status-folio">
                     <SelectValue placeholder={t("fields.estadoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -383,7 +383,7 @@ export default function FoliosAdminPage() {
                   value={form.folioTypeId !== undefined ? String(form.folioTypeId) : ""}
                   onValueChange={(v) => setForm({ ...form, folioTypeId: Number(v) })}
                 >
-                  <SelectTrigger data-testid="select-tipo-folio">
+                  <SelectTrigger data-testid="select-folio-type">
                     <SelectValue placeholder={t("fields.tipoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -398,7 +398,7 @@ export default function FoliosAdminPage() {
                   value={form.notaryId !== undefined ? String(form.notaryId) : ""}
                   onValueChange={(v) => setForm({ ...form, notaryId: Number(v) })}
                 >
-                  <SelectTrigger data-testid="select-escribano-folio">
+                  <SelectTrigger data-testid="select-notary-folio">
                     <SelectValue placeholder={t("fields.escribanoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -415,7 +415,7 @@ export default function FoliosAdminPage() {
                   value={form.deedId !== undefined ? String(form.deedId) : "none"}
                   onValueChange={(v) => setForm({ ...form, deedId: v === "none" ? undefined : Number(v) })}
                 >
-                  <SelectTrigger data-testid="select-escritura-folio">
+                  <SelectTrigger data-testid="select-deed-folio">
                     <SelectValue placeholder={t("fields.escrituraPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -455,7 +455,7 @@ export default function FoliosAdminPage() {
         <AppHeader
           title={t("tiposDeFolio.title")}
           actions={
-            <Button onClick={openCreateTipo} data-testid="btn-nuevo-tipo-folio">
+            <Button onClick={openCreateTipo} data-testid="btn-new-folio-type">
               <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
               {t("tiposDeFolio.newTipo")}
             </Button>
@@ -467,7 +467,7 @@ export default function FoliosAdminPage() {
             value={tipoSearch}
             onChange={(e) => setTipoSearch(e.target.value)}
             className="w-64"
-            data-testid="input-search-tipo-folio"
+            data-testid="input-search-folio-type"
           />
         </div>
         <DataTable
@@ -488,7 +488,7 @@ export default function FoliosAdminPage() {
               className: "w-24",
               render: (tf) => (
                 <div className="flex gap-2 justify-end">
-                  <Button size="sm" variant="ghost" onClick={() => openEditTipo(tf)} data-testid="btn-edit-tipo-folio" aria-label={tc("edit")}>
+                  <Button size="sm" variant="ghost" onClick={() => openEditTipo(tf)} data-testid="btn-edit-folio-type" aria-label={tc("edit")}>
                     <NotaireIcon src="/icons/actions/generate.png" alt={tc("edit")} size={16} />
                   </Button>
                   <Button
@@ -496,7 +496,7 @@ export default function FoliosAdminPage() {
                     variant="ghost"
                     className="text-destructive hover:text-destructive"
                     onClick={() => handleDeleteTipoClick(tf)}
-                    data-testid="btn-delete-tipo-folio"
+                    data-testid="btn-delete-folio-type"
                     aria-label={tc("delete")}
                   >
                     <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
@@ -516,14 +516,14 @@ export default function FoliosAdminPage() {
                 <Input
                   value={tipoNombre}
                   onChange={(e) => setTipoNombre(e.target.value)}
-                  data-testid="input-nombre-tipo-folio"
+                  data-testid="input-name-folio-type"
                 />
               </FormField>
               <CheckboxField
                 label={t("tiposDeFolio.esAuxiliar")}
                 checked={tipoEsAuxiliar}
                 onChange={setTipoEsAuxiliar}
-                data-testid="checkbox-es-auxiliar-tipo-folio"
+                data-testid="checkbox-is-auxiliary-folio-type"
               />
             </FormSection>
             <FormActions align="right">
@@ -531,7 +531,7 @@ export default function FoliosAdminPage() {
                 <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSaveTipo} disabled={tipoSaving} data-testid="btn-save-tipo-folio">
+              <Button onClick={handleSaveTipo} disabled={tipoSaving} data-testid="btn-save-folio-type">
                 <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {tipoEditing ? tc("update") : tc("save")}
               </Button>

@@ -168,7 +168,7 @@ export default function ItemsPage() {
         title={t("title")}
         description={t("description")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-item">
+          <Button onClick={openCreate} data-testid="btn-new-item">
             <Plus className="h-4 w-4" />
             {t("newItem")}
           </Button>
@@ -192,13 +192,13 @@ export default function ItemsPage() {
                 value={reporteId}
                 onChange={(e) => setReporteId(e.target.value)}
                 placeholder={t("fields.presupuestoPlaceholder")}
-                data-testid="input-reporte-presupuesto-id"
+                data-testid="input-report-budget-id"
               />
             </FormField>
             <Button
               variant="secondary"
               onClick={() => setReporteQuery(reporteId ? Number(reporteId) : undefined)}
-              data-testid="btn-consultar-reporte"
+              data-testid="btn-query-report"
             >
               {t("report.consult")}
             </Button>
@@ -230,7 +230,7 @@ export default function ItemsPage() {
                   value={budgetId}
                   onChange={(e) => setBudgetId(e.target.value)}
                   placeholder={t("fields.presupuestoPlaceholder")}
-                  data-testid="input-presupuesto-id"
+                  data-testid="input-budget-id"
                 />
               </FormField>
               <div className="grid grid-cols-2 gap-3">
@@ -238,7 +238,7 @@ export default function ItemsPage() {
                   <Input
                     value={editing.name ?? ""}
                     onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                    data-testid="input-cantidad"
+                    data-testid="input-quantity"
                   />
                 </FormField>
                 <FormField label={t("fields.valorLabel")}>
@@ -247,7 +247,7 @@ export default function ItemsPage() {
                     step="0.01"
                     value={editing.value ?? ""}
                     onChange={(e) => setEditing({ ...editing, value: parseFloat(e.target.value) })}
-                    data-testid="input-precio"
+                    data-testid="input-price"
                   />
                 </FormField>
               </div>
@@ -256,7 +256,7 @@ export default function ItemsPage() {
                   value={editing.type ?? "NORMAL"}
                   onValueChange={(v) => setEditing({ ...editing, type: v as TipoItem })}
                 >
-                  <SelectTrigger data-testid="select-tipo-item">
+                  <SelectTrigger data-testid="select-item-type">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -274,7 +274,7 @@ export default function ItemsPage() {
                     value={editing.reason ?? ""}
                     onChange={(e) => setEditing({ ...editing, reason: e.target.value })}
                     placeholder={t("fields.motivoPlaceholder")}
-                    data-testid="input-motivo"
+                    data-testid="input-reason"
                   />
                 </FormField>
               )}
@@ -286,7 +286,7 @@ export default function ItemsPage() {
               <Button
                 onClick={handleSave}
                 disabled={createMutation.isPending || updateMutation.isPending}
-                data-testid="btn-guardar-item"
+                data-testid="btn-save-item"
               >
                 {isEditMode ? tc("update") : tc("create")}
               </Button>

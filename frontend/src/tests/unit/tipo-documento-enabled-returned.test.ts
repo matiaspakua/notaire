@@ -32,8 +32,8 @@ describe("Document type enabled/returned form defaults (#800)", () => {
       join(ROOT, "src/app/dashboard/administration/documents/page.tsx"),
       "utf8",
     );
-    expect(src).toContain('data-testid="checkbox-enabled-documento"');
-    expect(src).toContain('data-testid="checkbox-returned-documento"');
+    expect(src).toContain('data-testid="checkbox-enabled-document"');
+    expect(src).toContain('data-testid="checkbox-returned-document"');
     expect(src).toContain("EMPTY_DOCUMENT_TYPE");
     expect(src).toContain("enabled:");
     expect(src).toContain("returned:");

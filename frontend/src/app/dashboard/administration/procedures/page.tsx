@@ -113,7 +113,7 @@ export default function TramitesPage() {
           <Button size="sm" variant="ghost" onClick={() => openEdit(item)} aria-label={tc("edit")}>
             <NotaireIcon src="/icons/actions/generate.png" alt="" size={16} />
           </Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(item)} data-testid="btn-delete-tramite" aria-label={tc("delete")}>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(item)} data-testid="btn-delete-procedure" aria-label={tc("delete")}>
             <NotaireIcon src="/icons/actions/borrar.png" alt="" size={16} />
           </Button>
         </div>
@@ -127,7 +127,7 @@ export default function TramitesPage() {
         title={t("title")}
         description={t("description")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-tipo-tramite">
+          <Button onClick={openCreate} data-testid="btn-new-procedure-type">
             <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
             {t("newTramite")}
           </Button>
@@ -140,7 +140,7 @@ export default function TramitesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
-          data-testid="input-search-tramite"
+          data-testid="input-search-procedure"
         />
       </div>
       <DataTable
@@ -160,7 +160,7 @@ export default function TramitesPage() {
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
-                  data-testid="input-nombre-tramite"
+                  data-testid="input-name-procedure"
                 />
               </FormField>
               <FormField label={t("fields.descripcion")}>
@@ -185,7 +185,7 @@ export default function TramitesPage() {
                   className="w-full h-12 rounded-xl border border-input px-3 text-sm bg-background"
                   value={selectedWorkflowId}
                   onChange={(e) => setSelectedWorkflowId(e.target.value)}
-                  data-testid="select-workflow-tramite"
+                  data-testid="select-workflow-procedure"
                 >
                   <option value="">{t("fields.sinWorkflow")}</option>
                   {workflows.filter((w) => w.active).map((w) => (

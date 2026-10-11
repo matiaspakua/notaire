@@ -294,7 +294,7 @@ export default function WorkflowEditorPage() {
                   className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
                   value={newNodeEstadoId}
                   onChange={(e) => setNewNodeEstadoId(e.target.value ? Number(e.target.value) : "")}
-                  data-testid="select-estado-nodo"
+                  data-testid="select-status-node"
                 >
                   <option value="">{t("fields.estadoPlaceholder")}</option>
                   {estados.map((e) => (
@@ -307,7 +307,7 @@ export default function WorkflowEditorPage() {
                   className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-background"
                   value={newNodeTipo}
                   onChange={(e) => setNewNodeTipo(e.target.value as WorkflowNodeType)}
-                  data-testid="select-tipo-nodo"
+                  data-testid="select-node-type"
                 >
                   <option value="INITIAL">{t("types.INITIAL")}</option>
                   <option value="INTERMEDIATE">{t("types.INTERMEDIATE")}</option>
@@ -317,7 +317,7 @@ export default function WorkflowEditorPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setAddNodeOpen(false)}>{tc("cancel")}</Button>
-              <Button onClick={handleAddNode} data-testid="btn-confirmar-nodo">{tc("add")}</Button>
+              <Button onClick={handleAddNode} data-testid="btn-confirm-node">{tc("add")}</Button>
             </FormActions>
           </FormContainer>
         </DialogContent>

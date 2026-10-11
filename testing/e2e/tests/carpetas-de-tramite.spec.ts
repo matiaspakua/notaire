@@ -89,25 +89,25 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-ver-carpetas-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
     let dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    const item = dialog.getByTestId("carpeta-item").first();
+    const item = dialog.getByTestId("folder-item").first();
     await expect(item).toContainText("Activa");
 
     await item.getByTestId(/^btn-poner-en-espera-/).click();
     dialog = page.getByRole("dialog");
-    await dialog.getByTestId("input-motivo-espera").fill("Falta documentación del titular");
-    await dialog.getByTestId("btn-confirmar-espera").click();
+    await dialog.getByTestId("input-wait-reason").fill("Falta documentación del titular");
+    await dialog.getByTestId("btn-confirm-espera").click();
     await expect(dialog).not.toBeVisible();
 
-    await page.getByTestId(`btn-ver-carpetas-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
     dialog = page.getByRole("dialog");
-    await expect(dialog.getByTestId("carpeta-item").first()).toContainText("Espera");
+    await expect(dialog.getByTestId("folder-item").first()).toContainText("Espera");
     await page.keyboard.press("Escape");
 
-    await page.getByTestId(`btn-archivar-gestion-${idGestion}`).click();
+    await page.getByTestId(`btn-archive-management-${idGestion}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
     await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
@@ -115,9 +115,9 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     await confirmDialog.getByRole("button", { name: /archive de todos modos/i }).click();
     await expect(confirmDialog).not.toBeVisible();
 
-    await page.getByTestId(`btn-ver-carpetas-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
     dialog = page.getByRole("dialog");
-    await expect(dialog.getByTestId("carpeta-item").first()).toContainText("Archivada");
+    await expect(dialog.getByTestId("folder-item").first()).toContainText("Archivada");
   });
 
   test("edge path: poner en espera sin motivo muestra un error visible", async ({ page }) => {
@@ -129,13 +129,13 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-ver-carpetas-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId(/^btn-poner-en-espera-/).click();
     const esperaDialog = page.getByRole("dialog");
-    await esperaDialog.getByTestId("btn-confirmar-espera").click();
+    await esperaDialog.getByTestId("btn-confirm-espera").click();
 
     await expect(page.getByText(/motivo es obligatorio/i)).toBeVisible({ timeout: 10000 });
     await expect(esperaDialog).toBeVisible();
@@ -152,16 +152,16 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-ver-carpetas-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
     let dialog = page.getByRole("dialog");
     await dialog.getByTestId(/^btn-poner-en-espera-/).click();
     dialog = page.getByRole("dialog");
-    await dialog.getByTestId("input-motivo-espera").fill("Falta documentación");
-    await dialog.getByTestId("btn-confirmar-espera").click();
+    await dialog.getByTestId("input-wait-reason").fill("Falta documentación");
+    await dialog.getByTestId("btn-confirm-espera").click();
     await expect(dialog).not.toBeVisible();
     await page.keyboard.press("Escape");
 
-    await page.getByTestId(`btn-archivar-gestion-${idGestion}`).click();
+    await page.getByTestId(`btn-archive-management-${idGestion}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
     await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
@@ -184,10 +184,10 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
       const row = listRow(page, new RegExp(String(numero)));
       await expect(row).toBeVisible({ timeout: 10000 });
 
-      await page.getByTestId(`btn-ver-carpetas-${idGestion}`).click();
+      await page.getByTestId(`btn-view-folders-${idGestion}`).click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
-      await expect(dialog.getByTestId("carpeta-item").first()).toContainText("Activa");
+      await expect(dialog.getByTestId("folder-item").first()).toContainText("Activa");
     });
   }
 });

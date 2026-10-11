@@ -84,7 +84,7 @@ test.describe('CU03 - Listar documentos y certificados necesarios', () => {
   }) => {
     await steps.thenPageHasHeading('Documentos Necesarios')
 
-    await page.getByTestId('select-tramite').click()
+    await page.getByTestId('select-procedure').click()
     await page.getByRole('listbox').getByRole('option').first().click()
 
     await expect(page.getByText(/Documentos necesarios para/i)).toBeVisible()
@@ -112,12 +112,12 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
 
     // ── CU07: Generar testimonio ──────────────────────
     await steps.givenUserIsOnPage('/dashboard/testimonies')
-    await page.getByTestId('btn-generar-testimonio').click()
+    await page.getByTestId('btn-generate-testimony').click()
     await steps.thenModalIsVisible()
 
-    await page.getByTestId('select-escritura-testimonio').click()
+    await page.getByTestId('select-deed-testimony').click()
     await page.getByRole('option', { name: new RegExp(String(escrituraNumero)) }).click()
-    await page.getByTestId('btn-guardar-testimonio').click()
+    await page.getByTestId('btn-save-testimony').click()
     await steps.thenShowsSuccessMessage('generado')
     await steps.thenModalIsNotVisible()
 
@@ -134,9 +134,9 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     )!.idTestimony
 
     // ── CU08: Verificar sin observaciones ─────────────
-    await page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-verify-testimony-${idTestimonio}`).click()
     await steps.thenModalIsVisible()
-    await page.getByTestId('btn-confirmar-verificar-testimonio').click()
+    await page.getByTestId('btn-confirm-verify-testimony').click()
     await steps.thenShowsSuccessMessage('verificado')
     await expect(rowTestimonios).toContainText(/verificado/i)
 
@@ -145,20 +145,20 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     const rowMovimientos = rowWithCell(page, escrituraNumero)
     await expect(rowMovimientos).toBeVisible({ timeout: 10_000 })
 
-    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('ingresado')
     await expect(rowMovimientos).toContainText(/ingresado/i)
 
     // ── CU11: Registrar inscripción ───────────────────
-    await page.getByTestId(`btn-registrar-inscripcion-${idTestimonio}`).click()
+    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('inscripción registrada')
     await expect(rowMovimientos).toContainText(/inscripto/i)
 
     // ── CU12: Retirar testimonio ──────────────────────
-    await page.getByTestId(`btn-retirar-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-withdraw-testimony-${idTestimonio}`).click()
     await steps.thenModalIsVisible()
-    await page.getByTestId('input-numero-carton').fill('123')
-    await page.getByTestId('btn-confirmar-retiro').click()
+    await page.getByTestId('input-card-number').fill('123')
+    await page.getByTestId('btn-confirm-retiro').click()
     await steps.thenShowsSuccessMessage('retirado')
     await expect(rowMovimientos).toContainText(/retirado/i)
   })
@@ -182,12 +182,12 @@ test.describe('CU07 - Generar testimonio', () => {
     const { numero } = await seedSignedDeed(page)
 
     await steps.givenUserIsOnPage('/dashboard/testimonies')
-    await page.getByTestId('btn-generar-testimonio').click()
+    await page.getByTestId('btn-generate-testimony').click()
     await steps.thenModalIsVisible()
 
-    await page.getByTestId('select-escritura-testimonio').click()
+    await page.getByTestId('select-deed-testimony').click()
     await page.getByRole('option', { name: new RegExp(String(numero)) }).click()
-    await page.getByTestId('btn-guardar-testimonio').click()
+    await page.getByTestId('btn-save-testimony').click()
     await steps.thenShowsSuccessMessage('generado')
     await steps.thenModalIsNotVisible()
 
@@ -222,11 +222,11 @@ test.describe('CU08 - Verificar testimonio', () => {
     const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
-    await page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-verify-testimony-${idTestimonio}`).click()
     await steps.thenModalIsVisible()
-    await page.getByTestId('checkbox-observado-testimonio').click()
-    await page.getByTestId('input-observaciones-testimonio').fill('Falta firma del otorgante')
-    await page.getByTestId('btn-confirmar-verificar-testimonio').click()
+    await page.getByTestId('checkbox-observed-testimony').click()
+    await page.getByTestId('input-notes-testimony').fill('Falta firma del otorgante')
+    await page.getByTestId('btn-confirm-verify-testimony').click()
     await steps.thenShowsSuccessMessage('verificado')
 
     await expect(row).toContainText(/observado/i)
@@ -248,9 +248,9 @@ test.describe('CU08 - Verificar testimonio', () => {
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     // btn-emitir-copia must NOT exist while testimonio is still unverified
-    await expect(page.getByTestId(`btn-emitir-copia-${idTestimonio}`)).toHaveCount(0)
+    await expect(page.getByTestId(`btn-issue-copy-${idTestimonio}`)).toHaveCount(0)
     // The verify button must still be available
-    await expect(page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`)).toBeVisible()
+    await expect(page.getByTestId(`btn-verify-testimony-${idTestimonio}`)).toBeVisible()
   })
 })
 
@@ -273,11 +273,11 @@ test.describe('CU11 - Ingresar para inscripción', () => {
     const row = rowWithCell(page, numero)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
-    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('ingresado')
     await expect(row).toContainText(/ingresado/i)
 
-    await page.getByTestId(`btn-registrar-inscripcion-${idTestimonio}`).click()
+    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('inscripción registrada')
     await expect(row).toContainText(/inscripto/i)
   })
@@ -303,16 +303,16 @@ test.describe('CU12 - Retirar testimonio', () => {
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     // Move to 'inscripto' first
-    await page.getByTestId(`btn-sign-in-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('ingresado')
-    await page.getByTestId(`btn-registrar-inscripcion-${idTestimonio}`).click()
+    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click()
     await steps.thenShowsSuccessMessage('inscripción registrada')
 
     // Now retire
-    await page.getByTestId(`btn-retirar-testimonio-${idTestimonio}`).click()
+    await page.getByTestId(`btn-withdraw-testimony-${idTestimonio}`).click()
     await steps.thenModalIsVisible()
-    await page.getByTestId('input-numero-carton').fill('456')
-    await page.getByTestId('btn-confirmar-retiro').click()
+    await page.getByTestId('input-card-number').fill('456')
+    await page.getByTestId('btn-confirm-retiro').click()
     await steps.thenShowsSuccessMessage('retirado')
     await expect(row).toContainText(/retirado/i)
   })

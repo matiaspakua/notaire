@@ -191,7 +191,7 @@ export default function PlantillasPage() {
       className: "w-24",
       render: (p) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(p)} data-testid="btn-edit-plantilla" aria-label={tc("edit")}>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(p)} data-testid="btn-edit-template" aria-label={tc("edit")}>
             <NotaireIcon src="/icons/actions/generate.png" alt={tc("edit")} size={16} />
           </Button>
           <Button
@@ -204,7 +204,7 @@ export default function PlantillasPage() {
                 conceptId: p.budgetTemplatePK!.fkIdConcept,
               })
             }
-            data-testid="btn-delete-plantilla"
+            data-testid="btn-delete-template"
             aria-label={tc("delete")}
           >
             <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
@@ -220,7 +220,7 @@ export default function PlantillasPage() {
         title={t("title")}
         description={t("description")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nueva-plantilla">
+          <Button onClick={openCreate} data-testid="btn-new-template">
             <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
             {t("newPlantilla")}
           </Button>
@@ -240,7 +240,7 @@ export default function PlantillasPage() {
             <FormSection dialogTitle title={isEditMode ? t("editPlantilla") : t("newPlantilla")}>
               <FormField label={t("fields.tipoTramite")} required>
                 <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
-                  <SelectTrigger data-testid="select-tipo-tramite" disabled={isEditMode}>
+                  <SelectTrigger data-testid="select-procedure-type" disabled={isEditMode}>
                     <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -254,7 +254,7 @@ export default function PlantillasPage() {
               </FormField>
               <FormField label={t("fields.concepto")} required>
                 <Select value={conceptId} onValueChange={setConceptId}>
-                  <SelectTrigger data-testid="select-concepto" disabled={isEditMode}>
+                  <SelectTrigger data-testid="select-concept" disabled={isEditMode}>
                     <SelectValue placeholder={t("fields.conceptoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -271,7 +271,7 @@ export default function PlantillasPage() {
                 <Input
                   value={observaciones}
                   onChange={(e) => setObservaciones(e.target.value)}
-                  data-testid="input-observaciones-plantilla"
+                  data-testid="input-notes-template"
                 />
               </FormField>
             </FormSection>
@@ -294,7 +294,7 @@ export default function PlantillasPage() {
       <AppHeader title={t("costosDocumento.title")} description={t("costosDocumento.description")} />
       <FormField label={t("costosDocumento.fields.tipoTramite")}>
         <Select value={costoTramiteId} onValueChange={setCostoTramiteId}>
-          <SelectTrigger data-testid="select-tipo-tramite-costos">
+          <SelectTrigger data-testid="select-procedure-type-costs">
             <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
           </SelectTrigger>
           <SelectContent>
@@ -310,7 +310,7 @@ export default function PlantillasPage() {
       {costoTramiteId && (
         <>
           <div className="flex justify-end mb-4">
-            <Button onClick={openCreateCosto} data-testid="btn-nuevo-costo-documento">
+            <Button onClick={openCreateCosto} data-testid="btn-new-cost-document">
               <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
               {t("costosDocumento.newCosto")}
             </Button>
@@ -350,7 +350,7 @@ export default function PlantillasPage() {
             <FormSection dialogTitle title={t("costosDocumento.newCosto")}>
               <FormField label={t("costosDocumento.fields.tipoDocumento")} required>
                 <Select value={costoTipoDocumentoId} onValueChange={setCostoTipoDocumentoId}>
-                  <SelectTrigger data-testid="select-tipo-documento-costo">
+                  <SelectTrigger data-testid="select-document-type-cost">
                     <SelectValue placeholder={t("costosDocumento.fields.tipoDocumentoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -376,7 +376,7 @@ export default function PlantillasPage() {
                   type="number"
                   value={costoValor}
                   onChange={(e) => setCostoValor(e.target.value)}
-                  data-testid="input-valor-costo-documento"
+                  data-testid="input-value-cost-document"
                 />
               </FormField>
             </FormSection>
@@ -385,7 +385,7 @@ export default function PlantillasPage() {
                 <NotaireIcon src="/icons/actions/cerrar.png" alt={tc("cancel")} size={16} className="mr-1" />
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleSaveCosto} disabled={savingCosto} data-testid="btn-guardar-costo-documento">
+              <Button onClick={handleSaveCosto} disabled={savingCosto} data-testid="btn-save-cost-document">
                 <NotaireIcon src="/icons/actions/guardar.png" alt={tc("save")} size={16} className="mr-1 brightness-0 invert" />
                 {tc("save")}
               </Button>

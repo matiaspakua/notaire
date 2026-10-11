@@ -103,7 +103,7 @@ export default function ProtocoloAuxiliarPage() {
                   rows={6}
                   value={cuerpo}
                   onChange={(e) => setCuerpo(e.target.value)}
-                  data-testid="textarea-cuerpo-escritura-auxiliar"
+                  data-testid="textarea-deed-body-auxiliary"
                 />
               </FormField>
             </FormSection>

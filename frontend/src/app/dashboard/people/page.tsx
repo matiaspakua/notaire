@@ -213,7 +213,7 @@ function PersonasList() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nueva-persona">
+          <Button onClick={openCreate} data-testid="btn-new-person">
             <Plus className="h-4 w-4" />
             {t("newPersona")}
           </Button>
@@ -248,7 +248,7 @@ function PersonasList() {
         <Button
           variant={filterClientes ? "default" : "secondary"}
           onClick={() => setFilterClientes((v) => !v)}
-          data-testid="btn-filter-clientes"
+          data-testid="btn-filter-clients"
           size="sm"
         >
           {t("filterClients")}
@@ -361,14 +361,14 @@ function PersonasList() {
                       notaryRegistrationNumber: e.target.value ? Number(e.target.value) : undefined,
                     })
                   }
-                  data-testid="input-registro-escribano"
+                  data-testid="input-notary-registration"
                 />
               </FormField>
               <CheckboxField
                 label={t("fields.esCliente")}
                 checked={editing.isClient ?? false}
                 onChange={(checked) => setEditing({ ...editing, isClient: checked })}
-                data-testid="check-es-cliente"
+                data-testid="check-es-client"
               />
             </FormSection>
             <FormActions align="right">

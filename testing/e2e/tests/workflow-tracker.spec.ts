@@ -123,8 +123,8 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
 
     const tracker = page.getByTestId("workflow-tracker");
     await expect(tracker).toBeVisible({ timeout: 15000 });
-    await expect(page.getByTestId("workflow-reingreso-badge")).toBeVisible();
-    await expect(page.getByTestId("workflow-reingreso-badge")).toContainText("2");
+    await expect(page.getByTestId("workflow-reentry-badge")).toBeVisible();
+    await expect(page.getByTestId("workflow-reentry-badge")).toContainText("2");
 
     await page.getByTestId("workflow-node-9").click();
     await expect(page.getByTestId("workflow-node-modal")).toBeVisible();
@@ -151,7 +151,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
 
     const tracker = page.getByTestId("workflow-tracker");
     await expect(tracker).toBeVisible({ timeout: 15000 });
-    await expect(page.getByTestId("workflow-reingreso-badge")).toHaveCount(0);
+    await expect(page.getByTestId("workflow-reentry-badge")).toHaveCount(0);
   });
 
   test("degrades without post-firma nodes and without movements", async ({
@@ -184,7 +184,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
 
     const tracker = page.getByTestId("workflow-tracker");
     await expect(tracker).toBeVisible({ timeout: 15000 });
-    await expect(page.getByTestId("workflow-reingreso-badge")).toHaveCount(0);
+    await expect(page.getByTestId("workflow-reentry-badge")).toHaveCount(0);
     await expect(page.getByTestId("workflow-node-1")).toBeVisible();
   });
 
@@ -212,7 +212,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
       await expect(page.getByTestId("workflow-tracker")).toBeVisible({
         timeout: 15000,
       });
-      await expect(page.getByTestId("workflow-reingreso-badge")).toBeVisible();
+      await expect(page.getByTestId("workflow-reentry-badge")).toBeVisible();
     });
   }
 });

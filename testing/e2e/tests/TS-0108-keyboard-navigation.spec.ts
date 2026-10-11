@@ -41,7 +41,7 @@ test.describe("Keyboard navigation (#1352)", () => {
     await page.goto("/dashboard/people");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId("sidebar").getByTestId("nav-gestiones").click();
+    await page.getByTestId("sidebar").getByTestId("nav-managements").click();
     await expect(page).toHaveURL(/\/dashboard\/managements$/);
 
     const h1 = page.locator("main h1").first();

@@ -27,13 +27,13 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click();
+    await page.getByTestId(`btn-change-status-${idGestion}`).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    await dialog.getByTestId("select-nuevo-estado").click();
+    await dialog.getByTestId("select-new-status").click();
     await page.getByRole("option", { name: estadoFinal }).click();
-    await dialog.getByTestId("btn-confirmar-transicion").click();
+    await dialog.getByTestId("btn-confirm-transicion").click();
 
     await expect(dialog).not.toBeVisible();
     await expect(row).toContainText(estadoFinal);
@@ -45,9 +45,9 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
-    await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click();
+    await page.getByTestId(`btn-change-status-${idGestion}`).click();
     const dialog = page.getByRole("dialog");
-    await dialog.getByTestId("select-nuevo-estado").click();
+    await dialog.getByTestId("select-new-status").click();
 
     await expect(page.getByRole("option", { name: estadoFinal })).toBeVisible();
     await expect(page.getByRole("option", { name: estadoInicial })).toHaveCount(0);
@@ -68,12 +68,12 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
       const row = listRow(page, new RegExp(String(numero)));
       await expect(row).toBeVisible({ timeout: 10000 });
 
-      await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click();
+      await page.getByTestId(`btn-change-status-${idGestion}`).click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
-      await dialog.getByTestId("select-nuevo-estado").click();
+      await dialog.getByTestId("select-new-status").click();
       await page.getByRole("option", { name: estadoFinal }).click();
-      await dialog.getByTestId("btn-confirmar-transicion").click();
+      await dialog.getByTestId("btn-confirm-transicion").click();
       await expect(dialog).not.toBeVisible();
     });
   }

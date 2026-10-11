@@ -269,7 +269,7 @@ function NodeModal({ node, status, trace, onClose }: NodeModalProps) {
           )}
           {returnedCount > 0 && (
             <span
-              data-testid="workflow-reingreso-badge"
+              data-testid="workflow-reentry-badge"
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white"
               style={{ backgroundColor: theme.colors.warning[600] }}
             >
@@ -583,7 +583,7 @@ export default function WorkflowTracker({ trace }: Props) {
                   </text>
                 )}
                 {showReentryBadge && (
-                  <g data-testid="workflow-reingreso-badge">
+                  <g data-testid="workflow-reentry-badge">
                     <rect
                       x={node.lx + 40}
                       y={cy + (inProgress ? 14 : 6)}

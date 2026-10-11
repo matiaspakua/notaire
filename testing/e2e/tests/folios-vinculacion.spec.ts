@@ -34,14 +34,14 @@ async function pickFirstOption(page: Page) {
 
 /** Open the "nuevo folio" modal and fill the required fields (número, tipo, escribano) */
 async function openNewFolioAndFillRequired(page: Page, numeroFolio: number) {
-  await page.getByTestId('btn-nuevo-folio').click()
+  await page.getByTestId('btn-new-folio').click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
 
-  await page.getByTestId('input-numero-folio').fill(String(numeroFolio))
-  await page.getByTestId('select-tipo-folio').click()
+  await page.getByTestId('input-folio-number').fill(String(numeroFolio))
+  await page.getByTestId('select-folio-type').click()
   await pickFirstOption(page)
-  await page.getByTestId('select-escribano-folio').click()
+  await page.getByTestId('select-notary-folio').click()
   await pickFirstOption(page)
 
   return dialog
@@ -63,7 +63,7 @@ test.describe('CU87 - Vincular Deed y Folio', () => {
 
     const dialog = await openNewFolioAndFillRequired(page, numeroFolio)
 
-    await page.getByTestId('select-escritura-folio').click()
+    await page.getByTestId('select-deed-folio').click()
     const escrituraOption = page.getByRole('option', { name: `Deed Nº ${numero}` })
     await escrituraOption.waitFor({ state: 'attached', timeout: 5000 })
     await escrituraOption.evaluate((el: HTMLElement) => el.click())
@@ -97,7 +97,7 @@ test.describe('CU87 - Vincular Deed y Folio', () => {
     await page.waitForLoadState('domcontentloaded')
 
     const dialog = await openNewFolioAndFillRequired(page, Math.floor(10000 + Math.random() * 90000))
-    await page.getByTestId('select-escritura-folio').click()
+    await page.getByTestId('select-deed-folio').click()
 
     // Then: the picker never offers an escritura already Utilizado by another folio
     await expect(page.getByRole('option', { name: `Deed Nº ${numero}` })).toHaveCount(0)
@@ -168,7 +168,7 @@ for (const viewport of [
     await page.waitForLoadState('domcontentloaded')
 
     await expect(page.getByRole('heading', { name: /folios/i }).first()).toBeVisible()
-    await expect(page.getByTestId('btn-nuevo-folio')).toBeVisible()
+    await expect(page.getByTestId('btn-new-folio')).toBeVisible()
 
     const noOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth

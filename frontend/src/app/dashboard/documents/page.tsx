@@ -170,7 +170,7 @@ export default function DocumentosPage() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-documento">
+          <Button onClick={openCreate} data-testid="btn-new-document">
             <Plus className="h-4 w-4" />
             {t("newDocumento")}
           </Button>
@@ -191,7 +191,7 @@ export default function DocumentosPage() {
             <FormSection dialogTitle title={editing ? t("editDocumento") : t("newDocumento")}>
               <FormField label={tc("type")} required={!editing}>
                 <Select value={form.tipoId} onValueChange={(v) => setForm({ ...form, tipoId: v })}>
-                  <SelectTrigger data-testid="select-tipo-documento">
+                  <SelectTrigger data-testid="select-document-type">
                     <SelectValue placeholder={t("selectTipo")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -218,7 +218,7 @@ export default function DocumentosPage() {
                       onChange={(g) => setForm({ ...form, gestionId: g?.idManagement?.toString() ?? "", tramiteId: "" })}
                       aria-label={t("gestion")}
                       placeholder={t("selectGestion")}
-                      data-testid="select-gestion-documento"
+                      data-testid="select-management-document"
                     />
                   </FormField>
                   {form.gestionId && (
@@ -228,7 +228,7 @@ export default function DocumentosPage() {
                       required={!editing}
                     >
                       <Select value={form.tramiteId} onValueChange={(v) => setForm({ ...form, tramiteId: v })}>
-                        <SelectTrigger data-testid="select-tramite-documento" disabled={tramites.length === 0}>
+                        <SelectTrigger data-testid="select-procedure-document" disabled={tramites.length === 0}>
                           <SelectValue placeholder={t("selectTramite")} />
                         </SelectTrigger>
                         <SelectContent>
@@ -260,7 +260,7 @@ export default function DocumentosPage() {
                   updateMutation.isPending ||
                   missingDocumentoFields(form, !!editing).length > 0
                 }
-                data-testid="btn-guardar-documento"
+                data-testid="btn-save-document"
               >
                 {editing ? tc("update") : tc("create")}
               </Button>

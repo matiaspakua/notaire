@@ -58,13 +58,13 @@ test.describe("CU43 - Reingresar documentación", () => {
 
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
-    await page.getByTestId(`btn-ver-tramites-${idGestion}`).click();
+    await page.getByTestId(`btn-view-procedures-${idGestion}`).click();
 
     const detalleDialog = page.getByRole("dialog");
     await expect(detalleDialog).toBeVisible();
     await expect(detalleDialog.getByText("Certificado de Dominio")).toBeVisible();
 
-    await page.getByTestId(`btn-reingresar-${idTramite}-${idTipoDocumento}`).click();
+    await page.getByTestId(`btn-reenter-${idTramite}-${idTipoDocumento}`).click();
 
     await expect(page.getByText(/document reingresado/i)).toBeVisible({ timeout: 10000 });
   });
@@ -78,7 +78,7 @@ test.describe("CU43 - Reingresar documentación", () => {
 
     const row = page.getByRole("row", { name: new RegExp(String(gestion.data!.number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
-    await page.getByTestId(`btn-ver-tramites-${gestion.data!.idManagement}`).click();
+    await page.getByTestId(`btn-view-procedures-${gestion.data!.idManagement}`).click();
 
     const detalleDialog = page.getByRole("dialog");
     await expect(detalleDialog).toBeVisible();

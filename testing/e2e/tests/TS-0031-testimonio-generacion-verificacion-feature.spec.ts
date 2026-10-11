@@ -38,12 +38,12 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
     const { numero } = await seedSignedDeed(page);
 
     await steps.givenUserIsOnPage("/dashboard/testimonies");
-    await page.getByTestId("btn-generar-testimonio").click();
+    await page.getByTestId("btn-generate-testimony").click();
     await steps.thenModalIsVisible();
 
-    await page.getByTestId("select-escritura-testimonio").click();
+    await page.getByTestId("select-deed-testimony").click();
     await page.getByRole("option", { name: new RegExp(String(numero)) }).click();
-    await page.getByTestId("btn-guardar-testimonio").click();
+    await page.getByTestId("btn-save-testimony").click();
     await steps.thenShowsSuccessMessage("generado");
     await steps.thenModalIsNotVisible();
 
@@ -52,14 +52,14 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
     const list = await apiGet<TestimonioApiResult[]>(page, "/testimonies");
     const idTestimonio = list.data!.find((te) => te.deed?.number === numero)!.idTestimony;
 
-    await page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`).click();
+    await page.getByTestId(`btn-verify-testimony-${idTestimonio}`).click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("btn-confirmar-verificar-testimonio").click();
+    await page.getByTestId("btn-confirm-verify-testimony").click();
     await steps.thenShowsSuccessMessage("verificado");
 
     await expect(row).toContainText(/verificado/i);
     const downloadPromise = page.waitForEvent("download");
-    await page.getByTestId(`btn-emitir-copia-${idTestimonio}`).click();
+    await page.getByTestId(`btn-issue-copy-${idTestimonio}`).click();
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toMatch(/^testimonio_\d+_copia\.pdf$/);
   });
@@ -73,11 +73,11 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`).click();
+    await page.getByTestId(`btn-verify-testimony-${idTestimonio}`).click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("checkbox-observado-testimonio").click();
-    await page.getByTestId("input-observaciones-testimonio").fill("Falta firma del otorgante");
-    await page.getByTestId("btn-confirmar-verificar-testimonio").click();
+    await page.getByTestId("checkbox-observed-testimony").click();
+    await page.getByTestId("input-notes-testimony").fill("Falta firma del otorgante");
+    await page.getByTestId("btn-confirm-verify-testimony").click();
     await steps.thenShowsSuccessMessage("verificado");
 
     await expect(row).toContainText(/observado/i);
@@ -92,8 +92,8 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await expect(page.getByTestId(`btn-emitir-copia-${idTestimonio}`)).toHaveCount(0);
-    await expect(page.getByTestId(`btn-verificar-testimonio-${idTestimonio}`)).toBeVisible();
+    await expect(page.getByTestId(`btn-issue-copy-${idTestimonio}`)).toHaveCount(0);
+    await expect(page.getByTestId(`btn-verify-testimony-${idTestimonio}`)).toBeVisible();
   });
 
   for (const viewport of [

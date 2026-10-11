@@ -114,7 +114,7 @@ export default function RolesPage() {
       key: "actions", header: "", className: "w-24",
       render: (r) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(r)} data-testid={`btn-edit-rol-${r.idRole}`} aria-label={tc("edit")}><Pencil className="h-4 w-4" /></Button>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(r)} data-testid={`btn-edit-role-${r.idRole}`} aria-label={tc("edit")}><Pencil className="h-4 w-4" /></Button>
           <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => setDeleteId(r.idRole!)} aria-label={tc("delete")}><Trash2 className="h-4 w-4" /></Button>
         </div>
       ),
@@ -126,7 +126,7 @@ export default function RolesPage() {
       <AppHeader
         title={t("title")}
         description={t("description")}
-        actions={<Button onClick={openCreate} data-testid="btn-nuevo-rol"><Plus className="h-4 w-4" />{t("newRol")}</Button>}
+        actions={<Button onClick={openCreate} data-testid="btn-new-role"><Plus className="h-4 w-4" />{t("newRol")}</Button>}
       />
       <DataTable data={roles} columns={columns} isLoading={isLoading} keyExtractor={(r) => r.idRole!} emptyMessage={t("noData")} />
 
@@ -138,7 +138,7 @@ export default function RolesPage() {
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                  data-testid="input-nombre-rol"
+                  data-testid="input-name-role"
                   aria-invalid={!!fieldErrors.name}
                 />
               </FormField>

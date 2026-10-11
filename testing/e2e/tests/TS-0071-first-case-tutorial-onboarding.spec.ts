@@ -71,12 +71,12 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     await page.getByTestId("btn-sign-in").click();
     await expect(page).toHaveURL(/\/dashboard/);
     await page.goto("/dashboard/managements");
-    await page.getByTestId("btn-nueva-gestion").click();
+    await page.getByTestId("btn-new-management").click();
 
-    await expect(page.getByTestId("select-presupuesto-gestion")).toBeVisible();
-    await expect(page.getByTestId("select-escribano-gestion")).toBeVisible();
-    await expect(page.getByTestId("select-estado-gestion")).toBeVisible();
-    await expect(page.getByTestId("select-tipo-tramite-gestion")).toBeVisible();
+    await expect(page.getByTestId("select-budget-management")).toBeVisible();
+    await expect(page.getByTestId("select-notary-management")).toBeVisible();
+    await expect(page.getByTestId("select-status-management")).toBeVisible();
+    await expect(page.getByTestId("select-procedure-type-management")).toBeVisible();
   });
 
   test("a new user can set up and follow a complete first case", async ({ page }) => {
@@ -100,11 +100,11 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
 
     await test.step("2. Define the task type — what work the office will perform", async () => {
       await go(page, "/dashboard/administration/procedures");
-      await page.getByTestId("btn-nuevo-tipo-tramite").click();
-      await page.getByTestId("input-nombre-tramite").fill(tipoTramite);
+      await page.getByTestId("btn-new-procedure-type").click();
+      await page.getByTestId("input-name-procedure").fill(tipoTramite);
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-tramite").fill(tipoTramite);
+      await page.getByTestId("input-search-procedure").fill(tipoTramite);
       await expect(page.getByRole("table")).toContainText(tipoTramite);
       await pause(page);
     });
@@ -112,26 +112,26 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     await test.step("3. Add a charge concept — the building block for quotes", async () => {
       await go(page, "/dashboard/administration/concepts");
       await page.getByRole("button", { name: /nuevo concepto/i }).click();
-      await page.getByTestId("input-nombre-concepto").fill(concepto);
+      await page.getByTestId("input-name-concept").fill(concepto);
       await page.getByRole("dialog").getByRole("spinbutton").fill("25000");
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-concepto").fill(concepto);
+      await page.getByTestId("input-search-concept").fill(concepto);
       await expect(page.getByRole("table")).toContainText(concepto);
       await pause(page);
     });
 
     await test.step("4. Prepare the protocol — create a folio type and a folio", async () => {
       await go(page, "/dashboard/administration/folios");
-      await page.getByTestId("btn-nuevo-tipo-folio").click();
-      await page.getByTestId("input-nombre-tipo-folio").fill(tipoFolio);
+      await page.getByTestId("btn-new-folio-type").click();
+      await page.getByTestId("input-name-folio-type").fill(tipoFolio);
       await pause(page);
-      await page.getByTestId("btn-save-tipo-folio").click();
+      await page.getByTestId("btn-save-folio-type").click();
       await expect(page.getByRole("dialog")).toBeHidden();
       await pause(page);
 
-      await page.getByTestId("btn-nuevo-folio").click();
-      await page.getByTestId("input-numero-folio").fill(`8${runId}`);
+      await page.getByTestId("btn-new-folio").click();
+      await page.getByTestId("input-folio-number").fill(`8${runId}`);
       await choose(page, "select-estado-folio", /nuevo/i);
       await choose(page, "select-tipo-folio", new RegExp(tipoFolio, "i"));
       // The office's existing notary is selected from the live list; this makes the
@@ -143,12 +143,12 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
 
     await test.step("5. Register the client — the person behind the case", async () => {
       await go(page, "/dashboard/people");
-      await page.getByTestId("btn-nueva-persona").click();
+      await page.getByTestId("btn-new-person").click();
       await page.getByTestId("input-firstName").fill("Ana");
       await page.getByTestId("input-lastName").fill(`Tutorial ${runId}`);
       await page.getByRole("dialog").getByTestId("input-dni").fill(`DNI${runId}`);
       await page.getByLabel(/email/i).fill(`ana.tutorial.${runId}@notaire.test`);
-      await page.getByTestId("check-es-cliente").click();
+      await page.getByTestId("check-es-client").click();
       await pause(page);
       await saveDialog(page);
       await page.getByTestId("input-search-firstName").fill("Ana");
@@ -158,20 +158,20 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
 
     await test.step("6. Create the quote — link the proposed amount to the client", async () => {
       await go(page, "/dashboard/budgets");
-      await page.getByTestId("btn-nuevo-presupuesto").click();
+      await page.getByTestId("btn-new-budget").click();
       await choose(page, "select-persona", new RegExp(cliente, "i"));
       await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-04");
-      await page.getByTestId("input-monto").fill("25000");
+      await page.getByTestId("input-amount").fill("25000");
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-presupuesto").fill("Ana");
+      await page.getByTestId("input-search-budget").fill("Ana");
       await pause(page);
     });
 
     await test.step("7. Open the case — link it to the quote, notary, state and task type", async () => {
       await go(page, "/dashboard/managements");
-      await page.getByTestId("btn-nueva-gestion").click();
-      await page.getByTestId("input-numero-gestion").fill(gestion);
+      await page.getByTestId("btn-new-management").click();
+      await page.getByTestId("input-management-number").fill(gestion);
       await pause(page);
       // Budget options are labeled with the client's name, so the tutorial links the
       // case to its own quote rather than relying on list order.

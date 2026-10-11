@@ -159,7 +159,7 @@ export default function InmueblesPage() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-inmueble">
+          <Button onClick={openCreate} data-testid="btn-new-property">
             <Plus className="h-4 w-4" />
             {t("newInmueble")}
           </Button>
@@ -219,7 +219,7 @@ export default function InmueblesPage() {
               </FormField>
               <FormField label={t("fields.tomoFolioFinca")}>
                 <Input
-                  data-testid="input-tomo-folio-finca"
+                  data-testid="input-volume-folio-property"
                   value={form.tomoFolioFinca}
                   onChange={(e) => setForm({ ...form, tomoFolioFinca: e.target.value })}
                   placeholder={t("fields.tomoFolioFincaPlaceholder")}

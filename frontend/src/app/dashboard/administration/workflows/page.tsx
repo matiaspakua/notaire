@@ -134,7 +134,7 @@ export default function WorkflowsPage() {
         title={t("title")}
         description={t("description")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-workflow">
+          <Button onClick={openCreate} data-testid="btn-new-workflow">
             + {t("newWorkflow")}
           </Button>
         }
@@ -160,7 +160,7 @@ export default function WorkflowsPage() {
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
-                  data-testid="input-nombre-workflow"
+                  data-testid="input-name-workflow"
                 />
               </FormField>
               <FormField label={tc("description")}>
@@ -184,7 +184,7 @@ export default function WorkflowsPage() {
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>{tc("cancel")}</Button>
-              <Button onClick={handleSave} disabled={saving} data-testid="btn-guardar-workflow">
+              <Button onClick={handleSave} disabled={saving} data-testid="btn-save-workflow">
                 {isEditMode ? tc("update") : tc("create")}
               </Button>
             </FormActions>

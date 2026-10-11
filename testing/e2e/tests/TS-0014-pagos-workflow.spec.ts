@@ -198,7 +198,7 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
-    const badge = page.getByTestId("estado-pago-badge");
+    const badge = page.getByTestId("status-payment-badge");
     await expect(badge).toBeVisible({ timeout: 5000 });
     await expect(badge).toHaveText(/sin pagos/i);
   });
@@ -220,7 +220,7 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
-    const badge = page.getByTestId("estado-pago-badge");
+    const badge = page.getByTestId("status-payment-badge");
     await expect(badge).toBeVisible({ timeout: 5000 });
     await expect(badge).toHaveText(/parcial/i);
   });
@@ -242,7 +242,7 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await presupuestoSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
-    const badge = page.getByTestId("estado-pago-badge");
+    const badge = page.getByTestId("status-payment-badge");
     await expect(badge).toBeVisible({ timeout: 5000 });
     await expect(badge).toHaveText(/saldado/i);
   });

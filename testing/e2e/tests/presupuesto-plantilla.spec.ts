@@ -47,21 +47,21 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
 
     // WHEN: operador abre los ítems del presupuesto y elige el tipo de trámite
     await steps.givenUserIsOnPage("/dashboard/budgets");
-    const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
+    const itemsBtn = page.getByTestId(`btn-items-budget-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
 
-    const dialog = page.getByTestId("dialog-items-presupuesto");
+    const dialog = page.getByTestId("dialog-items-budget");
     await expect(dialog).toBeVisible();
 
-    await dialog.getByTestId("select-tipo-tramite-items").click();
+    await dialog.getByTestId("select-procedure-type-items").click();
     await page.getByRole("option", { name: tipoTramiteName, exact: true }).click();
 
     // AND: carga los ítems de la plantilla
-    await dialog.getByTestId("btn-cargar-plantilla").click();
+    await dialog.getByTestId("btn-load-template").click();
 
     // THEN: el ítem de la plantilla aparece en el desglose con su subtotal
-    const table = dialog.getByTestId("table-items-presupuesto");
+    const table = dialog.getByTestId("table-items-budget");
     await expect(table).toBeVisible({ timeout: 8000 });
     await expect(table).toContainText("Honorarios E2E");
     await expect(dialog.getByTestId("items-subtotal")).toContainText("1.500");
@@ -86,21 +86,21 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
 
     // WHEN: el operador crea el presupuesto eligiendo cliente, monto y tipo de trámite
     await steps.givenUserIsOnPage("/dashboard/budgets");
-    await page.getByTestId("btn-nuevo-presupuesto").click();
-    await page.getByTestId("select-persona").fill(lastName);
+    await page.getByTestId("btn-new-budget").click();
+    await page.getByTestId("select-person").fill(lastName);
     await page.getByRole("option", { name: new RegExp(lastName) }).click();
     await page.locator('input[type="date"]').fill(new Date().toISOString().split("T")[0]);
-    await page.getByTestId("input-monto").fill("100000");
-    await page.getByTestId("select-tipo-tramite-nuevo").click();
+    await page.getByTestId("input-amount").fill("100000");
+    await page.getByTestId("select-procedure-type-new").click();
     await page.getByRole("option", { name: tipoTramiteName }).click();
-    await page.getByTestId("btn-guardar-presupuesto").click();
+    await page.getByTestId("btn-save-budget").click();
 
     // THEN: los ítems de la plantilla ya están en el desglose del nuevo presupuesto
     const row = page.getByRole("row").filter({ hasText: lastName }).first();
     await expect(row).toBeVisible({ timeout: 8000 });
     await row.getByRole("button", { name: /ítems|items/i }).click();
-    const dialog = page.getByTestId("dialog-items-presupuesto");
-    await expect(dialog.getByTestId("table-items-presupuesto")).toContainText("Honorarios Alta E2E", { timeout: 8000 });
+    const dialog = page.getByTestId("dialog-items-budget");
+    await expect(dialog.getByTestId("table-items-budget")).toContainText("Honorarios Alta E2E", { timeout: 8000 });
   });
 
   test("muestra un error cuando el tipo de trámite no tiene plantilla configurada", async ({ page }) => {
@@ -114,16 +114,16 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     expect(tipoTramiteResult.ok).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
-    const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
+    const itemsBtn = page.getByTestId(`btn-items-budget-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
 
-    const dialog = page.getByTestId("dialog-items-presupuesto");
+    const dialog = page.getByTestId("dialog-items-budget");
     await expect(dialog).toBeVisible();
 
-    await dialog.getByTestId("select-tipo-tramite-items").click();
+    await dialog.getByTestId("select-procedure-type-items").click();
     await page.getByRole("option", { name: /Sin Plantilla E2E/i }).last().click();
-    await dialog.getByTestId("btn-cargar-plantilla").click();
+    await dialog.getByTestId("btn-load-template").click();
 
     // THEN: curated Spanish toast for 400 (preferFallback → items.errorNoPlantilla)
     await expect(
@@ -131,7 +131,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
         .locator("[data-sonner-toast]")
         .getByText(/no tiene una plantilla configurada/i)
     ).toBeVisible({ timeout: 8000 });
-    await expect(dialog.getByTestId("items-sin-datos")).toBeVisible();
+    await expect(dialog.getByTestId("items-empty-data")).toBeVisible();
   });
 });
 
@@ -153,11 +153,11 @@ for (const viewport of [
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await steps.givenUserIsOnPage("/dashboard/budgets");
 
-    const itemsBtn = page.getByTestId(`btn-items-presupuesto-${idPresupuesto}`);
+    const itemsBtn = page.getByTestId(`btn-items-budget-${idPresupuesto}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
 
-    const dialog = page.getByTestId("dialog-items-presupuesto");
+    const dialog = page.getByTestId("dialog-items-budget");
     await expect(dialog).toBeVisible();
     await steps.thenHasNoHorizontalOverflow();
   });

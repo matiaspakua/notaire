@@ -68,7 +68,7 @@ function ReingresoDocumentacionList() {
             variant="ghost"
             onClick={() => setSelectedGestionId(g.idManagement!)}
             aria-label={t("verTramites")}
-            data-testid={`btn-ver-tramites-${g.idManagement}`}
+            data-testid={`btn-view-procedures-${g.idManagement}`}
           >
             <Eye className="h-4 w-4" />
           </Button>
@@ -102,7 +102,7 @@ function ReingresoDocumentacionList() {
               variant="secondary"
               onClick={() => handleReingresar(idTramite, d)}
               disabled={reingresarMutation.isPending}
-              data-testid={`btn-reingresar-${idTramite}-${d.idDocumentType}`}
+              data-testid={`btn-reenter-${idTramite}-${d.idDocumentType}`}
             >
               <RotateCcw className="h-4 w-4 mr-1" />
               {t("reingresar")}
@@ -115,12 +115,12 @@ function ReingresoDocumentacionList() {
 
   function renderTramite(tramite: ProcedureRequiredDocumentation) {
     return (
-      <div key={tramite.idProcedure} className="mb-6" data-testid={`tramite-${tramite.idProcedure}`}>
+      <div key={tramite.idProcedure} className="mb-6" data-testid={`procedure-${tramite.idProcedure}`}>
         <h3 className="text-sm font-semibold mb-2">
           {t("fields.tramite")}: {tramite.typeProcedureName ?? "—"}
         </h3>
         {tramite.documentsNecesarios.length === 0 ? (
-          <p className="text-sm text-muted-foreground" data-testid={`empty-documentos-${tramite.idProcedure}`}>
+          <p className="text-sm text-muted-foreground" data-testid={`empty-documents-${tramite.idProcedure}`}>
             {t("noDocumentosNecesarios")}
           </p>
         ) : (
@@ -161,7 +161,7 @@ function ReingresoDocumentacionList() {
           {isLoadingDetalle ? (
             <p className="text-sm text-muted-foreground">{tc("loading")}</p>
           ) : !detalle || detalle.procedures.length === 0 ? (
-            <p className="text-sm text-muted-foreground" data-testid="empty-tramites">
+            <p className="text-sm text-muted-foreground" data-testid="empty-procedures">
               {t("noTramites")}
             </p>
           ) : (

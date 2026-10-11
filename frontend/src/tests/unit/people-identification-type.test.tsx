@@ -76,7 +76,7 @@ describe("PersonasPage identification type (#1361)", () => {
   it("creates a person with DNI preselected and sends identificationTypeId", async () => {
     render(<PersonasPage />, { wrapper });
     await screen.findByText("CUIT 30712345678");
-    fireEvent.click(screen.getByTestId("btn-nueva-persona"));
+    fireEvent.click(screen.getByTestId("btn-new-person"));
     const dialog = await screen.findByRole("dialog");
     const typeSelect = within(dialog).getByRole("combobox", { name: /personas\.fields\.tipoIdentificacion/ });
     await waitFor(() => expect(typeSelect).toHaveTextContent("DNI"));

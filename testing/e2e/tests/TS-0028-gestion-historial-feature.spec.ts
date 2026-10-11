@@ -27,18 +27,18 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-cambiar-estado-${idGestion}`).click();
+    await page.getByTestId(`btn-change-status-${idGestion}`).click();
     let dialog = page.getByRole("dialog");
-    await dialog.getByTestId("select-nuevo-estado").click();
+    await dialog.getByTestId("select-new-status").click();
     await page.getByRole("option", { name: estadoFinal }).click();
-    await dialog.getByTestId("btn-confirmar-transicion").click();
+    await dialog.getByTestId("btn-confirm-transicion").click();
     await expect(dialog).not.toBeVisible();
 
-    await page.getByTestId(`btn-ver-bitacora-${idGestion}`).click();
+    await page.getByTestId(`btn-view-history-${idGestion}`).click();
     dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    const items = dialog.getByTestId("bitacora-item");
+    const items = dialog.getByTestId("history-item");
     await expect(items).toHaveCount(2);
     await expect(items.nth(0)).toContainText(estadoInicial);
     await expect(items.nth(1)).toContainText(estadoFinal);
@@ -53,11 +53,11 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-ver-bitacora-${idGestion}`).click();
+    await page.getByTestId(`btn-view-history-${idGestion}`).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    const items = dialog.getByTestId("bitacora-item");
+    const items = dialog.getByTestId("history-item");
     await expect(items).toHaveCount(1);
     await expect(items.first()).toContainText(estadoInicial);
   });
@@ -73,13 +73,13 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
     const row = page.getByRole("row", { name: new RegExp(String(numero)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-archivar-gestion-${idGestion}`).click();
+    await page.getByTestId(`btn-archive-management-${idGestion}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
     await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
 
     await expect(page.getByText(/is not allowed/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId(`btn-archivar-gestion-${idGestion}`)).toBeVisible();
+    await expect(page.getByTestId(`btn-archive-management-${idGestion}`)).toBeVisible();
   });
 
   for (const viewport of [
@@ -97,10 +97,10 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
       const row = listRow(page, new RegExp(String(numero)));
       await expect(row).toBeVisible({ timeout: 10000 });
 
-      await page.getByTestId(`btn-ver-bitacora-${idGestion}`).click();
+      await page.getByTestId(`btn-view-history-${idGestion}`).click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
-      await expect(dialog.getByTestId("bitacora-item").first()).toContainText(estadoInicial);
+      await expect(dialog.getByTestId("history-item").first()).toContainText(estadoInicial);
     });
   }
 });

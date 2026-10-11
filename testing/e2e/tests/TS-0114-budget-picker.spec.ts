@@ -25,7 +25,7 @@ test.describe("Budget picker (#1340)", () => {
 
     await page.goto("/dashboard/payments");
     await page.waitForLoadState("networkidle");
-    await page.getByTestId("btn-nuevo-pago").click();
+    await page.getByTestId("btn-new-payment").click();
     const dialog = page.getByRole("dialog");
     const picker = dialog.getByRole("combobox", { name: /budget|budget/i });
     await expect(picker).toHaveAttribute("aria-expanded", "false");
@@ -53,9 +53,9 @@ test.describe("Budget picker (#1340)", () => {
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("networkidle");
-    await page.getByTestId("btn-nueva-gestion").click();
+    await page.getByTestId("btn-new-management").click();
     const dialog = page.getByRole("dialog");
-    const picker = dialog.getByTestId("select-presupuesto-gestion");
+    const picker = dialog.getByTestId("select-budget-management");
     await expect(picker).toHaveAttribute("role", "combobox");
     await picker.click();
     await picker.fill(lastName);

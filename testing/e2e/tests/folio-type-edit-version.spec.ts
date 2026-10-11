@@ -23,15 +23,15 @@ test.describe("CU64 — Tipos de folio: editing twice keeps working", () => {
     const id = created.data!.idFolioType;
 
     await page.goto("/dashboard/administration/folios");
-    await page.getByTestId("input-search-tipo-folio").fill(name);
+    await page.getByTestId("input-search-folio-type").fill(name);
 
     for (const suffix of ["-a", "-b"]) {
-      await page.getByRole("row", { name: new RegExp(name) }).getByTestId("btn-edit-tipo-folio").click();
-      await page.getByTestId("input-nombre-tipo-folio").fill(name + suffix);
+      await page.getByRole("row", { name: new RegExp(name) }).getByTestId("btn-edit-folio-type").click();
+      await page.getByTestId("input-name-folio-type").fill(name + suffix);
       const put = page.waitForResponse(
         (r) => r.url().includes(`/api/v1/folio-types/${id}`) && r.request().method() === "PUT",
       );
-      await page.getByTestId("btn-save-tipo-folio").click();
+      await page.getByTestId("btn-save-folio-type").click();
       expect((await put).status()).toBe(200);
       await expect(page.getByRole("dialog")).not.toBeVisible();
     }

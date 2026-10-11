@@ -25,14 +25,14 @@ test.describe("Plantillas - Costos de Documentos", () => {
   });
 
   test("CU39-GW01: Given no tipo de trámite selected, Then costos de documentos section is hidden", async ({ page }) => {
-    await expect(page.getByTestId("btn-nuevo-costo-documento")).not.toBeVisible();
+    await expect(page.getByTestId("btn-new-cost-document")).not.toBeVisible();
   });
 
   test("CU39-GW02: Given a tipo de trámite selected, Then costos de documentos section appears", async ({ page }) => {
-    await page.getByTestId("select-tipo-tramite-costos").click();
+    await page.getByTestId("select-procedure-type-costs").click();
     await page.getByRole("listbox").getByRole("option").first().click();
 
-    await expect(page.getByTestId("btn-nuevo-costo-documento")).toBeVisible();
+    await expect(page.getByTestId("btn-new-cost-document")).toBeVisible();
   });
 
   test("CU27-GW01: Given costo form open, When creating a fixed cost, Then it is saved and listed", async ({ page }) => {
@@ -48,17 +48,17 @@ test.describe("Plantillas - Costos de Documentos", () => {
     expect(tipoDocumentoResult.ok).toBe(true);
 
     await page.reload();
-    await page.getByTestId("select-tipo-tramite-costos").click();
+    await page.getByTestId("select-procedure-type-costs").click();
     await page.getByRole("option", { name: nombreTramite }).click();
 
-    await page.getByTestId("btn-nuevo-costo-documento").click();
+    await page.getByTestId("btn-new-cost-document").click();
     await steps.thenModalIsVisible();
 
-    await page.getByTestId("select-tipo-documento-costo").click();
+    await page.getByTestId("select-document-type-cost").click();
     await page.getByRole("option", { name: nombreDocumento }).click();
-    await page.getByTestId("input-valor-costo-documento").fill("1500");
+    await page.getByTestId("input-value-cost-document").fill("1500");
 
-    await page.getByTestId("btn-guardar-costo-documento").click();
+    await page.getByTestId("btn-save-cost-document").click();
 
     await steps.thenShowsSuccessMessage("Costo creado");
   });

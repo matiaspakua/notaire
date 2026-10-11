@@ -165,7 +165,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await test.step("Create", async () => {
       const uniqueNumero = String(Date.now()).slice(-5);
       await openModal(page, "btn-nueva-gestion");
-      await page.getByTestId("input-numero-gestion").fill(uniqueNumero);
+      await page.getByTestId("input-management-number").fill(uniqueNumero);
       await pause(page, PAUSE);
       await saveAndDismiss(page, "btn-guardar-gestion");
     });
@@ -188,7 +188,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Search", async () => {
-      const searchInput = page.getByTestId("input-search-presupuesto");
+      const searchInput = page.getByTestId("input-search-budget");
       await searchInput.fill("test");
       await pause(page, PAUSE);
       await searchInput.clear();
@@ -196,7 +196,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Filter by estado", async () => {
-      const trigger = page.getByTestId("select-estado");
+      const trigger = page.getByTestId("select-status");
       await trigger.click();
       await pause(page, 400);
       const firstOption = page.getByRole("listbox").getByRole("option").first();
@@ -210,7 +210,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Open create modal and cancel", async () => {
       await openModal(page, "btn-nuevo-presupuesto");
-      await expect(page.getByTestId("input-monto")).toBeVisible();
+      await expect(page.getByTestId("input-amount")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
@@ -245,10 +245,10 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Filter clientes", async () => {
-      await page.getByTestId("btn-filter-clientes").click();
+      await page.getByTestId("btn-filter-clients").click();
       await pause(page, PAUSE);
       // Toggle back
-      await page.getByTestId("btn-filter-clientes").click();
+      await page.getByTestId("btn-filter-clients").click();
       await pause(page, 400);
     });
 
@@ -274,7 +274,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Open create modal and cancel", async () => {
-      const btn = page.getByTestId("btn-nuevo-pago");
+      const btn = page.getByTestId("btn-new-payment");
       if (await btn.isVisible().catch(() => false)) {
         await openModal(page, "btn-nuevo-pago");
         await pause(page, PAUSE);
@@ -326,7 +326,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Open create modal and cancel", async () => {
-      const btn = page.getByTestId("btn-nueva-suplencia");
+      const btn = page.getByTestId("btn-new-substitution");
       if (await btn.isVisible().catch(() => false)) {
         await openModal(page, "btn-nueva-suplencia");
         await pause(page, PAUSE);
@@ -355,7 +355,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Open create modal and cancel", async () => {
       await openModal(page, "btn-nuevo-tipo-tramite");
-      await expect(page.getByTestId("input-nombre-tramite")).toBeVisible();
+      await expect(page.getByTestId("input-name-procedure")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
@@ -364,7 +364,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
   test("Admin Conceptos — List and Search", async () => {
     await navigateTo(page, "/dashboard/administration/concepts");
     await assertHeadingVisible(page);
-    const searchInput = page.getByTestId("input-search-concepto");
+    const searchInput = page.getByTestId("input-search-concept");
     await searchInput.fill("test");
     await pause(page, PAUSE);
     await searchInput.clear();
@@ -378,7 +378,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Search", async () => {
-      const searchInput = page.getByTestId("search-estados");
+      const searchInput = page.getByTestId("search-statuses");
       await searchInput.fill("inicial");
       await pause(page, PAUSE);
       await searchInput.clear();
@@ -387,13 +387,13 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Create", async () => {
       await openModal(page, "btn-nuevo-estado");
-      await page.getByTestId("input-nombre-estado").fill(`Estado E2E ${Date.now()}`);
+      await page.getByTestId("input-name-status").fill(`Estado E2E ${Date.now()}`);
       await pause(page, PAUSE);
       await saveAndDismiss(page);
     });
 
     await test.step("Edit first row", async () => {
-      const editBtn = page.getByTestId("btn-edit-estado").first();
+      const editBtn = page.getByTestId("btn-edit-status").first();
       if (await editBtn.isVisible().catch(() => false)) {
         await editBtn.click();
         await expect(page.getByRole("dialog")).toBeVisible({ timeout: 6000 });
@@ -411,7 +411,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Open create modal and cancel", async () => {
       await openModal(page, "btn-nuevo-folio");
-      await expect(page.getByTestId("input-numero-folio")).toBeVisible();
+      await expect(page.getByTestId("input-folio-number")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
@@ -425,7 +425,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Open create modal and cancel", async () => {
       await openModal(page, "btn-nueva-plantilla");
-      await expect(page.getByTestId("input-observaciones-plantilla")).toBeVisible();
+      await expect(page.getByTestId("input-notes-template")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
@@ -439,7 +439,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Open create modal and cancel", async () => {
       await openModal(page, "btn-nuevo-tipo-documento");
-      await expect(page.getByTestId("input-nombre-documento")).toBeVisible();
+      await expect(page.getByTestId("input-name-document")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
@@ -466,7 +466,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Open create modal and cancel", async () => {
       await openModal(page, "btn-nuevo-usuario");
-      await expect(page.getByTestId("input-nombre-usuario")).toBeVisible();
+      await expect(page.getByTestId("input-name-user")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
@@ -480,7 +480,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Open create modal and cancel", async () => {
       await openModal(page, "btn-nuevo-rol");
-      await expect(page.getByTestId("input-nombre-rol")).toBeVisible();
+      await expect(page.getByTestId("input-name-role")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });
@@ -510,7 +510,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Open create modal and cancel", async () => {
       await openModal(page, "btn-nuevo-workflow");
-      await expect(page.getByTestId("input-nombre-workflow")).toBeVisible();
+      await expect(page.getByTestId("input-name-workflow")).toBeVisible();
       await pause(page, PAUSE);
       await closeModalViaButton(page);
     });

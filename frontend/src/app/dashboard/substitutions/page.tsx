@@ -160,7 +160,7 @@ export default function SuplenciasPage() {
         title={t("title")}
         description={t("description")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nueva-suplencia">
+          <Button onClick={openCreate} data-testid="btn-new-substitution">
             <Plus className="h-4 w-4" />
             {t("newSuplencia")}
           </Button>
@@ -186,7 +186,7 @@ export default function SuplenciasPage() {
                     value={notaryId}
                     onChange={(e) => setNotaryId(e.target.value)}
                     placeholder={t("fields.escribanoPlaceholder")}
-                    data-testid="input-escribano-id"
+                    data-testid="input-notary-id"
                   />
                 </FormField>
                 <FormField label={t("fields.suplenteId")} helperText={t("fields.escribanoHelper")}>
@@ -225,7 +225,7 @@ export default function SuplenciasPage() {
               <Button
                 onClick={handleSave}
                 disabled={createMutation.isPending || updateMutation.isPending}
-                data-testid="btn-guardar-suplencia"
+                data-testid="btn-save-substitution"
               >
                 {isEditMode ? tc("update") : t("register")}
               </Button>

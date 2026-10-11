@@ -102,7 +102,7 @@ export default function TestimoniosPage() {
               variant="ghost"
               onClick={() => openVerificar(te)}
               aria-label={t("verificarTestimonio")}
-              data-testid={`btn-verificar-testimonio-${te.idTestimony}`}
+              data-testid={`btn-verify-testimony-${te.idTestimony}`}
             >
               <CheckCircle2 className="h-4 w-4" />
             </Button>
@@ -114,7 +114,7 @@ export default function TestimoniosPage() {
               onClick={() => handleDescargarCopia(te)}
               disabled={downloadingId === te.idTestimony}
               aria-label={t("emitirCopia")}
-              data-testid={`btn-emitir-copia-${te.idTestimony}`}
+              data-testid={`btn-issue-copy-${te.idTestimony}`}
             >
               <Download className="h-4 w-4" />
             </Button>
@@ -129,7 +129,7 @@ export default function TestimoniosPage() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openGenerar} data-testid="btn-generar-testimonio">
+          <Button onClick={openGenerar} data-testid="btn-generate-testimony">
             <Plus className="h-4 w-4" />
             {t("newTestimonio")}
           </Button>
@@ -144,7 +144,7 @@ export default function TestimoniosPage() {
             <FormSection dialogTitle title={t("newTestimonio")}>
               <FormField label={t("fields.escritura")} required>
                 <Select value={idEscritura} onValueChange={setIdEscritura}>
-                  <SelectTrigger data-testid="select-escritura-testimonio">
+                  <SelectTrigger data-testid="select-deed-testimony">
                     <SelectValue placeholder={t("selectEscritura")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -161,7 +161,7 @@ export default function TestimoniosPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleGenerar} disabled={!idEscritura || generarMutation.isPending} data-testid="btn-guardar-testimonio">
+              <Button onClick={handleGenerar} disabled={!idEscritura || generarMutation.isPending} data-testid="btn-save-testimony">
                 {tc("create")}
               </Button>
             </FormActions>
@@ -173,13 +173,13 @@ export default function TestimoniosPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("verificarTestimonio")}>
-              <CheckboxField label={t("fields.observado")} checked={observado} onChange={setObservado} data-testid="checkbox-observado-testimonio" />
+              <CheckboxField label={t("fields.observado")} checked={observado} onChange={setObservado} data-testid="checkbox-observed-testimony" />
               <FormField label={t("fields.observaciones")}>
                 <textarea
                   className={themeClass("textarea")}
                   value={observaciones}
                   onChange={(e) => setObservaciones(e.target.value)}
-                  data-testid="input-observaciones-testimonio"
+                  data-testid="input-notes-testimony"
                 />
               </FormField>
             </FormSection>
@@ -187,7 +187,7 @@ export default function TestimoniosPage() {
               <Button variant="secondary" onClick={() => setVerificarId(null)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleVerificar} disabled={verificarMutation.isPending} data-testid="btn-confirmar-verificar-testimonio">
+              <Button onClick={handleVerificar} disabled={verificarMutation.isPending} data-testid="btn-confirm-verify-testimony">
                 {t("verificarTestimonio")}
               </Button>
             </FormActions>

@@ -72,7 +72,7 @@ export default function DocumentosNecesariosPage() {
           <FormSection title={t("selectorTitle")}>
             <FormField label={t("fields.tramite")} required>
               <Select value={tramiteId} onValueChange={setTramiteId}>
-                <SelectTrigger data-testid="select-tramite">
+                <SelectTrigger data-testid="select-procedure">
                   <SelectValue placeholder={t("fields.tramitePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>

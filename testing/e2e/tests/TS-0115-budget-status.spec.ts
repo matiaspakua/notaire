@@ -19,10 +19,10 @@ test.describe("Budget status vocabulary (#1346)", () => {
 
     const searched = page.waitForRequest((r) => /\/budgets\/search\?status=PENDIENTE$/.test(r.url()));
     await page.goto("/dashboard/budgets");
-    await page.getByTestId("select-estado").click();
+    await page.getByTestId("select-status").click();
     await page.getByRole("option", { name: "Pendiente", exact: true }).click();
     await searched;
-    const editButton = page.getByTestId(`btn-editar-presupuesto-${id}`);
+    const editButton = page.getByTestId(`btn-edit-budget-${id}`);
     await expect(editButton).toBeVisible({ timeout: 10000 });
     const row = page.getByRole("row").filter({ has: editButton });
     await expect(row).toContainText("Pendiente");
@@ -30,13 +30,13 @@ test.describe("Budget status vocabulary (#1346)", () => {
 
     await editButton.click();
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByTestId("select-estado-presupuesto")).toHaveText("Pendiente");
+    await expect(dialog.getByTestId("select-status-budget")).toHaveText("Pendiente");
   });
 
   test("the status filter offers every status of the vocabulary", async ({ page }) => {
     await establishAdminBrowserSession(page);
     await page.goto("/dashboard/budgets");
-    await page.getByTestId("select-estado").click();
+    await page.getByTestId("select-status").click();
     const options = page.getByRole("listbox").getByRole("option");
     await expect(options).toHaveText(["Todos", "Borrador", "Pendiente", "Aprobado", "Rechazado", "Facturado"]);
   });

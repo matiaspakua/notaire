@@ -44,7 +44,7 @@ async function fillPersonaForm(
     esCliente?: boolean
   },
 ): Promise<void> {
-  await page.getByTestId('btn-nueva-persona').click()
+  await page.getByTestId('btn-new-person').click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
 
@@ -54,7 +54,7 @@ async function fillPersonaForm(
 
   if (opts.esCliente) {
     // CU18: checking this checkbox registers the person as a client at creation time.
-    const checkbox = dialog.getByTestId('check-es-cliente')
+    const checkbox = dialog.getByTestId('check-es-client')
     await checkbox.check()
     await expect(checkbox).toBeChecked()
   }
@@ -80,7 +80,7 @@ test.describe('CU17 - Dar Alta Person', () => {
     'CU17-GW01: btn-nueva-persona abre el formulario con los campos requeridos',
     async ({ page }) => {
       // When
-      await page.getByTestId('btn-nueva-persona').click()
+      await page.getByTestId('btn-new-person').click()
 
       // Then — modal visible with required fields
       const dialog = page.getByRole('dialog')
@@ -90,7 +90,7 @@ test.describe('CU17 - Dar Alta Person', () => {
       await expect(dialog.getByTestId('input-dni')).toBeVisible()
 
       // CU18 mechanism: checkbox must be present in the creation form
-      await expect(dialog.getByTestId('check-es-cliente')).toBeVisible()
+      await expect(dialog.getByTestId('check-es-client')).toBeVisible()
     },
   )
 
@@ -232,7 +232,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
       await expect(editDialog).toBeVisible()
 
       // And — check the es-cliente checkbox to promote the person (CU18/CU41)
-      const checkbox = editDialog.getByTestId('check-es-cliente')
+      const checkbox = editDialog.getByTestId('check-es-client')
       await checkbox.check()
       await expect(checkbox).toBeChecked()
       await submitForm(page)
@@ -311,7 +311,7 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
     'Dedup-EDGE: crear persona sin DNI → error de validación en el form',
     async ({ page }) => {
       // When — open form and submit without filling DNI
-      await page.getByTestId('btn-nueva-persona').click()
+      await page.getByTestId('btn-new-person').click()
       await expect(page.getByRole('dialog')).toBeVisible()
 
       await page.getByTestId('input-firstName').fill('SinDNI')
@@ -337,7 +337,7 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
   test(
     'A11y-#1351: un campo con error queda inválido y descrito por su mensaje',
     async ({ page }) => {
-      await page.getByTestId('btn-nueva-persona').click()
+      await page.getByTestId('btn-new-person').click()
       const dialog = page.getByRole('dialog')
       await expect(dialog).toBeVisible()
       await submitForm(page)
@@ -490,8 +490,8 @@ test.describe('Personas screen - responsive viewports', () => {
         await page.goto('/dashboard/people')
         await page.waitForLoadState('domcontentloaded')
 
-        await expect(page.getByTestId('btn-nueva-persona')).toBeVisible()
-        await page.getByTestId('btn-nueva-persona').click()
+        await expect(page.getByTestId('btn-new-person')).toBeVisible()
+        await page.getByTestId('btn-new-person').click()
         await expect(page.getByRole('dialog')).toBeVisible()
         // Modal has no horizontal overflow either
         const noOverflow = await page.evaluate(
@@ -567,7 +567,7 @@ test.describe('#1361 - Identification type in the person form', () => {
   })
 
   test('a new person starts on DNI, the type select comes before the number', async ({ page }) => {
-    await page.getByTestId('btn-nueva-persona').click()
+    await page.getByTestId('btn-new-person').click()
     const dialog = page.getByRole('dialog')
     const typeSelect = dialog.getByRole('combobox', { name: /tipo de identificación/i })
     await expect(typeSelect).toBeVisible()
@@ -580,7 +580,7 @@ test.describe('#1361 - Identification type in the person form', () => {
   test('creating a person with type CUIT persists it and lists "CUIT <number>"', async ({ page }) => {
     const cuit = `30${String(uniqueId() % 1_000_000_000).padStart(9, '0')}`
     const apellido = `Cuit${uniqueId() % 100_000}`
-    await page.getByTestId('btn-nueva-persona').click()
+    await page.getByTestId('btn-new-person').click()
     const dialog = page.getByRole('dialog')
     await page.getByTestId('input-firstName').fill('Empresa')
     await page.getByTestId('input-lastName').fill(apellido)

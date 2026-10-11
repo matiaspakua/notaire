@@ -42,8 +42,8 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     });
 
     await page.goto("/dashboard/payments");
-    await page.getByTestId("btn-nuevo-pago").click();
-    await page.getByTestId("input-monto-pago").fill("999999");
+    await page.getByTestId("btn-new-payment").click();
+    await page.getByTestId("input-amount-payment").fill("999999");
     // Submit even if presupuesto picker is empty — stub owns the failure.
     await page.getByRole("button", { name: /crear|create/i }).click();
 
@@ -76,15 +76,15 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     });
 
     await page.goto("/dashboard/administration/users");
-    await page.getByTestId("btn-nuevo-usuario").click();
+    await page.getByTestId("btn-new-user").click();
     // Bypass client-side empty-name guard so the stubbed API error is exercised.
-    await page.getByTestId("input-nombre-usuario").fill("stub-user");
+    await page.getByTestId("input-name-user").fill("stub-user");
     await page.getByRole("button", { name: /crear|create/i }).click();
 
     await expect(
       page.locator("[data-sonner-toast]").getByText(fieldMessage)
     ).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId("input-nombre-usuario")).toHaveAttribute(
+    await expect(page.getByTestId("input-name-user")).toHaveAttribute(
       "aria-invalid",
       "true"
     );
@@ -93,7 +93,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     await expect(
       page.getByRole("dialog").getByRole("alert").filter({ hasText: /must not be blank/i })
     ).toBeVisible();
-    await expect(page.getByTestId("input-nombre-usuario")).toHaveAccessibleDescription(/must not be blank/i);
+    await expect(page.getByTestId("input-name-user")).toHaveAccessibleDescription(/must not be blank/i);
   });
 
   test("error toast / field error visible at 320px, 768px, and 1024px", async ({
@@ -122,8 +122,8 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     for (const width of [320, 768, 1024] as const) {
       await page.setViewportSize({ width, height: 800 });
       await page.goto("/dashboard/administration/roles");
-      await page.getByTestId("btn-nuevo-rol").click();
-      await page.getByTestId("input-nombre-rol").fill(`rol-e2e-${width}`);
+      await page.getByTestId("btn-new-role").click();
+      await page.getByTestId("input-name-role").fill(`rol-e2e-${width}`);
       await page.getByRole("button", { name: /crear|create/i }).click();
       await expect(
         page.locator("[data-sonner-toast]").getByText(serverMessage)

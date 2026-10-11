@@ -69,7 +69,7 @@ test.describe("CU20 - Dar Alta UserAccount", () => {
     await steps.thenModalIsVisible();
 
     // When — fill nombre via testid; tipo is a Select (combobox), activo defaults to true
-    await steps.page.getByTestId("input-nombre-usuario").fill(TestData.usuario.username);
+    await steps.page.getByTestId("input-name-user").fill(TestData.usuario.username);
     await steps.page.getByLabel(/contraseña/i).fill(TestData.usuario.password);
     await steps.whenUserSubmitsForm();
 
@@ -103,7 +103,7 @@ test.describe("CU21 - Modificar UserAccount", () => {
 
     // Then
     await steps.thenModalIsVisible("Editar usuario");
-    await expect(page.getByTestId("input-nombre-usuario")).toHaveValue(username);
+    await expect(page.getByTestId("input-name-user")).toHaveValue(username);
   });
 
   test("CU21-GW02: Given edit modal open, When modify and submit, Then shows success", async ({
@@ -118,7 +118,7 @@ test.describe("CU21 - Modificar UserAccount", () => {
       .click();
     await steps.thenModalIsVisible("Editar usuario");
 
-    const input = page.getByTestId("input-nombre-usuario");
+    const input = page.getByTestId("input-name-user");
     await expect(input).toHaveValue(username);
     // Never rename admin — only mutate the disposable EMPLEADO we just created.
     await input.fill(`${username}_e2e`);

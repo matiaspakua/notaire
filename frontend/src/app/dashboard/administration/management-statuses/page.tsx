@@ -125,7 +125,7 @@ export default function EstadosGestionPage() {
       className: "w-24",
       render: (e) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(e)} data-testid="btn-edit-estado" aria-label={tc("edit")}>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(e)} data-testid="btn-edit-status" aria-label={tc("edit")}>
             <NotaireIcon src="/icons/actions/generate.png" alt={tc("edit")} size={16} />
           </Button>
           <Button
@@ -133,7 +133,7 @@ export default function EstadosGestionPage() {
             variant="ghost"
             className="text-destructive hover:text-destructive"
             onClick={() => handleDeleteClick(e)}
-            data-testid="btn-delete-estado"
+            data-testid="btn-delete-status"
             aria-label={tc("delete")}
           >
             <NotaireIcon src="/icons/actions/borrar.png" alt={tc("delete")} size={16} />
@@ -149,7 +149,7 @@ export default function EstadosGestionPage() {
         title={t("title")}
         description={t("description")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nuevo-estado">
+          <Button onClick={openCreate} data-testid="btn-new-status">
             <NotaireIcon src="/icons/actions/agregar.png" alt={tc("add")} size={16} className="mr-1" />
             {t("newEstado")}
           </Button>
@@ -162,7 +162,7 @@ export default function EstadosGestionPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
-          data-testid="search-estados"
+          data-testid="search-statuses"
         />
       </div>
       <DataTable data={filtered} columns={columns} isLoading={isLoading} keyExtractor={(e) => e.idManagementStatus!} emptyMessage={t("noData")} />
@@ -197,7 +197,7 @@ export default function EstadosGestionPage() {
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
                   placeholder={t("fields.namePlaceholder")}
-                  data-testid="input-nombre-estado"
+                  data-testid="input-name-status"
                 />
               </FormField>
               <FormField label={t("fields.descripcion")}>

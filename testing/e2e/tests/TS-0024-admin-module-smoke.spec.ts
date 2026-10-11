@@ -57,7 +57,7 @@ test.describe("CU67 — Estados de Gestión", () => {
     const searchRequest = page.waitForRequest((req) =>
       req.url().includes("/api/v1/management-statuses/search") && req.method() === "GET"
     );
-    await page.getByTestId("search-estados").fill("Iniciada");
+    await page.getByTestId("search-statuses").fill("Iniciada");
     await searchRequest;
   });
 });
@@ -87,7 +87,7 @@ test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
     const searchRequest = page.waitForRequest((req) =>
       req.url().includes("/api/v1/procedure-types/search") && req.method() === "GET"
     );
-    await page.getByTestId("input-search-tramite").fill("Compraventa");
+    await page.getByTestId("input-search-procedure").fill("Compraventa");
     await searchRequest;
   });
 });
@@ -106,7 +106,7 @@ test.describe("CU37 — Conceptos", () => {
     const searchRequest = page.waitForRequest((req) =>
       req.url().includes("/api/v1/concepts/search") && req.method() === "GET"
     );
-    await page.getByTestId("input-search-concepto").fill("Honorarios");
+    await page.getByTestId("input-search-concept").fill("Honorarios");
     await searchRequest;
   });
 });
@@ -125,7 +125,7 @@ test.describe("CU38 — Tipos de Documento", () => {
     const searchRequest = page.waitForRequest((req) =>
       req.url().includes("/api/v1/document-types/search") && req.method() === "GET"
     );
-    await page.getByTestId("input-search-documento").fill("DNI");
+    await page.getByTestId("input-search-document").fill("DNI");
     await searchRequest;
   });
 });
@@ -150,7 +150,7 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
   });
 
   test("CU63 — estado filter select is present and usable", async ({ page }) => {
-    await expect(page.getByTestId("select-filter-estado-folio")).toBeVisible();
+    await expect(page.getByTestId("select-filter-status-folio")).toBeVisible();
   });
 
   test("Tipos de Folio section: full CRUD via search + create + edit + delete", async ({ page }) => {
@@ -159,26 +159,26 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
 
     await expect(page.getByRole("heading", { name: /tipos de folio/i })).toBeVisible();
 
-    await page.getByTestId("btn-nuevo-tipo-folio").click();
+    await page.getByTestId("btn-new-folio-type").click();
     const createDialog = page.getByRole("dialog");
-    await createDialog.getByTestId("input-nombre-tipo-folio").fill(uniqueName);
-    await createDialog.getByTestId("btn-save-tipo-folio").click();
+    await createDialog.getByTestId("input-name-folio-type").fill(uniqueName);
+    await createDialog.getByTestId("btn-save-folio-type").click();
     await expect(createDialog).toBeHidden();
 
-    await page.getByTestId("input-search-tipo-folio").fill(uniqueName);
+    await page.getByTestId("input-search-folio-type").fill(uniqueName);
     const row = page.getByText(uniqueName, { exact: true });
     await expect(row).toBeVisible();
 
-    await page.getByTestId("btn-edit-tipo-folio").first().click();
+    await page.getByTestId("btn-edit-folio-type").first().click();
     const editDialog = page.getByRole("dialog");
-    await editDialog.getByTestId("input-nombre-tipo-folio").fill(renamed);
-    await editDialog.getByTestId("btn-save-tipo-folio").click();
+    await editDialog.getByTestId("input-name-folio-type").fill(renamed);
+    await editDialog.getByTestId("btn-save-folio-type").click();
     await expect(editDialog).toBeHidden();
 
-    await page.getByTestId("input-search-tipo-folio").fill(renamed);
+    await page.getByTestId("input-search-folio-type").fill(renamed);
     await expect(page.getByText(renamed, { exact: true })).toBeVisible();
 
-    await page.getByTestId("btn-delete-tipo-folio").first().click();
+    await page.getByTestId("btn-delete-folio-type").first().click();
     await page.getByRole("alertdialog").getByRole("button", { name: /eliminar/i }).click();
     await expect(page.getByText(renamed, { exact: true })).toBeHidden();
   });
@@ -186,14 +186,14 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
   test("CU81 — marking a tipo de folio as Protocolo Auxiliar via checkbox persists the flag", async ({ page }) => {
     const uniqueName = `TipoAuxiliarTest${Date.now()}`;
 
-    await page.getByTestId("btn-nuevo-tipo-folio").click();
+    await page.getByTestId("btn-new-folio-type").click();
     const dialog = page.getByRole("dialog");
-    await dialog.getByTestId("input-nombre-tipo-folio").fill(uniqueName);
-    await dialog.getByTestId("checkbox-es-auxiliar-tipo-folio").click();
-    await dialog.getByTestId("btn-save-tipo-folio").click();
+    await dialog.getByTestId("input-name-folio-type").fill(uniqueName);
+    await dialog.getByTestId("checkbox-is-auxiliary-folio-type").click();
+    await dialog.getByTestId("btn-save-folio-type").click();
     await expect(dialog).toBeHidden();
 
-    await page.getByTestId("input-search-tipo-folio").fill(uniqueName);
+    await page.getByTestId("input-search-folio-type").fill(uniqueName);
     await expect(page.getByText(/protocol auxiliar/i).first()).toBeVisible();
   });
 });

@@ -133,7 +133,7 @@ export default function UsuariosPage() {
     <div>
       <AppHeader
         title={t("title")}
-        actions={<Button onClick={openCreate} data-testid="btn-nuevo-usuario"><Plus className="h-4 w-4" />{t("newUsuario")}</Button>}
+        actions={<Button onClick={openCreate} data-testid="btn-new-user"><Plus className="h-4 w-4" />{t("newUsuario")}</Button>}
       />
       <DataTable data={usuarios} columns={columns} isLoading={isLoading} keyExtractor={(u) => u.idUser!} emptyMessage={t("noData")} />
 
@@ -145,7 +145,7 @@ export default function UsuariosPage() {
                 <Input
                   value={editing.name ?? ""}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                  data-testid="input-nombre-usuario"
+                  data-testid="input-name-user"
                   aria-invalid={!!fieldErrors.name}
                 />
               </FormField>
@@ -179,7 +179,7 @@ export default function UsuariosPage() {
               </FormField>
               <FormField label={t("fields.rolAcceso")} helperText={t("fields.rolAccesoHint")}>
                 <Select value={selectedRolId} onValueChange={setSelectedRolId}>
-                  <SelectTrigger data-testid="select-rol-usuario">
+                  <SelectTrigger data-testid="select-role-user">
                     <SelectValue placeholder={t("fields.sinRolAsignado")} />
                   </SelectTrigger>
                   <SelectContent>

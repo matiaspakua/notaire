@@ -294,7 +294,7 @@ function GestionesList() {
               variant="ghost"
               onClick={() => setTransitionId(g.idManagement!)}
               aria-label={t("changeState")}
-              data-testid={`btn-cambiar-estado-${g.idManagement}`}
+              data-testid={`btn-change-status-${g.idManagement}`}
             >
               <RefreshCcw className="h-4 w-4" />
             </Button>
@@ -304,7 +304,7 @@ function GestionesList() {
             variant="ghost"
             onClick={() => setBitacoraId(g.idManagement!)}
             aria-label={t("viewBitacora")}
-            data-testid={`btn-ver-bitacora-${g.idManagement}`}
+            data-testid={`btn-view-history-${g.idManagement}`}
           >
             <History className="h-4 w-4" />
           </Button>
@@ -313,7 +313,7 @@ function GestionesList() {
             variant="ghost"
             onClick={() => setResumenCasoId(g.idManagement!)}
             aria-label={t("resumen.action")}
-            data-testid={`btn-resumen-caso-${g.idManagement}`}
+            data-testid={`btn-summary-case-${g.idManagement}`}
           >
             <ClipboardList className="h-4 w-4" />
           </Button>
@@ -322,7 +322,7 @@ function GestionesList() {
             variant="ghost"
             onClick={() => setCarpetasGestionId(g.idManagement!)}
             aria-label={t("viewCarpetas")}
-            data-testid={`btn-ver-carpetas-${g.idManagement}`}
+            data-testid={`btn-view-folders-${g.idManagement}`}
           >
             <FolderClock className="h-4 w-4" />
           </Button>
@@ -332,7 +332,7 @@ function GestionesList() {
               variant="ghost"
               onClick={() => setArchiveId(g.idManagement!)}
               aria-label={t("archiveGestion")}
-              data-testid={`btn-archivar-gestion-${g.idManagement}`}
+              data-testid={`btn-archive-management-${g.idManagement}`}
             >
               <Archive className="h-4 w-4" />
             </Button>
@@ -357,7 +357,7 @@ function GestionesList() {
       <AppHeader
         title={t("title")}
         actions={
-          <Button onClick={openCreate} data-testid="btn-nueva-gestion">
+          <Button onClick={openCreate} data-testid="btn-new-management">
             <Plus className="h-4 w-4" />
             {t("newGestion")}
           </Button>
@@ -374,7 +374,7 @@ function GestionesList() {
           clientsOnly
           allowClear
           className="w-full sm:w-80"
-          data-testid="select-filter-cliente-gestion"
+          data-testid="select-filter-client-management"
         />
       </div>
 
@@ -408,7 +408,7 @@ function GestionesList() {
                   value={numero}
                   onChange={(e) => setNumero(e.target.value)}
                   placeholder={t("fields.numeroPlaceholder")}
-                  data-testid="input-numero-gestion"
+                  data-testid="input-management-number"
                 />
               </FormField>
               {!editing && (
@@ -419,7 +419,7 @@ function GestionesList() {
                       value={budgetId ? Number(budgetId) : undefined}
                       onChange={(budget) => setBudgetId(budget?.idBudget != null ? String(budget.idBudget) : "")}
                       aria-label={t("fields.presupuesto")}
-                      data-testid="select-presupuesto-gestion"
+                      data-testid="select-budget-management"
                     />
                   </FormField>
                   <FormField label={t("fields.escribano")} required>
@@ -427,24 +427,24 @@ function GestionesList() {
                       value={notaryId ? Number(notaryId) : undefined}
                       onChange={(person) => setNotaryId(person?.personId != null ? String(person.personId) : "")}
                       aria-label={t("fields.escribano")}
-                      data-testid="select-escribano-gestion"
+                      data-testid="select-notary-management"
                     />
                   </FormField>
                   <FormField label={t("fields.estado")} required>
                     <Select value={statusId} onValueChange={setStatusId}>
-                      <SelectTrigger data-testid="select-estado-gestion"><SelectValue placeholder={t("selectEstado")} /></SelectTrigger>
+                      <SelectTrigger data-testid="select-status-management"><SelectValue placeholder={t("selectEstado")} /></SelectTrigger>
                       <SelectContent>{estados.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.tipo")} required>
                     <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
-                      <SelectTrigger data-testid="select-tipo-tramite-gestion"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
+                      <SelectTrigger data-testid="select-procedure-type-management"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
                       <SelectContent>{tiposTramite.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.inmueble")}>
                     <Select value={propertyId} onValueChange={setPropertyId}>
-                      <SelectTrigger data-testid="select-inmueble-gestion"><SelectValue placeholder={t("selectInmueble")} /></SelectTrigger>
+                      <SelectTrigger data-testid="select-property-management"><SelectValue placeholder={t("selectInmueble")} /></SelectTrigger>
                       <SelectContent>{inmuebles.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? t("inmuebleFallback", { id: i.idProperty ?? "—" })}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
@@ -458,7 +458,7 @@ function GestionesList() {
               <Button
                 onClick={handleSave}
                 disabled={createCompleteMutation.isPending || updateMutation.isPending}
-                data-testid="btn-guardar-gestion"
+                data-testid="btn-save-management"
               >
                 {editing ? tc("update") : tc("create")}
               </Button>
@@ -499,7 +499,7 @@ function GestionesList() {
             <FormSection title={t("selectNewState")}>
               <FormField label={t("selectNewState")} required>
                 <Select value={selectedEstado} onValueChange={setSelectedEstado}>
-                  <SelectTrigger data-testid="select-nuevo-estado">
+                  <SelectTrigger data-testid="select-new-status">
                     <SelectValue placeholder={t("selectNewState")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -519,7 +519,7 @@ function GestionesList() {
               <Button
                 onClick={handleTransicionar}
                 disabled={!selectedEstado || transicionarMutation.isPending}
-                data-testid="btn-confirmar-transicion"
+                data-testid="btn-confirm-transicion"
               >
                 {t("confirmTransition")}
               </Button>
@@ -537,7 +537,7 @@ function GestionesList() {
             ) : (
               <div className="flex flex-col gap-3">
                 {historial.map((h) => (
-                  <div key={h.idHistory} data-testid="bitacora-item" className="border-b pb-2">
+                  <div key={h.idHistory} data-testid="history-item" className="border-b pb-2">
                     <div className="font-medium">{h.statusManagementName}</div>
                     <div className="text-xs text-muted-foreground">{formatDate(h.date)}</div>
                     {h.notes && <div className="text-sm">{h.notes}</div>}
@@ -569,7 +569,7 @@ function GestionesList() {
                     value={motivoEspera}
                     onChange={(e) => setMotivoEspera(e.target.value)}
                     placeholder={t("motivoEsperaPlaceholder")}
-                    data-testid="input-motivo-espera"
+                    data-testid="input-wait-reason"
                   />
                 </FormField>
               </FormSection>
@@ -586,7 +586,7 @@ function GestionesList() {
                 <Button
                   onClick={handlePonerEnEspera}
                   disabled={ponerEnEsperaMutation.isPending}
-                  data-testid="btn-confirmar-espera"
+                  data-testid="btn-confirm-espera"
                 >
                   {t("confirmEspera")}
                 </Button>
@@ -602,7 +602,7 @@ function GestionesList() {
                   {carpetas.map((c) => (
                     <div
                       key={c.idFolder}
-                      data-testid="carpeta-item"
+                      data-testid="folder-item"
                       className="border-b pb-2 flex items-center justify-between"
                     >
                       <div>
