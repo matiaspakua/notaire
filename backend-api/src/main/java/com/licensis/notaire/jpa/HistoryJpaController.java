@@ -44,11 +44,11 @@ public class HistoryJpaController implements Serializable, JpaPersistence
      * Creates a history record.
      *
      * @param history the history record to persist
-     * @return the new history id, or {@link BusinessConstants#ID_OBJETO_NO_VALIDO} when creation fails
+     * @return the new history id, or {@link BusinessConstants#INVALID_OBJECT_ID} when creation fails
      */
     public Integer create(History history) throws CreateEntityException
     {
-        Integer idHistory = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        Integer idHistory = BusinessConstants.INVALID_OBJECT_ID;
         EntityManager em = null;
         try
         {

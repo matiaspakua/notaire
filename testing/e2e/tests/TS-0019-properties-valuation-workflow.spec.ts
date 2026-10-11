@@ -49,7 +49,7 @@ test.describe("CU69 - Property management: fiscal valuation", () => {
     await steps.thenTableContainsText(cadastralDesignation);
   });
 
-  test("CU69-GW04: Given on inmuebles page, When the nomenclatura catastral is blank, Then the form cannot be saved (#655)", async ({ page }) => {
+  test("CU69-GW04: Given on the properties page, When the cadastral code is blank, Then the form cannot be saved (#655)", async ({ page }) => {
     await steps.whenUserClicksButton("nuevo inmueble");
     await steps.thenModalIsVisible();
 

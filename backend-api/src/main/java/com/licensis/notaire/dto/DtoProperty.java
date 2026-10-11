@@ -26,7 +26,7 @@ public class DtoProperty implements ValidDto
 
     public DtoProperty()
     {
-        this.idProperty = ValidDto.ID_DTO_INICIALIZADO;
+        this.idProperty = ValidDto.INITIAL_DTO_ID;
     }
 
     public DtoProperty(String cadastralDesignation, String address, String typeProperty)

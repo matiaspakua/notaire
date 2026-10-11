@@ -110,7 +110,7 @@ public class TestimonyMovement implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idTestimonyMovement == null || idTestimonyMovement.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idTestimonyMovement == null || idTestimonyMovement.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

@@ -3,7 +3,7 @@
  *
  * Responsibilities:
  *  1. Authenticate as admin and store auth cookie/localStorage
- *  2. Seed base catalog data via API (tipos de trámite, concepts, etc.)
+ *  2. Seed base catalog data via API (procedure types, concepts, etc.)
  *  3. Export shared test data as environment variables
  *  4. Verify backend and frontend are reachable
  *
@@ -122,7 +122,7 @@ async function authenticateAdmin(page: Page): Promise<void> {
  * Seed catalog data needed by most tests
  */
 async function seedCatalogData(page: Page): Promise<void> {
-  // 1. Create a tipo de trámite — ProcedureTypeController accepts a DtoProcedureType
+  // 1. Create a procedure type — ProcedureTypeController accepts a DtoProcedureType
   // (name, notes, isArchived, isRegistered, associatesProperties).
   const ttResult = await apiPost<{ idProcedureType: number; name: string }>(
     page,
@@ -175,23 +175,23 @@ async function seedCatalogData(page: Page): Promise<void> {
   // 4. Create a budget (if we have a person) — BudgetController accepts the raw
   // Budget entity (heading, status, notes, person).
   if (seedData.seedPersonId && seedData.seedConceptId) {
-    const presResult = await apiPost<{ idBudget: number }>(
+    const budgetResult = await apiPost<{ idBudget: number }>(
       page,
       "/budgets",
       {
         person: { personId: seedData.seedPersonId },
         date: "2026-05-27",
-        heading: "Presupuesto E2E Seed",
+        heading: "Budget E2E Seed",
         status: "PENDIENTE",
-        notes: `Presupuesto semilla ${seedData.testId}`,
+        notes: `Seed budget ${seedData.testId}`,
       }
     );
-    if (presResult.ok && presResult.data?.idBudget) {
-      seedData.seedBudgetId = presResult.data.idBudget;
+    if (budgetResult.ok && budgetResult.data?.idBudget) {
+      seedData.seedBudgetId = budgetResult.data.idBudget;
     }
   }
 
-  // 5. Create a usuario — UserController's UserRequest is (name, password, type, active).
+  // 5. Create a user — UserController's UserRequest is (name, password, type, active).
   const usrResult = await apiPost<{ idUser: number }>(
     page,
     "/users",
@@ -223,18 +223,18 @@ async function seedCatalogData(page: Page): Promise<void> {
     seedData.seedFolioId = folioResult.data.idFolio;
   }
 
-  // 7. Create an estado de gestión — ManagementStatusController accepts a
+  // 7. Create a management status — ManagementStatusController accepts a
   // DtoManagementStatus (name, notes).
-  const egResult = await apiPost<{ idManagementStatus: number }>(
+  const statusResult = await apiPost<{ idManagementStatus: number }>(
     page,
     "/management-statuses",
     {
-      name: `Seed Estado ${seedData.testId}`,
+      name: `Seed status ${seedData.testId}`,
       notes: "Seeded by global-setup",
     }
   );
-  if (egResult.ok && egResult.data?.idManagementStatus) {
-    seedData.seedStatusManagementId = egResult.data.idManagementStatus;
+  if (statusResult.ok && statusResult.data?.idManagementStatus) {
+    seedData.seedStatusManagementId = statusResult.data.idManagementStatus;
   }
 }
 

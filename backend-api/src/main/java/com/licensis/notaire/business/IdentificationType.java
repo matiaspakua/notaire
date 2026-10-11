@@ -87,7 +87,7 @@ public class IdentificationType implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idIdentificationType == null || idIdentificationType.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idIdentificationType == null || idIdentificationType.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

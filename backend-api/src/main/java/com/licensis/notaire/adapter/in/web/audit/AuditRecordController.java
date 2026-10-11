@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/audit-log")
-@Tag(name = "AuditRecord", description = "API for querying audit of users (only lectura; mutaciones denegadas)")
+@Tag(name = "AuditRecord", description = "API for querying user audit records (read only; mutations are denied)")
 public class AuditRecordController {
 
     private final AuditRecordService service;
@@ -35,12 +35,12 @@ public class AuditRecordController {
 
     /**
      * Returns audit log entries. Supports pagination, sort and optional
-     * filters by {@code modulo} and {@code idUsuario}. When no pagination
+     * filters by {@code module} and {@code idUser}. When no pagination
      * parameters are present the response is a flat list of DTOs (kept for
      * backwards compatibility with the existing Swing/Next clients).
      */
     @GetMapping
-    @Operation(summary = "Get the registros of audit with pagination and filters opcionales")
+    @Operation(summary = "Get audit records with pagination and optional filters")
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) Integer page,

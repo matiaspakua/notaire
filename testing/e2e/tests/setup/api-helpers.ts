@@ -242,7 +242,7 @@ export async function createPerson(
 }
 
 /**
- * Presupuesto helpers — BudgetController accepts the raw Budget entity.
+ * Budget helpers — BudgetController accepts the raw Budget entity.
  */
 export async function createBudget(
   page: Page,
@@ -253,15 +253,15 @@ export async function createBudget(
   return apiPost(page, "/budgets", {
     person: { personId: personId },
     date: new Date().toISOString().split("T")[0],
-    heading: `Presupuesto E2E ${uniqueId()}`,
+    heading: `Budget E2E ${uniqueId()}`,
     status: "PENDIENTE",
-    notes: `Presupuesto E2E ${uniqueId()}`,
+    notes: `Budget E2E ${uniqueId()}`,
     ...overrides,
   });
 }
 
 /**
- * Gestión helpers (CU02 - complete-case: gestión + trámite in one call)
+ * Management helpers (CU02 - complete-case: management and procedure in one call)
  */
 export async function createCompleteCaseManagement(
   page: Page,
@@ -270,7 +270,7 @@ export async function createCompleteCaseManagement(
   const merged: CompleteCaseManagementPayload = {
     // `number` is a Postgres `integer` column; uniqueId() is Date.now()-based and overflows it.
     number: uniqueId() % 1_000_000,
-    heading: `Gestión E2E ${uniqueId()}`,
+    heading: `Management E2E ${uniqueId()}`,
     notaryId: 1,
     statusManagementId: 1,
     procedureTypeId: 4,
@@ -280,9 +280,9 @@ export async function createCompleteCaseManagement(
 }
 
 /**
- * CU43 - trámites of a gestión with their required documentation. `DtoManagementSummary`
- * (the `complete-case`/`GET /managements/{id}` read-model) never exposes trámite IDs, so
- * this is the only way to learn the ID of the trámite `complete-case` created.
+ * CU43 - procedures of a management with their required documentation. `DtoManagementSummary`
+ * (the `complete-case`/`GET /managements/{id}` read-model) never exposes procedure IDs, so
+ * this is the only way to learn the ID of the procedure `complete-case` created.
  */
 export async function getDocumentReentry(
   page: Page,
@@ -292,8 +292,8 @@ export async function getDocumentReentry(
 }
 
 /**
- * Plain gestión helper (CU43) — unlike `createCompleteCaseManagement`, this does
- * not create a `Procedure`, so the resulting gestión has zero trámites.
+ * Plain management helper (CU43) — unlike `createCompleteCaseManagement`, this does
+ * not create a `Procedure`, so the resulting management has zero procedures.
  * ManagementController accepts the raw DeedManagement entity.
  */
 export async function createManagementWithoutProcedure(
@@ -302,7 +302,7 @@ export async function createManagementWithoutProcedure(
   overrides: { heading?: string; number?: number } = {},
 ): Promise<ApiResult<{ idManagement: number; number: number }>> {
   return apiPost(page, "/managements", {
-    heading: `Gestión E2E ${uniqueId()}`,
+    heading: `Management E2E ${uniqueId()}`,
     dateStart: new Date().toISOString().split("T")[0],
     number: uniqueId() % 1_000_000,
     notaryPersonId: notaryId,
@@ -323,7 +323,7 @@ export async function createDeed(
   return apiPost(page, "/deeds", {
     number: id % 1_000_000,
     dateDeedrecording: new Date().toISOString().split("T")[0],
-    body: `Contenido de escritura E2E ${id}`,
+    body: `E2E deed body ${id}`,
     status: "Pendiente",
     ...overrides,
   });
@@ -404,7 +404,7 @@ export async function createFolioType(
 }
 
 /**
- * Catálogo helpers
+ * Catalog helpers
  */
 export async function createProcedureType(
   page: Page,
@@ -412,7 +412,7 @@ export async function createProcedureType(
 ): Promise<ApiResult<{ idProcedureType: number }>> {
   const id = uniqueId();
   return apiPost(page, "/procedure-types", {
-    name: `Tipo Procedure E2E ${id}`,
+    name: `Procedure type E2E ${id}`,
     notes: "Created by E2E test",
     isArchived: false,
     isRegistered: false,
@@ -421,7 +421,7 @@ export async function createProcedureType(
 }
 
 /**
- * Trámite / document presentado helpers (CU10) — ProcedureController takes
+ * Procedure and submitted-document helpers (CU10) — ProcedureController takes
  * a plain-id ProcedureRequest (issue #981), not the raw Procedure entity.
  */
 export async function createProcedure(
@@ -448,11 +448,11 @@ export async function createExternalEntityDocument(
 ): Promise<ApiResult<{ idSubmittedDocument: number }>> {
   let typeId = overrides.typeId;
   if (typeId === undefined) {
-    const tipo = await createDocumentType(page, { expires: false });
-    if (!tipo.ok) {
-      return { ok: false, status: tipo.status, error: tipo.error ?? "createDocumentType failed" };
+    const documentType = await createDocumentType(page, { expires: false });
+    if (!documentType.ok) {
+      return { ok: false, status: documentType.status, error: documentType.error ?? "createDocumentType failed" };
     }
-    typeId = tipo.data!.idDocumentType;
+    typeId = documentType.data!.idDocumentType;
   }
   return apiPost(page, "/submitted-documents", {
     typeId,
@@ -465,7 +465,7 @@ export async function createExternalEntityDocument(
 
 /**
  * Workflow helpers (CU83) — used to seed a self-contained workflow
- * (definition + nodes + transition) for gestión transition E2E tests,
+ * (definition + nodes + transition) for management transition E2E tests,
  * independent of demo/seed data.
  */
 export async function createWorkflowDefinition(
@@ -519,9 +519,9 @@ export async function assignWorkflowToProcedureType(
 
 /**
  * Seeds a self-contained two-node workflow (INITIAL -> FINAL) with a single
- * valid transition, assigns it to a fresh tipo de trámite, and creates a
- * gestión whose estado inicial matches the workflow's INITIAL node — ready
- * for a "Cambiar estado" transition to the FINAL node's estado.
+ * valid transition, assigns it to a fresh procedure type, and creates a
+ * management whose initial status matches the workflow's INITIAL node — ready
+ * for a status change to the FINAL node's status.
  */
 export async function seedManagementWithWorkflow(
   page: Page,
@@ -529,27 +529,27 @@ export async function seedManagementWithWorkflow(
 ): Promise<{
   idManagement: number;
   number: number;
-  estadoInicial: string;
-  estadoFinal: string;
+  initialStatus: string;
+  finalStatus: string;
 }> {
-  const estadoInicial = await createManagementStatus(page);
-  const estadoFinal = await createManagementStatus(page);
+  const initialStatus = await createManagementStatus(page);
+  const finalStatus = await createManagementStatus(page);
   const workflow = await createWorkflowDefinition(page);
   const workflowId = workflow.data!.id;
 
-  const nodoInicial = await createWorkflowNode(
+  const initialNode = await createWorkflowNode(
     page,
     workflowId,
-    estadoInicial.data!.idManagementStatus,
+    initialStatus.data!.idManagementStatus,
     "INITIAL",
   );
-  const nodoFinal = await createWorkflowNode(
+  const finalNode = await createWorkflowNode(
     page,
     workflowId,
-    estadoFinal.data!.idManagementStatus,
+    finalStatus.data!.idManagementStatus,
     "FINAL",
   );
-  await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoFinal.data!.id);
+  await createWorkflowTransition(page, workflowId, initialNode.data!.id, finalNode.data!.id);
 
   const typeProcedure = await createProcedureType(page);
   await assignWorkflowToProcedureType(page, typeProcedure.data!.idProcedureType, workflowId);
@@ -557,14 +557,14 @@ export async function seedManagementWithWorkflow(
   const management = await createCompleteCaseManagement(page, {
     budgetId,
     procedureTypeId: typeProcedure.data!.idProcedureType,
-    statusManagementId: estadoInicial.data!.idManagementStatus,
+    statusManagementId: initialStatus.data!.idManagementStatus,
   });
 
   return {
     idManagement: management.data!.idManagement,
     number: management.data!.number,
-    estadoInicial: estadoInicial.data!.name,
-    estadoFinal: estadoFinal.data!.name,
+    initialStatus: initialStatus.data!.name,
+    finalStatus: finalStatus.data!.name,
   };
 }
 
@@ -618,7 +618,7 @@ export async function createManagementStatus(
 ): Promise<ApiResult<{ idManagementStatus: number; name: string }>> {
   const id = uniqueId();
   return apiPost(page, "/management-statuses", {
-    name: `Estado E2E ${id}`,
+    name: `Status E2E ${id}`,
     notes: "Created by E2E test",
     ...overrides,
   });
@@ -637,7 +637,7 @@ export async function createDocumentType(
 ): Promise<ApiResult<{ idDocumentType: number }>> {
   const id = uniqueId();
   return apiPost(page, "/document-types", {
-    name: `Tipo Documento E2E ${id}`,
+    name: `Document type E2E ${id}`,
     enabled: true,
     returned: false,
     expires: true,
@@ -648,8 +648,8 @@ export async function createDocumentType(
 }
 
 /**
- * ProcedureTemplate helper (CU03/CU43) — links a tipo de trámite to a tipo de
- * document as required documentación necesaria. ProcedureTemplateController
+ * ProcedureTemplate helper (CU03/CU43) — links a procedure type to a document
+ * type as required documentation. ProcedureTemplateController
  * accepts the raw ProcedureTemplate entity.
  */
 export async function createProcedureTemplate(

@@ -139,7 +139,7 @@ test.describe("API — Usuarios endpoints", () => {
     expect(result.ok).toBe(true);
   });
 
-  test("GET /api/v1/users — list all usuarios", async ({ page }) => {
+  test("GET /api/v1/users — list all users", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet<ApiUsuario[]>(page, "/users");
     expect(result.ok).toBe(true);
@@ -258,7 +258,7 @@ test.describe("API — Management endpoints", () => {
 });
 
 test.describe("API — Escrituras endpoints", () => {
-  test("GET /api/v1/deeds — list escrituras", async ({ page }) => {
+  test("GET /api/v1/deeds — list deeds", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet(page, "/deeds");
     expect(result.ok).toBe(true);
@@ -274,7 +274,7 @@ test.describe("API — Payment endpoints", () => {
 });
 
 test.describe("API — Inmuebles endpoints", () => {
-  test("GET /api/v1/properties — list inmuebles", async ({ page }) => {
+  test("GET /api/v1/properties — list properties", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet(page, "/properties");
     expect(result.ok).toBe(true);
@@ -298,7 +298,7 @@ test.describe("API — Items endpoints", () => {
 });
 
 test.describe("API — Documentos Presentados endpoints", () => {
-  test("GET /api/v1/submitted-documents — list documentos", async ({ page }) => {
+  test("GET /api/v1/submitted-documents — list documents", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet(page, "/submitted-documents");
     expect(result.ok).toBe(true);
@@ -306,7 +306,7 @@ test.describe("API — Documentos Presentados endpoints", () => {
 });
 
 test.describe("API — Suplencias endpoints", () => {
-  test("GET /api/v1/substitutions — list suplencias", async ({ page }) => {
+  test("GET /api/v1/substitutions — list substitutions", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet(page, "/substitutions");
     expect(result.ok).toBe(true);

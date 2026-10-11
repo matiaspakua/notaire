@@ -37,7 +37,7 @@ test.describe("Workflow hero section (CU70, CU71)", () => {
     await expect(page.locator("#workflow-ref")).toBeVisible();
   });
 
-  test("workflow tracker renders nodes and legend for latest gestion", async ({ page }) => {
+  test("workflow tracker renders nodes and legend for the latest management", async ({ page }) => {
     const tracker = page.getByTestId("workflow-tracker");
     await expect(tracker).toBeVisible({ timeout: 15000 });
 

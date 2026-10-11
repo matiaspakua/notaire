@@ -69,11 +69,11 @@ public class History implements Serializable, Persistable<Integer>
 
     /**
      * Default constructor. Assigns the id from
-     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}.
+     * {@link BusinessConstants#INVALID_OBJECT_ID}.
      */
     public History()
     {
-        this.idHistory = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idHistory = BusinessConstants.INVALID_OBJECT_ID;
     }
 
     public History(Integer idHistory)
@@ -110,7 +110,7 @@ public class History implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew()
     {
-        return idHistory == null || idHistory.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idHistory == null || idHistory.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
     public String getNotes()

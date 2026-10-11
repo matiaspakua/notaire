@@ -126,12 +126,12 @@ test.describe("l10n — Login page translations", () => {
 });
 
 test.describe("l10n — Admin pages translations", () => {
-  test("usuarios page shows Spanish title by default", async ({ page }) => {
+  test("users page shows Spanish title by default", async ({ page }) => {
     await setupAuthAndGo(page, "/dashboard/administration/users");
     await expect(page.getByRole("heading", { name: /users/i })).toBeVisible({ timeout: 10000 });
   });
 
-  test("usuarios page shows English title when locale is EN", async ({ page }) => {
+  test("users page shows English title when locale is EN", async ({ page }) => {
     await setupAuthWithLocale(page, "en", "/dashboard/administration/users");
     await expect(page.getByRole("heading", { name: /users/i })).toBeVisible({ timeout: 10000 });
   });
@@ -171,7 +171,7 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     await expect(head).not.toContainText("Fecha");
   });
 
-  test("protocolo: English report buttons and status badges", async ({ page }) => {
+  test("protocol: English report buttons and status badges", async ({ page }) => {
     await setupAuthWithLocale(page, "en", "/dashboard/protocol");
     await expect(page.getByRole("button", { name: "Index Book" })).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole("button", { name: "Monthly Affidavit" })).toBeVisible();

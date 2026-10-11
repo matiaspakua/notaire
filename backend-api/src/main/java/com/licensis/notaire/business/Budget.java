@@ -102,10 +102,10 @@ public class Budget implements Serializable, Persistable<Integer> {
 
     /**
      * Default constructor. Initializes the id from
-     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}, and the object lists.
+     * {@link BusinessConstants#INVALID_OBJECT_ID}, and the object lists.
      */
     public Budget() {
-        this.idBudget = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idBudget = BusinessConstants.INVALID_OBJECT_ID;
         this.itemList = new ArrayList<>();
         this.paymentList = new java.util.HashSet<>();
         this.procedureList = new ArrayList<>();
@@ -134,7 +134,7 @@ public class Budget implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idBudget == null || idBudget.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idBudget == null || idBudget.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

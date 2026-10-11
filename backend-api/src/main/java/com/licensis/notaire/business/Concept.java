@@ -102,7 +102,7 @@ public class Concept implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idConcept == null || idConcept.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idConcept == null || idConcept.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

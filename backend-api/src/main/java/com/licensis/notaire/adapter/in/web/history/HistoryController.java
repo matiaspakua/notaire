@@ -131,13 +131,13 @@ public class HistoryController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "403", description = "Only a administrador can update the history"),
+    @ApiResponse(responseCode = "403", description = "Only an administrator can update the history"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
-    @Operation(summary = "Update history (only administrador)",
-            description = "The history is the traza of cambios of status of the management (CU13): "
-                    + "solo un administrador puede corregir un registro.")
+    @Operation(summary = "Update history (administrator only)",
+            description = "The history is the trace of status changes of the management (CU13): "
+                    + "only an administrator can correct a record.")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody HistoryRequest request) {
         return repository.findById(id).map(existing -> {
             try {
@@ -155,13 +155,13 @@ public class HistoryController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Deleted"),
-    @ApiResponse(responseCode = "403", description = "Only a administrador can delete the history"),
+    @ApiResponse(responseCode = "403", description = "Only an administrator can delete the history"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete history (only administrador)",
-            description = "The history is the traza of cambios of status of the management (CU13): "
-                    + "only a administrador can delete a registro.")
+    @Operation(summary = "Delete history (administrator only)",
+            description = "The history is the trace of status changes of the management (CU13): "
+                    + "only an administrator can delete a record.")
     @Transactional
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         History entity = repository.findById(id).orElse(null);

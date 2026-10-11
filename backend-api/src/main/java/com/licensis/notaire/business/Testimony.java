@@ -110,7 +110,7 @@ public class Testimony implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idTestimony == null || idTestimony.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idTestimony == null || idTestimony.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

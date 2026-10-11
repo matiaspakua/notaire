@@ -22,7 +22,7 @@ test.describe("Breadcrumb navigation — admin module", () => {
     await expect(page.getByTestId("breadcrumb")).toBeVisible({ timeout: 5000 });
   });
 
-  test("breadcrumb shows correct segments for usuarios", async ({ page }) => {
+  test("breadcrumb shows correct segments for users", async ({ page }) => {
     await page.goto("/dashboard/administration/users");
     const breadcrumb = page.getByTestId("breadcrumb");
     await expect(breadcrumb).toContainText("Administración");

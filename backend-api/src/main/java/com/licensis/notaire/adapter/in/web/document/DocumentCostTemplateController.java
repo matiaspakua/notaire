@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/document-cost-templates")
-@Tag(name = "PlantillaCostosDocumento", description = "API for managing costos esperados of documents by procedure type")
+@Tag(name = "Document cost template", description = "API for managing expected document costs by procedure type")
 public class DocumentCostTemplateController {
 
     private final DocumentCostTemplateService documentCostTemplateService;

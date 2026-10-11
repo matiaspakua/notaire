@@ -387,7 +387,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
 
     await test.step("Create", async () => {
       await openModal(page, "btn-nuevo-estado");
-      await page.getByTestId("input-name-status").fill(`Estado E2E ${Date.now()}`);
+      await page.getByTestId("input-name-status").fill(`Status E2E ${Date.now()}`);
       await pause(page, PAUSE);
       await saveAndDismiss(page);
     });

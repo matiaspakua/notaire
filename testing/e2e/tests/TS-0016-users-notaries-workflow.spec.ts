@@ -63,7 +63,7 @@ test.describe("CU20 - Register a user", () => {
     await steps.thenFormHasField("tipo");
   });
 
-  test("CU20-GW02: Given form open, When fill and submit, Then usuario created", async () => {
+  test("CU20-GW02: Given form open, When fill and submit, Then the user is created", async () => {
     // Given
     await steps.whenUserClicksButton("nuevo usuario");
     await steps.thenModalIsVisible();

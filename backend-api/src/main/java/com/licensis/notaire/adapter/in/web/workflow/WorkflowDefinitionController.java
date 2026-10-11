@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/workflow-definition")
-@Tag(name = "Workflow Definition", description = "CU70 - Management of workflows of estados")
+@Tag(name = "Workflow Definition", description = "CU70 - Management of status workflows")
 public class WorkflowDefinitionController {
 
     private final WorkflowDefinitionRepository repository;

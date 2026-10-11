@@ -29,7 +29,7 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
     await establishAdminBrowserSession(page);
   });
 
-  test("usuarios row actions are reachable by role name", async ({ page }) => {
+  test("users row actions are reachable by role name", async ({ page }) => {
     const created = await createUser(page);
     expect(created.ok, created.error ?? "createUser failed").toBe(true);
 

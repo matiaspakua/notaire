@@ -96,7 +96,7 @@ public class RegistrationDraft implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idRegistrationDraft == null || idRegistrationDraft.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idRegistrationDraft == null || idRegistrationDraft.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

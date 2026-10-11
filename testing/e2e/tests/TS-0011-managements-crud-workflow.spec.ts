@@ -20,19 +20,19 @@ import { listRow } from './setup/list-locators'
 interface SeededManagement {
   idManagement: number
   number: number
-  estadoInicial: string
-  estadoFinal: string
+  initialStatus: string
+  finalStatus: string
   personId: number
-  personaApellido: string
+  personLastName: string
 }
 
 async function seedFullWorkflow(page: Page): Promise<SeededManagement> {
   const person = await createPerson(page)
   const personId = person.data!.personId
-  const personaApellido = person.data!.lastName!
+  const personLastName = person.data!.lastName!
   const budget = await createBudget(page, personId)
   const management = await seedManagementWithWorkflow(page, budget.data!.idBudget)
-  return { ...management, personId, personaApellido }
+  return { ...management, personId, personLastName }
 }
 
 // ──────────────────────────────────────────────
@@ -45,14 +45,14 @@ test.describe('CU02 - Start a management', () => {
   })
 
   test('CU02-GW01: golden path — a management seeded via API appears in the table with its number and initial status', async ({ page }) => {
-    const { number, estadoInicial } = await seedFullWorkflow(page)
+    const { number, initialStatus } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
     const row = page.getByRole('row', { name: new RegExp(String(number)) })
     await expect(row).toBeVisible({ timeout: 10000 })
-    await expect(row).toContainText(estadoInicial)
+    await expect(row).toContainText(initialStatus)
   })
 
   test('CU02-GW02: the "new management" modal opens and shows the budget picker', async ({ page }) => {
@@ -99,7 +99,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
 
   test('golden path — management in the table → history has 1 entry → change status → history has 2 entries', async ({ page }) => {
     // Step 1: seed — createPerson → createBudget → seedManagementWithWorkflow
-    const { idManagement, number, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
+    const { idManagement, number, initialStatus, finalStatus } = await seedFullWorkflow(page)
 
     // Step 2: navegar a /dashboard/managements y verificar que la gestión aparece con estado inicial
     await page.goto('/dashboard/managements')
@@ -107,7 +107,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
 
     const row = page.getByRole('row', { name: new RegExp(String(number)) })
     await expect(row).toBeVisible({ timeout: 10000 })
-    await expect(row).toContainText(estadoInicial)
+    await expect(row).toContainText(initialStatus)
 
     // Step 3 (CU13): ver bitácora — debe tener 1 entrada con el estado inicial
     await page.getByTestId(`btn-view-history-${idManagement}`).click()
@@ -116,7 +116,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
 
     const items = dialog.getByTestId('history-item')
     await expect(items).toHaveCount(1)
-    await expect(items.first()).toContainText(estadoInicial)
+    await expect(items.first()).toContainText(initialStatus)
 
     await dialog.getByRole('button', { name: /cerrar|close/i }).click()
     await expect(dialog).not.toBeVisible()
@@ -127,11 +127,11 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
     await expect(dialog).toBeVisible()
 
     await dialog.getByTestId('select-new-status').click()
-    await page.getByRole('option', { name: estadoFinal }).click()
+    await page.getByRole('option', { name: finalStatus }).click()
     await dialog.getByTestId('btn-confirm-transicion').click()
     await expect(dialog).not.toBeVisible()
 
-    await expect(row).toContainText(estadoFinal)
+    await expect(row).toContainText(finalStatus)
 
     // Step 5 (CU13): ver bitácora nuevamente — debe tener 2 entradas (inicial + final)
     await page.getByTestId(`btn-view-history-${idManagement}`).click()
@@ -140,8 +140,8 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
 
     const updatedItems = dialog.getByTestId('history-item')
     await expect(updatedItems).toHaveCount(2)
-    await expect(updatedItems.nth(0)).toContainText(estadoInicial)
-    await expect(updatedItems.nth(1)).toContainText(estadoFinal)
+    await expect(updatedItems.nth(0)).toContainText(initialStatus)
+    await expect(updatedItems.nth(1)).toContainText(finalStatus)
   })
 })
 
@@ -155,7 +155,7 @@ test.describe("CU13 - View a management's history", () => {
   })
 
   test('CU13-GW01: a newly created management shows exactly 1 history entry with the initial status', async ({ page }) => {
-    const { idManagement, number, estadoInicial } = await seedFullWorkflow(page)
+    const { idManagement, number, initialStatus } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
@@ -170,11 +170,11 @@ test.describe("CU13 - View a management's history", () => {
 
     const items = dialog.getByTestId('history-item')
     await expect(items).toHaveCount(1)
-    await expect(items.first()).toContainText(estadoInicial)
+    await expect(items.first()).toContainText(initialStatus)
   })
 
   test('CU13-GW02: after a status change the history gains a second entry', async ({ page }) => {
-    const { idManagement, number, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
+    const { idManagement, number, initialStatus, finalStatus } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
@@ -187,7 +187,7 @@ test.describe("CU13 - View a management's history", () => {
     await page.getByTestId(`btn-change-status-${idManagement}`).click()
     let dialog = page.getByRole('dialog')
     await dialog.getByTestId('select-new-status').click()
-    await page.getByRole('option', { name: estadoFinal }).click()
+    await page.getByRole('option', { name: finalStatus }).click()
     await dialog.getByTestId('btn-confirm-transicion').click()
     await expect(dialog).not.toBeVisible()
 
@@ -198,8 +198,8 @@ test.describe("CU13 - View a management's history", () => {
 
     const items = dialog.getByTestId('history-item')
     await expect(items).toHaveCount(2)
-    await expect(items.nth(0)).toContainText(estadoInicial)
-    await expect(items.nth(1)).toContainText(estadoFinal)
+    await expect(items.nth(0)).toContainText(initialStatus)
+    await expect(items.nth(1)).toContainText(finalStatus)
   })
 })
 
@@ -213,7 +213,7 @@ test.describe("CU83 - Change a management's status", () => {
   })
 
   test('CU83-GW01: a transition to a valid destination updates the status shown in the table', async ({ page }) => {
-    const { idManagement, number, estadoFinal } = await seedFullWorkflow(page)
+    const { idManagement, number, finalStatus } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
@@ -226,15 +226,15 @@ test.describe("CU83 - Change a management's status", () => {
     await expect(dialog).toBeVisible()
 
     await dialog.getByTestId('select-new-status').click()
-    await page.getByRole('option', { name: estadoFinal }).click()
+    await page.getByRole('option', { name: finalStatus }).click()
     await dialog.getByTestId('btn-confirm-transicion').click()
 
     await expect(dialog).not.toBeVisible()
-    await expect(row).toContainText(estadoFinal)
+    await expect(row).toContainText(finalStatus)
   })
 
   test('CU83-GW02: the picker offers only valid workflow destinations (not the current status)', async ({ page }) => {
-    const { idManagement, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
+    const { idManagement, initialStatus, finalStatus } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
@@ -243,8 +243,8 @@ test.describe("CU83 - Change a management's status", () => {
     const dialog = page.getByRole('dialog')
     await dialog.getByTestId('select-new-status').click()
 
-    await expect(page.getByRole('option', { name: estadoFinal })).toBeVisible()
-    await expect(page.getByRole('option', { name: estadoInicial })).toHaveCount(0)
+    await expect(page.getByRole('option', { name: finalStatus })).toBeVisible()
+    await expect(page.getByRole('option', { name: initialStatus })).toHaveCount(0)
   })
 })
 
@@ -315,7 +315,7 @@ test.describe('CU19 - Search managements by client', () => {
   })
 
   test('CU19-GW02: a management seeded with a specific client appears when filtering by that client', async ({ page }) => {
-    const { personId, number, personaApellido } = await seedFullWorkflow(page)
+    const { personId, number, personLastName } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
@@ -324,12 +324,12 @@ test.describe('CU19 - Search managements by client', () => {
     const filterSelect = page.getByTestId('select-filter-client-management')
     await filterSelect.click()
     // The client filter searches the server (#1340): type the seeded last name.
-    await filterSelect.fill(personaApellido)
+    await filterSelect.fill(personLastName)
 
     // Select the option matching the seeded person specifically — picking
     // the first non-"Todos" option would filter by an unrelated person
     // accumulated from other test runs, hiding the seeded gestión.
-    const clientOption = page.getByRole('option', { name: new RegExp(personaApellido) })
+    const clientOption = page.getByRole('option', { name: new RegExp(personLastName) })
 
     if ((await clientOption.count()) === 0) {
       return
@@ -364,7 +364,7 @@ test.describe('Responsive viewports — managements view', () => {
     { width: 1024, height: 768, label: '1024px (desktop)' },
   ]) {
     test(`the managements table is visible and usable at ${viewport.label}`, async ({ page }) => {
-      const { idManagement, number, estadoInicial } = await seedFullWorkflow(page)
+      const { idManagement, number, initialStatus } = await seedFullWorkflow(page)
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height })
       await page.goto('/dashboard/managements')
@@ -377,7 +377,7 @@ test.describe('Responsive viewports — managements view', () => {
       await page.getByTestId(`btn-view-history-${idManagement}`).click()
       const dialog = page.getByRole('dialog')
       await expect(dialog).toBeVisible()
-      await expect(dialog.getByTestId('history-item').first()).toContainText(estadoInicial)
+      await expect(dialog.getByTestId('history-item').first()).toContainText(initialStatus)
     })
   }
 })

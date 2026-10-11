@@ -1,8 +1,8 @@
 /**
- * E2E tests — CU85 Administrar Carpetas de Trámite.
+ * E2E tests — CU85 Administer procedure folders.
  *
- * A carpeta is auto-generated (estado "Activa") whenever a gestión's trámite is
- * created, and is cascade-archived when the gestión itself is archived (#839).
+ * A folder is auto-generated (stored status "Activa") whenever a management's procedure is
+ * created, and is cascade-archived when the management itself is archived (#839).
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
@@ -21,45 +21,45 @@ import {
 import { listRow } from "./setup/list-locators";
 
 /**
- * "Archivada" is a global, singleton estado (looked up by name in
- * GestionTransitionService) — reuse the existing row instead of creating a
+ * "Archivada" is a global, singleton status (looked up by name in
+ * ManagementTransitionService) — reuse the existing row instead of creating a
  * duplicate, which would make that lookup ambiguous.
  */
-async function findEstadoArchivada(page: Page): Promise<{ idManagementStatus: number; name: string }> {
+async function findArchivedStatus(page: Page): Promise<{ idManagementStatus: number; name: string }> {
   const result = await apiGet<{ idManagementStatus: number; name: string }[]>(
     page,
     "/management-statuses/search?name=Archivada",
   );
   const match = result.data!.find((e) => e.name === "Archivada");
   if (!match) {
-    throw new Error("Estado 'Archivada' not found — expected to be seeded by default data");
+    throw new Error("Status 'Archivada' not found — expected to be seeded by default data");
   }
   return match;
 }
 
-/** Seeds a gestión whose workflow allows a direct transition to "Archivada". */
+/** Seeds a management whose workflow allows a direct transition to "Archivada". */
 async function seedArchivableManagement(page: Page) {
   const person = await createPerson(page);
   const budget = await createBudget(page, person.data!.personId);
 
-  const estadoInicial = await createManagementStatus(page);
-  const estadoArchivada = await findEstadoArchivada(page);
+  const initialStatus = await createManagementStatus(page);
+  const archivedStatus = await findArchivedStatus(page);
   const workflow = await createWorkflowDefinition(page);
   const workflowId = workflow.data!.id;
 
-  const nodoInicial = await createWorkflowNode(
+  const initialNode = await createWorkflowNode(
     page,
     workflowId,
-    estadoInicial.data!.idManagementStatus,
+    initialStatus.data!.idManagementStatus,
     "INITIAL",
   );
-  const nodoArchivada = await createWorkflowNode(
+  const archivedNode = await createWorkflowNode(
     page,
     workflowId,
-    estadoArchivada.idManagementStatus,
+    archivedStatus.idManagementStatus,
     "FINAL",
   );
-  await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoArchivada.data!.id);
+  await createWorkflowTransition(page, workflowId, initialNode.data!.id, archivedNode.data!.id);
 
   const typeProcedure = await createProcedureType(page);
   await assignWorkflowToProcedureType(page, typeProcedure.data!.idProcedureType, workflowId);
@@ -67,7 +67,7 @@ async function seedArchivableManagement(page: Page) {
   const management = await createCompleteCaseManagement(page, {
     budgetId: budget.data!.idBudget,
     procedureTypeId: typeProcedure.data!.idProcedureType,
-    statusManagementId: estadoInicial.data!.idManagementStatus,
+    statusManagementId: initialStatus.data!.idManagementStatus,
   });
 
   return { idManagement: management.data!.idManagement, number: management.data!.number };

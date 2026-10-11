@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/workflow-transition")
-@Tag(name = "Workflow Transition", description = "CU71 - Transiciones entre estados de un workflow")
+@Tag(name = "Workflow Transition", description = "CU71 - Transitions between statuses of a workflow")
 public class WorkflowTransitionController {
 
     private final WorkflowTransitionRepository repository;

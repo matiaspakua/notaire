@@ -73,10 +73,10 @@ public class Property implements Serializable, Persistable<Integer> {
 
     /**
      * Default constructor. Initializes the id from
-     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}, and the internal lists.
+     * {@link BusinessConstants#INVALID_OBJECT_ID}, and the internal lists.
      */
     public Property() {
-        this.idProperty = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idProperty = BusinessConstants.INVALID_OBJECT_ID;
         this.procedureList = new ArrayList<>();
     }
 
@@ -95,7 +95,7 @@ public class Property implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idProperty == null || idProperty.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idProperty == null || idProperty.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

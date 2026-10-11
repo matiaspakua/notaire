@@ -36,7 +36,7 @@ test.describe("CU73 - Workflow assignment to ProcedureType", () => {
     await expect(page.locator("table tbody tr").first()).toBeVisible({ timeout: 10000 });
   });
 
-  test("tramites page shows workflow column", async ({ page }) => {
+  test("procedures page shows the workflow column", async ({ page }) => {
     await expect(page.getByRole("columnheader", { name: "Workflow" })).toBeVisible();
     await expect(page.getByTestId("btn-new-procedure-type")).toBeVisible();
   });

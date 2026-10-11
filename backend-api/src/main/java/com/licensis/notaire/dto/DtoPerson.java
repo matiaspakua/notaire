@@ -291,7 +291,7 @@ public class DtoPerson implements ValidDto {
     @Override
     public Boolean isValid() {
         // Simplified validation without backend dependencies
-        if (this.getId() == null || this.getId() == ID_DTO_INICIALIZADO) {
+        if (this.getId() == null || this.getId() == INITIAL_DTO_ID) {
             return false;
         }
         return true;

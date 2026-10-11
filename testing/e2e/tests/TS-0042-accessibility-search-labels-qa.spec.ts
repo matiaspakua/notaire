@@ -18,7 +18,7 @@ test.describe("Search inputs expose an accessible label (#608)", () => {
     await expect(page.getByLabel("Buscar por DNI...", { exact: true })).toBeVisible();
   });
 
-  test("escrituras page search input is labeled", async ({ page }) => {
+  test("deeds page search input is labeled", async ({ page }) => {
     await page.goto("/dashboard/deeds");
     await expect(page.getByLabel("Buscar por número...", { exact: true })).toBeVisible();
   });

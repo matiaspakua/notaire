@@ -1,5 +1,5 @@
 /**
- * E2E tests — "Cambiar estado" action on the managements screen (CU83)
+ * E2E tests — status-change action on the managements screen (CU83)
  * Issues: #833, #804 (server rejects PUT status bypass; UI filtered destinations)
  */
 import { type Page, test, expect } from "@playwright/test";
@@ -19,7 +19,7 @@ test.describe("CU83 - Change a management's status", () => {
   });
 
   test("golden path: transitioning to a valid destination updates the estado", async ({ page }) => {
-    const { idManagement, number, estadoFinal } = await seedManagement(page);
+    const { idManagement, number, finalStatus } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -32,15 +32,15 @@ test.describe("CU83 - Change a management's status", () => {
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId("select-new-status").click();
-    await page.getByRole("option", { name: estadoFinal }).click();
+    await page.getByRole("option", { name: finalStatus }).click();
     await dialog.getByTestId("btn-confirm-transicion").click();
 
     await expect(dialog).not.toBeVisible();
-    await expect(row).toContainText(estadoFinal);
+    await expect(row).toContainText(finalStatus);
   });
 
   test("edge path: only valid workflow destinations are offered", async ({ page }) => {
-    const { idManagement, estadoInicial, estadoFinal } = await seedManagement(page);
+    const { idManagement, initialStatus, finalStatus } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -49,8 +49,8 @@ test.describe("CU83 - Change a management's status", () => {
     const dialog = page.getByRole("dialog");
     await dialog.getByTestId("select-new-status").click();
 
-    await expect(page.getByRole("option", { name: estadoFinal })).toBeVisible();
-    await expect(page.getByRole("option", { name: estadoInicial })).toHaveCount(0);
+    await expect(page.getByRole("option", { name: finalStatus })).toBeVisible();
+    await expect(page.getByRole("option", { name: initialStatus })).toHaveCount(0);
   });
 
   for (const viewport of [
@@ -59,7 +59,7 @@ test.describe("CU83 - Change a management's status", () => {
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
     test(`the change-status action is usable at ${viewport.label}`, async ({ page }) => {
-      const { idManagement, number, estadoFinal } = await seedManagement(page);
+      const { idManagement, number, finalStatus } = await seedManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto("/dashboard/managements");
@@ -72,7 +72,7 @@ test.describe("CU83 - Change a management's status", () => {
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
       await dialog.getByTestId("select-new-status").click();
-      await page.getByRole("option", { name: estadoFinal }).click();
+      await page.getByRole("option", { name: finalStatus }).click();
       await dialog.getByTestId("btn-confirm-transicion").click();
       await expect(dialog).not.toBeVisible();
     });

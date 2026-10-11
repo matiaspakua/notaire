@@ -91,12 +91,12 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
 
     /**
      * Default constructor for deed management. Assigns ID and number to
-     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO} and initializes empty
+     * {@link BusinessConstants#INVALID_OBJECT_ID} and initializes empty
      * procedure and history lists.
      */
     public DeedManagement() {
-        this.idManagement = BusinessConstants.ID_OBJETO_NO_VALIDO;
-        this.number = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idManagement = BusinessConstants.INVALID_OBJECT_ID;
+        this.number = BusinessConstants.INVALID_OBJECT_ID;
         this.procedureList = new ArrayList<>();
         this.historyList = new ArrayList<>();
     }
@@ -127,7 +127,7 @@ public class DeedManagement implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idManagement == null || idManagement.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idManagement == null || idManagement.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

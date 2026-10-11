@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/folio-types")
-@Tag(name = "Tipo de Folio", description = "API for folio")
+@Tag(name = "Folio type", description = "API for folio types")
 public class FolioTypeController {
 
     private final FolioTypeRepository repository;

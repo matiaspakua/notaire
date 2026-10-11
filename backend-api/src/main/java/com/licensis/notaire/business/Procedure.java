@@ -107,10 +107,10 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
     /**
      * Default constructor. Initializes the id from
-     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}, and the lists.
+     * {@link BusinessConstants#INVALID_OBJECT_ID}, and the lists.
      */
     public Procedure() {
-        this.idProcedure = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idProcedure = BusinessConstants.INVALID_OBJECT_ID;
         this.submittedDocumentList = new ArrayList<>();
         this.personList = new ArrayList<>();
     }
@@ -138,7 +138,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
     @Override
     @JsonIgnore
     public boolean isNew() {
-        return idProcedure == null || idProcedure.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idProcedure == null || idProcedure.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
     public String getNotes() {

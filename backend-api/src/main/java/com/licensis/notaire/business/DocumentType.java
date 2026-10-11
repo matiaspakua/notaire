@@ -107,7 +107,7 @@ public class DocumentType implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idDocumentType == null || idDocumentType.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idDocumentType == null || idDocumentType.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

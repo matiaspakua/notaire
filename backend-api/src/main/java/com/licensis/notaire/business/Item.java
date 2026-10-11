@@ -81,11 +81,11 @@ public class Item implements Serializable, Persistable<Integer>
 
     /**
      * Default constructor. Initializes the id from
-     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}.
+     * {@link BusinessConstants#INVALID_OBJECT_ID}.
      */
     public Item()
     {
-        this.idItem = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idItem = BusinessConstants.INVALID_OBJECT_ID;
     }
 
     public Item(Integer idItem)
@@ -123,7 +123,7 @@ public class Item implements Serializable, Persistable<Integer>
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew()
     {
-        return idItem == null || idItem.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idItem == null || idItem.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
     public String getName()

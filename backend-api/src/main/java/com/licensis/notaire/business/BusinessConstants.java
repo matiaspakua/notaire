@@ -13,9 +13,9 @@ public interface BusinessConstants
      * Sentinel id for an object that is not yet consistent: it was just created
      * and not persisted, or a persistence or lookup error left it invalid.
      * <p>
-     * An object is consistent when its id is different from {@link #ID_OBJETO_NO_VALIDO}.
+     * An object is consistent when its id is different from {@link #INVALID_OBJECT_ID}.
      */
-    public int ID_OBJETO_NO_VALIDO = -1;
+    public int INVALID_OBJECT_ID = -1;
     // Management statuses
     /**
      * Initial history status when a management starts: "Iniciada".

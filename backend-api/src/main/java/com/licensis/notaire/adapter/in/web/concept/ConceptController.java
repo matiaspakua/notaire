@@ -29,7 +29,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/concepts")
-@Tag(name = "Conceptos", description = "API for managing concepts")
+@Tag(name = "Concepts", description = "API for managing concepts")
 public class ConceptController {
 
     private static final Logger log = LoggerFactory.getLogger(ConceptController.class);

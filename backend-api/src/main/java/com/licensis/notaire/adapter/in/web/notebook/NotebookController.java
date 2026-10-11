@@ -35,7 +35,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/notebooks")
 @Validated
-@Tag(name = "Cuadernos", description = "API for managing folio notebooks")
+@Tag(name = "Notebooks", description = "API for managing folio notebooks")
 public class NotebookController {
 
     private static final Logger logger = LoggerFactory.getLogger(NotebookController.class);

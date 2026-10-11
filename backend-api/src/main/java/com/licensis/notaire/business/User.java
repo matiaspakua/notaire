@@ -105,7 +105,7 @@ public class User implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idUser == null || idUser.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idUser == null || idUser.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

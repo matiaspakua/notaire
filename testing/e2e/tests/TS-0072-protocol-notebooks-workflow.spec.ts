@@ -27,7 +27,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
     await authenticateAsAdmin(page);
   });
 
-  test("golden path: creating a cuaderno from 10 consecutive folios shows it in the list", async ({ page }) => {
+  test("golden path: creating a notebook from 10 consecutive folios shows it in the list", async ({ page }) => {
     const person = await createPerson(page);
     const notaryId = person.data!.personId;
     const folios = await seedConsecutiveFolios(page, notaryId, 10);

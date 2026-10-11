@@ -146,7 +146,7 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idSubmittedDocument == null || idSubmittedDocument.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idSubmittedDocument == null || idSubmittedDocument.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

@@ -113,7 +113,7 @@ public class Copy implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idCopy == null || idCopy.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idCopy == null || idCopy.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

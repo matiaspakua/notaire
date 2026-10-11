@@ -138,7 +138,7 @@ class EntitiesBasicTest {
         @DisplayName("constructors/setters/equals/getDto")
         void all() throws Exception {
             ManagementStatus e1 = new ManagementStatus();
-            assertThat(e1.getIdManagementStatus()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            assertThat(e1.getIdManagementStatus()).isEqualTo(BusinessConstants.INVALID_OBJECT_ID);
 
             ManagementStatus e2 = new ManagementStatus(7);
             assertThat(e2.getIdManagementStatus()).isEqualTo(7);
@@ -340,7 +340,7 @@ class EntitiesBasicTest {
         @DisplayName("All members and equals")
         void all() {
             History h1 = new History();
-            assertThat(h1.getIdHistory()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            assertThat(h1.getIdHistory()).isEqualTo(BusinessConstants.INVALID_OBJECT_ID);
             History h2 = new History(1);
             assertThat(h2.getIdHistory()).isEqualTo(1);
             Date d = new Date();
@@ -432,7 +432,7 @@ class EntitiesBasicTest {
         @DisplayName("All")
         void all() {
             Property i1 = new Property();
-            assertThat(i1.getIdProperty()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            assertThat(i1.getIdProperty()).isEqualTo(BusinessConstants.INVALID_OBJECT_ID);
             Property i2 = new Property(1);
             assertThat(i2.getIdProperty()).isEqualTo(1);
 
@@ -469,7 +469,7 @@ class EntitiesBasicTest {
         @DisplayName("All")
         void all() {
             Item i1 = new Item();
-            assertThat(i1.getIdItem()).isEqualTo(BusinessConstants.ID_OBJETO_NO_VALIDO);
+            assertThat(i1.getIdItem()).isEqualTo(BusinessConstants.INVALID_OBJECT_ID);
             Item i2 = new Item(1);
             assertThat(i2.getIdItem()).isEqualTo(1);
             Item i3 = new Item(2, "n", new java.math.BigDecimal("100"));
@@ -1047,7 +1047,7 @@ class EntitiesBasicTest {
         @DisplayName("Constants are accessible")
         void constants() {
             // Trigger class loading and reach trivial fields
-            assertThat(BusinessConstants.ID_OBJETO_NO_VALIDO).isNotNull();
+            assertThat(BusinessConstants.INVALID_OBJECT_ID).isNotNull();
         }
     }
 }

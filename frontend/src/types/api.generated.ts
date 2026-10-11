@@ -11,7 +11,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get the registros of audit with pagination and filters opcionales */
+        /** Get audit records with pagination and optional filters */
         get: operations["getAll_22"];
         put?: never;
         post?: never;
@@ -761,14 +761,14 @@ export interface paths {
         /** Get history by ID */
         get: operations["getById_16"];
         /**
-         * Update history (only administrador)
-         * @description The history is the traza of cambios of status of the management (CU13): solo un administrador puede corregir un registro.
+         * Update history (administrator only)
+         * @description The history is the trace of status changes of the management (CU13): only an administrator can correct a record.
          */
         put: operations["update_16"];
         post?: never;
         /**
-         * Delete history (only administrador)
-         * @description The history is the traza of cambios of status of the management (CU13): only a administrador can delete a registro.
+         * Delete history (administrator only)
+         * @description The history is the trace of status changes of the management (CU13): only an administrator can delete a record.
          */
         delete: operations["delete_16"];
         options?: never;
@@ -6401,7 +6401,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Only a administrador can update the history */
+            /** @description Only an administrator can update the history */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -6435,7 +6435,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Only a administrador can delete the history */
+            /** @description Only an administrator can delete the history */
             403: {
                 headers: {
                     [name: string]: unknown;

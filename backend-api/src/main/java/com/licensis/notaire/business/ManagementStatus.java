@@ -62,10 +62,10 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
 
     /**
      * Default constructor. Assigns the id from
-     * {@link BusinessConstants#ID_OBJETO_NO_VALIDO}.
+     * {@link BusinessConstants#INVALID_OBJECT_ID}.
      */
     public ManagementStatus() {
-        this.idManagementStatus = BusinessConstants.ID_OBJETO_NO_VALIDO;
+        this.idManagementStatus = BusinessConstants.INVALID_OBJECT_ID;
     }
 
     public ManagementStatus(Integer idManagementStatus) {
@@ -88,7 +88,7 @@ public class ManagementStatus implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idManagementStatus == null || idManagementStatus.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idManagementStatus == null || idManagementStatus.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

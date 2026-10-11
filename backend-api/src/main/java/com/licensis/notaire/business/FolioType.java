@@ -103,7 +103,7 @@ public class FolioType implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idFolioType == null || idFolioType.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idFolioType == null || idFolioType.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

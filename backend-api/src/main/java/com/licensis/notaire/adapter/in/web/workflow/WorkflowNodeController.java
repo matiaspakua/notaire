@@ -34,7 +34,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/workflow-node")
-@Tag(name = "Workflow Node", description = "CU70/CU71 - Nodos de workflows de estados")
+@Tag(name = "Workflow Node", description = "CU70/CU71 - Workflow status nodes")
 public class WorkflowNodeController {
 
     private final WorkflowNodeRepository repository;

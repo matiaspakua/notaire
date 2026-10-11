@@ -52,7 +52,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     ).toBeVisible({ timeout: 10000 });
   });
 
-  test("usuario form shows FormField error and aria-invalid for field detail", async ({
+  test("user form shows FormField error and aria-invalid for field detail", async ({
     page,
   }) => {
     await loginAsAdmin(page);

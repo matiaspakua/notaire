@@ -109,7 +109,7 @@ public class ProcedureType implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idProcedureType == null || idProcedureType.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idProcedureType == null || idProcedureType.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

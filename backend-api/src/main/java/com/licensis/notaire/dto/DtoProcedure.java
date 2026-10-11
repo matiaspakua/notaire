@@ -19,7 +19,7 @@ public class DtoProcedure implements ValidDto {
     private List<DtoSubmittedDocument> documentsNotSubmitted;
 
     public DtoProcedure() {
-        this.idProcedure = ID_DTO_INICIALIZADO;
+        this.idProcedure = INITIAL_DTO_ID;
         this.property = new DtoProperty();
         this.people = new ArrayList<>();
         this.budgets = new ArrayList<>();

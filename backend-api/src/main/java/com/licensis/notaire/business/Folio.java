@@ -144,7 +144,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idFolio == null || idFolio.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idFolio == null || idFolio.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

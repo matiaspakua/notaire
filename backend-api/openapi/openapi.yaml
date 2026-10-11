@@ -2791,7 +2791,7 @@ paths:
               schema:
                 type: object
           description: OK
-      summary: Get the registros of audit with pagination and filters opcionales
+      summary: Get audit records with pagination and optional filters
       tags:
       - AuditRecord
   /api/v1/audit-log/user/{idUser}:
@@ -3352,7 +3352,7 @@ paths:
           description: OK
       summary: Get all concepts
       tags:
-      - Conceptos
+      - Concepts
     post:
       operationId: createConcept
       requestBody:
@@ -3382,7 +3382,7 @@ paths:
           description: Conflict
       summary: Create concept
       tags:
-      - Conceptos
+      - Concepts
   /api/v1/concepts/search:
     get:
       operationId: searchConcepts
@@ -3403,7 +3403,7 @@ paths:
           description: OK
       summary: Search concepts by name
       tags:
-      - Conceptos
+      - Concepts
   /api/v1/concepts/{id}:
     delete:
       operationId: deleteConcept
@@ -3429,7 +3429,7 @@ paths:
           description: Not found
       summary: Delete concept
       tags:
-      - Conceptos
+      - Concepts
     get:
       operationId: getConceptById
       parameters:
@@ -3454,7 +3454,7 @@ paths:
           description: Not found
       summary: Get concept by ID
       tags:
-      - Conceptos
+      - Concepts
     put:
       operationId: updateConcept
       parameters:
@@ -3497,7 +3497,7 @@ paths:
           description: 'version is not the stored one: another user modified the record'
       summary: Update concept
       tags:
-      - Conceptos
+      - Concepts
   /api/v1/concepts/{id}/in-use:
     get:
       operationId: isConceptInUse
@@ -3519,7 +3519,7 @@ paths:
           description: OK
       summary: Check whether a concept is in uso
       tags:
-      - Conceptos
+      - Concepts
   /api/v1/copies:
     get:
       operationId: getAll_19
@@ -3892,7 +3892,7 @@ paths:
           description: Procedure type or document not found
       summary: Define the costo (fijo or variable) of a document type in the template of a procedure type
       tags:
-      - PlantillaCostosDocumento
+      - Document cost template
   /api/v1/document-cost-templates/procedure-types/{idProcedureType}:
     get:
       operationId: getCostosByTypeProcedure
@@ -3914,7 +3914,7 @@ paths:
           description: OK
       summary: Get the costos of documents definidos for a procedure type
       tags:
-      - PlantillaCostosDocumento
+      - Document cost template
   /api/v1/document-types:
     get:
       operationId: getAll_17
@@ -4111,7 +4111,7 @@ paths:
           description: OK
       summary: Get all folio types
       tags:
-      - Tipo de Folio
+      - Folio type
     post:
       operationId: create_17
       requestBody:
@@ -4141,7 +4141,7 @@ paths:
           description: Conflict
       summary: Create folio type
       tags:
-      - Tipo de Folio
+      - Folio type
   /api/v1/folio-types/search:
     get:
       operationId: search_4
@@ -4162,7 +4162,7 @@ paths:
           description: OK
       summary: Search folio types by name
       tags:
-      - Tipo de Folio
+      - Folio type
   /api/v1/folio-types/{id}:
     delete:
       operationId: delete_18
@@ -4188,7 +4188,7 @@ paths:
           description: Not found
       summary: Delete folio type
       tags:
-      - Tipo de Folio
+      - Folio type
     get:
       operationId: getById_18
       parameters:
@@ -4213,7 +4213,7 @@ paths:
           description: Not found
       summary: Get folio type by ID
       tags:
-      - Tipo de Folio
+      - Folio type
     put:
       operationId: update_18
       parameters:
@@ -4256,7 +4256,7 @@ paths:
           description: 'version is not the stored one: another user modified the record'
       summary: Update folio type
       tags:
-      - Tipo de Folio
+      - Folio type
   /api/v1/folio-types/{id}/in-use:
     get:
       operationId: isInUse_3
@@ -4278,7 +4278,7 @@ paths:
           description: OK
       summary: Check whether a folio type is in uso
       tags:
-      - Tipo de Folio
+      - Folio type
   /api/v1/folios:
     get:
       operationId: getAll_15
@@ -4552,8 +4552,7 @@ paths:
       - ManagementHistory
   /api/v1/history/{id}:
     delete:
-      description: 'The history is the traza of cambios of status of the management (CU13): only a administrador can delete
-        a registro.'
+      description: 'The history is the trace of status changes of the management (CU13): only an administrator can delete a record.'
       operationId: delete_16
       parameters:
       - in: path
@@ -4566,10 +4565,10 @@ paths:
         '204':
           description: Deleted
         '403':
-          description: Only a administrador can delete the history
+          description: Only an administrator can delete the history
         '404':
           description: Not found
-      summary: Delete history (only administrador)
+      summary: Delete history (administrator only)
       tags:
       - ManagementHistory
     get:
@@ -4598,8 +4597,7 @@ paths:
       tags:
       - ManagementHistory
     put:
-      description: 'The history is the traza of cambios of status of the management (CU13): solo un administrador puede corregir
-        un registro.'
+      description: 'The history is the trace of status changes of the management (CU13): only an administrator can correct a record.'
       operationId: update_16
       parameters:
       - in: path
@@ -4618,10 +4616,10 @@ paths:
         '200':
           description: OK
         '403':
-          description: Only a administrador can update the history
+          description: Only an administrator can update the history
         '404':
           description: Not found
-      summary: Update history (only administrador)
+      summary: Update history (administrator only)
       tags:
       - ManagementHistory
   /api/v1/identification-types:
@@ -5708,7 +5706,7 @@ paths:
           description: OK
       summary: Get all notebooks
       tags:
-      - Cuadernos
+      - Notebooks
     post:
       operationId: createNotebook
       requestBody:
@@ -5744,7 +5742,7 @@ paths:
           description: A notebook already exists with that number for the year and notary
       summary: Create a notebook a partir of diez folios consecutive
       tags:
-      - Cuadernos
+      - Notebooks
   /api/v1/notebooks/{id}:
     get:
       operationId: getNotebookById
@@ -5770,7 +5768,7 @@ paths:
           description: Not found
       summary: Get notebook by ID
       tags:
-      - Cuadernos
+      - Notebooks
   /api/v1/notebooks/{id}/cover:
     get:
       operationId: getCover
@@ -5798,7 +5796,7 @@ paths:
           description: Notebook not found
       summary: Generate the cover PDF of a notebook
       tags:
-      - Cuadernos
+      - Notebooks
   /api/v1/payments:
     get:
       operationId: getAll_9
@@ -6496,7 +6494,7 @@ paths:
           description: OK
       summary: Get all procedure types
       tags:
-      - Tipo de Procedure
+      - Procedure type
     post:
       operationId: create_9
       requestBody:
@@ -6526,7 +6524,7 @@ paths:
           description: Conflict
       summary: Create procedure type
       tags:
-      - Tipo de Procedure
+      - Procedure type
   /api/v1/procedure-types/search:
     get:
       operationId: search
@@ -6547,7 +6545,7 @@ paths:
           description: OK
       summary: Search procedure types by name
       tags:
-      - Tipo de Procedure
+      - Procedure type
   /api/v1/procedure-types/{id}:
     delete:
       operationId: delete_9
@@ -6573,7 +6571,7 @@ paths:
           description: Not found
       summary: Delete procedure type
       tags:
-      - Tipo de Procedure
+      - Procedure type
     get:
       operationId: getById_9
       parameters:
@@ -6598,7 +6596,7 @@ paths:
           description: Not found
       summary: Get procedure type by ID
       tags:
-      - Tipo de Procedure
+      - Procedure type
     put:
       operationId: update_9
       parameters:
@@ -6641,7 +6639,7 @@ paths:
           description: 'version is not the stored one: another user modified the record'
       summary: Update procedure type
       tags:
-      - Tipo de Procedure
+      - Procedure type
   /api/v1/procedure-types/{id}/in-use:
     get:
       operationId: isInUse
@@ -6663,7 +6661,7 @@ paths:
           description: OK
       summary: Check whether the procedure type is in uso
       tags:
-      - Tipo de Procedure
+      - Procedure type
   /api/v1/procedure-types/{id}/workflow:
     put:
       operationId: assignWorkflow
@@ -6707,7 +6705,7 @@ paths:
           description: The workflow seleccionado is not active
       summary: Assign or unassign workflow a procedure type
       tags:
-      - Tipo de Procedure
+      - Procedure type
   /api/v1/procedures:
     get:
       operationId: getAll_6
@@ -9138,14 +9136,14 @@ servers:
 tags:
 - description: API for generating PDF reports
   name: Reports
-- description: API for folio
-  name: Tipo de Folio
+- description: API for folio types
+  name: Folio type
 - description: API for managing concepts
-  name: Conceptos
+  name: Concepts
 - description: API to manage document types
   name: DocumentType
 - description: API for managing folio notebooks
-  name: Cuadernos
+  name: Notebooks
 - description: API for managing folio
   name: Folio
 - description: API for managing management history
@@ -9164,8 +9162,8 @@ tags:
   name: Substitution
 - description: API for generating and tracking the registration draft
   name: Registration drafts
-- description: API for procedure
-  name: Tipo de Procedure
+- description: API for procedure types
+  name: Procedure type
 - description: API for managing procedure folders
   name: Procedure folders
 - description: API to manage people
@@ -9174,13 +9172,13 @@ tags:
   name: TestimonyMovement
 - description: API for managing budget items
   name: Items
-- description: CU70 - Management of workflows of estados
+- description: CU70 - Management of status workflows
   name: Workflow Definition
 - description: API for procedure (documents by procedure type)
   name: ProcedureTemplate
 - description: API for managing testimony
   name: Testimony
-- description: CU71 - Transiciones entre estados de un workflow
+- description: CU71 - Transitions between statuses of a workflow
   name: Workflow Transition
 - description: API for managing payments (CU15, CU47)
   name: Payment
@@ -9192,9 +9190,9 @@ tags:
   name: Copy
 - description: API for managing property
   name: Property
-- description: CU70/CU71 - Nodos de workflows de estados
+- description: CU70/CU71 - Workflow status nodes
   name: Workflow Node
-- description: API for querying audit of users (only lectura; mutaciones denegadas)
+- description: API for querying user audit records (read only; mutations are denied)
   name: AuditRecord
 - description: API for management
   name: Management status
@@ -9206,5 +9204,5 @@ tags:
   name: Auxiliary protocol
 - description: CU72 - Workflow consistency validation
   name: Workflow Validation
-- description: API for managing costos esperados of documents by procedure type
-  name: PlantillaCostosDocumento
+- description: API for managing expected document costs by procedure type
+  name: Document cost template

@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English sentinels, test titles, and API tags** (#1490, CU75):
+  `INVALID_OBJECT_ID` and `INITIAL_DTO_ID` replace the Spanish sentinel
+  constants. Playwright titles, helper comments, and workflow seed locals
+  use English names. OpenAPI tags and history/audit descriptions are
+  English (`Concepts`, `Notebooks`, `Folio type`, `Procedure type`,
+  `Document cost template`). Stored labels such as `PENDIENTE`, `Nuevo`,
+  `Archivada`, `Activa`, and `Entidad Externa` stay. Message catalogs stay
+  bilingual.
 - **English end-to-end spec filenames** (#1490, CU75): Playwright and Robot
   specs use English filenames, such as `TS-0010-budget-workflow.spec.ts`
   and `procedure-folders.spec.ts`. The living test index matches those

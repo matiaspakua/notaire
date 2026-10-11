@@ -71,7 +71,7 @@ public class Notebook implements Serializable, Persistable<Integer> {
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idNotebook == null || idNotebook.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idNotebook == null || idNotebook.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

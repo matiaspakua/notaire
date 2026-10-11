@@ -24,12 +24,12 @@ test.describe("CU431 — Role and permission management", () => {
     await expect(page.getByTestId("input-name-role")).toBeVisible();
   });
 
-  test("usuarios page shows rol column", async ({ page }) => {
+  test("users page shows the role column", async ({ page }) => {
     await page.goto("/dashboard/administration/users");
     await expect(page.getByText("Role")).toBeVisible({ timeout: 10000 });
   });
 
-  test("usuario edit modal shows rol selector", async ({ page }) => {
+  test("user edit modal shows the role selector", async ({ page }) => {
     await page.goto("/dashboard/administration/users");
     await page.getByTestId("btn-new-user").click();
     await expect(page.getByTestId("select-role-user")).toBeVisible();

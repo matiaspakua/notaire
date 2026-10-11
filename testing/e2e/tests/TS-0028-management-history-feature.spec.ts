@@ -1,5 +1,5 @@
 /**
- * E2E tests — Bitácora (ManagementHistory) view on the managements screen (CU13)
+ * E2E tests — history (ManagementHistory) view on the managements screen (CU13)
  * Also covers the archive-rejected-by-invalid-transition edge path (CU16, issue #833).
  */
 import { type Page, test, expect } from "@playwright/test";
@@ -19,7 +19,7 @@ test.describe("CU13 - View a management's history", () => {
   });
 
   test("golden path: transitioning a management adds a new history entry", async ({ page }) => {
-    const { idManagement, number, estadoInicial, estadoFinal } = await seedManagement(page);
+    const { idManagement, number, initialStatus, finalStatus } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -30,7 +30,7 @@ test.describe("CU13 - View a management's history", () => {
     await page.getByTestId(`btn-change-status-${idManagement}`).click();
     let dialog = page.getByRole("dialog");
     await dialog.getByTestId("select-new-status").click();
-    await page.getByRole("option", { name: estadoFinal }).click();
+    await page.getByRole("option", { name: finalStatus }).click();
     await dialog.getByTestId("btn-confirm-transicion").click();
     await expect(dialog).not.toBeVisible();
 
@@ -40,12 +40,12 @@ test.describe("CU13 - View a management's history", () => {
 
     const items = dialog.getByTestId("history-item");
     await expect(items).toHaveCount(2);
-    await expect(items.nth(0)).toContainText(estadoInicial);
-    await expect(items.nth(1)).toContainText(estadoFinal);
+    await expect(items.nth(0)).toContainText(initialStatus);
+    await expect(items.nth(1)).toContainText(finalStatus);
   });
 
   test("edge path: a management with only its initial status shows a single history entry", async ({ page }) => {
-    const { idManagement, number, estadoInicial } = await seedManagement(page);
+    const { idManagement, number, initialStatus } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -59,7 +59,7 @@ test.describe("CU13 - View a management's history", () => {
 
     const items = dialog.getByTestId("history-item");
     await expect(items).toHaveCount(1);
-    await expect(items.first()).toContainText(estadoInicial);
+    await expect(items.first()).toContainText(initialStatus);
   });
 
   test("edge path: archiving a management whose status cannot transition to Archivada shows a visible error", async ({
@@ -88,7 +88,7 @@ test.describe("CU13 - View a management's history", () => {
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
     test(`the history view is usable at ${viewport.label}`, async ({ page }) => {
-      const { idManagement, number, estadoInicial } = await seedManagement(page);
+      const { idManagement, number, initialStatus } = await seedManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto("/dashboard/managements");
@@ -100,7 +100,7 @@ test.describe("CU13 - View a management's history", () => {
       await page.getByTestId(`btn-view-history-${idManagement}`).click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
-      await expect(dialog.getByTestId("history-item").first()).toContainText(estadoInicial);
+      await expect(dialog.getByTestId("history-item").first()).toContainText(initialStatus);
     });
   }
 });

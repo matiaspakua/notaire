@@ -91,7 +91,7 @@ public class AuditRecord implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idAuditRecord == null || idAuditRecord.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idAuditRecord == null || idAuditRecord.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 

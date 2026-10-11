@@ -36,7 +36,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/procedure-types")
-@Tag(name = "Tipo de Procedure", description = "API for procedure")
+@Tag(name = "Procedure type", description = "API for procedure types")
 public class ProcedureTypeController {
 
     private final ProcedureTypeRepositoryPort repository;

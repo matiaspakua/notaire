@@ -568,7 +568,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 persistentManagement.setHeading(managementParaModificar.getHeading());
                 persistentManagement.setNotes(managementParaModificar.getNotes());
                 persistentManagement.setFkIdManagementStatus(managementParaModificar.getFkIdManagementStatus());
-                //persistentGestion.setHistorialList(gestionParaModificar.getHistorialList());
+                // The history list is not copied on this update path.
 
                 em.getTransaction().commit();
                 result = true;

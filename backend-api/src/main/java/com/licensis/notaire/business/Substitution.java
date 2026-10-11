@@ -99,7 +99,7 @@ public class Substitution implements Serializable, Persistable<Integer>
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public boolean isNew() {
-        return idSubstitution == null || idSubstitution.equals(BusinessConstants.ID_OBJETO_NO_VALIDO);
+        return idSubstitution == null || idSubstitution.equals(BusinessConstants.INVALID_OBJECT_ID);
     }
 
 
