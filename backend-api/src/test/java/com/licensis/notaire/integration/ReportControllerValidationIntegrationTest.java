@@ -43,10 +43,10 @@ class ReportControllerValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET lista-documents-tramite with blank nombreTipoTramite returns 400")
+    @DisplayName("GET lista-documents-tramite with blank procedureTypeName returns 400")
     void shouldRejectListaDocumentsWithBlankNameTypeProcedure() throws Exception {
         mockMvc.perform(get("/api/v1/reports/procedure-document-list")
-                        .param("nombreTipoTramite", "   "))
+                        .param("procedureTypeName", "   "))
                 .andExpect(status().isBadRequest());
     }
 
@@ -54,8 +54,8 @@ class ReportControllerValidationIntegrationTest {
     @DisplayName("GET declaracion-jurada-mensual with mes=13 returns 400")
     void shouldRejectDeclaracionJuradaMensualWithMesOutOfRange() throws Exception {
         mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
-                        .param("anio", "2026")
-                        .param("mes", "13"))
+                        .param("year", "2026")
+                        .param("month", "13"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -63,8 +63,8 @@ class ReportControllerValidationIntegrationTest {
     @DisplayName("GET declaracion-jurada-mensual with non-positive anio returns 400")
     void shouldRejectDeclaracionJuradaMensualWithNonPositiveYear() throws Exception {
         mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
-                        .param("anio", "0")
-                        .param("mes", "6"))
+                        .param("year", "0")
+                        .param("month", "6"))
                 .andExpect(status().isBadRequest());
     }
 }

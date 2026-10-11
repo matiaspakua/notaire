@@ -385,7 +385,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
         return testimony;
     }
 
-    public Boolean modificarTestimony(Testimony miTestimony) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyTestimony(Testimony miTestimony) throws ClassModifiedException, ClassEliminatedException
     {
 
         Boolean flag = false; //Variable for saber the resultado of the transaccion

@@ -41,10 +41,10 @@ export function useBudgetPropertiesReport() {
 /** CU02 — Lista de documentos para tipo de trámite */
 export function useDocumentListReport() {
   return {
-    download: (nombreTipoTramite: string) =>
+    download: (procedureTypeName: string) =>
       downloadPdf(
-        `/reports/procedure-document-list?nombreTipoTramite=${encodeURIComponent(nombreTipoTramite)}`,
-        `lista_documentos_${nombreTipoTramite}.pdf`
+        `/reports/procedure-document-list?procedureTypeName=${encodeURIComponent(procedureTypeName)}`,
+        `lista_documentos_${procedureTypeName}.pdf`
       ),
   };
 }
@@ -52,10 +52,10 @@ export function useDocumentListReport() {
 /** CU13 — ManagementHistory de gestión */
 export function useManagementHistoryReport() {
   return {
-    download: (idGestion: number) =>
+    download: (idManagement: number) =>
       downloadPdf(
-        `/reports/management-history/${idGestion}`,
-        `historial_gestion_${idGestion}.pdf`
+        `/reports/management-history/${idManagement}`,
+        `historial_gestion_${idManagement}.pdf`
       ),
   };
 }
@@ -63,10 +63,10 @@ export function useManagementHistoryReport() {
 /** CU25 — Declaración Jurada Mensual */
 export function useMonthlySwornStatementReport() {
   return {
-    download: (anio: number, mes: number) =>
+    download: (year: number, month: number) =>
       downloadPdf(
-        `/reports/monthly-sworn-statement?anio=${anio}&mes=${mes}`,
-        `ddjj_mensual_${anio}_${mes}.pdf`
+        `/reports/monthly-sworn-statement?year=${year}&month=${month}`,
+        `ddjj_mensual_${year}_${month}.pdf`
       ),
   };
 }
@@ -74,10 +74,10 @@ export function useMonthlySwornStatementReport() {
 /** CU50 — Declaración Jurada de Rentas */
 export function useTaxSwornStatementReport() {
   return {
-    download: (anio: number, mes: number) =>
+    download: (year: number, month: number) =>
       downloadPdf(
-        `/reports/tax-sworn-statement?anio=${anio}&mes=${mes}`,
-        `ddjj_rentas_${anio}_${mes}.pdf`
+        `/reports/tax-sworn-statement?year=${year}&month=${month}`,
+        `ddjj_rentas_${year}_${month}.pdf`
       ),
   };
 }
@@ -85,10 +85,10 @@ export function useTaxSwornStatementReport() {
 /** CU24 — Libro Índice */
 export function useIndexBookReport() {
   return {
-    download: (anio: number) =>
+    download: (year: number) =>
       downloadPdf(
-        `/reports/index-book?anio=${anio}`,
-        `libro_indice_${anio}.pdf`
+        `/reports/index-book?year=${year}`,
+        `libro_indice_${year}.pdf`
       ),
   };
 }

@@ -17,7 +17,7 @@ import {
   useSubmitRegistrationDraft,
   useObserveRegistrationDraft,
   useRegisterRegistrationDraft,
-  descargarReporteMinutaInscripcion,
+  downloadRegistrationDraftReport,
 } from "@/hooks/useRegistrationDrafts";
 import { useDeeds } from "@/hooks/useDeeds";
 import { extractApiError } from "@/lib/utils";
@@ -125,7 +125,7 @@ export default function MinutasInscripcionPage() {
     if (!minutaId) return;
     try {
       setDownloading(true);
-      await descargarReporteMinutaInscripcion(minutaId);
+      await downloadRegistrationDraftReport(minutaId);
     } catch {
       toast.error(t("errorReporte"));
     } finally {

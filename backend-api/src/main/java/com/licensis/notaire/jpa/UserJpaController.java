@@ -288,7 +288,7 @@ public class UserJpaController implements Serializable, JpaPersistence {
         }
     }
 
-    public Boolean modificarUser(User pUser) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modifyUser(User pUser) throws ClassModifiedException, ClassEliminatedException {
 
         Boolean flag = false; // Variable for saber the resultado of the transaccion
         int oldVersion = 0; // Variable for Version in memoria of the Objeto

@@ -46,13 +46,13 @@ public class RegistrationDraftController {
             Integer idDeed) {
     }
 
-    public record PresentarRequest(Date dateSubmission, String registryEntryNumber) {
+    public record SubmitRequest(Date dateSubmission, String registryEntryNumber) {
     }
 
-    public record ObservarRequest(String registryNotes, Date dateCorrection) {
+    public record ObserveRequest(String registryNotes, Date dateCorrection) {
     }
 
-    public record InscribirRequest(Date dateReception, String finalRegistrationNumber) {
+    public record RegisterRequest(Date dateReception, String finalRegistrationNumber) {
     }
 
     @ApiResponses({
@@ -93,10 +93,10 @@ public class RegistrationDraftController {
     })
     @PutMapping("/{id}/submit")
     @Operation(summary = "CU82 - Record the presentación of the minuta ante the Registro")
-    public ResponseEntity<Object> presentar(@PathVariable Integer id, @RequestBody PresentarRequest request) {
+    public ResponseEntity<Object> submit(@PathVariable Integer id, @RequestBody SubmitRequest request) {
         try {
             DtoRegistrationDraft dto = registrationDraftService
-                    .presentar(id, request.dateSubmission(), request.registryEntryNumber()).getDto();
+                    .submit(id, request.dateSubmission(), request.registryEntryNumber()).getDto();
             return ResponseEntity.ok(dto);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -112,10 +112,10 @@ public class RegistrationDraftController {
     })
     @PutMapping("/{id}/observe")
     @Operation(summary = "CU82 - Record a observation formulada by the Registro")
-    public ResponseEntity<Object> observar(@PathVariable Integer id, @RequestBody ObservarRequest request) {
+    public ResponseEntity<Object> observe(@PathVariable Integer id, @RequestBody ObserveRequest request) {
         try {
             DtoRegistrationDraft dto = registrationDraftService
-                    .observar(id, request.registryNotes(), request.dateCorrection()).getDto();
+                    .observe(id, request.registryNotes(), request.dateCorrection()).getDto();
             return ResponseEntity.ok(dto);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -131,10 +131,10 @@ public class RegistrationDraftController {
     })
     @PutMapping("/{id}/register")
     @Operation(summary = "CU82 - Record the registration definitiva of the minuta")
-    public ResponseEntity<Object> inscribir(@PathVariable Integer id, @RequestBody InscribirRequest request) {
+    public ResponseEntity<Object> recordRegistration(@PathVariable Integer id, @RequestBody RegisterRequest request) {
         try {
             DtoRegistrationDraft dto = registrationDraftService
-                    .inscribir(id, request.dateReception(), request.finalRegistrationNumber()).getDto();
+                    .recordRegistration(id, request.dateReception(), request.finalRegistrationNumber()).getDto();
             return ResponseEntity.ok(dto);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();

@@ -53,7 +53,7 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("idDeed").asInt();
     }
 
-    private int generarTestimony() throws Exception {
+    private int generateTestimony() throws Exception {
         int idDeed = createDeedFirmada();
         MvcResult result = mockMvc.perform(post("/api/v1/testimonies/" + idDeed + "/generate"))
                 .andExpect(status().isCreated())
@@ -61,8 +61,8 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("idTestimony").asInt();
     }
 
-    private int generarTestimonyVerified() throws Exception {
-        int idTestimony = generarTestimony();
+    private int generateVerifiedTestimony() throws Exception {
+        int idTestimony = generateTestimony();
         mockMvc.perform(post("/api/v1/testimonies/" + idTestimony + "/verify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"flagged\": false}"))
@@ -73,7 +73,7 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should return a PDF for a verified testimony")
     void shouldReturnPdfForVerifiedTestimony() throws Exception {
-        int idTestimony = generarTestimonyVerified();
+        int idTestimony = generateVerifiedTestimony();
 
         MvcResult result = mockMvc.perform(get("/api/v1/reports/testimonies/" + idTestimony + "/copies"))
                 .andExpect(status().isOk())
@@ -86,7 +86,7 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should return 400 when testimony is not verified")
     void shouldRejectCopyForNonVerifiedTestimony() throws Exception {
-        int idTestimony = generarTestimony();
+        int idTestimony = generateTestimony();
 
         mockMvc.perform(get("/api/v1/reports/testimonies/" + idTestimony + "/copies"))
                 .andExpect(status().isBadRequest());

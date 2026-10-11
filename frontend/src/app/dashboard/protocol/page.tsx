@@ -38,13 +38,13 @@ export default function ProtocoloPage() {
       let url = "";
       let filename = "";
       if (reportDialog === "libro-indice") {
-        url = `/reports/index-book?anio=${reportYear}`;
+        url = `/reports/index-book?year=${reportYear}`;
         filename = `libro_indice_${reportYear}.pdf`;
       } else if (reportDialog === "declaracion-jurada-mensual") {
-        url = `/reports/monthly-sworn-statement?anio=${reportYear}&mes=${reportMonth}`;
+        url = `/reports/monthly-sworn-statement?year=${reportYear}&month=${reportMonth}`;
         filename = `declaracion_jurada_mensual_${reportMonth}_${reportYear}.pdf`;
       } else if (reportDialog === "declaracion-jurada-rentas") {
-        url = `/reports/tax-sworn-statement?anio=${reportYear}&mes=${reportMonth}`;
+        url = `/reports/tax-sworn-statement?year=${reportYear}&month=${reportMonth}`;
         filename = `declaracion_jurada_rentas_${reportMonth}_${reportYear}.pdf`;
       }
       const blob = await apiGetBytes(url);

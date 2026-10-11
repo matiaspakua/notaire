@@ -52,7 +52,7 @@ class DocumentCostTemplateControllerTest {
         procedureType = procedureTypeRepository.findById(1).orElseThrow();
     }
 
-    private DocumentType crearDocumentType(String name) {
+    private DocumentType createDocumentType(String name) {
         DocumentType documentType = new DocumentType();
         documentType.setName(name);
         documentType.setExpires(false);
@@ -74,7 +74,7 @@ class DocumentCostTemplateControllerTest {
     @Test
     @DisplayName("Should return costos by type of procedure")
     void shouldReturnCostosByTypeProcedure() throws Exception {
-        DocumentType documentType = crearDocumentType("Deed previa");
+        DocumentType documentType = createDocumentType("Deed previa");
 
         mockMvc.perform(post("/api/v1/document-cost-templates")
                         .contentType(MediaType.APPLICATION_JSON)

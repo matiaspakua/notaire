@@ -280,7 +280,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public Boolean eliminarBudgetTemplate(BudgetTemplate miTemplate) throws ClassEliminatedException
+    public Boolean deleteBudgetTemplate(BudgetTemplate miTemplate) throws ClassEliminatedException
     {
 
         Boolean eliminada = false;

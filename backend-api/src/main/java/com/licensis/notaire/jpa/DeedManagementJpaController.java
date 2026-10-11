@@ -433,7 +433,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public int obtenerUltimoNumberManagement()
+    public int getLastManagementNumber()
     {
         EntityManager em = getEntityManager();
         int resultado = 0;
@@ -539,7 +539,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
      * @return
      * @throws ClassModifiedException
      */
-    public boolean modificarDeedManagement(DeedManagement managementParaModificar) throws ClassModifiedException
+    public boolean modifyDeedManagement(DeedManagement managementParaModificar) throws ClassModifiedException
     {
         boolean resultado = false;
 
@@ -592,7 +592,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
      * @return
      * @throws ClassModifiedException
      */
-    public boolean modificarManagementStatusDeDeed(DeedManagement managementParaModificar) throws ClassModifiedException
+    public boolean modifyDeedManagementStatus(DeedManagement managementParaModificar) throws ClassModifiedException
     {
         boolean resultado = false;
 

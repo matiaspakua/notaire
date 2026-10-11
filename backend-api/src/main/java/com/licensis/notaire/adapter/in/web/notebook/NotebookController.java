@@ -107,17 +107,17 @@ public class NotebookController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "Notebook not found")
     })
-    @GetMapping(value = "/{id}/caratula", produces = MediaType.APPLICATION_PDF_VALUE)
-    @Operation(summary = "Generate the carátula PDF of a notebook")
-    public ResponseEntity<byte[]> getCaratula(@PathVariable Integer id) {
+    @GetMapping(value = "/{id}/cover", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Generate the cover PDF of a notebook")
+    public ResponseEntity<byte[]> getCover(@PathVariable Integer id) {
         try {
             byte[] pdf = reporteService.generateNotebookCoverReport(id);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"cuaderno_" + id + "_caratula.pdf\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"notebook_" + id + "_cover.pdf\"")
                     .body(pdf);
         } catch (ResourceNotFoundException e) {
-            logger.info("Carátula solicitada for notebook inexistente: {}", id);
+            logger.info("Cover requested for a missing notebook: {}", id);
             return ResponseEntity.notFound().build();
         }
     }

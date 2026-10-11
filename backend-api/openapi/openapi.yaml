@@ -1747,14 +1747,6 @@ components:
           format: int32
           type: integer
       type: object
-    InscribirRequest:
-      properties:
-        dateReception:
-          format: date-time
-          type: string
-        finalRegistrationNumber:
-          type: string
-      type: object
     ItemRequest:
       properties:
         budgetId:
@@ -1917,7 +1909,7 @@ components:
           format: int32
           type: integer
       type: object
-    ObservarRequest:
+    ObserveRequest:
       properties:
         dateCorrection:
           format: date-time
@@ -2288,14 +2280,6 @@ components:
       - identificationNumber
       - lastName
       type: object
-    PresentarRequest:
-      properties:
-        dateSubmission:
-          format: date-time
-          type: string
-        registryEntryNumber:
-          type: string
-      type: object
     ProcedureRequest:
       properties:
         idBudget:
@@ -2450,6 +2434,14 @@ components:
         volumeFolioLandRecord:
           type: string
       type: object
+    RegisterRequest:
+      properties:
+        dateReception:
+          format: date-time
+          type: string
+        finalRegistrationNumber:
+          type: string
+      type: object
     RoleInfo:
       properties:
         idRole:
@@ -2498,6 +2490,14 @@ components:
           type: boolean
         unsorted:
           type: boolean
+      type: object
+    SubmitRequest:
+      properties:
+        dateSubmission:
+          format: date-time
+          type: string
+        registryEntryNumber:
+          type: string
       type: object
     SubmittedDocumentCreateRequest:
       properties:
@@ -3269,7 +3269,7 @@ paths:
       - Budgets
   /api/v1/budgets/{id}/items-from-template:
     post:
-      operationId: cargarItemsDesdeTemplate
+      operationId: loadItemsFromTemplate
       parameters:
       - in: path
         name: id
@@ -3279,7 +3279,7 @@ paths:
           type: integer
       - description: ID of the procedure type
         in: query
-        name: tipoTramiteId
+        name: procedureTypeId
         required: true
         schema:
           format: int32
@@ -3832,7 +3832,7 @@ paths:
   /api/v1/deeds/{id}/sign:
     post:
       description: Transitions a deed 'Sin Firmar' with folio assigned to the status 'Firmada'
-      operationId: firmar
+      operationId: sign
       parameters:
       - in: path
         name: id
@@ -4804,7 +4804,7 @@ paths:
       - Items
   /api/v1/items/budget/{idBudget}/discounts-surcharges:
     get:
-      operationId: getDescuentosYRecargos
+      operationId: getDiscountsAndSurcharges
       parameters:
       - in: path
         name: idBudget
@@ -5771,9 +5771,9 @@ paths:
       summary: Get notebook by ID
       tags:
       - Cuadernos
-  /api/v1/notebooks/{id}/caratula:
+  /api/v1/notebooks/{id}/cover:
     get:
-      operationId: getCaratula
+      operationId: getCover
       parameters:
       - in: path
         name: id
@@ -5796,7 +5796,7 @@ paths:
                 format: byte
                 type: string
           description: Notebook not found
-      summary: Generate the carátula PDF of a notebook
+      summary: Generate the cover PDF of a notebook
       tags:
       - Cuadernos
   /api/v1/payments:
@@ -6980,7 +6980,7 @@ paths:
       - Property
   /api/v1/registration-drafts:
     post:
-      operationId: generate
+      operationId: generate_1
       requestBody:
         content:
           application/json:
@@ -7043,7 +7043,7 @@ paths:
       - Registration drafts
   /api/v1/registration-drafts/{id}/observe:
     put:
-      operationId: observar
+      operationId: observe
       parameters:
       - in: path
         name: id
@@ -7055,7 +7055,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ObservarRequest'
+              $ref: '#/components/schemas/ObserveRequest'
         required: true
       responses:
         '200':
@@ -7081,7 +7081,7 @@ paths:
       - Registration drafts
   /api/v1/registration-drafts/{id}/register:
     put:
-      operationId: inscribir
+      operationId: recordRegistration
       parameters:
       - in: path
         name: id
@@ -7093,7 +7093,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InscribirRequest'
+              $ref: '#/components/schemas/RegisterRequest'
         required: true
       responses:
         '200':
@@ -7119,7 +7119,7 @@ paths:
       - Registration drafts
   /api/v1/registration-drafts/{id}/submit:
     put:
-      operationId: presentar
+      operationId: submit
       parameters:
       - in: path
         name: id
@@ -7131,7 +7131,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PresentarRequest'
+              $ref: '#/components/schemas/SubmitRequest'
         required: true
       responses:
         '200':
@@ -7155,7 +7155,7 @@ paths:
       summary: CU82 - Record the presentación of the minuta ante the Registro
       tags:
       - Registration drafts
-  /api/v1/reports/budget-properties/{idPresupuesto}:
+  /api/v1/reports/budget-properties/{idBudget}:
     get:
       description: Generates the PDF of the budget e incluye the properties of their procedures (cadastral nomenclature, domicilio
         and valuación fiscal)
@@ -7163,7 +7163,7 @@ paths:
       parameters:
       - description: ID of the budget
         in: path
-        name: idPresupuesto
+        name: idBudget
         required: true
         schema:
           exclusiveMinimum: 0
@@ -7194,7 +7194,7 @@ paths:
       summary: Generate reporte of budget with properties
       tags:
       - Reportes
-  /api/v1/reports/budget/{idPresupuesto}:
+  /api/v1/reports/budget/{idBudget}:
     get:
       description: Generates a PDF with the datos of the budget (client, procedures, management), sus conceptos y el total
         y saldo pendiente calculados como en CU47
@@ -7202,7 +7202,7 @@ paths:
       parameters:
       - description: ID of the budget
         in: path
-        name: idPresupuesto
+        name: idBudget
         required: true
         schema:
           exclusiveMinimum: 0
@@ -7272,7 +7272,7 @@ paths:
       summary: Generar reporte de consulta de deuda de documentos
       tags:
       - Reportes
-  /api/v1/reports/documents-due/{idDocumentoPresentado}:
+  /api/v1/reports/documents-due/{idSubmittedDocument}:
     get:
       description: Generates a PDF with the expiration of a submitted document (date and days restantes), its status of payment
         and the management, procedure and client a the that belongs
@@ -7280,7 +7280,7 @@ paths:
       parameters:
       - description: ID of the submitted document
         in: path
-        name: idDocumentoPresentado
+        name: idSubmittedDocument
         required: true
         schema:
           exclusiveMinimum: 0
@@ -7315,11 +7315,11 @@ paths:
     get:
       description: 'Endpoint base for CU24: PDF provisorio with the period solicitado; the contenido of the libro of índice
         is pendiente'
-      operationId: generarLibroIndice
+      operationId: generateIndexBook
       parameters:
       - description: Year of the index book
         in: query
-        name: anio
+        name: year
         required: true
         schema:
           exclusiveMinimum: 0
@@ -7336,7 +7336,7 @@ paths:
       summary: Generar libro de indice
       tags:
       - Reportes
-  /api/v1/reports/management-history/{idGestion}:
+  /api/v1/reports/management-history/{idManagement}:
     get:
       description: Generates a PDF with the datos of the management and its status history, of the more antiguo to the more
         reciente
@@ -7344,7 +7344,7 @@ paths:
       parameters:
       - description: ID of the management
         in: path
-        name: idGestion
+        name: idManagement
         required: true
         schema:
           exclusiveMinimum: 0
@@ -7379,11 +7379,11 @@ paths:
     get:
       description: 'Endpoint base for CU25: PDF provisorio with the period solicitado; the contenido of the DDJJ mensual is
         pendiente'
-      operationId: generarDeclaracionJuradaMensual
+      operationId: generateMonthlySwornStatement
       parameters:
       - description: Year of the period
         in: query
-        name: anio
+        name: year
         required: true
         schema:
           exclusiveMinimum: 0
@@ -7391,7 +7391,7 @@ paths:
           type: integer
       - description: Month of the period
         in: query
-        name: mes
+        name: month
         required: true
         schema:
           format: int32
@@ -7409,14 +7409,14 @@ paths:
       summary: Generar declaracion jurada mensual
       tags:
       - Reportes
-  /api/v1/reports/payment-receipt/{idPago}:
+  /api/v1/reports/payment-receipt/{idPayment}:
     get:
       description: Genera un PDF con el recibo de un pago existente
       operationId: generatePaymentReceiptReport
       parameters:
       - description: ID of the payment
         in: path
-        name: idPago
+        name: idPayment
         required: true
         schema:
           exclusiveMinimum: 0
@@ -7448,7 +7448,7 @@ paths:
       parameters:
       - description: Name of the procedure type
         in: query
-        name: nombreTipoTramite
+        name: procedureTypeName
         required: true
         schema:
           minLength: 1
@@ -7478,14 +7478,14 @@ paths:
       summary: Generate reporte of lista of documents by procedure
       tags:
       - Reportes
-  /api/v1/reports/registration-draft/{idMinutaInscripcion}:
+  /api/v1/reports/registration-draft/{idRegistrationDraft}:
     get:
       description: Generates a PDF with the formulario normalizado of a registration draft
       operationId: generateRegistrationDraftReport
       parameters:
       - description: ID of the registration draft
         in: path
-        name: idMinutaInscripcion
+        name: idRegistrationDraft
         required: true
         schema:
           exclusiveMinimum: 0
@@ -7513,11 +7513,11 @@ paths:
     get:
       description: 'Endpoint base for CU50: PDF provisorio with the period solicitado; the contenido of the DDJJ of rentas
         is pendiente'
-      operationId: generarDeclaracionJuradaRentas
+      operationId: generateTaxSwornStatement
       parameters:
       - description: Year of the period
         in: query
-        name: anio
+        name: year
         required: true
         schema:
           exclusiveMinimum: 0
@@ -7525,7 +7525,7 @@ paths:
           type: integer
       - description: Month of the period
         in: query
-        name: mes
+        name: month
         required: true
         schema:
           format: int32
@@ -7543,14 +7543,14 @@ paths:
       summary: Generar declaracion jurada de rentas
       tags:
       - Reportes
-  /api/v1/reports/testimonies/{idTestimonio}/copies:
+  /api/v1/reports/testimonies/{idTestimony}/copies:
     get:
       description: Generates a PDF with the copy impresa of a testimony, only if already was verified
       operationId: generateTestimonyCopyReport
       parameters:
       - description: ID of the testimony
         in: path
-        name: idTestimonio
+        name: idTestimony
         required: true
         schema:
           exclusiveMinimum: 0
@@ -8072,7 +8072,7 @@ paths:
   /api/v1/testimonies/{idDeed}/generate:
     post:
       description: Generates a testimony with number assigned by the sistema a partir of a deed 'Firmada'
-      operationId: generar
+      operationId: generate
       parameters:
       - in: path
         name: idDeed
@@ -8202,7 +8202,7 @@ paths:
   /api/v1/testimonies/{id}/verify:
     post:
       description: Records the verificación of a testimony, marcando if was observado and by qué
-      operationId: verificar
+      operationId: verify
       parameters:
       - in: path
         name: id

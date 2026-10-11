@@ -56,7 +56,7 @@ class AuxiliaryProtocolControllerTest {
         notary = personRepository.findById(1).orElseThrow();
     }
 
-    private FolioType crearTypeAuxiliary() {
+    private FolioType createAuxiliaryType() {
         FolioType type = new FolioType();
         type.setName("Protocolo Auxiliar " + System.nanoTime());
         type.setIsAuxiliary(true);
@@ -64,7 +64,7 @@ class AuxiliaryProtocolControllerTest {
         return folioTypeRepository.save(type);
     }
 
-    private Folio crearFolioAuxiliary(FolioType type, int number) {
+    private Folio createAuxiliaryFolio(FolioType type, int number) {
         Folio folio = new Folio();
         folio.setNumber(number);
         folio.setYear(2026);
@@ -77,8 +77,8 @@ class AuxiliaryProtocolControllerTest {
     @Test
     @DisplayName("Should list available auxiliar folios")
     void shouldListAvailableFoliosAuxiliares() throws Exception {
-        FolioType type = crearTypeAuxiliary();
-        crearFolioAuxiliary(type, 501);
+        FolioType type = createAuxiliaryType();
+        createAuxiliaryFolio(type, 501);
 
         mockMvc.perform(get("/api/v1/auxiliary-protocol/available-folios"))
                 .andExpect(status().isOk())
@@ -97,8 +97,8 @@ class AuxiliaryProtocolControllerTest {
     @Test
     @DisplayName("Should create deed on an available auxiliar folio with its own correlative number")
     void shouldCreateDeedOnAvailableFolioAuxiliary() throws Exception {
-        FolioType type = crearTypeAuxiliary();
-        Folio folio = crearFolioAuxiliary(type, 601);
+        FolioType type = createAuxiliaryType();
+        Folio folio = createAuxiliaryFolio(type, 601);
 
         Map<String, Object> body = new HashMap<>();
         body.put("idFolio", folio.getIdFolio());

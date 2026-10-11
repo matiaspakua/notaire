@@ -79,13 +79,13 @@ export default function CuadernosPage() {
     }
   }
 
-  async function handleDownloadCaratula(idCuaderno: number) {
-    setDownloadingId(idCuaderno);
+  async function handleDownloadCover(idNotebook: number) {
+    setDownloadingId(idNotebook);
     try {
-      const blob = await apiGetBytes(`/notebooks/${idCuaderno}/caratula`);
+      const blob = await apiGetBytes(`/notebooks/${idNotebook}/cover`);
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `cuaderno_${idCuaderno}_caratula.pdf`;
+      link.download = `notebook_${idNotebook}_cover.pdf`;
       link.click();
       URL.revokeObjectURL(link.href);
     } catch {
@@ -112,7 +112,7 @@ export default function CuadernosPage() {
           variant="outline"
           size="sm"
           disabled={downloadingId === c.idNotebook}
-          onClick={() => handleDownloadCaratula(c.idNotebook!)}
+          onClick={() => handleDownloadCover(c.idNotebook!)}
         >
           <Download className="h-4 w-4" />
           {tc("downloadPdf")}

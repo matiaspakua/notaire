@@ -75,13 +75,13 @@ public class ReportController {
         @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
                 content = @Content)
     })
-    @GetMapping(value = "/budget/{idPresupuesto}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/budget/{idBudget}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate reporte of budget",
                description = "Generates a PDF with the datos of the budget (client, procedures, management), "
                        + "sus conceptos y el total y saldo pendiente calculados como en CU47")
     public ResponseEntity<byte[]> generateBudgetReport(
             @Parameter(description = "ID of the budget")
-            @PathVariable("idPresupuesto") @Positive Integer idBudget) {
+            @PathVariable("idBudget") @Positive Integer idBudget) {
         return buildPdfResponse("presupuesto_" + idBudget + ".pdf",
                 () -> reporteService.generateBudgetReport(idBudget));
     }
@@ -95,13 +95,13 @@ public class ReportController {
         @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
                 content = @Content)
     })
-    @GetMapping(value = "/budget-properties/{idPresupuesto}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/budget-properties/{idBudget}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate reporte of budget with properties",
                description = "Generates the PDF of the budget e incluye the properties of their procedures "
                        + "(cadastral nomenclature, domicilio and valuación fiscal)")
     public ResponseEntity<byte[]> generateBudgetPropertiesReport(
             @Parameter(description = "ID of the budget")
-            @PathVariable("idPresupuesto") @Positive Integer idBudget) {
+            @PathVariable("idBudget") @Positive Integer idBudget) {
         return buildPdfResponse("presupuesto_inmuebles_" + idBudget + ".pdf",
                 () -> reporteService.generateBudgetPropertiesReport(idBudget));
     }
@@ -121,7 +121,7 @@ public class ReportController {
                        + "template (expiration, days of validez and who the entrega)")
     public ResponseEntity<byte[]> generateProcedureDocumentsListReport(
             @Parameter(description = "Name of the procedure type")
-            @RequestParam("nombreTipoTramite") @NotBlank String nameTypeProcedure) {
+            @RequestParam("procedureTypeName") @NotBlank String nameTypeProcedure) {
         return buildPdfResponse("lista_documentos.pdf",
                 () -> reporteService.generateProcedureDocumentsListReport(nameTypeProcedure));
     }
@@ -135,13 +135,13 @@ public class ReportController {
         @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
                 content = @Content)
     })
-    @GetMapping(value = "/management-history/{idGestion}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/management-history/{idManagement}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate reporte of management history",
                description = "Generates a PDF with the datos of the management and its status history, "
                        + "of the more antiguo to the more reciente")
     public ResponseEntity<byte[]> generateManagementHistoryReport(
             @Parameter(description = "ID of the management")
-            @PathVariable("idGestion") @Positive Integer idManagement) {
+            @PathVariable("idManagement") @Positive Integer idManagement) {
         return buildPdfResponse("historial_gestion_" + idManagement + ".pdf",
                 () -> reporteService.generateManagementHistoryReport(idManagement));
     }
@@ -155,13 +155,13 @@ public class ReportController {
         @ApiResponse(responseCode = "500", description = "Error inesperado al generar el PDF (sin cuerpo)",
                 content = @Content)
     })
-    @GetMapping(value = "/documents-due/{idDocumentoPresentado}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/documents-due/{idSubmittedDocument}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate reporte of documents by vencer",
                description = "Generates a PDF with the expiration of a submitted document (date and days "
                        + "restantes), its status of payment and the management, procedure and client a the that belongs")
     public ResponseEntity<byte[]> generateDocumentsDueSoonReport(
             @Parameter(description = "ID of the submitted document")
-            @PathVariable("idDocumentoPresentado") @Positive Integer idSubmittedDocument) {
+            @PathVariable("idSubmittedDocument") @Positive Integer idSubmittedDocument) {
         return buildPdfResponse("documentos_vencer.pdf",
                 () -> reporteService.generateDocumentsDueSoonReport(idSubmittedDocument));
     }
@@ -190,9 +190,9 @@ public class ReportController {
     @Operation(summary = "Generar libro de indice",
                description = "Endpoint base for CU24: PDF provisorio with the period solicitado; "
                        + "the contenido of the libro of índice is pendiente")
-    public ResponseEntity<byte[]> generarLibroIndice(
+    public ResponseEntity<byte[]> generateIndexBook(
             @Parameter(description = "Year of the index book")
-            @RequestParam("anio") @Positive Integer year) {
+            @RequestParam("year") @Positive Integer year) {
         return buildPdfResponse("libro_indice_" + year + ".pdf",
                 () -> reporteService.generateIndexBookReport(year));
     }
@@ -201,16 +201,16 @@ public class ReportController {
     @Operation(summary = "Generar declaracion jurada mensual",
                description = "Endpoint base for CU25: PDF provisorio with the period solicitado; "
                        + "the contenido of the DDJJ mensual is pendiente")
-    public ResponseEntity<byte[]> generarDeclaracionJuradaMensual(
+    public ResponseEntity<byte[]> generateMonthlySwornStatement(
             @Parameter(description = "Year of the period")
-            @RequestParam("anio") @Positive Integer year,
+            @RequestParam("year") @Positive Integer year,
             @Parameter(description = "Month of the period")
-            @RequestParam @Min(1) @Max(12) Integer mes) {
-        if (mes < 1 || mes > 12) {
+            @RequestParam("month") @Min(1) @Max(12) Integer month) {
+        if (month < 1 || month > 12) {
             return ResponseEntity.badRequest().build();
         }
-        return buildPdfResponse("ddjj_mensual_" + year + "_" + mes + ".pdf",
-                () -> reporteService.generateMonthlyTaxDeclarationReport(year, mes));
+        return buildPdfResponse("ddjj_mensual_" + year + "_" + month + ".pdf",
+                () -> reporteService.generateMonthlyTaxDeclarationReport(year, month));
     }
 
     @ApiResponses({
@@ -218,12 +218,12 @@ public class ReportController {
     @ApiResponse(responseCode = "400", description = "The testimony is not verified"),
     @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
-    @GetMapping(value = "/testimonies/{idTestimonio}/copies", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/testimonies/{idTestimony}/copies", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Generate copy impresa of testimony verified",
                description = "Generates a PDF with the copy impresa of a testimony, only if already was verified")
     public ResponseEntity<byte[]> generateTestimonyCopyReport(
             @Parameter(description = "ID of the testimony")
-            @PathVariable("idTestimonio") @Positive Integer idTestimony) {
+            @PathVariable("idTestimony") @Positive Integer idTestimony) {
         byte[] pdfBytes = reporteService.generateTestimonyCopyReport(idTestimony);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
@@ -235,12 +235,12 @@ public class ReportController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "Registration draft not found")
     })
-    @GetMapping(value = "/registration-draft/{idMinutaInscripcion}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/registration-draft/{idRegistrationDraft}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "CU82 - Generate the formulario normalizado of the registration draft",
                description = "Generates a PDF with the formulario normalizado of a registration draft")
     public ResponseEntity<byte[]> generateRegistrationDraftReport(
             @Parameter(description = "ID of the registration draft")
-            @PathVariable("idMinutaInscripcion") @Positive Integer idRegistrationDraft) {
+            @PathVariable("idRegistrationDraft") @Positive Integer idRegistrationDraft) {
         byte[] pdfBytes = reporteService.generateRegistrationDraftReport(idRegistrationDraft);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
@@ -253,12 +253,12 @@ public class ReportController {
         @ApiResponse(responseCode = "200", description = "OK"),
         @ApiResponse(responseCode = "404", description = "Payment not found")
     })
-    @GetMapping(value = "/payment-receipt/{idPago}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/payment-receipt/{idPayment}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "CU15 - Emitir recibo de pago",
                description = "Genera un PDF con el recibo de un pago existente")
     public ResponseEntity<byte[]> generatePaymentReceiptReport(
             @Parameter(description = "ID of the payment")
-            @PathVariable("idPago") @Positive Integer idPayment) {
+            @PathVariable("idPayment") @Positive Integer idPayment) {
         byte[] pdfBytes = reporteService.generatePaymentReceiptReport(idPayment);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
@@ -270,15 +270,15 @@ public class ReportController {
     @Operation(summary = "Generar declaracion jurada de rentas",
                description = "Endpoint base for CU50: PDF provisorio with the period solicitado; "
                        + "the contenido of the DDJJ of rentas is pendiente")
-    public ResponseEntity<byte[]> generarDeclaracionJuradaRentas(
+    public ResponseEntity<byte[]> generateTaxSwornStatement(
             @Parameter(description = "Year of the period")
-            @RequestParam("anio") @Positive Integer year,
+            @RequestParam("year") @Positive Integer year,
             @Parameter(description = "Month of the period")
-            @RequestParam @Min(1) @Max(12) Integer mes) {
-        if (mes < 1 || mes > 12) {
+            @RequestParam("month") @Min(1) @Max(12) Integer month) {
+        if (month < 1 || month > 12) {
             return ResponseEntity.badRequest().build();
         }
-        return buildPdfResponse("ddjj_rentas_" + year + "_" + mes + ".pdf",
-                () -> reporteService.generateIncomeTaxDeclarationReport(year, mes));
+        return buildPdfResponse("ddjj_rentas_" + year + "_" + month + ".pdf",
+                () -> reporteService.generateIncomeTaxDeclarationReport(year, month));
     }
 }

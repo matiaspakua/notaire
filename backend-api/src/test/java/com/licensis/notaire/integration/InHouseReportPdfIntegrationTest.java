@@ -214,7 +214,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("shouldRenderTheRequiredDocumentsOfAProcedureType")
     void shouldRenderTheRequiredDocumentsOfAProcedureType() throws Exception {
         String text = pdfText(get("/api/v1/reports/procedure-document-list")
-                .param("nombreTipoTramite", PROCEDURE_TYPE));
+                .param("procedureTypeName", PROCEDURE_TYPE));
 
         assertThat(text).contains(PROCEDURE_TYPE, "Se archiva", "Yes", "Informe de dominio 567", "30",
                 "Registro de la Propiedad", "Certificado catastral 567", "Catastro");
@@ -256,7 +256,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         mockMvc.perform(get("/api/v1/reports/budget/{id}", 999_999)).andExpect(status().isNotFound());
         mockMvc.perform(get("/api/v1/reports/budget-properties/{id}", 999_999))
                 .andExpect(status().isNotFound());
-        mockMvc.perform(get("/api/v1/reports/procedure-document-list").param("nombreTipoTramite", "No existe 567"))
+        mockMvc.perform(get("/api/v1/reports/procedure-document-list").param("procedureTypeName", "No existe 567"))
                 .andExpect(status().isNotFound());
         mockMvc.perform(get("/api/v1/reports/management-history/{id}", 999_999)).andExpect(status().isNotFound());
         mockMvc.perform(get("/api/v1/reports/documents-due/{id}", 999_999))

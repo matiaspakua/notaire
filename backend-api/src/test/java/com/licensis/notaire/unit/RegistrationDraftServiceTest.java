@@ -128,7 +128,7 @@ class RegistrationDraftServiceTest {
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
         when(registrationDraftRepository.save(any(RegistrationDraft.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        RegistrationDraft result = registrationDraftService.presentar(1, new Date(), "ENT-123");
+        RegistrationDraft result = registrationDraftService.submit(1, new Date(), "ENT-123");
 
         assertThat(result.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftPRESENTADA);
         assertThat(result.getRegistryEntryNumber()).isEqualTo("ENT-123");
@@ -141,7 +141,7 @@ class RegistrationDraftServiceTest {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftPRESENTADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
 
-        assertThatThrownBy(() -> registrationDraftService.presentar(1, new Date(), "ENT-123"))
+        assertThatThrownBy(() -> registrationDraftService.submit(1, new Date(), "ENT-123"))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
@@ -152,7 +152,7 @@ class RegistrationDraftServiceTest {
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
         when(registrationDraftRepository.save(any(RegistrationDraft.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        RegistrationDraft result = registrationDraftService.observar(1, "Falta plano de mensura", new Date());
+        RegistrationDraft result = registrationDraftService.observe(1, "Falta plano de mensura", new Date());
 
         assertThat(result.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftOBSERVADA);
         assertThat(result.getRegistryNotes()).isEqualTo("Falta plano de mensura");
@@ -165,7 +165,7 @@ class RegistrationDraftServiceTest {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftGENERADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
 
-        assertThatThrownBy(() -> registrationDraftService.observar(1, "Observation", new Date()))
+        assertThatThrownBy(() -> registrationDraftService.observe(1, "Observation", new Date()))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
@@ -176,7 +176,7 @@ class RegistrationDraftServiceTest {
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
         when(registrationDraftRepository.save(any(RegistrationDraft.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        RegistrationDraft result = registrationDraftService.inscribir(1, new Date(), "INS-456");
+        RegistrationDraft result = registrationDraftService.recordRegistration(1, new Date(), "INS-456");
 
         assertThat(result.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftRegistered);
         assertThat(result.getFinalRegistrationNumber()).isEqualTo("INS-456");
@@ -189,7 +189,7 @@ class RegistrationDraftServiceTest {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftOBSERVADA);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
 
-        assertThatThrownBy(() -> registrationDraftService.inscribir(1, new Date(), "INS-456"))
+        assertThatThrownBy(() -> registrationDraftService.recordRegistration(1, new Date(), "INS-456"))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
@@ -198,7 +198,7 @@ class RegistrationDraftServiceTest {
     void shouldThrowWhenDraftNotFound() {
         when(registrationDraftRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> registrationDraftService.presentar(999, new Date(), "ENT-1"))
+        assertThatThrownBy(() -> registrationDraftService.submit(999, new Date(), "ENT-1"))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 

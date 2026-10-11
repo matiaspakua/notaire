@@ -436,11 +436,11 @@ class UserJpaControllerTest {
         }
     }
 
-    // -- modificarUsuario -------------------------------------------------
+    // -- modifyUser -------------------------------------------------
 
     @Nested
-    @DisplayName("modificarUsuario")
-    class ModificarUser {
+    @DisplayName("modifyUser")
+    class ModifyUser {
         @Test
         @DisplayName("should update entity fields when version matches")
         void shouldUpdateWhenVersionMatches() throws Exception {
@@ -454,7 +454,7 @@ class UserJpaControllerTest {
             when(em.find(User.class, id)).thenReturn(persistentUser);
             when(em.getTransaction()).thenReturn(tx);
 
-            Boolean result = controller.modificarUser(inputUser);
+            Boolean result = controller.modifyUser(inputUser);
 
             assertThat(result).isTrue();
             assertThat(persistentUser.getName()).isEqualTo("new");
@@ -476,7 +476,7 @@ class UserJpaControllerTest {
 
             when(em.find(User.class, id)).thenReturn(persistentUser);
 
-            assertThatThrownBy(() -> controller.modificarUser(inputUser))
+            assertThatThrownBy(() -> controller.modifyUser(inputUser))
                     .isInstanceOf(ClassModifiedException.class);
 
             verify(em).close();
@@ -490,7 +490,7 @@ class UserJpaControllerTest {
 
             when(em.find(User.class, id)).thenReturn(null);
 
-            assertThatThrownBy(() -> controller.modificarUser(inputUser))
+            assertThatThrownBy(() -> controller.modifyUser(inputUser))
                     .isInstanceOf(ClassEliminatedException.class);
 
             verify(em).close();

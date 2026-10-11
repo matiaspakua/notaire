@@ -733,7 +733,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
     }
 
-    public Boolean modificarPerson(Person pPerson) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modifyPerson(Person pPerson) throws ClassModifiedException, ClassEliminatedException {
 
         Boolean flag = false; // Variable for saber the resultado of the transaccion
         int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable for Version in memoria of the Objeto
@@ -783,7 +783,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         return flag;
     }
 
-    public Boolean registrarNotary(Person notary) throws ClassModifiedException, NonexistentEntityException {
+    public Boolean registerNotary(Person notary) throws ClassModifiedException, NonexistentEntityException {
 
         Boolean resultado = false; // Variable for saber the resultado of the transaccion
         int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable for Version in memoria of the Objeto
@@ -823,7 +823,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         return resultado;
     }
 
-    public Boolean modificarClient(Person pClient) throws ClassModifiedException, ClassEliminatedException {
+    public Boolean modifyClient(Person pClient) throws ClassModifiedException, ClassEliminatedException {
 
         Boolean flag = false; // Variable for saber the resultado of the transaccion
         int oldVersion = 0; // Variable for Version in memoria of the Objeto

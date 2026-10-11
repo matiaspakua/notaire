@@ -48,7 +48,7 @@ describe("useCreateBudget (CU01, CU39)", () => {
     result.current.mutate({ data: { propertyAmount: 100 }, tipoTramiteId: 3 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiPost).toHaveBeenNthCalledWith(2, "/budgets/7/items-from-template?tipoTramiteId=3", undefined);
+    expect(apiPost).toHaveBeenNthCalledWith(2, "/budgets/7/items-from-template?procedureTypeId=3", undefined);
     expect(result.current.data).toMatchObject({ itemsLoaded: true });
   });
 

@@ -234,7 +234,7 @@ public class DeedController {
     @PostMapping("/{id}/sign")
     @Operation(summary = "Firmar deed",
                description = "Transitions a deed 'Sin Firmar' with folio assigned to the status 'Firmada'")
-    public ResponseEntity<DeedResponse> firmar(@PathVariable Integer id) {
+    public ResponseEntity<DeedResponse> sign(@PathVariable Integer id) {
         return ResponseEntity.ok(toResponse(deedFirmaService.sign(id)));
     }
 }

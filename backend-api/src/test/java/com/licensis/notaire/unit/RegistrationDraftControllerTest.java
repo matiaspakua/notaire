@@ -124,13 +124,13 @@ class RegistrationDraftControllerTest {
     @Test
     @DisplayName("PUT /api/v1/registration-drafts/{id}/submit registers presentacion")
     void shouldRegisterSubmission() throws Exception {
-        when(registrationDraftService.presentar(any(), any(), anyString()))
+        when(registrationDraftService.submit(any(), any(), anyString()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftPRESENTADA));
 
         mockMvc.perform(put("/api/v1/registration-drafts/1/submit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
-                                new RegistrationDraftController.PresentarRequest(new Date(), "ENT-123"))))
+                                new RegistrationDraftController.SubmitRequest(new Date(), "ENT-123"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftPRESENTADA));
     }
@@ -138,13 +138,13 @@ class RegistrationDraftControllerTest {
     @Test
     @DisplayName("PUT /api/v1/registration-drafts/{id}/observe registers observacion")
     void shouldRegisterObservacion() throws Exception {
-        when(registrationDraftService.observar(anyInt(), anyString(), any()))
+        when(registrationDraftService.observe(anyInt(), anyString(), any()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftOBSERVADA));
 
         mockMvc.perform(put("/api/v1/registration-drafts/1/observe")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
-                                new RegistrationDraftController.ObservarRequest("Falta plano", new Date()))))
+                                new RegistrationDraftController.ObserveRequest("Falta plano", new Date()))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftOBSERVADA));
     }
@@ -152,13 +152,13 @@ class RegistrationDraftControllerTest {
     @Test
     @DisplayName("PUT /api/v1/registration-drafts/{id}/register registers inscripcion definitiva")
     void shouldRegisterRegistrationDefinitiva() throws Exception {
-        when(registrationDraftService.inscribir(anyInt(), any(), anyString()))
+        when(registrationDraftService.recordRegistration(anyInt(), any(), anyString()))
                 .thenReturn(buildDraft(1, 1, BusinessConstants.RegistrationDraftRegistered));
 
         mockMvc.perform(put("/api/v1/registration-drafts/1/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(
-                                new RegistrationDraftController.InscribirRequest(new Date(), "INS-456"))))
+                                new RegistrationDraftController.RegisterRequest(new Date(), "INS-456"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(BusinessConstants.RegistrationDraftRegistered));
     }

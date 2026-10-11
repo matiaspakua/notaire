@@ -289,7 +289,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
 //            }
 //        }
 //    }
-    public int eliminarRecord(PersonProcedure record)
+    public int deleteRecord(PersonProcedure record)
     {
         EntityManager em = getEntityManager();
         int rowCount = 0;

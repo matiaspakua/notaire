@@ -77,8 +77,8 @@ class AdministradorJpaTest {
         void shouldSetEmfWithoutLoadingList() {
             JpaAdministrator.setEmf(mockEmf);
             assertThat(JpaAdministrator.getEmf()).isSameAs(mockEmf);
-            // milistaJpas should be null since instancia is null (no call to cargarListaJpas)
-            // Note: after getInstancia(), setEmf will trigger cargarListaJpas()
+            // milistaJpas should be null since instancia is null (no call to loadJpaList)
+            // Note: after getInstancia(), setEmf will trigger loadJpaList()
         }
 
         @Test
@@ -87,7 +87,7 @@ class AdministradorJpaTest {
             // First get instance (instancia created, but no emf yet)
             JpaAdministrator.getInstancia();
 
-            // Now set EMF - should trigger cargarListaJpas via the if (instancia != null) block
+            // Now set EMF - should trigger loadJpaList via the if (instancia != null) block
             JpaAdministrator.setEmf(mockEmf);
 
             Collection<JpaPersistence> list = JpaAdministrator.getMilistaJpas();
@@ -97,7 +97,7 @@ class AdministradorJpaTest {
     }
 
     @Nested
-    @DisplayName("cargarListaJpas")
+    @DisplayName("loadJpaList")
     class CargarListaJpas {
 
         @BeforeEach
@@ -108,7 +108,7 @@ class AdministradorJpaTest {
         @Test
         @DisplayName("should populate milistaJpas with all controllers")
         void shouldPopulateAllControllers() {
-            // This test verifies that calling setEmf after instancia triggers cargarListaJpas
+            // This test verifies that calling setEmf after instancia triggers loadJpaList
             // which adds all 26 controllers to the list
             JpaAdministrator.setEmf(mockEmf);
 
@@ -131,7 +131,7 @@ class AdministradorJpaTest {
     }
 
     @Nested
-    @DisplayName("obtenerJpa")
+    @DisplayName("getJpa")
     class ObtenerJpa {
 
         @BeforeEach
@@ -144,7 +144,7 @@ class AdministradorJpaTest {
         @DisplayName("should return matching JPA by class name")
         void shouldFindMatchingJpa() throws Exception {
             JpaPersistence jpa = JpaAdministrator.getInstancia()
-                    .obtenerJpa("ConceptJpaController");
+                    .getJpa("ConceptJpaController");
             assertThat(jpa).isNotNull();
             assertThat(jpa).isInstanceOf(ConceptJpaController.class);
         }
@@ -153,7 +153,7 @@ class AdministradorJpaTest {
         @DisplayName("should throw NonexistentJpaException when not found")
         void shouldThrowWhenNotFound() {
             assertThatThrownBy(() ->
-                    JpaAdministrator.getInstancia().obtenerJpa("NonExistentJpa"))
+                    JpaAdministrator.getInstancia().getJpa("NonExistentJpa"))
                     .isInstanceOf(NonexistentJpaException.class)
                     .hasMessage("El JPA indicado no existe.");
         }

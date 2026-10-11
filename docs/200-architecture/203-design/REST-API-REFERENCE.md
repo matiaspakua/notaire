@@ -93,7 +93,7 @@ Authenticate a user.
 |--------|------|-------------|
 | GET | `/items` | List all items |
 | GET | `/items/{id}` | Get item by ID |
-| GET | `/items/budget/{idPresupuesto}` | Items by presupuesto |
+| GET | `/items/budget/{idBudget}` | Items by presupuesto |
 | POST | `/items` | Create item |
 | PUT | `/items/{id}` | Update item |
 | DELETE | `/items/{id}` | Delete item |
@@ -106,7 +106,7 @@ Authenticate a user.
 |--------|------|-------------|-----------|
 | GET | `/payments` | List all pagos | CU15 |
 | GET | `/payments/{id}` | Get pago by ID | CU15 |
-| GET | `/payments/budget/{idPresupuesto}` | Pagos by presupuesto | CU47 |
+| GET | `/payments/budget/{idBudget}` | Pagos by presupuesto | CU47 |
 | POST | `/payments` | Create pago | CU15 |
 | PUT | `/payments/{id}` | Update pago | — |
 | DELETE | `/payments/{id}` | Delete pago | — |
@@ -169,7 +169,7 @@ Authenticate a user.
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
 | GET | `/history` | List all historial | CU13 |
-| GET | `/history/management/{idGestion}` | ManagementHistory by gestión | CU13 |
+| GET | `/history/management/{idManagement}` | ManagementHistory by gestión | CU13 |
 
 ---
 
@@ -278,15 +278,15 @@ All endpoints return `application/pdf` (errors: `ErrorResponse` JSON) and are co
 
 | Method | Path | Description | Use Cases |
 |--------|------|-------------|-----------|
-| GET | `/reports/budget/{idPresupuesto}` | Download presupuesto PDF (items, total and pending balance) | CU01, CU39 |
-| GET | `/reports/budget-properties/{idPresupuesto}` | Download presupuesto PDF with the properties of its trámites | CU01 |
-| GET | `/reports/procedure-document-list` | Documents required by a trámite type, from its template (`?nombreTipoTramite=`) | CU03 |
-| GET | `/reports/management-history/{idGestion}` | Gestión data and state history report | CU13 |
-| GET | `/reports/documents-due/{idDocumentoPresentado}` | Expiry, payment and gestión of one submitted document | CU42 |
+| GET | `/reports/budget/{idBudget}` | Download presupuesto PDF (items, total and pending balance) | CU01, CU39 |
+| GET | `/reports/budget-properties/{idBudget}` | Download presupuesto PDF with the properties of its trámites | CU01 |
+| GET | `/reports/procedure-document-list` | Documents required by a trámite type, from its template (`?procedureTypeName=`) | CU03 |
+| GET | `/reports/management-history/{idManagement}` | Gestión data and state history report | CU13 |
+| GET | `/reports/documents-due/{idSubmittedDocument}` | Expiry, payment and gestión of one submitted document | CU42 |
 | GET | `/reports/document-debt` | Document debt of a gestión number (`?numberManagement=`) | CU09 |
-| GET | `/reports/index-book` | Libro Índice report (`?anio=`) | CU24 |
-| GET | `/reports/monthly-sworn-statement` | Monthly declaración jurada (`?anio=&mes=`) | CU25 |
-| GET | `/reports/tax-sworn-statement` | Rentas declaración jurada (`?anio=&mes=`) | CU50 |
+| GET | `/reports/index-book` | Libro Índice report (`?year=`) | CU24 |
+| GET | `/reports/monthly-sworn-statement` | Monthly declaración jurada (`?year=&month=`) | CU25 |
+| GET | `/reports/tax-sworn-statement` | Rentas declaración jurada (`?year=&month=`) | CU50 |
 
 ---
 

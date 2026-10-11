@@ -248,7 +248,7 @@ public class TestimonyController {
                description = "Generates a testimony with number assigned by the sistema a partir of a deed "
                        + "'Firmada'")
     @Transactional
-    public ResponseEntity<DtoTestimony> generar(@PathVariable Integer idDeed) {
+    public ResponseEntity<DtoTestimony> generate(@PathVariable Integer idDeed) {
         Testimony testimony = generationVerificacionService.generate(idDeed);
         return ResponseEntity.status(HttpStatus.CREATED).body(testimony.getDto());
     }
@@ -261,7 +261,7 @@ public class TestimonyController {
     @Operation(summary = "Check testimony",
                description = "Records the verificación of a testimony, marcando if was observado and by qué")
     @Transactional
-    public ResponseEntity<DtoTestimony> verificar(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
+    public ResponseEntity<DtoTestimony> verify(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
         Testimony testimony = generationVerificacionService.verify(id, dto.isFlagged(), dto.getNotes());
         return ResponseEntity.ok(testimony.getDto());
     }

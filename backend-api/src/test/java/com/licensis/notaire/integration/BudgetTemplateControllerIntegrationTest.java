@@ -109,7 +109,7 @@ class BudgetTemplateControllerIntegrationTest {
         ProcedureType procedureType = createProcedureTypeConTemplate("Honorarios IT", new java.math.BigDecimal("1500"), 10);
 
         mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-template")
-                        .param("tipoTramiteId", procedureType.getIdProcedureType().toString()))
+                        .param("procedureTypeId", procedureType.getIdProcedureType().toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].name").value("Honorarios IT"))
@@ -127,7 +127,7 @@ class BudgetTemplateControllerIntegrationTest {
         procedureTypeRepository.save(typeSinTemplate);
 
         mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-template")
-                        .param("tipoTramiteId", typeSinTemplate.getIdProcedureType().toString()))
+                        .param("procedureTypeId", typeSinTemplate.getIdProcedureType().toString()))
                 .andExpect(status().isBadRequest());
     }
 
@@ -137,7 +137,7 @@ class BudgetTemplateControllerIntegrationTest {
         ProcedureType procedureType = createProcedureTypeConTemplate("Sellado IT", new java.math.BigDecimal("500"), 0);
 
         mockMvc.perform(post("/api/v1/budgets/999999/items-from-template")
-                        .param("tipoTramiteId", procedureType.getIdProcedureType().toString()))
+                        .param("procedureTypeId", procedureType.getIdProcedureType().toString()))
                 .andExpect(status().isNotFound());
     }
 

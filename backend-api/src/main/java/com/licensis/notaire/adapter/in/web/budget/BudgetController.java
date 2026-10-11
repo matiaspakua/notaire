@@ -280,11 +280,11 @@ public class BudgetController {
 })
     @PostMapping("/{id}/items-from-template")
     @Operation(summary = "CU39 - Load budget items from the template of the procedure type")
-    public ResponseEntity<List<ItemResponse>> cargarItemsDesdeTemplate(
+    public ResponseEntity<List<ItemResponse>> loadItemsFromTemplate(
             @PathVariable Integer id,
             @Parameter(description = "ID of the procedure type")
-            @RequestParam("tipoTramiteId") Integer typeProcedureId) {
-        return ResponseEntity.ok(budgetTemplateService.cargarItemsDesdeTemplate(id, typeProcedureId).stream()
+            @RequestParam("procedureTypeId") Integer typeProcedureId) {
+        return ResponseEntity.ok(budgetTemplateService.loadItemsFromTemplate(id, typeProcedureId).stream()
                 .map(ItemResponse::from).toList());
     }
 

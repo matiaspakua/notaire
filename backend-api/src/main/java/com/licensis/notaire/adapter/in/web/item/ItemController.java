@@ -147,7 +147,7 @@ public class ItemController {
     @GetMapping("/budget/{idBudget}/discounts-surcharges")
     @Operation(summary = "CU45/CU71 - Query discounts and surcharges of a budget")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<ItemResponse>> getDescuentosYRecargos(@PathVariable Integer idBudget) {
+    public ResponseEntity<List<ItemResponse>> getDiscountsAndSurcharges(@PathVariable Integer idBudget) {
         try {
             return ResponseEntity.ok(itemService.findDiscountsAndSurchargesByBudget(idBudget)
                     .stream().map(ItemResponse::from).toList());

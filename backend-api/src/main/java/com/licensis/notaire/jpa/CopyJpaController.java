@@ -297,7 +297,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public int crearCopy(Copy miCopy)
+    public int createCopy(Copy miCopy)
     {
         int creada = -1;
 
@@ -335,7 +335,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
         return copies;
     }
 
-    public Boolean modificarCopy(Copy copy) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyCopy(Copy copy) throws ClassModifiedException, ClassEliminatedException
     {
         EntityManager em = null;
         Boolean modificada = false;

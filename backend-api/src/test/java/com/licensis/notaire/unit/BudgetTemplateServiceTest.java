@@ -65,7 +65,7 @@ class BudgetTemplateServiceTest {
         ));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> items = budgetTemplateService.cargarItemsDesdeTemplate(1, 5);
+        List<Item> items = budgetTemplateService.loadItemsFromTemplate(1, 5);
 
         assertThat(items).hasSize(2);
         assertThat(items).extracting(Item::getName).containsExactlyInAnyOrder("Honorarios", "Sellado");
@@ -84,7 +84,7 @@ class BudgetTemplateServiceTest {
                 .thenReturn(List.of(template));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        List<Item> items = budgetTemplateService.cargarItemsDesdeTemplate(1, 5);
+        List<Item> items = budgetTemplateService.loadItemsFromTemplate(1, 5);
 
         // The item copied the concept's value at load time; changing the plantilla's
         // concept afterwards must not retroactively change the already-loaded item.
@@ -101,7 +101,7 @@ class BudgetTemplateServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(budgetTemplateRepository.findByProcedureTypeIdProcedureType(99)).thenReturn(List.of());
 
-        assertThatThrownBy(() -> budgetTemplateService.cargarItemsDesdeTemplate(1, 99))
+        assertThatThrownBy(() -> budgetTemplateService.loadItemsFromTemplate(1, 99))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("template");
     }
@@ -111,7 +111,7 @@ class BudgetTemplateServiceTest {
     void shouldRejectWhenBudgetDoesNotExist() {
         when(budgetRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> budgetTemplateService.cargarItemsDesdeTemplate(999, 5))
+        assertThatThrownBy(() -> budgetTemplateService.loadItemsFromTemplate(999, 5))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

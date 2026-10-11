@@ -305,7 +305,7 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
      * @param miPlantilla, the Template of Procedure a delete.
      * @return True si se elimino, False de lo contrario.
      */
-    public Boolean eliminarProcedureTemplate(ProcedureTemplate miTemplate)
+    public Boolean deleteProcedureTemplate(ProcedureTemplate miTemplate)
     {
 
         Boolean eliminada = false;

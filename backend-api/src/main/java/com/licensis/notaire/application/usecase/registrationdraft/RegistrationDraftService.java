@@ -108,7 +108,7 @@ public class RegistrationDraftService {
         return registrationDraftRepository.findById(id);
     }
 
-    public RegistrationDraft presentar(Integer id, Date dateSubmission, String registryEntryNumber) {
+    public RegistrationDraft submit(Integer id, Date dateSubmission, String registryEntryNumber) {
         RegistrationDraft draft = searchDraft(id);
         if (!BusinessConstants.RegistrationDraftGENERADA.equals(draft.getStatus())) {
             throw new BusinessValidationException(
@@ -120,7 +120,7 @@ public class RegistrationDraftService {
         return registrationDraftRepository.save(draft);
     }
 
-    public RegistrationDraft observar(Integer id, String registryNotes, Date dateCorrection) {
+    public RegistrationDraft observe(Integer id, String registryNotes, Date dateCorrection) {
         RegistrationDraft draft = searchDraft(id);
         if (!BusinessConstants.RegistrationDraftPRESENTADA.equals(draft.getStatus())) {
             throw new BusinessValidationException(
@@ -132,7 +132,7 @@ public class RegistrationDraftService {
         return registrationDraftRepository.save(draft);
     }
 
-    public RegistrationDraft inscribir(Integer id, Date dateReception, String finalRegistrationNumber) {
+    public RegistrationDraft recordRegistration(Integer id, Date dateReception, String finalRegistrationNumber) {
         RegistrationDraft draft = searchDraft(id);
         if (!BusinessConstants.RegistrationDraftPRESENTADA.equals(draft.getStatus())) {
             throw new BusinessValidationException(

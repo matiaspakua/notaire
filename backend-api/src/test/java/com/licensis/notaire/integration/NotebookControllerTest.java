@@ -60,7 +60,7 @@ class NotebookControllerTest {
         folioType = folioTypeRepository.findById(1).orElseThrow();
     }
 
-    private List<Integer> crearFolios(int cantidad, String status) {
+    private List<Integer> createFolios(int cantidad, String status) {
         List<Integer> ids = new ArrayList<>();
         for (int i = 0; i < cantidad; i++) {
             Folio folio = new Folio();
@@ -86,7 +86,7 @@ class NotebookControllerTest {
     @Test
     @DisplayName("Should create notebook from ten consecutive folios")
     void shouldCreateNotebookFromConsecutiveFolios() throws Exception {
-        List<Integer> ids = crearFolios(10, "New");
+        List<Integer> ids = createFolios(10, "New");
 
         mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +98,7 @@ class NotebookControllerTest {
     @Test
     @DisplayName("Should reject notebook when folio count is not a multiple of ten")
     void shouldRejectNotebookWhenFolioCountNotMultipleOfTen() throws Exception {
-        List<Integer> ids = crearFolios(5, "New");
+        List<Integer> ids = createFolios(5, "New");
 
         mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +109,7 @@ class NotebookControllerTest {
     @Test
     @DisplayName("Should reject notebook with non-consecutive folios")
     void shouldRejectNotebookWithNonConsecutiveFolios() throws Exception {
-        List<Integer> ids = crearFolios(11, "New");
+        List<Integer> ids = createFolios(11, "New");
         List<Integer> discontinuos = new ArrayList<>(ids.subList(0, 9));
         discontinuos.add(ids.get(10));
 
@@ -122,13 +122,13 @@ class NotebookControllerTest {
     @Test
     @DisplayName("Should reject notebook with a folio already assigned")
     void shouldRejectNotebookWithFolioAlreadyAssigned() throws Exception {
-        List<Integer> primerLote = crearFolios(10, "New");
+        List<Integer> primerLote = createFolios(10, "New");
         mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createNotebookBody(primerLote, null)))
                 .andExpect(status().isCreated());
 
-        List<Integer> segundoLote = crearFolios(10, "New");
+        List<Integer> segundoLote = createFolios(10, "New");
         List<Integer> conFolioReasignado = new ArrayList<>(segundoLote.subList(0, 9));
         conFolioReasignado.add(primerLote.get(0));
 
@@ -141,8 +141,8 @@ class NotebookControllerTest {
     @Test
     @DisplayName("Should create notebook with a justified damaged folio")
     void shouldCreateNotebookWithJustifiedDamagedFolio() throws Exception {
-        List<Integer> ids = crearFolios(9, "New");
-        ids.addAll(crearFolios(1, "Errose"));
+        List<Integer> ids = createFolios(9, "New");
+        ids.addAll(createFolios(1, "Errose"));
 
         mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -153,7 +153,7 @@ class NotebookControllerTest {
     @Test
     @DisplayName("Should generate carátula for an existing notebook")
     void shouldGenerateCaratulaForExistingNotebook() throws Exception {
-        List<Integer> ids = crearFolios(10, "New");
+        List<Integer> ids = createFolios(10, "New");
         MvcResult creado = mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(createNotebookBody(ids, null)))
@@ -161,18 +161,18 @@ class NotebookControllerTest {
                 .andReturn();
         Integer idNotebook = mapper.readTree(creado.getResponse().getContentAsString()).get("idNotebook").asInt();
 
-        MvcResult caratula = mockMvc.perform(get("/api/v1/notebooks/" + idNotebook + "/caratula"))
+        MvcResult cover = mockMvc.perform(get("/api/v1/notebooks/" + idNotebook + "/cover"))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertThat(caratula.getResponse().getContentType()).isEqualTo(MediaType.APPLICATION_PDF_VALUE);
-        assertThat(caratula.getResponse().getContentAsByteArray()).isNotEmpty();
+        assertThat(cover.getResponse().getContentType()).isEqualTo(MediaType.APPLICATION_PDF_VALUE);
+        assertThat(cover.getResponse().getContentAsByteArray()).isNotEmpty();
     }
 
     @Test
     @DisplayName("Should return 404 for carátula of a missing notebook")
     void shouldReturnNotFoundForMissingNotebookCaratula() throws Exception {
-        mockMvc.perform(get("/api/v1/notebooks/999999/caratula"))
+        mockMvc.perform(get("/api/v1/notebooks/999999/cover"))
                 .andExpect(status().isNotFound());
     }
 }

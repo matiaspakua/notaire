@@ -87,11 +87,11 @@ export function useRegisterRegistrationDraft() {
 }
 
 /** Descarga el formulario normalizado (PDF) de una minuta de inscripción. */
-export async function descargarReporteMinutaInscripcion(idMinutaInscripcion: number): Promise<void> {
-  const blob = await apiGetBytes(`/reports/registration-draft/${idMinutaInscripcion}`);
+export async function downloadRegistrationDraftReport(idRegistrationDraft: number): Promise<void> {
+  const blob = await apiGetBytes(`/reports/registration-draft/${idRegistrationDraft}`);
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = `minuta_inscripcion_${idMinutaInscripcion}.pdf`;
+  link.download = `minuta_inscripcion_${idRegistrationDraft}.pdf`;
   link.click();
   URL.revokeObjectURL(link.href);
 }

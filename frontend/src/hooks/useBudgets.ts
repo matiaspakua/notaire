@@ -57,7 +57,7 @@ export function useCreateBudget() {
       if (tipoTramiteId === undefined) return { presupuesto, itemsLoaded: false };
       try {
         await apiPost<Item[]>(
-          `/budgets/${presupuesto.idBudget}/items-from-template?tipoTramiteId=${tipoTramiteId}`,
+          `/budgets/${presupuesto.idBudget}/items-from-template?procedureTypeId=${tipoTramiteId}`,
           undefined,
         );
         return { presupuesto, itemsLoaded: true };
@@ -94,7 +94,7 @@ export function useLoadItemsFromTemplate() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ idBudget, tipoTramiteId }: { idBudget: number; tipoTramiteId: number }) =>
-      apiPost<Item[]>(`/budgets/${idBudget}/items-from-template?tipoTramiteId=${tipoTramiteId}`, undefined),
+      apiPost<Item[]>(`/budgets/${idBudget}/items-from-template?procedureTypeId=${tipoTramiteId}`, undefined),
     onSuccess: (_, variables) =>
       qc.invalidateQueries({ queryKey: itemsKeys.byBudget(variables.idBudget) }),
   });

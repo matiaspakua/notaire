@@ -552,8 +552,8 @@ class SimpleControllersTest {
 
             com.licensis.notaire.business.Item item = new com.licensis.notaire.business.Item(
                     1, "Sellado", new java.math.BigDecimal("500"));
-            when(budgetTemplateService.cargarItemsDesdeTemplate(1, 5)).thenReturn(List.of(item));
-            mvc.perform(post("/api/v1/budgets/1/items-from-template?tipoTramiteId=5"))
+            when(budgetTemplateService.loadItemsFromTemplate(1, 5)).thenReturn(List.of(item));
+            mvc.perform(post("/api/v1/budgets/1/items-from-template?procedureTypeId=5"))
                     .andExpect(status().isOk());
 
             when(budgetCatalogoItemsService.addItemsFromCatalog(eq(1), anyList()))

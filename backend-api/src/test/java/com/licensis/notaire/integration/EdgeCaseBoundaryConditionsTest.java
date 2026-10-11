@@ -209,8 +209,8 @@ class EdgeCaseBoundaryConditionsTest {
         @DisplayName("Report endpoint with month 0 returns 400")
         void reportEndpointWithMonthZeroReturns400() throws Exception {
             mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
-                            .param("anio", "2026")
-                            .param("mes", "0"))
+                            .param("year", "2026")
+                            .param("month", "0"))
                     .andExpect(status().isBadRequest());
         }
 
@@ -218,8 +218,8 @@ class EdgeCaseBoundaryConditionsTest {
         @DisplayName("Report endpoint with month 13 returns 400")
         void reportEndpointWithMonth13Returns400() throws Exception {
             mockMvc.perform(get("/api/v1/reports/tax-sworn-statement")
-                            .param("anio", "2026")
-                            .param("mes", "13"))
+                            .param("year", "2026")
+                            .param("month", "13"))
                     .andExpect(status().isBadRequest());
         }
     }

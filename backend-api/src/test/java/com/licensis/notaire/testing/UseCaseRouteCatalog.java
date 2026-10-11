@@ -55,7 +55,7 @@ public final class UseCaseRouteCatalog {
                 new UseCaseRoute("CU39", "Create Template Budget", RequestMethod.POST, "/api/v1/budget-templates"),
                 new UseCaseRoute("CU40", "Modificar type de folio", RequestMethod.PUT, "/api/v1/folio-types/{id}"),
                 new UseCaseRoute("CU41", "Modificar Cliente", RequestMethod.PUT, "/api/v1/people/{id}"),
-                new UseCaseRoute("CU42", "Informar proximos vencimientos", RequestMethod.GET, "/api/v1/reports/documents-due/{idDocumentoPresentado}"),
+                new UseCaseRoute("CU42", "Informar proximos vencimientos", RequestMethod.GET, "/api/v1/reports/documents-due/{idSubmittedDocument}"),
                 new UseCaseRoute("CU43", "Reenter documentation", RequestMethod.PUT, "/api/v1/submitted-documents/{id}"),
                 new UseCaseRoute("CU44", "Reingresar testimony", RequestMethod.PUT, "/api/v1/testimonies/{id}"),
                 new UseCaseRoute("CU45", "Modificar budget", RequestMethod.PUT, "/api/v1/budgets/{id}"),

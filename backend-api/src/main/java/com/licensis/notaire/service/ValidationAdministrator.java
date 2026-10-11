@@ -21,12 +21,12 @@ public class ValidationAdministrator
         return instancia;
     }
 
-    public Boolean validarCampoVacio(String campoParaValidar)
+    public Boolean validateEmptyField(String campoParaValidar)
     {
         return campoParaValidar.isEmpty();
     }
 
-    public Boolean validarCampoSoloTexto(String campoParaValidar)
+    public Boolean validateTextOnlyField(String campoParaValidar)
     {
         Boolean resultado = Boolean.TRUE;
         char[] caractes = campoParaValidar.toCharArray();
@@ -40,7 +40,7 @@ public class ValidationAdministrator
         return resultado;
     }
 
-    public Boolean validarCampoSoloNumerosEnteros(String campoParaValidar)
+    public Boolean validateIntegerOnlyField(String campoParaValidar)
     {
         Boolean resultado = Boolean.TRUE;
         char[] caractes = campoParaValidar.toCharArray();
@@ -54,7 +54,7 @@ public class ValidationAdministrator
         return resultado;
     }
 
-    public Boolean validarCampoLetrasYNumeros(String campoParaValidar)
+    public Boolean validateLettersAndNumbersField(String campoParaValidar)
     {
         Boolean resultado = Boolean.TRUE;
         try
@@ -83,7 +83,7 @@ public class ValidationAdministrator
         return resultado;
     }
 
-    public Boolean validarCharacters(String pCampo)
+    public Boolean validateCharacters(String pCampo)
     {
         Boolean flag = false;
 
@@ -105,7 +105,7 @@ public class ValidationAdministrator
         return flag;
     }
 
-    public Boolean validarSoloLetrasNumeros(String pCampo)
+    public Boolean validateLettersAndNumbersOnly(String pCampo)
     {
         Boolean flag = true;
 
@@ -126,7 +126,7 @@ public class ValidationAdministrator
 
     }
 
-    public Boolean validarLetrasGuiones(String pCampo)
+    public Boolean validateLettersAndHyphens(String pCampo)
     {
         Boolean flag = true;
 
@@ -145,7 +145,7 @@ public class ValidationAdministrator
         return flag;
     }
 
-    public Boolean validarCantidadCharacters(int pCantCharter, String pCampo)
+    public Boolean validateCharacterCount(int pCantCharter, String pCampo)
     {
         Boolean flag = false;
         int count = 0;
@@ -163,7 +163,7 @@ public class ValidationAdministrator
         return flag;
     }
 
-    public Boolean validarNumber(int numberParaValidar)
+    public Boolean validateNumber(int numberParaValidar)
     {
         Boolean resultado = Boolean.TRUE;
 
@@ -175,7 +175,7 @@ public class ValidationAdministrator
         return resultado;
     }
 
-    public Boolean validarCampoEspacios(String pCampo)
+    public Boolean validateFieldSpaces(String pCampo)
     {
         Boolean flag = false;
 
@@ -192,7 +192,7 @@ public class ValidationAdministrator
         return flag;
     }
 
-    public Boolean validarNumberFloat(String number)
+    public Boolean validateFloatNumber(String number)
     {
         Boolean valid = true;
 
@@ -210,7 +210,7 @@ public class ValidationAdministrator
         }
     }
 
-    public Boolean validarDatePosteriorHoy(Date dateParaValidar)
+    public Boolean validateDateAfterToday(Date dateParaValidar)
     {
         boolean resultado = true;
 
@@ -222,7 +222,7 @@ public class ValidationAdministrator
         return resultado;
     }
 
-    public Boolean validarFechasPosterioresHoy(Date dateDesde, Date dateHasta)
+    public Boolean validateDatesAfterToday(Date dateDesde, Date dateHasta)
     {
         try
         {
@@ -241,7 +241,7 @@ public class ValidationAdministrator
         }
     }
 
-    public Boolean validarDateYearLimite(Date year)
+    public Boolean validateYearLimit(Date year)
     {
         boolean resultado = false;
 

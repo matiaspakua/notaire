@@ -81,20 +81,20 @@ class AdditionalControllersTest {
 
             mvc.perform(get("/api/v1/reports/budget/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reports/budget-properties/1")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reports/procedure-document-list?nombreTipoTramite=Compraventa"))
+            mvc.perform(get("/api/v1/reports/procedure-document-list?procedureTypeName=Compraventa"))
                     .andExpect(status().isOk());
             mvc.perform(get("/api/v1/reports/management-history/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reports/documents-due/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/reports/document-debt?numberManagement=10"))
                     .andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reports/index-book?anio=2024")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reports/monthly-sworn-statement?anio=2024&mes=5"))
+            mvc.perform(get("/api/v1/reports/index-book?year=2024")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/reports/monthly-sworn-statement?year=2024&month=5"))
                     .andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reports/monthly-sworn-statement?anio=2024&mes=13"))
+            mvc.perform(get("/api/v1/reports/monthly-sworn-statement?year=2024&month=13"))
                     .andExpect(status().isBadRequest());
-            mvc.perform(get("/api/v1/reports/tax-sworn-statement?anio=2024&mes=5"))
+            mvc.perform(get("/api/v1/reports/tax-sworn-statement?year=2024&month=5"))
                     .andExpect(status().isOk());
-            mvc.perform(get("/api/v1/reports/tax-sworn-statement?anio=2024&mes=0"))
+            mvc.perform(get("/api/v1/reports/tax-sworn-statement?year=2024&month=0"))
                     .andExpect(status().isBadRequest());
 
             // Now all error paths
@@ -110,16 +110,16 @@ class AdditionalControllersTest {
 
             mvc.perform(get("/api/v1/reports/budget/1")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reports/budget-properties/1")).andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reports/procedure-document-list?nombreTipoTramite=Compraventa"))
+            mvc.perform(get("/api/v1/reports/procedure-document-list?procedureTypeName=Compraventa"))
                     .andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reports/management-history/1")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reports/documents-due/1")).andExpect(status().isInternalServerError());
             mvc.perform(get("/api/v1/reports/document-debt?numberManagement=10"))
                     .andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reports/index-book?anio=2024")).andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reports/monthly-sworn-statement?anio=2024&mes=5"))
+            mvc.perform(get("/api/v1/reports/index-book?year=2024")).andExpect(status().isInternalServerError());
+            mvc.perform(get("/api/v1/reports/monthly-sworn-statement?year=2024&month=5"))
                     .andExpect(status().isInternalServerError());
-            mvc.perform(get("/api/v1/reports/tax-sworn-statement?anio=2024&mes=5"))
+            mvc.perform(get("/api/v1/reports/tax-sworn-statement?year=2024&month=5"))
                     .andExpect(status().isInternalServerError());
         }
     }

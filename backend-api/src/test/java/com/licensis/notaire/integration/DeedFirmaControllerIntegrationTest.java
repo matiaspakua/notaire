@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * (deferred to issue #838), so tests assign it directly through the repository.
  */
 @RequirementCoverage({"CU06"})
-@DisplayName("EscrituraController#firmar — CU06 integration tests")
+@DisplayName("DeedController#sign — CU06 integration tests")
 class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired

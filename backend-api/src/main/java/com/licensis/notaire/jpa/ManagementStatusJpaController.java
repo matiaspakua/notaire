@@ -69,7 +69,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
                 }
             }
 
-            if (this.verificarExistenciaManagementStatus(managementStatus.getName())) {
+            if (this.verifyManagementStatusExists(managementStatus.getName())) {
                 throw new PreexistingEntityException("La entidad ya existe");
             }
 
@@ -206,7 +206,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
      *         contrario.
      *
      */
-    public boolean verificarExistenciaManagementStatus(String nameStatus) {
+    public boolean verifyManagementStatusExists(String nameStatus) {
         boolean resultado = false;
 
         List<ManagementStatus> listaEstadosDeGestiones = this.findManagementStatusEntities();

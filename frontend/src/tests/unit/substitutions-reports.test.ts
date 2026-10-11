@@ -95,26 +95,26 @@ describe("Reporte URL construction", () => {
     expect(url).toBe("http://localhost:8080/api/v1/reports/management-history/100");
   });
 
-  it("DDJJ mensual URL includes anio and mes", () => {
-    const anio = 2026;
-    const mes = 4;
-    const url = `${BASE}/reports/monthly-sworn-statement?anio=${anio}&mes=${mes}`;
-    expect(url).toContain("anio=2026");
-    expect(url).toContain("mes=4");
+  it("monthly sworn statement URL includes year and month", () => {
+    const year = 2026;
+    const month = 4;
+    const url = `${BASE}/reports/monthly-sworn-statement?year=${year}&month=${month}`;
+    expect(url).toContain("year=2026");
+    expect(url).toContain("month=4");
   });
 
-  it("DDJJ rentas URL includes anio and mes", () => {
-    const anio = 2026;
-    const mes = 12;
-    const url = `${BASE}/reports/tax-sworn-statement?anio=${anio}&mes=${mes}`;
-    expect(url).toContain("anio=2026");
-    expect(url).toContain("mes=12");
+  it("tax sworn statement URL includes year and month", () => {
+    const year = 2026;
+    const month = 12;
+    const url = `${BASE}/reports/tax-sworn-statement?year=${year}&month=${month}`;
+    expect(url).toContain("year=2026");
+    expect(url).toContain("month=12");
   });
 
-  it("libro indice URL includes anio", () => {
-    const anio = 2025;
-    const url = `${BASE}/reports/index-book?anio=${anio}`;
-    expect(url).toBe("http://localhost:8080/api/v1/reports/index-book?anio=2025");
+  it("index book URL includes year", () => {
+    const year = 2025;
+    const url = `${BASE}/reports/index-book?year=${year}`;
+    expect(url).toBe("http://localhost:8080/api/v1/reports/index-book?year=2025");
   });
 
   it("deuda documentos URL includes the management number (numberManagement)", () => {

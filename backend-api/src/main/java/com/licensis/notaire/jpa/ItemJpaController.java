@@ -249,7 +249,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
         return this.getClass().getName();
     }
 
-    public Boolean eliminarItem(Item miItem)
+    public Boolean deleteItem(Item miItem)
     {
 
         Boolean eliminado = false;

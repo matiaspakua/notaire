@@ -44,13 +44,13 @@ public class JpaAdministrator {
     public static void setEmf(EntityManagerFactory factory) {
         emf = factory;
         if (instancia != null) {
-            cargarListaJpas();
+            loadJpaList();
         }
     }
 
     private JpaAdministrator() {
         if (emf != null) {
-            JpaAdministrator.cargarListaJpas();
+            JpaAdministrator.loadJpaList();
         }
     }
 
@@ -65,7 +65,7 @@ public class JpaAdministrator {
         return emf;
     }
 
-    public JpaPersistence obtenerJpa(String nameClase) throws NonexistentJpaException {
+    public JpaPersistence getJpa(String nameClase) throws NonexistentJpaException {
         for (Iterator<JpaPersistence> it = milistaJpas.iterator(); it.hasNext();) {
             JpaPersistence iPersistenciaJpa = it.next();
             if (iPersistenciaJpa.getNameJpa().contains(nameClase)) {
@@ -84,7 +84,7 @@ public class JpaAdministrator {
         JpaAdministrator.milistaJpas = milistaJpas;
     }
 
-    private static void cargarListaJpas() {
+    private static void loadJpaList() {
         JpaAdministrator.milistaJpas = new ArrayList<>();
         JpaAdministrator.milistaJpas.add(new ConceptJpaController(null, emf));
 

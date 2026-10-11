@@ -38,7 +38,8 @@ class EnglishSurfaceRatchetTest {
             "tipo-tramite", "tipo-folio", "tipo-de-documento", "tipo-identificacion",
             "identificaciones", "documento-presentado", "plantilla-tramite",
             "plantilla-presupuestos", "plantilla-costos-documento",
-            "movimiento-testimonio", "minutas-inscripcion", "protocolo-auxiliar");
+            "movimiento-testimonio", "minutas-inscripcion", "protocolo-auxiliar",
+            "caratula");
 
     private static final List<String> SPANISH_SCHEMA = List.of(
             "identificaciones", "nombre", "descripcion", "activo", "tipo",

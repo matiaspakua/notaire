@@ -31,7 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
   `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
   `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
-  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). `R45` reverses the
+  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
+  notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
+  `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
+  `{idBudget}` and `{idManagement}`. `R45` reverses the
   renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
 
 ### Changed

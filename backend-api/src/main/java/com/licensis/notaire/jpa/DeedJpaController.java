@@ -411,7 +411,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public Boolean modificarDeed(Deed miDeed) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyDeed(Deed miDeed) throws ClassModifiedException, ClassEliminatedException
     {
         EntityManager em = null;
         Boolean modificada = false;
@@ -466,7 +466,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
         return modificada;
     }
 
-    public Boolean modificarDeedSimple(Deed miDeed) throws ClassModifiedException, ClassEliminatedException
+    public Boolean modifyDeedSimple(Deed miDeed) throws ClassModifiedException, ClassEliminatedException
     {
         EntityManager em = null;
         Boolean modificada = false;

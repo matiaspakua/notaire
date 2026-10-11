@@ -243,7 +243,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** CU39 - Load budget items from the template of the procedure type */
-        post: operations["cargarItemsDesdeTemplate"];
+        post: operations["loadItemsFromTemplate"];
         delete?: never;
         options?: never;
         head?: never;
@@ -459,7 +459,7 @@ export interface paths {
          * Firmar deed
          * @description Transitions a deed 'Sin Firmar' with folio assigned to the status 'Firmada'
          */
-        post: operations["firmar"];
+        post: operations["sign"];
         delete?: never;
         options?: never;
         head?: never;
@@ -856,7 +856,7 @@ export interface paths {
             cookie?: never;
         };
         /** CU45/CU71 - Query discounts and surcharges of a budget */
-        get: operations["getDescuentosYRecargos"];
+        get: operations["getDiscountsAndSurcharges"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1301,15 +1301,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/notebooks/{id}/caratula": {
+    "/api/v1/notebooks/{id}/cover": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Generate the carátula PDF of a notebook */
-        get: operations["getCaratula"];
+        /** Generate the cover PDF of a notebook */
+        get: operations["getCover"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1757,7 +1757,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** CU82 - Generate the registration draft for a deed on a property */
-        post: operations["generate"];
+        post: operations["generate_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1790,7 +1790,7 @@ export interface paths {
         };
         get?: never;
         /** CU82 - Record a observation formulada by the Registro */
-        put: operations["observar"];
+        put: operations["observe"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1807,7 +1807,7 @@ export interface paths {
         };
         get?: never;
         /** CU82 - Record the registration definitiva of the minuta */
-        put: operations["inscribir"];
+        put: operations["recordRegistration"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1824,7 +1824,7 @@ export interface paths {
         };
         get?: never;
         /** CU82 - Record the presentación of the minuta ante the Registro */
-        put: operations["presentar"];
+        put: operations["submit"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1832,7 +1832,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reports/budget-properties/{idPresupuesto}": {
+    "/api/v1/reports/budget-properties/{idBudget}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1852,7 +1852,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reports/budget/{idPresupuesto}": {
+    "/api/v1/reports/budget/{idBudget}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1892,7 +1892,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reports/documents-due/{idDocumentoPresentado}": {
+    "/api/v1/reports/documents-due/{idSubmittedDocument}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1923,7 +1923,7 @@ export interface paths {
          * Generar libro de indice
          * @description Endpoint base for CU24: PDF provisorio with the period solicitado; the contenido of the libro of índice is pendiente
          */
-        get: operations["generarLibroIndice"];
+        get: operations["generateIndexBook"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1932,7 +1932,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reports/management-history/{idGestion}": {
+    "/api/v1/reports/management-history/{idManagement}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1963,7 +1963,7 @@ export interface paths {
          * Generar declaracion jurada mensual
          * @description Endpoint base for CU25: PDF provisorio with the period solicitado; the contenido of the DDJJ mensual is pendiente
          */
-        get: operations["generarDeclaracionJuradaMensual"];
+        get: operations["generateMonthlySwornStatement"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1972,7 +1972,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reports/payment-receipt/{idPago}": {
+    "/api/v1/reports/payment-receipt/{idPayment}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2012,7 +2012,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reports/registration-draft/{idMinutaInscripcion}": {
+    "/api/v1/reports/registration-draft/{idRegistrationDraft}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2043,7 +2043,7 @@ export interface paths {
          * Generar declaracion jurada de rentas
          * @description Endpoint base for CU50: PDF provisorio with the period solicitado; the contenido of the DDJJ of rentas is pendiente
          */
-        get: operations["generarDeclaracionJuradaRentas"];
+        get: operations["generateTaxSwornStatement"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2052,7 +2052,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/reports/testimonies/{idTestimonio}/copies": {
+    "/api/v1/reports/testimonies/{idTestimony}/copies": {
         parameters: {
             query?: never;
             header?: never;
@@ -2268,7 +2268,7 @@ export interface paths {
          * Generate testimony of a deed firmada
          * @description Generates a testimony with number assigned by the sistema a partir of a deed 'Firmada'
          */
-        post: operations["generar"];
+        post: operations["generate"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2310,7 +2310,7 @@ export interface paths {
          * Check testimony
          * @description Records the verificación of a testimony, marcando if was observado and by qué
          */
-        post: operations["verificar"];
+        post: operations["verify"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3655,11 +3655,6 @@ export interface components {
             /** Format: int32 */
             idFolio?: number;
         };
-        InscribirRequest: {
-            /** Format: date-time */
-            dateReception?: string;
-            finalRegistrationNumber?: string;
-        };
         ItemRequest: {
             /** Format: int32 */
             budgetId?: number;
@@ -3749,7 +3744,7 @@ export interface components {
             /** Format: int32 */
             year?: number;
         };
-        ObservarRequest: {
+        ObserveRequest: {
             /** Format: date-time */
             dateCorrection?: string;
             registryNotes?: string;
@@ -3954,11 +3949,6 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
-        PresentarRequest: {
-            /** Format: date-time */
-            dateSubmission?: string;
-            registryEntryNumber?: string;
-        };
         ProcedureRequest: {
             /** Format: int32 */
             idBudget?: number;
@@ -4050,6 +4040,11 @@ export interface components {
             version?: number;
             volumeFolioLandRecord?: string;
         };
+        RegisterRequest: {
+            /** Format: date-time */
+            dateReception?: string;
+            finalRegistrationNumber?: string;
+        };
         RoleInfo: {
             /** Format: int32 */
             idRole?: number;
@@ -4073,6 +4068,11 @@ export interface components {
             empty?: boolean;
             sorted?: boolean;
             unsorted?: boolean;
+        };
+        SubmitRequest: {
+            /** Format: date-time */
+            dateSubmission?: string;
+            registryEntryNumber?: string;
         };
         SubmittedDocumentCreateRequest: {
             /** @description Fecha de ingreso: un día real con formato yyyy-MM-dd (p. ej. 2026-09-05); otro valor responde 400 */
@@ -4830,11 +4830,11 @@ export interface operations {
             };
         };
     };
-    cargarItemsDesdeTemplate: {
+    loadItemsFromTemplate: {
         parameters: {
             query: {
                 /** @description ID of the procedure type */
-                tipoTramiteId: number;
+                procedureTypeId: number;
             };
             header?: never;
             path: {
@@ -5493,7 +5493,7 @@ export interface operations {
             };
         };
     };
-    firmar: {
+    sign: {
         parameters: {
             query?: never;
             header?: never;
@@ -6686,7 +6686,7 @@ export interface operations {
             };
         };
     };
-    getDescuentosYRecargos: {
+    getDiscountsAndSurcharges: {
         parameters: {
             query?: never;
             header?: never;
@@ -7820,7 +7820,7 @@ export interface operations {
             };
         };
     };
-    getCaratula: {
+    getCover: {
         parameters: {
             query?: never;
             header?: never;
@@ -9208,7 +9208,7 @@ export interface operations {
             };
         };
     };
-    generate: {
+    generate_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -9290,7 +9290,7 @@ export interface operations {
             };
         };
     };
-    observar: {
+    observe: {
         parameters: {
             query?: never;
             header?: never;
@@ -9301,7 +9301,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ObservarRequest"];
+                "application/json": components["schemas"]["ObserveRequest"];
             };
         };
         responses: {
@@ -9334,7 +9334,7 @@ export interface operations {
             };
         };
     };
-    inscribir: {
+    recordRegistration: {
         parameters: {
             query?: never;
             header?: never;
@@ -9345,7 +9345,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["InscribirRequest"];
+                "application/json": components["schemas"]["RegisterRequest"];
             };
         };
         responses: {
@@ -9378,7 +9378,7 @@ export interface operations {
             };
         };
     };
-    presentar: {
+    submit: {
         parameters: {
             query?: never;
             header?: never;
@@ -9389,7 +9389,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PresentarRequest"];
+                "application/json": components["schemas"]["SubmitRequest"];
             };
         };
         responses: {
@@ -9428,7 +9428,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description ID of the budget */
-                idPresupuesto: number;
+                idBudget: number;
             };
             cookie?: never;
         };
@@ -9476,7 +9476,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description ID of the budget */
-                idPresupuesto: number;
+                idBudget: number;
             };
             cookie?: never;
         };
@@ -9572,7 +9572,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description ID of the submitted document */
-                idDocumentoPresentado: number;
+                idSubmittedDocument: number;
             };
             cookie?: never;
         };
@@ -9614,11 +9614,11 @@ export interface operations {
             };
         };
     };
-    generarLibroIndice: {
+    generateIndexBook: {
         parameters: {
             query: {
                 /** @description Year of the index book */
-                anio: number;
+                year: number;
             };
             header?: never;
             path?: never;
@@ -9643,7 +9643,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description ID of the management */
-                idGestion: number;
+                idManagement: number;
             };
             cookie?: never;
         };
@@ -9685,13 +9685,13 @@ export interface operations {
             };
         };
     };
-    generarDeclaracionJuradaMensual: {
+    generateMonthlySwornStatement: {
         parameters: {
             query: {
                 /** @description Year of the period */
-                anio: number;
+                year: number;
                 /** @description Month of the period */
-                mes: number;
+                month: number;
             };
             header?: never;
             path?: never;
@@ -9716,7 +9716,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description ID of the payment */
-                idPago: number;
+                idPayment: number;
             };
             cookie?: never;
         };
@@ -9746,7 +9746,7 @@ export interface operations {
         parameters: {
             query: {
                 /** @description Name of the procedure type */
-                nombreTipoTramite: string;
+                procedureTypeName: string;
             };
             header?: never;
             path?: never;
@@ -9796,7 +9796,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description ID of the registration draft */
-                idMinutaInscripcion: number;
+                idRegistrationDraft: number;
             };
             cookie?: never;
         };
@@ -9822,13 +9822,13 @@ export interface operations {
             };
         };
     };
-    generarDeclaracionJuradaRentas: {
+    generateTaxSwornStatement: {
         parameters: {
             query: {
                 /** @description Year of the period */
-                anio: number;
+                year: number;
                 /** @description Month of the period */
-                mes: number;
+                month: number;
             };
             header?: never;
             path?: never;
@@ -9853,7 +9853,7 @@ export interface operations {
             header?: never;
             path: {
                 /** @description ID of the testimony */
-                idTestimonio: number;
+                idTestimony: number;
             };
             cookie?: never;
         };
@@ -10531,7 +10531,7 @@ export interface operations {
             };
         };
     };
-    generar: {
+    generate: {
         parameters: {
             query?: never;
             header?: never;
@@ -10686,7 +10686,7 @@ export interface operations {
             };
         };
     };
-    verificar: {
+    verify: {
         parameters: {
             query?: never;
             header?: never;

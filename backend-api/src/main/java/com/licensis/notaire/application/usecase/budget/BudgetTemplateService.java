@@ -34,7 +34,7 @@ public class BudgetTemplateService {
         this.itemRepository = itemRepository;
     }
 
-    public List<Item> cargarItemsDesdeTemplate(Integer idBudget, Integer typeProcedureId) {
+    public List<Item> loadItemsFromTemplate(Integer idBudget, Integer typeProcedureId) {
         Budget budget = budgetRepository.findById(idBudget)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Budget not found with ID: " + idBudget));
@@ -48,13 +48,13 @@ public class BudgetTemplateService {
         }
 
         List<Item> items = plantillas.stream()
-                .map(template -> crearItemDesdeConcept(budget, template.getConcept()))
+                .map(template -> createItemFromConcept(budget, template.getConcept()))
                 .toList();
 
         return itemRepository.createAll(items);
     }
 
-    private Item crearItemDesdeConcept(Budget budget, Concept concept) {
+    private Item createItemFromConcept(Budget budget, Concept concept) {
         Item item = new Item();
         item.setName(concept.getName());
         item.setValue(concept.getValue());

@@ -38,7 +38,7 @@ describe("report hooks call the documented endpoints", () => {
   it("procedure documents report encodes the procedure type name", async () => {
     await useDocumentListReport().download("Compra/Venta & más");
     expect(apiGetBytes).toHaveBeenCalledWith(
-      "/reports/procedure-document-list?nombreTipoTramite=Compra%2FVenta%20%26%20m%C3%A1s"
+      "/reports/procedure-document-list?procedureTypeName=Compra%2FVenta%20%26%20m%C3%A1s"
     );
   });
 
