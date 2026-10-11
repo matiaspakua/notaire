@@ -91,7 +91,7 @@ public class Budget implements Serializable, Persistable<Integer> {
     @ManyToOne(fetch = FetchType.EAGER)
     private Person fkIdPerson;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdBudget", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdBudget", fetch = FetchType.LAZY)
     private java.util.Set<Payment> paymentList;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdBudget", fetch = FetchType.LAZY)
