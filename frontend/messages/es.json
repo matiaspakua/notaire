@@ -242,6 +242,7 @@
     "updated": "Gestión actualizada",
     "deleted": "Gestión eliminada",
     "suplenciaRedirected": "La gestión fue redirigida al escribano suplente vigente",
+    "estadoViaTransition": "El estado se cambia desde «Cambiar estado» (flujo de trabajo).",
     "errorSave": "Error al guardar la gestión",
     "errorDelete": "Error al eliminar la gestión",
     "noData": "No hay gestiones registradas",

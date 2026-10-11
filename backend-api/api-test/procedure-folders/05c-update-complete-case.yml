@@ -1,0 +1,31 @@
+info:
+  name: Update complete case (full edit)
+  type: http
+  seq: 8
+  description: |-
+      Traceability: CU53, issue #1360 - the UI edit dialog saves every field through PUT /managements/{id}/complete-case.
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/managements/{{pf_mgmt_id}}/complete-case"
+  body:
+    type: json
+    data: |-
+        {
+          "number": {{pf_mgmt_number}},
+          "heading": "Bruno folder management edited",
+          "notes": "edited by Bruno #1360",
+          "budgetId": {{pf_budget_id}},
+          "notaryId": {{pf_notary_id}},
+          "statusManagementId": 1,
+          "typeProcedureId": 1
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200", function () { expect(res.getStatus()).to.equal(200); });

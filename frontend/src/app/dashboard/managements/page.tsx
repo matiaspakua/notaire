@@ -17,7 +17,8 @@ import {
   useManagementsPage,
   useManagementsByClient,
   useCreateCompleteManagement,
-  useUpdateManagement,
+  useManagementCompleteCase,
+  useUpdateCompleteManagement,
   useDeleteManagement,
   useOutstandingBalance,
   useArchiveManagement,
@@ -67,7 +68,7 @@ function ManagementsList() {
   const { data: procedureTypes = [] } = useProcedureTypes();
   const { data: properties = [] } = useProperties();
   const createCompleteMutation = useCreateCompleteManagement();
-  const updateMutation = useUpdateManagement();
+  const updateMutation = useUpdateCompleteManagement();
   const deleteMutation = useDeleteManagement();
   const archiveMutation = useArchiveManagement();
   const transitionMutation = useTransitionManagement();
@@ -92,6 +93,26 @@ function ManagementsList() {
   const [statusId, setStatusId] = useState("");
   const [procedureTypeId, setProcedureTypeId] = useState("");
   const [propertyId, setPropertyId] = useState("");
+  // Full edit (#1360): prefill once per opened management from GET /complete-case.
+  const { data: editCase, isLoading: isLoadingEditCase } = useManagementCompleteCase(
+    modalOpen ? editing?.idManagement : undefined,
+  );
+  const [prefilledFor, setPrefilledFor] = useState<number | null>(null);
+  // Adjust state while rendering (not in an effect) once the case values arrive.
+  if (
+    editCase
+    && editing?.idManagement != null
+    && prefilledFor !== editing.idManagement
+    && editCase.idManagement === editing.idManagement
+  ) {
+    setPrefilledFor(editing.idManagement);
+    setNumber(editCase.number?.toString() ?? "");
+    setBudgetId(editCase.budgetId != null ? String(editCase.budgetId) : "");
+    setNotaryId(editCase.notaryId != null ? String(editCase.notaryId) : "");
+    setStatusId(editCase.statusManagementId != null ? String(editCase.statusManagementId) : "");
+    setProcedureTypeId(editCase.typeProcedureId != null ? String(editCase.typeProcedureId) : "");
+    setPropertyId(editCase.propertyId != null ? String(editCase.propertyId) : "");
+  }
 
   const { data: managementsByClient = [], isLoading: isLoadingByClient } = useManagementsByClient(
     clientFilter ? Number(clientFilter) : 0
@@ -125,18 +146,37 @@ function ManagementsList() {
 
   function openEdit(g: DeedManagement) {
     setEditing(g);
+    setPrefilledFor(null);
     setNumber(g.number?.toString() ?? "");
+    setBudgetId("");
+    setNotaryId("");
+    setStatusId("");
+    setProcedureTypeId("");
+    setPropertyId("");
     setModalOpen(true);
   }
 
   async function handleSave() {
     try {
       if (editing?.idManagement) {
-        await updateMutation.mutateAsync({
+        // Heading and notes are not edited here; send them back so the PUT keeps them.
+        const sentNotes = editCase?.notes ?? undefined;
+        const updated = await updateMutation.mutateAsync({
           id: editing.idManagement,
-          data: { number: number ? Number(number) : undefined },
+          data: {
+            number: Number(number),
+            heading: editCase?.heading ?? undefined,
+            notes: sentNotes,
+            budgetId: Number(budgetId),
+            notaryId: Number(notaryId),
+            statusManagementId: Number(statusId),
+            procedureTypeId: Number(procedureTypeId),
+            propertyId: propertyId ? Number(propertyId) : undefined,
+          },
         });
         toast.success(t("updated"));
+        // Only a note the backend added on this save means a new redirect.
+        if ((updated?.notes ?? undefined) !== sentNotes) notifySubstitutionRedirect(updated?.notes);
       } else {
         const created = await createCompleteMutation.mutateAsync({
           number: Number(number),
@@ -287,7 +327,13 @@ function ManagementsList() {
       header: "",
       render: (g) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(g)} aria-label={tc("edit")}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => openEdit(g)}
+            aria-label={tc("edit")}
+            data-testid={`btn-edit-management-${g.idManagement}`}
+          >
             <Pencil className="h-4 w-4" />
           </Button>
           {g.currentStatus !== ESTADO_ARCHIVADA && (
@@ -413,45 +459,46 @@ function ManagementsList() {
                   data-testid="input-management-number"
                 />
               </FormField>
-              {!editing && (
-                <>
-                  <FormField label={t("fields.presupuesto")} required>
-                    {/* Server search instead of the first 1000 budgets (#1340). */}
-                    <BudgetPicker
-                      value={budgetId ? Number(budgetId) : undefined}
-                      onChange={(budget) => setBudgetId(budget?.idBudget != null ? String(budget.idBudget) : "")}
-                      aria-label={t("fields.presupuesto")}
-                      data-testid="select-budget-management"
-                    />
-                  </FormField>
-                  <FormField label={t("fields.escribano")} required>
-                    <PersonPicker
-                      value={notaryId ? Number(notaryId) : undefined}
-                      onChange={(person) => setNotaryId(person?.personId != null ? String(person.personId) : "")}
-                      aria-label={t("fields.escribano")}
-                      data-testid="select-notary-management"
-                    />
-                  </FormField>
-                  <FormField label={t("fields.estado")} required>
-                    <Select value={statusId} onValueChange={setStatusId}>
-                      <SelectTrigger data-testid="select-status-management"><SelectValue placeholder={t("selectEstado")} /></SelectTrigger>
-                      <SelectContent>{statuses.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
-                    </Select>
-                  </FormField>
-                  <FormField label={t("fields.tipo")} required>
-                    <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
-                      <SelectTrigger data-testid="select-procedure-type-management"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
-                      <SelectContent>{procedureTypes.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
-                    </Select>
-                  </FormField>
-                  <FormField label={t("fields.inmueble")}>
-                    <Select value={propertyId} onValueChange={setPropertyId}>
-                      <SelectTrigger data-testid="select-property-management"><SelectValue placeholder={t("selectInmueble")} /></SelectTrigger>
-                      <SelectContent>{properties.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? t("inmuebleFallback", { id: i.idProperty ?? "—" })}</SelectItem>)}</SelectContent>
-                    </Select>
-                  </FormField>
-                </>
-              )}
+              <FormField label={t("fields.presupuesto")} required>
+                {/* Server search instead of the first 1000 budgets (#1340). */}
+                <BudgetPicker
+                  value={budgetId ? Number(budgetId) : undefined}
+                  onChange={(budget) => setBudgetId(budget?.idBudget != null ? String(budget.idBudget) : "")}
+                  aria-label={t("fields.presupuesto")}
+                  data-testid="select-budget-management"
+                />
+              </FormField>
+              <FormField label={t("fields.escribano")} required>
+                <PersonPicker
+                  value={notaryId ? Number(notaryId) : undefined}
+                  onChange={(person) => setNotaryId(person?.personId != null ? String(person.personId) : "")}
+                  aria-label={t("fields.escribano")}
+                  data-testid="select-notary-management"
+                />
+              </FormField>
+              <FormField
+                label={t("fields.estado")}
+                required
+                helperText={editing ? t("estadoViaTransition") : undefined}
+              >
+                {/* CU83: an edit keeps the status; it changes through the workflow transition. */}
+                <Select value={statusId} onValueChange={setStatusId} disabled={!!editing}>
+                  <SelectTrigger data-testid="select-status-management"><SelectValue placeholder={t("selectEstado")} /></SelectTrigger>
+                  <SelectContent>{statuses.map((e) => <SelectItem key={e.idManagementStatus} value={String(e.idManagementStatus)}>{e.name}</SelectItem>)}</SelectContent>
+                </Select>
+              </FormField>
+              <FormField label={t("fields.tipo")} required>
+                <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
+                  <SelectTrigger data-testid="select-procedure-type-management"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
+                  <SelectContent>{procedureTypes.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
+                </Select>
+              </FormField>
+              <FormField label={t("fields.inmueble")}>
+                <Select value={propertyId} onValueChange={setPropertyId}>
+                  <SelectTrigger data-testid="select-property-management"><SelectValue placeholder={t("selectInmueble")} /></SelectTrigger>
+                  <SelectContent>{properties.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? t("inmuebleFallback", { id: i.idProperty ?? "—" })}</SelectItem>)}</SelectContent>
+                </Select>
+              </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
@@ -459,7 +506,11 @@ function ManagementsList() {
               </Button>
               <Button
                 onClick={handleSave}
-                disabled={createCompleteMutation.isPending || updateMutation.isPending}
+                disabled={
+                  createCompleteMutation.isPending
+                  || updateMutation.isPending
+                  || (!!editing && (isLoadingEditCase || prefilledFor !== editing.idManagement))
+                }
                 data-testid="btn-save-management"
               >
                 {editing ? tc("update") : tc("create")}
