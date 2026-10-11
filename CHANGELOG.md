@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Testimony-movements screen comment** (#1490, CU75): the dialog comment
+  names the testimony-movements screen. The official title
+  `CU08 – Movimientos de testimonio` stays. The Spanish catalog value
+  `Movimientos de testimonio` stays.
 - **Auxiliary deed body** (#1490, CU75): the auxiliary-protocol edge path
   fills `Deed body`. The golden path still fills `E2E test deed body`.
   The Spanish catalog helper `Contenido de la escritura` stays.
