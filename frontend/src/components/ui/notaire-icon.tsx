@@ -19,7 +19,9 @@ export function NotaireIcon({ src, alt, size = 24, className }: NotaireIconProps
       width={size}
       height={size}
       unoptimized
-      className={cn("object-contain", className)}
+      // shrink-0 + max-w-none: preflight's img max-width:100% let a flex button in a
+      // narrow column shrink to its padding and draw the icon 0px wide (#1525).
+      className={cn("shrink-0 max-w-none object-contain", className)}
     />
   );
 }
