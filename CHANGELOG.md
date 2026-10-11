@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English named-query and history specs** (#1490, CU75): the history-order
+  scenario says History, not Bitácora. The named-query spec lists the
+  forbidden Spanish prefixes `Escritura.`, `Usuario.`, `Presupuesto.`, and
+  `Persona.`, and the tail `Folio.findByNumero`. English prefixes `Deed` and
+  `Person` stay allowed.
 - **English workflow test fixtures** (#1490, CU83): workflow tests use
   English identifiers (`nodeIntermediate`, `statusInProgress`, `status1`)
   and synthetic names (`Start`, `In progress`, `Finished`, `Start → Review`,
