@@ -29,6 +29,7 @@
 
 | Document | Updated | Commit |
 |----------|---------|--------|
+| `infra/.env.example` | yes | fix commit |
 | `CHANGELOG.md` | n/a | n/a |
 
 ## Gate log
