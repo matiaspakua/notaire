@@ -19,7 +19,7 @@ The English identifier rename (#1495) also replaced entity words inside Spanish 
 - `frontend/messages/es.json`: 27 values restored from `d4bd1693` (personas, gestiones.fields, inmuebles, protocolo.cuadernos, administracion.usuarios/conceptos/plantillas/roles, suplencias). Sentence-case changes from #1495 that stay Spanish ("Movimientos de testimonio", "Método de pago") are kept. `en.json` untouched.
 - Vitest `es-catalog-spanish.test.ts`: fails when an es.json value contains an English entity name from the rename map ("Roles" excluded: it is also Spanish).
 - Playwright `TS-0023`: the users table header is "Rol" again (the rename had changed the assertion to "Role").
-- Playwright specs (20 files): Spanish locator text restored from the pre-#1495 specs where the UI renders Spanish; English kept where the test runs in EN or matches the English API (`search?number=`, the `cadastral` message).
+- Playwright specs (21 files): Spanish locator text restored from the pre-#1495 specs where the UI renders Spanish; English kept where the test runs in EN or matches the English API (`search?number=`, the `cadastral` message).
 - `useCreateCompleteManagement` and the E2E helper `createCompleteCaseManagement` map `procedureTypeId` to `typeProcedureId` (shared `toCompleteCaseRequest`); Vitest `useManagements.create-wire.test.tsx`.
 - `frontend/src/types/api.generated.ts` regenerated from the merged `openapi.yaml` (budget status description).
 - Bruno: `workflow-nodes/10` expects the English validation message the backend has returned since #1495 (the other four, `procedures/04a`, `procedure-types/04a`, `testimonies/04a` and `testimonies/04c`, were already aligned on main by #1504).
@@ -49,7 +49,7 @@ The English identifier rename (#1495) also replaced entity words inside Spanish 
 | Module | Touched | What changes |
 |--------|---------|--------------|
 | `frontend` | yes | es.json, guard test, create mapper, generated types |
-| `testing/e2e` | yes | 20 specs, seed helper |
+| `testing/e2e` | yes | 21 specs, seed helper |
 | `backend-api` | no | — |
 
 ### Surface area
