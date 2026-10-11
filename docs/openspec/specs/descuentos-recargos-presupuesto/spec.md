@@ -63,7 +63,8 @@ The system SHALL calculate a budget total by adding items of type
 
 ### Requirement: Read a budget's discounts and surcharges
 The system SHALL allow reading, for a given budget, the list of its
-`DESCUENTO` and `RECARGO` items together with each `reason`.
+`DESCUENTO` and `RECARGO` items together with each `reason`. The read is
+`GET /api/v1/items/budget/{idBudget}/discounts-surcharges`.
 
 #### Scenario: Read discounts and surcharges of a budget that has both
 - **WHEN** the discount and surcharge report of a budget that has at

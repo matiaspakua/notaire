@@ -36,6 +36,8 @@ so the availability answer is not only in a pull request.
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in
 `presupuesto-catalogo-items`.
+[CU45 still names `GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos`] → The live call is in
+`descuentos-recargos-presupuesto`.
 [Dictionary stays stale] → #1222, recorded as not a missing sequence.
 
 ## Testing Strategy

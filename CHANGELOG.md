@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Discounts and surcharges path** (#1490, CU75): the living
+  `descuentos-recargos-presupuesto` spec names
+  `GET /api/v1/items/budget/{idBudget}/discounts-surcharges`. The
+  engineering-sequences design names the path CU45 still writes,
+  `GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos`.
+  The archived design keeps that path. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Catalog items path** (#1490, CU75): the living
   `presupuesto-catalogo-items` spec names
   `POST /api/v1/budgets/{id}/items-from-catalog`. The
