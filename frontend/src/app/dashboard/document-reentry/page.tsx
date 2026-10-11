@@ -15,16 +15,16 @@ import { useReenterDocumentation, useDocumentReentry } from "@/hooks/useDocument
 import { extractApiError } from "@/lib/utils";
 import type { RequiredDocument, DeedManagement, ProcedureRequiredDocumentation } from "@/types";
 
-export default function ReingresoDocumentacionPage() {
+export default function DocumentReentryPage() {
   // useUrlPagination reads useSearchParams, which needs a Suspense boundary.
   return (
     <Suspense>
-      <ReingresoDocumentacionList />
+      <DocumentReentryList />
     </Suspense>
   );
 }
 
-function ReingresoDocumentacionList() {
+function DocumentReentryList() {
   const t = useTranslations("reingresoDocumentacion");
   const tc = useTranslations("common");
 
@@ -36,16 +36,16 @@ function ReingresoDocumentacionList() {
   useClampPage(paging, managementsPage?.totalPages);
 
   const [selectedManagementId, setSelectedManagementId] = useState<number | null>(null);
-  const { data: detalle, isLoading: isLoadingDetalle } = useDocumentReentry(selectedManagementId ?? undefined);
+  const { data: detail, isLoading: isLoadingDetail } = useDocumentReentry(selectedManagementId ?? undefined);
 
-  const reingresarMutation = useReenterDocumentation();
+  const reenterMutation = useReenterDocumentation();
 
-  async function handleReingresar(idProcedure: number, document: RequiredDocument) {
+  async function handleReenter(idProcedure: number, document: RequiredDocument) {
     if (!selectedManagementId) return;
     try {
-      await reingresarMutation.mutateAsync({
+      await reenterMutation.mutateAsync({
         managementId: selectedManagementId,
-        reingreso: { idProcedure: idProcedure, idDocumentType: document.idDocumentType },
+        reentry: { idProcedure: idProcedure, idDocumentType: document.idDocumentType },
       });
       toast.success(t("documentoReingresado"));
     } catch (err) {
@@ -100,8 +100,8 @@ function ReingresoDocumentacionList() {
             <Button
               size="sm"
               variant="secondary"
-              onClick={() => handleReingresar(idProcedure, d)}
-              disabled={reingresarMutation.isPending}
+              onClick={() => handleReenter(idProcedure, d)}
+              disabled={reenterMutation.isPending}
               data-testid={`btn-reenter-${idProcedure}-${d.idDocumentType}`}
             >
               <RotateCcw className="h-4 w-4 mr-1" />
@@ -158,14 +158,14 @@ function ReingresoDocumentacionList() {
           <DialogHeader>
             <DialogTitle>{t("detalleTitle")}</DialogTitle>
           </DialogHeader>
-          {isLoadingDetalle ? (
+          {isLoadingDetail ? (
             <p className="text-sm text-muted-foreground">{tc("loading")}</p>
-          ) : !detalle || detalle.procedures.length === 0 ? (
+          ) : !detail || detail.procedures.length === 0 ? (
             <p className="text-sm text-muted-foreground" data-testid="empty-procedures">
               {t("noTramites")}
             </p>
           ) : (
-            detalle.procedures.map(renderProcedure)
+            detail.procedures.map(renderProcedure)
           )}
         </DialogContent>
       </Dialog>

@@ -26,7 +26,7 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
-import ReingresoDocumentacionPage from "@/app/dashboard/document-reentry/page";
+import DocumentReentryPage from "@/app/dashboard/document-reentry/page";
 import DocumentosEntidadesExternasPage from "@/app/dashboard/external-entity-documents/page";
 import { ManagementPicker } from "@/components/shared/ManagementPicker";
 import type { DeedManagement } from "@/types";
@@ -65,7 +65,7 @@ const urls = () => mockFetch.mock.calls.map((c) => String(c[0]));
 const PAGE = { content: [NEWEST], number: 0, size: 20, totalElements: 1312, totalPages: 66 };
 
 describe.each([
-  ["reingreso-documentacion", ReingresoDocumentacionPage],
+  ["document-reentry", DocumentReentryPage],
   ["documentos-entidades-externas", DocumentosEntidadesExternasPage],
 ])("%s list (#1340)", (path, Page) => {
   beforeEach(() => {

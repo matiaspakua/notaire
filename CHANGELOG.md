@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English copy dates and testimony-movement handlers** (#1490, CU75): the copy
+  form uses `datePrinting` and `dateWithdrawal`. Testimony movement handlers
+  use enter, register, withdraw, and re-enter. Document re-entry posts
+  `reentry` and caches under `documentReentry`. Message catalog keys stay.
 - **English document, testimony, and folder-hold locals** (#1490, CU75): the
   submitted-document form uses `typeId`, `date`, and `delivered`. Testimony
   verification passes `flagged`. Re-entry passes `observedByRegistry`. The

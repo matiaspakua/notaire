@@ -22,12 +22,12 @@ import type { Copy } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { formatCalendarDate, toDateInputValue, todayInputValue } from "@/lib/dates";
 
-export default function CopiasPage() {
+export default function CopiesPage() {
   const t = useTranslations("copias");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: copias = [], isLoading } = useCopies();
+  const { data: copies = [], isLoading } = useCopies();
   const createMutation = useCreateCopy();
   const updateMutation = useUpdateCopy();
   const deleteMutation = useDeleteCopy();
@@ -37,14 +37,14 @@ export default function CopiasPage() {
   const [editing, setEditing] = useState<Copy | null>(null);
   const [form, setForm] = useState({
     number: "",
-    fechaImpresion: "",
-    fechaRetiro: "",
+    datePrinting: "",
+    dateWithdrawal: "",
     notes: "",
   });
 
   function openCreate() {
     setEditing(null);
-    setForm({ number: "", fechaImpresion: todayInputValue(), fechaRetiro: "", notes: "" });
+    setForm({ number: "", datePrinting: todayInputValue(), dateWithdrawal: "", notes: "" });
     setModalOpen(true);
   }
 
@@ -52,21 +52,21 @@ export default function CopiasPage() {
     setEditing(c);
     setForm({
       number: c.number?.toString() ?? "",
-      fechaImpresion: toDateInputValue(c.datePrinting),
-      fechaRetiro: toDateInputValue(c.dateWithdrawal),
+      datePrinting: toDateInputValue(c.datePrinting),
+      dateWithdrawal: toDateInputValue(c.dateWithdrawal),
       notes: c.notes ?? "",
     });
     setModalOpen(true);
   }
 
   // The copy number and print date are required by the API on create and update (#655).
-  const canSave = form.number.trim() !== "" && form.fechaImpresion !== "";
+  const canSave = form.number.trim() !== "" && form.datePrinting !== "";
 
   async function handleSave() {
     const data: Partial<Copy> = {
       number: form.number ? Number(form.number) : undefined,
-      datePrinting: form.fechaImpresion || undefined,
-      dateWithdrawal: form.fechaRetiro || undefined,
+      datePrinting: form.datePrinting || undefined,
+      dateWithdrawal: form.dateWithdrawal || undefined,
       notes: form.notes || undefined,
     };
     try {
@@ -108,12 +108,12 @@ export default function CopiasPage() {
       render: (c) => <span className="font-medium">{c.number ?? "—"}</span>,
     },
     {
-      key: "fechaImpresion",
+      key: "datePrinting",
       header: t("columns.fechaImpresion"),
       render: (c) => formatCalendarDate(c.datePrinting),
     },
     {
-      key: "fechaRetiro",
+      key: "dateWithdrawal",
       header: t("columns.fechaRetiro"),
       render: (c) => formatCalendarDate(c.dateWithdrawal),
     },
@@ -159,7 +159,7 @@ export default function CopiasPage() {
       />
 
       <DataTable
-        data={copias}
+        data={copies}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(c) => c.idCopy!}
@@ -181,15 +181,15 @@ export default function CopiasPage() {
                 <FormField label={t("fields.fechaImpresion")} required>
                   <Input
                     type="date"
-                    value={form.fechaImpresion}
-                    onChange={(e) => setForm({ ...form, fechaImpresion: e.target.value })}
+                    value={form.datePrinting}
+                    onChange={(e) => setForm({ ...form, datePrinting: e.target.value })}
                   />
                 </FormField>
                 <FormField label={t("fields.fechaRetiro")}>
                   <Input
                     type="date"
-                    value={form.fechaRetiro}
-                    onChange={(e) => setForm({ ...form, fechaRetiro: e.target.value })}
+                    value={form.dateWithdrawal}
+                    onChange={(e) => setForm({ ...form, dateWithdrawal: e.target.value })}
                   />
                 </FormField>
               </div>

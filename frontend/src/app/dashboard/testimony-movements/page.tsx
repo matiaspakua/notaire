@@ -39,57 +39,57 @@ export default function MovementsTestimonyPage() {
   const tc = useTranslations("common");
 
   const { data: testimonies = [], isLoading } = useTestimonies();
-  const verificados = testimonies.filter((te) => te.verified);
+  const verified = testimonies.filter((te) => te.verified);
 
-  const ingresarMutation = useEnterRegistration();
-  const registrarMutation = useRegisterInscription();
-  const retirarMutation = useWithdraw();
-  const reingresarMutation = useReenter();
+  const enterMutation = useEnterRegistration();
+  const registerMutation = useRegisterInscription();
+  const withdrawMutation = useWithdraw();
+  const reenterMutation = useReenter();
 
-  const [retirarId, setRetirarId] = useState<number | null>(null);
+  const [withdrawId, setWithdrawId] = useState<number | null>(null);
   const [numberCard, setNumberCard] = useState("");
-  const [reingresarId, setReingresarId] = useState<number | null>(null);
+  const [reenterId, setReenterId] = useState<number | null>(null);
 
-  async function handleIngresar(idTestimony: number) {
+  async function handleEnter(idTestimony: number) {
     try {
-      await ingresarMutation.mutateAsync(idTestimony);
+      await enterMutation.mutateAsync(idTestimony);
       toast.success(t("ingresado"));
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorIngresar"));
     }
   }
 
-  async function handleRegistrar(idTestimony: number) {
+  async function handleRegister(idTestimony: number) {
     try {
-      await registrarMutation.mutateAsync(idTestimony);
+      await registerMutation.mutateAsync(idTestimony);
       toast.success(t("inscripto"));
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorRegistrar"));
     }
   }
 
-  function openRetirar(idTestimony: number) {
-    setRetirarId(idTestimony);
+  function openWithdraw(idTestimony: number) {
+    setWithdrawId(idTestimony);
     setNumberCard("");
   }
 
-  async function handleRetirar() {
-    if (!retirarId) return;
+  async function handleWithdraw() {
+    if (!withdrawId) return;
     try {
-      await retirarMutation.mutateAsync({ idTestimony: retirarId, numberCard: Number(numberCard) });
+      await withdrawMutation.mutateAsync({ idTestimony: withdrawId, numberCard: Number(numberCard) });
       toast.success(t("retirado"));
-      setRetirarId(null);
+      setWithdrawId(null);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorRetirar"));
     }
   }
 
   async function handleReenter(details: ReentryDetails) {
-    if (!reingresarId) return;
+    if (!reenterId) return;
     try {
-      await reingresarMutation.mutateAsync({ idTestimony: reingresarId, ...details });
+      await reenterMutation.mutateAsync({ idTestimony: reenterId, ...details });
       toast.success(t("reingresado"));
-      setReingresarId(null);
+      setReenterId(null);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorReingresar"));
     }
@@ -112,22 +112,22 @@ export default function MovementsTestimonyPage() {
         return (
           <div className="flex gap-2 justify-end">
             {estado === "sinIngresar" && (
-              <Button size="sm" variant="ghost" onClick={() => handleIngresar(id)} aria-label={t("ingresar")} data-testid={`btn-sign-in-testimony-${id}`}>
+              <Button size="sm" variant="ghost" onClick={() => handleEnter(id)} aria-label={t("ingresar")} data-testid={`btn-sign-in-testimony-${id}`}>
                 <LogIn className="h-4 w-4" />
               </Button>
             )}
             {estado === "ingresado" && (
-              <Button size="sm" variant="ghost" onClick={() => handleRegistrar(id)} aria-label={t("registrarInscripcion")} data-testid={`btn-record-registration-${id}`}>
+              <Button size="sm" variant="ghost" onClick={() => handleRegister(id)} aria-label={t("registrarInscripcion")} data-testid={`btn-record-registration-${id}`}>
                 <Stamp className="h-4 w-4" />
               </Button>
             )}
             {estado === "inscripto" && (
-              <Button size="sm" variant="ghost" onClick={() => openRetirar(id)} aria-label={t("retirar")} data-testid={`btn-withdraw-testimony-${id}`}>
+              <Button size="sm" variant="ghost" onClick={() => openWithdraw(id)} aria-label={t("retirar")} data-testid={`btn-withdraw-testimony-${id}`}>
                 <LogOut className="h-4 w-4" />
               </Button>
             )}
             {estado === "retirado" && (
-              <Button size="sm" variant="ghost" onClick={() => setReingresarId(id)} aria-label={t("reingresar")} data-testid={`btn-reenter-testimony-${id}`}>
+              <Button size="sm" variant="ghost" onClick={() => setReenterId(id)} aria-label={t("reingresar")} data-testid={`btn-reenter-testimony-${id}`}>
                 <RotateCcw className="h-4 w-4" />
               </Button>
             )}
@@ -140,9 +140,9 @@ export default function MovementsTestimonyPage() {
   return (
     <div>
       <AppHeader title={t("title")} />
-      <DataTable data={verificados} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} />
+      <DataTable data={verified} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} />
 
-      <Dialog open={!!retirarId} onOpenChange={(v) => !v && setRetirarId(null)}>
+      <Dialog open={!!withdrawId} onOpenChange={(v) => !v && setWithdrawId(null)}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("retirar")}>
@@ -151,10 +151,10 @@ export default function MovementsTestimonyPage() {
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setRetirarId(null)}>
+              <Button variant="secondary" onClick={() => setWithdrawId(null)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleRetirar} disabled={!numberCard || retirarMutation.isPending} data-testid="btn-confirm-retiro">
+              <Button onClick={handleWithdraw} disabled={!numberCard || withdrawMutation.isPending} data-testid="btn-confirm-retiro">
                 {t("retirar")}
               </Button>
             </FormActions>
@@ -162,8 +162,8 @@ export default function MovementsTestimonyPage() {
         </DialogContent>
       </Dialog>
 
-      {reingresarId !== null && (
-        <ReenterDialog open isPending={reingresarMutation.isPending} onCancel={() => setReingresarId(null)} onConfirm={handleReenter} />
+      {reenterId !== null && (
+        <ReenterDialog open isPending={reenterMutation.isPending} onCancel={() => setReenterId(null)} onConfirm={handleReenter} />
       )}
     </div>
   );

@@ -30,7 +30,7 @@ function createWrapper() {
 
 describe("documentReentryKeys", () => {
   it("byManagement key includes the management id", () => {
-    expect(documentReentryKeys.byManagement(9)).toEqual(["reingresoDocumentacion", "gestion", 9]);
+    expect(documentReentryKeys.byManagement(9)).toEqual(["documentReentry", "management", 9]);
   });
 });
 
@@ -71,7 +71,7 @@ describe("useDocumentReentry (CU43)", () => {
 describe("useReenterDocumentation (CU43)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("reingresa a document via POST", async () => {
+  it("re-enters a document via POST", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idDocumentPresentado: 1, reingresado: true });
 
     const { Wrapper } = createWrapper();
@@ -79,7 +79,7 @@ describe("useReenterDocumentation (CU43)", () => {
 
     await result.current.mutateAsync({
       managementId: 9,
-      reingreso: { idProcedure: 1, idDocumentType: 5 },
+      reentry: { idProcedure: 1, idDocumentType: 5 },
     });
 
     // Backend body is DtoDocumentReentryRequest(idProcedure, idDocumentType) —
