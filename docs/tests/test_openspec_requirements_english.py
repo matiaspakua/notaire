@@ -19,6 +19,12 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "presupuesto-catalogo-items",
             "pago-recibo",
             "persona-credencial-escribano",
+            "copia-validacion-testimonio-inscripto",
+            "documento-presentado-herencia-vencimiento",
+            "costos-documentos-presupuesto",
+            "numeracion-escrituras",
+            "folio-vinculacion-escritura",
+            "testimonio-generacion-verificacion",
         ):
             path = SPECS / spec_id / "spec.md"
             text = path.read_text(encoding="utf-8")
@@ -44,6 +50,31 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
         self.assertIn("`notaryRegistrationNumber`", credential)
         self.assertIn("CU48", credential)
         self.assertIn("CU51", credential)
+        copy = (SPECS / "copia-validacion-testimonio-inscripto" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`registered = true`", copy)
+        self.assertIn("CU87", copy)
+        submitted = (SPECS / "documento-presentado-herencia-vencimiento" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`expires`", submitted)
+        self.assertIn("`dueDays`", submitted)
+        self.assertIn("`deliveredBy`", submitted)
+        self.assertIn("`dateEntry`", submitted)
+        self.assertIn("`dateDue`", submitted)
+        self.assertIn("CU42", submitted)
+        costs = (SPECS / "costos-documentos-presupuesto" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`amountToPay`", costs)
+        numbering = (SPECS / "numeracion-escrituras" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("Protocolo Auxiliar", numbering)
+        self.assertIn("Protocolo Principal", numbering)
+        self.assertIn("no pasó", numbering)
+        self.assertIn("CU86", numbering)
+        folio = (SPECS / "folio-vinculacion-escritura" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`deedId`", folio)
+        self.assertIn('"Utilizado"', folio)
+        self.assertIn("GET /api/v1/folios/{id}", folio)
+        testimony = (SPECS / "testimonio-generacion-verificacion" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn('"Firmada"', testimony)
+        self.assertIn("Escribano", testimony)
+        self.assertIn("CU07", testimony)
         combined = "\n".join(
             (SPECS / spec_id / "spec.md").read_text(encoding="utf-8")
             for spec_id in (
@@ -52,6 +83,12 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
                 "presupuesto-catalogo-items",
                 "pago-recibo",
                 "persona-credencial-escribano",
+                "copia-validacion-testimonio-inscripto",
+                "documento-presentado-herencia-vencimiento",
+                "costos-documentos-presupuesto",
+                "numeracion-escrituras",
+                "folio-vinculacion-escritura",
+                "testimonio-generacion-verificacion",
             )
         )
         for retired in (
@@ -60,6 +97,14 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "`Presupuesto`",
             "idPago",
             "registroEscribano",
+            "inscripta",
+            "vence",
+            "diasVencimiento",
+            "quienEntrega",
+            "fechaVencimiento",
+            "fechaIngreso",
+            "importeAPagar",
+            "escrituraId",
         ):
             self.assertNotIn(retired, combined, retired)
 

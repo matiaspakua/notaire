@@ -1,56 +1,56 @@
-# Numeración de Escrituras Specification
+# numeracion-escrituras Specification
 
 ## Purpose
 
-Controla que el número de escritura asignado al preparar o firmar una
-escritura sea único y correlativo dentro del protocolo, año y escribano
-correspondientes, sin faltantes no justificados ni duplicados (CU86).
+Controls that the deed number assigned when preparing or signing a
+deed is unique and consecutive within the corresponding protocol, year, and
+notary (Escribano), with no unjustified gaps and no duplicates (CU86).
 
 ## Requirements
 
-### Requirement: Validar correlatividad al guardar una escritura
-El sistema SHALL calcular el siguiente número correlativo esperado dentro
-del protocolo (principal o auxiliar), año y escribano de la escritura, y
-comparar el número propuesto contra ese correlativo antes de guardar.
+### Requirement: Validate the sequence when saving a deed
+The system SHALL calculate the next expected consecutive number within
+the protocol (principal or auxiliary), year, and notary (Escribano) of the deed, and
+compare the proposed number with that sequence before saving.
 
-#### Scenario: Número coincide con el correlativo esperado
-- **WHEN** se guarda una escritura cuyo número coincide con el correlativo
-  esperado para su protocolo, año y escribano
-- **THEN** el sistema guarda la escritura con normalidad
+#### Scenario: The number matches the expected sequence
+- **WHEN** a deed is saved whose number matches the expected sequence
+  for its protocol, year, and notary (Escribano)
+- **THEN** the system saves the deed as usual
 
-### Requirement: Rechazar números duplicados
-El sistema SHALL rechazar el guardado de una escritura cuyo número ya fue
-usado por otra escritura del mismo protocolo, año y escribano.
+### Requirement: Reject duplicate numbers
+The system SHALL reject saving a deed whose number was already
+used by another deed of the same protocol, year, and notary (Escribano).
 
-#### Scenario: Número ya utilizado
-- **WHEN** se intenta guardar una escritura con un número ya usado por otra
-  escritura del mismo protocolo, año y escribano
-- **THEN** el sistema rechaza el guardado e informa el número duplicado
+#### Scenario: Number already used
+- **WHEN** saving a deed is attempted with a number already used by another
+  deed of the same protocol, year, and notary (Escribano)
+- **THEN** the system rejects the save and reports the duplicate number
 
-### Requirement: Exigir justificación ante un salto de numeración
-El sistema SHALL exigir una justificación registrada cuando el número
-propuesto deja un salto respecto al correlativo esperado, y SHALL guardar
-esa justificación junto a la escritura.
+### Requirement: Require a justification for a numbering gap
+The system SHALL require a recorded justification when the proposed
+number leaves a gap against the expected sequence, and SHALL store
+that justification with the deed.
 
-#### Scenario: Salto sin justificación
-- **WHEN** se intenta guardar una escritura cuyo número deja un salto
-  respecto al correlativo esperado, sin indicar justificación
-- **THEN** el sistema rechaza el guardado y solicita la justificación del
-  salto
+#### Scenario: Gap without a justification
+- **WHEN** saving a deed is attempted whose number leaves a gap
+  against the expected sequence, without a justification
+- **THEN** the system rejects the save and asks for the justification of the
+  gap
 
-#### Scenario: Salto con justificación
-- **WHEN** se guarda una escritura cuyo número deja un salto respecto al
-  correlativo esperado, indicando una justificación (por ejemplo,
-  escritura anulada o "no pasó")
-- **THEN** el sistema guarda la escritura junto con la justificación
-  registrada
+#### Scenario: Gap with a justification
+- **WHEN** a deed is saved whose number leaves a gap against the
+  expected sequence, with a justification (for example,
+  a voided deed or "no pasó")
+- **THEN** the system saves the deed together with the recorded
+  justification
 
-### Requirement: Numeración del Protocolo Auxiliar independiente del Principal
-El sistema SHALL controlar la correlatividad del Protocolo Auxiliar en
-forma independiente de la del Protocolo Principal.
+### Requirement: Protocolo Auxiliar numbering is independent of Protocolo Principal
+The system SHALL check the sequence of Protocolo Auxiliar
+independently from that of Protocolo Principal.
 
-#### Scenario: Deed de Protocolo Auxiliar no afecta la numeración del Principal
-- **WHEN** se guarda una escritura sobre un folio de Protocolo Auxiliar
-- **THEN** el sistema calcula y valida su correlativo únicamente contra
-  otras escrituras de Protocolo Auxiliar del mismo año y escribano, sin
-  considerar la numeración del Protocolo Principal
+#### Scenario: A Protocolo Auxiliar deed does not affect Protocolo Principal numbering
+- **WHEN** a deed is saved on a Protocolo Auxiliar folio
+- **THEN** the system calculates and validates its sequence only against
+  other Protocolo Auxiliar deeds of the same year and notary (Escribano), without
+  considering the Protocolo Principal numbering

@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English deed, folio, and document requirement prose** (#1490, CU75):
+  Six more living specs state requirements in English and name `registered`,
+  `expires`, `dueDays`, `deliveredBy`, `dateEntry`, `dateDue`, `amountToPay`,
+  and `deedId`. `GET /api/v1/folios/{id}` stays the read path. Spec ids stay.
+  Stored labels `Firmada`, `Utilizado`, `Protocolo Auxiliar`, `Protocolo Principal`,
+  and `no pasó` stay, along with the role `Escribano`.
 - **English OpenSpec requirement prose** (#1490, CU75):
   `escritura-firma`, `presupuesto-plantilla`, `presupuesto-catalogo-items`,
   `pago-recibo`, and `persona-credencial-escribano` state requirements in
