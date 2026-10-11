@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English mutation-error samples** (#1490, CU75):
+  The local budget-total sample uses `calculateTotal`, `price`, and
+  `quantity`. Mutation-error fixtures use the live English sentences
+  `The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)`
+  and `The submitted data duplicates an existing record`. The default-locale
+  plantilla fallback stays Spanish because the budgets page passes
+  `t("items.errorNoPlantilla")`.
 - **English report test names** (#1490, CU75):
   `NotebookController` stores `reportService`. Payment logs say
   `Editing payment` and `Deleting payment`. Report tests are

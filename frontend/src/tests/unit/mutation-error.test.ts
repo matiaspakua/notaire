@@ -29,7 +29,7 @@ describe("parseFieldErrors()", () => {
   });
 
   it("returns empty map when message has no field detail", () => {
-    expect(parseFieldErrors("Saldo excedido", ["amount"])).toEqual({});
+    expect(parseFieldErrors("Balance exceeded", ["amount"])).toEqual({});
   });
 });
 
@@ -44,13 +44,19 @@ describe("presentMutationError()", () => {
     const err = new ApiError(
       409,
       "/payments",
-      JSON.stringify({ message: "El monto excede el saldo pendiente" })
+      JSON.stringify({
+        message: "The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)",
+      })
     );
 
-    const result = presentMutationError(err, { fallback: "Error al guardar" });
+    const result = presentMutationError(err, { fallback: "Error while saving" });
 
-    expect(result.message).toBe("El monto excede el saldo pendiente");
-    expect(toast.error).toHaveBeenCalledWith("El monto excede el saldo pendiente");
+    expect(result.message).toBe(
+      "The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)"
+    );
+    expect(toast.error).toHaveBeenCalledWith(
+      "The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)"
+    );
     expect(result.toasted).toBe(true);
   });
 
@@ -58,17 +64,17 @@ describe("presentMutationError()", () => {
     const { toast } = await import("sonner");
     const err = new ApiError(500, "/payments", "plain text");
 
-    const result = presentMutationError(err, { fallback: "Error al guardar" });
+    const result = presentMutationError(err, { fallback: "Error while saving" });
 
-    expect(result.message).toBe("Error al guardar");
-    expect(toast.error).toHaveBeenCalledWith("Error al guardar");
+    expect(result.message).toBe("Error while saving");
+    expect(toast.error).toHaveBeenCalledWith("Error while saving");
   });
 
   it("does not toast authenticated 401 (session-expiry owns that path)", async () => {
     const { toast } = await import("sonner");
     const err = new ApiError(401, "/users", "Unauthorized");
 
-    const result = presentMutationError(err, { fallback: "Error al guardar" });
+    const result = presentMutationError(err, { fallback: "Error while saving" });
 
     expect(result.toasted).toBe(false);
     expect(toast.error).not.toHaveBeenCalled();
@@ -84,7 +90,7 @@ describe("presentMutationError()", () => {
     );
 
     const result = presentMutationError(err, {
-      fallback: "Error al guardar el rol",
+      fallback: "Error while saving the role",
       fieldNames: ["name"],
       setFieldErrors,
     });
@@ -105,7 +111,7 @@ describe("presentMutationError()", () => {
     );
 
     const result = presentMutationError(err, {
-      fallback: "Error al guardar el rol",
+      fallback: "Error while saving the role",
       fieldNames: ["name"],
       setFieldErrors,
     });

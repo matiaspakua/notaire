@@ -23,7 +23,8 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
   }) => {
     await loginAsAdmin(page);
 
-    const serverMessage = "El monto excede el saldo pendiente del presupuesto";
+    const serverMessage =
+      "The payment amount ($10.00) cannot exceed the outstanding balance ($5.00)";
     await page.route("**/api/v1/payments", async (route) => {
       if (route.request().method() === "POST") {
         await route.fulfill({
@@ -101,7 +102,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
   }) => {
     await loginAsAdmin(page);
 
-    const serverMessage = "Role duplicado: ya existe un rol con ese nombre";
+    const serverMessage = "The submitted data duplicates an existing record";
     await page.route("**/api/v1/roles", async (route) => {
       if (route.request().method() === "POST") {
         await route.fulfill({
@@ -123,7 +124,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
       await page.setViewportSize({ width, height: 800 });
       await page.goto("/dashboard/administration/roles");
       await page.getByTestId("btn-new-role").click();
-      await page.getByTestId("input-name-role").fill(`rol-e2e-${width}`);
+      await page.getByTestId("input-name-role").fill(`role-e2e-${width}`);
       await page.getByRole("button", { name: /crear|create/i }).click();
       await expect(
         page.locator("[data-sonner-toast]").getByText(serverMessage)

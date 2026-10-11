@@ -124,36 +124,36 @@ describe("documentsKeys (CU27, CU65)", () => {
 // ──────────────────────────────────────────────
 
 describe("Budget total calculation (CU01, CU39)", () => {
-  type Item = { precio?: number; cantidad?: number };
+  type Item = { price?: number; quantity?: number };
 
-  function calcularTotal(items: Item[]): number {
-    return items.reduce((sum, item) => sum + (item.precio ?? 0) * (item.cantidad ?? 1), 0);
+  function calculateTotal(items: Item[]): number {
+    return items.reduce((sum, item) => sum + (item.price ?? 0) * (item.quantity ?? 1), 0);
   }
 
   it("sums item prices * quantities", () => {
     const items = [
-      { precio: 100, cantidad: 2 },
-      { precio: 50, cantidad: 3 },
+      { price: 100, quantity: 2 },
+      { price: 50, quantity: 3 },
     ];
-    expect(calcularTotal(items)).toBe(350);
+    expect(calculateTotal(items)).toBe(350);
   });
 
   it("empty items returns 0", () => {
-    expect(calcularTotal([])).toBe(0);
+    expect(calculateTotal([])).toBe(0);
   });
 
-  it("item with undefined precio contributes 0", () => {
-    const items = [{ cantidad: 5 }];
-    expect(calcularTotal(items)).toBe(0);
+  it("item with undefined price contributes 0", () => {
+    const items = [{ quantity: 5 }];
+    expect(calculateTotal(items)).toBe(0);
   });
 
-  it("item with undefined cantidad defaults to 1", () => {
-    const items = [{ precio: 200 }];
-    expect(calcularTotal(items)).toBe(200);
+  it("item with undefined quantity defaults to 1", () => {
+    const items = [{ price: 200 }];
+    expect(calculateTotal(items)).toBe(200);
   });
 
   it("single item total", () => {
-    expect(calcularTotal([{ precio: 500, cantidad: 1 }])).toBe(500);
+    expect(calculateTotal([{ price: 500, quantity: 1 }])).toBe(500);
   });
 });
 
