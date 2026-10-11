@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English testimony and request fixtures** (#1490, CU75):
+  Testimony samples use `number`, `verified`, `idTestimonyMovement`, and
+  `registered`. Withdraw and reentry inputs use `cardNumber`, and the
+  reentry field test id is `input-reentry-card-number`. Document reentry
+  samples use `idSubmittedDocument` and `reentered`. API client samples
+  post `number`. Message keys such as `reingresado` and
+  `fields.numeroCarton` stay.
 - **English external-document identifiers** (#1490, CU75):
   The external-entity document cache key is `externalEntityDocuments` /
   `management`. The movement input is `idSubmittedDocument`. Playwright

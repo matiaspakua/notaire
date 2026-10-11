@@ -47,7 +47,7 @@ export default function MovementsTestimonyPage() {
   const reenterMutation = useReenter();
 
   const [withdrawId, setWithdrawId] = useState<number | null>(null);
-  const [numberCard, setNumberCard] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
   const [reenterId, setReenterId] = useState<number | null>(null);
 
   async function handleEnter(idTestimony: number) {
@@ -70,13 +70,13 @@ export default function MovementsTestimonyPage() {
 
   function openWithdraw(idTestimony: number) {
     setWithdrawId(idTestimony);
-    setNumberCard("");
+    setCardNumber("");
   }
 
   async function handleWithdraw() {
     if (!withdrawId) return;
     try {
-      await withdrawMutation.mutateAsync({ idTestimony: withdrawId, numberCard: Number(numberCard) });
+      await withdrawMutation.mutateAsync({ idTestimony: withdrawId, cardNumber: Number(cardNumber) });
       toast.success(t("retirado"));
       setWithdrawId(null);
     } catch (err) {
@@ -107,26 +107,26 @@ export default function MovementsTestimonyPage() {
       header: "",
       className: "w-40",
       render: (te) => {
-        const estado = statusMovement(te);
+        const status = statusMovement(te);
         const id = te.idTestimony!;
         return (
           <div className="flex gap-2 justify-end">
-            {estado === "sinIngresar" && (
+            {status === "sinIngresar" && (
               <Button size="sm" variant="ghost" onClick={() => handleEnter(id)} aria-label={t("ingresar")} data-testid={`btn-sign-in-testimony-${id}`}>
                 <LogIn className="h-4 w-4" />
               </Button>
             )}
-            {estado === "ingresado" && (
+            {status === "ingresado" && (
               <Button size="sm" variant="ghost" onClick={() => handleRegister(id)} aria-label={t("registrarInscripcion")} data-testid={`btn-record-registration-${id}`}>
                 <Stamp className="h-4 w-4" />
               </Button>
             )}
-            {estado === "inscripto" && (
+            {status === "inscripto" && (
               <Button size="sm" variant="ghost" onClick={() => openWithdraw(id)} aria-label={t("retirar")} data-testid={`btn-withdraw-testimony-${id}`}>
                 <LogOut className="h-4 w-4" />
               </Button>
             )}
-            {estado === "retirado" && (
+            {status === "retirado" && (
               <Button size="sm" variant="ghost" onClick={() => setReenterId(id)} aria-label={t("reingresar")} data-testid={`btn-reenter-testimony-${id}`}>
                 <RotateCcw className="h-4 w-4" />
               </Button>
@@ -147,14 +147,14 @@ export default function MovementsTestimonyPage() {
           <FormContainer>
             <FormSection dialogTitle title={t("retirar")}>
               <FormField label={t("fields.numeroCarton")} required>
-                <Input type="number" value={numberCard} onChange={(e) => setNumberCard(e.target.value)} data-testid="input-card-number" />
+                <Input type="number" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} data-testid="input-card-number" />
               </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setWithdrawId(null)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleWithdraw} disabled={!numberCard || withdrawMutation.isPending} data-testid="btn-confirm-withdraw">
+              <Button onClick={handleWithdraw} disabled={!cardNumber || withdrawMutation.isPending} data-testid="btn-confirm-withdraw">
                 {t("retirar")}
               </Button>
             </FormActions>

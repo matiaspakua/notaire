@@ -49,22 +49,22 @@ describe("testimoniesKeys (CU07, CU08)", () => {
 describe("useTestimonies (CU07, CU08)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("fetches the testimonio list via GET /testimonies", async () => {
-    vi.mocked(apiGet).mockResolvedValue([{ idTestimony: 1, numero: 10 }]);
+  it("fetches the testimony list via GET /testimonies", async () => {
+    vi.mocked(apiGet).mockResolvedValue([{ idTestimony: 1, number: 10 }]);
 
     const { result } = renderHook(() => useTestimonies(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiGet).toHaveBeenCalledWith("/testimonies");
-    expect(result.current.data).toEqual([{ idTestimony: 1, numero: 10 }]);
+    expect(result.current.data).toEqual([{ idTestimony: 1, number: 10 }]);
   });
 });
 
 describe("useGenerateTestimony (CU07)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("posts to /testimonies/{idEscritura}/generate", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idTestimony: 2, numero: 20 });
+  it("posts to /testimonies/{idDeed}/generate", async () => {
+    vi.mocked(apiPost).mockResolvedValue({ idTestimony: 2, number: 20 });
 
     const { result } = renderHook(() => useGenerateTestimony(), { wrapper: createWrapper() });
     result.current.mutate(5);
@@ -78,15 +78,15 @@ describe("useVerifyTestimony (CU08)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("posts flagged and notes (DtoTestimony's actual fields) to /testimonies/{id}/verify", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idTestimony: 3, verificado: true });
+    vi.mocked(apiPost).mockResolvedValue({ idTestimony: 3, verified: true });
 
     const { result } = renderHook(() => useVerifyTestimony(), { wrapper: createWrapper() });
-    result.current.mutate({ id: 3, flagged: true, notes: "Falta firma" });
+    result.current.mutate({ id: 3, flagged: true, notes: "Missing signature" });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenCalledWith("/testimonies/3/verify", {
       flagged: true,
-      notes: "Falta firma",
+      notes: "Missing signature",
     });
   });
 });
@@ -117,11 +117,11 @@ describe("downloadTestimonyCopy", () => {
   });
 });
 
-describe("Movimiento de testimonio hooks (CU11, CU12, CU44)", () => {
+describe("Testimony movement hooks (CU11, CU12, CU44)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("useEnterRegistration posts to /testimony-movements/{id}/enter-registration", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idMovementTestimony: 1 });
+    vi.mocked(apiPost).mockResolvedValue({ idTestimonyMovement: 1 });
 
     const { result } = renderHook(() => useEnterRegistration(), { wrapper: createWrapper() });
     result.current.mutate(5);
@@ -131,7 +131,7 @@ describe("Movimiento de testimonio hooks (CU11, CU12, CU44)", () => {
   });
 
   it("useRegisterInscription posts to /testimony-movements/{id}/register-inscription", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idMovementTestimony: 1, inscripta: true });
+    vi.mocked(apiPost).mockResolvedValue({ idTestimonyMovement: 1, registered: true });
 
     const { result } = renderHook(() => useRegisterInscription(), { wrapper: createWrapper() });
     result.current.mutate(5);
@@ -141,31 +141,31 @@ describe("Movimiento de testimonio hooks (CU11, CU12, CU44)", () => {
   });
 
   it("useWithdraw posts cardNumber to /testimony-movements/{id}/withdraw", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idMovementTestimony: 1, cardNumber: 123 });
+    vi.mocked(apiPost).mockResolvedValue({ idTestimonyMovement: 1, cardNumber: 123 });
 
     const { result } = renderHook(() => useWithdraw(), { wrapper: createWrapper() });
-    result.current.mutate({ idTestimony: 5, numberCard: 123 });
+    result.current.mutate({ idTestimony: 5, cardNumber: 123 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenCalledWith("/testimony-movements/5/withdraw", { cardNumber: 123 });
   });
 
   it("useReenter posts the card number, observation flag, and notes to /testimony-movements/{id}/reenter", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idMovementTestimony: 2 });
+    vi.mocked(apiPost).mockResolvedValue({ idTestimonyMovement: 2 });
 
     const { result } = renderHook(() => useReenter(), { wrapper: createWrapper() });
     result.current.mutate({
       idTestimony: 5,
-      numberCard: 77,
+      cardNumber: 77,
       observedByRegistry: true,
-      notes: "Falta sello",
+      notes: "Missing stamp",
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenCalledWith("/testimony-movements/5/reenter", {
       cardNumber: 77,
       observedByRegistry: true,
-      notes: "Falta sello",
+      notes: "Missing stamp",
     });
   });
 });

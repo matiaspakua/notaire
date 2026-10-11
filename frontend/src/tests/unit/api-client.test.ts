@@ -106,12 +106,12 @@ describe("apiGet()", () => {
 describe("apiPost()", () => {
   it("sends POST with JSON body", async () => {
     mockFetch.mockReturnValueOnce(makeResponse(""));
-    await apiPost("/managements", { numero: 100 });
+    await apiPost("/managements", { number: 100 });
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("/managements"),
       expect.objectContaining({
         method: "POST",
-        body: JSON.stringify({ numero: 100 }),
+        body: JSON.stringify({ number: 100 }),
       })
     );
   });
@@ -135,7 +135,7 @@ describe("apiPost()", () => {
 describe("apiPut()", () => {
   it("sends PUT with correct method and body", async () => {
     mockFetch.mockReturnValueOnce(makeResponse(""));
-    await apiPut("/managements/1", { numero: 999 });
+    await apiPut("/managements/1", { number: 999 });
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("/managements/1"),
       expect.objectContaining({ method: "PUT" })

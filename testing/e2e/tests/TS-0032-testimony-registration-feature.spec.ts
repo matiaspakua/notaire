@@ -86,7 +86,7 @@ test.describe("CU11/CU12/CU44 - Testimony movements", () => {
     await expect(page.getByTestId(`btn-reenter-testimony-${idTestimony}`)).toBeVisible();
     await page.getByTestId(`btn-reenter-testimony-${idTestimony}`).click();
 
-    await page.getByTestId("input-reentry-carton").fill("77");
+    await page.getByTestId("input-reentry-card-number").fill("77");
     await page.getByTestId("checkbox-reentry-observed").check();
     await expect(page.getByTestId("btn-confirm-reentry")).toBeDisabled();
     await page.getByTestId("input-reentry-notes").fill("Falta sello del registro");

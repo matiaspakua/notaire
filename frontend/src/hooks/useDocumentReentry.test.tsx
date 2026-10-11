@@ -41,7 +41,7 @@ describe("useDocumentReentry (CU43)", () => {
     vi.mocked(apiGet).mockResolvedValue({
       idManagement: 9,
       number: 1001,
-      heading: "Gestion",
+      heading: "Test management",
       procedures: [
         {
           idProcedure: 1,
@@ -72,7 +72,7 @@ describe("useReenterDocumentation (CU43)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("re-enters a document via POST", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idDocumentPresentado: 1, reingresado: true });
+    vi.mocked(apiPost).mockResolvedValue({ idSubmittedDocument: 1, reentered: true });
 
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useReenterDocumentation(), { wrapper: Wrapper });

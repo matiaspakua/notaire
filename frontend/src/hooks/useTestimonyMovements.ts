@@ -28,9 +28,9 @@ export function useWithdraw() {
   return useMutation({
     // Backend route is /withdraw (English) and its body is DtoTestimonyMovement(cardNumber) —
     // not the former Spanish withdraw path plus the card number.
-    mutationFn: ({ idTestimony, numberCard }: { idTestimony: number; numberCard: number }) =>
+    mutationFn: ({ idTestimony, cardNumber }: { idTestimony: number; cardNumber: number }) =>
       apiPost<TestimonyMovement>(`/testimony-movements/${idTestimony}/withdraw`, {
-        cardNumber: numberCard,
+        cardNumber,
       }),
     onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
   });
@@ -38,7 +38,7 @@ export function useWithdraw() {
 
 export interface TestimonyReentry {
   idTestimony: number;
-  numberCard: number;
+  cardNumber: number;
   observedByRegistry: boolean;
   notes: string;
 }
@@ -47,9 +47,9 @@ export interface TestimonyReentry {
 export function useReenter() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ idTestimony, numberCard, observedByRegistry, notes }: TestimonyReentry) =>
+    mutationFn: ({ idTestimony, cardNumber, observedByRegistry, notes }: TestimonyReentry) =>
       apiPost<TestimonyMovement>(`/testimony-movements/${idTestimony}/reenter`, {
-        cardNumber: numberCard,
+        cardNumber,
         observedByRegistry,
         notes,
       }),

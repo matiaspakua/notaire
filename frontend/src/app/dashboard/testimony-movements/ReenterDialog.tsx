@@ -9,7 +9,7 @@ import { FormContainer, FormSection, FormField, FormActions, CheckboxField } fro
 import { useThemeClasses } from "@/theme";
 
 export interface ReentryDetails {
-  numberCard: number;
+  cardNumber: number;
   observedByRegistry: boolean;
   notes: string;
 }
@@ -27,7 +27,7 @@ export function ReenterDialog({ open, isPending, onCancel, onConfirm }: ReenterD
   const tc = useTranslations("common");
   const themeClass = useThemeClasses();
 
-  const [numberCard, setNumberCard] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
   const [observedByRegistry, setObservedByRegistry] = useState(false);
   const [notes, setNotes] = useState("");
 
@@ -39,7 +39,7 @@ export function ReenterDialog({ open, isPending, onCancel, onConfirm }: ReenterD
         <FormContainer>
           <FormSection dialogTitle title={t("reingresar")}>
             <FormField label={t("fields.numeroCarton")}>
-              <Input type="number" value={numberCard} onChange={(e) => setNumberCard(e.target.value)} data-testid="input-reentry-carton" />
+              <Input type="number" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} data-testid="input-reentry-card-number" />
             </FormField>
             <CheckboxField label={t("fields.observadoPorRegistro")} checked={observedByRegistry} onChange={setObservedByRegistry} data-testid="checkbox-reentry-observed" />
             <FormField label={t("fields.observaciones")} required={observedByRegistry}>
@@ -56,7 +56,7 @@ export function ReenterDialog({ open, isPending, onCancel, onConfirm }: ReenterD
               {tc("cancel")}
             </Button>
             <Button
-              onClick={() => onConfirm({ numberCard: Number(numberCard) || 0, observedByRegistry, notes })}
+              onClick={() => onConfirm({ cardNumber: Number(cardNumber) || 0, observedByRegistry, notes })}
               disabled={missingNotes || isPending}
               data-testid="btn-confirm-reentry"
             >
