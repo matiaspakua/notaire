@@ -63,6 +63,7 @@ CU22 = (
     / "CU22 – Registrar Suplencia.md"
 )
 COMPLETE_CASE = "`PUT /api/v1/gestiones/complete-case`"
+WORKFLOW_TRACE = "`GET /api/v1/gestiones/{id}/workflow-trace`"
 
 
 class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
@@ -110,6 +111,17 @@ class DocumentReentryPathCitationEnglishTest(unittest.TestCase):
             ROOT / "docs" / "200-architecture" / "203-design" / "GESTION.md"
         ).read_text(encoding="utf-8")
         self.assertIn("`POST /api/v1/managements/complete-case`", live)
+
+    def test_design_cites_the_path_cu83_still_names_for_workflow_trace(self):
+        text = DESIGN.read_text(encoding="utf-8")
+        use_case = CU83.read_text(encoding="utf-8")
+        self.assertIn(WORKFLOW_TRACE, text)
+        self.assertIn(WORKFLOW_TRACE.strip("`"), use_case)
+        self.assertIn("`DOC-GESTION`", text)
+        live = (
+            ROOT / "docs" / "200-architecture" / "203-design" / "GESTION.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("`GET /api/v1/managements/{id}/workflow-trace`", live)
 
 
 if __name__ == "__main__":
