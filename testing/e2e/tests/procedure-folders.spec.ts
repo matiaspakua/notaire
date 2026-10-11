@@ -98,7 +98,7 @@ test.describe("CU85 - Manage procedure folders", () => {
 
     await item.getByTestId(/^btn-place-on-hold-/).click();
     dialog = page.getByRole("dialog");
-    await dialog.getByTestId("input-wait-reason").fill("Falta documentación del titular");
+    await dialog.getByTestId("input-wait-reason").fill("Owner documentation is missing");
     await dialog.getByTestId("btn-confirm-wait").click();
     await expect(dialog).not.toBeVisible();
 
@@ -156,7 +156,7 @@ test.describe("CU85 - Manage procedure folders", () => {
     let dialog = page.getByRole("dialog");
     await dialog.getByTestId(/^btn-place-on-hold-/).click();
     dialog = page.getByRole("dialog");
-    await dialog.getByTestId("input-wait-reason").fill("Falta documentación");
+    await dialog.getByTestId("input-wait-reason").fill("Documentation is missing");
     await dialog.getByTestId("btn-confirm-wait").click();
     await expect(dialog).not.toBeVisible();
     await page.keyboard.press("Escape");

@@ -101,7 +101,7 @@ function Harness({ initial, onPick }: { initial?: number; onPick?: (g?: DeedMana
         setId(g?.idManagement);
         onPick?.(g);
       }}
-      aria-label="Gestión"
+      aria-label="Management"
       data-testid="picker"
     />
   );
@@ -115,7 +115,7 @@ describe("ManagementPicker (#1340)", () => {
 
   it("is an ARIA combobox that opens with the newest managements and never asks for size=1000", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Gestión" });
+    const box = screen.getByRole("combobox", { name: "Management" });
     fireEvent.click(box);
     // The number leads the label, so it reads the same in es and en.
     expect(await screen.findByRole("option", { name: "98765 — Compraventa Nueva" })).toBeInTheDocument();
@@ -125,7 +125,7 @@ describe("ManagementPicker (#1340)", () => {
 
   it("finds a management by its number, and every management of a client by name or document", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Gestión" });
+    const box = screen.getByRole("combobox", { name: "Management" });
     fireEvent.click(box);
     fireEvent.change(box, { target: { value: "4321" } });
     expect(await screen.findByRole("option", { name: "4321 — Hipoteca Garcia" })).toBeInTheDocument();
@@ -139,7 +139,7 @@ describe("ManagementPicker (#1340)", () => {
   it("picks an option and shows the current value loaded by id", async () => {
     const onPick = vi.fn();
     render(<Harness initial={12} onPick={onPick} />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Gestión" });
+    const box = screen.getByRole("combobox", { name: "Management" });
     await waitFor(() => expect(box).toHaveValue("4321 — Hipoteca Garcia"));
     fireEvent.click(box);
     fireEvent.click(await screen.findByRole("option", { name: "98765 — Compraventa Nueva" }));

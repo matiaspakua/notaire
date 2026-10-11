@@ -17,7 +17,7 @@ import { apiPost } from './setup/api-helpers'
 // Seed helpers
 // ──────────────────────────────────────────────
 
-/** Seed a folio in estado "Nuevo" and return its idFolio */
+/** Seed a folio in status Nuevo and return its idFolio */
 async function seedNewFolio(page: Page): Promise<number> {
   const result = await createFolio(page, 1, { status: 'Nuevo' })
   if (!result.ok || !result.data?.idFolio) {
@@ -27,8 +27,8 @@ async function seedNewFolio(page: Page): Promise<number> {
 }
 
 /**
- * Seed a deed in estado "Sin Firmar" WITH a folio assigned via the API.
- * Returns the idDeed and number — the table only renders `number`, not `cuerpo`,
+ * Seed a deed in status "Sin Firmar" with a folio assigned via the API.
+ * Returns the idDeed and number — the table only renders `number`, not `body`,
  * so tests must match rows by number.
  */
 async function seedDeedWithFolio(page: Page, idFolio: number): Promise<{ idDeed: number; number: number }> {
@@ -36,31 +36,31 @@ async function seedDeedWithFolio(page: Page, idFolio: number): Promise<{ idDeed:
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
     dateDeedrecording: new Date().toISOString().split('T')[0],
-    body: `Deed para firma E2E ${id}`,
+    body: `Deed for signing E2E ${id}`,
     status: 'Sin Firmar',
     idFolio,
-    notes: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
+    notes: 'Non-sequential numbering: isolated E2E data seed (CU86)',
   })
   if (!result.ok || !result.data?.idDeed) {
-    throw new Error(`Failed to seed escritura: ${result.error ?? JSON.stringify(result.data)}`)
+    throw new Error(`Failed to seed deed: ${result.error ?? JSON.stringify(result.data)}`)
   }
   return { idDeed: result.data.idDeed, number: id }
 }
 
 /**
- * Seed a deed in estado "Sin Firmar" WITHOUT a folio — used by the edge-case
- * test that verifies firmar is blocked when no folio is assigned.
+ * Seed a deed in status "Sin Firmar" without a folio — used by the edge-case
+ * test that verifies signing is blocked when no folio is assigned.
  */
 async function seedDeedWithoutFolio(page: Page): Promise<{ idDeed: number; number: number }> {
   const id = uniqueId()
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
     dateDeedrecording: new Date().toISOString().split('T')[0],
-    body: `Deed sin folio E2E ${id}`,
+    body: `Deed without folio E2E ${id}`,
     status: 'Sin Firmar',
   })
   if (!result.ok || !result.data?.idDeed) {
-    throw new Error(`Failed to seed escritura sin folio: ${result.error ?? JSON.stringify(result.data)}`)
+    throw new Error(`Failed to seed a deed without a folio: ${result.error ?? JSON.stringify(result.data)}`)
   }
   return { idDeed: result.data.idDeed, number: id }
 }
@@ -123,7 +123,7 @@ test.describe('CU05 - Prepare a deed', () => {
     await folioOption.evaluate((el: HTMLElement) => el.click())
 
     // Justify the numbering gap (number is random, per CU86 correlative validation)
-    await dialog.getByLabel(/observaciones/i).fill('Numeración no correlativa: seed de datos E2E aislado (CU86)')
+    await dialog.getByLabel(/observaciones/i).fill('Non-sequential numbering: isolated E2E data seed (CU86)')
 
     // Submit
     await dialog.getByRole('button', { name: /confirmar|guardar|crear/i }).click()
@@ -173,7 +173,7 @@ test.describe('CU06 - Sign a deed', () => {
     await expect(confirmDialog).toBeVisible({ timeout: 5000 })
     await confirmDialog.getByRole('button', { name: /confirmar|firmar|aceptar/i }).click()
 
-    // Then: dialog closes and deed row shows estado "Signed"
+    // Then: dialog closes and the deed row shows status Firmada
     await expect(confirmDialog).not.toBeVisible({ timeout: 8000 })
     await expect(row).toContainText(/Firmada/i, { timeout: 10000 })
   })
@@ -190,19 +190,19 @@ test.describe('CU06 - Sign a deed', () => {
     await expect(row).toBeVisible({ timeout: 10000 })
 
     // The sign button should be either absent, disabled, or trigger an error
-    const firmarBtn = page.getByTestId(`btn-sign-deed-${idDeed}`)
-    const firmarBtnExists = await firmarBtn.isVisible({ timeout: 3000 }).catch(() => false)
+    const signButton = page.getByTestId(`btn-sign-deed-${idDeed}`)
+    const signButtonExists = await signButton.isVisible({ timeout: 3000 }).catch(() => false)
 
-    if (firmarBtnExists) {
+    if (signButtonExists) {
       // If button is rendered, it must be disabled OR clicking it shows an error
-      const isDisabled = await firmarBtn.isDisabled()
+      const isDisabled = await signButton.isDisabled()
       if (isDisabled) {
         // Acceptable: button is disabled — no folio assigned
         expect(isDisabled).toBe(true)
       } else {
         // If not disabled, confirming the sign dialog must produce an error toast
         // (backend rejects with 400 when the deed has no folio assigned)
-        await firmarBtn.click()
+        await signButton.click()
         const confirmDialog = page.getByRole('dialog').or(page.getByRole('alertdialog'))
         await expect(confirmDialog).toBeVisible({ timeout: 5000 })
         await confirmDialog.getByRole('button', { name: /confirmar|firmar|aceptar/i }).click()
@@ -216,7 +216,7 @@ test.describe('CU06 - Sign a deed', () => {
       }
     } else {
       // Acceptable: button is not rendered at all when folio is absent
-      expect(firmarBtnExists).toBe(false)
+      expect(signButtonExists).toBe(false)
     }
   })
 })
@@ -281,7 +281,7 @@ for (const viewport of [
   { width: 768, height: 1024, label: '768px (tablet)' },
   { width: 1024, height: 768, label: '1024px (desktop)' },
 ]) {
-  test(`escrituras screen is usable at ${viewport.label}`, async ({ page }) => {
+  test(`deeds screen is usable at ${viewport.label}`, async ({ page }) => {
     await authenticateAsAdmin(page)
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
 

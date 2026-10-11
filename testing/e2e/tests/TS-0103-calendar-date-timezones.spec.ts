@@ -16,9 +16,9 @@ async function seedPayment(page: Page): Promise<number> {
     propertyAmount: 10000, // a payment may not exceed the budget balance
   });
   expect(budget.ok, budget.error ?? "createBudget failed").toBe(true);
-  const pago = await createPayment(page, budget.data!.idBudget, { date: "2026-08-07" });
-  expect(pago.ok, pago.error ?? "createPayment failed").toBe(true);
-  return pago.data!.idPayment;
+  const payment = await createPayment(page, budget.data!.idBudget, { date: "2026-08-07" });
+  expect(payment.ok, payment.error ?? "createPayment failed").toBe(true);
+  return payment.data!.idPayment;
 }
 
 for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid", "UTC"]) {

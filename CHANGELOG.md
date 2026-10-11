@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English Playwright case identifiers** (#1490, CU75):
+  Folio and deed selects use `select-folio-type` and `select-folio-deed`.
+  Case fixtures name `folioType` and `copyNumber`. Seed failures, payment
+  locals, API suite titles, and the management picker accessible name are
+  English. Stored statuses such as `Firmada` and `Sin Firmar` stay, and
+  default-locale labels such as `/número/i` and `/archivar de todos modos/i` stay.
 - **English validation messages and DTO guide** (#1490, CU75):
   A missing auxiliary folio reports `The auxiliary folio where the deed starts is required`.
   A workflow node update with no fields reports `provide at least one field to update`.

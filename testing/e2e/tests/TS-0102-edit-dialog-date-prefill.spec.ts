@@ -41,14 +41,14 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid"]) {
       const budget = await createBudget(page, person.data!.personId, undefined, {
         propertyAmount: 10000, // a payment may not exceed the budget balance
       });
-      const pago = await createPayment(page, budget.data!.idBudget, { date: DAY });
-      expect(pago.ok, pago.error ?? "createPayment failed").toBe(true);
+      const payment = await createPayment(page, budget.data!.idBudget, { date: DAY });
+      expect(payment.ok, payment.error ?? "createPayment failed").toBe(true);
 
       await page.goto("/dashboard/payments");
       await page.waitForLoadState("networkidle");
       const row = page
         .getByRole("row")
-        .filter({ has: page.getByRole("cell", { name: String(pago.data!.idPayment), exact: true }) });
+        .filter({ has: page.getByRole("cell", { name: String(payment.data!.idPayment), exact: true }) });
       await row.getByRole("button", { name: /editar|edit/i }).click();
       await expect(page.getByRole("dialog").locator('input[type="date"]')).toHaveValue(DAY);
     });

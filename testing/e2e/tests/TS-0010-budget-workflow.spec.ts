@@ -167,8 +167,8 @@ test.describe("CU47 - Consult payment / outstanding balance", () => {
 
     // WHEN: a partial payment is recorded (40000 < 80000) through the API — recording
     // payments is covered in TS-0014 (CU15); here CU47 must show the updated balance.
-    const pagoResult = await createPayment(page, idBudget, { amount: 40000 });
-    expect(pagoResult.ok, `createPayment failed: ${pagoResult.error}`).toBe(true);
+    const paymentResult = await createPayment(page, idBudget, { amount: 40000 });
+    expect(paymentResult.ok, `createPayment failed: ${paymentResult.error}`).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");

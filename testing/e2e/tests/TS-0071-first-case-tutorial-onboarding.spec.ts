@@ -82,7 +82,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
   test("a new user can set up and follow a complete first case", async ({ page }) => {
     const procedureType = `Compraventa tutorial ${runId}`;
     const concept = `Honorarios tutorial ${runId}`;
-    const tipoFolio = `Protocolo tutorial ${runId}`;
+    const folioType = `Protocol tutorial ${runId}`;
     const client = `Ana Tutorial ${runId}`;
     const management = `900${runId}`;
 
@@ -124,7 +124,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     await test.step("4. Prepare the protocol — create a folio type and a folio", async () => {
       await go(page, "/dashboard/administration/folios");
       await page.getByTestId("btn-new-folio-type").click();
-      await page.getByTestId("input-name-folio-type").fill(tipoFolio);
+      await page.getByTestId("input-name-folio-type").fill(folioType);
       await pause(page);
       await page.getByTestId("btn-save-folio-type").click();
       await expect(page.getByRole("dialog")).toBeHidden();
@@ -133,7 +133,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
       await page.getByTestId("btn-new-folio").click();
       await page.getByTestId("input-folio-number").fill(`8${runId}`);
       await choose(page, "select-status-folio", /nuevo/i);
-      await choose(page, "select-tipo-folio", new RegExp(tipoFolio, "i"));
+      await choose(page, "select-folio-type", new RegExp(folioType, "i"));
       // The office's existing notary is selected from the live list; this makes the
       // tutorial usable even when no tutorial user has an Escribano role.
       await chooseFirst(page, "select-notary-folio");

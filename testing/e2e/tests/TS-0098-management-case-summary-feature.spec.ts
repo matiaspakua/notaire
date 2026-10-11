@@ -13,7 +13,7 @@ import {
   uniqueId,
 } from "./setup/api-helpers";
 
-test.describe("#774 - Resumen del caso", () => {
+test.describe("#774 - Case summary", () => {
   test.beforeEach(async ({ page }) => {
     await establishAdminBrowserSession(page);
   });
@@ -22,29 +22,29 @@ test.describe("#774 - Resumen del caso", () => {
     const notary = await createPerson(page, { isClient: false });
     expect(notary.ok, notary.error ?? "createPerson failed").toBe(true);
     const management = await apiPost<{ idManagement: number }>(page, "/managements", {
-      heading: `Gestión resumen E2E ${uniqueId()}`,
+      heading: `Management summary E2E ${uniqueId()}`,
       dateStart: new Date().toISOString().split("T")[0],
       number: uniqueId() % 1_000_000,
       notaryPersonId: notary.data!.personId,
     });
-    expect(management.ok, management.error ?? "create gestión failed").toBe(true);
+    expect(management.ok, management.error ?? "create management failed").toBe(true);
     const idManagement = management.data!.idManagement;
 
     const deedNumber = uniqueId() % 1_000_000;
     const deed = await apiPost<{ idDeed: number }>(page, "/deeds", {
       number: deedNumber,
       dateDeedrecording: new Date().toISOString().split("T")[0],
-      body: `Deed resumen E2E ${deedNumber}`,
+      body: `Deed summary E2E ${deedNumber}`,
       status: "Firmada",
     });
-    expect(deed.ok, deed.error ?? "escritura failed").toBe(true);
+    expect(deed.ok, deed.error ?? "deed failed").toBe(true);
     const testimony = await apiPost(page, `/testimonies/${deed.data!.idDeed}/generate`, {});
-    expect(testimony.ok, testimony.error ?? "generar testimonio failed").toBe(true);
+    expect(testimony.ok, testimony.error ?? "generate testimony failed").toBe(true);
 
-    const tipo = await createProcedureType(page);
-    expect(tipo.ok, tipo.error ?? "createProcedureType failed").toBe(true);
+    const procedureType = await createProcedureType(page);
+    expect(procedureType.ok, procedureType.error ?? "createProcedureType failed").toBe(true);
     const procedure = await apiPost(page, "/procedures", {
-      idProcedureType: tipo.data!.idProcedureType,
+      idProcedureType: procedureType.data!.idProcedureType,
       idManagement: idManagement,
       idDeed: deed.data!.idDeed,
     });

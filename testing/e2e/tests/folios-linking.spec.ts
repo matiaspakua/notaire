@@ -9,18 +9,18 @@ import { apiPost, createFolio, uniqueId } from './setup/api-helpers'
 
 const STATUS_DEED_SIGNED = 'Firmada'
 
-/** Seed a deed already in estado "Signed" (no folio linked) */
+/** Seed a deed already in status Firmada (no folio linked) */
 async function seedSignedDeed(page: Page): Promise<{ idDeed: number; number: number }> {
   const id = uniqueId()
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
     dateDeedrecording: new Date().toISOString().split('T')[0],
-    body: `Deed firmada E2E ${id}`,
+    body: `Deed in status Firmada E2E ${id}`,
     status: STATUS_DEED_SIGNED,
-    notes: 'Numeración no correlativa: seed de datos E2E aislado (CU86)',
+    notes: 'Non-sequential numbering: isolated E2E data seed (CU86)',
   })
   if (!result.ok || !result.data?.idDeed) {
-    throw new Error(`Failed to seed escritura firmada: ${result.error ?? JSON.stringify(result.data)}`)
+    throw new Error(`Failed to seed a deed in status Firmada: ${result.error ?? JSON.stringify(result.data)}`)
   }
   return { idDeed: result.data.idDeed, number: id }
 }
@@ -32,7 +32,7 @@ async function pickFirstOption(page: Page) {
   await option.evaluate((el: HTMLElement) => el.click())
 }
 
-/** Open the "nuevo folio" modal and fill the required fields (número, tipo, notary) */
+/** Open the new-folio dialog and fill the required fields (number, type, notary) */
 async function openNewFolioAndFillRequired(page: Page, folioNumber: number) {
   await page.getByTestId('btn-new-folio').click()
   const dialog = page.getByRole('dialog')

@@ -3,7 +3,7 @@
  * CU73: Assign a workflow to a procedure type
  * Requires: backend running at localhost:8080, frontend at localhost:3000
  *
- * Arranges its own tipo-procedure via API helpers (#1066) — never skips when the table is empty.
+ * Arranges its own procedure type via API helpers (#1066) — never skips when the table is empty.
  */
 import { test, expect, type Page } from "@playwright/test";
 import { createProcedureType } from "./setup/api-helpers";
@@ -19,11 +19,11 @@ async function loginAsAdmin(page: Page) {
 /** Create a procedure type; fail the test if arrange/seed fails (do not skip). */
 async function arrangeTypeProcedure(page: Page): Promise<number> {
   const created = await createProcedureType(page, {
-    name: `Asignación E2E ${Date.now()}`,
+    name: `Assignment E2E ${Date.now()}`,
   });
   expect(
     created.ok && created.data?.idProcedureType != null,
-    `arrange tipo-tramite failed: ${created.status} ${created.error ?? JSON.stringify(created.data)}`,
+    `arrange procedure type failed: ${created.status} ${created.error ?? JSON.stringify(created.data)}`,
   ).toBe(true);
   return created.data!.idProcedureType;
 }

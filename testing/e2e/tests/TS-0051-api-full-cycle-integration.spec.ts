@@ -32,10 +32,10 @@ interface ApiBudget {
   status?: string;
 }
 
-interface ApiUsuario {
-  idUsuario?: number;
+interface ApiUser {
+  idUser?: number;
   name?: string;
-  tipo?: string;
+  type?: string;
   valid?: boolean;
 }
 
@@ -51,17 +51,17 @@ interface ApiFolio {
   status?: string;
 }
 
-interface ApiTypeProcedure {
+interface ApiProcedureType {
   idProcedureType?: number;
   name?: string;
 }
 
-interface ApiStatusManagement {
+interface ApiManagementStatus {
   idManagementStatus?: number;
   name?: string;
 }
 
-interface ApiTypeDocument {
+interface ApiDocumentType {
   idDocumentType?: number;
   name?: string;
 }
@@ -129,10 +129,10 @@ test.describe("API — People endpoints", () => {
   });
 });
 
-test.describe("API — Usuarios endpoints", () => {
+test.describe("API — Users endpoints", () => {
   test("POST /api/v1/users/login — login works", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiPost<ApiUsuario>(page, "/users/login", {
+    const result = await apiPost<ApiUser>(page, "/users/login", {
       name: "admin",
       password: "admin",
     });
@@ -141,7 +141,7 @@ test.describe("API — Usuarios endpoints", () => {
 
   test("GET /api/v1/users — list all users", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiUsuario[]>(page, "/users");
+    const result = await apiGet<ApiUser[]>(page, "/users");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
   });
@@ -159,7 +159,7 @@ test.describe("API — Budget endpoints", () => {
 test.describe("API — Catalog endpoints", () => {
   test("GET /api/v1/procedure-types — list procedure types", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiTypeProcedure[]>(page, "/procedure-types");
+    const result = await apiGet<ApiProcedureType[]>(page, "/procedure-types");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
   });
@@ -177,7 +177,7 @@ test.describe("API — Catalog endpoints", () => {
 
   test("GET /api/v1/management-statuses — list management statuses", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiStatusManagement[]>(page, "/management-statuses");
+    const result = await apiGet<ApiManagementStatus[]>(page, "/management-statuses");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
   });
@@ -185,7 +185,7 @@ test.describe("API — Catalog endpoints", () => {
   test("POST /api/v1/management-statuses — create a management status", async ({ page }) => {
     await page.goto("/login");
     const result = await apiPost(page, "/management-statuses", {
-      name: `Test Estado ${Date.now()}`,
+      name: `Test Status ${Date.now()}`,
       notes: "Created by E2E test",
     });
     expect(result.ok).toBe(true);
@@ -193,16 +193,16 @@ test.describe("API — Catalog endpoints", () => {
 
   test("GET /api/v1/document-types — list document types", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiTypeDocument[]>(page, "/document-types");
+    const result = await apiGet<ApiDocumentType[]>(page, "/document-types");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
   });
 });
 
-test.describe("API — Conceptos endpoints", () => {
+test.describe("API — Concepts endpoints", () => {
   let createdConceptId = 0;
 
-  test("GET /api/v1/concepts — list conceptos", async ({ page }) => {
+  test("GET /api/v1/concepts — list concepts", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet<ApiConcept[]>(page, "/concepts");
     expect(result.ok).toBe(true);
@@ -257,7 +257,7 @@ test.describe("API — Management endpoints", () => {
   });
 });
 
-test.describe("API — Escrituras endpoints", () => {
+test.describe("API — Deeds endpoints", () => {
   test("GET /api/v1/deeds — list deeds", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet(page, "/deeds");
@@ -273,7 +273,7 @@ test.describe("API — Payment endpoints", () => {
   });
 });
 
-test.describe("API — Inmuebles endpoints", () => {
+test.describe("API — Properties endpoints", () => {
   test("GET /api/v1/properties — list properties", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet(page, "/properties");
@@ -281,8 +281,8 @@ test.describe("API — Inmuebles endpoints", () => {
   });
 });
 
-test.describe("API — Copias endpoints", () => {
-  test("GET /api/v1/copies — list copias", async ({ page }) => {
+test.describe("API — Copies endpoints", () => {
+  test("GET /api/v1/copies — list copies", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet(page, "/copies");
     expect(result.ok).toBe(true);
@@ -297,7 +297,7 @@ test.describe("API — Items endpoints", () => {
   });
 });
 
-test.describe("API — Documentos Presentados endpoints", () => {
+test.describe("API — Submitted documents endpoints", () => {
   test("GET /api/v1/submitted-documents — list documents", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet(page, "/submitted-documents");

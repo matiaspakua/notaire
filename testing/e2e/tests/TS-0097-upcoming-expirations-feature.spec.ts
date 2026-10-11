@@ -1,5 +1,5 @@
 /**
- * CU42 - Informar próximos vencimientos (issue #802).
+ * CU42 - Report upcoming expirations (issue #802).
  *
  * A document type that expires after 10 days and a document submitted today are
  * seeded through the API; the screen must list the document inside the default
@@ -15,8 +15,8 @@ test.describe("CU42 - Upcoming expirations", () => {
   });
 
   test("lists a document due in 10 days and hides it when the window is 7 days", async ({ page }) => {
-    const tipo = await createDocumentType(page, { expires: true, dueDays: 10 });
-    expect(tipo.ok, tipo.error ?? "createDocumentType failed").toBe(true);
+    const documentType = await createDocumentType(page, { expires: true, dueDays: 10 });
+    expect(documentType.ok, documentType.error ?? "createDocumentType failed").toBe(true);
 
     // A document is presented for a procedure (CU04, #655): procedureId is required on create.
     const procedureType = await createProcedureType(page);
@@ -24,17 +24,17 @@ test.describe("CU42 - Upcoming expirations", () => {
     const procedure = await apiPost<{ idProcedure: number }>(page, "/procedures", {
       idProcedureType: procedureType.data!.idProcedureType,
     });
-    expect(procedure.ok, procedure.error ?? "create trámite failed").toBe(true);
+    expect(procedure.ok, procedure.error ?? "create procedure failed").toBe(true);
 
-    const name = `Vencimiento E2E ${uniqueId()}`;
+    const name = `Expiration E2E ${uniqueId()}`;
     const document = await apiPost<{ idSubmittedDocument: number }>(page, "/submitted-documents", {
-      typeId: tipo.data!.idDocumentType,
+      typeId: documentType.data!.idDocumentType,
       procedureId: procedure.data!.idProcedure,
       date: new Date().toISOString().split("T")[0],
       delivered: false,
       name,
     });
-    expect(document.ok, document.error ?? "documento-presentado failed").toBe(true);
+    expect(document.ok, document.error ?? "submitted document failed").toBe(true);
 
     await page.goto("/dashboard/upcoming-expirations");
     const table = page.getByRole("table");

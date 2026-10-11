@@ -158,15 +158,15 @@ test.describe("CU15 - Process a payment", () => {
   test("CU15-RECIBO-01 (#23): Given a payment exists, When issue receipt is clicked, Then a PDF is downloaded", async ({ page }) => {
     const amountUnico = 345;
     const { idBudget } = await seedBudget(page, amountUnico + 1000);
-    const pagoResult = await createPayment(page, idBudget, { amount: amountUnico });
-    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
-      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    const paymentResult = await createPayment(page, idBudget, { amount: amountUnico });
+    if (!paymentResult.ok || !paymentResult.data?.idPayment) {
+      throw new Error(`Failed to seed payment: ${paymentResult.error ?? JSON.stringify(paymentResult.data)}`);
     }
 
     await steps.givenUserIsOnPage("/dashboard/payments");
 
     // Row's accessible name starts with the bare id (no "#" prefix) — see TABLE-01/02/03.
-    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
+    const row = page.getByRole("row", { name: new RegExp(`^${paymentResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
 
     const downloadPromise = page.waitForEvent("download");
@@ -205,9 +205,9 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
 
   test("ESTADO-02: a budget with a partial payment shows the PARCIAL badge", async ({ page }) => {
     const { idBudget, lastName } = await seedBudget(page, 100000);
-    const pagoResult = await createPayment(page, idBudget, { amount: 40000 });
-    if (!pagoResult.ok) {
-      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    const paymentResult = await createPayment(page, idBudget, { amount: 40000 });
+    if (!paymentResult.ok) {
+      throw new Error(`Failed to seed payment: ${paymentResult.error ?? JSON.stringify(paymentResult.data)}`);
     }
 
     await steps.givenUserIsOnPage("/dashboard/payments");
@@ -227,9 +227,9 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
 
   test("ESTADO-03: a fully paid budget shows the SALDADO badge", async ({ page }) => {
     const { idBudget, lastName } = await seedBudget(page, 80000);
-    const pagoResult = await createPayment(page, idBudget, { amount: 80000 });
-    if (!pagoResult.ok) {
-      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    const paymentResult = await createPayment(page, idBudget, { amount: 80000 });
+    if (!paymentResult.ok) {
+      throw new Error(`Failed to seed payment: ${paymentResult.error ?? JSON.stringify(paymentResult.data)}`);
     }
 
     await steps.givenUserIsOnPage("/dashboard/payments");
@@ -262,14 +262,14 @@ test.describe("CU47 - Payments table CRUD (list, edit, delete)", () => {
 
   test("TABLE-01: Given a payment exists, When the payments page is opened, Then it renders in the table with the correct data", async ({ page }) => {
     const { idBudget } = await seedBudget(page, 20000);
-    const pagoResult = await createPayment(page, idBudget, { amount: 12345, paymentMethod: "Transferencia" });
-    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
-      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    const paymentResult = await createPayment(page, idBudget, { amount: 12345, paymentMethod: "Transferencia" });
+    if (!paymentResult.ok || !paymentResult.data?.idPayment) {
+      throw new Error(`Failed to seed payment: ${paymentResult.error ?? JSON.stringify(paymentResult.data)}`);
     }
 
     await steps.givenUserIsOnPage("/dashboard/payments");
 
-    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
+    const row = page.getByRole("row", { name: new RegExp(`^${paymentResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
     await expect(row).toContainText("Transferencia");
     await expect(row).toContainText(`#${idBudget}`);
@@ -277,14 +277,14 @@ test.describe("CU47 - Payments table CRUD (list, edit, delete)", () => {
 
   test("TABLE-02: Given a payment exists, When its amount is edited, Then the table shows the update", async ({ page }) => {
     const { idBudget } = await seedBudget(page, 30000);
-    const pagoResult = await createPayment(page, idBudget, { amount: 1000, paymentMethod: "Efectivo" });
-    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
-      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    const paymentResult = await createPayment(page, idBudget, { amount: 1000, paymentMethod: "Efectivo" });
+    if (!paymentResult.ok || !paymentResult.data?.idPayment) {
+      throw new Error(`Failed to seed payment: ${paymentResult.error ?? JSON.stringify(paymentResult.data)}`);
     }
 
     await steps.givenUserIsOnPage("/dashboard/payments");
 
-    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
+    const row = page.getByRole("row", { name: new RegExp(`^${paymentResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
     await row.getByRole("button").nth(1).click();
 
@@ -299,14 +299,14 @@ test.describe("CU47 - Payments table CRUD (list, edit, delete)", () => {
 
   test("TABLE-03: Given a payment exists, When it is deleted, Then it is removed from the table", async ({ page }) => {
     const { idBudget } = await seedBudget(page, 15000);
-    const pagoResult = await createPayment(page, idBudget, { amount: 500 });
-    if (!pagoResult.ok || !pagoResult.data?.idPayment) {
-      throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
+    const paymentResult = await createPayment(page, idBudget, { amount: 500 });
+    if (!paymentResult.ok || !paymentResult.data?.idPayment) {
+      throw new Error(`Failed to seed payment: ${paymentResult.error ?? JSON.stringify(paymentResult.data)}`);
     }
 
     await steps.givenUserIsOnPage("/dashboard/payments");
 
-    const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
+    const row = page.getByRole("row", { name: new RegExp(`^${paymentResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
     await row.getByRole("button").nth(2).click();
 

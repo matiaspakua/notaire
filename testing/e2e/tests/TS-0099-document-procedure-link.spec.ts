@@ -25,12 +25,12 @@ test.describe("#773 - Document linked to a procedure", () => {
     expect(notary.ok, notary.error ?? "createPerson failed").toBe(true);
     const numberManagement = uniqueId() % 1_000_000;
     const management = await apiPost<{ idManagement: number }>(page, "/managements", {
-      heading: `Gestión documentos E2E ${numberManagement}`,
+      heading: `Management documents E2E ${numberManagement}`,
       dateStart: new Date().toISOString().split("T")[0],
       number: numberManagement,
       notaryPersonId: notary.data!.personId,
     });
-    expect(management.ok, management.error ?? "create gestión failed").toBe(true);
+    expect(management.ok, management.error ?? "create management failed").toBe(true);
     const procedureType = await createProcedureType(page);
     expect(procedureType.ok, procedureType.error ?? "createProcedureType failed").toBe(true);
     const procedure = await createProcedure(page, management.data!.idManagement, procedureType.data!.idProcedureType);
