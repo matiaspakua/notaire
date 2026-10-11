@@ -40,8 +40,8 @@ export default function PropertiesPage() {
     fiscalAppraisal: "",
     notes: "",
     registrationNumber: "",
-    tomoFolioFinca: "",
-    linderos: "",
+    volumeFolioLandRecord: "",
+    boundaries: "",
   });
 
   function openCreate() {
@@ -52,8 +52,8 @@ export default function PropertiesPage() {
       fiscalAppraisal: "",
       notes: "",
       registrationNumber: "",
-      tomoFolioFinca: "",
-      linderos: "",
+      volumeFolioLandRecord: "",
+      boundaries: "",
     });
     setModalOpen(true);
   }
@@ -66,8 +66,8 @@ export default function PropertiesPage() {
       fiscalAppraisal: i.fiscalAppraisal !== undefined ? String(i.fiscalAppraisal) : "",
       notes: i.notes ?? "",
       registrationNumber: i.registrationNumber ?? "",
-      tomoFolioFinca: i.volumeFolioLandRecord ?? "",
-      linderos: i.boundaries ?? "",
+      volumeFolioLandRecord: i.volumeFolioLandRecord ?? "",
+      boundaries: i.boundaries ?? "",
     });
     setModalOpen(true);
   }
@@ -80,8 +80,8 @@ export default function PropertiesPage() {
         notes: form.notes,
         fiscalAppraisal: form.fiscalAppraisal === "" ? undefined : Number(form.fiscalAppraisal),
         registrationNumber: form.registrationNumber || undefined,
-        volumeFolioLandRecord: form.tomoFolioFinca || undefined,
-        boundaries: form.linderos || undefined,
+        volumeFolioLandRecord: form.volumeFolioLandRecord || undefined,
+        boundaries: form.boundaries || undefined,
       };
       if (editing?.idProperty) {
         await updateMutation.mutateAsync({ id: editing.idProperty, data: payload });
@@ -180,7 +180,7 @@ export default function PropertiesPage() {
             <FormSection dialogTitle title={editing ? t("editInmueble") : t("newInmueble")}>
               <FormField label={t("fields.nomenclatura")} required>
                 <Input
-                  data-testid="input-nomenclatura"
+                  data-testid="input-cadastral-designation"
                   value={form.cadastralDesignation}
                   onChange={(e) => setForm({ ...form, cadastralDesignation: e.target.value })}
                   placeholder={t("fields.nomenclaturaPlaceholder")}
@@ -197,7 +197,7 @@ export default function PropertiesPage() {
               <FormField label={t("fields.valuacionFiscal")}>
                 <Input
                   type="number"
-                  data-testid="input-valuacion-fiscal"
+                  data-testid="input-fiscal-appraisal"
                   value={form.fiscalAppraisal}
                   onChange={(e) => setForm({ ...form, fiscalAppraisal: e.target.value })}
                 />
@@ -220,16 +220,16 @@ export default function PropertiesPage() {
               <FormField label={t("fields.tomoFolioFinca")}>
                 <Input
                   data-testid="input-volume-folio-property"
-                  value={form.tomoFolioFinca}
-                  onChange={(e) => setForm({ ...form, tomoFolioFinca: e.target.value })}
+                  value={form.volumeFolioLandRecord}
+                  onChange={(e) => setForm({ ...form, volumeFolioLandRecord: e.target.value })}
                   placeholder={t("fields.tomoFolioFincaPlaceholder")}
                 />
               </FormField>
               <FormField label={t("fields.linderos")}>
                 <Input
-                  data-testid="input-linderos"
-                  value={form.linderos}
-                  onChange={(e) => setForm({ ...form, linderos: e.target.value })}
+                  data-testid="input-boundaries"
+                  value={form.boundaries}
+                  onChange={(e) => setForm({ ...form, boundaries: e.target.value })}
                   placeholder={t("fields.linderosPlaceholder")}
                 />
               </FormField>

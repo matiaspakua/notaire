@@ -65,7 +65,7 @@ class RegistrationDraftServiceTest {
         property.setAddress("Fake Street 123");
         property.setRegistrationNumber("M-1");
         property.setVolumeFolioLandRecord("T1-F2-FN3");
-        property.setBoundaries("Norte, Sur, Este, Oeste");
+        property.setBoundaries("North, South, East, West");
 
         procedure = new Procedure();
         procedure.setIdProcedure(10);
@@ -90,7 +90,7 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject generation when catastral/registral data is incomplete")
+    @DisplayName("Should reject generation when cadastral/registry data is incomplete")
     void shouldRejectGenerationWhenDataIsIncomplete() {
         property.setRegistrationNumber(null);
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));

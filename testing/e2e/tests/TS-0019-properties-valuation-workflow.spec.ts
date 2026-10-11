@@ -24,7 +24,7 @@ test.describe("CU69 - Property management: fiscal valuation", () => {
     await steps.thenModalIsVisible();
 
     await steps.whenUserFillsField("Nomenclatura Catastral", cadastralDesignation);
-    await steps.whenUserFillsField("Domicilio", "Calle Falsa 123");
+    await steps.whenUserFillsField("Domicilio", "Fake Street 123");
     await steps.whenUserFillsField("Valuación Fiscal", "150000.5");
     await steps.whenUserSubmitsForm();
 
@@ -41,7 +41,7 @@ test.describe("CU69 - Property management: fiscal valuation", () => {
     await steps.thenModalIsVisible();
 
     await steps.whenUserFillsField("Nomenclatura Catastral", cadastralDesignation);
-    await steps.whenUserFillsField("Domicilio", "Calle Falsa 456");
+    await steps.whenUserFillsField("Domicilio", "Fake Street 456");
     await steps.whenUserSubmitsForm();
 
     await steps.thenShowsSuccessMessage("creado");
@@ -54,7 +54,7 @@ test.describe("CU69 - Property management: fiscal valuation", () => {
     await steps.thenModalIsVisible();
 
     const save = page.getByRole("dialog").getByRole("button", { name: /^(crear|create)$/i });
-    await steps.whenUserFillsField("Domicilio", "Calle sin nomenclatura");
+    await steps.whenUserFillsField("Domicilio", "Street without designation");
     await expect(save).toBeDisabled();
 
     await steps.whenUserFillsField("Nomenclatura Catastral", "   ");

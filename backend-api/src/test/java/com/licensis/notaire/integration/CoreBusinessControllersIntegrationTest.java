@@ -379,7 +379,7 @@ class CoreBusinessControllersIntegrationTest {
                       "fiscalAppraisal": 1000.00,
                       "registrationNumber": "M-1",
                       "volumeFolioLandRecord": "T1-F2-FN3",
-                      "boundaries": "Norte, Sur, Este, Oeste"
+                      "boundaries": "North, South, East, West"
                     }
                     """;
 
@@ -389,7 +389,7 @@ class CoreBusinessControllersIntegrationTest {
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.registrationNumber", is("M-1")))
                     .andExpect(jsonPath("$.volumeFolioLandRecord", is("T1-F2-FN3")))
-                    .andExpect(jsonPath("$.boundaries", is("Norte, Sur, Este, Oeste")));
+                    .andExpect(jsonPath("$.boundaries", is("North, South, East, West")));
         }
     }
 }

@@ -103,7 +103,7 @@ class PaymentEntityTest {
         @Test
         @DisplayName("not equal to different type")
         void notEqualToDifferentType() {
-            assertThat(new Payment(1)).isNotEqualTo("not a pago");
+            assertThat(new Payment(1)).isNotEqualTo("not a payment");
         }
 
         @Test
