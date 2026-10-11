@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { NotaireIcon } from "@/components/ui/notaire-icon";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -267,7 +268,7 @@ export default function FoliosAdminPage() {
     {
       key: "status",
       header: t("fields.estado"),
-      render: (f) => (f.status ? <Badge variant="secondary">{f.status}</Badge> : "—"),
+      render: (f) => <StatusBadge domain="folio" value={f.status} />,
     },
     {
       key: "deed",

@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English names kept with status badges and the app-shell skeleton** (#1490, CU75):
+  The #1366 `StatusBadge` and the #1359 app-shell skeleton land on the English
+  screens. Management badges read `currentStatus`. Testimony badges use
+  `testimonyStatus`. Stored statuses such as `Pendiente` stay.
 - **English names kept with locale formatting and deed pickers** (#1490, CU75):
   The #1355 `useFormat` hook and the #1340 deed picker land on the English
   screens. Testimony, registration-draft, and folio forms use `DeedPicker`
@@ -1712,6 +1716,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional `status` (Sin Firmar, Firmada, Anulada, No Paso, Inscripta; any letter case,
   anything else answers 400) and returns one page of deeds in that status, so deed pickers
   no longer need the whole list to find signed deeds. Non-breaking.
+
+- **App-shell skeleton instead of a blank first paint** (issue #1359, RNF-03, RNF-05): the dashboard layout returned `null` until the client had mounted and read the stored session, so the server HTML of every dashboard URL was empty and each hard load painted a white page before the shell popped in. It now renders `components/layout/AppShellSkeleton.tsx` (busy `role="status"` region labelled `common.loading`, desktop sidebar block as wide as `AppSidebar`, header row, content blocks), which the real shell replaces without layout shift; the redirect to `/login` is unchanged. New shared `components/ui/skeleton.tsx` (`aria-hidden`, `motion-safe:animate-pulse`, a static tint under reduced motion) is used by `DataTable`'s loading rows and cards and by the workflow hero; the stat skeleton pulses only with motion allowed, and a guard keeps plain `animate-pulse` out of components. Vitest `app-shell-skeleton.test.tsx` and Playwright `TS-0125` cover it.
+- **One status badge on every status column** (issue #1366, RF-23, RNF-09): budgets, cases and testimonies showed status as plain text, folios the raw stored value, and protocol and users ad-hoc badges where color was the only difference. New `components/shared/StatusBadge.tsx` with `lib/status-maps.ts` maps a domain (`budget`, `management`, `testimony`, `folio`, `availability`, `user`) and a stored value to a tone (neutral, info, success, warning, danger), a decorative lucide icon and a text label, so no status relies on color alone (WCAG 1.4.1). Budget labels reuse `presupuestos.status.*` (#1346); management statuses keep their catalog name and only the seeded names get a tone; folio labels are new (`status.folio.*`, es/en); a value outside a vocabulary shows as stored in a neutral badge, an empty one as a dash. Wired on presupuestos, gestiones, testimonios, protocolo, administracion/usuarios and administracion/folios. Vitest `status-badge.test.tsx` and Playwright `TS-0124` cover it.
 
 ### Deprecated
 

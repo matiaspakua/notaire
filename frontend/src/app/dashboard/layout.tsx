@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { AppSidebar, MOBILE_SIDEBAR_ID } from "@/components/layout/AppSidebar";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { SkipLink } from "@/components/layout/SkipLink";
+import { AppShellSkeleton } from "@/components/layout/AppShellSkeleton";
 import { ROUTE_PATH_ATTR, useRouteFocus } from "@/hooks/useRouteFocus";
 import { useAuthStore } from "@/store/auth-store";
 import { AnimatePresence, PageTransition } from "@/components/motion";
@@ -50,7 +51,8 @@ export default function DashboardLayout({
     return () => desktop.removeEventListener("change", onChange);
   }, []);
 
-  if (!mounted || !isAuthenticated) return null;
+  // #1359: a static shell, not a blank page, until the session is known.
+  if (!mounted || !isAuthenticated) return <AppShellSkeleton />;
 
   return (
     <div

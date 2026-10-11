@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -117,7 +118,7 @@ export default function UsersPage() {
     { key: "name", header: t("fields.nombre"), render: (u) => <span className="font-medium">{u.name}</span> },
     { key: "type", header: t("fields.tipo"), render: (u) => <Badge variant={userTypeVariant(u.type)}>{u.type ?? "—"}</Badge> },
     { key: "role", header: t("fields.rol"), render: (u) => u.role ? <Badge variant="outline">{u.role.name}</Badge> : <span className="text-xs text-muted-foreground">—</span> },
-    { key: "active", header: tc("status"), render: (u) => u.active ? <Badge variant="success">{tc("active")}</Badge> : <Badge variant="secondary">{tc("inactive")}</Badge> },
+    { key: "active", header: tc("status"), render: (u) => <StatusBadge domain="user" value={u.active ?? false} /> },
     {
       key: "actions", header: "", className: "w-24",
       render: (u) => (

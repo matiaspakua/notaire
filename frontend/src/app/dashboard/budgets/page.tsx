@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, Receipt, ListChecks } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -187,12 +188,6 @@ function BudgetsList() {
     setModalOpen(true);
   }
 
-  /** Translated label of a stored status; a value outside the vocabulary shows as stored (#1346). */
-  function statusLabel(status: string | undefined) {
-    const code = normalizeBudgetStatus(status);
-    return code ? t(budgetStatusLabelKey(code)) : status || "—";
-  }
-
   async function handleSave() {
     try {
       if (isEditMode && editing.idBudget) {
@@ -247,7 +242,7 @@ function BudgetsList() {
     {
       key: "status",
       header: tc("status"),
-      render: (p) => statusLabel(p.status),
+      render: (p) => <StatusBadge domain="budget" value={p.status} />,
     },
     {
       key: "actions",

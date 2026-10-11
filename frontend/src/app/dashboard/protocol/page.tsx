@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -75,8 +75,7 @@ export default function ProtocolPage() {
     {
       key: "available",
       header: tc("status"),
-      render: (f) =>
-        f.status !== "Utilizado" ? <Badge variant="success">{t("available")}</Badge> : <Badge variant="secondary">{t("inUse")}</Badge>,
+      render: (f) => <StatusBadge domain="availability" value={f.status} />,
     },
   ];
 

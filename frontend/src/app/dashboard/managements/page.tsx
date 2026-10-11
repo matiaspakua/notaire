@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, Archive, RefreshCcw, History, FolderClock, Clipbo
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -279,7 +280,7 @@ function ManagementsList() {
     {
       key: "status",
       header: t("fields.estado"),
-      render: (g) => g.currentStatus ?? "—",
+      render: (g) => <StatusBadge domain="management" value={g.currentStatus} />,
     },
     {
       key: "actions",

@@ -7,6 +7,7 @@
  * workflow.
  */
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
@@ -103,7 +104,7 @@ export function WorkflowHero() {
       {trace && !notFound && <WorkflowTracker trace={trace} />}
 
       {loading && !trace && (
-        <div className="h-[320px] bg-muted rounded-[28px] animate-pulse" data-testid="workflow-skeleton" />
+        <Skeleton className="h-[320px] bg-muted rounded-[28px]" data-testid="workflow-skeleton" />
       )}
     </section>
   );
