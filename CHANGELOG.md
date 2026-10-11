@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English API versioning decision** (#1490, CU75):
+  ADR-003 is English. The live budget controller is `BudgetController` at
+  `/api/v1/budgets`. Errors use `ErrorResponse` (`timestamp`, `status`, `error`,
+  `message`, `path`, `traceId`, `details`). Stored statuses such as `BORRADOR`
+  and `PENDIENTE` stay. There is no `/api/v2` surface.
 - **English module-structure decision** (#1490, CU75):
   ADR-002 is English. Samples name current types (`ReportController`,
   `DeedManagementRepository`, `User`, `SecurityAndCorsConfig`). The coverage
