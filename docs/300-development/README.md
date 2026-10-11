@@ -23,6 +23,7 @@ which define the mandatory workflow.
 | [`304-ai-sdlc-cloud/`](304-ai-sdlc-cloud/) | Cursor Cloud AI SDLC fleet: foreman, specialists, env checklist, [CI merge gate](304-ai-sdlc-cloud/CI-MERGE-GATE.md), validation (not `local-ai/`) |
 | [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md) | Permanent domain model. A change that moves a state updates this file in the same PR |
 | [`INGENIERIA.md`](INGENIERIA.md) | Artifact IDs, forward/back trace, and process boxes. Method from the specialization guide, fitted to this repo |
+| [`EVALUACION-INGENIERIA.md`](EVALUACION-INGENIERIA.md) | Which engineering documents exist, and which gaps are not a missing file |
 
 OpenSpec and the Constitution: see [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../openspec/NOTAIRE-ADAPTATIONS.md)
 (SpecKit, removed in #1083: [`docs/000-archive/speckit/`](../000-archive/speckit/)).

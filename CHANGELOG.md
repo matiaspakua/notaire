@@ -44,6 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Flyway `V45` amended (#1499, Owner-approved exception).** It failed on every fresh database because the legacy table `identificaciones` was never created by Flyway. It now renames the table where it exists and creates `identifications` where it does not. A database that already applied the original `V45` must run `flyway repair` once (checksum changed). The reports page (`/dashboard/reports`) is restored; it had been hidden by an unanchored `.gitignore` rule.
 
+- **Testimony and document re-entry sequences** (CU08, CU11, CU43, CU44, #921):
+  `GESTION.md` (`DOC-GESTION`) verifies a testimony before entry, records
+  inscription before withdrawal, and sequences re-entry of a testimony and
+  of a document. Neither re-entry moves the management. The engineering
+  catalog is `EVALUACION-INGENIERIA.md`.
 - **Case-process documentation and a traceability check** (CU76, CU02, #921):
   `GESTION.md` is the step-by-step analysis of a gestión. The legacy activity
   diagram matches the seeded workflow. `check-doc-traceability.py` rejects an

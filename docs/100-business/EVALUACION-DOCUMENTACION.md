@@ -51,9 +51,9 @@ desde `V32`. El archivo se corrigió. Sigue siendo legado.
 |---------|-------|---------|--------------------------------------|-----------------|
 | Gestión | CU02, CU14, CU16, CU83, CU85 | CICLO §3.1 | [GESTION.md](../200-architecture/203-design/GESTION.md) §3 | Ninguno en el camino sembrado |
 | Escritura | CU05, CU06, CU52 | CICLO §3.3 | GESTION §3.3 | Anulada, No Paso e Inscripta no tienen servicio propio |
-| Testimonio | CU07, CU11, CU12, CU44 | CICLO §3.4 | GESTION §3.4 | El reingreso está en el servicio y en CICLO, no en una secuencia propia |
+| Testimonio | CU07, CU08, CU11, CU12, CU44 | CICLO §3.4 | GESTION §3.4 y §3.7 | — |
 | Minuta | CU82 | CICLO §3.5 | GESTION §3.6 | Sin vuelta desde Observada |
-| Documentación | CU04, CU10, CU43, CU72 | CICLO §3.6 | CICLO §4.2 y GESTION §3.2 | — |
+| Documentación | CU04, CU10, CU43, CU72 | CICLO §3.6 | CICLO §4.2, GESTION §3.2 y §3.8 | — |
 | Presupuesto y pago | CU01, CU15, CU45, CU47 | CICLO §3.7 y §3.8 | CICLO §4.3 | El orden del presupuesto no está custodiado por aristas |
 | Carpeta | CU85 | CICLO §3.9 | GESTION §3.5 | — |
 
@@ -76,7 +76,11 @@ y, si mueve un estado o una llamada de estos procesos, la fila de esta tabla.
 ## 5. Qué no se hizo
 
 No se reescribió cada ficha CU01–CU87. El relato paso a paso del actor sigue
-en la ficha. Copiar el grafo en cada una vuelve a separar las fuentes.
+en la ficha. Copiar el grafo en cada una vuelve a separar las fuentes. Las
+llamadas vigentes de verificación, inscripción, reingreso de testimonio y
+reingreso de documento están en GESTION §3.4, §3.7 y §3.8. El catálogo de
+los documentos de ingeniería está en
+[EVALUACION-INGENIERIA.md](../300-development/EVALUACION-INGENIERIA.md).
 
 No se cerró el issue #921. El diccionario de datos (hallazgo F3 de la auditoría
 de octubre) y la licencia siguen abiertos ahí.
