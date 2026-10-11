@@ -58,7 +58,7 @@ class TestimonyControllerIntegrationTest {
         return node.get("idDeed").asInt();
     }
 
-    private int createDeedFirmada() throws Exception {
+    private int createSignedDeed() throws Exception {
         String deedBody = """
                 {
                   "number": 3002,
@@ -185,7 +185,7 @@ class TestimonyControllerIntegrationTest {
                   "number": 1003,
                   "flagged": true,
                   "verified": false,
-                  "notes": "Verified por notary",
+                  "notes": "Verified by the notary",
                   "version": %d,
                   "deed": {"idDeed": %d, "number": 0}
                 }
@@ -199,7 +199,7 @@ class TestimonyControllerIntegrationTest {
         mockMvc.perform(get("/api/v1/testimonies/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.flagged").value(true))
-                .andExpect(jsonPath("$.notes").value("Verified por notary"));
+                .andExpect(jsonPath("$.notes").value("Verified by the notary"));
     }
 
     @Test
@@ -250,9 +250,9 @@ class TestimonyControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU07 - Should generate testimony with system-assigned number from a Firmada deed")
-    void shouldGenerateTestimonyFromFirmadaDeed() throws Exception {
-        int deedId = createDeedFirmada();
+    @DisplayName("CU07 - Should generate testimony with system-assigned number from a signed deed")
+    void shouldGenerateTestimonyFromSignedDeed() throws Exception {
+        int deedId = createSignedDeed();
 
         mockMvc.perform(post("/api/v1/testimonies/" + deedId + "/generate"))
                 .andExpect(status().isCreated())
@@ -264,8 +264,8 @@ class TestimonyControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU07 - Should return 400 when generating testimony from a non-Firmada deed")
-    void shouldRejectGenerateTestimonyFromNonFirmadaDeed() throws Exception {
+    @DisplayName("CU07 - Should return 400 when generating testimony from an unsigned deed")
+    void shouldRejectGenerateTestimonyFromUnsignedDeed() throws Exception {
         int deedId = createDeed();
 
         mockMvc.perform(post("/api/v1/testimonies/" + deedId + "/generate"))
@@ -275,7 +275,7 @@ class TestimonyControllerIntegrationTest {
     @Test
     @DisplayName("CU08 - Should verify a generated testimony without notes")
     void shouldVerifyGeneratedTestimonyWithoutNotes() throws Exception {
-        int deedId = createDeedFirmada();
+        int deedId = createSignedDeed();
 
         MvcResult generated = mockMvc.perform(post("/api/v1/testimonies/" + deedId + "/generate"))
                 .andExpect(status().isCreated())
@@ -294,7 +294,7 @@ class TestimonyControllerIntegrationTest {
     @Test
     @DisplayName("CU08 - Should verify a generated testimony with notes")
     void shouldVerifyGeneratedTestimonyWithNotes() throws Exception {
-        int deedId = createDeedFirmada();
+        int deedId = createSignedDeed();
 
         MvcResult generated = mockMvc.perform(post("/api/v1/testimonies/" + deedId + "/generate"))
                 .andExpect(status().isCreated())

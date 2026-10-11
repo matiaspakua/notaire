@@ -49,7 +49,7 @@ class AuditRecordServiceTest {
 
         testRecord = new AuditRecord();
         testRecord.setIdAuditRecord(1);
-        testRecord.setModule("DOCUMENTOS");
+        testRecord.setModule("DOCUMENTS");
         testRecord.setOperationDetail("CREATE");
         testRecord.setDate(new Date());
         testRecord.setFkIdUser(testUser);
@@ -74,7 +74,7 @@ class AuditRecordServiceTest {
 
     @Test
     @DisplayName("Should return an empty list when no audit records exist")
-    void shouldReturnEmptyListWhenNoRegistrosExist() {
+    void shouldReturnEmptyListWhenNoRecordsExist() {
         when(repository.findAll()).thenReturn(new ArrayList<>());
 
         List<AuditRecord> result = service.findAll();
@@ -97,7 +97,7 @@ class AuditRecordServiceTest {
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .allMatch(dto -> dto.getModule().equals("DOCUMENTOS"));
+                .allMatch(dto -> dto.getModule().equals("DOCUMENTS"));
 
         verify(repository, times(1)).findAllWithUser();
     }
@@ -132,7 +132,7 @@ class AuditRecordServiceTest {
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .allMatch(dto -> dto.getModule().equals("DOCUMENTOS"));
+                .allMatch(dto -> dto.getModule().equals("DOCUMENTS"));
 
         verify(repository, times(1)).findAll(pageable);
     }
@@ -143,15 +143,15 @@ class AuditRecordServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
 
-        when(repository.findByModule("DOCUMENTOS", pageable)).thenReturn(page);
+        when(repository.findByModule("DOCUMENTS", pageable)).thenReturn(page);
 
-        Page<AuditRecord> result = service.findByModule("DOCUMENTOS", pageable);
+        Page<AuditRecord> result = service.findByModule("DOCUMENTS", pageable);
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .allMatch(reg -> reg.getModule().equals("DOCUMENTOS"));
+                .allMatch(reg -> reg.getModule().equals("DOCUMENTS"));
 
-        verify(repository, times(1)).findByModule("DOCUMENTOS", pageable);
+        verify(repository, times(1)).findByModule("DOCUMENTS", pageable);
     }
 
     @Test
@@ -160,15 +160,15 @@ class AuditRecordServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
 
-        when(repository.findByModule("DOCUMENTOS", pageable)).thenReturn(page);
+        when(repository.findByModule("DOCUMENTS", pageable)).thenReturn(page);
 
-        Page<DtoAuditRecord> result = service.findByModuleAsDto("DOCUMENTOS", pageable);
+        Page<DtoAuditRecord> result = service.findByModuleAsDto("DOCUMENTS", pageable);
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .allMatch(dto -> dto.getModule().equals("DOCUMENTOS"));
+                .allMatch(dto -> dto.getModule().equals("DOCUMENTS"));
 
-        verify(repository, times(1)).findByModule("DOCUMENTOS", pageable);
+        verify(repository, times(1)).findByModule("DOCUMENTS", pageable);
     }
 
     @Test
@@ -239,7 +239,7 @@ class AuditRecordServiceTest {
         assertThat(result).isPresent()
                 .hasValueSatisfying(dto -> {
                     assertThat(dto.getIdAuditRecord()).isEqualTo(1);
-                    assertThat(dto.getModule()).isEqualTo("DOCUMENTOS");
+                    assertThat(dto.getModule()).isEqualTo("DOCUMENTS");
                 });
 
         verify(repository, times(1)).findByIdWithUser(1);
@@ -247,7 +247,7 @@ class AuditRecordServiceTest {
 
     @Test
     @DisplayName("Should find the audit record list by user id")
-    void shouldFindRegistrosByUserIdList() {
+    void shouldFindRecordsByUserIdList() {
         List<AuditRecord> registros = new ArrayList<>();
         registros.add(testRecord);
 
@@ -264,7 +264,7 @@ class AuditRecordServiceTest {
 
     @Test
     @DisplayName("Should find the audit record list by user id as DTOs")
-    void shouldFindRegistrosByUserIdAsDto() {
+    void shouldFindRecordsByUserIdAsDto() {
         List<AuditRecord> registros = new ArrayList<>();
         registros.add(testRecord);
 
@@ -274,7 +274,7 @@ class AuditRecordServiceTest {
 
         assertThat(result).isNotNull()
                 .hasSize(1)
-                .allMatch(dto -> dto.getModule().equals("DOCUMENTOS"));
+                .allMatch(dto -> dto.getModule().equals("DOCUMENTS"));
 
         verify(repository, times(1)).findByUserIdWithUser(1);
     }
@@ -289,7 +289,7 @@ class AuditRecordServiceTest {
         assertThat(result).isNotNull()
                 .isEqualTo(testRecord)
                 .extracting(AuditRecord::getModule)
-                .isEqualTo("DOCUMENTOS");
+                .isEqualTo("DOCUMENTS");
 
         verify(repository, times(1)).save(testRecord);
     }
@@ -303,7 +303,7 @@ class AuditRecordServiceTest {
                 .extracting(DtoAuditRecord::getIdAuditRecord,
                         DtoAuditRecord::getModule,
                         DtoAuditRecord::getOperationDetail)
-                .containsExactly(1, "DOCUMENTOS", "CREATE");
+                .containsExactly(1, "DOCUMENTS", "CREATE");
         assertThat(dto.getUsers()).isNotNull()
                 .extracting(u -> u.getName())
                 .isEqualTo("Juan");
@@ -312,18 +312,18 @@ class AuditRecordServiceTest {
     @Test
     @DisplayName("Should handle null user in DTO mapping")
     void shouldHandleNullUserInDtoMapping() {
-        AuditRecord recordSinUser = new AuditRecord();
-        recordSinUser.setIdAuditRecord(1);
-        recordSinUser.setModule("DOCUMENTOS");
-        recordSinUser.setOperationDetail("DELETE");
-        recordSinUser.setDate(new Date());
-        recordSinUser.setFkIdUser(null);
+        AuditRecord recordWithoutUser = new AuditRecord();
+        recordWithoutUser.setIdAuditRecord(1);
+        recordWithoutUser.setModule("DOCUMENTS");
+        recordWithoutUser.setOperationDetail("DELETE");
+        recordWithoutUser.setDate(new Date());
+        recordWithoutUser.setFkIdUser(null);
 
-        DtoAuditRecord dto = AuditRecordService.toDto(recordSinUser);
+        DtoAuditRecord dto = AuditRecordService.toDto(recordWithoutUser);
 
         assertThat(dto).isNotNull()
                 .extracting(DtoAuditRecord::getModule)
-                .isEqualTo("DOCUMENTOS");
+                .isEqualTo("DOCUMENTS");
         assertThat(dto.getUsers()).isNull();
     }
 }

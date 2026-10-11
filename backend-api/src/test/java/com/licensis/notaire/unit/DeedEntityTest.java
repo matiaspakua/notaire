@@ -21,8 +21,8 @@ import com.licensis.notaire.testing.RequirementCoverage;
 class DeedEntityTest {
 
     @Nested
-    @DisplayName("CU05 - Preparar deed - Unit Tests")
-    class PrepararDeedTests {
+    @DisplayName("CU05 - Prepare deed - Unit Tests")
+    class PrepareDeedTests {
 
         @Test
         @DisplayName("Should create deed with required fields")
@@ -32,11 +32,11 @@ class DeedEntityTest {
             deed.setNumber(1001);
             deed.setDateDeedrecording(new Date());
             deed.setBody("Sale deed");
-            deed.setStatus("firmada");
+            deed.setStatus("signed");
 
             assertThat(deed.getNumber()).isEqualTo(1001);
             assertThat(deed.getBody()).isEqualTo("Sale deed");
-            assertThat(deed.getStatus()).isEqualTo("firmada");
+            assertThat(deed.getStatus()).isEqualTo("signed");
         }
 
         @Test
@@ -44,17 +44,17 @@ class DeedEntityTest {
         void shouldSetDeedStates() {
             Deed deed = new Deed();
 
-            deed.setStatus("firmada");
-            assertThat(deed.getStatus()).isEqualTo("firmada");
+            deed.setStatus("signed");
+            assertThat(deed.getStatus()).isEqualTo("signed");
 
-            deed.setStatus("no_firmada");
-            assertThat(deed.getStatus()).isEqualTo("no_firmada");
+            deed.setStatus("unsigned");
+            assertThat(deed.getStatus()).isEqualTo("unsigned");
 
-            deed.setStatus("anulada");
-            assertThat(deed.getStatus()).isEqualTo("anulada");
+            deed.setStatus("voided");
+            assertThat(deed.getStatus()).isEqualTo("voided");
 
-            deed.setStatus("no_paso");
-            assertThat(deed.getStatus()).isEqualTo("no_paso");
+            deed.setStatus("not_passed");
+            assertThat(deed.getStatus()).isEqualTo("not_passed");
         }
 
         @Test
@@ -69,7 +69,7 @@ class DeedEntityTest {
         }
 
         @Test
-        @DisplayName("Should have SIN_FIRMAR as default status")
+        @DisplayName("Should have the unsigned status as default")
         void shouldHaveUnsignedAsDefaultStatus() {
             Deed deed = new Deed();
 
@@ -216,7 +216,7 @@ class DeedEntityTest {
 
     @Nested
     @DisplayName("setAttributes branches")
-    class SetAtributosTests {
+    class SetAttributesTests {
 
     }
 
@@ -250,7 +250,7 @@ class DeedEntityTest {
             Deed e = new Deed(1);
             e.setNumber(42);
             var dto = e.getDto();
-            // procedureList null → setTramites(null) → dto.getTramites() is null
+            // procedureList null → setProcedures(null) → dto.getProcedures() is null
             assertThat(dto.getProcedures()).isNull();
         }
 

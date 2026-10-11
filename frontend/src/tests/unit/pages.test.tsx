@@ -51,8 +51,8 @@ describe("CU01 — Budget display helpers", () => {
     expect(formatted).toBe("—");
   });
 
-  it("status field reflects PENDIENTE/PAGADO states", () => {
-    const statuses = ["PENDIENTE", "PAGADO", "CANCELADO"];
+  it("status field reflects PENDIENTE/PAID states", () => {
+    const statuses = ["PENDIENTE", "PAID", "CANCELLED"];
     statuses.forEach((e) => {
       const p: Budget = { status: e };
       expect(p.status).toBe(e);
@@ -81,13 +81,13 @@ describe("CU17 — People list display helpers", () => {
 
   it("filters clients using isClient flag", () => {
     const people: Person[] = [
-      { personId: 1, firstName: "Cliente A", isClient: true },
-      { personId: 2, firstName: "Empleado B", isClient: false },
-      { personId: 3, firstName: "Cliente C", isClient: true },
+      { personId: 1, firstName: "Client A", isClient: true },
+      { personId: 2, firstName: "Employee B", isClient: false },
+      { personId: 3, firstName: "Client C", isClient: true },
     ];
     const clients = people.filter((p) => p.isClient);
     expect(clients).toHaveLength(2);
-    expect(clients[0].firstName).toBe("Cliente A");
+    expect(clients[0].firstName).toBe("Client A");
   });
 });
 

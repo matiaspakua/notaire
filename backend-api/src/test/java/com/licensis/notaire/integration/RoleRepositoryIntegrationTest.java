@@ -75,11 +75,11 @@ class RoleRepositoryIntegrationTest extends ServiceIntegrationTest {
         role.setActive(true);
         Role saved = roleRepository.save(role);
 
-        saved.setDescription("Description actualizada");
+        saved.setDescription("Updated description");
         saved.setActive(false);
         Role updated = roleRepository.save(saved);
 
-        assertThat(updated.getDescription()).isEqualTo("Description actualizada");
+        assertThat(updated.getDescription()).isEqualTo("Updated description");
         assertThat(updated.isActive()).isFalse();
     }
 

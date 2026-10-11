@@ -54,7 +54,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
         identificationTypeRepository.save(identificationType);
 
         Person person = new Person();
-        person.setFirstName("Cliente");
+        person.setFirstName("Client");
         person.setLastName("Test");
         person.setIdentificationNumber("87654321");
         person.setIsClient(true);

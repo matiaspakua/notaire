@@ -237,8 +237,8 @@ class PaymentPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("Should report status SIN_PAGOS when budget has no payments")
-    void shouldCalculateStatusPaymentSinPayments() {
+    @DisplayName("Should report status NoPayments when the budget has no payments")
+    void shouldCalculateStatusWithNoPayments() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(null);
 

@@ -71,7 +71,7 @@ class BudgetTemplateSerializationIntegrationTest {
 
     private void createTemplate(Integer typeProcedureId, Integer conceptId) throws Exception {
         String body = """
-                {"fkIdProcedureType": %d, "fkIdConcept": %d, "notes": "template ciclo IT"}
+                {"fkIdProcedureType": %d, "fkIdConcept": %d, "notes": "template cycle IT"}
                 """.formatted(typeProcedureId, conceptId);
         mockMvc.perform(post("/api/v1/budget-templates")
                         .contentType(MediaType.APPLICATION_JSON)

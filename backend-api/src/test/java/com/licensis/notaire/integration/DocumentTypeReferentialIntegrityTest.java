@@ -73,7 +73,7 @@ class DocumentTypeReferentialIntegrityTest {
         linkToProcedureTemplate(id);
 
         String updateBody = """
-                {"name": "Name actualizado", "expires": false}
+                {"name": "Updated name", "expires": false}
                 """;
 
         mockMvc.perform(put("/api/v1/document-types/" + id)
@@ -89,7 +89,7 @@ class DocumentTypeReferentialIntegrityTest {
         int id = createTypeDocument("Type_edit_ok_" + System.nanoTime());
 
         String updateBody = """
-                {"name": "Name actualizado ok", "expires": false}
+                {"name": "Updated name ok", "expires": false}
                 """;
 
         mockMvc.perform(put("/api/v1/document-types/" + id)

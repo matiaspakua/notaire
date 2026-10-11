@@ -31,7 +31,7 @@ import ExternalEntityDocumentsPage from "@/app/dashboard/external-entity-documen
 import { ManagementPicker } from "@/components/shared/ManagementPicker";
 import type { DeedManagement } from "@/types";
 
-const NEWEST: DeedManagement = { idManagement: 1312, number: 98765, heading: "Compraventa Nueva", currentStatus: "Iniciada" };
+const NEWEST: DeedManagement = { idManagement: 1312, number: 98765, heading: "New Compraventa", currentStatus: "Iniciada" };
 const OLD: DeedManagement = { idManagement: 12, number: 4321, heading: "Hipoteca Garcia", currentStatus: "Iniciada" };
 const OLD2: DeedManagement = { idManagement: 40, number: 5555, heading: "Donación Garcia", currentStatus: "Iniciada" };
 
@@ -118,7 +118,7 @@ describe("ManagementPicker (#1340)", () => {
     const box = screen.getByRole("combobox", { name: "Management" });
     fireEvent.click(box);
     // The number leads the label, so it reads the same in es and en.
-    expect(await screen.findByRole("option", { name: "98765 — Compraventa Nueva" })).toBeInTheDocument();
+    expect(await screen.findByRole("option", { name: "98765 — New Compraventa" })).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("managementPicker.recentHint");
     expect(urls().some((u) => u.includes("size=1000"))).toBe(false);
   });
@@ -142,7 +142,7 @@ describe("ManagementPicker (#1340)", () => {
     const box = screen.getByRole("combobox", { name: "Management" });
     await waitFor(() => expect(box).toHaveValue("4321 — Hipoteca Garcia"));
     fireEvent.click(box);
-    fireEvent.click(await screen.findByRole("option", { name: "98765 — Compraventa Nueva" }));
+    fireEvent.click(await screen.findByRole("option", { name: "98765 — New Compraventa" }));
     expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ idManagement: 1312 }));
   });
 });

@@ -43,6 +43,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English fixture names** (#1490, CU75): person fixtures use `Client`,
+  `Lawyer`, and `Criminal`. Budget headings use `Updatable budget` and a
+  `Budget` prefix. The management mock heading is `Management` and the
+  transition sample is `In progress`. Audit samples use module `DOCUMENTS`.
+  Helpers are `managementWithoutStatus`, `recordWithoutUser`,
+  `shouldCalculateStatusWithNoPayments`, `findByModule`, and record methods
+  without `Registros`. Stored statuses `PENDIENTE`, `BORRADOR`, and
+  `APROBADO` stay, along with `NoPayments`, `Pérez`, and the role
+  `Escribano`. Delivered-by `Cliente` stays.
+- **English signing identifiers** (#1490, CU75): the signing service comment
+  says `Sign a deed`. The controller field is `deedSigningService`. Tests
+  name `createSignedDeed`, `nextNumber`, `next`, `nextAuxiliary`,
+  `nextPrincipal`, and `count`. The gap justification is
+  `Voided deed No. 6 to 8`. The integration class is
+  `DeedSigningControllerIntegrationTest`. Stored statuses `Firmada` and
+  `Sin Firmar` stay, along with `Protocolo Auxiliar` and `Protocolo Principal`.
+- **English entity round-trips** (#1490, CU75): budget and deed setter fixtures
+  use `pending`, `approved`, `signed`, `unsigned`, `voided`, and `not_passed`.
+  Nested tests are `PrepareBudgetTests`, `PrepareDeedTests`, and
+  `SetAttributesTests`. The concept round-trip method is `getDtoAndSetAttributes`.
+  The deed comment names `setProcedures`. Stored heading `Compraventa` and
+  constructor status `FIRMADA` stay.
+- **English mixed phrases** (#1490, CU75): fixtures use English phrases
+  (`Discount without reason`, `Discount for early payment`,
+  `Surcharge for late payment`, `Item without a type`,
+  `Verified by the notary`, and `hash-already-rotated-by-the-operator`).
+  The missing-deed mock uses the live message `Deed not found with ID: 999`.
+  The initializer display name is `default admin user`. Stored types
+  `DESCUENTO` and `RECARGO` stay.
+- **English updated phrases** (#1490, CU75): tests name updates in English
+  (`Updated name`, `Updated name ok`, `Updated item`, `Updated payment`,
+  `Updated description`, and `Updated management IT`). Deed bodies say
+  `Signed deed for a testimony movement` and `Signed deed for a testimony copy`.
+  The helper is `createSignedDeed`. The notebook result is `created`.
+  Stored status `Firmada` stays.
+- **English synthetic phrases** (#1490, CU75): tests use English phrases and
+  local names (`Name`, `No data available`, `Client A`, `Employee B`,
+  `PAID`, `CANCELLED`, `Approved by the client`, `notes only`,
+  `budget cycle IT`, `procedure cycle IT`, and `template cycle IT`).
+  The budget repository names `statuses`, `uniqueHeading`, `created`, and
+  `approved`. The workflow-trace comment names the procedure type and
+  statuses. Stored labels `PENDIENTE`, `BORRADOR`, `APROBADO`, `RECHAZADO`,
+  `En proceso`, and `Compraventa` stay, along with `Juan García` and
+  `Ana López`.
+- **English synthetic labels** (#1490, CU75): form and picker fixtures use
+  English (`Name`, `The name is required`, `Without hyphens`, `Notes`,
+  `Too long`, `Status`, `Choose a status`, `Client`, `Ana Latest`,
+  `Bruno Recent`, `New Compraventa`, and `Status E2E 42`). Sale headings
+  use `Sale property`, `parcel sale`, `Sale budget`, `Compraventa property`,
+  and `Urban Compraventa property`. Stored labels `CUIT`, `Borrador`,
+  `Aprobado`, `Rechazado`, `Iniciada`, `Pendiente`, `Hipoteca`, `Donación`,
+  `APROBADO`, `FIRMADA`, and `Compraventa` stay, along with `Juan`.
 - **English synthetic chrome fixtures** (#1490, CU75): tests name dialog and
   header props in English (`People`, `Client management`, `New person`,
   `Delete person`, `Edit budget`, `Budget summary`, `Items`, `Template`,

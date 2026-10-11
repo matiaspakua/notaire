@@ -36,11 +36,11 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-    private int createDeedFirmada() throws Exception {
+    private int createSignedDeed() throws Exception {
         String body = """
                 {
                   "number": %d,
-                  "body": "Deed firmada para copy de testimony",
+                  "body": "Signed deed for a testimony copy",
                   "status": "Firmada",
                   "dateDeedrecording": "2026-06-16"
                 }
@@ -54,7 +54,7 @@ class TestimonyCopyReportIntegrationTest extends ServiceIntegrationTest {
     }
 
     private int generateTestimony() throws Exception {
-        int idDeed = createDeedFirmada();
+        int idDeed = createSignedDeed();
         MvcResult result = mockMvc.perform(post("/api/v1/testimonies/" + idDeed + "/generate"))
                 .andExpect(status().isCreated())
                 .andReturn();

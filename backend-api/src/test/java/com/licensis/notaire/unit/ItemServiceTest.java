@@ -49,7 +49,7 @@ class ItemServiceTest {
     @DisplayName("Should treat an item without explicit type as normal")
     void shouldTreatItemWithoutTypeAsNormal() {
         Item item = new Item();
-        item.setName("Item sin type");
+        item.setName("Item without a type");
         item.setValue(new java.math.BigDecimal("500"));
 
         when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -62,25 +62,25 @@ class ItemServiceTest {
     @Test
     @DisplayName("Should accept a discount item with a reason")
     void shouldAcceptDiscountItemWithReason() {
-        Item item = buildItem(TypeItem.DESCUENTO, "Descuento by pronto payment");
+        Item item = buildItem(TypeItem.DESCUENTO, "Discount for early payment");
         when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
         assertThat(saved.getType()).isEqualTo(TypeItem.DESCUENTO);
-        assertThat(saved.getReason()).isEqualTo("Descuento by pronto payment");
+        assertThat(saved.getReason()).isEqualTo("Discount for early payment");
     }
 
     @Test
     @DisplayName("Should accept a surcharge item with a reason")
     void shouldAcceptSurchargeItemWithReason() {
-        Item item = buildItem(TypeItem.RECARGO, "Recargo by mora");
+        Item item = buildItem(TypeItem.RECARGO, "Surcharge for late payment");
         when(itemRepository.create(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Item saved = itemService.create(item);
 
         assertThat(saved.getType()).isEqualTo(TypeItem.RECARGO);
-        assertThat(saved.getReason()).isEqualTo("Recargo by mora");
+        assertThat(saved.getReason()).isEqualTo("Surcharge for late payment");
     }
 
     @Test
@@ -138,8 +138,8 @@ class ItemServiceTest {
         when(budgetRepository.existsById(1)).thenReturn(true);
         when(itemRepository.findByBudgetId(1)).thenReturn(List.of(
                 buildItem(TypeItem.NORMAL, null),
-                buildItem(TypeItem.DESCUENTO, "Descuento"),
-                buildItem(TypeItem.RECARGO, "Recargo")
+                buildItem(TypeItem.DESCUENTO, "Discount"),
+                buildItem(TypeItem.RECARGO, "Surcharge")
         ));
 
         List<Item> result = itemService.findDiscountsAndSurchargesByBudget(1);

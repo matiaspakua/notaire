@@ -73,7 +73,7 @@ class ProcedureTypeReferentialIntegrityTest {
         linkToBudgetTemplate(id);
 
         String updateBody = """
-                {"name": "Name actualizado", "isArchived": false, "isRegistered": false, "associatesProperties": false}
+                {"name": "Updated name", "isArchived": false, "isRegistered": false, "associatesProperties": false}
                 """;
 
         mockMvc.perform(put("/api/v1/procedure-types/" + id)
@@ -89,7 +89,7 @@ class ProcedureTypeReferentialIntegrityTest {
         int id = createTypeProcedure("Procedure_edit_ok_" + System.nanoTime());
 
         String updateBody = """
-                {"name": "Name actualizado ok", "isArchived": false, "isRegistered": false, "associatesProperties": false}
+                {"name": "Updated name ok", "isArchived": false, "isRegistered": false, "associatesProperties": false}
                 """;
 
         mockMvc.perform(put("/api/v1/procedure-types/" + id)
