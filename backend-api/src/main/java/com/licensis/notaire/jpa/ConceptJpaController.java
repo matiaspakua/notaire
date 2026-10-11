@@ -262,14 +262,14 @@ public class ConceptJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public List<Concept> findConceptByName(String nameConcept)
+    public List<Concept> findConceptByName(String conceptName)
     {
 
         EntityManager em = getEntityManager();
         List<Concept> concepts = new ArrayList<>();
 
         Query query = em.createNamedQuery("Concept.findByName");
-        query.setParameter("name", nameConcept);
+        query.setParameter("name", conceptName);
 
         concepts = query.getResultList();
 

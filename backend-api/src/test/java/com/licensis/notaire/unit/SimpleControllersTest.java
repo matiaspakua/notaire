@@ -551,7 +551,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/budgets/99")).andExpect(status().isNotFound());
 
             com.licensis.notaire.business.Item item = new com.licensis.notaire.business.Item(
-                    1, "Sellado", new java.math.BigDecimal("500"));
+                    1, "Stamp duty", new java.math.BigDecimal("500"));
             when(budgetTemplateService.loadItemsFromTemplate(1, 5)).thenReturn(List.of(item));
             mvc.perform(post("/api/v1/budgets/1/items-from-template?procedureTypeId=5"))
                     .andExpect(status().isOk());

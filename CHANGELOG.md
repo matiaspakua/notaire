@@ -61,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ### Changed
 
 - **English local identifiers** (#1490, CU75): the payments page uses
@@ -1205,6 +1206,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ### Fixed
 
 - **Spanish UI copy, E2E locators and management create restored after the English rename** (issue #1502, RNF-04): the #1495 identifier rename also rewrote 27 Spanish values in `frontend/messages/es.json`, so users saw "Person actualizada", "Property creado", "Nuevo Notebook", "Concept creado", "Substitution registrada" and a "Role" column. The values are restored from the pre-rename catalog (sentence-case fixes that stay Spanish are kept; `en.json` untouched), Playwright `TS-0023` expects "Rol" again, and Vitest `es-catalog-spanish.test.ts` fails if an English entity name from the rename map reaches an es.json value. The same rename had rewritten the Spanish UI text that Playwright locators match (`/fecha/` became `/date/`, `/presupuesto/` became `/budget/`, `nav-gestiones` became `nav-managements`) in 21 specs, and left the management create sending `procedureTypeId` where `CompleteCaseRequest` reads `typeProcedureId` (UI creates answered 400); both are fixed (`toCompleteCaseRequest`, Vitest `useManagements.create-wire.test.tsx`), `TS-0072` expects the English notebook validation messages, and the CU39 no-template E2E case picks its procedure type by exact name, so main's E2E jobs pass again.
@@ -1743,6 +1745,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ### Added
 
 - **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
@@ -2130,10 +2133,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ### Deprecated
 
 - `init-db/01-schema.sql` - Superseded by Flyway migration
 - `init-db/02-data.sql` - Superseded by Flyway migration
+
 
 
 
@@ -2157,6 +2162,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING — unused payment params create** (issue #1065, CU76):
   `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
   `POST /api/v1/pagos` (JSON body).
+
 
 
 
@@ -2238,6 +2244,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `spring.security.user.*` keys (`admin`/`admin`) from `application.properties`
   and deleted the legacy Swing-era `config.properties` (plain-text database
   credentials) that no code read. Actuator auth is unchanged (#1069)
+
 
 
 

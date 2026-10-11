@@ -61,14 +61,14 @@ class BudgetTemplateServiceTest {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
         when(budgetTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of(
                 buildTemplate("Honorarios", new java.math.BigDecimal("1000"), 10),
-                buildTemplate("Sellado", new java.math.BigDecimal("500"), 0)
+                buildTemplate("Stamp duty", new java.math.BigDecimal("500"), 0)
         ));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Item> items = budgetTemplateService.loadItemsFromTemplate(1, 5);
 
         assertThat(items).hasSize(2);
-        assertThat(items).extracting(Item::getName).containsExactlyInAnyOrder("Honorarios", "Sellado");
+        assertThat(items).extracting(Item::getName).containsExactlyInAnyOrder("Honorarios", "Stamp duty");
         assertThat(items).extracting(Item::getValue).containsExactlyInAnyOrder(new java.math.BigDecimal("1000"), new java.math.BigDecimal("500"));
         assertThat(items).allMatch(item -> item.getFkIdBudget() == budget);
     }

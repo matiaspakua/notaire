@@ -80,13 +80,13 @@ class BudgetTemplateControllerIntegrationTest {
         return mapper.readTree(result.getResponse().getContentAsString()).get("idBudget").asInt();
     }
 
-    private ProcedureType createProcedureTypeConTemplate(String nameConcept, java.math.BigDecimal value, int percentage) {
+    private ProcedureType createProcedureTypeWithTemplate(String conceptName, java.math.BigDecimal value, int percentage) {
         ProcedureType procedureType = new ProcedureType();
         procedureType.setName("Procedure template IT " + System.nanoTime());
         procedureTypeRepository.save(procedureType);
 
         Concept concept = new Concept();
-        concept.setName(nameConcept);
+        concept.setName(conceptName);
         concept.setValue(value);
         concept.setPercentage(percentage);
         conceptRepository.save(concept);
@@ -106,7 +106,7 @@ class BudgetTemplateControllerIntegrationTest {
     void shouldLoadItemsFromTemplate() throws Exception {
         Integer clientId = createPerson();
         Integer budgetId = createBudget(clientId);
-        ProcedureType procedureType = createProcedureTypeConTemplate("Honorarios IT", new java.math.BigDecimal("1500"), 10);
+        ProcedureType procedureType = createProcedureTypeWithTemplate("Honorarios IT", new java.math.BigDecimal("1500"), 10);
 
         mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-template")
                         .param("procedureTypeId", procedureType.getIdProcedureType().toString()))
@@ -134,7 +134,7 @@ class BudgetTemplateControllerIntegrationTest {
     @Test
     @DisplayName("Should return 404 when the budget does not exist")
     void shouldReturnNotFoundForUnknownBudget() throws Exception {
-        ProcedureType procedureType = createProcedureTypeConTemplate("Sellado IT", new java.math.BigDecimal("500"), 0);
+        ProcedureType procedureType = createProcedureTypeWithTemplate("Stamp duty IT", new java.math.BigDecimal("500"), 0);
 
         mockMvc.perform(post("/api/v1/budgets/999999/items-from-template")
                         .param("procedureTypeId", procedureType.getIdProcedureType().toString()))
@@ -144,7 +144,7 @@ class BudgetTemplateControllerIntegrationTest {
     @Test
     @DisplayName("DELETE should remove the budget template row and answer 204 No Content (CU49, #1315)")
     void shouldPersistBudgetTemplateDeletion() throws Exception {
-        ProcedureType procedureType = createProcedureTypeConTemplate("Delete IT", new java.math.BigDecimal("100"), 0);
+        ProcedureType procedureType = createProcedureTypeWithTemplate("Delete IT", new java.math.BigDecimal("100"), 0);
         Integer idProcedureType = procedureType.getIdProcedureType();
         Integer idConcept = budgetTemplateRepository.findByProcedureTypeIdProcedureType(idProcedureType)
                 .get(0).getBudgetTemplatePK().getFkIdConcept();
