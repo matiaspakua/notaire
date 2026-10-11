@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Folio-type name in the data dictionary** (#1490, CU75): the stored
+  name is `Testimonio`, listed with `Protocolo Principal` and
+  `Protocolo Auxiliar`, in the dictionary and the ERD. English prose such
+  as `Testimony issued from a deed` stays. The filenames
+  `Diccionario de Datos.md` and `Modelo Relacional Escribania - Entidades.csv`
+  stay.
 - **Constraint-error use-case citation** (#1490, CU75): the record cites
   `CU07 – Testimonio`. The titles `Movimientos de testimonio` and
   `Personas` stay. The proposal heading `Objetivo` stays.

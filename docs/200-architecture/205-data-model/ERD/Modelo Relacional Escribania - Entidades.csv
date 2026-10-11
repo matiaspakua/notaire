@@ -238,7 +238,7 @@ notebooks,Strong,notes,,yes,Text,,,x,Notebook notes
 notebooks,Strong,fk_id_notary_person,FK,no,Integer,,x,,Notary who owns the notebook
 folio_types,Strong,version,,no,Integer,,,,Optimistic lock
 folio_types,Strong,id,PK,no,Integer,x,,,Unique id of the folio type
-folio_types,Strong,name,,no,Text,,,,"Name. Stored values `Protocolo Principal`, `Protocolo Auxiliar`, and `Testimony` stay."
+folio_types,Strong,name,,no,Text,,,,"Name. Stored values `Protocolo Principal`, `Protocolo Auxiliar`, and `Testimonio` stay."
 folio_types,Strong,notes,,yes,Text,,,x,Folio-type notes (V3/V4)
 folio_types,Strong,enabled,,no,Boolean,,,,`true` when it can be used for folio batches (V3/V4)
 folio_types,Strong,is_auxiliary,,no,Boolean,,,,`true` when the type is an auxiliary sheet
