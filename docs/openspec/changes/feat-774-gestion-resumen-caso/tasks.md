@@ -19,38 +19,38 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: deed with testimony and copy, no movements, withdrawn, no deed, unknown id, dialog
-- [ ] 3.2 Add the failing unit, integration and hook tests; observed failing
-- [ ] 3.3 Every scenario maps to a test
+- [x] 3.1 Enumerate test cases: deed with testimony and copy, no movements, withdrawn, no deed, unknown id, dialog
+- [x] 3.2 Add the failing unit, integration and hook tests; observed failing
+- [x] 3.3 Every scenario maps to a test
 
 ## 4. Implementación
 
-- [ ] 4.1 Add DTOs and service
-- [ ] 4.2 Add the endpoint and regenerate OpenAPI
-- [ ] 4.3 Add the hook, dialog and i18n
-- [ ] 4.4 Tests green
+- [x] 4.1 Add DTOs and service
+- [x] 4.2 Add the endpoint and regenerate OpenAPI
+- [x] 4.3 Add the hook, dialog and i18n
+- [x] 4.4 Tests green
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Existing affected tests updated without weakening assertions
-- [ ] 5.2 No dead code or references remain
+- [x] 5.1 Existing affected tests updated without weakening assertions
+- [x] 5.2 No dead code or references remain
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api -Dtest=ManagementCaseSummary*`
-- [ ] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
-- [ ] 6.3 `bash workspace/sdlc/preflight.sh` (or the subset the environment allows)
-- [ ] 6.4 No `@Disabled` tests
+- [x] 6.1 `mvn test -pl backend-api -Dtest=ManagementCaseSummary*`
+- [x] 6.2 Coverage gate — `mvn verify -pl backend-api` keeps the ratchet floor
+- [x] 6.3 `bash workspace/sdlc/preflight.sh` (or the subset the environment allows)
+- [x] 6.4 No `@Disabled` tests
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 n/a — no UI change
+- [x] 7.1 n/a — no UI change
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 `CHANGELOG.md` — one entry
-- [ ] 8.2 `backend-api/openapi/openapi.yaml` — regenerated
-- [ ] 8.3 `docs/300-development/303-testing/CU-API-MATRIX.csv` — row for the new endpoint
+- [x] 8.1 `CHANGELOG.md` — one entry
+- [x] 8.2 `backend-api/openapi/openapi.yaml` — regenerated
+- [x] 8.3 `docs/300-development/303-testing/CU-API-MATRIX.csv` — row for the new endpoint
 
 ## 9. Commits atómicos
 
