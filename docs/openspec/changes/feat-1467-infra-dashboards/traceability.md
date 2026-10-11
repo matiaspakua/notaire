@@ -31,8 +31,10 @@
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `infra/MODULE.md`, `infra/docs/DEFINITION.md`, `infra/docs/OPERATION.md` | pending | pending |
-| `docs/200-architecture/207-monitoring/README.md` | pending | pending |
+| `infra/MODULE.md` | yes | docs commit |
+| `infra/docs/DEFINITION.md` | yes | docs commit |
+| `infra/docs/OPERATION.md` | yes | docs commit |
+| `docs/200-architecture/207-monitoring/README.md` | yes | docs commit |
 | `CHANGELOG.md` | n/a | n/a |
 
 ## Gate log
