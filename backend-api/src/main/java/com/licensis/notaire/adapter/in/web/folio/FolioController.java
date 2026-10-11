@@ -196,7 +196,7 @@ public class FolioController {
         Folio folio = existing.get();
         if (StatusUTILIZADO.equals(folio.getStatus()) && !linksSameDeed(folio, request)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "This folio is in uso (Utilizado) and cannot modificarse."));
+                    .body(Map.of("error", "This folio is in use (Utilizado) and cannot be modified."));
         }
         Deed deed = null;
         if (request.deedId() != null) {
@@ -230,7 +230,7 @@ public class FolioController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -243,7 +243,7 @@ public class FolioController {
         }
         if (StatusUTILIZADO.equals(opt.get().getStatus())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Not can delete: the folio is in uso (Utilizado)."));
+                    .body(Map.of("error", "Cannot delete: the folio is in use (Utilizado)."));
         }
         try {
             Folio folio = opt.get();

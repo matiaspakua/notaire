@@ -98,7 +98,7 @@ class StaleOrMissingVersionIntegrationTest {
                         .content("{\"number\":72,\"flagged\":false,\"verified\":false}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.message").value("version: es obligatorio"));
+                .andExpect(jsonPath("$.message").value("version: is required"));
 
         assertThat(getJson("/api/v1/testimonies/" + id).get("number").asInt()).isEqualTo(71);
     }

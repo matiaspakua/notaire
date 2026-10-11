@@ -112,7 +112,7 @@ public class RoleController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")

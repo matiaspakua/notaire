@@ -96,7 +96,7 @@ public class PaymentController {
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
-            log.error("Error al consultar pago ID={}", id, e);
+            log.error("Failed to look up payment ID={}", id, e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -120,7 +120,7 @@ public class PaymentController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Error al calcular saldo pendiente", e);
+            log.error("Failed to calculate the pending balance", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -137,7 +137,7 @@ public class PaymentController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            log.error("Error al calcular estado de pago", e);
+            log.error("Failed to calculate the payment status", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -164,7 +164,7 @@ public class PaymentController {
         @ApiResponse(responseCode = "409", description = "Conflict")
     })
     @PostMapping
-    @Operation(summary = "CU15 - Procesar pago (JSON body)")
+    @Operation(summary = "CU15 - Process a payment (JSON body)")
     public ResponseEntity<DtoPaymentResponse> processPayment(@Valid @RequestBody PaymentRequest request) {
         return register(new ProcessPaymentCommand(
                 request.idBudget(), request.amount(), request.date(),
@@ -176,13 +176,13 @@ public class PaymentController {
             PaymentDetails payment = processPaymentUseCase.process(command);
             return CreatedResponses.of(PaymentWebMapper.toDto(payment), "/api/v1/payments", payment.id());
         } catch (PendingBalanceExceededException e) {
-            log.warn("Payment rechazado by exceder the outstanding balance: {}", e.getMessage());
+            log.warn("Payment rejected because it exceeds the outstanding balance: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (IllegalArgumentException e) {
-            log.warn("Error of validación to the procesar payment: {}", e.getMessage());
+            log.warn("Validation error while processing the payment: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            log.error("Error al procesar pago", e);
+            log.error("Failed to process the payment", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -192,7 +192,7 @@ public class PaymentController {
         @ApiResponse(responseCode = "404", description = "Not found")
     })
     @PutMapping("/{id}")
-    @Operation(summary = "Editar pago")
+    @Operation(summary = "Edit a payment")
     public ResponseEntity<DtoPaymentResponse> update(@PathVariable Integer id,
             @Valid @RequestBody PaymentUpdateRequest request) {
         try {
@@ -208,7 +208,7 @@ public class PaymentController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Eliminado"),
+        @ApiResponse(responseCode = "204", description = "Deleted"),
         @ApiResponse(responseCode = "404", description = "Not found")
     })
     @DeleteMapping("/{id}")

@@ -109,8 +109,8 @@ public class WorkflowNodeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Invalid request: indicar to the menos type, positionX or "
-            + "positionY; type debe ser INITIAL, INTERMEDIATE o FINAL"),
+    @ApiResponse(responseCode = "400", description = "Invalid request: provide at least type, positionX, or "
+            + "positionY; type must be INITIAL, INTERMEDIATE, or FINAL"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PutMapping("/{id}")
@@ -144,7 +144,7 @@ public class WorkflowNodeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -155,7 +155,7 @@ public class WorkflowNodeController {
         }
         if (transitionRepository.existsByOriginNodeIdOrDestinationNodeId(id, id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Not can delete: the node has transitions asociadas."));
+                    .body(Map.of("error", "Cannot delete: the node has associated transitions."));
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();

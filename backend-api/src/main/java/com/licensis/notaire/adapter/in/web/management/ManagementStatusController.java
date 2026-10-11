@@ -74,7 +74,7 @@ public class ManagementStatusController {
     }
 
     @GetMapping("/{id}/in-use")
-    @Operation(summary = "Verificar si el estado esta referenciado")
+    @Operation(summary = "Check whether the status is referenced")
     @Transactional(readOnly = true)
     public ResponseEntity<Map<String, Boolean>> isInUse(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
@@ -121,7 +121,7 @@ public class ManagementStatusController {
         if (!managementRepository.findByFkIdManagementStatusIdManagementStatus(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error",
-                            "Not can update: the status is referenciado by managements of deed."));
+                            "Cannot update: the status is referenced by deed managements."));
         }
         try {
             ManagementStatus entity = existing.get();
@@ -138,7 +138,7 @@ public class ManagementStatusController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -150,7 +150,7 @@ public class ManagementStatusController {
         if (!managementRepository.findByFkIdManagementStatusIdManagementStatus(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("error",
-                            "Not can delete: the status is referenciado by managements of deed."));
+                            "Cannot delete: the status is referenced by deed managements."));
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();

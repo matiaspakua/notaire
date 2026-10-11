@@ -28,7 +28,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get registros of audit by user */
+        /** Get audit records by user */
         get: operations["getByUser"];
         put?: never;
         post?: never;
@@ -45,7 +45,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get registro of audit by ID */
+        /** Get an audit record by ID */
         get: operations["getById_25"];
         put?: never;
         post?: never;
@@ -150,8 +150,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get budgets paginados
-         * @description Parámetros: page (default 0), size (default 20), sort (ej. idPresupuesto,desc)
+         * Get budgets, paged
+         * @description Parameters: page (default 0), size (default 20), sort (for example idBudget,desc)
          */
         get: operations["getAll_20"];
         put?: never;
@@ -400,7 +400,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get lista of notaries available (with registro) */
+        /** Get the list of available notaries (with a registry) */
         get: operations["getAvailableNotaries"];
         put?: never;
         post?: never;
@@ -456,7 +456,7 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Firmar deed
+         * Sign deed
          * @description Transitions a deed 'Sin Firmar' with folio assigned to the status 'Firmada'
          */
         post: operations["sign"];
@@ -726,7 +726,7 @@ export interface paths {
          */
         get: operations["getAll_14"];
         put?: never;
-        /** Create registro of history */
+        /** Create a history record */
         post: operations["create_15"];
         delete?: never;
         options?: never;
@@ -945,7 +945,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Verificar si el estado esta referenciado */
+        /** Check whether the status is referenced */
         get: operations["isInUse_1"];
         put?: never;
         post?: never;
@@ -1328,7 +1328,7 @@ export interface paths {
         /** Get all payments */
         get: operations["getAll_9"];
         put?: never;
-        /** CU15 - Procesar pago (JSON body) */
+        /** CU15 - Process a payment (JSON body) */
         post: operations["processPayment"];
         delete?: never;
         options?: never;
@@ -1413,7 +1413,7 @@ export interface paths {
         };
         /** CU47 - Query payment by ID */
         get: operations["getById_11"];
-        /** Editar pago */
+        /** Edit a payment */
         put: operations["update_11"];
         post?: never;
         /** Delete payment */
@@ -1699,7 +1699,7 @@ export interface paths {
         get: operations["getById_8"];
         /**
          * Update procedure
-         * @description idProcedureType is required (400 if falta); notes guarda tal as envía and a asociación ausente conserva the actual.
+         * @description idProcedureType is required (400 if it is missing); notes are stored as sent and a missing association keeps the current one.
          */
         put: operations["update_8"];
         post?: never;
@@ -1789,7 +1789,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** CU82 - Record a observation formulada by the Registro */
+        /** CU82 - Record an observation issued by the registry */
         put: operations["observe"];
         post?: never;
         delete?: never;
@@ -1806,7 +1806,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** CU82 - Record the registration definitiva of the minuta */
+        /** CU82 - Record the final registration of the registration draft */
         put: operations["recordRegistration"];
         post?: never;
         delete?: never;
@@ -1823,7 +1823,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** CU82 - Record the presentación of the minuta ante the Registro */
+        /** CU82 - Record the registration draft submission to the registry */
         put: operations["submit"];
         post?: never;
         delete?: never;
@@ -1840,8 +1840,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generate reporte of budget with properties
-         * @description Generates the PDF of the budget e incluye the properties of their procedures (cadastral nomenclature, domicilio and valuación fiscal)
+         * Generate the budget report with properties
+         * @description Generates the budget PDF and includes the properties of its procedures (cadastral designation, address, and fiscal appraisal)
          */
         get: operations["generateBudgetPropertiesReport"];
         put?: never;
@@ -1860,8 +1860,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generate reporte of budget
-         * @description Generates a PDF with the datos of the budget (client, procedures, management), sus conceptos y el total y saldo pendiente calculados como en CU47
+         * Generate the budget report
+         * @description Generates a PDF with the budget data (client, procedures, management), its concepts, and the total and pending balance calculated as in CU47
          */
         get: operations["generateBudgetReport"];
         put?: never;
@@ -1880,8 +1880,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generar reporte de consulta de deuda de documentos
-         * @description Generates a PDF with the submitted documents in the managements with that number, su importe, fecha de pago o pago pendiente, y el total adeudado
+         * Generate the document-debt report
+         * @description Generates a PDF with the submitted documents in the managements with that number, its amount, payment date or pending payment, and the total owed
          */
         get: operations["generateDebtDocumentsReport"];
         put?: never;
@@ -1900,8 +1900,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generate reporte of documents by vencer
-         * @description Generates a PDF with the expiration of a submitted document (date and days restantes), its status of payment and the management, procedure and client a the that belongs
+         * Generate the documents-due report
+         * @description Generates a PDF with the expiration of a submitted document (date and days remaining), its payment status, and the management, procedure, and client it belongs to
          */
         get: operations["generateDocumentsDueSoonReport"];
         put?: never;
@@ -1920,8 +1920,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generar libro de indice
-         * @description Endpoint base for CU24: PDF provisorio with the period solicitado; the contenido of the libro of índice is pendiente
+         * Generate the index book
+         * @description Base endpoint for CU24: a provisional PDF for the requested period; the index-book content is still pending
          */
         get: operations["generateIndexBook"];
         put?: never;
@@ -1940,8 +1940,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generate reporte of management history
-         * @description Generates a PDF with the datos of the management and its status history, of the more antiguo to the more reciente
+         * Generate the management history report
+         * @description Generates a PDF with the management data and its status history, from the oldest to the most recent
          */
         get: operations["generateManagementHistoryReport"];
         put?: never;
@@ -1960,8 +1960,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generar declaracion jurada mensual
-         * @description Endpoint base for CU25: PDF provisorio with the period solicitado; the contenido of the DDJJ mensual is pendiente
+         * Generate the monthly sworn statement
+         * @description Base endpoint for CU25: a provisional PDF for the requested period; the monthly sworn-statement content is still pending
          */
         get: operations["generateMonthlySwornStatement"];
         put?: never;
@@ -1980,8 +1980,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * CU15 - Emitir recibo de pago
-         * @description Genera un PDF con el recibo de un pago existente
+         * CU15 - Issue a payment receipt
+         * @description Generates a PDF with the receipt of an existing payment
          */
         get: operations["generatePaymentReceiptReport"];
         put?: never;
@@ -2020,8 +2020,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * CU82 - Generate the formulario normalizado of the registration draft
-         * @description Generates a PDF with the formulario normalizado of a registration draft
+         * CU82 - Generate the standard form of the registration draft
+         * @description Generates a PDF with the standard form of a registration draft
          */
         get: operations["generateRegistrationDraftReport"];
         put?: never;
@@ -2040,8 +2040,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generar declaracion jurada de rentas
-         * @description Endpoint base for CU50: PDF provisorio with the period solicitado; the contenido of the DDJJ of rentas is pendiente
+         * Generate the tax sworn statement
+         * @description Base endpoint for CU50: a provisional PDF for the requested period; the tax sworn-statement content is still pending
          */
         get: operations["generateTaxSwornStatement"];
         put?: never;
@@ -2060,8 +2060,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Generate copy impresa of testimony verified
-         * @description Generates a PDF with the copy impresa of a testimony, only if already was verified
+         * Generate the printed copy of a verified testimony
+         * @description Generates a PDF with the printed copy of a testimony, only when it has been verified
          */
         get: operations["generateTestimonyCopyReport"];
         put?: never;
@@ -2265,8 +2265,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Generate testimony of a deed firmada
-         * @description Generates a testimony with number assigned by the sistema a partir of a deed 'Firmada'
+         * Generate a testimony from a signed deed
+         * @description Generates a testimony with a number assigned by the system from a deed 'Firmada'
          */
         post: operations["generate"];
         delete?: never;
@@ -2286,7 +2286,7 @@ export interface paths {
         get: operations["getById_4"];
         /**
          * Update testimony
-         * @description Replaces the testimony. number, flagged, verified and version are obligatorios (400 if falta alguno); notes guarda tal as envía and a deed ausente conserva the actual. version is the leída: if already is not the stored responde 409 (bloqueo optimista).
+         * @description Replaces the testimony. number, flagged, verified, and version are required (400 if any of them is missing); notes are stored as sent, and a missing deed keeps the current one. version is the one that was read: a mismatch with the stored version responds 409 (optimistic lock).
          */
         put: operations["update_4"];
         post?: never;
@@ -2308,7 +2308,7 @@ export interface paths {
         put?: never;
         /**
          * Check testimony
-         * @description Records the verificación of a testimony, marcando if was observado and by qué
+         * @description Records the verification of a testimony, marking whether it was observed and why
          */
         post: operations["verify"];
         delete?: never;
@@ -2346,7 +2346,7 @@ export interface paths {
         put?: never;
         /**
          * Enter testimony for registration
-         * @description Records the date of ingreso of a testimony verified to the Registro of the Propiedad
+         * @description Records the entry date of a verified testimony at the property registry
          */
         post: operations["registerEntry"];
         delete?: never;
@@ -2365,8 +2365,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Reenter testimony retirado
-         * @description Crea a new movimiento of ingreso for a testimony previamente retirado, without alterar the movimiento anterior. The cuerpo is opcional: number of cartón, if was observado by the registro and notes (obligatorias when was observado)
+         * Re-enter a withdrawn testimony
+         * @description Creates a new entry movement for a previously withdrawn testimony, without changing the previous movement. The body is optional: carton number, whether it was observed by the registry, and notes (required when it was observed)
          */
         post: operations["reenter"];
         delete?: never;
@@ -2386,7 +2386,7 @@ export interface paths {
         put?: never;
         /**
          * Record registration of the testimony
-         * @description Marks as registered the movimiento abierto of a testimony, registrando the date
+         * @description Marks the open testimony movement as registered and records the date
          */
         post: operations["registerInscription"];
         delete?: never;
@@ -2405,8 +2405,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Retirar testimony registered
-         * @description Records the date of salida and the number of cartón of a testimony registered
+         * Withdraw a registered testimony
+         * @description Records the exit date and carton number of a registered testimony
          */
         post: operations["withdraw"];
         delete?: never;
@@ -2571,7 +2571,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Validar consistencia de un workflow */
+        /** Validate the consistency of a workflow */
         post: operations["validate"];
         delete?: never;
         options?: never;
@@ -2767,7 +2767,7 @@ export interface components {
         CopyRequest: {
             /**
              * Format: date-time
-             * @description Date of impresión
+             * @description Print date
              */
             datePrinting: string;
             /** Format: date-time */
@@ -3621,7 +3621,7 @@ export interface components {
         GenerateRequest: {
             /**
              * Format: int32
-             * @description Deed for the that generates the minuta
+             * @description Deed for which the registration draft is generated
              */
             idDeed: number;
         };
@@ -4149,7 +4149,7 @@ export interface components {
         };
         TestimonyCreateRequest: {
             copies?: components["schemas"]["DtoCopy"][];
-            /** @description Deed of the that the testimony is copy; `idDeed` must existir (404 if not) */
+            /** @description Deed this testimony copies; `idDeed` must exist (404 if it does not) */
             deed: components["schemas"]["DtoDeed"];
             flagged?: boolean;
             /** Format: int32 */
@@ -4182,7 +4182,7 @@ export interface components {
             verified: boolean;
             /**
              * Format: int32
-             * @description Versión leída of the testimony (bloqueo optimista): 409 if already is not the almacenada
+             * @description Version read from the testimony (optimistic lock): 409 when it is no longer the stored version
              */
             version: number;
         };
@@ -4550,7 +4550,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -4779,7 +4779,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -5083,7 +5083,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -5262,7 +5262,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -5477,7 +5477,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -5999,7 +5999,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -6213,7 +6213,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -6428,7 +6428,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -6586,7 +6586,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -6797,7 +6797,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -6992,7 +6992,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -8090,7 +8090,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -8578,7 +8578,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -8773,7 +8773,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -8928,7 +8928,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Referencia no encontrada */
+            /** @description Reference not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9003,7 +9003,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Cuerpo empty or incompleto: idProcedureType is required */
+            /** @description Empty or incomplete body: idProcedureType is required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9012,7 +9012,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Procedure or referencia not found */
+            /** @description Procedure or reference not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9034,7 +9034,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -9092,7 +9092,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Invalid request (falta the cadastral nomenclature) */
+            /** @description Invalid request (the cadastral designation is missing) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9165,7 +9165,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Invalid request (falta the cadastral nomenclature) */
+            /** @description Invalid request (the cadastral designation is missing) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9192,7 +9192,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -9221,7 +9221,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Minuta generada */
+            /** @description Registration draft generated */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -9230,7 +9230,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Datos catastrales/registrales incompletos or deed not firmada */
+            /** @description Incomplete cadastral or registry data, or the deed is not signed */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9239,7 +9239,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Deed no encontrada */
+            /** @description Deed not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9279,7 +9279,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
-            /** @description Minuta not found */
+            /** @description Registration draft not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9305,7 +9305,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Observation registrada */
+            /** @description Observation recorded */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -9314,7 +9314,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description The minuta is not presented */
+            /** @description The registration draft is not submitted */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9323,7 +9323,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Minuta not found */
+            /** @description Registration draft not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9349,7 +9349,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Registration definitiva registrada */
+            /** @description Final registration recorded */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -9358,7 +9358,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description The minuta is not presented */
+            /** @description The registration draft is not submitted */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9367,7 +9367,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Minuta not found */
+            /** @description Registration draft not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -9393,7 +9393,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Presentación registrada */
+            /** @description Submission recorded */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -9402,7 +9402,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description The minuta is not in status Generada */
+            /** @description The registration draft is not in status Generada */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -9411,7 +9411,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Minuta not found */
+            /** @description Registration draft not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10095,7 +10095,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -10293,7 +10293,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -10444,7 +10444,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -10502,7 +10502,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Invalid request (falta the deed or its idDeed) */
+            /** @description Invalid request (the deed or its idDeed is missing) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10511,7 +10511,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Deed no encontrada */
+            /** @description Deed not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10560,7 +10560,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimony"];
                 };
             };
-            /** @description Deed no encontrada */
+            /** @description Deed not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -10626,7 +10626,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Cuerpo empty or incompleto: number, flagged, verified and version are obligatorios */
+            /** @description Empty or incomplete body: number, flagged, verified, and version are required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10666,7 +10666,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -10803,7 +10803,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
-            /** @description The testimony is not verified or already has a movimiento abierto */
+            /** @description The testimony is not verified or already has an open movement */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10847,7 +10847,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
-            /** @description The testimony was not retirado previamente, or the reentry observado does not have notes */
+            /** @description The testimony was not withdrawn earlier, or the observed re-entry has no notes */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -10887,7 +10887,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
-            /** @description Falta the ingreso a registration previo */
+            /** @description The prior registration entry is missing */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11046,7 +11046,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -11278,7 +11278,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -11451,7 +11451,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -11614,7 +11614,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Invalid request: indicar to the menos type, positionX or positionY; type debe ser INITIAL, INTERMEDIATE o FINAL */
+            /** @description Invalid request: provide at least type, positionX, or positionY; type must be INITIAL, INTERMEDIATE, or FINAL */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11645,7 +11645,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;
@@ -11784,7 +11784,7 @@ export interface operations {
                     "*/*": Record<string, never>;
                 };
             };
-            /** @description Invalid request: originNodeId and destinationNodeId are obligatorios */
+            /** @description Invalid request: originNodeId and destinationNodeId are required */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11815,7 +11815,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Eliminado */
+            /** @description Deleted */
             204: {
                 headers: {
                     [name: string]: unknown;

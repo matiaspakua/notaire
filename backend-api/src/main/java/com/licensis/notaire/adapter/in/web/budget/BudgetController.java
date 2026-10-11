@@ -168,8 +168,8 @@ public class BudgetController {
     }
 
     @GetMapping
-    @Operation(summary = "Get budgets paginados",
-            description = "Parámetros: page (default 0), size (default 20), sort (ej. idPresupuesto,desc)")
+    @Operation(summary = "Get budgets, paged",
+            description = "Parameters: page (default 0), size (default 20), sort (for example idBudget,desc)")
     public ResponseEntity<Page<BudgetResponse>> getAll(
             @ParameterObject @PageableDefault(size = 20, sort = "idBudget", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(budgetService.findAllPaged(pageable).map(this::toResponse));
@@ -259,7 +259,7 @@ public class BudgetController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")

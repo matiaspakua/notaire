@@ -170,7 +170,7 @@ public class ItemController {
             entity = itemService.create(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(ItemResponse.from(entity));
         } catch (BusinessValidationException e) {
-            log.warn("Error of validación to the create item: {}", e.getMessage());
+            log.warn("Validation error while creating the item: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Failed to create item", e);
@@ -195,7 +195,7 @@ public class ItemController {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (BusinessValidationException e) {
-            log.warn("Error of validación to the update item id {}: {}", id, e.getMessage());
+            log.warn("Validation error while updating item id {}: {}", id, e.getMessage());
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("Failed to update item id {}", id, e);
@@ -204,7 +204,7 @@ public class ItemController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")

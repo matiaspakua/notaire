@@ -156,7 +156,7 @@ public class ProcedureTypeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -169,7 +169,7 @@ public class ProcedureTypeController {
                 || !budgetTemplateRepository.findByProcedureTypeIdProcedureType(id).isEmpty()
                 || !procedureRepository.findByFkIdProcedureTypeIdProcedureType(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Not can delete: the procedure type is siendo utilizado in plantillas or procedures."));
+                    .body(Map.of("error", "Cannot delete: the procedure type is in use on templates or procedures."));
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();

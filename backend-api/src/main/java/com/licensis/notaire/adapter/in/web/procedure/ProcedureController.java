@@ -129,7 +129,7 @@ public class ProcedureController {
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "Invalid request: idProcedureType is required"),
-    @ApiResponse(responseCode = "404", description = "Referencia no encontrada"),
+    @ApiResponse(responseCode = "404", description = "Reference not found"),
     @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
@@ -153,13 +153,13 @@ public class ProcedureController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Cuerpo empty or incompleto: idProcedureType is required"),
-    @ApiResponse(responseCode = "404", description = "Procedure or referencia not found")
+    @ApiResponse(responseCode = "400", description = "Empty or incomplete body: idProcedureType is required"),
+    @ApiResponse(responseCode = "404", description = "Procedure or reference not found")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update procedure",
-               description = "idProcedureType is required (400 if falta); notes guarda tal as envía and "
-                       + "a asociación ausente conserva the actual.")
+               description = "idProcedureType is required (400 if it is missing); notes are stored as sent and "
+                       + "a missing association keeps the current one.")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProcedureRequest request) {
         RequiredFields.require(request.idProcedureType(), "idProcedureType");
         Procedure existing = repository.findById(id).orElse(null);
@@ -215,7 +215,7 @@ public class ProcedureController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")

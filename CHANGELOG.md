@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English API descriptions** (#1490, CU75): OpenAPI summaries and
+  descriptions use English. Missing-field validation says `is required`.
+  Delete conflicts say `Cannot delete`. Stored statuses such as `Generada`,
+  `Firmada`, `Sin Firmar`, and `Utilizado` stay. PDF filenames stay.
+  Message catalog keys stay.
 - **English test titles** (#1490, CU75): JUnit display names and nested
   test class names use English type names. Stored labels such as
   `Protocolo Auxiliar`, `Protocolo Principal`, `Generada`, `Presentado`,

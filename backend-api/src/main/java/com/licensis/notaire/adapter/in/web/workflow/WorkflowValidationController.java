@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/workflow-definition")
-@Tag(name = "Workflow Validation", description = "CU72 - Validación of consistencia of the workflow")
+@Tag(name = "Workflow Validation", description = "CU72 - Workflow consistency validation")
 public class WorkflowValidationController {
 
     private final WorkflowDefinitionRepository workflowRepository;
@@ -36,7 +36,7 @@ public class WorkflowValidationController {
     }
 
     @PostMapping("/{id}/validate")
-    @Operation(summary = "Validar consistencia de un workflow")
+    @Operation(summary = "Validate the consistency of a workflow")
     public ResponseEntity<Map<String, Object>> validate(@PathVariable Integer id) {
         if (!workflowRepository.existsById(id)) {
             return ResponseEntity.notFound().build();

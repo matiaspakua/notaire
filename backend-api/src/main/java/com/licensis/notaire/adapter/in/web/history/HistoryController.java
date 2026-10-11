@@ -114,7 +114,7 @@ public class HistoryController {
     @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
-    @Operation(summary = "Create registro of history")
+    @Operation(summary = "Create a history record")
     public ResponseEntity<Object> create(@Valid @RequestBody HistoryRequest request) {
         try {
             History entity = new History();
@@ -154,7 +154,7 @@ public class HistoryController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "403", description = "Only a administrador can delete the history"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })

@@ -149,7 +149,7 @@ class ItemControllerTest {
     @DisplayName("POST /api/v1/items should return 400 when a discount item has no reason")
     void shouldReturn400WhenDiscountItemHasNoReason() throws Exception {
         when(itemService.create(any(Item.class)))
-                .thenThrow(new BusinessValidationException("The motivo is required for items of type DESCUENTO"));
+                .thenThrow(new BusinessValidationException("The reason is required for items of type DESCUENTO"));
 
         String json = """
                 {

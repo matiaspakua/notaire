@@ -41,7 +41,7 @@ public class RegistrationDraftController {
 
     /** Body of the generate request; the deed is required (issue #655). */
     public record GenerateRequest(
-            @NotNull @Schema(description = "Deed for the that generates the minuta",
+            @NotNull @Schema(description = "Deed for which the registration draft is generated",
                     requiredMode = Schema.RequiredMode.REQUIRED)
             Integer idDeed) {
     }
@@ -57,7 +57,7 @@ public class RegistrationDraftController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "404", description = "Minuta not found")
+        @ApiResponse(responseCode = "404", description = "Registration draft not found")
     })
     @GetMapping("/{id}")
     @Operation(summary = "CU82 - Query a registration draft by ID")
@@ -68,9 +68,9 @@ public class RegistrationDraftController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Minuta generada"),
-        @ApiResponse(responseCode = "400", description = "Datos catastrales/registrales incompletos or deed not firmada"),
-        @ApiResponse(responseCode = "404", description = "Deed no encontrada"),
+        @ApiResponse(responseCode = "201", description = "Registration draft generated"),
+        @ApiResponse(responseCode = "400", description = "Incomplete cadastral or registry data, or the deed is not signed"),
+        @ApiResponse(responseCode = "404", description = "Deed not found"),
         @ApiResponse(responseCode = "409", description = "The deed already has a registration draft")
     })
     @PostMapping
@@ -87,12 +87,12 @@ public class RegistrationDraftController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Presentación registrada"),
-        @ApiResponse(responseCode = "400", description = "The minuta is not in status Generada"),
-        @ApiResponse(responseCode = "404", description = "Minuta not found")
+        @ApiResponse(responseCode = "200", description = "Submission recorded"),
+        @ApiResponse(responseCode = "400", description = "The registration draft is not in status Generada"),
+        @ApiResponse(responseCode = "404", description = "Registration draft not found")
     })
     @PutMapping("/{id}/submit")
-    @Operation(summary = "CU82 - Record the presentación of the minuta ante the Registro")
+    @Operation(summary = "CU82 - Record the registration draft submission to the registry")
     public ResponseEntity<Object> submit(@PathVariable Integer id, @RequestBody SubmitRequest request) {
         try {
             DtoRegistrationDraft dto = registrationDraftService
@@ -106,12 +106,12 @@ public class RegistrationDraftController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Observation registrada"),
-        @ApiResponse(responseCode = "400", description = "The minuta is not presented"),
-        @ApiResponse(responseCode = "404", description = "Minuta not found")
+        @ApiResponse(responseCode = "200", description = "Observation recorded"),
+        @ApiResponse(responseCode = "400", description = "The registration draft is not submitted"),
+        @ApiResponse(responseCode = "404", description = "Registration draft not found")
     })
     @PutMapping("/{id}/observe")
-    @Operation(summary = "CU82 - Record a observation formulada by the Registro")
+    @Operation(summary = "CU82 - Record an observation issued by the registry")
     public ResponseEntity<Object> observe(@PathVariable Integer id, @RequestBody ObserveRequest request) {
         try {
             DtoRegistrationDraft dto = registrationDraftService
@@ -125,12 +125,12 @@ public class RegistrationDraftController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Registration definitiva registrada"),
-        @ApiResponse(responseCode = "400", description = "The minuta is not presented"),
-        @ApiResponse(responseCode = "404", description = "Minuta not found")
+        @ApiResponse(responseCode = "200", description = "Final registration recorded"),
+        @ApiResponse(responseCode = "400", description = "The registration draft is not submitted"),
+        @ApiResponse(responseCode = "404", description = "Registration draft not found")
     })
     @PutMapping("/{id}/register")
-    @Operation(summary = "CU82 - Record the registration definitiva of the minuta")
+    @Operation(summary = "CU82 - Record the final registration of the registration draft")
     public ResponseEntity<Object> recordRegistration(@PathVariable Integer id, @RequestBody RegisterRequest request) {
         try {
             DtoRegistrationDraft dto = registrationDraftService

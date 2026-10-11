@@ -130,7 +130,7 @@ public class FolioTypeController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -141,14 +141,14 @@ public class FolioTypeController {
         }
         if (!folioRepository.findByFkIdFolioTypeIdFolioType(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Not can delete: the folio type is siendo utilizado by folios."));
+                    .body(Map.of("error", "Cannot delete: the folio type is in use by folios."));
         }
         try {
             repository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Not can delete: the folio type is referenciado by other registros.");
+                    .body("Cannot delete: the folio type is referenced by other records.");
         }
     }
 }

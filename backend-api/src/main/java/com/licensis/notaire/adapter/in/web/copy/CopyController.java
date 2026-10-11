@@ -45,7 +45,7 @@ public class CopyController {
     record CopyRequest(
             @NotNull @Schema(description = "Number of copy", requiredMode = Schema.RequiredMode.REQUIRED)
             Integer number,
-            @NotNull @Schema(description = "Date of impresión", requiredMode = Schema.RequiredMode.REQUIRED)
+            @NotNull @Schema(description = "Print date", requiredMode = Schema.RequiredMode.REQUIRED)
             Date datePrinting,
             Date dateWithdrawal,
             String notes,
@@ -173,7 +173,7 @@ public class CopyController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")

@@ -112,7 +112,7 @@ public class WorkflowDefinitionController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -123,7 +123,7 @@ public class WorkflowDefinitionController {
         }
         if (!nodeRepository.findByWorkflowDefinitionId(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "Not can delete: the workflow has nodes asociados."));
+                    .body(Map.of("error", "Cannot delete: the workflow has associated nodes."));
         }
         repository.deleteById(id);
         return ResponseEntity.noContent().build();

@@ -72,7 +72,7 @@ public class AuditRecordController {
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @GetMapping("/{id}")
-    @Operation(summary = "Get registro of audit by ID")
+    @Operation(summary = "Get an audit record by ID")
     @Transactional(readOnly = true)
     public ResponseEntity<DtoAuditRecord> getById(@PathVariable Integer id) {
         return service.findByIdAsDto(id)
@@ -81,7 +81,7 @@ public class AuditRecordController {
     }
 
     @GetMapping("/user/{idUser}")
-    @Operation(summary = "Get registros of audit by user")
+    @Operation(summary = "Get audit records by user")
     @Transactional(readOnly = true)
     public ResponseEntity<List<DtoAuditRecord>> getByUser(@PathVariable Integer idUser) {
         return ResponseEntity.ok(service.findByUserIdAsDto(idUser));

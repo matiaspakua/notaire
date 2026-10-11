@@ -88,8 +88,8 @@ public class TestimonyController {
         }
 
         @Override
-        @Schema(description = "Versión leída of the testimony (bloqueo optimista): 409 if already is not the "
-                + "almacenada", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Version read from the testimony (optimistic lock): 409 when it is no longer the "
+                + "stored version", requiredMode = Schema.RequiredMode.REQUIRED)
         public int getVersion() {
             return super.getVersion();
         }
@@ -119,7 +119,7 @@ public class TestimonyController {
     public static class TestimonyCreateRequest extends DtoTestimony {
         @Override
         @NotNull
-        @Schema(description = "Deed of the that the testimony is copy; `idDeed` must existir (404 if not)",
+        @Schema(description = "Deed this testimony copies; `idDeed` must exist (404 if it does not)",
                 requiredMode = Schema.RequiredMode.REQUIRED)
         public DtoDeed getDeed() {
             return super.getDeed();
@@ -163,8 +163,8 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "Invalid request (falta the deed or its idDeed)"),
-    @ApiResponse(responseCode = "404", description = "Deed no encontrada"),
+    @ApiResponse(responseCode = "400", description = "Invalid request (the deed or its idDeed is missing)"),
+    @ApiResponse(responseCode = "404", description = "Deed not found"),
     @ApiResponse(responseCode = "409", description = "Conflict")
 })
     @PostMapping
@@ -172,10 +172,10 @@ public class TestimonyController {
     public ResponseEntity<Object> create(@Valid @RequestBody TestimonyCreateRequest dto) {
         Integer idDeed = dto.getDeed().getIdDeed();
         if (idDeed == null) {
-            throw new BusinessValidationException("deed.idDeed: es obligatorio");
+            throw new BusinessValidationException("deed.idDeed: is required");
         }
         if (!deedRepository.existsById(idDeed)) {
-            throw new ResourceNotFoundException("Deed no encontrada: " + idDeed);
+            throw new ResourceNotFoundException("Deed not found: " + idDeed);
         }
         try {
             Testimony entity = new Testimony();
@@ -189,16 +189,16 @@ public class TestimonyController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Cuerpo empty or incompleto: number, flagged, verified and version are "
-            + "obligatorios"),
+    @ApiResponse(responseCode = "400", description = "Empty or incomplete body: number, flagged, verified, and version are "
+            + "required"),
     @ApiResponse(responseCode = "404", description = "Not found"),
     @ApiResponse(responseCode = "409", description = "version is not the stored one: another user modified the testimony")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update testimony",
-               description = "Replaces the testimony. number, flagged, verified and version are obligatorios (400 if "
-                       + "falta alguno); notes guarda tal as envía and a deed ausente conserva the actual. "
-                       + "version is the leída: if already is not the stored responde 409 (bloqueo optimista).")
+               description = "Replaces the testimony. number, flagged, verified, and version are required (400 if "
+                       + "any of them is missing); notes are stored as sent, and a missing deed keeps the current one. "
+                       + "version is the one that was read: a mismatch with the stored version responds 409 (optimistic lock).")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody TestimonyUpdateRequest dto) {
         dto.requireComplete();
         Optional<Testimony> existing = repository.findById(id);
@@ -220,7 +220,7 @@ public class TestimonyController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -234,18 +234,18 @@ public class TestimonyController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Not can delete: the testimony is referenciado by other registros.");
+                    .body("Cannot delete: the testimony is referenced by other records.");
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Created"),
     @ApiResponse(responseCode = "400", description = "The deed is not in status 'Firmada'"),
-    @ApiResponse(responseCode = "404", description = "Deed no encontrada")
+    @ApiResponse(responseCode = "404", description = "Deed not found")
 })
     @PostMapping("/{idDeed}/generate")
-    @Operation(summary = "Generate testimony of a deed firmada",
-               description = "Generates a testimony with number assigned by the sistema a partir of a deed "
+    @Operation(summary = "Generate a testimony from a signed deed",
+               description = "Generates a testimony with a number assigned by the system from a deed "
                        + "'Firmada'")
     @Transactional
     public ResponseEntity<DtoTestimony> generate(@PathVariable Integer idDeed) {
@@ -259,7 +259,7 @@ public class TestimonyController {
 })
     @PostMapping("/{id}/verify")
     @Operation(summary = "Check testimony",
-               description = "Records the verificación of a testimony, marcando if was observado and by qué")
+               description = "Records the verification of a testimony, marking whether it was observed and why")
     @Transactional
     public ResponseEntity<DtoTestimony> verify(@PathVariable Integer id, @RequestBody DtoTestimony dto) {
         Testimony testimony = generationVerificacionService.verify(id, dto.isFlagged(), dto.getNotes());

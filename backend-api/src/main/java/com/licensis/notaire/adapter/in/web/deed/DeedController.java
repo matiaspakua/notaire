@@ -188,7 +188,7 @@ public class DeedController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -213,7 +213,7 @@ public class DeedController {
     }
 
     @GetMapping("/available-notaries")
-    @Operation(summary = "Get lista of notaries available (with registro)")
+    @Operation(summary = "Get the list of available notaries (with a registry)")
     @Transactional(readOnly = true)
     public ResponseEntity<List<PersonResponse>> getAvailableNotaries() {
         return ResponseEntity.ok(deedService.findAvailableNotaries().stream().map(PersonResponse::from).toList());
@@ -232,7 +232,7 @@ public class DeedController {
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @PostMapping("/{id}/sign")
-    @Operation(summary = "Firmar deed",
+    @Operation(summary = "Sign deed",
                description = "Transitions a deed 'Sin Firmar' with folio assigned to the status 'Firmada'")
     public ResponseEntity<DeedResponse> sign(@PathVariable Integer id) {
         return ResponseEntity.ok(toResponse(deedFirmaService.sign(id)));

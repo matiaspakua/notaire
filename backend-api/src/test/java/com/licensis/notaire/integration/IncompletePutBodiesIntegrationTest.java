@@ -102,8 +102,8 @@ class IncompletePutBodiesIntegrationTest {
         mockMvc.perform(put("/api/v1/testimonies/" + id).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.message").value(allOf(containsString("number: es obligatorio"),
-                        containsString("flagged: es obligatorio"), containsString("verified: es obligatorio"))));
+                .andExpect(jsonPath("$.message").value(allOf(containsString("number: is required"),
+                        containsString("flagged: is required"), containsString("verified: is required"))));
 
         JsonNode stored = getJson("/api/v1/testimonies/" + id);
         assertThat(stored.get("number").asInt()).isEqualTo(57);
@@ -120,7 +120,7 @@ class IncompletePutBodiesIntegrationTest {
         mockMvc.perform(put("/api/v1/testimonies/" + id).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"number\":58,\"flagged\":false}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(allOf(containsString("verified: es obligatorio"),
+                .andExpect(jsonPath("$.message").value(allOf(containsString("verified: is required"),
                         not(containsString("number")), not(containsString("flagged")))));
 
         assertThat(getJson("/api/v1/testimonies/" + id).get("number").asInt()).isEqualTo(57);
@@ -154,7 +154,7 @@ class IncompletePutBodiesIntegrationTest {
             mockMvc.perform(put("/api/v1/procedures/" + id).contentType(MediaType.APPLICATION_JSON).content(body))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value(400))
-                    .andExpect(jsonPath("$.message").value("idProcedureType: es obligatorio"));
+                    .andExpect(jsonPath("$.message").value("idProcedureType: is required"));
         }
         assertThat(getJson("/api/v1/procedures/" + id).get("notes").asText()).isEqualTo("keep");
 
@@ -170,7 +170,7 @@ class IncompletePutBodiesIntegrationTest {
         mockMvc.perform(post("/api/v1/procedures").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.message").value("idProcedureType: es obligatorio"));
+                .andExpect(jsonPath("$.message").value("idProcedureType: is required"));
     }
 
     // ---------------------------------------------------------------- PUT /procedure-types/{id}/workflow
@@ -184,7 +184,7 @@ class IncompletePutBodiesIntegrationTest {
                         .content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.message").value(containsString("workflowDefinitionId: es obligatorio")));
+                .andExpect(jsonPath("$.message").value(containsString("workflowDefinitionId: is required")));
 
         mockMvc.perform(put("/api/v1/procedure-types/" + type + "/workflow").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"workflowDefinitionId\":null}"))

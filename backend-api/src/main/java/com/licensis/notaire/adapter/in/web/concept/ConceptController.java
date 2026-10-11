@@ -142,7 +142,7 @@ public class ConceptController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -154,7 +154,7 @@ public class ConceptController {
             }
             if (!templateRepository.findByConceptIdConcept(id).isEmpty()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(Map.of("error", "Not can delete: the concept is siendo utilizado in budget templates."));
+                        .body(Map.of("error", "Cannot delete: the concept is in use on budget templates."));
             }
             service.deleteById(id);
             return ResponseEntity.noContent().build();

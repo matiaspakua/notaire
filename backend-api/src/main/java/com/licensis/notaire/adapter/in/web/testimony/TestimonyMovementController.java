@@ -108,7 +108,7 @@ public class TestimonyMovementController {
     }
 
     @ApiResponses({
-    @ApiResponse(responseCode = "204", description = "Eliminado"),
+    @ApiResponse(responseCode = "204", description = "Deleted"),
     @ApiResponse(responseCode = "404", description = "Not found")
 })
     @DeleteMapping("/{id}")
@@ -122,18 +122,18 @@ public class TestimonyMovementController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Not can delete: the movimiento of testimony is referenciado by other registros.");
+                    .body("Cannot delete: the testimony movement is referenced by other records.");
         }
     }
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "The testimony is not verified or already has a movimiento abierto"),
+    @ApiResponse(responseCode = "400", description = "The testimony is not verified or already has an open movement"),
     @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @PostMapping("/{idTestimony}/enter-registration")
     @Operation(summary = "Enter testimony for registration",
-               description = "Records the date of ingreso of a testimony verified to the Registro of the Propiedad")
+               description = "Records the entry date of a verified testimony at the property registry")
     public ResponseEntity<DtoTestimonyMovement> registerEntry(@PathVariable Integer idTestimony) {
         TestimonyMovement movement = testimonyMovementService.registerEntry(idTestimony);
         return ResponseEntity.status(HttpStatus.CREATED).body(movement.getDto());
@@ -141,12 +141,12 @@ public class TestimonyMovementController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "400", description = "Falta the ingreso a registration previo"),
+    @ApiResponse(responseCode = "400", description = "The prior registration entry is missing"),
     @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @PostMapping("/{idTestimony}/register-inscription")
     @Operation(summary = "Record registration of the testimony",
-               description = "Marks as registered the movimiento abierto of a testimony, registrando the date")
+               description = "Marks the open testimony movement as registered and records the date")
     public ResponseEntity<DtoTestimonyMovement> registerInscription(@PathVariable Integer idTestimony) {
         TestimonyMovement movement = testimonyMovementService.registerInscription(idTestimony);
         return ResponseEntity.ok(movement.getDto());
@@ -158,8 +158,8 @@ public class TestimonyMovementController {
     @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @PostMapping("/{idTestimony}/withdraw")
-    @Operation(summary = "Retirar testimony registered",
-               description = "Records the date of salida and the number of cartón of a testimony registered")
+    @Operation(summary = "Withdraw a registered testimony",
+               description = "Records the exit date and carton number of a registered testimony")
     public ResponseEntity<DtoTestimonyMovement> withdraw(@PathVariable Integer idTestimony,
             @RequestBody DtoTestimonyMovement dto) {
         TestimonyMovement movement = testimonyMovementService.withdraw(idTestimony, dto.getCardNumber());
@@ -168,14 +168,14 @@ public class TestimonyMovementController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "201", description = "Created"),
-    @ApiResponse(responseCode = "400", description = "The testimony was not retirado previamente, or the reentry observado does not have notes"),
+    @ApiResponse(responseCode = "400", description = "The testimony was not withdrawn earlier, or the observed re-entry has no notes"),
     @ApiResponse(responseCode = "404", description = "Testimony not found")
 })
     @PostMapping("/{idTestimony}/reenter")
-    @Operation(summary = "Reenter testimony retirado",
-               description = "Crea a new movimiento of ingreso for a testimony previamente retirado, without "
-                       + "alterar the movimiento anterior. The cuerpo is opcional: number of cartón, if was observado "
-                       + "by the registro and notes (obligatorias when was observado)")
+    @Operation(summary = "Re-enter a withdrawn testimony",
+               description = "Creates a new entry movement for a previously withdrawn testimony, without "
+                       + "changing the previous movement. The body is optional: carton number, whether it was observed "
+                       + "by the registry, and notes (required when it was observed)")
     public ResponseEntity<DtoTestimonyMovement> reenter(@PathVariable Integer idTestimony,
             @RequestBody(required = false) DtoTestimonyMovement dto) {
         TestimonyReentry reentry = dto == null ? TestimonyReentry.empty()

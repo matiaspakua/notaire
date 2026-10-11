@@ -107,7 +107,7 @@ public class PropertyController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Created"),
-        @ApiResponse(responseCode = "400", description = "Invalid request (falta the cadastral nomenclature)"),
+        @ApiResponse(responseCode = "400", description = "Invalid request (the cadastral designation is missing)"),
         @ApiResponse(responseCode = "409", description = "Conflict")
     })
     @PostMapping
@@ -125,7 +125,7 @@ public class PropertyController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "400", description = "Invalid request (falta the cadastral nomenclature)"),
+        @ApiResponse(responseCode = "400", description = "Invalid request (the cadastral designation is missing)"),
         @ApiResponse(responseCode = "404", description = "Not found")
     })
     @PutMapping("/{id}")
@@ -139,7 +139,7 @@ public class PropertyController {
     }
 
     @ApiResponses({
-        @ApiResponse(responseCode = "204", description = "Eliminado"),
+        @ApiResponse(responseCode = "204", description = "Deleted"),
         @ApiResponse(responseCode = "404", description = "Not found")
     })
     @DeleteMapping("/{id}")

@@ -81,7 +81,7 @@ public class PdfBoxReportRenderer implements ReportRenderer {
             pdf.save(out);
             return out.toByteArray();
         } catch (IOException e) {
-            throw new UncheckedIOException("Error al generar el reporte PDF: " + document.title(), e);
+            throw new UncheckedIOException("Failed to generate the PDF report: " + document.title(), e);
         }
     }
 

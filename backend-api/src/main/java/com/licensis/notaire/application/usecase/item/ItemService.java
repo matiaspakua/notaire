@@ -48,7 +48,7 @@ public class ItemService {
 
     /**
      * CU71 - Query discounts and surcharges: devuelve the items of tipo DESCUENTO or RECARGO
-     * of a budget, together with its motivo.
+     * of a budget, together with its reason.
      */
     @Transactional(readOnly = true)
     public List<Item> findDiscountsAndSurchargesByBudget(Integer idBudget) {
@@ -86,8 +86,8 @@ public class ItemService {
     }
 
     /**
-     * CU45 - Exigir motivo estructurado en descuentos y recargos: rechaza items de tipo
-     * DESCUENTO or RECARGO without a motivo not empty.
+     * CU45 - A structured reason is required for discounts and surcharges: rejects items of type
+     * DESCUENTO or RECARGO when the reason is empty.
      */
     private void validateReason(Item item) {
         TypeItem type = item.getType();

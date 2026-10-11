@@ -173,7 +173,7 @@ components:
     CopyRequest:
       properties:
         datePrinting:
-          description: Date of impresión
+          description: Print date
           format: date-time
           type: string
         dateWithdrawal:
@@ -1687,7 +1687,7 @@ components:
     GenerateRequest:
       properties:
         idDeed:
-          description: Deed for the that generates the minuta
+          description: Deed for which the registration draft is generated
           format: int32
           type: integer
       required:
@@ -2617,7 +2617,7 @@ components:
           type: array
         deed:
           $ref: '#/components/schemas/DtoDeed'
-          description: Deed of the that the testimony is copy; `idDeed` must existir (404 if not)
+          description: Deed this testimony copies; `idDeed` must exist (404 if it does not)
         flagged:
           type: boolean
         idTestimony:
@@ -2672,7 +2672,7 @@ components:
           description: Testimony verificado
           type: boolean
         version:
-          description: 'Versión leída of the testimony (bloqueo optimista): 409 if already is not the almacenada'
+          description: 'Version read from the testimony (optimistic lock): 409 when it is no longer the stored version'
           format: int32
           type: integer
       required:
@@ -2813,7 +2813,7 @@ paths:
                   $ref: '#/components/schemas/DtoAuditRecord'
                 type: array
           description: OK
-      summary: Get registros of audit by user
+      summary: Get audit records by user
       tags:
       - AuditRecord
   /api/v1/audit-log/{id}:
@@ -2839,7 +2839,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoAuditRecord'
           description: Not found
-      summary: Get registro of audit by ID
+      summary: Get an audit record by ID
       tags:
       - AuditRecord
   /api/v1/auxiliary-protocol/available-folios:
@@ -2977,7 +2977,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -3020,7 +3020,7 @@ paths:
       - BudgetTemplate
   /api/v1/budgets:
     get:
-      description: 'Parámetros: page (default 0), size (default 20), sort (ej. idPresupuesto,desc)'
+      description: 'Parameters: page (default 0), size (default 20), sort (for example idBudget,desc)'
       operationId: getAll_20
       parameters:
       - description: Zero-based page index (0..N)
@@ -3057,7 +3057,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PageBudgetResponse'
           description: OK
-      summary: Get budgets paginados
+      summary: Get budgets, paged
       tags:
       - Budgets
     post:
@@ -3160,7 +3160,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete budget
@@ -3420,7 +3420,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -3577,7 +3577,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete copy
@@ -3730,7 +3730,7 @@ paths:
                   $ref: '#/components/schemas/PersonResponse'
                 type: array
           description: OK
-      summary: Get lista of notaries available (with registro)
+      summary: Get the list of available notaries (with a registry)
       tags:
       - Deeds
   /api/v1/deeds/search:
@@ -3767,7 +3767,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete deed
@@ -3859,7 +3859,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DeedResponse'
           description: Not found
-      summary: Firmar deed
+      summary: Sign deed
       tags:
       - Deeds
   /api/v1/document-cost-templates:
@@ -4179,7 +4179,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -4361,7 +4361,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -4525,7 +4525,7 @@ paths:
               schema:
                 type: object
           description: Conflict
-      summary: Create registro of history
+      summary: Create a history record
       tags:
       - ManagementHistory
   /api/v1/history/management/{idManagement}:
@@ -4564,7 +4564,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '403':
           description: Only a administrador can delete the history
         '404':
@@ -4681,7 +4681,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete identification type
@@ -4844,7 +4844,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete item
@@ -4982,7 +4982,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -5079,7 +5079,7 @@ paths:
                   type: boolean
                 type: object
           description: OK
-      summary: Verificar si el estado esta referenciado
+      summary: Check whether the status is referenced
       tags:
       - Management status
   /api/v1/managements:
@@ -5841,7 +5841,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoPaymentResponse'
           description: Conflict
-      summary: CU15 - Procesar pago (JSON body)
+      summary: CU15 - Process a payment (JSON body)
       tags:
       - Payment
   /api/v1/payments/budget/{idBudget}:
@@ -5962,7 +5962,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete payment
@@ -6021,7 +6021,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoPaymentResponse'
           description: Not found
-      summary: Editar pago
+      summary: Edit a payment
       tags:
       - Payment
   /api/v1/people:
@@ -6408,7 +6408,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete procedure template (CU55)
@@ -6564,7 +6564,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -6773,7 +6773,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Referencia no encontrada
+          description: Reference not found
         '409':
           content:
             '*/*':
@@ -6795,7 +6795,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete procedure
@@ -6827,8 +6827,8 @@ paths:
       tags:
       - Procedures
     put:
-      description: idProcedureType is required (400 if falta); notes guarda tal as envía and a asociación ausente conserva
-        the actual.
+      description: idProcedureType is required (400 if it is missing); notes are stored as sent and a missing association
+        keeps the current one.
       operationId: update_8
       parameters:
       - in: path
@@ -6855,13 +6855,13 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: 'Cuerpo empty or incompleto: idProcedureType is required'
+          description: 'Empty or incomplete body: idProcedureType is required'
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: Procedure or referencia not found
+          description: Procedure or reference not found
       summary: Update procedure
       tags:
       - Procedures
@@ -6900,7 +6900,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Invalid request (falta the cadastral nomenclature)
+          description: Invalid request (the cadastral designation is missing)
         '409':
           content:
             '*/*':
@@ -6922,7 +6922,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete property
@@ -6972,7 +6972,7 @@ paths:
         '200':
           description: OK
         '400':
-          description: Invalid request (falta the cadastral nomenclature)
+          description: Invalid request (the cadastral designation is missing)
         '404':
           description: Not found
       summary: Update property
@@ -6993,19 +6993,19 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Minuta generada
+          description: Registration draft generated
         '400':
           content:
             '*/*':
               schema:
                 type: object
-          description: Datos catastrales/registrales incompletos or deed not firmada
+          description: Incomplete cadastral or registry data, or the deed is not signed
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: Deed no encontrada
+          description: Deed not found
         '409':
           content:
             '*/*':
@@ -7037,7 +7037,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoRegistrationDraft'
-          description: Minuta not found
+          description: Registration draft not found
       summary: CU82 - Query a registration draft by ID
       tags:
       - Registration drafts
@@ -7063,20 +7063,20 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Observation registrada
+          description: Observation recorded
         '400':
           content:
             '*/*':
               schema:
                 type: object
-          description: The minuta is not presented
+          description: The registration draft is not submitted
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: Minuta not found
-      summary: CU82 - Record a observation formulada by the Registro
+          description: Registration draft not found
+      summary: CU82 - Record an observation issued by the registry
       tags:
       - Registration drafts
   /api/v1/registration-drafts/{id}/register:
@@ -7101,20 +7101,20 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Registration definitiva registrada
+          description: Final registration recorded
         '400':
           content:
             '*/*':
               schema:
                 type: object
-          description: The minuta is not presented
+          description: The registration draft is not submitted
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: Minuta not found
-      summary: CU82 - Record the registration definitiva of the minuta
+          description: Registration draft not found
+      summary: CU82 - Record the final registration of the registration draft
       tags:
       - Registration drafts
   /api/v1/registration-drafts/{id}/submit:
@@ -7139,26 +7139,26 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Presentación registrada
+          description: Submission recorded
         '400':
           content:
             '*/*':
               schema:
                 type: object
-          description: The minuta is not in status Generada
+          description: The registration draft is not in status Generada
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: Minuta not found
-      summary: CU82 - Record the presentación of the minuta ante the Registro
+          description: Registration draft not found
+      summary: CU82 - Record the registration draft submission to the registry
       tags:
       - Registration drafts
   /api/v1/reports/budget-properties/{idBudget}:
     get:
-      description: Generates the PDF of the budget e incluye the properties of their procedures (cadastral nomenclature, domicilio
-        and valuación fiscal)
+      description: Generates the budget PDF and includes the properties of its procedures (cadastral designation, address,
+        and fiscal appraisal)
       operationId: generateBudgetPropertiesReport
       parameters:
       - description: ID of the budget
@@ -7191,13 +7191,13 @@ paths:
           description: Budget not found
         '500':
           description: Unexpected error generating the PDF (no body)
-      summary: Generate reporte of budget with properties
+      summary: Generate the budget report with properties
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/budget/{idBudget}:
     get:
-      description: Generates a PDF with the datos of the budget (client, procedures, management), sus conceptos y el total
-        y saldo pendiente calculados como en CU47
+      description: Generates a PDF with the budget data (client, procedures, management), its concepts, and the total and
+        pending balance calculated as in CU47
       operationId: generateBudgetReport
       parameters:
       - description: ID of the budget
@@ -7230,13 +7230,13 @@ paths:
           description: Budget not found
         '500':
           description: Unexpected error generating the PDF (no body)
-      summary: Generate reporte of budget
+      summary: Generate the budget report
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/document-debt:
     get:
-      description: Generates a PDF with the submitted documents in the managements with that number, su importe, fecha de
-        pago o pago pendiente, y el total adeudado
+      description: Generates a PDF with the submitted documents in the managements with that number, its amount, payment date
+        or pending payment, and the total owed
       operationId: generateDebtDocumentsReport
       parameters:
       - description: Number of management
@@ -7269,13 +7269,13 @@ paths:
           description: There is no management with that number
         '500':
           description: Unexpected error generating the PDF (no body)
-      summary: Generar reporte de consulta de deuda de documentos
+      summary: Generate the document-debt report
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/documents-due/{idSubmittedDocument}:
     get:
-      description: Generates a PDF with the expiration of a submitted document (date and days restantes), its status of payment
-        and the management, procedure and client a the that belongs
+      description: Generates a PDF with the expiration of a submitted document (date and days remaining), its payment status,
+        and the management, procedure, and client it belongs to
       operationId: generateDocumentsDueSoonReport
       parameters:
       - description: ID of the submitted document
@@ -7308,13 +7308,12 @@ paths:
           description: Submitted document not found
         '500':
           description: Unexpected error generating the PDF (no body)
-      summary: Generate reporte of documents by vencer
+      summary: Generate the documents-due report
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/index-book:
     get:
-      description: 'Endpoint base for CU24: PDF provisorio with the period solicitado; the contenido of the libro of índice
-        is pendiente'
+      description: 'Base endpoint for CU24: a provisional PDF for the requested period; the index-book content is still pending'
       operationId: generateIndexBook
       parameters:
       - description: Year of the index book
@@ -7333,13 +7332,12 @@ paths:
                 format: byte
                 type: string
           description: OK
-      summary: Generar libro de indice
+      summary: Generate the index book
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/management-history/{idManagement}:
     get:
-      description: Generates a PDF with the datos of the management and its status history, of the more antiguo to the more
-        reciente
+      description: Generates a PDF with the management data and its status history, from the oldest to the most recent
       operationId: generateManagementHistoryReport
       parameters:
       - description: ID of the management
@@ -7372,13 +7370,13 @@ paths:
           description: Management not found
         '500':
           description: Unexpected error generating the PDF (no body)
-      summary: Generate reporte of management history
+      summary: Generate the management history report
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/monthly-sworn-statement:
     get:
-      description: 'Endpoint base for CU25: PDF provisorio with the period solicitado; the contenido of the DDJJ mensual is
-        pendiente'
+      description: 'Base endpoint for CU25: a provisional PDF for the requested period; the monthly sworn-statement content
+        is still pending'
       operationId: generateMonthlySwornStatement
       parameters:
       - description: Year of the period
@@ -7406,12 +7404,12 @@ paths:
                 format: byte
                 type: string
           description: OK
-      summary: Generar declaracion jurada mensual
+      summary: Generate the monthly sworn statement
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/payment-receipt/{idPayment}:
     get:
-      description: Genera un PDF con el recibo de un pago existente
+      description: Generates a PDF with the receipt of an existing payment
       operationId: generatePaymentReceiptReport
       parameters:
       - description: ID of the payment
@@ -7437,9 +7435,9 @@ paths:
                 format: byte
                 type: string
           description: Payment not found
-      summary: CU15 - Emitir recibo de pago
+      summary: CU15 - Issue a payment receipt
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/procedure-document-list:
     get:
       description: Generates a PDF with the documents a procedure type requires according to its template (expiration, validity
@@ -7477,10 +7475,10 @@ paths:
           description: Unexpected error generating the PDF (no body)
       summary: Generate the document list report for a procedure
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/registration-draft/{idRegistrationDraft}:
     get:
-      description: Generates a PDF with the formulario normalizado of a registration draft
+      description: Generates a PDF with the standard form of a registration draft
       operationId: generateRegistrationDraftReport
       parameters:
       - description: ID of the registration draft
@@ -7506,13 +7504,13 @@ paths:
                 format: byte
                 type: string
           description: Registration draft not found
-      summary: CU82 - Generate the formulario normalizado of the registration draft
+      summary: CU82 - Generate the standard form of the registration draft
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/tax-sworn-statement:
     get:
-      description: 'Endpoint base for CU50: PDF provisorio with the period solicitado; the contenido of the DDJJ of rentas
-        is pendiente'
+      description: 'Base endpoint for CU50: a provisional PDF for the requested period; the tax sworn-statement content is
+        still pending'
       operationId: generateTaxSwornStatement
       parameters:
       - description: Year of the period
@@ -7540,12 +7538,12 @@ paths:
                 format: byte
                 type: string
           description: OK
-      summary: Generar declaracion jurada de rentas
+      summary: Generate the tax sworn statement
       tags:
-      - Reportes
+      - Reports
   /api/v1/reports/testimonies/{idTestimony}/copies:
     get:
-      description: Generates a PDF with the copy impresa of a testimony, only if already was verified
+      description: Generates a PDF with the printed copy of a testimony, only when it has been verified
       operationId: generateTestimonyCopyReport
       parameters:
       - description: ID of the testimony
@@ -7578,9 +7576,9 @@ paths:
                 format: byte
                 type: string
           description: Testimony not found
-      summary: Generate copy impresa of testimony verified
+      summary: Generate the printed copy of a verified testimony
       tags:
-      - Reportes
+      - Reports
   /api/v1/roles:
     get:
       operationId: getAllRoles
@@ -7682,7 +7680,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete role
@@ -7851,7 +7849,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete submitted document
@@ -7964,7 +7962,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete substitution
@@ -8053,13 +8051,13 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Invalid request (falta the deed or its idDeed)
+          description: Invalid request (the deed or its idDeed is missing)
         '404':
           content:
             '*/*':
               schema:
                 type: object
-          description: Deed no encontrada
+          description: Deed not found
         '409':
           content:
             '*/*':
@@ -8071,7 +8069,7 @@ paths:
       - Testimony
   /api/v1/testimonies/{idDeed}/generate:
     post:
-      description: Generates a testimony with number assigned by the sistema a partir of a deed 'Firmada'
+      description: Generates a testimony with a number assigned by the system from a deed 'Firmada'
       operationId: generate
       parameters:
       - in: path
@@ -8098,8 +8096,8 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimony'
-          description: Deed no encontrada
-      summary: Generate testimony of a deed firmada
+          description: Deed not found
+      summary: Generate a testimony from a signed deed
       tags:
       - Testimony
   /api/v1/testimonies/{id}:
@@ -8118,7 +8116,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -8154,9 +8152,9 @@ paths:
       tags:
       - Testimony
     put:
-      description: 'Replaces the testimony. number, flagged, verified and version are obligatorios (400 if falta alguno);
-        notes guarda tal as envía and a deed ausente conserva the actual. version is the leída: if already is not the stored
-        responde 409 (bloqueo optimista).'
+      description: 'Replaces the testimony. number, flagged, verified, and version are required (400 if any of them is missing);
+        notes are stored as sent, and a missing deed keeps the current one. version is the one that was read: a mismatch with
+        the stored version responds 409 (optimistic lock).'
       operationId: update_4
       parameters:
       - in: path
@@ -8183,7 +8181,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: 'Cuerpo empty or incompleto: number, flagged, verified and version are obligatorios'
+          description: 'Empty or incomplete body: number, flagged, verified, and version are required'
         '404':
           content:
             '*/*':
@@ -8201,7 +8199,7 @@ paths:
       - Testimony
   /api/v1/testimonies/{id}/verify:
     post:
-      description: Records the verificación of a testimony, marcando if was observado and by qué
+      description: Records the verification of a testimony, marking whether it was observed and why
       operationId: verify
       parameters:
       - in: path
@@ -8279,7 +8277,7 @@ paths:
       - TestimonyMovement
   /api/v1/testimony-movements/{idTestimony}/enter-registration:
     post:
-      description: Records the date of ingreso of a testimony verified to the Registro of the Propiedad
+      description: Records the entry date of a verified testimony at the property registry
       operationId: registerEntry
       parameters:
       - in: path
@@ -8300,7 +8298,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: The testimony is not verified or already has a movimiento abierto
+          description: The testimony is not verified or already has an open movement
         '404':
           content:
             '*/*':
@@ -8312,9 +8310,8 @@ paths:
       - TestimonyMovement
   /api/v1/testimony-movements/{idTestimony}/reenter:
     post:
-      description: 'Crea a new movimiento of ingreso for a testimony previamente retirado, without alterar the movimiento
-        anterior. The cuerpo is opcional: number of cartón, if was observado by the registro and notes (obligatorias when
-        was observado)'
+      description: 'Creates a new entry movement for a previously withdrawn testimony, without changing the previous movement.
+        The body is optional: carton number, whether it was observed by the registry, and notes (required when it was observed)'
       operationId: reenter
       parameters:
       - in: path
@@ -8340,19 +8337,19 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: The testimony was not retirado previamente, or the reentry observado does not have notes
+          description: The testimony was not withdrawn earlier, or the observed re-entry has no notes
         '404':
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
           description: Testimony not found
-      summary: Reenter testimony retirado
+      summary: Re-enter a withdrawn testimony
       tags:
       - TestimonyMovement
   /api/v1/testimony-movements/{idTestimony}/register-inscription:
     post:
-      description: Marks as registered the movimiento abierto of a testimony, registrando the date
+      description: Marks the open testimony movement as registered and records the date
       operationId: registerInscription
       parameters:
       - in: path
@@ -8373,7 +8370,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
-          description: Falta the ingreso a registration previo
+          description: The prior registration entry is missing
         '404':
           content:
             '*/*':
@@ -8385,7 +8382,7 @@ paths:
       - TestimonyMovement
   /api/v1/testimony-movements/{idTestimony}/withdraw:
     post:
-      description: Records the date of salida and the number of cartón of a testimony registered
+      description: Records the exit date and carton number of a registered testimony
       operationId: withdraw
       parameters:
       - in: path
@@ -8419,7 +8416,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DtoTestimonyMovement'
           description: Testimony not found
-      summary: Retirar testimony registered
+      summary: Withdraw a registered testimony
       tags:
       - TestimonyMovement
   /api/v1/testimony-movements/{id}:
@@ -8438,7 +8435,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -8635,7 +8632,7 @@ paths:
           type: integer
       responses:
         '204':
-          description: Eliminado
+          description: Deleted
         '404':
           description: Not found
       summary: Delete user
@@ -8750,7 +8747,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -8846,7 +8843,7 @@ paths:
                 additionalProperties: {}
                 type: object
           description: OK
-      summary: Validar consistencia de un workflow
+      summary: Validate the consistency of a workflow
       tags:
       - Workflow Validation
   /api/v1/workflow-node:
@@ -8919,7 +8916,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -8981,8 +8978,8 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: 'Invalid request: indicar to the menos type, positionX or positionY; type debe ser INITIAL, INTERMEDIATE
-            o FINAL'
+          description: 'Invalid request: provide at least type, positionX, or positionY; type must be INITIAL, INTERMEDIATE,
+            or FINAL'
         '404':
           content:
             '*/*':
@@ -9061,7 +9058,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: Eliminado
+          description: Deleted
         '404':
           content:
             '*/*':
@@ -9123,7 +9120,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: 'Invalid request: originNodeId and destinationNodeId are obligatorios'
+          description: 'Invalid request: originNodeId and destinationNodeId are required'
         '404':
           content:
             '*/*':
@@ -9139,6 +9136,8 @@ servers:
 - description: Docker local
   url: http://localhost:8081
 tags:
+- description: API for generating PDF reports
+  name: Reports
 - description: API for folio
   name: Tipo de Folio
 - description: API for managing concepts
@@ -9197,10 +9196,6 @@ tags:
   name: Workflow Node
 - description: API for querying audit of users (only lectura; mutaciones denegadas)
   name: AuditRecord
-- description: API for generating PDF reports
-  name: Reportes
-- description: CU72 - Validación of consistencia of the workflow
-  name: Workflow Validation
 - description: API for management
   name: Management status
 - description: API for deed managements
@@ -9209,5 +9204,7 @@ tags:
   name: Users
 - description: API for managing procedures in the auxiliary protocol
   name: Auxiliary protocol
+- description: CU72 - Workflow consistency validation
+  name: Workflow Validation
 - description: API for managing costos esperados of documents by procedure type
   name: PlantillaCostosDocumento
