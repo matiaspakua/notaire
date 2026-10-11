@@ -1,223 +1,227 @@
 # Architecture Decision Records (ADRs)
 
-Los Architecture Decision Records documentan las decisiones arquitectónicas importantes del proyecto Notaire, incluyendo el contexto, opciones consideradas, y trade-offs de cada decisión.
+Architecture Decision Records document the important architecture decisions for Notaire: the context, the options considered, and the trade-offs of each decision.
 
-## ADR Index
+## ADR index
 
 | # | Title | Status | Date | Scope |
 |---|-------|--------|------|-------|
-| [001](ADR-001-microservices-architecture.md) | Microservices Architecture | Accepted | 2024-03-20 | System architecture |
-| [002](ADR-002-module-structure.md) | Module Structure | Accepted | 2024-03-20 | Code organization |
-| [003](ADR-003-rest-api-versioning.md) | REST API Versioning | Accepted | 2024-03-20 | API evolution |
-| [004](ADR-004-database-migration.md) | Database Migration | Accepted | 2024-03-20 | Data persistence |
-| [005](ADR-005-modern-frontend-migration.md) | Modern Frontend Migration | Accepted | 2024-04-10 | Frontend architecture |
-| [006](ADR-006-testing-strategy.md) | Testing Strategy | Accepted | 2024-04-12 | QA & validation |
-| [007](ADR-007-database-schema-versioning-flyway.md) | Database Schema Versioning (Flyway) | Accepted | 2024-04-13 | Data persistence |
-| [008](ADR-008-security-authentication.md) | Security & Authentication | Accepted | 2024-04-28 | Security |
-| [009](ADR-009-logging-monitoring.md) | Logging & Monitoring | Accepted | 2024-04-28 | Observability |
-| [010](ADR-010-error-handling.md) | Error Handling | Accepted | 2024-04-28 | Resilience |
-| [011](ADR-011-centralized-design-system.md) | Centralized Design System | Accepted | 2026-05-12 | UI/UX |
-| [012](ADR-012-ci-cd-pipeline.md) | CI/CD Pipeline (GitHub Actions) | Accepted | 2026-03-24 | DevOps |
-| [013](ADR-013-audit-trail.md) | Audit Trail (Spring AOP) | Accepted | 2026-05-12 | Security & Compliance |
-| [014](ADR-014-workflow-engine.md) | Workflow Engine (data-driven) | Accepted | 2026-06-09 | Domain model |
+| [001](ADR-001-microservices-architecture.md) | Microservices architecture | Accepted | 2024-03-20 | System architecture |
+| [002](ADR-002-module-structure.md) | Module structure | Accepted | 2024-03-20 | Code organization |
+| [003](ADR-003-rest-api-versioning.md) | REST API versioning | Accepted | 2024-03-20 | API evolution |
+| [004](ADR-004-database-migration.md) | Database migration | Accepted | 2024-03-20 | Data persistence |
+| [005](ADR-005-modern-frontend-migration.md) | Modern frontend migration | Accepted | 2026-04-13 | Frontend architecture |
+| [006](ADR-006-testing-strategy.md) | Testing strategy | Accepted | 2026-04-13 | QA and validation |
+| [007](ADR-007-database-schema-versioning-flyway.md) | Database schema versioning (Flyway) | Accepted | 2026-04-14 | Data persistence |
+| [008](ADR-008-security-authentication.md) | Security and authentication | Accepted | 2024-04-28 | Security |
+| [009](ADR-009-logging-monitoring.md) | Logging and monitoring | Accepted | 2024-04-28 | Observability |
+| [010](ADR-010-error-handling.md) | Error handling | Accepted | 2024-04-28 | Resilience |
+| [011](ADR-011-centralized-design-system.md) | Centralized design system | Accepted | 2026-05-12 | UI/UX |
+| [012](ADR-012-ci-cd-pipeline.md) | CI/CD pipeline (GitHub Actions) | Accepted | 2026-03-24 | DevOps |
+| [013](ADR-013-audit-trail.md) | Audit trail (Spring AOP) | Accepted | 2026-05-12 | Security and compliance |
+| [014](ADR-014-workflow-engine.md) | Workflow engine (data-driven) | Accepted | 2026-06-09 | Domain model |
 | [015](ADR-015-internationalization.md) | Internationalization (next-intl) | Accepted | 2026-05-23 | Frontend |
-| [016](ADR-016-observability-stack.md) | Observability Stack Topology | Accepted | 2026-08-19 | Observability |
-| [017](ADR-017-container-base-images.md) | Container / Base-Image Strategy | Accepted | 2026-08-19 | DevOps |
-| [018](ADR-018-rate-limiting-policy.md) | Rate-Limiting Policy | Accepted | 2026-08-19 | Security |
-| [019](ADR-019-secrets-management.md) | Secrets Management | Accepted | 2026-08-19 | Security |
-| [020](ADR-020-openapi-exposure-policy.md) | OpenAPI Exposure Policy | Accepted | 2026-08-19 | Security & API |
-| [021](ADR-021-hexagonal-architecture-pilot.md) | Hexagonal Architecture Pilot (Payment Slice) | Accepted | 2026-09-13 | Code organization |
-| [022](ADR-022-git-history-rewrite-and-large-binaries.md) | Git History Rewrite and Large Binaries | Accepted | 2026-10-03 | DevOps / repo hygiene |
-| [023](ADR-023-rest-resource-naming.md) | REST Resource Naming Conventions | Accepted | 2026-10-03 | API design |
-| [024](ADR-024-repository-topology.md) | Repository Topology — Evidence-Gated Decomposition | Proposed | 2026-10-05 | Repository structure |
-| [025](ADR-025-retire-notaire-shared.md) | Retire the notaire-shared Module | Accepted | 2026-10-05 | Code organization |
-| [026](ADR-026-module-separation.md) | Module Separation Inside the Repository | Accepted | 2026-10-06 | Code organization |
-| [027](ADR-027-mermaid-diagrams.md) | Mermaid as Canonical Diagram Language | Accepted | 2026-10-10 | Documentation |
+| [016](ADR-016-observability-stack.md) | Observability stack topology | Accepted | 2026-08-19 | Observability |
+| [017](ADR-017-container-base-images.md) | Container and base-image strategy | Accepted | 2026-08-19 | DevOps |
+| [018](ADR-018-rate-limiting-policy.md) | Rate-limiting policy | Accepted | 2026-08-19 | Security |
+| [019](ADR-019-secrets-management.md) | Secrets management | Accepted | 2026-08-19 | Security |
+| [020](ADR-020-openapi-exposure-policy.md) | OpenAPI exposure policy | Accepted | 2026-08-19 | Security and API |
+| [021](ADR-021-hexagonal-architecture-pilot.md) | Hexagonal architecture pilot (payment slice) | Accepted | 2026-09-13 | Code organization |
+| [022](ADR-022-git-history-rewrite-and-large-binaries.md) | Git history rewrite and large binaries | Accepted | 2026-10-03 | DevOps and repo hygiene |
+| [023](ADR-023-rest-resource-naming.md) | REST resource naming conventions | Accepted | 2026-10-03 | API design |
+| [024](ADR-024-repository-topology.md) | Repository topology — evidence-gated decomposition | Proposed | 2026-10-05 | Repository structure |
+| [025](ADR-025-retire-notaire-shared.md) | Retire the notaire-shared module | Accepted | 2026-10-05 | Code organization |
+| [026](ADR-026-module-separation.md) | Module separation inside the repository | Accepted | 2026-10-06 | Code organization |
+| [027](ADR-027-mermaid-diagrams.md) | Mermaid as the canonical diagram language | Accepted | 2026-10-10 | Documentation |
 
-## ADR Status Legend
+Dates for ADR-005, ADR-006, and ADR-007 match the date in each decision file.
 
-- **Proposed** - Opción bajo evaluación, sin implementación aún
-- **Accepted** - Aprobado por equipo, actualmente implementado
-- **Deprecated** - Fue válido pero fue supercedido
-- **Superseded by** - Reemplazado por otro ADR
+## Status legend
 
-## How to Read ADRs
+- **Proposed** — under evaluation, not implemented yet
+- **Accepted** — approved and in use
+- **Deprecated** — was valid, and has been retired
+- **Superseded by** — replaced by another ADR
 
-Cada ADR sigue esta estructura:
+## How to read an ADR
+
+Each ADR uses this structure:
 
 ### Header
 
-- **Status**: Proposed | Accepted | Deprecated | Superseded
-- **Date**: Cuándo fue propuesto
-- **Deciders**: Quién tomó la decisión
-- **Related**: ADRs relacionados
+- **Status**: Proposed, Accepted, Deprecated, or Superseded
+- **Date**: when it was proposed
+- **Deciders**: who made the decision
+- **Related**: connected ADRs
 
 ### Body
 
-1. **Context** - Qué problema intentamos resolver y cuáles son las restricciones
-2. **Decision** - Qué alternativa elegimos y por qué
-3. **Options Considered** - Alternativas evaluadas con trade-offs
-4. **Trade-off Analysis** - Análisis detallado de los trade-offs clave
-5. **Consequences** - Qué se vuelve más fácil, más difícil, y qué necesita seguimiento
-6. **Implementation Details** - Específicos técnicos para implementar la decisión
-7. **Related ADRs** - Otras decisiones conectadas
+1. **Context** — the problem and the constraints
+2. **Decision** — the chosen option and why
+3. **Options considered** — alternatives and their trade-offs
+4. **Trade-off analysis** — the main trade-offs in detail
+5. **Consequences** — what becomes easier, what becomes harder, and what needs follow-up
+6. **Implementation details** — technical notes for carrying out the decision
+7. **Related ADRs** — other connected decisions
 
-## Decision Categories
+## Decision categories
 
-### System Architecture (2 ADRs)
+### System architecture
 
-- **ADR-001**: Migración de monolito a microservicios con 3 capas
-- **ADR-005**: Migración a Next.js para el nuevo frontend web
+- **ADR-001**: move from the monolith to a layered service
+- **ADR-005**: Next.js for the web frontend
 
-### Code Organization (3 ADRs)
+### Code organization
 
-- **ADR-002**: Estructura Maven multi-módulo (parcialmente reemplazada por ADR-025)
-- **ADR-021**: Piloto de arquitectura hexagonal (solo el slice de pagos/budgets)
-- **ADR-025**: Retiro del módulo `notaire-shared`; `backend-api` es dueño de sus DTOs
+- **ADR-002**: multi-module Maven layout (partly replaced by ADR-025)
+- **ADR-021**: hexagonal pilot (the payment and budget slice)
+- **ADR-025**: retire `notaire-shared`; `backend-api` owns its DTOs
+- **ADR-026**: module separation inside this repository
 
-### API Design (2 ADRs)
+### API design
 
-- **ADR-003**: REST API versioning con URL path versioning
-- **ADR-023**: REST resource naming (language, plurals, search, actions, 201+Location)
-- **ADR-024**: Repository topology (staged, evidence-gated extraction of satellites; core stays a monorepo)
+- **ADR-003**: REST versioning by URL path
+- **ADR-023**: resource naming (language, plurals, search, actions, 201 + Location)
 
-### Data Persistence (2 ADRs)
+### Repository structure
 
-- **ADR-004**: Migración MySQL → PostgreSQL 16
-- **ADR-007**: Gestión de versiones de esquema con Flyway
+- **ADR-024**: topology (staged, evidence-gated extraction of satellites; the core stays a monorepo)
 
-### Quality & Reliability (3 ADRs)
+### Data persistence
 
-- **ADR-006**: Estrategia de testing (unitario, integración, E2E)
-- **ADR-008**: Seguridad y autenticación (JWT, RBAC)
-- **ADR-010**: Manejo de errores global
+- **ADR-004**: MySQL to PostgreSQL 16
+- **ADR-007**: schema versioning with Flyway
 
-### Observability (2 ADRs)
+### Quality and reliability
 
-- **ADR-009**: Logging y monitoreo centralizado (LPG Stack)
-- **ADR-016**: Topología del stack de observabilidad (Prometheus/Grafana/Loki/SonarQube)
+- **ADR-006**: testing strategy (unit, integration, E2E)
+- **ADR-008**: security and authentication (JWT, RBAC)
+- **ADR-010**: global error handling
 
-### DevOps (3 ADRs)
+### Observability
 
-- **ADR-012**: Pipeline CI/CD con GitHub Actions
-- **ADR-017**: Estrategia de imágenes base de contenedores (Alpine, multi-stage, non-root)
-- **ADR-022**: Higiene de binarios grandes y decisión diferida de `git filter-repo` (#1050)
+- **ADR-009**: centralized logging and monitoring (Loki, Prometheus, Grafana)
+- **ADR-016**: observability stack topology (Prometheus, Grafana, Loki, SonarQube)
 
-### Security & Compliance (4 ADRs)
+### DevOps
 
-- **ADR-013**: Auditoría transversal con Spring AOP
-- **ADR-018**: Política de rate-limiting (solo login lockout, sin límite general de API)
-- **ADR-019**: Gestión de secretos (.env único, ProductionCredentialsGuard)
-- **ADR-020**: Política de exposición de OpenAPI/Swagger (público salvo producción)
+- **ADR-012**: CI/CD with GitHub Actions
+- **ADR-017**: container base images (Alpine, multi-stage, non-root)
+- **ADR-022**: large-binary hygiene and a deferred `git filter-repo` decision (#1050)
 
-### Domain Model (1 ADR)
+### Security and compliance
 
-- **ADR-014**: Motor de workflow configurable para gestiones
+- **ADR-013**: cross-cutting audit with Spring AOP
+- **ADR-018**: rate limiting (login lockout only, no general API limit)
+- **ADR-019**: secrets (one `.env`, `ProductionCredentialsGuard`)
+- **ADR-020**: OpenAPI and Swagger exposure (public except in production)
 
-### Frontend (1 ADR adicional)
+### Domain model
 
-- **ADR-015**: Internacionalización con next-intl
+- **ADR-014**: configurable workflow engine for managements
 
-## Key Architectural Principles
+### Frontend
 
-Basados en los ADRs implementados:
+- **ADR-011**: centralized design system
+- **ADR-015**: internationalization with next-intl. Message keys such as `suplencias` and `reportes` stay Spanish.
 
-### 1. Separation of Concerns
+### Documentation
 
-- Frontend y Backend completamente desacoplados
-- Comunicación única vía REST API
-- Database solo accesible desde Backend
+- **ADR-027**: Mermaid for active diagrams
+
+## Principles drawn from the accepted ADRs
+
+### 1. Separation of concerns
+
+- Frontend and backend are separate
+- They talk only through the REST API
+- The database is reached only from the backend
 
 ### 2. Scalability
 
-- Backend stateless para horizontal scaling
-- Database connection pooling
-- API versionado para evolución sin romper clientes
+- The backend is stateless so it can scale horizontally
+- Database connections are pooled
+- The API is versioned so clients are not broken by evolution
 
 ### 3. Maintainability
 
-- Código organizado en módulos Maven independientes
-- Layered architecture (controllers → services → repositories → database)
-- Clear responsibility boundaries
+- Code is organized in Maven modules
+- Layers run from controllers to services to repositories to the database
+- Responsibilities have a clear boundary
 
-### 4. Modern Technology Stack
+### 4. Current platform
 
-- Java 21 LTS (long-term support)
-- Spring Boot 4.1.0 (framework moderno)
-- PostgreSQL 16 (robust RDBMS)
-- Docker (containerization)
+From the root `pom.xml` and Compose:
 
-## ADR Lifecycle
+- Java 26
+- Spring Boot 4.1.1
+- PostgreSQL 16
+- Docker
+
+## ADR lifecycle
 
 ```text
 Proposed
-    │ (Analysis)
+    │ (analysis)
     ↓
 Accepted
-    │ (Implementation)
-    ├─→ Deprecated (replaced)
+    │ (implementation)
+    ├─→ Deprecated (retired)
     │
-    └─→ Superseded (by new ADR)
+    └─→ Superseded (by a new ADR)
 ```
 
-### Proposing a New ADR
+### Proposing a new ADR
 
-1. **Identify the decision**: Qué pregunta arquitectónica necesita resolverse?
-2. **Create ADR file**: `ADR-NNN-title.md`
-3. **Document thoroughly**:
-   - Context claro (qué problema, restricciones)
-   - Mínimo 2-3 opciones consideradas
-   - Trade-off analysis detailed
-   - Consequences y follow-up actions
+1. **Name the decision**: which architecture question needs an answer?
+2. **Create the file**: `ADR-NNN-title.md`
+3. **Write it fully**:
+   - A clear context (problem and constraints)
+   - At least two or three options
+   - A trade-off analysis
+   - Consequences and follow-up
+4. **Get agreement**: team review
+5. **Implement**: follow the recorded decision
+6. **Update this README**: add the row and the status
 
-4. **Get approval**: Team review and consensus
-5. **Implement**: Follow the decision documented
-6. **Update this README**: Add to index and track status
+## Decisions that cut across several ADRs
 
-## Cross-Cutting Decisions
+### Layered architecture
 
-Algunas decisiones afectan múltiples ADRs:
-
-### Layered Architecture
-
-Implementado en:
-
-- ADR-001 (3-layer architecture)
+- ADR-001 (layered service)
 - ADR-002 (package structure)
-- ADR-005 (testing at each layer)
+- ADR-006 (tests at each layer)
 
-### Data Integrity
+### Data integrity
 
-Implementado en:
+- ADR-004 (PostgreSQL)
+- ADR-007 (Flyway)
+- ADR-010 (error handling)
 
-- ADR-004 (PostgreSQL migration)
-- ADR-008 (error handling & recovery)
-
-### API Evolution
-
-Implementado en:
+### API evolution
 
 - ADR-003 (versioning)
-- ADR-006 (authentication)
+- ADR-008 (authentication)
+- ADR-023 (resource names)
 
-## Metrics & Monitoring
+## Targets used to judge the decisions
 
-Para evaluar si nuestras decisiones fueron correctas, monitorearemos:
+These are targets, not a measured report:
 
-- **Performance**: API response times <500ms avg
-- **Reliability**: 99.5% uptime target
-- **Maintainability**: <6 month time-to-market para features nuevas
-- **Quality**: 80% code coverage, <5 critical bugs/quarter
-- **Developer velocity**: Feature delivery rate
+- **Performance**: API response times under 500 ms on average
+- **Reliability**: 99.5% uptime
+- **Maintainability**: new features shipped inside six months
+- **Quality**: 80% code coverage, fewer than five critical bugs per quarter
+- **Developer velocity**: feature delivery rate
 
 ## References
 
 - [Documenting Architecture Decisions - Michael Nygard](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
-- [ADR GitHub - ADF](https://adr.github.io/)
+- [ADR GitHub](https://adr.github.io/)
 - [12-Factor App](https://12factor.net/)
 
 ## Navigation
 
 - [SAD (Software Architecture Document)](../201-SAD/sad.md)
 - [Diagrams](../204-diagrams/)
-- [Design System](../203-design/)
+- [Design](../203-design/)

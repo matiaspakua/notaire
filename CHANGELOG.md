@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English ADR index** (#1490, CU75):
+  The ADR index is English. Dates for ADR-005, ADR-006, and ADR-007 match each
+  decision file. The platform line matches the root `pom.xml`: Java 26 and
+  Spring Boot 4.1.1. Message keys such as `suplencias` and `reportes` stay.
 - **English Flyway schema-versioning decision** (#1490, CU75):
   ADR-007 is English. Dependencies are `spring-boot-starter-flyway` and
   `flyway-database-postgresql`. `V1__initial_schema.sql`, `V2__initial_data.sql`,
