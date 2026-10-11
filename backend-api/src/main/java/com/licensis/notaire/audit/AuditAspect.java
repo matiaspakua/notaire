@@ -26,7 +26,7 @@ import java.util.Optional;
 
 /**
  * Spring AOP aspect that writes a business audit record to the
- * {@code registro_auditoria} table for every REST operation handled by
+ * {@code audit_records} table for every REST operation handled by
  * controllers in the {@code com.licensis.notaire.api} package.
  *
  * <p>The aspect is intentionally tolerant: any failure during the audit
@@ -102,7 +102,7 @@ public class AuditAspect {
             record.setFkIdUser(user);
 
             auditService.save(record);
-            log.debug("Audit record created — modulo={}, detalle={}, user={}",
+            log.debug("Audit record created — module={}, detail={}, user={}",
                     module, detail, user.getName());
         } catch (RuntimeException ex) {
             // Never break functional flows because of audit failures.

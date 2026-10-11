@@ -71,7 +71,7 @@ function BudgetsList() {
   const { data: resumen, isLoading: isResumenLoading, error: resumenError } =
     useBudgetSummary(resumenId);
 
-  const [newProcedureTypeId, setTypeProcedureNuevoId] = useState(NO_TEMPLATE);
+  const [newProcedureTypeId, setNewProcedureTypeId] = useState(NO_TEMPLATE);
   const [itemsBudgetId, setItemsBudgetId] = useState<number | null>(null);
   const { data: budgetItems = [], isLoading: isItemsLoading } =
     useItemsByBudget(itemsBudgetId ?? undefined);
@@ -175,7 +175,7 @@ function BudgetsList() {
 
   function openCreate() {
     setEditing(EMPTY);
-    setTypeProcedureNuevoId(NO_TEMPLATE);
+    setNewProcedureTypeId(NO_TEMPLATE);
     setIsEditMode(false);
     setModalOpen(true);
   }
@@ -381,7 +381,7 @@ function BudgetsList() {
               </FormField>
               {!isEditMode && (
                 <FormField label={t("fields.tipoTramite")} helperText={t("fields.tipoTramiteAyuda")}>
-                  <Select value={newProcedureTypeId} onValueChange={setTypeProcedureNuevoId}>
+                  <Select value={newProcedureTypeId} onValueChange={setNewProcedureTypeId}>
                     <SelectTrigger data-testid="select-procedure-type-new">
                       <SelectValue />
                     </SelectTrigger>

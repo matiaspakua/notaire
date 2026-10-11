@@ -127,7 +127,7 @@ public class SubmittedDocument implements Serializable, Persistable<Integer>
     {
         this.idSubmittedDocument = idSubmittedDocument;
         this.name = name;
-        //this.fechaIngreso = fechaIngreso;
+        //this.dateEntry = dateEntry;
         this.prepared = prepared;
         this.expires = expires;
         this.released = released;

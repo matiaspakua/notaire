@@ -159,28 +159,28 @@ public class Concept implements Serializable, Persistable<Integer>
         return dto;
     }
 
-    public void setAttributes(DtoConcept nuevoDto) throws InvalidDtoException
+    public void setAttributes(DtoConcept updatedDto) throws InvalidDtoException
     {
-        this.setIdConcept(nuevoDto.getIdConcept());
+        this.setIdConcept(updatedDto.getIdConcept());
 
-        if (nuevoDto.getName() != null)
+        if (updatedDto.getName() != null)
         {
-            this.setName(nuevoDto.getName());
+            this.setName(updatedDto.getName());
         }
 
-        if (nuevoDto.getValue() != null)
+        if (updatedDto.getValue() != null)
         {
-            this.setValue(nuevoDto.getValue());
+            this.setValue(updatedDto.getValue());
         }
 
-        if (nuevoDto.getPercentage() != null)
+        if (updatedDto.getPercentage() != null)
         {
-            this.setPercentage(nuevoDto.getPercentage());
+            this.setPercentage(updatedDto.getPercentage());
         }
 
-        this.setVersion(nuevoDto.getVersion());
-        this.setEnabled(nuevoDto.getEnabled());
-        this.fixedConcept = nuevoDto.isFixed();
+        this.setVersion(updatedDto.getVersion());
+        this.setEnabled(updatedDto.getEnabled());
+        this.fixedConcept = updatedDto.isFixed();
     }
 
     @Override

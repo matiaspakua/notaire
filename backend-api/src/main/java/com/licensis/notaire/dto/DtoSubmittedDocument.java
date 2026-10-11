@@ -241,7 +241,7 @@ public class DtoSubmittedDocument implements ValidDto
     @Override
     public Boolean isValid()
     {
-        //  TODO: Implementar
+        //  TODO: implement
         return true;
     }
 }

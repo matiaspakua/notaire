@@ -17,8 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU11/CU12/CU44 - Circuito of movimientos of testimony (issue #832): ingreso a
- * registration, registro of registration, retiro and reentry.
+ * CU11/CU12/CU44 - Testimony movement circuit (issue #832): entry for
+ * registration, recording the inscription, withdrawal, and re-entry.
  */
 @RequirementCoverage({"CU11", "CU12", "CU44"})
 @DisplayName("TestimonyMovementController — CU11/CU12/CU44 integration tests")
@@ -87,7 +87,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should enter registration a verified testimony")
+    @DisplayName("Should enter registration for a verified testimony")
     void shouldEnterRegistrationForVerifiedTestimony() throws Exception {
         int idTestimony = generateVerifiedTestimony();
 
@@ -98,7 +98,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 400 when ingresando a registration a non-verified testimony")
+    @DisplayName("Should return 400 when entering registration for a testimony that is not verified")
     void shouldRejectEnterRegistrationWhenTestimonyNotVerified() throws Exception {
         int idTestimony = generateTestimony();
 
@@ -107,7 +107,7 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 404 when ingresando a registration a non-existing testimony")
+    @DisplayName("Should return 404 when entering registration for a testimony that does not exist")
     void shouldReturn404WhenEnterRegistrationForNonExistingTestimony() throws Exception {
         mockMvc.perform(post("/api/v1/testimony-movements/99999/enter-registration"))
                 .andExpect(status().isNotFound());
@@ -124,8 +124,8 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should record registration after ingreso")
-    void shouldRegistrarRegistrationAfterEntry() throws Exception {
+    @DisplayName("Should record the inscription after entry")
+    void shouldRecordInscriptionAfterEntry() throws Exception {
         int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
 
@@ -136,8 +136,8 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 400 when registrando registration without a prior ingreso")
-    void shouldRejectRegistrarRegistrationWithoutEntry() throws Exception {
+    @DisplayName("Should return 400 when recording the inscription without a prior entry")
+    void shouldRejectInscriptionWithoutEntry() throws Exception {
         int idTestimony = generateVerifiedTestimony();
 
         mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/register-inscription"))
@@ -145,8 +145,8 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should withdraw an inscripto testimony")
-    void shouldRetirarInscriptoTestimony() throws Exception {
+    @DisplayName("Should withdraw an inscribed testimony")
+    void shouldWithdrawInscribedTestimony() throws Exception {
         int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
         registerInscription(idTestimony);
@@ -160,8 +160,8 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 400 when withdrawing a testimony that is not inscripto")
-    void shouldRejectRetirarWhenNotInscripto() throws Exception {
+    @DisplayName("Should return 400 when withdrawing a testimony that is not inscribed")
+    void shouldRejectWithdrawalWhenNotInscribed() throws Exception {
         int idTestimony = generateVerifiedTestimony();
         registerEntry(idTestimony);
 
@@ -197,11 +197,11 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
 
         mockMvc.perform(post("/api/v1/testimony-movements/" + idTestimony + "/reenter")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"cardNumber\": 77, \"observedByRegistry\": true, \"notes\": \"Falta sello\"}"))
+                        .content("{\"cardNumber\": 77, \"observedByRegistry\": true, \"notes\": \"Missing seal\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.cardNumber").value(77))
                 .andExpect(jsonPath("$.observedByRegistry").value(true))
-                .andExpect(jsonPath("$.notes").value("Falta sello"));
+                .andExpect(jsonPath("$.notes").value("Missing seal"));
     }
 
     @Test
@@ -229,15 +229,15 @@ class TestimonyMovementControllerIntegrationTest extends ServiceIntegrationTest 
     }
 
     @Test
-    @DisplayName("Should return 404 when registrando registration for a non-existing testimony")
-    void shouldReturn404WhenRegistrarRegistrationForNonExistingTestimony() throws Exception {
+    @DisplayName("Should return 404 when recording the inscription for a testimony that does not exist")
+    void shouldReturn404WhenRecordingInscriptionForMissingTestimony() throws Exception {
         mockMvc.perform(post("/api/v1/testimony-movements/99999/register-inscription"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("Should return 404 when withdrawing a testimony that does not exist")
-    void shouldReturn404WhenRetirarForNonExistingTestimony() throws Exception {
+    void shouldReturn404WhenWithdrawingMissingTestimony() throws Exception {
         mockMvc.perform(post("/api/v1/testimony-movements/99999/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"cardNumber\": 123}"))

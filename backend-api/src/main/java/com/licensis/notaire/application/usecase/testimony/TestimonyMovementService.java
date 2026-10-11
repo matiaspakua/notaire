@@ -16,7 +16,7 @@ import java.util.Optional;
 
 /**
  * Validates and applies the testimony movement circuit through the property registry:
- * ingreso, registration, retiro and reentry (CU11, CU12, CU44).
+ * entry, registration, withdrawal, and re-entry (CU11, CU12, CU44).
  */
 @Service
 @Transactional

@@ -64,7 +64,7 @@ public class TestimonyController {
         }
 
         @Override
-        @Schema(description = "Testimony observado", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Flagged testimony", requiredMode = Schema.RequiredMode.REQUIRED)
         public boolean isFlagged() {
             return super.isFlagged();
         }

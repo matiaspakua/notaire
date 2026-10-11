@@ -129,14 +129,14 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     /**
      * Updates a deed management in persistence.
      *
-     * @param gestionParaModificar the deed management to update
+     * @param updatedManagement the deed management to update
      * @return true when the update is stored, false otherwise
      *
      * @throws IllegalOrphanException
      * @throws NonexistentEntityException
      * @throws Exception
      */
-    public Boolean edit(DeedManagement managementParaModificar) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException
+    public Boolean edit(DeedManagement updatedManagement) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException
     {
         Boolean modified = Boolean.FALSE;
 
@@ -148,12 +148,12 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         {
             em = getEntityManager();
 
-            DeedManagement persistentManagement = em.find(DeedManagement.class, managementParaModificar.getIdManagement());
+            DeedManagement persistentManagement = em.find(DeedManagement.class, updatedManagement.getIdManagement());
 
             if (persistentManagement != null)
             {
                 version = persistentManagement.getVersion();
-                oldVersion = managementParaModificar.getVersion();
+                oldVersion = updatedManagement.getVersion();
 
                 if (version != oldVersion)
                 {
@@ -161,13 +161,13 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 }
 
                 em.getTransaction().begin();
-                DeedManagement persistentDeedManagement = em.find(DeedManagement.class, managementParaModificar.getIdManagement());
+                DeedManagement persistentDeedManagement = em.find(DeedManagement.class, updatedManagement.getIdManagement());
                 Person fkIdNotaryPersonOld = persistentDeedManagement.getFkIdNotaryPerson();
-                Person fkIdNotaryPersonNew = managementParaModificar.getFkIdNotaryPerson();
+                Person fkIdNotaryPersonNew = updatedManagement.getFkIdNotaryPerson();
                 List<History> historyListOld = persistentDeedManagement.getHistoryList();
-                List<History> historyListNew = managementParaModificar.getHistoryList();
+                List<History> historyListNew = updatedManagement.getHistoryList();
                 List<Procedure> procedureListOld = persistentDeedManagement.getProcedureList();
-                List<Procedure> procedureListNew = managementParaModificar.getProcedureList();
+                List<Procedure> procedureListNew = updatedManagement.getProcedureList();
                 List<String> illegalOrphanMessages = null;
                 for (History historyListOldHistory : historyListOld)
                 {
@@ -187,7 +187,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 if (fkIdNotaryPersonNew != null)
                 {
                     fkIdNotaryPersonNew = em.getReference(fkIdNotaryPersonNew.getClass(), fkIdNotaryPersonNew.getPersonId());
-                    managementParaModificar.setFkIdNotaryPerson(fkIdNotaryPersonNew);
+                    updatedManagement.setFkIdNotaryPerson(fkIdNotaryPersonNew);
                 }
                 List<History> attachedHistoryListNew = new ArrayList<History>();
                 for (History historyListNewHistoryToAttach : historyListNew)
@@ -196,7 +196,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                     attachedHistoryListNew.add(historyListNewHistoryToAttach);
                 }
                 historyListNew = attachedHistoryListNew;
-                managementParaModificar.setHistoryList(historyListNew);
+                updatedManagement.setHistoryList(historyListNew);
                 List<Procedure> attachedProcedureListNew = new ArrayList<Procedure>();
                 for (Procedure procedureListNewProcedureToAttach : procedureListNew)
                 {
@@ -204,16 +204,16 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                     attachedProcedureListNew.add(procedureListNewProcedureToAttach);
                 }
                 procedureListNew = attachedProcedureListNew;
-                managementParaModificar.setProcedureList(procedureListNew);
-                managementParaModificar = em.merge(managementParaModificar);
+                updatedManagement.setProcedureList(procedureListNew);
+                updatedManagement = em.merge(updatedManagement);
                 if (fkIdNotaryPersonOld != null && !fkIdNotaryPersonOld.equals(fkIdNotaryPersonNew))
                 {
-                    fkIdNotaryPersonOld.getDeedManagementList().remove(managementParaModificar);
+                    fkIdNotaryPersonOld.getDeedManagementList().remove(updatedManagement);
                     fkIdNotaryPersonOld = em.merge(fkIdNotaryPersonOld);
                 }
                 if (fkIdNotaryPersonNew != null && !fkIdNotaryPersonNew.equals(fkIdNotaryPersonOld))
                 {
-                    fkIdNotaryPersonNew.getDeedManagementList().add(managementParaModificar);
+                    fkIdNotaryPersonNew.getDeedManagementList().add(updatedManagement);
                     fkIdNotaryPersonNew = em.merge(fkIdNotaryPersonNew);
                 }
                 for (History historyListNewHistory : historyListNew)
@@ -221,9 +221,9 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                     if (!historyListOld.contains(historyListNewHistory))
                     {
                         DeedManagement oldFkIdManagementOfHistoryListNewHistory = historyListNewHistory.getFkIdManagement();
-                        historyListNewHistory.setFkIdManagement(managementParaModificar);
+                        historyListNewHistory.setFkIdManagement(updatedManagement);
                         historyListNewHistory = em.merge(historyListNewHistory);
-                        if (oldFkIdManagementOfHistoryListNewHistory != null && !oldFkIdManagementOfHistoryListNewHistory.equals(managementParaModificar))
+                        if (oldFkIdManagementOfHistoryListNewHistory != null && !oldFkIdManagementOfHistoryListNewHistory.equals(updatedManagement))
                         {
                             oldFkIdManagementOfHistoryListNewHistory.getHistoryList().remove(historyListNewHistory);
                             oldFkIdManagementOfHistoryListNewHistory = em.merge(oldFkIdManagementOfHistoryListNewHistory);
@@ -243,9 +243,9 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                     if (!procedureListOld.contains(procedureListNewProcedure))
                     {
                         DeedManagement oldFkIdManagementOfProcedureListNewProcedure = procedureListNewProcedure.getFkIdManagement();
-                        procedureListNewProcedure.setFkIdManagement(managementParaModificar);
+                        procedureListNewProcedure.setFkIdManagement(updatedManagement);
                         procedureListNewProcedure = em.merge(procedureListNewProcedure);
-                        if (oldFkIdManagementOfProcedureListNewProcedure != null && !oldFkIdManagementOfProcedureListNewProcedure.equals(managementParaModificar))
+                        if (oldFkIdManagementOfProcedureListNewProcedure != null && !oldFkIdManagementOfProcedureListNewProcedure.equals(updatedManagement))
                         {
                             oldFkIdManagementOfProcedureListNewProcedure.getProcedureList().remove(procedureListNewProcedure);
                             oldFkIdManagementOfProcedureListNewProcedure = em.merge(oldFkIdManagementOfProcedureListNewProcedure);
@@ -534,11 +534,11 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     /**
      * Updates a deed management.
      *
-     * @param managementParaModificar the management to update
+     * @param updatedManagement the management to update
      * @return true when the update is stored
      * @throws ClassModifiedException
      */
-    public boolean modifyDeedManagement(DeedManagement managementParaModificar) throws ClassModifiedException
+    public boolean modifyDeedManagement(DeedManagement updatedManagement) throws ClassModifiedException
     {
         boolean result = false;
 
@@ -550,12 +550,12 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         {
             em = getEntityManager();
 
-            DeedManagement persistentManagement = em.find(DeedManagement.class, managementParaModificar.getIdManagement());
+            DeedManagement persistentManagement = em.find(DeedManagement.class, updatedManagement.getIdManagement());
 
             if (persistentManagement != null)
             {
                 version = persistentManagement.getVersion();
-                oldVersion = managementParaModificar.getVersion();
+                oldVersion = updatedManagement.getVersion();
 
                 if (version != oldVersion)
                 {
@@ -564,9 +564,9 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
 
                 em.getTransaction().begin();
 
-                persistentManagement.setHeading(managementParaModificar.getHeading());
-                persistentManagement.setNotes(managementParaModificar.getNotes());
-                persistentManagement.setFkIdManagementStatus(managementParaModificar.getFkIdManagementStatus());
+                persistentManagement.setHeading(updatedManagement.getHeading());
+                persistentManagement.setNotes(updatedManagement.getNotes());
+                persistentManagement.setFkIdManagementStatus(updatedManagement.getFkIdManagementStatus());
                 // The history list is not copied on this update path.
 
                 em.getTransaction().commit();
@@ -587,11 +587,11 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     /**
      * Updates the status of a deed management.
      *
-     * @param managementParaModificar the management whose status changes
+     * @param updatedManagement the management whose status changes
      * @return true when the status is stored
      * @throws ClassModifiedException
      */
-    public boolean modifyDeedManagementStatus(DeedManagement managementParaModificar) throws ClassModifiedException
+    public boolean modifyDeedManagementStatus(DeedManagement updatedManagement) throws ClassModifiedException
     {
         boolean result = false;
 
@@ -603,12 +603,12 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         {
             em = getEntityManager();
 
-            DeedManagement persistentManagement = em.find(DeedManagement.class, managementParaModificar.getIdManagement());
+            DeedManagement persistentManagement = em.find(DeedManagement.class, updatedManagement.getIdManagement());
 
             if (persistentManagement != null)
             {
                 version = persistentManagement.getVersion();
-                oldVersion = managementParaModificar.getVersion();
+                oldVersion = updatedManagement.getVersion();
 
                 if (version != oldVersion)
                 {
@@ -617,7 +617,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
 
                 em.getTransaction().begin();
 
-                persistentManagement.setFkIdManagementStatus(managementParaModificar.getFkIdManagementStatus());
+                persistentManagement.setFkIdManagementStatus(updatedManagement.getFkIdManagementStatus());
 
                 em.getTransaction().commit();
                 result = true;

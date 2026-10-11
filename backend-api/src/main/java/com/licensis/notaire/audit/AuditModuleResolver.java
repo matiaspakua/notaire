@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Translates a controller class name (for example {@code DeedController}) into a
  * user-facing module name (for example {@code Deeds}) used in the
- * {@code registro_auditoria.modulo} column.
+ * {@code audit_records.module} column.
  *
  * <p>Centralising the mapping in a single helper avoids scattering the
  * controller-to-module translation across the audit aspect and keeps the

@@ -56,13 +56,13 @@ public class AuditRecordService {
 
     @Transactional(readOnly = true)
     public Page<AuditRecord> findByModule(String module, Pageable pageable) {
-        logger.debug("Finding AuditRecord by modulo={} page={}", module, pageable);
+        logger.debug("Finding AuditRecord by module={} page={}", module, pageable);
         return repository.findByModule(module, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<DtoAuditRecord> findByModuleAsDto(String module, Pageable pageable) {
-        logger.debug("Finding AuditRecord by modulo={} page={} as DTO", module, pageable);
+        logger.debug("Finding AuditRecord by module={} page={} as DTO", module, pageable);
         return repository.findByModule(module, pageable).map(AuditRecordService::toDto);
     }
 

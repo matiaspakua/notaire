@@ -4166,7 +4166,7 @@ export interface components {
         TestimonyUpdateRequest: {
             copies?: components["schemas"]["DtoCopy"][];
             deed?: components["schemas"]["DtoDeed"];
-            /** @description Testimony observado */
+            /** @description Flagged testimony */
             flagged: boolean;
             /** Format: int32 */
             idTestimony?: number;

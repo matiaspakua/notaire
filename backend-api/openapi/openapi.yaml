@@ -2650,7 +2650,7 @@ components:
         deed:
           $ref: '#/components/schemas/DtoDeed'
         flagged:
-          description: Testimony observado
+          description: Flagged testimony
           type: boolean
         idTestimony:
           format: int32

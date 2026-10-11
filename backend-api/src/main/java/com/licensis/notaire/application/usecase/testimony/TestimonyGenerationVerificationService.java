@@ -74,7 +74,7 @@ public class TestimonyGenerationVerificationService {
         testimony.setFlagged(flagged);
         testimony.setNotes(notes);
 
-        log.info("Verificando testimony id: {}, observado: {}", idTestimony, flagged);
+        log.info("Verifying testimony id: {}, flagged: {}", idTestimony, flagged);
         return testimonyRepository.save(testimony);
     }
 }

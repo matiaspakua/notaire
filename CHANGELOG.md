@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English audit comments, management update locals, and flagged-testimony description** (#1490, CU75):
+  Audit comments name `audit_records.module` and `operation_detail`. Deed
+  management update parameters use `updatedManagement`. The flagged-testimony
+  OpenAPI description is English. Testimony movement test titles use entry,
+  inscription, and withdrawal. Role JSON `modulos` stays. Applied migration
+  `V1` table names stay.
 - **English testimony messages and leftover identifiers** (#1490, CU75):
   Testimony movement errors say withdrawn, registration entry, and observed
   re-entry. Substitute lookup parameters, folio and procedure update locals,
