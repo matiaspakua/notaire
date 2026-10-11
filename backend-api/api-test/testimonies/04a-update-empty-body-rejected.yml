@@ -27,8 +27,8 @@ runtime:
           test("Status 400", function () { expect(res.getStatus()).to.equal(400); });
           test("Names every missing field", function () {
             const m = res.getBody().message;
-            expect(m).to.contain('number: es obligatorio');
-            expect(m).to.contain('flagged: es obligatorio');
-            expect(m).to.contain('verified: es obligatorio');
-            expect(m).to.contain('version: es obligatorio');
+            expect(m).to.contain('number: is required');
+            expect(m).to.contain('flagged: is required');
+            expect(m).to.contain('verified: is required');
+            expect(m).to.contain('version: is required');
           });

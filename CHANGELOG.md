@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English incomplete-body Bruno assertions** (#1490, CU75):
+  the incomplete PUT collections expect `is required`, matching
+  `RequiredFields`. The requests stay `PUT /api/v1/testimonies/{id}`,
+  `PUT /api/v1/procedures/{id}`, and
+  `PUT /api/v1/procedure-types/{id}/workflow`. Released changelog text
+  that records the earlier Spanish phrase stays.
 - **English business-finding index** (#1490, CU75):
   `docs/openspec/explore.md` states the finding↔Issue record in English.
   The filename stays. Change slugs stay, including

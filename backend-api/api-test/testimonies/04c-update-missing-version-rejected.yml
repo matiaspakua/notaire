@@ -25,5 +25,5 @@ runtime:
       code: |-
           test("Status 400", function () { expect(res.getStatus()).to.equal(400); });
           test("Names version", function () {
-            expect(res.getBody().message).to.equal('version: es obligatorio');
+            expect(res.getBody().message).to.equal('version: is required');
           });
