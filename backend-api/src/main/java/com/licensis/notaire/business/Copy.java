@@ -41,11 +41,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @NamedQueries(
         {
             @NamedQuery(name = "Copy.findAll", query = "SELECT c FROM Copy c"),
-            @NamedQuery(name = "Copy.findByIdCopy", query = "SELECT c FROM Copy c WHERE c.idCopy = :idCopia"),
+            @NamedQuery(name = "Copy.findByIdCopy", query = "SELECT c FROM Copy c WHERE c.idCopy = :idCopy"),
             @NamedQuery(name = "Copy.findByNumber", query = "SELECT c FROM Copy c WHERE c.number = :number"),
-            @NamedQuery(name = "Copy.findByPrintingDate", query = "SELECT c FROM Copy c WHERE c.datePrinting = :fechaImpresion"),
-            @NamedQuery(name = "Copy.findByTestimony", query = "SELECT c FROM Copy c WHERE c.fkIdTestimony.idTestimony = :idTestimonio"),
-            @NamedQuery(name = "Copy.findByWithdrawalDate", query = "SELECT c FROM Copy c WHERE c.dateWithdrawal = :fechaRetiro")
+            @NamedQuery(name = "Copy.findByPrintingDate", query = "SELECT c FROM Copy c WHERE c.datePrinting = :printingDate"),
+            @NamedQuery(name = "Copy.findByTestimony", query = "SELECT c FROM Copy c WHERE c.fkIdTestimony.idTestimony = :idTestimony"),
+            @NamedQuery(name = "Copy.findByWithdrawalDate", query = "SELECT c FROM Copy c WHERE c.dateWithdrawal = :withdrawalDate")
         })
 public class Copy implements Serializable, Persistable<Integer>
 {

@@ -38,9 +38,9 @@ import org.springframework.data.domain.Persistable;
 @NamedQueries(
         {
             @NamedQuery(name = "History.findAll", query = "SELECT h FROM History h"),
-            @NamedQuery(name = "History.findByIdHistory", query = "SELECT h FROM History h WHERE h.idHistory = :idHistorial"),
-            @NamedQuery(name = "History.findByIdManagement", query = "SELECT h FROM History h WHERE h.fkIdManagement.idManagement = :idGestion"),
-            @NamedQuery(name = "History.findByDate", query = "SELECT h FROM History h WHERE h.date = :fecha")
+            @NamedQuery(name = "History.findByIdHistory", query = "SELECT h FROM History h WHERE h.idHistory = :idHistory"),
+            @NamedQuery(name = "History.findByIdManagement", query = "SELECT h FROM History h WHERE h.fkIdManagement.idManagement = :idManagement"),
+            @NamedQuery(name = "History.findByDate", query = "SELECT h FROM History h WHERE h.date = :date")
         })
 public class History implements Serializable, Persistable<Integer>
 {

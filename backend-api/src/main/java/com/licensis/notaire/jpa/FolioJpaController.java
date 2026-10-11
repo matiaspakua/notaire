@@ -339,8 +339,8 @@ public class FolioJpaController implements Serializable, JpaPersistence
         try
         {
             Query q = em.createNamedQuery("Folio.findByYearAndRegistration");
-            q.setParameter("anio", year);
-            q.setParameter("registro", record);
+            q.setParameter("year", year);
+            q.setParameter("registration", record);
             miListaFolios = q.getResultList();
 
             for (Iterator<Folio> it = miListaFolios.iterator(); it.hasNext();)

@@ -36,13 +36,13 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQueries(
         {
             @NamedQuery(name = "TestimonyMovement.findAll", query = "SELECT m FROM TestimonyMovement m"),
-            @NamedQuery(name = "TestimonyMovement.findByIdTestimonyMovement", query = "SELECT m FROM TestimonyMovement m WHERE m.idTestimonyMovement = :idMovimientoTestimonio"),
-            @NamedQuery(name = "TestimonyMovement.findByEntryDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateEntry = :fechaIngreso"),
-            @NamedQuery(name = "TestimonyMovement.findByExitDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateExit = :fechaSalida"),
-            @NamedQuery(name = "TestimonyMovement.findByRegistrationDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateRegistration = :fechaInscripcion"),
+            @NamedQuery(name = "TestimonyMovement.findByIdTestimonyMovement", query = "SELECT m FROM TestimonyMovement m WHERE m.idTestimonyMovement = :idTestimonyMovement"),
+            @NamedQuery(name = "TestimonyMovement.findByEntryDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateEntry = :entryDate"),
+            @NamedQuery(name = "TestimonyMovement.findByExitDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateExit = :exitDate"),
+            @NamedQuery(name = "TestimonyMovement.findByRegistrationDate", query = "SELECT m FROM TestimonyMovement m WHERE m.dateRegistration = :registrationDate"),
             @NamedQuery(name = "TestimonyMovement.findByRegistered", query = "SELECT m FROM TestimonyMovement m WHERE m.registered = :registered"),
-            @NamedQuery(name = "TestimonyMovement.findByTestimony", query = "SELECT m FROM TestimonyMovement m WHERE m.fkIdTestimony.idTestimony = :idTestimonio"),
-            @NamedQuery(name = "TestimonyMovement.findByCardNumber", query = "SELECT m FROM TestimonyMovement m WHERE m.cardNumber = :numeroCarton")
+            @NamedQuery(name = "TestimonyMovement.findByTestimony", query = "SELECT m FROM TestimonyMovement m WHERE m.fkIdTestimony.idTestimony = :idTestimony"),
+            @NamedQuery(name = "TestimonyMovement.findByCardNumber", query = "SELECT m FROM TestimonyMovement m WHERE m.cardNumber = :cardNumber")
         })
 public class TestimonyMovement implements Serializable, Persistable<Integer>
 {

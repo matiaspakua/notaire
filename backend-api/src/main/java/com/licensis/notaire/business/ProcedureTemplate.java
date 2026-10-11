@@ -32,8 +32,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQueries(
         {
             @NamedQuery(name = "ProcedureTemplate.findAll", query = "SELECT p FROM ProcedureTemplate p"),
-            @NamedQuery(name = "ProcedureTemplate.findByFkIdProcedureType", query = "SELECT p FROM ProcedureTemplate p WHERE p.procedureTemplatePK.fkIdProcedureType = :fkIdTipoTramite"),
-            @NamedQuery(name = "ProcedureTemplate.findByFkIdDocumentType", query = "SELECT p FROM ProcedureTemplate p WHERE p.procedureTemplatePK.fkIdDocumentType = :fkIdTipoDocumento")
+            @NamedQuery(name = "ProcedureTemplate.findByFkIdProcedureType", query = "SELECT p FROM ProcedureTemplate p WHERE p.procedureTemplatePK.fkIdProcedureType = :fkIdProcedureType"),
+            @NamedQuery(name = "ProcedureTemplate.findByFkIdDocumentType", query = "SELECT p FROM ProcedureTemplate p WHERE p.procedureTemplatePK.fkIdDocumentType = :fkIdDocumentType")
         })
 public class ProcedureTemplate implements Serializable, Persistable<ProcedureTemplatePK>
 {

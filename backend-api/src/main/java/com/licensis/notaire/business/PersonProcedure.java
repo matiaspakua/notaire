@@ -33,10 +33,10 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQueries(
         {
             @NamedQuery(name = "PersonProcedure.findAll", query = "SELECT t FROM PersonProcedure t"),
-            @NamedQuery(name = "PersonProcedure.findByFkIdProcedure", query = "SELECT t FROM PersonProcedure t WHERE t.personProcedurePK.fkIdProcedure = :fkIdTramite"),
-            @NamedQuery(name = "PersonProcedure.findByFkIdClientPerson", query = "SELECT t FROM PersonProcedure t WHERE t.personProcedurePK.fkIdClientPerson = :fkIdPersonaCliente"),
-            @NamedQuery(name = "PersonProcedure.findByProcedureClient", query = "SELECT t FROM PersonProcedure t WHERE t.personProcedurePK.fkIdClientPerson = :fkIdPersonaCliente AND t.personProcedurePK.fkIdProcedure = :fkIdTramite"),
-        //@NamedQuery(name = "PersonProcedure.deleteRecord", query = "DELETE FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdPersonaCliente AND t.tramitesPersonasPK.fkIdTramite = :fkIdTramite"),
+            @NamedQuery(name = "PersonProcedure.findByFkIdProcedure", query = "SELECT t FROM PersonProcedure t WHERE t.personProcedurePK.fkIdProcedure = :fkIdProcedure"),
+            @NamedQuery(name = "PersonProcedure.findByFkIdClientPerson", query = "SELECT t FROM PersonProcedure t WHERE t.personProcedurePK.fkIdClientPerson = :fkIdClientPerson"),
+            @NamedQuery(name = "PersonProcedure.findByProcedureClient", query = "SELECT t FROM PersonProcedure t WHERE t.personProcedurePK.fkIdClientPerson = :fkIdClientPerson AND t.personProcedurePK.fkIdProcedure = :fkIdProcedure"),
+        //@NamedQuery(name = "PersonProcedure.deleteRecord", query = "DELETE FROM TramitesPersonas t WHERE t.tramitesPersonasPK.fkIdPersonaCliente = :fkIdClientPerson AND t.tramitesPersonasPK.fkIdTramite = :fkIdProcedure"),
         })
 public class PersonProcedure implements Serializable, Persistable<PersonProcedurePK>
 {

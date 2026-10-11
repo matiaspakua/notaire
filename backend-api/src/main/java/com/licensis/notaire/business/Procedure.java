@@ -72,8 +72,8 @@ import org.springframework.data.domain.Persistable;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "Procedure.findAll", query = "SELECT t FROM Procedure t"),
-        @NamedQuery(name = "Procedure.findByIdProcedure", query = "SELECT t FROM Procedure t WHERE t.idProcedure = :idTramite"),
-        @NamedQuery(name = "Procedure.findByIdBudget", query = "SELECT t FROM Procedure t WHERE t.fkIdBudget.idBudget = :idPresupuesto")
+        @NamedQuery(name = "Procedure.findByIdProcedure", query = "SELECT t FROM Procedure t WHERE t.idProcedure = :idProcedure"),
+        @NamedQuery(name = "Procedure.findByIdBudget", query = "SELECT t FROM Procedure t WHERE t.fkIdBudget.idBudget = :idBudget")
 })
 public class Procedure implements Serializable, Persistable<Integer> {
 

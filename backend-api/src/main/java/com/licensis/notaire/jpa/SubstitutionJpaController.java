@@ -208,8 +208,8 @@ public class SubstitutionJpaController implements Serializable, JpaPersistence
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("Substitution.findSubstitutionsByYear");
-        query.setParameter("fechaInicio", unaSubstitution.getDateStart());
-        query.setParameter("fechaFin", unaSubstitution.getDateEnd());
+        query.setParameter("startDate", unaSubstitution.getDateStart());
+        query.setParameter("endDate", unaSubstitution.getDateEnd());
 
         listaSuplencias = query.getResultList();
 

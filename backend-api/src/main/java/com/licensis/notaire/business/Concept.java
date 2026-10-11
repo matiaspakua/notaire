@@ -38,10 +38,10 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @NamedQueries(
         {
             @NamedQuery(name = "Concept.findAll", query = "SELECT c FROM Concept c"),
-            @NamedQuery(name = "Concept.findByIdConcept", query = "SELECT c FROM Concept c WHERE c.idConcept = :idConcepto"),
-            @NamedQuery(name = "Concept.findByValue", query = "SELECT c FROM Concept c WHERE c.value = :valor"),
+            @NamedQuery(name = "Concept.findByIdConcept", query = "SELECT c FROM Concept c WHERE c.idConcept = :idConcept"),
+            @NamedQuery(name = "Concept.findByValue", query = "SELECT c FROM Concept c WHERE c.value = :value"),
             @NamedQuery(name = "Concept.findByName", query = "SELECT c FROM Concept c WHERE c.name = :name"),
-            @NamedQuery(name = "Concept.findByPercentage", query = "SELECT c FROM Concept c WHERE c.percentage = :porcentaje")
+            @NamedQuery(name = "Concept.findByPercentage", query = "SELECT c FROM Concept c WHERE c.percentage = :percentage")
         })
 public class Concept implements Serializable, Persistable<Integer>
 {

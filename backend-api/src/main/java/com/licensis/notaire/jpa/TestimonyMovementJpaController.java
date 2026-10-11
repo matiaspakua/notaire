@@ -210,7 +210,7 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("TestimonyMovement.findByTestimony");
-        query.setParameter("idTestimonio", idTestimony);
+        query.setParameter("idTestimony", idTestimony);
 
         movTestimony = (List<TestimonyMovement>) query.getResultList();
 
@@ -224,7 +224,7 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("TestimonyMovement.findByIdTestimonyMovement");
-        query.setParameter("idMovimientoTestimonio", idMovement);
+        query.setParameter("idTestimonyMovement", idMovement);
 
         movTestimony = (TestimonyMovement) query.getResultList().get(0);
 

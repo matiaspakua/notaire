@@ -27,8 +27,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
         {
             @NamedQuery(name = "Identification.findAll", query = "SELECT i FROM Identification i"),
             @NamedQuery(name = "Identification.findByNumber", query = "SELECT i FROM Identification i WHERE i.number = :number"),
-            @NamedQuery(name = "Identification.findByFkIdPerson", query = "SELECT i FROM Identification i WHERE i.identificationPK.fkIdPerson = :fkIdPersona"),
-            @NamedQuery(name = "Identification.findByFkIdIdentificationType", query = "SELECT i FROM Identification i WHERE i.identificationPK.fkIdIdentificationType = :fkIdTipoIdentificacion")
+            @NamedQuery(name = "Identification.findByFkIdPerson", query = "SELECT i FROM Identification i WHERE i.identificationPK.fkIdPerson = :fkIdPerson"),
+            @NamedQuery(name = "Identification.findByFkIdIdentificationType", query = "SELECT i FROM Identification i WHERE i.identificationPK.fkIdIdentificationType = :fkIdIdentificationType")
         })
 public class Identification implements Serializable
 {

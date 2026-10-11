@@ -37,10 +37,10 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "ProcedureType.findAll", query = "SELECT t FROM ProcedureType t"),
-        @NamedQuery(name = "ProcedureType.findByIdProcedureType", query = "SELECT t FROM ProcedureType t WHERE t.idProcedureType = :idTipoTramite"),
-        @NamedQuery(name = "ProcedureType.findByIsArchived", query = "SELECT t FROM ProcedureType t WHERE t.isArchived = :seArchiva"),
-        @NamedQuery(name = "ProcedureType.findByIsRegistered", query = "SELECT t FROM ProcedureType t WHERE t.isRegistered = :seInscribe"),
-        @NamedQuery(name = "ProcedureType.findByAssociatesProperties", query = "SELECT t FROM ProcedureType t WHERE t.associatesProperties = :asociaInmuebles"),
+        @NamedQuery(name = "ProcedureType.findByIdProcedureType", query = "SELECT t FROM ProcedureType t WHERE t.idProcedureType = :idProcedureType"),
+        @NamedQuery(name = "ProcedureType.findByIsArchived", query = "SELECT t FROM ProcedureType t WHERE t.isArchived = :isArchived"),
+        @NamedQuery(name = "ProcedureType.findByIsRegistered", query = "SELECT t FROM ProcedureType t WHERE t.isRegistered = :isRegistered"),
+        @NamedQuery(name = "ProcedureType.findByAssociatesProperties", query = "SELECT t FROM ProcedureType t WHERE t.associatesProperties = :associatesProperties"),
         @NamedQuery(name = "ProcedureType.findByName", query = "SELECT t FROM ProcedureType t WHERE t.name = :name")
 })
 public class ProcedureType implements Serializable, Persistable<Integer> {

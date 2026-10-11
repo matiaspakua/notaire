@@ -19,16 +19,16 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     List<Person> findBySex(String sex);
 
-    @Query("SELECT p FROM Person p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :nombre, '%'))")
-    List<Person> findByNameContainingIgnoreCase(@Param("nombre") String name);
+    @Query("SELECT p FROM Person p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    List<Person> findByNameContainingIgnoreCase(@Param("name") String name);
 
-    @Query("SELECT p FROM Person p WHERE LOWER(p.lastName) LIKE LOWER(CONCAT('%', :apellido, '%'))")
-    List<Person> findByLastNameContainingIgnoreCase(@Param("apellido") String lastName);
+    @Query("SELECT p FROM Person p WHERE LOWER(p.lastName) LIKE LOWER(CONCAT('%', :lastName, '%'))")
+    List<Person> findByLastNameContainingIgnoreCase(@Param("lastName") String lastName);
 
-    @Query("SELECT p FROM Person p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :nombre, '%')) "
-            + "AND LOWER(p.lastName) LIKE LOWER(CONCAT('%', :apellido, '%'))")
-    List<Person> findByNameAndLastNameContainingIgnoreCase(@Param("nombre") String name,
-            @Param("apellido") String lastName);
+    @Query("SELECT p FROM Person p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) "
+            + "AND LOWER(p.lastName) LIKE LOWER(CONCAT('%', :lastName, '%'))")
+    List<Person> findByNameAndLastNameContainingIgnoreCase(@Param("name") String name,
+            @Param("lastName") String lastName);
 
     List<Person> findByFkIdIdentificationType(IdentificationType identificationType);
 

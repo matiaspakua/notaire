@@ -230,7 +230,7 @@ public class ItemJpaController implements Serializable, JpaPersistence
             Query q = em.createNamedQuery("Item.findByBudget");
 
             //It step the name of the parametro of the query, and the valor a search.
-            q.setParameter("idPresupuesto", pIdBudget);
+            q.setParameter("idBudget", pIdBudget);
 
             misItems = (List<Item>) q.getResultList();
 

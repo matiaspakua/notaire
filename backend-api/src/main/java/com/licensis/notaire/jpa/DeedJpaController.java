@@ -377,7 +377,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
         Deed deed = null;
 
         Query query = em.createNamedQuery("Deed.findByIdDeed");
-        query.setParameter("idEscritura", id);
+        query.setParameter("idDeed", id);
 
         deed = (Deed) query.getResultList().get(0);
 

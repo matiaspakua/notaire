@@ -16,6 +16,6 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     List<Item> findByFkIdBudgetIdBudget(Integer idBudget);
 
-    @Query("SELECT i FROM Item i WHERE i.name LIKE %:nombre%")
-    List<Item> findByNameItemContaining(@Param("nombre") String name);
+    @Query("SELECT i FROM Item i WHERE i.name LIKE %:name%")
+    List<Item> findByNameItemContaining(@Param("name") String name);
 }

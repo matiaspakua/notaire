@@ -291,7 +291,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
             Query q = em.createNamedQuery("ProcedureType.findByIdProcedureType");
 
             //It step the name of the parametro of the query, and the valor a search.
-            q.setParameter("idTipoTramite", id);
+            q.setParameter("idProcedureType", id);
 
             misTiposDeProcedure = (List<ProcedureType>) q.getResultList();
 

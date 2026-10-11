@@ -404,7 +404,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         EntityManager em = getEntityManager();
 
         Query query = em.createNamedQuery("DeedManagement.findByIdManagement");
-        query.setParameter("idGestion", idManagement);
+        query.setParameter("idManagement", idManagement);
 
         List<DeedManagement> listaGestiones = query.getResultList();
 
@@ -465,8 +465,8 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         {
             Query q = em.createQuery(
                     "SELECT DISTINCT t.fkIdManagement FROM com.licensis.notaire.business.PersonProcedure tp "
-                            + "JOIN tp.procedure t WHERE tp.personProcedurePK.fkIdClientPerson = :idPersona");
-            q.setParameter("idPersona", idPerson);
+                            + "JOIN tp.procedure t WHERE tp.personProcedurePK.fkIdClientPerson = :idPerson");
+            q.setParameter("idPerson", idPerson);
             return (List<DeedManagement>) q.getResultList();
         }
         finally

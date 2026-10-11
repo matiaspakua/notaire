@@ -419,7 +419,7 @@ class UserJpaControllerTest {
             User result = controller.findUserByPerson(10);
 
             assertThat(result).isSameAs(expected);
-            verify(query).setParameter("idPersona", 10);
+            verify(query).setParameter("idPerson", 10);
             verify(em).close();
         }
 

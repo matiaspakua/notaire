@@ -584,7 +584,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
             Query q = em.createNamedQuery("Procedure.findByIdBudget");
 
             //It step the name of the parametro of the query, and the valor a search.
-            q.setParameter("idPresupuesto", idBudget);
+            q.setParameter("idBudget", idBudget);
 
             miProcedure = (List<Procedure>) q.getResultList();
 
@@ -623,8 +623,8 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         tx = em.getTransaction();
         tx.begin();
 
-        Query q = em.createQuery("UPDATE Procedure t SET t.fkIdBudget.idBudget = :idPresupuesto WHERE t.idProcedure = :id");
-        q.setParameter("idPresupuesto", miProcedure.getFkIdBudget().getIdBudget());
+        Query q = em.createQuery("UPDATE Procedure t SET t.fkIdBudget.idBudget = :idBudget WHERE t.idProcedure = :id");
+        q.setParameter("idBudget", miProcedure.getFkIdBudget().getIdBudget());
         q.setParameter("id", miProcedure.getIdProcedure());
 
         int updated = q.executeUpdate();

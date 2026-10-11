@@ -39,10 +39,10 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQueries(
         {
             @NamedQuery(name = "Substitution.findAll", query = "SELECT s FROM Substitution s"),
-            @NamedQuery(name = "Substitution.findByIdSubstitution", query = "SELECT s FROM Substitution s WHERE s.idSubstitution = :idSuplencia"),
-            @NamedQuery(name = "Substitution.findByStartDate", query = "SELECT s FROM Substitution s WHERE s.dateStart = :fechaInicio"),
-            @NamedQuery(name = "Substitution.findByEndDate", query = "SELECT s FROM Substitution s WHERE s.dateEnd = :fechaFin"),
-            @NamedQuery(name = "Substitution.findSubstitutionsByYear", query = "SELECT s FROM Substitution s WHERE s.dateStart >= :fechaInicio AND s.dateEnd <= :fechaFin"),
+            @NamedQuery(name = "Substitution.findByIdSubstitution", query = "SELECT s FROM Substitution s WHERE s.idSubstitution = :idSubstitution"),
+            @NamedQuery(name = "Substitution.findByStartDate", query = "SELECT s FROM Substitution s WHERE s.dateStart = :startDate"),
+            @NamedQuery(name = "Substitution.findByEndDate", query = "SELECT s FROM Substitution s WHERE s.dateEnd = :endDate"),
+            @NamedQuery(name = "Substitution.findSubstitutionsByYear", query = "SELECT s FROM Substitution s WHERE s.dateStart >= :startDate AND s.dateEnd <= :endDate"),
         })
 public class Substitution implements Serializable, Persistable<Integer>
 {

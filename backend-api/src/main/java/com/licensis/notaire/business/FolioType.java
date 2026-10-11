@@ -41,7 +41,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @NamedQueries(
         {
             @NamedQuery(name = "FolioType.findAll", query = "SELECT t FROM FolioType t"),
-            @NamedQuery(name = "FolioType.findByIdFolioType", query = "SELECT t FROM FolioType t WHERE t.idFolioType = :idTipoFolio")
+            @NamedQuery(name = "FolioType.findByIdFolioType", query = "SELECT t FROM FolioType t WHERE t.idFolioType = :idFolioType")
         })
 public class FolioType implements Serializable, Persistable<Integer>
 {

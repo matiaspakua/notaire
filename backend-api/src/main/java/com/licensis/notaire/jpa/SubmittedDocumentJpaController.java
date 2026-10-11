@@ -268,7 +268,7 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
         Date dateActual = Calendar.getInstance().getTime();
 
         Query query = em.createNamedQuery("SubmittedDocument.findByDueDate");
-        query.setParameter("fechaVencimiento", dateActual);
+        query.setParameter("dueDate", dateActual);
 
         listaDocumentPorVencer = query.getResultList();
 

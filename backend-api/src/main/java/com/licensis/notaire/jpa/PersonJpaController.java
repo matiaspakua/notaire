@@ -939,8 +939,8 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         String lastName = "%" + dtoPerson.getLastName() + "%";
 
         Query query = em.createNamedQuery("Person.findByPersonNameLastName");
-        query.setParameter("nombre", name);
-        query.setParameter("apellido", lastName);
+        query.setParameter("name", name);
+        query.setParameter("lastName", lastName);
 
         listaPerson = query.getResultList();
 
@@ -976,7 +976,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         Person person = null;
 
         Query query = em.createNamedQuery("Person.findByNotaryRegistrationNumber");
-        query.setParameter("registroEscribano", miPerson.getNotaryRegistrationNumber());
+        query.setParameter("notaryRegistrationNumber", miPerson.getNotaryRegistrationNumber());
 
         listaPerson = query.getResultList();
 
@@ -993,7 +993,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
         Person person = new Person();
 
         Query query = em.createNamedQuery("Person.findByIdPerson");
-        query.setParameter("idPersona", idPerson);
+        query.setParameter("idPerson", idPerson);
 
         person = (Person) query.getSingleResult();
 

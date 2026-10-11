@@ -40,7 +40,7 @@ test.describe("CU42 - Próximos vencimientos", () => {
     const table = page.getByRole("table");
     await expect(table.getByText(name)).toBeVisible({ timeout: 15000 });
 
-    await page.getByTestId("select-ventana-vencimientos").click();
+    await page.getByTestId("select-expiration-window").click();
     await page.getByRole("option", { name: /^7 / }).click();
     await expect(table.getByText(name)).toHaveCount(0);
   });

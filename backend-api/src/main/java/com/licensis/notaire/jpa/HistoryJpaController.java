@@ -216,7 +216,7 @@ public class HistoryJpaController implements Serializable, JpaPersistence
         EntityManager em = getEntityManager();
 
         Query q = em.createNamedQuery("History.currentManagementStatus");
-        q.setParameter("fkIdGestion", idManagement);
+        q.setParameter("fkIdManagement", idManagement);
 
         statusActualManagement = (History) q.getSingleResult();
 
@@ -237,7 +237,7 @@ public class HistoryJpaController implements Serializable, JpaPersistence
         EntityManager em = getEntityManager();
 
         Query q = em.createNamedQuery("History.findByIdManagement");
-        q.setParameter("idGestion", idManagement);
+        q.setParameter("idManagement", idManagement);
 
         recordHistory = q.getResultList();
 

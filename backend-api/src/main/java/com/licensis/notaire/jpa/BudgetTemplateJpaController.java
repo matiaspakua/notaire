@@ -267,7 +267,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
             Query q = em.createNamedQuery("BudgetTemplate.findByFkIdProcedureType");
 
             //It step the name of the parametro of the query, and the valor a search.
-            q.setParameter("fkIdTipoTramite", idProcedureType);
+            q.setParameter("fkIdProcedureType", idProcedureType);
 
             misPlantillas = (List<BudgetTemplate>) q.getResultList();
 

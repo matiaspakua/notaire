@@ -38,9 +38,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
-        @NamedQuery(name = "User.findByIdUser", query = "SELECT u FROM User u WHERE u.idUser = :idUsuario"),
+        @NamedQuery(name = "User.findByIdUser", query = "SELECT u FROM User u WHERE u.idUser = :idUser"),
         @NamedQuery(name = "User.findByStatus", query = "SELECT u FROM User u WHERE u.status = :status"),
-        @NamedQuery(name = "User.findByPersonId", query = "SELECT u FROM User u WHERE u.fkIdPerson.idPerson = :idPersona")
+        @NamedQuery(name = "User.findByPersonId", query = "SELECT u FROM User u WHERE u.fkIdPerson.idPerson = :idPerson")
 })
 public class User implements Serializable, Persistable<Integer> {
 

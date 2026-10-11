@@ -385,7 +385,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
         EntityManager em = getEntityManager();
         List<Procedure> procedures = null;
         Query query = em.createNamedQuery("PersonProcedure.findByFkIdClientPerson");
-        query.setParameter("fkIdPersonaCliente", idPerson);
+        query.setParameter("fkIdClientPerson", idPerson);
 
         procedures = query.getResultList();
 
@@ -404,8 +404,8 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
         EntityManager em = getEntityManager();
         List<PersonProcedure> listaPersonProcedure = null;
         Query query = em.createNamedQuery("PersonProcedure.findByProcedureClient");
-        query.setParameter("fkIdPersonaCliente", idPerson);
-        query.setParameter("fkIdTramite", idProcedure);
+        query.setParameter("fkIdClientPerson", idPerson);
+        query.setParameter("fkIdProcedure", idProcedure);
 
         listaPersonProcedure = query.getResultList();
 

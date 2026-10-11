@@ -22,8 +22,8 @@ public interface BudgetRepository extends JpaRepository<Budget, Integer> {
 
     List<Budget> findByStatus(String status);
 
-    @Query("SELECT p FROM Budget p WHERE p.fkIdPerson.idPerson = :idPersona AND p.status = :estado")
-    List<Budget> findByFkIdPersonIdPersonAndStatus(@Param("idPersona") Integer idPerson, @Param("estado") String status);
+    @Query("SELECT p FROM Budget p WHERE p.fkIdPerson.idPerson = :idPerson AND p.status = :status")
+    List<Budget> findByFkIdPersonIdPersonAndStatus(@Param("idPerson") Integer idPerson, @Param("status") String status);
 
     @Query("SELECT p FROM Budget p WHERE p.date BETWEEN :startDate AND :endDate")
     List<Budget> findByDateBetween(@Param("startDate") Date startDate, @Param("endDate") Date endDate);

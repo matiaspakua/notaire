@@ -27,14 +27,14 @@ public class UpcomingExpirationController {
 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "OK"),
-        @ApiResponse(responseCode = "400", description = "The window of days is fuera of 1 a 365")
+        @ApiResponse(responseCode = "400", description = "The window of days is outside 1 to 365")
     })
     @GetMapping("/upcoming-expirations")
-    @Operation(summary = "CU42 - Informar próximos vencimientos",
-               description = "Submitted documents that vencen between hoy and hoy more 'dias' days (by defecto 30), "
-                       + "not liberados, ordenados by date of expiration")
+    @Operation(summary = "CU42 - Report upcoming expirations",
+               description = "Submitted documents that expire between today and today plus 'days' days (default 30), "
+                       + "not released, ordered by expiration date")
     public ResponseEntity<List<DtoUpcomingExpiration>> getUpcoming(
-            @RequestParam(required = false) Integer dias) {
-        return ResponseEntity.ok(upcomingExpirationService.findUpcoming(dias, LocalDate.now()));
+            @RequestParam(name = "days", required = false) Integer days) {
+        return ResponseEntity.ok(upcomingExpirationService.findUpcoming(days, LocalDate.now()));
     }
 }

@@ -2169,8 +2169,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * CU42 - Informar próximos vencimientos
-         * @description Submitted documents that vencen between hoy and hoy more 'dias' days (by defecto 30), not liberados, ordenados by date of expiration
+         * CU42 - Report upcoming expirations
+         * @description Submitted documents that expire between today and today plus 'days' days (default 30), not released, ordered by expiration date
          */
         get: operations["getUpcoming"];
         put?: never;
@@ -10185,7 +10185,7 @@ export interface operations {
     getUpcoming: {
         parameters: {
             query?: {
-                dias?: number;
+                days?: number;
             };
             header?: never;
             path?: never;
@@ -10202,7 +10202,7 @@ export interface operations {
                     "*/*": components["schemas"]["DtoUpcomingExpiration"][];
                 };
             };
-            /** @description The window of days is fuera of 1 a 365 */
+            /** @description The window of days is outside 1 to 365 */
             400: {
                 headers: {
                     [name: string]: unknown;

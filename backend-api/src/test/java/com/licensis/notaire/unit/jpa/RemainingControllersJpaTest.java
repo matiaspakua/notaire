@@ -1359,8 +1359,8 @@ class RemainingControllersJpaTest {
             dto.setLastName("Perez");
             List<Person> result = controller.findPersonNameLastName(dto);
             assertThat(result).hasSize(1);
-            verify(mockQuery).setParameter("nombre", "%Juan%");
-            verify(mockQuery).setParameter("apellido", "%Perez%");
+            verify(mockQuery).setParameter("name", "%Juan%");
+            verify(mockQuery).setParameter("lastName", "%Perez%");
         }
     }
 

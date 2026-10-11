@@ -114,7 +114,7 @@ class UpcomingExpirationControllerIntegrationTest {
             submittedDocumentRepository.save(d);
         });
 
-        List<Integer> ids = upcomingIds("?dias=30");
+        List<Integer> ids = upcomingIds("?days=30");
 
         assertThat(ids).contains(dueIn5, dueIn20);
         assertThat(ids.indexOf(dueIn5)).isLessThan(ids.indexOf(dueIn20));
@@ -122,7 +122,7 @@ class UpcomingExpirationControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should apply a 30-day window when dias is omitted")
+    @DisplayName("Should apply a 30-day window when days is omitted")
     void shouldDefaultTheWindow() throws Exception {
         int dueIn25 = submit(documentType(true, 25), LocalDate.now());
         int dueIn45 = submit(documentType(true, 45), LocalDate.now());
@@ -135,7 +135,7 @@ class UpcomingExpirationControllerIntegrationTest {
     @Test
     @DisplayName("Should return 400 for a window outside 1 to 365 days")
     void shouldRejectAnInvalidWindow() throws Exception {
-        mockMvc.perform(get(ENDPOINT + "?dias=0")).andExpect(status().isBadRequest());
-        mockMvc.perform(get(ENDPOINT + "?dias=366")).andExpect(status().isBadRequest());
+        mockMvc.perform(get(ENDPOINT + "?days=0")).andExpect(status().isBadRequest());
+        mockMvc.perform(get(ENDPOINT + "?days=366")).andExpect(status().isBadRequest());
     }
 }

@@ -22,7 +22,7 @@ function createWrapper() {
 }
 
 describe("upcomingExpirationKeys", () => {
-  it("byDias key includes the window", () => {
+  it("byDays key includes the window", () => {
     expect(upcomingExpirationKeys.byDays(15)).toEqual(["upcomingExpirations", 15]);
   });
 });
@@ -30,13 +30,13 @@ describe("upcomingExpirationKeys", () => {
 describe("useUpcomingExpirations (CU42)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("fetches the upcoming expirations of the window via GET with the dias parameter", async () => {
+  it("fetches the upcoming expirations of the window via GET with the days parameter", async () => {
     vi.mocked(apiGet).mockResolvedValue([{ idSubmittedDocument: 1, documentName: "Certificado", daysRemaining: 10 }]);
 
     const { result } = renderHook(() => useUpcomingExpirations(30), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(apiGet).toHaveBeenCalledWith("/submitted-documents/upcoming-expirations?dias=30");
+    expect(apiGet).toHaveBeenCalledWith("/submitted-documents/upcoming-expirations?days=30");
     expect(result.current.data).toEqual([{ idSubmittedDocument: 1, documentName: "Certificado", daysRemaining: 10 }]);
   });
 });

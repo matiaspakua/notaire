@@ -37,10 +37,10 @@ import org.springframework.data.domain.Persistable;
 @NamedQueries(
         {
             @NamedQuery(name = "Payment.findAll", query = "SELECT p FROM Payment p"),
-            @NamedQuery(name = "Payment.findByIdPayment", query = "SELECT p FROM Payment p WHERE p.idPayment = :idPago"),
+            @NamedQuery(name = "Payment.findByIdPayment", query = "SELECT p FROM Payment p WHERE p.idPayment = :idPayment"),
             @NamedQuery(name = "Payment.findByAmount", query = "SELECT p FROM Payment p WHERE p.amount = :amount"),
-            @NamedQuery(name = "Payment.findByDate", query = "SELECT p FROM Payment p WHERE p.date = :fecha"),
-            @NamedQuery(name = "Payment.findByBudget", query = "SELECT p FROM Payment p WHERE p.fkIdBudget.idBudget = :idPresupuesto")
+            @NamedQuery(name = "Payment.findByDate", query = "SELECT p FROM Payment p WHERE p.date = :date"),
+            @NamedQuery(name = "Payment.findByBudget", query = "SELECT p FROM Payment p WHERE p.fkIdBudget.idBudget = :idBudget")
         })
 public class Payment implements Serializable, Persistable<Integer>
 {

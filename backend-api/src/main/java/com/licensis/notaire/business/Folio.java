@@ -53,7 +53,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
             @NamedQuery(name = "Folio.findByIdFolio", query = "SELECT f FROM Folio f WHERE f.idFolio = :idFolio"),
             @NamedQuery(name = "Folio.findByNumber", query = "SELECT f FROM Folio f WHERE f.number = :number"),
             @NamedQuery(name = "Folio.findByYear", query = "SELECT f FROM Folio f WHERE f.year = :year"),
-            @NamedQuery(name = "Folio.findByYearAndRegistration", query = "SELECT f FROM Folio f WHERE f.year = :anio AND f.fkIdNotaryPerson.notaryRegistrationNumber =:registro")
+            @NamedQuery(name = "Folio.findByYearAndRegistration", query = "SELECT f FROM Folio f WHERE f.year = :year AND f.fkIdNotaryPerson.notaryRegistrationNumber =:registration")
         })
 public class Folio implements Serializable, Persistable<Integer>
 {

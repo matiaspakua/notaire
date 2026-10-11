@@ -25,6 +25,6 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Integer> {
 
     List<Procedure> findByFkIdDeedIdDeed(Integer idDeed);
 
-    @Query("SELECT t FROM Procedure t JOIN t.personList p WHERE p.idPerson = :idPersona")
-    List<Procedure> findByPersonListIdPerson(@Param("idPersona") Integer idPerson);
+    @Query("SELECT t FROM Procedure t JOIN t.personList p WHERE p.idPerson = :idPerson")
+    List<Procedure> findByPersonListIdPerson(@Param("idPerson") Integer idPerson);
 }

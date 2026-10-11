@@ -29,8 +29,8 @@ public interface SubstitutionRepository extends JpaRepository<Substitution, Inte
 
     List<Substitution> findByFkIdSubstitutedIdPerson(Integer idSuplantado);
 
-    @Query("SELECT s FROM Substitution s WHERE s.dateStart <= :fecha AND s.dateEnd >= :fecha")
-    List<Substitution> findByDateStartBeforeAndDateEndAfter(@Param("fecha") Date date);
+    @Query("SELECT s FROM Substitution s WHERE s.dateStart <= :date AND s.dateEnd >= :date")
+    List<Substitution> findByDateStartBeforeAndDateEndAfter(@Param("date") Date date);
 
     List<Substitution> findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
             Integer idSuplantado, Date dateStart, Date dateEnd);

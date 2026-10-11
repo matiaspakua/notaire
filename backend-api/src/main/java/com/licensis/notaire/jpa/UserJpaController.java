@@ -279,7 +279,7 @@ public class UserJpaController implements Serializable, JpaPersistence {
         EntityManager em = getEntityManager();
         try {
             Query query = em.createNamedQuery("User.findByPersonId");
-            query.setParameter("idPersona", idPerson);
+            query.setParameter("idPerson", idPerson);
             @SuppressWarnings("unchecked")
             List<User> results = query.getResultList();
             return results.isEmpty() ? null : results.get(0);

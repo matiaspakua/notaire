@@ -7809,12 +7809,12 @@ paths:
       - SubmittedDocument
   /api/v1/submitted-documents/upcoming-expirations:
     get:
-      description: Submitted documents that vencen between hoy and hoy more 'dias' days (by defecto 30), not liberados, ordenados
-        by date of expiration
+      description: Submitted documents that expire between today and today plus 'days' days (default 30), not released, ordered
+        by expiration date
       operationId: getUpcoming
       parameters:
       - in: query
-        name: dias
+        name: days
         required: false
         schema:
           format: int32
@@ -7835,8 +7835,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/DtoUpcomingExpiration'
                 type: array
-          description: The window of days is fuera of 1 a 365
-      summary: CU42 - Informar próximos vencimientos
+          description: The window of days is outside 1 to 365
+      summary: CU42 - Report upcoming expirations
       tags:
       - SubmittedDocument
   /api/v1/submitted-documents/{id}:

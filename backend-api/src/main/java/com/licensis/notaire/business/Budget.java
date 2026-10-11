@@ -43,11 +43,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
         @NamedQuery(name = "Budget.findAll", query = "SELECT p FROM Budget p"),
-        @NamedQuery(name = "Budget.findByIdBudget", query = "SELECT p FROM Budget p WHERE p.idBudget = :idPresupuesto"),
-        @NamedQuery(name = "Budget.findByDate", query = "SELECT p FROM Budget p WHERE p.date = :fecha"),
+        @NamedQuery(name = "Budget.findByIdBudget", query = "SELECT p FROM Budget p WHERE p.idBudget = :idBudget"),
+        @NamedQuery(name = "Budget.findByDate", query = "SELECT p FROM Budget p WHERE p.date = :date"),
         @NamedQuery(name = "Budget.findByNumber", query = "SELECT p FROM Budget p WHERE p.number = :number"),
         @NamedQuery(name = "Budget.findByStatus", query = "SELECT p FROM Budget p WHERE p.status = :status"),
-        @NamedQuery(name = "Budget.findByPerson", query = "SELECT p FROM Budget p WHERE p.fkIdPerson.idPerson = :idPersona"),
+        @NamedQuery(name = "Budget.findByPerson", query = "SELECT p FROM Budget p WHERE p.fkIdPerson.idPerson = :idPerson"),
 })
 public class Budget implements Serializable, Persistable<Integer> {
 

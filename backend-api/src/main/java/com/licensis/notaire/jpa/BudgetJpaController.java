@@ -389,7 +389,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
             Query q = em.createNamedQuery("Budget.findByPerson");
 
             // It step the name of the parametro of the query, and the valor a search.
-            q.setParameter("idPersona", pIdPerson);
+            q.setParameter("idPerson", pIdPerson);
 
             misPresupuestos = (List<Budget>) q.getResultList();
             ProcedureJpaController jpaProcedure = new ProcedureJpaController(utx, emf);
@@ -425,8 +425,8 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
             Query q = em.createNamedQuery("Budget.findByPersonProcedure");
 
             // It step the name of the parametro of the query, and the valor a search.
-            q.setParameter("idPersona", pIdPerson);
-            q.setParameter("idTramite", pIdProcedure);
+            q.setParameter("idPerson", pIdPerson);
+            q.setParameter("idProcedure", pIdProcedure);
 
             misPresupuestos = (List<Budget>) q.getResultList();
         } finally {
@@ -445,7 +445,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
             Query q = em.createNamedQuery("Budget.findByIdBudget");
 
             // It step the name of the parametro of the query, and the valor a search.
-            q.setParameter("idPresupuesto", idBudget);
+            q.setParameter("idBudget", idBudget);
 
             miBudget = (Budget) q.getResultList().get(0);
         } finally {
