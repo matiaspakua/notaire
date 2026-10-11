@@ -29,7 +29,7 @@ describe("backend-proxy helper (issue #1055)", () => {
     );
 
     expect(resolveBackendBaseUrl()).toBe("http://backend:8080/api/v1");
-    expect(joinUpstreamUrl(resolveBackendBaseUrl()!, ["usuarios", "login"])).toBe(
+    expect(joinUpstreamUrl(resolveBackendBaseUrl()!, ["users", "login"])).toBe(
       "http://backend:8080/api/v1/users/login",
     );
   });
@@ -83,7 +83,7 @@ describe("backend-proxy helper (issue #1055)", () => {
         method: "GET",
         headers: { cookie: "notaire-auth-token=secret-jwt; other=1" },
       }),
-      ["gestiones"],
+      ["managements"],
     );
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -112,7 +112,7 @@ describe("backend-proxy helper (issue #1055)", () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ name: "admin", password: "admin" }),
       }),
-      ["usuarios", "login"],
+      ["users", "login"],
     );
 
     const setCookies =
@@ -148,7 +148,7 @@ describe("backend-proxy helper (issue #1055)", () => {
         new Request("http://localhost:3000/api/v1/people?dni=123", {
           headers: { cookie: "session=secret" },
         }),
-        ["personas"],
+        ["people"],
       );
 
       const [entry] = loggedEntries(log);
@@ -170,7 +170,7 @@ describe("backend-proxy helper (issue #1055)", () => {
 
       const response = await proxyApiRequest(
         new Request("http://localhost:3000/api/v1/people"),
-        ["personas"],
+        ["people"],
       );
 
       expect(response.status).toBe(502);

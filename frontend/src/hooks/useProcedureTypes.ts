@@ -6,53 +6,53 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiPut, apiDelete } from "@/lib/api-client";
 import type { ProcedureType } from "@/types";
 
-export const tiposTramiteKeys = {
+export const procedureTypeKeys = {
   all: ["tiposTramite"] as const,
   detail: (id: number) => ["tiposTramite", id] as const,
 };
 
 export function useProcedureTypes() {
   return useQuery({
-    queryKey: tiposTramiteKeys.all,
+    queryKey: procedureTypeKeys.all,
     queryFn: () => apiGet<ProcedureType[]>("/procedure-types"),
   });
 }
 
-export function useCreateTipoTramite() {
+export function useCreateProcedureType() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: Partial<ProcedureType>) =>
       apiPost<void>("/procedure-types", data),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: tiposTramiteKeys.all }),
+      qc.invalidateQueries({ queryKey: procedureTypeKeys.all }),
   });
 }
 
-export function useUpdateTipoTramite() {
+export function useUpdateProcedureType() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<ProcedureType> }) =>
       apiPut<void>(`/procedure-types/${id}`, data),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: tiposTramiteKeys.all }),
+      qc.invalidateQueries({ queryKey: procedureTypeKeys.all }),
   });
 }
 
-export function useDeleteTipoTramite() {
+export function useDeleteProcedureType() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => apiDelete(`/procedure-types/${id}`),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: tiposTramiteKeys.all }),
+      qc.invalidateQueries({ queryKey: procedureTypeKeys.all }),
   });
 }
 
-export function useAssignWorkflowToTipoTramite() {
+export function useAssignWorkflowToProcedureType() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, workflowDefinitionId }: { id: number; workflowDefinitionId: number | null }) =>
       apiPut<ProcedureType>(`/procedure-types/${id}/workflow`, { workflowDefinitionId }),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: tiposTramiteKeys.all }),
+      qc.invalidateQueries({ queryKey: procedureTypeKeys.all }),
   });
 }

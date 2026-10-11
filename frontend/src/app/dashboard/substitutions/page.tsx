@@ -13,9 +13,9 @@ import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   useSubstitutions,
-  useCreateSuplencia,
-  useUpdateSuplencia,
-  useDeleteSuplencia,
+  useCreateSubstitution,
+  useUpdateSubstitution,
+  useDeleteSubstitution,
 } from "@/hooks/useSubstitutions";
 import { presentMutationError } from "@/lib/mutation-error";
 import { formatDate } from "@/lib/utils";
@@ -38,9 +38,9 @@ export default function SuplenciasPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
   const { data: suplencias = [], isLoading } = useSubstitutions();
-  const createMutation = useCreateSuplencia();
-  const updateMutation = useUpdateSuplencia();
-  const deleteMutation = useDeleteSuplencia();
+  const createMutation = useCreateSubstitution();
+  const updateMutation = useUpdateSubstitution();
+  const deleteMutation = useDeleteSubstitution();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);

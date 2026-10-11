@@ -24,7 +24,7 @@ vi.mock("next-intl", () => ({
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
 import { ApiError } from "@/lib/api-client";
-import { usePersonasPage } from "@/hooks/usePeople";
+import { usePeoplePage } from "@/hooks/usePeople";
 import { presentPersonaSaveError } from "@/lib/person-save-error";
 import PersonasPage from "@/app/dashboard/people/page";
 
@@ -40,14 +40,14 @@ function wrapper({ children }: { children: ReactNode }) {
 
 const ROW = { personId: 1384, firstName: "Ana", lastName: "Nueva", identificationNumber: "1", isClient: false };
 
-describe("usePersonasPage (#1340)", () => {
+describe("usePeoplePage (#1340)", () => {
   beforeEach(() => mockFetch.mockReset());
 
   it("requests one page, newest first, and keeps the total", async () => {
     mockFetch.mockReturnValue(
       pageResponse({ content: [ROW], number: 2, size: 50, totalElements: 1384, totalPages: 28 }),
     );
-    const { result } = renderHook(() => usePersonasPage({ page: 2, size: 50 }), { wrapper });
+    const { result } = renderHook(() => usePeoplePage({ page: 2, size: 50 }), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     const url = String(mockFetch.mock.calls[0][0]);
     expect(url).toMatch(/\/people\?page=2&size=50&sort=idPerson%2Cdesc$/);

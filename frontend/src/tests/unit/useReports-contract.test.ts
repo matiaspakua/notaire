@@ -10,11 +10,11 @@ const apiGetBytes = vi.fn();
 vi.mock("@/lib/api-client", () => ({ apiGetBytes: (path: string) => apiGetBytes(path) }));
 
 import {
-  useReporteDeudaDocumentos,
-  useReporteHistorialGestion,
-  useReporteListaDocumentos,
-  useReportePresupuesto,
-  useReportePresupuestoInmuebles,
+  useDocumentDebtReport,
+  useManagementHistoryReport,
+  useDocumentListReport,
+  useBudgetReport,
+  useBudgetPropertiesReport,
 } from "@/hooks/useReports";
 
 beforeEach(() => {
@@ -26,29 +26,29 @@ beforeEach(() => {
 
 describe("report hooks call the documented endpoints", () => {
   it("budget report", async () => {
-    await useReportePresupuesto().download(7);
+    await useBudgetReport().download(7);
     expect(apiGetBytes).toHaveBeenCalledWith("/reports/budget/7");
   });
 
   it("budget report with properties", async () => {
-    await useReportePresupuestoInmuebles().download(7);
+    await useBudgetPropertiesReport().download(7);
     expect(apiGetBytes).toHaveBeenCalledWith("/reports/budget-properties/7");
   });
 
   it("procedure documents report encodes the procedure type name", async () => {
-    await useReporteListaDocumentos().download("Compra/Venta & más");
+    await useDocumentListReport().download("Compra/Venta & más");
     expect(apiGetBytes).toHaveBeenCalledWith(
       "/reports/procedure-document-list?nombreTipoTramite=Compra%2FVenta%20%26%20m%C3%A1s"
     );
   });
 
   it("management history report", async () => {
-    await useReporteHistorialGestion().download(12);
+    await useManagementHistoryReport().download(12);
     expect(apiGetBytes).toHaveBeenCalledWith("/reports/management-history/12");
   });
 
   it("document debt report sends numberManagement, the documented query parameter", async () => {
-    await useReporteDeudaDocumentos().download(1001);
+    await useDocumentDebtReport().download(1001);
     expect(apiGetBytes).toHaveBeenCalledWith("/reports/document-debt?numberManagement=1001");
   });
 });

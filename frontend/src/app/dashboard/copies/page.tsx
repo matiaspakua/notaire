@@ -13,9 +13,9 @@ import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   useCopies,
-  useCreateCopia,
-  useUpdateCopia,
-  useDeleteCopia,
+  useCreateCopy,
+  useUpdateCopy,
+  useDeleteCopy,
 } from "@/hooks/useCopies";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Copy } from "@/types";
@@ -28,9 +28,9 @@ export default function CopiasPage() {
   const tc = useTranslations("common");
 
   const { data: copias = [], isLoading } = useCopies();
-  const createMutation = useCreateCopia();
-  const updateMutation = useUpdateCopia();
-  const deleteMutation = useDeleteCopia();
+  const createMutation = useCreateCopy();
+  const updateMutation = useUpdateCopy();
+  const deleteMutation = useDeleteCopy();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);

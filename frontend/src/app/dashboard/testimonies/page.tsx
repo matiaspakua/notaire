@@ -11,7 +11,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useThemeClasses } from "@/theme";
-import { useTestimonies, useGenerarTestimonio, useVerificarTestimonio, descargarCopiaTestimonio } from "@/hooks/useTestimonies";
+import { useTestimonies, useGenerateTestimony, useVerifyTestimony, downloadTestimonyCopy } from "@/hooks/useTestimonies";
 import { useDeeds } from "@/hooks/useDeeds";
 import { extractApiError } from "@/lib/utils";
 import type { Testimony } from "@/types";
@@ -25,8 +25,8 @@ export default function TestimoniosPage() {
 
   const { data: testimonios = [], isLoading } = useTestimonies();
   const { data: escrituras = [] } = useDeeds();
-  const generarMutation = useGenerarTestimonio();
-  const verificarMutation = useVerificarTestimonio();
+  const generarMutation = useGenerateTestimony();
+  const verificarMutation = useVerifyTestimony();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [idEscritura, setIdEscritura] = useState("");
@@ -72,7 +72,7 @@ export default function TestimoniosPage() {
   async function handleDescargarCopia(testimonio: Testimony) {
     try {
       setDownloadingId(testimonio.idTestimony!);
-      await descargarCopiaTestimonio(testimonio.idTestimony!);
+      await downloadTestimonyCopy(testimonio.idTestimony!);
     } catch {
       toast.error(t("errorCopia"));
     } finally {

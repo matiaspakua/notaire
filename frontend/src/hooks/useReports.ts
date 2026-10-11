@@ -17,29 +17,29 @@ async function downloadPdf(path: string, filename: string): Promise<void> {
 }
 
 /** CU01/CU39 — Reporte PDF de presupuesto */
-export function useReportePresupuesto() {
+export function useBudgetReport() {
   return {
-    download: (idPresupuesto: number) =>
+    download: (idBudget: number) =>
       downloadPdf(
-        `/reports/budget/${idPresupuesto}`,
-        `presupuesto_${idPresupuesto}.pdf`
+        `/reports/budget/${idBudget}`,
+        `presupuesto_${idBudget}.pdf`
       ),
   };
 }
 
 /** CU01 — Reporte PDF de presupuesto con inmuebles */
-export function useReportePresupuestoInmuebles() {
+export function useBudgetPropertiesReport() {
   return {
-    download: (idPresupuesto: number) =>
+    download: (idBudget: number) =>
       downloadPdf(
-        `/reports/budget-properties/${idPresupuesto}`,
-        `presupuesto_inmuebles_${idPresupuesto}.pdf`
+        `/reports/budget-properties/${idBudget}`,
+        `presupuesto_inmuebles_${idBudget}.pdf`
       ),
   };
 }
 
 /** CU02 — Lista de documentos para tipo de trámite */
-export function useReporteListaDocumentos() {
+export function useDocumentListReport() {
   return {
     download: (nombreTipoTramite: string) =>
       downloadPdf(
@@ -50,7 +50,7 @@ export function useReporteListaDocumentos() {
 }
 
 /** CU13 — ManagementHistory de gestión */
-export function useReporteHistorialGestion() {
+export function useManagementHistoryReport() {
   return {
     download: (idGestion: number) =>
       downloadPdf(
@@ -61,7 +61,7 @@ export function useReporteHistorialGestion() {
 }
 
 /** CU25 — Declaración Jurada Mensual */
-export function useReporteDeclaracionJuradaMensual() {
+export function useMonthlySwornStatementReport() {
   return {
     download: (anio: number, mes: number) =>
       downloadPdf(
@@ -72,7 +72,7 @@ export function useReporteDeclaracionJuradaMensual() {
 }
 
 /** CU50 — Declaración Jurada de Rentas */
-export function useReporteDeclaracionJuradaRentas() {
+export function useTaxSwornStatementReport() {
   return {
     download: (anio: number, mes: number) =>
       downloadPdf(
@@ -83,7 +83,7 @@ export function useReporteDeclaracionJuradaRentas() {
 }
 
 /** CU24 — Libro Índice */
-export function useReporteLibroIndice() {
+export function useIndexBookReport() {
   return {
     download: (anio: number) =>
       downloadPdf(
@@ -94,7 +94,7 @@ export function useReporteLibroIndice() {
 }
 
 /** CU09 — Consultar deuda de documentos (query param numberManagement, see openapi.yaml) */
-export function useReporteDeudaDocumentos() {
+export function useDocumentDebtReport() {
   return {
     download: (numeroGestion: number) =>
       downloadPdf(
@@ -105,7 +105,7 @@ export function useReporteDeudaDocumentos() {
 }
 
 /** CU15 — Emitir recibo de pago */
-export function useReciboPago() {
+export function usePaymentReceipt() {
   return {
     download: (idPago: number) =>
       downloadPdf(

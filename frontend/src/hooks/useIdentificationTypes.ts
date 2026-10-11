@@ -6,16 +6,16 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import type { IdentificationType } from "@/types";
 
-export const tiposIdentificacionKeys = {
-  all: ["tiposIdentificacion"] as const,
+export const identificationTypeKeys = {
+  all: ["identificationTypes"] as const,
 };
 
 /** Name of the type a new person starts with (Owner decision on #1361). */
 export const DEFAULT_IDENTIFICATION_TYPE = "DNI";
 
-export function useTiposIdentificacion() {
+export function useIdentificationTypes() {
   return useQuery({
-    queryKey: tiposIdentificacionKeys.all,
+    queryKey: identificationTypeKeys.all,
     queryFn: () => apiGet<IdentificationType[]>("/identification-types"),
     staleTime: 5 * 60 * 1000,
   });

@@ -1,5 +1,5 @@
 /**
- * Unit test for useProximosVencimientos (CU42 — informar próximos vencimientos).
+ * Unit test for useUpcomingExpirations (CU42 — informar próximos vencimientos).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
@@ -11,7 +11,7 @@ vi.mock("@/lib/api-client", () => ({
 }));
 
 import { apiGet } from "@/lib/api-client";
-import { proximosVencimientosKeys, useProximosVencimientos } from "@/hooks/useProximosVencimientos";
+import { upcomingExpirationKeys, useUpcomingExpirations } from "@/hooks/useUpcomingExpirations";
 
 function createWrapper() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -21,19 +21,19 @@ function createWrapper() {
   return Wrapper;
 }
 
-describe("proximosVencimientosKeys", () => {
+describe("upcomingExpirationKeys", () => {
   it("byDias key includes the window", () => {
-    expect(proximosVencimientosKeys.byDias(15)).toEqual(["proximosVencimientos", 15]);
+    expect(upcomingExpirationKeys.byDays(15)).toEqual(["upcomingExpirations", 15]);
   });
 });
 
-describe("useProximosVencimientos (CU42)", () => {
+describe("useUpcomingExpirations (CU42)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches the upcoming expirations of the window via GET with the dias parameter", async () => {
     vi.mocked(apiGet).mockResolvedValue([{ idSubmittedDocument: 1, documentName: "Certificado", daysRemaining: 10 }]);
 
-    const { result } = renderHook(() => useProximosVencimientos(30), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useUpcomingExpirations(30), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiGet).toHaveBeenCalledWith("/submitted-documents/upcoming-expirations?dias=30");

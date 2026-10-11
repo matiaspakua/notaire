@@ -6,14 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import type { ManagementStatus } from "@/types";
 
-export const estadosGestionKeys = {
+export const managementStatusKeys = {
   all: ["estadosGestion"] as const,
   detail: (id: number) => ["estadosGestion", id] as const,
 };
 
 export function useManagementStatuses() {
   return useQuery({
-    queryKey: estadosGestionKeys.all,
+    queryKey: managementStatusKeys.all,
     queryFn: () => apiGet<ManagementStatus[]>("/management-statuses"),
   });
 }

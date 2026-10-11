@@ -4,10 +4,10 @@
  */
 import { describe, it, expect } from "vitest";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
-import type { Person, DeedManagement, Presupuesto, Payment } from "@/types";
+import type { Person, DeedManagement, Budget, Payment } from "@/types";
 
 // ──────────────────────────────────────────────
-// CU01/CU02 — Gestiones and Presupuestos display
+// CU01/CU02 — Gestiones and Budgets display
 // ──────────────────────────────────────────────
 
 describe("CU02 — Gestiones list display helpers", () => {
@@ -28,19 +28,19 @@ describe("CU02 — Gestiones list display helpers", () => {
 });
 
 // ──────────────────────────────────────────────
-// CU01 — Presupuestos
+// CU01 — Budgets
 // ──────────────────────────────────────────────
 
-describe("CU01 — Presupuesto display helpers", () => {
+describe("CU01 — Budget display helpers", () => {
   it("formats presupuesto propertyAmount as currency", () => {
-    const p: Presupuesto = { idBudget: 1, propertyAmount: 125000.5, status: "PENDIENTE" };
+    const p: Budget = { idBudget: 1, propertyAmount: 125000.5, status: "PENDIENTE" };
     const formatted = formatCurrency(p.propertyAmount);
     expect(formatted).toContain("125");
     expect(typeof formatted).toBe("string");
   });
 
   it("formats presupuesto date", () => {
-    const p: Presupuesto = { idBudget: 1, date: "2025-04-15" };
+    const p: Budget = { idBudget: 1, date: "2025-04-15" };
     const formatted = formatDate(p.date);
     expect(typeof formatted).toBe("string");
     expect(formatted.length).toBeGreaterThan(0);
@@ -54,7 +54,7 @@ describe("CU01 — Presupuesto display helpers", () => {
   it("status field reflects PENDIENTE/PAGADO states", () => {
     const estados = ["PENDIENTE", "PAGADO", "CANCELADO"];
     estados.forEach((e) => {
-      const p: Presupuesto = { status: e };
+      const p: Budget = { status: e };
       expect(p.status).toBe(e);
     });
   });

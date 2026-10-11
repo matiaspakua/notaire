@@ -15,7 +15,7 @@ vi.mock("@/lib/api-client", () => ({
 }));
 
 import { apiPost, apiPut } from "@/lib/api-client";
-import { useCreateDocumentoPresentado, useUpdateDocumentoPresentado } from "@/hooks/useSubmittedDocuments";
+import { useCreateSubmittedDocument, useUpdateSubmittedDocument } from "@/hooks/useSubmittedDocuments";
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -27,13 +27,13 @@ function createWrapper() {
   return Wrapper;
 }
 
-describe("useCreateDocumentoPresentado (CU04)", () => {
+describe("useCreateSubmittedDocument (CU04)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("posts typeId, date, delivered and procedureId", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idSubmittedDocument: 1 });
 
-    const { result } = renderHook(() => useCreateDocumentoPresentado(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useCreateSubmittedDocument(), { wrapper: createWrapper() });
     result.current.mutate({ typeId: 3, date: "2026-06-01", delivered: true, procedureId: 9 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -46,13 +46,13 @@ describe("useCreateDocumentoPresentado (CU04)", () => {
   });
 });
 
-describe("useUpdateDocumentoPresentado (CU72)", () => {
+describe("useUpdateSubmittedDocument (CU72)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("puts typeId, date and delivered", async () => {
     vi.mocked(apiPut).mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useUpdateDocumentoPresentado(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useUpdateSubmittedDocument(), { wrapper: createWrapper() });
     result.current.mutate({ id: 5, data: { typeId: 3, date: "2026-06-01", delivered: false } });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

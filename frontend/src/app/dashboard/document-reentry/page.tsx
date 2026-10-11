@@ -9,9 +9,9 @@ import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useGestionesPage } from "@/hooks/useManagements";
+import { useManagementsPage } from "@/hooks/useManagements";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
-import { useReingresarDocumentacion, useDocumentReentry } from "@/hooks/useDocumentReentry";
+import { useReenterDocumentation, useDocumentReentry } from "@/hooks/useDocumentReentry";
 import { extractApiError } from "@/lib/utils";
 import type { RequiredDocument, DeedManagement, ProcedureRequiredDocumentation } from "@/types";
 
@@ -31,14 +31,14 @@ function ReingresoDocumentacionList() {
   // One server page at a time, newest first, page and size in the URL (#1340):
   // the list used to load size=1000 and silently miss every later case.
   const paging = useUrlPagination();
-  const { data: gestionesPage, isLoading, isFetching } = useGestionesPage({ page: paging.page, size: paging.size });
+  const { data: gestionesPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
   const gestiones = gestionesPage?.content ?? [];
   useClampPage(paging, gestionesPage?.totalPages);
 
   const [selectedGestionId, setSelectedGestionId] = useState<number | null>(null);
   const { data: detalle, isLoading: isLoadingDetalle } = useDocumentReentry(selectedGestionId ?? undefined);
 
-  const reingresarMutation = useReingresarDocumentacion();
+  const reingresarMutation = useReenterDocumentation();
 
   async function handleReingresar(idTramite: number, documento: RequiredDocument) {
     if (!selectedGestionId) return;

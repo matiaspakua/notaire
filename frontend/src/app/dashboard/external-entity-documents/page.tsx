@@ -12,11 +12,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useThemeClasses } from "@/theme";
-import { useGestionesPage } from "@/hooks/useManagements";
+import { useManagementsPage } from "@/hooks/useManagements";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import {
   useExternalEntityDocuments,
-  useRegistrarMovimientoDocumentoEntidadExterna,
+  useRegisterExternalEntityDocumentMovement,
 } from "@/hooks/useExternalEntityDocuments";
 import { extractApiError, formatDate } from "@/lib/utils";
 import type { ExternalEntityDocument, DeedManagement, ExternalEntityDocumentMovementInput } from "@/types";
@@ -52,7 +52,7 @@ function DocumentosEntidadesExternasList() {
   // One server page at a time, newest first, page and size in the URL (#1340):
   // the list used to load size=1000 and silently miss every later case.
   const paging = useUrlPagination();
-  const { data: gestionesPage, isLoading, isFetching } = useGestionesPage({ page: paging.page, size: paging.size });
+  const { data: gestionesPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
   const gestiones = gestionesPage?.content ?? [];
   useClampPage(paging, gestionesPage?.totalPages);
 
@@ -62,7 +62,7 @@ function DocumentosEntidadesExternasList() {
   const [editingDocumento, setEditingDocumento] = useState<ExternalEntityDocument | null>(null);
   const [movimiento, setMovimiento] = useState<ExternalEntityDocumentMovementInput>(emptyMovimiento);
 
-  const registrarMutation = useRegistrarMovimientoDocumentoEntidadExterna();
+  const registrarMutation = useRegisterExternalEntityDocumentMovement();
 
   function openEditar(documento: ExternalEntityDocument) {
     setEditingDocumento(documento);

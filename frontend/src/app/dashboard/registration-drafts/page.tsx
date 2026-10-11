@@ -12,11 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { theme } from "@/theme/tokens";
 import {
-  useMinutaInscripcion,
-  useGenerarMinutaInscripcion,
-  usePresentarMinutaInscripcion,
-  useObservarMinutaInscripcion,
-  useInscribirMinutaInscripcion,
+  useRegistrationDraft,
+  useGenerateRegistrationDraft,
+  useSubmitRegistrationDraft,
+  useObserveRegistrationDraft,
+  useRegisterRegistrationDraft,
   descargarReporteMinutaInscripcion,
 } from "@/hooks/useRegistrationDrafts";
 import { useDeeds } from "@/hooks/useDeeds";
@@ -33,10 +33,10 @@ export default function MinutasInscripcionPage() {
   const tc = useTranslations("common");
 
   const { data: escrituras = [] } = useDeeds();
-  const generarMutation = useGenerarMinutaInscripcion();
-  const presentarMutation = usePresentarMinutaInscripcion();
-  const observarMutation = useObservarMinutaInscripcion();
-  const inscribirMutation = useInscribirMinutaInscripcion();
+  const generarMutation = useGenerateRegistrationDraft();
+  const presentarMutation = useSubmitRegistrationDraft();
+  const observarMutation = useObserveRegistrationDraft();
+  const inscribirMutation = useRegisterRegistrationDraft();
 
   const [minutaId, setMinutaId] = useState<number | null>(null);
   const [buscarId, setBuscarId] = useState("");
@@ -55,7 +55,7 @@ export default function MinutasInscripcionPage() {
   const [fechaRecepcion, setFechaRecepcion] = useState("");
   const [numeroInscripcionDefinitivo, setNumeroInscripcionDefinitivo] = useState("");
 
-  const { data: minuta, isLoading } = useMinutaInscripcion(minutaId);
+  const { data: minuta, isLoading } = useRegistrationDraft(minutaId);
   const escriturasFirmadas = escrituras.filter((e) => e.status === ESTADO_FIRMADA);
 
   function estadoLabel(estado?: string): string {

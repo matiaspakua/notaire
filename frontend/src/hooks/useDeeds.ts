@@ -3,20 +3,20 @@ import { apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/lib/api-c
 import type { Deed } from "@/types";
 
 export const deedsKeys = {
-  all: ["escrituras"] as const,
-  detail: (id: number) => ["escrituras", id] as const,
-  page: (params: { page: number; size: number }) => ["escrituras", "page", params] as const,
+  all: ["deeds"] as const,
+  detail: (id: number) => ["deeds", id] as const,
+  page: (params: { page: number; size: number }) => ["deeds", "page", params] as const,
 };
 
 /** Sort for the deeds list: newest first (#1340). */
-export const ESCRITURAS_SORT = "idDeed,desc";
+export const DEEDS_SORT = "idDeed,desc";
 
 /** One server page of GET /deeds (#1340); the list is never loaded whole. */
 export function useDeedsPage(params: { page: number; size: number }, options: { enabled?: boolean } = {}) {
   return useQuery({
     queryKey: deedsKeys.page(params),
     queryFn: () =>
-      apiGetPage<Deed>("/deeds", { page: params.page, size: params.size, sort: ESCRITURAS_SORT }),
+      apiGetPage<Deed>("/deeds", { page: params.page, size: params.size, sort: DEEDS_SORT }),
     placeholderData: keepPreviousData,
     enabled: options.enabled ?? true,
   });
@@ -29,7 +29,7 @@ export function useDeeds() {
   });
 }
 
-export function useCreateEscritura() {
+export function useCreateDeed() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: Partial<Deed>) => apiPost<void>("/deeds", data),
@@ -37,7 +37,7 @@ export function useCreateEscritura() {
   });
 }
 
-export function useUpdateEscritura() {
+export function useUpdateDeed() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Deed> }) =>
@@ -46,7 +46,7 @@ export function useUpdateEscritura() {
   });
 }
 
-export function useDeleteEscritura() {
+export function useDeleteDeed() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => apiDelete(`/deeds/${id}`),
@@ -55,7 +55,7 @@ export function useDeleteEscritura() {
 }
 
 /** CU06 - Transiciona una escritura "Sin Firmar" con folio asignado al estado "Firmada". */
-export function useFirmarEscritura() {
+export function useSignDeed() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => apiPost<Deed>(`/deeds/${id}/sign`, {}),

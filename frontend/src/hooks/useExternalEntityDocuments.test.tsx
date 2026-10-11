@@ -14,9 +14,9 @@ vi.mock("@/lib/api-client", () => ({
 
 import { apiGet, apiPut } from "@/lib/api-client";
 import {
-  documentosEntidadExternaKeys,
+  externalEntityDocumentKeys,
   useExternalEntityDocuments,
-  useRegistrarMovimientoDocumentoEntidadExterna,
+  useRegisterExternalEntityDocumentMovement,
 } from "@/hooks/useExternalEntityDocuments";
 
 function createWrapper() {
@@ -29,9 +29,9 @@ function createWrapper() {
   return { Wrapper, queryClient };
 }
 
-describe("documentosEntidadExternaKeys", () => {
-  it("byGestion key includes the gestión id", () => {
-    expect(documentosEntidadExternaKeys.byGestion(9)).toEqual(["documentosEntidadExterna", "gestion", 9]);
+describe("externalEntityDocumentKeys", () => {
+  it("byManagement key includes the gestión id", () => {
+    expect(externalEntityDocumentKeys.byManagement(9)).toEqual(["documentosEntidadExterna", "gestion", 9]);
   });
 });
 
@@ -64,14 +64,14 @@ describe("useExternalEntityDocuments (CU10)", () => {
   });
 });
 
-describe("useRegistrarMovimientoDocumentoEntidadExterna (CU10)", () => {
+describe("useRegisterExternalEntityDocumentMovement (CU10)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("registers a movement via PUT", async () => {
     vi.mocked(apiPut).mockResolvedValue({ idSubmittedDocument: 1, delivered: true });
 
     const { Wrapper } = createWrapper();
-    const { result } = renderHook(() => useRegistrarMovimientoDocumentoEntidadExterna(), { wrapper: Wrapper });
+    const { result } = renderHook(() => useRegisterExternalEntityDocumentMovement(), { wrapper: Wrapper });
 
     await result.current.mutateAsync({
       gestionId: 9,

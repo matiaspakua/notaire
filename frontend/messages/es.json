@@ -1279,9 +1279,31 @@
       "protocolo": "Protocolo",
       "cuadernos": "Cuadernos de Folios",
       "auxiliar": "Protocolo Auxiliar",
+      "auxiliary": "Protocolo Auxiliar",
       "documentosEntidadesExternas": "Documentación de Entidades Externas",
       "administracion": "Administración",
-      "inmuebles": "Inmuebles"
+      "inmuebles": "Inmuebles",
+      "administration": "Administración",
+      "audit": "Auditoría",
+      "deeds": "Escrituras",
+      "testimonyMovements": "Movimientos de testimonio",
+      "reports": "Reportes",
+      "registrationDrafts": "Minutas de Inscripción",
+      "testimonies": "Testimonios",
+      "documents": "Documentos",
+      "managements": "Gestiones",
+      "people": "Personas",
+      "budgets": "Presupuestos",
+      "payments": "Pagos",
+      "requiredDocuments": "Documentos Necesarios",
+      "substitutions": "Suplencias",
+      "upcomingExpirations": "Próximos Vencimientos",
+      "documentReentry": "Reingresar Documentación",
+      "copies": "Copias",
+      "protocol": "Protocolo",
+      "notebooks": "Cuadernos de Folios",
+      "externalEntityDocuments": "Documentación de Entidades Externas",
+      "properties": "Inmuebles"
     },
     "admin": {
       "roles": "Roles y Permisos",
@@ -1294,7 +1316,14 @@
       "conceptos": "Conceptos",
       "estadosGestion": "Estados de Gestión",
       "folios": "Folios",
-      "usuarios": "Usuarios"
+      "usuarios": "Usuarios",
+      "audit": "Auditoría",
+      "documents": "Tipos de Documento",
+      "procedures": "Tipos de Trámite",
+      "templates": "Plantillas Presupuesto",
+      "concepts": "Conceptos",
+      "managementStatuses": "Estados de Gestión",
+      "users": "Usuarios"
     }
   },
   "workflowViewer": {

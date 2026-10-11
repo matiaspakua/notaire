@@ -12,7 +12,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
-import { useRoles, useCreateRol, useUpdateRol, useDeleteRol } from "@/hooks/useRoles";
+import { useRoles, useCreateRole, useUpdateRole, useDeleteRole } from "@/hooks/useRoles";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Role } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
@@ -35,9 +35,9 @@ export default function RolesPage() {
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
   const { data: roles = [], isLoading } = useRoles();
-  const createMutation = useCreateRol();
-  const updateMutation = useUpdateRol();
-  const deleteMutation = useDeleteRol();
+  const createMutation = useCreateRole();
+  const updateMutation = useUpdateRole();
+  const deleteMutation = useDeleteRole();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);

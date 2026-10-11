@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
-import { useConcepts, useCreateConcepto, useUpdateConcepto, useDeleteConcepto } from "@/hooks/useConcepts";
+import { useConcepts, useCreateConcept, useUpdateConcept, useDeleteConcept } from "@/hooks/useConcepts";
 import { formatCurrency, extractApiError } from "@/lib/utils";
 import type { Concept } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
@@ -26,9 +26,9 @@ export default function ConceptosPage() {
   const tc = useTranslations("common");
 
   const { data: conceptos = [], isLoading } = useConcepts();
-  const createMutation = useCreateConcepto();
-  const updateMutation = useUpdateConcepto();
-  const deleteMutation = useDeleteConcepto();
+  const createMutation = useCreateConcept();
+  const updateMutation = useUpdateConcept();
+  const deleteMutation = useDeleteConcept();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -37,7 +37,7 @@ export default function ConceptosPage() {
   const [search, setSearch] = useState("");
 
   const { data: filtered = conceptos } = useQuery({
-    queryKey: ["conceptos", "search", search, conceptos],
+    queryKey: ["concepts", "search", search, conceptos],
     queryFn: () =>
       search
         ? apiGet<Concept[]>(`/concepts/search?name=${encodeURIComponent(search)}`)

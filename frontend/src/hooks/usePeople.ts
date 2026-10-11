@@ -3,15 +3,15 @@ import { apiGet, apiGetPage, apiGetPaged, apiPost, apiPut, apiDelete } from "@/l
 import type { Person } from "@/types";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
-export const personasKeys = {
-  all: ["personas"] as const,
-  detail: (id: number) => ["personas", id] as const,
-  page: (params: PersonasPageParams) => ["personas", "page", params] as const,
-  search: (params: PersonasSearchParams) => ["personas", "search", { ...params }] as const,
+export const peopleKeys = {
+  all: ["people"] as const,
+  detail: (id: number) => ["people", id] as const,
+  page: (params: PeoplePageParams) => ["people", "page", params] as const,
+  search: (params: PeopleSearchParams) => ["people", "search", { ...params }] as const,
 };
 
 /** Criteria of the personas search (#1357); primitives only, so they are a stable query key. */
-export interface PersonasSearchParams {
+export interface PeopleSearchParams {
   firstName: string;
   lastName: string;
   identificationNumber: string;
@@ -19,7 +19,7 @@ export interface PersonasSearchParams {
 }
 
 /** Wait after the last keystroke before searching (#1357). */
-export const PERSONAS_SEARCH_DEBOUNCE_MS = 300;
+export const PEOPLE_SEARCH_DEBOUNCE_MS = 300;
 
 /**
  * GET /people/search for the personas list (#1357). The criteria are debounced,
@@ -27,9 +27,9 @@ export const PERSONAS_SEARCH_DEBOUNCE_MS = 300;
  * while the next ones load, and a stale response never replaces a newer one
  * (each criteria set has its own cache entry).
  */
-export function useSearchPersonas(params: PersonasSearchParams) {
-  const debounced = useDebouncedValue(params, PERSONAS_SEARCH_DEBOUNCE_MS);
-  const settled: PersonasSearchParams = {
+export function useSearchPeople(params: PeopleSearchParams) {
+  const debounced = useDebouncedValue(params, PEOPLE_SEARCH_DEBOUNCE_MS);
+  const settled: PeopleSearchParams = {
     firstName: debounced.firstName.trim(),
     lastName: debounced.lastName.trim(),
     identificationNumber: debounced.identificationNumber.trim(),
@@ -37,7 +37,7 @@ export function useSearchPersonas(params: PersonasSearchParams) {
   };
   const active = !!(settled.firstName || settled.lastName || settled.identificationNumber || settled.onlyClients);
   const query = useQuery({
-    queryKey: personasKeys.search(settled),
+    queryKey: peopleKeys.search(settled),
     enabled: active,
     queryFn: () => {
       // Backend route is /people/search (PersonController#searchPeople).
@@ -53,7 +53,7 @@ export function useSearchPersonas(params: PersonasSearchParams) {
   return { active, results: query.data ?? [], isLoading: query.isLoading, isFetching: query.isFetching };
 }
 
-export interface PersonasPageParams {
+export interface PeoplePageParams {
   page: number;
   size: number;
 }
@@ -65,10 +65,10 @@ export const PERSONAS_SORT = "idPerson,desc";
  * One server page of GET /people (#1340). The people list outgrows any fixed
  * size, so the list screen never loads it whole.
  */
-export function usePersonasPage(params: PersonasPageParams, options: { enabled?: boolean } = {}) {
+export function usePeoplePage(params: PeoplePageParams, options: { enabled?: boolean } = {}) {
   return useQuery({
     enabled: options.enabled ?? true,
-    queryKey: personasKeys.page(params),
+    queryKey: peopleKeys.page(params),
     queryFn: () =>
       apiGetPage<Person>("/people", { page: params.page, size: params.size, sort: PERSONAS_SORT }),
     placeholderData: keepPreviousData,
@@ -82,32 +82,32 @@ export function fetchPersona(id: number) {
 
 export function usePeople() {
   return useQuery({
-    queryKey: personasKeys.all,
+    queryKey: peopleKeys.all,
     queryFn: () => apiGetPaged<Person>("/people"),
   });
 }
 
-export function useCreatePersona() {
+export function useCreatePerson() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: Partial<Person>) => apiPost<void>("/people", data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: personasKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: peopleKeys.all }),
   });
 }
 
-export function useUpdatePersona() {
+export function useUpdatePerson() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Person> }) =>
       apiPut<void>(`/people/${id}`, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: personasKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: peopleKeys.all }),
   });
 }
 
-export function useDeletePersona() {
+export function useDeletePerson() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => apiDelete(`/people/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: personasKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: peopleKeys.all }),
   });
 }

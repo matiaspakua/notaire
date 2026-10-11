@@ -28,19 +28,19 @@ export default function PlantillasPage() {
   const tc = useTranslations("common");
 
   const { data = [], isLoading, refetch } = useQuery({
-    queryKey: ["plantilla-presupuestos"],
+    queryKey: ["budget-templates"],
     queryFn: () => apiGet<BudgetTemplate[]>("/budget-templates"),
   });
   const { data: tiposTramite = [] } = useQuery({
-    queryKey: ["tipo-tramite"],
+    queryKey: ["procedure-types"],
     queryFn: () => apiGet<ProcedureType[]>("/procedure-types"),
   });
   const { data: conceptos = [] } = useQuery({
-    queryKey: ["conceptos"],
+    queryKey: ["concepts"],
     queryFn: () => apiGet<Concept[]>("/concepts"),
   });
   const { data: tiposDocumento = [] } = useQuery({
-    queryKey: ["tipo-de-documento"],
+    queryKey: ["document-types"],
     queryFn: () => apiGet<DocumentType[]>("/document-types"),
   });
 
@@ -50,7 +50,7 @@ export default function PlantillasPage() {
     isLoading: isLoadingCostos,
     refetch: refetchCostos,
   } = useQuery({
-    queryKey: ["plantilla-costos-documento", costoTramiteId],
+    queryKey: ["document-cost-templates", costoTramiteId],
     queryFn: () =>
       apiGet<DocumentCostTemplate[]>(`/document-cost-templates/procedure-types/${costoTramiteId}`),
     enabled: !!costoTramiteId,

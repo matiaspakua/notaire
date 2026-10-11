@@ -13,9 +13,9 @@ vi.mock("@/lib/api-client", () => ({
 
 import { apiGet, apiPost } from "@/lib/api-client";
 import {
-  reingresoDocumentacionKeys,
+  documentReentryKeys,
   useDocumentReentry,
-  useReingresarDocumentacion,
+  useReenterDocumentation,
 } from "@/hooks/useDocumentReentry";
 
 function createWrapper() {
@@ -28,9 +28,9 @@ function createWrapper() {
   return { Wrapper, queryClient };
 }
 
-describe("reingresoDocumentacionKeys", () => {
-  it("byGestion key includes the gestión id", () => {
-    expect(reingresoDocumentacionKeys.byGestion(9)).toEqual(["reingresoDocumentacion", "gestion", 9]);
+describe("documentReentryKeys", () => {
+  it("byManagement key includes the gestión id", () => {
+    expect(documentReentryKeys.byManagement(9)).toEqual(["reingresoDocumentacion", "gestion", 9]);
   });
 });
 
@@ -68,14 +68,14 @@ describe("useDocumentReentry (CU43)", () => {
   });
 });
 
-describe("useReingresarDocumentacion (CU43)", () => {
+describe("useReenterDocumentation (CU43)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("reingresa a document via POST", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idDocumentoPresentado: 1, reingresado: true });
 
     const { Wrapper } = createWrapper();
-    const { result } = renderHook(() => useReingresarDocumentacion(), { wrapper: Wrapper });
+    const { result } = renderHook(() => useReenterDocumentation(), { wrapper: Wrapper });
 
     await result.current.mutateAsync({
       gestionId: 9,

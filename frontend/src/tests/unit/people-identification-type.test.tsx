@@ -78,7 +78,7 @@ describe("PersonasPage identification type (#1361)", () => {
     await screen.findByText("CUIT 30712345678");
     fireEvent.click(screen.getByTestId("btn-nueva-persona"));
     const dialog = await screen.findByRole("dialog");
-    const typeSelect = within(dialog).getByRole("combobox", { name: /people\.fields\.tipoIdentificacion/ });
+    const typeSelect = within(dialog).getByRole("combobox", { name: /personas\.fields\.tipoIdentificacion/ });
     await waitFor(() => expect(typeSelect).toHaveTextContent("DNI"));
     const number = within(dialog).getByTestId("input-dni");
     fireEvent.change(within(dialog).getByTestId("input-firstName"), { target: { value: "Ana" } });
@@ -95,7 +95,7 @@ describe("PersonasPage identification type (#1361)", () => {
     const rows = screen.getAllByRole("button", { name: "common.edit" });
     fireEvent.click(rows[1]);
     const dialog = await screen.findByRole("dialog");
-    const typeSelect = within(dialog).getByRole("combobox", { name: /people\.fields\.tipoIdentificacion/ });
+    const typeSelect = within(dialog).getByRole("combobox", { name: /personas\.fields\.tipoIdentificacion/ });
     expect(typeSelect).not.toHaveTextContent("DNI");
     fireEvent.click(within(dialog).getByRole("button", { name: "common.update" }));
     expect(await within(dialog).findByText("personas.validation.tipoIdentificacionRequired")).toBeInTheDocument();

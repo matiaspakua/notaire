@@ -13,7 +13,7 @@ function camelCase(segment: string): string {
  * own labels ("documentos" there means document types); record ids have none.
  */
 export function breadcrumbKey(segment: string, parent?: string): string {
-  const group = parent === "administracion" ? "admin" : "segments";
+  const group = parent === "administration" || parent === "administracion" ? "admin" : "segments";
   return `breadcrumb.${group}.${camelCase(segment)}`;
 }
 

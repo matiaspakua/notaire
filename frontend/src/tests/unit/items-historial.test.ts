@@ -18,12 +18,12 @@ describe("itemsKeys", () => {
     expect(itemsKeys.detail(3)).toEqual(["items", 3]);
   });
 
-  it("byPresupuesto key includes presupuesto id", () => {
-    expect(itemsKeys.byPresupuesto(10)).toEqual(["items", "presupuesto", 10]);
+  it("byBudget key includes presupuesto id", () => {
+    expect(itemsKeys.byBudget(10)).toEqual(["items", "budget", 10]);
   });
 
-  it("byPresupuesto key with id 1", () => {
-    expect(itemsKeys.byPresupuesto(1)).toEqual(["items", "presupuesto", 1]);
+  it("byBudget key with id 1", () => {
+    expect(itemsKeys.byBudget(1)).toEqual(["items", "budget", 1]);
   });
 });
 
@@ -38,13 +38,13 @@ describe("Item type shape (CU01, CU39)", () => {
       concepto: { idConcepto: 5, nombre: "Honorarios", valor: 100 },
       cantidad: 2,
       precio: 500,
-      presupuesto: { idPresupuesto: 10 },
+      presupuesto: { idBudget: 10 },
     };
     expect(item.idItem).toBe(1);
     expect(item.concepto.nombre).toBe("Honorarios");
     expect(item.cantidad).toBe(2);
     expect(item.precio).toBe(500);
-    expect(item.presupuesto.idPresupuesto).toBe(10);
+    expect(item.presupuesto.idBudget).toBe(10);
   });
 
   it("item subtotal calculation", () => {
@@ -65,7 +65,7 @@ describe("Item type shape (CU01, CU39)", () => {
   });
 
   it("item presupuesto relationship is optional", () => {
-    const item: { idItem?: number; presupuesto?: { idPresupuesto?: number } } = { idItem: 2 };
+    const item: { idItem?: number; presupuesto?: { idBudget?: number } } = { idItem: 2 };
     expect(item.presupuesto).toBeUndefined();
   });
 });

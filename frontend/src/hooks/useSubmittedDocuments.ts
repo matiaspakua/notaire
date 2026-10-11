@@ -6,39 +6,39 @@ import type {
   SubmittedDocumentUpdateRequest,
 } from "@/types/api";
 
-export const documentosPresentadosKeys = {
-  all: ["documentosPresentados"] as const,
-  detail: (id: number) => ["documentosPresentados", id] as const,
+export const submittedDocumentsKeys = {
+  all: ["submittedDocuments"] as const,
+  detail: (id: number) => ["submittedDocuments", id] as const,
 };
 
 export function useSubmittedDocuments() {
   return useQuery({
-    queryKey: documentosPresentadosKeys.all,
+    queryKey: submittedDocumentsKeys.all,
     queryFn: () => apiGet<SubmittedDocument[]>("/submitted-documents"),
   });
 }
 
-export function useCreateDocumentoPresentado() {
+export function useCreateSubmittedDocument() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: SubmittedDocumentRequest) => apiPost<SubmittedDocument>("/submitted-documents", data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: documentosPresentadosKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: submittedDocumentsKeys.all }),
   });
 }
 
-export function useUpdateDocumentoPresentado() {
+export function useUpdateSubmittedDocument() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: SubmittedDocumentUpdateRequest }) =>
       apiPut<void>(`/submitted-documents/${id}`, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: documentosPresentadosKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: submittedDocumentsKeys.all }),
   });
 }
 
-export function useDeleteDocumentoPresentado() {
+export function useDeleteSubmittedDocument() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => apiDelete(`/submitted-documents/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: documentosPresentadosKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: submittedDocumentsKeys.all }),
   });
 }

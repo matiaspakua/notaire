@@ -4,16 +4,16 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { apiGet, apiGetPage } from "@/lib/api-client";
-import { GESTIONES_SORT } from "@/hooks/useManagements";
+import { MANAGEMENTS_SORT } from "@/hooks/useManagements";
 import type { ManagementWorkflowTrace } from "@/types";
 
-export const gestionWorkflowKeys = {
+export const managementWorkflowKeys = {
   trace: (gestionId: number) => ["gestion-workflow-trace", gestionId] as const,
 };
 
-export function useGestionWorkflowTrace(gestionId: number | undefined) {
+export function useManagementWorkflowTrace(gestionId: number | undefined) {
   return useQuery({
-    queryKey: gestionWorkflowKeys.trace(gestionId ?? 0),
+    queryKey: managementWorkflowKeys.trace(gestionId ?? 0),
     queryFn: () => apiGet<ManagementWorkflowTrace>(`/managements/${gestionId}/workflow-trace`),
     enabled: !!gestionId,
   });
@@ -39,7 +39,7 @@ export async function findLatestTracedGestion(): Promise<LatestTracedGestion | n
   const page = await apiGetPage<{ idManagement?: number }>("/managements", {
     page: 0,
     size: LATEST_TRACE_CANDIDATES,
-    sort: GESTIONES_SORT,
+    sort: MANAGEMENTS_SORT,
   });
   const ids = page.content.map((g) => g.idManagement).filter((id): id is number => id != null);
   for (let i = 0; i < ids.length; i += TRACE_BATCH) {
@@ -55,7 +55,7 @@ export async function findLatestTracedGestion(): Promise<LatestTracedGestion | n
   return null;
 }
 
-export function useLatestTracedGestion(enabled = true) {
+export function useLatestTracedManagement(enabled = true) {
   return useQuery({
     queryKey: ["gestion-workflow-trace", "latest"] as const,
     queryFn: findLatestTracedGestion,

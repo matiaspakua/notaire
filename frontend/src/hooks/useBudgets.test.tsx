@@ -1,5 +1,5 @@
 /**
- * Unit tests for useCreatePresupuesto (CU01, CU39 — create a presupuesto from a procedure-type template).
+ * Unit tests for useCreateBudget (CU01, CU39 — create a presupuesto from a procedure-type template).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
@@ -14,7 +14,7 @@ vi.mock("@/lib/api-client", () => ({
 }));
 
 import { apiPost } from "@/lib/api-client";
-import { useCreatePresupuesto } from "@/hooks/useBudgets";
+import { useCreateBudget } from "@/hooks/useBudgets";
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -26,13 +26,13 @@ function createWrapper() {
   return Wrapper;
 }
 
-describe("useCreatePresupuesto (CU01, CU39)", () => {
+describe("useCreateBudget (CU01, CU39)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("creates only the presupuesto when no tipo de trámite is given", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idBudget: 7 });
 
-    const { result } = renderHook(() => useCreatePresupuesto(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
     result.current.mutate({ data: { propertyAmount: 100 } });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -44,7 +44,7 @@ describe("useCreatePresupuesto (CU01, CU39)", () => {
   it("loads the template items into the new presupuesto when a tipo de trámite is given", async () => {
     vi.mocked(apiPost).mockResolvedValueOnce({ idBudget: 7 }).mockResolvedValueOnce([{ idItem: 1 }]);
 
-    const { result } = renderHook(() => useCreatePresupuesto(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
     result.current.mutate({ data: { propertyAmount: 100 }, tipoTramiteId: 3 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -55,7 +55,7 @@ describe("useCreatePresupuesto (CU01, CU39)", () => {
   it("keeps the created presupuesto and reports no items when the template step fails", async () => {
     vi.mocked(apiPost).mockResolvedValueOnce({ idBudget: 7 }).mockRejectedValueOnce(new Error("no template"));
 
-    const { result } = renderHook(() => useCreatePresupuesto(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
     result.current.mutate({ data: { propertyAmount: 100 }, tipoTramiteId: 3 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

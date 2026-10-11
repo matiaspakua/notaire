@@ -19,8 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
-import { useUsers, useCreateUsuario, useUpdateUsuario, useDeleteUsuario } from "@/hooks/useUsers";
-import { useRoles, useAssignRolToUsuario, useUnassignRolFromUsuario } from "@/hooks/useRoles";
+import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from "@/hooks/useUsers";
+import { useRoles, useAssignRoleToUser, useUnassignRoleFromUser } from "@/hooks/useRoles";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { UserAccount } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
@@ -35,11 +35,11 @@ export default function UsuariosPage() {
 
   const { data: usuarios = [], isLoading } = useUsers();
   const { data: roles = [] } = useRoles();
-  const createMutation = useCreateUsuario();
-  const updateMutation = useUpdateUsuario();
-  const deleteMutation = useDeleteUsuario();
-  const assignRolMutation = useAssignRolToUsuario();
-  const unassignRolMutation = useUnassignRolFromUsuario();
+  const createMutation = useCreateUser();
+  const updateMutation = useUpdateUser();
+  const deleteMutation = useDeleteUser();
+  const assignRolMutation = useAssignRoleToUser();
+  const unassignRolMutation = useUnassignRoleFromUser();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);

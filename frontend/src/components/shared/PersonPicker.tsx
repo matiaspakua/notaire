@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { fullName } from "@/lib/utils";
 import { SearchCombobox } from "@/components/shared/SearchCombobox";
-import { usePersona, usePersonSearch, useRecentPersonas } from "@/hooks/usePersonSearch";
+import { usePerson, usePersonSearch, useRecentPeople } from "@/hooks/usePersonSearch";
 import type { Person } from "@/types";
 
 export interface PersonPickerProps {
@@ -42,12 +42,12 @@ export function PersonPicker({
   const [known, setKnown] = useState<Person | undefined>(selected);
 
   const knownMatches = (selected?.personId === value ? selected : undefined) ?? (known?.personId === value ? known : undefined);
-  const loaded = usePersona(value, value != null && !knownMatches);
+  const loaded = usePerson(value, value != null && !knownMatches);
   const current = value == null ? undefined : knownMatches ?? loaded.data;
 
   function useSource(query: string, open: boolean) {
     const search = usePersonSearch(query, open);
-    const recent = useRecentPersonas(open && !query);
+    const recent = useRecentPeople(open && !query);
     const list = query ? search.data : recent.data?.content;
     return {
       options: list?.filter((p) => !clientsOnly || p.isClient),

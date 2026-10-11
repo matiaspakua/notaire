@@ -5,23 +5,23 @@
  * Covers: CU12, CU42, CU59 (Suplencias), CU50, CU24, CU25, CU13, CU01 (Reportes)
  */
 import { describe, it, expect } from "vitest";
-import { suplenciasKeys } from "@/hooks/useSubstitutions";
+import { substitutionsKeys } from "@/hooks/useSubstitutions";
 
 // ──────────────────────────────────────────────
 // Query key contracts
 // ──────────────────────────────────────────────
 
-describe("suplenciasKeys", () => {
+describe("substitutionsKeys", () => {
   it("all key is ['suplencias']", () => {
-    expect(suplenciasKeys.all).toEqual(["suplencias"]);
+    expect(substitutionsKeys.all).toEqual(["substitutions"]);
   });
 
   it("detail key includes id", () => {
-    expect(suplenciasKeys.detail(7)).toEqual(["suplencias", 7]);
+    expect(substitutionsKeys.detail(7)).toEqual(["substitutions", 7]);
   });
 
   it("detail key with id 1", () => {
-    expect(suplenciasKeys.detail(1)).toEqual(["suplencias", 1]);
+    expect(substitutionsKeys.detail(1)).toEqual(["substitutions", 1]);
   });
 });
 
@@ -163,10 +163,10 @@ describe("Reporte filename construction", () => {
 });
 
 // ──────────────────────────────────────────────
-// Presupuesto status badge logic
+// Budget status badge logic
 // ──────────────────────────────────────────────
 
-describe("Presupuesto estado badge logic", () => {
+describe("Budget estado badge logic", () => {
   function getEstadoBadgeClass(estado?: string): string {
     switch (estado?.toUpperCase()) {
       case "APROBADO":

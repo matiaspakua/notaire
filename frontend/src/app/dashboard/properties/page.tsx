@@ -13,9 +13,9 @@ import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import {
   useProperties,
-  useCreateInmueble,
-  useUpdateInmueble,
-  useDeleteInmueble,
+  useCreateProperty,
+  useUpdateProperty,
+  useDeleteProperty,
 } from "@/hooks/useProperties";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Property } from "@/types";
@@ -27,9 +27,9 @@ export default function InmueblesPage() {
   const tc = useTranslations("common");
 
   const { data: inmuebles = [], isLoading } = useProperties();
-  const createMutation = useCreateInmueble();
-  const updateMutation = useUpdateInmueble();
-  const deleteMutation = useDeleteInmueble();
+  const createMutation = useCreateProperty();
+  const updateMutation = useUpdateProperty();
+  const deleteMutation = useDeleteProperty();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);

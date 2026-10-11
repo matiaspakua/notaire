@@ -1279,9 +1279,31 @@
       "protocolo": "Protocol",
       "cuadernos": "Folio Notebooks",
       "auxiliar": "Auxiliary Protocol",
+      "auxiliary": "Auxiliary Protocol",
       "documentosEntidadesExternas": "External Entity Documentation",
       "administracion": "Administration",
-      "inmuebles": "Properties"
+      "inmuebles": "Properties",
+      "administration": "Administration",
+      "audit": "Audit",
+      "deeds": "Deeds",
+      "testimonyMovements": "Testimony Movements",
+      "reports": "Reports",
+      "registrationDrafts": "Registration Drafts",
+      "testimonies": "Testimonies",
+      "documents": "Documents",
+      "managements": "Managements",
+      "people": "People",
+      "budgets": "Budgets",
+      "payments": "Payments",
+      "requiredDocuments": "Required Documents",
+      "substitutions": "Substitutions",
+      "upcomingExpirations": "Upcoming Expirations",
+      "documentReentry": "Document Reentry",
+      "copies": "Copies",
+      "protocol": "Protocol",
+      "notebooks": "Folio Notebooks",
+      "externalEntityDocuments": "External Entity Documents",
+      "properties": "Properties"
     },
     "admin": {
       "roles": "Roles & Permissions",
@@ -1294,7 +1316,14 @@
       "conceptos": "Concepts",
       "estadosGestion": "Case Statuses",
       "folios": "Folios",
-      "usuarios": "Users"
+      "usuarios": "Users",
+      "audit": "Audit",
+      "documents": "Document Types",
+      "procedures": "Procedure Types",
+      "templates": "Budget Templates",
+      "concepts": "Concepts",
+      "managementStatuses": "Management Statuses",
+      "users": "Users"
     }
   },
   "workflowViewer": {

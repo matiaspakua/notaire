@@ -8,122 +8,122 @@
  */
 import { describe, it, expect } from "vitest";
 
-import { gestionesKeys } from "@/hooks/useManagements";
-import { personasKeys } from "@/hooks/usePeople";
-import { presupuestosKeys } from "@/hooks/useBudgets";
-import { pagosKeys } from "@/hooks/usePayments";
-import { conceptosKeys } from "@/hooks/useConcepts";
+import { managementsKeys } from "@/hooks/useManagements";
+import { peopleKeys } from "@/hooks/usePeople";
+import { budgetsKeys } from "@/hooks/useBudgets";
+import { paymentsKeys } from "@/hooks/usePayments";
+import { conceptsKeys } from "@/hooks/useConcepts";
 import { deedsKeys } from "@/hooks/useDeeds";
-import { usuariosKeys } from "@/hooks/useUsers";
-import { inmueblesKeys } from "@/hooks/useProperties";
-import { copiasKeys } from "@/hooks/useCopies";
-import { documentosKeys } from "@/hooks/useDocuments";
+import { usersKeys } from "@/hooks/useUsers";
+import { propertiesKeys } from "@/hooks/useProperties";
+import { copiesKeys } from "@/hooks/useCopies";
+import { documentsKeys } from "@/hooks/useDocuments";
 
 // ──────────────────────────────────────────────
 // Query key contracts — all remaining hooks
 // ──────────────────────────────────────────────
 
-describe("gestionesKeys (CU02, CU13, CU24)", () => {
+describe("managementsKeys (CU02, CU13, CU24)", () => {
   it("all key is ['gestiones']", () => {
-    expect(gestionesKeys.all).toEqual(["gestiones"]);
+    expect(managementsKeys.all).toEqual(["managements"]);
   });
 
   it("detail key includes id", () => {
-    expect(gestionesKeys.detail(10)).toEqual(["gestiones", 10]);
+    expect(managementsKeys.detail(10)).toEqual(["managements", 10]);
   });
 
-  it("byCliente key includes persona id", () => {
-    expect(gestionesKeys.byCliente(5)).toEqual(["gestiones", "cliente", 5]);
+  it("byClient key includes persona id", () => {
+    expect(managementsKeys.byClient(5)).toEqual(["managements", "client", 5]);
   });
 });
 
-describe("personasKeys (CU17, CU18)", () => {
+describe("peopleKeys (CU17, CU18)", () => {
   it("all key is ['personas']", () => {
-    expect(personasKeys.all).toEqual(["personas"]);
+    expect(peopleKeys.all).toEqual(["people"]);
   });
 
   it("detail key includes id", () => {
-    expect(personasKeys.detail(3)).toEqual(["personas", 3]);
+    expect(peopleKeys.detail(3)).toEqual(["people", 3]);
   });
 });
 
-describe("presupuestosKeys (CU01, CU39)", () => {
+describe("budgetsKeys (CU01, CU39)", () => {
   it("all key is ['presupuestos']", () => {
-    expect(presupuestosKeys.all).toEqual(["presupuestos"]);
+    expect(budgetsKeys.all).toEqual(["budgets"]);
   });
 
   it("detail key includes id", () => {
-    expect(presupuestosKeys.detail(7)).toEqual(["presupuestos", 7]);
+    expect(budgetsKeys.detail(7)).toEqual(["budgets", 7]);
   });
 
-  it("byPersona key includes persona id", () => {
-    expect(presupuestosKeys.byPersona(2)).toEqual(["presupuestos", "persona", 2]);
+  it("byPerson key includes persona id", () => {
+    expect(budgetsKeys.byPerson(2)).toEqual(["budgets", "person", 2]);
   });
 });
 
-describe("pagosKeys (CU15, CU47)", () => {
+describe("paymentsKeys (CU15, CU47)", () => {
   it("all key is ['pagos']", () => {
-    expect(pagosKeys.all).toEqual(["pagos"]);
+    expect(paymentsKeys.all).toEqual(["payments"]);
   });
 });
 
-describe("conceptosKeys (CU39, CU49)", () => {
+describe("conceptsKeys (CU39, CU49)", () => {
   it("all key is ['conceptos']", () => {
-    expect(conceptosKeys.all).toEqual(["conceptos"]);
+    expect(conceptsKeys.all).toEqual(["concepts"]);
   });
 });
 
 describe("deedsKeys (CU05, CU06)", () => {
   it("all key is ['escrituras']", () => {
-    expect(deedsKeys.all).toEqual(["escrituras"]);
+    expect(deedsKeys.all).toEqual(["deeds"]);
   });
 
   it("detail key includes id", () => {
-    expect(deedsKeys.detail(99)).toEqual(["escrituras", 99]);
+    expect(deedsKeys.detail(99)).toEqual(["deeds", 99]);
   });
 });
 
-describe("usuariosKeys (CU20, CU21)", () => {
+describe("usersKeys (CU20, CU21)", () => {
   it("all key is ['usuarios']", () => {
-    expect(usuariosKeys.all).toEqual(["usuarios"]);
+    expect(usersKeys.all).toEqual(["users"]);
   });
 });
 
-describe("inmueblesKeys (CU08)", () => {
+describe("propertiesKeys (CU08)", () => {
   it("all key is ['inmuebles']", () => {
-    expect(inmueblesKeys.all).toEqual(["inmuebles"]);
+    expect(propertiesKeys.all).toEqual(["properties"]);
   });
 
   it("detail key includes id", () => {
-    expect(inmueblesKeys.detail(15)).toEqual(["inmuebles", 15]);
+    expect(propertiesKeys.detail(15)).toEqual(["properties", 15]);
   });
 });
 
-describe("copiasKeys (CU44, CU53)", () => {
+describe("copiesKeys (CU44, CU53)", () => {
   it("all key is ['copias']", () => {
-    expect(copiasKeys.all).toEqual(["copias"]);
+    expect(copiesKeys.all).toEqual(["copies"]);
   });
 
   it("detail key includes id", () => {
-    expect(copiasKeys.detail(8)).toEqual(["copias", 8]);
+    expect(copiesKeys.detail(8)).toEqual(["copies", 8]);
   });
 });
 
-describe("documentosKeys (CU27, CU65)", () => {
+describe("documentsKeys (CU27, CU65)", () => {
   it("all key is ['tiposDocumento']", () => {
-    expect(documentosKeys.all).toEqual(["tiposDocumento"]);
+    expect(documentsKeys.all).toEqual(["tiposDocumento"]);
   });
 
   it("detail key includes id", () => {
-    expect(documentosKeys.detail(4)).toEqual(["tiposDocumento", 4]);
+    expect(documentsKeys.detail(4)).toEqual(["tiposDocumento", 4]);
   });
 });
 
 // ──────────────────────────────────────────────
-// Presupuesto business logic (CU01, CU39)
+// Budget business logic (CU01, CU39)
 // ──────────────────────────────────────────────
 
-describe("Presupuesto total calculation (CU01, CU39)", () => {
+describe("Budget total calculation (CU01, CU39)", () => {
   type Item = { precio?: number; cantidad?: number };
 
   function calcularTotal(items: Item[]): number {
@@ -162,9 +162,9 @@ describe("Presupuesto total calculation (CU01, CU39)", () => {
 // ──────────────────────────────────────────────
 
 describe("Payment saldo computation (CU47)", () => {
-  function calcularSaldo(totalPresupuesto: number, pagos: { monto?: number }[]): number {
+  function calcularSaldo(totalBudget: number, pagos: { monto?: number }[]): number {
     const totalPaid = pagos.reduce((sum, p) => sum + (p.monto ?? 0), 0);
-    return totalPresupuesto - totalPaid;
+    return totalBudget - totalPaid;
   }
 
   it("saldo is total minus sum of pagos", () => {

@@ -1,5 +1,5 @@
 /**
- * Unit tests for useAssignWorkflowToTipoTramite (CU26, issue #655).
+ * Unit tests for useAssignWorkflowToProcedureType (CU26, issue #655).
  * PUT /procedure-types/{id}/workflow answers 400 when the body has no `workflowDefinitionId`
  * (Owner decision Oct 9), so the hook must always send the key: a number to assign, or an
  * explicit null to unassign.
@@ -17,7 +17,7 @@ vi.mock("@/lib/api-client", () => ({
 }));
 
 import { apiPut } from "@/lib/api-client";
-import { useAssignWorkflowToTipoTramite } from "@/hooks/useProcedureTypes";
+import { useAssignWorkflowToProcedureType } from "@/hooks/useProcedureTypes";
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -29,13 +29,13 @@ function createWrapper() {
   return Wrapper;
 }
 
-describe("useAssignWorkflowToTipoTramite (CU26, #655)", () => {
+describe("useAssignWorkflowToProcedureType (CU26, #655)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("sends the workflow id to assign it", async () => {
     vi.mocked(apiPut).mockResolvedValue({ idProcedureType: 3 });
 
-    const { result } = renderHook(() => useAssignWorkflowToTipoTramite(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useAssignWorkflowToProcedureType(), { wrapper: createWrapper() });
     result.current.mutate({ id: 3, workflowDefinitionId: 9 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -45,7 +45,7 @@ describe("useAssignWorkflowToTipoTramite (CU26, #655)", () => {
   it("sends an explicit null, never an empty body, to unassign", async () => {
     vi.mocked(apiPut).mockResolvedValue({ idProcedureType: 3 });
 
-    const { result } = renderHook(() => useAssignWorkflowToTipoTramite(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useAssignWorkflowToProcedureType(), { wrapper: createWrapper() });
     result.current.mutate({ id: 3, workflowDefinitionId: null });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));

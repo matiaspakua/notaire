@@ -87,7 +87,7 @@ describe("canonical admin redirects (#1058)", () => {
     const source = readFileSync(adminItems, "utf8");
     // Redirect-only stubs are fine; a full CRUD page is not.
     expect(source).toMatch(/redirect\s*\(/);
-    expect(source).not.toMatch(/useDescuentosYRecargos/);
+    expect(source).not.toMatch(/useDiscountsAndSurcharges/);
     expect(source).not.toMatch(/btn-nuevo-item/);
   });
 

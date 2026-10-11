@@ -17,7 +17,7 @@ vi.mock("@/lib/api-client", () => ({
 }));
 
 import { apiGet } from "@/lib/api-client";
-import { personasKeys, useSearchPersonas, PERSONAS_SEARCH_DEBOUNCE_MS, type PersonasSearchParams } from "@/hooks/usePeople";
+import { peopleKeys, useSearchPeople, PEOPLE_SEARCH_DEBOUNCE_MS, type PeopleSearchParams } from "@/hooks/usePeople";
 
 function wrapper() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -26,7 +26,7 @@ function wrapper() {
   };
 }
 
-const EMPTY: PersonasSearchParams = { firstName: "", lastName: "", identificationNumber: "", onlyClients: false };
+const EMPTY: PeopleSearchParams = { firstName: "", lastName: "", identificationNumber: "", onlyClients: false };
 
 async function flush(ms: number) {
   await act(async () => {
@@ -34,7 +34,7 @@ async function flush(ms: number) {
   });
 }
 
-describe("useSearchPersonas (#1357)", () => {
+describe("useSearchPeople (#1357)", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.mocked(apiGet).mockReset();
@@ -42,12 +42,12 @@ describe("useSearchPersonas (#1357)", () => {
   afterEach(() => vi.useRealTimers());
 
   it("debounces at 300ms", () => {
-    expect(PERSONAS_SEARCH_DEBOUNCE_MS).toBe(300);
+    expect(PEOPLE_SEARCH_DEBOUNCE_MS).toBe(300);
   });
 
   it("the search key holds only primitive params", () => {
-    const key = personasKeys.search({ firstName: "a", lastName: "b", identificationNumber: "1", onlyClients: true });
-    expect(key.slice(0, 2)).toEqual(["personas", "search"]);
+    const key = peopleKeys.search({ firstName: "a", lastName: "b", identificationNumber: "1", onlyClients: true });
+    expect(key.slice(0, 2)).toEqual(["people", "search"]);
     const flat = JSON.stringify(key);
     expect(JSON.parse(flat)).toEqual(key);
     for (const part of key.slice(2)) {
@@ -56,7 +56,7 @@ describe("useSearchPersonas (#1357)", () => {
   });
 
   it("is idle without criteria", async () => {
-    const { result } = renderHook(() => useSearchPersonas(EMPTY), { wrapper: wrapper() });
+    const { result } = renderHook(() => useSearchPeople(EMPTY), { wrapper: wrapper() });
     await flush(400);
     expect(result.current.active).toBe(false);
     expect(apiGet).not.toHaveBeenCalled();
@@ -64,7 +64,7 @@ describe("useSearchPersonas (#1357)", () => {
 
   it("typing 8 characters quickly sends one request with the final text", async () => {
     vi.mocked(apiGet).mockResolvedValue([{ personId: 1, lastName: "Martinez" }]);
-    const { rerender, result } = renderHook((p: PersonasSearchParams) => useSearchPersonas(p), {
+    const { rerender, result } = renderHook((p: PeopleSearchParams) => useSearchPeople(p), {
       wrapper: wrapper(),
       initialProps: EMPTY,
     });
@@ -72,7 +72,7 @@ describe("useSearchPersonas (#1357)", () => {
       rerender({ ...EMPTY, lastName: prefix });
       await flush(50);
     }
-    await flush(PERSONAS_SEARCH_DEBOUNCE_MS + 50);
+    await flush(PEOPLE_SEARCH_DEBOUNCE_MS + 50);
     expect(apiGet).toHaveBeenCalledTimes(1);
     expect(vi.mocked(apiGet).mock.calls[0][0]).toBe("/people/search?lastName=Martinez");
     expect(result.current.active).toBe(true);
@@ -83,14 +83,14 @@ describe("useSearchPersonas (#1357)", () => {
     vi.mocked(apiGet)
       .mockResolvedValueOnce([{ personId: 1, lastName: "Perez" }])
       .mockImplementationOnce(() => new Promise((r) => (release = r)));
-    const { rerender, result } = renderHook((p: PersonasSearchParams) => useSearchPersonas(p), {
+    const { rerender, result } = renderHook((p: PeopleSearchParams) => useSearchPeople(p), {
       wrapper: wrapper(),
       initialProps: { ...EMPTY, lastName: "Perez" },
     });
-    await flush(PERSONAS_SEARCH_DEBOUNCE_MS + 50);
+    await flush(PEOPLE_SEARCH_DEBOUNCE_MS + 50);
     expect(result.current.results).toEqual([{ personId: 1, lastName: "Perez" }]);
     rerender({ ...EMPTY, lastName: "Perezz" });
-    await flush(PERSONAS_SEARCH_DEBOUNCE_MS + 50);
+    await flush(PEOPLE_SEARCH_DEBOUNCE_MS + 50);
     expect(apiGet).toHaveBeenCalledTimes(2);
     expect(result.current.results).toEqual([{ personId: 1, lastName: "Perez" }]);
     await act(async () => release([]));

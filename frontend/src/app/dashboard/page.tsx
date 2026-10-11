@@ -8,9 +8,9 @@ import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Stagger, StaggerItem, HoverLift } from "@/components/motion";
 import { useAuthStore } from "@/store/auth-store";
-import { useGestionesPage } from "@/hooks/useManagements";
-import { usePersonasPage } from "@/hooks/usePeople";
-import { usePresupuestosPage } from "@/hooks/useBudgets";
+import { useManagementsPage } from "@/hooks/useManagements";
+import { usePeoplePage } from "@/hooks/usePeople";
+import { useBudgetsPage } from "@/hooks/useBudgets";
 import { StatValue } from "@/components/dashboard/StatValue";
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
 import { theme } from "@/theme/tokens";
@@ -38,9 +38,9 @@ export default function DashboardPage() {
   const locale = useLocale();
   const { user, isAdmin } = useAuthStore();
   // Only the totals are needed: size=1 pages, never the lists (#1340, #1358).
-  const gestionesPage = useGestionesPage({ page: 0, size: 1 });
-  const personasPage = usePersonasPage({ page: 0, size: 1 });
-  const presupuestosPage = usePresupuestosPage({ page: 0, size: 1 });
+  const gestionesPage = useManagementsPage({ page: 0, size: 1 });
+  const personasPage = usePeoplePage({ page: 0, size: 1 });
+  const presupuestosPage = useBudgetsPage({ page: 0, size: 1 });
 
   // One config for the sidebar and this grid (#1367).
   const visibleModules = DASHBOARD_MODULES.filter((m) => !m.adminOnly || isAdmin());

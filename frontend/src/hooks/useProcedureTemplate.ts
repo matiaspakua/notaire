@@ -6,13 +6,13 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import type { ProcedureTemplate } from "@/types";
 
-export const plantillaTramiteKeys = {
+export const procedureTemplateKeys = {
   byTramite: (idTipoTramite: number) => ["plantillaTramite", "tramite", idTipoTramite] as const,
 };
 
 export function useProcedureTemplate(idTipoTramite: number | undefined) {
   return useQuery({
-    queryKey: idTipoTramite !== undefined ? plantillaTramiteKeys.byTramite(idTipoTramite) : ["plantillaTramite", "tramite", "none"],
+    queryKey: idTipoTramite !== undefined ? procedureTemplateKeys.byTramite(idTipoTramite) : ["plantillaTramite", "tramite", "none"],
     queryFn: () => apiGet<ProcedureTemplate[]>(`/procedure-templates/procedure-types/${idTipoTramite}`),
     enabled: idTipoTramite !== undefined,
   });

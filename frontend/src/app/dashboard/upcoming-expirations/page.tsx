@@ -6,7 +6,7 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { FormField } from "@/theme/form-patterns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useProximosVencimientos } from "@/hooks/useProximosVencimientos";
+import { useUpcomingExpirations } from "@/hooks/useUpcomingExpirations";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { UpcomingExpiration } from "@/types";
 
@@ -16,7 +16,7 @@ const DEFAULT_WINDOW = 30;
 export default function ProximosVencimientosPage() {
   const t = useTranslations("proximosVencimientos");
   const [dias, setDias] = useState(DEFAULT_WINDOW);
-  const { data: vencimientos = [], isLoading } = useProximosVencimientos(dias);
+  const { data: vencimientos = [], isLoading } = useUpcomingExpirations(dias);
 
   const columns: Column<UpcomingExpiration>[] = [
     { key: "documento", header: t("fields.documento"), render: (v) => <span className="font-medium">{v.documentName ?? "—"}</span> },

@@ -16,10 +16,10 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import {
   useDeedsPage,
-  useCreateEscritura,
-  useUpdateEscritura,
-  useDeleteEscritura,
-  useFirmarEscritura,
+  useCreateDeed,
+  useUpdateDeed,
+  useDeleteDeed,
+  useSignDeed,
 } from "@/hooks/useDeeds";
 import { formatDate, extractApiError } from "@/lib/utils";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
@@ -47,10 +47,10 @@ function EscriturasList() {
     queryKey: ["folios"],
     queryFn: () => apiGet<Folio[]>("/folios"),
   });
-  const createMutation = useCreateEscritura();
-  const updateMutation = useUpdateEscritura();
-  const deleteMutation = useDeleteEscritura();
-  const firmarMutation = useFirmarEscritura();
+  const createMutation = useCreateDeed();
+  const updateMutation = useUpdateDeed();
+  const deleteMutation = useDeleteDeed();
+  const firmarMutation = useSignDeed();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -71,7 +71,7 @@ function EscriturasList() {
 
   // The backend reads `number`; `numero` was ignored and returned every deed.
   const { data: found = [], isLoading: isLoadingSearch } = useQuery({
-    queryKey: ["escrituras", "buscar", numero],
+    queryKey: ["deeds", "search", numero],
     queryFn: () => apiGet<Deed[]>(`/deeds/search?number=${encodeURIComponent(numero)}`),
     enabled: /^\d+$/.test(numero),
   });

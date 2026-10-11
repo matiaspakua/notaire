@@ -9,7 +9,7 @@ import type {
   SubmittedDocumentUpdateRequest,
   DtoOutstandingBalance,
   DeedManagement,
-  Presupuesto,
+  Budget,
   BudgetSummary,
 } from "@/types/api";
 
@@ -19,7 +19,7 @@ export type {
   SubmittedDocumentUpdateRequest,
   DtoOutstandingBalance,
   DeedManagement,
-  Presupuesto,
+  Budget,
   BudgetSummary,
 };
 

@@ -11,38 +11,38 @@ import { describe, it, expect } from "vitest";
 // Query key contracts
 // ──────────────────────────────────────────────
 
-import { estadosGestionKeys } from "@/hooks/useManagementStatuses";
-import { tiposTramiteKeys } from "@/hooks/useProcedureTypes";
-import { auditoriaKeys } from "@/hooks/useAudit";
+import { managementStatusKeys } from "@/hooks/useManagementStatuses";
+import { procedureTypeKeys } from "@/hooks/useProcedureTypes";
+import { auditKeys } from "@/hooks/useAudit";
 
 describe("React Query key contracts", () => {
-  describe("estadosGestionKeys", () => {
+  describe("managementStatusKeys", () => {
     it("all key is ['estadosGestion']", () => {
-      expect(estadosGestionKeys.all).toEqual(["estadosGestion"]);
+      expect(managementStatusKeys.all).toEqual(["estadosGestion"]);
     });
 
     it("detail key includes id", () => {
-      expect(estadosGestionKeys.detail(5)).toEqual(["estadosGestion", 5]);
+      expect(managementStatusKeys.detail(5)).toEqual(["estadosGestion", 5]);
     });
   });
 
-  describe("tiposTramiteKeys", () => {
+  describe("procedureTypeKeys", () => {
     it("all key is ['tiposTramite']", () => {
-      expect(tiposTramiteKeys.all).toEqual(["tiposTramite"]);
+      expect(procedureTypeKeys.all).toEqual(["tiposTramite"]);
     });
 
     it("detail key includes id", () => {
-      expect(tiposTramiteKeys.detail(3)).toEqual(["tiposTramite", 3]);
+      expect(procedureTypeKeys.detail(3)).toEqual(["tiposTramite", 3]);
     });
   });
 
-  describe("auditoriaKeys", () => {
+  describe("auditKeys", () => {
     it("all key is ['auditoria']", () => {
-      expect(auditoriaKeys.all).toEqual(["auditoria"]);
+      expect(auditKeys.all).toEqual(["audit"]);
     });
 
-    it("byUsuario key includes user id", () => {
-      expect(auditoriaKeys.byUsuario(12)).toEqual(["auditoria", "usuario", 12]);
+    it("byUser key includes user id", () => {
+      expect(auditKeys.byUser(12)).toEqual(["audit", "user", 12]);
     });
   });
 });

@@ -6,14 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import type { DocumentType } from "@/types";
 
-export const documentosKeys = {
+export const documentsKeys = {
   all: ["tiposDocumento"] as const,
   detail: (id: number) => ["tiposDocumento", id] as const,
 };
 
-export function useTiposDocumento() {
+export function useDocumentTypes() {
   return useQuery({
-    queryKey: documentosKeys.all,
+    queryKey: documentsKeys.all,
     queryFn: () => apiGet<DocumentType[]>("/document-types"),
   });
 }

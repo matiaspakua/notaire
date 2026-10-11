@@ -206,7 +206,7 @@ describe("no screen loads every person (#1340)", () => {
   it("no page or component calls usePeople() (the size=1000 list)", () => {
     const root = join(__dirname, "..", "..");
     const offenders = [...files(join(root, "app")), ...files(join(root, "components"))].filter((f) =>
-      /\busePersonas\(\)/.test(readFileSync(f, "utf8")),
+      /\busePersons\(\)/.test(readFileSync(f, "utf8")),
     );
     expect(offenders).toEqual([]);
   });

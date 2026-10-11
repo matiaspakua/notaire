@@ -2,21 +2,21 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiGetBytes, apiPost, apiPut } from "@/lib/api-client";
 import type { RegistrationDraft } from "@/types";
 
-export const minutasInscripcionKeys = {
+export const registrationDraftKeys = {
   detail: (id: number) => ["minutas-inscripcion", id] as const,
 };
 
 /** CU82 - Consulta una minuta de inscripción por ID. */
-export function useMinutaInscripcion(id: number | null) {
+export function useRegistrationDraft(id: number | null) {
   return useQuery({
-    queryKey: id ? minutasInscripcionKeys.detail(id) : ["minutas-inscripcion", "none"],
+    queryKey: id ? registrationDraftKeys.detail(id) : ["minutas-inscripcion", "none"],
     queryFn: () => apiGet<RegistrationDraft>(`/registration-drafts/${id}`),
     enabled: id !== null,
   });
 }
 
 /** CU82 - Genera la minuta de inscripción para una escritura firmada. */
-export function useGenerarMinutaInscripcion() {
+export function useGenerateRegistrationDraft() {
   return useMutation({
     mutationFn: (idEscritura: number) =>
       apiPost<RegistrationDraft>("/registration-drafts", { idDeed: idEscritura }),
@@ -24,7 +24,7 @@ export function useGenerarMinutaInscripcion() {
 }
 
 /** CU82 - Registra la presentación de la minuta ante el Registro. */
-export function usePresentarMinutaInscripcion() {
+export function useSubmitRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({
@@ -40,12 +40,12 @@ export function usePresentarMinutaInscripcion() {
         dateSubmission: fechaPresentacion,
         registryEntryNumber: numeroEntradaRegistral,
       }),
-    onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: minutasInscripcionKeys.detail(id) }),
+    onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
 }
 
 /** CU82 - Registra una observación formulada por el Registro. */
-export function useObservarMinutaInscripcion() {
+export function useObserveRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({
@@ -61,12 +61,12 @@ export function useObservarMinutaInscripcion() {
         registryNotes: observacionesRegistro,
         dateCorrection: fechaSubsanacion,
       }),
-    onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: minutasInscripcionKeys.detail(id) }),
+    onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
 }
 
 /** CU82 - Registra la inscripción definitiva de la minuta. */
-export function useInscribirMinutaInscripcion() {
+export function useRegisterRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({
@@ -82,7 +82,7 @@ export function useInscribirMinutaInscripcion() {
         dateReception: fechaRecepcion,
         finalRegistrationNumber: numeroInscripcionDefinitivo,
       }),
-    onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: minutasInscripcionKeys.detail(id) }),
+    onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
 }
 

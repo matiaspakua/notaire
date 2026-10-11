@@ -10,7 +10,7 @@ export type ApiSchemas = components["schemas"];
 export type DeedManagement = ApiSchemas["DtoManagementSummary"];
 
 /** GET /budgets page/detail — BudgetResponse. */
-export type Presupuesto = ApiSchemas["BudgetResponse"];
+export type Budget = ApiSchemas["BudgetResponse"];
 
 /** GET /budgets/{id}/summary — DtoBudgetResumen. */
 export type BudgetSummary = ApiSchemas["DtoBudgetResumen"];

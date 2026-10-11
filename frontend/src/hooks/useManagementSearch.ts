@@ -6,7 +6,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import { searchPeople } from "@/hooks/usePersonSearch";
-import { gestionesKeys, useGestionesPage } from "@/hooks/useManagements";
+import { managementsKeys, useManagementsPage } from "@/hooks/useManagements";
 import type { DeedManagement } from "@/types";
 
 /** Newest managements listed before the user types. */
@@ -51,7 +51,7 @@ export async function searchManagements(raw: string): Promise<DeedManagement[]> 
 export function useManagementSearch(query: string, enabled: boolean) {
   const q = query.trim();
   return useQuery({
-    queryKey: ["gestiones", "picker-search", q],
+    queryKey: ["managements", "picker-search", q],
     queryFn: () => searchManagements(q),
     enabled: enabled && q.length > 0,
     placeholderData: keepPreviousData,
@@ -60,13 +60,13 @@ export function useManagementSearch(query: string, enabled: boolean) {
 
 /** The newest managements, for an empty picker query. */
 export function useRecentManagements(enabled: boolean) {
-  return useGestionesPage({ page: 0, size: MANAGEMENT_PICKER_RECENT_SIZE }, { enabled });
+  return useManagementsPage({ page: 0, size: MANAGEMENT_PICKER_RECENT_SIZE }, { enabled });
 }
 
 /** One management by id, so a form shows its current case whatever page it is on. */
 export function useManagement(id: number | undefined, enabled = true) {
   return useQuery({
-    queryKey: gestionesKeys.detail(id ?? -1),
+    queryKey: managementsKeys.detail(id ?? -1),
     queryFn: () => apiGet<DeedManagement>(`/managements/${id}`),
     enabled: enabled && id != null,
     staleTime: 60_000,

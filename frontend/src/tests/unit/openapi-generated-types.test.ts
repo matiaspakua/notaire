@@ -5,17 +5,17 @@ import { describe, expect, it } from "vitest";
 import type {
   SubmittedDocument,
   DeedManagement,
-  Presupuesto,
+  Budget,
   BudgetSummary,
 } from "@/types/api";
-import { gestionesKeys } from "@/hooks/useManagements";
-import { presupuestosKeys } from "@/hooks/useBudgets";
-import { documentosPresentadosKeys } from "@/hooks/useSubmittedDocuments";
+import { managementsKeys } from "@/hooks/useManagements";
+import { budgetsKeys } from "@/hooks/useBudgets";
+import { submittedDocumentsKeys } from "@/hooks/useSubmittedDocuments";
 
 describe("openapi generated types (#1260)", () => {
   it("exports schema aliases used by gestiones, presupuestos and documentos hooks", () => {
     const gestion: DeedManagement = { idManagement: 1, procedureCount: 2 };
-    const budget: Presupuesto = { idBudget: 9, number: 1 };
+    const budget: Budget = { idBudget: 9, number: 1 };
     const resumen: BudgetSummary = {
       idBudget: 9,
       numberBudget: 1,
@@ -30,12 +30,12 @@ describe("openapi generated types (#1260)", () => {
   });
 
   it("keeps hook query-key factories for dashboard / list screens", () => {
-    expect(gestionesKeys.page({ page: 0, size: 1 })).toEqual(["gestiones", "page", { page: 0, size: 1 }]);
-    expect(presupuestosKeys.page({ page: 0, size: 1 })).toEqual([
-      "presupuestos",
+    expect(managementsKeys.page({ page: 0, size: 1 })).toEqual(["managements", "page", { page: 0, size: 1 }]);
+    expect(budgetsKeys.page({ page: 0, size: 1 })).toEqual([
+      "budgets",
       "page",
       { page: 0, size: 1 },
     ]);
-    expect(documentosPresentadosKeys.all).toEqual(["documentosPresentados"]);
+    expect(submittedDocumentsKeys.all).toEqual(["submittedDocuments"]);
   });
 });

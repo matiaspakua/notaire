@@ -13,8 +13,8 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import WorkflowTracker from "@/components/motion/WorkflowTracker";
-import { useGestionByNumero } from "@/hooks/useManagements";
-import { useGestionWorkflowTrace, useLatestTracedGestion } from "@/hooks/useManagementWorkflow";
+import { useManagementByNumber } from "@/hooks/useManagements";
+import { useManagementWorkflowTrace, useLatestTracedManagement } from "@/hooks/useManagementWorkflow";
 import { theme } from "@/theme/tokens";
 import type { ManagementWorkflowTrace } from "@/types";
 
@@ -29,13 +29,13 @@ export function WorkflowHero() {
   const [refInput, setRefInput] = useState("");
   const [searchedNumero, setSearchedNumero] = useState<number | undefined>();
   const searching = searchedNumero != null;
-  const byNumero = useGestionByNumero(searchedNumero);
-  const searchedTrace = useGestionWorkflowTrace(searching ? byNumero.data?.idManagement : undefined);
-  const latest = useLatestTracedGestion(!searching);
+  const byNumber = useManagementByNumber(searchedNumero);
+  const searchedTrace = useManagementWorkflowTrace(searching ? byNumber.data?.idManagement : undefined);
+  const latest = useLatestTracedManagement(!searching);
 
-  const notFound = searching && byNumero.isError;
+  const notFound = searching && byNumber.isError;
   const trace = searching ? searchedTrace.data : latest.data?.trace;
-  const loading = searching ? searchedTrace.isLoading && byNumero.data != null : latest.isLoading;
+  const loading = searching ? searchedTrace.isLoading && byNumber.data != null : latest.isLoading;
   const noRecentWorkflow = !searching && latest.isSuccess && latest.data === null;
 
   function handleSubmit(e: React.FormEvent) {

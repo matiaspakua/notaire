@@ -36,7 +36,7 @@ describe("budget status vocabulary (#1346)", () => {
   });
 
   it("the budgets page builds its status options from the list, with no Spanish literals", () => {
-    const src = readFileSync(join(__dirname, "..", "..", "app", "dashboard", "presupuestos", "page.tsx"), "utf8");
+    const src = readFileSync(join(__dirname, "..", "..", "app", "dashboard", "budgets", "page.tsx"), "utf8");
     expect(src).not.toMatch(/>(Borrador|Aprobado|Rechazado|Facturado|Todos)</);
     expect(src).toMatch(/BUDGET_STATUSES\.map/);
   });

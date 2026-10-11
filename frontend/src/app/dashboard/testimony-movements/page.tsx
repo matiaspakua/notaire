@@ -11,7 +11,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
 import { useTestimonies } from "@/hooks/useTestimonies";
-import { useIngresarInscripcion, useRegistrarInscripcion, useRetirar, useReingresar } from "@/hooks/useTestimonyMovements";
+import { useEnterRegistration, useRegisterInscription, useWithdraw, useReenter } from "@/hooks/useTestimonyMovements";
 import { extractApiError, formatDate } from "@/lib/utils";
 import { ReenterDialog, type DatosReingreso } from "./ReenterDialog";
 import type { Testimony, TestimonyMovement } from "@/types";
@@ -41,10 +41,10 @@ export default function MovimientosTestimonioPage() {
   const { data: testimonios = [], isLoading } = useTestimonies();
   const verificados = testimonios.filter((te) => te.verified);
 
-  const ingresarMutation = useIngresarInscripcion();
-  const registrarMutation = useRegistrarInscripcion();
-  const retirarMutation = useRetirar();
-  const reingresarMutation = useReingresar();
+  const ingresarMutation = useEnterRegistration();
+  const registrarMutation = useRegisterInscription();
+  const retirarMutation = useWithdraw();
+  const reingresarMutation = useReenter();
 
   const [retirarId, setRetirarId] = useState<number | null>(null);
   const [numeroCarton, setNumeroCarton] = useState("");

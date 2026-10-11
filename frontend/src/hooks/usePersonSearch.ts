@@ -4,7 +4,7 @@
  */
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
-import { fetchPersona, personasKeys, usePersonasPage } from "@/hooks/usePeople";
+import { fetchPersona, peopleKeys, usePeoplePage } from "@/hooks/usePeople";
 import type { Person } from "@/types";
 
 export type PersonSearchParams = { firstName?: string; lastName?: string; identificationNumber?: string };
@@ -43,7 +43,7 @@ export async function searchPeople(raw: string): Promise<Person[]> {
 export function usePersonSearch(query: string, enabled: boolean) {
   const q = query.trim();
   return useQuery({
-    queryKey: ["personas", "picker-search", q],
+    queryKey: ["people", "picker-search", q],
     queryFn: () => searchPeople(q),
     enabled: enabled && q.length > 0,
     placeholderData: keepPreviousData,
@@ -51,14 +51,14 @@ export function usePersonSearch(query: string, enabled: boolean) {
 }
 
 /** The newest people, for an empty picker query. */
-export function useRecentPersonas(enabled: boolean) {
-  return usePersonasPage({ page: 0, size: PICKER_RECENT_SIZE }, { enabled });
+export function useRecentPeople(enabled: boolean) {
+  return usePeoplePage({ page: 0, size: PICKER_RECENT_SIZE }, { enabled });
 }
 
 /** One person by id, so an edit form shows its current person whatever page it is on. */
-export function usePersona(id: number | undefined, enabled = true) {
+export function usePerson(id: number | undefined, enabled = true) {
   return useQuery({
-    queryKey: personasKeys.detail(id ?? -1),
+    queryKey: peopleKeys.detail(id ?? -1),
     queryFn: () => fetchPersona(id!),
     enabled: enabled && id != null,
     staleTime: 60_000,

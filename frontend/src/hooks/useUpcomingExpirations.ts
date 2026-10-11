@@ -6,13 +6,13 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import type { UpcomingExpiration } from "@/types";
 
-export const proximosVencimientosKeys = {
-  byDias: (dias: number) => ["proximosVencimientos", dias] as const,
+export const upcomingExpirationKeys = {
+  byDays: (dias: number) => ["upcomingExpirations", dias] as const,
 };
 
-export function useProximosVencimientos(dias: number) {
+export function useUpcomingExpirations(dias: number) {
   return useQuery({
-    queryKey: proximosVencimientosKeys.byDias(dias),
+    queryKey: upcomingExpirationKeys.byDays(dias),
     queryFn: () => apiGet<UpcomingExpiration[]>(`/submitted-documents/upcoming-expirations?dias=${dias}`),
   });
 }

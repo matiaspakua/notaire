@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormContainer, FormSection, FormField, FormActions } from "@/theme/form-patterns";
-import { usePayments, useCreatePago, useUpdatePago, useDeletePago, usePagoEstado } from "@/hooks/usePayments";
-import { usePresupuestoResumen } from "@/hooks/useBudgets";
+import { usePayments, useCreatePayment, useUpdatePayment, useDeletePayment, usePaymentStatus } from "@/hooks/usePayments";
+import { useBudgetSummary } from "@/hooks/useBudgets";
 import { BudgetPicker } from "@/components/shared/BudgetPicker";
-import { useReciboPago } from "@/hooks/useReports";
+import { usePaymentReceipt } from "@/hooks/useReports";
 import { ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import { formatDate, formatCurrency } from "@/lib/utils";
@@ -32,10 +32,10 @@ export default function PagosPage() {
   const tc = useTranslations("common");
 
   const { data: pagos = [], isLoading } = usePayments();
-  const createMutation = useCreatePago();
-  const updateMutation = useUpdatePago();
-  const deleteMutation = useDeletePago();
-  const reciboPago = useReciboPago();
+  const createMutation = useCreatePayment();
+  const updateMutation = useUpdatePayment();
+  const deleteMutation = useDeletePayment();
+  const reciboPago = usePaymentReceipt();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -44,11 +44,11 @@ export default function PagosPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Fetch saldo for selected presupuesto (Issue #796)
-  const { data: resumen, isLoading: resumenLoading } = usePresupuestoResumen(
+  const { data: resumen, isLoading: resumenLoading } = useBudgetSummary(
     editing.idBudget || null
   );
   // Fetch estado de pago for selected presupuesto (Issue #821)
-  const { data: estadoPago } = usePagoEstado(editing.idBudget || null);
+  const { data: estadoPago } = usePaymentStatus(editing.idBudget || null);
 
   const estadoPagoLabel: Record<string, string> = {
     NoPayments: t("estadoSinPagos"),

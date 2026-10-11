@@ -23,76 +23,76 @@ import { useQuery } from "@tanstack/react-query";
 import { apiGet, ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import {
-  usePresupuestosPage,
-  usePresupuestoResumen,
-  useCreatePresupuesto,
-  useUpdatePresupuesto,
-  useDeletePresupuesto,
-  useCargarItemsDesdePlantilla,
-  useAgregarItemsDesdeCatalogo,
+  useBudgetsPage,
+  useBudgetSummary,
+  useCreateBudget,
+  useUpdateBudget,
+  useDeleteBudget,
+  useLoadItemsFromTemplate,
+  useAddItemsFromCatalog,
 } from "@/hooks/useBudgets";
 import { PersonPicker } from "@/components/shared/PersonPicker";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
-import { useItems, useItemsByPresupuesto } from "@/hooks/useItems";
+import { useItems, useItemsByBudget } from "@/hooks/useItems";
 import { useProcedureTypes } from "@/hooks/useProcedureTypes";
 import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import { BUDGET_STATUSES, DEFAULT_BUDGET_STATUS, budgetStatusLabelKey, normalizeBudgetStatus } from "@/lib/budget-status";
-import type { Presupuesto } from "@/types";
+import type { Budget } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue } from "@/lib/dates";
 
 const NO_TEMPLATE = "none";
 
-const EMPTY: Partial<Presupuesto> = { date: "", propertyAmount: undefined, status: DEFAULT_BUDGET_STATUS };
+const EMPTY: Partial<Budget> = { date: "", propertyAmount: undefined, status: DEFAULT_BUDGET_STATUS };
 
-export default function PresupuestosPage() {
+export default function BudgetsPage() {
   return (
     <Suspense>
-      <PresupuestosList />
+      <BudgetsList />
     </Suspense>
   );
 }
 
-function PresupuestosList() {
+function BudgetsList() {
   const t = useTranslations("presupuestos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const createMutation = useCreatePresupuesto();
-  const updateMutation = useUpdatePresupuesto();
-  const deleteMutation = useDeletePresupuesto();
+  const createMutation = useCreateBudget();
+  const updateMutation = useUpdateBudget();
+  const deleteMutation = useDeleteBudget();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [editing, setEditing] = useState<Partial<Presupuesto>>(EMPTY);
+  const [editing, setEditing] = useState<Partial<Budget>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [resumenId, setResumenId] = useState<number | null>(null);
   const { data: resumen, isLoading: isResumenLoading, error: resumenError } =
-    usePresupuestoResumen(resumenId);
+    useBudgetSummary(resumenId);
 
   const [tipoTramiteNuevoId, setTipoTramiteNuevoId] = useState(NO_TEMPLATE);
-  const [itemsPresupuestoId, setItemsPresupuestoId] = useState<number | null>(null);
+  const [itemsBudgetId, setItemsBudgetId] = useState<number | null>(null);
   const { data: presupuestoItems = [], isLoading: isItemsLoading } =
-    useItemsByPresupuesto(itemsPresupuestoId ?? undefined);
+    useItemsByBudget(itemsBudgetId ?? undefined);
   const { data: tiposTramite = [] } = useProcedureTypes();
   const { data: catalogoItems = [] } = useItems();
   const [selectedTipoTramiteId, setSelectedTipoTramiteId] = useState<string>("");
   const [selectedCatalogItemId, setSelectedCatalogItemId] = useState<string>("");
-  const cargarPlantillaMutation = useCargarItemsDesdePlantilla();
-  const agregarCatalogoMutation = useAgregarItemsDesdeCatalogo();
+  const cargarPlantillaMutation = useLoadItemsFromTemplate();
+  const agregarCatalogoMutation = useAddItemsFromCatalog();
 
-  function openItems(p: Presupuesto) {
-    setItemsPresupuestoId(p.idBudget!);
+  function openItems(p: Budget) {
+    setItemsBudgetId(p.idBudget!);
     setSelectedTipoTramiteId("");
     setSelectedCatalogItemId("");
   }
 
   async function handleCargarPlantilla() {
-    if (!itemsPresupuestoId || !selectedTipoTramiteId) return;
+    if (!itemsBudgetId || !selectedTipoTramiteId) return;
     try {
       await cargarPlantillaMutation.mutateAsync({
-        idPresupuesto: itemsPresupuestoId,
+        idBudget: itemsBudgetId,
         tipoTramiteId: Number(selectedTipoTramiteId),
       });
       toast.success(t("items.loadedFromPlantilla"));
@@ -108,10 +108,10 @@ function PresupuestosList() {
   }
 
   async function handleAgregarCatalogo() {
-    if (!itemsPresupuestoId || !selectedCatalogItemId) return;
+    if (!itemsBudgetId || !selectedCatalogItemId) return;
     try {
       await agregarCatalogoMutation.mutateAsync({
-        idPresupuesto: itemsPresupuestoId,
+        idBudget: itemsBudgetId,
         idItems: [Number(selectedCatalogItemId)],
       });
       toast.success(t("items.addedFromCatalogo"));
@@ -123,16 +123,16 @@ function PresupuestosList() {
 
   const itemsSubtotal = presupuestoItems.reduce((sum, item) => sum + (item.value ?? 0), 0);
 
-  const [searchPresupuesto, setSearchPresupuesto] = useState("");
+  const [searchBudget, setSearchBudget] = useState("");
   const [filterEstado, setFilterEstado] = useState<string>("TODOS");
-  const search = searchPresupuesto.trim();
+  const search = searchBudget.trim();
   const searchId = /^\d+$/.test(search) ? Number(search) : null;
   const byStatus = filterEstado !== "TODOS";
 
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000, so budgets after the 1000th were unreachable.
   const paging = useUrlPagination();
-  const { data: presupuestosPage, isLoading: isLoadingPage, isFetching } = usePresupuestosPage(
+  const { data: presupuestosPage, isLoading: isLoadingPage, isFetching } = useBudgetsPage(
     { page: paging.page, size: paging.size },
     { enabled: !byStatus && searchId === null },
   );
@@ -140,16 +140,16 @@ function PresupuestosList() {
 
   // CU60: the backend reads `status`; `estado` was ignored and returned every budget.
   const { data: byEstado = [], isLoading: isLoadingEstado } = useQuery({
-    queryKey: ["presupuestos", "buscar", filterEstado],
-    queryFn: () => apiGet<Presupuesto[]>(`/budgets/search?status=${encodeURIComponent(filterEstado)}`),
+    queryKey: ["budgets", "search", filterEstado],
+    queryFn: () => apiGet<Budget[]>(`/budgets/search?status=${encodeURIComponent(filterEstado)}`),
     enabled: byStatus,
   });
 
   // A budget number is looked up on the server, so it is found on any page.
   const { data: byId = null, isLoading: isLoadingId } = useQuery({
-    queryKey: ["presupuestos", searchId ?? 0, "search"],
+    queryKey: ["budgets", searchId ?? 0, "search"],
     queryFn: () =>
-      apiGet<Presupuesto>(`/budgets/${searchId}`).catch((e) => {
+      apiGet<Budget>(`/budgets/${searchId}`).catch((e) => {
         if (e instanceof ApiError && e.status === 404) return null;
         throw e;
       }),
@@ -161,7 +161,7 @@ function PresupuestosList() {
 
   // A name filters the rows shown (the page or the status list): the backend has
   // no budget search by client name.
-  const filteredPresupuestos =
+  const filteredBudgets =
     searchId !== null
       ? byId && (!byStatus || normalizeBudgetStatus(byId.status) === filterEstado)
         ? [byId]
@@ -179,7 +179,7 @@ function PresupuestosList() {
     setIsEditMode(false);
     setModalOpen(true);
   }
-  function openEdit(p: Presupuesto) {
+  function openEdit(p: Budget) {
     setEditing({ ...p, status: normalizeBudgetStatus(p.status) ?? p.status });
     setIsEditMode(true);
     setModalOpen(true);
@@ -220,7 +220,7 @@ function PresupuestosList() {
     }
   }
 
-  const columns: Column<Presupuesto>[] = [
+  const columns: Column<Budget>[] = [
     {
       key: "id",
       header: tc("id"),
@@ -311,8 +311,8 @@ function PresupuestosList() {
         <Input
           placeholder={t("searchPlaceholder")}
           aria-label={t("searchPlaceholder")}
-          value={searchPresupuesto}
-          onChange={(e) => setSearchPresupuesto(e.target.value)}
+          value={searchBudget}
+          onChange={(e) => setSearchBudget(e.target.value)}
           data-testid="input-search-presupuesto"
           className="w-full sm:w-52"
         />
@@ -330,7 +330,7 @@ function PresupuestosList() {
       </div>
 
       <DataTable
-        data={filteredPresupuestos}
+        data={filteredBudgets}
         columns={columns}
         isLoading={isLoading}
         isFetching={showPagination && isFetching}
@@ -507,7 +507,7 @@ function PresupuestosList() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={itemsPresupuestoId !== null} onOpenChange={(v) => !v && setItemsPresupuestoId(null)}>
+      <Dialog open={itemsBudgetId !== null} onOpenChange={(v) => !v && setItemsBudgetId(null)}>
         <DialogContent className="max-w-2xl" data-testid="dialog-items-presupuesto">
           <FormContainer>
             <FormHeader dialogTitle title={t("items.title")} />
@@ -605,7 +605,7 @@ function PresupuestosList() {
             </FormSection>
 
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setItemsPresupuestoId(null)}>
+              <Button variant="secondary" onClick={() => setItemsBudgetId(null)}>
                 {tc("cancel")}
               </Button>
             </FormActions>

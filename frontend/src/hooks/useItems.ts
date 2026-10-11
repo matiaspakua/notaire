@@ -5,7 +5,7 @@ import type { Item } from "@/types";
 export const itemsKeys = {
   all: ["items"] as const,
   detail: (id: number) => ["items", id] as const,
-  byPresupuesto: (id: number) => ["items", "presupuesto", id] as const,
+  byBudget: (id: number) => ["items", "budget", id] as const,
 };
 
 export function useItems() {
@@ -15,19 +15,19 @@ export function useItems() {
   });
 }
 
-export function useItemsByPresupuesto(idPresupuesto: number | undefined) {
+export function useItemsByBudget(idBudget: number | undefined) {
   return useQuery({
-    queryKey: itemsKeys.byPresupuesto(idPresupuesto ?? 0),
-    queryFn: () => apiGet<Item[]>(`/items/budget/${idPresupuesto}`),
-    enabled: !!idPresupuesto,
+    queryKey: itemsKeys.byBudget(idBudget ?? 0),
+    queryFn: () => apiGet<Item[]>(`/items/budget/${idBudget}`),
+    enabled: !!idBudget,
   });
 }
 
-export function useDescuentosYRecargos(idPresupuesto: number | undefined) {
+export function useDiscountsAndSurcharges(idBudget: number | undefined) {
   return useQuery({
-    queryKey: ["items", "presupuesto", idPresupuesto, "descuentos-recargos"],
-    queryFn: () => apiGet<Item[]>(`/items/budget/${idPresupuesto}/discounts-surcharges`),
-    enabled: !!idPresupuesto,
+    queryKey: ["items", "budget", idBudget, "discounts-surcharges"],
+    queryFn: () => apiGet<Item[]>(`/items/budget/${idBudget}/discounts-surcharges`),
+    enabled: !!idBudget,
   });
 }
 
@@ -39,7 +39,7 @@ export function useCreateItem() {
       qc.invalidateQueries({ queryKey: itemsKeys.all });
       if (variables.fkIdBudget?.idBudget) {
         qc.invalidateQueries({
-          queryKey: itemsKeys.byPresupuesto(variables.fkIdBudget.idBudget),
+          queryKey: itemsKeys.byBudget(variables.fkIdBudget.idBudget),
         });
       }
     },

@@ -8,23 +8,23 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { apiGet, apiGetPage } from "@/lib/api-client";
 import type { AuditRecord } from "@/types";
 
-export interface AuditoriaPageParams {
+export interface AuditPageParams {
   page: number;
   size: number;
   /** Exact module name as stored by the backend (e.g. "People"); omit for all. */
   module?: string;
 }
 
-export const auditoriaKeys = {
-  all: ["auditoria"] as const,
-  page: (params: AuditoriaPageParams) => ["auditoria", "page", params] as const,
-  byUsuario: (id: number) => ["auditoria", "usuario", id] as const,
+export const auditKeys = {
+  all: ["audit"] as const,
+  page: (params: AuditPageParams) => ["audit", "page", params] as const,
+  byUser: (id: number) => ["audit", "user", id] as const,
 };
 
 /** One server page of the audit log (#1340): the table grows fastest, so it is never loaded whole. */
-export function useAudit(params: AuditoriaPageParams) {
+export function useAudit(params: AuditPageParams) {
   return useQuery({
-    queryKey: auditoriaKeys.page(params),
+    queryKey: auditKeys.page(params),
     queryFn: () =>
       apiGetPage<AuditRecord>("/audit-log", {
         page: params.page,
@@ -38,7 +38,7 @@ export function useAudit(params: AuditoriaPageParams) {
 
 export function useAuditByUser(idUsuario: number | null) {
   return useQuery({
-    queryKey: auditoriaKeys.byUsuario(idUsuario ?? 0),
+    queryKey: auditKeys.byUser(idUsuario ?? 0),
     queryFn: () =>
       apiGet<AuditRecord[]>(`/audit-log/user/${idUsuario}`),
     enabled: idUsuario !== null && idUsuario > 0,

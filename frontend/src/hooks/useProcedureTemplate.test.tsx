@@ -11,7 +11,7 @@ vi.mock("@/lib/api-client", () => ({
 }));
 
 import { apiGet } from "@/lib/api-client";
-import { plantillaTramiteKeys, useProcedureTemplate } from "@/hooks/useProcedureTemplate";
+import { procedureTemplateKeys, useProcedureTemplate } from "@/hooks/useProcedureTemplate";
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -23,9 +23,9 @@ function createWrapper() {
   return Wrapper;
 }
 
-describe("plantillaTramiteKeys", () => {
+describe("procedureTemplateKeys", () => {
   it("byTramite key includes the trámite id", () => {
-    expect(plantillaTramiteKeys.byTramite(7)).toEqual(["plantillaTramite", "tramite", 7]);
+    expect(procedureTemplateKeys.byTramite(7)).toEqual(["plantillaTramite", "tramite", 7]);
   });
 });
 

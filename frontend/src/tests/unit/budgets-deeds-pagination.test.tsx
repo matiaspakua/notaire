@@ -25,9 +25,9 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
-import { usePresupuestosPage } from "@/hooks/useBudgets";
+import { useBudgetsPage } from "@/hooks/useBudgets";
 import { useDeedsPage } from "@/hooks/useDeeds";
-import PresupuestosPage from "@/app/dashboard/budgets/page";
+import BudgetsPage from "@/app/dashboard/budgets/page";
 import EscriturasPage from "@/app/dashboard/deeds/page";
 
 const BUDGET = { idBudget: 1192, date: "2026-10-01", status: "BORRADOR", propertyAmount: 1000 };
@@ -62,9 +62,9 @@ beforeEach(() => {
 });
 
 describe("paged hooks (#1340)", () => {
-  it("usePresupuestosPage requests one page, newest first", async () => {
+  it("useBudgetsPage requests one page, newest first", async () => {
     mockFetch.mockImplementation(route(/\/budgets\?/, { content: [BUDGET], number: 1, size: 50, totalElements: 1192, totalPages: 24 }));
-    const { result } = renderHook(() => usePresupuestosPage({ page: 1, size: 50 }), { wrapper });
+    const { result } = renderHook(() => useBudgetsPage({ page: 1, size: 50 }), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(urls()[0]).toMatch(/\/budgets\?page=1&size=50&sort=idBudget%2Cdesc$/);
     expect(result.current.data?.totalElements).toBe(1192);
@@ -78,12 +78,12 @@ describe("paged hooks (#1340)", () => {
   });
 });
 
-describe("PresupuestosPage (#1340)", () => {
+describe("BudgetsPage (#1340)", () => {
   beforeEach(() => { mockPathname = "/dashboard/budgets"; });
 
   it("renders the server page with the footer and never asks for size=1000", async () => {
     mockFetch.mockImplementation(route(/\/budgets\?page=/, { content: [BUDGET], number: 0, size: 20, totalElements: 1192, totalPages: 60 }));
-    render(<PresupuestosPage />, { wrapper });
+    render(<BudgetsPage />, { wrapper });
     expect(await screen.findByTestId("btn-items-presupuesto-1192")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
     expect(urls().some((u) => /\/budgets\?page=0&size=20&sort=idBudget%2Cdesc$/.test(u))).toBe(true);
@@ -92,7 +92,7 @@ describe("PresupuestosPage (#1340)", () => {
 
   it("finds a budget by number outside the loaded page", async () => {
     mockFetch.mockImplementation(route(/\/budgets\?page=/, { content: [], number: 0, size: 20, totalElements: 1192, totalPages: 60 }));
-    render(<PresupuestosPage />, { wrapper });
+    render(<BudgetsPage />, { wrapper });
     fireEvent.change(await screen.findByTestId("input-search-presupuesto"), { target: { value: "1192" } });
     expect(await screen.findByTestId("btn-items-presupuesto-1192")).toBeInTheDocument();
     expect(urls().some((u) => /\/budgets\/1192$/.test(u))).toBe(true);
@@ -101,7 +101,7 @@ describe("PresupuestosPage (#1340)", () => {
   it("clamps a page past the end", async () => {
     mockSearchParams = new URLSearchParams("page=99");
     mockFetch.mockImplementation(route(/\/budgets\?page=/, { content: [], number: 99, size: 20, totalElements: 1192, totalPages: 60 }));
-    render(<PresupuestosPage />, { wrapper });
+    render(<BudgetsPage />, { wrapper });
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith("/dashboard/budgets?page=59", { scroll: false }));
   });
 });

@@ -13,19 +13,19 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, FormHeader } from "@/theme/form-patterns";
 import {
-  useGestionesPage,
-  useGestionesByCliente,
-  useCreateCompleteGestion,
-  useUpdateGestion,
-  useDeleteGestion,
-  useSaldoPendiente,
-  useArchivarGestion,
-  useTransicionarGestion,
+  useManagementsPage,
+  useManagementsByClient,
+  useCreateCompleteManagement,
+  useUpdateManagement,
+  useDeleteManagement,
+  useOutstandingBalance,
+  useArchiveManagement,
+  useTransitionManagement,
   useHistorial,
-  useCarpetasByGestion,
-  usePonerCarpetaEnEspera,
+  useFoldersByManagement,
+  usePutFolderOnHold,
 } from "@/hooks/useManagements";
-import { useGestionWorkflowTrace } from "@/hooks/useManagementWorkflow";
+import { useManagementWorkflowTrace } from "@/hooks/useManagementWorkflow";
 import { PersonPicker } from "@/components/shared/PersonPicker";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { BudgetPicker } from "@/components/shared/BudgetPicker";
@@ -58,18 +58,18 @@ function GestionesList() {
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000, hiding older managements and rendering 1000 rows.
   const paging = useUrlPagination();
-  const { data: gestionesPage, isLoading, isFetching } = useGestionesPage({ page: paging.page, size: paging.size });
+  const { data: gestionesPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
   const gestiones = gestionesPage?.content ?? [];
   useClampPage(paging, gestionesPage?.totalPages);
   const { data: estados = [] } = useManagementStatuses();
   const { data: tiposTramite = [] } = useProcedureTypes();
   const { data: inmuebles = [] } = useProperties();
-  const createCompleteMutation = useCreateCompleteGestion();
-  const updateMutation = useUpdateGestion();
-  const deleteMutation = useDeleteGestion();
-  const archivarMutation = useArchivarGestion();
-  const transicionarMutation = useTransicionarGestion();
-  const ponerEnEsperaMutation = usePonerCarpetaEnEspera();
+  const createCompleteMutation = useCreateCompleteManagement();
+  const updateMutation = useUpdateManagement();
+  const deleteMutation = useDeleteManagement();
+  const archivarMutation = useArchiveManagement();
+  const transicionarMutation = useTransitionManagement();
+  const ponerEnEsperaMutation = usePutFolderOnHold();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -85,19 +85,19 @@ function GestionesList() {
   const [editing, setEditing] = useState<DeedManagement | null>(null);
   const [numero, setNumero] = useState("");
   const [clienteFilter, setClienteFilter] = useState("");
-  const [presupuestoId, setPresupuestoId] = useState("");
+  const [presupuestoId, setBudgetId] = useState("");
   const [escribanoId, setEscribanoId] = useState("");
   const [estadoId, setEstadoId] = useState("");
   const [tipoTramiteId, setTipoTramiteId] = useState("");
   const [inmuebleId, setInmuebleId] = useState("");
 
-  const { data: gestionesByCliente = [], isLoading: isLoadingByCliente } = useGestionesByCliente(
+  const { data: gestionesByCliente = [], isLoading: isLoadingByCliente } = useManagementsByClient(
     clienteFilter ? Number(clienteFilter) : 0
   );
-  const { data: saldoPendiente } = useSaldoPendiente(archiveId ?? undefined);
-  const { data: trace } = useGestionWorkflowTrace(transitionId ?? undefined);
+  const { data: outstandingBalance } = useOutstandingBalance(archiveId ?? undefined);
+  const { data: trace } = useManagementWorkflowTrace(transitionId ?? undefined);
   const { data: historial = [] } = useHistorial(bitacoraId ?? undefined);
-  const { data: carpetas = [] } = useCarpetasByGestion(carpetasGestionId ?? undefined);
+  const { data: carpetas = [] } = useFoldersByManagement(carpetasGestionId ?? undefined);
 
   const visibleGestiones = clienteFilter ? gestionesByCliente : gestiones;
   const isLoadingVisible = clienteFilter ? isLoadingByCliente : isLoading;
@@ -113,7 +113,7 @@ function GestionesList() {
   function openCreate() {
     setEditing(null);
     setNumero("");
-    setPresupuestoId("");
+    setBudgetId("");
     setEscribanoId("");
     setEstadoId("");
     setTipoTramiteId("");
@@ -417,7 +417,7 @@ function GestionesList() {
                     {/* Server search instead of the first 1000 budgets (#1340). */}
                     <BudgetPicker
                       value={presupuestoId ? Number(presupuestoId) : undefined}
-                      onChange={(budget) => setPresupuestoId(budget?.idBudget != null ? String(budget.idBudget) : "")}
+                      onChange={(budget) => setBudgetId(budget?.idBudget != null ? String(budget.idBudget) : "")}
                       aria-label={t("fields.presupuesto")}
                       data-testid="select-presupuesto-gestion"
                     />
@@ -483,9 +483,9 @@ function GestionesList() {
         description={
           archiveConflict
             ? archiveConflict
-            : saldoPendiente && (saldoPendiente.pendingBalance ?? 0) > 0
+            : outstandingBalance && (outstandingBalance.pendingBalance ?? 0) > 0
               ? t("archiveConfirmDescriptionWithDebt", {
-                  monto: formatCurrency(saldoPendiente.pendingBalance ?? 0),
+                  monto: formatCurrency(outstandingBalance.pendingBalance ?? 0),
                 })
               : t("archiveConfirmDescriptionNoDebt")
         }

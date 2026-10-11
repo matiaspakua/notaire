@@ -14,19 +14,19 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import {
-  usePersonasPage,
+  usePeoplePage,
   fetchPersona,
-  useCreatePersona,
-  useUpdatePersona,
-  useDeletePersona,
-  useSearchPersonas,
+  useCreatePerson,
+  useUpdatePerson,
+  useDeletePerson,
+  useSearchPeople,
 } from "@/hooks/usePeople";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { fullName } from "@/lib/utils";
 import { presentPersonaSaveError } from "@/lib/person-save-error";
 import type { Person } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
-import { defaultIdentificationTypeId, useTiposIdentificacion } from "@/hooks/useTiposIdentificacion";
+import { defaultIdentificationTypeId, useIdentificationTypes } from "@/hooks/useIdentificationTypes";
 
 const EMPTY: Partial<Person> = {
   firstName: "",
@@ -54,13 +54,13 @@ function PersonasList() {
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000 and silently hide everyone after the 1000th person.
   const paging = useUrlPagination();
-  const { data: peoplePage, isLoading, isFetching } = usePersonasPage({ page: paging.page, size: paging.size });
+  const { data: peoplePage, isLoading, isFetching } = usePeoplePage({ page: paging.page, size: paging.size });
   const personas = peoplePage?.content ?? [];
   useClampPage(paging, peoplePage?.totalPages);
-  const createMutation = useCreatePersona();
-  const updateMutation = useUpdatePersona();
-  const deleteMutation = useDeletePersona();
-  const { data: typesData } = useTiposIdentificacion();
+  const createMutation = useCreatePerson();
+  const updateMutation = useUpdatePerson();
+  const deleteMutation = useDeletePerson();
+  const { data: typesData } = useIdentificationTypes();
   const identificationTypes = Array.isArray(typesData) ? typesData : [];
   const typeNames = new Map(identificationTypes.map((ti) => [ti.idIdentificationType, ti.name]));
 
@@ -77,7 +77,7 @@ function PersonasList() {
 
   // A search goes to GET /people/search (debounced, #1357) and lists every
   // match; without one the table shows the current server page.
-  const search = useSearchPersonas({
+  const search = useSearchPeople({
     firstName: searchNombre,
     lastName: searchApellido,
     identificationNumber: searchDni,

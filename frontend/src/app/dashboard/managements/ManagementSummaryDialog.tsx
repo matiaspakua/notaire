@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormHeader, FormSection } from "@/theme/form-patterns";
-import { useGestionResumenCaso, useGestionResumenFinanciero } from "@/hooks/useManagementSummary";
+import { useManagementCaseSummary, useManagementFinancialSummary } from "@/hooks/useManagementSummary";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { CaseDocument } from "@/types";
 
@@ -26,8 +26,8 @@ interface ManagementSummaryDialogProps {
 /** #774 - Escrituras, testimonios (with registry state), copias and pagos of a gestión. */
 export function ManagementSummaryDialog({ gestionId, onClose }: ManagementSummaryDialogProps) {
   const t = useTranslations("gestiones.resumen");
-  const { data: caso, isLoading } = useGestionResumenCaso(gestionId ?? undefined);
-  const { data: financiero } = useGestionResumenFinanciero(gestionId ?? undefined);
+  const { data: caso, isLoading } = useManagementCaseSummary(gestionId ?? undefined);
+  const { data: financiero } = useManagementFinancialSummary(gestionId ?? undefined);
 
   const deeds = caso?.deeds ?? [];
   const documents = caso?.documents ?? [];

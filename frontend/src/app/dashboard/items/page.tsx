@@ -23,7 +23,7 @@ import {
   useCreateItem,
   useUpdateItem,
   useDeleteItem,
-  useDescuentosYRecargos,
+  useDiscountsAndSurcharges,
 } from "@/hooks/useItems";
 import { presentMutationError } from "@/lib/mutation-error";
 import { formatCurrency } from "@/lib/utils";
@@ -51,11 +51,11 @@ export default function ItemsPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Item>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [presupuestoId, setPresupuestoId] = useState("");
+  const [presupuestoId, setBudgetId] = useState("");
   const [reporteId, setReporteId] = useState("");
   const [reporteQuery, setReporteQuery] = useState<number | undefined>(undefined);
   const { data: descuentosRecargos = [], isFetching: reporteLoading } =
-    useDescuentosYRecargos(reporteQuery);
+    useDiscountsAndSurcharges(reporteQuery);
 
   function tipoLabel(tipo: TipoItem): string {
     return t(`types.${tipo}`);
@@ -63,14 +63,14 @@ export default function ItemsPage() {
 
   function openCreate() {
     setEditing(EMPTY);
-    setPresupuestoId("");
+    setBudgetId("");
     setIsEditMode(false);
     setModalOpen(true);
   }
 
   function openEdit(item: Item) {
     setEditing(item);
-    setPresupuestoId(item.fkIdBudget?.idBudget?.toString() ?? "");
+    setBudgetId(item.fkIdBudget?.idBudget?.toString() ?? "");
     setIsEditMode(true);
     setModalOpen(true);
   }
@@ -228,7 +228,7 @@ export default function ItemsPage() {
                 <Input
                   type="number"
                   value={presupuestoId}
-                  onChange={(e) => setPresupuestoId(e.target.value)}
+                  onChange={(e) => setBudgetId(e.target.value)}
                   placeholder={t("fields.presupuestoPlaceholder")}
                   data-testid="input-presupuesto-id"
                 />

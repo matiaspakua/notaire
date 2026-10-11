@@ -22,11 +22,11 @@ import { presentMutationError } from "@/lib/mutation-error";
 import { formatDate } from "@/lib/utils";
 import {
   useSubmittedDocuments,
-  useCreateDocumentoPresentado,
-  useUpdateDocumentoPresentado,
-  useDeleteDocumentoPresentado,
+  useCreateSubmittedDocument,
+  useUpdateSubmittedDocument,
+  useDeleteSubmittedDocument,
 } from "@/hooks/useSubmittedDocuments";
-import { useTiposDocumento } from "@/hooks/useDocuments";
+import { useDocumentTypes } from "@/hooks/useDocuments";
 import { ManagementPicker } from "@/components/shared/ManagementPicker";
 import {
   EMPTY_DOCUMENTO_FORM,
@@ -46,10 +46,10 @@ export default function DocumentosPage() {
   const tc = useTranslations("common");
 
   const { data: documentos = [], isLoading } = useSubmittedDocuments();
-  const { data: tiposDoc = [] } = useTiposDocumento();
-  const createMutation = useCreateDocumentoPresentado();
-  const updateMutation = useUpdateDocumentoPresentado();
-  const deleteMutation = useDeleteDocumentoPresentado();
+  const { data: tiposDoc = [] } = useDocumentTypes();
+  const createMutation = useCreateSubmittedDocument();
+  const updateMutation = useUpdateSubmittedDocument();
+  const deleteMutation = useDeleteSubmittedDocument();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);

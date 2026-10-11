@@ -12,7 +12,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
-import { useProcedureTypes, useCreateTipoTramite, useUpdateTipoTramite, useDeleteTipoTramite, useAssignWorkflowToTipoTramite } from "@/hooks/useProcedureTypes";
+import { useProcedureTypes, useCreateProcedureType, useUpdateProcedureType, useDeleteProcedureType, useAssignWorkflowToProcedureType } from "@/hooks/useProcedureTypes";
 import { useWorkflowDefinitions } from "@/hooks/useWorkflow";
 import { extractApiError } from "@/lib/utils";
 import type { ProcedureType } from "@/types";
@@ -26,10 +26,10 @@ export default function TramitesPage() {
   const tc = useTranslations("common");
 
   const { data = [], isLoading } = useProcedureTypes();
-  const createMutation = useCreateTipoTramite();
-  const updateMutation = useUpdateTipoTramite();
-  const deleteMutation = useDeleteTipoTramite();
-  const assignWorkflowMutation = useAssignWorkflowToTipoTramite();
+  const createMutation = useCreateProcedureType();
+  const updateMutation = useUpdateProcedureType();
+  const deleteMutation = useDeleteProcedureType();
+  const assignWorkflowMutation = useAssignWorkflowToProcedureType();
   const { data: workflows = [] } = useWorkflowDefinitions();
 
   const [modalOpen, setModalOpen] = useState(false);

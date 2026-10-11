@@ -17,17 +17,17 @@ vi.mock("@/lib/api-client", () => ({
 
 import { apiGet, apiPost, apiGetBytes } from "@/lib/api-client";
 import {
-  testimoniosKeys,
+  testimoniesKeys,
   useTestimonies,
-  useGenerarTestimonio,
-  useVerificarTestimonio,
-  descargarCopiaTestimonio,
+  useGenerateTestimony,
+  useVerifyTestimony,
+  downloadTestimonyCopy,
 } from "@/hooks/useTestimonies";
 import {
-  useIngresarInscripcion,
-  useRegistrarInscripcion,
-  useRetirar,
-  useReingresar,
+  useEnterRegistration,
+  useRegisterInscription,
+  useWithdraw,
+  useReenter,
 } from "@/hooks/useTestimonyMovements";
 
 function createWrapper() {
@@ -40,9 +40,9 @@ function createWrapper() {
   return Wrapper;
 }
 
-describe("testimoniosKeys (CU07, CU08)", () => {
+describe("testimoniesKeys (CU07, CU08)", () => {
   it("all key is ['testimonios']", () => {
-    expect(testimoniosKeys.all).toEqual(["testimonios"]);
+    expect(testimoniesKeys.all).toEqual(["testimonios"]);
   });
 });
 
@@ -60,13 +60,13 @@ describe("useTestimonies (CU07, CU08)", () => {
   });
 });
 
-describe("useGenerarTestimonio (CU07)", () => {
+describe("useGenerateTestimony (CU07)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("posts to /testimonies/{idEscritura}/generate", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idTestimonio: 2, numero: 20 });
 
-    const { result } = renderHook(() => useGenerarTestimonio(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useGenerateTestimony(), { wrapper: createWrapper() });
     result.current.mutate(5);
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -74,13 +74,13 @@ describe("useGenerarTestimonio (CU07)", () => {
   });
 });
 
-describe("useVerificarTestimonio (CU08)", () => {
+describe("useVerifyTestimony (CU08)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("posts flagged and notes (DtoTestimony's actual fields) to /testimonies/{id}/verify", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idTestimonio: 3, verificado: true });
 
-    const { result } = renderHook(() => useVerificarTestimonio(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useVerifyTestimony(), { wrapper: createWrapper() });
     result.current.mutate({ id: 3, observado: true, observaciones: "Falta firma" });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -91,7 +91,7 @@ describe("useVerificarTestimonio (CU08)", () => {
   });
 });
 
-describe("descargarCopiaTestimonio", () => {
+describe("downloadTestimonyCopy", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("downloads the PDF blob from /reports/testimonies/{id}/copies", async () => {
@@ -107,7 +107,7 @@ describe("descargarCopiaTestimonio", () => {
     URL.createObjectURL = vi.fn().mockReturnValue("blob:mock-url");
     URL.revokeObjectURL = vi.fn();
 
-    await descargarCopiaTestimonio(7);
+    await downloadTestimonyCopy(7);
 
     expect(apiGetBytes).toHaveBeenCalledWith("/reports/testimonies/7/copies");
     expect(clickSpy).toHaveBeenCalled();
@@ -120,40 +120,40 @@ describe("descargarCopiaTestimonio", () => {
 describe("Movimiento de testimonio hooks (CU11, CU12, CU44)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("useIngresarInscripcion posts to /testimony-movements/{id}/enter-registration", async () => {
+  it("useEnterRegistration posts to /testimony-movements/{id}/enter-registration", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idMovimientoTestimonio: 1 });
 
-    const { result } = renderHook(() => useIngresarInscripcion(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useEnterRegistration(), { wrapper: createWrapper() });
     result.current.mutate(5);
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenCalledWith("/testimony-movements/5/enter-registration", {});
   });
 
-  it("useRegistrarInscripcion posts to /testimony-movements/{id}/register-inscription", async () => {
+  it("useRegisterInscription posts to /testimony-movements/{id}/register-inscription", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idMovimientoTestimonio: 1, inscripta: true });
 
-    const { result } = renderHook(() => useRegistrarInscripcion(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useRegisterInscription(), { wrapper: createWrapper() });
     result.current.mutate(5);
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenCalledWith("/testimony-movements/5/register-inscription", {});
   });
 
-  it("useRetirar posts cardNumber to /testimony-movements/{id}/withdraw", async () => {
+  it("useWithdraw posts cardNumber to /testimony-movements/{id}/withdraw", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idMovimientoTestimonio: 1, cardNumber: 123 });
 
-    const { result } = renderHook(() => useRetirar(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useWithdraw(), { wrapper: createWrapper() });
     result.current.mutate({ idTestimonio: 5, numeroCarton: 123 });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiPost).toHaveBeenCalledWith("/testimony-movements/5/withdraw", { cardNumber: 123 });
   });
 
-  it("useReingresar posts cartón number, observation flag and notes to /testimony-movements/{id}/reenter", async () => {
+  it("useReenter posts cartón number, observation flag and notes to /testimony-movements/{id}/reenter", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idMovimientoTestimonio: 2 });
 
-    const { result } = renderHook(() => useReingresar(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useReenter(), { wrapper: createWrapper() });
     result.current.mutate({
       idTestimonio: 5,
       numeroCarton: 77,

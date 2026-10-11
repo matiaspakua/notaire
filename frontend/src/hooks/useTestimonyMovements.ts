@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiPost } from "@/lib/api-client";
-import { testimoniosKeys } from "@/hooks/useTestimonies";
+import { testimoniesKeys } from "@/hooks/useTestimonies";
 import type { TestimonyMovement } from "@/types";
 
 function useMovimientoAction(action: string) {
@@ -8,22 +8,22 @@ function useMovimientoAction(action: string) {
   return useMutation({
     mutationFn: (idTestimonio: number) =>
       apiPost<TestimonyMovement>(`/testimony-movements/${idTestimonio}/${action}`, {}),
-    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniosKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
   });
 }
 
 /** CU11 - Send a verified testimony to the property registry for inscription. */
-export function useIngresarInscripcion() {
+export function useEnterRegistration() {
   return useMovimientoAction("enter-registration");
 }
 
 /** Record the inscription of the testimony's open movement. */
-export function useRegistrarInscripcion() {
+export function useRegisterInscription() {
   return useMovimientoAction("register-inscription");
 }
 
 /** CU12 - Retira un testimonio inscripto, registrando el número de cartón. */
-export function useRetirar() {
+export function useWithdraw() {
   const qc = useQueryClient();
   return useMutation({
     // Backend route is /withdraw (English) and its body is DtoTestimonyMovement(cardNumber) —
@@ -32,11 +32,11 @@ export function useRetirar() {
       apiPost<TestimonyMovement>(`/testimony-movements/${idTestimonio}/withdraw`, {
         cardNumber: numeroCarton,
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniosKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
   });
 }
 
-export interface ReingresoTestimonio {
+export interface TestimonyReentry {
   idTestimonio: number;
   numeroCarton: number;
   observadoPorRegistro: boolean;
@@ -44,15 +44,15 @@ export interface ReingresoTestimonio {
 }
 
 /** CU44 - Reingresa un testimonio previamente retirado, sin alterar el movimiento anterior. */
-export function useReingresar() {
+export function useReenter() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ idTestimonio, numeroCarton, observadoPorRegistro, observaciones }: ReingresoTestimonio) =>
+    mutationFn: ({ idTestimonio, numeroCarton, observadoPorRegistro, observaciones }: TestimonyReentry) =>
       apiPost<TestimonyMovement>(`/testimony-movements/${idTestimonio}/reenter`, {
         cardNumber: numeroCarton,
         observedByRegistry: observadoPorRegistro,
         notes: observaciones,
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniosKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
   });
 }

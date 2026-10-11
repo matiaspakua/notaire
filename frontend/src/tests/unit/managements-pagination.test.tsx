@@ -24,7 +24,7 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
-import { useGestionesPage } from "@/hooks/useManagements";
+import { useManagementsPage } from "@/hooks/useManagements";
 import GestionesPage from "@/app/dashboard/managements/page";
 
 const ROW = { idManagement: 1312, number: 98765, statusActual: "Iniciada", procedureCount: 1 };
@@ -50,12 +50,12 @@ function wrapper({ children }: { children: ReactNode }) {
 }
 const gestionesUrls = () => mockFetch.mock.calls.map((c) => String(c[0])).filter((u) => /\/managements(\?|$)/.test(u));
 
-describe("useGestionesPage (#1340)", () => {
+describe("useManagementsPage (#1340)", () => {
   beforeEach(() => mockFetch.mockReset());
 
   it("requests one page, newest first, and keeps the total", async () => {
     mockFetch.mockImplementation(route({ content: [ROW], number: 2, size: 50, totalElements: 1312, totalPages: 27 }));
-    const { result } = renderHook(() => useGestionesPage({ page: 2, size: 50 }), { wrapper });
+    const { result } = renderHook(() => useManagementsPage({ page: 2, size: 50 }), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(gestionesUrls()[0]).toMatch(/\/managements\?page=2&size=50&sort=idManagement%2Cdesc$/);
     expect(result.current.data?.totalElements).toBe(1312);
