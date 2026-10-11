@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English document-link requirements** (#1490, CU75):
+  `document-procedure-link` and `required-docs-on-confirm` name a
+  procedure and a management. The Documents screen stays the screen
+  name in that prose. Spec ids stay. `ProcedureTemplate`,
+  `POST /api/v1/managements/complete-case`, and
+  `GET /api/v1/managements/{id}/case-summary` stay.
 - **Named-query prefix** (#1490, CU75): the createNamedQuery scenario
   forbids the retired prefix `Persona.`. The live prefix is `Person.*`.
   Spec id `jpa-namedquery-english-names` stays.
