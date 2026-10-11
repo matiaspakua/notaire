@@ -45,8 +45,8 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push and open the PR
-- [ ] 10.2 Record the PR number
+- [x] 10.1 Push and open the PR — #1507
+- [x] 10.2 Record the PR number
 
 ## 11. Deploy
 
