@@ -157,7 +157,7 @@ test.describe("CU29 - Enter a new concept", () => {
     await steps.whenUserClicksButton("nuevo concepto");
     await steps.thenModalIsVisible();
 
-    // When — form has Name, Descripción, and "Valor base ($)" (no "porcentaje" field)
+    // When — the form shows "Nombre", "Descripción", and "Valor base ($)" (no "porcentaje" field)
     await steps.fillAndSubmitForm({
       "nombre": "New Concept Test",
       "valor": "100",

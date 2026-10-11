@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English field-label comments** (#1490, CU75): the management-edit
+  note names the number field, and the concept-form note quotes
+  `Nombre`, `Descripción`, and `Valor base ($)`. The button `Editar`
+  stays, along with `porcentaje`, `nuevo concepto`, and `Nuevo concepto`.
+  The official title `CU53 - Modificar gestión` stays.
 - **English is-client comments** (#1490, CU75): the people-workflow
   notes name the is-client checkbox. The visible label `Es cliente`
   stays, along with the toast match `/creada/i` and the row match
