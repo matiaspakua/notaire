@@ -86,6 +86,8 @@ so the availability answer is not only in a pull request.
 `ManagementStatusLogService`.
 [CU10 still names `idDocumentoPresentado`] → The live path variable is
 `idSubmittedDocument`.
+[CU39 still names `tipoTramiteId`] → The live query parameter is
+`procedureTypeId`.
 [CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in
