@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English source comments** (#1490, CU75): the redirect comment in
+  `frontend/next.config.ts` says administration pages, and the status-map
+  comment names the catalog namespace `administracion.estadosGestion`. Stored
+  management statuses such as `en tramite` and `gestion con escritura firmada`
+  stay. Canonical routes `/dashboard/administration/items` and
+  `/dashboard/administration/audit` stay.
 - **English leftover requirement titles** (#1490, CU75):
   `frontend-i18n-page-coverage`, `icon-button-accessible-names`,
   `k6-load-test-restore`, `report-pdfs`, and `api-request-dto-binding` name
