@@ -18,7 +18,7 @@ A future Spanish string that legitimately contains one of the listed English wor
 
 ## Testing Strategy
 
-Vitest `es-catalog-spanish.test.ts` written first: 2 failures (27 leaked values) on main, green after the restore.
+Written first: Vitest `es-catalog-spanish.test.ts` (2 failures, 27 leaked values) and `useManagements.create-wire.test.tsx` (1 failure); the 50 failing Playwright tests from a local full run of main were the red tests for the spec fixes.
 
 ## Regression Strategy
 

@@ -28,6 +28,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |---------------------------------|------|--------|
 | Person toast | `es-catalog-spanish.test.ts` | passing |
 | Guard | `es-catalog-spanish.test.ts` | passing |
+| Create a management | `useManagements.create-wire.test.tsx`, `TS-0092` | passing |
 | Users table | `TS-0023` | passing |
 
 ## Permanent documentation updated
@@ -41,7 +42,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
 | 1 | Issue + Specification + Acceptance Criteria | yes | `bash workspace/sdlc/validate-sdlc-plan.sh fix-1502-es-catalog-spanish` |
-| 2 | Failing tests written, test cases designed | yes | 2 Vitest failures (27 leaked values) on main a7079cf1 |
+| 2 | Failing tests written, test cases designed | yes | 3 Vitest failures and 50 Playwright failures on main |
 | 3 | Suite green, coverage held, docs updated | yes | `bash frontend/verify.sh` (see PR) |
 | 4 | CI green, review approved, no conflicts | pending | — |
 | 5 | Deployed, smoke test passed, Issue closed | pending | — |

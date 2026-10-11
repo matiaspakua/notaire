@@ -11,7 +11,7 @@
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [x] 3.1 2 Vitest failures (27 leaked values) on main a7079cf1
+- [x] 3.1 3 Vitest failures and 50 Playwright failures on main
 
 ## 4. Implementación
 

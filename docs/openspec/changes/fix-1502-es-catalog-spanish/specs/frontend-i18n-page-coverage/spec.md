@@ -20,6 +20,11 @@ Every value in frontend/messages/es.json SHALL be Spanish copy; English entity n
 - **WHEN** a code rename rewrites an es.json value to an English entity name
 - **THEN** the unit suite fails naming the key
 
+#### Scenario: Create a management
+
+- **WHEN** a user creates a management from the dashboard
+- **THEN** the request carries typeProcedureId and the management is created
+
 #### Scenario: Users table
 
 - **WHEN** an admin opens the users page in Spanish
