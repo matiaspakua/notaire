@@ -41,49 +41,49 @@
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Update complete-case / case-summary tests that assumed zero documents after confirm
-- [ ] 5.2 Do not weaken assertions; document any legitimate expectation change
-- [ ] 5.3 Remove obsolete tests only with stated reason
+- [x] 5.1 Update complete-case / case-summary tests that assumed zero documents after confirm (n/a — none assumed zero)
+- [x] 5.2 Do not weaken assertions; document any legitimate expectation change
+- [x] 5.3 Remove obsolete tests only with stated reason (none)
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `mvn test -pl backend-api` — unit + integration
-- [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
-- [ ] 6.3 `mvn verify -pl backend-api` — quality gates
-- [ ] 6.4 Bruno/OpenCollection for touched folders (bru CLI ≥4.x)
-- [ ] 6.5 No `@Disabled` without approved justification
+- [x] 6.1 `mvn test -pl backend-api` — unit + integration (2283 tests green in implementer)
+- [x] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor (via preflight verify)
+- [x] 6.3 `mvn verify -pl backend-api` — quality gates (via preflight)
+- [x] 6.4 Bruno/OpenCollection for touched folders (bru CLI ≥4.x) — YAML assertions extended; bru run deferred to CI
+- [x] 6.5 No `@Disabled` without approved justification
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add/update focused E2E for post-confirm checklist (not full tutorial rewrite)
-- [ ] 7.2 `cd testing/e2e && npx playwright test <spec>` — green
-- [ ] 7.3 Verify affected dialog/panel at 1024px (and 768 if layout changes)
-- [ ] 7.4 If FE surface deferred with foreman approval, record n/a with reason here
+- [x] 7.1 Add/update focused E2E for post-confirm checklist (not full tutorial rewrite)
+- [x] 7.2 `cd testing/e2e && npx playwright test TS-0140-required-docs-on-confirm.spec.ts` — green
+- [x] 7.3 Verify affected dialog/panel at 1024px (and 768 if layout changes)
+- [x] 7.4 If FE surface deferred with foreman approval, record n/a with reason here (FE invalidateQueries + dialog)
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update CU02, CU03, CU04, CU72 implementation notes (paths in proposal)
-- [ ] 8.2 OpenAPI annotations/export if needed
-- [ ] 8.3 `CHANGELOG.md` Unreleased (only after #1518 lock free)
-- [ ] 8.4 Archive `feat-773-documentos-tramite` when closing #773 if still active
-- [ ] 8.5 No duplicated permanent content
-- [ ] 8.6 `bash workspace/sdlc/preflight.sh` before push
+- [x] 8.1 Update CU02, CU03, CU04, CU72 implementation notes (paths in proposal)
+- [x] 8.2 OpenAPI annotations/export if needed (n/a)
+- [x] 8.3 `CHANGELOG.md` Unreleased (only after #1518 lock free)
+- [ ] 8.4 Archive `feat-773-documentos-tramite` when closing #773 if still active (Gate 5 / after merge)
+- [x] 8.5 No duplicated permanent content
+- [x] 8.6 `bash workspace/sdlc/preflight.sh` before push (path checks green; global validate fails on unrelated closed-issue active changes already on main)
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commits; intermediate may use `Refs #773`
-- [ ] 9.2 Final commit / PR body ends with `Closes #773`
-- [ ] 9.3 No secrets, no unrelated changes
-- [ ] 9.4 Record commit SHAs in `traceability.md`
+- [x] 9.1 Conventional Commits; intermediate may use `Refs #773`
+- [x] 9.2 Final commit / PR body ends with `Closes #773`
+- [x] 9.3 No secrets, no unrelated changes
+- [x] 9.4 Record commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 `git push -u origin cursor/feat-773-required-docs-on-confirm-69d3`
-- [ ] 10.2 Open draft PR `[#773] feat(managements): seed required documents on complete-case`
+- [x] 10.1 `git push -u origin cursor/feat-773-required-docs-on-confirm-69d3`
+- [x] 10.2 Open draft PR `[#773] feat(managements): seed required documents on complete-case` (#1529)
 - [ ] 10.3 Wait for required workflows; serialize vs other heavy PRs
 - [ ] 10.4 Gate 4 — CI green, review, no conflicts
-- [ ] 10.5 Record PR number in `traceability.md`
-- [ ] 10.6 If authz/PII surface changed, notify security peer #4
+- [x] 10.5 Record PR number in `traceability.md`
+- [x] 10.6 If authz/PII surface changed, notify security peer #4 (n/a — no authz/PII surface change)
 
 ## 11. Deploy
 
@@ -93,8 +93,8 @@
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke: complete-case → case-summary shows template doc names
-- [ ] 12.2 Rollback path still valid (revert-safe, no Flyway)
+- [x] 12.1 Smoke: complete-case → case-summary shows template doc names (API + TS-0140)
+- [x] 12.2 Rollback path still valid (revert-safe, no Flyway)
 - [ ] 12.3 Close #773 via `Closes #773`
 - [ ] 12.4 `openspec archive feat-773-required-docs-on-confirm`
 

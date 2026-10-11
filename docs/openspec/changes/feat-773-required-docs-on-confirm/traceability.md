@@ -19,10 +19,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Related | #1240 MERGED (partial); parent #771 OPEN; #774 blocked until this closes | referenced |
 | Specification | `docs/openspec/changes/feat-773-required-docs-on-confirm/` | Gate 1 validated |
 | Branch | `cursor/feat-773-required-docs-on-confirm-69d3` | created from `ecb8cbfc` |
-| Tasks | `tasks.md` | apply in progress |
-| Commits | — | pending |
-| Pull Request | — | pending |
-| CI run | — | pending |
+| Tasks | `tasks.md` | apply mostly complete; Gate 4/5 pending |
+| Commits | `1f41a79b` … `5d4884ee` (+ follow-ups) | landed |
+| Pull Request | https://github.com/matiaspakua/notaire/pull/1529 | draft |
+| CI run | — | pending (subscribed) |
 | Merge commit | — | pending |
 | Release / tag | — | pending |
 | Smoke test | — | pending |
@@ -31,24 +31,24 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Complete-case seeds pending required documents from procedure template | unit + integration | pending |
-| Case summary lists pending required documents after confirm | unit + integration + Bruno | pending |
-| Idempotent seed skips existing document types for the procedure | unit + integration | pending |
-| PUT complete-case on existing procedure does not wipe registered docs | integration | pending |
-| Empty template yields no seeded documents | unit | pending |
-| E2E: checklist visible after complete-case | Playwright | pending |
+| Complete-case seeds pending required documents from procedure template | `ManagementCompleteCaseRequiredDocsIntegrationTest` + unit | covered |
+| Case summary lists pending required documents after confirm | IT + Bruno `05b-case-summary.yml` + TS-0140 | covered |
+| Idempotent seed skips existing document types for the procedure | `RequiredDocumentationOnConfirmServiceTest` + IT | covered |
+| PUT complete-case on existing procedure does not wipe registered docs | `ManagementCompleteCaseRequiredDocsIntegrationTest` | covered |
+| Empty template yields no seeded documents | `RequiredDocumentationOnConfirmServiceTest` | covered |
+| E2E: checklist visible after complete-case | `TS-0140-required-docs-on-confirm.spec.ts` | covered |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/100-business/102-use-cases/CU02 – Iniciar Gestión.md` | pending | — |
-| `docs/100-business/102-use-cases/CU03 – Lista documentos y certificados necesarios.md` | pending | — |
-| `docs/100-business/102-use-cases/CU04 – Registrar documentación cliente.md` | pending | — |
-| `docs/100-business/102-use-cases/CU72 – Gestión de Documentos Presentados.md` | pending | — |
-| `backend-api/openapi/openapi.yaml` | pending | — |
-| `docs/300-development/303-testing/E2E-TEST-MAPPING.md` | pending | — |
-| `CHANGELOG.md` | pending | — |
+| `docs/100-business/102-use-cases/CU02 – Iniciar Gestión.md` | yes | `5d4884ee` |
+| `docs/100-business/102-use-cases/CU03 – Lista documentos y certificados necesarios.md` | yes | `5d4884ee` |
+| `docs/100-business/102-use-cases/CU04 – Registrar documentación cliente.md` | yes | `5d4884ee` |
+| `docs/100-business/102-use-cases/CU72 – Gestión de Documentos Presentados.md` | yes | `5d4884ee` |
+| `backend-api/openapi/openapi.yaml` | n/a (no annotation change) | — |
+| `docs/300-development/303-testing/E2E-TEST-MAPPING.md` | yes | `5d4884ee` |
+| `CHANGELOG.md` | yes | `5d4884ee` |
 
 ## Gate log
 
