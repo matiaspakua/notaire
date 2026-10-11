@@ -1,13 +1,13 @@
 @startuml administracion-escribanos
 !theme plain
 left to right direction
-title Casos de Uso — Módulo Escribanos (Administración)
+title Use cases — Notaries module (Administration)
 
-actor Administrador
+actor Administrator
 actor Escribano
-actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor "Receptionist / Clerk (Gestor)" as ReceptionistClerk
 
-rectangle "Módulo Escribanos" {
+rectangle "Notaries module" {
   usecase "CU48 - Dar alta escribano" as CU48
   usecase "CU51 - Modificar escribano" as CU51
   usecase "CU22 - Registrar Suplencia" as CU22
@@ -16,12 +16,12 @@ rectangle "Módulo Escribanos" {
 
 usecase "CU61 - Buscar persona o cliente\n(from Clientes)" as CU61
 
-Administrador --> CU48 : requiere
-Administrador --> CU51 : requiere
-Escribano --> CU51 : requiere
-Escribano --> CU22 : solicita
-Escribano --> CU59 : solicita
-RecepcionistaGestor --> CU59 : solicita
+Administrator --> CU48 : needs
+Administrator --> CU51 : needs
+Escribano --> CU51 : needs
+Escribano --> CU22 : requests
+Escribano --> CU59 : requests
+ReceptionistClerk --> CU59 : requests
 
 CU48 ..> CU61 : <<include>>
 CU51 ..> CU61 : <<include>>

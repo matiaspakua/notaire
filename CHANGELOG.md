@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English use-case diagram structure** (#1490, CU75):
+  Module titles, actor names, and association labels in
+  `Casos de Uso/*.puml` are English. Official `CUxx` titles and the filenames
+  stay. The stored role `Escribano` stays. The folder name `Casos de Uso` stays.
 - **English CU sequence steps** (#1490, CU75):
   The 83 use-case sequence diagrams under `Secuencias/` describe each step in
   English. The participant is `Notaire system`. CU titles and filenames stay.

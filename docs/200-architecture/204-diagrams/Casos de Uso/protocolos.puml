@@ -1,12 +1,12 @@
 @startuml protocolos
 !theme plain
 left to right direction
-title Casos de Uso — Módulo Protocolos (incluye submódulo Folios)
+title Use cases — Protocols module (includes the Folios submodule)
 
 actor Escribano
-actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor "Receptionist / Clerk (Gestor)" as ReceptionistClerk
 
-rectangle "Módulo Protocolos" {
+rectangle "Protocols module" {
   usecase "CU24 - Generar libro de índices" as CU24
   usecase "CU25 - Generar Declaración Jurada del mes" as CU25
   usecase "CU50 - Generar Declaración Jurada de Rentas" as CU50
@@ -15,12 +15,12 @@ rectangle "Módulo Protocolos" {
 usecase "CU62 - Buscar Escritura\n(from Escrituras)" as CU62
 usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
 
-Escribano --> CU24 : requiere
-Escribano --> CU25 : requiere
-Escribano --> CU50 : requiere
-RecepcionistaGestor --> CU24 : requiere
-RecepcionistaGestor --> CU25 : requiere
-RecepcionistaGestor --> CU50 : requiere
+Escribano --> CU24 : needs
+Escribano --> CU25 : needs
+Escribano --> CU50 : needs
+ReceptionistClerk --> CU24 : needs
+ReceptionistClerk --> CU25 : needs
+ReceptionistClerk --> CU50 : needs
 
 CU24 ..> CU62 : <<include>>
 CU24 ..> CU19 : <<include>>
@@ -29,15 +29,15 @@ CU25 ..> CU19 : <<include>>
 CU50 ..> CU62 : <<include>>
 CU50 ..> CU19 : <<include>>
 
-rectangle "Submódulo Folios" {
+rectangle "Folios submodule" {
   usecase "CU28 - Ingresar nuevos folios" as CU28
   usecase "CU63 - Buscar Folios" as CU63
   usecase "CU33 - Modificar folio" as CU33
 }
 
-Escribano --> CU28 : requiere
-Escribano --> CU63 : requiere
-Escribano --> CU33 : requiere
+Escribano --> CU28 : needs
+Escribano --> CU63 : needs
+Escribano --> CU33 : needs
 
 CU33 ..> CU63 : <<include>>
 
