@@ -8,7 +8,7 @@
 | GitHub Issue | #676 |
 | Use Case | CU84 – Login |
 | Branch | `fix/676_jwt_logout_revocation` |
-| Gate 1 status | draft |
+| Gate 1 status | passed (logout slice merged #1317; archive hygiene) |
 
 ## Objetivo
 

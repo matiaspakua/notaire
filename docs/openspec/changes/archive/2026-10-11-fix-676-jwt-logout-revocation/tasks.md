@@ -39,17 +39,17 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push and open PR
-- [ ] 10.2 `bash workspace/sdlc/run_pipeline.sh` green
+- [x] 10.1 Push and open PR (#1317)
+- [x] 10.2 CI green; merged to `main` as `af5409c0` (2026-10-07)
 
 ## 11. Deploy
 
-- [ ] 11.1 Deploy
+- [x] 11.1 Shipped on `main` via #1317 (logout slice only)
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke test and close issue
+- [x] 12.1 Logout slice archived; living spec synced. #676 stays OPEN for password-change revocation and refresh/lifetime (Owner).
 
 ## Definition of Done
 
-- [ ] All gates passed
+- [x] Logout-slice gates passed; OpenSpec change archived with synced main spec
