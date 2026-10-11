@@ -14,7 +14,8 @@ class AdrRegistrationDraftEnglishTest(unittest.TestCase):
         text = ADR.read_text(encoding="utf-8")
         self.assertIn("registration-draft create", text)
         self.assertIn("`201`", text)
-        self.assertIn("/payments/params", text)
+        self.assertIn("`POST /pagos/params`", text)
+        self.assertNotIn("/payments/params", text)
         self.assertNotIn("minuta create", text)
 
     def test_spec_id_and_gloss_stay(self):

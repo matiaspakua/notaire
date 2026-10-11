@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired path citations in ADR-023** (#1490, CU75): the naming
+  decision cites `/folio`, `/inmueble`, `/copia`, `/buscar`, `/firmar`,
+  `/archivar`, and the removed `POST /pagos/params`. It prefers `/search`
+  over `/buscar`. The preferred example
+  `PUT /registration-drafts/{id}/submit` stays, along with
+  registration-draft create. The live create `POST /api/v1/payments` stays.
+  The requirement that `POST /api/v1/payments/params` shall not exist stays.
 - **English registration-draft consequence** (#1490, CU75): ADR-023 says
   clients must treat registration-draft create as `201`. The spec id
   `minuta-inscripcion` stays, along with the gloss `Minuta de Inscripción`
