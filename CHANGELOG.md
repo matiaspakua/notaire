@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English security asset names** (#1490, CU75):
+  The system threat model, cybersecurity program, monitoring note, and
+  trust-boundary diagram name `Person`, `Deed`, `Testimony`, `Budget`,
+  `Payment`, and `audit_records`. Owner prose says Security Officer and
+  Development Team. The policy owner `Oficial de Seguridad`, CU78, and the
+  actor list stay. The GitHub page's 2026 sample clicks `New procedure`.
+  The 2014 monolith sample still shows `escrituras`.
 - **English SDD presentation** (#1490, CU75):
   The slide deck and `docs/presentations/README.md` describe OpenSpec and
   Spec Kit in English. Archived paths, `Property.valuacionFiscal`, and the
