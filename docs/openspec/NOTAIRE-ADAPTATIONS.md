@@ -1,212 +1,212 @@
-# OpenSpec en Notaire — Guía de instalación, adaptaciones y quality gates
+# OpenSpec in Notaire — installation, adaptations, and quality gates
 
-> **Autoridad**: `CONSTITUTION.md` en la raíz del repositorio es el documento de
-> mayor autoridad. Este archivo es el registro canónico de cómo **OpenSpec** fue
-> instalado, adaptado y conectado a esa Constitución en el proyecto Notaire.
-> Consolida y reemplaza `docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md`
-> (archivado en `docs/000-archive/`), per Constitución P7/§8 (nunca duplicar
-> documentación permanente). Tracked under #783 (adopción original) y #870
-> (consolidación).
+> **Authority**: `CONSTITUTION.md` at the repository root is the highest
+> authority. This file is the canonical record of how **OpenSpec** was
+> installed, adapted, and connected to that Constitution in the Notaire
+> project. It consolidates and replaces
+> `docs/300-development/OPENSPEC-CONSTITUTION-BRIDGE.md` (archived under
+> `docs/000-archive/`), per Constitution P7/§8 (never duplicate permanent
+> documentation). Tracked under #783 (original adoption) and #870
+> (consolidation).
 >
-> Este documento cubre **únicamente OpenSpec**, el único framework spec-driven
-> del proyecto. SpecKit se evaluó en paralelo y se retiró en #1083; su historia
-> queda en `docs/000-archive/speckit/`.
+> This document covers **only OpenSpec**, the project's only spec-driven
+> framework. SpecKit was evaluated in parallel and retired in #1083; its
+> history stays in `docs/000-archive/speckit/`.
 
 ---
 
-## Tabla de contenidos
+## Table of contents
 
-1. [¿Qué es OpenSpec?](#1-qué-es-openspec)
-2. [Instalación](#2-instalación)
-3. [Configuración inicial del proyecto](#3-configuración-inicial-del-proyecto)
-4. [Adaptaciones Notaire — paso a paso](#4-adaptaciones-notaire--paso-a-paso)
-   - 4.1 [Fork del schema: `notaire-sdlc`](#41-fork-del-schema-notaire-sdlc)
-   - 4.2 [Contexto de la Constitución en `config.yaml`](#42-contexto-de-la-constitución-en-configyaml)
-   - 4.3 [El gap Explore → Issue → Propose](#43-el-gap-explore--issue--propose)
-   - 4.4 [Skill project-owned: `openspec-triage`](#44-skill-project-owned-openspec-triage)
-   - 4.5 [Gate mecánico: `validate-sdlc-plan.sh`](#45-gate-mecánico-validate-sdlc-plansh)
-   - 4.6 [Archivado: `openspec-archive-change`](#46-archivado-openspec-archive-change)
-5. [Flujo completo — secuencia canónica](#5-flujo-completo--secuencia-canónica)
-6. [Quality Gates por etapa SDLC](#6-quality-gates-por-etapa-sdlc)
-   - 6.1 [Gate 1 — Especificación (no empezar sin esto)](#61-gate-1--especificación-no-empezar-sin-esto)
-   - 6.2 [Gate 2 — TDD (tests primero, fallando)](#62-gate-2--tdd-tests-primero-fallando)
-   - 6.3 [Gate 3 — PR-ready (suite verde + docs)](#63-gate-3--pr-ready-suite-verde--docs)
-   - 6.4 [Gate 4 — Merge (CI verde + review)](#64-gate-4--merge-ci-verde--review)
-   - 6.5 [Gate 5 — Done (deploy + smoke test + cierre)](#65-gate-5--done-deploy--smoke-test--cierre)
-7. [Mapa de herramientas por etapa](#7-mapa-de-herramientas-por-etapa)
-8. [Skills y commands disponibles](#8-skills-y-commands-disponibles)
-
-- 8.1 [Composición de skills para el SDLC](#81-composición-de-skills-para-el-sdlc)
-- 8.2 [Contratos de artefactos y evidencias](#82-contratos-de-artefactos-y-evidencias)
-
-1. [Evidencia: changes que recorrieron el flujo completo](#9-evidencia-changes-que-recorrieron-el-flujo-completo)
-2. [Verificación del gate mecánico](#10-verificación-del-gate-mecánico)
-3. [Cómo adaptar OpenSpec en un proyecto nuevo](#11-cómo-adaptar-openspec-en-un-proyecto-nuevo)
-4. [Referencias](#12-referencias)
-5. [Orquestación del SDLC con OpenSpec — paralelización y optimización de costo](#13-orquestación-del-sdlc-con-openspec--paralelización-y-optimización-de-costo)
+1. [What is OpenSpec?](#1-what-is-openspec)
+2. [Installation](#2-installation)
+3. [Initial project configuration](#3-initial-project-configuration)
+4. [Notaire adaptations — step by step](#4-notaire-adaptations--step-by-step)
+   - 4.1 [Schema fork: `notaire-sdlc`](#41-schema-fork-notaire-sdlc)
+   - 4.2 [Constitution context in `config.yaml`](#42-constitution-context-in-configyaml)
+   - 4.3 [The Explore → Issue → Propose gap](#43-the-explore--issue--propose-gap)
+   - 4.4 [Project-owned skill: `openspec-triage`](#44-project-owned-skill-openspec-triage)
+   - 4.5 [Mechanical gate: `validate-sdlc-plan.sh`](#45-mechanical-gate-validate-sdlc-plansh)
+   - 4.6 [Archive: `openspec-archive-change`](#46-archive-openspec-archive-change)
+5. [Full flow — canonical sequence](#5-full-flow--canonical-sequence)
+6. [Quality gates by SDLC stage](#6-quality-gates-by-sdlc-stage)
+   - 6.1 [Gate 1 — Specification (do not start without this)](#61-gate-1--specification-do-not-start-without-this)
+   - 6.2 [Gate 2 — TDD (tests first, failing)](#62-gate-2--tdd-tests-first-failing)
+   - 6.3 [Gate 3 — PR-ready (green suite + docs)](#63-gate-3--pr-ready-green-suite--docs)
+   - 6.4 [Gate 4 — Merge (green CI + review)](#64-gate-4--merge-green-ci--review)
+   - 6.5 [Gate 5 — Done (deploy + smoke test + close)](#65-gate-5--done-deploy--smoke-test--close)
+7. [Tool map by stage](#7-tool-map-by-stage)
+8. [Available skills and commands](#8-available-skills-and-commands)
+   - 8.1 [Skill composition for the SDLC](#81-skill-composition-for-the-sdlc)
+   - 8.2 [Artifact and evidence contracts](#82-artifact-and-evidence-contracts)
+9. [Evidence: changes that completed the flow](#9-evidence-changes-that-completed-the-flow)
+10. [Mechanical gate verification](#10-mechanical-gate-verification)
+11. [How to adapt OpenSpec in a new project](#11-how-to-adapt-openspec-in-a-new-project)
+12. [References](#12-references)
+13. [SDLC orchestration with OpenSpec — parallelization and cost](#13-sdlc-orchestration-with-openspec--parallelization-and-cost)
 
 ---
 
-## 1. ¿Qué es OpenSpec?
+## 1. What is OpenSpec?
 
-OpenSpec es una CLI de especificación schema-driven. Su núcleo: un **schema**
-(`docs/openspec/schemas/<nombre>/schema.yaml`) declara un conjunto de **artifacts**
-(proposal, spec deltas, design, tasks, traceability), cada uno con un template
-Markdown y un bloque `instruction:` que la CLI inyecta en el contexto del agente
-vía `openspec instructions`. El comando `openspec new change <nombre>` crea el
-directorio `docs/openspec/changes/<nombre>/` con `.openspec.yaml`. Los cuatro
-templates Markdown (`proposal`, `design`, `tasks`, `traceability`) se copian con
-`bash workspace/sdlc/seed-openspec-change.sh <nombre> …` cuando aún no existen;
-`openspec archive <nombre>` mueve un change completado a `docs/openspec/changes/archive/` y
-sincroniza sus deltas aceptados en `docs/openspec/specs/<capability>/spec.md`.
+OpenSpec is a schema-driven specification CLI. Its core: a **schema**
+(`docs/openspec/schemas/<name>/schema.yaml`) declares a set of **artifacts**
+(proposal, spec deltas, design, tasks, traceability). Each artifact has a
+Markdown template and an `instruction:` block that the CLI injects into the
+agent context through `openspec instructions`. The command
+`openspec new change <name>` creates the directory
+`docs/openspec/changes/<name>/` with `.openspec.yaml`. The four Markdown
+templates (`proposal`, `design`, `tasks`, `traceability`) are copied with
+`bash workspace/sdlc/seed-openspec-change.sh <name> …` when they do not exist
+yet. `openspec archive <name>` moves a completed change to
+`docs/openspec/changes/archive/` and syncs its accepted deltas into
+`docs/openspec/specs/<capability>/spec.md`.
 
-Lo que OpenSpec no hace por defecto: verificar que el Issue existe en GitHub,
-exigir diseño técnico en cada cambio, ni conectar con los gates de CI de un
-proyecto específico. Esas capas las agrega Notaire sobre OpenSpec.
+What OpenSpec does not do by default: verify that the Issue exists on GitHub,
+require a technical design on every change, or connect to a project's CI
+gates. Notaire adds those layers on top of OpenSpec.
 
-### Comandos CLI de referencia rápida
+### Quick CLI reference
 
 ```bash
-# Instalar / actualizar
+# Install / update
 npm install -g openspec
 
-# Ciclo de vida de un change
-openspec new change "<nombre-en-kebab-case>"      # crea .openspec.yaml del change
-bash workspace/sdlc/seed-openspec-change.sh "<nombre>" \ # copia templates + valores conocidos
+# Change lifecycle
+openspec new change "<kebab-case-name>"           # creates the change .openspec.yaml
+bash workspace/sdlc/seed-openspec-change.sh "<name>" \ # copies templates + known values
   --issue N --use-case "CU…" --branch "type/N_desc"
-openspec status --change "<nombre>"               # orden de construcción de artifacts
-openspec instructions <artifact> --change "<nombre>"  # instrucciones para el agente
-openspec validate "<nombre>" --strict             # chequeos estructurales
-bash workspace/sdlc/validate-sdlc-plan.sh "<nombre>"     # Gate 1 (incluye leftover <!-- -->)
-openspec list                                     # changes activos
-openspec archive "<nombre>"                       # archivar un change completado
+openspec status --change "<name>"                 # artifact build order
+openspec instructions <artifact> --change "<name>"  # instructions for the agent
+openspec validate "<name>" --strict               # structural checks
+bash workspace/sdlc/validate-sdlc-plan.sh "<name>"     # Gate 1 (includes leftover <!-- -->)
+openspec list                                     # active changes
+openspec archive "<name>"                         # archive a completed change
 
-# Checks de integridad
-openspec doctor                                   # salud de la instalación
-openspec context --json                           # root resuelto por la CLI
-openspec schemas --json                           # schemas disponibles
+# Integrity checks
+openspec doctor                                   # installation health
+openspec context --json                           # root resolved by the CLI
+openspec schemas --json                           # available schemas
 ```
 
 ---
 
-## 2. Instalación
+## 2. Installation
 
-### Prerrequisitos
+### Prerequisites
 
-| Herramienta | Versión mínima | Uso |
-|-------------|----------------|-----|
-| Node.js | 18+ | Runtime de la CLI |
-| npm | 9+ | Instalación de la CLI |
-| `gh` CLI | 2.x | Verificación live de Issues (Gate 1) |
-| Git | cualquiera | Branches, commits, pre-push hook |
-| Bash | 3.2+ | Scripts de validación |
-| Java 21 + Maven 3.9 | (proyecto) | Backend quality gates |
-| Node.js 22 + npm 10 | (proyecto) | Frontend quality gates |
+| Tool | Minimum version | Use |
+|------|-----------------|-----|
+| Node.js | 18+ | CLI runtime |
+| npm | 9+ | CLI installation |
+| `gh` CLI | 2.x | Live Issue verification (Gate 1) |
+| Git | any | Branches, commits, pre-push hook |
+| Bash | 3.2+ | Validation scripts |
+| Java 26 + Maven 3.9 | (project) | Backend quality gates |
+| Node.js 22 + npm 10 | (project) | Frontend quality gates |
 
-### Pasos de instalación
+### Installation steps
 
 ```bash
-# 1. Instalar la CLI globalmente
+# 1. Install the CLI globally
 npm install -g openspec
 
-# 2. Verificar la instalación
+# 2. Verify the installation
 openspec --version
 openspec doctor
 
-# 3. Autenticar gh CLI (necesario para el gate de Issue live)
+# 3. Authenticate the gh CLI (required for the live Issue gate)
 gh auth login
 
-# 4. Instalar git hooks del proyecto (pre-push ejecuta preflight.sh)
+# 4. Install the project git hooks (pre-push runs preflight.sh)
 bash workspace/sdlc/install-git-hooks.sh
 
-# 5. Verificar que el schema del proyecto está reconocido
+# 5. Verify that the project schema is recognized
 openspec schemas --json
-# debe incluir "notaire-sdlc"
+# must include "notaire-sdlc"
 ```
 
-### Verificar que todo está conectado
+### Verify that everything is connected
 
 ```bash
-# Debe listar los changes activos bajo docs/openspec/changes/
+# Must list the active changes under docs/openspec/changes/
 openspec list
 
-# Debe validar todos los changes activos
+# Must validate every active change
 bash workspace/sdlc/validate-sdlc-plan.sh
 
-# Debe ejecutar todos los gates locales
+# Must list every local gate
 bash workspace/sdlc/preflight.sh --list
 ```
 
 ---
 
-## 3. Configuración inicial del proyecto
+## 3. Initial project configuration
 
-La configuración de OpenSpec en Notaire vive en **dos archivos project-owned**:
+OpenSpec configuration in Notaire lives in **two project-owned files**:
 
 ```text
 docs/openspec/
-├── config.yaml                        # contexto de la Constitución + reglas + operations
+├── config.yaml                        # Constitution context + rules + operations
 └── schemas/
     └── notaire-sdlc/
-        ├── schema.yaml                # fork del schema spec-driven con adaptaciones
+        ├── schema.yaml                # spec-driven schema fork with adaptations
         └── templates/
-            ├── proposal.md            # template con todas las secciones obligatorias
+            ├── proposal.md            # template with every mandatory section
             ├── traceability.md        # ledger Issue → ... → Release
-            ├── spec.md                # delta spec con Scenarios como criterios
-            ├── design.md              # diseño técnico + estrategias testing/deploy
-            └── tasks.md               # 12 grupos SDLC + Definition of Done
+            ├── spec.md                # delta spec with Scenarios as criteria
+            ├── design.md              # technical design + testing/deploy strategies
+            └── tasks.md               # 12 SDLC groups + Definition of Done
 ```
 
-Ninguno de estos archivos es generado por `openspec update` — son project-owned
-y sobreviven actualizaciones de la CLI. Los skills vendor (`openspec-propose`,
+None of these files is generated by `openspec update`. They are project-owned
+and survive CLI upgrades. The vendor skills (`openspec-propose`,
 `openspec-apply-change`, `openspec-archive-change`, `openspec-explore`,
-`openspec-sync-specs`, `openspec-update-change`) en `.claude/skills/` sí son
-reemplazados por `openspec update`; por eso ninguna adaptación del proyecto vive
-dentro de ellos.
+`openspec-sync-specs`, `openspec-update-change`) in `.claude/skills/` are
+replaced by `openspec update`. That is why no project adaptation lives inside
+them.
 
 ---
 
-## 4. Adaptaciones Notaire — paso a paso
+## 4. Notaire adaptations — step by step
 
-### 4.1 Fork del schema: `notaire-sdlc`
+### 4.1 Schema fork: `notaire-sdlc`
 
-**Archivo**: `docs/openspec/schemas/notaire-sdlc/schema.yaml`
+**File**: `docs/openspec/schemas/notaire-sdlc/schema.yaml`
 
-El schema upstream es `spec-driven` (empaquetado con openspec 1.8.0). Notaire lo
-forkea en un schema propio para poder agregar la Constitución sin tocar el
-código vendor. El fork mantiene intactas todas las primitivas de parsing de
-OpenSpec:
+The upstream schema is `spec-driven` (packaged with openspec 1.8.0). Notaire
+forks it into its own schema so the Constitution can be added without touching
+vendor code. The fork keeps every OpenSpec parsing primitive intact:
 
 - `## ADDED/MODIFIED/REMOVED/RENAMED Requirements`
-- `### Requirement:` (tres hashtags)
-- `#### Scenario:` con exactamente cuatro hashtags
-- `- [ ]` checkboxes de tareas
+- `### Requirement:` (three hashes)
+- `#### Scenario:` with exactly four hashes
+- `- [ ]` task checkboxes
 
-Lo que el fork **agrega** sobre el upstream:
+What the fork **adds** on top of upstream:
 
-| Adición | Por qué |
-|---------|---------|
-| `CONSTITUTION.md` como contexto obligatorio en cada artifact | Todo agente recibe la Constitución via `openspec instructions`, sin importar la herramienta |
-| Secciones mandatorias en `proposal.md` | Impact Analysis, Documentation Impact, Reglas de negocio — exigidas por §5 paso 3-4 |
-| Artifact `traceability` | Implementa P4 (trazabilidad Issue→Release), no existe en el schema upstream |
-| `design.md` obligatorio (no condicional) | La Constitución §6/§7 exige estrategias de testing/regresión/Playwright/deploy/rollback en cada cambio |
-| Schema `notaire-sdlc` en `config.yaml` | Hace que `openspec new change` use este schema por defecto |
+| Addition | Why |
+|----------|-----|
+| `CONSTITUTION.md` as mandatory context on every artifact | Every agent receives the Constitution through `openspec instructions`, regardless of the tool |
+| Mandatory sections in `proposal.md` | Impact Analysis, Documentation Impact, `Reglas de negocio` — required by §5 steps 3-4 |
+| `traceability` artifact | Implements P4 (Issue→Release traceability). It does not exist in the upstream schema |
+| `design.md` mandatory (not conditional) | Constitution §6/§7 requires testing, regression, Playwright, deploy, and rollback strategies on every change |
+| Schema `notaire-sdlc` in `config.yaml` | Makes `openspec new change` use this schema by default |
 
-Para actualizar openspec sin perder el fork:
+To upgrade openspec without losing the fork:
 
 ```bash
-openspec update          # actualiza skills vendor
-# Luego revisar manualmente:
+openspec update          # updates vendor skills
+# Then review manually:
 diff <(openspec schema which spec-driven --json) docs/openspec/schemas/notaire-sdlc/schema.yaml
 ```
 
-### 4.2 Contexto de la Constitución en `config.yaml`
+### 4.2 Constitution context in `config.yaml`
 
-**Archivo**: `docs/openspec/config.yaml`
+**File**: `docs/openspec/config.yaml`
 
-Este es el mecanismo por el cual **cualquier agente** — Claude Code, OpenCode,
-GitHub Copilot, Codex, Cursor — recibe la Constitución y las reglas del proyecto.
-La CLI inyecta `context:` en cada llamada a `openspec instructions <artifact>`.
+This is the mechanism by which **any agent** — Claude Code, OpenCode, GitHub
+Copilot, Codex, Cursor — receives the Constitution and the project rules. The
+CLI injects `context:` into every call to `openspec instructions <artifact>`.
 
 ```yaml
 schema: notaire-sdlc
@@ -215,150 +215,153 @@ githubCopilot:
 
 context: |
   This repository is governed by CONSTITUTION.md at its root...
-  [puntero a la Constitución + no-negociables, nunca una copia]
+  [pointer to the Constitution + non-negotiables, never a copy]
 
 rules:
-  proposal:    [...]   # secciones obligatorias, Issue real, nunca fabricado
-  traceability:[...]   # no pre-llenar, solo evidencia real
-  specs:       [...]   # Scenarios con 4 hashtags, happy+edge+error paths
-  design:      [...]   # todas las secciones, Testing Strategy completa
-  tasks:       [...]   # 12 grupos obligatorios + DoD
+  proposal:    [...]   # mandatory sections, a real Issue, never fabricated
+  traceability:[...]   # do not pre-fill, only real evidence
+  specs:       [...]   # Scenarios with 4 hashes, happy+edge+error paths
+  design:      [...]   # every section, complete Testing Strategy
+  tasks:       [...]   # 12 mandatory groups + DoD
 
 operations:
   apply:
-    guidance:  [...]   # verificar Gate 1 primero, TDD, preflight.sh antes de push
+    guidance:  [...]   # verify Gate 1 first, TDD, preflight.sh before push
   archive:
-    guidance:  [...]   # solo después de Gate 5: deploy + smoke + Issue cerrado
+    guidance:  [...]   # only after Gate 5: deploy + smoke + Issue closed
 ```
 
-El `context:` es un **puntero** a `CONSTITUTION.md` más sus no-negociables, no
-una copia. La documentación permanente tiene un único dueño (P7/§8). Los `rules:`
-por artifact y el `operations:` por comando exigen explícitamente el Issue real,
-los 12 grupos de tareas, y que traceability.md nunca se pre-llene.
+`context:` is a **pointer** to `CONSTITUTION.md` plus its non-negotiables, not
+a copy. Permanent documentation has a single owner (P7/§8). The per-artifact
+`rules:` and the per-command `operations:` explicitly require a real Issue,
+the 12 task groups, and that `traceability.md` is never pre-filled.
 
-### 4.3 El gap Explore → Issue → Propose
+### 4.3 The Explore → Issue → Propose gap
 
-**El problema que había**: `opsx:explore` produce un informe de hallazgos/gaps
-pero nunca scaffoldea un change (es una postura de pensamiento). `opsx:propose`
-scaffoldea un change y espera un Issue number en el header de `proposal.md`. El
-único check que existía validaba el **formato** del Issue reference (`#[0-9]+`),
-no que el Issue fuera **real**. Nada impedía que un agente escribiera `#999999`
-en un proposal y lo pasara a Gate 1.
+**The problem that existed**: `opsx:explore` produces a findings/gaps report
+but never scaffolds a change (it is a thinking posture). `opsx:propose`
+scaffolds a change and expects an Issue number in the `proposal.md` header.
+The only check that existed validated the **format** of the Issue reference
+(`#[0-9]+`), not that the Issue was **real**. Nothing stopped an agent from
+writing `#999999` in a proposal and passing Gate 1.
 
-**La solución**: tres piezas que trabajan juntas:
+**The solution**: three pieces that work together:
 
 ```text
 opsx:explore          openspec-triage          opsx:propose
-(thinking, produce  ──▶  (informe → Issues   ──▶  (scaffoldea change,
- informe; nunca           reales, estimados,        proposal.md cita
- scaffoldea change)       priorizados, con CU)      Issue REAL)
+(thinking, produces ──▶  (report → real      ──▶  (scaffolds the change,
+ a report; never          Issues, estimated,        proposal.md cites a
+ scaffolds a change)      prioritized, with CU)     REAL Issue)
                                    │
                                    ▼
                      workspace/sdlc/validate-sdlc-plan.sh
-                     resuelve el Issue live via
-                     `gh issue view` — un Issue
-                     fabricado o cerrado falla Gate 1
+                     resolves the Issue live via
+                     `gh issue view` — a fabricated
+                     or closed Issue fails Gate 1
 ```
 
-Todo hallazgo en `docs/openspec/explore*.md` debe tener un Issue de GitHub real y
-abierto antes de que `/opsx:propose` lo convierta en un change. Esta regla está
-en `docs/openspec/config.yaml`'s `context:` y es reforzada mecánicamente por el
-script (ver §4.5).
+Every finding in `docs/openspec/explore*.md` must have a real, open GitHub
+Issue before `/opsx:propose` turns it into a change. This rule is in
+`docs/openspec/config.yaml`'s `context:` and is enforced mechanically by the
+script (see §4.5).
 
-### 4.4 Skill project-owned: `openspec-triage`
+### 4.4 Project-owned skill: `openspec-triage`
 
-**Archivo**: `.claude/skills/openspec-triage/SKILL.md`
+**File**: `.claude/skills/openspec-triage/SKILL.md`
 
-- `metadata.author: notaire-project` — no es tocado por `openspec update`
-- El eslabón faltante entre `opsx:explore` y `opsx:propose`
-- Toma un informe de exploración y produce una lista de candidatos estimados,
-  priorizados y con CU-XX asociado
-- Solo crea Issues de GitHub con confirmación explícita del usuario (`gh issue create`)
-- Su única salida es un número de Issue real — lo único que puede pasarse a `opsx:propose`
+- `metadata.author: notaire-project` — `openspec update` does not touch it
+- The missing link between `opsx:explore` and `opsx:propose`
+- Takes an exploration report and produces a list of estimated, prioritized
+  candidates with an associated CU-XX
+- Creates GitHub Issues only with explicit user confirmation (`gh issue create`)
+- Its only output is a real Issue number — the only thing that may be passed
+  to `opsx:propose`
 
-**Flujo interno del skill**:
+**Internal skill flow**:
 
-1. Leer el informe fuente completo
-2. Extraer un candidato por feature/gap: título, CU-XX, descripción, acceptance
-   criteria, notas técnicas
-3. Estimar tamaño (S/M/L) y prioridad (`priority:high/medium/low`)
-4. Escribir la lista candidata en `docs/openspec/<source>_issues.md`
-5. Mostrar al usuario y **detenerse** — nunca crear Issues sin confirmación
-6. Con confirmación, `gh issue create` uno a uno, registrar el número resultante
-7. Reportar cuáles tienen Issue real y están listos para `opsx:propose`
+1. Read the full source report
+2. Extract one candidate per feature/gap: title, CU-XX, description,
+   acceptance criteria, technical notes
+3. Estimate size (S/M/L) and priority (`priority:high/medium/low`)
+4. Write the candidate list to `docs/openspec/<source>_issues.md`
+5. Show it to the user and **stop** — never create Issues without confirmation
+6. With confirmation, `gh issue create` one by one and record the resulting number
+7. Report which candidates have a real Issue and are ready for `opsx:propose`
 
-**Guardrails**: nunca inventar un número de Issue; nunca scaffoldear un change
-(`openspec new change`) desde este skill; nunca saltear el check de Use Case.
+**Guardrails**: never invent an Issue number; never scaffold a change
+(`openspec new change`) from this skill; never skip the Use Case (Caso de Uso)
+check.
 
-### 4.5 Gate mecánico: `validate-sdlc-plan.sh`
+### 4.5 Mechanical gate: `validate-sdlc-plan.sh`
 
-**Archivo**: `workspace/sdlc/validate-sdlc-plan.sh`
+**File**: `workspace/sdlc/validate-sdlc-plan.sh`
 
-Este es el gate mecánico que convierte las reglas advisory del schema en un check
-que falla con exit code ≠ 0. Es bash puro — funciona para cualquier agente, CI,
-o humano, sin hooks tool-specific.
+This is the mechanical gate that turns the schema's advisory rules into a
+check that fails with an exit code other than 0. It is plain bash. It works
+for any agent, CI, or human, without tool-specific hooks.
 
 ```bash
-# Uso
-bash workspace/sdlc/validate-sdlc-plan.sh                 # todo los changes activos
-bash workspace/sdlc/validate-sdlc-plan.sh <change-name>   # un change específico
-bash workspace/sdlc/validate-sdlc-plan.sh --list          # mapeo checks ↔ §Constitución
+# Usage
+bash workspace/sdlc/validate-sdlc-plan.sh                 # every active change
+bash workspace/sdlc/validate-sdlc-plan.sh <change-name>   # one change
+bash workspace/sdlc/validate-sdlc-plan.sh --list          # checks ↔ Constitution §
 ```
 
-**Qué verifica**:
+**What it verifies**:
 
-| Check | Archivo | Qué falla |
-|-------|---------|-----------|
-| Issue + Use Case en header | `proposal.md` | §4/Gate 1 — número faltante o placeholder |
-| Issue **existe y está OPEN** en GitHub | `proposal.md` | Explore→Issue→Propose — resuelve live via `gh issue view` |
-| Secciones obligatorias | `proposal.md` | Objetivo, What Changes, Reglas de negocio, Impact Analysis, Documentation Impact |
-| Chain completa | `traceability.md` | Issue→Spec→Tasks→Commits→PR→Merge→Release |
-| No pre-llenada | `traceability.md` | Detecta SHAs/PRs ficticios en la cadena |
-| Al menos un delta spec | `specs/**/*.md` | Salvo `skip_specs: true` en `.openspec.yaml` |
-| Scenarios bien formados | `specs/**/*.md` | `#### Scenario:` con 4 hashtags |
-| Secciones de diseño | `design.md` | Testing/Regression/Playwright/Deployment/Rollback |
-| 12 grupos SDLC | `tasks.md` | Gate 1-5, grupos 1-12 + Definition of Done |
-| Cuerpos solo `<!-- … -->` | `proposal`/`design`/`tasks`/`traceability` | Gate 1 — sección de template sin rellenar (nombra archivo + heading) |
+| Check | File | What fails |
+|-------|------|------------|
+| Issue + Use Case in the header | `proposal.md` | §4/Gate 1 — missing number or placeholder |
+| Issue **exists and is OPEN** on GitHub | `proposal.md` | Explore→Issue→Propose — resolves live via `gh issue view` |
+| Mandatory sections | `proposal.md` | `Objetivo`, What Changes, `Reglas de negocio`, Impact Analysis, Documentation Impact |
+| Complete chain | `traceability.md` | Issue→Spec→Tasks→Commits→PR→Merge→Release |
+| Not pre-filled | `traceability.md` | Detects fictional SHAs/PRs in the chain |
+| At least one delta spec | `specs/**/*.md` | Unless `skip_specs: true` in `.openspec.yaml` |
+| Well-formed Scenarios | `specs/**/*.md` | `#### Scenario:` with 4 hashes |
+| Design sections | `design.md` | Testing/Regression/Playwright/Deployment/Rollback |
+| 12 SDLC groups | `tasks.md` | Gates 1-5, groups 1-12 + Definition of Done |
+| Bodies that are only `<!-- … -->` | `proposal`/`design`/`tasks`/`traceability` | Gate 1 — unfilled template section (names the file + heading) |
 
-**Seed de templates (equivalente cloud/genérico a `phase_setup`)**:
+**Template seed (cloud/generic equivalent of `phase_setup`)**:
 
-`openspec new change` solo escribe `.openspec.yaml`. Antes de que el agente
-rellene la especificación, corrê:
+`openspec new change` writes only `.openspec.yaml`. Before the agent fills
+the specification, run:
 
 ```bash
 bash workspace/sdlc/seed-openspec-change.sh "<change>" \
   --issue <n> --use-case "CU76 — …" --branch "<type>/<n>_desc"
 ```
 
-Eso copia `proposal.md`, `design.md`, `tasks.md` y `traceability.md` desde
-`docs/openspec/schemas/notaire-sdlc/templates/` **solo si faltan**, rellena Issue /
-Use Case / Branch / change name, y **no** sobrescribe un archivo ya presente.
-El agente debe **rellenar** las secciones sembradas (mantener cada `##`);
-`validate-sdlc-plan.sh` rechaza un cuerpo que siga siendo solo el comentario
-HTML del template. Self-tests: `workspace/tests/test_validate_sdlc_plan.py`.
+That copies `proposal.md`, `design.md`, `tasks.md`, and `traceability.md`
+from `docs/openspec/schemas/notaire-sdlc/templates/` **only when they are
+missing**, fills Issue / Use Case / Branch / change name, and does **not**
+overwrite a file that is already present. The agent must **fill** the seeded
+sections (keep every `##`). `validate-sdlc-plan.sh` rejects a body that is
+still only the template HTML comment. Self-tests:
+`workspace/tests/test_validate_sdlc_plan.py`.
 
-**El check de Issue live** (el más importante):
+**The live Issue check** (the most important one):
 
 ```bash
-# Cuando gh está disponible y autenticado:
+# When gh is available and authenticated:
 # ✗ - Issue #999999 was not found on GitHub (Gate 1 fails)
 # ✓ - Issue #780 verified live on GitHub (OPEN)
 
-# Sin gh disponible:
+# Without gh:
 # - (advisory) gh CLI not available/authenticated — Issue not live-verified
-#   (nota visible, nunca un silent pass)
+#   (visible note, never a silent pass)
 ```
 
-**Integración**: ejecutado por `workspace/sdlc/preflight.sh` (local, pre-push) y por
-`.github/workflows/pr-validation.yml` (CI, bloqueante).
+**Integration**: run by `workspace/sdlc/preflight.sh` (local, pre-push) and by
+`.github/workflows/pr-validation.yml` (CI, blocking).
 
-### 4.6 Archivado: `openspec-archive-change`
+### 4.6 Archive: `openspec-archive-change`
 
 **Skill**: `.claude/skills/openspec-archive-change/SKILL.md` (vendor, `metadata.author: openspec`)
 
-El mecanismo de archivado no requirió adaptación — se usa tal como viene.
-`docs/openspec/config.yaml`'s `operations.archive.guidance` pina la secuencia para
-que un agente no pueda archivar temprano:
+The archive mechanism needed no adaptation. It is used as shipped.
+`docs/openspec/config.yaml`'s `operations.archive.guidance` pins the sequence
+so an agent cannot archive early:
 
 ```yaml
 operations:
@@ -370,270 +373,271 @@ operations:
       - "Summarize what moved into docs/openspec/specs/ and what remains outstanding."
 ```
 
-**Resultado del archivo**:
+**Archive result**:
 
-- Change movido a `docs/openspec/changes/archive/YYYY-MM-DD-<name>/`
-- Deltas aceptados sincronizados en `docs/openspec/specs/<capability>/spec.md`
-- `traceability.md` completa con evidencia real (SHAs, PR, CI run, smoke test)
+- Change moved to `docs/openspec/changes/archive/YYYY-MM-DD-<name>/`
+- Accepted deltas synced into `docs/openspec/specs/<capability>/spec.md`
+- `traceability.md` complete with real evidence (SHAs, PR, CI run, smoke test)
 
 ---
 
-## 5. Flujo completo — secuencia canónica
+## 5. Full flow — canonical sequence
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                     NOTAIRE SDLC — FLUJO COMPLETO                           │
+│                     NOTAIRE SDLC — FULL FLOW                                │
 └─────────────────────────────────────────────────────────────────────────────┘
 
   opsx:explore                                           GATE 1
   ─────────────                                          ──────
-  Producir hallazgos/gaps                     ◄── openspec-triage → Issue real
-  en docs/openspec/explore*.md                         (nunca opsx:propose sin Issue)
+  Produce findings/gaps                       ◄── openspec-triage → real Issue
+  in docs/openspec/explore*.md                         (never opsx:propose without an Issue)
           │
           ▼
   openspec-triage (SKILL, project-owned)
-  Informe → candidatos estimados/priorizados
-  gh issue create (con confirmación)
-  Issue # real registrado en el informe
+  Report → estimated/prioritized candidates
+  gh issue create (with confirmation)
+  Real Issue # recorded in the report
           │
           ▼
   opsx:propose (SKILL, vendor)
   openspec new change "<name>"
-  Scaffoldea: proposal.md, traceability.md,
+  Scaffolds: proposal.md, traceability.md,
   specs/, design.md, tasks.md
           │
           ▼
-  bash workspace/sdlc/validate-sdlc-plan.sh ◄── Gate mecánico:
-  • Issue existe y está OPEN               Issue fabricado → FALLA
-  • Secciones obligatorias                 Issue cerrado  → FALLA
-  • Traceability no pre-llenada            Sin diseño     → FALLA
-  • 12 grupos SDLC presentes               Sin specs      → FALLA
-  • Scenarios bien formados
+  bash workspace/sdlc/validate-sdlc-plan.sh ◄── Mechanical gate:
+  • Issue exists and is OPEN                Fabricated Issue → FAIL
+  • Mandatory sections                      Closed Issue     → FAIL
+  • Traceability not pre-filled             No design        → FAIL
+  • 12 SDLC groups present                  No specs         → FAIL
+  • Well-formed Scenarios
           │
-          ▼ Gate 1 pasa
+          ▼ Gate 1 passes
   ─────────────────────────────────────────────────────
   git checkout main && git pull
-  git checkout -b <type>/<issue-number>_<description>  ◄── rama desde main
+  git checkout -b <type>/<issue-number>_<description>  ◄── branch from main
   gh issue edit <n> --add-label "in-progress"
   ─────────────────────────────────────────────────────
           │
           ▼
   GATE 2 — TDD
-  Escribir tests (unit + integration) → observarlos FALLAR
-  mvn test -pl backend-api -Dtest=<NewTestClass>  # debe FALLAR aquí
+  Write tests (unit + integration) → watch them FAIL
+  mvn test -pl backend-api -Dtest=<NewTestClass>  # must FAIL here
           │
           ▼
   opsx:apply (SKILL, vendor)
-  Implementar (make tests pass)
-  Refactor (KIS, SRP, eliminar código muerto/duplicado)
+  Implement (make tests pass)
+  Refactor (KIS, SRP, remove dead/duplicated code)
           │
           ▼
   GATE 3 — PR-ready
   mvn test -pl backend-api                  # unit + integration
-  mvn jacoco:check -pl backend-api          # coverage ratchet ≥ 70% línea / 25% branch
+  mvn jacoco:check -pl backend-api          # coverage ratchet ≥ 70% line / 25% branch
   mvn verify -pl backend-api                # Checkstyle + SpotBugs
-  cd testing/e2e && npx playwright test        # E2E (si hay cambios UI)
+  cd testing/e2e && npx playwright test        # E2E (when the UI changes)
   Actualizar documentación permanente       # docs/, README.md, CHANGELOG.md
-  bash workspace/sdlc/preflight.sh --fix           # mirrors todos los CI gates
-  bash workspace/sdlc/run_pipeline.sh              # gate final pre-PR (HTML dashboard)
+  bash workspace/sdlc/preflight.sh --fix           # mirrors every CI gate
+  bash workspace/sdlc/run_pipeline.sh              # final pre-PR gate (HTML dashboard)
           │
           ▼
   git push -u origin <branch>
   gh pr create --title "[#<issue>] type(scope): description"
           │
           ▼
-  GATE 4 — CI verde + review
+  GATE 4 — green CI + review
   ci.yml + pr-validation.yml + frontend-ci.yml + playwright-e2e.yml
-  Code review (code owner merging = aprobación en repo solo-maintainer)
-  Merge via PR (nunca push directo a main)
+  Code review (code owner merging = approval in a maintainer-only repo)
+  Merge via PR (never a direct push to main)
           │
           ▼
   GATE 5 — Done
-  cd.yml → imagen Docker → GHCR
-  Smoke test en el entorno destino
+  cd.yml → Docker image → GHCR
+  Smoke test in the target environment
   gh issue close <n> --comment "Closes #<n> via PR #<pr>"
-  openspec archive <change-name>            # sync specs, traceability completa
+  openspec archive <change-name>            # sync specs, complete traceability
 ```
 
 ---
 
-## 6. Quality Gates por etapa SDLC
+## 6. Quality gates by SDLC stage
 
-### 6.1 Gate 1 — Especificación (no empezar sin esto)
+### 6.1 Gate 1 — Specification (do not start without this)
 
-**Cuándo**: Antes de crear la rama o escribir cualquier código.
+**When**: Before creating the branch or writing any code.
 
-**Condiciones** (todas deben cumplirse):
+**Conditions** (all of them):
 
-- [ ] Issue de GitHub existe, tiene etiqueta, y está vinculado a un Caso de Uso (`CU-XX` / `RF-XX` / `RNF-XX`)
-- [ ] Especificación escrita (proposal, specs, design, tasks con `openspec new change`)
-- [ ] Acceptance Criteria definidos como `#### Scenario:` en el delta spec
-- [ ] Impact Analysis y módulos afectados confirmados en `proposal.md`
-- [ ] ADR si el cambio es arquitectónico (`docs/200-architecture/202-ADR/`)
+- [ ] A GitHub Issue exists, has a label, and is linked to a Use Case (Caso de Uso) (`CU-XX` / `RF-XX` / `RNF-XX`)
+- [ ] Specification written (proposal, specs, design, tasks with `openspec new change`)
+- [ ] Acceptance Criteria defined as `#### Scenario:` in the delta spec
+- [ ] Impact Analysis and `Módulos afectados` confirmed in `proposal.md`
+- [ ] An ADR when the change is architectural (`docs/200-architecture/202-ADR/`)
 
-**Scripts y herramientas que lo enforcan**:
+**Scripts and tools that enforce it**:
 
 ```bash
-# Validación mecánica local (y en CI)
+# Local mechanical validation (and in CI)
 bash workspace/sdlc/validate-sdlc-plan.sh <change-name>
 
-# Verificación del Issue live
-gh issue view <number>   # usado internamente por validate-sdlc-plan.sh
+# Live Issue verification
+gh issue view <number>   # used internally by validate-sdlc-plan.sh
 
-# Validación estructural del schema
+# Structural schema validation
 openspec validate <change-name> --strict
 ```
 
-**CI jobs que lo bloquean**:
+**CI jobs that block on it**:
 
 - `pr-validation.yml` → job `sdlc-plan-validation` → `bash workspace/sdlc/validate-sdlc-plan.sh` (BLOCKING)
 
-**Regla de trazabilidad** (P4, §4): todo hallazgo en `docs/openspec/explore*.md`
-debe tener un Issue real antes de que `opsx:propose` lo convierta en un change.
-Ver `.claude/skills/openspec-triage/SKILL.md` para el proceso.
+**Traceability rule** (P4, §4): every finding in `docs/openspec/explore*.md`
+must have a real Issue before `opsx:propose` turns it into a change. See
+`.claude/skills/openspec-triage/SKILL.md` for the process.
 
 ---
 
-### 6.2 Gate 2 — TDD (tests primero, fallando)
+### 6.2 Gate 2 — TDD (tests first, failing)
 
-**Cuándo**: Después de crear la rama, antes de escribir código de implementación.
+**When**: After creating the branch, before writing implementation code.
 
-**Condiciones**:
+**Conditions**:
 
-- [ ] Tests unitarios escritos (y **observados fallando**)
-- [ ] Tests de integración escritos donde aplique
-- [ ] Cada `#### Scenario:` del delta spec tiene al menos un test que lo cubre
+- [ ] Unit tests written (and **observed failing**)
+- [ ] Integration tests written where they apply
+- [ ] Each `#### Scenario:` in the delta spec has at least one test that covers it
 
-**Comandos obligatorios**:
+**Mandatory commands**:
 
 ```bash
-# Backend — deben FALLAR en este punto
-mvn test -pl backend-api -Dtest=<NuevoTestClass>
+# Backend — must FAIL at this point
+mvn test -pl backend-api -Dtest=<NewTestClass>
 
-# Frontend — deben FALLAR en este punto
-cd frontend && npx vitest run <nuevo-test>
+# Frontend — must FAIL at this point
+cd frontend && npx vitest run <new-test>
 ```
 
-**Herramientas**:
+**Tools**:
 
-| Nivel | Framework | Ubicación | Cobertura objetivo |
-|-------|-----------|-----------|-------------------|
-| Unit (backend) | JUnit 5 + Mockito | `src/test/java/.../unit/` | 70-85% línea |
+| Level | Framework | Location | Coverage target |
+|-------|-----------|----------|-----------------|
+| Unit (backend) | JUnit 5 + Mockito | `src/test/java/.../unit/` | 70-85% line |
 | Integration (backend) | Testcontainers / H2 | `src/test/java/.../integration/` | 60-75% |
-| Component (frontend) | Vitest + React Testing Library | `frontend/src/**/*.test.tsx` | 60-75% línea |
-| API Contract | Bruno | `backend-api/api-test/` | 80-100% endpoints |
-| E2E | Playwright | `testing/e2e/tests/TS-nnnn-*.spec.ts` | 1+ por Caso de Uso |
+| Component (frontend) | Vitest + React Testing Library | `frontend/src/**/*.test.tsx` | 60-75% line |
+| API Contract | Bruno | `backend-api/api-test/` | 80-100% of endpoints |
+| E2E | Playwright | `testing/e2e/tests/TS-nnnn-*.spec.ts` | 1+ per Use Case (Caso de Uso) |
 
-**Convenciones**:
+**Conventions**:
 
-- Nombres: `shouldXxxYyy` con `@DisplayName` (backend); `describe/it` (frontend)
-- Nomenclatura E2E: `TS-nnnn-<workflow-name>.spec.ts` con trazabilidad a CU
-- DTOs: `DtoEntityName` (e.g. `DtoLoginUser`)
+- Names: `shouldXxxYyy` with `@DisplayName` (backend); `describe/it` (frontend)
+- E2E naming: `TS-nnnn-<workflow-name>.spec.ts` with CU traceability
+- DTOs: `DtoEntityName` (for example `DtoLoginUser`)
 - Assertions: AssertJ (backend); React Testing Library (frontend)
 
 ---
 
-### 6.3 Gate 3 — PR-ready (suite verde + docs)
+### 6.3 Gate 3 — PR-ready (green suite + docs)
 
-**Cuándo**: Antes de abrir el Pull Request. El gate completo se ejecuta con
-`bash workspace/sdlc/run_pipeline.sh`, que levanta el stack Docker por sí mismo.
+**When**: Before opening the pull request. The full gate runs with
+`bash workspace/sdlc/run_pipeline.sh`, which starts the Docker stack itself.
 
-**Condiciones** (ninguna puede fallar):
+**Conditions** (none of them may fail):
 
-- [ ] Suite completa verde: unit + integration + regresión + E2E
-- [ ] Coverage ≥ ratchet floor (JaCoCo: 70% línea / 25% branch; Vitest: 75% línea)
-- [ ] Playwright verde para cambios UI
-- [ ] Checkstyle sin violaciones
-- [ ] Spotless formateado
-- [ ] ESLint sin errores
-- [ ] Documentación permanente actualizada y consistente
-- [ ] `bash workspace/sdlc/run_pipeline.sh` pasado (genera HTML dashboard en `reports/pipeline/<timestamp>/`)
+- [ ] Full suite green: unit + integration + regression + E2E
+- [ ] Coverage at or above the ratchet floor (JaCoCo: 70% line / 25% branch; Vitest: 75% line)
+- [ ] Playwright green for UI changes
+- [ ] Checkstyle with no violations
+- [ ] Spotless formatted
+- [ ] ESLint with no errors
+- [ ] Permanent documentation updated and consistent
+- [ ] `bash workspace/sdlc/run_pipeline.sh` passed (writes an HTML dashboard under `reports/pipeline/<timestamp>/`)
 
-**Comandos completos**:
+**Full commands**:
 
 ```bash
-# Backend: calidad completa
+# Backend: full quality
 mvn test -pl backend-api                          # unit + integration
 mvn jacoco:check -pl backend-api                  # coverage gate (ratchet floor)
-mvn verify -pl backend-api                        # Checkstyle + SpotBugs + cobertura
-mvn checkstyle:check -pl backend-api              # style solo
+mvn verify -pl backend-api                        # Checkstyle + SpotBugs + coverage
+mvn checkstyle:check -pl backend-api              # style only
 mvn spotbugs:check -pl backend-api -DskipSpotBugs=false  # static analysis
 
-# Frontend: calidad completa
+# Frontend: full quality
 cd frontend && npm run build                      # TypeScript compile + Next.js build
 cd frontend && npx eslint src                     # ESLint
 cd frontend && npx vitest run --coverage          # Vitest + coverage
 
-# E2E (requiere stack corriendo)
-cd testing/e2e && npx playwright test                # todos los tests
-cd testing/e2e && npx playwright test --reporter=html  # con reporte HTML
+# E2E (requires a running stack)
+cd testing/e2e && npx playwright test                # every test
+cd testing/e2e && npx playwright test --reporter=html  # with an HTML report
 
 # API tests
 bash testing/scripts/test.sh                      # Bruno / HTTP suite
 
-# Formato Java (Spotless — NO está en mvn verify, requiere llamada explícita)
-mvn spotless:check -pl backend-api                # verificar
-mvn spotless:apply -pl backend-api                # corregir
+# Java format (Spotless — NOT in mvn verify, requires an explicit call)
+mvn spotless:check -pl backend-api                # verify
+mvn spotless:apply -pl backend-api                # fix
 
-# Gate local completo (mirrors CI)
-bash workspace/sdlc/preflight.sh                         # todo excepto suites server-backed
-bash workspace/sdlc/preflight.sh --fix                   # auto-fix lo que es fixable
-bash workspace/sdlc/preflight.sh --fast                  # solo format/lint/compile/typecheck
+# Full local gate (mirrors CI)
+bash workspace/sdlc/preflight.sh                         # everything except server-backed suites
+bash workspace/sdlc/preflight.sh --fix                   # auto-fix what is fixable
+bash workspace/sdlc/preflight.sh --fast                  # format/lint/compile/typecheck only
 bash workspace/sdlc/preflight.sh --full                  # + Playwright E2E + Bruno + Docker
 
-# Gate pre-PR con dashboard HTML
-bash workspace/sdlc/run_pipeline.sh                      # OBLIGATORIO antes de abrir PR
+# Pre-PR gate with an HTML dashboard
+bash workspace/sdlc/run_pipeline.sh                      # REQUIRED before opening a PR
 ```
 
-**CI jobs que lo bloquean** (todos deben ser verdes):
+**CI jobs that block on it** (all of them must be green):
 
-| Workflow | Jobs clave | Qué verifica |
-|----------|-----------|--------------|
+| Workflow | Key jobs | What it verifies |
+|----------|----------|------------------|
 | `ci.yml` | build, unit-tests, integration-tests, coverage, security | Compile, JUnit, Testcontainers, JaCoCo, Trivy |
-| `pr-validation.yml` | branch-naming, sdlc-plan, spotless, checkstyle, dep-analysis | Gate 1, formato, Spotless (BLOCKING) |
+| `pr-validation.yml` | branch-naming, sdlc-plan, spotless, checkstyle, dep-analysis | Gate 1, format, Spotless (BLOCKING) |
 | `frontend-ci.yml` | typecheck, eslint, vitest, build | TypeScript, ESLint, Vitest ≥75%, Next.js build |
-| `playwright-e2e.yml` | playwright, bruno-api | E2E Playwright, Bruno API suite |
+| `playwright-e2e.yml` | playwright, bruno-api | Playwright E2E, Bruno API suite |
 
-**Herramientas de calidad detalladas**:
+**Quality tools in detail**:
 
-| Herramienta | Config | Ratchet/Target | Dónde se enforza |
-|------------|--------|----------------|-----------------|
-| JaCoCo | `pom.xml` | 70% línea / 25% branch (floor); 80%/80% (target) | `mvn verify`, `ci.yml` job `coverage` |
-| Checkstyle | `backend-api/checkstyle.xml` | 0 violaciones (warn en CI) | `mvn checkstyle:check`, `pr-validation.yml` |
+| Tool | Config | Ratchet/Target | Where it is enforced |
+|------|--------|----------------|----------------------|
+| JaCoCo | `pom.xml` | 70% line / 25% branch (floor); 80%/80% (target) | `mvn verify`, `ci.yml` job `coverage` |
+| Checkstyle | `backend-api/checkstyle.xml` | 0 violations (warn in CI) | `mvn checkstyle:check`, `pr-validation.yml` |
 | SpotBugs | `backend-api/spotbugs-exclude.xml` | report-only | `ci.yml` job `code-quality` |
-| Spotless | `pom.xml` (unbound del lifecycle) | 0 errores (BLOCKING) | `mvn spotless:check`, `pr-validation.yml` Code Lint |
-| ESLint | `frontend/eslint.config.mjs` | 0 errores | `frontend-ci.yml` |
-| Vitest | `frontend/vitest.config.ts` | 75% línea | `frontend-ci.yml` |
-| Trivy | built-in | HIGH+CRITICAL reportados | `ci.yml` job `security`, `cd.yml` |
-| markdownlint | ratchet vs `origin/main` | solo archivos .md del branch | `run_pipeline.sh` (local) |
+| Spotless | `pom.xml` (unbound from the lifecycle) | 0 errors (BLOCKING) | `mvn spotless:check`, `pr-validation.yml` Code Lint |
+| ESLint | `frontend/eslint.config.mjs` | 0 errors | `frontend-ci.yml` |
+| Vitest | `frontend/vitest.config.ts` | 75% line | `frontend-ci.yml` |
+| Trivy | built-in | HIGH+CRITICAL reported | `ci.yml` job `security`, `cd.yml` |
+| markdownlint | ratchet vs `origin/main` | only `.md` files on the branch | `run_pipeline.sh` (local) |
 
-> **Nota crítica**: Spotless está **deliberadamente desvinculado** de `mvn verify`
-> (`backend-api/pom.xml`, ver issue #705). Un branch puede pasar `mvn verify`
-> localmente y fallar "Code Lint" en CI. Por esto `workspace/sdlc/preflight.sh` invoca
-> Spotless explícitamente — `mvn verify` solo no predice CI.
+> **Critical note**: Spotless is **deliberately unbound** from `mvn verify`
+> (`backend-api/pom.xml`, see issue #705). A branch can pass local
+> `mvn verify` and fail "Code Lint" in CI. That is why
+> `workspace/sdlc/preflight.sh` invokes Spotless explicitly. `mvn verify`
+> alone does not predict CI.
 
 ---
 
-### 6.4 Gate 4 — Merge (CI verde + review)
+### 6.4 Gate 4 — Merge (green CI + review)
 
-**Cuándo**: Antes del merge del Pull Request.
+**When**: Before merging the pull request.
 
-**Condiciones**:
+**Conditions**:
 
-- [ ] CI/CD completamente verde (todos los workflows requeridos)
-- [ ] Code review aprobado (en este repo: code owner mergeando el PR = aprobación)
-- [ ] Sin conflictos de merge
-- [ ] Actualizaciones de documentación completas
-- [ ] `traceability.md` actualizado con PR number y CI run URL
+- [ ] CI/CD fully green (every required workflow)
+- [ ] Code review approved (in this repo: the code owner merging the PR is the approval)
+- [ ] No merge conflicts
+- [ ] Documentation updates complete
+- [ ] `traceability.md` updated with the PR number and the CI run URL
 
-**Convenciones de PR**:
+**PR conventions**:
 
 ```text
-Título: [#<issue>] type(scope): description (≤70 chars)
-Body: .github/PULL_REQUEST_TEMPLATE.md (referencia Issue + Use Case)
+Title: [#<issue>] type(scope): description (≤70 chars)
+Body: .github/PULL_REQUEST_TEMPLATE.md (Issue + Use Case reference)
 ```
 
-**Convenciones de commits** (Conventional Commits):
+**Commit conventions** (Conventional Commits):
 
 ```text
 feat(scope): description
@@ -644,40 +648,40 @@ Closes #<issue-number>
 
 ---
 
-### 6.5 Gate 5 — Done (deploy + smoke test + cierre)
+### 6.5 Gate 5 — Done (deploy + smoke test + close)
 
-**Cuándo**: Después del merge, antes de cerrar el Issue.
+**When**: After the merge, before closing the Issue.
 
-**Condiciones**:
+**Conditions**:
 
-- [ ] Deploy ejecutado (CD pipeline `cd.yml` publicó imagen a GHCR)
-- [ ] Smoke test pasado en el entorno destino (endpoint health + flujo clave del cambio)
-- [ ] Issue cerrado con referencia al PR
-- [ ] `openspec archive <change-name>` ejecutado con `traceability.md` completa
+- [ ] Deploy executed (CD pipeline `cd.yml` published the image to GHCR)
+- [ ] Smoke test passed in the target environment (health endpoint + the change's key flow)
+- [ ] Issue closed with a reference to the PR
+- [ ] `openspec archive <change-name>` executed with a complete `traceability.md`
 
-**Comandos**:
+**Commands**:
 
 ```bash
-# Verificar deploy
+# Verify the deploy
 gh run list --workflow=cd.yml --limit=1
 
-# Smoke test manual
+# Manual smoke test
 curl http://localhost:8080/actuator/health
-# + verificar el flujo específico del change
+# + verify the change's specific flow
 
-# Cerrar Issue
+# Close the Issue
 gh issue close <number> --comment "Implemented in PR #<pr>. Closes #<number>."
 
-# Archivar el change (sync specs + traceability completa)
+# Archive the change (sync specs + complete traceability)
 openspec archive <change-name>
 ```
 
 ---
 
-## 7. Mapa de herramientas por etapa
+## 7. Tool map by stage
 
 ```text
-ETAPA                 HERRAMIENTA / ARCHIVO                          GATE
+STAGE                 TOOL / FILE                                    GATE
 ─────────────────────────────────────────────────────────────────────────
 Issue + Use Case      GitHub Issues; gh CLI; .github/ISSUE_TEMPLATE/  Gate 1
                       issue.md
@@ -685,11 +689,11 @@ Issue + Use Case      GitHub Issues; gh CLI; .github/ISSUE_TEMPLATE/  Gate 1
 Exploration           opsx:explore                                    (pre-Gate 1)
                       .claude/skills/openspec-explore/SKILL.md
                       .claude/commands/opsx/explore.md
-                      → produce docs/openspec/explore*.md
+                      → produces docs/openspec/explore*.md
 
-Triage               openspec-triage (project-owned)                  (pre-Gate 1)
+Triage                openspec-triage (project-owned)                 (pre-Gate 1)
                       .claude/skills/openspec-triage/SKILL.md
-                      → produce docs/openspec/*_issues.md + Issues reales
+                      → produces docs/openspec/*_issues.md + real Issues
 
 Specification         openspec new change                             Gate 1
                       docs/openspec/schemas/notaire-sdlc/schema.yaml
@@ -698,9 +702,9 @@ Specification         openspec new change                             Gate 1
 
 Plan validation       bash workspace/sdlc/validate-sdlc-plan.sh              Gate 1
                       .github/workflows/pr-validation.yml
-                      (BLOCKING: Issue live, secciones, 12 grupos)
+                      (BLOCKING: live Issue, sections, 12 groups)
 
-Traceability          traceability.md por change                      P4
+Traceability          traceability.md per change                      P4
                       openspec archive → docs/openspec/specs/
 
 Branch + commits      Git; branch <type>/<issue-number>_<desc>        §9
@@ -715,8 +719,8 @@ Implementation        opsx:apply                                      Gate 2→3
                       .claude/commands/opsx/apply.md
 
 Coverage              JaCoCo (mvn jacoco:check)                       Gate 3
-                      70% línea / 25% branch (floor); 80% (target)
-                      Vitest --coverage (75% línea frontend)
+                      70% line / 25% branch (floor); 80% (target)
+                      Vitest --coverage (75% line, frontend)
 
 Code style            Checkstyle (checkstyle.xml)                     Gate 3
                       Spotless (mvn spotless:check — unbound)
@@ -725,12 +729,12 @@ Code style            Checkstyle (checkstyle.xml)                     Gate 3
 Static analysis       SpotBugs (spotbugs-exclude.xml)                 Gate 3
                       Trivy (filesystem + Docker image)
 
-E2E                   Playwright (testing/e2e/tests/)                Gate 3
+E2E                   Playwright (testing/e2e/tests/)                 Gate 3
                       Bruno (backend-api/api-test/)
                       npx playwright test
 
 Local preflight       bash workspace/sdlc/preflight.sh [--fix/--fast/--full] Gate 3
-                      (pre-push hook instalado por install-git-hooks.sh)
+                      (pre-push hook installed by install-git-hooks.sh)
 
 Pre-PR gate           bash workspace/sdlc/run_pipeline.sh                    Gate 3
                       → reports/pipeline/<timestamp>/index.html
@@ -753,13 +757,13 @@ Agent rules           AGENTS.md, CLAUDE.md                            §10
                       .claude/rules/database-migrations.md
                       .claude/rules/refactoring.md
 
-Agent context (todos) docs/openspec/config.yaml (context + rules)          §10
-                      → inyectado por CLI en openspec instructions
-                      → alcanza Claude Code, OpenCode, Copilot,
-                        Codex, Cursor por el mismo canal
+Agent context (all)   docs/openspec/config.yaml (context + rules)     §10
+                      → injected by the CLI into openspec instructions
+                      → reaches Claude Code, OpenCode, Copilot,
+                        Codex, and Cursor through the same channel
 
 Deploy                cd.yml → GHCR                                   Gate 5
-                      (trigger: push main o tag v* o manual dispatch)
+                      (trigger: push to main, tag v*, or manual dispatch)
 
 Archive               openspec archive <name>                         Gate 5
                       .claude/skills/openspec-archive-change/SKILL.md
@@ -768,26 +772,26 @@ Archive               openspec archive <name>                         Gate 5
 
 ---
 
-## 8. Skills y commands disponibles
+## 8. Available skills and commands
 
-### Skills vendor (generados por `openspec update`, no modificar)
+### Vendor skills (generated by `openspec update`, do not edit)
 
-| Skill | Archivo | Cuándo usarlo |
-|-------|---------|---------------|
-| `openspec-explore` | `.claude/skills/openspec-explore/SKILL.md` | Explorar el codebase/negocio sin scaffoldear nada |
-| `openspec-propose` | `.claude/skills/openspec-propose/SKILL.md` | Scaffoldear un change desde un Issue real |
-| `openspec-apply-change` | `.claude/skills/openspec-apply-change/SKILL.md` | Implementar tasks de un change |
-| `openspec-archive-change` | `.claude/skills/openspec-archive-change/SKILL.md` | Archivar tras Gate 5 |
-| `openspec-sync-specs` | `.claude/skills/openspec-sync-specs/SKILL.md` | Sincronizar deltas a specs principales |
-| `openspec-update-change` | `.claude/skills/openspec-update-change/SKILL.md` | Actualizar artifacts de un change |
+| Skill | File | When to use it |
+|-------|------|----------------|
+| `openspec-explore` | `.claude/skills/openspec-explore/SKILL.md` | Explore the codebase or the business without scaffolding anything |
+| `openspec-propose` | `.claude/skills/openspec-propose/SKILL.md` | Scaffold a change from a real Issue |
+| `openspec-apply-change` | `.claude/skills/openspec-apply-change/SKILL.md` | Implement the tasks of a change |
+| `openspec-archive-change` | `.claude/skills/openspec-archive-change/SKILL.md` | Archive after Gate 5 |
+| `openspec-sync-specs` | `.claude/skills/openspec-sync-specs/SKILL.md` | Sync deltas into the main specs |
+| `openspec-update-change` | `.claude/skills/openspec-update-change/SKILL.md` | Update a change's artifacts |
 
-### Skill project-owned (no tocado por `openspec update`)
+### Project-owned skill (`openspec update` does not touch it)
 
-| Skill | Archivo | Cuándo usarlo |
-|-------|---------|---------------|
-| `openspec-triage` | `.claude/skills/openspec-triage/SKILL.md` | Después de `opsx:explore`, antes de `opsx:propose` |
+| Skill | File | When to use it |
+|-------|------|----------------|
+| `openspec-triage` | `.claude/skills/openspec-triage/SKILL.md` | After `opsx:explore`, before `opsx:propose` |
 
-### Commands slash (Claude Code)
+### Slash commands (Claude Code)
 
 ```text
 .claude/commands/opsx/
@@ -799,138 +803,138 @@ Archive               openspec archive <name>                         Gate 5
 └── archive.md     # /opsx:archive
 ```
 
-### Entry points por agente (§10 de la Constitución)
+### Entry points by agent (Constitution §10)
 
-| Agente | Entry point |
-|--------|------------|
-| **Claude Code** | `AGENTS.md` (importado por `CLAUDE.md`) + `.claude/rules/ai-agent-workflow.md` |
-| **OpenCode** | `opencode.json` (carga `AGENTS.md`, `.claude/rules/*` y `.claude/skills/*`) |
+| Agent | Entry point |
+|-------|-------------|
+| **Claude Code** | `AGENTS.md` (imported by `CLAUDE.md`) + `.claude/rules/ai-agent-workflow.md` |
+| **OpenCode** | `opencode.json` (loads `AGENTS.md`, `.claude/rules/*`, and `.claude/skills/*`) |
 | **GitHub Copilot** | `AGENTS.md`; `.claude/agents/` |
-| **Cualquier agente** | `AGENTS.md` en la raíz; `.claude/skills/openspec-*` |
-| **Cualquier agente via CLI** | `openspec instructions <artifact> --change <name>` |
+| **Any agent** | `AGENTS.md` at the root; `.claude/skills/openspec-*` |
+| **Any agent through the CLI** | `openspec instructions <artifact> --change <name>` |
 
-### 8.1 Composición de skills para el SDLC
+### 8.1 Skill composition for the SDLC
 
-Las skills genéricas derivadas del TPF están instaladas en `.claude/skills/`.
-Son provider-neutral y describen intención, entradas, salidas, validación y
-riesgos. Las skills específicas de Notaire conservan la autoridad sobre
-comandos, paquetes, convenciones y herramientas locales. No se reemplazan entre
-sí: se componen por responsabilidad.
+The generic skills derived from the specialization guide are installed under
+`.claude/skills/`. They are provider-neutral and describe intent, inputs,
+outputs, validation, and risks. Notaire-specific skills keep authority over
+commands, packages, conventions, and local tools. They do not replace each
+other. They compose by responsibility.
 
-| Momento | Skill transversal | Skill Notaire complementaria | Salida esperada |
+| Moment | Cross-cutting skill | Complementary Notaire skill | Expected output |
 |---|---|---|---|
-| Estrategia | `delivery-maturity-roadmap` | `product-owner`, `analyst` | baseline, outcome, roadmap y backlog priorizado |
-| Descubrimiento | `devsecops-traceability` | `analyst`, `openspec-explore` | Issue, CU/RF/RNF, impacto y evidencia origen |
-| Triage | `devsecops-traceability` | `openspec-triage` | candidatos estimados y Issues reales |
-| Propuesta | `devsecops-traceability` | `openspec-propose` | proposal y ledger inicial sin evidencia inventada |
-| Arquitectura | `architecture-decision-design` | `java-architect`, `plantuml`, `design-doc-mermaid` | design, ADR, C4/UML y decisiones revisables |
-| Seguridad | `secure-threat-modeling` | `backend`, `devops`, `programming` | threat model, riesgo, privacidad, `SR-*` y verificadores |
-| QA | `qa-automation-strategy` | `testing`, `maven-build`, `api-rest` | MTP, matriz de escenarios, fixtures, vectores y evidencias |
-| API | `api-contract-testing` | `api-rest`, `backend` | OpenAPI/Swagger, contrato, compatibilidad y pruebas Bruno |
-| Implementación | `devsecops-traceability` | `openspec-apply-change`, `java`, `frontend-design` | TDD observado, código, tests y ledger actualizado |
-| Integración | `ci-cd-quality-gates` | `devops`, `maven-build` | gates, reportes, artifact digest/provenance y promoción |
-| Operación | `operations-observability-readiness` | `devops` | SLO, telemetry, dashboards, alertas, runbook y rollback |
-| Cierre | `devsecops-traceability` | `openspec-archive-change` | trazabilidad completa, docs permanentes y change archivado |
+| Strategy | `delivery-maturity-roadmap` | `product-owner`, `analyst` | baseline, outcome, roadmap, and prioritized backlog |
+| Discovery | `devsecops-traceability` | `analyst`, `openspec-explore` | Issue, CU/RF/RNF, impact, and source evidence |
+| Triage | `devsecops-traceability` | `openspec-triage` | estimated candidates and real Issues |
+| Proposal | `devsecops-traceability` | `openspec-propose` | proposal and initial ledger with no invented evidence |
+| Architecture | `architecture-decision-design` | `java-architect`, `plantuml`, `design-doc-mermaid` | design, ADR, C4/UML, and reviewable decisions |
+| Security | `secure-threat-modeling` | `backend`, `devops`, `programming` | threat model, risk, privacy, `SR-*`, and verifiers |
+| QA | `qa-automation-strategy` | `testing`, `maven-build`, `api-rest` | MTP, scenario matrix, fixtures, vectors, and evidence |
+| API | `api-contract-testing` | `api-rest`, `backend` | OpenAPI/Swagger, contract, compatibility, and Bruno tests |
+| Implementation | `devsecops-traceability` | `openspec-apply-change`, `java`, `frontend-design` | observed TDD, code, tests, and an updated ledger |
+| Integration | `ci-cd-quality-gates` | `devops`, `maven-build` | gates, reports, artifact digest/provenance, and promotion |
+| Operations | `operations-observability-readiness` | `devops` | SLO, telemetry, dashboards, alerts, runbook, and rollback |
+| Close | `devsecops-traceability` | `openspec-archive-change` | complete traceability, permanent docs, and an archived change |
 
-#### Secuencia operativa recomendada
+#### Recommended operating sequence
 
 ```text
 1. delivery-maturity-roadmap
-  -> define outcome, restricciones, métricas y prioridad
+  -> define outcome, constraints, metrics, and priority
 2. analyst + product-owner + openspec-explore
-  -> refina necesidad, CU, requisitos y escenarios
+  -> refine the need, the CU, the requirements, and the scenarios
 3. devsecops-traceability + openspec-triage
-  -> convierte hallazgos en Issues reales vinculados a CU
+  -> turn findings into real Issues linked to a CU
 4. openspec-propose + validate-sdlc-plan.sh
-  -> crea y valida proposal, traceability, specs, design y tasks
+  -> create and validate proposal, traceability, specs, design, and tasks
 5. architecture-decision-design + secure-threat-modeling
-  -> decide arquitectura, modela amenazas y define SR/controles
+  -> decide the architecture, model threats, and define SR/controls
 6. qa-automation-strategy + api-contract-testing
-  -> diseña pruebas, contrato, fixtures y evidencia antes del código
-7. openspec-apply-change + skills de implementación locales
-  -> TDD rojo, implementación mínima, refactor y ledger incremental
+  -> design tests, the contract, fixtures, and evidence before code
+7. openspec-apply-change + local implementation skills
+  -> red TDD, minimal implementation, refactor, and an incremental ledger
 8. ci-cd-quality-gates
-  -> preflight, suite completa, seguridad, artifact, promoción y rollback
+  -> preflight, full suite, security, artifact, promotion, and rollback
 9. operations-observability-readiness
-  -> readiness, deploy verification, smoke test, SLO y soporte
+  -> readiness, deploy verification, smoke test, SLO, and support
 10. devsecops-traceability + openspec-archive-change
-  -> cierra evidencia, actualiza docs, sincroniza specs y archiva
+  -> close the evidence, update docs, sync specs, and archive
 ```
 
-Una skill se activa por intención, no por nombre de herramienta. Por ejemplo,
-un cambio de endpoint activa `api-contract-testing` aunque la implementación
-use REST, gRPC o AsyncAPI; la skill local `api-rest` aporta después los detalles
-de Bruno y del repositorio.
+A skill is activated by intent, not by tool name. For example, an endpoint
+change activates `api-contract-testing` whether the implementation uses REST,
+gRPC, or AsyncAPI. The local skill `api-rest` then supplies the Bruno and
+repository details.
 
-### 8.2 Contratos de artefactos y evidencias
+### 8.2 Artifact and evidence contracts
 
-Cada change debe conservar una cadena única y verificable. OpenSpec registra el
-cambio temporal; `docs/` registra conocimiento permanente; GitHub/CI registra
-el estado de entrega. Ningún artifact debe copiar la Constitución ni repetir
-una documentación permanente.
+Every change must keep a single verifiable chain. OpenSpec records the
+temporary change. `docs/` records permanent knowledge. GitHub/CI records
+delivery status. No artifact may copy the Constitution or repeat permanent
+documentation.
 
-| Artifact | Responsable primario | Debe contener | Se valida en |
+| Artifact | Primary owner | Must contain | Validated at |
 |---|---|---|---|
-| Issue | Product/FA | CU/RF/RNF, alcance, AC, prioridad, owner | Gate 1 |
-| `proposal.md` | Analyst/agent | objetivo, cambios, reglas, impacto, docs, out-of-scope | Gate 1 |
-| `specs/**/spec.md` | Product/FA/QA | comportamiento normativo y escenarios happy/edge/error | Gate 1 |
-| `design.md` | Architecture/Dev/Sec/QA/Ops | decisiones, riesgos, testing, deploy, rollback | Gate 1 |
+| Issue | Product/FA | CU/RF/RNF, scope, AC, priority, owner | Gate 1 |
+| `proposal.md` | Analyst/agent | objective, changes, rules, impact, docs, out-of-scope | Gate 1 |
+| `specs/**/spec.md` | Product/FA/QA | normative behavior and happy/edge/error scenarios | Gate 1 |
+| `design.md` | Architecture/Dev/Sec/QA/Ops | decisions, risks, testing, deploy, rollback | Gate 1 |
 | `traceability.md` | Change owner | Issue→CU→spec→test→code→docs→PR→deploy | Gates 1-5 |
-| Test plan/cases | QA + Dev | `TC/TS-*`, fixtures, vectores, expected/evidence | Gate 2 |
-| Threat model | Security + Architecture | activos, límites, STRIDE/LINDDUN, risk, `SR-*` | Gates 1-3 |
+| Test plan/cases | QA + Dev | `TC/TS-*`, fixtures, vectors, expected/evidence | Gate 2 |
+| Threat model | Security + Architecture | assets, boundaries, STRIDE/LINDDUN, risk, `SR-*` | Gates 1-3 |
 | API contract | API owner | schemas, auth/authz, errors, compatibility, examples | Gates 1-3 |
 | Pipeline evidence | DevOps/CI | source, tests, scans, artifact digest, approvals | Gates 3-4 |
 | Runbook/SLO | Operations | signal, threshold, action, owner, escalation, recovery | Gates 3-5 |
 | Release/smoke evidence | Release owner | version, target, health, key flow, timestamp, result | Gate 5 |
 
-#### Reglas de calidad de evidencia
+#### Evidence quality rules
 
-1. Usar IDs estables y conservar los IDs existentes; nunca usar números de línea
-  como identificadores de trazabilidad.
-2. Diferenciar `planned`, `verified`, `missing` y `conflicting`; un plan no es
-  evidencia de ejecución.
-3. Registrar owner, fecha, entorno, herramienta/versión y ubicación de evidencia
-  cuando el dato pueda cambiar o no sea reproducible.
-4. Redactar secretos, tokens, datos personales, financieros, biométricos y
-  registros de producción; definir retención y control de acceso.
-5. Un test verde prueba el escenario ejecutado, no la ausencia de defectos; un
-  scan sin hallazgos no prueba seguridad total.
-6. Una excepción debe indicar aprobador, alcance, motivo, fecha de expiración y
-  acción compensatoria. Nunca convertir una excepción temporal en una regla.
+1. Use stable IDs and keep existing IDs. Never use line numbers as
+   traceability identifiers.
+2. Distinguish `planned`, `verified`, `missing`, and `conflicting`. A plan is
+   not evidence of execution.
+3. Record owner, date, environment, tool/version, and evidence location when
+   the datum can change or is not reproducible.
+4. Redact secrets, tokens, personal data, financial data, biometric data, and
+   production records. Define retention and access control.
+5. A green test proves the scenario that ran. It does not prove the absence of
+   defects. A scan with no findings does not prove total security.
+6. An exception must name the approver, the scope, the reason, the expiry
+   date, and the compensating action. Never turn a temporary exception into a
+   rule.
 
-#### Cómo seleccionar el nivel de rigor
+#### How to choose the level of rigor
 
-Aplicar el flujo completo a cambios de negocio, API, datos, seguridad,
-arquitectura, infraestructura o producción. Para cambios puramente editoriales
-se puede omitir la especificación funcional, pero debe quedar registrado el
-motivo y mantenerse la revisión documental. Nunca omitir el análisis de impacto,
-la trazabilidad ni la validación apropiada al riesgo.
+Apply the full flow to business, API, data, security, architecture,
+infrastructure, or production changes. For purely editorial changes the
+functional specification may be omitted, but the reason must be recorded and
+the documentation review must remain. Never omit impact analysis,
+traceability, or the validation that matches the risk.
 
-#### Mantenimiento y evolución
+#### Maintenance and evolution
 
-- Las skills genéricas se actualizan en su origen y se sincronizan como una
-  unidad; las adaptaciones de Notaire viven en esta guía, la Constitución y el
-  catálogo `.claude/skills/README.md`.
-- Antes de actualizar una skill, ejecutar sus escenarios de `evals/evals.json` y
-  comparar comportamiento; mantener el conjunto de pruebas cuando se cambie el
-  alcance.
-- Antes de actualizar OpenSpec, preservar el fork `notaire-sdlc`, ejecutar
-  `openspec validate --strict` y `bash workspace/sdlc/validate-sdlc-plan.sh` sobre un
-  fixture representativo.
-- Cuando una herramienta cambie, actualizar el mapa de tooling y la skill local
-  correspondiente; las prácticas y contratos no deben quedar atados a una sola
-  herramienta.
+- Generic skills are updated at their origin and synced as a unit. Notaire
+  adaptations live in this guide, the Constitution, and the catalog
+  `.claude/skills/README.md`.
+- Before updating a skill, run its `evals/evals.json` scenarios and compare
+  behavior. Keep the test set when the scope changes.
+- Before updating OpenSpec, preserve the `notaire-sdlc` fork and run
+  `openspec validate --strict` and `bash workspace/sdlc/validate-sdlc-plan.sh`
+  against a representative fixture.
+- When a tool changes, update the tooling map and the matching local skill.
+  Practices and contracts must not stay tied to a single tool.
 
 ---
 
-## 9. Evidencia: changes que recorrieron el flujo completo
+## 9. Evidence: changes that completed the flow
 
-Al momento de esta revisión, `docs/openspec/changes/archive/` tiene los siguientes
-changes completados con el flujo Explore → Issue → Propose → Apply → Archive,
-cada uno con `traceability.md` con SHAs reales, PR mergeado y CI pasado:
+At the time of this review, `docs/openspec/changes/archive/` contains the
+following completed changes with the flow Explore → Issue → Propose → Apply →
+Archive. Each one has a `traceability.md` with real SHAs, a merged PR, and
+passing CI:
 
-| Change | Issue | PR | Fecha |
-|--------|-------|----|-------|
+| Change | Issue | PR | Date |
+|--------|-------|----|------|
 | `persist-metodo-pago-on-pago` | #792 | #828 | 2026-08-20 |
 | `resolve-presupuesto-tramite-cardinality` | — | — | 2026-08-20 |
 | `verify-debt-on-gestion-archive` | #819 | #826 | 2026-08-20 |
@@ -942,193 +946,193 @@ cada uno con `traceability.md` con SHAs reales, PR mergeado y CI pasado:
 | `protocolo-auxiliar-tramites` | #839 | #907 | 2026-09-02 |
 | `escritura-folio-picker-form` | #892 | — | 2026-09-02 |
 
-Varios changes más están activos bajo `docs/openspec/changes/` en cualquier momento.
-`docs/openspec/explore.md` es el registro permanente de trazabilidad hallazgo↔Issue
-para el dominio de negocio — toda exploración debe resolverse en un Issue real,
-sin excepciones.
+More changes are active under `docs/openspec/changes/` at any moment.
+`docs/openspec/explore.md` is the permanent finding↔Issue traceability record
+for the business domain. Every exploration must resolve to a real Issue, with
+no exceptions.
 
 ---
 
-## 10. Verificación del gate mecánico
+## 10. Mechanical gate verification
 
-Probado directamente contra `workspace/sdlc/validate-sdlc-plan.sh` usando un fixture
-temporal en `docs/openspec/changes/` (nunca commiteado):
+Tested directly against `workspace/sdlc/validate-sdlc-plan.sh` using a
+temporary fixture under `docs/openspec/changes/` (never committed):
 
-| Caso | Issue reference | Resultado |
-|------|-----------------|-----------|
-| Negativo | `#999999` (no existe) | ✗ `proposal: Issue #999999 was not found on GitHub` — Gate 1 falla |
-| Positivo | `#780` (real, abierto) | ✓ `proposal: Issue #780 verified live on GitHub (OPEN)` |
-| Degradado | `gh` no disponible | `- proposal: gh CLI not available/authenticated — Issue not live-verified` (advisory, no falla) |
+| Case | Issue reference | Result |
+|------|-----------------|--------|
+| Negative | `#999999` (does not exist) | ✗ `proposal: Issue #999999 was not found on GitHub` — Gate 1 fails |
+| Positive | `#780` (real, open) | ✓ `proposal: Issue #780 verified live on GitHub (OPEN)` |
+| Degraded | `gh` unavailable | `- proposal: gh CLI not available/authenticated — Issue not live-verified` (advisory, does not fail) |
 
 ---
 
-## 11. Cómo adaptar OpenSpec en un proyecto nuevo
+## 11. How to adapt OpenSpec in a new project
 
-Esta sección resume, de forma genérica, los pasos que Notaire siguió. Útil como
-guía para aplicar el mismo patrón en otro proyecto.
+This section summarizes, in generic form, the steps Notaire followed. It is a
+guide for applying the same pattern in another project.
 
-### Paso 1: Instalar y verificar
+### Step 1: Install and verify
 
 ```bash
 npm install -g openspec
 openspec doctor
-gh auth login    # para el gate de Issue live
+gh auth login    # for the live Issue gate
 ```
 
-### Paso 2: Inicializar el directorio docs/openspec/
+### Step 2: Initialize the docs/openspec/ directory
 
 ```bash
-openspec init    # crea docs/openspec/ con config.yaml y schema por defecto
+openspec init    # creates docs/openspec/ with config.yaml and the default schema
 ```
 
-### Paso 3: Crear el schema propio del proyecto
+### Step 3: Create the project's own schema
 
 ```bash
-cp -r "$(openspec schema which spec-driven --path)" docs/openspec/schemas/<mi-proyecto>/
-# Editar docs/openspec/schemas/<mi-proyecto>/schema.yaml:
-#   name: <mi-proyecto>
-#   Agregar artifacts necesarios (ej. traceability)
-#   Hacer design.md obligatorio
-#   Ajustar templates
+cp -r "$(openspec schema which spec-driven --path)" docs/openspec/schemas/<my-project>/
+# Edit docs/openspec/schemas/<my-project>/schema.yaml:
+#   name: <my-project>
+#   Add required artifacts (for example traceability)
+#   Make design.md mandatory
+#   Adjust the templates
 ```
 
-Apuntar `docs/openspec/config.yaml` al nuevo schema:
+Point `docs/openspec/config.yaml` at the new schema:
 
 ```yaml
-schema: <mi-proyecto>
+schema: <my-project>
 ```
 
-### Paso 4: Inyectar el proceso de gobierno en config.yaml
+### Step 4: Inject the governance process into config.yaml
 
 ```yaml
 context: |
-  [Pointer a tu Constitución/proceso + no-negociables]
+  [Pointer to your Constitution/process + non-negotiables]
 
 rules:
-  proposal:    [...]   # secciones obligatorias, Issue real
-  traceability:[...]   # no pre-llenar
-  specs:       [...]   # Scenarios completos
+  proposal:    [...]   # mandatory sections, a real Issue
+  traceability:[...]   # do not pre-fill
+  specs:       [...]   # complete Scenarios
   design:      [...]   # Testing/Deployment/Rollback
-  tasks:       [...]   # grupos SDLC + DoD
+  tasks:       [...]   # SDLC groups + DoD
 
 operations:
   apply:    { guidance: [...] }
   archive:  { guidance: [...] }
 ```
 
-### Paso 5: Crear el gate mecánico (bash)
+### Step 5: Create the mechanical gate (bash)
 
-Adaptar `workspace/sdlc/validate-sdlc-plan.sh` para verificar:
+Adapt `workspace/sdlc/validate-sdlc-plan.sh` to verify:
 
-- Issue reference presente en `proposal.md`
-- Issue existe y está abierto (`gh issue view <number>`)
-- Secciones obligatorias del proceso
-- Grupos de tareas obligatorios
+- An Issue reference is present in `proposal.md`
+- The Issue exists and is open (`gh issue view <number>`)
+- The process's mandatory sections
+- The mandatory task groups
 
-Integrar en:
+Integrate it into:
 
-- Git pre-push hook (`workspace/sdlc/install-git-hooks.sh`)
-- CI (workflow de PR validation, BLOCKING)
+- The git pre-push hook (`workspace/sdlc/install-git-hooks.sh`)
+- CI (PR validation workflow, BLOCKING)
 
-### Paso 6: Crear el skill de triage (project-owned)
+### Step 6: Create the triage skill (project-owned)
 
-Crear `.claude/skills/<mi-triage>/SKILL.md` con `metadata.author: <mi-proyecto>`.
-El skill toma un informe de exploración y produce Issues reales antes de
-que cualquier change sea scaffoldeado.
+Create `.claude/skills/<my-triage>/SKILL.md` with
+`metadata.author: <my-project>`. The skill takes an exploration report and
+produces real Issues before any change is scaffolded.
 
-### Paso 7: Conectar con los quality gates de CI/CD existentes
+### Step 7: Connect it to the existing CI/CD quality gates
 
-Agregar en `workspace/sdlc/preflight.sh` (o equivalente):
+Add this to `workspace/sdlc/preflight.sh` (or the equivalent):
 
 ```bash
 # SDLC plan validation
 bash workspace/sdlc/validate-sdlc-plan.sh
 
-# ... resto de gates del proyecto (tests, lint, coverage, etc.)
+# ... the rest of the project gates (tests, lint, coverage, and so on)
 ```
 
-### Principios guía (de la Constitución P10)
+### Guiding principles (from Constitution P10)
 
-- **Adaptar, no reemplazar**: los skills vendor y el engine de OpenSpec se
-  instalan/actualizan sin tocar; las adaptaciones viven en archivos project-owned.
-- **Una única fuente de verdad**: la Constitución/proceso de gobierno está en un
-  solo archivo; `config.yaml` apunta a él, nunca lo copia.
-- **Agente-agnóstico**: `config.yaml` usa el extension point nativo de OpenSpec
-  — funciona para Claude Code, Copilot, Codex, Cursor y cualquier herramienta
-  futura que lea `openspec instructions`.
-- **Gates mecánicos, no advisory**: las reglas del schema son consejos; el script
-  bash es el check que realmente falla el CI.
+- **Adapt, do not replace**: vendor skills and the OpenSpec engine are
+  installed and updated untouched. Adaptations live in project-owned files.
+- **A single source of truth**: the Constitution or governance process lives
+  in one file. `config.yaml` points at it and never copies it.
+- **Agent-agnostic**: `config.yaml` uses OpenSpec's native extension point.
+  It works for Claude Code, Copilot, Codex, Cursor, and any future tool that
+  reads `openspec instructions`.
+- **Mechanical gates, not advisory text**: schema rules are advice. The bash
+  script is the check that actually fails CI.
 
 ---
 
-## 12. Referencias
+## 12. References
 
-| Documento | Qué cubre |
-|-----------|-----------|
+| Document | What it covers |
+|----------|----------------|
 | `CONSTITUTION.md` | §3 Definition of Done; §4 Conventions; §5 SDLC Workflow; §6 Quality Gates; §7 Testing; §8 Documentation; §9 Git; §10 AI Agents; §11 Release; §13 Tooling Map |
-| `AGENTS.md` | Agents disponibles, workflow mandatorio, quick reference |
-| `CLAUDE.md` | Entry point para Claude Code |
-| `.claude/rules/ai-agent-workflow.md` | Workflow paso a paso para agentes |
-| `.claude/rules/code-quality.md` | JaCoCo, Checkstyle, SpotBugs, Trivy — configuración y umbrales |
+| `AGENTS.md` | Available agents, mandatory workflow, quick reference |
+| `CLAUDE.md` | Entry point for Claude Code |
+| `.claude/rules/ai-agent-workflow.md` | Step-by-step workflow for agents |
+| `.claude/rules/code-quality.md` | JaCoCo, Checkstyle, SpotBugs, Trivy — configuration and thresholds |
 | `.claude/rules/ui-ux-design.md` | Design system, tokens, FormContainer |
-| `.claude/rules/database-migrations.md` | Flyway — Convenciones, V{n}__description.sql |
-| `docs/300-development/303-testing/TEST-PLAN.md` | Targets de cobertura, patrones de fixture por nivel |
-| `docs/300-development/303-testing/TESTING-PATTERNS.md` | Código concreto: AAA, Test Data Builders, RTL |
-| `docs/300-development/303-testing/E2E-TEST-MAPPING.md` | Nomenclatura TS-nnnn, trazabilidad CU |
-| `docs/300-development/CI-PREFLIGHT.md` | Mapeo local ↔ CI de cada gate |
-| `docs/openspec/explore.md` | Registro permanente hallazgo↔Issue del dominio de negocio |
-| `docs/openspec/schemas/notaire-sdlc/schema.yaml` | Schema completo con instructions por artifact |
-| `docs/openspec/config.yaml` | Contexto, reglas por artifact, guidance por operación |
-| `workspace/sdlc/validate-sdlc-plan.sh` | Gate mecánico — `--list` mapea cada check a §Constitución |
-| `workspace/sdlc/preflight.sh` | Gate local completo — `--list` mapea local ↔ CI job |
-| `workspace/sdlc/run_pipeline.sh` | Gate pre-PR con dashboard HTML |
+| `.claude/rules/database-migrations.md` | Flyway — conventions, V{n}__description.sql |
+| `docs/300-development/303-testing/TEST-PLAN.md` | Coverage targets, fixture patterns by level |
+| `docs/300-development/303-testing/TESTING-PATTERNS.md` | Concrete code: AAA, Test Data Builders, RTL |
+| `docs/300-development/303-testing/E2E-TEST-MAPPING.md` | TS-nnnn naming, CU traceability |
+| `docs/300-development/CI-PREFLIGHT.md` | Local ↔ CI mapping of each gate |
+| `docs/openspec/explore.md` | Permanent finding↔Issue record for the business domain |
+| `docs/openspec/schemas/notaire-sdlc/schema.yaml` | Full schema with instructions per artifact |
+| `docs/openspec/config.yaml` | Context, per-artifact rules, per-operation guidance |
+| `workspace/sdlc/validate-sdlc-plan.sh` | Mechanical gate — `--list` maps each check to a Constitution § |
+| `workspace/sdlc/preflight.sh` | Full local gate — `--list` maps local ↔ CI job |
+| `workspace/sdlc/run_pipeline.sh` | Pre-PR gate with an HTML dashboard |
 | `.github/workflows/pr-validation.yml` | CI — SDLC validation, Spotless, branch naming |
 | `.github/workflows/ci.yml` | CI — build, tests, coverage, security |
 | `.github/workflows/frontend-ci.yml` | CI — TypeScript, ESLint, Vitest, Next.js |
-| `.github/workflows/playwright-e2e.yml` | CI — E2E Playwright + Bruno API |
+| `.github/workflows/playwright-e2e.yml` | CI — Playwright E2E + Bruno API |
 | `.github/workflows/cd.yml` | CD — Docker image → GHCR |
 
 ---
 
-## 13. Orquestación del SDLC con OpenSpec — paralelización y optimización de costo
+## 13. SDLC orchestration with OpenSpec — parallelization and cost
 
-> Este bloque documenta cómo **OpenSpec** actúa como columna vertebral
-> spec-driven del flujo del §5 de `CONSTITUTION.md` cuando el trabajo se
-> reparte entre varios agentes/sub-agentes en paralelo: cada `openspec
-> change` es la unidad atómica que un carril (lane) toma, ejecuta de punta a
-> punta y cierra, de modo que el estado del backlog es siempre reconstruible
-> leyendo `docs/openspec/changes/` + GitHub Issues, sin depender de memoria de
-> conversación. La ejecución en sí la hace el asistente de turno (Claude
-> Code, Copilot, u otro agente conforme a `CONSTITUTION.md` §10) — OpenSpec
-> no ejecuta código, es el contrato y el registro que todos comparten.
+> This block documents how **OpenSpec** acts as the spec-driven backbone of
+> the §5 flow in `CONSTITUTION.md` when work is split across several agents
+> or sub-agents in parallel. Each `openspec change` is the atomic unit that a
+> lane takes, runs end to end, and closes, so the backlog state is always
+> reconstructable by reading `docs/openspec/changes/` plus GitHub Issues,
+> without depending on conversation memory. The assistant of the moment
+> (Claude Code, Copilot, or another agent that conforms to `CONSTITUTION.md`
+> §10) does the execution. OpenSpec does not execute code. It is the contract
+> and the record that everyone shares.
 
-### 13.1 Por qué OpenSpec como columna vertebral de la orquestación
+### 13.1 Why OpenSpec is the orchestration backbone
 
-`openspec new change "<slug>"` scaffoldea los artefactos mandatorios
+`openspec new change "<slug>"` scaffolds the mandatory artifacts
 (`proposal.md`, `traceability.md`, `specs/<capability>/spec.md`, `design.md`,
-`tasks.md`) según el schema `notaire-sdlc`. Esto importa para la
-paralelización porque:
+`tasks.md`) according to the `notaire-sdlc` schema. This matters for
+parallelization because:
 
-- **Cada change es una unidad de trabajo autocontenida y verificable**:
-  `bash workspace/sdlc/validate-sdlc-plan.sh <slug>` confirma mecánicamente (sin
-  IA) que el Issue, la especificación y las tareas están completas antes de
-  que cualquier agente empiece a escribir código — el Gate 1 no depende de
-  que el agente "se acuerde" de verificarlo.
-- **`tasks.md` es la fuente de verdad del progreso**, no el historial de
-  chat: un agente que retoma un change interrumpido (por rate limit, por
-  reinicio de sesión) lee `tasks.md` para saber qué falta, en vez de
-  reconstruir el estado a partir de la conversación.
-- **El mismo contrato sirve para cualquier agente** (Claude Code, Copilot,
-  Codex, u otro conforme a la Constitución §10) — no hay lock-in a una
-  herramienta de ejecución concreta; lo único fijo es el schema OpenSpec y
-  los gates mecánicos.
+- **Each change is a self-contained, verifiable unit of work**:
+  `bash workspace/sdlc/validate-sdlc-plan.sh <slug>` confirms mechanically
+  (without AI) that the Issue, the specification, and the tasks are complete
+  before any agent starts writing code. Gate 1 does not depend on the agent
+  remembering to check it.
+- **`tasks.md` is the source of truth for progress**, not the chat history.
+  An agent that resumes an interrupted change (rate limit, session restart)
+  reads `tasks.md` to see what remains, instead of reconstructing state from
+  the conversation.
+- **The same contract serves any agent** (Claude Code, Copilot, Codex, or
+  another that conforms to Constitution §10). There is no lock-in to a
+  concrete execution tool. The fixed parts are the OpenSpec schema and the
+  mechanical gates.
 
-### 13.2 Modelo de paralelización — carriles (lanes) independientes
+### 13.2 Parallelization model — independent lanes
 
-Cada Issue se asigna a un **carril** según el módulo que toca, y los
-carriles corren en paralelo mientras no compartan archivos:
+Each Issue is assigned to a **lane** according to the module it touches.
+Lanes run in parallel while they do not share files:
 
-| Carril | Módulos | Ejecutor típico |
+| Lane | Modules | Typical executor |
 |---|---|---|
 | `backend` | `backend-api/src/main` | `mvn`, Checkstyle, Spotless, JaCoCo |
 | `backend-test` | `backend-api/src/test` (unit/integration) | `mvn test`, `mvn verify -Ppg-integration` |
@@ -1137,138 +1141,138 @@ carriles corren en paralelo mientras no compartan archivos:
 | `e2e` | `testing/e2e/tests` | Playwright |
 | `docs` | `docs/`, `docs/openspec/` | markdown-lint, `validate-sdlc-plan.sh` |
 
-Reglas de paralelización (derivadas de la Constitución §5 "Sub-agent
-delegation is the default for multi-part work"):
+Parallelization rules (derived from Constitution §5 "Sub-agent delegation is
+the default for multi-part work"):
 
-1. **Un Issue, un worktree.** Cada Issue procesado en paralelo obtiene su
-   propio `git worktree` (`git worktree add ../notaire-issue-<n> -b
-   <type>/<n>_<slug> main`), nunca el checkout compartido — evita que dos
-   ejecuciones concurrentes pisen los cambios no comiteados de la otra (lección
-   aprendida en la sesión #984-#995: dos agentes escribiendo en el mismo
-   working tree sin worktree produjeron un merge manual de ~135 archivos).
-2. **Issues independientes = paralelo; Issues con overlap de archivos =
-   secuencial.** Antes de lanzar el batch, se hace un impact-analysis rápido
-   (grep de los archivos/paquetes que cada Issue previsiblemente toca) y solo
-   se paraleliza el subconjunto sin solapamiento.
-3. **Tests corren en paralelo a la implementación de *otros* Issues**, nunca
-   al de su propio Issue (TDD sigue siendo secuencial dentro de un Issue:
-   test failing → implementar → test passing).
-4. **Merge secuencial, uno a la vez**, con `mvn verify` / `npm run build` +
-   gates re-corridos contra `main` actualizado antes de cada merge — nunca se
-   asume que dos PRs verdes en paralelo siguen siendo compatibles entre sí sin
-   re-verificar tras el primer merge (Constitución Gate 4).
+1. **One Issue, one worktree.** Each Issue processed in parallel gets its own
+   `git worktree` (`git worktree add ../notaire-issue-<n> -b
+   <type>/<n>_<slug> main`), never the shared checkout. That stops two
+   concurrent runs from overwriting each other's uncommitted changes (lesson
+   from session #984-#995: two agents writing in the same working tree
+   without a worktree produced a manual merge of about 135 files).
+2. **Independent Issues run in parallel. Issues with overlapping files run
+   sequentially.** Before launching the batch, do a quick impact analysis
+   (grep the files and packages each Issue is expected to touch) and
+   parallelize only the subset with no overlap.
+3. **Tests run in parallel with the implementation of *other* Issues**, never
+   with the implementation of their own Issue. TDD stays sequential inside
+   one Issue: failing test → implement → passing test.
+4. **Merge sequentially, one at a time**, with `mvn verify` / `npm run build`
+   and the gates re-run against updated `main` before each merge. Never
+   assume that two PRs that were green in parallel stay compatible without
+   re-checking after the first merge (Constitution Gate 4).
 
-### 13.3 Reducir llamadas a IA — priorizar el toolchain determinístico
+### 13.3 Fewer AI calls — prefer the deterministic toolchain
 
-Principio: **si un script determinístico puede responder la pregunta, no se
-gasta una llamada a modelo en ella.** Aplicado en este flujo:
+Principle: **if a deterministic script can answer the question, do not spend
+a model call on it.** Applied in this flow:
 
-| Antes (dependía de la IA) | Ahora (toolchain, 0 tokens de IA) |
+| Before (depended on AI) | Now (toolchain, 0 AI tokens) |
 |---|---|
-| "¿Compila el backend?" | `mvn -q compile -pl backend-api -am` (exit code) |
-| "¿Pasan los tests?" | `mvn test -pl backend-api` / `npx vitest run` — parsear `Tests run:` / summary JSON |
-| "¿Cumple el estilo?" | `mvn checkstyle:check` + `mvn spotless:check` — no se le pide a un modelo que "revise el formato" |
-| "¿Está completo el plan SDLC?" | `bash workspace/sdlc/validate-sdlc-plan.sh` (gate mecánico, resuelve el Issue vía `gh` en vivo) |
-| "¿Está todo listo para el PR?" | `bash workspace/sdlc/run_pipeline.sh` (dashboard HTML, un solo exit code) |
-| "¿Qué endpoints Bruno fallan?" | `npx @usebruno/cli run` + grep del resumen — solo se lee con IA el *diff* de fallos, no el log completo |
-| "¿Hay un merge conflict?" | `gh pr view <n> --json mergeable,mergeStateStatus` |
+| "Does the backend compile?" | `mvn -q compile -pl backend-api -am` (exit code) |
+| "Do the tests pass?" | `mvn test -pl backend-api` / `npx vitest run` — parse `Tests run:` / the summary JSON |
+| "Does it meet the style rules?" | `mvn checkstyle:check` + `mvn spotless:check` — do not ask a model to "review the format" |
+| "Is the SDLC plan complete?" | `bash workspace/sdlc/validate-sdlc-plan.sh` (mechanical gate, resolves the Issue live through `gh`) |
+| "Is everything ready for the PR?" | `bash workspace/sdlc/run_pipeline.sh` (HTML dashboard, a single exit code) |
+| "Which Bruno endpoints fail?" | `npx @usebruno/cli run` + grep of the summary — AI reads only the failure *diff*, not the full log |
+| "Is there a merge conflict?" | `gh pr view <n> --json mergeable,mergeStateStatus` |
 
-La IA se reserva para lo que el toolchain no puede decidir: diseñar el caso
-de prueba, interpretar *por qué* falló un test, elegir la estrategia de
-implementación, redactar el ADR, revisar si el fix es correcto.
+AI is reserved for what the toolchain cannot decide: designing the test case,
+interpreting *why* a test failed, choosing the implementation strategy,
+writing the ADR, and reviewing whether the fix is correct.
 
-**RTK (Rust Token Killer)** — ya configurado en el entorno (ver
-`~/.claude/RTK.md`) — se usa de forma transparente para todo comando de shell
-que un agente ejecuta (`git status`, `mvn test`, greps grandes): el hook
-reescribe el comando para recortar hasta ~90% del output antes de que llegue
-al contexto del modelo. No requiere cambios en los prompts; es una capa de
-infraestructura, no una decisión por tarea.
+**RTK (Rust Token Killer)** — already configured in the environment (see
+`~/.claude/RTK.md`) — is used transparently for every shell command an agent
+runs (`git status`, `mvn test`, large greps). The hook rewrites the command
+to cut up to about 90% of the output before it reaches the model context. It
+requires no prompt changes. It is an infrastructure layer, not a per-task
+decision.
 
-### 13.4 Enrutamiento de modelo por tipo de tarea
+### 13.4 Model routing by task type
 
-Aplica la tabla de la Constitución §5 "Sub-agent delegation... cost-matched
-to task complexity" independientemente de qué asistente concreto ejecute
-cada `openspec change` — el criterio es el mismo sin importar el proveedor:
+This applies the Constitution §5 table "Sub-agent delegation... cost-matched
+to task complexity" regardless of which concrete assistant executes each
+`openspec change`. The criterion is the same for every provider:
 
-| Complejidad | Ejemplos de tarea en este flujo | Nivel de modelo |
+| Complexity | Task examples in this flow | Model level |
 |---|---|---|
-| Mecánica / find-replace | Rename masivo, aplicar un patrón ya probado en un módulo nuevo, correr y resumir un script fijo | el más barato disponible (p.ej. Haiku) |
-| Test y validación | Escribir/arreglar tests unitarios, interpretar una suite, triage de fallos, consistency checks | nivel medio (p.ej. Sonnet) |
-| Implementación estándar | Un endpoint CRUD siguiendo convención existente, un bugfix acotado con causa raíz clara | nivel medio (p.ej. Sonnet) |
-| Análisis complejo / crítico | Decisión de arquitectura, ADR, diseño cross-cutting, cualquier cosa con consecuencia real de negocio o seguridad si sale mal | el más capaz disponible (p.ej. Opus) |
+| Mechanical / find-replace | Mass rename, apply a proven pattern in a new module, run and summarize a fixed script | the cheapest available (for example Haiku) |
+| Test and validation | Write or fix unit tests, interpret a suite, triage failures, consistency checks | mid level (for example Sonnet) |
+| Standard implementation | A CRUD endpoint that follows an existing convention, a bounded bugfix with a clear root cause | mid level (for example Sonnet) |
+| Complex / critical analysis | Architecture decision, ADR, cross-cutting design, anything with a real business or security consequence if it goes wrong | the most capable available (for example Opus) |
 
-Regla operativa: **arrancar siempre en el nivel más barato que pueda
-resolver la tarea** y escalar solo si el resultado no pasa los gates
-mecánicos (test sigue fallando, checkstyle sigue rojo) — no elegir el modelo
-más caro "por si acaso".
+Operating rule: **always start at the cheapest level that can resolve the
+task** and escalate only if the result does not pass the mechanical gates
+(the test still fails, checkstyle is still red). Do not pick the most
+expensive model "just in case".
 
-### 13.5 Bucle operativo — Issue → PR guiado por OpenSpec
+### 13.5 Operating loop — Issue → PR guided by OpenSpec
 
-Para cada Issue del backlog, en el carril que le corresponda:
+For each backlog Issue, in the lane that matches it:
 
 ```bash
-# 1. Branch dedicado en worktree propio (nunca el checkout compartido)
+# 1. Dedicated branch in its own worktree (never the shared checkout)
 git worktree add ../notaire-issue-<n> -b <type>/<n>_<slug> main
 cd ../notaire-issue-<n>
 
-# 2. Spec (Gate 1) — el artefacto OpenSpec es el contrato que el
-#    ejecutor (agente o humano) sigue de punta a punta
+# 2. Spec (Gate 1) — the OpenSpec artifact is the contract the
+#    executor (agent or human) follows end to end
 openspec new change "<slug>"
-bash workspace/sdlc/validate-sdlc-plan.sh   # gate mecánico, 0 tokens de IA
+bash workspace/sdlc/validate-sdlc-plan.sh   # mechanical gate, 0 AI tokens
 
-# 3. TDD + implementación — el agente de turno (Claude Code u otro
-#    conforme a Constitución §10), modelo cost-matched (13.4), trabaja
-#    tasks.md como lista de progreso: escribe primero los tests
-#    (deben fallar), luego el código mínimo para pasarlos, marcando cada
-#    tarea de tasks.md al completarla — así un agente que retoma el change
-#    tras una interrupción no necesita reconstruir el estado por chat.
+# 3. TDD + implementation — the agent of the moment (Claude Code or
+#    another that conforms to Constitution §10), cost-matched model (13.4),
+#    uses tasks.md as the progress list: write the tests first
+#    (they must fail), then the minimum code to pass them, marking each
+#    tasks.md item as it is completed — so an agent that resumes the change
+#    after an interruption does not need to reconstruct state from chat.
 
-# 4. Gates — todo mecánico, 0 tokens salvo para interpretar un fallo real
+# 4. Gates — all mechanical, 0 tokens except to interpret a real failure
 mvn test -pl backend-api && mvn verify -pl backend-api
 cd frontend && npx vitest run && npx tsc --noEmit
-bash workspace/sdlc/run_pipeline.sh   # Gate 3 obligatorio antes del PR
+bash workspace/sdlc/run_pipeline.sh   # Gate 3 required before the PR
 
-# 5. PR + verificación de mergeabilidad (Gate 4) — `gh`, sin IA
+# 5. PR + mergeability check (Gate 4) — `gh`, no AI
 gh pr create --title "[#<n>] ..." --body "Closes #<n>"
 gh pr view <pr> --json mergeable,mergeStateStatus
 
-# 6. Merge secuencial + re-verificación contra main actualizado
+# 6. Sequential merge + re-check against updated main
 gh pr merge <pr> --merge --delete-branch
 
-# 7. Archivar el change — pliega el delta spec en docs/openspec/specs/
+# 7. Archive the change — fold the delta spec into docs/openspec/specs/
 openspec archive <slug>
 ```
 
-Un orquestador (humano o agente coordinador) lanza el paso 3 de varios
-Issues en paralelo (worktrees independientes + el tool de sub-agentes del
-asistente que esté coordinando — p.ej. `Agent`/`Task` en Claude Code), pero
-los pasos 5–7 son **siempre secuenciales** — un PR a la vez, re-verificando
-contra `main` tras cada merge.
+An orchestrator (a human or a coordinating agent) launches step 3 of several
+Issues in parallel (independent worktrees plus the sub-agent tool of the
+assistant that is coordinating — for example `Agent`/`Task` in Claude Code).
+Steps 5–7 are **always sequential**: one PR at a time, re-checking against
+`main` after each merge.
 
-### 13.6 Lecciones aplicadas de la sesión de referencia
+### 13.6 Lessons from the reference session
 
-- **Nunca confiar en el resumen de un sub-agente sin re-correr `mvn
-  test`/`mvn verify` de forma independiente** — en la migración hexagonal
-  (#984-#995) varios sub-agentes reportaron "tests passing" habiendo corrido
-  solo un subconjunto; la verificación completa encontró regresiones reales
-  (`NullPointerException` en mocks desactualizados, `LazyInitializationException`
-  en un endpoint de listado). El orquestador siempre re-verifica antes de
-  abrir el PR, nunca confía ciegamente en el reporte del ejecutor.
-- **`git worktree`, no el checkout compartido**, para cualquier ejecución en
-  paralelo — evita reconciliaciones manuales de cientos de archivos.
-- **Un test contra base de datos real (H2 no alcanza) para todo lo que
-  dependa de fetch lazy/eager de JPA** — varios bugs de serialización solo
-  aparecieron corriendo Bruno contra Postgres con datos reales, nunca en los
-  tests unitarios con mocks.
-- **Docker con volumen limpio (`docker compose down -v`) entre corridas de
-  Bruno** — de lo contrario, colisiones de DNI/ID de corridas previas generan
-  falsos negativos (409) indistinguibles de un bug real.
+- **Never trust a sub-agent summary without re-running `mvn test` / `mvn
+  verify` independently.** In the hexagonal migration (#984-#995) several
+  sub-agents reported "tests passing" after running only a subset. The full
+  verification found real regressions (`NullPointerException` in stale mocks,
+  `LazyInitializationException` on a list endpoint). The orchestrator always
+  re-verifies before opening the PR and never trusts the executor's report
+  blindly.
+- **`git worktree`, not the shared checkout**, for any parallel execution.
+  That avoids manual reconciliation of hundreds of files.
+- **A test against a real database (H2 is not enough) for anything that
+  depends on JPA lazy/eager fetch.** Several serialization bugs appeared only
+  when Bruno ran against Postgres with real data, never in the unit tests
+  with mocks.
+- **Docker with a clean volume (`docker compose down -v`) between Bruno
+  runs.** Otherwise DNI/ID collisions from previous runs produce false
+  negatives (409) that cannot be distinguished from a real bug.
 
 ---
 
-*Última revisión: 2026-09-18. Este documento es la única fuente canónica de
-cómo OpenSpec fue instalado y adaptado en Notaire, incluyendo cómo sus
-artefactos (`proposal.md`/`traceability.md`/`tasks.md`) se usan como
-columna vertebral de una ejecución paralela y cost-optimizada entre varios
-agentes/sub-agentes. Cambios a este documento requieren PR, como cualquier
-otro cambio al proceso (Constitución §12).*
+*Last review: 2026-09-18. This document is the single canonical source for
+how OpenSpec was installed and adapted in Notaire, including how its
+artifacts (`proposal.md` / `traceability.md` / `tasks.md`) are used as the
+backbone of a parallel, cost-optimized execution across several agents and
+sub-agents. Changes to this document require a PR, like any other process
+change (Constitution §12).*

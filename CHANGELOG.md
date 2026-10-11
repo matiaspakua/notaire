@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English OpenSpec adaptations guide** (#1490, CU75):
+  `docs/openspec/NOTAIRE-ADAPTATIONS.md` describes installation, gates, and
+  orchestration in English. The backend prerequisite is Java 26. Required
+  headings `Objetivo`, `Reglas de negocio`, `Módulos afectados`, and
+  `Actualizar documentación permanente` stay. Archived change slugs stay.
 - **English security asset names** (#1490, CU75):
   The system threat model, cybersecurity program, monitoring note, and
   trust-boundary diagram name `Person`, `Deed`, `Testimony`, `Budget`,
