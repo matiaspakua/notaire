@@ -38,6 +38,10 @@ so the availability answer is not only in a pull request.
 `presupuesto-catalogo-items`.
 [CU45 still names `GET /api/v1/items/presupuesto/{idPresupuesto}/descuentos-recargos`] → The live call is in
 `descuentos-recargos-presupuesto`.
+[CU47 still names `GET /api/v1/presupuestos/{id}/resumen`] → The live call is in
+`pago-presupuesto-gestion-summary`.
+[CU47 still names `GET /api/v1/pagos/presupuesto/{id}/estado`] → The live call is in
+`pagos-parciales-cuotas`.
 [Dictionary stays stale] → #1222, recorded as not a missing sequence.
 
 ## Testing Strategy

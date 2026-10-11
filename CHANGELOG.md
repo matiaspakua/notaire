@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Payment consult paths** (#1490, CU75): the engineering-sequences
+  design names the paths CU47 still writes,
+  `GET /api/v1/presupuestos/{id}/resumen` and
+  `GET /api/v1/pagos/presupuesto/{id}/estado`. The live calls stay in
+  `pago-presupuesto-gestion-summary` and `pagos-parciales-cuotas`.
+  The heading `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Discounts and surcharges path** (#1490, CU75): the living
   `descuentos-recargos-presupuesto` spec names
   `GET /api/v1/items/budget/{idBudget}/discounts-surcharges`. The
