@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English SDD presentation** (#1490, CU75):
+  The slide deck and `docs/presentations/README.md` describe OpenSpec and
+  Spec Kit in English. Archived paths, `Property.valuacionFiscal`, and the
+  name Matías Miguez stay. The phrase `Use Case (Caso de Uso)` stays.
 - **English local-model setup scripts** (#1490, CU75):
   `setup-omlx-codex.sh` and `stop-omlx.sh` report progress in English.
   Presets, profiles, ports, and the `: applied` patch marker stay.
