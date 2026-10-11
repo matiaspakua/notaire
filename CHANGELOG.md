@@ -64,6 +64,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English change proposals** (#1490, CU75): the case-summary
+  proposal names a management, the managements screen,
+  `financial-summary`, and `ManagementFinancialSummaryService`.
+  The paged-list proposal names `budgets`, `deeds`, `procedures`,
+  and `managements`. The incomplete-PUT proposal names
+  `is required`. Headings `Objetivo`, `Reglas de negocio`, and
+  `Módulos afectados` stay. Official titles stay, including
+  `CU07 – Generar testimonio` and `CU70 – Gestión de Copias`.
+  The visible action `Resumen del caso` stays, along with the
+  dialog labels `Escrituras`, `Testimonios`, `Copias`, and
+  `Pagos`, and `Administración → Trámites`. The branch
+  `feat/774_gestion_workflow_links` stays. Stored states
+  `SIN_INGRESAR`, `INGRESADO`, `INSCRIPTO`, and `RETIRADO` stay.
 - **English change-task notes** (#1490, CU75): the case-summary
   task list names a managements pull request and the managements
   screen. The assessment task list names the create-management

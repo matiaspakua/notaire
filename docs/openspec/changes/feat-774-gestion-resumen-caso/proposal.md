@@ -1,4 +1,4 @@
-# Surface a gestión's escrituras, testimonios, copias and pagos in one case summary (slice of #774)
+# Surface a management's deeds, testimonies, copies and payments in one case summary (slice of #774)
 
 > Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md). This proposal documents
 > **only this change**; permanent documentation remains the single source of truth.
@@ -12,27 +12,27 @@
 
 ## Objetivo
 
-The back half of the case workflow exists as separate modules (escrituras, testimonios and their movements, copias, pagos) but a gestión shows none of it together. Add a case summary read model and a dialog on the gestiones screen so staff see, per gestión, its escrituras, their testimonios with the state of the registry circuit, the copias issued and the payments, each linked through the gestión's trámites.
+The back half of the case workflow exists as separate modules (deeds, testimonies and their movements, copies, payments) but a management shows none of it together. Add a case summary read model and a dialog on the managements screen so staff see, per management, its deeds, their testimonies with the state of the registry circuit, the copies issued and the payments, each linked through the management's procedures.
 
 ## What Changes
 
-- `GET /api/v1/managements/{id}/case-summary` returns the gestión header and, for each escritura reached through its trámites, the testimonios with verified flag, flagged flag, the state of the latest movement (SIN_INGRESAR, INGRESADO, INSCRIPTO, RETIRADO) and the number of copias.
+- `GET /api/v1/managements/{id}/case-summary` returns the management header and, for each deed reached through its procedures, the testimonies with verified flag, flagged flag, the state of the latest movement (SIN_INGRESAR, INGRESADO, INSCRIPTO, RETIRADO) and the number of copies.
 - `ManagementCaseSummaryService` builds it; `DtoManagementCaseSummary`, `DtoCaseDeed` and `DtoCaseTestimony` live in `notaire-shared`.
-- The gestiones screen gets a `Resumen del caso` action opening a dialog with Escrituras, Testimonios, Copias and Pagos; pagos come from the existing `resumen-financiero` endpoint.
-- #774 stays open: creating each linked record directly from the gestión (rather than from its own module) and the full first-case journey spec are listed on the issue as the remaining work.
+- The managements screen gets a `Resumen del caso` action opening a dialog with Escrituras, Testimonios, Copias and Pagos; payments come from the existing `financial-summary` endpoint.
+- #774 stays open: creating each linked record directly from the management (rather than from its own module) and the full first-case journey spec are listed on the issue as the remaining work.
 
 ## Reglas de negocio
 
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
-| A gestión's escrituras are the distinct deeds of its trámites; testimonios and copias hang from those deeds | Domain model (Procedure.fkIdDeed, Testimony.fkIdDeed, Copy.fkIdTestimony) | Made explicit |
+| A management's deeds are the distinct deeds of its procedures; testimonies and copies hang from those deeds | Domain model (Procedure.fkIdDeed, Testimony.fkIdDeed, Copy.fkIdTestimony) | Made explicit |
 | The state of a testimony is the state of its latest movement, SIN_INGRESAR when it has none | CU11, CU12, CU44 | Made explicit |
 
 ## Capabilities
 
 ### New Capabilities
 
-- `management-case-summary`: Show what a gestión has produced in the post-signing workflow.
+- `management-case-summary`: Show what a management has produced in the post-signing workflow.
 
 ### Modified Capabilities
 
@@ -56,7 +56,7 @@ The back half of the case workflow exists as separate modules (escrituras, testi
 
 ### Architecture review
 
-Read model over existing aggregates; no schema change and no ADR. Follows the ManagementResumenFinancieroService pattern.
+Read model over existing aggregates; no schema change and no ADR. Follows the ManagementFinancialSummaryService pattern.
 
 ## Documentation Impact
 
