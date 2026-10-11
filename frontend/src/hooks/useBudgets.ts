@@ -26,7 +26,7 @@ export function useBudgetsPage(params: { page: number; size: number }, options: 
   });
 }
 
-/** CU47 - Consultar Payment: financial summary (gestión, total, saldo, pagos) for a budget. */
+/** CU47 - Budget financial summary: management, total, outstanding balance, and payments. */
 export function useBudgetSummary(id: number | null) {
   return useQuery({
     queryKey: budgetsKeys.summary(id ?? 0),
@@ -46,7 +46,7 @@ interface CreateBudgetResult {
 }
 
 /**
- * CU01/CU39 - Creates the budget and, when a tipo de trámite is given, loads that type's template items into it.
+ * CU01/CU39 - Creates the budget and, when a procedure type is given, loads that type's template items into it.
  * A missing template must not undo the creation, so the second step only reports `itemsLoaded`.
  */
 export function useCreateBudget() {
@@ -89,7 +89,7 @@ export function useDeleteBudget() {
   });
 }
 
-/** CU39 - Cargar los ítems del budget desde la template del tipo de trámite. */
+/** CU39 - Loads budget items from the procedure type's template. */
 export function useLoadItemsFromTemplate() {
   const qc = useQueryClient();
   return useMutation({
@@ -100,7 +100,7 @@ export function useLoadItemsFromTemplate() {
   });
 }
 
-/** CU71 - Agregar al budget copias de ítems existentes del catálogo. */
+/** CU71 - Adds copies of existing catalog items to the budget. */
 export function useAddItemsFromCatalog() {
   const qc = useQueryClient();
   return useMutation({

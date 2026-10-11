@@ -170,7 +170,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
           {
             id: 2,
             statusManagementId: 2,
-            statusManagementName: "En Procedure",
+            statusManagementName: "En Tramite",
             type: "FINAL",
           },
         ],

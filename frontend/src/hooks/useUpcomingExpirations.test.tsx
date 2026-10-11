@@ -1,5 +1,5 @@
 /**
- * Unit test for useUpcomingExpirations (CU42 — informar próximos vencimientos).
+ * Unit test for useUpcomingExpirations (CU42 — upcoming document expirations).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";

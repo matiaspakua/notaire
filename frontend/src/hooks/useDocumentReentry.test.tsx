@@ -1,5 +1,5 @@
 /**
- * Unit test for useDocumentReentry (CU43 — reingresar documentación).
+ * Unit test for useDocumentReentry (CU43 — document reentry).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";

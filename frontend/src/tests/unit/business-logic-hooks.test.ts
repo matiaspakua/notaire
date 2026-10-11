@@ -158,7 +158,7 @@ describe("Budget total calculation (CU01, CU39)", () => {
 });
 
 // ──────────────────────────────────────────────
-// Payment saldo computation (CU47)
+// Payment outstanding-balance computation (CU47)
 // ──────────────────────────────────────────────
 
 describe("Payment saldo computation (CU47)", () => {

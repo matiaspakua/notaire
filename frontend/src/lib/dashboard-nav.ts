@@ -42,14 +42,14 @@ export interface DashboardNavGroup {
   items: DashboardNavItem[];
 }
 
-/** "Inicio" sits above the sections. */
+/** Home sits above the sections. */
 export const DASHBOARD_NAV_HOME: DashboardNavItem = { labelKey: "home", href: "/dashboard", icon: Home };
 
 /**
  * Sidebar sections (#1367, owner decision 2026-10-09). The dashboard module
  * grid is derived from the `featured` items, so the home page and the sidebar
- * agree on the app's areas. Suplencias and Reportes stay discoverable (#1058).
- * Items is not in the written proposal; it sits under Gestión.
+ * agree on the app's areas. Substitutions and Reports stay discoverable (#1058).
+ * Items is not in the written proposal; it sits under the management group.
  */
 export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
   {
@@ -121,7 +121,7 @@ export function isNavItemActive(pathname: string, href: string): boolean {
   return pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
 }
 
-/** Canonical routes that replaced duplicate administración pages (#1058). */
+/** Canonical routes that replaced duplicate administration pages (#1058). */
 export const CANONICAL_ADMIN_REDIRECTS = [
   {
     source: "/dashboard/administration/items",

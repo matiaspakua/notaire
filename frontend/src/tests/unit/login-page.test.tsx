@@ -1,6 +1,6 @@
 /**
  * Unit tests for LoginPage
- * Covers: CU — Autenticación de usuario / CU84 session expiry (#1053)
+ * Covers: user authentication / CU84 session expiry (#1053)
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";

@@ -1,5 +1,5 @@
 /**
- * React Query hooks for CU10 — movements de documentación de entities externas.
+ * React Query hooks for CU10 — movements of external-entity documents.
  * Endpoints: GET/PUT /api/v1/managements/{id}/external-entity-documents[/{idDocumentPresentado}]
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

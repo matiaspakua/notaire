@@ -106,7 +106,7 @@ export function useDeleteManagement() {
   });
 }
 
-/** CU16 - Saldo pendiente agregado de una gestión (RF-22), consultado antes de archivar. */
+/** CU16 - Aggregated outstanding balance of a management (RF-22), loaded before archive. */
 export function useOutstandingBalance(managementId: number | undefined) {
   return useQuery({
     queryKey: managementsKeys.outstandingBalance(managementId ?? 0),
@@ -116,9 +116,9 @@ export function useOutstandingBalance(managementId: number | undefined) {
 }
 
 /**
- * CU16 - Archiva la gestión advirtiendo y registrando la debt pendiente (RF-22, RF-37).
- * `confirmado` debe reenviarse en `true` cuando el usuario acepta archivar a pesar de
- * folders de trámite (CU85) en espera sin resolver (HTTP 409).
+ * CU16 - Archives the management, warning about and recording outstanding debt (RF-22, RF-37).
+ * The `confirmado` query flag must be sent as true when the user archives anyway
+ * despite unresolved procedure folders on hold (CU85, HTTP 409).
  */
 export function useArchiveManagement() {
   const qc = useQueryClient();
@@ -132,7 +132,7 @@ export function useArchiveManagement() {
   });
 }
 
-/** CU83 - Transiciona el estado de una gestión validando el workflow definido. */
+/** CU83 - Moves a management to another status after the defined workflow allows it. */
 export function useTransitionManagement() {
   const qc = useQueryClient();
   return useMutation({
@@ -148,7 +148,7 @@ export function useTransitionManagement() {
   });
 }
 
-/** CU13 - Bitácora completa de una gestión, ordenada cronológicamente. */
+/** CU13 - Full history of a management, in chronological order. */
 export function useHistory(managementId: number | undefined) {
   return useQuery({
     queryKey: historyKeys.byManagement(managementId ?? 0),
@@ -157,7 +157,7 @@ export function useHistory(managementId: number | undefined) {
   });
 }
 
-/** CU85 - Carpetas de trámite asociadas a una gestión. */
+/** CU85 - Procedure folders linked to a management. */
 export function useFoldersByManagement(managementId: number | undefined) {
   return useQuery({
     queryKey: procedureFolderKeys.byManagement(managementId ?? 0),
@@ -166,7 +166,7 @@ export function useFoldersByManagement(managementId: number | undefined) {
   });
 }
 
-/** CU85 - Pone una carpeta de trámite en espera, exigiendo un motivo (Excepción 3.1). */
+/** CU85 - Puts a procedure folder on hold and requires a reason (exception 3.1). */
 export function usePutFolderOnHold() {
   const qc = useQueryClient();
   return useMutation({

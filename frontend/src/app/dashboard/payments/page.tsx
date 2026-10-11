@@ -43,11 +43,11 @@ export default function PagosPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Fetch saldo for selected budget (Issue #796)
+  // Fetch the outstanding balance for the selected budget (Issue #796)
   const { data: resumen, isLoading: resumenLoading } = useBudgetSummary(
     editing.idBudget || null
   );
-  // Fetch estado de pago for selected budget (Issue #821)
+  // Fetch the payment status for the selected budget (Issue #821)
   const { data: estadoPago } = usePaymentStatus(editing.idBudget || null);
 
   const estadoPagoLabel: Record<string, string> = {
@@ -151,7 +151,7 @@ export default function PagosPage() {
                 />
               </FormField>
 
-              {/* Issue #796: Show saldo pendiente after selection */}
+              {/* Issue #796: Show the outstanding balance after selection */}
               {editing.idBudget && (
                 <div className="rounded-lg bg-info/10 p-3 border border-info/30">
                   {resumenLoading ? (

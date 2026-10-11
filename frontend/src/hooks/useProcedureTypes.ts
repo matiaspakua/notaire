@@ -1,5 +1,5 @@
 /**
- * React Query hooks for ProcedureType (CU26, CU57, CU64 — Tipos de trámite).
+ * React Query hooks for ProcedureType (CU26, CU57, CU64 — procedure types).
  * Endpoint: GET/POST/PUT/DELETE /api/v1/procedure-types
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

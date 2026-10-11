@@ -13,7 +13,7 @@ export function useTestimonies() {
   });
 }
 
-/** CU07 - Genera un testimony numerado a partir de una deed "Firmada". */
+/** CU07 - Creates a numbered testimony from a deed in status Firmada. */
 export function useGenerateTestimony() {
   const qc = useQueryClient();
   return useMutation({
@@ -22,18 +22,18 @@ export function useGenerateTestimony() {
   });
 }
 
-/** CU08 - Registra la verificación de un testimony (observado o no, con motivo). */
+/** CU08 - Records testimony verification (flagged or not, with a reason). */
 export function useVerifyTestimony() {
   const qc = useQueryClient();
   return useMutation({
-    // Backend body is DtoTestimony(flagged, notes) — not observado/notes.
+    // Backend body is DtoTestimony(flagged, notes). The local flag is `observado`.
     mutationFn: ({ id, observado, notes }: { id: number; observado: boolean; notes?: string }) =>
       apiPost<Testimony>(`/testimonies/${id}/verify`, { flagged: observado, notes: notes }),
     onSuccess: () => qc.invalidateQueries({ queryKey: testimoniesKeys.all }),
   });
 }
 
-/** Descarga la copia impresa (PDF) de un testimony verificado. */
+/** Downloads the printed copy (PDF) of a verified testimony. */
 export async function downloadTestimonyCopy(idTestimony: number): Promise<void> {
   const blob = await apiGetBytes(`/reports/testimonies/${idTestimony}/copies`);
   const link = document.createElement("a");

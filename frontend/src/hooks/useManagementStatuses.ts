@@ -1,5 +1,5 @@
 /**
- * React Query hooks for ManagementStatus (CU67 — Gestionar estados de gestión).
+ * React Query hooks for ManagementStatus (CU67 — manage management statuses).
  * Endpoint: GET/POST/PUT/DELETE /api/v1/management-statuses
  */
 import { useQuery } from "@tanstack/react-query";

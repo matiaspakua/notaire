@@ -21,11 +21,10 @@ import com.licensis.notaire.application.usecase.management.ManagementTransitionS
 import java.util.List;
 
 /**
- * CU10 - Record movimientos of documentation of entidades externas: expone
- * the documentation of a management that must be presented by entidades
- * externas (registros, catastro) and permite record the datos of its
- * movimiento, disparando the transition automática of the management a
- * "Documentation Completa" when all esos documents quedan entregados.
+ * CU10 — Record movements of external-entity documentation. Exposes the
+ * documents a management must present to an external entity (registry,
+ * cadastre) and records each movement. When every such document is delivered,
+ * it tries an automatic transition to the stored status "Documentacion Completa".
  */
 @Service
 public class ExternalEntityDocumentService {
@@ -56,7 +55,7 @@ public class ExternalEntityDocumentService {
         findManagementOrThrow(idManagement);
         SubmittedDocument document = documentRepository.findSubmittedDocumentById(idSubmittedDocument)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Documento presentado not found with ID: " + idSubmittedDocument));
+                        "Submitted document not found with ID: " + idSubmittedDocument));
         validateBelongsToManagement(document, idManagement);
         validateIsExternalEntity(document);
 
@@ -67,14 +66,14 @@ public class ExternalEntityDocumentService {
     }
 
     /**
-     * Intenta transition the management a "Documentation Completa" when all their
-     * documentos de entidad externa quedaron entregados. Se invoca como un paso
-     * independiente después of {@link #registrarMovimiento}, in its propia
-     * transacción of nivel superior: a transition not definida in the workflow is
-     * un efecto colateral "best effort" que nunca debe invalidar el movimiento ya
-     * guardado, and only a llamada fuera of the transacción of {@code
-     * registrarMovimiento} evita that Spring marque that transacción as
-     * rollback-only cuando {@link GestionTransitionService#transition} falla.
+     * Tries to move the management to the stored status "Documentacion Completa"
+     * when every external-entity document has been delivered. Called as its own
+     * step after {@link #registerMovement}, in a separate top-level transaction:
+     * a transition the workflow does not define is a best-effort side effect and
+     * must not invalidate the movement already saved. Only a call outside the
+     * {@code registerMovement} transaction keeps Spring from marking that
+     * transaction rollback-only when {@link ManagementTransitionService#transition}
+     * fails.
      */
     public void tryCompleteDocumentation(Integer idManagement) {
         List<SubmittedDocument> documents = documentRepository
@@ -88,7 +87,7 @@ public class ExternalEntityDocumentService {
         try {
             managementTransitionService.transition(idManagement, BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA);
         } catch (BusinessValidationException | ResourceNotFoundException e) {
-            log.warn("Not pudo transition automáticamente the management {} a '{}': {}", idManagement,
+            log.warn("Could not automatically transition management {} to '{}': {}", idManagement,
                     BusinessConstants.ManagementCONDOCUMENTACIONCOMPLETA, e.getMessage());
         }
     }
@@ -103,7 +102,7 @@ public class ExternalEntityDocumentService {
         DeedManagement management = procedure != null ? procedure.getFkIdManagement() : null;
         if (management == null || !idManagement.equals(management.getIdManagement())) {
             throw new BusinessValidationException(
-                    "El documento " + document.getIdSubmittedDocument() + " not belongs to the management "
+                    "Document " + document.getIdSubmittedDocument() + " does not belong to management "
                             + idManagement);
         }
     }
@@ -111,7 +110,7 @@ public class ExternalEntityDocumentService {
     private static void validateIsExternalEntity(SubmittedDocument document) {
         if (!BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA.equals(document.getDeliveredBy())) {
             throw new BusinessValidationException(
-                    "El documento " + document.getIdSubmittedDocument() + " no es de entidad externa");
+                    "Document " + document.getIdSubmittedDocument() + " is not an external-entity document");
         }
     }
 

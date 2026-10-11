@@ -1,5 +1,5 @@
 /**
- * React Query hook for ProcedureTemplate (CU03 — documents required por trámite).
+ * React Query hook for ProcedureTemplate (CU03 — documents required for a procedure).
  * Endpoint: GET /api/v1/procedure-templates/procedure-types/{idTypeProcedure}
  */
 import { useQuery } from "@tanstack/react-query";

@@ -1,5 +1,5 @@
 /**
- * React Query hooks for AuditRecord (CU — Auditoría del sistema).
+ * React Query hooks for AuditRecord (system audit).
  * Endpoints: GET /api/v1/audit-log (paged, newest first; optional module)
  *            GET /api/v1/audit-log/user/{id}
  * Read-only — audit logs are not editable.

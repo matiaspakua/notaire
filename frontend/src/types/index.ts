@@ -290,7 +290,7 @@ export interface TestimonyMovement {
   testimony?: { idTestimony?: number };
 }
 
-/** CU07/CU08 - Testimony generado a partir de una deed firmada. */
+/** CU07/CU08 - Testimony created from a deed in status Firmada. */
 export interface Testimony {
   idTestimony?: number;
   number?: number;
@@ -440,11 +440,11 @@ export interface ManagementWorkflowTrace {
   history: HistoryEntry[];
   /** nodeId → "completed" | "in_progress" | "pending" */
   nodeStatuses: Record<number, string>;
-  /** Secondary timeline for the unbounded reingreso loop (issue #841). */
+  /** Secondary timeline for the unbounded reentry loop (issue #841). */
   testimonyMovements?: TestimonyMovementEntry[];
 }
 
-/** Lightweight testimony movement on the workflow trace (reingreso loop). */
+/** Lightweight testimony movement on the workflow trace (reentry loop). */
 export interface TestimonyMovementEntry {
   dateEntry?: string;
   dateExit?: string;
@@ -453,7 +453,7 @@ export interface TestimonyMovementEntry {
   returnedObserved?: boolean;
 }
 
-/** CU10 - a single "Entity Externa" document tracked within a gestión — DtoExternalEntityDocument. */
+/** CU10 - one external-entity document tracked within a management — DtoExternalEntityDocument. */
 export interface ExternalEntityDocument {
   idSubmittedDocument: number;
   name?: string;
@@ -494,7 +494,7 @@ export interface ExternalEntityDocumentMovementInput {
   delivered?: boolean;
 }
 
-/** CU43 - Tipo de document requerido por la ProcedureTemplate de un trámite — DtoRequiredDocument. */
+/** CU43 - Document type required by a procedure's template — DtoRequiredDocument. */
 export interface RequiredDocument {
   idDocumentType: number;
   name?: string;
@@ -503,7 +503,7 @@ export interface RequiredDocument {
   deliveredBy?: string;
 }
 
-/** CU43 - Un trámite de la gestión junto con su documentación necesaria — DtoProcedureRequiredDocumentation. */
+/** CU43 - One procedure of the management and the documents it requires — DtoProcedureRequiredDocumentation. */
 export interface ProcedureRequiredDocumentation {
   idProcedure: number;
   typeProcedureName?: string;

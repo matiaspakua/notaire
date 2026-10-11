@@ -62,7 +62,7 @@ class UserAuthorityResolverTest {
     @Test
     @DisplayName("should resolve nothing for an inactive user")
     void shouldResolveNothingForAnInactiveUser() {
-        when(userRepository.findByName("gone")).thenReturn(Optional.of(new User(4, "gone", "x", false, "Notary")));
+        when(userRepository.findByName("gone")).thenReturn(Optional.of(new User(4, "gone", "x", false, "Escribano")));
 
         assertThat(new UserAuthorityResolver(userRepository).resolve("gone")).isEmpty();
     }

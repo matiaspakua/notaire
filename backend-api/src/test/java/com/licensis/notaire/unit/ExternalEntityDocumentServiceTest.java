@@ -216,7 +216,7 @@ class ExternalEntityDocumentServiceTest {
     class IntentarCompletarDocumentacionTests {
 
         @Test
-        @DisplayName("Transitions the management a Documentation Completa when all the documents quedan entregados")
+        @DisplayName("Transitions the management to Documentacion Completa when every document is delivered")
         void shouldTransitionManagementWhenAllDocumentsDelivered() {
             document.setDelivered(true);
             when(documentRepository.findByManagementAndDeliveredBy(

@@ -1,5 +1,5 @@
 /**
- * Unit tests for the gestión case summary hooks (#774 — deeds, testimonies, copias, pagos).
+ * Unit tests for the management case summary hooks (#774 — deeds, testimonies, copies, payments).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";

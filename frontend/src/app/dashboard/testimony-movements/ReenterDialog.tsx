@@ -21,7 +21,7 @@ interface ReingresarDialogProps {
   onConfirm: (datos: DatosReingreso) => void;
 }
 
-/** CU44 paso 5 - solicita número de cartón, si fue observado por el registro y notes. */
+/** CU44 step 5 - asks for the card number, whether the registry flagged it, and notes. */
 export function ReenterDialog({ open, isPending, onCancel, onConfirm }: ReingresarDialogProps) {
   const t = useTranslations("movimientosTestimonio");
   const tc = useTranslations("common");

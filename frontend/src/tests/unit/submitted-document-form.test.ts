@@ -7,8 +7,8 @@ import {
 } from "@/lib/submitted-document-form";
 
 /**
- * CU04 / CU72 (#655): a submitted document is presented for a trámite of a
- * gestión, so the create form requires the document type and the trámite.
+* CU04 / CU72 (#655): a submitted document is presented for a procedure of a
+* management, so the create form requires the document type and the procedure.
  */
 describe("documento presentado form (#655)", () => {
   const complete = { ...EMPTY_DOCUMENT_FORM, tipoId: "3", fecha: "2026-09-05", managementId: "7", procedureId: "11" };

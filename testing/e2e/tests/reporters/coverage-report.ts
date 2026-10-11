@@ -102,7 +102,7 @@ const CU_MATRIX: CuEntry[] = [
   { id: "CU51", name: "Modificar escribano", module: "Administracion", grado: "Esencial" },
   { id: "CU52", name: "Modificar Deed", module: "Gestiones", grado: "Esencial" },
   { id: "CU53", name: "Modificar Gestión", module: "Gestiones", grado: "Esencial" },
-  { id: "CU54", name: "Modificar Person", module: "Clientes", grado: "Esencial" },
+  { id: "CU54", name: "Modificar Persona", module: "Clientes", grado: "Esencial" },
   { id: "CU55", name: "Modificar Plantilla Presupuesto", module: "Administracion", grado: "Esencial" },
   { id: "CU56", name: "Registrar inscripción", module: "Gestiones", grado: "Esencial" },
   { id: "CU57", name: "Eliminar tipo de trámite", module: "Administracion", grado: "Esencial" },

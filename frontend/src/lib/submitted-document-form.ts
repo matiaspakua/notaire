@@ -20,8 +20,8 @@ export const EMPTY_DOCUMENT_FORM: DocumentForm = {
 export type DocumentRequiredField = "tipoId" | "tramiteId";
 
 /**
- * A document is presented for a trámite of a gestión (CU04), so a new one needs
- * its type and its trámite (#655). Editing never forces a trámite: documents
+ * A document is presented for a procedure of a management (CU04), so a new one needs
+ * its type and its procedure (#655). Editing never forces a procedure: documents
  * stored before this rule may have none and must stay editable.
  */
 export function missingDocumentFields(form: DocumentForm, isEditing: boolean): DocumentRequiredField[] {
@@ -32,7 +32,7 @@ export function missingDocumentFields(form: DocumentForm, isEditing: boolean): D
   return missing;
 }
 
-/** The gestión/trámite selectors appear on create and on documents not yet linked to a trámite. */
+/** The management and procedure selectors appear on create and on documents not yet linked to a procedure. */
 export function showsProcedureLink(editing: SubmittedDocument | null): boolean {
   return !editing || editing.procedureId == null;
 }

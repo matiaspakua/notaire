@@ -971,7 +971,7 @@ class EntitiesBasicTest {
         void all() {
             User u1 = new User();
             User u2 = new User(1);
-            User u3 = new User(2, "admin", "pwd", true, "Notary");
+            User u3 = new User(2, "admin", "pwd", true, "Escribano");
             assertThat(u2.getIdUser()).isEqualTo(1);
             assertThat(u3.getName()).isEqualTo("admin");
 
@@ -979,7 +979,7 @@ class EntitiesBasicTest {
             u1.setName("X");
             u1.setPassword("password");
             u1.setStatus(true);
-            u1.setType("Notary");
+            u1.setType("Escribano");
             u1.setVersion(1);
             u1.setAuditRecordList(new ArrayList<>());
             Person p = new Person();
@@ -989,7 +989,7 @@ class EntitiesBasicTest {
             assertThat(u1.getName()).isEqualTo("X");
             assertThat(u1.getPassword()).isEqualTo("password");
             assertThat(u1.getStatus()).isTrue();
-            assertThat(u1.getType()).isEqualTo("Notary");
+            assertThat(u1.getType()).isEqualTo("Escribano");
             assertThat(u1.getVersion()).isEqualTo(1);
             assertThat(u1.getFkIdPerson()).isSameAs(p);
             assertThat(u1.getAuditRecordList()).isEmpty();

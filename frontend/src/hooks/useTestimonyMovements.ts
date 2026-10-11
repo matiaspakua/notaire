@@ -22,7 +22,7 @@ export function useRegisterInscription() {
   return useMovementAction("register-inscription");
 }
 
-/** CU12 - Retira un testimony inscripto, registrando el número de cartón. */
+/** CU12 - Withdraws a registered testimony and records the card number. */
 export function useWithdraw() {
   const qc = useQueryClient();
   return useMutation({
@@ -43,7 +43,7 @@ export interface TestimonyReentry {
   notes: string;
 }
 
-/** CU44 - Reingresa un testimony previamente retirado, sin alterar el movement anterior. */
+/** CU44 - Reenters a previously withdrawn testimony without changing the earlier movement. */
 export function useReenter() {
   const qc = useQueryClient();
   return useMutation({

@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Stored status and role labels kept** (#1490, CU75): `BusinessConstants` and audit
+  `GuiConstants` values stay the recorded Spanish labels (`Iniciada`, `Firmada`,
+  `Documentacion Completa`, `Escribano`). The initial administrator type is `Escribano`
+  again. Frontend hook and page comments are English. Behavior of those labels is unchanged.
 - **English page-local identifiers** (#1490, CU75): frontend and Playwright locals,
   parameters, and component names use English stems (`managementId`, `number`,
   `PeoplePage`). Message catalog keys, `{numero}` / `{dias}` / `{tramite}`

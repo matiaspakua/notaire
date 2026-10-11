@@ -27,7 +27,7 @@ export function isAdminRoute(pathname: string): boolean {
 }
 
 /**
- * Edge decision: deny administración when the session marker is present but
+ * Edge decision: deny administration when the session marker is present but
  * the role cookie is missing or not admin-capable.
  */
 export function shouldDenyAdminRoute(

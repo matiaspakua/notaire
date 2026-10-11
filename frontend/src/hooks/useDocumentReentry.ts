@@ -1,5 +1,5 @@
 /**
- * React Query hooks for CU43 — reingresar documentación.
+ * React Query hooks for CU43 — document reentry.
  * Endpoints: GET/POST /api/v1/managements/{id}/document-reentry
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

@@ -106,7 +106,7 @@ class UserControllerHashTest {
         user.setName("juan");
         user.setPassword(BCRYPT_HASH);
         user.setStatus(true);
-        user.setType("Notary");
+        user.setType("Escribano");
         when(userRepository.findAll()).thenReturn(List.of(user));
         when(passwordEncoder.matches("secret", BCRYPT_HASH)).thenReturn(true);
         when(jwtTokenService.generateToken("juan")).thenReturn("jwt-token");
@@ -130,7 +130,7 @@ class UserControllerHashTest {
         user.setName("admin");
         user.setPassword(LEGACY_MD5_ADMIN);
         user.setStatus(true);
-        user.setType("Notary");
+        user.setType("Escribano");
         when(userRepository.findAll()).thenReturn(List.of(user));
         when(passwordEncoder.encode("admin")).thenReturn(BCRYPT_HASH);
         when(jwtTokenService.generateToken("admin")).thenReturn("jwt-token");

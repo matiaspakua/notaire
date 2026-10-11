@@ -6,7 +6,7 @@ export const registrationDraftKeys = {
   detail: (id: number) => ["minutas-inscripcion", id] as const,
 };
 
-/** CU82 - Consulta una registrationDraft de inscripción por ID. */
+/** CU82 - Loads one registration draft by id. */
 export function useRegistrationDraft(id: number | null) {
   return useQuery({
     queryKey: id ? registrationDraftKeys.detail(id) : ["minutas-inscripcion", "none"],
@@ -15,7 +15,7 @@ export function useRegistrationDraft(id: number | null) {
   });
 }
 
-/** CU82 - Genera la registrationDraft de inscripción para una deed firmada. */
+/** CU82 - Creates the registration draft for a deed in status Firmada. */
 export function useGenerateRegistrationDraft() {
   return useMutation({
     mutationFn: (idDeed: number) =>
@@ -23,7 +23,7 @@ export function useGenerateRegistrationDraft() {
   });
 }
 
-/** CU82 - Registra la presentación de la registrationDraft ante el Registro. */
+/** CU82 - Records that the registration draft was submitted to the registry. */
 export function useSubmitRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
@@ -44,7 +44,7 @@ export function useSubmitRegistrationDraft() {
   });
 }
 
-/** CU82 - Registra una observación formulada por el Registro. */
+/** CU82 - Records a note raised by the registry. */
 export function useObserveRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
@@ -65,7 +65,7 @@ export function useObserveRegistrationDraft() {
   });
 }
 
-/** CU82 - Registra la inscripción definitiva de la registrationDraft. */
+/** CU82 - Records the final registration of the draft. */
 export function useRegisterRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
@@ -86,7 +86,7 @@ export function useRegisterRegistrationDraft() {
   });
 }
 
-/** Descarga el formulario normalizado (PDF) de una registrationDraft de inscripción. */
+/** Downloads the normalized registration-draft form (PDF). */
 export async function downloadRegistrationDraftReport(idRegistrationDraft: number): Promise<void> {
   const blob = await apiGetBytes(`/reports/registration-draft/${idRegistrationDraft}`);
   const link = document.createElement("a");

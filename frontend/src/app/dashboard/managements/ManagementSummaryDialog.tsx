@@ -23,7 +23,7 @@ interface ManagementSummaryDialogProps {
   onClose: () => void;
 }
 
-/** #774 - Escrituras, testimonies (with registry state), copias and pagos of a gestión. */
+/** #774 - Deeds, testimonies (with registry state), copies, and payments of a management. */
 export function ManagementSummaryDialog({ managementId, onClose }: ManagementSummaryDialogProps) {
   const t = useTranslations("gestiones.resumen");
   const { data: caso, isLoading } = useManagementCaseSummary(managementId ?? undefined);

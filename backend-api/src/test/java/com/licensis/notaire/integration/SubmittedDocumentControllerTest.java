@@ -140,7 +140,7 @@ class SubmittedDocumentControllerTest {
     @Test
     @DisplayName("Should inherit expires, dueDays and deliveredBy from type de documento and compute dateDue")
     void shouldInheritDueFieldsFromDocumentType() throws Exception {
-        Integer typeId = createDocumentType(true, 5, "Notary");
+        Integer typeId = createDocumentType(true, 5, "Escribano");
         String body = """
                 {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false}
                 """.formatted(typeId, createProcedure());
@@ -156,7 +156,7 @@ class SubmittedDocumentControllerTest {
         var saved = submittedDocumentRepository.findById(id).orElseThrow();
         assertThat(saved.getExpires()).isTrue();
         assertThat(saved.getDueDays()).isEqualTo(5);
-        assertThat(saved.getDeliveredBy()).isEqualTo("Notary");
+        assertThat(saved.getDeliveredBy()).isEqualTo("Escribano");
         assertThat(saved.getDateDue()).isEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse("2024-01-06"));
     }
 
@@ -185,7 +185,7 @@ class SubmittedDocumentControllerTest {
     @Test
     @DisplayName("Should let an explicit deliveredBy override the value inherited from type de documento")
     void shouldLetExplicitDeliveredByOverrideDocumentType() throws Exception {
-        Integer typeId = createDocumentType(false, null, "Notary");
+        Integer typeId = createDocumentType(false, null, "Escribano");
         String body = """
                 {"typeId": %d, "procedureId": %d, "date": "2024-01-01", "delivered": false,
                  "deliveredBy": "Entidad Externa"}

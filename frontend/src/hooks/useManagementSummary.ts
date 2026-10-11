@@ -1,5 +1,5 @@
 /**
- * React Query hooks for the gestión case summary (#774) and its financial summary (CU47/CU02).
+ * React Query hooks for the management case summary (#774) and its financial summary (CU47/CU02).
  * Endpoints: GET /api/v1/managements/{id}/case-summary and /financial-summary
  */
 import { useQuery } from "@tanstack/react-query";

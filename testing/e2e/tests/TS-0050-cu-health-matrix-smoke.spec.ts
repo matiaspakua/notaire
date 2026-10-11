@@ -45,7 +45,7 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU17", name: "Dar Alta persona", method: "POST", path: "/people", expectStatus: 201 },
   { id: "CU18", name: "Dar Alta Cliente", method: "POST", path: "/people", expectStatus: 201 },
   { id: "CU46", name: "Ver detalle cliente", method: "GET", path: () => `/people/${seedPersonId()}`, expectStatus: 200 },
-  { id: "CU54", name: "Modificar Person", method: "GET", path: "/people", expectStatus: 200 },
+  { id: "CU54", name: "Modificar Persona", method: "GET", path: "/people", expectStatus: 200 },
   { id: "CU61", name: "Buscar persona o cliente", method: "GET", path: "/people/search?firstName=test", expectStatus: 200 },
 
   // ── Presupuestos (CU01, CU45, CU60) ──

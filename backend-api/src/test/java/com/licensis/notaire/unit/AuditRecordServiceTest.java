@@ -52,7 +52,7 @@ class AuditRecordServiceTest {
         testUser = new User();
         testUser.setIdUser(1);
         testUser.setName("testuser");
-        testUser.setType("Notary");
+        testUser.setType("Escribano");
         testUser.setStatus(true);
         testUser.setFkIdPerson(person);
 

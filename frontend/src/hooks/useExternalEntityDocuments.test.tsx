@@ -1,6 +1,5 @@
 /**
- * Unit test for useExternalEntityDocuments (CU10 — movements de
- * documentación de entities externas).
+ * Unit test for useExternalEntityDocuments (CU10 — external-entity document movements).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";

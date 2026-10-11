@@ -66,7 +66,7 @@ class AuditRecordControllerTest {
         DtoUser user = new DtoUser();
         user.setIdUser(1);
         user.setName("admin");
-        user.setType("Notary");
+        user.setType("Escribano");
         user.setStatus(true);
         user.setPersons(person);
 

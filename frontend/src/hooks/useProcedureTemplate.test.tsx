@@ -1,5 +1,5 @@
 /**
- * Unit test for useProcedureTemplate (CU03 — documents required por trámite).
+ * Unit test for useProcedureTemplate (CU03 — documents required for a procedure).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";

@@ -1,5 +1,5 @@
 /**
- * React Query hook for CU42 — informar próximos vencimientos.
+ * React Query hook for CU42 — upcoming document expirations.
  * Endpoint: GET /api/v1/submitted-documents/upcoming-expirations?days=N
  */
 import { useQuery } from "@tanstack/react-query";

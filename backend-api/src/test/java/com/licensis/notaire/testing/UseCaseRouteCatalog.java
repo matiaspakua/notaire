@@ -67,7 +67,7 @@ public final class UseCaseRouteCatalog {
                 new UseCaseRoute("CU51", "Modificar notary", RequestMethod.PUT, "/api/v1/people/{id}"),
                 new UseCaseRoute("CU52", "Modificar Deed", RequestMethod.PUT, "/api/v1/deeds/{id}"),
                 new UseCaseRoute("CU53", "Update Management", RequestMethod.PUT, "/api/v1/managements/{id}"),
-                new UseCaseRoute("CU54", "Modificar Person", RequestMethod.PUT, "/api/v1/people/{id}"),
+                new UseCaseRoute("CU54", "Modificar Persona", RequestMethod.PUT, "/api/v1/people/{id}"),
                 new UseCaseRoute("CU55", "Update Template Budget", RequestMethod.PUT, "/api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}"),
                 new UseCaseRoute("CU56", "Record registration", RequestMethod.PUT, "/api/v1/testimonies/{id}"),
                 new UseCaseRoute("CU57", "Delete type of procedure", RequestMethod.DELETE, "/api/v1/procedure-types/{id}"),

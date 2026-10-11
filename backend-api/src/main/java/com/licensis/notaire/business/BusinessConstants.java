@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.licensis.notaire.business;
 
 /**
- * Clase that agrupa all the constantes utilizadas in the capa of negocio.
+ * Stored business vocabulary. The string values are persisted labels and stay
+ * as recorded; only the comments around them are English.
  *
  * @author matias
  */
@@ -13,48 +10,45 @@ public interface BusinessConstants
 {
 
     /**
-     * All the objejos must be instanciados in a status valid. If a objeto is creado, it
-     * asigna to the idxx this valor for indicar that is a objeto in a status inconsistente, already sea
-     * by that aun not has been persistido or by that has habido algun tipo of error peristiendo the
-     * entidad, buscandola, etc.
+     * Sentinel id for an object that is not yet consistent: it was just created
+     * and not persisted, or a persistence or lookup error left it invalid.
      * <p>
-     * For saber if a objeto esta in a status consistente, must
-     * verificar que su ID sea distinto a {@link ID_OBJETO_NO_VALIDO}.
+     * An object is consistent when its id is different from {@link #ID_OBJETO_NO_VALIDO}.
      */
     public int ID_OBJETO_NO_VALIDO = -1;
-    //Estados Management
+    // Management statuses
     /**
-     * Status inicial of a history when inicia a management: "Management iniciada"
+     * Initial history status when a management starts: "Iniciada".
      */
     public String ManagementStatusINICIAL = "Iniciada";
-    public String ManagementStatusMODIFICADA = "Management Modificada";
-    public String ManagementENProcedure = "En Procedure";
-    public String DOCUMENTACION_COMPLETA = "Documentation Completa";
-    public String ManagementCONDeedFIRMADA = "Management with Deed Firmada";
-    public String ManagementCONDeedSINFIRMAR = "Management with Deed Sin Firmar";
-    public String ManagementCONDeedANULADA = "Management with Deed Anulada";
-    public String ManagementCONDeedNOPASO = "Management with Deed Not Step";
-    public String ManagementCONDeedRegistered = "Management with Deed Inscripta";
-    public String ManagementCONDOCUMENTACIONCOMPLETA = "Documentation Completa";
+    public String ManagementStatusMODIFICADA = "Gestion Modificada";
+    public String ManagementENProcedure = "En Tramite";
+    public String DOCUMENTACION_COMPLETA = "Documentacion Completa";
+    public String ManagementCONDeedFIRMADA = "Gestion con Escritura Firmada";
+    public String ManagementCONDeedSINFIRMAR = "Gestion con Escritura Sin Firmar";
+    public String ManagementCONDeedANULADA = "Gestion con Escritura Anulada";
+    public String ManagementCONDeedNOPASO = "Gestion con Escritura No Paso";
+    public String ManagementCONDeedRegistered = "Gestion con Escritura Inscripta";
+    public String ManagementCONDOCUMENTACIONCOMPLETA = "Documentacion Completa";
     public String ManagementARCHIVADA = "Archivada";
     /**
-     * Determina que un tipo de folio en particular se puede usar.
+     * A folio type that can still be used.
      */
     public boolean FolioTypeEnabled = true;
     public boolean FolioTypeDESHABILITADO = false;
 
     /**
-     * Determina que un tipo de folio ha sido eliminado o no se puede utilizar.
+     * A folio type that was removed or can no longer be used.
      */
-    //  All the estados posibles of the folios.
-    public String StatusFolioNUEVOS = "Folio New";
+    // Possible folio statuses.
+    public String StatusFolioNUEVOS = "Folio Nuevo";
     public String StatusFolioUTILIZADO = "Folio Utilizado";
     public String StatusFolioERROSE = "Folio Errose";
 
-    public String ModuleMODIFICARPerson = "Modificar Person";
+    public String ModuleMODIFICARPerson = "Modificar Persona";
     public String ModuleMODIFICARClient = "Modificar Cliente";
     /**
-     * The distintos status of a deed.
+     * Possible deed statuses.
      */
     public String DeedFIRMADA = "Firmada";
     public String DeedSINFIRMAR = "Sin Firmar";
@@ -62,20 +56,20 @@ public interface BusinessConstants
     public String DeedNOPASO = "No Paso";
     public String DeedRegistered = "Inscripta";
     /**
-     * The distintos estados of the circuito registral of a Registration draft (CU82).
+     * Registry-circuit statuses of a registration draft (CU82).
      */
     public String RegistrationDraftGENERADA = "Generada";
-    public String RegistrationDraftPRESENTADA = "Presented for registration";
+    public String RegistrationDraftPRESENTADA = "Presentado para inscripción";
     public String RegistrationDraftOBSERVADA = "Observado";
     public String RegistrationDraftRegistered = "Inscripto";
     /**
-     * The distintos tipos of users.
+     * User types. {@code Escribano} is an administrator type.
      */
     public String UserEMPLEADO = "Empleado";
-    public String UserNotary = "Notary";
+    public String UserNotary = "Escribano";
 
     /**
-     * Quienes entregan the documentation
+     * Who delivers the documentation.
      */
     public String DOCUMENTACION_ENTIDAD_EXTERNA = "Entidad Externa";
     public String DOCUMENTACIONClient = "Cliente";

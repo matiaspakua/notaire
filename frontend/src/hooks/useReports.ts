@@ -16,7 +16,7 @@ async function downloadPdf(path: string, filename: string): Promise<void> {
   URL.revokeObjectURL(url);
 }
 
-/** CU01/CU39 — Reporte PDF de budget */
+/** CU01/CU39 — Budget PDF report */
 export function useBudgetReport() {
   return {
     download: (idBudget: number) =>
@@ -27,7 +27,7 @@ export function useBudgetReport() {
   };
 }
 
-/** CU01 — Reporte PDF de budget con properties */
+/** CU01 — Budget PDF report that includes properties */
 export function useBudgetPropertiesReport() {
   return {
     download: (idBudget: number) =>
@@ -38,7 +38,7 @@ export function useBudgetPropertiesReport() {
   };
 }
 
-/** CU02 — Lista de documents para tipo de trámite */
+/** CU02 — Document list for a procedure type */
 export function useDocumentListReport() {
   return {
     download: (procedureTypeName: string) =>
@@ -49,7 +49,7 @@ export function useDocumentListReport() {
   };
 }
 
-/** CU13 — ManagementHistory de gestión */
+/** CU13 — Management history report */
 export function useManagementHistoryReport() {
   return {
     download: (idManagement: number) =>
@@ -60,7 +60,7 @@ export function useManagementHistoryReport() {
   };
 }
 
-/** CU25 — Declaración Jurada Mensual */
+/** CU25 — Monthly sworn statement */
 export function useMonthlySwornStatementReport() {
   return {
     download: (year: number, month: number) =>
@@ -71,7 +71,7 @@ export function useMonthlySwornStatementReport() {
   };
 }
 
-/** CU50 — Declaración Jurada de Rentas */
+/** CU50 — Tax sworn statement */
 export function useTaxSwornStatementReport() {
   return {
     download: (year: number, month: number) =>
@@ -82,7 +82,7 @@ export function useTaxSwornStatementReport() {
   };
 }
 
-/** CU24 — Libro Índice */
+/** CU24 — Index book */
 export function useIndexBookReport() {
   return {
     download: (year: number) =>
@@ -93,7 +93,7 @@ export function useIndexBookReport() {
   };
 }
 
-/** CU09 — Consultar debt de documents (query param numberManagement, see openapi.yaml) */
+/** CU09 — Document debt report (query param numberManagement, see openapi.yaml) */
 export function useDocumentDebtReport() {
   return {
     download: (numberManagement: number) =>
@@ -104,7 +104,7 @@ export function useDocumentDebtReport() {
   };
 }
 
-/** CU15 — Emitir recibo de pago */
+/** CU15 — Payment receipt */
 export function usePaymentReceipt() {
   return {
     download: (idPago: number) =>

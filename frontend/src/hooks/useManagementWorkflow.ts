@@ -1,5 +1,5 @@
 /**
- * React Query hook for the gestión workflow trace (dashboard).
+ * React Query hook for the management workflow trace (dashboard).
  * Fetches GET /api/v1/managements/{id}/workflow-trace.
  */
 import { useQuery } from "@tanstack/react-query";

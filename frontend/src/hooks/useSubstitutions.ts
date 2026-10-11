@@ -7,7 +7,7 @@ export const substitutionsKeys = {
   detail: (id: number) => ["substitutions", id] as const,
 };
 
-/** CU12, CU42, CU59 — Gestión de substitutions de notary */
+/** CU12, CU42, CU59 — Notary substitutions */
 export function useSubstitutions() {
   return useQuery({
     queryKey: substitutionsKeys.all,

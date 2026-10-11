@@ -251,7 +251,7 @@ class AdditionalControllersTest {
             var mvc = standaloneSetup(new UserController(repo, jwtSvc, metrics, passwordEncoder,
                     new com.licensis.notaire.security.LoginAttemptService(5, 900000), authCookies,
                     mock(com.licensis.notaire.config.TokenRevocationService.class))).build();
-            User u = new User(1, "admin", "abc", true, "Notary");
+            User u = new User(1, "admin", "abc", true, "Escribano");
 
             when(repo.findAll()).thenReturn(List.of(u));
             when(repo.findById(1)).thenReturn(Optional.of(u));
