@@ -61,7 +61,7 @@
 ## 10. Pull Request y validación CI
 
 - [ ] 10.1 `git push -u origin feat/774_gestion_workflow_links`
-- [ ] 10.2 Open PR `[#774] feat(gestiones): add a case summary of escrituras, testimonios, copias and pagos (slice of #774)`
+- [ ] 10.2 Open PR `[#774] feat(managements): add a case summary of deeds, testimonies, copies and payments (slice of #774)`
 - [ ] 10.3 Wait for all required workflows
 - [ ] 10.4 Gate 4 — CI green, review approved, no conflicts
 
@@ -72,7 +72,7 @@
 
 ## 12. Gate 5 — Smoke test y cierre
 
-- [ ] 12.1 Smoke: CI green on the merge commit; the case summary opens from the gestiones screen
+- [ ] 12.1 Smoke: CI green on the merge commit; the case summary opens from the managements screen
 - [ ] 12.2 Rollback path (revert PR) still valid
 - [ ] 12.3 Close Issue #774 referencing the PR
 - [ ] 12.4 Archive the change: `openspec archive feat-774-gestion-resumen-caso`

@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English change-task notes** (#1490, CU75): the case-summary
+  task list names a managements pull request and the managements
+  screen. The assessment task list names the create-management
+  diagram. The branch `feat/774_gestion_workflow_links` and the
+  change slug `feat-774-gestion-resumen-caso` stay. Template
+  headings stay, including `Crear branch`, `Commits atómicos`, and
+  `Implementación`. The filename `GESTION.md` stays.
 - **English change-design notes** (#1490, CU75): the case-summary
   design names the managements screen, `useManagementSummary`, and
   `financial-summary`. The required-documents design names the
