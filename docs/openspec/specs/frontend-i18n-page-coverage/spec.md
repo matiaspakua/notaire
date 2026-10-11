@@ -5,9 +5,7 @@
 Close the frontend i18n coverage gap for remaining dashboard pages and login
 leftover strings so English locale switching (TS-0040) does not leave Spanish
 hardcoded copy on those surfaces. Source: #1059; CU76; ADR-015.
-
 ## Requirements
-
 ### Requirement: Gap page namespaces exist in both catalogs
 
 The message catalogs `frontend/messages/es.json` and `frontend/messages/en.json`
@@ -85,3 +83,23 @@ catalog.
 - **WHEN** TS-0040 (or a focused extension) runs against a wired gap page with
   locale `en`
 - **THEN** at least one former gap page title is asserted in English
+
+### Requirement: Formatted values follow the active locale
+
+Screens SHALL format dates, timestamps, numbers and money through one locale-aware formatter: `es` uses es-AR, `en` uses en-GB (day first), and money is always ARS. No screen SHALL hardcode a locale.
+
+#### Scenario: English formats
+
+- **WHEN** the UI language is English and a payment of 75123.45 on 2026-07-08 is listed
+- **THEN** the row shows `08/07/2026` and `ARS 75,123.45`
+
+#### Scenario: Spanish formats
+
+- **WHEN** the UI language is Spanish and the same payment is listed
+- **THEN** the row shows `8/7/2026` and `$ 75.123,45`
+
+#### Scenario: No hardcoded locale
+
+- **WHEN** the screen sources are scanned
+- **THEN** none names es-AR, en-US or en-GB or calls the es-AR-only helpers
+
