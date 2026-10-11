@@ -66,7 +66,7 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
     ).toBeVisible();
   });
 
-  test("administracion/concepts NotaireIcon actions use button aria-label", async ({ page }) => {
+  test("administration/concepts NotaireIcon actions use button aria-label", async ({ page }) => {
     const created = await createConcept(page);
     expect(created.ok, created.error ?? "createConcept failed").toBe(true);
 

@@ -216,7 +216,7 @@ class SubstitutionServiceIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should support complex scenarios")
     void shouldSupportComplexScenarios() {
-        // Create multiple personas
+        // Create multiple people
         Person substitute1 = createPerson("Notary Principal");
         Person substitute2 = createPerson("Notary Suplente");
         Person substituted1 = createPerson("Notary A");

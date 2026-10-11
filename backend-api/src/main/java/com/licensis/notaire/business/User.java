@@ -199,7 +199,7 @@ public class User implements Serializable, Persistable<Integer> {
 
     @Override
     public String toString() {
-        return "Users[ version=" + version + " ]"
+        return "User[ version=" + version + " ]"
                 + "[ idUser=" + idUser + " ]"
                 + "[ name=" + name + " ]"
                 + "[ type=" + type + " ] "

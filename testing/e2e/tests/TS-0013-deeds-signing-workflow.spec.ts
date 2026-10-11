@@ -91,7 +91,7 @@ test.describe('CU05 - Prepare a deed', () => {
     // Form must have a "número" field
     await expect(dialog.getByLabel(/número/i)).toBeVisible()
 
-    // Form must have campo "fecha"
+    // Form must have a date field
     await expect(dialog.getByLabel(/date/i)).toBeVisible()
 
     // Form must have folio selector (Issue #892)

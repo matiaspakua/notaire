@@ -1260,7 +1260,7 @@ class RemainingControllersJpaTest {
     }
 
     //╔══════════════════════════════════════════════════════════════════════════════╗
-    //║  PERSONA — singleton with private constructor, has extra query methods       ║
+    //║  PERSON — singleton with private constructor, has extra query methods        ║
     //╚══════════════════════════════════════════════════════════════════════════════╝
 
     @Nested

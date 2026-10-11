@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English entity debug names and test titles** (#1490, CU75):
+  `User.toString` starts with `User[` and `Concept.toString` starts with
+  `Concept[`. Tour and workflow titles say deeds, properties, copies,
+  reports, concepts, users, payments, and folders. Visible Spanish labels
+  and stored statuses stay.
 - **English helper and architecture names** (#1490, CU75):
   E2E helpers and comments name `User` and `History`. The SAD domain
   diagram, the security data table, and the API coverage notes use those

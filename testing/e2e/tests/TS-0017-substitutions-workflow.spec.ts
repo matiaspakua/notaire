@@ -1,6 +1,6 @@
 /**
  * CU22 - Register a substitution (Gherkin style)
- * CU59 - Consultar Suplencias
+ * CU59 - View substitutions
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";

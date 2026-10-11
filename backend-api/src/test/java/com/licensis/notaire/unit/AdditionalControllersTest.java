@@ -267,7 +267,7 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/users/person/10")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/users/person/99")).andExpect(status().isNotFound());
 
-            // create with no password — uses UserRequest format (active, not estado)
+            // create with no password — uses UserRequest format (field active)
             String noPwdJson = """
                     {"name":"user","password":"","type":"Notary","active":true}
                     """;

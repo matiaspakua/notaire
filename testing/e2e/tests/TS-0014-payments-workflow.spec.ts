@@ -1,6 +1,6 @@
 /**
- * TS-0014 - Pagos Workflow (CU15 → CU47)
- * CU15 - Procesar Payment
+ * TS-0014 - Payments workflow (CU15 → CU47)
+ * CU15 - Process a payment
  * CU47 - Look up a payment
  * Issue #796 (budget picker and pending-balance visibility)
  * Issue #821 (payment-status badge: SIN_PAGOS / PARCIAL / SALDADO)
@@ -152,7 +152,7 @@ test.describe("CU15 - Process a payment", () => {
   });
 
   test.skip("CU15-GW03 (#1146): Given a payment exists, When view details is clicked, Then the details are shown", () => {
-    // Skipped (#1146): pagos table has no "ver" button per row — only edit/delete icons.
+    // Skipped (#1146): the payments table has no view button per row — only edit and delete icons.
   });
 
   test("CU15-RECIBO-01 (#23): Given a payment exists, When issue receipt is clicked, Then a PDF is downloaded", async ({ page }) => {
@@ -248,7 +248,7 @@ test.describe("CU47 - Look up a payment (payment status #821)", () => {
   });
 
   test.skip("CU47-GW01 (#1146): Given the payments page, When filtered by date, Then the filtered list is shown", () => {
-    // Skipped (#1146): pagos page has no "fecha desde" / "fecha hasta" filter inputs.
+    // Skipped (#1146): the payments page has no date-from / date-to filter inputs.
   });
 });
 

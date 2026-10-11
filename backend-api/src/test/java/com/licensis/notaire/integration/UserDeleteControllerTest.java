@@ -53,7 +53,7 @@ class UserDeleteControllerTest {
     @Test
     @DisplayName("Should delete user and return 404 on subsequent GET")
     void shouldDeleteUserAndReturnNotFoundOnSubsequentGet() throws Exception {
-        // Create a user to delete (using persona id=1 from V2 test data)
+        // Create a user to delete (using person id=1 from V2 test data)
         String createBody = """
                 {
                   "name": "to_be_deleted",

@@ -93,7 +93,7 @@ class BusinessWorkflowIntegrationTest {
     }
 
     // ──────────────────────────────────────────────
-    // CU17/CU18 — Personas (Clientes) workflow
+    // CU17/CU18 — People (clients) workflow
     // ──────────────────────────────────────────────
 
     @Nested
@@ -256,7 +256,7 @@ class BusinessWorkflowIntegrationTest {
     }
 
     // ──────────────────────────────────────────────
-    // CU15/CU47 — Pagos workflow
+    // CU15/CU47 — Payments workflow
     // ──────────────────────────────────────────────
 
     @Nested

@@ -92,7 +92,7 @@ describe("CU17 — People list display helpers", () => {
 });
 
 // ──────────────────────────────────────────────
-// CU15 — Pagos
+// CU15 — Payments
 // ──────────────────────────────────────────────
 
 describe("CU15 — Payment display helpers", () => {

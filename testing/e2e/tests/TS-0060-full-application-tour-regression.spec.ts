@@ -261,7 +261,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Escrituras — List", async () => {
+  test("Deeds — List", async () => {
     await navigateTo(page, "/dashboard/deeds");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
@@ -283,19 +283,19 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Protocolo — List", async () => {
+  test("Protocol — List", async () => {
     await navigateTo(page, "/dashboard/protocol");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Inmuebles — List", async () => {
+  test("Properties — List", async () => {
     await navigateTo(page, "/dashboard/properties");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Copias — List", async () => {
+  test("Copies — List", async () => {
     await navigateTo(page, "/dashboard/copies");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
@@ -335,7 +335,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Reportes — List", async () => {
+  test("Reports — List", async () => {
     await navigateViaSidebar(page, "reportes");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
@@ -361,7 +361,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Admin Conceptos — List and Search", async () => {
+  test("Admin Concepts — List and Search", async () => {
     await navigateTo(page, "/dashboard/administration/concepts");
     await assertHeadingVisible(page);
     const searchInput = page.getByTestId("input-search-concept");
@@ -458,7 +458,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Admin Usuarios — List, Create", async () => {
+  test("Admin Users — List, Create", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/administration/users");
       await assertHeadingVisible(page);

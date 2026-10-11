@@ -164,7 +164,7 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     await expect(head).not.toContainText("Presupuesto");
   });
 
-  test("copias: English column headers", async ({ page }) => {
+  test("copies: English column headers", async ({ page }) => {
     await setupAuthWithLocale(page, "en", "/dashboard/copies");
     const head = page.locator("thead").first();
     await expect(head).toContainText("Print date", { timeout: 10000 });
@@ -180,7 +180,7 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     await expect(page.getByRole("main")).not.toContainText("Disponible");
   });
 
-  test("administracion/users: English breadcrumb, role header and status", async ({ page }) => {
+  test("administration/users: English breadcrumb, role header and status", async ({ page }) => {
     await setupAuthWithLocale(page, "en", "/dashboard/administration/users");
     const crumb = page.getByRole("navigation", { name: "Breadcrumb" });
     await expect(crumb).toContainText("Administration", { timeout: 10000 });

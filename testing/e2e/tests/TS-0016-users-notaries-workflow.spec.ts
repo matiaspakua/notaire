@@ -68,7 +68,7 @@ test.describe("CU20 - Register a user", () => {
     await steps.whenUserClicksButton("nuevo usuario");
     await steps.thenModalIsVisible();
 
-    // When — fill name via testid; tipo is a Select (combobox), activo defaults to true
+    // When — fill name via testid; type is a Select (combobox), active defaults to true
     await steps.page.getByTestId("input-name-user").fill(TestData.user.username);
     await steps.page.getByLabel(/contraseña/i).fill(TestData.user.password);
     await steps.whenUserSubmitsForm();
@@ -153,7 +153,7 @@ test.describe("CU48 - Register a notary", () => {
 
   test.skip("CU48-GW01 (#1146): Given the notaries page, When new notary is clicked, Then the modal opens", async () => {
     // Skipped (#1146): no /dashboard/administration/notaries page exists in the current frontend.
-    // Escribanos are managed through the Usuarios module.
+    // Notaries are managed through the users module. The stored role name Escribano stays.
   });
 
   test.skip("CU48-GW02 (#1146): Given the form is open, When it is filled and submitted, Then the notary is created", async () => {

@@ -210,7 +210,7 @@ public class Concept implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "Concepts[ version=" + version + " ]"
+        return "Concept[ version=" + version + " ]"
                 + "[ idConcept=" + idConcept + " ]"
                 + "[ name=" + name + " ]";
     }

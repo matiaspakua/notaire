@@ -1,5 +1,5 @@
 /**
- * Copias: required fields (Gherkin style)
+ * Copies: required fields (Gherkin style)
  *
  * Covers Issue #655: the copy number and print date are NOT NULL columns, and
  * POST/PUT /api/v1/copies without them answered 500. The API now answers 400,

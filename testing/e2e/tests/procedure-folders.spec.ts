@@ -174,7 +174,7 @@ test.describe("CU85 - Manage procedure folders", () => {
     { width: 768, height: 1024, label: "768px (tablet)" },
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
-    test(`carpetas dialog is usable at ${viewport.label}`, async ({ page }) => {
+    test(`folders dialog is usable at ${viewport.label}`, async ({ page }) => {
       const { idManagement, number } = await seedArchivableManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });

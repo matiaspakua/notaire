@@ -39,7 +39,7 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
 
-test.describe("Reportes — navigation discovery (#1058)", () => {
+test.describe("Reports — navigation discovery (#1058)", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe("Reportes — navigation discovery (#1058)", () => {
     await steps.givenDashboardIsLoaded();
   });
 
-  test("opens Reportes from the sidebar", async ({ page }) => {
+  test("opens Reports from the sidebar", async ({ page }) => {
     await steps.whenUserOpensSidebarNav("reportes");
     await expect(page).toHaveURL(/\/dashboard\/reports/);
     await expect(page.locator("h1").filter({ hasText: /\S/ }).first()).toBeVisible();
@@ -241,7 +241,7 @@ test.describe("CU65 - Search document types", () => {
   });
 
   test.skip("CU65-GW01 (#1146): Given document types, When searching, Then results are shown", async () => {
-    // Skipped (#1146): administracion/documents page has no search bar in the current UI.
+    // Skipped (#1146): the administration/documents page has no search bar in the current UI.
   });
 });
 
@@ -254,7 +254,7 @@ test.describe("CU66 - Search concepts", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/concepts");
   });
 
-  test.skip("CU66-GW01 (#1146): Given on conceptos, When search, Then shows results", async () => {
-    // Skipped (#1146): administracion/concepts page has no search bar in the current UI.
+  test.skip("CU66-GW01 (#1146): Given concepts, When search, Then shows results", async () => {
+    // Skipped (#1146): the administration/concepts page has no search bar in the current UI.
   });
 });

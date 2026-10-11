@@ -18,7 +18,7 @@ test.describe("CU83 - Change a management's status", () => {
     await authenticateAsAdmin(page);
   });
 
-  test("golden path: transitioning to a valid destination updates the estado", async ({ page }) => {
+  test("golden path: transitioning to a valid destination updates the status", async ({ page }) => {
     const { idManagement, number, finalStatus } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");

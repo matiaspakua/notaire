@@ -74,7 +74,7 @@ test.describe("CU26/CU57/CU64 — Procedure types", () => {
     ).toBeVisible();
   });
 
-  test("modal has nombre, descripcion and checkbox fields", async ({ page }) => {
+  test("modal has name, description, and checkbox fields", async ({ page }) => {
     await page.getByRole("button", { name: /nuevo tipo/i }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByLabel(/nombre/i)).toBeVisible();
@@ -142,7 +142,7 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
     ).toBeVisible();
   });
 
-  test("modal has numero, anio and estado fields", async ({ page }) => {
+  test("modal has number, year, and status fields", async ({ page }) => {
     await page.getByRole("button", { name: /nuevo folio/i }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByLabel(/número/i)).toBeVisible();

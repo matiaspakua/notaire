@@ -28,32 +28,32 @@ test.describe("Search inputs expose an accessible label (#608)", () => {
     await expect(page.getByLabel("Buscar por ID o cliente...", { exact: true })).toBeVisible();
   });
 
-  test("auditoria page search input is labeled", async ({ page }) => {
+  test("audit page search input is labeled", async ({ page }) => {
     await page.goto("/dashboard/audit");
     await expect(page.getByLabel("Buscar en esta página por usuario u operación...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/workflows page search input is labeled", async ({ page }) => {
+  test("administration/workflows page search input is labeled", async ({ page }) => {
     await page.goto("/dashboard/administration/workflows");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/procedures page search input is labeled", async ({ page }) => {
+  test("administration/procedures page search input is labeled", async ({ page }) => {
     await page.goto("/dashboard/administration/procedures");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/concepts page search input is labeled", async ({ page }) => {
+  test("administration/concepts page search input is labeled", async ({ page }) => {
     await page.goto("/dashboard/administration/concepts");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/documents page search input is labeled", async ({ page }) => {
+  test("administration/documents page search input is labeled", async ({ page }) => {
     await page.goto("/dashboard/administration/documents");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
 
-  test("administracion/management-statuses page search input is labeled", async ({ page }) => {
+  test("administration/management-statuses page search input is labeled", async ({ page }) => {
     await page.goto("/dashboard/administration/management-statuses");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
   });
@@ -61,7 +61,7 @@ test.describe("Search inputs expose an accessible label (#608)", () => {
 
 /**
  * Issue #1343: filter selects had no accessible name (axe button-name /
- * select-name, critical) on managements, budgets, folios, auditoria and
+ * select-name, critical) on managements, budgets, folios, audit, and
  * estados-management.
  */
 test.describe("Filter selects expose an accessible name (#1343)", () => {
@@ -84,7 +84,7 @@ test.describe("Filter selects expose an accessible name (#1343)", () => {
     await expect(page.getByRole("combobox", { name: "Filtrar por estado", exact: true })).toBeVisible();
   });
 
-  test("auditoria module filter, when shown, is a named combobox", async ({ page }) => {
+  test("audit module filter, when shown, is a named combobox", async ({ page }) => {
     await page.goto("/dashboard/audit");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     const selects = page.locator("select");
