@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **k6 script path** (#1490, CU75): the living load-test spec names
+  `infra/performance/k6/load-test.js`, the file the weekly workflow runs.
+  The archived change keeps `performance-test/k6/load-test.js`.
 - **DAST protected path** (#1490, CU75): the unauthenticated baseline and
   the security catalog probe `GET /api/v1/people`. The retired path
   `/api/v1/personas` stays out of that gate. Health still expects 200.

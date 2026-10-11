@@ -10,7 +10,7 @@ Source: #1047; owners CU74 (performance SLOs) and CU76 (QA/CI infrastructure).
 
 ### Requirement: k6 load-test script is present and API-current
 
-The repository MUST contain `performance-test/k6/load-test.js` (path referenced
+The repository MUST contain `infra/performance/k6/load-test.js` (path referenced
 by `.github/workflows/performance-test.yml`). The script MUST authenticate via
 `POST /api/v1/users/login` using the English DTO fields `name` and
 `password`, reuse a Bearer JWT, and exercise the highest-traffic read
@@ -19,7 +19,7 @@ endpoints `/api/v1/managements`, `/api/v1/budgets`, and `/api/v1/procedures`.
 #### Scenario: k6 script file exists at workflow path
 
 - **WHEN** the Performance workflow or asset validator resolves
-  `performance-test/k6/load-test.js`
+  `infra/performance/k6/load-test.js`
 - **THEN** the file exists and is a valid k6 script importing `k6/http`
 
 #### Scenario: Script uses English login DTO fields
@@ -59,7 +59,7 @@ artifact that is actually produced by the run.
 
 - **WHEN** the Performance workflow YAML is validated
 - **THEN** it defines `schedule` and `workflow_dispatch`, does not gate
-  `pull_request`, references `performance-test/k6/load-test.js`, and waits on
+  `pull_request`, references `infra/performance/k6/load-test.js`, and waits on
   backend `actuator/health` before k6
 
 #### Scenario: Results published as artifact
