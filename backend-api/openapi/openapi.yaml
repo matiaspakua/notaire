@@ -71,7 +71,8 @@ components:
         propertyAmount:
           type: number
         status:
-          description: Budget status (#1346). Accepts any letter case and stores the code; any other value returns 400.
+          description: Budget status (#1346). Accepts any uppercase/lowercase and stores the code; any other value returns
+            400.
           enum:
           - BORRADOR
           - PENDIENTE
@@ -2741,7 +2742,8 @@ info:
     email: info@licensis.com
     name: Licensis
     url: https://www.licensis.com
-  description: Notarial management system — REST backend API. Every resource uses the `/api/v1/` prefix. Error responses keep the `{error, message, timestamp, path}` shape.
+  description: Notarial management system — REST backend API. Every resource uses the `/api/v1/` prefix. Error responses keep
+    the `{error, message, timestamp, path}` shape.
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -4550,7 +4552,8 @@ paths:
       - ManagementHistory
   /api/v1/history/{id}:
     delete:
-      description: 'The history is the trace of status changes of the management (CU13): only an administrator can delete a record.'
+      description: 'The history is the trace of status changes of the management (CU13): only an administrator can delete
+        a record.'
       operationId: delete_16
       parameters:
       - in: path
@@ -4595,7 +4598,8 @@ paths:
       tags:
       - ManagementHistory
     put:
-      description: 'The history is the trace of status changes of the management (CU13): only an administrator can correct a record.'
+      description: 'The history is the trace of status changes of the management (CU13): only an administrator can correct
+        a record.'
       operationId: update_16
       parameters:
       - in: path
@@ -8581,9 +8585,8 @@ paths:
       - Users
   /api/v1/users/logout:
     post:
-      description: 'Revokes on the server the JWT sent by Bearer or cookie, so it cannot be reused even if it has not
-        expired; the user''s other sessions remain active. A missing or invalid token gets the same response (issue
-        #676).'
+      description: 'Revokes on the server the JWT sent by Bearer or cookie, so it cannot be reused even if it has not expired;
+        the user''s other sessions remain active. A missing or invalid token gets the same response (issue #676).'
       operationId: logout
       responses:
         '200':
@@ -9134,14 +9137,8 @@ servers:
 tags:
 - description: API for generating PDF reports
   name: Reports
-- description: API for folio types
-  name: Folio type
-- description: API for managing concepts
-  name: Concepts
 - description: API to manage document types
   name: DocumentType
-- description: API for managing folio notebooks
-  name: Notebooks
 - description: API for managing folio
   name: Folio
 - description: API for managing management history
@@ -9154,44 +9151,50 @@ tags:
   name: BudgetTemplate
 - description: API for managing submitted documents
   name: SubmittedDocument
+- description: CU70 - Management of status workflows
+  name: Workflow Definition
 - description: API for managing deeds
   name: Deeds
 - description: API for managing substitution
   name: Substitution
+- description: API for folio types
+  name: Folio type
+- description: API for managing folio notebooks
+  name: Notebooks
 - description: API for generating and tracking the registration draft
   name: Registration drafts
-- description: API for procedure types
-  name: Procedure type
 - description: API for managing procedure folders
   name: Procedure folders
 - description: API to manage people
   name: People
+- description: API for managing concepts
+  name: Concepts
+- description: CU71 - Transitions between statuses of a workflow
+  name: Workflow Transition
+- description: API for querying user audit records (read only; mutations are denied)
+  name: AuditRecord
 - description: API for managing testimony movement
   name: TestimonyMovement
 - description: API for managing budget items
   name: Items
-- description: CU70 - Management of status workflows
-  name: Workflow Definition
 - description: API for procedure (documents by procedure type)
   name: ProcedureTemplate
 - description: API for managing testimony
   name: Testimony
-- description: CU71 - Transitions between statuses of a workflow
-  name: Workflow Transition
 - description: API for managing payments (CU15, CU47)
   name: Payment
 - description: API for managing procedures
   name: Procedures
+- description: CU70/CU71 - Workflow status nodes
+  name: Workflow Node
 - description: API for managing identification types
   name: IdentificationType
 - description: API for managing copies
   name: Copy
 - description: API for managing property
   name: Property
-- description: CU70/CU71 - Workflow status nodes
-  name: Workflow Node
-- description: API for querying user audit records (read only; mutations are denied)
-  name: AuditRecord
+- description: API for procedure types
+  name: Procedure type
 - description: API for management
   name: Management status
 - description: API for deed managements
@@ -9200,7 +9203,7 @@ tags:
   name: Users
 - description: API for managing procedures in the auxiliary protocol
   name: Auxiliary protocol
-- description: CU72 - Workflow consistency validation
-  name: Workflow Validation
 - description: API for managing expected document costs by procedure type
   name: Document cost template
+- description: CU72 - Workflow consistency validation
+  name: Workflow Validation

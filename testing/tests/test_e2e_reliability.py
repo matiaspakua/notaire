@@ -118,7 +118,7 @@ class ApiPayloadFieldsTest(unittest.TestCase):
                      if "fkIdNotaryPerson" in path.read_text(encoding="utf-8")]
         self.assertEqual([], offenders, "the gestiones API reads notaryPersonId, not fkIdNotaryPerson")
 
-    def test_gestion_helper_sends_the_notary_field_the_api_reads(self):
+    def test_management_helper_sends_the_notary_field_the_api_reads(self):
         helpers = (TESTS_DIR / "setup" / "api-helpers.ts").read_text(encoding="utf-8")
         body = helpers[helpers.index("export async function createManagementWithoutProcedure"):]
         self.assertIn("notaryPersonId", body[: body.index("\n}\n")])
