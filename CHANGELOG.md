@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English substituted parameters** (#1490, CU75): substitution lookups
+  take `substituted` and `substitutedId`. The methods stay
+  `findByFkIdSubstituted`, `findByFkIdSubstitutedIdPerson`, and
+  `findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual`.
+  Message key `fields.suplente` stays. The visible toast match
+  `/suplente/i` stays.
 - **English started status and substitute parameters** (#1490, CU75):
   the workflow fixture status is `Started`. History creation defaults to
   `Started`. Substitution parameters are `idSubstitute` and
