@@ -22,7 +22,7 @@ Integration test (H2) observed failing first (collection loaded on find and list
 
 ## Regression Strategy
 
-Full backend suite (2069 tests) incl. `HistoryDeleteIntegrationTest` and `ManagementStatusReferentialIntegrityTest`; Playwright TS-0024, TS-0028, TS-0060, TS-0071, TS-0092 and carpetas-de-tramite (69 passed) against this backend on PostgreSQL, no `LazyInitializationException` in the log.
+Full backend suite (2069 tests) incl. `HistoryDeleteIntegrationTest` and `ManagementStatusReferentialIntegrityTest`; Playwright TS-0024, TS-0028, TS-0060, TS-0071, TS-0092 and procedure-folders (69 passed) against this backend on PostgreSQL, no `LazyInitializationException` in the log.
 
 ## Playwright Strategy
 

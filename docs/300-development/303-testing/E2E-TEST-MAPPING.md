@@ -62,8 +62,8 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Assertions | Value |
 |----|----|-------|------|-------|----------|-------|
-| **TS-0010** | `TS-0010-presupuesto-workflow.spec.ts` | CU01, CU39, CU45, CU49, CU55, CU60 | GherkinSteps, API helpers | 1 (form schema mismatch) | 8 expect() | **HIGH** |
-| **TS-0011** | `TS-0011-gestiones-crud-workflow.spec.ts` | CU02, CU13, CU14, CU16, CU19, CU53 | GherkinSteps, API helpers | 1 (form simplified) | 12 expect() | **HIGH** |
+| **TS-0010** | `TS-0010-budget-workflow.spec.ts` | CU01, CU39, CU45, CU49, CU55, CU60 | GherkinSteps, API helpers | 1 (form schema mismatch) | 8 expect() | **HIGH** |
+| **TS-0011** | `TS-0011-managements-crud-workflow.spec.ts` | CU02, CU13, CU14, CU16, CU19, CU53 | GherkinSteps, API helpers | 1 (form simplified) | 12 expect() | **HIGH** |
 
 **Consolidated From**:
 
@@ -80,10 +80,10 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0012** | `TS-0012-documentacion-testimonio-workflow.spec.ts` | CU03–CU12 | GherkinSteps + API | 2 (UI not present) | **HIGH** |
-| **TS-0013** | `TS-0013-escrituras-signing-workflow.spec.ts` | CU05, CU06, CU52, CU63 | GherkinSteps + API | 1 (UI not present) | **HIGH** |
-| **TS-0014** | `TS-0014-pagos-workflow.spec.ts` | CU15, CU47 | GherkinSteps | 2 intentional gaps cite #1146 | **HIGH** |
-| **TS-0015** | `TS-0015-personas-clientes-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61; #945 Dedup-EDGE (empty DNI → validation feedback) | GherkinSteps + API | 1 (UI flow changed) | **HIGH** |
+| **TS-0012** | `TS-0012-documentation-testimony-workflow.spec.ts` | CU03–CU12 | GherkinSteps + API | 2 (UI not present) | **HIGH** |
+| **TS-0013** | `TS-0013-deeds-signing-workflow.spec.ts` | CU05, CU06, CU52, CU63 | GherkinSteps + API | 1 (UI not present) | **HIGH** |
+| **TS-0014** | `TS-0014-payments-workflow.spec.ts` | CU15, CU47 | GherkinSteps | 2 intentional gaps cite #1146 | **HIGH** |
+| **TS-0015** | `TS-0015-people-clients-workflow.spec.ts` | CU17, CU18, CU21, CU41, CU46, CU54, CU61; #945 Dedup-EDGE (empty DNI → validation feedback) | GherkinSteps + API | 1 (UI flow changed) | **HIGH** |
 
 **Consolidated From**:
 
@@ -94,25 +94,25 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0016** | `TS-0016-usuarios-escribanos-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | 3 intentional gaps cite #1146 (CU21 unskipped #1057) | **HIGH** |
-| **TS-0017** | `TS-0017-suplencias-workflow.spec.ts` | CU22, CU59 | Sidebar nav (`nav-suplencias`) + GherkinSteps | 2 intentional gaps cite #1146 | **MEDIUM** |
-| **TS-0018** | `TS-0018-reingreso-documentacion-workflow.spec.ts` | CU43 | Direct nav + assertions | 0 | **MEDIUM** |
-| **TS-0019** | `TS-0019-inmuebles-valuacion-workflow.spec.ts` | CU69 | GherkinSteps | 0 | **MEDIUM** |
+| **TS-0016** | `TS-0016-users-notaries-workflow.spec.ts` | CU20, CU21, CU23, CU48, CU51 | GherkinSteps + API | 3 intentional gaps cite #1146 (CU21 unskipped #1057) | **HIGH** |
+| **TS-0017** | `TS-0017-substitutions-workflow.spec.ts` | CU22, CU59 | Sidebar nav (`nav-suplencias`) + GherkinSteps | 2 intentional gaps cite #1146 | **MEDIUM** |
+| **TS-0018** | `TS-0018-document-reentry-workflow.spec.ts` | CU43 | Direct nav + assertions | 0 | **MEDIUM** |
+| **TS-0019** | `TS-0019-properties-valuation-workflow.spec.ts` | CU69 | GherkinSteps | 0 | **MEDIUM** |
 
 #### Administration & Workflows (TS-0020–TS-0035)
 
 | TS | Filename | CU Coverage | Fixture Type | Skipped | Value |
 |----|----|-------|------|-------|-------|
-| **TS-0020** | `TS-0020-reportes-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | 7 intentional gaps cite #1146 | **HIGH** |
+| **TS-0020** | `TS-0020-reports-admin-workflow.spec.ts` | CU24–CU32, CU57–CU68 | Sidebar nav (`nav-reportes`) + GherkinSteps + API | 7 intentional gaps cite #1146 | **HIGH** |
 | **TS-0021** | `TS-0021-workflow-editor-admin.spec.ts` | CU70, CU71 | API arrange + editor | 0 (self-seeds workflow; #1066) | **HIGH** |
 | **TS-0022** | `TS-0022-workflow-assignment-admin.spec.ts` | CU73 | API arrange + table | 0 (self-seeds tipo-tramite; #1066) | **MEDIUM** |
-| **TS-0023** | `TS-0023-roles-permisos-admin.spec.ts` | CU43.1 | Direct nav + form | 0 | **MEDIUM** |
+| **TS-0023** | `TS-0023-roles-permissions-admin.spec.ts` | CU43.1 | Direct nav + form | 0 | **MEDIUM** |
 | **TS-0024** | `TS-0024-admin-module-smoke.spec.ts` | CU20–CU32, CU57–CU67 | Direct nav + buttons | 0 | **MEDIUM** |
-| **TS-0028** | `TS-0028-gestion-historial-feature.spec.ts` | CU13 | GherkinSteps + API seed | 0 | **MEDIUM** |
-| **TS-0029** | `TS-0029-gestion-estado-transition-feature.spec.ts` | CU83 | GherkinSteps + API seed | 0 | **MEDIUM** |
-| **TS-0031** | `TS-0031-testimonio-generacion-verificacion-feature.spec.ts` | CU07, CU08 | GherkinSteps + API | 0 | **HIGH** |
-| **TS-0032** | `TS-0032-testimonio-inscripcion-feature.spec.ts` | CU11, CU12, CU44 | GherkinSteps + API | 0 | **HIGH** |
-| **TS-0033** | `TS-0033-documentos-entidades-externas-feature.spec.ts` | CU10 | GherkinSteps + API | 0 | **MEDIUM** |
+| **TS-0028** | `TS-0028-management-history-feature.spec.ts` | CU13 | GherkinSteps + API seed | 0 | **MEDIUM** |
+| **TS-0029** | `TS-0029-management-status-transition-feature.spec.ts` | CU83 | GherkinSteps + API seed | 0 | **MEDIUM** |
+| **TS-0031** | `TS-0031-testimony-generation-verification-feature.spec.ts` | CU07, CU08 | GherkinSteps + API | 0 | **HIGH** |
+| **TS-0032** | `TS-0032-testimony-registration-feature.spec.ts` | CU11, CU12, CU44 | GherkinSteps + API | 0 | **HIGH** |
+| **TS-0033** | `TS-0033-external-entity-documents-feature.spec.ts` | CU10 | GherkinSteps + API | 0 | **MEDIUM** |
 | **TS-0035** | `TS-0035-workflow-tracker-visualization-feature.spec.ts` | CU70, CU71 | Direct nav + assertions | 0 | **LOW** |
 
 ---
@@ -155,7 +155,7 @@ TS-0060, TS-0070-0071 = Regression & Tutorials (3 reference suites)
 
 | TS | Filename | CU Coverage | Fixture Type | Setup | Assertions | Status |
 |----|----|-------|------|-------|----------|--------|
-| **TS-0091** | `TS-0091-items-descuentos-recargos.spec.ts` | CU45, CU71 | GherkinSteps | Direct navigation | Client-side validation + report query | ✅ Passing |
+| **TS-0091** | `TS-0091-items-discounts-surcharges.spec.ts` | CU45, CU71 | GherkinSteps | Direct navigation | Client-side validation + report query | ✅ Passing |
 
 ---
 
@@ -255,23 +255,23 @@ in the same change.
 
 **Files Deleted (Content Merged)**:
 
-1. **`crud-gestiones.spec.ts`** → TS-0011-gestiones-crud-workflow
+1. **`crud-gestiones.spec.ts`** → TS-0011-managements-crud-workflow
    - Duplicate: `cu02-gestiones.spec.ts` was canonical
    - Merged: No unique tests in crud variant
 
-2. **`presupuestos.spec.ts`** → TS-0010-presupuesto-workflow
+2. **`presupuestos.spec.ts`** → TS-0010-budget-workflow
    - Duplicate: `cu01-presupuesto.spec.ts` had Gherkin pattern
    - Merged: Module CRUD tests already covered by TS-0010
 
-3. **`personas.spec.ts`** → TS-0015-personas-clientes-workflow
+3. **`personas.spec.ts`** → TS-0015-people-clients-workflow
    - Duplicate: `cu17-18-personas-clientes.spec.ts` was canonical
    - Merged: Module CRUD coverage overlapped
 
-4. **`suplencias.spec.ts`** → TS-0017-suplencias-workflow
+4. **`suplencias.spec.ts`** → TS-0017-substitutions-workflow
    - Duplicate: `cu22-suplencias.spec.ts` had Gherkin pattern
    - Merged: Module view tests subsumed
 
-5. **`escritura-firma.spec.ts`** → TS-0013-escrituras-signing-workflow
+5. **`escritura-firma.spec.ts`** → TS-0013-deeds-signing-workflow
    - Consolidation: Edge path tests (sin folio, ya firmada)
    - Merged: Signing workflow + edge cases now in TS-0013
 

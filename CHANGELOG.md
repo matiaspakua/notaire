@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English end-to-end spec filenames** (#1490, CU75): Playwright and Robot
+  specs use English filenames, such as `TS-0010-budget-workflow.spec.ts`
+  and `procedure-folders.spec.ts`. The living test index matches those
+  names. Archived plans keep the filenames they were written with.
 - **English test method names and frontend component locals** (#1490, CU75):
   JUnit method names, page components, React Query keys, and local helpers
   use English names. Message catalog keys such as `estadoFilter`,
