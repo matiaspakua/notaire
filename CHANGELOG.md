@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English development setup guide** (#1490, CU75):
+  `docs/300-development/301-setup/README.md` is English. The JDK line matches
+  the root `pom.xml` (Java 26). The package tree names `PersonController`,
+  `DtoPerson`, and `adapter.in.web`. Index examples are `people.id`,
+  `deeds.id`, and `budgets.id`. The example test class is `BudgetEntityTest`.
 - **English E2E test inventory** (#1490, CU75):
   `TEST-PLAN.md` and `E2E-TEST-MAPPING.md` name the suites in English
   (budgets, deed managements, documents, deeds, payments). Visible UI

@@ -1,26 +1,28 @@
-# Setup de Desarrollo
+# Development setup
 
-## Requisitos Previos
+## Prerequisites
 
-| Herramienta | Versión Mínima |
+| Tool | Minimum version |
 |------------|----------------|
-| Java JDK | 21 |
+| Java JDK | 26 |
 | Maven | 3.9+ |
 | Docker | 24+ |
-| PostgreSQL Client | 15+ |
+| PostgreSQL client | 15+ |
 
-## Instalación
+The root `pom.xml` sets Java 26 and Spring Boot 4.1.1.
 
-### 1. Clonar Repositorio
+## Installation
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/matiaspakua/notaire.git
 cd notaire
 ```
 
-### 2. Configurar Variables de Entorno
+### 2. Configure environment variables
 
-Crear archivo `.env` en la raíz del proyecto:
+Create a `.env` file at the repository root:
 
 ```bash
 # Database
@@ -32,26 +34,28 @@ POSTGRES_PASSWORD=your_password
 API_PORT=8080
 ```
 
-### 3. Iniciar Ambiente
+### 3. Start the environment
 
 ```bash
-# Iniciar Docker con PostgreSQL
+# Start Docker with PostgreSQL
 bash workspace/stack/start.sh
 
-# Ver logs
+# Follow logs
 bash workspace/stack/logs.sh
 
-# Detener
+# Stop
 bash workspace/stack/stop.sh
 ```
 
-### 4. Compilar Proyecto
+`workspace/stack/start.sh` uses `docker compose` when that command exists, and `docker-compose` otherwise.
+
+### 4. Build the project
 
 ```bash
 mvn clean install
 ```
 
-### 5. Start Frontend (Next.js)
+### 5. Start the frontend (Next.js)
 
 The active web client lives in `frontend/`. The Swing desktop modules
 (`frontend-swing` / `deprecated-frontend-swing`) were **removed** (#1046); do not
@@ -81,89 +85,92 @@ notaire/
 Swing Robot E2E under `testing/e2e-swing/` is hard-deprecated (#811); active UI
 E2E is Playwright (`cd testing/e2e && npm test`).
 
-## Comandos de Desarrollo
+## Development commands
 
-### Compilación
+### Build
 
 ```bash
-# Compilar todo
+# Build everything
 mvn clean install
 
-# Compilar módulo específico con dependencias
+# Build one module and the modules it depends on
 mvn clean install -pl backend-api -am
 
-# Saltar tests
+# Skip tests
 mvn clean install -DskipTests
 ```
 
 ### Tests
 
 ```bash
-# Ejecutar todos los tests
+# Run every test
 mvn test
 
-# Tests de un módulo
+# Tests for one module
 mvn test -pl backend-api
 
-# Tests específicos
-mvn test -Dtest=PresupuestoEntityTest
+# One test class
+mvn test -Dtest=BudgetEntityTest
 
-# Ver cobertura
+# Coverage report
 mvn jacoco:report
 ```
 
-### Ejecución
+### Run
 
 ```bash
 # Backend
 cd backend-api && mvn spring-boot:run
 
-# API Docs
+# API docs
 # http://localhost:8080/swagger-ui.html
 ```
 
-## Estructura de Packages
+## Package structure
 
 ### Backend API
 
 ```text
 com.licensis.notaire/
-├── api/                  # Controllers REST
-│   └── PersonaController.java
-├── service/             # Servicios de negocio
-│   └── PersonaService.java
-├── repository/          # Repositorios JPA
-│   └── PersonaRepository.java
-├── negocio/             # Entidades
-│   └── Person.java
-├── security/            # JWT y filtros de seguridad
-├── config/              # Configuración de beans
-├── jpa/                 # Legacy (a eliminar)
-└── exception/           # Excepciones
+├── adapter/in/web/      # REST controllers (PersonController, BudgetController, ...)
+├── application/         # Use cases
+├── audit/
+├── business/
+├── config/              # Bean configuration
+├── domain/
+├── dto/                 # DtoPerson and the other API DTOs
+├── exception/
+├── jpa/                 # Legacy controllers
+├── observability/
+├── repository/
+├── security/            # JWT and security filters
+└── service/
 ```
 
-Los DTOs (`DtoPersona`, etc.) viven en `backend-api` (`com.licensis.notaire.dto`); el
-módulo `notaire-shared` fue retirado (ADR-025) y los servicios externos consumen la
-API REST (OpenAPI) — ver [DTO-MAPPING-GUIDE.md](../302-code-standards/DTO-MAPPING-GUIDE.md).
+DTOs such as `DtoPerson` live in `backend-api` (`com.licensis.notaire.dto`). The
+`notaire-shared` module was retired (ADR-025). External services use the REST API
+(OpenAPI). See [DTO-MAPPING-GUIDE.md](../302-code-standards/DTO-MAPPING-GUIDE.md).
 
-## Base de Datos
+## Database
 
 ### Schema
 
-El schema es gestionado por Flyway (migraciones en `backend-api/src/main/resources/db/migration/`). Los scripts históricos `init-db/` están archivados en `docs/000-archive/init-db/`.
+Flyway owns the schema (migrations in `backend-api/src/main/resources/db/migration/`).
+Applied files V1–V44 stay immutable. V45 renames the remaining Spanish identifiers.
+The historical `init-db/` scripts are archived at `docs/000-archive/init-db/`.
 
-### Índices
+### Indexes
 
-Verificar que los índices necesarios estén creados para:
+Confirm the indexes you need exist, including:
 
-- `personas.id_persona`
-- `escrituras.id_escritura`
-- `presupuestos.id_presupuesto`
-- Foreign keys frecuentemente consultadas
+- `people.id`
+- `deeds.id`
+- `budgets.id`
+- Foreign keys that queries use often
 
 ## Troubleshooting
 
-### Puerto en uso
+### Port already in use
 
 ```bash
 # Linux/Mac
@@ -175,19 +182,21 @@ netstat -ano | findstr :8080
 taskkill /PID <PID> /F
 ```
 
-### Docker no inicia
+### Docker does not start
 
 ```bash
 docker ps
-docker-compose logs
-docker-compose down -v
-docker-compose up -d
+docker compose logs
+docker compose down -v
+docker compose up -d
 ```
 
-### Maven build falla
+Use `docker-compose` in those commands when the machine does not have `docker compose`.
+
+### Maven build fails
 
 ```bash
-# Limpiar cache
+# Clear the local cache
 mvn dependency:purge-local-repository
 mvn clean install -U
 ```
