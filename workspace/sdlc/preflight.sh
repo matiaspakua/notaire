@@ -49,6 +49,7 @@ commit messages                 Process Checks                    sdlc-process.y
 tdd evidence                    Process Checks                    sdlc-process.yml   (BLOCKING)
 sdlc exception label            Process Checks                    sdlc-process.yml   (BLOCKING; skipped here until a PR exists)
 doc traceability                Process Checks                    sdlc-process.yml   (BLOCKING)
+openspec archive hygiene        Process Checks                    sdlc-process.yml   (BLOCKING; #1252)
 agent rule files                Process Checks                    sdlc-process.yml   (BLOCKING)
 process script self-tests       Process Checks                    sdlc-process.yml   (BLOCKING)
 openapi breaking diff           OpenAPI commit + breaking diff   openapi-contract.yml (needs oasdiff; export freshness CI-only)
@@ -150,6 +151,7 @@ PR_LABELS="$(gh pr view --json labels -q '[.labels[].name] | join(",")' 2>/dev/n
 export PR_LABELS
 run "commit messages" bash workspace/sdlc/check-commit-messages.sh origin/main
 run "doc traceability" python3 workspace/sdlc/check-doc-traceability.py origin/main
+run "openspec archive hygiene" python3 workspace/sdlc/check-openspec-archive-hygiene.py origin/main
 run "tdd evidence" bash workspace/sdlc/check-tdd-evidence.sh origin/main
 if gh pr view >/dev/null 2>&1; then
     run "sdlc exception label" bash workspace/sdlc/check-sdlc-exception.sh origin/main

@@ -57,12 +57,36 @@ merge job after #1258 shards) to be success.
 Local mirror before push: [`CI-PREFLIGHT.md`](../CI-PREFLIGHT.md)
 (`bash workspace/sdlc/preflight.sh`, optionally `--full`).
 
+## OpenSpec archive hygiene (in addition to heavy CI)
+
+Heavy CI green is not enough if the PR leaves OpenSpec lifecycle drift:
+
+- A shipped change whose GitHub Issue is **CLOSED** must not remain under
+  `docs/openspec/changes/<name>/` — archive it (`openspec archive`, syncing
+  delta specs when present).
+- A PR that touches an active change must have implementation task groups
+  **3–8** checked in that change’s `tasks.md` (groups 1–2 and 9–12 may stay
+  open until after merge), unless the PR carries `sdlc-exception`.
+
+Mechanical gate (Process Checks / preflight):
+
+```bash
+python3 workspace/sdlc/check-openspec-archive-hygiene.py origin/main
+# inventory-only (closed-issue leftovers):
+python3 workspace/sdlc/check-openspec-archive-hygiene.py --inventory-only
+```
+
+Agents must verify OpenSpec archive hygiene and task completion (or run that
+checker) before merge — same bar as heavy CI. See issue #1252 / CU76.
+
 ## Verify before merge
 
 ```bash
 # REQUIRED — agents must run this before `gh pr merge`.
 # Do not merge on subscription “all checks success” alone.
 bash workspace/sdlc/check-heavy-ci.sh <pr-number>
+# Also confirm OpenSpec archive / task-completion hygiene:
+python3 workspace/sdlc/check-openspec-archive-hygiene.py origin/main
 
 # Or manually (still confirm the four required names are success):
 gh run list --branch <pr-head-branch> --limit 10

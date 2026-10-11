@@ -12,6 +12,8 @@ on:
 
 permissions:
   contents: read
+  issues: read
+  pull-requests: read
 
 jobs:
   process-checks:
@@ -51,6 +53,10 @@ jobs:
       - name: Traceability names documents that this diff updates
         if: ${{ !cancelled() }}
         run: python3 workspace/sdlc/check-doc-traceability.py "$BASE_SHA"
+
+      - name: OpenSpec archive hygiene and task completion
+        if: ${{ !cancelled() }}
+        run: python3 workspace/sdlc/check-openspec-archive-hygiene.py "$BASE_SHA"
 
       - name: Agent rule files are valid
         if: ${{ !cancelled() }}

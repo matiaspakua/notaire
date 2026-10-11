@@ -10,7 +10,7 @@
 | **Descripción** | Define las prácticas de prueba, estándares visuales de formularios secuenciales y control de calidad requeridos para validar cada caso de uso y requerimiento del sistema. |
 | **Tipo** | Soporte / Calidad |
 | **Referencias Cruzadas** | RF #74 (Aspecto visual), RF #75 (Diseño de ventanas), RF #76 (Diseño de campos y combos), RF #77 (Especificación de campos a completar), RF #78 (Uso de colores en la GUI), RF #79 (Seguimiento del trabajo sobre ventanas), RF #80 (Identificación de sesión), RF #86 (Java VM), RF #87 (Sistema operativo), RF #90 (Metodología de desarrollo), RF #91 (Modelo de desarrollo), RF #92 (Lenguaje de programación) |
-| **GitHub ID** | #1511, #276, #295, #296, #594, #1047, #1042, #1041, #1043, #1050, #1059, #1066, #1146, #1186, #1185, #1191, #1192 |
+| **GitHub ID** | #1511, #276, #295, #296, #594, #1047, #1042, #1041, #1043, #1050, #1059, #1066, #1146, #1186, #1185, #1191, #1192, #1252 |
 
 ## Alcance de Calidad e Interfaz
 
@@ -42,6 +42,11 @@
   local-only, PDF del Manual de Usuario vía Release `docs-manuals` (no blob
   ordinario), ADR-022 difiere `git filter-repo` (issue #1050;
   `workspace/tests/test_repo_hygiene.py`).
+- OpenSpec lifecycle (RF #90 / #91): after merge, archive shipped changes under
+  `docs/openspec/changes/archive/` (sync delta specs when present). Process
+  Checks fail CLOSED-issue leftovers and unticked implementation task groups
+  3–8 via `workspace/sdlc/check-openspec-archive-hygiene.py` (issue #1252;
+  Cloud merge-gate: `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md`).
 
 ## Ciclo de Verificación de Calidad
 
