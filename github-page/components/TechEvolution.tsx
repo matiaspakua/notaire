@@ -59,11 +59,11 @@ public class DeedController {
 // Claude AI generates tests, reviews code,
 // writes E2E tests, updates documentation
 
-const tramite = await page.getByRole(
-  'link', { name: 'Nuevo Trámite' }
+const procedure = await page.getByRole(
+  'link', { name: 'New procedure' }
 );
-await expect(tramite).toBeVisible();
-await tramite.click();
+await expect(procedure).toBeVisible();
+await procedure.click();
 
 // 200+ Playwright E2E tests
 // 84% JaCoCo line coverage

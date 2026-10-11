@@ -1,34 +1,29 @@
-# Documentación — Notaire
+# Documentation — Notaire
 
-Índice de navegación de toda la documentación del proyecto Notaire, organizada por fase del
-ciclo de vida: negocio, arquitectura y desarrollo.
+Navigation index for all Notaire project documentation, organized by lifecycle phase:
+business, architecture, and development.
 
-## Estructura
+## Structure
 
-| Carpeta | Contenido |
+| Folder | Contents |
 |---------|-----------|
-| [`100-business/`](100-business/) | Requerimientos, casos de uso, actores y trazabilidad de negocio |
-| [`200-architecture/`](200-architecture/) | SAD (arc42), ADRs, diseño, diagramas, modelo de datos, seguridad, monitoreo, DevSecOps y deployment |
-| [`300-development/`](300-development/) | Guías de setup, estándares de código, testing y [AI SDLC Cloud fleet](300-development/304-ai-sdlc-cloud/); auditoría vigente: [DOCUMENTATION-AUDIT-2026-10.md](300-development/DOCUMENTATION-AUDIT-2026-10.md) |
-| [`github/`](github/) | Organización de GitHub (tablero, milestones, labels) y auditoría de preparación para producción 2026-09 |
-| [`000-archive/`](000-archive/) | Documentos y artefactos legacy superados, conservados por trazabilidad histórica |
+| [`100-business/`](100-business/) | Requirements, use cases, actors, and business traceability |
+| [`200-architecture/`](200-architecture/) | SAD (arc42), ADRs, design, diagrams, data model, security, monitoring, DevSecOps, and deployment |
+| [`300-development/`](300-development/) | Setup guides, code standards, testing, and the [AI SDLC Cloud fleet](300-development/304-ai-sdlc-cloud/); current audit: [DOCUMENTATION-AUDIT-2026-10.md](300-development/DOCUMENTATION-AUDIT-2026-10.md) |
+| [`github/`](github/) | GitHub organization (board, milestones, labels) and the September 2026 production-readiness audit |
+| [`000-archive/`](000-archive/) | Superseded legacy documents and artifacts, kept for historical traceability |
 
-## Punto de entrada recomendado
+## Recommended entry point
 
-1. **Negocio**: [Casos de Uso](100-business/102-use-cases/) — qué hace el sistema y para quién.
-2. **Ciclo de vida**: [CICLO-DE-VIDA.md](200-architecture/203-design/CICLO-DE-VIDA.md) — estados,
-   secuencias y vistas C4 del producto.
-3. **Método**: [INGENIERIA.md](300-development/INGENIERIA.md) — artefactos, trazabilidad y procesos.
-4. **Arquitectura**: [SAD](200-architecture/201-SAD/sad.md) — visión arc42 completa del sistema.
-5. **Desarrollo**: [`CLAUDE.md`](../CLAUDE.md) y [`CONSTITUTION.md`](../CONSTITUTION.md) — flujo de
-   trabajo obligatorio para cualquier cambio de código.
-6. **Gestión**: [Organización de GitHub](github/README.md) — dónde se sigue el trabajo y cómo se etiqueta.
+1. **Business**: [Use cases](100-business/102-use-cases/) — what the system does and for whom.
+2. **Lifecycle**: [CICLO-DE-VIDA.md](200-architecture/203-design/CICLO-DE-VIDA.md) — states, sequences, and C4 views of the product.
+3. **Method**: [INGENIERIA.md](300-development/INGENIERIA.md) — artifacts, traceability, and processes.
+4. **Architecture**: [SAD](200-architecture/201-SAD/sad.md) — the full arc42 view of the system.
+5. **Development**: [`CLAUDE.md`](../CLAUDE.md) and [`CONSTITUTION.md`](../CONSTITUTION.md) — the mandatory workflow for any code change.
+6. **Delivery**: [GitHub organization](github/README.md) — where the work is tracked and how it is labeled.
 
-## Convenciones
+## Conventions
 
-- Toda carpeta numerada (`1XX-`, `2XX-`, `3XX-`) sigue el orden de lectura sugerido dentro de su fase.
-- Los diagramas activos van en Mermaid dentro del Markdown ([ADR-027](200-architecture/202-ADR/ADR-027-mermaid-diagrams.md)).
-  Los `.puml` que quedan son legado.
-- Los documentos superados (formatos legacy como `.drawio`/`.jpg`, o contenido reemplazado) se mueven
-  a `000-archive/` con un `README.md` que enlaza al equivalente vigente, y se deja una nota de
-  redirección en la carpeta original.
+- Every numbered folder (`1XX-`, `2XX-`, `3XX-`) follows the suggested reading order inside its phase.
+- Active diagrams are Mermaid inside Markdown ([ADR-027](200-architecture/202-ADR/ADR-027-mermaid-diagrams.md)). Remaining `.puml` files are legacy.
+- Superseded documents (legacy formats such as `.drawio`/`.jpg`, or replaced content) move to `000-archive/` with a `README.md` that links to the current equivalent, and a redirect note stays in the original folder.

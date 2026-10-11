@@ -73,7 +73,7 @@ once per diagram, or centralize it in a shared `!include`d file (see
 title Notaire — Deed Lifecycle
 class Deed
 note right of Deed
-  Immutable once **FIRMADA**.
+  Immutable once **Firmada**.
   See ADR-004 for the audit trail design.
 end note
 legend right

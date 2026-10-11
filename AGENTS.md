@@ -16,7 +16,7 @@ Before any code change:
 2. OpenSpec Gate 1 from `docs/` (`openspec` + `bash workspace/sdlc/validate-sdlc-plan.sh`).
 3. Branch `<type>/<#>_description` from updated `main`.
 4. TDD — failing tests first, then implement.
-5. Full suite + Playwright for UI; `bash workspace/sdlc/preflight.sh` before push.
+5. Full suite + Playwright for UI. Before a PR, `bash workspace/sdlc/run_pipeline.sh` (security phase: `python3 security/run_gates.py --profile local`). `bash workspace/sdlc/preflight.sh` before push.
 6. Permanent docs + Conventional Commits + PR (`Closes #…`).
 
 Operational detail (load when implementing): `.claude/rules/ai-agent-workflow.md` and

@@ -637,7 +637,7 @@ through `procedures.fk_id_budget`. `budgets.fk_id_tramite` was removed in V14.
 
 ## 6. Runtime View
 
-Domain lifecycles — gestión, deed, testimony, registration draft, documents,
+Domain lifecycles — management, deed, testimony, registration draft, documents,
 budget, payment, procedure folder — are specified once in
 [CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md). The PlantUML sequences in
 this section are legacy runtime sketches ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).

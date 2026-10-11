@@ -1,0 +1,95 @@
+# Security test schema (issue #1500, CU78).
+# Each case names the local tool that runs before a pull request and the CI
+# control. Normative process: docs/200-architecture/206-security/CYBERSECURITY-PROGRAM.md.
+version: 1
+use_case: CU78
+issue: 1500
+
+cases:
+  - id: SEC-TM-01
+    family: threat-model
+    title: System threat model names STRIDE, LINDDUN, and the open requirements
+    requirement: CU78
+    local_tool: catalog
+    ci_tool: catalog
+    blocking: true
+    evidence:
+      - path: docs/200-architecture/206-security/THREAT-MODEL-SYSTEM.md
+        must_contain: [STRIDE, LINDDUN, SR-11, SR-16, LD-1, Escribano]
+      - path: docs/200-architecture/206-security/diagrams/trust-boundaries.puml
+        must_contain: [JwtAuthenticationFilter]
+
+  - id: SEC-SEC-01
+    family: secrets
+    title: High-confidence secrets fail the gate
+    requirement: SR-14
+    local_tool: security/scan_secrets.py
+    ci_tool: security/scan_secrets.py
+    blocking: true
+
+  - id: SEC-SAST-01
+    family: sast
+    title: Semgrep ruleset is clean on the tree and fires on the planted fixture
+    requirement: SR-12
+    local_tool: semgrep
+    ci_tool: semgrep + codeql
+    blocking: true
+    rules: security/semgrep/notaire.yml
+    fixture: security/semgrep/fixtures/bad
+    ci_complement: .github/workflows/codeql.yml
+
+  - id: SEC-SCA-01
+    family: sca
+    title: Trivy runs locally; CI runs the same scanner as an action
+    requirement: SR-13
+    local_tool: trivy
+    ci_tool: trivy-action
+    blocking: true
+    fail_on_findings: false
+
+  - id: SEC-DAST-01
+    family: dast
+    title: Unauthenticated baseline, with OWASP ZAP as the CI complement
+    requirement: CU78
+    local_tool: security/dast_baseline.py
+    ci_tool: zap
+    blocking: true
+    health_path: /actuator/health
+    protected_path: /api/v1/personas
+    ci_complement: .github/workflows/dast-zap.yml
+
+  - id: SEC-POL-01
+    family: policy
+    title: Policy names the local tools and the CI tools
+    requirement: CU78
+    local_tool: catalog
+    ci_tool: catalog
+    blocking: true
+    evidence:
+      - path: security/policy/security-policy.yml
+        must_contain: [semgrep, scan_secrets.py, trivy, dast_baseline.py, codeql, zap]
+
+  - id: SEC-SDLC-01
+    family: policy
+    title: The AI SDLC requires the local security gate before a pull request
+    requirement: CU78
+    local_tool: catalog
+    ci_tool: catalog
+    blocking: true
+    evidence:
+      - path: workspace/sdlc/run_pipeline.sh
+        must_contain: [security/run_gates.py]
+      - path: workspace/sdlc/preflight.sh
+        must_contain: [security/run_gates.py]
+      - path: AGENTS.md
+        must_contain: [security/run_gates.py]
+      - path: CONSTITUTION.md
+        must_contain: [security/run_gates.py]
+      - path: CONSTITUTION-AGENT-CARD.md
+        must_contain: [security/run_gates.py]
+      - path: .claude/agents/openspec.md
+        must_contain: [security/run_gates.py]
+      - path: .claude/rules/ai-agent-workflow.md
+        must_contain: [security/run_gates.py]
+      - path: docs/300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md
+        must_contain: [security/run_gates.py]

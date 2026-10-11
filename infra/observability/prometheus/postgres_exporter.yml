@@ -14,46 +14,42 @@ pg_statio_user_sequences: true
 
 # Custom queries specific to Notaire business metrics
 custom_queries:
-  # Total escrituras by status
+  # Deeds by stored status
   - query: |
-      SELECT e.id_estado, ed.nombre as estado_nombre, COUNT(*) as total
-      FROM escritura e
-      LEFT JOIN estado_de_gestion ed ON e.id_estado = ed.id_estado
-      GROUP BY e.id_estado, ed.nombre
+      SELECT status, COUNT(*) AS deeds_total
+      FROM deeds
+      GROUP BY status
     metrics:
-      - escrituras_total:
+      - deeds_total:
           usage: "COUNTER"
-          description: "Total number of escrituras by status"
-      - estado_id:
+          description: "Total number of deeds by status"
+      - status:
           usage: "LABEL"
-          description: "Estado de gestion ID"
-      - estado_nombre:
-          usage: "LABEL"
-          description: "Estado de gestion name"
+          description: "Deed status"
 
-  # Total presupuestos by state
+  # Budgets
   - query: |
-      SELECT COUNT(*) as total FROM presupuesto
+      SELECT COUNT(*) AS budgets_total FROM budgets
     metrics:
-      - presupuestos_total:
+      - budgets_total:
           usage: "COUNTER"
-          description: "Total number of presupuestos"
+          description: "Total number of budgets"
 
-  # Active usuarios count
+  # Users
   - query: |
-      SELECT COUNT(*) as total FROM usuario
+      SELECT COUNT(*) AS users_total FROM users
     metrics:
-      - usuarios_total:
+      - users_total:
           usage: "COUNTER"
-          description: "Total number of usuarios"
+          description: "Total number of users"
 
-  # Personas count
+  # People
   - query: |
-      SELECT COUNT(*) as total FROM persona
+      SELECT COUNT(*) AS people_total FROM people
     metrics:
-      - personas_total:
+      - people_total:
           usage: "COUNTER"
-          description: "Total number of personas"
+          description: "Total number of people"
 
   # Database size
   - query: |

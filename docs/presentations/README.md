@@ -1,72 +1,72 @@
 # Notaire Presentations
 
-## 🎬 SDD Framework Guide
+## SDD Framework Guide
 
-**Archivo:** `sdd-framework-guide.html`
+**File:** `sdd-framework-guide.html`
 
-Presentación sobre Spec-Driven Development, comparando OpenSpec vs GitHub SpecKit,
-con dos demos basadas en cambios **reales y ya mergeados** en Notaire.
+A presentation on Spec-Driven Development, comparing OpenSpec with GitHub Spec Kit,
+with two demos based on changes **already merged** in Notaire.
 
-### 📊 Contenido (23 diapositivas)
+### Contents (23 slides)
 
-1. Título
-2. **Fundamentos de SDD** — qué es, sin SDD vs con SDD
-3. **Problemas que resuelve** — alineación, trazabilidad, consistencia, context tax
-4. **OpenSpec vs Spec Kit** — filosofías
-5. **Tabla comparativa** — características detalladas
-6-7. **Caso A — Brownfield con OpenSpec** — flujo real (`/opsx:explore → propose → apply → verify → archive`, diagrama Mermaid) + delta specs y ventajas en legacy
-8-9. **Caso B — Greenfield con Spec Kit** — flujo (diagrama Mermaid) + estructura de artefactos
-9.3. **Por qué SDD necesita ajustes en empresa/legacy** — Jira, GitHub, Confluence, ambientes dev, compliance
-9.5. **¿Qué es Notaire?** — contexto técnico simplificado (diagrama Mermaid basado en SAD §3.2 Technical Context) antes de entrar a las demos
-10-12. **DEMO 1 — OpenSpec real**: Issue #879 → PR #882 (fix) → PR #884 (archive Gate 5) — fix de `Property.valuacionFiscal` (slide 12 incluye links a issue, branch, proposal/design/tasks/spec, commit, test y ambas PRs)
-13-15. **DEMO 2 — Spec Kit real**: Issue #865 (CU-43) → PR #871 (feat) → PR #874 (archive Gate 5) — Reingresar documentación
-15.5. **Demo 2 — Artefactos con links**: issue, branch, spec/plan/tasks/traceability, commit, test E2E y ambas PRs
-16. **Cierre** — cuándo usar cada framework
-17. **Adopción en equipos** — Pilotaje → Estándares → Extensión
-18. **Cierre final**
-19. **Anexo A — Testing con SDD** — el spec como motor de calidad verificable; diagrama Mermaid del workflow OpenSpec adaptado (Gherkin/BDD, TDD, Cucumber, contract testing con Pact/Testcontainers)
-20. **Anexo B — Ciberseguridad con SDD** — el spec como cadena de control y evidencia; diagrama Mermaid del workflow OpenSpec adaptado (threat modeling STRIDE, SAST/SCA/SBOM, OWASP ZAP, policy-as-code con OPA)
+1. Title
+2. **SDD foundations** — what it is, without SDD versus with SDD
+3. **Problems it solves** — alignment, traceability, consistency, context tax
+4. **OpenSpec vs Spec Kit** — philosophies
+5. **Comparison table** — detailed characteristics
+6-7. **Case A — Brownfield with OpenSpec** — the real flow (`/opsx:explore → propose → apply → verify → archive`, Mermaid diagram) plus delta specs and the advantages on legacy code
+8-9. **Case B — Greenfield with Spec Kit** — the flow (Mermaid diagram) plus the artifact layout
+9.3. **Why SDD needs adjustments in an enterprise or legacy setting** — Jira, GitHub, Confluence, dev environments, compliance
+9.5. **What is Notaire?** — simplified technical context (Mermaid diagram based on SAD §3.2 Technical Context) before the demos
+10-12. **DEMO 1 — real OpenSpec**: Issue #879 → PR #882 (fix) → PR #884 (archive Gate 5) — fix of `Property.valuacionFiscal` (slide 12 links the issue, branch, proposal/design/tasks/spec, commit, test, and both PRs)
+13-15. **DEMO 2 — real Spec Kit**: Issue #865 (CU-43) → PR #871 (feat) → PR #874 (archive Gate 5) — Re-file documentation
+15.5. **Demo 2 — artifacts with links**: issue, branch, spec/plan/tasks/traceability, commit, E2E test, and both PRs
+16. **Close** — when to use each framework
+17. **Adoption in teams** — Pilot → Standards → Rollout
+18. **Final close**
+19. **Appendix A — Testing with SDD** — the spec as a verifiable quality engine; Mermaid diagram of the OpenSpec workflow adapted to Gherkin/BDD, TDD, Cucumber, and contract testing with Pact/Testcontainers
+20. **Appendix B — Cybersecurity with SDD** — the spec as a chain of control and evidence; Mermaid diagram of the OpenSpec workflow adapted to STRIDE threat modeling, SAST/SCA/SBOM, OWASP ZAP, and policy-as-code with OPA
 
-### 🎯 Demos grounded en artefactos reales del repo
+### Demos grounded in real repository artifacts
 
 - **OpenSpec**: `openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/`
 - **Spec Kit**: `docs/000-archive/speckit/specs/archive/003-cu43-reingresar-documentacion/`
 
-Todos los números de Issue/PR y resultados de tests citados en la presentación
-provienen de esos artefactos y del historial de commits, no son ejemplos inventados.
+Every issue number, PR number, and test result cited in the presentation
+comes from those artifacts and the commit history. They are not invented examples.
 
-### 🎨 Características
+### Characteristics
 
-- **Tema Notaire (Apple design tokens)** — dark/light mode:
-  - Primary Blue (`#0A84FF` / `#0071E3`) — identidad Spec Kit
-  - Success Green (`#34C759`) — identidad OpenSpec
+- **Notaire theme (Apple design tokens)** — dark/light mode:
+  - Primary Blue (`#0A84FF` / `#0071E3`) — Spec Kit identity
+  - Success Green (`#34C759`) — OpenSpec identity
   - Warning Orange (`#FF9500`) — Gates / Quality
-  - Error Red (`#FF453A`) — breaking changes / riesgo
-- **Diagramas Mermaid** embebidos (flujos OpenSpec y Spec Kit, contexto técnico de Notaire, y workflows OpenSpec adaptados a Testing/Ciberseguridad, renderizados en vivo)
-- **Motion** con GSAP (entrada de slides, cursor glow, transiciones 200-400ms)
-- **Interactividad:** ← → navegación con teclado, botones, contador de diapositivas, F pantalla completa, T cambia tema
+  - Error Red (`#FF453A`) — breaking changes / risk
+- **Embedded Mermaid diagrams** (OpenSpec and Spec Kit flows, Notaire technical context, and OpenSpec workflows adapted to testing and cybersecurity, rendered live)
+- **Motion** with GSAP (slide entrance, cursor glow, 200–400ms transitions)
+- **Interaction:** ← → keyboard navigation, buttons, slide counter, F fullscreen, T toggles the theme
 
-### 🚀 Cómo Usar
+### How to open it
 
 ```bash
 open docs/presentations/sdd-framework-guide.html
 ```
 
-O con servidor local (recomendado para que Mermaid/fonts carguen sin restricciones CORS):
+Or with a local server (recommended so Mermaid and fonts load without CORS limits):
 
 ```bash
 python -m http.server 8000
 # http://localhost:8000/docs/presentations/sdd-framework-guide.html
 ```
 
-**Navegación:** `← →` teclado · click Anterior/Siguiente · `F` pantalla completa · `T` tema
+**Navigation:** `← →` keyboard · click Previous/Next · `F` fullscreen · `T` theme
 
-### 🔗 Referencias
+### References
 
-- OpenSpec demo real: `openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/`
-- Spec Kit demo real: `docs/000-archive/speckit/specs/archive/003-cu43-reingresar-documentacion/`
-- Constitución: `CONSTITUTION.md` §5 (SDLC Workflow), §6 (Quality Gates)
+- Real OpenSpec demo: `openspec/changes/archive/2026-08-31-fix-inmueble-valuacion-fiscal-type/`
+- Real Spec Kit demo: `docs/000-archive/speckit/specs/archive/003-cu43-reingresar-documentacion/`
+- Constitution: `CONSTITUTION.md` §5 (SDLC Workflow), §6 (Quality Gates)
 
 ---
 
-**Última actualización:** 2026-08-31 | **Branch:** `docs/redesign-sdd-presentation`
+**Last updated:** 2026-08-31 | **Branch:** `docs/redesign-sdd-presentation`

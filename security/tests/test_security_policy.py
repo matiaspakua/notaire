@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import sys
 import textwrap
 import unittest
@@ -112,6 +113,44 @@ class PolicyDocumentTest(unittest.TestCase):
         sad = SAD.read_text(encoding="utf-8")
         self.assertIn("ROLE_ADMIN", sad)
         self.assertNotIn(STALE_RBAC, sad)
+
+    def test_live_security_docs_name_english_types(self):
+        retired = (
+            "Persona",
+            "Escritura",
+            "Presupuesto",
+            "Testimonio",
+            "registro_auditoria",
+            "Oficial de Seguridad",
+            "Equipo de Desarrollo",
+        )
+        threat = THREAT.read_text(encoding="utf-8")
+        for live in (
+            "`Person`",
+            "`Deed`",
+            "`Testimony`",
+            "`Budget`",
+            "`Payment`",
+            "`audit_records`",
+            "Security Officer",
+            "Development Team",
+        ):
+            self.assertIn(live, threat, live)
+        for token in retired:
+            self.assertIsNone(
+                re.search(rf"\b{re.escape(token)}\b", threat),
+                token,
+            )
+        program = PROGRAM.read_text(encoding="utf-8")
+        monitoring = MONITORING.read_text(encoding="utf-8")
+        diagram = DIAGRAM.read_text(encoding="utf-8")
+        for token in ("Persona", "Escritura", "Presupuesto"):
+            self.assertIsNone(re.search(rf"\b{token}\b", program), token)
+            self.assertIsNone(re.search(rf"\b{token}\b", diagram), token)
+        self.assertIsNone(re.search(r"\bPersona\b", monitoring))
+        self.assertIn("`Person`", program)
+        self.assertIn("`Person`", monitoring)
+        self.assertIn("Person, Deed, Budget", diagram)
 
 
 class SecretScanTest(unittest.TestCase):

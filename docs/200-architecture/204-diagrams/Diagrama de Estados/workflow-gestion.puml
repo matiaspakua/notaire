@@ -1,27 +1,27 @@
 @startuml
-title Workflow — Crear nueva Gestión de Escritura
+title Workflow — Create a new deed management
 
-participant "Escribano / Gestor" as User
+participant "Notary (Escribano)" as User
 participant "Frontend\n(Swing / Web)" as Client
 participant "REST API\n(Spring Boot)" as API
 participant "Spring Security" as Sec
-participant "GestionController" as Ctrl
+participant "ManagementController" as Ctrl
 participant "Business Service" as Svc
 participant "PostgreSQL" as DB
 
-User -> Client : Iniciar nueva gestión
-Client -> API : POST /api/v1/gestion
-API -> Sec : Validar token JWT
+User -> Client : Start a new management
+Client -> API : POST /api/v1/managements
+API -> Sec : Validate the JWT
 Sec --> API : OK (user context)
 API -> Ctrl : delegateRequest(dto)
-Ctrl -> Svc : createGestion(dto)
-Svc -> Svc : Validar datos de negocio
-Svc -> DB : INSERT INTO gestiones_de_escrituras
+Ctrl -> Svc : create(request)
+Svc -> Svc : Validate business data
+Svc -> DB : INSERT INTO deed_managements
 DB --> Svc : OK (generatedId)
-Svc -> DB : INSERT INTO registro_auditoria
+Svc -> DB : INSERT INTO audit_records
 DB --> Svc : OK
-Svc --> Ctrl : GestionDTO
+Svc --> Ctrl : created management
 Ctrl --> API : 201 Created
 API --> Client : JSON response
-Client --> User : Mostrar éxito y número
+Client --> User : Show success and the number
 @enduml

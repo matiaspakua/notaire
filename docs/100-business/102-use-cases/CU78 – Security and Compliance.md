@@ -18,6 +18,9 @@ El programa Sec by Design, el modelo de amenazas del sistema, el toolchain y el
 tablero de seguridad están en
 [CYBERSECURITY-PROGRAM.md](../../200-architecture/206-security/CYBERSECURITY-PROGRAM.md)
 (issue #307). La política ejecutable es `security/policy/security-policy.yml`.
+El esquema de casos de seguridad (amenazas, secretos, SAST, SCA y DAST) es
+`security/cases/catalog.yml`, y el gate local antes del pull request es
+`python3 security/run_gates.py --profile local` (issue #1500).
 
 ## Alcance Técnico
 

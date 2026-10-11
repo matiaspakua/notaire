@@ -2,60 +2,60 @@
 title Backend Package Structure — com.licensis.notaire
 
 package "com.licensis.notaire" {
-  package "api\n(31 REST Controllers)" as api #LightCyan {
-    [GestionController]
-    [PersonaController]
-    [EscrituraController]
-    [PresupuestoController]
-    [UsuarioController]
-    [ReporteController]
+  package "adapter.in.web\n(38 REST controllers)" as api #LightCyan {
+    [ManagementController]
+    [PersonController]
+    [DeedController]
+    [BudgetController]
+    [UserController]
+    [ReportController]
     [FolioController]
-    [PagoController]
+    [PaymentController]
     [WorkflowDefinitionController]
-    [... +22 more]
+    [... +29 more]
   }
 
-  package "service\n(Business Logic)" as svc #LightGreen {
-    [PagoService]
-    [PersonaService]
-    [EscrituraService]
-    [PresupuestoService]
-    [ReporteService]
-    [RegistroAuditoriaService]
+  package "application.usecase\n(44 use cases)" as svc #LightGreen {
+    [PaymentService]
+    [ManagementQueryService]
+    [ManagementArchiveDebtService]
+    [ReportService]
     [WorkflowTraceService]
     [WorkflowValidationService]
-    [GestionQueryService]
-    [AdministradorJpa]
-    [AdministradorValidaciones]
-    package "mappers" {
-      [HistorialMapper]
-    }
+    [HistoryMapper]
   }
 
-  package "repository\n(31 Spring Data JPA)" as repo #LightBlue {
-    [GestionDeEscrituraRepository]
-    [PersonaRepository]
-    [EscrituraRepository]
-    [PresupuestoRepository]
-    [UsuarioRepository]
-    [... +26 more]
+  package "repository\n(36 Spring Data JPA)" as repo #LightBlue {
+    [DeedManagementRepository]
+    [PersonRepository]
+    [DeedRepository]
+    [BudgetRepository]
+    [UserRepository]
+    [... +31 more]
   }
 
-  package "negocio\n(40 Domain Entities)" as dom #LightYellow {
-    [GestionDeEscritura]
-    [Persona]
-    [Escritura]
-    [Presupuesto]
-    [Tramite]
-    [Usuario]
+  package "business\n(48 domain types)" as dom #LightYellow {
+    [DeedManagement]
+    [Person]
+    [Deed]
+    [Budget]
+    [Procedure]
+    [User]
     [WorkflowDefinition]
-    [... +33 more]
+    [... +41 more]
   }
 
-  package "jpa\n(Legacy — being replaced)" as jpa #LightGray {
-    [27 JpaController classes]
+  package "service" as admins #LightGreen {
+    [JpaAdministrator]
+    [SessionAdministrator]
+    [ValidationAdministrator]
+  }
+
+  package "jpa\n(26 legacy controllers)" as jpa #LightGray {
+    [PersonJpaController]
+    [DeedJpaController]
+    [BudgetJpaController]
     [exceptions/]
-    [interfaz/]
   }
 
   package "config" as cfg #Wheat {
@@ -82,9 +82,10 @@ package "com.licensis.notaire" {
   }
 
   package "audit" as aud #Honeydew {
-    [AuditoriaAspect]
+    [AuditAspect]
     [AuditModuleResolver]
     [AuditOperationDescriber]
+    [GuiConstants]
   }
 
   package "observability" as obs #Lavender {
@@ -98,7 +99,7 @@ package "com.licensis.notaire" {
 api -down-> svc : delegates
 svc -down-> repo : persists
 repo -down-> dom : maps entities
-svc .right.> jpa : legacy fallback
+api .right.> jpa : legacy controllers
 cfg -left-> sec : JWT config
 aud --> repo : audit trail
 obs ..> api : health/metrics

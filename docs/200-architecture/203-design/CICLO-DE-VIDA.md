@@ -1,144 +1,146 @@
-# Ciclo de vida — del requerimiento a la operación
+# Lifecycle — from requirement to operation
 
-Modelo único del sistema notarial: flujo de valor, casos de uso agrupados,
-máquinas de estado, secuencias del camino principal, componentes que los
-implementan y cómo eso se opera y se gestiona.
+One model of the notarial system: value flow, use cases grouped by
+capability, state machines, sequences of the main path, the components that
+implement them, and how that is operated and managed.
 
-Los casos de uso (`docs/100-business/102-use-cases/`) siguen siendo el relato
-paso a paso. OpenSpec describe el delta de un cambio. Este documento es la
-foto permanente. Si un cambio mueve un estado, se actualiza aquí en el mismo
-PR. No se agrega un PlantUML paralelo ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
+The use cases (`docs/100-business/102-use-cases/`) stay the step-by-step
+narrative. OpenSpec describes the delta of a change. This document is the
+permanent picture. If a change moves a state, update this file in the same
+PR. Do not add a parallel PlantUML
+([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
 
-Cuando el relato de un caso de uso y el grafo sembrado no coinciden, manda el
-código y Flyway. Las divergencias están en [§8](#8-divergencias-conocidas).
+When a use-case narrative and the seeded graph disagree, the code and Flyway
+win. The divergences are in [§8](#8-known-divergences).
 
-**Método:** [INGENIERIA.md](../../300-development/INGENIERIA.md) (`DOC-ING`),
-aplicado desde la
-[guía de especialización](https://github.com/matiaspakua/tech.notes.io/blob/main/pages/sw_eng_specialization/final_projects_specialization.md).
-Este archivo es `DOC-CICLO`: el modelo del producto. Las vistas de abajo son
-C4 niveles 1 a 3, más las máquinas de estado del dominio.
+**Method:** [INGENIERIA.md](../../300-development/INGENIERIA.md) (`DOC-ING`),
+applied from the
+[specialization guide](https://github.com/matiaspakua/tech.notes.io/blob/main/pages/sw_eng_specialization/final_projects_specialization.md).
+This file is `DOC-CICLO`: the product model. The views below are C4 levels
+1 to 3, plus the domain state machines.
 
-**Fuentes:** `V2__initial_data.sql`, `V10__seed_workflow_demo_data.sql`,
+**Sources:** `V2__initial_data.sql`, `V10__seed_workflow_demo_data.sql`,
 `V41__extend_workflow_post_firma_testimony.sql`, `BusinessConstants`,
 `PaymentStatus`, `BudgetStatus`, `DeedSigningService`, `DeedController`,
 `ExternalEntityDocumentService`, `RegistrationDraftService`,
 `ManagementArchiveDebtService`, `ProcedureFolderService`.
 
-## 1. Flujo de valor
+## 1. Value flow
 
-Una compraventa (tipo de trámite 1) recorre presupuestos, una gestión, la
-documentación, la escritura, el testimonio y el cobro. El cobro corre en
-paralelo: no cambia el estado de la gestión. El archivo sí, y solo si el
-workflow del tipo de trámite tiene la arista.
+A sale (procedure type 1) runs through budgets, a management, the documents,
+the deed, the testimony, and collection. Collection runs in parallel: it
+does not change the management status. Archiving does, and only if the
+procedure type's workflow has that edge.
 
 ```mermaid
 flowchart LR
-  persona[Persona] --> presupuesto[Presupuesto]
-  presupuesto --> gestion[Gestión Iniciada]
-  gestion --> docs[Documentación]
-  docs --> escritura[Escritura sin firmar]
-  escritura --> firma[Escritura firmada]
-  firma --> testimonio[Testimonio]
-  testimonio --> registro[Inscripción y retiro]
-  presupuesto --> cobro[Cobro]
-  docs --> archivo[Archivo]
-  registro --> operacion[Bitácora y operación]
-  archivo --> operacion
-  cobro --> operacion
+  person[Person] --> budget[Budget]
+  budget --> management[Management Iniciada]
+  management --> docs[Documentation]
+  docs --> deed[Deed Sin Firmar]
+  deed --> signed[Deed Firmada]
+  signed --> testimony[Testimony]
+  testimony --> registry[Registration and withdrawal]
+  budget --> collection[Collection]
+  docs --> archive[Archive]
+  registry --> operation[History and operation]
+  archive --> operation
+  collection --> operation
 ```
 
-| Proceso | Qué transforma | Casos de uso | Dónde vive la regla |
-|---------|----------------|--------------|---------------------|
-| Presupuestar | Ítems y total de un trámite | CU01, CU45, CU60 | `budgets.status` (vocabulario) |
-| Cobrar | Pagos contra el saldo | CU15, CU47 | `PaymentStatus` derivado |
-| Abrir gestión | Presupuesto aceptado → gestión en nodo inicial | CU02, CU83 | `WorkflowNode` INITIAL |
-| Documentar | Certificados y papeles del cliente o de un organismo | CU04, CU10, CU43, CU72 | Flags de `submitted_documents` |
-| Escriturar y firmar | Borrador con folio → escritura firmada | CU05, CU06 | `deeds.status` y estado de gestión, por separado |
-| Testimonio e inscripción | Movimiento ante el Registro | CU07, CU11, CU12, CU44, CU82 | Movimiento de testimonio y minuta |
-| Archivar | Gestión y carpetas cerradas, con o sin deuda | CU16, CU85 | Transición a `Archivada` |
-| Operar | Auditoría, salud, incidentes | CU13, CU73, CU76, CU77 | Bitácora, actuator, observabilidad |
+| Process | What it transforms | Use cases | Where the rule lives |
+|---------|--------------------|-----------|----------------------|
+| Budget | Items and total of a procedure | CU01, CU45, CU60 | `budgets.status` (vocabulary) |
+| Collect | Payments against the balance | CU15, CU47 | Derived `PaymentStatus` |
+| Open a management | Accepted budget → management on the initial node | CU02, CU83 | `WorkflowNode` INITIAL |
+| Document | Certificates and papers from the client or an agency | CU04, CU10, CU43, CU72 | Flags on `submitted_documents` |
+| Draw and sign the deed | Draft with a folio → signed deed | CU05, CU06 | `deeds.status` and the management status, separately |
+| Testimony and registration | Movement before the Registry | CU07, CU11, CU12, CU44, CU82 | Testimony movement and registration draft |
+| Archive | Closed management and folders, with or without debt | CU16, CU85 | Transition to `Archivada` |
+| Operate | Audit, health, incidents | CU13, CU73, CU76, CU77 | History, actuator, observability |
 
-## 2. Mapa de casos de uso
+## 2. Use-case map
 
-Un óvalo por caso de uso no se lee. El sistema se usa en seis capacidades.
-El catálogo completo sigue en `docs/100-business/102-use-cases/` (CU01–CU87).
-Actores atómicos: [lista de actores](../../100-business/103-actors/Lista%20de%20actores.md).
+One oval per use case does not read. The system is used in six capabilities.
+The full catalog stays in `docs/100-business/102-use-cases/` (CU01–CU87).
+Atomic actors: [actor list](../../100-business/103-actors/Lista%20de%20actores.md).
 
 ```mermaid
 flowchart TB
-  cliente[Cliente]
-  recepcion[Recepcionista]
-  gestor[Gestor]
-  escribano[Escribano]
+  client[Client]
+  reception[Receptionist]
+  clerk[Clerk]
+  notary[Escribano]
   admin[Administrador]
-  ops[Operaciones]
+  ops[Operations]
 
   subgraph notaire [Notaire]
-    pago[Presupuesto y pago]
-    gestion[Gestión y workflow]
-    doc[Documentación]
-    esc[Escritura, testimonio, minuta]
-    adm[Tablas, usuarios, plantillas]
-    ope[Calidad, seguridad, operación]
+    pay[Budget and payment]
+    management[Management and workflow]
+    doc[Documentation]
+    deed[Deed, testimony, registration draft]
+    adm[Tables, users, templates]
+    ope[Quality, security, operation]
   end
 
-  cliente --> pago
-  recepcion --> pago
-  recepcion --> gestion
-  gestor --> gestion
-  gestor --> doc
-  escribano --> esc
-  escribano --> gestion
+  client --> pay
+  reception --> pay
+  reception --> management
+  clerk --> management
+  clerk --> doc
+  notary --> deed
+  notary --> management
   admin --> adm
-  admin --> gestion
+  admin --> management
   ops --> ope
 ```
 
-| Capacidad | Casos que la sostienen | Requerimiento ancla |
-|-----------|------------------------|---------------------|
-| Presupuesto y pago | CU01, CU15, CU45, CU47, CU60 | RF de abonar trámite y cuotas |
-| Gestión y workflow | CU02, CU14, CU16, CU30, CU35, CU67, CU83, CU85 | RF de estados y transiciones |
-| Documentación | CU04, CU10, CU43, CU72 | RF de certificados y seguimiento |
-| Escritura y testimonio | CU05, CU06, CU07, CU11, CU12, CU44, CU82, CU86 | RF de firma, inscripción, numeración |
-| Administración | CU20–CU37, CU48, CU79, CU80 | RF de tablas base y usuarios |
-| Operación | CU73–CU78 | RNF de auditoría, pruebas, monitoreo, seguridad |
+| Capability | Use cases that support it | Anchor requirement |
+|------------|---------------------------|--------------------|
+| Budget and payment | CU01, CU15, CU45, CU47, CU60 | RF to pay a procedure and installments |
+| Management and workflow | CU02, CU14, CU16, CU30, CU35, CU67, CU83, CU85 | RF for statuses and transitions |
+| Documentation | CU04, CU10, CU43, CU72 | RF for certificates and tracking |
+| Deed and testimony | CU05, CU06, CU07, CU11, CU12, CU44, CU82, CU86 | RF for signing, registration, numbering |
+| Administration | CU20–CU37, CU48, CU79, CU80 | RF for base tables and users |
+| Operation | CU73–CU78 | RNF for audit, tests, monitoring, security |
 
-La matriz RF ↔ CU sigue en
-[trazabilidad](../../100-business/104-traceability/Matriz%20de%20Trazabilidad%20Requerimientos-Casos%20de%20Uso.md).
-Este mapa no la reemplaza.
+The RF ↔ CU matrix stays in
+[traceability](../../100-business/104-traceability/Matriz%20de%20Trazabilidad%20Requerimientos-Casos%20de%20Uso.md).
+This map does not replace it.
 
-## 3. Máquinas de estado
+## 3. State machines
 
-Hay varias máquinas. No se colapsan en una: el pago no es un estado de la
-gestión, y el movimiento del testimonio no es un nodo del workflow sembrado.
+There are several machines. They do not collapse into one: payment is not a
+management status, and the testimony movement is not a node of the seeded
+workflow.
 
-### 3.1 Gestión — workflow estándar sembrado
+### 3.1 Management — seeded standard workflow
 
-Definición `Workflow de Gestión Estándar`, asignada a Compraventa, Donación
-e Hipoteca (`V10` + `V41`). Sucesión y Poder quedan sin workflow: cualquier
-`POST /api/v1/gestiones/{id}/transition` se rechaza.
+Definition `Workflow de Gestión Estándar`, assigned to `Compraventa`,
+`Donación`, and `Hipoteca` (`V10` + `V41`). Succession and power of attorney
+have no workflow: any `POST /api/v1/managements/{id}/transition` is rejected.
 
-El cambio de estado de una gestión existente solo entra por
-`POST /api/v1/gestiones/{id}/transition` o por el archivado. Un `PUT` que
-cambie el estado responde 400. Cada transición válida escribe la bitácora
+The status of an existing management changes only through
+`POST /api/v1/managements/{id}/transition` or through archiving. A `PUT` that
+changes the status answers 400. Each valid transition writes the history
 (CU13).
 
 ```mermaid
 stateDiagram-v2
   [*] --> Iniciada
-  Iniciada --> EnTramite: Se asignan trámites
-  EnTramite --> DocCompleta: Documentación presentada
-  DocCompleta --> SinFirmar: Se redacta la escritura
-  SinFirmar --> Firmada: Las partes firman
-  Firmada --> TestimonioGenerado: Se genera el testimonio
-  TestimonioGenerado --> TestimonioIngresado: Ingreso a inscripción
-  TestimonioIngresado --> TestimonioRetirado: Retiro
-  DocCompleta --> Archivada: Archivo sin escritura
+  Iniciada --> EnTramite: Procedures are assigned
+  EnTramite --> DocCompleta: Documentation submitted
+  DocCompleta --> SinFirmar: The deed is drafted
+  SinFirmar --> Firmada: The parties sign
+  Firmada --> TestimonioGenerado: The testimony is generated
+  TestimonioGenerado --> TestimonioIngresado: Entered for registration
+  TestimonioIngresado --> TestimonioRetirado: Withdrawal
+  DocCompleta --> Archivada: Archive without a deed
   TestimonioRetirado --> [*]
   Archivada --> [*]
 ```
 
-| Nodo | Estado de gestión | Tipo |
+| Node | Management status | Type |
 |------|-------------------|------|
 | 1 | Iniciada | INITIAL |
 | 2 | En Tramite | INTERMEDIATE |
@@ -150,445 +152,448 @@ stateDiagram-v2
 | 10 | Testimonio Retirado | FINAL |
 | 7 | Archivada | FINAL |
 
-La arista sembrada hacia `Archivada` sale solo de `Documentacion Completa`.
-Archivar desde `Testimonio Retirado` exige que un administrador agregue esa
-arista (CU83). El archivado calcula el saldo de los presupuestos de la
-gestión y advierte si es mayor a cero; la deuda no bloquea. Si alguna carpeta
-sigue en `Espera`, hay que confirmar explícitamente.
+The seeded edge to `Archivada` leaves only from `Documentacion Completa`.
+Archiving from `Testimonio Retirado` requires an administrator to add that
+edge (CU83). Archiving computes the balance of the management's budgets and
+warns when it is greater than zero; the debt does not block. If a folder is
+still `Espera`, the caller must confirm explicitly.
 
-CU10, al marcar entregado el último documento de entidad externa, intenta
-pasar la gestión a `Documentacion Completa`. Si esa arista no existe desde
-el estado actual, el movimiento del documento queda guardado y la transición
-se registra en el log.
+CU10, when the last external-entity document is marked delivered, tries to
+move the management to `Documentacion Completa`. If that edge does not exist
+from the current status, the document movement stays saved and the transition
+is written to the log.
 
-El tablero animado del dashboard lee este mismo grafo más el historial:
+The animated dashboard board reads this same graph plus the history:
 [FRONTEND-WORKFLOW-TRACKER.md](FRONTEND-WORKFLOW-TRACKER.md).
 
-### 3.2 Estados de gestión que el grafo estándar no usa
+### 3.2 Management statuses the standard graph does not use
 
-Siguen en el catálogo (`V2` y el residuo de `V41`). No son destinos del
-workflow sembrado. Un tipo de trámite puede incorporarlos con otra
-`WorkflowDefinition`.
+They stay in the catalog (`V2` and the remainder of `V41`). They are not
+destinations of the seeded workflow. A procedure type can include them with
+another `WorkflowDefinition`.
 
-| Id | Nombre | Situación |
-|----|--------|-----------|
-| 5 | Gestion Modificada | Catálogo, sin arista sembrada |
-| 8 | Gestion con Escritura Anulada | Catálogo, sin arista sembrada |
-| 9 | Gestion con Escritura No Paso | Catálogo, sin arista sembrada |
-| 10 | Gestion con Escritura Inscripta | Sacado del grafo en V41; la fila queda |
+| Id | Name | Situation |
+|----|------|-----------|
+| 5 | Gestion Modificada | Catalog, no seeded edge |
+| 8 | Gestion con Escritura Anulada | Catalog, no seeded edge |
+| 9 | Gestion con Escritura No Paso | Catalog, no seeded edge |
+| 10 | Gestion con Escritura Inscripta | Removed from the graph in V41; the row stays |
 
-### 3.3 Escritura
+### 3.3 Deed
 
-`deeds.status` empieza en `Sin Firmar`. La única transición que el servicio
-de firma exige es esa, y solo si hay al menos un folio (CU06). Anulada, No
-Paso e Inscripta son valores del vocabulario. `GET /api/v1/escrituras?status=`
-acepta solo esos cinco textos, en cualquier mayúscula, y responde 400 ante
-otro valor. El `PUT` genérico persiste el texto que reciba: no consulta el
-workflow de la gestión ni ese vocabulario.
+`deeds.status` starts at `Sin Firmar`. The only transition the signing
+service requires is that one, and only when there is at least one folio
+(CU06). `Anulada`, `No Paso`, and `Inscripta` are vocabulary values.
+`GET /api/v1/deeds?status=` accepts only those five texts, in any case, and
+answers 400 for any other value. The generic `PUT` persists the text it
+receives: it does not consult the management workflow or that vocabulary.
 
-Firmar la escritura no mueve la gestión. La gestión pasa a `Gestion con
-Escritura Firmada` solo si alguien aplica esa transición del workflow.
+Signing the deed does not move the management. The management moves to
+`Gestion con Escritura Firmada` only when someone applies that workflow
+transition.
 
 ```mermaid
 stateDiagram-v2
   [*] --> SinFirmar
-  SinFirmar --> Firmada: CU06 y al menos un folio
-  Firmada --> Anulada: Vocabulario, sin servicio dedicado
-  Firmada --> NoPaso: Vocabulario, sin servicio dedicado
-  Firmada --> Inscripta: Vocabulario, sin servicio dedicado
+  SinFirmar --> Firmada: CU06 and at least one folio
+  Firmada --> Anulada: Vocabulary, no dedicated service
+  Firmada --> NoPaso: Vocabulary, no dedicated service
+  Firmada --> Inscripta: Vocabulary, no dedicated service
 ```
 
-### 3.4 Testimonio — línea de tiempo aparte
+### 3.4 Testimony — a separate timeline
 
-`V41` deja el bucle de reingreso fuera del grafo de la gestión. El estado
-de la gestión (`Testimonio Generado` → `Ingresado` → `Retirado`) es el
-resumen. El detalle es una lista de movimientos.
+`V41` leaves the re-entry loop out of the management graph. The management
+status (`Testimonio Generado` → `Ingresado` → `Retirado`) is the summary.
+The detail is a list of movements.
 
-Reglas de `testimonio-movimiento-inscripcion`:
+Rules of `testimonio-movimiento-inscripcion`:
 
-- Ingresar exige testimonio verificado y que no haya un movimiento abierto
-  (fecha de ingreso sin fecha de salida).
-- Inscribir exige un ingreso previo y marca `registered` con fecha.
-- Retirar exige inscripto, y guarda fecha de salida y número de cartón.
-- Reingresar exige que el movimiento más reciente tenga fecha de salida, y
-  crea un movimiento nuevo. El anterior no se pisa.
-- `observed_by_registry` es una marca del movimiento, no un nodo de la gestión.
+- Entering requires a verified testimony and no open movement (entry date
+  without an exit date).
+- Registering requires a previous entry and sets `registered` with a date.
+- Withdrawing requires registered, and stores the exit date and card number.
+- Re-entering requires the latest movement to have an exit date, and creates
+  a new movement. The previous one is not overwritten.
+- `observed_by_registry` is a mark on the movement, not a management node.
 
 ```mermaid
 stateDiagram-v2
-  [*] --> Verificado
-  Verificado --> Ingresado: Fecha de ingreso
-  Ingresado --> Inscripto: Fecha de inscripción
-  Inscripto --> Retirado: Fecha de salida y cartón
-  Retirado --> Ingresado: Reingreso, movimiento nuevo
+  [*] --> Verified
+  Verified --> Entered: Entry date
+  Entered --> Registered: Registration date
+  Registered --> Withdrawn: Exit date and card
+  Withdrawn --> Entered: Re-entry, new movement
 ```
 
-### 3.5 Minuta de inscripción
+### 3.5 Registration draft
 
-Circuito propio de la minuta (`RegistrationDraftService`, CU82), no de la
-gestión. Generar exige escritura `Firmada` y datos catastrales y registrales
-completos del inmueble.
+The draft's own circuit (`RegistrationDraftService`, CU82), not the
+management's. Generating requires a deed in status `Firmada` and complete
+cadastral and registry data on the property.
 
 ```mermaid
 stateDiagram-v2
   [*] --> Generada
-  Generada --> Presentada: Fecha y número de entrada
-  Presentada --> Observado: Observación del Registro
-  Presentada --> Inscripto: Recepción e inscripción definitiva
+  Generada --> Presentada: Entry date and number
+  Presentada --> Observado: Registry observation
+  Presentada --> Inscripto: Receipt and final registration
 ```
 
-`Observado` no tiene vuelta codificada a `Presentada` ni camino a `Inscripto`.
-Inscribir solo se acepta desde `Presentado para inscripción`.
+`Observado` has no coded return to `Presentada` and no path to `Inscripto`.
+Registering is accepted only from `Presentado para inscripción`.
 
-### 3.6 Documentación
+### 3.6 Documentation
 
-Un documento presentado no tiene un enum de estado. El seguimiento es un
-conjunto de marcas, y pueden combinarse.
+A submitted document has no status enum. Tracking is a set of marks, and
+they can combine.
 
-| Marca | Columna | Lectura de negocio |
-|-------|---------|--------------------|
-| Preparado | `prepared` | El papel ya se pidió o se armó |
-| Entregado | `delivered` | Llegó. Si todos los de entidad externa están entregados, CU10 intenta completar la gestión |
-| Observado | `observed` | El organismo o la escribanía lo observó |
-| Liberado | `released` + `released_date` | Salió del organismo |
-| Reingresado | `reentered` | Volvió a presentarse (CU43) |
-| Vencimiento | `expires`, `due_date` | Plazo heredado del tipo de documento |
+| Mark | Column | Business reading |
+|------|--------|------------------|
+| Prepared | `prepared` | The paper was already requested or assembled |
+| Delivered | `delivered` | It arrived. If every external-entity document is delivered, CU10 tries to complete the management |
+| Flagged | `observed` | The agency or the office flagged it |
+| Released | `released` + `released_date` | It left the agency |
+| Re-entered | `reentered` | It was submitted again (CU43) |
+| Due | `expires`, `due_date` | Deadline inherited from the document type |
 
-Quién lo trae (`delivered_by`): `Cliente` (CU72) o `Entidad Externa` (CU10).
-El curso de CU72 dice “Presentado”; en datos eso es `delivered` / `prepared`,
-no un estado llamado Presentado.
+Who brings it (`delivered_by`): `Cliente` (CU72) or `Entidad Externa` (CU10).
+The CU72 narrative says “Presentado”; in data that is `delivered` /
+`prepared`, not a status named Presentado.
 
-Progresión que el negocio lee, linealizada. Las marcas reales pueden salirse
-de esta línea.
+The progression the business reads, drawn as a line. The real marks can
+leave this line.
 
 ```mermaid
 stateDiagram-v2
-  [*] --> Requerido
-  Requerido --> Preparado: prepared
-  Preparado --> EnMovimiento: Ingreso, cartón, salida
-  EnMovimiento --> Observado: observed
-  Observado --> EnMovimiento: Se corrige y sigue
-  EnMovimiento --> Entregado: delivered
-  Entregado --> Liberado: released
-  Entregado --> Reingresado: reentered
+  [*] --> Required
+  Required --> Prepared: prepared
+  Prepared --> InMovement: Entry, card, exit
+  InMovement --> Flagged: observed
+  Flagged --> InMovement: Corrected and continues
+  InMovement --> Delivered: delivered
+  Delivered --> Released: released
+  Delivered --> Reentered: reentered
 ```
 
-### 3.7 Presupuesto
+### 3.7 Budget
 
-`budgets.status` acepta solo estos códigos (cualquier otro `PUT` responde
-400). El comentario del enum los ordena, pero el controlador no valida la
-arista: se puede escribir cualquiera de los cinco.
+`budgets.status` accepts only these codes (any other `PUT` answers 400).
+The enum comment orders them, but the controller does not validate the
+edge: any of the five can be written.
 
-`BORRADOR` → `PENDIENTE` → `APROBADO` o `RECHAZADO` → `FACTURADO`
+`BORRADOR` → `PENDIENTE` → `APROBADO` or `RECHAZADO` → `FACTURADO`
 
-Ese orden es la lectura de negocio. No es un grafo custodiado.
+That order is the business reading. It is not a guarded graph.
 
-### 3.8 Pago
+### 3.8 Payment
 
-Un pago es un hecho: monto, fecha, método, observaciones, presupuesto. No
-tiene estado propio. El estado del presupuesto se calcula
-(`GET /api/v1/pagos/presupuesto/{id}/estado`):
+A payment is a fact: amount, date, method, notes, budget. It has no status
+of its own. The budget's payment status is computed
+(`GET /api/v1/payments/budget/{idBudget}/status`):
 
 ```mermaid
 stateDiagram-v2
   [*] --> NoPayments
-  NoPayments --> PARTIAL: Pago menor al saldo
-  NoPayments --> PAID: Pago que cubre el saldo
-  PARTIAL --> PARTIAL: Otra cuota
-  PARTIAL --> PAID: El saldo llega a cero
+  NoPayments --> PARTIAL: Payment below the balance
+  NoPayments --> PAID: Payment that covers the balance
+  PARTIAL --> PARTIAL: Another installment
+  PARTIAL --> PAID: The balance reaches zero
 ```
 
-| Código publicado | Condición |
-|------------------|-----------|
-| `NoPayments` | Nada pagado, o total pagado nulo o cero |
-| `PARTIAL` | Hay pagos y el saldo sigue siendo positivo |
-| `PAID` | Hay pagos y el saldo es cero o negativo |
+| Published code | Condition |
+|----------------|-----------|
+| `NoPayments` | Nothing paid, or the paid total is null or zero |
+| `PARTIAL` | There are payments and the balance is still positive |
+| `PAID` | There are payments and the balance is zero or negative |
 
-El monto no puede superar el saldo (`BigDecimal` escala 2). Un rechazo no
-persiste el pago. El nombre `NoPayments` es contrato REST: no se renombra
-sin versionar la API.
+The amount cannot exceed the balance (`BigDecimal` scale 2). A rejection
+does not persist the payment and answers an empty 409. The name
+`NoPayments` is a REST contract: it is not renamed without versioning the
+API.
 
-El cobro no transiciona la gestión. Solo alimenta el aviso de deuda al
-archivar.
+Collection does not transition the management. It only feeds the debt
+warning at archive time.
 
-### 3.9 Carpeta de trámite
+### 3.9 Procedure folder
 
-Cada trámite nuevo genera una carpeta `Activa` (CU85).
+Each new procedure creates a folder in status `Activa` (CU85).
 
 ```mermaid
 stateDiagram-v2
   [*] --> Activa
-  Activa --> Espera: Motivo obligatorio
-  Activa --> Archivada: Archivo de la gestión
-  Espera --> Archivada: Archivo confirmado
+  Activa --> Espera: Reason required
+  Activa --> Archivada: Management archived
+  Espera --> Archivada: Archive confirmed
 ```
 
-Archivar la gestión pasa todas sus carpetas a `Archivada`. Si alguna está en
-`Espera` y el cliente no confirma, el archivado se rechaza.
+Archiving the management moves all of its folders to `Archivada`. If one is
+`Espera` and the client does not confirm, archiving is rejected.
 
-## 4. Secuencias del camino principal
+## 4. Sequences of the main path
 
-Una secuencia por decisión que el sistema toma. El resto de los casos de uso
-siguen en su ficha; los `.puml` de `204-diagrams/Secuencias/` son legado.
+One sequence per decision the system makes. The rest of the use cases stay
+in their own write-up; the `.puml` files under `204-diagrams/Secuencias/`
+are legacy.
 
-### 4.1 Abrir la gestión y avanzar hasta el testimonio
+### 4.1 Open the management and advance to the testimony
 
 ```mermaid
 sequenceDiagram
-  actor Gestor
+  actor Clerk
   participant FE as Frontend
-  participant API as Gestiones
+  participant API as Managements
   participant WF as Workflow
   participant DB as PostgreSQL
 
-  Gestor->>FE: Inicia la gestión con presupuesto
-  FE->>API: POST /api/v1/gestiones/complete-case
-  API->>WF: El estado inicial es un nodo del workflow
+  Clerk->>FE: Starts the management with a budget
+  FE->>API: POST /api/v1/managements/complete-case
+  API->>WF: The initial status is a workflow node
   WF-->>API: Iniciada
-  API->>DB: Gestión, trámites, historial
+  API->>DB: Management, procedures, history
   API-->>FE: 201
 
-  Gestor->>FE: Cambia el estado
-  FE->>API: POST /api/v1/gestiones/{id}/transition
-  API->>WF: Hay arista desde el nodo actual
-  alt Arista válida
-    API->>DB: Nuevo estado e historial
+  Clerk->>FE: Changes the status
+  FE->>API: POST /api/v1/managements/{id}/transition
+  API->>WF: There is an edge from the current node
+  alt Valid edge
+    API->>DB: New status and history
     API-->>FE: 200
-  else Arista ausente o tipo sin workflow
-    API-->>FE: 400, la gestión no cambia
+  else Missing edge or type without a workflow
+    API-->>FE: 400, the management does not change
   end
 ```
 
-### 4.2 Documentación de entidad externa
+### 4.2 External-entity documentation
 
 ```mermaid
 sequenceDiagram
-  actor Gestor
+  actor Clerk
   participant FE as Frontend
-  participant Doc as Documentos externos
-  participant WF as Transición de gestión
+  participant Doc as External documents
+  participant WF as Management transition
   participant DB as PostgreSQL
 
-  Gestor->>FE: Registra movimiento del certificado
-  FE->>Doc: PUT documentos-entidades-externas
-  Doc->>DB: Cartón, fechas, observado, entregado
-  Doc-->>FE: Movimiento guardado
-  Doc->>Doc: Todos los de entidad externa entregados
-  alt Sí, y el workflow permite Documentacion Completa
-    Doc->>WF: transition a Documentacion Completa
-    WF->>DB: Estado e historial
-  else No, o la arista no existe
-    Doc->>Doc: Log, el movimiento no se revierte
+  Clerk->>FE: Records the certificate movement
+  FE->>Doc: PUT /api/v1/managements/{id}/external-entity-documents/{idSubmittedDocument}
+  Doc->>DB: Card, dates, flagged, delivered
+  Doc-->>FE: Movement saved
+  Doc->>Doc: Every external-entity document is delivered
+  alt Yes, and the workflow allows Documentacion Completa
+    Doc->>WF: transition to Documentacion Completa
+    WF->>DB: Status and history
+  else No, or the edge does not exist
+    Doc->>Doc: Log, the movement is not rolled back
   end
 ```
 
-### 4.3 Cobrar y archivar
+### 4.3 Collect and archive
 
 ```mermaid
 sequenceDiagram
-  actor Recepcion
+  actor Reception
   participant FE as Frontend
-  participant Pay as Pagos
-  participant Arc as Archivo
+  participant Pay as Payments
+  participant Arc as Archive
   participant WF as Workflow
   participant DB as PostgreSQL
 
-  Recepcion->>FE: Registra un pago
-  FE->>Pay: POST /api/v1/pagos
-  Pay->>Pay: Monto menor o igual al saldo
-  alt Válido
-    Pay->>DB: Pago
-    Pay-->>FE: 201 y estado NoPayments, PARTIAL o PAID
-  else Supera el saldo
-    Pay-->>FE: 400, no persiste
+  Reception->>FE: Records a payment
+  FE->>Pay: POST /api/v1/payments
+  Pay->>Pay: Amount less than or equal to the balance
+  alt Valid
+    Pay->>DB: Payment
+    Pay-->>FE: 201 and status NoPayments, PARTIAL, or PAID
+  else Exceeds the balance
+    Pay-->>FE: empty 409, nothing persisted
   end
 
-  Recepcion->>FE: Archiva la gestión
-  FE->>Arc: Consulta saldo y confirma
-  Arc->>Arc: Carpetas en Espera exigen confirmación
-  Arc->>WF: transition a Archivada
-  alt Arista presente
-    WF->>DB: Archivada, deuda sí o no, carpetas Archivada, historial
-  else Arista ausente
+  Reception->>FE: Archives the management
+  FE->>Arc: Reads the balance and confirms
+  Arc->>Arc: Folders in Espera require confirmation
+  Arc->>WF: transition to Archivada
+  alt Edge present
+    WF->>DB: Archivada, debt yes or no, folders Archivada, history
+  else Edge absent
     WF-->>FE: 400
   end
 ```
 
-## 5. Vistas C4
+## 5. C4 views
 
-Nivel 4 (clases) no se dibuja aquí: el costo no paga el detalle, y el código
-ya es esa vista. El SAD arc42 sigue siendo `DOC-SAD`.
+Level 4 (classes) is not drawn here: the cost does not pay for the detail,
+and the code is already that view. The arc42 SAD stays `DOC-SAD`.
 
-### 5.1 Contexto
+### 5.1 Context
 
 ```mermaid
 flowchart TB
-  cliente[Cliente]
-  gestor[Gestor y recepcionista]
-  escribano[Escribano]
-  registro[Registro de la Propiedad]
-  catastro[Catastro y municipio]
+  client[Client]
+  clerk[Clerk and receptionist]
+  notary[Escribano]
+  registry[Property registry]
+  cadastre[Cadastre and municipality]
 
   subgraph notaire [Notaire]
-    sistema[Gestión notarial]
+    system[Notarial management]
   end
 
-  cliente --> sistema
-  gestor --> sistema
-  escribano --> sistema
-  sistema --> registro
-  sistema --> catastro
+  client --> system
+  clerk --> system
+  notary --> system
+  system --> registry
+  system --> cadastre
 ```
 
-El cliente pide el trámite y paga. El gestor documenta y hace avanzar la
-gestión. El escribano firma y archiva. Registro y catastro están fuera del
-sistema: la minuta y los certificados se registran en Notaire; el organismo
-no tiene API en este modelo.
+The client requests the procedure and pays. The clerk documents and advances
+the management. The notary signs and archives. The registry and the cadastre
+are outside the system: the registration draft and the certificates are
+recorded in Notaire; the agency has no API in this model.
 
-### 5.2 Contenedores
+### 5.2 Containers
 
 ```mermaid
 flowchart LR
-  usuario[Usuario] --> web[frontend Next.js]
+  user[User] --> web[frontend Next.js]
   web --> api[backend-api]
   api --> db[(PostgreSQL)]
   api --> obs[Prometheus Grafana Loki]
 ```
 
-### 5.3 Componentes del backend que sostienen el ciclo
+### 5.3 Backend components that carry the cycle
 
-El pago es el corte hexagonal ([ADR-021](../202-ADR/ADR-021-hexagonal-architecture-pilot.md)).
-Gestión, documento, escritura, testimonio y minuta viven en casos de uso de
-aplicación sobre entidades JPA. El frontend solo habla HTTP.
+Payment is the hexagonal cut
+([ADR-021](../202-ADR/ADR-021-hexagonal-architecture-pilot.md)).
+Management, document, deed, testimony, and registration draft live in
+application use cases over JPA entities. The frontend speaks HTTP only.
 
 ```mermaid
 flowchart TB
-  subgraph actores [Fuera del sistema]
-    usuario[Escribano, gestor, cliente]
-    organismo[Registro y catastro]
+  subgraph actors [Outside the system]
+    user[Escribano, clerk, client]
+    agency[Registry and cadastre]
   end
 
   subgraph fe [frontend]
-    ui[Dashboard y formularios]
+    ui[Dashboard and forms]
   end
 
   subgraph api [backend-api]
-    web[Adaptadores HTTP]
-    uc[Casos de uso de gestión, documento, escritura, testimonio, minuta]
-    dominio[domain.payment]
-    jpa[Entidades y repositorios]
+    web[HTTP adapters]
+    uc[Use cases for management, document, deed, testimony, registration draft]
+    domain[domain.payment]
+    jpa[Entities and repositories]
   end
 
-  db[(PostgreSQL y Flyway)]
+  db[(PostgreSQL and Flyway)]
   obs[Prometheus, Grafana, Loki]
 
-  usuario --> ui
+  user --> ui
   ui --> web
-  organismo -.-> uc
+  agency -.-> uc
   web --> uc
-  web --> dominio
-  uc --> dominio
+  web --> domain
+  uc --> domain
   uc --> jpa
-  dominio --> jpa
+  domain --> jpa
   jpa --> db
   api --> obs
 ```
 
-| Pieza | Responsabilidad en el ciclo | Módulo |
+| Piece | Responsibility in the cycle | Module |
 |-------|-----------------------------|--------|
-| `adapter.in.web` | Contratos REST de gestión, pago, documento, escritura | backend-api |
-| `application.usecase.management` | Transición y archivo con deuda | backend-api |
-| `application.usecase.document` | Movimiento externo y completitud | backend-api |
-| `application.usecase.deed` | Firma con folio | backend-api |
-| `application.usecase.testimony` | Ingreso, inscripción, retiro, reingreso | backend-api |
-| `application.usecase.registrationdraft` | Minuta | backend-api |
-| `domain.payment` | Saldo, cuotas, estado derivado | backend-api |
-| `frontend` | Tracker del workflow y formularios | frontend |
-| Flyway | Catálogo de estados y grafo sembrado | backend-api |
-| Observabilidad | Salud, métricas, logs de operación | infra |
+| `adapter.in.web` | REST contracts for management, payment, document, deed | backend-api |
+| `application.usecase.management` | Transition and archive with debt | backend-api |
+| `application.usecase.document` | External movement and completeness | backend-api |
+| `application.usecase.deed` | Signing with a folio | backend-api |
+| `application.usecase.testimony` | Entry, registration, withdrawal, re-entry | backend-api |
+| `application.usecase.registrationdraft` | Registration draft | backend-api |
+| `domain.payment` | Balance, installments, derived status | backend-api |
+| `frontend` | Workflow tracker and forms | frontend |
+| Flyway | Status catalog and seeded graph | backend-api |
+| Observability | Health, metrics, operational logs | infra |
 
-El mapa de módulos del repositorio está en
-[MODULE-OWNERSHIP.md](../../300-development/MODULE-OWNERSHIP.md). El despliegue
-y el rollback están en
-[DEPLOYMENT-PLAN.md](../../300-development/DEPLOYMENT-PLAN.md). La operación
-diaria (métricas, logs, incidentes) está en
-[monitoreo](../207-monitoring/README.md) y CU77.
+The repository module map is in
+[MODULE-OWNERSHIP.md](../../300-development/MODULE-OWNERSHIP.md). Deployment
+and rollback are in
+[DEPLOYMENT-PLAN.md](../../300-development/DEPLOYMENT-PLAN.md). Day-to-day
+operation (metrics, logs, incidents) is in
+[monitoring](../207-monitoring/README.md) and CU77.
 
-## 6. Trazabilidad de punta a punta
+## 6. End-to-end traceability
 
-El hilo adelante y atrás, con el ejemplo de CU15, está en
-[INGENIERIA.md §3](../../300-development/INGENIERIA.md#3-trazabilidad).
-Esta tabla es el mapa de documentos del dominio.
+The thread forward and backward, with the CU15 example, is in
+[INGENIERIA.md §3](../../300-development/INGENIERIA.md#3-traceability).
+This table is the map of the domain documents.
 
-| Pregunta | Documento permanente | Contrato de cambio | Código |
-|----------|----------------------|--------------------|--------|
-| Qué debe hacer el negocio | SRS y casos de uso | OpenSpec `specs/` | — |
-| Qué estados puede tomar una gestión | §3.1 de este archivo | `gestion-workflow-transicion` | `V10`, `V41`, `ManagementTransitionService` |
-| Cómo se cobra | §3.8 | `pagos`, `pagos-parciales-cuotas` | `PaymentStatus`, `ProcessPaymentService` |
-| Cómo viaja un certificado | §3.6 | `submitted-document-update` | `ExternalEntityDocumentService` |
-| Cómo se inscribe | §3.4 y §3.5 | `testimonio-movimiento-inscripcion`, `minuta-inscripcion` | `TestimonyMovementService`, `RegistrationDraftService` |
-| Cómo se archiva con deuda | §3.1 y §3.9 | archivo / CU16 | `ManagementArchiveDebtService` |
-| Cómo se prueba | [TEST-PLAN.md](../../300-development/303-testing/TEST-PLAN.md) | tareas OpenSpec | JUnit, Bruno, Playwright |
-| Cómo se entrega | [github/README.md](../../github/README.md) | issue + PR | tablero de entrega |
-| Cómo se opera | [209-deployment](../209-deployment/README.md), CU77 | — | Compose, Kustomize, actuator |
+| Question | Permanent document | Change contract | Code |
+|----------|--------------------|-----------------|------|
+| What the business must do | SRS and use cases | OpenSpec `specs/` | — |
+| Which statuses a management can take | §3.1 of this file | `gestion-workflow-transicion` | `V10`, `V41`, `ManagementTransitionService` |
+| How collection works | §3.8 | `pagos`, `pagos-parciales-cuotas` | `PaymentStatus`, `ProcessPaymentService` |
+| How a certificate travels | §3.6 | `submitted-document-update` | `ExternalEntityDocumentService` |
+| How registration works | §3.4 and §3.5 | `testimonio-movimiento-inscripcion`, `minuta-inscripcion` | `TestimonyMovementService`, `RegistrationDraftService` |
+| How archiving with debt works | §3.1 and §3.9 | archive / CU16 | `ManagementArchiveDebtService` |
+| How it is tested | [TEST-PLAN.md](../../300-development/303-testing/TEST-PLAN.md) | OpenSpec tasks | JUnit, Bruno, Playwright |
+| How it is delivered | [github/README.md](../../github/README.md) | issue + PR | delivery board |
+| How it is operated | [209-deployment](../209-deployment/README.md), CU77 | — | Compose, Kustomize, actuator |
 
-## 7. Gestión del trabajo
+## 7. Managing the work
 
-El tablero de GitHub no es el workflow de la gestión. Un issue `In Progress`
-no es una gestión `En Tramite`.
+The GitHub board is not the management workflow. An issue `In Progress` is
+not a management in status `En Tramite`.
 
-La etiqueta `in-review` marca un PR en revisión. La columna del tablero sigue
-en curso hasta que el issue se cierra.
+The `in-review` label marks a PR under review. The board column stays in
+progress until the issue is closed.
 
 ```mermaid
 stateDiagram-v2
   [*] --> Todo
-  Todo --> InProgress: Rama y etiqueta in-progress
-  InProgress --> Done: Merge e issue cerrado
-  Todo --> Done: Cierre sin código
+  Todo --> InProgress: Branch and in-progress label
+  InProgress --> Done: Merge and issue closed
+  Todo --> Done: Closed without code
 ```
 
-| Capa | Estados | Dónde se lee |
-|------|---------|--------------|
-| Trabajo | Todo, In Progress, Done (`in-review` es etiqueta, no columna) | [Organización de GitHub](../../github/README.md) |
-| Ingeniería | Issue, OpenSpec, TDD, preflight, PR, CI pesado, review, merge, smoke | [CONSTITUTION.md](../../../CONSTITUTION.md) |
-| Dominio | §3 de este archivo | Código y Flyway |
+| Layer | Statuses | Where it is read |
+|-------|----------|------------------|
+| Work | Todo, In Progress, Done (`in-review` is a label, not a column) | [GitHub organization](../../github/README.md) |
+| Engineering | Issue, OpenSpec, TDD, preflight, PR, heavy CI, review, merge, smoke | [CONSTITUTION.md](../../../CONSTITUTION.md) |
+| Domain | §3 of this file | Code and Flyway |
 
-Hitos: `v1.0 — Production Ready` (prioridad crítica y alta), `v1.1 — Hardening`
-(media), `Backlog` (baja). Los issues ancla de RF y de caso de uso permanecen
-abiertos; el trabajo los referencia, no los cierra.
+Milestones: `v1.0 — Production Ready` (critical and high priority),
+`v1.1 — Hardening` (medium), `Backlog` (low). The anchor issues for an RF
+and a use case stay open; the work references them and does not close them.
 
-Una issue de trabajo lleva caso de uso, criterios de aceptación, un área, una
-prioridad y un hito. El cambio que altere un estado de §3 actualiza este
-archivo además del spec OpenSpec.
+A work issue carries a use case, acceptance criteria, an area, a priority,
+and a milestone. A change that alters a status in §3 updates this file as
+well as the OpenSpec spec.
 
-## 8. Divergencias conocidas
+## 8. Known divergences
 
-Hechos del sistema de hoy. No son una propuesta de cambio.
+Facts of the system today. They are not a change proposal.
 
-1. El diagrama de actividad legado
-   `204-diagrams/Diagrama de Estados/transicion-de-estados.puml` archiva al
-   final, después de los testimonios. El grafo sembrado solo archiva desde
+1. The legacy activity diagram
+   `204-diagrams/Diagrama de Estados/transicion-de-estados.puml` archives at
+   the end, after the testimonies. The seeded graph archives only from
    `Documentacion Completa`.
-2. `DeedSigningService` cambia `deeds.status`. No cambia el estado de la
-   gestión.
-3. `Gestion con Escritura Inscripta` ya no está en el grafo. La inscripción
-   que el workflow recorre es la del testimonio.
-4. La minuta `Observado` no vuelve a presentarse ni se inscribe por el
-   servicio actual.
-5. El orden del presupuesto no está custodiado por aristas.
-6. “Presentado” en CU72 no es un valor persistido.
+2. `DeedSigningService` changes `deeds.status`. It does not change the
+   management status.
+3. `Gestion con Escritura Inscripta` is no longer in the graph. The
+   registration the workflow walks is the testimony's.
+4. A registration draft in `Observado` is not resubmitted and is not
+   registered by the current service.
+5. The budget order is not guarded by edges.
+6. “Presentado” in CU72 is not a persisted value.
 
-## 9. Regla para el AI SDLC
+## 9. Rule for the AI SDLC
 
-En la fase de documentación de un cambio:
+In the documentation phase of a change:
 
-- Si el cambio agrega, quita o condiciona un estado de §3, se edita este
-  archivo y, si el grafo sembrado cambia, la migración Flyway. Una sola
-  fuente.
-- El spec OpenSpec dice el delta. Este archivo dice el resultado.
-- No se crea un `.puml` nuevo para el mismo ciclo.
-- Los casos de uso se tocan solo cuando cambia el relato del actor. El grafo
-  no se copia dentro de cada CU.
+- If the change adds, removes, or conditions a status in §3, edit this file
+  and, if the seeded graph changes, the Flyway migration. One source.
+- The OpenSpec spec says the delta. This file says the result.
+- Do not create a new `.puml` for the same cycle.
+- Use cases are touched only when the actor's narrative changes. The graph
+  is not copied into each CU.
 
-Detalle de flota: [FLEET-ARCHITECTURE.md](../../300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md).
+Fleet detail: [FLEET-ARCHITECTURE.md](../../300-development/304-ai-sdlc-cloud/FLEET-ARCHITECTURE.md).
