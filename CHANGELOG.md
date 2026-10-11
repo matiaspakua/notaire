@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English local-model guide** (#1490, CU75):
+  `local-ai/README.md` describes the oMLX stack, presets, and Metal memory
+  limit in English. Model names, profiles, and commands stay. The Cursor Cloud
+  fleet still does not use `local-ai/`.
 - **English documentation index and backend README** (#1490, CU75):
   `docs/README.md` and `backend-api/README.md` name the lifecycle, the method,
   and the REST service in English. Filenames `CICLO-DE-VIDA.md` and
