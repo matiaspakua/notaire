@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Workflow tracker E2E filename** (#1490, CU75): the design cites
+  `testing/e2e/tests/TS-0138-workflow-tracker.spec.ts`. The e2e-suite
+  spec keeps the historical name `workflow-tracker.spec.ts`.
 - **Person validation E2E filename** (#1490, CU75): the living spec names
   `TS-0015-people-clients-workflow.spec.ts`. The archived #945 spec keeps
   `TS-0015-personas-clientes-workflow.spec.ts`.
