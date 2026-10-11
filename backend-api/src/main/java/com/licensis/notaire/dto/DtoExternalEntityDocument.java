@@ -5,11 +5,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * CU10 - Read-model for a single "Entidad Externa" document tracked within a
- * management, exposing exactly the fields the use case's Curso of Eventos (step 4)
- * requires: name, preparado, number of cartón, date of ingreso, date of
- * salida, observado, monto debt, date of payment, date of liberación,
- * observaciones y si fue finalizado (entregado).
+ * CU10 — Read model for one external-entity document on a management. Exposes
+ * the fields the use case's main flow (step 4) requires: name, prepared flag,
+ * card number, entry date, exit date, flagged flag, amount due, payment date,
+ * release date, notes, and whether it was delivered.
  */
 public record DtoExternalEntityDocument(
         Integer idSubmittedDocument,

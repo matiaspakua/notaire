@@ -23,10 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * CU43 - Reenter documentation: expone, for a management, their procedures
- * together with the documentation required of each uno (according to its
- * {@code ProcedureTemplate}), y permite reingresar un tipo de documento
- * creando a new {@code SubmittedDocument} with {@code reingresado=true}.
+ * CU43 — Re-enter documentation. For a management, lists each procedure and the
+ * documents its {@code ProcedureTemplate} requires, and re-enters a document
+ * type by creating a {@code SubmittedDocument} with {@code reingresado=true}.
  */
 @Service
 public class ReingresoDocumentacionService {

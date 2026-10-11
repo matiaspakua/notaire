@@ -96,10 +96,10 @@ public class TestimonyMovementService {
     }
 
     /**
-     * Withdraws an registered testimony, registering the date of salida and number of cartón.
+     * Withdraws a registered testimony, recording the exit date and card number.
      *
-     * @param idTestimonio the testimony ID
-     * @param numeroCarton the cartón number
+     * @param idTestimony the testimony ID
+     * @param cardNumber the card number
      * @return the updated movement
      * @throws ResourceNotFoundException if not testimony with the given ID exists
      * @throws BusinessValidationException if the testimony is not registered
@@ -122,7 +122,7 @@ public class TestimonyMovementService {
      * Re-enters a withdrawn testimony, creating a new movement without altering the previous one.
      *
      * @param idTestimony the testimony ID
-     * @param reentry cartón number, observation flag and notes captured at the reentry
+     * @param reentry card number, observation flag, and notes captured at re-entry
      * @return the newly created movement
      * @throws ResourceNotFoundException if not testimony with the given ID exists
      * @throws BusinessValidationException if the testimony was not previously withdrawn, or the reentry is

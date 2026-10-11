@@ -373,11 +373,10 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
     }
 
     /**
-     * Busca all the budgets asociados a a person.
+     * Finds every budget linked to a person.
      *
-     * @param pIdPersona El ID de la persona.
-     * @return misPresupuestos A lista with all the budgets asociados to the
-     *         persona indicada.
+     * @param pIdPerson the person id
+     * @return the budgets linked to that person
      */
     public List<Budget> findBudgetsPerson(Integer pIdPerson) {
         EntityManager em = getEntityManager();
@@ -385,7 +384,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
         List<Budget> misPresupuestos = new ArrayList<>();
 
         try {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Name of the @NamedQuery declared on Budget
             Query q = em.createNamedQuery("Budget.findByPerson");
 
             // It step the name of the parametro of the query, and the valor a search.
@@ -421,7 +420,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
         List<Budget> misPresupuestos = new ArrayList<>();
 
         try {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Name of the @NamedQuery declared on Budget
             Query q = em.createNamedQuery("Budget.findByPersonProcedure");
 
             // It step the name of the parametro of the query, and the valor a search.
@@ -441,7 +440,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
         Budget miBudget = null;
 
         try {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Name of the @NamedQuery declared on Budget
             Query q = em.createNamedQuery("Budget.findByIdBudget");
 
             // It step the name of the parametro of the query, and the valor a search.

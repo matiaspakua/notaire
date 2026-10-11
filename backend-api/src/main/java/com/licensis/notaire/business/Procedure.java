@@ -37,33 +37,22 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.springframework.data.domain.Persistable;
 
 /**
- * Clase that representa a procedure in curso (is not the definicion of a procedure,
- * sino a procedure
- * concreto that esta llevando a cabo). Posee the referencias hacia the tipo of
- * procedure, the
- * client, the budget of the cual origino and the number of management.
+ * A procedure that is underway (a concrete case, not the procedure-type
+ * definition). It references the procedure type, the client, the budget it
+ * came from, and the management number.
  * <p>
- * REGLA DE NEGOCIO:
+ * Business rule:
  * <p>
- * +
- * When crea a budget, in the tabla procedures crea a registo, the
- * cual asocia al
- * budget a determinado procedure together with the procedure type indicado.
+ * Creating a budget inserts a row in {@code procedures} that links that budget
+ * to a procedure and the chosen procedure type.
  * <p>
- * + Cuando se inicia
- * a management, must asociar the misma with the registros of procedures asociados
- * a the budgets
- * seleccionado. La combinacion de "DeedManagement" y "Procedure" representan
- * the concept
- * abstracto of a "management".
+ * Starting a management associates it with the procedure rows of the selected
+ * budgets. {@code DeedManagement} and {@code Procedure} together are the
+ * management.
  * <p>
- * + When start a management, can haber varios clients
- * involucrados en la misma. La tabla tramites_personas, expresa esta relacion.
- * El atributo
- * personasList is utilizado by the framework of persistencia for escribir
- * sobre la tabla
- * relacional indicada.
- * <p>
+ * A management can involve several clients. The {@code tramites_personas}
+ * table stores that link. {@code personasList} is the persistence mapping for
+ * that table.
  *
  * @author juanca
  */

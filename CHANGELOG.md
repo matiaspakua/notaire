@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English comments on archive, person, budget, and procedure types** (#1490, CU75):
+  javadoc on the archive-debt service, deed-management and person persistence,
+  budget lookup, user password checks, testimony movements, document re-entry,
+  and the procedure entity is English. Stored statuses `Archivada` and `Espera` stay.
 - **Stored status and role labels kept** (#1490, CU75): `BusinessConstants` and audit
   `GuiConstants` values stay the recorded Spanish labels (`Iniciada`, `Firmada`,
   `Documentacion Completa`, `Escribano`). The initial administrator type is `Escribano`

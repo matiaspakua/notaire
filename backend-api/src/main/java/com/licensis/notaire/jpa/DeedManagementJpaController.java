@@ -128,10 +128,10 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * Permite update a management of deed in the persistencia.
+     * Updates a deed management in persistence.
      *
-     * @param gestionParaModificar The management of deed a update.
-     * @return modificado Verdadero si se pudo modificar, falso en caso contrario.
+     * @param gestionParaModificar the deed management to update
+     * @return true when the update is stored, false otherwise
      *
      * @throws IllegalOrphanException
      * @throws NonexistentEntityException
@@ -268,9 +268,9 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * Permite elimianr a management of deed of the persistencia.
+     * Deletes a deed management from persistence.
      *
-     * @param id The id of the management of deed a delete.
+     * @param id the deed management id to delete
      * @throws IllegalOrphanException
      * @throws NonexistentEntityException
      */
@@ -455,7 +455,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * Managements in the that participa a client (person) vía TramitesPersonas.
+     * Managements in which a client (person) takes part, via the person-procedure link.
      */
     @SuppressWarnings("unchecked")
     public List<DeedManagement> findManagementsByClient(Integer idPerson)
@@ -533,10 +533,10 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * Permite update a management of deed.
+     * Updates a deed management.
      *
-     * @param gestionParaModificar
-     * @return
+     * @param managementParaModificar the management to update
+     * @return true when the update is stored
      * @throws ClassModifiedException
      */
     public boolean modifyDeedManagement(DeedManagement managementParaModificar) throws ClassModifiedException
@@ -586,10 +586,10 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     }
 
     /**
-     * permite modifica the "status" of a management of deed.
+     * Updates the status of a deed management.
      *
-     * @param gestionParaModificar
-     * @return
+     * @param managementParaModificar the management whose status changes
+     * @return true when the status is stored
      * @throws ClassModifiedException
      */
     public boolean modifyDeedManagementStatus(DeedManagement managementParaModificar) throws ClassModifiedException

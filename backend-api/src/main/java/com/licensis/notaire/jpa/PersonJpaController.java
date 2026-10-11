@@ -853,8 +853,8 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     persistentPerson.setFkIdIdentificationType(pClient.getFkIdIdentificationType());
                     persistentPerson.setIdentificationNumber(pClient.getIdentificationNumber());
 
-                    // The version of the objeto queda a cargo of Hivernate
-                    // Atributos Cliente
+                    // Hibernate assigns the version.
+                    // Client attributes
                     persistentPerson.setNationality(pClient.getNationality());
                     persistentPerson.setBirthDate(pClient.getBirthDate());
                     persistentPerson.setTaxId(pClient.getTaxId());
@@ -883,13 +883,10 @@ public class PersonJpaController implements Serializable, JpaPersistence {
     }
 
     /**
-     * Metodo JPA that permite search if exists or not, a person with the mismo tipo
-     * de
-     * Identification and number.
+     * Looks up a person by identification type and number.
      *
-     * @param pNumeroIdentificacion
-     * @param pTipoIdentificacion
-     * @return Retorno a lista of people
+     * @param dtoPerson identification type and number to match
+     * @return the matching person, or null when none exists
      */
     public Person findPersonTypeIdentificationNumber(DtoPerson dtoPerson) { // No pueden repetirse un mismo numero y
                                                                                 // identification type
@@ -923,10 +920,10 @@ public class PersonJpaController implements Serializable, JpaPersistence {
     }
 
     /**
-     * Metodo JPA, that permite search people by aproximacion of name and apellido
+     * Looks up people by an approximate first name and last name.
      *
-     * @param dtoPersona
-     * @return
+     * @param dtoPerson name fragment to match
+     * @return people whose names contain the given fragments
      */
     public List<Person> findPersonNameLastName(DtoPerson dtoPerson) { // No pueden repetirse un mismo numero y
                                                                             // identification type
@@ -948,9 +945,9 @@ public class PersonJpaController implements Serializable, JpaPersistence {
     }
 
     /**
-     * Metodo that devuelve all the people, with its red of objetos each a
+     * Returns every person.
      *
-     * @return
+     * @return all people
      */
     public List<Person> findPersons() {
         EntityManager em = getEntityManager();

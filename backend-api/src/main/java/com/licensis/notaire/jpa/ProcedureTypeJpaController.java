@@ -287,7 +287,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
 
         try
         {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Name of the @NamedQuery declared on ProcedureType
             Query q = em.createNamedQuery("ProcedureType.findByIdProcedureType");
 
             //It step the name of the parametro of the query, and the valor a search.
@@ -320,7 +320,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
 
         try
         {
-            // Name of the @NamedQuery definido in nuestra clase
+            // Name of the @NamedQuery declared on ProcedureType
             Query q = em.createNamedQuery("ProcedureType.findByName");
 
             //It step the name of the parametro of the query, and the valor a search.

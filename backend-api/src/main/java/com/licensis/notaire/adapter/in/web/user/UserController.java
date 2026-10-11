@@ -324,10 +324,10 @@ public class UserController {
     }
 
     /**
-     * Verifica the contraseña ingresada contra the hash stored, soportando tanto the
-     * new formato BCrypt as the legado MD5 (issue #554). If the hash stored
-     * still is MD5 and the contraseña coincide, re-encripta in BCrypt and persiste
-     * of forma transparente, migrando the credencial without exigir a reseteo to the user.
+     * Checks the submitted password against the stored hash. Accepts BCrypt and
+     * the legacy MD5 form (issue #554). When the stored hash is still MD5 and the
+     * password matches, it re-encodes the password as BCrypt and saves it, so the
+     * credential migrates without a reset.
      */
     private boolean passwordMatches(String rawPassword, User user) {
         String storedHash = user.getPassword();
@@ -347,8 +347,8 @@ public class UserController {
     }
 
     /**
-     * Hash MD5 legado, mantenido únicamente for check credenciales sembradas
-     * antes of the migración a BCrypt (issue #554); not usa for generate hashes new.
+     * Legacy MD5 hash, kept only to check credentials seeded before the BCrypt
+     * migration (issue #554). It is not used to create new hashes.
      */
     private String legacyMd5Hash(String stringAEncriptar) {
         char[] hexChars = {

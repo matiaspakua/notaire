@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * CU16 - Archivar Management: calcula the outstanding balance agregado of a management
- * (RF-22) and persiste if quedó archivada with debt (RF-37). Delega the
- * validación of the transition of status (and its registro in bitácora) a
- * {@link GestionTransitionService} (CU83, CU13).
+ * CU16 — Archive a management: computes the management's aggregated outstanding
+ * balance (RF-22) and records whether it was archived with debt (RF-37).
+ * Status-transition checks, including the history entry, are delegated to
+ * {@link ManagementTransitionService} (CU83, CU13).
  */
 @Service
 public class ManagementArchiveDebtService {
@@ -52,7 +52,7 @@ public class ManagementArchiveDebtService {
     }
 
     /**
-     * Suma the outstanding balance of each budget vinculado a the procedures of the management.
+     * Sums the outstanding balance of each budget linked to the management's procedures.
      */
     @Transactional(readOnly = true)
     public BigDecimal calculatePendingBalance(Integer idManagement) {
@@ -70,33 +70,32 @@ public class ManagementArchiveDebtService {
             saldo = Money.of(saldo.add(paymentStatus.pendingBalance(budget.getIdBudget())));
         }
 
-        log.debug("Outstanding balance agregado for management {}: {}", idManagement, saldo);
+        log.debug("Aggregated outstanding balance for management {}: {}", idManagement, saldo);
         return saldo;
     }
 
     /**
-     * Resultado of archivar a management: the management already archivada together with the
-     * outstanding balance agregado calculado in the momento of the archivado.
+     * Result of archiving a management: the archived management and the aggregated
+     * outstanding balance calculated at that moment.
      */
     public record ArchiveResult(DeedManagement management, BigDecimal pendingBalance) { }
 
     /**
-     * CU16 - Archiva the management without exigir confirmación of folders in espera.
-     * Equivalente a {@code archivar(idGestion, false)}.
+     * CU16 — Archives the management without requiring confirmation of folders in wait.
+     * Equivalent to {@code archiving(idManagement, false)}.
      */
     public ArchiveResult archiving(Integer idManagement) {
         return archiving(idManagement, false);
     }
 
     /**
-     * CU16 - Archiva the management, cambia all their procedure folders a
-     * "Archivada" (CU85) and records if quedó with debt pendiente (RF-22,
-     * RF-37). The archivado not bloquea by the existencia of debt: the
-     * advertencia of outstanding balance muestra to the user antes of confirmar
-     * (ver GET /outstanding-balance), pero the confirmación of the archivado siempre
-     *  persiste with or without debt. If alguna folder sigue in "Espera" and
-     * {@code confirmado} es falso, se rechaza el archivado con
-     * {@link CarpetasEnEsperaException} (CU85 — Excepción 5.1).
+     * CU16 — Archives the management, moves every procedure folder to the stored
+     * status "Archivada" (CU85), and records whether debt was still outstanding
+     * (RF-22, RF-37). Debt does not block the archive: the outstanding-balance
+     * warning is shown before confirmation (GET /outstanding-balance), and the
+     * archive is stored with or without debt. If a folder is still in the stored
+     * status "Espera" and {@code confirmado} is false, the archive is rejected
+     * with {@link FoldersInWaitException} (CU85 — exception 5.1).
      */
     @Transactional
     public ArchiveResult archiving(Integer idManagement, boolean confirmado) {
