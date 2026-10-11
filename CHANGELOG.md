@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Upcoming-expiration purpose** (#1490, CU75): the living spec
+  `documento-presentado-herencia-vencimiento` cites the official title
+  `CU42 – Informar próximos vencimientos`. The archived spec keeps
+  `"informar próximos vencimientos"`.
 - **Management-status histories accessor** (#1490, CU75): `DtoManagementStatus`
   names the set `histories` (`getHistories` / `setHistories`). The JSON key
   stays `historials`.
