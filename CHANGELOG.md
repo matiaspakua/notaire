@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English document note phrases** (#1490, CU75): the upcoming-expiration
+  note is `Request a copy`. The partial-update note is `previous note`.
+  Stored document name `Certificado de dominio` stays, along with heading
+  `Compraventa Pérez`, delivered-by `Cliente`, and the name `Deed original`.
 - **English load-test check names and dialog locals** (#1490, CU75): k6
   check names are `managements`, `budgets`, and `procedures`. The
   reentry dialog local is `detailDialog`. Item-form prose names stored

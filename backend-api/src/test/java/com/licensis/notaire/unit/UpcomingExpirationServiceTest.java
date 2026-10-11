@@ -59,7 +59,7 @@ class UpcomingExpirationServiceTest {
         document.setFlagged(false);
         document.setCardNumber(33);
         document.setAmountToPay(new BigDecimal("1500.50"));
-        document.setNotes("Pedir copia");
+        document.setNotes("Request a copy");
         document.setDateEntry(toDate(TODAY.minusDays(5)));
         document.setDateDue(toDate(TODAY.plusDays(days)));
         document.setFkIdProcedure(procedure);
