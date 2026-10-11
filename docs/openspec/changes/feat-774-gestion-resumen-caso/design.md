@@ -27,7 +27,7 @@ Issue #774, Use Case CU07 – Generar testimonio (#160); CU11 – Ingresar para 
 | A withdrawn testimony | unit | `ManagementCaseSummaryServiceTest` |
 | No deed yet | integration | `ManagementCaseSummaryIntegrationTest` |
 | Unknown id | integration | `ManagementCaseSummaryIntegrationTest` |
-| Open the summary | e2e | `testing/e2e/tests/TS-0098-gestion-resumen-caso-feature.spec.ts` |
+| Open the summary | e2e | `testing/e2e/tests/TS-0098-management-case-summary-feature.spec.ts` |
 
 - New unit tests (`src/test/java/.../unit/`): `ManagementCaseSummaryServiceTest`, `useManagementSummary` hook test
 - New integration tests: `ManagementCaseSummaryIntegrationTest` (H2)

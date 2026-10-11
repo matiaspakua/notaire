@@ -29,7 +29,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Create without designation | `backend-api/src/test/java/com/licensis/notaire/integration/PropertyRequestValidationIntegrationTest.java, Bruno properties/08` | passing |
 | Update without designation | `backend-api/src/test/java/com/licensis/notaire/integration/PropertyRequestValidationIntegrationTest.java` | passing |
 | Contract | `backend-api/src/test/java/com/licensis/notaire/integration/PropertyRequestValidationIntegrationTest.java` | passing |
-| Form | `testing/e2e/tests/TS-0019-inmuebles-valuacion-workflow.spec.ts` | passing |
+| Form | `testing/e2e/tests/TS-0019-properties-valuation-workflow.spec.ts` | passing |
 
 ## Permanent documentation updated
 

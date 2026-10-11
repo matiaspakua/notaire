@@ -32,7 +32,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | A withdrawn testimony | `ManagementCaseSummaryServiceTest` | pending |
 | No deed yet | `ManagementCaseSummaryIntegrationTest` | pending |
 | Unknown id | `ManagementCaseSummaryIntegrationTest` | pending |
-| Open the summary | `testing/e2e/tests/TS-0098-gestion-resumen-caso-feature.spec.ts` | pending |
+| Open the summary | `testing/e2e/tests/TS-0098-management-case-summary-feature.spec.ts` | pending |
 
 ## Permanent documentation updated
 

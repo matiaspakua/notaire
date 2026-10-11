@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Open Playwright filenames** (#1490, CU75): open change notes cite
+  `TS-0098-management-case-summary-feature.spec.ts`,
+  `TS-0099-document-procedure-link.spec.ts`, and
+  `TS-0019-properties-valuation-workflow.spec.ts`. The change slug
+  `feat-774-gestion-resumen-caso` stays. The archived feat-773 design
+  keeps `TS-0099-documento-tramite-link.spec.ts`.
 - **Testimony-movements screen comment** (#1490, CU75): the dialog comment
   names the testimony-movements screen. The official title
   `CU08 – Movimientos de testimonio` stays. The Spanish catalog value
