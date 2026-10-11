@@ -38,6 +38,15 @@ test.describe("TS-0139 - Identification type catalog (#1361)", () => {
     await expect(rowFor(page, "DNI")).toBeVisible({ timeout: 15000 });
   });
 
+  test("row actions show their icons (not squeezed to zero width)", async ({ page }) => {
+    await openCatalog(page);
+    const row = rowFor(page, "DNI");
+    for (const id of ["btn-edit-identification-type", "btn-delete-identification-type"]) {
+      const box = await row.getByTestId(id).locator("img").boundingBox();
+      expect(box?.width ?? 0, `${id} icon width`).toBeGreaterThanOrEqual(12);
+    }
+  });
+
   test("admin creates, edits and deletes a type", async ({ page }) => {
     const name = `Doc E2E ${uniqueId()}`;
     await openCatalog(page);
