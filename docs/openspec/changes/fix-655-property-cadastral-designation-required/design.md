@@ -2,7 +2,7 @@
 
 ## Context
 
-Issue #655 lists endpoints that accept incomplete bodies. Run 7: the Owner decided inmuebles require `cadastralDesignation`. On PostgreSQL the `properties.nomenclature` column is nullable, so the API accepted `{}`; the entity declares it `optional = false` and the UI labels it required.
+Issue #655 lists endpoints that accept incomplete bodies. Run 7: the Owner decided properties require `cadastralDesignation`. On PostgreSQL the `properties.nomenclature` column is nullable, so the API accepted `{}`; the entity declares it `optional = false` and the UI labels it required.
 
 ## Goals / Non-Goals
 

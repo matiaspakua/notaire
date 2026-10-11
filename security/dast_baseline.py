@@ -15,7 +15,7 @@ import urllib.error
 import urllib.request
 
 HEALTH_PATH = "/actuator/health"
-PROTECTED_PATH = "/api/v1/personas"
+PROTECTED_PATH = "/api/v1/people"
 STACK_TRACE = re.compile(r"java\.lang\.\w*Exception|\bat com\.licensis\.notaire\.")
 
 

@@ -13,7 +13,7 @@ An ADMIN SHALL be able to add a document type to a procedure type's checklist, e
 #### Scenario: Add
 
 - **WHEN** an admin adds a document type to a procedure type
-- **THEN** the dialog lists it by name and Documentos necesarios shows it for that procedure type
+- **THEN** the dialog lists it by name and the required-documents screen shows it for that procedure type
 
 #### Scenario: Duplicate
 

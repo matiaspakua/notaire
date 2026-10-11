@@ -11,8 +11,8 @@ rectangle "Budget templates module" {
   usecase "CU49 - Eliminar Plantilla Presupuesto" as CU49
 }
 
-usecase "CU66 - Buscar Conceptos\n(from Conceptos)" as CU66
-usecase "CU64 - Buscar Tipo de trámite\n(from Trámites)" as CU64
+usecase "CU66 - Buscar Conceptos\n(from Concepts)" as CU66
+usecase "CU64 - Buscar Tipo de trámite\n(from Procedures)" as CU64
 
 Escribano --> CU39 : needs
 Escribano --> CU55 : needs

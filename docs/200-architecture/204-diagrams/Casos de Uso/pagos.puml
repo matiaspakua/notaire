@@ -12,8 +12,8 @@ rectangle "Payments module" {
   usecase "CU47 - Consultar Pago" as CU47
 }
 
-usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
-usecase "CU60 - Buscar Presupuesto\n(from Presupuesto)" as CU60
+usecase "CU19 - Buscar gestiones de un Cliente\n(from Clients)" as CU19
+usecase "CU60 - Buscar Presupuesto\n(from Budget)" as CU60
 
 Escribano --> CU15 : needs
 Escribano --> CU47 : needs

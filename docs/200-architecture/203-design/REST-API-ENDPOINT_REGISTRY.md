@@ -102,7 +102,7 @@ These endpoints are actively called by the Next.js frontend:
 
 ### PaymentController
 - `GET /api/v1/payments`
-- `POST /api/v1/payments` — `201 Created` + `Location` (ADR-023 / #1065); `/payments/params` removed
+- `POST /api/v1/payments` — `201 Created` + `Location` (ADR-023 / #1065); `/pagos/params` removed
 - `PUT /api/v1/payments/{id}`
 - `DELETE /api/v1/payments/{id}`
 
@@ -267,7 +267,7 @@ Not reached by any current frontend call site. May be used by reports, backgroun
 - `GET /api/v1/payments/budget/{idBudget}/balance`
 - `GET /api/v1/payments/date`
 - `POST /api/v1/payments` — `201 Created` + `Location: /api/v1/payments/{id}` (ADR-023 / #1065)
-- ~~`POST /api/v1/payments/params`~~ — **removed** (unused; #1065)
+- ~~`POST /api/v1/pagos/params`~~ — **removed** (unused; #1065)
 
 ### PersonController
 - `GET /api/v1/people/{id}`

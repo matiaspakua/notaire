@@ -20,7 +20,7 @@ A client clearing the print date in the dialog now cannot save, instead of getti
 
 ## Testing Strategy
 
-`RequiredRequestIdsIntegrationTest` (8 cases) observed failing 8/8 first (500/404 instead of 400; fields not required in the contract). Playwright `copias-required-fields.spec.ts` observed failing first (Save enabled with an empty number).
+`RequiredRequestIdsIntegrationTest` (8 cases) observed failing 8/8 first (500/404 instead of 400; fields not required in the contract). Playwright `TS-0132-copies-required-fields.spec.ts` observed failing first (Save enabled with an empty number).
 
 ## Regression Strategy
 
@@ -28,7 +28,7 @@ Full backend verify, frontend tsc/eslint/vitest, testing verify, full Bruno, Pla
 
 ## Playwright Strategy
 
-`copias-required-fields.spec.ts`, TS-0018, TS-0082.
+`TS-0132-copies-required-fields.spec.ts`, TS-0018, TS-0082.
 
 ## Deployment Strategy
 

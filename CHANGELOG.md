@@ -64,6 +64,184 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **k6 script path** (#1490, CU75): the living load-test spec names
+  `infra/performance/k6/load-test.js`, the file the weekly workflow runs.
+  The archived change keeps `performance-test/k6/load-test.js`.
+- **DAST protected path** (#1490, CU75): the unauthenticated baseline and
+  the security catalog probe `GET /api/v1/people`. The retired path
+  `/api/v1/personas` stays out of that gate. Health still expects 200.
+- **Testimony re-entry path citation** (#1490, CU75): the engineering-sequences
+  design names the path CU44 still writes,
+  `POST /api/v1/movimiento-testimonio/{id}/reenter`. The live call stays in
+  `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **Document re-entry path citation** (#1490, CU75): the engineering-sequences
+  design names the path CU43 still writes,
+  `GET/POST /api/v1/gestiones/{id}/reingreso-documentacion`. The live call
+  stays in `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
+- **English source-surface purpose** (#1490, CU75): the living spec says
+  the domain model maps database identifiers to English names. The
+  historical login contrast `POST /api/v1/usuarios/login` stays, along
+  with the forbidden segments `usuarios`, `gestiones`, `tramites`,
+  `presupuestos`, and `escrituras`.
+- **Withdraw comment citation** (#1490, CU75): the testimony-movement
+  hook names the retired `/retirar` path and `numeroCarton`. The live
+  call stays `/testimony-movements/{id}/withdraw` with `cardNumber`.
+  The message key `fields.numeroCarton` stays.
+- **SAD API design collections** (#1490, CU75): section 8.7 names the
+  English collections `/managements`, `/people`, and `/deeds`. The
+  parenthetical no longer calls those paths a Spanish domain.
+- **September 2026 audit index citation** (#1490, CU75): the #1065 row
+  names the unused `POST /pagos/params` path recorded on baseline `5a8fa14`.
+  The column `State (at audit)` stays. The later notes on #1040 and #1042 stay.
+- **October 2026 assessment citations** (#1490, CU75): the baseline
+  measurements name `pagos/fecha`, `presupuestos/persona`,
+  `historial/gestion`, `reportes/documentos-por-vencer`, `usuarios/persona`,
+  `/gestiones`, `/pagos`, `/folio`, `/inmueble`, `/copia`, `/buscar`, and
+  `/usuarios`. Official titles `Documentos Presentados` and
+  `Plantillas de Trámite` stay. Stored roles `EMPLEADO` and `ESCRIBANO` stay.
+  The baseline commit `d4473af2` stays.
+- **Retired path citations in ADR-023** (#1490, CU75): the naming
+  decision cites `/folio`, `/inmueble`, `/copia`, `/buscar`, `/firmar`,
+  `/archivar`, and the removed `POST /pagos/params`. It prefers `/search`
+  over `/buscar`. The preferred example
+  `PUT /registration-drafts/{id}/submit` stays, along with
+  registration-draft create. The live create `POST /api/v1/payments` stays.
+  The requirement that `POST /api/v1/payments/params` shall not exist stays.
+- **English registration-draft consequence** (#1490, CU75): ADR-023 says
+  clients must treat registration-draft create as `201`. The spec id
+  `minuta-inscripcion` stays, along with the gloss `Minuta de Inscripción`
+  and `POST /api/v1/registration-drafts`.
+- **English client actor id** (#1490, CU75): the case-process diagram
+  names the client actor `client`. The label `Client` stays. The actor
+  ids `gestor` and `escribano` stay, along with `escribano[Escribano]`.
+- **English field-label comments** (#1490, CU75): the management-edit
+  note names the number field, and the concept-form note quotes
+  `Nombre`, `Descripción`, and `Valor base ($)`. The button `Editar`
+  stays, along with `porcentaje`, `nuevo concepto`, and `Nuevo concepto`.
+  The official title `CU53 - Modificar gestión` stays.
+- **English is-client comments** (#1490, CU75): the people-workflow
+  notes name the is-client checkbox. The visible label `Es cliente`
+  stays, along with the toast match `/creada/i` and the row match
+  `/^cliente$|^sí$/i`.
+- **English required-documents comment** (#1490, CU75): the checklist
+  dialog says it is ADMIN only, like the rest of the administration
+  section. The visible section name `Administración` stays.
+- **English use-case module pointers** (#1490, CU75): included use
+  cases point at `Budget`, `Clients`, `Deeds`, `Concepts`, and
+  `Procedures`. Official titles stay, including `Buscar Presupuesto`,
+  `Buscar gestiones de un Cliente`, `Buscar Escritura`,
+  `Buscar Conceptos`, `Buscar Tipo de trámite`, and `Buscar Folios`.
+  The pointer `(from Folios)` stays, along with actor `Escribano`.
+- **English property-title fixture** (#1490, CU75): the procedure-template
+  unit catalog names the synthetic document `Property title`. Seed names
+  `Libre Deuda Municipal` and `Informe de Dominio` stay, along with
+  `Cliente`, `Entidad`, `Compraventa`, and the visible label
+  `Administración → Trámites`.
+- **English catalog Playwright filenames** (#1490, CU75): the
+  budget-template delete note names `TS-0131-budget-template.spec.ts`.
+  The catalog-constraint note names
+  `TS-0134-document-type-expiration-config.spec.ts` and
+  `TS-0130-budget-catalog-items.spec.ts`. The incomplete-PUT task list
+  names `TS-0135-folio-type-edit-version.spec.ts` and
+  `TS-0136-folios-linking.spec.ts`. The heading `Riesgos / Trade-offs`
+  stays, along with `Crear branch`, `Implementación`, and
+  `Ejecutar Playwright`. Spec ids stay.
+- **English checklist fixture notes** (#1490, CU75): required-document
+  samples say `Original and copy` and `Certified copy`. Created names
+  say `Procedure checklist E2E`, `Document checklist E2E`,
+  `FolioTypeTest`, and `AuxiliaryFolioTypeTest`. The visible labels
+  `Administración → Trámites`, `Documentos requeridos`, and
+  `Documentos necesarios` stay. Stored `Cliente` and `Protocolo Auxiliar`
+  stay, along with `tipos de trámite`.
+- **English retired test filenames** (#1490, CU75): the copies
+  change names `TS-0132-copies-required-fields.spec.ts`. The
+  people-pagination change names `people-pagination.test.tsx` and
+  `TS-0015-people-clients-workflow.spec.ts`. Headings
+  `Módulos afectados` and `Riesgos / Trade-offs` stay. Official titles
+  stay, including `CU08 – Copias de testimonio`,
+  `CU82 – Minuta de inscripción`,
+  `CU43 – Reingreso de documentación`, `CU18 – Dar Alta Cliente`,
+  `CU54 – Modificar Persona`, and `CU61 – Buscar persona`. Task
+  headings `Crear branch`, `Implementación`, `Ejecutar regresión`,
+  `Ejecutar Playwright`, `Commits atómicos`, and
+  `Pull Request y validación CI` stay.
+- **English lifecycle proposals** (#1490, CU75): the assessment
+  and domain-lifecycle proposals name a management and the
+  create-management sequence. Headings `Objetivo`, `Reglas de negocio`,
+  and `Módulos afectados` stay. Stored statuses `Documentación completa`
+  and `Testimonio Retirado` stay. Filenames `GESTION.md` and
+  `CICLO-DE-VIDA.md` stay. `POST /api/v1/managements/complete-case`,
+  `deed_managements`, and `deeds.status` stay.
+- **English remaining proposals** (#1490, CU75): the archive-debt
+  proposal names `ManagementArchiveDebtService`,
+  `pendingDebtAtArchiving`, and `managements/page.tsx`. The
+  submitted-document proposal names the Documents screen. The
+  property proposal names the Properties page and the Properties
+  dialog. Headings `Objetivo`, `Regla de Negocio`, `Reglas de negocio`,
+  and `Módulos afectados` stay. Official titles stay, including
+  `CU16 – Archivar Gestión`, `CU04 – Registrar documentación cliente`,
+  `CU72 – Gestionar documentos presentados`,
+  `CU69 – Gestión de Inmuebles`, and
+  `CU82 – Datos registrales del inmueble`. The visible label
+  `nomenclatura catastral` stays. The branch
+  `feat/169_gestion-archive-deuda-check` and the change slug
+  `gestion-archive-deuda-check` stay. `fk_id_tramite` and
+  `GET /outstanding-balance` stay.
+- **English change proposals** (#1490, CU75): the case-summary
+  proposal names a management, the managements screen,
+  `financial-summary`, and `ManagementFinancialSummaryService`.
+  The paged-list proposal names `budgets`, `deeds`, `procedures`,
+  and `managements`. The incomplete-PUT proposal names
+  `is required`. Headings `Objetivo`, `Reglas de negocio`, and
+  `Módulos afectados` stay. Official titles stay, including
+  `CU07 – Generar testimonio` and `CU70 – Gestión de Copias`.
+  The visible action `Resumen del caso` stays, along with the
+  dialog labels `Escrituras`, `Testimonios`, `Copias`, and
+  `Pagos`, and `Administración → Trámites`. The branch
+  `feat/774_gestion_workflow_links` stays. Stored states
+  `SIN_INGRESAR`, `INGRESADO`, `INSCRIPTO`, and `RETIRADO` stay.
+- **English change-task notes** (#1490, CU75): the case-summary
+  task list names a managements pull request and the managements
+  screen. The assessment task list names the create-management
+  diagram. The branch `feat/774_gestion_workflow_links` and the
+  change slug `feat-774-gestion-resumen-caso` stay. Template
+  headings stay, including `Crear branch`, `Commits atómicos`, and
+  `Implementación`. The filename `GESTION.md` stays.
+- **English change-design notes** (#1490, CU75): the case-summary
+  design names the managements screen, `useManagementSummary`, and
+  `financial-summary`. The required-documents design names the
+  required-documents screen and the procedure-types page. The
+  property design says properties require `cadastralDesignation`.
+  The submitted-document design names the Documents screen and
+  `DocumentReentryService`. Official titles stay, including
+  `CU07 – Generar testimonio` and `CU70 – Gestión de Copias`. The
+  heading `Riesgos / Trade-offs` stays. The column
+  `properties.nomenclature` and `fk_id_tramite` stay. The filename
+  `TS-0098-gestion-resumen-caso-feature.spec.ts` stays. The proposal
+  heading `Objetivo` stays, along with `Documentos necesarios` in
+  that proposal.
+- **English change-contract requirements** (#1490, CU75): the
+  archive-debt change spec names a management, `pendingBalance`, and
+  `pendingDebtAtArchiving`. The incomplete-PUT delta names
+  `is required` and the live paths `folio-types`,
+  `management-statuses`, `document-types`, `procedure-types`,
+  `concepts`, `workflow-definition`, and `testimony-movements`. The
+  people-list delta names the people screen. The change slugs
+  `gestion-archive-deuda-check`,
+  `fix-655-put-rejects-incomplete-bodies`, and
+  `fix-596-people-pagination` stay. Stored status `Archivada` stays.
+  The official filename `CU16 – Archivar Gestión.md` stays. The
+  historical test `GestionArchiveIntegrationTest` stays. `usePeople`
+  and `GET /api/v1/people` stay.
+- **English property-designation requirements** (#1490, CU75): the
+  properties delta names the Properties dialog and a cadastral
+  designation. The change slug
+  `fix-655-property-cadastral-designation-required` stays.
+  `cadastralDesignation`, `POST /api/v1/properties`, and
+  `PUT /api/v1/properties/{id}` stay. The visible label
+  `nomenclatura catastral` in TS-0090 stays.
 - **English open-change requirements** (#1490, CU75): the case-summary
   spec and the submitted-document delta name a management and a
   procedure. The change slugs `feat-774-gestion-resumen-caso` and

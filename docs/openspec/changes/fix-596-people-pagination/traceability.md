@@ -28,14 +28,14 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |---------------------------------|------|--------|
 | Requested page size | `PeoplePaginationIntegrationTest, Bruno people/02-list` | passing |
 | Default page | `PeoplePaginationIntegrationTest` | passing |
-| People screen lists people | `use-personas-pagination.test.tsx, Playwright TS-0015` | passing |
+| People screen lists people | `people-pagination.test.tsx, Playwright TS-0015-people-clients-workflow.spec.ts` | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
 | `CHANGELOG.md` | yes | branch commit |
-| `backend-api/openapi/openapi.yaml` | yes | branch commit |
+| `backend-api/openapi/openapi.yaml` | no | not in this PR |
 
 ## Gate log
 

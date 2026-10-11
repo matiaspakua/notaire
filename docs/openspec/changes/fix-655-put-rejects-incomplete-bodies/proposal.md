@@ -18,9 +18,9 @@ The Run 8 probe found three updates that accepted an empty body `{}` and answere
 
 - "Incomplete" is defined per entity from the POST rule and the NOT NULL columns the body maps to:
   - `PUT /api/v1/testimonies/{id}`: `number`, `flagged`, `verified` required (`TestimonyUpdateRequest`, which records which DTO primitives were sent). `notes` is stored as sent; an absent `deed` keeps the link.
-  - `PUT /api/v1/procedures/{id}`: `idProcedureType` required, as on `POST`; `POST` now answers the standard `ErrorResponse` (`idProcedureType: es obligatorio`) instead of an ad-hoc map.
+  - `PUT /api/v1/procedures/{id}`: `idProcedureType` required, as on `POST`; `POST` now answers the standard `ErrorResponse` (`idProcedureType: is required`) instead of an ad-hoc map.
   - `PUT /api/v1/procedure-types/{id}/workflow`: the `workflowDefinitionId` key is required; an explicit `null` unassigns; a non-integer value answers 400 (was 500).
-- `RequiredFields.check()` names every missing field in one 400 (`number: es obligatorio; flagged: es obligatorio`). Validation runs before the 404 lookup.
+- `RequiredFields.check()` names every missing field in one 400 (`number: is required; flagged: is required`). Validation runs before the 404 lookup.
 - OpenAPI: request schemas mark the required fields; the three PUTs document 400, and the workflow assignment also its 404/409. Six accepted oasdiff entries under #655.
 - Frontend: no code change needed. The only UI caller (workflow assignment in Administración → Trámites) always sends `workflowDefinitionId` (a number or `null`); a vitest guard pins it. The testimony and procedure PUTs have no UI caller.
 - Tests: `IncompletePutBodiesIntegrationTest`, `RequiredFieldsTest`, `useProcedureTypes.test.tsx`, Bruno `testimonies/04a`, `procedures/04a`, `procedure-types/04a`–`04b`; CHANGELOG entry.

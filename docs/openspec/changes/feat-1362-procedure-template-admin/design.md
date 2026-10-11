@@ -6,11 +6,11 @@ ProcedureTemplate has a composite key (procedure type, document type) and notes.
 
 ## Goals / Non-Goals
 
-Goals: list/add/edit/remove checklist rows from the procedure-type admin; correct names on Documentos necesarios; a DELETE that deletes. Non-goals: ordering or a 'mandatory' flag (the API has only notes), changing the parent cascades (a wider entity change).
+Goals: list/add/edit/remove checklist rows from the procedure-type admin; correct names on the required-documents screen; a DELETE that deletes. Non-goals: ordering or a 'mandatory' flag (the API has only notes), changing the parent cascades (a wider entity change).
 
 ## Decisions
 
-Bulk JPQL delete instead of removing the row from both parent collections: it is local to this repository and can't be undone by any cascade. Names are joined client-side from the small document-type catalog instead of widening the API response, so the contract stays unchanged. A dialog on the existing Trámites page rather than a new route, as the issue suggested.
+Bulk JPQL delete instead of removing the row from both parent collections: it is local to this repository and can't be undone by any cascade. Names are joined client-side from the small document-type catalog instead of widening the API response, so the contract stays unchanged. A dialog on the existing procedure-types page rather than a new route, as the issue suggested.
 
 ## Riesgos / Trade-offs
 
@@ -26,7 +26,7 @@ Written first: JUnit DELETE-then-404 (red: 200), Bruno 08/09 red on the main jar
 
 ## Playwright Strategy
 
-`TS-0142` admin adds, edits and removes a required document and Documentos necesarios shows it; mobile 390px usability.
+`TS-0142` admin adds, edits and removes a required document and the required-documents screen shows it; mobile 390px usability.
 
 ## Deployment Strategy
 

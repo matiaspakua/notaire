@@ -12,21 +12,21 @@
 
 ## Objetivo
 
-`POST /api/v1/submitted-documents` accepted a body without `typeId` or `procedureId` (even `{}`) and stored an empty, orphan document. The Owner decided the type is required (#655) and asked whether the procedure is really needed from the user's point of view. Analysis: it is. CU04 and CU72 define a submitted document as one presented by the client for a gestión, through its trámite, and every reader of documents goes through that link. Make both required on create, in the API, the contract and the UI, without breaking documents already stored.
+`POST /api/v1/submitted-documents` accepted a body without `typeId` or `procedureId` (even `{}`) and stored an empty, orphan document. The Owner decided the type is required (#655) and asked whether the procedure is really needed from the user's point of view. Analysis: it is. CU04 and CU72 define a submitted document as one presented by the client for a management, through its procedure, and every reader of documents goes through that link. Make both required on create, in the API, the contract and the UI, without breaking documents already stored.
 
 ## What Changes
 
 - `SubmittedDocumentController`: POST takes `SubmittedDocumentCreateRequest` with `@NotNull typeId` and `@NotNull procedureId` (`@Valid`, 400 naming the field; `requiredMode = REQUIRED` in the contract). PUT keeps the all-optional `SubmittedDocumentRequest`. The `fk_id_tramite` column stays nullable (no migration).
-- Documentos page: type, gestión and trámite are marked required and Save stays disabled until type and trámite are chosen. The gestión/trámite selectors also appear when editing a document that has no trámite yet, so legacy documents can be linked. The rules live in `lib/submitted-document-form.ts`; i18n helper texts say the link is required.
+- Documents screen: type, management and procedure are marked required and Save stays disabled until type and procedure are chosen. The management and procedure selectors also appear when editing a document that has no procedure yet, so legacy documents can be linked. The rules live in `lib/submitted-document-form.ts`; i18n helper texts say the link is required.
 - `openapi.yaml` regenerated; `accepted-breaking-changes.txt`: two `request property became required` entries, justified.
-- Tests: validation integration tests (missing type, missing procedure, empty body, contract), existing tests send both fields; frontend unit test; Bruno setup/teardown trámite and two reject requests; Playwright TS-0097, TS-0090 and the TS-0033 helper send a trámite and a type.
+- Tests: validation integration tests (missing type, missing procedure, empty body, contract), existing tests send both fields; frontend unit test; Bruno setup/teardown procedure and two reject requests; Playwright TS-0097, TS-0090 and the TS-0033 helper send a procedure and a type.
 
 ## Reglas de negocio
 
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
 | A submitted document is created with its document type | #655 (Owner decision, Run 7) | New |
-| A submitted document is created for a trámite of a gestión | CU04, CU72, #655 analysis | New (create only) |
+| A submitted document is created for a procedure of a management | CU04, CU72, #655 analysis | New (create only) |
 | Documents stored before the rule stay readable and editable | #655 | Preserved (nullable column, partial PUT) |
 
 ## Capabilities
@@ -37,7 +37,7 @@
 
 ### Modified Capabilities
 
-- `submitted-documents`: Registering and maintaining the documents clients submit for a gestión's trámites.
+- `submitted-documents`: Registering and maintaining the documents clients submit for a management's procedures.
 
 ## Impact Analysis
 
@@ -46,7 +46,7 @@
 | Module | Touched | What changes |
 |--------|---------|--------------|
 | `backend-api` | yes | `SubmittedDocumentController`, OpenAPI, tests, Bruno |
-| `frontend` | yes | Documentos page, form helper, types, i18n |
+| `frontend` | yes | Documents screen, form helper, types, i18n |
 | `testing` | yes | Playwright TS-0097, TS-0090, api-helpers |
 | Docs / scripts / CI | yes | CHANGELOG, accepted-breaking-changes |
 
@@ -54,7 +54,7 @@
 
 - Endpoints: `POST /api/v1/submitted-documents` (typeId and procedureId required; breaking, accepted); `PUT` unchanged
 - Entities / Flyway: none (column stays nullable)
-- UI: Documentos create/edit dialog
+- UI: Documents create/edit dialog
 
 ### Architecture review
 

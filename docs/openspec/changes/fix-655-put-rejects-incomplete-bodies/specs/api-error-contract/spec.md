@@ -8,7 +8,7 @@ Consistent HTTP status codes and error bodies for failed API requests.
 
 ### Requirement: Empty or incomplete PUT bodies answer 400
 
-`PUT /api/v1/testimonies/{id}`, `PUT /api/v1/procedures/{id}` and `PUT /api/v1/procedure-types/{id}/workflow` SHALL answer 400 with the standard ErrorResponse naming every missing required field (`<field>: es obligatorio`, joined by `; `) and SHALL store nothing. Required fields: `number`, `flagged`, `verified` (testimony); `idProcedureType` (procedure, as on POST); `workflowDefinitionId`, which MAY be null to unassign (workflow assignment). The contract SHALL mark them required and document 400.
+`PUT /api/v1/testimonies/{id}`, `PUT /api/v1/procedures/{id}` and `PUT /api/v1/procedure-types/{id}/workflow` SHALL answer 400 with the standard ErrorResponse naming every missing required field (`<field>: is required`, joined by `; `) and SHALL store nothing. Required fields: `number`, `flagged`, `verified` (testimony); `idProcedureType` (procedure, as on POST); `workflowDefinitionId`, which MAY be null to unassign (workflow assignment). The contract SHALL mark them required and document 400.
 
 #### Scenario: Empty testimony update
 
@@ -23,7 +23,7 @@ Consistent HTTP status codes and error bodies for failed API requests.
 #### Scenario: Procedure update without type
 
 - **WHEN** `PUT /procedures/{id}` sends {} or only notes
-- **THEN** the response is 400 `idProcedureType: es obligatorio` and the notes are unchanged
+- **THEN** the response is 400 `idProcedureType: is required` and the notes are unchanged
 
 #### Scenario: Workflow assignment
 
@@ -37,12 +37,12 @@ Consistent HTTP status codes and error bodies for failed API requests.
 
 ### Requirement: A missing or stale version on update never answers 500
 
-`PUT /api/v1/testimonies/{id}` SHALL require `version` (400 `version: es obligatorio` when absent) and SHALL answer 409 with the standard ErrorResponse ("The record was modified by another user; reload it and try again") when the sent version is not the stored one, storing nothing. Every update whose optimistic lock fails (Spring `OptimisticLockingFailureException`, JPA `OptimisticLockException`, Hibernate `StaleStateException`), whether caught through `ErrorResponses.updateFailed` or reaching `GlobalExceptionHandler`, SHALL answer that 409. The PUTs that copy `version` from the body (tipo-folio, estado-gestion, tipo-de-documento, tipo-tramite, conceptos, workflow-definition, movimiento-testimonio) SHALL document 409. Owner decision Oct 9.
+`PUT /api/v1/testimonies/{id}` SHALL require `version` (400 `version: is required` when absent) and SHALL answer 409 with the standard ErrorResponse ("The record was modified by another user; reload it and try again") when the sent version is not the stored one, storing nothing. Every update whose optimistic lock fails (Spring `OptimisticLockingFailureException`, JPA `OptimisticLockException`, Hibernate `StaleStateException`), whether caught through `ErrorResponses.updateFailed` or reaching `GlobalExceptionHandler`, SHALL answer that 409. The PUTs that copy `version` from the body (folio-types, management-statuses, document-types, procedure-types, concepts, workflow-definition, testimony-movements) SHALL document 409. Owner decision Oct 9.
 
 #### Scenario: Testimony update without version
 
 - **WHEN** `PUT /testimonies/{id}` sends number, flagged and verified but no version
-- **THEN** the response is 400 `version: es obligatorio` and the testimony is unchanged
+- **THEN** the response is 400 `version: is required` and the testimony is unchanged
 
 #### Scenario: Stale testimony version
 

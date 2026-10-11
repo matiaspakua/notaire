@@ -22,11 +22,11 @@ The new guard and the updated integration test written first and observed failin
 
 ## Regression Strategy
 
-Full backend suite; full Bruno run against this backend (329/329 requests, 558 tests); Playwright chromium presupuesto-plantilla and TS-0024 (28 passed).
+Full backend suite; full Bruno run against this backend (329/329 requests, 558 tests); Playwright chromium TS-0131-budget-template.spec.ts and TS-0024 (28 passed).
 
 ## Playwright Strategy
 
-presupuesto-plantilla, TS-0024: 28 passed.
+TS-0131-budget-template.spec.ts, TS-0024: 28 passed.
 
 ## Deployment Strategy
 

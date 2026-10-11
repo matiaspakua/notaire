@@ -1,7 +1,7 @@
 # english-source-surface Specification
 
 ## Purpose
-Makes the live source surface English: HTTP paths, dashboard routes, and the database identifiers that the English domain model still maps to Spanish names.
+The live source surface is English: HTTP paths, dashboard routes, and database identifiers. The English domain model maps those identifiers to English names.
 ## Requirements
 ### Requirement: Public HTTP paths are English
 The API SHALL expose its resources under English path segments. A request to a former Spanish segment SHALL NOT be served as that resource.

@@ -14,7 +14,7 @@ rectangle "Deeds module" {
   usecase "CU52 - Modificar Escritura" as CU52
 }
 
-usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
+usecase "CU19 - Buscar gestiones de un Cliente\n(from Clients)" as CU19
 usecase "CU63 - Buscar Folios\n(from Folios)" as CU63
 
 Escribano --> CU05 : prepares

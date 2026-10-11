@@ -982,7 +982,7 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 ### 8.7 API Design
 
 - All endpoints under `/api/v1/` prefix.
-- RESTful resource naming (Spanish domain: `/management`, `/person`, `/deed`).
+- RESTful resource naming (English collections: `/managements`, `/people`, `/deeds`).
 - OpenAPI 3.0 documentation via `OpenApiConfig` at `/swagger-ui.html`.
 - Response wrapping with the DTOs in `backend-api` (`com.licensis.notaire.dto`).
 - Pagination support on list endpoints.

@@ -25,7 +25,7 @@
 ## 4. Implementación
 
 - [x] 4.1 Assessment and `GESTION.md`
-- [x] 4.2 Activity and create-gestión diagram corrected
+- [x] 4.2 Activity and create-management diagram corrected
 - [x] 4.3 Lifecycle HTTP paths updated to the English routes
 - [x] 4.4 Constitution §8, fleet rule, and the Process Checks step
 

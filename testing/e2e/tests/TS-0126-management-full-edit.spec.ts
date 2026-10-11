@@ -2,7 +2,7 @@
  * TS-0126 - Full management edit (issue #1360)
  * CU53 - Modificar gestión; CU22/CU59 - substitution redirect on edit
  *
- * "Editar" used to show only Número and PUT { number }. It now prefills every field from
+ * "Editar" used to show only the number ("Número") and PUT { number }. It now prefills every field from
  * GET /managements/{id}/complete-case and saves through PUT /managements/{id}/complete-case.
  * The status is read-only there: status changes go through the workflow transition (CU83).
  */

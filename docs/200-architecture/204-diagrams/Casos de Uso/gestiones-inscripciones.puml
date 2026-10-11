@@ -12,7 +12,7 @@ rectangle "Registration module" {
   usecase "CU44 - Reingresar testimonio" as CU44
 }
 
-usecase "CU62 - Buscar Escritura\n(from Escrituras)" as CU62
+usecase "CU62 - Buscar Escritura\n(from Deeds)" as CU62
 
 Escribano --> CU11 : records
 Escribano --> CU56 : records

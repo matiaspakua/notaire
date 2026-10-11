@@ -22,11 +22,11 @@ A client that treated 409 as 'invalid catalog data' now sees 400; the shipped fr
 
 ## Regression Strategy
 
-Full backend suite; full Bruno run against this backend (334/334 requests, 568 tests); Playwright chromium TS-0024, TS-0029, tipo-documento-vencimiento-config, presupuesto-catalogo-items (36 passed).
+Full backend suite; full Bruno run against this backend (334/334 requests, 568 tests); Playwright chromium TS-0024, TS-0029, TS-0134-document-type-expiration-config.spec.ts, TS-0130-budget-catalog-items.spec.ts (36 passed).
 
 ## Playwright Strategy
 
-TS-0024, TS-0029, tipo-documento-vencimiento-config, presupuesto-catalogo-items: 36 passed.
+TS-0024, TS-0029, TS-0134-document-type-expiration-config.spec.ts, TS-0130-budget-catalog-items.spec.ts: 36 passed.
 
 ## Deployment Strategy
 

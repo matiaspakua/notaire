@@ -55,7 +55,7 @@ cases:
     ci_tool: zap
     blocking: true
     health_path: /actuator/health
-    protected_path: /api/v1/personas
+    protected_path: /api/v1/people
     ci_complement: .github/workflows/dast-zap.yml
 
   - id: SEC-POL-01

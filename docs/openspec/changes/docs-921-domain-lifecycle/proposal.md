@@ -34,9 +34,9 @@ the documentation audit in #921. It does not close that audit.
 
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
-| A gestión moves only along the seeded workflow; archiving is allowed from Documentación completa | CU83, V10/V41 | Made explicit |
-| Signing a deed does not by itself move the gestión | CU16, `deeds.status` | Made explicit |
-| Testimony, registration draft, submitted document, budget, and payment each have their own state, separate from the gestión node | CU85, CU06, CU10, CU72, CU15, CU47 | Made explicit |
+| A management moves only along the seeded workflow; archiving is allowed from Documentación completa | CU83, V10/V41 | Made explicit |
+| Signing a deed does not by itself move the management | CU16, `deeds.status` | Made explicit |
+| Testimony, registration draft, submitted document, budget, and payment each have their own state, separate from the management node | CU85, CU06, CU10, CU72, CU15, CU47 | Made explicit |
 | A pull request without its own OpenSpec change needs a human `sdlc-exception` label | Constitution §12, CU76 | Made explicit |
 
 ## Capabilities

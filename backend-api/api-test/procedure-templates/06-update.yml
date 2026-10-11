@@ -12,7 +12,7 @@ http:
     type: json
     data: |-
         {
-          "notes": "Original y copia"
+          "notes": "Original and copy"
         }
   headers:
     - name: Content-Type
@@ -24,4 +24,4 @@ runtime:
     - type: tests
       code: |-
           test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
-          test("Notes updated", function () { expect(res.getBody().notes).to.equal("Original y copia"); });
+          test("Notes updated", function () { expect(res.getBody().notes).to.equal("Original and copy"); });

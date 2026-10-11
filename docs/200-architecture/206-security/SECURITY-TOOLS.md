@@ -14,7 +14,7 @@ vendor account.
 | 4.3 Test | Unit / API | JUnit, Vitest, Bruno, Playwright | existing suites | Bruno is the guide's Postman alternative and is already the API suite |
 | 4.3 SAST | Java, JS | Semgrep (local and CI) | `security/semgrep/notaire.yml` | High-signal rules that run before the PR. CodeQL stays the deeper CI SAST |
 | 4.3 SAST | Java, JS, Actions | CodeQL | `codeql.yml` | Covers the three languages in one advanced setup. SpotBugs stays a quality report |
-| 4.3 DAST | Running API, anonymous | `security/dast_baseline.py` | `run_pipeline.sh` after the stack is up | Health plus a 401 on a protected path, with no stack trace |
+| 4.3 DAST | Running API, anonymous | `security/dast_baseline.py` | `run_pipeline.sh` after the stack is up | Health plus a 401 on `/api/v1/people`, with no stack trace |
 | 4.3 DAST | Running API | OWASP ZAP baseline | `dast-zap.yml` | The guide's DAST tool. Warn-first until #281 |
 | 4.3 Secrets | High-confidence tokens | `security/scan_secrets.py` | CI security job | Same families as Gitleaks (private key, `ghp_`, `AKIA`, Slack). No extra action pin |
 | 4.3 SCA | Dependencies and images | Trivy + Dependabot | `ci.yml`, `dependabot.yml` | Trivy is the OSS scanner already in CI. Dependabot opens the update |

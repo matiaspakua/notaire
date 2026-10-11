@@ -39,6 +39,7 @@ class GestionDesignEnglishTest(unittest.TestCase):
         for live in (
             "# Case process — analysis and design",
             "gestor[Clerk / Receptionist]",
+            "client[Client]",
             "participant API as Managements",
             "participant Esc as Deeds",
             "participant Tes as Testimony",
@@ -89,6 +90,8 @@ class GestionDesignEnglishTest(unittest.TestCase):
             "análisis y diseño del proceso central",
             "Casos de uso del proceso",
             "Gestor / Recepcionista",
+            "cliente[Client]",
+            "cliente -->",
             "as Gestiones",
             "as Escrituras",
             "as Minutas",

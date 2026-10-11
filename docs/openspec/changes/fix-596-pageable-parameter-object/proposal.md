@@ -49,7 +49,7 @@ Five paged list endpoints document one required `pageable` query object, which n
 
 ### Surface area
 
-- Endpoints: `GET /api/v1/{people,presupuestos,escrituras,tramites,gestiones}` (documentation only; runtime unchanged)
+- Endpoints: `GET /api/v1/{people,budgets,deeds,procedures,managements}` (documentation only; runtime unchanged)
 - Entities / Flyway / Configuration: none
 
 ### Architecture review

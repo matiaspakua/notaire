@@ -27,7 +27,7 @@
 
 ## 7. Ejecutar Playwright
 
-- [x] 7.1 copias-required-fields, TS-0018, TS-0082: 9 passed
+- [x] 7.1 TS-0132-copies-required-fields.spec.ts, TS-0018, TS-0082: 9 passed
 
 ## 8. Gate 3 — Actualizar documentación permanente
 

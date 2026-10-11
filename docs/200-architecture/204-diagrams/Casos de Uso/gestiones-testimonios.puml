@@ -13,7 +13,7 @@ rectangle "Testimonies module" {
   usecase "CU12 - Retirar testimonio" as CU12
 }
 
-usecase "CU62 - Buscar Escritura\n(from Escrituras)" as CU62
+usecase "CU62 - Buscar Escritura\n(from Deeds)" as CU62
 
 Escribano --> CU07 : needs
 Escribano --> CU08 : needs

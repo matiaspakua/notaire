@@ -12,8 +12,8 @@ rectangle "Protocols module" {
   usecase "CU50 - Generar Declaración Jurada de Rentas" as CU50
 }
 
-usecase "CU62 - Buscar Escritura\n(from Escrituras)" as CU62
-usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
+usecase "CU62 - Buscar Escritura\n(from Deeds)" as CU62
+usecase "CU19 - Buscar gestiones de un Cliente\n(from Clients)" as CU19
 
 Escribano --> CU24 : needs
 Escribano --> CU25 : needs

@@ -75,7 +75,7 @@ issues were closed: #695, #582, #572, #294 (obsolete Swing), #780, #807, #829, #
 | #256 | low | DB, DevOps | CU75 | Implement automated PostgreSQL backups | open |
 | #1049 | low | DevOps | CU76 | chore(ci): delete stale Jenkinsfile that contradicts the real quality gates | open |
 | #1059 | low | Frontend | CU76 | i18n(frontend): 9 pages and the login page bypass translations | open |
-| #1065 | low | Backend | CU76 | api: REST convention inconsistencies and an unused /payments/params endpoint | open |
+| #1065 | low | Backend | CU76 | api: REST convention inconsistencies and an unused /pagos/params endpoint | open |
 
 ## GitHub organization changes made during the audit
 

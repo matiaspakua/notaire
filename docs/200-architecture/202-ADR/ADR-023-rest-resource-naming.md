@@ -8,9 +8,9 @@
 ## Context
 
 The public `/api/v1` surface mixes languages (`/people`, `/audit-log`, `/items`
-vs Spanish nouns elsewhere), singular collection paths (`/folios`, `/properties`,
-`/copies`, …), both `/search` and `/search`, and verbs in paths
-(`/sign`, `/archive`, …). ADR-003 documents **URL path versioning** only; it
+vs Spanish nouns elsewhere), singular collection paths (`/folio`, `/inmueble`,
+`/copia`, …), both `/buscar` and `/search`, and verbs in paths
+(`/firmar`, `/archivar`, …). ADR-003 documents **URL path versioning** only; it
 does not define resource naming. Create responses also lacked a consistent
 `Location` header policy (Slice-1 of #1065 adds a shared helper and sample
 coverage).
@@ -27,8 +27,8 @@ without a migration plan.
    vocabulary). Do not introduce new Spanish collection segments. Existing
    Spanish paths remain until a phased rename under ADR-003.
 2. **Plural collection nouns** for new resources. Singular legacy collections
-   (e.g. `/folios`) rename in follow-up slices, not as a big-bang.
-3. **Search:** Prefer `/search` over `/search` for new or renamed search
+   (e.g. `/folio`) rename in follow-up slices, not as a big-bang.
+3. **Search:** Prefer `/search` over `/buscar` for new or renamed search
    routes.
 4. **Actions:** Prefer sub-resources or status transitions on the resource
    (e.g. `PUT /registration-drafts/{id}/submit`) over free-standing verbs on
@@ -44,7 +44,7 @@ without a migration plan.
 - Breaking renames (path segment changes) follow ADR-003: deprecate + dual-route
   window and/or `/api/v2`, documented in CHANGELOG.
 - Slice-1 of #1065 does **not** rename paths; it only records this policy,
-  removes unused `POST /payments/params`, and standardizes sample creates on
+  removes unused `POST /pagos/params`, and standardizes sample creates on
   `201` + `Location`.
 
 ## Consequences
@@ -52,11 +52,11 @@ without a migration plan.
 - **Pros:** Clear target for new endpoints; renames can be batched; create
   responses become discoverable via `Location`.
 - **Cons:** Temporary dual vocabulary until phased renames complete; clients
-  must treat minuta create as `201` (was `200`); clients must stop calling
-  `/payments/params` (removed).
+  must treat registration-draft create as `201` (was `200`); clients must stop calling
+  `/pagos/params` (removed).
 
 ## Follow-up (out of this ADR's first slice)
 
-Phased inventory renames (singular→plural, language alignment, `/search`→
+Phased inventory renames (singular→plural, language alignment, `/buscar`→
 `/search`) tracked under issue #1065 acceptance / future issues; not executed
 here.

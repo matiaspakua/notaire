@@ -95,10 +95,10 @@ class ProcedureTemplateAdminIntegrationTest {
         createTemplate(pt, dt, "original");
 
         mockMvc.perform(put(BASE + "/" + pt + "/" + dt).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"notes\":\"Original y copia\"}"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.notes").value("Original y copia"));
+                        .content("{\"notes\":\"Original and copy\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.notes").value("Original and copy"));
         mockMvc.perform(get(BASE + "/procedure-types/" + pt))
-                .andExpect(jsonPath("$", hasSize(1))).andExpect(jsonPath("$[0].notes").value("Original y copia"));
+                .andExpect(jsonPath("$", hasSize(1))).andExpect(jsonPath("$[0].notes").value("Original and copy"));
 
         mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"fkIdProcedureType\":" + pt + ",\"fkIdDocumentType\":" + dt + "}"))

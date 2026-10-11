@@ -1,7 +1,7 @@
 "use client";
 /**
  * Required-documents checklist of one procedure type (#1362, CU55): list, add, edit notes and
- * remove (with confirmation). ADMIN only, like the rest of Administración.
+ * remove (with confirmation). ADMIN only, like the rest of the administration section (Administración).
  */
 import { useState } from "react";
 import { toast } from "sonner";

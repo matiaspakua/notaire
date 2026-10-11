@@ -22,5 +22,5 @@ Listing and maintaining people (clients, notaries).
 
 #### Scenario: People screen lists people
 
-- **WHEN** the personas screen loads
+- **WHEN** the people screen loads
 - **THEN** usePeople unwraps the page content

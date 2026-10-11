@@ -2,11 +2,11 @@
 
 ## Context
 
-Issue #655 lists endpoints that accept empty or incomplete bodies. Run 7: the Owner made `typeId` required and asked for a user-centred analysis of `procedureId`. V6 (2026-06-05) made `fk_id_tramite` nullable so that the Documentos screen could create documents before it had any gestión/trámite selector; #773 later added those selectors as optional. Readers that depend on the link: ManagementCaseSummaryService (case summary), CU04 documentation-complete flow, ReportDocumentFactory CU09 debt report (findByFkIdProcedureFkIdManagementIdManagement), CU42 UpcomingExpirationService (gestión number and header), ExternalEntityDocumentService CU10 (validateBelongsToManagement), ReingresoDocumentacionService CU43.
+Issue #655 lists endpoints that accept empty or incomplete bodies. Run 7: the Owner made `typeId` required and asked for a user-centred analysis of `procedureId`. V6 (2026-06-05) made `fk_id_tramite` nullable so that the Documents screen could create documents before it had any management or procedure selector; #773 later added those selectors as optional. Readers that depend on the link: ManagementCaseSummaryService (case summary), CU04 documentation-complete flow, ReportDocumentFactory CU09 debt report (findByFkIdProcedureFkIdManagementIdManagement), CU42 UpcomingExpirationService (management number and header), ExternalEntityDocumentService CU10 (validateBelongsToManagement), DocumentReentryService CU43.
 
 ## Goals / Non-Goals
 
-Goal: no new orphan or typeless documents; legacy rows untouched. Non-goals: backfilling or deleting documents already stored without a trámite; making the DB column NOT NULL (needs a data decision); the other #655 endpoints.
+Goal: no new orphan or typeless documents; legacy rows untouched. Non-goals: backfilling or deleting documents already stored without a procedure; making the DB column NOT NULL (needs a data decision); the other #655 endpoints.
 
 ## Decisions
 
@@ -14,7 +14,7 @@ Require on create and keep the column nullable plus PUT partial: it stops the pr
 
 ## Riesgos / Trade-offs
 
-An external client that created documents without a procedure now gets 400; none ships in this repository. A gestión with no trámite cannot receive documents until one is added; the dialog says so.
+An external client that created documents without a procedure now gets 400; none ships in this repository. A management with no procedure cannot receive documents until one is added; the dialog says so.
 
 ## Testing Strategy
 
@@ -30,7 +30,7 @@ TS-0033, TS-0097, TS-0099, TS-0090, TS-0012, TS-0043, TS-0060, TS-0070, TS-0071:
 
 ## Deployment Strategy
 
-Backend and frontend together (the old UI could still send a create without trámite).
+Backend and frontend together (the old UI could still send a create without a procedure).
 
 ## Rollback Strategy
 

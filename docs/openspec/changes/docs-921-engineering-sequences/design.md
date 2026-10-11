@@ -28,7 +28,7 @@ so the availability answer is not only in a pull request.
 
 ## Riesgos / Trade-offs
 
-[A use-case file still names a Spanish path] → The live call is in
+[CU43 still names `GET/POST /api/v1/gestiones/{id}/reingreso-documentacion`, and CU44 still names `POST /api/v1/movimiento-testimonio/{id}/reenter`] → The live call is in
 `DOC-GESTION`. Rewriting every file is a different change.
 [Dictionary stays stale] → #1222, recorded as not a missing sequence.
 

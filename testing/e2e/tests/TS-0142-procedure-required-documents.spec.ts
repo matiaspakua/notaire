@@ -18,8 +18,8 @@ const ADMIN_PAGE = "/dashboard/administration/procedures";
 
 async function setup(page: Page) {
   const id = uniqueId();
-  const procedureName = `Trámite checklist E2E ${id}`;
-  const documentName = `Documento checklist E2E ${id}`;
+  const procedureName = `Procedure checklist E2E ${id}`;
+  const documentName = `Document checklist E2E ${id}`;
   const pt = await createProcedureType(page, { name: procedureName });
   expect(pt.ok, "procedure type created").toBe(true);
   const dt = await apiPost<{ idDocumentType: number }>(page, "/document-types", {
@@ -68,9 +68,9 @@ test.describe("TS-0142 - Required documents per procedure type (#1362)", () => {
 
       // WHEN: the admin edits the notes
       await row.getByTestId("btn-edit-required-doc").click();
-      await row.getByTestId("input-edit-required-doc-notes").fill("Original y copia");
+      await row.getByTestId("input-edit-required-doc-notes").fill("Original and copy");
       await row.getByTestId("btn-save-required-doc").click();
-      await expect(row).toContainText("Original y copia");
+      await expect(row).toContainText("Original and copy");
       await page.keyboard.press("Escape");
 
       // THEN: Documentos necesarios lists it by name for that procedure type
