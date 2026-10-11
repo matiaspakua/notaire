@@ -84,7 +84,7 @@ class RegistrationDraftServiceTest {
         RegistrationDraft draft = registrationDraftService.generate(1);
 
         assertThat(draft.getNumber()).isEqualTo(1);
-        assertThat(draft.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftGENERADA);
+        assertThat(draft.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftGenerated);
         assertThat(draft.getFkIdDeed()).isEqualTo(deed);
         assertThat(draft.getDateGeneration()).isNotNull();
     }
@@ -124,13 +124,13 @@ class RegistrationDraftServiceTest {
     @Test
     @DisplayName("Should register the submission and transition to Presentado")
     void shouldRegisterSubmission() {
-        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftGENERADA);
+        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftGenerated);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
         when(registrationDraftRepository.save(any(RegistrationDraft.class))).thenAnswer(inv -> inv.getArgument(0));
 
         RegistrationDraft result = registrationDraftService.submit(1, new Date(), "ENT-123");
 
-        assertThat(result.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftPRESENTADA);
+        assertThat(result.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftSubmitted);
         assertThat(result.getRegistryEntryNumber()).isEqualTo("ENT-123");
         assertThat(result.getDateSubmission()).isNotNull();
     }
@@ -138,7 +138,7 @@ class RegistrationDraftServiceTest {
     @Test
     @DisplayName("Should reject the submission when the registration draft is not in status Generada")
     void shouldRejectSubmissionWhenNotGenerada() {
-        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftPRESENTADA);
+        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftSubmitted);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
 
         assertThatThrownBy(() -> registrationDraftService.submit(1, new Date(), "ENT-123"))
@@ -147,22 +147,22 @@ class RegistrationDraftServiceTest {
 
     @Test
     @DisplayName("Should register the observation and transition to Observado")
-    void shouldRegisterObservacion() {
-        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftPRESENTADA);
+    void shouldRegisterObservation() {
+        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftSubmitted);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
         when(registrationDraftRepository.save(any(RegistrationDraft.class))).thenAnswer(inv -> inv.getArgument(0));
 
         RegistrationDraft result = registrationDraftService.observe(1, "Falta plano de mensura", new Date());
 
-        assertThat(result.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftOBSERVADA);
+        assertThat(result.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftObserved);
         assertThat(result.getRegistryNotes()).isEqualTo("Falta plano de mensura");
         assertThat(result.getDateCorrection()).isNotNull();
     }
 
     @Test
     @DisplayName("Should reject the observation when the registration draft is not presented")
-    void shouldRejectObservacionWhenNotPresentada() {
-        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftGENERADA);
+    void shouldRejectObservationWhenNotSubmitted() {
+        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftGenerated);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
 
         assertThatThrownBy(() -> registrationDraftService.observe(1, "Observation", new Date()))
@@ -171,8 +171,8 @@ class RegistrationDraftServiceTest {
 
     @Test
     @DisplayName("Should register the final registration and transition to Registered")
-    void shouldRegisterRegistrationDefinitiva() {
-        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftPRESENTADA);
+    void shouldRegisterFinalRegistration() {
+        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftSubmitted);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
         when(registrationDraftRepository.save(any(RegistrationDraft.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -185,8 +185,8 @@ class RegistrationDraftServiceTest {
 
     @Test
     @DisplayName("Should reject the final registration when the registration draft is not presented")
-    void shouldRejectRegistrationWhenNotPresentada() {
-        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftOBSERVADA);
+    void shouldRejectRegistrationWhenNotSubmitted() {
+        RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftObserved);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
 
         assertThatThrownBy(() -> registrationDraftService.recordRegistration(1, new Date(), "INS-456"))

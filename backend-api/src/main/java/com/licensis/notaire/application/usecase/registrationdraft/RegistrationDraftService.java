@@ -20,7 +20,8 @@ import java.util.Optional;
 
 /**
  * CU82 - Generates a registration draft and tracks the registry workflow
- * (Generada -> Presentada -> Observada / Inscripta) of a deed on a property
+ * ({@code Generada} to {@code Presentado para inscripción}, then
+ * {@code Observado} or {@code Inscripto}) of a deed on a property
  * filed with the property registry.
  */
 @Service
@@ -52,7 +53,7 @@ public class RegistrationDraftService {
 
         RegistrationDraft draft = new RegistrationDraft();
         draft.setNumber(calculateNextNumber());
-        draft.setStatus(BusinessConstants.RegistrationDraftGENERADA);
+        draft.setStatus(BusinessConstants.RegistrationDraftGenerated);
         draft.setDateGeneration(new Date());
         draft.setFkIdDeed(deed);
         return registrationDraftRepository.save(draft);
@@ -110,31 +111,31 @@ public class RegistrationDraftService {
 
     public RegistrationDraft submit(Integer id, Date dateSubmission, String registryEntryNumber) {
         RegistrationDraft draft = searchDraft(id);
-        if (!BusinessConstants.RegistrationDraftGENERADA.equals(draft.getStatus())) {
+        if (!BusinessConstants.RegistrationDraftGenerated.equals(draft.getStatus())) {
             throw new BusinessValidationException(
                     "The registration draft must be in status Generada to record the submission");
         }
         draft.setDateSubmission(dateSubmission);
         draft.setRegistryEntryNumber(registryEntryNumber);
-        draft.setStatus(BusinessConstants.RegistrationDraftPRESENTADA);
+        draft.setStatus(BusinessConstants.RegistrationDraftSubmitted);
         return registrationDraftRepository.save(draft);
     }
 
     public RegistrationDraft observe(Integer id, String registryNotes, Date dateCorrection) {
         RegistrationDraft draft = searchDraft(id);
-        if (!BusinessConstants.RegistrationDraftPRESENTADA.equals(draft.getStatus())) {
+        if (!BusinessConstants.RegistrationDraftSubmitted.equals(draft.getStatus())) {
             throw new BusinessValidationException(
                     "The registration draft must be submitted to record a registry observation");
         }
         draft.setRegistryNotes(registryNotes);
         draft.setDateCorrection(dateCorrection);
-        draft.setStatus(BusinessConstants.RegistrationDraftOBSERVADA);
+        draft.setStatus(BusinessConstants.RegistrationDraftObserved);
         return registrationDraftRepository.save(draft);
     }
 
     public RegistrationDraft recordRegistration(Integer id, Date dateReception, String finalRegistrationNumber) {
         RegistrationDraft draft = searchDraft(id);
-        if (!BusinessConstants.RegistrationDraftPRESENTADA.equals(draft.getStatus())) {
+        if (!BusinessConstants.RegistrationDraftSubmitted.equals(draft.getStatus())) {
             throw new BusinessValidationException(
                     "The registration draft must be submitted to record the final registration");
         }
