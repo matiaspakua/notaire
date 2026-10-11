@@ -27,7 +27,7 @@ export function useWithdraw() {
   const qc = useQueryClient();
   return useMutation({
     // Backend route is /withdraw (English) and its body is DtoTestimonyMovement(cardNumber) —
-    // not the former Spanish withdraw path plus the card number.
+    // not the retired `/retirar` path plus `numeroCarton`.
     mutationFn: ({ idTestimony, cardNumber }: { idTestimony: number; cardNumber: number }) =>
       apiPost<TestimonyMovement>(`/testimony-movements/${idTestimony}/withdraw`, {
         cardNumber,

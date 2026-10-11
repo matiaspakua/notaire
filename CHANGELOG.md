@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Withdraw comment citation** (#1490, CU75): the testimony-movement
+  hook names the retired `/retirar` path and `numeroCarton`. The live
+  call stays `/testimony-movements/{id}/withdraw` with `cardNumber`.
+  The message key `fields.numeroCarton` stays.
 - **SAD API design collections** (#1490, CU75): section 8.7 names the
   English collections `/managements`, `/people`, and `/deeds`. The
   parenthetical no longer calls those paths a Spanish domain.
