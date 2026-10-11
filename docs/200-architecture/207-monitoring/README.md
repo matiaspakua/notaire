@@ -93,6 +93,12 @@ line per proxied request, both as structured JSON. Promtail stores `traceId`/`sp
 labels, which would be high-cardinality), so `{container="notary-backend"} | traceId="<id>"` finds a request's lines and the
 Loki datasource's `TraceID` derived field opens the trace in Tempo. Loki needs `allow_structured_metadata: true`.
 
+**Drill-down dashboards:** `notaire-infra-resources` (Docker host and aggregate container usage; on Docker Desktop it describes
+the Linux VM), `notaire-frontend` (Node runtime, proxied requests by status from logs), `notaire-observability-health`
+(Prometheus, Loki, Tempo, Alertmanager, Promtail and the collector, scraped natively), `notaire-traces` (recent traces and
+the request logs that link to them). The frontend `api_proxy` log line carries `method`, `path`, `status` and `durationMs`
+in its message, because Promtail keeps only the message and dashboards parse it with a LogQL `regexp`.
+
 **Overview dashboards (start here):** `notaire-stack-status` (every service in the stack) and
 `notaire-status` (Notaire only). Both show availability from blackbox probes, firing alerts and recent
 errors, and link to the specialist dashboards below.

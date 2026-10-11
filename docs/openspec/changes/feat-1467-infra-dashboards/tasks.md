@@ -17,27 +17,27 @@
 
 ## 3. Gate 2 — Write tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate cases from the spec scenarios
-- [ ] 3.2 Write `infra/tests/test_infra_dashboards.py`
-- [ ] 3.3 Run it and observe it fail
-- [ ] 3.4 Every scenario maps to a test (`traceability.md`)
+- [x] 3.1 Enumerate cases from the spec scenarios
+- [x] 3.2 Write `infra/tests/test_infra_dashboards.py`
+- [x] 3.3 Run it and observe it fail
+- [x] 3.4 Every scenario maps to a test (`traceability.md`)
 
 ## 4. Implementation
 
-- [ ] 4.1 Scrape jobs for Tempo, Alertmanager, Promtail; collector internal metrics
-- [ ] 4.2 Dashboards `notaire-infra-resources` and `notaire-frontend`
-- [ ] 4.3 Dashboards `notaire-observability-health` and `notaire-traces`
-- [ ] 4.4 Register the guard in `infra/verify.sh`
+- [x] 4.1 Scrape jobs for Tempo, Alertmanager, Promtail; collector internal metrics
+- [x] 4.2 Dashboards `notaire-infra-resources` and `notaire-frontend`
+- [x] 4.3 Dashboards `notaire-observability-health` and `notaire-traces`
+- [x] 4.4 Register the guard in `infra/verify.sh`
 
 ## 5. Update existing tests
 
-- [ ] 5.1 Existing `infra/tests/test_*.py` still pass
+- [x] 5.1 Existing `infra/tests/test_*.py` still pass
 
 ## 6. Run regression
 
-- [ ] 6.1 `bash infra/verify.sh`
+- [x] 6.1 `bash infra/verify.sh`
 - [ ] 6.2 `bash workspace/sdlc/preflight.sh`
-- [ ] 6.3 Live run of every panel query via the Grafana datasource proxy
+- [x] 6.3 Live run of every panel query via the Grafana datasource proxy
 
 ## 7. Playwright
 
@@ -45,9 +45,9 @@
 
 ## 8. Gate 3 — Update permanent documentation
 
-- [ ] 8.1 `infra/MODULE.md`, `infra/docs/DEFINITION.md`, `infra/docs/OPERATION.md`
-- [ ] 8.2 `infra/docs/DEFINITION.md`
-- [ ] 8.3 `docs/200-architecture/207-monitoring/README.md`
+- [x] 8.1 `infra/MODULE.md`, `infra/docs/DEFINITION.md`, `infra/docs/OPERATION.md`
+- [x] 8.2 `infra/docs/DEFINITION.md`
+- [x] 8.3 `docs/200-architecture/207-monitoring/README.md`
 
 ## 9. Atomic commits
 
