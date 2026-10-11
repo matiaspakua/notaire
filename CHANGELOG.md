@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English client actor id** (#1490, CU75): the case-process diagram
+  names the client actor `client`. The label `Client` stays. The actor
+  ids `gestor` and `escribano` stay, along with `escribano[Escribano]`.
 - **English field-label comments** (#1490, CU75): the management-edit
   note names the number field, and the concept-form note quotes
   `Nombre`, `Descripción`, and `Valor base ($)`. The button `Editar`

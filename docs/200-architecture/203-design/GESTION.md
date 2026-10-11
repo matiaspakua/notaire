@@ -17,7 +17,7 @@ A use case is not a status. Several use cases walk one management.
 
 ```mermaid
 flowchart TB
-  cliente[Client]
+  client[Client]
   gestor[Clerk / Receptionist]
   escribano[Escribano]
 
@@ -40,8 +40,8 @@ flowchart TB
     cu83[CU83 Definir workflow]
   end
 
-  cliente --> cu01
-  cliente --> cu15
+  client --> cu01
+  client --> cu15
   gestor --> cu02
   gestor --> cu04
   gestor --> cu10
