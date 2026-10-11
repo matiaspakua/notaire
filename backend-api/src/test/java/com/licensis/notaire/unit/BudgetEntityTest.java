@@ -29,12 +29,12 @@ class BudgetEntityTest {
             budget.setIdBudget(1);
             budget.setNumber(1001);
             budget.setDate(new Date());
-            budget.setHeading("Compraventa de property");
+            budget.setHeading("Compraventa property");
             budget.setStatus("pendiente");
             budget.setPropertyAmount(new java.math.BigDecimal("500000.00"));
 
             assertThat(budget.getNumber()).isEqualTo(1001);
-            assertThat(budget.getHeading()).isEqualTo("Compraventa de property");
+            assertThat(budget.getHeading()).isEqualTo("Compraventa property");
             assertThat(budget.getStatus()).isEqualTo("pendiente");
             assertThat(budget.getPropertyAmount()).isEqualByComparingTo(new java.math.BigDecimal("500000.00"));
         }

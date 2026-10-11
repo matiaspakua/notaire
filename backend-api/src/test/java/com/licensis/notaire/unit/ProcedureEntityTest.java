@@ -54,9 +54,9 @@ class ProcedureEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             Procedure procedure = new Procedure();
-            procedure.setNotes("Compraventa de property urbano");
+            procedure.setNotes("Urban Compraventa property");
 
-            assertThat(procedure.getNotes()).isEqualTo("Compraventa de property urbano");
+            assertThat(procedure.getNotes()).isEqualTo("Urban Compraventa property");
         }
 
         @Test

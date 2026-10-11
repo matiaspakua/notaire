@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English synthetic labels** (#1490, CU75): form and picker fixtures use
+  English (`Name`, `The name is required`, `Without hyphens`, `Notes`,
+  `Too long`, `Status`, `Choose a status`, `Client`, `Ana Latest`,
+  `Bruno Recent`, `New Compraventa`, and `Status E2E 42`). Sale headings
+  use `Sale property`, `parcel sale`, `Sale budget`, `Compraventa property`,
+  and `Urban Compraventa property`. Stored labels `CUIT`, `Borrador`,
+  `Aprobado`, `Rechazado`, `Iniciada`, `Pendiente`, `Hipoteca`, `Donación`,
+  `APROBADO`, `FIRMADA`, and `Compraventa` stay, along with `Juan`.
 - **English synthetic chrome fixtures** (#1490, CU75): tests name dialog and
   header props in English (`People`, `Client management`, `New person`,
   `Delete person`, `Edit budget`, `Budget summary`, `Items`, `Template`,
