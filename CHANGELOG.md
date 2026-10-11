@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Named-query prefix** (#1490, CU75): the createNamedQuery scenario
+  forbids the retired prefix `Persona.`. The live prefix is `Person.*`.
+  Spec id `jpa-namedquery-english-names` stays.
 - **Historical user-manual filename** (#1490, CU75): the PDF is
   `Manual de Usuario Notaire.doc.pdf`, in `C_Manual de Usuario`, and the
   release asset is `Manual-de-Usuario-Notaire.doc.pdf`. The fetch script,

@@ -30,10 +30,10 @@ Every `createNamedQuery("…")` call site under `backend-api` (main + test) MUST
 use the English NamedQuery name matching the entity declaration. Call sites
 MUST NOT use `Persona.*`. The entity declares `Person.*`.
 
-#### Scenario: No Person createNamedQuery mismatch
+#### Scenario: No Persona createNamedQuery mismatch
 
 - **WHEN** the hygiene inventory scans `createNamedQuery("` under `backend-api`
-- **THEN** zero matches start with `Person.` and zero matches use a forbidden
+- **THEN** zero matches start with `Persona.` and zero matches use a forbidden
   Spanish entity prefix
 
 ### Requirement: Method tails are English on Folio, Item, and Person
