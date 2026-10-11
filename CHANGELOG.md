@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **October 2026 assessment citations** (#1490, CU75): the baseline
+  measurements name `pagos/fecha`, `presupuestos/persona`,
+  `historial/gestion`, `reportes/documentos-por-vencer`, `usuarios/persona`,
+  `/gestiones`, `/pagos`, `/folio`, `/inmueble`, `/copia`, `/buscar`, and
+  `/usuarios`. Official titles `Documentos Presentados` and
+  `Plantillas de Trámite` stay. Stored roles `EMPLEADO` and `ESCRIBANO` stay.
+  The baseline commit `d4473af2` stays.
 - **Retired path citations in ADR-023** (#1490, CU75): the naming
   decision cites `/folio`, `/inmueble`, `/copia`, `/buscar`, `/firmar`,
   `/archivar`, and the removed `POST /pagos/params`. It prefers `/search`
