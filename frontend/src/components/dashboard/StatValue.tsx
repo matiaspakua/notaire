@@ -25,7 +25,7 @@ export function StatValue({ value, isLoading, isError }: StatValueProps) {
     >
       {busy ? (
         <>
-          <span aria-hidden="true" className="inline-block h-12 w-24 align-middle rounded-xl bg-secondary animate-pulse" />
+          <span aria-hidden="true" className="inline-block h-12 w-24 align-middle rounded-xl bg-secondary motion-safe:animate-pulse" />
           <span className="sr-only">{tc("loading")}</span>
         </>
       ) : value === undefined || isError ? (

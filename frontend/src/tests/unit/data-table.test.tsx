@@ -58,8 +58,8 @@ describe("DataTable", () => {
         keyExtractor={(r) => r.id}
       />
     );
-    // Skeleton rows have animate-pulse class
-    const skeletons = container.querySelectorAll(".animate-pulse");
+    // Skeleton rows are shared Skeleton blocks (#1359)
+    const skeletons = container.querySelectorAll('[data-slot="skeleton"]');
     expect(skeletons.length).toBeGreaterThan(0);
   });
 });

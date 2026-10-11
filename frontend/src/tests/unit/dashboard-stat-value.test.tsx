@@ -21,7 +21,7 @@ describe("StatValue (#1358)", () => {
   it("shows a skeleton, not 0, while the count is loading", () => {
     const { container } = renderStat({ value: undefined, isLoading: true });
     expect(screen.queryByText("0")).toBeNull();
-    expect(container.querySelector(".animate-pulse")).not.toBeNull();
+    expect(container.querySelector(".motion-safe\\:animate-pulse")).not.toBeNull();
     expect(screen.getByTestId("stat-value")).toHaveAttribute("aria-busy", "true");
     expect(screen.getByText("Cargando...")).toBeInTheDocument();
   });
