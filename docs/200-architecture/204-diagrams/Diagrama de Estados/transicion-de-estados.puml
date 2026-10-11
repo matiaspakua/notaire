@@ -1,7 +1,11 @@
+' Management activity, aligned with the seeded workflow (V10 + V41) and
+' docs/200-architecture/203-design/GESTION.md.
+' Not the source of truth for states (ADR-027). That is CICLO-DE-VIDA.md §3.1.
+' Signing the deed and the registration draft are not edges of this activity.
 @startuml
-title Management state transition
+title Management activity
 
-skinparam shadowing true
+skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam activity {
   BackgroundColor #F6EBD8
@@ -13,60 +17,51 @@ skinparam activity {
 
 start
 
-:Request to start a management;
-
-if (Is the person a client?) then (yes)
-  :Find the client;
-else (no)
-  if (Does the person need to be created?) then (yes)
-    :Create the person;
-  endif
-  :Create the client;
-endif
-
-if (Does a budget exist?) then (yes)
-  :Find the budget;
-else (no)
-  :Create the budget;
-endif
-
+:The client requests a procedure;
+:The clerk identifies the client and the budget\n(CU61, CU60, CU01);
 :Start the management;
+:POST /api/v1/managements/complete-case;
+:Management is Iniciada;
 
-repeat
-  :Waiting for documents;
-repeat while (Are the documents complete?) is (no) not (yes)
+:Transition "Procedures are assigned";
+:En Tramite;
 
-repeat
-  :Prepare the deed;
+:Client documents and external-entity documents\n(CU04, CU10);
+:Transition "Documents submitted";
+:Documentacion Completa;
 
-  if (Deed result) then (sign)
-    :Sign the deed;
-    :Generate the testimony;
-
-    if (Does it require registration?) then (yes)
-      :Submit for registration;
-
-      while (Did it return Observado?) is (yes)
-        :Record the re-entry;
-        :Submit for registration;
-      endwhile (no)
-    endif
-
-    repeat
-      :Withdraw the testimony;
-    repeat while (Have all testimonies been withdrawn?) is (no) not (yes)
-  elseif (void)
-    :Deed voided;
-  else (No Pasó)
-    :Deed status No Pasó;
+if (Archive without a deed?) then (yes)
+  :POST /api/v1/managements/{id}/archive;
+  if (A folder is in Espera and not confirmed?) then (yes)
+    :409 — the management does not change;
+    stop
+  else (no)
+    :Balance above zero: warning, it does not block;
+    :Archivada;
+    stop
   endif
-
-repeat while (Are there more procedures in the management?) is (yes) not (no)
-
-if (Is the pending balance > 0?) then (yes)
-  :Show the pending-debt warning (it does not block);
+else (continue with the deed)
 endif
 
-:Archive the management;
+:Transition "The deed is drafted";
+:Gestion con Escritura Sin Firmar;
+
+note right
+  POST /api/v1/deeds/{id}/sign
+  sets deeds.status to Firmada.
+  It does not move this node.
+end note
+
+:Transition "The parties sign";
+:Gestion con Escritura Firmada;
+
+:Transition "The testimony is generated";
+:Testimonio Generado;
+
+:Transition "Submitted for registration";
+:Testimonio Ingresado a Inscripcion;
+
+:Transition "Withdrawn";
+:Testimonio Retirado;
 stop
 @enduml

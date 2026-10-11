@@ -5,10 +5,11 @@ capability, state machines, sequences of the main path, the components that
 implement them, and how that is operated and managed.
 
 The use cases (`docs/100-business/102-use-cases/`) stay the step-by-step
-narrative. OpenSpec describes the delta of a change. This document is the
-permanent picture. If a change moves a state, update this file in the same
-PR. Do not add a parallel PlantUML
-([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
+narrative. The management walkthrough, with the dependency of each step and
+one sequence per step, is in [GESTION.md](GESTION.md). OpenSpec describes the
+delta of a change. This document is the permanent picture of the states. If a
+change moves a state, update this file in the same PR. Do not add a parallel
+PlantUML ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
 
 When a use-case narrative and the seeded graph disagree, the code and Flyway
 win. The divergences are in [§8](#8-known-divergences).
@@ -409,9 +410,9 @@ sequenceDiagram
   end
 
   Reception->>FE: Archives the management
-  FE->>Arc: Reads the balance and confirms
+  FE->>Arc: POST /api/v1/managements/{id}/archive
   Arc->>Arc: Folders in Espera require confirmation
-  Arc->>WF: transition to Archivada
+  Arc->>WF: Edge to Archivada
   alt Edge present
     WF->>DB: Archivada, debt yes or no, folders Archivada, history
   else Edge absent
@@ -572,10 +573,9 @@ well as the OpenSpec spec.
 
 Facts of the system today. They are not a change proposal.
 
-1. The legacy activity diagram
-   `204-diagrams/Diagrama de Estados/transicion-de-estados.puml` archives at
-   the end, after the testimonies. The seeded graph archives only from
-   `Documentacion Completa`.
+1. The activity `204-diagrams/Diagrama de Estados/transicion-de-estados.puml`
+   follows the seeded graph: archive leaves `Documentacion Completa`, and
+   `Testimonio Retirado` is final. It stays legacy. The source is §3.1.
 2. `DeedSigningService` changes `deeds.status`. It does not change the
    management status.
 3. `Gestion con Escritura Inscripta` is no longer in the graph. The

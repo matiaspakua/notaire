@@ -48,6 +48,10 @@ jobs:
         if: ${{ !cancelled() }}
         run: bash workspace/sdlc/check-sdlc-exception.sh "$BASE_SHA"
 
+      - name: Traceability names documents that this diff updates
+        if: ${{ !cancelled() }}
+        run: python3 workspace/sdlc/check-doc-traceability.py "$BASE_SHA"
+
       - name: Agent rule files are valid
         if: ${{ !cancelled() }}
         run: bash workspace/sdlc/check-agent-rules.sh

@@ -16,7 +16,7 @@ business, architecture, and development.
 ## Recommended entry point
 
 1. **Business**: [Use cases](100-business/102-use-cases/) — what the system does and for whom.
-2. **Lifecycle**: [CICLO-DE-VIDA.md](200-architecture/203-design/CICLO-DE-VIDA.md) — states, sequences, and C4 views of the product.
+2. **Lifecycle**: [CICLO-DE-VIDA.md](200-architecture/203-design/CICLO-DE-VIDA.md) — states, sequences, and C4 views of the product. The case walkthrough is [GESTION.md](200-architecture/203-design/GESTION.md). The coherence assessment is [EVALUACION-DOCUMENTACION.md](100-business/EVALUACION-DOCUMENTACION.md).
 3. **Method**: [INGENIERIA.md](300-development/INGENIERIA.md) — artifacts, traceability, and processes.
 4. **Architecture**: [SAD](200-architecture/201-SAD/sad.md) — the full arc42 view of the system.
 5. **Development**: [`CLAUDE.md`](../CLAUDE.md) and [`CONSTITUTION.md`](../CONSTITUTION.md) — the mandatory workflow for any code change.

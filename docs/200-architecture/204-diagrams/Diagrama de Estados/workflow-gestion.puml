@@ -1,27 +1,28 @@
 @startuml
-title Workflow — Create a new deed management
+title Create a management — POST /api/v1/managements/complete-case
+
+skinparam shadowing false
 
 participant "Notary (Escribano)" as User
-participant "Frontend\n(Swing / Web)" as Client
-participant "REST API\n(Spring Boot)" as API
-participant "Spring Security" as Sec
+participant "Frontend" as Client
+participant "REST API" as API
 participant "ManagementController" as Ctrl
-participant "Business Service" as Svc
+participant "Workflow" as WF
 participant "PostgreSQL" as DB
 
-User -> Client : Start a new management
-Client -> API : POST /api/v1/managements
-API -> Sec : Validate the JWT
-Sec --> API : OK (user context)
-API -> Ctrl : delegateRequest(dto)
-Ctrl -> Svc : create(request)
-Svc -> Svc : Validate business data
-Svc -> DB : INSERT INTO deed_managements
-DB --> Svc : OK (generatedId)
-Svc -> DB : INSERT INTO audit_records
-DB --> Svc : OK
-Svc --> Ctrl : created management
-Ctrl --> API : 201 Created
-API --> Client : JSON response
-Client --> User : Show success and the number
+User -> Client : Start the management with a budget
+Client -> API : POST /api/v1/managements/complete-case
+API -> Ctrl : completeCase(dto)
+Ctrl -> WF : The status is an INITIAL node
+alt The procedure type has a workflow and the status is initial
+  WF --> Ctrl : Iniciada
+  Ctrl -> DB : INSERT INTO deed_managements
+  DB --> Ctrl : id
+  Ctrl --> API : 201 Created
+  API --> Client : JSON
+  Client --> User : Management number
+else The status is not initial
+  Ctrl --> API : 400
+  API --> Client : The management is not created
+end
 @enduml

@@ -194,7 +194,7 @@ class ReachabilityTest(unittest.TestCase):
         pending = sorted(k for k, r in allowlist.items() if "Owner to reclassify" in str(r))
         self.assertEqual(pending, [], "entries still waiting for an Owner decision:\n  " + "\n  ".join(pending))
         for key in (
-            "GET /api/v1/reports/documents-due/{idDocumentoPresentado}",
+            "GET /api/v1/reports/documents-due/{idSubmittedDocument}",
             "POST /api/v1/testimony-movements",
             "PUT /api/v1/testimony-movements/{id}",
             "DELETE /api/v1/testimony-movements/{id}",

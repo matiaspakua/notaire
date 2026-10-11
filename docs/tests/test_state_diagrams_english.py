@@ -17,9 +17,8 @@ class StateDiagramsEnglishTest(unittest.TestCase):
         text = (FOLDER / "workflow-gestion.puml").read_text(encoding="utf-8")
         for live in (
             "ManagementController",
-            "POST /api/v1/managements",
+            "POST /api/v1/managements/complete-case",
             "deed_managements",
-            "audit_records",
             "Escribano",
         ):
             self.assertIn(live, text, live)
@@ -35,9 +34,12 @@ class StateDiagramsEnglishTest(unittest.TestCase):
     def test_activity_diagram_is_english_and_keeps_the_stored_status(self):
         text = (FOLDER / "transicion-de-estados.puml").read_text(encoding="utf-8")
         self.assertIn("Start the management", text)
-        self.assertIn("No Pasó", text)
+        self.assertIn("Documentacion Completa", text)
+        self.assertIn("Testimonio Retirado", text)
+        self.assertIn("POST /api/v1/managements/{id}/archive", text)
         self.assertNotIn("¿Es cliente?", text)
         self.assertNotIn("Archivar gestión", text)
+        self.assertNotIn("Deed status No Pasó", text)
 
 
 if __name__ == "__main__":

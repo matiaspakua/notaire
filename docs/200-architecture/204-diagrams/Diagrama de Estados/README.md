@@ -7,6 +7,8 @@ The current model — management, deed, testimony, registration draft,
 documents, budget, payment, and procedure folder — is in
 [CICLO-DE-VIDA.md](../../203-design/CICLO-DE-VIDA.md).
 
-`transicion-de-estados.puml` is a business activity. The graph the engine
-applies is the management section of that document. They do not agree on
-archiving; the divergence is recorded there.
+`transicion-de-estados.puml` is the business activity of that same graph:
+archive leaves Documentación completa, and a withdrawn testimony is final.
+`workflow-gestion.puml` is the create call
+`POST /api/v1/managements/complete-case`. The step-by-step dependencies are in
+[GESTION.md](../../203-design/GESTION.md).
