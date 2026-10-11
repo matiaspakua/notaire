@@ -141,9 +141,9 @@ export default function TestimoniesPage() {
     {
       key: "actions",
       header: "",
-      className: "w-48",
+      className: "w-52",
       render: (te) => (
-        <div className="flex gap-1 justify-end">
+        <div className="flex gap-2 justify-end">
           <Button
             size="icon-sm"
             variant="ghost"
