@@ -21,15 +21,15 @@ function readInt(value: string | null, fallback: number): number {
   return Number.isInteger(n) && n >= 0 ? n : fallback;
 }
 
-export default function AuditoriaPage() {
+export default function AuditPage() {
   return (
     <Suspense>
-      <AuditoriaList />
+      <AuditList />
     </Suspense>
   );
 }
 
-function AuditoriaList() {
+function AuditList() {
   const t = useTranslations("auditoria");
   const tc = useTranslations("common");
   const router = useRouter();

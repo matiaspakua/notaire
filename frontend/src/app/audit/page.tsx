@@ -8,6 +8,6 @@ import { redirect } from "next/navigation";
  * layout (header, navigation, theme). Visiting {@code /audit}
  * directly redirects there so external links remain stable.
  */
-export default function AuditoriaPage() {
+export default function AuditPage() {
   redirect("/dashboard/audit");
 }

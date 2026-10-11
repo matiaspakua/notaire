@@ -71,7 +71,7 @@ function PeopleList() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const [searchName, setSearchName] = useState("");
-  const [searchApellido, setSearchApellido] = useState("");
+  const [searchLastName, setSearchLastName] = useState("");
   const [searchDni, setSearchDni] = useState("");
   const [filterClients, setFilterClients] = useState(false);
 
@@ -79,7 +79,7 @@ function PeopleList() {
   // match; without one the table shows the current server page.
   const search = useSearchPeople({
     firstName: searchName,
-    lastName: searchApellido,
+    lastName: searchLastName,
     identificationNumber: searchDni,
     onlyClients: filterClients,
   });
@@ -232,8 +232,8 @@ function PeopleList() {
         <Input
           placeholder={t("searchPlaceholders.apellido")}
           aria-label={t("searchPlaceholders.apellido")}
-          value={searchApellido}
-          onChange={(e) => setSearchApellido(e.target.value)}
+          value={searchLastName}
+          onChange={(e) => setSearchLastName(e.target.value)}
           data-testid="input-search-lastName"
           className="w-full sm:w-40"
         />

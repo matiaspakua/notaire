@@ -49,13 +49,13 @@ public class SubstitutionPersistenceAdapter implements SubstitutionRepositoryPor
     }
 
     @Override
-    public List<Substitution> findByFkIdSubstitute(Person suplente) {
-        return substitutionRepository.findByFkIdSubstitute(suplente);
+    public List<Substitution> findByFkIdSubstitute(Person substitute) {
+        return substitutionRepository.findByFkIdSubstitute(substitute);
     }
 
     @Override
-    public List<Substitution> findByFkIdSubstituteIdPerson(Integer idSuplente) {
-        return substitutionRepository.findByFkIdSubstituteIdPerson(idSuplente);
+    public List<Substitution> findByFkIdSubstituteIdPerson(Integer substituteId) {
+        return substitutionRepository.findByFkIdSubstituteIdPerson(substituteId);
     }
 
     @Override

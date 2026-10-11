@@ -50,9 +50,9 @@ import org.springframework.data.domain.Persistable;
  * budgets. {@code DeedManagement} and {@code Procedure} together are the
  * management.
  * <p>
- * A management can involve several clients. The {@code tramites_personas}
- * table stores that link. {@code personasList} is the persistence mapping for
- * that table.
+ * A management can involve several clients. The {@code person_procedures}
+ * table stores that link. {@code personProcedureList} is the persistence mapping
+ * for that table.
  *
  * @author juanca
  */

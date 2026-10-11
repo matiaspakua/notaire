@@ -69,7 +69,7 @@ export default function TestimoniesPage() {
     }
   }
 
-  async function handleDescargarCopia(testimony: Testimony) {
+  async function handleDownloadCopy(testimony: Testimony) {
     try {
       setDownloadingId(testimony.idTestimony!);
       await downloadTestimonyCopy(testimony.idTestimony!);
@@ -111,7 +111,7 @@ export default function TestimoniesPage() {
             <Button
               size="sm"
               variant="ghost"
-              onClick={() => handleDescargarCopia(te)}
+              onClick={() => handleDownloadCopy(te)}
               disabled={downloadingId === te.idTestimony}
               aria-label={t("emitirCopia")}
               data-testid={`btn-issue-copy-${te.idTestimony}`}

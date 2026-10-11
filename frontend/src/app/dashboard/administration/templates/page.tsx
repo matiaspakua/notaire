@@ -131,8 +131,8 @@ export default function TemplatesPage() {
     setSaving(true);
     try {
       // The backend derives the composite PK from the related entities. It reads
-      // ProcedureType via getIdTipoTramite(), so the relation must carry the
-      // `idTypeProcedure` key (the typed field is idTipoDeTramite — hence the cast).
+      // ProcedureType via getIdProcedureType(), so the relation must carry the
+      // idProcedureType key.
       const body: BudgetTemplate = {
         budgetTemplatePK: { fkIdProcedureType: tt, fkIdConcept: cc },
         procedureType: { idProcedureType: tt },

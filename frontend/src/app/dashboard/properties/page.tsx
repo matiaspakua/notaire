@@ -35,11 +35,11 @@ export default function PropertiesPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Property | null>(null);
   const [form, setForm] = useState({
-    cadastralDesignationCatastral: "",
-    domicilio: "",
-    valuacionFiscal: "",
+    cadastralDesignation: "",
+    address: "",
+    fiscalAppraisal: "",
     notes: "",
-    matricula: "",
+    registrationNumber: "",
     tomoFolioFinca: "",
     linderos: "",
   });
@@ -47,11 +47,11 @@ export default function PropertiesPage() {
   function openCreate() {
     setEditing(null);
     setForm({
-      cadastralDesignationCatastral: "",
-      domicilio: "",
-      valuacionFiscal: "",
+      cadastralDesignation: "",
+      address: "",
+      fiscalAppraisal: "",
       notes: "",
-      matricula: "",
+      registrationNumber: "",
       tomoFolioFinca: "",
       linderos: "",
     });
@@ -61,11 +61,11 @@ export default function PropertiesPage() {
   function openEdit(i: Property) {
     setEditing(i);
     setForm({
-      cadastralDesignationCatastral: i.cadastralDesignation ?? "",
-      domicilio: i.address ?? "",
-      valuacionFiscal: i.fiscalAppraisal !== undefined ? String(i.fiscalAppraisal) : "",
+      cadastralDesignation: i.cadastralDesignation ?? "",
+      address: i.address ?? "",
+      fiscalAppraisal: i.fiscalAppraisal !== undefined ? String(i.fiscalAppraisal) : "",
       notes: i.notes ?? "",
-      matricula: i.registrationNumber ?? "",
+      registrationNumber: i.registrationNumber ?? "",
       tomoFolioFinca: i.volumeFolioLandRecord ?? "",
       linderos: i.boundaries ?? "",
     });
@@ -75,11 +75,11 @@ export default function PropertiesPage() {
   async function handleSave() {
     try {
       const payload = {
-        cadastralDesignation: form.cadastralDesignationCatastral,
-        address: form.domicilio,
+        cadastralDesignation: form.cadastralDesignation,
+        address: form.address,
         notes: form.notes,
-        fiscalAppraisal: form.valuacionFiscal === "" ? undefined : Number(form.valuacionFiscal),
-        registrationNumber: form.matricula || undefined,
+        fiscalAppraisal: form.fiscalAppraisal === "" ? undefined : Number(form.fiscalAppraisal),
+        registrationNumber: form.registrationNumber || undefined,
         volumeFolioLandRecord: form.tomoFolioFinca || undefined,
         boundaries: form.linderos || undefined,
       };
@@ -181,16 +181,16 @@ export default function PropertiesPage() {
               <FormField label={t("fields.nomenclatura")} required>
                 <Input
                   data-testid="input-nomenclatura"
-                  value={form.cadastralDesignationCatastral}
-                  onChange={(e) => setForm({ ...form, cadastralDesignationCatastral: e.target.value })}
+                  value={form.cadastralDesignation}
+                  onChange={(e) => setForm({ ...form, cadastralDesignation: e.target.value })}
                   placeholder={t("fields.nomenclaturaPlaceholder")}
                 />
               </FormField>
               <FormField label={t("fields.domicilio")}>
                 <Input
-                  data-testid="input-domicilio"
-                  value={form.domicilio}
-                  onChange={(e) => setForm({ ...form, domicilio: e.target.value })}
+                  data-testid="input-address"
+                  value={form.address}
+                  onChange={(e) => setForm({ ...form, address: e.target.value })}
                   placeholder={t("fields.domicilioPlaceholder")}
                 />
               </FormField>
@@ -198,8 +198,8 @@ export default function PropertiesPage() {
                 <Input
                   type="number"
                   data-testid="input-valuacion-fiscal"
-                  value={form.valuacionFiscal}
-                  onChange={(e) => setForm({ ...form, valuacionFiscal: e.target.value })}
+                  value={form.fiscalAppraisal}
+                  onChange={(e) => setForm({ ...form, fiscalAppraisal: e.target.value })}
                 />
               </FormField>
               <FormField label={tc("observations")}>
@@ -212,9 +212,9 @@ export default function PropertiesPage() {
             <FormSection title={t("registralData")}>
               <FormField label={t("fields.matricula")}>
                 <Input
-                  data-testid="input-matricula"
-                  value={form.matricula}
-                  onChange={(e) => setForm({ ...form, matricula: e.target.value })}
+                  data-testid="input-registration-number"
+                  value={form.registrationNumber}
+                  onChange={(e) => setForm({ ...form, registrationNumber: e.target.value })}
                 />
               </FormField>
               <FormField label={t("fields.tomoFolioFinca")}>
@@ -243,8 +243,8 @@ export default function PropertiesPage() {
                 disabled={
                   createMutation.isPending ||
                   updateMutation.isPending ||
-                  // The cadastralDesignation catastral identifies the property (CU69, #655).
-                  !form.cadastralDesignationCatastral.trim()
+                  // The cadastral designation identifies the property (CU69, #655).
+                  !form.cadastralDesignation.trim()
                 }
               >
                 {editing ? tc("update") : tc("create")}

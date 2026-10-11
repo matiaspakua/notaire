@@ -226,7 +226,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
         }
     }
 
-    public boolean updateFolioFull(Folio folioModificado) throws ClassModifiedException
+    public boolean updateFolioFull(Folio updatedFolio) throws ClassModifiedException
     {
         boolean result = false;
 
@@ -236,12 +236,12 @@ public class FolioJpaController implements Serializable, JpaPersistence
 
         em = getEntityManager();
         em.getTransaction().begin();
-        Folio persistentFolio = em.find(Folio.class, folioModificado.getIdFolio());
+        Folio persistentFolio = em.find(Folio.class, updatedFolio.getIdFolio());
 
         if (persistentFolio != null)
         {
             version = persistentFolio.getVersion();
-            oldVersion = folioModificado.getVersion();
+            oldVersion = updatedFolio.getVersion();
 
             if (version != oldVersion) // Versions differ: someone else modified the object
             {
@@ -252,12 +252,12 @@ public class FolioJpaController implements Serializable, JpaPersistence
                 throw new ClassModifiedException();
             } else
             {
-                persistentFolio.setYear(folioModificado.getYear());
-                persistentFolio.setStatus(folioModificado.getStatus());
-//                persistentFolio.setFkIdPersonaEscribano(folioModificado.getFkIdPersonaEscribano());
-//                persistentFolio.setFkIdTipoFolio(folioModificado.getFkIdTipoFolio());
-                persistentFolio.setNumber(folioModificado.getNumber());
-                persistentFolio.setNotes(folioModificado.getNotes());
+                persistentFolio.setYear(updatedFolio.getYear());
+                persistentFolio.setStatus(updatedFolio.getStatus());
+//                persistentFolio.setFkIdNotaryPerson(updatedFolio.getFkIdNotaryPerson());
+//                persistentFolio.setFkIdFolioType(updatedFolio.getFkIdFolioType());
+                persistentFolio.setNumber(updatedFolio.getNumber());
+                persistentFolio.setNotes(updatedFolio.getNotes());
 
                 em.getTransaction().commit();
 

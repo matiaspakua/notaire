@@ -21,9 +21,9 @@ public interface SubstitutionRepository extends JpaRepository<Substitution, Inte
     @Query("SELECT s FROM Substitution s JOIN FETCH s.fkIdSubstitute JOIN FETCH s.fkIdSubstituted")
     List<Substitution> findAllWithPersons();
 
-    List<Substitution> findByFkIdSubstitute(Person suplente);
+    List<Substitution> findByFkIdSubstitute(Person substitute);
 
-    List<Substitution> findByFkIdSubstituteIdPerson(Integer idSuplente);
+    List<Substitution> findByFkIdSubstituteIdPerson(Integer substituteId);
 
     List<Substitution> findByFkIdSubstituted(Person suplantado);
 

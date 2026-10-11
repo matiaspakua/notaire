@@ -46,9 +46,9 @@ public class TestimonyMovementService {
     }
 
     /**
-     * Presents a verified testimony for inscription, registering the date of ingreso.
+     * Presents a verified testimony for inscription, registering the entry date.
      *
-     * @param idTestimonio the testimony ID
+     * @param idTestimony the testimony ID
      * @return the created movement
      * @throws ResourceNotFoundException if not testimony with the given ID exists
      * @throws BusinessValidationException if the testimony is not verified, or already has an open movement
@@ -58,12 +58,12 @@ public class TestimonyMovementService {
                 .orElseThrow(() -> new ResourceNotFoundException("Testimony not found with ID: " + idTestimony));
 
         if (!testimony.getVerified()) {
-            throw new BusinessValidationException("The testimony must be verified for enter registration");
+            throw new BusinessValidationException("The testimony must be verified before registration entry");
         }
 
-        TestimonyMovement ultimo = lastMovement(idTestimony);
-        if (ultimo != null && ultimo.getDateExit() == null) {
-            throw new BusinessValidationException("The testimony already is in procedure of registration");
+        TestimonyMovement latest = lastMovement(idTestimony);
+        if (latest != null && latest.getDateExit() == null) {
+            throw new BusinessValidationException("The testimony is already in registration");
         }
 
         TestimonyMovement movement = new TestimonyMovement();
@@ -86,7 +86,7 @@ public class TestimonyMovementService {
         requireTestimonyExists(idTestimony);
         TestimonyMovement movement = Optional.ofNullable(lastMovement(idTestimony))
                 .orElseThrow(() -> new BusinessValidationException(
-                        "Falta the ingreso a registration of the testimony antes of record the registration"));
+                        "Record the registration entry before recording the inscription"));
 
         movement.setRegistered(true);
         movement.setDateRegistration(new Date());
@@ -126,26 +126,26 @@ public class TestimonyMovementService {
      * @return the newly created movement
      * @throws ResourceNotFoundException if not testimony with the given ID exists
      * @throws BusinessValidationException if the testimony was not previously withdrawn, or the reentry is
-     *         observed without observaciones
+     *         observed without notes
      */
     public TestimonyMovement reenter(Integer idTestimony, TestimonyReentry reentry) {
         requireTestimonyExists(idTestimony);
-        TestimonyMovement ultimo = lastMovement(idTestimony);
-        if (ultimo == null || ultimo.getDateExit() == null) {
-            throw new BusinessValidationException("The testimony was not retirado, not can reenter");
+        TestimonyMovement latest = lastMovement(idTestimony);
+        if (latest == null || latest.getDateExit() == null) {
+            throw new BusinessValidationException("The testimony was not withdrawn and cannot be re-entered");
         }
         if (reentry.isMissingRequiredNotes()) {
-            throw new BusinessValidationException("The reentry observado requires notes");
+            throw new BusinessValidationException("An observed re-entry requires notes");
         }
 
-        TestimonyMovement nuevo = new TestimonyMovement();
-        nuevo.setTestimony(ultimo.getTestimony());
-        nuevo.setDateEntry(new Date());
-        nuevo.setCardNumber(reentry.cardNumber());
-        nuevo.setObservedByRegistry(reentry.observedByRegistry());
-        nuevo.setNotes(reentry.notes());
+        TestimonyMovement created = new TestimonyMovement();
+        created.setTestimony(latest.getTestimony());
+        created.setDateEntry(new Date());
+        created.setCardNumber(reentry.cardNumber());
+        created.setObservedByRegistry(reentry.observedByRegistry());
+        created.setNotes(reentry.notes());
 
         log.info("Re-entering testimony id: {}", idTestimony);
-        return testimonyMovementRepository.save(nuevo);
+        return testimonyMovementRepository.save(created);
     }
 }

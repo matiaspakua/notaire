@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English testimony messages and leftover identifiers** (#1490, CU75):
+  Testimony movement errors say withdrawn, registration entry, and observed
+  re-entry. Substitute lookup parameters, folio and procedure update locals,
+  property form state, and audit page components use English names. Message
+  keys such as `fields.valuacionFiscal`, `fields.domicilio`, and
+  `fields.matricula` stay. The deprecated JSON field `saldo` stays.
 - **English test identifiers for templates, substitutions, and properties** (#1490, CU75):
   Java test locals and method names use template, substitute, property, budget,
   procedure, and amount. Fixture notes asserted by those tests use the same

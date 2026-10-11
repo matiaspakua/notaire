@@ -359,7 +359,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         return modified;
     }
 
-    public Boolean editProcedure(Procedure procedureModificado)
+    public Boolean editProcedure(Procedure updatedProcedure)
     {
         Boolean modified = Boolean.FALSE;
 
@@ -369,10 +369,10 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
 
             em.getTransaction().begin();
 
-            Procedure procedureViejo = em.find(Procedure.class, procedureModificado.getIdProcedure());
+            Procedure existingProcedure = em.find(Procedure.class, updatedProcedure.getIdProcedure());
 
-            procedureViejo.setFkIdManagement(procedureModificado.getFkIdManagement());
-            procedureViejo.setFkIdDeed(procedureModificado.getFkIdDeed());
+            existingProcedure.setFkIdManagement(updatedProcedure.getFkIdManagement());
+            existingProcedure.setFkIdDeed(updatedProcedure.getFkIdDeed());
 
             em.getTransaction().commit();
             em.close();
@@ -385,7 +385,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
         return modified;
     }
 
-    public Boolean editProcedureManagementOnly(Procedure procedureModificado)
+    public Boolean editProcedureManagementOnly(Procedure updatedProcedure)
     {
         Boolean modified = Boolean.FALSE;
 
@@ -395,9 +395,9 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
 
             em.getTransaction().begin();
 
-            Procedure procedureViejo = em.find(Procedure.class, procedureModificado.getIdProcedure());
+            Procedure existingProcedure = em.find(Procedure.class, updatedProcedure.getIdProcedure());
 
-            procedureViejo.setFkIdManagement(procedureModificado.getFkIdManagement());
+            existingProcedure.setFkIdManagement(updatedProcedure.getFkIdManagement());
 
             em.getTransaction().commit();
             em.close();
