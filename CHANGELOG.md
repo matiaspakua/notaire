@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired status log service** (#1490, CU75): the engineering-sequences
+  design names the class CU13 still writes, `ManagementBitacoraService`.
+  The live class is `ManagementStatusLogService`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Retired due-date formula** (#1490, CU75): the engineering-sequences
   design names the formula CU42 still writes,
   `fechaVencimiento = fechaIngreso + diasVencimiento`.
