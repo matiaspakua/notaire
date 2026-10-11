@@ -81,13 +81,13 @@ class ManagementCompleteCaseReadIntegrationTest {
 
     private Integer createManagementStatus() {
         ManagementStatus status = new ManagementStatus();
-        status.setName("Estado 1360");
+        status.setName("Status 1360");
         return managementStatusRepository.save(status).getIdManagementStatus();
     }
 
     private Integer createProcedureType() {
         ProcedureType type = new ProcedureType();
-        type.setName("Tramite 1360");
+        type.setName("Procedure 1360");
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);

@@ -43,7 +43,7 @@ class ManagementQueryServiceTest {
     void setUp() {
         testStatus = new ManagementStatus();
         testStatus.setIdManagementStatus(1);
-        testStatus.setName("INICIADO");
+        testStatus.setName("STARTED");
 
         testManagement = new DeedManagement();
         testManagement.setIdManagement(1);
@@ -100,7 +100,7 @@ class ManagementQueryServiceTest {
                     assertThat(dto.idManagement()).isEqualTo(1);
                     assertThat(dto.number()).isEqualTo(100);
                     assertThat(dto.heading()).isEqualTo("Sale property");
-                    assertThat(dto.currentStatus()).isEqualTo("INICIADO");
+                    assertThat(dto.currentStatus()).isEqualTo("STARTED");
                 });
 
         verify(repository, times(1)).findById(1);

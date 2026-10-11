@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English synthetic status names** (#1490, CU75): the query fixture
+  status is `STARTED`. The repository identification type is
+  `Professional`. The complete-case fixtures are `Status 1360` and
+  `Procedure 1360`. Stored budget status `PENDIENTE` stays, along with
+  identification type `DNI` and stored management status `Iniciada`.
 - **English testing practice names** (#1490, CU75): the master plan
   section is `Identification`. Critical examples include `managements`.
   Process practices are `Organization / knowledge base`, `Identification`,
