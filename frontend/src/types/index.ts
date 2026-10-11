@@ -123,8 +123,8 @@ export interface DocumentType {
 
 export interface ProcedureTemplate {
   notes?: string;
-  tipoDeTramite?: { idProcedureType?: number; name?: string };
-  tipoDeDocumento?: DocumentType;
+  typeDeProcedure?: { idProcedureType?: number; name?: string };
+  typeDeDocument?: DocumentType;
 }
 
 /** GET /api/v1/folio-types — raw FolioType entity. */
@@ -290,7 +290,7 @@ export interface TestimonyMovement {
   testimony?: { idTestimony?: number };
 }
 
-/** CU07/CU08 - Testimony generado a partir de una escritura firmada. */
+/** CU07/CU08 - Testimony generado a partir de una deed firmada. */
 export interface Testimony {
   idTestimony?: number;
   number?: number;
@@ -418,7 +418,7 @@ export interface NavItem {
 // Workflow Trace (dashboard)
 // ──────────────────────────────────────────────
 
-/** A single historial entry for the workflow trace. */
+/** A single history entry for the workflow trace. */
 export interface HistoryEntry {
   idHistory?: number;
   statusManagementId?: number;
@@ -453,7 +453,7 @@ export interface TestimonyMovementEntry {
   returnedObserved?: boolean;
 }
 
-/** CU10 - a single "Entidad Externa" document tracked within a gestión — DtoExternalEntityDocument. */
+/** CU10 - a single "Entity Externa" document tracked within a gestión — DtoExternalEntityDocument. */
 export interface ExternalEntityDocument {
   idSubmittedDocument: number;
   name?: string;
@@ -494,7 +494,7 @@ export interface ExternalEntityDocumentMovementInput {
   delivered?: boolean;
 }
 
-/** CU43 - Tipo de documento requerido por la ProcedureTemplate de un trámite — DtoRequiredDocument. */
+/** CU43 - Tipo de document requerido por la ProcedureTemplate de un trámite — DtoRequiredDocument. */
 export interface RequiredDocument {
   idDocumentType: number;
   name?: string;

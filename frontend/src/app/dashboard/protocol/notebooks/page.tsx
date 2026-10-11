@@ -39,7 +39,7 @@ export default function CuadernosPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [observaciones, setObservaciones] = useState("");
+  const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
@@ -51,7 +51,7 @@ export default function CuadernosPage() {
 
   function openModal() {
     setSelectedIds([]);
-    setObservaciones("");
+    setNotes("");
     setModalOpen(true);
   }
 
@@ -67,7 +67,7 @@ export default function CuadernosPage() {
         idsFolio: selectedIds,
         idNotary: notaryId,
         year: new Date().getFullYear(),
-        notes: observaciones || null,
+        notes: notes || null,
       });
       toast.success(t("created"));
       setModalOpen(false);
@@ -97,7 +97,7 @@ export default function CuadernosPage() {
 
   const columns: Column<Notebook>[] = [
     { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idNotebook}</span>, className: "w-12" },
-    { key: "numero", header: tc("number"), render: (c) => <span className="font-medium">{c.number}</span> },
+    { key: "number", header: tc("number"), render: (c) => <span className="font-medium">{c.number}</span> },
     { key: "anio", header: t("fields.year"), render: (c) => c.year },
     {
       key: "registro",
@@ -166,7 +166,7 @@ export default function CuadernosPage() {
                 </div>
               </FormField>
               <FormField label={t("fields.observaciones")} helperText={t("observacionesHelper")}>
-                <Input value={observaciones} onChange={(e) => setObservaciones(e.target.value)} />
+                <Input value={notes} onChange={(e) => setNotes(e.target.value)} />
               </FormField>
             </FormSection>
             <FormActions align="right">

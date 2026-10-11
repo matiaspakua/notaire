@@ -8,14 +8,14 @@ import { MANAGEMENTS_SORT } from "@/hooks/useManagements";
 import type { ManagementWorkflowTrace } from "@/types";
 
 export const managementWorkflowKeys = {
-  trace: (gestionId: number) => ["gestion-workflow-trace", gestionId] as const,
+  trace: (managementId: number) => ["gestion-workflow-trace", managementId] as const,
 };
 
-export function useManagementWorkflowTrace(gestionId: number | undefined) {
+export function useManagementWorkflowTrace(managementId: number | undefined) {
   return useQuery({
-    queryKey: managementWorkflowKeys.trace(gestionId ?? 0),
-    queryFn: () => apiGet<ManagementWorkflowTrace>(`/managements/${gestionId}/workflow-trace`),
-    enabled: !!gestionId,
+    queryKey: managementWorkflowKeys.trace(managementId ?? 0),
+    queryFn: () => apiGet<ManagementWorkflowTrace>(`/managements/${managementId}/workflow-trace`),
+    enabled: !!managementId,
   });
 }
 
@@ -24,8 +24,8 @@ export const LATEST_TRACE_CANDIDATES = 20;
 /** Traces requested at once while looking. */
 const TRACE_BATCH = 5;
 
-export interface LatestTracedGestion {
-  gestionId: number;
+export interface LatestTracedManagement {
+  managementId: number;
   trace: ManagementWorkflowTrace;
 }
 
@@ -35,7 +35,7 @@ export interface LatestTracedGestion {
  * managements in small parallel batches and keeps the first that has one.
  * Null when none of the newest LATEST_TRACE_CANDIDATES has a workflow.
  */
-export async function findLatestTracedGestion(): Promise<LatestTracedGestion | null> {
+export async function findLatestTracedManagement(): Promise<LatestTracedManagement | null> {
   const page = await apiGetPage<{ idManagement?: number }>("/managements", {
     page: 0,
     size: LATEST_TRACE_CANDIDATES,
@@ -49,7 +49,7 @@ export async function findLatestTracedGestion(): Promise<LatestTracedGestion | n
     );
     const hit = results.findIndex((r) => r.status === "fulfilled");
     if (hit >= 0) {
-      return { gestionId: batch[hit], trace: (results[hit] as PromiseFulfilledResult<ManagementWorkflowTrace>).value };
+      return { managementId: batch[hit], trace: (results[hit] as PromiseFulfilledResult<ManagementWorkflowTrace>).value };
     }
   }
   return null;
@@ -58,7 +58,7 @@ export async function findLatestTracedGestion(): Promise<LatestTracedGestion | n
 export function useLatestTracedManagement(enabled = true) {
   return useQuery({
     queryKey: ["gestion-workflow-trace", "latest"] as const,
-    queryFn: findLatestTracedGestion,
+    queryFn: findLatestTracedManagement,
     enabled,
     staleTime: 30_000,
   });

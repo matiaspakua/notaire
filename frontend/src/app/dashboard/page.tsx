@@ -38,18 +38,18 @@ export default function DashboardPage() {
   const locale = useLocale();
   const { user, isAdmin } = useAuthStore();
   // Only the totals are needed: size=1 pages, never the lists (#1340, #1358).
-  const gestionesPage = useManagementsPage({ page: 0, size: 1 });
-  const personasPage = usePeoplePage({ page: 0, size: 1 });
-  const presupuestosPage = useBudgetsPage({ page: 0, size: 1 });
+  const managementsPage = useManagementsPage({ page: 0, size: 1 });
+  const peoplePage = usePeoplePage({ page: 0, size: 1 });
+  const budgetsPage = useBudgetsPage({ page: 0, size: 1 });
 
   // One config for the sidebar and this grid (#1367).
   const visibleModules = DASHBOARD_MODULES.filter((m) => !m.adminOnly || isAdmin());
   const dateLocale = locale === "en" ? "en-US" : "es-AR";
 
   const stats = [
-    { labelKey: "gestiones.label", query: gestionesPage, icon: FolderKanban, tint: "bg-primary/10", iconColor: "text-primary" },
-    { labelKey: "personas.label", query: personasPage, icon: Users, tint: "bg-primary/10", iconColor: "text-primary" },
-    { labelKey: "presupuestos.label", query: presupuestosPage, icon: Calculator, tint: "bg-primary/10", iconColor: "text-primary" },
+    { labelKey: "gestiones.label", query: managementsPage, icon: FolderKanban, tint: "bg-primary/10", iconColor: "text-primary" },
+    { labelKey: "personas.label", query: peoplePage, icon: Users, tint: "bg-primary/10", iconColor: "text-primary" },
+    { labelKey: "presupuestos.label", query: budgetsPage, icon: Calculator, tint: "bg-primary/10", iconColor: "text-primary" },
   ] as const;
 
   return (

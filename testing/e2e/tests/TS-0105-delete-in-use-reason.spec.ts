@@ -1,7 +1,7 @@
 /**
  * TS-0105 - Delete failures show why (issue #1345)
  *
- * Covers: CU76 (RF-38 Modificación de clientes, RF-53 Administrar tablas base)
+ * Covers: CU76 (RF-38 Modificación de clients, RF-53 Administrar tablas base)
  * Issue: #1345 — delete handlers toasted a generic "Error al eliminar" and hid
  * the backend's 409 "in use" reason.
  *

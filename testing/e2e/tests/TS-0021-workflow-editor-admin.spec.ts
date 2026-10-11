@@ -41,11 +41,11 @@ test.describe("CU70 - Workflow manager (CRUD)", () => {
   });
 
   test("can create a new workflow", async ({ page }) => {
-    const nombre = `Test Workflow E2E ${Date.now()}`;
+    const name = `Test Workflow E2E ${Date.now()}`;
     await page.getByTestId("btn-new-workflow").click();
-    await page.getByTestId("input-name-workflow").fill(nombre);
+    await page.getByTestId("input-name-workflow").fill(name);
     await page.getByTestId("btn-save-workflow").click();
-    await expect(page.getByText(nombre)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(name)).toBeVisible({ timeout: 5000 });
   });
 });
 

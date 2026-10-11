@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FormContainer, FormSection, FormField, FormActions, CheckboxField } from "@/theme/form-patterns";
 import {
   usePeoplePage,
-  fetchPersona,
+  fetchPerson,
   useCreatePerson,
   useUpdatePerson,
   useDeletePerson,
@@ -23,7 +23,7 @@ import {
 } from "@/hooks/usePeople";
 import { useClampPage, useUrlPagination } from "@/hooks/useUrlPagination";
 import { fullName } from "@/lib/utils";
-import { presentPersonaSaveError } from "@/lib/person-save-error";
+import { presentPersonSaveError } from "@/lib/person-save-error";
 import type { Person } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { defaultIdentificationTypeId, useIdentificationTypes } from "@/hooks/useIdentificationTypes";
@@ -38,15 +38,15 @@ const EMPTY: Partial<Person> = {
   isClient: false,
 };
 
-export default function PersonasPage() {
+export default function PeoplePage() {
   return (
     <Suspense>
-      <PersonasList />
+      <PeopleList />
     </Suspense>
   );
 }
 
-function PersonasList() {
+function PeopleList() {
   const t = useTranslations("personas");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -55,7 +55,7 @@ function PersonasList() {
   // to load size=1000 and silently hide everyone after the 1000th person.
   const paging = useUrlPagination();
   const { data: peoplePage, isLoading, isFetching } = usePeoplePage({ page: paging.page, size: paging.size });
-  const personas = peoplePage?.content ?? [];
+  const people = peoplePage?.content ?? [];
   useClampPage(paging, peoplePage?.totalPages);
   const createMutation = useCreatePerson();
   const updateMutation = useUpdatePerson();
@@ -70,18 +70,18 @@ function PersonasList() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  const [searchNombre, setSearchNombre] = useState("");
+  const [searchName, setSearchName] = useState("");
   const [searchApellido, setSearchApellido] = useState("");
   const [searchDni, setSearchDni] = useState("");
-  const [filterClientes, setFilterClientes] = useState(false);
+  const [filterClients, setFilterClients] = useState(false);
 
   // A search goes to GET /people/search (debounced, #1357) and lists every
   // match; without one the table shows the current server page.
   const search = useSearchPeople({
-    firstName: searchNombre,
+    firstName: searchName,
     lastName: searchApellido,
     identificationNumber: searchDni,
-    onlyClients: filterClientes,
+    onlyClients: filterClients,
   });
   const hasSearchCriteria = search.active;
   const searchResults = search.results;
@@ -124,12 +124,12 @@ function PersonasList() {
       }
       setModalOpen(false);
     } catch (err) {
-      presentPersonaSaveError(err, {
+      presentPersonSaveError(err, {
         fallback: t("errorSave"),
         duplicateDocument: t("duplicateDocument"),
         viewExistingLabel: t("viewExisting"),
-        personas: hasSearchCriteria ? searchResults : personas,
-        loadPersona: fetchPersona,
+        people: hasSearchCriteria ? searchResults : people,
+        loadPerson: fetchPerson,
         onViewExisting: openEdit,
         setFieldErrors,
       });
@@ -224,8 +224,8 @@ function PersonasList() {
         <Input
           placeholder={t("searchPlaceholders.nombre")}
           aria-label={t("searchPlaceholders.nombre")}
-          value={searchNombre}
-          onChange={(e) => setSearchNombre(e.target.value)}
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
           data-testid="input-search-firstName"
           className="w-full sm:w-40"
         />
@@ -246,8 +246,8 @@ function PersonasList() {
           className="w-full sm:w-36"
         />
         <Button
-          variant={filterClientes ? "default" : "secondary"}
-          onClick={() => setFilterClientes((v) => !v)}
+          variant={filterClients ? "default" : "secondary"}
+          onClick={() => setFilterClients((v) => !v)}
           data-testid="btn-filter-clients"
           size="sm"
         >
@@ -256,7 +256,7 @@ function PersonasList() {
       </div>
 
       <DataTable
-        data={hasSearchCriteria ? searchResults : personas}
+        data={hasSearchCriteria ? searchResults : people}
         columns={columns}
         isLoading={hasSearchCriteria ? isSearching : isLoading}
         isFetching={hasSearchCriteria ? search.isFetching : isFetching}

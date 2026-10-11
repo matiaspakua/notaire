@@ -1,5 +1,5 @@
 /**
- * Personas search (#1357, RF-39 / RNF-03): debounced, keyed by primitive
+ * People search (#1357, RF-39 / RNF-03): debounced, keyed by primitive
  * params only, and keeps the previous results while the next ones load.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";

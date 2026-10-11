@@ -36,7 +36,7 @@ export default function ProtocoloAuxiliarPage() {
     setCuerpo("");
   }
 
-  async function handleIniciarEscritura() {
+  async function handleStartDeed() {
     if (!selectedFolio) return;
     setSaving(true);
     try {
@@ -62,7 +62,7 @@ export default function ProtocoloAuxiliarPage() {
       render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>,
       className: "w-12",
     },
-    { key: "numero", header: tc("number"), render: (f) => <span className="font-medium">{f.number ?? "—"}</span> },
+    { key: "number", header: tc("number"), render: (f) => <span className="font-medium">{f.number ?? "—"}</span> },
     { key: "tipo", header: tc("type"), render: (f) => f.fkIdFolioType?.name ?? "—" },
     {
       key: "action",
@@ -111,7 +111,7 @@ export default function ProtocoloAuxiliarPage() {
               <Button variant="secondary" onClick={() => setSelectedFolio(null)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleIniciarEscritura} disabled={saving || !cuerpo.trim()}>
+              <Button onClick={handleStartDeed} disabled={saving || !cuerpo.trim()}>
                 {saving ? tc("saving") : tc("create")}
               </Button>
             </FormActions>

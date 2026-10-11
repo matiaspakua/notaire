@@ -1,6 +1,6 @@
 /**
- * Unit tests for useItems hook plus ManagementHistory/Gestiones business logic.
- * Covers CU01, CU39 (Items), CU13, CU53 (ManagementHistory), CU02, CU53 (Gestiones search)
+ * Unit tests for useItems hook plus ManagementHistory/Managements business logic.
+ * Covers CU01, CU39 (Items), CU13, CU53 (ManagementHistory), CU02, CU53 (Managements search)
  */
 import { describe, it, expect } from "vitest";
 import { itemsKeys } from "@/hooks/useItems";
@@ -35,16 +35,16 @@ describe("Item type shape (CU01, CU39)", () => {
   it("item has correct fields", () => {
     const item = {
       idItem: 1,
-      concepto: { idConcepto: 5, nombre: "Honorarios", valor: 100 },
+      concept: { idConcept: 5, name: "Honorarios", valor: 100 },
       cantidad: 2,
       precio: 500,
-      presupuesto: { idBudget: 10 },
+      budget: { idBudget: 10 },
     };
     expect(item.idItem).toBe(1);
-    expect(item.concepto.nombre).toBe("Honorarios");
+    expect(item.concept.name).toBe("Honorarios");
     expect(item.cantidad).toBe(2);
     expect(item.precio).toBe(500);
-    expect(item.presupuesto.idBudget).toBe(10);
+    expect(item.budget.idBudget).toBe(10);
   });
 
   it("item subtotal calculation", () => {
@@ -60,13 +60,13 @@ describe("Item type shape (CU01, CU39)", () => {
   });
 
   it("item can have undefined concepto", () => {
-    const item: { idItem?: number; concepto?: unknown } = { idItem: 1 };
-    expect(item.concepto).toBeUndefined();
+    const item: { idItem?: number; concept?: unknown } = { idItem: 1 };
+    expect(item.concept).toBeUndefined();
   });
 
   it("item presupuesto relationship is optional", () => {
-    const item: { idItem?: number; presupuesto?: { idBudget?: number } } = { idItem: 2 };
-    expect(item.presupuesto).toBeUndefined();
+    const item: { idItem?: number; budget?: { idBudget?: number } } = { idItem: 2 };
+    expect(item.budget).toBeUndefined();
   });
 });
 
@@ -77,111 +77,111 @@ describe("Item type shape (CU01, CU39)", () => {
 describe("ManagementHistory type shape (CU13, CU53)", () => {
   it("historial has correct fields", () => {
     const h = {
-      idHistorial: 1,
-      estado: { idEstadoGestion: 2, nombre: "En trámite" },
+      idHistory: 1,
+      estado: { idStatusManagement: 2, name: "En trámite" },
       fecha: "2026-01-15",
-      observaciones: "Iniciado proceso",
+      notes: "Iniciado proceso",
     };
-    expect(h.idHistorial).toBe(1);
-    expect(h.estado.nombre).toBe("En trámite");
+    expect(h.idHistory).toBe(1);
+    expect(h.estado.name).toBe("En trámite");
     expect(h.fecha).toBe("2026-01-15");
   });
 
   it("latest historial is determined by most recent fecha", () => {
     const historiales = [
-      { idHistorial: 1, fecha: "2026-01-01", estado: { nombre: "Iniciado" } },
-      { idHistorial: 2, fecha: "2026-03-15", estado: { nombre: "En revisión" } },
-      { idHistorial: 3, fecha: "2026-02-10", estado: { nombre: "Pausado" } },
+      { idHistory: 1, fecha: "2026-01-01", estado: { name: "Iniciado" } },
+      { idHistory: 2, fecha: "2026-03-15", estado: { name: "En revisión" } },
+      { idHistory: 3, fecha: "2026-02-10", estado: { name: "Pausado" } },
     ];
     const sorted = [...historiales].sort((a, b) =>
       new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
     );
-    expect(sorted[0].estado.nombre).toBe("En revisión");
+    expect(sorted[0].estado.name).toBe("En revisión");
   });
 
   it("empty historialList returns undefined estado", () => {
-    const gestion: { historialList: Array<{ estado?: { nombre?: string } }> } = { historialList: [] };
-    const estado = gestion.historialList.length > 0
-      ? gestion.historialList[0].estado
+    const management: { historyList: Array<{ estado?: { name?: string } }> } = { historyList: [] };
+    const estado = management.historyList.length > 0
+      ? management.historyList[0].estado
       : undefined;
     expect(estado).toBeUndefined();
   });
 });
 
 // ──────────────────────────────────────────────
-// Gestiones search filter logic
+// Managements search filter logic
 // ──────────────────────────────────────────────
 
 describe("Gestiones search filter (CU02, CU53)", () => {
-  const gestiones = [
+  const managements = [
     {
-      idGestion: 1,
-      numero: 1001,
-      tramiteList: [],
-      historialList: [{ estado: { nombre: "Activo" }, fecha: "2026-01-01" }],
+      idManagement: 1,
+      number: 1001,
+      procedureList: [],
+      historyList: [{ estado: { name: "Activo" }, fecha: "2026-01-01" }],
     },
     {
-      idGestion: 2,
-      numero: 1002,
-      tramiteList: [{ idTramite: 1 }],
-      historialList: [{ estado: { nombre: "Cerrado" }, fecha: "2026-02-01" }],
+      idManagement: 2,
+      number: 1002,
+      procedureList: [{ idProcedure: 1 }],
+      historyList: [{ estado: { name: "Cerrado" }, fecha: "2026-02-01" }],
     },
     {
-      idGestion: 3,
-      numero: 2001,
-      tramiteList: [],
-      historialList: [],
+      idManagement: 3,
+      number: 2001,
+      procedureList: [],
+      historyList: [],
     },
   ];
 
-  function getEstadoActual(g: typeof gestiones[0]): string | undefined {
-    if (!g.historialList || g.historialList.length === 0) return undefined;
-    return g.historialList[0]?.estado?.nombre;
+  function getEstadoActual(g: typeof managements[0]): string | undefined {
+    if (!g.historyList || g.historyList.length === 0) return undefined;
+    return g.historyList[0]?.estado?.name;
   }
 
-  function filterGestiones(list: typeof gestiones, numero: string, estado: string) {
+  function filterManagements(list: typeof managements, number: string, estado: string) {
     return list.filter((g) => {
-      const matchNumero = !numero || g.numero?.toString().includes(numero);
+      const matchNumber = !number || g.number?.toString().includes(number);
       const matchEstado =
         !estado ||
         getEstadoActual(g)?.toLowerCase().includes(estado.toLowerCase());
-      return matchNumero && matchEstado;
+      return matchNumber && matchEstado;
     });
   }
 
   it("no filters returns all gestiones", () => {
-    expect(filterGestiones(gestiones, "", "")).toHaveLength(3);
+    expect(filterManagements(managements, "", "")).toHaveLength(3);
   });
 
   it("filter by numero partial match", () => {
-    expect(filterGestiones(gestiones, "100", "")).toHaveLength(2);
+    expect(filterManagements(managements, "100", "")).toHaveLength(2);
   });
 
   it("filter by exact numero", () => {
-    expect(filterGestiones(gestiones, "2001", "")).toHaveLength(1);
+    expect(filterManagements(managements, "2001", "")).toHaveLength(1);
   });
 
   it("filter by estado activo", () => {
-    expect(filterGestiones(gestiones, "", "activ")).toHaveLength(1);
+    expect(filterManagements(managements, "", "activ")).toHaveLength(1);
   });
 
   it("filter by estado cerrado", () => {
-    expect(filterGestiones(gestiones, "", "cerrad")).toHaveLength(1);
+    expect(filterManagements(managements, "", "cerrad")).toHaveLength(1);
   });
 
   it("combined numero + estado filter", () => {
-    const result = filterGestiones(gestiones, "1001", "activ");
+    const result = filterManagements(managements, "1001", "activ");
     expect(result).toHaveLength(1);
-    expect(result[0].idGestion).toBe(1);
+    expect(result[0].idManagement).toBe(1);
   });
 
   it("no match returns empty", () => {
-    expect(filterGestiones(gestiones, "9999", "")).toHaveLength(0);
+    expect(filterManagements(managements, "9999", "")).toHaveLength(0);
   });
 });
 
 // ──────────────────────────────────────────────
-// Estado badge logic for gestiones
+// Estado badge logic for managements
 // ──────────────────────────────────────────────
 
 describe("Gestión estado badge logic", () => {

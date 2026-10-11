@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English page-local identifiers** (#1490, CU75): frontend and Playwright locals,
+  parameters, and component names use English stems (`managementId`, `number`,
+  `PeoplePage`). Message catalog keys, `{numero}` / `{dias}` / `{tramite}`
+  placeholders, stored status labels, and JSON names that are still Spanish
+  (`documentsNecesarios`, `listaClientesInvolucrados`) stay as recorded.
 - **English `data-testid` values** (#1490, CU75): dashboard controls and the Playwright
   specs that look them up use English ids (`btn-new-budget`, `btn-save-management`,
   `select-procedure-type`). Message catalog keys are unchanged.

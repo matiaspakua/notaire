@@ -93,13 +93,13 @@ test.describe("Workflow hero shows the newest case (#1347)", () => {
     await createWorkflowNode(page, workflow.data!.id, estado.data!.idManagementStatus, "INITIAL");
     const tipo = await createProcedureType(page);
     await assignWorkflowToProcedureType(page, tipo.data!.idProcedureType, workflow.data!.id);
-    const gestion = await createCompleteCaseManagement(page, {
+    const management = await createCompleteCaseManagement(page, {
       budgetId: budget.data!.idBudget,
       procedureTypeId: tipo.data!.idProcedureType,
       statusManagementId: estado.data!.idManagementStatus,
     });
-    expect(gestion.ok, gestion.error).toBe(true);
-    const trace = await apiGet(page, `/managements/${gestion.data!.idManagement}/workflow-trace`);
+    expect(management.ok, management.error).toBe(true);
+    const trace = await apiGet(page, `/managements/${management.data!.idManagement}/workflow-trace`);
     expect(trace.ok, trace.error).toBe(true);
 
     await page.goto("/dashboard");
@@ -107,7 +107,7 @@ test.describe("Workflow hero shows the newest case (#1347)", () => {
     await expect(page.getByTestId("workflow-tracker")).toBeVisible({ timeout: 15000 });
     const shown = Number(await hero.getAttribute("data-management-id"));
     // Parallel workers may create newer cases; the oldest (seed 1001) must never win.
-    expect(shown).toBeGreaterThanOrEqual(gestion.data!.idManagement);
+    expect(shown).toBeGreaterThanOrEqual(management.data!.idManagement);
     await expect(page.getByTestId("workflow-subtitle")).toContainText("#");
   });
 

@@ -1,5 +1,5 @@
 /**
- * React Query hooks for DocumentType (CU27, CU65 — Tipos de documento).
+ * React Query hooks for DocumentType (CU27, CU65 — Tipos de document).
  * Endpoint: GET/POST/PUT/DELETE /api/v1/document-types
  */
 import { useQuery } from "@tanstack/react-query";

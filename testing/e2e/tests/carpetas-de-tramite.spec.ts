@@ -39,8 +39,8 @@ async function findEstadoArchivada(page: Page): Promise<{ idManagementStatus: nu
 
 /** Seeds a gestión whose workflow allows a direct transition to "Archivada". */
 async function seedArchivableManagement(page: Page) {
-  const persona = await createPerson(page);
-  const presupuesto = await createBudget(page, persona.data!.personId);
+  const person = await createPerson(page);
+  const budget = await createBudget(page, person.data!.personId);
 
   const estadoInicial = await createManagementStatus(page);
   const estadoArchivada = await findEstadoArchivada(page);
@@ -61,16 +61,16 @@ async function seedArchivableManagement(page: Page) {
   );
   await createWorkflowTransition(page, workflowId, nodoInicial.data!.id, nodoArchivada.data!.id);
 
-  const tipoTramite = await createProcedureType(page);
-  await assignWorkflowToProcedureType(page, tipoTramite.data!.idProcedureType, workflowId);
+  const typeProcedure = await createProcedureType(page);
+  await assignWorkflowToProcedureType(page, typeProcedure.data!.idProcedureType, workflowId);
 
-  const gestion = await createCompleteCaseManagement(page, {
-    budgetId: presupuesto.data!.idBudget,
-    procedureTypeId: tipoTramite.data!.idProcedureType,
+  const management = await createCompleteCaseManagement(page, {
+    budgetId: budget.data!.idBudget,
+    procedureTypeId: typeProcedure.data!.idProcedureType,
     statusManagementId: estadoInicial.data!.idManagementStatus,
   });
 
-  return { idGestion: gestion.data!.idManagement, numero: gestion.data!.number };
+  return { idManagement: management.data!.idManagement, number: management.data!.number };
 }
 
 test.describe("CU85 - Administrar Carpetas de Trámite", () => {
@@ -81,15 +81,15 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
   test("golden path: iniciar trámite genera carpeta activa, se pone en espera y se archiva con la gestión", async ({
     page,
   }) => {
-    const { idGestion, numero } = await seedArchivableManagement(page);
+    const { idManagement, number } = await seedArchivableManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idManagement}`).click();
     let dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
@@ -102,12 +102,12 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     await dialog.getByTestId("btn-confirm-espera").click();
     await expect(dialog).not.toBeVisible();
 
-    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idManagement}`).click();
     dialog = page.getByRole("dialog");
     await expect(dialog.getByTestId("folder-item").first()).toContainText("Espera");
     await page.keyboard.press("Escape");
 
-    await page.getByTestId(`btn-archive-management-${idGestion}`).click();
+    await page.getByTestId(`btn-archive-management-${idManagement}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
     await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
@@ -115,21 +115,21 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     await confirmDialog.getByRole("button", { name: /archive de todos modos/i }).click();
     await expect(confirmDialog).not.toBeVisible();
 
-    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idManagement}`).click();
     dialog = page.getByRole("dialog");
     await expect(dialog.getByTestId("folder-item").first()).toContainText("Archivada");
   });
 
   test("edge path: poner en espera sin motivo muestra un error visible", async ({ page }) => {
-    const { idGestion, numero } = await seedArchivableManagement(page);
+    const { idManagement, number } = await seedArchivableManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idManagement}`).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
@@ -144,15 +144,15 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
   test("edge path: archivar una gestión con carpeta en espera exige confirmación explícita", async ({
     page,
   }) => {
-    const { idGestion, numero } = await seedArchivableManagement(page);
+    const { idManagement, number } = await seedArchivableManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-view-folders-${idGestion}`).click();
+    await page.getByTestId(`btn-view-folders-${idManagement}`).click();
     let dialog = page.getByRole("dialog");
     await dialog.getByTestId(/^btn-poner-en-espera-/).click();
     dialog = page.getByRole("dialog");
@@ -161,7 +161,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     await expect(dialog).not.toBeVisible();
     await page.keyboard.press("Escape");
 
-    await page.getByTestId(`btn-archive-management-${idGestion}`).click();
+    await page.getByTestId(`btn-archive-management-${idManagement}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
     await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
@@ -175,16 +175,16 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
     test(`carpetas dialog is usable at ${viewport.label}`, async ({ page }) => {
-      const { idGestion, numero } = await seedArchivableManagement(page);
+      const { idManagement, number } = await seedArchivableManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto("/dashboard/managements");
       await page.waitForLoadState("domcontentloaded");
 
-      const row = listRow(page, new RegExp(String(numero)));
+      const row = listRow(page, new RegExp(String(number)));
       await expect(row).toBeVisible({ timeout: 10000 });
 
-      await page.getByTestId(`btn-view-folders-${idGestion}`).click();
+      await page.getByTestId(`btn-view-folders-${idManagement}`).click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
       await expect(dialog.getByTestId("folder-item").first()).toContainText("Activa");

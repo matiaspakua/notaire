@@ -10,7 +10,7 @@ function camelCase(segment: string): string {
 
 /**
  * Message key for a route segment (#1354). Administration sub-routes have their
- * own labels ("documentos" there means document types); record ids have none.
+ * own labels ("documents" there means document types); record ids have none.
  */
 export function breadcrumbKey(segment: string, parent?: string): string {
   const group = parent === "administration" || parent === "administracion" ? "admin" : "segments";

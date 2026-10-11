@@ -6,7 +6,7 @@ export const registrationDraftKeys = {
   detail: (id: number) => ["minutas-inscripcion", id] as const,
 };
 
-/** CU82 - Consulta una minuta de inscripción por ID. */
+/** CU82 - Consulta una registrationDraft de inscripción por ID. */
 export function useRegistrationDraft(id: number | null) {
   return useQuery({
     queryKey: id ? registrationDraftKeys.detail(id) : ["minutas-inscripcion", "none"],
@@ -15,30 +15,30 @@ export function useRegistrationDraft(id: number | null) {
   });
 }
 
-/** CU82 - Genera la minuta de inscripción para una escritura firmada. */
+/** CU82 - Genera la registrationDraft de inscripción para una deed firmada. */
 export function useGenerateRegistrationDraft() {
   return useMutation({
-    mutationFn: (idEscritura: number) =>
-      apiPost<RegistrationDraft>("/registration-drafts", { idDeed: idEscritura }),
+    mutationFn: (idDeed: number) =>
+      apiPost<RegistrationDraft>("/registration-drafts", { idDeed: idDeed }),
   });
 }
 
-/** CU82 - Registra la presentación de la minuta ante el Registro. */
+/** CU82 - Registra la presentación de la registrationDraft ante el Registro. */
 export function useSubmitRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({
       id,
       fechaPresentacion,
-      numeroEntradaRegistral,
+      numberEntryRegistry,
     }: {
       id: number;
       fechaPresentacion: string;
-      numeroEntradaRegistral: string;
+      numberEntryRegistry: string;
     }) =>
       apiPut<RegistrationDraft>(`/registration-drafts/${id}/submit`, {
         dateSubmission: fechaPresentacion,
-        registryEntryNumber: numeroEntradaRegistral,
+        registryEntryNumber: numberEntryRegistry,
       }),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
@@ -50,43 +50,43 @@ export function useObserveRegistrationDraft() {
   return useMutation({
     mutationFn: ({
       id,
-      observacionesRegistro,
+      notesRegistration,
       fechaSubsanacion,
     }: {
       id: number;
-      observacionesRegistro: string;
+      notesRegistration: string;
       fechaSubsanacion: string;
     }) =>
       apiPut<RegistrationDraft>(`/registration-drafts/${id}/observe`, {
-        registryNotes: observacionesRegistro,
+        registryNotes: notesRegistration,
         dateCorrection: fechaSubsanacion,
       }),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
 }
 
-/** CU82 - Registra la inscripción definitiva de la minuta. */
+/** CU82 - Registra la inscripción definitiva de la registrationDraft. */
 export function useRegisterRegistrationDraft() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({
       id,
       fechaRecepcion,
-      numeroInscripcionDefinitivo,
+      numberRegistrationFinal,
     }: {
       id: number;
       fechaRecepcion: string;
-      numeroInscripcionDefinitivo: string;
+      numberRegistrationFinal: string;
     }) =>
       apiPut<RegistrationDraft>(`/registration-drafts/${id}/register`, {
         dateReception: fechaRecepcion,
-        finalRegistrationNumber: numeroInscripcionDefinitivo,
+        finalRegistrationNumber: numberRegistrationFinal,
       }),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
 }
 
-/** Descarga el formulario normalizado (PDF) de una minuta de inscripción. */
+/** Descarga el formulario normalizado (PDF) de una registrationDraft de inscripción. */
 export async function downloadRegistrationDraftReport(idRegistrationDraft: number): Promise<void> {
   const blob = await apiGetBytes(`/reports/registration-draft/${idRegistrationDraft}`);
   const link = document.createElement("a");

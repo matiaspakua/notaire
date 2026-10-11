@@ -44,7 +44,7 @@ test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
     await page.goto("/dashboard/payments");
     await page.getByTestId("btn-new-payment").click();
     await page.getByTestId("input-amount-payment").fill("999999");
-    // Submit even if presupuesto picker is empty — stub owns the failure.
+    // Submit even if budget picker is empty — stub owns the failure.
     await page.getByRole("button", { name: /crear|create/i }).click();
 
     await expect(

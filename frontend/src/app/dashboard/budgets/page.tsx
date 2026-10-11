@@ -71,38 +71,38 @@ function BudgetsList() {
   const { data: resumen, isLoading: isResumenLoading, error: resumenError } =
     useBudgetSummary(resumenId);
 
-  const [newProcedureTypeId, setTipoTramiteNuevoId] = useState(NO_TEMPLATE);
+  const [newProcedureTypeId, setTypeProcedureNuevoId] = useState(NO_TEMPLATE);
   const [itemsBudgetId, setItemsBudgetId] = useState<number | null>(null);
-  const { data: presupuestoItems = [], isLoading: isItemsLoading } =
+  const { data: budgetItems = [], isLoading: isItemsLoading } =
     useItemsByBudget(itemsBudgetId ?? undefined);
-  const { data: tiposTramite = [] } = useProcedureTypes();
+  const { data: tiposProcedure = [] } = useProcedureTypes();
   const { data: catalogoItems = [] } = useItems();
-  const [selectedProcedureTypeId, setSelectedTipoTramiteId] = useState<string>("");
+  const [selectedProcedureTypeId, setSelectedTypeProcedureId] = useState<string>("");
   const [selectedCatalogItemId, setSelectedCatalogItemId] = useState<string>("");
-  const cargarPlantillaMutation = useLoadItemsFromTemplate();
+  const loadTemplateMutation = useLoadItemsFromTemplate();
   const agregarCatalogoMutation = useAddItemsFromCatalog();
 
   function openItems(p: Budget) {
     setItemsBudgetId(p.idBudget!);
-    setSelectedTipoTramiteId("");
+    setSelectedTypeProcedureId("");
     setSelectedCatalogItemId("");
   }
 
-  async function handleCargarPlantilla() {
+  async function handleLoadTemplate() {
     if (!itemsBudgetId || !selectedProcedureTypeId) return;
     try {
-      await cargarPlantillaMutation.mutateAsync({
+      await loadTemplateMutation.mutateAsync({
         idBudget: itemsBudgetId,
         procedureTypeId: Number(selectedProcedureTypeId),
       });
       toast.success(t("items.loadedFromPlantilla"));
     } catch (e) {
-      // CU39: keep curated Spanish for "no plantilla" (400). Server body is
+      // CU39: keep curated Spanish for "no template" (400). Server body is
       // terse and would otherwise replace items.errorNoPlantilla via extractApiError.
-      const noPlantilla = e instanceof ApiError && e.status === 400;
+      const noTemplate = e instanceof ApiError && e.status === 400;
       presentMutationError(e, {
-        fallback: noPlantilla ? t("items.errorNoPlantilla") : t("items.errorCargar"),
-        preferFallback: noPlantilla,
+        fallback: noTemplate ? t("items.errorNoPlantilla") : t("items.errorCargar"),
+        preferFallback: noTemplate,
       });
     }
   }
@@ -121,7 +121,7 @@ function BudgetsList() {
     }
   }
 
-  const itemsSubtotal = presupuestoItems.reduce((sum, item) => sum + (item.value ?? 0), 0);
+  const itemsSubtotal = budgetItems.reduce((sum, item) => sum + (item.value ?? 0), 0);
 
   const [searchBudget, setSearchBudget] = useState("");
   const [filterEstado, setFilterEstado] = useState<string>("TODOS");
@@ -132,11 +132,11 @@ function BudgetsList() {
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000, so budgets after the 1000th were unreachable.
   const paging = useUrlPagination();
-  const { data: presupuestosPage, isLoading: isLoadingPage, isFetching } = useBudgetsPage(
+  const { data: budgetsPage, isLoading: isLoadingPage, isFetching } = useBudgetsPage(
     { page: paging.page, size: paging.size },
     { enabled: !byStatus && searchId === null },
   );
-  useClampPage(paging, byStatus || searchId !== null ? undefined : presupuestosPage?.totalPages);
+  useClampPage(paging, byStatus || searchId !== null ? undefined : budgetsPage?.totalPages);
 
   // CU60: the backend reads `status`; `estado` was ignored and returned every budget.
   const { data: byEstado = [], isLoading: isLoadingEstado } = useQuery({
@@ -156,7 +156,7 @@ function BudgetsList() {
     enabled: searchId !== null,
   });
 
-  const shown = byStatus ? byEstado : presupuestosPage?.content ?? [];
+  const shown = byStatus ? byEstado : budgetsPage?.content ?? [];
   const isLoading = searchId !== null ? isLoadingId : byStatus ? isLoadingEstado : isLoadingPage;
 
   // A name filters the rows shown (the page or the status list): the backend has
@@ -175,7 +175,7 @@ function BudgetsList() {
 
   function openCreate() {
     setEditing(EMPTY);
-    setTipoTramiteNuevoId(NO_TEMPLATE);
+    setTypeProcedureNuevoId(NO_TEMPLATE);
     setIsEditMode(false);
     setModalOpen(true);
   }
@@ -339,9 +339,9 @@ function BudgetsList() {
         pagination={
           showPagination
             ? {
-                page: presupuestosPage?.number ?? paging.page,
+                page: budgetsPage?.number ?? paging.page,
                 size: paging.size,
-                totalElements: presupuestosPage?.totalElements ?? 0,
+                totalElements: budgetsPage?.totalElements ?? 0,
                 onPageChange: paging.setPage,
                 onSizeChange: paging.setSize,
               }
@@ -381,13 +381,13 @@ function BudgetsList() {
               </FormField>
               {!isEditMode && (
                 <FormField label={t("fields.tipoTramite")} helperText={t("fields.tipoTramiteAyuda")}>
-                  <Select value={newProcedureTypeId} onValueChange={setTipoTramiteNuevoId}>
+                  <Select value={newProcedureTypeId} onValueChange={setTypeProcedureNuevoId}>
                     <SelectTrigger data-testid="select-procedure-type-new">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value={NO_TEMPLATE}>{t("fields.sinPlantilla")}</SelectItem>
-                      {tiposTramite.map((tt) => (
+                      {tiposProcedure.map((tt) => (
                         <SelectItem key={tt.idProcedureType} value={tt.idProcedureType!.toString()}>
                           {tt.name}
                         </SelectItem>
@@ -515,15 +515,15 @@ function BudgetsList() {
             <FormSection title={t("items.plantillaSection")}>
               <FormField
                 label={t("items.selectTipoTramite")}
-                helperText={tiposTramite.length === 0 ? t("items.noTiposTramite") : undefined}
+                helperText={tiposProcedure.length === 0 ? t("items.noTiposTramite") : undefined}
               >
                 <div className="flex gap-2">
-                  <Select value={selectedProcedureTypeId} onValueChange={setSelectedTipoTramiteId}>
-                    <SelectTrigger data-testid="select-procedure-type-items" disabled={tiposTramite.length === 0}>
+                  <Select value={selectedProcedureTypeId} onValueChange={setSelectedTypeProcedureId}>
+                    <SelectTrigger data-testid="select-procedure-type-items" disabled={tiposProcedure.length === 0}>
                       <SelectValue placeholder={t("items.selectTipoTramite")} />
                     </SelectTrigger>
                     <SelectContent>
-                      {tiposTramite.map((tt) => (
+                      {tiposProcedure.map((tt) => (
                         <SelectItem key={tt.idProcedureType} value={tt.idProcedureType!.toString()}>
                           {tt.name}
                         </SelectItem>
@@ -532,8 +532,8 @@ function BudgetsList() {
                   </Select>
                   <Button
                     data-testid="btn-load-template"
-                    disabled={!selectedProcedureTypeId || cargarPlantillaMutation.isPending}
-                    onClick={handleCargarPlantilla}
+                    disabled={!selectedProcedureTypeId || loadTemplateMutation.isPending}
+                    onClick={handleLoadTemplate}
                   >
                     {t("items.cargarPlantilla")}
                   </Button>
@@ -573,7 +573,7 @@ function BudgetsList() {
             <FormSection title={t("items.itemsSection")}>
               {isItemsLoading ? (
                 <p className="text-sm text-muted-foreground">{tc("loading")}</p>
-              ) : presupuestoItems.length === 0 ? (
+              ) : budgetItems.length === 0 ? (
                 <p className="text-sm text-muted-foreground" data-testid="items-empty-data">
                   {t("items.noData")}
                 </p>
@@ -588,7 +588,7 @@ function BudgetsList() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {presupuestoItems.map((item) => (
+                      {budgetItems.map((item) => (
                         <TableRow key={item.idItem}>
                           <TableCell>{item.name}</TableCell>
                           <TableCell>{formatCurrency(item.value)}</TableCell>

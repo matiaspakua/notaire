@@ -83,11 +83,11 @@ async function applyAdminSession(
  */
 export async function authenticateAsAdmin(
   page: Page,
-  nombre: string = "admin",
+  name: string = "admin",
   contrasenia: string = "admin",
 ): Promise<void> {
   const fallbackUser = {
-    name: nombre,
+    name: name,
     type: "ADMIN",
     valid: true,
     idUser: 1,
@@ -100,7 +100,7 @@ export async function authenticateAsAdmin(
   }
 
   const result = await apiPost<LoginResponse>(page, "/users/login", {
-    name: nombre,
+    name: name,
     password: contrasenia,
   });
   const data = result.ok ? result.data : undefined;
@@ -108,7 +108,7 @@ export async function authenticateAsAdmin(
 
   if (token) {
     await applyAdminSession(page, token, {
-      name: data?.name ?? nombre,
+      name: data?.name ?? name,
       type: data?.type ?? "ADMIN",
       valid: true,
       idUser: data?.idUser ?? 1,

@@ -1,9 +1,9 @@
 /**
- * TS-0092 - Efecto práctico de las suplencias en la asignación de gestiones
+ * TS-0092 - Efecto práctico de las substitutions en la asignación de managements
  * CU22 - Registrar Substitution
- * CU59 - Aplicar suplencia a una gestión (redirección automática)
- * CU48 - Dar alta escribano (registro de escribano)
- * CU51 - Modificar escribano (registro de escribano)
+ * CU59 - Aplicar substitution a una gestión (redirección automática)
+ * CU48 - Dar alta notary (registro de notary)
+ * CU51 - Modificar notary (registro de notary)
  * Issue #836
  */
 import { type Page, test, expect } from "@playwright/test";
@@ -26,7 +26,7 @@ async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
-// CU48/CU51 - Registro de escribano en el formulario de personas
+// CU48/CU51 - Registro de notary en el formulario de people
 // ---------------------------------------------------------------------------
 
 test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
@@ -56,11 +56,11 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
   });
 
   test("CU51-GW01: editar persona y modificar su registro de escribano", async ({ page }) => {
-    const persona = await createPerson(page, {
+    const person = await createPerson(page, {
       lastName: `Modif${uniqueId() % 100_000}`,
       identificationNumber: `51${uniqueId() % 10_000_000}`,
     });
-    const apellido = persona.data!.lastName!;
+    const apellido = person.data!.lastName!;
 
     await page.reload();
     await page.waitForLoadState("domcontentloaded");
@@ -81,7 +81,7 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
 });
 
 // ---------------------------------------------------------------------------
-// CU22/CU59 - Redirección automática de la gestión al escribano suplente
+// CU22/CU59 - Redirección automática de la gestión al notary suplente
 // ---------------------------------------------------------------------------
 
 test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () => {
@@ -90,24 +90,24 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
   });
 
   test("GW01: gestión creada para un escribano con suplencia activa se redirige al suplente", async ({ page }) => {
-    const escribano = await createPerson(page, {
+    const notary = await createPerson(page, {
       lastName: `Suplantado${uniqueId() % 100_000}`,
     });
     const suplente = await createPerson(page, {
       lastName: `Suplente${uniqueId() % 100_000}`,
     });
-    const cliente = await createPerson(page, {
+    const client = await createPerson(page, {
       lastName: `Cliente${uniqueId() % 100_000}`,
     });
-    const presupuesto = await createBudget(page, cliente.data!.personId);
+    const budget = await createBudget(page, client.data!.personId);
 
     const hoy = new Date();
     const manana = new Date(hoy.getTime() + 24 * 60 * 60 * 1000);
-    const suplencia = await createSubstitution(page, suplente.data!.personId, escribano.data!.personId, {
+    const substitution = await createSubstitution(page, suplente.data!.personId, notary.data!.personId, {
       dateStart: hoy.toISOString().split("T")[0],
       dateEnd: manana.toISOString().split("T")[0],
     });
-    expect(suplencia.ok).toBe(true);
+    expect(substitution.ok).toBe(true);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -116,8 +116,8 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
     await expect(dialog).toBeVisible();
 
     await page.getByTestId("input-management-number").fill(String(uniqueId() % 1_000_000));
-    await choose(page, "select-presupuesto-gestion", new RegExp(cliente.data!.lastName!, "i"));
-    await choose(page, "select-escribano-gestion", new RegExp(escribano.data!.lastName!, "i"));
+    await choose(page, "select-presupuesto-gestion", new RegExp(client.data!.lastName!, "i"));
+    await choose(page, "select-escribano-gestion", new RegExp(notary.data!.lastName!, "i"));
     await chooseFirst(page, "select-estado-gestion");
     await chooseFirst(page, "select-tipo-tramite-gestion");
 
@@ -132,13 +132,13 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
   });
 
   test("EDGE: gestión creada para un escribano sin suplencia activa no dispara aviso de redirección", async ({ page }) => {
-    const escribano = await createPerson(page, {
+    const notary = await createPerson(page, {
       lastName: `SinSuplencia${uniqueId() % 100_000}`,
     });
-    const cliente = await createPerson(page, {
+    const client = await createPerson(page, {
       lastName: `ClienteNorm${uniqueId() % 100_000}`,
     });
-    await createBudget(page, cliente.data!.personId);
+    await createBudget(page, client.data!.personId);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -147,8 +147,8 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
     await expect(dialog).toBeVisible();
 
     await page.getByTestId("input-management-number").fill(String(uniqueId() % 1_000_000));
-    await choose(page, "select-presupuesto-gestion", new RegExp(cliente.data!.lastName!, "i"));
-    await choose(page, "select-escribano-gestion", new RegExp(escribano.data!.lastName!, "i"));
+    await choose(page, "select-presupuesto-gestion", new RegExp(client.data!.lastName!, "i"));
+    await choose(page, "select-escribano-gestion", new RegExp(notary.data!.lastName!, "i"));
     await chooseFirst(page, "select-estado-gestion");
     await chooseFirst(page, "select-tipo-tramite-gestion");
 

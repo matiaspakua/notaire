@@ -25,8 +25,8 @@ vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
 import { ApiError } from "@/lib/api-client";
 import { usePeoplePage } from "@/hooks/usePeople";
-import { presentPersonaSaveError } from "@/lib/person-save-error";
-import PersonasPage from "@/app/dashboard/people/page";
+import { presentPersonSaveError } from "@/lib/person-save-error";
+import PeoplePage from "@/app/dashboard/people/page";
 
 function pageResponse(body: unknown) {
   const json = JSON.stringify(body);
@@ -67,7 +67,7 @@ describe("PersonasPage (#1340)", () => {
     mockFetch.mockReturnValue(
       pageResponse({ content: [ROW], number: 0, size: 20, totalElements: 1384, totalPages: 70 }),
     );
-    render(<PersonasPage />, { wrapper });
+    render(<PeoplePage />, { wrapper });
     expect(await screen.findByText("Ana Nueva")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
     const urls = mockFetch.mock.calls.map((c) => String(c[0]));
@@ -80,7 +80,7 @@ describe("PersonasPage (#1340)", () => {
     mockFetch.mockReturnValue(
       pageResponse({ content: [ROW], number: 3, size: 50, totalElements: 1384, totalPages: 28 }),
     );
-    render(<PersonasPage />, { wrapper });
+    render(<PeoplePage />, { wrapper });
     await screen.findByText("Ana Nueva");
     const urls = mockFetch.mock.calls.map((c) => String(c[0]));
     expect(urls.some((u) => /\/people\?page=3&size=50&sort=idPerson%2Cdesc$/.test(u))).toBe(true);
@@ -98,7 +98,7 @@ describe("PersonasPage out-of-range page (#1340)", () => {
     mockFetch.mockReturnValue(
       pageResponse({ content: [], number: 99, size: 20, totalElements: 1104, totalPages: 56 }),
     );
-    render(<PersonasPage />, { wrapper });
+    render(<PeoplePage />, { wrapper });
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith("/dashboard/people?page=55", { scroll: false }));
   });
 });
@@ -109,15 +109,15 @@ describe("presentPersonaSaveError duplicate link outside the loaded page (#1340)
     vi.mocked(toast.error).mockClear();
     const onViewExisting = vi.fn();
     const existing = { ...ROW, personId: 7 };
-    const loadPersona = vi.fn().mockResolvedValue(existing);
+    const loadPerson = vi.fn().mockResolvedValue(existing);
     const err = new ApiError(409, "/people", JSON.stringify({ existingPersonId: 7 }));
 
-    presentPersonaSaveError(err, {
+    presentPersonSaveError(err, {
       fallback: "f",
       duplicateDocument: "dup",
       viewExistingLabel: "Ver persona existente",
-      personas: [ROW],
-      loadPersona,
+      people: [ROW],
+      loadPerson,
       onViewExisting,
       setFieldErrors: vi.fn(),
     });
@@ -126,7 +126,7 @@ describe("presentPersonaSaveError duplicate link outside the loaded page (#1340)
     expect(opts.action?.label).toBe("Ver persona existente");
     opts.action?.onClick();
     await waitFor(() => expect(onViewExisting).toHaveBeenCalledWith(existing));
-    expect(loadPersona).toHaveBeenCalledWith(7);
+    expect(loadPerson).toHaveBeenCalledWith(7);
   });
 });
 

@@ -13,7 +13,7 @@ import { apiDelete } from "./api-helpers";
 
 // Track IDs to clean up (loaded from env vars set by global-setup)
 const idsToCleanup = {
-  personaId: process.env.E2E_SEED_PERSONA_ID
+  personId: process.env.E2E_SEED_PERSONA_ID
     ? Number(process.env.E2E_SEED_PERSONA_ID)
     : null,
   budgetId: process.env.E2E_SEED_PRESUPUESTO_ID
@@ -69,13 +69,13 @@ async function globalTeardown(): Promise<void> {
       ...(idsToCleanup.conceptId
         ? [{ label: "concepto", path: `/concepts/${idsToCleanup.conceptId}` }]
         : []),
-      // Delete the usuario before the persona it references, otherwise the
-      // persona delete hits a foreign-key constraint.
+      // Delete the usuario before the person it references, otherwise the
+      // person delete hits a foreign-key constraint.
       ...(idsToCleanup.usuarioId
         ? [{ label: "usuario", path: `/users/${idsToCleanup.usuarioId}` }]
         : []),
-      ...(idsToCleanup.personaId
-        ? [{ label: "persona", path: `/people/${idsToCleanup.personaId}` }]
+      ...(idsToCleanup.personId
+        ? [{ label: "persona", path: `/people/${idsToCleanup.personId}` }]
         : []),
       ...(idsToCleanup.procedureTypeId
         ? [{ label: "tipo-tramite", path: `/procedure-types/${idsToCleanup.procedureTypeId}` }]

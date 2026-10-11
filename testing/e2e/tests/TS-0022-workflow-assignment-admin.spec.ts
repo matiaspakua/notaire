@@ -3,7 +3,7 @@
  * CU73: Asignar Workflow a Tipo de Trámite
  * Requires: backend running at localhost:8080, frontend at localhost:3000
  *
- * Arranges its own tipo-tramite via API helpers (#1066) — never skips when the table is empty.
+ * Arranges its own tipo-procedure via API helpers (#1066) — never skips when the table is empty.
  */
 import { test, expect, type Page } from "@playwright/test";
 import { createProcedureType } from "./setup/api-helpers";
@@ -17,7 +17,7 @@ async function loginAsAdmin(page: Page) {
 }
 
 /** Create a tipo de trámite; fail the test if arrange/seed fails (do not skip). */
-async function arrangeTipoTramite(page: Page): Promise<number> {
+async function arrangeTypeProcedure(page: Page): Promise<number> {
   const created = await createProcedureType(page, {
     name: `Asignación E2E ${Date.now()}`,
   });
@@ -31,7 +31,7 @@ async function arrangeTipoTramite(page: Page): Promise<number> {
 test.describe("CU73 - Workflow assignment to ProcedureType", () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
-    await arrangeTipoTramite(page);
+    await arrangeTypeProcedure(page);
     await page.goto("/dashboard/administration/procedures");
     await expect(page.locator("table tbody tr").first()).toBeVisible({ timeout: 10000 });
   });

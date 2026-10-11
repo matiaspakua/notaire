@@ -65,7 +65,7 @@ describe("AppSidebar sections (#1367)", () => {
     render(<AppSidebar />);
     const toggle = desktop().getByRole("button", { name: "navGroups.clientes" });
     expect(toggle).toHaveAttribute("aria-expanded", "true");
-    expect(desktop().getByTestId("nav-people")).toBeVisible();
+    expect(desktop().getByTestId("nav-personas")).toBeVisible();
 
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute("aria-expanded", "false");

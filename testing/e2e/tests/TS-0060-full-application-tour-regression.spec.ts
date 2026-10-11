@@ -142,7 +142,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     // Workflow hero section
     const hero = page.getByTestId("workflow-hero");
     await expect(hero).toBeVisible({ timeout: 10000 });
-    // Search an existing workflow reference (seeded gestion numero 1001)
+    // Search an existing workflow reference (seeded management number 1001)
     const searchInput = page.getByTestId("workflow-search-form").locator("input");
     await searchInput.fill("1001");
     await pause(page, 600);
@@ -163,9 +163,9 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
 
     await test.step("Create", async () => {
-      const uniqueNumero = String(Date.now()).slice(-5);
+      const uniqueNumber = String(Date.now()).slice(-5);
       await openModal(page, "btn-nueva-gestion");
-      await page.getByTestId("input-management-number").fill(uniqueNumero);
+      await page.getByTestId("input-management-number").fill(uniqueNumber);
       await pause(page, PAUSE);
       await saveAndDismiss(page, "btn-guardar-gestion");
     });
@@ -542,7 +542,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
 
     const searchInput = page.getByTestId("workflow-search-form").locator("input");
-    // Search for seeded gestion 1001
+    // Search for seeded management 1001
     await searchInput.fill("1001");
     await pause(page, 600);
     await page.keyboard.press("Enter");

@@ -16,9 +16,9 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid"]) {
 
     test("budget edit shows the stored date and saving keeps it", async ({ page }) => {
       await establishAdminBrowserSession(page);
-      const persona = await createPerson(page);
-      expect(persona.ok, persona.error ?? "createPerson failed").toBe(true);
-      const budget = await createBudget(page, persona.data!.personId, undefined, { date: DAY });
+      const person = await createPerson(page);
+      expect(person.ok, person.error ?? "createPerson failed").toBe(true);
+      const budget = await createBudget(page, person.data!.personId, undefined, { date: DAY });
       expect(budget.ok, budget.error ?? "createBudget failed").toBe(true);
       const id = budget.data!.idBudget;
 
@@ -37,8 +37,8 @@ for (const timezoneId of ["America/Argentina/Buenos_Aires", "Europe/Madrid"]) {
 
     test("payment edit shows the stored date", async ({ page }) => {
       await establishAdminBrowserSession(page);
-      const persona = await createPerson(page);
-      const budget = await createBudget(page, persona.data!.personId, undefined, {
+      const person = await createPerson(page);
+      const budget = await createBudget(page, person.data!.personId, undefined, {
         propertyAmount: 10000, // a payment may not exceed the budget balance
       });
       const pago = await createPayment(page, budget.data!.idBudget, { date: DAY });

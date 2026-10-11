@@ -1,7 +1,7 @@
 /**
  * Budgets and deeds lists read one server page at a time (#1340 slice 5, CU01/CU60, CU06/CU07).
  * Both requested size=1000; their filters also sent query parameters the backend ignores
- * (`estado` instead of `status`, `numero` instead of `number`), so they returned every row.
+ * (`estado` instead of `status`, `number` instead of `number`), so they returned every row.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, renderHook, fireEvent } from "@testing-library/react";
@@ -28,7 +28,7 @@ vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 import { useBudgetsPage } from "@/hooks/useBudgets";
 import { useDeedsPage } from "@/hooks/useDeeds";
 import BudgetsPage from "@/app/dashboard/budgets/page";
-import EscriturasPage from "@/app/dashboard/deeds/page";
+import DeedsPage from "@/app/dashboard/deeds/page";
 
 const BUDGET = { idBudget: 1192, date: "2026-10-01", status: "BORRADOR", propertyAmount: 1000 };
 const DEED = { idDeed: 845, number: 77001, status: "Borrador" };
@@ -84,7 +84,7 @@ describe("BudgetsPage (#1340)", () => {
   it("renders the server page with the footer and never asks for size=1000", async () => {
     mockFetch.mockImplementation(route(/\/budgets\?page=/, { content: [BUDGET], number: 0, size: 20, totalElements: 1192, totalPages: 60 }));
     render(<BudgetsPage />, { wrapper });
-    expect(await screen.findByTestId("btn-items-presupuesto-1192")).toBeInTheDocument();
+    expect(await screen.findByTestId("btn-items-budget-1192")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
     expect(urls().some((u) => /\/budgets\?page=0&size=20&sort=idBudget%2Cdesc$/.test(u))).toBe(true);
     expect(urls().filter((u) => /\/budgets\?/.test(u)).some((u) => u.includes("size=1000"))).toBe(false);
@@ -93,8 +93,8 @@ describe("BudgetsPage (#1340)", () => {
   it("finds a budget by number outside the loaded page", async () => {
     mockFetch.mockImplementation(route(/\/budgets\?page=/, { content: [], number: 0, size: 20, totalElements: 1192, totalPages: 60 }));
     render(<BudgetsPage />, { wrapper });
-    fireEvent.change(await screen.findByTestId("input-search-presupuesto"), { target: { value: "1192" } });
-    expect(await screen.findByTestId("btn-items-presupuesto-1192")).toBeInTheDocument();
+    fireEvent.change(await screen.findByTestId("input-search-budget"), { target: { value: "1192" } });
+    expect(await screen.findByTestId("btn-items-budget-1192")).toBeInTheDocument();
     expect(urls().some((u) => /\/budgets\/1192$/.test(u))).toBe(true);
   });
 
@@ -111,7 +111,7 @@ describe("EscriturasPage (#1340)", () => {
 
   it("renders the server page with the footer and never asks for size=1000", async () => {
     mockFetch.mockImplementation(route(/\/deeds\?page=/, { content: [DEED], number: 0, size: 20, totalElements: 845, totalPages: 43 }));
-    render(<EscriturasPage />, { wrapper });
+    render(<DeedsPage />, { wrapper });
     expect(await screen.findByText("77001")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
     expect(urls().some((u) => /\/deeds\?page=0&size=20&sort=idDeed%2Cdesc$/.test(u))).toBe(true);
@@ -120,8 +120,8 @@ describe("EscriturasPage (#1340)", () => {
 
   it("searches by number with the parameter the backend reads", async () => {
     mockFetch.mockImplementation(route(/\/deeds\?page=/, { content: [DEED], number: 0, size: 20, totalElements: 845, totalPages: 43 }));
-    render(<EscriturasPage />, { wrapper });
-    fireEvent.change(await screen.findByTestId("input-search-escritura"), { target: { value: "77001" } });
+    render(<DeedsPage />, { wrapper });
+    fireEvent.change(await screen.findByTestId("input-search-deed"), { target: { value: "77001" } });
     await waitFor(() => expect(urls().some((u) => /\/deeds\/search\?number=77001$/.test(u))).toBe(true));
     expect(urls().some((u) => u.includes("numero="))).toBe(false);
   });

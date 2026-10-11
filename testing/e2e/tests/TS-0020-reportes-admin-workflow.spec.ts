@@ -2,27 +2,27 @@
  * CU24 - Generar libro de índices (Gherkin style)
  * CU25 - Generar Declaración Jurada del mes
  * CU26 - Ingresar nuevo tipo de trámite
- * CU27 - Ingresar nuevo tipo de documento
+ * CU27 - Ingresar nuevo tipo de document
  * CU28 - Ingresar nuevos folios
- * CU29 - Ingresar nuevo concepto
+ * CU29 - Ingresar nuevo concept
  * CU30 - Ingresar nuevo estado de Gestión
  * CU31 - Modificar tipo de trámite
- * CU32 - Modificar tipo de documento
+ * CU32 - Modificar tipo de document
  * CU33 - Modificar folio
- * CU34 - Modificar concepto
+ * CU34 - Modificar concept
  * CU35 - Modificar estado de Gestión
  * CU36 - Ingresar tipos de folio
- * CU37 - Eliminar concepto
- * CU38 - Eliminar tipo de documento
- * CU39 - Crear Plantilla Presupuesto
+ * CU37 - Eliminar concept
+ * CU38 - Eliminar tipo de document
+ * CU39 - Crear Template Presupuesto
  * CU40 - Modificar tipo de folio
  * CU42 - Informar próximos vencimientos
  * CU43 - Reingresar documentación
- * CU44 - Reingresar testimonio
- * CU45 - Modificar presupuesto
- * CU49 - Eliminar Plantilla Presupuesto
+ * CU44 - Reingresar testimony
+ * CU45 - Modificar budget
+ * CU49 - Eliminar Template Presupuesto
  * CU50 - Generar Declaración Jurada de Rentas
- * CU55 - Modificar Cliente
+ * CU55 - Modificar Client
  * CU56 - Registrar inscripcion
  * CU57 - Eliminar tipo de trámite
  * CU58 - Eliminar tipo de folio
@@ -30,8 +30,8 @@
  * CU60 - Buscar Presupuesto
  * CU62 - Buscar Deed
  * CU63 - Buscar Folios
- * CU64 - Buscar Tipo de tramite
- * CU65 - Buscar Tipos de documentos
+ * CU64 - Buscar Tipo de procedure
+ * CU65 - Buscar Tipos de documents
  * CU66 - Buscar Conceptos
  * CU67 - Buscar Estados de Gestión
  * CU68 - Buscar tipos de folios
@@ -157,7 +157,7 @@ test.describe("CU29 - Ingresar nuevo concepto", () => {
     await steps.whenUserClicksButton("nuevo concepto");
     await steps.thenModalIsVisible();
 
-    // When — form has Nombre, Descripción, and "Valor base ($)" (no "porcentaje" field)
+    // When — form has Name, Descripción, and "Valor base ($)" (no "porcentaje" field)
     await steps.fillAndSubmitForm({
       "nombre": "Nuevo Concept Test",
       "valor": "100",
@@ -178,7 +178,7 @@ test.describe("CU39 - Crear Plantilla Presupuesto", () => {
   });
 
   test.skip("CU39-GW01 (#1146): Given on presupuestos, When click plantillas, Then shows plantillas", async () => {
-    // Skipped (#1146): presupuestos page has no "plantillas" button in the current UI.
+    // Skipped (#1146): budgets page has no "plantillas" button in the current UI.
   });
 });
 
@@ -227,7 +227,7 @@ test.describe("CU62 - Buscar Deed", () => {
   });
 
   test.skip("CU62-GW01 (#1146): Given on escrituras, When search by number, Then shows results", async () => {
-    // Skipped (#1146): escrituras page has no search bar in the current UI.
+    // Skipped (#1146): deeds page has no search bar in the current UI.
   });
 });
 

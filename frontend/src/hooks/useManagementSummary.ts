@@ -7,22 +7,22 @@ import { apiGet } from "@/lib/api-client";
 import type { ManagementCaseSummary, ManagementFinancialSummary } from "@/types";
 
 export const managementSummaryKeys = {
-  caso: (gestionId: number) => ["management-case-summary", gestionId] as const,
-  financiero: (gestionId: number) => ["management-financial-summary", gestionId] as const,
+  caso: (managementId: number) => ["management-case-summary", managementId] as const,
+  financiero: (managementId: number) => ["management-financial-summary", managementId] as const,
 };
 
-export function useManagementCaseSummary(gestionId: number | undefined) {
+export function useManagementCaseSummary(managementId: number | undefined) {
   return useQuery({
-    queryKey: managementSummaryKeys.caso(gestionId ?? 0),
-    queryFn: () => apiGet<ManagementCaseSummary>(`/managements/${gestionId}/case-summary`),
-    enabled: !!gestionId,
+    queryKey: managementSummaryKeys.caso(managementId ?? 0),
+    queryFn: () => apiGet<ManagementCaseSummary>(`/managements/${managementId}/case-summary`),
+    enabled: !!managementId,
   });
 }
 
-export function useManagementFinancialSummary(gestionId: number | undefined) {
+export function useManagementFinancialSummary(managementId: number | undefined) {
   return useQuery({
-    queryKey: managementSummaryKeys.financiero(gestionId ?? 0),
-    queryFn: () => apiGet<ManagementFinancialSummary>(`/managements/${gestionId}/financial-summary`),
-    enabled: !!gestionId,
+    queryKey: managementSummaryKeys.financiero(managementId ?? 0),
+    queryFn: () => apiGet<ManagementFinancialSummary>(`/managements/${managementId}/financial-summary`),
+    enabled: !!managementId,
   });
 }

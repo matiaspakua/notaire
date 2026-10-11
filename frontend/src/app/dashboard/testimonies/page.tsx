@@ -16,41 +16,41 @@ import { useDeeds } from "@/hooks/useDeeds";
 import { extractApiError } from "@/lib/utils";
 import type { Testimony } from "@/types";
 
-const ESTADO_FIRMADA = "Firmada";
+const STATUS_SIGNED = "Firmada";
 
-export default function TestimoniosPage() {
+export default function TestimoniesPage() {
   const t = useTranslations("testimonios");
   const tc = useTranslations("common");
   const themeClass = useThemeClasses();
 
-  const { data: testimonios = [], isLoading } = useTestimonies();
-  const { data: escrituras = [] } = useDeeds();
+  const { data: testimonies = [], isLoading } = useTestimonies();
+  const { data: deeds = [] } = useDeeds();
   const generarMutation = useGenerateTestimony();
   const verificarMutation = useVerifyTestimony();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [idEscritura, setIdEscritura] = useState("");
+  const [idDeed, setIdDeed] = useState("");
   const [verificarId, setVerificarId] = useState<number | null>(null);
   const [observado, setObservado] = useState(false);
-  const [observaciones, setObservaciones] = useState("");
+  const [notes, setNotes] = useState("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
-  const escriturasFirmadas = escrituras.filter((e) => e.status === ESTADO_FIRMADA);
+  const deedsSigned = deeds.filter((e) => e.status === STATUS_SIGNED);
 
   function openGenerar() {
-    setIdEscritura("");
+    setIdDeed("");
     setModalOpen(true);
   }
 
-  function openVerificar(testimonio: Testimony) {
-    setVerificarId(testimonio.idTestimony!);
+  function openVerificar(testimony: Testimony) {
+    setVerificarId(testimony.idTestimony!);
     setObservado(false);
-    setObservaciones("");
+    setNotes("");
   }
 
   async function handleGenerar() {
     try {
-      await generarMutation.mutateAsync(Number(idEscritura));
+      await generarMutation.mutateAsync(Number(idDeed));
       toast.success(t("generated"));
       setModalOpen(false);
     } catch (err) {
@@ -61,7 +61,7 @@ export default function TestimoniosPage() {
   async function handleVerificar() {
     if (!verificarId) return;
     try {
-      await verificarMutation.mutateAsync({ id: verificarId, observado, observaciones: observaciones || undefined });
+      await verificarMutation.mutateAsync({ id: verificarId, observado, notes: notes || undefined });
       toast.success(t("verified"));
       setVerificarId(null);
     } catch (err) {
@@ -69,10 +69,10 @@ export default function TestimoniosPage() {
     }
   }
 
-  async function handleDescargarCopia(testimonio: Testimony) {
+  async function handleDescargarCopia(testimony: Testimony) {
     try {
-      setDownloadingId(testimonio.idTestimony!);
-      await downloadTestimonyCopy(testimonio.idTestimony!);
+      setDownloadingId(testimony.idTestimony!);
+      await downloadTestimonyCopy(testimony.idTestimony!);
     } catch {
       toast.error(t("errorCopia"));
     } finally {
@@ -80,14 +80,14 @@ export default function TestimoniosPage() {
     }
   }
 
-  function estadoLabel(testimonio: Testimony): string {
-    if (!testimonio.verified) return t("estadoGenerado");
-    return testimonio.flagged ? t("estadoObservado") : t("estadoVerificado");
+  function estadoLabel(testimony: Testimony): string {
+    if (!testimony.verified) return t("estadoGenerado");
+    return testimony.flagged ? t("estadoObservado") : t("estadoVerificado");
   }
 
   const columns: Column<Testimony>[] = [
     { key: "id", header: tc("id"), render: (te) => <span className="text-xs text-muted-foreground">{te.idTestimony}</span>, className: "w-12" },
-    { key: "numero", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
+    { key: "number", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
     { key: "escritura", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
     { key: "estado", header: t("fields.estado"), render: (te) => estadoLabel(te) },
     {
@@ -136,19 +136,19 @@ export default function TestimoniosPage() {
         }
       />
 
-      <DataTable data={testimonios} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} />
+      <DataTable data={testimonies} columns={columns} isLoading={isLoading} keyExtractor={(te) => te.idTestimony!} emptyMessage={t("noData")} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("newTestimonio")}>
               <FormField label={t("fields.escritura")} required>
-                <Select value={idEscritura} onValueChange={setIdEscritura}>
+                <Select value={idDeed} onValueChange={setIdDeed}>
                   <SelectTrigger data-testid="select-deed-testimony">
                     <SelectValue placeholder={t("selectEscritura")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {escriturasFirmadas.map((e) => (
+                    {deedsSigned.map((e) => (
                       <SelectItem key={e.idDeed} value={String(e.idDeed)}>
                         {t("fields.numero")} {e.number}
                       </SelectItem>
@@ -161,7 +161,7 @@ export default function TestimoniosPage() {
               <Button variant="secondary" onClick={() => setModalOpen(false)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleGenerar} disabled={!idEscritura || generarMutation.isPending} data-testid="btn-save-testimony">
+              <Button onClick={handleGenerar} disabled={!idDeed || generarMutation.isPending} data-testid="btn-save-testimony">
                 {tc("create")}
               </Button>
             </FormActions>
@@ -177,8 +177,8 @@ export default function TestimoniosPage() {
               <FormField label={t("fields.observaciones")}>
                 <textarea
                   className={themeClass("textarea")}
-                  value={observaciones}
-                  onChange={(e) => setObservaciones(e.target.value)}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
                   data-testid="input-notes-testimony"
                 />
               </FormField>

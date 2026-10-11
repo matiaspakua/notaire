@@ -8,7 +8,7 @@ import { ApiError } from "@/lib/api-client";
 import { presentMutationError } from "@/lib/mutation-error";
 import type { Person } from "@/types";
 
-export const PERSONA_FIELD_NAMES = [
+export const PERSON_FIELD_NAMES = [
   "firstName",
   "lastName",
   "identificationNumber",
@@ -18,24 +18,24 @@ export const PERSONA_FIELD_NAMES = [
   "taxId",
 ];
 
-export type PresentPersonaSaveErrorOptions = {
+export type PresentPersonSaveErrorOptions = {
   fallback: string;
   duplicateDocument: string;
   viewExistingLabel: string;
-  personas: Person[];
-  /** Loads the existing person when it is not among `personas` (e.g. on another page, #1340). */
-  loadPersona?: (id: number) => Promise<Person>;
-  onViewExisting: (persona: Person) => void;
+  people: Person[];
+  /** Loads the existing person when it is not among `people` (e.g. on another page, #1340). */
+  loadPerson?: (id: number) => Promise<Person>;
+  onViewExisting: (person: Person) => void;
   setFieldErrors: (errors: Record<string, string>) => void;
 };
 
-export type PresentPersonaSaveErrorResult = {
+export type PresentPersonSaveErrorResult = {
   message: string;
   fieldErrors: Record<string, string>;
   usedDuplicatePath: boolean;
 };
 
-function extractDuplicatePersonaId(err: ApiError): number | undefined {
+function extractDuplicatePersonId(err: ApiError): number | undefined {
   try {
     return (JSON.parse(err.body) as { existingPersonId?: number }).existingPersonId;
   } catch {
@@ -43,19 +43,19 @@ function extractDuplicatePersonaId(err: ApiError): number | undefined {
   }
 }
 
-export function presentPersonaSaveError(
+export function presentPersonSaveError(
   err: unknown,
-  options: PresentPersonaSaveErrorOptions
-): PresentPersonaSaveErrorResult {
+  options: PresentPersonSaveErrorOptions
+): PresentPersonSaveErrorResult {
   if (err instanceof ApiError && err.status === 409) {
-    const existingId = extractDuplicatePersonaId(err);
-    const existing = options.personas.find((p) => p.personId === existingId);
-    const { loadPersona } = options;
+    const existingId = extractDuplicatePersonId(err);
+    const existing = options.people.find((p) => p.personId === existingId);
+    const { loadPerson } = options;
     const onClick = existing
       ? () => options.onViewExisting(existing)
-      : existingId != null && loadPersona
+      : existingId != null && loadPerson
         ? () => {
-            loadPersona(existingId)
+            loadPerson(existingId)
               .then(options.onViewExisting)
               .catch(() => toast.error(options.fallback));
           }
@@ -72,7 +72,7 @@ export function presentPersonaSaveError(
 
   const result = presentMutationError(err, {
     fallback: options.fallback,
-    fieldNames: PERSONA_FIELD_NAMES,
+    fieldNames: PERSON_FIELD_NAMES,
     setFieldErrors: options.setFieldErrors,
   });
   return {

@@ -88,9 +88,9 @@ describe("X-Notaire-User header removal (issue #678)", () => {
 
 describe("apiGet()", () => {
   it("fetches and returns parsed JSON", async () => {
-    mockFetch.mockReturnValueOnce(makeResponse([{ idGestion: 1 }]));
-    const result = await apiGet<{ idGestion: number }[]>("/managements");
-    expect(result).toEqual([{ idGestion: 1 }]);
+    mockFetch.mockReturnValueOnce(makeResponse([{ idManagement: 1 }]));
+    const result = await apiGet<{ idManagement: number }[]>("/managements");
+    expect(result).toEqual([{ idManagement: 1 }]);
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("/managements"),
       expect.objectContaining({ cache: "no-store" })

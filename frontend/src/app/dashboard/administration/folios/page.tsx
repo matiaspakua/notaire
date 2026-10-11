@@ -21,7 +21,7 @@ import { useDeleteError } from "@/hooks/useDeleteError";
 
 const ESTADOS_FOLIO = ["Nuevo", "Utilizado", "Errose"] as const;
 const ESTADO_UTILIZADO = "Utilizado";
-const ESTADO_ESCRITURA_FIRMADA = "Firmada";
+const STATUS_DEED_SIGNED = "Firmada";
 
 interface TipoDeFolioRow {
   idFolioType: number;
@@ -78,7 +78,7 @@ export default function FoliosAdminPage() {
   const [tipoSearch, setTipoSearch] = useState("");
   const [tipoModalOpen, setTipoModalOpen] = useState(false);
   const [tipoEditing, setTipoEditing] = useState<TipoDeFolioRow | null>(null);
-  const [tipoNombre, setTipoNombre] = useState("");
+  const [typeName, setTypeName] = useState("");
   const [tipoEsAuxiliar, setTipoEsAuxiliar] = useState(false);
   const [tipoDeleteId, setTipoDeleteId] = useState<number | null>(null);
   const [tipoSaving, setTipoSaving] = useState(false);
@@ -94,20 +94,20 @@ export default function FoliosAdminPage() {
 
   function openCreateTipo() {
     setTipoEditing(null);
-    setTipoNombre("");
+    setTypeName("");
     setTipoEsAuxiliar(false);
     setTipoModalOpen(true);
   }
 
   function openEditTipo(tf: TipoDeFolioRow) {
     setTipoEditing(tf);
-    setTipoNombre(tf.name);
+    setTypeName(tf.name);
     setTipoEsAuxiliar(tf.isAuxiliary ?? false);
     setTipoModalOpen(true);
   }
 
   async function handleSaveTipo() {
-    if (!tipoNombre.trim()) {
+    if (!typeName.trim()) {
       toast.error(t("tiposDeFolio.nameRequired"));
       return;
     }
@@ -118,12 +118,12 @@ export default function FoliosAdminPage() {
         // otherwise version reads as 0 and every edit after the first answers 409 (#655).
         await apiPut(`/folio-types/${tipoEditing.idFolioType}`, {
           ...tipoEditing,
-          name: tipoNombre,
+          name: typeName,
           isAuxiliary: tipoEsAuxiliar,
         });
         toast.success(t("tiposDeFolio.updated"));
       } else {
-        await apiPost("/folio-types", { name: tipoNombre, isAuxiliary: tipoEsAuxiliar });
+        await apiPost("/folio-types", { name: typeName, isAuxiliary: tipoEsAuxiliar });
         toast.success(t("tiposDeFolio.created"));
       }
       setTipoModalOpen(false);
@@ -168,7 +168,7 @@ export default function FoliosAdminPage() {
     queryFn: () => apiGet<Person[]>("/deeds/available-notaries"),
   });
 
-  const { data: escrituras = [] } = useDeeds();
+  const { data: deeds = [] } = useDeeds();
   const { data: allFolios = [] } = useQuery({
     queryKey: ["folios"],
     queryFn: () => apiGet<Folio[]>("/folios"),
@@ -176,8 +176,8 @@ export default function FoliosAdminPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState<FolioFormState>(EMPTY);
-  const escriturasVinculables = escrituras.filter((e) => {
-    if (e.status !== ESTADO_ESCRITURA_FIRMADA) return false;
+  const deedsLinkable = deeds.filter((e) => {
+    if (e.status !== STATUS_DEED_SIGNED) return false;
     const yaVinculada = allFolios.some(
       (f) => f.fkIdDeed?.idDeed === e.idDeed && f.idFolio !== form.idFolio
     );
@@ -420,7 +420,7 @@ export default function FoliosAdminPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">{t("fields.escrituraPlaceholder")}</SelectItem>
-                    {escriturasVinculables.map((e) => (
+                    {deedsLinkable.map((e) => (
                       <SelectItem key={e.idDeed} value={String(e.idDeed)}>
                         {t("escrituraOption", { number: e.number ?? "—" })}
                       </SelectItem>
@@ -476,7 +476,7 @@ export default function FoliosAdminPage() {
           emptyMessage={t("tiposDeFolio.noData")}
           columns={[
             { key: "id", header: tc("id"), render: (tf) => <span className="text-xs text-muted-foreground">{tf.idFolioType}</span>, className: "w-12" },
-            { key: "nombre", header: tc("name"), render: (tf) => <span className="font-medium">{tf.name}</span> },
+            { key: "name", header: tc("name"), render: (tf) => <span className="font-medium">{tf.name}</span> },
             {
               key: "esAuxiliar",
               header: t("tiposDeFolio.esAuxiliar"),
@@ -514,8 +514,8 @@ export default function FoliosAdminPage() {
             <FormSection dialogTitle title={tipoEditing ? t("tiposDeFolio.editTipo") : t("tiposDeFolio.newTipo")}>
               <FormField label={tc("name")} required>
                 <Input
-                  value={tipoNombre}
-                  onChange={(e) => setTipoNombre(e.target.value)}
+                  value={typeName}
+                  onChange={(e) => setTypeName(e.target.value)}
                   data-testid="input-name-folio-type"
                 />
               </FormField>

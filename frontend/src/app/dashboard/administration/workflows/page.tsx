@@ -90,7 +90,7 @@ export default function WorkflowsPage() {
 
   const columns: Column<WorkflowDefinition>[] = [
     { key: "id", header: tc("id"), render: (wf) => <span className="text-xs text-muted-foreground">{wf.id}</span>, className: "w-12" },
-    { key: "nombre", header: tc("name"), render: (wf) => <span className="font-medium">{wf.name}</span> },
+    { key: "name", header: tc("name"), render: (wf) => <span className="font-medium">{wf.name}</span> },
     { key: "desc", header: tc("description"), render: (wf) => wf.description ?? "—" },
     {
       key: "activo",

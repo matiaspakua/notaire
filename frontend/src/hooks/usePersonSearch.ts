@@ -4,7 +4,7 @@
  */
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
-import { fetchPersona, peopleKeys, usePeoplePage } from "@/hooks/usePeople";
+import { fetchPerson, peopleKeys, usePeoplePage } from "@/hooks/usePeople";
 import type { Person } from "@/types";
 
 export type PersonSearchParams = { firstName?: string; lastName?: string; identificationNumber?: string };
@@ -59,7 +59,7 @@ export function useRecentPeople(enabled: boolean) {
 export function usePerson(id: number | undefined, enabled = true) {
   return useQuery({
     queryKey: peopleKeys.detail(id ?? -1),
-    queryFn: () => fetchPersona(id!),
+    queryFn: () => fetchPerson(id!),
     enabled: enabled && id != null,
     staleTime: 60_000,
   });

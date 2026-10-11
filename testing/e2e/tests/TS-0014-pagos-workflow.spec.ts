@@ -2,7 +2,7 @@
  * TS-0014 - Pagos Workflow (CU15 → CU47)
  * CU15 - Procesar Payment
  * CU47 - Consultar Payment
- * Issue #796 (presupuesto picker + saldo pendiente visibility)
+ * Issue #796 (budget picker + saldo pendiente visibility)
  * Issue #821 (estado de pago badge: SIN_PAGOS / PARCIAL / SALDADO)
  * Issue #848 (overpayment rejection message)
  */
@@ -14,17 +14,17 @@ import { createPerson, createBudget, createPayment } from "./setup/api-helpers";
 // Seed helpers
 // ──────────────────────────────────────────────
 
-/** Seed a persona + presupuesto with a given monto, returning both IDs and the apellido used to find it in the UI. */
-async function seedBudget(page: Page, monto: number): Promise<{ idPresupuesto: number; apellido: string }> {
-  const personaResult = await createPerson(page);
-  if (!personaResult.ok || !personaResult.data?.personId) {
-    throw new Error(`Failed to seed persona: ${personaResult.error ?? JSON.stringify(personaResult.data)}`);
+/** Seed a person + budget with a given amount, returning both IDs and the apellido used to find it in the UI. */
+async function seedBudget(page: Page, amount: number): Promise<{ idBudget: number; apellido: string }> {
+  const personResult = await createPerson(page);
+  if (!personResult.ok || !personResult.data?.personId) {
+    throw new Error(`Failed to seed persona: ${personResult.error ?? JSON.stringify(personResult.data)}`);
   }
-  const presupuestoResult = await createBudget(page, personaResult.data.personId, undefined, { propertyAmount: monto });
-  if (!presupuestoResult.ok || !presupuestoResult.data?.idBudget) {
-    throw new Error(`Failed to seed presupuesto: ${presupuestoResult.error ?? JSON.stringify(presupuestoResult.data)}`);
+  const budgetResult = await createBudget(page, personResult.data.personId, undefined, { propertyAmount: amount });
+  if (!budgetResult.ok || !budgetResult.data?.idBudget) {
+    throw new Error(`Failed to seed presupuesto: ${budgetResult.error ?? JSON.stringify(budgetResult.data)}`);
   }
-  return { idPresupuesto: presupuestoResult.data.idBudget, apellido: personaResult.data.lastName! };
+  return { idBudget: budgetResult.data.idBudget, apellido: personResult.data.lastName! };
 }
 
 test.describe("CU15 - Procesar Payment", () => {
@@ -49,32 +49,32 @@ test.describe("CU15 - Procesar Payment", () => {
   test("CU15-SALDO-01 (#796): Payment form has presupuesto picker, not a numeric input", async ({ page }) => {
     await steps.whenUserClicksButton("nuevo pago");
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
-    await expect(presupuestoSelector).toBeVisible();
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    await expect(budgetSelector).toBeVisible();
   });
 
   test("CU15-SALDO-02 (#796): Selecting a presupuesto shows its client name and saldo pendiente", async ({ page }) => {
-    const montoPresupuesto = 75000;
-    const { apellido } = await seedBudget(page, montoPresupuesto);
+    const amountBudget = 75000;
+    const { apellido } = await seedBudget(page, amountBudget);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
-    await presupuestoSelector.click();
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await presupuestoSelector.fill(apellido);
+    await budgetSelector.fill(apellido);
 
-    const presupuestoOption = page.getByRole("option", { name: new RegExp(apellido, "i") });
-    await expect(presupuestoOption).toBeVisible();
-    await presupuestoOption.click();
+    const budgetOption = page.getByRole("option", { name: new RegExp(apellido, "i") });
+    await expect(budgetOption).toBeVisible();
+    await budgetOption.click();
 
     const saldoDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
     await expect(saldoDisplay).toBeVisible({ timeout: 5000 });
 
     // The picker shows "#<id> — <client>"; the budget amount is in the balance panel (#1340).
-    await expect(presupuestoSelector).toHaveValue(new RegExp(apellido, "i"));
+    await expect(budgetSelector).toHaveValue(new RegExp(apellido, "i"));
     await expect(page.getByRole("dialog").getByText(/Presupuestado: \$\s?75\.000/)).toBeVisible();
   });
 
@@ -85,21 +85,21 @@ test.describe("CU15 - Procesar Payment", () => {
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
-    await presupuestoSelector.click();
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await presupuestoSelector.fill(apellido1);
+    await budgetSelector.fill(apellido1);
     await page.getByRole("option", { name: new RegExp(apellido1, "i") }).click();
 
     let saldoDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
     await expect(saldoDisplay).toBeVisible();
     const saldoText1 = await saldoDisplay.locator("../..").textContent();
 
-    await presupuestoSelector.click();
+    await budgetSelector.click();
 
     // Budget pickers search the server (#1340): type the client first.
 
-    await presupuestoSelector.fill(apellido2);
+    await budgetSelector.fill(apellido2);
     await page.getByRole("option", { name: new RegExp(apellido2, "i") }).click();
 
     saldoDisplay = page.getByRole("dialog").getByText(/balance pendiente/i);
@@ -116,10 +116,10 @@ test.describe("CU15 - Procesar Payment", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
-    await presupuestoSelector.click();
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await presupuestoSelector.fill(apellido);
+    await budgetSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     await page.getByRole("dialog").getByLabel(/date/i).fill("2026-09-01");
@@ -137,10 +137,10 @@ test.describe("CU15 - Procesar Payment", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
-    await presupuestoSelector.click();
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await presupuestoSelector.fill(apellido);
+    await budgetSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     await page.getByRole("dialog").getByLabel(/date/i).fill("2026-09-01");
@@ -156,9 +156,9 @@ test.describe("CU15 - Procesar Payment", () => {
   });
 
   test("CU15-RECIBO-01 (#23): Given pago exists, When click emitir recibo, Then PDF is downloaded", async ({ page }) => {
-    const montoUnico = 345;
-    const { idPresupuesto } = await seedBudget(page, montoUnico + 1000);
-    const pagoResult = await createPayment(page, idPresupuesto, { amount: montoUnico });
+    const amountUnico = 345;
+    const { idBudget } = await seedBudget(page, amountUnico + 1000);
+    const pagoResult = await createPayment(page, idBudget, { amount: amountUnico });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -192,10 +192,10 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
-    await presupuestoSelector.click();
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await presupuestoSelector.fill(apellido);
+    await budgetSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     const badge = page.getByTestId("status-payment-badge");
@@ -204,8 +204,8 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
   });
 
   test("ESTADO-02: Presupuesto with a partial payment shows PARCIAL badge", async ({ page }) => {
-    const { idPresupuesto, apellido } = await seedBudget(page, 100000);
-    const pagoResult = await createPayment(page, idPresupuesto, { amount: 40000 });
+    const { idBudget, apellido } = await seedBudget(page, 100000);
+    const pagoResult = await createPayment(page, idBudget, { amount: 40000 });
     if (!pagoResult.ok) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -214,10 +214,10 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
-    await presupuestoSelector.click();
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await presupuestoSelector.fill(apellido);
+    await budgetSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     const badge = page.getByTestId("status-payment-badge");
@@ -226,8 +226,8 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
   });
 
   test("ESTADO-03: Presupuesto fully paid shows SALDADO badge", async ({ page }) => {
-    const { idPresupuesto, apellido } = await seedBudget(page, 80000);
-    const pagoResult = await createPayment(page, idPresupuesto, { amount: 80000 });
+    const { idBudget, apellido } = await seedBudget(page, 80000);
+    const pagoResult = await createPayment(page, idBudget, { amount: 80000 });
     if (!pagoResult.ok) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -236,10 +236,10 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await steps.whenUserClicksButton("nuevo pago");
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    const presupuestoSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
-    await presupuestoSelector.click();
+    const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
+    await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await presupuestoSelector.fill(apellido);
+    await budgetSelector.fill(apellido);
     await page.getByRole("option", { name: new RegExp(apellido, "i") }).click();
 
     const badge = page.getByTestId("status-payment-badge");
@@ -261,8 +261,8 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
   });
 
   test("TABLE-01: Given a pago exists, When visiting pagos page, Then it renders in the table with correct data", async ({ page }) => {
-    const { idPresupuesto } = await seedBudget(page, 20000);
-    const pagoResult = await createPayment(page, idPresupuesto, { amount: 12345, paymentMethod: "Transferencia" });
+    const { idBudget } = await seedBudget(page, 20000);
+    const pagoResult = await createPayment(page, idBudget, { amount: 12345, paymentMethod: "Transferencia" });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -272,12 +272,12 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
     const row = page.getByRole("row", { name: new RegExp(`^${pagoResult.data.idPayment}\\s`) });
     await expect(row).toBeVisible({ timeout: 5000 });
     await expect(row).toContainText("Transferencia");
-    await expect(row).toContainText(`#${idPresupuesto}`);
+    await expect(row).toContainText(`#${idBudget}`);
   });
 
   test("TABLE-02: Given a pago exists, When editing its monto, Then the table reflects the update", async ({ page }) => {
-    const { idPresupuesto } = await seedBudget(page, 30000);
-    const pagoResult = await createPayment(page, idPresupuesto, { amount: 1000, paymentMethod: "Efectivo" });
+    const { idBudget } = await seedBudget(page, 30000);
+    const pagoResult = await createPayment(page, idBudget, { amount: 1000, paymentMethod: "Efectivo" });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }
@@ -289,8 +289,8 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
     await row.getByRole("button").nth(1).click();
 
     await expect(page.getByRole("dialog")).toBeVisible();
-    const montoInput = page.getByRole("dialog").locator('input[type="number"]');
-    await montoInput.fill("1500");
+    const amountInput = page.getByRole("dialog").locator('input[type="number"]');
+    await amountInput.fill("1500");
     await page.getByRole("dialog").getByRole("button", { name: /guardar|actualizar/i }).click();
 
     await expect(page.getByRole("dialog")).toBeHidden();
@@ -298,8 +298,8 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
   });
 
   test("TABLE-03: Given a pago exists, When deleting it, Then it is removed from the table", async ({ page }) => {
-    const { idPresupuesto } = await seedBudget(page, 15000);
-    const pagoResult = await createPayment(page, idPresupuesto, { amount: 500 });
+    const { idBudget } = await seedBudget(page, 15000);
+    const pagoResult = await createPayment(page, idBudget, { amount: 500 });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
       throw new Error(`Failed to seed pago: ${pagoResult.error ?? JSON.stringify(pagoResult.data)}`);
     }

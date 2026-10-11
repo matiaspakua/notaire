@@ -1,19 +1,19 @@
 /**
- * React Query hook for ProcedureTemplate (CU03 — documentos necesarios por trámite).
- * Endpoint: GET /api/v1/procedure-templates/procedure-types/{idTipoTramite}
+ * React Query hook for ProcedureTemplate (CU03 — documents required por trámite).
+ * Endpoint: GET /api/v1/procedure-templates/procedure-types/{idTypeProcedure}
  */
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api-client";
 import type { ProcedureTemplate } from "@/types";
 
 export const procedureTemplateKeys = {
-  byTramite: (idTipoTramite: number) => ["plantillaTramite", "tramite", idTipoTramite] as const,
+  byProcedure: (idTypeProcedure: number) => ["plantillaTramite", "tramite", idTypeProcedure] as const,
 };
 
-export function useProcedureTemplate(idTipoTramite: number | undefined) {
+export function useProcedureTemplate(idTypeProcedure: number | undefined) {
   return useQuery({
-    queryKey: idTipoTramite !== undefined ? procedureTemplateKeys.byTramite(idTipoTramite) : ["plantillaTramite", "tramite", "none"],
-    queryFn: () => apiGet<ProcedureTemplate[]>(`/procedure-templates/procedure-types/${idTipoTramite}`),
-    enabled: idTipoTramite !== undefined,
+    queryKey: idTypeProcedure !== undefined ? procedureTemplateKeys.byProcedure(idTypeProcedure) : ["plantillaTramite", "tramite", "none"],
+    queryFn: () => apiGet<ProcedureTemplate[]>(`/procedure-templates/procedure-types/${idTypeProcedure}`),
+    enabled: idTypeProcedure !== undefined,
   });
 }

@@ -30,15 +30,15 @@ import { toDateInputValue } from "@/lib/dates";
 const EMPTY: Partial<Deed> = { number: undefined, dateDeedrecording: "", body: "" };
 const ESTADO_SIN_FIRMAR = "Sin Firmar";
 
-export default function EscriturasPage() {
+export default function DeedsPage() {
   return (
     <Suspense>
-      <EscriturasList />
+      <DeedsList />
     </Suspense>
   );
 }
 
-function EscriturasList() {
+function DeedsList() {
   const t = useTranslations("escrituras");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -57,26 +57,26 @@ function EscriturasList() {
   const [firmarId, setFirmarId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Partial<Deed>>(EMPTY);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [searchNumero, setSearchNumero] = useState("");
-  const numero = searchNumero.trim();
+  const [searchNumber, setSearchNumber] = useState("");
+  const number = searchNumber.trim();
 
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000.
   const paging = useUrlPagination();
-  const { data: escriturasPage, isLoading: isLoadingPage, isFetching } = useDeedsPage(
+  const { data: deedsPage, isLoading: isLoadingPage, isFetching } = useDeedsPage(
     { page: paging.page, size: paging.size },
-    { enabled: !numero },
+    { enabled: !number },
   );
-  useClampPage(paging, numero ? undefined : escriturasPage?.totalPages);
+  useClampPage(paging, number ? undefined : deedsPage?.totalPages);
 
-  // The backend reads `number`; `numero` was ignored and returned every deed.
+  // The backend reads `number`. Any other query name is ignored and returns every deed.
   const { data: found = [], isLoading: isLoadingSearch } = useQuery({
-    queryKey: ["deeds", "search", numero],
-    queryFn: () => apiGet<Deed[]>(`/deeds/search?number=${encodeURIComponent(numero)}`),
-    enabled: /^\d+$/.test(numero),
+    queryKey: ["deeds", "search", number],
+    queryFn: () => apiGet<Deed[]>(`/deeds/search?number=${encodeURIComponent(number)}`),
+    enabled: /^\d+$/.test(number),
   });
-  const filteredEscrituras = numero ? (/^\d+$/.test(numero) ? found : []) : escriturasPage?.content ?? [];
-  const isLoading = numero ? isLoadingSearch && /^\d+$/.test(numero) : isLoadingPage;
+  const filteredDeeds = number ? (/^\d+$/.test(number) ? found : []) : deedsPage?.content ?? [];
+  const isLoading = number ? isLoadingSearch && /^\d+$/.test(number) : isLoadingPage;
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
   function openEdit(e: Deed) { setEditing(e); setIsEditMode(true); setModalOpen(true); }
@@ -114,7 +114,7 @@ function EscriturasList() {
 
   const columns: Column<Deed>[] = [
     { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idDeed}</span>, className: "w-12" },
-    { key: "numero", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.number ?? "—"}</span> },
+    { key: "number", header: t("fields.numero"), render: (e) => <span className="font-medium">{e.number ?? "—"}</span> },
     { key: "fecha", header: tc("date"), render: (e) => formatDate(e.dateDeedrecording) },
     { key: "estado", header: t("fields.estado"), render: (e) => e.status ?? "—" },
     {
@@ -157,27 +157,27 @@ function EscriturasList() {
         <Input
           placeholder={t("searchPlaceholder")}
           aria-label={t("searchPlaceholder")}
-          value={searchNumero}
-          onChange={(e) => setSearchNumero(e.target.value)}
+          value={searchNumber}
+          onChange={(e) => setSearchNumber(e.target.value)}
           className="w-full sm:w-48"
           type="number"
           data-testid="input-search-deed"
         />
       </div>
       <DataTable
-        data={filteredEscrituras}
+        data={filteredDeeds}
         columns={columns}
         isLoading={isLoading}
-        isFetching={!numero && isFetching}
+        isFetching={!number && isFetching}
         keyExtractor={(e) => e.idDeed!}
         emptyMessage={t("noData")}
         pagination={
-          numero
+          number
             ? undefined
             : {
-                page: escriturasPage?.number ?? paging.page,
+                page: deedsPage?.number ?? paging.page,
                 size: paging.size,
-                totalElements: escriturasPage?.totalElements ?? 0,
+                totalElements: deedsPage?.totalElements ?? 0,
                 onPageChange: paging.setPage,
                 onSizeChange: paging.setSize,
               }

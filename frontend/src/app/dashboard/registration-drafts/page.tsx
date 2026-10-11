@@ -22,41 +22,41 @@ import {
 import { useDeeds } from "@/hooks/useDeeds";
 import { extractApiError } from "@/lib/utils";
 
-const ESTADO_FIRMADA = "Firmada";
+const STATUS_SIGNED = "Firmada";
 const ESTADO_GENERADA = "Generada";
 const ESTADO_PRESENTADA = "Presentado para inscripción";
 const ESTADO_OBSERVADA = "Observado";
 const ESTADO_INSCRIPTA = "Inscripto";
 
-export default function MinutasInscripcionPage() {
+export default function RegistrationDraftsRegistrationPage() {
   const t = useTranslations("minutasInscripcion");
   const tc = useTranslations("common");
 
-  const { data: escrituras = [] } = useDeeds();
+  const { data: deeds = [] } = useDeeds();
   const generarMutation = useGenerateRegistrationDraft();
   const presentarMutation = useSubmitRegistrationDraft();
   const observarMutation = useObserveRegistrationDraft();
   const inscribirMutation = useRegisterRegistrationDraft();
 
-  const [minutaId, setMinutaId] = useState<number | null>(null);
+  const [registrationDraftId, setRegistrationDraftId] = useState<number | null>(null);
   const [buscarId, setBuscarId] = useState("");
-  const [idEscritura, setIdEscritura] = useState("");
+  const [idDeed, setIdDeed] = useState("");
   const [downloading, setDownloading] = useState(false);
 
   const [presentarOpen, setPresentarOpen] = useState(false);
   const [fechaPresentacion, setFechaPresentacion] = useState("");
-  const [numeroEntradaRegistral, setNumeroEntradaRegistral] = useState("");
+  const [numberEntryRegistry, setNumberEntryRegistry] = useState("");
 
   const [observarOpen, setObservarOpen] = useState(false);
-  const [observacionesRegistro, setObservacionesRegistro] = useState("");
+  const [notesRegistration, setNotesRegistration] = useState("");
   const [fechaSubsanacion, setFechaSubsanacion] = useState("");
 
   const [inscribirOpen, setInscribirOpen] = useState(false);
   const [fechaRecepcion, setFechaRecepcion] = useState("");
-  const [numeroInscripcionDefinitivo, setNumeroInscripcionDefinitivo] = useState("");
+  const [numberRegistrationFinal, setNumberRegistrationFinal] = useState("");
 
-  const { data: minuta, isLoading } = useRegistrationDraft(minutaId);
-  const escriturasFirmadas = escrituras.filter((e) => e.status === ESTADO_FIRMADA);
+  const { data: registrationDraft, isLoading } = useRegistrationDraft(registrationDraftId);
+  const deedsSigned = deeds.filter((e) => e.status === STATUS_SIGNED);
 
   function estadoLabel(estado?: string): string {
     switch (estado) {
@@ -75,8 +75,8 @@ export default function MinutasInscripcionPage() {
 
   async function handleGenerar() {
     try {
-      const nueva = await generarMutation.mutateAsync(Number(idEscritura));
-      setMinutaId(nueva.idRegistrationDraft ?? null);
+      const nueva = await generarMutation.mutateAsync(Number(idDeed));
+      setRegistrationDraftId(nueva.idRegistrationDraft ?? null);
       toast.success(t("generated"));
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorGenerate"));
@@ -85,13 +85,13 @@ export default function MinutasInscripcionPage() {
 
   function handleBuscar() {
     if (!buscarId) return;
-    setMinutaId(Number(buscarId));
+    setRegistrationDraftId(Number(buscarId));
   }
 
   async function handlePresentar() {
-    if (!minutaId) return;
+    if (!registrationDraftId) return;
     try {
-      await presentarMutation.mutateAsync({ id: minutaId, fechaPresentacion, numeroEntradaRegistral });
+      await presentarMutation.mutateAsync({ id: registrationDraftId, fechaPresentacion, numberEntryRegistry });
       toast.success(t("presented"));
       setPresentarOpen(false);
     } catch (err) {
@@ -100,9 +100,9 @@ export default function MinutasInscripcionPage() {
   }
 
   async function handleObservar() {
-    if (!minutaId) return;
+    if (!registrationDraftId) return;
     try {
-      await observarMutation.mutateAsync({ id: minutaId, observacionesRegistro, fechaSubsanacion });
+      await observarMutation.mutateAsync({ id: registrationDraftId, notesRegistration, fechaSubsanacion });
       toast.success(t("observed"));
       setObservarOpen(false);
     } catch (err) {
@@ -111,9 +111,9 @@ export default function MinutasInscripcionPage() {
   }
 
   async function handleInscribir() {
-    if (!minutaId) return;
+    if (!registrationDraftId) return;
     try {
-      await inscribirMutation.mutateAsync({ id: minutaId, fechaRecepcion, numeroInscripcionDefinitivo });
+      await inscribirMutation.mutateAsync({ id: registrationDraftId, fechaRecepcion, numberRegistrationFinal });
       toast.success(t("inscribed"));
       setInscribirOpen(false);
     } catch (err) {
@@ -122,10 +122,10 @@ export default function MinutasInscripcionPage() {
   }
 
   async function handleDescargar() {
-    if (!minutaId) return;
+    if (!registrationDraftId) return;
     try {
       setDownloading(true);
-      await downloadRegistrationDraftReport(minutaId);
+      await downloadRegistrationDraftReport(registrationDraftId);
     } catch {
       toast.error(t("errorReporte"));
     } finally {
@@ -140,12 +140,12 @@ export default function MinutasInscripcionPage() {
       <FormContainer>
         <FormSection title={t("generarSection")}>
           <FormField label={t("fields.escritura")} required>
-            <Select value={idEscritura} onValueChange={setIdEscritura}>
+            <Select value={idDeed} onValueChange={setIdDeed}>
               <SelectTrigger data-testid="select-deed-registration-draft">
                 <SelectValue placeholder={t("selectEscritura")} />
               </SelectTrigger>
               <SelectContent>
-                {escriturasFirmadas.map((e) => (
+                {deedsSigned.map((e) => (
                   <SelectItem key={e.idDeed} value={String(e.idDeed)}>
                     {t("fields.numero")} {e.number}
                   </SelectItem>
@@ -156,7 +156,7 @@ export default function MinutasInscripcionPage() {
           <FormActions align="left">
             <Button
               onClick={handleGenerar}
-              disabled={!idEscritura || generarMutation.isPending}
+              disabled={!idDeed || generarMutation.isPending}
               data-testid="btn-generate-registration-draft"
             >
               <FileCheck2 className="h-4 w-4" />
@@ -182,13 +182,13 @@ export default function MinutasInscripcionPage() {
           </FormField>
         </FormSection>
 
-        {minutaId && isLoading && <p style={{ color: theme.colors.neutral[600] }}>{tc("loading")}</p>}
+        {registrationDraftId && isLoading && <p style={{ color: theme.colors.neutral[600] }}>{tc("loading")}</p>}
 
-        {minuta && (
-          <FormSection title={`${t("fields.numero")} ${minuta.number}`}>
+        {registrationDraft && (
+          <FormSection title={`${t("fields.numero")} ${registrationDraft.number}`}>
             <FormField label={t("fields.estado")}>
               <span data-testid="registration-draft-status" className="font-medium">
-                {estadoLabel(minuta.status)}
+                {estadoLabel(registrationDraft.status)}
               </span>
             </FormField>
 
@@ -203,14 +203,14 @@ export default function MinutasInscripcionPage() {
                 {t("descargarReporte")}
               </Button>
 
-              {minuta.status === ESTADO_GENERADA && (
+              {registrationDraft.status === ESTADO_GENERADA && (
                 <Button onClick={() => setPresentarOpen(true)} data-testid="btn-submit-registration-draft">
                   <Send className="h-4 w-4" />
                   {t("presentar")}
                 </Button>
               )}
 
-              {minuta.status === ESTADO_PRESENTADA && (
+              {registrationDraft.status === ESTADO_PRESENTADA && (
                 <>
                   <Button
                     variant="secondary"
@@ -246,8 +246,8 @@ export default function MinutasInscripcionPage() {
               <FormField label={t("fields.numeroEntradaRegistral")} required>
                 <Input
                   data-testid="input-registry-entry-number"
-                  value={numeroEntradaRegistral}
-                  onChange={(e) => setNumeroEntradaRegistral(e.target.value)}
+                  value={numberEntryRegistry}
+                  onChange={(e) => setNumberEntryRegistry(e.target.value)}
                 />
               </FormField>
             </FormSection>
@@ -257,7 +257,7 @@ export default function MinutasInscripcionPage() {
               </Button>
               <Button
                 onClick={handlePresentar}
-                disabled={!fechaPresentacion || !numeroEntradaRegistral || presentarMutation.isPending}
+                disabled={!fechaPresentacion || !numberEntryRegistry || presentarMutation.isPending}
                 data-testid="btn-confirm-submit"
               >
                 {t("presentar")}
@@ -274,8 +274,8 @@ export default function MinutasInscripcionPage() {
               <FormField label={t("fields.observacionesRegistro")} required>
                 <Input
                   data-testid="input-notes-registro"
-                  value={observacionesRegistro}
-                  onChange={(e) => setObservacionesRegistro(e.target.value)}
+                  value={notesRegistration}
+                  onChange={(e) => setNotesRegistration(e.target.value)}
                 />
               </FormField>
               <FormField label={t("fields.fechaSubsanacion")} required>
@@ -293,7 +293,7 @@ export default function MinutasInscripcionPage() {
               </Button>
               <Button
                 onClick={handleObservar}
-                disabled={!observacionesRegistro || !fechaSubsanacion || observarMutation.isPending}
+                disabled={!notesRegistration || !fechaSubsanacion || observarMutation.isPending}
                 data-testid="btn-confirm-observe"
               >
                 {t("observar")}
@@ -318,8 +318,8 @@ export default function MinutasInscripcionPage() {
               <FormField label={t("fields.numeroInscripcionDefinitivo")} required>
                 <Input
                   data-testid="input-final-registration-number"
-                  value={numeroInscripcionDefinitivo}
-                  onChange={(e) => setNumeroInscripcionDefinitivo(e.target.value)}
+                  value={numberRegistrationFinal}
+                  onChange={(e) => setNumberRegistrationFinal(e.target.value)}
                 />
               </FormField>
             </FormSection>
@@ -330,7 +330,7 @@ export default function MinutasInscripcionPage() {
               <Button
                 onClick={handleInscribir}
                 disabled={
-                  !fechaRecepcion || !numeroInscripcionDefinitivo || inscribirMutation.isPending
+                  !fechaRecepcion || !numberRegistrationFinal || inscribirMutation.isPending
                 }
                 data-testid="btn-confirm-register"
               >

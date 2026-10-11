@@ -24,7 +24,7 @@ vi.mock("@/components/motion/WorkflowTracker", () => ({
 }));
 
 import { WorkflowHero } from "@/components/workflow/WorkflowHero";
-import { findLatestTracedGestion, LATEST_TRACE_CANDIDATES } from "@/hooks/useManagementWorkflow";
+import { findLatestTracedManagement, LATEST_TRACE_CANDIDATES } from "@/hooks/useManagementWorkflow";
 
 function json(body: unknown, status = 200) {
   const text = JSON.stringify(body);
@@ -63,7 +63,7 @@ describe("findLatestTracedGestion (#1347)", () => {
 
   it("asks for the newest managements first and returns the newest one with a workflow", async () => {
     mockFetch.mockImplementation(routes([30, 29, 28, 27], [29, 27]));
-    const found = await findLatestTracedGestion();
+    const found = await findLatestTracedManagement();
     expect(found?.trace.managementId).toBe(29);
     expect(urls()[0]).toMatch(new RegExp(`/managements\\?page=0&size=${LATEST_TRACE_CANDIDATES}&sort=idManagement%2Cdesc$`));
   });
@@ -71,12 +71,12 @@ describe("findLatestTracedGestion (#1347)", () => {
   it("skips a long run of managements without a workflow", async () => {
     const ids = Array.from({ length: 15 }, (_, i) => 100 - i);
     mockFetch.mockImplementation(routes(ids, [87]));
-    expect((await findLatestTracedGestion())?.trace.managementId).toBe(87);
+    expect((await findLatestTracedManagement())?.trace.managementId).toBe(87);
   });
 
   it("returns null when no recent management has a workflow", async () => {
     mockFetch.mockImplementation(routes([3, 2, 1], []));
-    expect(await findLatestTracedGestion()).toBeNull();
+    expect(await findLatestTracedManagement()).toBeNull();
   });
 });
 

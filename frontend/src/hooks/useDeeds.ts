@@ -54,7 +54,7 @@ export function useDeleteDeed() {
   });
 }
 
-/** CU06 - Transiciona una escritura "Sin Firmar" con folio asignado al estado "Firmada". */
+/** CU06 - Transiciona una deed "Sin Firmar" con folio asignado al estado "Firmada". */
 export function useSignDeed() {
   const qc = useQueryClient();
   return useMutation({

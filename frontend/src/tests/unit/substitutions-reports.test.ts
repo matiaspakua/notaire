@@ -32,28 +32,28 @@ describe("substitutionsKeys", () => {
 describe("Substitution type shape", () => {
   it("suplencia object has correct optional fields", () => {
     const s = {
-      idSuplencia: 1,
-      escribano: { idPersona: 10, nombre: "Carlos", apellido: "López" },
-      suplente: { idPersona: 20, nombre: "Ana", apellido: "García" },
+      idSubstitution: 1,
+      notary: { idPerson: 10, name: "Carlos", apellido: "López" },
+      suplente: { idPerson: 20, name: "Ana", apellido: "García" },
       desde: "2026-01-01",
       hasta: "2026-06-30",
     };
-    expect(s.idSuplencia).toBe(1);
-    expect(s.escribano.idPersona).toBe(10);
-    expect(s.suplente.idPersona).toBe(20);
+    expect(s.idSubstitution).toBe(1);
+    expect(s.notary.idPerson).toBe(10);
+    expect(s.suplente.idPerson).toBe(20);
     expect(s.desde).toBe("2026-01-01");
     expect(s.hasta).toBe("2026-06-30");
   });
 
   it("suplencia can have undefined escribano/suplente", () => {
     const s: {
-      idSuplencia?: number;
-      escribano?: unknown;
+      idSubstitution?: number;
+      notary?: unknown;
       suplente?: unknown;
       desde?: string;
       hasta?: string;
-    } = { idSuplencia: 5 };
-    expect(s.escribano).toBeUndefined();
+    } = { idSubstitution: 5 };
+    expect(s.notary).toBeUndefined();
     expect(s.suplente).toBeUndefined();
   });
 
@@ -118,8 +118,8 @@ describe("Reporte URL construction", () => {
   });
 
   it("deuda documentos URL includes the management number (numberManagement)", () => {
-    const numero = 1001;
-    const url = `${BASE}/reports/document-debt?numberManagement=${numero}`;
+    const number = 1001;
+    const url = `${BASE}/reports/document-debt?numberManagement=${number}`;
     expect(url).toContain("numberManagement=1001");
   });
 });
@@ -136,16 +136,16 @@ describe("Reporte filename construction", () => {
   });
 
   it("DDJJ mensual filename includes year and month", () => {
-    const anio = 2026;
+    const year = 2026;
     const mes = 3;
-    const filename = `ddjj_mensual_${anio}_${mes}.pdf`;
+    const filename = `ddjj_mensual_${year}_${mes}.pdf`;
     expect(filename).toBe("ddjj_mensual_2026_3.pdf");
   });
 
   it("DDJJ rentas filename includes year and month", () => {
-    const anio = 2026;
+    const year = 2026;
     const mes = 12;
-    const filename = `ddjj_rentas_${anio}_${mes}.pdf`;
+    const filename = `ddjj_rentas_${year}_${mes}.pdf`;
     expect(filename).toBe("ddjj_rentas_2026_12.pdf");
   });
 
@@ -156,8 +156,8 @@ describe("Reporte filename construction", () => {
   });
 
   it("libro indice filename includes anio", () => {
-    const anio = 2025;
-    const filename = `libro_indice_${anio}.pdf`;
+    const year = 2025;
+    const filename = `libro_indice_${year}.pdf`;
     expect(filename).toBe("libro_indice_2025.pdf");
   });
 });
@@ -206,63 +206,63 @@ describe("Budget estado badge logic", () => {
 });
 
 // ──────────────────────────────────────────────
-// Personas search filter logic
+// People search filter logic
 // ──────────────────────────────────────────────
 
 describe("Personas search filter (CU61)", () => {
-  const personas = [
-    { idPersona: 1, nombre: "Juan", apellido: "García", dni: "12345678", esCliente: true },
-    { idPersona: 2, nombre: "Ana", apellido: "López", dni: "87654321", esCliente: false },
-    { idPersona: 3, nombre: "Carlos", apellido: "García", dni: "11111111", esCliente: true },
+  const people = [
+    { idPerson: 1, name: "Juan", apellido: "García", dni: "12345678", esClient: true },
+    { idPerson: 2, name: "Ana", apellido: "López", dni: "87654321", esClient: false },
+    { idPerson: 3, name: "Carlos", apellido: "García", dni: "11111111", esClient: true },
   ];
 
   function filterPersonas(
-    list: typeof personas,
-    nombre: string,
+    list: typeof people,
+    name: string,
     apellido: string,
     dni: string,
-    esCliente: boolean | null
+    esClient: boolean | null
   ) {
     return list.filter((p) => {
-      const matchNombre = !nombre || p.nombre?.toLowerCase().includes(nombre.toLowerCase());
+      const matchNombre = !name || p.name?.toLowerCase().includes(name.toLowerCase());
       const matchApellido = !apellido || p.apellido?.toLowerCase().includes(apellido.toLowerCase());
       const matchDni = !dni || p.dni?.includes(dni);
-      const matchCliente = esCliente === null || p.esCliente === esCliente;
+      const matchCliente = esClient === null || p.esClient === esClient;
       return matchNombre && matchApellido && matchDni && matchCliente;
     });
   }
 
   it("no filters returns all personas", () => {
-    expect(filterPersonas(personas, "", "", "", null)).toHaveLength(3);
+    expect(filterPersonas(people, "", "", "", null)).toHaveLength(3);
   });
 
   it("filter by nombre returns matching", () => {
-    expect(filterPersonas(personas, "juan", "", "", null)).toHaveLength(1);
+    expect(filterPersonas(people, "juan", "", "", null)).toHaveLength(1);
   });
 
   it("filter by apellido returns multiple matches", () => {
-    expect(filterPersonas(personas, "", "García", "", null)).toHaveLength(2);
+    expect(filterPersonas(people, "", "García", "", null)).toHaveLength(2);
   });
 
   it("filter by DNI returns exact match", () => {
-    expect(filterPersonas(personas, "", "", "12345678", null)).toHaveLength(1);
+    expect(filterPersonas(people, "", "", "12345678", null)).toHaveLength(1);
   });
 
   it("filter by esCliente true returns only clients", () => {
-    expect(filterPersonas(personas, "", "", "", true)).toHaveLength(2);
+    expect(filterPersonas(people, "", "", "", true)).toHaveLength(2);
   });
 
   it("filter by esCliente false returns non-clients", () => {
-    expect(filterPersonas(personas, "", "", "", false)).toHaveLength(1);
+    expect(filterPersonas(people, "", "", "", false)).toHaveLength(1);
   });
 
   it("combined nombre + apellido filter", () => {
-    const result = filterPersonas(personas, "Carlos", "García", "", null);
+    const result = filterPersonas(people, "Carlos", "García", "", null);
     expect(result).toHaveLength(1);
-    expect(result[0].idPersona).toBe(3);
+    expect(result[0].idPerson).toBe(3);
   });
 
   it("no match returns empty array", () => {
-    expect(filterPersonas(personas, "NonExistent", "", "", null)).toHaveLength(0);
+    expect(filterPersonas(people, "NonExistent", "", "", null)).toHaveLength(0);
   });
 });

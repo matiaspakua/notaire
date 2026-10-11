@@ -114,7 +114,7 @@ export default function UsuariosPage() {
 
   const columns: Column<UserAccount>[] = [
     { key: "id", header: tc("id"), render: (u) => <span className="text-xs text-muted-foreground">{u.idUser}</span>, className: "w-12" },
-    { key: "nombre", header: t("fields.nombre"), render: (u) => <span className="font-medium">{u.name}</span> },
+    { key: "name", header: t("fields.nombre"), render: (u) => <span className="font-medium">{u.name}</span> },
     { key: "tipo", header: t("fields.tipo"), render: (u) => <Badge variant={tipoVariant(u.type)}>{u.type ?? "—"}</Badge> },
     { key: "rol", header: t("fields.rol"), render: (u) => u.role ? <Badge variant="outline">{u.role.name}</Badge> : <span className="text-xs text-muted-foreground">—</span> },
     { key: "activo", header: tc("status"), render: (u) => u.active ? <Badge variant="success">{tc("active")}</Badge> : <Badge variant="secondary">{tc("inactive")}</Badge> },

@@ -18,35 +18,35 @@ test.describe("CU69 - Gestión de Inmuebles: valuación fiscal", () => {
   });
 
   test("CU69-GW01: Given on inmuebles page, When create with a numeric valuación fiscal, Then it is saved", async () => {
-    const nomenclatura = `NC-E2E-${Date.now()}`;
+    const cadastralDesignation = `NC-E2E-${Date.now()}`;
 
     await steps.whenUserClicksButton("nuevo inmueble");
     await steps.thenModalIsVisible();
 
-    await steps.whenUserFillsField("Nomenclatura Catastral", nomenclatura);
+    await steps.whenUserFillsField("Nomenclatura Catastral", cadastralDesignation);
     await steps.whenUserFillsField("Domicilio", "Calle Falsa 123");
     await steps.whenUserFillsField("Valuación Fiscal", "150000.5");
     await steps.whenUserSubmitsForm();
 
     await steps.thenShowsSuccessMessage("creado");
     await steps.thenModalIsNotVisible();
-    await steps.thenTableContainsText(nomenclatura);
+    await steps.thenTableContainsText(cadastralDesignation);
     await steps.thenTableContainsText("150000.5");
   });
 
   test("CU69-GW02: Given on inmuebles page, When create leaving valuación fiscal empty, Then it still succeeds", async () => {
-    const nomenclatura = `NC-E2E-${Date.now()}-EMPTY`;
+    const cadastralDesignation = `NC-E2E-${Date.now()}-EMPTY`;
 
     await steps.whenUserClicksButton("nuevo inmueble");
     await steps.thenModalIsVisible();
 
-    await steps.whenUserFillsField("Nomenclatura Catastral", nomenclatura);
+    await steps.whenUserFillsField("Nomenclatura Catastral", cadastralDesignation);
     await steps.whenUserFillsField("Domicilio", "Calle Falsa 456");
     await steps.whenUserSubmitsForm();
 
     await steps.thenShowsSuccessMessage("creado");
     await steps.thenModalIsNotVisible();
-    await steps.thenTableContainsText(nomenclatura);
+    await steps.thenTableContainsText(cadastralDesignation);
   });
 
   test("CU69-GW04: Given on inmuebles page, When the nomenclatura catastral is blank, Then the form cannot be saved (#655)", async ({ page }) => {

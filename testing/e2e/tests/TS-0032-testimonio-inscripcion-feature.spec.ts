@@ -1,35 +1,35 @@
 /**
- * CU11/CU12/CU44 - Circuito de inscripción de testimonio (issue #832)
+ * CU11/CU12/CU44 - Circuito de inscripción de testimony (issue #832)
  *
  * Golden path: ingresar para inscripción → registrar inscripción → retirar.
  * Edge path: reingresar sin retiro previo (bloqueado, per design.md —
- * Playwright Strategy). Testimonios are seeded already "Firmada"/generado/
+ * Playwright Strategy). Testimonios are seeded already "Signed"/generado/
  * verificado directly via the generic CRUD endpoints (design.md — Non-Goals:
- * these endpoints stay open) so each test starts from the exact movimiento
+ * these endpoints stay open) so each test starts from the exact movement
  * state it exercises.
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { apiPost, uniqueId } from "./setup/api-helpers";
 
-async function seedVerifiedTestimony(page: import("@playwright/test").Page): Promise<{ idTestimonio: number; numero: number }> {
-  const escrituraNumero = uniqueId() % 1_000_000;
-  const escritura = await apiPost<{ idDeed: number }>(page, "/deeds", {
-    number: escrituraNumero,
+async function seedVerifiedTestimony(page: import("@playwright/test").Page): Promise<{ idTestimony: number; number: number }> {
+  const deedNumber = uniqueId() % 1_000_000;
+  const deed = await apiPost<{ idDeed: number }>(page, "/deeds", {
+    number: deedNumber,
     dateDeedrecording: new Date().toISOString().split("T")[0],
-    body: `Contenido E2E ${escrituraNumero}`,
+    body: `Contenido E2E ${deedNumber}`,
     status: "Firmada",
   });
-  const numero = uniqueId() % 1_000_000;
+  const number = uniqueId() % 1_000_000;
   // DtoDeed.number is primitive int — must be included in nested object to avoid 400
   // (see TestimonioControllerIntegrationTest#testimonioBody).
-  const testimonio = await apiPost<{ idTestimony: number }>(page, "/testimonies", {
-    deed: { idDeed: escritura.data!.idDeed, number: escrituraNumero },
-    number: numero,
+  const testimony = await apiPost<{ idTestimony: number }>(page, "/testimonies", {
+    deed: { idDeed: deed.data!.idDeed, number: deedNumber },
+    number: number,
     flagged: false,
     verified: true,
   });
-  return { idTestimonio: testimonio.data!.idTestimony, numero };
+  return { idTestimony: testimony.data!.idTestimony, number };
 }
 
 test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
@@ -41,21 +41,21 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
   });
 
   test("Golden path: ingresar, registrar inscripción y retirar", async ({ page }) => {
-    const { idTestimonio, numero } = await seedVerifiedTestimony(page);
+    const { idTestimony, number } = await seedVerifiedTestimony(page);
 
     await steps.givenUserIsOnPage("/dashboard/testimony-movements");
-    const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click();
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimony}`).click();
     await steps.thenShowsSuccessMessage("ingresado");
     await expect(row).toContainText(/ingresado/i);
 
-    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click();
+    await page.getByTestId(`btn-record-registration-${idTestimony}`).click();
     await steps.thenShowsSuccessMessage("inscripción registrada");
     await expect(row).toContainText(/inscripto/i);
 
-    await page.getByTestId(`btn-withdraw-testimony-${idTestimonio}`).click();
+    await page.getByTestId(`btn-withdraw-testimony-${idTestimony}`).click();
     await steps.thenModalIsVisible();
     await page.getByTestId("input-card-number").fill("123");
     await page.getByTestId("btn-confirm-retiro").click();
@@ -64,27 +64,27 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
   });
 
   test("Edge: reingresar solo está disponible después de un retiro previo", async ({ page }) => {
-    const { idTestimonio, numero } = await seedVerifiedTestimony(page);
+    const { idTestimony, number } = await seedVerifiedTestimony(page);
 
     await steps.givenUserIsOnPage("/dashboard/testimony-movements");
-    const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await expect(page.getByTestId(`btn-reenter-testimony-${idTestimonio}`)).toHaveCount(0);
-    await expect(page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`)).toBeVisible();
+    await expect(page.getByTestId(`btn-reenter-testimony-${idTestimony}`)).toHaveCount(0);
+    await expect(page.getByTestId(`btn-sign-in-testimony-${idTestimony}`)).toBeVisible();
 
-    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click();
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimony}`).click();
     await steps.thenShowsSuccessMessage("ingresado");
-    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click();
+    await page.getByTestId(`btn-record-registration-${idTestimony}`).click();
     await steps.thenShowsSuccessMessage("inscripción registrada");
-    await page.getByTestId(`btn-withdraw-testimony-${idTestimonio}`).click();
+    await page.getByTestId(`btn-withdraw-testimony-${idTestimony}`).click();
     await steps.thenModalIsVisible();
     await page.getByTestId("input-card-number").fill("456");
     await page.getByTestId("btn-confirm-retiro").click();
     await steps.thenShowsSuccessMessage("retirado");
 
-    await expect(page.getByTestId(`btn-reenter-testimony-${idTestimonio}`)).toBeVisible();
-    await page.getByTestId(`btn-reenter-testimony-${idTestimonio}`).click();
+    await expect(page.getByTestId(`btn-reenter-testimony-${idTestimony}`)).toBeVisible();
+    await page.getByTestId(`btn-reenter-testimony-${idTestimony}`).click();
 
     await page.getByTestId("input-reentry-carton").fill("77");
     await page.getByTestId("checkbox-reentry-observed").check();

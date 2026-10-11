@@ -13,27 +13,27 @@ import { createPerson, createBudget, createPayment } from "./setup/api-helpers";
 import { listView } from "./setup/list-locators";
 
 // ─────────────────────────────────────────────────────────────
-// Seed helper: creates a persona + presupuesto via API
+// Seed helper: creates a person + budget via API
 // ─────────────────────────────────────────────────────────────
 async function seedBudget(
   steps: GherkinSteps,
-  montoOverride = 80000,
+  amountOverride = 80000,
 ) {
   const { page } = steps;
 
-  const personaResult = await createPerson(page);
-  expect(personaResult.ok, `createPerson failed: ${personaResult.error}`).toBe(true);
-  const idPersona = personaResult.data!.personId;
-  const apellido = personaResult.data as any;
+  const personResult = await createPerson(page);
+  expect(personResult.ok, `createPerson failed: ${personResult.error}`).toBe(true);
+  const idPerson = personResult.data!.personId;
+  const apellido = personResult.data as any;
 
-  const presupuestoResult = await createBudget(page, idPersona, undefined, {
-    propertyAmount: montoOverride,
+  const budgetResult = await createBudget(page, idPerson, undefined, {
+    propertyAmount: amountOverride,
     status: "PENDIENTE",
   });
-  expect(presupuestoResult.ok, `createBudget failed: ${presupuestoResult.error}`).toBe(true);
-  const idPresupuesto = presupuestoResult.data!.idBudget;
+  expect(budgetResult.ok, `createBudget failed: ${budgetResult.error}`).toBe(true);
+  const idBudget = budgetResult.data!.idBudget;
 
-  return { idPersona, idPresupuesto };
+  return { idPerson, idBudget };
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -51,37 +51,37 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
   test("TS-0010-GW01: crear persona via API y presupuesto via UI — aparece en la lista con nombre del cliente", async ({
     page,
   }) => {
-    // GIVEN: persona creada via API helper (CU01 pre-condition)
-    const personaResult = await createPerson(page);
-    expect(personaResult.ok, `createPerson failed: ${personaResult.error}`).toBe(true);
-    const idPersona = personaResult.data!.personId;
+    // GIVEN: person created via API helper (CU01 pre-condition)
+    const personResult = await createPerson(page);
+    expect(personResult.ok, `createPerson failed: ${personResult.error}`).toBe(true);
+    const idPerson = personResult.data!.personId;
 
-    // Lean on any name-like field that the API returns; we search by idPersona
-    // and verify the presupuesto row shows the client name automatically.
+    // Lean on any name-like field that the API returns; we search by idPerson
+    // and verify the budget row shows the client name automatically.
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await steps.givenModuleIsVisible("Presupuestos");
 
-    // WHEN: operador abre el formulario de nuevo presupuesto
+    // WHEN: operador abre el formulario de nuevo budget
     await page.getByTestId("btn-new-budget").click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    // AND: selecciona persona en el picker
+    // AND: selecciona person en el picker
     await dialog.getByTestId("select-person").click();
-    // The option text is "<nombre> <apellido>" — idPersona is embedded as data-value or similar;
-    // we select the first option that contains the persona we just created.
-    const personaOption = page.getByRole("listbox").getByRole("option").first();
-    await expect(personaOption).toBeVisible({ timeout: 5000 });
-    // Use the picker option that matches our seeded persona via data attribute
-    const targetOption = page.getByRole("option", { name: new RegExp(`Person-${idPersona}`, "i") });
+    // The option text is "<name> <apellido>" — idPerson is embedded as data-value or similar;
+    // we select the first option that contains the person we just created.
+    const personOption = page.getByRole("listbox").getByRole("option").first();
+    await expect(personOption).toBeVisible({ timeout: 5000 });
+    // Use the picker option that matches our seeded person via data attribute
+    const targetOption = page.getByRole("option", { name: new RegExp(`Person-${idPerson}`, "i") });
     if (await targetOption.count() > 0) {
       await targetOption.evaluate((el: HTMLElement) => el.click());
     } else {
       // Fallback: use the first available option
-      await personaOption.evaluate((el: HTMLElement) => el.click());
+      await personOption.evaluate((el: HTMLElement) => el.click());
     }
 
-    // AND: completa fecha y monto
+    // AND: completa fecha y amount
     const today = new Date().toISOString().split("T")[0];
     await dialog.getByLabel(/date/i).fill(today);
     await dialog.getByTestId("input-amount").fill("80000");
@@ -90,7 +90,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     await dialog.getByRole("button", { name: /guardar|crear/i }).click();
     await expect(dialog).not.toBeVisible({ timeout: 8000 });
 
-    // THEN: el presupuesto aparece en la lista
+    // THEN: el budget aparece en la lista
     await expect(page.getByRole("table")).toBeVisible({ timeout: 8000 });
     const table = page.getByRole("table");
     await expect(table).toBeVisible();
@@ -102,23 +102,23 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
   test("TS-0010-GW02: lista de presupuestos muestra el nombre del cliente en cada fila", async ({
     page,
   }) => {
-    // GIVEN: presupuesto sembrado via API
-    const personaResult = await createPerson(page);
-    expect(personaResult.ok).toBe(true);
-    const idPersona = personaResult.data!.personId;
+    // GIVEN: budget sembrado via API
+    const personResult = await createPerson(page);
+    expect(personResult.ok).toBe(true);
+    const idPerson = personResult.data!.personId;
 
-    const presupuestoResult = await createBudget(page, idPersona, undefined, { propertyAmount: 60000 });
-    expect(presupuestoResult.ok).toBe(true);
+    const budgetResult = await createBudget(page, idPerson, undefined, { propertyAmount: 60000 });
+    expect(budgetResult.ok).toBe(true);
 
     // WHEN: recarga la lista
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
-    // THEN: la tabla es visible y tiene columna de cliente
+    // THEN: la tabla es visible y tiene columna de client
     const table = page.getByRole("table");
     await expect(table).toBeVisible({ timeout: 8000 });
 
-    // La cabecera debe incluir "cliente" o "persona"
+    // La cabecera debe incluir "client" o "person"
     const headerRow = table.getByRole("row").first();
     const headerText = await headerRow.textContent();
     expect(headerText?.toLowerCase()).toMatch(/client|persona/);
@@ -140,14 +140,14 @@ test.describe("CU47 - Consultar Payment / Saldo", () => {
   test("TS-0010-SD01 (#796): el resumen del presupuesto muestra el saldo pendiente", async ({
     page,
   }) => {
-    // GIVEN: presupuesto con saldo conocido
-    const { idPresupuesto } = await seedBudget(steps, 75000);
+    // GIVEN: budget con saldo conocido
+    const { idBudget } = await seedBudget(steps, 75000);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
-    // WHEN: operador abre el resumen del presupuesto (CU47)
-    const resumenBtn = page.getByTestId(`btn-summary-budget-${idPresupuesto}`);
+    // WHEN: operador abre el resumen del budget (CU47)
+    const resumenBtn = page.getByTestId(`btn-summary-budget-${idBudget}`);
     await expect(resumenBtn).toBeVisible({ timeout: 8000 });
     await resumenBtn.click();
 
@@ -163,18 +163,18 @@ test.describe("CU47 - Consultar Payment / Saldo", () => {
   test("TS-0010-SD02 (#821): tras registrar un pago parcial vía API el resumen refleja el nuevo saldo", async ({
     page,
   }) => {
-    // GIVEN: presupuesto con monto 80000 y sin pagos
-    const { idPresupuesto } = await seedBudget(steps, 80000);
+    // GIVEN: budget con amount 80000 y sin pagos
+    const { idBudget } = await seedBudget(steps, 80000);
 
     // WHEN: se registra un pago parcial (40000 < 80000) vía API — el registro de pagos
     // en sí se cubre en TS-0014 (CU15); aquí verificamos que CU47 refleje el saldo actualizado.
-    const pagoResult = await createPayment(page, idPresupuesto, { amount: 40000 });
+    const pagoResult = await createPayment(page, idBudget, { amount: 40000 });
     expect(pagoResult.ok, `createPayment failed: ${pagoResult.error}`).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
-    const resumenBtn = page.getByTestId(`btn-summary-budget-${idPresupuesto}`);
+    const resumenBtn = page.getByTestId(`btn-summary-budget-${idBudget}`);
     await expect(resumenBtn).toBeVisible({ timeout: 8000 });
     await resumenBtn.click();
 
@@ -202,37 +202,37 @@ test.describe("CU45 - Modificar Presupuesto", () => {
   test("TS-0010-MOD01: editar un presupuesto existente actualiza los datos en la lista", async ({
     page,
   }) => {
-    // GIVEN: presupuesto creado via API
-    const personaResult = await createPerson(page);
-    expect(personaResult.ok).toBe(true);
-    const idPersona = personaResult.data!.personId;
+    // GIVEN: budget created via API
+    const personResult = await createPerson(page);
+    expect(personResult.ok).toBe(true);
+    const idPerson = personResult.data!.personId;
 
-    const presupuestoResult = await createBudget(page, idPersona, undefined, { propertyAmount: 30000 });
-    expect(presupuestoResult.ok).toBe(true);
-    const idPresupuesto = presupuestoResult.data!.idBudget;
+    const budgetResult = await createBudget(page, idPerson, undefined, { propertyAmount: 30000 });
+    expect(budgetResult.ok).toBe(true);
+    const idBudget = budgetResult.data!.idBudget;
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("networkidle");
 
     // WHEN: abre el modal de edición
-    const editBtn = page.getByTestId(`btn-edit-budget-${idPresupuesto}`);
+    const editBtn = page.getByTestId(`btn-edit-budget-${idBudget}`);
     await expect(editBtn).toBeVisible({ timeout: 8000 });
     await editBtn.click();
 
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
-    // AND: modifica el monto
-    const montoInput = dialog
+    // AND: modifica el amount
+    const amountInput = dialog
       .getByTestId("input-amount")
       .or(dialog.getByLabel(/monto/i));
-    await montoInput.clear();
-    await montoInput.fill("35000");
+    await amountInput.clear();
+    await amountInput.fill("35000");
 
     await dialog.getByRole("button", { name: /guardar|actualizar/i }).click();
     await expect(dialog).not.toBeVisible({ timeout: 8000 });
 
-    // THEN: la tabla refleja el nuevo monto
+    // THEN: la tabla refleja el nuevo amount
     await page.waitForLoadState("networkidle");
     const table = page.getByRole("table");
     await expect(table).toContainText("35.000");
@@ -240,7 +240,7 @@ test.describe("CU45 - Modificar Presupuesto", () => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// Viewports – módulo de presupuestos responsive (320 / 768 / 1024 px)
+// Viewports – módulo de budgets responsive (320 / 768 / 1024 px)
 // ─────────────────────────────────────────────────────────────
 for (const viewport of [
   { width: 320, height: 568, label: "320px (mobile)" },
@@ -251,19 +251,19 @@ for (const viewport of [
     const steps = new GherkinSteps(page);
     await authenticateAsAdmin(page);
 
-    // Seed a presupuesto so the list is not empty
-    const personaResult = await createPerson(page);
-    expect(personaResult.ok).toBe(true);
-    const idPersona = personaResult.data!.personId;
-    const presupuestoResult = await createBudget(page, idPersona);
-    expect(presupuestoResult.ok).toBe(true);
+    // Seed a budget so the list is not empty
+    const personResult = await createPerson(page);
+    expect(personResult.ok).toBe(true);
+    const idPerson = personResult.data!.personId;
+    const budgetResult = await createBudget(page, idPerson);
+    expect(budgetResult.ok).toBe(true);
 
     // Set viewport before navigating
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await steps.givenUserIsOnPage("/dashboard/budgets");
     await page.waitForLoadState("domcontentloaded");
 
-    // THEN: la lista de presupuestos (tabla o tarjetas, #1356) es visible sin overflow horizontal
+    // THEN: la lista de budgets (tabla o tarjetas, #1356) es visible sin overflow horizontal
     await expect(listView(page)).toBeVisible({ timeout: 8000 });
     await steps.thenHasNoHorizontalOverflow();
   });

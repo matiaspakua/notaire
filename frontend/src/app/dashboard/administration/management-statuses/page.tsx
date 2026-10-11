@@ -20,7 +20,7 @@ import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<ManagementStatus> = { name: "", notes: "" };
 
-export default function EstadosGestionPage() {
+export default function StatusesManagementPage() {
   const t = useTranslations("administracion.estadosGestion");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -117,7 +117,7 @@ export default function EstadosGestionPage() {
 
   const columns: Column<ManagementStatus>[] = [
     { key: "id", header: tc("id"), render: (e) => <span className="text-xs text-muted-foreground">{e.idManagementStatus}</span>, className: "w-12" },
-    { key: "nombre", header: t("fields.nombre"), render: (e) => <span className="font-medium">{e.name}</span> },
+    { key: "name", header: t("fields.nombre"), render: (e) => <span className="font-medium">{e.name}</span> },
     { key: "desc", header: tc("description"), render: (e) => e.notes ?? "—" },
     {
       key: "actions",

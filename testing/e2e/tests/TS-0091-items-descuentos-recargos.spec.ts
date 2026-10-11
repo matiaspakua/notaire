@@ -7,9 +7,9 @@
  * Workflow:
  *   - Open the item form and select tipo DESCUENTO/RECARGO
  *   - Motivo becomes required and is enforced client-side
- *   - Query the descuentos/recargos report for a presupuesto
+ *   - Query the descuentos/recargos report for a budget
  *
- * Reference: docs/openspec/changes/descuentos-recargos-presupuesto
+ * Reference: docs/openspec/changes/descuentos-recargos-budget
  */
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";

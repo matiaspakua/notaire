@@ -10,7 +10,7 @@ export const peopleKeys = {
   search: (params: PeopleSearchParams) => ["people", "search", { ...params }] as const,
 };
 
-/** Criteria of the personas search (#1357); primitives only, so they are a stable query key. */
+/** Criteria of the people search (#1357); primitives only, so they are a stable query key. */
 export interface PeopleSearchParams {
   firstName: string;
   lastName: string;
@@ -22,7 +22,7 @@ export interface PeopleSearchParams {
 export const PEOPLE_SEARCH_DEBOUNCE_MS = 300;
 
 /**
- * GET /people/search for the personas list (#1357). The criteria are debounced,
+ * GET /people/search for the people list (#1357). The criteria are debounced,
  * so typing a surname sends one request; the previous results stay on screen
  * while the next ones load, and a stale response never replaces a newer one
  * (each criteria set has its own cache entry).
@@ -59,7 +59,7 @@ export interface PeoplePageParams {
 }
 
 /** Sort for the people list: newest first, so a person just created is on page 1 (#1340). */
-export const PERSONAS_SORT = "idPerson,desc";
+export const PEOPLE_SORT = "idPerson,desc";
 
 /**
  * One server page of GET /people (#1340). The people list outgrows any fixed
@@ -70,13 +70,13 @@ export function usePeoplePage(params: PeoplePageParams, options: { enabled?: boo
     enabled: options.enabled ?? true,
     queryKey: peopleKeys.page(params),
     queryFn: () =>
-      apiGetPage<Person>("/people", { page: params.page, size: params.size, sort: PERSONAS_SORT }),
+      apiGetPage<Person>("/people", { page: params.page, size: params.size, sort: PEOPLE_SORT }),
     placeholderData: keepPreviousData,
   });
 }
 
 /** One person by id, for links to a record that is not on the loaded page. */
-export function fetchPersona(id: number) {
+export function fetchPerson(id: number) {
   return apiGet<Person>(`/people/${id}`);
 }
 

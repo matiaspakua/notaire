@@ -27,11 +27,11 @@ async function seedNewFolio(page: Page): Promise<number> {
 }
 
 /**
- * Seed a escritura in estado "Sin Firmar" WITH a folio assigned via the API.
- * Returns the idEscritura and numero — the table only renders `numero`, not `cuerpo`,
- * so tests must match rows by numero.
+ * Seed a deed in estado "Sin Firmar" WITH a folio assigned via the API.
+ * Returns the idDeed and number — the table only renders `number`, not `cuerpo`,
+ * so tests must match rows by number.
  */
-async function seedDeedWithFolio(page: Page, idFolio: number): Promise<{ idEscritura: number; numero: number }> {
+async function seedDeedWithFolio(page: Page, idFolio: number): Promise<{ idDeed: number; number: number }> {
   const id = uniqueId()
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
@@ -44,14 +44,14 @@ async function seedDeedWithFolio(page: Page, idFolio: number): Promise<{ idEscri
   if (!result.ok || !result.data?.idDeed) {
     throw new Error(`Failed to seed escritura: ${result.error ?? JSON.stringify(result.data)}`)
   }
-  return { idEscritura: result.data.idDeed, numero: id }
+  return { idDeed: result.data.idDeed, number: id }
 }
 
 /**
- * Seed a escritura in estado "Sin Firmar" WITHOUT a folio — used by the edge-case
+ * Seed a deed in estado "Sin Firmar" WITHOUT a folio — used by the edge-case
  * test that verifies firmar is blocked when no folio is assigned.
  */
-async function seedDeedWithoutFolio(page: Page): Promise<{ idEscritura: number; numero: number }> {
+async function seedDeedWithoutFolio(page: Page): Promise<{ idDeed: number; number: number }> {
   const id = uniqueId()
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: id,
@@ -62,7 +62,7 @@ async function seedDeedWithoutFolio(page: Page): Promise<{ idEscritura: number; 
   if (!result.ok || !result.data?.idDeed) {
     throw new Error(`Failed to seed escritura sin folio: ${result.error ?? JSON.stringify(result.data)}`)
   }
-  return { idEscritura: result.data.idDeed, numero: id }
+  return { idDeed: result.data.idDeed, number: id }
 }
 
 // ──────────────────────────────────────────────
@@ -81,7 +81,7 @@ test.describe('CU05 - Preparar Deed', () => {
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
-    // When: click "Nueva escritura"
+    // When: click "Nueva deed"
     await page.getByRole('button', { name: /nueva escritura/i }).click()
 
     // Then: modal opens
@@ -104,14 +104,14 @@ test.describe('CU05 - Preparar Deed', () => {
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
-    const numeroEscritura = `${uniqueId()}`
+    const numberDeed = `${uniqueId()}`
 
     // When: open modal and fill fields
     await page.getByRole('button', { name: /nueva escritura/i }).click()
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    await dialog.getByLabel(/número/i).fill(numeroEscritura)
+    await dialog.getByLabel(/número/i).fill(numberDeed)
     await dialog.getByLabel(/date/i).fill(new Date().toISOString().split('T')[0])
 
     // Select folio using the folio picker
@@ -122,7 +122,7 @@ test.describe('CU05 - Preparar Deed', () => {
     await folioOption.waitFor({ state: 'attached', timeout: 5000 })
     await folioOption.evaluate((el: HTMLElement) => el.click())
 
-    // Justify the numbering gap (numero is random, per CU86 correlative validation)
+    // Justify the numbering gap (number is random, per CU86 correlative validation)
     await dialog.getByLabel(/observaciones/i).fill('Numeración no correlativa: seed de datos E2E aislado (CU86)')
 
     // Submit
@@ -134,11 +134,11 @@ test.describe('CU05 - Preparar Deed', () => {
       page.locator('[data-sonner-toast]').getByText(/creada|éxito/i)
     ).toBeVisible({ timeout: 5000 })
 
-    // And: escritura row appears in the table with estado "Sin Firmar" (the backend default
-    // for newly-created escrituras — see ConstantesNegocio.ESCRITURA_SIN_FIRMAR)
+    // And: deed row appears in the table with estado "Sin Firmar" (the backend default
+    // for newly-created deeds — see ConstantesNegocio.ESCRITURA_SIN_FIRMAR)
     const table = page.getByRole('table')
     await expect(table).toBeVisible()
-    const row = table.getByRole('row', { name: new RegExp(numeroEscritura) })
+    const row = table.getByRole('row', { name: new RegExp(numberDeed) })
     await expect(row).toBeVisible({ timeout: 10000 })
     await expect(row).toContainText(/Sin Firmar/i)
   })
@@ -154,43 +154,43 @@ test.describe('CU06 - Firmar Deed', () => {
   })
 
   test('CU06-GW01: golden path — escritura Sin Firmar con folio → firmar → estado Firmada', async ({ page }) => {
-    // Seed: folio + escritura con folio asignado
+    // Seed: folio + deed con folio asignado
     const idFolio = await seedNewFolio(page)
-    const { idEscritura, numero } = await seedDeedWithFolio(page, idFolio)
+    const { idDeed, number } = await seedDeedWithFolio(page, idFolio)
 
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
-    // The escritura row must be visible
-    const row = page.getByRole('row').filter({ hasText: new RegExp(String(numero)) })
+    // The deed row must be visible
+    const row = page.getByRole('row').filter({ hasText: new RegExp(String(number)) })
     await expect(row).toBeVisible({ timeout: 10000 })
 
-    // When: click the firmar button for this escritura
-    await page.getByTestId(`btn-sign-deed-${idEscritura}`).click()
+    // When: click the firmar button for this deed
+    await page.getByTestId(`btn-sign-deed-${idDeed}`).click()
 
     // Confirm in the dialog/alert
     const confirmDialog = page.getByRole('dialog').or(page.getByRole('alertdialog'))
     await expect(confirmDialog).toBeVisible({ timeout: 5000 })
     await confirmDialog.getByRole('button', { name: /confirmar|firmar|aceptar/i }).click()
 
-    // Then: dialog closes and escritura row shows estado "Firmada"
+    // Then: dialog closes and deed row shows estado "Signed"
     await expect(confirmDialog).not.toBeVisible({ timeout: 8000 })
     await expect(row).toContainText(/Firmada/i, { timeout: 10000 })
   })
 
   test('CU06-EDGE01: escritura Sin Firmar SIN folio → botón firmar deshabilitado o muestra error', async ({ page }) => {
-    // Seed: escritura sin folio asignado
-    const { idEscritura, numero } = await seedDeedWithoutFolio(page)
+    // Seed: deed sin folio asignado
+    const { idDeed, number } = await seedDeedWithoutFolio(page)
 
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
-    // The escritura row must be visible
-    const row = page.getByRole('row').filter({ hasText: new RegExp(String(numero)) })
+    // The deed row must be visible
+    const row = page.getByRole('row').filter({ hasText: new RegExp(String(number)) })
     await expect(row).toBeVisible({ timeout: 10000 })
 
     // The firmar button should be either absent, disabled, or trigger an error
-    const firmarBtn = page.getByTestId(`btn-sign-deed-${idEscritura}`)
+    const firmarBtn = page.getByTestId(`btn-sign-deed-${idDeed}`)
     const firmarBtnExists = await firmarBtn.isVisible({ timeout: 3000 }).catch(() => false)
 
     if (firmarBtnExists) {
@@ -248,9 +248,9 @@ test.describe('CU63 - Buscar Deed', () => {
   })
 
   test('CU63-GW02: buscar escritura existente → resultado aparece en tabla', async ({ page }) => {
-    // Seed a known escritura via API so the search has something to find
+    // Seed a known deed via API so the search has something to find
     const id = uniqueId()
-    const numero = `${id}`
+    const number = `${id}`
     const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
       number: id,
       dateDeedrecording: new Date().toISOString().split('T')[0],
@@ -262,18 +262,18 @@ test.describe('CU63 - Buscar Deed', () => {
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
-    // When: search for the known numero
-    await page.getByTestId('input-search-deed').fill(numero)
+    // When: search for the known number
+    await page.getByTestId('input-search-deed').fill(number)
 
     // Then: the matching row is visible in the table
     const table = page.getByRole('table')
     await expect(table).toBeVisible()
-    await expect(table.getByRole('row', { name: new RegExp(numero) })).toBeVisible({ timeout: 10000 })
+    await expect(table.getByRole('row', { name: new RegExp(number) })).toBeVisible({ timeout: 10000 })
   })
 })
 
 // ──────────────────────────────────────────────
-// Viewport responsive tests — escrituras screen
+// Viewport responsive tests — deeds screen
 // ──────────────────────────────────────────────
 
 for (const viewport of [
@@ -291,7 +291,7 @@ for (const viewport of [
     // Page heading visible
     await expect(page.getByRole('heading', { level: 1, name: /deeds/i })).toBeVisible()
 
-    // "Nueva escritura" button accessible
+    // "Nueva deed" button accessible
     await expect(page.getByRole('button', { name: /nueva escritura/i })).toBeVisible()
 
     // Search input accessible

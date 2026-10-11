@@ -1,5 +1,5 @@
 /**
- * CU71 - Agregar al presupuesto copias de ítems existentes del catálogo.
+ * CU71 - Agregar al budget copias de ítems existentes del catálogo.
  * Issue #834.
  */
 import { test, expect } from "@playwright/test";
@@ -16,19 +16,19 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
   });
 
   test("agrega un ítem del catálogo al presupuesto y lo muestra en el desglose", async ({ page }) => {
-    // GIVEN: presupuesto y un ítem reutilizable en el catálogo
-    const personaResult = await createPerson(page);
-    expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createBudget(page, personaResult.data!.personId);
-    expect(presupuestoResult.ok).toBe(true);
-    const idPresupuesto = presupuestoResult.data!.idBudget;
+    // GIVEN: budget y un ítem reutilizable en el catálogo
+    const personResult = await createPerson(page);
+    expect(personResult.ok).toBe(true);
+    const budgetResult = await createBudget(page, personResult.data!.personId);
+    expect(budgetResult.ok).toBe(true);
+    const idBudget = budgetResult.data!.idBudget;
 
     const itemResult = await createItem(page, { name: "Sellado E2E", value: 750 });
     expect(itemResult.ok, `createItem failed: ${itemResult.error}`).toBe(true);
 
-    // WHEN: operador abre los ítems del presupuesto y agrega el ítem del catálogo
+    // WHEN: operador abre los ítems del budget y agrega el ítem del catálogo
     await steps.givenUserIsOnPage("/dashboard/budgets");
-    const itemsBtn = page.getByTestId(`btn-items-budget-${idPresupuesto}`);
+    const itemsBtn = page.getByTestId(`btn-items-budget-${idBudget}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
 
@@ -47,11 +47,11 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
   });
 
   test("permite combinar un ítem de plantilla y uno de catálogo en el mismo presupuesto", async ({ page }) => {
-    const personaResult = await createPerson(page);
-    expect(personaResult.ok).toBe(true);
-    const presupuestoResult = await createBudget(page, personaResult.data!.personId);
-    expect(presupuestoResult.ok).toBe(true);
-    const idPresupuesto = presupuestoResult.data!.idBudget;
+    const personResult = await createPerson(page);
+    expect(personResult.ok).toBe(true);
+    const budgetResult = await createBudget(page, personResult.data!.personId);
+    expect(budgetResult.ok).toBe(true);
+    const idBudget = budgetResult.data!.idBudget;
 
     const item1 = await createItem(page, { name: "Item Uno E2E", value: 200 });
     const item2 = await createItem(page, { name: "Item Dos E2E", value: 300 });
@@ -59,7 +59,7 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
     expect(item2.ok).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
-    const itemsBtn = page.getByTestId(`btn-items-budget-${idPresupuesto}`);
+    const itemsBtn = page.getByTestId(`btn-items-budget-${idBudget}`);
     await expect(itemsBtn).toBeVisible({ timeout: 8000 });
     await itemsBtn.click();
 

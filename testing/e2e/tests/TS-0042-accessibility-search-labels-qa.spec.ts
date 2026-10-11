@@ -61,8 +61,8 @@ test.describe("Search inputs expose an accessible label (#608)", () => {
 
 /**
  * Issue #1343: filter selects had no accessible name (axe button-name /
- * select-name, critical) on gestiones, presupuestos, folios, auditoria and
- * estados-gestion.
+ * select-name, critical) on managements, budgets, folios, auditoria and
+ * estados-management.
  */
 test.describe("Filter selects expose an accessible name (#1343)", () => {
   test.beforeEach(async ({ page }) => {

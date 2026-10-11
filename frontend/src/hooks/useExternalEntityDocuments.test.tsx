@@ -1,6 +1,6 @@
 /**
- * Unit test for useExternalEntityDocuments (CU10 — movimientos de
- * documentación de entidades externas).
+ * Unit test for useExternalEntityDocuments (CU10 — movements de
+ * documentación de entities externas).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
@@ -40,10 +40,10 @@ describe("useExternalEntityDocuments (CU10)", () => {
 
   it("fetches the gestión's entidad-externa documents via GET", async () => {
     vi.mocked(apiGet).mockResolvedValue({
-      idGestion: 9,
+      idManagement: 9,
       numero: 1001,
       heading: "Gestion",
-      nomenclaturaCatastral: "11-22-33",
+      cadastralDesignationCatastral: "11-22-33",
       documents: [{ idSubmittedDocument: 1, name: "Certificado de Dominio", delivered: false }],
     });
 
@@ -74,9 +74,9 @@ describe("useRegisterExternalEntityDocumentMovement (CU10)", () => {
     const { result } = renderHook(() => useRegisterExternalEntityDocumentMovement(), { wrapper: Wrapper });
 
     await result.current.mutateAsync({
-      gestionId: 9,
-      idDocumentoPresentado: 1,
-      movimiento: { delivered: true },
+      managementId: 9,
+      idDocumentPresentado: 1,
+      movement: { delivered: true },
     });
 
     expect(apiPut).toHaveBeenCalledWith("/managements/9/external-entity-documents/1", { delivered: true });

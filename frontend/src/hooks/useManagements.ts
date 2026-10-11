@@ -13,7 +13,7 @@ export const managementsKeys = {
   all: ["managements"] as const,
   detail: (id: number) => ["managements", id] as const,
   byClient: (id: number) => ["managements", "client", id] as const,
-  byNumber: (numero: number) => ["managements", "number", numero] as const,
+  byNumber: (number: number) => ["managements", "number", number] as const,
   outstandingBalance: (id: number) => ["managements", id, "outstanding-balance"] as const,
   page: (params: ManagementsPageParams) => ["managements", "page", params] as const,
 };
@@ -54,20 +54,20 @@ export const procedureFolderKeys = {
   byManagement: (id: number) => ["procedure-folders", "management", id] as const,
 };
 
-export function useManagementByNumber(numero: number | undefined) {
+export function useManagementByNumber(number: number | undefined) {
   return useQuery({
-    queryKey: managementsKeys.byNumber(numero ?? 0),
-    queryFn: () => apiGet<DeedManagement>(`/managements/number/${numero}`),
-    enabled: numero != null && numero > 0,
+    queryKey: managementsKeys.byNumber(number ?? 0),
+    queryFn: () => apiGet<DeedManagement>(`/managements/number/${number}`),
+    enabled: number != null && number > 0,
     retry: false,
   });
 }
 
-export function useManagementsByClient(idPersona: number) {
+export function useManagementsByClient(idPerson: number) {
   return useQuery({
-    queryKey: managementsKeys.byClient(idPersona),
-    queryFn: () => apiGet<DeedManagement[]>(`/managements/client/${idPersona}`),
-    enabled: idPersona > 0,
+    queryKey: managementsKeys.byClient(idPerson),
+    queryFn: () => apiGet<DeedManagement[]>(`/managements/client/${idPerson}`),
+    enabled: idPerson > 0,
   });
 }
 
@@ -107,18 +107,18 @@ export function useDeleteManagement() {
 }
 
 /** CU16 - Saldo pendiente agregado de una gestión (RF-22), consultado antes de archivar. */
-export function useOutstandingBalance(gestionId: number | undefined) {
+export function useOutstandingBalance(managementId: number | undefined) {
   return useQuery({
-    queryKey: managementsKeys.outstandingBalance(gestionId ?? 0),
-    queryFn: () => apiGet<DtoOutstandingBalance>(`/managements/${gestionId}/outstanding-balance`),
-    enabled: !!gestionId,
+    queryKey: managementsKeys.outstandingBalance(managementId ?? 0),
+    queryFn: () => apiGet<DtoOutstandingBalance>(`/managements/${managementId}/outstanding-balance`),
+    enabled: !!managementId,
   });
 }
 
 /**
- * CU16 - Archiva la gestión advirtiendo y registrando la deuda pendiente (RF-22, RF-37).
+ * CU16 - Archiva la gestión advirtiendo y registrando la debt pendiente (RF-22, RF-37).
  * `confirmado` debe reenviarse en `true` cuando el usuario acepta archivar a pesar de
- * carpetas de trámite (CU85) en espera sin resolver (HTTP 409).
+ * folders de trámite (CU85) en espera sin resolver (HTTP 409).
  */
 export function useArchiveManagement() {
   const qc = useQueryClient();
@@ -149,20 +149,20 @@ export function useTransitionManagement() {
 }
 
 /** CU13 - Bitácora completa de una gestión, ordenada cronológicamente. */
-export function useHistorial(gestionId: number | undefined) {
+export function useHistory(managementId: number | undefined) {
   return useQuery({
-    queryKey: historyKeys.byManagement(gestionId ?? 0),
-    queryFn: () => apiGet<ManagementHistory[]>(`/managements/${gestionId}/history`),
-    enabled: !!gestionId,
+    queryKey: historyKeys.byManagement(managementId ?? 0),
+    queryFn: () => apiGet<ManagementHistory[]>(`/managements/${managementId}/history`),
+    enabled: !!managementId,
   });
 }
 
 /** CU85 - Carpetas de trámite asociadas a una gestión. */
-export function useFoldersByManagement(gestionId: number | undefined) {
+export function useFoldersByManagement(managementId: number | undefined) {
   return useQuery({
-    queryKey: procedureFolderKeys.byManagement(gestionId ?? 0),
-    queryFn: () => apiGet<ProcedureFolder[]>(`/procedure-folders?managementId=${gestionId}`),
-    enabled: !!gestionId,
+    queryKey: procedureFolderKeys.byManagement(managementId ?? 0),
+    queryFn: () => apiGet<ProcedureFolder[]>(`/procedure-folders?managementId=${managementId}`),
+    enabled: !!managementId,
   });
 }
 
@@ -170,10 +170,10 @@ export function useFoldersByManagement(gestionId: number | undefined) {
 export function usePutFolderOnHold() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ idCarpeta, motivo }: { idCarpeta: number; motivo: string; gestionId: number }) =>
-      apiPut<ProcedureFolder>(`/procedure-folders/${idCarpeta}/wait`, { reason: motivo }),
-    onSuccess: (_data, { gestionId }) => {
-      qc.invalidateQueries({ queryKey: procedureFolderKeys.byManagement(gestionId) });
+    mutationFn: ({ idFolder, motivo }: { idFolder: number; motivo: string; managementId: number }) =>
+      apiPut<ProcedureFolder>(`/procedure-folders/${idFolder}/wait`, { reason: motivo }),
+    onSuccess: (_data, { managementId }) => {
+      qc.invalidateQueries({ queryKey: procedureFolderKeys.byManagement(managementId) });
     },
   });
 }

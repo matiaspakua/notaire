@@ -1,5 +1,5 @@
 /**
- * Unit test for useProcedureTemplate (CU03 — documentos necesarios por trámite).
+ * Unit test for useProcedureTemplate (CU03 — documents required por trámite).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
@@ -25,7 +25,7 @@ function createWrapper() {
 
 describe("procedureTemplateKeys", () => {
   it("byTramite key includes the trámite id", () => {
-    expect(procedureTemplateKeys.byTramite(7)).toEqual(["plantillaTramite", "tramite", 7]);
+    expect(procedureTemplateKeys.byProcedure(7)).toEqual(["plantillaTramite", "tramite", 7]);
   });
 });
 
@@ -36,8 +36,8 @@ describe("useProcedureTemplate (CU03)", () => {
     vi.mocked(apiGet).mockResolvedValue([
       {
         notes: "",
-        tipoDeTramite: { idProcedureType: 7, name: "Compraventa" },
-        tipoDeDocumento: { idDocumentType: 1, name: "DNI", expires: false, deliveredBy: "Cliente" },
+        typeDeProcedure: { idProcedureType: 7, name: "Compraventa" },
+        typeDeDocument: { idDocumentType: 1, name: "DNI", expires: false, deliveredBy: "Cliente" },
       },
     ]);
 
@@ -45,7 +45,7 @@ describe("useProcedureTemplate (CU03)", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(apiGet).toHaveBeenCalledWith("/procedure-templates/procedure-types/7");
-    expect(result.current.data?.[0].tipoDeDocumento?.name).toBe("DNI");
+    expect(result.current.data?.[0].typeDeDocument?.name).toBe("DNI");
   });
 
   it("does not fetch when idTipoTramite is undefined", () => {

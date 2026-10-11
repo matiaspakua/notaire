@@ -28,16 +28,16 @@ const EMPTY: Partial<Substitution> = {
   dateEnd: "",
 };
 
-function personaName(p: Substitution["fkIdSubstituted"]): string {
+function personName(p: Substitution["fkIdSubstituted"]): string {
   if (!p) return "—";
   return [p.name, p.lastName].filter(Boolean).join(" ") || `#${p.personId}`;
 }
 
-export default function SuplenciasPage() {
+export default function SubstitutionsPage() {
   const t = useTranslations("suplencias");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
-  const { data: suplencias = [], isLoading } = useSubstitutions();
+  const { data: substitutions = [], isLoading } = useSubstitutions();
   const createMutation = useCreateSubstitution();
   const updateMutation = useUpdateSubstitution();
   const deleteMutation = useDeleteSubstitution();
@@ -112,14 +112,14 @@ export default function SuplenciasPage() {
       render: (s) => (
         <div className="flex items-center gap-2">
           <UserCheck className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">{personaName(s.fkIdSubstituted)}</span>
+          <span className="font-medium">{personName(s.fkIdSubstituted)}</span>
         </div>
       ),
     },
     {
       key: "suplente",
       header: t("fields.suplente"),
-      render: (s) => personaName(s.fkIdSubstitute),
+      render: (s) => personName(s.fkIdSubstitute),
     },
     {
       key: "desde",
@@ -168,7 +168,7 @@ export default function SuplenciasPage() {
       />
 
       <DataTable
-        data={suplencias}
+        data={substitutions}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(s) => s.idSubstitution!}

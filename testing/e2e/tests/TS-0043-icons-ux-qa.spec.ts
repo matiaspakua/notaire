@@ -208,7 +208,7 @@ test.describe("Page load — All pages render without crash", () => {
         (e) =>
           !e.includes("favicon") &&
           !e.includes("next-dev") &&
-          !e.includes("reading 'toString'") // pre-existing bug in documentos page
+          !e.includes("reading 'toString'") // pre-existing bug in documents page
       );
       expect(criticalErrors).toEqual([]);
     });

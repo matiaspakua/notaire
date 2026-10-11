@@ -58,7 +58,7 @@ describe("icon-only Buttons expose aria-label (#1057)", () => {
   it("inventory covers nine pages (17 actions)", () => {
     const snippetCount = INVENTORY.reduce((n, e) => n + e.requiredSnippets.length, 0);
     expect(INVENTORY).toHaveLength(9);
-    // 8 pages × edit+delete + presupuestos resumen = 17
+    // 8 pages × edit+delete + budgets resumen = 17
     expect(snippetCount).toBe(17);
   });
 

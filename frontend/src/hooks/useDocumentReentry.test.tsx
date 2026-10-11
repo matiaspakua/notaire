@@ -72,18 +72,18 @@ describe("useReenterDocumentation (CU43)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("reingresa a document via POST", async () => {
-    vi.mocked(apiPost).mockResolvedValue({ idDocumentoPresentado: 1, reingresado: true });
+    vi.mocked(apiPost).mockResolvedValue({ idDocumentPresentado: 1, reingresado: true });
 
     const { Wrapper } = createWrapper();
     const { result } = renderHook(() => useReenterDocumentation(), { wrapper: Wrapper });
 
     await result.current.mutateAsync({
-      gestionId: 9,
+      managementId: 9,
       reingreso: { idProcedure: 1, idDocumentType: 5 },
     });
 
     // Backend body is DtoDocumentReentryRequest(idProcedure, idDocumentType) —
-    // not idTramite/idTipoDocumento.
+    // not idProcedure/idTypeDocument.
     expect(apiPost).toHaveBeenCalledWith("/managements/9/document-reentry", {
       idProcedure: 1,
       idDocumentType: 5,

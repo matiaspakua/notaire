@@ -19,22 +19,22 @@ test.describe("CU42 - Próximos vencimientos", () => {
     expect(tipo.ok, tipo.error ?? "createDocumentType failed").toBe(true);
 
     // A document is presented for a trámite (CU04, #655): procedureId is required on create.
-    const tipoTramite = await createProcedureType(page);
-    expect(tipoTramite.ok, tipoTramite.error ?? "createProcedureType failed").toBe(true);
-    const tramite = await apiPost<{ idProcedure: number }>(page, "/procedures", {
-      idProcedureType: tipoTramite.data!.idProcedureType,
+    const typeProcedure = await createProcedureType(page);
+    expect(typeProcedure.ok, typeProcedure.error ?? "createProcedureType failed").toBe(true);
+    const procedure = await apiPost<{ idProcedure: number }>(page, "/procedures", {
+      idProcedureType: typeProcedure.data!.idProcedureType,
     });
-    expect(tramite.ok, tramite.error ?? "create trámite failed").toBe(true);
+    expect(procedure.ok, procedure.error ?? "create trámite failed").toBe(true);
 
     const name = `Vencimiento E2E ${uniqueId()}`;
-    const documento = await apiPost<{ idSubmittedDocument: number }>(page, "/submitted-documents", {
+    const document = await apiPost<{ idSubmittedDocument: number }>(page, "/submitted-documents", {
       typeId: tipo.data!.idDocumentType,
-      procedureId: tramite.data!.idProcedure,
+      procedureId: procedure.data!.idProcedure,
       date: new Date().toISOString().split("T")[0],
       delivered: false,
       name,
     });
-    expect(documento.ok, documento.error ?? "documento-presentado failed").toBe(true);
+    expect(document.ok, document.error ?? "documento-presentado failed").toBe(true);
 
     await page.goto("/dashboard/upcoming-expirations");
     const table = page.getByRole("table");

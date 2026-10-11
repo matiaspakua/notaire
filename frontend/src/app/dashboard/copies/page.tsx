@@ -36,38 +36,38 @@ export default function CopiasPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Copy | null>(null);
   const [form, setForm] = useState({
-    numero: "",
+    number: "",
     fechaImpresion: "",
     fechaRetiro: "",
-    observaciones: "",
+    notes: "",
   });
 
   function openCreate() {
     setEditing(null);
-    setForm({ numero: "", fechaImpresion: todayInputValue(), fechaRetiro: "", observaciones: "" });
+    setForm({ number: "", fechaImpresion: todayInputValue(), fechaRetiro: "", notes: "" });
     setModalOpen(true);
   }
 
   function openEdit(c: Copy) {
     setEditing(c);
     setForm({
-      numero: c.number?.toString() ?? "",
+      number: c.number?.toString() ?? "",
       fechaImpresion: toDateInputValue(c.datePrinting),
       fechaRetiro: toDateInputValue(c.dateWithdrawal),
-      observaciones: c.notes ?? "",
+      notes: c.notes ?? "",
     });
     setModalOpen(true);
   }
 
   // The copy number and print date are required by the API on create and update (#655).
-  const canSave = form.numero.trim() !== "" && form.fechaImpresion !== "";
+  const canSave = form.number.trim() !== "" && form.fechaImpresion !== "";
 
   async function handleSave() {
     const data: Partial<Copy> = {
-      number: form.numero ? Number(form.numero) : undefined,
+      number: form.number ? Number(form.number) : undefined,
       datePrinting: form.fechaImpresion || undefined,
       dateWithdrawal: form.fechaRetiro || undefined,
-      notes: form.observaciones || undefined,
+      notes: form.notes || undefined,
     };
     try {
       if (editing?.idCopy) {
@@ -103,7 +103,7 @@ export default function CopiasPage() {
       className: "w-16",
     },
     {
-      key: "numero",
+      key: "number",
       header: tc("number"),
       render: (c) => <span className="font-medium">{c.number ?? "—"}</span>,
     },
@@ -173,8 +173,8 @@ export default function CopiasPage() {
               <FormField label={tc("number")} required>
                 <Input
                   type="number"
-                  value={form.numero}
-                  onChange={(e) => setForm({ ...form, numero: e.target.value })}
+                  value={form.number}
+                  onChange={(e) => setForm({ ...form, number: e.target.value })}
                 />
               </FormField>
               <div className="grid grid-cols-2 gap-3">
@@ -195,8 +195,8 @@ export default function CopiasPage() {
               </div>
               <FormField label={tc("observations")}>
                 <Input
-                  value={form.observaciones}
-                  onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
+                  value={form.notes}
+                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
                 />
               </FormField>
             </FormSection>

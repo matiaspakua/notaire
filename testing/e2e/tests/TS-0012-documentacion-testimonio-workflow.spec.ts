@@ -1,10 +1,10 @@
 /**
  * TS-0012 - Documentación y Testimony Workflow (CU03 → CU07 → CU08 → CU11 → CU12)
- * CU03 - Listar documentos necesarios
- * CU07 - Generar testimonio
- * CU08 - Verificar testimonio
+ * CU03 - Listar documents required
+ * CU07 - Generar testimony
+ * CU08 - Verificar testimony
  * CU11 - Ingresar para inscripción
- * CU12 - Retirar testimonio
+ * CU12 - Retirar testimony
  * Issue #832
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU07.puml
  */
@@ -18,56 +18,56 @@ import { rowWithCell } from './setup/rows'
 // Seed helpers
 // ──────────────────────────────────────────────
 
-interface EscrituraCreada {
-  idEscritura: number
-  numero: number
+interface DeedCreated {
+  idDeed: number
+  number: number
 }
 
-interface TestimonioCreado {
-  idTestimonio: number
-  numero: number
+interface TestimonyCreated {
+  idTestimony: number
+  number: number
 }
 
-/** Seed a "Firmada" escritura so CU07 has something to reference. */
+/** Seed a "Signed" deed so CU07 has something to reference. */
 async function seedSignedDeed(
   page: import('@playwright/test').Page,
-): Promise<EscrituraCreada> {
-  const numero = uniqueId() % 1_000_000
+): Promise<DeedCreated> {
+  const number = uniqueId() % 1_000_000
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
-    number: numero,
+    number: number,
     dateDeedrecording: new Date().toISOString().split('T')[0],
-    body: `Contenido E2E TS-0012 ${numero}`,
+    body: `Contenido E2E TS-0012 ${number}`,
     status: 'Firmada',
   })
   if (!result.ok || !result.data?.idDeed) {
     throw new Error(`seedSignedDeed failed: status ${result.status} — ${result.error}`)
   }
-  return { idEscritura: result.data.idDeed, numero }
+  return { idDeed: result.data.idDeed, number }
 }
 
 /**
- * Seed a testimonio that is already "verificado" (true) so CU11/CU12 can
- * start directly from the movimientos page without repeating CU07/CU08.
+ * Seed a testimony that is already "verificado" (true) so CU11/CU12 can
+ * start directly from the movements page without repeating CU07/CU08.
  */
 async function seedVerifiedTestimony(
   page: import('@playwright/test').Page,
-): Promise<TestimonioCreado> {
-  const { idEscritura, numero: escrituraNumero } = await seedSignedDeed(page)
-  const numero = uniqueId() % 1_000_000
+): Promise<TestimonyCreated> {
+  const { idDeed, number: deedNumber } = await seedSignedDeed(page)
+  const number = uniqueId() % 1_000_000
   const result = await apiPost<{ idTestimony: number }>(page, '/testimonies', {
-    deed: { idDeed: idEscritura, number: escrituraNumero },
-    number: numero,
+    deed: { idDeed: idDeed, number: deedNumber },
+    number: number,
     flagged: false,
     verified: true,
   })
   if (!result.ok || !result.data?.idTestimony) {
     throw new Error(`seedVerifiedTestimony failed: status ${result.status} — ${result.error}`)
   }
-  return { idTestimonio: result.data.idTestimony, numero }
+  return { idTestimony: result.data.idTestimony, number }
 }
 
 // ──────────────────────────────────────────────
-// CU03 — Listar documentos necesarios
+// CU03 — Listar documents required
 // ──────────────────────────────────────────────
 
 test.describe('CU03 - Listar documentos y certificados necesarios', () => {
@@ -108,64 +108,64 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
 
   test('Golden path: generar → verificar → ingresar → inscribir → retirar', async ({ page }) => {
     // ── Seed ──────────────────────────────────────────
-    const { idEscritura, numero: escrituraNumero } = await seedSignedDeed(page)
+    const { idDeed, number: deedNumber } = await seedSignedDeed(page)
 
-    // ── CU07: Generar testimonio ──────────────────────
+    // ── CU07: Generar testimony ──────────────────────
     await steps.givenUserIsOnPage('/dashboard/testimonies')
     await page.getByTestId('btn-generate-testimony').click()
     await steps.thenModalIsVisible()
 
     await page.getByTestId('select-deed-testimony').click()
-    await page.getByRole('option', { name: new RegExp(String(escrituraNumero)) }).click()
+    await page.getByRole('option', { name: new RegExp(String(deedNumber)) }).click()
     await page.getByTestId('btn-save-testimony').click()
     await steps.thenShowsSuccessMessage('generado')
     await steps.thenModalIsNotVisible()
 
-    const rowTestimonios = rowWithCell(page, escrituraNumero)
-    await expect(rowTestimonios).toBeVisible({ timeout: 10_000 })
+    const rowTestimonies = rowWithCell(page, deedNumber)
+    await expect(rowTestimonies).toBeVisible({ timeout: 10_000 })
 
-    // Retrieve the generated testimonio id from the API
+    // Retrieve the generated testimony id from the API
     const list = await apiGet<Array<{ idTestimony: number; deed?: { number?: number } }>>(
       page,
       '/testimonies',
     )
-    const idTestimonio = list.data!.find(
-      (t) => t.deed?.number === escrituraNumero,
+    const idTestimony = list.data!.find(
+      (t) => t.deed?.number === deedNumber,
     )!.idTestimony
 
-    // ── CU08: Verificar sin observaciones ─────────────
-    await page.getByTestId(`btn-verify-testimony-${idTestimonio}`).click()
+    // ── CU08: Verificar sin notes ─────────────
+    await page.getByTestId(`btn-verify-testimony-${idTestimony}`).click()
     await steps.thenModalIsVisible()
     await page.getByTestId('btn-confirm-verify-testimony').click()
     await steps.thenShowsSuccessMessage('verificado')
-    await expect(rowTestimonios).toContainText(/verificado/i)
+    await expect(rowTestimonies).toContainText(/verificado/i)
 
     // ── CU11: Ingresar para inscripción ───────────────
     await steps.givenUserIsOnPage('/dashboard/testimony-movements')
-    const rowMovimientos = rowWithCell(page, escrituraNumero)
-    await expect(rowMovimientos).toBeVisible({ timeout: 10_000 })
+    const rowMovements = rowWithCell(page, deedNumber)
+    await expect(rowMovements).toBeVisible({ timeout: 10_000 })
 
-    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click()
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimony}`).click()
     await steps.thenShowsSuccessMessage('ingresado')
-    await expect(rowMovimientos).toContainText(/ingresado/i)
+    await expect(rowMovements).toContainText(/ingresado/i)
 
     // ── CU11: Registrar inscripción ───────────────────
-    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click()
+    await page.getByTestId(`btn-record-registration-${idTestimony}`).click()
     await steps.thenShowsSuccessMessage('inscripción registrada')
-    await expect(rowMovimientos).toContainText(/inscripto/i)
+    await expect(rowMovements).toContainText(/inscripto/i)
 
-    // ── CU12: Retirar testimonio ──────────────────────
-    await page.getByTestId(`btn-withdraw-testimony-${idTestimonio}`).click()
+    // ── CU12: Retirar testimony ──────────────────────
+    await page.getByTestId(`btn-withdraw-testimony-${idTestimony}`).click()
     await steps.thenModalIsVisible()
     await page.getByTestId('input-card-number').fill('123')
     await page.getByTestId('btn-confirm-retiro').click()
     await steps.thenShowsSuccessMessage('retirado')
-    await expect(rowMovimientos).toContainText(/retirado/i)
+    await expect(rowMovements).toContainText(/retirado/i)
   })
 })
 
 // ──────────────────────────────────────────────
-// CU07 — Generar testimonio (unit / edge)
+// CU07 — Generar testimony (unit / edge)
 // ──────────────────────────────────────────────
 
 test.describe('CU07 - Generar testimonio', () => {
@@ -179,25 +179,25 @@ test.describe('CU07 - Generar testimonio', () => {
   test('CU07-GW01: Given escritura firmada, When generar testimonio, Then estado generado aparece en tabla', async ({
     page,
   }) => {
-    const { numero } = await seedSignedDeed(page)
+    const { number } = await seedSignedDeed(page)
 
     await steps.givenUserIsOnPage('/dashboard/testimonies')
     await page.getByTestId('btn-generate-testimony').click()
     await steps.thenModalIsVisible()
 
     await page.getByTestId('select-deed-testimony').click()
-    await page.getByRole('option', { name: new RegExp(String(numero)) }).click()
+    await page.getByRole('option', { name: new RegExp(String(number)) }).click()
     await page.getByTestId('btn-save-testimony').click()
     await steps.thenShowsSuccessMessage('generado')
     await steps.thenModalIsNotVisible()
 
-    const row = rowWithCell(page, numero)
+    const row = rowWithCell(page, number)
     await expect(row).toBeVisible({ timeout: 10_000 })
   })
 })
 
 // ──────────────────────────────────────────────
-// CU08 — Verificar testimonio (edge paths)
+// CU08 — Verificar testimony (edge paths)
 // ──────────────────────────────────────────────
 
 test.describe('CU08 - Verificar testimonio', () => {
@@ -209,20 +209,20 @@ test.describe('CU08 - Verificar testimonio', () => {
   })
 
   test('CU08-GW01: Edge: verificar con observaciones → estado Observado', async ({ page }) => {
-    // Seed escritura and generate testimonio via API so this test is independent
-    const { idEscritura, numero } = await seedSignedDeed(page)
+    // Seed deed and generate testimony via API so this test is independent
+    const { idDeed, number } = await seedSignedDeed(page)
     const generated = await apiPost<{ idTestimony: number }>(
       page,
-      `/testimonies/${idEscritura}/generate`,
+      `/testimonies/${idDeed}/generate`,
       {},
     )
-    const idTestimonio = generated.data!.idTestimony
+    const idTestimony = generated.data!.idTestimony
 
     await steps.givenUserIsOnPage('/dashboard/testimonies')
-    const row = rowWithCell(page, numero)
+    const row = rowWithCell(page, number)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
-    await page.getByTestId(`btn-verify-testimony-${idTestimonio}`).click()
+    await page.getByTestId(`btn-verify-testimony-${idTestimony}`).click()
     await steps.thenModalIsVisible()
     await page.getByTestId('checkbox-observed-testimony').click()
     await page.getByTestId('input-notes-testimony').fill('Falta firma del otorgante')
@@ -235,27 +235,27 @@ test.describe('CU08 - Verificar testimonio', () => {
   test('CU08-GW02: Edge: emitir copia está bloqueado hasta que el testimonio esté verificado', async ({
     page,
   }) => {
-    const { idEscritura, numero } = await seedSignedDeed(page)
+    const { idDeed, number } = await seedSignedDeed(page)
     const generated = await apiPost<{ idTestimony: number }>(
       page,
-      `/testimonies/${idEscritura}/generate`,
+      `/testimonies/${idDeed}/generate`,
       {},
     )
-    const idTestimonio = generated.data!.idTestimony
+    const idTestimony = generated.data!.idTestimony
 
     await steps.givenUserIsOnPage('/dashboard/testimonies')
-    const row = rowWithCell(page, numero)
+    const row = rowWithCell(page, number)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
-    // btn-emitir-copia must NOT exist while testimonio is still unverified
-    await expect(page.getByTestId(`btn-issue-copy-${idTestimonio}`)).toHaveCount(0)
+    // btn-emitir-copia must NOT exist while testimony is still unverified
+    await expect(page.getByTestId(`btn-issue-copy-${idTestimony}`)).toHaveCount(0)
     // The verify button must still be available
-    await expect(page.getByTestId(`btn-verify-testimony-${idTestimonio}`)).toBeVisible()
+    await expect(page.getByTestId(`btn-verify-testimony-${idTestimony}`)).toBeVisible()
   })
 })
 
 // ──────────────────────────────────────────────
-// CU11 — Movimientos testimonio (edge paths)
+// CU11 — Movimientos testimony (edge paths)
 // ──────────────────────────────────────────────
 
 test.describe('CU11 - Ingresar para inscripción', () => {
@@ -267,24 +267,24 @@ test.describe('CU11 - Ingresar para inscripción', () => {
   })
 
   test('CU11-GW01: ingresar y registrar inscripción cambia estado a inscripto', async ({ page }) => {
-    const { idTestimonio, numero } = await seedVerifiedTestimony(page)
+    const { idTestimony, number } = await seedVerifiedTestimony(page)
 
     await steps.givenUserIsOnPage('/dashboard/testimony-movements')
-    const row = rowWithCell(page, numero)
+    const row = rowWithCell(page, number)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
-    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click()
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimony}`).click()
     await steps.thenShowsSuccessMessage('ingresado')
     await expect(row).toContainText(/ingresado/i)
 
-    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click()
+    await page.getByTestId(`btn-record-registration-${idTestimony}`).click()
     await steps.thenShowsSuccessMessage('inscripción registrada')
     await expect(row).toContainText(/inscripto/i)
   })
 })
 
 // ──────────────────────────────────────────────
-// CU12 — Retirar testimonio (edge paths)
+// CU12 — Retirar testimony (edge paths)
 // ──────────────────────────────────────────────
 
 test.describe('CU12 - Retirar testimonio', () => {
@@ -296,20 +296,20 @@ test.describe('CU12 - Retirar testimonio', () => {
   })
 
   test('CU12-GW01: retirar después de inscripción → estado retirado', async ({ page }) => {
-    const { idTestimonio, numero } = await seedVerifiedTestimony(page)
+    const { idTestimony, number } = await seedVerifiedTestimony(page)
 
     await steps.givenUserIsOnPage('/dashboard/testimony-movements')
-    const row = rowWithCell(page, numero)
+    const row = rowWithCell(page, number)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
     // Move to 'inscripto' first
-    await page.getByTestId(`btn-sign-in-testimony-${idTestimonio}`).click()
+    await page.getByTestId(`btn-sign-in-testimony-${idTestimony}`).click()
     await steps.thenShowsSuccessMessage('ingresado')
-    await page.getByTestId(`btn-record-registration-${idTestimonio}`).click()
+    await page.getByTestId(`btn-record-registration-${idTestimony}`).click()
     await steps.thenShowsSuccessMessage('inscripción registrada')
 
     // Now retire
-    await page.getByTestId(`btn-withdraw-testimony-${idTestimonio}`).click()
+    await page.getByTestId(`btn-withdraw-testimony-${idTestimony}`).click()
     await steps.thenModalIsVisible()
     await page.getByTestId('input-card-number').fill('456')
     await page.getByTestId('btn-confirm-retiro').click()
@@ -319,7 +319,7 @@ test.describe('CU12 - Retirar testimonio', () => {
 })
 
 // ──────────────────────────────────────────────
-// Responsive — testimonios screens
+// Responsive — testimonies screens
 // ──────────────────────────────────────────────
 
 for (const viewport of [

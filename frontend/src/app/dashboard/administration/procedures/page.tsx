@@ -20,7 +20,7 @@ import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<ProcedureType> = { name: "", notes: "" };
 
-export default function TramitesPage() {
+export default function ProceduresPage() {
   const t = useTranslations("administracion.tramites");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -103,7 +103,7 @@ export default function TramitesPage() {
 
   const columns: Column<ProcedureType>[] = [
     { key: "id", header: tc("id"), render: (item) => <span className="text-xs text-muted-foreground">{item.idProcedureType}</span>, className: "w-12" },
-    { key: "nombre", header: t("fields.nombre"), render: (item) => <span className="font-medium">{item.name}</span> },
+    { key: "name", header: t("fields.nombre"), render: (item) => <span className="font-medium">{item.name}</span> },
     { key: "desc", header: t("fields.descripcion"), render: (item) => item.notes ?? "—" },
     { key: "workflow", header: t("fields.workflow"), render: (item) => item.workflowDefinitionName ? <span className="text-xs text-muted-foreground">{item.workflowDefinitionName}</span> : <span className="text-xs text-muted-foreground">—</span> },
     {

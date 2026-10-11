@@ -7,7 +7,7 @@ import { formatDate, formatCurrency, fullName } from "@/lib/utils";
 import type { Person, DeedManagement, Budget, Payment } from "@/types";
 
 // ──────────────────────────────────────────────
-// CU01/CU02 — Gestiones and Budgets display
+// CU01/CU02 — Managements and Budgets display
 // ──────────────────────────────────────────────
 
 describe("CU02 — Gestiones list display helpers", () => {
@@ -61,7 +61,7 @@ describe("CU01 — Budget display helpers", () => {
 });
 
 // ──────────────────────────────────────────────
-// CU17/CU18 — Personas
+// CU17/CU18 — People
 // ──────────────────────────────────────────────
 
 describe("CU17 — Personas list display helpers", () => {
@@ -80,14 +80,14 @@ describe("CU17 — Personas list display helpers", () => {
   });
 
   it("filters clients using isClient flag", () => {
-    const personas: Person[] = [
+    const people: Person[] = [
       { personId: 1, firstName: "Cliente A", isClient: true },
       { personId: 2, firstName: "Empleado B", isClient: false },
       { personId: 3, firstName: "Cliente C", isClient: true },
     ];
-    const clientes = personas.filter((p) => p.isClient);
-    expect(clientes).toHaveLength(2);
-    expect(clientes[0].firstName).toBe("Cliente A");
+    const clients = people.filter((p) => p.isClient);
+    expect(clients).toHaveLength(2);
+    expect(clients[0].firstName).toBe("Cliente A");
   });
 });
 
@@ -129,7 +129,7 @@ describe("CU15 — Pagos display helpers", () => {
 
 describe("Form validation contracts", () => {
   it("estado nombre must not be empty", () => {
-    const validate = (nombre?: string) => !!nombre?.trim();
+    const validate = (name?: string) => !!name?.trim();
     expect(validate("En proceso")).toBe(true);
     expect(validate("")).toBe(false);
     expect(validate("   ")).toBe(false);
@@ -137,7 +137,7 @@ describe("Form validation contracts", () => {
   });
 
   it("tipo tramite nombre must not be empty", () => {
-    const validate = (nombre?: string) => !!nombre?.trim();
+    const validate = (name?: string) => !!name?.trim();
     expect(validate("Compraventa")).toBe(true);
     expect(validate("")).toBe(false);
   });
@@ -152,8 +152,8 @@ describe("Form validation contracts", () => {
   });
 
   it("plantilla requires both tipo tramite and concepto", () => {
-    const validate = (idTipoTramite: string, idConcepto: string) =>
-      !!idTipoTramite && !!idConcepto;
+    const validate = (idTypeProcedure: string, idConcept: string) =>
+      !!idTypeProcedure && !!idConcept;
     expect(validate("1", "2")).toBe(true);
     expect(validate("", "2")).toBe(false);
     expect(validate("1", "")).toBe(false);
@@ -161,7 +161,7 @@ describe("Form validation contracts", () => {
   });
 
   it("pago monto must be a positive number", () => {
-    const validate = (monto?: number) => monto !== undefined && monto > 0;
+    const validate = (amount?: number) => amount !== undefined && amount > 0;
     expect(validate(5000)).toBe(true);
     expect(validate(0.01)).toBe(true);
     expect(validate(0)).toBe(false);

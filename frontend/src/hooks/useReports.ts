@@ -16,7 +16,7 @@ async function downloadPdf(path: string, filename: string): Promise<void> {
   URL.revokeObjectURL(url);
 }
 
-/** CU01/CU39 — Reporte PDF de presupuesto */
+/** CU01/CU39 — Reporte PDF de budget */
 export function useBudgetReport() {
   return {
     download: (idBudget: number) =>
@@ -27,7 +27,7 @@ export function useBudgetReport() {
   };
 }
 
-/** CU01 — Reporte PDF de presupuesto con inmuebles */
+/** CU01 — Reporte PDF de budget con properties */
 export function useBudgetPropertiesReport() {
   return {
     download: (idBudget: number) =>
@@ -38,7 +38,7 @@ export function useBudgetPropertiesReport() {
   };
 }
 
-/** CU02 — Lista de documentos para tipo de trámite */
+/** CU02 — Lista de documents para tipo de trámite */
 export function useDocumentListReport() {
   return {
     download: (procedureTypeName: string) =>
@@ -93,13 +93,13 @@ export function useIndexBookReport() {
   };
 }
 
-/** CU09 — Consultar deuda de documentos (query param numberManagement, see openapi.yaml) */
+/** CU09 — Consultar debt de documents (query param numberManagement, see openapi.yaml) */
 export function useDocumentDebtReport() {
   return {
-    download: (numeroGestion: number) =>
+    download: (numberManagement: number) =>
       downloadPdf(
-        `/reports/document-debt?numberManagement=${numeroGestion}`,
-        `deuda_documentos_${numeroGestion}.pdf`
+        `/reports/document-debt?numberManagement=${numberManagement}`,
+        `deuda_documentos_${numberManagement}.pdf`
       ),
   };
 }

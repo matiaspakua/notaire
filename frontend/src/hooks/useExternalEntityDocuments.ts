@@ -1,35 +1,35 @@
 /**
- * React Query hooks for CU10 — movimientos de documentación de entidades externas.
- * Endpoints: GET/PUT /api/v1/managements/{id}/external-entity-documents[/{idDocumentoPresentado}]
+ * React Query hooks for CU10 — movements de documentación de entities externas.
+ * Endpoints: GET/PUT /api/v1/managements/{id}/external-entity-documents[/{idDocumentPresentado}]
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPut } from "@/lib/api-client";
 import type { ManagementExternalEntityDocuments, ExternalEntityDocumentMovementInput } from "@/types";
 
 export const externalEntityDocumentKeys = {
-  byManagement: (gestionId: number) => ["documentosEntidadExterna", "gestion", gestionId] as const,
+  byManagement: (managementId: number) => ["documentosEntidadExterna", "gestion", managementId] as const,
 };
 
-export function useExternalEntityDocuments(gestionId: number | undefined) {
+export function useExternalEntityDocuments(managementId: number | undefined) {
   return useQuery({
-    queryKey: externalEntityDocumentKeys.byManagement(gestionId ?? 0),
-    queryFn: () => apiGet<ManagementExternalEntityDocuments>(`/managements/${gestionId}/external-entity-documents`),
-    enabled: !!gestionId,
+    queryKey: externalEntityDocumentKeys.byManagement(managementId ?? 0),
+    queryFn: () => apiGet<ManagementExternalEntityDocuments>(`/managements/${managementId}/external-entity-documents`),
+    enabled: !!managementId,
   });
 }
 
-interface RegistrarMovimientoInput {
-  gestionId: number;
-  idDocumentoPresentado: number;
-  movimiento: ExternalEntityDocumentMovementInput;
+interface RegistrarMovementInput {
+  managementId: number;
+  idDocumentPresentado: number;
+  movement: ExternalEntityDocumentMovementInput;
 }
 
 export function useRegisterExternalEntityDocumentMovement() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ gestionId, idDocumentoPresentado, movimiento }: RegistrarMovimientoInput) =>
-      apiPut(`/managements/${gestionId}/external-entity-documents/${idDocumentoPresentado}`, movimiento),
-    onSuccess: (_data, { gestionId }) =>
-      qc.invalidateQueries({ queryKey: externalEntityDocumentKeys.byManagement(gestionId) }),
+    mutationFn: ({ managementId, idDocumentPresentado, movement }: RegistrarMovementInput) =>
+      apiPut(`/managements/${managementId}/external-entity-documents/${idDocumentPresentado}`, movement),
+    onSuccess: (_data, { managementId }) =>
+      qc.invalidateQueries({ queryKey: externalEntityDocumentKeys.byManagement(managementId) }),
   });
 }

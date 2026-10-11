@@ -21,7 +21,7 @@ import {
   useOutstandingBalance,
   useArchiveManagement,
   useTransitionManagement,
-  useHistorial,
+  useHistory,
   useFoldersByManagement,
   usePutFolderOnHold,
 } from "@/hooks/useManagements";
@@ -39,31 +39,31 @@ import type { DeedManagement } from "@/types";
 import { ManagementSummaryDialog } from "./ManagementSummaryDialog";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
-const ESTADO_CARPETA_ACTIVA = "Activa";
+const STATUS_FOLDER_ACTIVE = "Activa";
 
 const ESTADO_ARCHIVADA = "Archivada";
 
-export default function GestionesPage() {
+export default function ManagementsPage() {
   return (
     <Suspense>
-      <GestionesList />
+      <ManagementsList />
     </Suspense>
   );
 }
 
-function GestionesList() {
+function ManagementsList() {
   const t = useTranslations("gestiones");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
   // One server page at a time, page and size in the URL (#1340): the list used
   // to load size=1000, hiding older managements and rendering 1000 rows.
   const paging = useUrlPagination();
-  const { data: gestionesPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
-  const gestiones = gestionesPage?.content ?? [];
-  useClampPage(paging, gestionesPage?.totalPages);
+  const { data: managementsPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
+  const managements = managementsPage?.content ?? [];
+  useClampPage(paging, managementsPage?.totalPages);
   const { data: estados = [] } = useManagementStatuses();
-  const { data: tiposTramite = [] } = useProcedureTypes();
-  const { data: inmuebles = [] } = useProperties();
+  const { data: tiposProcedure = [] } = useProcedureTypes();
+  const { data: properties = [] } = useProperties();
   const createCompleteMutation = useCreateCompleteManagement();
   const updateMutation = useUpdateManagement();
   const deleteMutation = useDeleteManagement();
@@ -77,30 +77,30 @@ function GestionesList() {
   const [archiveConflict, setArchiveConflict] = useState<string | null>(null);
   const [transitionId, setTransitionId] = useState<number | null>(null);
   const [selectedEstado, setSelectedEstado] = useState("");
-  const [bitacoraId, setBitacoraId] = useState<number | null>(null);
-  const [carpetasGestionId, setCarpetasGestionId] = useState<number | null>(null);
+  const [historyId, setHistoryId] = useState<number | null>(null);
+  const [foldersManagementId, setFoldersManagementId] = useState<number | null>(null);
   const [resumenCasoId, setResumenCasoId] = useState<number | null>(null);
-  const [esperaCarpetaId, setEsperaCarpetaId] = useState<number | null>(null);
+  const [waitFolderId, setWaitFolderId] = useState<number | null>(null);
   const [motivoEspera, setMotivoEspera] = useState("");
   const [editing, setEditing] = useState<DeedManagement | null>(null);
-  const [numero, setNumero] = useState("");
-  const [clienteFilter, setClienteFilter] = useState("");
+  const [number, setNumber] = useState("");
+  const [clientFilter, setClientFilter] = useState("");
   const [budgetId, setBudgetId] = useState("");
   const [notaryId, setNotaryId] = useState("");
   const [statusId, setStatusId] = useState("");
   const [procedureTypeId, setProcedureTypeId] = useState("");
   const [propertyId, setPropertyId] = useState("");
 
-  const { data: gestionesByCliente = [], isLoading: isLoadingByCliente } = useManagementsByClient(
-    clienteFilter ? Number(clienteFilter) : 0
+  const { data: managementsByClient = [], isLoading: isLoadingByClient } = useManagementsByClient(
+    clientFilter ? Number(clientFilter) : 0
   );
   const { data: outstandingBalance } = useOutstandingBalance(archiveId ?? undefined);
   const { data: trace } = useManagementWorkflowTrace(transitionId ?? undefined);
-  const { data: historial = [] } = useHistorial(bitacoraId ?? undefined);
-  const { data: carpetas = [] } = useFoldersByManagement(carpetasGestionId ?? undefined);
+  const { data: history = [] } = useHistory(historyId ?? undefined);
+  const { data: folders = [] } = useFoldersByManagement(foldersManagementId ?? undefined);
 
-  const visibleGestiones = clienteFilter ? gestionesByCliente : gestiones;
-  const isLoadingVisible = clienteFilter ? isLoadingByCliente : isLoading;
+  const visibleManagements = clientFilter ? managementsByClient : managements;
+  const isLoadingVisible = clientFilter ? isLoadingByClient : isLoading;
 
   const currentNode = trace?.nodes.find((n) => n.statusManagementName === trace.statusActual);
   const validDestinations = trace && currentNode
@@ -112,7 +112,7 @@ function GestionesList() {
 
   function openCreate() {
     setEditing(null);
-    setNumero("");
+    setNumber("");
     setBudgetId("");
     setNotaryId("");
     setStatusId("");
@@ -123,7 +123,7 @@ function GestionesList() {
 
   function openEdit(g: DeedManagement) {
     setEditing(g);
-    setNumero(g.number?.toString() ?? "");
+    setNumber(g.number?.toString() ?? "");
     setModalOpen(true);
   }
 
@@ -132,12 +132,12 @@ function GestionesList() {
       if (editing?.idManagement) {
         await updateMutation.mutateAsync({
           id: editing.idManagement,
-          data: { number: numero ? Number(numero) : undefined },
+          data: { number: number ? Number(number) : undefined },
         });
         toast.success(t("updated"));
       } else {
         const created = await createCompleteMutation.mutateAsync({
-          number: Number(numero),
+          number: Number(number),
           budgetId: Number(budgetId),
           notaryId: Number(notaryId),
           statusManagementId: Number(statusId),
@@ -199,21 +199,21 @@ function GestionesList() {
   }
 
   async function handlePonerEnEspera() {
-    if (!esperaCarpetaId || !carpetasGestionId) return;
+    if (!waitFolderId || !foldersManagementId) return;
     if (!motivoEspera.trim()) {
       toast.error(t("errorMotivoRequerido"));
       return;
     }
     try {
       await ponerEnEsperaMutation.mutateAsync({
-        idCarpeta: esperaCarpetaId,
+        idFolder: waitFolderId,
         motivo: motivoEspera,
-        gestionId: carpetasGestionId,
+        managementId: foldersManagementId,
       });
       toast.success(t("carpetaEnEspera"));
-      setEsperaCarpetaId(null);
+      setWaitFolderId(null);
       setMotivoEspera("");
-      setCarpetasGestionId(null);
+      setFoldersManagementId(null);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorCarpetaEspera"));
     }
@@ -240,7 +240,7 @@ function GestionesList() {
 
   const columns: Column<DeedManagement>[] = [
     {
-      key: "numero",
+      key: "number",
       header: t("fields.numero"),
       render: (g) => (
         <div className="flex flex-col">
@@ -302,7 +302,7 @@ function GestionesList() {
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setBitacoraId(g.idManagement!)}
+            onClick={() => setHistoryId(g.idManagement!)}
             aria-label={t("viewBitacora")}
             data-testid={`btn-view-history-${g.idManagement}`}
           >
@@ -320,7 +320,7 @@ function GestionesList() {
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setCarpetasGestionId(g.idManagement!)}
+            onClick={() => setFoldersManagementId(g.idManagement!)}
             aria-label={t("viewCarpetas")}
             data-testid={`btn-view-folders-${g.idManagement}`}
           >
@@ -367,8 +367,8 @@ function GestionesList() {
       <div className="px-4 pb-4 flex items-center gap-2">
         {/* Server search over clients instead of the first 1000 people (#1340). */}
         <PersonPicker
-          value={clienteFilter ? Number(clienteFilter) : undefined}
-          onChange={(person) => setClienteFilter(person?.personId != null ? String(person.personId) : "")}
+          value={clientFilter ? Number(clientFilter) : undefined}
+          onChange={(person) => setClientFilter(person?.personId != null ? String(person.personId) : "")}
           aria-label={t("clienteFilter")}
           placeholder={t("filterByCliente")}
           clientsOnly
@@ -379,19 +379,19 @@ function GestionesList() {
       </div>
 
       <DataTable
-        data={visibleGestiones}
+        data={visibleManagements}
         columns={columns}
         isLoading={isLoadingVisible}
-        isFetching={!clienteFilter && isFetching}
+        isFetching={!clientFilter && isFetching}
         keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
         pagination={
-          clienteFilter
+          clientFilter
             ? undefined
             : {
-                page: gestionesPage?.number ?? paging.page,
+                page: managementsPage?.number ?? paging.page,
                 size: paging.size,
-                totalElements: gestionesPage?.totalElements ?? 0,
+                totalElements: managementsPage?.totalElements ?? 0,
                 onPageChange: paging.setPage,
                 onSizeChange: paging.setSize,
               }
@@ -405,8 +405,8 @@ function GestionesList() {
               <FormField label={t("fields.numero")} required>
                 <Input
                   type="number"
-                  value={numero}
-                  onChange={(e) => setNumero(e.target.value)}
+                  value={number}
+                  onChange={(e) => setNumber(e.target.value)}
                   placeholder={t("fields.numeroPlaceholder")}
                   data-testid="input-management-number"
                 />
@@ -439,13 +439,13 @@ function GestionesList() {
                   <FormField label={t("fields.tipo")} required>
                     <Select value={procedureTypeId} onValueChange={setProcedureTypeId}>
                       <SelectTrigger data-testid="select-procedure-type-management"><SelectValue placeholder={t("selectTramite")} /></SelectTrigger>
-                      <SelectContent>{tiposTramite.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
+                      <SelectContent>{tiposProcedure.map((tt) => <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>{tt.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                   <FormField label={t("fields.inmueble")}>
                     <Select value={propertyId} onValueChange={setPropertyId}>
                       <SelectTrigger data-testid="select-property-management"><SelectValue placeholder={t("selectInmueble")} /></SelectTrigger>
-                      <SelectContent>{inmuebles.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? t("inmuebleFallback", { id: i.idProperty ?? "—" })}</SelectItem>)}</SelectContent>
+                      <SelectContent>{properties.map((i) => <SelectItem key={i.idProperty} value={String(i.idProperty)}>{i.address ?? t("inmuebleFallback", { id: i.idProperty ?? "—" })}</SelectItem>)}</SelectContent>
                     </Select>
                   </FormField>
                 </>
@@ -528,15 +528,15 @@ function GestionesList() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!bitacoraId} onOpenChange={(v) => !v && setBitacoraId(null)}>
+      <Dialog open={!!historyId} onOpenChange={(v) => !v && setHistoryId(null)}>
         <DialogContent>
           <FormContainer>
             <FormHeader dialogTitle title={t("bitacoraTitle")} />
-            {historial.length === 0 ? (
+            {history.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t("bitacoraEmpty")}</p>
             ) : (
               <div className="flex flex-col gap-3">
-                {historial.map((h) => (
+                {history.map((h) => (
                   <div key={h.idHistory} data-testid="history-item" className="border-b pb-2">
                     <div className="font-medium">{h.statusManagementName}</div>
                     <div className="text-xs text-muted-foreground">{formatDate(h.date)}</div>
@@ -550,17 +550,17 @@ function GestionesList() {
       </Dialog>
 
       <Dialog
-        open={!!carpetasGestionId}
+        open={!!foldersManagementId}
         onOpenChange={(v) => {
           if (!v) {
-            setCarpetasGestionId(null);
-            setEsperaCarpetaId(null);
+            setFoldersManagementId(null);
+            setWaitFolderId(null);
             setMotivoEspera("");
           }
         }}
       >
         <DialogContent>
-          {esperaCarpetaId ? (
+          {waitFolderId ? (
             <FormContainer>
               <FormHeader dialogTitle title={t("ponerEnEsperaTitle")} />
               <FormSection title={t("ponerEnEsperaTitle")}>
@@ -577,7 +577,7 @@ function GestionesList() {
                 <Button
                   variant="secondary"
                   onClick={() => {
-                    setEsperaCarpetaId(null);
+                    setWaitFolderId(null);
                     setMotivoEspera("");
                   }}
                 >
@@ -595,11 +595,11 @@ function GestionesList() {
           ) : (
             <FormContainer>
               <FormHeader title={t("carpetasTitle")} />
-              {carpetas.length === 0 ? (
+              {folders.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{t("carpetasEmpty")}</p>
               ) : (
                 <div className="flex flex-col gap-3">
-                  {carpetas.map((c) => (
+                  {folders.map((c) => (
                     <div
                       key={c.idFolder}
                       data-testid="folder-item"
@@ -610,11 +610,11 @@ function GestionesList() {
                         <div className="text-xs text-muted-foreground">{c.status}</div>
                         {c.waitReason && <div className="text-sm">{c.waitReason}</div>}
                       </div>
-                      {c.status === ESTADO_CARPETA_ACTIVA && (
+                      {c.status === STATUS_FOLDER_ACTIVE && (
                         <Button
                           size="sm"
                           variant="secondary"
-                          onClick={() => setEsperaCarpetaId(c.idFolder!)}
+                          onClick={() => setWaitFolderId(c.idFolder!)}
                           data-testid={`btn-poner-en-espera-${c.idFolder}`}
                         >
                           {t("ponerEnEspera")}
@@ -629,7 +629,7 @@ function GestionesList() {
         </DialogContent>
       </Dialog>
 
-      <ManagementSummaryDialog gestionId={resumenCasoId} onClose={() => setResumenCasoId(null)} />
+      <ManagementSummaryDialog managementId={resumenCasoId} onClose={() => setResumenCasoId(null)} />
     </div>
   );
 }

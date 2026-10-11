@@ -39,9 +39,9 @@ test.describe("TS-0121 grouped sidebar (#1367)", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await establishAdminBrowserSession(page);
     await page.goto("/dashboard/managements");
-    const clientes = sidebar(page).getByRole("button", { name: "Clientes" });
-    await clientes.click();
-    await expect(clientes).toHaveAttribute("aria-expanded", "false");
+    const clients = sidebar(page).getByRole("button", { name: "Clientes" });
+    await clients.click();
+    await expect(clients).toHaveAttribute("aria-expanded", "false");
     await expect(sidebar(page).getByTestId("nav-people")).toHaveCount(0);
 
     await page.reload();

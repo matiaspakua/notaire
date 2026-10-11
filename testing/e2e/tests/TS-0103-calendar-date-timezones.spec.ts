@@ -9,9 +9,9 @@ import { establishAdminBrowserSession } from "./setup/auth";
 import { createPayment, createPerson, createBudget } from "./setup/api-helpers";
 
 async function seedPayment(page: Page): Promise<number> {
-  const persona = await createPerson(page);
-  expect(persona.ok, persona.error ?? "createPerson failed").toBe(true);
-  const budget = await createBudget(page, persona.data!.personId, undefined, {
+  const person = await createPerson(page);
+  expect(person.ok, person.error ?? "createPerson failed").toBe(true);
+  const budget = await createBudget(page, person.data!.personId, undefined, {
     date: "2026-08-07",
     propertyAmount: 10000, // a payment may not exceed the budget balance
   });

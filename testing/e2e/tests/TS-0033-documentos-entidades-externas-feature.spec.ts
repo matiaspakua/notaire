@@ -1,5 +1,5 @@
 /**
- * E2E tests — Registrar movimientos de documentación de entidades externas (CU10).
+ * E2E tests — Registrar movements de documentación de entities externas (CU10).
  */
 import { type Page, test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
@@ -13,26 +13,26 @@ import {
   createManagementStatus,
 } from "./setup/api-helpers";
 
-async function seedManagementWithExternalEntityDocument(page: Page, nombreDocumento: string) {
-  const persona = await createPerson(page);
-  const presupuesto = await createBudget(page, persona.data!.personId);
+async function seedManagementWithExternalEntityDocument(page: Page, nameDocument: string) {
+  const person = await createPerson(page);
+  const budget = await createBudget(page, person.data!.personId);
   const estado = await createManagementStatus(page);
-  const tipoTramite = await createProcedureType(page);
-  const gestion = await createCompleteCaseManagement(page, {
-    budgetId: presupuesto.data!.idBudget,
-    notaryId: persona.data!.personId,
+  const typeProcedure = await createProcedureType(page);
+  const management = await createCompleteCaseManagement(page, {
+    budgetId: budget.data!.idBudget,
+    notaryId: person.data!.personId,
     statusManagementId: estado.data!.idManagementStatus,
-    procedureTypeId: tipoTramite.data!.idProcedureType,
+    procedureTypeId: typeProcedure.data!.idProcedureType,
   });
-  const tramite = await createProcedure(page, gestion.data!.idManagement, tipoTramite.data!.idProcedureType);
-  const documento = await createExternalEntityDocument(page, tramite.data!.idProcedure, {
-    name: nombreDocumento,
+  const procedure = await createProcedure(page, management.data!.idManagement, typeProcedure.data!.idProcedureType);
+  const document = await createExternalEntityDocument(page, procedure.data!.idProcedure, {
+    name: nameDocument,
   });
 
   return {
-    idGestion: gestion.data!.idManagement,
-    numero: gestion.data!.number,
-    idDocumentoPresentado: documento.data!.idSubmittedDocument,
+    idManagement: management.data!.idManagement,
+    number: management.data!.number,
+    idDocumentPresentado: document.data!.idSubmittedDocument,
   };
 }
 
@@ -42,7 +42,7 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
   });
 
   test("golden path: registering a movement updates the document and shows a success toast", async ({ page }) => {
-    const { idGestion, numero, idDocumentoPresentado } = await seedManagementWithExternalEntityDocument(
+    const { idManagement, number, idDocumentPresentado } = await seedManagementWithExternalEntityDocument(
       page,
       "Certificado de Dominio",
     );
@@ -50,45 +50,45 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
     await page.goto("/dashboard/external-entity-documents");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
-    await page.getByTestId(`btn-view-documents-${idGestion}`).click();
+    await page.getByTestId(`btn-view-documents-${idManagement}`).click();
 
     const detalleDialog = page.getByRole("dialog");
     await expect(detalleDialog).toBeVisible();
     await expect(detalleDialog.getByText("Certificado de Dominio")).toBeVisible();
 
-    await page.getByTestId(`btn-edit-document-${idDocumentoPresentado}`).click();
-    const movimientoDialog = page.getByTestId("dialog-movimiento");
-    await expect(movimientoDialog).toBeVisible();
+    await page.getByTestId(`btn-edit-document-${idDocumentPresentado}`).click();
+    const movementDialog = page.getByTestId("dialog-movimiento");
+    await expect(movementDialog).toBeVisible();
 
-    await movimientoDialog.getByTestId("input-card-number").fill("42");
-    await movimientoDialog.getByTestId("input-notes").fill("Retirado del registro");
-    await movimientoDialog.getByTestId("checkbox-delivered").click();
-    await movimientoDialog.getByTestId("btn-save-movimiento").click();
+    await movementDialog.getByTestId("input-card-number").fill("42");
+    await movementDialog.getByTestId("input-notes").fill("Retirado del registro");
+    await movementDialog.getByTestId("checkbox-delivered").click();
+    await movementDialog.getByTestId("btn-save-movimiento").click();
 
     await expect(page.getByText(/movimiento registrado/i)).toBeVisible({ timeout: 10000 });
-    await expect(movimientoDialog).not.toBeVisible();
+    await expect(movementDialog).not.toBeVisible();
   });
 
   test("edge path: a gestión without entidad externa documents shows the empty state", async ({ page }) => {
-    const persona = await createPerson(page);
-    const presupuesto = await createBudget(page, persona.data!.personId);
+    const person = await createPerson(page);
+    const budget = await createBudget(page, person.data!.personId);
     const estado = await createManagementStatus(page);
-    const tipoTramite = await createProcedureType(page);
-    const gestion = await createCompleteCaseManagement(page, {
-      budgetId: presupuesto.data!.idBudget,
-      notaryId: persona.data!.personId,
+    const typeProcedure = await createProcedureType(page);
+    const management = await createCompleteCaseManagement(page, {
+      budgetId: budget.data!.idBudget,
+      notaryId: person.data!.personId,
       statusManagementId: estado.data!.idManagementStatus,
-      procedureTypeId: tipoTramite.data!.idProcedureType,
+      procedureTypeId: typeProcedure.data!.idProcedureType,
     });
 
     await page.goto("/dashboard/external-entity-documents");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(gestion.data!.number)) });
+    const row = page.getByRole("row", { name: new RegExp(String(management.data!.number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
-    await page.getByTestId(`btn-view-documents-${gestion.data!.idManagement}`).click();
+    await page.getByTestId(`btn-view-documents-${management.data!.idManagement}`).click();
 
     const detalleDialog = page.getByRole("dialog");
     await expect(detalleDialog).toBeVisible();

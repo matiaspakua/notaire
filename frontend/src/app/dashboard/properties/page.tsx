@@ -21,12 +21,12 @@ import { presentMutationError } from "@/lib/mutation-error";
 import type { Property } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
-export default function InmueblesPage() {
+export default function PropertiesPage() {
   const t = useTranslations("inmuebles");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: inmuebles = [], isLoading } = useProperties();
+  const { data: properties = [], isLoading } = useProperties();
   const createMutation = useCreateProperty();
   const updateMutation = useUpdateProperty();
   const deleteMutation = useDeleteProperty();
@@ -35,10 +35,10 @@ export default function InmueblesPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<Property | null>(null);
   const [form, setForm] = useState({
-    nomenclaturaCatastral: "",
+    cadastralDesignationCatastral: "",
     domicilio: "",
     valuacionFiscal: "",
-    observaciones: "",
+    notes: "",
     matricula: "",
     tomoFolioFinca: "",
     linderos: "",
@@ -47,10 +47,10 @@ export default function InmueblesPage() {
   function openCreate() {
     setEditing(null);
     setForm({
-      nomenclaturaCatastral: "",
+      cadastralDesignationCatastral: "",
       domicilio: "",
       valuacionFiscal: "",
-      observaciones: "",
+      notes: "",
       matricula: "",
       tomoFolioFinca: "",
       linderos: "",
@@ -61,10 +61,10 @@ export default function InmueblesPage() {
   function openEdit(i: Property) {
     setEditing(i);
     setForm({
-      nomenclaturaCatastral: i.cadastralDesignation ?? "",
+      cadastralDesignationCatastral: i.cadastralDesignation ?? "",
       domicilio: i.address ?? "",
       valuacionFiscal: i.fiscalAppraisal !== undefined ? String(i.fiscalAppraisal) : "",
-      observaciones: i.notes ?? "",
+      notes: i.notes ?? "",
       matricula: i.registrationNumber ?? "",
       tomoFolioFinca: i.volumeFolioLandRecord ?? "",
       linderos: i.boundaries ?? "",
@@ -75,9 +75,9 @@ export default function InmueblesPage() {
   async function handleSave() {
     try {
       const payload = {
-        cadastralDesignation: form.nomenclaturaCatastral,
+        cadastralDesignation: form.cadastralDesignationCatastral,
         address: form.domicilio,
-        notes: form.observaciones,
+        notes: form.notes,
         fiscalAppraisal: form.valuacionFiscal === "" ? undefined : Number(form.valuacionFiscal),
         registrationNumber: form.matricula || undefined,
         volumeFolioLandRecord: form.tomoFolioFinca || undefined,
@@ -167,7 +167,7 @@ export default function InmueblesPage() {
       />
 
       <DataTable
-        data={inmuebles}
+        data={properties}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(i) => i.idProperty!}
@@ -181,8 +181,8 @@ export default function InmueblesPage() {
               <FormField label={t("fields.nomenclatura")} required>
                 <Input
                   data-testid="input-nomenclatura"
-                  value={form.nomenclaturaCatastral}
-                  onChange={(e) => setForm({ ...form, nomenclaturaCatastral: e.target.value })}
+                  value={form.cadastralDesignationCatastral}
+                  onChange={(e) => setForm({ ...form, cadastralDesignationCatastral: e.target.value })}
                   placeholder={t("fields.nomenclaturaPlaceholder")}
                 />
               </FormField>
@@ -204,8 +204,8 @@ export default function InmueblesPage() {
               </FormField>
               <FormField label={tc("observations")}>
                 <Input
-                  value={form.observaciones}
-                  onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
+                  value={form.notes}
+                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
                 />
               </FormField>
             </FormSection>
@@ -243,8 +243,8 @@ export default function InmueblesPage() {
                 disabled={
                   createMutation.isPending ||
                   updateMutation.isPending ||
-                  // The nomenclatura catastral identifies the property (CU69, #655).
-                  !form.nomenclaturaCatastral.trim()
+                  // The cadastralDesignation catastral identifies the property (CU69, #655).
+                  !form.cadastralDesignationCatastral.trim()
                 }
               >
                 {editing ? tc("update") : tc("create")}

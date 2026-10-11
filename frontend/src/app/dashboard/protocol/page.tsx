@@ -70,7 +70,7 @@ export default function ProtocoloPage() {
 
   const columns: Column<Folio>[] = [
     { key: "id", header: tc("id"), render: (f) => <span className="text-xs text-muted-foreground">{f.idFolio}</span>, className: "w-12" },
-    { key: "numero", header: tc("number"), render: (f) => <span className="font-medium">{f.number ?? "—"}</span> },
+    { key: "number", header: tc("number"), render: (f) => <span className="font-medium">{f.number ?? "—"}</span> },
     { key: "tipo", header: tc("type"), render: (f) => f.fkIdFolioType?.name ?? "—" },
     {
       key: "disponible",

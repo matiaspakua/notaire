@@ -7,33 +7,33 @@ import { useManagementCaseSummary, useManagementFinancialSummary } from "@/hooks
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { CaseDocument } from "@/types";
 
-function documentFlags(documento: CaseDocument, t: (key: string) => string): string[] {
+function documentFlags(document: CaseDocument, t: (key: string) => string): string[] {
   const flags: [boolean, string][] = [
-    [documento.prepared, "preparado"],
-    [documento.released, "liberado"],
-    [documento.observed, "observado"],
-    [documento.delivered, "entregado"],
-    [documento.reentered, "reingresado"],
+    [document.prepared, "preparado"],
+    [document.released, "liberado"],
+    [document.observed, "observado"],
+    [document.delivered, "entregado"],
+    [document.reentered, "reingresado"],
   ];
   return flags.filter(([active]) => active).map(([, key]) => t(key));
 }
 
 interface ManagementSummaryDialogProps {
-  gestionId: number | null;
+  managementId: number | null;
   onClose: () => void;
 }
 
-/** #774 - Escrituras, testimonios (with registry state), copias and pagos of a gestión. */
-export function ManagementSummaryDialog({ gestionId, onClose }: ManagementSummaryDialogProps) {
+/** #774 - Escrituras, testimonies (with registry state), copias and pagos of a gestión. */
+export function ManagementSummaryDialog({ managementId, onClose }: ManagementSummaryDialogProps) {
   const t = useTranslations("gestiones.resumen");
-  const { data: caso, isLoading } = useManagementCaseSummary(gestionId ?? undefined);
-  const { data: financiero } = useManagementFinancialSummary(gestionId ?? undefined);
+  const { data: caso, isLoading } = useManagementCaseSummary(managementId ?? undefined);
+  const { data: financiero } = useManagementFinancialSummary(managementId ?? undefined);
 
   const deeds = caso?.deeds ?? [];
   const documents = caso?.documents ?? [];
 
   return (
-    <Dialog open={!!gestionId} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={!!managementId} onOpenChange={(open) => !open && onClose()}>
       <DialogContent data-testid="dialog-summary-case">
         <FormContainer>
           <FormHeader dialogTitle title={t("title")} description={caso ? `${caso.managementNumber} — ${caso.heading ?? ""}` : undefined} />
@@ -64,13 +64,13 @@ export function ManagementSummaryDialog({ gestionId, onClose }: ManagementSummar
                 {documents.length === 0 ? (
                   <p className="text-sm text-muted-foreground" data-testid="summary-empty-documents">{t("sinDocumentos")}</p>
                 ) : (
-                  documents.map((documento) => (
-                    <div key={documento.idSubmittedDocument} className="text-sm border-b pb-2" data-testid="summary-document">
-                      <div className="font-medium">{documento.typeName ?? documento.name ?? "—"}</div>
+                  documents.map((document) => (
+                    <div key={document.idSubmittedDocument} className="text-sm border-b pb-2" data-testid="summary-document">
+                      <div className="font-medium">{document.typeName ?? document.name ?? "—"}</div>
                       <div className="text-muted-foreground">
-                        {t("tramiteDocumento", { id: documento.idProcedure })}
-                        {documento.dateDue ? ` · ${t("vence", { fecha: formatDate(documento.dateDue) })}` : ""}
-                        {documentFlags(documento, t).map((flag) => ` · ${flag}`).join("")}
+                        {t("tramiteDocumento", { id: document.idProcedure })}
+                        {document.dateDue ? ` · ${t("vence", { fecha: formatDate(document.dateDue) })}` : ""}
+                        {documentFlags(document, t).map((flag) => ` · ${flag}`).join("")}
                       </div>
                     </div>
                   ))

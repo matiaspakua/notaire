@@ -43,11 +43,11 @@ export default function PagosPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Fetch saldo for selected presupuesto (Issue #796)
+  // Fetch saldo for selected budget (Issue #796)
   const { data: resumen, isLoading: resumenLoading } = useBudgetSummary(
     editing.idBudget || null
   );
-  // Fetch estado de pago for selected presupuesto (Issue #821)
+  // Fetch estado de pago for selected budget (Issue #821)
   const { data: estadoPago } = usePaymentStatus(editing.idBudget || null);
 
   const estadoPagoLabel: Record<string, string> = {
@@ -140,7 +140,7 @@ export default function PagosPage() {
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={isEditMode ? t("editPago") : t("newPago")}>
-              {/* Issue #796: Replace numeric ID input with presupuesto picker */}
+              {/* Issue #796: Replace numeric ID input with budget picker */}
               <FormField label={t("fields.presupuesto")} required>
                 {/* Server search instead of the first 1000 budgets (#1340). */}
                 <BudgetPicker

@@ -6,11 +6,11 @@ import { test, expect, type Page } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
 import { apiGet } from "./setup/api-helpers";
 
-const RESOURCES = ["gestiones", "personas", "presupuestos"] as const;
+const RESOURCES = ["managements", "people", "budgets"] as const;
 const PATHS: Record<(typeof RESOURCES)[number], string> = {
-  gestiones: "/managements",
-  personas: "/people",
-  presupuestos: "/budgets",
+  managements: "/managements",
+  people: "/people",
+  budgets: "/budgets",
 };
 
 async function totalOf(page: Page, path: string): Promise<number> {

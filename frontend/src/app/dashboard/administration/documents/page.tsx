@@ -17,7 +17,7 @@ import { EMPTY_DOCUMENT_TYPE } from "@/lib/document-type-form";
 import type { DocumentType } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
-export default function DocumentosPage() {
+export default function DocumentsPage() {
   const t = useTranslations("administracion.documentos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
@@ -116,7 +116,7 @@ export default function DocumentosPage() {
 
   const columns: Column<DocumentType>[] = [
     { key: "id", header: tc("id"), render: (tipo) => <span className="text-xs text-muted-foreground">{tipo.idDocumentType}</span>, className: "w-12" },
-    { key: "nombre", header: tc("name"), render: (tipo) => <span className="font-medium">{tipo.name}</span> },
+    { key: "name", header: tc("name"), render: (tipo) => <span className="font-medium">{tipo.name}</span> },
     {
       key: "actions", header: "", className: "w-24",
       render: (tipo) => (

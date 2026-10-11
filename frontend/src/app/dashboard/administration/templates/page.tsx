@@ -17,7 +17,7 @@ import { presentMutationError } from "@/lib/mutation-error";
 import type { BudgetTemplate, ProcedureType, Concept, DocumentType, DocumentCostTemplate } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
-interface PlantillaKey {
+interface TemplateKey {
   procedureTypeId: number;
   conceptId: number;
 }
@@ -31,55 +31,55 @@ export default function PlantillasPage() {
     queryKey: ["budget-templates"],
     queryFn: () => apiGet<BudgetTemplate[]>("/budget-templates"),
   });
-  const { data: tiposTramite = [] } = useQuery({
+  const { data: tiposProcedure = [] } = useQuery({
     queryKey: ["procedure-types"],
     queryFn: () => apiGet<ProcedureType[]>("/procedure-types"),
   });
-  const { data: conceptos = [] } = useQuery({
+  const { data: concepts = [] } = useQuery({
     queryKey: ["concepts"],
     queryFn: () => apiGet<Concept[]>("/concepts"),
   });
-  const { data: tiposDocumento = [] } = useQuery({
+  const { data: tiposDocument = [] } = useQuery({
     queryKey: ["document-types"],
     queryFn: () => apiGet<DocumentType[]>("/document-types"),
   });
 
-  const [costoTramiteId, setCostoTramiteId] = useState("");
+  const [costoProcedureId, setCostoProcedureId] = useState("");
   const {
-    data: costosDocumento = [],
+    data: costosDocument = [],
     isLoading: isLoadingCostos,
     refetch: refetchCostos,
   } = useQuery({
-    queryKey: ["document-cost-templates", costoTramiteId],
+    queryKey: ["document-cost-templates", costoProcedureId],
     queryFn: () =>
-      apiGet<DocumentCostTemplate[]>(`/document-cost-templates/procedure-types/${costoTramiteId}`),
-    enabled: !!costoTramiteId,
+      apiGet<DocumentCostTemplate[]>(`/document-cost-templates/procedure-types/${costoProcedureId}`),
+    enabled: !!costoProcedureId,
   });
   const [costoModalOpen, setCostoModalOpen] = useState(false);
-  const [costoTipoDocumentoId, setCostoTipoDocumentoId] = useState("");
+  const [costoTypeDocumentId, setCostoTypeDocumentId] = useState("");
   const [tipoCosto, setTipoCosto] = useState<"fijo" | "variable">("fijo");
   const [costoValor, setCostoValor] = useState("");
   const [savingCosto, setSavingCosto] = useState(false);
 
   function openCreateCosto() {
-    setCostoTipoDocumentoId("");
+    setCostoTypeDocumentId("");
     setTipoCosto("fijo");
     setCostoValor("");
     setCostoModalOpen(true);
   }
 
   async function handleSaveCosto() {
-    const idTipoDocumento = Number(costoTipoDocumentoId);
+    const idTypeDocument = Number(costoTypeDocumentId);
     const valor = Number(costoValor);
-    if (!costoTramiteId || !idTipoDocumento || !valor) {
+    if (!costoProcedureId || !idTypeDocument || !valor) {
       toast.error(t("costosDocumento.selectionRequired"));
       return;
     }
     setSavingCosto(true);
     try {
       await apiPost("/document-cost-templates", {
-        idProcedureType: Number(costoTramiteId),
-        idDocumentType: idTipoDocumento,
+        idProcedureType: Number(costoProcedureId),
+        idDocumentType: idTypeDocument,
         fixedAmount: tipoCosto === "fijo" ? valor : null,
         variablePercentage: tipoCosto === "variable" ? valor : null,
       });
@@ -93,15 +93,15 @@ export default function PlantillasPage() {
     }
   }
 
-  const tipoDocumentoName = (id?: number) =>
-    tiposDocumento.find((x) => x.idDocumentType === id)?.name ?? `#${id}`;
+  const typeDocumentName = (id?: number) =>
+    tiposDocument.find((x) => x.idDocumentType === id)?.name ?? `#${id}`;
 
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [procedureTypeId, setProcedureTypeId] = useState("");
   const [conceptId, setConceptId] = useState("");
-  const [observaciones, setObservaciones] = useState("");
-  const [deleteKey, setDeleteKey] = useState<PlantillaKey | null>(null);
+  const [notes, setNotes] = useState("");
+  const [deleteKey, setDeleteKey] = useState<TemplateKey | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -109,7 +109,7 @@ export default function PlantillasPage() {
     setIsEditMode(false);
     setProcedureTypeId("");
     setConceptId("");
-    setObservaciones("");
+    setNotes("");
     setModalOpen(true);
   }
 
@@ -117,7 +117,7 @@ export default function PlantillasPage() {
     setIsEditMode(true);
     setProcedureTypeId(String(p.budgetTemplatePK?.fkIdProcedureType ?? ""));
     setConceptId(String(p.budgetTemplatePK?.fkIdConcept ?? ""));
-    setObservaciones(p.notes ?? "");
+    setNotes(p.notes ?? "");
     setModalOpen(true);
   }
 
@@ -132,12 +132,12 @@ export default function PlantillasPage() {
     try {
       // The backend derives the composite PK from the related entities. It reads
       // ProcedureType via getIdTipoTramite(), so the relation must carry the
-      // `idTipoTramite` key (the typed field is idTipoDeTramite — hence the cast).
+      // `idTypeProcedure` key (the typed field is idTipoDeTramite — hence the cast).
       const body: BudgetTemplate = {
         budgetTemplatePK: { fkIdProcedureType: tt, fkIdConcept: cc },
         procedureType: { idProcedureType: tt },
         concept: { idConcept: cc },
-        notes: observaciones.trim() || undefined,
+        notes: notes.trim() || undefined,
       };
       if (isEditMode) {
         await apiPut(`/budget-templates/procedure-types/${tt}/concept/${cc}`, body);
@@ -170,19 +170,19 @@ export default function PlantillasPage() {
     }
   }
 
-  const tramiteName = (id?: number) => tiposTramite.find((x) => x.idProcedureType === id)?.name ?? `#${id}`;
-  const conceptoName = (id?: number) => conceptos.find((x) => x.idConcept === id)?.name ?? `#${id}`;
+  const procedureName = (id?: number) => tiposProcedure.find((x) => x.idProcedureType === id)?.name ?? `#${id}`;
+  const conceptName = (id?: number) => concepts.find((x) => x.idConcept === id)?.name ?? `#${id}`;
 
   const columns: Column<BudgetTemplate>[] = [
     {
       key: "tramite",
       header: t("fields.tipoTramite"),
-      render: (p) => <span className="font-medium">{p.procedureType?.name ?? tramiteName(p.budgetTemplatePK?.fkIdProcedureType)}</span>,
+      render: (p) => <span className="font-medium">{p.procedureType?.name ?? procedureName(p.budgetTemplatePK?.fkIdProcedureType)}</span>,
     },
     {
       key: "concepto",
       header: t("fields.concepto"),
-      render: (p) => p.concept?.name ?? conceptoName(p.budgetTemplatePK?.fkIdConcept),
+      render: (p) => p.concept?.name ?? conceptName(p.budgetTemplatePK?.fkIdConcept),
     },
     { key: "obs", header: t("fields.observaciones"), render: (p) => p.notes ?? "—" },
     {
@@ -244,7 +244,7 @@ export default function PlantillasPage() {
                     <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposTramite.map((tt) => (
+                    {tiposProcedure.map((tt) => (
                       <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>
                         {tt.name}
                       </SelectItem>
@@ -258,7 +258,7 @@ export default function PlantillasPage() {
                     <SelectValue placeholder={t("fields.conceptoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {conceptos.map((c) => (
+                    {concepts.map((c) => (
                       <SelectItem key={c.idConcept} value={String(c.idConcept)}>
                         {c.name}
                         {c.value ? ` ($${c.value})` : ""}
@@ -269,8 +269,8 @@ export default function PlantillasPage() {
               </FormField>
               <FormField label={t("fields.observaciones")}>
                 <Input
-                  value={observaciones}
-                  onChange={(e) => setObservaciones(e.target.value)}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
                   data-testid="input-notes-template"
                 />
               </FormField>
@@ -293,12 +293,12 @@ export default function PlantillasPage() {
 
       <AppHeader title={t("costosDocumento.title")} description={t("costosDocumento.description")} />
       <FormField label={t("costosDocumento.fields.tipoTramite")}>
-        <Select value={costoTramiteId} onValueChange={setCostoTramiteId}>
+        <Select value={costoProcedureId} onValueChange={setCostoProcedureId}>
           <SelectTrigger data-testid="select-procedure-type-costs">
             <SelectValue placeholder={t("fields.tipoTramitePlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            {tiposTramite.map((tt) => (
+            {tiposProcedure.map((tt) => (
               <SelectItem key={tt.idProcedureType} value={String(tt.idProcedureType)}>
                 {tt.name}
               </SelectItem>
@@ -307,7 +307,7 @@ export default function PlantillasPage() {
         </Select>
       </FormField>
 
-      {costoTramiteId && (
+      {costoProcedureId && (
         <>
           <div className="flex justify-end mb-4">
             <Button onClick={openCreateCosto} data-testid="btn-new-cost-document">
@@ -316,7 +316,7 @@ export default function PlantillasPage() {
             </Button>
           </div>
           <DataTable
-            data={costosDocumento}
+            data={costosDocument}
             isLoading={isLoadingCostos}
             emptyMessage={t("costosDocumento.noData")}
             keyExtractor={(c) =>
@@ -327,7 +327,7 @@ export default function PlantillasPage() {
                 key: "tipoDocumento",
                 header: t("costosDocumento.fields.tipoDocumento"),
                 render: (c) =>
-                  c.documentType?.name ?? tipoDocumentoName(c.documentCostTemplatePK?.fkIdDocumentType),
+                  c.documentType?.name ?? typeDocumentName(c.documentCostTemplatePK?.fkIdDocumentType),
               },
               {
                 key: "montoFijo",
@@ -349,12 +349,12 @@ export default function PlantillasPage() {
           <FormContainer>
             <FormSection dialogTitle title={t("costosDocumento.newCosto")}>
               <FormField label={t("costosDocumento.fields.tipoDocumento")} required>
-                <Select value={costoTipoDocumentoId} onValueChange={setCostoTipoDocumentoId}>
+                <Select value={costoTypeDocumentId} onValueChange={setCostoTypeDocumentId}>
                   <SelectTrigger data-testid="select-document-type-cost">
                     <SelectValue placeholder={t("costosDocumento.fields.tipoDocumentoPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposDocumento.map((td) => (
+                    {tiposDocument.map((td) => (
                       <SelectItem key={td.idDocumentType} value={String(td.idDocumentType)}>
                         {td.name}
                       </SelectItem>

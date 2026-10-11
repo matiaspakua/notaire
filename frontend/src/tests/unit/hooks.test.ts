@@ -123,9 +123,9 @@ describe("API endpoint path contracts", () => {
   });
 
   it("BudgetTemplate composite PUT path is correct", () => {
-    const idTipoTramite = 3;
-    const idConcepto = 7;
-    const path = `/budget-templates/procedure-types/${idTipoTramite}/concept/${idConcepto}`;
+    const idTypeProcedure = 3;
+    const idConcept = 7;
+    const path = `/budget-templates/procedure-types/${idTypeProcedure}/concept/${idConcept}`;
     expect(path).toBe("/budget-templates/procedure-types/3/concept/7");
   });
 

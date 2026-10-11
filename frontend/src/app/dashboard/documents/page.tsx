@@ -29,23 +29,23 @@ import {
 import { useDocumentTypes } from "@/hooks/useDocuments";
 import { ManagementPicker } from "@/components/shared/ManagementPicker";
 import {
-  EMPTY_DOCUMENTO_FORM,
-  missingDocumentoFields,
-  showsTramiteLink,
-  toDocumentoRequest,
-  type DocumentoForm,
+  EMPTY_DOCUMENT_FORM,
+  missingDocumentFields,
+  showsProcedureLink,
+  toDocumentRequest,
+  type DocumentForm,
 } from "@/lib/submitted-document-form";
 import { useDocumentReentry } from "@/hooks/useDocumentReentry";
 import type { SubmittedDocument } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 import { toDateInputValue, todayInputValue } from "@/lib/dates";
 
-export default function DocumentosPage() {
+export default function DocumentsPage() {
   const t = useTranslations("documentos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: documentos = [], isLoading } = useSubmittedDocuments();
+  const { data: documents = [], isLoading } = useSubmittedDocuments();
   const { data: tiposDoc = [] } = useDocumentTypes();
   const createMutation = useCreateSubmittedDocument();
   const updateMutation = useUpdateSubmittedDocument();
@@ -54,13 +54,13 @@ export default function DocumentosPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editing, setEditing] = useState<SubmittedDocument | null>(null);
-  const [form, setForm] = useState<DocumentoForm>(EMPTY_DOCUMENTO_FORM);
-  const { data: gestionConTramites } = useDocumentReentry(form.gestionId ? Number(form.gestionId) : undefined);
-  const tramites = gestionConTramites?.procedures ?? [];
+  const [form, setForm] = useState<DocumentForm>(EMPTY_DOCUMENT_FORM);
+  const { data: managementWithProcedures } = useDocumentReentry(form.managementId ? Number(form.managementId) : undefined);
+  const procedures = managementWithProcedures?.procedures ?? [];
 
   function openCreate() {
     setEditing(null);
-    setForm({ ...EMPTY_DOCUMENTO_FORM, fecha: todayInputValue() });
+    setForm({ ...EMPTY_DOCUMENT_FORM, fecha: todayInputValue() });
     setModalOpen(true);
   }
 
@@ -70,14 +70,14 @@ export default function DocumentosPage() {
       tipoId: d.type?.idDocumentType?.toString() ?? "",
       fecha: toDateInputValue(d.date),
       entregado: d.delivered ?? false,
-      gestionId: "",
-      tramiteId: d.procedureId?.toString() ?? "",
+      managementId: "",
+      procedureId: d.procedureId?.toString() ?? "",
     });
     setModalOpen(true);
   }
 
   async function handleSave() {
-    const data = toDocumentoRequest(form);
+    const data = toDocumentRequest(form);
     try {
       if (editing?.idSubmittedDocument) {
         await updateMutation.mutateAsync({ id: editing.idSubmittedDocument, data });
@@ -178,7 +178,7 @@ export default function DocumentosPage() {
       />
 
       <DataTable
-        data={documentos}
+        data={documents}
         columns={columns}
         isLoading={isLoading}
         keyExtractor={(d) => d.idSubmittedDocument!}
@@ -210,29 +210,29 @@ export default function DocumentosPage() {
                   onChange={(e) => setForm({ ...form, fecha: e.target.value })}
                 />
               </FormField>
-              {showsTramiteLink(editing) && (
+              {showsProcedureLink(editing) && (
                 <>
                   <FormField label={t("gestion")} helperText={t("gestionHelper")} required={!editing}>
                     <ManagementPicker
-                      value={form.gestionId ? Number(form.gestionId) : undefined}
-                      onChange={(g) => setForm({ ...form, gestionId: g?.idManagement?.toString() ?? "", tramiteId: "" })}
+                      value={form.managementId ? Number(form.managementId) : undefined}
+                      onChange={(g) => setForm({ ...form, managementId: g?.idManagement?.toString() ?? "", procedureId: "" })}
                       aria-label={t("gestion")}
                       placeholder={t("selectGestion")}
                       data-testid="select-management-document"
                     />
                   </FormField>
-                  {form.gestionId && (
+                  {form.managementId && (
                     <FormField
                       label={t("tramite")}
-                      helperText={tramites.length === 0 ? t("sinTramites") : undefined}
+                      helperText={procedures.length === 0 ? t("sinTramites") : undefined}
                       required={!editing}
                     >
-                      <Select value={form.tramiteId} onValueChange={(v) => setForm({ ...form, tramiteId: v })}>
-                        <SelectTrigger data-testid="select-procedure-document" disabled={tramites.length === 0}>
+                      <Select value={form.procedureId} onValueChange={(v) => setForm({ ...form, procedureId: v })}>
+                        <SelectTrigger data-testid="select-procedure-document" disabled={procedures.length === 0}>
                           <SelectValue placeholder={t("selectTramite")} />
                         </SelectTrigger>
                         <SelectContent>
-                          {tramites.map((tr) => (
+                          {procedures.map((tr) => (
                             <SelectItem key={tr.idProcedure} value={tr.idProcedure.toString()}>
                               #{tr.idProcedure} — {tr.typeProcedureName}
                             </SelectItem>
@@ -258,7 +258,7 @@ export default function DocumentosPage() {
                 disabled={
                   createMutation.isPending ||
                   updateMutation.isPending ||
-                  missingDocumentoFields(form, !!editing).length > 0
+                  missingDocumentFields(form, !!editing).length > 0
                 }
                 data-testid="btn-save-document"
               >

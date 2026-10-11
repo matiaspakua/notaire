@@ -1,9 +1,9 @@
 /**
- * TS-0015 - Personas y Clientes Workflow (CU17 → CU18 → CU61)
+ * TS-0015 - People y Clientes Workflow (CU17 → CU18 → CU61)
  * CU17 - Dar Alta Person
- * CU18 - Dar Alta Cliente (via checkbox 'es cliente')
- * CU41 - Modificar Cliente
- * CU61 - Buscar persona o cliente
+ * CU18 - Dar Alta Client (via checkbox 'es client')
+ * CU41 - Modificar Client
+ * CU61 - Buscar person o client
  * Issue #835 (validación duplicados por DNI)
  * Sequence: docs/200-architecture/204-diagrams/Secuencias/CU17.puml
  */
@@ -15,9 +15,9 @@ import { createPerson, uniqueId } from './setup/api-helpers'
 // ---------------------------------------------------------------------------
 // NOTE ON CU18 MECHANISM
 // ---------------------------------------------------------------------------
-// CU18 "Dar Alta Cliente" is NOT a separate button or screen. The "Es cliente"
-// checkbox inside the persona creation/edit form is the sole mechanism: checking
-// it during persona creation (CU17) or editing (CU41) simultaneously registers
+// CU18 "Dar Alta Client" is NOT a separate button or screen. The "Es client"
+// checkbox inside the person creation/edit form is the sole mechanism: checking
+// it during person creation (CU17) or editing (CU41) simultaneously registers
 // the person as a client. There is no standalone "client upgrade" flow.
 // Tests that previously used test.skip() for CU18 have been replaced with
 // real assertions that verify this checkbox-driven contract.
@@ -27,32 +27,32 @@ import { createPerson, uniqueId } from './setup/api-helpers'
 // Shared helpers
 // ---------------------------------------------------------------------------
 
-async function loginAndGoToPersonas(page: Page): Promise<void> {
+async function loginAndGoToPeople(page: Page): Promise<void> {
   const steps = new GherkinSteps(page)
   await authenticateAsAdmin(page)
   await steps.givenUserIsOnPage('/dashboard/people')
 }
 
-/** Opens "Nueva persona" modal and fills the required fields.
- *  `esCliente` controls whether the checkbox is checked (CU18 path). */
-async function fillPersonaForm(
+/** Opens "Nueva person" modal and fills the required fields.
+ *  `esClient` controls whether the checkbox is checked (CU18 path). */
+async function fillPersonForm(
   page: Page,
   opts: {
-    nombre: string
+    name: string
     apellido: string
     dni: string
-    esCliente?: boolean
+    esClient?: boolean
   },
 ): Promise<void> {
   await page.getByTestId('btn-new-person').click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
 
-  await page.getByTestId('input-firstName').fill(opts.nombre)
+  await page.getByTestId('input-firstName').fill(opts.name)
   await page.getByTestId('input-lastName').fill(opts.apellido)
   await dialog.getByTestId('input-dni').fill(opts.dni)
 
-  if (opts.esCliente) {
+  if (opts.esClient) {
     // CU18: checking this checkbox registers the person as a client at creation time.
     const checkbox = dialog.getByTestId('check-es-client')
     await checkbox.check()
@@ -73,7 +73,7 @@ async function submitForm(page: Page): Promise<void> {
 
 test.describe('CU17 - Dar Alta Person', () => {
   test.beforeEach(async ({ page }) => {
-    await loginAndGoToPersonas(page)
+    await loginAndGoToPeople(page)
   })
 
   test(
@@ -100,16 +100,16 @@ test.describe('CU17 - Dar Alta Person', () => {
       const dni = `17${uniqueId() % 10_000_000}`
       const apellido = `Alta${uniqueId() % 100_000}`
 
-      // When — create without the es-cliente checkbox
-      await fillPersonaForm(page, {
-        nombre: 'Carlos',
+      // When — create without the es-client checkbox
+      await fillPersonForm(page, {
+        name: 'Carlos',
         apellido,
         dni,
-        esCliente: false,
+        esClient: false,
       })
       await submitForm(page)
 
-      // Then — success toast and table shows new persona
+      // Then — success toast and table shows new person
       await expect(
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
@@ -125,50 +125,50 @@ test.describe('CU17 - Dar Alta Person', () => {
   test(
     'CU17-GW03: crear persona con es-cliente marcado (CU17 + CU18) → aparece en tabla con flag cliente',
     async ({ page }) => {
-      // NOTE (CU18): the 'es cliente' checkbox IS the CU18 registration mechanism.
-      // Creating a persona with this checkbox checked simultaneously registers
+      // NOTE (CU18): the 'es client' checkbox IS the CU18 registration mechanism.
+      // Creating a person with this checkbox checked simultaneously registers
       // the person as a client. No separate step is needed.
       const dni = `18${uniqueId() % 10_000_000}`
       const apellido = `Cliente${uniqueId() % 100_000}`
 
-      // When — create WITH the es-cliente checkbox (CU17 + CU18 in one step)
-      await fillPersonaForm(page, {
-        nombre: 'María',
+      // When — create WITH the es-client checkbox (CU17 + CU18 in one step)
+      await fillPersonForm(page, {
+        name: 'María',
         apellido,
         dni,
-        esCliente: true,
+        esClient: true,
       })
       await submitForm(page)
 
-      // Then — persona created successfully
+      // Then — person created successfully
       await expect(
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      // And — persona appears in the table
+      // And — person appears in the table
       await page.getByTestId('input-search-lastName').fill(apellido)
       await expect(page.getByRole('table')).toBeVisible()
       const row = page.getByRole('row', { name: new RegExp(apellido, 'i') })
       await expect(row).toBeVisible()
 
       // And — the row indicates the person is a client
-      // (badge, icon, or "Sí" in the "Cliente" column)
+      // (badge, icon, or "Sí" in the "Client" column)
       await expect(row.getByText(/^cliente$|^sí$/i)).toBeVisible()
     },
   )
 })
 
 // ---------------------------------------------------------------------------
-// CU18 - Dar Alta Cliente (via checkbox mechanism)
+// CU18 - Dar Alta Client (via checkbox mechanism)
 // ---------------------------------------------------------------------------
 
 test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
-  // NOTE: CU18 is exercised through the persona form's 'es cliente' checkbox.
+  // NOTE: CU18 is exercised through the person form's 'es client' checkbox.
   // There is no separate button, screen, or API flow for client registration.
   // All tests here are real, not skipped.
 
   test.beforeEach(async ({ page }) => {
-    await loginAndGoToPersonas(page)
+    await loginAndGoToPeople(page)
   })
 
   test(
@@ -177,12 +177,12 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
       const dni = `CU18${uniqueId() % 10_000_000}`
       const apellido = `EsCliente${uniqueId() % 100_000}`
 
-      // When — persona created with es-cliente checked (the CU18 mechanism)
-      await fillPersonaForm(page, {
-        nombre: 'Lucía',
+      // When — person created with es-client checked (the CU18 mechanism)
+      await fillPersonForm(page, {
+        name: 'Lucía',
         apellido,
         dni,
-        esCliente: true,
+        esClient: true,
       })
       await submitForm(page)
 
@@ -191,7 +191,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      // And — searching for the persona shows her in the table as a client
+      // And — searching for the person shows her in the table as a client
       await page.getByTestId('input-search-lastName').fill(apellido)
       await expect(page.getByRole('table')).toBeVisible()
 
@@ -205,24 +205,24 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
   test(
     'CU18-GW02: persona sin checkbox es-cliente puede ser promovida a cliente via edición (CU41)',
     async ({ page }) => {
-      // NOTE (CU41): editing an existing persona and checking 'es cliente'
+      // NOTE (CU41): editing an existing person and checking 'es client'
       // promotes them to client status. This is the CU41 path.
       const dni = `CU41${uniqueId() % 10_000_000}`
       const apellido = `Promover${uniqueId() % 100_000}`
 
-      // Given — persona created without es-cliente
-      await fillPersonaForm(page, {
-        nombre: 'Pedro',
+      // Given — person created without es-client
+      await fillPersonForm(page, {
+        name: 'Pedro',
         apellido,
         dni,
-        esCliente: false,
+        esClient: false,
       })
       await submitForm(page)
       await expect(
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      // When — open the persona for editing
+      // When — open the person for editing
       await page.getByTestId('input-search-lastName').fill(apellido)
       await expect(page.getByRole('table')).toBeVisible()
       const row = page.getByRole('row', { name: new RegExp(apellido, 'i') })
@@ -231,7 +231,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
       const editDialog = page.getByRole('dialog')
       await expect(editDialog).toBeVisible()
 
-      // And — check the es-cliente checkbox to promote the person (CU18/CU41)
+      // And — check the es-client checkbox to promote the person (CU18/CU41)
       const checkbox = editDialog.getByTestId('check-es-client')
       await checkbox.check()
       await expect(checkbox).toBeChecked()
@@ -242,7 +242,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
         page.locator('[data-sonner-toast]').getByText(/actualizada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      // And — persona now shows as client
+      // And — person now shows as client
       await page.getByTestId('input-search-lastName').fill(apellido)
       const updatedRow = page.getByRole('row', { name: new RegExp(apellido, 'i') })
       await expect(updatedRow.getByText(/client|sí/i)).toBeVisible()
@@ -256,7 +256,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
 
 test.describe('Issue #835 - Deduplicación por DNI', () => {
   test.beforeEach(async ({ page }) => {
-    await loginAndGoToPersonas(page)
+    await loginAndGoToPeople(page)
   })
 
   test(
@@ -264,15 +264,15 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
     async ({ page }) => {
       const dni = `DUP${uniqueId() % 10_000_000}`
 
-      // Given — first persona created successfully
-      await fillPersonaForm(page, { nombre: 'Original', apellido: 'Duplicado', dni })
+      // Given — first person created successfully
+      await fillPersonForm(page, { name: 'Original', apellido: 'Duplicado', dni })
       await submitForm(page)
       await expect(
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      // When — attempt to create a second persona with the same DNI
-      await fillPersonaForm(page, { nombre: 'Otra', apellido: 'Person', dni })
+      // When — attempt to create a second person with the same DNI
+      await fillPersonForm(page, { name: 'Otra', apellido: 'Person', dni })
       await submitForm(page)
 
       // Then — error toast references duplicate document
@@ -291,16 +291,16 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
     async ({ page }) => {
       const dni = `DUP2${uniqueId() % 10_000_000}`
 
-      await fillPersonaForm(page, { nombre: 'Primero', apellido: 'Exist', dni })
+      await fillPersonForm(page, { name: 'Primero', apellido: 'Exist', dni })
       await submitForm(page)
       await expect(
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
-      await fillPersonaForm(page, { nombre: 'Segundo', apellido: 'Dup', dni })
+      await fillPersonForm(page, { name: 'Segundo', apellido: 'Dup', dni })
       await submitForm(page)
 
-      // Then — link to existing persona is shown in the toast
+      // Then — link to existing person is shown in the toast
       await expect(
         page.locator('[data-sonner-toast]').getByText(/ver persona existente/i),
       ).toBeVisible({ timeout: 5000 })
@@ -342,11 +342,11 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
       await expect(dialog).toBeVisible()
       await submitForm(page)
 
-      const nombre = page.getByTestId('input-firstName')
-      await expect(nombre).toHaveAttribute('aria-invalid', 'true')
-      await expect(nombre).toHaveAttribute('aria-required', 'true')
+      const name = page.getByTestId('input-firstName')
+      await expect(name).toHaveAttribute('aria-invalid', 'true')
+      await expect(name).toHaveAttribute('aria-required', 'true')
       // The message comes from the backend's field error (English Bean Validation text today).
-      await expect(nombre).toHaveAccessibleDescription(/requerido|obligatorio|must not be blank/i)
+      await expect(name).toHaveAccessibleDescription(/requerido|obligatorio|must not be blank/i)
       const alert = dialog.getByRole('alert').first()
       await expect(alert).toBeVisible()
       expect(await alert.textContent()).not.toMatch(/\p{Extended_Pictographic}/u)
@@ -355,12 +355,12 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
 })
 
 // ---------------------------------------------------------------------------
-// CU61 - Buscar persona o cliente
+// CU61 - Buscar person o client
 // ---------------------------------------------------------------------------
 
 test.describe('CU61 - Buscar persona o cliente', () => {
   test.beforeEach(async ({ page }) => {
-    // Seed a known persona via API so searches have guaranteed results
+    // Seed a known person via API so searches have guaranteed results
     await authenticateAsAdmin(page)
     await page.goto('/dashboard/people')
     await page.waitForLoadState('networkidle')
@@ -371,7 +371,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
     async ({ page }) => {
       const steps = new GherkinSteps(page)
 
-      // Given — a persona was created via API with a unique apellido
+      // Given — a person was created via API with a unique apellido
       const result = await createPerson(page, {
         lastName: `BuscaApellido${uniqueId() % 100_000}`,
         identificationNumber: `CU61A${uniqueId() % 10_000_000}`,
@@ -401,7 +401,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
     async ({ page }) => {
       const steps = new GherkinSteps(page)
 
-      // Given — a persona with a unique DNI
+      // Given — a person with a unique DNI
       const dni = `CU61D${uniqueId() % 10_000_000}`
       const result = await createPerson(page, {
         lastName: `BuscaDni${uniqueId() % 100_000}`,
@@ -450,7 +450,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
 })
 
 // ---------------------------------------------------------------------------
-// Viewport tests — Personas screen at 320 / 768 / 1024 px
+// Viewport tests — People screen at 320 / 768 / 1024 px
 // ---------------------------------------------------------------------------
 
 const VIEWPORTS = [
@@ -469,7 +469,7 @@ test.describe('Personas screen - responsive viewports', () => {
         await page.goto('/dashboard/people')
         await page.waitForLoadState('domcontentloaded')
 
-        // Personas heading visible
+        // People heading visible
         await expect(
           page.getByRole('heading', { name: /people/i }),
         ).toBeVisible()
@@ -512,14 +512,14 @@ test.describe('Personas screen - responsive viewports', () => {
         await page.waitForLoadState('domcontentloaded')
 
         // Create original
-        await fillPersonaForm(page, { nombre: 'Primero', apellido: 'VP', dni })
+        await fillPersonForm(page, { name: 'Primero', apellido: 'VP', dni })
         await submitForm(page)
         await expect(
           page.locator('[data-sonner-toast]').getByText(/creada/i),
         ).toBeVisible({ timeout: 8000 })
 
         // Attempt duplicate
-        await fillPersonaForm(page, { nombre: 'Segundo', apellido: 'VP', dni })
+        await fillPersonForm(page, { name: 'Segundo', apellido: 'VP', dni })
         await submitForm(page)
 
         // Then — duplicate error is visible even on narrow screens
@@ -539,7 +539,7 @@ test.describe('Personas screen - responsive viewports', () => {
 
 test.describe('#1357 - Debounced personas search', () => {
   test('typing a surname quickly sends one /people/search request and finds the person', async ({ page }) => {
-    await loginAndGoToPersonas(page)
+    await loginAndGoToPeople(page)
     const created = await createPerson(page)
     const lastName = created.data!.lastName!
     const searches: string[] = []
@@ -563,7 +563,7 @@ test.describe('#1357 - Debounced personas search', () => {
 
 test.describe('#1361 - Identification type in the person form', () => {
   test.beforeEach(async ({ page }) => {
-    await loginAndGoToPersonas(page)
+    await loginAndGoToPeople(page)
   })
 
   test('a new person starts on DNI, the type select comes before the number', async ({ page }) => {

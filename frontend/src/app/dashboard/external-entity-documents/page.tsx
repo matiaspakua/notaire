@@ -22,7 +22,7 @@ import { extractApiError, formatDate } from "@/lib/utils";
 import type { ExternalEntityDocument, DeedManagement, ExternalEntityDocumentMovementInput } from "@/types";
 import { toDateInputValue } from "@/lib/dates";
 
-const emptyMovimiento: ExternalEntityDocumentMovementInput = {
+const emptyMovement: ExternalEntityDocumentMovementInput = {
   prepared: false,
   cardNumber: undefined,
   dateEntry: "",
@@ -52,51 +52,51 @@ function DocumentosEntidadesExternasList() {
   // One server page at a time, newest first, page and size in the URL (#1340):
   // the list used to load size=1000 and silently miss every later case.
   const paging = useUrlPagination();
-  const { data: gestionesPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
-  const gestiones = gestionesPage?.content ?? [];
-  useClampPage(paging, gestionesPage?.totalPages);
+  const { data: managementsPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
+  const managements = managementsPage?.content ?? [];
+  useClampPage(paging, managementsPage?.totalPages);
 
-  const [selectedGestionId, setSelectedGestionId] = useState<number | null>(null);
-  const { data: detalle, isLoading: isLoadingDetalle } = useExternalEntityDocuments(selectedGestionId ?? undefined);
+  const [selectedManagementId, setSelectedManagementId] = useState<number | null>(null);
+  const { data: detalle, isLoading: isLoadingDetalle } = useExternalEntityDocuments(selectedManagementId ?? undefined);
 
-  const [editingDocumento, setEditingDocumento] = useState<ExternalEntityDocument | null>(null);
-  const [movimiento, setMovimiento] = useState<ExternalEntityDocumentMovementInput>(emptyMovimiento);
+  const [editingDocument, setEditingDocument] = useState<ExternalEntityDocument | null>(null);
+  const [movement, setMovement] = useState<ExternalEntityDocumentMovementInput>(emptyMovement);
 
   const registrarMutation = useRegisterExternalEntityDocumentMovement();
 
-  function openEditar(documento: ExternalEntityDocument) {
-    setEditingDocumento(documento);
-    setMovimiento({
-      prepared: documento.prepared ?? false,
-      cardNumber: documento.cardNumber,
-      dateEntry: documento.dateEntry ?? "",
-      dateExit: documento.dateExit ?? "",
-      flagged: documento.flagged ?? false,
-      amountToPay: documento.amountToPay,
-      datePayment: documento.datePayment ?? "",
-      dateReleased: documento.dateReleased ?? "",
-      notes: documento.notes ?? "",
-      delivered: documento.delivered ?? false,
+  function openEditar(document: ExternalEntityDocument) {
+    setEditingDocument(document);
+    setMovement({
+      prepared: document.prepared ?? false,
+      cardNumber: document.cardNumber,
+      dateEntry: document.dateEntry ?? "",
+      dateExit: document.dateExit ?? "",
+      flagged: document.flagged ?? false,
+      amountToPay: document.amountToPay,
+      datePayment: document.datePayment ?? "",
+      dateReleased: document.dateReleased ?? "",
+      notes: document.notes ?? "",
+      delivered: document.delivered ?? false,
     });
   }
 
-  async function handleGuardarMovimiento() {
-    if (!selectedGestionId || !editingDocumento) return;
+  async function handleGuardarMovement() {
+    if (!selectedManagementId || !editingDocument) return;
     try {
       await registrarMutation.mutateAsync({
-        gestionId: selectedGestionId,
-        idDocumentoPresentado: editingDocumento.idSubmittedDocument,
-        movimiento,
+        managementId: selectedManagementId,
+        idDocumentPresentado: editingDocument.idSubmittedDocument,
+        movement,
       });
       toast.success(t("movimientoRegistrado"));
-      setEditingDocumento(null);
+      setEditingDocument(null);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorMovimiento"));
     }
   }
 
-  const gestionColumns: Column<DeedManagement>[] = [
-    { key: "numero", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.number}</span> },
+  const managementColumns: Column<DeedManagement>[] = [
+    { key: "number", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.number}</span> },
     { key: "heading", header: t("fields.encabezado"), render: (g) => g.heading ?? "—" },
     { key: "estadoActual", header: tc("status"), render: (g) => g.statusActual ?? "—" },
     {
@@ -108,7 +108,7 @@ function DocumentosEntidadesExternasList() {
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setSelectedGestionId(g.idManagement!)}
+            onClick={() => setSelectedManagementId(g.idManagement!)}
             aria-label={t("verDocumentos")}
             data-testid={`btn-view-documents-${g.idManagement}`}
           >
@@ -119,8 +119,8 @@ function DocumentosEntidadesExternasList() {
     },
   ];
 
-  const documentoColumns: Column<ExternalEntityDocument>[] = [
-    { key: "nombre", header: t("fields.nombre"), render: (d) => d.name ?? "—" },
+  const documentColumns: Column<ExternalEntityDocument>[] = [
+    { key: "name", header: t("fields.nombre"), render: (d) => d.name ?? "—" },
     {
       key: "delivered",
       header: t("fields.entregado"),
@@ -156,22 +156,22 @@ function DocumentosEntidadesExternasList() {
     <div>
       <AppHeader title={t("title")} />
       <DataTable
-        data={gestiones}
-        columns={gestionColumns}
+        data={managements}
+        columns={managementColumns}
         isLoading={isLoading}
         isFetching={isFetching}
         keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
         pagination={{
-          page: gestionesPage?.number ?? paging.page,
+          page: managementsPage?.number ?? paging.page,
           size: paging.size,
-          totalElements: gestionesPage?.totalElements ?? 0,
+          totalElements: managementsPage?.totalElements ?? 0,
           onPageChange: paging.setPage,
           onSizeChange: paging.setSize,
         }}
       />
 
-      <Dialog open={!!selectedGestionId} onOpenChange={(v) => !v && setSelectedGestionId(null)}>
+      <Dialog open={!!selectedManagementId} onOpenChange={(v) => !v && setSelectedManagementId(null)}>
         <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t("detalleTitle")}</DialogTitle>
@@ -195,7 +195,7 @@ function DocumentosEntidadesExternasList() {
           )}
           <DataTable
             data={detalle?.documents ?? []}
-            columns={documentoColumns}
+            columns={documentColumns}
             isLoading={isLoadingDetalle}
             keyExtractor={(d) => d.idSubmittedDocument}
             emptyMessage={t("noDocumentos")}
@@ -203,16 +203,16 @@ function DocumentosEntidadesExternasList() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!editingDocumento} onOpenChange={(v) => !v && setEditingDocumento(null)}>
+      <Dialog open={!!editingDocument} onOpenChange={(v) => !v && setEditingDocument(null)}>
         <DialogContent className="max-h-[85vh] overflow-y-auto" data-testid="dialog-movimiento">
           <FormContainer>
             <FormSection dialogTitle title={t("registrarMovimiento")}>
               <FormField label={t("fields.numeroCarton")}>
                 <Input
                   type="number"
-                  value={movimiento.cardNumber ?? ""}
+                  value={movement.cardNumber ?? ""}
                   onChange={(e) =>
-                    setMovimiento((m) => ({ ...m, cardNumber: e.target.value ? Number(e.target.value) : undefined }))
+                    setMovement((m) => ({ ...m, cardNumber: e.target.value ? Number(e.target.value) : undefined }))
                   }
                   data-testid="input-card-number"
                 />
@@ -220,25 +220,25 @@ function DocumentosEntidadesExternasList() {
               <FormField label={t("fields.fechaIngreso")}>
                 <Input
                   type="date"
-                  value={toDateInputValue(movimiento.dateEntry)}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, dateEntry: e.target.value }))}
+                  value={toDateInputValue(movement.dateEntry)}
+                  onChange={(e) => setMovement((m) => ({ ...m, dateEntry: e.target.value }))}
                   data-testid="input-entry-date"
                 />
               </FormField>
               <FormField label={t("fields.fechaSalida")}>
                 <Input
                   type="date"
-                  value={toDateInputValue(movimiento.dateExit)}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, dateExit: e.target.value }))}
+                  value={toDateInputValue(movement.dateExit)}
+                  onChange={(e) => setMovement((m) => ({ ...m, dateExit: e.target.value }))}
                   data-testid="input-exit-date"
                 />
               </FormField>
               <FormField label={t("fields.importeAPagar")}>
                 <Input
                   type="number"
-                  value={movimiento.amountToPay ?? ""}
+                  value={movement.amountToPay ?? ""}
                   onChange={(e) =>
-                    setMovimiento((m) => ({ ...m, amountToPay: e.target.value ? Number(e.target.value) : undefined }))
+                    setMovement((m) => ({ ...m, amountToPay: e.target.value ? Number(e.target.value) : undefined }))
                   }
                   data-testid="input-importe-a-pagar"
                 />
@@ -246,52 +246,52 @@ function DocumentosEntidadesExternasList() {
               <FormField label={t("fields.fechaPago")}>
                 <Input
                   type="date"
-                  value={toDateInputValue(movimiento.datePayment)}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, datePayment: e.target.value }))}
+                  value={toDateInputValue(movement.datePayment)}
+                  onChange={(e) => setMovement((m) => ({ ...m, datePayment: e.target.value }))}
                   data-testid="input-payment-date"
                 />
               </FormField>
               <FormField label={t("fields.fechaLiberado")}>
                 <Input
                   type="date"
-                  value={toDateInputValue(movimiento.dateReleased)}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, dateReleased: e.target.value }))}
+                  value={toDateInputValue(movement.dateReleased)}
+                  onChange={(e) => setMovement((m) => ({ ...m, dateReleased: e.target.value }))}
                   data-testid="input-released-date"
                 />
               </FormField>
               <FormField label={t("fields.observaciones")}>
                 <textarea
                   className={themeClass("textarea")}
-                  value={movimiento.notes ?? ""}
-                  onChange={(e) => setMovimiento((m) => ({ ...m, notes: e.target.value }))}
+                  value={movement.notes ?? ""}
+                  onChange={(e) => setMovement((m) => ({ ...m, notes: e.target.value }))}
                   data-testid="input-notes"
                 />
               </FormField>
               <CheckboxField
                 label={t("fields.preparado")}
-                checked={!!movimiento.prepared}
-                onChange={(checked) => setMovimiento((m) => ({ ...m, prepared: checked }))}
+                checked={!!movement.prepared}
+                onChange={(checked) => setMovement((m) => ({ ...m, prepared: checked }))}
                 data-testid="checkbox-prepared"
               />
               <CheckboxField
                 label={t("fields.observado")}
-                checked={!!movimiento.flagged}
-                onChange={(checked) => setMovimiento((m) => ({ ...m, flagged: checked }))}
+                checked={!!movement.flagged}
+                onChange={(checked) => setMovement((m) => ({ ...m, flagged: checked }))}
                 data-testid="checkbox-flagged"
               />
               <CheckboxField
                 label={t("fields.entregado")}
-                checked={!!movimiento.delivered}
-                onChange={(checked) => setMovimiento((m) => ({ ...m, delivered: checked }))}
+                checked={!!movement.delivered}
+                onChange={(checked) => setMovement((m) => ({ ...m, delivered: checked }))}
                 data-testid="checkbox-delivered"
               />
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setEditingDocumento(null)}>
+              <Button variant="secondary" onClick={() => setEditingDocument(null)}>
                 {tc("cancel")}
               </Button>
               <Button
-                onClick={handleGuardarMovimiento}
+                onClick={handleGuardarMovement}
                 disabled={registrarMutation.isPending}
                 data-testid="btn-save-movimiento"
               >

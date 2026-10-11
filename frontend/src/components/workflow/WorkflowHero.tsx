@@ -27,9 +27,9 @@ export function WorkflowHero() {
   const tw = useTranslations("dashboard.workflow");
 
   const [refInput, setRefInput] = useState("");
-  const [searchedNumero, setSearchedNumero] = useState<number | undefined>();
-  const searching = searchedNumero != null;
-  const byNumber = useManagementByNumber(searchedNumero);
+  const [searchedNumber, setSearchedNumber] = useState<number | undefined>();
+  const searching = searchedNumber != null;
+  const byNumber = useManagementByNumber(searchedNumber);
   const searchedTrace = useManagementWorkflowTrace(searching ? byNumber.data?.idManagement : undefined);
   const latest = useLatestTracedManagement(!searching);
 
@@ -40,8 +40,8 @@ export function WorkflowHero() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const numero = Number.parseInt(refInput.trim(), 10);
-    setSearchedNumero(Number.isNaN(numero) ? undefined : numero);
+    const number = Number.parseInt(refInput.trim(), 10);
+    setSearchedNumber(Number.isNaN(number) ? undefined : number);
   }
 
   return (

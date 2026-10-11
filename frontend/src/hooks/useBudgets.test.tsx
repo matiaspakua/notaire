@@ -1,5 +1,5 @@
 /**
- * Unit tests for useCreateBudget (CU01, CU39 — create a presupuesto from a procedure-type template).
+ * Unit tests for useCreateBudget (CU01, CU39 — create a budget from a procedure-type template).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";

@@ -16,30 +16,30 @@ import { extractApiError, formatDate } from "@/lib/utils";
 import { ReenterDialog, type DatosReingreso } from "./ReenterDialog";
 import type { Testimony, TestimonyMovement } from "@/types";
 
-type EstadoMovimiento = "sinIngresar" | "ingresado" | "inscripto" | "retirado";
+type StatusMovement = "sinIngresar" | "ingresado" | "inscripto" | "retirado";
 
-function latestMovimiento(testimonio: Testimony): TestimonyMovement | undefined {
-  const movimientos = testimonio.testimonyMovements ?? [];
-  return movimientos.reduce<TestimonyMovement | undefined>(
+function latestMovement(testimony: Testimony): TestimonyMovement | undefined {
+  const movements = testimony.testimonyMovements ?? [];
+  return movements.reduce<TestimonyMovement | undefined>(
     (latest, m) => (!latest || (m.idTestimonyMovement ?? 0) > (latest.idTestimonyMovement ?? 0) ? m : latest),
     undefined
   );
 }
 
-function estadoMovimiento(testimonio: Testimony): EstadoMovimiento {
-  const movimiento = latestMovimiento(testimonio);
-  if (!movimiento) return "sinIngresar";
-  if (movimiento.dateExit) return "retirado";
-  if (movimiento.registered) return "inscripto";
+function statusMovement(testimony: Testimony): StatusMovement {
+  const movement = latestMovement(testimony);
+  if (!movement) return "sinIngresar";
+  if (movement.dateExit) return "retirado";
+  if (movement.registered) return "inscripto";
   return "ingresado";
 }
 
-export default function MovimientosTestimonioPage() {
+export default function MovementsTestimonyPage() {
   const t = useTranslations("movimientosTestimonio");
   const tc = useTranslations("common");
 
-  const { data: testimonios = [], isLoading } = useTestimonies();
-  const verificados = testimonios.filter((te) => te.verified);
+  const { data: testimonies = [], isLoading } = useTestimonies();
+  const verificados = testimonies.filter((te) => te.verified);
 
   const ingresarMutation = useEnterRegistration();
   const registrarMutation = useRegisterInscription();
@@ -47,36 +47,36 @@ export default function MovimientosTestimonioPage() {
   const reingresarMutation = useReenter();
 
   const [retirarId, setRetirarId] = useState<number | null>(null);
-  const [numeroCarton, setNumeroCarton] = useState("");
+  const [numberCard, setNumberCard] = useState("");
   const [reingresarId, setReingresarId] = useState<number | null>(null);
 
-  async function handleIngresar(idTestimonio: number) {
+  async function handleIngresar(idTestimony: number) {
     try {
-      await ingresarMutation.mutateAsync(idTestimonio);
+      await ingresarMutation.mutateAsync(idTestimony);
       toast.success(t("ingresado"));
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorIngresar"));
     }
   }
 
-  async function handleRegistrar(idTestimonio: number) {
+  async function handleRegistrar(idTestimony: number) {
     try {
-      await registrarMutation.mutateAsync(idTestimonio);
+      await registrarMutation.mutateAsync(idTestimony);
       toast.success(t("inscripto"));
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorRegistrar"));
     }
   }
 
-  function openRetirar(idTestimonio: number) {
-    setRetirarId(idTestimonio);
-    setNumeroCarton("");
+  function openRetirar(idTestimony: number) {
+    setRetirarId(idTestimony);
+    setNumberCard("");
   }
 
   async function handleRetirar() {
     if (!retirarId) return;
     try {
-      await retirarMutation.mutateAsync({ idTestimonio: retirarId, numeroCarton: Number(numeroCarton) });
+      await retirarMutation.mutateAsync({ idTestimony: retirarId, numberCard: Number(numberCard) });
       toast.success(t("retirado"));
       setRetirarId(null);
     } catch (err) {
@@ -87,7 +87,7 @@ export default function MovimientosTestimonioPage() {
   async function handleReingresar(datos: DatosReingreso) {
     if (!reingresarId) return;
     try {
-      await reingresarMutation.mutateAsync({ idTestimonio: reingresarId, ...datos });
+      await reingresarMutation.mutateAsync({ idTestimony: reingresarId, ...datos });
       toast.success(t("reingresado"));
       setReingresarId(null);
     } catch (err) {
@@ -96,18 +96,18 @@ export default function MovimientosTestimonioPage() {
   }
 
   const columns: Column<Testimony>[] = [
-    { key: "numero", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
+    { key: "number", header: t("fields.numero"), render: (te) => <span className="font-medium">{te.number}</span> },
     { key: "escritura", header: t("fields.escritura"), render: (te) => te.deed?.number ?? "—" },
-    { key: "estado", header: t("fields.estado"), render: (te) => t(`estados.${estadoMovimiento(te)}`) },
-    { key: "fechaIngreso", header: t("fields.fechaIngreso"), render: (te) => formatDate(latestMovimiento(te)?.dateEntry) },
-    { key: "fechaInscripcion", header: t("fields.fechaInscripcion"), render: (te) => formatDate(latestMovimiento(te)?.dateRegistration) },
-    { key: "fechaSalida", header: t("fields.fechaSalida"), render: (te) => formatDate(latestMovimiento(te)?.dateExit) },
+    { key: "estado", header: t("fields.estado"), render: (te) => t(`estados.${statusMovement(te)}`) },
+    { key: "fechaIngreso", header: t("fields.fechaIngreso"), render: (te) => formatDate(latestMovement(te)?.dateEntry) },
+    { key: "fechaInscripcion", header: t("fields.fechaInscripcion"), render: (te) => formatDate(latestMovement(te)?.dateRegistration) },
+    { key: "fechaSalida", header: t("fields.fechaSalida"), render: (te) => formatDate(latestMovement(te)?.dateExit) },
     {
       key: "actions",
       header: "",
       className: "w-40",
       render: (te) => {
-        const estado = estadoMovimiento(te);
+        const estado = statusMovement(te);
         const id = te.idTestimony!;
         return (
           <div className="flex gap-2 justify-end">
@@ -147,14 +147,14 @@ export default function MovimientosTestimonioPage() {
           <FormContainer>
             <FormSection dialogTitle title={t("retirar")}>
               <FormField label={t("fields.numeroCarton")} required>
-                <Input type="number" value={numeroCarton} onChange={(e) => setNumeroCarton(e.target.value)} data-testid="input-card-number" />
+                <Input type="number" value={numberCard} onChange={(e) => setNumberCard(e.target.value)} data-testid="input-card-number" />
               </FormField>
             </FormSection>
             <FormActions align="right">
               <Button variant="secondary" onClick={() => setRetirarId(null)}>
                 {tc("cancel")}
               </Button>
-              <Button onClick={handleRetirar} disabled={!numeroCarton || retirarMutation.isPending} data-testid="btn-confirm-retiro">
+              <Button onClick={handleRetirar} disabled={!numberCard || retirarMutation.isPending} data-testid="btn-confirm-retiro">
                 {t("retirar")}
               </Button>
             </FormActions>

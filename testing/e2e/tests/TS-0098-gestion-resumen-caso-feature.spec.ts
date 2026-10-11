@@ -1,8 +1,8 @@
 /**
  * #774 - Resumen del caso de una gestión.
  *
- * A gestión whose trámite has a signed escritura with a generated testimonio is seeded through the API;
- * the case summary dialog of the gestiones screen must list the escritura and the testimonio state.
+ * A gestión whose trámite has a signed deed with a generated testimony is seeded through the API;
+ * the case summary dialog of the managements screen must list the deed and the testimony state.
  */
 import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
@@ -19,42 +19,42 @@ test.describe("#774 - Resumen del caso", () => {
   });
 
   test("lists the escritura and the testimonio state of a gestión", async ({ page }) => {
-    const escribano = await createPerson(page, { isClient: false });
-    expect(escribano.ok, escribano.error ?? "createPerson failed").toBe(true);
-    const gestion = await apiPost<{ idManagement: number }>(page, "/managements", {
+    const notary = await createPerson(page, { isClient: false });
+    expect(notary.ok, notary.error ?? "createPerson failed").toBe(true);
+    const management = await apiPost<{ idManagement: number }>(page, "/managements", {
       heading: `Gestión resumen E2E ${uniqueId()}`,
       dateStart: new Date().toISOString().split("T")[0],
       number: uniqueId() % 1_000_000,
-      notaryPersonId: escribano.data!.personId,
+      notaryPersonId: notary.data!.personId,
     });
-    expect(gestion.ok, gestion.error ?? "create gestión failed").toBe(true);
-    const idGestion = gestion.data!.idManagement;
+    expect(management.ok, management.error ?? "create gestión failed").toBe(true);
+    const idManagement = management.data!.idManagement;
 
-    const escrituraNumero = uniqueId() % 1_000_000;
-    const escritura = await apiPost<{ idDeed: number }>(page, "/deeds", {
-      number: escrituraNumero,
+    const deedNumber = uniqueId() % 1_000_000;
+    const deed = await apiPost<{ idDeed: number }>(page, "/deeds", {
+      number: deedNumber,
       dateDeedrecording: new Date().toISOString().split("T")[0],
-      body: `Deed resumen E2E ${escrituraNumero}`,
+      body: `Deed resumen E2E ${deedNumber}`,
       status: "Firmada",
     });
-    expect(escritura.ok, escritura.error ?? "escritura failed").toBe(true);
-    const testimonio = await apiPost(page, `/testimonies/${escritura.data!.idDeed}/generate`, {});
-    expect(testimonio.ok, testimonio.error ?? "generar testimonio failed").toBe(true);
+    expect(deed.ok, deed.error ?? "escritura failed").toBe(true);
+    const testimony = await apiPost(page, `/testimonies/${deed.data!.idDeed}/generate`, {});
+    expect(testimony.ok, testimony.error ?? "generar testimonio failed").toBe(true);
 
     const tipo = await createProcedureType(page);
     expect(tipo.ok, tipo.error ?? "createProcedureType failed").toBe(true);
-    const tramite = await apiPost(page, "/procedures", {
+    const procedure = await apiPost(page, "/procedures", {
       idProcedureType: tipo.data!.idProcedureType,
-      idManagement: idGestion,
-      idDeed: escritura.data!.idDeed,
+      idManagement: idManagement,
+      idDeed: deed.data!.idDeed,
     });
-    expect(tramite.ok, `createProcedure ${tramite.status}`).toBe(true);
+    expect(procedure.ok, `createProcedure ${procedure.status}`).toBe(true);
 
     await page.goto("/dashboard/managements");
-    await page.getByTestId(`btn-summary-case-${idGestion}`).click();
+    await page.getByTestId(`btn-summary-case-${idManagement}`).click();
 
     const dialog = page.getByTestId("dialog-summary-case");
-    await expect(dialog.getByTestId("summary-deed")).toContainText(String(escrituraNumero), { timeout: 15000 });
+    await expect(dialog.getByTestId("summary-deed")).toContainText(String(deedNumber), { timeout: 15000 });
     await expect(dialog.getByTestId("summary-testimony")).toContainText(/sin ingresar|not filed/i);
     await expect(dialog.getByTestId("summary-payments")).toBeVisible();
   });

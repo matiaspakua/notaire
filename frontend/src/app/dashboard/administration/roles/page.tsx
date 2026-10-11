@@ -101,7 +101,7 @@ export default function RolesPage() {
 
   const columns: Column<Role>[] = [
     { key: "id", header: tc("id"), render: (r) => <span className="text-xs text-muted-foreground">{r.idRole}</span>, className: "w-12" },
-    { key: "nombre", header: tc("name"), render: (r) => <span className="font-medium">{r.name}</span> },
+    { key: "name", header: tc("name"), render: (r) => <span className="font-medium">{r.name}</span> },
     { key: "descripcion", header: tc("description"), render: (r) => <span className="text-sm text-muted-foreground">{r.description ?? "—"}</span> },
     { key: "modulos", header: t("fields.modulos"), render: (r) => (
       <div className="flex flex-wrap gap-1">

@@ -23,7 +23,7 @@ test.describe("CU22 - Registrar Substitution", () => {
     // When
     await steps.whenUserClicksButton("nueva suplencia");
 
-    // Then — modal uses IDs for escribano/suplente (numeric inputs), and date range (Desde/Hasta)
+    // Then — modal uses IDs for notary/suplente (numeric inputs), and date range (Desde/Hasta)
     await steps.thenModalIsVisible("Nueva suplencia");
     await expect(steps.page.getByTestId("input-notary-id")).toBeVisible();
     await expect(steps.page.getByTestId("input-suplente-id")).toBeVisible();
@@ -36,7 +36,7 @@ test.describe("CU22 - Registrar Substitution", () => {
     await steps.whenUserClicksButton("nueva suplencia");
     await steps.thenModalIsVisible();
 
-    // When — fill escribano ID, suplente ID, and date range via testids
+    // When — fill notary ID, suplente ID, and date range via testids
     await steps.page.getByTestId("input-notary-id").fill("1");
     await steps.page.getByTestId("input-suplente-id").fill("1");
     await steps.page.getByTestId("input-desde").fill("2026-05-01");
@@ -61,10 +61,10 @@ test.describe("CU59 - Consultar Suplencias", () => {
   });
 
   test.skip("CU59-GW01 (#1146): Given on suplencias, When filter by escribano, Then shows filtered", async () => {
-    // Skipped (#1146): suplencias page has no filter dropdown by escribano.
+    // Skipped (#1146): substitutions page has no filter dropdown by notary.
   });
 
   test.skip("CU59-GW02 (#1146): Given suplencia exists, When click ver detalle, Then shows details", async () => {
-    // Skipped (#1146): suplencias table has no "ver" button — only edit/delete icons.
+    // Skipped (#1146): substitutions table has no "ver" button — only edit/delete icons.
   });
 });

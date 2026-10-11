@@ -21,7 +21,7 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
-import PersonasPage from "@/app/dashboard/people/page";
+import PeoplePage from "@/app/dashboard/people/page";
 
 const TYPES = [
   { idIdentificationType: 1, name: "DNI", characters: "8", version: 0 },
@@ -69,12 +69,12 @@ describe("PersonasPage identification type (#1361)", () => {
   });
 
   it("lists the type next to the number", async () => {
-    render(<PersonasPage />, { wrapper });
+    render(<PeoplePage />, { wrapper });
     expect(await screen.findByText("CUIT 30712345678")).toBeInTheDocument();
   });
 
   it("creates a person with DNI preselected and sends identificationTypeId", async () => {
-    render(<PersonasPage />, { wrapper });
+    render(<PeoplePage />, { wrapper });
     await screen.findByText("CUIT 30712345678");
     fireEvent.click(screen.getByTestId("btn-new-person"));
     const dialog = await screen.findByRole("dialog");
@@ -90,7 +90,7 @@ describe("PersonasPage identification type (#1361)", () => {
   });
 
   it("asks for a type before saving a person stored without one", async () => {
-    render(<PersonasPage />, { wrapper });
+    render(<PeoplePage />, { wrapper });
     await screen.findByText("Sin Tipo");
     const rows = screen.getAllByRole("button", { name: "common.edit" });
     fireEvent.click(rows[1]);

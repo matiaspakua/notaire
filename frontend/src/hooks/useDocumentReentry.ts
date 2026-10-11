@@ -11,28 +11,28 @@ import type {
 } from "@/types";
 
 export const documentReentryKeys = {
-  byManagement: (gestionId: number) => ["reingresoDocumentacion", "gestion", gestionId] as const,
+  byManagement: (managementId: number) => ["reingresoDocumentacion", "gestion", managementId] as const,
 };
 
-export function useDocumentReentry(gestionId: number | undefined) {
+export function useDocumentReentry(managementId: number | undefined) {
   return useQuery({
-    queryKey: documentReentryKeys.byManagement(gestionId ?? 0),
-    queryFn: () => apiGet<ManagementDocumentReentry>(`/managements/${gestionId}/document-reentry`),
-    enabled: !!gestionId,
+    queryKey: documentReentryKeys.byManagement(managementId ?? 0),
+    queryFn: () => apiGet<ManagementDocumentReentry>(`/managements/${managementId}/document-reentry`),
+    enabled: !!managementId,
   });
 }
 
 interface ReingresarDocumentacionInput {
-  gestionId: number;
+  managementId: number;
   reingreso: DocumentReentryInput;
 }
 
 export function useReenterDocumentation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ gestionId, reingreso }: ReingresarDocumentacionInput) =>
-      apiPost<ReenteredDocument>(`/managements/${gestionId}/document-reentry`, reingreso),
-    onSuccess: (_data, { gestionId }) =>
-      qc.invalidateQueries({ queryKey: documentReentryKeys.byManagement(gestionId) }),
+    mutationFn: ({ managementId, reingreso }: ReingresarDocumentacionInput) =>
+      apiPost<ReenteredDocument>(`/managements/${managementId}/document-reentry`, reingreso),
+    onSuccess: (_data, { managementId }) =>
+      qc.invalidateQueries({ queryKey: documentReentryKeys.byManagement(managementId) }),
   });
 }

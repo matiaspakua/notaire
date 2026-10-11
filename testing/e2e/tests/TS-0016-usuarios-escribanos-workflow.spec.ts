@@ -2,8 +2,8 @@
  * CU20 - Dar Alta UserAccount (Gherkin style)
  * CU21 - Modificar UserAccount
  * CU23 - Ver registro de actividades de usuario
- * CU48 - Dar alta escribano
- * CU51 - Modificar escribano
+ * CU48 - Dar alta notary
+ * CU51 - Modificar notary
  */
 import { test, expect, type Page } from "@playwright/test";
 import { GherkinSteps, TestData } from "./gherkin-helpers";
@@ -56,7 +56,7 @@ test.describe("CU20 - Dar Alta UserAccount", () => {
     // When
     await steps.whenUserClicksButton("nuevo usuario");
 
-    // Then — modal title is "Nuevo usuario" (i18n lowercase); form has Nombre, Contraseña, Tipo
+    // Then — modal title is "Nuevo usuario" (i18n lowercase); form has Name, Contraseña, Tipo
     await steps.thenModalIsVisible("Nuevo usuario");
     await steps.thenFormHasField("nombre");
     await steps.thenFormHasField("contraseña");
@@ -68,7 +68,7 @@ test.describe("CU20 - Dar Alta UserAccount", () => {
     await steps.whenUserClicksButton("nuevo usuario");
     await steps.thenModalIsVisible();
 
-    // When — fill nombre via testid; tipo is a Select (combobox), activo defaults to true
+    // When — fill name via testid; tipo is a Select (combobox), activo defaults to true
     await steps.page.getByTestId("input-name-user").fill(TestData.usuario.username);
     await steps.page.getByLabel(/contraseña/i).fill(TestData.usuario.password);
     await steps.whenUserSubmitsForm();

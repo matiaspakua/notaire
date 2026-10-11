@@ -19,7 +19,7 @@ test.describe("Dashboard navigation", () => {
     await loginAs(page);
 
     // Sidebar link accessible names include icon alt text + label text
-    // (e.g. "Gestiones Gestiones"), so use exact: false
+    // (e.g. "Managements Managements"), so use exact: false
     for (const name of ["Gestiones", "Presupuestos", "Personas", "Escrituras", "Pagos"]) {
       await expect(page.getByRole("link", { name }).first()).toBeVisible({ timeout: 5000 });
     }

@@ -29,35 +29,35 @@ interface CuCheck {
 // ──────────────────────────────────────────────
 
 // Helpers to create dynamic paths using seed data
-const seedPersonaId = () => Number(process.env.E2E_SEED_PERSONA_ID || "1");
-const seedPresupuestoId = () => Number(process.env.E2E_SEED_PRESUPUESTO_ID || "1");
-const seedGestionId = () => Number(process.env.E2E_SEED_GESTION_ID || "1");
-const seedConceptoId = () => Number(process.env.E2E_SEED_CONCEPTO_ID || "1");
+const seedPersonId = () => Number(process.env.E2E_SEED_PERSONA_ID || "1");
+const seedBudgetId = () => Number(process.env.E2E_SEED_PRESUPUESTO_ID || "1");
+const seedManagementId = () => Number(process.env.E2E_SEED_GESTION_ID || "1");
+const seedConceptId = () => Number(process.env.E2E_SEED_CONCEPTO_ID || "1");
 const seedUsuarioId = () => Number(process.env.E2E_SEED_USUARIO_ID || "1");
 const seedFolioId = () => Number(process.env.E2E_SEED_FOLIO_ID || "1");
-const seedEstadoGestionId = () => Number(process.env.E2E_SEED_ESTADO_GESTION_ID || "1");
+const seedStatusManagementId = () => Number(process.env.E2E_SEED_ESTADO_GESTION_ID || "1");
 
 const CU_CHECKS: CuCheck[] = [
   // ── Auth / System ──
   { id: "CU-AUTH", name: "Login", method: "POST", path: "/users/login", expectStatus: 200 },
 
-  // ── Personas / Clientes (CU17, CU18, CU41, CU46, CU54, CU61) ──
+  // ── People / Clientes (CU17, CU18, CU41, CU46, CU54, CU61) ──
   { id: "CU17", name: "Dar Alta persona", method: "POST", path: "/people", expectStatus: 201 },
   { id: "CU18", name: "Dar Alta Cliente", method: "POST", path: "/people", expectStatus: 201 },
-  { id: "CU46", name: "Ver detalle cliente", method: "GET", path: () => `/people/${seedPersonaId()}`, expectStatus: 200 },
+  { id: "CU46", name: "Ver detalle cliente", method: "GET", path: () => `/people/${seedPersonId()}`, expectStatus: 200 },
   { id: "CU54", name: "Modificar Person", method: "GET", path: "/people", expectStatus: 200 },
   { id: "CU61", name: "Buscar persona o cliente", method: "GET", path: "/people/search?firstName=test", expectStatus: 200 },
 
   // ── Presupuestos (CU01, CU45, CU60) ──
   { id: "CU01", name: "Preparar Presupuesto", method: "GET", path: "/budgets", expectStatus: 200 },
   { id: "CU45", name: "Modificar presupuesto", method: "GET", path: "/budgets", expectStatus: 200 },
-  { id: "CU60", name: "Buscar Presupuesto", method: "GET", path: () => `/budgets/person/${seedPersonaId()}`, expectStatus: 200 },
+  { id: "CU60", name: "Buscar Presupuesto", method: "GET", path: () => `/budgets/person/${seedPersonId()}`, expectStatus: 200 },
 
-  // ── Gestiones (CU02, CU14, CU16, CU19, CU53, CU56) ──
+  // ── Managements (CU02, CU14, CU16, CU19, CU53, CU56) ──
   { id: "CU02", name: "Iniciar Gestión", method: "GET", path: "/managements", expectStatus: 200 },
-  { id: "CU14", name: "Consultar estado gestión", method: "GET", path: () => `/managements/${seedGestionId()}/current-status`, expectStatus: 200 },
+  { id: "CU14", name: "Consultar estado gestión", method: "GET", path: () => `/managements/${seedManagementId()}/current-status`, expectStatus: 200 },
   { id: "CU16", name: "Archivar Gestión", method: "GET", path: "/managements", expectStatus: 200 },
-  { id: "CU19", name: "Buscar gestiones de un Cliente", method: "GET", path: () => `/managements/client/${seedPersonaId()}`, expectStatus: 200 },
+  { id: "CU19", name: "Buscar gestiones de un Cliente", method: "GET", path: () => `/managements/client/${seedPersonId()}`, expectStatus: 200 },
   { id: "CU53", name: "Modificar Gestión", method: "GET", path: "/managements", expectStatus: 200 },
   { id: "CU56", name: "Registrar inscripción", method: "GET", path: "/managements", expectStatus: 200 },
 
@@ -73,7 +73,7 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU07", name: "Generar testimonio", method: "GET", path: "/testimonies", expectStatus: 200 },
   { id: "CU08", name: "Verificar Testimony", method: "GET", path: "/testimonies", expectStatus: 200 },
 
-  // ── Documentos (CU03, CU04, CU09, CU42, CU43) ──
+  // ── Documents (CU03, CU04, CU09, CU42, CU43) ──
   { id: "CU03", name: "Lista documentos", method: "GET", path: "/submitted-documents", expectStatus: 200 },
   { id: "CU04", name: "Registrar documentación cliente", method: "GET", path: "/submitted-documents", expectStatus: 200 },
   { id: "CU42", name: "Informar próximos vencimientos", method: "GET", path: "/submitted-documents", expectStatus: 200 },
@@ -122,7 +122,7 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU68", name: "Buscar tipos de folios", method: "GET", path: "/folio-types", expectStatus: 200 },
 
   // ── ManagementHistory (CU13) ──
-  { id: "CU13", name: "Ver historial de gestión", method: "GET", path: () => `/history/management/${seedGestionId()}`, expectStatus: 200 },
+  { id: "CU13", name: "Ver historial de gestión", method: "GET", path: () => `/history/management/${seedManagementId()}`, expectStatus: 200 },
   { id: "CU11", name: "Ingresar para inscripción", method: "GET", path: "/history", expectStatus: 200 },
 
   // ── Movimiento Testimony (CU10, CU12, CU44) ──

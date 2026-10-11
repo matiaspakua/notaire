@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/lib/api-client";
-import { presentPersonaSaveError } from "@/lib/person-save-error";
+import { presentPersonSaveError } from "@/lib/person-save-error";
 import type { Person } from "@/types";
 
 vi.mock("sonner", () => ({
@@ -10,7 +10,7 @@ vi.mock("sonner", () => ({
 describe("presentPersonaSaveError()", () => {
   const setFieldErrors = vi.fn();
   const onViewExisting = vi.fn();
-  const personas: Person[] = [
+  const people: Person[] = [
     {
       personId: 42,
       firstName: "Ana",
@@ -35,11 +35,11 @@ describe("presentPersonaSaveError()", () => {
       JSON.stringify({ message: "identificationNumber: must not be blank" })
     );
 
-    const result = presentPersonaSaveError(err, {
+    const result = presentPersonSaveError(err, {
       fallback: "Error al guardar la persona",
       duplicateDocument: "Ya existe otra persona registrada con este documento.",
       viewExistingLabel: "Ver persona existente",
-      personas,
+      people,
       onViewExisting,
       setFieldErrors,
     });
@@ -61,11 +61,11 @@ describe("presentPersonaSaveError()", () => {
     const { toast } = await import("sonner");
     const err = new ApiError(500, "/people", "plain text");
 
-    const result = presentPersonaSaveError(err, {
+    const result = presentPersonSaveError(err, {
       fallback: "Error al guardar la persona",
       duplicateDocument: "Ya existe otra persona registrada con este documento.",
       viewExistingLabel: "Ver persona existente",
-      personas,
+      people,
       onViewExisting,
       setFieldErrors,
     });
@@ -86,11 +86,11 @@ describe("presentPersonaSaveError()", () => {
       })
     );
 
-    const result = presentPersonaSaveError(err, {
+    const result = presentPersonSaveError(err, {
       fallback: "Error al guardar la persona",
       duplicateDocument: "Ya existe otra persona registrada con este documento.",
       viewExistingLabel: "Ver persona existente",
-      personas,
+      people,
       onViewExisting,
       setFieldErrors,
     });
@@ -105,7 +105,7 @@ describe("presentPersonaSaveError()", () => {
     const call = vi.mocked(toast.error).mock.calls[0];
     const opts = call[1] as { action?: { onClick: () => void } };
     opts.action?.onClick();
-    expect(onViewExisting).toHaveBeenCalledWith(personas[0]);
+    expect(onViewExisting).toHaveBeenCalledWith(people[0]);
     expect(setFieldErrors).not.toHaveBeenCalled();
   });
 });

@@ -129,7 +129,7 @@ function extractCuTags(tags: string[]): string[] {
 }
 
 /**
- * Extract module tag (e.g., @module-presupuestos)
+ * Extract module tag (e.g., @module-budgets)
  */
 function extractModuleTag(tags: string[]): string | null {
   const match = tags.find((t) => /^module-/i.test(t));

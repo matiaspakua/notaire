@@ -16,7 +16,7 @@ import { apiGet, apiPost, apiPut, apiDelete } from "./setup/api-helpers";
 // Record type interfaces (mirroring backend DTOs)
 // ──────────────────────────────────────────────
 
-interface ApiPersona {
+interface ApiPerson {
   personId?: number;
   firstName?: string;
   lastName?: string;
@@ -25,7 +25,7 @@ interface ApiPersona {
   isClient?: boolean;
 }
 
-interface ApiPresupuesto {
+interface ApiBudget {
   idBudget?: number;
   date?: string;
   propertyAmount?: number;
@@ -34,12 +34,12 @@ interface ApiPresupuesto {
 
 interface ApiUsuario {
   idUsuario?: number;
-  nombre?: string;
+  name?: string;
   tipo?: string;
   valid?: boolean;
 }
 
-interface ApiConcepto {
+interface ApiConcept {
   idConcept?: number;
   name?: string;
   value?: number;
@@ -51,17 +51,17 @@ interface ApiFolio {
   status?: string;
 }
 
-interface ApiTipoTramite {
+interface ApiTypeProcedure {
   idProcedureType?: number;
   name?: string;
 }
 
-interface ApiEstadoGestion {
+interface ApiStatusManagement {
   idManagementStatus?: number;
   name?: string;
 }
 
-interface ApiTipoDocumento {
+interface ApiTypeDocument {
   idDocumentType?: number;
   name?: string;
 }
@@ -81,7 +81,7 @@ test.describe("API — Personas endpoints", () => {
 
   test("GET /api/v1/people — list people (paginated, #596)", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<{ content: ApiPersona[]; size: number }>(page, "/people?size=5");
+    const result = await apiGet<{ content: ApiPerson[]; size: number }>(page, "/people?size=5");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data?.content)).toBe(true);
     expect(result.data?.size).toBe(5);
@@ -90,7 +90,7 @@ test.describe("API — Personas endpoints", () => {
 
   test("POST /api/v1/people — create a persona", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiPost<ApiPersona>(page, "/people", {
+    const result = await apiPost<ApiPerson>(page, "/people", {
       firstName: "Test E2E",
       lastName: "Playwright",
       identificationNumber: "99" + Date.now(),
@@ -105,9 +105,9 @@ test.describe("API — Personas endpoints", () => {
 
   test("PUT /api/v1/people/{id} — update a persona", async ({ page }) => {
     await page.goto("/login");
-    // Create a fresh persona for this PUT test to avoid dependency on POST test state
+    // Create a fresh person for this PUT test to avoid dependency on POST test state
     const unique = Date.now();
-    const create = await apiPost<ApiPersona>(page, "/people", {
+    const create = await apiPost<ApiPerson>(page, "/people", {
       firstName: "Test PUT",
       lastName: "Person",
       identificationNumber: "PUT" + unique,
@@ -150,7 +150,7 @@ test.describe("API — Usuarios endpoints", () => {
 test.describe("API — Presupuestos endpoints", () => {
   test("GET /api/v1/budgets — list presupuestos", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<{ content: ApiPresupuesto[] }>(page, "/budgets");
+    const result = await apiGet<{ content: ApiBudget[] }>(page, "/budgets");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data?.content)).toBe(true);
   });
@@ -159,7 +159,7 @@ test.describe("API — Presupuestos endpoints", () => {
 test.describe("API — Catálogos endpoints", () => {
   test("GET /api/v1/procedure-types — list tipos de trámite", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiTipoTramite[]>(page, "/procedure-types");
+    const result = await apiGet<ApiTypeProcedure[]>(page, "/procedure-types");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
   });
@@ -177,7 +177,7 @@ test.describe("API — Catálogos endpoints", () => {
 
   test("GET /api/v1/management-statuses — list estados de gestión", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiEstadoGestion[]>(page, "/management-statuses");
+    const result = await apiGet<ApiStatusManagement[]>(page, "/management-statuses");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
   });
@@ -193,45 +193,45 @@ test.describe("API — Catálogos endpoints", () => {
 
   test("GET /api/v1/document-types — list tipos de documento", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiTipoDocumento[]>(page, "/document-types");
+    const result = await apiGet<ApiTypeDocument[]>(page, "/document-types");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
   });
 });
 
 test.describe("API — Conceptos endpoints", () => {
-  let createdConceptoId = 0;
+  let createdConceptId = 0;
 
   test("GET /api/v1/concepts — list conceptos", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiGet<ApiConcepto[]>(page, "/concepts");
+    const result = await apiGet<ApiConcept[]>(page, "/concepts");
     expect(result.ok).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
   });
 
   test("POST /api/v1/concepts — create concepto", async ({ page }) => {
     await page.goto("/login");
-    const result = await apiPost<ApiConcepto>(page, "/concepts", {
+    const result = await apiPost<ApiConcept>(page, "/concepts", {
       name: `Test Concept ${Date.now()}`,
       value: 100.50,
     });
     expect(result.ok).toBe(true);
     if (result.data?.idConcept) {
-      createdConceptoId = result.data.idConcept;
+      createdConceptId = result.data.idConcept;
     }
   });
 
   test("PUT /api/v1/concepts/{id} — update concepto", async ({ page }) => {
     await page.goto("/login");
-    if (!createdConceptoId) {
-      const create = await apiPost<ApiConcepto>(page, "/concepts", {
+    if (!createdConceptId) {
+      const create = await apiPost<ApiConcept>(page, "/concepts", {
         name: `Test Concept PUT ${Date.now()}`,
         value: 200,
       });
-      createdConceptoId = create.data?.idConcept ?? 0;
+      createdConceptId = create.data?.idConcept ?? 0;
     }
-    if (createdConceptoId) {
-      const result = await apiPut(page, `/concepts/${createdConceptoId}`, {
+    if (createdConceptId) {
+      const result = await apiPut(page, `/concepts/${createdConceptId}`, {
         name: "Updated Concept E2E",
         value: 250.75,
       });
@@ -322,14 +322,14 @@ test.describe("API — Auditoría endpoints", () => {
 });
 
 test.describe("API — Full CRUD cycle: Personas", () => {
-  let personaId = 0;
+  let personId = 0;
   const unique = Date.now();
 
   test("Complete CREATE → READ → UPDATE → DELETE cycle", async ({ page }) => {
     await page.goto("/login");
 
     // 1. CREATE
-    const createRes = await apiPost<ApiPersona>(page, "/people", {
+    const createRes = await apiPost<ApiPerson>(page, "/people", {
       firstName: "CRUD",
       lastName: "Test",
       identificationNumber: `CRUD${unique}`,
@@ -337,16 +337,16 @@ test.describe("API — Full CRUD cycle: Personas", () => {
       isClient: true,
     });
     expect(createRes.ok).toBe(true);
-    personaId = createRes.data?.personId ?? 0;
-    expect(personaId).toBeGreaterThan(0);
+    personId = createRes.data?.personId ?? 0;
+    expect(personId).toBeGreaterThan(0);
 
     // 2. READ (by ID)
-    const readRes = await apiGet<ApiPersona>(page, `/people/${personaId}`);
+    const readRes = await apiGet<ApiPerson>(page, `/people/${personId}`);
     expect(readRes.ok).toBe(true);
     expect(readRes.data?.firstName).toBe("CRUD");
 
     // 3. UPDATE — must include all required fields to avoid NOT NULL constraint violations
-    const updateRes = await apiPut(page, `/people/${personaId}`, {
+    const updateRes = await apiPut(page, `/people/${personId}`, {
       firstName: "CRUD Updated",
       lastName: "Test Updated",
       identificationNumber: `CRUD${unique}`,
@@ -356,15 +356,15 @@ test.describe("API — Full CRUD cycle: Personas", () => {
     expect(updateRes.ok).toBe(true);
 
     // 4. Verify update
-    const verifyUpdate = await apiGet<ApiPersona>(page, `/people/${personaId}`);
+    const verifyUpdate = await apiGet<ApiPerson>(page, `/people/${personId}`);
     expect(verifyUpdate.data?.firstName).toBe("CRUD Updated");
 
     // 5. DELETE
-    const deleteRes = await apiDelete(page, `/people/${personaId}`);
+    const deleteRes = await apiDelete(page, `/people/${personId}`);
     expect(deleteRes.ok).toBe(true);
 
     // 6. Verify deletion
-    const verifyDelete = await apiGet(page, `/people/${personaId}`);
+    const verifyDelete = await apiGet(page, `/people/${personId}`);
     expect(verifyDelete.status).toBe(404);
   });
 });

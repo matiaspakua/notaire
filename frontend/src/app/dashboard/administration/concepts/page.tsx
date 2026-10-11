@@ -20,12 +20,12 @@ import { useDeleteError } from "@/hooks/useDeleteError";
 
 const EMPTY: Partial<Concept> = { name: "", value: undefined };
 
-export default function ConceptosPage() {
+export default function ConceptsPage() {
   const t = useTranslations("administracion.conceptos");
   const showDeleteError = useDeleteError();
   const tc = useTranslations("common");
 
-  const { data: conceptos = [], isLoading } = useConcepts();
+  const { data: concepts = [], isLoading } = useConcepts();
   const createMutation = useCreateConcept();
   const updateMutation = useUpdateConcept();
   const deleteMutation = useDeleteConcept();
@@ -36,12 +36,12 @@ export default function ConceptosPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [search, setSearch] = useState("");
 
-  const { data: filtered = conceptos } = useQuery({
-    queryKey: ["concepts", "search", search, conceptos],
+  const { data: filtered = concepts } = useQuery({
+    queryKey: ["concepts", "search", search, concepts],
     queryFn: () =>
       search
         ? apiGet<Concept[]>(`/concepts/search?name=${encodeURIComponent(search)}`)
-        : Promise.resolve(conceptos),
+        : Promise.resolve(concepts),
   });
 
   function openCreate() { setEditing(EMPTY); setIsEditMode(false); setModalOpen(true); }
@@ -93,7 +93,7 @@ export default function ConceptosPage() {
 
   const columns: Column<Concept>[] = [
     { key: "id", header: tc("id"), render: (c) => <span className="text-xs text-muted-foreground">{c.idConcept}</span>, className: "w-12" },
-    { key: "nombre", header: t("fields.nombre"), render: (c) => <span className="font-medium">{c.name}</span> },
+    { key: "name", header: t("fields.nombre"), render: (c) => <span className="font-medium">{c.name}</span> },
     { key: "valor", header: t("fields.valorBase"), render: (c) => formatCurrency(c.value) },
     {
       key: "actions", header: "", className: "w-24",

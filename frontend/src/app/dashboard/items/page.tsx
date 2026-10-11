@@ -120,7 +120,7 @@ export default function ItemsPage() {
       className: "w-12",
     },
     {
-      key: "nombre",
+      key: "name",
       header: t("fields.nombre"),
       render: (i) => i.name ?? "—",
     },
@@ -210,7 +210,7 @@ export default function ItemsPage() {
               keyExtractor={(i) => i.idItem!}
               emptyMessage={t("report.empty")}
               columns={[
-                { key: "nombre", header: t("fields.nombre"), render: (i) => i.name ?? "—" },
+                { key: "name", header: t("fields.nombre"), render: (i) => i.name ?? "—" },
                 { key: "tipo", header: t("fields.tipo"), render: (i) => tipoLabel(i.type ?? "NORMAL") },
                 { key: "motivo", header: t("fields.motivo"), render: (i) => i.reason ?? "—" },
                 { key: "valor", header: t("fields.valor"), render: (i) => formatCurrency(i.value) },

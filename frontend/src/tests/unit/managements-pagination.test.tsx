@@ -25,7 +25,7 @@ vi.mock("next-intl", () => ({
 vi.mock("sonner", () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
 import { useManagementsPage } from "@/hooks/useManagements";
-import GestionesPage from "@/app/dashboard/managements/page";
+import ManagementsPage from "@/app/dashboard/managements/page";
 
 const ROW = { idManagement: 1312, number: 98765, statusActual: "Iniciada", procedureCount: 1 };
 
@@ -48,7 +48,7 @@ function wrapper({ children }: { children: ReactNode }) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }
-const gestionesUrls = () => mockFetch.mock.calls.map((c) => String(c[0])).filter((u) => /\/managements(\?|$)/.test(u));
+const managementsUrls = () => mockFetch.mock.calls.map((c) => String(c[0])).filter((u) => /\/managements(\?|$)/.test(u));
 
 describe("useManagementsPage (#1340)", () => {
   beforeEach(() => mockFetch.mockReset());
@@ -57,7 +57,7 @@ describe("useManagementsPage (#1340)", () => {
     mockFetch.mockImplementation(route({ content: [ROW], number: 2, size: 50, totalElements: 1312, totalPages: 27 }));
     const { result } = renderHook(() => useManagementsPage({ page: 2, size: 50 }), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(gestionesUrls()[0]).toMatch(/\/managements\?page=2&size=50&sort=idManagement%2Cdesc$/);
+    expect(managementsUrls()[0]).toMatch(/\/managements\?page=2&size=50&sort=idManagement%2Cdesc$/);
     expect(result.current.data?.totalElements).toBe(1312);
   });
 });
@@ -71,18 +71,18 @@ describe("GestionesPage (#1340)", () => {
 
   it("renders the server page with the pagination footer and never asks for size=1000", async () => {
     mockFetch.mockImplementation(route({ content: [ROW], number: 0, size: 20, totalElements: 1312, totalPages: 66 }));
-    render(<GestionesPage />, { wrapper });
+    render(<ManagementsPage />, { wrapper });
     expect(await screen.findByText("98765")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
-    expect(gestionesUrls().some((u) => /\/managements\?page=0&size=20&sort=idManagement%2Cdesc$/.test(u))).toBe(true);
-    expect(gestionesUrls().some((u) => u.includes("size=1000"))).toBe(false);
+    expect(managementsUrls().some((u) => /\/managements\?page=0&size=20&sort=idManagement%2Cdesc$/.test(u))).toBe(true);
+    expect(managementsUrls().some((u) => u.includes("size=1000"))).toBe(false);
   });
 
   it("reads the page and size from the URL and clamps a page past the end", async () => {
     mockSearchParams = new URLSearchParams("page=99&size=50");
     mockFetch.mockImplementation(route({ content: [], number: 99, size: 50, totalElements: 1312, totalPages: 27 }));
-    render(<GestionesPage />, { wrapper });
+    render(<ManagementsPage />, { wrapper });
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith("/dashboard/managements?page=26&size=50", { scroll: false }));
-    expect(gestionesUrls().some((u) => /page=99&size=50&sort=idManagement%2Cdesc$/.test(u))).toBe(true);
+    expect(managementsUrls().some((u) => /page=99&size=50&sort=idManagement%2Cdesc$/.test(u))).toBe(true);
   });
 });

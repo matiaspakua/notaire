@@ -1,5 +1,5 @@
 /**
- * E2E tests — Bitácora (ManagementHistory) view on the gestiones screen (CU13)
+ * E2E tests — Bitácora (ManagementHistory) view on the managements screen (CU13)
  * Also covers the archive-rejected-by-invalid-transition edge path (CU16, issue #833).
  */
 import { type Page, test, expect } from "@playwright/test";
@@ -8,9 +8,9 @@ import { createPerson, createBudget, seedManagementWithWorkflow } from "./setup/
 import { listRow } from "./setup/list-locators";
 
 async function seedManagement(page: Page) {
-  const persona = await createPerson(page);
-  const presupuesto = await createBudget(page, persona.data!.personId);
-  return seedManagementWithWorkflow(page, presupuesto.data!.idBudget);
+  const person = await createPerson(page);
+  const budget = await createBudget(page, person.data!.personId);
+  return seedManagementWithWorkflow(page, budget.data!.idBudget);
 }
 
 test.describe("CU13 - Ver bitácora de una gestión", () => {
@@ -19,22 +19,22 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
   });
 
   test("golden path: transitioning a gestión adds a new bitácora entry", async ({ page }) => {
-    const { idGestion, numero, estadoInicial, estadoFinal } = await seedManagement(page);
+    const { idManagement, number, estadoInicial, estadoFinal } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-change-status-${idGestion}`).click();
+    await page.getByTestId(`btn-change-status-${idManagement}`).click();
     let dialog = page.getByRole("dialog");
     await dialog.getByTestId("select-new-status").click();
     await page.getByRole("option", { name: estadoFinal }).click();
     await dialog.getByTestId("btn-confirm-transicion").click();
     await expect(dialog).not.toBeVisible();
 
-    await page.getByTestId(`btn-view-history-${idGestion}`).click();
+    await page.getByTestId(`btn-view-history-${idManagement}`).click();
     dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
@@ -45,15 +45,15 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
   });
 
   test("edge path: a gestión with only its initial estado shows a single bitácora entry", async ({ page }) => {
-    const { idGestion, numero, estadoInicial } = await seedManagement(page);
+    const { idManagement, number, estadoInicial } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-view-history-${idGestion}`).click();
+    await page.getByTestId(`btn-view-history-${idManagement}`).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
 
@@ -65,21 +65,21 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
   test("edge path: archiving a gestión whose estado cannot transition to Archivada shows a visible error", async ({
     page,
   }) => {
-    const { idGestion, numero } = await seedManagement(page);
+    const { idManagement, number } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
 
-    const row = page.getByRole("row", { name: new RegExp(String(numero)) });
+    const row = page.getByRole("row", { name: new RegExp(String(number)) });
     await expect(row).toBeVisible({ timeout: 10000 });
 
-    await page.getByTestId(`btn-archive-management-${idGestion}`).click();
+    await page.getByTestId(`btn-archive-management-${idManagement}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
     await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
 
     await expect(page.getByText(/is not allowed/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId(`btn-archive-management-${idGestion}`)).toBeVisible();
+    await expect(page.getByTestId(`btn-archive-management-${idManagement}`)).toBeVisible();
   });
 
   for (const viewport of [
@@ -88,16 +88,16 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
     test(`bitácora view is usable at ${viewport.label}`, async ({ page }) => {
-      const { idGestion, numero, estadoInicial } = await seedManagement(page);
+      const { idManagement, number, estadoInicial } = await seedManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto("/dashboard/managements");
       await page.waitForLoadState("domcontentloaded");
 
-      const row = listRow(page, new RegExp(String(numero)));
+      const row = listRow(page, new RegExp(String(number)));
       await expect(row).toBeVisible({ timeout: 10000 });
 
-      await page.getByTestId(`btn-view-history-${idGestion}`).click();
+      await page.getByTestId(`btn-view-history-${idManagement}`).click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
       await expect(dialog.getByTestId("history-item").first()).toContainText(estadoInicial);

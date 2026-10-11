@@ -14,7 +14,7 @@ import { submittedDocumentsKeys } from "@/hooks/useSubmittedDocuments";
 
 describe("openapi generated types (#1260)", () => {
   it("exports schema aliases used by gestiones, presupuestos and documentos hooks", () => {
-    const gestion: DeedManagement = { idManagement: 1, procedureCount: 2 };
+    const management: DeedManagement = { idManagement: 1, procedureCount: 2 };
     const budget: Budget = { idBudget: 9, number: 1 };
     const resumen: BudgetSummary = {
       idBudget: 9,
@@ -23,7 +23,7 @@ describe("openapi generated types (#1260)", () => {
       pendingBalance: 0,
     };
     const doc: SubmittedDocument = { idSubmittedDocument: 3, delivered: false };
-    expect(gestion.idManagement).toBe(1);
+    expect(management.idManagement).toBe(1);
     expect(budget.idBudget).toBe(9);
     expect(resumen.total).toBe(100);
     expect(doc.delivered).toBe(false);

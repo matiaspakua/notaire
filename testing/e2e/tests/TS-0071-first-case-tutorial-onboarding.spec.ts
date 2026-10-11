@@ -80,11 +80,11 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
   });
 
   test("a new user can set up and follow a complete first case", async ({ page }) => {
-    const tipoTramite = `Compraventa tutorial ${runId}`;
-    const concepto = `Honorarios tutorial ${runId}`;
+    const typeProcedure = `Compraventa tutorial ${runId}`;
+    const concept = `Honorarios tutorial ${runId}`;
     const tipoFolio = `Protocolo tutorial ${runId}`;
-    const cliente = `Ana Tutorial ${runId}`;
-    const gestion = `900${runId}`;
+    const client = `Ana Tutorial ${runId}`;
+    const management = `900${runId}`;
 
     await test.step("1. Sign in — the dashboard is the starting point", async () => {
       await page.goto("/login");
@@ -101,23 +101,23 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     await test.step("2. Define the task type — what work the office will perform", async () => {
       await go(page, "/dashboard/administration/procedures");
       await page.getByTestId("btn-new-procedure-type").click();
-      await page.getByTestId("input-name-procedure").fill(tipoTramite);
+      await page.getByTestId("input-name-procedure").fill(typeProcedure);
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-procedure").fill(tipoTramite);
-      await expect(page.getByRole("table")).toContainText(tipoTramite);
+      await page.getByTestId("input-search-procedure").fill(typeProcedure);
+      await expect(page.getByRole("table")).toContainText(typeProcedure);
       await pause(page);
     });
 
     await test.step("3. Add a charge concept — the building block for quotes", async () => {
       await go(page, "/dashboard/administration/concepts");
       await page.getByRole("button", { name: /nuevo concepto/i }).click();
-      await page.getByTestId("input-name-concept").fill(concepto);
+      await page.getByTestId("input-name-concept").fill(concept);
       await page.getByRole("dialog").getByRole("spinbutton").fill("25000");
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-concept").fill(concepto);
-      await expect(page.getByRole("table")).toContainText(concepto);
+      await page.getByTestId("input-search-concept").fill(concept);
+      await expect(page.getByRole("table")).toContainText(concept);
       await pause(page);
     });
 
@@ -152,14 +152,14 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
       await pause(page);
       await saveDialog(page);
       await page.getByTestId("input-search-firstName").fill("Ana");
-      await expect(page.getByRole("table")).toContainText(cliente);
+      await expect(page.getByRole("table")).toContainText(client);
       await pause(page);
     });
 
     await test.step("6. Create the quote — link the proposed amount to the client", async () => {
       await go(page, "/dashboard/budgets");
       await page.getByTestId("btn-new-budget").click();
-      await choose(page, "select-persona", new RegExp(cliente, "i"));
+      await choose(page, "select-persona", new RegExp(client, "i"));
       await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-04");
       await page.getByTestId("input-amount").fill("25000");
       await pause(page);
@@ -171,16 +171,16 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     await test.step("7. Open the case — link it to the quote, notary, state and task type", async () => {
       await go(page, "/dashboard/managements");
       await page.getByTestId("btn-new-management").click();
-      await page.getByTestId("input-management-number").fill(gestion);
+      await page.getByTestId("input-management-number").fill(management);
       await pause(page);
       // Budget options are labeled with the client's name, so the tutorial links the
       // case to its own quote rather than relying on list order.
-      await choose(page, "select-presupuesto-gestion", new RegExp(cliente, "i"));
+      await choose(page, "select-presupuesto-gestion", new RegExp(client, "i"));
       await chooseFirst(page, "select-escribano-gestion");
       await chooseFirst(page, "select-estado-gestion");
-      await choose(page, "select-tipo-tramite-gestion", new RegExp(tipoTramite, "i"));
+      await choose(page, "select-tipo-tramite-gestion", new RegExp(typeProcedure, "i"));
       await saveDialog(page);
-      await expect(page.getByRole("table")).toContainText(gestion);
+      await expect(page.getByRole("table")).toContainText(management);
       await pause(page);
     });
 

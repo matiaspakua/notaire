@@ -31,21 +31,21 @@ function ReingresoDocumentacionList() {
   // One server page at a time, newest first, page and size in the URL (#1340):
   // the list used to load size=1000 and silently miss every later case.
   const paging = useUrlPagination();
-  const { data: gestionesPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
-  const gestiones = gestionesPage?.content ?? [];
-  useClampPage(paging, gestionesPage?.totalPages);
+  const { data: managementsPage, isLoading, isFetching } = useManagementsPage({ page: paging.page, size: paging.size });
+  const managements = managementsPage?.content ?? [];
+  useClampPage(paging, managementsPage?.totalPages);
 
-  const [selectedGestionId, setSelectedGestionId] = useState<number | null>(null);
-  const { data: detalle, isLoading: isLoadingDetalle } = useDocumentReentry(selectedGestionId ?? undefined);
+  const [selectedManagementId, setSelectedManagementId] = useState<number | null>(null);
+  const { data: detalle, isLoading: isLoadingDetalle } = useDocumentReentry(selectedManagementId ?? undefined);
 
   const reingresarMutation = useReenterDocumentation();
 
-  async function handleReingresar(idTramite: number, documento: RequiredDocument) {
-    if (!selectedGestionId) return;
+  async function handleReingresar(idProcedure: number, document: RequiredDocument) {
+    if (!selectedManagementId) return;
     try {
       await reingresarMutation.mutateAsync({
-        gestionId: selectedGestionId,
-        reingreso: { idProcedure: idTramite, idDocumentType: documento.idDocumentType },
+        managementId: selectedManagementId,
+        reingreso: { idProcedure: idProcedure, idDocumentType: document.idDocumentType },
       });
       toast.success(t("documentoReingresado"));
     } catch (err) {
@@ -53,8 +53,8 @@ function ReingresoDocumentacionList() {
     }
   }
 
-  const gestionColumns: Column<DeedManagement>[] = [
-    { key: "numero", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.number}</span> },
+  const managementColumns: Column<DeedManagement>[] = [
+    { key: "number", header: t("fields.numero"), render: (g) => <span className="font-medium">{g.number}</span> },
     { key: "heading", header: t("fields.encabezado"), render: (g) => g.heading ?? "—" },
     { key: "estadoActual", header: tc("status"), render: (g) => g.statusActual ?? "—" },
     {
@@ -66,7 +66,7 @@ function ReingresoDocumentacionList() {
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setSelectedGestionId(g.idManagement!)}
+            onClick={() => setSelectedManagementId(g.idManagement!)}
             aria-label={t("verTramites")}
             data-testid={`btn-view-procedures-${g.idManagement}`}
           >
@@ -77,9 +77,9 @@ function ReingresoDocumentacionList() {
     },
   ];
 
-  function documentoColumns(idTramite: number): Column<RequiredDocument>[] {
+  function documentColumns(idProcedure: number): Column<RequiredDocument>[] {
     return [
-      { key: "nombre", header: t("fields.nombre"), render: (d) => d.name ?? "—" },
+      { key: "name", header: t("fields.nombre"), render: (d) => d.name ?? "—" },
       {
         key: "vence",
         header: t("fields.vence"),
@@ -100,9 +100,9 @@ function ReingresoDocumentacionList() {
             <Button
               size="sm"
               variant="secondary"
-              onClick={() => handleReingresar(idTramite, d)}
+              onClick={() => handleReingresar(idProcedure, d)}
               disabled={reingresarMutation.isPending}
-              data-testid={`btn-reenter-${idTramite}-${d.idDocumentType}`}
+              data-testid={`btn-reenter-${idProcedure}-${d.idDocumentType}`}
             >
               <RotateCcw className="h-4 w-4 mr-1" />
               {t("reingresar")}
@@ -113,20 +113,20 @@ function ReingresoDocumentacionList() {
     ];
   }
 
-  function renderTramite(tramite: ProcedureRequiredDocumentation) {
+  function renderProcedure(procedure: ProcedureRequiredDocumentation) {
     return (
-      <div key={tramite.idProcedure} className="mb-6" data-testid={`procedure-${tramite.idProcedure}`}>
+      <div key={procedure.idProcedure} className="mb-6" data-testid={`procedure-${procedure.idProcedure}`}>
         <h3 className="text-sm font-semibold mb-2">
-          {t("fields.tramite")}: {tramite.typeProcedureName ?? "—"}
+          {t("fields.tramite")}: {procedure.typeProcedureName ?? "—"}
         </h3>
-        {tramite.documentsNecesarios.length === 0 ? (
-          <p className="text-sm text-muted-foreground" data-testid={`empty-documents-${tramite.idProcedure}`}>
+        {procedure.documentsNecesarios.length === 0 ? (
+          <p className="text-sm text-muted-foreground" data-testid={`empty-documents-${procedure.idProcedure}`}>
             {t("noDocumentosNecesarios")}
           </p>
         ) : (
           <DataTable
-            data={tramite.documentsNecesarios}
-            columns={documentoColumns(tramite.idProcedure)}
+            data={procedure.documentsNecesarios}
+            columns={documentColumns(procedure.idProcedure)}
             keyExtractor={(d) => d.idDocumentType}
           />
         )}
@@ -138,22 +138,22 @@ function ReingresoDocumentacionList() {
     <div>
       <AppHeader title={t("title")} />
       <DataTable
-        data={gestiones}
-        columns={gestionColumns}
+        data={managements}
+        columns={managementColumns}
         isLoading={isLoading}
         isFetching={isFetching}
         keyExtractor={(g) => g.idManagement!}
         emptyMessage={t("noData")}
         pagination={{
-          page: gestionesPage?.number ?? paging.page,
+          page: managementsPage?.number ?? paging.page,
           size: paging.size,
-          totalElements: gestionesPage?.totalElements ?? 0,
+          totalElements: managementsPage?.totalElements ?? 0,
           onPageChange: paging.setPage,
           onSizeChange: paging.setSize,
         }}
       />
 
-      <Dialog open={!!selectedGestionId} onOpenChange={(v) => !v && setSelectedGestionId(null)}>
+      <Dialog open={!!selectedManagementId} onOpenChange={(v) => !v && setSelectedManagementId(null)}>
         <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t("detalleTitle")}</DialogTitle>
@@ -165,7 +165,7 @@ function ReingresoDocumentacionList() {
               {t("noTramites")}
             </p>
           ) : (
-            detalle.procedures.map(renderTramite)
+            detalle.procedures.map(renderProcedure)
           )}
         </DialogContent>
       </Dialog>

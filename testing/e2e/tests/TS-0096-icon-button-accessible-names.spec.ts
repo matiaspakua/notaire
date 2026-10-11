@@ -52,13 +52,13 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
   });
 
   test("presupuestos resumen action is reachable by role name", async ({ page }) => {
-    const persona = await createPerson(page);
-    expect(persona.ok, persona.error ?? "createPerson failed").toBe(true);
-    const presupuesto = await createBudget(page, persona.data!.personId);
-    expect(presupuesto.ok, presupuesto.error ?? "createBudget failed").toBe(true);
+    const person = await createPerson(page);
+    expect(person.ok, person.error ?? "createPerson failed").toBe(true);
+    const budget = await createBudget(page, person.data!.personId);
+    expect(budget.ok, budget.error ?? "createBudget failed").toBe(true);
 
     const table = await openList(page, "/dashboard/budgets");
-    await expect(page.getByTestId(/^btn-resumen-presupuesto-/).first()).toBeVisible({
+    await expect(page.getByTestId(/^btn-summary-budget-/).first()).toBeVisible({
       timeout: 15000,
     });
     await expect(

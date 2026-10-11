@@ -3,7 +3,7 @@
  *
  * Responsibilities:
  *  1. Authenticate as admin and store auth cookie/localStorage
- *  2. Seed base catalog data via API (tipos de trámite, conceptos, etc.)
+ *  2. Seed base catalog data via API (tipos de trámite, concepts, etc.)
  *  3. Export shared test data as environment variables
  *  4. Verify backend and frontend are reachable
  *
@@ -16,38 +16,38 @@ import { apiPost, apiGet, apiPut, apiDelete } from "./api-helpers";
 interface SeedData {
   testId: number;
   adminAuth: { token: string; user: any } | null;
-  seedPersonaId: number | null;
-  seedPresupuestoId: number | null;
-  seedGestionId: number | null;
-  seedEscrituraId: number | null;
-  seedConceptoId: number | null;
-  seedTipoTramiteId: number | null;
-  seedEstadoGestionId: number | null;
-  seedTipoDocumentoId: number | null;
+  seedPersonId: number | null;
+  seedBudgetId: number | null;
+  seedManagementId: number | null;
+  seedDeedId: number | null;
+  seedConceptId: number | null;
+  seedTypeProcedureId: number | null;
+  seedStatusManagementId: number | null;
+  seedTypeDocumentId: number | null;
   seedUsuarioId: number | null;
   seedFolioId: number | null;
-  seedSuplenciaId: number | null;
+  seedSubstitutionId: number | null;
   seedPagoId: number | null;
-  seedTestimonioId: number | null;
+  seedTestimonyId: number | null;
 }
 
 // Global seed data accessible by tests via process.env
 export const seedData: SeedData = {
   testId: Date.now(),
   adminAuth: null,
-  seedPersonaId: null,
-  seedPresupuestoId: null,
-  seedGestionId: null,
-  seedEscrituraId: null,
-  seedConceptoId: null,
-  seedTipoTramiteId: null,
-  seedEstadoGestionId: null,
-  seedTipoDocumentoId: null,
+  seedPersonId: null,
+  seedBudgetId: null,
+  seedManagementId: null,
+  seedDeedId: null,
+  seedConceptId: null,
+  seedTypeProcedureId: null,
+  seedStatusManagementId: null,
+  seedTypeDocumentId: null,
   seedUsuarioId: null,
   seedFolioId: null,
-  seedSuplenciaId: null,
+  seedSubstitutionId: null,
   seedPagoId: null,
-  seedTestimonioId: null,
+  seedTestimonyId: null,
 };
 
 /**
@@ -135,10 +135,10 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   );
   if (ttResult.ok && ttResult.data?.idProcedureType) {
-    seedData.seedTipoTramiteId = ttResult.data.idProcedureType;
+    seedData.seedTypeProcedureId = ttResult.data.idProcedureType;
   }
 
-  // 2. Create a concepto — ConceptController accepts a DtoConcept (name, value, percentage).
+  // 2. Create a concept — ConceptController accepts a DtoConcept (name, value, percentage).
   const concResult = await apiPost<{ idConcept: number; name: string }>(
     page,
     "/concepts",
@@ -148,10 +148,10 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   );
   if (concResult.ok && concResult.data?.idConcept) {
-    seedData.seedConceptoId = concResult.data.idConcept;
+    seedData.seedConceptId = concResult.data.idConcept;
   }
 
-  // 3. Create a persona (client) — PersonController accepts the raw Person entity.
+  // 3. Create a person (client) — PersonController accepts the raw Person entity.
   const persResult = await apiPost<{ personId: number; firstName: string; lastName: string }>(
     page,
     "/people",
@@ -169,17 +169,17 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   );
   if (persResult.ok && persResult.data?.personId) {
-    seedData.seedPersonaId = persResult.data.personId;
+    seedData.seedPersonId = persResult.data.personId;
   }
 
-  // 4. Create a presupuesto (if we have a persona) — BudgetController accepts the raw
+  // 4. Create a budget (if we have a person) — BudgetController accepts the raw
   // Budget entity (heading, status, notes, person).
-  if (seedData.seedPersonaId && seedData.seedConceptoId) {
+  if (seedData.seedPersonId && seedData.seedConceptId) {
     const presResult = await apiPost<{ idBudget: number }>(
       page,
       "/budgets",
       {
-        person: { personId: seedData.seedPersonaId },
+        person: { personId: seedData.seedPersonId },
         date: "2026-05-27",
         heading: "Presupuesto E2E Seed",
         status: "PENDIENTE",
@@ -187,7 +187,7 @@ async function seedCatalogData(page: Page): Promise<void> {
       }
     );
     if (presResult.ok && presResult.data?.idBudget) {
-      seedData.seedPresupuestoId = presResult.data.idBudget;
+      seedData.seedBudgetId = presResult.data.idBudget;
     }
   }
 
@@ -216,7 +216,7 @@ async function seedCatalogData(page: Page): Promise<void> {
       year: 2026,
       status: "Nuevo",
       typeFolioId: 1,
-      notaryId: seedData.seedPersonaId || 1,
+      notaryId: seedData.seedPersonId || 1,
     }
   );
   if (folioResult.ok && folioResult.data?.idFolio) {
@@ -234,7 +234,7 @@ async function seedCatalogData(page: Page): Promise<void> {
     }
   );
   if (egResult.ok && egResult.data?.idManagementStatus) {
-    seedData.seedEstadoGestionId = egResult.data.idManagementStatus;
+    seedData.seedStatusManagementId = egResult.data.idManagementStatus;
   }
 }
 
@@ -265,24 +265,24 @@ async function globalSetup(): Promise<void> {
     console.log("[global-setup] Seeding test data...");
     await seedCatalogData(page);
     console.log("[global-setup] Seed complete:", {
-      personaId: seedData.seedPersonaId,
-      budgetId: seedData.seedPresupuestoId,
-      conceptId: seedData.seedConceptoId,
-      procedureTypeId: seedData.seedTipoTramiteId,
+      personId: seedData.seedPersonId,
+      budgetId: seedData.seedBudgetId,
+      conceptId: seedData.seedConceptId,
+      procedureTypeId: seedData.seedTypeProcedureId,
       usuarioId: seedData.seedUsuarioId,
       folioId: seedData.seedFolioId,
-      managementStatusId: seedData.seedEstadoGestionId,
+      managementStatusId: seedData.seedStatusManagementId,
     });
 
     // Step 3: Export seed data to environment for test specs
     process.env.E2E_TEST_ID = String(seedData.testId);
-    process.env.E2E_SEED_PERSONA_ID = String(seedData.seedPersonaId ?? "");
-    process.env.E2E_SEED_PRESUPUESTO_ID = String(seedData.seedPresupuestoId ?? "");
-    process.env.E2E_SEED_CONCEPTO_ID = String(seedData.seedConceptoId ?? "");
-    process.env.E2E_SEED_TIPO_TRAMITE_ID = String(seedData.seedTipoTramiteId ?? "");
+    process.env.E2E_SEED_PERSONA_ID = String(seedData.seedPersonId ?? "");
+    process.env.E2E_SEED_PRESUPUESTO_ID = String(seedData.seedBudgetId ?? "");
+    process.env.E2E_SEED_CONCEPTO_ID = String(seedData.seedConceptId ?? "");
+    process.env.E2E_SEED_TIPO_TRAMITE_ID = String(seedData.seedTypeProcedureId ?? "");
     process.env.E2E_SEED_USUARIO_ID = String(seedData.seedUsuarioId ?? "");
     process.env.E2E_SEED_FOLIO_ID = String(seedData.seedFolioId ?? "");
-    process.env.E2E_SEED_ESTADO_GESTION_ID = String(seedData.seedEstadoGestionId ?? "");
+    process.env.E2E_SEED_ESTADO_GESTION_ID = String(seedData.seedStatusManagementId ?? "");
 
     // Persist JWT for workers — process.env set here is not inherited by test
     // workers, and mid-suite login 429 (lockout) must not strand later specs.

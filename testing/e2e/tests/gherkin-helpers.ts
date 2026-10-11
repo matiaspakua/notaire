@@ -67,8 +67,8 @@ export class GherkinSteps {
 
   /**
    * List pages commonly have a "Buscar por {campo}..." search input whose
-   * aria-label also matches a modal field's label regex (e.g. /nombre/i
-   * matches both "Nombre" and "Buscar por nombre..."). Scoping to the open
+   * aria-label also matches a modal field's label regex (e.g. /name/i
+   * matches both "Name" and "Buscar por name..."). Scoping to the open
    * dialog when one exists avoids that ambiguity for form-field lookups.
    */
   private async formScope(): Promise<Locator | Page> {
@@ -300,18 +300,18 @@ export class GherkinSteps {
  * Test data factories for use cases
  */
 export const TestData = {
-  persona: {
+  person: {
     nombre: "Juan",
     apellido: "Pérez",
     tipoIdentificacion: "DNI",
-    numeroIdentificacion: "12345678",
+    numberIdentification: "12345678",
     telefono: "1234567890",
     correo: "juan.perez@test.com",
     nacionalidad: "Argentina",
     fechaNacimiento: "1990-01-01",
     cuit: "20-12345678-9",
   },
-  cliente: {
+  client: {
     nacionalidad: "Argentina",
     fechaNacimiento: "1990-01-01",
     cuit: "20-12345678-9",
@@ -320,19 +320,19 @@ export const TestData = {
     ocupacion: "Empleado",
     domicilio: "Calle Falsa 123",
   },
-  presupuesto: {
-    tipoTramite: "Deed",
-    observaciones: "Presupuesto de prueba",
+  budget: {
+    typeProcedure: "Deed",
+    notes: "Presupuesto de prueba",
     fecha: new Date().toISOString().split("T")[0],
     monto: 1000,
   },
-  gestion: {
-    numeroGestion: "TEST-001",
+  management: {
+    numberManagement: "TEST-001",
     detalle: "Gestión de prueba",
     fechaInicio: new Date().toISOString().split("T")[0],
   },
-  escritura: {
-    numeroEscritura: "ESC-001",
+  deed: {
+    numberDeed: "ESC-001",
     fecha: new Date().toISOString().split("T")[0],
     cuerpo: "Contenido de la escritura de prueba",
     estado: "Firmada",
@@ -343,28 +343,28 @@ export const TestData = {
     tipo: "EMPLEADO",
     estado: "Habilitado",
   },
-  suplencia: {
+  substitution: {
     fechaInicio: new Date().toISOString().split("T")[0],
     motivo: "Substitution de prueba",
   },
   pago: {
     monto: 5000,
     formaPago: "Efectivo",
-    observaciones: "Payment de prueba E2E",
+    notes: "Payment de prueba E2E",
   },
-  testimonio: {
+  testimony: {
     fecha: new Date().toISOString().split("T")[0],
     estado: "Pendiente",
   },
-  documentoPresentado: {
+  documentPresentado: {
     nombre: "Documento de prueba",
-    tieneDeuda: false,
+    tieneDebt: false,
   },
   catalogo: {
-    tipoTramite: { nombre: "Test Procedure", descripcion: "Catálogo de prueba" },
-    tipoDocumento: { nombre: "Test Documento", descripcion: "Catálogo de prueba" },
-    concepto: { nombre: "Test Concept", descripcion: "Catálogo de prueba", valor: 100 },
-    estadoGestion: { nombre: "Test Estado", descripcion: "Catálogo de prueba" },
+    typeProcedure: { nombre: "Test Procedure", descripcion: "Catálogo de prueba" },
+    typeDocument: { nombre: "Test Documento", descripcion: "Catálogo de prueba" },
+    concept: { nombre: "Test Concept", descripcion: "Catálogo de prueba", valor: 100 },
+    statusManagement: { nombre: "Test Estado", descripcion: "Catálogo de prueba" },
     folio: { numero: 9999, disponible: true },
   },
 };
@@ -374,13 +374,13 @@ export const TestData = {
  */
 export function getSeedId(entity: string): number | null {
   const map: Record<string, string> = {
-    persona: "E2E_SEED_PERSONA_ID",
-    presupuesto: "E2E_SEED_PRESUPUESTO_ID",
-    concepto: "E2E_SEED_CONCEPTO_ID",
-    tipo_tramite: "E2E_SEED_TIPO_TRAMITE_ID",
+    person: "E2E_SEED_PERSONA_ID",
+    budget: "E2E_SEED_PRESUPUESTO_ID",
+    concept: "E2E_SEED_CONCEPTO_ID",
+    type_procedure: "E2E_SEED_TIPO_TRAMITE_ID",
     usuario: "E2E_SEED_USUARIO_ID",
     folio: "E2E_SEED_FOLIO_ID",
-    estado_gestion: "E2E_SEED_ESTADO_GESTION_ID",
+    status_management: "E2E_SEED_ESTADO_GESTION_ID",
   };
   const envKey = map[entity];
   if (!envKey) return null;
