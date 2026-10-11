@@ -736,8 +736,8 @@ public class PersonJpaController implements Serializable, JpaPersistence {
     public Boolean modifyPerson(Person pPerson) throws ClassModifiedException, ClassEliminatedException {
 
         Boolean flag = false; // Whether the transaction succeeded
-        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Version of the object in memory
-        int version = ConstantesPersistencia.VersionINICIAL; // Version of the object in the database
+        int oldVersion = PersistenceConstants.INITIAL_VERSION; // Version of the object in memory
+        int version = PersistenceConstants.INITIAL_VERSION; // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
@@ -786,8 +786,8 @@ public class PersonJpaController implements Serializable, JpaPersistence {
     public Boolean registerNotary(Person notary) throws ClassModifiedException, NonexistentEntityException {
 
         Boolean result = false; // Whether the transaction succeeded
-        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Version of the object in memory
-        int version = ConstantesPersistencia.VersionINICIAL; // Version of the object in the database
+        int oldVersion = PersistenceConstants.INITIAL_VERSION; // Version of the object in memory
+        int version = PersistenceConstants.INITIAL_VERSION; // Version of the object in the database
 
         EntityManager em = getEntityManager();
 

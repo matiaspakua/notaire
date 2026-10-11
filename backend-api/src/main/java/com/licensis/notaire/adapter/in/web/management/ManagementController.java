@@ -34,7 +34,7 @@ import com.licensis.notaire.application.usecase.document.ExternalEntityDocumentS
 import com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService;
 import com.licensis.notaire.application.usecase.management.ManagementStatusLogService;
 import com.licensis.notaire.application.usecase.management.ManagementQueryService;
-import com.licensis.notaire.application.usecase.management.ManagementResumenFinancieroService;
+import com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService;
 import com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard;
 import com.licensis.notaire.application.usecase.management.ManagementSubstitutionService;
 import com.licensis.notaire.exception.NotaireException;
@@ -91,7 +91,7 @@ public class ManagementController {
     private final PropertyRepository propertyRepository;
     private final ManagementArchiveDebtService managementArchiveDebtService;
     private final ManagementSubstitutionService managementSubstitutionService;
-    private final ManagementResumenFinancieroService managementResumenFinancieroService;
+    private final ManagementFinancialSummaryService financialSummaryService;
     private final ManagementStatusLogService statusLogService;
     private final ManagementStatusWriteGuard managementStatusWriteGuard;
     private final TransitionManagementUseCase transitionManagementUseCase;
@@ -109,7 +109,7 @@ public class ManagementController {
                              PropertyRepository propertyRepository,
                              ManagementArchiveDebtService managementArchiveDebtService,
                              ManagementSubstitutionService managementSubstitutionService,
-                             ManagementResumenFinancieroService managementResumenFinancieroService,
+                             ManagementFinancialSummaryService financialSummaryService,
                              ManagementStatusLogService statusLogService,
                              ManagementStatusWriteGuard managementStatusWriteGuard,
                              TransitionManagementUseCase transitionManagementUseCase,
@@ -129,7 +129,7 @@ public class ManagementController {
         this.propertyRepository = propertyRepository;
         this.managementArchiveDebtService = managementArchiveDebtService;
         this.managementSubstitutionService = managementSubstitutionService;
-        this.managementResumenFinancieroService = managementResumenFinancieroService;
+        this.financialSummaryService = financialSummaryService;
         this.statusLogService = statusLogService;
         this.managementStatusWriteGuard = managementStatusWriteGuard;
         this.transitionManagementUseCase = transitionManagementUseCase;
@@ -139,7 +139,7 @@ public class ManagementController {
         this.procedureFolderService = procedureFolderService;
     }
 
-    public record DtoSaldoPending(java.math.BigDecimal pendingBalance) {}
+    public record DtoPendingBalance(java.math.BigDecimal pendingBalance) {}
 
     public record DtoArchivedManagement(Integer idManagement, java.math.BigDecimal pendingBalance, boolean pendingDebtAtArchiving) {}
 
@@ -559,10 +559,10 @@ public class ManagementController {
     })
     @GetMapping("/{id}/outstanding-balance")
     @Operation(summary = "CU16 - Calculate aggregated pending balance for a management (RF-22)")
-    public ResponseEntity<DtoSaldoPending> getSaldoPending(@PathVariable Integer id) {
+    public ResponseEntity<DtoPendingBalance> getPendingBalance(@PathVariable Integer id) {
         try {
-            java.math.BigDecimal saldo = managementArchiveDebtService.calculatePendingBalance(id);
-            return ResponseEntity.ok(new DtoSaldoPending(saldo));
+            java.math.BigDecimal pendingBalance = managementArchiveDebtService.calculatePendingBalance(id);
+            return ResponseEntity.ok(new DtoPendingBalance(pendingBalance));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
@@ -574,9 +574,9 @@ public class ManagementController {
     })
     @GetMapping("/{id}/financial-summary")
     @Operation(summary = "CU47/CU02 - Get aggregated financial summary for a management")
-    public ResponseEntity<DtoManagementFinancialSummary> getResumenFinanciero(@PathVariable Integer id) {
+    public ResponseEntity<DtoManagementFinancialSummary> getFinancialSummary(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(managementResumenFinancieroService.getSummary(id));
+            return ResponseEntity.ok(financialSummaryService.getSummary(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

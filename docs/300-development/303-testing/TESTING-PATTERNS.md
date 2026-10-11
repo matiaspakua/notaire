@@ -601,7 +601,7 @@ BudgetPaymentTestFixtures.createPayment(mockMvc, budgetId, new BigDecimal("1500.
 ```
 
 Read-only GETs against seed id `1` remain acceptable. Patterns to follow:
-`ManagementArchiveIntegrationTest`, `BudgetResumenControllerTest`,
+`ManagementArchiveIntegrationTest`, `BudgetSummaryControllerTest`,
 `BudgetPaymentTestFixtures`. Controller unit mega-tests that stub
 `RuntimeException("x")` must keep happy-path and error-path methods separate
 (`SimpleControllersTest`).

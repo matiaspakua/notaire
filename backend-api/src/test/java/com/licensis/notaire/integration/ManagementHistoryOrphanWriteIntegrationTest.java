@@ -43,7 +43,7 @@ import com.licensis.notaire.testing.RequirementCoverage;
 @Transactional
 @ActiveProfiles("test-h2")
 @DisplayName("CU13 — orphan management status writes must populate History")
-class ManagementHistorialOrphanWriteIntegrationTest {
+class ManagementHistoryOrphanWriteIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

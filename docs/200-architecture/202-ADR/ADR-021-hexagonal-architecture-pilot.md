@@ -78,7 +78,7 @@ starts where the business operation starts, not where HTTP arrives.
 - **Keep a deprecated `PaymentService` facade delegating to the use cases.**
   Rejected: a facade that nothing needs is dead code, and keeping it invites new
   callers to bypass the ports. The two remaining consumers
-  (`ManagementArchiveDebtService`, `ManagementResumenFinancieroService`) were
+  (`ManagementArchiveDebtService`, `ManagementFinancialSummaryService`) were
   rewired to the inbound ports instead, which is a two-line change each.
 
 ## Trade-off Analysis
@@ -125,7 +125,7 @@ separate issue with its own use case.
 - **`PaymentWebMapper` is public as a transitional seam.** `BudgetController` still
   lives in the legacy `api` package while it consumes `GetBudgetSummaryUseCase`.
   The mapper goes back to package-private when the budget slice is migrated.
-- **`ManagementResumenFinancieroService` and `ManagementArchiveDebtService` remain
+- **`ManagementFinancialSummaryService` and `ManagementArchiveDebtService` remain
   layered services** that consume payment inbound ports. They are the natural
   candidates for the next slice.
 - **Decide whether to extend the pattern.** The pilot should be reviewed after one
@@ -170,7 +170,7 @@ same exception messages, none weakened:
 | `unit/PaymentServiceTest` | `unit/PaymentUseCaseTest` | use cases over real adapters, mocked repositories |
 | `service/unit/PaymentServiceTest` | `adapter/out/persistence/payment/PaymentPersistenceAdapterTest` | the outbound adapters, mocked repositories |
 | `unit/PaymentControllerTest` | `adapter/in/web/payment/PaymentControllerTest` | the controller over mocked inbound ports |
-| `unit/BudgetResumenServiceTest` | `unit/BudgetSummaryDtoTest` | `BudgetSummaryService` + web mapping to `DtoBudgetResumen` |
+| `unit/BudgetResumenServiceTest` | `unit/BudgetSummaryDtoTest` | `BudgetSummaryService` + web mapping to `DtoBudgetSummary` |
 | `integration/PaymentServiceIntegrationTest` | `integration/PaymentUseCaseIntegrationTest` | use-case beans end-to-end over real JPA adapters |
 
 New tests added by the pilot: `domain/payment/BudgetChargesTest` (framework-free

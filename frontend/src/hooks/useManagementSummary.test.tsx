@@ -24,7 +24,7 @@ function createWrapper() {
 describe("managementSummaryKeys", () => {
   it("case and financial keys include the management id", () => {
     expect(managementSummaryKeys.caso(4)).toEqual(["management-case-summary", 4]);
-    expect(managementSummaryKeys.financiero(4)).toEqual(["management-financial-summary", 4]);
+    expect(managementSummaryKeys.financialSummary(4)).toEqual(["management-financial-summary", 4]);
   });
 });
 
@@ -51,7 +51,7 @@ describe("useManagementFinancialSummary (CU47)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches the financial summary via GET /managements/{id}/financial-summary", async () => {
-    vi.mocked(apiGet).mockResolvedValue({ idManagement: 4, totalCobrado: 100 });
+    vi.mocked(apiGet).mockResolvedValue({ idManagement: 4, totalCollected: 100 });
 
     const { result } = renderHook(() => useManagementFinancialSummary(4), { wrapper: createWrapper() });
 

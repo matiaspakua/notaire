@@ -8,7 +8,7 @@ import java.util.List;
  * CU47 financial summary for a budget: its management, total, pending
  * balance, and the list of payments applied to it.
  */
-public record DtoBudgetResumen(
+public record DtoBudgetSummary(
         Integer idBudget,
         int numberBudget,
         Integer idManagement,

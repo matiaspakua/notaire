@@ -151,7 +151,7 @@ class AdditionalControllersTest {
                     mock(com.licensis.notaire.repository.PropertyRepository.class),
                     mock(com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService.class),
                     mock(com.licensis.notaire.application.usecase.management.ManagementSubstitutionService.class),
-                    mock(com.licensis.notaire.application.usecase.management.ManagementResumenFinancieroService.class),
+                    mock(com.licensis.notaire.application.usecase.management.ManagementFinancialSummaryService.class),
                     statusLogService, statusWriteGuard, transitionUseCase, transitionWebMapper,
                     externalEntityDocumentService, documentReentryService,
                     mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class)))

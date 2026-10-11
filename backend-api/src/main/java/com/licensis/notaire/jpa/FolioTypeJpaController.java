@@ -92,8 +92,8 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
     public boolean edit(FolioType folioType) throws IllegalOrphanException, NonexistentEntityException, ClassModifiedException, ClassEliminatedException
     {
 
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
         Boolean result = Boolean.FALSE;
 
         EntityManager em = null;

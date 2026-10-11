@@ -95,8 +95,8 @@ public class ConceptJpaController implements Serializable, JpaPersistence
     public Boolean edit(Concept concept) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
     {
         Boolean result = Boolean.FALSE;
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
         EntityManager em = null;
 
         em = getEntityManager();

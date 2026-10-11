@@ -27,7 +27,7 @@ interface ManagementSummaryDialogProps {
 export function ManagementSummaryDialog({ managementId, onClose }: ManagementSummaryDialogProps) {
   const t = useTranslations("gestiones.resumen");
   const { data: caso, isLoading } = useManagementCaseSummary(managementId ?? undefined);
-  const { data: financiero } = useManagementFinancialSummary(managementId ?? undefined);
+  const { data: financialSummary } = useManagementFinancialSummary(managementId ?? undefined);
 
   const deeds = caso?.deeds ?? [];
   const documents = caso?.documents ?? [];
@@ -77,11 +77,11 @@ export function ManagementSummaryDialog({ managementId, onClose }: ManagementSum
                 )}
               </FormSection>
               <FormSection title={t("pagos")}>
-                {financiero ? (
+                {financialSummary ? (
                   <div className="text-sm space-y-1" data-testid="summary-payments">
-                    <div>{t("totalPresupuestado")}: {formatCurrency(financiero.totalPresupuestado)}</div>
-                    <div>{t("totalCobrado")}: {formatCurrency(financiero.totalCobrado)}</div>
-                    <div>{t("saldoPendiente")}: {formatCurrency(financiero.pendingBalance)}</div>
+                    <div>{t("totalPresupuestado")}: {formatCurrency(financialSummary.totalBudgeted)}</div>
+                    <div>{t("totalCobrado")}: {formatCurrency(financialSummary.totalCollected)}</div>
+                    <div>{t("saldoPendiente")}: {formatCurrency(financialSummary.pendingBalance)}</div>
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">{t("sinPagos")}</p>

@@ -12,8 +12,8 @@ export type DeedManagement = ApiSchemas["DtoManagementSummary"];
 /** GET /budgets page/detail — BudgetResponse. */
 export type Budget = ApiSchemas["BudgetResponse"];
 
-/** GET /budgets/{id}/summary — DtoBudgetResumen. */
-export type BudgetSummary = ApiSchemas["DtoBudgetResumen"];
+/** GET /budgets/{id}/summary — DtoBudgetSummary. */
+export type BudgetSummary = ApiSchemas["DtoBudgetSummary"];
 
 /** GET /submitted-documents item — SubmittedDocumentResponse. */
 export type SubmittedDocument = ApiSchemas["SubmittedDocumentResponse"];
@@ -25,4 +25,4 @@ export type SubmittedDocumentRequest = ApiSchemas["SubmittedDocumentCreateReques
 export type SubmittedDocumentUpdateRequest = ApiSchemas["SubmittedDocumentRequest"];
 
 /** GET /managements/{id}/outstanding-balance. */
-export type DtoOutstandingBalance = ApiSchemas["DtoSaldoPending"];
+export type DtoOutstandingBalance = ApiSchemas["DtoPendingBalance"];

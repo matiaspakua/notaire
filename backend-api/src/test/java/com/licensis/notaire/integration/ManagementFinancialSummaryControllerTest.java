@@ -28,7 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DisplayName("Management financial summary — CU47/CU02 aggregate financial summary endpoint")
-class ManagementResumenFinancieroControllerTest {
+class ManagementFinancialSummaryControllerTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -118,7 +118,7 @@ class ManagementResumenFinancieroControllerTest {
 
     @Test
     @DisplayName("Should return the aggregate financial summary for a management with a payment")
-    void shouldReturnResumenFinancieroForManagement() throws Exception {
+    void shouldReturnFinancialSummaryForManagement() throws Exception {
         Integer clientId = createPerson("65" + (System.nanoTime() % 1000000));
         Integer budgetId = createBudget(clientId, new java.math.BigDecimal("5000.00"));
         createPayment(budgetId, new java.math.BigDecimal("2000.00"));
@@ -127,8 +127,8 @@ class ManagementResumenFinancieroControllerTest {
         mockMvc.perform(get("/api/v1/managements/" + managementId + "/financial-summary"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.idManagement").value(managementId))
-                .andExpect(jsonPath("$.totalPresupuestado").value(5000.00))
-                .andExpect(jsonPath("$.totalCobrado").value(2000.00))
+                .andExpect(jsonPath("$.totalBudgeted").value(5000.00))
+                .andExpect(jsonPath("$.totalCollected").value(2000.00))
                 .andExpect(jsonPath("$.pendingBalance").value(3000.00));
     }
 

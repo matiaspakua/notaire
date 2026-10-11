@@ -1,6 +1,6 @@
 package com.licensis.notaire.business;
 
-import com.licensis.notaire.jpa.ConstantesPersistencia;
+import com.licensis.notaire.jpa.PersistenceConstants;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,7 +58,7 @@ public class Notebook implements Serializable, Persistable<Integer> {
     @Basic(optional = false)
     @Column(name = "version")
     @Version
-    private int version = ConstantesPersistencia.VersionINICIAL;
+    private int version = PersistenceConstants.INITIAL_VERSION;
     @Override
     @com.fasterxml.jackson.annotation.JsonIgnore
     public Integer getId() {

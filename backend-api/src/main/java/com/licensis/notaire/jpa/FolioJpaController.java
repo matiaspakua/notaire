@@ -114,8 +114,8 @@ public class FolioJpaController implements Serializable, JpaPersistence
     public void edit(Folio folio) throws NonexistentEntityException, ClassModifiedException, ClassEliminatedException
     {
         EntityManager em = null;
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
 
         em = getEntityManager();
         em.getTransaction().begin();
@@ -231,8 +231,8 @@ public class FolioJpaController implements Serializable, JpaPersistence
         boolean result = false;
 
         EntityManager em = null;
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
 
         em = getEntityManager();
         em.getTransaction().begin();

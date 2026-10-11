@@ -17,19 +17,18 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * CU47/CU02 - Financial summary agregado of a management: total presupuestado,
- * total cobrado and outstanding balance, sumados a través of the budgets of
- * each procedure vinculado.
+ * CU47/CU02 - Financial summary of a management: total budgeted, total collected,
+ * and outstanding balance, summed across the budgets of each linked procedure.
  */
 @Service
-public class ManagementResumenFinancieroService {
+public class ManagementFinancialSummaryService {
 
     private final ProcedureRepository procedureRepository;
     private final GetPaymentStatusUseCase paymentStatus;
     private final QueryPaymentsUseCase paymentQueries;
     private final ManagementArchiveDebtService managementArchiveDebtService;
 
-    public ManagementResumenFinancieroService(ProcedureRepository procedureRepository,
+    public ManagementFinancialSummaryService(ProcedureRepository procedureRepository,
             GetPaymentStatusUseCase paymentStatus, QueryPaymentsUseCase paymentQueries,
             ManagementArchiveDebtService managementArchiveDebtService) {
         this.procedureRepository = procedureRepository;
@@ -43,24 +42,24 @@ public class ManagementResumenFinancieroService {
         BigDecimal pendingBalance = managementArchiveDebtService.calculatePendingBalance(idManagement);
 
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
-        Set<Integer> idsBudgetContados = new HashSet<>();
-        BigDecimal totalPresupuestado = Money.zero();
-        BigDecimal totalCobrado = Money.zero();
+        Set<Integer> countedBudgetIds = new HashSet<>();
+        BigDecimal totalBudgeted = Money.zero();
+        BigDecimal totalCollected = Money.zero();
 
         for (Procedure procedure : procedures) {
             Budget budget = procedure.getFkIdBudget();
-            if (budget == null || !idsBudgetContados.add(budget.getIdBudget())) {
+            if (budget == null || !countedBudgetIds.add(budget.getIdBudget())) {
                 continue;
             }
-            BigDecimal saldoBudget = paymentStatus.pendingBalance(budget.getIdBudget());
-            BigDecimal cobradoBudget = paymentQueries.findByBudget(budget.getIdBudget()).stream()
+            BigDecimal outstandingBudget = paymentStatus.pendingBalance(budget.getIdBudget());
+            BigDecimal collectedBudget = paymentQueries.findByBudget(budget.getIdBudget()).stream()
                     .map(PaymentDetails::amount)
                     .map(Money::nullToZero)
                     .reduce(Money.zero(), BigDecimal::add);
-            totalCobrado = Money.of(totalCobrado.add(cobradoBudget));
-            totalPresupuestado = Money.of(totalPresupuestado.add(saldoBudget).add(cobradoBudget));
+            totalCollected = Money.of(totalCollected.add(collectedBudget));
+            totalBudgeted = Money.of(totalBudgeted.add(outstandingBudget).add(collectedBudget));
         }
 
-        return new DtoManagementFinancialSummary(idManagement, totalPresupuestado, totalCobrado, pendingBalance);
+        return new DtoManagementFinancialSummary(idManagement, totalBudgeted, totalCollected, pendingBalance);
     }
 }

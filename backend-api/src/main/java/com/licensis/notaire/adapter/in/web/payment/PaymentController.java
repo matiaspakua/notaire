@@ -114,7 +114,7 @@ public class PaymentController {
 
     @GetMapping("/budget/{idBudget}/balance")
     @Operation(summary = "Calculate outstanding balance of a budget")
-    public ResponseEntity<BigDecimal> getSaldoPending(@PathVariable Integer idBudget) {
+    public ResponseEntity<BigDecimal> getPendingBalance(@PathVariable Integer idBudget) {
         try {
             return ResponseEntity.ok(paymentStatusUseCase.pendingBalance(idBudget));
         } catch (IllegalArgumentException e) {

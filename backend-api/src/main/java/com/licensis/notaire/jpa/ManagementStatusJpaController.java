@@ -87,8 +87,8 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
 
     public Boolean edit(ManagementStatus managementStatus) throws IllegalOrphanException, NonexistentEntityException,
             ClassEliminatedException, ClassModifiedException {
-        Integer version = ConstantesPersistencia.VersionINICIAL;
-        Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
+        Integer version = PersistenceConstants.INITIAL_VERSION;
+        Integer oldVersion = PersistenceConstants.INITIAL_VERSION;
         Boolean result = Boolean.FALSE;
         EntityManager em = null;
 

@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("JpaPersistence implementation tests")
 @ExtendWith(MockitoExtension.class)
-class IPersistenciaJpaTest {
+class JpaPersistenceTest {
 
     @Mock
     private UserTransaction utx;

@@ -258,7 +258,7 @@ export interface paths {
             cookie?: never;
         };
         /** CU47 - Get financial summary of a budget (total, balance and payments) */
-        get: operations["getResumen"];
+        get: operations["getBudgetSummary"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1186,7 +1186,7 @@ export interface paths {
             cookie?: never;
         };
         /** CU47/CU02 - Get aggregated financial summary for a management */
-        get: operations["getResumenFinanciero"];
+        get: operations["getFinancialSummary"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1220,7 +1220,7 @@ export interface paths {
             cookie?: never;
         };
         /** CU16 - Calculate aggregated pending balance for a management (RF-22) */
-        get: operations["getSaldoPending_1"];
+        get: operations["getPendingBalance_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1361,7 +1361,7 @@ export interface paths {
             cookie?: never;
         };
         /** Calculate outstanding balance of a budget */
-        get: operations["getSaldoPending"];
+        get: operations["getPendingBalance"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2911,7 +2911,7 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
-        DtoBudgetResumen: {
+        DtoBudgetSummary: {
             /** Format: int32 */
             idBudget?: number;
             /** Format: int32 */
@@ -3232,8 +3232,8 @@ export interface components {
             /** Format: int32 */
             idManagement?: number;
             pendingBalance?: number;
-            totalCobrado?: number;
-            totalPresupuestado?: number;
+            totalBudgeted?: number;
+            totalCollected?: number;
         };
         DtoManagementStatus: {
             data?: {
@@ -3271,6 +3271,9 @@ export interface components {
             idPayment?: number;
             notes?: string;
             paymentMethod?: string;
+        };
+        DtoPendingBalance: {
+            pendingBalance?: number;
         };
         DtoPerson: {
             address?: string;
@@ -3414,9 +3417,6 @@ export interface components {
             /** Format: int32 */
             idDocumentType?: number;
             name?: string;
-        };
-        DtoSaldoPending: {
-            pendingBalance?: number;
         };
         DtoSubmittedDocument: {
             amountApagar?: number;
@@ -4873,7 +4873,7 @@ export interface operations {
             };
         };
     };
-    getResumen: {
+    getBudgetSummary: {
         parameters: {
             query?: never;
             header?: never;
@@ -4890,7 +4890,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoBudgetResumen"];
+                    "*/*": components["schemas"]["DtoBudgetSummary"];
                 };
             };
             /** @description Not found */
@@ -4899,7 +4899,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoBudgetResumen"];
+                    "*/*": components["schemas"]["DtoBudgetSummary"];
                 };
             };
         };
@@ -7541,7 +7541,7 @@ export interface operations {
             };
         };
     };
-    getResumenFinanciero: {
+    getFinancialSummary: {
         parameters: {
             query?: never;
             header?: never;
@@ -7603,7 +7603,7 @@ export interface operations {
             };
         };
     };
-    getSaldoPending_1: {
+    getPendingBalance_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -7620,7 +7620,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoSaldoPending"];
+                    "*/*": components["schemas"]["DtoPendingBalance"];
                 };
             };
             /** @description Management not found */
@@ -7629,7 +7629,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["DtoSaldoPending"];
+                    "*/*": components["schemas"]["DtoPendingBalance"];
                 };
             };
         };
@@ -7935,7 +7935,7 @@ export interface operations {
             };
         };
     };
-    getSaldoPending: {
+    getPendingBalance: {
         parameters: {
             query?: never;
             header?: never;

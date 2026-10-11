@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 @DisplayName("JpaAdministrator unit tests")
-class AdministradorJpaTest {
+class JpaAdministratorTest {
 
     private EntityManagerFactory mockEmf;
 
@@ -33,9 +33,9 @@ class AdministradorJpaTest {
         emfField.setAccessible(true);
         emfField.set(null, null);
 
-        java.lang.reflect.Field milistaJpasField = JpaAdministrator.class.getDeclaredField("milistaJpas");
-        milistaJpasField.setAccessible(true);
-        milistaJpasField.set(null, null);
+        java.lang.reflect.Field jpaListField = JpaAdministrator.class.getDeclaredField("jpaList");
+        jpaListField.setAccessible(true);
+        jpaListField.set(null, null);
 
         mockEmf = mock(EntityManagerFactory.class);
     }
@@ -50,9 +50,9 @@ class AdministradorJpaTest {
         emfField.setAccessible(true);
         emfField.set(null, null);
 
-        java.lang.reflect.Field milistaJpasField = JpaAdministrator.class.getDeclaredField("milistaJpas");
-        milistaJpasField.setAccessible(true);
-        milistaJpasField.set(null, null);
+        java.lang.reflect.Field jpaListField = JpaAdministrator.class.getDeclaredField("jpaList");
+        jpaListField.setAccessible(true);
+        jpaListField.set(null, null);
     }
 
     @Nested
@@ -77,7 +77,7 @@ class AdministradorJpaTest {
         void shouldSetEmfWithoutLoadingList() {
             JpaAdministrator.setEmf(mockEmf);
             assertThat(JpaAdministrator.getEmf()).isSameAs(mockEmf);
-            // milistaJpas should be null since instancia is null (no call to loadJpaList)
+            // jpaList should be null since instancia is null (no call to loadJpaList)
             // Note: after getInstancia(), setEmf will trigger loadJpaList()
         }
 
@@ -90,7 +90,7 @@ class AdministradorJpaTest {
             // Now set EMF - should trigger loadJpaList via the if (instancia != null) block
             JpaAdministrator.setEmf(mockEmf);
 
-            Collection<JpaPersistence> list = JpaAdministrator.getMilistaJpas();
+            Collection<JpaPersistence> list = JpaAdministrator.getJpaList();
             assertThat(list).isNotNull();
             assertThat(list).isNotEmpty();
         }
@@ -106,13 +106,13 @@ class AdministradorJpaTest {
         }
 
         @Test
-        @DisplayName("should populate milistaJpas with all controllers")
+        @DisplayName("should populate jpaList with all controllers")
         void shouldPopulateAllControllers() {
             // This test verifies that calling setEmf after instancia triggers loadJpaList
             // which adds all 26 controllers to the list
             JpaAdministrator.setEmf(mockEmf);
 
-            Collection<JpaPersistence> list = JpaAdministrator.getMilistaJpas();
+            Collection<JpaPersistence> list = JpaAdministrator.getJpaList();
             assertThat(list).isNotNull();
             assertThat(list).hasSizeGreaterThan(20);
 
@@ -160,15 +160,15 @@ class AdministradorJpaTest {
     }
 
     @Nested
-    @DisplayName("getMilistaJpas / setMilistaJpas")
+    @DisplayName("getJpaList / setJpaList")
     class GetSetList {
 
         @Test
         @DisplayName("should allow direct list manipulation")
         void shouldAllowDirectListAccess() {
             java.util.ArrayList<JpaPersistence> customList = new java.util.ArrayList<>();
-            JpaAdministrator.setMilistaJpas(customList);
-            assertThat(JpaAdministrator.getMilistaJpas()).isSameAs(customList);
+            JpaAdministrator.setJpaList(customList);
+            assertThat(JpaAdministrator.getJpaList()).isSameAs(customList);
         }
     }
 

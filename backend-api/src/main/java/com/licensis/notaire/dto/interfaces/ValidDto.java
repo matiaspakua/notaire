@@ -12,7 +12,7 @@ public interface ValidDto {
      * Id assigned when a DTO is first created (id = -1).
      */
     int ID_DTO_INICIALIZADO = -1;
-    int VersionINICIAL = 0;
+    int INITIAL_VERSION = 0;
 
     /**
      * Reports whether this DTO is valid.

@@ -415,7 +415,7 @@ components:
           format: int32
           type: integer
       type: object
-    DtoBudgetResumen:
+    DtoBudgetSummary:
       properties:
         idBudget:
           format: int32
@@ -986,9 +986,9 @@ components:
           type: integer
         pendingBalance:
           type: number
-        totalCobrado:
+        totalBudgeted:
           type: number
-        totalPresupuestado:
+        totalCollected:
           type: number
       type: object
     DtoManagementStatus:
@@ -1051,6 +1051,11 @@ components:
           type: string
         paymentMethod:
           type: string
+      type: object
+    DtoPendingBalance:
+      properties:
+        pendingBalance:
+          type: number
       type: object
     DtoPerson:
       properties:
@@ -1340,11 +1345,6 @@ components:
           type: integer
         name:
           type: string
-      type: object
-    DtoSaldoPending:
-      properties:
-        pendingBalance:
-          type: number
       type: object
     DtoSubmittedDocument:
       properties:
@@ -3314,7 +3314,7 @@ paths:
       - Budgets
   /api/v1/budgets/{id}/summary:
     get:
-      operationId: getResumen
+      operationId: getBudgetSummary
       parameters:
       - in: path
         name: id
@@ -3327,13 +3327,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/DtoBudgetResumen'
+                $ref: '#/components/schemas/DtoBudgetSummary'
           description: OK
         '404':
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/DtoBudgetResumen'
+                $ref: '#/components/schemas/DtoBudgetSummary'
           description: Not found
       summary: CU47 - Get financial summary of a budget (total, balance and payments)
       tags:
@@ -5541,7 +5541,7 @@ paths:
       - Managements
   /api/v1/managements/{id}/financial-summary:
     get:
-      operationId: getResumenFinanciero
+      operationId: getFinancialSummary
       parameters:
       - in: path
         name: id
@@ -5597,7 +5597,7 @@ paths:
       - Managements
   /api/v1/managements/{id}/outstanding-balance:
     get:
-      operationId: getSaldoPending_1
+      operationId: getPendingBalance_1
       parameters:
       - in: path
         name: id
@@ -5610,13 +5610,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/DtoSaldoPending'
+                $ref: '#/components/schemas/DtoPendingBalance'
           description: OK
         '404':
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/DtoSaldoPending'
+                $ref: '#/components/schemas/DtoPendingBalance'
           description: Management not found
       summary: CU16 - Calculate aggregated pending balance for a management (RF-22)
       tags:
@@ -5868,7 +5868,7 @@ paths:
       - Payment
   /api/v1/payments/budget/{idBudget}/balance:
     get:
-      operationId: getSaldoPending
+      operationId: getPendingBalance
       parameters:
       - in: path
         name: idBudget

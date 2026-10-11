@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.licensis.notaire.adapter.in.web.payment.PaymentWebMapper;
 import com.licensis.notaire.application.port.in.payment.GetBudgetSummaryUseCase;
-import com.licensis.notaire.dto.DtoBudgetResumen;
+import com.licensis.notaire.dto.DtoBudgetSummary;
 import com.licensis.notaire.exception.ResourceNotFoundException;
 import com.licensis.notaire.adapter.in.web.item.ItemController.ItemResponse;
 import com.licensis.notaire.adapter.in.web.support.RequiredFields;
@@ -195,7 +195,7 @@ public class BudgetController {
 })
     @GetMapping("/{id}/summary")
     @Operation(summary = "CU47 - Get financial summary of a budget (total, balance and payments)")
-    public ResponseEntity<DtoBudgetResumen> getResumen(@PathVariable Integer id) {
+    public ResponseEntity<DtoBudgetSummary> getBudgetSummary(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(PaymentWebMapper.toDto(budgetSummaryUseCase.summary(id)));
         } catch (IllegalArgumentException e) {

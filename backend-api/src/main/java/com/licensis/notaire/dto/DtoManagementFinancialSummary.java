@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  */
 public record DtoManagementFinancialSummary(
         Integer idManagement,
-        BigDecimal totalPresupuestado,
-        BigDecimal totalCobrado,
+        BigDecimal totalBudgeted,
+        BigDecimal totalCollected,
         BigDecimal pendingBalance) {
 }

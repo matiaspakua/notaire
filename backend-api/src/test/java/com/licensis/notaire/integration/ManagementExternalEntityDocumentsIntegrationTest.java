@@ -36,7 +36,7 @@ import com.licensis.notaire.repository.ProcedureRepository;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DisplayName("Management documents of entidades externas (CU10)")
-class ManagementDocumentsEntidadesExternasIntegrationTest {
+class ManagementExternalEntityDocumentsIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

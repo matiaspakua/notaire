@@ -12,7 +12,7 @@ public class DtoManagementStatus extends GenericDto implements ValidDto {
     private Integer version;
 
     public DtoManagementStatus() {
-        this.version = ValidDto.VersionINICIAL;
+        this.version = ValidDto.INITIAL_VERSION;
     }
 
     public DtoManagementStatus(String name) {

@@ -145,7 +145,7 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @DisplayName("CU02/CU13 — Ciclo of vida of a management")
-    class GestionesWorkflow {
+    class ManagementsWorkflow {
 
         @Test
         @Order(1)
@@ -198,7 +198,7 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @DisplayName("CU01 — Management of budgets")
-    class PresupuestosWorkflow {
+    class BudgetsWorkflow {
 
         @Test
         @Order(1)
@@ -313,7 +313,7 @@ class BusinessWorkflowIntegrationTest {
 
     @Nested
     @DisplayName("CU05-CU08 — Deeds and protocolo")
-    class EscriturasWorkflow {
+    class DeedsWorkflow {
 
         @Test
         @Order(1)

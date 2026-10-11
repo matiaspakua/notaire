@@ -60,18 +60,18 @@ public class ManagementArchiveDebtService {
                 .orElseThrow(() -> new IllegalArgumentException("Management not found with ID: " + idManagement));
 
         List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(idManagement);
-        Set<Integer> idsBudgetContados = new HashSet<>();
-        BigDecimal saldo = Money.zero();
+        Set<Integer> countedBudgetIds = new HashSet<>();
+        BigDecimal pendingBalance = Money.zero();
         for (Procedure procedure : procedures) {
             Budget budget = procedure.getFkIdBudget();
-            if (budget == null || !idsBudgetContados.add(budget.getIdBudget())) {
+            if (budget == null || !countedBudgetIds.add(budget.getIdBudget())) {
                 continue;
             }
-            saldo = Money.of(saldo.add(paymentStatus.pendingBalance(budget.getIdBudget())));
+            pendingBalance = Money.of(pendingBalance.add(paymentStatus.pendingBalance(budget.getIdBudget())));
         }
 
-        log.debug("Aggregated outstanding balance for management {}: {}", idManagement, saldo);
-        return saldo;
+        log.debug("Aggregated outstanding balance for management {}: {}", idManagement, pendingBalance);
+        return pendingBalance;
     }
 
     /**

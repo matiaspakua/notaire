@@ -7,7 +7,7 @@ package com.licensis.notaire.business;
 import com.licensis.notaire.dto.DtoDeed;
 import com.licensis.notaire.dto.DtoFolio;
 import com.licensis.notaire.dto.DtoPerson;
-import com.licensis.notaire.jpa.ConstantesPersistencia;
+import com.licensis.notaire.jpa.PersistenceConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
@@ -61,7 +61,7 @@ public class Folio implements Serializable, Persistable<Integer>
     @Basic(optional = false)
     @Column(name = "version")
     @Version
-    private int version = ConstantesPersistencia.VersionINICIAL;
+    private int version = PersistenceConstants.INITIAL_VERSION;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "folio")
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"folio", "copia"})
     private Collection<FolioCopies> folioCopiesCollection;

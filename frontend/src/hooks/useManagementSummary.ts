@@ -8,7 +8,7 @@ import type { ManagementCaseSummary, ManagementFinancialSummary } from "@/types"
 
 export const managementSummaryKeys = {
   caso: (managementId: number) => ["management-case-summary", managementId] as const,
-  financiero: (managementId: number) => ["management-financial-summary", managementId] as const,
+  financialSummary: (managementId: number) => ["management-financial-summary", managementId] as const,
 };
 
 export function useManagementCaseSummary(managementId: number | undefined) {
@@ -21,7 +21,7 @@ export function useManagementCaseSummary(managementId: number | undefined) {
 
 export function useManagementFinancialSummary(managementId: number | undefined) {
   return useQuery({
-    queryKey: managementSummaryKeys.financiero(managementId ?? 0),
+    queryKey: managementSummaryKeys.financialSummary(managementId ?? 0),
     queryFn: () => apiGet<ManagementFinancialSummary>(`/managements/${managementId}/financial-summary`),
     enabled: !!managementId,
   });

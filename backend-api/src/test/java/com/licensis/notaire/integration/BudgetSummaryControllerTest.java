@@ -23,8 +23,8 @@ import org.springframework.web.context.WebApplicationContext;
 @RequirementCoverage({"CU47", "CU02"})
 @SpringBootTest
 @ActiveProfiles("test-h2")
-@DisplayName("Budget resumen — CU47 financial summary endpoint")
-class BudgetResumenControllerTest {
+@DisplayName("Budget summary — CU47 financial summary endpoint")
+class BudgetSummaryControllerTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

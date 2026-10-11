@@ -598,7 +598,7 @@ export interface ManagementCaseSummary {
 /** CU47/CU02 - GET /managements/{id}/financial-summary — DtoManagementFinancialSummary. */
 export interface ManagementFinancialSummary {
   idManagement: number;
-  totalPresupuestado: number;
-  totalCobrado: number;
+  totalBudgeted: number;
+  totalCollected: number;
   pendingBalance: number;
 }

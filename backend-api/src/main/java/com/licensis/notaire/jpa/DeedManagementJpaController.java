@@ -393,9 +393,9 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
             return listaGestiones.get(0);
         }
 
-        DeedManagement managementVacia = new DeedManagement();
-        managementVacia.setNumber(ConstantesPersistencia.VersionINICIAL);
-        return managementVacia;
+        DeedManagement emptyManagement = new DeedManagement();
+        emptyManagement.setNumber(PersistenceConstants.INITIAL_VERSION);
+        return emptyManagement;
     }
 
     public DeedManagement findDeedManagementPorId(Integer idManagement)
@@ -414,9 +414,9 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
             return listaGestiones.get(0);
         }
 
-        DeedManagement managementVacia = new DeedManagement();
-        managementVacia.setNumber(ConstantesPersistencia.VersionINICIAL);
-        return managementVacia;
+        DeedManagement emptyManagement = new DeedManagement();
+        emptyManagement.setNumber(PersistenceConstants.INITIAL_VERSION);
+        return emptyManagement;
     }
 
     public int getDeedManagementCount()

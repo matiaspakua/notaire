@@ -39,7 +39,7 @@ public class JpaAdministrator {
     private static JpaAdministrator instancia = null;
     private static EntityManagerFactory emf = null;
 
-    private static Collection<JpaPersistence> milistaJpas = null;
+    private static Collection<JpaPersistence> jpaList = null;
 
     public static void setEmf(EntityManagerFactory factory) {
         emf = factory;
@@ -65,54 +65,54 @@ public class JpaAdministrator {
         return emf;
     }
 
-    public JpaPersistence getJpa(String nameClase) throws NonexistentJpaException {
-        for (Iterator<JpaPersistence> it = milistaJpas.iterator(); it.hasNext();) {
-            JpaPersistence iPersistenciaJpa = it.next();
-            if (iPersistenciaJpa.getNameJpa().contains(nameClase)) {
-                return iPersistenciaJpa;
+    public JpaPersistence getJpa(String className) throws NonexistentJpaException {
+        for (Iterator<JpaPersistence> it = jpaList.iterator(); it.hasNext();) {
+            JpaPersistence jpaPersistence = it.next();
+            if (jpaPersistence.getNameJpa().contains(className)) {
+                return jpaPersistence;
             }
         }
         throw new NonexistentJpaException("The indicated JPA does not exist.");
 
     }
 
-    public static Collection<JpaPersistence> getMilistaJpas() {
-        return milistaJpas;
+    public static Collection<JpaPersistence> getJpaList() {
+        return jpaList;
     }
 
-    public static void setMilistaJpas(Collection<JpaPersistence> milistaJpas) {
-        JpaAdministrator.milistaJpas = milistaJpas;
+    public static void setJpaList(Collection<JpaPersistence> jpaList) {
+        JpaAdministrator.jpaList = jpaList;
     }
 
     private static void loadJpaList() {
-        JpaAdministrator.milistaJpas = new ArrayList<>();
-        JpaAdministrator.milistaJpas.add(new ConceptJpaController(null, emf));
+        JpaAdministrator.jpaList = new ArrayList<>();
+        JpaAdministrator.jpaList.add(new ConceptJpaController(null, emf));
 
-        JpaAdministrator.milistaJpas.add(new ManagementStatusJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new FolioTypeJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(PersonJpaController.getInstancia());
-        JpaAdministrator.milistaJpas.add(new SubstitutionJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(UserJpaController.getInstancia());
-        JpaAdministrator.milistaJpas.add(new FolioJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new FolioTypeJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new DocumentTypeJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new ProcedureTypeJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new ProcedureTemplateJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new IdentificationTypeJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new HistoryJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new ProcedureJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new DeedManagementJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(AuditRecordJpaController.getInstancia());
-        JpaAdministrator.milistaJpas.add(new BudgetJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new ItemJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new PropertyJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new BudgetTemplateJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new PersonProcedureJpaController(emf));
-        JpaAdministrator.milistaJpas.add(new PaymentJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new DeedJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new CopyJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new TestimonyJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new TestimonyMovementJpaController(null, emf));
-        JpaAdministrator.milistaJpas.add(new SubmittedDocumentJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new ManagementStatusJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new FolioTypeJpaController(null, emf));
+        JpaAdministrator.jpaList.add(PersonJpaController.getInstancia());
+        JpaAdministrator.jpaList.add(new SubstitutionJpaController(null, emf));
+        JpaAdministrator.jpaList.add(UserJpaController.getInstancia());
+        JpaAdministrator.jpaList.add(new FolioJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new FolioTypeJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new DocumentTypeJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new ProcedureTypeJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new ProcedureTemplateJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new IdentificationTypeJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new HistoryJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new ProcedureJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new DeedManagementJpaController(null, emf));
+        JpaAdministrator.jpaList.add(AuditRecordJpaController.getInstancia());
+        JpaAdministrator.jpaList.add(new BudgetJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new ItemJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new PropertyJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new BudgetTemplateJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new PersonProcedureJpaController(emf));
+        JpaAdministrator.jpaList.add(new PaymentJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new DeedJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new CopyJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new TestimonyJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new TestimonyMovementJpaController(null, emf));
+        JpaAdministrator.jpaList.add(new SubmittedDocumentJpaController(null, emf));
     }
 }
