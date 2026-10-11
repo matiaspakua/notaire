@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English migration samples** (#1490, CU75):
+  Flyway skill and database-migration examples insert into `concepts` and
+  index `users(username)`. The deed-lifecycle note uses the stored status
+  `Firmada`. Applied migrations V1–V44 stay unchanged.
 - **English diagram and workflow samples** (#1490, CU75):
   The PlantUML skill examples use `Person`, `Deed`, `deeds`, and `DeedDto`.
   The workflow skill sample is `users.spec.ts` and `User authentication`.
