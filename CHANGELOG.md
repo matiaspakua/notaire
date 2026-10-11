@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English lifecycle pointers** (#1490, CU75):
+  The legacy state-diagram folder, the design index, the SAD runtime view,
+  the system threat model, and the GitHub board note name management, deed,
+  and budget. Stored statuses and the folder name `Diagrama de Estados` stay.
 - **English lifecycle and engineering method** (#1490, CU75):
   `CICLO-DE-VIDA.md` and `INGENIERIA.md` are written in English. Sequences
   call `POST /api/v1/managements/{id}/transition`, `GET /api/v1/deeds`, and

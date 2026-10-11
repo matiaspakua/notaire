@@ -14,7 +14,7 @@ Everything is on **[Notaire — Delivery Board](https://github.com/users/matiasp
 | In Progress | Branch open; the issue also carries the `in-progress` label |
 | Done | Issue closed |
 
-Board status is the **work item** lifecycle. It is not a gestión state.
+Board status is the **work item** lifecycle. It is not a management state.
 `In Progress` on an issue is not `En Tramite` on a deed file. Domain states
 live in [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md).
 

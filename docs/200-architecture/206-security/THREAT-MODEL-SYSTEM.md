@@ -66,7 +66,7 @@ remaining object-level gap that `SR-06` used to describe too broadly.
 | ID | Privacy threat | Data | Mitigation | Verification | Residual |
 |----|----------------|------|------------|--------------|----------|
 | LD-1 | Identifiability | DNI, email, name | Access requires a JWT. Field-level minimization is not implemented | Schema and API responses still return identifiers to any authenticated caller | Open |
-| LD-2 | Linkability | Same person across gestión, escritura, and presupuesto | Identifiers are stable keys. That is required for the notarial record | SAD data model | Accepted for the notarial purpose |
+| LD-2 | Linkability | Same person across management, deed, and budget | Identifiers are stable keys. That is required for the notarial record | SAD data model | Accepted for the notarial purpose |
 | LD-3 | Disclosure | Request logs | `RequestLoggingFilter` logs method, path, status, and duration. It does not log query, headers, or body (#1463) | `RequestLoggingFilterTest` | Partial — the path can still contain a record id |
 | LD-4 | Unawareness | Data subjects | No in-product privacy notice | Issue #309 | Open |
 | LD-5 | Non-compliance | Retention and statute mapping | Notarial retention is indefinite by SAD §2.3. A statute map is not an engineering claim | Issue #309 | Open |
