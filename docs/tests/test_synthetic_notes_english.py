@@ -83,7 +83,8 @@ class SyntheticNotesEnglishTest(unittest.TestCase):
         self.assertNotIn("Caso", hero)
 
         historical = read("integration/ManagementDocumentReentryPgIntegrationTest.java")
-        self.assertIn("documentos_presentados", historical)
+        self.assertIn("submitted_documents", historical)
+        self.assertNotIn("documentos_presentados", historical)
 
 
 if __name__ == "__main__":
