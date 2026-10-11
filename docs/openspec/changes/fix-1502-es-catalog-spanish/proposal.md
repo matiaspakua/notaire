@@ -22,6 +22,7 @@ The English identifier rename (#1495) also replaced entity words inside Spanish 
 - Playwright specs (20 files): Spanish locator text restored from the pre-#1495 specs where the UI renders Spanish; English kept where the test runs in EN or matches the English API (`search?number=`, the `cadastral` message).
 - `useCreateCompleteManagement` and the E2E helper `createCompleteCaseManagement` map `procedureTypeId` to `typeProcedureId` (shared `toCompleteCaseRequest`); Vitest `useManagements.create-wire.test.tsx`.
 - `frontend/src/types/api.generated.ts` regenerated from the merged `openapi.yaml` (budget status description).
+- Bruno: five assertions (`procedures/04a`, `procedure-types/04a`, `testimonies/04a`, `testimonies/04c`, `workflow-nodes/10`) expect the English validation messages the backend has returned since #1495.
 - CHANGELOG entry.
 
 ## Reglas de negocio
