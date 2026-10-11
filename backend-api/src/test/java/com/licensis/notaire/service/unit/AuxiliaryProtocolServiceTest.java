@@ -40,7 +40,7 @@ class AuxiliaryProtocolServiceTest {
         auxiliaryProtocolService = new AuxiliaryProtocolService(folioRepository, deedRepository);
     }
 
-    private Folio folioAuxiliaryDisponible() {
+    private Folio availableAuxiliaryFolio() {
         FolioType typeAuxiliary = new FolioType("Protocolo Auxiliar");
         typeAuxiliary.setIsAuxiliary(true);
         Folio folio = new Folio();
@@ -72,7 +72,7 @@ class AuxiliaryProtocolServiceTest {
     @Test
     @DisplayName("Should not generate a procedure folder for an auxiliary-protocol deed")
     void shouldNotGenerateFolderForAuxiliaryDeed() {
-        Folio folio = folioAuxiliaryDisponible();
+        Folio folio = availableAuxiliaryFolio();
         when(folioRepository.findById(1)).thenReturn(Optional.of(folio));
         when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.empty());
         when(deedRepository.save(any(Deed.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -98,7 +98,7 @@ class AuxiliaryProtocolServiceTest {
     @Test
     @DisplayName("Should reject starting a deed on an auxiliary folio already linked to another deed")
     void shouldRejectDeedOnAlreadyLinkedFolio() {
-        Folio folio = folioAuxiliaryDisponible();
+        Folio folio = availableAuxiliaryFolio();
         folio.setFkIdDeed(new Deed(99));
         when(folioRepository.findById(1)).thenReturn(Optional.of(folio));
 

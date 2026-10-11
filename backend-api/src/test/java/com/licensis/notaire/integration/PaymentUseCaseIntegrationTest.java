@@ -331,13 +331,13 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should handle multiple payments with different amounts")
     void shouldHandleMultiplePaymentsWithDifferentAmounts() {
-        java.math.BigDecimal monto1 = new java.math.BigDecimal("50000");
-        java.math.BigDecimal monto2 = new java.math.BigDecimal("75000");
-        java.math.BigDecimal monto3 = new java.math.BigDecimal("125000");
+        java.math.BigDecimal amount1 = new java.math.BigDecimal("50000");
+        java.math.BigDecimal amount2 = new java.math.BigDecimal("75000");
+        java.math.BigDecimal amount3 = new java.math.BigDecimal("125000");
 
-        process(testBudget.getIdBudget(), monto1, new Date(), "Payment 1");
-        process(testBudget.getIdBudget(), monto2, new Date(), "Payment 2");
-        process(testBudget.getIdBudget(), monto3, new Date(), "Payment 3");
+        process(testBudget.getIdBudget(), amount1, new Date(), "Payment 1");
+        process(testBudget.getIdBudget(), amount2, new Date(), "Payment 2");
+        process(testBudget.getIdBudget(), amount3, new Date(), "Payment 3");
 
         List<PaymentDetails> payments = paymentQueries.findByBudget(testBudget.getIdBudget());
 
@@ -345,10 +345,10 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
                 .hasSize(3)
                 .extracting(PaymentDetails::amount)
                 .usingElementComparator(java.math.BigDecimal::compareTo)
-                .containsExactlyInAnyOrder(monto1, monto2, monto3);
+                .containsExactlyInAnyOrder(amount1, amount2, amount3);
 
         java.math.BigDecimal pendingBalance = paymentStatus.pendingBalance(testBudget.getIdBudget());
-        java.math.BigDecimal totalPaid = monto1.add(monto2).add(monto3);
+        java.math.BigDecimal totalPaid = amount1.add(amount2).add(amount3);
         assertThat(pendingBalance).isEqualByComparingTo(new java.math.BigDecimal("500000").subtract(totalPaid));
     }
 

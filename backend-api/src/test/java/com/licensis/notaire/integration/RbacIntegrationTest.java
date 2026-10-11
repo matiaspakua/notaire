@@ -96,7 +96,7 @@ class RbacIntegrationTest {
 
     @Test
     @DisplayName("should not create a user when an employee posts an NOTARY account")
-    void shouldNotCreateAUserWhenAnEmployeePostsAnEscribanoAccount() throws Exception {
+    void shouldNotCreateAUserWhenAnEmployeePostsANotaryAccount() throws Exception {
         String name = "escalation-" + UUID.randomUUID();
 
         mockMvc.perform(post("/api/v1/users")

@@ -187,7 +187,7 @@ class BudgetTemplateEntityTest {
             BudgetTemplate pp = new BudgetTemplate(1, 2);
 
             assertThat(pp).isNotEqualTo(null);
-            assertThat(pp).isNotEqualTo("not a plantilla");
+            assertThat(pp).isNotEqualTo("not a template");
         }
 
         @Test

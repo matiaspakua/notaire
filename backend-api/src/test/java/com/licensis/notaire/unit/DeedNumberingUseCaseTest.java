@@ -28,7 +28,7 @@ class DeedNumberingUseCaseTest {
 
     @Test
     @DisplayName("Should start the sequence at one when no deed exists yet in scope")
-    void shouldStartCorrelativoAtOneWhenScopeIsEmpty() {
+    void shouldStartSequenceAtOneWhenScopeIsEmpty() {
         Person notary = createNotary(1);
 
         int siguiente = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, false);
@@ -38,7 +38,7 @@ class DeedNumberingUseCaseTest {
 
     @Test
     @DisplayName("Should accept a number matching the expected sequence")
-    void shouldAcceptNumberMatchingExpectedCorrelativo() {
+    void shouldAcceptNumberMatchingExpectedSequence() {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 

@@ -31,8 +31,8 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     private IdentificationTypeRepository identificationTypeRepository;
 
-    private Person suplente;
-    private Person suplantado;
+    private Person substitute;
+    private Person substituted;
     private IdentificationType identificationType;
 
     @BeforeEach
@@ -45,29 +45,29 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
         identificationType.setCharacters("8");
         identificationType = identificationTypeRepository.save(identificationType);
 
-        suplente = new Person();
-        suplente.setFirstName("Juan");
-        suplente.setLastName("Suplente");
-        suplente.setIdentificationNumber("12345678");
-        suplente.setIsClient(true);
-        suplente.setFkIdIdentificationType(identificationType);
-        suplente = personRepository.save(suplente);
+        substitute = new Person();
+        substitute.setFirstName("Juan");
+        substitute.setLastName("Suplente");
+        substitute.setIdentificationNumber("12345678");
+        substitute.setIsClient(true);
+        substitute.setFkIdIdentificationType(identificationType);
+        substitute = personRepository.save(substitute);
 
-        suplantado = new Person();
-        suplantado.setFirstName("Pedro");
-        suplantado.setLastName("Suplantado");
-        suplantado.setIdentificationNumber("87654321");
-        suplantado.setIsClient(true);
-        suplantado.setFkIdIdentificationType(identificationType);
-        suplantado = personRepository.save(suplantado);
+        substituted = new Person();
+        substituted.setFirstName("Pedro");
+        substituted.setLastName("Suplantado");
+        substituted.setIdentificationNumber("87654321");
+        substituted.setIsClient(true);
+        substituted.setFkIdIdentificationType(identificationType);
+        substituted = personRepository.save(substituted);
     }
 
     @Test
     @DisplayName("Should persist substitution with all fields")
     void shouldPersistSubstitutionWithAllFields() {
         Substitution substitution = new Substitution();
-        substitution.setFkIdSubstitute(suplente);
-        substitution.setFkIdSubstituted(suplantado);
+        substitution.setFkIdSubstitute(substitute);
+        substitution.setFkIdSubstituted(substituted);
         substitution.setDateStart(toDate(LocalDate.of(2026, 1, 1)));
         substitution.setDateEnd(toDate(LocalDate.of(2026, 6, 30)));
         substitution.setNotes("Substitution de prueba");
@@ -75,8 +75,8 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
         Substitution saved = substitutionRepository.save(substitution);
 
         assertThat(saved.getIdSubstitution()).isNotNull();
-        assertThat(saved.getFkIdSubstitute().getPersonId()).isEqualTo(suplente.getPersonId());
-        assertThat(saved.getFkIdSubstituted().getPersonId()).isEqualTo(suplantado.getPersonId());
+        assertThat(saved.getFkIdSubstitute().getPersonId()).isEqualTo(substitute.getPersonId());
+        assertThat(saved.getFkIdSubstituted().getPersonId()).isEqualTo(substituted.getPersonId());
         assertThat(saved.getNotes()).isEqualTo("Substitution de prueba");
     }
 
@@ -84,8 +84,8 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should retrieve substitution by ID")
     void shouldRetrieveSubstitutionById() {
         Substitution substitution = new Substitution();
-        substitution.setFkIdSubstitute(suplente);
-        substitution.setFkIdSubstituted(suplantado);
+        substitution.setFkIdSubstitute(substitute);
+        substitution.setFkIdSubstituted(substituted);
         substitution.setDateStart(toDate(LocalDate.of(2026, 3, 1)));
         substitution.setDateEnd(toDate(LocalDate.of(2026, 9, 30)));
         Substitution saved = substitutionRepository.save(substitution);
@@ -100,8 +100,8 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should find all substitutions")
     void shouldFindAllSubstitutions() {
         Substitution substitution = new Substitution();
-        substitution.setFkIdSubstitute(suplente);
-        substitution.setFkIdSubstituted(suplantado);
+        substitution.setFkIdSubstitute(substitute);
+        substitution.setFkIdSubstituted(substituted);
         substitution.setDateStart(toDate(LocalDate.of(2026, 1, 15)));
         substitution.setDateEnd(toDate(LocalDate.of(2026, 12, 15)));
         substitutionRepository.save(substitution);
@@ -115,8 +115,8 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should update substitution")
     void shouldUpdateSubstitution() {
         Substitution substitution = new Substitution();
-        substitution.setFkIdSubstitute(suplente);
-        substitution.setFkIdSubstituted(suplantado);
+        substitution.setFkIdSubstitute(substitute);
+        substitution.setFkIdSubstituted(substituted);
         substitution.setDateStart(toDate(LocalDate.of(2026, 2, 1)));
         substitution.setDateEnd(toDate(LocalDate.of(2026, 2, 28)));
         Substitution saved = substitutionRepository.save(substitution);
@@ -135,8 +135,8 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should delete substitution")
     void shouldDeleteSubstitution() {
         Substitution substitution = new Substitution();
-        substitution.setFkIdSubstitute(suplente);
-        substitution.setFkIdSubstituted(suplantado);
+        substitution.setFkIdSubstitute(substitute);
+        substitution.setFkIdSubstituted(substituted);
         substitution.setDateStart(toDate(LocalDate.of(2026, 4, 1)));
         substitution.setDateEnd(toDate(LocalDate.of(2026, 4, 30)));
         Substitution saved = substitutionRepository.save(substitution);
@@ -152,8 +152,8 @@ class SubstitutionRepositoryIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("Should handle null notes")
     void shouldHandleNullNotes() {
         Substitution substitution = new Substitution();
-        substitution.setFkIdSubstitute(suplente);
-        substitution.setFkIdSubstituted(suplantado);
+        substitution.setFkIdSubstitute(substitute);
+        substitution.setFkIdSubstituted(substituted);
         substitution.setDateStart(toDate(LocalDate.of(2026, 5, 1)));
         substitution.setDateEnd(toDate(LocalDate.of(2026, 5, 31)));
         substitution.setNotes(null);

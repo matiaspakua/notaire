@@ -280,7 +280,7 @@ class RemainingControllersIntegrationTest {
 
         @Test
         @DisplayName("CU39 - Should return all budget templates")
-        void shouldReturnAllPlantillasBudget() throws Exception {
+        void shouldReturnAllBudgetTemplates() throws Exception {
             mockMvc.perform(get("/api/v1/budget-templates"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -308,7 +308,7 @@ class RemainingControllersIntegrationTest {
 
         @Test
         @DisplayName("Should return all procedure templates")
-        void shouldReturnAllPlantillasProcedure() throws Exception {
+        void shouldReturnAllProcedureTemplates() throws Exception {
             mockMvc.perform(get("/api/v1/procedure-templates"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))

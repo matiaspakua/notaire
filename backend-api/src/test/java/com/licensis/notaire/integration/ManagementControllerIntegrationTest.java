@@ -246,7 +246,7 @@ class ManagementControllerIntegrationTest {
 
     @Test
     @DisplayName("Should redirect a management to the substitute when the requested notary has an active substitution")
-    void shouldRedirectToSuplenteWhenUpdatingManagementNotary() throws Exception {
+    void shouldRedirectToSubstituteWhenUpdatingManagementNotary() throws Exception {
         Integer clientId = createPerson("42000016");
         Integer notaryId = createPerson("42000017");
         Integer substituteId = createPerson("42000018");

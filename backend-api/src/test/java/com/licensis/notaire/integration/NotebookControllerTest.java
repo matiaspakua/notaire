@@ -152,7 +152,7 @@ class NotebookControllerTest {
 
     @Test
     @DisplayName("Should generate cover for an existing notebook")
-    void shouldGenerateCaratulaForExistingNotebook() throws Exception {
+    void shouldGenerateCoverForExistingNotebook() throws Exception {
         List<Integer> ids = createFolios(10, "New");
         MvcResult creado = mockMvc.perform(post("/api/v1/notebooks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -171,7 +171,7 @@ class NotebookControllerTest {
 
     @Test
     @DisplayName("Should return 404 for cover of a missing notebook")
-    void shouldReturnNotFoundForMissingNotebookCaratula() throws Exception {
+    void shouldReturnNotFoundForMissingNotebookCover() throws Exception {
         mockMvc.perform(get("/api/v1/notebooks/999999/cover"))
                 .andExpect(status().isNotFound());
     }

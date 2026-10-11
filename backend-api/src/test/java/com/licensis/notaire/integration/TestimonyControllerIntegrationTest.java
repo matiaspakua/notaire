@@ -89,7 +89,7 @@ class TestimonyControllerIntegrationTest {
 
     @Test
     @DisplayName("CU07 - Should return 200 and an empty array when no testimonies exist")
-    void shouldReturnEmptyListWhenNoTestimonios() throws Exception {
+    void shouldReturnEmptyListWhenNoTestimonies() throws Exception {
         mockMvc.perform(get("/api/v1/testimonies"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());

@@ -246,7 +246,7 @@ class CatalogControllersIntegrationTest {
 
         @Test
         @DisplayName("CU07 - Should return 200 and an empty list when no testimonies exist")
-        void shouldReturnEmptyListOfTestimonios() throws Exception {
+        void shouldReturnEmptyListOfTestimonies() throws Exception {
             mockMvc.perform(get("/api/v1/testimonies"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))

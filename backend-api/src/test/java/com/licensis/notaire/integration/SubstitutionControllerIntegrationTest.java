@@ -51,12 +51,12 @@ class SubstitutionControllerIntegrationTest {
 
     private Integer createSubstitution() throws Exception {
         long suffix = System.nanoTime() % 100000;
-        Integer suplente = createPerson("Suplente IT", "410" + suffix);
-        Integer suplantado = createPerson("Suplantado IT", "411" + suffix);
+        Integer substitute = createPerson("Suplente IT", "410" + suffix);
+        Integer substituted = createPerson("Suplantado IT", "411" + suffix);
         String body = """
                 {"dateStart": "2026-01-01", "dateEnd": "2026-01-31",
                  "substitutePersonId": %d, "substitutedPersonId": %d}
-                """.formatted(suplente, suplantado);
+                """.formatted(substitute, substituted);
         MvcResult result = mockMvc.perform(post("/api/v1/substitutions")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))

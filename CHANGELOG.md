@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English test identifiers for templates, substitutions, and properties** (#1490, CU75):
+  Java test locals and method names use template, substitute, property, budget,
+  procedure, and amount. Fixture notes asserted by those tests use the same
+  English words. The named-query hygiene method name stays. Stored samples such
+  as `Protocolo Auxiliar` stay.
 - **English payment wording and protocol locals** (#1490, CU75):
   Payment logs, comments, and test titles say pending balance and amount.
   Protocol pages use `notebooks`, `availableFolios`, and `deedBody`. Query

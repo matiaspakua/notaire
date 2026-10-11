@@ -57,7 +57,7 @@ class FlywaySchemaValidationIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("Should return 200 for GET /api/v1/testimonies against the Flyway schema")
-    void shouldListTestimoniosWhenSchemaMatchesEntities() throws Exception {
+    void shouldListTestimoniesWhenSchemaMatchesEntities() throws Exception {
         mockMvc.perform(get("/api/v1/testimonies")).andExpect(status().isOk());
     }
 

@@ -144,13 +144,13 @@ class BusinessWorkflowIntegrationTest {
     // ──────────────────────────────────────────────
 
     @Nested
-    @DisplayName("CU02/CU13 — Ciclo of vida of a management")
+    @DisplayName("CU02/CU13 — Lifecycle of a management")
     class ManagementsWorkflow {
 
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/managements returns array")
-        void getAllGestionesReturnsArray() throws Exception {
+        void getAllManagementsReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/managements"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray());
@@ -176,7 +176,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(3)
         @DisplayName("CU19 — GET managements by client returns array")
-        void getGestionesByClientReturnsArray() throws Exception {
+        void getManagementsByClientReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/managements/client/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -203,7 +203,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/budgets returns array")
-        void getAllPresupuestosReturnsArray() throws Exception {
+        void getAllBudgetsReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/budgets"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray());
@@ -318,7 +318,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/deeds returns array")
-        void getAllEscriturasReturnsArray() throws Exception {
+        void getAllDeedsReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/deeds"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray());
@@ -513,12 +513,12 @@ class BusinessWorkflowIntegrationTest {
     @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @DisplayName("CU39/CU49/CU55 — Budget templates")
-    class PlantillasWorkflow {
+    class TemplatesWorkflow {
 
         @Test
         @Order(1)
         @DisplayName("GET /api/v1/budget-templates returns array")
-        void getAllPlantillasReturnsArray() throws Exception {
+        void getAllTemplatesReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/budget-templates"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -527,7 +527,7 @@ class BusinessWorkflowIntegrationTest {
         @Test
         @Order(2)
         @DisplayName("GET budget templates by procedure type returns an array")
-        void getPlantillasByTypeProcedureReturnsArray() throws Exception {
+        void getTemplatesByProcedureTypeReturnsArray() throws Exception {
             mockMvc.perform(get("/api/v1/budget-templates/procedure-types/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());

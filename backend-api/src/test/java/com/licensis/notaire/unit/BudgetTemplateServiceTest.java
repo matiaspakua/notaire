@@ -86,7 +86,7 @@ class BudgetTemplateServiceTest {
 
         List<Item> items = budgetTemplateService.loadItemsFromTemplate(1, 5);
 
-        // The item copied the concept's value at load time; changing the plantilla's
+        // The item copied the concept's value at load time; changing the template's
         // concept afterwards must not retroactively change the already-loaded item.
         template.getConcept().setValue(new java.math.BigDecimal("9999"));
 

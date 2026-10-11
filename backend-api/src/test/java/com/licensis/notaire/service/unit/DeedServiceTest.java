@@ -90,10 +90,10 @@ class DeedServiceTest {
     @Test
     @DisplayName("Should find all deeds")
     void shouldFindAll() {
-        List<Deed> escrituras = new ArrayList<>();
-        escrituras.add(testDeed);
+        List<Deed> deeds = new ArrayList<>();
+        deeds.add(testDeed);
 
-        when(deedRepository.findAll()).thenReturn(escrituras);
+        when(deedRepository.findAll()).thenReturn(deeds);
 
         List<Deed> result = deedService.findAll();
 
@@ -286,10 +286,10 @@ class DeedServiceTest {
     @Test
     @DisplayName("Should return all deeds when number is null")
     void shouldReturnAllDeedsWhenNumberIsNull() {
-        List<Deed> escrituras = new ArrayList<>();
-        escrituras.add(testDeed);
+        List<Deed> deeds = new ArrayList<>();
+        deeds.add(testDeed);
 
-        when(deedRepository.findAll()).thenReturn(escrituras);
+        when(deedRepository.findAll()).thenReturn(deeds);
 
         List<Deed> result = deedService.searchByNumber(null);
 

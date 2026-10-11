@@ -81,7 +81,7 @@ class BudgetTemplateSerializationIntegrationTest {
 
     @Test
     @DisplayName("Should serialize the budget-template list as valid JSON without recursion")
-    void shouldListPlantillasWithoutCyclicRecursion() throws Exception {
+    void shouldListTemplatesWithoutCyclicRecursion() throws Exception {
         Integer conceptId = createConcept();
         Integer typeProcedureId = createTypeProcedure();
         createTemplate(typeProcedureId, conceptId);
@@ -100,7 +100,7 @@ class BudgetTemplateSerializationIntegrationTest {
                 break;
             }
         }
-        assertThat(template).as("created plantilla should be in the list").isNotNull();
+        assertThat(template).as("created template should be in the list").isNotNull();
         assertThat(template.has("concept"))
                 .as("DTO response must not embed concept entity graph")
                 .isFalse();

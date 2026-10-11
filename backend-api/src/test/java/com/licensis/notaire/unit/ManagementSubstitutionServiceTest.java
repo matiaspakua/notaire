@@ -73,7 +73,7 @@ class ManagementSubstitutionServiceTest {
 
     @Test
     @DisplayName("Should assign substitute when notary has an active substitution")
-    void shouldAssignSuplenteWhenNotaryHasActiveSubstitution() {
+    void shouldAssignSubstituteWhenNotaryHasActiveSubstitution() {
         Substitution activeSubstitution = new Substitution(1, managementDate, managementDate);
         activeSubstitution.setFkIdSubstituted(requestedNotary);
         activeSubstitution.setFkIdSubstitute(substitute);

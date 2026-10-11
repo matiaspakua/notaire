@@ -148,7 +148,7 @@ class EdgeCaseBoundaryConditionsTest {
 
         @Test
         @DisplayName("GET managements returns 200 with paginated content array")
-        void getGestionesReturns200WithArray() throws Exception {
+        void getManagementsReturns200WithArray() throws Exception {
             mockMvc.perform(get("/api/v1/managements"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray());
@@ -156,7 +156,7 @@ class EdgeCaseBoundaryConditionsTest {
 
         @Test
         @DisplayName("GET deeds returns 200 with paginated content array")
-        void getEscriturasReturns200WithArray() throws Exception {
+        void getDeedsReturns200WithArray() throws Exception {
             mockMvc.perform(get("/api/v1/deeds"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray());

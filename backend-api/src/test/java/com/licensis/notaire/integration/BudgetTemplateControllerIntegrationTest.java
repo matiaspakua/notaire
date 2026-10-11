@@ -82,7 +82,7 @@ class BudgetTemplateControllerIntegrationTest {
 
     private ProcedureType createProcedureTypeConTemplate(String nameConcept, java.math.BigDecimal value, int percentage) {
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo Procedure Plantilla IT " + System.nanoTime());
+        procedureType.setName("Procedure template IT " + System.nanoTime());
         procedureTypeRepository.save(procedureType);
 
         Concept concept = new Concept();
@@ -122,12 +122,12 @@ class BudgetTemplateControllerIntegrationTest {
         Integer clientId = createPerson();
         Integer budgetId = createBudget(clientId);
 
-        ProcedureType typeSinTemplate = new ProcedureType();
-        typeSinTemplate.setName("Tipo Sin Plantilla IT " + System.nanoTime());
-        procedureTypeRepository.save(typeSinTemplate);
+        ProcedureType typeWithoutTemplate = new ProcedureType();
+        typeWithoutTemplate.setName("Procedure type without template IT " + System.nanoTime());
+        procedureTypeRepository.save(typeWithoutTemplate);
 
         mockMvc.perform(post("/api/v1/budgets/" + budgetId + "/items-from-template")
-                        .param("procedureTypeId", typeSinTemplate.getIdProcedureType().toString()))
+                        .param("procedureTypeId", typeWithoutTemplate.getIdProcedureType().toString()))
                 .andExpect(status().isBadRequest());
     }
 
