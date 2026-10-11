@@ -22,7 +22,7 @@
 
 These endpoints are actively called by the Next.js frontend:
 
-### ConceptoController
+### ConceptController
 - `GET /api/v1/concepts`
 - `GET /api/v1/concepts/search`
 - `GET /api/v1/concepts/{id}/in-use`
@@ -30,19 +30,19 @@ These endpoints are actively called by the Next.js frontend:
 - `PUT /api/v1/concepts/{id}`
 - `DELETE /api/v1/concepts/{id}`
 
-### CopiaController
+### CopyController
 - `GET /api/v1/copies`
 - `POST /api/v1/copies`
 - `PUT /api/v1/copies/{id}`
 - `DELETE /api/v1/copies/{id}`
 
-### DocumentoPresentadoController
+### SubmittedDocumentController
 - `GET /api/v1/submitted-documents`
 - `POST /api/v1/submitted-documents`
 - `PUT /api/v1/submitted-documents/{id}`
 - `DELETE /api/v1/submitted-documents/{id}`
 
-### EscrituraController
+### DeedController
 - `GET /api/v1/deeds`
 - `POST /api/v1/deeds`
 - `PUT /api/v1/deeds/{id}`
@@ -50,7 +50,7 @@ These endpoints are actively called by the Next.js frontend:
 - `GET /api/v1/deeds/available-notaries`
 - `GET /api/v1/deeds/search`
 
-### EstadoDeGestionController
+### ManagementStatusController
 - `GET /api/v1/management-statuses`
 - `GET /api/v1/management-statuses/search`
 - `GET /api/v1/management-statuses/{id}/in-use`
@@ -65,11 +65,11 @@ These endpoints are actively called by the Next.js frontend:
 - `PUT /api/v1/folios/{id}`
 - `DELETE /api/v1/folios/{id}`
 
-### GestionController
+### ManagementController
 - `POST /api/v1/managements/complete-case` — CU02; initial status must be a workflow start node when a definition exists (#804)
 - `GET /api/v1/managements`
-- `GET /api/v1/managements/number/{numero}`
-- `GET /api/v1/managements/client/{idPersona}`
+- `GET /api/v1/managements/number/{number}`
+- `GET /api/v1/managements/client/{idPerson}`
 - `POST /api/v1/managements`
 - `PUT /api/v1/managements/{id}` — CU53; **BREAKING (#804):** changing `managementStatusId` → 400; use `POST /{id}/transition`
 - `PUT /api/v1/managements/{id}/complete-case` — **BREAKING (#804):** changing `statusManagementId` → 400; use `POST /{id}/transition`
@@ -81,7 +81,7 @@ These endpoints are actively called by the Next.js frontend:
 - `GET /api/v1/managements/{id}/document-reentry` — `useDocumentReentry.ts`, CU43 `document-reentry` screen (#865)
 - `POST /api/v1/managements/{id}/document-reentry` — `useDocumentReentry.ts`, CU43 `document-reentry` screen (#865)
 
-### InmuebleController
+### PropertyController
 - `GET /api/v1/properties`
 - `POST /api/v1/properties`
 - `PUT /api/v1/properties/{id}`
@@ -93,51 +93,51 @@ These endpoints are actively called by the Next.js frontend:
 - `PUT /api/v1/items/{id}`
 - `DELETE /api/v1/items/{id}`
 
-### RegistrationDraftController (Minutas de Inscripción)
+### RegistrationDraftController
 - `GET /api/v1/registration-drafts/{id}`
 - `POST /api/v1/registration-drafts` — `201 Created` + `Location: /api/v1/registration-drafts/{id}` (ADR-023 / #1065)
 - `PUT /api/v1/registration-drafts/{id}/submit`
 - `PUT /api/v1/registration-drafts/{id}/observe`
 - `PUT /api/v1/registration-drafts/{id}/register`
 
-### PagoController / PaymentController
+### PaymentController
 - `GET /api/v1/payments`
 - `POST /api/v1/payments` — `201 Created` + `Location` (ADR-023 / #1065); `/payments/params` removed
 - `PUT /api/v1/payments/{id}`
 - `DELETE /api/v1/payments/{id}`
 
-### PersonaController
+### PersonController
 - `GET /api/v1/people`
 - `POST /api/v1/people`
 - `PUT /api/v1/people/{id}`
 - `DELETE /api/v1/people/{id}`
 - `GET /api/v1/people/search`
 
-### PlantillaPresupuestoController
+### BudgetTemplateController
 - `GET /api/v1/budget-templates`
 - `POST /api/v1/budget-templates`
-- `PUT /api/v1/budget-templates/procedure-types/{idTipoTramite}/concept/{idConcepto}`
-- `DELETE /api/v1/budget-templates/procedure-types/{idTipoTramite}/concept/{idConcepto}`
+- `PUT /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}`
+- `DELETE /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept}`
 
-### PlantillaTramiteController
-- `GET /api/v1/procedure-templates/procedure-types/{idTipoTramite}` — `useProcedureTemplate.ts`, CU03 `documentos-necesarios` screen (#860)
+### ProcedureTemplateController
+- `GET /api/v1/procedure-templates/procedure-types/{idProcedureType}` — `useProcedureTemplate.ts`, CU03 `required-documents` screen (#860)
 
-### PresupuestoController
+### BudgetController
 - `GET /api/v1/budgets`
 - `GET /api/v1/budgets/search`
 - `POST /api/v1/budgets`
 - `PUT /api/v1/budgets/{id}`
 - `DELETE /api/v1/budgets/{id}`
 
-### RegistroAuditoriaController
-- `GET /api/v1/registro-auditoria`
-- `GET /api/v1/registro-auditoria/user/{idUsuario}`
+### AuditRecordController
+- `GET /api/v1/audit-log`
+- `GET /api/v1/audit-log/user/{idUser}`
 
-### ReporteController
-- `GET /api/v1/reports/budget/{idPresupuesto}`
-- `GET /api/v1/reports/budget-properties/{idPresupuesto}`
+### ReportController
+- `GET /api/v1/reports/budget/{idBudget}`
+- `GET /api/v1/reports/budget-properties/{idBudget}`
 - `GET /api/v1/reports/procedure-document-list`
-- `GET /api/v1/reports/management-history/{idGestion}`
+- `GET /api/v1/reports/management-history/{idManagement}`
 - `GET /api/v1/reports/document-debt`
 - `GET /api/v1/reports/index-book`
 - `GET /api/v1/reports/monthly-sworn-statement`
@@ -148,16 +148,16 @@ These endpoints are actively called by the Next.js frontend:
 - `POST /api/v1/roles`
 - `PUT /api/v1/roles/{id}`
 - `DELETE /api/v1/roles/{id}`
-- `PUT /api/v1/roles/{idRol}/users/{idUsuario}`
-- `DELETE /api/v1/roles/users/{idUsuario}`
+- `PUT /api/v1/roles/{idRole}/users/{idUser}`
+- `DELETE /api/v1/roles/users/{idUser}`
 
-### SuplenciaController
+### SubstitutionController
 - `GET /api/v1/substitutions`
 - `POST /api/v1/substitutions`
 - `PUT /api/v1/substitutions/{id}`
 - `DELETE /api/v1/substitutions/{id}`
 
-### TipoDeDocumentoController
+### DocumentTypeController
 - `GET /api/v1/document-types`
 - `GET /api/v1/document-types/search`
 - `GET /api/v1/document-types/{id}/in-use`
@@ -165,7 +165,7 @@ These endpoints are actively called by the Next.js frontend:
 - `PUT /api/v1/document-types/{id}`
 - `DELETE /api/v1/document-types/{id}`
 
-### TipoDeFolioController
+### FolioTypeController
 - `GET /api/v1/folio-types`
 - `GET /api/v1/folio-types/search`
 - `GET /api/v1/folio-types/{id}/in-use`
@@ -173,7 +173,7 @@ These endpoints are actively called by the Next.js frontend:
 - `PUT /api/v1/folio-types/{id}`
 - `DELETE /api/v1/folio-types/{id}`
 
-### TipoDeTramiteController
+### ProcedureTypeController
 - `GET /api/v1/procedure-types`
 - `GET /api/v1/procedure-types/search`
 - `GET /api/v1/procedure-types/{id}/in-use`
@@ -182,7 +182,7 @@ These endpoints are actively called by the Next.js frontend:
 - `DELETE /api/v1/procedure-types/{id}`
 - `PUT /api/v1/procedure-types/{id}/workflow`
 
-### UsuarioController
+### UserController
 - `GET /api/v1/users`
 - `POST /api/v1/users`
 - `PUT /api/v1/users/{id}`
@@ -215,122 +215,122 @@ These endpoints are actively called by the Next.js frontend:
 
 Not reached by any current frontend call site. May be used by reports, background jobs, other internal callers, tests, or reserved for future UI work.
 
-### ConceptoController
+### ConceptController
 - `GET /api/v1/concepts/{id}`
 
-### CopiaController
+### CopyController
 - `GET /api/v1/copies/{id}`
 
-### DocumentoPresentadoController
+### SubmittedDocumentController
 - `GET /api/v1/submitted-documents/{id}`
 
-### EscrituraController
+### DeedController
 - `GET /api/v1/deeds/{id}`
 
-### EstadoDeGestionController
+### ManagementStatusController
 - `GET /api/v1/management-statuses/{id}`
 
 ### FolioController
 - `GET /api/v1/folios/{id}/in-use`
 - `GET /api/v1/folios/{id}`
 
-### GestionController
-- `PUT /api/v1/managements/{id}/complete-case` — see primary GestionController list; status id changes rejected (#804)
+### ManagementController
+- `PUT /api/v1/managements/{id}/complete-case` — see primary ManagementController list; status id changes rejected (#804)
 - `GET /api/v1/managements/{id}`
 - `GET /api/v1/managements/{id}/current-status`
 
-### HistorialController
+### HistoryController
 - `GET /api/v1/history`
 - `GET /api/v1/history/{id}`
-- `GET /api/v1/history/management/{idGestion}`
+- `GET /api/v1/history/management/{idManagement}`
 - `POST /api/v1/history`
 - `PUT /api/v1/history/{id}`
 - `DELETE /api/v1/history/{id}`
 
-### InmuebleController
+### PropertyController
 - `GET /api/v1/properties/{id}`
 
 ### ItemController
 - `GET /api/v1/items/{id}`
-- `GET /api/v1/items/budget/{idPresupuesto}`
+- `GET /api/v1/items/budget/{idBudget}`
 
-### MovimientoTestimonioController
+### TestimonyMovementController
 - `GET /api/v1/testimony-movements`
 - `GET /api/v1/testimony-movements/{id}`
 - `POST /api/v1/testimony-movements`
 - `PUT /api/v1/testimony-movements/{id}`
 - `DELETE /api/v1/testimony-movements/{id}`
 
-### PagoController / PaymentController
+### PaymentController
 - `GET /api/v1/payments/{id}`
-- `GET /api/v1/payments/budget/{idPresupuesto}`
-- `GET /api/v1/payments/budget/{idPresupuesto}/balance`
+- `GET /api/v1/payments/budget/{idBudget}`
+- `GET /api/v1/payments/budget/{idBudget}/balance`
 - `GET /api/v1/payments/date`
 - `POST /api/v1/payments` — `201 Created` + `Location: /api/v1/payments/{id}` (ADR-023 / #1065)
 - ~~`POST /api/v1/payments/params`~~ — **removed** (unused; #1065)
 
-### PersonaController
+### PersonController
 - `GET /api/v1/people/{id}`
 
-### PlantillaPresupuestoController
-- `GET /api/v1/budget-templates/procedure-types/{idTipoTramite}`
+### BudgetTemplateController
+- `GET /api/v1/budget-templates/procedure-types/{idProcedureType}`
 
-### PlantillaTramiteController
+### ProcedureTemplateController
 - `GET /api/v1/procedure-templates`
-- `GET /api/v1/procedure-templates/{idTipoTramite}/{idTipoDocumento}`
+- `GET /api/v1/procedure-templates/{idProcedureType}/{idDocumentType}`
 - `POST /api/v1/procedure-templates`
-- `PUT /api/v1/procedure-templates/{idTipoTramite}/{idTipoDocumento}`
-- `DELETE /api/v1/procedure-templates/{idTipoTramite}/{idTipoDocumento}`
+- `PUT /api/v1/procedure-templates/{idProcedureType}/{idDocumentType}`
+- `DELETE /api/v1/procedure-templates/{idProcedureType}/{idDocumentType}`
 
-### PresupuestoController
+### BudgetController
 - `GET /api/v1/budgets/{id}`
-- `GET /api/v1/budgets/person/{idPersona}`
+- `GET /api/v1/budgets/person/{idPerson}`
 
-### RegistroAuditoriaController
-- `GET /api/v1/registro-auditoria/{id}`
-- `POST /api/v1/registro-auditoria`
+### AuditRecordController
+- `GET /api/v1/audit-log/{id}`
+- `POST /api/v1/audit-log`
 
-### ReporteController
+### ReportController
 - `GET /api/v1/reports/documents-due/{idDocumentoPresentado}`
 
 ### RolController
 - `GET /api/v1/roles/{id}`
 
-### SuplenciaController
+### SubstitutionController
 - `GET /api/v1/substitutions/{id}`
 
-### TestimonioController
+### TestimonyController
 - `GET /api/v1/testimonies`
 - `GET /api/v1/testimonies/{id}`
 - `POST /api/v1/testimonies`
 - `PUT /api/v1/testimonies/{id}`
 - `DELETE /api/v1/testimonies/{id}`
 
-### TipoDeDocumentoController
+### DocumentTypeController
 - `GET /api/v1/document-types/{id}`
 
-### TipoDeFolioController
+### FolioTypeController
 - `GET /api/v1/folio-types/{id}`
 
-### TipoDeTramiteController
+### ProcedureTypeController
 - `GET /api/v1/procedure-types/{id}`
 
-### TipoIdentificacionController
+### IdentificationTypeController
 - `GET /api/v1/identification-types`
 - `GET /api/v1/identification-types/{id}`
 - `POST /api/v1/identification-types`
 - `PUT /api/v1/identification-types/{id}`
 - `DELETE /api/v1/identification-types/{id}`
 
-### TramiteController
+### ProcedureController
 - `GET /api/v1/procedures`
 - `GET /api/v1/procedures/{id}`
 - `POST /api/v1/procedures`
 - `PUT /api/v1/procedures/{id}`
 - `DELETE /api/v1/procedures/{id}`
 
-### UsuarioController
-- `GET /api/v1/users/person/{idPersona}`
+### UserController
+- `GET /api/v1/users/person/{idPerson}`
 - `GET /api/v1/users/{id}`
 
 ### WorkflowDefinitionController
@@ -347,9 +347,9 @@ Not reached by any current frontend call site. May be used by reports, backgroun
 
 ## Notes
 
-- `RegistroAuditoriaController`: audit records are append-only, no DELETE endpoint exists by design (see issue #556).
-- `ReporteController` endpoints are consumed via `downloadPdf()` in `frontend/src/hooks/useReports.ts`, not the `apiGet`/`apiPost` wrapper family, since they return `application/pdf` rather than JSON.
-- `GET /api/v1/reports/documents-due/{idDocumentoPresentado}` is the one `ReporteController` endpoint with no frontend caller found.
+- `AuditRecordController`: audit records are append-only, no DELETE endpoint exists by design (see issue #556).
+- `ReportController` endpoints are consumed via `downloadPdf()` in `frontend/src/hooks/useReports.ts`, not the `apiGet`/`apiPost` wrapper family, since they return `application/pdf` rather than JSON.
+- `GET /api/v1/reports/documents-due/{idDocumentoPresentado}` is the one `ReportController` endpoint with no frontend caller found.
 
 ### Ongoing Maintenance
 - Update registry when a new endpoint is added.

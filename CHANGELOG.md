@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English endpoint registry and API test guide** (#1490, CU75):
+  The REST endpoint registry names the current controllers (`DeedController`,
+  `ManagementController`, `AuditRecordController`) and the current path
+  parameters. The manual API guide uses English and the `audit-log` path.
+  Archived change folders stay historical.
 - **English Playwright titles and remaining API descriptions** (#1490, CU75):
   Playwright suite and test titles use English. Payment date parameters are
   start date and end date. A verified testimony and the cadastral designation
