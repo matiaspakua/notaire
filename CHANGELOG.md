@@ -22,6 +22,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Breaking
+
+- **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
+  public resources move to English segments (`POST /api/v1/users/login`, `/api/v1/managements`,
+  `/dashboard/people`, and the rest of the former Spanish paths). There is no Spanish alias.
+  Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
+  `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
+  `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
+  `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
+  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
+  notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
+  `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
+  `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
+  (`managementHeading` on budget summaries). Upcoming expirations take the query
+  parameter `days`. Management summaries and workflow traces use the JSON
+  field `currentStatus`. The current-status read operation id is
+  `getCurrentStatus`. `R45` reverses the schema
+  renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
+- **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
+  public resources move to English segments (`POST /api/v1/users/login`, `/api/v1/managements`,
+  `/dashboard/people`, and the rest of the former Spanish paths). There is no Spanish alias.
+  Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
+  `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
+  `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
+  `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
+  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
+  notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
+  `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
+  `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
+  (`managementHeading` on budget summaries). Upcoming expirations take the query
+  parameter `days`. Management summaries and workflow traces use the JSON
+  field `currentStatus`. The current-status read operation id is
+  `getCurrentStatus`. `R45` reverses the schema
+  renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
+
+
+
 ### Changed
 
 - **Testing process architecture (MTP + living inventory)** (#1511, CU76):
@@ -1127,41 +1164,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-### Breaking
-
-- **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
-  public resources move to English segments (`POST /api/v1/users/login`, `/api/v1/managements`,
-  `/dashboard/people`, and the rest of the former Spanish paths). There is no Spanish alias.
-  Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
-  `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
-  `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
-  `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
-  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
-  notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
-  `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
-  `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
-  (`managementHeading` on budget summaries). Upcoming expirations take the query
-  parameter `days`. Management summaries and workflow traces use the JSON
-  field `currentStatus`. The current-status read operation id is
-  `getCurrentStatus`. `R45` reverses the schema
-  renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
-- **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
-  public resources move to English segments (`POST /api/v1/users/login`, `/api/v1/managements`,
-  `/dashboard/people`, and the rest of the former Spanish paths). There is no Spanish alias.
-  Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
-  `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
-  `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
-  `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
-  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
-  notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
-  `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
-  `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
-  (`managementHeading` on budget summaries). Upcoming expirations take the query
-  parameter `days`. Management summaries and workflow traces use the JSON
-  field `currentStatus`. The current-status read operation id is
-  `getCurrentStatus`. `R45` reverses the schema
-  renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
-
 
 ### Fixed
 
@@ -1698,6 +1700,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Deeds are chosen with a searchable picker instead of the first 1000 (slice 8b of #1340)** (issue #1340, CU07/CU08/CU87): the testimony, registration-draft and folio forms read `GET /escrituras?size=1000` and kept the signed deeds in the browser, so once the deeds table passes 1000 rows a newly signed deed could not be chosen. A new `DeedPicker` (shared `SearchCombobox`) lists the 20 newest signed deeds on open (`GET /escrituras?status=Firmada`, #1476), finds any signed deed by number (`GET /escrituras/buscar`) and loads the current deed by id; unsigned deeds are never offered. The folio form still hides a deed already linked to another folio. `useEscrituras()`, the unused `usePersonas()` and the size=1000 helper `apiGetPaged` are removed, and a guard test fails if a source asks for a whole table again. `deed-picker.test.tsx`, `no-whole-table-loads.test.ts` and Playwright `TS-0123` cover it.
 
 
+
 ### Added
 
 - **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
@@ -2081,10 +2084,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **One status badge on every status column** (issue #1366, RF-23, RNF-09): budgets, cases and testimonies showed status as plain text, folios the raw stored value, and protocol and users ad-hoc badges where color was the only difference. New `components/shared/StatusBadge.tsx` with `lib/status-maps.ts` maps a domain (`budget`, `management`, `testimony`, `folio`, `availability`, `user`) and a stored value to a tone (neutral, info, success, warning, danger), a decorative lucide icon and a text label, so no status relies on color alone (WCAG 1.4.1). Budget labels reuse `presupuestos.status.*` (#1346); management statuses keep their catalog name and only the seeded names get a tone; folio labels are new (`status.folio.*`, es/en); a value outside a vocabulary shows as stored in a neutral badge, an empty one as a dash. Wired on presupuestos, gestiones, testimonios, protocolo, administracion/usuarios and administracion/folios. Vitest `status-badge.test.tsx` and Playwright `TS-0124` cover it.
 
 
+
 ### Deprecated
 
 - `init-db/01-schema.sql` - Superseded by Flyway migration
 - `init-db/02-data.sql` - Superseded by Flyway migration
+
 
 
 ### Removed
@@ -2105,6 +2110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING — unused payment params create** (issue #1065, CU76):
   `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
   `POST /api/v1/pagos` (JSON body).
+
 
 
 ### Security
@@ -2183,6 +2189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `spring.security.user.*` keys (`admin`/`admin`) from `application.properties`
   and deleted the legacy Swing-era `config.properties` (plain-text database
   credentials) that no code read. Actuator auth is unchanged (#1069)
+
 
 
 ## [1.0.0-SNAPSHOT] - 2026-04-14
