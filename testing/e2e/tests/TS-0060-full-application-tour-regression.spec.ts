@@ -195,7 +195,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
       await pause(page, 400);
     });
 
-    await test.step("Filter by estado", async () => {
+    await test.step("Filter by status", async () => {
       const trigger = page.getByTestId("select-status");
       await trigger.click();
       await pause(page, 400);
@@ -223,7 +223,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
       await assertTableVisible(page);
     });
 
-    await test.step("Search by nombre", async () => {
+    await test.step("Search by first name", async () => {
       await page.getByTestId("input-search-firstName").fill("Juan");
       await pause(page, PAUSE);
       await page.getByTestId("input-search-firstName").clear();

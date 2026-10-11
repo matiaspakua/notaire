@@ -88,15 +88,15 @@ test.describe("Workflow hero shows the newest case (#1347)", () => {
     const budget = await createBudget(page, person.data!.personId);
     expect(budget.ok, budget.error).toBe(true);
     // A self-contained one-node workflow, so the new case is traceable on any database.
-    const estado = await createManagementStatus(page);
+    const status = await createManagementStatus(page);
     const workflow = await createWorkflowDefinition(page);
-    await createWorkflowNode(page, workflow.data!.id, estado.data!.idManagementStatus, "INITIAL");
-    const tipo = await createProcedureType(page);
-    await assignWorkflowToProcedureType(page, tipo.data!.idProcedureType, workflow.data!.id);
+    await createWorkflowNode(page, workflow.data!.id, status.data!.idManagementStatus, "INITIAL");
+    const procedureType = await createProcedureType(page);
+    await assignWorkflowToProcedureType(page, procedureType.data!.idProcedureType, workflow.data!.id);
     const management = await createCompleteCaseManagement(page, {
       budgetId: budget.data!.idBudget,
-      procedureTypeId: tipo.data!.idProcedureType,
-      statusManagementId: estado.data!.idManagementStatus,
+      procedureTypeId: procedureType.data!.idProcedureType,
+      statusManagementId: status.data!.idManagementStatus,
     });
     expect(management.ok, management.error).toBe(true);
     const trace = await apiGet(page, `/managements/${management.data!.idManagement}/workflow-trace`);

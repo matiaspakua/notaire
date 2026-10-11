@@ -61,12 +61,12 @@ async function seedArchivableManagement(page: Page) {
   );
   await createWorkflowTransition(page, workflowId, initialNode.data!.id, archivedNode.data!.id);
 
-  const typeProcedure = await createProcedureType(page);
-  await assignWorkflowToProcedureType(page, typeProcedure.data!.idProcedureType, workflowId);
+  const procedureType = await createProcedureType(page);
+  await assignWorkflowToProcedureType(page, procedureType.data!.idProcedureType, workflowId);
 
   const management = await createCompleteCaseManagement(page, {
     budgetId: budget.data!.idBudget,
-    procedureTypeId: typeProcedure.data!.idProcedureType,
+    procedureTypeId: procedureType.data!.idProcedureType,
     statusManagementId: initialStatus.data!.idManagementStatus,
   });
 

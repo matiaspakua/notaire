@@ -40,7 +40,7 @@ function AuditList() {
   const page = readInt(searchParams.get("page"), 0);
   const sizeParam = readInt(searchParams.get("size"), DEFAULT_SIZE);
   const size = (PAGE_SIZE_OPTIONS as readonly number[]).includes(sizeParam) ? sizeParam : DEFAULT_SIZE;
-  const moduloFilter = searchParams.get("module") ?? "all";
+  const moduleFilter = searchParams.get("module") ?? "all";
 
   function updateQuery(changes: Record<string, string | number | null>) {
     const next = new URLSearchParams(searchParams.toString());
@@ -55,13 +55,13 @@ function AuditList() {
   const { data, isLoading, isFetching } = useAudit({
     page,
     size,
-    module: moduloFilter === "all" ? undefined : moduloFilter,
+    module: moduleFilter === "all" ? undefined : moduleFilter,
   });
-  const registros = data?.content ?? [];
+  const records = data?.content ?? [];
   const [search, setSearch] = useState("");
 
   // Search narrows the rows of the current page only; the backend has no text filter.
-  const filtered = registros.filter((r) => {
+  const filtered = records.filter((r) => {
     return (
       !search ||
       r.operationDetail?.toLowerCase().includes(search.toLowerCase()) ||
@@ -137,9 +137,9 @@ function AuditList() {
           <Filter className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
           <select
             aria-label={t("moduleFilter")}
-            data-testid="select-modulo-auditoria"
+            data-testid="select-audit-module"
             className="h-12 rounded-lg border border-input bg-background px-4 text-sm text-foreground font-sans outline-none cursor-pointer focus:ring-2 focus:ring-ring"
-            value={moduloFilter}
+            value={moduleFilter}
             onChange={(e) => updateQuery({ module: e.target.value === "all" ? null : e.target.value, page: null })}
           >
             <option value="all">{t("allModules")}</option>

@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English audit and Playwright identifiers** (#1490, CU75):
+  The audit module filter is `moduleFilter` and its test id is
+  `select-audit-module`. Playwright uses the live ids `select-status-folio`,
+  `select-deed-testimony`, and `select-document-type`. Seed locals use
+  `procedureType`, `documentType`, and `status`. Stored labels such as
+  `Nuevo`, `Errose`, `Utilizado`, `Compraventa`, and `Honorarios` stay.
+  Default-locale labels such as `nuevo cuaderno` stay.
 - **English Java test identifiers** (#1490, CU75):
   External-entity, document-reentry, and management-transition tests use
   English method and variable names such as `createExternalEntityDocument`

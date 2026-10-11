@@ -33,12 +33,12 @@ async function pickFirstOption(page: Page) {
 }
 
 /** Open the "nuevo folio" modal and fill the required fields (número, tipo, notary) */
-async function openNewFolioAndFillRequired(page: Page, numberFolio: number) {
+async function openNewFolioAndFillRequired(page: Page, folioNumber: number) {
   await page.getByTestId('btn-new-folio').click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
 
-  await page.getByTestId('input-folio-number').fill(String(numberFolio))
+  await page.getByTestId('input-folio-number').fill(String(folioNumber))
   await page.getByTestId('select-folio-type').click()
   await pickFirstOption(page)
   await page.getByTestId('select-notary-folio').click()
@@ -56,12 +56,12 @@ test.describe('CU87 - Link a deed and a folio', () => {
     page,
   }) => {
     const { number } = await seedSignedDeed(page)
-    const numberFolio = Math.floor(10000 + Math.random() * 90000)
+    const folioNumber = Math.floor(10000 + Math.random() * 90000)
 
     await page.goto('/dashboard/administration/folios')
     await page.waitForLoadState('domcontentloaded')
 
-    const dialog = await openNewFolioAndFillRequired(page, numberFolio)
+    const dialog = await openNewFolioAndFillRequired(page, folioNumber)
 
     await page.getByTestId('select-deed-folio').click()
     const deedOption = page.getByRole('option', { name: `Deed Nº ${number}` })
@@ -75,7 +75,7 @@ test.describe('CU87 - Link a deed and a folio', () => {
 
     // Then: the new folio row shows status Utilizado and the linked deed number
     const table = page.getByRole('table')
-    const row = table.getByRole('row', { name: new RegExp(String(numberFolio)) })
+    const row = table.getByRole('row', { name: new RegExp(String(folioNumber)) })
     await expect(row).toBeVisible({ timeout: 10000 })
     await expect(row).toContainText(/Utilizado/i)
     await expect(row).toContainText(new RegExp(String(number)))
@@ -112,17 +112,17 @@ test.describe('CU87 - Link a deed and a folio', () => {
     await expect(dialog).not.toBeVisible({ timeout: 5000 })
   })
 
-  test('CU87-EDGE02: folio en estado Utilizado no puede editarse ni borrarse desde la grilla', async ({ page }) => {
+  test('CU87-EDGE02: a folio in status Utilizado cannot be edited or deleted from the grid', async ({ page }) => {
     const { idDeed } = await seedSignedDeed(page)
-    const numberFolio = Math.floor(10000 + Math.random() * 90000)
-    const linked = await createFolio(page, 1, { number: numberFolio, status: 'Nuevo', deedId: idDeed })
+    const folioNumber = Math.floor(10000 + Math.random() * 90000)
+    const linked = await createFolio(page, 1, { number: folioNumber, status: 'Nuevo', deedId: idDeed })
     if (!linked.ok) throw new Error(`Failed to seed linked folio: ${linked.error}`)
 
     await page.goto('/dashboard/administration/folios')
     await page.waitForLoadState('domcontentloaded')
 
     const table = page.getByRole('table')
-    const row = table.getByRole('row', { name: new RegExp(String(numberFolio)) })
+    const row = table.getByRole('row', { name: new RegExp(String(folioNumber)) })
     await expect(row).toBeVisible({ timeout: 10000 })
     await expect(row).toContainText(/Utilizado/i)
 
@@ -131,12 +131,12 @@ test.describe('CU87 - Link a deed and a folio', () => {
   })
 
   test('CU87-EDGE03: creating a folio without linking a deed still works (the field is optional)', async ({ page }) => {
-    const numberFolio = Math.floor(10000 + Math.random() * 90000)
+    const folioNumber = Math.floor(10000 + Math.random() * 90000)
 
     await page.goto('/dashboard/administration/folios')
     await page.waitForLoadState('domcontentloaded')
 
-    const dialog = await openNewFolioAndFillRequired(page, numberFolio)
+    const dialog = await openNewFolioAndFillRequired(page, folioNumber)
 
     // No deed selected — leave the picker at "Sin vincular"
     await dialog.getByRole('button', { name: /guardar/i }).click()
@@ -145,7 +145,7 @@ test.describe('CU87 - Link a deed and a folio', () => {
     await expect(page.locator('[data-sonner-toast]').getByText(/creado/i)).toBeVisible({ timeout: 5000 })
 
     const table = page.getByRole('table')
-    const row = table.getByRole('row', { name: new RegExp(String(numberFolio)) })
+    const row = table.getByRole('row', { name: new RegExp(String(folioNumber)) })
     await expect(row).toBeVisible({ timeout: 10000 })
     await expect(row).toContainText(/Nuevo/i)
   })

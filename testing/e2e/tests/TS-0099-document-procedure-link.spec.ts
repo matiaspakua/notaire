@@ -31,13 +31,13 @@ test.describe("#773 - Document linked to a procedure", () => {
       notaryPersonId: notary.data!.personId,
     });
     expect(management.ok, management.error ?? "create gestión failed").toBe(true);
-    const typeProcedure = await createProcedureType(page);
-    expect(typeProcedure.ok, typeProcedure.error ?? "createProcedureType failed").toBe(true);
-    const procedure = await createProcedure(page, management.data!.idManagement, typeProcedure.data!.idProcedureType);
+    const procedureType = await createProcedureType(page);
+    expect(procedureType.ok, procedureType.error ?? "createProcedureType failed").toBe(true);
+    const procedure = await createProcedure(page, management.data!.idManagement, procedureType.data!.idProcedureType);
     expect(procedure.ok, `createProcedure ${procedure.status}`).toBe(true);
     const typeName = `Certificado E2E ${uniqueId()}`;
-    const typeDocument = await createDocumentType(page, { name: typeName, expires: false });
-    expect(typeDocument.ok, typeDocument.error ?? "createDocumentType failed").toBe(true);
+    const documentType = await createDocumentType(page, { name: typeName, expires: false });
+    expect(documentType.ok, documentType.error ?? "createDocumentType failed").toBe(true);
 
     await page.goto("/dashboard/documents");
     await page.getByTestId("btn-new-document").click();

@@ -81,9 +81,9 @@ interface CaseDefinition {
   label: string;
   clientName: string;
   clientLastName: string;
-  typeProcedure: string;
+  procedureType: string;
   tipoFolio: string;
-  typeDocument: string;
+  documentType: string;
   propertyAddress: string;
   propertyCadastralDesignation: string;
   budgetAmount: string;
@@ -99,9 +99,9 @@ function buildCaseDefinition(label: "A" | "B", suffix: string): CaseDefinition {
     label,
     clientName: label === "A" ? "María" : "Carlos",
     clientLastName: `Demo${label} ${suffix}`,
-    typeProcedure: `Compraventa Demo ${label} ${suffix}`,
+    procedureType: `Compraventa Demo ${label} ${suffix}`,
     tipoFolio: `Protocolo Demo ${label} ${suffix}`,
-    typeDocument: `DNI Comprador Demo ${label} ${suffix}`,
+    documentType: `DNI Comprador Demo ${label} ${suffix}`,
     propertyAddress: `Av. Demo ${label} 1234, CABA ${suffix}`,
     propertyCadastralDesignation: `0${label === "A" ? "1" : "2"}-0${label === "A" ? "2" : "3"}-${suffix}`,
     budgetAmount: label === "A" ? "150000" : "220000",
@@ -117,19 +117,19 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   await test.step(`[Caso ${def.label}] Tipo de trámite`, async () => {
     await go(page, "/dashboard/administration/procedures");
     await page.getByTestId("btn-new-procedure-type").click();
-    await page.getByTestId("input-name-procedure").fill(def.typeProcedure);
+    await page.getByTestId("input-name-procedure").fill(def.procedureType);
     await saveDialog(page);
-    await page.getByTestId("input-search-procedure").fill(def.typeProcedure);
-    await expect(page.getByRole("table")).toContainText(def.typeProcedure);
+    await page.getByTestId("input-search-procedure").fill(def.procedureType);
+    await expect(page.getByRole("table")).toContainText(def.procedureType);
   });
 
   await test.step(`[Caso ${def.label}] Tipo de documento`, async () => {
     await go(page, "/dashboard/administration/documents");
     await page.getByTestId("btn-new-document-type").click();
-    await page.getByTestId("input-name-document").fill(def.typeDocument);
+    await page.getByTestId("input-name-document").fill(def.documentType);
     await saveDialog(page);
-    await page.getByTestId("input-search-document").fill(def.typeDocument);
-    await expect(page.getByRole("table")).toContainText(def.typeDocument);
+    await page.getByTestId("input-search-document").fill(def.documentType);
+    await expect(page.getByRole("table")).toContainText(def.documentType);
   });
 
   await test.step(`[Caso ${def.label}] Tipo de folio y folio`, async () => {
@@ -142,7 +142,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
 
     await page.getByTestId("btn-new-folio").click();
     await page.getByTestId("input-folio-number").fill(def.folioNumber);
-    await choose(page, "select-estado-folio", /nuevo/i);
+    await choose(page, "select-status-folio", /nuevo/i);
     await choose(page, "select-tipo-folio", new RegExp(def.tipoFolio, "i"));
     await chooseFirst(page, "select-notary-folio");
     await saveDialog(page);
@@ -188,7 +188,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await choose(page, "select-budget-management", new RegExp(def.clientLastName, "i"));
     await chooseFirst(page, "select-notary-management");
     await chooseFirst(page, "select-status-management");
-    await choose(page, "select-procedure-type-management", new RegExp(def.typeProcedure, "i"));
+    await choose(page, "select-procedure-type-management", new RegExp(def.procedureType, "i"));
     await choose(page, "select-property-management", new RegExp(def.propertyAddress, "i"));
     await saveDialog(page);
     await expect(page.getByRole("table")).toContainText(def.managementNumber);
@@ -219,7 +219,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   await test.step(`[Caso ${def.label}] Testimony, verificación y copia`, async () => {
     await go(page, "/dashboard/testimonies");
     await page.getByTestId("btn-generate-testimony").click();
-    await choose(page, "select-escritura-testimonio", new RegExp(def.deedNumber, "i"));
+    await choose(page, "select-deed-testimony", new RegExp(def.deedNumber, "i"));
     await page.getByTestId("btn-save-testimony").click();
     await expect(page.getByRole("dialog")).toBeHidden();
     await pause(page);
@@ -239,7 +239,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
   await test.step(`[Caso ${def.label}] Documento presentado`, async () => {
     await go(page, "/dashboard/documents");
     await page.getByRole("button", { name: /nuevo documento/i }).click();
-    await chooseInDialogCombobox(page, new RegExp(def.typeDocument, "i"), "select-tipo-documento");
+    await chooseInDialogCombobox(page, new RegExp(def.documentType, "i"), "select-document-type");
     // The document is presented for the case's procedure (CU04, #655).
     await chooseInDialogCombobox(page, new RegExp(`^${def.managementNumber} `), "select-management-document");
     await chooseFirst(page, "select-procedure-document");

@@ -9,14 +9,14 @@ async function seedConsecutiveFolios(
   page: Page,
   notaryId: number,
   count: number,
-  overrides: { estados?: string[] } = {},
+  overrides: { statuses?: string[] } = {},
 ) {
   const base = (uniqueId() % 900000) * 10 + 100000;
   const folios = [];
   for (let i = 0; i < count; i++) {
     const number = base + i;
-    const estado = overrides.estados?.[i] ?? "Nuevo";
-    const folio = await createFolio(page, notaryId, { number: number, status: estado });
+    const status = overrides.statuses?.[i] ?? "Nuevo";
+    const folio = await createFolio(page, notaryId, { number: number, status: status });
     folios.push({ idFolio: folio.data!.idFolio, number });
   }
   return folios;
@@ -93,7 +93,7 @@ test.describe("CU80 - Manage folio notebooks", () => {
   test("edge path: including a damaged folio without notes shows a validation error", async ({ page }) => {
     const person = await createPerson(page);
     const folios = await seedConsecutiveFolios(page, person.data!.personId, 10, {
-      estados: ["Errose"],
+      statuses: ["Errose"],
     });
 
     await page.goto("/dashboard/protocol/notebooks");

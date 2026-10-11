@@ -40,22 +40,22 @@ test.describe("Templates - document costs", () => {
     // combination already created (unique constraint) by an earlier/parallel
     // run against the shared "first option" catalog entries.
     const runId = Date.now();
-    const nameProcedure = `Tipo Procedure Costo E2E ${runId}`;
-    const nameDocument = `Tipo Documento Costo E2E ${runId}`;
-    const typeProcedureResult = await createProcedureType(page, { name: nameProcedure });
-    expect(typeProcedureResult.ok).toBe(true);
-    const typeDocumentResult = await createDocumentType(page, { name: nameDocument });
-    expect(typeDocumentResult.ok).toBe(true);
+    const procedureName = `Procedure cost type E2E ${runId}`;
+    const documentName = `Document cost type E2E ${runId}`;
+    const procedureTypeResult = await createProcedureType(page, { name: procedureName });
+    expect(procedureTypeResult.ok).toBe(true);
+    const documentTypeResult = await createDocumentType(page, { name: documentName });
+    expect(documentTypeResult.ok).toBe(true);
 
     await page.reload();
     await page.getByTestId("select-procedure-type-costs").click();
-    await page.getByRole("option", { name: nameProcedure }).click();
+    await page.getByRole("option", { name: procedureName }).click();
 
     await page.getByTestId("btn-new-cost-document").click();
     await steps.thenModalIsVisible();
 
     await page.getByTestId("select-document-type-cost").click();
-    await page.getByRole("option", { name: nameDocument }).click();
+    await page.getByRole("option", { name: documentName }).click();
     await page.getByTestId("input-value-cost-document").fill("1500");
 
     await page.getByTestId("btn-save-cost-document").click();

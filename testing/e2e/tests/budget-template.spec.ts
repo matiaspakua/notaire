@@ -30,17 +30,17 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     const idBudget = budgetResult.data!.idBudget;
 
     // Own uniquely named type: `.last()` on a shared name raced with parallel tests.
-    const typeProcedureName = `Tipo Items E2E ${Date.now()}`;
-    const typeProcedureResult = await createProcedureType(page, { name: typeProcedureName });
-    expect(typeProcedureResult.ok).toBe(true);
-    const idTypeProcedure = typeProcedureResult.data!.idProcedureType;
+    const procedureTypeName = `Items type E2E ${Date.now()}`;
+    const procedureTypeResult = await createProcedureType(page, { name: procedureTypeName });
+    expect(procedureTypeResult.ok).toBe(true);
+    const idProcedureType = procedureTypeResult.data!.idProcedureType;
 
     const conceptResult = await createConcept(page, { name: "Honorarios E2E", value: 1500 });
     expect(conceptResult.ok).toBe(true);
 
     const templateResult = await createBudgetTemplate(
       page,
-      idTypeProcedure,
+      idProcedureType,
       conceptResult.data!.idConcept,
     );
     expect(templateResult.ok, `createBudgetTemplate failed: ${templateResult.error}`).toBe(true);
@@ -55,7 +55,7 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId("select-procedure-type-items").click();
-    await page.getByRole("option", { name: typeProcedureName, exact: true }).click();
+    await page.getByRole("option", { name: procedureTypeName, exact: true }).click();
 
     // AND: loads the template items
     await dialog.getByTestId("btn-load-template").click();
@@ -69,17 +69,17 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
 
   test("creates the budget from the form with the procedure type's template items", async ({ page }) => {
     // GIVEN: a person and a procedure type with a configured template
-    const lastName = `Plantilla-${Date.now()}`;
+    const lastName = `Template-${Date.now()}`;
     const personResult = await createPerson(page, { lastName });
     expect(personResult.ok).toBe(true);
-    const typeProcedureName = `Tipo Alta E2E ${Date.now()}`;
-    const typeProcedureResult = await createProcedureType(page, { name: typeProcedureName });
-    expect(typeProcedureResult.ok).toBe(true);
+    const procedureTypeName = `Create type E2E ${Date.now()}`;
+    const procedureTypeResult = await createProcedureType(page, { name: procedureTypeName });
+    expect(procedureTypeResult.ok).toBe(true);
     const conceptResult = await createConcept(page, { name: "Honorarios Alta E2E", value: 2500 });
     expect(conceptResult.ok).toBe(true);
     const templateResult = await createBudgetTemplate(
       page,
-      typeProcedureResult.data!.idProcedureType,
+      procedureTypeResult.data!.idProcedureType,
       conceptResult.data!.idConcept,
     );
     expect(templateResult.ok, `createBudgetTemplate failed: ${templateResult.error}`).toBe(true);
@@ -92,7 +92,7 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     await page.locator('input[type="date"]').fill(new Date().toISOString().split("T")[0]);
     await page.getByTestId("input-amount").fill("100000");
     await page.getByTestId("select-procedure-type-new").click();
-    await page.getByRole("option", { name: typeProcedureName }).click();
+    await page.getByRole("option", { name: procedureTypeName }).click();
     await page.getByTestId("btn-save-budget").click();
 
     // THEN: the template items are already in the new budget breakdown
@@ -110,8 +110,8 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     expect(budgetResult.ok).toBe(true);
     const idBudget = budgetResult.data!.idBudget;
 
-    const typeProcedureResult = await createProcedureType(page, { name: `Sin Plantilla E2E ${Date.now()}` });
-    expect(typeProcedureResult.ok).toBe(true);
+    const procedureTypeResult = await createProcedureType(page, { name: `No template E2E ${Date.now()}` });
+    expect(procedureTypeResult.ok).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
     const itemsBtn = page.getByTestId(`btn-items-budget-${idBudget}`);

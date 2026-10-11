@@ -13,20 +13,20 @@ import {
   createManagementStatus,
 } from "./setup/api-helpers";
 
-async function seedManagementWithExternalEntityDocument(page: Page, nameDocument: string) {
+async function seedManagementWithExternalEntityDocument(page: Page, documentName: string) {
   const person = await createPerson(page);
   const budget = await createBudget(page, person.data!.personId);
   const managementStatus = await createManagementStatus(page);
-  const typeProcedure = await createProcedureType(page);
+  const procedureType = await createProcedureType(page);
   const management = await createCompleteCaseManagement(page, {
     budgetId: budget.data!.idBudget,
     notaryId: person.data!.personId,
     statusManagementId: managementStatus.data!.idManagementStatus,
-    procedureTypeId: typeProcedure.data!.idProcedureType,
+    procedureTypeId: procedureType.data!.idProcedureType,
   });
-  const procedure = await createProcedure(page, management.data!.idManagement, typeProcedure.data!.idProcedureType);
+  const procedure = await createProcedure(page, management.data!.idManagement, procedureType.data!.idProcedureType);
   const document = await createExternalEntityDocument(page, procedure.data!.idProcedure, {
-    name: nameDocument,
+    name: documentName,
   });
 
   return {
@@ -75,12 +75,12 @@ test.describe("CU10 - Record movements of external-entity documentation", () => 
     const person = await createPerson(page);
     const budget = await createBudget(page, person.data!.personId);
     const managementStatus = await createManagementStatus(page);
-    const typeProcedure = await createProcedureType(page);
+    const procedureType = await createProcedureType(page);
     const management = await createCompleteCaseManagement(page, {
       budgetId: budget.data!.idBudget,
       notaryId: person.data!.personId,
       statusManagementId: managementStatus.data!.idManagementStatus,
-      procedureTypeId: typeProcedure.data!.idProcedureType,
+      procedureTypeId: procedureType.data!.idProcedureType,
     });
 
     await page.goto("/dashboard/external-entity-documents");

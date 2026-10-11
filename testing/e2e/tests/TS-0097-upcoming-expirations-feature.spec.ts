@@ -19,10 +19,10 @@ test.describe("CU42 - Upcoming expirations", () => {
     expect(tipo.ok, tipo.error ?? "createDocumentType failed").toBe(true);
 
     // A document is presented for a procedure (CU04, #655): procedureId is required on create.
-    const typeProcedure = await createProcedureType(page);
-    expect(typeProcedure.ok, typeProcedure.error ?? "createProcedureType failed").toBe(true);
+    const procedureType = await createProcedureType(page);
+    expect(procedureType.ok, procedureType.error ?? "createProcedureType failed").toBe(true);
     const procedure = await apiPost<{ idProcedure: number }>(page, "/procedures", {
-      idProcedureType: typeProcedure.data!.idProcedureType,
+      idProcedureType: procedureType.data!.idProcedureType,
     });
     expect(procedure.ok, procedure.error ?? "create trámite failed").toBe(true);
 

@@ -1,9 +1,9 @@
 /**
- * E2E — Workflow tracker reingreso loop (strategy b)
+ * E2E — Workflow tracker reentry loop (strategy b)
  * CU: CU83, CU44 — Issue #841
  *
  * Stubs the workflow-trace API so the secondary TestimonyMovement timeline
- * and reingreso badge can be asserted without depending on live seed data.
+ * and the reentry badge can be asserted without depending on live seed data.
  */
 import { type Page, test, expect } from "@playwright/test";
 

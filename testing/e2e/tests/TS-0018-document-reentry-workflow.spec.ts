@@ -15,30 +15,30 @@ import {
   getDocumentReentry,
 } from "./setup/api-helpers";
 
-async function seedManagementWithRequiredDocumentation(page: Page, nameDocument: string) {
+async function seedManagementWithRequiredDocumentation(page: Page, documentName: string) {
   const person = await createPerson(page);
   const budget = await createBudget(page, person.data!.personId);
-  const estado = await createManagementStatus(page);
-  const typeProcedure = await createProcedureType(page);
+  const status = await createManagementStatus(page);
+  const procedureType = await createProcedureType(page);
   // `complete-case` creates the management and its single procedure in one call;
   // creating a second procedure for the same procedure type here would duplicate
   // the "Certificado de Dominio" row and break the dialog's strict-mode lookup.
   const management = await createCompleteCaseManagement(page, {
     budgetId: budget.data!.idBudget,
     notaryId: person.data!.personId,
-    statusManagementId: estado.data!.idManagementStatus,
-    procedureTypeId: typeProcedure.data!.idProcedureType,
+    statusManagementId: status.data!.idManagementStatus,
+    procedureTypeId: procedureType.data!.idProcedureType,
   });
-  const typeDocument = await createDocumentType(page, { name: nameDocument });
-  await createProcedureTemplate(page, typeProcedure.data!.idProcedureType, typeDocument.data!.idDocumentType);
-  const reingreso = await getDocumentReentry(page, management.data!.idManagement);
-  const idProcedure = reingreso.data!.procedures[0].idProcedure;
+  const documentType = await createDocumentType(page, { name: documentName });
+  await createProcedureTemplate(page, procedureType.data!.idProcedureType, documentType.data!.idDocumentType);
+  const reentry = await getDocumentReentry(page, management.data!.idManagement);
+  const idProcedure = reentry.data!.procedures[0].idProcedure;
 
   return {
     idManagement: management.data!.idManagement,
     number: management.data!.number,
     idProcedure,
-    idTypeDocument: typeDocument.data!.idDocumentType,
+    idDocumentType: documentType.data!.idDocumentType,
   };
 }
 
@@ -48,7 +48,7 @@ test.describe("CU43 - Re-enter documentation", () => {
   });
 
   test("golden path: re-entering a document shows a success toast", async ({ page }) => {
-    const { idManagement, number, idProcedure, idTypeDocument } = await seedManagementWithRequiredDocumentation(
+    const { idManagement, number, idProcedure, idDocumentType } = await seedManagementWithRequiredDocumentation(
       page,
       "Certificado de Dominio",
     );
@@ -64,7 +64,7 @@ test.describe("CU43 - Re-enter documentation", () => {
     await expect(detalleDialog).toBeVisible();
     await expect(detalleDialog.getByText("Certificado de Dominio")).toBeVisible();
 
-    await page.getByTestId(`btn-reenter-${idProcedure}-${idTypeDocument}`).click();
+    await page.getByTestId(`btn-reenter-${idProcedure}-${idDocumentType}`).click();
 
     await expect(page.getByText(/document reingresado/i)).toBeVisible({ timeout: 10000 });
   });

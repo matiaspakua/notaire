@@ -551,12 +551,12 @@ export async function seedManagementWithWorkflow(
   );
   await createWorkflowTransition(page, workflowId, initialNode.data!.id, finalNode.data!.id);
 
-  const typeProcedure = await createProcedureType(page);
-  await assignWorkflowToProcedureType(page, typeProcedure.data!.idProcedureType, workflowId);
+  const procedureType = await createProcedureType(page);
+  await assignWorkflowToProcedureType(page, procedureType.data!.idProcedureType, workflowId);
 
   const management = await createCompleteCaseManagement(page, {
     budgetId,
-    procedureTypeId: typeProcedure.data!.idProcedureType,
+    procedureTypeId: procedureType.data!.idProcedureType,
     statusManagementId: initialStatus.data!.idManagementStatus,
   });
 
@@ -654,13 +654,13 @@ export async function createDocumentType(
  */
 export async function createProcedureTemplate(
   page: Page,
-  idTypeProcedure: number,
-  idTypeDocument: number,
+  idProcedureType: number,
+  idDocumentType: number,
 ): Promise<ApiResult<unknown>> {
   return apiPost(page, "/procedure-templates", {
-    procedureTemplatePK: { fkIdProcedureType: idTypeProcedure, fkIdDocumentType: idTypeDocument },
-    procedureType: { idProcedureType: idTypeProcedure },
-    documentType: { idDocumentType: idTypeDocument },
+    procedureTemplatePK: { fkIdProcedureType: idProcedureType, fkIdDocumentType: idDocumentType },
+    procedureType: { idProcedureType: idProcedureType },
+    documentType: { idDocumentType: idDocumentType },
   });
 }
 
@@ -702,7 +702,7 @@ export async function createTestimony(
 export async function createHistoryEntry(
   page: Page,
   idManagement: number,
-  estado: string = "Iniciado",
+  status: string = "Iniciado",
 ): Promise<ApiResult<any>> {
   return apiPost(page, "/history", {
     fkIdManagement: { idManagement: idManagement },

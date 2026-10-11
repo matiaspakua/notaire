@@ -183,7 +183,7 @@ test.describe("CU13 - View a management's history", () => {
       page.getByRole('row', { name: new RegExp(String(number)) }),
     ).toBeVisible({ timeout: 10000 })
 
-    // Cambiar estado
+    // Change status
     await page.getByTestId(`btn-change-status-${idManagement}`).click()
     let dialog = page.getByRole('dialog')
     await dialog.getByTestId('select-new-status').click()
@@ -204,7 +204,7 @@ test.describe("CU13 - View a management's history", () => {
 })
 
 // ──────────────────────────────────────────────
-// CU83 - Cambiar estado (workflow)
+// CU83 - Change status (workflow)
 // ──────────────────────────────────────────────
 
 test.describe("CU83 - Change a management's status", () => {

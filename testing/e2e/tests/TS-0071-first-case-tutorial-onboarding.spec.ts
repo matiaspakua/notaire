@@ -80,7 +80,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
   });
 
   test("a new user can set up and follow a complete first case", async ({ page }) => {
-    const typeProcedure = `Compraventa tutorial ${runId}`;
+    const procedureType = `Compraventa tutorial ${runId}`;
     const concept = `Honorarios tutorial ${runId}`;
     const tipoFolio = `Protocolo tutorial ${runId}`;
     const client = `Ana Tutorial ${runId}`;
@@ -101,11 +101,11 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
     await test.step("2. Define the task type — what work the office will perform", async () => {
       await go(page, "/dashboard/administration/procedures");
       await page.getByTestId("btn-new-procedure-type").click();
-      await page.getByTestId("input-name-procedure").fill(typeProcedure);
+      await page.getByTestId("input-name-procedure").fill(procedureType);
       await pause(page);
       await saveDialog(page);
-      await page.getByTestId("input-search-procedure").fill(typeProcedure);
-      await expect(page.getByRole("table")).toContainText(typeProcedure);
+      await page.getByTestId("input-search-procedure").fill(procedureType);
+      await expect(page.getByRole("table")).toContainText(procedureType);
       await pause(page);
     });
 
@@ -132,7 +132,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
 
       await page.getByTestId("btn-new-folio").click();
       await page.getByTestId("input-folio-number").fill(`8${runId}`);
-      await choose(page, "select-estado-folio", /nuevo/i);
+      await choose(page, "select-status-folio", /nuevo/i);
       await choose(page, "select-tipo-folio", new RegExp(tipoFolio, "i"));
       // The office's existing notary is selected from the live list; this makes the
       // tutorial usable even when no tutorial user has an Escribano role.
@@ -178,7 +178,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
       await choose(page, "select-budget-management", new RegExp(client, "i"));
       await chooseFirst(page, "select-notary-management");
       await chooseFirst(page, "select-status-management");
-      await choose(page, "select-procedure-type-management", new RegExp(typeProcedure, "i"));
+      await choose(page, "select-procedure-type-management", new RegExp(procedureType, "i"));
       await saveDialog(page);
       await expect(page.getByRole("table")).toContainText(management);
       await pause(page);
