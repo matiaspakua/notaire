@@ -43,6 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English development and testing indexes** (#1490, CU75):
+  The development index and the testing inventory are English. Commands, suite
+  counts, and the coverage exclusion `service.Administrador*` stay.
 - **English testing strategy and workflow tracker** (#1490, CU75):
   ADR-006 is English. The workflow tracker uses management, procedure, history,
   and `workflowDefinitionName` on `DtoProcedureType`. Seeded labels such as
