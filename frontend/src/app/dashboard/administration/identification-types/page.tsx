@@ -118,8 +118,9 @@ export default function IdentificationTypesPage() {
       render: (e) => (
         <div className="flex gap-2 justify-end">
           <Button
-            size="sm"
+            size="icon-sm"
             variant="ghost"
+            className="shrink-0"
             onClick={() => openEdit(e)}
             data-testid="btn-edit-identification-type"
             aria-label={`${tc("edit")} ${e.name}`}
@@ -127,9 +128,9 @@ export default function IdentificationTypesPage() {
             <NotaireIcon src="/icons/actions/generate.png" alt="" size={16} />
           </Button>
           <Button
-            size="sm"
+            size="icon-sm"
             variant="ghost"
-            className="text-destructive hover:text-destructive"
+            className="shrink-0 text-destructive hover:text-destructive"
             onClick={() => setDeleteTarget(e)}
             data-testid="btn-delete-identification-type"
             aria-label={`${tc("delete")} ${e.name}`}
