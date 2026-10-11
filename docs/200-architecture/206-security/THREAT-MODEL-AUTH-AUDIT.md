@@ -69,7 +69,7 @@ Two trust boundaries matter here:
 | SR-03 | Tampering | Attacker modifies a JWT payload (e.g. escalate role claim) | Signature validation rejects any payload change | Mitigated |
 | SR-04 | Information Disclosure | Credentials or JWT secret leak via logs, error responses, or default `.env` values | `ProductionCredentialsGuard` blocks startup on the literal default password/secret in production; secrets never committed (`.env` is git-ignored, see [ADR-019](../202-ADR/ADR-019-secrets-management.md)) | Partial — only catches the literal known-default value, not other weak-but-non-default secrets |
 | SR-05 | Denial of Service | Attacker floods `/login` to exhaust resources or lock out legitimate users via `LoginAttemptService` (an attacker locking a *victim* out by deliberately failing their login) | None dedicated — `LoginAttemptService` mitigates brute force but is itself abusable as a lockout-griefing vector against a known username | **Open** — general API rate limiting is not implemented (README already flags this); tracked as follow-up in issue #1028 |
-| SR-06 | Elevation of Privilege | Authenticated low-privilege user accesses another user's or an admin's data/endpoints | JWT is required on all `/api/**` endpoints, but authorization is coarse-grained (any valid JWT, not per-role) | **Open** — no per-role authorization yet, consistent with SAD §8.1 / ADR-008 gap already on record |
+| SR-06 | Elevation of Privilege | Authenticated low-privilege user accesses an admin endpoint, or another user's record | `ROLE_ADMIN` is required for user, role, and audit-log paths and for admin catalog writes (#559). Any other authenticated caller still reaches business records | **Partial** — function-level RBAC exists; object-level access is SR-11 in [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md) |
 
 ## STRIDE — Audit-trail flow
 
@@ -83,11 +83,11 @@ Two trust boundaries matter here:
 ## Summary
 
 - **Mitigated**: SR-02, SR-03, SR-07, SR-10 (4)
-- **Partial**: SR-01, SR-04 (2)
-- **Open**: SR-05, SR-06, SR-08, SR-09 (4)
+- **Partial**: SR-01, SR-04, SR-06 (3)
+- **Open**: SR-05, SR-08, SR-09 (3)
 
-The four Open items are exactly the gaps already named informally in
-`README.md`'s risk register plus one newly surfaced item (SR-09, audit-log
-tamper-evidence) that the informal register did not previously call out.
+SR-06 moved to Partial when function-level RBAC landed (#559). The object-level
+gap is SR-11 in the system model. The remaining Open items are the login
+flood/lockout-griefing case, unaudited reads, and audit-log tamper evidence.
 None are fixed by this change — see issue #1028's follow-up
 recommendations for how each should be triaged into its own issue.

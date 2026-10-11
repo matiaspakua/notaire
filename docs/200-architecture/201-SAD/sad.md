@@ -50,7 +50,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 |----------|-------------|----------|
 | 1 | **Maintainability** | New features delivered in < 6 months; developers onboard in < 2 weeks |
 | 2 | **Testability** | ≥ 80% code coverage; all changes validated by unit, integration, and E2E tests |
-| 3 | **Security** | JWT authentication, coarse-grained authorization (authenticated-only; no per-role enforcement yet), full audit trail for legal compliance |
+| 3 | **Security** | JWT authentication, `ROLE_ADMIN` on admin paths and admin writes, full audit trail for legal compliance. Object-level checks remain open (SR-11) |
 | 4 | **Scalability** | Backend scales horizontally via stateless containers |
 | 5 | **Observability** | Real-time metrics, structured logs, and alerts via LPG stack |
 
@@ -96,7 +96,7 @@ The system originated as a monolithic Java Swing desktop application with direct
 |-----------|-------------|
 | Audit trail | All CRUD operations must be recorded for legal compliance |
 | Data retention | Notarial records must be preserved indefinitely |
-| Access control | Authenticated access to sensitive notarial data (per-role enforcement not yet implemented) |
+| Access control | Authenticated access to sensitive notarial data. `ROLE_ADMIN` guards admin paths and admin writes; object-level checks are still open (SR-11) |
 
 ---
 
@@ -851,12 +851,14 @@ Loki --> Graf : depends_on
 
 **Authorization:**
 
-- Coarse-grained only: every `/api/**` request must be authenticated (valid JWT);
-  there is no per-role authorization yet — no `@PreAuthorize` annotations exist in
-  the codebase.
-- The `Rol` entity/table exists for future RBAC; extending enforcement means
-  replacing `.anyRequest().authenticated()` with per-route role checks in
-  `SecurityAndCorsConfig` (see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md#extending-rbac)).
+- Every `/api/**` request must be authenticated (valid JWT), except login and logout.
+- `UserAuthorityResolver` grants `ROLE_ADMIN` to active users of type Administrador,
+  Admin, or Escribano, and `ROLE_USER` to other active users. `SecurityAndCorsConfig`
+  requires `ROLE_ADMIN` for user, role, and audit-log paths and for admin catalog
+  writes (#559). Other business records are reachable by any authenticated user
+  (object-level gap SR-11).
+- Extending enforcement means adding a path in `SecurityAndCorsConfig` and a case
+  in `RbacIntegrationTest` (see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md#extending-rbac)).
 
 **API Security:**
 

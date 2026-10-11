@@ -27,6 +27,17 @@ groups:
           summary: "Suspicious brute-force activity detected"
           description: "More than 30 bad-credential login attempts per minute for 1 minute."
 
+      - alert: LoginLockoutSpike
+        expr: |
+          sum(rate(notaire_operation_total{operation="login", status="locked"}[5m])) > 0
+        for: 1m
+        labels:
+          severity: warning
+          team: notaire
+        annotations:
+          summary: "Login lockout is tripping"
+          description: "At least one locked login outcome is being recorded. Check the security dashboard for credential abuse."
+
   - name: notaire.availability
     interval: 30s
     rules:
