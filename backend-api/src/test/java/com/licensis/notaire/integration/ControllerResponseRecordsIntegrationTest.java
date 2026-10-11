@@ -158,10 +158,10 @@ class ControllerResponseRecordsIntegrationTest {
     @DisplayName("shouldReturnCostTemplateRecordsByProcedureType")
     void shouldReturnCostTemplateRecordsByProcedureType() throws Exception {
         JsonNode type = postJson("/api/v1/procedure-types",
-                "{\"name\":\"Tipo costos\",\"isRegistered\":false,\"isArchived\":false,"
+                "{\"name\":\"Cost type\",\"isRegistered\":false,\"isArchived\":false,"
                         + "\"associatesProperties\":false}");
         JsonNode document = postJson("/api/v1/document-types",
-                "{\"name\":\"Doc costos\",\"expires\":false,\"deliveredBy\":\"Cliente\",\"returned\":false}");
+                "{\"name\":\"Cost document\",\"expires\":false,\"deliveredBy\":\"Cliente\",\"returned\":false}");
         postJson("/api/v1/document-cost-templates", "{\"idProcedureType\":" + type.get("idProcedureType")
                 + ",\"idDocumentType\":" + document.get("idDocumentType")
                 + ",\"fixedAmount\":10}");
@@ -172,8 +172,8 @@ class ControllerResponseRecordsIntegrationTest {
         assertNoEntityInternals(first);
         assertThat(first.get("documentCostTemplatePK").get("fkIdDocumentType").asInt())
                 .isEqualTo(document.get("idDocumentType").asInt());
-        assertThat(first.get("procedureType").get("name").asText()).isEqualTo("Tipo costos");
-        assertThat(first.get("documentType").get("name").asText()).isEqualTo("Doc costos");
+        assertThat(first.get("procedureType").get("name").asText()).isEqualTo("Cost type");
+        assertThat(first.get("documentType").get("name").asText()).isEqualTo("Cost document");
         assertThat(first.get("fixedAmount").decimalValue()).isEqualByComparingTo("10");
     }
 
@@ -181,7 +181,7 @@ class ControllerResponseRecordsIntegrationTest {
     @DisplayName("shouldReturnProcedureRecordsFromPageAndById")
     void shouldReturnProcedureRecordsFromPageAndById() throws Exception {
         JsonNode type = postJson("/api/v1/procedure-types",
-                "{\"name\":\"Tipo tramite\",\"isRegistered\":false,\"isArchived\":false,"
+                "{\"name\":\"Procedure type\",\"isRegistered\":false,\"isArchived\":false,"
                         + "\"associatesProperties\":false}");
         JsonNode procedure = postJson("/api/v1/procedures", "{\"notes\":\"n\",\"idProcedureType\":"
                 + type.get("idProcedureType") + "}");

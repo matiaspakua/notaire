@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English workflow test fixtures** (#1490, CU83): workflow tests use
+  English identifiers (`nodeIntermediate`, `statusInProgress`, `status1`)
+  and synthetic names (`Start`, `In progress`, `Finished`, `Start → Review`,
+  `Cost type`, `Procedure type`). Stored label `Cliente` stays.
 - **English folio status comment** (#1490, CU28): the folio class states the
   business rule in English and names the stored statuses `Nuevo`,
   `Utilizado`, `Errose`, `no pasó`, and `Asignado a cuaderno`. The state

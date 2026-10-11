@@ -42,7 +42,7 @@ class ManagementQueryServiceTest {
     @BeforeEach
     void setUp() {
         testStatus = new ManagementStatus(5);
-        testStatus.setName("En Proceso");
+        testStatus.setName("In progress");
 
         testManagement = new DeedManagement(1, 100, new Date(), "Test Management");
         testManagement.setFkIdManagementStatus(testStatus);
@@ -108,7 +108,7 @@ class ManagementQueryServiceTest {
             assertThat(result.get().idManagement()).isEqualTo(1);
             assertThat(result.get().number()).isEqualTo(100);
             assertThat(result.get().heading()).isEqualTo("Test Management");
-            assertThat(result.get().currentStatus()).isEqualTo("En Proceso");
+            assertThat(result.get().currentStatus()).isEqualTo("In progress");
         }
 
         @Test
@@ -165,7 +165,7 @@ class ManagementQueryServiceTest {
             assertThat(summary.number()).isEqualTo(100);
             assertThat(summary.heading()).isEqualTo("Test Management");
             assertThat(summary.dateStart()).isNotNull();
-            assertThat(summary.currentStatus()).isEqualTo("En Proceso");
+            assertThat(summary.currentStatus()).isEqualTo("In progress");
             assertThat(summary.procedureCount()).isZero();
         }
 
