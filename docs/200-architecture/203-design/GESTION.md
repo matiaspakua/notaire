@@ -292,8 +292,8 @@ an exit; it does not store the observation. The use case uses `reenter`.
 
 ### 3.8 Re-enter a document
 
-CU43. It is not a management status and it does not fire the
-documentation-complete edge.
+CU43. The screen is `/dashboard/document-reentry`. It is not a management
+status and it does not fire the documentation-complete edge.
 
 ```mermaid
 sequenceDiagram

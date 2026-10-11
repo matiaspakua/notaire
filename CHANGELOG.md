@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Document re-entry screen** (#1490, CU75): `DOC-GESTION` names
+  `/dashboard/document-reentry`. The engineering-sequences design names
+  the screen CU43 still writes, `/dashboard/reingreso-documentacion`.
+  The heading `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **External-entity documents screen** (#1490, CU75): `DOC-GESTION` names
   `/dashboard/external-entity-documents`. The engineering-sequences design
   names the screen CU10 still writes,
