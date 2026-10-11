@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Corrected notes** (#1490, CU75): synthetic testimony and payment notes in
+  tests say `Corrected`, `Corrected number E2E`, and `First copy`. Visible
+  labels such as `Eliminar` and `Testimonio actualizado` stay.
 - **Error-toast exemplars** (#1490, CU75): the living spec `api-error-toasts`
   cites `CU20 – Dar alta usuario` and `CU21 – Modificar Usuario`, and names
   the CU26–CU30 base-catalog pages. The archived spec keeps `usuarios` and

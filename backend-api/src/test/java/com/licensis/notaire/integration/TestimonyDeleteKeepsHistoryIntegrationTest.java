@@ -100,12 +100,12 @@ class TestimonyDeleteKeepsHistoryIntegrationTest extends ServiceIntegrationTest 
                 .andReturn().getResponse().getContentAsString());
         int newNumber = before.get("number").asInt() + 7;
         mockMvc.perform(put("/api/v1/testimonies/" + id).contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"number\": " + newNumber + ", \"notes\": \"Corregido\", \"flagged\": false, \"verified\": "
+                        .content("{\"number\": " + newNumber + ", \"notes\": \"Corrected\", \"flagged\": false, \"verified\": "
                                 + before.get("verified").asBoolean() + ", \"version\": " + before.get("version").asInt() + "}"))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/testimonies/" + id))
                 .andExpect(jsonPath("$.number").value(newNumber))
-                .andExpect(jsonPath("$.notes").value("Corregido"))
+                .andExpect(jsonPath("$.notes").value("Corrected"))
                 .andExpect(jsonPath("$.deed.idDeed").value(before.get("deed").get("idDeed").asInt()));
     }
 }

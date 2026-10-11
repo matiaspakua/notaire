@@ -53,13 +53,13 @@ test.describe("#1364 - Testimony edit, delete and movement history", () => {
     await page.getByTestId(`btn-edit-testimony-${idTestimony}`).click();
     await steps.thenModalIsVisible();
     await page.getByTestId("input-edit-testimony-number").fill(String(corrected));
-    await page.getByTestId("input-edit-testimony-notes").fill("Número corregido E2E");
+    await page.getByTestId("input-edit-testimony-notes").fill("Corrected number E2E");
     await page.getByTestId("btn-save-edit-testimony").click();
     await steps.thenShowsSuccessMessage("Testimonio actualizado");
     await expect(page.getByRole("row", { name: new RegExp(String(corrected)) })).toBeVisible();
 
     const stored = await apiGet<{ number: number; notes: string }>(page, `/testimonies/${idTestimony}`);
-    expect(stored.data).toMatchObject({ number: corrected, notes: "Número corregido E2E" });
+    expect(stored.data).toMatchObject({ number: corrected, notes: "Corrected number E2E" });
 
     await page.getByTestId(`btn-delete-testimony-${idTestimony}`).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Eliminar" }).click();
