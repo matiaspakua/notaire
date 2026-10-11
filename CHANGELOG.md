@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English repository README** (#1490, CU75):
+  The root README and the frontend module table name managements, budgets,
+  people, deeds, payments, and administration. The stack is Java 26 and
+  Spring Boot 4.1.1. The name Matías Miguez stays. The required phrase
+  `Use Case (Caso de Uso)` stays.
 - **English migration samples** (#1490, CU75):
   Flyway skill and database-migration examples insert into `concepts` and
   index `users(username)`. The deed-lifecycle note uses the stored status

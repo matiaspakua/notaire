@@ -52,20 +52,20 @@ Playwright E2E is not part of this module: see [`testing/e2e`](../testing/e2e) (
 |--------|-------------|------|
 | Login | CU — Auth | `/login` |
 | Dashboard | — | `/dashboard` |
-| Gestiones | CU02, CU13–16, CU19, CU53 | `/dashboard/managements` |
-| Presupuestos | CU01, CU39, CU45, CU49, CU55, CU60 | `/dashboard/budgets` |
-| Personas | CU17, CU18, CU21, CU41, CU46, CU48, CU51, CU54, CU61 | `/dashboard/people` |
-| Escrituras | CU05–08, CU52, CU62 | `/dashboard/deeds` |
-| Pagos | CU15, CU47 | `/dashboard/payments` |
-| Protocolo | CU24, CU28, CU63 | `/dashboard/protocol` |
-| Administración | — | `/dashboard/administration` |
-| → Usuarios | CU20, CU21, CU23 | `/dashboard/administration/users` |
-| → Conceptos | CU29, CU66 | `/dashboard/administration/concepts` |
-| → Tipos Documento | CU27, CU65 | `/dashboard/administration/documents` |
+| Managements | CU02, CU13–16, CU19, CU53 | `/dashboard/managements` |
+| Budgets | CU01, CU39, CU45, CU49, CU55, CU60 | `/dashboard/budgets` |
+| People | CU17, CU18, CU21, CU41, CU46, CU48, CU51, CU54, CU61 | `/dashboard/people` |
+| Deeds | CU05–08, CU52, CU62 | `/dashboard/deeds` |
+| Payments | CU15, CU47 | `/dashboard/payments` |
+| Protocol | CU24, CU28, CU63 | `/dashboard/protocol` |
+| Administration | — | `/dashboard/administration` |
+| → Users | CU20, CU21, CU23 | `/dashboard/administration/users` |
+| → Concepts | CU29, CU66 | `/dashboard/administration/concepts` |
+| → Document types | CU27, CU65 | `/dashboard/administration/documents` |
 | → Folios | CU28, CU40, CU58, CU68 | `/dashboard/administration/folios` |
-| → Tipos Trámite | CU26, CU57, CU64 | `/dashboard/administration/procedures` |
-| → Estados Gestión | CU67 | `/dashboard/administration/management-statuses` |
-| → Plantillas | CU39, CU49, CU55 | `/dashboard/administration/templates` |
+| → Procedure types | CU26, CU57, CU64 | `/dashboard/administration/procedures` |
+| → Management statuses | CU67 | `/dashboard/administration/management-statuses` |
+| → Templates | CU39, CU49, CU55 | `/dashboard/administration/templates` |
 
 ## API
 
