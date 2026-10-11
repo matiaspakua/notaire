@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English folio status comment** (#1490, CU28): the folio class states the
+  business rule in English and names the stored statuses `Nuevo`,
+  `Utilizado`, `Errose`, `no pasó`, and `Asignado a cuaderno`. The state
+  diagram note quotes `Documentacion Completa`.
 - **English workflow-tracker seed names** (#1490, CU83): the dashboard
   workflow tracker quotes the seeded statuses `Testimonio Generado`,
   `Testimonio Ingresado a Inscripcion`, `Testimonio Retirado`,
