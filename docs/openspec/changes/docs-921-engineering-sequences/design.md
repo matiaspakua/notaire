@@ -50,6 +50,8 @@ so the availability answer is not only in a pull request.
 `admin-route-guard`.
 [CU83 and CU13 still name `PUT /gestiones/{id}` and `PUT /gestiones/{id}/complete-case`] → The live call is in
 `DOC-GESTION`.
+[CU13 still names `POST /gestiones` and `GET /gestiones/{id}/estado-actual`] → The live call is in
+`DOC-GESTION`.
 [CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in
