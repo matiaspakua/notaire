@@ -129,7 +129,7 @@ test.describe('CU17 - Register a person', () => {
       // Creating a person with this checkbox checked simultaneously registers
       // the person as a client. No separate step is needed.
       const dni = `18${uniqueId() % 10_000_000}`
-      const lastName = `Cliente${uniqueId() % 100_000}`
+      const lastName = `Client${uniqueId() % 100_000}`
 
       // When — create WITH the es-client checkbox (CU17 + CU18 in one step)
       await fillPersonForm(page, {
@@ -175,7 +175,7 @@ test.describe('CU18 - Register a client via the is-client checkbox', () => {
     'CU18-GW01: a person created with the is-client checkbox appears as a client',
     async ({ page }) => {
       const dni = `CU18${uniqueId() % 10_000_000}`
-      const lastName = `EsCliente${uniqueId() % 100_000}`
+      const lastName = `IsClient${uniqueId() % 100_000}`
 
       // When — person created with es-client checked (the CU18 mechanism)
       await fillPersonForm(page, {
@@ -373,7 +373,7 @@ test.describe('CU61 - Search for a person or client', () => {
 
       // Given — a person was created via API with a unique lastName
       const result = await createPerson(page, {
-        lastName: `BuscaApellido${uniqueId() % 100_000}`,
+        lastName: `SearchLastName${uniqueId() % 100_000}`,
         identificationNumber: `CU61A${uniqueId() % 10_000_000}`,
       })
       expect(result.ok).toBe(true)
@@ -387,7 +387,7 @@ test.describe('CU61 - Search for a person or client', () => {
         await page.getByTestId('input-search-lastName').fill(lastName)
       } else {
         // fallback: search with a partial known value
-        await page.getByTestId('input-search-lastName').fill('BuscaApellido')
+        await page.getByTestId('input-search-lastName').fill('SearchLastName')
       }
 
       // Then — table is visible and has at least one row
@@ -404,7 +404,7 @@ test.describe('CU61 - Search for a person or client', () => {
       // Given — a person with a unique DNI
       const dni = `CU61D${uniqueId() % 10_000_000}`
       const result = await createPerson(page, {
-        lastName: `BuscaDni${uniqueId() % 100_000}`,
+        lastName: `SearchDni${uniqueId() % 100_000}`,
         identificationNumber: dni,
       })
       expect(result.ok).toBe(true)

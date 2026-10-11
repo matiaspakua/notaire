@@ -64,6 +64,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English synthetic person labels** (#1490, CU75): the substitution
+  fixture first name is `Substituted IT`. Redirect last names are
+  `Notary`, `Substituted`, `Substitute`, `Client`, `NoSubstitution`,
+  and `ClientNorm`. Date locals are `today` and `tomorrow`. Edit
+  fixtures are `Absent1360` and `Substitute1360`. People-search
+  fixtures are `Client`, `IsClient`, `SearchLastName`, and
+  `SearchDni`. Payment balance locals are `lastName1` and
+  `lastName2`. The visible toast match `/suplente/i` stays, along
+  with stored role `Escribano` and person names `Lucía` and `María`.
 - **English substituted parameters** (#1490, CU75): substitution lookups
   take `substituted` and `substitutedId`. The methods stay
   `findByFkIdSubstituted`, `findByFkIdSubstitutedIdPerson`, and

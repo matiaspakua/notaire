@@ -37,7 +37,7 @@ test.describe("CU48/CU51 - Notary registration on people", () => {
   });
 
   test("CU48-GW01: registering a person with a notary registration number is saved", async ({ page }) => {
-    const lastName = `Escribano${uniqueId() % 100_000}`;
+    const lastName = `Notary${uniqueId() % 100_000}`;
     const dni = `48${uniqueId() % 10_000_000}`;
 
     await page.getByTestId("btn-new-person").click();
@@ -91,21 +91,21 @@ test.describe("CU22/CU59 - Management redirect when a substitution is active", (
 
   test("GW01: a management created for a notary with an active substitution is redirected to the substitute", async ({ page }) => {
     const notary = await createPerson(page, {
-      lastName: `Suplantado${uniqueId() % 100_000}`,
+      lastName: `Substituted${uniqueId() % 100_000}`,
     });
     const substitute = await createPerson(page, {
-      lastName: `Suplente${uniqueId() % 100_000}`,
+      lastName: `Substitute${uniqueId() % 100_000}`,
     });
     const client = await createPerson(page, {
-      lastName: `Cliente${uniqueId() % 100_000}`,
+      lastName: `Client${uniqueId() % 100_000}`,
     });
     const budget = await createBudget(page, client.data!.personId);
 
-    const hoy = new Date();
-    const manana = new Date(hoy.getTime() + 24 * 60 * 60 * 1000);
+    const today = new Date();
+    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
     const substitution = await createSubstitution(page, substitute.data!.personId, notary.data!.personId, {
-      dateStart: hoy.toISOString().split("T")[0],
-      dateEnd: manana.toISOString().split("T")[0],
+      dateStart: today.toISOString().split("T")[0],
+      dateEnd: tomorrow.toISOString().split("T")[0],
     });
     expect(substitution.ok).toBe(true);
 
@@ -133,10 +133,10 @@ test.describe("CU22/CU59 - Management redirect when a substitution is active", (
 
   test("EDGE: a management created for a notary without an active substitution does not show a redirect notice", async ({ page }) => {
     const notary = await createPerson(page, {
-      lastName: `SinSuplencia${uniqueId() % 100_000}`,
+      lastName: `NoSubstitution${uniqueId() % 100_000}`,
     });
     const client = await createPerson(page, {
-      lastName: `ClienteNorm${uniqueId() % 100_000}`,
+      lastName: `ClientNorm${uniqueId() % 100_000}`,
     });
     await createBudget(page, client.data!.personId);
 

@@ -83,8 +83,8 @@ test.describe("TS-0126 full management edit (#1360)", () => {
 
   test("editing to a notary with an active substitution shows the redirect toast", async ({ page }) => {
     const { management } = await seedCase(page, `EscC1360${uniqueId() % 100_000}`);
-    const absent = await createPerson(page, { lastName: `Ausente1360${uniqueId() % 100_000}` });
-    const substitute = await createPerson(page, { lastName: `Suplente1360${uniqueId() % 100_000}` });
+    const absent = await createPerson(page, { lastName: `Absent1360${uniqueId() % 100_000}` });
+    const substitute = await createPerson(page, { lastName: `Substitute1360${uniqueId() % 100_000}` });
     const today = new Date();
     const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
     // Substitution coverage is checked against the management start date (today).
