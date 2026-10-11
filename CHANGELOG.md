@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English lifecycle proposals** (#1490, CU75): the assessment
+  and domain-lifecycle proposals name a management and the
+  create-management sequence. Headings `Objetivo`, `Reglas de negocio`,
+  and `Módulos afectados` stay. Stored statuses `Documentación completa`
+  and `Testimonio Retirado` stay. Filenames `GESTION.md` and
+  `CICLO-DE-VIDA.md` stay. `POST /api/v1/managements/complete-case`,
+  `deed_managements`, and `deeds.status` stay.
 - **English remaining proposals** (#1490, CU75): the archive-debt
   proposal names `ManagementArchiveDebtService`,
   `pendingDebtAtArchiving`, and `managements/page.tsx`. The

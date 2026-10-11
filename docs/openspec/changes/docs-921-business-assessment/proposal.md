@@ -21,7 +21,7 @@ traceability names are in the same diff.
 
 - Add the assessment and the case-process schema (`GESTION.md`).
 - Rewrite the legacy activity so archive leaves Documentación completa and
-  Testimonio Retirado is final. Correct the create-gestión sequence to
+  Testimonio Retirado is final. Correct the create-management sequence to
   `POST /api/v1/managements/complete-case` and `deed_managements`.
 - Point the SAD, the lifecycle doc, and the indexes at that schema.
 - Constitution §8, `INGENIERIA.md`, and the fleet docs require the named
@@ -31,8 +31,8 @@ traceability names are in the same diff.
 
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
-| A gestión moves only on a seeded edge; archive leaves Documentación completa | CU83, CU16 | Made explicit |
-| Signing a deed does not move the gestión | CU06 | Made explicit |
+| A management moves only on a seeded edge; archive leaves Documentación completa | CU83, CU16 | Made explicit |
+| Signing a deed does not move the management | CU06 | Made explicit |
 | An implementation updates the permanent documents its traceability names | CU76, Constitution §8 | New |
 
 ## Capabilities
