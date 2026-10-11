@@ -4684,6 +4684,8 @@ paths:
           description: Deleted
         '404':
           description: Not found
+        '409':
+          description: The identification type is in use by people
       summary: Delete identification type
       tags:
       - IdentificationType
@@ -4730,8 +4732,12 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          description: Invalid request
         '404':
           description: Not found
+        '409':
+          description: Another identification type already has this name
       summary: Update identification type
       tags:
       - IdentificationType

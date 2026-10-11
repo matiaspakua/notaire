@@ -1,0 +1,20 @@
+info:
+  name: Delete the person that used the identification type
+  type: http
+  seq: 9
+  description: |-
+      Issue #1361: the person survived the rejected type delete (08); removing it frees the type.
+      Traceability: CU17 (RF #12, #38, #39)
+http:
+  method: DELETE
+  url: "{{base_url}}/api/v1/people/{{identification_type_person_id}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 204 No Content (person still existed)", function () { expect(res.getStatus()).to.equal(204); });

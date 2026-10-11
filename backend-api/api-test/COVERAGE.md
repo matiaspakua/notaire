@@ -60,7 +60,7 @@ the value but update did not. Hardened in `setAttributes`.
 | folio-types | `/folio-types` | ✅ | — | CU36, CU68, CU40, CU58 |
 | folios | `/folios` | ✅ (no PUT) | own notary fixture | CU48, CU28, CU63, CU33 |
 | history | `/history` | ✅ | `management/{id}`; own notary + management fixtures | CU48, CU02, CU11, CU13, CU53 |
-| identification-types | `/identification-types` | ✅ | — | CU17 |
+| identification-types | `/identification-types` | ✅ | 409 duplicate name, 409 delete in use (#1361) | CU17 |
 | items | `/items` | ✅ | `budget/{id}`, surcharge without reason rejected | CU01, CU71, CU45 |
 | management-statuses | `/management-statuses` | ✅ | — | CU30, CU67, CU35 |
 | managements | `/managements` | ✅ | by number; current-status (History latest or entity-status fallback when empty — #806); PUT update keeps same `managementStatusId` (status changes via `/transition` — #804); `/case-summary` lists the deeds, testimonies, and copies (#774) | CU02, CU07, CU13, CU14, CU53, CU83 |

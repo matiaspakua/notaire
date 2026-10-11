@@ -1,0 +1,31 @@
+info:
+  name: Create identification type with an existing name (409)
+  type: http
+  seq: 6
+  description: |-
+      Issue #1361: the catalog keeps one row per name in any letter case, so the DNI default
+      for new people stays unambiguous. Same name in lower case with spaces answers 409.
+      Traceability: CU17 (RF #12, #38, #39), RF-53
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/identification-types"
+  body:
+    type: json
+    data: |-
+        {"name":"  {{identification_type_duplicate}}  ","characters":"8"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('identification_type_duplicate', (bru.getVar('identification_type_name') + ' Updated').toLowerCase());
+    - type: tests
+      code: |-
+          test("Status 409 Conflict", function () { expect(res.getStatus()).to.equal(409); });
+          test("Says the name exists", function () {
+            expect(String(res.getBody().message)).to.contain('already exists');
+          });
