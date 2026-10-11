@@ -113,7 +113,7 @@ public class AuditRecordService {
 
     /**
      * Maps a {@link AuditRecord} entity to its DTO inside the current
-     * transaction so that the LAZY {@code fkIdUsuario} association can be
+     * transaction so that the LAZY {@code fkIdUser} association can be
      * dereferenced safely.
      */
     public static DtoAuditRecord toDto(AuditRecord entity) {

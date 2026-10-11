@@ -41,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English JPA relationship names** (#1490, CU75): generated locals,
+  orphan messages, and `toString` labels use English relationship names
+  (`fkIdPerson`, `budgetTemplateList`, `auditRecordList`, `DeedManagements`).
+  Creating a budget template returns `fkIdProcedureType` and `fkIdConcept`.
+  Jackson `@JsonIgnoreProperties` values stay as they are. Message catalog
+  keys stay.
 - **English case-summary key and JPA helper names** (#1490, CU75):
   the management case-summary cache key is `caseSummary`. Involved-person
   mapping is `getInvolvedPersonDto`. Audit lookup is `searchAuditRecordsByUser`.

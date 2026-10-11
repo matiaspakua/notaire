@@ -117,7 +117,7 @@ public class UserJpaController implements Serializable, JpaPersistence {
                     }
                     illegalOrphanMessages
                             .add("You must retain AuditRecord " + auditRecordListOldAuditRecord
-                                    + " since its fkIdUsuario field is not nullable.");
+                                    + " since its fkIdUser field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -199,7 +199,7 @@ public class UserJpaController implements Serializable, JpaPersistence {
                 illegalOrphanMessages
                         .add("This Users (" + users + ") cannot be destroyed since the AuditRecord "
                                 + auditRecordListOrphanCheckAuditRecord
-                                + " in its registroAuditoriaList field has a non-nullable fkIdUsuario field.");
+                                + " in its auditRecordList field has a non-nullable fkIdUser field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

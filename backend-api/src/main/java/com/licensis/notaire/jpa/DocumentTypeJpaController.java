@@ -128,7 +128,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
                         {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain ProcedureTemplate " + procedureTemplateListOldProcedureTemplate + " since its tipoDeDocumento field is not nullable.");
+                        illegalOrphanMessages.add("You must retain ProcedureTemplate " + procedureTemplateListOldProcedureTemplate + " since its documentType field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null)
@@ -197,7 +197,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
                 }
                 catch (EntityNotFoundException enfe)
                 {
-                    throw new NonexistentEntityException("The tipoDeDocumento with id " + id + " no longer exists.", enfe);
+                    throw new NonexistentEntityException("The document type with id " + id + " no longer exists.", enfe);
                 }
                 List<String> illegalOrphanMessages = null;
                 List<ProcedureTemplate> procedureTemplateListOrphanCheck = documentType.getProcedureTemplateList();
@@ -207,7 +207,7 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This DocumentType (" + documentType + ") cannot be destroyed since the ProcedureTemplate " + procedureTemplateListOrphanCheckProcedureTemplate + " in its plantillaTramiteList field has a non-nullable tipoDeDocumento field.");
+                    illegalOrphanMessages.add("This DocumentType (" + documentType + ") cannot be destroyed since the ProcedureTemplate " + procedureTemplateListOrphanCheckProcedureTemplate + " in its procedureTemplateList field has a non-nullable documentType field.");
                 }
                 if (illegalOrphanMessages != null)
                 {

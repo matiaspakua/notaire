@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * {@code @DirtiesContext(BEFORE_CLASS)}: the create/list round trip goes through the legacy
- * {@code PlantillaPresupuestoJpaController}, which caches its {@code EntityManagerFactory} in
+ * {@code BudgetTemplateJpaController}, which caches its {@code EntityManagerFactory} in
  * the static {@link com.licensis.notaire.config.JpaControllerProvider}. If an earlier test class
  * in the same JVM dirtied the Spring context, that static reference goes stale relative to the
  * newly created H2 instance, so a create() here is invisible to a getAll() backed by the fresh

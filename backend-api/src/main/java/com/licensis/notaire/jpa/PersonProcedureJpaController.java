@@ -83,7 +83,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
         {
             if (findPersonProcedure(personProcedure.getPersonProcedurePK()) != null)
             {
-                throw new PreexistingEntityException("TramitesPersonas " + personProcedure + " already exists.", ex);
+                throw new PreexistingEntityException("PersonProcedure " + personProcedure + " already exists.", ex);
             }
             throw new CreateEntityException("Error creating a entity of type: Procedures People");
         }
@@ -99,7 +99,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
     /**
      * Crea a registro new of procedures_person.
      *
-     * @param tramitesPersonas
+     * @param personProcedure
      * @return Verdadero if pudo create the registro, falso in caso of that the registro this
      * repetido (error grave), u ocurra algun otro tipo de error.
      * @throws PreexistingEntityException
@@ -137,7 +137,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
         {
             if (findPersonProcedure(personProcedure.getPersonProcedurePK()) != null)
             {
-                throw new PreexistingEntityException("TramitesPersonas " + personProcedure + " already exists.", ex);
+                throw new PreexistingEntityException("PersonProcedure " + personProcedure + " already exists.", ex);
             }
             return false;
 
@@ -207,7 +207,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
                 PersonProcedurePK id = personProcedure.getPersonProcedurePK();
                 if (findPersonProcedure(id) == null)
                 {
-                    throw new NonexistentEntityException("The tramitesPersonas with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The person procedure with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -236,7 +236,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The tramitesPersonas with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The person procedure with id " + id + " no longer exists.", enfe);
             }
             Person person = personProcedure.getPerson();
             if (person != null)
@@ -262,23 +262,23 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
         }
     }
 
-//    public void destroy2(TramitesPersonasPK id) throws NonexistentEntityException {
+//    public void destroy2(PersonProcedurePK id) throws NonexistentEntityException {
 //        EntityManager em = null;
 //        try
 //        {
 //            em = getEntityManager();
 //            em.getTransaction().begin();
-//            TramitesPersonas tramitesPersonas;
+//            PersonProcedure personProcedure;
 //            try
 //            {
-//                tramitesPersonas = em.getReference(TramitesPersonas.class, id);
-//                tramitesPersonas.getTramitesPersonasPK();
+//                personProcedure = em.getReference(PersonProcedure.class, id);
+//                personProcedure.getPersonProcedurePK();
 //            }
 //            catch (EntityNotFoundException enfe)
 //            {
-//                throw new NonexistentEntityException("The tramitesPersonas with id " + id + " no longer exists.", enfe);
+//                throw new NonexistentEntityException("The person procedure with id " + id + " no longer exists.", enfe);
 //            }
-//            em.remove(tramitesPersonas);
+//            em.remove(personProcedure);
 //            em.getTransaction().commit();
 //        }
 //        finally

@@ -190,7 +190,7 @@ public class History implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "ManagementHistory[ idHistorial=" + getIdHistory() + " ]";
+        return "ManagementHistory[ idHistory=" + getIdHistory() + " ]";
     }
 
     @com.fasterxml.jackson.annotation.JsonIgnore

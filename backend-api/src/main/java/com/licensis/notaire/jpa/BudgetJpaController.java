@@ -163,7 +163,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
                         illegalOrphanMessages.add("You must retain Payment " + paymentListOldPayment
-                                + " since its fkIdPresupuesto field is not nullable.");
+                                + " since its fkIdBudget field is not nullable.");
                     }
                 }
                 for (Procedure procedureListOldProcedure : procedureListOld) {
@@ -172,7 +172,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
                         illegalOrphanMessages.add("You must retain Procedure " + procedureListOldProcedure
-                                + " since its fkIdPresupuesto field is not nullable.");
+                                + " since its fkIdBudget field is not nullable.");
                     }
                 }
                 for (Item itemListOldItem : itemListOld) {
@@ -181,7 +181,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
                         illegalOrphanMessages.add("You must retain Item " + itemListOldItem
-                                + " since its fkIdPresupuesto field is not nullable.");
+                                + " since its fkIdBudget field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null) {
@@ -292,7 +292,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Budget (" + budget + ") cannot be destroyed since the Payment "
-                        + paymentListOrphanCheckPayment + " in its pagoList field has a non-nullable fkIdPresupuesto field.");
+                        + paymentListOrphanCheckPayment + " in its paymentList field has a non-nullable fkIdBudget field.");
             }
             List<Procedure> procedureListOrphanCheck = budget.getProcedureList();
             for (Procedure procedureListOrphanCheckProcedure : procedureListOrphanCheck) {
@@ -301,7 +301,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
                 }
                 illegalOrphanMessages.add("This Budget (" + budget
                         + ") cannot be destroyed since the Procedure " + procedureListOrphanCheckProcedure
-                        + " in its tramiteList field has a non-nullable fkIdPresupuesto field.");
+                        + " in its procedureList field has a non-nullable fkIdBudget field.");
             }
             List<Item> itemListOrphanCheck = budget.getItemList();
             for (Item itemListOrphanCheckItem : itemListOrphanCheck) {
@@ -309,7 +309,7 @@ public class BudgetJpaController implements Serializable, JpaPersistence {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Budget (" + budget + ") cannot be destroyed since the Item "
-                        + itemListOrphanCheckItem + " in its itemList field has a non-nullable fkIdPresupuesto field.");
+                        + itemListOrphanCheckItem + " in its itemList field has a non-nullable fkIdBudget field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

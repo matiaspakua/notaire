@@ -170,7 +170,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Testimony " + testimonyListOldTestimony + " since its fkIdEscritura field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Testimony " + testimonyListOldTestimony + " since its fkIdDeed field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null)
@@ -299,7 +299,7 @@ public class DeedJpaController implements Serializable, JpaPersistence
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Deed (" + deed + ") cannot be destroyed since the Testimony " + testimonyListOrphanCheckTestimony + " in its testimonioList field has a non-nullable fkIdEscritura field.");
+                illegalOrphanMessages.add("This Deed (" + deed + ") cannot be destroyed since the Testimony " + testimonyListOrphanCheckTestimony + " in its testimonyList field has a non-nullable fkIdDeed field.");
             }
             if (illegalOrphanMessages != null)
             {

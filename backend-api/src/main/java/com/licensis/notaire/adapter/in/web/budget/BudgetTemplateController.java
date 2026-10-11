@@ -144,7 +144,7 @@ public class BudgetTemplateController {
         Integer procedureTypeId = resolveProcedureTypeId(request);
         Integer conceptId = resolveConceptId(request);
         if (procedureTypeId == null || conceptId == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "fkIdProcedureType y fkIdConcept son requeridos"));
+            return ResponseEntity.badRequest().body(Map.of("error", "fkIdProcedureType and fkIdConcept are required"));
         }
         if (!conceptRepository.existsById(conceptId) || !procedureTypeRepository.existsById(procedureTypeId)) {
             return ResponseEntity.badRequest().body(Map.of("error", "concept or procedure type not found"));
@@ -168,11 +168,11 @@ public class BudgetTemplateController {
                 LOG.log(Level.SEVERE, "Budget template create returned false for tipo={0} concept={1}",
                         new Object[]{procedureTypeId, conceptId});
                 return ResponseEntity.internalServerError()
-                        .body(Map.of("error", "Error interno to the create the template"));
+                        .body(Map.of("error", "Internal error creating the template"));
             }
             BudgetTemplatePK pk = entity.getBudgetTemplatePK();
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("fkIdTipoTramite", pk.getFkIdProcedureType(), "fkIdConcepto", pk.getFkIdConcept()));
+                    .body(Map.of("fkIdProcedureType", pk.getFkIdProcedureType(), "fkIdConcept", pk.getFkIdConcept()));
         } catch (PreexistingEntityException e) {
             LOG.log(Level.WARNING, "Budget template already exists", e);
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -180,7 +180,7 @@ public class BudgetTemplateController {
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error to the create budget template", e);
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Error interno to the create the template"));
+                    .body(Map.of("error", "Internal error creating the template"));
         }
     }
 

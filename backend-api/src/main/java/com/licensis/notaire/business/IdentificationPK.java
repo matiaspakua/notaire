@@ -86,6 +86,6 @@ public class IdentificationPK implements Serializable
     @Override
     public String toString()
     {
-        return "negocio.IdentificacionPK[ fkIdPersona=" + fkIdPerson + ", fkIdTipoIdentificacion=" + fkIdIdentificationType + " ]";
+        return "IdentificationPK[ fkIdPerson=" + fkIdPerson + ", fkIdIdentificationType=" + fkIdIdentificationType + " ]";
     }
 }

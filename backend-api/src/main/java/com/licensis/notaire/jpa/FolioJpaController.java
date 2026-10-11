@@ -141,8 +141,8 @@ public class FolioJpaController implements Serializable, JpaPersistence
                 FolioType fkIdFolioTypeNew = folio.getFkIdFolioType();
                 Deed fkIdDeedOld = persistentFolio.getFkIdDeed();
                 Deed fkIdDeedNew = folio.getFkIdDeed();
-//                List<Copy> copiaListOld = persistentFolio.getCopiaList();
-//                List<Copy> copiaListNew = folio.getCopiaList();
+//                List<Copy> copyListOld = persistentFolio.getCopyList();
+//                List<Copy> copyListNew = folio.getCopyList();
                 if (fkIdNotaryPersonNew != null)
                 {
                     fkIdNotaryPersonNew = em.getReference(fkIdNotaryPersonNew.getClass(), fkIdNotaryPersonNew.getPersonId());
@@ -158,59 +158,59 @@ public class FolioJpaController implements Serializable, JpaPersistence
                     fkIdDeedNew = em.getReference(fkIdDeedNew.getClass(), fkIdDeedNew.getIdDeed());
                     folio.setFkIdDeed(fkIdDeedNew);
                 }
-//                List<Copy> attachedCopiaListNew = new ArrayList<Copy>();
-//                for (Copy copiaListNewCopiaToAttach : copiaListNew)
+//                List<Copy> attachedCopyListNew = new ArrayList<Copy>();
+//                for (Copy copyListNewCopyToAttach : copyListNew)
 //                {
-//                    copiaListNewCopiaToAttach = em.getReference(copiaListNewCopiaToAttach.getClass(), copiaListNewCopiaToAttach.getIdCopia());
-//                    attachedCopiaListNew.add(copiaListNewCopiaToAttach);
+//                    copyListNewCopyToAttach = em.getReference(copyListNewCopyToAttach.getClass(), copyListNewCopyToAttach.getIdCopy());
+//                    attachedCopyListNew.add(copyListNewCopyToAttach);
 //                }
-//                copiaListNew = attachedCopiaListNew;
-//                folio.setCopiaList(copiaListNew);
+//                copyListNew = attachedCopyListNew;
+//                folio.setCopyList(copyListNew);
                 folio = em.merge(folio);
-//                if (fkIdPersonaEscribanoOld != null && !fkIdPersonaEscribanoOld.equals(fkIdPersonaEscribanoNew))
+//                if (fkIdNotaryPersonOld != null && !fkIdNotaryPersonOld.equals(fkIdNotaryPersonNew))
 //                {
-//                    fkIdPersonaEscribanoOld.getFolioList().remove(folio);
-//                    fkIdPersonaEscribanoOld = em.merge(fkIdPersonaEscribanoOld);
+//                    fkIdNotaryPersonOld.getFolioList().remove(folio);
+//                    fkIdNotaryPersonOld = em.merge(fkIdNotaryPersonOld);
 //                }
-//                if (fkIdPersonaEscribanoNew != null && !fkIdPersonaEscribanoNew.equals(fkIdPersonaEscribanoOld))
+//                if (fkIdNotaryPersonNew != null && !fkIdNotaryPersonNew.equals(fkIdNotaryPersonOld))
 //                {
-//                    fkIdPersonaEscribanoNew.getFolioList().add(folio);
-//                    fkIdPersonaEscribanoNew = em.merge(fkIdPersonaEscribanoNew);
+//                    fkIdNotaryPersonNew.getFolioList().add(folio);
+//                    fkIdNotaryPersonNew = em.merge(fkIdNotaryPersonNew);
 //                }
-//                if (fkIdTipoFolioOld != null && !fkIdTipoFolioOld.equals(fkIdTipoFolioNew))
+//                if (fkIdFolioTypeOld != null && !fkIdFolioTypeOld.equals(fkIdFolioTypeNew))
 //                {
-//                    fkIdTipoFolioOld.getFolioList().remove(folio);
-//                    fkIdTipoFolioOld = em.merge(fkIdTipoFolioOld);
+//                    fkIdFolioTypeOld.getFolioList().remove(folio);
+//                    fkIdFolioTypeOld = em.merge(fkIdFolioTypeOld);
 //                }
-//                if (fkIdTipoFolioNew != null && !fkIdTipoFolioNew.equals(fkIdTipoFolioOld))
+//                if (fkIdFolioTypeNew != null && !fkIdFolioTypeNew.equals(fkIdFolioTypeOld))
 //                {
-//                    fkIdTipoFolioNew.getFolioList().add(folio);
-//                    fkIdTipoFolioNew = em.merge(fkIdTipoFolioNew);
+//                    fkIdFolioTypeNew.getFolioList().add(folio);
+//                    fkIdFolioTypeNew = em.merge(fkIdFolioTypeNew);
 //                }
-//                if (fkIdEscrituraOld != null && !fkIdEscrituraOld.equals(fkIdEscrituraNew))
+//                if (fkIdDeedOld != null && !fkIdDeedOld.equals(fkIdDeedNew))
 //                {
-//                    fkIdEscrituraOld.getFolioList().remove(folio);
-//                    fkIdEscrituraOld = em.merge(fkIdEscrituraOld);
+//                    fkIdDeedOld.getFolioList().remove(folio);
+//                    fkIdDeedOld = em.merge(fkIdDeedOld);
 //                }
-//                if (fkIdEscrituraNew != null && !fkIdEscrituraNew.equals(fkIdEscrituraOld))
+//                if (fkIdDeedNew != null && !fkIdDeedNew.equals(fkIdDeedOld))
 //                {
-//                    fkIdEscrituraNew.getFolioList().add(folio);
-//                    fkIdEscrituraNew = em.merge(fkIdEscrituraNew);
+//                    fkIdDeedNew.getFolioList().add(folio);
+//                    fkIdDeedNew = em.merge(fkIdDeedNew);
 //                }
-//                for (Copy copiaListOldCopia : copiaListOld)
+//                for (Copy copyListOldCopy : copyListOld)
 //                {
-//                    if (!copiaListNew.contains(copiaListOldCopia))
+//                    if (!copyListNew.contains(copyListOldCopy))
 //                    {
-//                        copiaListOldCopia.getFolioList().remove(folio);
-//                        copiaListOldCopia = em.merge(copiaListOldCopia);
+//                        copyListOldCopy.getFolioList().remove(folio);
+//                        copyListOldCopy = em.merge(copyListOldCopy);
 //                    }
 //                }
-//                for (Copy copiaListNewCopia : copiaListNew)
+//                for (Copy copyListNewCopy : copyListNew)
 //                {
-//                    if (!copiaListOld.contains(copiaListNewCopia))
+//                    if (!copyListOld.contains(copyListNewCopy))
 //                    {
-//                        copiaListNewCopia.getFolioList().add(folio);
-//                        copiaListNewCopia = em.merge(copiaListNewCopia);
+//                        copyListNewCopy.getFolioList().add(folio);
+//                        copyListNewCopy = em.merge(copyListNewCopy);
 //                    }
 //                }
                 em.getTransaction().commit();

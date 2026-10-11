@@ -142,7 +142,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain TestimonyMovement " + testimonyMovementListOldTestimonyMovement + " since its fkIdTestimonio field is not nullable.");
+                    illegalOrphanMessages.add("You must retain TestimonyMovement " + testimonyMovementListOldTestimonyMovement + " since its fkIdTestimony field is not nullable.");
                 }
             }
             for (Copy copyListOldCopy : copyListOld)
@@ -153,7 +153,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain Copy " + copyListOldCopy + " since its fkIdTestimonio field is not nullable.");
+                    illegalOrphanMessages.add("You must retain Copy " + copyListOldCopy + " since its fkIdTestimony field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null)
@@ -269,7 +269,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Testimony (" + testimony + ") cannot be destroyed since the TestimonyMovement " + testimonyMovementListOrphanCheckTestimonyMovement + " in its movimientoTestimonioList field has a non-nullable fkIdTestimonio field.");
+                illegalOrphanMessages.add("This Testimony (" + testimony + ") cannot be destroyed since the TestimonyMovement " + testimonyMovementListOrphanCheckTestimonyMovement + " in its testimonyMovementList field has a non-nullable fkIdTestimony field.");
             }
             List<Copy> copyListOrphanCheck = testimony.getCopyList();
             for (Copy copyListOrphanCheckCopy : copyListOrphanCheck)
@@ -278,7 +278,7 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Testimony (" + testimony + ") cannot be destroyed since the Copy " + copyListOrphanCheckCopy + " in its copiaList field has a non-nullable fkIdTestimonio field.");
+                illegalOrphanMessages.add("This Testimony (" + testimony + ") cannot be destroyed since the Copy " + copyListOrphanCheckCopy + " in its copyList field has a non-nullable fkIdTestimony field.");
             }
             if (illegalOrphanMessages != null)
             {

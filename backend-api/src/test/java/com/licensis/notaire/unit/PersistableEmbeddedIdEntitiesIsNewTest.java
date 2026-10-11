@@ -42,11 +42,11 @@ class PersistableEmbeddedIdEntitiesIsNewTest {
 
     static Stream<Arguments> entities() {
         return Stream.of(
-                Arguments.of("FoliosCopias", new FolioCopies(), "markNotNew"),
+                Arguments.of("FolioCopies", new FolioCopies(), "markNotNew"),
                 Arguments.of("DocumentCostTemplate", new DocumentCostTemplate(), "markNotNew"),
                 Arguments.of("BudgetTemplate", new BudgetTemplate(), "markNotNew"),
                 Arguments.of("ProcedureTemplate", new ProcedureTemplate(), "markNotNew"),
-                Arguments.of("TramitesPersonas", new PersonProcedure(), "markNotNew")
+                Arguments.of("PersonProcedure", new PersonProcedure(), "markNotNew")
         );
     }
 }

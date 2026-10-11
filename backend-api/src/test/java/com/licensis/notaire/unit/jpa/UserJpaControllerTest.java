@@ -35,7 +35,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("UsuarioJpaController unit tests")
+@DisplayName("UserJpaController unit tests")
 @ExtendWith(MockitoExtension.class)
 class UserJpaControllerTest {
 
@@ -497,10 +497,10 @@ class UserJpaControllerTest {
         }
     }
 
-    // -- getNombreJpa -----------------------------------------------------
+    // -- getNameJpa -----------------------------------------------------
 
     @Nested
-    @DisplayName("getNombreJpa")
+    @DisplayName("getNameJpa")
     class GetNameJpa {
         @Test
         @DisplayName("should return class name")

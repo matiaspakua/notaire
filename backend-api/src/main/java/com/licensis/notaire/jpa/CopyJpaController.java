@@ -180,7 +180,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
                 Integer id = copy.getIdCopy();
                 if (findCopy(id) == null)
                 {
-                    throw new NonexistentEntityException("The copia with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The copy with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -209,7 +209,7 @@ public class CopyJpaController implements Serializable, JpaPersistence
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The copia with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The copy with id " + id + " no longer exists.", enfe);
             }
             Person fkIdPerson = copy.getFkIdPerson();
             if (fkIdPerson != null)

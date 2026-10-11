@@ -118,7 +118,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
                             illegalOrphanMessages = new ArrayList<String>();
                         }
                         illegalOrphanMessages.add("You must retain ManagementHistory " + historyListOldHistory
-                                + " since its fkIdEstadoGestion field is not nullable.");
+                                + " since its fkIdManagementStatus field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null) {
@@ -173,7 +173,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
                 managementStatus = em.getReference(ManagementStatus.class, id);
                 managementStatus.getIdManagementStatus();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The estadoDeGestion with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The management status with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             java.util.Set<History> historyListOrphanCheck = managementStatus.getHistoryList();
@@ -183,7 +183,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
                 }
                 illegalOrphanMessages.add("This ManagementStatus (" + managementStatus
                         + ") cannot be destroyed since the ManagementHistory " + historyListOrphanCheckHistory
-                        + " in its historialList field has a non-nullable fkIdEstadoGestion field.");
+                        + " in its historyList field has a non-nullable fkIdManagementStatus field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

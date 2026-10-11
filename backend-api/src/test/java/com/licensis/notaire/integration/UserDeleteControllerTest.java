@@ -125,7 +125,7 @@ class UserDeleteControllerTest {
     @Test
     @DisplayName("Should delete user and cascade-remove associated audit records")
     void shouldDeleteUserWithAuditRecordsViaCascade() throws Exception {
-        // Create user via API (sets fkIdPersona=1 from seeded test data)
+        // Create user via API (sets fkIdPerson=1 from seeded test data)
         String createBody = """
                 {
                   "name": "user_with_audit",

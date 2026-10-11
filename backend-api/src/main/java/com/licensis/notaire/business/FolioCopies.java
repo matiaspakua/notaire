@@ -165,6 +165,6 @@ public class FolioCopies implements Serializable, Persistable<FolioCopiesPK>
     @Override
     public String toString()
     {
-        return "negocio.FoliosCopias[ foliosCopiasPK=" + folioCopiesPK + " ]";
+        return "FolioCopies[ folioCopiesPK=" + folioCopiesPK + " ]";
     }
 }

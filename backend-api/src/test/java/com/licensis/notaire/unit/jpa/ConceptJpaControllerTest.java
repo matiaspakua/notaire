@@ -33,7 +33,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("ConceptoJpaController unit tests")
+@DisplayName("ConceptJpaController unit tests")
 @ExtendWith(MockitoExtension.class)
 class ConceptJpaControllerTest {
 
@@ -89,7 +89,7 @@ class ConceptJpaControllerTest {
 
             Integer result = controller.create(concept);
 
-            assertThat(result).isNull(); // idConcepto is null before persist
+            assertThat(result).isNull(); // idConcept is null before persist
             verify(tx).begin();
             verify(tx).commit();
             verify(em).persist(concept);
@@ -97,7 +97,7 @@ class ConceptJpaControllerTest {
         }
 
         @Test
-        @DisplayName("should initialize plantillaPresupuestoList when null")
+        @DisplayName("should initialize budgetTemplateList when null")
         void shouldInitializeTemplateListWhenNull() {
             Concept concept = new Concept(1, "Test", new java.math.BigDecimal("100"), 10);
             concept.setBudgetTemplateList(null);
@@ -404,7 +404,7 @@ class ConceptJpaControllerTest {
     }
 
     @Nested
-    @DisplayName("getNombreJpa")
+    @DisplayName("getNameJpa")
     class GetNameJpa {
 
         @Test

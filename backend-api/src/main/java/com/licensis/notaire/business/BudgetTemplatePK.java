@@ -86,6 +86,6 @@ public class BudgetTemplatePK implements Serializable
     @Override
     public String toString()
     {
-        return "negocio.BudgetTemplateKey[ fkIdTipoTramite=" + fkIdProcedureType + ", fkIdConcepto=" + fkIdConcept + " ]";
+        return "BudgetTemplateKey[ fkIdProcedureType=" + fkIdProcedureType + ", fkIdConcept=" + fkIdConcept + " ]";
     }
 }

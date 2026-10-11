@@ -245,17 +245,17 @@ class DeedEntityTest {
         }
 
         @Test
-        @DisplayName("getDto with null tramiteList returns empty procedures")
+        @DisplayName("getDto with null procedureList returns empty procedures")
         void getDtoWithNullProcedureListReturnsProceduresEmpty() {
             Deed e = new Deed(1);
             e.setNumber(42);
             var dto = e.getDto();
-            // tramiteList null → setTramites(null) → dto.getTramites() is null
+            // procedureList null → setTramites(null) → dto.getTramites() is null
             assertThat(dto.getProcedures()).isNull();
         }
 
         @Test
-        @DisplayName("getDto with empty tramiteList returns null procedures")
+        @DisplayName("getDto with empty procedureList returns null procedures")
         void getDtoWithEmptyProcedureListReturnsProceduresNull() {
             Deed e = new Deed(1);
             e.setNumber(42);

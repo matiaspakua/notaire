@@ -141,7 +141,7 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The movimientoTestimonio with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The testimony movement with id " + id + " no longer exists.", enfe);
             }
             Testimony fkIdTestimony = testimonyMovement.getTestimony();
             if (fkIdTestimony != null)

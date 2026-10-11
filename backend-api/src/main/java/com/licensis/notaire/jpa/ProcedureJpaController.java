@@ -195,7 +195,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("You must retain Budget " + fkIdBudgetOld + " since its fkIdTramite field is not nullable.");
+                illegalOrphanMessages.add("You must retain Budget " + fkIdBudgetOld + " since its fkIdProcedure field is not nullable.");
             }
             for (SubmittedDocument documentsSubmittedListOldDocumentsSubmitted : documentsSubmittedListOld)
             {
@@ -205,7 +205,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain DocumentosPresentado " + documentsSubmittedListOldDocumentsSubmitted + " since its fkIdTramite field is not nullable.");
+                    illegalOrphanMessages.add("You must retain SubmittedDocument " + documentsSubmittedListOldDocumentsSubmitted + " since its fkIdProcedure field is not nullable.");
                 }
             }
             for (PersonProcedure personProcedureListOldPersonProcedure : personProcedureListOld)
@@ -216,7 +216,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain TramitesPersonas " + personProcedureListOldPersonProcedure + " since its procedure field is not nullable.");
+                    illegalOrphanMessages.add("You must retain PersonProcedure " + personProcedureListOldPersonProcedure + " since its procedure field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null)
@@ -435,7 +435,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the Budget " + fkIdBudgetOrphanCheck + " in its fkIdPresupuesto field has a non-nullable fkIdTramite field.");
+                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the Budget " + fkIdBudgetOrphanCheck + " in its fkIdBudget field has a non-nullable fkIdProcedure field.");
             }
             List<SubmittedDocument> documentsSubmittedListOrphanCheck = procedure.getSubmittedDocumentList();
             for (SubmittedDocument documentsSubmittedListOrphanCheckDocumentsSubmitted : documentsSubmittedListOrphanCheck)
@@ -444,7 +444,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the DocumentosPresentado " + documentsSubmittedListOrphanCheckDocumentsSubmitted + " in its documentosPresentadoList field has a non-nullable fkIdTramite field.");
+                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the SubmittedDocument " + documentsSubmittedListOrphanCheckDocumentsSubmitted + " in its submittedDocumentList field has a non-nullable fkIdProcedure field.");
             }
             List<PersonProcedure> personProcedureListOrphanCheck = procedure.getPersonProcedureList();
             for (PersonProcedure personProcedureListOrphanCheckPersonProcedure : personProcedureListOrphanCheck)
@@ -453,7 +453,7 @@ public class ProcedureJpaController implements Serializable, JpaPersistence
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the TramitesPersonas " + personProcedureListOrphanCheckPersonProcedure + " in its tramitesPersonasList field has a non-nullable procedure field.");
+                illegalOrphanMessages.add("This Procedure (" + procedure + ") cannot be destroyed since the PersonProcedure " + personProcedureListOrphanCheckPersonProcedure + " in its personProcedureList field has a non-nullable procedure field.");
             }
             if (illegalOrphanMessages != null)
             {

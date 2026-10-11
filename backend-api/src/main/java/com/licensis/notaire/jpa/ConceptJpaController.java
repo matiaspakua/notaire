@@ -204,7 +204,7 @@ public class ConceptJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This Concept (" + concept + ") cannot be destroyed since the BudgetTemplate " + budgetTemplateListOrphanCheckBudgetTemplate + " in its plantillaPresupuestoList field has a non-nullable concept field.");
+                    illegalOrphanMessages.add("This Concept (" + concept + ") cannot be destroyed since the BudgetTemplate " + budgetTemplateListOrphanCheckBudgetTemplate + " in its budgetTemplateList field has a non-nullable concept field.");
                 }
                 if (illegalOrphanMessages != null)
                 {

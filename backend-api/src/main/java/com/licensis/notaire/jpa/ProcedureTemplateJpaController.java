@@ -153,7 +153,7 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
                 ProcedureTemplatePK id = procedureTemplate.getProcedureTemplatePK();
                 if (findProcedureTemplate(id) == null)
                 {
-                    throw new NonexistentEntityException("The plantillaTramite with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The procedure template with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -183,7 +183,7 @@ public class ProcedureTemplateJpaController implements Serializable, JpaPersiste
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The plantillaTramite with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The procedure template with id " + id + " no longer exists.", enfe);
             }
             ProcedureType procedureType = procedureTemplate.getProcedureType();
             if (procedureType != null)

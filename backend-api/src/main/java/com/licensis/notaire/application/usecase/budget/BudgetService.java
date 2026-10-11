@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * Service layer for Budget domain operations.
- * Replaces the legacy PresupuestoJpaController access pattern.
+ * Replaces the legacy BudgetJpaController access pattern.
  */
 @Service
 @Transactional

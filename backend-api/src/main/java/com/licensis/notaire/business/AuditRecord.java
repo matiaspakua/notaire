@@ -152,7 +152,7 @@ public class AuditRecord implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "negocio.AuditRecord[ idRegistroAuditoria=" + idAuditRecord + " ]";
+        return "AuditRecord[ idAuditRecord=" + idAuditRecord + " ]";
     }
 
 

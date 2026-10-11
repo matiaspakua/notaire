@@ -152,7 +152,7 @@ public class SubstitutionJpaController implements Serializable, JpaPersistence
             em = getEntityManager();
             em.getTransaction().begin();
             // Load directly (not via getReference + reverse-collection removal): Substitution
-            // is the FK-owning side, so removing it from Person.suplenciaList/suplenciaList1
+            // is the FK-owning side, so removing it from Person.substitutionList/substitutionList1
             // in memory has no cascading DB effect (no orphanRemoval) and previously left the
             // row un-flushed — em.remove() below is sufficient and correct on its own.
             Substitution substitution = em.find(Substitution.class, id);

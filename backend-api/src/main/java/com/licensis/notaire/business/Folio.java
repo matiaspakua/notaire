@@ -309,7 +309,7 @@ public class Folio implements Serializable, Persistable<Integer>
 
         if (this.fkIdDeed != null)
         {
-            // Not fkIdEscritura.getDto(): that walks Deed's lazy folioList, which
+            // Not fkIdDeed.getDto(): that walks Deed's lazy folioList, which
             // includes this same Folio, and would recurse back into Folio.getDto().
             DtoDeed miDtoDeed = new DtoDeed();
             miDtoDeed.setIdDeed(this.fkIdDeed.getIdDeed());

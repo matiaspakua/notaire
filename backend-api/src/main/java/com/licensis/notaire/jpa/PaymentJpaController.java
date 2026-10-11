@@ -105,7 +105,7 @@ public class PaymentJpaController implements Serializable, JpaPersistence
                 Integer id = payment.getIdPayment();
                 if (findPayment(id) == null)
                 {
-                    throw new NonexistentEntityException("The pago with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The payment with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -134,7 +134,7 @@ public class PaymentJpaController implements Serializable, JpaPersistence
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The pago with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The payment with id " + id + " no longer exists.", enfe);
             }
             Budget fkIdBudget = payment.getBudget();
             if (fkIdBudget != null)

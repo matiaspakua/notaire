@@ -283,7 +283,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("FoliosCopias + PK")
+    @DisplayName("FolioCopies + PK")
     class FolioCopiesTests {
         @Test
         @DisplayName("PK equality and hashCode")
@@ -531,7 +531,7 @@ class EntitiesBasicTest {
             assertThat(new Testimony(1)).isEqualTo(new Testimony(1));
             assertThat(new Testimony(1)).isNotEqualTo(new Testimony(2));
             assertThat(new Testimony(1)).isNotEqualTo("x");
-            // toString requires fkIdEscritura to be set
+            // toString requires fkIdDeed to be set
             assertThat(t1.toString()).contains("10");
 
             DtoTestimony dto = t1.getDto();
@@ -923,7 +923,7 @@ class EntitiesBasicTest {
     }
 
     @Nested
-    @DisplayName("TramitesPersonas + PK")
+    @DisplayName("PersonProcedure + PK")
     class PersonProcedureTests {
         @Test
         @DisplayName("All")
@@ -998,7 +998,7 @@ class EntitiesBasicTest {
             assertThat(new User(1)).isNotEqualTo(new User(2));
             assertThat(new User(1)).isNotEqualTo("x");
             assertThat(u1.toString()).contains("10");
-            // getDto wraps a try/catch but won't NPE because we set fkIdPersona with idPersona
+            // getDto wraps a try/catch but won't NPE because we set fkIdPerson with idPersona
             // and Person.getDto handles nulls. Let's call it to cover.
             try {
             } catch (Exception e) {

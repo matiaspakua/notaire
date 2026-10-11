@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * Read-model for management list/detail endpoints. Avoids serializing the JPA
- * entity, whose lazy collections (tramiteList, historialList) and circular
+ * entity, whose lazy collections (procedureList, historyList) and circular
  * back-references cannot be written outside a Hibernate session.
  */
 public record DtoManagementSummary(

@@ -157,7 +157,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
                 BudgetTemplatePK id = budgetTemplate.getBudgetTemplatePK();
                 if (findBudgetTemplate(id) == null)
                 {
-                    throw new NonexistentEntityException("The plantillaPresupuesto with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The budget template with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -181,7 +181,7 @@ public class BudgetTemplateJpaController implements Serializable, JpaPersistence
             BudgetTemplate budgetTemplate = em.find(BudgetTemplate.class, id);
             if (budgetTemplate == null)
             {
-                throw new NonexistentEntityException("The plantillaPresupuesto with id " + id + " no longer exists.");
+                throw new NonexistentEntityException("The budget template with id " + id + " no longer exists.");
             }
             // find(), not getReference(): a proxy does not match the loaded instance in the parents'
             // cascade-ALL lists, so it stayed there and flush re-persisted it, undoing the delete.

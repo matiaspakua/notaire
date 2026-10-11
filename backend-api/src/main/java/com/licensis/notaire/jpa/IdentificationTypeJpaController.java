@@ -91,7 +91,7 @@ public class IdentificationTypeJpaController implements Serializable, JpaPersist
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("You must retain Person " + personListOldPerson
-                            + " since its fkIdTipoIdentificacion field is not nullable.");
+                            + " since its fkIdIdentificationType field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -126,7 +126,7 @@ public class IdentificationTypeJpaController implements Serializable, JpaPersist
             if (msg == null || msg.length() == 0) {
                 Integer id = identificationType.getIdIdentificationType();
                 if (findIdentificationType(id) == null) {
-                    throw new NonexistentEntityException("The tipoIdentificacion with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The identification type with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -147,7 +147,7 @@ public class IdentificationTypeJpaController implements Serializable, JpaPersist
                 identificationType = em.getReference(IdentificationType.class, id);
                 identificationType.getIdIdentificationType();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The tipoIdentificacion with id " + id + " no longer exists.",
+                throw new NonexistentEntityException("The identification type with id " + id + " no longer exists.",
                         enfe);
             }
             List<String> illegalOrphanMessages = null;
@@ -158,7 +158,7 @@ public class IdentificationTypeJpaController implements Serializable, JpaPersist
                 }
                 illegalOrphanMessages.add("This IdentificationType (" + identificationType
                         + ") cannot be destroyed since the Person " + personListOrphanCheckPerson
-                        + " in its personaList field has a non-nullable fkIdTipoIdentificacion field.");
+                        + " in its personList field has a non-nullable fkIdIdentificationType field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);

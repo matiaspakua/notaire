@@ -102,7 +102,7 @@ public class AuditRecordJpaController implements Serializable, JpaPersistence {
             if (msg == null || msg.length() == 0) {
                 Integer id = auditRecord.getIdAuditRecord();
                 if (findAuditRecord(id) == null) {
-                    throw new NonexistentEntityException("The registroAuditoria with id " + id + " no longer exists.");
+                    throw new NonexistentEntityException("The audit record with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -123,7 +123,7 @@ public class AuditRecordJpaController implements Serializable, JpaPersistence {
                 auditRecord = em.getReference(AuditRecord.class, id);
                 auditRecord.getIdAuditRecord();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The registroAuditoria with id " + id + " no longer exists.",
+                throw new NonexistentEntityException("The audit record with id " + id + " no longer exists.",
                         enfe);
             }
             User fkIdUser = auditRecord.getFkIdUser();

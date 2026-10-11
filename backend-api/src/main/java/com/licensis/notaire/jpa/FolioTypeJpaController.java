@@ -131,7 +131,7 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
                         {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain Folio " + folioListOldFolio + " since its fkIdTipoFolio field is not nullable.");
+                        illegalOrphanMessages.add("You must retain Folio " + folioListOldFolio + " since its fkIdFolioType field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null)
@@ -189,7 +189,7 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
             }
             catch (EntityNotFoundException enfe)
             {
-                throw new NonexistentEntityException("The tipoDeFolio with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The folio type with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
             List<Folio> folioListOrphanCheck = folioType.getFolioList();
@@ -199,7 +199,7 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This FolioType (" + folioType + ") cannot be destroyed since the Folio " + folioListOrphanCheckFolio + " in its folioList field has a non-nullable fkIdTipoFolio field.");
+                illegalOrphanMessages.add("This FolioType (" + folioType + ") cannot be destroyed since the Folio " + folioListOrphanCheckFolio + " in its folioList field has a non-nullable fkIdFolioType field.");
             }
             if (illegalOrphanMessages != null)
             {

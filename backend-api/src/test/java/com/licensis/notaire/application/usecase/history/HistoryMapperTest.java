@@ -40,7 +40,7 @@ class HistoryMapperTest {
     }
 
     @Test
-    @DisplayName("Should map a null management ID when fkIdGestion is null")
+    @DisplayName("Should map a null management ID when fkIdManagement is null")
     void shouldMapNullManagementIdWhenFkIdManagementIsNull() {
         ManagementStatus status = new ManagementStatus();
         status.setIdManagementStatus(3);
@@ -58,7 +58,7 @@ class HistoryMapperTest {
     }
 
     @Test
-    @DisplayName("Should map null status fields when fkIdEstadoGestion is null")
+    @DisplayName("Should map null status fields when fkIdManagementStatus is null")
     void shouldMapNullStatusFieldsWhenFkIdManagementStatusIsNull() {
         DeedManagement management = new DeedManagement();
         management.setIdManagement(7);

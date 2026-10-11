@@ -204,7 +204,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This ProcedureType (" + procedureType + ") cannot be destroyed since the BudgetTemplate " + budgetTemplateListOrphanCheckBudgetTemplate + " in its plantillaPresupuestoList field has a non-nullable tipoDeTramite field.");
+                    illegalOrphanMessages.add("This ProcedureType (" + procedureType + ") cannot be destroyed since the BudgetTemplate " + budgetTemplateListOrphanCheckBudgetTemplate + " in its budgetTemplateList field has a non-nullable procedureType field.");
                 }
                 List<ProcedureTemplate> procedureTemplateListOrphanCheck = procedureType.getProcedureTemplateList();
                 for (ProcedureTemplate procedureTemplateListOrphanCheckProcedureTemplate : procedureTemplateListOrphanCheck)
@@ -213,7 +213,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This ProcedureType (" + procedureType + ") cannot be destroyed since the ProcedureTemplate " + procedureTemplateListOrphanCheckProcedureTemplate + " in its plantillaTramiteList field has a non-nullable tipoDeTramite field.");
+                    illegalOrphanMessages.add("This ProcedureType (" + procedureType + ") cannot be destroyed since the ProcedureTemplate " + procedureTemplateListOrphanCheckProcedureTemplate + " in its procedureTemplateList field has a non-nullable procedureType field.");
                 }
                 List<Procedure> procedureListOrphanCheck = procedureType.getProcedureList();
                 for (Procedure procedureListOrphanCheckProcedure : procedureListOrphanCheck)
@@ -222,7 +222,7 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
                     {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("This ProcedureType (" + procedureType + ") cannot be destroyed since the Procedure " + procedureListOrphanCheckProcedure + " in its tramiteList field has a non-nullable fkIdTipoTramite field.");
+                    illegalOrphanMessages.add("This ProcedureType (" + procedureType + ") cannot be destroyed since the Procedure " + procedureListOrphanCheckProcedure + " in its procedureList field has a non-nullable fkIdProcedureType field.");
                 }
                 if (illegalOrphanMessages != null)
                 {

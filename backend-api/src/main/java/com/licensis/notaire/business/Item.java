@@ -217,7 +217,7 @@ public class Item implements Serializable, Persistable<Integer>
     @Override
     public String toString()
     {
-        return "negocio.Item[ idItem=" + idItem + " ]"
+        return "Item[ idItem=" + idItem + " ]"
                 + "[ name=" + name + " ]";
     }
 

@@ -170,7 +170,7 @@ class ManagementQueryServiceTest {
         }
 
         @Test
-        @DisplayName("Should handle null estadoDeGestion gracefully")
+        @DisplayName("Should handle null managementStatus gracefully")
         void shouldHandleNullStatus() {
             testManagement.setFkIdManagementStatus(null);
             when(repository.findById(1)).thenReturn(Optional.of(testManagement));
@@ -194,7 +194,7 @@ class ManagementQueryServiceTest {
         }
 
         @Test
-        @DisplayName("Should return zero procedureCount when tramiteList is null")
+        @DisplayName("Should return zero procedureCount when procedureList is null")
         void shouldReturnZeroProcedureCountWhenListIsNull() {
             testManagement.setProcedureList(null);
             testManagement.setFkIdManagementStatus(null);

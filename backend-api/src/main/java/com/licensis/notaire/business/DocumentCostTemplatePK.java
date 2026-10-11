@@ -60,7 +60,7 @@ public class DocumentCostTemplatePK implements Serializable {
 
     @Override
     public String toString() {
-        return "negocio.DocumentCostTemplatePK[ fkIdTipoTramite=" + fkIdProcedureType
-                + ", fkIdTipoDocumento=" + fkIdDocumentType + " ]";
+        return "DocumentCostTemplatePK[ fkIdProcedureType=" + fkIdProcedureType
+                + ", fkIdDocumentType=" + fkIdDocumentType + " ]";
     }
 }
