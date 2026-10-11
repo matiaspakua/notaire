@@ -15,7 +15,7 @@ import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 import { createProcedureType, createDocumentType } from "./setup/api-helpers";
 
-test.describe("Plantillas - Costos de Documentos", () => {
+test.describe("Templates - document costs", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

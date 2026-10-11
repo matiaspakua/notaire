@@ -76,7 +76,7 @@ public class TestimonyController {
         }
 
         @Override
-        @Schema(description = "Testimony verificado", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Verified testimony", requiredMode = Schema.RequiredMode.REQUIRED)
         public boolean isVerified() {
             return super.isVerified();
         }

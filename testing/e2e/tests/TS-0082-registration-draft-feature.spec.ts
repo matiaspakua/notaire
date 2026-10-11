@@ -23,7 +23,7 @@ async function seedSignedDeed(page: import("@playwright/test").Page): Promise<{ 
   const seeded = await apiPost<DeedApiResult>(page, "/deeds", {
     number: number,
     dateDeedrecording: new Date().toISOString().split("T")[0],
-    body: `Contenido E2E ${number}`,
+    body: `E2E content ${number}`,
     status: "Firmada",
   });
   return { idDeed: seeded.data!.idDeed, number };

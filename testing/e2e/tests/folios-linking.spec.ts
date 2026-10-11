@@ -47,7 +47,7 @@ async function openNewFolioAndFillRequired(page: Page, numberFolio: number) {
   return dialog
 }
 
-test.describe('CU87 - Vincular Deed y Folio', () => {
+test.describe('CU87 - Link a deed and a folio', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
@@ -73,7 +73,7 @@ test.describe('CU87 - Vincular Deed y Folio', () => {
     await expect(dialog).not.toBeVisible({ timeout: 8000 })
     await expect(page.locator('[data-sonner-toast]').getByText(/creado/i)).toBeVisible({ timeout: 5000 })
 
-    // Then: the new folio row shows estado Utilizado and the linked deed número
+    // Then: the new folio row shows status Utilizado and the linked deed number
     const table = page.getByRole('table')
     const row = table.getByRole('row', { name: new RegExp(String(numberFolio)) })
     await expect(row).toBeVisible({ timeout: 10000 })

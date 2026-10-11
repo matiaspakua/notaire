@@ -2388,7 +2388,7 @@ components:
         boundaries:
           type: string
         cadastralDesignation:
-          description: Cadastral nomenclature that identifica the property; required and not empty
+          description: Cadastral nomenclature that identifies the property; required and not empty
           minLength: 1
           type: string
         fiscalAppraisal:
@@ -2668,7 +2668,7 @@ components:
         valid:
           type: boolean
         verified:
-          description: Testimony verificado
+          description: Verified testimony
           type: boolean
         version:
           description: 'Version read from the testimony (optimistic lock): 409 when it is no longer the stored version'
@@ -5920,14 +5920,14 @@ paths:
     get:
       operationId: getByDateRange
       parameters:
-      - description: Fecha inicio (YYYY-MM-DD)
+      - description: Start date (YYYY-MM-DD)
         in: query
         name: startDate
         required: true
         schema:
           format: date-time
           type: string
-      - description: Fecha fin (YYYY-MM-DD)
+      - description: End date (YYYY-MM-DD)
         in: query
         name: endDate
         required: true

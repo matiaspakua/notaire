@@ -33,14 +33,14 @@ class NotaireForm extends JFrame {
     code: `// 2025 — Clean separation
 @RestController
 @RequestMapping("/api/v1/deeds")
-public class EscrituraController {
+public class DeedController {
 
   @Autowired
-  EscrituraService service;
+  DeedService service;
 
   @PostMapping
-  public ResponseEntity<DtoEscritura> create(
-      @RequestBody @Valid DtoEscritura dto) {
+  public ResponseEntity<DtoDeed> create(
+      @RequestBody @Valid DtoDeed dto) {
     return ResponseEntity.ok(service.save(dto));
   }
 }`,

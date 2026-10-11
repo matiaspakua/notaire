@@ -319,7 +319,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
   });
 
-  test("Suplencias — List, Create", async () => {
+  test("Substitutions — List, Create", async () => {
     await test.step("List via sidebar", async () => {
       await navigateViaSidebar(page, "suplencias");
       await assertHeadingVisible(page);
@@ -417,7 +417,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Admin Plantillas — List, Create", async () => {
+  test("Admin templates — List, Create", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/administration/templates");
       await assertHeadingVisible(page);

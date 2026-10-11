@@ -36,7 +36,7 @@ async function seedSignedDeed(
   const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
     number: number,
     dateDeedrecording: new Date().toISOString().split('T')[0],
-    body: `Contenido E2E TS-0012 ${number}`,
+    body: `E2E content TS-0012 ${number}`,
     status: 'Firmada',
   })
   if (!result.ok || !result.data?.idDeed) {
@@ -67,10 +67,10 @@ async function seedVerifiedTestimony(
 }
 
 // ──────────────────────────────────────────────
-// CU03 — Listar documents required
+// CU03 — List required documents
 // ──────────────────────────────────────────────
 
-test.describe('CU03 - Listar documentos y certificados necesarios', () => {
+test.describe('CU03 - List required documents and certificates', () => {
   let steps: GherkinSteps
 
   test.beforeEach(async ({ page }) => {
@@ -95,10 +95,10 @@ test.describe('CU03 - Listar documentos y certificados necesarios', () => {
 })
 
 // ──────────────────────────────────────────────
-// CU07 + CU08 — Golden path: ciclo legal completo
+// CU07 + CU08 — Golden path: full legal cycle
 // ──────────────────────────────────────────────
 
-test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)', () => {
+test.describe('CU07→CU08→CU11→CU12 — Full legal cycle (golden path)', () => {
   let steps: GherkinSteps
 
   test.beforeEach(async ({ page }) => {
@@ -106,7 +106,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     await steps.givenUserIsLoggedIn()
   })
 
-  test('Golden path: generar → verificar → ingresar → inscribir → retirar', async ({ page }) => {
+  test('Golden path: generate → verify → enter → inscribe → withdraw', async ({ page }) => {
     // ── Seed ──────────────────────────────────────────
     const { idDeed, number: deedNumber } = await seedSignedDeed(page)
 
@@ -154,7 +154,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
     await steps.thenShowsSuccessMessage('inscripción registrada')
     await expect(rowMovements).toContainText(/inscripto/i)
 
-    // ── CU12: Retirar testimony ──────────────────────
+    // ── CU12: Withdraw the testimony ──────────────────────
     await page.getByTestId(`btn-withdraw-testimony-${idTestimony}`).click()
     await steps.thenModalIsVisible()
     await page.getByTestId('input-card-number').fill('123')
@@ -168,7 +168,7 @@ test.describe('CU07→CU08→CU11→CU12 — Ciclo legal completo (golden path)'
 // CU07 — Generate a testimony (unit / edge)
 // ──────────────────────────────────────────────
 
-test.describe('CU07 - Generar testimonio', () => {
+test.describe('CU07 - Generate a testimony', () => {
   let steps: GherkinSteps
 
   test.beforeEach(async ({ page }) => {
@@ -197,10 +197,10 @@ test.describe('CU07 - Generar testimonio', () => {
 })
 
 // ──────────────────────────────────────────────
-// CU08 — Verificar testimony (edge paths)
+// CU08 — Verify a testimony (edge paths)
 // ──────────────────────────────────────────────
 
-test.describe('CU08 - Verificar testimonio', () => {
+test.describe('CU08 - Verify a testimony', () => {
   let steps: GherkinSteps
 
   test.beforeEach(async ({ page }) => {
@@ -208,7 +208,7 @@ test.describe('CU08 - Verificar testimonio', () => {
     await steps.givenUserIsLoggedIn()
   })
 
-  test('CU08-GW01: Edge: verificar con observaciones → estado Observado', async ({ page }) => {
+  test('CU08-GW01: Edge: verify with notes → status Observado', async ({ page }) => {
     // Seed deed and generate testimony via API so this test is independent
     const { idDeed, number } = await seedSignedDeed(page)
     const generated = await apiPost<{ idTestimony: number }>(
@@ -247,7 +247,7 @@ test.describe('CU08 - Verificar testimonio', () => {
     const row = rowWithCell(page, number)
     await expect(row).toBeVisible({ timeout: 10_000 })
 
-    // btn-emitir-copia must NOT exist while testimony is still unverified
+    // The issue-copy button must NOT exist while the testimony is still unverified
     await expect(page.getByTestId(`btn-issue-copy-${idTestimony}`)).toHaveCount(0)
     // The verify button must still be available
     await expect(page.getByTestId(`btn-verify-testimony-${idTestimony}`)).toBeVisible()
@@ -255,7 +255,7 @@ test.describe('CU08 - Verificar testimonio', () => {
 })
 
 // ──────────────────────────────────────────────
-// CU11 — Movimientos testimony (edge paths)
+// CU11 — Testimony movements (edge paths)
 // ──────────────────────────────────────────────
 
 test.describe('CU11 - Submit for registration', () => {
@@ -284,10 +284,10 @@ test.describe('CU11 - Submit for registration', () => {
 })
 
 // ──────────────────────────────────────────────
-// CU12 — Retirar testimony (edge paths)
+// CU12 — Withdraw a testimony (edge paths)
 // ──────────────────────────────────────────────
 
-test.describe('CU12 - Retirar testimonio', () => {
+test.describe('CU12 - Withdraw a testimony', () => {
   let steps: GherkinSteps
 
   test.beforeEach(async ({ page }) => {
@@ -336,13 +336,13 @@ for (const viewport of [
       await steps.givenUserIsLoggedIn()
     })
 
-    test(`testimonios screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
+    test(`testimonies screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
       await steps.givenUserIsOnPage('/dashboard/testimonies')
       await page.waitForLoadState('networkidle')
       await steps.thenHasNoHorizontalOverflow()
     })
 
-    test(`movimientos-testimonio screen has no horizontal overflow at ${viewport.label}`, async ({
+    test(`testimony-movements screen has no horizontal overflow at ${viewport.label}`, async ({
       page,
     }) => {
       await steps.givenUserIsOnPage('/dashboard/testimony-movements')

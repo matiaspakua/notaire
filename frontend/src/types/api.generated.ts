@@ -4015,7 +4015,7 @@ export interface components {
         PropertyRequest: {
             address?: string;
             boundaries?: string;
-            /** @description Cadastral nomenclature that identifica the property; required and not empty */
+            /** @description Cadastral nomenclature that identifies the property; required and not empty */
             cadastralDesignation: string;
             fiscalAppraisal?: number;
             notes?: string;
@@ -4178,7 +4178,7 @@ export interface components {
             number: number;
             testimonyMovements?: components["schemas"]["DtoTestimonyMovement"][];
             valid?: boolean;
-            /** @description Testimony verificado */
+            /** @description Verified testimony */
             verified: boolean;
             /**
              * Format: int32
@@ -7991,9 +7991,9 @@ export interface operations {
     getByDateRange: {
         parameters: {
             query: {
-                /** @description Fecha inicio (YYYY-MM-DD) */
+                /** @description Start date (YYYY-MM-DD) */
                 startDate: string;
-                /** @description Fecha fin (YYYY-MM-DD) */
+                /** @description End date (YYYY-MM-DD) */
                 endDate: string;
             };
             header?: never;

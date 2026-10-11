@@ -190,7 +190,7 @@ test.describe("l10n — hardcoded strings (#1354)", () => {
     await expect(page.getByRole("main")).not.toContainText("Inactivo");
   });
 
-  test("movimientos-testimonio: English breadcrumb", async ({ page }) => {
+  test("testimony-movements: English breadcrumb", async ({ page }) => {
     await setupAuthWithLocale(page, "en", "/dashboard/testimony-movements");
     const crumb = page.getByRole("navigation", { name: "Breadcrumb" });
     await expect(crumb).toContainText("Testimony Movements", { timeout: 10000 });

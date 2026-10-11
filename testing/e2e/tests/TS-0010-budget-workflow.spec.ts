@@ -37,7 +37,7 @@ async function seedBudget(
 }
 
 // ─────────────────────────────────────────────────────────────
-// CU01 – Preparar Presupuesto (golden path via UI)
+// CU01 – Prepare a budget (golden path via UI)
 // ─────────────────────────────────────────────────────────────
 test.describe("CU01 - Prepare a budget (golden path)", () => {
   let steps: GherkinSteps;
@@ -102,7 +102,7 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
   test("TS-0010-GW02: the budget list shows the client name on each row", async ({
     page,
   }) => {
-    // GIVEN: budget sembrado via API
+    // GIVEN: a budget seeded via API
     const personResult = await createPerson(page);
     expect(personResult.ok).toBe(true);
     const idPerson = personResult.data!.personId;
@@ -118,7 +118,7 @@ test.describe("CU01 - Prepare a budget (golden path)", () => {
     const table = page.getByRole("table");
     await expect(table).toBeVisible({ timeout: 8000 });
 
-    // La cabecera debe incluir "client" o "person"
+    // The header must include "client" or "person"
     const headerRow = table.getByRole("row").first();
     const headerText = await headerRow.textContent();
     expect(headerText?.toLowerCase()).toMatch(/client|persona/);

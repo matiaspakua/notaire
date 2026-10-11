@@ -27,7 +27,7 @@ async function seedBudget(page: Page, amount: number): Promise<{ idBudget: numbe
   return { idBudget: budgetResult.data.idBudget, apellido: personResult.data.lastName! };
 }
 
-test.describe("CU15 - Procesar Payment", () => {
+test.describe("CU15 - Process a payment", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

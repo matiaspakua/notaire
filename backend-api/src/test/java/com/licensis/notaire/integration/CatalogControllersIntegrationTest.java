@@ -266,7 +266,7 @@ class CatalogControllersIntegrationTest {
     class TestimonyMovementTests {
 
         @Test
-        @DisplayName("CU10 - Should return 200 and empty list when no movimientos exist")
+        @DisplayName("CU10 - Should return 200 and empty list when no movements exist")
         void shouldReturnEmptyListOfMovimientos() throws Exception {
             mockMvc.perform(get("/api/v1/testimony-movements"))
                     .andExpect(status().isOk())

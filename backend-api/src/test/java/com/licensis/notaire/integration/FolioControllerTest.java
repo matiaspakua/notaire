@@ -98,7 +98,7 @@ class FolioControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 400 when escribanoId is missing")
+    @DisplayName("Should return 400 when notaryId is missing")
     void shouldReturn400WhenNotaryIdMissing() throws Exception {
         String body = """
                 {"number": 9005, "year": 2026, "status": "Nuevo", "typeFolioId": 1}

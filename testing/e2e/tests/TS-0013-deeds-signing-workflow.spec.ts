@@ -66,10 +66,10 @@ async function seedDeedWithoutFolio(page: Page): Promise<{ idDeed: number; numbe
 }
 
 // ──────────────────────────────────────────────
-// CU05 — Preparar Deed
+// CU05 — Prepare a deed
 // ──────────────────────────────────────────────
 
-test.describe('CU05 - Preparar Deed', () => {
+test.describe('CU05 - Prepare a deed', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
@@ -88,7 +88,7 @@ test.describe('CU05 - Preparar Deed', () => {
     const dialog = page.getByRole('dialog')
     await expect(dialog).toBeVisible()
 
-    // Form must have campo "número"
+    // Form must have a "número" field
     await expect(dialog.getByLabel(/número/i)).toBeVisible()
 
     // Form must have campo "fecha"
@@ -134,7 +134,7 @@ test.describe('CU05 - Preparar Deed', () => {
       page.locator('[data-sonner-toast]').getByText(/creada|éxito/i)
     ).toBeVisible({ timeout: 5000 })
 
-    // And: deed row appears in the table with estado "Sin Firmar" (the backend default
+    // And: deed row appears in the table with status "Sin Firmar" (the backend default
     // for newly-created deeds — see ConstantesNegocio.ESCRITURA_SIN_FIRMAR)
     const table = page.getByRole('table')
     await expect(table).toBeVisible()
@@ -145,10 +145,10 @@ test.describe('CU05 - Preparar Deed', () => {
 })
 
 // ──────────────────────────────────────────────
-// CU06 — Firmar Deed
+// CU06 — Sign a deed
 // ──────────────────────────────────────────────
 
-test.describe('CU06 - Firmar Deed', () => {
+test.describe('CU06 - Sign a deed', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
@@ -165,7 +165,7 @@ test.describe('CU06 - Firmar Deed', () => {
     const row = page.getByRole('row').filter({ hasText: new RegExp(String(number)) })
     await expect(row).toBeVisible({ timeout: 10000 })
 
-    // When: click the firmar button for this deed
+    // When: click the sign button for this deed
     await page.getByTestId(`btn-sign-deed-${idDeed}`).click()
 
     // Confirm in the dialog/alert
@@ -189,7 +189,7 @@ test.describe('CU06 - Firmar Deed', () => {
     const row = page.getByRole('row').filter({ hasText: new RegExp(String(number)) })
     await expect(row).toBeVisible({ timeout: 10000 })
 
-    // The firmar button should be either absent, disabled, or trigger an error
+    // The sign button should be either absent, disabled, or trigger an error
     const firmarBtn = page.getByTestId(`btn-sign-deed-${idDeed}`)
     const firmarBtnExists = await firmarBtn.isVisible({ timeout: 3000 }).catch(() => false)
 
@@ -200,7 +200,7 @@ test.describe('CU06 - Firmar Deed', () => {
         // Acceptable: button is disabled — no folio assigned
         expect(isDisabled).toBe(true)
       } else {
-        // If not disabled, confirming the firmar dialog must produce an error toast
+        // If not disabled, confirming the sign dialog must produce an error toast
         // (backend rejects with 400 when the deed has no folio assigned)
         await firmarBtn.click()
         const confirmDialog = page.getByRole('dialog').or(page.getByRole('alertdialog'))

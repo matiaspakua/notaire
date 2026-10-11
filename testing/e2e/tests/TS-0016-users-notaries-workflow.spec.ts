@@ -128,7 +128,7 @@ test.describe("CU21 - Update a user account", () => {
   });
 });
 
-test.describe("CU23 - Ver registro de actividades", () => {
+test.describe("CU23 - View the activity log", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

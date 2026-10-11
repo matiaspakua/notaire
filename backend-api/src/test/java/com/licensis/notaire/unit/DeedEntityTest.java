@@ -229,7 +229,7 @@ class DeedEntityTest {
         void getDtoWithNullFolioListReturnsFoliosEmpty() {
             Deed e = new Deed(1);
             e.setNumber(42);
-            // folioList is null by default → getDto sets folios null on DTO, but DtoEscritura.getFolios() returns new ArrayList<>()
+            // folioList is null by default → getDto sets folios null on DTO, but DtoDeed.getFolios() returns new ArrayList<>()
             var dto = e.getDto();
             assertThat(dto.getFolios()).isNotNull().isEmpty();
         }

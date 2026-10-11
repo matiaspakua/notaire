@@ -17,12 +17,12 @@ async function seedVerifiedTestimony(page: import("@playwright/test").Page): Pro
   const deed = await apiPost<{ idDeed: number }>(page, "/deeds", {
     number: deedNumber,
     dateDeedrecording: new Date().toISOString().split("T")[0],
-    body: `Contenido E2E ${deedNumber}`,
+    body: `E2E content ${deedNumber}`,
     status: "Firmada",
   });
   const number = uniqueId() % 1_000_000;
   // DtoDeed.number is primitive int — must be included in nested object to avoid 400
-  // (see TestimonioControllerIntegrationTest#testimonioBody).
+  // (see TestimonyControllerIntegrationTest#testimonyBody).
   const testimony = await apiPost<{ idTestimony: number }>(page, "/testimonies", {
     deed: { idDeed: deed.data!.idDeed, number: deedNumber },
     number: number,
@@ -32,7 +32,7 @@ async function seedVerifiedTestimony(page: import("@playwright/test").Page): Pro
   return { idTestimony: testimony.data!.idTestimony, number };
 }
 
-test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
+test.describe("CU11/CU12/CU44 - Testimony movements", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -101,7 +101,7 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
     { width: 768, height: 1024, label: "768px (tablet)" },
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
-    test(`movimientos-testimonio screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
+    test(`testimony-movements screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await steps.givenUserIsOnPage("/dashboard/testimony-movements");
       await page.waitForLoadState("networkidle");

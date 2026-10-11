@@ -50,7 +50,7 @@ test.describe("CU22 - Register a substitution", () => {
   });
 });
 
-test.describe("CU59 - Consultar Suplencias", () => {
+test.describe("CU59 - Look up substitutions", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

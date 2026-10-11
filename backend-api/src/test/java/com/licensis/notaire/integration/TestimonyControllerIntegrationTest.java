@@ -76,7 +76,7 @@ class TestimonyControllerIntegrationTest {
         return node.get("idDeed").asInt();
     }
 
-    // DtoEscritura.numero is primitive int — must be included in nested object to avoid 400
+    // DtoDeed.number is a primitive int — must be included in the nested object to avoid 400
     private String testimonyBody(int number, boolean flagged, int deedId) {
         return """
                 {

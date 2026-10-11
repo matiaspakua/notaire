@@ -66,7 +66,7 @@ test.describe("CU24 - Generate the index book", () => {
   });
 
   test.skip("CU24-GW01 (#1146): Given reports, When the index book is requested, Then it is generated", async () => {
-    // Skipped (#1146): reportes page uses "Descargar PDF" buttons — no "libro índices" button text.
+    // Skipped (#1146): reports page uses "Descargar PDF" buttons — no "libro índices" button text.
     // The report is triggered by filling the year field and clicking Descargar PDF.
   });
 });
@@ -82,7 +82,7 @@ test.describe("CU25 - Generate the monthly sworn statement", () => {
   });
 
   test.skip("CU25-GW01 (#1146): Given on reportes, When select month and generate, Then creates", async () => {
-    // Skipped (#1146): reportes page has no "mes" dropdown or "declaración jurada" named button.
+    // Skipped (#1146): reports page has no "mes" dropdown or "declaración jurada" named button.
     // The DDJJ mensual section uses number inputs for year/month and a "Descargar PDF" button.
   });
 });
@@ -178,7 +178,7 @@ test.describe("CU39 - Create a budget template", () => {
   });
 
   test.skip("CU39-GW01 (#1146): Given budgets, When templates is clicked, Then the templates are shown", async () => {
-    // Skipped (#1146): budgets page has no "plantillas" button in the current UI.
+    // Skipped (#1146): the budgets page has no templates button in the current UI.
   });
 });
 
@@ -192,7 +192,7 @@ test.describe("CU42 - Report upcoming expirations", () => {
   });
 
   test.skip("CU42-GW01 (#1146): Given on dashboard, When view alerts, Then shows vencimientos", async () => {
-    // Skipped (#1146): dashboard has no "alertas" button or "próximos vencimientos" section.
+    // Skipped (#1146): the dashboard has no alerts button or upcoming-expirations section.
   });
 });
 

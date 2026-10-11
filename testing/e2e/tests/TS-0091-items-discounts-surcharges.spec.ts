@@ -14,7 +14,7 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 
-test.describe("Items - Descuentos y Recargos", () => {
+test.describe("Items - discounts and surcharges", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

@@ -47,7 +47,7 @@ test.describe("CU43 - Re-enter documentation", () => {
     await authenticateAsAdmin(page);
   });
 
-  test("golden path: reingresar a document shows a success toast", async ({ page }) => {
+  test("golden path: re-entering a document shows a success toast", async ({ page }) => {
     const { idManagement, number, idProcedure, idTypeDocument } = await seedManagementWithRequiredDocumentation(
       page,
       "Certificado de Dominio",

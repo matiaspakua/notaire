@@ -22,7 +22,7 @@ async function seedConsecutiveFolios(
   return folios;
 }
 
-test.describe("CU80 - Administrar Cuadernos de Folios", () => {
+test.describe("CU80 - Manage folio notebooks", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
   });
@@ -90,7 +90,7 @@ test.describe("CU80 - Administrar Cuadernos de Folios", () => {
     await expect(dialog).toBeVisible();
   });
 
-  test("edge path: including a damaged folio without observaciones shows a validation error", async ({ page }) => {
+  test("edge path: including a damaged folio without notes shows a validation error", async ({ page }) => {
     const person = await createPerson(page);
     const folios = await seedConsecutiveFolios(page, person.data!.personId, 10, {
       estados: ["Errose"],

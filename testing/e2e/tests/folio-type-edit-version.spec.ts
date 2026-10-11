@@ -9,7 +9,7 @@ import { test, expect } from "@playwright/test";
 import { authenticateAsAdmin } from "./setup/auth";
 import { apiGet, apiPost } from "./setup/api-helpers";
 
-test.describe("CU64 — Tipos de folio: editing twice keeps working", () => {
+test.describe("CU64 — Folio types: editing twice keeps working", () => {
   test("second edit of the same folio type succeeds and keeps notes and enabled", async ({ page }) => {
     await authenticateAsAdmin(page);
     const name = `TF655-${Date.now()}`;

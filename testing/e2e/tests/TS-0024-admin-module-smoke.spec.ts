@@ -153,7 +153,7 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
     await expect(page.getByTestId("select-filter-status-folio")).toBeVisible();
   });
 
-  test("Tipos de Folio section: full CRUD via search + create + edit + delete", async ({ page }) => {
+  test("Folio types section: full CRUD via search + create + edit + delete", async ({ page }) => {
     const uniqueName = `TipoTest${Date.now()}`;
     const renamed = `${uniqueName}-edit`;
 
@@ -183,7 +183,7 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
     await expect(page.getByText(renamed, { exact: true })).toBeHidden();
   });
 
-  test("CU81 — marking a tipo de folio as Protocolo Auxiliar via checkbox persists the flag", async ({ page }) => {
+  test("CU81 — marking a folio type as Protocolo Auxiliar via checkbox persists the flag", async ({ page }) => {
     const uniqueName = `TipoAuxiliarTest${Date.now()}`;
 
     await page.getByTestId("btn-new-folio-type").click();

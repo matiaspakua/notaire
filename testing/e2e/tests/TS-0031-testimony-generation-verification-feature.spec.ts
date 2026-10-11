@@ -20,13 +20,13 @@ async function seedSignedDeed(page: import("@playwright/test").Page): Promise<{ 
   const seeded = await apiPost<{ idDeed: number }>(page, "/deeds", {
     number: number,
     dateDeedrecording: new Date().toISOString().split("T")[0],
-    body: `Contenido E2E ${number}`,
+    body: `E2E content ${number}`,
     status: "Firmada",
   });
   return { idDeed: seeded.data!.idDeed, number };
 }
 
-test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
+test.describe("CU07/CU08 - Generate and verify a testimony", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -34,7 +34,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
     await steps.givenUserIsLoggedIn();
   });
 
-  test("Golden path: generar testimonio, verificar sin observaciones y emitir copia", async ({ page }) => {
+  test("Golden path: generate a testimony, verify it without notes, and issue a copy", async ({ page }) => {
     const { number } = await seedSignedDeed(page);
 
     await steps.givenUserIsOnPage("/dashboard/testimonies");
@@ -64,7 +64,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
     expect(download.suggestedFilename()).toMatch(/^testimonio_\d+_copia\.pdf$/);
   });
 
-  test("Edge: verificar con observaciones muestra el testimonio como Observado", async ({ page }) => {
+  test("Edge: verifying with notes shows the testimony as Observado", async ({ page }) => {
     const { idDeed, number } = await seedSignedDeed(page);
     const generated = await apiPost<{ idTestimony: number }>(page, `/testimonies/${idDeed}/generate`, {});
     const idTestimony = generated.data!.idTestimony;
@@ -101,7 +101,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
     { width: 768, height: 1024, label: "768px (tablet)" },
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
-    test(`testimonios screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
+    test(`testimonies screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await steps.givenUserIsOnPage("/dashboard/testimonies");
       await page.waitForLoadState("networkidle");

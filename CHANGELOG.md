@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English Playwright titles and remaining API descriptions** (#1490, CU75):
+  Playwright suite and test titles use English. Payment date parameters are
+  start date and end date. A verified testimony and the cadastral designation
+  are described in English. Visible Spanish UI text, stored statuses such as
+  `Sin Firmar` and `Observado`, and `Protocolo Auxiliar` stay.
 - **English audit comments, management update locals, and flagged-testimony description** (#1490, CU75):
   Audit comments name `audit_records.module` and `operation_detail`. Deed
   management update parameters use `updatedManagement`. The flagged-testimony

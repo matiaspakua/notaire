@@ -34,7 +34,7 @@ public class PropertyController {
      */
     record PropertyRequest(
             @NotBlank
-            @Schema(description = "Cadastral nomenclature that identifica the property; required and not empty",
+            @Schema(description = "Cadastral nomenclature that identifies the property; required and not empty",
                     requiredMode = Schema.RequiredMode.REQUIRED)
             String cadastralDesignation,
             java.math.BigDecimal fiscalAppraisal,

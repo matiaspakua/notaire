@@ -145,9 +145,9 @@ public class PaymentController {
     @GetMapping("/date")
     @Operation(summary = "Get payments by date range")
     public ResponseEntity<List<DtoPaymentResponse>> getByDateRange(
-            @Parameter(description = "Fecha inicio (YYYY-MM-DD)")
+            @Parameter(description = "Start date (YYYY-MM-DD)")
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @Parameter(description = "Fecha fin (YYYY-MM-DD)")
+            @Parameter(description = "End date (YYYY-MM-DD)")
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         try {
             return ResponseEntity.ok(

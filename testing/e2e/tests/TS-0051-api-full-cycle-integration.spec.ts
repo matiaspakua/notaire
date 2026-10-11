@@ -305,7 +305,7 @@ test.describe("API — Documentos Presentados endpoints", () => {
   });
 });
 
-test.describe("API — Suplencias endpoints", () => {
+test.describe("API — substitution endpoints", () => {
   test("GET /api/v1/substitutions — list substitutions", async ({ page }) => {
     await page.goto("/login");
     const result = await apiGet(page, "/substitutions");

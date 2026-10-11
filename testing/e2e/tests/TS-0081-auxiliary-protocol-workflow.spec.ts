@@ -42,7 +42,7 @@ test.describe("CU81 - Procedure management in the auxiliary protocol", () => {
     await expect(row).not.toBeVisible();
   });
 
-  test("edge path: submit button stays disabled until the cuerpo field is filled", async ({ page }) => {
+  test("edge path: submit button stays disabled until the body field is filled", async ({ page }) => {
     const idFolio = await seedAvailableAuxiliaryFolio(page);
 
     await page.goto("/dashboard/protocol/auxiliary");
@@ -60,7 +60,7 @@ test.describe("CU81 - Procedure management in the auxiliary protocol", () => {
     await expect(submit).toBeEnabled();
   });
 
-  test("empty state: shows no-data message when there are no available auxiliar folios", async ({ page }) => {
+  test("empty state: shows no-data message when there are no available auxiliary folios", async ({ page }) => {
     await page.goto("/dashboard/protocol/auxiliary");
     await page.waitForLoadState("domcontentloaded");
 
