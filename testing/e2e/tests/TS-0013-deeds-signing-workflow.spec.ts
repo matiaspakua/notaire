@@ -254,7 +254,7 @@ test.describe('CU63 - Search deeds', () => {
     const result = await apiPost<{ idDeed: number }>(page, '/deeds', {
       number: id,
       dateDeedrecording: new Date().toISOString().split('T')[0],
-      body: `Deed de búsqueda E2E ${id}`,
+      body: `Deed search E2E ${id}`,
       status: 'Sin Firmar',
     })
     if (!result.ok) throw new Error(`Seed failed: ${result.error}`)

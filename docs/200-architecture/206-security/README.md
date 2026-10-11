@@ -36,7 +36,7 @@ application data.
 | PII | `Person` (DNI, email, firstName/lastName) | High — regulated personal data |
 | Legal/notarial records | `Deed`, `Testimony`, `Folio`, `SubmittedDocument` | High — legally binding, indefinite retention |
 | Financial | `Budget`, `Payment` | Medium — budget/payment amounts, no card data stored |
-| Operational | `AuditRecord`, `ManagementHistory` | Medium — who-did-what audit trail, itself a control |
+| Operational | `AuditRecord`, `History` | Medium — who-did-what audit trail, itself a control |
 | Credentials | `User.password` (BCrypt hash) | Critical |
 
 ### Primary threats and current mitigations

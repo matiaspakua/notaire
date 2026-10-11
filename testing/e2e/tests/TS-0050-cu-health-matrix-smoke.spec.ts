@@ -121,7 +121,7 @@ const CU_CHECKS: CuCheck[] = [
   { id: "CU67", name: "Search management statuses", method: "GET", path: "/management-statuses", expectStatus: 200 },
   { id: "CU68", name: "Search folio types", method: "GET", path: "/folio-types", expectStatus: 200 },
 
-  // ── ManagementHistory (CU13) ──
+  // ── History (CU13) ──
   { id: "CU13", name: "View management history", method: "GET", path: () => `/history/management/${seedManagementId()}`, expectStatus: 200 },
   { id: "CU11", name: "Submit for registration", method: "GET", path: "/history", expectStatus: 200 },
 

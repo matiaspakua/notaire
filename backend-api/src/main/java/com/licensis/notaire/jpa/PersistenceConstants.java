@@ -18,6 +18,6 @@ public interface PersistenceConstants
     int INITIAL_VERSION = 0;
 //    // Name of the class that corresponds to a given JPA controller.
 //    public String JPA_PERSON = "Person";
-//    public String JPA_USER = "UserAccount";
+//    public String JPA_USER = "User";
 //    public String JPA_AUDIT = "AuditRecord";
 }

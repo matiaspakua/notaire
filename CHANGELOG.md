@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English helper and architecture names** (#1490, CU75):
+  E2E helpers and comments name `User` and `History`. The SAD domain
+  diagram, the security data table, and the API coverage notes use those
+  class names. The Java architect sample uses `users` and `DtoUser`. The
+  stored status `Sin Firmar` and the default history status `Iniciado` stay.
 - **English test titles and PDF fixtures** (#1490, CU75):
   User and history tests name the live types `User` and `History`, and the
   user field `active`. PDF samples use `No concepts`, `Properties`,

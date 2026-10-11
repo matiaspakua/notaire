@@ -47,13 +47,13 @@ When designing architecture or reviewing code structure:
 ### Entity & DTO Pattern
 
 ```java
-// Entity (negocio package) — never returned from controllers
+// Entity (business package) — never returned from controllers
 @Entity
-@Table(name = "usuarios")
-public class UserAccount { ... }
+@Table(name = "users")
+public class User { ... }
 
-// DTO (dto or negocio package) — what the API speaks
-public class DtoLoginUser { ... }
+// DTO (dto package) — what the API speaks
+public class DtoUser { ... }
 
 // Controller → Service → Repository (never skip layers)
 ```

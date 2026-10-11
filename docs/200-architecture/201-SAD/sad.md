@@ -339,7 +339,7 @@ package "com.licensis.notaire" {
     [Deed]
     [Budget]
     [Procedure]
-    [UserAccount]
+    [User]
     [WorkflowDefinition]
     [WorkflowNode]
     [WorkflowTransition]

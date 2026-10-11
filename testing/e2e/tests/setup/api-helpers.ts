@@ -330,7 +330,7 @@ export async function createDeed(
 }
 
 /**
- * UserAccount helpers — UserController's UserRequest is (name, password, type, active).
+ * User helpers — UserController's UserRequest is (name, password, type, active).
  */
 export async function createUser(
   page: Page,
@@ -697,7 +697,7 @@ export async function createTestimony(
 }
 
 /**
- * ManagementHistory helpers — HistoryController accepts the raw History entity.
+ * History helpers — HistoryController accepts the raw History entity.
  */
 export async function createHistoryEntry(
   page: Page,
@@ -707,7 +707,7 @@ export async function createHistoryEntry(
   return apiPost(page, "/history", {
     fkIdManagement: { idManagement: idManagement },
     date: new Date().toISOString().split("T")[0],
-    notes: `ManagementHistory E2E ${uniqueId()}`,
+    notes: `History E2E ${uniqueId()}`,
   });
 }
 

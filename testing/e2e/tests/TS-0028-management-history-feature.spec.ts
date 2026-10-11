@@ -1,5 +1,5 @@
 /**
- * E2E tests — history (ManagementHistory) view on the managements screen (CU13)
+ * E2E tests — history view on the managements screen (CU13)
  * Also covers the archive-rejected-by-invalid-transition edge path (CU16, issue #833).
  */
 import { type Page, test, expect } from "@playwright/test";
