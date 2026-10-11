@@ -308,6 +308,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | `backend-api/src/main/java/com/licensis/notaire/application/usecase/registrationdraft/RegistrationDraftService.java` | yes | `3d9d3ead` |
 | `docs/200-architecture/203-design/CICLO-DE-VIDA.md` | yes | `3d9d3ead` |
 | `docs/300-development/EVALUACION-INGENIERIA.md` | yes | `3d9d3ead` |
+| `backend-api/src/test/java/com/licensis/notaire/unit/RegistrationDraftServiceTest.java` | yes | `3d9d3ead` |
+| `backend-api/src/test/java/com/licensis/notaire/unit/RegistrationDraftControllerTest.java` | yes | `3d9d3ead` |
 
 ## Gate log
 
