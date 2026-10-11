@@ -18,7 +18,7 @@
 | Tests | `security/tests/test_security_cases.py` |
 | Implementation | `62126cf25746614be6805a4f04fa39d08717c8ac` — `security/run_gates.py`, `security/cases/catalog.yml`, `workspace/sdlc/run_pipeline.sh` |
 | CI | `.github/workflows/ci.yml` security job, artifact `security-case-report` |
-| Pull request | pending |
+| Pull request | https://github.com/matiaspakua/notaire/pull/1501 |
 | Merge | pending |
 | Release | pending |
 

@@ -51,10 +51,10 @@
 
 ## 10. Pull Request y validación CI
 
-- [ ] 10.1 Push the branch
-- [ ] 10.2 Open the PR referencing #1500 and CU78
+- [x] 10.1 Push the branch
+- [x] 10.2 Open the PR referencing #1500 and CU78 — #1501
 - [ ] 10.3 Required workflows run
-- [ ] 10.4 Record the PR number
+- [x] 10.4 Record the PR number
 
 ## 11. Deploy
 
