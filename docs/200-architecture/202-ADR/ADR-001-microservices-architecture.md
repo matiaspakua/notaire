@@ -1,181 +1,196 @@
-# ADR-001: Migración de Monolito Swing a Arquitectura de Microservicios
+# ADR-001: Migration from the Swing monolith to a layered service architecture
 
 **Status:** Accepted  
 **Date:** 2024-03-20  
-**Deciders:** Matías Miguez, Equipo de Arquitectura  
+**Deciders:** Matías Miguez, Architecture team  
 **Supersedes:** N/A  
 **Superseded by:** N/A  
 
 ## Context
 
-El sistema Notaire era originalmente una aplicación monolítica desarrollada en Java 1.6 con interfaz Swing, acceso directo a base de datos MySQL, y lógica de negocio acoplada a la capa de presentación. Esta arquitectura presentaba los siguientes problemas:
+Notaire was originally a monolithic application written in Java 1.6 with a Swing interface, direct access to a MySQL database, and business logic coupled to the presentation layer. That architecture had these problems:
 
-- **Acoplamiento fuerte**: La lógica de negocio estaba distribuida entre la GUI y la base de datos
-- **Dificultad de mantenimiento**: Cambios en requisitos requerían modificaciones en múltiples capas
-- **Escalabilidad limitada**: Imposible escalar componentes individuales
-- **Testing difícil**: Acoplamiento a Swing y JDBC dificultaba pruebas automatizadas
-- **Tecnología desactualizada**: Java 1.6, MySQL, sin estándares modernos
+- **Tight coupling**: business logic was split between the GUI and the database
+- **Hard to maintain**: a requirement change needed edits in several layers
+- **Limited scale**: individual components could not be scaled
+- **Hard to test**: coupling to Swing and JDBC made automated tests difficult
+- **Outdated technology**: Java 1.6, MySQL, and no modern standards
 
-**Restricciones:**
-- Mantener funcionalidad existente (54 casos de uso)
-- Migración gradual, sin parada total del sistema
-- Equipo con experiencia en Java pero nuevo en microservicios
-- Presupuesto y tiempo limitados
+**Constraints:**
+
+- Keep the existing behavior (54 use cases)
+- Migrate gradually, without a full stop of the system
+- A team experienced in Java and new to services
+- Limited budget and time
 
 ## Decision
 
-Migrar a una arquitectura de tres capas con separación clara:
+Move to a three-layer architecture with a clear split:
 
 1. **Backend REST API** (Spring Boot 4.1.0, Java 21, PostgreSQL 16)
-   - Centraliza toda lógica de negocio
-   - Proporciona API REST estándar
-   - Gestiona persistencia de datos
-   - Implementa auditoría y seguridad
+   - Holds all business logic
+   - Provides a standard REST API
+   - Manages data persistence
+   - Implements audit and security
 
-2. **Frontend Web (Next.js)** (TECNOLOGÍA TARGET - ver ADR-005)
-   - Interfaz de usuario moderna basada en web
-   - Reemplaza gradualmente al cliente Swing
-   - Utiliza sistema de diseño centralizado (ver ADR-011)
+2. **Web frontend (Next.js)** (target technology — see ADR-005)
+   - A modern web user interface
+   - Replaces the Swing client gradually
+   - Uses the centralized design system (see ADR-011)
 
-3. **Frontend Swing Cliente** (Mantenimiento / Transición)
-   - Refactorizado para consumir API REST
-   - Siendo deprecado en favor de la versión web
-   - Sin lógica de negocio ni acceso directo a BD
+3. **Swing client** (maintenance / transition)
+   - Refactored to call the REST API
+   - Being deprecated in favor of the web version
+   - No business logic and no direct database access
 
-4. **Módulo Compartido** (DTOs y código común)
-   - Definiciones comunes entre backend y frontend (Swing/Java)
-   - Facilita versionado de contratos
+4. **Shared module** (DTOs and common code)
+   - Shared definitions between the backend and the Swing/Java frontend
+   - Makes contract versioning easier
 
-**Tecnologías elegidas:**
+**Chosen technologies:**
+
 - **Backend**: Spring Boot 4.1.0, Java 21
 - **Database**: PostgreSQL 16, Hibernate
 - **Build**: Maven 3.x
 - **Deploy**: Docker + Docker Compose
-- **API**: REST con OpenAPI 3.0 (Swagger)
+- **API**: REST with OpenAPI 3.0 (Swagger)
 
 ## Options Considered
 
-### Option A: Mantener monolito Swing + mejorar
-| Dimensión | Evaluación |
+### Option A: Keep the Swing monolith and improve it
+
+| Dimension | Assessment |
 |-----------|-----------|
-| Complejidad | Baja |
-| Costo | Bajo |
-| Escalabilidad | Muy baja |
-| Mantenibilidad | Muy baja |
-| Testabilidad | Muy baja |
+| Complexity | Low |
+| Cost | Low |
+| Scalability | Very low |
+| Maintainability | Very low |
+| Testability | Very low |
 
 **Pros:**
-- Cambios mínimos en código existente
-- No requiere reentrenamiento del equipo
-- Costo inicial bajo
+
+- Minimal changes to existing code
+- No team retraining
+- Low initial cost
 
 **Cons:**
-- No resuelve problemas de acoplamiento
-- Imposible escalar componentes
-- Testing automatizado limitado
-- Continúa dependencia de tecnología antigua
-- Dificulta incorporación de nuevas características
 
-### Option B: Rewrite completo (Big Bang)
-| Dimensión | Evaluación |
+- Does not fix the coupling
+- Components still cannot scale
+- Automated testing stays limited
+- The old technology dependency continues
+- Adding new features stays hard
+
+### Option B: Full rewrite (big bang)
+
+| Dimension | Assessment |
 |-----------|-----------|
-| Complejidad | Alta |
-| Costo | Muy alto |
-| Escalabilidad | Alta |
-| Mantenibilidad | Alta |
-| Riesgo | Muy alto |
+| Complexity | High |
+| Cost | Very high |
+| Scalability | High |
+| Maintainability | High |
+| Risk | Very high |
 
 **Pros:**
-- Código completamente nuevo y limpio
-- Arquitectura moderna desde cero
-- Mejor performance potencial
-- Oportunidad de refactorizar todo
+
+- Entirely new, clean code
+- A modern architecture from the start
+- Potentially better performance
+- A chance to refactor everything
 
 **Cons:**
-- Alto riesgo de fallos durante transición
-- Tiempo de desarrollo muy largo (6+ meses)
-- Sistema antigua no disponible durante migración
-- Pérdida de conocimiento acumulado
-- Costo muy elevado
 
-### Option C: Migración gradual a 3 capas (SELECCIONADO)
-| Dimensión | Evaluación |
+- High risk of failures during the transition
+- A very long development (6+ months)
+- The old system is unavailable during the migration
+- Accumulated knowledge is lost
+- Very high cost
+
+### Option C: Gradual migration to 3 layers (selected)
+
+| Dimension | Assessment |
 |-----------|-----------|
-| Complejidad | Media |
-| Costo | Medio |
-| Escalabilidad | Alta |
-| Mantenibilidad | Alta |
-| Riesgo | Bajo |
+| Complexity | Medium |
+| Cost | Medium |
+| Scalability | High |
+| Maintainability | High |
+| Risk | Low |
 
 **Pros:**
-- Migración controlada y validable
-- Sistema funcional en cada etapa
-- Reduce riesgo de fallos críticos
-- Permite mantener negocio operativo
-- Testing incremental de cada módulo
-- Aprendizaje gradual de nuevas tecnologías
+
+- A controlled migration that can be checked at each step
+- The system stays usable at every stage
+- Lower risk of critical failures
+- The business can keep operating
+- Incremental testing of each module
+- Gradual learning of the new technologies
 
 **Cons:**
-- Requiere más coordinación
-- Coexistencia temporal de tecnologías
-- Mantenimiento de múltiples versiones
-- Trabajo inicial de setup duplicado
+
+- Needs more coordination
+- Technologies coexist for a while
+- Several versions have to be maintained
+- The initial setup work is duplicated
 
 ## Trade-off Analysis
 
-**Escalabilidad vs. Complejidad**
+**Scalability versus complexity**
 
-La opción C requiere más coordinación inicial que mantener el monolito, pero permite escalar cada componente independientemente. El backend puede replicarse sin tocar la GUI, y la base de datos puede optimizarse sin afectar la lógica de aplicación.
+Option C needs more coordination at the start than keeping the monolith, and it lets each component scale on its own. The backend can be replicated without touching the GUI, and the database can be tuned without changing application logic.
 
-**Riesgo vs. Velocidad**
+**Risk versus speed**
 
-El Big Bang (Option B) sería más rápido en teoría, pero el riesgo operacional es inaceptable. La migración gradual reduce riesgo significativamente: cada cambio puede probarse en prod con rollback.
+The big bang (option B) would be faster in theory, and the operational risk is unacceptable. The gradual migration lowers that risk: each change can be tried in production with a rollback.
 
-**Costo de Transición vs. Costo de Mantenimiento**
+**Transition cost versus maintenance cost**
 
-El costo inicial de la migración es compensado ampliamente por:
-- Reducción de bugs en producción
-- Menor time-to-market para features nuevas
-- Mejor performance
-- Capacidad de escalar bajo carga
+The initial migration cost is offset by:
+
+- Fewer production bugs
+- Shorter time to market for new features
+- Better performance
+- The ability to scale under load
 
 ## Consequences
 
-### Positivas
-- **Separación de responsabilidades**: GUI y negocio desacoplados
-- **Testabilidad**: El backend puede testearse independientemente sin GUI
-- **Escalabilidad horizontal**: Backend puede escalarse según demanda
-- **Modernización tecnológica**: Java 21, Spring Boot, PostgreSQL
-- **API reutilizable**: Otros clientes (móvil, web) pueden consumir la API
-- **Seguridad mejorada**: Control centralizado, auditoría en backend
+### Positive
 
-### Desafíos
-- **Mantenimiento de múltiples módulos**: Más packages que mantener
-- **Versionado de API**: Necesario planificar evolucion de contratos REST
-- **Network latency**: Llamadas HTTP tienen latencia vs. llamadas directas
-- **Complejidad operacional**: Más servicios que deployar y monitorear
-- **Duplicación temporal**: Código legacy y nuevo coexisten durante transición
+- **Separation of responsibilities**: the GUI and the business logic are decoupled
+- **Testability**: the backend can be tested on its own, without a GUI
+- **Horizontal scale**: the backend can scale with demand
+- **Technology update**: Java 21, Spring Boot, PostgreSQL
+- **Reusable API**: other clients (mobile, web) can call the API
+- **Stronger security**: centralized control and audit in the backend
 
-### Acciones de seguimiento
-- [ ] Establecer SLAs para API REST
-- [ ] Implementar circuit breakers para resiliencia
-- [ ] Plan de deprecación para código legacy
-- [ ] Estrategia de versionado de API (semantic versioning)
-- [ ] Documentación de contratos REST (OpenAPI)
+### Challenges
+
+- **Several modules to maintain**: more packages to keep
+- **API versioning**: the evolution of REST contracts has to be planned
+- **Network latency**: HTTP calls have latency that direct calls do not
+- **Operational complexity**: more services to deploy and monitor
+- **Temporary duplication**: legacy and new code coexist during the transition
+
+### Follow-up actions
+
+- [ ] Set SLAs for the REST API
+- [ ] Add circuit breakers for resilience
+- [ ] A deprecation plan for legacy code
+- [ ] An API versioning strategy (semantic versioning)
+- [ ] REST contract documentation (OpenAPI)
 
 ## Implementation Plan
 
-1. **Phase 1**: Setup Spring Boot backend con módulo compartido
-2. **Phase 2**: Migrar entidades de negocio y repositorios
-3. **Phase 3**: Implementar servicios de negocio
-4. **Phase 4**: Crear endpoints REST
-5. **Phase 5**: Refactorizar GUI para consumir API
-6. **Phase 6**: Deprecar código legacy
-7. **Phase 7**: Monitoreo y optimización
+1. **Phase 1**: Set up the Spring Boot backend with the shared module
+2. **Phase 2**: Move business entities and repositories
+3. **Phase 3**: Implement business services
+4. **Phase 4**: Create REST endpoints
+5. **Phase 5**: Refactor the GUI to call the API
+6. **Phase 6**: Deprecate legacy code
+7. **Phase 7**: Monitoring and tuning
 
 ## Related Decisions
 
-- ADR-002: Estructura de paquetes y módulos Maven
-- ADR-003: Estrategia de versionado de API REST
-- ADR-004: Seguridad y autenticación en REST API
-- ADR-005: Estrategia de testing para arquitectura distribuida
+- ADR-002: Maven package and module structure
+- ADR-003: REST API versioning strategy
+- ADR-004: Security and authentication on the REST API
+- ADR-005: Testing strategy for the distributed architecture
