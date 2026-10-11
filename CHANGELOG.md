@@ -43,6 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English local-model setup scripts** (#1490, CU75):
+  `setup-omlx-codex.sh` and `stop-omlx.sh` report progress in English.
+  Presets, profiles, ports, and the `: applied` patch marker stay.
 - **English local-model guide** (#1490, CU75):
   `local-ai/README.md` describes the oMLX stack, presets, and Metal memory
   limit in English. Model names, profiles, and commands stay. The Cursor Cloud
