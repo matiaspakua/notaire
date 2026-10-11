@@ -110,7 +110,8 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     expect(budgetResult.ok).toBe(true);
     const idBudget = budgetResult.data!.idBudget;
 
-    const procedureTypeResult = await createProcedureType(page, { name: `No template E2E ${Date.now()}` });
+    const procedureTypeName = `No template E2E ${Date.now()}`;
+    const procedureTypeResult = await createProcedureType(page, { name: procedureTypeName });
     expect(procedureTypeResult.ok).toBe(true);
 
     await steps.givenUserIsOnPage("/dashboard/budgets");
@@ -122,7 +123,9 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     await expect(dialog).toBeVisible();
 
     await dialog.getByTestId("select-procedure-type-items").click();
-    await page.getByRole("option", { name: /Sin Plantilla E2E/i }).last().click();
+    // Pick the procedure type this test created (exact name): the #1495 rename changed the seeded
+    // name to English, so the old /Sin Plantilla E2E/ pattern only matched leftovers on old dev DBs.
+    await page.getByRole("option", { name: procedureTypeName, exact: true }).click();
     await dialog.getByTestId("btn-load-template").click();
 
     // THEN: curated Spanish toast for 400 (preferFallback → items.errorNoPlantilla)

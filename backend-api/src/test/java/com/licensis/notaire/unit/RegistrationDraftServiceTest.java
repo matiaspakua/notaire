@@ -56,7 +56,7 @@ class RegistrationDraftServiceTest {
 
         deed = new Deed();
         deed.setIdDeed(1);
-        deed.setStatus(BusinessConstants.DeedFIRMADA);
+        deed.setStatus(BusinessConstants.DeedSigned);
 
         property = new Property();
         property.setIdProperty(1);
@@ -102,9 +102,9 @@ class RegistrationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject generation when deed is not firmada")
-    void shouldRejectGenerationWhenDeedNotFirmada() {
-        deed.setStatus(BusinessConstants.DeedSINFIRMAR);
+    @DisplayName("Should reject generation when the deed is not signed")
+    void shouldRejectGenerationWhenDeedNotSigned() {
+        deed.setStatus(BusinessConstants.DeedUnsigned);
         when(deedRepository.findById(1)).thenReturn(Optional.of(deed));
 
         assertThatThrownBy(() -> registrationDraftService.generate(1))
@@ -152,10 +152,10 @@ class RegistrationDraftServiceTest {
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
         when(registrationDraftRepository.save(any(RegistrationDraft.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        RegistrationDraft result = registrationDraftService.observe(1, "Falta plano de mensura", new Date());
+        RegistrationDraft result = registrationDraftService.observe(1, "Missing survey plan", new Date());
 
         assertThat(result.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftObserved);
-        assertThat(result.getRegistryNotes()).isEqualTo("Falta plano de mensura");
+        assertThat(result.getRegistryNotes()).isEqualTo("Missing survey plan");
         assertThat(result.getDateCorrection()).isNotNull();
     }
 

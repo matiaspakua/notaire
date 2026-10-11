@@ -104,7 +104,7 @@ class ManagementControllerIntegrationTest {
 
     private Integer createManagementStatus() {
         ManagementStatus status = new ManagementStatus();
-        status.setName("Estado IT");
+        status.setName("Status IT");
         return managementStatusRepository.save(status).getIdManagementStatus();
     }
 
@@ -233,7 +233,7 @@ class ManagementControllerIntegrationTest {
         Integer managementId = mapper.readTree(created.getResponse().getContentAsString()).get("idManagement").asInt();
 
         String updateBody = """
-                {"number": 9204, "heading": "Management IT actualizada", "budgetId": %d,
+                {"number": 9204, "heading": "Updated management IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted(budgetId, notaryId, statusId, typeProcedureId);
 

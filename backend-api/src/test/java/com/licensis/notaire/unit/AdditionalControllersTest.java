@@ -190,7 +190,7 @@ class AdditionalControllersTest {
             mvc.perform(get("/api/v1/managements/1/current-status")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/managements/2/current-status")).andExpect(status().isNotFound());
 
-            String managementBody = "{\"number\":1,\"heading\":\"Gestion\"}";
+            String managementBody = "{\"number\":1,\"heading\":\"Management\"}";
             mvc.perform(post("/api/v1/managements").contentType("application/json")
                     .content(managementBody)).andExpect(status().isCreated());
             mvc.perform(put("/api/v1/managements/1").contentType("application/json")
@@ -201,23 +201,23 @@ class AdditionalControllersTest {
             mvc.perform(delete("/api/v1/managements/2")).andExpect(status().isNotFound());
 
             var transitionOutput = new com.licensis.notaire.application.port.in.management.TransitionManagementOutput(1);
-            when(transitionUseCase.execute(1, "En Progreso")).thenReturn(transitionOutput);
+            when(transitionUseCase.execute(1, "In progress")).thenReturn(transitionOutput);
             when(transitionWebMapper.mapToHttpResponse(transitionOutput))
                     .thenReturn(new com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper
-                            .ManagementSummaryDto(1, "En Progreso"));
-            when(transitionUseCase.execute(1, "Estado Inexistente"))
+                            .ManagementSummaryDto(1, "In progress"));
+            when(transitionUseCase.execute(1, "Missing status"))
                     .thenThrow(new com.licensis.notaire.exception.BusinessValidationException(
                             "Transition not allowed"));
-            when(transitionUseCase.execute(2, "En Progreso"))
+            when(transitionUseCase.execute(2, "In progress"))
                     .thenThrow(new com.licensis.notaire.exception.ResourceNotFoundException(
                             "Management not found with ID: 2"));
 
             mvc.perform(post("/api/v1/managements/1/transition").contentType("application/json")
-                    .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isOk());
+                    .content("{\"statusDestination\": \"In progress\"}")).andExpect(status().isOk());
             mvc.perform(post("/api/v1/managements/1/transition").contentType("application/json")
-                    .content("{\"statusDestination\": \"Estado Inexistente\"}")).andExpect(status().isBadRequest());
+                    .content("{\"statusDestination\": \"Missing status\"}")).andExpect(status().isBadRequest());
             mvc.perform(post("/api/v1/managements/2/transition").contentType("application/json")
-                    .content("{\"statusDestination\": \"En Progreso\"}")).andExpect(status().isNotFound());
+                    .content("{\"statusDestination\": \"In progress\"}")).andExpect(status().isNotFound());
 
             mvc.perform(get("/api/v1/managements/1/history")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/managements/2/history")).andExpect(status().isNotFound());

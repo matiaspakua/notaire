@@ -181,7 +181,7 @@ class DeedManagementEntityTest {
 
     @Nested
     @DisplayName("setAttributes branches")
-    class SetAtributosTests {
+    class SetAttributesTests {
 
     }
 

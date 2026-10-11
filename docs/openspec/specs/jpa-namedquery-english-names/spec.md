@@ -12,14 +12,11 @@ tails after the #973 domain-schema rename. Source: #1022 (follow-up to #973).
 
 Every `@NamedQuery(name = "…")` declaration under
 `backend-api/src/main/java/com/licensis/notaire/business/` MUST use an English
-entity prefix from the #1022 rename map (e.g. `Deed`, `User`, `AuditRecord`,
-`Person`, `Folio`, `Item`). Spanish prefixes (`Deed`, `UserAccount`,
-`AuditRecord`, `Concept`, `Testimony`, `Substitution`, `Copy`, `Payment`,
-`Presupuesto`, `Procedure`, `ProcedureType`, `DocumentType`,
-`SubmittedDocument`, `ProcedureTemplate`, `BudgetTemplate`,
-`DeedManagement`, `ManagementHistory`, `Property`, `Identificacion`,
-`IdentificationType`, `TestimonyMovement`, `TramitesPersonas`, `Notebook`,
-`FoliosCopias`, `FolioType`, `ManagementStatus`) MUST NOT appear.
+entity prefix (`Deed`, `User`, `AuditRecord`, `Person`, `Folio`, `Item`, and
+the rest of the renamed entities). The Spanish prefixes recorded in
+`NamedQueryEnglishNamesHygieneTest` MUST NOT appear, including `Escritura.`,
+`Usuario.`, `Presupuesto.`, `Tramite.`, `Persona.`, `Historial.`, and
+`EstadoDeGestion.`.
 
 #### Scenario: No Spanish NamedQuery prefixes in business entities
 
@@ -31,7 +28,7 @@ entity prefix from the #1022 rename map (e.g. `Deed`, `User`, `AuditRecord`,
 
 Every `createNamedQuery("…")` call site under `backend-api` (main + test) MUST
 use the English NamedQuery name matching the entity declaration. Call sites
-MUST NOT use `Person.*` (the entity declares `Person.*`).
+MUST NOT use `Persona.*`. The entity declares `Person.*`.
 
 #### Scenario: No Person createNamedQuery mismatch
 
@@ -43,7 +40,7 @@ MUST NOT use `Person.*` (the entity declares `Person.*`).
 
 For prefixes that are already English (`Folio`, `Item`, `Person`), NamedQuery
 method tails MUST NOT retain Spanish tokens that were part of the #1022
-inventory (e.g. `findByNumero`, `findByAnio`, `findByPresupuesto`,
+inventory (e.g. `Folio.findByNumero`, `findByAnio`, `findByPresupuesto`,
 `findByIdPersona`, `findByNumeroIdentificacion`).
 
 #### Scenario: Folio Item Person method tails are English

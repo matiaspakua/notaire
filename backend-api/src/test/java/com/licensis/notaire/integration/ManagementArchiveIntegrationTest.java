@@ -63,12 +63,12 @@ class ManagementArchiveIntegrationTest {
 
     private MockMvc mockMvc;
     private final ObjectMapper mapper = new ObjectMapper();
-    private ManagementStatus archivada;
+    private ManagementStatus archived;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        archivada = managementStatusRepository.findByName("Archivada").orElseGet(() -> {
+        archived = managementStatusRepository.findByName("Archivada").orElseGet(() -> {
             ManagementStatus nuevo = new ManagementStatus();
             nuevo.setName("Archivada");
             return managementStatusRepository.save(nuevo);
@@ -103,7 +103,7 @@ class ManagementArchiveIntegrationTest {
 
     private ManagementStatus createManagementStatus() {
         ManagementStatus status = new ManagementStatus();
-        status.setName("Estado Archive IT " + System.nanoTime());
+        status.setName("Status Archive IT " + System.nanoTime());
         return managementStatusRepository.save(status);
     }
 
@@ -121,7 +121,7 @@ class ManagementArchiveIntegrationTest {
 
         WorkflowNode destinationNode = new WorkflowNode();
         destinationNode.setWorkflowDefinition(definition);
-        destinationNode.setManagementStatus(archivada);
+        destinationNode.setManagementStatus(archived);
         destinationNode.setType(WorkflowNodeType.FINAL);
         destinationNode = workflowNodeRepository.save(destinationNode);
 

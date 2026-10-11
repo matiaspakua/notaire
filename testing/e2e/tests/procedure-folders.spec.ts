@@ -110,8 +110,8 @@ test.describe("CU85 - Manage procedure folders", () => {
     await page.getByTestId(`btn-archive-management-${idManagement}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
-    await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
-    await expect(confirmDialog).toContainText(/wait/i);
+    await confirmDialog.getByRole("button", { name: /archivar gestión/i }).click();
+    await expect(confirmDialog).toContainText(/espera/i);
     await confirmDialog.getByRole("button", { name: /archivar de todos modos/i }).click();
     await expect(confirmDialog).not.toBeVisible();
 
@@ -164,8 +164,8 @@ test.describe("CU85 - Manage procedure folders", () => {
     await page.getByTestId(`btn-archive-management-${idManagement}`).click();
     const confirmDialog = page.getByRole("alertdialog");
     await expect(confirmDialog).toBeVisible();
-    await confirmDialog.getByRole("button", { name: /archive gestión/i }).click();
-    await expect(confirmDialog).toContainText(/wait/i);
+    await confirmDialog.getByRole("button", { name: /archivar gestión/i }).click();
+    await expect(confirmDialog).toContainText(/espera/i);
     await expect(confirmDialog.getByRole("button", { name: /archivar de todos modos/i })).toBeVisible();
   });
 

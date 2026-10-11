@@ -160,7 +160,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
       await go(page, "/dashboard/budgets");
       await page.getByTestId("btn-new-budget").click();
       await choose(page, "select-person", new RegExp(client, "i"));
-      await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-04");
+      await page.getByRole("dialog").getByLabel(/fecha/i).fill("2026-08-04");
       await page.getByTestId("input-amount").fill("25000");
       await pause(page);
       await saveDialog(page);

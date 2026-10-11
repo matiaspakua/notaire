@@ -40,7 +40,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
         userRepository.save(testUser);
 
         testRecord = new AuditRecord();
-        testRecord.setModule("DOCUMENTOS");
+        testRecord.setModule("DOCUMENTS");
         testRecord.setOperationDetail("CREATE");
         testRecord.setDate(new Date());
         testRecord.setFkIdUser(testUser);
@@ -57,7 +57,7 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
         assertThat(retrieved).isPresent()
                 .hasValueSatisfying(r -> {
-                    assertThat(r.getModule()).isEqualTo("DOCUMENTOS");
+                    assertThat(r.getModule()).isEqualTo("DOCUMENTS");
                     assertThat(r.getOperationDetail()).isEqualTo("CREATE");
                 });
     }
@@ -68,10 +68,10 @@ class AuditRecordRepositoryIntegrationTest extends RepositoryIntegrationTest {
         auditRecordRepository.save(testRecord);
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<AuditRecord> found = auditRecordRepository.findByModule("DOCUMENTOS", pageable);
+        Page<AuditRecord> found = auditRecordRepository.findByModule("DOCUMENTS", pageable);
 
         assertThat(found).isNotEmpty()
-                .allMatch(r -> r.getModule().equals("DOCUMENTOS"));
+                .allMatch(r -> r.getModule().equals("DOCUMENTS"));
     }
 
     @Test

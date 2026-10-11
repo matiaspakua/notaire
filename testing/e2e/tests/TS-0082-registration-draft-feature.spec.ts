@@ -118,7 +118,7 @@ test.describe("CU82 - Generate and track the registration draft", () => {
 
     await page.getByTestId("btn-observe-registration-draft").click();
     await steps.thenModalIsVisible();
-    await page.getByTestId("input-notes-registro").fill("Falta certificado catastral");
+    await page.getByTestId("input-notes-registro").fill("Missing cadastral certificate");
     await page.getByTestId("input-correction-date").fill(new Date().toISOString().split("T")[0]);
     await page.getByTestId("btn-confirm-observe").click();
     await steps.thenShowsSuccessMessage("Observación");
@@ -141,7 +141,7 @@ test.describe("CU82 - Generate and track the registration draft", () => {
     await chooseDeed(page, "select-deed-registration-draft", number);
     await page.getByTestId("btn-generate-registration-draft").click();
 
-    await steps.thenShowsErrorMessage("catastrales");
+    await steps.thenShowsErrorMessage("cadastral");
   });
 
   for (const viewport of [

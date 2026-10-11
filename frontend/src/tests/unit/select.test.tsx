@@ -6,8 +6,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 function renderSelect(onValueChange: (value: string) => void) {
   return render(
     <Select value={undefined} onValueChange={onValueChange}>
-      <SelectTrigger aria-label="Estado">
-        <SelectValue placeholder="Elegir estado" />
+      <SelectTrigger aria-label="Status">
+        <SelectValue placeholder="Choose a status" />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="borrador">Borrador</SelectItem>

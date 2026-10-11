@@ -195,7 +195,7 @@ class SimpleControllersTest {
                 standaloneSetup(new ManagementStatusController(repo, managementRepo)).build();
 
         private ManagementStatus build() {
-            ManagementStatus e = new ManagementStatus(1, "Activo");
+            ManagementStatus e = new ManagementStatus(1, "Active");
             return e;
         }
 
@@ -222,7 +222,7 @@ class SimpleControllersTest {
         void create() throws Exception {
             DtoManagementStatus dto = new DtoManagementStatus();
             dto.setIdManagementStatus(1);
-            dto.setName("Activo");
+            dto.setName("Active");
             when(repo.save(any(ManagementStatus.class))).thenReturn(build());
             mvc.perform(post("/api/v1/management-statuses").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isCreated());
@@ -233,7 +233,7 @@ class SimpleControllersTest {
         void createErrorOnSave() throws Exception {
             DtoManagementStatus dto = new DtoManagementStatus();
             dto.setIdManagementStatus(1);
-            dto.setName("Activo");
+            dto.setName("Active");
             when(repo.save(any(ManagementStatus.class))).thenThrow(new RuntimeException("x"));
             mvc.perform(post("/api/v1/management-statuses").contentType("application/json")
                     .content(mapper.writeValueAsString(dto))).andExpect(status().isConflict());
@@ -425,11 +425,11 @@ class SimpleControllersTest {
     @DisplayName("DeedController")
     class DeedControllerTests {
         private final DeedService service = mock(DeedService.class);
-        private final DeedSigningService firmaService = mock(DeedSigningService.class);
+        private final DeedSigningService signingService = mock(DeedSigningService.class);
         private final com.licensis.notaire.repository.FolioRepository folioRepository =
                 mock(com.licensis.notaire.repository.FolioRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new DeedController(service, firmaService, folioRepository))
+                standaloneSetup(new DeedController(service, signingService, folioRepository))
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                         .build();
@@ -575,7 +575,7 @@ class SimpleControllersTest {
             budget.setIdBudget(7);
             budget.setNumber(7);
             budget.setStatus("BORRADOR");
-            budget.setHeading("Con cliente");
+            budget.setHeading("With client");
             budget.setFkIdPerson(client);
 
             when(service.findById(7)).thenReturn(Optional.of(budget));
@@ -742,10 +742,10 @@ class SimpleControllersTest {
         void all() throws Exception {
             FolioType t = new FolioType();
             t.setIdFolioType(1);
-            t.setName("Protocolo");
+            t.setName("Protocol");
             DtoFolioType dto = new DtoFolioType();
             dto.setIdFolioType(1);
-            dto.setName("Protocolo");
+            dto.setName("Protocol");
 
             when(repo.findAll()).thenReturn(List.of(t));
             when(repo.findById(1)).thenReturn(Optional.of(t));
@@ -773,10 +773,10 @@ class SimpleControllersTest {
         void allErrorPaths() throws Exception {
             FolioType t = new FolioType();
             t.setIdFolioType(1);
-            t.setName("Protocolo");
+            t.setName("Protocol");
             DtoFolioType dto = new DtoFolioType();
             dto.setIdFolioType(1);
-            dto.setName("Protocolo");
+            dto.setName("Protocol");
             when(repo.findById(1)).thenReturn(Optional.of(t));
             when(repo.existsById(1)).thenReturn(true);
             when(repo.save(any(FolioType.class))).thenThrow(new RuntimeException("x"));

@@ -21,8 +21,8 @@ import { buildPersonSearchQueries } from "@/hooks/usePersonSearch";
 import type { Person } from "@/types";
 
 const NEWEST: Person[] = [
-  { personId: 1500, firstName: "Ana", lastName: "Nueva", identificationNumber: "111", isClient: true },
-  { personId: 1499, firstName: "Bruno", lastName: "Reciente", identificationNumber: "222", isClient: false },
+  { personId: 1500, firstName: "Ana", lastName: "Latest", identificationNumber: "111", isClient: true },
+  { personId: 1499, firstName: "Bruno", lastName: "Recent", identificationNumber: "222", isClient: false },
 ];
 const FAR: Person = { personId: 7, firstName: "Carla", lastName: "Garcia", identificationNumber: "30111222", isClient: true };
 
@@ -59,7 +59,7 @@ function Harness({ initial, clientsOnly, onPick }: { initial?: number; clientsOn
         setId(p?.personId);
         onPick?.(p);
       }}
-      aria-label="Cliente"
+      aria-label="Client"
       clientsOnly={clientsOnly}
       allowClear
       data-testid="picker"
@@ -95,7 +95,7 @@ describe("PersonPicker (#1340)", () => {
 
   it("is an ARIA combobox that opens with the newest people and never asks for size=1000", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Cliente" });
+    const box = screen.getByRole("combobox", { name: "Client" });
     expect(box).toHaveAttribute("aria-expanded", "false");
     fireEvent.focus(box);
     expect(box).toHaveAttribute("aria-expanded", "false"); // focus alone does not open it
@@ -103,13 +103,13 @@ describe("PersonPicker (#1340)", () => {
     expect(box).toHaveAttribute("aria-expanded", "true");
     const listbox = await screen.findByRole("listbox");
     expect(box).toHaveAttribute("aria-controls", listbox.id);
-    expect(await screen.findByRole("option", { name: "Ana Nueva" })).toBeInTheDocument();
+    expect(await screen.findByRole("option", { name: "Ana Latest" })).toBeInTheDocument();
     expect(urls().some((u) => u.includes("size=1000"))).toBe(false);
   });
 
   it("searches the server after a short pause and lists the match", async () => {
     render(<Harness />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Cliente" });
+    const box = screen.getByRole("combobox", { name: "Client" });
     fireEvent.click(box);
     fireEvent.change(box, { target: { value: "Gar" } });
     expect(await screen.findByRole("option", { name: "Carla Garcia" })).toBeInTheDocument();
@@ -123,11 +123,11 @@ describe("PersonPicker (#1340)", () => {
   it("hides the newest people as soon as the user types, so Enter cannot pick a stale option", async () => {
     const onPick = vi.fn();
     render(<Harness onPick={onPick} />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Cliente" });
+    const box = screen.getByRole("combobox", { name: "Client" });
     fireEvent.click(box);
-    await screen.findByRole("option", { name: "Ana Nueva" });
+    await screen.findByRole("option", { name: "Ana Latest" });
     fireEvent.change(box, { target: { value: "Gar" } });
-    expect(screen.queryByRole("option", { name: "Ana Nueva" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "Ana Latest" })).not.toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("personPicker.searching");
     fireEvent.keyDown(box, { key: "ArrowDown" });
     fireEvent.keyDown(box, { key: "Enter" });
@@ -138,17 +138,17 @@ describe("PersonPicker (#1340)", () => {
   it("selects with the keyboard and closes on Escape without bubbling", async () => {
     const onPick = vi.fn();
     render(<Harness onPick={onPick} />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Cliente" });
+    const box = screen.getByRole("combobox", { name: "Client" });
     fireEvent.click(box);
-    await screen.findByRole("option", { name: "Ana Nueva" });
+    await screen.findByRole("option", { name: "Ana Latest" });
     fireEvent.keyDown(box, { key: "ArrowDown" });
     fireEvent.keyDown(box, { key: "ArrowDown" });
     const active = box.getAttribute("aria-activedescendant");
-    expect(active).toBe(screen.getByRole("option", { name: "Bruno Reciente" }).id);
+    expect(active).toBe(screen.getByRole("option", { name: "Bruno Recent" }).id);
     fireEvent.keyDown(box, { key: "Enter" });
     expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ personId: 1499 }));
     expect(box).toHaveAttribute("aria-expanded", "false");
-    expect(box).toHaveValue("Bruno Reciente");
+    expect(box).toHaveValue("Bruno Recent");
 
     fireEvent.keyDown(box, { key: "ArrowDown" });
     expect(box).toHaveAttribute("aria-expanded", "true");
@@ -161,31 +161,31 @@ describe("PersonPicker (#1340)", () => {
 
   it("shows the current person of an edit form by loading it by id", async () => {
     render(<Harness initial={7} />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Cliente" });
+    const box = screen.getByRole("combobox", { name: "Client" });
     await waitFor(() => expect(box).toHaveValue("Carla Garcia"));
     expect(urls().some((u) => /\/people\/7$/.test(u))).toBe(true);
   });
 
   it("stays closed after a mouse pick inside a form <label>", async () => {
-    render(<label><span>Cliente</span><Harness /></label>, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Cliente" });
+    render(<label><span>Client</span><Harness /></label>, { wrapper });
+    const box = screen.getByRole("combobox", { name: "Client" });
     fireEvent.click(box);
-    fireEvent.click(await screen.findByRole("option", { name: "Ana Nueva" }));
-    expect(box).toHaveValue("Ana Nueva");
+    fireEvent.click(await screen.findByRole("option", { name: "Ana Latest" }));
+    expect(box).toHaveValue("Ana Latest");
     expect(box).toHaveAttribute("aria-expanded", "false");
   });
 
   it("lists only clients when clientsOnly is set", async () => {
     render(<Harness clientsOnly />, { wrapper });
-    fireEvent.click(screen.getByRole("combobox", { name: "Cliente" }));
-    expect(await screen.findByRole("option", { name: "Ana Nueva" })).toBeInTheDocument();
-    expect(screen.queryByRole("option", { name: "Bruno Reciente" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("combobox", { name: "Client" }));
+    expect(await screen.findByRole("option", { name: "Ana Latest" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "Bruno Recent" })).not.toBeInTheDocument();
   });
 
   it("announces when nothing matches and can clear the selection", async () => {
     const onPick = vi.fn();
     render(<Harness initial={7} onPick={onPick} />, { wrapper });
-    const box = screen.getByRole("combobox", { name: "Cliente" });
+    const box = screen.getByRole("combobox", { name: "Client" });
     await waitFor(() => expect(box).toHaveValue("Carla Garcia"));
     fireEvent.click(screen.getByRole("button", { name: "personPicker.clear" }));
     expect(onPick).toHaveBeenCalledWith(undefined);

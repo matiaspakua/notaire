@@ -26,5 +26,5 @@ runtime:
           test("Standard ErrorResponse naming the problem", function () {
             const b = res.getBody();
             expect(b.status).to.equal(400);
-            expect(b.message).to.include("indicar al menos un campo");
+            expect(b.message).to.include("provide at least one field");
           });

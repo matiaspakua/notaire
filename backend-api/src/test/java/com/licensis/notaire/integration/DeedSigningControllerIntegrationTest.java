@@ -26,12 +26,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU06 - Firmar deed (issue #832). Linking a Folio to an Deed has not REST endpoint yet
+ * CU06 - Sign a deed (issue #832). Linking a Folio to an Deed has not REST endpoint yet
  * (deferred to issue #838), so tests assign it directly through the repository.
  */
 @RequirementCoverage({"CU06"})
 @DisplayName("DeedController#sign — CU06 integration tests")
-class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
+class DeedSigningControllerIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -126,7 +126,7 @@ class DeedFirmaControllerIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should reject signing an already 'Firmada' deed")
-    void shouldRejectSigningAlreadyFirmadaDeed() throws Exception {
+    void shouldRejectSigningAlreadySignedDeed() throws Exception {
         int idDeed = createDeed("Firmada");
         assignFolio(idDeed);
 

@@ -75,7 +75,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
 
         testManagement = new DeedManagement();
         testManagement.setNumber((int) (System.currentTimeMillis() % 10000));
-        testManagement.setHeading("Venta Property");
+        testManagement.setHeading("Sale property");
         testManagement.setDateStart(new Date());
         testManagement.setFkIdNotaryPerson(testNotary);
         testManagement.setFkIdManagementStatus(testStatus);
@@ -93,7 +93,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         assertThat(retrieved).isPresent()
                 .hasValueSatisfying(g -> {
                     assertThat(g.getNumber()).isEqualTo(saved.getNumber());
-                    assertThat(g.getHeading()).isEqualTo("Venta Property");
+                    assertThat(g.getHeading()).isEqualTo("Sale property");
                 });
     }
 
@@ -105,7 +105,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         Optional<DeedManagement> found = managementRepository.findByNumber(saved.getNumber());
 
         assertThat(found).isPresent()
-                .hasValueSatisfying(g -> assertThat(g.getHeading()).isEqualTo("Venta Property"));
+                .hasValueSatisfying(g -> assertThat(g.getHeading()).isEqualTo("Sale property"));
     }
 
     @Test
@@ -162,13 +162,13 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     @Test
     @DisplayName("Should find managements by notes containing")
     void shouldFindByNotesContaining() {
-        testManagement.setNotes("Venta de propiedad");
+        testManagement.setNotes("parcel sale");
         managementRepository.save(testManagement);
 
-        List<DeedManagement> found = managementRepository.findByNotesContaining("propiedad");
+        List<DeedManagement> found = managementRepository.findByNotesContaining("parcel");
 
         assertThat(found).isNotEmpty()
-                .allMatch(g -> g.getNotes().contains("propiedad"));
+                .allMatch(g -> g.getNotes().contains("parcel"));
     }
 
     @Test
@@ -176,13 +176,13 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     void shouldUpdateManagement() {
         DeedManagement saved = managementRepository.save(testManagement);
 
-        saved.setNotes("Actualizado");
+        saved.setNotes("Updated");
         managementRepository.save(saved);
 
         Optional<DeedManagement> updated = managementRepository.findById(saved.getIdManagement());
 
         assertThat(updated).isPresent()
-                .hasValueSatisfying(g -> assertThat(g.getNotes()).isEqualTo("Actualizado"));
+                .hasValueSatisfying(g -> assertThat(g.getNotes()).isEqualTo("Updated"));
     }
 
     @Test
@@ -230,7 +230,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         identificationTypeRepository.save(identificationType);
 
         Person client = new Person();
-        client.setFirstName("Cliente");
+        client.setFirstName("Client");
         client.setLastName("Test");
         client.setIdentificationNumber("12345678");
         client.setIsClient(true);
@@ -249,7 +249,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         DeedManagement saved = managementRepository.save(testManagement);
 
         ProcedureType procedureType = new ProcedureType();
-        procedureType.setName("Tipo Procedure Test");
+        procedureType.setName("Type Procedure Test");
         procedureTypeRepository.save(procedureType);
 
         Procedure procedure = new Procedure();

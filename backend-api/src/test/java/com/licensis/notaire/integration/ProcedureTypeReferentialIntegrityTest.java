@@ -48,7 +48,7 @@ class ProcedureTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should return inUse=false when type of procedure is not referenced")
     void shouldReturnInUseFalseWhenNotReferenced() throws Exception {
-        int id = createTypeProcedure("Tramite_unused_" + System.nanoTime());
+        int id = createTypeProcedure("Procedure_unused_" + System.nanoTime());
 
         mockMvc.perform(get("/api/v1/procedure-types/" + id + "/in-use"))
                 .andExpect(status().isOk())
@@ -58,7 +58,7 @@ class ProcedureTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should return inUse=true when type of procedure is referenced by template budget")
     void shouldReturnInUseTrueWhenReferencedByBudgetTemplate() throws Exception {
-        int id = createTypeProcedure("Tramite_used_" + System.nanoTime());
+        int id = createTypeProcedure("Procedure_used_" + System.nanoTime());
         linkToBudgetTemplate(id);
 
         mockMvc.perform(get("/api/v1/procedure-types/" + id + "/in-use"))
@@ -69,11 +69,11 @@ class ProcedureTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should return 409 when editing type of procedure that is in use")
     void shouldReturn409WhenEditingTypeProcedureInUse() throws Exception {
-        int id = createTypeProcedure("Tramite_edit_conflict_" + System.nanoTime());
+        int id = createTypeProcedure("Procedure_edit_conflict_" + System.nanoTime());
         linkToBudgetTemplate(id);
 
         String updateBody = """
-                {"name": "Name actualizado", "isArchived": false, "isRegistered": false, "associatesProperties": false}
+                {"name": "Updated name", "isArchived": false, "isRegistered": false, "associatesProperties": false}
                 """;
 
         mockMvc.perform(put("/api/v1/procedure-types/" + id)
@@ -86,10 +86,10 @@ class ProcedureTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should allow editing type of procedure that is not in use")
     void shouldAllowEditingTypeProcedureNotInUse() throws Exception {
-        int id = createTypeProcedure("Tramite_edit_ok_" + System.nanoTime());
+        int id = createTypeProcedure("Procedure_edit_ok_" + System.nanoTime());
 
         String updateBody = """
-                {"name": "Name actualizado ok", "isArchived": false, "isRegistered": false, "associatesProperties": false}
+                {"name": "Updated name ok", "isArchived": false, "isRegistered": false, "associatesProperties": false}
                 """;
 
         mockMvc.perform(put("/api/v1/procedure-types/" + id)
@@ -101,7 +101,7 @@ class ProcedureTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should return 409 when deleting type of procedure that is in use")
     void shouldReturn409WhenDeletingTypeProcedureInUse() throws Exception {
-        int id = createTypeProcedure("Tramite_delete_conflict_" + System.nanoTime());
+        int id = createTypeProcedure("Procedure_delete_conflict_" + System.nanoTime());
         linkToBudgetTemplate(id);
 
         mockMvc.perform(delete("/api/v1/procedure-types/" + id))
@@ -112,13 +112,13 @@ class ProcedureTypeReferentialIntegrityTest {
     @Test
     @DisplayName("Should search procedure types by name")
     void shouldSearchProcedureTypesByName() throws Exception {
-        String uniqueName = "SearchableTramite_" + System.nanoTime();
+        String uniqueName = "SearchableProcedure_" + System.nanoTime();
         createTypeProcedure(uniqueName);
 
         mockMvc.perform(get("/api/v1/procedure-types/search")
-                        .param("name", "SearchableTramite"))
+                        .param("name", "SearchableProcedure"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[?(@.name =~ /.*SearchableTramite.*/)]").exists());
+                .andExpect(jsonPath("$[?(@.name =~ /.*SearchableProcedure.*/)]").exists());
     }
 
     private int createTypeProcedure(String name) throws Exception {

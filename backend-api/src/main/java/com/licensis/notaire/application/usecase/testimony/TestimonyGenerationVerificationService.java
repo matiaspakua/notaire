@@ -42,7 +42,7 @@ public class TestimonyGenerationVerificationService {
         Deed deed = deedRepository.findById(idDeed)
                 .orElseThrow(() -> new ResourceNotFoundException("Deed not found with ID: " + idDeed));
 
-        if (!BusinessConstants.DeedFIRMADA.equals(deed.getStatus())) {
+        if (!BusinessConstants.DeedSigned.equals(deed.getStatus())) {
             throw new BusinessValidationException(
                     "The deed must be in status 'Firmada' to generate its testimony");
         }

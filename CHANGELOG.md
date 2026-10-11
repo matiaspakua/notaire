@@ -43,6 +43,119 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English fixture names** (#1490, CU75): person fixtures use `Client`,
+  `Lawyer`, and `Criminal`. Budget headings use `Updatable budget` and a
+  `Budget` prefix. The management mock heading is `Management` and the
+  transition sample is `In progress`. Audit samples use module `DOCUMENTS`.
+  Helpers are `managementWithoutStatus`, `recordWithoutUser`,
+  `shouldCalculateStatusWithNoPayments`, `findByModule`, and record methods
+  without `Registros`. Stored statuses `PENDIENTE`, `BORRADOR`, and
+  `APROBADO` stay, along with `NoPayments`, `Pérez`, and the role
+  `Escribano`. Delivered-by `Cliente` stays.
+- **English signing identifiers** (#1490, CU75): the signing service comment
+  says `Sign a deed`. The controller field is `deedSigningService`. Tests
+  name `createSignedDeed`, `nextNumber`, `next`, `nextAuxiliary`,
+  `nextPrincipal`, and `count`. The gap justification is
+  `Voided deed No. 6 to 8`. The integration class is
+  `DeedSigningControllerIntegrationTest`. Stored statuses `Firmada` and
+  `Sin Firmar` stay, along with `Protocolo Auxiliar` and `Protocolo Principal`.
+- **English entity round-trips** (#1490, CU75): budget and deed setter fixtures
+  use `pending`, `approved`, `signed`, `unsigned`, `voided`, and `not_passed`.
+  Nested tests are `PrepareBudgetTests`, `PrepareDeedTests`, and
+  `SetAttributesTests`. The concept round-trip method is `getDtoAndSetAttributes`.
+  The deed comment names `setProcedures`. Stored heading `Compraventa` and
+  constructor status `FIRMADA` stay.
+- **English mixed phrases** (#1490, CU75): fixtures use English phrases
+  (`Discount without reason`, `Discount for early payment`,
+  `Surcharge for late payment`, `Item without a type`,
+  `Verified by the notary`, and `hash-already-rotated-by-the-operator`).
+  The missing-deed mock uses the live message `Deed not found with ID: 999`.
+  The initializer display name is `default admin user`. Stored types
+  `DESCUENTO` and `RECARGO` stay.
+- **English updated phrases** (#1490, CU75): tests name updates in English
+  (`Updated name`, `Updated name ok`, `Updated item`, `Updated payment`,
+  `Updated description`, and `Updated management IT`). Deed bodies say
+  `Signed deed for a testimony movement` and `Signed deed for a testimony copy`.
+  The helper is `createSignedDeed`. The notebook result is `created`.
+  Stored status `Firmada` stays.
+- **English synthetic phrases** (#1490, CU75): tests use English phrases and
+  local names (`Name`, `No data available`, `Client A`, `Employee B`,
+  `PAID`, `CANCELLED`, `Approved by the client`, `notes only`,
+  `budget cycle IT`, `procedure cycle IT`, and `template cycle IT`).
+  The budget repository names `statuses`, `uniqueHeading`, `created`, and
+  `approved`. The workflow-trace comment names the procedure type and
+  statuses. Stored labels `PENDIENTE`, `BORRADOR`, `APROBADO`, `RECHAZADO`,
+  `En proceso`, and `Compraventa` stay, along with `Juan García` and
+  `Ana López`.
+- **English synthetic labels** (#1490, CU75): form and picker fixtures use
+  English (`Name`, `The name is required`, `Without hyphens`, `Notes`,
+  `Too long`, `Status`, `Choose a status`, `Client`, `Ana Latest`,
+  `Bruno Recent`, `New Compraventa`, and `Status E2E 42`). Sale headings
+  use `Sale property`, `parcel sale`, `Sale budget`, `Compraventa property`,
+  and `Urban Compraventa property`. Stored labels `CUIT`, `Borrador`,
+  `Aprobado`, `Rechazado`, `Iniciada`, `Pendiente`, `Hipoteca`, `Donación`,
+  `APROBADO`, `FIRMADA`, and `Compraventa` stay, along with `Juan`.
+- **English synthetic chrome fixtures** (#1490, CU75): tests name dialog and
+  header props in English (`People`, `Client management`, `New person`,
+  `Delete person`, `Edit budget`, `Budget summary`, `Items`, `Template`,
+  and `Managements`). Table fixtures use `Name`, `Internal`, `Edit`, and
+  `Nothing`. Deed fixtures use `Deed for Compraventa`, `Deed of sale`,
+  `Sale deed`, `Notarial body`, `Expenses`, and `Before delete`. Catalog
+  labels `Cerrar`, `Saltar al contenido`, `Honorarios`, `Comprador`, and
+  `Poder` stay, along with stored `Compraventa` and `Firmada` and the
+  person names `Juan García` and `Ana López`.
+- **English synthetic notes** (#1490, CU75): tests use English notes and
+  headings (`New name`, `Listed document`, `Missing grantor signature`,
+  `Missing survey plan`, `Missing cadastral certificate`, `without client`,
+  and `Case`). The last management number query aliases `latestManagement`.
+  The historical table name `documentos_presentados` stays, along with the
+  cadastral label `nomenclatura catastral`.
+- **English type fixture names** (#1490, CU75): Java tests name synthetic
+  types in English (`Type_unused_`, `Type #655`, `Case summary type`,
+  `Type Trace Test`, and `Base fee`). The traceability registry names the
+  live classes `BudgetEntityTest`, `DeedEntityTest`, `PaymentEntityTest`,
+  `ProcessPaymentServiceTest`, `ProcedureTypeWorkflowAssignmentTest`, and
+  `AuditRecordServiceTest`. The untyped person fixture is `No Type`.
+  Stored labels `Compraventa`, `Firmada`, `DNI`, and `Pasaporte` stay.
+  The named-query hygiene list still forbids `TipoDeTramite.` and
+  `DocumentoPresentado.`.
+- **English remaining fixture names** (#1490, CU75): Java tests use English
+  synthetic names (`Archived management`, `Notarial power`, `Grantor`,
+  `FindThisStatus`, `Procedure_unused_`, `Updated notes`, `Cycle IT Status`,
+  `Missing status`, `Substitute IT`, and `Ana Notary`). Stored label
+  `Archivada` stays. Test methods say `shouldReturnAllManagementStatuses`
+  and `shouldReturnCurrentStatusFromHistoryWhenRowsExist`.
+- **English synthetic test fixtures** (#1490, CU75): Java tests use English
+  notes and names (`Updated`, `Pending signature`, `Full cycle`,
+  `First semester`, `With client`, `Notary office`, `Active`, `Protocol`,
+  `Substitute`, and `Special folio`). Stored labels `Honorarios` and
+  `Protocolo Auxiliar` stay, along with the legacy budget status `Activo`
+  and the given names `Juan` and `Pedro`.
+- **English named-query and history specs** (#1490, CU75): the history-order
+  scenario says History, not Bitácora. The named-query spec lists the
+  forbidden Spanish prefixes `Escritura.`, `Usuario.`, `Presupuesto.`, and
+  `Persona.`, and the tail `Folio.findByNumero`. English prefixes `Deed` and
+  `Person` stay allowed.
+- **English workflow test fixtures** (#1490, CU83): workflow tests use
+  English identifiers (`nodeIntermediate`, `statusInProgress`, `status1`)
+  and synthetic names (`Start`, `In progress`, `Finished`, `Start → Review`,
+  `Cost type`, `Procedure type`). Stored label `Cliente` stays.
+- **English folio status comment** (#1490, CU28): the folio class states the
+  business rule in English and names the stored statuses `Nuevo`,
+  `Utilizado`, `Errose`, `no pasó`, and `Asignado a cuaderno`. The state
+  diagram note quotes `Documentacion Completa`.
+- **English workflow-tracker seed names** (#1490, CU83): the dashboard
+  workflow tracker quotes the seeded statuses `Testimonio Generado`,
+  `Testimonio Ingresado a Inscripcion`, `Testimonio Retirado`,
+  `Documentacion Completa`, and `Gestion con Escritura Inscripta`.
+  Procedure types stay `Compraventa`, `Donacion`, and `Hipoteca`. The
+  workflow name `Workflow de Gestión Estándar` stays.
+- **English business-constant names** (#1490, CU75): `BusinessConstants` field
+  names are English (`DeedSigned`, `ManagementStatusInitial`,
+  `DocumentationComplete`, `UserEmployee`, and the rest of that interface).
+  Stored values stay, including `Firmada`, `Iniciada`, `Documentacion Completa`,
+  `Empleado`, `Folio Errose`, `Modificar Persona`, and `Escribano`. Deed status
+  `Inscripta` stays.
 - **English registration-draft statuses** (#1490, CU82): comments, the
   lifecycle diagram, and the engineering gap row name the stored statuses
   `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto`.
@@ -1027,6 +1140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Spanish UI copy, E2E locators and management create restored after the English rename** (issue #1502, RNF-04): the #1495 identifier rename also rewrote 27 Spanish values in `frontend/messages/es.json`, so users saw "Person actualizada", "Property creado", "Nuevo Notebook", "Concept creado", "Substitution registrada" and a "Role" column. The values are restored from the pre-rename catalog (sentence-case fixes that stay Spanish are kept; `en.json` untouched), Playwright `TS-0023` expects "Rol" again, and Vitest `es-catalog-spanish.test.ts` fails if an English entity name from the rename map reaches an es.json value. The same rename had rewritten the Spanish UI text that Playwright locators match (`/fecha/` became `/date/`, `/presupuesto/` became `/budget/`, `nav-gestiones` became `nav-managements`) in 21 specs, and left the management create sending `procedureTypeId` where `CompleteCaseRequest` reads `typeProcedureId` (UI creates answered 400); both are fixed (`toCompleteCaseRequest`, Vitest `useManagements.create-wire.test.tsx`), `TS-0072` expects the English notebook validation messages, and the CU39 no-template E2E case picks its procedure type by exact name, so main's E2E jobs pass again.
 - **No more hardcoded Spanish (or English) UI strings** (issue #1354, RNF-05/ADR-015): in English the breadcrumb, several column headers, form labels and placeholders, the protocol report buttons and badges, the payment balance panel and the empty-table message were still Spanish, and the language switcher's screen-reader name was English in the Spanish UI. The breadcrumb now reads its labels from the catalogs (administration sub-routes have their own), about 50 literals moved to `messages/es.json`/`en.json`, and a Vitest static scan fails if a literal UI string is added again. Playwright TS-0040 checks the English screens.
 - **Personas search waits for you to stop typing** (issue #1357, RF-39 / RNF-03): the search sent one `/people/search` request per keystroke (17 for a 17-character surname) and the table flashed between keystrokes. `useSearchPersonas` now debounces the criteria 300ms, keys the cache by primitive criteria only, and keeps the previous results visible while the next ones load. Vitest `personas-search` and Playwright TS-0015 (#1357, one request per typed surname) cover it.
 - **The dashboard workflow graph is reachable by screen readers and its motion stops** (issue #1353, RF-23/CU76): the graph was an image (`role="img"`) containing focusable step buttons, so screen readers couldn't reach the steps (axe `nested-interactive`), and the active-edge dot and current-step pulse looped forever. The graph is now a named group described as a flow diagram, each step is a button named with its state, and both animations stop after 4.8 seconds (WCAG 2.2.2). Vitest `workflow-tracker-a11y.test.tsx` and Playwright TS-0035 cover it.

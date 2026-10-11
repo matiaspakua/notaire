@@ -12,7 +12,7 @@ interface Row {
 
 const columns: Column<Row>[] = [
   { key: "id", header: "ID", render: (r) => r.id },
-  { key: "name", header: "Nombre", render: (r) => r.name },
+  { key: "name", header: "Name", render: (r) => r.name },
 ];
 
 const data: Row[] = [
@@ -26,7 +26,7 @@ describe("DataTable", () => {
       <DataTable data={data} columns={columns} keyExtractor={(r) => r.id} />
     );
     expect(screen.getByText("ID")).toBeDefined();
-    expect(screen.getByText("Nombre")).toBeDefined();
+    expect(screen.getByText("Name")).toBeDefined();
   });
 
   it("renders data rows", () => {
@@ -43,10 +43,10 @@ describe("DataTable", () => {
         data={[]}
         columns={columns}
         keyExtractor={(r) => r.id}
-        emptyMessage="Sin datos disponibles"
+        emptyMessage="No data available"
       />
     );
-    expect(screen.getByText("Sin datos disponibles")).toBeDefined();
+    expect(screen.getByText("No data available")).toBeDefined();
   });
 
   it("shows skeleton rows when loading", () => {

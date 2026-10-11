@@ -26,7 +26,7 @@ test.describe("CU431 — Role and permission management", () => {
 
   test("users page shows the role column", async ({ page }) => {
     await page.goto("/dashboard/administration/users");
-    await expect(page.getByText("Role")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("Rol")).toBeVisible({ timeout: 10000 });
   });
 
   test("user edit modal shows the role selector", async ({ page }) => {

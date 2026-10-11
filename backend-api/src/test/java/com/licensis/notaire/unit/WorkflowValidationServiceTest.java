@@ -29,7 +29,7 @@ class WorkflowValidationServiceTest {
         WorkflowNode n = new WorkflowNode(id);
         n.setType(type);
         ManagementStatus e = new ManagementStatus(id);
-        e.setName("Estado " + id);
+        e.setName("Status " + id);
         n.setManagementStatus(e);
         return n;
     }

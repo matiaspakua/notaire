@@ -31,9 +31,9 @@ class DeedNumberingUseCaseTest {
     void shouldStartSequenceAtOneWhenScopeIsEmpty() {
         Person notary = createNotary(1);
 
-        int siguiente = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, false);
+        int next = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, false);
 
-        assertThat(siguiente).isEqualTo(1);
+        assertThat(next).isEqualTo(1);
     }
 
     @Test
@@ -79,7 +79,7 @@ class DeedNumberingUseCaseTest {
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
         DeedNumberingValidationResult result = deedNumberingUseCase.validate(
-                9, notary, 2026, false, "Deed anulada N° 6 a 8", null);
+                9, notary, 2026, false, "Voided deed No. 6 to 8", null);
 
         assertThat(result).isEqualTo(DeedNumberingValidationResult.SKIP_JUSTIFIED);
     }
@@ -91,11 +91,11 @@ class DeedNumberingUseCaseTest {
         inMemoryPort.recordMaxNumber(1, 2026, true, null, 2);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 40);
 
-        int siguienteAuxiliary = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, true);
-        int siguientePrincipal = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, false);
+        int nextAuxiliary = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, true);
+        int nextPrincipal = deedNumberingUseCase.calculateNextSequenceNumber(notary, 2026, false);
 
-        assertThat(siguienteAuxiliary).isEqualTo(3);
-        assertThat(siguientePrincipal).isEqualTo(41);
+        assertThat(nextAuxiliary).isEqualTo(3);
+        assertThat(nextPrincipal).isEqualTo(41);
     }
 
     private Person createNotary(int notaryId) {

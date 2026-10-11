@@ -70,7 +70,7 @@ class AuditRecordServiceTest {
 
         @Test
         @DisplayName("Should return all audit records as entities")
-        void shouldReturnAllRegistros() {
+        void shouldReturnAllRecords() {
             when(repository.findAll()).thenReturn(List.of(testRecord));
 
             List<AuditRecord> result = service.findAll();
@@ -89,7 +89,7 @@ class AuditRecordServiceTest {
 
         @Test
         @DisplayName("Should return paged audit records")
-        void shouldReturnPagedRegistros() {
+        void shouldReturnPagedRecords() {
             Pageable pageable = PageRequest.of(0, 10);
             Page<AuditRecord> page = new PageImpl<>(List.of(testRecord), pageable, 1);
             when(repository.findAll(pageable)).thenReturn(page);
@@ -128,7 +128,7 @@ class AuditRecordServiceTest {
     }
 
     @Nested
-    @DisplayName("findByModulo")
+    @DisplayName("findByModule")
     class FindByModule {
 
         @Test

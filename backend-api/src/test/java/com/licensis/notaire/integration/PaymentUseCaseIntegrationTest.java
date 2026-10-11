@@ -70,7 +70,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
         identificationTypeRepository.save(identificationType);
 
         testPerson = new Person();
-        testPerson.setFirstName("Cliente");
+        testPerson.setFirstName("Client");
         testPerson.setLastName("Test");
         testPerson.setIdentificationNumber("12345678");
         testPerson.setIsClient(true);

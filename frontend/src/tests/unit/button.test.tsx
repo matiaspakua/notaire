@@ -34,11 +34,11 @@ describe("Button sizes (#1369)", () => {
 
   it("renders an icon-sm button", () => {
     render(
-      <Button size="icon-sm" aria-label="Editar">
+      <Button size="icon-sm" aria-label="Edit">
         <svg aria-hidden="true" />
       </Button>,
     );
-    expect(screen.getByRole("button", { name: "Editar" }).className).toContain("w-8");
+    expect(screen.getByRole("button", { name: "Edit" }).className).toContain("w-8");
   });
 });
 

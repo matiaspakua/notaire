@@ -2705,7 +2705,7 @@ export interface components {
             personId?: number;
             propertyAmount?: number;
             /**
-             * @description Budget status (#1346). Accepts any letter case and stores the code; any other value returns 400.
+             * @description Budget status (#1346). Accepts any uppercase/lowercase and stores the code; any other value returns 400.
              * @enum {string}
              */
             status: "BORRADOR" | "PENDIENTE" | "APROBADO" | "RECHAZADO" | "FACTURADO";

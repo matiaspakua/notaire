@@ -80,11 +80,29 @@ export function useCreateManagement() {
   });
 }
 
+/**
+ * ManagementController's CompleteCaseRequest wire names are (number, heading, notes, budgetId,
+ * notaryId, statusManagementId, typeProcedureId, propertyId): the input's procedureTypeId is
+ * sent as typeProcedureId, otherwise the backend reads null and answers 400.
+ */
+function toCompleteCaseRequest(data: CreateCompleteManagementInput) {
+  return {
+    number: data.number,
+    heading: data.heading,
+    notes: data.notes,
+    budgetId: data.budgetId,
+    notaryId: data.notaryId,
+    statusManagementId: data.statusManagementId,
+    typeProcedureId: data.procedureTypeId,
+    propertyId: data.propertyId,
+  };
+}
+
 export function useCreateCompleteManagement() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: CreateCompleteManagementInput) =>
-      apiPost<DeedManagement>("/managements/complete-case", data),
+      apiPost<DeedManagement>("/managements/complete-case", toCompleteCaseRequest(data)),
     onSuccess: () => qc.invalidateQueries({ queryKey: managementsKeys.all }),
   });
 }

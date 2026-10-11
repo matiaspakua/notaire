@@ -51,7 +51,7 @@ class BudgetTemplateSerializationIntegrationTest {
         MvcResult result = mockMvc.perform(post("/api/v1/concepts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name": "Concept Ciclo IT", "value": 100, "percentage": 0, "fixedConcept": true}
+                                {"name": "Concept Cycle IT", "value": 100, "percentage": 0, "fixedConcept": true}
                                 """))
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -62,7 +62,7 @@ class BudgetTemplateSerializationIntegrationTest {
         MvcResult result = mockMvc.perform(post("/api/v1/procedure-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name": "Procedure Ciclo IT", "isRegistered": false, "isArchived": false, "associatesProperties": false}
+                                {"name": "Procedure Cycle IT", "isRegistered": false, "isArchived": false, "associatesProperties": false}
                                 """))
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -71,7 +71,7 @@ class BudgetTemplateSerializationIntegrationTest {
 
     private void createTemplate(Integer typeProcedureId, Integer conceptId) throws Exception {
         String body = """
-                {"fkIdProcedureType": %d, "fkIdConcept": %d, "notes": "template ciclo IT"}
+                {"fkIdProcedureType": %d, "fkIdConcept": %d, "notes": "template cycle IT"}
                 """.formatted(typeProcedureId, conceptId);
         mockMvc.perform(post("/api/v1/budget-templates")
                         .contentType(MediaType.APPLICATION_JSON)

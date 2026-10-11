@@ -11,22 +11,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 describe("FormField (#1351)", () => {
   it("an error makes the control invalid, describes it and is announced, without an emoji", () => {
     render(
-      <FormField label="Nombre" error="El nombre es obligatorio" required>
+      <FormField label="Name" error="The name is required" required>
         <Input />
       </FormField>,
     );
-    const input = screen.getByRole("textbox", { name: /Nombre/ });
+    const input = screen.getByRole("textbox", { name: /Name/ });
     expect(input).toHaveAttribute("aria-invalid", "true");
     expect(input).toHaveAttribute("aria-required", "true");
-    expect(input).toHaveAccessibleDescription("El nombre es obligatorio");
+    expect(input).toHaveAccessibleDescription("The name is required");
     const alert = screen.getByRole("alert");
-    expect(alert).toHaveTextContent("El nombre es obligatorio");
+    expect(alert).toHaveTextContent("The name is required");
     expect(alert.textContent).not.toMatch(/\p{Extended_Pictographic}/u);
   });
 
   it("helper text describes the control when there is no error", () => {
     render(
-      <FormField label="CUIT" helperText="Sin guiones">
+      <FormField label="CUIT" helperText="Without hyphens">
         <Input aria-describedby="extra" />
       </FormField>,
     );
@@ -35,17 +35,17 @@ describe("FormField (#1351)", () => {
     expect(input).not.toHaveAttribute("aria-required");
     // The caller's own description is kept.
     expect(input.getAttribute("aria-describedby")!.split(" ")).toContain("extra");
-    expect(input).toHaveAccessibleDescription(/Sin guiones/);
+    expect(input).toHaveAccessibleDescription(/Without hyphens/);
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
   it("works for a native control and for a Select trigger", () => {
     render(
       <>
-        <FormField label="Notas" error="Demasiado largo">
+        <FormField label="Notes" error="Too long">
           <textarea />
         </FormField>
-        <FormField label="Estado" error="Elegí un estado">
+        <FormField label="Status" error="Choose a status">
           <Select>
             <SelectTrigger>
               <SelectValue />
@@ -57,9 +57,9 @@ describe("FormField (#1351)", () => {
         </FormField>
       </>,
     );
-    expect(screen.getByRole("textbox", { name: "Notas" })).toHaveAccessibleDescription("Demasiado largo");
+    expect(screen.getByRole("textbox", { name: "Notes" })).toHaveAccessibleDescription("Too long");
     const trigger = screen.getByRole("combobox");
     expect(trigger).toHaveAttribute("aria-invalid", "true");
-    expect(trigger).toHaveAccessibleDescription("Elegí un estado");
+    expect(trigger).toHaveAccessibleDescription("Choose a status");
   });
 });

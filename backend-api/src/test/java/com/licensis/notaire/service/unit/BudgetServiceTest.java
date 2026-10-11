@@ -40,7 +40,7 @@ class BudgetServiceTest {
         testBudget = new Budget();
         testBudget.setIdBudget(1);
         testBudget.setNumber(1000);
-        testBudget.setHeading("Budget Venta");
+        testBudget.setHeading("Sale budget");
         testBudget.setStatus("APROBADO");
     }
 

@@ -65,13 +65,13 @@ public class DeedController {
             int version) {}
 
     private final DeedService deedService;
-    private final DeedSigningService deedFirmaService;
+    private final DeedSigningService deedSigningService;
     private final FolioRepository folioRepository;
 
-    public DeedController(DeedService deedService, DeedSigningService deedFirmaService,
+    public DeedController(DeedService deedService, DeedSigningService deedSigningService,
             FolioRepository folioRepository) {
         this.deedService = deedService;
-        this.deedFirmaService = deedFirmaService;
+        this.deedSigningService = deedSigningService;
         this.folioRepository = folioRepository;
     }
 
@@ -123,8 +123,8 @@ public class DeedController {
 
     /** Deed statuses as stored (BusinessConstants), in workflow order. */
     static final List<String> DEED_STATUSES = List.of(
-            BusinessConstants.DeedSINFIRMAR, BusinessConstants.DeedFIRMADA, BusinessConstants.DeedANULADA,
-            BusinessConstants.DeedNOPASO, BusinessConstants.DeedRegistered);
+            BusinessConstants.DeedUnsigned, BusinessConstants.DeedSigned, BusinessConstants.DeedVoided,
+            BusinessConstants.DeedNotPassed, BusinessConstants.DeedRegistered);
 
     /** The stored spelling of {@code value} in any letter case, null for none, or a 400. */
     static String canonicalStatus(String value) {
@@ -235,6 +235,6 @@ public class DeedController {
     @Operation(summary = "Sign deed",
                description = "Transitions a deed 'Sin Firmar' with folio assigned to the status 'Firmada'")
     public ResponseEntity<DeedResponse> sign(@PathVariable Integer id) {
-        return ResponseEntity.ok(toResponse(deedFirmaService.sign(id)));
+        return ResponseEntity.ok(toResponse(deedSigningService.sign(id)));
     }
 }

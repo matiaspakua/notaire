@@ -51,7 +51,7 @@ class SubstitutionControllerIntegrationTest {
 
     private Integer createSubstitution() throws Exception {
         long suffix = System.nanoTime() % 100000;
-        Integer substitute = createPerson("Suplente IT", "410" + suffix);
+        Integer substitute = createPerson("Substitute IT", "410" + suffix);
         Integer substituted = createPerson("Suplantado IT", "411" + suffix);
         String body = """
                 {"dateStart": "2026-01-01", "dateEnd": "2026-01-31",

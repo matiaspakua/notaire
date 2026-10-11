@@ -110,7 +110,7 @@ class ManagementExternalEntityDocumentsIntegrationTest {
         Procedure procedure = procedureRepository.findByFkIdManagementIdManagement(idManagement).get(0);
         SubmittedDocument document = new SubmittedDocument();
         document.setName(name);
-        document.setDeliveredBy(BusinessConstants.DOCUMENTACION_ENTIDAD_EXTERNA);
+        document.setDeliveredBy(BusinessConstants.DocumentationExternalEntity);
         document.setFkIdProcedure(procedure);
         document.setDelivered(false);
         document.setPrepared(false);
