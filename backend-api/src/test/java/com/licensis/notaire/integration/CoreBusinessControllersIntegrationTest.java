@@ -140,7 +140,7 @@ class CoreBusinessControllersIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "name": "Honorario adicional",
+                                      "name": "Additional fee",
                                       "value": 5000,
                                       "percentage": 0,
                                       "enabled": true,
@@ -375,7 +375,7 @@ class CoreBusinessControllersIntegrationTest {
             String body = """
                     {
                       "cadastralDesignation": "123-456-789",
-                      "address": "Calle Falsa 123",
+                      "address": "Fake Street 123",
                       "fiscalAppraisal": 1000.00,
                       "registrationNumber": "M-1",
                       "volumeFolioLandRecord": "T1-F2-FN3",

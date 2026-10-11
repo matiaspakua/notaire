@@ -269,7 +269,7 @@ class ProcedureEntityTest {
         void getDtoWithProperty() {
             Procedure procedure = baseProcedure();
             Property property = new Property(3);
-            property.setAddress("Calle Test 456");
+            property.setAddress("Street Test 456");
             procedure.setFkIdProperty(property);
 
             var dto = procedure.getDto();

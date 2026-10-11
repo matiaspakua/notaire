@@ -17,7 +17,7 @@ class PaymentEntityTest {
 
     @Nested
     @DisplayName("CU15 - Process payment - Unit Tests")
-    class ProcesarPaymentTests {
+    class ProcessPaymentTests {
 
         @Test
         @DisplayName("Should create a payment with the required fields")

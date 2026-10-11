@@ -98,7 +98,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("Should process a valid payment through service")
     void shouldProcessValidPaymentThroughService() {
-        PaymentDetails result = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Primer pago");
+        PaymentDetails result = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "First payment");
 
         assertThat(result).isNotNull();
         assertThat(result.id()).isNotNull();
@@ -219,7 +219,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
     void shouldEditPaymentThroughService() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment");
 
-        PaymentDetails edited = edit(saved.id(), new java.math.BigDecimal("120000"), new Date(), "Editado");
+        PaymentDetails edited = edit(saved.id(), new java.math.BigDecimal("120000"), new Date(), "Edited");
 
         assertThat(edited).isNotNull();
         assertThat(edited.amount()).isEqualByComparingTo(new java.math.BigDecimal("120000"));

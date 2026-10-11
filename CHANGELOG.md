@@ -59,8 +59,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ### Changed
 
+- **English local identifiers** (#1490, CU75): the payments page uses
+  `PaymentsPage`, `PAYMENT_FIELD_NAMES`, `paymentReceipt`, and
+  `handleIssueReceipt`. Reports take `idPayment`. Managements use
+  `STATUS_ARCHIVED`. Document lists use `documentTypes`. Auth tests say
+  `type ADMIN`, `type ADMINISTRADOR`, and `type EMPLEADO`. Property,
+  payment, history, and auxiliary-folio tests use English method and
+  variable names. Stored status `Archivada`, seed label
+  `Protocolo Auxiliar`, filename `recibo_pago_`, and message keys
+  `pagos`, `estadoSinPagos`, `emitirRecibo`, `saldoExcedido`,
+  `selectTipo`, and `editDocumento` stay.
+- **English helper names** (#1490, CU75): deed tests use `folioWithNotary` and
+  `shouldRejectSaveWhenGapIsNotJustified`. Archive tests use
+  `createProcedureTypeWithWorkflowToArchived` and `transition`. Template
+  tests use `createProcedureTypeWithTemplate` and `conceptName`. The stamp
+  duty fixture is `Stamp duty`. The amount field test id is
+  `input-amount-to-pay`. Stored status `Archivada` and seed concept
+  `Honorarios` stay, along with the message key `importeAPagar`.
+- **English property words** (#1490, CU75): the property form state uses
+  `volumeFolioLandRecord` and `boundaries`. Test ids are
+  `input-cadastral-designation`, `input-fiscal-appraisal`, and
+  `input-boundaries`. Fixtures use `Without designation`, `Another street`,
+  `Null`, `Empty`, `Blank`, `North, South, East, West`, `Fake Street`,
+  `Street without designation`, `Siempreviva Avenue`, `Volume 1 Folio 2`,
+  `DEED-001`, and `not a payment`. The registration-draft display says
+  `cadastral/registry`. Message keys `inmuebles`, `nomenclatura`,
+  `domicilio`, `valuacionFiscal`, `matricula`, `tomoFolioFinca`,
+  `linderos`, and `registralData` stay, along with `Pérez`, `Soltero`,
+  `Firmada`, and `Efectivo`.
+- **English address fixtures** (#1490, CU75): property and person fixtures use
+  `Fake Street`, `Main Street`, `Street`, `Apartment`, `Floor`,
+  `Corrientes Avenue`, and `Designation`. The extra concept is
+  `Additional fee`. Payment notes are `First payment`, `Edited`, and
+  `Partial payment`. Sample names are `roleValid655` and `typeValid655`.
+  Process-payment tests are `ProcessPaymentTests`. Stored methods
+  `Efectivo`, `Transferencia`, and `Cheque` stay, along with `Pérez` and
+  the role field `modulos`.
 - **Testing process architecture (MTP + living inventory)** (#1511, CU76):
   `TEST-PLAN.md` is the Master Test Plan for all levels; added
   `PROCESS-ARCHITECTURE.md` and generated `INVENTORY.md` with
@@ -1165,6 +1202,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ### Fixed
 
 - **Spanish UI copy, E2E locators and management create restored after the English rename** (issue #1502, RNF-04): the #1495 identifier rename also rewrote 27 Spanish values in `frontend/messages/es.json`, so users saw "Person actualizada", "Property creado", "Nuevo Notebook", "Concept creado", "Substitution registrada" and a "Role" column. The values are restored from the pre-rename catalog (sentence-case fixes that stay Spanish are kept; `en.json` untouched), Playwright `TS-0023` expects "Rol" again, and Vitest `es-catalog-spanish.test.ts` fails if an English entity name from the rename map reaches an es.json value. The same rename had rewritten the Spanish UI text that Playwright locators match (`/fecha/` became `/date/`, `/presupuesto/` became `/budget/`, `nav-gestiones` became `nav-managements`) in 21 specs, and left the management create sending `procedureTypeId` where `CompleteCaseRequest` reads `typeProcedureId` (UI creates answered 400); both are fixed (`toCompleteCaseRequest`, Vitest `useManagements.create-wire.test.tsx`), `TS-0072` expects the English notebook validation messages, and the CU39 no-template E2E case picks its procedure type by exact name, so main's E2E jobs pass again.
@@ -1701,6 +1739,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ### Added
 
 - **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
@@ -2086,10 +2125,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ### Deprecated
 
 - `init-db/01-schema.sql` - Superseded by Flyway migration
 - `init-db/02-data.sql` - Superseded by Flyway migration
+
 
 
 
@@ -2111,6 +2152,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING — unused payment params create** (issue #1065, CU76):
   `POST /api/v1/pagos/params` removed (no UI/Bruno callers). Use
   `POST /api/v1/pagos` (JSON body).
+
 
 
 
@@ -2190,6 +2232,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `spring.security.user.*` keys (`admin`/`admin`) from `application.properties`
   and deleted the legacy Swing-era `config.properties` (plain-text database
   credentials) that no code read. Actuator auth is unchanged (#1069)
+
 
 
 

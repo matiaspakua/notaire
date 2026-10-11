@@ -62,7 +62,7 @@ class RegistrationDraftServiceTest {
         property.setIdProperty(1);
         property.setCadastralDesignation("123-456-789");
         property.setFiscalAppraisal(new java.math.BigDecimal("1000"));
-        property.setAddress("Calle Falsa 123");
+        property.setAddress("Fake Street 123");
         property.setRegistrationNumber("M-1");
         property.setVolumeFolioLandRecord("T1-F2-FN3");
         property.setBoundaries("Norte, Sur, Este, Oeste");

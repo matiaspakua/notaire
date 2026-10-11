@@ -54,7 +54,7 @@ class PropertyRequestValidationIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         stored = new Property();
         stored.setCadastralDesignation("NC-655-STORED");
-        stored.setAddress("Calle #655");
+        stored.setAddress("Street #655");
         stored = propertyRepository.save(stored);
     }
 
@@ -92,7 +92,7 @@ class PropertyRequestValidationIntegrationTest {
 
         Property reloaded = propertyRepository.findById(stored.getIdProperty()).orElseThrow();
         assertThat(reloaded.getCadastralDesignation()).isEqualTo("NC-655-STORED");
-        assertThat(reloaded.getAddress()).isEqualTo("Calle #655");
+        assertThat(reloaded.getAddress()).isEqualTo("Street #655");
     }
 
     @Test

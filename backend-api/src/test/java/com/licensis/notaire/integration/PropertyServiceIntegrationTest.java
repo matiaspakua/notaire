@@ -149,8 +149,8 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
         // Create diverse data
         for (int i = 1; i <= 10; i++) {
             Property property = new Property();
-            property.setCadastralDesignation("Nomenclatura " + i);
-            property.setAddress("Calle " + i);
+            property.setCadastralDesignation("Designation " + i);
+            property.setAddress("Street " + i);
             property.setFiscalAppraisal(java.math.BigDecimal.valueOf(50000 + (i * 10000L)));
             propertyRepository.save(property);
         }
@@ -158,7 +158,7 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
         List<Property> all = propertyRepository.findAll();
         assertThat(all.size()).isGreaterThanOrEqualTo(10);
 
-        // Filter by valuacion > 100000
+        // Filter by fiscal appraisal > 100000
         List<Property> highValueProperties = all.stream()
                 .filter(i -> i.getFiscalAppraisal() != null &&
                            i.getFiscalAppraisal().compareTo(new java.math.BigDecimal("100000")) > 0)
@@ -173,7 +173,7 @@ class PropertyServiceIntegrationTest extends ServiceIntegrationTest {
         for (int i = 0; i < 20; i++) {
             Property property = new Property();
             property.setCadastralDesignation("Batch-" + i);
-            property.setAddress("Batch Calle " + i);
+            property.setAddress("Batch Street " + i);
             property.setFiscalAppraisal(java.math.BigDecimal.valueOf(10000L * (i + 1)));
             propertyRepository.save(property);
         }

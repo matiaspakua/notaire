@@ -62,7 +62,7 @@ class PersonEntityTest {
             person.setMaritalStatus("soltero");
             person.setSex("femenino");
             person.setOccupation("empleada");
-            person.setAddress("Calle Falsa 123");
+            person.setAddress("Fake Street 123");
 
             assertThat(person.getIsClient()).isTrue();
             assertThat(person.getNationality()).isEqualTo("Argentina");
