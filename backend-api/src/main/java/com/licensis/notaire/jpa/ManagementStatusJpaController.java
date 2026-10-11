@@ -89,7 +89,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
             ClassEliminatedException, ClassModifiedException {
         Integer version = ConstantesPersistencia.VersionINICIAL;
         Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
-        Boolean resultado = Boolean.FALSE;
+        Boolean result = Boolean.FALSE;
         EntityManager em = null;
 
         em = getEntityManager();
@@ -101,7 +101,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
             version = persistentManagementStatus.getVersion();
             oldVersion = managementStatus.getVersion();
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico o elimino el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified or deleted the object
             {
                 if (em != null) {
                     em.close();
@@ -150,7 +150,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
                 }
                 em.getTransaction().commit();
 
-                resultado = Boolean.TRUE;
+                result = Boolean.TRUE;
                 if (em != null) {
                     em.close();
                 }
@@ -159,7 +159,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
             throw new ClassEliminatedException();
         }
 
-        return resultado;
+        return result;
     }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
@@ -207,7 +207,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
      *
      */
     public boolean verifyManagementStatusExists(String nameStatus) {
-        boolean resultado = false;
+        boolean result = false;
 
         List<ManagementStatus> listaEstadosDeGestiones = this.findManagementStatusEntities();
 
@@ -218,7 +218,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
                 return true;
             }
         }
-        return resultado;
+        return result;
     }
 
     public List<ManagementStatus> findManagementStatusEntities() {

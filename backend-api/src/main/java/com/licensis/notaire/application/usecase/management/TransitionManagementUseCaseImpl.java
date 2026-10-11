@@ -2,7 +2,7 @@ package com.licensis.notaire.application.usecase.management;
 
 import com.licensis.notaire.application.port.in.management.TransitionManagementOutput;
 import com.licensis.notaire.application.port.in.management.TransitionManagementUseCase;
-import com.licensis.notaire.application.port.out.management.ManagementBitacoraPort;
+import com.licensis.notaire.application.port.out.management.ManagementStatusLogPort;
 import com.licensis.notaire.application.port.out.management.ManagementRepositoryPort;
 import com.licensis.notaire.application.port.out.management.StatusRepositoryPort;
 import com.licensis.notaire.application.port.out.management.WorkflowLookupPort;
@@ -28,11 +28,11 @@ public class TransitionManagementUseCaseImpl implements TransitionManagementUseC
     private final StatusRepositoryPort statusRepository;
     private final WorkflowLookupPort workflowLookup;
     private final WorkflowTransitionValidatorPort transitionValidator;
-    private final ManagementBitacoraPort statusLog;
+    private final ManagementStatusLogPort statusLog;
 
     public TransitionManagementUseCaseImpl(ManagementRepositoryPort managementRepository,
             StatusRepositoryPort statusRepository, WorkflowLookupPort workflowLookup,
-            WorkflowTransitionValidatorPort transitionValidator, ManagementBitacoraPort statusLog) {
+            WorkflowTransitionValidatorPort transitionValidator, ManagementStatusLogPort statusLog) {
         this.managementRepository = managementRepository;
         this.statusRepository = statusRepository;
         this.workflowLookup = workflowLookup;

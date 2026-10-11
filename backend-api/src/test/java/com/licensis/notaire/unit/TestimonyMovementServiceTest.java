@@ -124,10 +124,10 @@ class TestimonyMovementServiceTest {
                     .thenReturn(Optional.of(ingresado));
             when(testimonyMovementRepository.save(ingresado)).thenReturn(ingresado);
 
-            TestimonyMovement resultado = testimonyMovementService.registerInscription(5);
+            TestimonyMovement result = testimonyMovementService.registerInscription(5);
 
-            assertThat(resultado.getRegistered()).isTrue();
-            assertThat(resultado.getDateRegistration()).isNotNull();
+            assertThat(result.getRegistered()).isTrue();
+            assertThat(result.getDateRegistration()).isNotNull();
         }
 
         @Test
@@ -167,10 +167,10 @@ class TestimonyMovementServiceTest {
                     .thenReturn(Optional.of(inscripto));
             when(testimonyMovementRepository.save(inscripto)).thenReturn(inscripto);
 
-            TestimonyMovement resultado = testimonyMovementService.withdraw(5, 123);
+            TestimonyMovement result = testimonyMovementService.withdraw(5, 123);
 
-            assertThat(resultado.getDateExit()).isNotNull();
-            assertThat(resultado.getCardNumber()).isEqualTo(123);
+            assertThat(result.getDateExit()).isNotNull();
+            assertThat(result.getCardNumber()).isEqualTo(123);
         }
 
         @Test
@@ -198,7 +198,7 @@ class TestimonyMovementServiceTest {
 
     @Nested
     @DisplayName("Reingresar testimony")
-    class ReingresarTests {
+    class ReenterTests {
 
         @Test
         @DisplayName("Should create a new movement preserving the previous one when testimony was withdrawn")

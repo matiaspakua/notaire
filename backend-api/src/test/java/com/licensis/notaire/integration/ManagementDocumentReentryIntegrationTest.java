@@ -35,7 +35,7 @@ import com.licensis.notaire.repository.ProcedureRepository;
 @SpringBootTest
 @ActiveProfiles("test-h2")
 @DisplayName("Management reentry of documentation (CU43)")
-class ManagementReingresoDocumentacionIntegrationTest {
+class ManagementDocumentReentryIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -136,7 +136,7 @@ class ManagementReingresoDocumentacionIntegrationTest {
 
     @Test
     @DisplayName("Should list procedures with their documentation required")
-    void shouldListProceduresWithDocumentacionNecesaria() throws Exception {
+    void shouldListProceduresWithRequiredDocumentation() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9401);
         DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-1");
         createProcedureTemplate(management.procedureType(), typeDocument);
@@ -151,7 +151,7 @@ class ManagementReingresoDocumentacionIntegrationTest {
 
     @Test
     @DisplayName("Should return empty documentation required when the procedure has not ProcedureTemplate")
-    void shouldReturnEmptyDocumentacionWhenNoTemplate() throws Exception {
+    void shouldReturnEmptyDocumentationWhenNoTemplate() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9402);
 
         mockMvc.perform(get("/api/v1/managements/" + management.idManagement() + "/document-reentry"))
@@ -161,7 +161,7 @@ class ManagementReingresoDocumentacionIntegrationTest {
 
     @Test
     @DisplayName("Should create a SubmittedDocument with reentered=true when the pair is valid")
-    void shouldReingresarWhenValid() throws Exception {
+    void shouldReenterWhenValid() throws Exception {
         ManagementConProcedure management = createManagementConProcedure(9403);
         DocumentType typeDocument = createDocumentType("Certificado de Dominio CU43-3");
         createProcedureTemplate(management.procedureType(), typeDocument);

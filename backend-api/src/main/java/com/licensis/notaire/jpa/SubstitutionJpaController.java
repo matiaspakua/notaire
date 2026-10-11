@@ -222,7 +222,7 @@ public class SubstitutionJpaController implements Serializable, JpaPersistence
         try
         {
             // JOIN FETCH: the people are LAZY and the entidad serializa with the
-            // EntityManager already cerrado (detached); without fetch the serialización falla.
+            // EntityManager is already closed (detached); without a fetch, serialization fails.
             Query q = em.createQuery(
                     "SELECT s FROM Substitution s "
                             + "JOIN FETCH s.fkIdSubstitute "
@@ -230,8 +230,8 @@ public class SubstitutionJpaController implements Serializable, JpaPersistence
                             + "WHERE s.idSubstitution = :id");
             q.setParameter("id", id);
             @SuppressWarnings("unchecked")
-            List<Substitution> resultado = q.getResultList();
-            return resultado.isEmpty() ? null : resultado.get(0);
+            List<Substitution> result = q.getResultList();
+            return result.isEmpty() ? null : result.get(0);
         }
         finally
         {

@@ -38,7 +38,7 @@ public class AuditRecordJpaController implements Serializable, JpaPersistence {
     }
 
     public boolean create(AuditRecord auditRecord) {
-        boolean resultado = false;
+        boolean result = false;
 
         EntityManager em = null;
         try {
@@ -55,13 +55,13 @@ public class AuditRecordJpaController implements Serializable, JpaPersistence {
                 fkIdUser = em.merge(fkIdUser);
             }
             em.getTransaction().commit();
-            resultado = true;
+            result = true;
         } finally {
             if (em != null) {
                 em.close();
             }
         }
-        return resultado;
+        return result;
     }
 
     public static AuditRecordJpaController getInstancia() {
@@ -193,7 +193,7 @@ public class AuditRecordJpaController implements Serializable, JpaPersistence {
 
             listaAudit = query.getResultList();
 
-            // Filtro el resultado de la busqueda con el UserAccount deseado
+            // Filter the search result to the requested user account
             for (int i = 0; i < listaAudit.size(); i++) {
                 if (miUser.getIdUser().equals(listaAudit.get(i).getFkIdUser().getIdUser())) {
                     flag = true;

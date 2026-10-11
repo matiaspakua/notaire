@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English status-log and document-reentry type names** (#1490, CU75):
+  `ManagementStatusLogService`, `ManagementStatusLogPort`, and `DocumentReentryService`
+  replace the Spanish type names. External-entity document operations are
+  `getExternalEntityDocuments` and `registerExternalEntityDocumentMovement`.
+  Message catalog key `viewBitacora` stays.
 - **English validation messages and API descriptions** (#1490, CU75): exception
   and validation text, PDF labels, and OpenAPI response descriptions (`Not found`,
   `Created`, `Conflict`) are English. The status log parameter is `statusLog`.

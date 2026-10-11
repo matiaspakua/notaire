@@ -76,10 +76,10 @@ These endpoints are actively called by the Next.js frontend:
 - `POST /api/v1/managements/{id}/transition` — CU83 validated status mutation
 - `DELETE /api/v1/managements/{id}`
 - `GET /api/v1/managements/{id}/workflow-trace` — CU83 legal-next source: filter transitions from the current node
-- `GET /api/v1/managements/{id}/external-entity-documents` — `useExternalEntityDocuments.ts`, CU10 `documentos-entidades-externas` screen (#863)
-- `PUT /api/v1/managements/{id}/external-entity-documents/{idDocumentoPresentado}` — `useExternalEntityDocuments.ts`, CU10 `documentos-entidades-externas` screen (#863)
-- `GET /api/v1/managements/{id}/document-reentry` — `useReingresoDocumentacion.ts`, CU43 `reingreso-documentacion` screen (#865)
-- `POST /api/v1/managements/{id}/document-reentry` — `useReingresoDocumentacion.ts`, CU43 `reingreso-documentacion` screen (#865)
+- `GET /api/v1/managements/{id}/external-entity-documents` — `useExternalEntityDocuments.ts`, CU10 `external-entity-documents` screen (#863)
+- `PUT /api/v1/managements/{id}/external-entity-documents/{idSubmittedDocument}` — `useExternalEntityDocuments.ts`, CU10 `external-entity-documents` screen (#863)
+- `GET /api/v1/managements/{id}/document-reentry` — `useDocumentReentry.ts`, CU43 `document-reentry` screen (#865)
+- `POST /api/v1/managements/{id}/document-reentry` — `useDocumentReentry.ts`, CU43 `document-reentry` screen (#865)
 
 ### InmuebleController
 - `GET /api/v1/properties`

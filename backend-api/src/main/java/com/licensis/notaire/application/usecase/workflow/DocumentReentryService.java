@@ -25,17 +25,17 @@ import java.util.List;
 /**
  * CU43 — Re-enter documentation. For a management, lists each procedure and the
  * documents its {@code ProcedureTemplate} requires, and re-enters a document
- * type by creating a {@code SubmittedDocument} with {@code reingresado=true}.
+ * type by creating a {@code SubmittedDocument} with {@code reentered=true}.
  */
 @Service
-public class ReingresoDocumentacionService {
+public class DocumentReentryService {
 
     private final DeedManagementRepository managementRepository;
     private final ProcedureRepository procedureRepository;
     private final ProcedureTemplateRepository procedureTemplateRepository;
     private final SubmittedDocumentRepository submittedDocumentRepository;
 
-    public ReingresoDocumentacionService(DeedManagementRepository managementRepository,
+    public DocumentReentryService(DeedManagementRepository managementRepository,
             ProcedureRepository procedureRepository, ProcedureTemplateRepository procedureTemplateRepository,
             SubmittedDocumentRepository submittedDocumentRepository) {
         this.managementRepository = managementRepository;

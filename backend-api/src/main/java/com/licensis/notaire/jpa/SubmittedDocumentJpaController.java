@@ -44,8 +44,8 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
     public boolean create(SubmittedDocument submittedDocument) throws NonexistentEntityException
     {
 
-        boolean flag = false; //Variable for saber the resultado of the transaccion
-        int version = 0;    //Variable for Version in bd of the Objeto
+        boolean flag = false; // Whether the transaction succeeded
+        int version = 0;    // Version of the object in the database
 
         Procedure fkIdProcedure = submittedDocument.getFkIdProcedure();
         EntityManager em = null;
@@ -93,9 +93,9 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
     public boolean edit(SubmittedDocument submittedDocument) throws NonexistentEntityException, ClassModifiedException
     {
 
-        Boolean flag = false; //Variable for saber the resultado of the transaccion
-        int oldVersion = 0; //Variable for Version in memoria of the Objeto
-        int version = 0;    //Variable for Version in bd of the Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = 0; // Version of the object in memory
+        int version = 0;    // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
@@ -103,10 +103,10 @@ public class SubmittedDocumentJpaController implements Serializable, JpaPersiste
 
         if (persistSubmittedDocument != null)
         {
-            version = persistSubmittedDocument.getVersion(); // Version of the Objeto in db
-            oldVersion = submittedDocument.getVersion(); // Version of the Objeto in memoria
+            version = persistSubmittedDocument.getVersion(); // Version of the object in the database
+            oldVersion = submittedDocument.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException("The indicated document has been modified by another user");
 

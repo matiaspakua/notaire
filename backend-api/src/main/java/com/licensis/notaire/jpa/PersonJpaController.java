@@ -735,19 +735,19 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
     public Boolean modifyPerson(Person pPerson) throws ClassModifiedException, ClassEliminatedException {
 
-        Boolean flag = false; // Variable for saber the resultado of the transaccion
-        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable for Version in memoria of the Objeto
-        int version = ConstantesPersistencia.VersionINICIAL; // Variable for Version in bd of the Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Version of the object in memory
+        int version = ConstantesPersistencia.VersionINICIAL; // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
         Person persistentPerson = em.find(Person.class, pPerson.getPersonId());
 
         if (persistentPerson != null) {
-            version = persistentPerson.getVersion(); // Version of the Objeto in db
-            oldVersion = pPerson.getVersion(); // Version of the Objeto in memoria
+            version = persistentPerson.getVersion(); // Version of the object in the database
+            oldVersion = pPerson.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException("The indicated person has already been modified");
             } else {
@@ -776,7 +776,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     ex.printStackTrace();
                 }
             }
-        } else // If was eliminado dispara a excepcion
+        } else // Already deleted: throw
         {
             throw new ClassEliminatedException("The indicated person has been deleted");
         }
@@ -785,19 +785,19 @@ public class PersonJpaController implements Serializable, JpaPersistence {
 
     public Boolean registerNotary(Person notary) throws ClassModifiedException, NonexistentEntityException {
 
-        Boolean resultado = false; // Variable for saber the resultado of the transaccion
-        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Variable for Version in memoria of the Objeto
-        int version = ConstantesPersistencia.VersionINICIAL; // Variable for Version in bd of the Objeto
+        Boolean result = false; // Whether the transaction succeeded
+        int oldVersion = ConstantesPersistencia.VersionINICIAL; // Version of the object in memory
+        int version = ConstantesPersistencia.VersionINICIAL; // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
         Person persistentPerson = em.find(Person.class, notary.getPersonId());
 
         if (persistentPerson != null) {
-            version = persistentPerson.getVersion(); // Version of the Objeto in db
-            oldVersion = notary.getVersion(); // Version of the Objeto in memoria
+            version = persistentPerson.getVersion(); // Version of the object in the database
+            oldVersion = notary.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null) {
                     em.close();
@@ -810,34 +810,34 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     persistentPerson.setNotaryRegistrationNumber(notary.getNotaryRegistrationNumber());
                 }
                 em.getTransaction().commit();
-                resultado = true;
+                result = true;
 
                 if (em != null) {
                     em.close();
                 }
             }
-        } else // If was eliminado dispara a excepcion
+        } else // Already deleted: throw
         {
             throw new NonexistentEntityException("The indicated person does not exist");
         }
-        return resultado;
+        return result;
     }
 
     public Boolean modifyClient(Person pClient) throws ClassModifiedException, ClassEliminatedException {
 
-        Boolean flag = false; // Variable for saber the resultado of the transaccion
-        int oldVersion = 0; // Variable for Version in memoria of the Objeto
-        int version = 0; // Variable for Version in bd of the Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = 0; // Version of the object in memory
+        int version = 0; // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
         Person persistentPerson = em.find(Person.class, pClient.getPersonId());
 
         if (persistentPerson != null) {
-            version = persistentPerson.getVersion(); // Version of the Objeto in db
-            oldVersion = pClient.getVersion(); // Version of the Objeto in memoria
+            version = persistentPerson.getVersion(); // Version of the object in the database
+            oldVersion = pClient.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) // Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException("The indicated client has already been modified");
 
@@ -875,7 +875,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     System.out.println("Error de Persistencia: UserAccount JpaController metodo: modificarUsuario");
                 }
             }
-        } else // If was eliminado dispara a excepcion
+        } else // Already deleted: throw
         {
             throw new ClassEliminatedException("The indicated client has been deleted or does not exist");
         }

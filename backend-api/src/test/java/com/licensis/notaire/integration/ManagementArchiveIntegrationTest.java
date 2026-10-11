@@ -107,7 +107,7 @@ class ManagementArchiveIntegrationTest {
         return managementStatusRepository.save(status);
     }
 
-    private Integer createProcedureTypeConWorkflowHaciaArchivada(ManagementStatus statusInicial) {
+    private Integer createProcedureTypeConWorkflowHaciaArchivada(ManagementStatus initialStatus) {
         WorkflowDefinition definition = new WorkflowDefinition();
         definition.setName("Workflow Archive IT " + System.nanoTime());
         definition.setActive(true);
@@ -115,7 +115,7 @@ class ManagementArchiveIntegrationTest {
 
         WorkflowNode originNode = new WorkflowNode();
         originNode.setWorkflowDefinition(definition);
-        originNode.setManagementStatus(statusInicial);
+        originNode.setManagementStatus(initialStatus);
         originNode.setType(WorkflowNodeType.INITIAL);
         originNode = workflowNodeRepository.save(originNode);
 
@@ -145,9 +145,9 @@ class ManagementArchiveIntegrationTest {
         Integer clientId = createPerson("43" + (System.nanoTime() % 1000000));
         Integer notaryId = createPerson("44" + (System.nanoTime() % 1000000));
         Integer budgetId = createBudget(clientId, propertyAmount);
-        ManagementStatus statusInicial = createManagementStatus();
-        Integer statusId = statusInicial.getIdManagementStatus();
-        Integer typeProcedureId = createProcedureTypeConWorkflowHaciaArchivada(statusInicial);
+        ManagementStatus initialStatus = createManagementStatus();
+        Integer statusId = initialStatus.getIdManagementStatus();
+        Integer typeProcedureId = createProcedureTypeConWorkflowHaciaArchivada(initialStatus);
         String body = """
                 {"number": %d, "heading": "Management Archive IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}

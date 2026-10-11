@@ -84,10 +84,10 @@ public class TestimonyMovementJpaController implements Serializable, JpaPersiste
 
         if (persistentTestimonyMovement != null)
         {
-            version = persistentTestimonyMovement.getVersion(); // Version of the Objeto in db
-            oldVersion = testimonyMovement.getVersion(); // Version of the Objeto in memoria
+            version = persistentTestimonyMovement.getVersion(); // Version of the object in the database
+            oldVersion = testimonyMovement.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 

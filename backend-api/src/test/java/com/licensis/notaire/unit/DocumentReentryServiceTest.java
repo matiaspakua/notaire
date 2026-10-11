@@ -16,7 +16,7 @@ import com.licensis.notaire.repository.SubmittedDocumentRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.ProcedureTemplateRepository;
 import com.licensis.notaire.repository.ProcedureRepository;
-import com.licensis.notaire.application.usecase.workflow.ReingresoDocumentacionService;
+import com.licensis.notaire.application.usecase.workflow.DocumentReentryService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,9 +36,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU43"})
-@DisplayName("ReingresoDocumentacionService Tests")
+@DisplayName("DocumentReentryService Tests")
 @ExtendWith(MockitoExtension.class)
-class ReingresoDocumentacionServiceTest {
+class DocumentReentryServiceTest {
 
     @Mock
     private DeedManagementRepository managementRepository;
@@ -52,7 +52,7 @@ class ReingresoDocumentacionServiceTest {
     @Mock
     private SubmittedDocumentRepository submittedDocumentRepository;
 
-    private ReingresoDocumentacionService service;
+    private DocumentReentryService service;
 
     private DeedManagement management;
     private ProcedureType typeProcedure;
@@ -61,7 +61,7 @@ class ReingresoDocumentacionServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new ReingresoDocumentacionService(managementRepository, procedureRepository,
+        service = new DocumentReentryService(managementRepository, procedureRepository,
                 procedureTemplateRepository, submittedDocumentRepository);
 
         management = new DeedManagement();
@@ -87,11 +87,11 @@ class ReingresoDocumentacionServiceTest {
     }
 
     @Nested
-    @DisplayName("Get documentation required of a management")
-    class ObtenerDocumentacionNecesariaTests {
+    @DisplayName("Required documentation of a management")
+    class RequiredDocumentationTests {
 
         @Test
-        @DisplayName("Devuelve the procedures of the management with its documentation required")
+        @DisplayName("Returns the management procedures with their required documentation")
         void shouldReturnProceduresWithDocumentacionNecesaria() {
             ProcedureTemplate template = new ProcedureTemplate(new ProcedureTemplatePK(5, 7));
             template.setDocumentType(typeDocument);
@@ -101,33 +101,33 @@ class ReingresoDocumentacionServiceTest {
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedure));
             when(procedureTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of(template));
 
-            DtoManagementDocumentReentry resultado = service.getRequiredDocumentation(1);
+            DtoManagementDocumentReentry result = service.getRequiredDocumentation(1);
 
-            assertThat(resultado.idManagement()).isEqualTo(1);
-            assertThat(resultado.number()).isEqualTo(100);
-            assertThat(resultado.procedures()).hasSize(1);
-            assertThat(resultado.procedures().get(0).idProcedure()).isEqualTo(10);
-            assertThat(resultado.procedures().get(0).typeProcedureName()).isEqualTo("Compraventa");
-            assertThat(resultado.procedures().get(0).documentsNecesarios()).hasSize(1);
-            assertThat(resultado.procedures().get(0).documentsNecesarios().get(0).name())
+            assertThat(result.idManagement()).isEqualTo(1);
+            assertThat(result.number()).isEqualTo(100);
+            assertThat(result.procedures()).hasSize(1);
+            assertThat(result.procedures().get(0).idProcedure()).isEqualTo(10);
+            assertThat(result.procedures().get(0).typeProcedureName()).isEqualTo("Compraventa");
+            assertThat(result.procedures().get(0).documentsNecesarios()).hasSize(1);
+            assertThat(result.procedures().get(0).documentsNecesarios().get(0).name())
                     .isEqualTo("Certificado de Dominio");
         }
 
         @Test
-        @DisplayName("Devuelve documentation required empty when the procedure does not have ProcedureTemplate")
-        void shouldReturnEmptyDocumentacionWhenNoTemplate() {
+        @DisplayName("Returns empty required documentation when the procedure has no template")
+        void shouldReturnEmptyDocumentationWhenNoTemplate() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(procedure));
             when(procedureTemplateRepository.findByProcedureTypeIdProcedureType(5)).thenReturn(List.of());
 
-            DtoManagementDocumentReentry resultado = service.getRequiredDocumentation(1);
+            DtoManagementDocumentReentry result = service.getRequiredDocumentation(1);
 
-            assertThat(resultado.procedures()).hasSize(1);
-            assertThat(resultado.procedures().get(0).documentsNecesarios()).isEmpty();
+            assertThat(result.procedures()).hasSize(1);
+            assertThat(result.procedures().get(0).documentsNecesarios()).isEmpty();
         }
 
         @Test
-        @DisplayName("Lanza ResourceNotFoundException when the management there is no")
+        @DisplayName("Throws ResourceNotFoundException when the management does not exist")
         void shouldThrowWhenManagementNotFound() {
             when(managementRepository.findById(999)).thenReturn(Optional.empty());
 
@@ -137,11 +137,11 @@ class ReingresoDocumentacionServiceTest {
     }
 
     @Nested
-    @DisplayName("Reingresar un type de documento")
-    class ReingresarTests {
+    @DisplayName("Re-enter a document type")
+    class ReenterTests {
 
         @Test
-        @DisplayName("Crea a SubmittedDocument with reentered=true heredando datos of the DocumentType")
+        @DisplayName("Creates a submitted document with reentered=true from the document type")
         void shouldCreateSubmittedDocumentWhenValid() {
             ProcedureTemplate template = new ProcedureTemplate(new ProcedureTemplatePK(5, 7));
             template.setDocumentType(typeDocument);
@@ -157,16 +157,16 @@ class ReingresoDocumentacionServiceTest {
             });
 
             DtoDocumentReentryRequest request = new DtoDocumentReentryRequest(10, 7);
-            DtoDocumentReentered resultado = service.reenter(1, request);
+            DtoDocumentReentered result = service.reenter(1, request);
 
-            assertThat(resultado.idSubmittedDocument()).isEqualTo(50);
-            assertThat(resultado.idProcedure()).isEqualTo(10);
-            assertThat(resultado.idDocumentType()).isEqualTo(7);
-            assertThat(resultado.name()).isEqualTo("Certificado de Dominio");
-            assertThat(resultado.expires()).isTrue();
-            assertThat(resultado.dueDays()).isEqualTo(30);
-            assertThat(resultado.deliveredBy()).isEqualTo("Cliente");
-            assertThat(resultado.reentered()).isTrue();
+            assertThat(result.idSubmittedDocument()).isEqualTo(50);
+            assertThat(result.idProcedure()).isEqualTo(10);
+            assertThat(result.idDocumentType()).isEqualTo(7);
+            assertThat(result.name()).isEqualTo("Certificado de Dominio");
+            assertThat(result.expires()).isTrue();
+            assertThat(result.dueDays()).isEqualTo(30);
+            assertThat(result.deliveredBy()).isEqualTo("Cliente");
+            assertThat(result.reentered()).isTrue();
 
             ArgumentCaptor<SubmittedDocument> captor = ArgumentCaptor.forClass(SubmittedDocument.class);
             org.mockito.Mockito.verify(submittedDocumentRepository).save(captor.capture());
@@ -175,7 +175,7 @@ class ReingresoDocumentacionServiceTest {
         }
 
         @Test
-        @DisplayName("Lanza BusinessValidationException cuando el type de documento no forma parte de la ProcedureTemplate")
+        @DisplayName("Throws BusinessValidationException when the document type is not in the template")
         void shouldThrowWhenTypeDocumentNotInTemplate() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findById(10)).thenReturn(Optional.of(procedure));
@@ -188,7 +188,7 @@ class ReingresoDocumentacionServiceTest {
         }
 
         @Test
-        @DisplayName("Lanza BusinessValidationException when the procedure not belongs to the management")
+        @DisplayName("Throws BusinessValidationException when the procedure does not belong to the management")
         void shouldThrowWhenProcedureDoesNotBelongToManagement() {
             DeedManagement otraManagement = new DeedManagement();
             otraManagement.setIdManagement(2);
@@ -204,7 +204,7 @@ class ReingresoDocumentacionServiceTest {
         }
 
         @Test
-        @DisplayName("Lanza ResourceNotFoundException when the procedure there is no")
+        @DisplayName("Throws ResourceNotFoundException when the procedure does not exist")
         void shouldThrowWhenProcedureNotFound() {
             when(managementRepository.findById(1)).thenReturn(Optional.of(management));
             when(procedureRepository.findById(999)).thenReturn(Optional.empty());
@@ -216,7 +216,7 @@ class ReingresoDocumentacionServiceTest {
         }
 
         @Test
-        @DisplayName("Lanza ResourceNotFoundException when the management there is no")
+        @DisplayName("Throws ResourceNotFoundException when the management does not exist")
         void shouldThrowWhenManagementNotFound() {
             when(managementRepository.findById(999)).thenReturn(Optional.empty());
 

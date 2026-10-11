@@ -1,7 +1,7 @@
 package com.licensis.notaire.config;
 
 import com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper;
-import com.licensis.notaire.adapter.out.persistence.management.ManagementBitacoraAdapter;
+import com.licensis.notaire.adapter.out.persistence.management.ManagementStatusLogAdapter;
 import com.licensis.notaire.adapter.out.persistence.management.ManagementRepositoryAdapter;
 import com.licensis.notaire.adapter.out.persistence.management.StatusRepositoryAdapter;
 import com.licensis.notaire.adapter.out.persistence.management.WorkflowLookupAdapter;
@@ -11,7 +11,7 @@ import com.licensis.notaire.application.usecase.management.TransitionManagementU
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.ManagementStatusRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
-import com.licensis.notaire.application.usecase.management.ManagementBitacoraService;
+import com.licensis.notaire.application.usecase.management.ManagementStatusLogService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,7 +29,7 @@ public class ManagementCompositionConfig {
     public TransitionManagementUseCase transitionManagementUseCase(
             DeedManagementRepository managementRepository,
             ManagementStatusRepository statusRepository,
-            ManagementBitacoraService statusLogService,
+            ManagementStatusLogService statusLogService,
             WorkflowTransitionRepository workflowTransitionRepository) {
 
         var managementRepositoryAdapter = new ManagementRepositoryAdapter(managementRepository);
@@ -37,7 +37,7 @@ public class ManagementCompositionConfig {
         var workflowLookupAdapter = new WorkflowLookupAdapter();
         var workflowTransitionValidatorAdapter =
                 new WorkflowTransitionValidatorAdapter(workflowTransitionRepository);
-        var statusLogAdapter = new ManagementBitacoraAdapter(statusLogService);
+        var statusLogAdapter = new ManagementStatusLogAdapter(statusLogService);
 
         return new TransitionManagementUseCaseImpl(managementRepositoryAdapter, statusRepositoryAdapter,
                 workflowLookupAdapter, workflowTransitionValidatorAdapter, statusLogAdapter);

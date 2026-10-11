@@ -94,7 +94,7 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
 
         Integer version = ConstantesPersistencia.VersionINICIAL;
         Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
-        Boolean resultado = Boolean.FALSE;
+        Boolean result = Boolean.FALSE;
 
         EntityManager em = null;
 
@@ -164,14 +164,14 @@ public class FolioTypeJpaController implements Serializable, JpaPersistence
 
                 em.getTransaction().commit();
 
-                resultado = true;
+                result = true;
             }
         } else
         {
             throw new ClassEliminatedException("The folio type with ID:" + folioType.getIdFolioType() + " no longer exists");
         }
 
-        return resultado;
+        return result;
     }
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException

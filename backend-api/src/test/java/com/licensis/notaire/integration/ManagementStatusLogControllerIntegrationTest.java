@@ -35,8 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test-h2")
-@DisplayName("GET /managements/{id}/history — returns the ordered bitácora (CU13)")
-class ManagementBitacoraControllerIntegrationTest {
+@DisplayName("GET /managements/{id}/history — returns the ordered history (CU13)")
+class ManagementStatusLogControllerIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -50,15 +50,15 @@ class ManagementBitacoraControllerIntegrationTest {
     private PersonRepository personRepository;
 
     private MockMvc mockMvc;
-    private Integer managementConHistoryId;
-    private Integer managementSinHistoryId;
-    private ManagementStatus statusInicial;
+    private Integer managementWithHistoryId;
+    private Integer managementWithoutHistoryId;
+    private ManagementStatus initialStatus;
     private ManagementStatus statusFinal;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        seedGestionesConHistory();
+        seedManagementsWithHistory();
     }
 
     private ManagementStatus managementStatus(String name) {
@@ -70,7 +70,7 @@ class ManagementBitacoraControllerIntegrationTest {
     private Integer createManagement(ManagementStatus status) {
         DeedManagement management = new DeedManagement();
         management.setNumber((int) (System.nanoTime() % 100000));
-        management.setHeading("Management Bitacora IT");
+        management.setHeading("Management status log IT");
         management.setDateStart(new Date());
         management.setFkIdManagementStatus(status);
         management.setFkIdNotaryPerson(personRepository.findAll().get(0));
@@ -85,32 +85,32 @@ class ManagementBitacoraControllerIntegrationTest {
         historyRepository.save(entry);
     }
 
-    private void seedGestionesConHistory() {
-        statusInicial = managementStatus("Bitacora Inicial");
-        statusFinal = managementStatus("Bitacora Final");
+    private void seedManagementsWithHistory() {
+        initialStatus = managementStatus("Initial status");
+        statusFinal = managementStatus("Final status");
 
-        managementConHistoryId = createManagement(statusFinal);
+        managementWithHistoryId = createManagement(statusFinal);
         long oneDayMillis = 86_400_000L;
-        history(managementConHistoryId, statusFinal, 3 * oneDayMillis);
-        history(managementConHistoryId, statusInicial, oneDayMillis);
+        history(managementWithHistoryId, statusFinal, 3 * oneDayMillis);
+        history(managementWithHistoryId, initialStatus, oneDayMillis);
 
-        managementSinHistoryId = createManagement(statusInicial);
+        managementWithoutHistoryId = createManagement(initialStatus);
     }
 
     @Test
     @DisplayName("Query returns the full ordered history")
     void shouldReturnOrderedHistory() throws Exception {
-        mockMvc.perform(get("/api/v1/managements/{id}/history", managementConHistoryId))
+        mockMvc.perform(get("/api/v1/managements/{id}/history", managementWithHistoryId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].statusManagementName").value(statusInicial.getName()))
+                .andExpect(jsonPath("$[0].statusManagementName").value(initialStatus.getName()))
                 .andExpect(jsonPath("$[1].statusManagementName").value(statusFinal.getName()));
     }
 
     @Test
     @DisplayName("Should return an empty list when the management has not history entries")
     void shouldReturnEmptyListWhenNoHistoryEntries() throws Exception {
-        mockMvc.perform(get("/api/v1/managements/{id}/history", managementSinHistoryId))
+        mockMvc.perform(get("/api/v1/managements/{id}/history", managementWithoutHistoryId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
     }

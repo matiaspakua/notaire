@@ -146,10 +146,10 @@ public class DeedJpaController implements Serializable, JpaPersistence
 
         if (persistentDeed != null)
         {
-            version = persistentDeed.getVersion(); // Version of the Objeto in db
-            oldVersion = deed.getVersion(); // Version of the Objeto in memoria
+            version = persistentDeed.getVersion(); // Version of the object in the database
+            oldVersion = deed.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 
@@ -425,10 +425,10 @@ public class DeedJpaController implements Serializable, JpaPersistence
 
         if (persistentDeed != null)
         {
-            version = persistentDeed.getVersion(); // Version of the Objeto in db
-            oldVersion = miDeed.getVersion(); // Version of the Objeto in memoria
+            version = persistentDeed.getVersion(); // Version of the object in the database
+            oldVersion = miDeed.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 
@@ -480,10 +480,10 @@ public class DeedJpaController implements Serializable, JpaPersistence
 
         if (persistentDeed != null)
         {
-            version = persistentDeed.getVersion(); // Version of the Objeto in db
-            oldVersion = miDeed.getVersion(); // Version of the Objeto in memoria
+            version = persistentDeed.getVersion(); // Version of the object in the database
+            oldVersion = miDeed.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 

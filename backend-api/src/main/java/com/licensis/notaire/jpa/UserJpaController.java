@@ -290,9 +290,9 @@ public class UserJpaController implements Serializable, JpaPersistence {
 
     public Boolean modifyUser(User pUser) throws ClassModifiedException, ClassEliminatedException {
 
-        Boolean flag = false; // Variable for saber the resultado of the transaccion
-        int oldVersion = 0; // Variable for Version in memoria of the Objeto
-        int version = 0; // Variable for Version in bd of the Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = 0; // Version of the object in memory
+        int version = 0; // Version of the object in the database
 
         EntityManager em = getEntityManager();
 

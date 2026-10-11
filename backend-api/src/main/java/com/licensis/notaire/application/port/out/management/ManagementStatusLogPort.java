@@ -5,7 +5,7 @@ import com.licensis.notaire.business.DeedManagement;
 /**
  * Outbound port for recording management status transitions in the audit trail.
  */
-public interface ManagementBitacoraPort {
+public interface ManagementStatusLogPort {
 
     /**
      * Register a status change in the management's history.

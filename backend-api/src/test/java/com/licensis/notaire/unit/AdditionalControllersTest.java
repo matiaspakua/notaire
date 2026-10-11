@@ -138,10 +138,10 @@ class AdditionalControllersTest {
             var transitionUseCase = mock(com.licensis.notaire.application.port.in.management.TransitionManagementUseCase.class);
             var transitionWebMapper =
                     mock(com.licensis.notaire.adapter.in.web.management.TransitionManagementWebMapper.class);
-            var statusLogService = mock(com.licensis.notaire.application.usecase.management.ManagementBitacoraService.class);
+            var statusLogService = mock(com.licensis.notaire.application.usecase.management.ManagementStatusLogService.class);
             var statusWriteGuard = mock(com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard.class);
-            var documentEntidadExternaService = mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class);
-            var reingresoDocumentacionService = mock(com.licensis.notaire.application.usecase.workflow.ReingresoDocumentacionService.class);
+            var externalEntityDocumentService = mock(com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService.class);
+            var documentReentryService = mock(com.licensis.notaire.application.usecase.workflow.DocumentReentryService.class);
             var mvc = standaloneSetup(new ManagementController(repo, histRepo, traceService, queryService,
                     mock(com.licensis.notaire.repository.PersonRepository.class),
                     mock(com.licensis.notaire.repository.ManagementStatusRepository.class),
@@ -153,7 +153,7 @@ class AdditionalControllersTest {
                     mock(com.licensis.notaire.application.usecase.management.ManagementSubstitutionService.class),
                     mock(com.licensis.notaire.application.usecase.management.ManagementResumenFinancieroService.class),
                     statusLogService, statusWriteGuard, transitionUseCase, transitionWebMapper,
-                    documentEntidadExternaService, reingresoDocumentacionService,
+                    externalEntityDocumentService, documentReentryService,
                     mock(com.licensis.notaire.application.usecase.procedure.ProcedureFolderService.class)))
                     .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                     .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())

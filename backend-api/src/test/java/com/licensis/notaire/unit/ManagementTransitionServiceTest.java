@@ -12,7 +12,7 @@ import com.licensis.notaire.business.WorkflowTransition;
 import com.licensis.notaire.repository.ManagementStatusRepository;
 import com.licensis.notaire.repository.DeedManagementRepository;
 import com.licensis.notaire.repository.WorkflowTransitionRepository;
-import com.licensis.notaire.application.usecase.management.ManagementBitacoraService;
+import com.licensis.notaire.application.usecase.management.ManagementStatusLogService;
 import com.licensis.notaire.application.usecase.management.ManagementTransitionService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,13 +45,13 @@ class ManagementTransitionServiceTest {
     private WorkflowTransitionRepository workflowTransitionRepository;
 
     @Mock
-    private ManagementBitacoraService managementBitacoraService;
+    private ManagementStatusLogService statusLogService;
 
     @InjectMocks
     private ManagementTransitionService managementTransitionService;
 
     private DeedManagement management;
-    private ManagementStatus statusInicial;
+    private ManagementStatus initialStatus;
     private ManagementStatus statusDestination;
     private WorkflowDefinition workflowDefinition;
     private WorkflowNode originNode;
@@ -59,7 +59,7 @@ class ManagementTransitionServiceTest {
 
     @BeforeEach
     void setUp() {
-        statusInicial = new ManagementStatus(1, "Iniciada");
+        initialStatus = new ManagementStatus(1, "Iniciada");
         statusDestination = new ManagementStatus(2, "In procedure");
 
         workflowDefinition = new WorkflowDefinition(1);
@@ -72,11 +72,11 @@ class ManagementTransitionServiceTest {
 
         management = new DeedManagement();
         management.setIdManagement(1);
-        management.setFkIdManagementStatus(statusInicial);
+        management.setFkIdManagementStatus(initialStatus);
         management.setProcedureList(List.of(procedure));
 
         originNode = new WorkflowNode(1);
-        originNode.setManagementStatus(statusInicial);
+        originNode.setManagementStatus(initialStatus);
 
         destinationNode = new WorkflowNode(2);
         destinationNode.setManagementStatus(statusDestination);

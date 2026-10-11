@@ -436,17 +436,17 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     public int getLastManagementNumber()
     {
         EntityManager em = getEntityManager();
-        int resultado = 0;
+        int result = 0;
         try
         {
             Query q = em.createQuery("select max(number) as ultimaGestion from DeedManagement");
 
             if (q.getSingleResult() != null)
             {
-                resultado = (int) q.getSingleResult();
+                result = (int) q.getSingleResult();
             }
 
-            return resultado;
+            return result;
         }
         finally
         {
@@ -490,9 +490,9 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
     public boolean archivingManagements(DeedManagement pGestioneDeEscrituras) throws ClassModifiedException
     {
 
-        Boolean flag = false; //Variable for saber the resultado of the transaccion
-        int oldVersion = 0; //Variable for Version in memoria of the Objeto
-        int version = 0;    //Variable for Version in bd of the Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = 0; // Version of the object in memory
+        int version = 0;    // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
@@ -500,10 +500,10 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
 
         if (persistentManagement != null)
         {
-            version = persistentManagement.getVersion(); // Version of the Objeto in db
-            oldVersion = pGestioneDeEscrituras.getVersion(); // Version of the Objeto in memoria
+            version = persistentManagement.getVersion(); // Version of the object in the database
+            oldVersion = pGestioneDeEscrituras.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException("The management indicada has been modificada by another user");
 
@@ -541,7 +541,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
      */
     public boolean modifyDeedManagement(DeedManagement managementParaModificar) throws ClassModifiedException
     {
-        boolean resultado = false;
+        boolean result = false;
 
         int version;
         int oldVersion;
@@ -571,7 +571,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 //persistentGestion.setHistorialList(gestionParaModificar.getHistorialList());
 
                 em.getTransaction().commit();
-                resultado = true;
+                result = true;
             }
         }
         finally
@@ -582,7 +582,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
             }
         }
 
-        return resultado;
+        return result;
     }
 
     /**
@@ -594,7 +594,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
      */
     public boolean modifyDeedManagementStatus(DeedManagement managementParaModificar) throws ClassModifiedException
     {
-        boolean resultado = false;
+        boolean result = false;
 
         int version;
         int oldVersion;
@@ -621,7 +621,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 persistentManagement.setFkIdManagementStatus(managementParaModificar.getFkIdManagementStatus());
 
                 em.getTransaction().commit();
-                resultado = true;
+                result = true;
             }
         }
         finally
@@ -632,7 +632,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
             }
         }
 
-        return resultado;
+        return result;
     }
 
     @Override

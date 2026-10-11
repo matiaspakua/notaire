@@ -388,9 +388,9 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
     public Boolean modifyTestimony(Testimony miTestimony) throws ClassModifiedException, ClassEliminatedException
     {
 
-        Boolean flag = false; //Variable for saber the resultado of the transaccion
-        int oldVersion = 0; //Variable for Version in memoria of the Objeto
-        int version = 0;    //Variable for Version in bd of the Objeto
+        Boolean flag = false; // Whether the transaction succeeded
+        int oldVersion = 0; // Version of the object in memory
+        int version = 0;    // Version of the object in the database
 
         EntityManager em = getEntityManager();
 
@@ -398,10 +398,10 @@ public class TestimonyJpaController implements Serializable, JpaPersistence
 
         if (persistentTestimony != null)
         {
-            version = persistentTestimony.getVersion(); // Version of the Objeto in db
-            oldVersion = miTestimony.getVersion(); // Version of the Objeto in memoria
+            version = persistentTestimony.getVersion(); // Version of the object in the database
+            oldVersion = miTestimony.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
             } else

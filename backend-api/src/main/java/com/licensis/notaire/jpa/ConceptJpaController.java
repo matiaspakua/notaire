@@ -94,7 +94,7 @@ public class ConceptJpaController implements Serializable, JpaPersistence
 
     public Boolean edit(Concept concept) throws ClassEliminatedException, ClassModifiedException, IllegalOrphanException, NonexistentEntityException
     {
-        Boolean resultado = Boolean.FALSE;
+        Boolean result = Boolean.FALSE;
         Integer version = ConstantesPersistencia.VersionINICIAL;
         Integer oldVersion = ConstantesPersistencia.VersionINICIAL;
         EntityManager em = null;
@@ -106,10 +106,10 @@ public class ConceptJpaController implements Serializable, JpaPersistence
 
         if (persistentConcept != null)
         {
-            version = persistentConcept.getVersion(); // Version of the Objeto in db
-            oldVersion = concept.getVersion(); // Version of the Objeto in memoria
+            version = persistentConcept.getVersion(); // Version of the object in the database
+            oldVersion = concept.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {
@@ -163,7 +163,7 @@ public class ConceptJpaController implements Serializable, JpaPersistence
                 }
 
                 em.getTransaction().commit();
-                resultado = Boolean.TRUE;
+                result = Boolean.TRUE;
 
                 if (em != null)
                 {
@@ -175,12 +175,12 @@ public class ConceptJpaController implements Serializable, JpaPersistence
             throw new ClassEliminatedException();
         }
 
-        return resultado;
+        return result;
     }
 
     public Boolean destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException, ClassEliminatedException
     {
-        Boolean resultado = Boolean.FALSE;
+        Boolean result = Boolean.FALSE;
 
         EntityManager em = null;
         try
@@ -213,7 +213,7 @@ public class ConceptJpaController implements Serializable, JpaPersistence
 
                 em.remove(concept);
                 em.getTransaction().commit();
-                resultado = Boolean.TRUE;
+                result = Boolean.TRUE;
             } else
             {
                 throw new ClassEliminatedException();
@@ -230,7 +230,7 @@ public class ConceptJpaController implements Serializable, JpaPersistence
                 em.close();
             }
         }
-        return resultado;
+        return result;
     }
 
     public List<Concept> findConceptEntities()

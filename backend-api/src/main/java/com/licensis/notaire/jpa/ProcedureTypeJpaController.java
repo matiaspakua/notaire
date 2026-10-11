@@ -145,10 +145,10 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
 
         if (procedureTypeEncontrado != null)
         {
-            version = procedureTypeEncontrado.getVersion(); // Version of the Objeto in db
-            oldVersion = procedureType.getVersion(); // Version of the Objeto in memoria
+            version = procedureTypeEncontrado.getVersion(); // Version of the object in the database
+            oldVersion = procedureType.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {

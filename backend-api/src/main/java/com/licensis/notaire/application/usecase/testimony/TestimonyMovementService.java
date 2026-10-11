@@ -70,7 +70,7 @@ public class TestimonyMovementService {
         movement.setTestimony(testimony);
         movement.setDateEntry(new Date());
 
-        log.info("Registrando ingreso a registration of the testimony id: {}", idTestimony);
+        log.info("Recording registration entry for testimony id: {}", idTestimony);
         return testimonyMovementRepository.save(movement);
     }
 
@@ -91,7 +91,7 @@ public class TestimonyMovementService {
         movement.setRegistered(true);
         movement.setDateRegistration(new Date());
 
-        log.info("Registrando registration of the testimony id: {}", idTestimony);
+        log.info("Recording registration of testimony id: {}", idTestimony);
         return testimonyMovementRepository.save(movement);
     }
 
@@ -114,7 +114,7 @@ public class TestimonyMovementService {
         movement.setDateExit(new Date());
         movement.setCardNumber(cardNumber);
 
-        log.info("Registrando retiro of the testimony id: {}, cartón: {}", idTestimony, cardNumber);
+        log.info("Recording withdrawal of testimony id: {}, card: {}", idTestimony, cardNumber);
         return testimonyMovementRepository.save(movement);
     }
 
@@ -145,7 +145,7 @@ public class TestimonyMovementService {
         nuevo.setObservedByRegistry(reentry.observedByRegistry());
         nuevo.setNotes(reentry.notes());
 
-        log.info("Reingresando testimony id: {}", idTestimony);
+        log.info("Re-entering testimony id: {}", idTestimony);
         return testimonyMovementRepository.save(nuevo);
     }
 }

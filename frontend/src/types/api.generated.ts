@@ -1152,7 +1152,7 @@ export interface paths {
             cookie?: never;
         };
         /** CU10 - Get management documentation handled by external entities */
-        get: operations["getDocumentsEntidadesExternas"];
+        get: operations["getExternalEntityDocuments"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1170,7 +1170,7 @@ export interface paths {
         };
         get?: never;
         /** CU10 - Register movement of an external-entity document */
-        put: operations["registerMovementDocumentEntidadExterna"];
+        put: operations["registerExternalEntityDocumentMovement"];
         post?: never;
         delete?: never;
         options?: never;
@@ -7465,7 +7465,7 @@ export interface operations {
             };
         };
     };
-    getDocumentsEntidadesExternas: {
+    getExternalEntityDocuments: {
         parameters: {
             query?: never;
             header?: never;
@@ -7496,7 +7496,7 @@ export interface operations {
             };
         };
     };
-    registerMovementDocumentEntidadExterna: {
+    registerExternalEntityDocumentMovement: {
         parameters: {
             query?: never;
             header?: never;

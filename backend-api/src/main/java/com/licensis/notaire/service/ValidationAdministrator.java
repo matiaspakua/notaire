@@ -28,35 +28,35 @@ public class ValidationAdministrator
 
     public Boolean validateTextOnlyField(String campoParaValidar)
     {
-        Boolean resultado = Boolean.TRUE;
+        Boolean result = Boolean.TRUE;
         char[] caractes = campoParaValidar.toCharArray();
         for (char c : caractes)
         {
             if (!((Character.isLetter(c)) || (Character.isSpaceChar(c))))
             {
-                resultado = Boolean.FALSE;
+                result = Boolean.FALSE;
             }
         }
-        return resultado;
+        return result;
     }
 
     public Boolean validateIntegerOnlyField(String campoParaValidar)
     {
-        Boolean resultado = Boolean.TRUE;
+        Boolean result = Boolean.TRUE;
         char[] caractes = campoParaValidar.toCharArray();
         for (char c : caractes)
         {
             if (!Character.isDigit(c))
             {
-                resultado = Boolean.FALSE;
+                result = Boolean.FALSE;
             }
         }
-        return resultado;
+        return result;
     }
 
     public Boolean validateLettersAndNumbersField(String campoParaValidar)
     {
-        Boolean resultado = Boolean.TRUE;
+        Boolean result = Boolean.TRUE;
         try
         {
             if (campoParaValidar.isEmpty())
@@ -70,7 +70,7 @@ public class ValidationAdministrator
                 {
                     if (!Character.isWhitespace(c))
                     {
-                        resultado = Boolean.FALSE;
+                        result = Boolean.FALSE;
                     }
                 }
             }
@@ -80,7 +80,7 @@ public class ValidationAdministrator
         {
             return false;
         }
-        return resultado;
+        return result;
     }
 
     public Boolean validateCharacters(String pCampo)
@@ -165,14 +165,14 @@ public class ValidationAdministrator
 
     public Boolean validateNumber(int numberParaValidar)
     {
-        Boolean resultado = Boolean.TRUE;
+        Boolean result = Boolean.TRUE;
 
         if (numberParaValidar < 0)
         {
             return false;
         }
 
-        return resultado;
+        return result;
     }
 
     public Boolean validateFieldSpaces(String pCampo)
@@ -212,14 +212,14 @@ public class ValidationAdministrator
 
     public Boolean validateDateAfterToday(Date dateParaValidar)
     {
-        boolean resultado = true;
+        boolean result = true;
 
         if (dateParaValidar.before(Calendar.getInstance().getTime()))
         {
             return false;
         }
 
-        return resultado;
+        return result;
     }
 
     public Boolean validateDatesAfterToday(Date dateDesde, Date dateHasta)
@@ -243,19 +243,19 @@ public class ValidationAdministrator
 
     public Boolean validateYearLimit(Date year)
     {
-        boolean resultado = false;
+        boolean result = false;
 
         Date actual = Calendar.getInstance().getTime();
 
         if (actual.before(year))
         {
-            resultado = true;
+            result = true;
         }
         if (year.getYear() == actual.getYear())
         {
-            resultado = true;
+            result = true;
         }
 
-        return resultado;
+        return result;
     }
 }

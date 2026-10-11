@@ -13,14 +13,14 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * CU13 - Writes and reads the status History (bitácora) for a management.
+ * CU13 - Writes and reads the status history for a management.
  */
 @Service
-public class ManagementBitacoraService {
+public class ManagementStatusLogService {
 
     private final HistoryRepository historyRepository;
 
-    public ManagementBitacoraService(HistoryRepository historyRepository) {
+    public ManagementStatusLogService(HistoryRepository historyRepository) {
         this.historyRepository = historyRepository;
     }
 

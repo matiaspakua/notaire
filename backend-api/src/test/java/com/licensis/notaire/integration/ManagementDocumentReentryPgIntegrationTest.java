@@ -32,7 +32,7 @@ import com.licensis.notaire.repository.ProcedureRepository;
 
 /**
  * CU43 - Reenter documentation, against the real Flyway-managed Postgres
- * schema. {@link GestionReingresoDocumentacionIntegrationTest} runs on
+ * schema. {@link ManagementDocumentReentryIntegrationTest} runs on
  * {@code test-h2}, whose {@code ddl-auto=create} schema does not enforce the
  * NOT NULL columns (e.g. {@code liberado}, {@code observado}) that
  * {@code documentos_presentados} has in production, so it cannot catch a
@@ -43,7 +43,7 @@ import com.licensis.notaire.repository.ProcedureRepository;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
 @DisplayName("Management reentry of documentation contra the esquema real (CU43)")
-class ManagementReingresoDocumentacionPgIntegrationTest extends BaseIntegrationTest {
+class ManagementDocumentReentryPgIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -83,7 +83,7 @@ class ManagementReingresoDocumentacionPgIntegrationTest extends BaseIntegrationT
 
     @Test
     @DisplayName("Should create a SubmittedDocument with reentered=true against the real Postgres schema")
-    void shouldReingresarWhenValidAgainstRealSchema() throws Exception {
+    void shouldReenterWhenValidAgainstRealSchema() throws Exception {
         Integer notaryId = createPerson("43pg001");
         String managementBody = """
                 {"heading": "Management CU43 pg", "dateStart": "2026-01-01", "number": 943001,

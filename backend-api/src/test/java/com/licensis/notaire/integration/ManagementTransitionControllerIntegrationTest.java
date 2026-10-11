@@ -75,7 +75,7 @@ class ManagementTransitionControllerIntegrationTest {
     private EntityManager entityManager;
 
     private MockMvc mockMvc;
-    private ManagementStatus statusInicial;
+    private ManagementStatus initialStatus;
     private ManagementStatus statusIntermedio;
     private ManagementStatus statusInalcanzable;
     private Integer managementId;
@@ -94,7 +94,7 @@ class ManagementTransitionControllerIntegrationTest {
     }
 
     private void seedWorkflowAndManagement() {
-        statusInicial = managementStatus("Transicion Inicial");
+        initialStatus = managementStatus("Transicion Inicial");
         statusIntermedio = managementStatus("Transicion Intermedio");
         statusInalcanzable = managementStatus("Transicion Inalcanzable");
 
@@ -105,7 +105,7 @@ class ManagementTransitionControllerIntegrationTest {
 
         WorkflowNode nodeInicial = new WorkflowNode();
         nodeInicial.setWorkflowDefinition(definition);
-        nodeInicial.setManagementStatus(statusInicial);
+        nodeInicial.setManagementStatus(initialStatus);
         nodeInicial.setType(WorkflowNodeType.INITIAL);
         nodeInicial = workflowNodeRepository.save(nodeInicial);
 
@@ -126,8 +126,8 @@ class ManagementTransitionControllerIntegrationTest {
         type.setWorkflowDefinition(definition);
         type = procedureTypeRepository.save(type);
 
-        managementId = createManagement(statusInicial, type, true);
-        managementSinProcedureId = createManagement(statusInicial, type, false);
+        managementId = createManagement(initialStatus, type, true);
+        managementSinProcedureId = createManagement(initialStatus, type, false);
 
         entityManager.flush();
         entityManager.clear();
@@ -181,7 +181,7 @@ class ManagementTransitionControllerIntegrationTest {
                 .isPresent()
                 .get()
                 .extracting(g -> g.getFkIdManagementStatus().getName())
-                .isEqualTo(statusInicial.getName());
+                .isEqualTo(initialStatus.getName());
     }
 
     @Test

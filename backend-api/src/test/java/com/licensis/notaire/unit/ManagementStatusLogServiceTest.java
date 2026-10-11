@@ -5,7 +5,7 @@ import com.licensis.notaire.business.ManagementStatus;
 import com.licensis.notaire.business.DeedManagement;
 import com.licensis.notaire.business.History;
 import com.licensis.notaire.repository.HistoryRepository;
-import com.licensis.notaire.application.usecase.management.ManagementBitacoraService;
+import com.licensis.notaire.application.usecase.management.ManagementStatusLogService;
 import com.licensis.notaire.testing.RequirementCoverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,25 +26,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RequirementCoverage({"CU13"})
-@DisplayName("GestionBitacoraService Tests")
+@DisplayName("ManagementStatusLogService tests")
 @ExtendWith(MockitoExtension.class)
-class ManagementBitacoraServiceTest {
+class ManagementStatusLogServiceTest {
 
     @Mock
     private HistoryRepository historyRepository;
 
     @InjectMocks
-    private ManagementBitacoraService managementBitacoraService;
+    private ManagementStatusLogService statusLogService;
 
     private DeedManagement management;
-    private ManagementStatus statusInicial;
+    private ManagementStatus initialStatus;
 
     @BeforeEach
     void setUp() {
-        statusInicial = new ManagementStatus(1, "Iniciada");
+        initialStatus = new ManagementStatus(1, "Iniciada");
         management = new DeedManagement();
         management.setIdManagement(1);
-        management.setFkIdManagementStatus(statusInicial);
+        management.setFkIdManagementStatus(initialStatus);
     }
 
     @Test
@@ -53,26 +53,26 @@ class ManagementBitacoraServiceTest {
         ArgumentCaptor<History> captor = ArgumentCaptor.forClass(History.class);
         when(historyRepository.save(any(History.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        History resultado = managementBitacoraService.registerStatus(management, null);
+        History result = statusLogService.registerStatus(management, null);
 
         verify(historyRepository).save(captor.capture());
         assertThat(captor.getValue().getFkIdManagement()).isEqualTo(management);
-        assertThat(captor.getValue().getFkIdManagementStatus()).isEqualTo(statusInicial);
-        assertThat(resultado.getFkIdManagementStatus()).isEqualTo(statusInicial);
+        assertThat(captor.getValue().getFkIdManagementStatus()).isEqualTo(initialStatus);
+        assertThat(result.getFkIdManagementStatus()).isEqualTo(initialStatus);
     }
 
     @Test
     @DisplayName("Should record history entry on valid transition")
     void shouldRecordHistoryOnValidTransition() {
-        ManagementStatus nuevoStatus = new ManagementStatus(2, "In procedure");
-        management.setFkIdManagementStatus(nuevoStatus);
+        ManagementStatus newStatus = new ManagementStatus(2, "In procedure");
+        management.setFkIdManagementStatus(newStatus);
         ArgumentCaptor<History> captor = ArgumentCaptor.forClass(History.class);
         when(historyRepository.save(any(History.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        managementBitacoraService.registerStatus(management, null);
+        statusLogService.registerStatus(management, null);
 
         verify(historyRepository).save(captor.capture());
-        assertThat(captor.getValue().getFkIdManagementStatus()).isEqualTo(nuevoStatus);
+        assertThat(captor.getValue().getFkIdManagementStatus()).isEqualTo(newStatus);
     }
 
     @Test
@@ -83,11 +83,11 @@ class ManagementBitacoraServiceTest {
         ArgumentCaptor<History> captor = ArgumentCaptor.forClass(History.class);
         when(historyRepository.save(any(History.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        managementBitacoraService.registerStatus(management, "Archivado con deuda pendiente");
+        statusLogService.registerStatus(management, "Archived with outstanding debt");
 
         verify(historyRepository).save(captor.capture());
         assertThat(captor.getValue().getFkIdManagementStatus()).isEqualTo(archivada);
-        assertThat(captor.getValue().getNotes()).isEqualTo("Archivado con deuda pendiente");
+        assertThat(captor.getValue().getNotes()).isEqualTo("Archived with outstanding debt");
     }
 
     @Test
@@ -95,7 +95,7 @@ class ManagementBitacoraServiceTest {
     void shouldRejectRecordingWhenNoStatus() {
         management.setFkIdManagementStatus(null);
 
-        assertThatThrownBy(() -> managementBitacoraService.registerStatus(management, null))
+        assertThatThrownBy(() -> statusLogService.registerStatus(management, null))
                 .isInstanceOf(BusinessValidationException.class);
     }
 
@@ -111,7 +111,7 @@ class ManagementBitacoraServiceTest {
 
         when(historyRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(h1, h2, h3));
 
-        List<History> history = managementBitacoraService.getHistory(1);
+        List<History> history = statusLogService.getHistory(1);
 
         assertThat(history).containsExactly(h1, h3, h2);
     }
@@ -126,7 +126,7 @@ class ManagementBitacoraServiceTest {
 
         when(historyRepository.findByFkIdManagementIdManagement(1)).thenReturn(List.of(h3, h1, earlier, h2));
 
-        List<History> history = managementBitacoraService.getHistory(1);
+        List<History> history = statusLogService.getHistory(1);
 
         assertThat(history).containsExactly(earlier, h1, h2, h3);
     }

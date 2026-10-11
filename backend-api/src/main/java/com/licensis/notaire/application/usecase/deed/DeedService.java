@@ -74,16 +74,16 @@ public class DeedService {
                 return;
             }
             boolean isAuxiliary = folio.getFkIdFolioType() != null && folio.getFkIdFolioType().isIsAuxiliary();
-            DeedNumberingValidationResult resultado = validateDeedNumberingUseCase.validate(
+            DeedNumberingValidationResult result = validateDeedNumberingUseCase.validate(
                     entity.getNumber(), notary, folio.getYear(), isAuxiliary,
                     entity.getNotes(), entity.getIdDeed());
 
-            if (resultado == DeedNumberingValidationResult.DUPLICATE) {
+            if (result == DeedNumberingValidationResult.DUPLICATE) {
                 throw new DuplicateDeedNumberException(
                         "The number " + entity.getNumber() + " ya fue utilizado en el protocolo "
                                 + (isAuxiliary ? "auxiliar" : "principal") + " of the year " + folio.getYear());
             }
-            if (resultado == DeedNumberingValidationResult.SKIP_UNJUSTIFIED) {
+            if (result == DeedNumberingValidationResult.SKIP_UNJUSTIFIED) {
                 throw new UnjustifiedNumberingGapException(
                         "The number " + entity.getNumber() + " deja a salto in the numeración correlativa; "
                                 + "must indicar a justificación in notes");

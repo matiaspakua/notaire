@@ -348,10 +348,10 @@ public class CopyJpaController implements Serializable, JpaPersistence
 
         if (persistentCopy != null)
         {
-            version = persistentCopy.getVersion(); // Version of the Objeto in db
-            oldVersion = copy.getVersion(); // Version of the Objeto in memoria
+            version = persistentCopy.getVersion(); // Version of the object in the database
+            oldVersion = copy.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
             }

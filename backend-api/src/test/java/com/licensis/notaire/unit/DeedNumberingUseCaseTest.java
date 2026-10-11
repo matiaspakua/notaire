@@ -42,10 +42,10 @@ class DeedNumberingUseCaseTest {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
-        DeedNumberingValidationResult resultado = deedNumberingUseCase.validate(
+        DeedNumberingValidationResult result = deedNumberingUseCase.validate(
                 6, notary, 2026, false, null, null);
 
-        assertThat(resultado).isEqualTo(DeedNumberingValidationResult.OK);
+        assertThat(result).isEqualTo(DeedNumberingValidationResult.OK);
     }
 
     @Test
@@ -54,10 +54,10 @@ class DeedNumberingUseCaseTest {
         Person notary = createNotary(1);
         inMemoryPort.recordDuplicate(5, 1, 2026, false, null);
 
-        DeedNumberingValidationResult resultado = deedNumberingUseCase.validate(
+        DeedNumberingValidationResult result = deedNumberingUseCase.validate(
                 5, notary, 2026, false, null, null);
 
-        assertThat(resultado).isEqualTo(DeedNumberingValidationResult.DUPLICATE);
+        assertThat(result).isEqualTo(DeedNumberingValidationResult.DUPLICATE);
     }
 
     @Test
@@ -66,10 +66,10 @@ class DeedNumberingUseCaseTest {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
-        DeedNumberingValidationResult resultado = deedNumberingUseCase.validate(
+        DeedNumberingValidationResult result = deedNumberingUseCase.validate(
                 9, notary, 2026, false, null, null);
 
-        assertThat(resultado).isEqualTo(DeedNumberingValidationResult.SKIP_UNJUSTIFIED);
+        assertThat(result).isEqualTo(DeedNumberingValidationResult.SKIP_UNJUSTIFIED);
     }
 
     @Test
@@ -78,10 +78,10 @@ class DeedNumberingUseCaseTest {
         Person notary = createNotary(1);
         inMemoryPort.recordMaxNumber(1, 2026, false, null, 5);
 
-        DeedNumberingValidationResult resultado = deedNumberingUseCase.validate(
+        DeedNumberingValidationResult result = deedNumberingUseCase.validate(
                 9, notary, 2026, false, "Deed anulada N° 6 a 8", null);
 
-        assertThat(resultado).isEqualTo(DeedNumberingValidationResult.SKIP_JUSTIFIED);
+        assertThat(result).isEqualTo(DeedNumberingValidationResult.SKIP_JUSTIFIED);
     }
 
     @Test

@@ -107,7 +107,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
      */
     public boolean createSimple(PersonProcedure personProcedure) throws PreexistingEntityException, Exception
     {
-        boolean resultado = false;
+        boolean result = false;
 
         if (personProcedure.getPersonProcedurePK() == null)
         {
@@ -131,7 +131,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
 
             em.getTransaction().commit();
 
-            resultado = true;
+            result = true;
         }
         catch (Exception ex)
         {
@@ -149,7 +149,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
                 em.close();
             }
         }
-        return resultado;
+        return result;
     }
 
     public void edit(PersonProcedure personProcedure) throws NonexistentEntityException, Exception

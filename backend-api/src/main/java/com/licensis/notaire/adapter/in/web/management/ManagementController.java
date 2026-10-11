@@ -32,13 +32,13 @@ import com.licensis.notaire.repository.ProcedureRepository;
 import com.licensis.notaire.application.usecase.procedure.ProcedureFolderService;
 import com.licensis.notaire.application.usecase.document.ExternalEntityDocumentService;
 import com.licensis.notaire.application.usecase.management.ManagementArchiveDebtService;
-import com.licensis.notaire.application.usecase.management.ManagementBitacoraService;
+import com.licensis.notaire.application.usecase.management.ManagementStatusLogService;
 import com.licensis.notaire.application.usecase.management.ManagementQueryService;
 import com.licensis.notaire.application.usecase.management.ManagementResumenFinancieroService;
 import com.licensis.notaire.application.usecase.management.ManagementStatusWriteGuard;
 import com.licensis.notaire.application.usecase.management.ManagementSubstitutionService;
 import com.licensis.notaire.exception.NotaireException;
-import com.licensis.notaire.application.usecase.workflow.ReingresoDocumentacionService;
+import com.licensis.notaire.application.usecase.workflow.DocumentReentryService;
 import com.licensis.notaire.application.usecase.workflow.WorkflowTraceService;
 import com.licensis.notaire.application.port.in.management.TransitionManagementUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -92,12 +92,12 @@ public class ManagementController {
     private final ManagementArchiveDebtService managementArchiveDebtService;
     private final ManagementSubstitutionService managementSubstitutionService;
     private final ManagementResumenFinancieroService managementResumenFinancieroService;
-    private final ManagementBitacoraService managementBitacoraService;
+    private final ManagementStatusLogService statusLogService;
     private final ManagementStatusWriteGuard managementStatusWriteGuard;
     private final TransitionManagementUseCase transitionManagementUseCase;
     private final TransitionManagementWebMapper transitionManagementWebMapper;
-    private final ExternalEntityDocumentService documentEntidadExternaService;
-    private final ReingresoDocumentacionService reingresoDocumentacionService;
+    private final ExternalEntityDocumentService externalEntityDocumentService;
+    private final DocumentReentryService documentReentryService;
     private final ProcedureFolderService procedureFolderService;
 
     public ManagementController(DeedManagementRepository repository,
@@ -110,12 +110,12 @@ public class ManagementController {
                              ManagementArchiveDebtService managementArchiveDebtService,
                              ManagementSubstitutionService managementSubstitutionService,
                              ManagementResumenFinancieroService managementResumenFinancieroService,
-                             ManagementBitacoraService managementBitacoraService,
+                             ManagementStatusLogService statusLogService,
                              ManagementStatusWriteGuard managementStatusWriteGuard,
                              TransitionManagementUseCase transitionManagementUseCase,
                              TransitionManagementWebMapper transitionManagementWebMapper,
-                             ExternalEntityDocumentService documentEntidadExternaService,
-                             ReingresoDocumentacionService reingresoDocumentacionService,
+                             ExternalEntityDocumentService externalEntityDocumentService,
+                             DocumentReentryService documentReentryService,
                              ProcedureFolderService procedureFolderService) {
         this.repository = repository;
         this.historyRepository = historyRepository;
@@ -130,12 +130,12 @@ public class ManagementController {
         this.managementArchiveDebtService = managementArchiveDebtService;
         this.managementSubstitutionService = managementSubstitutionService;
         this.managementResumenFinancieroService = managementResumenFinancieroService;
-        this.managementBitacoraService = managementBitacoraService;
+        this.statusLogService = statusLogService;
         this.managementStatusWriteGuard = managementStatusWriteGuard;
         this.transitionManagementUseCase = transitionManagementUseCase;
         this.transitionManagementWebMapper = transitionManagementWebMapper;
-        this.documentEntidadExternaService = documentEntidadExternaService;
-        this.reingresoDocumentacionService = reingresoDocumentacionService;
+        this.externalEntityDocumentService = externalEntityDocumentService;
+        this.documentReentryService = documentReentryService;
         this.procedureFolderService = procedureFolderService;
     }
 
@@ -245,7 +245,7 @@ public class ManagementController {
         applyManagementFields(management, request, deps);
         management = repository.save(management);
         saveProcedure(management, deps);
-        managementBitacoraService.registerStatus(management, null);
+        statusLogService.registerStatus(management, null);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(managementQueryService.findById(management.getIdManagement()).orElseThrow());
     }
@@ -448,7 +448,7 @@ public class ManagementController {
             }
             entity = repository.save(entity);
             if (entity.getFkIdManagementStatus() != null) {
-                managementBitacoraService.registerStatus(entity, null);
+                statusLogService.registerStatus(entity, null);
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(toManagementResponse(entity));
         } catch (NotaireException e) {
@@ -500,12 +500,12 @@ public class ManagementController {
 
     /**
      * Appends a History row when status is first assigned or changes. Does not invent a row
-     * when status remains null or unchanged. Reuses {@link ManagementBitacoraService}.
+     * when status remains null or unchanged. Reuses {@link ManagementStatusLogService}.
      */
     private void registerStatusChangeIfNeeded(DeedManagement management, Integer previousStatusId) {
         Integer newStatusId = statusIdOf(management);
         if (newStatusId != null && !newStatusId.equals(previousStatusId)) {
-            managementBitacoraService.registerStatus(management, null);
+            statusLogService.registerStatus(management, null);
         }
     }
 
@@ -632,7 +632,7 @@ public class ManagementController {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        List<DtoHistorySummary> history = managementBitacoraService.getHistory(id).stream()
+        List<DtoHistorySummary> history = statusLogService.getHistory(id).stream()
                 .map(com.licensis.notaire.application.usecase.history.HistoryMapper::toDto)
                 .toList();
         return ResponseEntity.ok(history);
@@ -644,9 +644,9 @@ public class ManagementController {
     })
     @GetMapping("/{id}/external-entity-documents")
     @Operation(summary = "CU10 - Get management documentation handled by external entities")
-    public ResponseEntity<DtoManagementExternalEntityDocuments> getDocumentsEntidadesExternas(
+    public ResponseEntity<DtoManagementExternalEntityDocuments> getExternalEntityDocuments(
             @PathVariable Integer id) {
-        return ResponseEntity.ok(documentEntidadExternaService.getDocuments(id));
+        return ResponseEntity.ok(externalEntityDocumentService.getDocuments(id));
     }
 
     @ApiResponses({
@@ -656,12 +656,12 @@ public class ManagementController {
     })
     @PutMapping("/{id}/external-entity-documents/{idSubmittedDocument}")
     @Operation(summary = "CU10 - Register movement of an external-entity document")
-    public ResponseEntity<DtoExternalEntityDocument> registerMovementDocumentEntidadExterna(
+    public ResponseEntity<DtoExternalEntityDocument> registerExternalEntityDocumentMovement(
             @PathVariable Integer id, @PathVariable Integer idSubmittedDocument,
             @RequestBody DtoExternalEntityDocumentMovement movement) {
         DtoExternalEntityDocument result =
-                documentEntidadExternaService.registerMovement(id, idSubmittedDocument, movement);
-        documentEntidadExternaService.tryCompleteDocumentation(id);
+                externalEntityDocumentService.registerMovement(id, idSubmittedDocument, movement);
+        externalEntityDocumentService.tryCompleteDocumentation(id);
         return ResponseEntity.ok(result);
     }
 
@@ -673,7 +673,7 @@ public class ManagementController {
     @Operation(summary = "CU43 - Get management procedures with required documentation")
     public ResponseEntity<DtoManagementDocumentReentry> getRequiredDocumentationForReentry(
             @PathVariable Integer id) {
-        return ResponseEntity.ok(reingresoDocumentacionService.getRequiredDocumentation(id));
+        return ResponseEntity.ok(documentReentryService.getRequiredDocumentation(id));
     }
 
     @ApiResponses({
@@ -685,7 +685,7 @@ public class ManagementController {
     @Operation(summary = "CU43 - Re-enter a document type for a management procedure")
     public ResponseEntity<DtoDocumentReentered> reenterDocumentation(@PathVariable Integer id,
             @Valid @RequestBody DtoDocumentReentryRequest request) {
-        DtoDocumentReentered result = reingresoDocumentacionService.reenter(id, request);
+        DtoDocumentReentered result = documentReentryService.reenter(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 }

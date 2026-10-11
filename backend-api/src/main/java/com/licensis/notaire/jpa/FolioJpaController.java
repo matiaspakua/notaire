@@ -126,7 +126,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
             version = persistentFolio.getVersion();
             oldVersion = folio.getVersion();
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {
@@ -228,7 +228,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
 
     public boolean updateFolioFull(Folio folioModificado) throws ClassModifiedException
     {
-        boolean resultado = false;
+        boolean result = false;
 
         EntityManager em = null;
         Integer version = ConstantesPersistencia.VersionINICIAL;
@@ -243,7 +243,7 @@ public class FolioJpaController implements Serializable, JpaPersistence
             version = persistentFolio.getVersion();
             oldVersion = folioModificado.getVersion();
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {
@@ -266,11 +266,11 @@ public class FolioJpaController implements Serializable, JpaPersistence
                     em.close();
                 }
 
-                resultado = true;
+                result = true;
             }
         }
 
-        return resultado;
+        return result;
     }
 
     public void destroy(Integer id) throws NonexistentEntityException
@@ -453,10 +453,10 @@ public class FolioJpaController implements Serializable, JpaPersistence
 
         if (persistentFolio != null)
         {
-            version = persistentFolio.getVersion(); // Version of the Objeto in db
-            oldVersion = miFolio.getVersion(); // Version of the Objeto in memoria
+            version = persistentFolio.getVersion(); // Version of the object in the database
+            oldVersion = miFolio.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 throw new ClassModifiedException();
 

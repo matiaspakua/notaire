@@ -102,10 +102,10 @@ public class DocumentTypeJpaController implements Serializable, JpaPersistence
 
         if (persistentDocumentType != null)
         {
-            version = persistentDocumentType.getVersion(); // Version of the Objeto in db
-            oldVersion = documentType.getVersion(); // Version of the Objeto in memoria
+            version = persistentDocumentType.getVersion(); // Version of the object in the database
+            oldVersion = documentType.getVersion(); // Version of the object in memory
 
-            if (version != oldVersion) //Si son distintas "Alguien modifico el objeto"
+            if (version != oldVersion) // Versions differ: someone else modified the object
             {
                 if (em != null)
                 {

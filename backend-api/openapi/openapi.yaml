@@ -5471,7 +5471,7 @@ paths:
       - Managements
   /api/v1/managements/{id}/external-entity-documents:
     get:
-      operationId: getDocumentsEntidadesExternas
+      operationId: getExternalEntityDocuments
       parameters:
       - in: path
         name: id
@@ -5497,7 +5497,7 @@ paths:
       - Managements
   /api/v1/managements/{id}/external-entity-documents/{idSubmittedDocument}:
     put:
-      operationId: registerMovementDocumentEntidadExterna
+      operationId: registerExternalEntityDocumentMovement
       parameters:
       - in: path
         name: id
