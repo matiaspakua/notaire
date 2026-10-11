@@ -7,14 +7,14 @@ vi.mock("sonner", () => ({
   toast: { error: vi.fn(), success: vi.fn() },
 }));
 
-describe("presentPersonaSaveError()", () => {
+describe("presentPersonSaveError()", () => {
   const setFieldErrors = vi.fn();
   const onViewExisting = vi.fn();
   const people: Person[] = [
     {
       personId: 42,
       firstName: "Ana",
-      lastName: "Existente",
+      lastName: "Existing",
       identificationNumber: "123",
       isClient: false,
     },

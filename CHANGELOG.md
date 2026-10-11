@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English hook fixture phrases** (#1490, CU75): the budget-template
+  procedure type is `Base fee`. The folio type is `Protocol`. Save-error
+  describe titles name `presentPersonSaveError`. The fixture last name is
+  `Existing`. The audit query-key title names `audit`. Stored statuses
+  `En proceso` and `Compraventa` stay. Visible fallbacks
+  `Error al guardar la persona` and `Ver persona existente` stay. The
+  nav label `Protocolo` stays.
 - **English audit column keys** (#1490, CU75): the audit table keys are
   `module` and `detail`. The procedure-template note is
   `Observation test`. Message key `fields.modulo` stays. The role
