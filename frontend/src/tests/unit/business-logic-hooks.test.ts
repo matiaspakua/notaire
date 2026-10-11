@@ -24,7 +24,7 @@ import { documentsKeys } from "@/hooks/useDocuments";
 // ──────────────────────────────────────────────
 
 describe("managementsKeys (CU02, CU13, CU24)", () => {
-  it("all key is ['gestiones']", () => {
+  it("all key is ['managements']", () => {
     expect(managementsKeys.all).toEqual(["managements"]);
   });
 
@@ -32,13 +32,13 @@ describe("managementsKeys (CU02, CU13, CU24)", () => {
     expect(managementsKeys.detail(10)).toEqual(["managements", 10]);
   });
 
-  it("byClient key includes persona id", () => {
+  it("byClient key includes the person id", () => {
     expect(managementsKeys.byClient(5)).toEqual(["managements", "client", 5]);
   });
 });
 
 describe("peopleKeys (CU17, CU18)", () => {
-  it("all key is ['personas']", () => {
+  it("all key is ['people']", () => {
     expect(peopleKeys.all).toEqual(["people"]);
   });
 
@@ -48,7 +48,7 @@ describe("peopleKeys (CU17, CU18)", () => {
 });
 
 describe("budgetsKeys (CU01, CU39)", () => {
-  it("all key is ['presupuestos']", () => {
+  it("all key is ['budgets']", () => {
     expect(budgetsKeys.all).toEqual(["budgets"]);
   });
 
@@ -56,25 +56,25 @@ describe("budgetsKeys (CU01, CU39)", () => {
     expect(budgetsKeys.detail(7)).toEqual(["budgets", 7]);
   });
 
-  it("byPerson key includes persona id", () => {
+  it("byPerson key includes the person id", () => {
     expect(budgetsKeys.byPerson(2)).toEqual(["budgets", "person", 2]);
   });
 });
 
 describe("paymentsKeys (CU15, CU47)", () => {
-  it("all key is ['pagos']", () => {
+  it("all key is ['payments']", () => {
     expect(paymentsKeys.all).toEqual(["payments"]);
   });
 });
 
 describe("conceptsKeys (CU39, CU49)", () => {
-  it("all key is ['conceptos']", () => {
+  it("all key is ['concepts']", () => {
     expect(conceptsKeys.all).toEqual(["concepts"]);
   });
 });
 
 describe("deedsKeys (CU05, CU06)", () => {
-  it("all key is ['escrituras']", () => {
+  it("all key is ['deeds']", () => {
     expect(deedsKeys.all).toEqual(["deeds"]);
   });
 
@@ -84,13 +84,13 @@ describe("deedsKeys (CU05, CU06)", () => {
 });
 
 describe("usersKeys (CU20, CU21)", () => {
-  it("all key is ['usuarios']", () => {
+  it("all key is ['users']", () => {
     expect(usersKeys.all).toEqual(["users"]);
   });
 });
 
 describe("propertiesKeys (CU08)", () => {
-  it("all key is ['inmuebles']", () => {
+  it("all key is ['properties']", () => {
     expect(propertiesKeys.all).toEqual(["properties"]);
   });
 
@@ -100,7 +100,7 @@ describe("propertiesKeys (CU08)", () => {
 });
 
 describe("copiesKeys (CU44, CU53)", () => {
-  it("all key is ['copias']", () => {
+  it("all key is ['copies']", () => {
     expect(copiesKeys.all).toEqual(["copies"]);
   });
 
@@ -161,29 +161,29 @@ describe("Budget total calculation (CU01, CU39)", () => {
 // Payment outstanding-balance computation (CU47)
 // ──────────────────────────────────────────────
 
-describe("Payment saldo computation (CU47)", () => {
+describe("Payment outstanding-balance computation (CU47)", () => {
   function calcularSaldo(totalBudget: number, pagos: { amount?: number }[]): number {
     const totalPaid = pagos.reduce((sum, p) => sum + (p.amount ?? 0), 0);
     return totalBudget - totalPaid;
   }
 
-  it("saldo is total minus sum of pagos", () => {
+  it("outstanding balance is the total minus the sum of payments", () => {
     expect(calcularSaldo(1000, [{ amount: 300 }, { amount: 200 }])).toBe(500);
   });
 
-  it("saldo with no pagos equals total", () => {
+  it("outstanding balance with no payments equals the total", () => {
     expect(calcularSaldo(800, [])).toBe(800);
   });
 
-  it("fully paid presupuesto has saldo 0", () => {
+  it("a fully paid budget has an outstanding balance of 0", () => {
     expect(calcularSaldo(500, [{ amount: 500 }])).toBe(0);
   });
 
-  it("overpaid presupuesto has negative saldo", () => {
+  it("an overpaid budget has a negative outstanding balance", () => {
     expect(calcularSaldo(200, [{ amount: 300 }])).toBe(-100);
   });
 
-  it("pago with undefined monto contributes 0", () => {
+  it("a payment with an undefined amount contributes 0", () => {
     expect(calcularSaldo(400, [{ amount: undefined }, { amount: 100 }])).toBe(300);
   });
 });
@@ -198,7 +198,7 @@ describe("Deed display label (CU05)", () => {
     return fecha ? `Deed #${number} — ${fecha}` : `Deed #${number}`;
   }
 
-  it("returns Sin número when numero is undefined", () => {
+  it("returns \"Sin número\" when number is undefined", () => {
     expect(getDeedLabel(undefined, "2026-01-01")).toBe("Sin número");
   });
 
@@ -234,11 +234,11 @@ describe("Person display name (CU17, CU18, CU61)", () => {
     expect(getDisplayName({ name: "Juan" })).toBe("Juan");
   });
 
-  it("returns dash for empty persona", () => {
+  it("returns a dash for an empty person", () => {
     expect(getDisplayName({})).toBe("—");
   });
 
-  it("returns dash for undefined persona", () => {
+  it("returns a dash for an undefined person", () => {
     expect(getDisplayName(undefined)).toBe("—");
   });
 });
@@ -271,13 +271,13 @@ describe("Copy type shape (CU44, CU53)", () => {
 // ──────────────────────────────────────────────
 
 describe("Concept type shape (CU39, CU49)", () => {
-  it("concepto has nombre and valor", () => {
+  it("a concept has a name and a value", () => {
     const concept = { idConcept: 1, name: "Honorarios", valor: 1500 };
     expect(concept.name).toBe("Honorarios");
     expect(concept.valor).toBe(1500);
   });
 
-  it("concepto valor can be 0", () => {
+  it("a concept value can be 0", () => {
     const concept = { idConcept: 2, name: "Exento", valor: 0 };
     expect(concept.valor).toBe(0);
   });
@@ -288,7 +288,7 @@ describe("Concept type shape (CU39, CU49)", () => {
 // ──────────────────────────────────────────────
 
 describe("Property type shape (CU08)", () => {
-  it("inmueble has address fields", () => {
+  it("a property has address fields", () => {
     const property = {
       idProperty: 1,
       calle: "Av. Corrientes",
@@ -299,7 +299,7 @@ describe("Property type shape (CU08)", () => {
     expect(property.number).toBe(1234);
   });
 
-  it("inmueble can have undefined optional fields", () => {
+  it("a property can omit optional fields", () => {
     const property: { idProperty?: number; piso?: string; depto?: string } = { idProperty: 1 };
     expect(property.piso).toBeUndefined();
     expect(property.depto).toBeUndefined();

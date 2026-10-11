@@ -23,7 +23,7 @@ test.describe("Items - Descuentos y Recargos", () => {
     await steps.givenUserIsOnPage("/dashboard/items");
   });
 
-  test("CU71-GW01: Given nuevo ítem, When tipo is Descuento, Then motivo field is required", async ({ page }) => {
+  test("CU71-GW01: Given a new item, When the type is Descuento, Then the reason field is required", async ({ page }) => {
     await page.getByTestId("btn-new-item").click();
     await steps.thenModalIsVisible();
 
@@ -46,7 +46,7 @@ test.describe("Items - Descuentos y Recargos", () => {
     await steps.thenModalIsVisible();
   });
 
-  test("CU45-GW01: Given a presupuesto ID, When consultar descuentos y recargos, Then report table renders", async ({ page }) => {
+  test("CU45-GW01: Given a budget ID, When discounts and surcharges are queried, Then the report table renders", async ({ page }) => {
     await page.getByTestId("input-report-budget-id").fill("999999");
     await page.getByTestId("btn-query-report").click();
 

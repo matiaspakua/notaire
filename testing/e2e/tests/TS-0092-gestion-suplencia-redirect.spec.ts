@@ -29,14 +29,14 @@ async function chooseFirst(page: Page, triggerTestId: string): Promise<void> {
 // CU48/CU51 - Registro de notary en el formulario de people
 // ---------------------------------------------------------------------------
 
-test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
+test.describe("CU48/CU51 - Notary registration on people", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
     await page.goto("/dashboard/people");
     await page.waitForLoadState("domcontentloaded");
   });
 
-  test("CU48-GW01: alta de persona con registro de escribano se guarda correctamente", async ({ page }) => {
+  test("CU48-GW01: registering a person with a notary registration number is saved", async ({ page }) => {
     const apellido = `Escribano${uniqueId() % 100_000}`;
     const dni = `48${uniqueId() % 10_000_000}`;
 
@@ -55,7 +55,7 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
     ).toBeVisible({ timeout: 8000 });
   });
 
-  test("CU51-GW01: editar persona y modificar su registro de escribano", async ({ page }) => {
+  test("CU51-GW01: editing a person and changing their notary registration number", async ({ page }) => {
     const person = await createPerson(page, {
       lastName: `Modif${uniqueId() % 100_000}`,
       identificationNumber: `51${uniqueId() % 10_000_000}`,
@@ -84,12 +84,12 @@ test.describe("CU48/CU51 - Registro de escribano en Personas", () => {
 // CU22/CU59 - Redirección automática de la gestión al notary suplente
 // ---------------------------------------------------------------------------
 
-test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () => {
+test.describe("CU22/CU59 - Management redirect when a substitution is active", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
   });
 
-  test("GW01: gestión creada para un escribano con suplencia activa se redirige al suplente", async ({ page }) => {
+  test("GW01: a management created for a notary with an active substitution is redirected to the substitute", async ({ page }) => {
     const notary = await createPerson(page, {
       lastName: `Suplantado${uniqueId() % 100_000}`,
     });
@@ -131,7 +131,7 @@ test.describe("CU22/CU59 - Redirección de gestión por suplencia activa", () =>
     ).toBeVisible({ timeout: 8000 });
   });
 
-  test("EDGE: gestión creada para un escribano sin suplencia activa no dispara aviso de redirección", async ({ page }) => {
+  test("EDGE: a management created for a notary without an active substitution does not show a redirect notice", async ({ page }) => {
     const notary = await createPerson(page, {
       lastName: `SinSuplencia${uniqueId() % 100_000}`,
     });

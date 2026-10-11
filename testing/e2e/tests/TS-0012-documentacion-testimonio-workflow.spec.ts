@@ -79,7 +79,7 @@ test.describe('CU03 - Listar documentos y certificados necesarios', () => {
     await steps.givenUserIsOnPage('/dashboard/required-documents')
   })
 
-  test('CU03-GW01: Given on documentos necesarios, When select trámite, Then shows results section', async ({
+  test('CU03-GW01: Given on required documents, When a procedure is selected, Then the results section is shown', async ({
     page,
   }) => {
     await steps.thenPageHasHeading('Documentos Necesarios')
@@ -176,7 +176,7 @@ test.describe('CU07 - Generar testimonio', () => {
     await steps.givenUserIsLoggedIn()
   })
 
-  test('CU07-GW01: Given escritura firmada, When generar testimonio, Then estado generado aparece en tabla', async ({
+  test('CU07-GW01: Given a signed deed, When a testimony is generated, Then the generated status appears in the table', async ({
     page,
   }) => {
     const { number } = await seedSignedDeed(page)
@@ -232,7 +232,7 @@ test.describe('CU08 - Verificar testimonio', () => {
     await expect(row).toContainText(/observado/i)
   })
 
-  test('CU08-GW02: Edge: emitir copia está bloqueado hasta que el testimonio esté verificado', async ({
+  test('CU08-GW02: Edge: issuing a copy stays blocked until the testimony is verified', async ({
     page,
   }) => {
     const { idDeed, number } = await seedSignedDeed(page)
@@ -258,7 +258,7 @@ test.describe('CU08 - Verificar testimonio', () => {
 // CU11 — Movimientos testimony (edge paths)
 // ──────────────────────────────────────────────
 
-test.describe('CU11 - Ingresar para inscripción', () => {
+test.describe('CU11 - Submit for registration', () => {
   let steps: GherkinSteps
 
   test.beforeEach(async ({ page }) => {
@@ -266,7 +266,7 @@ test.describe('CU11 - Ingresar para inscripción', () => {
     await steps.givenUserIsLoggedIn()
   })
 
-  test('CU11-GW01: ingresar y registrar inscripción cambia estado a inscripto', async ({ page }) => {
+  test('CU11-GW01: submitting and recording registration changes the status to inscripto', async ({ page }) => {
     const { idTestimony, number } = await seedVerifiedTestimony(page)
 
     await steps.givenUserIsOnPage('/dashboard/testimony-movements')
@@ -295,7 +295,7 @@ test.describe('CU12 - Retirar testimonio', () => {
     await steps.givenUserIsLoggedIn()
   })
 
-  test('CU12-GW01: retirar después de inscripción → estado retirado', async ({ page }) => {
+  test('CU12-GW01: withdrawing after registration → status withdrawn', async ({ page }) => {
     const { idTestimony, number } = await seedVerifiedTestimony(page)
 
     await steps.givenUserIsOnPage('/dashboard/testimony-movements')

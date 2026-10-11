@@ -29,7 +29,7 @@ function createWrapper() {
 }
 
 describe("documentReentryKeys", () => {
-  it("byManagement key includes the gestión id", () => {
+  it("byManagement key includes the management id", () => {
     expect(documentReentryKeys.byManagement(9)).toEqual(["reingresoDocumentacion", "gestion", 9]);
   });
 });
@@ -37,7 +37,7 @@ describe("documentReentryKeys", () => {
 describe("useDocumentReentry (CU43)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("fetches the gestión's trámites with documentación necesaria via GET", async () => {
+  it("fetches the management's procedures with required documentation via GET", async () => {
     vi.mocked(apiGet).mockResolvedValue({
       idManagement: 9,
       number: 1001,

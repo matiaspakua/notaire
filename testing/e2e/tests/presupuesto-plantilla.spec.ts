@@ -13,7 +13,7 @@ import {
   createBudgetTemplate,
 } from "./setup/api-helpers";
 
-test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
+test.describe("CU39 - Load items from the template (golden path)", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -21,7 +21,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     await authenticateAsAdmin(page);
   });
 
-  test("carga los ítems de la plantilla del tipo de trámite en el presupuesto", async ({ page }) => {
+  test("loads the procedure type's template items into the budget", async ({ page }) => {
     // GIVEN: budget, tipo de trámite con template configurada
     const personResult = await createPerson(page);
     expect(personResult.ok).toBe(true);
@@ -67,7 +67,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     await expect(dialog.getByTestId("items-subtotal")).toContainText("1.500");
   });
 
-  test("crea el presupuesto desde el formulario con los ítems de la plantilla del tipo de trámite", async ({ page }) => {
+  test("creates the budget from the form with the procedure type's template items", async ({ page }) => {
     // GIVEN: person, tipo de trámite con template configurada
     const lastName = `Plantilla-${Date.now()}`;
     const personResult = await createPerson(page, { lastName });
@@ -103,7 +103,7 @@ test.describe("CU39 - Cargar ítems desde la plantilla (golden path)", () => {
     await expect(dialog.getByTestId("table-items-budget")).toContainText("Honorarios Alta E2E", { timeout: 8000 });
   });
 
-  test("muestra un error cuando el tipo de trámite no tiene plantilla configurada", async ({ page }) => {
+  test("shows an error when the procedure type has no template configured", async ({ page }) => {
     const personResult = await createPerson(page);
     expect(personResult.ok).toBe(true);
     const budgetResult = await createBudget(page, personResult.data!.personId);
@@ -140,7 +140,7 @@ for (const viewport of [
   { width: 768, height: 1024, label: "768px (tablet)" },
   { width: 1024, height: 768, label: "1024px (desktop)" },
 ]) {
-  test(`CU39 - el diálogo de ítems es usable a ${viewport.label}`, async ({ page }) => {
+  test(`CU39 - the items dialog is usable at ${viewport.label}`, async ({ page }) => {
     const steps = new GherkinSteps(page);
     await authenticateAsAdmin(page);
 

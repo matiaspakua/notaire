@@ -18,7 +18,7 @@ describe("itemsKeys", () => {
     expect(itemsKeys.detail(3)).toEqual(["items", 3]);
   });
 
-  it("byBudget key includes presupuesto id", () => {
+  it("byBudget key includes the budget id", () => {
     expect(itemsKeys.byBudget(10)).toEqual(["items", "budget", 10]);
   });
 
@@ -59,12 +59,12 @@ describe("Item type shape (CU01, CU39)", () => {
     expect(subtotal).toBe(350);
   });
 
-  it("item can have undefined concepto", () => {
+  it("an item can omit the concept", () => {
     const item: { idItem?: number; concept?: unknown } = { idItem: 1 };
     expect(item.concept).toBeUndefined();
   });
 
-  it("item presupuesto relationship is optional", () => {
+  it("an item's budget relationship is optional", () => {
     const item: { idItem?: number; budget?: { idBudget?: number } } = { idItem: 2 };
     expect(item.budget).toBeUndefined();
   });
@@ -112,7 +112,7 @@ describe("ManagementHistory type shape (CU13, CU53)", () => {
 // Managements search filter logic
 // ──────────────────────────────────────────────
 
-describe("Gestiones search filter (CU02, CU53)", () => {
+describe("Managements search filter (CU02, CU53)", () => {
   const managements = [
     {
       idManagement: 1,
@@ -149,7 +149,7 @@ describe("Gestiones search filter (CU02, CU53)", () => {
     });
   }
 
-  it("no filters returns all gestiones", () => {
+  it("no filters returns every management", () => {
     expect(filterManagements(managements, "", "")).toHaveLength(3);
   });
 
@@ -184,7 +184,7 @@ describe("Gestiones search filter (CU02, CU53)", () => {
 // Estado badge logic for managements
 // ──────────────────────────────────────────────
 
-describe("Gestión estado badge logic", () => {
+describe("Management status badge logic", () => {
   function getBadgeVariant(estado?: string): string {
     if (!estado) return "outline";
     const lower = estado.toLowerCase();

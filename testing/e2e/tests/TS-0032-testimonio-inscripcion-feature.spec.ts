@@ -40,7 +40,7 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
     await steps.givenUserIsLoggedIn();
   });
 
-  test("Golden path: ingresar, registrar inscripción y retirar", async ({ page }) => {
+  test("Golden path: submit, record registration, and withdraw", async ({ page }) => {
     const { idTestimony, number } = await seedVerifiedTestimony(page);
 
     await steps.givenUserIsOnPage("/dashboard/testimony-movements");
@@ -63,7 +63,7 @@ test.describe("CU11/CU12/CU44 - Movimientos de testimonio", () => {
     await expect(row).toContainText(/retirado/i);
   });
 
-  test("Edge: reingresar solo está disponible después de un retiro previo", async ({ page }) => {
+  test("Edge: re-entry is available only after a previous withdrawal", async ({ page }) => {
     const { idTestimony, number } = await seedVerifiedTestimony(page);
 
     await steps.givenUserIsOnPage("/dashboard/testimony-movements");

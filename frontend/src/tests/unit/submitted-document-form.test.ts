@@ -10,21 +10,21 @@ import {
 * CU04 / CU72 (#655): a submitted document is presented for a procedure of a
 * management, so the create form requires the document type and the procedure.
  */
-describe("documento presentado form (#655)", () => {
+describe("submitted document form (#655)", () => {
   const complete = { ...EMPTY_DOCUMENT_FORM, tipoId: "3", fecha: "2026-09-05", managementId: "7", procedureId: "11" };
 
-  it("requires the type and the trámite on create", () => {
+  it("requires the type and the procedure on create", () => {
     expect(missingDocumentFields(EMPTY_DOCUMENT_FORM, false)).toEqual(["tipoId", "tramiteId"]);
     expect(missingDocumentFields({ ...complete, procedureId: "" }, false)).toEqual(["tramiteId"]);
     expect(missingDocumentFields({ ...complete, tipoId: "" }, false)).toEqual(["tipoId"]);
     expect(missingDocumentFields(complete, false)).toEqual([]);
   });
 
-  it("does not force a trámite when editing a legacy document without one", () => {
+  it("does not force a procedure when editing a legacy document without one", () => {
     expect(missingDocumentFields({ ...complete, managementId: "", procedureId: "" }, true)).toEqual([]);
   });
 
-  it("offers the gestión/trámite link on create and on documents that have none yet", () => {
+  it("offers the management/procedure link on create and on documents that have none yet", () => {
     expect(showsProcedureLink(null)).toBe(true);
     expect(showsProcedureLink({ idSubmittedDocument: 1, procedureId: undefined })).toBe(true);
     expect(showsProcedureLink({ idSubmittedDocument: 1, procedureId: 11 })).toBe(false);

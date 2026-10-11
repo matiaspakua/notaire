@@ -10,7 +10,7 @@
 import { test, expect } from "@playwright/test";
 import { GherkinSteps } from "./gherkin-helpers";
 
-test.describe("Tipo de Documento - Vencimiento y responsable", () => {
+test.describe("Document type - expiration and responsible party", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -19,7 +19,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/documents");
   });
 
-  test("CU27-GW01: Given nuevo tipo de documento, When vence is unchecked, Then dias vencimiento is hidden", async ({
+  test("CU27-GW01: Given a new document type, When expires is unchecked, Then the expiration days field is hidden", async ({
     page,
   }) => {
     await page.getByTestId("btn-new-document-type").click();
@@ -42,7 +42,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
     await steps.thenShowsErrorMessage("días");
   });
 
-  test("CU27-GW03: Given a complete form, When creating a tipo de documento with vencimiento, Then it is persisted", async ({
+  test("CU27-GW03: Given a complete form, When creating a document type with an expiration, Then it is stored", async ({
     page,
   }) => {
     const name = `Cedula Vence ${Date.now()}`;
@@ -58,7 +58,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
     await expect(page.getByRole("cell", { name: name })).toBeVisible({ timeout: 10000 });
   });
 
-  test("CU32-GW01: Given an existing tipo de documento, When editing it, Then vencimiento fields are pre-filled", async ({
+  test("CU32-GW01: Given an existing document type, When it is edited, Then the expiration fields are pre-filled", async ({
     page,
   }) => {
     const name = `Contrato Vence ${Date.now()}`;
@@ -80,7 +80,7 @@ test.describe("Tipo de Documento - Vencimiento y responsable", () => {
     await expect(page.getByTestId("input-delivered-by-document")).toHaveValue("Escribano");
   });
 
-  test("CU27-GW04: Given nuevo tipo de documento, When form opens, Then enabled is checked and returned is unchecked", async ({
+  test("CU27-GW04: Given a new document type, When the form opens, Then enabled is checked and returned is unchecked", async ({
     page,
   }) => {
     await page.getByTestId("btn-new-document-type").click();

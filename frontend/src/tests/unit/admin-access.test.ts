@@ -44,13 +44,13 @@ describe("isAdminRoute", () => {
 });
 
 describe("shouldDenyAdminRoute (edge decision)", () => {
-  it("denies non-admin role on administración path (issue #1052)", () => {
+  it("denies a non-admin role on an administration path (issue #1052)", () => {
     expect(
       shouldDenyAdminRoute("/dashboard/administration/users", "1", "EMPLEADO"),
     ).toBe(true);
   });
 
-  it("allows admin-capable role on administración path", () => {
+  it("allows an admin-capable role on an administration path", () => {
     expect(
       shouldDenyAdminRoute("/dashboard/administration/users", "1", "ADMIN"),
     ).toBe(false);

@@ -24,11 +24,11 @@ test.describe("Plantillas - Costos de Documentos", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/templates");
   });
 
-  test("CU39-GW01: Given no tipo de trámite selected, Then costos de documentos section is hidden", async ({ page }) => {
+  test("CU39-GW01: Given no procedure type is selected, Then the document-costs section is hidden", async ({ page }) => {
     await expect(page.getByTestId("btn-new-cost-document")).not.toBeVisible();
   });
 
-  test("CU39-GW02: Given a tipo de trámite selected, Then costos de documentos section appears", async ({ page }) => {
+  test("CU39-GW02: Given a procedure type is selected, Then the document-costs section appears", async ({ page }) => {
     await page.getByTestId("select-procedure-type-costs").click();
     await page.getByRole("listbox").getByRole("option").first().click();
 

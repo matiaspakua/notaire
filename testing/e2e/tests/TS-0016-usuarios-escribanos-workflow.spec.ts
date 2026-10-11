@@ -40,7 +40,7 @@ async function seedEditableUser(page: Page): Promise<string> {
   return username;
 }
 
-test.describe("CU20 - Dar Alta UserAccount", () => {
+test.describe("CU20 - Register a user", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -49,7 +49,7 @@ test.describe("CU20 - Dar Alta UserAccount", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/users");
   });
 
-  test("CU20-GW01: Given on usuarios page, When click nuevo usuario, Then modal opens", async () => {
+  test("CU20-GW01: Given the users page, When new user is clicked, Then the modal opens", async () => {
     // Given
     await steps.givenModuleIsVisible("Usuarios");
 
@@ -89,7 +89,7 @@ test.describe("CU21 - Modificar UserAccount", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/users");
   });
 
-  test("CU21-GW01: Given usuario exists, When click editar, Then modal opens with data", async ({
+  test("CU21-GW01: Given a user exists, When edit is clicked, Then the modal opens with the data", async ({
     page,
   }) => {
     const username = await seedEditableUser(page);
@@ -142,7 +142,7 @@ test.describe("CU23 - Ver registro de actividades", () => {
   });
 });
 
-test.describe("CU48 - Dar alta escribano", () => {
+test.describe("CU48 - Register a notary", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -151,12 +151,12 @@ test.describe("CU48 - Dar alta escribano", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/users");
   });
 
-  test.skip("CU48-GW01 (#1146): Given on notaries page, When click nuevo escribano, Then modal opens", async () => {
+  test.skip("CU48-GW01 (#1146): Given the notaries page, When new notary is clicked, Then the modal opens", async () => {
     // Skipped (#1146): no /dashboard/administration/notaries page exists in the current frontend.
     // Escribanos are managed through the Usuarios module.
   });
 
-  test.skip("CU48-GW02 (#1146): Given form open, When fill and submit, Then escribano created", async () => {
+  test.skip("CU48-GW02 (#1146): Given the form is open, When it is filled and submitted, Then the notary is created", async () => {
     // Skipped (#1146): same reason as CU48-GW01.
   });
 });

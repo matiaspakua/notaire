@@ -52,7 +52,7 @@ test.describe('CU87 - Vincular Deed y Folio', () => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU87-GW01: golden path — crear folio vinculado a escritura firmada → folio Utilizado y escritura muestra el folio', async ({
+  test('CU87-GW01: golden path — creating a folio linked to a signed deed → the folio is Utilizado and the deed shows the folio', async ({
     page,
   }) => {
     const { number } = await seedSignedDeed(page)
@@ -88,7 +88,7 @@ test.describe('CU87 - Vincular Deed y Folio', () => {
     await expect(deedRow).toContainText(/Folio #/i)
   })
 
-  test('CU87-EDGE01: escritura ya vinculada a otro folio no aparece disponible en el selector', async ({ page }) => {
+  test('CU87-EDGE01: a deed already linked to another folio is not offered in the selector', async ({ page }) => {
     const { idDeed, number } = await seedSignedDeed(page)
     const linked = await createFolio(page, 1, { status: 'Nuevo', deedId: idDeed })
     if (!linked.ok) throw new Error(`Failed to seed linked folio: ${linked.error}`)
@@ -130,7 +130,7 @@ test.describe('CU87 - Vincular Deed y Folio', () => {
     await expect(row.getByTestId('btn-delete-folio')).toBeDisabled()
   })
 
-  test('CU87-EDGE03: crear folio sin vincular escritura sigue funcionando (campo opcional)', async ({ page }) => {
+  test('CU87-EDGE03: creating a folio without linking a deed still works (the field is optional)', async ({ page }) => {
     const numberFolio = Math.floor(10000 + Math.random() * 90000)
 
     await page.goto('/dashboard/administration/folios')

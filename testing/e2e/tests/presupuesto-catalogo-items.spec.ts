@@ -7,7 +7,7 @@ import { GherkinSteps } from "./gherkin-helpers";
 import { authenticateAsAdmin } from "./setup/auth";
 import { createPerson, createBudget, createItem } from "./setup/api-helpers";
 
-test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
+test.describe("CU71 - Add catalog items (golden path)", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -15,7 +15,7 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
     await authenticateAsAdmin(page);
   });
 
-  test("agrega un ítem del catálogo al presupuesto y lo muestra en el desglose", async ({ page }) => {
+  test("adds a catalog item to the budget and shows it in the breakdown", async ({ page }) => {
     // GIVEN: budget y un ítem reutilizable en el catálogo
     const personResult = await createPerson(page);
     expect(personResult.ok).toBe(true);
@@ -46,7 +46,7 @@ test.describe("CU71 - Agregar ítems del catálogo (golden path)", () => {
     await expect(dialog.getByTestId("items-subtotal")).toContainText("750");
   });
 
-  test("permite combinar un ítem de plantilla y uno de catálogo en el mismo presupuesto", async ({ page }) => {
+  test("allows a template item and a catalog item on the same budget", async ({ page }) => {
     const personResult = await createPerson(page);
     expect(personResult.ok).toBe(true);
     const budgetResult = await createBudget(page, personResult.data!.personId);

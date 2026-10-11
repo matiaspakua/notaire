@@ -12,7 +12,7 @@ import { substitutionsKeys } from "@/hooks/useSubstitutions";
 // ──────────────────────────────────────────────
 
 describe("substitutionsKeys", () => {
-  it("all key is ['suplencias']", () => {
+  it("all key is ['substitutions']", () => {
     expect(substitutionsKeys.all).toEqual(["substitutions"]);
   });
 
@@ -30,7 +30,7 @@ describe("substitutionsKeys", () => {
 // ──────────────────────────────────────────────
 
 describe("Substitution type shape", () => {
-  it("suplencia object has correct optional fields", () => {
+  it("a substitution object has the expected optional fields", () => {
     const s = {
       idSubstitution: 1,
       notary: { idPerson: 10, name: "Carlos", apellido: "López" },
@@ -45,7 +45,7 @@ describe("Substitution type shape", () => {
     expect(s.hasta).toBe("2026-06-30");
   });
 
-  it("suplencia can have undefined escribano/suplente", () => {
+  it("a substitution can omit the notary and the substitute", () => {
     const s: {
       idSubstitution?: number;
       notary?: unknown;
@@ -57,13 +57,13 @@ describe("Substitution type shape", () => {
     expect(s.suplente).toBeUndefined();
   });
 
-  it("suplencia date range validation — desde before hasta", () => {
+  it("substitution date range — start is before end", () => {
     const desde = new Date("2026-01-01");
     const hasta = new Date("2026-12-31");
     expect(desde < hasta).toBe(true);
   });
 
-  it("suplencia date range validation — invalid range detected", () => {
+  it("substitution date range — an inverted range is detected", () => {
     const desde = new Date("2026-12-31");
     const hasta = new Date("2026-01-01");
     expect(desde > hasta).toBe(true);
@@ -77,19 +77,19 @@ describe("Substitution type shape", () => {
 describe("Reporte URL construction", () => {
   const BASE = "http://localhost:8080/api/v1";
 
-  it("presupuesto PDF URL is correct", () => {
+  it("the budget PDF URL is correct", () => {
     const id = 42;
     const url = `${BASE}/reports/budget/${id}`;
     expect(url).toBe("http://localhost:8080/api/v1/reports/budget/42");
   });
 
-  it("presupuesto inmuebles PDF URL is correct", () => {
+  it("the budget properties PDF URL is correct", () => {
     const id = 7;
     const url = `${BASE}/reports/budget-properties/${id}`;
     expect(url).toBe("http://localhost:8080/api/v1/reports/budget-properties/7");
   });
 
-  it("historial gestion PDF URL is correct", () => {
+  it("the management history PDF URL is correct", () => {
     const id = 100;
     const url = `${BASE}/reports/management-history/${id}`;
     expect(url).toBe("http://localhost:8080/api/v1/reports/management-history/100");
@@ -129,7 +129,7 @@ describe("Reporte URL construction", () => {
 // ──────────────────────────────────────────────
 
 describe("Reporte filename construction", () => {
-  it("presupuesto filename includes id", () => {
+  it("the budget filename includes the id", () => {
     const id = 5;
     const filename = `presupuesto_${id}.pdf`;
     expect(filename).toBe("presupuesto_5.pdf");
@@ -149,7 +149,7 @@ describe("Reporte filename construction", () => {
     expect(filename).toBe("ddjj_rentas_2026_12.pdf");
   });
 
-  it("historial filename includes gestion id", () => {
+  it("the history filename includes the management id", () => {
     const id = 42;
     const filename = `historial_gestion_${id}.pdf`;
     expect(filename).toBe("historial_gestion_42.pdf");
@@ -209,7 +209,7 @@ describe("Budget estado badge logic", () => {
 // People search filter logic
 // ──────────────────────────────────────────────
 
-describe("Personas search filter (CU61)", () => {
+describe("People search filter (CU61)", () => {
   const people = [
     { idPerson: 1, name: "Juan", apellido: "García", dni: "12345678", esClient: true },
     { idPerson: 2, name: "Ana", apellido: "López", dni: "87654321", esClient: false },
@@ -232,7 +232,7 @@ describe("Personas search filter (CU61)", () => {
     });
   }
 
-  it("no filters returns all personas", () => {
+  it("no filters returns every person", () => {
     expect(filterPersonas(people, "", "", "", null)).toHaveLength(3);
   });
 

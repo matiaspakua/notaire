@@ -42,7 +42,7 @@ async function seedManagementWithRequiredDocumentation(page: Page, nameDocument:
   };
 }
 
-test.describe("CU43 - Reingresar documentación", () => {
+test.describe("CU43 - Re-enter documentation", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
   });
@@ -69,7 +69,7 @@ test.describe("CU43 - Reingresar documentación", () => {
     await expect(page.getByText(/document reingresado/i)).toBeVisible({ timeout: 10000 });
   });
 
-  test("edge path: a gestión without trámites shows the empty state", async ({ page }) => {
+  test("edge path: a management without procedures shows the empty state", async ({ page }) => {
     const person = await createPerson(page);
     const management = await createManagementWithoutProcedure(page, person.data!.personId);
 

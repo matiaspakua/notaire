@@ -73,12 +73,12 @@ async function seedArchivableManagement(page: Page) {
   return { idManagement: management.data!.idManagement, number: management.data!.number };
 }
 
-test.describe("CU85 - Administrar Carpetas de Trámite", () => {
+test.describe("CU85 - Manage procedure folders", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
   });
 
-  test("golden path: iniciar trámite genera carpeta activa, se pone en espera y se archiva con la gestión", async ({
+  test("golden path: starting a procedure creates an active folder, it is put on hold, and it is archived with the management", async ({
     page,
   }) => {
     const { idManagement, number } = await seedArchivableManagement(page);
@@ -141,7 +141,7 @@ test.describe("CU85 - Administrar Carpetas de Trámite", () => {
     await expect(esperaDialog).toBeVisible();
   });
 
-  test("edge path: archivar una gestión con carpeta en espera exige confirmación explícita", async ({
+  test("edge path: archiving a management with a folder on hold requires explicit confirmation", async ({
     page,
   }) => {
     const { idManagement, number } = await seedArchivableManagement(page);

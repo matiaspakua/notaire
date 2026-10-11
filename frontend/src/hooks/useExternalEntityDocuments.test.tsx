@@ -29,7 +29,7 @@ function createWrapper() {
 }
 
 describe("externalEntityDocumentKeys", () => {
-  it("byManagement key includes the gestión id", () => {
+  it("byManagement key includes the management id", () => {
     expect(externalEntityDocumentKeys.byManagement(9)).toEqual(["documentosEntidadExterna", "gestion", 9]);
   });
 });
@@ -37,7 +37,7 @@ describe("externalEntityDocumentKeys", () => {
 describe("useExternalEntityDocuments (CU10)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("fetches the gestión's entidad-externa documents via GET", async () => {
+  it("fetches the management's external-entity documents via GET", async () => {
     vi.mocked(apiGet).mockResolvedValue({
       idManagement: 9,
       numero: 1001,

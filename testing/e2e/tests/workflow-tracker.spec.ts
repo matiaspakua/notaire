@@ -93,8 +93,8 @@ async function stubTrace(page: Page, body: Record<string, unknown>) {
   });
 }
 
-test.describe("Workflow tracker reingreso loop (#841)", () => {
-  test("shows reingreso badge and movement timeline when returnedObserved=2", async ({
+test.describe("Workflow tracker re-entry loop (#841)", () => {
+  test("shows the re-entry badge and movement timeline when returnedObserved=2", async ({
     page,
   }) => {
     await stubTrace(
@@ -132,7 +132,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
     await expect(page.getByTestId("workflow-movement-entry")).toHaveCount(3);
   });
 
-  test("hides reingreso badge when no returned-observed movements", async ({
+  test("hides the re-entry badge when there are no returned-observed movements", async ({
     page,
   }) => {
     await stubTrace(
@@ -189,7 +189,7 @@ test.describe("Workflow tracker reingreso loop (#841)", () => {
   });
 
   for (const width of [320, 768, 1024] as const) {
-    test(`renders tracker at ${width}px with reingreso badge`, async ({ page }) => {
+    test(`renders the tracker at ${width}px with the re-entry badge`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
       await stubTrace(
         page,

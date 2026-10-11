@@ -13,7 +13,7 @@ import { budgetsKeys } from "@/hooks/useBudgets";
 import { submittedDocumentsKeys } from "@/hooks/useSubmittedDocuments";
 
 describe("openapi generated types (#1260)", () => {
-  it("exports schema aliases used by gestiones, presupuestos and documentos hooks", () => {
+  it("exports schema aliases used by management, budget, and document hooks", () => {
     const management: DeedManagement = { idManagement: 1, procedureCount: 2 };
     const budget: Budget = { idBudget: 9, number: 1 };
     const resumen: BudgetSummary = {

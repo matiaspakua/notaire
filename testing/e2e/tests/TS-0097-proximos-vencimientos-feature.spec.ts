@@ -9,7 +9,7 @@ import { test, expect } from "@playwright/test";
 import { establishAdminBrowserSession } from "./setup/auth";
 import { apiPost, createDocumentType, createProcedureType, uniqueId } from "./setup/api-helpers";
 
-test.describe("CU42 - Próximos vencimientos", () => {
+test.describe("CU42 - Upcoming expirations", () => {
   test.beforeEach(async ({ page }) => {
     await establishAdminBrowserSession(page);
   });

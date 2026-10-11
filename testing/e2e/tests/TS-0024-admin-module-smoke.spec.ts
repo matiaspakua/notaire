@@ -7,7 +7,7 @@
 import { test, expect } from "@playwright/test";
 import { authenticateAsAdmin as adminAuthSetup } from "./setup/auth";
 
-test.describe("Administración hub (ADMIN only)", () => {
+test.describe("Administration hub (ADMIN only)", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
     await page.goto("/dashboard/administration");
@@ -28,7 +28,7 @@ test.describe("Administración hub (ADMIN only)", () => {
   });
 });
 
-test.describe("CU67 — Estados de Gestión", () => {
+test.describe("CU67 — Management statuses", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
     await page.goto("/dashboard/administration/management-statuses");
@@ -62,7 +62,7 @@ test.describe("CU67 — Estados de Gestión", () => {
   });
 });
 
-test.describe("CU26/CU57/CU64 — Tipos de Trámite", () => {
+test.describe("CU26/CU57/CU64 — Procedure types", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
     await page.goto("/dashboard/administration/procedures");
@@ -111,7 +111,7 @@ test.describe("CU37 — Conceptos", () => {
   });
 });
 
-test.describe("CU38 — Tipos de Documento", () => {
+test.describe("CU38 — Document types", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
     await page.goto("/dashboard/administration/documents");
@@ -198,7 +198,7 @@ test.describe("CU28/CU40/CU58/CU68 — Folios", () => {
   });
 });
 
-test.describe("CU39/CU49/CU55 — Plantillas de Presupuesto", () => {
+test.describe("CU39/CU49/CU55 — Budget templates", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
     await page.goto("/dashboard/administration/templates");
@@ -210,14 +210,14 @@ test.describe("CU39/CU49/CU55 — Plantillas de Presupuesto", () => {
     ).toBeVisible();
   });
 
-  test("modal requires tipo de tramite and concepto", async ({ page }) => {
+  test("the modal requires a procedure type and a concept", async ({ page }) => {
     await page.getByRole("button", { name: /nueva plantilla/i }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("combobox").first()).toBeVisible();
   });
 });
 
-test.describe("Auditoría (read-only)", () => {
+test.describe("Audit (read-only)", () => {
   test.beforeEach(async ({ page }) => {
     await adminAuthSetup(page);
     await page.goto("/dashboard/audit");

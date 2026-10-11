@@ -48,7 +48,7 @@ describe("edge proxy route guards (issue #1056 / CU84)", () => {
     expect(locationOf(response)).toContain("/dashboard");
   });
 
-  it("denies non-admin administración routes at the edge", async () => {
+  it("denies non-admin administration routes at the edge", async () => {
     const proxy = await loadProxy();
     const response = proxy(
       request("/dashboard/administration/users", {

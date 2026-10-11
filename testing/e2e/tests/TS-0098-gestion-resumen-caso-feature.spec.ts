@@ -18,7 +18,7 @@ test.describe("#774 - Resumen del caso", () => {
     await establishAdminBrowserSession(page);
   });
 
-  test("lists the escritura and the testimonio state of a gestión", async ({ page }) => {
+  test("lists the deed and the testimony state of a management", async ({ page }) => {
     const notary = await createPerson(page, { isClient: false });
     expect(notary.ok, notary.error ?? "createPerson failed").toBe(true);
     const management = await apiPost<{ idManagement: number }>(page, "/managements", {

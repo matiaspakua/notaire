@@ -11,7 +11,7 @@ test.describe("Search inputs expose an accessible label (#608)", () => {
     await adminAuthSetup(page);
   });
 
-  test("personas page search inputs are labeled", async ({ page }) => {
+  test("people page search inputs are labeled", async ({ page }) => {
     await page.goto("/dashboard/people");
     await expect(page.getByLabel("Buscar por nombre...", { exact: true })).toBeVisible();
     await expect(page.getByLabel("Buscar por apellido...", { exact: true })).toBeVisible();
@@ -23,7 +23,7 @@ test.describe("Search inputs expose an accessible label (#608)", () => {
     await expect(page.getByLabel("Buscar por número...", { exact: true })).toBeVisible();
   });
 
-  test("presupuestos page search input is labeled", async ({ page }) => {
+  test("the budgets page search input is labeled", async ({ page }) => {
     await page.goto("/dashboard/budgets");
     await expect(page.getByLabel("Buscar por ID o cliente...", { exact: true })).toBeVisible();
   });
@@ -69,12 +69,12 @@ test.describe("Filter selects expose an accessible name (#1343)", () => {
     await adminAuthSetup(page);
   });
 
-  test("gestiones client filter is a named combobox", async ({ page }) => {
+  test("the managements client filter is a named combobox", async ({ page }) => {
     await page.goto("/dashboard/managements");
     await expect(page.getByRole("combobox", { name: "Filtrar por cliente", exact: true })).toBeVisible();
   });
 
-  test("presupuestos status filter is a named combobox", async ({ page }) => {
+  test("the budgets status filter is a named combobox", async ({ page }) => {
     await page.goto("/dashboard/budgets");
     await expect(page.getByRole("combobox", { name: "Filtrar por estado", exact: true })).toBeVisible();
   });

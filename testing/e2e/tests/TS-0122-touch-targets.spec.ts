@@ -48,7 +48,7 @@ for (const device of [
 test.describe("TS-0122 desktop look is unchanged (#1369)", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test("row actions on personas stay 32px tall with a fine pointer", async ({ page }) => {
+  test("row actions on people stay 32px tall with a fine pointer", async ({ page }) => {
     await establishAdminBrowserSession(page);
     await page.goto("/dashboard/people");
     const edit = page.locator("main tbody button[aria-label]").first();

@@ -24,7 +24,7 @@ function createWrapper() {
 }
 
 describe("procedureTemplateKeys", () => {
-  it("byTramite key includes the trámite id", () => {
+  it("byProcedure key includes the procedure id", () => {
     expect(procedureTemplateKeys.byProcedure(7)).toEqual(["plantillaTramite", "tramite", 7]);
   });
 });

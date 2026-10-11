@@ -15,12 +15,12 @@ async function seedAvailableAuxiliaryFolio(page: import("@playwright/test").Page
   return folio.data!.idFolio;
 }
 
-test.describe("CU81 - Gestión de Trámites en Protocolo Auxiliar", () => {
+test.describe("CU81 - Procedure management in the auxiliary protocol", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
   });
 
-  test("golden path: starting an escritura on an available auxiliar folio removes it from the list", async ({
+  test("golden path: starting a deed on an available auxiliary folio removes it from the list", async ({
     page,
   }) => {
     const idFolio = await seedAvailableAuxiliaryFolio(page);

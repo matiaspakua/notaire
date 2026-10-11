@@ -67,7 +67,7 @@ describe("Breadcrumb", () => {
     expect(screen.getByText("Document Types")).toBeInTheDocument();
   });
 
-  it("keeps the accent on Próximos Vencimientos", () => {
+  it("keeps the accent on the Spanish label Próximos Vencimientos", () => {
     renderAt("/dashboard/upcoming-expirations");
     expect(screen.getByText("Próximos Vencimientos")).toBeInTheDocument();
   });

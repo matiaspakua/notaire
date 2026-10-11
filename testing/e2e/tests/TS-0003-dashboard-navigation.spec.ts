@@ -87,8 +87,8 @@ test.describe("Dashboard navigation", () => {
   });
 });
 
-test.describe("Gestiones module (CU02, CU13-CU16)", () => {
-  test("shows gestiones page with table", async ({ page }) => {
+test.describe("Managements module (CU02, CU13-CU16)", () => {
+  test("shows the managements page with a table", async ({ page }) => {
     await loginAs(page);
     await page.goto("/dashboard/managements");
     await page.waitForLoadState("domcontentloaded");
@@ -98,8 +98,8 @@ test.describe("Gestiones module (CU02, CU13-CU16)", () => {
   });
 });
 
-test.describe("Personas module (CU17, CU18)", () => {
-  test("shows personas page", async ({ page }) => {
+test.describe("People module (CU17, CU18)", () => {
+  test("shows the people page", async ({ page }) => {
     await loginAs(page);
     await page.goto("/dashboard/people");
     await page.waitForLoadState("domcontentloaded");
@@ -109,8 +109,8 @@ test.describe("Personas module (CU17, CU18)", () => {
   });
 });
 
-test.describe("Presupuestos module (CU01)", () => {
-  test("shows presupuestos page", async ({ page }) => {
+test.describe("Budgets module (CU01)", () => {
+  test("shows the budgets page", async ({ page }) => {
     await loginAs(page);
     await page.goto("/dashboard/budgets");
     await page.waitForLoadState("domcontentloaded");

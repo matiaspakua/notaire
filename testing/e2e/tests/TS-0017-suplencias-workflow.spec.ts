@@ -16,7 +16,7 @@ test.describe("CU22 - Registrar Substitution", () => {
     await steps.whenUserOpensSidebarNav("suplencias");
   });
 
-  test("CU22-GW01: Given on suplencias page, When click nueva suplencia, Then modal opens", async () => {
+  test("CU22-GW01: Given the substitutions page, When new substitution is clicked, Then the modal opens", async () => {
     // Given
     await steps.givenModuleIsVisible("Suplencias");
 
@@ -31,7 +31,7 @@ test.describe("CU22 - Registrar Substitution", () => {
     await expect(steps.page.getByTestId("input-hasta")).toBeVisible();
   });
 
-  test("CU22-GW02: Given form open, When fill and submit, Then suplencia created", async () => {
+  test("CU22-GW02: Given the form is open, When it is filled and submitted, Then the substitution is created", async () => {
     // Given
     await steps.whenUserClicksButton("nueva suplencia");
     await steps.thenModalIsVisible();
@@ -60,11 +60,11 @@ test.describe("CU59 - Consultar Suplencias", () => {
     await steps.whenUserOpensSidebarNav("suplencias");
   });
 
-  test.skip("CU59-GW01 (#1146): Given on suplencias, When filter by escribano, Then shows filtered", async () => {
+  test.skip("CU59-GW01 (#1146): Given substitutions, When filtered by notary, Then the filtered list is shown", async () => {
     // Skipped (#1146): substitutions page has no filter dropdown by notary.
   });
 
-  test.skip("CU59-GW02 (#1146): Given suplencia exists, When click ver detalle, Then shows details", async () => {
+  test.skip("CU59-GW02 (#1146): Given a substitution exists, When view details is clicked, Then the details are shown", async () => {
     // Skipped (#1146): substitutions table has no "ver" button — only edit/delete icons.
   });
 });

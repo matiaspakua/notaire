@@ -36,7 +36,7 @@ test.describe("CU15 - Procesar Payment", () => {
     await steps.givenUserIsOnPage("/dashboard/payments");
   });
 
-  test("CU15-GW01: Given user on pagos page, When click nuevo pago, Then modal opens", async () => {
+  test("CU15-GW01: Given the user is on the payments page, When they click new payment, Then the modal opens", async () => {
     await steps.givenModuleIsVisible("Pagos");
     await steps.whenUserClicksButton("nuevo pago");
 
@@ -46,14 +46,14 @@ test.describe("CU15 - Procesar Payment", () => {
     await steps.thenFormHasField("método");
   });
 
-  test("CU15-SALDO-01 (#796): Payment form has presupuesto picker, not a numeric input", async ({ page }) => {
+  test("CU15-SALDO-01 (#796): the payment form has a budget picker, not a numeric input", async ({ page }) => {
     await steps.whenUserClicksButton("nuevo pago");
 
     const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /budget/i });
     await expect(budgetSelector).toBeVisible();
   });
 
-  test("CU15-SALDO-02 (#796): Selecting a presupuesto shows its client name and saldo pendiente", async ({ page }) => {
+  test("CU15-SALDO-02 (#796): selecting a budget shows its client name and outstanding balance", async ({ page }) => {
     const amountBudget = 75000;
     const { apellido } = await seedBudget(page, amountBudget);
 
@@ -78,7 +78,7 @@ test.describe("CU15 - Procesar Payment", () => {
     await expect(page.getByRole("dialog").getByText(/Presupuestado: \$\s?75\.000/)).toBeVisible();
   });
 
-  test("CU15-SALDO-03 (#796): Saldo updates when presupuesto selection changes", async ({ page }) => {
+  test("CU15-SALDO-03 (#796): the balance updates when the budget selection changes", async ({ page }) => {
     const { apellido: apellido1 } = await seedBudget(page, 50000);
     const { apellido: apellido2 } = await seedBudget(page, 100000);
 
@@ -109,7 +109,7 @@ test.describe("CU15 - Procesar Payment", () => {
     expect(saldoText1).not.toBe(saldoText2);
   });
 
-  test("CU15-SALDO-04 (#848): Submitting a monto over saldo pendiente shows a specific rejection message", async ({ page }) => {
+  test("CU15-SALDO-04 (#848): submitting an amount over the outstanding balance shows a specific rejection message", async ({ page }) => {
     const { apellido } = await seedBudget(page, 50000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
@@ -130,7 +130,7 @@ test.describe("CU15 - Procesar Payment", () => {
     await expect(page.getByRole("dialog")).toBeVisible();
   });
 
-  test("CU15-GW02: Given form open, When fill and submit, Then pago is registered", async ({ page }) => {
+  test("CU15-GW02: Given the form is open, When it is filled and submitted, Then the payment is recorded", async ({ page }) => {
     const { apellido } = await seedBudget(page, 50000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
@@ -151,11 +151,11 @@ test.describe("CU15 - Procesar Payment", () => {
     await steps.thenToastIsVisible();
   });
 
-  test.skip("CU15-GW03 (#1146): Given pago exists, When click ver detalle, Then shows details", () => {
+  test.skip("CU15-GW03 (#1146): Given a payment exists, When view details is clicked, Then the details are shown", () => {
     // Skipped (#1146): pagos table has no "ver" button per row — only edit/delete icons.
   });
 
-  test("CU15-RECIBO-01 (#23): Given pago exists, When click emitir recibo, Then PDF is downloaded", async ({ page }) => {
+  test("CU15-RECIBO-01 (#23): Given a payment exists, When issue receipt is clicked, Then a PDF is downloaded", async ({ page }) => {
     const amountUnico = 345;
     const { idBudget } = await seedBudget(page, amountUnico + 1000);
     const pagoResult = await createPayment(page, idBudget, { amount: amountUnico });
@@ -185,7 +185,7 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await steps.givenUserIsLoggedIn();
   });
 
-  test("ESTADO-01: New presupuesto without payments shows SIN_PAGOS badge", async ({ page }) => {
+  test("ESTADO-01: a new budget without payments shows the SIN_PAGOS badge", async ({ page }) => {
     const { apellido } = await seedBudget(page, 60000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
@@ -203,7 +203,7 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await expect(badge).toHaveText(/sin pagos/i);
   });
 
-  test("ESTADO-02: Presupuesto with a partial payment shows PARCIAL badge", async ({ page }) => {
+  test("ESTADO-02: a budget with a partial payment shows the PARCIAL badge", async ({ page }) => {
     const { idBudget, apellido } = await seedBudget(page, 100000);
     const pagoResult = await createPayment(page, idBudget, { amount: 40000 });
     if (!pagoResult.ok) {
@@ -225,7 +225,7 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await expect(badge).toHaveText(/parcial/i);
   });
 
-  test("ESTADO-03: Presupuesto fully paid shows SALDADO badge", async ({ page }) => {
+  test("ESTADO-03: a fully paid budget shows the SALDADO badge", async ({ page }) => {
     const { idBudget, apellido } = await seedBudget(page, 80000);
     const pagoResult = await createPayment(page, idBudget, { amount: 80000 });
     if (!pagoResult.ok) {
@@ -247,12 +247,12 @@ test.describe("CU47 - Consultar Payment (Estado de Payment #821)", () => {
     await expect(badge).toHaveText(/saldado/i);
   });
 
-  test.skip("CU47-GW01 (#1146): Given on pagos page, When filter by date, Then shows filtered", () => {
+  test.skip("CU47-GW01 (#1146): Given the payments page, When filtered by date, Then the filtered list is shown", () => {
     // Skipped (#1146): pagos page has no "fecha desde" / "fecha hasta" filter inputs.
   });
 });
 
-test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
+test.describe("CU47 - Payments table CRUD (list, edit, delete)", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -260,7 +260,7 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
     await steps.givenUserIsLoggedIn();
   });
 
-  test("TABLE-01: Given a pago exists, When visiting pagos page, Then it renders in the table with correct data", async ({ page }) => {
+  test("TABLE-01: Given a payment exists, When the payments page is opened, Then it renders in the table with the correct data", async ({ page }) => {
     const { idBudget } = await seedBudget(page, 20000);
     const pagoResult = await createPayment(page, idBudget, { amount: 12345, paymentMethod: "Transferencia" });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
@@ -275,7 +275,7 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
     await expect(row).toContainText(`#${idBudget}`);
   });
 
-  test("TABLE-02: Given a pago exists, When editing its monto, Then the table reflects the update", async ({ page }) => {
+  test("TABLE-02: Given a payment exists, When its amount is edited, Then the table shows the update", async ({ page }) => {
     const { idBudget } = await seedBudget(page, 30000);
     const pagoResult = await createPayment(page, idBudget, { amount: 1000, paymentMethod: "Efectivo" });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {
@@ -297,7 +297,7 @@ test.describe("CU47 - Pagos Table CRUD (list, edit, delete)", () => {
     await expect(row).toContainText("1.500");
   });
 
-  test("TABLE-03: Given a pago exists, When deleting it, Then it is removed from the table", async ({ page }) => {
+  test("TABLE-03: Given a payment exists, When it is deleted, Then it is removed from the table", async ({ page }) => {
     const { idBudget } = await seedBudget(page, 15000);
     const pagoResult = await createPayment(page, idBudget, { amount: 500 });
     if (!pagoResult.ok || !pagoResult.data?.idPayment) {

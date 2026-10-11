@@ -64,7 +64,7 @@ test.describe("TS-0121 grouped sidebar (#1367)", () => {
     expect(hrefs[hrefs.length - 1]).toBe("/dashboard/administration");
   });
 
-  test("a non-admin sees neither Administración nor Auditoría", async ({ page }) => {
+  test("a non-admin sees neither Administration nor Audit", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     const username = `emp1367-${Date.now()}`;
     const password = "Test1234!";

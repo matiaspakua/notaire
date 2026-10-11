@@ -22,7 +22,7 @@ function createWrapper() {
 }
 
 describe("managementSummaryKeys", () => {
-  it("caso and financiero keys include the gestión id", () => {
+  it("case and financial keys include the management id", () => {
     expect(managementSummaryKeys.caso(4)).toEqual(["management-case-summary", 4]);
     expect(managementSummaryKeys.financiero(4)).toEqual(["management-financial-summary", 4]);
   });
@@ -40,7 +40,7 @@ describe("useManagementCaseSummary (#774)", () => {
     expect(apiGet).toHaveBeenCalledWith("/managements/4/case-summary");
   });
 
-  it("does not fetch without a gestión id", () => {
+  it("does not fetch without a management id", () => {
     renderHook(() => useManagementCaseSummary(undefined), { wrapper: createWrapper() });
 
     expect(apiGet).not.toHaveBeenCalled();

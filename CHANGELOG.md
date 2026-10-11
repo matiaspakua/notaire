@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English Playwright and unit test titles** (#1490, CU75): `describe` / `test` / `it`
+  titles in `testing/e2e` and the frontend unit tests name the flows in English.
+  Selectors that match Spanish screen copy, stored statuses (`Firmada`, `Archivada`,
+  `SIN_PAGOS`), and message catalog keys stay as recorded.
 - **English comments on archive, person, budget, and procedure types** (#1490, CU75):
   javadoc on the archive-debt service, deed-management and person persistence,
   budget lookup, user password checks, testimony movements, document re-entry,

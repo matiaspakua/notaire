@@ -155,7 +155,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
   });
 
-  test("Gestiones — List, Create, Edit", async () => {
+  test("Managements — List, Create, Edit", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/managements");
       await assertHeadingVisible(page);
@@ -180,7 +180,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Presupuestos — List, Search, Filter, Create", async () => {
+  test("Budgets — List, Search, Filter, Create", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/budgets");
       await assertHeadingVisible(page);
@@ -216,7 +216,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Personas — List, Search, Filter, Create", async () => {
+  test("People — List, Search, Filter, Create", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/people");
       await assertHeadingVisible(page);
@@ -267,7 +267,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
   });
 
-  test("Pagos — List, Create", async () => {
+  test("Payments — List, Create", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/payments");
       await assertHeadingVisible(page);
@@ -313,7 +313,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
   });
 
-  test("Auditoría — List", async () => {
+  test("Audit — List", async () => {
     await navigateTo(page, "/dashboard/audit");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
@@ -341,13 +341,13 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, PAUSE);
   });
 
-  test("Administración — Hub page", async () => {
+  test("Administration — Hub page", async () => {
     await navigateTo(page, "/dashboard/administration");
     await assertHeadingVisible(page);
     await pause(page, PAUSE);
   });
 
-  test("Admin Trámites — List, Create", async () => {
+  test("Admin procedures — List, Create", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/administration/procedures");
       await assertHeadingVisible(page);
@@ -371,7 +371,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     await pause(page, 400);
   });
 
-  test("Admin Estados Gestión — List, Search, Create, Edit", async () => {
+  test("Admin management statuses — List, Search, Create, Edit", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/administration/management-statuses");
       await assertHeadingVisible(page);
@@ -431,7 +431,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Admin Tipos Documento — List, Create", async () => {
+  test("Admin document types — List, Create", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/administration/documents");
       await assertHeadingVisible(page);
@@ -445,7 +445,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Ítems — List, Create", async () => {
+  test("Items — List, Create", async () => {
     await test.step("List", async () => {
       await navigateTo(page, "/dashboard/items");
       await assertHeadingVisible(page);
@@ -486,7 +486,7 @@ test.describe.serial("Full Application Tour — single login → all modules →
     });
   });
 
-  test("Admin Auditoría — redirects to canonical", async () => {
+  test("Admin audit — redirects to the canonical route", async () => {
     // Legacy admin path must resolve to /dashboard/audit (#1058).
     await navigateTo(page, "/dashboard/administration/audit");
     await expect(page).toHaveURL(/\/dashboard\/audit/);

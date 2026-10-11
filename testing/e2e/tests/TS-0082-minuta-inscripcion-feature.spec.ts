@@ -57,7 +57,7 @@ async function seedProcedure(
   });
 }
 
-test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción", () => {
+test.describe("CU82 - Generate and track the registration draft", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -65,7 +65,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     await steps.givenUserIsLoggedIn();
   });
 
-  test("Golden path: generar minuta, presentar e inscribir en forma definitiva", async ({ page }) => {
+  test("Golden path: generate the draft, submit it, and register it definitively", async ({ page }) => {
     const { idDeed, number } = await seedSignedDeed(page);
     const idProperty = await seedProperty(page);
     await seedProcedure(page, idDeed, idProperty);
@@ -99,7 +99,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     await expect(page.getByTestId("registration-draft-status")).toHaveText(/Inscripto/i);
   });
 
-  test("Edge: observar tras presentar muestra la minuta como Observado", async ({ page }) => {
+  test("Edge: flagging after submission shows the draft as Observado", async ({ page }) => {
     const { idDeed, number } = await seedSignedDeed(page);
     const idProperty = await seedProperty(page);
     await seedProcedure(page, idDeed, idProperty);
@@ -127,7 +127,7 @@ test.describe("CU82 - Generar y hacer seguimiento de la minuta de inscripción",
     await expect(page.getByTestId("registration-draft-status")).toHaveText(/Observado/i);
   });
 
-  test("Edge: generar está bloqueado cuando el inmueble no tiene datos catastrales/registrales completos", async ({
+  test("Edge: generation is blocked when the property lacks complete cadastral and registry data", async ({
     page,
   }) => {
     const { idDeed, number } = await seedSignedDeed(page);

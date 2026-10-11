@@ -15,12 +15,12 @@ import {
   uniqueId,
 } from "./setup/api-helpers";
 
-test.describe("#773 - Documento vinculado a un trámite", () => {
+test.describe("#773 - Document linked to a procedure", () => {
   test.beforeEach(async ({ page }) => {
     await establishAdminBrowserSession(page);
   });
 
-  test("creates a document for a trámite and lists it in the case summary", async ({ page }) => {
+  test("creates a document for a procedure and lists it in the case summary", async ({ page }) => {
     const notary = await createPerson(page, { isClient: false });
     expect(notary.ok, notary.error ?? "createPerson failed").toBe(true);
     const numberManagement = uniqueId() % 1_000_000;

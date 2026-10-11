@@ -150,7 +150,7 @@ describe("Movimiento de testimonio hooks (CU11, CU12, CU44)", () => {
     expect(apiPost).toHaveBeenCalledWith("/testimony-movements/5/withdraw", { cardNumber: 123 });
   });
 
-  it("useReenter posts cartón number, observation flag and notes to /testimony-movements/{id}/reenter", async () => {
+  it("useReenter posts the card number, observation flag, and notes to /testimony-movements/{id}/reenter", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idMovementTestimony: 2 });
 
     const { result } = renderHook(() => useReenter(), { wrapper: createWrapper() });

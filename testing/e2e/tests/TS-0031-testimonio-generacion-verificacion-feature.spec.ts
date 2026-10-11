@@ -83,7 +83,7 @@ test.describe("CU07/CU08 - Generar y verificar testimonio", () => {
     await expect(row).toContainText(/observado/i);
   });
 
-  test("Edge: emitir copia está bloqueado hasta que el testimonio esté verificado", async ({ page }) => {
+  test("Edge: issuing a copy stays blocked until the testimony is verified", async ({ page }) => {
     const { idDeed, number } = await seedSignedDeed(page);
     const generated = await apiPost<{ idTestimony: number }>(page, `/testimonies/${idDeed}/generate`, {});
     const idTestimony = generated.data!.idTestimony;

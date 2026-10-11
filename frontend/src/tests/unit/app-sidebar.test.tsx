@@ -35,7 +35,7 @@ beforeEach(() => {
 });
 
 describe("AppSidebar sections (#1367)", () => {
-  it("renders six labelled sections for an admin, five without Administración otherwise", () => {
+  it("renders six labelled sections for an admin, five without Administration otherwise", () => {
     const { unmount } = render(<AppSidebar />);
     expect(desktop().getAllByRole("heading", { level: 2 })).toHaveLength(6);
     unmount();

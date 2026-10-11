@@ -114,7 +114,7 @@ describe("useAuthStore — isAdmin()", () => {
     expect(useAuthStore.getState().isAdmin()).toBe(true);
   });
 
-  it("returns true for tipo ESCRIBANO", () => {
+  it("returns true for type ESCRIBANO", () => {
     useAuthStore.setState({ user: { ...adminUser, type: "ESCRIBANO" }, isAuthenticated: true });
     expect(useAuthStore.getState().isAdmin()).toBe(true);
   });

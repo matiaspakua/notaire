@@ -36,7 +36,7 @@ async function seedManagementWithExternalEntityDocument(page: Page, nameDocument
   };
 }
 
-test.describe("CU10 - Registrar movimientos de documentación de entidades externas", () => {
+test.describe("CU10 - Record movements of external-entity documentation", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
   });
@@ -71,7 +71,7 @@ test.describe("CU10 - Registrar movimientos de documentación de entidades exter
     await expect(movementDialog).not.toBeVisible();
   });
 
-  test("edge path: a gestión without entidad externa documents shows the empty state", async ({ page }) => {
+  test("edge path: a management without external-entity documents shows the empty state", async ({ page }) => {
     const person = await createPerson(page);
     const budget = await createBudget(page, person.data!.personId);
     const estado = await createManagementStatus(page);

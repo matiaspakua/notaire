@@ -13,12 +13,12 @@ async function seedManagement(page: Page) {
   return seedManagementWithWorkflow(page, budget.data!.idBudget);
 }
 
-test.describe("CU13 - Ver bitácora de una gestión", () => {
+test.describe("CU13 - View a management's history", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
   });
 
-  test("golden path: transitioning a gestión adds a new bitácora entry", async ({ page }) => {
+  test("golden path: transitioning a management adds a new history entry", async ({ page }) => {
     const { idManagement, number, estadoInicial, estadoFinal } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
@@ -44,7 +44,7 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
     await expect(items.nth(1)).toContainText(estadoFinal);
   });
 
-  test("edge path: a gestión with only its initial estado shows a single bitácora entry", async ({ page }) => {
+  test("edge path: a management with only its initial status shows a single history entry", async ({ page }) => {
     const { idManagement, number, estadoInicial } = await seedManagement(page);
 
     await page.goto("/dashboard/managements");
@@ -62,7 +62,7 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
     await expect(items.first()).toContainText(estadoInicial);
   });
 
-  test("edge path: archiving a gestión whose estado cannot transition to Archivada shows a visible error", async ({
+  test("edge path: archiving a management whose status cannot transition to Archivada shows a visible error", async ({
     page,
   }) => {
     const { idManagement, number } = await seedManagement(page);
@@ -87,7 +87,7 @@ test.describe("CU13 - Ver bitácora de una gestión", () => {
     { width: 768, height: 1024, label: "768px (tablet)" },
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
-    test(`bitácora view is usable at ${viewport.label}`, async ({ page }) => {
+    test(`the history view is usable at ${viewport.label}`, async ({ page }) => {
       const { idManagement, number, estadoInicial } = await seedManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });

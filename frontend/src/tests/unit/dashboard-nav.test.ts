@@ -28,20 +28,20 @@ describe("DASHBOARD_NAV_ITEMS (#1058)", () => {
     expect(item?.adminOnly).toBeFalsy();
   });
 
-  it("exposes Próximos vencimientos (CU42) at its route with i18n labels", () => {
+  it("exposes Upcoming expirations (CU42) at its route with i18n labels", () => {
     const item = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "proximosVencimientos");
     expect(item?.href).toBe("/dashboard/upcoming-expirations");
     expect(esMessages.navigation.proximosVencimientos).toBeTruthy();
     expect(enMessages.navigation.proximosVencimientos).toBeTruthy();
   });
 
-  it("keeps Administración admin-gated", () => {
+  it("keeps Administration admin-gated", () => {
     const admin = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "administracion");
     expect(admin?.adminOnly).toBe(true);
     expect(admin?.href).toBe("/dashboard/administration");
   });
 
-  it("points Items and Auditoría at canonical dashboard routes", () => {
+  it("points Items and Audit at canonical dashboard routes", () => {
     expect(DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "items")?.href).toBe(
       "/dashboard/items",
     );
@@ -76,7 +76,7 @@ describe("canonical admin redirects (#1058)", () => {
     }
   });
 
-  it("does not keep a full duplicate Items page under administración", () => {
+  it("does not keep a full duplicate Items page under administration", () => {
     const adminItems = resolve(
       __dirname,
       "../../app/dashboard/administration/items/page.tsx",
@@ -91,7 +91,7 @@ describe("canonical admin redirects (#1058)", () => {
     expect(source).not.toMatch(/btn-nuevo-item/);
   });
 
-  it("does not keep a full duplicate Auditoría page under administración", () => {
+  it("does not keep a full duplicate Audit page under administration", () => {
     const adminAuditoria = resolve(
       __dirname,
       "../../app/dashboard/administration/audit/page.tsx",

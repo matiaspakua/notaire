@@ -55,7 +55,7 @@ test.describe("Reportes — navigation discovery (#1058)", () => {
   });
 });
 
-test.describe("CU24 - Generar libro de índices", () => {
+test.describe("CU24 - Generate the index book", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -65,13 +65,13 @@ test.describe("CU24 - Generar libro de índices", () => {
     await steps.whenUserOpensSidebarNav("reportes");
   });
 
-  test.skip("CU24-GW01 (#1146): Given on reportes, When click libro índices, Then generates", async () => {
+  test.skip("CU24-GW01 (#1146): Given reports, When the index book is requested, Then it is generated", async () => {
     // Skipped (#1146): reportes page uses "Descargar PDF" buttons — no "libro índices" button text.
     // The report is triggered by filling the year field and clicking Descargar PDF.
   });
 });
 
-test.describe("CU25 - Generar Declaración Jurada del mes", () => {
+test.describe("CU25 - Generate the monthly sworn statement", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -87,7 +87,7 @@ test.describe("CU25 - Generar Declaración Jurada del mes", () => {
   });
 });
 
-test.describe("CU26 - Ingresar nuevo tipo de trámite", () => {
+test.describe("CU26 - Enter a new procedure type", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -96,7 +96,7 @@ test.describe("CU26 - Ingresar nuevo tipo de trámite", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/procedures");
   });
 
-  test("CU26-GW01: Given on tipos tramite, When click nuevo, Then modal opens", async () => {
+  test("CU26-GW01: Given procedure types, When new is clicked, Then the modal opens", async () => {
     // Given
     await steps.givenModuleIsVisible("Tipos de Trámite");
 
@@ -109,7 +109,7 @@ test.describe("CU26 - Ingresar nuevo tipo de trámite", () => {
   });
 });
 
-test.describe("CU27 - Ingresar nuevo tipo de documento", () => {
+test.describe("CU27 - Enter a new document type", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -118,7 +118,7 @@ test.describe("CU27 - Ingresar nuevo tipo de documento", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/documents");
   });
 
-  test("CU27-GW01: Given on tipos documento, When click nuevo, Then modal opens", async () => {
+  test("CU27-GW01: Given document types, When new is clicked, Then the modal opens", async () => {
     // Given
     await steps.givenModuleIsVisible("Tipos de Documento");
 
@@ -130,7 +130,7 @@ test.describe("CU27 - Ingresar nuevo tipo de documento", () => {
   });
 });
 
-test.describe("CU29 - Ingresar nuevo concepto", () => {
+test.describe("CU29 - Enter a new concept", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -139,7 +139,7 @@ test.describe("CU29 - Ingresar nuevo concepto", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/concepts");
   });
 
-  test("CU29-GW01: Given on conceptos, When click nuevo, Then modal opens", async () => {
+  test("CU29-GW01: Given concepts, When new is clicked, Then the modal opens", async () => {
     // Given
     await steps.givenModuleIsVisible("Conceptos");
 
@@ -152,7 +152,7 @@ test.describe("CU29 - Ingresar nuevo concepto", () => {
     await steps.thenFormHasField("valor");
   });
 
-  test("CU29-GW02: Given form open, When fill and submit, Then concepto created", async () => {
+  test("CU29-GW02: Given the form is open, When it is filled and submitted, Then the concept is created", async () => {
     // Given
     await steps.whenUserClicksButton("nuevo concepto");
     await steps.thenModalIsVisible();
@@ -168,7 +168,7 @@ test.describe("CU29 - Ingresar nuevo concepto", () => {
   });
 });
 
-test.describe("CU39 - Crear Plantilla Presupuesto", () => {
+test.describe("CU39 - Create a budget template", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -177,12 +177,12 @@ test.describe("CU39 - Crear Plantilla Presupuesto", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
-  test.skip("CU39-GW01 (#1146): Given on presupuestos, When click plantillas, Then shows plantillas", async () => {
+  test.skip("CU39-GW01 (#1146): Given budgets, When templates is clicked, Then the templates are shown", async () => {
     // Skipped (#1146): budgets page has no "plantillas" button in the current UI.
   });
 });
 
-test.describe("CU42 - Informar próximos vencimientos", () => {
+test.describe("CU42 - Report upcoming expirations", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -196,7 +196,7 @@ test.describe("CU42 - Informar próximos vencimientos", () => {
   });
 });
 
-test.describe("CU60 - Buscar Presupuesto", () => {
+test.describe("CU60 - Search budgets", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -205,7 +205,7 @@ test.describe("CU60 - Buscar Presupuesto", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
-  test("CU60-GW01: Given on presupuestos, When search by number, Then shows results", async () => {
+  test("CU60-GW01: Given budgets, When searching by number, Then results are shown", async () => {
     // Given
     await steps.givenModuleIsVisible("Presupuestos");
 
@@ -217,7 +217,7 @@ test.describe("CU60 - Buscar Presupuesto", () => {
   });
 });
 
-test.describe("CU62 - Buscar Deed", () => {
+test.describe("CU62 - Search deeds", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -231,7 +231,7 @@ test.describe("CU62 - Buscar Deed", () => {
   });
 });
 
-test.describe("CU65 - Buscar Tipos de documentos", () => {
+test.describe("CU65 - Search document types", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -240,12 +240,12 @@ test.describe("CU65 - Buscar Tipos de documentos", () => {
     await steps.givenUserIsOnPage("/dashboard/administration/documents");
   });
 
-  test.skip("CU65-GW01 (#1146): Given on tipos documento, When search, Then shows results", async () => {
+  test.skip("CU65-GW01 (#1146): Given document types, When searching, Then results are shown", async () => {
     // Skipped (#1146): administracion/documents page has no search bar in the current UI.
   });
 });
 
-test.describe("CU66 - Buscar Conceptos", () => {
+test.describe("CU66 - Search concepts", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {

@@ -71,13 +71,13 @@ async function submitForm(page: Page): Promise<void> {
 // CU17 - Dar Alta Person (Golden Path)
 // ---------------------------------------------------------------------------
 
-test.describe('CU17 - Dar Alta Person', () => {
+test.describe('CU17 - Register a person', () => {
   test.beforeEach(async ({ page }) => {
     await loginAndGoToPeople(page)
   })
 
   test(
-    'CU17-GW01: btn-nueva-persona abre el formulario con los campos requeridos',
+    'CU17-GW01: btn-nueva-persona opens the form with the required fields',
     async ({ page }) => {
       // When
       await page.getByTestId('btn-new-person').click()
@@ -95,7 +95,7 @@ test.describe('CU17 - Dar Alta Person', () => {
   )
 
   test(
-    'CU17-GW02: crear persona sin marcar es-cliente → persona aparece en tabla, NO como cliente',
+    'CU17-GW02: creating a person without checking is-client → the person appears in the table, not as a client',
     async ({ page }) => {
       const dni = `17${uniqueId() % 10_000_000}`
       const apellido = `Alta${uniqueId() % 100_000}`
@@ -123,7 +123,7 @@ test.describe('CU17 - Dar Alta Person', () => {
   )
 
   test(
-    'CU17-GW03: crear persona con es-cliente marcado (CU17 + CU18) → aparece en tabla con flag cliente',
+    'CU17-GW03: creating a person with is-client checked (CU17 + CU18) → they appear in the table with the client flag',
     async ({ page }) => {
       // NOTE (CU18): the 'es client' checkbox IS the CU18 registration mechanism.
       // Creating a person with this checkbox checked simultaneously registers
@@ -162,7 +162,7 @@ test.describe('CU17 - Dar Alta Person', () => {
 // CU18 - Dar Alta Client (via checkbox mechanism)
 // ---------------------------------------------------------------------------
 
-test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
+test.describe('CU18 - Register a client via the is-client checkbox', () => {
   // NOTE: CU18 is exercised through the person form's 'es client' checkbox.
   // There is no separate button, screen, or API flow for client registration.
   // All tests here are real, not skipped.
@@ -172,7 +172,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
   })
 
   test(
-    'CU18-GW01: persona creada con checkbox es-cliente aparece como cliente en la vista',
+    'CU18-GW01: a person created with the is-client checkbox appears as a client',
     async ({ page }) => {
       const dni = `CU18${uniqueId() % 10_000_000}`
       const apellido = `EsCliente${uniqueId() % 100_000}`
@@ -203,7 +203,7 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
   )
 
   test(
-    'CU18-GW02: persona sin checkbox es-cliente puede ser promovida a cliente via edición (CU41)',
+    'CU18-GW02: a person without the is-client checkbox can be promoted to client by editing (CU41)',
     async ({ page }) => {
       // NOTE (CU41): editing an existing person and checking 'es client'
       // promotes them to client status. This is the CU41 path.
@@ -254,13 +254,13 @@ test.describe('CU18 - Dar Alta Cliente via checkbox es-cliente', () => {
 // Issue #835 - Deduplicación por DNI
 // ---------------------------------------------------------------------------
 
-test.describe('Issue #835 - Deduplicación por DNI', () => {
+test.describe('Issue #835 - Deduplication by DNI', () => {
   test.beforeEach(async ({ page }) => {
     await loginAndGoToPeople(page)
   })
 
   test(
-    'Dedup-GW01: crear segunda persona con mismo DNI → error de duplicado visible',
+    'Dedup-GW01: creating a second person with the same DNI → a duplicate error is visible',
     async ({ page }) => {
       const dni = `DUP${uniqueId() % 10_000_000}`
 
@@ -287,7 +287,7 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
   )
 
   test(
-    'Dedup-GW02: toast de duplicado incluye enlace a la persona existente',
+    'Dedup-GW02: the duplicate toast includes a link to the existing person',
     async ({ page }) => {
       const dni = `DUP2${uniqueId() % 10_000_000}`
 
@@ -308,7 +308,7 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
   )
 
   test(
-    'Dedup-EDGE: crear persona sin DNI → error de validación en el form',
+    'Dedup-EDGE: creating a person without a DNI → a validation error is shown on the form',
     async ({ page }) => {
       // When — open form and submit without filling DNI
       await page.getByTestId('btn-new-person').click()
@@ -335,7 +335,7 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
   )
 
   test(
-    'A11y-#1351: un campo con error queda inválido y descrito por su mensaje',
+    'A11y-#1351: a field with an error stays invalid and is described by its message',
     async ({ page }) => {
       await page.getByTestId('btn-new-person').click()
       const dialog = page.getByRole('dialog')
@@ -358,7 +358,7 @@ test.describe('Issue #835 - Deduplicación por DNI', () => {
 // CU61 - Buscar person o client
 // ---------------------------------------------------------------------------
 
-test.describe('CU61 - Buscar persona o cliente', () => {
+test.describe('CU61 - Search for a person or client', () => {
   test.beforeEach(async ({ page }) => {
     // Seed a known person via API so searches have guaranteed results
     await authenticateAsAdmin(page)
@@ -367,7 +367,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
   })
 
   test(
-    'CU61-GW01: buscar por apellido → tabla muestra resultados coincidentes',
+    'CU61-GW01: searching by last name → the table shows matching results',
     async ({ page }) => {
       const steps = new GherkinSteps(page)
 
@@ -397,7 +397,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
   )
 
   test(
-    'CU61-GW02: buscar por DNI → tabla muestra resultado exacto',
+    'CU61-GW02: searching by DNI → the table shows the exact result',
     async ({ page }) => {
       const steps = new GherkinSteps(page)
 
@@ -423,7 +423,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
   )
 
   test(
-    'CU61-GW03: buscar con valor inexistente → estado vacío visible',
+    'CU61-GW03: searching for a value that does not exist → the empty state is visible',
     async ({ page }) => {
       const steps = new GherkinSteps(page)
 
@@ -436,7 +436,7 @@ test.describe('CU61 - Buscar persona o cliente', () => {
   )
 
   test(
-    'CU61-GW04: buscar persona por apellido sin resultados → estado vacío visible',
+    'CU61-GW04: searching for a person by last name with no results → the empty state is visible',
     async ({ page }) => {
       const steps = new GherkinSteps(page)
 
@@ -459,10 +459,10 @@ const VIEWPORTS = [
   { label: 'desktop-1024', width: 1024, height: 768 },
 ] as const
 
-test.describe('Personas screen - responsive viewports', () => {
+test.describe('People screen - responsive viewports', () => {
   for (const vp of VIEWPORTS) {
     test(
-      `VP-${vp.label}: personas page renders without horizontal overflow`,
+      `VP-${vp.label}: the people page renders without horizontal overflow`,
       async ({ page }) => {
         await page.setViewportSize({ width: vp.width, height: vp.height })
         await authenticateAsAdmin(page)
@@ -483,7 +483,7 @@ test.describe('Personas screen - responsive viewports', () => {
     )
 
     test(
-      `VP-${vp.label}: btn-nueva-persona visible and opens modal`,
+      `VP-${vp.label}: btn-nueva-persona is visible and opens the modal`,
       async ({ page }) => {
         await page.setViewportSize({ width: vp.width, height: vp.height })
         await authenticateAsAdmin(page)
@@ -537,7 +537,7 @@ test.describe('Personas screen - responsive viewports', () => {
 // #1357 - Search-as-you-type is debounced and keeps the table stable
 // ---------------------------------------------------------------------------
 
-test.describe('#1357 - Debounced personas search', () => {
+test.describe('#1357 - Debounced people search', () => {
   test('typing a surname quickly sends one /people/search request and finds the person', async ({ page }) => {
     await loginAndGoToPeople(page)
     const created = await createPerson(page)

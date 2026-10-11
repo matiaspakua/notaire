@@ -39,12 +39,12 @@ async function seedFullWorkflow(page: Page): Promise<SeededManagement> {
 // CU02 - Iniciar Gestión
 // ──────────────────────────────────────────────
 
-test.describe('CU02 - Iniciar Gestión', () => {
+test.describe('CU02 - Start a management', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU02-GW01: golden path — gestión seeded via API aparece en la tabla con número y estado inicial', async ({ page }) => {
+  test('CU02-GW01: golden path — a management seeded via API appears in the table with its number and initial status', async ({ page }) => {
     const { number, estadoInicial } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
@@ -55,7 +55,7 @@ test.describe('CU02 - Iniciar Gestión', () => {
     await expect(row).toContainText(estadoInicial)
   })
 
-  test('CU02-GW02: modal "nueva gestión" abre y muestra picker de presupuesto', async ({ page }) => {
+  test('CU02-GW02: the "new management" modal opens and shows the budget picker', async ({ page }) => {
     await page.goto('/dashboard/managements')
     await page.waitForLoadState('domcontentloaded')
 
@@ -65,7 +65,7 @@ test.describe('CU02 - Iniciar Gestión', () => {
     await expect(page.getByTestId('select-budget-management')).toBeVisible()
   })
 
-  test('CU02-GW03: picker de presupuesto muestra el nombre del cliente asociado (#889)', async ({ page }) => {
+  test('CU02-GW03: the budget picker shows the associated client name (#889)', async ({ page }) => {
     // Seed a fresh person + budget to ensure option exists
     const person = await createPerson(page)
     const personId = person.data!.personId
@@ -97,7 +97,7 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
     await authenticateAsAdmin(page)
   })
 
-  test('golden path — gestión en tabla → bitácora 1 entrada → cambiar estado → bitácora 2 entradas', async ({ page }) => {
+  test('golden path — management in the table → history has 1 entry → change status → history has 2 entries', async ({ page }) => {
     // Step 1: seed — createPerson → createBudget → seedManagementWithWorkflow
     const { idManagement, number, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
 
@@ -149,12 +149,12 @@ test.describe('Full workflow: CU02 → CU13 → CU83 → CU16', () => {
 // CU13 - Ver history/bitácora
 // ──────────────────────────────────────────────
 
-test.describe('CU13 - Ver historial/bitácora de una gestión', () => {
+test.describe("CU13 - View a management's history", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU13-GW01: gestión recién creada muestra exactamente 1 entrada en bitácora con el estado inicial', async ({ page }) => {
+  test('CU13-GW01: a newly created management shows exactly 1 history entry with the initial status', async ({ page }) => {
     const { idManagement, number, estadoInicial } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
@@ -173,7 +173,7 @@ test.describe('CU13 - Ver historial/bitácora de una gestión', () => {
     await expect(items.first()).toContainText(estadoInicial)
   })
 
-  test('CU13-GW02: tras cambiar estado la bitácora acumula una segunda entrada', async ({ page }) => {
+  test('CU13-GW02: after a status change the history gains a second entry', async ({ page }) => {
     const { idManagement, number, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
@@ -207,12 +207,12 @@ test.describe('CU13 - Ver historial/bitácora de una gestión', () => {
 // CU83 - Cambiar estado (workflow)
 // ──────────────────────────────────────────────
 
-test.describe('CU83 - Cambiar estado de una gestión', () => {
+test.describe("CU83 - Change a management's status", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU83-GW01: transición a destino válido actualiza el estado visible en la tabla', async ({ page }) => {
+  test('CU83-GW01: a transition to a valid destination updates the status shown in the table', async ({ page }) => {
     const { idManagement, number, estadoFinal } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
@@ -233,7 +233,7 @@ test.describe('CU83 - Cambiar estado de una gestión', () => {
     await expect(row).toContainText(estadoFinal)
   })
 
-  test('CU83-GW02: el picker sólo ofrece destinos válidos del workflow (no el estado actual)', async ({ page }) => {
+  test('CU83-GW02: the picker offers only valid workflow destinations (not the current status)', async ({ page }) => {
     const { idManagement, estadoInicial, estadoFinal } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
@@ -252,12 +252,12 @@ test.describe('CU83 - Cambiar estado de una gestión', () => {
 // CU16 - Archivar Gestión
 // ──────────────────────────────────────────────
 
-test.describe('CU16 - Archivar Gestión', () => {
+test.describe('CU16 - Archive a management', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU16-GW01 edge path: archivar gestión cuyo estado no tiene transición a "Archivada" muestra error', async ({ page }) => {
+  test('CU16-GW01 edge path: archiving a management whose status has no transition to "Archivada" shows an error', async ({ page }) => {
     // The seeded workflow has INITIAL→FINAL with no path to "Archivada",
     // so the archive action must be rejected by the backend.
     const { idManagement, number } = await seedFullWorkflow(page)
@@ -284,12 +284,12 @@ test.describe('CU16 - Archivar Gestión', () => {
 // CU19 - Buscar managements por client
 // ──────────────────────────────────────────────
 
-test.describe('CU19 - Buscar gestiones por cliente', () => {
+test.describe('CU19 - Search managements by client', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU19-GW01: seleccionar cliente en el filtro dispara GET /managements/client/{id}', async ({ page }) => {
+  test('CU19-GW01: choosing a client in the filter calls GET /managements/client/{id}', async ({ page }) => {
     // Ensure at least one gestión with a real person/client exists
     await seedFullWorkflow(page)
 
@@ -314,7 +314,7 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
     await searchRequest
   })
 
-  test('CU19-GW02: gestión seeded con cliente específico aparece al filtrar por ese cliente', async ({ page }) => {
+  test('CU19-GW02: a management seeded with a specific client appears when filtering by that client', async ({ page }) => {
     const { personId, number, personaApellido } = await seedFullWorkflow(page)
 
     await page.goto('/dashboard/managements')
@@ -353,7 +353,7 @@ test.describe('CU19 - Buscar gestiones por cliente', () => {
 // Responsive viewports — vista de managements
 // ──────────────────────────────────────────────
 
-test.describe('Responsive viewports — vista de gestiones', () => {
+test.describe('Responsive viewports — managements view', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
@@ -363,7 +363,7 @@ test.describe('Responsive viewports — vista de gestiones', () => {
     { width: 768, height: 1024, label: '768px (tablet)' },
     { width: 1024, height: 768, label: '1024px (desktop)' },
   ]) {
-    test(`gestiones table is visible and usable at ${viewport.label}`, async ({ page }) => {
+    test(`the managements table is visible and usable at ${viewport.label}`, async ({ page }) => {
       const { idManagement, number, estadoInicial } = await seedFullWorkflow(page)
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height })

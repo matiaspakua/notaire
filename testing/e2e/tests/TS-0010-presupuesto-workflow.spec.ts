@@ -39,7 +39,7 @@ async function seedBudget(
 // ─────────────────────────────────────────────────────────────
 // CU01 – Preparar Presupuesto (golden path via UI)
 // ─────────────────────────────────────────────────────────────
-test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
+test.describe("CU01 - Prepare a budget (golden path)", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
-  test("TS-0010-GW01: crear persona via API y presupuesto via UI — aparece en la lista con nombre del cliente", async ({
+  test("TS-0010-GW01: create a person via API and a budget via UI — it appears in the list with the client name", async ({
     page,
   }) => {
     // GIVEN: person created via API helper (CU01 pre-condition)
@@ -99,7 +99,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
     expect(await rows.count()).toBeGreaterThan(1);
   });
 
-  test("TS-0010-GW02: lista de presupuestos muestra el nombre del cliente en cada fila", async ({
+  test("TS-0010-GW02: the budget list shows the client name on each row", async ({
     page,
   }) => {
     // GIVEN: budget sembrado via API
@@ -128,7 +128,7 @@ test.describe("CU01 - Preparar Presupuesto (golden path)", () => {
 // ─────────────────────────────────────────────────────────────
 // CU47 – Consultar Payment / Saldo
 // ─────────────────────────────────────────────────────────────
-test.describe("CU47 - Consultar Payment / Saldo", () => {
+test.describe("CU47 - Consult payment / outstanding balance", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -137,7 +137,7 @@ test.describe("CU47 - Consultar Payment / Saldo", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
-  test("TS-0010-SD01 (#796): el resumen del presupuesto muestra el saldo pendiente", async ({
+  test("TS-0010-SD01 (#796): the budget summary shows the outstanding balance", async ({
     page,
   }) => {
     // GIVEN: budget con saldo conocido
@@ -160,7 +160,7 @@ test.describe("CU47 - Consultar Payment / Saldo", () => {
     await expect(dialog).toContainText("75.000");
   });
 
-  test("TS-0010-SD02 (#821): tras registrar un pago parcial vía API el resumen refleja el nuevo saldo", async ({
+  test("TS-0010-SD02 (#821): after recording a partial payment via API the summary shows the new balance", async ({
     page,
   }) => {
     // GIVEN: budget con amount 80000 y sin pagos
@@ -190,7 +190,7 @@ test.describe("CU47 - Consultar Payment / Saldo", () => {
 // ─────────────────────────────────────────────────────────────
 // CU45 – Modificar Presupuesto
 // ─────────────────────────────────────────────────────────────
-test.describe("CU45 - Modificar Presupuesto", () => {
+test.describe("CU45 - Modify a budget", () => {
   let steps: GherkinSteps;
 
   test.beforeEach(async ({ page }) => {
@@ -199,7 +199,7 @@ test.describe("CU45 - Modificar Presupuesto", () => {
     await steps.givenUserIsOnPage("/dashboard/budgets");
   });
 
-  test("TS-0010-MOD01: editar un presupuesto existente actualiza los datos en la lista", async ({
+  test("TS-0010-MOD01: editing an existing budget updates the list", async ({
     page,
   }) => {
     // GIVEN: budget created via API
@@ -247,7 +247,7 @@ for (const viewport of [
   { width: 768, height: 1024, label: "768px (tablet)" },
   { width: 1024, height: 768, label: "1024px (desktop)" },
 ]) {
-  test(`TS-0010-VP: módulo de presupuestos es usable a ${viewport.label}`, async ({ page }) => {
+  test(`TS-0010-VP: the budgets module is usable at ${viewport.label}`, async ({ page }) => {
     const steps = new GherkinSteps(page);
     await authenticateAsAdmin(page);
 

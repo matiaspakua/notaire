@@ -40,7 +40,7 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
     await expect(table.getByRole("button", { name: /eliminar|delete/i }).first()).toBeVisible();
   });
 
-  test("personas row actions are reachable by role name", async ({ page }) => {
+  test("people row actions are reachable by role name", async ({ page }) => {
     const created = await createPerson(page);
     expect(created.ok, created.error ?? "createPerson failed").toBe(true);
 
@@ -51,7 +51,7 @@ test.describe("Icon-only buttons expose accessible names (#1057)", () => {
     await expect(table.getByRole("button", { name: /eliminar|delete/i }).first()).toBeVisible();
   });
 
-  test("presupuestos resumen action is reachable by role name", async ({ page }) => {
+  test("the budget summary action is reachable by role name", async ({ page }) => {
     const person = await createPerson(page);
     expect(person.ok, person.error ?? "createPerson failed").toBe(true);
     const budget = await createBudget(page, person.data!.personId);

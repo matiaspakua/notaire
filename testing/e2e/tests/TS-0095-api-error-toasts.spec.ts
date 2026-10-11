@@ -18,7 +18,7 @@ async function loginAsAdmin(page: Page) {
 }
 
 test.describe("TS-0095 - API error toasts (CU15 / CU20 / #1054)", () => {
-  test("pago mutation shows server message in toast (not only generic fallback)", async ({
+  test("a payment mutation shows the server message in the toast (not only the generic fallback)", async ({
     page,
   }) => {
     await loginAsAdmin(page);

@@ -13,7 +13,7 @@ async function seedManagement(page: Page) {
   return seedManagementWithWorkflow(page, budget.data!.idBudget);
 }
 
-test.describe("CU83 - Cambiar estado de una gestión", () => {
+test.describe("CU83 - Change a management's status", () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page);
   });
@@ -58,7 +58,7 @@ test.describe("CU83 - Cambiar estado de una gestión", () => {
     { width: 768, height: 1024, label: "768px (tablet)" },
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
-    test(`cambiar estado action is usable at ${viewport.label}`, async ({ page }) => {
+    test(`the change-status action is usable at ${viewport.label}`, async ({ page }) => {
       const { idManagement, number, estadoFinal } = await seedManagement(page);
 
       await page.setViewportSize({ width: viewport.width, height: viewport.height });

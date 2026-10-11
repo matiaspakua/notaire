@@ -29,7 +29,7 @@ test.describe("Breadcrumb navigation — admin module", () => {
     await expect(breadcrumb).toContainText("Usuarios");
   });
 
-  test("breadcrumb 'Administración' segment is a link to admin root", async ({ page }) => {
+  test("the breadcrumb 'Administration' segment is a link to the admin root", async ({ page }) => {
     await page.goto("/dashboard/administration/users");
     const adminLink = page.getByTestId("breadcrumb").getByRole("link", { name: "Administración" });
     await expect(adminLink).toBeVisible();

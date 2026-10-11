@@ -8,7 +8,7 @@ async function loginAsAdmin(page: import("@playwright/test").Page) {
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 }
 
-test.describe("CU431 — Gestión de Roles y Permisos", () => {
+test.describe("CU431 — Role and permission management", () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
   });

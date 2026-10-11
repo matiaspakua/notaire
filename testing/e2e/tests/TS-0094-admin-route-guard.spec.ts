@@ -97,7 +97,7 @@ test.describe("TS-0094 - Admin route guard (CU78 / #1052)", () => {
     }
   });
 
-  test("admin can still open administración usuarios", async ({ page }) => {
+  test("an admin can still open user administration", async ({ page }) => {
     await loginAs(page, "admin", "admin");
     await page.goto("/dashboard/administration/users");
     await expect(page).toHaveURL(/\/dashboard\/administration\/users/);

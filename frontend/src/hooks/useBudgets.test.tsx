@@ -29,7 +29,7 @@ function createWrapper() {
 describe("useCreateBudget (CU01, CU39)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("creates only the presupuesto when no tipo de trámite is given", async () => {
+  it("creates only the budget when no procedure type is given", async () => {
     vi.mocked(apiPost).mockResolvedValue({ idBudget: 7 });
 
     const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
@@ -41,7 +41,7 @@ describe("useCreateBudget (CU01, CU39)", () => {
     expect(result.current.data).toMatchObject({ budget: { idBudget: 7 }, itemsLoaded: false });
   });
 
-  it("loads the template items into the new presupuesto when a tipo de trámite is given", async () => {
+  it("loads the template items into the new budget when a procedure type is given", async () => {
     vi.mocked(apiPost).mockResolvedValueOnce({ idBudget: 7 }).mockResolvedValueOnce([{ idItem: 1 }]);
 
     const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });
@@ -52,7 +52,7 @@ describe("useCreateBudget (CU01, CU39)", () => {
     expect(result.current.data).toMatchObject({ itemsLoaded: true });
   });
 
-  it("keeps the created presupuesto and reports no items when the template step fails", async () => {
+  it("keeps the created budget and reports no items when the template step fails", async () => {
     vi.mocked(apiPost).mockResolvedValueOnce({ idBudget: 7 }).mockRejectedValueOnce(new Error("no template"));
 
     const { result } = renderHook(() => useCreateBudget(), { wrapper: createWrapper() });

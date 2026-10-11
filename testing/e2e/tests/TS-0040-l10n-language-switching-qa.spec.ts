@@ -154,7 +154,7 @@ test.describe("l10n — Admin pages translations", () => {
 
 // #1354 — no hardcoded Spanish left in the English UI (breadcrumb, headers, buttons)
 test.describe("l10n — hardcoded strings (#1354)", () => {
-  test("pagos: English breadcrumb and column headers", async ({ page }) => {
+  test("payments: English breadcrumb and column headers", async ({ page }) => {
     await setupAuthWithLocale(page, "en", "/dashboard/payments");
     const crumb = page.getByRole("navigation", { name: "Breadcrumb" });
     await expect(crumb).toContainText("Home", { timeout: 10000 });

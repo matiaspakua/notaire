@@ -83,7 +83,7 @@ test.describe("Icon rendering — Dashboard modules grid", () => {
   }
 });
 
-test.describe("Icon rendering — Administración hub", () => {
+test.describe("Icon rendering — Administration hub", () => {
   test.beforeEach(async ({ page }) => {
     await authSetup(page);
     await page.goto("/dashboard/administration");

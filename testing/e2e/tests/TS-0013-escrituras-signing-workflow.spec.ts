@@ -74,7 +74,7 @@ test.describe('CU05 - Preparar Deed', () => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU05-GW01: golden path — modal opens with número, fecha and folio selector', async ({ page }) => {
+  test('CU05-GW01: golden path — the modal opens with number, date, and folio selector', async ({ page }) => {
     // Seed: ensure at least one folio is available for the picker
     await seedNewFolio(page)
 
@@ -98,7 +98,7 @@ test.describe('CU05 - Preparar Deed', () => {
     await expect(dialog.getByTestId('select-folio-deed')).toBeVisible()
   })
 
-  test('CU05-GW02: golden path — fill form with folio → escritura appears in table as Sin Firmar', async ({ page }) => {
+  test('CU05-GW02: golden path — filling the form with a folio → the deed appears in the table as Sin Firmar', async ({ page }) => {
     const idFolio = await seedNewFolio(page)
 
     await page.goto('/dashboard/deeds')
@@ -153,7 +153,7 @@ test.describe('CU06 - Firmar Deed', () => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU06-GW01: golden path — escritura Sin Firmar con folio → firmar → estado Firmada', async ({ page }) => {
+  test('CU06-GW01: golden path — deed Sin Firmar with a folio → sign → status Firmada', async ({ page }) => {
     // Seed: folio + deed con folio asignado
     const idFolio = await seedNewFolio(page)
     const { idDeed, number } = await seedDeedWithFolio(page, idFolio)
@@ -178,7 +178,7 @@ test.describe('CU06 - Firmar Deed', () => {
     await expect(row).toContainText(/Firmada/i, { timeout: 10000 })
   })
 
-  test('CU06-EDGE01: escritura Sin Firmar SIN folio → botón firmar deshabilitado o muestra error', async ({ page }) => {
+  test('CU06-EDGE01: deed Sin Firmar without a folio → the sign button is disabled or shows an error', async ({ page }) => {
     // Seed: deed sin folio asignado
     const { idDeed, number } = await seedDeedWithoutFolio(page)
 
@@ -225,12 +225,12 @@ test.describe('CU06 - Firmar Deed', () => {
 // CU63 — Buscar Deed
 // ──────────────────────────────────────────────
 
-test.describe('CU63 - Buscar Deed', () => {
+test.describe('CU63 - Search deeds', () => {
   test.beforeEach(async ({ page }) => {
     await authenticateAsAdmin(page)
   })
 
-  test('CU63-GW01: buscar por número → GET /deeds/search es invocado', async ({ page }) => {
+  test('CU63-GW01: searching by number → GET /deeds/search is called', async ({ page }) => {
     await page.goto('/dashboard/deeds')
     await page.waitForLoadState('domcontentloaded')
 
@@ -247,7 +247,7 @@ test.describe('CU63 - Buscar Deed', () => {
     await searchRequestPromise
   })
 
-  test('CU63-GW02: buscar escritura existente → resultado aparece en tabla', async ({ page }) => {
+  test('CU63-GW02: searching for an existing deed → the result appears in the table', async ({ page }) => {
     // Seed a known deed via API so the search has something to find
     const id = uniqueId()
     const number = `${id}`
