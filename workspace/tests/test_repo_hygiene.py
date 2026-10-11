@@ -8,7 +8,7 @@ Asserts:
 - testing/e2e-swing/requirements.txt is not ignored by git
 - .serena/ is ignored and not tracked
 - CODEOWNERS has no frontend-swing path and still covers live modules
-- Manual de UserAccount PDF is not an ordinary ~13 MB git blob
+- Manual de Usuario PDF is not an ordinary ~13 MB git blob
 - ADR-022 exists and records the filter-repo decision
 
 Plain stdlib unittest, consistent with security/tests/test_dependabot_hygiene.py.
@@ -36,12 +36,12 @@ USER_MANUAL_DIR = (
     / "docs"
     / "100-business"
     / "105-manuals"
-    / "C_Manual de UserAccount"
+    / "C_Manual de Usuario"
 )
-USER_MANUAL_PDF = USER_MANUAL_DIR / "Manual de UserAccount Notaire.doc.pdf"
+USER_MANUAL_PDF = USER_MANUAL_DIR / "Manual de Usuario Notaire.doc.pdf"
 USER_MANUAL_PDF_REL = (
-    "docs/100-business/105-manuals/C_Manual de UserAccount/"
-    "Manual de UserAccount Notaire.doc.pdf"
+    "docs/100-business/105-manuals/C_Manual de Usuario/"
+    "Manual de Usuario Notaire.doc.pdf"
 )
 
 # Unbounded top-level rule like `*.txt` (optionally with trailing comment).
@@ -119,7 +119,7 @@ def _pdf_fetch_docs_present() -> bool:
         REPO_ROOT / "docs" / "tools" / "fetch-user-manual.sh",
     ]
     keywords = re.compile(
-        r"(gh\s+release|GitHub\s+Release|git\s+lfs|Manual de UserAccount.*\.pdf|"
+        r"(gh\s+release|GitHub\s+Release|git\s+lfs|Manual de Usuario.*\.pdf|"
         r"fetch-user-manual|docs-manuals)",
         re.IGNORECASE | re.DOTALL,
     )

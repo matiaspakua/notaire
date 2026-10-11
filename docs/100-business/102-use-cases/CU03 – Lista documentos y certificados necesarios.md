@@ -11,7 +11,7 @@
 | **Tipo** | Primario |
 | **Referencias Cruzadas** | RF #3 (Gestionar Trámites), RF #14 (Administrar certificados y documentos), RF #15 (Determinar los documentos necesarios para cada trámite), RF #16 (Generar solicitudes de certificados y documentos), RF #17 (Imprimir solicitudes) |
 | **GitHub ID** | #156 |
-| **Implementación** | Pantalla `/dashboard/documentos-necesarios` (Issue #860) — selector de trámite, tabla de documentos (nombre, vence, días de validez, quién entrega) y acción de impresión. Backend preexistente: `GET /api/v1/plantilla-tramite/tipo-tramite/{idTipoTramite}`. |
+| **Implementación** | Pantalla `/dashboard/required-documents` (Issue #860) — selector de trámite, tabla de documentos (nombre, vence, días de validez, quién entrega) y acción de impresión. Backend: `GET /api/v1/procedure-templates/procedure-types/{idProcedureType}`. Issue #773 — the same `ProcedureTemplate` catalog also feeds confirm-time seeding on complete-case (pending `SubmittedDocument` rows); the on-demand CU03 screen remains. |
 
 ## Curso de Eventos
 

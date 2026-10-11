@@ -72,7 +72,7 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
         stored = new SubmittedDocument();
         stored.setDocumentType(expiringType);
         stored.setName("Deed original");
-        stored.setNotes("nota previa");
+        stored.setNotes("previous note");
         stored.setDelivered(false);
         stored.setPrepared(true);
         stored.setReleased(true);
@@ -104,7 +104,7 @@ class SubmittedDocumentPartialUpdateIntegrationTest {
         SubmittedDocument after = reload();
         assertThat(after.getDelivered()).isTrue();
         assertThat(after.getName()).isEqualTo("Deed original");
-        assertThat(after.getNotes()).isEqualTo("nota previa");
+        assertThat(after.getNotes()).isEqualTo("previous note");
         assertThat(after.getFkIdProcedure().getIdProcedure()).isEqualTo(procedure.getIdProcedure());
         assertThat(after.getPrepared()).isTrue();
         assertThat(after.getReleased()).isTrue();

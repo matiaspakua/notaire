@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * CU08 - Issue copy impresa of testimony verified (issue #832).
+ * CU08 - Issue the printed copy of a verified testimony (issue #832).
  */
 @RequirementCoverage({"CU08"})
 @DisplayName("ReportController#generateTestimonyCopyReport — CU08 integration tests")

@@ -75,7 +75,7 @@ When business logic is in a `@Service` class, the transaction should be on the s
 ```java
 // Service with its own transaction — controller needs none
 @Service
-public class EscrituraService {
+public class DeedService {
     @Transactional(readOnly = true)
     public Page<Deed> findAllPaged(Pageable pageable) {
         return repository.findAll(pageable);
@@ -88,7 +88,7 @@ public class EscrituraService {
 When a new `@OneToMany(fetch = FetchType.LAZY)` is added to an entity whose `getDto()` iterates that collection, the controller or service calling `.getDto()` must be transactional. Check with:
 
 ```bash
-grep -rn "FetchType.LAZY" backend-api/src/main/java/com/licensis/notaire/negocio/
+grep -rn "FetchType.LAZY" backend-api/src/main/java/com/licensis/notaire/business/
 ```
 
 ## Verification

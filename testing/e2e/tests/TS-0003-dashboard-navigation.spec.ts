@@ -4,9 +4,9 @@
  */
 import { type Page, test, expect } from "@playwright/test";
 
-async function loginAs(page: Page, role: "admin" | "empleado" = "admin") {
+async function loginAs(page: Page, role: "admin" | "employee" = "admin") {
   await page.goto("/login");
-  await page.getByTestId("input-username").fill(role === "admin" ? "admin" : "empleado");
+  await page.getByTestId("input-username").fill(role === "admin" ? "admin" : "employee");
   await page.getByTestId("input-password").fill(role === "admin" ? "admin" : "admin");
   await page.getByTestId("btn-sign-in").click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });

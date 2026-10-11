@@ -560,7 +560,7 @@ Master catalog of protocol sheet types (V3/V4). Stored names such as `Protocolo 
 |---|---|---|---|---|---|---|---|
 | `id` | SERIAL (INT) | Yes | No | Yes | Auto | — | Unique id of the folio type |
 | `version` | INTEGER | No | No | Yes | — | — | Optimistic lock |
-| `name` | TEXT | No | No | Yes | — | — | Name. Stored values `Protocolo Principal`, `Protocolo Auxiliar`, and `Testimony` stay. |
+| `name` | TEXT | No | No | Yes | — | — | Name. Stored values `Protocolo Principal`, `Protocolo Auxiliar`, and `Testimonio` stay. |
 | `notes` | TEXT | No | No | No | NULL | — | Folio-type notes (V3/V4) |
 | `enabled` | BOOLEAN | No | No | Yes | true | — | `true` when it can be used for folio batches (V3/V4) |
 | `is_auxiliary` | BOOLEAN | No | No | Yes | false | — | `true` when the type is an auxiliary sheet |

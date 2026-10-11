@@ -1,5 +1,5 @@
 info:
-  name: Report - consultar deuda documentos PDF
+  name: Report - document debt PDF
   type: http
   seq: 13
   description: |-

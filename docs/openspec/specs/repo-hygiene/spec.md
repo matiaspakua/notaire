@@ -44,7 +44,7 @@ and MUST NOT reference the removed `frontend-swing` module.
 
 ### Requirement: Large user-manual PDF is not an ordinary git blob
 
-The 13 MB `Manual de UserAccount Notaire.doc.pdf` MUST NOT remain as a normal
+The 13 MB `Manual de Usuario Notaire.doc.pdf` MUST NOT remain as a normal
 git-tracked blob. It MUST be relocated to Git LFS and/or published as a GitHub
 Release (or equivalent) asset, with permanent docs explaining how to obtain it.
 

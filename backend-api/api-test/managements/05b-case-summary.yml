@@ -22,3 +22,11 @@ runtime:
             expect(res.getBody().managementId).to.equal(parseInt(bru.getVar('mgmt_id'), 10));
             expect(res.getBody().deeds).to.be.an('array').that.is.empty;
           });
+          test("Documents are an array; seeded required documents (#773) are pending", function () {
+            const docs = res.getBody().documents;
+            expect(docs).to.be.an('array');
+            docs.forEach(function (d) {
+              expect(d.delivered).to.equal(false);
+              expect(d.reentered).to.equal(false);
+            });
+          });

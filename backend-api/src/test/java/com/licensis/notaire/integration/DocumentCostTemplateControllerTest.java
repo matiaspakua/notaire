@@ -72,9 +72,9 @@ class DocumentCostTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("Should return costos by type of procedure")
-    void shouldReturnCostosByTypeProcedure() throws Exception {
-        DocumentType documentType = createDocumentType("Deed previa");
+    @DisplayName("Should return costs by procedure type")
+    void shouldReturnCostsByProcedureType() throws Exception {
+        DocumentType documentType = createDocumentType("Previous deed");
 
         mockMvc.perform(post("/api/v1/document-cost-templates")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -88,8 +88,8 @@ class DocumentCostTemplateControllerTest {
     }
 
     @Test
-    @DisplayName("Should return empty list when no costos defined")
-    void shouldReturnEmptyListWhenNoCostosDefined() throws Exception {
+    @DisplayName("Should return an empty list when no costs are defined")
+    void shouldReturnEmptyListWhenNoCostsDefined() throws Exception {
         mockMvc.perform(get("/api/v1/document-cost-templates/procedure-types/" + procedureType.getIdProcedureType()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));

@@ -260,7 +260,7 @@ class PaymentPersistenceAdapterTest {
 
     @Test
     @DisplayName("Should report status PAID when the pending balance is zero")
-    void shouldCalculateStatusPaymentSaldado() {
+    void shouldCalculateStatusPaymentPaid() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("5000"));
 
@@ -332,7 +332,7 @@ class PaymentPersistenceAdapterTest {
 
     @Test
     @DisplayName("Should edit the payment")
-    void shouldEditarPayment() {
+    void shouldEditPayment() {
         Payment editedPayment = new Payment();
         editedPayment.setIdPayment(1);
         editedPayment.setAmount(new java.math.BigDecimal("2000"));

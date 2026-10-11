@@ -22,14 +22,14 @@ INSERT INTO management_statuses (version, name, notes) VALUES (0, 'Iniciada', 'I
 -- Reference Data: Procedure Types
 -- Entity columns: version, id (auto), name, notes, enabled, is_archived, is_registered, associates_properties
 INSERT INTO procedure_types (version, name, notes, enabled, is_archived, is_registered, associates_properties) VALUES
-(0, 'Compraventa', 'Procedure de compraventa', true, true, true, true);
+(0, 'Compraventa', 'Compraventa procedure', true, true, true, true);
 
 -- Reference Data: Concepts
 -- Entity columns: version, id (auto), name, amount, percentage, enabled, fixed_concept
 INSERT INTO concepts (version, name, amount, percentage, enabled, fixed_concept) VALUES
-(0, 'Honorario base', 10000, 0, true, true);
+(0, 'Base fee', 10000, 0, true, true);
 
--- Seed Data: Person (Escribano) — required by Gestion, Folio, UserAccount FKs
+-- Seed Data: Person (Escribano) — required by management, Folio, UserAccount FKs
 -- Entity columns: version, id (auto), first_name, last_name, identification_number,
 --   tax_id, sex, marital_status, occupation, address, phone, email,
 --   notary_registration_number, is_client, fk_id_identification_type
@@ -43,7 +43,7 @@ INSERT INTO people (
     1001, false, 1
 );
 
--- Seed Data: User (Administrador) — required by login test
+-- Seed Data: User (administrator) — required by login test
 -- Entity columns: version, id (auto), username, password, status, user_type, fk_id_person
 -- MD5("admin") = 21232f297a57a5a743894a0e4a801fc3
 INSERT INTO users (version, username, password, user_type, status, fk_id_person) VALUES
@@ -53,7 +53,7 @@ INSERT INTO users (version, username, password, user_type, status, fk_id_person)
 -- Entity columns: version, id (auto), number, budget_date, heading, notes, status, property_amount
 -- property_amount must be large enough to cover the payment amounts asserted against it in integration tests.
 INSERT INTO budgets (version, number, budget_date, heading, status, property_amount) VALUES
-(0, 20250001, '2025-01-15', 'Presupuesto de prueba', 'PENDIENTE', 50000.00);
+(0, 20250001, '2025-01-15', 'Test budget', 'PENDIENTE', 50000.00);
 
 -- Procedure folder numbers come from this sequence (Flyway V38); Hibernate's
 -- ddl-auto=create only builds tables, so H2 needs it declared here (#1038).

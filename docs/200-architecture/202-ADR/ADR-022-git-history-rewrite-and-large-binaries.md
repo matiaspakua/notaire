@@ -16,7 +16,7 @@ The 2026-09 production-readiness audit (#1050, CU76) found:
 |---------|--------|
 | Global `*.txt` in `.gitignore` | Blocked legitimate assets such as `testing/e2e-swing/requirements.txt` |
 | `.serena/` | Local AI tooling state was tracked |
-| User-manual PDF | `Manual de UserAccount Notaire.doc.pdf` ≈ 13 MB as a normal blob |
+| User-manual PDF | `Manual de Usuario Notaire.doc.pdf` ≈ 13 MB as a normal blob |
 | Pack size | `git count-objects` ≈ **120 MiB** `size-pack` |
 | Historical heavy blobs | Related #585 / #682 — past `.doc` (~81 MB), `.eap` models, `notaire.jar`, committed `scripts/doc2md/venv`, etc. |
 
@@ -28,10 +28,10 @@ history are architectural choices that affect every clone and open PR.
 
 ### 1. User-manual PDF → GitHub Release (not LFS)
 
-- Remove `docs/100-business/105-manuals/C_Manual de UserAccount/Manual de UserAccount Notaire.doc.pdf`
+- Remove `docs/100-business/105-manuals/C_Manual de Usuario/Manual de Usuario Notaire.doc.pdf`
   from the git index.
 - Publish it as release tag **`docs-manuals`**, asset
-  **`Manual-de-UserAccount-Notaire.doc.pdf`**.
+  **`Manual-de-Usuario-Notaire.doc.pdf`**.
 - Keep a markdown stub + `docs/tools/fetch-user-manual.sh` so operators can
   download the binary without bloating clones.
 - Ignore the downloaded PDF path locally so it is not re-committed.

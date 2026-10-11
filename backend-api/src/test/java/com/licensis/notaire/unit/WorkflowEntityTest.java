@@ -78,7 +78,7 @@ class WorkflowEntityTest {
         void shouldCreateInitialNodeLinkedToWorkflowAndStatus() {
             WorkflowDefinition wf = new WorkflowDefinition(1);
             ManagementStatus status = new ManagementStatus(10);
-            status.setName("Iniciado");
+            status.setName("Started");
 
             WorkflowNode node = new WorkflowNode();
             node.setWorkflowDefinition(wf);
@@ -88,7 +88,7 @@ class WorkflowEntityTest {
             node.setPositionY(200.0f);
 
             assertThat(node.getWorkflowDefinition()).isEqualTo(wf);
-            assertThat(node.getManagementStatus().getName()).isEqualTo("Iniciado");
+            assertThat(node.getManagementStatus().getName()).isEqualTo("Started");
             assertThat(node.getType()).isEqualTo(WorkflowNodeType.INITIAL);
             assertThat(node.getPositionX()).isEqualTo(100.0f);
             assertThat(node.getPositionY()).isEqualTo(200.0f);
@@ -138,21 +138,21 @@ class WorkflowEntityTest {
             transition.setWorkflowDefinition(wf);
             transition.setOriginNode(origin);
             transition.setDestinationNode(destination);
-            transition.setDescription("Avance de status");
+            transition.setDescription("Status advance");
 
             assertThat(transition.getWorkflowDefinition()).isEqualTo(wf);
             assertThat(transition.getOriginNode()).isEqualTo(origin);
             assertThat(transition.getDestinationNode()).isEqualTo(destination);
-            assertThat(transition.getDescription()).isEqualTo("Avance de status");
+            assertThat(transition.getDescription()).isEqualTo("Status advance");
         }
 
         @Test
         @DisplayName("Should allow optional condition on transition")
         void shouldAllowOptionalConditionOnTransition() {
             WorkflowTransition transition = new WorkflowTransition();
-            transition.setCondition("status.documentosCompletos == true");
+            transition.setCondition("status.documentsComplete == true");
 
-            assertThat(transition.getCondition()).isEqualTo("status.documentosCompletos == true");
+            assertThat(transition.getCondition()).isEqualTo("status.documentsComplete == true");
         }
 
         @Test

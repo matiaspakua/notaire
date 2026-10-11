@@ -353,7 +353,7 @@ class PaymentUseCaseTest {
 
         @Test
         @DisplayName("Should update paymentMethod when editing a payment")
-        void shouldUpdatePaymentMethodWhenEditarPayment() {
+        void shouldUpdatePaymentMethodWhenEditingPayment() {
             Payment existing = new Payment();
             existing.setIdPayment(1);
             existing.setAmount(new java.math.BigDecimal("1000"));

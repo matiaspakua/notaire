@@ -15,10 +15,10 @@ import { test, expect, type Page } from "@playwright/test";
 import { createUser } from "./setup/api-helpers";
 import { authenticateAsAdmin } from "./setup/auth";
 
-async function loginAs(page: Page, name: string, contrasenia: string) {
+async function loginAs(page: Page, name: string, password: string) {
   await page.goto("/login");
   await page.getByTestId("input-username").fill(name);
-  await page.getByTestId("input-password").fill(contrasenia);
+  await page.getByTestId("input-password").fill(password);
   await page.getByTestId("btn-sign-in").click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 }

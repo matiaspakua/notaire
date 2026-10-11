@@ -295,9 +295,9 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
         int rowCount = 0;
         try
         {
-            PersonProcedure encontrado = (PersonProcedure) this.findClientProcedures(record.getPersonProcedurePK().getFkIdClientPerson(), record.getPersonProcedurePK().getFkIdProcedure()).get(0);
+            PersonProcedure found = (PersonProcedure) this.findClientProcedures(record.getPersonProcedurePK().getFkIdClientPerson(), record.getPersonProcedurePK().getFkIdProcedure()).get(0);
 
-            if (encontrado != null)
+            if (found != null)
             {
 
                 em.getTransaction().begin();

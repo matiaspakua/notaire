@@ -112,7 +112,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should still create a Budget when the client association is omitted")
     void shouldCreateWithoutPersonWhenOmitted() throws Exception {
         String body = """
-                {"number": 883003, "date": "2026-01-01", "heading": "Budget CU01 pg opcional",
+                {"number": 883003, "date": "2026-01-01", "heading": "Budget CU01 pg optional",
                  "status": "BORRADOR"}
                 """;
 

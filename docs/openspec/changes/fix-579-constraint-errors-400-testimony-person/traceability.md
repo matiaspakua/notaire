@@ -11,7 +11,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Link | Reference | Status |
 |------|-----------|--------|
 | Issue | #579 | open → in progress |
-| Use Case | CU07 – Testimony; CU08 – Movimientos de testimonio; CU06 – Personas | exists |
+| Use Case | CU07 – Testimonio; CU08 – Movimientos de testimonio; CU06 – Personas | exists |
 | Specification | `docs/openspec/changes/fix-579-constraint-errors-400-testimony-person/` | Gate 1 draft |
 | Branch | `fix/579_constraint_errors_400_testimony_person` | stacked on #1370 |
 | Tasks | `tasks.md` | in progress |

@@ -46,9 +46,9 @@ export default function (data) {
   };
 
   const endpoints = [
-    { name: 'gestiones', url: `${BASE_URL}/api/v1/managements` },
-    { name: 'presupuestos', url: `${BASE_URL}/api/v1/budgets` },
-    { name: 'tramites', url: `${BASE_URL}/api/v1/procedures` },
+    { name: 'managements', url: `${BASE_URL}/api/v1/managements` },
+    { name: 'budgets', url: `${BASE_URL}/api/v1/budgets` },
+    { name: 'procedures', url: `${BASE_URL}/api/v1/procedures` },
   ];
 
   for (const endpoint of endpoints) {

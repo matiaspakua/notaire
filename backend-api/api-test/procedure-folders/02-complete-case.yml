@@ -3,7 +3,8 @@ info:
   type: http
   seq: 3
   description: |-
-      Traceability: CU85
+      Complete-case also seeds pending required documents from the procedure template (#773).
+      Traceability: CU85; CU02; CU03
 http:
   method: POST
   url: "{{base_url}}/api/v1/managements/complete-case"

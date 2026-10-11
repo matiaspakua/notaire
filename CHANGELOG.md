@@ -64,6 +64,215 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Historical user-manual filename** (#1490, CU75): the PDF is
+  `Manual de Usuario Notaire.doc.pdf`, in `C_Manual de Usuario`, and the
+  release asset is `Manual-de-Usuario-Notaire.doc.pdf`. The fetch script,
+  ADR-022, the repo-hygiene spec, and the hygiene test use that path.
+  The TypeScript type `UserAccount` stays.
+- **Folio-type name in the data dictionary** (#1490, CU75): the stored
+  name is `Testimonio`, listed with `Protocolo Principal` and
+  `Protocolo Auxiliar`, in the dictionary and the ERD. English prose such
+  as `Testimony issued from a deed` stays. The filenames
+  `Diccionario de Datos.md` and `Modelo Relacional Escribania - Entidades.csv`
+  stay.
+- **Constraint-error use-case citation** (#1490, CU75): the record cites
+  `CU07 – Testimonio`. The titles `Movimientos de testimonio` and
+  `Personas` stay. The proposal heading `Objetivo` stays.
+- **Official use-case titles in open change records** (#1490, CU75):
+  the people-pagination record cites `CU54 – Modificar Persona`. The
+  testimony record cites `CU07 – Generar testimonio` and
+  `CU08 – Verificar Testimonio`. The delete-status record cites
+  `CU21 – Modificar Usuario`. Official titles `Dar Alta Cliente`,
+  `Buscar persona`, and `Procesar pago` stay, along with the original
+  wording `Gestionar historial de gestion`. Required headings
+  `Objetivo` and `Reglas de negocio` stay.
+- **English transaction-guide sample** (#1490, CU75): the sample service
+  is `DeedService`. The lazy-field search path is
+  `com/licensis/notaire/business/`. The return type `Page<Deed>` stays.
+- **English payment use-case titles in ADR-021** (#1490, CU75): the
+  hexagonal pilot cites `CU15 "Procesar pago"` and
+  `CU47 "Consultar pago"`. Class name `PaymentService` stays.
+- **English cleanup comments and role fixture** (#1490, CU75): the
+  cleanup comments name `people`, `deed_managements`, and `deeds`. The
+  role description is `Administrator`. The synthetic role name is
+  `OPERATOR`. The role field `modulos` and module key `administracion`
+  stay. `GuiConstants.ADMINISTRATOR` stays `Administrador`.
+- **English H2 seed phrases** (#1490, CU75): the concept is `Base fee`.
+  The budget heading is `Test budget`. The procedure-type note is
+  `Compraventa procedure`. Stored labels `De documento`, `Iniciada`,
+  `Inicio Gestion`, `Compraventa`, `PENDIENTE`, `Casado`, `Escribano`,
+  and `DNI` stay. Applied migration `V2` stays.
+- **English hook fixture phrases** (#1490, CU75): the budget-template
+  procedure type is `Base fee`. The folio type is `Protocol`. Save-error
+  describe titles name `presentPersonSaveError`. The fixture last name is
+  `Existing`. The audit query-key title names `audit`. Stored statuses
+  `En proceso` and `Compraventa` stay. Visible fallbacks
+  `Error al guardar la persona` and `Ver persona existente` stay. The
+  nav label `Protocolo` stays.
+- **English audit column keys** (#1490, CU75): the audit table keys are
+  `module` and `detail`. The procedure-template note is
+  `Observation test`. Message key `fields.modulo` stays. The role
+  field `modulos` and test id `check-modulo-` stay.
+- **English cost fixture phrases** (#1490, CU75): the document type is
+  `Previous deed`. Display names say `costs`. The printed-copy comment
+  names a verified testimony. Delivered-by `Cliente` stays. Stored
+  status `Firmada` stays. Operation id `getCostosByTypeProcedure` stays.
+- **English document note phrases** (#1490, CU75): the upcoming-expiration
+  note is `Request a copy`. The partial-update note is `previous note`.
+  Stored document name `Certificado de dominio` stays, along with heading
+  `Compraventa Pérez`, delivered-by `Cliente`, and the name `Deed original`.
+- **English load-test check names and dialog locals** (#1490, CU75): k6
+  check names are `managements`, `budgets`, and `procedures`. The
+  reentry dialog local is `detailDialog`. Item-form prose names stored
+  types `DESCUENTO` and `RECARGO`, and the surcharge case saves without
+  a reason. Paths `/api/v1/managements`, `/api/v1/budgets`, and
+  `/api/v1/procedures` stay. Login fields `name` and `password` stay.
+  Visible text `Certificado de Dominio`, `no tiene trámites`,
+  `documento reingresado`, `Descuento`, `Recargo`, and
+  `motivo es obligatorio` stay. The change slug
+  `descuentos-recargos-budget` stays.
+- **English catalog fixture phrases** (#1490, CU75): substitution notes
+  are `Sick leave`. The management heading fixture is `Heading E2E`.
+  The folio-type name is `Folio type E2E`. Playwright detail values are
+  `Activated from Playwright` and `Archived from Playwright`. The
+  movement note is `Withdrawn from the registry`. Procedure notes are
+  `Donation procedure`. Document-type names are `Power Expires`,
+  `Identity card Expires`, and `Contract Expires`. The delivered-by
+  fixture is `Property Registry`. The dialog local is `detailDialog`.
+  Visible headers `Carátula`, `Inicio`, `Trámites`, and
+  `Tipo de Trámite` stay, along with `días`, `creado`,
+  `movimiento registrado`, and `no hay documentos`. Stored labels
+  `Donacion`, `Escribano`, `Certificado de Dominio`, `Entidad Externa`,
+  `Cliente`, `Soltero`, `Masculino`, `Efectivo`, and `Nuevo` stay.
+  The dead field `detalle` and the keys `vence`, `diasVencimiento`,
+  and `quienEntrega` stay.
+- **English person and concept fixture labels** (#1490, CU75): stubbed
+  people are `Referenced` and `Mobile`. The company fixture is
+  `Company`. The concept value is `New Concept Test`. The
+  missing-person search is `ZZZZDoesNotExist999XY`. Visible phrases
+  `No se puede eliminar`, `Error al eliminar la persona`,
+  `Nuevo concepto`, and `no hay` stay. Stored types `DNI`, `CUIT`,
+  and `Pasaporte` stay, along with statuses `INICIADA` and
+  `EFECTIVO`. The form field key `nombre` stays.
+- **English workflow fixture phrases** (#1490, CU75): the transition
+  description is `Status advance`. The condition is
+  `status.documentsComplete == true`. The special-character query is
+  `Purchase/Sale (special) & more`. Person fixtures are `Create`,
+  `Promote`, `Edit`, `First`, `Second`, `NoId`, `Sample`, and
+  `Company`. Stored type `Compraventa` stays, along with person names
+  `Lucía`, `María`, and `Pedro`, and the visible toast match
+  `/suplente/i`.
+- **English case-summary state and status names** (#1490, CU75): the
+  managements page state is `caseSummaryId`. Identification-type
+  display names use `/identification-types`. Synthetic status names
+  are `StatusFree_InUse`, `StatusUsed_InUse`, `StatusEditBlocked`,
+  `StatusEditAllowed`, and `StatusDeleteBlocked`. Message keys under
+  `gestiones` stay. Stored statuses stay.
+- **English synthetic person labels** (#1490, CU75): the substitution
+  fixture first name is `Substituted IT`. Redirect last names are
+  `Notary`, `Substituted`, `Substitute`, `Client`, `NoSubstitution`,
+  and `ClientNorm`. Date locals are `today` and `tomorrow`. Edit
+  fixtures are `Absent1360` and `Substitute1360`. People-search
+  fixtures are `Client`, `IsClient`, `SearchLastName`, and
+  `SearchDni`. Payment balance locals are `lastName1` and
+  `lastName2`. The visible toast match `/suplente/i` stays, along
+  with stored role `Escribano` and person names `Lucía` and `María`.
+- **English substituted parameters** (#1490, CU75): substitution lookups
+  take `substituted` and `substitutedId`. The methods stay
+  `findByFkIdSubstituted`, `findByFkIdSubstitutedIdPerson`, and
+  `findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual`.
+  Message key `fields.suplente` stays. The visible toast match
+  `/suplente/i` stays.
+- **English started status and substitute parameters** (#1490, CU75):
+  the workflow fixture status is `Started`. History creation defaults to
+  `Started`. Substitution parameters are `idSubstitute` and
+  `idSubstituted`. The redirect fixture is `substitute`. The
+  identification-type fixture is `Identity card`. Stored types `DNI` and
+  `CUIT` stay. The visible toast match `/suplente/i` stays. Stored
+  management status `Iniciada` stays.
+- **English synthetic status names** (#1490, CU75): the query fixture
+  status is `STARTED`. The repository identification type is
+  `Professional`. The complete-case fixtures are `Status 1360` and
+  `Procedure 1360`. Stored budget status `PENDIENTE` stays, along with
+  identification type `DNI` and stored management status `Iniciada`.
+- **English testing practice names** (#1490, CU75): the master plan
+  section is `Identification`. Critical examples include `managements`.
+  Process practices are `Organization / knowledge base`, `Identification`,
+  `Traceability`, and `Pyramid / fail-fast`. The testing ADR cites
+  `pyramid / traceability`. The topology note names
+  `managements/budgets/documents/dashboard`. The merge-gate note says
+  `budget pickers`. The missing-cadastral check says
+  `cadastral designation` and `Bruno without a cadastral designation`.
+  Retired filenames such as `crud-gestiones.spec.ts` stay. The visible
+  label `/nomenclatura catastral/i` stays. The planned route sketch in
+  ADR-005 stays.
+- **English registry path names** (#1490, CU75): the role section is
+  `RoleController`. The documents-due path variable is
+  `{idSubmittedDocument}`. The auxiliary-deed check reads `idDeed`.
+  Path variables `{idRole}` and `{idUser}` stay. The PDF filename
+  `documentos_vencer.pdf` stays. The live path
+  `/api/v1/reports/documents-due/` stays.
+- **English living-spec contract names** (#1490, CU75): the tie-break
+  scenarios say `a management`. The tie test requests `current-status`.
+  The Bruno controller list names `Management`, `AuxiliaryProtocol`, and
+  `Report`. Reliability fixtures are `procedure-type`. Person save prose
+  says `person create` and `the new-person dialog`. The field example is
+  `name: must not be blank`. Spec ids `estado-actual-tie-break`,
+  `estado-actual-tie-test`, `bruno-zero-coverage-controllers`,
+  `e2e-test-reliability`, `persona-validation-error-toast`, and
+  `api-error-toasts` stay. The Playwright filename
+  `TS-0015-personas-clientes-workflow.spec.ts` stays, along with `DNI`.
+- **English report collection names** (#1490, CU75): the current-status
+  collection is `05-current-status.yml`. The report collections are
+  `11-documents-due-unknown-404.yml`, `12-document-debt.yml`, and
+  `13-document-debt-unknown-404.yml`. The documents-due path variable is
+  `{idSubmittedDocument}`. The living scenario is `Unknown documents-due id`.
+  Spec id `reportes-404` stays. PDF filenames `documentos_vencer.pdf` and
+  `deuda_documentos_` stay. The live paths `/current-status`,
+  `/reports/documents-due`, and `/reports/document-debt` stay.
+- **English optional heading and live deed-status constant** (#1490, CU75):
+  the omitted-client budget heading is `Budget CU01 pg optional`. The
+  template concept is `Honorarios Create E2E`. The deed-status comment
+  names `BusinessConstants.DeedUnsigned`. Stored status `BORRADOR` stays,
+  along with the seed-like name `Honorarios E2E` and the visible status
+  `/Sin Firmar/i`.
+- **English payment edit locals and registry note id** (#1490, CU75):
+  the payment method update test is `shouldUpdatePaymentMethodWhenEditingPayment`.
+  Null-field edit tests are `shouldHandleEditPaymentWithNullAmount`,
+  `shouldHandleEditPaymentWithNullDate`, and `shouldHandleEditPaymentWithNullNotes`.
+  Negative amount rejection is `shouldRejectNegativeAmountInEditPayment`.
+  The registration-draft note test id is `input-notes-registry`. Stored payment
+  methods `Efectivo` and `Transferencia` stay, along with message keys
+  `fields.observacionesRegistro` and `observar`, and the visible status
+  `/Generada/i`.
+- **English credential parameters and status locals** (#1490, CU75):
+  the admin login parameter is `password`. The route-guard login
+  parameter is `password`. Invalid login fixtures are `invalid_user`
+  and `invalid_password`. Navigation and helper roles use `employee`.
+  The paid-status test is `shouldCalculateStatusPaymentPaid`. Payment
+  edit is `shouldEditPayment`. Registration-draft rejection is
+  `shouldRejectSubmissionWhenNotGenerated`. The auxiliary folio local
+  is `auxiliaryType`. The auth fixture is `employeeUser` with name
+  `employee1`. Report filename titles name the monthly and tax sworn
+  statements. Stored role `EMPLEADO` stays, along with stored status
+  `Generada`, visible text `Complete usuario y contraseña`, the button
+  label `/iniciar escritura/i`, and PDF filenames `ddjj_mensual_` and
+  `ddjj_rentas_`. Message keys `fields.contrasenia` and
+  `fields.nuevaContrasenia` stay.
+- **English found locals and report dialog keys** (#1490, CU75): the
+  procedure-type edit local is `foundProcedureType`. The person-procedure
+  delete local is `found`. The folio status constant is `STATUS_USED`.
+  Sworn-statement tests are `shouldGenerateMonthlySwornStatementPdf`,
+  `shouldGenerateTaxSwornStatementPdf`,
+  `shouldRejectMonthlySwornStatementWithMonthOutOfRange`, and
+  `shouldRejectInvalidMonthForSwornStatements`. Protocol dialog keys are
+  `index-book`, `monthly-sworn-statement`, and `tax-sworn-statement`.
+  Role module locals are `MODULE_VALUES` and `toggleModule`. The stored
+  folio status `Utilizado` stays, along with PDF filenames `libro_indice_`,
+  `declaracion_jurada_mensual_`, `declaracion_jurada_rentas_`, and
+  `ddjj_mensual_`. The role field `modulos` stays, along with module
+  values `administracion` and message keys `fields.modulos`,
+  `reports.libroIndice`, `reports.ddjjMensual`, and `reports.ddjjRentas`.
 - **English sign and delivery locals** (#1490, CU75): the deeds page
   uses `UNSIGNED_STATUS`, `signMutation`, and `signId`. The delivery
   flag is `allDelivered`. Audit lists are `records`. The stored status
@@ -1833,6 +2042,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Required documents seeded on complete-case** (issue #773, CU02 / CU03 / CU04 / CU72):
+  when `POST /api/v1/managements/complete-case` (or PUT that creates the first procedure)
+  confirms a trámite, the API materializes one pending `SubmittedDocument` per
+  `ProcedureTemplate` row for that procedure type (`delivered=false`, `reentered=false`).
+  Seeding is idempotent on `(procedureId, documentTypeId)` and does not wipe docs when
+  PUT only updates an existing procedure. `GET /api/v1/managements/{id}/case-summary`
+  lists the checklist; the management summary dialog shows it. Covered by
+  `RequiredDocumentationOnConfirmServiceTest`,
+  `ManagementCompleteCaseRequiredDocsIntegrationTest`, and Playwright TS-0141.
 - **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
   with a "Saltar al contenido" / "Skip to content" link that appears on the first Tab and moves focus to
   `<main id="main-content">` (WCAG 2.4.1). After a client-side navigation, focus moves to the new page's `<h1>`

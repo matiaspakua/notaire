@@ -59,13 +59,13 @@ public class SubstitutionPersistenceAdapter implements SubstitutionRepositoryPor
     }
 
     @Override
-    public List<Substitution> findByFkIdSubstituted(Person suplantado) {
-        return substitutionRepository.findByFkIdSubstituted(suplantado);
+    public List<Substitution> findByFkIdSubstituted(Person substituted) {
+        return substitutionRepository.findByFkIdSubstituted(substituted);
     }
 
     @Override
-    public List<Substitution> findByFkIdSubstitutedIdPerson(Integer idSuplantado) {
-        return substitutionRepository.findByFkIdSubstitutedIdPerson(idSuplantado);
+    public List<Substitution> findByFkIdSubstitutedIdPerson(Integer substitutedId) {
+        return substitutionRepository.findByFkIdSubstitutedIdPerson(substitutedId);
     }
 
     @Override
@@ -75,9 +75,9 @@ public class SubstitutionPersistenceAdapter implements SubstitutionRepositoryPor
 
     @Override
     public List<Substitution> findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
-            Integer idSuplantado, Date dateStart, Date dateEnd) {
+            Integer substitutedId, Date dateStart, Date dateEnd) {
         return substitutionRepository
                 .findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
-                        idSuplantado, dateStart, dateEnd);
+                        substitutedId, dateStart, dateEnd);
     }
 }

@@ -23,7 +23,7 @@ runtime:
           test("Status 201", function () { expect(res.getStatus()).to.equal(201); });
           test("Returns deed id", function () {
             const b = res.getBody();
-            const id = b.idDeed || b.idEscritura || b.id;
+            const id = b.idDeed;
             expect(id).to.be.a('number');
             bru.setVar('ap_deed_id', id);
           });

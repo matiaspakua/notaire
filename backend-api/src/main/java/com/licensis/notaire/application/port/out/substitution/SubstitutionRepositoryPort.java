@@ -26,12 +26,12 @@ public interface SubstitutionRepositoryPort {
 
     List<Substitution> findByFkIdSubstituteIdPerson(Integer substituteId);
 
-    List<Substitution> findByFkIdSubstituted(Person suplantado);
+    List<Substitution> findByFkIdSubstituted(Person substituted);
 
-    List<Substitution> findByFkIdSubstitutedIdPerson(Integer idSuplantado);
+    List<Substitution> findByFkIdSubstitutedIdPerson(Integer substitutedId);
 
     List<Substitution> findByDateStartBeforeAndDateEndAfter(Date date);
 
     List<Substitution> findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
-            Integer idSuplantado, Date dateStart, Date dateEnd);
+            Integer substitutedId, Date dateStart, Date dateEnd);
 }

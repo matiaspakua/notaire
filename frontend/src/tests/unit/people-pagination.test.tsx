@@ -103,7 +103,7 @@ describe("PeoplePage out-of-range page (#1340)", () => {
   });
 });
 
-describe("presentPersonaSaveError duplicate link outside the loaded page (#1340)", () => {
+describe("presentPersonSaveError duplicate link outside the loaded page (#1340)", () => {
   it("offers the link and loads the existing person by id when it is not on the page", async () => {
     const { toast } = await import("sonner");
     vi.mocked(toast.error).mockClear();

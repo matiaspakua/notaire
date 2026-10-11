@@ -66,15 +66,15 @@ public class SubstitutionService {
     }
 
     @Transactional(readOnly = true)
-    public List<Substitution> findByFkIdSubstituted(Person suplantado) {
-        logger.debug("Finding substitutions by substituted: {}", suplantado);
-        return repository.findByFkIdSubstituted(suplantado);
+    public List<Substitution> findByFkIdSubstituted(Person substituted) {
+        logger.debug("Finding substitutions by substituted: {}", substituted);
+        return repository.findByFkIdSubstituted(substituted);
     }
 
     @Transactional(readOnly = true)
-    public List<Substitution> findByFkIdSubstitutedIdPerson(Integer idSuplantado) {
-        logger.debug("Finding substitutions by substituted id: {}", idSuplantado);
-        return repository.findByFkIdSubstitutedIdPerson(idSuplantado);
+    public List<Substitution> findByFkIdSubstitutedIdPerson(Integer substitutedId) {
+        logger.debug("Finding substitutions by substituted id: {}", substitutedId);
+        return repository.findByFkIdSubstitutedIdPerson(substitutedId);
     }
 
     @Transactional(readOnly = true)
@@ -85,11 +85,11 @@ public class SubstitutionService {
 
     @Transactional(readOnly = true)
     public List<Substitution> findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
-            Integer idSuplantado, Date dateStart, Date dateEnd) {
+            Integer substitutedId, Date dateStart, Date dateEnd) {
         logger.debug(
                 "Finding substitutions by substituted id={} and date range start={} end={}",
-                idSuplantado, dateStart, dateEnd);
+                substitutedId, dateStart, dateEnd);
         return repository.findByFkIdSubstitutedIdPersonAndDateStartLessThanEqualAndDateEndGreaterThanEqual(
-                idSuplantado, dateStart, dateEnd);
+                substitutedId, dateStart, dateEnd);
     }
 }

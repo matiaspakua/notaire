@@ -17,7 +17,7 @@ import { presentMutationError } from "@/lib/mutation-error";
 import type { Role } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
 
-const MODULO_VALUES = [
+const MODULE_VALUES = [
   "administracion",
   "usuarios",
   "tramites",
@@ -58,11 +58,11 @@ export default function RolesPage() {
     setModalOpen(true);
   }
 
-  function toggleModulo(modulo: string) {
+  function toggleModule(module: string) {
     const current = editing.modulos ?? [];
-    const updated = current.includes(modulo)
-      ? current.filter((m) => m !== modulo)
-      : [...current, modulo];
+    const updated = current.includes(module)
+      ? current.filter((m) => m !== module)
+      : [...current, module];
     setEditing({ ...editing, modulos: updated });
   }
 
@@ -151,12 +151,12 @@ export default function RolesPage() {
               </FormField>
               <FormField label={t("fields.modulosPermitidos")}>
                 <div className="grid grid-cols-2 gap-2 pt-1">
-                  {MODULO_VALUES.map((mod) => (
+                  {MODULE_VALUES.map((mod) => (
                     <label key={mod} className="flex items-center gap-2 cursor-pointer text-sm">
                       <input
                         type="checkbox"
                         checked={(editing.modulos ?? []).includes(mod)}
-                        onChange={() => toggleModulo(mod)}
+                        onChange={() => toggleModule(mod)}
                         data-testid={`check-modulo-${mod}`}
                         className="rounded"
                       />

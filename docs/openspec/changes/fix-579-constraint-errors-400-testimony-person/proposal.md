@@ -6,7 +6,7 @@
 | Field | Value |
 |-------|-------|
 | GitHub Issue | #579 |
-| Use Case | CU07 – Testimony; CU08 – Movimientos de testimonio; CU06 – Personas |
+| Use Case | CU07 – Testimonio; CU08 – Movimientos de testimonio; CU06 – Personas |
 | Branch | `fix/579_constraint_errors_400_testimony_person` (stacked on `fix/579_constraint_errors_400_catalogs`, #1370) |
 | Gate 1 status | draft |
 

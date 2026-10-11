@@ -135,14 +135,14 @@ describe("Report filename construction", () => {
     expect(filename).toBe("presupuesto_5.pdf");
   });
 
-  it("DDJJ mensual filename includes year and month", () => {
+  it("Monthly sworn-statement filename includes year and month", () => {
     const year = 2026;
     const month = 3;
     const filename = `ddjj_mensual_${year}_${month}.pdf`;
     expect(filename).toBe("ddjj_mensual_2026_3.pdf");
   });
 
-  it("DDJJ rentas filename includes year and month", () => {
+  it("Tax sworn-statement filename includes year and month", () => {
     const year = 2026;
     const month = 12;
     const filename = `ddjj_rentas_${year}_${month}.pdf`;

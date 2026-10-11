@@ -32,9 +32,9 @@ test.describe("Document type - expiration and responsible party", () => {
     await expect(page.getByTestId("input-due-days-document")).toBeVisible();
   });
 
-  test("CU27-GW02: Given vence checked without dias, When saving, Then shows validation error", async ({ page }) => {
+  test("CU27-GW02: Given expires checked without due days, When saving, Then shows validation error", async ({ page }) => {
     await page.getByTestId("btn-new-document-type").click();
-    await page.getByTestId("input-name-document").fill(`Poder Vence ${Date.now()}`);
+    await page.getByTestId("input-name-document").fill(`Power Expires ${Date.now()}`);
     await page.getByTestId("checkbox-expires-document").click();
 
     await page.getByRole("button", { name: /crear|guardar/i }).click();
@@ -45,12 +45,12 @@ test.describe("Document type - expiration and responsible party", () => {
   test("CU27-GW03: Given a complete form, When creating a document type with an expiration, Then it is stored", async ({
     page,
   }) => {
-    const name = `Cedula Vence ${Date.now()}`;
+    const name = `Identity card Expires ${Date.now()}`;
     await page.getByTestId("btn-new-document-type").click();
     await page.getByTestId("input-name-document").fill(name);
     await page.getByTestId("checkbox-expires-document").click();
     await page.getByTestId("input-due-days-document").fill("30");
-    await page.getByTestId("input-delivered-by-document").fill("Registro de la Propiedad");
+    await page.getByTestId("input-delivered-by-document").fill("Property Registry");
 
     await page.getByRole("button", { name: /crear|guardar/i }).click();
 
@@ -61,7 +61,7 @@ test.describe("Document type - expiration and responsible party", () => {
   test("CU32-GW01: Given an existing document type, When it is edited, Then the expiration fields are pre-filled", async ({
     page,
   }) => {
-    const name = `Contrato Vence ${Date.now()}`;
+    const name = `Contract Expires ${Date.now()}`;
     await page.getByTestId("btn-new-document-type").click();
     await page.getByTestId("input-name-document").fill(name);
     await page.getByTestId("checkbox-expires-document").click();
@@ -112,7 +112,7 @@ test.describe("Document type - expiration and responsible party", () => {
     await expect(page.getByTestId("checkbox-returned-document")).toBeChecked();
   });
 
-  test("CU32-GW02: Given an existing tipo with returned, When editing, Then enabled and returned are pre-filled", async ({
+  test("CU32-GW02: Given an existing type with returned, When editing, Then enabled and returned are pre-filled", async ({
     page,
   }) => {
     const name = `Doc Returned Edit ${Date.now()}`;

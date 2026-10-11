@@ -6,7 +6,7 @@
 | Field | Value |
 |-------|-------|
 | GitHub Issue | #596 |
-| Use Case | CU18 – Dar Alta Cliente; CU54 – Modificar Person; CU61 – Buscar persona |
+| Use Case | CU18 – Dar Alta Cliente; CU54 – Modificar Persona; CU61 – Buscar persona |
 | Branch | `fix/596_people_pagination` |
 | Gate 1 status | draft |
 
