@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English persistence and report names** (#1490, CU75):
+  Creating a history row reports `Could not create an entity of type: History`.
+  Orphan checks name `User`, `History`, and `DeedManagement`. The management
+  history PDF is titled `History of management`. The English catalog says
+  `Case type` for document costs. Stored status labels stay.
 - **Spanish catalog nouns restored** (#1490, CU75):
   `es.json` again says `Usuario`, `Escritura`, `Testimonio`, `Copia`, `Pago`,
   and `Historial` where class names had replaced those words. The English

@@ -82,7 +82,7 @@ public class HistoryJpaController implements Serializable, JpaPersistence
         }
         catch (Exception ex)
         {
-            throw new CreateEntityException("Not pudo create a entidad tipo: ManagementHistory");
+            throw new CreateEntityException("Could not create an entity of type: History");
         }
         finally
         {

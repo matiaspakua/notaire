@@ -177,7 +177,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                         {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain ManagementHistory " + historyListOldHistory + " since its fkIdManagement field is not nullable.");
+                        illegalOrphanMessages.add("You must retain History " + historyListOldHistory + " since its fkIdManagement field is not nullable.");
                     }
                 }
                 if (illegalOrphanMessages != null)
@@ -298,7 +298,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
                 {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This DeedManagement (" + DeedManagement + ") cannot be destroyed since the ManagementHistory " + historyListOrphanCheckHistory + " in its historyList field has a non-nullable fkIdManagement field.");
+                illegalOrphanMessages.add("This DeedManagement (" + DeedManagement + ") cannot be destroyed since the History " + historyListOrphanCheckHistory + " in its historyList field has a non-nullable fkIdManagement field.");
             }
             if (illegalOrphanMessages != null)
             {

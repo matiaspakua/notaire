@@ -292,7 +292,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add(
-                            "You must retain DeedManagements " + deedManagementListOldDeedManagements
+                            "You must retain DeedManagement " + deedManagementListOldDeedManagements
                                     + " since its fkIdNotaryPerson field is not nullable.");
                 }
             }
@@ -337,7 +337,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
-                    illegalOrphanMessages.add("You must retain UserAccount " + userListOldUser
+                    illegalOrphanMessages.add("You must retain User " + userListOldUser
                             + " since its fkIdPerson field is not nullable.");
                 }
             }
@@ -592,7 +592,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This Person (" + person
-                        + ") cannot be destroyed since the DeedManagements "
+                        + ") cannot be destroyed since the DeedManagement "
                         + deedManagementListOrphanCheckDeedManagements
                         + " in its deedManagementList field has a non-nullable fkIdNotaryPerson field.");
             }
@@ -636,7 +636,7 @@ public class PersonJpaController implements Serializable, JpaPersistence {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the UserAccount "
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the User "
                         + userListOrphanCheckUser
                         + " in its userList field has a non-nullable fkIdPerson field.");
             }

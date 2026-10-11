@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * Read-model for history endpoints. A POJO record without dependencies
- * on backend entity classes; mapping from `ManagementHistory` is performed in the
+ * on backend entity classes; mapping from `History` is performed in the
  * `backend-api` module where the entity type is available.
  */
 public record DtoHistorySummary(

@@ -1006,10 +1006,10 @@
         "newCosto": "New Document Cost",
         "created": "Cost created",
         "errorCreate": "Error creating cost",
-        "noData": "No costs defined for this trámite type",
+        "noData": "No costs defined for this case type",
         "selectionRequired": "Select a document type and enter a value",
         "fields": {
-          "tipoTramite": "Trámite Type",
+          "tipoTramite": "Case Type",
           "tipoDocumento": "Document Type",
           "tipoDocumentoPlaceholder": "Select document type...",
           "tipoCosto": "Cost Type",

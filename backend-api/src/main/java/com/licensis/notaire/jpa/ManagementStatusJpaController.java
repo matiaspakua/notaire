@@ -117,7 +117,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
                         if (illegalOrphanMessages == null) {
                             illegalOrphanMessages = new ArrayList<String>();
                         }
-                        illegalOrphanMessages.add("You must retain ManagementHistory " + historyListOldHistory
+                        illegalOrphanMessages.add("You must retain History " + historyListOldHistory
                                 + " since its fkIdManagementStatus field is not nullable.");
                     }
                 }
@@ -182,7 +182,7 @@ public class ManagementStatusJpaController implements Serializable, JpaPersisten
                     illegalOrphanMessages = new ArrayList<String>();
                 }
                 illegalOrphanMessages.add("This ManagementStatus (" + managementStatus
-                        + ") cannot be destroyed since the ManagementHistory " + historyListOrphanCheckHistory
+                        + ") cannot be destroyed since the History " + historyListOrphanCheckHistory
                         + " in its historyList field has a non-nullable fkIdManagementStatus field.");
             }
             if (illegalOrphanMessages != null) {

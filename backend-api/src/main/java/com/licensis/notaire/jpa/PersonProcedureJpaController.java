@@ -85,7 +85,7 @@ public class PersonProcedureJpaController implements Serializable, JpaPersistenc
             {
                 throw new PreexistingEntityException("PersonProcedure " + personProcedure + " already exists.", ex);
             }
-            throw new CreateEntityException("Error creating a entity of type: Procedures People");
+            throw new CreateEntityException("Could not create an entity of type: PersonProcedure");
         }
         finally
         {

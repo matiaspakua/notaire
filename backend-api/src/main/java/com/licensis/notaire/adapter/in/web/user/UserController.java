@@ -247,7 +247,7 @@ public class UserController {
                                 dtoUser.setPersons(dtoPerson);
                             }
                             dtoUser.setValid(true);
-                            log.debug("DTO UserAccount created - valid: {}, status: {}", dtoUser.isValid(), dtoUser.isStatus());
+                            log.debug("DTO User created - valid: {}, status: {}", dtoUser.isValid(), dtoUser.isStatus());
 
                             // Create a map response to ensure 'valid' field is included
                             String jwt = jwtTokenService.generateToken(user.getName());
