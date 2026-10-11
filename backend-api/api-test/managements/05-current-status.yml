@@ -3,7 +3,7 @@ info:
   type: http
   seq: 6
   description: |-
-      After #806, plain create with status writes History (and estado-actual
+      After #806, plain create with status writes History (and current-status
       also falls back to the entity status when History is empty).
       Traceability: CU14; CU13
 http:

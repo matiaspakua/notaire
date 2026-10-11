@@ -38,7 +38,7 @@ The report endpoint SHALL answer 404 Not Found when no history record has the re
 
 The report endpoint SHALL answer 404 Not Found when no documents-by-due-date record has the requested id.
 
-#### Scenario: Unknown documents-por-vencer id
+#### Scenario: Unknown documents-due id
 
-- **WHEN** a client requests `/api/v1/reports/documents-due/99999` and no documentos-por-vencer 99999 exists
+- **WHEN** a client requests `/api/v1/reports/documents-due/99999` and no documents-due 99999 exists
 - **THEN** the response status is 404

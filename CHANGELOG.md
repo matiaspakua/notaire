@@ -64,6 +64,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English report collection names** (#1490, CU75): the current-status
+  collection is `05-current-status.yml`. The report collections are
+  `11-documents-due-unknown-404.yml`, `12-document-debt.yml`, and
+  `13-document-debt-unknown-404.yml`. The documents-due path variable is
+  `{idSubmittedDocument}`. The living scenario is `Unknown documents-due id`.
+  Spec id `reportes-404` stays. PDF filenames `documentos_vencer.pdf` and
+  `deuda_documentos_` stay. The live paths `/current-status`,
+  `/reports/documents-due`, and `/reports/document-debt` stay.
 - **English optional heading and live deed-status constant** (#1490, CU75):
   the omitted-client budget heading is `Budget CU01 pg optional`. The
   template concept is `Honorarios Create E2E`. The deed-status comment
