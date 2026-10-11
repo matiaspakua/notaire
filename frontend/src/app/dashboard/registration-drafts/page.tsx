@@ -23,105 +23,105 @@ import { useDeeds } from "@/hooks/useDeeds";
 import { extractApiError } from "@/lib/utils";
 
 const STATUS_SIGNED = "Firmada";
-const ESTADO_GENERADA = "Generada";
-const ESTADO_PRESENTADA = "Presentado para inscripción";
-const ESTADO_OBSERVADA = "Observado";
-const ESTADO_INSCRIPTA = "Inscripto";
+const STATUS_GENERATED = "Generada";
+const STATUS_SUBMITTED = "Presentado para inscripción";
+const STATUS_FLAGGED = "Observado";
+const STATUS_REGISTERED = "Inscripto";
 
 export default function RegistrationDraftsRegistrationPage() {
   const t = useTranslations("minutasInscripcion");
   const tc = useTranslations("common");
 
   const { data: deeds = [] } = useDeeds();
-  const generarMutation = useGenerateRegistrationDraft();
-  const presentarMutation = useSubmitRegistrationDraft();
-  const observarMutation = useObserveRegistrationDraft();
-  const inscribirMutation = useRegisterRegistrationDraft();
+  const generateMutation = useGenerateRegistrationDraft();
+  const submitMutation = useSubmitRegistrationDraft();
+  const observeMutation = useObserveRegistrationDraft();
+  const registerMutation = useRegisterRegistrationDraft();
 
   const [registrationDraftId, setRegistrationDraftId] = useState<number | null>(null);
-  const [buscarId, setBuscarId] = useState("");
+  const [searchId, setSearchId] = useState("");
   const [idDeed, setIdDeed] = useState("");
   const [downloading, setDownloading] = useState(false);
 
-  const [presentarOpen, setPresentarOpen] = useState(false);
-  const [fechaPresentacion, setFechaPresentacion] = useState("");
-  const [numberEntryRegistry, setNumberEntryRegistry] = useState("");
+  const [submitOpen, setSubmitOpen] = useState(false);
+  const [dateSubmission, setDateSubmission] = useState("");
+  const [registryEntryNumber, setRegistryEntryNumber] = useState("");
 
-  const [observarOpen, setObservarOpen] = useState(false);
-  const [notesRegistration, setNotesRegistration] = useState("");
-  const [fechaSubsanacion, setFechaSubsanacion] = useState("");
+  const [observeOpen, setObserveOpen] = useState(false);
+  const [registryNotes, setRegistryNotes] = useState("");
+  const [dateCorrection, setDateCorrection] = useState("");
 
-  const [inscribirOpen, setInscribirOpen] = useState(false);
-  const [fechaRecepcion, setFechaRecepcion] = useState("");
-  const [numberRegistrationFinal, setNumberRegistrationFinal] = useState("");
+  const [registerOpen, setRegisterOpen] = useState(false);
+  const [dateReception, setDateReception] = useState("");
+  const [finalRegistrationNumber, setFinalRegistrationNumber] = useState("");
 
   const { data: registrationDraft, isLoading } = useRegistrationDraft(registrationDraftId);
   const deedsSigned = deeds.filter((e) => e.status === STATUS_SIGNED);
 
-  function estadoLabel(estado?: string): string {
-    switch (estado) {
-      case ESTADO_GENERADA:
+  function statusLabel(status?: string): string {
+    switch (status) {
+      case STATUS_GENERATED:
         return t("estadoGenerada");
-      case ESTADO_PRESENTADA:
+      case STATUS_SUBMITTED:
         return t("estadoPresentada");
-      case ESTADO_OBSERVADA:
+      case STATUS_FLAGGED:
         return t("estadoObservada");
-      case ESTADO_INSCRIPTA:
+      case STATUS_REGISTERED:
         return t("estadoInscripta");
       default:
-        return estado ?? "—";
+        return status ?? "—";
     }
   }
 
-  async function handleGenerar() {
+  async function handleGenerate() {
     try {
-      const nueva = await generarMutation.mutateAsync(Number(idDeed));
-      setRegistrationDraftId(nueva.idRegistrationDraft ?? null);
+      const created = await generateMutation.mutateAsync(Number(idDeed));
+      setRegistrationDraftId(created.idRegistrationDraft ?? null);
       toast.success(t("generated"));
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorGenerate"));
     }
   }
 
-  function handleBuscar() {
-    if (!buscarId) return;
-    setRegistrationDraftId(Number(buscarId));
+  function handleSearch() {
+    if (!searchId) return;
+    setRegistrationDraftId(Number(searchId));
   }
 
-  async function handlePresentar() {
+  async function handleSubmit() {
     if (!registrationDraftId) return;
     try {
-      await presentarMutation.mutateAsync({ id: registrationDraftId, fechaPresentacion, numberEntryRegistry });
+      await submitMutation.mutateAsync({ id: registrationDraftId, dateSubmission, registryEntryNumber });
       toast.success(t("presented"));
-      setPresentarOpen(false);
+      setSubmitOpen(false);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorPresentar"));
     }
   }
 
-  async function handleObservar() {
+  async function handleObserve() {
     if (!registrationDraftId) return;
     try {
-      await observarMutation.mutateAsync({ id: registrationDraftId, notesRegistration, fechaSubsanacion });
+      await observeMutation.mutateAsync({ id: registrationDraftId, registryNotes, dateCorrection });
       toast.success(t("observed"));
-      setObservarOpen(false);
+      setObserveOpen(false);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorObservar"));
     }
   }
 
-  async function handleInscribir() {
+  async function handleRegister() {
     if (!registrationDraftId) return;
     try {
-      await inscribirMutation.mutateAsync({ id: registrationDraftId, fechaRecepcion, numberRegistrationFinal });
+      await registerMutation.mutateAsync({ id: registrationDraftId, dateReception, finalRegistrationNumber });
       toast.success(t("inscribed"));
-      setInscribirOpen(false);
+      setRegisterOpen(false);
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorInscribir"));
     }
   }
 
-  async function handleDescargar() {
+  async function handleDownload() {
     if (!registrationDraftId) return;
     try {
       setDownloading(true);
@@ -155,8 +155,8 @@ export default function RegistrationDraftsRegistrationPage() {
           </FormField>
           <FormActions align="left">
             <Button
-              onClick={handleGenerar}
-              disabled={!idDeed || generarMutation.isPending}
+              onClick={handleGenerate}
+              disabled={!idDeed || generateMutation.isPending}
               data-testid="btn-generate-registration-draft"
             >
               <FileCheck2 className="h-4 w-4" />
@@ -171,10 +171,10 @@ export default function RegistrationDraftsRegistrationPage() {
               <Input
                 type="number"
                 data-testid="input-search-registration-draft"
-                value={buscarId}
-                onChange={(e) => setBuscarId(e.target.value)}
+                value={searchId}
+                onChange={(e) => setSearchId(e.target.value)}
               />
-              <Button variant="secondary" onClick={handleBuscar} data-testid="btn-search-registration-draft">
+              <Button variant="secondary" onClick={handleSearch} data-testid="btn-search-registration-draft">
                 <Search className="h-4 w-4" />
                 {tc("search")}
               </Button>
@@ -188,14 +188,14 @@ export default function RegistrationDraftsRegistrationPage() {
           <FormSection title={`${t("fields.numero")} ${registrationDraft.number}`}>
             <FormField label={t("fields.estado")}>
               <span data-testid="registration-draft-status" className="font-medium">
-                {estadoLabel(registrationDraft.status)}
+                {statusLabel(registrationDraft.status)}
               </span>
             </FormField>
 
             <FormActions align="left">
               <Button
                 variant="secondary"
-                onClick={handleDescargar}
+                onClick={handleDownload}
                 disabled={downloading}
                 data-testid="btn-download-registration-draft"
               >
@@ -203,24 +203,24 @@ export default function RegistrationDraftsRegistrationPage() {
                 {t("descargarReporte")}
               </Button>
 
-              {registrationDraft.status === ESTADO_GENERADA && (
-                <Button onClick={() => setPresentarOpen(true)} data-testid="btn-submit-registration-draft">
+              {registrationDraft.status === STATUS_GENERATED && (
+                <Button onClick={() => setSubmitOpen(true)} data-testid="btn-submit-registration-draft">
                   <Send className="h-4 w-4" />
                   {t("presentar")}
                 </Button>
               )}
 
-              {registrationDraft.status === ESTADO_PRESENTADA && (
+              {registrationDraft.status === STATUS_SUBMITTED && (
                 <>
                   <Button
                     variant="secondary"
-                    onClick={() => setObservarOpen(true)}
+                    onClick={() => setObserveOpen(true)}
                     data-testid="btn-observe-registration-draft"
                   >
                     <ShieldAlert className="h-4 w-4" />
                     {t("observar")}
                   </Button>
-                  <Button onClick={() => setInscribirOpen(true)} data-testid="btn-register-registration-draft">
+                  <Button onClick={() => setRegisterOpen(true)} data-testid="btn-register-registration-draft">
                     <Stamp className="h-4 w-4" />
                     {t("inscribir")}
                   </Button>
@@ -231,7 +231,7 @@ export default function RegistrationDraftsRegistrationPage() {
         )}
       </FormContainer>
 
-      <Dialog open={presentarOpen} onOpenChange={setPresentarOpen}>
+      <Dialog open={submitOpen} onOpenChange={setSubmitOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("presentar")}>
@@ -239,25 +239,25 @@ export default function RegistrationDraftsRegistrationPage() {
                 <Input
                   type="date"
                   data-testid="input-submission-date"
-                  value={fechaPresentacion}
-                  onChange={(e) => setFechaPresentacion(e.target.value)}
+                  value={dateSubmission}
+                  onChange={(e) => setDateSubmission(e.target.value)}
                 />
               </FormField>
               <FormField label={t("fields.numeroEntradaRegistral")} required>
                 <Input
                   data-testid="input-registry-entry-number"
-                  value={numberEntryRegistry}
-                  onChange={(e) => setNumberEntryRegistry(e.target.value)}
+                  value={registryEntryNumber}
+                  onChange={(e) => setRegistryEntryNumber(e.target.value)}
                 />
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setPresentarOpen(false)}>
+              <Button variant="secondary" onClick={() => setSubmitOpen(false)}>
                 {tc("cancel")}
               </Button>
               <Button
-                onClick={handlePresentar}
-                disabled={!fechaPresentacion || !numberEntryRegistry || presentarMutation.isPending}
+                onClick={handleSubmit}
+                disabled={!dateSubmission || !registryEntryNumber || submitMutation.isPending}
                 data-testid="btn-confirm-submit"
               >
                 {t("presentar")}
@@ -267,33 +267,33 @@ export default function RegistrationDraftsRegistrationPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={observarOpen} onOpenChange={setObservarOpen}>
+      <Dialog open={observeOpen} onOpenChange={setObserveOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("observar")}>
               <FormField label={t("fields.observacionesRegistro")} required>
                 <Input
                   data-testid="input-notes-registro"
-                  value={notesRegistration}
-                  onChange={(e) => setNotesRegistration(e.target.value)}
+                  value={registryNotes}
+                  onChange={(e) => setRegistryNotes(e.target.value)}
                 />
               </FormField>
               <FormField label={t("fields.fechaSubsanacion")} required>
                 <Input
                   type="date"
                   data-testid="input-correction-date"
-                  value={fechaSubsanacion}
-                  onChange={(e) => setFechaSubsanacion(e.target.value)}
+                  value={dateCorrection}
+                  onChange={(e) => setDateCorrection(e.target.value)}
                 />
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setObservarOpen(false)}>
+              <Button variant="secondary" onClick={() => setObserveOpen(false)}>
                 {tc("cancel")}
               </Button>
               <Button
-                onClick={handleObservar}
-                disabled={!notesRegistration || !fechaSubsanacion || observarMutation.isPending}
+                onClick={handleObserve}
+                disabled={!registryNotes || !dateCorrection || observeMutation.isPending}
                 data-testid="btn-confirm-observe"
               >
                 {t("observar")}
@@ -303,7 +303,7 @@ export default function RegistrationDraftsRegistrationPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={inscribirOpen} onOpenChange={setInscribirOpen}>
+      <Dialog open={registerOpen} onOpenChange={setRegisterOpen}>
         <DialogContent>
           <FormContainer>
             <FormSection dialogTitle title={t("inscribir")}>
@@ -311,26 +311,26 @@ export default function RegistrationDraftsRegistrationPage() {
                 <Input
                   type="date"
                   data-testid="input-receipt-date"
-                  value={fechaRecepcion}
-                  onChange={(e) => setFechaRecepcion(e.target.value)}
+                  value={dateReception}
+                  onChange={(e) => setDateReception(e.target.value)}
                 />
               </FormField>
               <FormField label={t("fields.numeroInscripcionDefinitivo")} required>
                 <Input
                   data-testid="input-final-registration-number"
-                  value={numberRegistrationFinal}
-                  onChange={(e) => setNumberRegistrationFinal(e.target.value)}
+                  value={finalRegistrationNumber}
+                  onChange={(e) => setFinalRegistrationNumber(e.target.value)}
                 />
               </FormField>
             </FormSection>
             <FormActions align="right">
-              <Button variant="secondary" onClick={() => setInscribirOpen(false)}>
+              <Button variant="secondary" onClick={() => setRegisterOpen(false)}>
                 {tc("cancel")}
               </Button>
               <Button
-                onClick={handleInscribir}
+                onClick={handleRegister}
                 disabled={
-                  !fechaRecepcion || !numberRegistrationFinal || inscribirMutation.isPending
+                  !dateReception || !finalRegistrationNumber || registerMutation.isPending
                 }
                 data-testid="btn-confirm-register"
               >

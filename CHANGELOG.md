@@ -41,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English document-type cache key and registration-draft fields** (#1490, CU75):
+  the document-type query key is `documentTypes`. Registration-draft form state
+  uses the English wire names (`dateSubmission`, `registryEntryNumber`,
+  `registryNotes`, `dateCorrection`, `dateReception`, `finalRegistrationNumber`).
+  Management transition passes `statusDestination`. Message catalog keys and
+  stored statuses (`Generada`, `Firmada`, `Inscripto`) stay.
 - **English Playwright and unit test titles** (#1490, CU75): `describe` / `test` / `it`
   titles in `testing/e2e` and the frontend unit tests name the flows in English.
   Selectors that match Spanish screen copy, stored statuses (`Firmada`, `Archivada`,

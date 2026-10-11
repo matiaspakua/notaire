@@ -136,10 +136,9 @@ export function useArchiveManagement() {
 export function useTransitionManagement() {
   const qc = useQueryClient();
   return useMutation({
-    // Backend route is /transition (English, see ManagementController#transition) and its
-    // request body is DtoTransicionRequest(statusDestination) — not /transicionar+estadoDestino.
-    mutationFn: ({ id, estadoDestino }: { id: number; estadoDestino: string }) =>
-      apiPost<DeedManagement>(`/managements/${id}/transition`, { statusDestination: estadoDestino }),
+    // Backend route is /transition (ManagementController#transition). The body field is statusDestination.
+    mutationFn: ({ id, statusDestination }: { id: number; statusDestination: string }) =>
+      apiPost<DeedManagement>(`/managements/${id}/transition`, { statusDestination }),
     onSuccess: (_data, { id }) => {
       qc.invalidateQueries({ queryKey: managementsKeys.all });
       qc.invalidateQueries({ queryKey: managementWorkflowKeys.trace(id) });

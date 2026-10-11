@@ -3,13 +3,13 @@ import { apiGet, apiGetBytes, apiPost, apiPut } from "@/lib/api-client";
 import type { RegistrationDraft } from "@/types";
 
 export const registrationDraftKeys = {
-  detail: (id: number) => ["minutas-inscripcion", id] as const,
+  detail: (id: number) => ["registration-drafts", id] as const,
 };
 
 /** CU82 - Loads one registration draft by id. */
 export function useRegistrationDraft(id: number | null) {
   return useQuery({
-    queryKey: id ? registrationDraftKeys.detail(id) : ["minutas-inscripcion", "none"],
+    queryKey: id ? registrationDraftKeys.detail(id) : ["registration-drafts", "none"],
     queryFn: () => apiGet<RegistrationDraft>(`/registration-drafts/${id}`),
     enabled: id !== null,
   });
@@ -29,16 +29,16 @@ export function useSubmitRegistrationDraft() {
   return useMutation({
     mutationFn: ({
       id,
-      fechaPresentacion,
-      numberEntryRegistry,
+      dateSubmission,
+      registryEntryNumber,
     }: {
       id: number;
-      fechaPresentacion: string;
-      numberEntryRegistry: string;
+      dateSubmission: string;
+      registryEntryNumber: string;
     }) =>
       apiPut<RegistrationDraft>(`/registration-drafts/${id}/submit`, {
-        dateSubmission: fechaPresentacion,
-        registryEntryNumber: numberEntryRegistry,
+        dateSubmission,
+        registryEntryNumber,
       }),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
@@ -50,16 +50,16 @@ export function useObserveRegistrationDraft() {
   return useMutation({
     mutationFn: ({
       id,
-      notesRegistration,
-      fechaSubsanacion,
+      registryNotes,
+      dateCorrection,
     }: {
       id: number;
-      notesRegistration: string;
-      fechaSubsanacion: string;
+      registryNotes: string;
+      dateCorrection: string;
     }) =>
       apiPut<RegistrationDraft>(`/registration-drafts/${id}/observe`, {
-        registryNotes: notesRegistration,
-        dateCorrection: fechaSubsanacion,
+        registryNotes,
+        dateCorrection,
       }),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });
@@ -71,16 +71,16 @@ export function useRegisterRegistrationDraft() {
   return useMutation({
     mutationFn: ({
       id,
-      fechaRecepcion,
-      numberRegistrationFinal,
+      dateReception,
+      finalRegistrationNumber,
     }: {
       id: number;
-      fechaRecepcion: string;
-      numberRegistrationFinal: string;
+      dateReception: string;
+      finalRegistrationNumber: string;
     }) =>
       apiPut<RegistrationDraft>(`/registration-drafts/${id}/register`, {
-        dateReception: fechaRecepcion,
-        finalRegistrationNumber: numberRegistrationFinal,
+        dateReception,
+        finalRegistrationNumber,
       }),
     onSuccess: (_, { id }) => qc.invalidateQueries({ queryKey: registrationDraftKeys.detail(id) }),
   });

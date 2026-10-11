@@ -110,12 +110,12 @@ describe("copiesKeys (CU44, CU53)", () => {
 });
 
 describe("documentsKeys (CU27, CU65)", () => {
-  it("all key is ['tiposDocumento']", () => {
-    expect(documentsKeys.all).toEqual(["tiposDocumento"]);
+  it("all key is ['documentTypes']", () => {
+    expect(documentsKeys.all).toEqual(["documentTypes"]);
   });
 
   it("detail key includes id", () => {
-    expect(documentsKeys.detail(4)).toEqual(["tiposDocumento", 4]);
+    expect(documentsKeys.detail(4)).toEqual(["documentTypes", 4]);
   });
 });
 
@@ -162,29 +162,29 @@ describe("Budget total calculation (CU01, CU39)", () => {
 // ──────────────────────────────────────────────
 
 describe("Payment outstanding-balance computation (CU47)", () => {
-  function calcularSaldo(totalBudget: number, pagos: { amount?: number }[]): number {
-    const totalPaid = pagos.reduce((sum, p) => sum + (p.amount ?? 0), 0);
+  function outstandingBalance(totalBudget: number, payments: { amount?: number }[]): number {
+    const totalPaid = payments.reduce((sum, p) => sum + (p.amount ?? 0), 0);
     return totalBudget - totalPaid;
   }
 
   it("outstanding balance is the total minus the sum of payments", () => {
-    expect(calcularSaldo(1000, [{ amount: 300 }, { amount: 200 }])).toBe(500);
+    expect(outstandingBalance(1000, [{ amount: 300 }, { amount: 200 }])).toBe(500);
   });
 
   it("outstanding balance with no payments equals the total", () => {
-    expect(calcularSaldo(800, [])).toBe(800);
+    expect(outstandingBalance(800, [])).toBe(800);
   });
 
   it("a fully paid budget has an outstanding balance of 0", () => {
-    expect(calcularSaldo(500, [{ amount: 500 }])).toBe(0);
+    expect(outstandingBalance(500, [{ amount: 500 }])).toBe(0);
   });
 
   it("an overpaid budget has a negative outstanding balance", () => {
-    expect(calcularSaldo(200, [{ amount: 300 }])).toBe(-100);
+    expect(outstandingBalance(200, [{ amount: 300 }])).toBe(-100);
   });
 
   it("a payment with an undefined amount contributes 0", () => {
-    expect(calcularSaldo(400, [{ amount: undefined }, { amount: 100 }])).toBe(300);
+    expect(outstandingBalance(400, [{ amount: undefined }, { amount: 100 }])).toBe(300);
   });
 });
 

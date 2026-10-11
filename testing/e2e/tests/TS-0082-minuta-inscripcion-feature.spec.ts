@@ -151,7 +151,7 @@ test.describe("CU82 - Generate and track the registration draft", () => {
     { width: 768, height: 1024, label: "768px (tablet)" },
     { width: 1024, height: 768, label: "1024px (desktop)" },
   ]) {
-    test(`minutas-inscripcion screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
+    test(`the registration drafts screen has no horizontal overflow at ${viewport.label}`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await steps.givenUserIsOnPage("/dashboard/registration-drafts");
       await page.waitForLoadState("networkidle");

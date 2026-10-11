@@ -68,7 +68,7 @@ function ManagementsList() {
   const updateMutation = useUpdateManagement();
   const deleteMutation = useDeleteManagement();
   const archivarMutation = useArchiveManagement();
-  const transicionarMutation = useTransitionManagement();
+  const transitionMutation = useTransitionManagement();
   const ponerEnEsperaMutation = usePutFolderOnHold();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -76,7 +76,7 @@ function ManagementsList() {
   const [archiveId, setArchiveId] = useState<number | null>(null);
   const [archiveConflict, setArchiveConflict] = useState<string | null>(null);
   const [transitionId, setTransitionId] = useState<number | null>(null);
-  const [selectedEstado, setSelectedEstado] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [historyId, setHistoryId] = useState<number | null>(null);
   const [foldersManagementId, setFoldersManagementId] = useState<number | null>(null);
   const [resumenCasoId, setResumenCasoId] = useState<number | null>(null);
@@ -219,13 +219,13 @@ function ManagementsList() {
     }
   }
 
-  async function handleTransicionar() {
-    if (!transitionId || !selectedEstado) return;
+  async function handleTransition() {
+    if (!transitionId || !selectedStatus) return;
     try {
-      await transicionarMutation.mutateAsync({ id: transitionId, estadoDestino: selectedEstado });
+      await transitionMutation.mutateAsync({ id: transitionId, statusDestination: selectedStatus });
       toast.success(t("transitioned"));
       setTransitionId(null);
-      setSelectedEstado("");
+      setSelectedStatus("");
     } catch (err) {
       toast.error(extractApiError(err) ?? t("errorTransition"));
     }
@@ -234,7 +234,7 @@ function ManagementsList() {
   function closeTransitionDialog(open: boolean) {
     if (!open) {
       setTransitionId(null);
-      setSelectedEstado("");
+      setSelectedStatus("");
     }
   }
 
@@ -498,7 +498,7 @@ function ManagementsList() {
             <FormHeader dialogTitle title={t("changeState")} description={t("selectNewStateDescription")} />
             <FormSection title={t("selectNewState")}>
               <FormField label={t("selectNewState")} required>
-                <Select value={selectedEstado} onValueChange={setSelectedEstado}>
+                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                   <SelectTrigger data-testid="select-new-status">
                     <SelectValue placeholder={t("selectNewState")} />
                   </SelectTrigger>
@@ -517,8 +517,8 @@ function ManagementsList() {
                 {tc("cancel")}
               </Button>
               <Button
-                onClick={handleTransicionar}
-                disabled={!selectedEstado || transicionarMutation.isPending}
+                onClick={handleTransition}
+                disabled={!selectedStatus || transitionMutation.isPending}
                 data-testid="btn-confirm-transicion"
               >
                 {t("confirmTransition")}

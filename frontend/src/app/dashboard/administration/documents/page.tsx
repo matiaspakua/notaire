@@ -16,6 +16,7 @@ import { extractApiError } from "@/lib/utils";
 import { EMPTY_DOCUMENT_TYPE } from "@/lib/document-type-form";
 import type { DocumentType } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { documentsKeys } from "@/hooks/useDocuments";
 
 export default function DocumentsPage() {
   const t = useTranslations("administracion.documentos");
@@ -23,23 +24,23 @@ export default function DocumentsPage() {
   const tc = useTranslations("common");
 
   const qc = useQueryClient();
-  const { data: tipos = [], isLoading } = useQuery({
-    queryKey: ["tiposDocumento"],
+  const { data: documentTypes = [], isLoading } = useQuery({
+    queryKey: documentsKeys.all,
     queryFn: () => apiGet<DocumentType[]>("/document-types"),
   });
 
   const createMutation = useMutation({
     mutationFn: (data: Partial<DocumentType>) => apiPost<void>("/document-types", data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["tiposDocumento"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: documentsKeys.all }),
   });
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<DocumentType> }) =>
       apiPut<void>(`/document-types/${id}`, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["tiposDocumento"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: documentsKeys.all }),
   });
   const deleteMutation = useMutation({
     mutationFn: (id: number) => apiDelete(`/document-types/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["tiposDocumento"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: documentsKeys.all }),
   });
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -48,12 +49,12 @@ export default function DocumentsPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [search, setSearch] = useState("");
 
-  const { data: filtered = tipos } = useQuery({
-    queryKey: ["tiposDocumento", "search", search, tipos],
+  const { data: filtered = documentTypes } = useQuery({
+    queryKey: [...documentsKeys.all, "search", search, documentTypes],
     queryFn: () =>
       search.trim()
         ? apiGet<DocumentType[]>(`/document-types/search?name=${encodeURIComponent(search.trim())}`)
-        : Promise.resolve(tipos),
+        : Promise.resolve(documentTypes),
   });
 
   function openCreate() {
@@ -61,11 +62,11 @@ export default function DocumentsPage() {
     setIsEditMode(false);
     setModalOpen(true);
   }
-  function openEdit(tipo: DocumentType) {
+  function openEdit(documentType: DocumentType) {
     setEditing({
-      ...tipo,
-      enabled: tipo.enabled ?? true,
-      returned: tipo.returned ?? false,
+      ...documentType,
+      enabled: documentType.enabled ?? true,
+      returned: documentType.returned ?? false,
     });
     setIsEditMode(true);
     setModalOpen(true);
@@ -89,14 +90,14 @@ export default function DocumentsPage() {
     }
   }
 
-  async function handleDeleteClick(tipo: DocumentType) {
+  async function handleDeleteClick(documentType: DocumentType) {
     try {
-      const { inUse } = await apiGet<{ inUse: boolean }>(`/document-types/${tipo.idDocumentType}/in-use`);
+      const { inUse } = await apiGet<{ inUse: boolean }>(`/document-types/${documentType.idDocumentType}/in-use`);
       if (inUse) {
         toast.warning(t("inUseCannotDelete"));
         return;
       }
-      setDeleteId(tipo.idDocumentType!);
+      setDeleteId(documentType.idDocumentType!);
     } catch (err) {
       showDeleteError(err, t("errorDelete"));
     }
@@ -115,16 +116,16 @@ export default function DocumentsPage() {
   }
 
   const columns: Column<DocumentType>[] = [
-    { key: "id", header: tc("id"), render: (tipo) => <span className="text-xs text-muted-foreground">{tipo.idDocumentType}</span>, className: "w-12" },
-    { key: "name", header: tc("name"), render: (tipo) => <span className="font-medium">{tipo.name}</span> },
+    { key: "id", header: tc("id"), render: (documentType) => <span className="text-xs text-muted-foreground">{documentType.idDocumentType}</span>, className: "w-12" },
+    { key: "name", header: tc("name"), render: (documentType) => <span className="font-medium">{documentType.name}</span> },
     {
       key: "actions", header: "", className: "w-24",
-      render: (tipo) => (
+      render: (documentType) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(tipo)} aria-label={tc("edit")}>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(documentType)} aria-label={tc("edit")}>
             <NotaireIcon src="/icons/actions/generate.png" alt="" size={16} />
           </Button>
-          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(tipo)} data-testid="btn-delete-document" aria-label={tc("delete")}>
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(documentType)} data-testid="btn-delete-document" aria-label={tc("delete")}>
             <NotaireIcon src="/icons/actions/borrar.png" alt="" size={16} />
           </Button>
         </div>
@@ -158,7 +159,7 @@ export default function DocumentsPage() {
         data={filtered}
         columns={columns}
         isLoading={isLoading}
-        keyExtractor={(tipo) => tipo.idDocumentType!}
+        keyExtractor={(documentType) => documentType.idDocumentType!}
         emptyMessage={t("noData")}
       />
 
