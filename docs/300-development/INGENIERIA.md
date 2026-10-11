@@ -238,3 +238,4 @@ ejecutan el rol; no reemplazan el artefacto.
 4. La prueba cita el caso de uso (`TS-` o `TC-`).
 5. El PR cita el issue. El merge cierra el issue.
 6. Si la operación muestra un fallo, el fallo vuelve como issue. No se documenta solo en el chat.
+7. La trazabilidad del cambio nombra los documentos permanentes que el delta toca (caso de uso, sección de `DOC-CICLO`, SAD o ADR, diagrama). Esos archivos van en el mismo diff. `workspace/sdlc/check-doc-traceability.py` lo verifica. No se copia el diagrama a un segundo archivo para cumplir la regla.

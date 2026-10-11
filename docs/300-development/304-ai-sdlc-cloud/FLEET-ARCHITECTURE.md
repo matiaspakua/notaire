@@ -266,6 +266,12 @@ states:
 2. Leave the use-case narrative in `docs/100-business/102-use-cases/` unless the
    actor's steps changed. Do not paste the state graph into every use case.
 3. Do not add a new `.puml` for the same lifecycle ([ADR-027](../../200-architecture/202-ADR/ADR-027-mermaid-diagrams.md)).
+4. The change's `traceability.md` names the permanent documents this delta
+   must validate (Use Case, `CICLO-DE-VIDA.md` section, SAD or ADR, diagram).
+   Those paths are in the same diff. `workspace/sdlc/check-doc-traceability.py`
+   fails the PR when a row marked yes is missing. The case walkthrough is
+   [GESTION.md](../../200-architecture/203-design/GESTION.md); do not paste it
+   into the use case.
 
 Work-item status on the delivery board is a different machine. Do not describe
 an issue `In Progress` as a gestión `En Tramite`.

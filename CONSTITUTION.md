@@ -513,6 +513,15 @@ permanent documentation **before merge**. Never duplicate documentation —
 centralize information in the most coherent place; move outdated documents to
 `docs/000-archive/`.
 
+An implementation validates the specific documents its own traceability names:
+the Use Case, the lifecycle section, the SAD or ADR, and the diagram that
+describes the behaviour it changes. The ledger is the OpenSpec
+`traceability.md` section **Permanent documentation updated**. A row marked
+yes is a claim that the path is in the same diff.
+`workspace/sdlc/check-doc-traceability.py` rejects a claim whose file is absent.
+Do not add a second copy of a state machine or a sequence to satisfy the check;
+point at the permanent document and edit that one.
+
 | Type | Where it lives | When it changes |
 |------|----------------|-----------------|
 | README | `README.md` | Project-level overview, quick start, badges |

@@ -22,6 +22,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Case-process documentation and a traceability check** (CU76, CU02, #921):
+  `GESTION.md` is the step-by-step analysis of a gestión. The legacy activity
+  diagram matches the seeded workflow. `check-doc-traceability.py` rejects an
+  OpenSpec change whose traceability claims a permanent document the diff does
+  not touch (Constitution §8).
+
 ### Breaking
 
 - **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
