@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pagination, type PaginationProps } from "@/components/shared/Pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MotionTableRow = motion.create(TableRow);
 const rowTransition = (i: number) => ({ duration: 0.3, ease: [0.4, 0, 0.2, 1] as const, delay: Math.min(i * 0.03, 0.3) });
@@ -84,7 +85,7 @@ export function DataTable<T>({
               <TableRow key={i} className="border-b border-border/20 last:border-0">
                 {columns.map((col) => (
                   <TableCell key={col.key} className="py-6 px-6">
-                    <div className="h-5 bg-secondary animate-pulse rounded-full w-full" />
+                    <Skeleton className="h-5 w-full" />
                   </TableCell>
                 ))}
               </TableRow>
@@ -164,8 +165,8 @@ function MobileCards<T>({
       <ul role="list" data-testid="data-table-cards" aria-busy="true" className="flex flex-col gap-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <li key={i} className="rounded-2xl border border-border/40 bg-white p-4 apple-shadow">
-            <div className="h-5 w-2/3 bg-secondary animate-pulse rounded-full" />
-            <div className="mt-3 h-4 w-full bg-secondary animate-pulse rounded-full" />
+            <Skeleton className="h-5 w-2/3" />
+            <Skeleton className="mt-3 h-4 w-full" />
           </li>
         ))}
       </ul>
