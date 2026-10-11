@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `validate-testing-inventory.py` in preflight. ADR-006 and Constitution §7
   document enforced JaCoCo 80%/65% and Vitest raise-only floors. Nine unprefixed
   Playwright specs renamed to `TS-0130`–`TS-0138`.
+<<<<<<< HEAD
 
 ### Breaking
 
@@ -104,6 +105,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `Urban Compraventa property`. Stored labels `CUIT`, `Borrador`,
   `Aprobado`, `Rechazado`, `Iniciada`, `Pendiente`, `Hipoteca`, `Donación`,
   `APROBADO`, `FIRMADA`, and `Compraventa` stay, along with `Juan`.
+=======
+>>>>>>> a16c3ece (fix(changelog): unique Unreleased ### Changed after rebase onto #1517)
 - **English synthetic chrome fixtures** (#1490, CU75): tests name dialog and
   header props in English (`People`, `Client management`, `New person`,
   `Delete person`, `Edit budget`, `Budget summary`, `Items`, `Template`,
@@ -1146,6 +1149,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Grouped sidebar (#1367).** The sidebar's flat 22-link list is now Inicio plus six collapsible sections with headings: Clientes, Trámites, Documentación, Escrituras y protocolo, Gestión and Administración. The browser remembers collapsed sections, and the section holding the current page always opens. The dashboard module grid is built from the same config, in sidebar order. Auditoría is now hidden from non-admins, matching its route guard. Opening Documentos necesarios no longer also highlights Documentos.
 - **Identification type in the person form (#1361).** The person dialog has a required "Tipo de identificación" select before the number, with DNI preselected for a new person (Owner decision); a person stored without a type must pick one before saving. The list shows the type before the number ("CUIT 30712345678") and the number field is labelled "Número de documento". `POST /people` and `PUT /people/{id}` now answer 400 for an identification type id that is not in the catalog (create used to store DNI silently, update kept the old type); an omitted type on create still means DNI, now found by name instead of by id 1.
 - **Dates, numbers and money follow the UI language** (#1355, RNF-05, ADR-015): every screen formatted values in `es-AR`, so the English UI showed `8/7/2026` and `$ 75.000,00`, and the dashboard and its counters each had their own locale switch. A new `useFormat()` hook (on `lib/format.ts` and the calendar-date helpers of #1339) formats dates, timestamps, numbers and ARS amounts for the active language. Spanish uses es-AR (`8/7/2026`, `$ 75.000,00`). English uses en-GB, so dates keep the day first as the Owner decided (`08/07/2026`), and money reads `ARS 75,000.00`. All 49 screen call sites (including the #1491 deed picker) moved to the hook, and guard tests keep locale names and the es-AR-only helpers out of screens. `use-format.test.tsx` and Playwright `TS-0040` cover it.
+
+
+### Breaking
+
+- **English HTTP paths, dashboard routes, and remaining schema names** (#1490, CU75):
+  public resources move to English segments (`POST /api/v1/users/login`, `/api/v1/managements`,
+  `/dashboard/people`, and the rest of the former Spanish paths). There is no Spanish alias.
+  Flyway `V45` renames the leftover Spanish table and columns (`identifications.number`,
+  `people.birth_date`, workflow `name` / `node_type` / `position_x`, and foreign keys such as
+  `fk_id_person` and `fk_id_deed_management`). Login JSON uses `valid`, `idUser`, `name`,
+  `type`, and `person`. Remaining DTO JSON names are English (`testimonies`, `testimonyMovements`,
+  `budget`, `budgets`, `folioType`, `deedManagement`, `users`, `copies`). Report and
+  notebook calls use English names: `GET /api/v1/notebooks/{id}/cover`, query parameters
+  `year`, `month`, `procedureTypeId`, and `procedureTypeName`, and path variables such as
+  `{idBudget}` and `{idManagement}`. The JSON field `heading` replaces `encabezado`
+  (`managementHeading` on budget summaries). Upcoming expirations take the query
+  parameter `days`. Management summaries and workflow traces use the JSON
+  field `currentStatus`. The current-status read operation id is
+  `getCurrentStatus`. `R45` reverses the schema
+  renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
 
 ### Fixed
 
