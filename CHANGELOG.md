@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English workflow, i18n, and CI decisions** (#1490, CU75):
+  ADR-012, ADR-014, ADR-015, the architecture index, and the legacy class-diagram
+  note are English. Workflow fields are `positionX`, `positionY`, `originNode`,
+  `destinationNode`, `condition`, and `description`. Message keys such as
+  `suplencias` and `administracion.usuarios` stay.
 - **English architecture type names and audit decision** (#1490, CU75):
   The SAD, ADRs, and security notes name the current classes (`ManagementController`,
   `AuditAspect`, `DeedManagementRepository`) and tables (`audit_records`,
