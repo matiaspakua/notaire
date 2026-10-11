@@ -110,7 +110,7 @@ class CopyControllerTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should create a copy when the testimony has no movements")
-    void shouldCreateCopyWhenTestimonyHasNoMovimientos() throws Exception {
+    void shouldCreateCopyWhenTestimonyHasNoMovements() throws Exception {
         Testimony testimony = createTestimony();
 
         mockMvc.perform(post("/api/v1/copies")

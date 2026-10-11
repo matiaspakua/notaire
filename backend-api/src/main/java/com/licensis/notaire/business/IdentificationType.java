@@ -8,7 +8,6 @@ import java.io.Serializable;
 import org.springframework.data.domain.Persistable;
 import java.util.List;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -61,7 +60,9 @@ public class IdentificationType implements Serializable, Persistable<Integer> {
     @XmlTransient
     @JsonIgnore
     @JsonIgnoreProperties("fkIdTipoIdentificacion")
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fkIdIdentificationType", fetch = FetchType.LAZY)
+    // No cascade: removing a type must never remove its people (issue #1361; the delete
+    // endpoint answers 409 while people use the type).
+    @OneToMany(mappedBy = "fkIdIdentificationType", fetch = FetchType.LAZY)
     private List<Person> personList;
 
     public IdentificationType() {

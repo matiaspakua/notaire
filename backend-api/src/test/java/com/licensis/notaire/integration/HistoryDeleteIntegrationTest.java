@@ -85,7 +85,7 @@ class HistoryDeleteIntegrationTest {
 
         History history = new History();
         history.setDate(new Date());
-        history.setNotes("obs");
+        history.setNotes("notes");
         history.setFkIdManagement(management);
         history.setFkIdManagementStatus(status);
         history = historyRepository.save(history);

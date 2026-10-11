@@ -160,7 +160,7 @@ class DeedServiceTest {
     @Test
     @DisplayName("Should reject saving deed when number is a duplicate within its folio scope (CU86)")
     void shouldRejectSaveWhenNumberIsDuplicate() {
-        Folio folio = folioConNotary(testNotary, 2026, false);
+        Folio folio = folioWithNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
         when(validateDeedNumberingUseCase.validate(100, testNotary, 2026, false, null, 1))
@@ -174,8 +174,8 @@ class DeedServiceTest {
 
     @Test
     @DisplayName("Should reject saving a deed when the number leaves an unjustified gap (CU86)")
-    void shouldRejectSaveWhenSaltoIsNotJustified() {
-        Folio folio = folioConNotary(testNotary, 2026, false);
+    void shouldRejectSaveWhenGapIsNotJustified() {
+        Folio folio = folioWithNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
         when(validateDeedNumberingUseCase.validate(100, testNotary, 2026, false, null, 1))
@@ -190,7 +190,7 @@ class DeedServiceTest {
     @Test
     @DisplayName("Should save the deed when the sequential number is valid (CU86)")
     void shouldSaveWhenNumberingIsOk() {
-        Folio folio = folioConNotary(testNotary, 2026, false);
+        Folio folio = folioWithNotary(testNotary, 2026, false);
         testDeed.setIdFolio(10);
         when(folioRepository.findById(10)).thenReturn(Optional.of(folio));
         when(validateDeedNumberingUseCase.validate(100, testNotary, 2026, false, null, 1))
@@ -203,7 +203,7 @@ class DeedServiceTest {
         verify(deedRepository, times(1)).save(testDeed);
     }
 
-    private Folio folioConNotary(Person notary, int year, boolean isAuxiliary) {
+    private Folio folioWithNotary(Person notary, int year, boolean isAuxiliary) {
         FolioType folioType = new FolioType();
         folioType.setIsAuxiliary(isAuxiliary);
 

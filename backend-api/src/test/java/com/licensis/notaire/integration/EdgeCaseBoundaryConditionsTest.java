@@ -113,7 +113,7 @@ class EdgeCaseBoundaryConditionsTest {
             mockMvc.perform(get("/api/v1/people/xyz"))
                     .andExpect(status().is4xxClientError());
 
-            mockMvc.perform(get("/api/v1/managements/not-a-numero"))
+            mockMvc.perform(get("/api/v1/managements/not-a-number"))
                     .andExpect(status().is4xxClientError());
         }
 

@@ -2757,7 +2757,7 @@ components:
     WorkflowAssignmentRequest:
       properties:
         workflowDefinitionId:
-          description: Workflow active a assign, or null for unassign the actual
+          description: Active workflow to assign, or null to unassign the current one
           format: int32
           type:
           - integer
@@ -4712,6 +4712,8 @@ paths:
           description: Deleted
         '404':
           description: Not found
+        '409':
+          description: The identification type is in use by people
       summary: Delete identification type
       tags:
       - IdentificationType
@@ -4758,8 +4760,12 @@ paths:
       responses:
         '200':
           description: OK
+        '400':
+          description: Invalid request
         '404':
           description: Not found
+        '409':
+          description: Another identification type already has this name
       summary: Update identification type
       tags:
       - IdentificationType
@@ -6748,7 +6754,7 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: 'Empty or invalid body: workflowDefinitionId is required (entero, or null for unassign)'
+          description: 'Empty or invalid body: workflowDefinitionId is required (an integer, or null to unassign)'
         '404':
           content:
             '*/*':
@@ -6760,8 +6766,8 @@ paths:
             '*/*':
               schema:
                 type: object
-          description: The workflow seleccionado is not active
-      summary: Assign or unassign workflow a procedure type
+          description: The selected workflow is not active
+      summary: Assign or unassign a workflow on a procedure type
       tags:
       - Procedure type
   /api/v1/procedures:

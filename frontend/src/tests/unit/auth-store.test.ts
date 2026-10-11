@@ -109,7 +109,7 @@ describe("useAuthStore — logout()", () => {
 });
 
 describe("useAuthStore — isAdmin()", () => {
-  it("returns true for tipo ADMIN", () => {
+  it("returns true for type ADMIN", () => {
     useAuthStore.setState({ user: adminUser, isAuthenticated: true });
     expect(useAuthStore.getState().isAdmin()).toBe(true);
   });
@@ -119,12 +119,12 @@ describe("useAuthStore — isAdmin()", () => {
     expect(useAuthStore.getState().isAdmin()).toBe(true);
   });
 
-  it("returns true for tipo ADMINISTRADOR", () => {
+  it("returns true for type ADMINISTRADOR", () => {
     useAuthStore.setState({ user: { ...adminUser, type: "ADMINISTRADOR" }, isAuthenticated: true });
     expect(useAuthStore.getState().isAdmin()).toBe(true);
   });
 
-  it("returns false for tipo EMPLEADO", () => {
+  it("returns false for type EMPLEADO", () => {
     useAuthStore.setState({ user: empleadoUser, isAuthenticated: true });
     expect(useAuthStore.getState().isAdmin()).toBe(false);
   });

@@ -1,7 +1,7 @@
 info:
   name: Delete identification type
   type: http
-  seq: 6
+  seq: 10
   description: |-
       Traceability: CU17 (RF #12, #38, #39)
 http:

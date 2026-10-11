@@ -217,7 +217,7 @@ class ProcedureEntityTest {
             typeDto.setName("Compraventa");
             DtoProcedure dto = new DtoProcedure();
             dto.setIdProcedure(10);
-            dto.setNotes("obs");
+            dto.setNotes("notes");
             dto.setProcedureType(typeDto);
             return dto;
         }
@@ -269,7 +269,7 @@ class ProcedureEntityTest {
         void getDtoWithProperty() {
             Procedure procedure = baseProcedure();
             Property property = new Property(3);
-            property.setAddress("Calle Test 456");
+            property.setAddress("Street Test 456");
             procedure.setFkIdProperty(property);
 
             var dto = procedure.getDto();

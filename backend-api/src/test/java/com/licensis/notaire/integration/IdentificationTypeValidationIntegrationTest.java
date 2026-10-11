@@ -58,7 +58,7 @@ class IdentificationTypeValidationIntegrationTest {
         mockMvc.perform(post("/api/v1/identification-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name": "typeValido655", "characters": "9"}
+                                {"name": "typeValid655", "characters": "9"}
                                 """))
                 .andExpect(status().isCreated());
     }

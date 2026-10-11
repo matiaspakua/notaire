@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 @RequirementCoverage({"CU08"})
 @DisplayName("TestimonyGenerationService - verification Tests")
 @ExtendWith(MockitoExtension.class)
-class TestimonyVerificacionServiceTest {
+class TestimonyVerificationServiceTest {
 
     @Mock
     private DeedRepository deedRepository;

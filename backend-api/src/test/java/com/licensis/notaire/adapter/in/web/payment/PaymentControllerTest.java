@@ -363,7 +363,7 @@ class PaymentControllerTest {
                 .param("idBudget", "10")
                 .param("amount", "500.0")
                 .param("date", "2026-06-16")
-                .param("notes", "Test pago"))
+                .param("notes", "Test payment"))
                 .andReturn()
                 .getResponse()
                 .getStatus();

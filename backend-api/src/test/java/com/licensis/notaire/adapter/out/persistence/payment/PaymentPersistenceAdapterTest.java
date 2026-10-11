@@ -414,9 +414,9 @@ class PaymentPersistenceAdapterTest {
         assertThat(result).isEqualByComparingTo(new java.math.BigDecimal("5000"));
     }
 
-    private Procedure procedureWithDocumentCosts(java.math.BigDecimal... importesAPay) {
+    private Procedure procedureWithDocumentCosts(java.math.BigDecimal... amountsToPay) {
         List<SubmittedDocument> documents = new ArrayList<>();
-        for (java.math.BigDecimal amountToPay : importesAPay) {
+        for (java.math.BigDecimal amountToPay : amountsToPay) {
             SubmittedDocument document = new SubmittedDocument();
             document.setAmountToPay(amountToPay);
             documents.add(document);

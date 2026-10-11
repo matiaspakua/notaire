@@ -6,7 +6,7 @@ import java.util.Date;
 
 /**
  * CU10 - Request body for registering the movement data of a single
- * "External entity" document (step 5 of the Curso of Eventos).
+ * external-entity document (step 5 of the course of events).
  */
 public record DtoExternalEntityDocumentMovement(
         Boolean prepared,

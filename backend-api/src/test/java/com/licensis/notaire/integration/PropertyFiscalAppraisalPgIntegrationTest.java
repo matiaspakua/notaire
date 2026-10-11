@@ -46,7 +46,7 @@ class PropertyFiscalAppraisalPgIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should create Property with a numeric fiscalAppraisal against the real Postgres schema")
     void shouldCreatePropertyWithNumericFiscalAppraisal() throws Exception {
         String body = """
-                {"cadastralDesignation": "NC-879-001", "address": "Calle Falsa 123",
+                {"cadastralDesignation": "NC-879-001", "address": "Fake Street 123",
                  "fiscalAppraisal": 150000.5}
                 """;
 
@@ -61,7 +61,7 @@ class PropertyFiscalAppraisalPgIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should create Property with a null fiscalAppraisal against the real Postgres schema")
     void shouldCreatePropertyWithNullFiscalAppraisal() throws Exception {
         String body = """
-                {"cadastralDesignation": "NC-879-002", "address": "Calle Falsa 456"}
+                {"cadastralDesignation": "NC-879-002", "address": "Fake Street 456"}
                 """;
 
         mockMvc.perform(post("/api/v1/properties")

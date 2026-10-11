@@ -52,9 +52,9 @@ class AuxiliaryProtocolServiceTest {
     @Test
     @DisplayName("Should keep auxiliary numbering independent of the main protocol numbering")
     void shouldKeepAuxiliaryNumberingIndependentFromPrincipal() {
-        when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.of(5));
+        when(folioRepository.findMaxAuxiliaryDeedNumber()).thenReturn(Optional.of(5));
 
-        int nextNumber = auxiliaryProtocolService.calculateNextNumberAuxiliary();
+        int nextNumber = auxiliaryProtocolService.calculateNextAuxiliaryNumber();
 
         assertThat(nextNumber).isEqualTo(6);
     }
@@ -62,9 +62,9 @@ class AuxiliaryProtocolServiceTest {
     @Test
     @DisplayName("Should start auxiliary numbering at one when no auxiliary deed exists yet")
     void shouldStartAuxiliaryNumberingAtOne() {
-        when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.empty());
+        when(folioRepository.findMaxAuxiliaryDeedNumber()).thenReturn(Optional.empty());
 
-        int nextNumber = auxiliaryProtocolService.calculateNextNumberAuxiliary();
+        int nextNumber = auxiliaryProtocolService.calculateNextAuxiliaryNumber();
 
         assertThat(nextNumber).isEqualTo(1);
     }
@@ -74,7 +74,7 @@ class AuxiliaryProtocolServiceTest {
     void shouldNotGenerateFolderForAuxiliaryDeed() {
         Folio folio = availableAuxiliaryFolio();
         when(folioRepository.findById(1)).thenReturn(Optional.of(folio));
-        when(folioRepository.findMaxNumberDeedAuxiliary()).thenReturn(Optional.empty());
+        when(folioRepository.findMaxAuxiliaryDeedNumber()).thenReturn(Optional.empty());
         when(deedRepository.save(any(Deed.class))).thenAnswer(inv -> inv.getArgument(0));
 
         Deed result = auxiliaryProtocolService.startDeed(1, "deed body", new Date());

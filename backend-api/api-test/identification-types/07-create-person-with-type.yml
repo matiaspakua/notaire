@@ -1,0 +1,38 @@
+info:
+  name: Create a person that uses the identification type
+  type: http
+  seq: 7
+  description: |-
+      Issue #1361: setup for the in-use delete check (08).
+      Traceability: CU17 (RF #12, #38, #39)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/people"
+  body:
+    type: json
+    data: |-
+        {
+          "firstName": "Ana",
+          "lastName": "Identification Type E2E",
+          "identificationNumber": "{{identification_type_person_document}}",
+          "isClient": true,
+          "identificationTypeId": {{identification_type_id}}
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar('identification_type_person_document', String((Date.now() + 7) % 100000000).padStart(8, '0'));
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          test("Person uses the type", function () {
+            const b = res.getBody();
+            expect(b.identificationTypeId).to.equal(Number(bru.getVar('identification_type_id')));
+            bru.setVar('identification_type_person_id', b.personId);
+          });

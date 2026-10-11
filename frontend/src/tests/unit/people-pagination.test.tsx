@@ -38,7 +38,7 @@ function wrapper({ children }: { children: ReactNode }) {
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }
 
-const ROW = { personId: 1384, firstName: "Ana", lastName: "Nueva", identificationNumber: "1", isClient: false };
+const ROW = { personId: 1384, firstName: "Ana", lastName: "Latest", identificationNumber: "1", isClient: false };
 
 describe("usePeoplePage (#1340)", () => {
   beforeEach(() => mockFetch.mockReset());
@@ -68,7 +68,7 @@ describe("PeoplePage (#1340)", () => {
       pageResponse({ content: [ROW], number: 0, size: 20, totalElements: 1384, totalPages: 70 }),
     );
     render(<PeoplePage />, { wrapper });
-    expect(await screen.findByText("Ana Nueva")).toBeInTheDocument();
+    expect(await screen.findByText("Ana Latest")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toBeInTheDocument();
     const urls = mockFetch.mock.calls.map((c) => String(c[0]));
     expect(urls.some((u) => /\/people\?page=0&size=20&sort=idPerson%2Cdesc$/.test(u))).toBe(true);
@@ -81,7 +81,7 @@ describe("PeoplePage (#1340)", () => {
       pageResponse({ content: [ROW], number: 3, size: 50, totalElements: 1384, totalPages: 28 }),
     );
     render(<PeoplePage />, { wrapper });
-    await screen.findByText("Ana Nueva");
+    await screen.findByText("Ana Latest");
     const urls = mockFetch.mock.calls.map((c) => String(c[0]));
     expect(urls.some((u) => /\/people\?page=3&size=50&sort=idPerson%2Cdesc$/.test(u))).toBe(true);
   });

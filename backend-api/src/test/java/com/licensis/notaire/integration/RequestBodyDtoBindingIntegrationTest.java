@@ -47,7 +47,7 @@ class RequestBodyDtoBindingIntegrationTest {
                                   "idProperty": 99999,
                                   "version": 99,
                                   "cadastralDesignation": "NC-1068-001",
-                                  "address": "Calle Mass Assignment 1",
+                                  "address": "Street Mass Assignment 1",
                                   "fiscalAppraisal": 1000.0
                                 }
                                 """))
@@ -68,7 +68,7 @@ class RequestBodyDtoBindingIntegrationTest {
                         .content("""
                                 {
                                   "cadastralDesignation": "NC-1068-002",
-                                  "address": "Calle Response DTO 2",
+                                  "address": "Street Response DTO 2",
                                   "fiscalAppraisal": 2500.5
                                 }
                                 """))

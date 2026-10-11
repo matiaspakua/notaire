@@ -34,15 +34,15 @@ import com.licensis.notaire.repository.ProcedureRepository;
  * CU43 - Reenter documentation, against the real Flyway-managed Postgres
  * schema. {@link ManagementDocumentReentryIntegrationTest} runs on
  * {@code test-h2}, whose {@code ddl-auto=create} schema does not enforce the
- * NOT NULL columns (e.g. {@code liberado}, {@code observado}) that
- * {@code documentos_presentados} has in production, so it cannot catch a
+ * NOT NULL columns (e.g. {@code released}, {@code observed}) that
+ * {@code submitted_documents} has in production, so it cannot catch a
  * service that forgets to set them.
  */
 @SpringBootTest
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Tag("pg-integration")
-@DisplayName("Management reentry of documentation contra the esquema real (CU43)")
+@DisplayName("Management reentry of documentation against the real schema (CU43)")
 class ManagementDocumentReentryPgIntegrationTest extends BaseIntegrationTest {
 
     @Autowired

@@ -97,13 +97,13 @@ class PersonRepositoryIntegrationTest extends ServiceIntegrationTest {
         person.setIdentificationNumber("22222222");
         person.setIsClient(true);
         person.setFkIdIdentificationType(typeId);
-        person.setAddress("Calle Falsa 123");
+        person.setAddress("Fake Street 123");
         person.setPhone("123-4567");
         person.setEmail("ana@example.com");
 
         Person saved = personRepository.save(person);
 
-        assertThat(saved.getAddress()).isEqualTo("Calle Falsa 123");
+        assertThat(saved.getAddress()).isEqualTo("Fake Street 123");
         assertThat(saved.getPhone()).isEqualTo("123-4567");
         assertThat(saved.getEmail()).isEqualTo("ana@example.com");
     }

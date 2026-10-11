@@ -94,6 +94,12 @@ line per proxied request, both as structured JSON. Promtail stores `traceId`/`sp
 labels, which would be high-cardinality), so `{container="notary-backend"} | traceId="<id>"` finds a request's lines and the
 Loki datasource's `TraceID` derived field opens the trace in Tempo. Loki needs `allow_structured_metadata: true`.
 
+**Client error beacon (#1483):** browsers POST allow-listed JSON to `POST /api/client-errors` (Next.js only; not under
+`/api/v1`). The route validates `level` (`ERROR`|`WARN`) and `message`, optional `name`/`path`/`stack`, enforces size caps
+and a per-client rate limit, then emits a structured `client_error …` log line with `service: "notaire-frontend"`. Promtail
+scrapes it like other frontend JSON. Example LogQL:
+`{container="notaire-frontend"} |= "client_error"` or `{service="notaire-frontend"} |= "client_error"`.
+
 **Drill-down dashboards:** `notaire-infra-resources` (Docker host and aggregate container usage; on Docker Desktop it describes
 the Linux VM), `notaire-frontend` (Node runtime, proxied requests by status from logs), `notaire-observability-health`
 (Prometheus, Loki, Tempo, Alertmanager, Promtail and the collector, scraped natively), `notaire-traces` (recent traces and

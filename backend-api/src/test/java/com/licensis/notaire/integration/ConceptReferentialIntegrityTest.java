@@ -72,7 +72,7 @@ class ConceptReferentialIntegrityTest {
     @Test
     @DisplayName("Should return inUse=false when no template references the concept")
     void shouldReturnInUseFalseWhenConceptIsNotReferenced() throws Exception {
-        int id = createConcept("ConceptoFree_InUse");
+        int id = createConcept("ConceptFree_InUse");
 
         mockMvc.perform(get("/api/v1/concepts/" + id + "/in-use"))
                 .andExpect(status().isOk())
@@ -82,7 +82,7 @@ class ConceptReferentialIntegrityTest {
     @Test
     @DisplayName("Should return inUse=true when a template references the concept")
     void shouldReturnInUseTrueWhenConceptIsReferenced() throws Exception {
-        int id = createConcept("ConceptoUsed_InUse");
+        int id = createConcept("ConceptUsed_InUse");
         linkConceptToTemplate(1, id);
 
         mockMvc.perform(get("/api/v1/concepts/" + id + "/in-use"))
@@ -93,7 +93,7 @@ class ConceptReferentialIntegrityTest {
     @Test
     @DisplayName("Should return 409 when editing a concept that is in use")
     void shouldReturn409WhenEditingConceptInUse() throws Exception {
-        int id = createConcept("ConceptoEditBlocked");
+        int id = createConcept("ConceptEditBlocked");
         linkConceptToTemplate(1, id);
 
         mockMvc.perform(put("/api/v1/concepts/" + id)
@@ -113,7 +113,7 @@ class ConceptReferentialIntegrityTest {
     @Test
     @DisplayName("Should allow editing a concept that is NOT in use")
     void shouldAllowEditingConceptNotInUse() throws Exception {
-        int id = createConcept("ConceptoEditAllowed");
+        int id = createConcept("ConceptEditAllowed");
 
         mockMvc.perform(put("/api/v1/concepts/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -131,7 +131,7 @@ class ConceptReferentialIntegrityTest {
     @Test
     @DisplayName("Should return 409 when deleting a concept that is in use")
     void shouldReturn409WhenDeletingConceptInUse() throws Exception {
-        int id = createConcept("ConceptoDeleteBlocked");
+        int id = createConcept("ConceptDeleteBlocked");
         linkConceptToTemplate(1, id);
 
         mockMvc.perform(delete("/api/v1/concepts/" + id))

@@ -67,7 +67,7 @@ merge, or skip gates.
 | **PR** | Open/update PR; body links issue with **`Closes #n`**; title `[#n] type(scope): …` | `gh pr view` / ManagePullRequest; every closing commit must end with `Closes #n` (not merely `Issue: #n`) |
 | **CI watch** | Subscribe or poll checks; on failure dispatch CI-fix specialist with failing job logs | Heavy CI + Playwright terminal success on last non-`[skip ci]` commit — **not** light-only (~12) green; see [`CI-MERGE-GATE.md`](CI-MERGE-GATE.md) |
 | **Gate 4** | Dispatch `code-reviewer` (+ `security-auditor` when auth/secrets/schema) | Review verdict PASS or concrete FIX notes |
-| **Gate 5** | Merge via PR only; wait CI/CD on `main`; smoke `/actuator/health`; close issue; archive OpenSpec change | Health UP; issue CLOSED (proves `Closes #` worked); `openspec archive` when applicable |
+| **Gate 5** | Merge via PR only; wait CI/CD on `main`; smoke `/actuator/health`; close issue; **archive OpenSpec change** (mechanical: `python3 workspace/sdlc/check-openspec-archive-hygiene.py`) | Health UP; issue CLOSED (proves `Closes #` worked); change leaves the active set (`openspec archive` + spec sync); Process Checks fail CLOSED leftovers / unticked groups 3–8 (#1252) |
 | **Next** | Update run ledger; pick next eligible issue | Do not start a second concurrent product issue on the same worktree without isolation |
 
 ### Foreman must never

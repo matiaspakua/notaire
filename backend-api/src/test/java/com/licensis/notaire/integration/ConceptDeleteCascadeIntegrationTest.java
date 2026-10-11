@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * "Riesgos" for reverting a delete via Hibernate re-managing the loaded, cascaded
  * children in the same persistence context (#957).
  *
- * <p>Follows the same two-transaction shape as {@link HistorialDeleteIntegrationTest}:
+ * <p>Follows the same two-transaction shape as {@link HistoryDeleteIntegrationTest}:
  * the parent and child are created and committed in a prior transaction, matching a real
  * HTTP delete request that arrives after both rows already exist.
  */

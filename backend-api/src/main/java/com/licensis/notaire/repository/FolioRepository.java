@@ -42,7 +42,7 @@ public interface FolioRepository extends JpaRepository<Folio, Integer> {
 
     @Query("SELECT MAX(f.fkIdDeed.number) FROM Folio f "
             + "WHERE f.fkIdFolioType.isAuxiliary = true AND f.fkIdDeed IS NOT NULL")
-    Optional<Integer> findMaxNumberDeedAuxiliary();
+    Optional<Integer> findMaxAuxiliaryDeedNumber();
 
     @Query("SELECT MAX(f.fkIdDeed.number) FROM Folio f "
             + "WHERE f.fkIdNotaryPerson.idPerson = :notaryId AND f.year = :year "

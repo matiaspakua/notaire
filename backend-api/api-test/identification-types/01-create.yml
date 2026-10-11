@@ -10,7 +10,7 @@ http:
   body:
     type: json
     data: |-
-        {"name":"E2E Identification Type","characters":"8"}
+        {"name":"{{identification_type_name}}","characters":"8"}
   headers:
     - name: Content-Type
       value: application/json
@@ -18,6 +18,10 @@ http:
       value: "Bearer {{token}}"
 runtime:
   scripts:
+    - type: before-request
+      code: |-
+          // Unique per run: the catalog keeps one row per name (#1361).
+          bru.setVar('identification_type_name', 'E2E Identification Type ' + Date.now());
     - type: tests
       code: |-
           test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });

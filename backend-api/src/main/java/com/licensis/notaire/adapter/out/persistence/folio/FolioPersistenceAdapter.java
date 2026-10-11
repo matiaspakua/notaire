@@ -45,8 +45,8 @@ public class FolioPersistenceAdapter implements FolioRepositoryPort {
     }
 
     @Override
-    public Optional<Integer> findMaxNumberDeedAuxiliary() {
-        return folioRepository.findMaxNumberDeedAuxiliary();
+    public Optional<Integer> findMaxAuxiliaryDeedNumber() {
+        return folioRepository.findMaxAuxiliaryDeedNumber();
     }
 
     @Override

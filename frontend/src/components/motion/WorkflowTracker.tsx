@@ -29,7 +29,7 @@ const FLOW_DOT_REPEATS = 2;
 const PULSE_SECONDS = 1.6;
 const PULSE_REPEATS = 3;
 
-/** ManagementStatus id for the seeded label "Testimony Ingresado a Inscripcion" (V41). */
+/** ManagementStatus id for the seeded label "Testimonio Ingresado a Inscripcion" (V41). */
 const INSCRIPTION_STATUS_ID = 12;
 
 type NodeStatus = "completed" | "in_progress" | "pending";

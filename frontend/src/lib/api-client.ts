@@ -6,6 +6,7 @@
  * through the Next.js same-origin proxy. Do not read JWT from localStorage.
  */
 import { logger } from "@/lib/logger";
+import { reportClientError } from "@/lib/report-client-error";
 import { handleAuthenticatedSessionExpiry } from "@/lib/session-expiry";
 
 // Same-origin /api/v1 — proxied at request time by the App Router BFF
@@ -59,6 +60,12 @@ async function handleResponse<T>(res: Response, path: string, method: string): P
       path,
       status: res.status,
       body: text.slice(0, 500),
+    });
+    reportClientError({
+      level: "ERROR",
+      message: `api_call_failed method=${method} path=${path} status=${res.status}`,
+      name: "ApiError",
+      path,
     });
     rejectApiFailure(res.status, path, text);
   }

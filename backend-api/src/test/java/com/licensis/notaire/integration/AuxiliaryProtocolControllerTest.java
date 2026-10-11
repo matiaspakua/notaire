@@ -76,7 +76,7 @@ class AuxiliaryProtocolControllerTest {
 
     @Test
     @DisplayName("Should list available auxiliary folios")
-    void shouldListAvailableFoliosAuxiliares() throws Exception {
+    void shouldListAvailableAuxiliaryFolios() throws Exception {
         FolioType type = createAuxiliaryType();
         createAuxiliaryFolio(type, 501);
 
@@ -87,7 +87,7 @@ class AuxiliaryProtocolControllerTest {
 
     @Test
     @DisplayName("Should return an empty list when there are no auxiliary folios available")
-    void shouldReturnEmptyWhenNoFoliosAuxiliaresAvailable() throws Exception {
+    void shouldReturnEmptyWhenNoAuxiliaryFoliosAvailable() throws Exception {
         mockMvc.perform(get("/api/v1/auxiliary-protocol/available-folios"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", org.hamcrest.Matchers.not(
@@ -96,7 +96,7 @@ class AuxiliaryProtocolControllerTest {
 
     @Test
     @DisplayName("Should create deed on an available auxiliary folio with its own correlative number")
-    void shouldCreateDeedOnAvailableFolioAuxiliary() throws Exception {
+    void shouldCreateDeedOnAvailableAuxiliaryFolio() throws Exception {
         FolioType type = createAuxiliaryType();
         Folio folio = createAuxiliaryFolio(type, 601);
 
@@ -113,7 +113,7 @@ class AuxiliaryProtocolControllerTest {
 
     @Test
     @DisplayName("Should reject starting a deed when no auxiliary folio is available")
-    void shouldRejectDeedWhenNoFolioAuxiliaryAvailable() throws Exception {
+    void shouldRejectDeedWhenNoAuxiliaryFolioAvailable() throws Exception {
         Map<String, Object> body = new HashMap<>();
         body.put("body", "Record of signature certification");
 

@@ -80,7 +80,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
                     "idBudget": %d,
                     "amount": 100000.0,
                     "date": "2026-08-20",
-                    "notes": "Primer payment",
+                    "notes": "First payment",
                     "paymentMethod": "Efectivo"
                 }
                 """.formatted(idBudget);
@@ -101,7 +101,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
                     "idBudget": %d,
                     "amount": 100000.0,
                     "date": "2026-08-20",
-                    "notes": "Primer payment",
+                    "notes": "First payment",
                     "paymentMethod": "Transferencia"
                 }
                 """.formatted(idBudget);
@@ -128,7 +128,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
                     "idBudget": %d,
                     "amount": 100000.0,
                     "date": "2026-08-20",
-                    "notes": "Primer payment",
+                    "notes": "First payment",
                     "paymentMethod": "Efectivo"
                 }
                 """.formatted(idBudget);
@@ -146,7 +146,7 @@ class PaymentIntegrationTest extends ServiceIntegrationTest {
                 {
                     "amount": 120000.0,
                     "date": "2026-08-20",
-                    "notes": "Editado",
+                    "notes": "Edited",
                     "paymentMethod": "Cheque"
                 }
                 """;

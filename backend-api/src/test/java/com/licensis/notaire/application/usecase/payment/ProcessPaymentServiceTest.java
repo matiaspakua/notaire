@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Unit tests for the CU15 "Procesar Payment" use case, driven entirely through the ports
+ * Unit tests for the CU15 "Process a payment" use case, driven entirely through the ports
  * with in-memory fakes — no Spring context, no JPA, no mocks.
  *
  * <p>These carry over the scenarios previously asserted against {@code PaymentService}:

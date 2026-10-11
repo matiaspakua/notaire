@@ -16,6 +16,7 @@ export default function AdministrationPage() {
     { key: "folios" as const, href: "/dashboard/administration/folios", pngIcon: "/icons/admin/folios.png" },
     { key: "tramites" as const, href: "/dashboard/administration/procedures", pngIcon: "/icons/admin/procedures.png" },
     { key: "estadosGestion" as const, href: "/dashboard/administration/management-statuses", pngIcon: "/icons/admin/management-statuses.png" },
+    { key: "tiposIdentificacion" as const, href: "/dashboard/administration/identification-types", pngIcon: "/icons/admin/users.png" },
     { key: "plantillas" as const, href: "/dashboard/administration/templates", pngIcon: "/icons/admin/budget-templates.png" },
     { key: "roles" as const, href: "/dashboard/administration/roles", pngIcon: "/icons/admin/users.png" },
   ];

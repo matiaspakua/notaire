@@ -1,6 +1,8 @@
 package com.licensis.notaire.adapter.in.web.person;
 
 import com.licensis.notaire.business.IdentificationType;
+import com.licensis.notaire.exception.NotaireException;
+import com.licensis.notaire.repository.PersonRepository;
 import com.licensis.notaire.repository.IdentificationTypeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,10 +43,34 @@ public class IdentificationTypeController {
             String characters,
             int version) {}
 
-    private final IdentificationTypeRepository repository;
+    /** Reason for a 409 on delete: people still use the type (issue #1361). */
+    static final String IN_USE_MESSAGE =
+            "Cannot delete: the identification type is in use by people";
 
-    public IdentificationTypeController(IdentificationTypeRepository repository) {
+    /** Reason for a 409 on create/rename: one row per name, in any letter case (issue #1361). */
+    static final String DUPLICATE_NAME_MESSAGE = "An identification type with this name already exists";
+
+    private final IdentificationTypeRepository repository;
+    private final PersonRepository personRepository;
+
+    public IdentificationTypeController(IdentificationTypeRepository repository,
+            PersonRepository personRepository) {
         this.repository = repository;
+        this.personRepository = personRepository;
+    }
+
+    /**
+     * The DNI default for new people looks the type up by name, so two rows that differ only in
+     * letter case or spaces would make it ambiguous: reject a name another row already has.
+     */
+    private void requireUniqueName(String name, Integer ownId) {
+        String wanted = name.trim();
+        boolean taken = repository.findAll().stream()
+                .filter(t -> ownId == null || !ownId.equals(t.getIdIdentificationType()))
+                .anyMatch(t -> t.getName() != null && t.getName().trim().equalsIgnoreCase(wanted));
+        if (taken) {
+            throw new NotaireException(HttpStatus.CONFLICT.value(), DUPLICATE_NAME_MESSAGE);
+        }
     }
 
     private IdentificationTypeResponse toResponse(IdentificationType entity) {
@@ -56,7 +82,7 @@ public class IdentificationTypeController {
     }
 
     private void applyRequest(IdentificationType entity, IdentificationTypeRequest request) {
-        entity.setName(request.name());
+        entity.setName(request.name().trim());
         entity.setCharacters(request.characters());
     }
 
@@ -89,6 +115,7 @@ public class IdentificationTypeController {
     @PostMapping
     @Operation(summary = "Create identification type")
     public ResponseEntity<Object> create(@Valid @RequestBody IdentificationTypeRequest request) {
+        requireUniqueName(request.name(), null);
         try {
             IdentificationType entity = new IdentificationType();
             applyRequest(entity, request);
@@ -102,12 +129,18 @@ public class IdentificationTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "200", description = "OK"),
-    @ApiResponse(responseCode = "404", description = "Not found")
+    @ApiResponse(responseCode = "400", description = "Invalid request"),
+    @ApiResponse(responseCode = "404", description = "Not found"),
+    @ApiResponse(responseCode = "409", description = "Another identification type already has this name")
 })
     @PutMapping("/{id}")
     @Operation(summary = "Update identification type")
     public ResponseEntity<Void> update(@PathVariable Integer id,
             @Valid @RequestBody IdentificationTypeRequest request) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        requireUniqueName(request.name(), id);
         return repository.findById(id).map(existing -> {
             try {
                 applyRequest(existing, request);
@@ -122,13 +155,17 @@ public class IdentificationTypeController {
 
     @ApiResponses({
     @ApiResponse(responseCode = "204", description = "Deleted"),
-    @ApiResponse(responseCode = "404", description = "Not found")
+    @ApiResponse(responseCode = "404", description = "Not found"),
+    @ApiResponse(responseCode = "409", description = "The identification type is in use by people")
 })
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete identification type")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();
+        }
+        if (personRepository.existsByFkIdIdentificationTypeIdIdentificationType(id)) {
+            throw new NotaireException(HttpStatus.CONFLICT.value(), IN_USE_MESSAGE);
         }
         try {
             repository.deleteById(id);

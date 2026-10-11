@@ -48,14 +48,14 @@ class BudgetCatalogItemsServiceTest {
         Budget budget = new Budget();
         budget.setIdBudget(1);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", new java.math.BigDecimal("500"))));
+        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Stamp duty", new java.math.BigDecimal("500"))));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Item> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10));
 
         assertThat(result).hasSize(1);
         Item copy = result.get(0);
-        assertThat(copy.getName()).isEqualTo("Sellado");
+        assertThat(copy.getName()).isEqualTo("Stamp duty");
         assertThat(copy.getValue()).isEqualByComparingTo(new java.math.BigDecimal("500"));
         assertThat(copy.getNotes()).isEqualTo("Catalog observation");
         assertThat(copy.getFkIdBudget()).isEqualTo(budget);
@@ -67,14 +67,14 @@ class BudgetCatalogItemsServiceTest {
         Budget budget = new Budget();
         budget.setIdBudget(1);
         when(budgetRepository.findById(1)).thenReturn(Optional.of(budget));
-        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Sellado", new java.math.BigDecimal("500"))));
+        when(itemRepository.findById(10)).thenReturn(Optional.of(buildCatalogItem(10, "Stamp duty", new java.math.BigDecimal("500"))));
         when(itemRepository.findById(11)).thenReturn(Optional.of(buildCatalogItem(11, "Honorarios", new java.math.BigDecimal("1000"))));
         when(itemRepository.createAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Item> result = budgetCatalogItemsService.addItemsFromCatalog(1, List.of(10, 11));
 
         assertThat(result).hasSize(2);
-        assertThat(result).extracting(Item::getName).containsExactlyInAnyOrder("Sellado", "Honorarios");
+        assertThat(result).extracting(Item::getName).containsExactlyInAnyOrder("Stamp duty", "Honorarios");
     }
 
     @Test

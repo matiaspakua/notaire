@@ -453,7 +453,7 @@ class SimpleControllersTest {
             mvc.perform(get("/api/v1/deeds/1")).andExpect(status().isOk());
             mvc.perform(get("/api/v1/deeds/2")).andExpect(status().isNotFound());
             mvc.perform(get("/api/v1/deeds/available-notaries")).andExpect(status().isOk());
-            mvc.perform(get("/api/v1/deeds/search?numero=10")).andExpect(status().isOk());
+            mvc.perform(get("/api/v1/deeds/search?number=10")).andExpect(status().isOk());
 
             String deedBody = "{\"number\":10,\"status\":\"BORRADOR\",\"body\":\"x\"}";
             mvc.perform(post("/api/v1/deeds").contentType("application/json")
@@ -551,7 +551,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/budgets/99")).andExpect(status().isNotFound());
 
             com.licensis.notaire.business.Item item = new com.licensis.notaire.business.Item(
-                    1, "Sellado", new java.math.BigDecimal("500"));
+                    1, "Stamp duty", new java.math.BigDecimal("500"));
             when(budgetTemplateService.loadItemsFromTemplate(1, 5)).thenReturn(List.of(item));
             mvc.perform(post("/api/v1/budgets/1/items-from-template?procedureTypeId=5"))
                     .andExpect(status().isOk());
@@ -592,12 +592,12 @@ class SimpleControllersTest {
     @DisplayName("TestimonyController")
     class TestimonyControllerTests {
         private final TestimonyRepository repo = mock(TestimonyRepository.class);
-        private final TestimonyGenerationVerificationService generationVerificacionService =
+        private final TestimonyGenerationVerificationService generationVerificationService =
                 mock(TestimonyGenerationVerificationService.class);
         private final com.licensis.notaire.repository.DeedRepository deedRepo =
                 mock(com.licensis.notaire.repository.DeedRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new TestimonyController(repo, generationVerificacionService, deedRepo)).build();
+                standaloneSetup(new TestimonyController(repo, generationVerificationService, deedRepo)).build();
 
         private Testimony build() {
             Testimony t = new Testimony();
@@ -876,8 +876,10 @@ class SimpleControllersTest {
     @DisplayName("IdentificationTypeController")
     class IdentificationTypeControllerTests {
         private final IdentificationTypeRepository repo = mock(IdentificationTypeRepository.class);
+        private final com.licensis.notaire.repository.PersonRepository people =
+                mock(com.licensis.notaire.repository.PersonRepository.class);
         private final org.springframework.test.web.servlet.MockMvc mvc =
-                standaloneSetup(new IdentificationTypeController(repo))
+                standaloneSetup(new IdentificationTypeController(repo, people))
                         .setControllerAdvice(new com.licensis.notaire.config.GlobalExceptionHandler())
                         .build();
 
@@ -901,7 +903,13 @@ class SimpleControllersTest {
 
             String typeBody = "{\"name\":\"DNI\",\"characters\":\"8\"}";
             mvc.perform(post("/api/v1/identification-types").contentType("application/json")
-                    .content(typeBody)).andExpect(status().isCreated());
+                    .content("{\"name\":\"CUIT\",\"characters\":\"11\"}")).andExpect(status().isCreated());
+            // #1361: one row per name in any letter case; a type people use is not deleted.
+            mvc.perform(post("/api/v1/identification-types").contentType("application/json")
+                    .content("{\"name\":\" dni \",\"characters\":\"8\"}")).andExpect(status().isConflict());
+            when(people.existsByFkIdIdentificationTypeIdIdentificationType(1)).thenReturn(true);
+            mvc.perform(delete("/api/v1/identification-types/1")).andExpect(status().isConflict());
+            when(people.existsByFkIdIdentificationTypeIdIdentificationType(1)).thenReturn(false);
             mvc.perform(put("/api/v1/identification-types/1").contentType("application/json")
                     .content(typeBody)).andExpect(status().isOk());
             mvc.perform(put("/api/v1/identification-types/2").contentType("application/json")
@@ -1050,7 +1058,7 @@ class SimpleControllersTest {
             mvc.perform(delete("/api/v1/people/1")).andExpect(status().isNoContent());
             mvc.perform(delete("/api/v1/people/2")).andExpect(status().isNotFound());
 
-            // POST with missing tipo identification should use default
+            // POST with missing identification type should use default
             String person2Body = """
                     {"firstName":"Ana","lastName":"Gomez","identificationNumber":"87654321","isClient":false}
                     """;

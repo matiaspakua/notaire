@@ -58,10 +58,10 @@ class AuditRecordServiceTest {
     @Test
     @DisplayName("Should find all audit records")
     void shouldFindAll() {
-        List<AuditRecord> registros = new ArrayList<>();
-        registros.add(testRecord);
+        List<AuditRecord> records = new ArrayList<>();
+        records.add(testRecord);
 
-        when(repository.findAll()).thenReturn(registros);
+        when(repository.findAll()).thenReturn(records);
 
         List<AuditRecord> result = service.findAll();
 
@@ -88,10 +88,10 @@ class AuditRecordServiceTest {
     @Test
     @DisplayName("Should find all audit records as DTOs")
     void shouldFindAllAsDto() {
-        List<AuditRecord> registros = new ArrayList<>();
-        registros.add(testRecord);
+        List<AuditRecord> records = new ArrayList<>();
+        records.add(testRecord);
 
-        when(repository.findAllWithUser()).thenReturn(registros);
+        when(repository.findAllWithUser()).thenReturn(records);
 
         List<DtoAuditRecord> result = service.findAllAsDto();
 
@@ -248,10 +248,10 @@ class AuditRecordServiceTest {
     @Test
     @DisplayName("Should find the audit record list by user id")
     void shouldFindRecordsByUserIdList() {
-        List<AuditRecord> registros = new ArrayList<>();
-        registros.add(testRecord);
+        List<AuditRecord> records = new ArrayList<>();
+        records.add(testRecord);
 
-        when(repository.findByFkIdUserIdUser(1)).thenReturn(registros);
+        when(repository.findByFkIdUserIdUser(1)).thenReturn(records);
 
         List<AuditRecord> result = service.findByUserId(1);
 
@@ -265,10 +265,10 @@ class AuditRecordServiceTest {
     @Test
     @DisplayName("Should find the audit record list by user id as DTOs")
     void shouldFindRecordsByUserIdAsDto() {
-        List<AuditRecord> registros = new ArrayList<>();
-        registros.add(testRecord);
+        List<AuditRecord> records = new ArrayList<>();
+        records.add(testRecord);
 
-        when(repository.findByUserIdWithUser(1)).thenReturn(registros);
+        when(repository.findByUserIdWithUser(1)).thenReturn(records);
 
         List<DtoAuditRecord> result = service.findByUserIdAsDto(1);
 

@@ -318,7 +318,7 @@ export const TestData = {
     maritalStatus: "Soltero",
     sex: "Masculino",
     occupation: "Empleado",
-    address: "Calle Falsa 123",
+    address: "Fake Street 123",
   },
   budget: {
     procedureType: "Deed",
@@ -332,7 +332,7 @@ export const TestData = {
     startDate: new Date().toISOString().split("T")[0],
   },
   deed: {
-    number: "ESC-001",
+    number: "DEED-001",
     date: new Date().toISOString().split("T")[0],
     body: "Test deed body",
     status: "Firmada",

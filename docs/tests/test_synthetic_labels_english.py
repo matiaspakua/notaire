@@ -99,6 +99,61 @@ class SyntheticLabelsEnglishTest(unittest.TestCase):
         self.assertNotIn("urbano", procedure)
         self.assertNotIn(" de property", procedure)
 
+    def test_remaining_sample_names_are_english(self):
+        picker = read(FRONT / "budget-picker.test.tsx")
+        self.assertIn("Ana Latest", picker)
+        self.assertIn("Recent", picker)
+        self.assertIn("Ana", picker)
+        self.assertIn("Bruno", picker)
+        self.assertNotIn("Nueva", picker)
+        self.assertNotIn("Reciente", picker)
+
+        people = read(FRONT / "people-pagination.test.tsx")
+        self.assertIn("Ana Latest", people)
+        self.assertIn("Ana", people)
+        self.assertNotIn("Nueva", people)
+
+        request = read(JAVA / "integration/PersonRequestValidationIntegrationTest.java")
+        self.assertIn("Other", request)
+        self.assertIn("Duplicate", request)
+        self.assertIn("New", request)
+        self.assertIn("Ana", request)
+        self.assertIn("Perez", request)
+        self.assertNotIn("Otro", request)
+        self.assertNotIn("Duplicado", request)
+        self.assertNotIn("Nueva", request)
+
+        budget = read(JAVA / "integration/BudgetSummaryControllerTest.java")
+        self.assertIn("Summary IT", budget)
+        self.assertNotIn("Resumen", budget)
+
+        management = read(JAVA / "integration/ManagementFinancialSummaryControllerTest.java")
+        self.assertIn("Summary Management IT", management)
+        self.assertNotIn("Resumen", management)
+
+        case_summary = read(JAVA / "integration/ManagementCaseSummaryIntegrationTest.java")
+        self.assertIn("CaseSummary", case_summary)
+        self.assertNotIn("CasoResumen", case_summary)
+
+        reports = read(JAVA / "integration/ReportsUseCaseIntegrationTest.java")
+        self.assertIn("procedure-document list", reports)
+        self.assertNotIn("lista-procedure", reports)
+
+        dedup = read(ROOT / "testing/e2e/tests/TS-0015-people-clients-workflow.spec.ts")
+        self.assertIn("Duplicate", dedup)
+        self.assertIn("Another", dedup)
+        self.assertIn("/creada/i", dedup)
+        self.assertIn("/ya existe/i", dedup)
+        self.assertNotIn("Duplicado", dedup)
+        self.assertNotIn("Otra", dedup)
+
+        pagination = read(ROOT / "testing/e2e/tests/TS-0110-people-pagination.spec.ts")
+        self.assertIn("Duplicate", pagination)
+        self.assertIn("Paged", pagination)
+        self.assertIn("ver persona existente", pagination)
+        self.assertNotIn("Duplicado", pagination)
+        self.assertNotIn("Paginado", pagination)
+
 
 if __name__ == "__main__":
     unittest.main()

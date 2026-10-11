@@ -107,10 +107,10 @@ export function useDocumentDebtReport() {
 /** CU15 — Payment receipt */
 export function usePaymentReceipt() {
   return {
-    download: (idPago: number) =>
+    download: (idPayment: number) =>
       downloadPdf(
-        `/reports/payment-receipt/${idPago}`,
-        `recibo_pago_${idPago}.pdf`
+        `/reports/payment-receipt/${idPayment}`,
+        `recibo_pago_${idPayment}.pdf`
       ),
   };
 }

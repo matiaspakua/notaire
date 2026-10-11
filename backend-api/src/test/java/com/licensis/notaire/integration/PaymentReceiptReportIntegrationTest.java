@@ -63,7 +63,7 @@ class PaymentReceiptReportIntegrationTest extends ServiceIntegrationTest {
                 {
                   "fkIdPerson": {"personId": %d},
                   "date": "2026-09-05",
-                  "heading": "Budget recibo E2E",
+                  "heading": "Budget receipt E2E",
                   "status": "PENDIENTE",
                   "propertyAmount": 10000.0
                 }

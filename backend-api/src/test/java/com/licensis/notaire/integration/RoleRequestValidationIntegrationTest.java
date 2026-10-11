@@ -58,7 +58,7 @@ class RoleRequestValidationIntegrationTest {
         mockMvc.perform(post("/api/v1/roles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name": "roleValido655", "description": "desc", "active": true, "modulos": []}
+                                {"name": "roleValid655", "description": "desc", "active": true, "modulos": []}
                                 """))
                 .andExpect(status().isCreated());
     }

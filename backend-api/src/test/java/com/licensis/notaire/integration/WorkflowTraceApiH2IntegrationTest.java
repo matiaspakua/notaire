@@ -109,18 +109,18 @@ class WorkflowTraceApiH2IntegrationTest {
     }
 
     private void seedWorkflowAndManagement() {
-        ManagementStatus iniciada = managementStatus("Trace Iniciada");
-        ManagementStatus enCurso = managementStatus("Trace En Curso");
-        ManagementStatus cerrada = managementStatus("Trace Cerrada");
+        ManagementStatus started = managementStatus("Trace Started");
+        ManagementStatus inProgress = managementStatus("Trace In Progress");
+        ManagementStatus closed = managementStatus("Trace Closed");
 
         WorkflowDefinition def = new WorkflowDefinition();
         def.setName("Workflow Trace Test");
         def.setActive(true);
         def = workflowDefinitionRepository.save(def);
 
-        WorkflowNode initial = node(def, iniciada, WorkflowNodeType.INITIAL);
-        WorkflowNode middle = node(def, enCurso, WorkflowNodeType.INTERMEDIATE);
-        WorkflowNode last = node(def, cerrada, WorkflowNodeType.FINAL);
+        WorkflowNode initial = node(def, started, WorkflowNodeType.INITIAL);
+        WorkflowNode middle = node(def, inProgress, WorkflowNodeType.INTERMEDIATE);
+        WorkflowNode last = node(def, closed, WorkflowNodeType.FINAL);
         initialNodeId = initial.getId();
         middleNodeId = middle.getId();
         finalNodeId = last.getId();
@@ -146,7 +146,7 @@ class WorkflowTraceApiH2IntegrationTest {
         management.setNumber(987654);
         management.setHeading("Management Trace Test");
         management.setDateStart(new Date());
-        management.setFkIdManagementStatus(enCurso);
+        management.setFkIdManagementStatus(inProgress);
         management.setFkIdNotaryPerson(personRepository.findAll().get(0));
         management = managementRepository.save(management);
         managementId = management.getIdManagement();
@@ -158,8 +158,8 @@ class WorkflowTraceApiH2IntegrationTest {
         procedureRepository.save(procedure);
 
         long oneDayMillis = 86_400_000L;
-        history(management, iniciada, oneDayMillis);
-        history(management, enCurso, 2 * oneDayMillis);
+        history(management, started, oneDayMillis);
+        history(management, inProgress, 2 * oneDayMillis);
 
         entityManager.flush();
         entityManager.clear();
@@ -173,7 +173,7 @@ class WorkflowTraceApiH2IntegrationTest {
                 .andExpect(jsonPath("$.managementId").value(managementId))
                 .andExpect(jsonPath("$.number").value(987654))
                 .andExpect(jsonPath("$.heading").value("Management Trace Test"))
-                .andExpect(jsonPath("$.currentStatus").value("Trace En Curso"))
+                .andExpect(jsonPath("$.currentStatus").value("Trace In Progress"))
                 .andExpect(jsonPath("$.workflowDefinition.name").value("Workflow Trace Test"))
                 .andExpect(jsonPath("$.nodes", hasSize(3)))
                 .andExpect(jsonPath("$.transitions", hasSize(2)))
@@ -211,10 +211,10 @@ class WorkflowTraceApiH2IntegrationTest {
     @Test
     @DisplayName("Should serialize management by number when procedure type has a workflow definition")
     void shouldSerializeManagementByNumberWhenTypeHasWorkflowDefinition() throws Exception {
-        mockMvc.perform(get("/api/v1/managements/number/{numero}", 987654))
+        mockMvc.perform(get("/api/v1/managements/number/{number}", 987654))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.number").value(987654))
-                .andExpect(jsonPath("$.currentStatus").value("Trace En Curso"))
+                .andExpect(jsonPath("$.currentStatus").value("Trace In Progress"))
                 .andExpect(jsonPath("$.procedureCount").value(1));
     }
 
@@ -238,6 +238,6 @@ class WorkflowTraceApiH2IntegrationTest {
                 .andExpect(jsonPath("$[0].managementId").value(managementId));
         mockMvc.perform(get("/api/v1/managements/{id}/current-status", managementId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusManagementName").value("Trace En Curso"));
+                .andExpect(jsonPath("$.statusManagementName").value("Trace In Progress"));
     }
 }

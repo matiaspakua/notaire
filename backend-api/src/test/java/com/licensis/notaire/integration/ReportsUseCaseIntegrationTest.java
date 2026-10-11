@@ -34,7 +34,7 @@ class ReportsUseCaseIntegrationTest {
 
     @Test
     @DisplayName("CU24: the index book returns valid PDF bytes")
-    void shouldGenerateLibroIndicePdf() throws Exception {
+    void shouldGenerateIndexBookPdf() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/reports/index-book")
                         .param("year", "2026"))
                 .andExpect(status().isOk())
@@ -138,7 +138,7 @@ class ReportsUseCaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU03: lista-procedure-documents endpoint handles unknown procedure gracefully")
+    @DisplayName("CU03: procedure-document list endpoint handles unknown procedure gracefully")
     void shouldHandleProcedureDocumentListEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/procedure-document-list")
                         .param("procedureTypeName", "ProcedureTypeThatDoesNotExist"))

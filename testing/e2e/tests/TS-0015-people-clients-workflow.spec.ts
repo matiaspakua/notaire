@@ -265,14 +265,14 @@ test.describe('Issue #835 - Deduplication by DNI', () => {
       const dni = `DUP${uniqueId() % 10_000_000}`
 
       // Given — first person created successfully
-      await fillPersonForm(page, { name: 'Original', lastName: 'Duplicado', dni })
+      await fillPersonForm(page, { name: 'Original', lastName: 'Duplicate', dni })
       await submitForm(page)
       await expect(
         page.locator('[data-sonner-toast]').getByText(/creada/i),
       ).toBeVisible({ timeout: 8000 })
 
       // When — attempt to create a second person with the same DNI
-      await fillPersonForm(page, { name: 'Otra', lastName: 'Person', dni })
+      await fillPersonForm(page, { name: 'Another', lastName: 'Person', dni })
       await submitForm(page)
 
       // Then — error toast references duplicate document
@@ -282,7 +282,7 @@ test.describe('Issue #835 - Deduplication by DNI', () => {
 
       // And — form stays open (data not lost)
       await expect(page.getByRole('dialog')).toBeVisible()
-      await expect(page.getByTestId('input-firstName')).toHaveValue('Otra')
+      await expect(page.getByTestId('input-firstName')).toHaveValue('Another')
     },
   )
 
