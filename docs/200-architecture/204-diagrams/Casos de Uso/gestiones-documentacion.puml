@@ -17,7 +17,7 @@ rectangle "Documentation module" {
   usecase "CU43 - Reingresar documentación" as CU43
 }
 
-usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
+usecase "CU19 - Buscar gestiones de un Cliente\n(from Clients)" as CU19
 
 ReceptionistClerk --> CU42 : is informed
 ReceptionistClerk --> CU04 : records

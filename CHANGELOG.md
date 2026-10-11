@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English use-case module pointers** (#1490, CU75): included use
+  cases point at `Budget`, `Clients`, `Deeds`, `Concepts`, and
+  `Procedures`. Official titles stay, including `Buscar Presupuesto`,
+  `Buscar gestiones de un Cliente`, `Buscar Escritura`,
+  `Buscar Conceptos`, `Buscar Tipo de trámite`, and `Buscar Folios`.
+  The pointer `(from Folios)` stays, along with actor `Escribano`.
 - **English property-title fixture** (#1490, CU75): the procedure-template
   unit catalog names the synthetic document `Property title`. Seed names
   `Libre Deuda Municipal` and `Informe de Dominio` stay, along with

@@ -14,7 +14,7 @@ rectangle "Notaries module" {
   usecase "CU59 - Consultar Suplencias" as CU59
 }
 
-usecase "CU61 - Buscar persona o cliente\n(from Clientes)" as CU61
+usecase "CU61 - Buscar persona o cliente\n(from Clients)" as CU61
 
 Administrator --> CU48 : needs
 Administrator --> CU51 : needs

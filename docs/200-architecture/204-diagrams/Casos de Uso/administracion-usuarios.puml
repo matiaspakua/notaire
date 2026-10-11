@@ -11,7 +11,7 @@ rectangle "Users module" {
   usecase "CU23 - Ver registro de actividades de usuario" as CU23
 }
 
-usecase "CU61 - Buscar persona o cliente\n(from Clientes)" as CU61
+usecase "CU61 - Buscar persona o cliente\n(from Clients)" as CU61
 
 Escribano --> CU20 : needs
 Escribano --> CU21 : needs

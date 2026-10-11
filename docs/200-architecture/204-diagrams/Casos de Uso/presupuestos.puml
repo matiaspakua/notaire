@@ -12,8 +12,8 @@ rectangle "Budget module" {
   usecase "CU45 - Modificar presupuesto" as CU45
 }
 
-usecase "CU64 - Buscar Tipo de trámite\n(from Trámites)" as CU64
-usecase "CU61 - Buscar persona o cliente\n(from Clientes)" as CU61
+usecase "CU64 - Buscar Tipo de trámite\n(from Procedures)" as CU64
+usecase "CU61 - Buscar persona o cliente\n(from Clients)" as CU61
 
 ReceptionistClerk --> CU01 : prepares
 ReceptionistClerk --> CU60 : looks up / needs
