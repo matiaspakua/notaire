@@ -42,6 +42,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
 
 ### Changed
+
+- **English sequence check** (#1490, #1508): `test_gestion_sequences.py`
+  requires the English sentences for no return from `Observado` and for
+  re-entry that does not move the management.
 - **Flyway `V45` amended (#1499, Owner-approved exception).** It failed on every fresh database because the legacy table `identificaciones` was never created by Flyway. It now renames the table where it exists and creates `identifications` where it does not. A database that already applied the original `V45` must run `flyway repair` once (checksum changed). The reports page (`/dashboard/reports`) is restored; it had been hidden by an unanchored `.gitignore` rule.
 
 - **Testimony and document re-entry sequences** (CU08, CU11, CU43, CU44, #921):
