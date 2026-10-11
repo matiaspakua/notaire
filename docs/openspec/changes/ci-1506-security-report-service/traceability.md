@@ -16,7 +16,7 @@
 | Spec | `specs/security-report-service/spec.md` |
 | Design | `design.md` |
 | Tests | `security/tests/test_security_gate_surface.py` |
-| Implementation | `infra/observability/docker-compose.yml` service `security-reports`, `security/publish_summary.py` |
+| Implementation | `c1cac28a7960c6f18616a04d6b3219759e58dc6d` — `infra/observability/docker-compose.yml` service `security-reports`, `security/publish_summary.py` |
 | CI | `.github/workflows/ci.yml` security job |
 | Pull request | pending |
 | Merge | pending |

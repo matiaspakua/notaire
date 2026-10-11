@@ -40,8 +40,8 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Conventional Commit ending with `Closes #1506`
-- [ ] 9.2 Record the commit SHA
+- [x] 9.1 Conventional Commit ending with `Closes #1506`
+- [x] 9.2 Record the commit SHA
 
 ## 10. Pull Request y validación CI
 
