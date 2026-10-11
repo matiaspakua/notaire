@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Substitutions screen** (#1490, CU75): the engineering-sequences design
+  names the screen CU22 and CU59 still write, `/dashboard/suplencias`.
+  The live screen stays in `dashboard-nav-canonical-routes`. The label
+  key `suplencias` stays. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
 - **Document re-entry screen** (#1490, CU75): `DOC-GESTION` names
   `/dashboard/document-reentry`. The engineering-sequences design names
   the screen CU43 still writes, `/dashboard/reingreso-documentacion`.
