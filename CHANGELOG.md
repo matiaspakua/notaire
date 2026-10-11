@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English architecture diagrams** (#1490, CU75):
+  The core model, package diagram, target architecture, and legacy Swing
+  diagram name `DeedManagement`, `Person`, `Budget`, `adapter.in.web`, and
+  `business`. The target stack is Java 26. The stored role `Escribano` stays.
+  `dni` stays on the person sketch. Sequence filenames under `Secuencias/` stay.
 - **English OpenSpec adaptations guide** (#1490, CU75):
   `docs/openspec/NOTAIRE-ADAPTATIONS.md` describes installation, gates, and
   orchestration in English. The backend prerequisite is Java 26. Required
