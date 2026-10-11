@@ -76,7 +76,7 @@ test.describe("CU07/CU08 - Generate and verify a testimony", () => {
     await page.getByTestId(`btn-verify-testimony-${idTestimony}`).click();
     await steps.thenModalIsVisible();
     await page.getByTestId("checkbox-observed-testimony").click();
-    await page.getByTestId("input-notes-testimony").fill("Falta firma del otorgante");
+    await page.getByTestId("input-notes-testimony").fill("Missing grantor signature");
     await page.getByTestId("btn-confirm-verify-testimony").click();
     await steps.thenShowsSuccessMessage("verificado");
 

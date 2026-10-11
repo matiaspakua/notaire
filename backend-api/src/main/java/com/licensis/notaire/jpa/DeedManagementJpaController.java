@@ -438,7 +438,7 @@ public class DeedManagementJpaController implements Serializable, JpaPersistence
         int result = 0;
         try
         {
-            Query q = em.createQuery("select max(number) as ultimaGestion from DeedManagement");
+            Query q = em.createQuery("select max(number) as latestManagement from DeedManagement");
 
             if (q.getSingleResult() != null)
             {

@@ -83,7 +83,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
     void shouldPersistPersonAssociationOnUpdate() throws Exception {
         Integer personId = createPerson("883pg002");
         String createBody = """
-                {"number": 883002, "date": "2026-01-01", "heading": "Budget CU01 pg sin client",
+                {"number": 883002, "date": "2026-01-01", "heading": "Budget CU01 pg without client",
                  "status": "BORRADOR"}
                 """;
         MvcResult createResult = mockMvc.perform(post("/api/v1/budgets")
@@ -95,7 +95,7 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
                 .get("idBudget").asInt();
 
         String updateBody = """
-                {"number": 883002, "date": "2026-01-01", "heading": "Budget CU01 pg sin client",
+                {"number": 883002, "date": "2026-01-01", "heading": "Budget CU01 pg without client",
                  "status": "BORRADOR", "person": {"personId": %d}}
                 """.formatted(personId);
 
@@ -151,11 +151,11 @@ class BudgetPersonAssociationPgIntegrationTest extends BaseIntegrationTest {
     void shouldReflectPersonAcrossListedBudgets() throws Exception {
         Integer personId = createPerson("883pg005");
         String withPersonBody = """
-                {"number": 883005, "date": "2026-01-01", "heading": "Budget CU01 pg con client",
+                {"number": 883005, "date": "2026-01-01", "heading": "Budget CU01 pg with client",
                  "status": "BORRADOR", "person": {"personId": %d}}
                 """.formatted(personId);
         String withoutPersonBody = """
-                {"number": 883006, "date": "2026-01-01", "heading": "Budget CU01 pg sin client listado",
+                {"number": 883006, "date": "2026-01-01", "heading": "Budget CU01 pg without listed client",
                  "status": "BORRADOR"}
                 """;
 

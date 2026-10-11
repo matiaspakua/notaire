@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English synthetic notes** (#1490, CU75): tests use English notes and
+  headings (`New name`, `Listed document`, `Missing grantor signature`,
+  `Missing survey plan`, `Missing cadastral certificate`, `without client`,
+  and `Case`). The last management number query aliases `latestManagement`.
+  The historical table name `documentos_presentados` stays, along with the
+  cadastral label `nomenclatura catastral`.
 - **English type fixture names** (#1490, CU75): Java tests name synthetic
   types in English (`Type_unused_`, `Type #655`, `Case summary type`,
   `Type Trace Test`, and `Base fee`). The traceability registry names the

@@ -45,7 +45,7 @@ function routes(ids: number[], traced: number[]) {
     const m = url.match(/\/managements\/(\d+)\/workflow-trace$/);
     if (m) {
       const id = Number(m[1]);
-      return traced.includes(id) ? json(trace(id, 1000 + id, `Caso ${id}`)) : json({ error: "no workflow" }, 400);
+      return traced.includes(id) ? json(trace(id, 1000 + id, `Case ${id}`)) : json({ error: "no workflow" }, 400);
     }
     return json({}, 404);
   };
@@ -58,7 +58,7 @@ function wrapper({ children }: { children: ReactNode }) {
 
 const urls = () => mockFetch.mock.calls.map((c) => String(c[0]));
 
-describe("findLatestTracedGestion (#1347)", () => {
+describe("findLatestTracedManagement (#1347)", () => {
   beforeEach(() => mockFetch.mockReset());
 
   it("asks for the newest managements first and returns the newest one with a workflow", async () => {
@@ -87,7 +87,7 @@ describe("WorkflowHero (#1347)", () => {
     mockFetch.mockImplementation(routes([30, 29], [29]));
     render(<WorkflowHero />, { wrapper });
     expect(await screen.findByTestId("workflow-tracker")).toHaveTextContent("tracker 29");
-    expect(screen.getByTestId("workflow-subtitle")).toHaveTextContent("#1029 — Caso 29");
+    expect(screen.getByTestId("workflow-subtitle")).toHaveTextContent("#1029 — Case 29");
     expect(screen.getByTestId("workflow-hero")).toHaveAttribute("data-management-id", "29");
   });
 

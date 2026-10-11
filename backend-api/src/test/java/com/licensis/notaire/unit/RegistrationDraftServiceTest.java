@@ -152,10 +152,10 @@ class RegistrationDraftServiceTest {
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
         when(registrationDraftRepository.save(any(RegistrationDraft.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        RegistrationDraft result = registrationDraftService.observe(1, "Falta plano de mensura", new Date());
+        RegistrationDraft result = registrationDraftService.observe(1, "Missing survey plan", new Date());
 
         assertThat(result.getStatus()).isEqualTo(BusinessConstants.RegistrationDraftObserved);
-        assertThat(result.getRegistryNotes()).isEqualTo("Falta plano de mensura");
+        assertThat(result.getRegistryNotes()).isEqualTo("Missing survey plan");
         assertThat(result.getDateCorrection()).isNotNull();
     }
 
