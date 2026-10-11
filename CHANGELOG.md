@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English reentry comments** (#1490, CU75): the Postgres reentry test
+  names `submitted_documents`, `released`, and `observed`, and its display
+  says against the real schema. The concept regression comment names
+  `enabled`. Stored document type `Certificado de Dominio` and stored
+  role `Cliente` stay. The message key `liberado` stays.
 - **English CU10 comments** (#1490, CU75): the external-entity read model
   describes the course of events, the start date, the notary in charge,
   and external entities. The management query display says start date.
