@@ -149,6 +149,14 @@ public class ManagementController {
             Integer budgetId, Integer notaryId, Integer statusManagementId, Integer typeProcedureId,
             Integer propertyId) {}
 
+    /**
+     * Issue #1360: current case values in the shape PUT /{id}/complete-case accepts, so an
+     * edit form can prefill every field and send them back unchanged except what the user edits.
+     */
+    public record CompleteCaseResponse(Integer idManagement, Integer number, String heading,
+            String notes, Integer budgetId, Integer notaryId, Integer statusManagementId,
+            Integer typeProcedureId, Integer propertyId) {}
+
     private record CaseDependencies(Budget budget, Person notary, ManagementStatus status,
             ProcedureType typeProcedure, Property property) {}
 
@@ -248,6 +256,39 @@ public class ManagementController {
         statusLogService.registerStatus(management, null);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(managementQueryService.findById(management.getIdManagement()).orElseThrow());
+    }
+
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "404", description = "Management not found")
+    })
+    @GetMapping("/{id}/complete-case")
+    @Transactional(readOnly = true)
+    @Operation(summary = "CU53 - Get a management with its case dependencies, as PUT /{id}/complete-case accepts them",
+            description = "Issue #1360 - Returns the management number, heading and notes plus the ids of its "
+                    + "budget, notary, status, procedure type and property (null when none), taken from the "
+                    + "same procedure PUT /{id}/complete-case updates. Lets the UI prefill a full edit.")
+    public ResponseEntity<CompleteCaseResponse> getCompleteCase(@PathVariable Integer id) {
+        Optional<DeedManagement> existing = repository.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        DeedManagement management = existing.get();
+        List<Procedure> procedures = procedureRepository.findByFkIdManagementIdManagement(id);
+        Procedure procedure = procedures.isEmpty() ? null : procedures.get(0);
+        return ResponseEntity.ok(new CompleteCaseResponse(
+                management.getIdManagement(),
+                management.getNumber(),
+                management.getHeading(),
+                management.getNotes(),
+                procedure == null || procedure.getFkIdBudget() == null ? null
+                        : procedure.getFkIdBudget().getIdBudget(),
+                management.getFkIdNotaryPerson() == null ? null : management.getFkIdNotaryPerson().getPersonId(),
+                statusIdOf(management),
+                procedure == null || procedure.getFkIdProcedureType() == null ? null
+                        : procedure.getFkIdProcedureType().getIdProcedureType(),
+                procedure == null || procedure.getFkIdProperty() == null ? null
+                        : procedure.getFkIdProperty().getIdProperty()));
     }
 
     @PutMapping("/{id}/complete-case")
