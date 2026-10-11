@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English synthetic test fixtures** (#1490, CU75): Java tests use English
+  notes and names (`Updated`, `Pending signature`, `Full cycle`,
+  `First semester`, `With client`, `Notary office`, `Active`, `Protocol`,
+  `Substitute`, and `Special folio`). Stored labels `Honorarios` and
+  `Protocolo Auxiliar` stay, along with the legacy budget status `Activo`
+  and the given names `Juan` and `Pedro`.
 - **English named-query and history specs** (#1490, CU75): the history-order
   scenario says History, not Bitácora. The named-query spec lists the
   forbidden Spanish prefixes `Escritura.`, `Usuario.`, `Presupuesto.`, and

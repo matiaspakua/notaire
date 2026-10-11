@@ -128,10 +128,10 @@ class WorkflowTransitionIntegrationTest extends ServiceIntegrationTest {
         transition.setDescription("Original");
         WorkflowTransition saved = workflowTransitionRepository.save(transition);
 
-        saved.setDescription("Actualizado");
+        saved.setDescription("Updated");
         WorkflowTransition updated = workflowTransitionRepository.save(saved);
 
-        assertThat(updated.getDescription()).isEqualTo("Actualizado");
+        assertThat(updated.getDescription()).isEqualTo("Updated");
     }
 
     @Test

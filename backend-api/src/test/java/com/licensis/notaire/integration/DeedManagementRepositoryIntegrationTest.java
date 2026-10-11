@@ -176,13 +176,13 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     void shouldUpdateManagement() {
         DeedManagement saved = managementRepository.save(testManagement);
 
-        saved.setNotes("Actualizado");
+        saved.setNotes("Updated");
         managementRepository.save(saved);
 
         Optional<DeedManagement> updated = managementRepository.findById(saved.getIdManagement());
 
         assertThat(updated).isPresent()
-                .hasValueSatisfying(g -> assertThat(g.getNotes()).isEqualTo("Actualizado"));
+                .hasValueSatisfying(g -> assertThat(g.getNotes()).isEqualTo("Updated"));
     }
 
     @Test

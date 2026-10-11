@@ -49,7 +49,7 @@ class FolioTypeControllerTest {
     private FolioType buildEntity() {
         FolioType t = new FolioType();
         t.setIdFolioType(1);
-        t.setName("Protocolo");
+        t.setName("Protocol");
         return t;
     }
 
@@ -59,7 +59,7 @@ class FolioTypeControllerTest {
         when(repository.findByNameContaining("Proto")).thenReturn(List.of(buildEntity()));
         mockMvc.perform(get("/api/v1/folio-types/search").param("name", "Proto"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Protocolo"));
+                .andExpect(jsonPath("$[0].name").value("Protocol"));
     }
 
     @Test
@@ -97,7 +97,7 @@ class FolioTypeControllerTest {
         when(folioRepository.findByFkIdFolioTypeIdFolioType(1)).thenReturn(List.of(new Folio()));
 
         DtoFolioType dto = new DtoFolioType();
-        dto.setName("Protocolo Modificado");
+        dto.setName("Modified protocol");
 
         mockMvc.perform(put("/api/v1/folio-types/1")
                         .contentType("application/json")
@@ -114,7 +114,7 @@ class FolioTypeControllerTest {
         when(repository.save(any(FolioType.class))).thenReturn(existing);
 
         DtoFolioType dto = new DtoFolioType();
-        dto.setName("Protocolo Modificado");
+        dto.setName("Modified protocol");
 
         mockMvc.perform(put("/api/v1/folio-types/1")
                         .contentType("application/json")

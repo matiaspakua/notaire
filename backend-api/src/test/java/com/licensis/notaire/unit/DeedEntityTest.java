@@ -117,9 +117,9 @@ class DeedEntityTest {
         @DisplayName("Should set and get notes")
         void shouldSetAndGetNotes() {
             Deed deed = new Deed();
-            deed.setNotes("Pendiente de firma");
+            deed.setNotes("Pending signature");
 
-            assertThat(deed.getNotes()).isEqualTo("Pendiente de firma");
+            assertThat(deed.getNotes()).isEqualTo("Pending signature");
         }
 
         @Test

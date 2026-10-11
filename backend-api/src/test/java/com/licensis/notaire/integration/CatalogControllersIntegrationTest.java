@@ -198,8 +198,8 @@ class CatalogControllersIntegrationTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
                                     {
-                                      "name": "Folio Especial",
-                                      "notes": "Folio para documents especiales",
+                                      "name": "Special folio",
+                                      "notes": "Folio for special documents",
                                       "enabled": true,
                                       "version": 0
                                     }
@@ -215,7 +215,7 @@ class CatalogControllersIntegrationTest {
                             .content("""
                                     {
                                       "idFolioType": 1,
-                                      "name": "De document - Actualizado",
+                                      "name": "Document - Updated",
                                       "enabled": true,
                                       "version": 0
                                     }

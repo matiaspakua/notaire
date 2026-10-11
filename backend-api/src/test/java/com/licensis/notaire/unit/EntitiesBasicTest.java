@@ -143,8 +143,8 @@ class EntitiesBasicTest {
             ManagementStatus e2 = new ManagementStatus(7);
             assertThat(e2.getIdManagementStatus()).isEqualTo(7);
 
-            ManagementStatus e3 = new ManagementStatus(8, "Activo");
-            assertThat(e3.getName()).isEqualTo("Activo");
+            ManagementStatus e3 = new ManagementStatus(8, "Active");
+            assertThat(e3.getName()).isEqualTo("Active");
 
             e1.setIdManagementStatus(10);
             e1.setName("New");
@@ -239,7 +239,7 @@ class EntitiesBasicTest {
             f1.setIdFolio(5);
             f1.setNumber(101);
             f1.setYear(2025);
-            f1.setStatus("Usado");
+            f1.setStatus("Used");
             f1.setNotes("obs");
             f1.setVersion(1);
             f1.setCopyList(new ArrayList<>());
@@ -249,7 +249,7 @@ class EntitiesBasicTest {
             notary.setNotaryRegistrationNumber(1);
             f1.setFkIdNotaryPerson(notary);
             FolioType tf = new FolioType(7);
-            tf.setName("Protocolo");
+            tf.setName("Protocol");
             f1.setFkIdFolioType(tf);
 
             assertThat(f1.getIdFolio()).isEqualTo(5);
@@ -781,11 +781,11 @@ class EntitiesBasicTest {
         void all() throws Exception {
             FolioType t1 = new FolioType();
             FolioType t2 = new FolioType(1);
-            FolioType t3 = new FolioType(2, "Protocolo");
-            FolioType t4 = new FolioType("Auxiliar");
+            FolioType t3 = new FolioType(2, "Protocol");
+            FolioType t4 = new FolioType("Auxiliary");
             assertThat(t2.getIdFolioType()).isEqualTo(1);
-            assertThat(t3.getName()).isEqualTo("Protocolo");
-            assertThat(t4.getName()).isEqualTo("Auxiliar");
+            assertThat(t3.getName()).isEqualTo("Protocol");
+            assertThat(t4.getName()).isEqualTo("Auxiliary");
 
             t1.setIdFolioType(10);
             t1.setName("X");
