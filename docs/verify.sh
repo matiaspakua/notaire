@@ -9,5 +9,6 @@ python3 docs/tests/test_business_docs_traceability.py
 python3 docs/tests/test_changelog_structure.py
 python3 docs/tests/test_erd_current_schema.py
 python3 docs/tests/test_compensation_diagram.py
+python3 docs/tests/test_test_cases_english.py
 python3 docs/tests/test_data_dictionary_sync.py
 python3 docs/tests/test_generate_data_dictionary.py

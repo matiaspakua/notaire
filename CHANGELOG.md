@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English test-case writeups** (#1490, CU75):
+  The nine cases under `docs/300-development/303-testing/test-cases/` use
+  English filenames and prose (`TC-001-prepare-budget-success.md` through
+  `TC-009-register-document-debts-success.md`). The stored deed status
+  `Firmada` stays. Use-case ids CU01 and CU04 through CU09 stay.
 - **English software architecture document** (#1490, CU75):
   The SAD uses current names (`deed_managements`, `procedures`, `budgets`,
   `User`) and the platform in the root `pom.xml` (Java 26, Spring Boot 4.1.1).
