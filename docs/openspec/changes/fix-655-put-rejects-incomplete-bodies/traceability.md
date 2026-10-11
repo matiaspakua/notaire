@@ -34,15 +34,15 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Testimony update without version | `StaleOrMissingVersionIntegrationTest.testimonyMissingVersionIsRejected`, Bruno `testimonies/04c`, `04a` | passing |
 | Stale testimony version | `StaleOrMissingVersionIntegrationTest.testimonyStaleVersionIsConflict` / `testimonyFutureVersionIsConflict`, Bruno `testimonies/04b` | passing |
 | Stale version on another versioned update | `StaleOrMissingVersionIntegrationTest.catalogStaleVersionIsConflict` / `testimonyMovementStaleVersionIsConflict` / `versionedUpdatesDocument409`, `GlobalExceptionHandlerOptimisticLockTest`, `ErrorResponsesTest`, Bruno `testimony-movements/04b` | passing |
-| UI sends the version it read | `testing/e2e/tests/folio-type-edit-version.spec.ts` | passing |
+| UI sends the version it read | `testing/e2e/tests/TS-0135-folio-type-edit-version.spec.ts` | passing |
 
 ## Permanent documentation updated
 
 | Document | Updated | Commit |
 |----------|---------|--------|
 | `CHANGELOG.md` | yes | branch commit |
-| `backend-api/openapi/openapi.yaml` | yes | branch commit |
-| `backend-api/openapi/accepted-breaking-changes.d/655-put-rejects-incomplete-bodies.txt` | yes | branch commit |
+| `backend-api/openapi/openapi.yaml` | no | not in this PR |
+| `backend-api/openapi/accepted-breaking-changes.d/655-put-rejects-incomplete-bodies.txt` | no | not in this PR |
 
 ## Gate log
 

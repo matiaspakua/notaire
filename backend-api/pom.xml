@@ -305,8 +305,7 @@
                         <!--
                             Enforced ratchet floor (runs on `mvn verify`). Legacy jpa package
                             is excluded from instrumentation so numbers reflect modern code only.
-                            Floor: 70% line / 25% branch, set 2026-06-16 (Phase 8).
-                            Actual: ~84% line / ~74% branch as of 2026-07-23.
+                            Enforced floor: 80% line / 65% branch (#1511 aligns docs).
                             Long-term target: 80% line / 80% branch.
                             Raise these minimums as coverage improves; never lower.
                         -->
