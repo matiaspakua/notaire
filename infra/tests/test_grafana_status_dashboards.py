@@ -22,6 +22,7 @@ SPECIALIST_UIDS = {"notaire-backend", "notaire-postgres", "notaire-auth", "notai
 NOTAIRE_SERVICES = {"frontend", "backend", "postgres", "pgadmin"}
 STACK_SERVICES = NOTAIRE_SERVICES | {
     "prometheus", "grafana", "loki", "promtail", "sonarqube", "sonar-db", "homer",
+    "security-reports",
 }
 DATASOURCE_UIDS = {"prometheus", "loki"}
 

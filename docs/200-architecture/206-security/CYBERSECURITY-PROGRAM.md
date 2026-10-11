@@ -115,7 +115,8 @@ local tool and the CI control. `python3 security/run_gates.py --profile local`
 runs the threat-model, secret, Semgrep, and Trivy cases and writes
 `reports/security/latest/index.html`. `bash workspace/sdlc/run_pipeline.sh`
 runs that command before the rest of the pipeline, then runs the DAST baseline
-against the API. Install the pinned tools with
+against the API. The HTML report is also served by the infra service
+`security-reports` at `http://localhost:8890` (#1506). Install the pinned tools with
 `bash security/tools/ensure_local_tools.sh` (the local profile does this
 itself). Trivy findings stay report-only until #282. The baseline checks
 health and an anonymous 401. It does not exploit the API.

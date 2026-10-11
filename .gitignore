@@ -75,8 +75,9 @@ headroom_memory.db
 .rtk/
 .tokensave/
 
-# workspace/sdlc/run_pipeline.sh dashboard + logs (regenerated every run)
-reports/
+# workspace/sdlc/run_pipeline.sh dashboard + logs (regenerated every run).
+# Anchored to the repo root: an unanchored `reports/` also hid frontend/src/app/dashboard/reports/ (#1499).
+/reports/
 
 # Local Semgrep venv and Trivy binary (security/tools/ensure_local_tools.sh)
 security/.tools/

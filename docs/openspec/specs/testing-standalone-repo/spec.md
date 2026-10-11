@@ -58,8 +58,8 @@ MUST supply the same Flyway placeholders the backend does (`exporterUsername`,
 #### Scenario: Only the documented rollback script is ignored
 
 - **WHEN** the suite compares the SQL files with the Flyway history
-- **THEN** every `V<n>__*.sql` file is applied, and the only file Flyway ignores is the manual
-  rollback script `R14__restore_presupuestos_fk_id_tramite.sql`
+- **THEN** every `V<n>__*.sql` file is applied, and the only files Flyway ignores are the manual
+  rollback scripts `R14__restore_presupuestos_fk_id_tramite.sql` and `R45__rename_remaining_spanish_identifiers.sql`
 
 #### Scenario: A second migrate is a no-op
 

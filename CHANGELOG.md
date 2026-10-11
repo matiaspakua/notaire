@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
 
 ### Changed
+- **Flyway `V45` amended (#1499, Owner-approved exception).** It failed on every fresh database because the legacy table `identificaciones` was never created by Flyway. It now renames the table where it exists and creates `identifications` where it does not. A database that already applied the original `V45` must run `flyway repair` once (checksum changed). The reports page (`/dashboard/reports`) is restored; it had been hidden by an unanchored `.gitignore` rule.
 
 - **English incomplete-body Bruno assertions** (#1490, CU75):
   the incomplete PUT collections expect `is required`, matching
@@ -1948,6 +1949,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Security reports on the local infra hub** (CU78, #1506): the case catalog
+  HTML is served at `http://localhost:8890` and linked from Homer. The CI
+  security job runs without waiting for the Java build and writes the case
+  summary on the Actions run.
 - **Local security gates in the AI SDLC** (CU78, #1500): the security case
   catalog runs before a pull request from `workspace/sdlc/run_pipeline.sh`
   (Semgrep, secret scan, Trivy, unauthenticated DAST baseline). CI runs the
