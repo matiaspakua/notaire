@@ -49,7 +49,7 @@ class ManagementFinancialSummaryControllerTest {
 
     private Integer createPerson(String identificationNumber) throws Exception {
         String body = """
-                {"firstName": "Notary IT", "lastName": "Resumen Management IT", "identificationNumber": "%s",
+                {"firstName": "Notary IT", "lastName": "Summary Management IT", "identificationNumber": "%s",
                  "isClient": false, "identificationType": {"idIdentificationType": 1}}
                 """.formatted(identificationNumber);
         MvcResult result = mockMvc.perform(post("/api/v1/people")
@@ -62,7 +62,7 @@ class ManagementFinancialSummaryControllerTest {
 
     private Integer createBudget(Integer clientId, java.math.BigDecimal propertyAmount) throws Exception {
         String body = """
-                {"number": %d, "date": "2026-01-01", "heading": "Budget Resumen Management IT",
+                {"number": %d, "date": "2026-01-01", "heading": "Budget Summary Management IT",
                  "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount, clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/budgets")
@@ -75,13 +75,13 @@ class ManagementFinancialSummaryControllerTest {
 
     private Integer createManagementStatus() {
         ManagementStatus status = new ManagementStatus();
-        status.setName("Status Resumen Management IT");
+        status.setName("Status Summary Management IT");
         return managementStatusRepository.save(status).getIdManagementStatus();
     }
 
     private Integer createProcedureType() {
         ProcedureType type = new ProcedureType();
-        type.setName("Procedure Resumen Management IT");
+        type.setName("Procedure Summary Management IT");
         type.setEnabled(true);
         type.setIsArchived(false);
         type.setIsRegistered(false);
@@ -94,7 +94,7 @@ class ManagementFinancialSummaryControllerTest {
         Integer statusId = createManagementStatus();
         Integer typeProcedureId = createProcedureType();
         String body = """
-                {"number": %d, "heading": "Management Resumen IT", "budgetId": %d,
+                {"number": %d, "heading": "Management Summary IT", "budgetId": %d,
                  "notaryId": %d, "statusManagementId": %d, "typeProcedureId": %d}
                 """.formatted((int) (System.nanoTime() % 100000), budgetId, notaryId, statusId,
                 typeProcedureId);
@@ -108,7 +108,7 @@ class ManagementFinancialSummaryControllerTest {
 
     private void createPayment(Integer idBudget, java.math.BigDecimal amount) throws Exception {
         String body = """
-                {"idBudget": %d, "amount": %s, "date": "2026-08-20", "notes": "Payment Resumen Management IT"}
+                {"idBudget": %d, "amount": %s, "date": "2026-08-20", "notes": "Payment Summary Management IT"}
                 """.formatted(idBudget, amount);
         mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)

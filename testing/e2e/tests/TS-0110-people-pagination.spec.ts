@@ -61,8 +61,8 @@ test.describe("People list pagination (#1340)", () => {
     await page.goto("/dashboard/people");
     await page.waitForLoadState("networkidle");
     await page.getByTestId("btn-new-person").click();
-    await page.getByTestId("input-firstName").fill("Duplicado");
-    await page.getByTestId("input-lastName").fill("Paginado");
+    await page.getByTestId("input-firstName").fill("Duplicate");
+    await page.getByTestId("input-lastName").fill("Paged");
     await page.getByTestId("input-dni").fill(target!.identificationNumber!);
     await page.getByRole("button", { name: /^crear$|^create$/i }).click();
 

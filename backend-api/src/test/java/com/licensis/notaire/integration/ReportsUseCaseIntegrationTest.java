@@ -138,7 +138,7 @@ class ReportsUseCaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("CU03: lista-procedure-documents endpoint handles unknown procedure gracefully")
+    @DisplayName("CU03: procedure-document list endpoint handles unknown procedure gracefully")
     void shouldHandleProcedureDocumentListEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/procedure-document-list")
                         .param("procedureTypeName", "ProcedureTypeThatDoesNotExist"))

@@ -59,7 +59,7 @@ class ManagementCaseSummaryIntegrationTest {
     private int createManagement(int number) throws Exception {
         MvcResult person = mockMvc.perform(post("/api/v1/people").contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"firstName": "Notary IT", "lastName": "CasoResumen", "identificationNumber": "774%d",
+                                {"firstName": "Notary IT", "lastName": "CaseSummary", "identificationNumber": "774%d",
                                  "isClient": false, "identificationType": {"idIdentificationType": 1}}
                                 """.formatted(number)))
                 .andExpect(status().isCreated()).andReturn();

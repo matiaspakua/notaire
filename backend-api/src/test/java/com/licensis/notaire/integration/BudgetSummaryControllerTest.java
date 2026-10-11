@@ -39,7 +39,7 @@ class BudgetSummaryControllerTest {
 
     private Integer createPerson(String identificationNumber) throws Exception {
         String body = """
-                {"firstName": "Client IT", "lastName": "Resumen IT", "identificationNumber": "%s",
+                {"firstName": "Client IT", "lastName": "Summary IT", "identificationNumber": "%s",
                  "isClient": true, "identificationType": {"idIdentificationType": 1}}
                 """.formatted(identificationNumber);
         MvcResult result = mockMvc.perform(post("/api/v1/people")
@@ -52,7 +52,7 @@ class BudgetSummaryControllerTest {
 
     private Integer createBudget(Integer clientId, java.math.BigDecimal propertyAmount) throws Exception {
         String body = """
-                {"number": %d, "date": "2026-01-01", "heading": "Budget Resumen IT",
+                {"number": %d, "date": "2026-01-01", "heading": "Budget Summary IT",
                  "status": "PENDIENTE", "propertyAmount": %s, "person": {"personId": %d}}
                 """.formatted((int) (System.nanoTime() % 100000), propertyAmount, clientId);
         MvcResult result = mockMvc.perform(post("/api/v1/budgets")
@@ -65,7 +65,7 @@ class BudgetSummaryControllerTest {
 
     private void createPayment(Integer idBudget, java.math.BigDecimal amount) throws Exception {
         String body = """
-                {"idBudget": %d, "amount": %s, "date": "2026-08-20", "notes": "Payment Resumen IT"}
+                {"idBudget": %d, "amount": %s, "date": "2026-08-20", "notes": "Payment Summary IT"}
                 """.formatted(idBudget, amount);
         mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)

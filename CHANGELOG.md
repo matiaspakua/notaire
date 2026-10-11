@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English sample names** (#1490, CU75): budget and people fixtures
+  use `Ana Latest` and `Bruno Recent`. Person validation uses `Other`,
+  `Duplicate`, and `New`. Summary fixtures use `Summary IT`,
+  `CaseSummary`, and `Summary Management IT`. The report display says
+  procedure-document list. Dedup fixtures use `Duplicate`, `Another`,
+  and `Paged`. Person names `Ana`, `Bruno`, and `Perez` stay, along with
+  the default-locale checks `/creada/i` and `/ya existe/i`.
 - **English workflow stub heading** (#1490, CU75): the tracker comment
   quotes the seeded label `Testimonio Ingresado a Inscripcion`. The E2E
   stub uses `Gestion con Escritura Firmada`, `Testimonio Generado`,
