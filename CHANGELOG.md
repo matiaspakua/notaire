@@ -43,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English postgres business metrics** (#1490, CU75):
+  The exporter queries count `deeds`, `budgets`, `users`, and `people`.
+  The postgres dashboard reads `deeds_total`, `budgets_total`, `users_total`,
+  and `people_total`. Deed status stays the stored label. The exporter role
+  remains `pg_monitor` only.
 - **English repository README** (#1490, CU75):
   The root README and the frontend module table name managements, budgets,
   people, deeds, payments, and administration. The stack is Java 26 and
