@@ -43,6 +43,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English case-process design** (#1490, CU75):
+  `docs/200-architecture/203-design/GESTION.md` states the central process in
+  English. The filename stays. Official use-case titles stay (`CU01 Preparar
+  presupuesto`, `CU02 Iniciar gestión`, `CU15 Procesar pago`). Stored nodes
+  stay (`Iniciada`, `En Tramite`, `Documentacion Completa`, `Gestion con
+  Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio
+  Generado`, `Testimonio Ingresado a Inscripcion`, `Testimonio Retirado`,
+  `Archivada`). Seeded edge descriptions stay, including `Se asignan trámites
+  y comienza la gestión` and `La gestión se archiva sin escritura`. The
+  archive query flag `confirmado` stays. Registration-draft stored statuses
+  are `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto`.
+  Deed statuses `Anulada`, `No Paso`, and `Inscripta` stay. Actor `Escribano`
+  stays. Stored procedure types `Sucesion` and `Poder` stay.
 - **English document, reentry, budget-person, and navigation requirement prose** (#1490, CU75):
   `submitted-document-update`, `testimony-reentry-data`,
   `budget-person-response`, `backend-test-isolation`, `admin-route-guard`,
