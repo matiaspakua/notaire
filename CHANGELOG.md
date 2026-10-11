@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Testimony re-entry path citation** (#1490, CU75): the engineering-sequences
+  design names the path CU44 still writes,
+  `POST /api/v1/movimiento-testimonio/{id}/reenter`. The live call stays in
+  `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
 - **Document re-entry path citation** (#1490, CU75): the engineering-sequences
   design names the path CU43 still writes,
   `GET/POST /api/v1/gestiones/{id}/reingreso-documentacion`. The live call
