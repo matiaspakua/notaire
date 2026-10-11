@@ -14,8 +14,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `docs/openspec/changes/docs-1511-testing-architecture/` | draft |
 | Branch | `cursor/1511-testing-architecture-b585` | created |
-| Tasks | `tasks.md` | 0/N complete (groups 1–2 done) |
-| Commits | pending | pending |
+| Tasks | `tasks.md` | groups 1–8 complete |
+| Commits | `e600eb89`, `b546fcb5`, `e3266425` | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -26,14 +26,14 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Inventory regenerates from disk | `testing/tests/test_testing_inventory.py` | pending |
-| Stale inventory fails validation | same | pending |
-| Unprefixed Playwright spec rejected | same | pending |
-| All specs use TS-nnnn prefix | same | pending |
-| MTP declares levels and ID scheme | same | pending |
-| Process architecture document exists | same | pending |
-| Preflight runs inventory validation | same | pending |
-| Coverage floors documented match tools | same | pending |
+| Inventory regenerates from disk | `testing/tests/test_testing_inventory.py` | passing |
+| Stale inventory fails validation | same | passing |
+| Unprefixed Playwright spec rejected | same | passing |
+| All specs use TS-nnnn prefix | same | passing |
+| MTP declares levels and ID scheme | same | passing |
+| Process architecture document exists | same | passing |
+| Preflight runs inventory validation | same | passing |
+| Coverage floors documented match tools | same | passing |
 
 ## Permanent documentation updated
 
