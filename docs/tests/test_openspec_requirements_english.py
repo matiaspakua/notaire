@@ -30,6 +30,12 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "carpetas-de-tramite",
             "descuentos-recargos-presupuesto",
             "persona-validacion-duplicados",
+            "gestion-workflow-transicion",
+            "gestion-bitacora",
+            "minuta-inscripcion",
+            "testimonio-movimiento-inscripcion",
+            "tipo-documento-vencimiento-config",
+            "cuadernos-de-folios",
         ):
             path = SPECS / spec_id / "spec.md"
             text = path.read_text(encoding="utf-8")
@@ -117,6 +123,61 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
         self.assertIn("CU17", duplicates)
         self.assertIn("#799", duplicates)
         self.assertIn("#835", duplicates)
+        workflow = (SPECS / "gestion-workflow-transicion" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`ProcedureType`", workflow)
+        self.assertIn("POST /api/v1/managements/{id}/transition", workflow)
+        self.assertIn("`managementStatusId`", workflow)
+        self.assertIn("GET /api/v1/managements/{id}/workflow-trace", workflow)
+        self.assertIn("`originNodeId`", workflow)
+        self.assertIn("`currentStatus`", workflow)
+        self.assertIn("CU83", workflow)
+        history = (SPECS / "gestion-bitacora" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`ManagementHistory`", history)
+        self.assertIn('"Archivada"', history)
+        self.assertIn("GET /api/v1/managements/{id}/history", history)
+        self.assertIn("GET /api/v1/managements/{id}/current-status", history)
+        self.assertIn("CU13", history)
+        draft = (SPECS / "minuta-inscripcion" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn('"Generada"', draft)
+        self.assertIn('"Presentado para inscripción"', draft)
+        self.assertIn('"Observado"', draft)
+        self.assertIn('"Inscripto"', draft)
+        self.assertIn("POST /api/v1/registration-drafts", draft)
+        self.assertIn("`registrationNumber`", draft)
+        self.assertIn("`volumeFolioLandRecord`", draft)
+        self.assertIn("`boundaries`", draft)
+        self.assertIn("`cadastralDesignation`", draft)
+        self.assertIn("minuta_inscripcion_", draft)
+        self.assertIn("CU82", draft)
+        movement = (SPECS / "testimonio-movimiento-inscripcion" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`dateEntry`", movement)
+        self.assertIn("`dateExit`", movement)
+        self.assertIn("`dateRegistration`", movement)
+        self.assertIn("`registered`", movement)
+        self.assertIn("`cardNumber`", movement)
+        self.assertIn("Escribano", movement)
+        self.assertIn("POST /api/v1/testimony-movements/{idTestimony}/enter-registration", movement)
+        self.assertIn("CU11", movement)
+        self.assertIn("CU12", movement)
+        self.assertIn("CU44", movement)
+        document_type = (SPECS / "tipo-documento-vencimiento-config" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`expires`", document_type)
+        self.assertIn("`dueDays`", document_type)
+        self.assertIn("`deliveredBy`", document_type)
+        self.assertIn("`enabled`", document_type)
+        self.assertIn("`returned`", document_type)
+        self.assertIn("CU27", document_type)
+        self.assertIn("CU32", document_type)
+        notebook = (SPECS / "cuadernos-de-folios" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn('"Asignado a cuaderno"', notebook)
+        self.assertIn('"Errose"', notebook)
+        self.assertIn("no pasó", notebook)
+        self.assertIn("`idsFolio`", notebook)
+        self.assertIn("`idNotary`", notebook)
+        self.assertIn("GET /api/v1/notebooks/{id}/cover", notebook)
+        self.assertIn("notebook_", notebook)
+        self.assertIn("Escribano", notebook)
+        self.assertIn("CU80", notebook)
         combined = "\n".join(
             (SPECS / spec_id / "spec.md").read_text(encoding="utf-8")
             for spec_id in (
@@ -165,6 +226,27 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "fk_id_tipo_identificacion",
         ):
             self.assertNotIn(retired, later, retired)
+        circuit = "\n".join(
+            (SPECS / spec_id / "spec.md").read_text(encoding="utf-8")
+            for spec_id in (
+                "gestion-workflow-transicion",
+                "gestion-bitacora",
+                "minuta-inscripcion",
+                "testimonio-movimiento-inscripcion",
+                "tipo-documento-vencimiento-config",
+                "cuadernos-de-folios",
+            )
+        )
+        for retired in (
+            "El sistema SHALL",
+            "tipo de trámite",
+            "bitácora",
+            "gestión",
+            "vence",
+            "diasVencimiento",
+            "quienEntrega",
+        ):
+            self.assertNotIn(retired, circuit, retired)
 
 
 if __name__ == "__main__":

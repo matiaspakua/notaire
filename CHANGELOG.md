@@ -43,6 +43,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English workflow, history, registry, and notebook requirement prose** (#1490, CU75):
+  `gestion-workflow-transicion`, `gestion-bitacora`, `minuta-inscripcion`,
+  `testimonio-movimiento-inscripcion`, `tipo-documento-vencimiento-config`,
+  and `cuadernos-de-folios` state requirements in English. Spec ids stay.
+  Live names stay: `ProcedureType`, `ManagementHistory`, `dateEntry`,
+  `dateExit`, `dateRegistration`, `registered`, `cardNumber`, `expires`,
+  `dueDays`, `deliveredBy`, `registrationNumber`, `idsFolio`, and
+  `idNotary`. Stored labels `Archivada`, `Generada`,
+  `Presentado para inscripción`, `Observado`, `Inscripto`,
+  `Asignado a cuaderno`, `Errose`, and `no pasó` stay, along with the role
+  `Escribano` and the filenames `minuta_inscripcion_` and `notebook_`.
 - **English protocol, payment, folder, and person requirement prose** (#1490, CU75):
   `protocolo-auxiliar`, `pagos-parciales-cuotas`, `carpetas-de-tramite`,
   `descuentos-recargos-presupuesto`, and `persona-validacion-duplicados`

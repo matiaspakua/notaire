@@ -2,80 +2,96 @@
 
 ## Purpose
 
-Provides the movement circuit of a testimonio through the property
-registry: presenting it for inscription (CU11), recording the inscription,
-withdrawing it (CU12), and re-entering it (CU44).
+Provides the movement circuit of a testimony through the property
+registry: presenting it for registration (CU11), recording the
+registration, withdrawing it (CU12), and re-entering it (CU44).
 
 ## Requirements
 
-### Requirement: Ingresar testimonio para inscripción
-El sistema SHALL permitir registrar el ingreso de un testimonio verificado
-al registro de la propiedad para su inscripción, guardando la fecha de
-ingreso, según CU11 y RF-30/RF-92.
+### Requirement: Enter a testimony for registration
 
-#### Scenario: Ingreso exitoso registra fecha de ingreso
-- **WHEN** el Escribano presenta un testimonio verificado para inscripción
-- **THEN** el sistema registra la fecha de ingreso en el movimiento del
-  testimonio
+The system SHALL allow recording the entry of a verified testimony at the
+property registry for registration, storing `dateEntry`, per CU11 and
+RF-30/RF-92. The path is
+`POST /api/v1/testimony-movements/{idTestimony}/enter-registration`.
 
-#### Scenario: Rechazo de ingreso de testimonio ya ingresado sin retirar
-- **WHEN** el Escribano intenta presentar para inscripción un testimonio
-  que ya tiene un movimiento con fecha de ingreso registrada y sin fecha de
-  salida
-- **THEN** el sistema rechaza la operación y responde con un error que
-  indica que el testimonio ya está en trámite de inscripción
+#### Scenario: A successful entry records the entry date
 
-#### Scenario: Rechazo de ingreso de testimonio no verificado
-- **WHEN** el Escribano intenta presentar para inscripción un testimonio
-  que todavía no fue verificado
-- **THEN** el sistema rechaza la operación y responde con un error que
-  indica que el testimonio debe estar verificado
+- **WHEN** the notary (Escribano) presents a verified testimony for
+  registration
+- **THEN** the system records `dateEntry` on the testimony movement
 
-### Requirement: Registrar inscripción del testimonio
-El sistema SHALL permitir marcar un testimonio ingresado como inscripto,
-registrando la fecha de inscripción, según RF-32.
+#### Scenario: Reject entry of a testimony already entered and not withdrawn
 
-#### Scenario: Registro exitoso marca inscripto con fecha
-- **WHEN** el Escribano registra la inscripción de un testimonio que tiene
-  fecha de ingreso registrada y aún no fue marcado inscripto
-- **THEN** el sistema marca el testimonio como inscripto y registra la
-  fecha de inscripción
+- **WHEN** the notary (Escribano) attempts to present for registration a
+  testimony that already has a movement with `dateEntry` set and no
+  `dateExit`
+- **THEN** the system rejects the operation and responds with an error
+  stating that the testimony is already in registration
 
-#### Scenario: Rechazo de registrar inscripción sin ingreso previo
-- **WHEN** el Escribano intenta registrar la inscripción de un testimonio
-  que no tiene ningún movimiento con fecha de ingreso registrada
-- **THEN** el sistema rechaza la operación y responde con un error que
-  indica que falta el ingreso a inscripción
+#### Scenario: Reject entry of an unverified testimony
 
-### Requirement: Retirar testimonio inscripto
-El sistema SHALL permitir retirar un testimonio ya inscripto, registrando
-la fecha de salida y el número de cartón, según CU12 y RF-33.
+- **WHEN** the notary (Escribano) attempts to present for registration a
+  testimony that has not yet been verified
+- **THEN** the system rejects the operation and responds with an error
+  stating that the testimony must be verified
 
-#### Scenario: Retiro exitoso registra fecha de salida y número de cartón
-- **WHEN** el Escribano retira un testimonio marcado como inscripto,
-  informando el número de cartón
-- **THEN** el sistema registra la fecha de salida y el número de cartón en
-  el movimiento del testimonio
+### Requirement: Record registration of the testimony
 
-#### Scenario: Rechazo de retiro de testimonio no inscripto
-- **WHEN** el Escribano intenta retirar un testimonio que todavía no fue
-  marcado como inscripto
-- **THEN** el sistema rechaza la operación y responde con un error que
-  indica que el testimonio no está inscripto
+The system SHALL allow marking an entered testimony as registered,
+recording `dateRegistration`, per RF-32. The path is
+`POST /api/v1/testimony-movements/{idTestimony}/register-inscription`.
 
-### Requirement: Reingresar testimonio retirado
-El sistema SHALL permitir reingresar un testimonio ya retirado, generando
-un nuevo movimiento sin perder el historial del movimiento anterior, según
-CU44 y RF-33.
+#### Scenario: A successful record marks the testimony registered with a date
 
-#### Scenario: Reingreso exitoso crea nuevo movimiento preservando historial
-- **WHEN** el Escribano reingresa un testimonio cuyo movimiento más
-  reciente tiene fecha de salida registrada
-- **THEN** el sistema crea un nuevo movimiento de testimonio con su propia
-  fecha de ingreso, conservando el movimiento anterior sin modificarlo
+- **WHEN** the notary (Escribano) records registration of a testimony that
+  has `dateEntry` set and is not yet `registered`
+- **THEN** the system sets `registered` and records `dateRegistration`
 
-#### Scenario: Rechazo de reingreso de testimonio no retirado previamente
-- **WHEN** el Escribano intenta reingresar un testimonio cuyo movimiento
-  más reciente no tiene fecha de salida registrada
-- **THEN** el sistema rechaza la operación y responde con un error que
-  indica que el testimonio no fue retirado
+#### Scenario: Reject recording registration without a prior entry
+
+- **WHEN** the notary (Escribano) attempts to record registration of a
+  testimony that has no movement with `dateEntry` set
+- **THEN** the system rejects the operation and responds with an error
+  stating that the registration entry is missing
+
+### Requirement: Withdraw a registered testimony
+
+The system SHALL allow withdrawing a testimony that is already
+`registered`, recording `dateExit` and `cardNumber`, per CU12 and RF-33.
+The path is `POST /api/v1/testimony-movements/{idTestimony}/withdraw`.
+
+#### Scenario: A successful withdrawal records the exit date and carton number
+
+- **WHEN** the notary (Escribano) withdraws a testimony with `registered`
+  set, providing `cardNumber`
+- **THEN** the system records `dateExit` and `cardNumber` on the testimony
+  movement
+
+#### Scenario: Reject withdrawal of a testimony that is not registered
+
+- **WHEN** the notary (Escribano) attempts to withdraw a testimony that is
+  not yet `registered`
+- **THEN** the system rejects the operation and responds with an error
+  stating that the testimony is not registered
+
+### Requirement: Re-enter a withdrawn testimony
+
+The system SHALL allow re-entering a testimony that was already withdrawn,
+creating a new movement without losing the previous movement's history, per
+CU44 and RF-33. The path is
+`POST /api/v1/testimony-movements/{idTestimony}/reenter`.
+
+#### Scenario: A successful re-entry creates a new movement and keeps history
+
+- **WHEN** the notary (Escribano) re-enters a testimony whose most recent
+  movement has `dateExit` set
+- **THEN** the system creates a new testimony movement with its own
+  `dateEntry`, leaving the previous movement unchanged
+
+#### Scenario: Reject re-entry of a testimony that was not withdrawn
+
+- **WHEN** the notary (Escribano) attempts to re-enter a testimony whose
+  most recent movement has no `dateExit`
+- **THEN** the system rejects the operation and responds with an error
+  stating that the testimony was not withdrawn

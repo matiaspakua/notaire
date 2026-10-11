@@ -2,53 +2,51 @@
 
 ## Purpose
 
-Permite cargar y editar, desde la pantalla de administración, si un tipo de
-documento vence, en cuántos días y quién es responsable de entregarlo,
-completando datos que ya existen en el modelo pero que hoy son imposibles de
-ingresar (CU27, CU32).
+Allows loading and editing, from the administration screen, whether a
+document type expires, in how many days, and who is responsible for
+delivering it, completing data that already exist in the model (CU27, CU32).
 
 ## Requirements
 
-### Requirement: Cargar vencimiento y responsable al crear un tipo de documento
+### Requirement: Load expiration and the responsible party when creating a document type
 
 The system SHALL allow entering, when creating a document type, whether it
 expires (`expires`), the number of validity days (`dueDays`), and who is
 responsible for delivering or returning it (`deliveredBy`), according to CU27.
 This change keeps that behavior and adds residual `enabled` / `returned`
-alongside it (see ADDED requirements).
+alongside it (see the requirements below).
 
-#### Scenario: Alta de tipo de documento que vence
+#### Scenario: Create a document type that expires
 
 - **WHEN** an administrator creates a document type indicating that it expires,
   with a number of validity days and a responsible party
 - **THEN** the system stores the document type with `expires = true`, the given
   `dueDays`, and the given `deliveredBy`
 
-#### Scenario: Alta de tipo de documento que no vence
+#### Scenario: Create a document type that does not expire
 
 - **WHEN** an administrator creates a document type indicating that it does not
   expire
 - **THEN** the system stores the document type with `expires = false` without
   requiring `dueDays`
 
-### Requirement: Modificar vencimiento y responsable de un tipo de documento
+### Requirement: Modify expiration and the responsible party of a document type
 
-El sistema SHALL permitir modificar `vence`, `diasVencimiento` y
-`quienEntrega` de un tipo de documento existente que no esté en uso, según
-CU32.
+The system SHALL allow modifying `expires`, `dueDays`, and `deliveredBy` of
+an existing document type that is not in use, according to CU32.
 
-#### Scenario: Modificación de vencimiento y responsable
+#### Scenario: Modify expiration and the responsible party
 
-- **WHEN** un usuario modifica un tipo de documento existente que no está en
-  uso, cambiando `vence`, `diasVencimiento` o `quienEntrega`
-- **THEN** el sistema guarda los nuevos valores
+- **WHEN** a user modifies an existing document type that is not in use,
+  changing `expires`, `dueDays`, or `deliveredBy`
+- **THEN** the system stores the new values
 
-#### Scenario: Modificación bloqueada por tipo de documento en uso
+#### Scenario: Modification blocked because the document type is in use
 
-- **WHEN** un usuario intenta modificar un tipo de documento que ya está en
-  uso (referenciado por una plantilla de trámite o un documento presentado)
-- **THEN** el sistema rechaza la modificación con un mensaje indicando que
-  debe crear un tipo de documento nuevo
+- **WHEN** a user attempts to modify a document type that is already in use
+  (referenced by a procedure template or a submitted document)
+- **THEN** the system rejects the modification with a message stating that
+  a new document type must be created
 
 ### Requirement: Load enabled and returned when creating a document type
 
