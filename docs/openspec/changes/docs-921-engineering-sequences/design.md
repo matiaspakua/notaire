@@ -46,6 +46,8 @@ so the availability answer is not only in a pull request.
 `dashboard-nav-canonical-routes`.
 [CU22 still names `PUT /api/v1/gestiones`] → The live call is in
 `gestion-asignacion-suplencia`.
+[CU78 still names `/dashboard/administracion/**`] → The live screen is in
+`admin-route-guard`.
 [CU42 still names `GET /api/v1/documento-presentado/proximos-vencimientos?dias=N` and `/dashboard/proximos-vencimientos`] → The live call is in
 `upcoming-expirations`.
 [CU71 still names `POST /api/v1/presupuestos/{id}/items-desde-catalogo`] → The live call is in
