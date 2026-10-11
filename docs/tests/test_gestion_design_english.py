@@ -45,6 +45,15 @@ class GestionDesignEnglishTest(unittest.TestCase):
             "participant Mov as Movement",
             "participant API as Registration drafts",
             "POST /api/v1/managements/{id}/archive?confirmado=",
+            "POST /api/v1/testimonies/{id}/verify",
+            "POST /api/v1/testimony-movements/{idTestimony}/reenter",
+            "POST /api/v1/managements/{id}/document-reentry",
+            "### 3.7 Re-enter a testimony",
+            "### 3.8 Re-enter a document",
+            "EVALUACION-INGENIERIA.md",
+            "CU08 Verificar testimonio",
+            "CU44 Reingresar testimonio",
+            "CU43 Reingresar documentación",
             "`Sucesion`",
             "`Poder`",
             "Se asignan trámites y comienza la gestión",
@@ -90,6 +99,9 @@ class GestionDesignEnglishTest(unittest.TestCase):
             "API->>DB: Inscripta",
             "Dónde está el resto",
             "Saldo pendiente",
+            "Reingresar un testimonio",
+            "as Movimiento",
+            "as Gestiones",
         ):
             self.assertNotIn(retired, text, retired)
 

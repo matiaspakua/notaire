@@ -29,8 +29,11 @@ flowchart TB
     cu05[CU05 Preparar escritura]
     cu06[CU06 Firmar escritura]
     cu07[CU07 Generar testimonio]
+    cu08[CU08 Verificar testimonio]
     cu11[CU11 Ingresar a inscripción]
     cu12[CU12 Retirar testimonio]
+    cu44[CU44 Reingresar testimonio]
+    cu43[CU43 Reingresar documentación]
     cu82[CU82 Minuta de inscripción]
     cu16[CU16 Archivar]
     cu15[CU15 Procesar pago]
@@ -45,8 +48,11 @@ flowchart TB
   gestor --> cu05
   escribano --> cu06
   escribano --> cu07
+  gestor --> cu08
   gestor --> cu11
   gestor --> cu12
+  gestor --> cu44
+  gestor --> cu43
   gestor --> cu82
   escribano --> cu16
   cu83 -.-> cu02
@@ -73,9 +79,13 @@ workflow: any transition answers 400.
 | Draft | Documentacion Completa | Edge `Se redacta la escritura` | CU05 | transition | The `deeds` status |
 | Sign the instrument | any | Deed `Sin Firmar` and at least one folio | CU06 | `POST /api/v1/deeds/{id}/sign` | That call does not move the management |
 | Record the signature on the management | Gestion con Escritura Sin Firmar | Edge `Las partes firman la escritura` | CU06, CU83 | transition | Having signed the deed |
-| Generate testimony | Gestion con Escritura Firmada | Edge `Testimony generated after deed signing` | CU07 | `POST /api/v1/testimonies/{idDeed}/generate` and, separately, the transition | Only one of the two calls |
-| Enter for registration | Testimonio Generado | Edge `Testimony submitted for inscription` | CU11 | `POST /api/v1/testimony-movements/{idTestimony}/enter-registration` and the transition | — |
-| Withdraw | Testimonio Ingresado a Inscripcion | Edge `Testimony withdrawn after inscription cycle` | CU12 | `POST /api/v1/testimony-movements/{idTestimony}/withdraw` and the transition | — |
+| Generate testimony | Gestion con Escritura Firmada | Edge `Testimony generated after deed signing`. Deed `Firmada` | CU07 | `POST /api/v1/testimonies/{idDeed}/generate` and, separately, the transition | Only one of the two calls. Create leaves `verified` false |
+| Verify the testimony | does not change | A testimony already generated | CU08 | `POST /api/v1/testimonies/{id}/verify` | It does not move the management. Without this call, entry answers 400 |
+| Enter for registration | Testimonio Generado | Verified testimony, no open movement, and edge `Testimony submitted for inscription` | CU11 | `POST /api/v1/testimony-movements/{idTestimony}/enter-registration` and the transition | Unverified, or an open movement: 400 |
+| Record the inscription | does not change | A movement with an entry date | CU11 | `POST /api/v1/testimony-movements/{idTestimony}/register-inscription` | It does not move the management. Without a prior entry it answers 400 |
+| Withdraw | Testimonio Ingresado a Inscripcion | Movement `registered` and edge `Testimony withdrawn after inscription cycle` | CU12 | `POST /api/v1/testimony-movements/{idTestimony}/withdraw` and the transition | Without `registered`: 400. The body carries `cardNumber` |
+| Re-enter a testimony | does not change | The latest movement has an exit date | CU44 | `POST /api/v1/testimony-movements/{idTestimony}/reenter` | It does not move the management and does not overwrite the previous movement. Observed without notes: 400 |
+| Re-enter a document | does not change | The procedure belongs to the management and the type is on the template | CU43 | `POST /api/v1/managements/{id}/document-reentry` | It does not move the management. It creates another document with `reentered` |
 | Archive without a deed | Documentacion Completa | Edge `La gestión se archiva sin escritura`. If a folder is `Espera`, `confirmado=true` | CU16, CU85 | `POST /api/v1/managements/{id}/archive` | Outstanding balance: it warns and does not block |
 | Registration draft | — | A deed. It is not a management node | CU82 | `POST /api/v1/registration-drafts`, then `submit`, `observe`, or `register` | From `Observado` the service has no return |
 
@@ -162,24 +172,35 @@ sequenceDiagram
 
   Clerk->>FE: Generates the testimony
   FE->>Tes: POST /api/v1/testimonies/{idDeed}/generate
-  Tes->>DB: Testimony
+  Tes->>DB: Testimony, verified false
   FE->>Ges: POST /api/v1/managements/{id}/transition
   Ges->>DB: Testimonio Generado
 
+  Clerk->>FE: Verifies it
+  FE->>Tes: POST /api/v1/testimonies/{id}/verify
+  Tes->>DB: verified true
+  Note over Ges: The management does not move
+
   Clerk->>FE: Enters it at the registry
   FE->>Mov: POST /api/v1/testimony-movements/{idTestimony}/enter-registration
+  Note over Mov: 400 when it is not verified or a movement is already open
   FE->>Ges: POST /api/v1/managements/{id}/transition
   Ges->>DB: Testimonio Ingresado a Inscripcion
 
+  Clerk->>FE: Records the inscription
+  FE->>Mov: POST /api/v1/testimony-movements/{idTestimony}/register-inscription
+  Note over Mov,Ges: 400 without a prior entry. The management does not move
+
   Clerk->>FE: Withdraws it
   FE->>Mov: POST /api/v1/testimony-movements/{idTestimony}/withdraw
+  Note over Mov: 400 when it is not registered. The body carries cardNumber
   FE->>Ges: POST /api/v1/managements/{id}/transition
   Ges->>DB: Testimonio Retirado
 ```
 
 The testimony movement (verified, entered, registered, withdrawn, re-entered)
-is another machine. It is in CICLO-DE-VIDA §3.4. This sequence is only the
-coupling with the management node.
+is another machine. It is in CICLO-DE-VIDA §3.4. This sequence is the coupling
+with the management node. Re-entry, which does not change that node, is in §3.7.
 
 ### 3.5 Archive
 
@@ -232,6 +253,65 @@ sequenceDiagram
 
 The registration draft does not move the management node.
 
+### 3.7 Re-enter a testimony
+
+CU44. The service creates a new movement and leaves the previous one as it was.
+There is no management transition.
+
+```mermaid
+sequenceDiagram
+  actor Clerk
+  participant FE as Frontend
+  participant Mov as Movement
+  participant DB as PostgreSQL
+
+  Clerk->>FE: Re-enters the withdrawn testimony
+  FE->>Mov: POST /api/v1/testimony-movements/{idTestimony}/reenter
+  alt The latest movement has no exit date
+    Mov-->>FE: 400, nothing is created
+  else It is observed and there are no notes
+    Mov-->>FE: 400, nothing is created
+  else The withdrawal exists
+    Mov->>DB: New movement with an entry date
+    Note over DB: The previous movement is not overwritten
+    Note over Mov: The management does not move
+    Mov-->>FE: 201
+  end
+```
+
+The body is optional: `cardNumber`, `observedByRegistry`, and `notes`.
+`notes` is required when `observedByRegistry` is true. A second
+`enter-registration` also opens a movement when the previous one already has
+an exit; it does not store the observation. The use case uses `reenter`.
+
+### 3.8 Re-enter a document
+
+CU43. It is not a management status and it does not fire the
+documentation-complete edge.
+
+```mermaid
+sequenceDiagram
+  actor Clerk
+  participant FE as Frontend
+  participant API as Managements
+  participant DB as PostgreSQL
+
+  Clerk->>FE: Chooses the management
+  FE->>API: GET /api/v1/managements/{id}/document-reentry
+  API-->>FE: Procedures and template types
+  Clerk->>FE: Chooses the procedure and the type
+  FE->>API: POST /api/v1/managements/{id}/document-reentry
+  alt The procedure is not on the management, or the type is not on the template
+    API-->>FE: 400, the document is not created
+  else The management or the procedure does not exist
+    API-->>FE: 404
+  else The pair is valid
+    API->>DB: New document, reentered true
+    Note over API: The management does not move
+    API-->>FE: 201
+  end
+```
+
 ## 4. Where the rest lives
 
 | Question | Document |
@@ -239,5 +319,6 @@ The registration draft does not move the management node.
 | State graph and divergences | [CICLO-DE-VIDA.md](CICLO-DE-VIDA.md) §3 and §8 |
 | Business activity of the same graph | [transicion-de-estados.puml](../204-diagrams/Diagrama%20de%20Estados/transicion-de-estados.puml) — legacy, aligned to the graph; not the source |
 | Requirements evaluation and gaps | [EVALUACION-DOCUMENTACION.md](../../100-business/EVALUACION-DOCUMENTACION.md) |
+| Engineering document catalog | [EVALUACION-INGENIERIA.md](../../300-development/EVALUACION-INGENIERIA.md) |
 | Engine | [ADR-014](../202-ADR/ADR-014-workflow-engine.md) |
 | SAD runtime view | [sad.md](../201-SAD/sad.md) §6 |
