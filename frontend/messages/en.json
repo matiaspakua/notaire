@@ -923,7 +923,7 @@
       "errorDelete": "Could not delete the identification type",
       "duplicateName": "An identification type with this name already exists",
       "nameRequired": "Name is required",
-      "charactersRequired": "Enter the number's length in characters (1 to 99)",
+      "charactersRequired": "Enter the number's length in characters (1 to 50)",
       "noData": "No identification types",
       "fields": {
         "name": "Name",

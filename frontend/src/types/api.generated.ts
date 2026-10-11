@@ -3661,7 +3661,11 @@ export interface components {
             idIdentificationType?: number;
         };
         IdentificationTypeRequest: {
-            characters?: string;
+            /**
+             * @description Number of characters of the identification number: a whole number from 1 to 50 (issue #1526)
+             * @example 8
+             */
+            characters: string;
             name: string;
         };
         IdentificationTypeResponse: {

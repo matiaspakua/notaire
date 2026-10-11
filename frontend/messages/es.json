@@ -923,7 +923,7 @@
       "errorDelete": "No se pudo eliminar el tipo de identificación",
       "duplicateName": "Ya existe un tipo de identificación con ese nombre",
       "nameRequired": "El nombre es obligatorio",
-      "charactersRequired": "Indicá la cantidad de caracteres del número (1 a 99)",
+      "charactersRequired": "Indicá la cantidad de caracteres del número (1 a 50)",
       "noData": "No hay tipos de identificación",
       "fields": {
         "name": "Nombre",

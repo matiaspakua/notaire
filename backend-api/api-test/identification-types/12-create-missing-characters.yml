@@ -1,0 +1,24 @@
+info:
+  name: Create without characters is rejected
+  type: http
+  seq: 12
+  description: |-
+      Issue #1526: characters is required; it used to reach the NOT NULL column and answer 500.
+      Traceability: CU17 (RF #12, #38, #39)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/identification-types"
+  body:
+    type: json
+    data: |-
+        {"name":"Sin caracteres 1526"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request (not 500)", function () { expect(res.getStatus()).to.equal(400); });

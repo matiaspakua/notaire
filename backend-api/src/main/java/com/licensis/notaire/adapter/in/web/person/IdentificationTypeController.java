@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,8 +35,15 @@ public class IdentificationTypeController {
 
     private static final Logger log = LoggerFactory.getLogger(IdentificationTypeController.class);
 
+    /** Whole number from 1 to 50, as digits without a leading zero (issue #1526). */
+    static final String CHARACTERS_PATTERN = "^([1-9]|[1-4][0-9]|50)$";
+
     record IdentificationTypeRequest(
             @NotBlank String name,
+            @Schema(description = "Number of characters of the identification number: a whole number from 1 to 50 (issue #1526)",
+                    example = "8", requiredMode = Schema.RequiredMode.REQUIRED, pattern = CHARACTERS_PATTERN)
+            @NotBlank(message = "characters is required")
+            @Pattern(regexp = CHARACTERS_PATTERN, message = "characters must be a whole number from 1 to 50")
             String characters) {}
 
     record IdentificationTypeResponse(
