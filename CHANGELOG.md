@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English data-dictionary column names** (#1490, CU75):
+  The data dictionary, the ERD, and the compensation diagram use the V45
+  column names (`fk_id_budget`, `birth_date`, `node_type`, and the rest).
+  Headings, table summaries, and section 6.1 are English. Stored labels such
+  as `Honorarios`, `BORRADOR`, and `Workflow de Gestión Estándar` stay.
+  `identificaciones` is not a Flyway-created table. Flag cells use `Yes`.
 - **English ADR index** (#1490, CU75):
   The ADR index is English. Dates for ADR-005, ADR-006, and ADR-007 match each
   decision file. The platform line matches the root `pom.xml`: Java 26 and

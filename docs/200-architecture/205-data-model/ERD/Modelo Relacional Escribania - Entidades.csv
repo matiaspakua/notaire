@@ -6,7 +6,7 @@ people,Fuerte,first_name,,no,Texto,,,,Nombres de pila o razón social
 people,Fuerte,identification_number,,no,Texto,,,,Identificación civil principal
 people,Fuerte,tax_id,,si,Texto,,,x,Clave tributaria CUIT / CUIL
 people,Fuerte,sex,,si,Texto,,,x,Sexo / Género legal
-people,Fuerte,fecha_nacimiento,,si,Fecha,,,x,Fecha de nacimiento
+people,Fuerte,birth_date,,si,Fecha,,,x,Fecha de nacimiento
 people,Fuerte,marital_status,,si,Texto,,,x,Estado civil
 people,Fuerte,marriage_count,,si,Entero,,,x,Número de nupcias si contrajo matrimonio
 people,Fuerte,occupation,,si,Texto,,,x,Ocupación laboral
@@ -22,7 +22,7 @@ people,Fuerte,secondary_email,,si,Texto,,,x,Correo electrónico secundario/hist�
 people,Fuerte,nationality,,si,Texto,,,x,Nacionalidad de la persona
 people,Fuerte,profession,,si,Texto,,,x,Profesión u oficio
 people,Fuerte,notes,,si,Texto,,,x,Legajo y antecedentes de la persona
-people,Fuerte,fk_id_tipo_identificacion,FK,si,Entero,,x,x,Tipo de identificación principal
+people,Fuerte,fk_id_identification_type,FK,si,Entero,,x,x,Tipo de identificación principal
 people,Fuerte,is_notary,,no,Lógico,,,,`true` si es escribano habilitado
 identification_types,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 identification_types,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del tipo de documento
@@ -55,7 +55,7 @@ audit_records,Débil,id,PK,no,Entero,x,,,Identificador unívoco del evento audit
 audit_records,Débil,date,,no,Fecha/Hora,,,,Marca temporal exacta de la transacción
 audit_records,Débil,module,,no,Texto,,,,Módulo funcional afectado
 audit_records,Débil,operation_detail,,no,Texto,,,,Detalle de datos modificados o acción ejecutada
-audit_records,Débil,fk_id_usuario,FK,si,Entero,,x,x,Operador responsable de la acción
+audit_records,Débil,fk_id_user,FK,si,Entero,,x,x,Operador responsable de la acción
 revoked_tokens,Fuerte,jti,PK,no,Texto,x,,,Identificador único del JWT revocado (claim `jti`)
 revoked_tokens,Fuerte,expires_at,,no,Fecha/Hora,,,,Vencimiento del token; después de esta fecha la fila puede purgarse
 revoked_tokens,Fuerte,revoked_at,,no,Fecha/Hora,,,,Momento del cierre de sesión que revocó el token
@@ -85,7 +85,7 @@ items,Débil,name,,no,Texto,,,,Concept o partida liquidada
 items,Débil,amount,,no,Real,,,,Monto resultante de la línea
 items,Débil,percentage,,no,Entero,,,,Porcentaje aplicado en la liquidación
 items,Débil,fixed_concept,,no,Lógico,,,,"`true` si es importe fijo, `false` si es porcentual"
-items,Débil,fk_id_presupuesto,FK,si,Entero,,x,x,Presupuesto al que pertenece
+items,Débil,fk_id_budget,FK,si,Entero,,x,x,Presupuesto al que pertenece
 items,Débil,notes,,si,Texto,,,x,Notas justificativas de la partida (V3/V4)
 items,Débil,item_type,,no,Texto,,,,Clase de ítem presupuestario (por defecto `NORMAL`)
 items,Débil,reason,,si,Texto,,,x,Motivo declarado del ítem cuando no es un concepto ordinario
@@ -94,7 +94,7 @@ payments,Débil,id,PK,no,Entero,x,,,Identificador unívoco del recibo
 payments,Débil,payment_date,,no,Fecha,,,,Fecha de realización del pago
 payments,Débil,amount,,no,Real,,,,Importe percibido
 payments,Débil,notes,,si,Texto,,,x,Medio de pago y constancias
-payments,Débil,fk_id_presupuesto,FK,si,Entero,,x,x,Presupuesto cancelado
+payments,Débil,fk_id_budget,FK,si,Entero,,x,x,Presupuesto cancelado
 payments,Débil,payment_method,,si,Texto,,,x,Medio de pago utilizado
 deed_managements,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 deed_managements,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco de la gestión
@@ -130,9 +130,9 @@ procedures,Fuerte,number,,si,Entero,,,x,Número correlativo de trámite (V13 opc
 procedures,Fuerte,name,,si,Texto,,,x,Carátula descriptiva (V13 opcional)
 procedures,Fuerte,notes,,si,Texto,,,x,Instrucciones u observaciones
 procedures,Fuerte,fk_id_procedure_type,FK,si,Entero,,x,x,Tipo de trámite
-procedures,Fuerte,fk_id_gestion,FK,si,Entero,,x,x,Gestión que lo agrupa (nulo en aux.)
-procedures,Fuerte,fk_id_escritura,FK,si,Entero,,x,x,Deed notarial resultante
-procedures,Fuerte,fk_id_presupuesto,FK,si,Entero,,x,x,Presupuesto económico base (V14)
+procedures,Fuerte,fk_id_deed_management,FK,si,Entero,,x,x,Gestión que lo agrupa (nulo en aux.)
+procedures,Fuerte,fk_id_deed,FK,si,Entero,,x,x,Deed notarial resultante
+procedures,Fuerte,fk_id_budget,FK,si,Entero,,x,x,Presupuesto económico base (V14)
 procedures,Fuerte,fk_id_property,FK,si,Entero,,x,x,Property objeto del acto (si aplica)
 person_procedures,Asociativa,version,,no,Entero,,,,Control de concurrencia optimista
 person_procedures,Asociativa,fk_id_procedure,PK,no,Entero,x,x,,Trámite en el que participa
@@ -142,8 +142,8 @@ procedure_folders,Débil,id,PK,no,Entero,x,,,Identificador unívoco de la carpet
 procedure_folders,Débil,number,,no,Entero,,,,Número correlativo de la carpeta (secuencia dedicada)
 procedure_folders,Débil,status,,no,Texto,,,,Estado de la carpeta
 procedure_folders,Débil,wait_reason,,si,Texto,,,x,Motivo de la espera cuando la carpeta está detenida
-procedure_folders,Débil,fk_id_gestion,FK,no,Entero,,x,,Gestión a la que pertenece la carpeta
-procedure_folders,Débil,fk_id_tramite,FK,no,Entero,,x,,Trámite que origina la carpeta
+procedure_folders,Débil,fk_id_deed_management,FK,no,Entero,,x,,Gestión a la que pertenece la carpeta
+procedure_folders,Débil,fk_id_procedure,FK,no,Entero,,x,,Trámite que origina la carpeta
 properties,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 properties,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del inmueble
 properties,Fuerte,nomenclature,,si,Texto,,,x,Nomenclatura catastral oficial
@@ -165,23 +165,23 @@ properties,Fuerte,registry_volume_folio,,si,Texto,,,x,Tomo y folio de inscripci�
 properties,Fuerte,boundaries,,si,Texto,,,x,Linderos del inmueble
 workflow_definition,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 workflow_definition,Fuerte,id_workflow_definition,PK,no,Entero,x,,,Identificador unívoco del workflow
-workflow_definition,Fuerte,nombre,,no,Texto,,,,Nombre descriptivo del workflow
-workflow_definition,Fuerte,descripcion,,si,Texto,,,x,Descripción funcional del proceso
-workflow_definition,Fuerte,activo,,no,Lógico,,,,`true` si el workflow está habilitado para uso
+workflow_definition,Fuerte,name,,no,Texto,,,,Nombre descriptivo del workflow
+workflow_definition,Fuerte,description,,si,Texto,,,x,Descripción funcional del proceso
+workflow_definition,Fuerte,active,,no,Lógico,,,,`true` si el workflow está habilitado para uso
 workflow_node,Débil,version,,no,Entero,,,,Control de concurrencia optimista
 workflow_node,Débil,id_workflow_node,PK,no,Entero,x,,,Identificador unívoco del nodo
 workflow_node,Débil,fk_workflow_definition_id,FK,no,Entero,,x,,Workflow contenedor (ON DELETE CASCADE)
-workflow_node,Débil,fk_estado_gestion_id,FK,no,Entero,,x,,Estado de gestión representado por el nodo
-workflow_node,Débil,tipo,,no,Texto,,,,"Tipo de nodo: `INITIAL`, `INTERMEDIATE`, `FINAL`"
-workflow_node,Débil,posicion_x,,si,Real,,,x,Coordenada visual X en el diagramador
-workflow_node,Débil,posicion_y,,si,Real,,,x,Coordenada visual Y en el diagramador
+workflow_node,Débil,fk_management_status_id,FK,no,Entero,,x,,Estado de gestión representado por el nodo
+workflow_node,Débil,node_type,,no,Texto,,,,"Tipo de nodo: `INITIAL`, `INTERMEDIATE`, `FINAL`"
+workflow_node,Débil,position_x,,si,Real,,,x,Coordenada visual X en el diagramador
+workflow_node,Débil,position_y,,si,Real,,,x,Coordenada visual Y en el diagramador
 workflow_transition,Débil,version,,no,Entero,,,,Control de concurrencia optimista
 workflow_transition,Débil,id_workflow_transition,PK,no,Entero,x,,,Identificador unívoco de la transición
 workflow_transition,Débil,fk_workflow_definition_id,FK,no,Entero,,x,,Workflow contenedor (ON DELETE CASCADE)
-workflow_transition,Débil,fk_nodo_origen_id,FK,no,Entero,,x,,Nodo origen (ON DELETE CASCADE)
-workflow_transition,Débil,fk_nodo_destino_id,FK,no,Entero,,x,,Nodo destino (ON DELETE CASCADE)
-workflow_transition,Débil,condicion,,si,Texto,,,x,Condición lógica de habilitación de la transición
-workflow_transition,Débil,descripcion,,si,Texto,,,x,Descripción de la acción que dispara el avance
+workflow_transition,Débil,fk_origin_node_id,FK,no,Entero,,x,,Nodo origen (ON DELETE CASCADE)
+workflow_transition,Débil,fk_destination_node_id,FK,no,Entero,,x,,Nodo destino (ON DELETE CASCADE)
+workflow_transition,Débil,condition,,si,Texto,,,x,Condición lógica de habilitación de la transición
+workflow_transition,Débil,description,,si,Texto,,,x,Descripción de la acción que dispara el avance
 document_types,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 document_types,Fuerte,id,PK,no,Entero,x,,,Identificador unívoco del tipo de documento
 document_types,Fuerte,name,,no,Texto,,,,Denominación del documento/certificado
@@ -219,7 +219,7 @@ submitted_documents,Débil,notes,,si,Texto,,,x,Notas técnicas o requisitos de s
 submitted_documents,Débil,delivered,,si,Lógico,,,x,`true` si ya fue entregado a la entidad requirente
 submitted_documents,Débil,reentered,,si,Lógico,,,x,`true` si fue reingresado tras subsanar (V6 nullable)
 submitted_documents,Débil,delivered_by,,no,Texto,,,,Origen de provisión (`Cliente` o `Entidad Externa`)
-submitted_documents,Débil,fk_id_tramite,FK,si,Entero,,x,x,Trámite al que pertenece (V6: opcional)
+submitted_documents,Débil,fk_id_procedure,FK,si,Entero,,x,x,Trámite al que pertenece (V6: opcional)
 submitted_documents,Débil,fk_id_document_type,FK,si,Entero,,x,x,Tipo de documento maestro
 deeds,Fuerte,version,,no,Entero,,,,Control de concurrencia optimista
 deeds,Fuerte,id,PK,no,Entero,x,,,Identificador interno de la escritura matriz
@@ -269,7 +269,7 @@ testimony_movements,Débil,version,,no,Entero,,,,Control de concurrencia optimis
 testimony_movements,Débil,id,PK,no,Entero,x,,,Identificador del movimiento registral (V5)
 testimony_movements,Débil,entry_date,,no,Fecha,,,,Fecha de ingreso del movimiento (V5)
 testimony_movements,Débil,notes,,si,Texto,,,x,Notas y despachos registrales
-testimony_movements,Débil,fk_id_testimonio,FK,si,Entero,,x,x,Testimony objeto del trámite
+testimony_movements,Débil,fk_id_testimony,FK,si,Entero,,x,x,Testimony objeto del trámite
 testimony_movements,Débil,exit_date,,si,Fecha,,,x,Fecha de devolución del Registro (V5)
 testimony_movements,Débil,registration_date,,si,Fecha,,,x,Fecha en que se perfeccionó la inscripción (V5)
 testimony_movements,Débil,registered,,no,Lógico,,,,`true` si la inscripción resultó favorable (V5)
@@ -281,7 +281,7 @@ copies,Débil,number,,no,Entero,,,,Número correlativo de copia emitida
 copies,Débil,print_date,,no,Fecha,,,,Fecha de expedición e impresión de la copia
 copies,Débil,pickup_date,,si,Fecha,,,x,Fecha en que fue retirada por el interesado
 copies,Débil,notes,,si,Texto,,,x,Registro de entrega o atestaciones
-copies,Débil,fk_id_testimonio,FK,si,Entero,,x,x,Testimony matriz originario
+copies,Débil,fk_id_testimony,FK,si,Entero,,x,x,Testimony matriz originario
 copies,Débil,fk_id_person,FK,si,Entero,,x,x,Person a quien se le expide o entrega la copia
 folio_copies,Asociativa,version,,no,Entero,,,,Control de concurrencia optimista
 folio_copies,Asociativa,fk_id_folio,PK,no,Entero,x,x,,Folio especial de testimonio
@@ -297,5 +297,5 @@ registration_drafts,Débil,reception_date,,si,Fecha,,,x,Fecha de recepción por 
 registration_drafts,Débil,final_registration_number,,si,Texto,,,x,Número definitivo de inscripción
 registration_drafts,Débil,registry_notes,,si,Texto,,,x,Observaciones formuladas por el Registro
 registration_drafts,Débil,correction_date,,si,Fecha,,,x,Fecha de la corrección solicitada por el Registro
-registration_drafts,Débil,fk_id_escritura,FK,no,Entero,,x,,Deed a inscribir
+registration_drafts,Débil,fk_id_deed,FK,no,Entero,,x,,Deed a inscribir
 registration_drafts,Débil,version,,no,Entero,,,,Control de concurrencia optimista

@@ -52,8 +52,8 @@ def dictionary_columns(lines):
         row = COLUMN_ROW.match(line)
         if table and row:
             cells = [c.strip() for c in row.group(2).split("|")]
-            tables[table][row.group(1)] = {"pk": cells[1] == "Sí", "fk": cells[2] == "Sí",
-                                           "not_null": cells[3] == "Sí", "description": cells[-1]}
+            tables[table][row.group(1)] = {"pk": cells[1] == "Yes", "fk": cells[2] == "Yes",
+                                           "not_null": cells[3] == "Yes", "description": cells[-1]}
     return tables
 
 

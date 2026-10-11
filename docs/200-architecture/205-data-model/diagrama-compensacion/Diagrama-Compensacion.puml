@@ -44,7 +44,7 @@ legend top left
   | **B** (Borrar) | **I** (Impedir / Restrict) | Es la operación por defecto de PostgreSQL cuando no hay ON DELETE específico |
   | | **C** (Cascada / Cascade) | Elimina en cascada los registros hijos al borrar el padre |
   | | **Null** (Set Null) | Desvincula los hijos asignando NULL a la FK al borrar el padre |
-  | **Nota** | **V14** | La relación canónica es `tramites.fk_id_presupuesto`; `presupuestos.fk_id_tramite` fue eliminada |
+  | **Nota** | **V14** | La relación canónica es `tramites.fk_id_budget`; `presupuestos.fk_id_procedure` fue eliminada |
 endlegend
 
 ' =============================================================================
@@ -207,7 +207,7 @@ note right of r_pres_pagos
   Impedir borrar presupuesto con cobranzas.
 end note
 
-' 24. Presupuestos -> Trámites (Flyway V14: relación canónica en tramites.fk_id_presupuesto)
+' 24. Presupuestos -> Trámites (Flyway V14: relación canónica en tramites.fk_id_budget)
 rectangle "I: I\nM: I\nB: I" as r_pres_tram <<rule>>
 presupuestos -down- r_pres_tram
 r_pres_tram -down-> tramites

@@ -68,7 +68,11 @@ class ErdUsesEnglishSchemaTest(unittest.TestCase):
         self.assertEqual([], sorted(csv_entities() & set(renamed_tables())))
 
     def test_renamed_tables_appear_under_their_new_name(self):
-        new_names = set(renamed_tables().values()) - {"users"}
+        # users is renamed inside a slice the diagram already shows.
+        # identifications is a legacy table Flyway never creates (V26). V45
+        # renames it only when that table is already present, so it is not an
+        # entity in the Flyway ERD.
+        new_names = set(renamed_tables().values()) - {"users", "identifications"}
         self.assertEqual([], sorted(new_names - puml_entities(FULL_PUML)))
 
 
