@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/chore-1252-openspec-archive-hygiene/` | Gate 1 + apply |
 | Branch | `cursor/chore-1252-openspec-archive-hygiene-69d3` | created from `fa7f0c03` |
 | Tasks | `tasks.md` | groups 1–8 ticked; 9–12 pending PR/merge |
-| Commits | (filled as commits land) | pending |
+| Commits | `150b1127` test; `fe78914a` feat; `3fc6e9e2` docs; `c24beca5` archive; `53c6d18f` ledger | recorded |
 | Pull Request | | pending |
 | CI run | | pending |
 | Merge commit | | pending |
