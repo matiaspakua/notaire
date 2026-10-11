@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired submitted-document id** (#1490, CU75): the engineering-sequences
+  design names the path variable CU10 still writes, `idDocumentoPresentado`.
+  The live path variable is `idSubmittedDocument`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Retired status log service** (#1490, CU75): the engineering-sequences
   design names the class CU13 still writes, `ManagementBitacoraService`.
   The live class is `ManagementStatusLogService`. The heading
