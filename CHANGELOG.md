@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English CU10 comments** (#1490, CU75): the external-entity read model
+  describes the course of events, the start date, the notary in charge,
+  and external entities. The management query display says start date.
+  The receipt display says PDF receipt. Stored procedure type
+  `Compraventa` stays.
 - **English hash and movement names** (#1490, CU75): the legacy MD5 helper
   uses `plainText`, `md5Hex`, `lowNibble`, and `highNibble`. Testimony
   movement tests say `shouldListTestimonyMovementsWhenRequested`,

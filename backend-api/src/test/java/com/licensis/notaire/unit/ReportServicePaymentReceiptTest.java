@@ -80,7 +80,7 @@ class ReportServicePaymentReceiptTest {
     }
 
     @Test
-    @DisplayName("Should generate a PDF recibo with client, date, concept and total for a simple payment")
+    @DisplayName("Should generate a PDF receipt with client, date, concept and total for a simple payment")
     void shouldGenerateReceiptWithPaymentData() throws Exception {
         Person client = buildClient();
         Payment payment = buildPayment(1, new java.math.BigDecimal("500000"), client);

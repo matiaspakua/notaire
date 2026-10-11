@@ -205,7 +205,7 @@ class ManagementQueryServiceTest {
     }
 
     @Test
-    @DisplayName("Should map date inicio correctly")
+    @DisplayName("Should map start date correctly")
     void shouldMapDateStart() {
         Date testDate = new Date();
         testManagement.setDateStart(testDate);
