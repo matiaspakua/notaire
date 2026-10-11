@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Short management updates** (#1490, CU75): the engineering-sequences
+  design names the paths CU83 and CU13 still write, `PUT /gestiones/{id}`
+  and `PUT /gestiones/{id}/complete-case`. The live calls stay in
+  `DOC-GESTION`. The heading `Riesgos / Trade-offs` stays.
+  `docs/100-business` stays.
 - **Admin screen** (#1490, CU75): the engineering-sequences design names
   the screen CU78 still writes, `/dashboard/administracion/**`.
   The live screen stays in `admin-route-guard`. The label key
