@@ -9,20 +9,20 @@
 - [x] 1.5 No new ADR (ADR-016 covers the log pipeline)
 - [x] 1.6 Claim attempted; `gh` integration cannot add labels/comments (token scope) — noted in PR
 
-## 2. Crear branch
+## 2. Create branch
 
 - [x] 2.1 Fetched `origin/main`
 - [x] 2.2 `cursor/feat-1483_client-error-beacon-69d3`
 - [x] 2.3 Branch recorded in `traceability.md`
 
-## 3. Gate 2 — Escribir tests (TDD, failing first)
+## 3. Gate 2 — Write tests (TDD, failing first)
 
 - [x] 3.1 Enumerate cases from the spec scenarios
 - [x] 3.2 Write `frontend/src/tests/unit/client-error-beacon.test.ts`
 - [x] 3.3 Run Vitest and observe failures (`/opt/cursor/artifacts/1483-red.log`)
 - [x] 3.4 Every scenario maps to a test (`traceability.md`)
 
-## 4. Implementación
+## 4. Implementation
 
 - [x] 4.1 Add `frontend/src/lib/client-error-beacon.ts` (validate, cap, rate-limit, log)
 - [x] 4.2 Add `frontend/src/app/api/client-errors/route.ts`
@@ -38,7 +38,7 @@
 
 - [x] 6.1 `cd frontend && npm test`
 - [x] 6.2 `bash workspace/sdlc/validate-sdlc-plan.sh feat-1483-client-error-beacon`
-- [ ] 6.3 Preflight as far as the environment allows (frontend-scoped)
+- [x] 6.3 Frontend-scoped preflight (typecheck, eslint, vitest, build) — evidence `/opt/cursor/artifacts/1483-preflight-frontend.log`
 
 ## 7. Playwright
 
