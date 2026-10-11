@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired procedure template** (#1490, CU75): the engineering-sequences
+  design names the type CU43 still writes, `PlantillaTramite`.
+  The live class is `ProcedureTemplate`. The heading `Riesgos / Trade-offs`
+  stays. `docs/100-business` stays.
 - **Retired document services** (#1490, CU75): the engineering-sequences
   design names the classes CU43 and CU10 still write,
   `ReingresoDocumentacionService` and `DocumentoEntidadExternaService`.
