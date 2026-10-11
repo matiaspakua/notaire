@@ -64,6 +64,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English credential parameters and status locals** (#1490, CU75):
+  the admin login parameter is `password`. The route-guard login
+  parameter is `password`. Invalid login fixtures are `invalid_user`
+  and `invalid_password`. Navigation and helper roles use `employee`.
+  The paid-status test is `shouldCalculateStatusPaymentPaid`. Payment
+  edit is `shouldEditPayment`. Registration-draft rejection is
+  `shouldRejectSubmissionWhenNotGenerated`. The auxiliary folio local
+  is `auxiliaryType`. The auth fixture is `employeeUser` with name
+  `employee1`. Report filename titles name the monthly and tax sworn
+  statements. Stored role `EMPLEADO` stays, along with stored status
+  `Generada`, visible text `Complete usuario y contraseña`, the button
+  label `/iniciar escritura/i`, and PDF filenames `ddjj_mensual_` and
+  `ddjj_rentas_`. Message keys `fields.contrasenia` and
+  `fields.nuevaContrasenia` stay.
 - **English found locals and report dialog keys** (#1490, CU75): the
   procedure-type edit local is `foundProcedureType`. The person-procedure
   delete local is `found`. The folio status constant is `STATUS_USED`.

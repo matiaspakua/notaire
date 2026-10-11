@@ -17,7 +17,7 @@ export class GherkinSteps {
   // =================== GIVEN steps ===================
 
   /** Only "admin" is seeded by default; other roles fall back to it. */
-  async givenUserIsAuthenticatedAs(role: "admin" | "empleado" = "admin") {
+  async givenUserIsAuthenticatedAs(role: "admin" | "employee" = "admin") {
     await authenticateAsAdmin(this.page);
   }
 

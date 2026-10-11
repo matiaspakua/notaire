@@ -8,9 +8,9 @@ import { rowWithCell } from "./setup/rows";
 
 async function seedAvailableAuxiliaryFolio(page: import("@playwright/test").Page) {
   const person = await createPerson(page);
-  const tipoAuxiliar = await createFolioType(page, { isAuxiliary: true });
+  const auxiliaryType = await createFolioType(page, { isAuxiliary: true });
   const folio = await createFolio(page, person.data!.personId, {
-    typeFolioId: tipoAuxiliar.data!.idFolioType,
+    typeFolioId: auxiliaryType.data!.idFolioType,
   });
   return folio.data!.idFolio;
 }
