@@ -64,6 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English optional heading and live deed-status constant** (#1490, CU75):
+  the omitted-client budget heading is `Budget CU01 pg optional`. The
+  template concept is `Honorarios Create E2E`. The deed-status comment
+  names `BusinessConstants.DeedUnsigned`. Stored status `BORRADOR` stays,
+  along with the seed-like name `Honorarios E2E` and the visible status
+  `/Sin Firmar/i`.
 - **English payment edit locals and registry note id** (#1490, CU75):
   the payment method update test is `shouldUpdatePaymentMethodWhenEditingPayment`.
   Null-field edit tests are `shouldHandleEditPaymentWithNullAmount`,

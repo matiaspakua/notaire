@@ -75,7 +75,7 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     const procedureTypeName = `Create type E2E ${Date.now()}`;
     const procedureTypeResult = await createProcedureType(page, { name: procedureTypeName });
     expect(procedureTypeResult.ok).toBe(true);
-    const conceptResult = await createConcept(page, { name: "Honorarios Alta E2E", value: 2500 });
+    const conceptResult = await createConcept(page, { name: "Honorarios Create E2E", value: 2500 });
     expect(conceptResult.ok).toBe(true);
     const templateResult = await createBudgetTemplate(
       page,
@@ -100,7 +100,7 @@ test.describe("CU39 - Load items from the template (golden path)", () => {
     await expect(row).toBeVisible({ timeout: 8000 });
     await row.getByRole("button", { name: /ítems|items/i }).click();
     const dialog = page.getByTestId("dialog-items-budget");
-    await expect(dialog.getByTestId("table-items-budget")).toContainText("Honorarios Alta E2E", { timeout: 8000 });
+    await expect(dialog.getByTestId("table-items-budget")).toContainText("Honorarios Create E2E", { timeout: 8000 });
   });
 
   test("shows an error when the procedure type has no template configured", async ({ page }) => {
