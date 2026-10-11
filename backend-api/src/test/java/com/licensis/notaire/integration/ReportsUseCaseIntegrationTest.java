@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test-h2")
-class ReportesUseCaseIntegrationTest {
+class ReportsUseCaseIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -139,9 +139,9 @@ class ReportesUseCaseIntegrationTest {
 
     @Test
     @DisplayName("CU03: lista-procedure-documents endpoint handles unknown procedure gracefully")
-    void shouldHandleListaDocumentsProcedureEndpointGracefully() throws Exception {
+    void shouldHandleProcedureDocumentListEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/procedure-document-list")
-                        .param("procedureTypeName", "TramiteQueNoExiste"))
+                        .param("procedureTypeName", "ProcedureTypeThatDoesNotExist"))
                 .andExpect(status().isNotFound());
     }
 
@@ -161,7 +161,7 @@ class ReportesUseCaseIntegrationTest {
 
     @Test
     @DisplayName("CU09: document-debt endpoint handles a missing management gracefully")
-    void shouldHandleConsultarDebtDocumentsEndpointGracefully() throws Exception {
+    void shouldHandleDocumentDebtEndpointGracefully() throws Exception {
         mockMvc.perform(get("/api/v1/reports/document-debt")
                         .param("numberManagement", "99999"))
                 .andExpect(status().isNotFound());

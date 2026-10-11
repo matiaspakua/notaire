@@ -249,7 +249,7 @@ class PaymentPersistenceAdapterTest {
 
     @Test
     @DisplayName("Should report status PARTIAL when the pending balance is positive but some payments exist")
-    void shouldCalculateStatusPaymentParcial() {
+    void shouldCalculatePartialPaymentStatus() {
         when(budgetRepository.findById(1)).thenReturn(Optional.of(testBudget));
         when(paymentRepository.sumAmountByBudgetId(1)).thenReturn(new java.math.BigDecimal("1000"));
 

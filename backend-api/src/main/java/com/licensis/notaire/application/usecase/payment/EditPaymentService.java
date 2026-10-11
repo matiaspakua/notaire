@@ -31,7 +31,7 @@ public class EditPaymentService implements EditPaymentUseCase {
     @Transactional
     public PaymentDetails edit(EditPaymentCommand command) {
         Integer paymentId = command.paymentId();
-        log.info("Editando pago con ID: {}", paymentId);
+        log.info("Editing payment with ID: {}", paymentId);
 
         if (!payments.existsById(paymentId)) {
             throw new IllegalArgumentException("Payment not found with ID: " + paymentId);

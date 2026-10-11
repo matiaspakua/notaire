@@ -125,8 +125,8 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         budget.setFkIdPerson(client);
         budget = budgetRepository.save(budget);
         budgetId = budget.getIdBudget();
-        itemRepository.save(item(budget, "Honorarios escribanía", "10000.00"));
-        itemRepository.save(item(budget, "Sellado", "2500.00"));
+        itemRepository.save(item(budget, "Notarial fees", "10000.00"));
+        itemRepository.save(item(budget, "Stamp duty", "2500.00"));
 
         ProcedureType procedureType = new ProcedureType();
         procedureType.setName(PROCEDURE_TYPE);
@@ -136,8 +136,8 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         procedureType.setAssociatesProperties(true);
         procedureType = procedureTypeRepository.save(procedureType);
 
-        DocumentType ownershipReport = documentType("Informe de dominio 567", true, 30, "Registro de la Propiedad");
-        DocumentType cadastralCertificate = documentType("Certificado catastral 567", false, null, "Catastro");
+        DocumentType ownershipReport = documentType("Ownership report 567", true, 30, "Property registry");
+        DocumentType cadastralCertificate = documentType("Cadastral certificate 567", false, null, "Cadastre");
         procedureTemplateRepository.save(new ProcedureTemplate(procedureType.getIdProcedureType(),
                 ownershipReport.getIdDocumentType()));
         procedureTemplateRepository.save(new ProcedureTemplate(procedureType.getIdProcedureType(),
@@ -146,7 +146,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         Property property = new Property();
         property.setCadastralDesignation("01-02-003-004");
         property.setFiscalAppraisal(new BigDecimal("98765.43"));
-        property.setAddress("Calle Falsa 123");
+        property.setAddress("Fake Street 123");
         property = propertyRepository.save(property);
 
         ManagementStatus status = managementStatusRepository.findById(1).orElseThrow();
@@ -166,17 +166,17 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         procedure.setFkIdProperty(property);
         procedure = procedureRepository.save(procedure);
 
-        historyRepository.save(history(management, status, LocalDate.of(2026, 9, 16), "Inicio of management"));
+        historyRepository.save(history(management, status, LocalDate.of(2026, 9, 16), "Management start"));
         historyRepository.save(history(management, status, LocalDate.of(2026, 9, 20), "Documentation presented"));
 
         dueDate = date(LocalDate.now().plusDays(10));
         SubmittedDocument document = new SubmittedDocument();
-        document.setName("Informe de dominio");
+        document.setName("Ownership report");
         document.setDocumentType(ownershipReport);
         document.setFkIdProcedure(procedure);
         document.setPrepared(true);
         document.setExpires(true);
-        document.setDeliveredBy("Registro de la Propiedad");
+        document.setDeliveredBy("Property registry");
         document.setCardNumber(77);
         document.setFlagged(false);
         document.setDateEntry(date(LocalDate.of(2026, 9, 20)));
@@ -195,7 +195,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         String text = pdfText(get("/api/v1/reports/budget/{id}", budgetId));
 
         assertThat(text).contains("Budget N° " + MANAGEMENT_NUMBER, "Lucía Peña", "15/09/2026",
-                PROCEDURE_TYPE, "Honorarios escribanía", "$ 10.000,00", "Sellado", "$ 2.500,00");
+                PROCEDURE_TYPE, "Notarial fees", "$ 10.000,00", "Stamp duty", "$ 2.500,00");
         // CU47 total: item lines plus the cost of the documents submitted for the budget.
         assertThat(text).contains("Total", "$ 15.500,00", "Pending balance");
         assertThat(text).doesNotContain("01-02-003-004");
@@ -206,8 +206,8 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
     void shouldRenderTheBudgetReportWithTheLinkedProperties() throws Exception {
         String text = pdfText(get("/api/v1/reports/budget-properties/{id}", budgetId));
 
-        assertThat(text).contains("Budget N° " + MANAGEMENT_NUMBER, "Honorarios escribanía",
-                "Properties", "01-02-003-004", "$ 98.765,43", "Calle Falsa 123", "$ 15.500,00");
+        assertThat(text).contains("Budget N° " + MANAGEMENT_NUMBER, "Notarial fees",
+                "Properties", "01-02-003-004", "$ 98.765,43", "Fake Street 123", "$ 15.500,00");
     }
 
     @Test
@@ -216,8 +216,8 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         String text = pdfText(get("/api/v1/reports/procedure-document-list")
                 .param("procedureTypeName", PROCEDURE_TYPE));
 
-        assertThat(text).contains(PROCEDURE_TYPE, "Is archived", "Yes", "Informe de dominio 567", "30",
-                "Registro de la Propiedad", "Certificado catastral 567", "Catastro");
+        assertThat(text).contains(PROCEDURE_TYPE, "Is archived", "Yes", "Ownership report 567", "30",
+                "Property registry", "Cadastral certificate 567", "Cadastre");
     }
 
     @Test
@@ -226,8 +226,8 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         String text = pdfText(get("/api/v1/reports/management-history/{id}", managementId));
 
         assertThat(text).contains("Management N° " + MANAGEMENT_NUMBER, "Management Peña", "Lucía Peña",
-                PROCEDURE_TYPE, "16/09/2026", "Inicio of management", "20/09/2026", "Documentation presented");
-        assertThat(text.indexOf("Inicio of management")).isLessThan(text.indexOf("Documentation presented"));
+                PROCEDURE_TYPE, "16/09/2026", "Management start", "20/09/2026", "Documentation presented");
+        assertThat(text.indexOf("Management start")).isLessThan(text.indexOf("Documentation presented"));
     }
 
     @Test
@@ -235,7 +235,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
     void shouldRenderTheExpiryDetailOfASubmittedDocument() throws Exception {
         String text = pdfText(get("/api/v1/reports/documents-due/{id}", submittedDocumentId));
 
-        assertThat(text).contains("Informe de dominio", "Informe de dominio 567",
+        assertThat(text).contains("Ownership report", "Ownership report 567",
                 String.valueOf(MANAGEMENT_NUMBER), "Management Peña", "Lucía Peña", "77", "$ 3.000,00",
                 new SimpleDateFormat("dd/MM/yyyy").format(dueDate), "Expires in 10 days");
     }
@@ -246,7 +246,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         String text = pdfText(get("/api/v1/reports/document-debt")
                 .param("numberManagement", String.valueOf(MANAGEMENT_NUMBER)));
 
-        assertThat(text).contains(PROCEDURE_TYPE, "Informe de dominio", "$ 3.000,00", "Payment pending",
+        assertThat(text).contains(PROCEDURE_TYPE, "Ownership report", "$ 3.000,00", "Payment pending",
                 "Total owed");
     }
 
@@ -256,7 +256,7 @@ class InHouseReportPdfIntegrationTest extends ServiceIntegrationTest {
         mockMvc.perform(get("/api/v1/reports/budget/{id}", 999_999)).andExpect(status().isNotFound());
         mockMvc.perform(get("/api/v1/reports/budget-properties/{id}", 999_999))
                 .andExpect(status().isNotFound());
-        mockMvc.perform(get("/api/v1/reports/procedure-document-list").param("procedureTypeName", "No existe 567"))
+        mockMvc.perform(get("/api/v1/reports/procedure-document-list").param("procedureTypeName", "Does not exist 567"))
                 .andExpect(status().isNotFound());
         mockMvc.perform(get("/api/v1/reports/management-history/{id}", 999_999)).andExpect(status().isNotFound());
         mockMvc.perform(get("/api/v1/reports/documents-due/{id}", 999_999))

@@ -41,11 +41,11 @@ public class NotebookController {
     private static final Logger logger = LoggerFactory.getLogger(NotebookController.class);
 
     private final NotebookService notebookService;
-    private final ReportService reporteService;
+    private final ReportService reportService;
 
-    public NotebookController(NotebookService notebookService, ReportService reporteService) {
+    public NotebookController(NotebookService notebookService, ReportService reportService) {
         this.notebookService = notebookService;
-        this.reporteService = reporteService;
+        this.reportService = reportService;
     }
 
     public record NotebookResponse(Integer idNotebook, int number, int year, String notes,
@@ -111,7 +111,7 @@ public class NotebookController {
     @Operation(summary = "Generate the cover PDF of a notebook")
     public ResponseEntity<byte[]> getCover(@PathVariable Integer id) {
         try {
-            byte[] pdf = reporteService.generateNotebookCoverReport(id);
+            byte[] pdf = reportService.generateNotebookCoverReport(id);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"notebook_" + id + "_cover.pdf\"")

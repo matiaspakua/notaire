@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RequirementCoverage({"CU15"})
 @DisplayName("ReportController#generatePaymentReceiptReport — CU15 integration tests")
-class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
+class PaymentReceiptReportIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -97,8 +97,8 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
                   "idBudget": %d,
                   "amount": %s,
                   "date": "2026-09-05",
-                  "notes": "Payment recibo E2E",
-                  "paymentMethod": "Transferencia"
+                  "notes": "E2E payment receipt",
+                  "paymentMethod": "Transfer"
                 }
                 """.formatted(idBudget, amount);
         MvcResult result = mockMvc.perform(post("/api/v1/payments")
@@ -111,10 +111,10 @@ class ReciboPaymentReportIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should return a PDF receipt for an existing payment")
-    void shouldReturnPdfForRecibo() throws Exception {
+    void shouldReturnPdfForPaymentReceipt() throws Exception {
         int idPerson = createClient();
         int idBudget = createBudget(idPerson);
-        createItem(idBudget, "Deed de compraventa");
+        createItem(idBudget, "Compraventa deed");
         int idPayment = createPayment(idBudget, new java.math.BigDecimal("4000"));
 
         MvcResult result = mockMvc.perform(get("/api/v1/reports/payment-receipt/" + idPayment))

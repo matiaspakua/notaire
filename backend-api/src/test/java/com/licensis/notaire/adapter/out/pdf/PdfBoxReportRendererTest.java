@@ -31,9 +31,9 @@ class PdfBoxReportRendererTest {
     @DisplayName("shouldRenderTitleFieldsTableAndTotalsWithSpanishText")
     void shouldRenderTitleFieldsTableAndTotalsWithSpanishText() throws IOException {
         ReportDocument document = new ReportDocument("Budget N° 12", "CU45", List.of(
-                new Fields("Datos", List.of(new Field("Cliente", "Lucía Peña"), new Field("Procedure", "Compraventa"))),
-                new Table("Conceptos", List.of(Column.left("Concept", 3), Column.right("Valor", 1)),
-                        List.of(List.of("Honorarios escribanía", "$ 10.000,00")),
+                new Fields("Details", List.of(new Field("Client", "Lucía Peña"), new Field("Procedure", "Compraventa"))),
+                new Table("Concepts", List.of(Column.left("Concept", 3), Column.right("Amount", 1)),
+                        List.of(List.of("Notarial fees", "$ 10.000,00")),
                         "Sin conceptos", List.of(new Field("Total", "$ 10.000,00")))));
 
         byte[] pdf = renderer.render(document);
@@ -41,8 +41,8 @@ class PdfBoxReportRendererTest {
         assertThat(new String(pdf, 0, 5, java.nio.charset.StandardCharsets.US_ASCII)).isEqualTo("%PDF-");
         try (PDDocument parsed = Loader.loadPDF(pdf)) {
             String text = new PDFTextStripper().getText(parsed);
-            assertThat(text).contains("Budget N° 12", "CU45", "Datos", "Cliente", "Lucía Peña", "Procedure",
-                    "Conceptos", "Concept", "Valor", "Honorarios escribanía", "$ 10.000,00", "Total",
+            assertThat(text).contains("Budget N° 12", "CU45", "Details", "Client", "Lucía Peña", "Procedure",
+                    "Concepts", "Concept", "Amount", "Notarial fees", "$ 10.000,00", "Total",
                     "Page 1 of 1");
             assertThat(parsed.getDocumentInformation().getTitle()).isEqualTo("Budget N° 12");
         }
@@ -96,7 +96,7 @@ class PdfBoxReportRendererTest {
     @DisplayName("shouldReplaceCharactersTheStandardFontCannotEncode")
     void shouldReplaceCharactersTheStandardFontCannotEncode() throws IOException {
         ReportDocument document = new ReportDocument("Símbolos ✓", null, List.of(
-                new Fields("Datos", List.of(new Field("Nota", "línea uno\nlínea\tdos 漢 €")))));
+                new Fields("Details", List.of(new Field("Note", "línea uno\nlínea\tdos 漢 €")))));
 
         String text = text(renderer.render(document));
 

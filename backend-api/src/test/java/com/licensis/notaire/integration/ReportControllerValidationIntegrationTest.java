@@ -44,7 +44,7 @@ class ReportControllerValidationIntegrationTest {
 
     @Test
     @DisplayName("GET procedure-documents with a blank procedureTypeName returns 400")
-    void shouldRejectListaDocumentsWithBlankNameTypeProcedure() throws Exception {
+    void shouldRejectProcedureDocumentListWithBlankProcedureTypeName() throws Exception {
         mockMvc.perform(get("/api/v1/reports/procedure-document-list")
                         .param("procedureTypeName", "   "))
                 .andExpect(status().isBadRequest());

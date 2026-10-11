@@ -123,7 +123,7 @@ class AuditFlowIntegrationTest {
     void shouldFilterAuditRecordsByModule() throws Exception {
         mockMvc.perform(get("/api/v1/concepts")).andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/audit-log?page=0&size=10&module=Conceptos"))
+        mockMvc.perform(get("/api/v1/audit-log?page=0&size=10&module=Concepts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
     }

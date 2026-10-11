@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English report test names** (#1490, CU75):
+  `NotebookController` stores `reportService`. Payment logs say
+  `Editing payment` and `Deleting payment`. Report tests are
+  `ReportServicePaymentReceiptTest`, `PaymentReceiptReportIntegrationTest`,
+  and `ReportsUseCaseIntegrationTest`. The audit filter uses the module
+  `Concepts`. PDF filenames such as `recibo_pago_` and `lista_documentos.pdf`
+  stay Spanish. Person names and `Compraventa` stay.
 - **English test fixture prose** (#1490, CU75):
   Backend and Playwright fixtures use English free-text values such as
   `Test deed`, `Test payment`, and `Standard workflow`. Stored labels and

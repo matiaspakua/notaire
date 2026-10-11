@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("ReportService payment-receipt unit tests (CU15/RF-21, issue #23)")
 @ExtendWith(MockitoExtension.class)
-class ReportServiceReciboPaymentTest {
+class ReportServicePaymentReceiptTest {
 
     @Mock
     private PaymentRepository paymentRepository;
@@ -42,13 +42,13 @@ class ReportServiceReciboPaymentTest {
     @Mock
     private ReportRenderer reportRenderer;
 
-    private ReportService reporteService;
+    private ReportService reportService;
 
     @BeforeEach
     void setUp() {
         // Provide all constructor arguments; mock objects are sufficient for
         // the tests that rely only on paymentRepository and itemRepository.
-        reporteService = new ReportService(
+        reportService = new ReportService(
                 null,
                 null,
                 null,
@@ -81,36 +81,36 @@ class ReportServiceReciboPaymentTest {
 
     @Test
     @DisplayName("Should generate a PDF recibo with client, date, concept and total for a simple payment")
-    void shouldGenerarReciboConDatosDelPayment() throws Exception {
+    void shouldGenerateReceiptWithPaymentData() throws Exception {
         Person client = buildClient();
         Payment payment = buildPayment(1, new java.math.BigDecimal("500000"), client);
 
         Item item = new Item();
-        item.setName("Deed de compraventa");
+        item.setName("Compraventa deed");
 
         when(paymentRepository.findById(1)).thenReturn(Optional.of(payment));
         when(itemRepository.findByFkIdBudgetIdBudget(10)).thenReturn(List.of(item));
 
-        byte[] pdf = reporteService.generatePaymentReceiptReport(1);
+        byte[] pdf = reportService.generatePaymentReceiptReport(1);
 
         assertThat(pdf).isNotEmpty();
         assertThat(new String(pdf, 0, Math.min(5, pdf.length))).startsWith("%PDF-");
         String content = new String(pdf, java.nio.charset.StandardCharsets.US_ASCII);
         assertThat(content).contains("Ana Gomez");
-        assertThat(content).contains("Deed de compraventa");
+        assertThat(content).contains("Compraventa deed");
         assertThat(content).contains("500000");
     }
 
     @Test
     @DisplayName("Should print the amount of a partial payment, not the budget total")
-    void shouldGenerarReciboParaPaymentParcial() throws Exception {
+    void shouldGenerateReceiptForPartialPayment() throws Exception {
         Person client = buildClient();
-        Payment paymentParcial = buildPayment(2, new java.math.BigDecimal("100000"), client);
+        Payment partialPayment = buildPayment(2, new java.math.BigDecimal("100000"), client);
 
-        when(paymentRepository.findById(2)).thenReturn(Optional.of(paymentParcial));
+        when(paymentRepository.findById(2)).thenReturn(Optional.of(partialPayment));
         when(itemRepository.findByFkIdBudgetIdBudget(10)).thenReturn(List.of());
 
-        byte[] pdf = reporteService.generatePaymentReceiptReport(2);
+        byte[] pdf = reportService.generatePaymentReceiptReport(2);
 
         String content = new String(pdf, java.nio.charset.StandardCharsets.US_ASCII);
         assertThat(content).contains("100000");
@@ -118,10 +118,10 @@ class ReportServiceReciboPaymentTest {
 
     @Test
     @DisplayName("Should throw ResourceNotFoundException when idPayment does not exist")
-    void shouldThrowWhenPaymentNoExiste() {
+    void shouldThrowWhenPaymentDoesNotExist() {
         when(paymentRepository.findById(999)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> reporteService.generatePaymentReceiptReport(999))
+        assertThatThrownBy(() -> reportService.generatePaymentReceiptReport(999))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

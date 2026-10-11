@@ -24,7 +24,7 @@ public class DeletePaymentService implements DeletePaymentUseCase {
     @Override
     @Transactional
     public void delete(Integer paymentId) {
-        log.info("Eliminando pago con ID: {}", paymentId);
+        log.info("Deleting payment with ID: {}", paymentId);
         if (!payments.existsById(paymentId)) {
             throw new IllegalArgumentException("Payment not found with ID: " + paymentId);
         }

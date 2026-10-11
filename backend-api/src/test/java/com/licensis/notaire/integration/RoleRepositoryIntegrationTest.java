@@ -28,14 +28,14 @@ class RoleRepositoryIntegrationTest extends ServiceIntegrationTest {
     void shouldCreateRoleWithAllFields() {
         Role role = new Role();
         role.setName("EDITOR");
-        role.setDescription("Role of edición");
+        role.setDescription("Editing role");
         role.setActive(true);
 
         Role saved = roleRepository.save(role);
 
         assertThat(saved.getIdRole()).isNotNull();
         assertThat(saved.getName()).isEqualTo("EDITOR");
-        assertThat(saved.getDescription()).isEqualTo("Role of edición");
+        assertThat(saved.getDescription()).isEqualTo("Editing role");
         assertThat(saved.isActive()).isTrue();
     }
 

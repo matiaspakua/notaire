@@ -144,7 +144,7 @@ class TransitionManagementUseCaseTest {
         fakeWorkflowLookup.setWorkflow(workflow);
 
         // Act & Assert
-        assertThatThrownBy(() -> useCase.execute(1, "NoExiste"))
+        assertThatThrownBy(() -> useCase.execute(1, "DoesNotExist"))
                 .isInstanceOf(BusinessValidationException.class)
                 .hasMessageContaining("is not defined");
     }
