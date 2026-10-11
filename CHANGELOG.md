@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Historical user-manual filename** (#1490, CU75): the PDF is
+  `Manual de Usuario Notaire.doc.pdf`, in `C_Manual de Usuario`, and the
+  release asset is `Manual-de-Usuario-Notaire.doc.pdf`. The fetch script,
+  ADR-022, the repo-hygiene spec, and the hygiene test use that path.
+  The TypeScript type `UserAccount` stays.
 - **Folio-type name in the data dictionary** (#1490, CU75): the stored
   name is `Testimonio`, listed with `Protocolo Principal` and
   `Protocolo Auxiliar`, in the dictionary and the ERD. English prose such
