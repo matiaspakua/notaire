@@ -185,7 +185,7 @@ class TestimonyControllerIntegrationTest {
                   "number": 1003,
                   "flagged": true,
                   "verified": false,
-                  "notes": "Verified por notary",
+                  "notes": "Verified by the notary",
                   "version": %d,
                   "deed": {"idDeed": %d, "number": 0}
                 }
@@ -199,7 +199,7 @@ class TestimonyControllerIntegrationTest {
         mockMvc.perform(get("/api/v1/testimonies/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.flagged").value(true))
-                .andExpect(jsonPath("$.notes").value("Verified por notary"));
+                .andExpect(jsonPath("$.notes").value("Verified by the notary"));
     }
 
     @Test

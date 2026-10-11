@@ -43,6 +43,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English mixed phrases** (#1490, CU75): fixtures use English phrases
+  (`Discount without reason`, `Discount for early payment`,
+  `Surcharge for late payment`, `Item without a type`,
+  `Verified by the notary`, and `hash-already-rotated-by-the-operator`).
+  The missing-deed mock uses the live message `Deed not found with ID: 999`.
+  The initializer display name is `default admin user`. Stored types
+  `DESCUENTO` and `RECARGO` stay.
 - **English updated phrases** (#1490, CU75): tests name updates in English
   (`Updated name`, `Updated name ok`, `Updated item`, `Updated payment`,
   `Updated description`, and `Updated management IT`). Deed bodies say
