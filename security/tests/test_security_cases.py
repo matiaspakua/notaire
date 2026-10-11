@@ -86,6 +86,19 @@ class CatalogSchemaTest(unittest.TestCase):
         self.assertIn("zap", cases["SEC-DAST-01"]["ci_tool"].lower())
         self.assertIn("scan_secrets.py", cases["SEC-SEC-01"]["local_tool"])
 
+    def test_dast_probes_the_live_people_collection(self):
+        catalog = yaml.safe_load(CATALOG.read_text(encoding="utf-8"))
+        cases = {case["id"]: case for case in catalog["cases"]}
+        script = DAST.read_text(encoding="utf-8")
+        self.assertEqual("/api/v1/people", cases["SEC-DAST-01"]["protected_path"])
+        self.assertIn('PROTECTED_PATH = "/api/v1/people"', script)
+        tools = (REPO_ROOT / "docs/200-architecture/206-security/SECURITY-TOOLS.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("401 on `/api/v1/people`", tools)
+        self.assertNotIn("/api/v1/personas", script)
+        self.assertNotIn("/api/v1/personas", CATALOG.read_text(encoding="utf-8"))
+
 
 class GateRunnerTest(unittest.TestCase):
     @classmethod

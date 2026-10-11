@@ -64,6 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **DAST protected path** (#1490, CU75): the unauthenticated baseline and
+  the security catalog probe `GET /api/v1/people`. The retired path
+  `/api/v1/personas` stays out of that gate. Health still expects 200.
 - **Testimony re-entry path citation** (#1490, CU75): the engineering-sequences
   design names the path CU44 still writes,
   `POST /api/v1/movimiento-testimonio/{id}/reenter`. The live call stays in
