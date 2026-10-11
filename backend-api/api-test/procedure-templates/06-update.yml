@@ -1,0 +1,27 @@
+info:
+  name: Edit the notes of a checklist row
+  type: http
+  seq: 6
+  description: |-
+      Issue #1362: PUT changes the notes of one row.
+      Traceability: CU55 (RF #53), CU03 (RF #14, #15)
+http:
+  method: PUT
+  url: "{{base_url}}/api/v1/procedure-templates/1/{{procedure_template_document_type_id}}"
+  body:
+    type: json
+    data: |-
+        {
+          "notes": "Original y copia"
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
+          test("Notes updated", function () { expect(res.getBody().notes).to.equal("Original y copia"); });

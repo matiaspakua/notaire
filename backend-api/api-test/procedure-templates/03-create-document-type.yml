@@ -1,0 +1,33 @@
+info:
+  name: Create a document type for the checklist
+  type: http
+  seq: 3
+  description: |-
+      Issue #1362 setup: a fresh document type so the checklist row is unique per run.
+      Traceability: CU55 (RF #53), CU03 (RF #14, #15)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/document-types"
+  body:
+    type: json
+    data: |-
+        {
+          "name": "Checklist E2E {{procedure_template_suffix}}",
+          "deliveredBy": "Cliente",
+          "expires": false,
+          "returned": false
+        }
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+          bru.setVar("procedure_template_suffix", String(Date.now()).slice(-8));
+    - type: tests
+      code: |-
+          test("Status 201 Created", function () { expect(res.getStatus()).to.equal(201); });
+          bru.setVar("procedure_template_document_type_id", res.getBody().idDocumentType);

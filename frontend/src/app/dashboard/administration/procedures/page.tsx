@@ -17,6 +17,8 @@ import { useWorkflowDefinitions } from "@/hooks/useWorkflow";
 import { extractApiError } from "@/lib/utils";
 import type { ProcedureType } from "@/types";
 import { useDeleteError } from "@/hooks/useDeleteError";
+import { FileCheck } from "lucide-react";
+import { RequiredDocumentsDialog } from "./RequiredDocumentsDialog";
 
 const EMPTY: Partial<ProcedureType> = { name: "", notes: "" };
 
@@ -38,6 +40,7 @@ export default function ProceduresPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>("");
+  const [checklistFor, setChecklistFor] = useState<ProcedureType | null>(null);
 
   const { data: filtered = data } = useQuery({
     queryKey: ["procedureTypes", "search", search, data],
@@ -107,11 +110,22 @@ export default function ProceduresPage() {
     { key: "desc", header: t("fields.descripcion"), render: (item) => item.notes ?? "—" },
     { key: "workflow", header: t("fields.workflow"), render: (item) => item.workflowDefinitionName ? <span className="text-xs text-muted-foreground">{item.workflowDefinitionName}</span> : <span className="text-xs text-muted-foreground">—</span> },
     {
-      key: "actions", header: "", className: "w-24",
+      key: "actions", header: "", className: "w-36",
       render: (item) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="ghost" onClick={() => openEdit(item)} aria-label={tc("edit")}>
+          <Button size="sm" variant="ghost" onClick={() => openEdit(item)} aria-label={tc("edit")} data-testid="btn-edit-procedure">
             <NotaireIcon src="/icons/actions/generate.png" alt="" size={16} />
+          </Button>
+          <Button
+            size="icon-sm"
+            variant="ghost"
+            className="shrink-0"
+            onClick={() => setChecklistFor(item)}
+            aria-label={t("requiredDocsAction")}
+            title={t("requiredDocsAction")}
+            data-testid="btn-required-docs-procedure"
+          >
+            <FileCheck aria-hidden />
           </Button>
           <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClick(item)} data-testid="btn-delete-procedure" aria-label={tc("delete")}>
             <NotaireIcon src="/icons/actions/delete.png" alt="" size={16} />
@@ -150,6 +164,8 @@ export default function ProceduresPage() {
         keyExtractor={(item) => item.idProcedureType!}
         emptyMessage={t("noData")}
       />
+
+      <RequiredDocumentsDialog procedureType={checklistFor} onClose={() => setChecklistFor(null)} />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>

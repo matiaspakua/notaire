@@ -38,7 +38,7 @@ public class ProcedureTemplatePersistenceAdapter implements ProcedureTemplateRep
 
     @Override
     public void deleteById(ProcedureTemplatePK id) {
-        procedureTemplateRepository.deleteById(id);
+        procedureTemplateRepository.deleteByPk(id);
     }
 
     @Override

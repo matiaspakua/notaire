@@ -42,7 +42,7 @@ test.describe("CU73 - Workflow assignment to ProcedureType", () => {
   });
 
   test("edit modal shows workflow selector", async ({ page }) => {
-    await page.locator("table tbody tr").first().locator("button").first().click();
+    await page.locator("table tbody tr").first().getByTestId("btn-edit-procedure").click();
     await expect(page.getByTestId("select-workflow-procedure")).toBeVisible({ timeout: 5000 });
   });
 });

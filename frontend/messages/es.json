@@ -998,7 +998,28 @@
         "seArchiva": "Se archiva",
         "seInscribe": "Se inscribe",
         "sinWorkflow": "— Sin workflow —"
-      }
+      },
+      "requiredDocs": {
+        "title": "Documentos requeridos: {name}",
+        "description": "Documentos que el cliente o una entidad deben presentar para este trámite.",
+        "empty": "Este trámite todavía no tiene documentos requeridos.",
+        "addTitle": "Agregar documento",
+        "documentType": "Tipo de documento",
+        "selectDocument": "Elegí un tipo de documento",
+        "notes": "Observaciones",
+        "notesPlaceholder": "Ej.: original y copia",
+        "add": "Agregar",
+        "documentRequired": "Elegí un tipo de documento.",
+        "added": "Documento agregado",
+        "updated": "Observaciones actualizadas",
+        "removed": "Documento quitado",
+        "duplicate": "Ese documento ya está en la lista del trámite",
+        "errorSave": "No se pudo guardar el documento requerido",
+        "errorDelete": "No se pudo quitar el documento requerido",
+        "removeTitle": "¿Quitar este documento?",
+        "removeDescription": "{name} dejará de pedirse en las gestiones nuevas de este trámite."
+      },
+      "requiredDocsAction": "Documentos requeridos"
     },
     "plantillas": {
       "title": "Plantillas de Presupuesto",
