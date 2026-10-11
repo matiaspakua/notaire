@@ -46,21 +46,21 @@ The system MUST answer 403 to any non-administrator request to `/api/v1/users` (
 
 ### Requirement: Administrative catalogs are read-only for non-administrators
 
-The system MUST answer 403 to any non-administrator POST, PUT, PATCH or DELETE on workflow definitions, nodes and transitions, tipo-tramite, tipo-de-documento, tipo-folio, tipo-identificacion, conceptos, estado-gestion, plantilla-tramite, plantilla-presupuestos and plantilla-costos-documento, and MUST keep GET available to every authenticated user.
+The system MUST answer 403 to any non-administrator POST, PUT, PATCH or DELETE on `/api/v1/workflow-definition`, `/api/v1/workflow-node`, `/api/v1/workflow-transition`, `/api/v1/procedure-types`, `/api/v1/document-types`, `/api/v1/folio-types`, `/api/v1/identification-types`, `/api/v1/concepts`, `/api/v1/management-statuses`, `/api/v1/procedure-templates`, `/api/v1/budget-templates` and `/api/v1/document-cost-templates`, and MUST keep GET available to every authenticated user.
 
 #### Scenario: Employee cannot change a catalog
 
-- **WHEN** an EMPLEADO creates a tipo de trámite or deletes a concepto
+- **WHEN** an EMPLEADO creates a procedure type or deletes a concept
 - **THEN** the response is 403
 
 #### Scenario: Employee can read a catalog
 
-- **WHEN** an EMPLEADO lists tipos de trámite
+- **WHEN** an EMPLEADO lists procedure types
 - **THEN** the response is 200
 
 #### Scenario: Administrator keeps full access
 
-- **WHEN** an administrator creates a tipo de trámite and lists users
+- **WHEN** an administrator creates a procedure type and lists users
 - **THEN** the responses are 201 and 200
 
 ### Requirement: The audit screen follows the same rule in the UI

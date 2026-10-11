@@ -1,13 +1,13 @@
 @startuml gestiones-escrituras
 !theme plain
 left to right direction
-title Casos de Uso — Módulo Escrituras
+title Use cases — Deeds module
 
 actor Escribano
-actor Cliente
-actor "Recepcionista / Gestor" as RecepcionistaGestor
+actor Client
+actor "Receptionist / Clerk (Gestor)" as ReceptionistClerk
 
-rectangle "Módulo Escrituras" {
+rectangle "Deeds module" {
   usecase "CU05 - Preparar escritura" as CU05
   usecase "CU06 - Firmar escritura" as CU06
   usecase "CU62 - Buscar Escritura" as CU62
@@ -17,14 +17,14 @@ rectangle "Módulo Escrituras" {
 usecase "CU19 - Buscar gestiones de un Cliente\n(from Clientes)" as CU19
 usecase "CU63 - Buscar Folios\n(from Folios)" as CU63
 
-Escribano --> CU05 : prepara
-Escribano --> CU06 : requiere
-Escribano --> CU62 : requiere
-Cliente --> CU05 : aporta datos
-Cliente --> CU06 : participa
-Cliente --> CU52 : participa
-RecepcionistaGestor --> CU62 : requiere
-RecepcionistaGestor --> CU52 : requiere
+Escribano --> CU05 : prepares
+Escribano --> CU06 : needs
+Escribano --> CU62 : needs
+Client --> CU05 : provides data
+Client --> CU06 : takes part
+Client --> CU52 : takes part
+ReceptionistClerk --> CU62 : needs
+ReceptionistClerk --> CU52 : needs
 
 CU05 ..> CU19 : <<include>>
 CU05 ..> CU06 : <<extend>>

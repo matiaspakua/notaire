@@ -3,15 +3,15 @@
 title CU30 — Ingresar nuevo estado de Gestión
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide dar de alta un nuevo estado de gestión.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita que se ingrese el nombre del estado y observaciones.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano indica el nombre del nuevo estado y observaciones.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra el nuevo estado.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to register a new management status.
+System -> System : Escribano
+Actor -> Actor : Asks for the status name and notes.
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the new status name and notes.
+System -> System : Escribano
+Actor -> Actor : Records the new status.
+System -> System : System
 
 @enduml

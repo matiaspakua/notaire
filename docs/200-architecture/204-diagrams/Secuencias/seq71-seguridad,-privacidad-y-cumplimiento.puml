@@ -2,24 +2,24 @@
 !theme plain
 title CU71 — Seguridad, Privacidad y Cumplimiento
 
-actor "Oficial de Seguridad" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Security officer (Oficial de Seguridad)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : El usuario ingresa sus credenciales.
-Sistema -> Sistema : Usuario
-Actor -> Actor : Valida las credenciales contra hash seguro.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Si válidas, genera sesión con token firmado.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Transmite el token mediante HTTPS/TLS.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El usuario solicita ejecutar una operación.
-Sistema -> Sistema : Usuario
-Actor -> Actor : Valida los permisos de rol.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Autoriza la ejecución.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Registra la acción en log de auditoría.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The user enters their credentials.
+System -> System : User
+Actor -> Actor : Validates the credentials against the secure hash.
+System -> System : System
+Actor -> Actor : If they are valid, generates a session with a signed token.
+System -> System : System
+Actor -> Actor : Sends the token over HTTPS/TLS.
+System -> System : System
+Actor -> Actor : The user requests to run an operation.
+System -> System : User
+Actor -> Actor : Validates the role permissions.
+System -> System : System
+Actor -> Actor : Authorizes the execution.
+System -> System : System
+Actor -> Actor : Records the action in the audit log.
+System -> System : System
 
 @enduml

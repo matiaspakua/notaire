@@ -3,11 +3,11 @@
 title CU41 — Informar próximos vencimientos
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El sistema busca documentos próximos a vencer.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Informa: (Nombre de documento; Número de gestión; Encabezado; Si fue preparado; Fechas; Monto deuda; Observaciones)
-Sistema -> Sistema : Sistema
+Actor -> Actor : The system looks up documents that are about to expire.
+System -> System : System
+Actor -> Actor : Reports: (Document name; Management number; Header; Whether it was prepared; Dates; Amount owed; Notes)
+System -> System : System
 
 @enduml

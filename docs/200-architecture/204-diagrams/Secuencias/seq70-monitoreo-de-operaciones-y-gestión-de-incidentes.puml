@@ -2,24 +2,24 @@
 !theme plain
 title CU70 — Monitoreo de Operaciones y Gestión de Incidentes
 
-actor "Equipo de Operaciones" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Operations team (Equipo de Operaciones)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : Los usuarios operan el sistema.
-Sistema -> Sistema : Usuarios
-Actor -> Actor : Expone métricas de salud y logs estructurados.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Prometheus realiza scraping de métricas.
-Sistema -> Sistema : Prometheus
-Actor -> Actor : Almacena series temporales.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Se detecta un umbral de anomalía.
-Sistema -> Sistema : Sistema
-Actor -> Actor : Grafana Alerting dispara notificación.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El ingeniero de guardia analiza el incidente.
-Sistema -> Sistema : Ingenieros de Guardia
-Actor -> Actor : Identifica causa raíz y ejecuta mitigación.
-Sistema -> Sistema : Ingenieros de Guardia
+Actor -> Actor : Users operate the system.
+System -> System : Users
+Actor -> Actor : Exposes health metrics and structured logs.
+System -> System : System
+Actor -> Actor : Prometheus scrapes metrics.
+System -> System : Prometheus
+Actor -> Actor : Stores time series.
+System -> System : System
+Actor -> Actor : An anomaly threshold is detected.
+System -> System : System
+Actor -> Actor : Grafana Alerting fires a notification.
+System -> System : System
+Actor -> Actor : The on-call engineer analyzes the incident.
+System -> System : On-call engineers
+Actor -> Actor : Identifies the root cause and runs mitigation.
+System -> System : On-call engineers
 
 @enduml

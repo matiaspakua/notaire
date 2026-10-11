@@ -3,15 +3,15 @@
 title CU57 — Buscar Tipo de trámite
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano/Gestor/Recepcionista requiere utilizar un tipo de trámite.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Busca y presenta la lista de tipos de trámites.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano/Gestor/Recepcionista selecciona un tipo de trámite.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra el detalle del tipo de trámite.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano), clerk (Gestor), or receptionist (Recepcionista) needs to use a procedure type.
+System -> System : Escribano
+Actor -> Actor : Looks up and presents the list of procedure types.
+System -> System : System
+Actor -> Actor : The notary (Escribano), clerk (Gestor), or receptionist (Recepcionista) selects a procedure type.
+System -> System : Escribano
+Actor -> Actor : Shows the procedure type detail.
+System -> System : System
 
 @enduml

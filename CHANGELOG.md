@@ -42,13 +42,135 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   renames. Message catalogs stay bilingual, and stored status and catalog labels stay as recorded.
 
 ### Changed
+
+- **English sequence check** (#1490, #1508): `test_gestion_sequences.py`
+  requires the English sentences for no return from `Observado` and for
+  re-entry that does not move the management.
 - **Flyway `V45` amended (#1499, Owner-approved exception).** It failed on every fresh database because the legacy table `identificaciones` was never created by Flyway. It now renames the table where it exists and creates `identifications` where it does not. A database that already applied the original `V45` must run `flyway repair` once (checksum changed). The reports page (`/dashboard/reports`) is restored; it had been hidden by an unanchored `.gitignore` rule.
 
 - **Testimony and document re-entry sequences** (CU08, CU11, CU43, CU44, #921):
   `GESTION.md` (`DOC-GESTION`) verifies a testimony before entry, records
   inscription before withdrawal, and sequences re-entry of a testimony and
   of a document. Neither re-entry moves the management. The engineering
-  catalog is `EVALUACION-INGENIERIA.md`.
+  catalog is `EVALUACION-INGENIERIA.md`. The step text is English. The
+  archive query flag stays `confirmado`.
+- **English incomplete-body Bruno assertions** (#1490, CU75):
+  the incomplete PUT collections expect `is required`, matching
+  `RequiredFields`. The requests stay `PUT /api/v1/testimonies/{id}`,
+  `PUT /api/v1/procedures/{id}`, and
+  `PUT /api/v1/procedure-types/{id}/workflow`. Released changelog text
+  that records the earlier Spanish phrase stays.
+- **English business-finding index** (#1490, CU75):
+  `docs/openspec/explore.md` states the finding↔Issue record in English.
+  The filename stays. Change slugs stay, including
+  `folio-vinculacion-escritura`, `gestion-archive-deuda-check`, and
+  `presupuesto-plantillas-y-catalogo-items`. Finding identifiers stay,
+  including `GestionArchiveDebtService`, `importeAPagar`,
+  `ManagementHistory.fecha`, `"Efectivo"`, and `"observaciones"`.
+  Issue numbers and the use-case filename `CU84 - Login.md` stay.
+- **English source comments** (#1490, CU75): the redirect comment in
+  `frontend/next.config.ts` says administration pages, and the status-map
+  comment names the catalog namespace `administracion.estadosGestion`. Stored
+  management statuses such as `en tramite` and `gestion con escritura firmada`
+  stay. Canonical routes `/dashboard/administration/items` and
+  `/dashboard/administration/audit` stay.
+- **English leftover requirement titles** (#1490, CU75):
+  `frontend-i18n-page-coverage`, `icon-button-accessible-names`,
+  `k6-load-test-restore`, `report-pdfs`, and `api-request-dto-binding` name
+  the live contract in English. Spec ids stay. Label keys `suplencias`,
+  `reportes`, `auditoria`, and `administracion` stay, along with module keys
+  `personas` and `tramites`, default-locale names “Editar” and “Eliminar”,
+  and the selector `/editar/i`. The document-debt PDF text is `Payment pending`.
+  Server-side auditing is `AuditAspect`. The SAD roadmap label is `Live status`.
+  Stored role `Escribano` stays.
+- **English case-process design** (#1490, CU75):
+  `docs/200-architecture/203-design/GESTION.md` states the central process in
+  English. The filename stays. Official use-case titles stay (`CU01 Preparar
+  presupuesto`, `CU02 Iniciar gestión`, `CU15 Procesar pago`). Stored nodes
+  stay (`Iniciada`, `En Tramite`, `Documentacion Completa`, `Gestion con
+  Escritura Sin Firmar`, `Gestion con Escritura Firmada`, `Testimonio
+  Generado`, `Testimonio Ingresado a Inscripcion`, `Testimonio Retirado`,
+  `Archivada`). Seeded edge descriptions stay, including `Se asignan trámites
+  y comienza la gestión` and `La gestión se archiva sin escritura`. The
+  archive query flag `confirmado` stays. Registration-draft stored statuses
+  are `Generada`, `Presentado para inscripción`, `Observado`, and `Inscripto`.
+  Deed statuses `Anulada`, `No Paso`, and `Inscripta` stay. Actor `Escribano`
+  stays. Stored procedure types `Sucesion` and `Poder` stay.
+- **English document, reentry, budget-person, and navigation requirement prose** (#1490, CU75):
+  `submitted-document-update`, `testimony-reentry-data`,
+  `budget-person-response`, `backend-test-isolation`, `admin-route-guard`,
+  `dashboard-nav-canonical-routes`, and `next-middleware-to-proxy` state
+  requirements in English. Spec ids stay. Live names stay: `procedureId`,
+  `cardNumber`, `observedByRegistry`, `personId`, `amount`,
+  `pendingBalance`, `/dashboard/administration`, `/dashboard/substitutions`,
+  and `frontend/src/proxy.ts`. Message key `reingresar` stays, along with
+  sidebar label keys `suplencias`, `reportes`, `auditoria`, and
+  `administracion`, test ids `nav-suplencias`, `nav-reportes`, and
+  `btn-reenter-testimony`, and stored roles `ADMINISTRADOR`, `ESCRIBANO`,
+  and `EMPLEADO`. Official title `Login al sistema` stays.
+- **English payment, template, and property-appraisal requirement prose** (#1490, CU75):
+  `pago-limite-saldo-pendiente`, `pago-presupuesto-picker-saldo`, `pagos`,
+  `presupuesto-from-template`, `procedure-fk-hydration`, and
+  `inmueble-valuacion-fiscal` state requirements in English. Spec ids stay.
+  Live names stay: `amount`, `pendingBalance`, `paymentMethod`, `idBudget`,
+  `procedureTypeId`, `fiscalAppraisal`, and `properties.fiscal_valuation`.
+  Stored label `Efectivo` stays, along with the message keys `saldoExcedido`
+  and `saldo.pending`. Official titles `Procesar pago` and
+  `Gestión de Inmuebles` stay. Stored deed status `Firmada` stays.
+- **English authorization, payment-summary, and archive requirement prose** (#1490, CU75):
+  `api-authorization`, `pago-presupuesto-gestion-summary`,
+  `presupuesto-tramite-relation`, `gestion-asignacion-suplencia`,
+  `deed-management-entity-null-safety`, and `gestion-archive-debt-check`
+  state requirements in English. Spec ids stay. Live names stay:
+  `/api/v1/procedure-types`, `idBudget`, `pendingBalance`,
+  `managementHeading`, `fk_id_budget`, `procedureList`, `fkIdSubstitute`,
+  `notaryPersonId`, `pendingDebtAtArchiving`, `getDto()`, and
+  `personNotary`. Stored labels `Administrador`, `Escribano`, `EMPLEADO`,
+  `ESCRIBANO`, and `Archivada` stay, along with the archive query flag
+  `confirmado` and the notes prefix
+  `Management redirected by active substitution`. Official titles
+  `Iniciar Gestión` and `Modificar presupuesto` stay.
+- **English workflow, history, registry, and notebook requirement prose** (#1490, CU75):
+  `gestion-workflow-transicion`, `gestion-bitacora`, `minuta-inscripcion`,
+  `testimonio-movimiento-inscripcion`, `tipo-documento-vencimiento-config`,
+  and `cuadernos-de-folios` state requirements in English. Spec ids stay.
+  Live names stay: `ProcedureType`, `ManagementHistory`, `dateEntry`,
+  `dateExit`, `dateRegistration`, `registered`, `cardNumber`, `expires`,
+  `dueDays`, `deliveredBy`, `registrationNumber`, `idsFolio`, and
+  `idNotary`. Stored labels `Archivada`, `Generada`,
+  `Presentado para inscripción`, `Observado`, `Inscripto`,
+  `Asignado a cuaderno`, `Errose`, and `no pasó` stay, along with the role
+  `Escribano` and the filenames `minuta_inscripcion_` and `notebook_`.
+- **English protocol, payment, folder, and person requirement prose** (#1490, CU75):
+  `protocolo-auxiliar`, `pagos-parciales-cuotas`, `carpetas-de-tramite`,
+  `descuentos-recargos-presupuesto`, and `persona-validacion-duplicados`
+  state requirements in English. Spec ids stay. Live names stay:
+  `isAuxiliary`, `idFolio`, `NoPayments`, `PARTIAL`, `PAID`, `amount`,
+  `identificationNumber`, and `fk_id_identification_type`. Stored labels
+  `Protocolo Auxiliar`, `Protocolo Principal`, `Activa`, `Espera`,
+  `Archivada`, `NORMAL`, `DESCUENTO`, and `RECARGO` stay, along with the
+  archive query flag `confirmado`.
+- **English deed, folio, and document requirement prose** (#1490, CU75):
+  Six more living specs state requirements in English and name `registered`,
+  `expires`, `dueDays`, `deliveredBy`, `dateEntry`, `dateDue`, `amountToPay`,
+  and `deedId`. `GET /api/v1/folios/{id}` stays the read path. Spec ids stay.
+  Stored labels `Firmada`, `Utilizado`, `Protocolo Auxiliar`, `Protocolo Principal`,
+  and `no pasó` stay, along with the role `Escribano`.
+- **English OpenSpec requirement prose** (#1490, CU75):
+  `escritura-firma`, `presupuesto-plantilla`, `presupuesto-catalogo-items`,
+  `pago-recibo`, and `persona-credencial-escribano` state requirements in
+  English and name `Budget`, `{idPayment}`, and `notaryRegistrationNumber`.
+  Spec ids stay. Stored statuses `Sin Firmar` and `Firmada`, the role
+  `Escribano`, and the receipt filename `recibo_pago_` stay.
+- **English use-case diagram structure** (#1490, CU75):
+  Module titles, actor names, and association labels in
+  `Casos de Uso/*.puml` are English. Official `CUxx` titles and the filenames
+  stay. The stored role `Escribano` stays. The folder name `Casos de Uso` stays.
+- **English CU sequence steps** (#1490, CU75):
+  The 83 use-case sequence diagrams under `Secuencias/` describe each step in
+  English. The participant is `Notaire system`. CU titles and filenames stay.
+  The stored role `Escribano` stays, along with `Protocolo Auxiliar`,
+  `Asignados a cuaderno`, `Presentado`, and `Finalizado / Entregado`.
 - **Case-process documentation and a traceability check** (CU76, CU02, #921):
   `GESTION.md` is the step-by-step analysis of a gestión. The legacy activity
   diagram matches the seeded workflow. `check-doc-traceability.py` rejects an

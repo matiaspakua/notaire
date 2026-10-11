@@ -1,57 +1,58 @@
 # folio-vinculacion-escritura Specification
 
 ## Purpose
-Permite registrar que un folio está vinculado a la escritura que lo ocupa,
-completando el protocolo notarial descrito en CU87, y evita que dos escrituras
-distintas ocupen el mismo folio.
+
+Allows recording that a folio is linked to the deed that occupies it,
+completing the notarial protocol described in CU87, and stops two different
+deeds from occupying the same folio.
+
 ## Requirements
-### Requirement: Vincular un folio a una escritura
-El sistema SHALL permitir asociar un folio a una escritura al crear o editar
-el folio, y SHALL marcar el folio como `Utilizado` al hacerlo.
 
-#### Scenario: Alta de folio vinculado a una escritura
-- **WHEN** se crea un folio informando el `escrituraId` de una escritura
-  existente
-- **THEN** el folio se guarda con esa escritura vinculada y con
-  `estado = "Utilizado"`
+### Requirement: Link a folio to a deed
+The system SHALL allow linking a folio to a deed when creating or editing
+the folio, and SHALL mark the folio as `Utilizado` when it does so.
 
-#### Scenario: Edición de folio para vincularlo a una escritura
-- **WHEN** se edita un folio existente sin escritura vinculada, informando un
-  `escrituraId`
-- **THEN** el folio se guarda con esa escritura vinculada y con
-  `estado = "Utilizado"`
+#### Scenario: Create a folio linked to a deed
+- **WHEN** a folio is created with the `deedId` of an existing deed
+- **THEN** the folio is stored linked to that deed and with
+  `status = "Utilizado"`
 
-#### Scenario: Alta de folio sin vincular
-- **WHEN** se crea un folio sin informar `escrituraId`
-- **THEN** el folio se guarda sin escritura vinculada, con el `estado`
-  informado en la solicitud (comportamiento sin cambios)
+#### Scenario: Edit a folio to link it to a deed
+- **WHEN** an existing folio with no linked deed is edited, providing a
+  `deedId`
+- **THEN** the folio is stored linked to that deed and with
+  `status = "Utilizado"`
 
-### Requirement: Rechazar vincular un folio ya utilizado
-El sistema SHALL rechazar la vinculación de un folio a una escritura cuando
-ese folio ya está vinculado a otra escritura y su `estado` es `Utilizado`.
+#### Scenario: Create a folio without a link
+- **WHEN** a folio is created without a `deedId`
+- **THEN** the folio is stored with no linked deed, with the `status`
+  provided in the request (behavior unchanged)
 
-#### Scenario: Folio ya vinculado a otra escritura
-- **WHEN** se intenta vincular a una escritura un folio cuyo `estado` ya es
-  `Utilizado` y que está vinculado a una escritura distinta
-- **THEN** el sistema rechaza la solicitud con `409 Conflict` y el folio no
-  cambia
+### Requirement: Reject linking a folio that is already in use
+The system SHALL reject linking a folio to a deed when
+that folio is already linked to another deed and its `status` is `Utilizado`.
 
-#### Scenario: Re-vincular el mismo folio a la misma escritura
-- **WHEN** se edita un folio informando el mismo `escrituraId` al que ya
-  estaba vinculado
-- **THEN** el sistema acepta la solicitud sin error (no es un conflicto,
-  es una actualización idempotente)
+#### Scenario: Folio already linked to another deed
+- **WHEN** linking a folio to a deed is attempted and that folio's `status` is
+  already `Utilizado` and it is linked to a different deed
+- **THEN** the system rejects the request with `409 Conflict` and the folio does
+  not change
 
-### Requirement: Consultar la escritura vinculada a un folio
-El sistema SHALL incluir la escritura vinculada, si existe, en la respuesta
-de consulta de un folio.
+#### Scenario: Link the same folio to the same deed again
+- **WHEN** a folio is edited with the same `deedId` it was already
+  linked to
+- **THEN** the system accepts the request without an error (it is not a conflict;
+  it is an idempotent update)
 
-#### Scenario: Consultar un folio con escritura vinculada
-- **WHEN** se consulta un folio (`GET /api/v1/folios/{id}` o el listado) que
-  tiene una escritura vinculada
-- **THEN** la respuesta incluye los datos de esa escritura
+### Requirement: Read the deed linked to a folio
+The system SHALL include the linked deed, when one exists, in the
+folio read response.
 
-#### Scenario: Consultar un folio sin escritura vinculada
-- **WHEN** se consulta un folio que no tiene ninguna escritura vinculada
-- **THEN** la respuesta no incluye datos de escritura para ese folio
+#### Scenario: Read a folio with a linked deed
+- **WHEN** a folio is read (`GET /api/v1/folios/{id}` or the list) that
+  has a linked deed
+- **THEN** the response includes that deed's data
 
+#### Scenario: Read a folio with no linked deed
+- **WHEN** a folio that has no linked deed is read
+- **THEN** the response does not include deed data for that folio

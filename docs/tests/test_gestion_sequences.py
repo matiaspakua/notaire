@@ -25,8 +25,9 @@ class GestionSequenceTest(unittest.TestCase):
 
     def test_reentry_does_not_invent_a_return_from_observada(self):
         text = GESTION.read_text(encoding="utf-8")
-        self.assertIn("No hay transición de vuelta", text)
-        self.assertIn("No mueve la gestión", text)
+        self.assertIn("There is no return transition", text)
+        self.assertIn("The management does not move", text)
+        self.assertIn("From `Observado` the service has no return", text)
 
     def test_case_schema_has_an_artifact_id(self):
         text = INGENIERIA.read_text(encoding="utf-8")

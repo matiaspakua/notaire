@@ -2,52 +2,60 @@
 
 ## Purpose
 
-Lets the operator choose the presupuesto being paid from a list instead of
-typing its ID from memory, and shows its saldo pendiente before the payment
-is confirmed, so a payment is never registered against the wrong
-presupuesto or without knowing what is actually owed (CU15, pasos 2-5 y 11).
+Lets the operator choose the `Budget` being paid from a list instead of
+typing its id from memory, and shows its `pendingBalance` before the
+payment is confirmed, so a payment is never registered against the wrong
+budget or without knowing what is actually owed (CU15, steps 2-5 and 11).
 
 ## Requirements
 
-### Requirement: Payment form offers a presupuesto picker
-The payment form SHALL let the operator select the presupuesto to pay from
-a list of existing presupuestos, identified by presupuesto number and
-associated client, instead of requiring a numeric ID to be typed.
+### Requirement: Payment form offers a budget picker
 
-#### Scenario: Operator selects a presupuesto from the picker
+The payment form SHALL let the operator select the `Budget` to pay from a
+list of existing budgets, identified by budget number and associated client,
+instead of requiring a numeric id to be typed.
+
+#### Scenario: Operator selects a budget from the picker
+
 - **WHEN** the operator opens the picker on the payment form
-- **THEN** it lists the existing presupuestos, each identified by its
-  presupuesto number and the client it belongs to
+- **THEN** it lists the existing budgets, each identified by its budget
+  number and the client it belongs to
 
-#### Scenario: Operator picks a presupuesto and it becomes the payment target
-- **WHEN** the operator selects one presupuesto from the picker
-- **THEN** that presupuesto is set as the target of the payment being
-  registered
+#### Scenario: Operator picks a budget and it becomes the payment target
 
-#### Scenario: No presupuestos available
-- **WHEN** the operator opens the picker and there are no presupuestos to
-  choose from
+- **WHEN** the operator selects one `Budget` from the picker
+- **THEN** that budget is set as the target of the payment being registered
+
+#### Scenario: No budgets available
+
+- **WHEN** the operator opens the picker and there are no budgets to choose
+  from
 - **THEN** the picker shows an empty state instead of an empty or broken
   dropdown
 
-### Requirement: Payment form shows the saldo pendiente of the selected presupuesto
-The payment form SHALL display the current saldo pendiente of the
-presupuesto selected in the picker before the payment amount is confirmed.
+### Requirement: Payment form shows the outstanding balance of the selected budget
 
-#### Scenario: Saldo pendiente is shown after selecting a presupuesto
-- **WHEN** the operator selects a presupuesto in the picker
-- **THEN** the form displays that presupuesto's current saldo pendiente
-  before the payment is submitted
+The payment form SHALL display the current `pendingBalance` of the `Budget`
+selected in the picker before the payment amount is confirmed. The catalog
+keys `saldo.pending`, `saldo.summary`, `saldo.error`, and `saldoExcedido`
+stay.
 
-#### Scenario: Saldo pendiente updates when the selection changes
-- **WHEN** the operator changes the picker selection from one presupuesto
-  to another
-- **THEN** the displayed saldo pendiente updates to reflect the newly
-  selected presupuesto, not the previous one
+#### Scenario: Outstanding balance is shown after selecting a budget
 
-#### Scenario: Saldo pendiente fails to load
-- **WHEN** the selected presupuesto's saldo pendiente cannot be retrieved
-  (e.g. network or server error)
-- **THEN** the form shows that the saldo pendiente is unavailable instead of
-  a stale or blank value, and does not block selecting a different
-  presupuesto
+- **WHEN** the operator selects a `Budget` in the picker
+- **THEN** the form displays that budget's current `pendingBalance` before
+  the payment is submitted
+
+#### Scenario: Outstanding balance updates when the selection changes
+
+- **WHEN** the operator changes the picker selection from one `Budget` to
+  another
+- **THEN** the displayed `pendingBalance` updates to reflect the newly
+  selected budget, not the previous one
+
+#### Scenario: Outstanding balance fails to load
+
+- **WHEN** the selected budget's `pendingBalance` cannot be retrieved (for
+  example a network or server error)
+- **THEN** the form shows the `saldo.error` state instead of a stale or
+  blank value, and does not block selecting a different budget

@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
   // /api/v1/** is proxied at request time by the App Router Route Handler
   // (src/app/api/v1/[...path]/route.ts) using runtime BACKEND_URL — do not
   // bake destinations via rewrites() (standalone evaluates them at build).
-  // Collapse duplicate administración pages onto canonical routes (#1058).
+  // Collapse duplicate administration pages onto canonical routes (#1058).
   async redirects() {
     return [
       {

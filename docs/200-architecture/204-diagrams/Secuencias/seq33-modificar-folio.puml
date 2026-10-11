@@ -3,23 +3,23 @@
 title CU33 — Modificar folio
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide modificar los datos de un folio.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Año; Número de registro de escribano)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano indica el año y número de registro.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Busca y presenta una lista de folios.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona un folio.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Presenta: (Número de folio; Tipo; Estado; Fecha último estado; Observaciones)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano modifica el estado.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Guarda los cambios realizados.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to modify a folio.
+System -> System : Escribano
+Actor -> Actor : Requests: (Year; Notary register number (Escribano))
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the year and register number.
+System -> System : Escribano
+Actor -> Actor : Looks up and presents a list of folios.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a folio.
+System -> System : Escribano
+Actor -> Actor : Presents: (Folio number; Type; Status; Date of last status; Notes)
+System -> System : System
+Actor -> Actor : The notary (Escribano) modifies the status.
+System -> System : Escribano
+Actor -> Actor : Saves the changes made.
+System -> System : System
 
 @enduml

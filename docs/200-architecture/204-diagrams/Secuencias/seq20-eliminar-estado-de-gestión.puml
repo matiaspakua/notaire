@@ -3,15 +3,15 @@
 title CU20 — Eliminar estado de gestión
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide eliminar un estado de gestión.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra una lista de todos los estados disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona un estado y confirma la eliminación.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Elimina el estado seleccionado.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to delete a management status.
+System -> System : Escribano
+Actor -> Actor : Shows a list of every available status.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a status and confirms the deletion.
+System -> System : Escribano
+Actor -> Actor : Deletes the selected status.
+System -> System : System
 
 @enduml

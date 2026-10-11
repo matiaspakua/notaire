@@ -28,7 +28,7 @@ endpoints `/api/v1/managements`, `/api/v1/budgets`, and `/api/v1/procedures`.
 - **THEN** the JSON body uses `name` and `password` (not Spanish
   `nombre`/`contrasenia`) against `/api/v1/users/login`
 
-#### Scenario: Script covers gestiones presupuestos and tramites with Bearer auth
+#### Scenario: Script covers managements, budgets, and procedures with Bearer auth
 
 - **WHEN** the default VU function runs after setup
 - **THEN** it GETs `/api/v1/managements`, `/api/v1/budgets`, and

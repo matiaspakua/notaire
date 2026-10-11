@@ -1,25 +1,24 @@
-# Gestión — análisis y diseño del proceso central
+# Case process — analysis and design
 
-El trámite notarial (la gestión) es el proceso central. Este documento es el
-esquema de análisis y diseño de ese proceso: actores, casos de uso, qué tiene
-que existir para dar cada paso, y una secuencia por paso que el sistema
-realmente ejecuta.
+The notarial procedure (the management) is the central process. This document
+is the analysis and design of that process: actors, use cases, what must
+exist before each step, and a sequence for each step the system actually runs.
 
-Las máquinas de estado no se copian. Gestión, escritura, testimonio, minuta,
-documento, presupuesto, pago y carpeta están en
-[CICLO-DE-VIDA.md](CICLO-DE-VIDA.md) §3. Si un cambio mueve un estado, se
-edita ese archivo. La decisión del motor está en
-[ADR-014](../202-ADR/ADR-014-workflow-engine.md). Los diagramas activos son
-Mermaid ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
+State machines are not copied here. Management, deed, testimony, registration
+draft, document, budget, payment, and procedure folder live in
+[CICLO-DE-VIDA.md](CICLO-DE-VIDA.md) §3. If a change moves a status, edit that
+file. The engine decision is in
+[ADR-014](../202-ADR/ADR-014-workflow-engine.md). Active diagrams are Mermaid
+([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
 
-## 1. Casos de uso del proceso
+## 1. Use cases of the process
 
-Un caso de uso no es un estado. Varios casos recorren una sola gestión.
+A use case is not a status. Several use cases walk one management.
 
 ```mermaid
 flowchart TB
-  cliente[Cliente]
-  gestor[Gestor / Recepcionista]
+  cliente[Client]
+  gestor[Clerk / Receptionist]
   escribano[Escribano]
 
   subgraph notaire [Notaire]
@@ -60,264 +59,266 @@ flowchart TB
   cu83 -.-> cu16
 ```
 
-`cu83` no lo dispara el gestor en cada trámite: define las aristas que CU02
-y CU16 consultan. El pago (CU15) corre al lado; no cambia el nodo de la gestión.
+`cu83` is not fired by the clerk on every procedure: it defines the edges
+that CU02 and CU16 consult. Payment (CU15) runs alongside; it does not change
+the management node.
 
-## 2. Dependencias de cada paso
+## 2. Dependencies of each step
 
-El estado de la gestión solo cambia por `POST /api/v1/managements/{id}/transition`
-o por `POST /api/v1/managements/{id}/archive`. Un `PUT` que cambie el estado
-responde 400. Sucesión y Poder no tienen workflow sembrado: cualquier
-transición responde 400.
+The management status changes only through
+`POST /api/v1/managements/{id}/transition` or through
+`POST /api/v1/managements/{id}/archive`. A `PUT` that changes the status
+answers 400. Stored procedure types `Sucesion` and `Poder` have no seeded
+workflow: any transition answers 400.
 
-| Paso | Nodo antes | Tiene que existir | Caso | Llamada | No alcanza |
-|------|------------|-------------------|------|---------|------------|
-| Abrir | — | Presupuesto, cliente, escribano, tipo con workflow | CU02 | `POST /api/v1/managements/complete-case` | Un `POST /api/v1/managements` sin trámite no exige nodo inicial |
-| Asignar trámites | Iniciada | Arista «Se asignan trámites» | CU02, CU83 | `POST /api/v1/managements/{id}/transition` | Crear la gestión otra vez |
-| Completar papeles | En Tramite | Arista «Documentación presentada», o el último certificado externo entregado | CU04, CU10 | transición, o `PUT /api/v1/managements/{id}/external-entity-documents/{doc}` | Guardar un documento si la arista no existe: el documento queda y la gestión no se mueve |
-| Redactar | Documentacion Completa | Arista «Se redacta la escritura» | CU05 | transición | El estado de `deeds` |
-| Firmar el instrumento | cualquiera | Escritura `Sin Firmar` y al menos un folio | CU06 | `POST /api/v1/deeds/{id}/sign` | Esa llamada no mueve la gestión |
-| Registrar la firma en la gestión | Gestion con Escritura Sin Firmar | Arista «Las partes firman» | CU06, CU83 | transición | Haber firmado la escritura |
-| Generar testimonio | Gestion con Escritura Firmada | Arista «Se genera el testimonio». Escritura `Firmada` | CU07 | `POST /api/v1/testimonies/{idDeed}/generate` y, aparte, la transición | Una sola de las dos llamadas. El alta deja `verified` en false |
-| Verificar testimonio | no cambia | Testimonio ya generado | CU08 | `POST /api/v1/testimonies/{id}/verify` | No mueve la gestión. Sin esta llamada el ingreso responde 400 |
-| Ingresar a inscripción | Testimonio Generado | Testimonio verificado, sin movimiento abierto, y arista «Ingreso a inscripción» | CU11 | `POST /api/v1/testimony-movements/{idTestimony}/enter-registration` y la transición | Sin verificar, o con un movimiento abierto: 400 |
-| Registrar la inscripción | no cambia | Un movimiento con fecha de ingreso | CU11 | `POST /api/v1/testimony-movements/{idTestimony}/register-inscription` | No mueve la gestión. Sin ingreso previo responde 400 |
-| Retirar | Testimonio Ingresado a Inscripcion | Movimiento `registered` y arista «Retiro» | CU12 | `POST /api/v1/testimony-movements/{idTestimony}/withdraw` y la transición | Sin `registered`: 400. El cuerpo lleva `cardNumber` |
-| Reingresar testimonio | no cambia | El último movimiento tiene fecha de salida | CU44 | `POST /api/v1/testimony-movements/{idTestimony}/reenter` | No mueve la gestión y no pisa el movimiento anterior. Observado sin notas: 400 |
-| Reingresar un documento | no cambia | El trámite es de la gestión y el tipo está en la plantilla | CU43 | `POST /api/v1/managements/{id}/document-reentry` | No mueve la gestión. Crea otro documento con `reentered` |
-| Archivar sin escritura | Documentacion Completa | Arista a `Archivada`. Si hay carpeta en Espera, `confirmed=true` | CU16, CU85 | `POST /api/v1/managements/{id}/archive` | Saldo pendiente: advierte y no bloquea |
-| Minuta | — | Escritura. No es un nodo de la gestión | CU82 | `POST /api/v1/registration-drafts`, luego `submit`, `observe` o `register` | Desde `Observado` no hay vuelta en el servicio |
+| Step | Node before | Must exist | Use case | Call | Not enough |
+|------|-------------|-------------------|----------|---------|------------|
+| Open | — | Budget, client, notary, a type with a workflow | CU02 | `POST /api/v1/managements/complete-case` | A `POST /api/v1/managements` without a procedure does not require an initial node |
+| Assign procedures | Iniciada | Edge `Se asignan trámites y comienza la gestión` | CU02, CU83 | `POST /api/v1/managements/{id}/transition` | Creating the management again |
+| Complete the papers | En Tramite | Edge `Toda la documentación requerida fue presentada`, or the last external certificate delivered | CU04, CU10 | transition, or `PUT /api/v1/managements/{id}/external-entity-documents/{doc}` | Saving a document when the edge does not exist: the document stays and the management does not move |
+| Draft | Documentacion Completa | Edge `Se redacta la escritura` | CU05 | transition | The `deeds` status |
+| Sign the instrument | any | Deed `Sin Firmar` and at least one folio | CU06 | `POST /api/v1/deeds/{id}/sign` | That call does not move the management |
+| Record the signature on the management | Gestion con Escritura Sin Firmar | Edge `Las partes firman la escritura` | CU06, CU83 | transition | Having signed the deed |
+| Generate testimony | Gestion con Escritura Firmada | Edge `Testimony generated after deed signing`. Deed `Firmada` | CU07 | `POST /api/v1/testimonies/{idDeed}/generate` and, separately, the transition | Only one of the two calls. Create leaves `verified` false |
+| Verify the testimony | does not change | A testimony already generated | CU08 | `POST /api/v1/testimonies/{id}/verify` | It does not move the management. Without this call, entry answers 400 |
+| Enter for registration | Testimonio Generado | Verified testimony, no open movement, and edge `Testimony submitted for inscription` | CU11 | `POST /api/v1/testimony-movements/{idTestimony}/enter-registration` and the transition | Unverified, or an open movement: 400 |
+| Record the inscription | does not change | A movement with an entry date | CU11 | `POST /api/v1/testimony-movements/{idTestimony}/register-inscription` | It does not move the management. Without a prior entry it answers 400 |
+| Withdraw | Testimonio Ingresado a Inscripcion | Movement `registered` and edge `Testimony withdrawn after inscription cycle` | CU12 | `POST /api/v1/testimony-movements/{idTestimony}/withdraw` and the transition | Without `registered`: 400. The body carries `cardNumber` |
+| Re-enter a testimony | does not change | The latest movement has an exit date | CU44 | `POST /api/v1/testimony-movements/{idTestimony}/reenter` | It does not move the management and does not overwrite the previous movement. Observed without notes: 400 |
+| Re-enter a document | does not change | The procedure belongs to the management and the type is on the template | CU43 | `POST /api/v1/managements/{id}/document-reentry` | It does not move the management. It creates another document with `reentered` |
+| Archive without a deed | Documentacion Completa | Edge `La gestión se archiva sin escritura`. If a folder is `Espera`, `confirmado=true` | CU16, CU85 | `POST /api/v1/managements/{id}/archive` | Outstanding balance: it warns and does not block |
+| Registration draft | — | A deed. It is not a management node | CU82 | `POST /api/v1/registration-drafts`, then `submit`, `observe`, or `register` | From `Observado` the service has no return |
 
-`Testimonio Retirado` y `Archivada` son finales. El grafo sembrado no archiva
-después del retiro.
+`Testimonio Retirado` and `Archivada` are final. The seeded graph does not
+archive after withdrawal.
 
-## 3. Secuencias
+## 3. Sequences
 
-### 3.1 Iniciar
+### 3.1 Open
 
 ```mermaid
 sequenceDiagram
-  actor Gestor
+  actor Clerk
   participant FE as Frontend
-  participant API as Gestiones
+  participant API as Managements
   participant WF as Workflow
   participant DB as PostgreSQL
 
-  Gestor->>FE: Presupuesto, cliente, escribano, trámites
+  Clerk->>FE: Budget, client, notary, procedures
   FE->>API: POST /api/v1/managements/complete-case
-  API->>WF: El estado inicial es nodo INITIAL
-  alt El tipo tiene workflow y el estado es inicial
-    API->>DB: deed_managements, trámites, historial
-    API-->>FE: 201, nodo Iniciada
-  else Estado que no es inicial
-    API-->>FE: 400, no persiste la gestión
+  API->>WF: The initial status is an INITIAL node
+  alt The type has a workflow and the status is initial
+    API->>DB: deed_managements, procedures, history
+    API-->>FE: 201, node Iniciada
+  else Status that is not initial
+    API-->>FE: 400, the management is not persisted
   end
 ```
 
-### 3.2 Documentación que puede completar la gestión
+### 3.2 Documentation that can complete the management
 
 ```mermaid
 sequenceDiagram
-  actor Gestor
+  actor Clerk
   participant FE as Frontend
-  participant API as Gestiones
+  participant API as Managements
   participant DB as PostgreSQL
 
-  Gestor->>FE: Entrega el certificado externo
+  Clerk->>FE: Delivers the external certificate
   FE->>API: PUT /api/v1/managements/{id}/external-entity-documents/{doc}
-  API->>DB: Movimiento guardado
-  alt Todos los de entidad externa entregados y hay arista a Documentacion Completa
-    API->>DB: Nodo Documentacion Completa e historial
-  else Falta uno, o la arista no sale del nodo actual
-    API->>API: El movimiento queda. La gestión no cambia
+  API->>DB: Movement saved
+  alt Every external-entity document is delivered and an edge leads to Documentacion Completa
+    API->>DB: Node Documentacion Completa and history
+  else One is missing, or the edge does not leave the current node
+    API->>API: The movement stays. The management does not change
   end
 ```
 
-### 3.3 Escritura y firma, en dos máquinas
+### 3.3 Deed and signature, on two machines
 
 ```mermaid
 sequenceDiagram
   actor Escribano
   participant FE as Frontend
-  participant Esc as Escrituras
-  participant Ges as Gestiones
+  participant Esc as Deeds
+  participant Ges as Managements
   participant DB as PostgreSQL
 
-  Escribano->>FE: Redacta
+  Escribano->>FE: Drafts
   FE->>Ges: POST /api/v1/managements/{id}/transition
   Ges->>DB: Gestion con Escritura Sin Firmar
-  Escribano->>FE: Firma, con folio
+  Escribano->>FE: Signs, with a folio
   FE->>Esc: POST /api/v1/deeds/{id}/sign
   Esc->>DB: deeds.status = Firmada
-  Note over Ges,DB: La gestión sigue en Sin Firmar
-  Escribano->>FE: Registra la firma en la gestión
+  Note over Ges,DB: The management stays on Sin Firmar
+  Escribano->>FE: Records the signature on the management
   FE->>Ges: POST /api/v1/managements/{id}/transition
   Ges->>DB: Gestion con Escritura Firmada
 ```
 
-Anulada, No Paso e Inscripta son valores de `deeds.status`. No hay arista
-sembrada hacia `Gestion con Escritura Anulada` ni `No Paso`.
+`Anulada`, `No Paso`, and `Inscripta` are values of `deeds.status`. No seeded
+edge leads to `Gestion con Escritura Anulada` or `Gestion con Escritura No Paso`.
 
-### 3.4 Testimonio
+### 3.4 Testimony
 
 ```mermaid
 sequenceDiagram
-  actor Gestor
+  actor Clerk
   participant FE as Frontend
-  participant Tes as Testimonio
-  participant Mov as Movimiento
-  participant Ges as Gestiones
+  participant Tes as Testimony
+  participant Mov as Movement
+  participant Ges as Managements
   participant DB as PostgreSQL
 
-  Gestor->>FE: Genera el testimonio
+  Clerk->>FE: Generates the testimony
   FE->>Tes: POST /api/v1/testimonies/{idDeed}/generate
-  Tes->>DB: Testimonio, verified en false
+  Tes->>DB: Testimony, verified false
   FE->>Ges: POST /api/v1/managements/{id}/transition
   Ges->>DB: Testimonio Generado
 
-  Gestor->>FE: Lo verifica
+  Clerk->>FE: Verifies it
   FE->>Tes: POST /api/v1/testimonies/{id}/verify
-  Tes->>DB: verified en true
-  Note over Ges: No mueve la gestión
+  Tes->>DB: verified true
+  Note over Ges: The management does not move
 
-  Gestor->>FE: Lo ingresa al Registro
+  Clerk->>FE: Enters it at the registry
   FE->>Mov: POST /api/v1/testimony-movements/{idTestimony}/enter-registration
-  Note over Mov: 400 si no está verificado o ya hay un movimiento abierto
+  Note over Mov: 400 when it is not verified or a movement is already open
   FE->>Ges: POST /api/v1/managements/{id}/transition
   Ges->>DB: Testimonio Ingresado a Inscripcion
 
-  Gestor->>FE: Registra la inscripción
+  Clerk->>FE: Records the inscription
   FE->>Mov: POST /api/v1/testimony-movements/{idTestimony}/register-inscription
-  Note over Mov,Ges: 400 sin ingreso previo. No mueve la gestión
+  Note over Mov,Ges: 400 without a prior entry. The management does not move
 
-  Gestor->>FE: Lo retira
+  Clerk->>FE: Withdraws it
   FE->>Mov: POST /api/v1/testimony-movements/{idTestimony}/withdraw
-  Note over Mov: 400 si no está registered. El cuerpo lleva cardNumber
+  Note over Mov: 400 when it is not registered. The body carries cardNumber
   FE->>Ges: POST /api/v1/managements/{id}/transition
   Ges->>DB: Testimonio Retirado
 ```
 
-La máquina del movimiento está en CICLO-DE-VIDA §3.4. Esta secuencia es el
-acoplamiento con el nodo de la gestión. El reingreso, que no cambia ese nodo,
-está en §3.7.
+The testimony movement (verified, entered, registered, withdrawn, re-entered)
+is another machine. It is in CICLO-DE-VIDA §3.4. This sequence is the coupling
+with the management node. Re-entry, which does not change that node, is in §3.7.
 
-### 3.5 Archivar
+### 3.5 Archive
 
 ```mermaid
 sequenceDiagram
   actor Escribano
   participant FE as Frontend
-  participant API as Gestiones
+  participant API as Managements
   participant DB as PostgreSQL
 
-  Escribano->>FE: Archiva
-  FE->>API: POST /api/v1/managements/{id}/archive?confirmed=
-  alt Hay carpeta en Espera y confirmed es falso
-    API-->>FE: 409, la gestión no cambia
-  else Hay arista a Archivada
-    API->>DB: Archivada, saldo advertido, carpetas Archivada, historial
+  Escribano->>FE: Archives
+  FE->>API: POST /api/v1/managements/{id}/archive?confirmado=
+  alt A folder is Espera and confirmado is false
+    API-->>FE: 409, the management does not change
+  else An edge leads to Archivada
+    API->>DB: Archivada, balance warned, folders Archivada, history
     API-->>FE: 200
-  else No hay arista
+  else No edge
     API-->>FE: 400
   end
 ```
 
-La arista sembrada sale solo de `Documentacion Completa`. Archivar desde
-`Testimonio Retirado` exige que un administrador agregue esa arista (CU83).
+The seeded edge leaves only from `Documentacion Completa`. Archiving from
+`Testimonio Retirado` requires an administrator to add that edge (CU83).
 
-### 3.6 Minuta
+### 3.6 Registration draft
 
 ```mermaid
 sequenceDiagram
-  actor Gestor
+  actor Clerk
   participant FE as Frontend
-  participant API as Minutas
+  participant API as Registration drafts
   participant DB as PostgreSQL
 
-  Gestor->>FE: Genera la minuta
+  Clerk->>FE: Generates the draft
   FE->>API: POST /api/v1/registration-drafts
   API->>DB: Generada
-  Gestor->>FE: La presenta
+  Clerk->>FE: Submits it
   FE->>API: PUT /api/v1/registration-drafts/{id}/submit
-  API->>DB: Presentada
-  alt El Registro observa
+  API->>DB: Presentado para inscripción
+  alt The registry observes
     FE->>API: PUT /api/v1/registration-drafts/{id}/observe
-    API->>DB: Observada
-    Note over API: No hay transición de vuelta
-  else El Registro inscribe
+    API->>DB: Observado
+    Note over API: There is no return transition
+  else The registry registers
     FE->>API: PUT /api/v1/registration-drafts/{id}/register
-    API->>DB: Inscripta
+    API->>DB: Inscripto
   end
 ```
 
-La minuta no mueve el nodo de la gestión.
+The registration draft does not move the management node.
 
-### 3.7 Reingresar un testimonio
+### 3.7 Re-enter a testimony
 
-CU44. El servicio crea un movimiento nuevo y deja el anterior como estaba.
-No hay transición de la gestión.
+CU44. The service creates a new movement and leaves the previous one as it was.
+There is no management transition.
 
 ```mermaid
 sequenceDiagram
-  actor Gestor
+  actor Clerk
   participant FE as Frontend
-  participant Mov as Movimiento
+  participant Mov as Movement
   participant DB as PostgreSQL
 
-  Gestor->>FE: Reingresa el testimonio retirado
+  Clerk->>FE: Re-enters the withdrawn testimony
   FE->>Mov: POST /api/v1/testimony-movements/{idTestimony}/reenter
-  alt El último movimiento no tiene fecha de salida
-    Mov-->>FE: 400, no crea nada
-  else Está observado y no hay notas
-    Mov-->>FE: 400, no crea nada
-  else El retiro existe
-    Mov->>DB: Movimiento nuevo con fecha de ingreso
-    Note over DB: El movimiento anterior no se pisa
-    Note over Mov: No mueve la gestión
+  alt The latest movement has no exit date
+    Mov-->>FE: 400, nothing is created
+  else It is observed and there are no notes
+    Mov-->>FE: 400, nothing is created
+  else The withdrawal exists
+    Mov->>DB: New movement with an entry date
+    Note over DB: The previous movement is not overwritten
+    Note over Mov: The management does not move
     Mov-->>FE: 201
   end
 ```
 
-El cuerpo es opcional: `cardNumber`, `observedByRegistry` y `notes`.
-`notes` es obligatorio cuando `observedByRegistry` es verdadero. Un segundo
-`enter-registration` también abre un movimiento si el anterior ya tiene
-salida; no guarda la observación. El caso de uso usa `reenter`.
+The body is optional: `cardNumber`, `observedByRegistry`, and `notes`.
+`notes` is required when `observedByRegistry` is true. A second
+`enter-registration` also opens a movement when the previous one already has
+an exit; it does not store the observation. The use case uses `reenter`.
 
-### 3.8 Reingresar un documento
+### 3.8 Re-enter a document
 
-CU43. No es un estado de la gestión y no dispara la arista de documentación
-completa.
+CU43. It is not a management status and it does not fire the
+documentation-complete edge.
 
 ```mermaid
 sequenceDiagram
-  actor Gestor
+  actor Clerk
   participant FE as Frontend
-  participant API as Gestiones
+  participant API as Managements
   participant DB as PostgreSQL
 
-  Gestor->>FE: Elige la gestión
+  Clerk->>FE: Chooses the management
   FE->>API: GET /api/v1/managements/{id}/document-reentry
-  API-->>FE: Trámites y tipos de la plantilla
-  Gestor->>FE: Elige trámite y tipo
+  API-->>FE: Procedures and template types
+  Clerk->>FE: Chooses the procedure and the type
   FE->>API: POST /api/v1/managements/{id}/document-reentry
-  alt El trámite no es de la gestión, o el tipo no está en la plantilla
-    API-->>FE: 400, no crea el documento
-  else La gestión o el trámite no existen
+  alt The procedure is not on the management, or the type is not on the template
+    API-->>FE: 400, the document is not created
+  else The management or the procedure does not exist
     API-->>FE: 404
-  else El par es válido
-    API->>DB: Documento nuevo, reentered en true
-    Note over API: No mueve la gestión
+  else The pair is valid
+    API->>DB: New document, reentered true
+    Note over API: The management does not move
     API-->>FE: 201
   end
 ```
 
-## 4. Dónde está el resto
+## 4. Where the rest lives
 
-| Pregunta | Documento |
-|----------|-----------|
-| Grafo de estados y divergencias | [CICLO-DE-VIDA.md](CICLO-DE-VIDA.md) §3 y §8 |
-| Actividad de negocio del mismo grafo | [transicion-de-estados.puml](../204-diagrams/Diagrama%20de%20Estados/transicion-de-estados.puml) — legado, alineado al grafo; no es la fuente |
-| Evaluación de requisitos y huecos | [EVALUACION-DOCUMENTACION.md](../../100-business/EVALUACION-DOCUMENTACION.md) |
-| Catálogo de documentos de ingeniería | [EVALUACION-INGENIERIA.md](../../300-development/EVALUACION-INGENIERIA.md) |
-| Motor | [ADR-014](../202-ADR/ADR-014-workflow-engine.md) |
-| Vista de runtime del SAD | [sad.md](../201-SAD/sad.md) §6 |
+| Question | Document |
+|----------|----------|
+| State graph and divergences | [CICLO-DE-VIDA.md](CICLO-DE-VIDA.md) §3 and §8 |
+| Business activity of the same graph | [transicion-de-estados.puml](../204-diagrams/Diagrama%20de%20Estados/transicion-de-estados.puml) — legacy, aligned to the graph; not the source |
+| Requirements evaluation and gaps | [EVALUACION-DOCUMENTACION.md](../../100-business/EVALUACION-DOCUMENTACION.md) |
+| Engineering document catalog | [EVALUACION-INGENIERIA.md](../../300-development/EVALUACION-INGENIERIA.md) |
+| Engine | [ADR-014](../202-ADR/ADR-014-workflow-engine.md) |
+| SAD runtime view | [sad.md](../201-SAD/sad.md) §6 |

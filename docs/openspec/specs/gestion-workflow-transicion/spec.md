@@ -2,66 +2,65 @@
 
 ## Purpose
 
-Validates and applies a state change of a gestión against the transitions
-defined in the `WorkflowDefinition` of its tipo de trámite (CU83), instead
-of accepting any estado value unconditionally through the generic `PUT`.
+Validates and applies a state change of a management against the transitions
+defined in the `WorkflowDefinition` of its `ProcedureType` (CU83), instead
+of accepting any status value unconditionally through the generic `PUT`.
 
 ## Requirements
 
-### Requirement: Transicionar estado de gestión contra el workflow definido
+### Requirement: Transition a management status against the defined workflow
 
-El sistema SHALL validar que un cambio de estado propuesto para una
-gestión corresponda a una `WorkflowTransition` existente entre el
-`WorkflowNode` del estado actual y el `WorkflowNode` del estado destino,
-dentro del `WorkflowDefinition` asignado al `ProcedureType` de la gestión,
-según CU83. Status mutations after create MUST use
+The system SHALL validate that a proposed status change for a management
+corresponds to an existing `WorkflowTransition` between the `WorkflowNode`
+of the current status and the `WorkflowNode` of the destination status,
+inside the `WorkflowDefinition` assigned to the management's `ProcedureType`,
+per CU83. Status mutations after create MUST use
 `POST /api/v1/managements/{id}/transition` (or archive); generic PUT and
 complete-case update MUST NOT apply a changed status id.
 
-#### Scenario: Transición válida se aplica
+#### Scenario: A valid transition is applied
 
-- **WHEN** un usuario solicita cambiar el estado de una gestión a un
-  estado para el cual existe una `WorkflowTransition` desde su estado
-  actual, en el `WorkflowDefinition` de su tipo de trámite
-- **THEN** el sistema aplica el cambio de estado a la gestión
+- **WHEN** a user requests changing a management's status to a status for
+  which a `WorkflowTransition` exists from its current status, in the
+  `WorkflowDefinition` of its `ProcedureType`
+- **THEN** the system applies the status change to the management
 
-#### Scenario: Transición inválida es rechazada
+#### Scenario: An invalid transition is rejected
 
-- **WHEN** un usuario solicita cambiar el estado de una gestión a un
-  estado para el cual no existe ninguna `WorkflowTransition` desde su
-  estado actual, en el `WorkflowDefinition` de su tipo de trámite
-- **THEN** el sistema rechaza la operación y responde con un error que
-  indica que la transición no es válida para el workflow del tipo de
-  trámite
+- **WHEN** a user requests changing a management's status to a status for
+  which no `WorkflowTransition` exists from its current status, in the
+  `WorkflowDefinition` of its `ProcedureType`
+- **THEN** the system rejects the operation and responds with an error
+  stating that the transition is not valid for that procedure type's workflow
 
-#### Scenario: Gestión sin workflow definido rechaza cualquier transición
+#### Scenario: A management without a defined workflow rejects any transition
 
-- **WHEN** un usuario solicita cambiar el estado de una gestión cuyo tipo
-  de trámite no tiene un `WorkflowDefinition` asignado
-- **THEN** el sistema rechaza la operación y responde con un error que
-  indica que el tipo de trámite no tiene un workflow configurado
+- **WHEN** a user requests changing the status of a management whose
+  `ProcedureType` has no assigned `WorkflowDefinition`
+- **THEN** the system rejects the operation and responds with an error
+  stating that the procedure type has no workflow configured
 
 ### Requirement: Reject status mutations on generic update paths
 
 The system SHALL reject any request that changes
-`managementStatusId` / `statusManagementId` on an existing gestión via
+`managementStatusId` / `statusManagementId` on an existing management via
 `PUT /api/v1/managements/{id}` or `PUT /api/v1/managements/{id}/complete-case`,
 responding with HTTP 400 and directing clients to
 `POST /api/v1/managements/{id}/transition`. Updates that leave the status id
 unchanged (or omit a status change) SHALL still succeed for other fields.
-History (bitácora) coverage from #806 remains for create and for successful
+History coverage from #806 remains for create and for successful
 `/transition` / archive paths.
 
 #### Scenario: Plain PUT that changes status is rejected
 
 - **WHEN** a client sends `PUT /api/v1/managements/{id}` with a
-  `managementStatusId` different from the gestión's current status
+  `managementStatusId` different from the management's current status
 - **THEN** the system responds 400 without persisting the status change
 
 #### Scenario: Complete-case PUT that changes status is rejected
 
 - **WHEN** a client sends `PUT /api/v1/managements/{id}/complete-case` with a
-  `statusManagementId` different from the gestión's current status
+  `statusManagementId` different from the management's current status
 - **THEN** the system responds 400 without persisting the status change
 
 #### Scenario: Plain PUT that keeps the same status succeeds
@@ -72,38 +71,38 @@ History (bitácora) coverage from #806 remains for create and for successful
 
 ### Requirement: Validate initial status against workflow nodes on create
 
-When creating a gestión and a `WorkflowDefinition` is available (e.g.
-complete-case with a tipo de trámite that has a workflow), the system SHALL
-accept an initial status only if that status is a node in the workflow,
-preferring the INITIAL/start node when clients choose among valid nodes.
-Create without a workflow MAY assign any defined management status.
+When creating a management and a `WorkflowDefinition` is available (for
+example a complete-case create whose `ProcedureType` has a workflow), the
+system SHALL accept an initial status only if that status is a node in the
+workflow, preferring the INITIAL/start node when clients choose among valid
+nodes. Create without a workflow MAY assign any defined management status.
 Initial assignment does not require a prior transition edge.
 
 #### Scenario: Complete-case create with start-node status succeeds
 
-- **WHEN** a client creates a complete-case gestión with
+- **WHEN** a client creates a complete-case management with
   `statusManagementId` equal to the workflow INITIAL node status
-- **THEN** the system creates the gestión and records History for the
+- **THEN** the system creates the management and records History for the
   initial status
 
 #### Scenario: Complete-case create with status outside the workflow is rejected
 
-- **WHEN** a client creates a complete-case gestión whose tipo de trámite
+- **WHEN** a client creates a complete-case management whose `ProcedureType`
   has a workflow, but `statusManagementId` is not any node in that workflow
-- **THEN** the system responds 400 and does not create the gestión
+- **THEN** the system responds 400 and does not create the management
 
 ### Requirement: Legal next destinations via workflow-trace
 
-The system SHALL expose legal next destinations for a gestión by
+The system SHALL expose legal next destinations for a management by
 `GET /api/v1/managements/{id}/workflow-trace`: clients derive valid
 destination statuses from `transitions` whose `originNodeId` matches the
-current node (the node whose status equals `currentStatus`). The gestiones
+current node (the node whose status equals `currentStatus`). The managements
 UI MUST offer only those destinations when changing status.
 
 #### Scenario: Workflow-trace lists transitions usable as legal next states
 
 - **WHEN** a client requests `GET /api/v1/managements/{id}/workflow-trace` for
-  a gestión with a workflow and current status on a node that has outbound
+  a management with a workflow and current status on a node that has outbound
   transitions
 - **THEN** the response includes those transitions and nodes so the client
   can compute valid destinations without an unfiltered status catalog

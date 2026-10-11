@@ -26,5 +26,5 @@ runtime:
       code: |-
           test("Status 400", function () { expect(res.getStatus()).to.equal(400); });
           test("Names workflowDefinitionId", function () {
-            expect(res.getBody().message).to.contain('workflowDefinitionId: es obligatorio');
+            expect(res.getBody().message).to.contain('workflowDefinitionId: is required');
           });

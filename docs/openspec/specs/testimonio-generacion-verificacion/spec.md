@@ -2,60 +2,60 @@
 
 ## Purpose
 
-Provides the business actions to generate a testimonio from a signed
-escritura (CU07), verify it (CU08), and issue its printed copy (RF-94).
+Provides the business actions to generate a testimony from a signed
+deed (CU07), verify it (CU08), and issue its printed copy (RF-94).
 
 ## Requirements
 
-### Requirement: Generar testimonio a partir de escritura firmada
-El sistema SHALL permitir generar un testimonio solo a partir de una
-escritura en estado "Firmada", según CU07 y RF-31. SHALL rechazar la
-generación si la escritura de origen no está firmada.
+### Requirement: Generate a testimony from a signed deed
+The system SHALL allow generating a testimony only from a
+deed in status "Firmada", per CU07 and RF-31. It SHALL reject
+generation when the source deed is not signed.
 
-#### Scenario: Generación exitosa desde escritura firmada
-- **WHEN** el Escribano genera un testimonio a partir de una escritura en
-  estado "Firmada"
-- **THEN** el sistema crea el testimonio vinculado a esa escritura y
-  responde con el testimonio creado
+#### Scenario: Successful generation from a signed deed
+- **WHEN** the notary (Escribano) generates a testimony from a deed in
+  status "Firmada"
+- **THEN** the system creates the testimony linked to that deed and
+  responds with the created testimony
 
-#### Scenario: Rechazo de generación desde escritura no firmada
-- **WHEN** el Escribano intenta generar un testimonio a partir de una
-  escritura que no está en estado "Firmada"
-- **THEN** el sistema rechaza la operación sin crear el testimonio y
-  responde con un error que indica que la escritura no está firmada
+#### Scenario: Rejection when generating from an unsigned deed
+- **WHEN** the notary (Escribano) tries to generate a testimony from a
+  deed that is not in status "Firmada"
+- **THEN** the system rejects the operation without creating the testimony and
+  responds with an error that the deed is not signed
 
-### Requirement: Verificar testimonio generado
-El sistema SHALL permitir verificar un testimonio ya generado, registrando
-si quedó observado y, de ser así, el motivo de la observación, según CU08.
+### Requirement: Verify a generated testimony
+The system SHALL allow verifying a testimony that was already generated, recording
+whether it was marked Observado and, when it was, the reason, per CU08.
 
-#### Scenario: Verificación sin observaciones
-- **WHEN** el Escribano verifica un testimonio generado y no reporta
-  observaciones
-- **THEN** el sistema marca el testimonio como verificado y no observado
+#### Scenario: Verification with no notes
+- **WHEN** the notary (Escribano) verifies a generated testimony and reports
+  no notes
+- **THEN** the system marks the testimony as verified and not observed
 
-#### Scenario: Verificación con observaciones
-- **WHEN** el Escribano verifica un testimonio generado y reporta un
-  motivo de observación
-- **THEN** el sistema marca el testimonio como verificado y observado,
-  registrando el motivo informado
+#### Scenario: Verification with notes
+- **WHEN** the notary (Escribano) verifies a generated testimony and reports
+  an observation reason
+- **THEN** the system marks the testimony as verified and Observado,
+  recording the reason provided
 
-#### Scenario: Rechazo de verificación de testimonio inexistente
-- **WHEN** se intenta verificar un testimonio cuyo identificador no existe
-- **THEN** el sistema rechaza la operación y responde con un error de
-  recurso no encontrado
+#### Scenario: Rejection when verifying a testimony that does not exist
+- **WHEN** verifying a testimony is attempted whose identifier does not exist
+- **THEN** the system rejects the operation and responds with a
+  resource-not-found error
 
-### Requirement: Emitir copia impresa del testimonio verificado
-El sistema SHALL permitir emitir una copia impresa (PDF) de un testimonio
-solo después de que haya sido verificado, según RF-94, reutilizando el
-patrón de generación de reportes ya existente.
+### Requirement: Issue a printed copy of the verified testimony
+The system SHALL allow issuing a printed copy (PDF) of a testimony
+only after it has been verified, per RF-94, reusing the
+existing report-generation pattern.
 
-#### Scenario: Emisión de copia PDF de testimonio verificado
-- **WHEN** el Escribano solicita la copia impresa de un testimonio ya
-  verificado
-- **THEN** el sistema genera y devuelve el documento PDF de la copia
+#### Scenario: Issue a PDF copy of a verified testimony
+- **WHEN** the notary (Escribano) requests the printed copy of a testimony that
+  is already verified
+- **THEN** the system generates and returns the PDF of the copy
 
-#### Scenario: Rechazo de emisión de copia de testimonio no verificado
-- **WHEN** el Escribano solicita la copia impresa de un testimonio que
-  todavía no fue verificado
-- **THEN** el sistema rechaza la operación y responde con un error que
-  indica que el testimonio no está verificado
+#### Scenario: Rejection when issuing a copy of an unverified testimony
+- **WHEN** the notary (Escribano) requests the printed copy of a testimony that
+  has not been verified yet
+- **THEN** the system rejects the operation and responds with an error that
+  the testimony is not verified

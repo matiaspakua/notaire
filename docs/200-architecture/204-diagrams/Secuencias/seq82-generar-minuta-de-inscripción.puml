@@ -2,28 +2,28 @@
 !theme plain
 title CU82 — Generar Minuta de Inscripción
 
-actor "Gestor" as Actor
-participant "Sistema Notaire" as Sistema
+actor "Clerk (Gestor)" as Actor
+participant "Notaire system" as System
 
-Actor -> Actor : El Gestor solicita generar la minuta de inscripción para una gestión de inmuebles.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Recupera los datos de la escritura, partes e inmuebles (CU69).
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor verifica los datos registrales (matrícula, tomo/folio, nomenclatura, valuación).
-Sistema -> Sistema : Gestor
-Actor -> Actor : Valida la completitud de los campos requeridos por la autoridad registral.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor confirma la generación de la Minuta de Inscripción.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Genera el documento oficial con número identificador y habilita impresión en formulario normalizado.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor presenta el testimonio junto con la minuta ante el Registro de la Propiedad.
-Sistema -> Sistema : Gestor
-Actor -> Actor : Registra la fecha de presentación y número de entrada registral, cambia estado a "Presentado".
-Sistema -> Sistema : Sistema
-Actor -> Actor : El organismo registral procesa y devuelve el testimonio inscripto.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Gestor registra fecha de recepción, número de inscripción y observaciones del registro (CU56).
-Sistema -> Sistema : Gestor
+Actor -> Actor : The clerk (Gestor) requests generation of the registration memorandum for a property management.
+System -> System : Clerk
+Actor -> Actor : Loads the deed, party, and property data (CU69).
+System -> System : System
+Actor -> Actor : The clerk (Gestor) checks the registry data (registration number, volume/folio, cadastral code, valuation).
+System -> System : Clerk
+Actor -> Actor : Validates that the fields required by the registry authority are complete.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) confirms generation of the registration memorandum.
+System -> System : Clerk
+Actor -> Actor : Generates the official document with an identifier and enables printing on the standard form.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) files the testimony together with the memorandum at the property registry.
+System -> System : Clerk
+Actor -> Actor : Records the filing date and registry entry number, and changes the status to "Presentado".
+System -> System : System
+Actor -> Actor : The registry authority processes it and returns the registered testimony.
+System -> System : System
+Actor -> Actor : The clerk (Gestor) records the receipt date, registration number, and registry notes (CU56).
+System -> System : Clerk
 
 @enduml

@@ -3,19 +3,19 @@
 title CU56 — Buscar Folios
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano requiere utilizar o modificar un folio.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Número de registro de escribano; Año)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los datos.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Busca y devuelve una lista de folios.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona uno o varios folios.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Indica: (Número de folios; Año; Estado actual)
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) needs to use or modify a folio.
+System -> System : Escribano
+Actor -> Actor : Requests: (Notary register number (Escribano); Year)
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the data.
+System -> System : Escribano
+Actor -> Actor : Looks up and returns a list of folios.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects one or more folios.
+System -> System : Escribano
+Actor -> Actor : Indicates: (Folio count; Year; Current status)
+System -> System : System
 
 @enduml

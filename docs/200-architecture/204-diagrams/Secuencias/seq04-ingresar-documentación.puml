@@ -3,19 +3,19 @@
 title CU04 — Ingresar documentación
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano busca una gestión abierta.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra la lista de gestiones disponibles.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano selecciona una gestión.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Muestra la documentación requerida y presentada.
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los documentos presentados.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra los documentos presentados.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) looks up an open management.
+System -> System : Escribano
+Actor -> Actor : Shows the list of available managements.
+System -> System : System
+Actor -> Actor : The notary (Escribano) selects a management.
+System -> System : Escribano
+Actor -> Actor : Shows the required and submitted documentation.
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the submitted documents.
+System -> System : Escribano
+Actor -> Actor : Records the submitted documents.
+System -> System : System
 
 @enduml

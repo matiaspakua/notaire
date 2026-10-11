@@ -3,15 +3,15 @@
 title CU26 — Ingresar nuevo tipo de trámite
 
 actor "Escribano" as Actor
-participant "Sistema Notaire" as Sistema
+participant "Notaire system" as System
 
-Actor -> Actor : El Escribano decide dar de alta un nuevo tipo de trámite.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Solicita: (Nombre; Si requiere inscripción; Si se archiva; Si se asocia con inmuebles; Observaciones; Lista de documentos)
-Sistema -> Sistema : Sistema
-Actor -> Actor : El Escribano ingresa los datos solicitados.
-Sistema -> Sistema : Escribano
-Actor -> Actor : Registra los datos ingresados, creando un nuevo tipo de trámite.
-Sistema -> Sistema : Sistema
+Actor -> Actor : The notary (Escribano) decides to register a new procedure type.
+System -> System : Escribano
+Actor -> Actor : Requests: (Name; Whether registration is required; Whether it is archived; Whether it is linked to properties; Notes; Document list)
+System -> System : System
+Actor -> Actor : The notary (Escribano) enters the requested data.
+System -> System : Escribano
+Actor -> Actor : Records the entered data and creates a new procedure type.
+System -> System : System
 
 @enduml

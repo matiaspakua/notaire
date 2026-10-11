@@ -2,29 +2,29 @@
 
 ## Purpose
 
-Permite emitir, en formato PDF, el comprobante de pago que CU15 exige entregar
-al cliente al cierre de una gestión de cobranza.
+Allows issuing, as a PDF, the payment receipt that CU15 requires handing
+to the client when a collection management is closed.
 
 ## Requirements
 
-### Requirement: Emitir recibo de un pago existente
-El sistema SHALL generar un PDF de recibo para un pago ya persistido,
-detallando el cliente que abona, la fecha de pago, el/los concepto(s)
-abonado(s) y el total abonado.
+### Requirement: Issue a receipt for an existing payment
+The system SHALL generate a receipt PDF for a payment that is already
+stored, detailing the client who pays, the payment date, the concept or
+concepts paid, and the amount paid.
 
-#### Scenario: Recibo de un pago simple
-- **WHEN** se solicita el recibo de un `idPago` existente cuyo presupuesto
-  tiene un cliente e ítems asociados
-- **THEN** el sistema responde `200 OK` con `Content-Type: application/pdf`
-  cuyo contenido incluye el nombre del cliente, la fecha del pago, el nombre
-  de al menos un ítem del presupuesto y el monto del pago
+#### Scenario: Receipt for a simple payment
+- **WHEN** the receipt is requested for an existing `{idPayment}` whose budget
+  has a client and associated items
+- **THEN** the system responds `200 OK` with `Content-Type: application/pdf`
+  whose content includes the client name, the payment date, the name
+  of at least one budget item, and the payment amount
 
-#### Scenario: Recibo de un pago parcial o en cuotas
-- **WHEN** se solicita el recibo de un pago que corresponde a una cuota
-  parcial de un presupuesto con saldo pendiente
-- **THEN** el recibo muestra el monto de esa cuota (el `monto` del pago),
-  no el total del presupuesto
+#### Scenario: Receipt for a partial payment or an installment
+- **WHEN** the receipt is requested for a payment that is a partial
+  installment of a budget with an outstanding balance
+- **THEN** the receipt shows that installment's amount (the payment `amount`),
+  not the budget total. The download name stays `recibo_pago_{idPayment}.pdf`
 
-#### Scenario: Recibo de un pago inexistente
-- **WHEN** se solicita el recibo de un `idPago` que no existe
-- **THEN** el sistema responde `404 Not Found`
+#### Scenario: Receipt for a payment that does not exist
+- **WHEN** the receipt is requested for an `{idPayment}` that does not exist
+- **THEN** the system responds `404 Not Found`

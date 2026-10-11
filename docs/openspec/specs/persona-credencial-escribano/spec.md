@@ -2,29 +2,29 @@
 
 ## Purpose
 
-Da a la pantalla de personas un lugar dedicado para dar de alta o modificar
-la credencial de escribano de una persona (`registroEscribano`), que ya
-existe en el modelo de datos pero no es gestionable desde la UI (CU48,
+Gives the people screen a dedicated place to register or modify
+a person's notary credential (`notaryRegistrationNumber`), which
+already exists on the data model but cannot be managed from the UI (CU48,
 CU51).
 
 ## Requirements
 
-### Requirement: Dar de alta el registro de escribano desde personas
-El sistema SHALL permitir ingresar el número de registro de escribano de una
-persona existente desde la pantalla de personas, según CU48.
+### Requirement: Register the notary number from the people screen
+The system SHALL allow entering the notary registration number of an
+existing person from the people screen, per CU48.
 
-#### Scenario: Alta de registro de escribano
-- **WHEN** un usuario busca una persona existente sin número de registro de
-  escribano y le asigna uno
-- **THEN** el sistema guarda el número de registro de escribano en esa
-  persona
+#### Scenario: Register a notary number
+- **WHEN** a user looks up an existing person with no notary registration
+  number and assigns one
+- **THEN** the system stores the notary registration number on that
+  person in `notaryRegistrationNumber`
 
-### Requirement: Modificar el registro de escribano desde personas
-El sistema SHALL permitir modificar el número de registro de escribano de
-una persona que ya lo tiene, desde la pantalla de personas, según CU51.
+### Requirement: Modify the notary number from the people screen
+The system SHALL allow modifying the notary registration number of
+a person who already has one, from the people screen, per CU51.
 
-#### Scenario: Modificación de registro de escribano
-- **WHEN** un usuario busca una persona que ya tiene un número de registro
-  de escribano y lo modifica
-- **THEN** el sistema guarda el nuevo número de registro de escribano en esa
-  persona
+#### Scenario: Modify a notary number
+- **WHEN** a user looks up a person who already has a notary registration
+  number and changes it
+- **THEN** the system stores the new notary registration number on that
+  person in `notaryRegistrationNumber`
