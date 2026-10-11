@@ -1,6 +1,6 @@
 /**
  * Unit tests for dashboard primary navigation (#1058).
- * Gate 2: written to fail until Suplencias/Reportes nav + canonical redirects exist.
+ * Gate 2: written to fail until the substitutions and reports nav and canonical redirects exist.
  */
 import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
@@ -14,14 +14,14 @@ import enMessages from "../../../messages/en.json";
 import nextConfig from "../../../next.config";
 
 describe("DASHBOARD_NAV_ITEMS (#1058)", () => {
-  it("exposes Suplencias at the canonical route", () => {
+  it("exposes substitutions at the canonical route", () => {
     const item = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "suplencias");
     expect(item).toBeDefined();
     expect(item?.href).toBe("/dashboard/substitutions");
     expect(item?.adminOnly).toBeFalsy();
   });
 
-  it("exposes Reportes at the canonical route", () => {
+  it("exposes reports at the canonical route", () => {
     const item = DASHBOARD_NAV_ITEMS.find((n) => n.labelKey === "reportes");
     expect(item).toBeDefined();
     expect(item?.href).toBe("/dashboard/reports");

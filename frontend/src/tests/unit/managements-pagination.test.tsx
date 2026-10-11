@@ -62,7 +62,7 @@ describe("useManagementsPage (#1340)", () => {
   });
 });
 
-describe("GestionesPage (#1340)", () => {
+describe("ManagementsPage (#1340)", () => {
   beforeEach(() => {
     mockFetch.mockReset();
     mockReplace.mockReset();

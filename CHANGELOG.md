@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English API coverage notes and leftover test titles** (#1490, CU75):
+  Bruno descriptions and `COVERAGE.md` filter notes use the live English
+  paths (`person`, `search`, `management`, `budget`, `current-status`,
+  `procedure-types`). Copy failure logs say `copy`. Test suite titles use
+  Managements, Deeds, and People. Stored catalog samples such as `Protocolo`
+  stay.
 - **English persistence messages and update locals** (#1490, CU75):
   budget-template conflict errors, payment and template failure logs, and
   persistence `println` lines are English. Update flags use `updated`.

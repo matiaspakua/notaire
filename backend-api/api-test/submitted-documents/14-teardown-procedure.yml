@@ -4,7 +4,7 @@ info:
   seq: 15
   description: |-
       ## Teardown — DELETE /api/v1/procedures/{id}
-      Removes the trámite from 00-setup-procedure; its document was deleted by
+      Removes the procedure from 00-setup-procedure; its document was deleted by
       06-delete.
       Traceability: CU04 / CU72 (#655)
 http:

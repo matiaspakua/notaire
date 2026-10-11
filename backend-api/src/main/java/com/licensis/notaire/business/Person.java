@@ -463,7 +463,7 @@ public class Person implements Serializable, Persistable<Integer> {
 
     public void setAttributes(DtoPerson dtoPerson) {
 
-        // Version of the objeto
+        // Version of the object
         this.setVersion(dtoPerson.getVersion());
 
         this.setFirstName(dtoPerson.getFirstName());

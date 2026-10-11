@@ -62,7 +62,7 @@ function sentBodies(method: string) {
     .map(([, init]) => JSON.parse(String((init as RequestInit).body)));
 }
 
-describe("PersonasPage identification type (#1361)", () => {
+describe("PeoplePage identification type (#1361)", () => {
   beforeEach(() => {
     mockFetch.mockReset();
     mockFetch.mockImplementation(routeFetch);

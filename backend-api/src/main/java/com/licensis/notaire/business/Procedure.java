@@ -291,7 +291,7 @@ public class Procedure implements Serializable, Persistable<Integer> {
 
         DtoPerson dtoPerson = new DtoPerson();
 
-        // Version of the objeto
+        // Version of the object
         dtoPerson.setVersion(person.getVersion());
         dtoPerson.setId(person.getPersonId());
         dtoPerson.setFirstName(person.getFirstName());

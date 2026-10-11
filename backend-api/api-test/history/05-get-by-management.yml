@@ -22,11 +22,11 @@ runtime:
       code: |-
           const baseUrl = bru.getEnvVar('base_url');
           const managementId = bru.getVar('history_management_id');
-          const bitacora = await axios.get(
+          const history = await axios.get(
             `${baseUrl}/api/v1/managements/${managementId}/history`,
             { headers: { Authorization: `Bearer ${bru.getVar('token')}` } }
           );
-          bru.setVar('history_bitacora_ids', JSON.stringify(bitacora.data.map((h) => h.idHistory)));
+          bru.setVar('history_ids', JSON.stringify(history.data.map((h) => h.idHistory)));
     - type: tests
       code: |-
           test("Status 200 OK", function () { expect(res.getStatus()).to.equal(200); });
@@ -43,7 +43,7 @@ runtime:
               expect(prev < cur || (prev === cur && rows[i - 1].idHistory < rows[i].idHistory)).to.be.true;
             }
           });
-          test("#1383 bitácora endpoint returns the same order", function () {
+          test("#1383 history endpoint returns the same order", function () {
             const ids = res.getBody().map((h) => h.idHistory);
-            expect(JSON.parse(bru.getVar('history_bitacora_ids'))).to.deep.equal(ids);
+            expect(JSON.parse(bru.getVar('history_ids'))).to.deep.equal(ids);
           });

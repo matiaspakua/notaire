@@ -56,7 +56,7 @@ describe("usePeoplePage (#1340)", () => {
   });
 });
 
-describe("PersonasPage (#1340)", () => {
+describe("PeoplePage (#1340)", () => {
   beforeEach(() => {
     mockFetch.mockReset();
     mockReplace.mockReset();
@@ -87,7 +87,7 @@ describe("PersonasPage (#1340)", () => {
   });
 });
 
-describe("PersonasPage out-of-range page (#1340)", () => {
+describe("PeoplePage out-of-range page (#1340)", () => {
   beforeEach(() => {
     mockFetch.mockReset();
     mockReplace.mockReset();

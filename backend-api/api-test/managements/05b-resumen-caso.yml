@@ -3,7 +3,7 @@ info:
   type: http
   seq: 7
   description: |-
-      A gestión without trámites has no escrituras (#774).
+      A management without procedures has no deeds (#774).
       Traceability: CU07; CU11; CU12; CU70
 http:
   method: GET
@@ -17,7 +17,7 @@ runtime:
   scripts:
     - type: tests
       code: |-
-          test("Status 200 with the gestión header and no deeds", function () {
+          test("Status 200 with the management header and no deeds", function () {
             expect(res.getStatus()).to.equal(200);
             expect(res.getBody().managementId).to.equal(parseInt(bru.getVar('mgmt_id'), 10));
             expect(res.getBody().deeds).to.be.an('array').that.is.empty;

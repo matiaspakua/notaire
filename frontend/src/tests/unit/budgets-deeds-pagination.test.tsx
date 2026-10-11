@@ -106,7 +106,7 @@ describe("BudgetsPage (#1340)", () => {
   });
 });
 
-describe("EscriturasPage (#1340)", () => {
+describe("DeedsPage (#1340)", () => {
   beforeEach(() => { mockPathname = "/dashboard/deeds"; });
 
   it("renders the server page with the footer and never asks for size=1000", async () => {

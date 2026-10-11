@@ -148,7 +148,7 @@ public class CopyController {
             entity = service.save(entity);
             return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(entity));
         } catch (Exception e) {
-            log.error("Failed to create copia", e);
+            log.error("Failed to create copy", e);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -166,7 +166,7 @@ public class CopyController {
                 service.save(existing);
                 return ResponseEntity.ok().<Void>build();
             } catch (Exception e) {
-                log.error("Failed to update copia id {}", id, e);
+                log.error("Failed to update copy id {}", id, e);
                 return ResponseEntity.internalServerError().<Void>build();
             }
         }).orElse(ResponseEntity.notFound().build());
@@ -186,7 +186,7 @@ public class CopyController {
             service.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("Failed to delete copia id {}", id, e);
+            log.error("Failed to delete copy id {}", id, e);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

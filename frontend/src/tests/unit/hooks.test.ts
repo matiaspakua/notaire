@@ -81,11 +81,11 @@ describe("TypeScript type shape contracts", () => {
   it("AuditRecord uses idAuditRecord and operationDetail", () => {
     const r: AuditRecord = {
       idAuditRecord: 100,
-      operationDetail: "Creó gestión #45",
-      module: "Gestiones",
+      operationDetail: "Created management #45",
+      module: "Managements",
     };
     expect(r.idAuditRecord).toBe(100);
-    expect(r.operationDetail).toBe("Creó gestión #45");
+    expect(r.operationDetail).toBe("Created management #45");
   });
 
   it("Folio has number and fkIdFolioType", () => {
