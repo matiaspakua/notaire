@@ -43,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English payment, template, and property-appraisal requirement prose** (#1490, CU75):
+  `pago-limite-saldo-pendiente`, `pago-presupuesto-picker-saldo`, `pagos`,
+  `presupuesto-from-template`, `procedure-fk-hydration`, and
+  `inmueble-valuacion-fiscal` state requirements in English. Spec ids stay.
+  Live names stay: `amount`, `pendingBalance`, `paymentMethod`, `idBudget`,
+  `procedureTypeId`, `fiscalAppraisal`, and `properties.fiscal_valuation`.
+  Stored label `Efectivo` stays, along with the message keys `saldoExcedido`
+  and `saldo.pending`. Official titles `Procesar pago` and
+  `Gestión de Inmuebles` stay. Stored deed status `Firmada` stays.
 - **English authorization, payment-summary, and archive requirement prose** (#1490, CU75):
   `api-authorization`, `pago-presupuesto-gestion-summary`,
   `presupuesto-tramite-relation`, `gestion-asignacion-suplencia`,

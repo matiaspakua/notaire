@@ -42,6 +42,12 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "gestion-asignacion-suplencia",
             "deed-management-entity-null-safety",
             "gestion-archive-debt-check",
+            "pago-limite-saldo-pendiente",
+            "pago-presupuesto-picker-saldo",
+            "pagos",
+            "presupuesto-from-template",
+            "procedure-fk-hydration",
+            "inmueble-valuacion-fiscal",
         ):
             path = SPECS / spec_id / "spec.md"
             text = path.read_text(encoding="utf-8")
@@ -320,6 +326,60 @@ class OpenSpecRequirementsEnglishTest(unittest.TestCase):
             "saldo pendiente",
         ):
             self.assertNotIn(retired, finance, retired)
+        limit = (SPECS / "pago-limite-saldo-pendiente" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`amount`", limit)
+        self.assertIn("`pendingBalance`", limit)
+        self.assertIn("`Budget`", limit)
+        self.assertIn("409", limit)
+        self.assertIn("CU15", limit)
+        picker = (SPECS / "pago-presupuesto-picker-saldo" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`Budget`", picker)
+        self.assertIn("`pendingBalance`", picker)
+        self.assertIn("saldoExcedido", picker)
+        self.assertIn("CU15", picker)
+        payments = (SPECS / "pagos" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`paymentMethod`", payments)
+        self.assertIn('"Efectivo"', payments)
+        self.assertIn("`Budget`", payments)
+        self.assertIn("POST /api/v1/payments", payments)
+        self.assertIn("Procesar pago", payments)
+        template = (SPECS / "presupuesto-from-template" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`Budget`", template)
+        self.assertIn("`Item`", template)
+        self.assertIn("POST /api/v1/budgets/{id}/items-from-template", template)
+        self.assertIn("`procedureTypeId`", template)
+        self.assertIn("CU01", template)
+        hydration = (SPECS / "procedure-fk-hydration" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`idBudget`", hydration)
+        self.assertIn('"Firmada"', hydration)
+        self.assertIn("POST /api/v1/procedures", hydration)
+        self.assertIn("CU82", hydration)
+        appraisal = (SPECS / "inmueble-valuacion-fiscal" / "spec.md").read_text(encoding="utf-8")
+        self.assertIn("`fiscalAppraisal`", appraisal)
+        self.assertIn("fiscal_valuation", appraisal)
+        self.assertIn("POST /api/v1/properties", appraisal)
+        self.assertIn("Gestión de Inmuebles", appraisal)
+        collection = "\n".join(
+            (SPECS / spec_id / "spec.md").read_text(encoding="utf-8")
+            for spec_id in (
+                "pago-limite-saldo-pendiente",
+                "pago-presupuesto-picker-saldo",
+                "pagos",
+                "presupuesto-from-template",
+                "procedure-fk-hydration",
+                "inmueble-valuacion-fiscal",
+            )
+        )
+        for retired in (
+            "El sistema SHALL",
+            "`monto`",
+            "`Presupuesto`",
+            "metodoPago",
+            "valuacionFiscal",
+            "trámite",
+            "saldo pendiente",
+        ):
+            self.assertNotIn(retired, collection, retired)
 
 
 if __name__ == "__main__":
