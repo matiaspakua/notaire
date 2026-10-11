@@ -217,7 +217,7 @@ class ProcedureEntityTest {
             typeDto.setName("Compraventa");
             DtoProcedure dto = new DtoProcedure();
             dto.setIdProcedure(10);
-            dto.setNotes("obs");
+            dto.setNotes("notes");
             dto.setProcedureType(typeDto);
             return dto;
         }

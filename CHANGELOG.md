@@ -64,6 +64,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English date parameters and note fixtures** (#1490, CU75): date
+  checks use `startDate`, `endDate`, and `today`. Note fixtures use
+  `notes`. Substitution comments name the notary and substitute and the
+  start and end date range. The tracker case degrades without
+  post-signing nodes. Punctuation checks `¿` and `¡` stay, along with
+  the visible labels `Suplencias`, `nueva suplencia`, and `registrada`,
+  the nav key `suplencias`, and the stored statuses `Testimonio Generado`
+  and `Gestion con Escritura Firmada`.
 - **English sample names** (#1490, CU75): budget and people fixtures
   use `Ana Latest` and `Bruno Recent`. Person validation uses `Other`,
   `Duplicate`, and `New`. Summary fixtures use `Summary IT`,

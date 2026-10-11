@@ -196,7 +196,7 @@ class EntitiesBasicTest {
             c1.setNumber(5);
             c1.setDatePrinting(d);
             c1.setDateWithdrawal(d);
-            c1.setNotes("obs");
+            c1.setNotes("notes");
             c1.setVersion(1);
             c1.setFolioList(new ArrayList<>());
             c1.setFkIdPerson(new Person());
@@ -208,7 +208,7 @@ class EntitiesBasicTest {
             assertThat(c1.getIdCopy()).isEqualTo(10);
             assertThat(c1.getDatePrinting()).isEqualTo(d);
             assertThat(c1.getDateWithdrawal()).isEqualTo(d);
-            assertThat(c1.getNotes()).isEqualTo("obs");
+            assertThat(c1.getNotes()).isEqualTo("notes");
             assertThat(c1.getVersion()).isEqualTo(1);
             assertThat(c1.getFolioList()).isEmpty();
             assertThat(c1.getFkIdPerson()).isNotNull();
@@ -240,7 +240,7 @@ class EntitiesBasicTest {
             f1.setNumber(101);
             f1.setYear(2025);
             f1.setStatus("Used");
-            f1.setNotes("obs");
+            f1.setNotes("notes");
             f1.setVersion(1);
             f1.setCopyList(new ArrayList<>());
             f1.setFolioCopiesCollection(new ArrayList<>());
@@ -253,7 +253,7 @@ class EntitiesBasicTest {
             f1.setFkIdFolioType(tf);
 
             assertThat(f1.getIdFolio()).isEqualTo(5);
-            assertThat(f1.getNotes()).isEqualTo("obs");
+            assertThat(f1.getNotes()).isEqualTo("notes");
             assertThat(f1.getFkIdNotaryPerson()).isSameAs(notary);
             assertThat(f1.getFkIdFolioType()).isSameAs(tf);
             assertThat(f1.getFkIdDeed()).isNull();
@@ -268,7 +268,7 @@ class EntitiesBasicTest {
             dto.setNumber(5);
             dto.setYear(2022);
             dto.setStatus("New");
-            dto.setNotes("obs");
+            dto.setNotes("notes");
             dto.setVersion(1);
 
             Folio target = new Folio();
@@ -348,14 +348,14 @@ class EntitiesBasicTest {
             assertThat(h3.getDate()).isEqualTo(d);
 
             h1.setIdHistory(3);
-            h1.setNotes("obs");
+            h1.setNotes("notes");
             h1.setVersion(1);
             h1.setDate(d);
             ManagementStatus ed = new ManagementStatus(1);
             h1.setFkIdManagementStatus(ed);
             h1.setFkIdManagement(null);
             assertThat(h1.getIdHistory()).isEqualTo(3);
-            assertThat(h1.getNotes()).isEqualTo("obs");
+            assertThat(h1.getNotes()).isEqualTo("notes");
             assertThat(h1.getVersion()).isEqualTo(1);
             assertThat(h1.getFkIdManagementStatus()).isSameAs(ed);
 
@@ -440,13 +440,13 @@ class EntitiesBasicTest {
             i1.setCadastralDesignation("N-1");
             i1.setFiscalAppraisal(new java.math.BigDecimal("10000"));
             i1.setAddress("Address");
-            i1.setNotes("obs");
+            i1.setNotes("notes");
             i1.setVersion(1);
             i1.setProcedureList(new ArrayList<>());
             assertThat(i1.getCadastralDesignation()).isEqualTo("N-1");
             assertThat(i1.getFiscalAppraisal()).isEqualByComparingTo(new java.math.BigDecimal("10000"));
             assertThat(i1.getAddress()).isEqualTo("Address");
-            assertThat(i1.getNotes()).isEqualTo("obs");
+            assertThat(i1.getNotes()).isEqualTo("notes");
             assertThat(i1.getVersion()).isEqualTo(1);
             assertThat(i1.getProcedureList()).isEmpty();
 
@@ -480,14 +480,14 @@ class EntitiesBasicTest {
             i1.setName("Item1");
             i1.setValue(new java.math.BigDecimal("50"));
             i1.setPercentage(5);
-            i1.setNotes("obs");
+            i1.setNotes("notes");
             i1.setFixedConcept(true);
             i1.setVersion(1);
             i1.setFkIdBudget(null);
             assertThat(i1.getName()).isEqualTo("Item1");
             assertThat(i1.getValue()).isEqualByComparingTo(new java.math.BigDecimal("50"));
             assertThat(i1.getPercentage()).isEqualTo(5);
-            assertThat(i1.getNotes()).isEqualTo("obs");
+            assertThat(i1.getNotes()).isEqualTo("notes");
             assertThat(i1.isFixed()).isTrue();
             assertThat(i1.getVersion()).isEqualTo(1);
             assertThat(i1.getFkIdBudget()).isNull();
@@ -511,7 +511,7 @@ class EntitiesBasicTest {
 
             t1.setIdTestimony(10);
             t1.setNumber(5);
-            t1.setNotes("obs");
+            t1.setNotes("notes");
             t1.setFlagged(true);
             t1.setVersion(1);
             com.licensis.notaire.business.Deed escr = new com.licensis.notaire.business.Deed();
@@ -521,7 +521,7 @@ class EntitiesBasicTest {
             t1.setCopyList(new ArrayList<>());
             assertThat(t1.getIdTestimony()).isEqualTo(10);
             assertThat(t1.getNumber()).isEqualTo(5);
-            assertThat(t1.getNotes()).isEqualTo("obs");
+            assertThat(t1.getNotes()).isEqualTo("notes");
             assertThat(t1.getFlagged()).isTrue();
             assertThat(t1.getVersion()).isEqualTo(1);
             assertThat(t1.getFkIdDeed()).isNotNull();
@@ -562,7 +562,7 @@ class EntitiesBasicTest {
             Date d = new Date();
             m1.setIdTestimonyMovement(10);
             m1.setCardNumber(5);
-            m1.setNotes("obs");
+            m1.setNotes("notes");
             m1.setDateEntry(d);
             m1.setDateRegistration(d);
             m1.setDateExit(d);
@@ -576,7 +576,7 @@ class EntitiesBasicTest {
             assertThat(m1.getDateEntry()).isEqualTo(d);
             assertThat(m1.getDateRegistration()).isEqualTo(d);
             assertThat(m1.getDateExit()).isEqualTo(d);
-            assertThat(m1.getNotes()).isEqualTo("obs");
+            assertThat(m1.getNotes()).isEqualTo("notes");
             assertThat(m1.getVersion()).isEqualTo(1);
             assertThat(m1.getTestimony()).isSameAs(t);
 
@@ -630,13 +630,13 @@ class EntitiesBasicTest {
             BudgetTemplate p2 = new BudgetTemplate(pk1);
             assertThat(p2.getBudgetTemplatePK()).isEqualTo(pk1);
             p1.setBudgetTemplatePK(pk1);
-            p1.setNotes("obs");
+            p1.setNotes("notes");
             ProcedureType tt = new ProcedureType(1);
             p1.setProcedureType(tt);
             Concept c = new Concept(1);
             p1.setConcept(c);
             assertThat(p1.getBudgetTemplatePK()).isEqualTo(pk1);
-            assertThat(p1.getNotes()).isEqualTo("obs");
+            assertThat(p1.getNotes()).isEqualTo("notes");
             assertThat(p1.getProcedureType()).isSameAs(tt);
             assertThat(p1.getConcept()).isSameAs(c);
 
@@ -673,13 +673,13 @@ class EntitiesBasicTest {
             ProcedureTemplate t2 = new ProcedureTemplate(pk1);
             assertThat(t2.getProcedureTemplatePK()).isEqualTo(pk1);
             t1.setProcedureTemplatePK(pk1);
-            t1.setNotes("obs");
+            t1.setNotes("notes");
             ProcedureType tt = new ProcedureType(1);
             t1.setProcedureType(tt);
             DocumentType td = new DocumentType();
             t1.setDocumentType(td);
             assertThat(t1.getProcedureTemplatePK()).isEqualTo(pk1);
-            assertThat(t1.getNotes()).isEqualTo("obs");
+            assertThat(t1.getNotes()).isEqualTo("notes");
             assertThat(t1.getProcedureType()).isSameAs(tt);
             assertThat(t1.getDocumentType()).isSameAs(td);
 
@@ -789,12 +789,12 @@ class EntitiesBasicTest {
 
             t1.setIdFolioType(10);
             t1.setName("X");
-            t1.setNotes("obs");
+            t1.setNotes("notes");
             t1.setEnabled(true);
             t1.setVersion(1);
             t1.setFolioList(new ArrayList<>());
             assertThat(t1.getName()).isEqualTo("X");
-            assertThat(t1.getNotes()).isEqualTo("obs");
+            assertThat(t1.getNotes()).isEqualTo("notes");
             assertThat(t1.getEnabled()).isTrue();
             assertThat(t1.getVersion()).isEqualTo(1);
 
@@ -827,7 +827,7 @@ class EntitiesBasicTest {
 
             t1.setIdProcedureType(10);
             t1.setName("X");
-            t1.setNotes("obs");
+            t1.setNotes("notes");
             t1.setIsArchived(true);
             t1.setIsRegistered(true);
             t1.setAssociatesProperties(true);
@@ -906,13 +906,13 @@ class EntitiesBasicTest {
             assertThat(t2.getIdProcedure()).isEqualTo(1);
 
             t1.setIdProcedure(10);
-            t1.setNotes("obs");
+            t1.setNotes("notes");
             t1.setVersion(1);
             t1.setFkIdProperty(new Property(1));
             t1.setFkIdProcedureType(new ProcedureType(1));
 
             assertThat(t1.getIdProcedure()).isEqualTo(10);
-            assertThat(t1.getNotes()).isEqualTo("obs");
+            assertThat(t1.getNotes()).isEqualTo("notes");
             assertThat(t1.getVersion()).isEqualTo(1);
 
             assertThat(new Procedure(1)).isEqualTo(new Procedure(1));
@@ -1023,12 +1023,12 @@ class EntitiesBasicTest {
             s1.setIdSubstitution(10);
             s1.setDateStart(d);
             s1.setDateEnd(d);
-            s1.setNotes("obs");
+            s1.setNotes("notes");
             s1.setVersion(1);
             s1.setFkIdSubstitute(new Person());
             s1.setFkIdSubstituted(new Person());
 
-            assertThat(s1.getNotes()).isEqualTo("obs");
+            assertThat(s1.getNotes()).isEqualTo("notes");
             assertThat(s1.getVersion()).isEqualTo(1);
             assertThat(s1.getFkIdSubstitute()).isNotNull();
             assertThat(s1.getFkIdSubstituted()).isNotNull();

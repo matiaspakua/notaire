@@ -154,7 +154,7 @@ test.describe("Workflow tracker re-entry loop (#841)", () => {
     await expect(page.getByTestId("workflow-reentry-badge")).toHaveCount(0);
   });
 
-  test("degrades without post-firma nodes and without movements", async ({
+  test("degrades without post-signing nodes and without movements", async ({
     page,
   }) => {
     await stubTrace(

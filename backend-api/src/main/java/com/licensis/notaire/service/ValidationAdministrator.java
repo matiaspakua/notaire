@@ -222,11 +222,11 @@ public class ValidationAdministrator
         return result;
     }
 
-    public Boolean validateDatesAfterToday(Date dateDesde, Date dateHasta)
+    public Boolean validateDatesAfterToday(Date startDate, Date endDate)
     {
         try
         {
-            if (dateHasta.after(dateDesde))
+            if (endDate.after(startDate))
             {
                 return true;
             } else
@@ -245,13 +245,13 @@ public class ValidationAdministrator
     {
         boolean result = false;
 
-        Date actual = Calendar.getInstance().getTime();
+        Date today = Calendar.getInstance().getTime();
 
-        if (actual.before(year))
+        if (today.before(year))
         {
             result = true;
         }
-        if (year.getYear() == actual.getYear())
+        if (year.getYear() == today.getYear())
         {
             result = true;
         }
