@@ -64,6 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Retired budget id** (#1490, CU75): the engineering-sequences
+  design names the path variable CU45 still writes, `idPresupuesto`.
+  The live path variable is `idBudget`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Retired procedure-type query** (#1490, CU75): the engineering-sequences
   design names the query parameter CU39 still writes, `tipoTramiteId`.
   The live query parameter is `procedureTypeId`. The heading
