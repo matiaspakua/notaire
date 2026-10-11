@@ -93,7 +93,7 @@ test.describe("CU22/CU59 - Management redirect when a substitution is active", (
     const notary = await createPerson(page, {
       lastName: `Suplantado${uniqueId() % 100_000}`,
     });
-    const suplente = await createPerson(page, {
+    const substitute = await createPerson(page, {
       lastName: `Suplente${uniqueId() % 100_000}`,
     });
     const client = await createPerson(page, {
@@ -103,7 +103,7 @@ test.describe("CU22/CU59 - Management redirect when a substitution is active", (
 
     const hoy = new Date();
     const manana = new Date(hoy.getTime() + 24 * 60 * 60 * 1000);
-    const substitution = await createSubstitution(page, suplente.data!.personId, notary.data!.personId, {
+    const substitution = await createSubstitution(page, substitute.data!.personId, notary.data!.personId, {
       dateStart: hoy.toISOString().split("T")[0],
       dateEnd: manana.toISOString().split("T")[0],
     });

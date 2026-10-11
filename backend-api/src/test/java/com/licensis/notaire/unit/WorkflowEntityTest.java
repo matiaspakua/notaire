@@ -78,7 +78,7 @@ class WorkflowEntityTest {
         void shouldCreateInitialNodeLinkedToWorkflowAndStatus() {
             WorkflowDefinition wf = new WorkflowDefinition(1);
             ManagementStatus status = new ManagementStatus(10);
-            status.setName("Iniciado");
+            status.setName("Started");
 
             WorkflowNode node = new WorkflowNode();
             node.setWorkflowDefinition(wf);
@@ -88,7 +88,7 @@ class WorkflowEntityTest {
             node.setPositionY(200.0f);
 
             assertThat(node.getWorkflowDefinition()).isEqualTo(wf);
-            assertThat(node.getManagementStatus().getName()).isEqualTo("Iniciado");
+            assertThat(node.getManagementStatus().getName()).isEqualTo("Started");
             assertThat(node.getType()).isEqualTo(WorkflowNodeType.INITIAL);
             assertThat(node.getPositionX()).isEqualTo(100.0f);
             assertThat(node.getPositionY()).isEqualTo(200.0f);

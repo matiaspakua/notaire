@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English started status and substitute parameters** (#1490, CU75):
+  the workflow fixture status is `Started`. History creation defaults to
+  `Started`. Substitution parameters are `idSubstitute` and
+  `idSubstituted`. The redirect fixture is `substitute`. The
+  identification-type fixture is `Identity card`. Stored types `DNI` and
+  `CUIT` stay. The visible toast match `/suplente/i` stays. Stored
+  management status `Iniciada` stays.
 - **English synthetic status names** (#1490, CU75): the query fixture
   status is `STARTED`. The repository identification type is
   `Professional`. The complete-case fixtures are `Status 1360` and

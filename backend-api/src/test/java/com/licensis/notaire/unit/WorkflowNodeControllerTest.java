@@ -59,7 +59,7 @@ class WorkflowNodeControllerTest {
     private WorkflowNode buildEntity() {
         WorkflowDefinition wf = new WorkflowDefinition(1);
         ManagementStatus status = new ManagementStatus(10);
-        status.setName("Iniciado");
+        status.setName("Started");
         WorkflowNode node = new WorkflowNode();
         node.setId(1);
         node.setWorkflowDefinition(wf);

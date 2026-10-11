@@ -45,7 +45,7 @@ let deleteStatus = 204;
 function routeFetch(input: RequestInfo | URL, init?: RequestInit) {
   const url = String(input);
   const method = init?.method ?? "GET";
-  if (method === "POST") return res({ idIdentificationType: 9, name: "Cédula", characters: "10", version: 0 }, 201);
+  if (method === "POST") return res({ idIdentificationType: 9, name: "Identity card", characters: "10", version: 0 }, 201);
   if (method === "PUT") return res(undefined, 200);
   if (method === "DELETE") {
     return deleteStatus === 409
@@ -82,13 +82,13 @@ describe("Identification types admin page (#1361)", () => {
     await screen.findByText("DNI");
     fireEvent.click(screen.getByTestId("btn-new-identification-type"));
     const dialog = await screen.findByRole("dialog");
-    fireEvent.change(within(dialog).getByTestId("input-identification-type-name"), { target: { value: "  Cédula " } });
+    fireEvent.change(within(dialog).getByTestId("input-identification-type-name"), { target: { value: "  Identity card " } });
     fireEvent.change(within(dialog).getByTestId("input-identification-type-characters"), { target: { value: "10" } });
     fireEvent.click(within(dialog).getByTestId("btn-save-identification-type"));
     await waitFor(() => expect(calls("POST")).toHaveLength(1));
     const [url, init] = calls("POST")[0];
     expect(String(url)).toContain("/identification-types");
-    expect(JSON.parse(String((init as RequestInit).body))).toEqual({ name: "Cédula", characters: "10" });
+    expect(JSON.parse(String((init as RequestInit).body))).toEqual({ name: "Identity card", characters: "10" });
   });
 
   it("does not send a type without a name or a length", async () => {
@@ -96,7 +96,7 @@ describe("Identification types admin page (#1361)", () => {
     await screen.findByText("DNI");
     fireEvent.click(screen.getByTestId("btn-new-identification-type"));
     const dialog = await screen.findByRole("dialog");
-    fireEvent.change(within(dialog).getByTestId("input-identification-type-name"), { target: { value: "Cédula" } });
+    fireEvent.change(within(dialog).getByTestId("input-identification-type-name"), { target: { value: "Identity card" } });
     fireEvent.click(within(dialog).getByTestId("btn-save-identification-type"));
     await waitFor(() => expect(toastError).toHaveBeenCalled());
     expect(calls("POST")).toHaveLength(0);
