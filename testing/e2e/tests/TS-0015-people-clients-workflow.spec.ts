@@ -441,7 +441,7 @@ test.describe('CU61 - Search for a person or client', () => {
       const steps = new GherkinSteps(page)
 
       // When — lastName search that will never match
-      await page.getByTestId('input-search-lastName').fill('ZZZZNoExiste999XY')
+      await page.getByTestId('input-search-lastName').fill('ZZZZDoesNotExist999XY')
 
       // Then — empty state message
       await steps.thenElementIsVisible('no hay')

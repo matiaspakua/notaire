@@ -64,6 +64,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English person and concept fixture labels** (#1490, CU75): stubbed
+  people are `Referenced` and `Mobile`. The company fixture is
+  `Company`. The concept value is `New Concept Test`. The
+  missing-person search is `ZZZZDoesNotExist999XY`. Visible phrases
+  `No se puede eliminar`, `Error al eliminar la persona`,
+  `Nuevo concepto`, and `no hay` stay. Stored types `DNI`, `CUIT`,
+  and `Pasaporte` stay, along with statuses `INICIADA` and
+  `EFECTIVO`. The form field key `nombre` stays.
 - **English workflow fixture phrases** (#1490, CU75): the transition
   description is `Status advance`. The condition is
   `status.documentsComplete == true`. The special-character query is

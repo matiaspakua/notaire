@@ -159,7 +159,7 @@ test.describe("CU29 - Enter a new concept", () => {
 
     // When — form has Name, Descripción, and "Valor base ($)" (no "porcentaje" field)
     await steps.fillAndSubmitForm({
-      "nombre": "Nuevo Concept Test",
+      "nombre": "New Concept Test",
       "valor": "100",
     });
 
