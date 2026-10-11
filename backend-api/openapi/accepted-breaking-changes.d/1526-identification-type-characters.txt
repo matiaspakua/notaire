@@ -1,0 +1,11 @@
+# #1526 (CU17, RF-53): `characters` (the number length the person form uses) is
+# required and must be a whole number from 1 to 50. A missing value already failed
+# (the column is NOT NULL, so the API answered 500) and any text was stored. The UI
+# admin form (#1361) always sends digits; the seeded types and every Bruno, Java and
+# Playwright fixture send 8 to 12. The Owner asked for required + numeric + 400.
+POST /api/v1/identification-types the request property `characters` became required
+POST /api/v1/identification-types the `characters` request property's minLength was set to `1`
+POST /api/v1/identification-types added the pattern `^([1-9]|[1-4][0-9]|50)$` to the request property `characters`
+PUT /api/v1/identification-types/{id} the request property `characters` became required
+PUT /api/v1/identification-types/{id} the `characters` request property's minLength was set to `1`
+PUT /api/v1/identification-types/{id} added the pattern `^([1-9]|[1-4][0-9]|50)$` to the request property `characters`

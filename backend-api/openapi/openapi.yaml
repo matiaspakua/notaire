@@ -1747,11 +1747,16 @@ components:
     IdentificationTypeRequest:
       properties:
         characters:
+          description: 'Number of characters of the identification number: a whole number from 1 to 50 (issue #1526)'
+          example: '8'
+          minLength: 1
+          pattern: ^([1-9]|[1-4][0-9]|50)$
           type: string
         name:
           minLength: 1
           type: string
       required:
+      - characters
       - name
       type: object
     IdentificationTypeResponse:

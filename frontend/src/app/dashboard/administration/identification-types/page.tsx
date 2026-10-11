@@ -67,7 +67,7 @@ export default function IdentificationTypesPage() {
       toast.error(t("nameRequired"));
       return;
     }
-    if (!/^[1-9]\d?$/.test(characters)) {
+    if (!/^([1-9]|[1-4][0-9]|50)$/.test(characters)) { // same rule as the API (#1526)
       toast.error(t("charactersRequired"));
       return;
     }

@@ -1,0 +1,24 @@
+info:
+  name: Create with non-numeric characters is rejected
+  type: http
+  seq: 13
+  description: |-
+      Issue #1526: characters must be a whole number from 1 to 50; any text used to be stored.
+      Traceability: CU17 (RF #12, #38, #39)
+http:
+  method: POST
+  url: "{{base_url}}/api/v1/identification-types"
+  body:
+    type: json
+    data: |-
+        {"name":"Invalid characters 1526","characters":"abc"}
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: "Bearer {{token}}"
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+          test("Status 400 Bad Request", function () { expect(res.getStatus()).to.equal(400); });
