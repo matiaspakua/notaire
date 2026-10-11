@@ -1832,6 +1832,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Required documents seeded on complete-case** (issue #773, CU02 / CU03 / CU04 / CU72):
+  when `POST /api/v1/managements/complete-case` (or PUT that creates the first procedure)
+  confirms a trámite, the API materializes one pending `SubmittedDocument` per
+  `ProcedureTemplate` row for that procedure type (`delivered=false`, `reentered=false`).
+  Seeding is idempotent on `(procedureId, documentTypeId)` and does not wipe docs when
+  PUT only updates an existing procedure. `GET /api/v1/managements/{id}/case-summary`
+  lists the checklist; the management summary dialog shows it. Covered by
+  `RequiredDocumentationOnConfirmServiceTest`,
+  `ManagementCompleteCaseRequiredDocsIntegrationTest`, and Playwright TS-0140.
 - **Skip to content and focus on route change** (issue #1352, RNF-10, CU76): every dashboard page starts
   with a "Saltar al contenido" / "Skip to content" link that appears on the first Tab and moves focus to
   `<main id="main-content">` (WCAG 2.4.1). After a client-side navigation, focus moves to the new page's `<h1>`

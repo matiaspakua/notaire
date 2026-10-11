@@ -4,7 +4,7 @@ Narrative CU ↔ TS mapping for reviewers. **Authoritative file list and counts:
 [`INVENTORY.md`](INVENTORY.md) (generated). Master strategy:
 [`TEST-PLAN.md`](TEST-PLAN.md). Matrix: [`CU-API-MATRIX.csv`](CU-API-MATRIX.csv).
 
-Updated: 2026-10-11 (#1511) — unprefixed specs renamed to TS-0130–TS-0138.
+Updated: 2026-10-11 (#773) — TS-0140 required docs on confirm; prior tip TS-0139.
 
 ---
 
@@ -16,6 +16,7 @@ TS-0010 to TS-0035    = Core Business Workflows
 TS-0040 to TS-0051    = Quality Assurance / Technical
 TS-0060 to TS-0125    = Regression, tutorials, feature/UX suites
 TS-0130 to TS-0138    = Former unprefixed feature specs (#1511)
+TS-0139 to TS-0140    = Catalog / complete-case feature specs (#1361, #773)
 ```
 
 ---
@@ -158,6 +159,12 @@ TS-0130 to TS-0138    = Former unprefixed feature specs (#1511)
 | TS | Filename | CU Coverage | Fixture Type | Setup | Assertions | Status |
 |----|----|-------|------|-------|----------|--------|
 | **TS-0091** | `TS-0091-items-discounts-surcharges.spec.ts` | CU45, CU71 | GherkinSteps | Direct navigation | Client-side validation + report query | ✅ Passing |
+
+### Feature Tests — Required docs on confirm (TS-0140)
+
+| TS | Filename | CU Coverage | Fixture Type | Setup | Assertions | Status |
+|----|----|-------|------|-------|----------|--------|
+| **TS-0140** | `TS-0140-required-docs-on-confirm.spec.ts` | CU02, CU03, CU72 (#773) | API helpers | Template before complete-case | case-summary lists pending required doc name | ✅ Added |
 
 ---
 
