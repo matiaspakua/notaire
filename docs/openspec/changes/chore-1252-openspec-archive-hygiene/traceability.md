@@ -19,8 +19,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/chore-1252-openspec-archive-hygiene/` | seeded + filled |
 | Branch | `cursor/chore-1252-openspec-archive-hygiene-69d3` | created |
 | Tasks | `tasks.md` | Gate 1 items ticked; implement pending |
-| Commits | | pending |
-| Pull Request | | pending |
+| Commits | `f8f39d48` (Gate 1 pack) | recorded |
+| Pull Request | #1520 | open (draft) |
 | CI run | | pending |
 | Merge commit | | pending |
 | Release / tag | | pending |
