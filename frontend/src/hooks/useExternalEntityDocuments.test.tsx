@@ -30,7 +30,7 @@ function createWrapper() {
 
 describe("externalEntityDocumentKeys", () => {
   it("byManagement key includes the management id", () => {
-    expect(externalEntityDocumentKeys.byManagement(9)).toEqual(["documentosEntidadExterna", "gestion", 9]);
+    expect(externalEntityDocumentKeys.byManagement(9)).toEqual(["externalEntityDocuments", "management", 9]);
   });
 });
 
@@ -40,9 +40,9 @@ describe("useExternalEntityDocuments (CU10)", () => {
   it("fetches the management's external-entity documents via GET", async () => {
     vi.mocked(apiGet).mockResolvedValue({
       idManagement: 9,
-      numero: 1001,
-      heading: "Gestion",
-      cadastralDesignationCatastral: "11-22-33",
+      number: 1001,
+      heading: "Test management",
+      cadastralDesignation: "11-22-33",
       documents: [{ idSubmittedDocument: 1, name: "Certificado de Dominio", delivered: false }],
     });
 
@@ -74,7 +74,7 @@ describe("useRegisterExternalEntityDocumentMovement (CU10)", () => {
 
     await result.current.mutateAsync({
       managementId: 9,
-      idDocumentPresentado: 1,
+      idSubmittedDocument: 1,
       movement: { delivered: true },
     });
 

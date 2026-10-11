@@ -136,7 +136,7 @@ test.describe("First case tutorial — from setup to a notarial case", () => {
       await choose(page, "select-tipo-folio", new RegExp(tipoFolio, "i"));
       // The office's existing notary is selected from the live list; this makes the
       // tutorial usable even when no tutorial user has an Escribano role.
-      await chooseFirst(page, "select-escribano-folio");
+      await chooseFirst(page, "select-notary-folio");
       await pause(page);
       await saveDialog(page);
     });

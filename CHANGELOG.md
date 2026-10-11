@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English external-document identifiers** (#1490, CU75):
+  The external-entity document cache key is `externalEntityDocuments` /
+  `management`. The movement input is `idSubmittedDocument`. Playwright
+  create buttons use the live ids such as `btn-new-person` and
+  `btn-new-deed`. Default-locale labels such as `Nueva persona` and
+  `Certificado de Dominio` stay.
 - **English summary locals** (#1490, CU75):
   Budget and payment screens store the summary in `summary` and the
   payment state in `paymentStatus`. Message keys such as `resumen.title`,

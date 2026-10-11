@@ -32,28 +32,28 @@ interface Module {
 const SIDEBAR_MODULES: Module[] = [
   { navLabel: "Gestiones", urlPart: "/dashboard/managements", createTestId: "btn-new-management" },
   { navLabel: "Presupuestos", urlPart: "/dashboard/budgets", createTestId: "btn-new-budget" },
-  { navLabel: "Personas", urlPart: "/dashboard/people", createTestId: "btn-nueva-persona" },
+  { navLabel: "Personas", urlPart: "/dashboard/people", createTestId: "btn-new-person" },
   { navLabel: "Escrituras", urlPart: "/dashboard/deeds" },
-  { navLabel: "Pagos", urlPart: "/dashboard/payments", createTestId: "btn-nuevo-pago" },
+  { navLabel: "Pagos", urlPart: "/dashboard/payments", createTestId: "btn-new-payment" },
   { navLabel: "Protocolo", urlPart: "/dashboard/protocol" },
   { navLabel: "Inmuebles", urlPart: "/dashboard/properties" },
   { navLabel: "Copias", urlPart: "/dashboard/copies" },
-  { navLabel: "Suplencias", urlPart: "/dashboard/substitutions", createTestId: "btn-nueva-suplencia" },
+  { navLabel: "Suplencias", urlPart: "/dashboard/substitutions", createTestId: "btn-new-substitution" },
   { navLabel: "Reportes", urlPart: "/dashboard/reports" },
-  { navLabel: "Items", urlPart: "/dashboard/items", createTestId: "btn-nuevo-item" },
+  { navLabel: "Items", urlPart: "/dashboard/items", createTestId: "btn-new-item" },
   { navLabel: "Documentos", urlPart: "/dashboard/documents" },
   { navLabel: "Auditoría", urlPart: "/dashboard/audit" },
 ];
 
 /** Administración sub-pages (reached by direct navigation from the admin hub). */
 const ADMIN_MODULES: Module[] = [
-  { navLabel: "Trámites", urlPart: "/dashboard/administration/procedures", createTestId: "btn-nuevo-tipo-tramite" },
+  { navLabel: "Trámites", urlPart: "/dashboard/administration/procedures", createTestId: "btn-new-procedure-type" },
   { navLabel: "Conceptos", urlPart: "/dashboard/administration/concepts" },
-  { navLabel: "Estados de gestión", urlPart: "/dashboard/administration/management-statuses", createTestId: "btn-nuevo-estado" },
-  { navLabel: "Folios", urlPart: "/dashboard/administration/folios", createTestId: "btn-nuevo-folio" },
-  { navLabel: "Plantillas", urlPart: "/dashboard/administration/templates", createTestId: "btn-nueva-plantilla" },
-  { navLabel: "Tipos de documento", urlPart: "/dashboard/administration/documents", createTestId: "btn-nuevo-tipo-documento" },
-  { navLabel: "Usuarios", urlPart: "/dashboard/administration/users", createTestId: "btn-nuevo-usuario" },
+  { navLabel: "Estados de gestión", urlPart: "/dashboard/administration/management-statuses", createTestId: "btn-new-status" },
+  { navLabel: "Folios", urlPart: "/dashboard/administration/folios", createTestId: "btn-new-folio" },
+  { navLabel: "Plantillas", urlPart: "/dashboard/administration/templates", createTestId: "btn-new-template" },
+  { navLabel: "Tipos de documento", urlPart: "/dashboard/administration/documents", createTestId: "btn-new-document-type" },
+  { navLabel: "Usuarios", urlPart: "/dashboard/administration/users", createTestId: "btn-new-user" },
 ];
 
 /**

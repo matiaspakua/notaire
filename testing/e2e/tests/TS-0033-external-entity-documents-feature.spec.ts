@@ -16,12 +16,12 @@ import {
 async function seedManagementWithExternalEntityDocument(page: Page, nameDocument: string) {
   const person = await createPerson(page);
   const budget = await createBudget(page, person.data!.personId);
-  const estado = await createManagementStatus(page);
+  const managementStatus = await createManagementStatus(page);
   const typeProcedure = await createProcedureType(page);
   const management = await createCompleteCaseManagement(page, {
     budgetId: budget.data!.idBudget,
     notaryId: person.data!.personId,
-    statusManagementId: estado.data!.idManagementStatus,
+    statusManagementId: managementStatus.data!.idManagementStatus,
     procedureTypeId: typeProcedure.data!.idProcedureType,
   });
   const procedure = await createProcedure(page, management.data!.idManagement, typeProcedure.data!.idProcedureType);
@@ -32,7 +32,7 @@ async function seedManagementWithExternalEntityDocument(page: Page, nameDocument
   return {
     idManagement: management.data!.idManagement,
     number: management.data!.number,
-    idDocumentPresentado: document.data!.idSubmittedDocument,
+    idSubmittedDocument: document.data!.idSubmittedDocument,
   };
 }
 
@@ -42,7 +42,7 @@ test.describe("CU10 - Record movements of external-entity documentation", () => 
   });
 
   test("golden path: registering a movement updates the document and shows a success toast", async ({ page }) => {
-    const { idManagement, number, idDocumentPresentado } = await seedManagementWithExternalEntityDocument(
+    const { idManagement, number, idSubmittedDocument } = await seedManagementWithExternalEntityDocument(
       page,
       "Certificado de Dominio",
     );
@@ -58,7 +58,7 @@ test.describe("CU10 - Record movements of external-entity documentation", () => 
     await expect(detalleDialog).toBeVisible();
     await expect(detalleDialog.getByText("Certificado de Dominio")).toBeVisible();
 
-    await page.getByTestId(`btn-edit-document-${idDocumentPresentado}`).click();
+    await page.getByTestId(`btn-edit-document-${idSubmittedDocument}`).click();
     const movementDialog = page.getByTestId("dialog-movement");
     await expect(movementDialog).toBeVisible();
 
@@ -74,12 +74,12 @@ test.describe("CU10 - Record movements of external-entity documentation", () => 
   test("edge path: a management without external-entity documents shows the empty state", async ({ page }) => {
     const person = await createPerson(page);
     const budget = await createBudget(page, person.data!.personId);
-    const estado = await createManagementStatus(page);
+    const managementStatus = await createManagementStatus(page);
     const typeProcedure = await createProcedureType(page);
     const management = await createCompleteCaseManagement(page, {
       budgetId: budget.data!.idBudget,
       notaryId: person.data!.personId,
-      statusManagementId: estado.data!.idManagementStatus,
+      statusManagementId: managementStatus.data!.idManagementStatus,
       procedureTypeId: typeProcedure.data!.idProcedureType,
     });
 

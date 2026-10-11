@@ -150,7 +150,7 @@ test.describe("Icon rendering — Admin sub-pages with action icons", () => {
 
 test.describe("Icon rendering — CRUD action icons", () => {
   const crudPages = [
-    { path: "/dashboard/people", testId: "btn-nueva-persona" },
+    { path: "/dashboard/people", testId: "btn-new-person" },
     { path: "/dashboard/budgets", testId: "btn-new-budget" },
   ];
 

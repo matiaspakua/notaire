@@ -77,7 +77,7 @@ test.describe('CU17 - Register a person', () => {
   })
 
   test(
-    'CU17-GW01: btn-nueva-persona opens the form with the required fields',
+    'CU17-GW01: btn-new-person opens the form with the required fields',
     async ({ page }) => {
       // When
       await page.getByTestId('btn-new-person').click()
@@ -483,7 +483,7 @@ test.describe('People screen - responsive viewports', () => {
     )
 
     test(
-      `VP-${vp.label}: btn-nueva-persona is visible and opens the modal`,
+      `VP-${vp.label}: btn-new-person is visible and opens the modal`,
       async ({ page }) => {
         await page.setViewportSize({ width: vp.width, height: vp.height })
         await authenticateAsAdmin(page)

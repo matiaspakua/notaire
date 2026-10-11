@@ -144,7 +144,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await page.getByTestId("input-folio-number").fill(def.folioNumber);
     await choose(page, "select-estado-folio", /nuevo/i);
     await choose(page, "select-tipo-folio", new RegExp(def.tipoFolio, "i"));
-    await chooseFirst(page, "select-escribano-folio");
+    await chooseFirst(page, "select-notary-folio");
     await saveDialog(page);
   });
 
@@ -189,7 +189,7 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await chooseFirst(page, "select-notary-management");
     await chooseFirst(page, "select-status-management");
     await choose(page, "select-procedure-type-management", new RegExp(def.typeProcedure, "i"));
-    await choose(page, "select-inmueble-gestion", new RegExp(def.propertyAddress, "i"));
+    await choose(page, "select-property-management", new RegExp(def.propertyAddress, "i"));
     await saveDialog(page);
     await expect(page.getByRole("table")).toContainText(def.managementNumber);
   });
@@ -241,8 +241,8 @@ async function buildFullCase(page: Page, def: CaseDefinition): Promise<void> {
     await page.getByRole("button", { name: /nuevo documento/i }).click();
     await chooseInDialogCombobox(page, new RegExp(def.typeDocument, "i"), "select-tipo-documento");
     // The document is presented for the case's procedure (CU04, #655).
-    await chooseInDialogCombobox(page, new RegExp(`^${def.managementNumber} `), "select-gestion-documento");
-    await chooseFirst(page, "select-tramite-documento");
+    await chooseInDialogCombobox(page, new RegExp(`^${def.managementNumber} `), "select-management-document");
+    await chooseFirst(page, "select-procedure-document");
     await page.getByRole("dialog").getByLabel(/date/i).fill("2026-08-06");
     await page.getByRole("dialog").getByLabel(/document entregado/i).click();
     await saveDialog(page);

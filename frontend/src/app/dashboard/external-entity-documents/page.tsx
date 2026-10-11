@@ -80,12 +80,12 @@ function ExternalEntityDocumentsList() {
     });
   }
 
-  async function handleGuardarMovement() {
+  async function handleSaveMovement() {
     if (!selectedManagementId || !editingDocument) return;
     try {
       await registerMutation.mutateAsync({
         managementId: selectedManagementId,
-        idDocumentPresentado: editingDocument.idSubmittedDocument,
+        idSubmittedDocument: editingDocument.idSubmittedDocument,
         movement,
       });
       toast.success(t("movimientoRegistrado"));
@@ -291,7 +291,7 @@ function ExternalEntityDocumentsList() {
                 {tc("cancel")}
               </Button>
               <Button
-                onClick={handleGuardarMovement}
+                onClick={handleSaveMovement}
                 disabled={registerMutation.isPending}
                 data-testid="btn-save-movement"
               >
