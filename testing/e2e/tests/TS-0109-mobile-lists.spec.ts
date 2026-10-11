@@ -18,7 +18,7 @@ const PAGES: { route: string; api: string; paged: boolean; row: Record<string, u
     route: "/dashboard/people",
     api: "**/api/v1/people?**",
     paged: true,
-    row: { personId: ROW_ID, firstName: "Movil", lastName: "TS0109", identificationNumber: "99010901", email: "movil.ts0109@notaire.test", isClient: true },
+    row: { personId: ROW_ID, firstName: "Mobile", lastName: "TS0109", identificationNumber: "99010901", email: "mobile.ts0109@notaire.test", isClient: true },
   },
   {
     route: "/dashboard/managements",

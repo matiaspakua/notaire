@@ -79,8 +79,8 @@ test.describe("CU15 - Process a payment", () => {
   });
 
   test("CU15-SALDO-03 (#796): the balance updates when the budget selection changes", async ({ page }) => {
-    const { lastName: apellido1 } = await seedBudget(page, 50000);
-    const { lastName: apellido2 } = await seedBudget(page, 100000);
+    const { lastName: lastName1 } = await seedBudget(page, 50000);
+    const { lastName: lastName2 } = await seedBudget(page, 100000);
 
     await steps.givenUserIsOnPage("/dashboard/payments");
     await steps.whenUserClicksButton("nuevo pago");
@@ -88,8 +88,8 @@ test.describe("CU15 - Process a payment", () => {
     const budgetSelector = page.getByRole("dialog").getByRole("combobox", { name: /presupuesto/i });
     await budgetSelector.click();
     // Budget pickers search the server (#1340): type the client first.
-    await budgetSelector.fill(apellido1);
-    await page.getByRole("option", { name: new RegExp(apellido1, "i") }).click();
+    await budgetSelector.fill(lastName1);
+    await page.getByRole("option", { name: new RegExp(lastName1, "i") }).click();
 
     let balanceDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
     await expect(balanceDisplay).toBeVisible();
@@ -99,8 +99,8 @@ test.describe("CU15 - Process a payment", () => {
 
     // Budget pickers search the server (#1340): type the client first.
 
-    await budgetSelector.fill(apellido2);
-    await page.getByRole("option", { name: new RegExp(apellido2, "i") }).click();
+    await budgetSelector.fill(lastName2);
+    await page.getByRole("option", { name: new RegExp(lastName2, "i") }).click();
 
     balanceDisplay = page.getByRole("dialog").getByText(/saldo pendiente/i);
     await expect(balanceDisplay).toBeVisible();

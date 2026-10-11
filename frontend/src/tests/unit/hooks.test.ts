@@ -37,7 +37,7 @@ describe("React Query key contracts", () => {
   });
 
   describe("auditKeys", () => {
-    it("all key is ['auditoria']", () => {
+    it("all key is ['audit']", () => {
       expect(auditKeys.all).toEqual(["audit"]);
     });
 
@@ -73,7 +73,7 @@ describe("TypeScript type shape contracts", () => {
   it("BudgetTemplate uses budgetTemplatePK", () => {
     const p: BudgetTemplate = {
       budgetTemplatePK: { fkIdProcedureType: 2, fkIdConcept: 1 },
-      procedureType: { name: "Cobro base" },
+      procedureType: { name: "Base fee" },
     };
     expect(p.budgetTemplatePK?.fkIdConcept).toBe(1);
   });
@@ -92,10 +92,10 @@ describe("TypeScript type shape contracts", () => {
     const f: Folio = {
       idFolio: 1,
       number: 42,
-      fkIdFolioType: { idFolioType: 1, name: "Protocolo" },
+      fkIdFolioType: { idFolioType: 1, name: "Protocol" },
     };
     expect(f.number).toBe(42);
-    expect(f.fkIdFolioType?.name).toBe("Protocolo");
+    expect(f.fkIdFolioType?.name).toBe("Protocol");
   });
 });
 

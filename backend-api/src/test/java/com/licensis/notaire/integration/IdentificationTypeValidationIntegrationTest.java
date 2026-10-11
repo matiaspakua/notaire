@@ -31,7 +31,7 @@ class IdentificationTypeValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /type-identificacion with blank name returns 400")
+    @DisplayName("POST /identification-types with blank name returns 400")
     void shouldRejectCreateWithBlankName() throws Exception {
         mockMvc.perform(post("/api/v1/identification-types")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -42,7 +42,7 @@ class IdentificationTypeValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /type-identificacion with missing name returns 400")
+    @DisplayName("POST /identification-types with missing name returns 400")
     void shouldRejectCreateWithMissingName() throws Exception {
         mockMvc.perform(post("/api/v1/identification-types")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -53,7 +53,7 @@ class IdentificationTypeValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /type-identificacion with valid payload still succeeds")
+    @DisplayName("POST /identification-types with valid payload still succeeds")
     void shouldAcceptCreateWithValidPayload() throws Exception {
         mockMvc.perform(post("/api/v1/identification-types")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,7 +64,7 @@ class IdentificationTypeValidationIntegrationTest {
     }
 
     @Test
-    @DisplayName("PUT /type-identificacion/{id} with blank name returns 400")
+    @DisplayName("PUT /identification-types/{id} with blank name returns 400")
     void shouldRejectUpdateWithBlankName() throws Exception {
         mockMvc.perform(put("/api/v1/identification-types/1")
                         .contentType(MediaType.APPLICATION_JSON)

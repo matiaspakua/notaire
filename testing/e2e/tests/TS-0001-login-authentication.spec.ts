@@ -47,8 +47,8 @@ test.describe("TS-0001 - Login Authentication", () => {
   });
 
   test("shows error for wrong credentials", async ({ page }) => {
-    await page.getByTestId("input-username").fill("usuario_invalido");
-    await page.getByTestId("input-password").fill("contrasenia_invalida");
+    await page.getByTestId("input-username").fill("invalid_user");
+    await page.getByTestId("input-password").fill("invalid_password");
     await page.getByTestId("btn-sign-in").click();
     await expect(
       page.getByText(/incorrectos|servidor/i)

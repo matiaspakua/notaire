@@ -137,7 +137,7 @@ class RegistrationDraftServiceTest {
 
     @Test
     @DisplayName("Should reject the submission when the registration draft is not in status Generada")
-    void shouldRejectSubmissionWhenNotGenerada() {
+    void shouldRejectSubmissionWhenNotGenerated() {
         RegistrationDraft draft = buildDraft(1, BusinessConstants.RegistrationDraftSubmitted);
         when(registrationDraftRepository.findById(1)).thenReturn(Optional.of(draft));
 

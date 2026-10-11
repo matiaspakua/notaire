@@ -93,7 +93,7 @@ function AuditList() {
       render: (r) => <span className="font-medium">{r.users?.name ?? "—"}</span>,
     },
     {
-      key: "modulo",
+      key: "module",
       header: t("fields.modulo"),
       render: (r) =>
         r.module ? (
@@ -106,7 +106,7 @@ function AuditList() {
       className: "w-32",
     },
     {
-      key: "detalle",
+      key: "detail",
       header: t("fields.operacion"),
       render: (r) => (
         <span className="text-sm text-muted-foreground max-w-md truncate block" title={r.operationDetail}>

@@ -58,7 +58,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
     @BeforeEach
     void setUp() {
         IdentificationType identificationType = new IdentificationType();
-        identificationType.setName("Profesional");
+        identificationType.setName("Professional");
         identificationTypeRepository.save(identificationType);
 
         testNotary = new Person();
@@ -70,7 +70,7 @@ class DeedManagementRepositoryIntegrationTest extends RepositoryIntegrationTest 
         personRepository.save(testNotary);
 
         testStatus = new ManagementStatus();
-        testStatus.setName("INICIADO");
+        testStatus.setName("STARTED");
         testStatus = statusRepository.save(testStatus);
 
         testManagement = new DeedManagement();

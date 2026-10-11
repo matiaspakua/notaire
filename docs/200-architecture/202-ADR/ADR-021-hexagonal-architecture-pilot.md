@@ -24,7 +24,7 @@ in ADR-002 until a follow-up decision extends or rolls back this pilot.
    `PaymentService`, `BudgetResumenService` and the two management summary
    services, with slightly different null handling in each.
 
-The financial workflow (CU15 "Procesar Payment", CU47 "Consultar Estado de Payment") is
+The financial workflow (CU15 "Procesar pago", CU47 "Consultar pago") is
 the highest-value place to fix this: it has the densest business rules, it is
 fully covered by existing tests, and its REST contract is consumed by the
 dashboard, so any regression is immediately visible.

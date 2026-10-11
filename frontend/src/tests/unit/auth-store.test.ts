@@ -39,9 +39,9 @@ const adminUser: DtoLoginUser = {
   valid: true,
 };
 
-const empleadoUser: DtoLoginUser = {
+const employeeUser: DtoLoginUser = {
   idUser: 2,
-  name: "empleado1",
+  name: "employee1",
   type: "EMPLEADO",
   valid: true,
 };
@@ -103,7 +103,7 @@ describe("useAuthStore — logout()", () => {
   });
 
   it("sets role cookie on login for edge admin guard (issue #1052)", () => {
-    useAuthStore.getState().login(empleadoUser);
+    useAuthStore.getState().login(employeeUser);
     expect(document.cookie).toContain("notaire-auth-role=EMPLEADO");
   });
 });
@@ -125,7 +125,7 @@ describe("useAuthStore — isAdmin()", () => {
   });
 
   it("returns false for type EMPLEADO", () => {
-    useAuthStore.setState({ user: empleadoUser, isAuthenticated: true });
+    useAuthStore.setState({ user: employeeUser, isAuthenticated: true });
     expect(useAuthStore.getState().isAdmin()).toBe(false);
   });
 

@@ -86,6 +86,6 @@ Local mirror: `bash workspace/sdlc/preflight.sh` (`--full` for stack-backed suit
 ## References
 
 - Master Test Plan — `docs/300-development/303-testing/TEST-PLAN.md`
-- Specialization guidelines (QA Automation / MTP / pirámide / trazabilidad)
+- Specialization guidelines (QA Automation / MTP / pyramid / traceability)
 - [Testing Trophy (Kent C. Dodds)](https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications)
 - [Playwright](https://playwright.dev/docs/intro) · [Testcontainers](https://java.testcontainers.org/)

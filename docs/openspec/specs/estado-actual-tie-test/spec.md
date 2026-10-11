@@ -14,7 +14,7 @@ is removed from the endpoint.
 
 #### Scenario: The tie test passes with the fix
 
-- **WHEN** two history rows share one instant, the second appended directly, and `estado-actual` is requested
+- **WHEN** two history rows share one instant, the second appended directly, and `current-status` is requested
 - **THEN** the later insert is returned and the test passes
 
 #### Scenario: The tie test fails without the fix

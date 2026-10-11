@@ -29,7 +29,7 @@ const TYPES = [
   { idIdentificationType: 5, name: "CUIT", characters: "11", version: 0 },
 ];
 const CUIT_PERSON = {
-  personId: 7, firstName: "Empresa", lastName: "SA", identificationNumber: "30712345678",
+  personId: 7, firstName: "Company", lastName: "SA", identificationNumber: "30712345678",
   identificationTypeId: 5, isClient: true, version: 0,
 };
 const UNTYPED_PERSON = {

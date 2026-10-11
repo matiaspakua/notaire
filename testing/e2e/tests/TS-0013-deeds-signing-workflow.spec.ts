@@ -135,7 +135,7 @@ test.describe('CU05 - Prepare a deed', () => {
     ).toBeVisible({ timeout: 5000 })
 
     // And: deed row appears in the table with status "Sin Firmar" (the backend default
-    // for newly-created deeds — see ConstantesNegocio.ESCRITURA_SIN_FIRMAR)
+    // for newly-created deeds — see BusinessConstants.DeedUnsigned)
     const table = page.getByRole('table')
     await expect(table).toBeVisible()
     const row = table.getByRole('row', { name: new RegExp(numberDeed) })

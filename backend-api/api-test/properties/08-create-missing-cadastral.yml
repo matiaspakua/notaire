@@ -4,7 +4,7 @@ info:
   seq: 8
   description: |-
       ## Reject — POST /api/v1/properties without cadastralDesignation
-      A property is identified by its nomenclatura catastral; a create
+      A property is identified by its cadastral designation; a create
       without it is rejected and nothing is stored (#655).
       Traceability: CU69 (#655)
 http:
@@ -13,7 +13,7 @@ http:
   body:
     type: json
     data: |-
-        {"cadastralDesignation": "  ", "address": "Bruno sin nomenclatura"}
+        {"cadastralDesignation": "  ", "address": "Bruno without a cadastral designation"}
   headers:
     - name: Content-Type
       value: application/json

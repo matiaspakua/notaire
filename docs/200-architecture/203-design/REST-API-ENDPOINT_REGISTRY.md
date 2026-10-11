@@ -143,7 +143,7 @@ These endpoints are actively called by the Next.js frontend:
 - `GET /api/v1/reports/monthly-sworn-statement`
 - `GET /api/v1/reports/tax-sworn-statement`
 
-### RolController
+### RoleController
 - `GET /api/v1/roles`
 - `POST /api/v1/roles`
 - `PUT /api/v1/roles/{id}`
@@ -291,9 +291,9 @@ Not reached by any current frontend call site. May be used by reports, backgroun
 - `POST /api/v1/audit-log`
 
 ### ReportController
-- `GET /api/v1/reports/documents-due/{idDocumentoPresentado}`
+- `GET /api/v1/reports/documents-due/{idSubmittedDocument}`
 
-### RolController
+### RoleController
 - `GET /api/v1/roles/{id}`
 
 ### SubstitutionController
@@ -349,7 +349,7 @@ Not reached by any current frontend call site. May be used by reports, backgroun
 
 - `AuditRecordController`: audit records are append-only, no DELETE endpoint exists by design (see issue #556).
 - `ReportController` endpoints are consumed via `downloadPdf()` in `frontend/src/hooks/useReports.ts`, not the `apiGet`/`apiPost` wrapper family, since they return `application/pdf` rather than JSON.
-- `GET /api/v1/reports/documents-due/{idDocumentoPresentado}` is the one `ReportController` endpoint with no frontend caller found.
+- `GET /api/v1/reports/documents-due/{idSubmittedDocument}` is the one `ReportController` endpoint with no frontend caller found.
 
 ### Ongoing Maintenance
 - Update registry when a new endpoint is added.

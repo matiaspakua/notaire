@@ -84,7 +84,7 @@ async function applyAdminSession(
 export async function authenticateAsAdmin(
   page: Page,
   name: string = "admin",
-  contrasenia: string = "admin",
+  password: string = "admin",
 ): Promise<void> {
   const fallbackUser = {
     name: name,
@@ -101,7 +101,7 @@ export async function authenticateAsAdmin(
 
   const result = await apiPost<LoginResponse>(page, "/users/login", {
     name: name,
-    password: contrasenia,
+    password,
   });
   const data = result.ok ? result.data : undefined;
   const token = data?.valid ? data.token : undefined;

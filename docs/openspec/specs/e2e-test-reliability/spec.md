@@ -12,7 +12,7 @@ budgets that hide flakiness (#1066).
 ### Requirement: Self-arranging workflow E2E data
 
 Workflow editor and assignment E2E suites (TS-0021, TS-0022) MUST create any
-required workflow / tipo-tramite fixtures via API helpers before exercising the
+required workflow / procedure-type fixtures via API helpers before exercising the
 UI. They MUST NOT call `test.skip()` solely because the table or editor list is
 empty.
 
@@ -26,7 +26,7 @@ empty.
 #### Scenario: Workflow assignment arranges data instead of skipping
 
 - **WHEN** TS-0022 assignment tests run against an environment with no
-  tipo-tramite rows
+  procedure-type rows
 - **THEN** the suite creates the needed row (via API helpers) and executes the
   assignment assertions without a data-missing `test.skip()`
 

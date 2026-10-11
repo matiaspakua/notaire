@@ -141,11 +141,11 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
 
         em.getTransaction().begin();
 
-        ProcedureType procedureTypeEncontrado = em.find(ProcedureType.class, procedureType.getIdProcedureType());
+        ProcedureType foundProcedureType = em.find(ProcedureType.class, procedureType.getIdProcedureType());
 
-        if (procedureTypeEncontrado != null)
+        if (foundProcedureType != null)
         {
-            version = procedureTypeEncontrado.getVersion(); // Version of the object in the database
+            version = foundProcedureType.getVersion(); // Version of the object in the database
             oldVersion = procedureType.getVersion(); // Version of the object in memory
 
             if (version != oldVersion) // Versions differ: someone else modified the object
@@ -160,12 +160,12 @@ public class ProcedureTypeJpaController implements Serializable, JpaPersistence
             } else
             {
 
-                procedureTypeEncontrado.setEnabled(procedureType.getEnabled());
-                procedureTypeEncontrado.setName(procedureType.getName());
-                procedureTypeEncontrado.setIsArchived(procedureType.getIsArchived());
-                procedureTypeEncontrado.setIsRegistered(procedureType.getIsRegistered());
-                procedureTypeEncontrado.setAssociatesProperties(procedureType.getAssociatesProperties());
-                procedureTypeEncontrado.setNotes(procedureType.getNotes());
+                foundProcedureType.setEnabled(procedureType.getEnabled());
+                foundProcedureType.setName(procedureType.getName());
+                foundProcedureType.setIsArchived(procedureType.getIsArchived());
+                foundProcedureType.setIsRegistered(procedureType.getIsRegistered());
+                foundProcedureType.setAssociatesProperties(procedureType.getAssociatesProperties());
+                foundProcedureType.setNotes(procedureType.getNotes());
 
                 em.getTransaction().commit();
                 em.close();

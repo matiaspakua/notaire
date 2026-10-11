@@ -82,7 +82,7 @@ function ManagementsList() {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [historyId, setHistoryId] = useState<number | null>(null);
   const [foldersManagementId, setFoldersManagementId] = useState<number | null>(null);
-  const [resumenCasoId, setResumenCasoId] = useState<number | null>(null);
+  const [caseSummaryId, setCaseSummaryId] = useState<number | null>(null);
   const [waitFolderId, setWaitFolderId] = useState<number | null>(null);
   const [waitReason, setWaitReason] = useState("");
   const [editing, setEditing] = useState<DeedManagement | null>(null);
@@ -359,7 +359,7 @@ function ManagementsList() {
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => setResumenCasoId(g.idManagement!)}
+            onClick={() => setCaseSummaryId(g.idManagement!)}
             aria-label={t("resumen.action")}
             data-testid={`btn-summary-case-${g.idManagement}`}
           >
@@ -682,7 +682,7 @@ function ManagementsList() {
         </DialogContent>
       </Dialog>
 
-      <ManagementSummaryDialog managementId={resumenCasoId} onClose={() => setResumenCasoId(null)} />
+      <ManagementSummaryDialog managementId={caseSummaryId} onClose={() => setCaseSummaryId(null)} />
     </div>
   );
 }

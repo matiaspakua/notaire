@@ -4,12 +4,12 @@
 --
 -- Tables WITH seed data (from data.sql) are intentionally left alone:
 --   identification_types, folio_types, management_statuses,
---   procedure_types, concepts, personas, users, budgets
+--   procedure_types, concepts, people, users, budgets
 -- These contain the reference IDs (1, 1, etc.) that downstream tests
 -- like BusinessWorkflowIntegrationTest depend on.
 --
 -- Tables WITHOUT seed data are truncated to prevent lazy-loading failures:
--- BusinessWorkflowIntegrationTest creates rows in gestiones, escrituras,
+-- BusinessWorkflowIntegrationTest creates rows in deed_managements, deeds,
 -- folios, etc., and the legacy JPA controllers (which close the EntityManager
 -- before returning) cannot serialize those entities' lazy @OneToMany
 -- collections — causing LazyInitializationException → 500 errors.

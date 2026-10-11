@@ -28,7 +28,7 @@ async function stubPeople(page: Page, deleteStatus: number, deleteBody: string) 
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
-        content: [{ personId: PERSON_ID, firstName: "Referenciada", lastName: "TS0105", identificationNumber: "99000001", isClient: true }],
+        content: [{ personId: PERSON_ID, firstName: "Referenced", lastName: "TS0105", identificationNumber: "99000001", isClient: true }],
         totalElements: 1, totalPages: 1, number: 0, size: 1000,
       }),
     });

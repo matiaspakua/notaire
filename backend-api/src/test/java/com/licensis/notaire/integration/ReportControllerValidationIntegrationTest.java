@@ -52,7 +52,7 @@ class ReportControllerValidationIntegrationTest {
 
     @Test
     @DisplayName("GET monthly-sworn-statement with month=13 returns 400")
-    void shouldRejectDeclaracionJuradaMensualWithMesOutOfRange() throws Exception {
+    void shouldRejectMonthlySwornStatementWithMonthOutOfRange() throws Exception {
         mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("year", "2026")
                         .param("month", "13"))
@@ -61,7 +61,7 @@ class ReportControllerValidationIntegrationTest {
 
     @Test
     @DisplayName("GET monthly-sworn-statement with a non-positive year returns 400")
-    void shouldRejectDeclaracionJuradaMensualWithNonPositiveYear() throws Exception {
+    void shouldRejectMonthlySwornStatementWithNonPositiveYear() throws Exception {
         mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("year", "0")
                         .param("month", "6"))

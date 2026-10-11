@@ -48,7 +48,7 @@ class ReportsUseCaseIntegrationTest {
 
     @Test
     @DisplayName("CU25: monthly sworn statement returns valid PDF bytes")
-    void shouldGenerateDeclaracionJuradaMensualPdf() throws Exception {
+    void shouldGenerateMonthlySwornStatementPdf() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("year", "2026")
                         .param("month", "6"))
@@ -63,7 +63,7 @@ class ReportsUseCaseIntegrationTest {
 
     @Test
     @DisplayName("CU50: tax sworn statement returns valid PDF bytes")
-    void shouldGenerateDeclaracionJuradaRentasPdf() throws Exception {
+    void shouldGenerateTaxSwornStatementPdf() throws Exception {
         MvcResult result = mockMvc.perform(get("/api/v1/reports/tax-sworn-statement")
                         .param("year", "2026")
                         .param("month", "6"))
@@ -79,7 +79,7 @@ class ReportsUseCaseIntegrationTest {
     // --- Month boundary validation ---
 
     @Test
-    @DisplayName("Month 1 and 12 are valid for DDJJ endpoints")
+    @DisplayName("Month 1 and 12 are valid for sworn-statement endpoints")
     void shouldAcceptBoundaryMonths() throws Exception {
         mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("year", "2026").param("month", "1"))
@@ -99,8 +99,8 @@ class ReportsUseCaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Month 0 and 13 are rejected for both DDJJ endpoints")
-    void shouldRejectInvalidMonthForDeclaraciones() throws Exception {
+    @DisplayName("Month 0 and 13 are rejected for both sworn-statement endpoints")
+    void shouldRejectInvalidMonthForSwornStatements() throws Exception {
         mockMvc.perform(get("/api/v1/reports/monthly-sworn-statement")
                         .param("year", "2026").param("month", "13"))
                 .andExpect(status().isBadRequest());
@@ -171,7 +171,7 @@ class ReportsUseCaseIntegrationTest {
     @DisplayName("Special characters in procedureTypeName are matched literally, never a server error")
     void shouldHandleSpecialCharsInProcedureParam() throws Exception {
         mockMvc.perform(get("/api/v1/reports/procedure-document-list")
-                        .param("procedureTypeName", "Compra/Venta (especial) & more"))
+                        .param("procedureTypeName", "Purchase/Sale (special) & more"))
                 .andExpect(status().isNotFound());
     }
 

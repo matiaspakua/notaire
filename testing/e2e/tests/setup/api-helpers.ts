@@ -401,7 +401,7 @@ export async function createFolioType(
 ): Promise<ApiResult<{ idFolioType: number }>> {
   const id = uniqueId();
   return apiPost(page, "/folio-types", {
-    name: `Tipo Folio E2E ${id}`,
+    name: `Folio type E2E ${id}`,
     enabled: true,
     isAuxiliary: false,
     ...overrides,
@@ -674,13 +674,13 @@ export async function createProcedureTemplate(
  */
 export async function createSubstitution(
   page: Page,
-  idSuplente: number,
-  idSuplantado: number,
+  idSubstitute: number,
+  idSubstituted: number,
   overrides: Partial<SubstitutionPayload> = {},
 ): Promise<ApiResult<{ idSubstitution: number }>> {
   return apiPost(page, "/substitutions", {
-    fkIdSubstitute: { personId: idSuplente },
-    fkIdSubstituted: { personId: idSuplantado },
+    fkIdSubstitute: { personId: idSubstitute },
+    fkIdSubstituted: { personId: idSubstituted },
     dateStart: new Date().toISOString().split("T")[0],
     notes: "E2E test substitution",
     ...overrides,
@@ -707,7 +707,7 @@ export async function createTestimony(
 export async function createHistoryEntry(
   page: Page,
   idManagement: number,
-  status: string = "Iniciado",
+  status: string = "Started",
 ): Promise<ApiResult<any>> {
   return apiPost(page, "/history", {
     fkIdManagement: { idManagement: idManagement },
@@ -778,7 +778,7 @@ export async function brunoActivateManagement(
   managementId: number,
 ): Promise<ApiResult> {
   return apiPut(page, `/managements/${managementId}`, {
-    detalle: "Activada desde Playwright",
+    detalle: "Activated from Playwright",
     dateStart: new Date().toISOString().split("T")[0],
   });
 }
@@ -788,7 +788,7 @@ export async function brunoArchiveManagement(
   managementId: number,
 ): Promise<ApiResult> {
   return apiPut(page, `/managements/${managementId}`, {
-    detalle: "Archivada desde Playwright",
+    detalle: "Archived from Playwright",
   });
 }
 

@@ -245,7 +245,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should handle updatePayment with null amount")
-    void shouldHandleEditarPaymentWithNullAmount() {
+    void shouldHandleEditPaymentWithNullAmount() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment Original");
 
         PaymentDetails edited = edit(saved.id(), null, new Date(), "Updated");
@@ -257,7 +257,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should handle updatePayment with null date")
-    void shouldHandleEditarPaymentWithNullDate() {
+    void shouldHandleEditPaymentWithNullDate() {
         Date originalDate = new Date();
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), originalDate, "Payment");
 
@@ -270,7 +270,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should handle updatePayment with null notes")
-    void shouldHandleEditarPaymentWithNullNotes() {
+    void shouldHandleEditPaymentWithNullNotes() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Original");
 
         PaymentDetails edited = edit(saved.id(), new java.math.BigDecimal("120000"), new Date(), null);
@@ -282,7 +282,7 @@ class PaymentUseCaseIntegrationTest extends ServiceIntegrationTest {
 
     @Test
     @DisplayName("Should reject negative amount in updatePayment")
-    void shouldRejectNegativeAmountInEditarPayment() {
+    void shouldRejectNegativeAmountInEditPayment() {
         PaymentDetails saved = process(testBudget.getIdBudget(), new java.math.BigDecimal("100000"), new Date(), "Payment");
 
         assertThatThrownBy(() -> edit(saved.id(), new java.math.BigDecimal("-50000"), new Date(), "Invalid"))

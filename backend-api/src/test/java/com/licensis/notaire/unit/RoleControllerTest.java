@@ -58,7 +58,7 @@ class RoleControllerTest {
     @Test
     @DisplayName("Should return all roles")
     void shouldReturnAllRoles() throws Exception {
-        when(roleRepository.findAll()).thenReturn(List.of(buildRole(1, "ADMIN"), buildRole(2, "OPERADOR")));
+        when(roleRepository.findAll()).thenReturn(List.of(buildRole(1, "ADMIN"), buildRole(2, "OPERATOR")));
 
         mockMvc.perform(get("/api/v1/roles"))
                 .andExpect(status().isOk())
@@ -93,7 +93,7 @@ class RoleControllerTest {
 
         Map<String, Object> body = Map.of(
                 "name", "ADMIN",
-                "description", "Administrador",
+                "description", "Administrator",
                 "active", true,
                 "modulos", List.of("administracion")
         );

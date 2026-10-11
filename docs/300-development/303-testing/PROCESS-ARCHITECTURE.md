@@ -94,10 +94,10 @@ All of the above (except heavy suite runners) run in `preflight.sh`.
 
 | Practice | Notaire realization |
 |----------|---------------------|
-| Organización / base de conocimiento | `docs/` + `testing/` + OpenSpec |
-| Identificación | CU / TC / TS / DOC / Issue IDs |
-| Trazabilidad | CU-API matrix, OpenSpec traceability, TS headers |
-| Pirámide / fail-fast | Levels in MTP §3; unit first in CI |
+| Organization / knowledge base | `docs/` + `testing/` + OpenSpec |
+| Identification | CU / TC / TS / DOC / Issue IDs |
+| Traceability | CU-API matrix, OpenSpec traceability, TS headers |
+| Pyramid / fail-fast | Levels in MTP §3; unit first in CI |
 | MTP | This folder’s `TEST-PLAN.md` |
 | QA Automation as SDLC software | Generators + unittest guards + preflight |
 

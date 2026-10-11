@@ -6,7 +6,7 @@
 | Field | Value |
 |-------|-------|
 | GitHub Issue | #1315 |
-| Use Case | CU15 – Procesar pago; CU13 – Gestionar historial de gestion; CU21 – Modificar UserAccount (and the other CRUD use cases with a DELETE) |
+| Use Case | CU15 – Procesar pago; CU13 – Gestionar historial de gestion; CU21 – Modificar Usuario (and the other CRUD use cases with a DELETE) |
 | Branch | `fix/1315_delete_returns_204` |
 | Gate 1 status | draft |
 

@@ -1,14 +1,13 @@
 info:
-  name: Report - documentos por vencer unknown id 404
+  name: Report - document debt unknown number 404
   type: http
-  seq: 12
+  seq: 14
   description: |-
-      ## GET /api/v1/reports/documents-due/{idDocumentoPresentado} for a missing document
-      The happy path is covered by InHouseReportPdfIntegrationTest (#567).
-      Traceability: CU42
+      ## GET /api/v1/reports/document-debt for a management number that does not exist
+      Traceability: CU09
 http:
   method: GET
-  url: "{{base_url}}/api/v1/reports/documents-due/999999999"
+  url: "{{base_url}}/api/v1/reports/document-debt?numberManagement=999999999"
   headers:
     - name: Content-Type
       value: application/json
