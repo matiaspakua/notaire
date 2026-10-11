@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Budget screen** (#1490, CU75): the living
+  `presupuesto-from-template` spec names `/dashboard/budgets`. The
+  engineering-sequences design names the screen CU01, CU39, and CU71
+  still write, `/dashboard/presupuestos`. The heading
+  `Riesgos / Trade-offs` stays. `docs/100-business` stays.
 - **Upcoming expirations screen** (#1490, CU75): the living
   `upcoming-expirations` spec names `/dashboard/upcoming-expirations`.
   The engineering-sequences design names the screen CU42 still writes,

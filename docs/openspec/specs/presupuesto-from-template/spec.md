@@ -11,7 +11,7 @@ one step. Source: #797; owner CU01.
 
 The create flow MUST create the `Budget` first and then load the selected
 procedure type's template items into it, so the items persist as `Item` rows
-of the new budget. The load path is
+of the new budget. The screen is `/dashboard/budgets`. The load path is
 `POST /api/v1/budgets/{id}/items-from-template` with `procedureTypeId`.
 
 #### Scenario: A type with a template is selected
