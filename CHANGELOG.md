@@ -64,6 +64,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **English living-spec contract names** (#1490, CU75): the tie-break
+  scenarios say `a management`. The tie test requests `current-status`.
+  The Bruno controller list names `Management`, `AuxiliaryProtocol`, and
+  `Report`. Reliability fixtures are `procedure-type`. Person save prose
+  says `person create` and `the new-person dialog`. The field example is
+  `name: must not be blank`. Spec ids `estado-actual-tie-break`,
+  `estado-actual-tie-test`, `bruno-zero-coverage-controllers`,
+  `e2e-test-reliability`, `persona-validation-error-toast`, and
+  `api-error-toasts` stay. The Playwright filename
+  `TS-0015-personas-clientes-workflow.spec.ts` stays, along with `DNI`.
 - **English report collection names** (#1490, CU75): the current-status
   collection is `05-current-status.yml`. The report collections are
   `11-documents-due-unknown-404.yml`, `12-document-debt.yml`, and

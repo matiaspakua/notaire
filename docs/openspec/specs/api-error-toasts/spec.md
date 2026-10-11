@@ -66,7 +66,7 @@ of a generic-only toast.
 #### Scenario: Field detail maps to FormField error
 
 - **WHEN** a mutation fails with a message that identifies a form field (for
-  example bean-validation style `nombre: must not be blank`) and that field is
+  example bean-validation style `name: must not be blank`) and that field is
   present on the form
 - **THEN** the matching `FormField` shows the error text and the control is
   marked invalid for assistive tech

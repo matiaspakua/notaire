@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Ensure the Personas dashboard surfaces backend validation messages on non-409
+Ensure the people screen surfaces backend validation messages on non-409
 save failures (instead of a generic save error) and that Dedup-EDGE proves the
 empty-identification path. Source: #945; CU17 / CU61.
 
@@ -10,7 +10,7 @@ empty-identification path. Source: #945; CU17 / CU61.
 
 ### Requirement: Non-409 ApiError shows extractable backend message
 
-When persona create or update fails with an `ApiError` whose status is not 409
+When person create or update fails with an `ApiError` whose status is not 409
 and whose body yields a parseable message via `extractApiError` (or the shared
 mutation-error helper), the UI MUST toast that message. The generic
 `errorSave` string MUST be used only when no message is extractable.
@@ -38,7 +38,7 @@ person id is known), not raw English API text substituted via
 
 #### Scenario: 409 keeps curated duplicate toast
 
-- **WHEN** persona create/update fails with HTTP 409 duplicate identification
+- **WHEN** person create/update fails with HTTP 409 duplicate identification
 - **THEN** the UI shows the localized duplicate-document message (and
   view-existing action when applicable), not a generic save error and not an
   unlocalized raw API string as the primary copy
@@ -50,7 +50,7 @@ the user can correct fields.
 
 #### Scenario: Dialog stays open after empty-DNI validation failure
 
-- **WHEN** the user opens Nueva Person, fills name fields, leaves DNI empty,
+- **WHEN** the user opens the new-person dialog, fills name fields, leaves DNI empty,
   and submits
 - **THEN** validation feedback is visible (inline or toast per Dedup-EDGE) and
   the dialog remains visible

@@ -13,10 +13,10 @@ when several rows share that date, the one with the highest id.
 
 #### Scenario: Identical dates return the later insert
 
-- **WHEN** a gestion has two history rows with the same date
+- **WHEN** a management has two history rows with the same date
 - **THEN** the endpoint returns the row with the higher id
 
 #### Scenario: Distinct dates still return the latest date
 
-- **WHEN** a gestion has history rows with different dates
+- **WHEN** a management has history rows with different dates
 - **THEN** the endpoint returns the row with the latest date
